@@ -396,6 +396,20 @@ def  build_generated_bindings(rosetta_source_path):
     execute('Building...', 'cd {prefix} && ninja -j{jobs}'.format(prefix=prefix, jobs=Options.jobs))
 
 
+def generate_documentation(rosetta_source_path, path):
+    path = os.path.abspath(path)
+    print('Creating PyRosetta documentation at: {}...'.format(path))
+
+    source_prefix = get_binding_build_root(rosetta_source_path, source=True)
+    build_prefix = get_binding_build_root(rosetta_source_path, build=True)
+
+    with open(source_prefix + '/rosetta.modules') as fh: modules = ' '.join( ['pyrosetta', 'rosetta'] + [ 'rosetta.'+ f for f in fh.read().split()] )
+
+    if not os.path.isdir(path): os.makedirs(path)
+    execute('Generating PyRosetta documentation...', 'cd {build_prefix} && {pydoc} -w {modules} && mv *.html {path}'.format(pydoc=Options.pydoc, **vars()), silent=True)
+
+    with open(path+'/index.html', 'w') as f: f.write('<!DOCTYPE html><html><head><title>PyRosetta-4 Documentation</title></head> <body><a href="rosetta.html">[Rosetta Module Documentation]</a> <a href="rosetta.html">[PyRosetta Module Documentation]</a> </body> </html>')
+
 
 def create_package(rosetta_source_path, path):
     print('Creating Python package at: {}...'.format(path))
@@ -414,6 +428,7 @@ def create_package(rosetta_source_path, path):
     shutil.copy(build_prefix + '/rosetta.so', package_prefix)
     distutils.dir_util.copy_tree(build_prefix + '/pyrosetta', package_prefix + '/pyrosetta', update=False)
 
+    generate_documentation(rosetta_source_path, path+'/documentation')
 
 
 
@@ -432,8 +447,12 @@ def main(args):
     parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.")
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
-    parser.add_argument('--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
+
+    parser.add_argument("--pydoc", default='pydoc', help="Specify pydoc executable to use (default is 'pydoc')")
+    parser.add_argument('--documentation', default='', help='Generate PyRosetta documentation at specified path (default is to skip documentation creation)')
+
+    parser.add_argument('--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
 
     global Options
     Options = parser.parse_args()
@@ -456,6 +475,7 @@ def main(args):
     if Options.skip_building_phase: print('Option --skip-building-phase is supplied, skipping building phase...')
     else: build_generated_bindings(rosetta_source_path)
 
+    if Options.documentation: generate_documentation(rosetta_source_path, Options.documentation)
     if Options.create_package: create_package(rosetta_source_path, Options.create_package)
 
 

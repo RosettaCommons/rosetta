@@ -78,7 +78,8 @@ def main(args):
 
     if Options.suffix: Options.suffix = '.' + Options.suffix
 
-    Platform['extras']  = Options.extras.split(',') if Options.extras else []
+    Platform['extras'] = Options.extras.split(',') if Options.extras else []
+    Platform['python'] = Options.python
     #Platform['options'] = json.loads( Options.options ) if Options.options else {}
 
     if Options.memory: memory = Options.memory

@@ -98,7 +98,6 @@ def release(name, package_name, package_dir, working_dir, platform, config):
         execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
 
-
 def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
     compiler = platform['compiler']
@@ -113,7 +112,7 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     # Creating git repository with source code, only for regular (not 'commits') branches
     #if config['branch'] != 'commits':
     git_repository_name = 'rosetta.source.{}'.format(config['branch'])
-    release_path = '{}/rosetta/git/{}/'.format(config['release_dir'], config['branch'])
+    release_path = '{}/rosetta/git/{}/'.format(config['release_root'], config['branch'])
     git_origin = os.path.abspath(release_path + git_repository_name + '.git')  # bare repositiry
     git_working_dir = working_dir + '/' + git_repository_name
     if not os.path.isdir(release_path): os.makedirs(release_path)
@@ -137,7 +136,7 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
 
     # Creating tar.bz2 archive with sources
     with tarfile.open(archive, "w:bz2") as t: t.add(working_dir+'/'+git_repository_name, arcname=release_name)
-    release_path = '{}/rosetta/archive/{}/source/'.format(config['release_dir'], config['branch'])  # , platform['os']
+    release_path = '{}/rosetta/archive/{}/source/'.format(config['release_root'], config['branch'])  # , platform['os']
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git . && git add * && git ci -a -m "{release_name}"'.format(**vars()))
@@ -149,15 +148,23 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
 
     # We moving archive and pushing new revision to upstream only *after* all test runs passed
     shutil.move(archive, release_path+release_name+'.tar.bz2')
+
+    # removing old archives and adjusting _latest_html_
+    files = [f for f in os.listdir(release_path) if f != _latest_html_]
+    files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
+    for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
+    if files:
+        with file(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.source', link=files[-1]))
+
     execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
 
     execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
-
 
     results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
     json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
+
 
 
 def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
@@ -174,7 +181,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     # Creating git repository with source code, only for regular (not 'commits') branches
     #if config['branch'] != 'commits':
     git_repository_name = 'rosetta.binary.{}.{}'.format(platform['os'], config['branch'])
-    release_path = '{}/rosetta/git/{}/'.format(config['release_dir'], config['branch'])
+    release_path = '{}/rosetta/git/{}/'.format(config['release_root'], config['branch'])
     git_origin = os.path.abspath(release_path + git_repository_name + '.git')  # bare repositiry
     git_working_dir = working_dir + '/' + git_repository_name
     if not os.path.isdir(release_path): os.makedirs(release_path)
@@ -200,7 +207,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
 
     # Creating tar.bz2 archive with sources
     with tarfile.open(archive, "w:bz2") as t: t.add(working_dir+'/'+git_repository_name, arcname=release_name)
-    release_path = '{}/rosetta/archive/{}/binary.{}/'.format(config['release_dir'], config['branch'], platform['os'])
+    release_path = '{}/rosetta/archive/{}/binary.{}/'.format(config['release_root'], config['branch'], platform['os'])
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git .'.format(**vars()))
@@ -218,9 +225,19 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
 
     # We moving archive and pushing new revision to upstream only *after* all test runs passed
     shutil.move(archive, release_path+release_name+'.tar.bz2')
+    # removing old archives and adjusting _latest_html_
+    files = [f for f in os.listdir(release_path) if f != _latest_html_]
+    files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
+    for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
+    if files:
+        with file(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.binary', link=files[-1]))
+
     execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
 
     execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
+
+    # release('PyRosetta4', release_name, package_dir, working_dir, platform, config)
+    #distutils.dir_util.copy_tree(source, prefix, update=False)
 
     results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
     json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
@@ -474,6 +491,75 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
 
 
+def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    memory = config['memory'];  jobs = config['cpu_count']
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+
+    TR = Tracer(True)
+
+    TR('Running PyRosetta4-documentaion release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+
+    # 'release' debug ----------------------------------
+    # output = 'dummy\n'
+
+
+    # python_version = execute('Getting Python version...', '{python} --version'.format(python=platform['python']), return_='output').split()[1][:3].replace('.', '')
+
+    # release_name = 'PyRosetta4.{kind}.python{python_version}.{os}'.format(kind=kind, os=platform['os'], python_version=python_version)
+    # package_dir = working_dir + '/' + release_name
+
+    # #execute('Creating PyRosetta4 distribution package...', '{build_command_line} --create-package {package_dir}'.format(**vars()), return_='tuple')
+    # distutils.dir_util.copy_tree('/home/benchmark/rosetta/binder/main/source/build/PyRosetta/linux/clang/pyhton-2.7/minsizerel/build/pyrosetta',
+    #                              package_dir, update=False)
+
+    # release('PyRosetta4', release_name, package_dir, working_dir, platform, config)
+
+    # res_code = _S_passed_
+    # results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+    # json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+    # return results
+    # ----------------------------------
+
+    res, output, build_command_line, pyrosetta_path = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, debug=debug)
+
+    for f in os.listdir(pyrosetta_path + '/source'):
+        if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
+    distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
+
+    file(working_dir+'/build-log.txt', 'w').write(output)
+
+    if res:
+        res_code = _S_build_failed_
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+
+    else:
+        documentation_dir = os.path.abspath(pyrosetta_path+'/build/documentation')
+
+        python_version = execute('Getting Python version...', '{python} --version'.format(python=platform['python']), return_='output').split()[1][:3].replace('.', '')
+        release_name = 'PyRosetta4.{kind}'.format(kind=kind, os=platform['os'], python_version=python_version)
+        package_dir = working_dir + '/' + release_name
+
+        res, output2 = execute('Generating PyRosetta4 documentation...', '{build_command_line} -s -d --documentation {documentation_dir} --pydoc /usr/bin/pydoc3.5'.format(**vars()), return_='tuple')
+
+        if res:
+            res_code = _S_build_failed_
+            results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output+output2 }
+            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+
+        else:
+            release_path = '{release_dir}/PyRosetta4/documentation'.format(release_dir=config['release_root'], **vars())
+            if os.path.isdir(release_path): shutil.rmtree(release_path)
+            shutil.move(documentation_dir, release_path)
+
+            res_code = _S_passed_
+            results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output+output2 }
+            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+    return results
+
+
+
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
@@ -491,5 +577,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test =='PyRosetta4.Release':        return py_rosetta4_release('Release',    rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta4.MinSizeRel':     return py_rosetta4_release('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta4.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+
+    elif test =='PyRosetta4.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))

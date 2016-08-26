@@ -391,11 +391,14 @@ void Context::generate(Config const &config)
 	}
 	outs() << "Writing code... Done.\n";
 
+	string modules;
 	string namespace_pairs;
 	std::set<string> namespaces = create_all_nested_namespaces();
 	for(auto & n : namespaces) {
 		if( n.size() ) namespace_pairs += "\t\t{{\"{}\", \"{}\"}},\n"_format(base_namespace(n), last_namespace(n));
+		modules += n;  modules += ' ';
 	}
+	replace(modules, "::", ".");
 
 	string binding_function_decls, binding_function_calls;
 	for(auto &f : binding_function_names) {
@@ -411,9 +414,17 @@ void Context::generate(Config const &config)
 	if( O_single_file ) {
 		root_module_file_handle << "\n// Source list file: " << config.prefix + config.root_module + ".sources\n";
 		for(auto &s : sources) root_module_file_handle << "// "<< s << "\n";
+
+		root_module_file_handle << "\n// Modules list file: " << config.prefix + config.root_module + ".modules\n// ";
+		root_module_file_handle << modules;
+		root_module_file_handle << "\n";
+
 	} else {
 		std::ofstream f(config.prefix + config.root_module + ".sources");
 		for(auto &s : sources) f << s << "\n";
+
+		std::ofstream namespaces_file_handle(config.prefix + config.root_module + ".modules");
+		namespaces_file_handle << modules;
 	}
 }
 

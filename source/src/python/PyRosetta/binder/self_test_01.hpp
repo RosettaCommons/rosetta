@@ -46,6 +46,10 @@ enum E1 {E1A, E1B};
 /// comment 0
 namespace utility {
 
+namespace a {
+struct A {};
+}
+
 /// comment 1
 /// comment 2
 //  comment 2.5
@@ -102,6 +106,8 @@ struct A /// comment 3
 	/// comment 5
 	int value;
 };
+
+
 
 std::ostream & operator << ( std::ostream & os, A const & a)
 {
