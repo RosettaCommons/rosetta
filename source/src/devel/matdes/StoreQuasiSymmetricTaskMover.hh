@@ -51,10 +51,12 @@ public:
   // setters
   void quasi_symm_comp( std::string const quasi_symm_comp );
   void num_quasi_repeats( core::Size const num_quasi_repeats );
+  void offset_resis( core::Size const offset_resis );
 
   // getters
   char quasi_symm_comp() const;
   core::Size num_quasi_repeats() const;
+  core::Size offset_resis() const;
 
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -62,6 +64,7 @@ private:
 	bool overwrite_;
 	std::string quasi_symm_comp_;
 	core::Size num_quasi_repeats_;
+	core::Size offset_resis_;
 };
 
 

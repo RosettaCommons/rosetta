@@ -51,6 +51,7 @@
 #include <devel/cutoutdomain/CutOutDomainCreator.hh>
 #include <devel/splice/RBOutMoverCreator.hh>
 #include <devel/splice/RBInMoverCreator.hh>
+#include <devel/matdes/StoreQuasiSymmetricTaskMoverCreator.hh>
 
 // Filter creators
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
@@ -105,6 +106,7 @@ static protocols::moves::MoverRegistrator< devel::loop_creation::CCDLoopCloserCr
 static protocols::moves::MoverRegistrator< devel::loop_creation::LoophashLoopInserterCreator > reg_LoophashLoopInserterCreator;
 static protocols::moves::MoverRegistrator< devel::loop_creation::IterativeLoophashLoopInserterCreator > reg_IterativeLoophashLoopInserterCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::StoreQuasiSymmetricTaskMoverCreator > reg_StoreQuasiSymmetricTaskMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::GenericSymmetricSamplerCreator > reg_GenericSymmetricSamplerCreator;
 static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;

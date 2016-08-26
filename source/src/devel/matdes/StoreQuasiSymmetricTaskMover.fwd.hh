@@ -20,8 +20,11 @@ namespace devel {
 namespace matdes {
 
 class StoreQuasiSymmetricTaskMover;
-typedef utility::pointer::owning_ptr< StoreQuasiSymmetricTaskMover > StoreQuasiSymmetricTaskMoverOP;
-typedef utility::pointer::owning_ptr< StoreQuasiSymmetricTaskMover const > StoreQuasiSymmetricTaskMoverCOP;
+
+//typedef utility::pointer::owning_ptr< StoreQuasiSymmetricTaskMover > StoreQuasiSymmetricTaskMoverOP;
+//typedef utility::pointer::owning_ptr< StoreQuasiSymmetricTaskMover const > StoreQuasiSymmetricTaskMoverCOP;
+typedef utility::pointer::shared_ptr< StoreQuasiSymmetricTaskMover > StoreQuasiSymmetricTaskMoverOP;
+typedef utility::pointer::shared_ptr< StoreQuasiSymmetricTaskMover const > StoreQuasiSymmetricTaskMoverCOP;
 
 } // matdes 
 } // devel

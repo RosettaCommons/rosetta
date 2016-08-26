@@ -150,6 +150,7 @@ sources = {
         "Symmetrizer",
         "SymmetrizerSampler",
         "GenericSymmetricSampler",
+        "StoreQuasiSymmetricTaskMover",
         ],
 	"devel/metal_interface": [
 		#"ZincHeterodimerMover",

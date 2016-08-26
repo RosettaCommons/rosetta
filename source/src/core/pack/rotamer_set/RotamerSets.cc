@@ -44,6 +44,8 @@
 #include <core/pose/symmetry/util.hh>
 
 #include <ObjexxFCL/format.hh>
+#include <basic/Tracer.hh>
+static THREAD_LOCAL basic::Tracer TR( "core.pack.rotamer_set.RotamerSets", basic::t_info );
 
 // C++
 #include <fstream>
@@ -53,6 +55,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
 using namespace ObjexxFCL;
@@ -190,74 +194,124 @@ RotamerSets::build_rotamers(
 
 	if ( task_->rotamer_links_exist() ) {
 		//check all the linked positions
-
-
-		//adding code to define a template residue in link-residues that is processed after layer-design etc. does pruning. This works independent to where linkres is placed in the task-operator list
-
-		for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
-			Size resid = moltenres_2_resid(ii);
-			if ( task_->rotamer_links()->get_template(resid) != resid ) {
-				RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
-				RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
-				rotset->set_resid( resid );
-				for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
-					conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
-					copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
-					rotset->add_rotamer(*cloneRes);
-
-				}
-				set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
-			}
+		TR << "RotamerLinks detected!" << std::endl;
+				
+		bool quasiflag = false;
+		//this quasisymmetry flag turns on a lot of bypasses below
+		if ( basic::options::option[ basic::options::OptionKeys::packing::quasisymmetry]() == true ) {
+			quasiflag = true;
+			TR << "NOTICE: QUASISYMMETRIC PACKING IS TURNED ON in RotamerSets. (quasiflag = " << quasiflag  << ")" << std::endl;
 		}
-		//end addition template residue code
+		
+		if ( quasiflag == false ) {
+			//adding code to define a template residue in link-residues that is processed after layer-design etc. does pruning. This works independent to where linkres is placed in the task-operator list
+			for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
+				Size resid = moltenres_2_resid(ii);
+				if ( task_->rotamer_links()->get_template(resid) != resid ) {
+					RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
+					RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
+					rotset->set_resid( resid );
+					for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
+						conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
+						copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
+						rotset->add_rotamer(*cloneRes);
+	
+					}
+					set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
+				}
+			}
+		} //if quasiflag == false
+		
+		if (quasiflag == false ) {
+			//adding code to define a template residue in link-residues that is processed after layer-design etc. does pruning. This works independent to where linkres is placed in the task-operator list
+			for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
+				Size resid = moltenres_2_resid(ii);
+				if(task_->rotamer_links()->get_template(resid) != resid){
+					RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
+					RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
+					rotset->set_resid( resid );
+					for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
+						conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
+						copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
+						rotset->add_rotamer(*cloneRes);
+	
+					}
+					set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
+				}
+			}	//end addition template residue code
+		}	
+		
 		utility::vector1<bool> visited(asym_length,false);
-
 		int expected_rot_count = 0;
-		for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
+		
+		for ( uint ii = 1; ii <= nmoltenres_; ++ii ) { //loop through each residue
+			TR.Debug << "visiting residue " << moltenres_2_resid_[ii] << std::endl;
 			utility::vector1<int> copies = task_->rotamer_links()->get_equiv(moltenres_2_resid_[ii]);
 
 			if ( visited[ moltenres_2_resid_[ii] ] ) {
+				TR.Debug << "residue " << moltenres_2_resid_[ii] << " already visited, skipping" << std::endl;
 				continue;
 			}
-
-			int num_rot = 1000000;
+			
 			int smallest_res = 0;
+			int num_rot = 1000000;
 
 			//Added to handle cases where no equivalent residue has been set. This shouldn't
 			//happen except in special cases (my scenario: add rotamer links and then relax
 			//with coordinate constraints, which addes virtual residues that have no equivalents
 			//set
 			if ( copies.size() == 0 ) {
+				TR << "WARNING: residue " << moltenres_2_resid_[ii] << " has no equivalent residues set!" << std::endl;
 				smallest_res = moltenres_2_resid_[ii];
 			}
-			for ( uint jj = 1; jj <= copies.size(); ++jj ) {
-				visited[ copies[jj] ] = true;
-				int buffer;
-				buffer = set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ] ]->num_rotamers();
-				if ( buffer <= num_rot ) {
-					num_rot = buffer;
-					smallest_res = copies[jj];
+			
+			//turn on quasisymmetry stuff, don't take smallest rotamer set
+			if ( quasiflag == true ) { 
+				num_rot = 0; //start num_rot at 0
+				for ( uint jj = 1; jj <= copies.size(); ++jj ) { //loop through each copy
+					visited[ copies[jj] ] = true; //marks this copy-group as visited, so a future round will not re-analyze
+					for ( uint rr = 1; rr <= set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ] ]->num_rotamers(); ++rr ) { //loop through each rotamer in this copy
+						if ( jj == 1 ) {
+							TR.Debug << "skipping copies[1]" << std::endl;
+							continue;
+						}
+						TR.Debug << "adding rotamer # " << rr << " from copies[" << jj << "] into copies[1]" << std::endl;
+						conformation::ResidueOP cloneRes( new conformation::Residue(*(set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ] ]->rotamer(rr)->clone())) );
+						set_of_rotamer_sets_[ resid_2_moltenres_[ copies[1] ] ]->add_rotamer( *cloneRes );
+					}
+					num_rot += set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ] ]->num_rotamers(); //add the current copy's # of rotamers into num_rot
+				}
+				smallest_res = copies[1]; //set "smallest_res" (one to be copied) to copies[1]
+			} else { //original behavior
+				for ( uint jj = 1; jj <= copies.size(); ++jj ) {
+					visited[ copies[jj] ] = true;
+					int buffer;
+					buffer = set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ] ]->num_rotamers();
+					if ( buffer <= num_rot ) {
+						num_rot = buffer;
+						smallest_res = copies[jj];
+					}
 				}
 			}
 			expected_rot_count += num_rot;
 
-			//relace rotset with the smallest set
+			//relace rotset with the smallest set AND fix connectivity
 			RotamerSetCOP bufferset = rotamer_set_for_moltenresidue( resid_2_moltenres_[ smallest_res ]);
 
-			for ( uint jj = 1; jj <= copies.size(); ++jj ) {
+			for ( uint jj = 1; jj <= copies.size(); ++jj ) { //each copy
 
-				if ( copies[jj] == smallest_res ) {
+				if ( ( copies[jj] == smallest_res ) && ( quasiflag == false ) ) {
 					//no need to overwrite itself
 					continue;
 				}
 
 				RotamerSetOP smallset( rsf->create_rotamer_set( pose.residue( 1 ) )) ;
 
-				for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
+				for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) { //go through each rotamer
 
 					conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
 
-					cloneRes->seqpos(copies[jj]);
+					cloneRes->seqpos(copies[jj]); //sets sequence position to current copy
 
 					//correct for connections if the smallset is from first or last
 					//residues.  These positions don't have a complete connect record.
@@ -283,12 +337,13 @@ RotamerSets::build_rotamers(
 					}
 
 					//debug connectivity
-					//std::cout << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
-					//std::cout << cloneRes->residue_connection_conn_id(1);
-					//std::cout << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
-					//std::cout << cloneRes->residue_connection_conn_id(2);
-					//std::cout << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
-
+					TR.Debug << "rotamer #: " << *itr << " "; 
+					TR.Debug << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
+					TR.Debug << cloneRes->residue_connection_conn_id(1);
+					TR.Debug << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
+					TR.Debug << cloneRes->residue_connection_conn_id(2);
+					TR.Debug << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
+			
 					using namespace core::chemical;
 
 					//if pose is cyclic, it'll have cutpoint variants; in those cases,
@@ -306,15 +361,15 @@ RotamerSets::build_rotamers(
 
 					smallset->add_rotamer(*cloneRes);
 
-					// std::cout << "smallset has " << smallset->num_rotamers() << std::endl;
+					TR.Debug << "smallset has " << smallset->num_rotamers() << std::endl;
 				}
 				smallset->set_resid(copies[jj]);
 				set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ]] = smallset;
-				//std::cout << "replacing rotset at " << copies[jj] << " with smallest set from " << smallest_res << std::endl;
-
+				TR.Debug << "replacing rotset at " << copies[jj] << " with smallest set from " << smallest_res << std::endl;
 			}
 		}
-	}
+		TR << "expected rotamer count is " << expected_rot_count << std::endl;
+	} //end RotamerLinks detected
 	update_offset_data();
 }
 
