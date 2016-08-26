@@ -700,7 +700,12 @@ core::Size BinTransitionData::which_bin_i( utility::vector1 < core::Real > const
 		}
 	}
 
-	if ( bin_index==0 || !found ) utility_exit_with_message( "In BinTransitionData::which_bin(): The bin corresponding to the input vector could not be found!\n" );
+	if ( bin_index==0 || !found ) {
+		std::ostringstream outstr;
+		outstr << "In BinTransitionData::which_bin(): The bin corresponding to the input vector " << mainchain_torsions << " could not be found!\n";
+		TR.Error << outstr.str() << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( outstr.str() );
+	}
 
 	return bin_index;
 } //which_bin_i

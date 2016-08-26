@@ -1172,15 +1172,16 @@ SimpleCycpepPredictApplication_MPI::emperor_write_summaries_to_tracer(
 		TR_summary << "\n";
 
 		//Calculations for PNear:
-		core::Real const Pcurrent( std::exp( -1.0*summary_list[i]->pose_energy()/kbt() ) );
-		denominator += Pcurrent;
-		numerator += std::exp( -1.0 * std::pow(-summary_list[i]->rmsd() / lambda() , 2.0 ) ) * Pcurrent;
-
+		if(native_) {
+			core::Real const Pcurrent( std::exp( -1.0*summary_list[i]->pose_energy()/kbt() ) );
+			denominator += Pcurrent;
+			numerator += std::exp( -1.0 * std::pow(-summary_list[i]->rmsd() / lambda() , 2.0 ) ) * Pcurrent;
+		}
 	}
 
-	if(summary_list.size() > 0 && denominator > 1e-12) {
+	if(native_ && summary_list.size() > 0 && denominator > 1e-12) {
 		core::Real const PNear( numerator/denominator );
-		TR_summary << "PNear:\t" << PNear << "\n";
+		TR_summary << "\nPNear:\t" << PNear << "\n";
 		TR_summary << "-kB*T*ln(PNear):\t" << -1.0*kbt()*std::log( PNear ) << "\n";
 		TR_summary << "lambda:\t" << lambda() << "\n";
 		TR_summary << "kB*T:\t" << kbt() << "\n";
@@ -1506,6 +1507,7 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs(
 	} catch ( utility::excn::EXCN_Base &excn ) {
 		TR.Error << "Exception in SimpleCycpepPredictApplication caught:" << std::endl;
 		excn.show( TR.Error );
+		TR.Error << "\nRecovering from error and continuing to next job." << std::endl;
 		TR.Error.flush();
 	}
 
