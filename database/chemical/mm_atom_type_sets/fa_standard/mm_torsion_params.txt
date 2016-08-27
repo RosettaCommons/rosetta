@@ -1312,3 +1312,14 @@ HA	CT3	S	CT3	0.2800	3	0.00 # from HA	CT3	S	CT2
 CPH1	CPH1	NR2	Zn2p 1.0000 1 180.00
  HR3	CPH1	NR2	Zn2p 1.0000 1 0.00
  NR1	CPH2	NR2	Zn2p 1.0000 1 180.00
+
+# Phosphohistidine
+ CT2    CPH1    NR1     P    3.0000 2 180.00  # Aromatic, so there's little choice really.
+ P      NR1    CPH1     CT2  3.0000 2 180.00  # Aromatic, so there's little choice really.
+ P      NR1    CPH1    CPH1  3.0000 2 180.00
+ P      NR1    CPH2     NR2  3.0000 2 180.00
+ P      NR1    CPH2     HR1  3.0000 2 180.00
+ P      NR1    CPH1     HR3  3.0000 2 180.00
+CPH1    NR1     P       ON3  0.6000 3  60.00  # radical guess
+CPH2    NR1     P       ON3  0.6000 3  60.00
+
