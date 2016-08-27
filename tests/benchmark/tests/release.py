@@ -548,7 +548,8 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
             json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
 
         else:
-            release_path = '{release_dir}/PyRosetta4/documentation'.format(release_dir=config['release_root'], **vars())
+            release_path = '{release_dir}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(release_dir=config['release_root'], branch=config['branch'], os=platform['os'], **vars())
+
             if os.path.isdir(release_path): shutil.rmtree(release_path)
             shutil.move(documentation_dir, release_path)
 
