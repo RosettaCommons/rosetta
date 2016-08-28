@@ -293,6 +293,7 @@ static MoverRegistrator< protein_interface_design::movers::LoopMoverFromCommandL
 static MoverRegistrator< protein_interface_design::movers::LoopOverCreator > reg_LoopOverCreator;
 static MoverRegistrator< protein_interface_design::movers::LoopRemodelCreator > reg_LoopRemodelCreator;
 static MoverRegistrator< protein_interface_design::movers::MapHotspotCreator > reg_MapHotspotCreator;
+static MoverRegistrator< protein_interface_design::movers::NucleotideMutationCreator > reg_NucleotideMutationCreator;
 static MoverRegistrator< protein_interface_design::movers::PatchdockTransformCreator > reg_PatchdockTransformCreator;
 static MoverRegistrator< protein_interface_design::movers::PeptideStapleDesignMoverCreator > reg_PeptideStapleDesignMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::PlacementAuctionMoverCreator > reg_PlacementAuctionMoverCreator;
@@ -371,6 +372,7 @@ static MoverRegistrator< simple_moves::DeleteChainMoverCreator> reg_DeleteChainM
 static MoverRegistrator< simple_moves::DeleteChainsMoverCreator> reg_DeleteChainsMoverCreator;
 static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_DisulfideInsertionMoverCreator;
+static MoverRegistrator< simple_moves::EvolutionaryDynamicsMoverCreator > reg_EvolutionaryDynamicsMoverCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;

@@ -37,6 +37,7 @@ sources = {
 		"MergeBehaviorManager",
 		"MMAtomType",
 		"MMAtomTypeSet",
+		"NucleotideTools",
 		"Orbital",
 		"Patch",
 		"PatchOperation",

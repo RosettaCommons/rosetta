@@ -278,6 +278,7 @@
 #include <protocols/protein_interface_design/movers/LoopOverCreator.hh>
 #include <protocols/protein_interface_design/movers/LoopRemodelCreator.hh>
 #include <protocols/protein_interface_design/movers/MapHotspotCreator.hh>
+#include <protocols/protein_interface_design/movers/NucleotideMutationCreator.hh>
 #include <protocols/protein_interface_design/movers/PatchdockTransformCreator.hh>
 #include <protocols/protein_interface_design/movers/PeptideStapleDesignMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMoverCreator.hh>
@@ -354,6 +355,7 @@
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
+#include <protocols/simple_moves/EvolutionaryDynamicsMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>

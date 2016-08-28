@@ -95,6 +95,7 @@ GenericMonteCarloMoverCreator::mover_name()
 GenericMonteCarloMover::GenericMonteCarloMover():
 	Super( "GenericMonteCarlo" ),
 	maxtrials_( 10 ),
+	max_accepted_trials_( 0 ),
 	task_scaling_( 5 ),
 	mover_( /* NULL */ ),
 	scorefxn_( /* NULL */ ),
@@ -118,6 +119,7 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	saved_trial_number_file_( "" ),
 	mover_tag_( /* NULL */ ),
 	reset_baselines_( true ),
+	keep_filters_( false ),
 	progress_file_( "" )
 {
 	initialize();
@@ -128,6 +130,7 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 
 GenericMonteCarloMover::GenericMonteCarloMover(
 	Size const maxtrials,
+    Size const max_accepted_trials,
 	Size const task_scaling,
 	MoverOP const & mover,
 	Real const temperature,
@@ -135,6 +138,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
+    max_accepted_trials_( max_accepted_trials ),
 	task_scaling_( task_scaling ),
 	mover_( mover ),
 	temperature_( temperature ),
@@ -157,6 +161,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	saved_trial_number_file_( "" ),
 	mover_tag_( /* NULL */ ),
 	reset_baselines_( true ),
+    keep_filters_( false ),
 	progress_file_( "" )
 {
 	initialize();
@@ -166,6 +171,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 /// @brief value constructor with a TaskFactory
 GenericMonteCarloMover::GenericMonteCarloMover(
 	Size const maxtrials,
+    Size const max_accepted_trials,
 	Size const task_scaling,
 	MoverOP const & mover,
 	TaskFactoryOP factory_in,
@@ -174,6 +180,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
+    max_accepted_trials_( max_accepted_trials ),
 	task_scaling_( task_scaling ),
 	mover_( mover ),
 	task_( /* NULL */ ),
@@ -190,7 +197,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	lowest_score_( 0.0 ),
 	saved_accept_file_name_( "" ),
 	mover_tag_( /* NULL */ ),
-	reset_baselines_( true )
+	reset_baselines_( true ),
+    keep_filters_( false )
 {
 	initialize();
 }
@@ -298,6 +306,13 @@ void
 GenericMonteCarloMover::set_maxtrials( Size const ntrial )
 {
 	maxtrials_ = ntrial;
+}
+
+/// @brief set the maximum number of trials that should be accepted
+void
+GenericMonteCarloMover::set_max_accepted_trials( Size const n_max_accepted_trials )
+{
+    max_accepted_trials_ = n_max_accepted_trials;
 }
 
 /// @brief set task multiplier to calculate trials from task
@@ -588,118 +603,119 @@ GenericMonteCarloMover::accept( Pose & pose,
 /// last accepted and best poses.
 /// @param pose = the pose to be evaluated
 /// @param random_nums = a vector of random numbers between 0 and 1, to be used for accepting poses that are not necessarily improved on filter/scorefxn value over the last accepted pose. Values of 0 indicate that only values that are improvements will be accepted, and values of 1 indicate that everything will be accepted regardless of scorefxn/filter value. Must have the same size as filters_
+
 bool
 GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums )
 {
-	++trial_counter_;
-	TR.Debug <<"filters.size() "<<filters_.size()<<std::endl;
-	core::Real filter_val(0.0);
-	if ( filters_.size() ) {
-		runtime_assert( filters_.size() == adaptive_.size() );
-		runtime_assert( filters_.size() == temperatures_.size() );
-		runtime_assert( filters_.size() == sample_types_.size() );
-		runtime_assert( filters_.size() == num_rejections_.size() );
-		runtime_assert( filters_.size() == random_nums.size() );
-		bool accepted( false );
-		utility::vector1< Real > provisional_scores;
-		provisional_scores.clear();
-		for ( core::Size index( 1 ); index <= filters_.size(); ++index ) {
-			runtime_assert( random_nums[ index ] >= 0.0 );
-			runtime_assert( random_nums[ index ] <= 1.0 );
-			TR.Debug <<"Filter #"<<index<<std::endl;
-			protocols::filters::FilterCOP filter( filters_[ index ] );
-			bool const adaptive( adaptive_[ index ] );
-			Real const temp( temperatures_[ index ] );
-			Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
-			filter_val = filter->report_sm( pose );
-			TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<lowest_scores_[index]<<"; last="<<last_accepted_scores_[index]<<" )"<<std::endl;
-
-			provisional_scores.push_back( flip * filter_val );
-			Real const boltz_factor = ( last_accepted_scores_[ index ] - provisional_scores[ index ] ) / temp;
-			TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores_[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
-			TR.Debug <<"Current, best, boltz "<<provisional_scores[ index ]<<" "<<last_accepted_scores_[ index ]<<" "<<boltz_factor<<std::endl;
-			if ( !adaptive ) { // return the starting score
-				provisional_scores[ index ] = last_accepted_scores_[ index ];
-			}
-			Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
-			bool const reject_filter( provisional_scores[ index ] > last_accepted_scores_[ index ]
-				&& random_nums[ index ] >= probability );
-			if ( reject_filter ) {
-				accepted = false;
-				++num_rejections_[index];
-				break;
-			}
-			if ( !reject_filter ) {
-				accepted = true;
-			}
-		}//for index
-
-		if ( progress_file_ != "" ) { //write progress data to file
-			/// write a table to a progress file that has the following structure
-			/// Trial# filter_val pose_comments protein_sequence
-
-			std::ofstream data;
-			data.open( progress_file().c_str(), std::ios::app );
-			if ( !data.good() ) {
-				utility_exit_with_message( "Unable to open GenericMonteCarlo progress file for writing: " + progress_file() + "\n" );
-			}
-
-			std::string pose_sequence( "" );
-			for ( core::Size chaini = 1 ; chaini <= pose.conformation().num_chains(); ++chaini ) {
-				pose_sequence += pose.chain_sequence( chaini );
-			}
-
-			using namespace std;
-			string stringed_comments("");
-			map< string, string > const comments = core::pose::get_all_comments(pose);
-			for ( map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
-				stringed_comments += i->first + ":" + i->second + " ";
-			}
-			data<<trial_counter_<<" "<<accepted<<" "<<filter_val<<" "<<stringed_comments<<" "<<pose_sequence<<'\n';
-			data.flush();
-		}
-
-		if ( accepted ) {
-			TR<<"Accept"<<std::endl;
-			accept( pose, provisional_scores, MCA_accepted_thermally );
-			return true;
-		} else { // fi accepted
-			TR<<"Reject"<<std::endl;
-			mc_accepted_ = MCA_rejected;
-			return false;
-		}
-	} else { //fi filters_.size()
-		runtime_assert( random_nums.size() >= 1 );
-		MCA mc_status( MCA_rejected );
-		utility::vector1< core::Real > provisional_score;
-		provisional_score.clear();
-		provisional_score.push_back( scoring( pose ) );
-		current_score_ = provisional_score[1]; // for debugging
-		last_tested_scores_.clear();
-		last_tested_scores_ = provisional_score;
-		show_scores( TR.Debug );
-		if ( provisional_score[1] > last_accepted_score() ) {
-			if ( temperature_ >= 1e-8 ) {
-				Real const boltz_factor = ( last_accepted_score() - provisional_score[1] ) / temperature_;
-				Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
-				if ( random_nums[1] < probability ) {
-					//if ( numeric::random::rg().uniform() < probability ) {
-					mc_status = MCA_accepted_thermally; // accepted thermally
-				}
-			}
-		} else {
-			mc_status = MCA_accepted_score_beat_last; // accepted: energy is lower than last_accepted
-		}
-
-		if ( mc_status >= 1 ) { // accepted
-			accept( pose, provisional_score, mc_status );
-			return true;
-		} else {
-			// rejected
-			mc_accepted_ = mc_status;
-			return false;
-		}
-	}
+    ++trial_counter_;
+    TR.Debug <<"filters.size() "<<filters_.size()<<std::endl;
+    core::Real filter_val(0.0);
+    if ( filters_.size() ) {
+        runtime_assert( filters_.size() == adaptive_.size() );
+        runtime_assert( filters_.size() == temperatures_.size() );
+        runtime_assert( filters_.size() == sample_types_.size() );
+        runtime_assert( filters_.size() == num_rejections_.size() );
+        runtime_assert( filters_.size() == random_nums.size() );
+        bool accepted( false );
+        utility::vector1< Real > provisional_scores;
+        provisional_scores.clear();
+        for ( core::Size index( 1 ); index <= filters_.size(); ++index ) {
+            runtime_assert( random_nums[ index ] >= 0.0 );
+            runtime_assert( random_nums[ index ] <= 1.0 );
+            TR.Debug <<"Filter #"<<index<<std::endl;
+            protocols::filters::FilterCOP filter( filters_[ index ] );
+            bool const adaptive( adaptive_[ index ] );
+            Real const temp( temperatures_[ index ] );
+            Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
+            filter_val = filter->report_sm( pose );
+            TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<lowest_scores_[index]<<"; last="<<last_accepted_scores_[index]<<" )"<<std::endl;
+            
+            provisional_scores.push_back( flip * filter_val );
+            Real const boltz_factor = ( last_accepted_scores_[ index ] - provisional_scores[ index ] ) / temp;
+            TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores_[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
+            TR.Debug <<"Current, best, boltz "<<provisional_scores[ index ]<<" "<<last_accepted_scores_[ index ]<<" "<<boltz_factor<<std::endl;
+            if ( !adaptive ) { // return the starting score
+                provisional_scores[ index ] = last_accepted_scores_[ index ];
+            }
+            Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
+            bool const reject_filter( provisional_scores[ index ] > last_accepted_scores_[ index ]
+                                     && random_nums[ index ] >= probability );
+            if ( reject_filter ) {
+                accepted = false;
+                ++num_rejections_[index];
+                break;
+            }
+            if ( !reject_filter ) {
+                accepted = true;
+            }
+        }//for index
+        
+        if ( progress_file_ != "" ) { //write progress data to file
+            /// write a table to a progress file that has the following structure
+            /// Trial# filter_val pose_comments protein_sequence
+            
+            std::ofstream data;
+            data.open( progress_file().c_str(), std::ios::app );
+            if ( !data.good() ) {
+                utility_exit_with_message( "Unable to open GenericMonteCarlo progress file for writing: " + progress_file() + "\n" );
+            }
+            
+            std::string pose_sequence( "" );
+            for ( core::Size chaini = 1 ; chaini <= pose.conformation().num_chains(); ++chaini ) {
+                pose_sequence += pose.chain_sequence( chaini );
+            }
+            
+            using namespace std;
+            string stringed_comments("");
+            map< string, string > const comments = core::pose::get_all_comments(pose);
+            for ( map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
+                stringed_comments += i->first + ":" + i->second + " ";
+            }
+            data<<trial_counter_<<" "<<accepted<<" "<<filter_val<<" "<<stringed_comments<<" "<<pose_sequence<<'\n';
+            data.flush();
+        }
+        
+        if ( accepted ) {
+            TR<<"Accept"<<std::endl;
+            accept( pose, provisional_scores, MCA_accepted_thermally );
+            return true;
+        } else { // fi accepted
+            TR<<"Reject"<<std::endl;
+            mc_accepted_ = MCA_rejected;
+            return false;
+        }
+    } else { //fi filters_.size()
+        runtime_assert( random_nums.size() >= 1 );
+        MCA mc_status( MCA_rejected );
+        utility::vector1< core::Real > provisional_score;
+        provisional_score.clear();
+        provisional_score.push_back( scoring( pose ) );
+        current_score_ = provisional_score[1]; // for debugging
+        last_tested_scores_.clear();
+        last_tested_scores_ = provisional_score;
+        show_scores( TR.Debug );
+        if ( provisional_score[1] > last_accepted_score() ) {
+            if ( temperature_ >= 1e-8 ) {
+                Real const boltz_factor = ( last_accepted_score() - provisional_score[1] ) / temperature_;
+                Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
+                if ( random_nums[1] < probability ) {
+                    //if ( numeric::random::rg().uniform() < probability ) {
+                    mc_status = MCA_accepted_thermally; // accepted thermally
+                }
+            }
+        } else {
+            mc_status = MCA_accepted_score_beat_last; // accepted: energy is lower than last_accepted
+        }
+        
+        if ( mc_status >= 1 ) { // accepted
+            accept( pose, provisional_score, mc_status );
+            return true;
+        } else {
+            // rejected
+            mc_accepted_ = mc_status;
+            return false;
+        }
+    }
 } // boltzmann
 
 core::Size
@@ -911,7 +927,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 			mover_accepts = utility::vector1< core::Size >( mover_accepts.size(), 1 );
 		}
 		Pose store_pose( pose );
-		// Mover apply
+        // Mover apply
 		mover_->apply( pose );
 		ms = mover_->get_last_move_status();
 		if ( ms == FAIL_RETRY ) {
@@ -922,15 +938,20 @@ GenericMonteCarloMover::apply( Pose & pose )
 			TR.Error << "Mover failed. Exit from GenericMonteCarloMover." << std::endl;
 			break;
 		}
-
+        
 		pose.energies().clear();
-		// check stopping condition
-		bool const stop( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
-			( stopping_condition() && stopping_condition()->apply( pose ) ) );
-		if ( stop ) {
-			TR<<"MC stopping condition met at trial "<<i<<std::endl;
-			break;
-		}
+        // check stopping condition
+        bool const stop( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
+                        ( stopping_condition() && stopping_condition()->apply( pose ) ) /* CNCNCN debug ||
+                        ( max_accepted_trials() != 0 && max_accepted_trials() == accept ) */);
+        if ( stop ) {
+            TR<<"MC stopping condition met at trial "<<i;
+            if ( max_accepted_trials() != 0 && max_accepted_trials() == accept ) {
+                TR << " because maximum number of accepted moves was achieved";
+            }
+            TR << std::endl;
+            break;
+        }
 
 		// MonteCarlo
 		if ( preapply_ && i==1 ) { // Auto-accept first application in order to deal with movers that e.g. change the length of the pose.
@@ -1000,6 +1021,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	//using core::pack::task::TaskFactory;
 
 	maxtrials_ = tag->getOption< core::Size >( "trials", 10 );
+	max_accepted_trials_ = tag->getOption< core::Size >( "max_accepted_trials", maxtrials_ );
 	temperature_ = tag->getOption< Real >( "temperature", 0.0 );
 	task_scaling_ = tag->getOption< core::Size >( "task_scaling", 5 );
 	adaptive_movers( tag->getOption< bool >( "adaptive_movers", false ) );
@@ -1031,21 +1053,24 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	if ( adaptive_movers() ) { /// adaptive movers only works if the mover being called is of type parsedprotocol
 		runtime_assert( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol >( mover_ ) != 0 );
 	}
-
+    
 	bool const adaptive( tag->getOption< bool >( "adaptive", true ) );
 	sample_type_ = tag->getOption< String >( "sample_type", "low" );
 	add_filter( find_filter->second->clone(), adaptive, temperature_, sample_type_ );
 	String const sfxn ( tag->getOption< String >( "scorefxn_name", "" ) );
-	if ( sfxn != "" ) {
+    
+    if ( sfxn != "" ) {
 		//scorefxn_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", sfxn ));
 		scorefxn_ = data.get< ScoreFunction * >( "scorefxns", sfxn )->clone();   //fpd use clone
-		TR << "Score evaluation during MC is done by" << sfxn << ", ";
-		TR << filter_name << " is ignored." << std::endl;
-		filters_.clear();
+        TR << "Score evaluation during MC is done by" << sfxn << ", ";
+            //CNCNCN debug if ( !keep_filters_ ){
+                TR << filter_name << " is ignored." << std::endl;
+                filters_.clear();
+        //} CNCNCN debug
 	} else {
 		scorefxn_ = NULL;
 	}
-
+    
 	parse_task_operations( tag, data, filters, movers );
 
 	runtime_assert_string_msg( filter_name != "true_filter" || scorefxn_, "You need to set filter_name or scorefxn_name for MC criteria." );
@@ -1054,7 +1079,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		TR << "Apply mover of " << user_defined_mover_name_ << ", and evaluate score by " << sfxn
 			<< " at Temperature=" << temperature_ << ", ntrails= " << maxtrials_ << std::endl;
 	}
-
+    
 	stopping_condition( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "stopping_condition", "false_filter" ), filters ) );
 	if ( tag->hasOption( "stopping_condition" ) ) {
 		TR<<"Generic MC using stopping condition "<< stopping_condition()->get_user_defined_name()<<std::endl;
