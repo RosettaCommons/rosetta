@@ -113,6 +113,71 @@ public: // re-used methods
 
 public: // tests
 
+	void test_fix_pdbinfo_damaged_by_insertion() {
+		// True PDBInfo based test
+		Pose pose = *one_chain_pose();
+		add_empty_pdb_info( pose );
+		// Set up PDBInfo as though residue 5 is an insertion
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if ( ii == 5 ) {
+				pose.pdb_info()->number( ii, 0 );
+				pose.pdb_info()->chain( ii, ' ' );
+				pose.pdb_info()->icode( ii, ' ' );
+				continue;
+			}
+			pose.pdb_info()->number( ii, ii );
+			pose.pdb_info()->chain( ii, 'A' );
+			pose.pdb_info()->icode( ii, ' ' );
+		}
+		fix_pdbinfo_damaged_by_insertion( pose );
+		TS_ASSERT( pose.pdb_info()->number( 5 ) == 5  ) ;
+		TS_ASSERT( pose.pdb_info()->chain( 5 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->icode( 5 )  == ' ' );
+		TS_ASSERT( pose.pdb_info()->number( 6 ) == 6  ) ;
+		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
+		
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if ( ii == 5 ) {
+				pose.pdb_info()->number( ii, 0 );
+				pose.pdb_info()->chain( ii, ' ' );
+				pose.pdb_info()->icode( ii, ' ' );
+			} else if ( ii > 5 ) {
+				pose.pdb_info()->number( ii, ii - 1 );
+				pose.pdb_info()->chain( ii, 'A' );
+				pose.pdb_info()->icode( ii, ' ' );
+			} else {
+				pose.pdb_info()->number( ii, ii );
+				pose.pdb_info()->chain( ii, 'A' );
+				pose.pdb_info()->icode( ii, ' ' );
+			}
+		}
+		fix_pdbinfo_damaged_by_insertion( pose );
+		TS_ASSERT( pose.pdb_info()->number( 5 ) == 4  ) ;
+		TS_ASSERT( pose.pdb_info()->chain( 5 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->icode( 5 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->number( 6 ) == 5  ) ;
+		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
+		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
+		
+		/*Pose pose = *two_chain_pose();
+		add_empty_pdb_info( pose );
+		renumber_pdbinfo_based_on_conf_chains( pose, true, true, false, false );
+		ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
+		ResidueCOP res = rts->name_map( "ALA" );
+		Pose test_one_pose = pose;
+		pose.conformation().append_polymer_residue_after_seqpos( *rsd, 5, true );
+		
+		TS_ASSERT( test_one_pose.pdb_info()->number( 6 ) == 0  ) ;
+		TS_ASSERT( test_one_pose.pdb_info()->chain( 6 )  == ' ' );
+		TS_ASSERT( test_one_pose.pdb_info()->icode( 6 )  == ' ' );
+		fix_pdbinfo_damaged_by_insertion( pose );
+		TS_ASSERT( test_one_pose.pdb_info()->number( 6 ) == 5  ) ;
+		TS_ASSERT( test_one_pose.pdb_info()->chain( 6 )  == 'A' );
+		TS_ASSERT( test_one_pose.pdb_info()->icode( 6 )  == 'A' );
+		*/
+	}
+
 
 	/// @brief test Pose DataCache manipulation methods
 	void test_pose_string_map() {

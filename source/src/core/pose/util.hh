@@ -272,7 +272,12 @@ utility::vector1< core::Size > chain_end_res( Pose const & pose );
 ///    true is unique, false is not
 utility::vector1< bool > compute_unique_chains( Pose & pose );
 
-
+/// @brief Repair pdbinfo of inserted residues that may have blank chain and zero
+/// seqpos. Assumes insertions only occur _after_ a residue. 
+void fix_pdbinfo_damaged_by_insertion(
+	core::pose::Pose & pose
+);
+	
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] fix_chains If true, the procedure will attempt to fix any empty record

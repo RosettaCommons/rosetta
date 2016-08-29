@@ -1386,6 +1386,86 @@ utility::vector1< bool > compute_unique_chains( Pose & pose ) {
 
 } // compute unique chains
 
+/// @brief Repair pdbinfo of inserted residues that may have blank chain and zero
+/// seqpos. Assumes insertions only occur _after_ a residue.
+/// @details That assumption is a bad simplifying assumption, but it's all I need
+/// for now.
+void fix_pdbinfo_damaged_by_insertion(
+	core::pose::Pose & pose
+) {
+	if ( !pose.pdb_info() ) return;
+	
+	PDBInfo & pdbinfo = *pose.pdb_info();
+	
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( pdbinfo.number( ii ) != 0 || ( pdbinfo.chain( ii ) != ' ' && pdbinfo.chain( ii ) != '^' ) ) {
+			// This residue is fine.
+			continue;
+		}
+			
+		if ( ii == 1 ) {
+			utility_exit_with_message( "Error: somehow, an insertion is present at the first residue!" );
+		}
+			
+		int const num_prev = pdbinfo.number( ii - 1 );
+		char const chn_prev = pdbinfo.chain( ii - 1 );
+		if ( ii == pose.total_residue() ) {
+			pdbinfo.number( ii, num_prev + 1 );
+			pdbinfo.chain( ii, chn_prev );
+			continue;
+		}
+		
+		Size next_sensible_seqpos = ii + 1;
+		while ( pdbinfo.number( next_sensible_seqpos ) == 0 && ( pdbinfo.chain( next_sensible_seqpos ) == ' ' || pdbinfo.chain( next_sensible_seqpos ) == '^' ) ) ++next_sensible_seqpos;
+		
+		// If this is the last residue of a chain, also easy.
+		if ( pdbinfo.chain( next_sensible_seqpos ) != chn_prev ) {
+			pdbinfo.number( ii, chn_prev + 1 );
+			pdbinfo.chain( ii, chn_prev );
+			continue;
+		}
+		
+		int const num_next = pdbinfo.number( next_sensible_seqpos );
+		if ( num_next - num_prev >= 2 ) {
+			// Squeeze in in the middle
+			pdbinfo.number( ii, num_prev + 1 );
+			pdbinfo.chain( ii, chn_prev );
+		} else if ( num_next - num_prev == 1 ) {
+			// Insertion after num_prev, incrementing icode
+			pdbinfo.number( ii, num_prev );
+			pdbinfo.chain( ii, chn_prev );
+			char const icode_prev = pdbinfo.icode( ii - 1 );
+			if ( icode_prev == ' ' ) {
+				pdbinfo.icode( ii, 'A' );
+			} else {
+				pdbinfo.icode( ii, char( pdbinfo.icode( ii - 1 ) + 1 ) );
+			}
+		} else if ( num_next == num_prev ) {
+			// Inserting in the middle of an icode sequence...
+			pdbinfo.number( ii, num_prev );
+			pdbinfo.chain( ii, chn_prev );
+			char const icode_prev = pdbinfo.icode( ii - 1 );
+			char const icode_next = pdbinfo.icode( next_sensible_seqpos );
+			if ( icode_prev == ' ' ) {
+				pdbinfo.icode( ii, 'A' );
+			} else {
+				if ( int( icode_next - icode_prev ) >= 2 ) {
+					// Easy, there's icode space to go around
+					pdbinfo.icode( ii, char( icode_prev + 1 ) );
+				} else {
+					// Uh oh, gotta increment subsequent icodes.
+					Size jj = ii;
+					char icode = icode_prev + 1;
+					while ( pdbinfo.number( jj ) == num_prev ) {
+						pdbinfo.icode( jj, char( icode ) );
+						jj++; icode++;
+					}
+				}
+			}
+		}
+	}
+}
+	
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] fix_chains If true, the procedure will attempt to fix any empty record
@@ -1687,16 +1767,16 @@ named_atom_id_to_atom_id(
 				return AtomID( rt.atom_index( named_atom_id.atom() ), named_atom_id.rsd() );
 			} else {
 				// tr.Error << "Error: can't find atom " << named_atom_id.atom() << " in residue "
-				//      << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
-				//     tr.Error << "atom names are: " << std::endl;
+				//	  << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
+				//	 tr.Error << "atom names are: " << std::endl;
 				//rt.show_all_atom_names( tr.Error );
 				if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
 				return id::BOGUS_ATOM_ID;
 			}
 		} else {
-			//    tr.Error << "Error: can't find residue " << named_atom_id.rsd()
-			//     << " in pose (pose.total_residue() = ) "
-			//     << pose.total_residue() << std::endl;
+			//	tr.Error << "Error: can't find residue " << named_atom_id.rsd()
+			//	 << " in pose (pose.total_residue() = ) "
+			//	 << pose.total_residue() << std::endl;
 			if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
 			return id::BOGUS_ATOM_ID;
 		}
@@ -2626,7 +2706,7 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
 		CacheableStringOP data =  utility::pointer::dynamic_pointer_cast< CacheableString > (  (pose.data().get_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
 		if ( data.get() == NULL ) return std::string("UnknownTag");
-		else               return data->str();
+		else                      return data->str();
 	}
 
 	return std::string("UnknownTag");
@@ -2775,8 +2855,8 @@ generate_vector_from_bounds(
 ///
 /// @brief calculates the center of mass of a pose
 /// @details
-///    the start and stop positions (or residues) within the pose are used to
-///    find the starting and finishing locations
+///	the start and stop positions (or residues) within the pose are used to
+///	find the starting and finishing locations
 ///
 /// @author Monica Berrondo June 14 2007
 ///
@@ -2865,8 +2945,8 @@ return_nearest_residue(
 /// @brief finds the residue nearest some position passed in (normally a
 ///  center of mass)
 /// @details
-///    the start and stop positions (or residues) within the pose are used to
-///    find the starting and finishing locations
+///	    the start and stop positions (or residues) within the pose are used to
+///	    find the starting and finishing locations
 ///
 /// @author Monica Berrondo June 14 2007
 ///
