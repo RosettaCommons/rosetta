@@ -427,8 +427,7 @@ IdealParametersDatabase::read_angle_database(std::string infile) {
 }
 
 void
-IdealParametersDatabase::read_torsion_database(std::string /*infile*/) {
-	/*
+IdealParametersDatabase::read_torsion_database(std::string infile) {
 	std::string line;
 	std::string name3, atom1, atom2, atom3, atom4;
 	Real mu_d, K_d;
@@ -438,27 +437,17 @@ IdealParametersDatabase::read_torsion_database(std::string /*infile*/) {
 	atm_name_quad tuple;
 	basic::database::open( instream, infile);
 	while ( instream ) {
-	getline( instream, line );
-	if ( line[0] == '#' ) continue;
+		getline( instream, line );
+		if ( line[0] == '#' ) continue;
 
-	std::istringstream linestream(line);
+		std::istringstream linestream(line);
 
-	linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
-	tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
-	CartBondedParametersCOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
-
-	std::string const rsdname( name3 );
-	std::map< std::string const, torsionparam_vector >::const_iterator it = torsions_indep_.find( rsdname );
-
-	if( it == torsions_indep_.end() ){
-	//torsions_indep_[ rsdname ] = utility::vector1< std::pair< atm_name_quad, CartBondedParametersOP > >();
-	torsionparam_vector a;
-	torsions_indep_.insert( std::pair< std::string const, torsionparam_vector >( rsdname, a )  );
-	}
-	torsions_indep_.at( rsdname ).push_back( std::make_pair( tuple, params_i ) );
+		linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
+		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
+		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
+		torsions_indep_.insert( std::make_pair( tuple, params_i) );
 	}
 	TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
-	*/
 }
 
 void
@@ -1293,30 +1282,32 @@ IdealParametersDatabase::create_parameters_for_restype(
 		restype_params->add_improper_parameter( ids, tor_params );
 	}
 
-	// use full iteration instead of map for torsion as multiple params can match to single atm_name_quad
-	/*
-	std::map< std::string const, torsionparam_vector >::const_iterator it = torsions_indep_.find( rsdname );
+	typedef boost::unordered_multimap< atm_name_quad, CartBondedParametersOP >::const_iterator tors_iterator;
+	for( tors_iterator it = torsions_indep_.begin(); it != torsions_indep_.end(); 
+			 it = torsions_indep_.equal_range(it->first).second ){
 
-	if( it != torsions_indep_.end() ){
-	torsionparam_vector rsd_torsion_params = torsions_indep_.at( rsdname );
+		atm_name_quad const &tuple( it-> first );
 
-	for( Size i = 1; i <= rsd_torsion_params.size(); ++i ){
-	atm_name_quad tuple = rsd_torsion_params[i].first;
-	CartBondedParametersCOP tor_params = rsd_torsion_params[i].second;
+		if ( rsdname != tuple.get<0>() ) continue;
 
-	// Also skip if any atom does not exist
-	if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
-	!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
+		// Also skip if any atom does not exist
+		if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
+				 !rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
 
-	ResidueCartBondedParameters::Size4 ids;
-	ids[1] = rsd_type.atom_index( tuple.get<1>() );
-	ids[2] = rsd_type.atom_index( tuple.get<2>() );
-	ids[3] = rsd_type.atom_index( tuple.get<3>() );
-	ids[4] = rsd_type.atom_index( tuple.get<4>() );
-	restype_params->add_torsion_parameter( ids, tor_params );
+		std::pair< tors_iterator, tors_iterator >	range	= torsions_indep_.equal_range( tuple );
+		tors_iterator it2;
+
+		for( it2 = range.first; it2 != range.second; ++it2 ){
+			CartBondedParametersCOP tor_params = it2->second;
+
+			ResidueCartBondedParameters::Size4 ids;
+			ids[1] = rsd_type.atom_index( tuple.get<1>() );
+			ids[2] = rsd_type.atom_index( tuple.get<2>() );
+			ids[3] = rsd_type.atom_index( tuple.get<3>() );
+			ids[4] = rsd_type.atom_index( tuple.get<4>() );
+			restype_params->add_torsion_parameter( ids, tor_params );
+		}
 	}
-	}
-	*/
 
 	// for each angle in the residue
 	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {

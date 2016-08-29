@@ -44,6 +44,7 @@ struct TorsionParams
 class HydroxylTorsionEnergy : public ContextIndependentOneBodyEnergy  {
 public:
 	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef boost::unordered_multimap< std::string, TorsionParams >::const_iterator tors_iterator;
 
 public:
 
@@ -93,8 +94,9 @@ private:
 	void read_database( std::string filename );
 
 private:
-	utility::vector1< std::pair< std::string, TorsionParams > >  torsion_params_;
+	//utility::vector1< std::pair< std::string, TorsionParams > >  torsion_params_;
 	//std::map< std::string const, utility::vector1< TorsionParams > >  torsion_params_;
+	boost::unordered_multimap< std::string, TorsionParams > torsion_params_;
 
 };
 

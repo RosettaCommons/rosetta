@@ -345,10 +345,9 @@ private:
 
 	// backbone-independent parameters (keyed on atom names)
 	boost::unordered_map< atm_name_quad,  CartBondedParametersOP > impropers_indep_;
+	boost::unordered_multimap< atm_name_quad, CartBondedParametersOP > torsions_indep_;
 	boost::unordered_map< atm_name_triple, CartBondedParametersOP > bondangles_indep_;
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP > bondlengths_indep_;
-	// use std::map instead for torsions since single atm_name_quad can match multiple params
-	//std::map< std::string const, torsionparam_vector > torsions_indep_;
 
 	// backbone-dependent parameter sets
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP >

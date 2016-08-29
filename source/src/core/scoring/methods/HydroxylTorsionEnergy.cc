@@ -127,15 +127,13 @@ HydroxylTorsionEnergy::read_database(
 		linestream >> atm1 >> atm2 >> atm3 >> atm4
 			>> k >> n >> delta;
 
-		//std::string const res3( restag );
 		/*
-		std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator
-		it  = torsion_params_.find( res3 );
+		boost::unordered_multimap< std::string, TorsionParams >::const_iterator it 
+			= torsion_params_.find( restag );
 		if( it == torsion_params_.end() ){
-		//torsion_params_[res3] = utility::vector1< TorsionParams >();
-		//torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
-		torsions_params_.push_back( )
-		TR.Debug << "add " << restag << std::endl;
+			torsion_params_[res3] = utility::vector1< TorsionParams >();
+			torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
+			TR.Debug << "add " << restag << std::endl;
 		}
 		*/
 
@@ -145,8 +143,8 @@ HydroxylTorsionEnergy::read_database(
 		p.atm[1] = rsd.atom_index( atm1 ); p.atm[2] = rsd.atom_index( atm2 );
 		p.atm[3] = rsd.atom_index( atm3 ); p.atm[4] = rsd.atom_index( atm4 );
 		p.k = k; p.n = n; p.delta = delta;
-		torsion_params_.push_back( std::make_pair( restag, p ) );
-		//TR.Debug << "added " << restag << ", total " << torsion_params_.at(res3).size() << std::endl;
+		torsion_params_.insert( std::make_pair( restag, p ) );
+		TR.Debug << "added " << restag << ", total " << torsion_params_.size() << std::endl;
 	}
 }
 
@@ -157,44 +155,42 @@ HydroxylTorsionEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-	//std::cout << "residue energy: " << rsd.seqpos() << std::endl;
+	std::string restag( get_restag( rsd.type() ) );
 
-	std::string const restag( get_restag( rsd.type() ) );
-
-	/*
-	std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator it
-	= torsion_params_.find( restag );
-
+	tors_iterator it = torsion_params_.find( restag );
 	if( it == torsion_params_.end() ) return;
 
-	utility::vector1< TorsionParams > params = torsions_params_.at( restag );
-	*/
 	Size const natm( rsd.natoms() );
 
-	for ( Size ip = 1; ip <= torsion_params_.size(); ++ip ) {
-		if ( torsion_params_[ip].first != restag ) continue;
-		TorsionParams const &p = torsion_params_[ip].second;
+	for( it = torsion_params_.begin(); it != torsion_params_.end(); 
+			 it = torsion_params_.equal_range(it->first).second ){
 
-		debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-			(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+		if( it->first != restag ) continue;
 
-		Real tors = numeric::dihedral_radians(
-			rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+		if( torsion_params_.count( it->first ) <= 1 ) continue;
 
-		//emap[ hxl_tors ] += p.k * ( std::cos( p.n*tors - p.delta ) + 1 );
-		Real score = p.k * ( std::cos( p.n*tors - p.delta ) + 1 );
-		emap[ hxl_tors ] += score;
+		std::pair< tors_iterator, tors_iterator >	range	= torsion_params_.equal_range( restag );
+		tors_iterator it2;
 
-		/*
-		printf( "Atms/k/n/delta/tors/score: %2d %2d %2d %2d %5.2f %4.1f %6.4f %6.4f %8.3f\n",
-		int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]),
-		p.k, p.n, p.delta, tors, score
-		);
-		*/
+		for( it2 = range.first; it2 != range.second; ++it2 ){
+			TorsionParams const &p = it2->second;
 
+			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
+										(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+
+			Real tors = numeric::dihedral_radians(
+									rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+
+			Real score = p.k * ( std::cos( p.n*tors - p.delta ) + 1 );
+			emap[ hxl_tors ] += score;
+			/*
+			printf( "Atms/k/n/delta/tors/score: %2d %2d %2d %2d %5.2f %4.1f %6.4f %6.4f %8.3f\n",
+							int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]),
+							p.k, p.n, p.delta, tors, score
+							);
+			*/
+		}
 	}
-
-	//std::cout << "done residue energy: " << rsd.seqpos() << std::endl;
 }
 
 // using atom derivs instead of dof derivates;
@@ -207,52 +203,57 @@ HydroxylTorsionEnergy::eval_residue_derivatives(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
-	std::string const restag = get_restag( rsd.type() );
-	/*
-	std::map< std::string const, utility::vector1< TorsionParams > >::const_iterator
-	it  = torsion_params_.find( restag );
-
-	if(  it == torsion_params_.end() ) return;
-	utility::vector1< TorsionParams > params = torsion_params_.at( restag );//it->second;
-	*/
+	std::string restag = get_restag( rsd.type() );
 
 	Size const natm( rsd.natoms() );
 
-	for ( Size ip = 1; ip <= torsion_params_.size(); ++ip ) {
-		if ( torsion_params_[ip].first != restag ) continue;
-		TorsionParams const &p = torsion_params_[ip].second;
+	tors_iterator it = torsion_params_.find( restag );
+	if( it == torsion_params_.end() ) return;
 
-		debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-			(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+	for( it = torsion_params_.begin(); it != torsion_params_.end(); 
+			 it = torsion_params_.equal_range(it->first).second ){
 
-		Real tors = numeric::dihedral_radians(
+		if ( it->first != restag ) continue;
+		if ( torsion_params_.count( it->first ) <= 1 ) continue;
+
+		tors_iterator it2;
+		std::pair< tors_iterator, tors_iterator >	range	= torsion_params_.equal_range( restag );
+
+		for( it2 = range.first; it2 != range.second; ++it2 ){
+			TorsionParams const &p = it2->second;
+
+			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
+										(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+
+			Real tors = numeric::dihedral_radians(
 			rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
-		Real dE_dtors = -p.k * p.n *( std::sin( p.n*tors - p.delta ) );
+			Real dE_dtors = -p.k * p.n *( std::sin( p.n*tors - p.delta ) );
 
-		Vector const &xyz1( rsd.xyz( p.atm[1] ) );
-		Vector const &xyz2( rsd.xyz( p.atm[2] ) );
-		Vector const &xyz3( rsd.xyz( p.atm[3] ) );
-		Vector const &xyz4( rsd.xyz( p.atm[4] ) );
+			Vector const &xyz1( rsd.xyz( p.atm[1] ) );
+			Vector const &xyz2( rsd.xyz( p.atm[2] ) );
+			Vector const &xyz3( rsd.xyz( p.atm[3] ) );
+			Vector const &xyz4( rsd.xyz( p.atm[4] ) );
 
-		Vector f1( 0.0 ), f2( 0.0 );
-		numeric::deriv::dihedral_p1_cosine_deriv( xyz1, xyz2, xyz3, xyz4, tors, f1, f2 );
-		atom_derivs[ p.atm[1] ].f1() += dE_dtors * f1;
-		atom_derivs[ p.atm[1] ].f2() += dE_dtors * f2;
+			Vector f1( 0.0 ), f2( 0.0 );
+			numeric::deriv::dihedral_p1_cosine_deriv( xyz1, xyz2, xyz3, xyz4, tors, f1, f2 );
+			atom_derivs[ p.atm[1] ].f1() += dE_dtors * f1;
+			atom_derivs[ p.atm[1] ].f2() += dE_dtors * f2;
 
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p2_cosine_deriv( xyz1, xyz2, xyz3, xyz4, tors, f1, f2 );
-		atom_derivs[ p.atm[2] ].f1() += dE_dtors * f1;
-		atom_derivs[ p.atm[2] ].f2() += dE_dtors * f2;
+			f1 = f2 = Vector(0.0);
+			numeric::deriv::dihedral_p2_cosine_deriv( xyz1, xyz2, xyz3, xyz4, tors, f1, f2 );
+			atom_derivs[ p.atm[2] ].f1() += dE_dtors * f1;
+			atom_derivs[ p.atm[2] ].f2() += dE_dtors * f2;
 
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p2_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
-		atom_derivs[ p.atm[3] ].f1() += dE_dtors * f1;
-		atom_derivs[ p.atm[3] ].f2() += dE_dtors * f2;
+			f1 = f2 = Vector(0.0);
+			numeric::deriv::dihedral_p2_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
+			atom_derivs[ p.atm[3] ].f1() += dE_dtors * f1;
+			atom_derivs[ p.atm[3] ].f2() += dE_dtors * f2;
 
-		f1 = f2 = Vector(0.0);
-		numeric::deriv::dihedral_p1_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
-		atom_derivs[ p.atm[4] ].f1() += dE_dtors * f1;
-		atom_derivs[ p.atm[4] ].f2() += dE_dtors * f2;
+			f1 = f2 = Vector(0.0);
+			numeric::deriv::dihedral_p1_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
+			atom_derivs[ p.atm[4] ].f1() += dE_dtors * f1;
+			atom_derivs[ p.atm[4] ].f2() += dE_dtors * f2;
+		}
 	}
 
 	return;
