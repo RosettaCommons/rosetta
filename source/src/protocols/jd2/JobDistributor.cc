@@ -797,7 +797,9 @@ void JobDistributor::write_output_from_job(
 
 	PROF_START( basic::JD2_OUTPUT);
 	// check cases: SUCCESS, FAIL_RETRY, FAIL_DO_NOT_RETRY, FAIL_BAD_INPUT
-	if ( status == protocols::moves::MS_SUCCESS ) {
+	switch ( status ) {
+	case protocols::moves::MS_SUCCESS:
+	{ // Scoping for variable initialization
 		last_completed_job_ = current_job_id_;
 		// tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
 
@@ -823,7 +825,9 @@ void JobDistributor::write_output_from_job(
 			++i_additional_pose;
 			additional_pose = mover_copy->get_additional_output();
 		}
-	} else if ( status == protocols::moves::FAIL_RETRY ) {
+		break;
+	}
+	case protocols::moves::FAIL_RETRY :
 		using namespace basic::options::OptionKeys::jd2;
 		++retries_this_job;
 		if ( option[ntrials].user()
@@ -841,16 +845,25 @@ void JobDistributor::write_output_from_job(
 			current_job_->clear_output();
 			job_failed(pose, true /* will retry */);
 		}
-	} else if ( status == protocols::moves::FAIL_DO_NOT_RETRY ) {
+		break;
+	case protocols::moves::FAIL_DO_NOT_RETRY:
 		tr.Warning << job_outputter_->output_name(current_job_)
 			<< " reported failure and will NOT retry" << std::endl;
 		job_failed(pose, false /* will not retry */);
-	} else if ( status == protocols::moves::FAIL_BAD_INPUT ) {
+		break;
+	case protocols::moves::FAIL_BAD_INPUT:
 		tr.Warning << job_outputter_->output_name(current_job_)
 			<< " reported that its input was bad and will not retry"
 			<< std::endl;
 		remove_bad_inputs_from_job_list();
 		job_failed(pose, false /*will not retry */);
+		break;
+	default:
+		tr.Error <<  job_outputter_->output_name(current_job_)
+			<< " reported unknown status code " << status
+			<< ". Rosetta is exiting." << std::endl;
+		utility_exit_with_message("Unknown mover status code encountered.");
+		break;
 	}
 
 	end_critical_section();

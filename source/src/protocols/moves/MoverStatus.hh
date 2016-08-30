@@ -22,14 +22,23 @@ namespace protocols {
 namespace moves {
 
 /// @brief return status for movers - mover was successful, failed but can be retried, etc; used mostly by job dist.
-// why not naming all thes flags MS_XXXX ???
-// probably because the MS part is encoded in the type! a related question: why
-// MS_SUCCESS and not just SUCCESS?
+/// @details Documention for individual codes from SML, and reflects the original intent behind them (more than current usage)
 enum MoverStatus {
+	/// @brief MS_SUCCESS: job succeeds.
 	MS_SUCCESS = 0,
+	/// @breif FAIL_RETRY: The job failed in a "science-y" way (rather than a "programmatic" way).  E.g. this particular
+	/// docking run failed an RMSD filter, but there's no reason to believe it's not just trapped in a bad region of
+	/// conformational space due to the stochasticity of Monte Carlo.
 	FAIL_RETRY,
+	/// @brief FAIL_DO_NOT_RETRY: This particular job should not be re-attempted, but there wasn't anything structurally
+	/// wrong with it - it was a valid job, but its output is uninteresting, so toss it and move on.
 	FAIL_DO_NOT_RETRY,
+	/// @brief FAIL_BAD_INPUT: This job has something structurally wrong with it/its input and can never be completed.
+	/// Other jobs of the same input (same InnerJob / stuff that differs only by its nstruct index) will by definition
+	/// fail in the same fashion, so short-circuit those failures and pre-emptively cancel those jobs when possible.
+	/// This probably means there is a user input problem.
 	FAIL_BAD_INPUT,
+	/// @brief FAIL: ??? Unknown usage (not obeyed by JD2).
 	FAIL,
 
 
