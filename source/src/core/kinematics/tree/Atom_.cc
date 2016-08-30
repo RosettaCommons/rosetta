@@ -817,7 +817,8 @@ Atom_::raw_input_stub_atom3() const
 {
 	Atom const * parent_ptr = raw_parent();
 	Atom const * sibling_ptr = raw_previous_sibling();
-	if ( is_jump() || ! sibling_ptr || sibling_ptr->is_jump() ||
+	if ( is_jump() || ! sibling_ptr || sibling_ptr->is_jump() || 
+			is_collinear( *(raw_parent()->raw_stub_atom1()), *(raw_parent()->raw_stub_atom2()), *sibling_ptr) ||
 			( parent_ptr->is_jump() && sibling_ptr->id() == parent_ptr->stub_atom2_id() ) ) {
 		return parent_ptr->raw_stub_atom3();
 	} else {

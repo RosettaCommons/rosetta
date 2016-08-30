@@ -34,6 +34,7 @@
 
 // Numeric headers
 #include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzVector.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -754,6 +755,17 @@ Length
 distance_squared( Atom const & atom1, Atom const & atom2 )
 {
 	return atom1.distance_squared( atom2 );
+}
+
+/// @brief Check collinearity of three atoms
+inline
+bool
+is_collinear( Atom const & atom1, Atom const & atom2, Atom const & atom3 )
+{
+	numeric::xyzVector< core::Real > ab = (atom1.xyz() - atom2.xyz());
+	numeric::xyzVector< core::Real > bc = (atom3.xyz() - atom2.xyz());
+	core::Real cross = (numeric::cross( ab, bc )).length_squared();
+	return (cross < 1e-12);
 }
 
 

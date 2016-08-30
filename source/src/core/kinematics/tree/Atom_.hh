@@ -467,6 +467,7 @@ public: // Properties
 		AtomCOP parent_op = parent();
 		AtomCOP sibling_op( previous_sibling() );
 		if ( is_jump() || !sibling_op || sibling_op->is_jump() ||
+				is_collinear( *(parent_op->stub_atom1()), *(parent_op->stub_atom2()), *sibling_op) ||
 				( parent_op->is_jump() && sibling_op->id() == parent_op->stub_atom2_id() ) ) {
 			return parent_op->stub_atom3();
 		} else {
