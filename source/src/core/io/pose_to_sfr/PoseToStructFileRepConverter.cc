@@ -21,6 +21,12 @@
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/Remarks.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomTypeSet.hh>
+
 #include <core/io/HeaderInformation.hh>
 #include <core/io/ResidueInformation.hh>
 
@@ -33,13 +39,19 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/Energies.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
+
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringMap.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -47,14 +59,17 @@
 
 // External headers
 #include <ObjexxFCL/format.hh>
+#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <sstream>
+#include <vector>
 
 
 namespace core {
 namespace io {
 namespace pose_to_sfr {
+	using utility::to_string;
 
 static THREAD_LOCAL basic::Tracer TR( "core.io.pose_to_sfr.PoseToStructFileRepConverter" );
 
@@ -706,6 +721,8 @@ PoseToStructFileRepConverter::grab_additional_pose_data( core::pose::Pose const 
 	grab_pdb_comments( pose, options_.pdb_comments() );
 	grab_torsion_records( pose, options_.output_torsions() );
 	grab_pdbinfo_labels( pose );
+	grab_pose_energies_table( pose);
+	grab_pose_cache_data( pose);
 }
 
 
@@ -975,6 +992,110 @@ PoseToStructFileRepConverter::grab_pdbinfo_labels(
 	}
 }
 
+void
+PoseToStructFileRepConverter::grab_pose_energies_table(
+	core::pose::Pose const & pose
+){
+
+	utility::vector1< std::string > labels;
+	utility::vector1< core::Real >  weights;
+	utility::vector1< std::vector< std::string > > table;
+	
+	core::scoring::EnergyMap emap_weights = pose.energies().weights();
+	
+	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
+	ScoreTypeVec score_types;
+	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
+		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+		if ( emap_weights[ii] != 0 ) score_types.push_back(ii);
+	}
+	
+	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+		labels.push_back( name_from_score_type(score_type) );
+	}
+	labels.push_back( "total" );
+	
+	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+		weights.push_back( emap_weights[score_type] );
+	}
+	
+	using utility::to_string;
+	core::Real pose_total = 0.0;
+	if ( pose.energies().energies_updated() ) {
+		std::vector<std::string> line;
+		line.push_back( "pose" );
+		BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+			core::Real score = (emap_weights[score_type] * pose.energies().total_energies()[ score_type ]);
+			line.push_back( restrict_prec(score) );
+			pose_total += score;
+		}
+		line.push_back( restrict_prec(pose_total)); //end first for overall pose energy;
+		table.push_back(line);
+		
+		for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
+			line.clear();
+			core::Real rsd_total = 0.0;
+			line.push_back( pose.residue(j).name() + "_" + to_string( j ) );
+			BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+				core::Real score = (emap_weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
+				
+				line.push_back( restrict_prec(score));
+				rsd_total += score;
+			}
+			line.push_back( restrict_prec(rsd_total) ); // end line;
+			table.push_back( line );
+		}
+	}
+	
+	
+	sfr_->score_table_labels() =   labels;
+	sfr_->score_table_weights() =  weights;
+	sfr_->score_table_lines() =    table;
+}
+
+void
+PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose){
+	
+	std::map< std::string, std::string > string_data;
+	std::map< std::string, float >  float_data;
+	
+	// ARBITRARY_STRING_DATA
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+		basic::datacache::CacheableStringMapCOP data
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+		assert( data.get() != NULL );
+
+		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
+			//TR << it->first << " " << it->second << std::endl;
+			string_data[ it->first ] = it->second;
+		}
+	}
+
+	// ARBITRARY_FLOAT_DATA
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
+		basic::datacache::CacheableStringFloatMapCOP data
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		assert( data.get() != NULL );
+
+		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
+			//TR << it->first << " " << it->second << std::endl;
+			float_data [ it->first ] = it->second;
+		}
+	}
+	
+	sfr_->pose_cache_string_data() = string_data;
+	sfr_->pose_cache_float_data() =  float_data;
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Get the total number of atoms in the SFR.
 core::Size
 PoseToStructFileRepConverter::total_sfr_atoms(
@@ -1054,6 +1175,36 @@ PoseToStructFileRepConverter::get_residue_information(
 		res_info.resSeq( res_info.resSeq() % 10000 );
 	}
 }
+
+/* OLDer - DELETE - left for reference
+core::Real restrict_prec( core::Real inval )
+{
+	if ( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
+		return inval;
+	}
+	core::Real outval;
+	std::stringstream temp;
+	temp << std::fixed << std::setprecision(5) << inval;
+	temp >> outval;
+	return outval;
+}
+*/
+
+
+// Left over from pose energies table.  Remove if possible! JAB
+std::string restrict_prec( core::Real inval )
+{
+	if ( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
+		return utility::to_string(inval);
+	}
+	core::Real outval;
+	std::stringstream temp;
+	temp << std::fixed << std::setprecision(5) << inval;
+	temp >> outval;
+	return utility::to_string(outval);
+	
+}
+
 
 } // namespace pose_to_sfr
 } // namespace io

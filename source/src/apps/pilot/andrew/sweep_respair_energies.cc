@@ -1140,9 +1140,9 @@ output_local_minima(
 
 		std::string out_fname = acc3let + "_" + don3let + "_minima_" + ObjexxFCL::format::I( max_digits, max_digits, ++count ) + ".pdb";
 		std::ofstream out( out_fname.c_str() );
-		//JAB -XRW 2016
 		core::pose::set_bfactors_from_atom_id_map( pose, bfactors );
-		pose.dump_pdb(out, "model_" + utility::to_string(count));
+		//pose.dump_pdb(out, "model_" + utility::to_string(count)); JAB - 'Tag' not actually doing anything
+		pose.dump_pdb(out);
 
 		//core::io::pdb::dump_bfactor_pdb( pose, bfactors, out, "model_" + utility::to_string(count));
 	}

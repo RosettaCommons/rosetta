@@ -37,7 +37,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-
+#include <vector>
 
 namespace core {
 namespace io {
@@ -140,43 +140,39 @@ public:  // Standard Methods //////////////////////////////////////////////////
 public:  // Accessors /////////////////////////////////////////////////////////
 	/// @brief Access the name of the input/output file, if any.
 	std::string const & filename() const { return filename_; }
-
-	/// @brief Access the name of the input/output file, if any.
-	std::string & filename() { return filename_; }
+	std::string      & filename()        { return filename_; }
 
 
 	/// @brief Access the model tag.
 	std::string const & modeltag() const { return modeltag_; }
-
-	/// @brief Access the model tag.
-	std::string & modeltag() { return modeltag_; }
+	std::string &       modeltag()       { return modeltag_; }
 
 
 	// PDB Title Section //////////////////////////////////////////////////////
 	/// @brief    Access HEADER, TITLE, EXPDTA, KEYWDS, and COMPND records.
 	/// @details "header" is a misnomer, as it actually stores HEADER, TITLE,
 	/// EXPDTA, KEYWDS, and COMPND records.
-	HeaderInformationCOP header() const { return header_; }
-	HeaderInformationOP & header() { return header_; }
+	HeaderInformationCOP  header() const { return header_; }
+	HeaderInformationOP & header()       { return header_; }
 
 	// Accessors for OBSLTE, SPLT, CAVEAT, NUMMDL, MDLTYP, AUTHOR, REVDAT,
 	// SPRSDE, and/or JRNL records data should be declared here if ever
 	// implemented.
 
 	/// @brief Access PDB remarks.
-	RemarksCOP remarks() const { return remarks_; }
-	RemarksOP & remarks() { return remarks_; }
+	RemarksCOP  remarks() const { return remarks_; }
+	RemarksOP & remarks()       { return remarks_; }
 
 
 	// PDB Primary Structure Section //////////////////////////////////////////
 	/// @brief  Access the sequences for each chain.
 	std::map< char, utility::vector1< std::string > > const & chain_sequences() const { return chain_sequences_; }
-	std::map< char, utility::vector1< std::string > > & chain_sequences() { return chain_sequences_; }
+	std::map< char, utility::vector1< std::string > >       & chain_sequences()       { return chain_sequences_; }
 
 	/// @brief    Access map for storing MODRES records.
 	/// @details  Key is 6-character resID of the modified residue.
 	std::map< std::string, ModifiedResidueInformation > const & modres_map() const { return modres_map_; }
-	std::map< std::string, ModifiedResidueInformation > & modres_map() { return modres_map_; }
+	std::map< std::string, ModifiedResidueInformation >       & modres_map()       { return modres_map_; }
 
 
 	// PDB Heterogen Section //////////////////////////////////////////////////
@@ -187,25 +183,25 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	/// @details key is hetID\n
 	/// value is the chemical name field
 	std::map< std::string, std::string > const & heterogen_names() const { return heterogen_names_; }
-	std::map< std::string, std::string > & heterogen_names() { return heterogen_names_; }
+	std::map< std::string, std::string >       & heterogen_names()       { return heterogen_names_; }
 
 	/// @brief   Access map for storing HETSYN records.
 	/// @details key is hetID\n
 	/// value is the chemical synonym list field
 	std::map< std::string, utility::vector1< std::string > > const & heterogen_synonyms() const { return heterogen_synonyms_; }
-	std::map< std::string, utility::vector1< std::string > > & heterogen_synonyms() { return heterogen_synonyms_; }
+	std::map< std::string, utility::vector1< std::string > >       & heterogen_synonyms()       { return heterogen_synonyms_; }
 
 	/// @brief   Access map for storing FORMUL records.
 	/// @details key is hetID\n
 	/// value is the chemical formula, including a potential asterisk character
 	std::map< std::string, std::string > const & heterogen_formulae() const { return heterogen_formulae_; }
-	std::map< std::string, std::string > & heterogen_formulae() { return heterogen_formulae_; }
+	std::map< std::string, std::string >       & heterogen_formulae()       { return heterogen_formulae_; }
 
 	/// @brief   Access map for storing ResidueType base (non-variant) names; parsed from HETNAM records:
 	/// @details key is 6-character resID\n
 	/// first value of pair is 3-letter-code; second value of pair is the base_name.
 	std::map< std::string, std::pair< std::string, std::string > > const & residue_type_base_names() const { return residue_type_base_names_; }
-	std::map< std::string, std::pair< std::string, std::string > > & residue_type_base_names() { return residue_type_base_names_; }
+	std::map< std::string, std::pair< std::string, std::string > >       & residue_type_base_names()       { return residue_type_base_names_; }
 
 
 	// PDB Secondary Structure Section ////////////////////////////////////////
@@ -221,7 +217,7 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	/// @note    (A vector is needed because to futureproof if we ever handle
 	/// weird disorder situations.)
 	std::map< std::string, utility::vector1< SSBondInformation > > const & ssbond_map() const { return ssbond_map_; }
-	std::map< std::string, utility::vector1< SSBondInformation > > & ssbond_map() { return ssbond_map_; }
+	std::map< std::string, utility::vector1< SSBondInformation > >       & ssbond_map()       { return ssbond_map_; }
 
 
 	/// @brief   Access map for storing LINK records.
@@ -229,12 +225,12 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	/// @note    (A vector is needed because a single saccharide residue can
 	/// have multiple branches.)
 	std::map< std::string, utility::vector1< LinkInformation > > const & link_map() const { return link_map_; }
-	std::map< std::string, utility::vector1< LinkInformation > > & link_map() { return link_map_; }
+	std::map< std::string, utility::vector1< LinkInformation > >       & link_map()       { return link_map_; }
 
 	/// @brief   Access map for storing CISPEP records.
 	/// @details Key is 6-character resID of 1st residue in the peptide bond.
 	std::map< std::string, CisPeptideInformation > const & cispep_map() const { return cispep_map_; }
-	std::map< std::string, CisPeptideInformation > & cispep_map() { return cispep_map_; }
+	std::map< std::string, CisPeptideInformation >       & cispep_map()       { return cispep_map_; }
 
 
 	// PDB Miscellaneous Features Section /////////////////////////////////////
@@ -245,7 +241,7 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	// PDB Crystallographic and Coordinate Transformation Section /////////////
 	/// @brief  Access crystallographic information.
 	CrystInfo const & crystinfo() const { return crystinfo_; }
-	CrystInfo & crystinfo() { return crystinfo_; }
+	CrystInfo       & crystinfo()       { return crystinfo_; }
 
 	// Accessors for MTRIX, ORIGX, and/or SCALE records data should be declared
 	// here if ever implemented.
@@ -254,7 +250,7 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	// PDB Coordinate Section /////////////////////////////////////////////////
 	/// @brief  Access the actual atomic coordinates, stored as chains.
 	utility::vector0< ChainAtoms > const & chains() const { return chains_; }
-	utility::vector0< ChainAtoms > & chains() { return chains_; }
+	utility::vector0< ChainAtoms >       & chains()       { return chains_; }
 
 
 	// PDB Connectivity Section ///////////////////////////////////////////////
@@ -267,20 +263,46 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	/// @details Each file outputter must figure out how to write this out in
 	/// its output format.
 	std::string const & foldtree_string() const { return foldtree_string_; }
-	std::string & foldtree_string() { return foldtree_string_; }
+	std::string       & foldtree_string()       { return foldtree_string_; }
 
-	/// @brief   Access The PDB comments, represented as a map of string->string.
-	/// @details Each file outputter must figure out how to write this out in
-	/// its output format.
-	std::map< std::string, std::string > const & pdb_comments() const { return pdb_comments_; }
-	std::map< std::string, std::string > & pdb_comments() { return pdb_comments_; }
-
-	/// @brief   Access a catch-all place to store additional data for output.
-	/// @details Each file outputter must figure out how to write this out in
-	/// its output format.
-	std::string const & additional_string_output() const { return additional_string_output_; }
-	std::string & additional_string_output() { return additional_string_output_; }
-
+	/// @brief The PDB comments, represented as a map of string->string.
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	std::map< std::string, std::string > const & pdb_comments() const { return pdb_comments_ ; };
+	std::map< std::string, std::string >       & pdb_comments()       { return pdb_comments_; };
+	
+	/// @brief Pose Energies Table lables
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	utility::vector1< std::string > const & score_table_labels() const { return score_table_labels_; };
+	utility::vector1< std::string >       & score_table_labels()       { return score_table_labels_; };
+	
+	/// @brief Pose Energies Table weights
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	utility::vector1< core::Real > const & score_table_weights() const { return score_table_weights_; };
+	utility::vector1< core::Real >       & score_table_weights()       { return score_table_weights_; };
+	
+	/// @brief Pose Energies Table lines (Yes, std::vector is appropriate to help for cif writing of the colunns.)
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	utility::vector1< std::vector< std::string > > const & score_table_lines() const { return score_table_lines_; };
+	utility::vector1< std::vector< std::string > >      & score_table_lines()        { return score_table_lines_; };
+	
+	/// @brief Pose Energies table filename for PDB output. 
+	std::string const &  score_table_filename() const { return score_table_filename_; };
+	std::string &        score_table_filename()       { return score_table_filename_; };
+	
+	/// @brief Pose Cache - String Data
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	std::map< std::string, std::string > const & pose_cache_string_data() const { return pose_cache_string_data_; };
+	std::map< std::string, std::string >       & pose_cache_string_data()       { return pose_cache_string_data_; };
+	
+	/// @brief Pose Cache - Float Data
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	std::map< std::string, float > const & pose_cache_float_data() const        { return pose_cache_float_data_; };
+	std::map< std::string, float >       & pose_cache_float_data()              { return pose_cache_float_data_; };
+	
+	/// @brief A catch-all place to store additional data for output.
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	std::string const & additional_string_output() const { return additional_string_output_; };
+	std::string       & additional_string_output()       { return additional_string_output_; };
 
 	/// @brief   Append more string data to the additional_string_output_ string in the SFR.
 	void append_to_additional_string_output( std::string const & input_string );
@@ -304,6 +326,15 @@ private:
 	utility::vector0< ChainAtoms > chains_;
 	std::string foldtree_string_;
 	std::map < std::string, std::string > pdb_comments_;
+	
+	utility::vector1< std::string > score_table_labels_;
+	utility::vector1< core::Real > score_table_weights_;
+	utility::vector1< std::vector < std::string > > score_table_lines_;
+	std::string score_table_filename_; //This is to preserve original PDB behavior.
+	
+	std::map< std::string, std::string > pose_cache_string_data_;
+	std::map< std::string, float > pose_cache_float_data_; //JAB - was originally a float, keeping it a float.
+	
 	std::string additional_string_output_;
 };  // class StructFileRep
 

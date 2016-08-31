@@ -54,6 +54,7 @@
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 // External headers
 #include <ObjexxFCL/format.hh>
@@ -66,133 +67,107 @@ using namespace ObjexxFCL::format; // AUTO USING NS
 
 
 
-
-
-core::Real restrict_prec( core::Real inval )
-{
-	if ( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
-		return inval;
-	}
-	core::Real outval;
-	std::stringstream temp;
-	temp << std::fixed << std::setprecision(5) << inval;
-	temp >> outval;
-	return outval;
-}
-
 /// @brief Write Pose energies information into a string and return it.
 /// @details Added during the 2016 Chemical XRW.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-std::string extract_scores(
-	core::pose::Pose const & pose,
-	std::string const &filename
+/// @author Vikram K. Mulligan (vmullig@uw.edu) Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+std::string pose_energies_from_sfr(
+	StructFileRep const & sfr
 ) {
 	std::stringstream out;
-	extract_scores(pose, out, filename);
+	pose_energies_from_sfr(sfr, out);
 	return out.str();
 }
 
-void extract_scores(
-	core::pose::Pose const & pose,
-	std::stringstream & out,
-	std::string const &filename
-)
-{
-	if ( basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
-		return;
-	}
-
-	//This is shamelessly refactored from the older JobDistributor; Jobdistributors.hh:1018; SVN 25940
-	// APL: Moving this job-independent code into a central location.
-	// Which score terms to use
-	core::scoring::EnergyMap weights = pose.energies().weights();
-	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
-	ScoreTypeVec score_types;
-	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
-		if ( weights[ii] != 0 ) score_types.push_back(ii);
-	}
-	// This version is formatted for easy parsing by R, Excel, etc.
-	out << "# All scores below are weighted scores, not raw scores.\n";
-	out << "#BEGIN_POSE_ENERGIES_TABLE " << filename << std::endl;
-	out << "label";
-	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
-		out << " " << name_from_score_type(score_type);
-	}
-	out << " total\n";
-	out << "weights";
-	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
-		out << " " << weights[score_type];
-	}
-	out << " NA\n";
-	out << "pose";
-	core::Real pose_total = 0.0;
-	if ( pose.energies().energies_updated() ) {
-		BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
-			core::Real score = (weights[score_type] * pose.energies().total_energies()[ score_type ]);
-			out << " " << restrict_prec(score);
-			pose_total += score;
-		}
-		out << " " << restrict_prec(pose_total) << "\n";
-		for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
-			core::Real rsd_total = 0.0;
-			out << pose.residue(j).name() << "_" << j;
-			BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
-				core::Real score = (weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
-				out << " " << restrict_prec(score);
-				rsd_total += score;
-			}
-			out << " " << restrict_prec(rsd_total) << "\n";
-		}
-	}
-	out << "#END_POSE_ENERGIES_TABLE " << filename << std::endl;
-}
-
-
-/// @brief Write Pose energies information into a string and return it.
-/// @details Added during the 2016 Chemical XRW.  This is a bloody mess.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-std::string extract_extra_scores(
-	pose::Pose const & pose
-) {
-	std::stringstream out;
-	extract_extra_scores(pose, out);
-	return out.str();
-}
-
-void extract_extra_scores(
-	pose::Pose const & pose,
+void pose_energies_from_sfr(
+	StructFileRep const & sfr,
 	std::stringstream & out
 )
 {
-	// ARBITRARY_STRING_DATA
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
-		basic::datacache::CacheableStringMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		assert( data.get() != NULL );
+	using namespace core::io::pose_to_sfr;
 
-		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
-			//TR << it->first << " " << it->second << std::endl;
-			out << it->first << " " << it->second << std::endl;
+	// This version is formatted for easy parsing by R, Excel, etc.
+
+	utility::vector1< std::string > const & score_names = sfr.score_table_labels();
+	utility::vector1< std::vector< std::string > > const & score_lines = sfr.score_table_lines();
+	
+	if (score_names.size() == 0 || score_lines.size() == 0) return; //Was not extracted!
+	
+	out << "# All scores below are weighted scores, not raw scores.\n";
+	
+	if (! sfr.score_table_filename().empty()){
+		out << "#BEGIN_POSE_ENERGIES_TABLE " << sfr.score_table_filename() << std::endl;
+	}
+	else {
+		out << "#BEGIN_POSE_ENERGIES_TABLE " << std::endl;
+	}
+	
+	out << "label";
+	
+	BOOST_FOREACH ( std::string score_name, score_names ) {
+		out << " " << score_name;
+	}
+	out << "\n";
+	out << "weights";
+	utility::vector1< core::Real > const & score_weights = sfr.score_table_weights();
+	
+	BOOST_FOREACH ( core::Real weight, score_weights ) {
+		out << " " << weight;
+	}
+	out << " NA\n";
+	
+	
+	BOOST_FOREACH( std::vector<std::string> score_line, score_lines){
+		std::string line = "";
+		BOOST_FOREACH( std::string column, score_line){
+			line = line+" "+column;
 		}
+		line = utility::strip(line);
+		out << line << "\n";
+	}
+	if (! sfr.score_table_filename().empty()){
+		out << "#END_POSE_ENERGIES_TABLE " << sfr.score_table_filename() << std::endl;
+	}
+	else {
+		out << "#END_POSE_ENERGIES_TABLE " << std::endl;
+	}
+}
+
+
+/// @brief Write Pose energies information into a string and return it.
+/// @details Added during the 2016 Chemical XRW.
+/// @author Vikram K. Mulligan (vmullig@uw.edu) + Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+std::string pose_data_cache_from_sfr(
+	StructFileRep const & sfr
+) {
+	std::stringstream out;
+	pose_data_cache_from_sfr(sfr, out);
+	return out.str();
+}
+
+void pose_data_cache_from_sfr(
+	StructFileRep const & sfr,
+	std::stringstream & out
+)
+{
+
+	//If either of these are empty, will not do anything.
+	std::map< std::string, std::string > const & string_data = sfr.pose_cache_string_data();
+	std::map< std::string,     float   > const & float_data =  sfr.pose_cache_float_data();
+	
+	// ARBITRARY_STRING_DATA
+	for ( std::map< std::string, std::string >::const_iterator it( string_data.begin() ), end( string_data.end() );
+				it != end;
+				++it ){
+		//TR << it->first << " " << it->second << std::endl;
+		out << it->first << " " << it->second << std::endl;
 	}
 
 	// ARBITRARY_FLOAT_DATA
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
-		basic::datacache::CacheableStringFloatMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		assert( data.get() != NULL );
-
-		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
+	for ( std::map< std::string, float >::const_iterator it( float_data.begin() ), end( float_data.end() );
 				it != end;
 				++it ) {
-			//TR << it->first << " " << it->second << std::endl;
-			out << it->first << " " << it->second << std::endl;
-		}
+		//TR << it->first << " " << it->second << std::endl;
+		out << it->first << " " << it->second << std::endl;
 	}
 }
 

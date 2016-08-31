@@ -136,11 +136,21 @@ public:
 		core::io::mmcif::dump_cif( "from_pdb.cif", pdb_sfr, sfro );
 		core::io::mmcif::dump_cif( "from_cif.cif", cif_sfr, sfro );
 
+		core::io::mmcif::dump_cif( *cif_pose, "io_pose_dump.cif" );
+
 		TS_ASSERT_EQUALS( pdb_pose->fold_tree(), cif_pose->fold_tree() );
 
-		// Check pose dump cif.
-		TS_ASSERT_THROWS_NOTHING( pdb_pose->dump_cif( "from_pdb_pose_dump.cif") );
+		//JAB - TODO - Add string comparison of cif_out
+		std::string cif_out = core::io::mmcif::dump_cif( *cif_pose );
 
+		//TR << cif_out << std::endl;
+		TR.flush();
+		
+		// Check pose dump cif. Cif writer throws exceptions during run I beleive.
+		pdb_pose->dump_cif( "pose_dump_cif.cif" );
+		pdb_pose->dump_file( "pose_dump_file.cif" );
+
+		TR.flush();
 		// Check PDB Info here
 		TS_ASSERT_EQUALS( pdb_pose->pdb_info()->chain(5), cif_pose->pdb_info()->chain(5) );
 		TS_ASSERT_EQUALS( pdb_pose->pdb_info()->number(10), cif_pose->pdb_info()->number(10) );

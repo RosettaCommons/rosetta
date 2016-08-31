@@ -587,8 +587,9 @@ Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size c
 	utility::vector1<Size> resnums(pose.n_residue(),tag);
 	BOOST_FOREACH ( Xform const & x,xforms ) {
 		xform_pose(pose,x);
-		//core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~'/*,resnums*/); JAB XRW
-		core::io::pdb::dump_pdb(pose, out, mask, string_of(tag));
+		//core::io::pdb::dump_pdb(pose, out, mask, string_of(tag)); JAB (tag never used)
+		core::io::pdb::dump_pdb(pose, out, mask);
+		
 		xform_pose(pose,~x);
 	}
 	return motif_align_rms;
@@ -659,8 +660,9 @@ void ResPairMotif::dump_pdb( ostream & out, Xform const & x, string tag ) const 
 	out << "MODEL " << tag << endl;
 	//Size atomno=0;
 	//core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~');
-	core::io::pdb::dump_pdb(pose, out, mask, string_of(tag));
-
+	//core::io::pdb::dump_pdb(pose, out, mask, string_of(tag));
+	core::io::pdb::dump_pdb(pose, out, mask);
+	
 	out << "ENDMDL" << endl;
 }
 void ResPairMotif::print_header(ostream & out){

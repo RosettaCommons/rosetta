@@ -27,6 +27,7 @@
 #include <devel/init.hh>
 #include <core/io/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
+#include <core/io/StructFileRepOptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/MetricValue.hh>
@@ -381,6 +382,7 @@ int main( int argc, char ** argv )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace protocols::genetic_algorithm;
+		using namespace core::io;
 
 		NEW_OPT( msd::entity_resfile, "Resfile for the entity elements which are shared between the multiple states", "" );
 		NEW_OPT( msd::fitness_file,   "Fitness function file specifying the multiple states and the objective function to optimize", "" );
@@ -569,6 +571,10 @@ int main( int argc, char ** argv )
 				poses[ 4 ]->dump_pdb( "msa_design_" + utility::to_string( counter ) + "_unbound2.pdb" );
 				//break;
 				*/
+
+				StructFileRepOptionsOP sfr_options = StructFileRepOptionsOP(new StructFileRepOptions() );
+				sfr_options->set_output_pose_cache_data( false );
+
 				for ( SizePosePairList::const_iterator iter = pose_list.begin(), iter_end = pose_list.end();
 						iter != iter_end; ++iter ) {
 					std::string output_name = "msd_output_";
@@ -577,7 +583,14 @@ int main( int argc, char ** argv )
 					TR << "Writing structure " << output_name << " with score: " << (*sfxn)( *(iter->second) ) << std::endl;
 					utility::io::ozstream outfile( output_name );
 
-					core::io::pdb::dump_pdb( *(iter->second), "", true, false, outfile, output_name );
+					//core::io::pdb::dump_pdb( *(iter->second), "", true, false, outfile, output_name );
+
+					//JAB - that second false used to denote not to output the pose data cache. 
+					// In order to preserve behavior, I am doing the same in the new code, through
+					// the StructFileRepOptions
+
+					pdb::dump_pdb( *(iter->second), outfile, sfr_options);
+
 				}
 			}
 

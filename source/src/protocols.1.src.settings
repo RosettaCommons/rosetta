@@ -97,6 +97,7 @@ sources = {
 		"JobsContainer",
 		"LargeNstructJobInputter",
 		"LazySilentFileJobInputter",
+		"mmCIFJobOutputter",
 		"MpiFileBuffer",
 		"MPIFileBufJobDistributor",
 		"MPIMultiCommJobDistributor",
@@ -117,6 +118,7 @@ sources = {
 		"SilentFileJobOutputter",
 		"SingleFileBuffer",
 		"util",
+		"wwPDBJobOutputter",
 	],
 	"protocols/jd2/archive": [
 		"ArchiveBase",

@@ -124,7 +124,16 @@ public:
 
 	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
 	void get_parametric_info( core::io::RemarksOP remarks, core::pose::Pose const & pose );
-
+	
+	/// @brief Grab all the data that makes the pose energies table
+	void grab_pose_energies_table( core::pose::Pose const & pose);
+	
+	/// @brief Grab all the data that is in pose datacache as string/value pairs
+	///  Arbitrary Float data
+	///  Arbitrary String data
+	void grab_pose_cache_data( core::pose::Pose const & pose);
+	
+	
 	/// @brief Debug printing
 	friend std::ostream& operator <<(std::ostream &os, StructFileRep const &);
 
@@ -268,6 +277,9 @@ private: // PRIVATE DATA:
 	StructFileRepOptions options_;
 
 }; // class PoseToStructFileRep
+
+// Left over from pose energies table.  Remove if possible! JAB
+std::string restrict_prec( core::Real inval );
 
 } // namespace pose_to_sfr
 } // namespace io

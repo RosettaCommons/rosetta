@@ -14,6 +14,7 @@
 //JobOutputterCreator #includes
 #include <protocols/jd2/JobOutputterFactory.hh>
 #include <protocols/jd2/PDBJobOutputterCreator.hh>
+#include <protocols/jd2/mmCIFJobOutputterCreator.hh>
 #include <protocols/jd2/SilentFileJobOutputterCreator.hh>
 #include <protocols/jd2/AtomTreeDiffJobOutputterCreator.hh>
 #include <protocols/jd2/NoOutputJobOutputterCreator.hh>

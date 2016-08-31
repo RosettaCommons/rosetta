@@ -142,6 +142,8 @@ utility::vector1<std::string> const & StructFileRepOptions::residues_for_atom_na
 bool StructFileRepOptions::pdb_comments() const { return pdb_comments_; }
 bool StructFileRepOptions::show_all_fixes() const { return show_all_fixes_; }
 bool StructFileRepOptions::constraints_from_link_records() const { return constraints_from_link_records_; }
+bool StructFileRepOptions::output_pose_cache() const { return output_pose_cache_data_; }
+bool StructFileRepOptions::output_pose_energies_table() const { return output_pose_energies_table_; }
 
 // mutators
 
@@ -255,8 +257,11 @@ void StructFileRepOptions::set_residues_for_atom_name_remapping(utility::vector1
 	residues_for_atom_name_remapping_ = setting;
 }
 
-void StructFileRepOptions::set_show_all_fixes( bool setting ) { show_all_fixes_ = setting; }
-void StructFileRepOptions::set_constraints_from_link_records( bool setting ) { constraints_from_link_records_ = setting; }
+void StructFileRepOptions::set_show_all_fixes( bool const setting ) { show_all_fixes_ = setting; }
+void StructFileRepOptions::set_constraints_from_link_records( bool const setting ) { constraints_from_link_records_ = setting; }
+
+void StructFileRepOptions::set_output_pose_energies_table( bool const setting ) { output_pose_energies_table_ = setting; }
+void StructFileRepOptions::set_output_pose_cache_data( bool const setting ) { output_pose_cache_data_ = setting; }
 
 /// @details List all of the options (by option key) that are read in the init_from_options function.
 void
@@ -302,7 +307,10 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ out::file::write_pdb_parametric_info
 		+ inout::write_all_connect_info
 		+ in::show_all_fixes
-		+ in::constraints_from_link_records;
+		+ in::constraints_from_link_records
+		+ out::file::output_pose_energies_table
+		+ out::file::output_pose_cache_data
+		+ out::file::output_pose_fold_tree;
 
 }
 
@@ -375,6 +383,10 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_write_all_connect_info( options[inout::write_all_connect_info]() );
 	set_show_all_fixes( options[ in::show_all_fixes ]() );
 	set_constraints_from_link_records( options[ in::constraints_from_link_records ]() );
+	
+	set_output_pose_energies_table(options[ OptionKeys::out::file::output_pose_energies_table ]()); //JD2 only?
+ 	set_output_pose_cache_data(options[ OptionKeys::out::file::output_pose_cache_data ]()); //JD2 only?
+ 	set_fold_tree_io( options[ OptionKeys::out::file::output_pose_fold_tree]());
 }
 
 

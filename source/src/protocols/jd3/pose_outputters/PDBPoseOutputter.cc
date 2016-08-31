@@ -105,19 +105,25 @@ PDBPoseOutputter::write_output_pose(
 	utility::options::OptionCollection const & job_options,
 	core::pose::Pose const & pose )
 {
+	
 	std::string out_fname = output_pdb_name( job );
-	utility::io::ozstream ostream( out_fname );
 
 	core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions( job_options ) );
-	core::io::pdb::dump_pdb( pose, "", true, true, ostream, out_fname, sfr_opts );
+	core::io::pdb::dump_pdb( pose, out_fname, sfr_opts );
 }
 
 std::string
 PDBPoseOutputter::output_pdb_name( LarvalJob const & job ) const
 {
+	using namespace basic::options;
+	std::string ext = ".pdb";
+	if ( option[ OptionKeys::out::pdb_gz ] ) {
+		ext = ".pdb.gz";
+	}
+	
 	return ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) ) + job.job_tag() + "_" +
 		ObjexxFCL::lead_zero_string_of( job.nstruct_index(), std::max( 4, int( std::log10( job.nstruct_max() ))) ) +
-		".pdb";
+		ext;
 }
 
 std::string

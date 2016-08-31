@@ -260,7 +260,8 @@ int main(int argc, char* argv[])
 			mover.apply(pose);
 
 			// output the states after each rigid body move
-			pose.dump_pdb("cycle_"+utility::to_string(i)+".pdb","pdb");
+			//pose.dump_pdb("cycle_"+utility::to_string(i)+".pdb","pdb");
+			pose.dump_pdb("cycle_"+utility::to_string(i)+".pdb");
 
 			//a jump in the pose stores rotational and translational information, and therefore the conformation of the pose.
 			//Therefore, reverting jumps (not the jump number) will reset the pose.
@@ -274,12 +275,16 @@ int main(int argc, char* argv[])
 			pose.update_actcoords();
 
 			// output the states after resetting jumps
-			pose.dump_pdb("cycle_"+utility::to_string(i)+"_reset.pdb","pdb");
+			//pose.dump_pdb("cycle_"+utility::to_string(i)+"_reset.pdb","pdb");
+			pose.dump_pdb("cycle_"+utility::to_string(i)+"_reset.pdb");
 		}
 
 		// Output final PDB
 		const std::string output_final = (prefix+"_final.pdb");
-		pose.dump_pdb(output_final,pdb);
+		
+		//pose.dump_pdb(output_final,pdb);
+		pose.dump_pdb(output_final);
+
 		tr << "Finished TMH sampling.  Outputting " << output_final << std::endl;
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception : " << std::endl;

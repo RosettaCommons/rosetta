@@ -48,12 +48,25 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
+// Options
+#include <basic/options/option.hh>
+//#include <basic/options/keys/chemical.OptionKeys.gen.hh>
+//#include <basic/options/keys/run.OptionKeys.gen.hh>
+//#include <basic/options/keys/in.OptionKeys.gen.hh>
+//#include <basic/options/keys/mp.OptionKeys.gen.hh>
+//#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+//#include <basic/options/keys/packing.OptionKeys.gen.hh>
+
 // Basic headers
 #include <basic/Tracer.hh>
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <basic/Tracer.hh>
+
 
 // C++ headers
 #include <cstdlib>
@@ -81,35 +94,65 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-/// @brief Writes a pose to a given stream in PDB file format, optionally
-/// appending a given string and optionally extracting scores from the pose.
-/// @details This came out of the 2016 Chemical XRW.  It's an attempt to preserve
-/// some stuff that jd2 was doing before, while centralizing all PDB generation in
-/// one place.
-/// @param[in] pose The pose to turn into a PDB.
-/// @param[in] extra_data Additional data to append to the PDB file data.
-/// @param[in] add_score_data Grab additional score data from the pose?
-/// @param[in] add_extra_score_data Grab still more score data from the pose?
-/// @param[out] out The output stream that the PDB file data will be written to.
-/// @param[in] filename (Optional)  String for the filename.  Will be included in the score data table if provided.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
+
+
+/// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
+///  Use default StructFileRepOptions
+bool
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::string const & file_name
+){
+	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	return dump_pdb(pose, file_name, options);
+}
+
+/// @details Convert given Pose object into PDB format and save it to 'file_name' file.
+/// @return true if operation was completed without error, false otherwise.
+bool
+dump_pdb(
+	core::pose::Pose const & pose,
+	String const & file_name,
+	core::io::StructFileRepOptionsCOP options
+) {
+	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
+	if ( !file ) {
+		Error() << "StructFileRep::dump_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		return false;
+	}
+	dump_pdb(pose, file, options);
+	file.close();
+
+	return true;
+}
+
+/// @brief Writes  <pose>  to a given stream in PDB file format
+///  Use default StructFileRepOptions
 void
 dump_pdb(
 	core::pose::Pose const & pose,
-	std::string const &extra_data,
-	bool const add_score_data,
-	bool const add_extra_score_data,
-	utility::io::ozstream & out,
-	std::string const &filename,
+	std::ostream & out
+){
+	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	dump_pdb(pose, out, options);
+}
+
+/// @details Convert given Pose object in to PDB format and send it to the given stream.
+void
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::ostream & out,
 	core::io::StructFileRepOptionsCOP options
 ) {
-	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );
-	pose_to_sfr.init_from_pose( pose );
-	if ( !extra_data.empty() ) pose_to_sfr.sfr()->append_to_additional_string_output( extra_data );
-	if ( add_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_scores(pose, filename) );
-	if ( add_extra_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_extra_scores(pose) );
-	out << create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ), options );
+	String data;
+
+	io::pose_to_sfr::PoseToStructFileRepConverter pu( *options );
+	pu.init_from_pose( pose );
+
+	data = create_pdb_contents_from_sfr(*pu.sfr(), options);
+	out.write( data.c_str(), data.size() );
 }
+
 
 /// @brief This version takes an AtomID mask.
 /// @details Used by Will's motif hash stuff, I think.
@@ -118,7 +161,6 @@ dump_pdb(
 	pose::Pose const & pose,
 	std::ostream & out,
 	id::AtomID_Mask const & mask,
-	std::string const & /* tag */,
 	core::io::StructFileRepOptionsCOP options
 ) {
 	PoseToStructFileRepConverter converter( *options );
@@ -127,92 +169,6 @@ dump_pdb(
 	out.write( data.c_str(), data.size() );
 }
 
-/// @brief Writes a pose to a given string in PDB file format, optionally
-/// appending a given string and optionally extracting scores from the pose.
-/// @details This came out of the 2016 Chemical XRW.  It's an attempt to preserve
-/// some stuff that jd2 was doing before, while centralizing all PDB generation in
-/// one place.
-/// @param[in] pose The pose to turn into a PDB.
-/// @param[in] extra_data Additional data to append to the PDB file data.
-/// @param[in] add_score_data Grab additional score data from the pose?
-/// @param[in] add_extra_score_data Grab still more score data from the pose?
-/// @param[out] out The output string that the PDB file data will be written to.
-/// @param[in] filename (Optional)  String for the filename.  Will be included in the score data table if provided.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-void
-dump_pdb(
-	core::pose::Pose const & pose,
-	std::string const &extra_data,
-	bool const add_score_data,
-	bool const add_extra_score_data,
-	std::string & out,
-	std::string const &filename,
-	core::io::StructFileRepOptionsCOP options
-) {
-	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );
-	pose_to_sfr.init_from_pose( pose ); //Yeah, there's a wee bit of code duplication here.
-	if ( !extra_data.empty() ) pose_to_sfr.sfr()->append_to_additional_string_output( extra_data ); //And here.
-	if ( add_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_scores(pose, filename) ); //And here.
-	if ( add_extra_score_data ) pose_to_sfr.sfr()->append_to_additional_string_output( core::io::extract_extra_scores(pose) ); //And here.  Four lines.  It's an XRW.
-	out = create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ), options );
-}
-
-/// @details Convert given Pose object in to PDB format and send it to the given stream.
-void
-dump_pdb(
-	core::pose::Pose const & pose,
-	std::ostream & out,
-	String const & /* tag */,
-	bool write_fold_tree,
-	core::io::StructFileRepOptionsCOP options
-) {
-	String data;
-	core::io::StructFileRepOptionsOP options2(options->clone());
-
-	options2->set_fold_tree_io( write_fold_tree );
-
-	io::pose_to_sfr::PoseToStructFileRepConverter pu( *options2 );
-	pu.init_from_pose( pose );
-
-	data = create_pdb_contents_from_sfr(*pu.sfr(), options2);
-	out.write( data.c_str(), data.size() );
-}
-
-/// @details Convert given Pose object into PDB format and save it to 'file_name' file.
-/// @return true if operation was completed without error, false otherwise.
-bool
-dump_pdb(
-	core::pose::Pose const &pose,
-	std::string const &file_name,
-	std::string const &tag,
-	bool write_fold_tree
-) {
-	return dump_pdb( pose, file_name, tag, write_fold_tree, core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions ) );
-}
-
-
-/// @details Convert given Pose object into PDB format and save it to 'file_name' file.
-/// @return true if operation was completed without error, false otherwise.
-bool
-dump_pdb(
-	core::pose::Pose const & pose,
-	String const & file_name,
-	String const & tag,
-	bool write_fold_tree,
-	core::io::StructFileRepOptionsCOP options
-) {
-	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
-	if ( !file ) {
-		Error() << "StructFileRep::dump_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
-		return false;
-	}
-	dump_pdb(pose, file, tag, write_fold_tree, options);
-	file.close();
-
-	return true;
-}
-
-
 /// @details Convert given Pose object into PDB format and send it to the given stream.
 /// only the residues corresponding to indices in 'residue_indices' will be output
 void
@@ -220,7 +176,6 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	utility::vector1< core::Size > const & residue_indices,
-	String const & /* tag */,
 	core::io::StructFileRepOptionsCOP options
 ) {
 	io::pose_to_sfr::PoseToStructFileRepConverter pu( *options );
@@ -238,8 +193,10 @@ create_pdb_contents_from_sfr(
 	StructFileRep const & sfr,
 	core::io::StructFileRepOptionsCOP options
 ) {
-	utility::vector1< Record > records( create_records_from_sfr( sfr , options ) );
 	std::string pdb_contents;
+	
+	utility::vector1< Record > records( create_records_from_sfr( sfr , options ) );
+	
 	pdb_contents.reserve( 81 * records.size() );
 	for ( Size i = 1, imax=records.size(); i <= imax; ++i ) {
 		pdb_contents += create_pdb_line_from_record( records[ i ] ) + "\n";
@@ -277,8 +234,14 @@ create_pdb_line_from_record( Record const & record )
 
 
 /// @details Create vector of Record from given StructFileRep object.  Used in PDB writing support.
-std::vector< Record >
-create_records_from_sfr( StructFileRep const & sfr, core::io::StructFileRepOptionsCOP options ) {
+std::vector<Record>
+create_records_from_sfr(
+	StructFileRep const & sfr,
+	core::io::StructFileRepOptionsCOP options
+) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	
 	std::vector<Record> VR;
 
 	sfr.header()->fill_records( VR );
@@ -488,7 +451,19 @@ create_records_from_sfr( StructFileRep const & sfr, core::io::StructFileRepOptio
 
 		VR.push_back(R);
 	}
-
+	
+	// Pose Energies Table (option system call preserves previous behavior)
+	if (sfr.score_table_labels().size() > 0 && sfr.score_table_lines().size() >0 && options->output_pose_energies_table() ){
+		R["info"].value = core::io::pose_energies_from_sfr(sfr);
+		VR.push_back(R);
+	}
+	
+	// Pose Arbitrary String and Float Data.
+	if (( sfr.pose_cache_float_data().size() > 0 || sfr.pose_cache_string_data().size() > 0 ) && options->output_pose_cache()){
+		R["info"].value = core::io::pose_data_cache_from_sfr(sfr);
+		VR.push_back(R);
+	}
+	
 	return VR;
 }
 
@@ -546,6 +521,41 @@ dump_pdb_residue(
 	std::string data = create_pdb_contents_from_sfr(*converter.sfr(), options);
 	out.write( data.c_str(), data.size() );
 }
+
+///////////////////////////////////////////////////////////////
+//////// LEGACY JD2-layer compatability (DO NOT USE) //////////
+///////////////////////////////////////////////////////////////
+
+void
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::string const &jd2_job_data,
+	utility::io::ozstream & out,
+	std::string const &filename
+) {
+	std::string sfr_string;
+	dump_pdb( pose, jd2_job_data, sfr_string, filename);
+	out << sfr_string;
+}
+
+void
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::string const &jd2_job_data,
+	std::string & out,
+	std::string const &filename
+) {
+	core::io::StructFileRepOptionsOP options=core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
+	
+	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );
+	pose_to_sfr.init_from_pose( pose );
+	pose_to_sfr.sfr()->score_table_filename() = filename;
+	
+	if ( !jd2_job_data.empty() ) pose_to_sfr.sfr()->append_to_additional_string_output( jd2_job_data );
+	
+	out = create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ), options );
+}
+
 
 }  // namespace pdb
 }  // namespace io

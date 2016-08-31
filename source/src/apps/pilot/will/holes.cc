@@ -174,8 +174,9 @@ public:
 
 			//JAB -XRW 2016
 			core::pose::set_bfactors_from_atom_id_map(pose, result.atom_scores);
-			pose.dump_pdb(out, "NO_MODEL_LINE_IN_OUTPUT");
-
+			//pose.dump_pdb(out, "NO_MODEL_LINE_IN_OUTPUT");
+			pose.dump_pdb(out);
+			
 			//dump_bfactor_pdb(pose,result.atom_scores,out,"NO_MODEL_LINE_IN_OUTPUT");
 
 			if ( make_voids_ ) {

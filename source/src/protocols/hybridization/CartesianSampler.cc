@@ -762,7 +762,7 @@ apply(
 	if ( dump_pdb_ ) {
 		std::string outfile = ("intermediate_" + dump_pdb_tag_ + ".pdb");
 		utility::io::ozstream out( outfile );
-		core::io::pdb::dump_pdb( pose, "", true, false, out );
+		core::io::pdb::dump_pdb( pose, out );
 	}
 
 	// autogenerate fragments if they are not loaded yet

@@ -131,7 +131,8 @@ public:
 
 			// records should be dumped with the pose
 			std::stringstream pdbstr;
-			p->dump_pdb( pdbstr, "1" );
+			//p->dump_pdb( pdbstr, "1" ); JAB - tag unused
+			p->dump_pdb( pdbstr);
 			TS_ASSERT_DIFFERS( pdbstr.str().find( "DISULFIDIZE" ), std::string::npos );
 		}
 		TS_ASSERT( num_disulf.find(1) == num_disulf.end() );

@@ -37,28 +37,42 @@ namespace core {
 namespace io {
 namespace pdb {
 
-/// @brief Writes a pose to a given stream in PDB file format, optionally
-/// appending a given string and optionally extracting scores from the pose.
-/// @details This came out of the 2016 Chemical XRW.  It's an attempt to preserve
-/// some stuff that jd2 was doing before, while centralizing all PDB generation in
-/// one place.
-/// @param[in] pose The pose to turn into a PDB.
-/// @param[in] extra_data Additional data to append to the PDB file data.
-/// @param[in] add_score_data Grab additional score data from the pose?
-/// @param[in] add_extra_score_data Grab still more score data from the pose?
-/// @param[out] out The output stream that the PDB file data will be written to.
-/// @param[in] filename (Optional)  String for the filename.  Will be included in the score data table if provided.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
+
+/// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
+///  Use default StructFileRepOptions
+bool
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::string const & file_name
+);
+
+/// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
+bool
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::string const & file_name,
+	core::io::StructFileRepOptionsCOP options
+);
+
+
+/// @brief Writes  <pose>  to a given stream in PDB file format
+///  Use default StructFileRepOptions
 void
 dump_pdb(
 	core::pose::Pose const & pose,
-	std::string const &extra_data,
-	bool const add_score_data,
-	bool const add_extra_score_data,
-	utility::io::ozstream & out,
-	std::string const &filename="",
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	std::ostream & out
 );
+
+/// @brief Writes  <pose>  to a given stream in PDB file format
+void
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options
+);
+
+
+
 
 /// @brief This version takes an AtomID mask.
 /// @details Used by Will's motif hash stuff, I think.
@@ -67,61 +81,11 @@ dump_pdb(
 	pose::Pose const & pose,
 	std::ostream & out,
 	id::AtomID_Mask const & mask,
-	std::string const &tag,
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
 
-/// @brief Writes a pose to a given string in PDB file format, optionally
-/// appending a given string and optionally extracting scores from the pose.
-/// @details This came out of the 2016 Chemical XRW.  It's an attempt to preserve
-/// some stuff that jd2 was doing before, while centralizing all PDB generation in
-/// one place.
-/// @param[in] pose The pose to turn into a PDB.
-/// @param[in] extra_data Additional data to append to the PDB file data.
-/// @param[in] add_score_data Grab additional score data from the pose?
-/// @param[in] add_extra_score_data Grab still more score data from the pose?
-/// @param[out] out The output string that the PDB file data will be written to.
-/// @param[in] filename (Optional)  String for the filename.  Will be included in the score data table if provided.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-void
-dump_pdb(
-	core::pose::Pose const & pose,
-	std::string const &extra_data,
-	bool const add_score_data,
-	bool const add_extra_score_data,
-	std::string & out,
-	std::string const &filename="",
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
-);
 
-/// @brief Writes  <pose>  to a given stream in PDB file format
-void
-dump_pdb(
-	core::pose::Pose const & pose,
-	std::ostream & out,
-	std::string const & tag="",
-	bool write_fold_tree = false,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
-);
 
-/// @brief Writes <pose> to a PDB file, returning false if an error occurs.
-bool
-dump_pdb(
-	core::pose::Pose const &pose,
-	std::string const &file_name,
-	std::string const &tag="",
-	bool write_fold_tree=false
-);
-
-/// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
-bool
-dump_pdb(
-	core::pose::Pose const & pose,
-	std::string const & file_name,
-	std::string const & tag,
-	bool write_fold_tree,
-	core::io::StructFileRepOptionsCOP options
-);
 
 
 void
@@ -129,7 +93,6 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	utility::vector1< core::Size > const & residue_indices,
-	std::string const & tag="",
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
 
@@ -168,6 +131,55 @@ std::vector< Record > create_records_from_sfr(
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
 
+
+
+///////////////////////////////////////////////////////////////
+//////// LEGACY JD2-layer compatability (DO NOT USE) //////////
+///////////////////////////////////////////////////////////////
+
+
+/// @brief Writes a pose to a given stream in PDB file format, optionally
+/// appending a given string and optionally extracting scores from the pose.
+/// @details This came out of the 2016 Chemical XRW.  It's an attempt to preserve
+/// some stuff that jd2 was doing before, while centralizing all PDB generation in
+/// one place.
+/// @param[in] pose The pose to turn into a PDB.
+/// @param[in] jd2_job_data Additional data to append to the PDB file data (from the job).
+/// @param[out] out The output stream that the PDB file data will be written to.
+/// @param[in] filename (Optional)  String for the filename.  Will be included in the score data table if provided.
+///
+/// NOTE: The two booleans are now specified in the StructFileRepOptions. Job data is no longer used in JD3. Do not use this function for general pdb writing.  Use dump_file.
+///
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+void
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::string const & jd2_job_data,
+	utility::io::ozstream & out,
+	std::string const &filename=""
+);
+
+/// @brief Writes a pose to a given string in PDB file format, optionally
+/// appending a given string and optionally extracting scores from the pose.
+/// @details This came out of the 2016 Chemical XRW.  It's an attempt to preserve
+/// some stuff that jd2 was doing before, while centralizing all PDB generation in
+/// one place.
+/// @param[in] pose The pose to turn into a PDB.
+/// @param[in] jd2_job_data Additional data to append to the PDB file data from the Job.
+/// @param[out] out The output string that the PDB file data will be written to.
+/// @param[in] filename (Optional)  String for the filename.  Will be included in the score data table if provided.
+///
+/// NOTE: The two booleans are now specified in the StructFileRepOptions. Job data is no longer used in JD3. Do not use this function for general pdb writing.  Use dump_file.
+///
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::string const & jd2_job_data,
+	std::string & out,
+	std::string const &filename=""
+);
 } //pdb
 } //io
 } //core

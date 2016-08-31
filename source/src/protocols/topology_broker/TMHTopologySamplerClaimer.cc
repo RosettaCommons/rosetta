@@ -524,7 +524,7 @@ TMHTopologySamplerClaimer::move_spans(core::pose::Pose& pose)
 	}
 	current_pose_ = pose;
 	if ( tr.Debug.visible() ) {
-		pose.dump_pdb("test_move_spans.pdb","test_move_spans");
+		pose.dump_pdb("test_move_spans.pdb");
 	}
 }
 

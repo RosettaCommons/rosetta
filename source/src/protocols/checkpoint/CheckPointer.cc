@@ -36,6 +36,7 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
+#include <core/io/StructFileRepOptions.hh>
 #include <core/io/pdb/pdb_writer.hh>
 
 #if defined(WIN32) || defined(BOINC)
@@ -374,7 +375,12 @@ bool CheckPointer::recover_checkpoint(
 		utility_exit_with_message("Fullatom mismatch in checkpointer.");
 	}
 
-	if ( debug ) core::io::pdb::dump_pdb( pose, checkpoint_id + ".debug.pdb", "", foldtree );
+	if ( debug ) {
+		core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions() );
+		sfr_opts->set_fold_tree_io( foldtree );
+		core::io::pdb::dump_pdb( pose, checkpoint_id + ".debug.pdb", sfr_opts );
+		
+	}
 
 #ifdef BOINC_GRAPHICS
 	// attach boinc graphics pose observer
@@ -384,13 +390,21 @@ bool CheckPointer::recover_checkpoint(
 		pose::Pose recovered_mc_last =  mc->last_accepted_pose();
 		pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, recovered_mc_last, fullatom );
 		mc->set_last_accepted_pose( recovered_mc_last );
-		if ( debug ) core::io::pdb::dump_pdb( mc->last_accepted_pose(), checkpoint_id + ".mc_last.debug.pdb" , "",  foldtree );
+		if ( debug ) {
+			core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions() );
+			sfr_opts->set_fold_tree_io( foldtree );
+			core::io::pdb::dump_pdb( mc->last_accepted_pose(), checkpoint_id + ".mc_last.debug.pdb"  );
+		}
 	}
 	if ( utility::file::file_exists( checkpoint_id + ".mc_low.pdb" ) ) {
 		pose::Pose recovered_mc_low =  mc->lowest_score_pose();
 		pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, recovered_mc_low, fullatom );
 		mc->set_lowest_score_pose( recovered_mc_low );
-		if ( debug ) core::io::pdb::dump_pdb( mc->lowest_score_pose(), checkpoint_id + ".mc_low.debug.pdb" , "",  foldtree );
+		if ( debug ){
+			core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions() );
+			sfr_opts->set_fold_tree_io( foldtree );
+			core::io::pdb::dump_pdb( mc->lowest_score_pose(), checkpoint_id + ".mc_low.debug.pdb" );
+		}
 	}
 	checkpoint_ids_.push_back( checkpoint_id );
 	TR << " SUCCESS" << std::endl;

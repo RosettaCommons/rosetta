@@ -37,48 +37,37 @@
 namespace core {
 namespace io {
 
+///@brief Extract the pose energies table from an SFR as a string representation for PDB output.
+std::string
+pose_energies_from_sfr(
+	StructFileRep const & sfr
 
-///@brief specific precision for score output.  Don't use this, use string_util, fmt_real or Real2string
-core::Real restrict_prec( core::Real inval );
-
-/// @brief Write extra Pose energies information into a string and return it.
-/// @details Added during the 2016 Chemical XRW.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-std::string extract_extra_scores(
-	pose::Pose const & pose
 );
 
-void extract_extra_scores(
-	core::pose::Pose const & pose,
+///@brief Extract the pose energies table from an SFR as a string representation for PDB output.
+void
+pose_energies_from_sfr(
+	StructFileRep const & sfr,
 	std::stringstream & out
 );
 
 
-/// @brief Write Pose energies information into a string and return it.
-/// @details Added during the 2016 Chemical XRW.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-std::string extract_scores(
-	core::pose::Pose const & pose,
-	std::string const &filename=""
+///@breif Extract the pose data cache from the SFR as a string representation for PDB output.
+std::string
+pose_data_cache_from_sfr(
+	StructFileRep const & sfr
 );
 
-/// @brief Write  <pose>  Energies information into an output stream
-/// (e.g. the tail of a pdb file)
-void extract_scores(
-	core::pose::Pose const & pose,
-	std::stringstream & out,
-	std::string const &filename=""
+///@breif Extract the pose data cache from the SFR as a string representation for PDB output.
+void
+pose_data_cache_from_sfr(
+	StructFileRep const & sfr,
+	std::stringstream & out
 );
 
-/// @brief Utility function to round a real value to the given precisions (number of digits after the decimal place) for output.
-/// For use solely by extract_scores()
-/// @details Apparently, there isn't an easy way to do this in C++, or even the general goal
-/// of limiting the precision in output streams. (setprecision() with default formatting doesn't
-/// correctly handle very small numbers, and with fixed precision outputs superfluous zeros.)
-///
-/// Do Not use this!  See utility::string_util, fmt_real and Real2string for precision output.
-core::Real
-restrict_prec( core::Real inval );
+
+
+
 
 void pose_from_pose(
 	pose::Pose & new_pose,

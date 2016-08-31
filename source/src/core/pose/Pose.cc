@@ -1603,7 +1603,7 @@ Pose::dump_file(const std::string & file_name_string) const {
 	if ( fname.ext() == "cif" ) {
 		core::io::mmcif::dump_cif( *this, file_name_string );
 	} else {
-		core::io::pdb::dump_pdb(*this, file_name_string, "1" );
+		core::io::pdb::dump_pdb(*this, file_name_string );
 	}
 }
 
@@ -1616,22 +1616,21 @@ Pose::dump_cif(std::string const &file_name) const {
 ///////////////////////////////////////////////////////////////////////////////
 /// @details save pose data to file with supplied file_name
 bool
-Pose::dump_pdb(std::string const &file_name, std::string const & tag) const
+Pose::dump_pdb(std::string const &file_name) const
 {
-	return core::io::pdb::dump_pdb(*this, file_name, tag);
+	return core::io::pdb::dump_pdb(*this, file_name);
 }
 
 /// @brief  Dump a pdbfile with some score info at the end.
 void
 Pose::dump_scored_pdb(
 	std::string const &file_name,
-	scoring::ScoreFunction const & scorefxn,
-	std::string const & tag
+	scoring::ScoreFunction const & scorefxn
 ) {
 	Real const total_score( scorefxn( *this ) );
 	/// Now handled automatically.  scorefxn.accumulate_residue_total_energies( *this );
 	std::ofstream out( file_name.c_str() );
-	core::io::pdb::dump_pdb( *this, out, tag );
+	core::io::pdb::dump_pdb( *this, out);
 	// verbose output
 	out << "END\n";
 	std::string secstruct;
@@ -1649,20 +1648,19 @@ Pose::dump_scored_pdb(
 	out.close();
 }
 
-void Pose::dump_pdb(std::ostream & out, std::string const & tag) const
+void Pose::dump_pdb(std::ostream & out) const
 {
-	return core::io::pdb::dump_pdb(*this, out, tag);
+	return core::io::pdb::dump_pdb(*this, out);
 }
 
 /// @brief for writing a specified subset of residues in pdb format
 void
 Pose::dump_pdb(
 	std::ostream & out,
-	utility::vector1< Size > const & residue_indices,
-	std::string const & tag
+	utility::vector1< Size > const & residue_indices
 ) const
 {
-	return core::io::pdb::dump_pdb( *this, out, residue_indices, tag );
+	return core::io::pdb::dump_pdb( *this, out, residue_indices);
 }
 
 

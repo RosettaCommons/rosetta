@@ -371,7 +371,7 @@ MMTDriver::retrieve_optimal_solutions()
 
 			TR << "Writing structure " << jj_out_name << " with score: " << (*sfxn_)( jj_pose ) << std::endl;
 
-			core::io::pdb::dump_pdb( jj_pose, "", true, false, opt_sols[ jj_out_name ] /*opt_sols is output*/ );
+			core::io::pdb::dump_pdb( jj_pose, opt_sols[ jj_out_name ] /*opt_sols is output*/ );
 		}
 
 	}

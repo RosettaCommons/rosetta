@@ -1499,24 +1499,23 @@ public:
 	///     dump_cif
 	///     dump_file
 	bool
-	dump_pdb(std::string const & file_name, std::string const & tag="1") const;
+	dump_pdb(std::string const & file_name) const;
 
 	void
-	dump_pdb(std::ostream & out, std::string const & tag="1") const;
+	dump_pdb(std::ostream & out) const;
 
 	/// @brief for writing a specified subset of residues in pdb format
 	void
 	dump_pdb(
 		std::ostream & out,
-		utility::vector1< core::Size > const & residue_indices,
-		std::string const & tag="1"
+		utility::vector1< core::Size > const & residue_indices
 	) const;
 
 
 	/// @brief Export pose data to the PDB file  <file_name>,
 	/// add some score output
 	void
-	dump_scored_pdb( std::string const & file_name, scoring::ScoreFunction const & scorefxn, std::string const & tag="1" );
+	dump_scored_pdb( std::string const & file_name, scoring::ScoreFunction const & scorefxn );
 
 
 

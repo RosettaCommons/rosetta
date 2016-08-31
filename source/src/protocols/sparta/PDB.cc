@@ -118,7 +118,7 @@ void PDB::loadPDB(const string &fileName)
 
 void PDB::loadPDB( core::pose::Pose const& pose ) {
 	std::stringstream obuffer;
-	pose.dump_pdb( obuffer, "no_tag" );
+	pose.dump_pdb( obuffer);
 	std::stringstream ibuffer( obuffer.str() );
 	loadPDB( ibuffer );
 }

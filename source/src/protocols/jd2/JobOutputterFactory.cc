@@ -115,6 +115,8 @@ JobOutputterFactory::get_new_JobOutputter()
 		return get_JobOutputter_from_string( "EnzdesJobOutputter" );
 	} else if ( basic::options::option[ basic::options::OptionKeys::out::use_database].user() ) {
 		return get_JobOutputter_from_string( "DatabaseJobOutputter" );
+	} else if ( basic::options::option[ basic::options::OptionKeys::out::mmCIF].value() ) {
+		return get_JobOutputter_from_string( "mmCIFJobOutputter" );
 	} else { //currently default; may need an if in the future
 		return get_JobOutputter_from_string( "PDBJobOutputter" );
 	}

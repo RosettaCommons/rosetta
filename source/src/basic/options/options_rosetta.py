@@ -1,4 +1,4 @@
-# -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+# -*- mode:python;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 # vi: set ts=2 noet:
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
@@ -558,12 +558,15 @@ Options = Option_Group( '',
 		Option( 'no_nstruct_label', 'Boolean', desc="Do not tag the first output structure with _0001",
 				default="false" ),
 		Option( 'pdb_gz', 'Boolean', desc="Compress (gzip) output pdbs", default="false", oldName="output_pdb_gz" ),
-		Option( 'pdb', 'Boolean', desc="Output PDBs", default="false" ),
+		Option( 'pdb', 'Boolean', desc="Output PDBs", default="false" ),  #The joke, of course, is that the default is true, because this is assumed and rarely checked
 		Option( 'silent_gz', 'Boolean', desc="Use gzipped compressed output (silent run level)",
 				default="false",
 				oldName="output_silent_gz" ),
 		Option( 'membrane_pdb', 'Boolean', desc="Write out the membrane in the PDB - on/off."),
 		Option( 'membrane_pdb_thickness', 'Real', desc="Thickness of the written membrane in the PDB file. Using this flag, turns on -out:membrane_pdb automatically. If flag is not given, it uses the default (30) or the one from the -mp:thickness flag."),
+
+		Option( 'mmCIF', 'Boolean', desc="output mmCIF files (broadly, as opposed to PDB files)", default='false' ),
+		Option( 'mmCIF_gz', 'Boolean', desc="if outputting mmCIF files, gzip them", default='false' ),
 
 		# Database options ----------------------------------------------------
 		Option( 'use_database', 'Boolean',
@@ -688,7 +691,6 @@ Options = Option_Group( '',
 			Option( 'no_chainend_ter', 'Boolean', desc="If true, TER records are not written at the ends of chains in PDB files -- only at the end of all of the ATOM records (the legacy Rosetta behaviour).  False by default (which results in TER records at the ends of every chain).", default='false' ),
 			Option( 'no_output_cen', 'Boolean', default='false', desc="Omit outputting centroids"),
 			Option( 'output_orbitals', 'Boolean', default='false', desc="Output all orbitals into PDB."),
-			Option( 'no_scores_in_pdb', 'Boolean', default='false', desc="Do not output the scoretable at the end of the output PDB."),
 			Option( 'renumber_pdb', 'Boolean', default='false',
 					desc='Use Rosetta residue numbering and arbitrary chain labels in pdb output.'),
 			Option( 'pdb_parents', 'Boolean', default='false',
@@ -725,6 +727,14 @@ Options = Option_Group( '',
 			Option( 'write_pdb_parametric_info', 'Boolean', desc='If true, parametric poses have their parameter info included in the REMARK lines of the output PDB file.  True by default.',
 					short= 'Write parametric info?', legal=['true', 'false'], default='true'),
 
+			# General oputput options
+			Option( 'output_pose_energies_table', 'Boolean', default = 'true', desc='Output the pose energies table.  This can be overridden'),
+			Option( 'output_pose_cache_data', 'Boolean', default = 'true', desc='Output the pose cache.'),
+			Option( 'output_pose_fold_tree', 'Boolean', default = 'false', desc = "Output the foldtree of the pose. Will go in rosetta_additional column for cif files."),
+			
+			# mmCIF options
+			Option( 'cif_extra_data_separate_file', 'Boolean', default='false', desc="When outputting mmCIF, write extra data and energies to separate files (JOBNAME.extradata and JOBNAME.eneriges)"),
+
 			# Dunbrack library options
 			Option( 'dont_rewrite_dunbrack_database', 'Boolean',
 					desc='Disables the default behavior of rewriting the Dunrack library in binary format if a binary '
@@ -735,6 +745,11 @@ Options = Option_Group( '',
 
 			# SDF file options
 			Option( 'no_extra_sdf_data', 'Boolean', desc='Do not add extra round-tripping data to SDF file output', default='false' ),
+			
+			#DEPRECATED OPTIONS
+			Option( 'no_scores_in_pdb', 'Boolean', desc = "Deprated option.  See -output_pose_energies_table and -output_pose_cache_data"),
+
+
 		), # out:file
 
 		# Path options -------------------------------------------------------
@@ -742,13 +757,14 @@ Options = Option_Group( '',
 			Option( 'all', 'Path', desc="Default file output path", default="." ),
 			Option( 'path', 'Path', desc="Default file output path", default="." ),
 			Option( 'pdb', 'Path', desc="PDB file output path" ),
-            Option( 'db', 'Path', desc="Database file output path if using FeatureReporters or database output", default="."),
+			Option( 'db', 'Path', desc="Database file output path if using FeatureReporters or database output", default="."),
 			Option( 'score', 'Path', desc="Score file output path" ),
 #			Option( 'movie', 'Path', desc="Movie file output path" ),
 			Option( 'scratch', 'Path', desc="use this path as scratch drive", default=['/scratch/USERS/'] ),
 			Option( 'mpi_rank_dir','Boolean',
 					desc="Put silent-output files in individual directory as determined by mpi-rank",
 					default='false'),
+			Option( 'mmCIF', 'Path', desc="if outputting mmCIF, mmCIF file output path" ),
 		), # out:path
 	), # out
 

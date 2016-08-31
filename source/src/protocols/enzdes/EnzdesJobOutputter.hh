@@ -33,6 +33,7 @@ namespace enzdes {
 /// @brief for now this class only writes a different scorefile
 /// than the default one written by the FileJobOutputter. the structure
 /// output format is pdb
+///SML Feb 4 2016 note.  I moved most of PDBJobOutputter into an intermediate class wwPDBJobOutputter to share functions with mmCIFJobOutputter.  This class is not being modified (doesn't appear to need it).  Its use of dump_pdb forces that function to be protected rather than private.
 class EnzdesJobOutputter : public protocols::jd2::PDBJobOutputter
 {
 public: //constructor / destructor

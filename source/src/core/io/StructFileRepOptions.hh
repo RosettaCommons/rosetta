@@ -93,7 +93,10 @@ public:
 	bool pdb_comments() const;
 	bool show_all_fixes() const;
 	bool constraints_from_link_records() const;
-
+	
+	bool output_pose_energies_table() const;
+	bool output_pose_cache() const;
+	
 	// mutators
 	void set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini );
 	void set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini );
@@ -130,8 +133,10 @@ public:
 	void set_chains_whose_residues_are_separate_chemical_entities( std::string const & setting );
 	void set_residues_for_atom_name_remapping( utility::vector1<std::string> const & setting );
 	void set_pdb_comments( bool const pdb_comments );
-	void set_show_all_fixes( bool setting );
-	void set_constraints_from_link_records( bool setting );
+	void set_show_all_fixes( bool const setting );
+	void set_constraints_from_link_records( bool const setting );
+	void set_output_pose_energies_table(bool const setting);
+	void set_output_pose_cache_data(bool const setting);
 
 	/// @brief Declare the list of options that are read in the process of reading a PDB (or SDF) and converting
 	/// it into a Pose.
@@ -189,6 +194,9 @@ private:
 	bool pdb_comments_;
 	bool show_all_fixes_;
 	bool constraints_from_link_records_;
+	bool output_pose_energies_table_;
+	bool output_pose_cache_data_;
+
 };
 
 } // namespace io

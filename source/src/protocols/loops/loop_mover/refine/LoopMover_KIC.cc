@@ -491,7 +491,8 @@ void LoopMover_Refine_KIC::apply(
 		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
-		pose.dump_pdb(loop_outfile, indices, "initial_repack");
+		//pose.dump_pdb(loop_outfile, indices, "initial_repack"); JAB - tag was never being used.
+		pose.dump_pdb(loop_outfile, indices);
 		loop_outfile << "ENDMDL" << std::endl;
 	}
 
@@ -741,7 +742,8 @@ void LoopMover_Refine_KIC::apply(
 							for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 								indices[j]=i;
 							}
-							pose.dump_pdb(loop_outfile, indices, "refine_r" + k_trial.str());
+							//pose.dump_pdb(loop_outfile, indices, "refine_r" + k_trial.str()); JAB - tag never used.
+							pose.dump_pdb(loop_outfile, indices);
 							loop_outfile << "ENDMDL" << std::endl;
 						}
 						//tr << "temperature: " << temperature << std::endl;
@@ -831,7 +833,8 @@ void LoopMover_Refine_KIC::apply(
 		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
-		pose.dump_pdb(loop_outfile, indices, "final_refine");
+		//pose.dump_pdb(loop_outfile, indices, "final_refine"); JAB - tag never used.
+		pose.dump_pdb(loop_outfile, indices);
 		loop_outfile << "ENDMDL" << std::endl;
 	}
 }

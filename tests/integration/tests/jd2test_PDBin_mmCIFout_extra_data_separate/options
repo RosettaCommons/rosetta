@@ -1,0 +1,12 @@
+-s 1UBQ.pdb.gz 1EM7.pdb.gz 1NLO.pdb.gz
+-resfile resfile
+
+-ex1 
+-ex2
+-extrachi_cutoff 0
+
+-nstruct 3
+
+-out::mmCIF true
+#this flag controls whether we want Rosetta accessory data (scores, etc) in the cif file or separately
+-out::file::cif_extra_data_separate_file true

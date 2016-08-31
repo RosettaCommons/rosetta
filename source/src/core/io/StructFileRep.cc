@@ -56,16 +56,6 @@ StructFileRep::clone() const {
 	return StructFileRepOP( new StructFileRep( *this ) );
 }
 
-
-// Append more string data to the additional_string_output_ string in the SFR.
-/// @details Retains all string data already added.
-void
-StructFileRep::append_to_additional_string_output( std::string const &input_string )
-{
-	additional_string_output_ = additional_string_output_ + input_string;
-}
-
-
 // Helper Functions ///////////////////////////////////////////////////////////
 // Debug printing, serializing to Tracer-like object
 std::ostream &
@@ -96,6 +86,16 @@ operator<<( std::ostream & os, StructFileRep const & sfr )
 	os << "}";
 	return os;
 }
+
+/// @brief Append more string data to the additional_string_output_ string in the SFR.
+/// @details Retains all string data already added.
+void
+StructFileRep::append_to_additional_string_output(
+	std::string const &input_string
+) {
+	additional_string_output_ = additional_string_output_ + input_string;
+}
+
 
 } // namespace io
 } // namespace core

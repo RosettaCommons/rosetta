@@ -469,7 +469,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		for ( Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++ ) {
 			indices[j]=i;
 		}
-		//pose.dump_pdb(loop_outfile, indices, "init_perturb");
+		//pose.dump_pdb(loop_outfile, indices, "init_perturb"); JAB - tag never used.
+		pose.dump_pdb(loop_outfile, indices);
 		loop_outfile << "ENDMDL" << std::endl;
 	}
 
@@ -555,7 +556,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 						for ( Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++ ) {
 							indices[j]=i;
 						}
-						pose.dump_pdb(loop_outfile, indices, "init_perturb");
+						//pose.dump_pdb(loop_outfile, indices, "init_perturb"); //JAB - tag never used.
+						pose.dump_pdb(loop_outfile, indices);
 						loop_outfile << "ENDMDL" << std::endl;
 					}
 					//tr << "chainbreak score: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl;
@@ -584,7 +586,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
-		pose.dump_pdb(loop_outfile, indices, "final_perturb");
+		//pose.dump_pdb(loop_outfile, indices, "final_perturb"); //JAB -tag never used
+		pose.dump_pdb(loop_outfile, indices);
 		loop_outfile << "ENDMDL" << std::endl;
 	}
 	if ( local_debug ) {

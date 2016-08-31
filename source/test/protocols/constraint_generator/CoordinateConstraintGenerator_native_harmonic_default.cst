@@ -70,8 +70,8 @@ CoordinateConstraint  N     19 ORIG   22 7.596 -7.575 6.212 HARMONIC 0 0.5
 CoordinateConstraint  CA    19 ORIG   22 6.831 -7.189 7.421 HARMONIC 0 0.5
 CoordinateConstraint  C     19 ORIG   22 7.504 -6.163 8.392 HARMONIC 0 0.5
 CoordinateConstraint  O     19 ORIG   22 8.476 -6.462 9.09 HARMONIC 0 0.5
-CoordinateConstraint  N     20 ORIG   22 6.915 -4.960 8.466 HARMONIC 0 0.5
-CoordinateConstraint  CA    20 ORIG   22 7.340 -3.890 9.428 HARMONIC 0 0.5
+CoordinateConstraint  N     20 ORIG   22 6.915 -4.96 8.466 HARMONIC 0 0.5
+CoordinateConstraint  CA    20 ORIG   22 7.34 -3.89 9.428 HARMONIC 0 0.5
 CoordinateConstraint  C     20 ORIG   22 7.043 -4.163 10.951 HARMONIC 0 0.5
 CoordinateConstraint  O     20 ORIG   22 7.764 -3.684 11.828 HARMONIC 0 0.5
 

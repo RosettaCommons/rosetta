@@ -18,6 +18,7 @@ namespace protocols {
 
 using namespace protocols::jd2;
 static JobOutputterRegistrator< PDBJobOutputterCreator > reg_PDBJobOutputterCreator;
+static JobOutputterRegistrator< mmCIFJobOutputterCreator > reg_mmCIFJobOutputterCreator;
 static JobOutputterRegistrator< SilentFileJobOutputterCreator > reg_SilentFileJobOutputterCreator;
 static JobOutputterRegistrator< AtomTreeDiffJobOutputterCreator > reg_AtomTreeDiffJobOutputterCreator;
 static JobOutputterRegistrator< NoOutputJobOutputterCreator > reg_NoOutputJobOutputterCreator;

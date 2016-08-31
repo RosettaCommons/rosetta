@@ -10,9 +10,11 @@
 /// @file core/io/mmcif/util.cc
 /// @brief Functions for MMCIF writing.
 /// @author Andy Watkins (andy.watkins2@gmail.com)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+
 
 #include <core/io/mmcif/cif_writer.hh>
-#include <core/io/StructFileReaderOptions.hh>
+#include <core/io/StructFileRepOptions.hh>
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 // Package headers
@@ -83,32 +85,131 @@ namespace core {
 namespace io {
 namespace mmcif {
 
-void
-dump_cif( core::pose::Pose const & pose, std::string const & cif_file){
+using basic::Error;
+using basic::Warning;
+using utility::to_string;
 
-	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter();
-	StructFileReaderOptions options = StructFileReaderOptions();
+/// @brief Dump an mmCIF from a pose to a file.
+///  Return success or failure.
+bool
+dump_cif(
+	core::pose::Pose const & pose,
+	std::string const & file_name,
+	StructFileRepOptionsCOP options )
+	
+{
+
+	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
+
+	converter.init_from_pose( pose );
+	StructFileRepOP cif_sfr =  converter.sfr();
+	
+	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
+	if ( !file ) {
+		Error() << "cif_writer:dump_cif Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		return false;
+	}
+	dump_cif( file, cif_sfr, *options);
+	file.close();
+	return true;
+}
+
+/// @brief Dump an mmCIF from a pose to an ostream.
+StructFileRepOP
+dump_cif(
+	core::pose::Pose const & pose,
+	std::ostream & out,
+	StructFileRepOptionsCOP options)
+	
+{
+
+	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
 
 	converter.init_from_pose( pose );
 	StructFileRepOP cif_sfr =  converter.sfr();
 
-	dump_cif( cif_file, cif_sfr, options);
+
+	dump_cif( out, cif_sfr, *options);
+	return cif_sfr;
 }
+
+///@brief Return an mmCIF-format string from a pose.
+std::string
+dump_cif( core::pose::Pose const & pose )
+{
+	std::ostringstream out;
+	dump_cif( pose, out );
+	return out.str();
+}
+
+/// @brief Dump an mmCIF from a pose, optionally extracting extra info.
+StructFileRepOP
+dump_cif(
+	core::pose::Pose const & pose,
+	std::string const & jd2_job_data,
+	utility::io::ozstream & out)
+
+{
+	StructFileRepOptionsOP options =  StructFileRepOptionsOP( new StructFileRepOptions );
+	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter();
+
+	converter.init_from_pose( pose );
+	StructFileRepOP cif_sfr =  converter.sfr();
+	cif_sfr->append_to_additional_string_output( jd2_job_data );
+	
+	dump_cif( out, cif_sfr, *options);
+	return cif_sfr;
+
+}
+
+
+bool
+dump_cif(
+	std::string const & file_name,
+	StructFileRepOP sfr,
+	StructFileRepOptions const & options
+) {
+
+	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
+	if ( !file ) {
+		Error() << "cif_writer:dump_cif Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		return false;
+	}
+
+	dump_cif(file, sfr, options);
+	file.close();
+	return true;
+}
+
+/// @brief Main dump_cif function.
+///  Return a string with contents of a CIF file, extracted from a Pose to a StructFileRep via PoseToStructFileRepConverter
+std::string
+dump_cif(
+	StructFileRepOP sfr,
+	StructFileRepOptions const & options )
+	
+{
+	std::ostringstream out;
+	dump_cif( out, sfr, options );
+	return out.str();
+}
+
+
+
 
 void
 dump_cif(
-	std::string const & cif_file,
+	std::ostream & out,
 	StructFileRepOP sfr,
-	StructFileReaderOptions const & options
+	StructFileRepOptions const & options
 ) {
 	// ALERT: do not delete pointers. block.WriteTable takes ownership.
-
 	CifFile cifFile;
 	cifFile.AddBlock( "Rosetta" );
 	Block& block = cifFile.GetBlock( "Rosetta" );
 
 	// "header information", i.e., is from the Title Section of the PDB file.
-	if ( options.read_pdb_header() ) {
+	if ( options.preserve_header() ) {
 		ISTable* citation = new ISTable( "citation" );
 		citation->AddColumn( "title" );
 		citation->AddRow( std::vector< std::string >( 1, sfr->header()->title() ) );
@@ -350,7 +451,118 @@ dump_cif(
 	}
 	block.WriteTable( atom_site );
 
-	cifFile.Write( cif_file );
+	// Pose Energies Table
+	if ( sfr->score_table_labels().size() > 0 && options.output_pose_energies_table() ) {
+		ISTable* pose_energies = new ISTable( "pose_energies" );
+
+		//Add the Columns
+		pose_energies->AddColumn( "label" );
+		for ( core::Size i =1; i <= sfr->score_table_labels().size(); ++i ) {
+			pose_energies->AddColumn( sfr->score_table_labels()[ i ] );
+		}
+
+		//Add the Score Weights as a Row
+		std::vector< std::string > weights;
+		weights.push_back("weights");
+		for ( core::Size i = 1; i <= sfr->score_table_weights().size(); ++i ) {
+			weights.push_back( to_string( sfr->score_table_weights()[ i ] ) );
+		}
+		weights.push_back("NA");
+		pose_energies->AddRow(weights);
+		//Add the rest of the Rows
+		for ( core::Size i = 1; i <= sfr->score_table_lines().size(); ++i ) {
+			pose_energies->AddRow( sfr->score_table_lines()[ i ] );
+		}
+		block.WriteTable( pose_energies );
+	}
+
+	// Pose Arbitrary String and Float Data.
+	if ( (sfr->pose_cache_string_data().size() > 0 || sfr->pose_cache_float_data().size() > 0) && options.output_pose_cache() ) {
+		ISTable* pose_cache = new ISTable( "pose_cache_data" );
+
+		if ( sfr->pose_cache_string_data().size() > 0 ) {
+			typedef std::map<std::string, std::string>::iterator it_type;
+			for ( it_type it = sfr->pose_cache_string_data().begin(); it != sfr->pose_cache_string_data().end(); ++it ) {
+				std::vector< std::string > row(2, "");
+				row[0] = it->first;
+				row[1] = it->second;
+				pose_cache->AddRow( row );
+			}
+		}
+
+		if ( sfr->pose_cache_float_data().size() > 0 ) {
+			typedef std::map<std::string, float>::iterator it_type;
+			for ( it_type it = sfr->pose_cache_float_data().begin(); it != sfr->pose_cache_float_data().end(); ++it ) {
+				std::vector< std::string> row(2, "");
+				row[0] = it->first;
+				row[1] = utility::to_string( it->second ); //PDB Writing of this data had no rounding of decimal places, so I'm not doing it here either (JAB).
+				pose_cache->AddRow( row );
+			}
+		}
+		block.WriteTable( pose_cache );
+
+	}
+
+	//Even more pose info.
+	if ( sfr->pdb_comments().size() > 0 ) {
+		ISTable* pose_comments = new ISTable( "pose_comments" );
+		pose_comments->AddColumn( "type" );
+		pose_comments->AddColumn( "comment" );
+
+
+		using namespace std;
+		map< string, string > const comments = sfr->pdb_comments();
+		for ( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
+			std::vector< std::string > row(2, "");
+			row[0] = i->first;
+			row[1] = i->second;
+			pose_comments->AddRow( row );
+		}
+
+		block.WriteTable( pose_comments );
+	}
+
+	//Remarks are now split into specific types in the mmCIF format.  Here we just place remarks as Rosetta remarks.
+	if ( sfr->remarks()->size() > 0 ) {
+		ISTable* rosetta_remarks = new ISTable( "rosetta_remarks" );
+		rosetta_remarks->AddColumn( "num"); //Feel free to change the name of this.
+		rosetta_remarks->AddColumn( "remark");
+
+		for ( Size i=0; i<sfr->remarks()->size(); ++i ) {
+			RemarkInfo const & ri( sfr->remarks()->at(i) );
+			std::vector< std::string > row(2, "");
+			row[0] = utility::pad_left( ri.num, 3 ); //("%3d", ri.num);
+			row[1] = ri.value;
+			rosetta_remarks->AddRow( row );
+		}
+
+		block.WriteTable( rosetta_remarks );
+	}
+
+	//Finally, the single string output.  If you have a better way to do this, please refactor this.
+	if ( !sfr->additional_string_output().empty() || ! sfr->foldtree_string().empty()) {
+		ISTable* rosetta_additional = new ISTable( "rosetta_additional" );
+			rosetta_additional->AddColumn( "type" );
+			rosetta_additional->AddColumn( "output");
+		
+		if (! sfr->foldtree_string().empty()){
+			std::vector< std::string > out;
+			
+			out.push_back("fold_tree");
+			out.push_back(sfr->foldtree_string());
+			rosetta_additional->AddRow(out);
+		}
+		if (! sfr->additional_string_output().empty()){
+			std::vector< std::string > out;
+
+			out.push_back( "etc" );
+			out.push_back( sfr->additional_string_output() );
+			rosetta_additional->AddRow( std::vector< std::string >( 1, sfr->additional_string_output() ) );
+		}
+		block.WriteTable( rosetta_additional );
+	}
+
+	cifFile.Write( out );
 }
 
 } //core
