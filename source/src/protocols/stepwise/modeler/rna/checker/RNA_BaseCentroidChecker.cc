@@ -382,7 +382,7 @@ RNA_BaseCentroidChecker::update_base_stub_list( core::pose::Pose const & pose ){
 
 	for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
 		Size const moving_res( moving_residues_[ m ] );
-		if ( !pose.residue( moving_res ).is_RNA() ) continue;
+		if ( !pose.residue_type( moving_res ).is_RNA() ) continue;
 		core::conformation::Residue const & residue_object( pose.residue( moving_res ) );
 		Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 		core::kinematics::Stub base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );

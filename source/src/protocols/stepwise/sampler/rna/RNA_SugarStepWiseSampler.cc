@@ -73,7 +73,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 	runtime_assert( is_init() );
 	PuckerState pucker_state = pucker_states_[i];
 	assert( pucker_state <= 2 );
-	assert( pose.residue( rsd_id_ ).is_RNA() );
+	assert( pose.residue_type( rsd_id_ ).is_RNA() );
 
 	static const RNA_IdealCoord ideal_coord;
 	static const RNA_FittedTorsionInfo torsion_info;
