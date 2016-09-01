@@ -713,17 +713,6 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 ) {
 	Ktheta = k_angle_;
 	
-	// AMW: better yet, ascertain why this is happening
-	if ( atm1 <= 0 || atm2 <= 0 || atm3 <= 0 ) return;
-	/*
-	TR << "restype " << restype.name() << std::endl;
-	TR << "atoms: ";
-	TR << atm1 << std::endl << restype.atom_name( atm1 ) << ", ";
-	TR << atm2 << std::endl << restype.atom_name( atm2 ) << ", ";
-	TR << atm3 << std::endl << restype.atom_name( atm3 ) << ", ";
-	TR << std::endl;
-	*/
-	
 	// Create mini-conformation for idealized residue
 	conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
 
