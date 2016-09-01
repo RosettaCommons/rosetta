@@ -355,6 +355,7 @@ sources = {
 	],
 	"moves" : [
 		"BackrubMover",
+                "FilterReportAsPoseExtraScoresMover",
 		"MoverContainer",
 		"MoversTest",
 		"ScoreTest",

@@ -175,6 +175,7 @@ sources = {
 		"DualMonteCarlo",
 		"FilterMover",
 		"FilterReporterMover",
+		"FilterReportAsPoseExtraScoresMover",
 		"IfMover",
 		"IteratedConvergenceMover",
 		"JumpOutMover",

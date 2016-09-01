@@ -256,6 +256,9 @@ sources = {
 		"make_loops",
 		"util",
 	],
+	"protocols/loops/filters": [
+	        "LoopAnalyzerFilter",
+	],
 	"protocols/loops/loop_closure/ccd": [
 	    "ccd_closure",
 		"CCDLoopClosureMover",

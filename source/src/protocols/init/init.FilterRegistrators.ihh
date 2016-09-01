@@ -77,6 +77,8 @@ static FilterRegistrator< protocols::ligand_docking::HBondDonorFilterCreator > r
 static FilterRegistrator< protocols::ligand_docking::MolecularMassFilterCreator > reg_MolecularMassFilterCreator;
 static FilterRegistrator< protocols::ligand_docking::MolarMassFilterCreator > reg_MolarMassFilterCreator;
 
+static FilterRegistrator< protocols::loops::filters::LoopAnalyzerFilterCreator > reg_LoopAnalyzerFilterCreator;
+
 static FilterRegistrator< protocols::matdes::ClashCheckFilterCreator > reg_ClashCheckFilterCreator;
 static FilterRegistrator< protocols::matdes::GetRBDOFValuesCreator > reg_GetRBDOFValuesCreator;
 static FilterRegistrator< protocols::matdes::InterfacePackingFilterCreator > reg_InterfacePackingFilterCreator;

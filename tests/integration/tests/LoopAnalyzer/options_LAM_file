@@ -1,0 +1,4 @@
+-in:file:s 4fxn.start_0001.pdb
+-mute core.io.database
+-out:file:score_only score.LAMf.sc
+-parser:protocol LAM_file.xml

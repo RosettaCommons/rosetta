@@ -90,6 +90,16 @@ public:
 	void
 	list_read_options( utility::options::OptionKeyList & opts );
 
+	/// @brief checks if the weights file is probably a beta_15 weights file
+	/// and if it is consistent with the options system.
+	/// static because C++ says it has to be; public because unit test
+	/// spiritually const but you can't do that with static
+	static
+	bool
+	validate_beta(
+		std::string const & weights_tag,
+		utility::options::OptionCollection const & options ) /*const*/;
+
 private:
 
 	/// @brief Applies user defined re-weighting from the options system. Reweights are applied as a

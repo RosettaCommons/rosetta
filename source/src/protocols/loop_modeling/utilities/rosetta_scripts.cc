@@ -25,6 +25,10 @@
 #include <string>
 #include <sstream>
 
+//for the copied loop tag handler
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using namespace std;
 
 using utility::tag::TagCOP;
@@ -61,6 +65,33 @@ LoopMoverOP loop_mover_from_tag(
 
 	return loop_mover;
 }
+
+/// @brief return a Loops object from tags
+/// @details returns a LoopsOP object from tags "loops_file" or a Loop subtag.  Moved from loop_modeling/LoopMover.cc.
+protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag ) {
+	protocols::loops::LoopsOP parsed_loops;
+
+	if ( tag->hasOption("loops_file") ) {
+		string loops_file = tag->getOption<string>("loops_file");
+		parsed_loops = LoopsOP( new Loops(loops_file) );
+	}
+
+	foreach ( utility::tag::TagCOP subtag, tag->getTags("Loop") ) {
+		core::Size start = subtag->getOption<Size>("start");
+		core::Size stop = subtag->getOption<Size>("stop");
+		core::Size cut = subtag->getOption<Size>("cut", 0);
+		core::Real skip_rate = subtag->getOption<Real>("skip_rate", 0.0);
+		bool extended = subtag->getOption<bool>("rebuild", false);
+
+		if ( ! parsed_loops ) {
+			parsed_loops = LoopsOP( new Loops() );
+		}
+		parsed_loops->add_loop(start, stop, cut, skip_rate, extended);
+	}
+
+	return parsed_loops;  //note may be NULL if no loops were found!
+}
+
 
 }
 }

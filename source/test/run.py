@@ -266,7 +266,7 @@ class Tester:
 
         logs_yamls = {}
 
-        # Getting list of test suite's
+        # Getting list of test suites
         self.all_test_suites = []
         self.all_test_suites_by_lib = {}
 
@@ -524,8 +524,8 @@ def main(args):
     parser.add_option("-1", "--one",
       default='', action="store",
       help="Run just one unit test or one test suite. To run one unit test-suite just specify it name, ie: '--one PDB_IO'. \
-            To run one unit test specify name of test suit, colon, then name of the test it self, like this: '--one PDB_IO:test_pdb_io'.  \
-            It is HIGHLY RECOMMENDED to run one unit test suit instead of one unit test! (when running one test all suite have to be initialized, while when running one suit this is not the case).",
+            To run one unit test specify name of test suite, colon, then name of the test it self, like this: '--one PDB_IO:test_pdb_io'.  \
+            It is HIGHLY RECOMMENDED to run one unit test suite instead of one unit test! (when running one test all suites have to be initialized, while when running one suite this is not the case).",
     )
 
     parser.add_option("-j", "--jobs",

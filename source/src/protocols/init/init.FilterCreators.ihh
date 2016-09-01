@@ -61,6 +61,8 @@
 #include <protocols/ligand_docking/MolecularMassFilterCreator.hh>
 #include <protocols/ligand_docking/MolarMassFilterCreator.hh>
 
+#include <protocols/loops/filters/LoopAnalyzerFilterCreator.hh>
+
 #include <protocols/matdes/ClashCheckFilterCreator.hh>
 #include <protocols/matdes/GetRBDOFValuesCreator.hh>
 #include <protocols/matdes/InterfacePackingFilterCreator.hh>

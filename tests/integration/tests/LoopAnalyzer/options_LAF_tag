@@ -1,0 +1,5 @@
+-in:file:s 4fxn.start_0001.pdb
+#-loops:loop_file 4fxn.loop_file
+-mute core.io.database
+-out:file:score_only score.LAFt.sc
+-parser:protocol LAF_tag.xml

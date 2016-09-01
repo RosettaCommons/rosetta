@@ -10,7 +10,7 @@
 /// @file src/protocols/simple_moves/GenericMonteCarloMover.hh
 /// @brief perform a given mover and sample structures by MonteCarlo
 /// @details The "score" evaluation of pose during MC after applying mover is done by
-/// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
+/// either FilterOP that can do report_sm() or ScoreFunctionOP you gave.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 /// @author Christopher Miles (cmiles@uw.edu)

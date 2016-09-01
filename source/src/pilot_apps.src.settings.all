@@ -849,7 +849,7 @@ sources = {
 	],
 	"pilot/smlewis" : [
 		#"Extender",
-		#"LoopAnalyzer",
+		"LoopAnalyzer",
 		#"ForgetPDBInfo",
 		"ChemXRW/PDB_diagnostic",
 	],

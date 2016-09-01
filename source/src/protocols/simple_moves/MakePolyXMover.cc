@@ -52,7 +52,7 @@ MakePolyXMoverCreator::mover_name()
 
 MakePolyXMover::MakePolyXMover():
 	protocols::moves::Mover( MakePolyXMoverCreator::mover_name() ),
-	aa_( "AA" ),
+	aa_( "ALA" ), //SML Jul 10 2016, changed AA to ALA.  Unclear if a typo or deliberate non amino acid?
 	keep_pro_( false ),
 	keep_gly_( true ),
 	keep_disulfide_cys_( false )

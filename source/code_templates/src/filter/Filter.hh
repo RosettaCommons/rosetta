@@ -51,7 +51,7 @@ public:
 	virtual std::string
 	get_name() const;
 
-	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
+	/// @brief parse XML tag (to use this Filter in Rosetta Scripts)
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,

@@ -10,7 +10,7 @@
 /// @file   core/scoring/ScoreFunctionFactory.cxxtest.hh
 /// @brief  unit testing for core/scoring/ScoreFunctionFactory.cc (just one tiny bit for now)
 /// @author Rocco Moretti (rmoretti@u.washington.edu) (ScoreFunctionUtility)
-/// @author Steven Lewis (smlewi@gmail.com) (check for beta_nov15
+/// @author Steven Lewis (smlewi@gmail.com) (check for beta_nov15)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -23,6 +23,8 @@
 
 // Package headers
 #include <basic/database/open.hh>
+
+#include <basic/options/option.hh>
 
 //Auto Headers
 
@@ -97,28 +99,82 @@ public:
 	/// @details the beta_15 family of scorefunctions requires both a weights file AND a command-line flag to activate loading of different SF parameters (like solvation parameters).  This tests that if the weights file is beta, the command line flags should have been set too.
 	void test_beta_15_behavior() {
 
+		using namespace core::scoring;
+
 		core_init_with_additional_options(""); //init with NO beta params
 		//These should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(core::scoring::ScoreFunctionFactory::create_score_function("beta_nov15.wts"));
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(core::scoring::ScoreFunctionFactory::create_score_function("beta_july15.wts"));
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
 
 		core_init_with_additional_options("-beta_nov15"); //init with beta_nov15 params
 		//shouldn't throw
-		TS_ASSERT_THROWS_NOTHING(core::scoring::ScoreFunctionFactory::create_score_function("beta_nov15.wts"));
+		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
 		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(core::scoring::ScoreFunctionFactory::create_score_function("beta_july15.wts"));
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
 
 		core_init_with_additional_options("-beta_july15"); //init with NO beta params
 		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING(core::scoring::ScoreFunctionFactory::create_score_function("beta_nov15.wts"));
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15.wts", basic::options::option));
 		//shouldn't throw
-		TS_ASSERT_THROWS_NOTHING(core::scoring::ScoreFunctionFactory::create_score_function("beta_july15.wts"));
-
+		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_july15.wts", basic::options::option));
+		return;
 	}
 
+	/// @details same test, but now without the .wts extension, since the ScoreFunction(Factory) machinery is agnostic
+	void test_beta_15_behavior_noext() {
+
+		using namespace core::scoring;
+
+		core_init_with_additional_options(""); //init with NO beta params
+		//These should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));
+
+		core_init_with_additional_options("-beta_nov15"); //init with beta_nov15 params
+		//shouldn't throw
+		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));
+
+		core_init_with_additional_options("-beta_july15"); //init with NO beta params
+		//This should utility_exit_with_message; I'm (SML) not sure how to capture or examine that it actually threw the right thing.
+		set_throw_on_next_assertion_failure();
+		TS_ASSERT_THROWS_ANYTHING(ScoreFunctionFactory::validate_beta("beta_nov15", basic::options::option));
+		//shouldn't throw
+		TS_ASSERT_THROWS_NOTHING(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta_july15", basic::options::option));
+		return;
+	}
+
+	/// @brief this function checks the return values for validate_beta
+	void test_beta_15_returns() {
+
+		using namespace core::scoring;
+
+		core_init_with_additional_options(""); //init with NO beta params
+
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("some_weights_file", basic::options::option));
+
+		//test a short string; earlier code did str.length-4, which was bad
+		//should just bail and return early with true
+		//lit = little, because "short" abbreviates badly
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("lit", basic::options::option));
+
+		//beta should return true but make noise doing it if mute isn't on
+		//(not that the latter bit there is tested)
+		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta", basic::options::option));
+
+		return;
+	}
 
 }; //ScoreFunctionFactoryTest

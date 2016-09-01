@@ -19,6 +19,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
@@ -71,8 +72,12 @@ void set_task_factory_from_tag(
 	}
 }
 
-}
-}
-}
+/// @brief return a Loops object from tags
+/// @details returns a LoopsOP object from tags "loops_file" or a Loop subtag.  Moved from loop_modeling/LoopMover.cc.
+protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag );
 
-#endif
+} //utilities
+} //loop_modeling
+} //protocols
+
+#endif //INCLUDED_protocols_loop_modeling_utilities_rosetta_scripts_HH

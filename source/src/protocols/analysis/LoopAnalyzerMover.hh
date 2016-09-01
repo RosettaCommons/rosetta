@@ -23,6 +23,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
+#include <basic/datacache/DataMap.fwd.hh>
+
 // Utility Headers
 #include <core/types.hh>
 
@@ -40,20 +42,42 @@ public:
 
 	virtual ~LoopAnalyzerMover();
 
-	/// @brief do not use a default constructor with this class - function exists as part of the remove #include drive
 	LoopAnalyzerMover();
 
 	LoopAnalyzerMover( LoopAnalyzerMover const & rhs );
 
-private:
-	/// @brief not implemented and deliberately uncallable - the tracer boolean can't be reset; why do you need this anyway?
+	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
+
 	LoopAnalyzerMover & operator = ( LoopAnalyzerMover const & rhs );
+
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual bool reinitialize_for_new_input() const {return false;} //reset allows this; true here would break loops
 
 public:
 	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
 	virtual void apply( core::pose::Pose & input_pose );
 
 	virtual std::string get_name() const;
+
+public: ///////////////////getters, setters/////////////
+	/// @brief set loops object, because public setters/getters are a rule
+	void set_loops( protocols::loops::LoopsCOP loops );
+
+	/// @brief get loops object, because public setters/getters are a rule
+	protocols::loops::LoopsCOP const & get_loops( void ) const ;
+
+	/// @brief set tracer bool, because public setters/getters are a rule
+	inline void set_use_tracer( bool tracer ) { tracer_ = tracer; }
+
+	/// @brief get tracer bool, because public setters/getters are a rule
+	inline bool get_use_tracer( void ) const { return tracer_; }
 
 	/// @brief Return the total score found from the last apply call
 	core::Real get_total_score() const;
@@ -67,6 +91,9 @@ public:
 	get_chainbreak_scores();
 
 private:
+	/// @brief reset stored data
+	void reset();
+
 	/// @brief places cutpoints in the loops, scores chainbreak, removes cutpoints
 	void calculate_all_chainbreaks( core::pose::Pose & pose );
 
@@ -81,7 +108,7 @@ private:
 	protocols::loops::LoopsCOP loops_;
 
 	/// @brief output to tracer or PDB/silent file
-	bool const tracer_;
+	bool tracer_;
 
 	/// @brief used to calculate positions to examine - loops +- 1 position are interesting, but vary w/termini, etc
 	utility::vector1< core::Size > positions_;

@@ -39,7 +39,7 @@ public:
 	void
 	apply(core::pose::Pose & pose ){
 		LAM->apply(pose);
-		set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY); //hacky way to prevent output
+		//set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY); //hacky way to prevent output
 		return;
 	}
 
@@ -56,19 +56,19 @@ main( int argc, char* argv[] )
 
 	try {
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	// read loops file
-	protocols::loops::Loops loops( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
+		// read loops file
+		protocols::loops::Loops loops( basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value()[1] );
 
-	TR << "initial loops " << loops << std::flush;
-	TR << "Read in files" << std::endl;
+		TR << "initial loops " << loops << std::flush;
+		TR << "Read in files" << std::endl;
 
-	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP(new hackLAMMover(loops)));
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP(new hackLAMMover(loops)));
 
-	TR << "************************d**o**n**e**************************************" << std::endl;
+		TR << "************************d**o**n**e**************************************" << std::endl;
 
-	return 0;
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

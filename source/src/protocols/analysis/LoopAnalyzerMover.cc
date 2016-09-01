@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/analysis/LoopAnalyzerMover.hh>
+#include <protocols/analysis/LoopAnalyzerMoverCreator.hh>
 
 // Package Headers
 #include <protocols/loops/Loop.hh>
@@ -27,12 +28,16 @@
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
 
-
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
+
+#include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 
 // Utility Headers
 #include <ObjexxFCL/FArray1D.hh> //necessary for fold tree tricks
@@ -40,15 +45,16 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/vector1.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // C++ Headers
 #include <sstream>
 #include <iomanip>
-
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
-#include <utility/vector1.hh>
-
+#include <limits>
 
 using basic::T;
 using basic::Error;
@@ -65,20 +71,24 @@ std::ostream & which_ostream( std::ostream & ost, std::ostream & oss, bool const
 	return oss;
 }
 
+//This should be std::numeric_limits<core::Real>::lowest(), but that's cxx11
+core::Real const REAL_FAKE_MIN = -1000000;
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////LoopAnalyzerMover////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer ) :
 	Mover(),
-	loops_(protocols::loops::LoopsCOP( protocols::loops::LoopsOP( new protocols::loops::Loops(loops) ) )),
+	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(loops) )),
 	tracer_(tracer),
 	sf_(/* NULL */),
 	chbreak_sf_(/* NULL */),
 	total_score_(0),
-	max_rama_(-100000),
-	max_chainbreak_(-100000),
-	max_omega_(-100000),
-	max_pbond_(-100000)
+	max_rama_(REAL_FAKE_MIN),
+	max_chainbreak_(REAL_FAKE_MIN),
+	max_omega_(REAL_FAKE_MIN),
+	max_pbond_(REAL_FAKE_MIN)
 {
 	protocols::moves::Mover::type( "LoopAnalyzer" );
 	set_sf();
@@ -86,24 +96,55 @@ LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, boo
 
 LoopAnalyzerMover::~LoopAnalyzerMover() {}
 
-/// @brief do not use a default constructor with this class - function exists as part of the remove #include drive
-LoopAnalyzerMover::LoopAnalyzerMover() : tracer_(false) { utility_exit_with_message("do not use default constructor of class LoopAnalyzerMover"); }
+//Isn't there some fancy way to have ctors call each other to deduplicate this code?
+LoopAnalyzerMover::LoopAnalyzerMover() :
+	Mover(),
+	tracer_(true), // WAG, who knows what user wants
+	sf_(/* NULL */),
+	chbreak_sf_(/* NULL */),
+	total_score_(0),
+	max_rama_(REAL_FAKE_MIN),
+	max_chainbreak_(REAL_FAKE_MIN),
+	max_omega_(REAL_FAKE_MIN),
+	max_pbond_(REAL_FAKE_MIN)
+{
+	protocols::moves::Mover::type( "LoopAnalyzer" );
+	set_sf();
+}
 
 LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
 	//utility::pointer::ReferenceCount(),
-	Mover(),
-	loops_(protocols::loops::LoopsCOP( protocols::loops::LoopsOP( new protocols::loops::Loops(*(rhs.loops_)) ) )),
-	tracer_(rhs.tracer_),
-	positions_(rhs.positions_), //this is useless data
-	sf_(rhs.sf_->clone()),
-	chbreak_sf_(rhs.chbreak_sf_->clone()),
-	scores_(rhs.scores_) //useless
-{}
+	Mover()
+{
+	*this = rhs;
+}
+
+// lhs.scorefxn_minimizer_        = rhs.scorefxn_minimizer_       ;
+
+
+LoopAnalyzerMover & LoopAnalyzerMover::operator=( LoopAnalyzerMover const & rhs ) {
+	if ( this == &rhs ) return *this;
+
+	loops_ = protocols::loops::LoopsCOP( new protocols::loops::Loops(*(rhs.loops_) ) );
+	tracer_ = rhs.tracer_;
+	positions_ = rhs.positions_; //this is useless data
+	sf_ = rhs.sf_->clone();
+	chbreak_sf_ = rhs.chbreak_sf_->clone();
+	scores_ = rhs.scores_; //useless
+	total_score_ = rhs.total_score_;
+	max_rama_ = rhs.max_rama_;
+	max_chainbreak_ = rhs.max_chainbreak_;
+	max_omega_ = rhs.max_omega_;
+	max_pbond_ = rhs.max_pbond_;
+
+	return *this;
+}
+
 
 void LoopAnalyzerMover::set_sf(){
 	using namespace core::scoring;
 
-	sf_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
+	sf_ = ScoreFunctionOP( new ScoreFunction );
 	sf_->set_weight( rama, 1.0 );
 	sf_->set_weight( omega, 1.0 );
 	sf_->set_weight( fa_dun, 1.0 );
@@ -111,19 +152,37 @@ void LoopAnalyzerMover::set_sf(){
 	//sf_->set_weight( chainbreak, 1.0 );
 	sf_->set_weight( peptide_bond, 1.0 );
 
-	chbreak_sf_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
+	chbreak_sf_ = ScoreFunctionOP( new ScoreFunction );
 	chbreak_sf_->set_weight( chainbreak, 20.0 );
 
 	return;
 }
 
-/// @details LoopAnalyzerMover is mostly a container for other movers for the anchored design protocol.
+/// @brief reset stored data
+void LoopAnalyzerMover::reset() {
+	scores_.clear();
+	max_rama_ = REAL_FAKE_MIN;
+	max_chainbreak_ = REAL_FAKE_MIN;
+	max_omega_ = REAL_FAKE_MIN;
+	max_pbond_ = REAL_FAKE_MIN;
+}
+
+/// @details LoopAnalyzerMover
 void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 {
 	TR << "running LoopAnalyzerMover" << std::endl;
 
+	reset();
+
 	//prep pose
-	core::pose::Pose pose(input_pose); //protecting input pose from our chainbreak changes (and its energies object)
+	core::pose::Pose pose;
+	//if symmetric, desymmetrize; otherwise just make a local copy
+	if ( !basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+		pose = input_pose; //protecting input pose from our chainbreak changes (and its energies object)
+	} else {
+		core::pose::symmetry::extract_asymmetric_unit(input_pose, pose, false); //don't need VIRTs
+	}
+
 	find_positions(pose);
 	calculate_all_chainbreaks(pose);
 	(*sf_)(pose);
@@ -189,37 +248,71 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 	return;
 }//LoopAnalyzerMover::apply
 
+
+void
+LoopAnalyzerMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap& ,
+	protocols::filters::Filters_map const & ,
+	protocols::moves::Movers_map const & ,
+	core::pose::Pose const & )
+{
+	set_use_tracer(tag->getOption< bool >( "use_tracer", false ) );
+	set_loops(protocols::loop_modeling::utilities::parse_loops_from_tag(tag));
+}
+
+/// @brief required in the context of the parser/scripting scheme
+protocols::moves::MoverOP
+LoopAnalyzerMover::fresh_instance() const
+{
+	return protocols::moves::MoverOP( new LoopAnalyzerMover );
+}
+
+/// @brief required in the context of the parser/scripting scheme
+protocols::moves::MoverOP
+LoopAnalyzerMover::clone() const
+{
+	return protocols::moves::MoverOP( new LoopAnalyzerMover( *this ) );
+}
+
 std::string
 LoopAnalyzerMover::get_name() const {
 	return "LoopAnalyzerMover";
 }
 
+//////////////////////////getters, setters/////////////////////
+/// @brief set loops object, because public setters/getters are a rule
+void LoopAnalyzerMover::set_loops( protocols::loops::LoopsCOP loops ) { loops_ = loops; }
+
+/// @brief get loops object, because public setters/getters are a rule
+protocols::loops::LoopsCOP const & LoopAnalyzerMover::get_loops( void ) const { return loops_; }
+
 core::Real
-LoopAnalyzerMover::get_total_score() const{
+LoopAnalyzerMover::get_total_score() const {
 	return total_score_;
 }
 
 core::Real
-LoopAnalyzerMover::get_max_rama() const{
+LoopAnalyzerMover::get_max_rama() const {
 	return max_rama_;
 }
 
 core::Real
-LoopAnalyzerMover::get_max_omega() const{
+LoopAnalyzerMover::get_max_omega() const {
 	return max_omega_;
 }
 core::Real
-LoopAnalyzerMover::get_max_pbond() const{
+LoopAnalyzerMover::get_max_pbond() const {
 	return max_pbond_;
 }
 
 core::Real
-LoopAnalyzerMover::get_max_chainbreak() const{
+LoopAnalyzerMover::get_max_chainbreak() const {
 	return max_chainbreak_;
 }
 
 utility::vector1<core::Real>
-LoopAnalyzerMover::get_chainbreak_scores(){
+LoopAnalyzerMover::get_chainbreak_scores() {
 	return scores_;
 }
 
@@ -280,6 +373,26 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 
 	return;
 }//calculate_all_chainbreaks
+
+
+////////////////////creator/////////////////////////////
+
+std::string
+LoopAnalyzerMoverCreator::keyname() const
+{
+	return LoopAnalyzerMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopAnalyzerMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopAnalyzerMover() );
+}
+
+std::string
+LoopAnalyzerMoverCreator::mover_name()
+{
+	return "LoopAnalyzerMover";
+}
 
 
 }//analysis

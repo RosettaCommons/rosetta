@@ -1,0 +1,16 @@
+<ROSETTASCRIPTS>
+  <TASKOPERATIONS>
+  </TASKOPERATIONS>
+  <SCOREFXNS>
+  </SCOREFXNS>
+  <FILTERS>
+  </FILTERS>
+  <MOVERS>
+    <LoopAnalyzerMover name=LAM_file use_tracer=false loops_file="4fxn.loop_file"/>
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover=LAM_file/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

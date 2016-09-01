@@ -1,0 +1,9 @@
+-in:file:fullatom
+-in:file:s inputs/4fxn.start_0001.pdb
+-loops:loop_file inputs/4fxn.loop_file
+-loops:frag_sizes 9 3 1
+-loops:frag_files  inputs/cc4fxn_09_05.200_v1_3.gz inputs/cc4fxn_03_05.200_v1_3.gz none
+-loops:remodel quick_ccd
+-loops:ccd_closure
+-loops:random_loop
+-mute core.io.database

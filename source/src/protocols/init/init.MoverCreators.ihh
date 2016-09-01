@@ -20,6 +20,7 @@
 #include <protocols/abinitio/DomainAssemblyCreator.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMoverCreator.hh>
+#include <protocols/analysis/LoopAnalyzerMoverCreator.hh>
 
 #include <protocols/antibody/AntibodyCDRGrafterCreator.hh>
 
@@ -234,6 +235,7 @@
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 #include <protocols/moves/PyMolMoverCreator.hh>
 #include <protocols/moves/RampingMoverCreator.hh>
+#include <protocols/moves/FilterReportAsPoseExtraScoresMoverCreator.hh>
 
 #include <protocols/simple_moves/MonteCarloRecoverCreator.hh>
 #include <protocols/simple_moves/MonteCarloTestCreator.hh>

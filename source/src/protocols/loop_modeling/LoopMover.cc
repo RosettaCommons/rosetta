@@ -19,6 +19,7 @@
 
 // Protocol headers
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -63,29 +64,8 @@ void LoopMover::parse_my_tag( // {{{1
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &) {
 
-	using utility::tag::TagCOP;
-
-	// Parse the 'loops_file' option and any <Loop> subtags.
-
-	LoopsOP parsed_loops;
-
-	if ( tag->hasOption("loops_file") ) {
-		string loops_file = tag->getOption<string>("loops_file");
-		parsed_loops = LoopsOP( new Loops(loops_file) );
-	}
-
-	foreach ( TagCOP subtag, tag->getTags("Loop") ) {
-		Size start = subtag->getOption<Size>("start");
-		Size stop = subtag->getOption<Size>("stop");
-		Size cut = subtag->getOption<Size>("cut", 0);
-		Real skip_rate = subtag->getOption<Real>("skip_rate", 0.0);
-		bool extended = subtag->getOption<bool>("rebuild", false);
-
-		if ( ! parsed_loops ) {
-			parsed_loops = LoopsOP( new Loops() );
-		}
-		parsed_loops->add_loop(start, stop, cut, skip_rate, extended);
-	}
+	//SML Jul 11 2016, moved this function to a utilities section for sharing
+	LoopsOP parsed_loops(protocols::loop_modeling::utilities::parse_loops_from_tag(tag));
 
 	// Don't override any loops that may be specified in parent movers unless
 	// loops really were specified here.

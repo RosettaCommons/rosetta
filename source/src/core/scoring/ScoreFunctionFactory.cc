@@ -42,7 +42,7 @@
 
 using basic::T;
 
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.ScoreFunctionFactory" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.ScoreFunctionFactory" );
 
 namespace core {
 namespace scoring {
@@ -106,35 +106,14 @@ ScoreFunctionFactory::create_score_function(
 		}
 	}
 
-	//If requested tag is beta_nov15 or beta_july15, but the user did not pass the relevant options-system option, ERROR
-	//This is because this scorefunction family has overrides to parameters (LK solvation params, etc)
-	//Those are loaded from the command-line flag, not the weights file
-	//Using only the weights file will give you mismatched weights/params and much sadness.
-	bool const betanov15_active(options[corrections::beta_nov15].value()
-		|| options[corrections::beta_nov15_cart].value() );
-	bool const betajuly15_active(options[corrections::beta_july15].value()
-		|| options[corrections::beta_july15_cart].value() );
-	//bool const sf_maybe_beta(weights_tag.find("beta") != weights_tag.end()) Can't remember string slicing syntax; programming on airplane
-	if ( (weights_tag == (BETA_NOV15+".wts")) && !betanov15_active ) {
-		utility_exit_with_message(BETA_NOV15 + ".wts requested, but -corrections::beta_nov15 not set to true. This leads to a garbage scorefunction.  Exiting.");
-	} else if ( (weights_tag == (BETA_JULY15+".wts")) && !betajuly15_active ) {
-		utility_exit_with_message(BETA_JULY15 + ".wts requested, but -corrections::beta_july15 not set to true. This leads to a garbage scorefunction.  Exiting.");
-	} /* else if (sf_maybe_beta && !beta_nov15_active && !beta_july15_active) {
-	TR.Warning << "**************************************************************************\n"
-	<< "*****************************************************\n"
-	<< "****************************************************\n"
-	<< weights_tag << " may be a 'beta' scorefunction, but ScoreFunctionFactory thinks the beta flags weren't set.  "
-	<< "Your scorefunction may be garbage!\n"
-	<< "**************************************************************************\n"
-	<< "*****************************************************\n"
-	<< "****************************************************" << std::endl; */ //commented until maybe_beta syntax right
+	runtime_assert(validate_beta(weights_tag, options));
 
 	load_weights_file( weights_tag, scorefxn );
 
 	for ( utility::vector1< std::string >::const_iterator it = patch_tags.begin(); it != patch_tags.end(); ++it ) {
 		std::string const& patch_tag( *it );
 		if ( patch_tag.size() && patch_tag != "NOPATCH" ) {
-			//   tr.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
+			//   TR.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
 			scorefxn->apply_patch_from_file( patch_tag );
 		}
 	}
@@ -146,6 +125,68 @@ ScoreFunctionFactory::create_score_function(
 	return scorefxn;
 }
 
+
+/// @details If requested tag is beta_nov15 or beta_july15, but the user did not
+/// pass the relevant options-system option, ERROR!  This is because this
+/// scorefunction family has overrides to parameters (LK solvation params, etc).
+/// Those are loaded from the command-line flag, not the weights file. Using
+/// only the weights file will give you mismatched weights/params and much
+/// sadness.
+bool
+ScoreFunctionFactory::validate_beta(
+	std::string const & weights_tag,
+	utility::options::OptionCollection const & options
+)
+{
+
+	bool const sf_maybe_beta(weights_tag.find("beta") != std::string::npos);
+	core::Size const weights_length(weights_tag.length());
+
+	//if the scorefunction does't have beta in it, we're OK.
+	//If the length is less than 4, also abort, because later substr() operations
+	//will go out of range.
+	//(As the code stands this latter check is irrelevant, but I'm leaving it in
+	//in case we check for a string that isn't literally "beta", which happens to
+	//be the same char length as ".wts"
+	if ( !sf_maybe_beta || weights_length < 4 ) return true;
+
+	//determine if weights_tag has .wts or not
+	//This Size is protected from overflow by the above if < 4
+	core::Size const fname_length(weights_tag.length() - 4); //4 represents ".wts"
+	std::string const weights_tag_extension(weights_tag.substr(fname_length)); // might or might not actually be an extension
+	bool const weights_tag_has_extension(weights_tag_extension == ".wts");
+	//this ternary creates the de-extended weights tag if it was extended
+	std::string const weights_tag_no_extension(weights_tag_has_extension ? weights_tag.substr(0, fname_length): weights_tag);
+
+	//Determine which user options are active and concerning
+	//Note this is checking a function argument options, not the global options
+	//not sure why create_score_function is like that.
+	using namespace basic::options::OptionKeys;
+	bool const betanov15_active(options[corrections::beta_nov15].value()
+		|| options[corrections::beta_nov15_cart].value() );
+	bool const betajuly15_active(options[corrections::beta_july15].value()
+		|| options[corrections::beta_july15_cart].value() );
+
+	if ( (weights_tag_no_extension == (BETA_NOV15)) && !betanov15_active ) {
+		utility_exit_with_message(BETA_NOV15 + "(.wts) requested, but -corrections::beta_nov15 not set to true. This leads to a garbage scorefunction.  Exiting.");
+		return false; //can't get here
+	} else if ( (weights_tag_no_extension == (BETA_JULY15)) && !betajuly15_active ) {
+		utility_exit_with_message(BETA_JULY15 + "(.wts) requested, but -corrections::beta_july15 not set to true. This leads to a garbage scorefunction.  Exiting.");
+		return false; //can't get here
+	} else if ( sf_maybe_beta && !betanov15_active && !betajuly15_active ) {
+		TR.Warning << "**************************************************************************\n"
+			<< "*****************************************************\n"
+			<< "****************************************************\n"
+			<< weights_tag << " may be a 'beta' scorefunction, but ScoreFunctionFactory thinks the beta flags weren't set.  "
+			<< "Your scorefunction may be garbage!\n"
+			<< "**************************************************************************\n"
+			<< "*****************************************************\n"
+			<< "****************************************************" << std::endl;
+		//return something between true and false, if there was such a thing
+	}
+
+	return true;
+} //ScoreFunctionFactory::validate_beta
 
 ScoreFunctionOP
 ScoreFunctionFactory::create_score_function( std::string const & weights_tag, std::string const & patch_tag )
@@ -178,7 +219,11 @@ ScoreFunctionFactory::list_read_options( utility::options::OptionKeyList & opts 
 		+ score::set_weights
 		+ abinitio::rg_reweight
 		+ score::ref_offset
-		+ score::ref_offsets;
+		+ score::ref_offsets
+		+ basic::options::OptionKeys::corrections::beta_nov15
+		+ basic::options::OptionKeys::corrections::beta_nov15_cart
+		+ basic::options::OptionKeys::corrections::beta_july15
+		+ basic::options::OptionKeys::corrections::beta_july15_cart;
 }
 
 void ScoreFunctionFactory::apply_user_defined_reweighting_(
@@ -199,7 +244,7 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_(
 			if ( !ObjexxFCL::is_float( settings[ 2*i+2 ] ) ) utility_exit_with_message( errmsg );
 			ScoreType const t( score_type_from_name( settings[ 2*i + 1] ) );
 			Real const value( ObjexxFCL::float_of( settings[ 2*i + 2 ] ) );
-			tr << "Setting/modifying scorefxn weight from command line: " << t << ' ' << value << std::endl;
+			TR << "Setting/modifying scorefxn weight from command line: " << t << ' ' << value << std::endl;
 			scorefxn->set_weight( t, value );
 		}
 	}
@@ -314,16 +359,16 @@ get_score_function(
 		// Default score is talaris2014 if the user has not specified a score weights file or a patch file
 		// on the command line.
 
-		//tr << "get_score_function1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
-		//tr << "options[ score::weights ].user() ? " << options[ score::weights ].user() << std::endl;
-		//tr << "options[ score::patch ].user() ? " << options[ score::patch ].user() << std::endl;
+		//TR << "get_score_function1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
+		//TR << "options[ score::weights ].user() ? " << options[ score::weights ].user() << std::endl;
+		//TR << "options[ score::patch ].user() ? " << options[ score::patch ].user() << std::endl;
 
 		if ( ( weight_set == "pre_talaris_2013_standard.wts" && !options[ score::weights ].user() ) &&
 				( !options[ score::patch ].user() ) ) {
 			patch_tags.push_back( "score12" );
-			//tr << "pushing back score12 patch" << std::endl;
+			//TR << "pushing back score12 patch" << std::endl;
 			if ( options[corrections::correct] ) {
-				//tr << "setting weight set to score12_w_corrections" << std::endl;
+				//TR << "setting weight set to score12_w_corrections" << std::endl;
 				weight_set = "score12_w_corrections";
 				patch_tags.clear();
 			} else if ( options[ corrections::hbond_sp2_correction ] ) {
@@ -338,7 +383,7 @@ get_score_function(
 				patch_tags.clear();
 			}
 		}
-		//tr << "get_score_function2: weight set " << weight_set << std::endl;
+		//TR << "get_score_function2: weight set " << weight_set << std::endl;
 	}
 
 	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << utility::CSI_Green << weight_set << utility::CSI_Reset << std::endl;
@@ -375,8 +420,8 @@ get_score_function(
 
 	// Turn on carbohydrate energy method weights if the user has supplied the -include_sugars flag.
 	if ( options[ in::include_sugars ].user() ) {
-		if ( tr.Info.visible() ) {
-			tr.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
+		if ( TR.Info.visible() ) {
+			TR.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
 				"Setting sugar_bb weight to 1.0 by default." << std::endl;
 		}
 		scorefxn->set_weight( sugar_bb, 1.0);

@@ -137,17 +137,19 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
 
 /// getters/setters for things in the Pose DataCache
 
-// ARBITRARY_FLOAT_DATA
+/// @brief return bool is T/F for whether the requested datum exists.  "value" is the data, pass-by-ref.
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name,
 	core::Real & value
 );
 
+/// @brief return value is ExtraScore if exist, runtime_assert if it doesn't exist
 Real getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name );
 
+/// @brief does this ExtraScore exist?
 bool
 hasPoseExtraScore(
 	core::pose::Pose const & pose,
@@ -168,7 +170,7 @@ void clearPoseExtraScores(
 	core::pose::Pose & pose
 );
 
-// ARBITRARY_STRING_DATA
+/// @brief return bool is T/F for whether the requested datum exists.  "value" is the data, pass-by-ref.
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name,
