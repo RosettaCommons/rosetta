@@ -42,7 +42,7 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-using namespace boost;
+//using namespace boost;
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
 using utility::io::izstream;
@@ -134,7 +134,7 @@ CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() {}
 utility::vector1<CDRSeqDesignOptionsOP>
 CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
-	for ( core::Size i = 1; i <= 6; ++i ) {
+	for ( Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_default_and_user_options( cdr, filename ) );
 	}

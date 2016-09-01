@@ -712,7 +712,18 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	Real & theta0
 ) {
 	Ktheta = k_angle_;
-
+	
+	// AMW: better yet, ascertain why this is happening
+	if ( atm1 <= 0 || atm2 <= 0 || atm3 <= 0 ) return;
+	/*
+	TR << "restype " << restype.name() << std::endl;
+	TR << "atoms: ";
+	TR << atm1 << std::endl << restype.atom_name( atm1 ) << ", ";
+	TR << atm2 << std::endl << restype.atom_name( atm2 ) << ", ";
+	TR << atm3 << std::endl << restype.atom_name( atm3 ) << ", ";
+	TR << std::endl;
+	*/
+	
 	// Create mini-conformation for idealized residue
 	conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
 
@@ -1379,10 +1390,10 @@ IdealParametersDatabase::create_parameters_for_restype(
 	if ( rsd_type.is_protein() ) {
 		/// backbone dependent bond lengths
 		bool is_nterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_lower_terminus()); //Modified by VKM to check for D-amino acids
-		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amnio acids
+		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amino acids
 		for ( int i=1; i<=5; ++i ) {
 			if ( i==1 && is_nterm ) continue;
-			if ( i==3 && rsd_type.aa() == core::chemical::aa_gly ) continue;
+			if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.name3() == "B3G" ) ) continue;
 
 			std::string atm1,atm2;
 			int rt1 = 0;
@@ -1403,7 +1414,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		// backbone dependent bond angles
 		for ( int i=1; i<=7; ++i ) {
-			if ( (i==2 || i==4) && rsd_type.aa() == core::chemical::aa_gly ) continue;
+			if ( (i==2 || i==4) && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.name3() == "B3G" ) ) continue;
 			if ( i==1 && is_nterm ) continue;
 			if ( (i==6 || i==7) && is_cterm ) continue;
 

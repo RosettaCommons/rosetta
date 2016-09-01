@@ -621,6 +621,8 @@ CT1  CT2  CA     51.800   107.5000 ! ALLOW   ALI ARO
                 ! PARALLH19 (JES)
 C    CT1  CA    53.350    114.00    8.00   2.56100 ! ALLOW   ALI
                 ! AMW no hope
+CT1  CT2  C      52.000   108.0000 ! ALLOW   ALI PEP POL ARO
+                ! AMW for beta amino acids
 CT1  CT2  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 CT1  CT2  CD     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
@@ -937,6 +939,8 @@ HB   CT1  CT1    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT1  CT2    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
+HB   CT2  CT1    35.000   111.0000 ! ALLOW  PEP
+                ! AMW beta amino acids
 HB   CT1  CT3    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT1  NR2    35.000   111.0000 ! ALLOW  PEP

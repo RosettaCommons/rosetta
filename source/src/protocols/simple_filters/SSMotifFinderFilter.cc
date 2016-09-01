@@ -181,7 +181,6 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 	using namespace std;
 	using core::Size;
 	using core::Real;
-	using namespace boost;
 	using utility::vector1;
 
 	core::scoring::dssp::Dssp pose_dssp( pose );

@@ -26,10 +26,6 @@ namespace protocols {
 namespace simple_moves {
 namespace hbs {
 
-void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std );
-void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position );
-
-
 /// @details
 class HbsPatcher : public protocols::moves::Mover {
 

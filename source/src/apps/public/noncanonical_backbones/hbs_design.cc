@@ -14,6 +14,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/ncbb/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -210,7 +211,7 @@ HbsDesignMover::apply(
 		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			hbs_seq_positions.push_back( i );
 			//kdrew: set up constraints
-			add_hbs_constraint( pose, i );
+			core::pose::ncbb::add_hbs_constraint( pose, i );
 			//kdrew: do not use small/shear mover on hbs positions, use hbs mover instead
 			pert_pep_mm->set_bb( i, false );
 

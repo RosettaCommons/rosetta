@@ -40,6 +40,7 @@ static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.CDRSetOptionsPar
 namespace protocols {
 namespace antibody {
 
+using namespace core;
 using namespace boost;
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
@@ -195,7 +196,7 @@ CDRSetOptionsParser::parse_cdr_option(std::string const & mode, vector1<string> 
 }
 
 void
-CDRSetOptionsParser::check_line_len(const vector1<string> & lineSP, const core::Size len_check) const {
+CDRSetOptionsParser::check_line_len(const vector1<string> & lineSP, const Size len_check) const {
 	if ( lineSP.size() < len_check ) {
 		utility_exit_with_message("Could not parse cdr_set instructions. Line not long enough: "+utility::to_string(len_check)+" "+utility::to_string(lineSP));
 	}
@@ -268,7 +269,7 @@ void
 CDRSetOptionsParser::set_cdr_set_include_options(std::string const & type, vector1<string> const & lineSP) {
 
 	this->clear_cdr_set_include_options(type);
-	for ( core::Size i=5; i<=lineSP.size(); ++i ) {
+	for ( Size i=5; i<=lineSP.size(); ++i ) {
 
 		std::string item = lineSP[i];
 
@@ -300,7 +301,7 @@ CDRSetOptionsParser::clear_cdr_set_include_options( std::string const & type ) {
 	} else if ( type == "PDBIDS" || type == "PDBID" || type == "PDB" ) {
 		cdr_options_->include_only_pdbs_clear();
 	} else if ( type == "TYPES" || type == "LENGTH_TYPES" ) {
-		for ( core::Size i = 1; i <=3; ++i ) {
+		for ( Size i = 1; i <=3; ++i ) {
 			cdr_options_->length_type(i, false);
 		}
 	} else if ( type == "SPECIES" ) {
@@ -314,7 +315,7 @@ void
 CDRSetOptionsParser::set_cdr_set_exclude_options(std::string const & type, vector1<string> const & lineSP){
 
 	this->clear_cdr_set_exclude_options(type);
-	for ( core::Size i=5; i<=lineSP.size(); ++i ) {
+	for ( Size i=5; i<=lineSP.size(); ++i ) {
 
 		std::string item = lineSP[i];
 

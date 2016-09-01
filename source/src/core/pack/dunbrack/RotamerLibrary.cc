@@ -2188,8 +2188,6 @@ RotamerLibrary::initialize_dun02_aa_parameters(
 /// derived classes.
 void RotamerLibrary::write_to_binary(utility::io::ozstream & out) const {
 
-	using namespace boost;
-
 	Size count_libraries( 0 );
 	for ( core::Size ii(1); ii <= aa_libraries_.size(); ++ii ) {
 		SingleResidueDunbrackLibraryCOP srdl =

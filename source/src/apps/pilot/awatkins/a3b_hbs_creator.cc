@@ -599,21 +599,22 @@ A3BHbsCreatorMover::delete_extra_residues(
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		char chn = pose.pdb_info()->chain(i);
-		//TR << "evaluating residue " << chn  << " " << pdb_info->number(i) << std::endl;
-
 		if ( chn != hbs_chain_ ) continue;
 		core::Size pdb_res_num = pose.pdb_info()->number(i);
 
 		// hbs pre is the smallest number of what we want to preserve
+		// AMW: this actually doesn't work at all.
 		if ( pdb_res_num < final_res ) {
-			//TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
 			while ( pdb_res_num < final_res ) {
+				//TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
 				pose.delete_polymer_residue(i);
+				//TR << "deleted residue " << pdb_res_num << std::endl;
 				pdb_res_num = pose.pdb_info()->number(i);
+				//TR << "now residue " << i << " refers to " << pdb_res_num << std::endl;
 			}
 
 		} else if ( pdb_res_num > final_res + hbs_length_ ) {
-			TR << "deleting residue " << pdb_res_num << std::endl;
+			//TR << "deleting residue " << pdb_res_num << std::endl;
 			while ( chn == hbs_chain_ && i <= pose.total_residue() ) {
 				chn = pose.pdb_info()->chain(i);
 				pose.delete_polymer_residue(i);
@@ -722,11 +723,23 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 	}
 	pose.add_constraint(
 		ConstraintOP(
-		new AtomPairConstraint(
-		AtomID( pose.residue( pose.total_residue()-4   ).atom_index( "O" ), pose.total_residue()-4 ),
-		AtomID( pose.residue( pose.total_residue() ).atom_index( "HM" ), pose.total_residue() ),
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-		) ) );
+			new AtomPairConstraint(
+				AtomID( pose.residue( pose.total_residue()-3   ).atom_index( "O" ), pose.total_residue()-3 ),
+				AtomID( pose.residue( pose.total_residue() ).atom_index( "HM" ), pose.total_residue() ),
+				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+	) ) );
+	
+	Size const nres = pose.total_residue();
+	std::string const i_omg_atom = pose.residue_type( nres ).is_beta_aa() ? "CM" : "CA";
+	pose.add_constraint(
+		ConstraintOP(
+			new DihedralConstraint(
+				AtomID( pose.residue( nres ).atom_index( i_omg_atom ), nres ),
+				AtomID( pose.residue( nres ).atom_index( "C"   ), nres ),
+				AtomID( pose.residue( nres ).atom_index( "NM"  ), nres ),
+				AtomID( pose.residue( nres ).atom_index( "CN"  ), nres ),
+				core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
+	) ) );
 }
 
 void
@@ -780,18 +793,23 @@ A3BHbsCreatorMover::apply(
 
 			conformation::Residue ala( restype_set->name_map( "B3A"+a3bpose.residue_type( i ).name().substr(3) ), true );
 			a3bpose.replace_residue( i, ala, true );
-			conformation::idealize_position( i, a3bpose.conformation() );
-
-			// TR << "Swapped position " << i << " and is now " <<
+			//conformation::idealize_position( i, a3bpose.conformation() );
 		} else {
 			if ( a3bpose.residue_type( i ).name3() != "PRO" ) continue; //&& pose.residue_type( i ).name3() != "B3P" ) continue;
 
 			conformation::Residue ala( restype_set->name_map( "ALA"+a3bpose.residue_type( i ).name().substr(3) ), true );
 			a3bpose.replace_residue( i, ala, true );
-			conformation::idealize_position( i, a3bpose.conformation() );
+			//conformation::idealize_position( i, a3bpose.conformation() );
 		}
 	}
 
+	kinematics::MoveMapOP promutmm( new kinematics::MoveMap() );
+	promutmm->set_bb( true );
+	promutmm->set_chi( true );
+	simple_moves::MinMoverOP promutmin( new protocols::simple_moves::MinMover( promutmm, score_fxn_/*cart_*/, "lbfgs_armijo_nonmonotone", 1, true ) );
+	promutmin->cartesian( false );//true );
+	promutmin->apply( a3bpose );
+	
 	for ( Size i = 1; i <= a3bpose.total_residue() - 4; ++i ) {
 		TR << "constraining " << i << std::endl;
 
@@ -803,25 +821,24 @@ A3BHbsCreatorMover::apply(
 			core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
 			) ) );
 	}
-
+	
 	// presently the final residue in the pose is the terminal residue of the hbs
 	// replace with terminal variant
 	conformation::Residue term( restype_set->get_residue_type_with_variant_added(a3bpose.residue(a3bpose.total_residue()).type(), chemical::METHYLATED_CTERMINUS_VARIANT), true );
 	term.set_all_chi(a3bpose.residue(a3bpose.total_residue()).chi());
-	//replace_res_post.mainchain_torsions(pose.residue(oop_post_pos_).mainchain_torsions());
 	a3bpose.replace_residue( a3bpose.total_residue(), term, true );
 	conformation::idealize_position( a3bpose.total_residue(), a3bpose.conformation() );
 	a3bpose.add_constraint(
 		ConstraintOP(
-		new AtomPairConstraint(
-		AtomID( a3bpose.residue( a3bpose.total_residue()-4   ).atom_index( "O" ), a3bpose.total_residue()-4 ),
-		AtomID( a3bpose.residue( a3bpose.total_residue() ).atom_index( "HM" ), a3bpose.total_residue() ),
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
-		) ) );
+			new AtomPairConstraint(
+				AtomID( a3bpose.residue( a3bpose.total_residue()-3   ).atom_index( "O" ), a3bpose.total_residue()-3 ),
+				AtomID( a3bpose.residue( a3bpose.total_residue() ).atom_index( "HM" ), a3bpose.total_residue() ),
+				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+	) ) );
 
 	// PATCH
-	// If offset is two then we need a special HBS patch for this pattern
-	if ( offset_ == 0 ) {
+	// If offset is three then we need a special HBS patch for this pattern
+	if ( offset_ == 3 ) {
 		a3b_hbs::A3BHbsPatcherOP hbs_patcher( new a3b_hbs::A3BHbsPatcher( 1 ) );
 		hbs_patcher->apply( a3bpose );
 	} else {
@@ -866,9 +883,14 @@ A3BHbsCreatorMover::apply(
 	kinematics::MoveMapOP a3blittlemm( new kinematics::MoveMap() );
 	a3blittlemm->set_bb( true );
 	a3blittlemm->set_chi( true );
-	simple_moves::MinMoverOP a3blittlemin( new protocols::simple_moves::MinMover( a3blittlemm, score_fxn_cart_, "lbfgs_armijo_nonmonotone", 1, true ) );
-	a3blittlemin->cartesian( true );
-	a3blittlemin->apply( a3bpose );
+	simple_moves::MinMoverOP a3blittlemin( new protocols::simple_moves::MinMover( a3blittlemm, score_fxn_/*cart_*/, "lbfgs_armijo_nonmonotone", 1, true ) );
+	a3blittlemin->cartesian( false );
+	for ( Size ii = 0; ii <= 10; ++ii ) {
+		score_fxn_->set_weight_if_zero( atom_pair_constraint, 0.01*ii );
+		score_fxn_->set_weight_if_zero( dihedral_constraint, 0.01*ii );
+		score_fxn_->set_weight_if_zero( angle_constraint, 0.01*ii );
+		a3blittlemin->apply( a3bpose );
+	}
 	a3bpose.dump_pdb( "posta3blittlemin.pdb");
 
 	PDBInfoCOP pdb_info = pose.pdb_info();

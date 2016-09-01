@@ -21,6 +21,7 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/ncbb/util.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -49,6 +50,8 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/ncbb/SecStructFinder.hh>
@@ -95,33 +98,28 @@ int main ( int argc, char* argv[] )
 		operation::RestrictToRepackingOP rtrop = operation::RestrictToRepackingOP( new operation::RestrictToRepacking );
 		task_factory->push_back( rtrop );
 
-		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mm_std_fa_elec_dslf_fa13_split_unfolded" );
-
+		//ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mm_std_fa_elec_dslf_fa13_split_unfolded" );
+		ScoreFunctionOP scorefxn = get_score_function();
+		
+		scorefxn->set_weight( dihedral_constraint, 1.0 );
+		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 		//Get the residue set we are drawing from.
-		core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
+		core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-		Pose pose;  //master pose of whatever residue we are working on now.
-		pose.clear();
+		Pose pose;
 
-		//ResidueType const & restype_first = residue_set_cap->name_map( "GLY:AcetylatedNtermProteinFull" );
-		ResidueType const & restype_first = residue_set_cap->name_map( "ALA:AcetylatedNtermProteinFull" );
-		ResidueType const & internal_B3A = residue_set_cap->name_map( "B3A" );
-		ResidueType const & internal_ALA = residue_set_cap->name_map( "ALA" );
-		//ResidueType const & restype_last = residue_set_cap->name_map( "GLY:MethylatedCtermProteinFull" );
-		ResidueType const & restype_last = residue_set_cap->name_map( "ALA:MethylatedCtermProteinFull" );
-		Residue res_first( restype_first, true );
-		Residue res_int_B3A( internal_B3A, true );
-		Residue res_int_ALA( internal_ALA, true );
-		Residue res_last( restype_last, true );
-		pose.append_residue_by_jump( res_first, 1 );
-		//pose.append_residue_by_bond( res_int_ALA, true );
-		pose.append_residue_by_bond( res_int_ALA, true );
-		pose.append_residue_by_bond( res_int_ALA, true );
-		pose.append_residue_by_bond( res_int_B3A, true );
-		pose.append_residue_by_bond( res_int_ALA, true );
-		pose.append_residue_by_bond( res_int_ALA, true );
-		//pose.append_residue_by_bond( res_int_ALA, true );
-		pose.append_residue_by_bond( res_last, true );
+		pose.append_residue_by_jump( Residue( rts->name_map( "GLN" ), 1 ), 1 );
+		pose.append_residue_by_bond( Residue( rts->name_map( "B3E" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "GLY" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "PHE" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "SER" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "B3D" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "LEU" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "TRP" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "LYS" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "B3L" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "LEU" ), 1 ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "SER:MethylatedCtermProteinFull" ), 1 ), true );
 
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( pose.residue_type( ii ).is_beta_aa() ) {
@@ -140,30 +138,51 @@ int main ( int argc, char* argv[] )
 				pose.set_psi(   ii, -48 );
 				pose.set_omega( ii, 180 );
 			}
+			for ( Size jj = 1; jj <= pose.residue_type( ii ).nchi(); ++jj ) {
+				pose.set_torsion( id::TorsionID( ii, id::CHI, jj ),  180 );
+			}
 		}
 
-		// Constrain h bonds
-		for ( Size ii = 1; ii <= pose.total_residue()-4; ++ii ) {
-			pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
-				*new AtomID( pose.residue(  ii  ).atom_index( "O" ), ii ),
-				*new AtomID( pose.residue( ii+4 ).atom_index( "H" ), ii ),
-				HarmonicFuncOP( new HarmonicFunc( 1.8, 0.2 ) ) ) ) );
-		}
-
-		//make a minmover, let it min everything
 		kinematics::MoveMapOP movemap( new kinematics::MoveMap );
-		movemap->set_bb( true );
+		movemap->set_bb( false );
 		movemap->set_chi( true );
-		protocols::simple_moves::MinMover minmover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );//"dfpmin_strong_wolfe", 0.0001, true );
-
-		// iterate over possible sets of bond angles, test them all! Record the best.
+		protocols::simple_moves::MinMover minmover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );
 
 		pose.dump_pdb ( "B3A_initial.pdb");
 		Real score = ( *scorefxn ) ( pose );
 		std::cout << "Initial score is " << score << std::endl;
 
-		minmover.apply ( pose );
+		minmover.apply( pose );
 		Real curr_energy = ( *scorefxn ) ( pose );
+		std::cout << "Minned chi:" << curr_energy << std::endl;
+
+		pose.dump_pdb ( "B3A_chiminned.pdb");
+
+		// Constrain h bonds
+		for ( Size ii = 1; ii <= pose.total_residue()-4; ++ii ) {
+			
+			std::string ca = "CA";
+			if ( pose.residue_type( ii ).is_beta_aa() ) {
+				ca = "CM";
+			}
+			pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+				*new AtomID( pose.residue(  ii  ).atom_index(  ca  ), ii ),
+				*new AtomID( pose.residue(  ii  ).atom_index( "C" ), ii ),
+				*new AtomID( pose.residue(  ii+1  ).atom_index( "N" ), ii+1 ),
+				*new AtomID( pose.residue(  ii+1  ).atom_index( "CA" ), ii+1 ),
+				CircularHarmonicFuncOP( new CircularHarmonicFunc( 3.14159, 0.01 ) )
+			) ) );
+			
+			
+			pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+				*new AtomID( pose.residue(  ii  ).atom_index( "O" ), ii ),
+				*new AtomID( pose.residue( ii+4 ).atom_index( "H" ), ii ),
+				HarmonicFuncOP( new HarmonicFunc( 1.8, 0.2 ) ) ) ) );
+		}
+		
+		movemap->set_bb( true );
+		minmover.apply( pose );
+		
 		std::cout << "Pose with torsions:" << std::endl;
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			for ( Size jj = 1; jj <= pose.residue( ii ).mainchain_torsions().size(); ++jj ) {
@@ -172,7 +191,43 @@ int main ( int argc, char* argv[] )
 			std::cout << std::endl;
 		}
 		std::cout << "has energy " << curr_energy << std::endl;
+		pose.dump_pdb ( "B3A_bbminned.pdb");
+		
+		// Replace first and third residue.
+		ResidueType const & pre_type = rts->get_residue_type_with_variant_added( pose.residue_type( 1 ), chemical::HBS_PRE );
+		ResidueType const & post_type = rts->get_residue_type_with_variant_added( pose.residue_type( 3 ), chemical::HBS_POST );
+		
+		// It's losing the chis of the original residue. Stupid stupid stupid.
+		utility::vector1< Real > old_chis;
+		for ( Size ii = 1; ii <= pose.residue_type( ii ).nchi(); ++ii ) {
+			old_chis.push_back( pose.residue( ii ).chi( ii ) );
+		}
+		pose.replace_residue( 1, Residue( pre_type, 1 ), true );
+		for ( Size ii = 1; ii <= pose.residue_type( 1 ).nchi(); ++ii ) {
+			pose.set_torsion( id::TorsionID( 1, id::CHI, ii ),  old_chis[ ii ] );
+		}
+		pose.replace_residue( 3, Residue( post_type, 1 ), true );
+		core::pose::ncbb::initialize_ncbbs( pose );
+		pose.conformation().declare_chemical_bond( 1, "CYH", 3, "CZH" );
+		
+		pose.set_torsion( id::TorsionID( 1, id::BB, 5 ), -60 );
+
+		
+		pose.dump_pdb ( "B3A_hbsed.pdb");
+
+		movemap->set_bb( false );
+		movemap->set_chi( false );
+		
+		movemap->set_bb( 1, true );
+		movemap->set_bb( 2, true );
+		movemap->set_bb( 3, true );
+		minmover.apply( pose );
+
+		std::cout << pose.residue_type( 1 );
+		
+		std::cout << pose.residue( 1 );
 		pose.dump_pdb ( "B3A_final.pdb");
+		
 
 		// New way.
 		// Cribbed from the SecStructFinder, but I don't wanna loop.

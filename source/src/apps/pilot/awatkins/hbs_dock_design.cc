@@ -13,6 +13,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/ncbb/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -340,7 +341,7 @@ HbsDockDesignMinimizeMover::apply(
 			TR << "hbs_seq_position is " << i;
 
 			//awatkins: set up constraints
-			add_hbs_constraint( pose, i );
+			core::pose::ncbb::add_hbs_constraint( pose, i );
 
 			//awatkins: do not use small/shear mover on hbs positions, use hbs mover instead
 			//pert_pep_mm->set_bb( i, false );

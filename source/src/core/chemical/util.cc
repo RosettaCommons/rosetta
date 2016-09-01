@@ -442,7 +442,7 @@ detect_ld_chirality_from_polymer_residue(
 	is_l_aa = false;
 
 	// Exclude known achiral.
-	if ( name3 == "GLY" || name3 == "C15" || name3 == "C16" || name3 == "MAL" ||
+	if ( name3 == "GLY" || name3 == "B3G" || name3 == "C15" || name3 == "C16" || name3 == "MAL" ||
 			name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
 		return;
 	}

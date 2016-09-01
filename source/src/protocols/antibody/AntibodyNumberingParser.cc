@@ -30,7 +30,7 @@ namespace antibody {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyNumberingParser" );
 
-using namespace boost;
+//using namespace boost;
 using utility::vector1;
 
 AntibodyNumberingParser::AntibodyNumberingParser(AntibodyEnumManagerCOP enum_manager):

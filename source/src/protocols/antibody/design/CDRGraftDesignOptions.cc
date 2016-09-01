@@ -40,7 +40,8 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-using namespace boost;
+using namespace core;
+//using namespace boost;
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
 using utility::io::izstream;
@@ -105,7 +106,7 @@ CDRGraftDesignOptions::design(bool design){
 }
 
 void
-CDRGraftDesignOptions::weight(core::Real weight){
+CDRGraftDesignOptions::weight(Real weight){
 	cdr_weight_ = weight;
 }
 

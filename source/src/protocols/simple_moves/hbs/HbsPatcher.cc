@@ -32,6 +32,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
+#include <core/pose/ncbb/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 // Utility Headers
@@ -58,59 +59,6 @@ using namespace core::id;
 namespace protocols {
 namespace simple_moves {
 namespace hbs {
-
-void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position )
-{
-	add_hbs_constraint( pose, hbs_pre_position, 1.52, 0.05 );
-}
-void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
-{
-	using namespace core::id;
-	using namespace core::scoring;
-	using namespace core::scoring::func;
-	using namespace core::scoring::constraints;
-
-	//kdrew: add constraint
-	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
-	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
-	CircularHarmonicFuncOP ang_func_120( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
-	//CircularHarmonicFuncOP ang_func_60( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func_180( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func_0( new CircularHarmonicFunc( 0, 0.02 ) );
-
-	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
-	AtomID aidHYH( pose.residue( hbs_pre_position ).atom_index("HYH"), hbs_pre_position );
-	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
-	AtomID aidVZH( pose.residue( hbs_pre_position ).atom_index("VZH"), hbs_pre_position );
-	AtomID aidVYH( pose.residue( hbs_pre_position+2 ).atom_index("VYH"), hbs_pre_position+2 );
-	AtomID aidN( pose.residue( hbs_pre_position+2 ).atom_index("N"), hbs_pre_position+2 );
-	AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
-	AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
-
-	ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
-	ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
-	ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
-	//ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 );
-	ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func_120 ) ) );
-	//ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidHYH, aidCYH, aidCY2, ang_func_120 ) ) );
-	//ConstraintCOP angle2 = new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 );
-	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func_180 ) ) );
-	//ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_0 ) ) );
-	ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidHYH, aidCZH, aidCY2, aidCYH, dih_func_0 ) ) );
-
-
-	pose.add_constraint( atompair );
-	pose.add_constraint( atompair2 );
-	pose.add_constraint( atompair3 );
-	pose.add_constraint( angle );
-	//pose.add_constraint( angle2 );
-	pose.add_constraint( dihedral );
-	pose.add_constraint( dihedral2 );
-
-	TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
-	TR << "and atom pair constraints with the virtual atoms" << std::endl;
-
-}
 
 void HbsPatcher::apply( core::pose::Pose & pose )
 {
@@ -213,7 +161,7 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 
 	}// if post
 
-	add_hbs_constraint( pose, hbs_pre_pos_ );
+	core::pose::ncbb::add_hbs_constraint( pose, hbs_pre_pos_ );
 
 	//awatkins: need to do all at once at the end because occasionally will get error:
 	//awatkins: Unable to handle change in the number of residue connections in the presence of pseudobonds!

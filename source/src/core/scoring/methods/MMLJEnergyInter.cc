@@ -161,7 +161,7 @@ MMLJEnergyInter::setup_for_packing(
 	tries->total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		// Do not compute energy for virtual residues.
-		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
+		if ( pose.residue_type(ii).aa() == core::chemical::aa_vrt ) continue;
 
 		RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ), pose );
 		tries->trie( ii, one_rotamer_trie );

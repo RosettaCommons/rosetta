@@ -98,10 +98,10 @@ LoopGraph::~LoopGraph()
 void
 LoopGraph::update( pose::Pose & pose, bool const verbose /* = false */ ){
 
-	using namespace core::id;
-	using namespace core::pose;
-	using namespace core::pose::full_model_info;
-	using namespace core::scoring::constraints;
+	using namespace id;
+	using namespace pose;
+	using namespace pose::full_model_info;
+	using namespace scoring::constraints;
 
 	// can't make this a vector1 of OPs since I don't have OP for input pose.
 	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
@@ -205,7 +205,7 @@ LoopGraph::get_loop_atom( Size const & res,
 	id::AtomID & atom_id,
 	Vector & xyz ){
 
-	using namespace core::pose::full_model_info;
+	using namespace pose::full_model_info;
 	core::conformation::Residue const & rsd = get_residue( res, pose );
 	std::string atom_name;
 	if ( rsd.is_NA() ) {
@@ -489,7 +489,7 @@ LoopGraph::check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 ) const 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
 LoopGraph::update_loops( pose::Pose const & pose ){
-	using namespace core::pose::full_model_info;
+	using namespace pose::full_model_info;
 	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
 	utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
 	update_loops( pose_domain_map, cutpoint_open );
@@ -551,7 +551,7 @@ LoopGraph::update_loops( utility::vector1< Size > const & pose_domain_map,
 // just a consistency check.
 void
 LoopGraph::check_for_unexpected_cutpoints( pose::Pose const & pose ) const {
-	using namespace core::pose::full_model_info;
+	using namespace pose::full_model_info;
 
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	for ( Size n = 1; n < pose.total_residue(); n++ ) {
@@ -626,7 +626,7 @@ LoopGraph::missing_residues( pose::Pose const & pose ) const{
 	}
 	std::sort( missing_pos.begin(), missing_pos.end() );
 
-	std::string const & full_sequence = core::pose::full_model_info::const_full_model_info( pose ).full_sequence();
+	std::string const & full_sequence = pose::full_model_info::const_full_model_info( pose ).full_sequence();
 	utility::vector1< char > missing_residues;
 	for ( Size n = 1; n <= missing_pos.size(); n++ ) {
 		missing_residues.push_back( full_sequence[ missing_pos[n] - 1 ] );

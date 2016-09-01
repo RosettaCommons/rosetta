@@ -39,8 +39,8 @@
 
 
 using namespace std;
-using namespace boost;
 using namespace core;
+using namespace boost;
 using namespace pose;
 using namespace protocols::jd2;
 

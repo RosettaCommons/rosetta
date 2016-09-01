@@ -200,48 +200,41 @@ HbsCreatorMover::apply(
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 
 	// shift the jump
-	core::kinematics::FoldTree f = pose.fold_tree();
-	f.slide_jump( 1, 1, pose.pdb_info()->pdb2pose( hbs_chain, final_res+1 ) );
-	pose.fold_tree( f );
+	//core::kinematics::FoldTree f = pose.fold_tree();
+	//f.slide_jump( 1, 1, pose.pdb_info()->pdb2pose( hbs_chain, final_res+1 ) );
+	//pose.fold_tree( f );
+
+	Size patch_ros_num = 0;
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		char chn = pdb_info->chain(i);
+		core::Size pdb_res_num = pdb_info->number(i);
 		TR << "evaluating residue " << chn  << " " << pdb_info->number(i) << std::endl;
 
-		if ( chn != hbs_chain ) {
-			continue;
-		}
+		if ( chn != hbs_chain ) continue;
 		// correct chain to be truncated and prepped
 
-		core::Size pdb_res_num = pdb_info->number(i);
-
 		// hbs pre is the smallest number of what we want to preserve
-		if ( pdb_res_num < final_res ) {
-			//TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
-			while ( pdb_res_num < final_res ) {
-				pose.delete_polymer_residue(i);
-				pdb_res_num = pdb_info->number(i);
-			}
-			hbs::HbsPatcherOP hbs_patcher( new hbs::HbsPatcher( i ) );
-			hbs_patcher->apply( pose );
+		while ( pdb_res_num < final_res ) {
+			TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
+			pose.delete_polymer_residue(i);
+			pdb_res_num = pdb_info->number(i);
+		}
 
-		} else if ( pdb_res_num > final_res + option[hbs_creator::hbs_length].value() ) {
-			//TR << "deleting residue " << pdb_res_num << std::endl;
+		if ( pdb_res_num > final_res + option[hbs_creator::hbs_length].value() ) {
+			TR << "deleting residue " << pdb_res_num << std::endl;
 			while ( chn == hbs_chain && i <= pose.total_residue() ) {
 				chn = pdb_info->chain(i);
 				pose.delete_polymer_residue(i);
 			}
 		}
-
-		/*if (pdb_res_num == final_res) {
-		pose.set_phi(i, -78);
-		pose.set_psi(i, -48);
-		}
-		else if (pdb_res_num == final_res + 1) {
-		pose.set_phi(i+1, -72);
-		pose.set_psi(i+1, -47);
-		}*/
+		
+		if ( pdb_res_num == final_res ) patch_ros_num = i;
 	}
+	
+	hbs::HbsPatcherOP hbs_patcher( new hbs::HbsPatcher( patch_ros_num ) );
+	hbs_patcher->apply( pose );
+
 
 	setup_pert_foldtree(pose);
 
