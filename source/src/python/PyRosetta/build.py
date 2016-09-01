@@ -408,7 +408,7 @@ def generate_documentation(rosetta_source_path, path):
     if not os.path.isdir(path): os.makedirs(path)
     execute('Generating PyRosetta documentation...', 'cd {build_prefix} && {pydoc} -w {modules} && mv *.html {path}'.format(pydoc=Options.pydoc, **vars()), silent=True)
 
-    with open(path+'/index.html', 'w') as f: f.write('<!DOCTYPE html><html><head><title>PyRosetta-4 Documentation</title></head> <body><a href="rosetta.html">[Rosetta Module Documentation]</a> <a href="rosetta.html">[PyRosetta Module Documentation]</a> </body> </html>')
+    with open(path+'/index.html', 'w') as f: f.write('<!DOCTYPE html><html><head><title>PyRosetta-4 Documentation</title></head> <body><a href="rosetta.html">[Rosetta Module Documentation]</a> <a href="pyrosetta.html">[PyRosetta Module Documentation]</a> </body> </html>')
 
 
 def create_package(rosetta_source_path, path):
