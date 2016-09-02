@@ -3,5 +3,6 @@
 -pocket_grid_size 12
 -pocket_filter_by_exemplar
 -pocket_static_grid
+-pocket_limit_exemplar_color false
+-pocket_limit_small_exemplars false
 -out:levels core.grid.Pockets.PocketGrid:debug 
-

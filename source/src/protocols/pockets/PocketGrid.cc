@@ -309,6 +309,7 @@ core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Re
 
 
 CCluster::CCluster(core::Size x, core::Size y, core::Size z, std::string atype, core::Real step_, core::Real absX, core::Real absY, core::Real absZ){
+    using namespace basic::options;
 	Cxyz point;
 	point.x=x;
 	minX=x;
@@ -329,6 +330,7 @@ CCluster::CCluster(core::Size x, core::Size y, core::Size z, std::string atype, 
 	solventExposed_=false;
 	count_=1;
 	step=step_;
+    filterExemplars_=option[ OptionKeys::pocket_grid::pocket_limit_exemplar_color ]();
 }
 
 void CCluster::add(core::Size x, core::Size y, core::Size z, std::string atype, core::Real absX, core::Real absY, core::Real absZ){
@@ -353,6 +355,7 @@ CCluster::CCluster(const CCluster& old){
 	maxX = old.maxX; maxY = old.maxY; maxZ = old.maxZ;
 	minX = old.minX; minY = old.minY; minZ = old.minZ;
 	step = old.step;
+    filterExemplars_=old.filterExemplars_;
 }
 
 
@@ -369,19 +372,28 @@ bool CCluster::isClose(CCluster const & c2) const{
 bool CCluster::testNeighbor(CCluster & c2){
 	for ( std::list<Cxyz>::iterator i = points_.begin(); i!=points_.end(); ++i ) {
 		for ( std::list<Cxyz>::iterator j = c2.points_.begin(); j!=c2.points_.end(); ++j ) {
-			if ( sqrt(pow((double)i->x - (double)j->x,2) + pow((double)i->y - (double)j->y,2) + pow((double)i->z - (double)j->z,2) ) <= 5./step ) {
+            
+            //Do not allow H-bond atoms to be neighbors with other H-bond atoms
+            if (filterExemplars_ && (i->atom_type.compare("C") != 0 ) &&(j->atom_type.compare("C") != 0 )){
+                continue;
+            }
+            
+            if ( sqrt(pow((double)i->x - (double)j->x,2) + pow((double)i->y - (double)j->y,2) + pow((double)i->z - (double)j->z,2) ) <= 5./step ) {
+                if ( ((i->atom_type.compare("C") == 0  || i->atom_type.compare("BBe") == 0 || i->atom_type.compare("BNe") == 0 ) && (j->atom_type.compare("C") == 0  || j->atom_type.compare("BBe") == 0 || j->atom_type.compare("BNe") == 0)) || !filterExemplars_ || (sqrt(pow((double)i->x - (double)j->x,2) + pow((double)i->y - (double)j->y,2) + pow((double)i->z - (double)j->z,2))  <= 3./step )){
+                    if(((i->atom_type.compare("C") != 0) && (j->atom_type.compare("C") != 0)) && filterExemplars_) continue;
 
-				minX=std::min(minX, c2.minX);
-				minY=std::min(minY, c2.minY);
-				minZ=std::min(minZ, c2.minZ);
-				maxX=std::max(maxX, c2.maxX);
-				maxY=std::max(maxY, c2.maxY);
-				maxZ=std::max(maxZ, c2.maxZ);
-				if ( c2.target_ ) target_=true;
-				if ( c2.subtarget_ ) subtarget_=true;
-				if ( c2.solventExposed_ ) solventExposed_=true;
-				points_.splice(points_.end(), c2.points_);
-				return true;
+                    minX=std::min(minX, c2.minX);
+                    minY=std::min(minY, c2.minY);
+                    minZ=std::min(minZ, c2.minZ);
+                    maxX=std::max(maxX, c2.maxX);
+                    maxY=std::max(maxY, c2.maxY);
+                    maxZ=std::max(maxZ, c2.maxZ);
+                    if ( c2.target_ ) target_=true;
+                    if ( c2.subtarget_ ) subtarget_=true;
+                    if ( c2.solventExposed_ ) solventExposed_=true;
+                    points_.splice(points_.end(), c2.points_);
+                    return true;
+                }
 			}
 		}
 	}
@@ -509,6 +521,8 @@ void PocketGrid::setup_default_options(){
 	side_chains_only_=option[ OptionKeys::pocket_grid::pocket_side ]();
 	exemplarRestriction_=option[ OptionKeys::pocket_grid::pocket_filter_by_exemplar ]();
 	dumpExemplars_=option[ OptionKeys::pocket_grid::pocket_dump_exemplars ]();
+	filterExemplars_=option[ OptionKeys::pocket_grid::pocket_limit_exemplar_color ]();
+	limitExemplars_=option[ OptionKeys::pocket_grid::pocket_limit_small_exemplars ]();
 	ignoreBuriedPockets_=option[ OptionKeys::pocket_grid::pocket_ignore_buried ]();
 	ignoreExposedPockets_=option[ OptionKeys::pocket_grid::pocket_only_buried ]();
 	if ( ignoreExposedPockets_ ) ignoreBuriedPockets_=false;
@@ -538,8 +552,10 @@ PocketGrid::PocketGrid(const PocketGrid& gr) :
 	markpsp_ = gr.markpsp_;
 	marksps_ = gr.marksps_;
 	exemplarRestriction_ = gr.exemplarRestriction_;
-	dumpExemplars_ = gr.dumpExemplars_;
-	search13_ = gr.search13_;
+    dumpExemplars_ = gr.dumpExemplars_;
+    filterExemplars_ = gr.filterExemplars_;
+    limitExemplars_ = gr.limitExemplars_;
+    search13_ = gr.search13_;
 	tag_=gr.tag_;
 	pdbno_=gr.pdbno_;
 	expdbno_=gr.expdbno_;
@@ -578,7 +594,9 @@ PocketGrid& PocketGrid::operator=(const PocketGrid& gr){
 		markpsp_ = gr.markpsp_;
 		marksps_ = gr.marksps_;
 		exemplarRestriction_ = gr.exemplarRestriction_;
-		dumpExemplars_ = gr.dumpExemplars_;
+        dumpExemplars_ = gr.dumpExemplars_;
+        filterExemplars_ = gr.filterExemplars_;
+        limitExemplars_ = gr.limitExemplars_;
 		search13_ = gr.search13_;
 		tag_=gr.tag_;
 		pdbno_=gr.pdbno_;
@@ -1566,15 +1584,27 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 	outPDB_stream.open(output_filename, std::ios::out);
 	//int counter=1; bazzoli: unused
 	int counter2=1;
-
 	int clustNo=1;
 	//bool smallPocket;
 	int count=0;
 	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
 		count++;
+        
 		if ( !cit->isTarget(numTargets_) ) {
 			continue;
 		}
+
+        //Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
+        int ccount = 0;
+        for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+            if ( pit->atom_type.compare("C") == 0 ) {
+                ccount++;
+            }
+        }
+        if (ccount <5 && limitExemplars_){
+            continue;
+        }
+
 		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "HETATM";
@@ -1585,7 +1615,11 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			else if ( counter2<1000 ) concatenated_pdb_info += "  ";
 			else if ( counter2<10000 ) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
-			tmp << "   "<<pit->atom_type;
+            if ( pit->atom_type.compare("BBe") == 0 ) {
+                tmp << "   Be";
+            }else if ( pit->atom_type.compare("BNe") == 0 ) {
+                tmp << "   Ne";
+            }else tmp << "   "<<pit->atom_type;
 			concatenated_pdb_info += tmp.str()+" ";
 			if ( pit->atom_type.length() ==1 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += "TMP A";
@@ -1600,7 +1634,13 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			if ( pit->atom_type.compare("C") == 0 ) {
 				tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<"  1.00  2.03           "<<pit->atom_type<<std::endl;
 			} else {
-				tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          "<<pit->atom_type<<std::endl;
+                if ( pit->atom_type.compare("BBe") == 0 ) {
+                    tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          Be"<<std::endl;
+                }else if ( pit->atom_type.compare("BNe") == 0 ) {
+                    tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          Ne"<<std::endl;
+                }else {
+                    tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          "<<pit->atom_type<<std::endl;
+                }
 			}
 
 			concatenated_pdb_info += tmp.str();
@@ -2711,7 +2751,11 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 							numeric::xyzVector<core::Real> const offro1(datm_xyz + (opt_distance+offset) * ( hatm_xyz - datm_xyz ).normalized());
 							numeric::xyzVector<core::Real> orrpoint = rotatePoint(offro1.x(),offro1.y(),offro1.z());
 							std::cout<<rrpoint.x()<<" "<<rrpoint.y()<<" "<<rrpoint.z()<<", "<<orrpoint.x()<<" "<<orrpoint.y()<<" "<<orrpoint.z()<<" "<<x<<" "<<y<<" "<<z<<", Buriedness: "<<buriedness<<"/27"<<std::endl;
-							c_clusters_.add(x,y,z, "Ne", stepSize_, orrpoint.x(), orrpoint.y(), orrpoint.z());
+                            
+                            //Treat more than half buried H-bonders the same as fully buried hydrophobics for special cases
+							if (buriedness < 14 || !filterExemplars_){
+                                c_clusters_.add(x,y,z, "Ne", stepSize_, orrpoint.x(), orrpoint.y(), orrpoint.z());
+                            }else c_clusters_.add(x,y,z, "BNe", stepSize_, orrpoint.x(), orrpoint.y(), orrpoint.z());
 							break;
 						}
 					}
@@ -2855,7 +2899,11 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 								numeric::xyzVector<core::Real> const offro1(stub.spherical( numeric::conversions::radians( phi_list[i]), numeric::conversions::radians( theta ), opt_distance+offset));
 								numeric::xyzVector<core::Real> orrpoint = rotatePoint(offro1.x(),offro1.y(),offro1.z());
 								std::cout<<rrpoint.x()<<" "<<rrpoint.y()<<" "<<rrpoint.z()<<" "<<x<<" "<<y<<" "<<z<<", Buriedness: "<<buriedness<<"/27"<<std::endl;
-								c_clusters_.add(x,y,z, "Be", stepSize_, orrpoint.x(), orrpoint.y(), orrpoint.z());
+                                
+                                //Treat more than half buried H-bonders the same as fully buried hydrophobics for special cases
+                                if (buriedness < 14 || !filterExemplars_){
+                                    c_clusters_.add(x,y,z, "Be", stepSize_, orrpoint.x(), orrpoint.y(), orrpoint.z());
+                                }else c_clusters_.add(x,y,z, "BBe", stepSize_, orrpoint.x(), orrpoint.y(), orrpoint.z());
 								break;
 							}
 						}
@@ -3791,6 +3839,8 @@ bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::Res
 		}
 		for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
 			core::conformation::Residue const & rsd( inPose.conformation().residue(j) );
+            //ligands should be ignored and treated like solvent
+            if (!rsd.is_protein()) continue;
 			int target=0;
 			int sz = central_rsds.size();
 			//this should restrict the recentering to those atoms that define the grid.
@@ -5923,7 +5973,9 @@ protocols::pockets::PocketGrid::save( Archive & arc ) const {
 	arc( CEREAL_NVP( markpsp_ ) ); // _Bool
 	arc( CEREAL_NVP( marksps_ ) ); // _Bool
 	arc( CEREAL_NVP( exemplarRestriction_ ) ); // _Bool
-	arc( CEREAL_NVP( dumpExemplars_ ) ); // _Bool
+    arc( CEREAL_NVP( dumpExemplars_ ) ); // _Bool
+    arc( CEREAL_NVP( filterExemplars_ ) ); // _Bool
+    arc( CEREAL_NVP( limitExemplars_ ) ); // _Bool
 	arc( CEREAL_NVP( search13_ ) ); // _Bool
 	arc( CEREAL_NVP( minPockSize_ ) ); // core::Real
 	arc( CEREAL_NVP( maxPockSize_ ) ); // core::Real
@@ -5973,7 +6025,9 @@ protocols::pockets::PocketGrid::load( Archive & arc ) {
 	arc( markpsp_ ); // _Bool
 	arc( marksps_ ); // _Bool
 	arc( exemplarRestriction_ ); // _Bool
-	arc( dumpExemplars_ ); // _Bool
+    arc( dumpExemplars_ ); // _Bool
+    arc( filterExemplars_ ); // _Bool
+    arc( limitExemplars_ ); // _Bool
 	arc( search13_ ); // _Bool
 	arc( minPockSize_ ); // core::Real
 	arc( maxPockSize_ ); // core::Real
@@ -6004,6 +6058,7 @@ protocols::pockets::CCluster::save( Archive & arc ) const {
 	arc( CEREAL_NVP( maxZ ) ); // core::Size
 	arc( CEREAL_NVP( minZ ) ); // core::Size
 	arc( CEREAL_NVP( step ) ); // core::Real
+	arc( CEREAL_NVP( filterExemplars_ ) ); // core::Real
 }
 
 /// @brief Automatically generated deserialization method
@@ -6022,6 +6077,7 @@ protocols::pockets::CCluster::load( Archive & arc ) {
 	arc( maxZ ); // core::Size
 	arc( minZ ); // core::Size
 	arc( step ); // core::Real
+	arc( filterExemplars_ ); // core::Real
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::CCluster );

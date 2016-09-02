@@ -6228,6 +6228,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'pocket_dump_pdbs', 'Boolean', desc="Generate PDB files",default='false' ),
 		Option( 'pocket_dump_exemplars', 'Boolean', desc="Generate exemplar PDB files",default='false' ),
 		Option( 'pocket_filter_by_exemplar', 'Boolean', desc="Restrict the pocket to the exemplars",default='false' ),
+		Option( 'pocket_limit_exemplar_color', 'Boolean', desc="Include surface donors/acceptors only when they are within range of the main pocket",default='true' ),
+		Option( 'pocket_limit_small_exemplars', 'Boolean', desc="Require exemplar to have at least 5 hydrophobic elements to output to exemplar file",default='true' ),
 		Option( 'pocket_dump_rama', 'Boolean', desc="Generate Ramachandran maps for each pocket cluster",default='false' ),
 		Option( 'pocket_restrict_size', 'Boolean', desc="Pockets that are too large return score of 0",default='false' ),
 		Option( 'pocket_ignore_buried', 'Boolean', desc="Ignore pockets that are not solvent exposed",default='true' ),
