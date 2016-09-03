@@ -1,4 +1,4 @@
--s ../../../integration/tests/jd2test/1EM7.pdb.gz ../../../integration/tests/jd2test/1NLO.pdb.gz ../../../integration/tests/jd2test/1UBQ.pdb.gz
+-s ../../../integration/tests/jd2test_PDBIO/1EM7.pdb.gz ../../../integration/tests/jd2test_PDBIO/1NLO.pdb.gz ../../../integration/tests/jd2test_PDBIO/1UBQ.pdb.gz
 
 -resfile resfile
 
