@@ -525,6 +525,9 @@ residue_types/lipids/linoleate.params
 ### Synthetic Adducts
 residue_types/lipids/ONonOMe.params
 
+## Terpene types
+residue_types/terpenes/isoprene.params
+
 ## Terminal types
 residue_types/terminal/ACE.params
 residue_types/terminal/NME.params

@@ -93,6 +93,7 @@ sources = {
 		"test_metapatch",
 		"test_mm_lj",
 		"test_nu_angles",
+		"test_terpenes",
 		"triazolamer_creator",
 		"triazolamer_dock_design",
 		"trivial_alascan",

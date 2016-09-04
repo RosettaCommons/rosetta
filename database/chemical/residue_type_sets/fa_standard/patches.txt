@@ -164,6 +164,10 @@ patches/carbohydrates/omega-oxidation.txt
 patches/carbohydrates/2-reduction.txt
 patches/carbohydrates/4-reduction.txt
 
+## Terpene patches
+patches/terpenes/terpene_lower_term.txt
+patches/terpenes/terpene_upper_term.txt
+
 ## alternative backbones
 patches/hbs_pre.txt
 patches/hbs_post.txt

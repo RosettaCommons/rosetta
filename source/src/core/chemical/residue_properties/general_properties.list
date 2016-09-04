@@ -38,6 +38,7 @@ PNA
 PEPTOID
 CARBOHYDRATE
 LIPID
+TERPENE
 SRI # New class of artificial heteropolymers. ~VMulligan
 TRIAZOLE_LINKER # Another new class of artificial heteropolymers. ~Vmulligan
 METAL  # This residue type is a metal ion.
