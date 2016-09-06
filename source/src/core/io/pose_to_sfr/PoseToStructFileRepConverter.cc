@@ -721,8 +721,14 @@ PoseToStructFileRepConverter::grab_additional_pose_data( core::pose::Pose const 
 	grab_pdb_comments( pose, options_.pdb_comments() );
 	grab_torsion_records( pose, options_.output_torsions() );
 	grab_pdbinfo_labels( pose );
-	grab_pose_energies_table( pose);
-	grab_pose_cache_data( pose);
+	
+	//Here due to packstat.
+	if (options_.output_pose_energies_table()){
+		grab_pose_energies_table( pose);
+	}
+	if (options_.output_pose_cache()){
+		grab_pose_cache_data( pose);
+	}
 }
 
 

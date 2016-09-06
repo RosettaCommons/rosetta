@@ -18,6 +18,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/io/pdb/pdb_writer.hh>
+#include <core/io/StructFileRepOptions.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -26,6 +27,7 @@
 #include <core/scoring/packstat/sasa_dot_locations.hh>
 #include <core/scoring/packstat/SimplePDB.hh>
 #include <core/scoring/packstat/util.hh>
+
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <cstdlib>
@@ -220,13 +222,23 @@ struct OrderCavBallOnRmAnb {
 
 PosePackData
 pose_to_pack_data( Pose const & pose, int include_water ) {
+
+	//JAB - fixing this up to make dump_pdb not fail.  Very suprised SimplePDB requires a full written PDB...
+	
 	using namespace std;
 	using namespace core::io::pdb;
 	ostringstream oss;
-	bool tmp = basic::options::option[basic::options::OptionKeys::out::file::output_virtual]();
-	basic::options::option[basic::options::OptionKeys::out::file::output_virtual].value(true);
-	dump_pdb(pose,oss);
-	basic::options::option[basic::options::OptionKeys::out::file::output_virtual].value(tmp);
+	
+	//bool tmp = basic::options::option[basic::options::OptionKeys::out::file::output_virtual]();
+	//basic::options::option[basic::options::OptionKeys::out::file::output_virtual].value(true);
+	
+	core::io::StructFileRepOptionsOP options = core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
+	options->set_output_virtual(true);
+	options->set_output_pose_energies_table(false); //Cannot access weights while scoring a PDB.  So, lets not bother to output the energies table
+	options->set_output_pose_cache_data(false); //SimplePDB - not needed, so at least not output it!
+	
+	dump_pdb(pose,oss, options);
+	
 	istringstream iss( oss.str() );
 	AtomRadiusMap arm( include_water );
 	SimplePDB pdb;
