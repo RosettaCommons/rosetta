@@ -81,6 +81,7 @@ sources = {
 		'chothia_numberer',
 		'grafter',
 		'regex_based_cdr_detection',
+		'regex_manager',
 		'scs_blast',
 		'scs_functor',
 		'scs_helper',

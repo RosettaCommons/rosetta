@@ -11,6 +11,7 @@
 /// @brief RegEx based detection of CRS's
 /// @author Sergey Lyskov
 /// @author Brian D. Weitzner (brian.weitzner@gmail.com)
+/// @author Jeliazko Jeliazkov
 
 #ifndef INCLUDED_protocols_antibody_grafting_regex_based_cdr_detection_HH
 #define INCLUDED_protocols_antibody_grafting_regex_based_cdr_detection_HH
@@ -55,8 +56,6 @@ public:
 	void detect_heavy_chain(AntibodySequence &);
 	void detect_light_chain(AntibodySequence &);
 };
-
-
 
 } // namespace grafting
 } // namespace antibody

@@ -1,0 +1,5 @@
+# File contains regular expressions used for finding CDRs, read in after splint on whitespace
+H1 "C[A-Z]{1,16}(W)(I|V|F|Y|A|M|L|N|G)(R|K|Q|V|N|C|G)(Q|K|H|E|L|R)"
+H3 "C[A-Z]{1,33}(W)(G|A|C)[A-Z]{1,2}(Q|S|G|R)"
+L1 "C[A-Z]{1,17}(WYL|WLQ|WFQ|WYQ|WYH|WVQ|WVR|WWQ|WVK|WYR|WLL|WFL|WVF|WIQ|WYR|WNQ|WHL|WHQ|WYM|WYY)"
+L3 "C[A-Z]{1,15}(L|F|V|S)G[A-Z](G|Y)"

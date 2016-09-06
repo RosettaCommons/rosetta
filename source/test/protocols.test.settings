@@ -47,6 +47,7 @@ sources = {
 	],
 	"antibody/grafting":[
 		"regex_based_cdr_detection",
+		"regex_manager",
 		"scs_functor_filtering",
 	],
 	"antibody/task_operations":[
