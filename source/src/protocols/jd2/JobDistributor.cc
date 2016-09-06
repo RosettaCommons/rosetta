@@ -81,7 +81,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.JobDistributor" );
 
 //// APL Disalbing this code for the time being.  I need to find out who uses it!
 ////multithreaded case requires special pointers
-//#ifdef MULTITHREADED
+//#ifdef MULTI_THREADED
 //
 //#include <boost/thread/tss.hpp>
 //

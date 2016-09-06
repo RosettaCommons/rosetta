@@ -423,7 +423,7 @@ namespace utility {
 
 using protocols::simple_filters::IdManager;
 
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 template<> std::mutex utility::SingletonBase< IdManager< core::Size > >::singleton_mutex_{};
 template<> std::atomic< IdManager< core::Size > * > utility::SingletonBase< IdManager< core::Size > >::instance_( 0 );
 #else

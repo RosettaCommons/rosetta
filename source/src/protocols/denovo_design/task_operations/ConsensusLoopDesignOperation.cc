@@ -726,7 +726,7 @@ namespace utility {
 
 using protocols::denovo_design::task_operations::ConsensusLoopDatabase;
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTI_THREADED
 template<> std::mutex utility::SingletonBase< ConsensusLoopDatabase >::singleton_mutex_{};
 template<> std::atomic< ConsensusLoopDatabase * > utility::SingletonBase< ConsensusLoopDatabase >::instance_( NULL );
 #else

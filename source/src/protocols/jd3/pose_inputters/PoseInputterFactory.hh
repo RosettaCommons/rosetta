@@ -130,7 +130,7 @@ private:
 #endif
 
 private:
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 	static std::atomic< PoseInputterFactory * > instance_;
 #else
 	static PoseInputterFactory * instance_;

@@ -22,7 +22,7 @@
 #include <platform/types.hh>
 
 // Boost Headers
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 #include <boost/thread/tss.hpp>
 #else
 #include <boost/scoped_ptr.hpp>
@@ -44,8 +44,8 @@ using platform::Size;
 using platform::SSize;
 using cppdb::statement;
 
-#ifdef MULTITHREADED
-boost::thread_specific_pointer< DatabaseSessionManager > DatabaseSessionManager::instance_;
+#ifdef MULTI_THREADED
+static thread_local std::shared_ptr< DatabaseSessionManager > instance_;
 #else
 boost::scoped_ptr< DatabaseSessionManager > DatabaseSessionManager::instance_;
 #endif

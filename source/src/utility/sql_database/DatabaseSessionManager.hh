@@ -217,7 +217,7 @@ private:
 	);
 
 
-#ifndef MULTITHREADED
+#ifndef MULTI_THREADED
 	static boost::scoped_ptr< DatabaseSessionManager > instance_;
 #endif
 };

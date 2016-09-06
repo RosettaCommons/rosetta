@@ -92,7 +92,7 @@ private:
 #endif
 
 private:
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 	static std::atomic< ResidueSelectorFactory * > instance_;
 #else
 	static ResidueSelectorFactory * instance_;

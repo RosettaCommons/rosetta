@@ -44,7 +44,7 @@ namespace utility {
 
 using protocols::antibody::grafting::RegExManager;
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTI_THREADED
 template <> std::mutex utility::SingletonBase< RegExManager >::singleton_mutex_ {};
 template <> std::atomic< RegExManager * > utility::SingletonBase< RegExManager >::instance_( 0 );
 #else

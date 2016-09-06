@@ -667,7 +667,7 @@ HydrogenBondInfo::atoms( std::string const & rsd_name ) const
 
 namespace utility {
 using namespace protocols::constraint_generator;
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 template<> std::mutex SingletonBase< HydrogenBondInfo >::singleton_mutex_{};
 template<> std::atomic< HydrogenBondInfo * > SingletonBase< HydrogenBondInfo >::instance_( NULL );
 #else

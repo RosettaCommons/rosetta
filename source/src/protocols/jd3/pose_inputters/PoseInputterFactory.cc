@@ -41,7 +41,7 @@ namespace pose_inputters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_inputters.PoseInputterFactory" );
 
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 std::atomic< PoseInputterFactory * > PoseInputterFactory::instance_( 0 );
 #else
 PoseInputterFactory * PoseInputterFactory::instance_( 0 );

@@ -41,7 +41,7 @@
 #include <set>
 
 namespace utility {
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 template <> std::mutex utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::singleton_mutex_{};
 template <> std::atomic< core::indexed_structure_store::ABEGOHashedFragmentStore * > utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::instance_( 0 );
 #else

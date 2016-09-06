@@ -34,7 +34,7 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 std::atomic< ResidueSelectorFactory * > ResidueSelectorFactory::instance_( 0 );
 #else
 ResidueSelectorFactory * ResidueSelectorFactory::instance_( 0 );

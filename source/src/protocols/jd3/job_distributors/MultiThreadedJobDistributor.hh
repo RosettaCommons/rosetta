@@ -232,6 +232,6 @@ private:
 }//jd2
 }//protocols
 
-#endif // MULTITHREADED
+#endif // MULTI_THREADED
 
 #endif //INCLUDED_protocols_jd2_MultiThreadedJobDistributor_HH

@@ -45,7 +45,7 @@ namespace utility {
 
 using core::io::pdb::RecordCollection;
 
-#ifdef MULTITHREADED
+#ifdef MULTI_THREADED
 template <> std::mutex utility::SingletonBase< RecordCollection >::singleton_mutex_ {};
 template <> std::atomic< RecordCollection * > utility::SingletonBase< RecordCollection >::instance_( 0 );
 #else
