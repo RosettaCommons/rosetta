@@ -14,18 +14,13 @@
 #ifndef INCLUDED_protocols_antibody_grafting_util_hh
 #define INCLUDED_protocols_antibody_grafting_util_hh
 
-#ifdef CXX11
-
 #ifdef __clang__
-
-		#define __ANTIBODY_GRAFTING__
+#define __ANTIBODY_GRAFTING__
 #else
 #if (__GNUC__ > 3  &&  __GNUC_MINOR__ > 8)  || (__GNUC__ > 4) // We need at least GCC-4.9 to compiler Antibody code
 #define __ANTIBODY_GRAFTING__
 #endif
 #endif
-
-#endif // CXX11
 
 #include <utility/vector0.hh>
 #include <map>
@@ -34,8 +29,6 @@
 namespace protocols {
 namespace antibody {
 namespace grafting {
-
-using std::string;
 
 /// Check if regex library is functional
 bool antibody_grafting_usable();
@@ -51,7 +44,14 @@ namespace antibody {
 namespace grafting {
 
 /// @brief helper function to parse plain text for BLAST result and filter data
-utility::vector0< std::map<std::string, std::string> > parse_plain_text_with_columns(std::string file_name, std::string legend_prefix="# ", char legend_separator=' ', std::string data_prefix="", char data_separator=' ');
+utility::vector0< std::map<std::string, std::string> >
+parse_plain_text_with_columns(
+	std::string file_name,
+	std::string legend_prefix="# ",
+	char legend_separator=' ',
+	std::string data_prefix="",
+	char data_separator=' '
+);
 
 
 } // grafting

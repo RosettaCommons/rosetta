@@ -869,7 +869,7 @@ PCS_Energy_parameters_manager::get_vector_weight() const{
 	return vec_individual_weight_;
 }
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< PCS_Energy_parameters_manager * > PCS_Energy_parameters_manager::instance_( 0 );
 #else
 PCS_Energy_parameters_manager * PCS_Energy_parameters_manager::instance_( 0 );
@@ -877,13 +877,11 @@ PCS_Energy_parameters_manager * PCS_Energy_parameters_manager::instance_( 0 );
 
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex PCS_Energy_parameters_manager::singleton_mutex_;
 
 std::mutex & PCS_Energy_parameters_manager::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

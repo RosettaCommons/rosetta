@@ -27,11 +27,8 @@
 #include <map>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <mutex>
 #include <atomic>
-#endif
 #endif
 
 namespace protocols {
@@ -70,7 +67,6 @@ private:
 	static DataLoaderFactory * create_singleton_instance();
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -81,11 +77,10 @@ public:
 private:
 	static std::mutex singleton_mutex_;
 #endif
-#endif
 
 private:
 	/// Singleton instance pointer
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::atomic< DataLoaderFactory * > instance_;
 #else
 	static DataLoaderFactory * instance_;

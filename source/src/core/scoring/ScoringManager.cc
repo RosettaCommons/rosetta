@@ -115,7 +115,7 @@ namespace utility {
 
 using core::scoring::ScoringManager;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< ScoringManager >::singleton_mutex_{};
 template <> std::atomic< ScoringManager * > utility::SingletonBase< ScoringManager >::instance_( 0 );
 #else

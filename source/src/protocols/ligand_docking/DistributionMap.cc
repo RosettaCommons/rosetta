@@ -24,7 +24,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< DistributionMap * > DistributionMap::instance_( 0 );
 #else
 DistributionMap * DistributionMap::instance_( 0 );
@@ -32,13 +32,11 @@ DistributionMap * DistributionMap::instance_( 0 );
 
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex DistributionMap::singleton_mutex_;
 
 std::mutex & DistributionMap::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

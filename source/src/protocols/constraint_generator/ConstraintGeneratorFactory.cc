@@ -78,7 +78,7 @@ namespace utility {
 
 using protocols::constraint_generator::ConstraintGeneratorFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTITHREADED
 template<> std::mutex utility::SingletonBase< ConstraintGeneratorFactory >::singleton_mutex_{};
 template<> std::atomic< ConstraintGeneratorFactory * > utility::SingletonBase< ConstraintGeneratorFactory >::instance_( NULL );
 #else

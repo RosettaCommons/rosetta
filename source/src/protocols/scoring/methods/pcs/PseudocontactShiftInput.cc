@@ -55,7 +55,7 @@ namespace utility {
 
 using protocols::scoring::methods::pcs::PCS_data_input_manager;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< PCS_data_input_manager >::singleton_mutex_{};
 template <> std::atomic< PCS_data_input_manager * > utility::SingletonBase< PCS_data_input_manager >::instance_( 0 );
 #else

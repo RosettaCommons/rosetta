@@ -20,11 +20,8 @@
 #include <map>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <atomic>
 #include <mutex>
-#endif
 #endif
 
 namespace core {
@@ -45,7 +42,6 @@ public:
 	//orbital_type_enum get_orbital_type_enum(std::string const & orbital_type_name)
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -55,7 +51,6 @@ public:
 
 private:
 
-#endif
 #endif
 
 private:
@@ -72,7 +67,7 @@ private:
 
 private:
 	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::atomic< OrbitalTypeMapper * > instance_;
 #else
 	static OrbitalTypeMapper * instance_;

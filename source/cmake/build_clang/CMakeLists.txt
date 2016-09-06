@@ -14,7 +14,7 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
 
-SET(COMPILE_FLAGS "-pipe -w -O3 -std=c++98 -Qunused-arguments -DUNUSUAL_ALLOCATOR_DECLARATION -ftemplate-depth-256 -stdlib=libstdc++")
+SET(COMPILE_FLAGS "-pipe -w -O3 -std=c++11 -Qunused-arguments -DUNUSUAL_ALLOCATOR_DECLARATION -ftemplate-depth-256 -stdlib=libstdc++")
 SET(CMAKE_CXX_FLAGS "${COMPILE_FLAGS}")
 
 INCLUDE(../build/build.post.cmake)

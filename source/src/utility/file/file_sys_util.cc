@@ -49,9 +49,7 @@
 // only needed for linux?
 #include <errno.h>
 
-#ifdef CXX11
 #include <random>
-#endif
 
 // Platform headers - Win32
 #ifndef _WIN32
@@ -255,22 +253,14 @@ create_temp_filename( std::string const & dir, std::string const & prefix ) {
 	std::string const charset("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	std::string str = "";
 	std::string tempfilename;
-#ifdef CXX11
 	std::random_device rd; // Gets unseeded random numbers from OS.
 	std::mt19937 mt(rd()); // Start the mt with the random device.
 	std::uniform_int_distribution< int > rand_int(0,charset.size()-1); // Inclusive range
-#else
-	srand(time(NULL));
-#endif
 	do {
 		// We're using the C++ random number generator because we don't want
 		// to pull extra draws on the Rosetta one - besides,
 		// in utility we don't have access to it
-#ifdef CXX11
 		str += charset[rand_int(mt)];
-#else
-		str += charset[rand()%charset.size()];
-#endif
 		tempfilename  = dirname + str + prefix;
 		std::ifstream file(tempfilename.c_str());
 		if ( file ) {

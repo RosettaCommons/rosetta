@@ -59,7 +59,7 @@ def get_rosetta_include_directories():
 
 def get_defines():
     ''' return list of #defines '''
-    defines = 'PYROSETTA BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS CXX11 PTR_STD'
+    defines = 'PYROSETTA BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD'
     if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
     if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
     return defines.split()

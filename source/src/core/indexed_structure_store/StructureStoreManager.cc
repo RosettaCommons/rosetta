@@ -36,7 +36,7 @@ namespace utility {
 
 using core::indexed_structure_store::StructureStoreManager;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< StructureStoreManager >::singleton_mutex_{};
 template <> std::atomic< StructureStoreManager * > utility::SingletonBase< StructureStoreManager >::instance_( 0 );
 #else

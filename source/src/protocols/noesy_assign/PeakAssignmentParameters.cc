@@ -49,13 +49,11 @@ namespace protocols {
 namespace noesy_assign {
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex PeakAssignmentParameters::singleton_mutex_;
 
 std::mutex & PeakAssignmentParameters::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class
@@ -76,7 +74,7 @@ PeakAssignmentParameters::create_singleton_instance()
 
 bool PeakAssignmentParameters::options_registered_( false );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< PeakAssignmentParameters * > PeakAssignmentParameters::instance_( 0 );
 #else
 PeakAssignmentParameters * PeakAssignmentParameters::instance_( 0 );
@@ -94,7 +92,7 @@ PeakAssignmentParameters*
 PeakAssignmentParameters::get_nonconst_instance() {
 	if ( instance_ ) return instance_;
 	instance_ = new PeakAssignmentParameters;
-#if defined CXX11 && defined MULTI_THREADED
+#if defined MULTI_THREADED
 	instance_.load()->set_options_from_cmdline();
 #else
   instance_->set_options_from_cmdline();
@@ -106,7 +104,7 @@ PeakAssignmentParameters::get_nonconst_instance() {
 void PeakAssignmentParameters::set_cycle( core::Size cycle ) {
 	if ( instance_ ) delete instance_;
 	instance_ = new PeakAssignmentParameters;
-#if defined CXX11 && defined MULTI_THREADED
+#if defined MULTI_THREADED
 	instance_.load()->set_options_from_cmdline( cycle );
 #else
   instance_->set_options_from_cmdline( cycle );

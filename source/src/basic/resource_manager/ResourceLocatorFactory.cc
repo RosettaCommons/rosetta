@@ -28,7 +28,7 @@ namespace utility {
 
 using basic::resource_manager::ResourceLocatorFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< ResourceLocatorFactory >::singleton_mutex_{};
 template <> std::atomic< ResourceLocatorFactory * > utility::SingletonBase< ResourceLocatorFactory >::instance_( 0 );
 #else

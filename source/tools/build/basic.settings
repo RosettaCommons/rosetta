@@ -91,8 +91,8 @@ settings = {
             "defines" : [
                 "BOOST_ERROR_CODE_HEADER_ONLY",
                 "BOOST_SYSTEM_NO_DEPRECATED",
-				"BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS",
-                "PTR_BOOST"
+                "BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS",
+                "PTR_STD",
             ],
         },
     },
@@ -148,7 +148,7 @@ settings = {
                     "isystem external/dbio/",
                 ],
                 "cxx" : [
-                    "std=c++98",
+                    "std=c++11",
                     "ffor-scope",
                     "isystem external/boost_1_55_0/",
                     "isystem external/",
@@ -172,82 +172,6 @@ settings = {
         },
     },
 
-    "gcc, *" : {  # default version for installation
-        "appends" : {
-            "version" : [ ],
-        },
-    },
-
-    "gcc, 3.3" : {
-        "appends" : {
-            "version" : [ "3", "3" ],
-        },
-    },
-
-    "gcc, 3.4" : {
-        "appends" : {
-            "version" : [ "3", "4" ],
-            "flags" : {
-                # These flags likely cause memory exhaustion on whatever plat-
-                # form they're active.
-                #"compile" : [
-                #    "-param inline-unit-growth=1000",
-                #    "-param large-function-growth=50000"
-                #],
-            },
-        },
-    },
-
-    "gcc, 4.0" : {
-        "appends" : {
-            "version" : [ "4", "0" ],
-            "flags" : {
-                # These flags causes memory exhaustion during compiling on
-                # MacOS 10.5.
-                #"compile" : [
-                #    "-param inline-unit-growth=1000",
-                #    "-param large-function-growth=50000"
-                #],
-            },
-        },
-    },
-
-    "gcc, 4.1" : {
-        "appends" : {
-            "version" : [ "4", "1" ],
-            "flags" : {
-                # These flags causes memory exhaustion during compiling on the
-                # test server.
-                #"compile" : [
-                #    "-param inline-unit-growth=1000",
-                #    "-param large-function-growth=50000"
-                #],
-            },
-        },
-        "overrides" : {
-            "flags" : {
-                "cc" : [ "std=c99" ],
-                "cxx" : [
-                    "std=c++98",
-                    "ffor-scope",
-                ],
-                "compile" : [
-                    "pipe",
-                ],
-                "warn" : [],
-            },
-        },
-    },
-
-    "gcc, 4.4" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [ "Wno-uninitialized", ],
-            },
-        },
-    },
-
-
     # OSs & architecures ######################################################
 
     "gcc, linux" : {
@@ -255,57 +179,6 @@ settings = {
             "flags" : { },
         },
     },
-
-    # These names are actually Fedora specific.
-    # We need to determine names on SuSE, Debian, etc.
-    "gcc, 3.3, linux" : {
-        "overrides" : {
-            "cc" : "gcc33",
-            "cxx" : "g++33",
-        },
-    },
-
-    "gcc, 3.4, linux" : {
-        "overrides" : {
-            "cc" : "gcc34",
-            "cxx" : "g++34",
-        },
-    },
-
-    "gcc, 4.0, linux" : {
-        "overrides" : {
-            "cc" : "gcc40",
-            "cxx" : "g++40",
-        },
-    },
-
-    "gcc, 4.1, linux" : {
-        "overrides" : {
-            "cc" : "gcc",
-            "cxx" : "g++",
-        },
-    },
-
-    "gcc, 4.3, linux" : {
-        "overrides" : {
-            "cc" : "gcc-4.3",
-            "cxx" : "g++-4.3",
-        },
-    },
-
-    "gcc, 4.5, linux" : {
-        "overrides" : {
-            "cc" : "gcc-4.5",
-            "cxx" : "g++-4.5",
-        },
-    },
-    "gcc, 4.6, linux" : {
-        "overrides" : {
-            "cc" : "gcc-4.6",
-            "cxx": "g++-4.6",
-        },
-    },
-
 
     "gcc, macos" : {
         "appends" : {
@@ -320,7 +193,6 @@ settings = {
         "removes" : {
             "flags" : {
                 "link" : [ "$__RPATH" ],
-                "cxx" : [ "std=c++98" ],
                 "shlink" : [ "$LINKFLAGS" ],
                 "warn" : [
                     # For some reason, despite using isystem for boost,
@@ -338,70 +210,6 @@ settings = {
             },
         },
     },
-
-    "gcc, 3.3, macos" : {
-        "overrides" : {
-            "cc" : "gcc-3.3",
-            "cxx" : "g++-3.3",
-        },
-    },
-
-    "gcc, 3.4, macos" : {
-        "overrides" : {
-            "cc" : "gcc-3.4",
-            "cxx" : "g++-3.4",
-        },
-    },
-
-    "gcc, 4.0, macos" : {
-        "overrides" : {
-            "cc" : "gcc-4.0",
-            "cxx" : "g++-4.0",
-        },
-        "removes" : {
-            "flags" :  {
-                "cxx" : [ "std=c++98" ],
-            },
-        },
-    },
-
-    "gcc, 4.1, macos" : {
-        "overrides" : {
-            "cc" : "gcc-4.1",
-            "cxx" : "g++-4.1",
-        },
-    },
-
-    "gcc, 4.2, macos" : {
-        "overrides" : {
-            "cc" : "gcc-4.2",
-            "cxx" : "g++-4.2",
-        },
-    },
-
-    "gcc, 4.2, macos, 10.7" : {
-        "overrides" : {
-            "cc" : "llvm-gcc-4.2",
-            "cxx" : "llvm-g++-4.2",
-        },
-    },
-
-    "gcc, 4.2, macos, 10.8" : {
-        "overrides" : {
-            "cc" : "llvm-gcc-4.2",
-            "cxx" : "llvm-g++-4.2",
-        },
-    },
-
-
-    "gcc, cygwin" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++98" ],
-            },
-        },
-    },
-
 
     "gcc, x86, 32" : {
         "appends" : {
@@ -473,18 +281,6 @@ settings = {
     },
 
 
-    "gcc, ia64" : {
-        "appends" : {
-            "flags" : {
-                "compile"  : [
-                    "fprefetch-loop-arrays",
-                    "mtune=itanium2"
-                ],
-            },
-        },
-    },
-
-
     "gcc, amd" : {
         "appends" : {
             "flags" : {
@@ -532,21 +328,6 @@ settings = {
                 ],
             },
             "defines" : [ "NDEBUG" ],
-        },
-    },
-
-    "gcc, 4.4, release" : {
-        "removes" : {
-            "flags" : {
-                "compile" : [ "finline-limit=20000" ],
-            },
-        },
-        "appends" : {
-            "flags" : {
-                 # A bug in gcc4.4 that has not yet been fixed requires that
-                 # this inline limit be removed.
-                "compile" : [ "finline-limit=487" ],
-            },
         },
     },
 
@@ -668,21 +449,6 @@ settings = {
                 "PYROSETTA3",
                 'BOOST_THREAD_DONT_USE_CHRONO',
             ],
-        },
-    },
-
-    "gcc, 4.4, pyrosetta" : {
-        "removes" : {
-            "flags" : {
-                "compile" : [ "finline-limit=20000" ],
-            },
-        },
-        "appends" : {
-            "flags" : {
-                # A bug in gcc4.4 that has not yet been fixed requires that
-                # this inline limit be removed.
-                "compile" : [ "finline-limit=487" ],
-            },
         },
     },
 
@@ -918,12 +684,6 @@ settings = {
         },
     },
 
-    "gcc, 4.3, mpi" : {
-        "appends" : {
-            "defines"       : [ "USEMPI" ],
-        },
-    },
-
     "gcc, macos, graphics" : {
         "appends" : {
             "include_path" : [ "/usr/X11R6/include" ],
@@ -969,28 +729,6 @@ settings = {
         "overrides" : {
             "cc" : "mpicc",
             "cxx" : "mpiCC",
-        },
-    },
-
-    "gcc, 4.3, mpi" : {
-        "appends" : {
-            "defines" : [ "USEMPI" ],
-        },
-        "appends" : {
-            "cc" : " -V 4.3",
-            "cxx" : " -V 4.3",
-        },
-    },
-
-    "gcc, ia64, mpi" : {
-        "appends" : {
-            "flags" : {
-                "compile" : [
-                   "O3",
-                   "ip",
-                   "Qoption,c,-ip_ninl_max_stats=50000"
-                ],
-            },
         },
     },
 
@@ -1045,14 +783,10 @@ settings = {
 
 
     "gcc, omp" : {
-        #"overrides" : {
-        #    "cc" : "gcc4",
-        #    "cxx" : "g++4",
-        #},
         "appends" : {
             "defines" : [
                 "USE_OPENMP",
-                "MULTI_THREADED"
+                "MULTI_THREADED",
             ],
             "flags" : {
                 "compile" : [ "fopenmp" ],
@@ -1100,6 +834,19 @@ settings = {
         },
     },
 
+
+    "gcc, ptr_boost" : {
+        "appends" : {
+            "defines" : [
+                "PTR_BOOST",
+            ],
+        },
+        "removes" : {
+            "defines" : [
+                "PTR_STD"
+            ],
+        },
+    },
 
     "gcc, opencl" : {
         "appends" : {
@@ -1208,69 +955,22 @@ settings = {
         },
     },
 
-    "gcc, cxx11" : {
-        "appends" : {
-            "flags" : {
-                "cxx" : [ "std=c++11" ],
-            },
-            "defines" : [
-                "CXX11",
-                "PTR_STD",
-            ],
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++98", "std=c++0x" ],
-            },
-            "defines" : [
-                "PTR_BOOST"
-            ]
-        },
-    },
-
     "gcc, cxx11thread" : {
         "appends" : {
-            "flags" : {
-                "cxx" : [ "std=c++11" ],
-            },
             "defines" : [
-                "CXX11",
-                "PTR_STD",
                 "MULTI_THREADED"
             ],
             "libraries" : [ "pthread" ]
         },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++98", "std=c++0x" ],
-            },
-            "defines" : [
-                "PTR_BOOST"
-            ]
-        },
     },
 
-    "gcc, cxx11serialization" : {
+    "gcc, serialization" : {
         "appends" : {
-            "flags" : {
-                "cxx" : [ "std=c++11" ],
-            },
             "defines" : [
-                "CXX11",
-                "PTR_STD",
 		"SERIALIZATION",
             ],
         },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++98", "std=c++0x" ],
-            },
-            "defines" : [
-                "PTR_BOOST"
-            ]
-        },
     },
-
 
     "gcc, apbs" : {
         "appends" : {
@@ -1343,11 +1043,23 @@ settings = {
     # ICC #####################################################################
     ###########################################################################
 
+    "icc" : {
+        "appends" : {
+            "flags" : {
+                "cc" : [
+                    "std=c99",
+                ],
+                "cxx" : [
+                    "std=c++0x", # It seems like some versions of ICC have issues with supporting std=c++11
+                ],
+            },
+        },
+    },
+
     # OSs & architecures ######################################################
     "icc, linux" : {
         "appends" : {
             "flags" : {
-                "cc" : [ "std=c99" ],
                 "warn" : [
                     "Wall",
                     # When we ICC on the test server, we should probably turn on warnings-as-errors
@@ -1368,56 +1080,6 @@ settings = {
         "overrides" : {
             "cc" : "icc",
             "cxx" : "icpc",
-        },
-    },
-
-    "icc, *, linux" : {
-        "overrides" : {
-            "version" : [ ],
-        },
-    },
-
-    "icc, 8.0, linux" : {
-        "overrides" : {
-            "cc" : "icc",
-            "cxx" : "icc",
-            "version" : [ "8", "0" ],
-        },
-    },
-
-    "icc, 8.1, linux" : {
-        "overrides" : {
-            "version" : [ "8", "1" ],
-        },
-    },
-
-    "icc, 9.0, linux" : {
-        "overrides" : {
-            "version" : [ "9", "0" ],
-        },
-    },
-
-    "icc, 9.1, linux" : {
-        "overrides" : {
-            "version" : [ "9", "1" ],
-        },
-    },
-
-    "icc, 10.1, linux" : {
-        "overrides" : {
-            "version" : [ "10", "1" ],
-        },
-    },
-
-    "icc, 11.1, linux" : {
-        "overrides" : {
-            "version" : [ "11", "1" ],
-        },
-    },
-
-    "icc, 12.0, linux" : {
-        "overrides" : {
-           "version" : [ "12", "0" ],
         },
     },
 
@@ -1554,15 +1216,6 @@ settings = {
     },
 
 
-    "icc, ia64, release" : {
-        "appends" : {
-            "flags" : {
-                "compile" : [ "Qoption,c,-ip_ninl_max_stats=50000" ],
-            },
-        },
-    },
-
-
     # extras ##################################################################
 
     "icc, mpi" : {
@@ -1608,7 +1261,6 @@ settings = {
         "appends" : {
             "defines" : [
                 "USE_OPENMP",
-                "MULTI_THREADED"
             ],
             "flags" : {
                 "compile" : [ "openmp" ],
@@ -1631,6 +1283,19 @@ settings = {
         },
     },
 
+
+    "icc, ptr_boost" : {
+        "appends" : {
+            "defines" : [
+                "PTR_BOOST",
+            ],
+        },
+        "removes" : {
+            "defines" : [
+                "PTR_STD"
+            ],
+        },
+    },
 
     ###########################################################################
     # MS Visual C #############################################################
@@ -1791,72 +1456,72 @@ settings = {
     # XLC #####################################################################
     ###########################################################################
 
-    "xlc, 7.0, power4" : {  # Datastar (XLC++ 7.0 Power4)
-        "appends" : {
-            "defines" : [
-                "NDEBUG",
-                "USEMPI",
-                "MPICH_IGNORE_CXX_SEEK"
-            ],
-            "flags" : {
-                "cxx" : [ "qlanglvl=cpp__func__" ],
-                "compile" : [
-                    "O3",
-                    "qarch=pwr4",
-                    "qtune=pwr4",
-                    "qmaxmem=64000",
-                ],
-            },
-        },
-        "overrides" : {
-            "cc" : "mpcc",
-            "cxx" : "mpCC",
-            "version" : [ ],
-            "include_path" : [
-                "#external/boost_1_55_0",
-                "#external/dbio",
-            ],
-        },
-    },
-
-
-    # Does this need some other extra (e.g. "bluegene")?
-    "xlc, 8.0, ppc" : {  # Blue Gene (XLC++ 8.0 PowerPC)
-        "appends" : {
-            "defines" : [
-                "NDEBUG",
-                "USEMPI",
-                "MPICH_IGNORE_CXX_SEEK"
-            ],
-            "flags" : {
-                "cxx" : [ "qlanglvl=cpp__func__" ],
-                "compile" : [
-                    "O3",
-                    "qhot=nosimd",
-                    "qarch=440",
-                    "qtune=440",
-                    "qmaxmem=-1",
-                ],
-            },
-            "library_path" : [ "/bgl/BlueLight/V1R2M1_020_2006-060110/ppc/bglsys/lib" ],
-            "libraries" : [
-                "cxxmpich.rts",
-                "mpich.rts",
-                "msglayer.rts",
-                "rts.rts",
-                "devices.rts"
-            ],
-        },
-        "overrides" : {
-            "cc" : "mpcc",
-            "cxx" : "mpCC",
-            "version" : [ ],
-            "include_path" : [
-                "#external/boost_1_55_0",
-                "#external/dbio",
-            ],
-        },
-    },
+    #"xlc, 7.0, power4" : {  # Datastar (XLC++ 7.0 Power4)
+    #    "appends" : {
+    #        "defines" : [
+    #            "NDEBUG",
+    #            "USEMPI",
+    #            "MPICH_IGNORE_CXX_SEEK"
+    #        ],
+    #        "flags" : {
+    #            "cxx" : [ "qlanglvl=cpp__func__" ],
+    #            "compile" : [
+    #                "O3",
+    #                "qarch=pwr4",
+    #                "qtune=pwr4",
+    #                "qmaxmem=64000",
+    #            ],
+    #        },
+    #    },
+    #    "overrides" : {
+    #        "cc" : "mpcc",
+    #        "cxx" : "mpCC",
+    #        "version" : [ ],
+    #        "include_path" : [
+    #            "#external/boost_1_55_0",
+    #            "#external/dbio",
+    #        ],
+    #    },
+    #},
+    #
+    #
+    ## Does this need some other extra (e.g. "bluegene")?
+    #"xlc, 8.0, ppc" : {  # Blue Gene (XLC++ 8.0 PowerPC)
+    #    "appends" : {
+    #        "defines" : [
+    #            "NDEBUG",
+    #            "USEMPI",
+    #            "MPICH_IGNORE_CXX_SEEK"
+    #        ],
+    #        "flags" : {
+    #            "cxx" : [ "qlanglvl=cpp__func__" ],
+    #            "compile" : [
+    #                "O3",
+    #                "qhot=nosimd",
+    #                "qarch=440",
+    #                "qtune=440",
+    #                "qmaxmem=-1",
+    #            ],
+    #        },
+    #        "library_path" : [ "/bgl/BlueLight/V1R2M1_020_2006-060110/ppc/bglsys/lib" ],
+    #        "libraries" : [
+    #            "cxxmpich.rts",
+    #            "mpich.rts",
+    #            "msglayer.rts",
+    #            "rts.rts",
+    #            "devices.rts"
+    #        ],
+    #    },
+    #    "overrides" : {
+    #        "cc" : "mpcc",
+    #        "cxx" : "mpCC",
+    #        "version" : [ ],
+    #        "include_path" : [
+    #            "#external/boost_1_55_0",
+    #            "#external/dbio",
+    #        ],
+    #    },
+    #},
 
 
     # Does this need some other extra (e.g. "bluegene")?
@@ -1922,7 +1587,7 @@ settings = {
                     "isystem external/dbio/"
                 ],
                 "cxx" : [
-                    "std=c++98",
+                    "std=c++11",
                     "isystem external/boost_1_55_0/",
                     "isystem external/",
                     "isystem external/include/",
@@ -1984,20 +1649,16 @@ settings = {
                 "compile" : [ "march=native", "mtune=native", "stdlib=libc++", ],
                 "shlink" : [ "install_name ${TARGET.abspath}", "stdlib=libc++", ],
                 "link"   : [ "stdlib=libc++"],
-                "cxx" : [ "std=c++11" ],
                 # There is at least one variable only used on non-Macs.
                 "warn" : ["Wno-unused-variable"],
             },
-            "defines" : [ "CXX11", "PTR_STD" ],
         },
         "removes" : {
             "flags" : {
                 "link" : [ "$__RPATH", "stdlib=libstdc++", ],
-                "cxx" : [ "std=c++98", "std=c++0x", ],
                 "shlink" : [ "$LINKFLAGS", "stdlib=libstdc++", ],
                 "link"   : [ "stdlib=libstdc++", ],
             },
-            "defines" : [ "PTR_BOOST", ],
         },
     },
 
@@ -2086,45 +1747,14 @@ settings = {
 
     # extras ##################################################################
 
-    "clang, cxx11" : {
+    "clang, serialization" : {
         "appends" : {
             "flags" : {
-                "cxx" : [ "std=c++11" ],
-            },
-            "defines" : [
-                "CXX11",
-                "PTR_STD",
-            ],
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++98", "std=c++0x" ],
-            },
-            "defines" : [
-                "PTR_BOOST"
-            ],
-        },
-    },
-
-    "clang, cxx11serialization" : {
-        "appends" : {
-            "flags" : {
-                "cxx" : [ "std=c++11" ],
                 "warn" : [ "Wno-unused-function", ],
             },
             "defines" : [
-                "CXX11",
-                "PTR_STD",
 		"SERIALIZATION",
             ],
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++98", "std=c++0x" ],
-            },
-            "defines" : [
-                "PTR_BOOST"
-            ]
         },
     },
 
@@ -2267,6 +1897,19 @@ settings = {
             "flags" : {
                 "compile" : [ "pthread" ],
             },
+        },
+    },
+
+    "clang, ptr_boost" : {
+        "appends" : {
+            "defines" : [
+                "PTR_BOOST",
+            ],
+        },
+        "removes" : {
+            "defines" : [
+                "PTR_STD"
+            ],
         },
     },
 

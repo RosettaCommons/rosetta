@@ -16,10 +16,8 @@
 
 namespace utility {
 
-#ifdef CXX11
 template<typename T>
 struct has_insertion_operator_s;
-#endif
 
 } // namespace utility
 

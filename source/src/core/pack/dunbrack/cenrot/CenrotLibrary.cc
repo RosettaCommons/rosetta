@@ -52,7 +52,7 @@ namespace utility {
 
 using core::pack::dunbrack::cenrot::CenrotLibrary;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< CenrotLibrary >::singleton_mutex_{};
 template <> std::atomic< CenrotLibrary * > utility::SingletonBase< CenrotLibrary >::instance_( 0 );
 #else

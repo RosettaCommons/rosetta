@@ -26,7 +26,7 @@ static basic::Tracer TR( "protocols.farna.libraries.RNA_LibraryManager" );
 namespace utility {
 using namespace protocols::farna::libraries;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< RNA_LibraryManager >::singleton_mutex_{};
 template <> std::atomic< RNA_LibraryManager * > utility::SingletonBase< RNA_LibraryManager >::instance_( 0 );
 #else

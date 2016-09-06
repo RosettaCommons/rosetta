@@ -28,11 +28,8 @@ namespace fldsgn {
 namespace topology {
 
 /// @brief List of topologies determined by strand pairings
-#ifdef CXX11
+
 enum SheetFoldType : char {
-#else
-enum SheetFoldType {
-#endif
 
 	// 2strands
 	BABx1 = 1,  // beta-aplpha-beta motif

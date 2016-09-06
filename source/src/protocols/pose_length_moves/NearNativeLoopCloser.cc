@@ -510,18 +510,24 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size base5Abego_index, Size
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates_removed_stub_com;
 		for ( Size ii = 0;  ii < coordinates.size(); ++ii ) {
 			numeric::xyzVector<numeric::Real> tmp_coord;
+			tmp_coord.x()=coordinates[ii].x()-coordinates_stub_com[0];
+			tmp_coord.y()=coordinates[ii].y()-coordinates_stub_com[1];
+			tmp_coord.z()=coordinates[ii].z()-coordinates_stub_com[2];
 			coordinates_removed_stub_com.push_back(tmp_coord);
-			coordinates_removed_stub_com[ii].x()=coordinates[ii].x()-coordinates_stub_com[0];
-			coordinates_removed_stub_com[ii].y()=coordinates[ii].y()-coordinates_stub_com[1];
-			coordinates_removed_stub_com[ii].z()=coordinates[ii].z()-coordinates_stub_com[2];
+			//coordinates_removed_stub_com[ii].x()=coordinates[ii].x()-coordinates_stub_com[0];
+			//coordinates_removed_stub_com[ii].y()=coordinates[ii].y()-coordinates_stub_com[1];
+			//coordinates_removed_stub_com[ii].z()=coordinates[ii].z()-coordinates_stub_com[2];
 		}
 		std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_removed_stub_com;
 		for ( Size ii = 0;  ii < fragCoordinates.size(); ++ii ) {
 			numeric::xyzVector<numeric::Real> tmp_coord;
+			tmp_coord.x() = fragCoordinates[ii].x()-fragCoordinates_stub_com[0];
+			tmp_coord.y() = fragCoordinates[ii].y()-fragCoordinates_stub_com[1];
+			tmp_coord.z() = fragCoordinates[ii].z()-fragCoordinates_stub_com[2];
 			fragCoordinates_removed_stub_com.push_back(tmp_coord);
-			fragCoordinates_removed_stub_com[ii].x()=fragCoordinates[ii].x()-fragCoordinates_stub_com[0];
-			fragCoordinates_removed_stub_com[ii].y()=fragCoordinates[ii].y()-fragCoordinates_stub_com[1];
-			fragCoordinates_removed_stub_com[ii].z()=fragCoordinates[ii].z()-fragCoordinates_stub_com[2];
+			//fragCoordinates_removed_stub_com[ii].x()=fragCoordinates[ii].x()-fragCoordinates_stub_com[0];
+			//fragCoordinates_removed_stub_com[ii].y()=fragCoordinates[ii].y()-fragCoordinates_stub_com[1];
+			//fragCoordinates_removed_stub_com[ii].z()=fragCoordinates[ii].z()-fragCoordinates_stub_com[2];
 		}
 		//6. apply rotMatrix to fragCoordinates store in fragCoordinates_rot
 

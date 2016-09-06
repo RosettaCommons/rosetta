@@ -32,13 +32,11 @@
 #include <string>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 // C++11 headers
 #include <atomic>
 #include <mutex>
 
-#endif
 #endif
 
 
@@ -47,7 +45,7 @@ namespace utility {
 
 using core::io::pdb::RecordCollection;
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTITHREADED
 template <> std::mutex utility::SingletonBase< RecordCollection >::singleton_mutex_ {};
 template <> std::atomic< RecordCollection * > utility::SingletonBase< RecordCollection >::instance_( 0 );
 #else

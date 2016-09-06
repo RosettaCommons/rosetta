@@ -36,7 +36,7 @@ namespace utility {
 
 using basic::resource_manager::ResourceOptionsFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< ResourceOptionsFactory >::singleton_mutex_{};
 template <> std::atomic< ResourceOptionsFactory * > utility::SingletonBase< ResourceOptionsFactory >::instance_( 0 );
 #else

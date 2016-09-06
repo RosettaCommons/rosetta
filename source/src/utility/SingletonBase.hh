@@ -15,7 +15,7 @@
 #ifndef INCLUDED_utility_SingletonBase_HH
 #define INCLUDED_utility_SingletonBase_HH
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 
 // C++11 headers
 #include <atomic>
@@ -55,7 +55,6 @@ public:
 	get_instance() {
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 		// threadsafe double-checked locking version that uses c++11 interface
 		// taken from http://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/
 		T * local_instance = instance_.load( std::memory_order_relaxed );
@@ -69,14 +68,6 @@ public:
 				std::atomic_thread_fence( std::memory_order_release );
 			}
 		}
-#else
-	  // ok, multithreaded w/o cxx11. Foldit version?
-		// Not actually threadsafe!
-		// http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
-		if ( ! instance_ ) {
-			instance_ = T::create_singleton_instance();
-		}
-#endif
 #else
 		// not multithreaded; standard singleton instantiation logic
 		if ( ! instance_ ) {
@@ -95,7 +86,7 @@ private:
 
 private:
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::mutex singleton_mutex_;
 	static std::atomic< T * > instance_;
 #else

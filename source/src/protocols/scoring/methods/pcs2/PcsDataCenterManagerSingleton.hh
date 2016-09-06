@@ -41,11 +41,8 @@
 #include <utility/vector1.hh>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <atomic>
 #include <mutex>
-#endif
 #endif
 
 namespace protocols {
@@ -56,7 +53,6 @@ namespace pcs2 {
 class PcsDataCenterManagerSingleton {
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -67,12 +63,11 @@ public:
 private:
 	static std::mutex singleton_mutex_;
 #endif
-#endif
 
 private:
 
 	utility::vector1<PcsDataCenter> PCS_data_all_;
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::atomic< PcsDataCenterManagerSingleton * > instance_;
 #else
 	static PcsDataCenterManagerSingleton * instance_;

@@ -12,8 +12,6 @@
 /// @author Jeliazko Jeliazkov
 
 
-#ifdef CXX11
-
 #ifndef INCLUDED_protocols_antibody_grafting_scs_helper_fwd_hh
 #define INCLUDED_protocols_antibody_grafting_scs_helper_fwd_hh
 
@@ -34,4 +32,3 @@ class SCS_Helper;
 
 #endif // INCLUDED_protocols_antibody_grafting_scs_helper_fwd_hh
 
-#endif // CXX11

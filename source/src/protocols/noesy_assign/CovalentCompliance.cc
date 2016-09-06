@@ -25,7 +25,7 @@ namespace utility {
 
 using protocols::noesy_assign::CovalentCompliance;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< CovalentCompliance >::singleton_mutex_{};
 template <> std::atomic< CovalentCompliance * > utility::SingletonBase< CovalentCompliance >::instance_( 0 );
 #else

@@ -18,11 +18,8 @@
 #include <core/types.hh>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <atomic>
 #include <mutex>
-#endif
 #endif
 
 namespace devel {
@@ -41,7 +38,6 @@ public:
 	void step();
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -51,7 +47,6 @@ public:
 
 private:
 	static std::mutex singleton_mutex_;
-#endif
 #endif
 
 private:
@@ -65,7 +60,7 @@ private:
 	static SymmetrizerSampler * create_singleton_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::atomic< SymmetrizerSampler * > instance_;
 #else
 	static SymmetrizerSampler * instance_;

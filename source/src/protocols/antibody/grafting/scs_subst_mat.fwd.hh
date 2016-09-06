@@ -12,18 +12,14 @@
 /// @author Brian D. Weitzner
 
 
-#ifdef CXX11
-
 #ifndef INCLUDED_protocols_antibody_grafting_scs_subst_mat_fwd_hh
 #define INCLUDED_protocols_antibody_grafting_scs_subst_mat_fwd_hh
-
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody {
 namespace grafting {
-
 
 struct SCS_SubstitutionMatrixResult;
 typedef utility::pointer::shared_ptr< SCS_SubstitutionMatrixResult > SCS_SubstitutionMatrixResultOP;
@@ -34,5 +30,3 @@ typedef utility::pointer::shared_ptr< SCS_SubstitutionMatrixResult const > SCS_S
 } // namespace protocols
 
 #endif // INCLUDED_protocols_antibody_grafting_scs_subst_mat_fwd_hh
-
-#endif // CXX11

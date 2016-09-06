@@ -82,7 +82,7 @@ namespace utility {
 
 using core::chemical::ChemicalManager;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< ChemicalManager >::singleton_mutex_{};
 template <> std::atomic< ChemicalManager * > utility::SingletonBase< ChemicalManager >::instance_( 0 );
 #else
@@ -113,7 +113,7 @@ ChemicalManager::atom_type_set( std::string const & tag )
 {
 	AtomTypeSets::const_iterator iter;
 	{ // scope for the read lock guard
-#if defined MULTI_THREADED && CXX11
+#if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( atomtype_mutex_ );
 #endif
 		iter = atom_type_sets_.find( tag );
@@ -125,7 +125,7 @@ ChemicalManager::atom_type_set( std::string const & tag )
 		boost::function< utility::pointer::shared_ptr< AtomTypeSet > () > func =
 			boost::bind( &ChemicalManager::create_atom_type_set, this, boost::cref(tag) );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, atomtype_mutex_, tag, atom_type_sets_ );
 #else
 		AtomTypeSetOP newset = func();
@@ -158,7 +158,7 @@ ChemicalManager::element_set( std::string const & tag )
 {
 	ElementSets::const_iterator iter;
 	{ // scope for the ReadLockGuard
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( elem_mutex_ );
 #endif
 		iter = element_sets_.find( tag );
@@ -170,7 +170,7 @@ ChemicalManager::element_set( std::string const & tag )
 		boost::function< utility::pointer::shared_ptr< ElementSet > () > func =
 			boost::bind( &ChemicalManager::create_element_set, this, boost::cref(tag) );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, elem_mutex_, tag, element_sets_ );
 #else
 		ElementSetOP newset = func();
@@ -197,7 +197,7 @@ ChemicalManager::orbital_type_set( std::string const & tag )
 {
 	OrbitalTypeSets::const_iterator iter;
 	{
-#if defined MULTI_THREADED && CXX11
+#if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( orbtype_mutex_ );
 #endif
 		iter = orbital_type_sets_.find( tag );
@@ -209,7 +209,7 @@ ChemicalManager::orbital_type_set( std::string const & tag )
 		boost::function< utility::pointer::shared_ptr< orbitals::OrbitalTypeSet > () > func =
 			boost::bind( &ChemicalManager::create_orbital_type_set, this, boost::cref(tag) );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, orbtype_mutex_, tag, orbital_type_sets_ );
 #else
 		orbitals::OrbitalTypeSetOP newset = func();
@@ -234,7 +234,7 @@ ChemicalManager::mm_atom_type_set( std::string const & tag )
 {
 	MMAtomTypeSets::const_iterator iter;
 	{
-#if defined MULTI_THREADED && CXX11
+#if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( mmatomtype_mutex_ );
 #endif
 		iter = mm_atom_type_sets_.find( tag );
@@ -246,7 +246,7 @@ ChemicalManager::mm_atom_type_set( std::string const & tag )
 		boost::function< utility::pointer::shared_ptr< MMAtomTypeSet > () > func =
 			boost::bind( &ChemicalManager::create_mm_atom_type_set, this, boost::cref(tag) );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, mmatomtype_mutex_, tag, mm_atom_type_sets_ );
 #else
 		MMAtomTypeSetOP newset = func();
@@ -298,7 +298,7 @@ ChemicalManager::residue_type_set( std::string tag )
 
 	ResidueTypeSets::const_iterator iter;
 	{ // scope for the ReadLockGuard
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( restype_mutex_ );
 #endif
 		iter = residue_type_sets_.find( tag );
@@ -310,7 +310,7 @@ ChemicalManager::residue_type_set( std::string tag )
 		boost::function< utility::pointer::shared_ptr< ResidueTypeSet > () > func =
 			boost::bind( &ChemicalManager::create_residue_type_set, this, boost::cref(tag) );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, restype_mutex_, tag, residue_type_sets_ );
 #else
 		ResidueTypeSetOP newset = func();
@@ -565,7 +565,7 @@ ChemicalManager::ideal_bond_length_set( std::string const & tag )
 {
 	IdealBondLengthSets::const_iterator iter;
 	{ // scope for the ReadLockGuard
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( idealbondlength_mutex_ );
 #endif
 		iter = ideal_bond_length_sets_.find( tag );
@@ -577,7 +577,7 @@ ChemicalManager::ideal_bond_length_set( std::string const & tag )
 		boost::function< utility::pointer::shared_ptr< IdealBondLengthSet > () > func =
 			boost::bind( &ChemicalManager::create_ideal_bond_length_set, this, boost::cref(tag) );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, idealbondlength_mutex_, tag, ideal_bond_length_sets_ );
 #else
 		IdealBondLengthSetOP newset = func();

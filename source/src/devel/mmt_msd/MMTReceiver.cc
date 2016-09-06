@@ -45,13 +45,8 @@
 #include <sstream>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 headers
 #include <chrono>
 #include <thread>
-
-#endif
 #endif
 
 
@@ -267,7 +262,6 @@ bool MMTReceiver::recreate_previously_generated_result_pose()
 void MMTReceiver::sleep_a_bit()
 {
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 	if ( sleep_nsecs_ < sleep_max_ ) {
 		sleep_nsecs_ *= 2;
@@ -275,7 +269,6 @@ void MMTReceiver::sleep_a_bit()
 
 	std::chrono::nanoseconds dur( sleep_nsecs_ );
 	std::this_thread::sleep_for( dur );
-#endif
 #else
 	/// KAB - casting variable to void to avoid unused variable error
 	(void) sleep_max_;
@@ -352,7 +345,6 @@ MMTReceiver::receive_new_job()
 	job->set_npd_properties( sid.npd_to_do_list );
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 	//TR << "Launching job in separate thread" << std::endl;
 
@@ -362,7 +354,6 @@ MMTReceiver::receive_new_job()
 
 	//TR << "Launched job in separate thread" << std::endl;
 
-#endif
 #else
 	//TR << "Running job in main thread" << std::endl;
 	job->go(); // run the packing job in the (single) MPI-listener thread

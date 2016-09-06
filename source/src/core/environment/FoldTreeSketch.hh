@@ -122,11 +122,7 @@ private:
 
 	class Node : public ReferenceCount {
 	public:
-#ifdef CXX11
 		typedef std::set< NodeCAP, utility::pointer::owner_less< NodeCAP > > EdgeList;
-#else
-		typedef std::set< NodeCAP > EdgeList;
-#endif
 
 	private:
 		Node( core::Size i );

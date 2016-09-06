@@ -15,7 +15,6 @@
 #define INCLUDED_utility_thread_ReadWriteMutex_HH
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 // C++11 Headers
 #include <atomic>
@@ -90,7 +89,6 @@ private:
 }
 }
 
-#endif
 #endif
 
 #endif

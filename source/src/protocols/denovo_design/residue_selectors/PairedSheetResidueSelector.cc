@@ -213,6 +213,7 @@ PairedSheetResidueSelector::get_sheet_topology( core::pose::Pose const & pose ) 
 	if ( factory.has_cached_data( pose ) ) {
 		return components::SegmentPairing::get_strand_pairings( factory.get_from_const_pose( pose ) );
 	}
+
 	std::stringstream msg;
 	msg << "PairedSheetResidueSelector(): Could not determine strand pairings!  "
 		<< "You must specify them using the \"sheet_topology\" option or attach a StructureData object to the pose"

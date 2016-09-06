@@ -48,20 +48,18 @@ static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.TaskOperationFac
 
 // special singleton functions
 // initialize
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< TaskOperationFactory * > TaskOperationFactory::instance_( 0 );
 #else
 TaskOperationFactory * TaskOperationFactory::instance_( 0 );
 #endif
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex TaskOperationFactory::singleton_mutex_;
 
 std::mutex & TaskOperationFactory::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

@@ -23,16 +23,26 @@
 ###########################################################################
 
 if( ${COMPILER} STREQUAL "gcc" )
-	ADD_DEFINITIONS(-DPTR_BOOST)
+	ADD_DEFINITIONS(-DPTR_STD)
+	ADD_DEFINITIONS(-DCXX11)
 	set( cc
 			#-std=c99
 	)
 	set( cxx
-			-std=c++98
+			-std=c++11
 	)
 	set( compile
 			-pipe
 			-ffor-scope
+			-ftemplate-depth-256
+			-fPIC
+			-DBOOST_ERROR_CODE_HEADER_ONLY
+			-DBOOST_SYSTEM_NO_DEPRECATED
+			-I /usr/include
+			-I /usr/local/include
+			-I src
+			-I external/include
+			-I src/platform/linux
 	)
 	set( warn
 			-Wall
@@ -42,16 +52,8 @@ if( ${COMPILER} STREQUAL "gcc" )
 			-Wno-long-long
 			-Wno-strict-aliasing
 	)
+
 endif()
-
-# "gcc, 4.4"
-if( ${COMPILER} STREQUAL "gcc" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4.4(.[0-9])*" )
-	list( APPEND warn
-			-Wno-uninitialized
-	)
-endif()
-
-
 
 # modes ###################################################################
 
@@ -113,14 +115,14 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
 endif()
 
 # "gcc, 4.4, release"
-if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4.4(.[0-9])*" )
-	list( REMOVE_ITEM compile
-			-finline-limit=20000
-	)
-	list( APPEND compile
-			-finline-limit=487
-	)
-endif()
+#if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4.4(.[0-9])*" )
+#	list( REMOVE_ITEM compile
+#			-finline-limit=20000
+#	)
+#	list( APPEND compile
+#			-finline-limit=487
+#	)
+#endif()
 
 ###########################################################################
 # Blue Gene XLC compiler ##################################################
@@ -135,7 +137,7 @@ if( ${COMPILER} STREQUAL "xlc" AND ${MODE} STREQUAL "release_bluegene" )
                         #-std=c99
         )
         set( cxx
-                        -std=c++98
+                        -std=c++11
         )
         set( compile
 			-O3
@@ -143,6 +145,15 @@ if( ${COMPILER} STREQUAL "xlc" AND ${MODE} STREQUAL "release_bluegene" )
 			#-DBOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS
 			#-DBOOST_ERROR_CODE_HEADER_ONLY
 			-DBOOST_SYSTEM_NO_DEPRECATED
+			-ftemplate-depth-256
+			-fPIC
+			-DBOOST_ERROR_CODE_HEADER_ONLY
+			-DBOOST_SYSTEM_NO_DEPRECATED
+			-I /usr/include
+			-I /usr/local/include
+			-I src
+			-I external/include
+			-I src/platform/linux
         )
         list( APPEND defines
                         -DNDEBUG
@@ -156,18 +167,31 @@ endif()
 set(WITH_LIBSTDC++ ON CACHE BOOL "Build libraries using libstdc++ when using clang compiler. ")
 
 if( ${COMPILER} STREQUAL "clang" )
-	ADD_DEFINITIONS(-DPTR_BOOST)
+	ADD_DEFINITIONS(-DPTR_STD)
+	ADD_DEFINITIONS(-DCXX11)
 	set( cc
 			#-std=c99
 	)
 	set( cxx
-			-std=c++98
+			-std=c++11
 	)
 	set( compile
 			-pipe
 			-Qunused-arguments
 			-DUNUSUAL_ALLOCATOR_DECLARATION
 			-ftemplate-depth-256
+			-stdlib=libstdc++
+			-fPIC
+			-DBOOST_ERROR_CODE_HEADER_ONLY
+			-DBOOST_SYSTEM_NO_DEPRECATED
+			-I /usr/include
+			-I /usr/local/include
+			-I src
+			-I external/include
+			-I src/platform/linux
+			-I src/platform/macos/64/clang/6.1
+			-I src/platform/macos/64/clang
+			-I src/platform/macos/64
 	)
 	set( warn
 			-W
@@ -183,17 +207,26 @@ if( ${COMPILER} STREQUAL "clang" )
 			#-Wno-weak-vtables
 	)
 
-  if( WITH_LIBSTDC++ )
-    list( APPEND compile
+
+	set( shlink
+		-stdlib=libstdc++
+	)
+
+	set( link
+		-stdlib=libstdc++
+	)
+
+	if( WITH_LIBSTDC++ )
+		list( APPEND compile
 			-stdlib=libstdc++
-    )
-    list (APPEND shlink
+		)
+		list (APPEND shlink
 			-stdlib=libstdc++
-    )
-    list (APPEND link
+		)
+		list (APPEND link
 			-stdlib=libstdc++
-    )
-  endif()
+		)
+	endif()
 endif()
 
 if(APPLE AND ${COMPILER} STREQUAL "clang")
@@ -206,11 +239,6 @@ if(APPLE AND ${COMPILER} STREQUAL "clang")
     list( REMOVE_ITEM link
 	-stdlib=libstdc++
     )
-
-    REMOVE_DEFINITIONS(-DPTR_BOOST)
-
-    ADD_DEFINITIONS(-DCXX11)
-    ADD_DEFINITIONS(-DPTR_STD)
 
     set( cxx
           -std=c++11
@@ -265,95 +293,39 @@ endif()
 
 if( EXTRAS )
 
-	# cxx11"
-	if( ${EXTRAS} STREQUAL "cxx11" )
-	    set( cc
-			    #-std=c99
-	    )
-	    set( cxx
-			    -std=c++11
-	    )
-	    set( compile
-			    -pipe
-			    -ftemplate-depth-256
-    			    -fPIC
-			    -DBOOST_ERROR_CODE_HEADER_ONLY
-			    -DBOOST_SYSTEM_NO_DEPRECATED
-			    -I /usr/include
-			    -I /usr/local/include
-			    -I src
-			    -I external/include
-    	    )
-	    if( ${COMPILER} STREQUAL "gcc" )
-		list( APPEND compile
-		    -I src/platform/linux
-		)
-	    endif()
-
-
-	    if( ${COMPILER} STREQUAL "clang" )
-		list( APPEND compile
-		    -DUNUSUAL_ALLOCATOR_DECLARATION
-		    -stdlib=libstdc++
-		    -Qunused-arguments
-		    -I src/platform/macos/64/clang/6.1
-		    -I src/platform/macos/64/clang
-		    -I src/platform/macos/64
-		)
-
-		set( shlink
-		    -stdlib=libstdc++
-		)
-
-		set( link
-		    -stdlib=libstdc++
-		)
-
-	    endif()
-
-	endif()
-
-
 	# "macos, graphics"
 	if( APPLE AND ${EXTRAS} STREQUAL "graphics" )
-		find_package( GLUT REQUIRED )
-		find_package( OpenGL REQUIRED )
+		#find_package( GLUT REQUIRED )
+		#find_package( OpenGL REQUIRED )
 		include_directories( /usr/X11R6/include )
 		link_directories( /usr/X11R6/lib )
-		set( cxx
-			    -std=c++98
-
-	        )
-		REMOVE_DEFINITIONS(-DCXX11)
-		REMOVE_DEFINITIONS(-DPTR_STD)
 		list( APPEND defines
 				-DGL_GRAPHICS
 				-DMAC
-				-DPTR_MODERN
-				-DPTR_BOOST
 		)
 		set( link
 				-stdlib=libstdc++
+				-stdlib=libc++
 				-framework GLUT
 				-framework OpenGL
 				-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
 		)
 		set( shlink
 				-stdlib=libstdc++
+				-stdlib=libc++
 				-framework GLUT
 				-framework OpenGL
 				-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
 		)
-		set( compile
+		list( APPEND compile
 				-pipe
 				-ffast-math
 				-funroll-loops
 				-ftemplate-depth=250
-				-stdlib=libstdc++
-				-mmacosx-version-min=10.6
+				-mmacosx-version-min=10.10
 		)
 		set( warn
-				-Werror=sign-compare
+#				-Werror=sign-compare
 				-Werror=reorder
 				-Werror=address
 				-Werror=char-subscripts

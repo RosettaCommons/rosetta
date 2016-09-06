@@ -32,7 +32,7 @@ namespace utility {
 
 using core::sequence::SequenceFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< SequenceFactory >::singleton_mutex_{};
 template <> std::atomic< SequenceFactory * > utility::SingletonBase< SequenceFactory >::instance_( 0 );
 #else

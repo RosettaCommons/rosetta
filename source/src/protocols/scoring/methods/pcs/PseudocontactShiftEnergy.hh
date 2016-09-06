@@ -54,11 +54,8 @@
 // C++ headers
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <atomic>
 #include <mutex>
-#endif
 #endif
 
 namespace protocols {
@@ -145,7 +142,7 @@ public:
 	get_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::atomic< PCS_Energy_parameters_manager * > instance_;
 #else
 	static PCS_Energy_parameters_manager * instance_;
@@ -177,7 +174,6 @@ private:
 	bool vec_exclude_residues_changed_;
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -187,7 +183,6 @@ public:
 
 private:
 	static std::mutex singleton_mutex_;
-#endif
 #endif
 
 public:

@@ -14,8 +14,6 @@
 #ifndef INCLUDED_utility_type_traits_hh
 #define INCLUDED_utility_type_traits_hh
 
-#ifdef CXX11
-
 #include <utility/type_traits.fwd.hh>
 
 #include <utility/stream_util.fwd.hh>
@@ -60,5 +58,4 @@ struct has_insertion_operator_s {
 
 } // namespace utility
 
-#endif // CXX11
 #endif // INCLUDED_utility_type_traits_hh

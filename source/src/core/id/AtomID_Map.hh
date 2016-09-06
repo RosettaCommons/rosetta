@@ -112,10 +112,8 @@ public: // Creation
 		res_map_( n_res )
 	{}
 
-#ifdef CXX11
 	AtomID_Map(AtomID_Map const & ) = default;
 	AtomID_Map & operator= (AtomID_Map const & ) = default;
-#endif
 
 	/// @brief Destructor
 	inline

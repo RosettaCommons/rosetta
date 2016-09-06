@@ -23,13 +23,8 @@
 #include <cassert>
 #include <cstddef>
 #include <iosfwd>
-// only available in cxx11
-#ifdef CXX11
 #include <utility> // for swap
-#else
-#include <algorithm>
-#endif
-
+#include <algorithm> // also for swap??
 
 namespace ObjexxFCL {
 

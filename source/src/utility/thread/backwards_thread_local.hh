@@ -12,12 +12,17 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- modified for clang 3.7.0 case.
 
-#if (!defined CXX11 || !defined MULTI_THREADED)
-//Case 1: thread_local keyword not defined
-#define THREAD_LOCAL
+
+#ifdef MULTI_THREADED
+
+// You need thread_local for multithreading, so if this causes a compiler error
+// you'll need to update your compiler. No amount of preprocessor magic will help
+#define THREAD_LOCAL thread_local
 
 #else
-//Case 2: thread_local keyword defined
-#define THREAD_LOCAL thread_local
+
+// To avoid issues with compilers which don't support thread_local, don't use it
+// if we don't need it.
+#define THREAD_LOCAL
 
 #endif

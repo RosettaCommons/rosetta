@@ -38,7 +38,7 @@ namespace utility {
 
 using protocols::jd2::JobInputterFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< JobInputterFactory >::singleton_mutex_{};
 template <> std::atomic< JobInputterFactory * > utility::SingletonBase< JobInputterFactory >::instance_( 0 );
 #else

@@ -344,7 +344,7 @@ namespace utility {
 
 using protocols::denovo_design::components::Picker;
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTITHREADED
 template<> std::mutex utility::SingletonBase< Picker >::singleton_mutex_{};
 template<> std::atomic< Picker * > utility::SingletonBase< Picker >::instance_( NULL );
 #else

@@ -23,7 +23,9 @@ namespace protocols {
 namespace antibody {
 namespace grafting {
 
+
 using std::string;
+
 
 // It's only usable if the regex works.
 bool antibody_grafting_usable() {
@@ -66,7 +68,14 @@ namespace grafting {
 /// f21 f22 f23 ...
 /// @return utility::vector0< std::map<string field, string value> >
 /// @trows _AE_scs_failed_ on unexpeceted formating
-utility::vector0< std::map<string, string> > parse_plain_text_with_columns(string file_name, string legend_prefix/*="# "*/, char legend_separator/*=' '*/, string data_prefix/*=""*/, char data_separator/*=' '*/)
+utility::vector0< std::map<string, string> >
+parse_plain_text_with_columns(
+	string file_name,
+	string legend_prefix/*="# "*/,
+	char legend_separator/*=' '*/,
+	string data_prefix/*=""*/,
+	char data_separator/*=' '*/
+)
 {
 	utility::vector0< std::map<string, string> > result;
 	utility::vector0<string> legend;

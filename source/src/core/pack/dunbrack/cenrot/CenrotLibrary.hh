@@ -40,10 +40,7 @@
 #include <utility/vector1.hh>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <thread>
-#endif
 #endif
 
 namespace core {

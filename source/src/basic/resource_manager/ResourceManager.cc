@@ -34,7 +34,7 @@
 //
 // using basic::resource_manager::ResourceManager;
 //
-// #if defined MULTI_THREADED && defined CXX11
+// #if defined MULTI_THREADED
 // template <> std::mutex utility::SingletonBase< ResourceManager > ::singleton_mutex_;
 // template <> std::atomic< ResourceManager * > utility::SingletonBase< ResourceManager >::instance_( 0 );
 // #else

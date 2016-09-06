@@ -65,20 +65,18 @@ namespace protocols {
 namespace topology_broker {
 
 // Singleton initialization
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< TopologyClaimerFactory * > TopologyClaimerFactory::instance_( 0 );
 #else
 TopologyClaimerFactory * TopologyClaimerFactory::instance_( 0 );
 #endif
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex TopologyClaimerFactory::singleton_mutex_;
 
 std::mutex & TopologyClaimerFactory::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

@@ -37,11 +37,7 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Boost headers
-#ifdef CXX11
 #include <unordered_map>
-#else
-#include <boost/unordered_map.hpp>
-#endif
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -124,11 +120,7 @@ public:
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
-#ifdef CXX11
 	typedef std::unordered_map< boost::uint64_t, utility::vector1< ZnCoord >, bin_index_hasher > ZnCoordinateHash;
-#else
-	typedef boost::unordered_map< boost::uint64_t, utility::vector1< ZnCoord >, bin_index_hasher > ZnCoordinateHash;
-#endif
 	typedef utility::fixedsizearray1< Size, 3 > Size3;
 	typedef core::Vector Vector;
 

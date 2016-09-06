@@ -26,7 +26,6 @@
 #include <set>
 #include <utility>
 
-#ifdef CXX11
 
 #include <type_traits>
 
@@ -62,8 +61,6 @@ template <platform::SSize L, class T, typename std::enable_if< utility::has_inse
 std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v);
 
 } // namespace utility
-
-#endif
 
 
 

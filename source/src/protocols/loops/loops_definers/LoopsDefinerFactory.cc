@@ -39,7 +39,7 @@ namespace utility {
 
 using protocols::loops::loops_definers::LoopsDefinerFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< LoopsDefinerFactory >::singleton_mutex_{};
 template <> std::atomic< LoopsDefinerFactory * > utility::SingletonBase< LoopsDefinerFactory >::instance_( 0 );
 #else

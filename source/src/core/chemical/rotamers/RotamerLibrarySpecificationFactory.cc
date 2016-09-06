@@ -30,7 +30,7 @@ namespace utility {
 
 using core::chemical::rotamers::RotamerLibrarySpecificationFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< RotamerLibrarySpecificationFactory >::singleton_mutex_{};
 template <> std::atomic< RotamerLibrarySpecificationFactory * > utility::SingletonBase< RotamerLibrarySpecificationFactory >::instance_( 0 );
 #else

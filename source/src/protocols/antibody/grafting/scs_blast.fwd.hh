@@ -12,8 +12,6 @@
 /// @author Sergey Lyskov
 
 
-#ifdef CXX11
-
 #ifndef INCLUDED_protocols_antibody_grafting_scs_blast_fwd_hh
 #define INCLUDED_protocols_antibody_grafting_scs_blast_fwd_hh
 
@@ -65,5 +63,3 @@ typedef utility::pointer::shared_ptr< SCS_BlastPlus const > SCS_BlastPlusCOP;
 } // namespace protocols
 
 #endif // INCLUDED_protocols_antibody_grafting_scs_blast_fwd_hh
-
-#endif // CXX11

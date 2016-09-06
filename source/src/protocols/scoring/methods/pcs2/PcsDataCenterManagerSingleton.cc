@@ -106,7 +106,7 @@ PcsDataCenterManagerSingleton::get_n_multi_data() const{
 	return (PCS_data_all_.size());
 }
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< PcsDataCenterManagerSingleton * > PcsDataCenterManagerSingleton::instance_( 0 );
 #else
 PcsDataCenterManagerSingleton * PcsDataCenterManagerSingleton::instance_( 0 );
@@ -114,13 +114,11 @@ PcsDataCenterManagerSingleton * PcsDataCenterManagerSingleton::instance_( 0 );
 
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex PcsDataCenterManagerSingleton::singleton_mutex_;
 
 std::mutex & PcsDataCenterManagerSingleton::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

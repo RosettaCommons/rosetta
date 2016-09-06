@@ -17,11 +17,7 @@
 #include <core/pose/datacache/PositionConservedResiduesStore.fwd.hh>
 
 // External headers
-#ifdef CXX11
 #include <unordered_map>
-#else
-#include <boost/unordered/unordered_map.hpp>
-#endif
 
 // Utility headers
 #include <basic/datacache/CacheableData.hh>
@@ -47,12 +43,7 @@ namespace datacache {
 //
 class PositionConservedResiduesStore : public basic::datacache::CacheableData {
 
-#ifdef CXX11
 	typedef std::unordered_map<core::Size, bool>   ConservationMap;
-#else
-	typedef boost::unordered_map<core::Size, bool> ConservationMap;
-#endif
-
 
 public:
 	/// @brief Default constructor

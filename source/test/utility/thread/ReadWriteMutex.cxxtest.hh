@@ -24,7 +24,6 @@
 #include <utility/string_util.hh>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 #include <thread>
 #include <chrono>
@@ -136,7 +135,6 @@ test_write_lock_prevents_reading_t2(
 
 
 #endif
-#endif
 
 class ReadWriteMutexTests : public CxxTest::TestSuite {
 public:
@@ -151,7 +149,6 @@ public:
 	/// @brief ensure that two threads can read from the
 	void test_two_threads_read_together() {
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 		utility::thread::ReadWriteMutex rwm;
 
@@ -175,13 +172,11 @@ public:
 		//	std::cout << "ii = " << ii << " " << read_sequence[ii] << std::endl;
 		//}
 #endif
-#endif
 
 	}
 
 	void test_thread_waits_for_reading_to_finish_to_write() {
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 		utility::thread::ReadWriteMutex rwm;
 
@@ -205,13 +200,11 @@ public:
 		//	std::cout << "ii = " << ii << " " << read_sequence[ii] << std::endl;
 		//}
 #endif
-#endif
 
 	}
 
 	void test_write_lock_prevents_reading() {
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 		utility::thread::ReadWriteMutex rwm;
 
@@ -233,7 +226,6 @@ public:
 		//for ( unsigned int ii = 1; ii <= read_sequence.size(); ++ii ) {
 		//	std::cout << "ii = " << ii << " " << read_sequence[ii] << std::endl;
 		//}
-#endif
 #endif
 
 	}

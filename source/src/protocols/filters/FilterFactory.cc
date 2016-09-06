@@ -35,20 +35,18 @@ namespace filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.filters.FilterFactory" );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< FilterFactory * > FilterFactory::instance_( 0 );
 #else
 FilterFactory * FilterFactory::instance_( 0 );
 #endif
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex FilterFactory::singleton_mutex_;
 
 std::mutex & FilterFactory::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

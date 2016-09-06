@@ -41,7 +41,7 @@ namespace utility {
 
 using protocols::evaluation::EvaluatorFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< EvaluatorFactory >::singleton_mutex_{};
 template <> std::atomic< EvaluatorFactory * > utility::SingletonBase< EvaluatorFactory >::instance_( 0 );
 #else

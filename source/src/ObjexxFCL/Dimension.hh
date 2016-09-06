@@ -24,12 +24,10 @@
 #include <cassert>
 #include <iosfwd>
 
-#ifdef CXX11
 #include <utility>
-#include <type_traits>  // for swap
-#else
-#include <algorithm>
-#endif
+//#include <type_traits>  // for swap
+#include <algorithm> // for swap
+#include <utility> // for swap??
 
 namespace ObjexxFCL {
 

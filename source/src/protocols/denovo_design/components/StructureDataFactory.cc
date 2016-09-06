@@ -696,7 +696,7 @@ namespace utility {
 
 using protocols::denovo_design::components::StructureDataFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTITHREADED
 template<> std::mutex utility::SingletonBase< StructureDataFactory >::singleton_mutex_{};
 template<> std::atomic< StructureDataFactory * > utility::SingletonBase< StructureDataFactory >::instance_( NULL );
 #else

@@ -36,7 +36,7 @@ namespace utility {
 
 using core::pack::rotamers::SingleResidueRotamerLibraryFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< SingleResidueRotamerLibraryFactory >::singleton_mutex_{};
 template <> std::atomic< SingleResidueRotamerLibraryFactory * > utility::SingletonBase< SingleResidueRotamerLibraryFactory >::instance_( 0 );
 #else
@@ -52,9 +52,7 @@ namespace rotamers {
 static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLibraryFactory");
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 std::mutex SingleResidueRotamerLibraryFactory::cache_mutex_{};
-#endif
 #endif
 
 SingleResidueRotamerLibraryFactory * SingleResidueRotamerLibraryFactory::create_singleton_instance()
@@ -135,9 +133,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	std::pair< std::string, std::string > cachepair(type,cachetag);
 	if ( cachetag.size() ) {
 #ifdef MULTI_THREADED
-#ifdef CXX11
 		std::lock_guard<std::mutex> lock(cache_mutex_); // mutex will release when this scope exits
-#endif
 #endif
 		if ( cache_.count( cachepair ) ) {
 			if ( ! cache_[ cachepair ] && forcebasic ) {
@@ -157,9 +153,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 
 	if ( cachetag.size() ) {
 #ifdef MULTI_THREADED
-#ifdef CXX11
 		std::lock_guard<std::mutex> lock(cache_mutex_); // mutex will release when this scope exits
-#endif
 #endif
 		if ( ! cache_.count( cachepair ) ) {
 			cache_[ cachepair ] = library;

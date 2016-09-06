@@ -58,16 +58,13 @@
 //#include <core/chemical/ResidueTypeSet.hh>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
-// C++11 Headers
 #include <atomic>
 #include <mutex>
 
 // Utility thread headers
 #include <utility/thread/ReadWriteMutex.hh>
 
-#endif
 #endif
 
 // Utility headers
@@ -140,7 +137,6 @@ private:
 	typedef std::map< std::string, ResidueTypeSetOP > ResidueTypeSets;
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 private:
 	utility::thread::ReadWriteMutex elem_mutex_;
@@ -150,7 +146,6 @@ private:
 	utility::thread::ReadWriteMutex restype_mutex_;
 	utility::thread::ReadWriteMutex idealbondlength_mutex_;
 
-#endif
 #endif
 
 private:

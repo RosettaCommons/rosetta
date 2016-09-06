@@ -60,7 +60,7 @@ namespace utility {
 
 using protocols::scoring::InterchainPotential;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< InterchainPotential >::singleton_mutex_{};
 template <> std::atomic< InterchainPotential * > utility::SingletonBase< InterchainPotential >::instance_( 0 );
 #else

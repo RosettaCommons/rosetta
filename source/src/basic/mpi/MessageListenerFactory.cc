@@ -31,7 +31,7 @@ namespace utility {
 
 using basic::mpi::MessageListenerFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< MessageListenerFactory >::singleton_mutex_{};
 template <> std::atomic< MessageListenerFactory * > utility::SingletonBase< MessageListenerFactory >::instance_( 0 );
 #else

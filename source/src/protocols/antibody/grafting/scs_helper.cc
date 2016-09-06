@@ -31,13 +31,11 @@
 #include <fstream>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 // C++11 headers
 #include <atomic>
 #include <mutex>
 
-#endif
 #endif
 
 #include <basic/Tracer.hh>
@@ -45,7 +43,7 @@ static THREAD_LOCAL basic::Tracer TR("protocols.antibody.SCS_Helper");
 
 // Singleton setup
 namespace utility {
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTITHREADED
 	template <> std::mutex utility::SingletonBase< protocols::antibody::grafting::SCS_Helper > ::singleton_mutex_;
 	template <> std::atomic< protocols::antibody::grafting::SCS_Helper * > utility::SingletonBase< protocols::antibody::grafting::SCS_Helper >::instance_( 0 );
 #else
@@ -197,7 +195,7 @@ SCS_Helper::parse_outlier_data()
 {
 	// e.g. 12e8_FRL
   std::map< std::string, std::map<std::string, bool> > results;
-	string temp_cdr;
+	std::string temp_cdr;
 
 	// can we find the file?
 	std::string dir = "protocol_data/antibody/";

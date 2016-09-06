@@ -52,10 +52,7 @@
 #include <utility/io/FileContentsMap.hh>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 headers
 #include <chrono>
-#endif
 #endif
 
 namespace devel {
@@ -442,9 +439,7 @@ MMTDriver::optimize_generation()
 	using namespace protocols::genetic_algorithm;
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 	auto starttime = std::chrono::system_clock::now();
-#endif
 #else
 	clock_t starttime = clock();
 #endif
@@ -494,10 +489,8 @@ MMTDriver::optimize_generation()
 
 	core::Real running_time;
 #ifdef MULTI_THREADED
-#ifdef CXX11
 	auto stoptime = std::chrono::system_clock::now();
 	running_time = std::chrono::duration_cast< std::chrono::seconds >( stoptime - starttime ).count();
-#endif
 #else
 	clock_t stoptime = clock();
 	running_time = ((double) stoptime - starttime ) / CLOCKS_PER_SEC;

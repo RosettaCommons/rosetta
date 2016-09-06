@@ -121,20 +121,18 @@ PcsInputCenterManager::get_PcsInputCenter_for(utility::vector1<std::string> cons
 	return(pcs_i_c);
 }
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< PcsInputCenterManager * > PcsInputCenterManager::instance_( 0 );
 #else
 PcsInputCenterManager * PcsInputCenterManager::instance_( 0 );
 #endif
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex PcsInputCenterManager::singleton_mutex_;
 
 std::mutex & PcsInputCenterManager::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

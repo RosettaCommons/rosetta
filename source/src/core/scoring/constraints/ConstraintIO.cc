@@ -58,7 +58,7 @@ namespace utility {
 
 using core::scoring::constraints::ConstraintIO;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< ConstraintIO >::singleton_mutex_{};
 template <> std::atomic< ConstraintIO * > utility::SingletonBase< ConstraintIO >::instance_( 0 );
 #else

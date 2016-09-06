@@ -39,7 +39,7 @@ namespace operation {
 
 // special singleton functions
 // initialize
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< ResFilterFactory * > ResFilterFactory::instance_( 0 );
 #else
 ResFilterFactory * ResFilterFactory::instance_( 0 );
@@ -47,13 +47,11 @@ ResFilterFactory * ResFilterFactory::instance_( 0 );
 
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex ResFilterFactory::singleton_mutex_;
 
 std::mutex & ResFilterFactory::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

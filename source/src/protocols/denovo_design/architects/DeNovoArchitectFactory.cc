@@ -126,7 +126,7 @@ namespace utility {
 
 using protocols::denovo_design::architects::DeNovoArchitectFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTITHREADED
 template<> std::mutex utility::SingletonBase< DeNovoArchitectFactory >::singleton_mutex_{};
 template<> std::atomic< DeNovoArchitectFactory * > utility::SingletonBase< DeNovoArchitectFactory >::instance_( NULL );
 #else

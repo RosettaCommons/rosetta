@@ -29,15 +29,10 @@ IGNORED_FILES = ['./utility/libsvm/Svm.cc']
 def parse_defines( compile_type ):
     extras = compile_type.split('-')
     defines = ["BOOST_ERROR_CODE_HEADER_ONLY","BOOST_SYSTEM_NO_DEPRECATED","__USE_XOPEN2K8"]
-    if 'cxx11' or 'cxx11thread' in extras:
-        defines.append( "PTR_STD" )
-    else:
-        defines.append( "PTR_BOOST" )
+    defines.append( "PTR_STD" )
 
-    if 'cxx11' in extras:
-        defines.extend( ["CXX11"] )
     if 'cxx11thread' in extras:
-        defines.extend( ["CXX11", "MULTI_THREADED"] )
+        defines.extend( ["MULTI_THREADED"] )
     if 'mpi' in extras:
         defines.extend( ["USEMPI"] )
     if 'mysql' in extras:

@@ -22,11 +22,9 @@
 #include <iosfwd>
 #include <string>
 
-#ifdef CXX11
-#include <type_traits>  // for swap
-#else
-#include <algorithm>
-#endif
+//#include <type_traits>  // for swap
+#include <algorithm> // for swap
+#include <utility> // for swap??
 
 namespace ObjexxFCL {
 

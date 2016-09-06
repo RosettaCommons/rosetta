@@ -34,7 +34,7 @@ namespace utility {
 
 using protocols::rosetta_scripts::PoseSelectorFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< PoseSelectorFactory >::singleton_mutex_{};
 template <> std::atomic< PoseSelectorFactory * > utility::SingletonBase< PoseSelectorFactory >::instance_( 0 );
 #else

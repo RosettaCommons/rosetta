@@ -12,7 +12,6 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 // Unit headers
 #include <utility/thread/ReadWriteMutex.hh>
@@ -89,6 +88,5 @@ WriteLockGuard::~WriteLockGuard()
 }
 }
 
-#endif
 #endif
 

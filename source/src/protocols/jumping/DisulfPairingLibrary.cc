@@ -78,7 +78,7 @@ namespace utility {
 
 using protocols::jumping::StandardDisulfPairingLibrary;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< StandardDisulfPairingLibrary >::singleton_mutex_{};
 template <> std::atomic< StandardDisulfPairingLibrary * > utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( 0 );
 #else

@@ -43,7 +43,7 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
 
-#SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions")
+#SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++11 -pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions")
 ADD_DEFINITIONS(-DUNUSUAL_ALLOCATOR_DECLARATION)
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -stdlib=libstdc++ -pipe -ffast-math -O0 -Qunused-arguments -ftemplate-depth-256 -march=native -fPIC")
 #ET(COMPILE_FLAGS "${COMPILE_FLAGS} -stdlib=libstdc++ -pipe -ffast-math -O3 -ffor-scope -funroll-loops -finline-functions -s")

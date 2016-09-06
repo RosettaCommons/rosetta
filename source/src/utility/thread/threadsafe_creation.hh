@@ -17,12 +17,10 @@
 #include <boost/function.hpp>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 #include <utility/thread/ReadWriteMutex.hh>
 #include <thread>
 
-#endif
 #endif
 
 // Utility headers
@@ -50,7 +48,7 @@ template < class T >
 void
 safely_create_singleton(
 	boost::function< T * () > creation_func,
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	std::atomic< T * > & instance
 #else
 	T * & instance
@@ -58,7 +56,6 @@ safely_create_singleton(
 ) {
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 	// threadsafe version that uses c++11 interface
 	// taken from http://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/
 	T * local_instance = instance.load( std::memory_order_relaxed );
@@ -73,14 +70,6 @@ safely_create_singleton(
 		}
 	}
 #else
-  // ok, multithreaded w/o cxx11
-	// not actually threadsafe!
-	// http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
-	if ( ! instance ) {
-		instance = creation_func();
-	}
-#endif
-#else
 	// not multithreaded; standard singleton instantiation logic
 	if ( ! instance ) {
 		instance = creation_func();
@@ -91,7 +80,6 @@ safely_create_singleton(
 
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 /// @brief Safely create and insert an object into a map that is guarded by
 /// a utility::thread::ReadWriteMutex.  Uses boost::function to invoke
@@ -128,7 +116,6 @@ create_and_insert(
 	return iter;
 }
 
-#endif
 #endif
 
 

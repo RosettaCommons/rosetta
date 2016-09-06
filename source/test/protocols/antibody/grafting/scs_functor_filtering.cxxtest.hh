@@ -61,6 +61,10 @@ public:
 #ifdef __ANTIBODY_GRAFTING__
 		using namespace protocols::antibody::grafting;
 
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
+
 		// set up dummy AntibodySequence
 		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
 		RegEx_based_CDR_Detector().detect(as);
@@ -150,6 +154,10 @@ public:
 #ifdef __ANTIBODY_GRAFTING__
 		using namespace protocols::antibody::grafting;
 
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
+
 		// set up dummy AntibodySequence
 		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
 		RegEx_based_CDR_Detector().detect(as);
@@ -238,6 +246,10 @@ public:
 #ifdef __ANTIBODY_GRAFTING__
 		using namespace protocols::antibody::grafting;
 
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
+
 		// set up dummy AntibodySequence
 		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
 		RegEx_based_CDR_Detector().detect(as);
@@ -300,6 +312,10 @@ public:
 	void test_filter_by_sequence_identity() {
 #ifdef __ANTIBODY_GRAFTING__
 		using namespace protocols::antibody::grafting;
+
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
 
 		// set up dummy AntibodySequence
 		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
@@ -389,6 +405,10 @@ public:
 #ifdef __ANTIBODY_GRAFTING__
 		using namespace protocols::antibody::grafting;
 
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
+
 		// set up dummy AntibodySequence
 		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
 		RegEx_based_CDR_Detector().detect(as);
@@ -463,6 +483,10 @@ public:
 #ifdef __ANTIBODY_GRAFTING__
 		using namespace protocols::antibody::grafting;
 
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
+
 		// set up dummy AntibodySequence
 		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
 		RegEx_based_CDR_Detector().detect(as);
@@ -531,6 +555,10 @@ public:
 	void test_filter_by_OCD() {
 #ifdef __ANTIBODY_GRAFTING__
 		using namespace protocols::antibody::grafting;
+
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
 
 		// set up dummy AntibodySequence
 		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);

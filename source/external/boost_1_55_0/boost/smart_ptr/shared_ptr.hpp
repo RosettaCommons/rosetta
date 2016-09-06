@@ -340,26 +340,26 @@ public:
     {
     }
 
-    // Rosetta customization to handle NULL assignments and initialization
-    shared_ptr(void *i) BOOST_NOEXCEPT : px( 0 ), pn()
-    {
-	assert(i == NULL);
-    }
-
-#ifdef WIN_PYROSETTA
-    // Rosetta customization to handle 0 assignments and initialization under MSVC
-    shared_ptr(int i) BOOST_NOEXCEPT : px( 0 ), pn()
-    {
-	assert(i == 0);
-    }
-
-    // Rosetta customization to handle 0 assignments and initialization under MSVC
-    shared_ptr(unsigned int i) BOOST_NOEXCEPT : px( 0 ), pn()
-    {
-	assert(i == 0);
-    }
-
-#endif
+//    // Rosetta customization to handle NULL assignments and initialization
+//    shared_ptr(void *i) BOOST_NOEXCEPT : px( 0 ), pn()
+//    {
+//	assert(i == NULL);
+//    }
+//
+//#ifdef WIN_PYROSETTA
+//    // Rosetta customization to handle 0 assignments and initialization under MSVC
+//    shared_ptr(int i) BOOST_NOEXCEPT : px( 0 ), pn()
+//    {
+//	assert(i == 0);
+//    }
+//
+//    // Rosetta customization to handle 0 assignments and initialization under MSVC
+//    shared_ptr(unsigned int i) BOOST_NOEXCEPT : px( 0 ), pn()
+//    {
+//	assert(i == 0);
+//    }
+//
+//#endif
 
 #if !defined( BOOST_NO_CXX11_NULLPTR )
 

@@ -36,7 +36,7 @@ namespace utility {
 
 using devel::replica_docking::TempInterpolatorFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< TempInterpolatorFactory >::singleton_mutex_{};
 template <> std::atomic< TempInterpolatorFactory * > utility::SingletonBase< TempInterpolatorFactory >::instance_( 0 );
 #else

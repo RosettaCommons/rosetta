@@ -33,11 +33,9 @@
 #include <map>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 // C++11 Headers
 #include <atomic>
 #include <mutex>
-#endif
 #endif
 
 
@@ -114,7 +112,6 @@ private:
 	static PoseOutputterFactory * create_singleton_instance();
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -125,10 +122,9 @@ public:
 private:
 	static std::mutex singleton_mutex_;
 #endif
-#endif
 
 private:
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTI_THREADED
 	static std::atomic< PoseOutputterFactory * > instance_;
 #else
 	static PoseOutputterFactory * instance_;

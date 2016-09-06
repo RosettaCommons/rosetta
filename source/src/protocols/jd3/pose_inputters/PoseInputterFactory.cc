@@ -41,20 +41,18 @@ namespace pose_inputters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_inputters.PoseInputterFactory" );
 
-#if defined MULTI_THREADED && defined CXX11
+#ifdef MULTITHREADED
 std::atomic< PoseInputterFactory * > PoseInputterFactory::instance_( 0 );
 #else
 PoseInputterFactory * PoseInputterFactory::instance_( 0 );
 #endif
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex PoseInputterFactory::singleton_mutex_;
 
 std::mutex & PoseInputterFactory::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of (pointer to) this singleton class

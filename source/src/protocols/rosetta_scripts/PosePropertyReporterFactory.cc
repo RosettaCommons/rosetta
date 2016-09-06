@@ -34,20 +34,18 @@ namespace rosetta_scripts {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporterFactory" );
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 std::atomic< PosePropertyReporterFactory * > PosePropertyReporterFactory::instance_( 0 );
 #else
 PosePropertyReporterFactory * PosePropertyReporterFactory::instance_( 0 );
 #endif
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 
 std::mutex PosePropertyReporterFactory::singleton_mutex_;
 
 std::mutex & PosePropertyReporterFactory::singleton_mutex() { return singleton_mutex_; }
 
-#endif
 #endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class

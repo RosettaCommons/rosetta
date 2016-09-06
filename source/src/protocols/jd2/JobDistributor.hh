@@ -331,7 +331,7 @@ private:
 	/// @brief Number of failed jobs - kept track of so we can exit properly at the end of execution
 	core::Size number_failed_jobs_;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::atomic< JobDistributor * > instance_;
 #else
 	static JobDistributor * instance_;
@@ -398,7 +398,6 @@ protected:
 	static void jd2_signal_handler(int Signal);
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -408,7 +407,6 @@ public:
 
 private:
 	static std::mutex singleton_mutex_;
-#endif
 #endif
 
 private:

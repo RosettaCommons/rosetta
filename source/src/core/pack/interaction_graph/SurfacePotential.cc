@@ -69,7 +69,7 @@ namespace utility {
 
 using core::pack::interaction_graph::SurfacePotential;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< SurfacePotential >::singleton_mutex_{};
 template <> std::atomic< SurfacePotential * > utility::SingletonBase< SurfacePotential >::instance_( 0 );
 #else
@@ -728,7 +728,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 						 conformation::Residue const & ii_rsd = pose.residue( ii );
 						 conformation::Residue const & jj_rsd = pose.residue( jj );
 						 TR << "compute_pose_hpatch_score(): overlapping atom pair, but overlap is buried: "
-						 << ii_rsd.aa() << " " << ii << "/" << utility::trim( ii_rsd.atom_name( iia ) ) << " - " 
+						 << ii_rsd.aa() << " " << ii << "/" << utility::trim( ii_rsd.atom_name( iia ) ) << " - "
 						 << jj_rsd.aa() << " " << jj << "/" << utility::trim( jj_rsd.atom_name( jja ) ) << std::endl;
 						 }*/
 #endif

@@ -40,12 +40,10 @@
 #include <io.h>
 #endif
 
-#ifdef CXX11
 #ifdef MULTI_THREADED
 
 #include <mutex>
 
-#endif
 #endif
 
 
@@ -55,7 +53,6 @@ bool Tracer::initial_tracers_visibility_calculated_( false );
 
 TracerManager * TracerManager::instance_( 0 );
 
-#ifdef CXX11
 #ifdef MULTI_THREADED
 
 /// @brief This mutex ensures that any time static data is read from or written to by
@@ -66,7 +63,6 @@ TracerManager * TracerManager::instance_( 0 );
 /// is calling calculate_tracer_visibilities().
 std::recursive_mutex tracer_static_data_mutex;
 
-#endif
 #endif
 
 
@@ -167,10 +163,8 @@ Tracer::TracerProxy::~TracerProxy()
 
 void Tracer::flush_all_tracers()
 {
-#ifdef CXX11
 #ifdef MULTI_THREADED
 	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
-#endif
 #endif
 
 	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
@@ -184,10 +178,8 @@ void Tracer::flush_all_tracers()
 void
 Tracer::calculate_tracer_visibilities()
 {
-#ifdef CXX11
 #ifdef MULTI_THREADED
 	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
-#endif
 #endif
 	initial_tracers_visibility_calculated_ = true;
 	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
@@ -240,10 +232,8 @@ void Tracer::init(std::string const & channel, std::string const & channel_color
 	channel_color_ = channel_color;
 	channel_name_color_ = channel_name_color;
 
-#ifdef CXX11
 #ifdef MULTI_THREADED
 	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
-#endif
 #endif
 
 	if ( initial_tracers_visibility_calculated_ ) {
@@ -278,10 +268,8 @@ Tracer::~Tracer()
 	}
 #endif
 
-#ifdef CXX11
 #ifdef MULTI_THREADED
 	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
-#endif
 #endif
 
 	//std::cout << "Erasing tracer: " << channel_ << std::endl;
@@ -304,10 +292,8 @@ void Tracer::init( Tracer const & tr )
 	begining_of_the_line_ = true;
 	visibility_calculated_ = false;
 
-#ifdef CXX11
 #ifdef MULTI_THREADED
 	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
-#endif
 #endif
 
 	if ( initial_tracers_visibility_calculated_ ) {

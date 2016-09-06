@@ -15,16 +15,12 @@
 // C/C++ headers
 #include <sstream>
 #include <string>
-
-// As far as I can tell, find_if is available in algorithm under CXX11?
-#ifdef CXX11
 #include <algorithm>
-#endif
 
 // Singleton instance and mutex static data members
 namespace utility {
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< Inline_File_Provider >::singleton_mutex_{};
 template <> std::atomic< Inline_File_Provider * > utility::SingletonBase< Inline_File_Provider >::instance_( 0 );
 #else

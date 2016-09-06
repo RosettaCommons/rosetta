@@ -25,7 +25,7 @@ namespace utility {
 
 using basic::datacache::WriteableCacheableDataFactory;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< WriteableCacheableDataFactory >::singleton_mutex_{};
 template <> std::atomic< WriteableCacheableDataFactory * > utility::SingletonBase< WriteableCacheableDataFactory >::instance_( 0 );
 #else

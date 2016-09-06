@@ -27,11 +27,8 @@
 #include <map>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <atomic>
 #include <mutex>
-#endif
 #endif
 
 namespace protocols {
@@ -58,7 +55,6 @@ public:
 	void add_type(TopologyClaimerOP claimer);
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 public:
 
 	/// @brief This public method is meant to be used only by the
@@ -68,7 +64,6 @@ public:
 
 private:
 	static std::mutex singleton_mutex_;
-#endif
 #endif
 
 private:
@@ -92,7 +87,7 @@ private:
 	/// @brief A pointer to the singleton instance of the factory object.
 	/// Resources associated with the object are released on destruction.
 	/// APL Question: Should this be one-instance-per-program (singleton) or one-instance-per-job?
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 	static std::atomic< TopologyClaimerFactory * > instance_;
 #else
 	static TopologyClaimerFactory * instance_;

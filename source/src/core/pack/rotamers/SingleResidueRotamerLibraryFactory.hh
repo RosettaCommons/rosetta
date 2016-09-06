@@ -32,10 +32,7 @@
 #include <string>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
 #include <thread>
-#endif
 #endif
 
 namespace core {
@@ -76,11 +73,9 @@ private:
 	CreatorMap creator_map_;
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
 	/// @brief The mutex for the cache_ - aquire the mutex prior to reading/writing to the cache.
 	/// In practice, you shouldn't be touching the cache outside the get(ResidueType) method.
 	static std::mutex cache_mutex_;
-#endif
 #endif
 	mutable std::map< std::pair< std::string, std::string >, core::pack::rotamers::SingleResidueRotamerLibraryCOP > cache_;
 };

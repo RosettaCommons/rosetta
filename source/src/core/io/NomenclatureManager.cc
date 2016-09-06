@@ -37,13 +37,8 @@
 #include <string>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 headers
 #include <atomic>
 #include <mutex>
-
-#endif
 #endif
 
 
@@ -52,7 +47,7 @@ namespace utility {
 
 using core::io::NomenclatureManager;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< NomenclatureManager >::singleton_mutex_ {};
 template <> std::atomic< NomenclatureManager * > utility::SingletonBase< NomenclatureManager >::instance_( 0 );
 #else

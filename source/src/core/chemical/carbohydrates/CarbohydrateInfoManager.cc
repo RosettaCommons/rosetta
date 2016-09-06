@@ -30,22 +30,16 @@
 #include <map>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 headers
 #include <atomic>
 #include <mutex>
-
 #endif
-#endif
-
 
 // Singleton set-up
 namespace utility {
 
 using core::chemical::carbohydrates::CarbohydrateInfoManager;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< CarbohydrateInfoManager >::singleton_mutex_ {};
 template <> std::atomic< CarbohydrateInfoManager * > utility::SingletonBase< CarbohydrateInfoManager >::instance_( 0 );
 #else

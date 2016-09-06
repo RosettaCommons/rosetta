@@ -435,7 +435,6 @@ private:
 
 #ifdef NDEBUG  // faster version of Tracer IO for Release version
 
-#ifdef CXX11
 
 #include <utility/stream_util.hh>
 
@@ -457,27 +456,6 @@ Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
 
 } // namespace basic
 
-#else // CXX11
-
-namespace basic {
-
-template <class T>
-Tracer & operator <<( Tracer & TR, T const & entry ) {
-	std::ostream &t(TR);
-    if( TR.visible() ) { t << entry; }
-    return TR;
-}
-
-template <class T>
-Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
-	std::ostream &t(TR);
-    if( TR.visible() ) { t << entry; }
-    return TR;
-}
-
-} // namespace basic
-
-#endif // CXX11
 
 #endif // NDEBUG
 

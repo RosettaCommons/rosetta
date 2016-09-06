@@ -28,13 +28,8 @@
 #include <sstream>
 
 #ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 headers
 #include <atomic>
 #include <mutex>
-
-#endif
 #endif
 
 
@@ -43,7 +38,7 @@ namespace utility {
 
 using core::chemical::rings::RingConformerManager;
 
-#if defined MULTI_THREADED && defined CXX11
+#if defined MULTI_THREADED
 template <> std::mutex utility::SingletonBase< RingConformerManager >::singleton_mutex_ {};
 template <> std::atomic< RingConformerManager * > utility::SingletonBase< RingConformerManager >::instance_( 0 );
 #else
