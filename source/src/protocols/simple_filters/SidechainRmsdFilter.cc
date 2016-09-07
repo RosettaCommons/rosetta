@@ -51,7 +51,7 @@ SidechainRmsdFilter::SidechainRmsdFilter() : filters::Filter( "SidechainRmsd"  )
 SidechainRmsdFilter::SidechainRmsdFilter( core::Size const res1, core::Size const res2, core::Real const rmsd_threshold ) :
 	Filter( "SidechainRmsd" ), res1_( res1 ), res2_( res2 ), rmsd_threshold_( rmsd_threshold ) {}
 
-SidechainRmsdFilter::~SidechainRmsdFilter(){}
+SidechainRmsdFilter::~SidechainRmsdFilter()= default;
 
 void
 SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )

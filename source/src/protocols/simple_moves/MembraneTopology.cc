@@ -54,7 +54,7 @@ MembraneTopologyCreator::mover_name()
 	return "MembraneTopology";
 }
 
-MembraneTopology::~MembraneTopology() {}
+MembraneTopology::~MembraneTopology() = default;
 
 /// @brief default ctor
 MembraneTopology::MembraneTopology() :

@@ -54,7 +54,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.PoolEvaluatorCreator"
 namespace protocols {
 namespace simple_filters {
 
-PoolEvaluatorCreator::~PoolEvaluatorCreator() {}
+PoolEvaluatorCreator::~PoolEvaluatorCreator() = default;
 
 void PoolEvaluatorCreator::register_options() {
 	using namespace basic::options;

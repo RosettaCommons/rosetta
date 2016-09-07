@@ -41,7 +41,7 @@ BetaTurnDetection::BetaTurnDetection( BetaTurnDetection const & ) :
 	utility::pointer::ReferenceCount(), beta_turn_length_( 3 ), beta_turn_distance_cutoff_( 7.0 )
 {}
 
-BetaTurnDetection::~BetaTurnDetection() {}
+BetaTurnDetection::~BetaTurnDetection() = default;
 
 string
 BetaTurnDetection::type_name() const { return "BetaTurnDetection"; }
@@ -49,9 +49,9 @@ BetaTurnDetection::type_name() const { return "BetaTurnDetection"; }
 map< string, string > const & BetaTurnDetection::get_conformation_to_turn_type_map()
 {
 	// It pisses me off that C++ works this way, but it does. Sergey promises this line will only ever be executed once.
-	static map< string, string > * conformation_to_turn_type = 0;
+	static map< string, string > * conformation_to_turn_type = nullptr;
 
-	if ( conformation_to_turn_type == 0 ) {
+	if ( conformation_to_turn_type == nullptr ) {
 		conformation_to_turn_type = new map< string, string >;
 
 		// Turn types will be notated thusly: TurnXX[_NUMERAL], where XX is the Ramachandran hash of residues 2 and 3,
@@ -93,9 +93,9 @@ map< string, string > const & BetaTurnDetection::get_conformation_to_turn_type_m
 vector1< string > const & BetaTurnDetection::get_valid_ramachandran_hashes()
 {
 	// It pisses me off that C++ works this way, but it does. Sergey promises this line will only ever be executed once.
-	static vector1< string > * valid_ramachandran_hashes = 0;
+	static vector1< string > * valid_ramachandran_hashes = nullptr;
 
-	if ( valid_ramachandran_hashes == 0 ) {
+	if ( valid_ramachandran_hashes == nullptr ) {
 		valid_ramachandran_hashes = new vector1< string >;
 		valid_ramachandran_hashes->resize( number_of_ramachandran_hashes );
 

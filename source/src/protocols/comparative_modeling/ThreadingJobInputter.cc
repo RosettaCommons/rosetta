@@ -248,7 +248,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 			tr << "Len " <<  align_it->length() - align_it->gapped_positions() << std::endl;
 		}
 
-		std::vector< int >::iterator  i = length_list.begin();
+		auto  i = length_list.begin();
 		std::vector< int >::size_type m = (size_t)( length_list.size() * quantile );
 
 		std::nth_element(i, i + m, length_list.end());
@@ -316,7 +316,7 @@ protocols::jd2::JobInputterInputSource::Enum ThreadingJobInputter::input_source(
 
 size_t ThreadingJobInputter::num_templates() const {
 	size_t num_templates = 0;
-	for ( PoseMap::const_iterator i = template_poses_.begin();
+	for ( auto i = template_poses_.begin();
 			i != template_poses_.end(); ++i ) {
 		++num_templates;
 	}

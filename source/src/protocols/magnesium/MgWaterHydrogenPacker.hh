@@ -36,20 +36,20 @@ public:
 	MgWaterHydrogenPacker( utility::vector1< Size > const & mg_res_list );
 
 	//destructor
-	~MgWaterHydrogenPacker();
+	~MgWaterHydrogenPacker() override;
 
 public:
 
 	using Mover::apply;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void
 	apply( core::pose::Pose & pose,
 		std::pair< core::Size, core::Size > const & mg_water );
 
 
-	virtual std::string get_name() const{ return "MgWaterHydrogenPacker"; }
+	std::string get_name() const override{ return "MgWaterHydrogenPacker"; }
 
 	void remove_waters_except_mg_bound( core::pose::Pose & pose ) const;
 

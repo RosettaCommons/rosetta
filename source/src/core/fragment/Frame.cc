@@ -42,7 +42,7 @@ namespace core {
 namespace fragment {
 
 /// @details Auto-generated virtual destructor
-Frame::~Frame() {}
+Frame::~Frame() = default;
 
 using namespace kinematics;
 
@@ -261,8 +261,8 @@ BaseCacheUnit& Frame::cache( std::string tag, BaseCacheUnitOP const& new_cache )
 
 /// @brief copies all entries in the Frame-Cache for fragment "sid" of Frame "source" to fragment "nid" of "this" frame
 void Frame::clone_cache_data( Frame const& source, core::Size sid, core::Size nid ) {
-	for ( CacheMap::iterator it=source.cache_.begin(), eit=source.cache_.end(); it!=eit; ++it ) {
-		cache( it->first, it->second  ).remap_value( *it->second, sid, nid );
+	for (auto & it : source.cache_) {
+		cache( it.first, it.second  ).remap_value( *it.second, sid, nid );
 	}
 }
 
@@ -448,7 +448,7 @@ void Frame::read( std::istream &in ) {
 
 void Frame::show_fragments( std::ostream& out ) const {
 	for ( Size nr = 1; nr <= nr_frags(); nr ++ ) {
-		runtime_assert( fragment_ptr( nr ) != 0 );
+		runtime_assert( fragment_ptr( nr ) != nullptr );
 		//  std::cerr << "FRAME::show_fragments " << nr << " seqpos:" << start() << std::endl;
 		fragment( nr ).show( out, *this );
 		out << std::endl << std::endl;
@@ -462,7 +462,7 @@ bool Frame::merge( Frame const& other ) {
 	//copy cached data
 	Size insert_pos = frag_list_.size()+1;
 	Size other_frag_num = 1;
-	for ( FragDataCOPs::const_iterator it = other.frag_list_.begin(),
+	for ( auto it = other.frag_list_.begin(),
 			eit = other.frag_list_.end(); it!=eit; ++it ) {
 		frag_list_.push_back( *it );
 		clone_cache_data( other, other_frag_num++, insert_pos++ );
@@ -492,14 +492,13 @@ bool Frame::align( core::id::SequenceMapping const& map) {
 }
 
 FrameOP Frame::generate_sub_frame(  Size length, Size start /* = 1*/ ) const {
-	if ( !is_continuous() ) return NULL;
+	if ( !is_continuous() ) return nullptr;
 	FrameOP sub_frame( clone() ); //creates empty frame with same type
 	sub_frame->start_ += start - 1;
 	sub_frame->nr_res_ = length;
 	sub_frame->end_ = sub_frame->start_ + length - 1;
-	for ( FragDataCOPs::const_iterator it = frag_list_.begin(), eit = frag_list_.end();
-			it!=eit; ++it ) {
-		sub_frame->add_fragment( (*it)->generate_sub_fragment( start, start + length - 1 ) );
+	for (const auto & it : frag_list_) {
+		sub_frame->add_fragment( it->generate_sub_fragment( start, start + length - 1 ) );
 	}
 	runtime_assert( nr_frags() == sub_frame->nr_frags() );
 	return sub_frame;

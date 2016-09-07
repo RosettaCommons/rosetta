@@ -42,6 +42,7 @@
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 //utility includes
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -78,7 +79,7 @@ ConsensusDesignMoverCreator::mover_name()
 
 
 ConsensusDesignMover::ConsensusDesignMover()
-: ptask_(/* NULL */), task_factory_(NULL),
+: ptask_(/* NULL */), task_factory_(nullptr),
 	sfxn_(/* NULL */), invert_task_(false),
 	use_seqprof_constraints_(false), sasa_cutoff_(0.0),
 	seqprof_(/* NULL */), ignore_pose_profile_length_mismatch_(false)
@@ -88,13 +89,13 @@ ConsensusDesignMover::ConsensusDesignMover(
 	core::pack::task::PackerTaskCOP ptask,
 	core::scoring::ScoreFunctionCOP sfxn
 )
-: ptask_(ptask), task_factory_(/* NULL */),
-	sfxn_(sfxn), invert_task_(false),
+: ptask_(std::move(ptask)), task_factory_(/* NULL */),
+	sfxn_(std::move(sfxn)), invert_task_(false),
 	use_seqprof_constraints_(false), sasa_cutoff_(0.0),
 	seqprof_(/* NULL */), ignore_pose_profile_length_mismatch_(false)
 {}
 
-ConsensusDesignMover::~ConsensusDesignMover(){}
+ConsensusDesignMover::~ConsensusDesignMover()= default;
 
 protocols::moves::MoverOP
 ConsensusDesignMover::clone() const

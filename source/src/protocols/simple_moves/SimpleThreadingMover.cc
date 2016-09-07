@@ -55,7 +55,7 @@ SimpleThreadingMover::SimpleThreadingMover(std::string thread_sequence, core::Si
 	thread_sequence_ = thread_sequence;
 }
 
-SimpleThreadingMover::~SimpleThreadingMover(){}
+SimpleThreadingMover::~SimpleThreadingMover()= default;
 
 void
 SimpleThreadingMover::set_defaults(){
@@ -95,19 +95,7 @@ SimpleThreadingMover::parse_my_tag(
 
 
 
-SimpleThreadingMover::SimpleThreadingMover(SimpleThreadingMover const & src):
-	protocols::moves::Mover(src),
-	start_position_(src.start_position_),
-	thread_sequence_(src.thread_sequence_),
-	pack_neighbors_(src.pack_neighbors_),
-	neighbor_dis_(src.neighbor_dis_),
-	scorefxn_(src.scorefxn_),
-	parsed_position_(src.parsed_position_),
-	skip_unknown_mutant_(src.skip_unknown_mutant_),
-	pack_rounds_(src.pack_rounds_)
-{
-
-}
+SimpleThreadingMover::SimpleThreadingMover(SimpleThreadingMover const & )= default;
 
 protocols::moves::MoverOP
 SimpleThreadingMover::clone() const{

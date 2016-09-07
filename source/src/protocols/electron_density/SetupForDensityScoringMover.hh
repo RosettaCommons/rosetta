@@ -38,22 +38,22 @@ class SetupForDensityScoringMover : public moves::Mover {
 public:
 	SetupForDensityScoringMover();
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	virtual void mask( protocols::loops::Loops const & loops );
 
 	core::Real getScore() { return last_score; }
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	std::string dock_into_dens_strategy_;

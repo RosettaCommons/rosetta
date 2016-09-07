@@ -26,7 +26,7 @@ namespace import_pose {
 
 PDBSilentStructCreator::PDBSilentStructCreator() {}
 
-PDBSilentStructCreator::~PDBSilentStructCreator() {}
+PDBSilentStructCreator::~PDBSilentStructCreator() = default;
 
 core::io::silent::SilentStructOP PDBSilentStructCreator::create_silent_struct() const {
 	return core::io::silent::SilentStructOP( new PDBSilentStruct );

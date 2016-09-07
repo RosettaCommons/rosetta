@@ -49,7 +49,7 @@ public:
 	/// @brief assignment operator
 	TailSegmentMover & operator=( TailSegmentMover const & rhs );
 
-	virtual ~TailSegmentMover();
+	~TailSegmentMover() override;
 
 	/// @brief set the movemap instead of initializing it from cmd-line
 	virtual void set_movemap(core::kinematics::MoveMapOP const movemap);
@@ -57,15 +57,15 @@ public:
 	virtual void set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn);
 
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const { return "TailSegmentMover"; }
+	std::string get_name() const override { return "TailSegmentMover"; }
 
-	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new TailSegmentMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new TailSegmentMover ); }
 
-	virtual bool reinitialize_for_each_job() const { return false; }
+	bool reinitialize_for_each_job() const override { return false; }
 
-	virtual bool reinitialize_for_new_input() const { return true; }
+	bool reinitialize_for_new_input() const override { return true; }
 
 	void temp_initial( core::Real value ) { temp_initial_ = value; }
 	void temp_final( core::Real value ) { temp_final_ = value; }

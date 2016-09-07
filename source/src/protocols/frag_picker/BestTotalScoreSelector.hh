@@ -46,11 +46,10 @@ public:
 
 	}
 
-	virtual ~BestTotalScoreSelector() {
-	}
+	~BestTotalScoreSelector() override = default;
 
 	/// @brief  Selects desired number of fragments from a given candidates
-	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& );
+	void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& ) override;
 
 private:
 	CompareTotalScore comparator_;

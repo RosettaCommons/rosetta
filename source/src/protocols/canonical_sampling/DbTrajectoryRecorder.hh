@@ -63,11 +63,11 @@ public:
 	DbTrajectoryRecorder( DbTrajectoryRecorder const & );
 
 public:
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Return the job id that will be used as a foreign key in the
 	/// trajectory table that gets generated.
@@ -81,12 +81,12 @@ public:
 		core::pose::Pose & pose,
 		MetropolisHastingsMover const & mover,
 		core::Size cycle
-	);
+	) override;
 
 	void finalize_simulation(
 		core::pose::Pose & pose,
 		MetropolisHastingsMover const & mover
-	);
+	) override;
 
 	/// @brief Not implemented, except to complain if accidentally used.
 	bool restart_simulation(
@@ -95,7 +95,7 @@ public:
 		core::Size& cycle,
 		core::Size& temp_level,
 		core::Real& temperature
-	);
+	) override;
 
 private:
 
@@ -109,8 +109,8 @@ private:
 	/// written.
 	void  write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const * mover=0
-	);
+		protocols::canonical_sampling::MetropolisHastingsMover const * mover=nullptr
+	) override;
 
 private:
 

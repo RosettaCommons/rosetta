@@ -54,8 +54,8 @@ void SingleFileBuffer::flush( Size slave ) {
 }
 
 bool SingleFileBuffer::has_open_slaves() const {
-	for ( BufferMap::const_iterator it = unfinished_blocks_.begin(); it != unfinished_blocks_.end(); ++it ) {
-		if ( it->second.size() > 0 ) {
+	for (const auto & unfinished_block : unfinished_blocks_) {
+		if ( unfinished_block.second.size() > 0 ) {
 			return true;
 		}
 	}
@@ -90,8 +90,8 @@ core::Size SingleFileBuffer::length( core::Size slave ) {
 
 	core::Size length = 0;
 	LineBuffer & buf( unfinished_blocks_[ slave ] );
-	for ( LineBuffer::iterator iter = buf.begin(); iter != buf.end(); ++iter ) {
-		length += iter->length();
+	for (auto & iter : buf) {
+		length += iter.length();
 	}
 
 	return length;

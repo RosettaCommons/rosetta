@@ -38,7 +38,7 @@ public:
 	/// Using this comparator to sort fragment candidates orders them ascending by their sequence position
 	bool operator()(
 		ScoredCandidate first_candidate,
-		ScoredCandidate second_candidate) {
+		ScoredCandidate second_candidate) override {
 		return (first_candidate.first->get_first_index_in_query()
 			< second_candidate.first->get_first_index_in_query());
 	}
@@ -63,12 +63,12 @@ public:
 	/// to their total score
 	bool operator()(
 		ScoredCandidate first_candidate,
-		ScoredCandidate second_candidate) {
+		ScoredCandidate second_candidate) override {
 		return (scoring_->total_score(first_candidate.second)
 			< scoring_->total_score(second_candidate.second));
 	}
 
-	~CompareTotalScore() {}
+	~CompareTotalScore() override = default;
 private:
 	scores::FragmentScoreManagerOP scoring_;
 };
@@ -96,7 +96,7 @@ public:
 	/// to their total score
 	bool operator()(
 		ScoredCandidate first_candidate,
-		ScoredCandidate second_candidate) {
+		ScoredCandidate second_candidate) override {
 
 		Real t1(0);
 		Real t2(0);
@@ -107,7 +107,7 @@ public:
 		return (t1 < t2);
 	}
 
-	~CompareByScoreCombination() {}
+	~CompareByScoreCombination() override = default;
 private:
 	utility::vector1<Size> components_;
 	utility::vector1<Real> weights_;
@@ -130,7 +130,7 @@ public:
 	/// to their total score
 	bool operator()(
 		ScoredCandidate first_candidate,
-		ScoredCandidate second_candidate) {
+		ScoredCandidate second_candidate) override {
 		return (first_candidate.second->get_score_components()[component_id_]
 			< second_candidate.second->get_score_components()[component_id_]);
 	}

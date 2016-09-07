@@ -44,7 +44,7 @@ protocols::jd2::LazySilentFileJobInputter::LazySilentFileJobInputter()
 	tr.Debug << "instantiating LazySilentFileJobInputter" << std::endl;
 }
 
-protocols::jd2::LazySilentFileJobInputter::~LazySilentFileJobInputter() {}
+protocols::jd2::LazySilentFileJobInputter::~LazySilentFileJobInputter() = default;
 
 
 void
@@ -65,12 +65,10 @@ protocols::jd2::LazySilentFileJobInputter::fill_jobs( JobsContainer & jobs ) {
 	// feedign through multiple files.
 	runtime_assert( silent_files.size() <= 1 );
 
-	for ( vector1< file::FileName >::const_iterator current_fn_ = silent_files.begin();
-			current_fn_ != silent_files.end(); ++current_fn_
-			) {
+	for (const auto & silent_file : silent_files) {
 		utility::vector1< std::string > filetags;
 		//core::Size startindex = tags.size();
-		sfd_.read_tags_fast( *current_fn_, filetags );
+		sfd_.read_tags_fast( silent_file, filetags );
 
 		for ( core::Size jj = 1; jj <= filetags.size(); jj++ ) {
 			tags.push_back( filetags[jj] );

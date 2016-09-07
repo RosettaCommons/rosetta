@@ -132,8 +132,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 /// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-MPIFileBufJobDistributor::~MPIFileBufJobDistributor()
-{}
+MPIFileBufJobDistributor::~MPIFileBufJobDistributor() = default;
 
 void
 MPIFileBufJobDistributor::go( protocols::moves::MoverOP mover ) {

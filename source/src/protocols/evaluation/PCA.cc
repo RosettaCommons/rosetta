@@ -46,7 +46,7 @@ namespace protocols {
 namespace evaluation {
 
 /// @details Auto-generated virtual destructor
-PCA::~PCA() {}
+PCA::~PCA() = default;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.PCA", basic::t_info );
 
@@ -270,8 +270,8 @@ void PCA::fill_coordinates(
 {
 	int natoms = 1;
 	x.redimension( 3, ind.size() );
-	for ( IndexVector::const_iterator it=ind.begin(), eit=ind.end(); it!=eit; ++it ) {
-		PointPosition vec( pose.xyz( *it ) );
+	for (const auto & it : ind) {
+		PointPosition vec( pose.xyz( it ) );
 		for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
 			x(k+1,natoms) = vec[k];
 		}
@@ -316,8 +316,8 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 	}
 
 	/* clear matrix U */
-	for ( int i=0; i<DIM; i++ ) {
-		for ( int j=0; j<DIM; j++ ) u[i][j]=0;
+	for (auto & i : u) {
+		for ( int j=0; j<DIM; j++ ) i[j]=0;
 	}
 	/*calculate the matrix U*/
 	for ( n=0; (n<natoms); n++ ) {

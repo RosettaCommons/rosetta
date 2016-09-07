@@ -42,7 +42,7 @@ class PatchdockReader : public utility::pointer::ReferenceCount
 {
 public:
 	PatchdockReader();
-	virtual ~PatchdockReader();
+	~PatchdockReader() override;
 	/// @brief if no native is read
 	void read_poses( core::pose::Pose & input_pose, std::string & input_tag );
 

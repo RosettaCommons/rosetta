@@ -49,7 +49,7 @@ PackingState::PackingState( core::pose::Pose const & pose, bool is_positive )
 	ig_p_(/* 0 */)
 {}
 
-PackingState::~PackingState() {}
+PackingState::~PackingState() = default;
 
 PackerTaskCOP PackingState::ptask() const { return ptask_p_; }
 RotamerSetsCOP PackingState::rotamersets() const { return rotamersets_p_; }

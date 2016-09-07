@@ -47,7 +47,7 @@ public:
 	// c-tor
 	AtomTreeMinimizer();
 
-	virtual ~AtomTreeMinimizer();
+	~AtomTreeMinimizer() override;
 
 	/// @brief run minimization and return the final score at minimization's conclusion.
 	/// Virtual allowing derived classes to mascarade as AtomTreeMinimizers.

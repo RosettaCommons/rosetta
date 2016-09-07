@@ -53,13 +53,13 @@ void DiversifyDihedralsSelector::select_fragments(
 			Real rms = dihedral_rmsd(in[i].first, out[j].first);
 			if ( rms<cutoff_ ) {
 				is_ok = false;
-				trDiversifyDihedralsSelector.Trace<<"Phi-Psi rmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;;
+				trDiversifyDihedralsSelector.Trace<<"Phi-Psi rmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;
 				break;
 			}
 		}
 		if ( is_ok ) {
 			out.push_back( in[i] );
-			trDiversifyDihedralsSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;;
+			trDiversifyDihedralsSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;
 		}
 	}
 	trDiversifyDihedralsSelector<<out.size()<<" fragments passed through DiversifyDihedralsSelector at query position "

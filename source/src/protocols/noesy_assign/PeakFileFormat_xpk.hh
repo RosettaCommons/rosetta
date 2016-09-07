@@ -49,15 +49,15 @@ public:
 	//  PeakFileFormat_xpk( ResonanceListOP const& );
 	//  virtual ~PeakFileFormat_xpk();
 
-	virtual void set_format_from_peak( CrossPeak const& );
-	virtual void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const;
+	void set_format_from_peak( CrossPeak const& ) override;
+	void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const override;
 	//  virtual void write_resonances( std::ostream&, CrossPeak const& ) const;
 	//  virtual void write_strength( std::ostream&, CrossPeak const& ) const;
 	//  virtual void write_assignments( std::ostream&, CrossPeak const&, std::string const& first_line_end ) const;
-	virtual void write_assignment( std::ostream&, PeakAssignment const& ) const;
-	virtual void write_assignment_indent( std::ostream&, CrossPeak const& ) const;
-	virtual void write_assignment_stats( std::ostream&, PeakAssignment& ) const {}; //don't write these
-	virtual void write_nil_assignment( std::ostream& ) const;
+	void write_assignment( std::ostream&, PeakAssignment const& ) const override;
+	void write_assignment_indent( std::ostream&, CrossPeak const& ) const override;
+	void write_assignment_stats( std::ostream&, PeakAssignment& ) const override {}; //don't write these
+	void write_nil_assignment( std::ostream& ) const override;
 	//   virtual void read_resonances( std::istream&, CrossPeak& ) const;
 	//   virtual void read_assignments( std::istream& is, std::istream& rest_line, CrossPeak& ) const;
 	//   virtual void read_strength( std::istream&, CrossPeak& ) const;
@@ -69,7 +69,7 @@ public:
 	//   virtual void output_diagnosis( std::ostream& ) const;
 
 	//   virtual void set_format_from_peak( CrossPeak const& );
-	virtual void write_header( std::ostream& );
+	void write_header( std::ostream& ) override;
 	//   virtual bool compatible_with_current_format( CrossPeak const& ) const;
 
 	//static void register_options();

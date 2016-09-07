@@ -137,7 +137,7 @@ WorkUnit_CombinePose::run()
 	std::string combtype = cartesian? " cartesian": " torsion";
 	TR << "Executing WorkUnit_CombinePose_Mover on " << combtype << "." << std::endl;
 
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	core::scoring::ScoreFunctionCOP sfxn_loc = get_energy( "talaris2013_cart" );
 
@@ -172,7 +172,7 @@ WorkUnit_CombinePose::run()
 		store_to_decoys( start_struct, ss, tag );
 	}
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Debug << "Build " << decoys().size() << " structures in ";
 	TR.Debug << endtime - starttime << " s " << std::endl;
 
@@ -228,7 +228,7 @@ WorkUnit_NormalMode::run()
 
 	TR << "Executing WorkUnit_NormalMode_Mover" << std::endl;
 
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	// 1. Scales/mode setup
 	// Use maxmode + mixture of them by scale given as input
@@ -374,7 +374,7 @@ WorkUnit_NormalMode::run()
 		if ( decoys().store().size() >= nstruct ) break;
 	}
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Debug << "Build " << decoys().size() << " structures in ";
 	TR.Debug << endtime - starttime << " s " << std::endl;
 
@@ -433,7 +433,7 @@ WorkUnit_RamaPerturber::run()
 	decoys().clear();
 
 	// get number of runs
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	utility::vector1< core::Size > loopres;
 	loopres.resize( 0 );
@@ -498,7 +498,7 @@ WorkUnit_RamaPerturber::run()
 
 	store_to_decoys( start_struct, pose_work );
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Debug << "Build " << decoys().size() << " structures in " << endtime - starttime << " s " << std::endl;
 
 } // class WorkUnit_RamaPerturber

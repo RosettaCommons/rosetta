@@ -38,19 +38,19 @@ class GeometryFilter : public filters::Filter
 {
 public:
 	GeometryFilter();
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	virtual filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new GeometryFilter( *this ) );
 	}
-	virtual filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new GeometryFilter() );
 	}
 
-	virtual ~GeometryFilter();
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~GeometryFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Real omega_cutoff_;
 	core::Real cart_bonded_cutoff_;

@@ -32,19 +32,19 @@ public:
 	DbMoverMessageListener();
 
 	/// @brief receive the protocol id and batch id from the slave
-	virtual
+	
 	void
 	receive(
-		std::string const & data);
+		std::string const & data) override;
 
 	/// @brief check to see if we have a protocol id and batch id. If we
 	///have them then tell them to the slave. If we don't have them then
 	///tell the slave to make them
-	virtual
+	
 	bool
 	request(
 		std::string const & identifier,
-		std::string & return_data);
+		std::string & return_data) override;
 
 	void
 	deserialize_data(

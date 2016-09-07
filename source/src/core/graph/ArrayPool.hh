@@ -75,7 +75,7 @@ public:
 
 	/// @brief The destructor does not deallocate the memory that this Array0 points at.
 	/// That is the responsibility of some other class.  Array0 is for bounds checking only.
-	~Array0() {}
+	~Array0() = default;
 
 public:
 	/// Accessors and mutators.
@@ -193,7 +193,7 @@ public:
 		neg_ptr_( other.neg_ptr_ )
 	{}
 
-	~ArrayPoolElement() {}
+	~ArrayPoolElement() = default;
 
 	T const & operator [] ( platform::Size index ) const {
 		debug_assert( neg_ptr_->allocated() );
@@ -266,7 +266,7 @@ public:
 		nnegative_( 0 )
 	{}
 
-	~ArrayPool() {
+	~ArrayPool() override {
 		if ( !empty() ) {
 			utility_exit_with_message( "Error in ArrayPool destructor: cannot free a non-empty ArrayPool" );
 		}
@@ -400,13 +400,13 @@ private:
 		debug_assert( neg_begin_.next() == 0 );
 		if ( array_size_ != 0 ) {
 
-			NegSpaceElement< T > * const neg_block = new NegSpaceElement< T >[ block_size_ ];
+			auto * const neg_block = new NegSpaceElement< T >[ block_size_ ];
 
 			if ( neg_block == 0 ) {
 				utility_exit_with_message( neg_space_element_allocation_error_message( block_size_, sizeof( NegSpaceElement< T > )));
 			}
 
-			T * const t_block = new T[ block_size_ * array_size_ ];
+			auto * const t_block = new T[ block_size_ * array_size_ ];
 
 			if ( t_block == 0 ) {
 				utility_exit_with_message( block_allocation_error_message( block_size_, array_size_, sizeof( T )));
@@ -435,7 +435,7 @@ private:
 			array_blocks_.push_back( t_block );
 		} else {
 			/// 0-size array support.
-			NegSpaceElement< T > * const neg_block = new NegSpaceElement< T >[ block_size_ ];
+			auto * const neg_block = new NegSpaceElement< T >[ block_size_ ];
 
 			if ( neg_block == 0 ) {
 				utility_exit_with_message( neg_space_element_allocation_error_message( block_size_, sizeof( NegSpaceElement< T > )));

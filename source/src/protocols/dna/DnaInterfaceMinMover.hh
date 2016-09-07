@@ -35,11 +35,11 @@ public:
 	DnaInterfaceMinMover();
 	DnaInterfaceMinMover( DnaInterfaceMinMover const & );
 	DnaInterfaceMinMover & operator = ( DnaInterfaceMinMover const & );
-	virtual ~DnaInterfaceMinMover();
+	~DnaInterfaceMinMover() override;
 	DnaInterfaceMinMover( DnaInterfaceFinderOP );
 
-	virtual void apply( core::pose::Pose & );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & ) override;
+	std::string get_name() const override;
 
 	void use_interface( DnaInterfaceFinderOP );
 	void chi( bool value ) { chi_ = value; }
@@ -47,17 +47,17 @@ public:
 	void reset_from_interface();
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 private:
 	DnaInterfaceFinderOP interface_;

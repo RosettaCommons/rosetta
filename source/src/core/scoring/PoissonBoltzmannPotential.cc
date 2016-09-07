@@ -77,7 +77,7 @@ const std::string PB::APBS_DX_EXT = ".dx";
 const std::string PB::DEFAULT_APBS_PATH = "apbs";
 
 // @brief Auto-generated virtual destructor
-PB::~PoissonBoltzmannPotential() {}
+PB::~PoissonBoltzmannPotential() = default;
 
 PB::PoissonBoltzmannPotential()
 :config_filename_("Unknown.in"),

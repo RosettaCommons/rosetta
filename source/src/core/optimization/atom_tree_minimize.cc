@@ -162,7 +162,7 @@ atom_tree_dfunc(
 	/////////////////////////////////////////////////////////////////////////////
 	// now loop over the torsions in the map
 	int imap( 1 ); // for indexing into de_dvars( imap )
-	for ( MinimizerMap::iterator it=min_map.begin(), ite=min_map.end();
+	for ( auto it=min_map.begin(), ite=min_map.end();
 			it != ite; ++it, ++imap ) {
 
 		DOF_Node const & dof_node( **it );
@@ -290,12 +290,12 @@ atom_tree_get_atompairE_deriv(
 			min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
 	}
 
-	for ( MinimizerMap::iterator iter = min_map.begin(), iter_e = min_map.end();
+	for ( auto iter = min_map.begin(), iter_e = min_map.end();
 			iter != iter_e; ++iter ) {
 		DOF_Node & dof_node( **iter );
 
 		// loop through atoms first moved by this torsion
-		for ( DOF_Node::AtomIDs::const_iterator it1=dof_node.atoms().begin(),
+		for ( auto it1=dof_node.atoms().begin(),
 				it1e = dof_node.atoms().end(); it1 != it1e; ++it1 ) {
 			id::AtomID const & atom_id( *it1 );
 			dof_node.F1() += min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f1();
@@ -551,7 +551,7 @@ numerical_derivative_check(
 	Real const f00 = func( vars );
 	Size ii( 1 ); // for indexing into dE_dvars[ ii ]
 
-	for ( MinimizerMap::const_iterator iter= min_map.begin(),
+	for ( auto iter= min_map.begin(),
 			iter_end= min_map.end(); iter != iter_end; ++iter, ++ii ) {
 		DOF_Node const & dof_node( **iter );
 

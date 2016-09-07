@@ -72,7 +72,7 @@ NormalMode::NormalMode( std::string const mode,
 	torsions_using_assigned_ = false;
 }
 
-NormalMode::~NormalMode(){}
+NormalMode::~NormalMode()= default;
 
 void
 NormalMode::torsion( bool const torsion,

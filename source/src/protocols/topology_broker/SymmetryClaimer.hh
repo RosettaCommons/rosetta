@@ -48,18 +48,18 @@ class SymmetryClaimer : public virtual TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	SymmetryClaimer(); //for factory
-	~SymmetryClaimer() {};
+	~SymmetryClaimer() override = default;
 
 	SymmetryClaimer( SymmetryClaimer const & src );
 
 	SymmetryClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SymmetryClaimer>( TopologyClaimer::shared_from_this() ); }
 
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new SymmetryClaimer( *this ) );
 	}
 
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -67,13 +67,13 @@ public:
 		return "SymmetryClaimer";
 	}
 
-	virtual void generate_symmetry_claims( claims::SymmetryClaims& );
+	void generate_symmetry_claims( claims::SymmetryClaims& ) override;
 
 	virtual void symmetry_duplicate( claims::DofClaims&, core::pose::Pose& );
 
 
 protected:
-	virtual bool read_tag( std::string tag, std::istream& );
+	bool read_tag( std::string tag, std::istream& ) override;
 
 	//    virtual void symmdup_sequence_claims( claims::DofClaims& );
 	//    virtual void symmdup_pose_sequence( core::pose::Pose& );

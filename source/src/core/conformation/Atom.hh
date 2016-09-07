@@ -63,7 +63,7 @@ public:
 
 	/// @brief destructor
 	virtual
-	~Atom() {}
+	~Atom() = default;
 
 
 	/// @brief  Generate string representation of conformation::Atom for debugging purposes.

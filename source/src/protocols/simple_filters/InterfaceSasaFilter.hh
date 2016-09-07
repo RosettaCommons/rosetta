@@ -33,14 +33,14 @@ public:
 	InterfaceSasaFilter();
 	InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0, std::string const & sym_dof_names="" );
 
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const; // which residue numbers are neighbors
-	filters::FilterOP clone() const;
-	filters::FilterOP fresh_instance() const;
+	filters::FilterOP clone() const override;
+	filters::FilterOP fresh_instance() const override;
 
-	virtual ~InterfaceSasaFilter();
+	~InterfaceSasaFilter() override;
 	void jump( core::Size const jump );
 	void add_jump( core::Size const jump );
 	void jumps( utility::vector1<core::Size> const & jumps );
@@ -49,7 +49,7 @@ public:
 	void sym_dof_names( utility::vector1<std::string> const & sym_dof_names );
 	void add_sym_dof_name( std::string const & sym_dof_name );
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	core::Real lower_threshold_;

@@ -72,10 +72,10 @@ public:
 	/// and creates a ResourceManager
 	StandardJobQueen();
 
-	virtual ~StandardJobQueen();
+	~StandardJobQueen() override;
 
-	virtual std::string job_definition_xsd() const;
-	virtual std::string resource_definition_xsd() const;
+	std::string job_definition_xsd() const override;
+	std::string resource_definition_xsd() const override;
 
 	/// @brief The %StandardJobQueen manages the process of creating the list of LarvalJobs that
 	/// will be later matured into actual jobs and run by the JobDistributor.  Classes derived
@@ -92,13 +92,13 @@ public:
 	/// only be 5 preliminary larval jobs created). It then passes the preliminary LarvalJob list and
 	/// the TagOP objects for each preliminary LarvalJob to the derived class through the
 	/// refine_job_list method.
-	virtual LarvalJobs determine_job_list();
+	LarvalJobs determine_job_list() override;
 
-	virtual bool has_job_completed( protocols::jd3::LarvalJobCOP job );
+	bool has_job_completed( protocols::jd3::LarvalJobCOP job ) override;
 
-	virtual
+	
 	protocols::jd3::JobOP
-	mature_larval_job( protocols::jd3::LarvalJobCOP job );
+	mature_larval_job( protocols::jd3::LarvalJobCOP job ) override;
 
 	/// @brief Read from an input string representing the contents of the job-definiton XML file
 	/// and construct a set of LarvalJobs; this function is primarily useful for testing,

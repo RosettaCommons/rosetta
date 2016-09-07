@@ -35,8 +35,7 @@ TorsionSetMover::TorsionSetMover(
 }
 
 //Destructor
-TorsionSetMover::~TorsionSetMover()
-{}
+TorsionSetMover::~TorsionSetMover() = default;
 
 void
 TorsionSetMover::apply( core::pose::Pose & pose ) {

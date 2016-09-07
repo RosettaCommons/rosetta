@@ -32,7 +32,7 @@ class FilterCreator : public utility::pointer::ReferenceCount
 {
 public:
 	FilterCreator();
-	virtual ~FilterCreator();
+	~FilterCreator() override;
 
 	virtual FilterOP create_filter() const = 0;
 	virtual std::string keyname() const = 0;

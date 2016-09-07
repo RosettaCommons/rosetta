@@ -58,17 +58,17 @@ public:
 	// init to defaults
 	void init();
 
-	~SymFoldandDockRbTrialMover(){}
+	~SymFoldandDockRbTrialMover() override= default;
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;

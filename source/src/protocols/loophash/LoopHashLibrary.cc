@@ -146,21 +146,21 @@ LoopHashLibrary::sort() {
 void
 LoopHashLibrary::save_db()
 {
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 	TR.Info << "Saving bbdb_ (BackboneDatabase) " << assigned_string_ << " with extras" << std::endl;
 	bbdb_.write_db( db_path_ + "backbone" + assigned_string_ + ".db" );
 	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		TR.Info << "Saving loopdb (LoopHashDatabase) " << assigned_string_ << " with loop size " << *it << std::endl;
 		hash_[ *it ].write_db(db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ + ".db" );
 	}
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR << "Save LoopHash Library: " << endtime - starttime << " seconds " << std::endl;
 }
 
 void
 LoopHashLibrary::delete_db()
 {
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 	TR.Info << "Deleting database files " << assigned_string_ << std::endl;
 	std::string dbstring = db_path_ + "backbone" + assigned_string_ + ".db";
 	if ( remove( dbstring.c_str() ) != 0 ) throw EXCN_DB_IO_Failed( dbstring , "delete" );
@@ -170,21 +170,21 @@ LoopHashLibrary::delete_db()
 		if ( remove( dbstring.c_str() ) != 0 ) throw EXCN_DB_IO_Failed( dbstring, "delete" );
 		TR.Info << "loopdb size " << utility::to_string( *it ) << " deletion successful" << std::endl;
 	}
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR << "Deleted LoopHash Library: " << endtime - starttime << " seconds " << std::endl;
 }
 
 void
 LoopHashLibrary::load_db()
 {
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 	TR.Info << "Reading bbdb_ (BackboneDatabase) " << assigned_string_ << " with extras" << std::endl;
 	bbdb_.read_db( db_path_ + "backbone" + assigned_string_ + ".db", extra_ );
 	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		TR.Info << "Reading loopdb (LoopHashDatabase) " << assigned_string_ << " with loop size " << *it << std::endl;
 		hash_[ *it ].read_db( db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ + ".db" );
 	}
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR << "Read LoopHash Library from disk: " << endtime - starttime << " seconds " << std::endl;
 }
 
@@ -193,7 +193,7 @@ LoopHashLibrary::load_mergeddb()
 {
 	// Currently, reads a slice of the backbonedb and whatever proteins
 	// are included, the loops from those proteins are loaded.
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 
 	TR.Info << "Reading merged bbdb_ (BackboneDatabase) " << assigned_string_;
 	if ( extra_ ) TR.Info << " with extras";
@@ -210,7 +210,7 @@ LoopHashLibrary::load_mergeddb()
 		db_filename = db_path_ + "loopdb." + utility::to_string( *it ) + ".db";
 		hash_[ *it ].read_db(db_filename, loopdb_range_, homolog_map );
 	}
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR << "Read MergedLoopHash Library from disk: " << endtime - starttime << " seconds " << std::endl;
 }
 
@@ -220,7 +220,7 @@ LoopHashLibrary::merge(
 	LoopHashLibraryOP second_lib,
 	utility::vector1< core::Real> rms_cutoffs )
 {
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 
 	// Might want to split this function into subroutines, its kinda big
 
@@ -291,8 +291,8 @@ LoopHashLibrary::merge(
 					}
 				}
 				// Now do an RMS check against every bs in the master lib bucket
-				for ( core::Size j = 0; j < bs_vec_.size(); j++ ) {
-					core::Real BBrms = get_rmsd( bs_vec_[j], bs_ );
+				for (auto & j : bs_vec_) {
+					core::Real BBrms = get_rmsd( j, bs_ );
 					if ( BBrms < rms_cutoff ) {
 						// If any bs is within rms_cutoff RMS, then we don't add it
 						// and also don't check any others
@@ -318,7 +318,7 @@ LoopHashLibrary::merge(
 			}
 		}
 	}
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR << "Merged LoopHash Library: " << endtime - starttime << " seconds " << std::endl;
 }
 
@@ -482,9 +482,9 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
 		core::pose::set_ss_from_phipsi( pose );
 
-		core::Size starttime2 = time(NULL);
+		core::Size starttime2 = time(nullptr);
 		get_all( pose, lib_structs, 1, 0, 20,1400.0, 0.5, 4.0 );
-		core::Size endtime2 = time(NULL);
+		core::Size endtime2 = time(nullptr);
 		TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
 		//std::random__shuffle( lib_structs.begin(), lib_structs.end());
@@ -519,9 +519,9 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		core::Size bestindex = 0;
 		// Batch relax the result:
 
-		core::Size starttime = time(NULL);
+		core::Size starttime = time(nullptr);
 		relax->batch_apply( select_lib_structs );
-		core::Size endtime = time(NULL);
+		core::Size endtime = time(nullptr);
 		TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
 
@@ -668,7 +668,7 @@ LoopHashLibrary::apply_random(
 
 
 		core::Real BBrms = get_rmsd( pose_bs, new_bs );
-		TR.Info << "Applying: " << ir << "\t" << jr << "\t" << BBrms << nres << loop_size << std::endl;;
+		TR.Info << "Applying: " << ir << "\t" << jr << "\t" << BBrms << nres << loop_size << std::endl;
 		pose_bs.print();
 
 		new_bs.apply_to_pose( pose, ir );
@@ -726,10 +726,8 @@ LoopHashLibrary::get_all(
 	start_res = std::min( start_res, (core::Size)2 ); // dont start before 2 - WHY ?
 
 	for ( ir = 2; ir < nres; ir ++ ) {
-		for ( core::Size k = 0; k < hash_sizes_.size(); k ++ ) {
-			core::Size loop_size = hash_sizes_[ k ];
-
-			jr = ir + loop_size;
+		for (unsigned long loop_size : hash_sizes_) {
+				jr = ir + loop_size;
 			if ( ir > nres ) continue;
 			if ( jr > nres ) continue;
 
@@ -959,7 +957,7 @@ bool LoopHashLibrary::test_saving_library( core::pose::Pose pose, core::Size ir,
 	pose_bs.read_from_pose( pose, ir, loop_size );
 
 	if ( deposit ) {
-		bbdb_.add_pose( pose, pose.total_residue(), index, NULL );
+		bbdb_.add_pose( pose, pose.total_residue(), index, nullptr );
 
 		TR << "ADD: "
 			<< ir << " " << jr << " "

@@ -69,10 +69,10 @@ public:
 	LoopBuilder();
 
 	/// @brief Default destructor.
-	~LoopBuilder();
+	~LoopBuilder() override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "LoopBuilder"; }
+	string get_name() const override { return "LoopBuilder"; }
 
 public:
 
@@ -82,7 +82,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 public:
 
@@ -107,7 +107,7 @@ protected:
 
 	/// @brief Attempt to find a reasonable loop conformation without using any
 	/// information from the original coordinates.
-	bool do_apply(Pose & pose, Loop const & loop);
+	bool do_apply(Pose & pose, Loop const & loop) override;
 
 private:
 

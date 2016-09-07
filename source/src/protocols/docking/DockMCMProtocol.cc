@@ -120,7 +120,7 @@ DockMCMProtocol::DockMCMProtocol(
 }
 
 //destructor
-DockMCMProtocol::~DockMCMProtocol() {}
+DockMCMProtocol::~DockMCMProtocol() = default;
 
 void DockMCMProtocol::set_filter( DockingHighResFilterOP filter ) { filter_ = filter; }
 
@@ -180,7 +180,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 		TR <<"The default DockingTaskFactory is being ignored." << std::endl;
 	}
 	//Need a check to make sure there is a task HERE!!!
-	if ( task_factory() != 0 ) {
+	if ( task_factory() != nullptr ) {
 		dock_mcm_->set_task_factory( task_factory() );
 	}
 	//exit if you chose to ignore the default task but didn't provide one of your own.
@@ -294,7 +294,7 @@ std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 	out << "Docking Scorefunction:  " << dmp.scorefxn_docking()->get_name() << std::endl;
 	out << "Packing Scorefunction:  " << dmp.scorefxn_packing()->get_name() << std::endl;
 	out << "Movemap: ";
-	if ( dmp.movemap_ != 0 ) { out << std::endl; dmp.movemap_->show(); }
+	if ( dmp.movemap_ != nullptr ) { out << std::endl; dmp.movemap_->show(); }
 	else { out << "none"; }
 	return out;
 }

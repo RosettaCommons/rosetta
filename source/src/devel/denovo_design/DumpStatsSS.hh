@@ -42,18 +42,18 @@ class DumpStatsSS : public protocols::moves::Mover
 public:
 	DumpStatsSS();
 	DumpStatsSS( DumpStatsSS const &rval);
-	virtual ~DumpStatsSS();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const {
+	~DumpStatsSS() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new DumpStatsSS( *this ) ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DumpStatsSS ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new DumpStatsSS ); }
 	core::Real compute_boltz_sum( utility::vector1< core::Real > const & probabilities ) const;
 	core::Real compute_svm_prob(std::string sequence, std::string wanted_ss);
 	core::Real compute_psipred_prob(core::pose::Pose & pose , std::string wanted_ss);
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	std::string fname_;

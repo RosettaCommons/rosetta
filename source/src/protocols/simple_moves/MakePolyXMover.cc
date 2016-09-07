@@ -21,6 +21,7 @@
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <string>
 
@@ -60,14 +61,13 @@ MakePolyXMover::MakePolyXMover():
 
 MakePolyXMover::MakePolyXMover( std::string aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys ):
 	protocols::moves::Mover( MakePolyXMoverCreator::mover_name() ),
-	aa_( aa ),
+	aa_(std::move( aa )),
 	keep_pro_( keep_pro ),
 	keep_gly_( keep_gly ),
 	keep_disulfide_cys_( keep_disulfide_cys )
 {}
 
-MakePolyXMover::~MakePolyXMover()
-{}
+MakePolyXMover::~MakePolyXMover() = default;
 
 /// @brief clone this object
 protocols::moves::MoverOP MakePolyXMover::clone() const {

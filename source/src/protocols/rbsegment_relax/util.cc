@@ -204,18 +204,18 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	// "star" topology fold tree
 	utility::vector1< core::Size > cuts = f_in.cutpoints(), jump_res;
 	utility::vector1< std::pair<core::Size,core::Size> > jumps;
-	for ( loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
+	for (const auto & loop : loops) {
 		//if (pose.residue(it->stop()).is_upper_terminus() && it->stop() != nres)
 		// cuts.push_back( it->stop() );
 
 		//fpd segment with no rbsegs
-		if ( pose.residue(it->start()).is_lower_terminus() && pose.residue(it->stop()).is_upper_terminus() ) {
-			core::Size midpt = (it->start()+it->stop()) / 2;
+		if ( pose.residue(loop.start()).is_lower_terminus() && pose.residue(loop.stop()).is_upper_terminus() ) {
+			core::Size midpt = (loop.start()+loop.stop()) / 2;
 			jumps.push_back (std::pair<core::Size,core::Size>( vrtid, midpt ) );
 		}
 
-		if ( pose.residue(it->start()).is_lower_terminus() || pose.residue(it->stop()).is_upper_terminus() ) continue;
-		cuts.push_back( it->cut() );
+		if ( pose.residue(loop.start()).is_lower_terminus() || pose.residue(loop.stop()).is_upper_terminus() ) continue;
+		cuts.push_back( loop.cut() );
 	}
 	//cuts.push_back( nres );
 
@@ -260,8 +260,8 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 
 	// movemap
 	mm->clear();
-	for ( loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
-		for ( int j=(int)(it->start()) ; j<=(int)(it->stop()); ++j ) {
+	for (const auto & loop : loops) {
+		for ( int j=(int)(loop.start()) ; j<=(int)(loop.stop()); ++j ) {
 			mm->set_bb(j,true);
 		}
 	}
@@ -275,8 +275,8 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	}
 
 	// cb variants
-	for ( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
-		Size const loop_cut(it->cut());
+	for (const auto & loop : loops) {
+		Size const loop_cut(loop.cut());
 		if ( !pose.residue(loop_cut).is_lower_terminus() && !pose.residue(loop_cut).is_upper_terminus() ) {
 			if ( ! pose.residue(loop_cut).has_variant_type(core::chemical::CUTPOINT_LOWER) ) {
 				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, loop_cut );
@@ -800,8 +800,8 @@ void remap_rb_segments(
 	utility::vector1< RBSegment > const &rbsegs,
 	utility::vector1< RBSegment > &rbsegs_remap,
 	core::id::SequenceMapping const &resmap ) {
-	for ( RBConsIt it_seg = rbsegs.begin(), it_seg_end = rbsegs.end(); it_seg != it_seg_end; ++it_seg ) {
-		RBSegment it_remap = it_seg->remap( resmap );
+	for (const auto & rbseg : rbsegs) {
+		RBSegment it_remap = rbseg.remap( resmap );
 		rbsegs_remap.push_back( it_remap );
 	}
 }

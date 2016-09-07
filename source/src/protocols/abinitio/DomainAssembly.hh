@@ -40,18 +40,18 @@ public:
 		FragSetOP fragset_large,
 		FragSetOP fragset_small
 	);
-	virtual ~DomainAssembly();
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	~DomainAssembly() override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 private:
 	core::Size linker_start_, linker_end_;
 	core::fragment::FragSetOP fragset_large_, fragset_small_;

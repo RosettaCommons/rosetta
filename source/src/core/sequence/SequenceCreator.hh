@@ -35,7 +35,7 @@ class SequenceCreator : public utility::pointer::ReferenceCount
 {
 public:
 	SequenceCreator();
-	virtual ~SequenceCreator();
+	~SequenceCreator() override;
 
 	virtual SequenceOP create_sequence() const = 0;
 	virtual std::string keyname() const = 0;

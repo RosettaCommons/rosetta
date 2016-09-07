@@ -104,7 +104,7 @@ KinematicControl::add_chainbreak_variants( pose::Pose &pose, Size max_dist, core
 }
 
 KinematicControl::KinematicControl() {}
-KinematicControl::~KinematicControl() {}
+KinematicControl::~KinematicControl() = default;
 
 void KinematicControl::set_movemap( core::kinematics::MoveMapCOP mm ) {
 	movemap_ = mm;

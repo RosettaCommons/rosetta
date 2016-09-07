@@ -36,7 +36,7 @@ public:
 
 	PartitionAggregateFunction();
 	PartitionAggregateFunction(core::Real temp, core::Real anchor_offset, bool const compare_to_ground_state=false);
-	virtual ~PartitionAggregateFunction();
+	~PartitionAggregateFunction() override;
 
 	/*
 	PartitionAggregateFunction() : MultiStateAggregateFunction<T>(), temp_(1), anchor_offset_(0), compare_all_to_ground_state_( false ) {}
@@ -50,12 +50,12 @@ public:
 	virtual core::Real anchor_offset() const;
 	virtual void set_anchor_offset( core::Real offset );
 
-	virtual
+	
 	core::Real
 	evaluate(
 		utility::vector1<core::Real> const & single_state_fitnesses,
 		MultiStateFitnessFunction & fitness_function
-	) const;
+	) const override;
 
 private:
 	core::Real temp_;

@@ -177,7 +177,7 @@ SecondaryStructurePotential::hspair(
 
 	// are we symmetric?
 	bool symmetric=false;
-	core::conformation::symmetry::SymmetryInfoOP symm_info = NULL;
+	core::conformation::symmetry::SymmetryInfoOP symm_info = nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symmetric=true;
 		SymmetricConformation const & SymmConf (
@@ -381,7 +381,7 @@ SecondaryStructurePotential::sspair(
 
 	// We need to initialize some things for symmetry scoring. Default we are assymetric
 	bool symmetric=false;
-	core::conformation::symmetry::SymmetryInfoOP symm_info = NULL;
+	core::conformation::symmetry::SymmetryInfoOP symm_info = nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symmetric=true;
 		SymmetricConformation const & SymmConf (
@@ -823,7 +823,7 @@ SecondaryStructurePotential::sspair(
 
 	std::sort( dimer_pairs.begin(), dimer_pairs.end(), dimer_pairing_pointer_sorter );
 
-	for ( DimerPairings::iterator it= dimer_pairs.begin(), ite= dimer_pairs.end(); it != ite; ++it ) {
+	for ( auto it= dimer_pairs.begin(), ite= dimer_pairs.end(); it != ite; ++it ) {
 		DimerPairing const & pairing( **it );
 		if ( !pairing.valid() ) continue;
 		if ( symmetric ) { // multiply with score factors for the edge
@@ -868,7 +868,7 @@ SecondaryStructurePotential::sspair(
 		int const SS_strand_dimer2 = strands.SS_strand( dimer2 );
 		// ARE THERE OTHER DIMERS INTERACTING WITH THE BEST PAIR?
 
-		DimerPairings::iterator it2( it );
+		auto it2( it );
 		++it2;
 
 		for ( ; it2 != ite; ++it2 ) {
@@ -1004,7 +1004,7 @@ SecondaryStructurePotential::sheets_from_dimers(
 
 	// We need to set up some stuff for symmetry
 	bool symmetric=false;
-	core::conformation::symmetry::SymmetryInfoOP symm_info = NULL;
+	core::conformation::symmetry::SymmetryInfoOP symm_info = nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symmetric=true;
 		SymmetricConformation const & SymmConf (
@@ -1047,17 +1047,17 @@ SecondaryStructurePotential::sheets_from_dimers(
 		utility::vector1< Size > weight_sheets;
 		graph::DisjointSets reduced_sheet_sets;
 		std::map< Size, utility::vector1< Size > > const set_and_nodes ( sheet_sets.sets() );
-		std::map< Size, utility::vector1< Size > >::const_iterator it_start = set_and_nodes.begin();
-		std::map< Size, utility::vector1< Size > >::const_iterator it_end = set_and_nodes.end();
+		auto it_start = set_and_nodes.begin();
+		auto it_end = set_and_nodes.end();
 		// Loop over all sheets
-		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = it_start; it != it_end; ++it ) {
+		for ( auto it = it_start; it != it_end; ++it ) {
 			utility::vector1< Size > const node_list ( sheet_sets.nodes_in_set( it->first ) );
-			utility::vector1< Size >::const_iterator itn_start = node_list.begin();
-			utility::vector1< Size >::const_iterator itn_end = node_list.end();
+			auto itn_start = node_list.begin();
+			auto itn_end = node_list.end();
 			Size strand_res_native = 0;
 			Size weight = 0;
 			// Loop over all strands in sheet
-			for ( utility::vector1< Size >::const_iterator itn = itn_start; itn != itn_end; ++itn ) {
+			for ( auto itn = itn_start; itn != itn_end; ++itn ) {
 				Size strand_res (strand_to_SS_resnum[ *itn ] );
 				// determine the weight. Two cases: in scoring subunit or across an interface to the scoring
 				// subunit

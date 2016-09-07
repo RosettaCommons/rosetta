@@ -462,17 +462,17 @@ SO3coeffs::wignerSynthesisDiffSign(
 // null ctor
 SHT::SHT() {
 	bw = nRsteps = 0;
-	p1 = NULL;
-	fftPlan = ifftPlan = NULL;
-	dctPlan = idctPlan = NULL;
+	p1 = nullptr;
+	fftPlan = ifftPlan = nullptr;
+	dctPlan = idctPlan = nullptr;
 }
 
 // initialize for a given bandwidth, # of radial shells
 SHT::SHT(int B, int nR) {
 	bw = nRsteps = 0;
-	p1 = NULL;
-	fftPlan = ifftPlan = NULL;
-	dctPlan = idctPlan = NULL;
+	p1 = nullptr;
+	fftPlan = ifftPlan = nullptr;
+	dctPlan = idctPlan = nullptr;
 
 	init(B, nR);
 }

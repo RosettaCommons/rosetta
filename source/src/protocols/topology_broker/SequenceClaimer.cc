@@ -35,6 +35,7 @@
 
 // utility
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -62,11 +63,11 @@ SequenceClaimer::SequenceClaimer() :
 	sequence_claim_( /* NULL */ )
 {}
 
-SequenceClaimer::SequenceClaimer( std::string const& sequence, std::string const& label,
-	std::string const& rsd_type_set_identifier = core::chemical::CENTROID ) :
-	rsd_type_set_( rsd_type_set_identifier ),
+SequenceClaimer::SequenceClaimer( std::string  sequence, std::string const& label,
+	std::string  rsd_type_set_identifier = core::chemical::CENTROID ) :
+	rsd_type_set_(std::move( rsd_type_set_identifier )),
 	priority_( 0.0 ),
-	input_sequence_( sequence ),
+	input_sequence_(std::move( sequence )),
 	sequence_claim_( /* NULL */ )
 {
 	Parent::set_label(label);

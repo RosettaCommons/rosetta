@@ -461,7 +461,7 @@ int GPU::RegisterProgram(std::vector<std::string> & files)
 		TR.Error << "Error in kernel: " << endl;
 		std::string build_log_string( buildLog, actual_size );
 		TR.Error << build_log_string << std::endl;
-		TR.Error << buildLog << std::endl;;
+		TR.Error << buildLog << std::endl;
 		clReleaseProgram(program);
 		return 0;
 	}

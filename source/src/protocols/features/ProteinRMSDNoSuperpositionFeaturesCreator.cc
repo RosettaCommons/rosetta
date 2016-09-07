@@ -27,7 +27,7 @@ namespace protocols {
 namespace features {
 
 ProteinRMSDNoSuperpositionFeaturesCreator::ProteinRMSDNoSuperpositionFeaturesCreator() {}
-ProteinRMSDNoSuperpositionFeaturesCreator::~ProteinRMSDNoSuperpositionFeaturesCreator() {}
+ProteinRMSDNoSuperpositionFeaturesCreator::~ProteinRMSDNoSuperpositionFeaturesCreator() = default;
 FeaturesReporterOP ProteinRMSDNoSuperpositionFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ProteinRMSDNoSuperpositionFeatures );
 }

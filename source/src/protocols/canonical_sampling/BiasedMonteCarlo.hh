@@ -56,8 +56,8 @@ public:
 
 	BiasedMonteCarlo( BiasedMonteCarlo const& );
 
-	virtual
-	protocols::moves::MonteCarloOP clone() {
+	
+	protocols::moves::MonteCarloOP clone() override {
 		return protocols::moves::MonteCarloOP( new BiasedMonteCarlo( *this ) );
 	}
 	//BiasedMonteCarlo& operator=( BiasedMonteCarlo const& );
@@ -74,24 +74,24 @@ public:
 	///     MonteCarlo
 	///     MonteCarlo.last_accepted_score
 	///     MonteCarlo.lowest_score
-	virtual bool
+	bool
 	boltzmann(
 		Pose & pose,//PoseOP pose,
 		std::string const & move_type = "unk",
 		core::Real const proposal_density_ratio = 1,
 		core::Real const inner_score_delta_over_temperature = 0
-	);
+	) override;
 
-	virtual
+	
 	void
-	reset( Pose const & pose );
+	reset( Pose const & pose ) override;
 
-	virtual
+	
 	void
-	score_function( ScoreFunction const & scorefxn ); // ScoreFunctionCOP scorefxn )
+	score_function( ScoreFunction const & scorefxn ) override; // ScoreFunctionCOP scorefxn )
 
-	virtual void
-	set_temperature( Real const temp );
+	void
+	set_temperature( Real const temp ) override;
 
 	// Undefined, commenting out to fix PyRosetta build  void set_bias_energy( BiasEnergyOP );
 

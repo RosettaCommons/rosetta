@@ -39,12 +39,12 @@ public:
 	CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > res_map );
 
 	//destructor
-	~CopyDofMover();
+	~CopyDofMover() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "CopyDofMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "CopyDofMover"; }
 
 	pose::copydofs::CopyDofsInfo const & copy_dofs_info( pose::Pose const & pose ) const;
 

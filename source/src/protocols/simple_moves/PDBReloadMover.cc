@@ -64,7 +64,7 @@ PDBReloadMover::PDBReloadMover() :
 	protocols::moves::Mover("PDBReloadMover")
 {}
 
-PDBReloadMover::~PDBReloadMover() {}
+PDBReloadMover::~PDBReloadMover() = default;
 
 protocols::moves::MoverOP
 PDBReloadMover::clone() const

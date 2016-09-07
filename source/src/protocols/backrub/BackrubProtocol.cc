@@ -93,13 +93,13 @@ namespace backrub {
 
 
 BackrubProtocol::BackrubProtocol(): Mover(),
-	scorefxn_(NULL),
-	main_task_factory_(NULL),
+	scorefxn_(nullptr),
+	main_task_factory_(nullptr),
 	backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() )),
 	smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
 	sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
 	packrotamersmover_(protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover())),
-	movemap_smallmover_(NULL)
+	movemap_smallmover_(nullptr)
 {
 	read_cmd_line_options();
 }
@@ -125,7 +125,7 @@ BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp): Mover(bp),
 	initial_pack_(bp.initial_pack_)
 {}
 
-BackrubProtocol::~BackrubProtocol(){}
+BackrubProtocol::~BackrubProtocol()= default;
 
 void
 BackrubProtocol::read_cmd_line_options(){
@@ -390,7 +390,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			minmover.min_type("dfpmin");
 
 			// first minimize just the side chains
-			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+			for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
 					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::CHI ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
@@ -399,7 +399,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminchi.pdb");
 
 			// next minimize the side chains and backbone
-			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+			for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
 					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::BB ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
@@ -408,7 +408,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminbb.pdb");
 
 			// finally minimize everything
-			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+			for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
 					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::JUMP ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}

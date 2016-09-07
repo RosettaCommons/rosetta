@@ -38,9 +38,9 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 // this is a virtual functor which is going to act basically as a callback or function pointer but cleaner.
 class BasicInit {
 public:
-	BasicInit() {}
+	BasicInit() = default;
 
-	virtual ~BasicInit(){};
+	virtual ~BasicInit()= default;
 
 	virtual bool do_init() { return false; };
 };
@@ -62,7 +62,7 @@ public:
 		argv_(argv)
 	{}
 
-	virtual bool do_init();
+	bool do_init() override;
 
 private:
 	int argc_;
@@ -78,9 +78,9 @@ private:
 class JSON_RPC : public utility::pointer::ReferenceCount {
 public:
 
-	JSON_RPC(std::string const &msg, bool capture_tracer = true,  BasicInit *basic_init = NULL );
+	JSON_RPC(std::string const &msg, bool capture_tracer = true,  BasicInit *basic_init = nullptr );
 
-	virtual ~JSON_RPC() {}
+	~JSON_RPC() override = default;
 
 	JSON_RPC( JSON_RPC const & json_rpc);
 

@@ -61,7 +61,7 @@ namespace scoring {
 
 
 // @brief Auto-generated virtual destructor
-Ramachandran2B::~Ramachandran2B() {}
+Ramachandran2B::~Ramachandran2B() = default;
 
 static THREAD_LOCAL basic::Tracer T( "core.scoring.Ramachandran2B" );
 

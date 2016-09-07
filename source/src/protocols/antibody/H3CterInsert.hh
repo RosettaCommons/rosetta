@@ -44,12 +44,12 @@ public:
 
 
 	/// @brief default destructor
-	~H3CterInsert();
+	~H3CterInsert() override;
 
 	void set_default();
 
-	virtual void apply(core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	// read CDR H3 C-terminal fragments (size: 4)
 	void read_H3_cter_fragment();

@@ -104,7 +104,7 @@ private:
 class SuggestValueMessage : public ClaimerMessage {
 public:
 	SuggestValueMessage( std::string label );
-	virtual ~SuggestValueMessage();
+	~SuggestValueMessage() override;
 	claims::DofClaimOP some_claim_; //e.g., a ROOT Claim
 };
 

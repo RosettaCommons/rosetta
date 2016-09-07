@@ -79,7 +79,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_constants.hh>
 
-#include <math.h>
+#include <cmath>
 
 static THREAD_LOCAL basic::Tracer TR( "antibody.util" );
 

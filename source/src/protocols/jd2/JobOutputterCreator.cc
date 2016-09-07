@@ -17,7 +17,7 @@ namespace protocols {
 namespace jd2 {
 
 JobOutputterCreator::JobOutputterCreator() {}
-JobOutputterCreator::~JobOutputterCreator() {}
+JobOutputterCreator::~JobOutputterCreator() = default;
 
 } //namespace jd2
 } //namespace protocols

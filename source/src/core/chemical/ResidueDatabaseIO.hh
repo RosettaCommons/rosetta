@@ -35,7 +35,7 @@ public:
 
 	ResidueDatabaseIO();
 
-	virtual ~ResidueDatabaseIO();
+	~ResidueDatabaseIO() override;
 
 	/// @brief generate the table schemas and write them to the database
 	void

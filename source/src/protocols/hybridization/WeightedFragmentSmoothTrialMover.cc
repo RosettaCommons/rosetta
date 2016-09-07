@@ -19,6 +19,7 @@
 #include <core/fragment/FrameIterator.hh>
 
 #include <numeric/random/random.hh>
+#include <utility>
 #include <utility/exit.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
@@ -33,7 +34,7 @@ WeightedFragmentSmoothTrialMover::WeightedFragmentSmoothTrialMover(
 	utility::vector1< core::Real > const & residue_weights,
 	utility::vector1< core::Size > const & anchor_residues,
 	core::Size const nr_frags,
-	simple_moves::FragmentCostOP cost ) : cost_( cost )
+	simple_moves::FragmentCostOP cost ) : cost_(std::move( cost ))
 {
 	moves::Mover::type( "WeightedFragmentSmoothTrialMover" );
 	frag_libs_ = frag_libs;

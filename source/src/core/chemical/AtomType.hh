@@ -39,6 +39,7 @@
 #include <core/chemical/types.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -63,9 +64,9 @@ public:
 	///
 	/// @details All its properties are unset by default.
 	///
-	AtomType( std::string const & name_in, std::string const & element_in ):
+	AtomType( std::string const & name_in, std::string  element_in ):
 		name_( name_in ),
-		element_( element_in ),
+		element_(std::move( element_in )),
 		lj_radius_( 0 ),
 		lj_wdepth_( 0 ),
 		lk_lambda_( 0 ),
@@ -82,25 +83,7 @@ public:
 		hybridization_( UNKNOWN_HYBRID )
 	{}
 
-	AtomType(AtomType const & src) :
-		name_(src.name_ ),
-		element_(src.element_),
-		lj_radius_(src.lj_radius_),
-		lj_wdepth_(src.lj_wdepth_),
-		lk_lambda_(src.lk_lambda_),
-		lk_volume_(src.lk_volume_),
-		lk_dgfree_(src.lk_dgfree_),
-		extra_parameters_(src.extra_parameters_),
-		is_acceptor_(src.is_acceptor_),
-		is_donor_(src.is_donor_),
-		is_polar_hydrogen_(src.is_polar_hydrogen_),
-		is_h2o_(src.is_h2o_),
-		is_aromatic_(src.is_aromatic_),
-		atom_has_orbitals_(src.atom_has_orbitals_),
-		atom_is_virtual_(src.atom_is_virtual_),
-		atom_is_repulsive_(src.atom_is_repulsive_),
-		hybridization_(src.hybridization_)
-	{}
+	AtomType(AtomType const & ) = default;
 
 	void
 	print( std::ostream & out ) const;

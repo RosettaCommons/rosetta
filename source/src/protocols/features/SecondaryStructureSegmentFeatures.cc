@@ -54,7 +54,7 @@ SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(
 {
 }
 
-SecondaryStructureSegmentFeatures::~SecondaryStructureSegmentFeatures(){}
+SecondaryStructureSegmentFeatures::~SecondaryStructureSegmentFeatures()= default;
 
 /// @brief return string with class name
 std::string

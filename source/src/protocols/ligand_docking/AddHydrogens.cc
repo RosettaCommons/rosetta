@@ -71,7 +71,7 @@ AddHydrogens::AddHydrogens(AddHydrogens const & that):
 	chain_(that.chain_)
 {}
 
-AddHydrogens::~AddHydrogens() {}
+AddHydrogens::~AddHydrogens() = default;
 
 protocols::moves::MoverOP AddHydrogens::clone() const {
 	return protocols::moves::MoverOP( new AddHydrogens( *this ) );

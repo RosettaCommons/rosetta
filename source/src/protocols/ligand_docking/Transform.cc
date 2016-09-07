@@ -68,16 +68,7 @@ Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_sco
 }
 
 
-Transform::Transform(Transform const & other) :
-	Mover(other),
-	transform_info_(other.transform_info_),
-	ligand_conformers_(other.ligand_conformers_),
-	optimize_until_score_is_negative_(other.optimize_until_score_is_negative_),
-	output_sampled_space_(other.output_sampled_space_),
-	check_rmsd_(other.check_rmsd_),
-	sampled_space_file_(other.sampled_space_file_),
-	initial_perturb_(other.initial_perturb_)
-{}
+Transform::Transform(Transform const & ) = default;
 
 Transform::Transform(
 	std::string const & chain,
@@ -167,7 +158,7 @@ void Transform::apply(core::pose::Pose & pose)
 	transform_info_.jump_id = core::pose::get_jump_id_from_chain_id(transform_info_.chain_id, pose);
 	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
 	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose, transform_info_.jump_id));
-	assert(grid_manager != 0); //something has gone hopelessly wrong if this triggers
+	assert(grid_manager != nullptr); //something has gone hopelessly wrong if this triggers
 
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);

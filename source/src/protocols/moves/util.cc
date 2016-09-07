@@ -33,7 +33,7 @@ namespace moves {
 protocols::moves::MoverOP find_mover_or_die(const std::string& mover_name,
 	const utility::tag::TagCOP,
 	const protocols::moves::Movers_map& movers) {
-	protocols::moves::Movers_map::const_iterator i = movers.find(mover_name);
+	auto i = movers.find(mover_name);
 	if ( i == movers.end() ) {
 		utility_exit_with_message(mover_name + " not found in Movers_map");
 	}
@@ -44,7 +44,7 @@ protocols::moves::MoverOP find_mover_or_die(const std::string& mover_name,
 protocols::filters::FilterOP find_filter_or_die(const std::string& filter_name,
 	const utility::tag::TagCOP,
 	const protocols::filters::Filters_map& filters) {
-	protocols::filters::Filters_map::const_iterator i = filters.find(filter_name);
+	auto i = filters.find(filter_name);
 	if ( i == filters.end() ) {
 		utility_exit_with_message(filter_name + " not found in Filters_map");
 	}

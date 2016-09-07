@@ -33,8 +33,8 @@ namespace protocols {
 namespace jd2 {
 
 /////////////////////////////InnerJob/////////////////////////////
-InnerJob::InnerJob( std::string const & input_tag, core::Size nstruct_max ) :
-	input_tag_(input_tag),
+InnerJob::InnerJob( std::string  input_tag, core::Size nstruct_max ) :
+	input_tag_(std::move(input_tag)),
 	nstruct_max_(nstruct_max),
 	pose_(/* NULL */),
 	bad_( false )
@@ -43,10 +43,10 @@ InnerJob::InnerJob( std::string const & input_tag, core::Size nstruct_max ) :
 	//TR.Trace << "Using InnerJob (base class) for JobDistributor" << std::endl;
 }
 
-InnerJob::InnerJob( core::pose::PoseCOP pose, std::string const & input_tag, core::Size nstruct_max ) :
-	input_tag_(input_tag),
+InnerJob::InnerJob( core::pose::PoseCOP pose, std::string  input_tag, core::Size nstruct_max ) :
+	input_tag_(std::move(input_tag)),
 	nstruct_max_(nstruct_max),
-	pose_( pose ),
+	pose_(std::move( pose )),
 	bad_( false )
 {
 	//TR.Trace << "Using InnerJob (base class) for JobDistributor" << std::endl;
@@ -63,7 +63,7 @@ InnerJob::InnerJob( InnerJob const &src ) :
 {
 }
 
-InnerJob::~InnerJob(){}
+InnerJob::~InnerJob()= default;
 
 /// @brief Return an owning pointer to a copy of this object.
 ///

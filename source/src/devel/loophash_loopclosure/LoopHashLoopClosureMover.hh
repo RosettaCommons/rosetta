@@ -47,7 +47,7 @@ public:
 	unsigned int r1_, r2_;
 	char c1_, c2_;
 	unsigned int minn_, maxn_; // potential length range
-	MyLoop(){}
+	MyLoop() = default;
 	MyLoop(unsigned int r1, char c1, unsigned int minn, unsigned int maxn, unsigned int r2, char c2)
 	: r1_(r1), r2_(r2), c1_(c1), c2_(c2), minn_(minn), maxn_(maxn) {}
 };
@@ -56,16 +56,16 @@ class LoopHashLoopClosureMover : public protocols::moves::Mover {
 public:
 
 	LoopHashLoopClosureMover();
-	virtual ~LoopHashLoopClosureMover();
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void parse_my_tag( utility::tag::TagCOP const,
+	~LoopHashLoopClosureMover() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void parse_my_tag( utility::tag::TagCOP const,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const &);
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	protocols::moves::MoverOP clone() const;
+		core::pose::Pose const &) override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	protocols::moves::MoverOP clone() const override;
 
 private:
 	protocols::forge::remodel::RemodelMover_OP remodel_;

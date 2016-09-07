@@ -42,10 +42,10 @@ class EnzdesFixBBProtocol : public protocols::enzdes::EnzdesBaseProtocol
 public:
 
 	EnzdesFixBBProtocol();
-	~EnzdesFixBBProtocol();
+	~EnzdesFixBBProtocol() override;
 
-	void apply( core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose) override;
+	std::string get_name() const override;
 
 	static void register_options();
 

@@ -73,10 +73,10 @@ public:
 
 	AntibodyCDRGrafter( AntibodyCDRGrafter const & src );
 
-	virtual ~AntibodyCDRGrafter();
+	~AntibodyCDRGrafter() override;
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 
 
@@ -174,21 +174,21 @@ public:
 public:
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	//AntibodyCDRGrafter & operator=( AntibodyCDRGrafter const & src );
 
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
 
 private:

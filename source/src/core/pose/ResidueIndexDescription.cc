@@ -23,6 +23,7 @@
 #include <core/pose/PDBInfo.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
@@ -64,7 +65,7 @@ ResidueIndexDescription::ResidueIndexDescription(
 	insertion_code_( insertion_code )
 {}
 
-ResidueIndexDescription::~ResidueIndexDescription() {}
+ResidueIndexDescription::~ResidueIndexDescription() = default;
 
 core::Size
 ResidueIndexDescription::resolve_index(
@@ -105,7 +106,7 @@ ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
 	core::Size pose_index
 ) :
 	ResidueIndexDescription( pose_index ),
-	fname_( fname ),
+	fname_(std::move( fname )),
 	linenum_( linenum )
 {}
 
@@ -117,7 +118,7 @@ ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
 	char insertion_code
 ) :
 	ResidueIndexDescription( chain, resindex, insertion_code ),
-	fname_( fname ),
+	fname_(std::move( fname )),
 	linenum_( linenum )
 {}
 

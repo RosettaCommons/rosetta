@@ -51,7 +51,7 @@ static THREAD_LOCAL basic::Tracer TR( "core.optimization.AtomTreeMinimizer" );
 AtomTreeMinimizer::AtomTreeMinimizer()
 {}
 
-AtomTreeMinimizer::~AtomTreeMinimizer() {}
+AtomTreeMinimizer::~AtomTreeMinimizer() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
@@ -156,7 +156,7 @@ AtomTreeMinimizer::check_setup(pose::Pose const &,
 	// Do we have any nonideal bond length/bond angle settings in the movemap?
 	bool nonideal( move_map.get( core::id::D ) || move_map.get( core::id::THETA ) );
 	if ( ! nonideal ) {
-		for ( kinematics::MoveMap::DOF_ID_Map::const_iterator iter( move_map.dof_id_begin() ); iter != move_map.dof_id_end(); ++iter ) {
+		for ( auto iter( move_map.dof_id_begin() ); iter != move_map.dof_id_end(); ++iter ) {
 			if ( iter->second && ( iter->first.type() == core::id::D || iter->first.type() == core::id::THETA ) ) {
 				nonideal = true;
 				break;

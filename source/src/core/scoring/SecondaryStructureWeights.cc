@@ -36,7 +36,7 @@ namespace core {
 namespace scoring {
 
 
-SecondaryStructureWeights::~SecondaryStructureWeights() {}
+SecondaryStructureWeights::~SecondaryStructureWeights() = default;
 
 /// @brief initialize to default values, also load proper data bins from external files
 void

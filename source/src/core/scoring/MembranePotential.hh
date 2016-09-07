@@ -68,7 +68,7 @@ public:
 	MembraneEmbed( MembraneEmbed const & src );
 
 	/// @brief Clone Cacheable Data
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new MembraneEmbed( *this ) );
 	}
 

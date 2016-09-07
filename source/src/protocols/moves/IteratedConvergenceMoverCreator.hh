@@ -21,8 +21,8 @@ namespace moves {
 
 class IteratedConvergenceMoverCreator : public protocols::moves::MoverCreator {
 public:
-	virtual MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
 };
 

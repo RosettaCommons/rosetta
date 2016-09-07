@@ -34,6 +34,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
@@ -50,7 +51,7 @@ public:
 		: name( name_val),
 			length( len ),
 			register_shift( reg_shift ),
-			orientation( orient )
+			orientation(std::move( orient ))
 		{}
 		std::string name;
 		core::Size length;
@@ -80,7 +81,7 @@ public:
 	ParametricSheet();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~ParametricSheet();
+	~ParametricSheet() override;
 
 	/// @brief setup the parameters via a set of xml tags
 	void parse_tags( utility::vector1< utility::tag::TagCOP > const & tags );

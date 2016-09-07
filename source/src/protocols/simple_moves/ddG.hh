@@ -48,7 +48,7 @@ public :
 	ddG();
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1 );
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids );
-	virtual void apply (Pose & pose);
+	void apply (Pose & pose) override;
 	virtual void calculate( Pose const & pose_in );
 	virtual void report_ddG( std::ostream & out ) const;
 	virtual Real sum_ddG() const;
@@ -59,12 +59,12 @@ public :
 	core::Real translate_by() const { return translate_by_; }
 	void translate_by( core::Real translate_by ) { translate_by_ = translate_by; }
 	utility::vector1<core::Size> chain_ids() const { return chain_ids_; }
-	virtual ~ddG();
-	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG ); }
-	protocols::moves::MoverOP clone() const;
-	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& );
+	~ddG() override;
+	protocols::moves::MoverOP fresh_instance() const override { return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG ); }
+	protocols::moves::MoverOP clone() const override;
+	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
 	void relax_mover( protocols::moves::MoverOP m ){ relax_mover_ = m; }
 	protocols::filters::FilterOP filter() const;

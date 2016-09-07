@@ -35,9 +35,9 @@ namespace environment {
 
 class EnvCore : public utility::pointer::ReferenceCount {
 public:
-	EnvCore( std::string const& env_name );
+	EnvCore( std::string env_name );
 
-	virtual ~EnvCore();
+	~EnvCore() override;
 
 	std::string const& name() const;
 

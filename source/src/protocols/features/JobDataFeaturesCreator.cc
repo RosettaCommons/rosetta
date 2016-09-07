@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 JobDataFeaturesCreator::JobDataFeaturesCreator() {}
-JobDataFeaturesCreator::~JobDataFeaturesCreator() {}
+JobDataFeaturesCreator::~JobDataFeaturesCreator() = default;
 FeaturesReporterOP JobDataFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new JobDataFeatures );
 }

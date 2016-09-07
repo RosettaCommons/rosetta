@@ -27,6 +27,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 // utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
@@ -57,7 +58,7 @@ RandomTorsionMover::RandomTorsionMover() :
 
 RandomTorsionMover::RandomTorsionMover( core::kinematics::MoveMapOP move_map, core::Real max_angle, core::Size num_moves = 1) :
 	Mover("RandomTorsionMover"),
-	move_map_( move_map ),
+	move_map_(std::move( move_map )),
 	max_angle_( max_angle ),
 	num_moves_( num_moves )
 {}
@@ -70,7 +71,7 @@ RandomTorsionMover::RandomTorsionMover( RandomTorsionMover const & other ) :
 {}
 
 
-RandomTorsionMover::~RandomTorsionMover(){}
+RandomTorsionMover::~RandomTorsionMover()= default;
 
 void
 RandomTorsionMover::apply( core::pose::Pose & pose )

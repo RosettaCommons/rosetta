@@ -325,10 +325,10 @@ recreate_task(
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 
 		//first, we need to copy the rotamer and rotamerset operations
-		for ( core::pack::rotamer_set::RotamerOperations::const_iterator rot_it = orig_task.residue_task(i).rotamer_operations().begin(); rot_it != orig_task.residue_task(i).rotamer_operations().end(); ++rot_it ) {
+		for ( auto rot_it = orig_task.residue_task(i).rotamer_operations().begin(); rot_it != orig_task.residue_task(i).rotamer_operations().end(); ++rot_it ) {
 			mod_task->nonconst_residue_task( i ).append_rotamer_operation( *rot_it );
 		}
-		for ( core::pack::rotamer_set::RotSetOperationListIterator rotset_it = orig_task.residue_task(i).rotamer_set_operation_begin(); rotset_it != orig_task.residue_task(i).rotamer_set_operation_end(); ++rotset_it ) {
+		for ( auto rotset_it = orig_task.residue_task(i).rotamer_set_operation_begin(); rotset_it != orig_task.residue_task(i).rotamer_set_operation_end(); ++rotset_it ) {
 			mod_task->nonconst_residue_task( i ).append_rotamerset_operation( *rotset_it );
 		}
 
@@ -337,7 +337,7 @@ recreate_task(
 		else {
 			utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
 
-			for ( ResidueLevelTask::ResidueTypeCOPListConstIter res_it = orig_task.residue_task( i ).allowed_residue_types_begin(); res_it != orig_task.residue_task( i ).allowed_residue_types_end(); ++res_it ) {
+			for ( auto res_it = orig_task.residue_task( i ).allowed_residue_types_begin(); res_it != orig_task.residue_task( i ).allowed_residue_types_end(); ++res_it ) {
 
 				keep_aas[ (*res_it)->aa() ] = true;
 			}
@@ -349,7 +349,7 @@ recreate_task(
 	}
 
 	if ( orig_task.IGEdgeReweights() ) {
-		for ( utility::vector1< IGEdgeReweighterOP >::const_iterator it = orig_task.IGEdgeReweights()->reweighters_begin(); it != orig_task.IGEdgeReweights()->reweighters_end(); ++it ) {
+		for ( auto it = orig_task.IGEdgeReweights()->reweighters_begin(); it != orig_task.IGEdgeReweights()->reweighters_end(); ++it ) {
 			mod_task->set_IGEdgeReweights()->add_reweighter( *it );
 		}
 	}
@@ -361,9 +361,9 @@ toolbox::match_enzdes_util::EnzConstraintIOCOP
 get_enzcst_io( core::pose::Pose const & pose )
 {
 	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
-	if ( !enz_obs ) return NULL;
+	if ( !enz_obs ) return nullptr;
 	toolbox::match_enzdes_util::EnzdesCstCacheCOP enzcache( enz_obs->cst_cache() );
-	if ( !enzcache ) return NULL;
+	if ( !enzcache ) return nullptr;
 	return enzcache->enzcst_io();
 }
 
@@ -644,7 +644,7 @@ remove_all_enzdes_constraints( core::pose::Pose & pose )
 	protocols::toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
 	if ( !cst_cache ) return;
 	cst_cache->enzcst_io()->remove_constraints_from_pose( pose, false, false );
-	toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL );
+	toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( nullptr );
 }
 
 void
@@ -658,7 +658,7 @@ get_resnum_from_cstid_list( std::string const& cstidlist, core::pose::Pose const
 		runtime_assert( resnum>0 && resnum <=pose.total_residue() );
 		resnums.push_back( resnum );
 	}
-	utility::vector1<core::Size>::iterator last = std::unique(resnums.begin(), resnums.end());
+	auto last = std::unique(resnums.begin(), resnums.end());
 	resnums.erase( last, resnums.end() );
 	//tr <<" In util function size of resnums is "<< resnums.size() << std::endl;
 }
@@ -679,7 +679,7 @@ get_resnum_from_cstid( std::string const& cstid, core::pose::Pose const &pose)
 	ss >> cstnum;
 	//tr << "Cstid " <<cstid <<" parsed as template:"<< templ <<" and cstnum: "<< cstnum<<std::endl;
 	protocols::toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
-	runtime_assert( cst_cache != 0 );
+	runtime_assert( cst_cache != nullptr );
 	runtime_assert( cstnum <= cst_cache->ncsts());
 	bool found (false);
 	for ( core::Size seqpos =1; seqpos <=pose.total_residue(); ++seqpos ) {

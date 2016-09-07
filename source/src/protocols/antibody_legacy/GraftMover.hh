@@ -48,7 +48,7 @@ public:
 	GraftMover();
 
 	// default destructor
-	~GraftMover();
+	~GraftMover() override;
 
 	inline void enable_graft_l1( bool setting ) {
 		graft_l1_ = setting;
@@ -81,8 +81,8 @@ public:
 	void relax_optimized_CDR_grafts( core::pose::Pose & pose_in );
 
 	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 private:
 	// Grafting options
@@ -125,8 +125,8 @@ public:
 	);
 
 	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 	/// @brief enable benchmark mode
 	inline void enable_benchmark_mode( bool setting ) {
@@ -162,8 +162,8 @@ public:
 		core::Size query_end  );
 
 	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 	void close_one_loop_stem (
 		core::pose::Pose & pose_in,
@@ -216,8 +216,8 @@ public:
 
 	void set_default();
 
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 	void setup_packer_task( core::pose::Pose & pose_in );
 

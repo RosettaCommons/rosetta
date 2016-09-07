@@ -51,7 +51,7 @@ public: // typedefs
 
 public:
 	RotamerSetBase();
-	virtual ~RotamerSetBase();
+	~RotamerSetBase() override;
 
 	virtual
 	Size

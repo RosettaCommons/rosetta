@@ -67,7 +67,7 @@ source files: rosetta++/gb_elec*
 namespace core {
 namespace scoring {
 
-GenBornResidueInfo::~GenBornResidueInfo() {}
+GenBornResidueInfo::~GenBornResidueInfo() = default;
 
 
 void
@@ -107,8 +107,8 @@ GenBornPoseInfo::GenBornPoseInfo( GenBornPoseInfo const & src ):
 			placeholder_residue_[i] = src.placeholder_residue_[i]->clone();
 			placeholder_info_[i] = src.placeholder_info_[i]->clone();
 		} else {
-			placeholder_residue_[i] = 0;
-			placeholder_info_[i] = 0;
+			placeholder_residue_[i] = nullptr;
+			placeholder_info_[i] = nullptr;
 		}
 	}
 	being_packed_ = src.being_packed_;
@@ -121,9 +121,9 @@ GenBornPoseInfo::initialize( pose::Pose const & pose )
 {
 	Size const nres( pose.total_residue() );
 
-	residue_info_.resize( nres, 0 );
-	placeholder_residue_.resize( nres, 0 );
-	placeholder_info_.resize( nres, 0 );
+	residue_info_.resize( nres, nullptr );
+	placeholder_residue_.resize( nres, nullptr );
+	placeholder_info_.resize( nres, nullptr );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( !residue_info_[i] ) residue_info_[i] = GenBornResidueInfoOP( new GenBornResidueInfo( pose.residue(i) ) );
@@ -494,7 +494,7 @@ GenBornPotential::get_res_res_elecE(
 	Real const tau = (1.0/Ep - 1.0/Ew);
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
-	etable::count_pair::CountPairFunctionOP cpfxn( 0 );
+	etable::count_pair::CountPairFunctionOP cpfxn( nullptr );
 	if ( same_res ) {
 		cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
 	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
@@ -686,7 +686,7 @@ GenBornPotential::eval_atom_derivative(
 
 		GenBornResidueInfo const & gb2( gb_info.residue_info( j ) );
 
-		CountPairFunctionOP cpfxn( 0 );
+		CountPairFunctionOP cpfxn( nullptr );
 		if ( i == j ) {
 			cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
 		} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {

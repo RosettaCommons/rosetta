@@ -34,10 +34,10 @@ public:
 	typedef core::pack::task::PackerTask PackerTask;
 
 public:
-	virtual ~WatsonCrickRotamerCouplings();
-	virtual TaskOperationOP clone() const;
-	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	~WatsonCrickRotamerCouplings() override;
+	TaskOperationOP clone() const override;
+	void apply( Pose const & pose, PackerTask & ptask ) const override;
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "WatsonCrickRotamerCouplings"; }
 };

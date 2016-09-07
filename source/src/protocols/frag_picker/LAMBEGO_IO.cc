@@ -95,7 +95,7 @@ void LAMBEGO_IO::write( std::ostream & output ) {
 			row_end = probs_.end(); row_it != row_end; ++row_it
 			) {
 		output << seq_idx << ' ' << sequence_[seq_idx-1] << ' ';
-		for ( vector1< Real >::const_iterator it = row_it->begin(),
+		for ( auto it = row_it->begin(),
 				end = row_it->end(); it != end; ++it
 				) {
 			output << *it;

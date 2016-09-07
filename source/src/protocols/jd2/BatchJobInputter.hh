@@ -40,7 +40,7 @@ public:
 	static std::string const BOGUS_BATCH_ID;
 	BatchJobInputter( std::string batch );
 
-	virtual ~BatchJobInputter();
+	~BatchJobInputter() override;
 
 	/// @brief this function is responsible for filling the pose reference with
 	/// the pose indicated by the job.  The Job object (within its InnerJob)
@@ -48,14 +48,14 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.  This implementation uses pose_from_pdb
-	virtual void pose_from_job( core::pose::Pose & pose, JobOP job ) {
+	void pose_from_job( core::pose::Pose & pose, JobOP job ) override {
 		check_batch();
 		this_batch_job_inputter_->pose_from_job( pose, job);
 	}
 
 	/// @brief this function determines what jobs exist from -in::file::silent and
 	/// -in::file::tags.
-	virtual void fill_jobs( JobsContainer & jobs ) {
+	void fill_jobs( JobsContainer & jobs ) override {
 		check_batch();
 		this_batch_job_inputter_->fill_jobs( jobs );
 	}
@@ -63,7 +63,7 @@ public:
 	/// @brief Return the type of input source that the BatchJobInputter is currently
 	///  using.
 	/// @return The input source for the current batch.
-	virtual JobInputterInputSource::Enum input_source() const;
+	JobInputterInputSource::Enum input_source() const override;
 
 private:
 	void read_batch();

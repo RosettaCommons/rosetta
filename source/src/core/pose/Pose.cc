@@ -432,7 +432,7 @@ Pose::split_by_chain(Size const chain_id) const
 	}
 
 	// restore broken pdb_info to new pose ~ Labonte
-	if ( chain_pose->pdb_info() != 0 ) {
+	if ( chain_pose->pdb_info() != nullptr ) {
 		chain_pose->pdb_info()->obsolete(false);
 	}
 
@@ -679,7 +679,7 @@ Pose::append_pose_by_jump(
 		jump_anchor_atom,
 		jump_root_atom);
 
-	if ( pdb_info().get() != NULL && src.pdb_info().get() != NULL ) {
+	if ( pdb_info().get() != nullptr && src.pdb_info().get() != nullptr ) {
 		pdb_info()->copy(
 			*src.pdb_info(),
 			1,
@@ -1593,7 +1593,7 @@ Pose::clear()
 	metrics_->clear();
 	data_cache_->clear();
 	observer_cache_->clear();
-	pdb_info( NULL ); // will check for existence, remove observers, etc
+	pdb_info( nullptr ); // will check for existence, remove observers, etc
 }
 
 /// @details Dumps an mmcif formatted file if the extension on the input file_name_string is .cif
@@ -1667,7 +1667,7 @@ Pose::dump_pdb(
 Pose::ConstraintSetCOP
 Pose::constraint_set() const
 {
-	if ( constraint_set_ == 0 ) {
+	if ( constraint_set_ == nullptr ) {
 		return Pose::ConstraintSetCOP( Pose::ConstraintSetOP( new scoring::constraints::ConstraintSet ) ); // create an empty constraint set
 	}
 	return constraint_set_;
@@ -1677,7 +1677,7 @@ scoring::constraints::ConstraintCOP
 Pose::add_constraint( scoring::constraints::ConstraintCOP cst )
 {
 	energies_->clear();
-	if ( constraint_set_ == 0 ) {
+	if ( constraint_set_ == nullptr ) {
 		constraint_set_ = ConstraintSetOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set the first time it's asked for
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
@@ -1690,7 +1690,7 @@ scoring::constraints::ConstraintCOPs
 Pose::add_constraints( scoring::constraints::ConstraintCOPs csts )
 {
 	energies_->clear();
-	if ( constraint_set_ == 0 ) {
+	if ( constraint_set_ == nullptr ) {
 		constraint_set_ = ConstraintSetOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set the first time it's asked for
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
@@ -1708,7 +1708,7 @@ Pose::remove_constraint(
 	scoring::constraints::ConstraintCOP cst,
 	bool object_comparison )
 {
-	if ( constraint_set_ == 0 ) return false;
+	if ( constraint_set_ == nullptr ) return false;
 	energies_->clear();
 	return constraint_set_->remove_constraint(cst, object_comparison);
 }
@@ -1718,14 +1718,14 @@ Pose::remove_constraints(
 	scoring::constraints::ConstraintCOPs csts,
 	bool object_comparison )
 {
-	if ( constraint_set_ == 0 ) return false;
+	if ( constraint_set_ == nullptr ) return false;
 	energies_->clear();
 	return constraint_set_->remove_constraints(csts, object_comparison);
 }
 
 bool
 Pose::remove_constraints(){
-	if ( constraint_set_ == 0 ) return false;
+	if ( constraint_set_ == nullptr ) return false;
 	energies_->clear();
 	constraint_set_->clear();
 	return true;
@@ -1747,9 +1747,9 @@ Pose::constraint_set( ConstraintSetOP constraint_set )
 {
 	energies_->clear();
 
-	if ( constraint_set_ != 0 ) constraint_set_->detach_from_conformation();
+	if ( constraint_set_ != nullptr ) constraint_set_->detach_from_conformation();
 
-	if ( constraint_set != 0 ) {
+	if ( constraint_set != nullptr ) {
 		constraint_set_ = constraint_set->clone();
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	} else constraint_set_ = constraint_set;
@@ -1758,9 +1758,9 @@ Pose::constraint_set( ConstraintSetOP constraint_set )
 void Pose::transfer_constraint_set( const pose::Pose &pose ){
 	energies_->clear();
 
-	if ( constraint_set_ != 0 ) constraint_set_->detach_from_conformation();
+	if ( constraint_set_ != nullptr ) constraint_set_->detach_from_conformation();
 
-	if ( pose.constraint_set_ != 0 ) {
+	if ( pose.constraint_set_ != nullptr ) {
 		constraint_set_ = pose.constraint_set_->clone();
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	} else constraint_set_ = pose.constraint_set_;

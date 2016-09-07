@@ -168,7 +168,7 @@ MatcherTask::operator = ( MatcherTask const & rhs )
 	return *this;
 }
 
-MatcherTask::~MatcherTask() {}
+MatcherTask::~MatcherTask() = default;
 
 void
 MatcherTask::set_upstream_pose(
@@ -242,14 +242,14 @@ void
 MatcherTask::modify_pose_build_resids_from_endes_input()
 {
 
-	runtime_assert( enz_input_data_ != 0 );
-	runtime_assert( upstream_pose_ != 0 );
+	runtime_assert( enz_input_data_ != nullptr );
+	runtime_assert( upstream_pose_ != nullptr );
 	bool switch_to_per_cst_resids_necessary( share_build_points_for_geomcsts_ );
 
 	for ( core::Size i =1; i<= enz_input_data_->num_mcfi_lists(); ++i ) {
 
 		std::map< std::string, utility::vector1< std::string > > const & alg_map = (*(enz_input_data_->mcfi_list( i )->mcfi( 1 ))).algorithm_inputs();
-		std::map< std::string, utility::vector1< std::string > >::const_iterator map_it( alg_map.find( "match_positions" ) );
+		auto map_it( alg_map.find( "match_positions" ) );
 		if ( map_it == alg_map.end() ) continue;
 
 		// silly: this could mean that different positions are used for each cst, so we might have to switch
@@ -1058,14 +1058,14 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 	Size n_geometric_constraints( enz_input_data_->mcfi_lists_size() );
 
 	// Loop over all the remarks in pdb file
-	for ( std::vector< core::io::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
+	for (const auto & pose_remark : pose_remarks) {
 
 		std::string resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);
 		Size cst_block(0);
 		std::string resA_chain ,resB_chain;
 		core::Size ex_geom_id;
-		if ( protocols::toolbox::match_enzdes_util::split_up_remark_line(remark_it->value, resA_chain,
+		if ( protocols::toolbox::match_enzdes_util::split_up_remark_line(pose_remark.value, resA_chain,
 				resA_type, resA_num, resB_chain, resB_type,
 				resB_num, cst_block, ex_geom_id)  ) {
 
@@ -1151,7 +1151,7 @@ MatcherTask::initialize_enzdes_input_data_from_command_line()
 void
 MatcherTask::determine_all_match_relevant_downstream_atoms()
 {
-	runtime_assert( enz_input_data_ != 0 );
+	runtime_assert( enz_input_data_ != nullptr );
 	relevant_downstream_atoms_.clear();
 	std::set< core::id::AtomID > seen_atoms;
 
@@ -1343,8 +1343,7 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 				if ( atname == "" ) break;
 				if ( downstream_pose_->residue( 1 ).has( atname ) ) {
 					TR << "Requiring downstream atom '" << atname << "' to reside in the scaffold's active site" << std::endl;
-					downstream_atoms_required_inside_active_site_.push_back(
-						core::id::AtomID( downstream_pose_->residue( 1 ).atom_index( atname ), 1 ));
+					downstream_atoms_required_inside_active_site_.emplace_back( downstream_pose_->residue( 1 ).atom_index( atname ), 1 );
 				} else {
 					std::cerr << "ERROR reading required_active_site_atom_names: atom named '" << atname << "' is not an atom of " << downstream_pose_->residue( 1 ).name() << std::endl;
 					utility_exit_with_message( "Problem reading required_active_site_atom_names file " + filename );

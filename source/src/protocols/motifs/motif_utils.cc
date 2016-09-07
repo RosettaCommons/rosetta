@@ -566,10 +566,9 @@ setup_conformer_map(
 {
 	using namespace core::conformation;
 	std::map< std::string, ResidueOPs > conformer_map;
-	for ( ResidueOPs::const_iterator itr = conformerOPs.begin(), end_itr = conformerOPs.end();
-			itr != end_itr; ++itr ) {
-		std::string name( (*itr)->name3() );
-		conformer_map[name].push_back( *itr );
+	for (const auto & conformerOP : conformerOPs) {
+		std::string name( conformerOP->name3() );
+		conformer_map[name].push_back( conformerOP );
 	}
 	return conformer_map;
 }
@@ -702,12 +701,11 @@ make_dna_mutations(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	core::scoring::dna::set_base_partner( pose );
-	for ( DnaDesignDefOPs::const_iterator def( target.begin() );
-			def != target.end(); ++def ) {
+	for (const auto & def : target) {
 		// SHOULD INCLUDE JA checks to ensure that the input is DNA and is the correct strand
-		core::Size index( pdb_pose_map.find( (*def)->chain, (*def)->pdbpos ) );
-		if ( ! (*def)->name3.empty() ) {
-			std::string basepairID( (*def)->name3 );
+		core::Size index( pdb_pose_map.find( def->chain, def->pdbpos ) );
+		if ( ! def->name3.empty() ) {
+			std::string basepairID( def->name3 );
 			//if ( basepairID.length() == 3 ) {
 			if ( protocols::dna::dna_full_name3( pose.residue(index).name3() ) != basepairID ) {
 				make_base_pair_mutation( pose, index, core::chemical::aa_from_name( basepairID ) ); //what if it has an X instead of a name3
@@ -733,9 +731,8 @@ defs2vector(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	utility::vector1< core::Size > positions;
-	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
-			def != targets.end(); ++def ) {
-		core::Size index( pdb_pose_map.find( (*def)->chain, (*def)->pdbpos ) );
+	for (const auto & target : targets) {
+		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		positions.push_back( index );
 	}
 	return positions;
@@ -750,11 +747,10 @@ defs2allowedtypes(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	utility::vector1< std::pair< core::Size, utility::vector1< std::string > > > positions;
-	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
-			def != targets.end(); ++def ) {
-		core::Size index( pdb_pose_map.find( (*def)->chain, (*def)->pdbpos ) );
+	for (const auto & target : targets) {
+		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		utility::vector1< std::string > names;
-		std::string name( (*def)->name3 );
+		std::string name( target->name3 );
 		//if name3 something, then names.push_back();
 		if ( name.length() > 1 ) {
 			positions.push_back( std::make_pair( index, names ) );
@@ -783,11 +779,10 @@ defs2map(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	std::map< core::Size, std::set< std::string > > positions;
-	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
-			def != targets.end(); ++def ) {
-		core::Size index( pdb_pose_map.find( (*def)->chain, (*def)->pdbpos ) );
+	for (const auto & target : targets) {
+		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		std::set< std::string > names;
-		std::string name( (*def)->name3 );
+		std::string name( target->name3 );
 		if ( name.length() > 1 ) {
 			//positions.push_back( std::make_pair( index, names ) );
 			names.insert( name );
@@ -816,16 +811,15 @@ bpdefs2map(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	std::map< core::Size, std::set< std::string > > positions;
-	for ( DnaDesignDefOPs::const_iterator def( targets.begin() );
-			def != targets.end(); ++def ) {
-		core::Size index( pdb_pose_map.find( (*def)->chain, (*def)->pdbpos ) );
+	for (const auto & target : targets) {
+		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		std::set< std::string > names;
-		std::string name( (*def)->name3 );
-		for ( core::Size c(0); c < name.size(); ++c ) {
-			mu_tr << "Allowing AAtype " << name[c] << " for motif search." << std::endl;
+		std::string name( target->name3 );
+		for (char c : name) {
+			mu_tr << "Allowing AAtype " << c << " for motif search." << std::endl;
 			// put all canonical AAs in it
 			std::stringstream name1;
-			name1 << name[c];
+			name1 << c;
 			if ( name1.str() == "X" ) {
 				utility::vector1< std::string > allAA(utility::tools::make_vector1(std::string("A"), std::string("C"), std::string("D"), std::string("E"), std::string("F"), std::string("H"), std::string("I"), std::string("K"), std::string("L"), std::string("M"), std::string("N"), std::string("P"), std::string("Q"), std::string("R"), std::string("S"), std::string("T"), std::string("V"), std::string("W"), std::string("Y") ) );
 				for ( core::Size x(1); x <= allAA.size(); ++x ) {
@@ -963,8 +957,8 @@ load_build_position_data(
 			}
 		}
 		if ( keep_one_motif ) {
-			for ( std::map< std::string, SingleMotifOP >::iterator mot( single_motifs.begin() ), end( single_motifs.end()); mot != end; ++mot ) {
-				bp.keep_motif( *(mot->second) );
+			for (auto & single_motif : single_motifs) {
+				bp.keep_motif( *(single_motif.second) );
 			}
 		}
 	} else {
@@ -978,9 +972,8 @@ get_filenames(
 )
 {
 	utility::vector1< utility::file::FileName >  names;
-	for ( utility::vector1< utility::file::FileName >::const_iterator filename( listnames.begin() );
-			filename != listnames.end(); ++filename ) {
-		utility::io::izstream list( (*filename).name().c_str() );
+	for (const auto & listname : listnames) {
+		utility::io::izstream list( listname.name().c_str() );
 		while ( list ) {
 			std::string name;
 			list >> name;
@@ -1040,7 +1033,7 @@ bools_from_sizes(
 )
 {
 	utility::vector1< bool > b( nres, false );
-	for ( utility::vector1< core::Size >::const_iterator pos= v.begin(), epos= v.end(); pos != epos; ++pos ) b[ *pos ] = true;
+	for (unsigned long pos : v) b[ pos ] = true;
 	return b;
 }
 
@@ -1068,7 +1061,7 @@ make_base_pair_mutation(
 
 		// search for the matching residue type
 		ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
-		if ( rsd_type == 0 ) {
+		if ( rsd_type == nullptr ) {
 			utility_exit_with_message("couldnt find residuetype for basepair mutation!");
 		}
 

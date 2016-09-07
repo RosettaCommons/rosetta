@@ -209,7 +209,7 @@ MultistateFitnessFunction::MultistateFitnessFunction()
 {
 	set_history_size( 1 ); // at the very least, store the optimal solution!
 }
-MultistateFitnessFunction::~MultistateFitnessFunction() {}
+MultistateFitnessFunction::~MultistateFitnessFunction() = default;
 
 core::Real MultistateFitnessFunction::evaluate( Entity & entity )
 {
@@ -384,8 +384,8 @@ MultistateFitnessFunction::update_entity_history( Entity const & ent )
 
 	if ( added_entity ) instruct_daemons_to_keep_last_entity();
 
-	for ( std::list< genetic_algorithm::EntityOP >::iterator iter = discarded.begin(); iter != discarded.end(); ++iter ) {
-		instruct_daemons_to_drop_entity( **iter );
+	for (auto & iter : discarded) {
+		instruct_daemons_to_drop_entity( *iter );
 	}
 
 }
@@ -403,7 +403,7 @@ MPIMultistateFitnessFunction::MPIMultistateFitnessFunction() :
 #endif
 }
 
-MPIMultistateFitnessFunction::~MPIMultistateFitnessFunction() {}
+MPIMultistateFitnessFunction::~MPIMultistateFitnessFunction() = default;
 
 void MPIMultistateFitnessFunction::set_num_pack_daemons( Size n_daemons )
 {

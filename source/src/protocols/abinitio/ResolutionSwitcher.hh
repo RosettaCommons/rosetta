@@ -40,13 +40,13 @@ namespace abinitio {
 class ResolutionSwitcher : public moves::Mover {
 public:
 	ResolutionSwitcher( core::pose::Pose const&, bool fullatom /*input pose*/, bool start_centroid, bool apply_to_centroid );
-	~ResolutionSwitcher() {};
+	~ResolutionSwitcher() override = default;
 
 	//@brief if input was full-atom but we started (start_pose) from centroid we will copy side-chains
 	// repacks all residues that have been moved between start_pose and pose
-	virtual void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	//@brief gives a starting pose ( with respect to setting in start_centroid )
 	core::pose::Pose start_pose() const;

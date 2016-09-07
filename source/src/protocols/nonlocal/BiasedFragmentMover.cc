@@ -105,7 +105,7 @@ void BiasedFragmentMover::apply(core::pose::Pose& pose) {
 
 /// @detail Selects the insertion position in a weighted random fashion using binary search on the cdf
 unsigned BiasedFragmentMover::random_position() const {
-	Probabilities::const_iterator i = std::lower_bound(cdf_.begin(), cdf_.end(), numeric::random::uniform());
+	auto i = std::lower_bound(cdf_.begin(), cdf_.end(), numeric::random::uniform());
 	return i - cdf_.begin() + 1;
 }
 

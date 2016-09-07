@@ -49,7 +49,7 @@ public:
 
 	inline
 	~ProQPotential()
-	{}
+	= default;
 
 	void
 	setup_for_scoring( pose::Pose & pose ) const;

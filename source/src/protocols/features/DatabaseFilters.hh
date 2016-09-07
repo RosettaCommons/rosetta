@@ -48,7 +48,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size const & protocol_id
 	)=0;
-	virtual ~DatabaseFilter(){};
+	~DatabaseFilter() override= default;
 
 private:
 	DatabaseFilter( DatabaseFilter const & src );
@@ -62,8 +62,8 @@ public:
 		core::pose::Pose const & pose,
 		utility::sql_database::sessionOP db_session,
 		core::Size const & protocol_id
-	);
-	virtual ~TopCountOfEachInput(){};
+	) override;
+	~TopCountOfEachInput() override= default;
 	core::Size count_;
 	std::string score_term_;
 private:
@@ -78,8 +78,8 @@ public:
 		core::pose::Pose const & pose,
 		utility::sql_database::sessionOP db_session,
 		core::Size const & protocol_id
-	);
-	virtual ~TopCountOfAllInputs(){};
+	) override;
+	~TopCountOfAllInputs() override= default;
 	core::Size count_;
 	std::string score_term_;
 private:
@@ -93,8 +93,8 @@ public:
 		core::pose::Pose const & pose,
 		utility::sql_database::sessionOP db_session,
 		core::Size const & protocol_id
-	);
-	virtual ~TopPercentOfEachInput(){};
+	) override;
+	~TopPercentOfEachInput() override= default;
 private:
 	TopPercentOfEachInput( TopPercentOfEachInput const & src);
 	TopCountOfEachInput top_count_of_each_input_;
@@ -107,8 +107,8 @@ public:
 		core::pose::Pose const & pose,
 		utility::sql_database::sessionOP db_session,
 		core::Size const & protocol_id
-	);
-	virtual ~TopPercentOfAllInputs(){};
+	) override;
+	~TopPercentOfAllInputs() override= default;
 private:
 	TopPercentOfAllInputs( TopPercentOfAllInputs const & src);
 	TopCountOfAllInputs top_count_of_all_inputs_;

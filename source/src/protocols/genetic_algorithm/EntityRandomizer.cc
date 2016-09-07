@@ -33,7 +33,7 @@ namespace protocols {
 namespace genetic_algorithm {
 
 EntityRandomizer::EntityRandomizer() : utility::pointer::ReferenceCount(), entity_length_(0), mutation_rate_(1.), entity_template_(/* 0 */) {}
-EntityRandomizer::~EntityRandomizer() {}
+EntityRandomizer::~EntityRandomizer() = default;
 EntityCOP EntityRandomizer::entity_template() const { return entity_template_; }
 void EntityRandomizer::set_entity_template( EntityCOP entity) { entity_template_ = entity; }
 
@@ -42,13 +42,13 @@ void EntityRandomizer::set_entity_length( core::Size length ) { entity_length_ =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-DiscreteRandomizer::~DiscreteRandomizer(){}
+DiscreteRandomizer::~DiscreteRandomizer()= default;
 void DiscreteRandomizer::add_choice( EntityElementOP const & choice ) { choices_.push_back( choice ); }
 void DiscreteRandomizer::set_choices( EntityElements const & choices ) { choices_ = choices; }
 EntityElements const & DiscreteRandomizer::choices() const { return choices_; }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-PositionSpecificRandomizer::~PositionSpecificRandomizer() {}
+PositionSpecificRandomizer::~PositionSpecificRandomizer() = default;
 utility::vector1< EntityElements > const &
 PositionSpecificRandomizer::choices() const { return choices_; }
 
@@ -87,7 +87,7 @@ EntityRandomizer::crossover( Entity & entity1, Entity & entity2 )
 	// pick number of traits to swap that is in the interval [1, N-1]
 	core::Size num_to_swap(numeric::random::random_range(1, traits1.size()-1));
 
-	for ( EntityElements::iterator
+	for ( auto
 			it1( traits1.begin() ), it2( traits2.begin() ),
 			end1( traits1.end() ), end2( traits2.end() );
 			(it1 != end1) && (it2 != end2); ++it1, ++it2 ) {
@@ -111,10 +111,9 @@ DiscreteRandomizer::mutate( Entity & entity )
 {
 	EntityElements traits( entity.traits() );
 	core::Size const size_choices( choices_.size() );
-	for ( EntityElements::iterator it( traits.begin() ), end( traits.end() );
-			it != end; ++it ) {
+	for (auto & trait : traits) {
 		if ( this->mutation_rate() < numeric::random::uniform() ) continue;
-		*it = choices_[ static_cast< core::Size >( numeric::random::uniform() * size_choices ) + 1 ];
+		trait = choices_[ static_cast< core::Size >( numeric::random::uniform() * size_choices ) + 1 ];
 	}
 	entity.set_traits(traits);
 }
@@ -141,7 +140,7 @@ PositionSpecificRandomizer::mutate( Entity & entity )
 	EntityElements traits( entity.traits() );
 	assert( traits.size() == choices_.size() );
 	utility::vector1< EntityElements >::const_iterator choice_it( choices_.begin() );
-	for ( EntityElements::iterator
+	for ( auto
 			it( traits.begin() ), end( traits.end() ); it != end;
 			++it, ++choice_it ) {
 		if ( this->mutation_rate() < numeric::random::uniform() ) continue;
@@ -155,7 +154,7 @@ core::Size
 PositionSpecificRandomizer::library_size() const
 {
 	core::Size size( choices_.front().size() );
-	for ( utility::vector1< EntityElements >::const_iterator
+	for ( auto
 			it( choices_.begin() ), end( choices_.end() ); it != end; ++it ) {
 		if ( it == choices_.begin() ) continue;
 		size *= it->size();

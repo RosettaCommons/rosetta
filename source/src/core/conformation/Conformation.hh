@@ -122,8 +122,8 @@ public:  // standard class methods
 	Conformation();
 
 	/// @brief default destructor
-	virtual
-	~Conformation();
+	
+	~Conformation() override;
 
 	/// @brief copy constructor
 	Conformation( Conformation const & src );
@@ -210,7 +210,7 @@ public:  // General Properties
 
 	/// @brief convenience test for if the conformation contains information for a membrane protein
 	bool is_membrane() const {
-		if ( membrane_info_ == 0 ) return false;
+		if ( membrane_info_ == nullptr ) return false;
 		return true;
 	}
 

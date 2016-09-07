@@ -63,7 +63,7 @@ static THREAD_LOCAL basic::Tracer TR( "NestedEnergyTermOptEData" );
 NestedEnergyTermPNatAAOptEPositionData::NestedEnergyTermPNatAAOptEPositionData() {}
 
 ///
-NestedEnergyTermPNatAAOptEPositionData::~NestedEnergyTermPNatAAOptEPositionData() {}
+NestedEnergyTermPNatAAOptEPositionData::~NestedEnergyTermPNatAAOptEPositionData() = default;
 
 ///
 /// @brief
@@ -397,7 +397,7 @@ NestedEnergyTermPNatAAOptEPositionData::write_to_file( std::ofstream & outfile )
 	outfile << std::endl;
 
 	outfile << "nrots " << data().size() << "\n";
-	for ( PNatAAOptERotamerDataOPs::const_iterator rot( rotamer_data_begin() ); rot != rotamer_data_end(); ++rot ) {
+	for ( auto rot( rotamer_data_begin() ); rot != rotamer_data_end(); ++rot ) {
 		outfile << *rot << std::endl;
 	}
 
@@ -432,8 +432,8 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 		Strings sections( string_split( line, ' ' ) );
 
 		EnergyMap emap;
-		for ( Strings::iterator section = sections.begin(); section != sections.end(); ++section ) {
-			Strings pair( string_split( *section, '=' ) );
+		for (auto & section : sections) {
+			Strings pair( string_split( section, '=' ) );
 			ScoreType st = ScoreTypeManager::score_type_from_name( pair[1] );
 			Real score;
 			std::istringstream ss( pair[2] );
@@ -461,15 +461,15 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 		chemical::AA aa( chemical::aa_from_name( sections[2] ) );
 		utility::vector1< Real > fixed_energies, energies;
 		Strings fixed_vals( string_split( sections[3], ' ' ) ), free_vals( string_split( sections[4], ' ' ) );
-		for ( Strings::iterator fixed_val( fixed_vals.begin() ); fixed_val != fixed_vals.end(); ++fixed_val ) {
+		for (auto & fixed_val : fixed_vals) {
 			Real val;
-			std::istringstream ss( *fixed_val );
+			std::istringstream ss( fixed_val );
 			ss >> val;
 			fixed_energies.push_back( val );
 		}
-		for ( Strings::iterator free_val( free_vals.begin() ); free_val != free_vals.end(); ++free_val ) {
+		for (auto & free_val : free_vals) {
 			Real val;
-			std::istringstream ss( *free_val );
+			std::istringstream ss( free_val );
 			ss >> val;
 			energies.push_back( val );
 		}
@@ -702,7 +702,7 @@ NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node
 NestedEnergyTermDDGMutationOptEData::NestedEnergyTermDDGMutationOptEData() {}
 
 ///
-NestedEnergyTermDDGMutationOptEData::~NestedEnergyTermDDGMutationOptEData() {}
+NestedEnergyTermDDGMutationOptEData::~NestedEnergyTermDDGMutationOptEData() = default;
 
 ///
 /// @details

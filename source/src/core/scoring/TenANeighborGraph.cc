@@ -39,7 +39,7 @@ namespace scoring {
 //   class TenANeighborNode ///
 ///////////////////////////////
 
-TenANeighborNode::~TenANeighborNode() {}
+TenANeighborNode::~TenANeighborNode() = default;
 
 TenANeighborNode::TenANeighborNode( graph::Graph * owner, Size node_id )
 :
@@ -141,7 +141,7 @@ Size TenANeighborEdge::count_dynamic_memory() const
 Distance        const TenANeighborGraph::tenA_( 10.0 );
 DistanceSquared const TenANeighborGraph::tenA_squared_( tenA_ * tenA_);
 
-TenANeighborGraph::~TenANeighborGraph() { delete_everything(); delete tenA_edge_pool_; tenA_edge_pool_ = 0; }
+TenANeighborGraph::~TenANeighborGraph() { delete_everything(); delete tenA_edge_pool_; tenA_edge_pool_ = nullptr; }
 
 TenANeighborGraph::TenANeighborGraph()
 :

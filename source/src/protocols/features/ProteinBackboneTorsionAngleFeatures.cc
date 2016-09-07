@@ -51,7 +51,7 @@ ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures( Protei
 	FeaturesReporter()
 {}
 
-ProteinBackboneTorsionAngleFeatures::~ProteinBackboneTorsionAngleFeatures(){}
+ProteinBackboneTorsionAngleFeatures::~ProteinBackboneTorsionAngleFeatures()= default;
 
 string
 ProteinBackboneTorsionAngleFeatures::type_name() const { return "ProteinBackboneTorsionAngleFeatures"; }

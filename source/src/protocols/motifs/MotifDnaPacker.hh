@@ -49,13 +49,13 @@ public:
 		std::string filename_root = "dnapacker"
 	);
 
-	virtual ~MotifDnaPacker(); // important for properly "releasing" owning pointer data
+	~MotifDnaPacker() override; // important for properly "releasing" owning pointer data
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP fresh_instance() const override;
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
 
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
 	//void minimize_dna( core::pose::Pose & );
 

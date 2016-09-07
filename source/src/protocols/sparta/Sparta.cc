@@ -90,7 +90,7 @@ using namespace core;
 using namespace std;
 Sparta::SpartaLib::SpartaLib() {
 	//string libvar;
-	if ( getenv( "SPARTA_DIR" ) == NULL ) {
+	if ( getenv( "SPARTA_DIR" ) == nullptr ) {
 		SPARTA_DIR = ".";
 	} else {
 		SPARTA_DIR = getenv( "SPARTA_DIR" );
@@ -108,7 +108,7 @@ Sparta::SpartaLib::SpartaLib() {
 	else SPARTA_DIR = ".";
 
 	string temp;
-	if ( getenv( "PATH" ) != NULL ) {
+	if ( getenv( "PATH" ) != nullptr ) {
 		temp = getenv( "PATH" );
 		if ( temp.find("/") != string::npos ) slash_char = "/"; // unix
 		else if ( temp.find("\\") != string::npos ) slash_char = "\\"; // Windows
@@ -265,14 +265,14 @@ void Sparta::SpartaLib::init() {
 	string B62_fname = TAB_DIR + slash_char+ "BLOSUM62.tab";
 	tr.Info << "Reading BLOSUM62 Table from " << B62_fname << endl;
 	B62.loadGDB( B62_fname );
-	for ( GDB::EntryList::iterator it = B62.Entries.begin(), end = B62.Entries.end(); it != end; ++it ) {
-		string aa = (it->second)["RESNAME"];
+	for (auto & Entrie : B62.Entries) {
+		string aa = (Entrie.second)["RESNAME"];
 		BLOSUM_62[aa]=BlosumMatrix::mapped_type( AAlist.size(), 0 );
 	}
-	for ( GDB::EntryList::iterator it = B62.Entries.begin(), end = B62.Entries.end(); it != end; ++it ) {
+	for (auto & Entrie : B62.Entries) {
 		//int index=it->first;
-		string aa = (it->second)["RESNAME"];
-		for ( GDB::GDB_Entry::iterator itS = (it->second).begin(), endS = (it->second).end(); itS != endS; ++itS ) {
+		string aa = (Entrie.second)["RESNAME"];
+		for ( GDB::GDB_Entry::iterator itS = (Entrie.second).begin(), endS = (Entrie.second).end(); itS != endS; ++itS ) {
 			if ( itS->first == "RESNAME" ) continue;
 			size_t index( AAlist.find( itS->first ) );
 			runtime_assert( index  != string::npos);
@@ -281,8 +281,8 @@ void Sparta::SpartaLib::init() {
 	} // end of assigning sequence homology vector (using blosum62 matrix)
 
 	tr.Info << "Load ANN parameters ... ";
-	for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
-		string atomName = itN->second;
+	for (auto & itN : aN) {
+		string atomName = itN.second;
 		if ( atomName == "H" ) atomName="HN";
 		SPARTA_ANN[atomName].init(113,30,1,9,6,3,TAB_DIR,atomName);
 	}
@@ -334,7 +334,7 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 	int cnt = 0;
 	// format the sequence read from PDB coordinates
 	sequence="";
-	for ( ResidList::iterator itN = residList.begin(), end = residList.end(); itN != end; ++itN ) {
+	for ( auto itN = residList.begin(), end = residList.end(); itN != end; ++itN ) {
 		sequence += itN->second;
 		cnt++;
 		if ( cnt%10 == 0 ) sequence += " "; //separator for each 10 residues
@@ -408,8 +408,8 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		inTab.Entries[index]["SOURCE"] = inName.substr(pos0,pos1-pos0);
 
 		//Ring current shifts
-		for ( AtomNameList::iterator itN_unordered = aN.begin(), end = aN.end(); itN_unordered != end; ++itN_unordered ) {
-			string name = itN_unordered->second;
+		for (auto & itN_unordered : aN) {
+			string name = itN_unordered.second;
 			if ( name == "H" ) {
 				name = "HN";
 				if ( residList[i] == "P" ) continue;
@@ -418,8 +418,8 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 				name = "HA2";
 			} else if ( name == "CB" && residList[i] == "G" ) continue;
 
-			U_RING_SHIFTS[index][itN_unordered->first-1] = inPDB.getOrbitalShift(1,i,name) ;
-			inTab.Entries[index][itN_unordered->second+"_HM"] = ftoa(U_RING_SHIFTS[index][itN_unordered->first-1], buf);
+			U_RING_SHIFTS[index][itN_unordered.first-1] = inPDB.getOrbitalShift(1,i,name) ;
+			inTab.Entries[index][itN_unordered.second+"_HM"] = ftoa(U_RING_SHIFTS[index][itN_unordered.first-1], buf);
 		}
 
 		//H-Honds
@@ -705,8 +705,8 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	//start = clock();
 	tr.Info << "ANN prediction ..." << endl;
-	for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
-		string atomName = itN->second;
+	for (auto & itN : aN) {
+		string atomName = itN.second;
 		if ( atomName == "H" ) atomName="HN";
 
 		SPARTA_ANN[atomName].ANN_OUT_MTX_LEVEL1.clear();
@@ -727,8 +727,8 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	float RC, RCadj, pred_2nd_shift, pred_shift/*, HB*/;
 	for ( int i = r1+1; i <= rN-1; i++ ) { //olange: we have not loaded the ANN with stuff for residue 1 or rN as it would be the 0,1,2 triplett.. ignore here TOO!
-		for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
-			string atomName = itN->second;
+		for (auto & itN : aN) {
+			string atomName = itN.second;
 			if ( atomName == "H" ) atomName="HN";
 			int index = PRED_SUM.Entries.size()+1;
 
@@ -792,7 +792,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 				PRED_SUM.setEntry(index, "RESNAME",  residList[i]);
 				PRED_SUM.setEntry(index, "ATOMNAME",  "HA3");
 				PRED_SUM.setEntry(index, "SS_SHIFT",  ftoa(pred_2nd_shift,buf));
-				pred_shift = pred_2nd_shift + RC + RCadj + 0.6*U_RING_SHIFTS[i-r1][0]; // atof(inTab.Entries[i-r1][atomName+"_HM"].c_str());;
+				pred_shift = pred_2nd_shift + RC + RCadj + 0.6*U_RING_SHIFTS[i-r1][0]; // atof(inTab.Entries[i-r1][atomName+"_HM"].c_str());
 				pred_shift-= inPDB.ElectricField[i]["HA"];
 				PRED_SUM.setEntry(index, "SHIFT",  ftoa(pred_shift,buf));
 				PRED_SUM.setEntry(index, "RC_SHIFT", ftoa(RC+RCadj ,buf) );
@@ -903,8 +903,8 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 {
 	int step = 5;
 
-	for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
-		string atomName = itN->second;
+	for (auto & itN : aN) {
+		string atomName = itN.second;
 		if ( atomName == "H" ) atomName="HN";
 
 		for ( Size i=0; i<AAlist.length(); i++ ) {
@@ -917,11 +917,11 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 			string surfName = TAB_DIR + slash_char + "errorSurface" + slash_char + atomName + slash_char + AA + "..A450.S5.RMS.tab";
 			GDB surf(surfName);
 
-			for ( GDB::EntryList::iterator it = surf.Entries.begin(); it != surf.Entries.end(); ++it ) {
-				int phi = atoi( it->second["PHI"].c_str() );
+			for (auto & Entrie : surf.Entries) {
+				int phi = atoi( Entrie.second["PHI"].c_str() );
 				for ( int y=-180; y<180; y+=step ) {
 					string psi=itoa(y,buf);
-					SPARTA_ERR_SURF[AA][atomName][phi][y] = atof( it->second[psi].c_str() );
+					SPARTA_ERR_SURF[AA][atomName][phi][y] = atof( Entrie.second[psi].c_str() );
 				}
 			}
 		}

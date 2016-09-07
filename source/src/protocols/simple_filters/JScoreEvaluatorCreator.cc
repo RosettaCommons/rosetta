@@ -57,7 +57,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.JScoreEvaluatorCreato
 namespace protocols {
 namespace simple_filters {
 
-JScoreEvaluatorCreator::~JScoreEvaluatorCreator() {}
+JScoreEvaluatorCreator::~JScoreEvaluatorCreator() = default;
 
 void JScoreEvaluatorCreator::register_options() {
 	using namespace basic::options;

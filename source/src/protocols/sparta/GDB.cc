@@ -169,8 +169,8 @@ void GDB::showGDB( std::ostream & out ) {
 	}
 
 	// write the entries
-	for ( EntryList::iterator it = Entries.begin(), end2 = Entries.end(); it != end2; ++it ) {
-		GDB_Entry ent = it->second;
+	for (auto & Entrie : Entries) {
+		GDB_Entry ent = Entrie.second;
 
 		for ( int i = 0; i < (int) VARS.size(); i++ ) {
 			if ( contains(FORMAT[i],'s') == 1 ) {

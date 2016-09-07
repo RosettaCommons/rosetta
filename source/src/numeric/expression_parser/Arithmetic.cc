@@ -33,22 +33,22 @@ namespace numeric {
 namespace expression_parser {
 
 /// @details Auto-generated virtual destructor
-Expression::~Expression() {}
+Expression::~Expression() = default;
 
 /// @details Auto-generated virtual destructor
-ASTVisitor::~ASTVisitor() {}
+ASTVisitor::~ASTVisitor() = default;
 
 /// @details Auto-generated virtual destructor
-ArithmeticASTNode::~ArithmeticASTNode() {}
+ArithmeticASTNode::~ArithmeticASTNode() = default;
 
 /// @details Auto-generated virtual destructor
-ArithmeticScanner::~ArithmeticScanner() {}
+ArithmeticScanner::~ArithmeticScanner() = default;
 
 /// @details Auto-generated virtual destructor
-TokenSet::~TokenSet() {}
+TokenSet::~TokenSet() = default;
 
 /// @details Auto-generated virtual destructor
-Token::~Token() {}
+Token::~Token() = default;
 
 std::string
 token_type_name( TokenType tt )
@@ -258,10 +258,8 @@ TokenSet::print() const
 {
 	std::ostringstream ostream;
 	ostream << "Tokens:\n";
-	for ( std::list< TokenCOP >::const_iterator
-			iter = tokens_.begin(), iter_end = tokens_.end();
-			iter != iter_end; ++iter ) {
-		ostream << (*iter)->to_string() << "\n";
+	for (const auto & token : tokens_) {
+		ostream << token->to_string() << "\n";
 	}
 	return ostream.str();
 }
@@ -522,22 +520,18 @@ ArithmeticScanner::scan_identifier( std::string const & input_string ) const
 
 	log_error();
 	utility_exit_with_message( "Error in scan_identifier: Failed to find input_string in either variables_ or functions_ maps\n" + input_string );
-	return 0; /// appease compiler
+	return nullptr; /// appease compiler
 }
 
 /// @brief print the contents of functions_ and variables_ to std error
 void ArithmeticScanner::log_error() const
 {
 	std::cerr << "An error has occurred.  ArithmeticScanner contents: " << std::endl;
-	for ( std::map< std::string, numeric::Size >::const_iterator
-			iter = variables_.begin(), iter_end = variables_.end();
-			iter != iter_end; ++iter ) {
-		std::cerr << "variable: " << iter->first << std::endl;
+	for (const auto & variable : variables_) {
+		std::cerr << "variable: " << variable.first << std::endl;
 	}
-	for ( std::map< std::string, numeric::Size >::const_iterator
-			iter = functions_.begin(), iter_end = functions_.end();
-			iter != iter_end; ++iter ) {
-		std::cerr << "functions: " << iter->first << " #args: " << iter->second << std::endl;
+	for (const auto & function : functions_) {
+		std::cerr << "functions: " << function.first << " #args: " << function.second << std::endl;
 	}
 	std::cerr << std::endl;
 }
@@ -598,7 +592,7 @@ ArithmeticASTExpression::children_end() const
 
 //// FUNCTION
 
-ArithmeticASTFunction::~ArithmeticASTFunction() {}
+ArithmeticASTFunction::~ArithmeticASTFunction() = default;
 
 void
 ArithmeticASTFunction::visit( ASTVisitor & visitor ) const
@@ -666,7 +660,7 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 FunctionTokenCOP
 ArithmeticASTFunction::function() const
 {
-	if ( function_ == 0 ) {
+	if ( function_ == nullptr ) {
 		utility_exit_with_message( "function() request of ArithmeticASTFunction would return null pointer" );
 	}
 	return function_;
@@ -718,7 +712,7 @@ ArithmeticASTTerm::children_end() const
 	return children_.end();
 }
 
-ArithmeticASTFactor::~ArithmeticASTFactor() {}
+ArithmeticASTFactor::~ArithmeticASTFactor() = default;
 
 void
 ArithmeticASTFactor::visit( ASTVisitor & visitor ) const
@@ -767,7 +761,7 @@ ArithmeticASTValue::ArithmeticASTValue()
 	variable_name_( "UNASSIGNED_VARIABLE_NAME" )
 {}
 
-ArithmeticASTValue::~ArithmeticASTValue() {}
+ArithmeticASTValue::~ArithmeticASTValue() = default;
 
 void
 ArithmeticASTValue::visit( ASTVisitor & visitor ) const
@@ -955,7 +949,7 @@ ASTPrinter::visit( ArithmeticASTExpression const & node )
 	ostrstream_ << "ArithmeticASTExpression(";
 	finish_indented_line();
 	increment_indentation();
-	for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+	for ( auto iter = node.children_begin(),
 			iter_end = node.children_end(); iter != iter_end; ++iter ) {
 		(*iter)->visit( *this );
 		finish_indented_line();
@@ -974,7 +968,7 @@ ASTPrinter::visit( ArithmeticASTFunction const & node )
 	ostrstream_ << "ArithmeticASTFunction:" << node.function()->name() << ":" << node.function()->nargs() << "(";
 	finish_indented_line();
 	increment_indentation();
-	for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+	for ( auto iter = node.children_begin(),
 			iter_end = node.children_end(); iter != iter_end; ++iter ) {
 		++count_args;
 		(*iter)->visit( *this );
@@ -996,7 +990,7 @@ ASTPrinter::visit( ArithmeticASTTerm const & node )
 	ostrstream_ << "ArithmeticASTTerm(";
 	finish_indented_line();
 	increment_indentation();
-	for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+	for ( auto iter = node.children_begin(),
 			iter_end = node.children_end(); iter != iter_end; ++iter ) {
 		(*iter)->visit( *this );
 		finish_indented_line();
@@ -1046,7 +1040,7 @@ ASTPrinter::visit( ArithmeticASTRestTerm const & node )
 		ostrstream_ << ":" << token_type_name( node.rest_term_token() ) << "(";
 		finish_indented_line();
 		increment_indentation();
-		for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+		for ( auto iter = node.children_begin(),
 				iter_end = node.children_end(); iter != iter_end; ++iter ) {
 			(*iter)->visit( *this );
 			finish_indented_line();
@@ -1069,7 +1063,7 @@ ASTPrinter::visit( ArithmeticASTRestExpression const & node )
 		ostrstream_ << ":" << token_type_name( node.rest_expression_token() ) << "(";
 		finish_indented_line();
 		increment_indentation();
-		for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+		for ( auto iter = node.children_begin(),
 				iter_end = node.children_end(); iter != iter_end; ++iter ) {
 			(*iter)->visit( *this );
 			finish_indented_line();
@@ -1140,7 +1134,7 @@ void ASTPrinter::finish_indented_line()
 //// Expression visitor
 ExpressionCreator::ExpressionCreator() {}
 
-ExpressionCreator::~ExpressionCreator() {}
+ExpressionCreator::~ExpressionCreator() = default;
 
 void
 ExpressionCreator::visit( ArithmeticASTExpression const & node)
@@ -1148,7 +1142,7 @@ ExpressionCreator::visit( ArithmeticASTExpression const & node)
 	utility::vector1< ExpressionCOP > expressions;
 	expressions.reserve( 2 );
 
-	for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+	for ( auto iter = node.children_begin(),
 			iter_end = node.children_end(); iter != iter_end; ++iter ) {
 		(*iter)->visit( *this );
 		if ( last_constructed_expression_ ) {
@@ -1173,14 +1167,14 @@ ExpressionCreator::visit( ArithmeticASTExpression const & node)
 void
 ExpressionCreator::visit( ArithmeticASTFunction const & node)
 {
-	utility::vector1< ExpressionCOP > args( node.function()->nargs(), 0 );
+	utility::vector1< ExpressionCOP > args( node.function()->nargs(), nullptr );
 	Size count_args = 0;
-	for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+	for ( auto iter = node.children_begin(),
 			iter_end = node.children_end(); iter != iter_end; ++iter ) {
 		++count_args;
 		(*iter)->visit( *this );
 		args[ count_args ] = last_constructed_expression_;
-		if ( last_constructed_expression_ == 0 ) {
+		if ( last_constructed_expression_ == nullptr ) {
 			utility_exit_with_message( "Error constructing expression objects for ArithmeticASTFunction: argument #" +
 				utility::to_string( node.function()->nargs() ) + " to function: " + node.function()->name() + " resulted in NULL pointer when parsed" );
 		}
@@ -1188,7 +1182,7 @@ ExpressionCreator::visit( ArithmeticASTFunction const & node)
 	/// Polymorphic dispatch to allow derived classes to intercept the handling of this function.
 	last_constructed_expression_ = handle_function_expression( node.function(), args );
 
-	if ( last_constructed_expression_ == 0 ) {
+	if ( last_constructed_expression_ == nullptr ) {
 		/// ERROR.
 		utility_exit_with_message( "ExpressionCreator::visit( ArithmeticASTFunction ) called with unrecognized function: " +
 			node.function()->name() + ".\n" +
@@ -1202,7 +1196,7 @@ ExpressionCreator::visit( ArithmeticASTTerm const & node )
 	utility::vector1< ExpressionCOP > expressions;
 	expressions.reserve( 2 );
 
-	for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+	for ( auto iter = node.children_begin(),
 			iter_end = node.children_end(); iter != iter_end; ++iter ) {
 		last_constructed_expression_.reset(); // in case the child doesn't zero this out?
 		(*iter)->visit( *this );
@@ -1253,7 +1247,7 @@ ExpressionCreator::visit( ArithmeticASTRestTerm const & node )
 		utility::vector1< ExpressionCOP > expressions;
 		expressions.reserve( 2 );
 
-		for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+		for ( auto iter = node.children_begin(),
 				iter_end = node.children_end(); iter != iter_end; ++iter ) {
 			last_constructed_expression_.reset(); // in case the child doesn't zero this out?
 			(*iter)->visit( *this );
@@ -1300,7 +1294,7 @@ ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
 		utility::vector1< ExpressionCOP > expressions;
 		expressions.reserve( 2 );
 
-		for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
+		for ( auto iter = node.children_begin(),
 				iter_end = node.children_end(); iter != iter_end; ++iter ) {
 			last_constructed_expression_.reset(); // in case the child doesn't zero this out?
 			(*iter)->visit( *this );
@@ -1353,7 +1347,7 @@ ExpressionCOP
 ExpressionCreator::handle_variable_expression( ArithmeticASTValue const & )
 {
 	utility_exit_with_message( "ExpressionCreator::handle_variable_expression called.\nThis  method should be overridden by the derived class.");
-	return 0;
+	return nullptr;
 }
 
 ExpressionCOP
@@ -1384,7 +1378,7 @@ ExpressionCreator::handle_function_expression(
 		return ExpressionCOP( ExpressionOP( new SquarerootExpression( args[ 1 ] ) ) );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 SimpleExpressionCreator::SimpleExpressionCreator() {}
@@ -1393,9 +1387,8 @@ SimpleExpressionCreator::SimpleExpressionCreator(
 	std::list< std::string > const & varnames
 )
 {
-	for ( std::list< std::string >::const_iterator iter = varnames.begin(),
-			iter_end = varnames.end(); iter != iter_end; ++iter ) {
-		add_variable( *iter );
+	for (const auto & varname : varnames) {
+		add_variable( varname );
 	}
 }
 
@@ -1484,7 +1477,7 @@ BooleanExpressionCreator::handle_function_expression(
 		return ExpressionCOP( ExpressionOP( new NotExpression( args[ 1 ] ) ) );
 	} else {
 		utility_exit_with_message( "Unrecognized function name in BooleanExpressionCreator: '" + fname + "'" );
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -1510,7 +1503,7 @@ LiteralExpression::operator() () const
 ExpressionCOP
 LiteralExpression::differentiate( std::string const & ) const
 {
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -1558,7 +1551,7 @@ VariableExpression::differentiate( std::string const & varname ) const
 	if ( name_ == varname ) {
 		return ExpressionCOP( ExpressionOP( new LiteralExpression( 1.0 ) ) );
 	}
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -1571,16 +1564,16 @@ VariableExpression::active_variables() const
 
 
 UnaryExpression::UnaryExpression() : ex_( /* 0 */ ) {}
-UnaryExpression::~UnaryExpression() {}
+UnaryExpression::~UnaryExpression() = default;
 
-UnaryExpression::UnaryExpression( ExpressionCOP ex ) : ex_( ex ) {}
+UnaryExpression::UnaryExpression( ExpressionCOP ex ) : ex_(std::move( ex )) {}
 
 void
 UnaryExpression::set_expression( ExpressionCOP ex ) { ex_ = ex; }
 
 ExpressionCOP
 UnaryExpression::ex() const {
-	if ( ex_ == 0 ) {
+	if ( ex_ == nullptr ) {
 		utility_exit_with_message( "Bad expression evaluation; protocols::optimize_weights::UnaryExpression::ex_ is null" );
 	}
 	return ex_;
@@ -1593,9 +1586,9 @@ UnaryExpression::active_variables() const
 }
 
 
-BinaryExpression::BinaryExpression() : e1_( /* 0 */ ), e2_( 0 ) {}
-BinaryExpression::~BinaryExpression() {}
-BinaryExpression::BinaryExpression( ExpressionCOP e1, ExpressionCOP e2 ) : e1_( e1 ), e2_( e2 ) {}
+BinaryExpression::BinaryExpression() : e1_( /* 0 */ ), e2_( nullptr ) {}
+BinaryExpression::~BinaryExpression() = default;
+BinaryExpression::BinaryExpression( ExpressionCOP e1, ExpressionCOP e2 ) : e1_(std::move( e1 )), e2_(std::move( e2 )) {}
 
 void BinaryExpression::set_first_expression( ExpressionCOP e1 ) { e1_ = e1; }
 void BinaryExpression::set_second_expression( ExpressionCOP e2 ) { e2_ = e2; }
@@ -1603,7 +1596,7 @@ void BinaryExpression::set_second_expression( ExpressionCOP e2 ) { e2_ = e2; }
 ExpressionCOP
 BinaryExpression::e1() const
 {
-	if ( e1_ == 0 ) {
+	if ( e1_ == nullptr ) {
 		utility_exit_with_message( "Bad expression evaluation; protocols::optimize_weights::BinaryExpression::e1_ is null" );
 	}
 	return e1_;
@@ -1612,7 +1605,7 @@ BinaryExpression::e1() const
 ExpressionCOP
 BinaryExpression::e2() const
 {
-	if ( e2_ == 0 ) {
+	if ( e2_ == nullptr ) {
 		utility_exit_with_message( "Bad expression evaluation; protocols::optimize_weights::BinaryExpression::e2_ is null" );
 	}
 	return e2_;
@@ -1651,7 +1644,7 @@ SquarerootExpression::differentiate( std::string const & varname ) const
 		MultiplyExpressionOP derivative( new MultiplyExpression( onehalf, invsqrt ) );
 		return derivative;
 	}
-	return 0;
+	return nullptr;
 }
 
 AbsoluteValueExpression::AbsoluteValueExpression() : UnaryExpression() {}
@@ -1669,7 +1662,7 @@ AbsoluteValueExpression::differentiate( std::string const & varname ) const
 {
 	ExpressionCOP dex_dvar = ex()->differentiate( varname );
 
-	if ( ! dex_dvar ) return 0;
+	if ( ! dex_dvar ) return nullptr;
 
 	if (  (*ex())() > 0 ) {
 		return dex_dvar;
@@ -1696,7 +1689,7 @@ AddExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP de2 = e2()->differentiate( varname );
 
 	if ( ! de1 && ! de2 ) {
-		return 0;
+		return nullptr;
 	} else if ( de1 && de2 ) {
 		return ExpressionCOP( ExpressionOP( new AddExpression( de1, de2 ) ) );
 	} else if ( de1 ) {
@@ -1724,7 +1717,7 @@ SubtractExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP de2 = e2()->differentiate( varname );
 
 	if ( ! de1 && ! de2 ) {
-		return 0;
+		return nullptr;
 	} else if ( de1 && de2 ) {
 		return ExpressionCOP( ExpressionOP( new SubtractExpression( de1, de2 ) ) );
 	} else if ( de1 ) {
@@ -1753,7 +1746,7 @@ MultiplyExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP de2 = e2()->differentiate( varname );
 
 	if ( ! de1 && ! de2 ) {
-		return 0;
+		return nullptr;
 	} else if ( de1 && de2 ) {
 		ExpressionCOP a( ExpressionOP( new MultiplyExpression( de1, e2() ) ) );
 		ExpressionCOP b( ExpressionOP( new MultiplyExpression( e1(), de2 ) ) );
@@ -1783,7 +1776,7 @@ DivideExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP de2 = e2()->differentiate( varname );
 
 	if ( ! de1 && ! de2 ) {
-		return 0;
+		return nullptr;
 	} else if ( de1 && de2 ) {
 		MultiplyExpressionOP num1( new MultiplyExpression( de1, e2() ) );
 		MultiplyExpressionOP num2( new MultiplyExpression( de2, e1() ) );
@@ -1819,11 +1812,11 @@ MaxExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP de2 = e2()->differentiate( varname );
 
 	if ( ! de1 && ! de2 ) {
-		return 0;
+		return nullptr;
 	}
 
-	if ( de1 == 0 ) de1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
-	if ( de2 == 0 ) de2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( de1 == nullptr ) de1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( de2 == nullptr ) de2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
 
 	return ExpressionCOP( ExpressionOP( new MetaMaxExpression( e1(), e2(), de1, de2 ) ) );
 
@@ -1853,11 +1846,11 @@ MinExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP de2 = e2()->differentiate( varname );
 
 	if ( ! de1 && ! de2 ) {
-		return 0;
+		return nullptr;
 	}
 
-	if ( de1 == 0 ) de1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
-	if ( de2 == 0 ) de2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( de1 == nullptr ) de1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
+	if ( de2 == nullptr ) de2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
 
 	return ExpressionCOP( ExpressionOP( new MetaMinExpression( e1(), e2(), de1, de2 ) ) );
 
@@ -1877,10 +1870,10 @@ MetaMaxExpression::MetaMaxExpression(
 	ExpressionCOP ee1,
 	ExpressionCOP ee2
 ) :
-	e1_( e1 ),
-	e2_( e2 ),
-	ee1_( ee1 ),
-	ee2_( ee2 )
+	e1_(std::move( e1 )),
+	e2_(std::move( e2 )),
+	ee1_(std::move( ee1 )),
+	ee2_(std::move( ee2 ))
 {}
 
 numeric::Real
@@ -1895,7 +1888,7 @@ MetaMaxExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP dee1 = ee1_->differentiate( varname );
 	ExpressionCOP dee2 = ee2_->differentiate( varname );
 
-	if ( ! dee1 && ! dee2 ) return 0;
+	if ( ! dee1 && ! dee2 ) return nullptr;
 
 	if ( ! dee1 ) dee1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
 	if ( ! dee2 ) dee2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
@@ -1916,10 +1909,10 @@ MetaMinExpression::MetaMinExpression(
 	ExpressionCOP ee1,
 	ExpressionCOP ee2
 ) :
-	e1_( e1 ),
-	e2_( e2 ),
-	ee1_( ee1 ),
-	ee2_( ee2 )
+	e1_(std::move( e1 )),
+	e2_(std::move( e2 )),
+	ee1_(std::move( ee1 )),
+	ee2_(std::move( ee2 ))
 {}
 
 numeric::Real
@@ -1934,7 +1927,7 @@ MetaMinExpression::differentiate( std::string const & varname ) const
 	ExpressionCOP dee1 = ee1_->differentiate( varname );
 	ExpressionCOP dee2 = ee2_->differentiate( varname );
 
-	if ( ! dee1 && ! dee2 ) return 0;
+	if ( ! dee1 && ! dee2 ) return nullptr;
 
 	if ( ! dee1 ) dee1 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
 	if ( ! dee2 ) dee2 = ExpressionCOP( ExpressionOP( new LiteralExpression( 0.0 ) ) );
@@ -1951,7 +1944,7 @@ MetaMinExpression::active_variables() const
 
 EqualsExpression::EqualsExpression() : BinaryExpression() {}
 EqualsExpression::EqualsExpression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
-EqualsExpression::~EqualsExpression() {}
+EqualsExpression::~EqualsExpression() = default;
 
 
 numeric::Real
@@ -1965,13 +1958,13 @@ ExpressionCOP
 EqualsExpression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
 GT_Expression::GT_Expression() : BinaryExpression() {}
 GT_Expression::GT_Expression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
-GT_Expression::~GT_Expression() {}
+GT_Expression::~GT_Expression() = default;
 
 
 numeric::Real
@@ -1985,13 +1978,13 @@ ExpressionCOP
 GT_Expression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
 GTE_Expression::GTE_Expression() : BinaryExpression() {}
 GTE_Expression::GTE_Expression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
-GTE_Expression::~GTE_Expression() {}
+GTE_Expression::~GTE_Expression() = default;
 
 
 numeric::Real
@@ -2005,13 +1998,13 @@ ExpressionCOP
 GTE_Expression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
 LT_Expression::LT_Expression() : BinaryExpression() {}
 LT_Expression::LT_Expression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
-LT_Expression::~LT_Expression() {}
+LT_Expression::~LT_Expression() = default;
 
 
 numeric::Real
@@ -2025,13 +2018,13 @@ ExpressionCOP
 LT_Expression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
 LTE_Expression::LTE_Expression() : BinaryExpression() {}
 LTE_Expression::LTE_Expression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
-LTE_Expression::~LTE_Expression() {}
+LTE_Expression::~LTE_Expression() = default;
 
 
 numeric::Real
@@ -2045,14 +2038,14 @@ ExpressionCOP
 LTE_Expression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
 /// 2. Boolean Logic Operators
 AndExpression::AndExpression() : BinaryExpression() {}
 AndExpression::AndExpression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
-AndExpression::~AndExpression() {}
+AndExpression::~AndExpression() = default;
 
 
 numeric::Real
@@ -2066,13 +2059,13 @@ ExpressionCOP
 AndExpression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
 OrExpression::OrExpression() : BinaryExpression() {}
 OrExpression::OrExpression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
-OrExpression::~OrExpression() {}
+OrExpression::~OrExpression() = default;
 
 numeric::Real
 OrExpression::operator() () const
@@ -2085,13 +2078,13 @@ ExpressionCOP
 OrExpression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
 NotExpression::NotExpression() : UnaryExpression() {}
 NotExpression::NotExpression( ExpressionCOP e ) : UnaryExpression( e ) {}
-NotExpression::~NotExpression() {}
+NotExpression::~NotExpression() = default;
 
 numeric::Real
 NotExpression::operator() () const
@@ -2103,7 +2096,7 @@ ExpressionCOP
 NotExpression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 
@@ -2112,9 +2105,9 @@ ITEExpression::ITEExpression(
 	ExpressionCOP then_expression,
 	ExpressionCOP else_expression
 ) :
-	condition_( condition ),
-	then_expression_( then_expression ),
-	else_expression_( else_expression )
+	condition_(std::move( condition )),
+	then_expression_(std::move( then_expression )),
+	else_expression_(std::move( else_expression ))
 {}
 
 numeric::Real
@@ -2135,7 +2128,7 @@ ExpressionCOP
 ITEExpression::differentiate( std::string const &  ) const
 {
 	/// Boolean expressions cannot be differentiated
-	return 0;
+	return nullptr;
 }
 
 ExpressionCOP

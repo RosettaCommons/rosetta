@@ -32,9 +32,7 @@ SheetRemodelConstraintGenerator::SheetRemodelConstraintGenerator():
 {
 }
 
-SheetRemodelConstraintGenerator::~SheetRemodelConstraintGenerator()
-{
-}
+SheetRemodelConstraintGenerator::~SheetRemodelConstraintGenerator() = default;
 
 std::string
 SheetRemodelConstraintGenerator::get_name() const

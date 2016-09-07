@@ -84,7 +84,7 @@ public:
 	// virtual ~ResidualDipolarCouplingRigidSegments();
 
 	//this class lives in the PoseCache.... need to provide clone()
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new ResidualDipolarCouplingRigidSegments(*this) );
 	}
 

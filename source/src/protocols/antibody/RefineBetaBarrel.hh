@@ -42,7 +42,7 @@ public:
 	RefineBetaBarrel();
 
 	/// @brief default destructor
-	~RefineBetaBarrel();
+	~RefineBetaBarrel() override;
 
 	RefineBetaBarrel(AntibodyInfoOP antibody_info);
 
@@ -50,8 +50,8 @@ public:
 		core::scoring::ScoreFunctionCOP dock_scorefxn,
 		core::scoring::ScoreFunctionCOP pack_scorefxn);
 
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 	void set_task_factory(core::pack::task::TaskFactoryCOP tf);
 

@@ -226,7 +226,7 @@ AlignmentClustering::AlignmentClustering(){
 	for ( Size ii = 1; ii <= rankedAlignments.size(); ++ii ) {
 		string const aln_id( rankedAlignments[ii].sequence(2)->id() );
 		string const template_id( aln_id.substr(0,5) );
-		map< string, Pose >::iterator pose_it = template_poses.find( template_id );
+		auto pose_it = template_poses.find( template_id );
 		if ( pose_it == template_poses.end() ) {
 			string msg( "Error: can't find pose (id = "
 				+ template_id + ")"
@@ -368,8 +368,7 @@ AlignmentClustering::AlignmentClustering(){
 ///////////////////////////////////////////////////////////////////////////////
 /// @detail Deletes AlignmentClustering object
 ///////////////////////////////////////////////////////////////////////////////
-AlignmentClustering::~AlignmentClustering(){
-}
+AlignmentClustering::~AlignmentClustering()= default;
 ///////////////////////////////////////////////////////////////////////////////
 /// @detail  Does the clustering
 ///////////////////////////////////////////////////////////////////////////////
@@ -423,12 +422,11 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
 
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
-		if ( file_exists(*it) ) {
+	for (const auto & it : fn_list) {
+		if ( file_exists(it) ) {
 			Pose pose;
-			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
-			string name = utility::file_basename( *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);
+			string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
 		}

@@ -35,7 +35,7 @@ VectorPoseMover::VectorPoseMover( VectorPoseMover const & other ) :
 	Mover( other )
 {}
 
-VectorPoseMover::~VectorPoseMover() {}
+VectorPoseMover::~VectorPoseMover() = default;
 
 
 std::string VectorPoseMover::get_name() const {

@@ -71,7 +71,7 @@ DesignInterfacesOperation::DesignInterfacesOperation() :
 {
 }
 
-DesignInterfacesOperation::~DesignInterfacesOperation() {}
+DesignInterfacesOperation::~DesignInterfacesOperation() = default;
 
 core::pack::task::operation::TaskOperationOP
 DesignInterfacesOperationCreator::create_task_operation() const

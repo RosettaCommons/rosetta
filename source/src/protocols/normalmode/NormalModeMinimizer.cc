@@ -83,7 +83,7 @@ NormalModeMinimizer::NormalModeMinimizer() {
 	options_->max_iter(200);
 }
 
-NormalModeMinimizer::~NormalModeMinimizer() {}
+NormalModeMinimizer::~NormalModeMinimizer() = default;
 
 void
 NormalModeMinimizer::apply( pose::Pose & pose ) {

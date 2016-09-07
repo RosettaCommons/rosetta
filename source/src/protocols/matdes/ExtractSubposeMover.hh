@@ -45,18 +45,18 @@ public:
 
 	ExtractSubposeMover(const ExtractSubposeMover& rval);
 
-	virtual std::string get_name() const { return "ExtractSubposeMover"; }
-	virtual void apply( core::pose::Pose & pose );
+	std::string get_name() const override { return "ExtractSubposeMover"; }
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 

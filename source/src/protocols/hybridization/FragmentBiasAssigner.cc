@@ -72,7 +72,7 @@ init(
 	fragbias_tr.Trace << "init(): pose.total_residue(): " << nres_ << std::endl;
 
 	// symmetry
-	symminfo_=NULL;
+	symminfo_=nullptr;
 	n_symm_subunit_=1;
 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -716,7 +716,7 @@ bfactors(
 	// find segments with highest bfactors
 	core::Real Btemp=25;  // no idea what value makes sense here
 	// with Btemp = 25, a B=100 is ~54 times more likely to be sampled than B=0
-	runtime_assert( pose.pdb_info() != 0 );
+	runtime_assert( pose.pdb_info() != nullptr );
 	for ( int r=1; r<=(int)nres_; ++r ) {
 		core::Real Bsum=0;
 		core::Size nbb = pose.residue_type(r).last_backbone_atom();

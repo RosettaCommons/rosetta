@@ -97,7 +97,7 @@ TailSegmentMover::TailSegmentMover(): protocols::moves::Mover("TailSegment"),
 
 }
 
-TailSegmentMover::~TailSegmentMover(){}
+TailSegmentMover::~TailSegmentMover() = default;
 
 /// @brief copy ctor
 TailSegmentMover::TailSegmentMover( TailSegmentMover const & rhs ) :
@@ -136,7 +136,7 @@ void TailSegmentMover::set_task_factory(
 )
 {
 	// make local, non-const copy from const input
-	runtime_assert( task_factory_in != 0 );
+	runtime_assert( task_factory_in != nullptr );
 	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *task_factory_in ) );
 }
 

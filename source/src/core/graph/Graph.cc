@@ -163,8 +163,7 @@ bool output_interaction_graph_memory_usage = false;
 
 /// @brief
 /// virtual destructor
-Node::~Node()
-{}
+Node::~Node() = default;
 
 /// @brief
 /// Main constructor, no default constructor nor copy constructor
@@ -314,7 +313,7 @@ Edge * Node::find_edge(platform::Size other_node)
 			return (*iter);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 
@@ -474,8 +473,8 @@ platform::Size Edge::count_dynamic_memory() const
 Graph::~Graph()
 {
 	delete_everything();
-	delete edge_list_element_pool_; edge_list_element_pool_ = 0;
-	delete edge_pool_; edge_pool_ = 0;
+	delete edge_list_element_pool_; edge_list_element_pool_ = nullptr;
+	delete edge_pool_; edge_pool_ = nullptr;
 }
 
 /// @brief default constructor; creates an empty graph (no nodes, no edges)
@@ -487,7 +486,7 @@ Graph::Graph() :
 	edge_list_element_pool_( new boost::unordered_object_pool< EdgeListElement > ( 256 ) ),
 	edge_list_( *edge_list_element_pool_ ),
 	edge_pool_( new boost::unordered_object_pool< Edge > ( 256 ) ),
-	focused_edge_( 0 )
+	focused_edge_( nullptr )
 {}
 
 /// @details Do not call this constructor from a derived class in the initialization list,
@@ -498,12 +497,12 @@ Graph::Graph() :
 Graph::Graph( platform::Size num_nodes ) :
 	parent(),
 	num_nodes_(num_nodes),
-	nodes_(num_nodes, (Node*) 0),
+	nodes_(num_nodes, (Node*) nullptr),
 	num_edges_( 0 ),
 	edge_list_element_pool_( new boost::unordered_object_pool< EdgeListElement > ( 256 ) ),
 	edge_list_( *edge_list_element_pool_ ),
 	edge_pool_( new boost::unordered_object_pool< Edge > ( 256 ) ),
-	focused_edge_( 0 )
+	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes; ++ii ) {
 		nodes_[ ii ] = create_new_node( ii );
@@ -522,12 +521,12 @@ Graph::Graph( Graph const & source ) :
 	parent(),
 	utility::pointer::enable_shared_from_this< Graph >(),
 	num_nodes_( source.num_nodes_ ),
-	nodes_( num_nodes_, (Node *) 0 ),
+	nodes_( num_nodes_, (Node *) nullptr ),
 	num_edges_( 0 ),
 	edge_list_element_pool_( new boost::unordered_object_pool< EdgeListElement > ( 256 ) ),
 	edge_list_( *edge_list_element_pool_ ),
 	edge_pool_( new boost::unordered_object_pool< Edge > ( 256 ) ),
-	focused_edge_( 0 )
+	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) {
 		nodes_[ ii ] = create_new_node( ii );
@@ -655,7 +654,7 @@ void Graph::set_num_nodes( platform::Size num_nodes )
 bool Graph::get_edge_exists(platform::Size node1, platform::Size node2) const
 {
 	Edge const * edge = find_edge( node1, node2 );
-	return (edge != NULL);
+	return (edge != nullptr);
 }
 
 /// @brief deletes all edges adjacent to the node specified
@@ -779,7 +778,7 @@ Graph::all_pairs_shortest_paths() const
 /// @param citer - [in] - the iterator in the const edge list pointing at the edge that's deleting itself
 void Graph::drop_edge( EdgeListIter iter )
 {
-	if ( *iter == focused_edge_ ) focused_edge_ = NULL; //invalidate focused_edge_
+	if ( *iter == focused_edge_ ) focused_edge_ = nullptr; //invalidate focused_edge_
 
 	--num_edges_;
 	edge_list_.erase(iter);
@@ -799,10 +798,10 @@ void Graph::delete_everything()
 		delete_edge( *iter );
 		iter = next_iter;
 	}
-	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) { delete nodes_[ii]; nodes_[ii] = 0; }
+	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) { delete nodes_[ii]; nodes_[ii] = nullptr; }
 	num_nodes_ = 0;
 	nodes_.resize( 0 );
-	focused_edge_ = 0;
+	focused_edge_ = nullptr;
 }
 
 /// @brief
@@ -818,7 +817,7 @@ void Graph::delete_everything()
 /// node2 - [in] - index of the second node
 Edge const * Graph::find_edge(platform::Size node1, platform::Size node2) const
 {
-	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
+	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;
@@ -836,7 +835,7 @@ Edge const * Graph::find_edge(platform::Size node1, platform::Size node2) const
 /// node2 - [in] - index of the second node
 Edge * Graph::find_edge(platform::Size node1, platform::Size node2)
 {
-	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
+	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;

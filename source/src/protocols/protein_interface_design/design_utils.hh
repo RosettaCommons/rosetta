@@ -62,7 +62,7 @@ public:
 	void report( std::ostream & out ) const;
 	std::map< Size, std::string > const & res_name1() const { return res_name1_; }
 	std::map< Size, std::string > const & res_name2() const { return res_name2_; }
-	virtual ~ReportSequenceDifferences() {};
+	virtual ~ReportSequenceDifferences() = default;
 private:
 	std::map< Size, Real > res_energy1_;
 	std::map< Size, Real > res_energy2_;
@@ -93,7 +93,7 @@ public:
 		ddg_cycles_ = init.ddg_cycles_;
 	}
 	void apply( core::pose::Pose & pose_wt, core::pose::Pose & pose_des ) const;
-	virtual ~Revert(){};
+	virtual ~Revert()= default;
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real ddg_tolerance_;
@@ -112,7 +112,7 @@ public:
 public:
 	FavorNativeResidue( Pose & pose, Real const native_residue_bonus );
 	FavorNativeResidue( Pose & pose, utility::vector1< Real > const & native_residue_bonus );
-	virtual ~FavorNativeResidue(){};
+	virtual ~FavorNativeResidue()= default;
 private:
 	void add_residue_constraints( Pose & pose ) const;
 	utility::vector1< Real > native_residue_bonus_;
@@ -130,7 +130,7 @@ public:
 public:
 	FavorNonNativeResidue( Pose & pose, Real const native_residue_bonus );
 	FavorNonNativeResidue( Pose & pose, utility::vector1< Real > const & native_residue_bonus );
-	virtual ~FavorNonNativeResidue(){};
+	virtual ~FavorNonNativeResidue()= default;
 private:
 	void add_residue_constraints( Pose & pose ) const;
 	utility::vector1< Real > non_native_residue_bonus_;
@@ -148,13 +148,13 @@ void SymMinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunction
 // residue
 std::list< core::Size >
 hbonded( core::pose::Pose const & pose, core::Size const target_residue, std::set< core::Size > const & binders,
-	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false, core::scoring::ScoreFunctionOP sfxn = NULL );
+	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false, core::scoring::ScoreFunctionOP sfxn = nullptr );
 
 /// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
 // residue and atom
 std::list< core::Size >
 hbonded_atom( core::pose::Pose const & pose, core::Size const target_residue, std::string const & target_atom, std::set< core::Size > const & binders,
-	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false, core::scoring::ScoreFunctionOP sfxn = NULL );
+	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false, core::scoring::ScoreFunctionOP sfxn = nullptr );
 
 } // protein_interface_design
 } // protocols

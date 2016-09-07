@@ -20,6 +20,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
@@ -49,8 +50,8 @@ FilterStructs::FilterStructs():
 {}
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String const & name ):
-	name_( name ),
+FilterStructs::FilterStructs( String  name ):
+	name_(std::move( name )),
 	filter_on_( true ),
 	ntrial_( 5 ),
 	current_trial_( 0 ),
@@ -58,8 +59,8 @@ FilterStructs::FilterStructs( String const & name ):
 {}
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String const & name, Size const ntrial ):
-	name_( name ),
+FilterStructs::FilterStructs( String  name, Size const ntrial ):
+	name_(std::move( name )),
 	filter_on_( true ),
 	ntrial_( ntrial ),
 	current_trial_( 0 ),
@@ -68,8 +69,8 @@ FilterStructs::FilterStructs( String const & name, Size const ntrial ):
 
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String const & name, Pose const & pose, Size const ntrial ):
-	name_( name ),
+FilterStructs::FilterStructs( String  name, Pose const & pose, Size const ntrial ):
+	name_(std::move( name )),
 	filter_on_( true ),
 	ntrial_( ntrial ),
 	current_trial_( 0 ),
@@ -88,14 +89,14 @@ FilterStructs::FilterStructs( FilterStructs const & rval ):
 }
 
 /// @brief destructor
-FilterStructs::~FilterStructs(){}
+FilterStructs::~FilterStructs()= default;
 
 /// @brief clone this object
 FilterStructsOP
 FilterStructs::clone() const
 {
 	utility_exit_with_message( "clone has been called on a Mover which has not overriden the base class implementation.  Probably you tried to pass a Mover to the job distributor or parser which does not have clone implemented.  Implement the function and try again.\n");
-	return FilterStructsOP( NULL );
+	return FilterStructsOP( nullptr );
 }
 
 /// @brief create a new instance of this type of object
@@ -103,7 +104,7 @@ FilterStructsOP
 FilterStructs::fresh_instance() const
 {
 	utility_exit_with_message("fresh_instance has been called on a Mover which has not overriden the base class implementation.  Probably you tried to pass a Mover to the job distributor which does not have fresh_instance implemented.  Implement the function and try again.\n");
-	return FilterStructsOP( NULL );
+	return FilterStructsOP( nullptr );
 }
 
 /// @brief return best pose
@@ -175,13 +176,10 @@ FilterStructs_Packstat::FilterStructs_Packstat( Pose const & pose, Size const nt
 {}
 
 /// @brief copy constructor
-FilterStructs_Packstat::FilterStructs_Packstat( FilterStructs_Packstat const & rval ):
-	Super( rval ),
-	best_packscore_( rval.best_packscore_ )
-{}
+FilterStructs_Packstat::FilterStructs_Packstat( FilterStructs_Packstat const & )= default;
 
 /// @brief destructor
-FilterStructs_Packstat::~FilterStructs_Packstat(){}
+FilterStructs_Packstat::~FilterStructs_Packstat()= default;
 
 /// @brief clone
 FilterStructsOP FilterStructs_Packstat::clone() const
@@ -234,13 +232,10 @@ FilterStructs_TotalCharge::FilterStructs_TotalCharge( Pose const & pose, Size co
 {}
 
 /// @brief copy constructor
-FilterStructs_TotalCharge::FilterStructs_TotalCharge( FilterStructs_TotalCharge const & rval ):
-	Super( rval ),
-	disallowed_value_( rval.disallowed_value_ )
-{}
+FilterStructs_TotalCharge::FilterStructs_TotalCharge( FilterStructs_TotalCharge const & )= default;
 
 /// @brief destructor
-FilterStructs_TotalCharge::~FilterStructs_TotalCharge() {}
+FilterStructs_TotalCharge::~FilterStructs_TotalCharge() = default;
 
 /// @brief clone
 FilterStructsOP FilterStructs_TotalCharge::clone() const

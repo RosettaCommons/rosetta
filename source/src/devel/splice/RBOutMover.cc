@@ -69,9 +69,7 @@ RBOutMover::RBOutMover(): moves::Mover("RBOut"),
 {
 }
 
-RBOutMover::~RBOutMover()
-{
-}
+RBOutMover::~RBOutMover() = default;
 
 bool compare(std::pair<core::Size,core::Size> p1, std::pair<core::Size, core::Size> p2) {return p1.first == p2.first;}
 
@@ -110,14 +108,14 @@ RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose
 	relevant_disulfs.clear();
 	core::Real const max_allowed_distance( 5.0 );
 
-	for ( utility::vector1< std::pair< core::Size, core::Size > >::const_iterator disulf_templ_it = disulfs_in_template.begin(); disulf_templ_it != disulfs_in_template.end(); ++disulf_templ_it ) {
-		for ( utility::vector1< std::pair< core::Size, core::Size > >::const_iterator disulf_pose_it = disulfs_in_pose.begin(); disulf_pose_it != disulfs_in_pose.end(); ++disulf_pose_it ) {
-			core::Real const dist1( template_pose.residue( disulf_templ_it->first ).xyz( "CA" ).distance( pose.residue( disulf_pose_it->first ).xyz( "CA" ) ) );
-			core::Real const dist2( template_pose.residue( disulf_templ_it->second ).xyz( "CA" ).distance( pose.residue( disulf_pose_it->second ).xyz( "CA" ) ) );
-			TR<<"Template disulf: "<<disulf_templ_it->first<<"/"<<disulf_templ_it->second<<" pose disulf: "<<disulf_pose_it->first<<"/"<<disulf_pose_it->second<<" distances: "<<dist1<<"/"<<dist2<<std::endl;
+	for (const auto & disulf_templ_it : disulfs_in_template) {
+		for (const auto & disulf_pose_it : disulfs_in_pose) {
+			core::Real const dist1( template_pose.residue( disulf_templ_it.first ).xyz( "CA" ).distance( pose.residue( disulf_pose_it.first ).xyz( "CA" ) ) );
+			core::Real const dist2( template_pose.residue( disulf_templ_it.second ).xyz( "CA" ).distance( pose.residue( disulf_pose_it.second ).xyz( "CA" ) ) );
+			TR<<"Template disulf: "<<disulf_templ_it.first<<"/"<<disulf_templ_it.second<<" pose disulf: "<<disulf_pose_it.first<<"/"<<disulf_pose_it.second<<" distances: "<<dist1<<"/"<<dist2<<std::endl;
 			if ( dist1 <= max_allowed_distance && dist2 <= max_allowed_distance ) {
 				TR<<"Found neighbour"<<std::endl;
-				relevant_disulfs.push_back( std::pair< core::Size, core::Size >( disulf_pose_it->first, disulf_pose_it->second ) );
+				relevant_disulfs.push_back( std::pair< core::Size, core::Size >( disulf_pose_it.first, disulf_pose_it.second ) );
 				break;
 			} else {
 				TR<<"Not a neighbour"<<std::endl;

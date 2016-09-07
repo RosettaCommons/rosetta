@@ -60,7 +60,7 @@ public:
 	{
 	}
 
-	~session();
+	~session() override;
 
 	void
 	set_db_mode(

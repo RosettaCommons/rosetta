@@ -63,6 +63,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -308,8 +309,8 @@ void ZincHeterodimerMover::generate_factory(){
 		task_factory->push_back(operation::TaskOperationOP( new operation::ReadResfile ));
 	}
 	operation::PreventRepackingOP prop( new operation::PreventRepacking() );
-	for ( utility::vector1< core::Size >::const_iterator it(metal_site_.begin()), end(metal_site_.end()); it != end; ++it ) {
-		prop->include_residue(*it);
+	for (unsigned long it : metal_site_) {
+		prop->include_residue(it);
 	}
 	task_factory->push_back(prop);
 	//this assumes that the two protein partners are chains 1 and 3 - this is dangerous!!!!
@@ -323,17 +324,17 @@ void ZincHeterodimerMover::generate_factory(){
 /// @details constructor
 ZincHeterodimerMover::ZincHeterodimerMover(
 	utility::vector1< core::Size > const & metal_site,
-	core::kinematics::Edge const & fixed_to_metal,
-	core::kinematics::Edge const & metal_to_mobile )
-: Mover(), centroid_scorefunction_(/* NULL */), fullatom_scorefunction_(NULL), factory_(NULL),
-	fixed_to_metal_(fixed_to_metal), metal_to_mobile_(metal_to_mobile), metal_site_(metal_site)
+	core::kinematics::Edge  fixed_to_metal,
+	core::kinematics::Edge  metal_to_mobile )
+: Mover(), centroid_scorefunction_(/* NULL */), fullatom_scorefunction_(nullptr), factory_(nullptr),
+	fixed_to_metal_(std::move(fixed_to_metal)), metal_to_mobile_(std::move(metal_to_mobile)), metal_site_(metal_site)
 {
 	Mover::type( "ZincHeterodimerMover" );
 	generate_scorefunctions();
 	generate_factory();
 }
 
-ZincHeterodimerMover::~ZincHeterodimerMover(){}
+ZincHeterodimerMover::~ZincHeterodimerMover()= default;
 
 }//metal_interface
 }//protocols

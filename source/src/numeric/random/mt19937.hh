@@ -101,7 +101,7 @@ typedef unsigned long long uint64_t
 */
 
 
-#include <stdio.h>
+#include <cstdio>
 
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
 #include <inttypes.h>
@@ -110,7 +110,7 @@ typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
 #define inline __inline
 #else
-	#include <inttypes.h>
+	#include <cinttypes>
 #if defined(__GNUC__)
 		#define inline __inline__
 #else
@@ -333,10 +333,10 @@ public:
 		psformat64 = &sformat[0].d[0];
 	}
 
-	virtual ~mt19937_RG() {}
+	~mt19937_RG() override = default;
 
 	/// @brief Set seed and state
-	inline void setSeed(int const iseed)
+	inline void setSeed(int const iseed) override
 	{
 		iseed_ = iseed;
 		uint32_t seed = (uint32_t) iseed;
@@ -357,13 +357,13 @@ public:
 	}
 
 	/// @brief Set seed and state
-	void setSeed( std::string const & ) { assert( false ); } //< Not implemented yet!
+	void setSeed( std::string const & ) override { assert( false ); } //< Not implemented yet!
 
-	inline int getSeed() {
+	inline int getSeed() override {
 		return iseed_;
 	}
 
-	inline double getRandom()
+	inline double getRandom() override
 	{
 		//This function generates and returns double precision pseudorandom
 		//number which distributes uniformly in the range [1, 2).  This is
@@ -385,26 +385,26 @@ public:
 	}
 
 	/// @brief Serializes generator state to stream losslessly.
-	virtual void saveState(std::ostream & out)
+	void saveState(std::ostream & out) override
 	{
 		out << " " << is_sformat_initialized;
 		out << " " << sformat_idx;
 		// psformat64 is a pointer to a memory location and is never modified
 		// it should NOT be serialized or restored
-		for ( int i = 0; i < DSFMT_N+1; ++i ) {
-			out << " " << sformat[i].u[0] << " " << sformat[i].u[1];
+		for (auto & i : sformat) {
+			out << " " << i.u[0] << " " << i.u[1];
 		}
 	}
 
 	/// @brief Deserializes generator state from stream losslessly.
-	virtual void restoreState(std::istream & in)
+	void restoreState(std::istream & in) override
 	{
 		in >> is_sformat_initialized;
 		in >> sformat_idx;
 		// psformat64 is a pointer to a memory location and is never modified
 		// it should NOT be serialized or restored
-		for ( int i = 0; i < DSFMT_N+1; ++i ) {
-			in >> sformat[i].u[0] >> sformat[i].u[1];
+		for (auto & i : sformat) {
+			in >> i.u[0] >> i.u[1];
 		}
 	}
 

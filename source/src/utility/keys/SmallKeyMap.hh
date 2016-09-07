@@ -140,7 +140,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~SmallKeyMap()
-	{}
+	= default;
 
 
 public: // Assignment

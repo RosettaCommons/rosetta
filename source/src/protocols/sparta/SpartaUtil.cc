@@ -78,13 +78,13 @@ calc_per_residue_scores(
 	//std::cout << "begin_scoring: scores.size() = " << per_residue_scores.size() << std::endl;
 
 	utility::vector0< float > OBS_V, PRED_V, DIFF_V, OBS_V_CORRECTED;
-	for ( Sparta::SpartaLib::AtomNameList::iterator itN = atom_names.begin(), end = atom_names.end(); itN != end; ++itN ) {
-		string aName = itN->second;
+	for (auto & atom_name : atom_names) {
+		string aName = atom_name.second;
 		if ( aName == "H" ) aName="HN";
 		bool floating_sign( REF_CS_Tab.isVarFloat("SHIFT2") );
 		if ( floating_sign ) tr.Info << " use floating sign1 " << std::endl;
 		else tr.Info << " no floating sign " << std::endl;
-		for ( GDB::EntryList::iterator it = REF_CS_Tab.Entries.begin(), end2 = REF_CS_Tab.Entries.end(); it != end2; ++it ) {
+		for ( auto it = REF_CS_Tab.Entries.begin(), end2 = REF_CS_Tab.Entries.end(); it != end2; ++it ) {
 			float obs_shift, pred_shift, obs_shift2( 0.0 );
 			string aName_ref = it->second["ATOMNAME"];
 			if ( aName_ref == "H" ) aName_ref = "HN";
@@ -321,7 +321,7 @@ bool isDirExists(const string &Dir) {
 #else
 	DIR *dp;
 	dp = opendir(Dir.c_str());
-	if ( dp != NULL ) {
+	if ( dp != nullptr ) {
 		(void) closedir (dp);
 		return true;
 	} else {

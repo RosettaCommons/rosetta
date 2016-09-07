@@ -100,7 +100,7 @@ ConstrainToIdealMover::ConstrainToIdealMover() :
 	verbose_( false )
 {}
 
-ConstrainToIdealMover::~ConstrainToIdealMover(){}
+ConstrainToIdealMover::~ConstrainToIdealMover()= default;
 
 // Is this really in use?
 // ConstrainToIdealMover::ConstrainToIdealMover(ConstrainToIdealMover const & rhs) :

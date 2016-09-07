@@ -47,7 +47,7 @@ triangleIterator::triangleIterator(FArray3D_float const & density, float const &
 }
 
 triangleIterator::~triangleIterator() {
-	delete gradPtr; gradPtr = NULL;
+	delete gradPtr; gradPtr = nullptr;
 }
 
 bool triangleIterator::hasNext() const {

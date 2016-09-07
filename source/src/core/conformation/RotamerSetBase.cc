@@ -38,7 +38,7 @@ RotamerSetBase::RotamerSetBase() :
 	data_cache_( BasicDataCacheOP( new BasicDataCache( RotamerSetCacheableDataType::num_cacheable_data_types) ) )
 {}
 
-RotamerSetBase::~RotamerSetBase() {}
+RotamerSetBase::~RotamerSetBase() = default;
 
 /// @brief BasicDataCache indexed by enum in core/pack/rotamer_set/RotamerSetCacheableDataType.hh
 RotamerSetBase::BasicDataCache &

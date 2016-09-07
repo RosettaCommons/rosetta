@@ -73,7 +73,7 @@ protocols::jd2::PDBJobOutputter::PDBJobOutputter()
 	}
 }
 
-protocols::jd2::PDBJobOutputter::~PDBJobOutputter(){}
+protocols::jd2::PDBJobOutputter::~PDBJobOutputter()= default;
 
 /// @details private function (just prevents code duplication) to fill ozstream
 void protocols::jd2::PDBJobOutputter::dump_pose(

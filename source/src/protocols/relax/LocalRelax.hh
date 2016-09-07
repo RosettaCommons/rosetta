@@ -54,7 +54,7 @@ private:
 public:
 	LocalRelax();
 
-	virtual std::string get_name() const { return "LocalRelax"; }
+	std::string get_name() const override { return "LocalRelax"; }
 
 	/// @brief one cycle of local optimization
 	void
@@ -77,14 +77,14 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new LocalRelax(*this) );
 	}
 
-	void apply( core::pose::Pose & pose);
+	void apply( core::pose::Pose & pose) override;
 };
 
 

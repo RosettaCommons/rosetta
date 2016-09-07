@@ -100,7 +100,7 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 				Size vpos = 0;
 				VallChunkOP chunk = chunk_owner->find_chunk(pdb_id, chain_id,
 					res_id);
-				if ( chunk != 0 ) {
+				if ( chunk != nullptr ) {
 					for ( Size j = 1; j <= chunk->size(); ++j ) {
 						if ( chunk->at(j)->resi() == res_id ) {
 							vpos = j;

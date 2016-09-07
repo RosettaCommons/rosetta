@@ -55,7 +55,7 @@ using namespace basic;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.FragmentMover" );
 
-FragmentMover::~FragmentMover() {}
+FragmentMover::~FragmentMover() = default;
 
 /// @brief Empty constructor
 FragmentMover::FragmentMover(std::string type) {
@@ -69,7 +69,7 @@ FragmentMover::FragmentMover(std::string type) {
 FragmentMover::FragmentMover(
 	core::fragment::FragSetCOP fragset,
 	std::string type ) :
-	fragset_( fragset )
+	fragset_(std::move( fragset ))
 {
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true ); //standard movemap
@@ -84,7 +84,7 @@ FragmentMover::FragmentMover(
 	core::kinematics::MoveMapCOP movemap,
 	std::string type
 ) :
-	fragset_( fragset )
+	fragset_(std::move( fragset ))
 {
 	protocols::moves::Mover::type( type );
 	set_movemap( movemap );
@@ -103,9 +103,9 @@ FragmentMover::get_name() const {
 
 Size FragmentMover::apply_at_all_positions( core::pose::Pose& pose ) const {
 	Size ct( 0 );
-	for ( InsertMap::const_iterator it = insert_map().begin(), eit = insert_map().end(); it != eit; ++it ) {
+	for (unsigned long it : insert_map()) {
 		FrameList frames;
-		if ( !fragset_->frames( *it, frames ) ) continue;
+		if ( !fragset_->frames( it, frames ) ) continue;
 		for ( FrameList::const_iterator fit = frames.begin(); fit != frames.end(); ++fit ) {
 			FrameList one_frame;
 			one_frame.push_back( *fit );
@@ -184,7 +184,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 }
 
 ClassicFragmentMover::~ClassicFragmentMover()
-{}
+= default;
 
 // alternative Constructor to be used by derived classes
 ClassicFragmentMover::ClassicFragmentMover(
@@ -530,7 +530,7 @@ LoggedFragmentMover::LoggedFragmentMover(
 {}
 
 LoggedFragmentMover::~LoggedFragmentMover()
-{}
+= default;
 
 std::string
 LoggedFragmentMover::get_name() const {

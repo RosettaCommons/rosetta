@@ -54,6 +54,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/moves/MoverContainer.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -74,12 +75,12 @@ namespace symmetric_docking {
 // constructor with arguments
 SymDockingLowRes::SymDockingLowRes(
 	core::scoring::ScoreFunctionCOP scorefxn_in
-) : Mover(), scorefxn_(scorefxn_in)
+) : Mover(), scorefxn_(std::move(scorefxn_in))
 {
 	moves::Mover::type( "SymDockingLowRes" );
 }
 
-SymDockingLowRes::~SymDockingLowRes(){}
+SymDockingLowRes::~SymDockingLowRes()= default;
 
 moves::MoverOP
 SymDockingLowRes::clone() const {

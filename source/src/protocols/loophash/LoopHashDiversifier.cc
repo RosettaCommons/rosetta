@@ -89,7 +89,7 @@ LoopHashDiversifierCreator::mover_name()
 }
 ///****End Creator Methods****///
 
-LoopHashDiversifier::~LoopHashDiversifier() {}
+LoopHashDiversifier::~LoopHashDiversifier() = default;
 
 LoopHashDiversifier::LoopHashDiversifier() :
 	protocols::moves::Mover( LoopHashDiversifierCreator::mover_name() ),
@@ -147,7 +147,7 @@ LoopHashDiversifier::LoopHashDiversifier(
 	core::scoring::ScoreFunctionOP scorefxn_rama_cst
 ) :
 	protocols::moves::Mover( LoopHashDiversifierCreator::mover_name() ),
-	library_( library ),
+	library_(std::move( library )),
 	min_inter_ss_bbrms_( min_inter_ss_bbrms ),
 	max_inter_ss_bbrms_( max_inter_ss_bbrms ),
 	min_intra_ss_bbrms_( min_intra_ss_bbrms ),
@@ -164,10 +164,10 @@ LoopHashDiversifier::LoopHashDiversifier(
 	diversify_loop_only_(diversify_loop_only),
 	ideal_( ideal ),
 	filter_by_phipsi_( filter_by_phipsi ),
-	cenfilter_( cenfilter ),
-	ranking_cenfilter_( ranking_cenfilter ),
-	scorefxn_cen_cst_(scorefxn_cen_cst),
-	scorefxn_rama_cst_(scorefxn_rama_cst)
+	cenfilter_(std::move( cenfilter )),
+	ranking_cenfilter_(std::move( ranking_cenfilter )),
+	scorefxn_cen_cst_(std::move(scorefxn_cen_cst)),
+	scorefxn_rama_cst_(std::move(scorefxn_rama_cst))
 {
 	loop_sizes_.clear();
 	loop_sizes_.push_back(window_size_);
@@ -182,7 +182,7 @@ void
 LoopHashDiversifier::apply( Pose & pose )
 {
 	using namespace core::io::silent;
-	runtime_assert( library_ != 0 );
+	runtime_assert( library_ != nullptr );
 	Pose const saved_pose( pose );
 
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
@@ -256,9 +256,9 @@ LoopHashDiversifier::apply( Pose & pose )
 
 
 			std::vector< SilentStructOP > lib_structs;
-			Size starttime = time( NULL );
+			Size starttime = time( nullptr );
 			lsampler.build_structures( pose, lib_structs );
-			Size endtime = time( NULL );
+			Size endtime = time( nullptr );
 			Size nstructs = lib_structs.size();
 			TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
 
@@ -280,7 +280,7 @@ LoopHashDiversifier::apply( Pose & pose )
 						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() :
 						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 					new_struct->fill_struct( rpose );
-					cen_scored_structs.push_back( std::pair<Real, SilentStructOP >(-score_i,new_struct) );
+					cen_scored_structs.emplace_back(-score_i,new_struct );
 				}
 			}
 
@@ -405,7 +405,7 @@ LoopHashDiversifier::parse_my_tag(
 
 	// centroid filter
 	string const centroid_filter_name( tag->getOption< string >( "centroid_filter", "true_filter" ) );
-	Filters_map::const_iterator find_cenfilter( filters.find( centroid_filter_name ) );
+	auto find_cenfilter( filters.find( centroid_filter_name ) );
 	if ( find_cenfilter == filters.end() ) {
 		utility_exit_with_message( "Filter " + centroid_filter_name + " not found in LoopHashDiversifier" );
 	}

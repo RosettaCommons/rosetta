@@ -436,15 +436,15 @@ is_membrane_moveable_by_itself( core::pose::Pose & pose ) {
 
 		// Iterate through the edge list and check that only one jump
 		// connects to the membrane residue
-		for ( core::kinematics::FoldTree::const_iterator it = current_ft.begin(), it_end = current_ft.end(); it != it_end; ++it ) {
+		for (const auto & it : current_ft) {
 
 			// If a an edge is a jump edge that is not the membrane jump
 			// but has a start or end point that is the membrane rsd,
 			// the memrbane rsd is not 'independently moveable'
-			if ( ( it->label() > 0 ) && (
-					( it->label() != int(membrane_jump) ) &&
-					( it->start() == int(membrane_rsd) ||
-					it->stop() == int(membrane_rsd) ) ) ) {
+			if ( ( it.label() > 0 ) && (
+					( it.label() != int(membrane_jump) ) &&
+					( it.start() == int(membrane_rsd) ||
+					it.stop() == int(membrane_rsd) ) ) ) {
 				return false;
 			}
 		}

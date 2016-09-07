@@ -22,10 +22,10 @@ namespace numeric {
 namespace model_quality {
 
 // begin singleton class stuff!
-RmsData* RmsData::pinstance_ = 0;// initialize pointer
+RmsData* RmsData::pinstance_ = nullptr;// initialize pointer
 RmsData* RmsData::instance ()
 {
-	if ( pinstance_ == 0 ) {  // is it the first call?
+	if ( pinstance_ == nullptr ) {  // is it the first call?
 		pinstance_ = new RmsData; // create sole instance
 	}
 	return pinstance_; // address of sole instance

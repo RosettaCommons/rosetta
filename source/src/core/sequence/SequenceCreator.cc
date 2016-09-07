@@ -18,7 +18,7 @@ namespace core {
 namespace sequence {
 
 SequenceCreator::SequenceCreator() {}
-SequenceCreator::~SequenceCreator() {}
+SequenceCreator::~SequenceCreator() = default;
 
 } // namespace sequence
 } // namespace core

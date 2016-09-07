@@ -71,22 +71,19 @@ void SilentFileJobOutputter::write_all_structs() {
 	using core::io::silent::SilentStructOP;
 
 	typedef std::map< std::string, core::io::silent::SilentFileData > SFD_MAP;
-	typedef vector1< std::pair< SilentStructOP, FileName > >::iterator iter;
 	SFD_MAP sfds;
 	// Only write structures if the user hasn't disabled it - otherwise it totally breaks
 	// the user's expectation.
 	if ( !bWriteNoStructures_ ) {
 		tr.Debug << "writing " << saved_structs_.size() << " structs." << std::endl;
-		for ( iter it = saved_structs_.begin(), end = saved_structs_.end();
-				it != end; ++it
-				) {
+		for (auto & saved_struct : saved_structs_) {
 			//tr.Debug << "writing struct " << ss->decoy_tag() << std::endl;
 			//tr.Debug << "writing struct " << (*it->first)->decoy_tag() << std::endl;
 			//SilentStructOP ss = it->first;
-			sfds[ it->second ].add_structure( (*it->first) );
+			sfds[ saved_struct.second ].add_structure( (*saved_struct.first) );
 		}
-		for ( SFD_MAP::iterator it = sfds.begin(); it!=sfds.end(); ++it ) {
-			it->second.write_all( it->first );
+		for (auto & sfd : sfds) {
+			sfd.second.write_all( sfd.first );
 		}
 	}
 	// very important to clear after writing!
@@ -205,7 +202,7 @@ void SilentFileJobOutputter::other_pose(
 	utility::file::FileName tagged_score_filename( scorefile_name() );
 	tagged_score_filename.base( scorefile_name().base() +"_"+ tag );
 
-	core::io::silent::SilentStructOP ss( NULL );
+	core::io::silent::SilentStructOP ss( nullptr );
 	if ( bWriteIntermediateFiles_ ) {
 		if ( write_separate_scorefile_ && score_only ) {
 			dump_pose( tagged_score_filename, job, pose, !bWriteIntermediateStructures_ || score_only , copy_count );

@@ -49,10 +49,10 @@ class RegionalConnections {
 public:
 
 	RegionalConnections(
-		std::set< core::Size > const & reg1,
-		std::set< core::Size > const & reg2,
+		std::set< core::Size >  reg1,
+		std::set< core::Size >  reg2,
 		core::Size required_cons
-	) : region1_( reg1 ), region2_( reg2 ), required_connections_( required_cons ), num_cons_( 0 )
+	) : region1_(std::move( reg1 )), region2_(std::move( reg2 )), required_connections_( required_cons ), num_cons_( 0 )
 	{}
 
 	std::set< core::Size > const &
@@ -101,26 +101,26 @@ public:
 	PackerNeighborGraphFilter(
 		core::pack::task::PackerTaskCOP task,
 		core::scoring::ScoreFunctionCOP sfxn
-	) : task_( task ), sfxn_( sfxn ), task_invalidated_( false ) {}
+	) : task_(std::move( task )), sfxn_(std::move( sfxn )), task_invalidated_( false ) {}
 
 
 	PackerNeighborGraphFilter();
 
-	~PackerNeighborGraphFilter();
+	~PackerNeighborGraphFilter() override;
 
 
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new PackerNeighborGraphFilter( *this ) ); }
 
-	filters::FilterOP fresh_instance() const {
+	filters::FilterOP fresh_instance() const override {
 		return filters::FilterOP( new PackerNeighborGraphFilter() ); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
-	virtual
-	std::string name() const { return "PackerNeighborGraphFilter"; }
+	
+	std::string name() const override { return "PackerNeighborGraphFilter"; }
 
 	void
 	set_task( core::pack::task::PackerTaskCOP task ){

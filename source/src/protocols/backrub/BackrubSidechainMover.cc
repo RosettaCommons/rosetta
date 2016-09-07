@@ -109,15 +109,15 @@ protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 {
 	if ( mover.backrub_mover_ ) {
 		backrub_mover_ = utility::pointer::dynamic_pointer_cast< protocols::backrub::BackrubMover > ( mover.backrub_mover_->clone() );
-		runtime_assert(backrub_mover_ != 0);
+		runtime_assert(backrub_mover_ != nullptr);
 	}
 	if ( mover.sidechain_mover_ ) {
 		sidechain_mover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::sidechain_moves::SidechainMover > ( mover.sidechain_mover_->clone() );
-		runtime_assert(sidechain_mover_ != 0);
+		runtime_assert(sidechain_mover_ != nullptr);
 	}
 }
 
-protocols::backrub::BackrubSidechainMover::~BackrubSidechainMover(){}
+protocols::backrub::BackrubSidechainMover::~BackrubSidechainMover()= default;
 
 protocols::moves::MoverOP
 protocols::backrub::BackrubSidechainMover::clone() const
@@ -157,12 +157,11 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 		std::string const t_o_val( tag->getOption<std::string>("task_operations") );
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-				t_o_key != end; ++t_o_key ) {
-			if ( data.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
+		for (const auto & t_o_key : t_o_keys) {
+			if ( data.has( "task_operations", t_o_key ) ) {
+				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", t_o_key ) );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 

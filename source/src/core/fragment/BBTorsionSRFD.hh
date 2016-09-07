@@ -52,12 +52,12 @@ public:
 	BBTorsionSRFD & operator =( BBTorsionSRFD const & rval );
 
 	/// @brief clone this object
-	virtual SingleResidueFragDataOP clone() const {
+	SingleResidueFragDataOP clone() const override {
 		return SingleResidueFragDataOP( new BBTorsionSRFD( *this ) );
 	}
 
 	/// @brief create a new instance of this object
-	virtual SingleResidueFragDataOP create() const {
+	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new BBTorsionSRFD() );
 	}
 
@@ -121,7 +121,7 @@ public:
 	}
 
 	/// @brief insert all backbone torsions into pose at position seq_pos
-	virtual bool apply( pose::Pose&, Size seq_pos ) const;
+	bool apply( pose::Pose&, Size seq_pos ) const override;
 
 	/// @brief insert all backbone torsions into pose at position seq_pos
 	/// @param[in] movemap This MoveMap will be *ignored* at the BBTorsionSRFD level,
@@ -133,22 +133,22 @@ public:
 	///  For speed, does not check to see whether or not all backbone torsions
 	///  are moveable in MoveMap -- use <tt>is_applicable()</tt> for this
 	///  purpose prior to calling <tt>apply()</tt>.
-	virtual bool apply( kinematics::MoveMap const & movemap, pose::Pose & pose, Size const seqpos ) const;
+	bool apply( kinematics::MoveMap const & movemap, pose::Pose & pose, Size const seqpos ) const override;
 
-	virtual bool steal( pose::Pose const&, Size seq_pos );
-	virtual bool is_compatible( SingleResidueFragData const& ) const;
+	bool steal( pose::Pose const&, Size seq_pos ) override;
+	bool is_compatible( SingleResidueFragData const& ) const override;
 
 	/// @brief check if all backbone torsions at the sequence position moveable
 	///  in the MoveMap
 	/// @return True if all backbone torsions moveable and <tt>is_applicable()</tt>
 	///  succeeded for superclass, otherwise False.
-	virtual bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const;
+	bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const override;
 
-	virtual void show( std::ostream &out ) const;
+	void show( std::ostream &out ) const override;
 
-	virtual void read_data( std::istream &in );
+	void read_data( std::istream &in ) override;
 
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 

@@ -67,7 +67,7 @@ AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures( 
 	FeaturesReporter()
 {}
 
-AtomInResidueAtomInResiduePairFeatures::~AtomInResidueAtomInResiduePairFeatures(){}
+AtomInResidueAtomInResiduePairFeatures::~AtomInResidueAtomInResiduePairFeatures()= default;
 
 string
 AtomInResidueAtomInResiduePairFeatures::type_name() const { return "AtomInResidueAtomInResiduePairFeatures"; }

@@ -168,7 +168,7 @@ MakeBundle::MakeBundle( MakeBundle const & src ):
 
 
 /// @brief Destructor for MakeBundle mover.
-MakeBundle::~MakeBundle() {}
+MakeBundle::~MakeBundle() = default;
 
 
 /// @brief Clone operator to create a pointer to a fresh MakeBundle object that copies this one.
@@ -247,7 +247,7 @@ void MakeBundle::apply (core::pose::Pose & pose)
 			if ( TR.Debug.visible() ) TR.Debug << "Appending helical bundle to pose." << std::endl;
 			if ( pose.pdb_info() ) {
 				pose.pdb_info()->detach_from();
-				pose.pdb_info(NULL);
+				pose.pdb_info(nullptr);
 			}
 			pose.append_pose_by_jump(newpose, 1);
 		}
@@ -346,51 +346,51 @@ MakeBundle::parse_my_tag(
 
 	//Parse sub-tags, setting major and minor helix params.  (Note that the add_helix function will automatically set the defaults).
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for ( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
+	for (const auto & branch_tag : branch_tags) {
+		if ( branch_tag->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
 			at_least_one_helix = true;
-			runtime_assert_string_msg( !(*tag_it)->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
+			runtime_assert_string_msg( !branch_tag->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
 			add_helix(); //This will set all of the parameters to defaults
 			core::Size const helix_index( n_helices() ); //The index of the current helix
 			if ( TR.visible() ) TR << "Added a helix." << std::endl;
 
 			//Set crick_params_file, set_bondlengths, set_bondangles, and set_dihedrals options for this helix, based on the tag.
-			set_helix_params_from_tag( helix_index, (*tag_it) );
+			set_helix_params_from_tag( helix_index, branch_tag );
 
 			//Major helix params:
-			if ( (*tag_it)->hasOption( "r0" ) ) {
-				core::Real const r0val( (*tag_it)->getOption<core::Real>("r0", 0) );
+			if ( branch_tag->hasOption( "r0" ) ) {
+				core::Real const r0val( branch_tag->getOption<core::Real>("r0", 0) );
 				helix(helix_index)->set_r0(r0val);
 				if ( TR.visible() ) TR << "\tSet r0 value (major helix radius) to " << r0val << "." << std::endl;
 			}
-			if ( (*tag_it)->hasOption( "omega0" ) ) {
-				core::Real const omega0val( (*tag_it)->getOption<core::Real>("omega0", 0) );
+			if ( branch_tag->hasOption( "omega0" ) ) {
+				core::Real const omega0val( branch_tag->getOption<core::Real>("omega0", 0) );
 				helix(helix_index)->set_omega0( convert_angle(omega0val) );
 				if ( TR.visible() ) TR << "\tSet omega0 value (major helix turn per residue) to " << omega0val << "." << std::endl;
 			}
-			if ( (*tag_it)->hasOption( "delta_omega0" ) ) {
-				core::Real const delta_omega0val( (*tag_it)->getOption<core::Real>("delta_omega0", 0) );
+			if ( branch_tag->hasOption( "delta_omega0" ) ) {
+				core::Real const delta_omega0val( branch_tag->getOption<core::Real>("delta_omega0", 0) );
 				helix(helix_index)->set_delta_omega0( convert_angle(delta_omega0val) );
 				if ( TR.visible() ) TR << "\tSet delta_omega0 value (major helix rotation) to " << delta_omega0val << "." << std::endl;
 			}
 
 			//Set minor helix params (omega1, z1, delta_omega1):
-			set_minor_helix_params_from_tag(helix_index, (*tag_it));
+			set_minor_helix_params_from_tag(helix_index, branch_tag);
 
 			//Set residue_name, invert, and helix_length for this helix:
-			set_other_helix_params_from_tag(helix_index, (*tag_it));
-			if ( (*tag_it)->hasOption( "delta_t" ) ) {
-				core::Real const delta_tval( (*tag_it)->getOption<core::Real>("delta_t", 0) );
+			set_other_helix_params_from_tag(helix_index, branch_tag);
+			if ( branch_tag->hasOption( "delta_t" ) ) {
+				core::Real const delta_tval( branch_tag->getOption<core::Real>("delta_t", 0) );
 				helix(helix_index)->set_delta_t(delta_tval);
 				if ( TR.visible() ) TR << "\tSet delta_t value (residue offset) to " << delta_tval << "." << std::endl;
 			}
-			if ( (*tag_it)->hasOption( "z1_offset" ) ) {
-				core::Real const z1_offsetval( (*tag_it)->getOption<core::Real>("z1_offset", 0) );
+			if ( branch_tag->hasOption( "z1_offset" ) ) {
+				core::Real const z1_offsetval( branch_tag->getOption<core::Real>("z1_offset", 0) );
 				helix(helix_index)->set_z1_offset(z1_offsetval);
 				if ( TR.visible() ) TR << "\tSet z1 offset value (helix offset along the minor helix axis) to " << z1_offsetval << "." << std::endl;
 			}
-			if ( (*tag_it)->hasOption( "z0_offset" ) ) {
-				core::Real const z0_offsetval( (*tag_it)->getOption<core::Real>("z0_offset", 0) );
+			if ( branch_tag->hasOption( "z0_offset" ) ) {
+				core::Real const z0_offsetval( branch_tag->getOption<core::Real>("z0_offset", 0) );
 				helix(helix_index)->set_z0_offset(z0_offsetval);
 				if ( TR.visible() ) TR << "\tSet z0 offset value (helix offset along the major helix axis) to " << z0_offsetval << "." << std::endl;
 			}

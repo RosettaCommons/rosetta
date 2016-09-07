@@ -55,10 +55,10 @@ public:
 	void add_MSAcst_to_pose(vector1<vector1<Real> > profile_score,core::pose::Pose & pose);
 	Real get_cen_deviation(std::vector<Real> cenListFrag,vector1<Real> cenListModel);
 	vector1< Real> calc_cenlist(core::pose::Pose const pose);
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new StructProfileMover( *this ) ); }
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	moves::MoverOP clone() const override { return moves::MoverOP( new StructProfileMover( *this ) ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	Real rmsThreshold_;
 	std::string aa_order_;

@@ -44,11 +44,11 @@ public:
 
 public:
 	RestrictDesignToProteinDNAInterface();
-	virtual ~RestrictDesignToProteinDNAInterface();
+	~RestrictDesignToProteinDNAInterface() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
+	void apply( Pose const & pose, PackerTask & ptask ) const override;
 
 	void copy_dna_chains( DnaChainsCOP chains );
 	DnaChainsCOP dna_chains() const;
@@ -68,7 +68,7 @@ public:
 	void set_forget_chains_and_interface( bool value ) { forget_chains_and_interface_ = value; }
 	bool forget_chains_and_interface() const { return forget_chains_and_interface_; }
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictDesignToProteinDNAInterface"; }
 

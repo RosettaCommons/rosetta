@@ -32,11 +32,11 @@ public:
 
 	AddAssemblyConstraints() : Mover("AddAssemblyConstraints") {}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "AddAssemblyConstraints";
 	}
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 };
 
 

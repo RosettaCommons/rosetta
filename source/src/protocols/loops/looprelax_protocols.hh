@@ -51,10 +51,10 @@ public:
 		protocols::loops::Loops Loops_in
 	);
 
-	~LoopRebuild();
+	~LoopRebuild() override;
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief sets all the standard settings for LoopBuild
 	void set_default_settings();
@@ -66,8 +66,8 @@ public:
 	void set_default_mc( core::pose::Pose & pose );
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// @brief Are we extending the loops before running loop-rebuild?
 	bool extended_loop();
@@ -258,8 +258,8 @@ public:
 	}
 
 	/// @brief Apply the loop-refine protocol to the input pose
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	protocols::loops::Loops Loops_in_;

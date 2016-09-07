@@ -54,7 +54,7 @@ InnerMultiThreadingJob::template_poses() const {
 }
 
 
-InnerMultiThreadingJob::~InnerMultiThreadingJob() {}
+InnerMultiThreadingJob::~InnerMultiThreadingJob() = default;
 
 } // jd2
 } // protocols

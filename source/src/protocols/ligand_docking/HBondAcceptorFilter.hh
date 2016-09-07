@@ -18,6 +18,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 
+#include <utility>
 #include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -37,7 +38,7 @@ public:
 	HBondAcceptorFilter(std::string chain, core::Size hbond_donor_limit ) :
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "HBondAcceptor" ),
-		chain_(chain),
+		chain_(std::move(chain)),
 		hbond_acceptor_limit_(hbond_donor_limit)
 	{}
 
@@ -49,18 +50,18 @@ public:
 
 	{};
 
-	virtual ~HBondAcceptorFilter(){};
+	~HBondAcceptorFilter() override= default;
 
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new HBondAcceptorFilter( *this ) );
 	}
 
-	protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override{
 		return protocols::filters::FilterOP( new HBondAcceptorFilter() );
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose ) override;
 
 private:
 	std::string chain_;

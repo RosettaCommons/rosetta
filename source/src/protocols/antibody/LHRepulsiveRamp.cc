@@ -56,7 +56,7 @@ LHRepulsiveRamp::LHRepulsiveRamp(  docking::DockJumps const movable_jumps,
 
 
 // default destructor
-LHRepulsiveRamp::~LHRepulsiveRamp() {}
+LHRepulsiveRamp::~LHRepulsiveRamp() = default;
 
 //clone
 protocols::moves::MoverOP LHRepulsiveRamp::clone() const {

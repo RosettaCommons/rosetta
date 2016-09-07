@@ -75,7 +75,7 @@ protocols::jd2::mmCIFJobOutputter::mmCIFJobOutputter()
 	}
 }
 
-protocols::jd2::mmCIFJobOutputter::~mmCIFJobOutputter(){}
+protocols::jd2::mmCIFJobOutputter::~mmCIFJobOutputter()= default;
 
 /// @details private function (just prevents code duplication) to fill ozstream
 void protocols::jd2::mmCIFJobOutputter::dump_pose(

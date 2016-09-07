@@ -51,14 +51,14 @@ public:
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap);
 
-	~ResTypeFragmentMover();
+	~ResTypeFragmentMover() override;
 
 	ResTypeFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<ResTypeFragmentMover>( ClassicFragmentMover::shared_from_this() ); }
 
 protected:
 
 	// frame and fragment of choice, returns false if no good fragment is found
-	virtual bool apply_frames( core::pose::Pose &pose, core::fragment::FrameList const& frames ) const ;
+	bool apply_frames( core::pose::Pose &pose, core::fragment::FrameList const& frames ) const override ;
 	void swap_residue_types( core::pose::Pose &pose, std::string const & sequence, core::Size const startSeqPos ) const ;
 };
 

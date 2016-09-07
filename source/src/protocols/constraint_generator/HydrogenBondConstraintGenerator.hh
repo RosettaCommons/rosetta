@@ -45,9 +45,9 @@ public:
 	typedef std::list< core::Real > Dihedrals;
 
 	HydrogenBondingAtom(
-		std::string const & atom1,
-		std::string const & atom2,
-		std::string const & atom3,
+		std::string atom1, // move-constructed
+		std::string atom2,
+		std::string atom3,
 		core::Real const ideal_distance,
 		core::Real const ideal_angle,
 		Dihedrals const & ideal_dihedrals );
@@ -110,21 +110,21 @@ public:
 
 public:
 	HydrogenBondConstraintGenerator();
-	virtual ~HydrogenBondConstraintGenerator();
+	~HydrogenBondConstraintGenerator() override;
 
 	static std::string
 	class_name() { return "HydrogenBondConstraintGenerator"; }
 
-	virtual protocols::constraint_generator::ConstraintGeneratorOP
-	clone() const;
+	protocols::constraint_generator::ConstraintGeneratorOP
+	clone() const override;
 
-	virtual void
+	void
 	parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data );
+		basic::datacache::DataMap & data ) override;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const override;
 
 public:
 	void

@@ -150,9 +150,9 @@ public:
 		core::scoring::ScoreFunctionOP score5,
 		core::scoring::ScoreFunctionOP score3);
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	// strand pairings
 	utility::vector1< std::pair< core::Size, core::Size > > get_strand_pairs() { return strand_pairs_; };
@@ -179,8 +179,8 @@ private:
 	core::Size map_pdb_info_number( const core::pose::Pose & pose, core::Size pdb_res );
 	protocols::simple_moves::ClassicFragmentMoverOP get_pairings_jump_mover();
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 
 private:

@@ -19,7 +19,7 @@ namespace docking {
 
 RigidBodyInfo::RigidBodyInfo() {}
 
-RigidBodyInfo::~RigidBodyInfo() {}
+RigidBodyInfo::~RigidBodyInfo() = default;
 
 void RigidBodyInfo::add_jump( core::Size jump_id )
 {

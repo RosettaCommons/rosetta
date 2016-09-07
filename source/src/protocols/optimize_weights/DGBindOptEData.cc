@@ -33,7 +33,7 @@ DGBindOptEData::DGBindOptEData():
 }
 
 
-DGBindOptEData::~DGBindOptEData() {}
+DGBindOptEData::~DGBindOptEData() = default;
 
 
 core::Real

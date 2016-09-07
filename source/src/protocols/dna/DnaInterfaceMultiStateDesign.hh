@@ -45,24 +45,24 @@ public:
 
 public:
 	DnaInterfaceMultiStateDesign();
-	virtual ~DnaInterfaceMultiStateDesign();
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	~DnaInterfaceMultiStateDesign() override;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 	void copy_dna_chains( DnaChainsOP );
 	void copy_targeted_dna( DnaDesignDefOPs const & );
 	void output_results( Pose & );
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 private:
 	void initialize( Pose & );

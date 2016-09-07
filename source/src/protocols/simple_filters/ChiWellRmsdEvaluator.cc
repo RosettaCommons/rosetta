@@ -41,6 +41,7 @@
 
 
 #include <protocols/evaluation/util.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -53,7 +54,7 @@ using namespace core;
 
 ChiWellRmsdEvaluator::ChiWellRmsdEvaluator( core::pose::PoseCOP pose, core::Size nchi_max,  core::Real sasa_threshold, utility::vector1< Size> const& selection, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( tag ),
-	rmsd_pose_( pose ),
+	rmsd_pose_(std::move( pose )),
 	nchi_max_( nchi_max ),
 	sasa_threshold_( sasa_threshold ),
 	tag_( tag )
@@ -89,9 +90,8 @@ ChiWellRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	sasa_calc.get( "residue_sasa", residue_sasa, pose );
 
 
-	for ( core::scoring::ResidueSelection::const_iterator it = selection_.begin(); it != selection_.end(); ++it ) {
-		Size seqpos( *it );
-		if (  residue_sasa.value()[ seqpos ] > sasa_threshold_ ) {
+	for (unsigned long seqpos : selection_) {
+			if (  residue_sasa.value()[ seqpos ] > sasa_threshold_ ) {
 			tr.Debug << "residue " << seqpos << " is solvent exposed (SASA: " << residue_sasa.value()[ seqpos ] << " ) ignored... " << std::endl;
 			continue;
 		}

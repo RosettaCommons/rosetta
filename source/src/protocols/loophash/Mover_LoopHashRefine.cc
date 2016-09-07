@@ -130,7 +130,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			// convert pose to centroid pose and apply loophasher
 			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
 			core::pose::set_ss_from_phipsi( pose );
-			core::Size starttime2 = time(NULL);
+			core::Size starttime2 = time(nullptr);
 
 			core::Size lcount = 0;
 			while ( lib_structs.size() < skim_size ) {
@@ -142,7 +142,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 				lcount++;
 				TR.Info << "Lcount: " << lcount << std::endl;
 			}
-			core::Size endtime2 = time(NULL);
+			core::Size endtime2 = time(nullptr);
 			TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
 			// write out the centroid structures if desired
@@ -183,9 +183,9 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			// Batch relax the result:
 			core::Real bestscore = MAXIMAL_FLOAT;
 			core::Size bestindex = 0;
-			core::Size starttime = time(NULL);
+			core::Size starttime = time(nullptr);
 			relax.batch_apply( select_lib_structs );
-			core::Size endtime = time(NULL);
+			core::Size endtime = time(nullptr);
 			TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
 

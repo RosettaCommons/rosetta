@@ -43,8 +43,7 @@ ConstraintsMap::ConstraintsMap():
 	cst_map_()
 {}
 
-ConstraintsMap::~ConstraintsMap()
-{}
+ConstraintsMap::~ConstraintsMap() = default;
 
 basic::datacache::CacheableDataOP
 ConstraintsMap::clone() const
@@ -110,9 +109,9 @@ ConstraintsMap::valid_names_string() const
 {
 	std::stringstream stream;
 	utility::vector1< std::string > const names = valid_names();
-	for ( utility::vector1< std::string >::const_iterator n=names.begin(); n!=names.end(); ++n ) {
+	for (const auto & name : names) {
 		if ( !stream.str().empty() ) stream << ", ";
-		stream << *n;
+		stream << name;
 	}
 	return stream.str();
 }
@@ -121,8 +120,8 @@ utility::vector1< std::string >
 ConstraintsMap::valid_names() const
 {
 	utility::vector1< std::string > names;
-	for ( NameToConstraintsMap::const_iterator pair=cst_map_.begin(); pair!=cst_map_.end(); ++pair ) {
-		names.push_back( pair->first );
+	for (const auto & pair : cst_map_) {
+		names.push_back( pair.first );
 	}
 	return names;
 }

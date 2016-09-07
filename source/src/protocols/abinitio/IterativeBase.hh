@@ -75,13 +75,13 @@ public:
 	};
 
 	IterativeBase(std::string name );
-	~IterativeBase();
+	~IterativeBase() override;
 
 	/// @brief archive is finished when at last stage
-	virtual bool finished() const { return stage_ >= finish_stage_; };
+	bool finished() const override { return stage_ >= finish_stage_; };
 
 	/// @brief do initializing work that requires fully setup object here
-	virtual void initialize();
+	void initialize() override;
 
 	/// @brief where to stop ?
 	void set_finish_stage( IterationStage setting ) {
@@ -92,43 +92,43 @@ public:
 	void test_for_stage_end();
 
 	/// @brief overloaded to make input decoys appear the same as decoys coming from batches
-	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd );
+	void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) override;
 
 	/// @brief we are always ready to generate a new batch
 	virtual bool ready_for_batch() const { return true; };
 
 	/// @brief we are not interested in batches that were generated in old stages
-	virtual bool still_interested( jd2::archive::Batch const& batch ) const;
+	bool still_interested( jd2::archive::Batch const& batch ) const override;
 
 	/// @brief generate a new batch, use different recipe according to current stage
 
 	/// @brief generate a new batch, use different recipe according to current stage
-	virtual void generate_batch();
-	virtual core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id );
+	void generate_batch() override;
+	core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id ) override;
 
 	/// @brief while waiting for jobs to finish
-	virtual void idle();
-	virtual void rescore();
-	virtual void save_status( std::ostream& ) const;
-	virtual void restore_status( std::istream& );
+	void idle() override;
+	void rescore() override;
+	void save_status( std::ostream& ) const override;
+	void restore_status( std::istream& ) override;
 
 	/// @brief overloaded to handel special convergence check 'pool_converged_rmsd'
 	/// @brief add structure to Archive.. return false if structure is rejected.
-	virtual bool add_structure (
+	bool add_structure (
 		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
 		jd2::archive::Batch const&
-	);
+	) override;
 
 	/// @brief setup JumpNrEvaluator
 	void setup_default_evaluators();
 
 	/// @brief overloaded so we can test for end of IterationStage after reading
-	virtual void read_structures(
+	void read_structures(
 		core::io::silent::SilentFileData& sfd,
 		core::io::silent::SilentFileData& alternative_decoys,
 		jd2::archive::Batch const& batch
-	);
+	) override;
 
 
 	/// @brief generate flags and stuff for the out-sourced evaluation ---> such that score_final column is returned for each decoy
@@ -260,7 +260,7 @@ private:
 
 	void collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, jd2::archive::Batch const& batch );
 	/// @brief score a pose with Pool-Scoring function (adds necessary data to pose (RDC, constraints,  etc ) )
-	virtual void score( core::pose::Pose& pose ) const;
+	void score( core::pose::Pose& pose ) const override;
 
 	/// @brief what is the expected lowest acceptance ratio at the current stage ?
 	core::Real target_accept_ratio() const { return target_accept_ratio_[ stage_ ]; }

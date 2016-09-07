@@ -59,10 +59,8 @@ IRCollection::IRCollection( core::pose::Pose & pose, MotifLibrary & motifs, util
 		core::Size target_pos( build_sites[ target_index ] );
 
 		// Loop over motifs in libray, look for those that apply
-		for ( MotifCOPs::const_iterator motif_itr_itr = motifs.begin(), end_itr = motifs.end() ; motif_itr_itr != end_itr ; ++motif_itr_itr ) {
-			MotifCOP motif_itr( *motif_itr_itr );
-
-			// Check for applicability
+		for (auto motif_itr : motifs) {
+				// Check for applicability
 			if ( !motif_itr->apply_check( pose, target_pos ) ) continue;
 
 			// irt << "Found a motif that applies!" << std::endl;
@@ -144,7 +142,7 @@ void IRCollection::incorporate_motifs( core::pose::Pose & pose, protocols::loops
 	mutate_position_vector_for_search( pose, trim_positions );
 
 	// Relax away any clashes in the initial loop
-	//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
+	//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );
 	core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 	core::scoring::methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 	options.exclude_DNA_DNA( false );
@@ -269,7 +267,7 @@ void IRCollection::try_for_more(
 	std::string filename( unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
 	//std::string try_filename( my_output_path + "/" + unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
 
-	//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
+	//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );
 	core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 	core::scoring::methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 	options.exclude_DNA_DNA( false );
@@ -305,7 +303,7 @@ IRCollection::successful_loop_closure(
 	core::Real coordinate_cst_weight( 10.0 );
 	core::Real num_inverse_rotamers( 1.0 + setpos.size() ); // not an int because I need it for math
 
-	//ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
+	//ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );
 	ScoreFunctionOP score_fxn( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 	methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 	options.exclude_DNA_DNA( false );

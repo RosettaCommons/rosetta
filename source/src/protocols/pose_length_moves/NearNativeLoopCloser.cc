@@ -126,8 +126,7 @@ PossibleLoop::PossibleLoop(int resAdjustmentBeforeLoop, int resAdjustmentAfterLo
 	outputed_ = false;
 }
 
-PossibleLoop::~PossibleLoop(){
-}
+PossibleLoop::~PossibleLoop()= default;
 
 void PossibleLoop::trimRegion(core::pose::PoseOP & poseOP, Size resStart, Size resStop){
 	poseOP->conformation().delete_residue_range_slow(resStart,resStop);
@@ -143,7 +142,7 @@ void PossibleLoop::extendRegion(bool towardCTerm, Size resStart, Size numberAddR
 	Real tmpPhi = -57.8;
 	Real tmpPsi = -47.0;
 	Real tmpOmega = 180.0; //I extend with helical parameters. They get replaced during kic.
-	core::conformation::ResidueOP new_rsd( NULL );
+	core::conformation::ResidueOP new_rsd( nullptr );
 	string build_aa_type_one_letter =option[OptionKeys::remodel::generic_aa];
 	string build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_type_one_letter[0]));
 	bool fullatom = poseOP->is_fullatom();
@@ -401,12 +400,12 @@ void PossibleLoop::output_fragment_debug(std::vector< numeric::xyzVector<numeric
 	using namespace ObjexxFCL::format;
 	utility::io::ozstream out(filename, std::ios_base::app);
 	Size resid = 1;
-	for ( Size ii=0; ii<coordinates.size(); ++ii ) {
+	for (auto & coordinate : coordinates) {
 		out << "ATOM  " << I(5,resid) << "  CA  " <<
 			"GLY" << ' ' << 'A' << I(4,resid ) << "    " <<
-			F(8,3,coordinates[ii].x()) <<
-			F(8,3,coordinates[ii].y()) <<
-			F(8,3,coordinates[ii].z()) <<
+			F(8,3,coordinate.x()) <<
+			F(8,3,coordinate.y()) <<
+			F(8,3,coordinate.z()) <<
 			F(6,2,1.0) << F(6,2,1.0) << '\n';
 		resid++;
 	}
@@ -508,22 +507,22 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size base5Abego_index, Size
 
 		//5. Generate removed_com_vectors using the cooridinates_stub_com called coordinates_removed_stub_com
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates_removed_stub_com;
-		for ( Size ii = 0;  ii < coordinates.size(); ++ii ) {
+		for (auto & coordinate : coordinates) {
 			numeric::xyzVector<numeric::Real> tmp_coord;
-			tmp_coord.x()=coordinates[ii].x()-coordinates_stub_com[0];
-			tmp_coord.y()=coordinates[ii].y()-coordinates_stub_com[1];
-			tmp_coord.z()=coordinates[ii].z()-coordinates_stub_com[2];
+			tmp_coord.x()=coordinate.x()-coordinates_stub_com[0];
+			tmp_coord.y()=coordinate.y()-coordinates_stub_com[1];
+			tmp_coord.z()=coordinate.z()-coordinates_stub_com[2];
 			coordinates_removed_stub_com.push_back(tmp_coord);
 			//coordinates_removed_stub_com[ii].x()=coordinates[ii].x()-coordinates_stub_com[0];
 			//coordinates_removed_stub_com[ii].y()=coordinates[ii].y()-coordinates_stub_com[1];
 			//coordinates_removed_stub_com[ii].z()=coordinates[ii].z()-coordinates_stub_com[2];
 		}
 		std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_removed_stub_com;
-		for ( Size ii = 0;  ii < fragCoordinates.size(); ++ii ) {
+		for (auto & fragCoordinate : fragCoordinates) {
 			numeric::xyzVector<numeric::Real> tmp_coord;
-			tmp_coord.x() = fragCoordinates[ii].x()-fragCoordinates_stub_com[0];
-			tmp_coord.y() = fragCoordinates[ii].y()-fragCoordinates_stub_com[1];
-			tmp_coord.z() = fragCoordinates[ii].z()-fragCoordinates_stub_com[2];
+			tmp_coord.x() = fragCoordinate.x()-fragCoordinates_stub_com[0];
+			tmp_coord.y() = fragCoordinate.y()-fragCoordinates_stub_com[1];
+			tmp_coord.z() = fragCoordinate.z()-fragCoordinates_stub_com[2];
 			fragCoordinates_removed_stub_com.push_back(tmp_coord);
 			//fragCoordinates_removed_stub_com[ii].x()=fragCoordinates[ii].x()-fragCoordinates_stub_com[0];
 			//fragCoordinates_removed_stub_com[ii].y()=fragCoordinates[ii].y()-fragCoordinates_stub_com[1];
@@ -949,7 +948,7 @@ void NearNativeLoopCloser::apply(core::pose::Pose & pose) {
 		}
 	}
 	core::pose::PoseOP tmpPoseOP=get_additional_output();
-	if ( tmpPoseOP==NULL ) {
+	if ( tmpPoseOP==nullptr ) {
 		pose=*orig_poseOP;
 	} else {
 		pose=*tmpPoseOP;
@@ -1016,7 +1015,7 @@ void NearNativeLoopCloser::extendRegion(bool towardCTerm, Size resStart, char ne
 			tmpOmega = 180.0;
 		}
 	}
-	core::conformation::ResidueOP new_rsd( NULL );
+	core::conformation::ResidueOP new_rsd( nullptr );
 	string build_aa_type_one_letter =option[OptionKeys::remodel::generic_aa];
 	string build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_type_one_letter[0]));
 	bool fullatom = poseOP->is_fullatom();
@@ -1220,7 +1219,7 @@ core::pose::PoseOP NearNativeLoopCloser::get_additional_output(){
 	std::sort(possibleLoops_.begin(), possibleLoops_.end(), FinalRMSDComparator());
 	if ( !output_all_&&top_outputed_ ) {
 		set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-		return NULL;
+		return nullptr;
 	}
 	for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
 		//std::cout << possibleLoops_[ii]->get_description() << std::endl;
@@ -1256,7 +1255,7 @@ core::pose::PoseOP NearNativeLoopCloser::get_additional_output(){
 	TR << "no closure found" << std::endl;
 	TR << "Best rmsd was:" << low_rmsd << std::endl;
 	set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-	return NULL;
+	return nullptr;
 }
 
 }//pose_length_moves

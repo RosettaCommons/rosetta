@@ -35,7 +35,7 @@ class ImplicitFastClashCheck : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ImplicitFastClashCheck();
+	~ImplicitFastClashCheck() override;
 
 	ImplicitFastClashCheck(
 		core::pose::Pose const & pose_in,

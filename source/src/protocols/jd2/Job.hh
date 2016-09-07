@@ -70,7 +70,7 @@ public:
 	///
 	JobOP clone() const;
 
-	virtual ~Job();
+	~Job() override;
 
 	/// @brief Note: only compare if the pointers to the poses are to the
 	///same location

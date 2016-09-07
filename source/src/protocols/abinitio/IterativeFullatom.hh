@@ -51,15 +51,15 @@ public:
 	IterativeFullatom();
 
 	/// @brief do initializing work that requires fully setup object here
-	virtual void initialize();
+	void initialize() override;
 
-	virtual bool ready_for_batch() const;
+	bool ready_for_batch() const override;
 
-	void generate_batch() {
+	void generate_batch() override {
 		Parent::generate_batch();
 	}
 
-	core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id );
+	core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id ) override;
 
 protected:
 	void gen_resample_core( jd2::archive::Batch& batch, bool flex );

@@ -42,7 +42,7 @@ public:
 
 	InnerMultiThreadingJobOP multi_threading_inner_job();
 
-	virtual ~MultiThreadingJob();
+	~MultiThreadingJob() override;
 
 private:
 	InnerMultiThreadingJobOP inner_job_;

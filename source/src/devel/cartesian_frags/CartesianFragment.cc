@@ -420,7 +420,7 @@ CartesianFragment::add_frag_atom(
 Size
 CartesianFragment::atom_index( SafeAtomID id ) const
 {
-	vector1< SafeAtomID >::const_iterator it( std::find( atom_ids_.begin(), atom_ids_.end(), id ) );
+	auto it( std::find( atom_ids_.begin(), atom_ids_.end(), id ) );
 	if ( it == atom_ids_.end() ) {
 		std::string const name( id.name );
 		// look for stub

@@ -78,17 +78,7 @@ OptimizeMembranePositionMover::OptimizeMembranePositionMover() : protocols::move
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-OptimizeMembranePositionMover::OptimizeMembranePositionMover( OptimizeMembranePositionMover const & src ) : protocols::moves::Mover( src ),
-	ft_( src.ft_ ),
-	sfxn_( src.sfxn_ ),
-	score_best_( src.score_best_ ),
-	starting_z_( src.starting_z_ ),
-	best_z_( src.best_z_ ),
-	stepsize_z_( src.stepsize_z_ ),
-	best_center_( src.best_center_ ),
-	stepsize_angle_( src.stepsize_angle_ ),
-	best_normal_( src.best_normal_ )
-{}
+OptimizeMembranePositionMover::OptimizeMembranePositionMover( OptimizeMembranePositionMover const & ) = default;
 
 /// @brief Assignment Operator
 OptimizeMembranePositionMover & OptimizeMembranePositionMover::operator = ( OptimizeMembranePositionMover const & src ) {
@@ -103,7 +93,7 @@ OptimizeMembranePositionMover & OptimizeMembranePositionMover::operator = ( Opti
 }
 
 /// @brief Destructor
-OptimizeMembranePositionMover::~OptimizeMembranePositionMover() {}
+OptimizeMembranePositionMover::~OptimizeMembranePositionMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

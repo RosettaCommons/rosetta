@@ -55,10 +55,10 @@ public:
 	PDBDumpMover(std::string name_in);
 
 	//destructor
-	~PDBDumpMover();
+	~PDBDumpMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void name( std::string name_in );
 
@@ -81,10 +81,10 @@ public:
 	ProfilerMover();
 
 	//destructor
-	~ProfilerMover();
+	~ProfilerMover() override;
 
-	virtual void apply( core::pose::Pose & /* pose*/ );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & /* pose*/ ) override;
+	std::string get_name() const override;
 };
 
 // allows mc.show_scores to be used inside a cycle of movers
@@ -96,10 +96,10 @@ public:
 	MCShowMover( MonteCarloOP mc_in );
 
 	//destructor
-	~MCShowMover();
+	~MCShowMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	// the monte carlo that needs to be shown

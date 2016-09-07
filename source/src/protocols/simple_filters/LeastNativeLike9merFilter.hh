@@ -62,27 +62,27 @@ public:// constructor/destructor
 	LeastNativeLike9merFilter();
 
 
-	virtual ~LeastNativeLike9merFilter();
+	~LeastNativeLike9merFilter() override;
 
 
 public:// virtual constructor
 
 	// @brief make clone
-	filters::FilterOP clone() const { return filters::FilterOP(new LeastNativeLike9merFilter(*this));}
+	filters::FilterOP clone() const override { return filters::FilterOP(new LeastNativeLike9merFilter(*this));}
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const { return filters::FilterOP(new LeastNativeLike9merFilter());}
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new LeastNativeLike9merFilter());}
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "LeastNativeLike9merFilter"; }
-	Real report_sm(const Pose & pose ) const;
-	void report( std::ostream & out,const Pose & pose ) const;
+	std::string name() const override { return "LeastNativeLike9merFilter"; }
+	Real report_sm(const Pose & pose ) const override;
+	void report( std::ostream & out,const Pose & pose ) const override;
 	Real compute( const Pose & pose ) const;
-	virtual bool apply(const Pose & pose ) const;
+	bool apply(const Pose & pose ) const override;
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 private:

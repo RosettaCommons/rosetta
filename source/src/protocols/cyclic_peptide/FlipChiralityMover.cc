@@ -92,7 +92,7 @@ FlipChiralityMover::FlipChiralityMover( FlipChiralityMover const &src ) :
 
 /// @brief destructor for GeneralizedKIC mover.
 ///
-FlipChiralityMover::~FlipChiralityMover(){}
+FlipChiralityMover::~FlipChiralityMover()= default;
 
 /// @brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
 ///

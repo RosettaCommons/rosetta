@@ -66,14 +66,14 @@ public: // construct/destruct
 		core::scoring::ScoreFunctionOP scorefxn
 	);
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	protocols::moves::MoverOP clone() const {
+	
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new LoopMover_SlidingWindow( *this ) );
 	}
 
@@ -112,12 +112,12 @@ protected: // virtual loop operations
 
 
 	/// @brief loop modeling protocol implementation
-	virtual loops::loop_mover::LoopResult model_loop(
+	loops::loop_mover::LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
-	);
+	) override;
 
-	virtual basic::Tracer & tr() const;
+	basic::Tracer & tr() const override;
 
 protected: // data
 

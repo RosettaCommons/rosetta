@@ -117,7 +117,7 @@ ResidueTorsionRestraints::without_my_constraints(
 	ConstraintSetOP new_constraints( new ConstraintSet() );
 
 	// Cycle through all existing constraints, and keep all except the ones we added:
-	if ( old_constraints.get() != NULL ) {
+	if ( old_constraints.get() != nullptr ) {
 		utility::vector1< ConstraintCOP > old_constr = old_constraints->get_all_constraints();
 		for ( Size i = 1; i <= old_constr.size(); ++i ) {
 			if ( my_constraints_.find( old_constr[i]->to_string() ) == my_constraints_.end() ) {

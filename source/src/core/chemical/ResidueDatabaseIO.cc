@@ -47,10 +47,7 @@ ResidueDatabaseIO::ResidueDatabaseIO() :version_(0.2)
 
 }
 
-ResidueDatabaseIO::~ResidueDatabaseIO()
-{
-
-}
+ResidueDatabaseIO::~ResidueDatabaseIO() = default;
 
 void
 ResidueDatabaseIO::write_schema_to_db(

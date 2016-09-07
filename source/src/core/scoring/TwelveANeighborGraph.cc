@@ -35,7 +35,7 @@ namespace scoring {
 //   class TwelveANeighborNode ///
 ///////////////////////////////
 
-TwelveANeighborNode::~TwelveANeighborNode() {}
+TwelveANeighborNode::~TwelveANeighborNode() = default;
 
 TwelveANeighborNode::TwelveANeighborNode( graph::Graph * owner, Size node_id )
 :
@@ -63,7 +63,7 @@ TwelveANeighborNode::count_dynamic_memory() const {
 //   class TwelveANeighborEdge ///
 ///////////////////////////////
 
-TwelveANeighborEdge::~TwelveANeighborEdge() {}
+TwelveANeighborEdge::~TwelveANeighborEdge() = default;
 
 TwelveANeighborEdge::TwelveANeighborEdge(
 	graph::Graph* owner,

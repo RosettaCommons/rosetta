@@ -94,9 +94,8 @@ TempWeightedMetropolisHastingsMover::add_mover(
 
 	bool added_1 = false;
 	bool added_2 = false;
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = wc_tags.begin(); subtag_it != wc_tags.end(); ++subtag_it ) {
-		utility::tag::TagCOP const wc_tag = *subtag_it;
-		TempInterpolatorBaseOP wc=NULL;
+	for (const auto& wc_tag : wc_tags) {
+		TempInterpolatorBaseOP wc=nullptr;
 		if ( wc_tag->getName() == "Interp" && wc_tag->getOption< std::string >("key") == "weight" ) {
 			core::Size dim=wc_tag->getOption< core::Size >( "dim",1 );
 			tr.Debug << "dim" << dim << " nlevels_per_dim" << tempering()->nlevels_per_dim(dim) << std::endl;
@@ -143,9 +142,9 @@ TempWeightedMetropolisHastingsMover::random_mover() const {
 	tr.Trace << "current temp_level " << temp_level << " last temp_level " << last_temp_level_in_random_mover_ << " has_changed " << has_changed << std::endl;
 	if ( has_changed ) {
 		current_weighted_sampler_.clear();
-		Weights::const_iterator weight_it=overall_weights_.begin();
-		Interpolators::const_iterator interp_it1=weight_contro_1_.begin(); // interp_it is a pointer point to InterpolatorOP, so by *interp_it you get the real OP
-		Interpolators::const_iterator interp_it2=weight_contro_2_.begin();
+		auto weight_it=overall_weights_.begin();
+		auto interp_it1=weight_contro_1_.begin(); // interp_it is a pointer point to InterpolatorOP, so by *interp_it you get the real OP
+		auto interp_it2=weight_contro_2_.begin();
 		runtime_assert( overall_weights_.size() == weight_contro_1_.size() );
 		runtime_assert( overall_weights_.size() == weight_contro_2_.size() );
 

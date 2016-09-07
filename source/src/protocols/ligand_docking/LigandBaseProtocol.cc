@@ -135,7 +135,7 @@ LigandBaseProtocol::LigandBaseProtocol():
 }
 
 
-LigandBaseProtocol::~LigandBaseProtocol() {}
+LigandBaseProtocol::~LigandBaseProtocol() = default;
 
 core::scoring::ScoreFunctionOP LigandBaseProtocol::get_scorefxn() {
 	return scorefxn_;
@@ -494,7 +494,7 @@ LigandBaseProtocol::make_packer_task(
 				pack_task->nonconst_residue_task( i ).allow_noncanonical_aa( allowed_types[j]->name() );
 			}
 			TR << "Allowed residues at position " << i << ":" << std::endl;
-			for ( ResidueLevelTask::ResidueTypeCOPListConstIter rt = pack_task->nonconst_residue_task( i ).allowed_residue_types_begin();
+			for ( auto rt = pack_task->nonconst_residue_task( i ).allowed_residue_types_begin();
 					rt != pack_task->nonconst_residue_task( i ).allowed_residue_types_end(); ++rt ) {
 				TR << "  " << (*rt)->name() << std::endl;
 			}
@@ -836,16 +836,16 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		FoldTree f_new;
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
-		for ( FoldTree::const_iterator e = f_const.begin(), edge_end = f_const.end(); e != edge_end; ++e ) {
-			bool contains_attach_pt = (( e->start() < int(attach_pt) && int(attach_pt) < e->stop() )
-				|| ( e->stop() < int(attach_pt) && int(attach_pt) < e->start() ));
-			if ( e->label() == (int) jump_id ) {
+		for (const auto & e : f_const) {
+			bool contains_attach_pt = (( e.start() < int(attach_pt) && int(attach_pt) < e.stop() )
+				|| ( e.stop() < int(attach_pt) && int(attach_pt) < e.start() ));
+			if ( e.label() == (int) jump_id ) {
 				f_new.add_edge( attach_pt, lig_id, jump_id );
-			} else if ( e->label() == Edge::PEPTIDE && contains_attach_pt ) {
-				f_new.add_edge( e->start(), attach_pt, Edge::PEPTIDE );
-				f_new.add_edge( attach_pt,  e->stop(), Edge::PEPTIDE );
+			} else if ( e.label() == Edge::PEPTIDE && contains_attach_pt ) {
+				f_new.add_edge( e.start(), attach_pt, Edge::PEPTIDE );
+				f_new.add_edge( attach_pt,  e.stop(), Edge::PEPTIDE );
 			} else {
-				f_new.add_edge( e->start(), e->stop(), e->label() );
+				f_new.add_edge( e.start(), e.stop(), e.label() );
 			}
 		}
 		f = f_new;
@@ -864,13 +864,13 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		int new_jump = f.num_jump();
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
-		for ( FoldTree::const_iterator edge_itr = f_const.begin(), edge_end = f_const.end(); edge_itr != edge_end; ++edge_itr ) {
-			Size const e_start = edge_itr->start();
-			Size const e_stop = edge_itr->stop();
+		for (const auto & edge_itr : f_const) {
+			Size const e_start = edge_itr.start();
+			Size const e_stop = edge_itr.stop();
 			if ( e_stop < e_start ) utility_exit_with_message("Not prepared to deal with backwards fold tree edges!");
 			//std::cout << "Considering edge from " << e_start << " to " << e_stop << ", label " << edge_itr->label() << std::endl;
-			if ( !edge_itr->is_polymer() ) {
-				f_new.add_edge( *edge_itr );
+			if ( !edge_itr.is_polymer() ) {
+				f_new.add_edge( edge_itr );
 				continue; // only subdivide "peptide" edges of the fold tree
 			}
 			// else:
@@ -998,7 +998,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	core::conformation::ResidueOP best_rot;
 	core::Real bestE(1000000.0);
 
-	for ( utility::vector1< conformation::ResidueOP >::iterator rot_it = suggested_rotamers.begin(); rot_it != suggested_rotamers.end(); ++rot_it ) {
+	for (auto & suggested_rotamer : suggested_rotamers) {
 
 		scoring::EnergyMap emap;
 		for ( graph::Graph::EdgeListConstIter
@@ -1009,14 +1009,14 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 			int const neighbor_id( (*ir)->get_other_ind( seqpos ) );
 			conformation::Residue const & neighbor( pose.residue( neighbor_id ) );
 
-			scofx->bump_check_backbone( **rot_it, neighbor, pose, emap );
+			scofx->bump_check_backbone( *suggested_rotamer, neighbor, pose, emap );
 		}
 		core::Real thisrotE = scofx->weights().dot( emap ) ;
 
 		if (  thisrotE < bb_bump_cutoff ) {
-			temp_accepted_rotamers.push_back( *rot_it );
+			temp_accepted_rotamers.push_back( suggested_rotamer );
 			if ( thisrotE < bestE ) {
-				best_rot = *rot_it;
+				best_rot = suggested_rotamer;
 				bestE = thisrotE;
 			}
 		}
@@ -1028,9 +1028,9 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	//we half-sort the output array such that the lowest energy rotamer is the first one in the output array
 	if ( temp_accepted_rotamers.size() > 0 ) {
 		accepted_rotamers.push_back( best_rot );
-		for ( utility::vector1< conformation::ResidueOP >::iterator rot_it = temp_accepted_rotamers.begin(); rot_it != temp_accepted_rotamers.end(); ++rot_it ) {
+		for (auto & temp_accepted_rotamer : temp_accepted_rotamers) {
 
-			if ( *rot_it != best_rot ) accepted_rotamers.push_back( *rot_it );
+			if ( temp_accepted_rotamer != best_rot ) accepted_rotamers.push_back( temp_accepted_rotamer );
 		}
 
 	}

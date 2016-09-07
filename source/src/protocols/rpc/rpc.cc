@@ -75,7 +75,7 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 				= core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
 			std::string name = core::scoring::name_from_score_type( sc_type );
 
-			json_energies.push_back( utility::json_spirit::Pair( name, float(  (*emap_iter) * (*wts_iter) ) ) );
+			json_energies.emplace_back( name, float(  (*emap_iter) * (*wts_iter) ) );
 		} // if ( *wts_iter != 0.0 )
 	} // for ( emap_iter ...)
 
@@ -165,7 +165,7 @@ void JSON_RPC::unpack( const std::string &msg ){
 		pdbdata_string_ = get_string(parsed_json_, "pdbdata");
 
 		// do a re-init if user has set a basic_init functor
-		if ( basic_init_ != NULL ) basic_init_->do_init();
+		if ( basic_init_ != nullptr ) basic_init_->do_init();
 
 		// Load any flags that were given as part of this job.
 		std::cout << "Initializing options: " << command_ << std::endl;
@@ -214,7 +214,7 @@ void JSON_RPC::run(){
 
 	// start capturing Tracer outputs
 	output_capture_start();
-	starttime_ = time(NULL);
+	starttime_ = time(nullptr);
 
 	// finally load in the provided PDB
 	std::cout << "Loading PDB file: " << std::endl;
@@ -321,29 +321,29 @@ void JSON_RPC::run(){
 catch( utility::excn::EXCN_Msg_Exception &excn ){
 	std::cerr << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
 	TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
-	endtime_ = time(NULL);
+	endtime_ = time(nullptr);
 	output_capture_stop();  // Make sure we're catching the following message
 	throw;
 }
 catch( std::string &s ){
 	// convert Exception into a rosetta exception
-	endtime_ = time(NULL);
+	endtime_ = time(nullptr);
 	output_capture_stop();
 	throw utility::excn::EXCN_Msg_Exception( tracer() + s );
 }
 catch( utility::json_spirit::Error_position &ep ){
 	// convert Exception into a rosetta exception
-	endtime_ = time(NULL);
+	endtime_ = time(nullptr);
 	output_capture_stop();
 	throw utility::excn::EXCN_Msg_Exception( tracer() + ep.reason_ + " Line: " + ObjexxFCL::string_of( ep.line_ ) + " Col: " + ObjexxFCL::string_of( ep.column_ ) );
 }
 catch( ... ){
-	endtime_ = time(NULL);
+	endtime_ = time(nullptr);
 	output_capture_stop();
 	throw utility::excn::EXCN_Msg_Exception( tracer() + "Unknown Exception happened during execution of json RPC call " );
 }
 
-	endtime_ = time(NULL);
+	endtime_ = time(nullptr);
 }
 
 
@@ -367,14 +367,13 @@ void JSON_RPC::load_user_flag_file( const std::string &flags_file ){
 
 void JSON_RPC::load_new_set_of_user_flags( const mObject &json_user_flags ){
 	std::vector < std::string > user_flags;
-	for ( mObject::const_iterator it = json_user_flags.begin();
-			it != json_user_flags.end(); ++it ) {
-		if ( it->second.type() != obj_type ) {
-			throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_flag member:'" + it->first );
+	for (const auto & json_user_flag : json_user_flags) {
+		if ( json_user_flag.second.type() != obj_type ) {
+			throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_flag member:'" + json_user_flag.first );
 		};
-		const mObject &flag = it->second.get_obj();
+		const mObject &flag = json_user_flag.second.get_obj();
 		if ( has_value( flag, "value" ) ) {
-			std::string flagname = it->first;
+			std::string flagname = json_user_flag.first;
 			std::string flagvalue = get_string( flag, "value" );
 			std::cout << "User flag: " << flagname << " = " << flagvalue << std::endl;
 			user_flags.push_back(  flagname + " " + flagvalue );
@@ -390,15 +389,14 @@ void JSON_RPC::load_new_set_of_virtual_files( const mArray &json_user_files , bo
 	std::cerr << __FILE__ << __LINE__ << std::endl;
 	if ( clear_previous ) provider->clear_input_files();
 	std::cerr << __FILE__ << __LINE__ << std::endl;
-	for ( mArray::const_iterator it = json_user_files.begin();
-			it != json_user_files.end(); ++it ) {
+	for (const auto & json_user_file : json_user_files) {
 		std::cerr << __FILE__ << __LINE__ << std::endl;
-		std::cout << it->type() << std::endl;
+		std::cout << json_user_file.type() << std::endl;
 		std::cerr << __FILE__ << __LINE__ << std::endl;
-		if ( it->type() != obj_type ) {
+		if ( json_user_file.type() != obj_type ) {
 			throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_file member:'");
 		};
-		const mObject &flag = it->get_obj();
+		const mObject &flag = json_user_file.get_obj();
 		if ( !has_value( flag, "filename" ) ) {
 			throw utility::excn::EXCN_Msg_Exception("JSON error: Syntax error in user_files field: 'filename' missing ");
 		}

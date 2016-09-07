@@ -46,8 +46,8 @@ namespace datacache {
 class WriteableCacheableData : public CacheableData {
 
 public:
-	virtual
-	~WriteableCacheableData() {}
+	
+	~WriteableCacheableData() override = default;
 
 	virtual
 	void write( std::ostream &out ) const = 0;

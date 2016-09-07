@@ -39,27 +39,27 @@ public:
 
 public:
 	DesignProteinBackboneAroundDNA();
-	virtual ~DesignProteinBackboneAroundDNA();
+	~DesignProteinBackboneAroundDNA() override;
 
-	DesignProteinBackboneAroundDNA( std::string const &, ScoreFunctionCOP );
+	DesignProteinBackboneAroundDNA( std::string , ScoreFunctionCOP );
 
 	void targeted_dna( DnaDesignDefOPs const & );
 	DnaDesignDefOPs const & targeted_dna() const;
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 private: // methods
 	void set_loop_info( Pose const &, Loops const & );

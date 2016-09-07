@@ -45,7 +45,7 @@ public:
 
 	GraftMoverBase(GraftMoverBase const & src);
 
-	virtual ~GraftMoverBase();
+	~GraftMoverBase() override;
 
 	//@brief copy ctor
 	//GraftMoverBase( GraftMoverBase const & rhs);
@@ -72,8 +72,8 @@ public:
 
 public:
 	/// @brief  Return the name of the Mover.
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
 	Size start();
 	Size original_end();

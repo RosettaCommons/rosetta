@@ -65,7 +65,7 @@ namespace core {
 namespace kinematics {
 
 /// @details Auto-generated virtual destructor
-ShortestPathInFoldTree::~ShortestPathInFoldTree() {}
+ShortestPathInFoldTree::~ShortestPathInFoldTree() = default;
 
 static THREAD_LOCAL basic::Tracer tr( "core.kinematics.ShortestPathInFoldTree", basic::t_info );
 
@@ -199,11 +199,11 @@ ShortestPathInFoldTree::init_dist_map( EdgeList const& edges ) {
 	node_dist_.dimension( jump_res_.size(), jump_res_.size(), inf );
 
 	// initialize distance array with jump-edges
-	for ( EdgeList::const_iterator it=edges.begin(), eit=edges.end(); it!=eit; ++it ) {
-		node_dist_( it->start(), it->stop() ) = 1;
-		node_dist_( it->stop(), it->start() ) = 1;
-		node_dist_( it->start(), it->start() ) = 0;
-		node_dist_( it->stop(), it->stop() ) = 0;
+	for (const auto & edge : edges) {
+		node_dist_( edge.start(), edge.stop() ) = 1;
+		node_dist_( edge.stop(), edge.start() ) = 1;
+		node_dist_( edge.start(), edge.start() ) = 0;
+		node_dist_( edge.stop(), edge.stop() ) = 0;
 	}
 }
 
@@ -218,9 +218,8 @@ ShortestPathInFoldTree::compute_dist_map( FoldTree const& f ) {
 
 
 	// look for peptid edges that connect two jumps
-	for ( FoldTree::const_iterator it=f.begin(), eit=f.end();
-			it!=eit; ++it ) {
-		if ( it->is_jump() ) continue; // only look at peptide edges
+	for (const auto & it : f) {
+		if ( it.is_jump() ) continue; // only look at peptide edges
 		std::map< Size, Size>::const_iterator fit;
 
 		// do we have start and stop reside listed as jump_residues?
@@ -228,20 +227,20 @@ ShortestPathInFoldTree::compute_dist_map( FoldTree const& f ) {
 		int my_stop = -1;
 
 		// look for start residue
-		fit =  jump_res_.find( it->start() );
+		fit =  jump_res_.find( it.start() );
 		if ( fit != jump_res_.end() ) {
 			my_start = fit->second;
 		}
 
 		// look for stop residue
-		fit =  jump_res_.find( it->stop() );
+		fit =  jump_res_.find( it.stop() );
 		if ( fit != jump_res_.end() ) {
 			my_stop = fit->second;
 		}
 
 		// if start and stop are jump-residues this is an internal peptide edge!
 		if ( my_start > 0 && my_stop > 0 ) {
-			Size dd = node_dist_( my_start, my_stop ) = std::abs( it->start() - it->stop() );
+			Size dd = node_dist_( my_start, my_stop ) = std::abs( it.start() - it.stop() );
 			node_dist_( my_stop, my_start ) = dd;
 		};
 	} // for fold-tree edges
@@ -296,7 +295,7 @@ ShortestPathInFoldTree::build_peptide_table( core::kinematics::FoldTree const& f
 	utility::vector1< int > leaves;
 	// go thru edges and fill res2jump array accordingly
 	Size edge_nr = 1;
-	for ( FoldTree::const_iterator it=f.begin(), eit=f.end();
+	for ( auto it=f.begin(), eit=f.end();
 			it!=eit;
 			++it, ++edge_nr ) {
 		int start_jump = get_jump( it->start() ); // returns -1 if node is not a jump residue

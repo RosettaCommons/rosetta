@@ -56,31 +56,31 @@ public: // constructor/destructor
 	MonteCarloRecover();
 
 	/// @brief destructor
-	~MonteCarloRecover();
+	~MonteCarloRecover() override;
 
 	/// @brief create copy constructor
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 	/// @brief create this type of objectt
-	virtual MoverOP fresh_instance() const;
-	std::string get_name() const;
+	MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 
 	/// @brief apply MonteCarloRecover (Mover)
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 	/// @brief set mover
 	void set_MC( GenericMonteCarloMoverOP mover );
 	GenericMonteCarloMoverOP get_MC() const;
 	// Undefinede, commenting out to fix PyRosetta build  void recover( Pose & pose );
 
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const &
-	);
+	) override;
 
 	bool recover_low() const;
 	void recover_low( bool const recover );

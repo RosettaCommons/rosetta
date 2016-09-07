@@ -45,7 +45,7 @@ public:
 
 	PDBJobOutputter();
 
-	virtual ~PDBJobOutputter();
+	~PDBJobOutputter() override;
 
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
@@ -101,8 +101,8 @@ protected:
 protected:
 	//////////////////////////////////////protected PDB output/////////////////////////////////////
 	/// @brief This is the function actually different between mmCIF and PDB output, and unshared by the wwPDB parent class.  Here it causes a pdb file to be written.  Pure virtual in the base class.  filename is an optional label for the score data table, not an actual control.
-	virtual
-	void dump_pose( JobCOP job, core::pose::Pose const & pose, utility::io::ozstream & out, std::string const &filename="" );
+	
+	void dump_pose( JobCOP job, core::pose::Pose const & pose, utility::io::ozstream & out, std::string const &filename="" ) override;
 
 	////////////////////////////////////////data////////////////////////////////////////
 private:

@@ -42,7 +42,7 @@ public:
 public:
 
 	JobDistributor();
-	virtual ~JobDistributor();
+	~JobDistributor() override;
 
 	/// @brief The main method for executing a protocol.  Derived classes have the option of
 	/// overriding the behavior of the base class, or changing the behavior of the base class

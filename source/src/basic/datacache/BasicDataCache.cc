@@ -47,13 +47,11 @@ BasicDataCache::BasicDataCache( size_t const n_slots ) :
 
 
 /// @brief copy constructor
-BasicDataCache::BasicDataCache( BasicDataCache const & rval ) :
-	Super( rval )
-{}
+BasicDataCache::BasicDataCache( BasicDataCache const & ) = default;
 
 
 /// @brief default destructor
-BasicDataCache::~BasicDataCache() {}
+BasicDataCache::~BasicDataCache() = default;
 
 
 /// @brief copy assignment

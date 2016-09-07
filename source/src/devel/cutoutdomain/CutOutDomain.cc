@@ -77,7 +77,7 @@ CutOutDomain::CutOutDomain()
 {
 }
 
-CutOutDomain::~CutOutDomain() {}
+CutOutDomain::~CutOutDomain() = default;
 
 void
 CutOutDomain::apply( core::pose::Pose & pose )

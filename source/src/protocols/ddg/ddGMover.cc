@@ -142,7 +142,7 @@ ddGMover::ddGMover(
 	nbr_cutoff_(8.0),
 	restrict_to_nbrhood_(false),
 	interface_ddg_(false),
-	scorefxn_(s),
+	scorefxn_(std::move(s)),
 	min_cst_sfxn_( m->clone() ),
 	min_cst_sfxn_no_cst_weight_( m->clone() ),
 	cst_set_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
@@ -167,7 +167,7 @@ ddGMover::ddGMover(
 	mutants_()
 {}
 
-ddGMover::~ddGMover(){}
+ddGMover::~ddGMover()= default;
 
 
 utility::vector1<int>
@@ -221,8 +221,8 @@ double
 ddGMover::sum(ddGs &scores_to_sum)
 {
 	double sum=0;
-	for ( unsigned int i =0; i<scores_to_sum.size(); i++ ) {
-		sum+=scores_to_sum[i];
+	for (double i : scores_to_sum) {
+		sum+=i;
 	}
 	return sum;
 }
@@ -263,8 +263,8 @@ ddGMover::store_energies(
 	int num_score_components = 0;
 	using core::scoring::EnergyMap;
 	using core::scoring::ScoreType;
-	for ( EnergyMap::const_iterator it = s.weights().begin(); it != s.weights().end(); ++it ) {
-		if ( *it != 0.0 ) {
+	for (double it : s.weights()) {
+		if ( it != 0.0 ) {
 			num_score_components++;
 		}
 	}
@@ -838,7 +838,7 @@ ddGMover::get_scorefunction_header(
 {
 	//utility::vector1<std::string> components;
 	core::scoring::ScoreType const atom_pair_cst = score_type_from_name("atom_pair_constraint"); //atom-pair-csts not considered in ddg score
-	if ( sfxn != 0 ) {
+	if ( sfxn != nullptr ) {
 		int score_component=0;
 		for ( EnergyMap::const_iterator i = (sfxn->weights()).begin(), end = sfxn->weights().end(); i != end; ++i ) {
 			score_component++;
@@ -1297,7 +1297,7 @@ ddGMover::is_any_pdb_empty(
 		}
 	} else {
 		//silentfile specific behavior when local repacks activated
-		std::string file_to_check = "mut_"+this->mutation_label(pose)+".out";;
+		std::string file_to_check = "mut_"+this->mutation_label(pose)+".out";
 		if ( !basic::options::option[OptionKeys::ddg::suppress_checkpointing]() ) {
 
 			std::cout << "checking for decoys in silent file: " << file_to_check << std::endl;

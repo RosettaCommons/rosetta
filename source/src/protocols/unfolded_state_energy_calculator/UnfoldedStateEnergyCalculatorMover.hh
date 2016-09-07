@@ -66,7 +66,7 @@ public:
 	);
 
 	/// @brief dtor
-	virtual ~UnfoldedStateEnergyCalculatorMover();
+	~UnfoldedStateEnergyCalculatorMover() override;
 
 	/// @brief cctor
 	UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm );
@@ -76,18 +76,18 @@ public:
 public:
 
 	/// @brief
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
-
-	/// @brief
-	virtual bool reinitialize_for_each_job() const;
+	std::string get_name() const override;
 
 	/// @brief
-	virtual bool reinitialize_for_new_input() const;
+	bool reinitialize_for_each_job() const override;
+
+	/// @brief
+	bool reinitialize_for_new_input() const override;
 
 	// class specific functions
 private:

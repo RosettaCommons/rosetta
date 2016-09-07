@@ -26,11 +26,11 @@ class LoopMover_SlidingWindowCreator : public moves::MoverCreator {
 public:
 	LoopMover_SlidingWindowCreator() {}
 
-	virtual ~LoopMover_SlidingWindowCreator();
+	~LoopMover_SlidingWindowCreator() override;
 
-	moves::MoverOP create_mover() const;
+	moves::MoverOP create_mover() const override;
 
-	virtual std::string keyname() const;
+	std::string keyname() const override;
 
 };
 

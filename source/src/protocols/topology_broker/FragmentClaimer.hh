@@ -55,25 +55,25 @@ public:
 	FragmentClaimer( simple_moves::FragmentMoverOP );
 	FragmentClaimer( FragmentClaimer const & src );
 
-	~FragmentClaimer();
+	~FragmentClaimer() override;
 
 	FragmentClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<FragmentClaimer>( TopologyClaimer::shared_from_this() ); }
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new FragmentClaimer( *this ) );
 	}
 
-	virtual void generate_claims( claims::DofClaims& );
+	void generate_claims( claims::DofClaims& ) override;
 
 	/// @brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	//virtual DofClaims finalize_claims( DofClaims& );
 
-	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
+	void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) override;
 
-	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
+	bool accept_declined_claim( claims::DofClaim const& was_declined ) override;
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -93,7 +93,7 @@ public:
 		return mover_tag_;
 	}
 
-	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const;
+	moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const override;
 
 	void get_sequence_region( std::set< core::Size >& start_region ) const;
 
@@ -122,11 +122,11 @@ protected:
 		claim_right_ = setting;
 	}
 
-	virtual bool read_tag( std::string tag, std::istream & );
+	bool read_tag( std::string tag, std::istream & ) override;
 
 	core::kinematics::MoveMapOP movemap_;
 
-	virtual void init_after_reading();
+	void init_after_reading() override;
 
 private:
 

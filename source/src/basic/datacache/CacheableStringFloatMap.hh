@@ -49,8 +49,8 @@ class CacheableStringFloatMap : public CacheableData
 {
 public:
 	CacheableStringFloatMap() : CacheableData() {}
-	virtual ~CacheableStringFloatMap(){};
-	virtual CacheableDataOP clone() const { return CacheableDataOP( new CacheableStringFloatMap(*this) ); }
+	~CacheableStringFloatMap() override= default;
+	CacheableDataOP clone() const override { return CacheableDataOP( new CacheableStringFloatMap(*this) ); }
 
 	CacheableStringFloatMapOP shared_from_this() { return utility::pointer::static_pointer_cast<CacheableStringFloatMap>( CacheableData::shared_from_this() ); }
 

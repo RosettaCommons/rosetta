@@ -61,7 +61,7 @@ PolicyOP PolicyFactory::get_policy(const std::string& policy_name,
 	} else {
 		utility_exit_with_message("Invalid policy_name: " + policy_name);
 	}
-	return NULL;
+	return nullptr;
 }
 
 }  // namespace nonlocal

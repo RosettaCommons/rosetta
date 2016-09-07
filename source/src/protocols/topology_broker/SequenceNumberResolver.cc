@@ -51,7 +51,7 @@ SequenceNumberResolver::SequenceNumberResolver( const SequenceNumberResolver&  s
 /// @brief Returns offset of a given label.
 core::Size
 SequenceNumberResolver::offset( std::string const& label ) const {
-	OffsetMap::const_iterator p = offset_map_.find(label);
+	auto p = offset_map_.find(label);
 
 	if ( p != offset_map_.end() ) { return p->second; }
 	else if ( label == "" ) {
@@ -97,12 +97,12 @@ core::Size SequenceNumberResolver::find_global_pose_number(std::string const&lab
 }
 
 std::string SequenceNumberResolver::find_label( core::Size pose_number ) const {
-	std::map<core::Size, std::string>::const_iterator itlow = search_reversed_map( pose_number );
+	auto itlow = search_reversed_map( pose_number );
 	return itlow->second;
 }
 
 core::Size SequenceNumberResolver::find_local_pose_number( core::Size pose_number ) const{
-	std::map<core::Size, std::string>::const_iterator itlow = search_reversed_map( pose_number );
+	auto itlow = search_reversed_map( pose_number );
 	return ( pose_number - itlow->first );
 }
 
@@ -114,7 +114,7 @@ std::pair<core::Size, std::string> SequenceNumberResolver::terminal_pair() const
 std::map<core::Size, std::string>::const_iterator SequenceNumberResolver::search_reversed_map( core::Size pose_number ) const{
 
 	//Returns first entry whose key is greater or equal compared to the given pose_number
-	std::map<core::Size, std::string>::const_iterator itlow = offset_map_reversed_.lower_bound( pose_number ) ;
+	auto itlow = offset_map_reversed_.lower_bound( pose_number ) ;
 
 	//Decrement iterator to access element that is smaller than given pose number
 	if ( itlow != offset_map_reversed_.begin() ) --itlow;

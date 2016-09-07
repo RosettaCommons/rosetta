@@ -63,7 +63,7 @@ HelixNCapperMover::HelixNCapperMover(
 	setup_svm();
 }
 
-HelixNCapperMover::~HelixNCapperMover(){}
+HelixNCapperMover::~HelixNCapperMover()= default;
 
 void HelixNCapperMover::dump_pdb_to_file( core::pose::Pose & posey, std::string filename ){
 	posey.dump_pdb(filename);

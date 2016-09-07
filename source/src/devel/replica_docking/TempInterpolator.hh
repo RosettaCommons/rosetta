@@ -33,8 +33,8 @@ public:
 class TempFixValue : public TempInterpolatorBase {
 public:
 	TempFixValue( core::Real the_value );
-	virtual ~TempFixValue();
-	virtual core::Real get_value( core::Size ) { return value_; }
+	~TempFixValue() override;
+	core::Real get_value( core::Size ) override { return value_; }
 private:
 	core::Real value_;
 };
@@ -48,7 +48,7 @@ public:
 
 	TempInterpolator( TempInterpolator const & temp_interpolator );
 
-	virtual ~TempInterpolator();
+	~TempInterpolator() override;
 
 	//   void set_end( core::Real end ) {
 	//     end_ = end;
@@ -68,7 +68,7 @@ public:
 
 	void interpolate();
 
-	virtual core::Real get_value( core::Size temp_level );
+	core::Real get_value( core::Size temp_level ) override;
 
 private:
 	core::Real start_;

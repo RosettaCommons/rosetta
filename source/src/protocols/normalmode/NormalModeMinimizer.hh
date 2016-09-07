@@ -56,11 +56,11 @@ public:
 	// c-tor
 	NormalModeMinimizer();
 
-	virtual ~NormalModeMinimizer();
+	~NormalModeMinimizer() override;
 
-	virtual
+	
 	void
-	apply( pose::Pose & pose );
+	apply( pose::Pose & pose ) override;
 
 	/// @brief After minimization has concluded, the user may access the deriv-check result,
 	/// assuming that they have run the NormalModeMinimizer with deriv_check = true;
@@ -71,18 +71,18 @@ public:
 		modes_using_ = modes_using_in;
 	}
 
-	virtual
+	
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
-	std::string get_name() const;
-	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new NormalModeMinimizer( *this ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new NormalModeMinimizer ); }
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new NormalModeMinimizer( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new NormalModeMinimizer ); }
 
 private:
 	void

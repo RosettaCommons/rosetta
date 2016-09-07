@@ -14,6 +14,7 @@
 #include <protocols/moves/RepeatMover.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/vector1.hh>
 
 // Basic Headers
@@ -36,17 +37,14 @@ RepeatMover::RepeatMover(
 	MoverOP mover_in,
 	int nmoves_in
 ) : Mover("RepeatMover"),
-	mover_(mover_in),
+	mover_(std::move(mover_in)),
 	nmoves_(nmoves_in)
 {}
 
 // Copy constructor
-RepeatMover::RepeatMover(RepeatMover const & object_to_copy) : Mover(object_to_copy),
-	mover_(object_to_copy.mover_),
-	nmoves_(object_to_copy.nmoves_)
-{}
+RepeatMover::RepeatMover(RepeatMover const & ) = default;
 
-RepeatMover::~RepeatMover() {}
+RepeatMover::~RepeatMover() = default;
 
 /// @details
 /// Example(s):
@@ -84,14 +82,14 @@ RepeatMover::fresh_instance() const
 
 core::Size
 RepeatMover::get_nmoves() const {
-	if ( mover_ != 0 ) {
+	if ( mover_ != nullptr ) {
 		return nmoves_;
 	} else { return 0; }
 }
 
 std::string
 RepeatMover::get_mover() const {
-	if ( mover_ != 0 ) {
+	if ( mover_ != nullptr ) {
 		return mover_->get_name();
 	} else { return "none"; }
 }

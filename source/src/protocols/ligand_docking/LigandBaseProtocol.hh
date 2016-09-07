@@ -86,15 +86,15 @@ public:
 
 	LigandBaseProtocol();
 
-	virtual ~LigandBaseProtocol();
+	~LigandBaseProtocol() override;
 
 	LigandBaseProtocolOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<LigandBaseProtocol>( Mover::shared_from_this() ); }
 
 	core::scoring::ScoreFunctionOP  get_scorefxn();
 	core::scoring::ScoreFunctionCOP get_scorefxn() const;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	core::Size
 	get_ligand_jump_id(

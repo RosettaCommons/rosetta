@@ -94,7 +94,7 @@ LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, boo
 	set_sf();
 }
 
-LoopAnalyzerMover::~LoopAnalyzerMover() {}
+LoopAnalyzerMover::~LoopAnalyzerMover() = default;
 
 //Isn't there some fancy way to have ctors call each other to deduplicate this code?
 LoopAnalyzerMover::LoopAnalyzerMover() :
@@ -318,9 +318,9 @@ LoopAnalyzerMover::get_chainbreak_scores() {
 
 void LoopAnalyzerMover::find_positions( core::pose::Pose const & pose ){
 	positions_.clear();
-	for ( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it != it_end; ++it ) {
-		core::Size start(it->start());
-		core::Size end(it->stop());
+	for (const auto & it : *loops_) {
+		core::Size start(it.start());
+		core::Size end(it.stop());
 		if ( !pose.residue(start).is_terminus() && start != 1 ) --start;
 		if ( !pose.residue(end).is_terminus() && end != pose.total_residue() ) ++end;
 		for ( core::Size i(start); i <= end; ++i ) positions_.push_back(i);

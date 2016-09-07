@@ -37,13 +37,13 @@ class SeedFoldTree : public protocols::moves::Mover
 public:
 	SeedFoldTree();
 	SeedFoldTree( core::kinematics::FoldTreeOP ft );
-	virtual ~SeedFoldTree();
+	~SeedFoldTree() override;
 	void fold_tree(core::kinematics::FoldTreeOP ft );
 	core::kinematics::FoldTreeOP fold_tree() const;
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
@@ -56,7 +56,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 
 	core::kinematics::FoldTreeOP set_foldtree(

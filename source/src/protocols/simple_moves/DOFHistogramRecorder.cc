@@ -48,8 +48,7 @@ DOFHistogramRecorder::DOFHistogramRecorder() :
 	num_bins_(10)
 {}
 
-DOFHistogramRecorder::~DOFHistogramRecorder()
-{}
+DOFHistogramRecorder::~DOFHistogramRecorder() = default;
 
 DOFHistogramRecorder::DOFHistogramRecorder( DOFHistogramRecorder const & /* other */ )
 {

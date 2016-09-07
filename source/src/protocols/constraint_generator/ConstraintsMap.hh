@@ -51,10 +51,10 @@ public:
 public:
 	ConstraintsMap();
 
-	virtual ~ConstraintsMap();
+	~ConstraintsMap() override;
 
-	virtual basic::datacache::CacheableDataOP
-	clone() const;
+	basic::datacache::CacheableDataOP
+	clone() const override;
 
 public:
 	/// @brief Insert csts into the ConstraintsMap under the name given.

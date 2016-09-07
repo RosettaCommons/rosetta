@@ -47,7 +47,7 @@ public:
 	// typedef utility::vector1 < core::pose::Pose > StructureStore;
 
 	Protocol();
-	~Protocol() {};
+	~Protocol() override = default;
 
 	virtual
 	void init( core::pose::Pose const& ) {};
@@ -78,7 +78,7 @@ public:
 	}
 
 	abinitio::KinematicControl const& kinematics() {
-		runtime_assert( kinematic_control_ != 0 );
+		runtime_assert( kinematic_control_ != nullptr );
 		return *kinematic_control_;
 	}
 
@@ -94,8 +94,8 @@ public:
 		return_centroid_ = setting;
 	}
 
-	virtual void apply( core::pose::Pose& );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose& ) override;
+	std::string get_name() const override;
 
 	// virtual StructureStore const& structure_store() const {
 	//return structure_store_;

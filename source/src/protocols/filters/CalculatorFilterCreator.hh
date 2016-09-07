@@ -30,8 +30,8 @@ namespace filters {
 class CalculatorFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 } //namespace filters

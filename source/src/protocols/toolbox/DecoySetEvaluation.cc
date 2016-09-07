@@ -110,7 +110,7 @@ DecoySetEvaluation::DecoySetEvaluation() :
 	store_energies_( false )
 {}
 
-DecoySetEvaluation::~DecoySetEvaluation() {}
+DecoySetEvaluation::~DecoySetEvaluation() = default;
 
 void DecoySetEvaluation::reserve( core::Size n_resize ) {
 	if ( n_resize == n_decoys_max_ ) return;
@@ -505,7 +505,7 @@ void DecoySetEvaluation::create_dist_constraints_median(
 			Real av( 0.0 );
 			// dist_sorted.clear();
 			//   dist_sorted.reserve(n_decoys());
-			Real* dist_sorted = new Real[ n_decoys() ];
+			auto* dist_sorted = new Real[ n_decoys() ];
 			for ( Size n = 1; n<=n_decoys(); n++ ) {
 				core::Vector xi( coords_( 1, i, n ), coords_( 2, i, n ), coords_( 3, i, n ));
 				core::Vector xj( coords_( 1, j, n ), coords_( 2, j, n ), coords_( 3, j, n ));
@@ -603,7 +603,7 @@ void DecoySetEvaluation::create_xyz_constraints_median(
 			buf << std::endl;
 
 
-		Real* dist_sorted = new Real[ n_decoys() ];
+		auto* dist_sorted = new Real[ n_decoys() ];
 		for ( Size n = 1; n<=n_decoys(); n++ ) {
 			core::Vector xi( coords_( 1, pos, n ), coords_( 2, pos, n ), coords_( 3, pos, n ));
 			Real dist = xyz_av.distance(xi);

@@ -67,30 +67,30 @@ public:
 	IterativeAbrelax();
 
 	// virtual bool ready_for_batch() const { return false; };
-	virtual void initialize();
+	void initialize() override;
 
-	virtual bool finished() const;
+	bool finished() const override;
 	//  virtual bool ready_for_batch() const;
-	virtual bool still_interested( jd2::archive::Batch const& batch ) const;
-	virtual void generate_batch();
-	virtual core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id );
+	bool still_interested( jd2::archive::Batch const& batch ) const override;
+	void generate_batch() override;
+	core::Size generate_batch( jd2::archive::Batch&, core::Size repeat_id ) override;
 
-	virtual void idle();
+	void idle() override;
 
 	static void register_options();
 
 	//save Evaluator state ?
-	virtual void save_to_file( std::string suffix = "" );
-	virtual void save_status( std::ostream& ) const;
-	virtual bool restore_from_file();
-	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& );
-	virtual void read_structures(
+	void save_to_file( std::string suffix = "" ) override;
+	void save_status( std::ostream& ) const override;
+	bool restore_from_file() override;
+	void init_from_decoy_set( core::io::silent::SilentFileData const& ) override;
+	void read_structures(
 		core::io::silent::SilentFileData& sfd,
 		core::io::silent::SilentFileData& alternative_decoys,
 		jd2::archive::Batch const& batch
-	);
+	) override;
 
-	void set_manager( jd2::archive::BaseArchiveManagerAP manager );
+	void set_manager( jd2::archive::BaseArchiveManagerAP manager ) override;
 	// virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );
 
 private:

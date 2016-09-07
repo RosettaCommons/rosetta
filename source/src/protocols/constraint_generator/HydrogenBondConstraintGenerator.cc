@@ -79,9 +79,7 @@ HydrogenBondConstraintGenerator::HydrogenBondConstraintGenerator():
 {
 }
 
-HydrogenBondConstraintGenerator::~HydrogenBondConstraintGenerator()
-{
-}
+HydrogenBondConstraintGenerator::~HydrogenBondConstraintGenerator() = default;
 
 protocols::constraint_generator::ConstraintGeneratorOP
 HydrogenBondConstraintGenerator::clone() const
@@ -234,9 +232,9 @@ HydrogenBondConstraintGenerator::add_atom_definitions( std::string const & atom_
 	HydrogenBondInfo & info = *HydrogenBondInfo::get_instance();
 
 	utility::vector1< std::string > const definitions = utility::string_split( atom_def, ';' );
-	for ( utility::vector1< std::string >::const_iterator def=definitions.begin(); def!=definitions.end(); ++def ) {
-		TR.Debug << "Adding atom definition from string: " << *def << std::endl;
-		TR.Debug << "Added " << info.add_atoms_from_string( *def ) << std::endl;
+	for (const auto & definition : definitions) {
+		TR.Debug << "Adding atom definition from string: " << definition << std::endl;
+		TR.Debug << "Added " << info.add_atoms_from_string( definition ) << std::endl;
 	}
 }
 
@@ -244,8 +242,8 @@ utility::vector1< core::Size >
 existing_atoms( core::conformation::Residue const & rsd, utility::vector1< std::string > const & atoms )
 {
 	utility::vector1< core::Size > atom_idxs;
-	for ( utility::vector1< std::string >::const_iterator aname=atoms.begin(); aname!=atoms.end(); ++aname ) {
-		if ( rsd.has( *aname ) ) atom_idxs.push_back( rsd.type().atom_index( *aname ) );
+	for (const auto & atom : atoms) {
+		if ( rsd.has( atom ) ) atom_idxs.push_back( rsd.type().atom_index( atom ) );
 	}
 	return atom_idxs;
 }
@@ -306,8 +304,8 @@ HydrogenBondConstraintGenerator::compute_valid_atoms(
 	core::conformation::Residue const & rsd ) const
 {
 	core::chemical::AtomIndices const & sc_atoms = rsd.type().all_sc_atoms();
-	for ( core::chemical::AtomIndices::const_iterator at=sc_atoms.begin(); at!=sc_atoms.end(); ++at ) {
-		if ( ! can_hydrogen_bond( rsd.type().atom_type( *at ).element() ) ) {
+	for (unsigned long sc_atom : sc_atoms) {
+		if ( ! can_hydrogen_bond( rsd.type().atom_type( sc_atom ).element() ) ) {
 			continue;
 		}
 	}
@@ -328,33 +326,33 @@ HydrogenBondConstraintGenerator::choose_atoms(
 			<< " Full residue name is " << rsd.name3() << std::endl;
 	} else {
 		// if atoms are found for this residue, look for existing ones in the allowed set
-		for ( HydrogenBondingAtoms::const_iterator a=hb_atoms.begin(); a!=hb_atoms.end(); ++a ) {
-			if ( ! rsd.has( a->hb_atom() ) ) {
-				TR << "Skipping HBond atom " << a->hb_atom() << " because it does not exist in residue "
+		for (const auto & hb_atom : hb_atoms) {
+			if ( ! rsd.has( hb_atom.hb_atom() ) ) {
+				TR << "Skipping HBond atom " << hb_atom.hb_atom() << " because it does not exist in residue "
 					<< rsd.name() << rsd.seqpos() << std::endl;
 				continue;
 			}
-			if ( ! rsd.has( a->atom2() ) ) {
-				TR << "Skipping HBond atom " << a->hb_atom() << " because atom " << a->atom2()
+			if ( ! rsd.has( hb_atom.atom2() ) ) {
+				TR << "Skipping HBond atom " << hb_atom.hb_atom() << " because atom " << hb_atom.atom2()
 					<< " does not exist in residue " << rsd.name() << rsd.seqpos() << std::endl;
 				continue;
 			}
-			if ( ! rsd.has( a->atom3() ) ) {
-				TR << "Skipping HBond atom " << a->hb_atom() << " because atom " << a->atom3()
+			if ( ! rsd.has( hb_atom.atom3() ) ) {
+				TR << "Skipping HBond atom " << hb_atom.hb_atom() << " because atom " << hb_atom.atom3()
 					<< " does not exist in residue " << rsd.name() << rsd.seqpos() << std::endl;
 				continue;
 			}
 			// skip if allowed_atoms has things, but doesn't have this atom
-			if ( ( !allowed_atoms.empty() ) && ( allowed_atoms.find( a->hb_atom() ) == allowed_atoms.end() ) ) {
-				TR.Debug << "Skipping HBond atom " << a->hb_atom() << " because it is not in the set of allowed atoms" << std::endl
+			if ( ( !allowed_atoms.empty() ) && ( allowed_atoms.find( hb_atom.hb_atom() ) == allowed_atoms.end() ) ) {
+				TR.Debug << "Skipping HBond atom " << hb_atom.hb_atom() << " because it is not in the set of allowed atoms" << std::endl
 					<< "Allowed atoms = [";
-				for ( AtomNameSet::const_iterator a=allowed_atoms.begin(); a!=allowed_atoms.end(); ++a ) {
-					TR.Debug << " " << *a;
+				for (const auto & allowed_atom : allowed_atoms) {
+					TR.Debug << " " << allowed_atom;
 				}
 				TR.Debug << " ], empty=" << allowed_atoms.empty() << std::endl;
 				continue;
 			}
-			valid_atoms.push_back( *a );
+			valid_atoms.push_back( hb_atom );
 		}
 	}
 
@@ -390,17 +388,17 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 	core::scoring::constraints::ConstraintOPs csts;
 	TR.Debug << "Going to create constraints for res1=" << rsd1.seqpos() << " atoms1=" << atoms1
 		<< " res2=" << rsd2.seqpos() << " atoms2=" << atoms2 << std::endl;
-	for ( HydrogenBondingAtoms::const_iterator a1=atoms1.begin(); a1!=atoms1.end(); ++a1 ) {
-		core::id::AtomID const atomid1( rsd1.type().atom_index( a1->hb_atom() ), rsd1.seqpos() );
-		core::id::AtomID const parent_atomid1( rsd1.type().atom_index( a1->atom2() ), rsd1.seqpos() );
-		core::id::AtomID const parent2_atomid1( rsd1.type().atom_index( a1->atom3() ), rsd1.seqpos() );
-		for ( HydrogenBondingAtoms::const_iterator a2=atoms2.begin(); a2!=atoms2.end(); ++a2 ) {
-			core::id::AtomID const atomid2( rsd2.type().atom_index( a2->hb_atom() ), rsd2.seqpos() );
-			core::id::AtomID const parent_atomid2( rsd2.type().atom_index( a2->atom2() ), rsd2.seqpos() );
-			core::id::AtomID const parent2_atomid2( rsd2.type().atom_index( a2->atom3() ), rsd2.seqpos() );
+	for (const auto & a1 : atoms1) {
+		core::id::AtomID const atomid1( rsd1.type().atom_index( a1.hb_atom() ), rsd1.seqpos() );
+		core::id::AtomID const parent_atomid1( rsd1.type().atom_index( a1.atom2() ), rsd1.seqpos() );
+		core::id::AtomID const parent2_atomid1( rsd1.type().atom_index( a1.atom3() ), rsd1.seqpos() );
+		for (const auto & a2 : atoms2) {
+			core::id::AtomID const atomid2( rsd2.type().atom_index( a2.hb_atom() ), rsd2.seqpos() );
+			core::id::AtomID const parent_atomid2( rsd2.type().atom_index( a2.atom2() ), rsd2.seqpos() );
+			core::id::AtomID const parent2_atomid2( rsd2.type().atom_index( a2.atom3() ), rsd2.seqpos() );
 			csts.push_back( create_residue_constraint(
 				atomid1, parent_atomid1, parent2_atomid1,
-				atomid2, parent_atomid2, parent2_atomid2, *a1, *a2 ) );
+				atomid2, parent_atomid2, parent2_atomid2, a1, a2 ) );
 		}
 	}
 	if ( csts.empty() ) {
@@ -491,17 +489,17 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 
 	if ( !a1.dihedrals().empty() ) {
 		ConstraintOPs dihedral_csts;
-		for ( HydrogenBondingAtom::Dihedrals::const_iterator d=a1.dihedrals().begin(); d!=a1.dihedrals().end(); ++d ) {
+		for (double d : a1.dihedrals()) {
 			dihedral_csts.push_back( ConstraintOP( new DihedralConstraint(
-				parent2_atomid1, parent_atomid1, atomid1, atomid2, dihedral_func( *d ) ) ) );
+				parent2_atomid1, parent_atomid1, atomid1, atomid2, dihedral_func( d ) ) ) );
 		}
 		hb_csts.push_back( ambiguous_constraint_wrap( dihedral_csts ) );
 	}
 	if ( !a2.dihedrals().empty() ) {
 		ConstraintOPs dihedral_csts;
-		for ( HydrogenBondingAtom::Dihedrals::const_iterator d=a2.dihedrals().begin(); d!=a2.dihedrals().end(); ++d ) {
+		for (double d : a2.dihedrals()) {
 			dihedral_csts.push_back( ConstraintOP( new DihedralConstraint(
-				atomid1, atomid2, parent_atomid2, parent2_atomid2, dihedral_func( *d ) ) ) );
+				atomid1, atomid2, parent_atomid2, parent2_atomid2, dihedral_func( d ) ) ) );
 		}
 		hb_csts.push_back( ambiguous_constraint_wrap( dihedral_csts ) );
 	}
@@ -509,22 +507,22 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 }
 
 HydrogenBondingAtom::HydrogenBondingAtom(
-	std::string const & atom1,
-	std::string const & atom2,
-	std::string const & atom3,
+	std::string  atom1,
+	std::string  atom2,
+	std::string  atom3,
 	core::Real const ideal_distance,
 	core::Real const ideal_angle,
 	Dihedrals const & ideal_dihedral ):
 	utility::pointer::ReferenceCount(),
-	atom_( atom1 ),
-	atom2_( atom2 ),
-	atom3_( atom3 ),
+	atom_(std::move( atom1 )),
+	atom2_(std::move( atom2 )),
+	atom3_(std::move( atom3 )),
 	distance_( ideal_distance ),
 	angle_( numeric::constants::f::pi / 180.0 * ideal_angle ),
 	dihedrals_()
 {
-	for ( Dihedrals::const_iterator d=ideal_dihedral.begin(); d!=ideal_dihedral.end(); ++d ) {
-		dihedrals_.push_back( numeric::constants::f::pi / 180.0 * *d );
+	for (double d : ideal_dihedral) {
+		dihedrals_.push_back( numeric::constants::f::pi / 180.0 * d );
 	}
 }
 
@@ -552,51 +550,51 @@ HydrogenBondInfo::HydrogenBondInfo():
 	HydrogenBondingAtom::Dihedrals const none;
 
 	HydrogenBondingAtoms & arg = create_residue( "ARG" );
-	arg.push_back( HydrogenBondingAtom( "NE", "CZ", "NH1", 1.4, 120.0, zero_and_180 ) );
-	arg.push_back( HydrogenBondingAtom( "NH1", "CZ", "NE", 1.4, 120.0, zero_and_180 ) );
-	arg.push_back( HydrogenBondingAtom( "NH2", "CZ", "NE", 1.4, 120.0, zero_and_180 ) );
+	arg.emplace_back( "NE", "CZ", "NH1", 1.4, 120.0, zero_and_180 );
+	arg.emplace_back( "NH1", "CZ", "NE", 1.4, 120.0, zero_and_180 );
+	arg.emplace_back( "NH2", "CZ", "NE", 1.4, 120.0, zero_and_180 );
 
 	HydrogenBondingAtoms & asn = create_residue( "ASN" );
-	asn.push_back( HydrogenBondingAtom( "OD1", "CG", "ND2", 1.4, 120.0, zero_and_180 ) );
-	asn.push_back( HydrogenBondingAtom( "ND2", "CG", "OD1", 1.4, 120.0, zero_and_180 ) );
+	asn.emplace_back( "OD1", "CG", "ND2", 1.4, 120.0, zero_and_180 );
+	asn.emplace_back( "ND2", "CG", "OD1", 1.4, 120.0, zero_and_180 );
 
 	HydrogenBondingAtoms & asp = create_residue( "ASP" );
-	asp.push_back( HydrogenBondingAtom( "OD1", "CG", "OD2", 1.4, 120.0, zero_and_180 ) );
-	asp.push_back( HydrogenBondingAtom( "OD2", "CG", "OD1", 1.4, 120.0, zero_and_180 ) );
+	asp.emplace_back( "OD1", "CG", "OD2", 1.4, 120.0, zero_and_180 );
+	asp.emplace_back( "OD2", "CG", "OD1", 1.4, 120.0, zero_and_180 );
 
 	HydrogenBondingAtoms & cys = create_residue( "CYS" );
-	cys.push_back( HydrogenBondingAtom( "SG", "CB", "CA", 2.0, 109.5, none ) );
+	cys.emplace_back( "SG", "CB", "CA", 2.0, 109.5, none );
 
 	HydrogenBondingAtoms & gln = create_residue( "GLN" );
-	gln.push_back( HydrogenBondingAtom( "OE1", "CD", "OE2", 1.4, 120.0, zero_and_180 ) );
-	gln.push_back( HydrogenBondingAtom( "OE2", "CD", "OE1", 1.4, 120.0, zero_and_180 ) );
+	gln.emplace_back( "OE1", "CD", "OE2", 1.4, 120.0, zero_and_180 );
+	gln.emplace_back( "OE2", "CD", "OE1", 1.4, 120.0, zero_and_180 );
 
 	HydrogenBondingAtoms & glu = create_residue( "GLU" );
-	glu.push_back( HydrogenBondingAtom( "OE1", "CD", "OE2", 1.4, 120.0, zero_and_180 ) );
-	glu.push_back( HydrogenBondingAtom( "OE2", "CD", "OE1", 1.4, 120.0, zero_and_180 ) );
+	glu.emplace_back( "OE1", "CD", "OE2", 1.4, 120.0, zero_and_180 );
+	glu.emplace_back( "OE2", "CD", "OE1", 1.4, 120.0, zero_and_180 );
 
 	HydrogenBondingAtoms & his = create_residue( "HIS" );
-	his.push_back( HydrogenBondingAtom( "ND1", "CE1", "NE2", 1.4, 120.0, extended ) );
-	his.push_back( HydrogenBondingAtom( "NE2", "CE1", "ND1", 1.4, 120.0, extended ) );
+	his.emplace_back( "ND1", "CE1", "NE2", 1.4, 120.0, extended );
+	his.emplace_back( "NE2", "CE1", "ND1", 1.4, 120.0, extended );
 
 	HydrogenBondingAtoms & his_d = create_residue( "HIS_D" );
-	his_d.push_back( HydrogenBondingAtom( "ND1", "CE1", "NE2", 1.4, 120.0, extended ) );
-	his_d.push_back( HydrogenBondingAtom( "NE2", "CE1", "ND1", 1.4, 120.0, extended ) );
+	his_d.emplace_back( "ND1", "CE1", "NE2", 1.4, 120.0, extended );
+	his_d.emplace_back( "NE2", "CE1", "ND1", 1.4, 120.0, extended );
 
 	HydrogenBondingAtoms & lys = create_residue( "LYS" );
-	lys.push_back( HydrogenBondingAtom( "NZ", "CE", "CD", 1.4, 109.5, none ) );
+	lys.emplace_back( "NZ", "CE", "CD", 1.4, 109.5, none );
 
 	HydrogenBondingAtoms & ser = create_residue( "SER" );
-	ser.push_back( HydrogenBondingAtom( "OG", "CB", "CA", 1.4, 109.5, none ) );
+	ser.emplace_back( "OG", "CB", "CA", 1.4, 109.5, none );
 
 	HydrogenBondingAtoms & thr = create_residue( "THR" );
-	thr.push_back( HydrogenBondingAtom( "OG1", "CB", "CA", 1.4, 109.5, none ) );
+	thr.emplace_back( "OG1", "CB", "CA", 1.4, 109.5, none );
 
 	HydrogenBondingAtoms & trp = create_residue( "TRP" );
-	trp.push_back( HydrogenBondingAtom( "NE1", "CD1", "CG", 1.4, 120.0, extended ) );
+	trp.emplace_back( "NE1", "CD1", "CG", 1.4, 120.0, extended );
 
 	HydrogenBondingAtoms & tyr = create_residue( "TYR" );
-	tyr.push_back( HydrogenBondingAtom( "OH", "CZ", "CE1", 1.4, 109.5, none ) );
+	tyr.emplace_back( "OH", "CZ", "CE1", 1.4, 109.5, none );
 }
 
 HydrogenBondingAtoms const HydrogenBondInfo::empty_;
@@ -611,7 +609,7 @@ HydrogenBondInfo::create_residue( std::string const & rsd_name )
 HydrogenBondingAtoms &
 HydrogenBondInfo::retrieve_residue( std::string const & rsd_name )
 {
-	AtomNameMap::iterator hb_atoms = atoms_.find( rsd_name );
+	auto hb_atoms = atoms_.find( rsd_name );
 	if ( hb_atoms == atoms_.end() ) {
 		hb_atoms = atoms_.insert( std::make_pair( rsd_name, HydrogenBondingAtoms() ) ).first;
 	}
@@ -631,7 +629,7 @@ HydrogenBondInfo::add_atoms_from_string( std::string const & description_str )
 		utility_exit_with_message( msg.str() );
 	}
 
-	utility::vector1< std::string >::const_iterator cur_field = fields.begin();
+	auto cur_field = fields.begin();
 	std::string const & res_name = *cur_field;
 	++cur_field;
 	std::string const & atom1 = *cur_field;
@@ -650,14 +648,14 @@ HydrogenBondInfo::add_atoms_from_string( std::string const & description_str )
 	}
 
 	HydrogenBondingAtoms & hb_atoms = retrieve_residue( res_name );
-	hb_atoms.push_back( HydrogenBondingAtom( atom1, atom2, atom3, dist, angle, dihedrals ) );
+	hb_atoms.emplace_back( atom1, atom2, atom3, dist, angle, dihedrals );
 	return hb_atoms;
 }
 
 HydrogenBondingAtoms const &
 HydrogenBondInfo::atoms( std::string const & rsd_name ) const
 {
-	AtomNameMap::const_iterator a = atoms_.find( rsd_name );
+	auto a = atoms_.find( rsd_name );
 	if ( a == atoms_.end() ) return empty_;
 	else return a->second;
 }
@@ -671,7 +669,7 @@ using namespace protocols::constraint_generator;
 template<> std::mutex SingletonBase< HydrogenBondInfo >::singleton_mutex_{};
 template<> std::atomic< HydrogenBondInfo * > SingletonBase< HydrogenBondInfo >::instance_( NULL );
 #else
-template<> HydrogenBondInfo * SingletonBase< HydrogenBondInfo >::instance_ = NULL;
+template<> HydrogenBondInfo * SingletonBase< HydrogenBondInfo >::instance_ = nullptr;
 #endif
 }
 

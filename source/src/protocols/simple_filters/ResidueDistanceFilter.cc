@@ -37,7 +37,7 @@ ResidueDistanceFilterCreator::create_filter() const { return protocols::filters:
 std::string
 ResidueDistanceFilterCreator::keyname() const { return "ResidueDistance"; }
 
-ResidueDistanceFilter::~ResidueDistanceFilter(){}
+ResidueDistanceFilter::~ResidueDistanceFilter()= default;
 
 void
 ResidueDistanceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )

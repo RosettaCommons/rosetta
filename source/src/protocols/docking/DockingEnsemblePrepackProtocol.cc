@@ -77,15 +77,14 @@ void DockingEnsemblePrepackProtocol::setup_defaults()
 	trans_magnitude_ = 1000.0;
 	pack_operations_ = SequenceMoverOP( new SequenceMover() );
 
-	ensemble1_ = NULL;
-	ensemble2_ = NULL;
+	ensemble1_ = nullptr;
+	ensemble2_ = nullptr;
 	ensemble1_filename_ = "";
 	ensemble2_filename_ = "";
 	movers_setup_ = false;
 }
 
-DockingEnsemblePrepackProtocol::~DockingEnsemblePrepackProtocol(){
-}
+DockingEnsemblePrepackProtocol::~DockingEnsemblePrepackProtocol()= default;
 
 void DockingEnsemblePrepackProtocol::init_from_options()
 {

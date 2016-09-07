@@ -55,7 +55,7 @@ PNatLigPoseOptEData::PNatLigPoseOptEData():
 }
 
 
-PNatLigPoseOptEData::~PNatLigPoseOptEData() {}
+PNatLigPoseOptEData::~PNatLigPoseOptEData() = default;
 
 
 Real

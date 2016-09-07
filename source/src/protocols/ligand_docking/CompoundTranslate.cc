@@ -72,7 +72,7 @@ CompoundTranslate::CompoundTranslate(CompoundTranslate const & that):
 	allow_overlap_(that.allow_overlap_)
 {}
 
-CompoundTranslate::~CompoundTranslate() {}
+CompoundTranslate::~CompoundTranslate() = default;
 
 protocols::moves::MoverOP CompoundTranslate::clone() const {
 	return protocols::moves::MoverOP( new CompoundTranslate( *this ) );

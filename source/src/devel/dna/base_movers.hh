@@ -19,6 +19,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <utility/vector1.hh>
@@ -49,19 +50,19 @@ public:
 		Real const max_score_increase,
 		ScoreFunctionOP scorefxn
 	):
-		lib_( lib ),
+		lib_(std::move( lib )),
 		frag_dev_threshold_( frag_dev_threshold ),
 		max_tries_( max_tries ),
 		max_score_increase_( max_score_increase ),
-		scorefxn_( scorefxn )
+		scorefxn_(std::move( scorefxn ))
 	{
 		protocols::moves::Mover::type( "BasePairMover" );
 	}
 
 
 	void
-	apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	DNA_FragLibOP lib_;
@@ -96,19 +97,19 @@ public:
 		Real const max_score_increase,
 		ScoreFunctionOP scorefxn
 	):
-		lib_( lib ),
+		lib_(std::move( lib )),
 		frag_dev_threshold_( frag_dev_threshold ),
 		max_tries_( max_tries ),
 		max_score_increase_( max_score_increase ),
-		scorefxn_( scorefxn )
+		scorefxn_(std::move( scorefxn ))
 	{
 		protocols::moves::Mover::type( "BaseStepMover" );
 	}
 
 
 	void
-	apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	DNA_FragLibOP lib_;

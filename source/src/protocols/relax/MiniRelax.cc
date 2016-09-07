@@ -39,6 +39,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -53,7 +54,7 @@ MiniRelax::MiniRelax(
 	core::scoring::ScoreFunctionOP scorefxn_in
 ) :
 	parent(),
-	scorefxn_(scorefxn_in)
+	scorefxn_(std::move(scorefxn_in))
 {}
 
 MiniRelax::MiniRelax( MiniRelax const & other ) :
@@ -62,7 +63,7 @@ MiniRelax::MiniRelax( MiniRelax const & other ) :
 	scorefxn_( other.scorefxn_ )
 {}
 
-MiniRelax::~MiniRelax() {}
+MiniRelax::~MiniRelax() = default;
 
 protocols::moves::MoverOP
 MiniRelax::clone() const {

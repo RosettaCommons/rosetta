@@ -51,19 +51,19 @@ public:// constructor/destructor
 	FilterStructs();
 
 	/// @brief value constructor
-	FilterStructs( String const & name );
+	FilterStructs( String name );
 
 	/// @brief value constructor
-	FilterStructs( String const & name, Size const ntrial );
+	FilterStructs( String name, Size const ntrial );
 
 	/// @brief value constructor
-	FilterStructs( String const & name, Pose const & pose, Size const ntrial );
+	FilterStructs( String name, Pose const & pose, Size const ntrial );
 
 	/// @brief copy constructor
 	FilterStructs( FilterStructs const & rval );
 
 	/// @brief destructor
-	virtual ~FilterStructs();
+	~FilterStructs() override;
 
 
 public:// virtural constructor
@@ -166,27 +166,27 @@ public:
 	FilterStructs_Packstat( FilterStructs_Packstat const & rval );
 
 	/// @brief destructor
-	virtual ~FilterStructs_Packstat();
+	~FilterStructs_Packstat() override;
 
 
 public:// virtural constructor
 
 
 	/// @brief
-	virtual FilterStructsOP clone() const;
+	FilterStructsOP clone() const override;
 
 	/// @brief
-	virtual FilterStructsOP fresh_instance() const;
+	FilterStructsOP fresh_instance() const override;
 
 
 public:// virtual main operation
 
 
 	/// @brief
-	virtual void apply( Pose const & );
+	void apply( Pose const & ) override;
 
 	/// @brief
-	virtual void reset( Pose const & );
+	void reset( Pose const & ) override;
 
 
 private:
@@ -218,27 +218,27 @@ public:
 	FilterStructs_TotalCharge( FilterStructs_TotalCharge const & rval );
 
 	/// @brief destructor
-	virtual ~FilterStructs_TotalCharge();
+	~FilterStructs_TotalCharge() override;
 
 
 public:// virtural constructor
 
 
 	/// @brief
-	virtual FilterStructsOP clone() const;
+	FilterStructsOP clone() const override;
 
 	/// @brief
-	virtual FilterStructsOP fresh_instance() const;
+	FilterStructsOP fresh_instance() const override;
 
 
 public:// virtual main operation
 
 
 	/// @brief
-	virtual void apply( Pose const & );
+	void apply( Pose const & ) override;
 
 	/// @brief
-	virtual void reset( Pose const & );
+	void reset( Pose const & ) override;
 
 
 private:

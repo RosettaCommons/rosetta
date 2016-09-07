@@ -61,7 +61,7 @@ TrialCounterObserver::TrialCounterObserver(
 	Mover::type( "TrialCounterObserver" );
 }
 
-TrialCounterObserver::~TrialCounterObserver() {}
+TrialCounterObserver::~TrialCounterObserver() = default;
 
 std::string TrialCounterObserver::get_name() const {
 	return "TrialCounterObserver";

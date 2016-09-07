@@ -81,7 +81,7 @@ public:
 	protocols::moves::MonteCarloOP get_mc( core::pose::Pose & pose );
 
 protected:
-	virtual void apply( core::pose::Pose & pose ) = 0;
+	void apply( core::pose::Pose & pose ) override = 0;
 	virtual void apply_mod( core::pose::Pose & pose  ) = 0;
 	void set_default();
 	void set_default_mc( core::pose::Pose & pose );
@@ -130,8 +130,8 @@ public:
 		Mover::type("LoopModeler");
 	}
 
-	void apply( core::pose::Pose & pose );
-	void apply_mod( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
+	void apply_mod( core::pose::Pose & pose ) override;
 
 private:
 	core::fragment::FragSetCOP fragset3mer_;
@@ -158,8 +158,8 @@ public:
 		Mover::type("LoopRefiner");
 	}
 
-	void apply( core::pose::Pose & pose );
-	void apply_mod( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
+	void apply_mod( core::pose::Pose & pose ) override;
 private:
 
 	protocols::moves::SequenceMoverOP small_move_rot_trial_mover( core::kinematics::MoveMapOP movemap_one_loop );

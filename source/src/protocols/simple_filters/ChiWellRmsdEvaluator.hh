@@ -51,7 +51,7 @@ public:
 	ChiWellRmsdEvaluator( core::pose::PoseCOP, core::Size nchi_max, core::Real sasa_threshold, utility::vector1< core::Size> const& selection, std::string column_tag );
 
 	/// @brief evaluate pose
-	virtual core::Real apply( core::pose::Pose& ) const;
+	core::Real apply( core::pose::Pose& ) const override;
 
 private:
 	core::pose::PoseCOP rmsd_pose_;

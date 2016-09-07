@@ -22,6 +22,7 @@
 
 
 // unit headers
+#include <utility>
 #include <utility/signals/Link.fwd.hh>
 
 // package headers
@@ -61,20 +62,18 @@ public: // construct/destruct
 	/// @brief LinkUnit constructor
 	inline
 	Link( LinkUnitOP unit ) :
-		unit_( unit ) // must store the same LinkUnit
+		unit_(std::move( unit )) // must store the same LinkUnit
 	{}
 
 
 	/// @brief copy constructor
 	inline
-	Link( Link const & rval ) :
-		unit_( rval.unit_ ) // must store the same LinkUnit
-	{}
+	Link( Link const & ) = default;
 
 
 	/// @brief default destructor
 	inline
-	~Link() {}
+	~Link() = default;
 
 
 public: // copy assignment
@@ -106,7 +105,7 @@ public: // interface
 	/// @brief link empty?
 	inline
 	bool empty() const {
-		return ( unit_ == NULL );
+		return ( unit_ == nullptr );
 	}
 
 

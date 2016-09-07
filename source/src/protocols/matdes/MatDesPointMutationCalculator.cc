@@ -182,7 +182,7 @@ MatDesPointMutationCalculator::MatDesPointMutationCalculator(
 }
 
 //destruction!
-MatDesPointMutationCalculator::~MatDesPointMutationCalculator(){}
+MatDesPointMutationCalculator::~MatDesPointMutationCalculator()= default;
 
 //creators
 protocols::matdes::MatDesPointMutationCalculatorOP
@@ -395,7 +395,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 			}
 			//else TR << "Setting task for filter " << set_task_for_filters_[ifilt]->get_user_defined_name() << ": Residue " << resj << " allowed to repack." << std::endl;
 		}
-		OperateOnCertainResiduesOP oocr_prevent_repacking_op( new OperateOnCertainResidues );;
+		OperateOnCertainResiduesOP oocr_prevent_repacking_op( new OperateOnCertainResidues );
 		oocr_prevent_repacking_op->residue_indices( prevent_repacking_residues );
 		oocr_prevent_repacking_op->op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 		new_task_factory->push_back(oocr_prevent_repacking_op);
@@ -619,13 +619,13 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 	vector1< pair< Size, vector1< pair< AA, vector1< Real > > > > > seqpos_aa_vals_vec;
 	calc_point_mut_filters( pose, seqpos_aa_vals_vec );
 	//iter thru tmp container and use vals to populate input container
-	for ( vector1< pair< core::Size, vector1< pair< AA, vector1< Real > > > > >::iterator seqpos_aa_vals = seqpos_aa_vals_vec.begin();
+	for ( auto seqpos_aa_vals = seqpos_aa_vals_vec.begin();
 			seqpos_aa_vals != seqpos_aa_vals_vec.end(); ++seqpos_aa_vals ) {
 		Size seqpos( seqpos_aa_vals->first );
 		//seqpos_aa_vals->second is a seqpos' vector of aa/vals pairs
 		assert( !seqpos_aa_vals->second.empty() );
 		vector1< pair< AA, Real > > aa_val;
-		for ( vector1< pair< AA, vector1< Real > > >::iterator aa_vals = seqpos_aa_vals->second.begin();
+		for ( auto aa_vals = seqpos_aa_vals->second.begin();
 				aa_vals != seqpos_aa_vals->second.end(); ++aa_vals ) {
 			//aa_vals->second is an aa's vector of vals
 			assert( !aa_vals->second.empty() );

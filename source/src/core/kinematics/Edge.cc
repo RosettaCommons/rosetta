@@ -141,6 +141,8 @@ operator !=( Edge const & a, Edge const & b )
 	return ( a.start() != b.start() || a.stop() != b.stop() || a.label() != b.label() );
 }
 
+const int Edge::PEPTIDE;
+const int Edge::CHEMICAL;
 
 } // namespace kinematics
 } // namespace core

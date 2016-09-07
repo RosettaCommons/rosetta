@@ -71,7 +71,7 @@ public:
 		init_options();
 	}
 
-	virtual ~PhProtocol(){};
+	~PhProtocol() override= default;
 
 	void
 	set_default(){
@@ -359,9 +359,9 @@ public:
 	}
 
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) override{
 
 		using namespace core;
 		using namespace chemical;
@@ -441,21 +441,21 @@ public:
 		}
 	}
 
-	std::string get_name() const { return "PhProtocol"; }
+	std::string get_name() const override { return "PhProtocol"; }
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new PhProtocol );
 	}
 
-	virtual
+	
 	bool
-	reinitialize_for_each_job() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
 
-	virtual
+	
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_new_input() const override { return false; }
 
 private:
 	core::pose::Pose old_pose_;

@@ -77,7 +77,7 @@ ClearCompositionConstraintsMover::ClearCompositionConstraintsMover( ClearComposi
 
 /// @brief Destructor
 ///
-ClearCompositionConstraintsMover::~ClearCompositionConstraintsMover(){}
+ClearCompositionConstraintsMover::~ClearCompositionConstraintsMover()= default;
 
 /// @brief Copy this object and return a pointer to the copy.
 ///

@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
@@ -55,9 +56,9 @@ BiasedMonteCarlo::BiasedMonteCarlo(
 	Real const temperature,
 	BiasEnergyOP bias_energy
 ) : Parent( init_pose, scorefxn, temperature ),
-	bias_energy_( bias_energy )
+	bias_energy_(std::move( bias_energy ))
 {
-	runtime_assert( bias_energy_ != 0 );
+	runtime_assert( bias_energy_ != nullptr );
 	bias_energy_->set_temperature( temperature );
 }
 
@@ -66,9 +67,9 @@ BiasedMonteCarlo::BiasedMonteCarlo(
 	Real const temperature,
 	BiasEnergyOP bias_energy
 ) : Parent( scorefxn, temperature ),
-	bias_energy_( bias_energy )
+	bias_energy_(std::move( bias_energy ))
 {
-	runtime_assert( bias_energy_ != 0 );
+	runtime_assert( bias_energy_ != nullptr );
 	bias_energy_->set_temperature( temperature );
 }
 

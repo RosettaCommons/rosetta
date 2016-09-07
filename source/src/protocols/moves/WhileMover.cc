@@ -23,6 +23,7 @@
 // tracer
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 using basic::T;
@@ -37,7 +38,7 @@ namespace protocols {
 namespace moves {
 
 /// WhileMover
-PoseCondition::~PoseCondition() {}
+PoseCondition::~PoseCondition() = default;
 
 WhileMover::WhileMover() : Mover(), nmoves_(1) {}
 
@@ -47,12 +48,12 @@ WhileMover::WhileMover(
 	PoseConditionOP condition
 ) :
 	Mover("ConditionalRepeatMover"),
-	mover_(mover_in),
+	mover_(std::move(mover_in)),
 	nmoves_(nmoves_in),
-	p_cond_( condition )
+	p_cond_(std::move( condition ))
 {}
 
-WhileMover::~WhileMover() {}
+WhileMover::~WhileMover() = default;
 
 void
 WhileMover::apply( core::pose::Pose & pose ) {

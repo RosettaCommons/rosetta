@@ -59,7 +59,7 @@ public:
 	MatcherTask( MatcherTask const & other );
 	MatcherTask & operator = ( MatcherTask const & rhs );
 
-	virtual ~MatcherTask();
+	~MatcherTask() override;
 
 	/// self pointers
 	inline MatcherTaskCOP get_self_ptr() const { return shared_from_this(); }

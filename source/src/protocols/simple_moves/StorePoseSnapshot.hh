@@ -59,25 +59,25 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~StorePoseSnapshot();
+	~StorePoseSnapshot() override;
 
 	/// @brief Apply function -- actually apply this mover to the pose, modifying the pose.
 	///
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Get the mover name.
 	///
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Makea  copy of this mover, and return an owning pointer to the copy.
 	///
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::simple_moves::StorePoseSnapshot( *this ) ) );
 	}
 
 	/// @brief Create a new instance of this mover, initialized to default settings.
 	///
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new StorePoseSnapshot );
 	}
 
@@ -88,7 +88,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	/// @brief Set the name of the reference pose object that will be created and stored in the pose.
 	///

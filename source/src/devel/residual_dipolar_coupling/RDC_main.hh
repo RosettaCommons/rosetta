@@ -31,6 +31,7 @@
 //// C++ headers
 #include <map>
 
+#include <utility>
 #include <utility/vector1_bool.hh>
 #include <iostream>
 
@@ -42,7 +43,7 @@ namespace residual_dipolar_coupling {
 class RDC {
 
 public:
-	RDC(){}
+	RDC() = default;
 
 	RDC(
 		core::Size type,
@@ -147,7 +148,7 @@ public:
 	RDC_data(
 		std::string filename
 	) :
-		filename_( filename )
+		filename_(std::move( filename ))
 	{
 		read_RDC_file( filename_ );
 	}

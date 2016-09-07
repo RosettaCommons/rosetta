@@ -36,9 +36,9 @@ public:
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size const rb_jump=1,
 		core::Size const repeats=1);
-	bool apply( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const;
-	filters::FilterOP fresh_instance() const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	filters::FilterOP clone() const override;
+	filters::FilterOP fresh_instance() const override;
 
 	core::Size repeats() const;
 	void repeats( core::Size const repeats );
@@ -54,11 +54,11 @@ public:
 	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
 	void use_custom_task( bool uct ) { use_custom_task_ = uct; }
 	bool use_custom_task() const { return use_custom_task_; }
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	virtual ~DdgFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~DdgFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	void relax_mover( protocols::moves::MoverOP m );
 	protocols::moves::MoverOP relax_mover() const;
 	void filter( protocols::filters::FilterOP m );

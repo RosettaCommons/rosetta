@@ -51,6 +51,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/relax/ClassicRelax.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -228,9 +229,8 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
 		kin_moverOP->set_vary_bondangles( true );
 		kin_moverOP->set_temperature( 2.0 );
-		for ( protocols::loops::Loops::const_iterator it= loops->begin(), it_end=loops->end();
-				it != it_end; ++it ) {
-			protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
+		for (const auto & it : *loops) {
+			protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, it , 1000);
 			kinwrapper.apply(pose);
 		}
 	}
@@ -259,7 +259,7 @@ DesignRelaxMover::DesignRelaxMover() : Mover()
 
 /// @brief ctor with hand made designtaskfactory and default design/relax scorefunctions
 DesignRelaxMover::DesignRelaxMover( core::pack::task::TaskFactoryOP designtaskfactory
-) : Mover(), designtaskfactory_( designtaskfactory )
+) : Mover(), designtaskfactory_(std::move( designtaskfactory ))
 {
 	Mover::type( "DesignRelaxMover" );
 	core::scoring::ScoreFunctionOP softfxn(
@@ -275,13 +275,13 @@ DesignRelaxMover::DesignRelaxMover(
 	core::scoring::ScoreFunctionOP designfxn,
 	core::scoring::ScoreFunctionOP relaxfxn
 ) :
-	Mover(), designtaskfactory_( designtaskfactory ),designfxn_( designfxn ),relaxfxn_( relaxfxn )
+	Mover(), designtaskfactory_(std::move( designtaskfactory )),designfxn_(std::move( designfxn )),relaxfxn_(std::move( relaxfxn ))
 {
 	Mover::type( "DesignRelaxMover" );
 }
 
 
-DesignRelaxMover::~DesignRelaxMover(){}
+DesignRelaxMover::~DesignRelaxMover() = default;
 
 } // DenovoProteinDesign
 } // devel

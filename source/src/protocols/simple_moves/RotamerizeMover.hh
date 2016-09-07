@@ -61,14 +61,14 @@ public:
 	);
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~RotamerizeMover();
+	~RotamerizeMover() override;
 
 	// copy constructor
 	RotamerizeMover( RotamerizeMover const & other );
 
 	// methods
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
 	// setters

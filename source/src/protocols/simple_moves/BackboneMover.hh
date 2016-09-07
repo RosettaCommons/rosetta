@@ -69,13 +69,13 @@ public:
 	BackboneMover( BackboneMover const &src );
 
 	//destructor
-	~BackboneMover();
+	~BackboneMover() override;
 
 	/// virtual functions that get overridden or called from the inheriting classes
-	virtual void apply( core::pose::Pose & );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & ) override;
+	std::string get_name() const override;
 
-	virtual void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	virtual void setup_list( core::pose::Pose & ) = 0;
 
@@ -151,7 +151,7 @@ public:
 	/// @details Clones the input.
 	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -159,22 +159,22 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief get whether detailed balance is preserved (i.e. no Ramachandran biasing)
 	bool
-	preserve_detailed_balance() const;
+	preserve_detailed_balance() const override;
 
 	/// @brief set whether detailed balance is preserved (i.e. no Ramachandran biasing)
 	void
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
-	);
+	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::DOF_ID_Range>
-	dof_id_ranges(core::pose::Pose & pose) = 0;
+	dof_id_ranges(core::pose::Pose & pose) override = 0;
 
 protected:
 	core::select::residue_selector::ResidueSubset
@@ -246,31 +246,31 @@ public:
 	);
 
 	//destructor
-	~SmallMover();
+	~SmallMover() override;
 
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void setup_list( core::pose::Pose & pose );
-	virtual void set_angles( core::Real angle_in );
-	virtual bool make_move( core::pose::Pose & pose );
+	void setup_list( core::pose::Pose & pose ) override;
+	void set_angles( core::Real angle_in ) override;
+	bool make_move( core::pose::Pose & pose ) override;
 
-	virtual void test_move( core::pose::Pose & );
+	void test_move( core::pose::Pose & ) override;
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 private:
 	bool move_with_scorefxn( core::pose::Pose & pose );
@@ -309,31 +309,31 @@ public:
 	);
 
 	//destructor
-	~ShearMover();
+	~ShearMover() override;
 
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void setup_list( core::pose::Pose & pose );
-	virtual void set_angles( core::Real angle_in );
-	virtual bool make_move( core::pose::Pose & pose );
+	void setup_list( core::pose::Pose & pose ) override;
+	void set_angles( core::Real angle_in ) override;
+	bool make_move( core::pose::Pose & pose ) override;
 
-	virtual void test_move( core::pose::Pose & );
+	void test_move( core::pose::Pose & ) override;
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 private:
 	bool move_with_scorefxn( core::pose::Pose & pose );

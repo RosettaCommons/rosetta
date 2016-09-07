@@ -49,21 +49,21 @@ public:
 
 	SimulatedTempering( SimulatedTempering const& );
 
-	virtual
-	void apply( core::pose::Pose& ) {};
+	
+	void apply( core::pose::Pose& ) override {};
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -71,28 +71,28 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief execute the temperatur move ( called by observer_after_metropolis )
 	/// returns the current temperatur in kT.
 	core::Real
-	temperature_move( core::Real score);
+	temperature_move( core::Real score) override;
 
 	/// @brief callback executed before any Monte Carlo trials
-	virtual void
+	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
 	/// @brief callback executed after all Monte Carlo trials
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 	void
 	finalize_simulation( std::string const& output_name );
@@ -101,8 +101,8 @@ protected:
 	void set_defaults();
 
 	/// @brief Assigns user specified values to primitive members using command line options
-	virtual
-	void init_from_options();
+	
+	void init_from_options() override;
 
 	/// @brief update weights based on current counts
 	void reweight();
@@ -111,11 +111,11 @@ protected:
 	void reset_raw_counter();
 
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
-	virtual
-	bool initialize_from_file( std::string const& filename );
+	
+	bool initialize_from_file( std::string const& filename ) override;
 
-	virtual
-	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts );
+	
+	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts ) override;
 
 	/// ------------------ register cmdline options ---------------------------
 

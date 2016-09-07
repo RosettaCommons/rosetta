@@ -31,14 +31,13 @@ ResidueTypeSetCache::ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set ):
 {}
 
 //Destructor
-ResidueTypeSetCache::~ResidueTypeSetCache()
-{}
+ResidueTypeSetCache::~ResidueTypeSetCache() = default;
 
 /// @details Main accessor function into ResidueTypeSetCache
 ResidueTypeCOP
 ResidueTypeSetCache::name_map( std::string const & name_in ) const
 {
-	std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( name_in );
+	auto it = name_map_.find( name_in );
 	runtime_assert( it != name_map_.end() );
 	return it->second;
 }
@@ -62,7 +61,7 @@ ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
 void
 ResidueTypeSetCache::remove_residue_type( std::string const & name )
 {
-	std::map< std::string, ResidueTypeCOP >::iterator it = name_map_.find( name );
+	auto it = name_map_.find( name );
 	runtime_assert( it != name_map_.end() );
 	name_map_.erase( it );
 	clear_cached_maps();
@@ -80,7 +79,7 @@ ResidueTypeSetCache::update_residue_type( ResidueTypeCOP residue_type_original, 
 
 bool
 ResidueTypeSetCache::has_generated_residue_type( ResidueTypeCOP residue_type ) const {
-	std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( residue_type->name() );
+	auto it = name_map_.find( residue_type->name() );
 	if ( it == name_map_.end() ) return false;
 	runtime_assert( it->second == residue_type );
 	return true;

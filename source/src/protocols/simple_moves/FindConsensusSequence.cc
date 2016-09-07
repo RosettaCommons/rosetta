@@ -64,7 +64,7 @@ FindConsensusSequence::FindConsensusSequence() :
 	sfxn_( core::scoring::get_score_function() )
 {}
 
-FindConsensusSequence::~FindConsensusSequence() {}
+FindConsensusSequence::~FindConsensusSequence() = default;
 
 moves::MoverOP FindConsensusSequence::clone() const {
 	return FindConsensusSequenceOP( new FindConsensusSequence( *this ) );

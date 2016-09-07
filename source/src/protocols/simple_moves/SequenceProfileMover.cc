@@ -50,7 +50,7 @@ SequenceProfileMover::SequenceProfileMover() :
 {
 }
 
-SequenceProfileMover::~SequenceProfileMover() {}
+SequenceProfileMover::~SequenceProfileMover() = default;
 
 void
 SequenceProfileMover::apply( core::pose::Pose & pose )

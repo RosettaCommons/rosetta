@@ -338,7 +338,7 @@ analyze_interface_sasa(
 		conformation::Residue const & rsd( pose.residue(i) );
 
 		// donors
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				hnum  = rsd.Hpos_polar().begin(),
 				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			id::AtomID const hatm( *hnum, i );
@@ -351,7 +351,7 @@ analyze_interface_sasa(
 		}
 
 		// acceptors
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				anum  = rsd.accpt_pos().begin(),
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			id::AtomID const aatm( *anum, i );
@@ -391,7 +391,7 @@ make_base_pair_mutation(
 
 		// search for the matching residue type
 		ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
-		if ( rsd_type == 0 ) {
+		if ( rsd_type == nullptr ) {
 			utility_exit_with_message("couldnt find residuetype for basepair mutation!");
 		}
 
@@ -458,8 +458,8 @@ check_residue_proximity_to_dna(
 
 	Real shortest_arg_dis2(10000), dis2;
 
-	for ( Positions::const_iterator dpos( dna_design_positions.begin() ); dpos != dna_design_positions.end(); ++dpos ) {
-		Residue const & dres( pose.residue(*dpos) );
+	for (unsigned long dna_design_position : dna_design_positions) {
+		Residue const & dres( pose.residue(dna_design_position) );
 		close = close || close_to_dna( res, dres, close_threshold2, true );
 		if ( close ) {
 			if ( z_axis_dist( res, dres ) < z_cutoff ) {

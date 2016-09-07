@@ -33,13 +33,13 @@ public:
 	MgScanner();
 
 	//destructor
-	~MgScanner();
+	~MgScanner() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "MgScanner"; }
+	std::string get_name() const override{ return "MgScanner"; }
 
 	void set_minimize( bool const & setting ){ minimize_ = setting; }
 	bool minimize() const { return minimize_; }

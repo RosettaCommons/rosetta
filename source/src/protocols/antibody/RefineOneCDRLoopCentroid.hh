@@ -54,12 +54,12 @@ public:
 		core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief default destructor
-	~RefineOneCDRLoopCentroid();
+	~RefineOneCDRLoopCentroid() override;
 
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 	void set_benchmark(bool const & setting) {

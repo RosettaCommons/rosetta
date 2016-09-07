@@ -44,8 +44,7 @@ numeric::Real kl_divergence(
 	// p = prior distribution, q = posterior distribution
 	// relative entropy = sum( p(i) * log( p(i) / q(i) )
 	Real div( 0.0 );
-	typedef utility::vector1< numeric::Real >::const_iterator iter;
-	for ( iter p = prior.begin(), p_end = prior.end(),
+	for ( auto p = prior.begin(), p_end = prior.end(),
 			q = posterior.begin(), q_end = posterior.end();
 			p != p_end && q != q_end; ++p, ++q
 			) {
@@ -78,8 +77,7 @@ numeric::Real corrcoef_with_provided_mean_and_std_dev(
 ) {
 	numeric::Real cov(0);
 	Size n(0);
-	typedef utility::vector1< numeric::Real >::const_iterator iter;
-	for ( iter v1 = vec1.begin(), v2 = vec2.begin(), v1_end = vec1.end(), v2_end = vec2.end();
+	for ( auto v1 = vec1.begin(), v2 = vec2.begin(), v1_end = vec1.end(), v2_end = vec2.end();
 			v1 != v1_end && v2 != v2_end;
 			++v1, ++v2, n++ ) {
 		cov += ( *v1 - m1 ) * ( *v2 - m2 );
@@ -106,8 +104,7 @@ numeric::Real cov_with_provided_mean(
 ) {
 	numeric::Real cov(0);
 	Size n(0);
-	typedef utility::vector1< numeric::Real >::const_iterator iter;
-	for ( iter v1 = vec1.begin(), v2 = vec2.begin(), v1_end = vec1.end(), v2_end = vec2.end();
+	for ( auto v1 = vec1.begin(), v2 = vec2.begin(), v1_end = vec1.end(), v2_end = vec2.end();
 			v1 != v1_end && v2 != v2_end;
 			++v1, ++v2, n++ ) {
 		cov += ( *v1 - m1 ) * ( *v2 - m2 );

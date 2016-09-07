@@ -115,8 +115,8 @@ public: // constructors
 
 
 	/// @brief destructor
-	virtual
-	~DataCache() {}
+	
+	~DataCache() override = default;
 
 
 public: // assignment

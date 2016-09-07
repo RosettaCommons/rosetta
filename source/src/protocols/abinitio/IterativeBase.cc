@@ -536,7 +536,7 @@ void IterativeBase::initialize() {
 	mem_tr << "IterativeBase CStor-End" << std::endl;
 }
 
-IterativeBase::~IterativeBase() {}
+IterativeBase::~IterativeBase() = default;
 
 /// @details ready for new batch .... if queue is empty batch will be generated any way, but otherwise we only generate if this yields true.
 ///  logic here: new batch at beginning, but only if we are in startup phase ( not a reload of a full archive )
@@ -668,7 +668,7 @@ void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP e
 		hedge_archive_->initialize();
 		hedge_archive_->set_evaluators( evaluators(), weights() );
 	}
-	hedge_archive_->add_evaluated_structure( evaluated_decoy, NULL, batch );
+	hedge_archive_->add_evaluated_structure( evaluated_decoy, nullptr, batch );
 }
 
 /// @brief overload to check for pool_convergence data in incoming decoys
@@ -862,9 +862,9 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 			if ( it->second == "atom_pair_constraint" ) {
 				core::Real var_sum( 0 ); core::Size ct_cst( 0 );
 				WeightMap const& variations( score_variations() );
-				for ( WeightMap::const_iterator vit = variations.begin(); vit != variations.end(); ++vit ) {
-					if ( vit->first.find( "filter_cst" ) != std::string::npos ) {
-						var_sum += vit->second;
+				for (const auto & variation : variations) {
+					if ( variation.first.find( "filter_cst" ) != std::string::npos ) {
+						var_sum += variation.second;
 						++ct_cst;
 					}
 				}
@@ -1416,26 +1416,26 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 
 	//count total decoys
 	Size total( 0 );
-	for ( ArchiveManager::BatchList::const_iterator it = manager().batches().begin(); it != manager().batches().end(); ++it ) {
-		if ( it->id() >= first_fullatom_batch_ ) break;
-		if ( !it->has_silent_in() ) continue;
-		total += it->decoys_returned();
-		tr.Debug << "harvest old decoys for safety hatch: batch " << it->id() << " " << it->decoys_returned() << " " << total << std::endl;
+	for (const auto & it : manager().batches()) {
+		if ( it.id() >= first_fullatom_batch_ ) break;
+		if ( !it.has_silent_in() ) continue;
+		total += it.decoys_returned();
+		tr.Debug << "harvest old decoys for safety hatch: batch " << it.id() << " " << it.decoys_returned() << " " << total << std::endl;
 	}
 	basic::show_time( tr,  "generate safety_hatch: counted total decoys" );
 
-	for ( ArchiveManager::BatchList::const_iterator it = manager().batches().begin(); it != manager().batches().end(); ++it ) {
+	for (const auto & it : manager().batches()) {
 		Real percentage_per_batch( 1.0*batch.nstruct() / (1.0*total) );
-		if ( it->id() >= first_fullatom_batch_ ) break;
-		if ( !it->has_silent_in() ) continue; //usually only the resampling decoys are interesting...
-		if ( !it->decoys_returned() ) continue; //avoid looking for empty files
+		if ( it.id() >= first_fullatom_batch_ ) break;
+		if ( !it.has_silent_in() ) continue; //usually only the resampling decoys are interesting...
+		if ( !it.decoys_returned() ) continue; //avoid looking for empty files
 		//  it->silent_out();
-		basic::show_time( tr,  "generate safety_hatch: access batch "+it->batch() );
+		basic::show_time( tr,  "generate safety_hatch: access batch "+it.batch() );
 		SilentFileData sfd;
 		std::list< std::pair< core::Real, SilentStructOP > > score_cut_decoys;
 		Size ct( 0 );
-		tr.Debug << "read and score decoys in " << it->silent_out() << "..." << std::endl;
-		sfd.read_file( it->silent_out() );
+		tr.Debug << "read and score decoys in " << it.silent_out() << "..." << std::endl;
+		sfd.read_file( it.silent_out() );
 		for ( SilentFileData::iterator sit=sfd.begin(), esit=sfd.end(); sit!=esit; ++sit ) {
 			//std::string tag = sit->decoy_tag();
 			sit->set_decoy_tag( "harvest_"+batch.batch()+"_"+ObjexxFCL::lead_zero_string_of( ++ct, 6 ) );
@@ -1452,7 +1452,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		}
 		score_cut_decoys.sort();
 		tr.Debug << "select " << percentage_per_batch*100 << "% from batch from the lowest scoring " << score_cut_per_batch*100 << "% of structures" << std::endl;
-		basic::show_time( tr,  "generate safety_hatch: collected decoys batch "+it->batch() );
+		basic::show_time( tr,  "generate safety_hatch: collected decoys batch "+it.batch() );
 		// if we have less structures below score cut than what we want to harvest,.... take them all
 		while ( score_cut_per_batch < percentage_per_batch ) {
 			Size ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
@@ -1463,7 +1463,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 			}
 			percentage_per_batch-=score_cut_per_batch;
 		}
-		basic::show_time( tr,  "generate safety_hatch: generated start_decoys batch "+it->batch());
+		basic::show_time( tr,  "generate safety_hatch: generated start_decoys batch "+it.batch());
 		// for the remaining structures we want to harvest, they clearly will be less than what the score-cut yields... choose randomly...
 		if ( percentage_per_batch > 0.01 ) {
 			Size ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
@@ -1781,7 +1781,7 @@ void IterativeBase::rescore_nonlocal_archive() {
 	//make sure that archive gets re-evaluated...
 	set_evaluate_local( true );//set this temporarily
 
-	core::scoring::ScoreFunctionOP scfxn( NULL );
+	core::scoring::ScoreFunctionOP scfxn( nullptr );
 	std::string score_name;
 	std::string score_patch;
 
@@ -1832,7 +1832,7 @@ void IterativeBase::rescore_nonlocal_archive() {
 		//    add_evaluation( new evaluation::TruncatedScoreEvaluator( "prefa_centroid_score", selection, cen_scfxn, true /*fullname*/ ), 1.0 );
 
 		std::string fa_score = option[ iterative::fa_score ]();
-		core::scoring::ScoreFunctionOP fa_scfxn( NULL );
+		core::scoring::ScoreFunctionOP fa_scfxn( nullptr );
 		fa_scfxn = core::scoring::ScoreFunctionFactory::create_score_function( fa_score );
 		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::ScoreEvaluator( "score_fa", fa_scfxn, true /*fullname*/ ) ) ), option[ iterative::fullatom_after_quickrelax_weight ]() );
 	}
@@ -1841,7 +1841,7 @@ void IterativeBase::rescore_nonlocal_archive() {
 	add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::ScoreEvaluator( "_final", scfxn ) ) ), 1.0 );
 	rescore();
 	save_to_file();
-	set_scorefxn( NULL );
+	set_scorefxn( nullptr );
 	remove_evaluation("score_final");
 	set_weight("score_final",1.0); // need this for further scoring
 	//can only get here, if the mode is evaluate_local == false, then its setting to true was only temporarily
@@ -2189,7 +2189,7 @@ void IterativeBase::setup_filter_cst( core::Real overall_weight ) {
 	add_cmdline_claims( *topology_broker, false );
 	tr.Trace << "topology_broker is initiailized with " << topology_broker->num_claimers() << " claimers "<< std::endl;
 	core::Size ct( 1 );
-	for ( TopologyBroker::const_iterator it = topology_broker->begin();
+	for ( auto it = topology_broker->begin();
 			it != topology_broker->end(); ++it, ++ct ) {
 		tr.Trace << "found claimer of type " << (*it)->type() << "trying to cast now..."<< std::endl;
 		ConstraintClaimerCOP cst_claimer = utility::pointer::dynamic_pointer_cast< ConstraintClaimer const >( *it );
@@ -2202,7 +2202,7 @@ void IterativeBase::setup_filter_cst( core::Real overall_weight ) {
 			if ( !name.size() ) {
 				name = "filter_cst_"+ObjexxFCL::lead_zero_string_of( ct, 2 );
 			} else {
-				name = "filter_cst_"+name+"_"+ObjexxFCL::lead_zero_string_of( ct, 2 );;
+				name = "filter_cst_"+name+"_"+ObjexxFCL::lead_zero_string_of( ct, 2 );
 			}
 			add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new ConstraintEvaluatorWrapper( name, cst_claimer ) ) ), weight*overall_weight );
 		}//if cst_claimer

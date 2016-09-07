@@ -36,9 +36,9 @@ class FavorSequenceProfile : public protocols::moves::Mover
 {
 public:
 	FavorSequenceProfile();
-	virtual std::string get_name() const { return "FavorSequenceProfile"; }
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new protocols::simple_moves::FavorSequenceProfile( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FavorSequenceProfile ); }
+	std::string get_name() const override { return "FavorSequenceProfile"; }
+	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new protocols::simple_moves::FavorSequenceProfile( *this ) ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new FavorSequenceProfile ); }
 	void set_sequence( core::sequence::Sequence & seq, std::string matrix);
 	/// @brief Set the profile object to use.
 	/// Remember to set set_scaling() appropriately for the profile matrix you pass in.
@@ -47,9 +47,9 @@ public:
 	void set_scaling( std::string const & scaling );
 	/// @brief What multiplication factor to apply to the profile prior to using it for constraints.
 	void set_weight( core::Real weight );
-	void apply( core::pose::Pose & pose );
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	virtual ~FavorSequenceProfile() {};
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	~FavorSequenceProfile() override = default;
 private:
 	core::Real weight_;
 	bool use_current_;

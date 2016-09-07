@@ -112,8 +112,8 @@ MPI_LoopHashRefine::set_defaults(){
 	TR << "IDENT: " << ident_string_ << std::endl;
 
 	// make sure the state saves are randomly staggered - otherwise all the masters dump several hundred megs at once!
-	last_save_state_ = time(NULL)  + core::Size( numeric::random::rg().uniform()  * (core::Real) save_state_interval_) ;
-	TR << "Interlace dumps: " << last_save_state_ << "  " << time(NULL)  << "  " << last_save_state_ - time(NULL) << "  " << save_state_interval_ << "  " << std::endl;
+	last_save_state_ = time(nullptr)  + core::Size( numeric::random::rg().uniform()  * (core::Real) save_state_interval_) ;
+	TR << "Interlace dumps: " << last_save_state_ << "  " << time(nullptr)  << "  " << last_save_state_ - time(nullptr) << "  " << save_state_interval_ << "  " << std::endl;
 }
 
 void
@@ -169,7 +169,7 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 		}
 		ss->add_string_value( "husid", ss->get_string_value("usid") ); // history of usids
 		ss->add_energy( "state", 0 );     // state: 0 init, 1 loophashed, 2 relaxed
-		ss->add_energy( "ltime", time(NULL) ); // time when it became active. This is used to expire structures that havn't changed for a while.
+		ss->add_energy( "ltime", time(nullptr) ); // time when it became active. This is used to expire structures that havn't changed for a while.
 		ss->add_energy( "master", mpi_rank() ); // what master is it curretnly on ? (volatile)
 		ss->add_energy( "emperor_count", 0 ); // what master is it curretnly on ? (volatile)
 		temp_lib.add( ss );
@@ -204,19 +204,19 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 void
 MPI_LoopHashRefine::save_state(std::string prefix ){
 	start_timer( TIMING_IO_WRITE );
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 	write_queues_to_file( prefix + "." + string_of(mpi_rank()) );
 	library_central_.serialize_to_file( prefix + "." + string_of(mpi_rank())+ ".lib.library_central" );
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR << "Saved state: " << endtime - starttime << "s " << inbound().size() << " + " << outbound().size() << " + " <<  library_central_.size() << " + " << ( inbound().size() + outbound().size() + library_central_.size() ) << std::endl;
 	start_timer( TIMING_CPU );
 }
 
 void
 MPI_LoopHashRefine::save_state_auto(){
-	if ( (core::Size)(last_save_state_ + save_state_interval_ ) < (core::Size)time(NULL) ) {
+	if ( (core::Size)(last_save_state_ + save_state_interval_ ) < (core::Size)time(nullptr) ) {
 		TR << "Saving state.. " << std::endl;
-		last_save_state_ = time(NULL);
+		last_save_state_ = time(nullptr);
 		save_state( ident_string_ );
 	}
 }
@@ -235,8 +235,8 @@ MPI_LoopHashRefine::load_state(std::string prefix ){
 void
 MPI_LoopHashRefine::print_stats(){
 	static int lasttime = 0;
-	if ( (time(NULL) - lasttime) < 300 ) return;
-	lasttime = time(NULL);
+	if ( (time(nullptr) - lasttime) < 300 ) return;
+	lasttime = time(nullptr);
 
 	TR << "STATL: "
 		<< wall_time() << "s  "
@@ -254,7 +254,7 @@ bool
 MPI_LoopHashRefine::add_structure_to_library( core::io::silent::SilentStruct &pss, std::string add_algorithm ){
 	// reset the lhcount to 0
 	pss.add_energy( "lhcount", 0 );
-	pss.add_energy( "ltime", time(NULL) );
+	pss.add_energy( "ltime", time(nullptr) );
 
 	bool result = false;
 
@@ -304,19 +304,19 @@ MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::Si
 	core::Real closest_rms = 1000000;
 	SilentStructStore::iterator closest_struct;
 
-	for ( SilentStructStore::iterator jt =  library_central_.begin(),
+	for ( auto jt =  library_central_.begin(),
 			end = library_central_.end(); jt != end; ++jt ) {
 		core::Real the_rms;
 		// downcast
 		if ( option[ OptionKeys::lh::bss]() ) {
 			core::io::silent::BinarySilentStruct *jt_pss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(*(*jt)) );
 			core::io::silent::BinarySilentStruct *ss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(pss) );
-			if ( jt_pss == NULL || ss == NULL ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Binary Protein SilentStructs " );
+			if ( jt_pss == nullptr || ss == nullptr ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Binary Protein SilentStructs " );
 			the_rms = ss->CA_rmsd( *jt_pss );
 		} else {
 			core::io::silent::ProteinSilentStruct *jt_pss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(*(*jt)) );
 			core::io::silent::ProteinSilentStruct *ss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(pss) );
-			if ( jt_pss == NULL || ss == NULL ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Protein SilentStructs " );
+			if ( jt_pss == nullptr || ss == nullptr ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Protein SilentStructs " );
 			the_rms = ss->CA_rmsd( *jt_pss );
 		}
 		TRDEBUG << "The rms: " << the_rms << std::endl;
@@ -357,7 +357,7 @@ MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::S
 
 	// now find the library structure with the same ssid
 	find_SilentStructOPs predic("ssid", ssid);
-	SilentStructStore::iterator ssid_match = std::find_if( library_central_.begin(), library_central_.end(), predic );
+	auto ssid_match = std::find_if( library_central_.begin(), library_central_.end(), predic );
 
 	if ( ssid_match == library_central_.end() ) {
 		TR << "ssid expired: " + ObjexxFCL::string_of( ssid ) + " - rejected structure" << std::endl;
@@ -418,7 +418,7 @@ MPI_LoopHashRefine::add_structures_to_library( SilentStructStore &new_structs, s
 
 	for ( SilentStructStore::const_iterator it = new_structs.begin();
 			it != new_structs.end(); ++it ) {
-		runtime_assert( *it != 0 );
+		runtime_assert( *it != nullptr );
 		TR << "Add structure... " << format_silent_struct( *it ) << std::endl;
 		bool local_result = add_structure_to_library( *(*it), add_algorithm );
 		result = result || local_result;
@@ -444,12 +444,11 @@ MPI_LoopHashRefine::dump_structures( const SilentStructStore &new_structs, bool 
 	start_timer( TIMING_IO_WRITE  );
 	core::io::silent::SilentFileData sfd;
 	std::string filename = jobname_ + "." + string_of( mpi_rank() ) + ".out";
-	for ( SilentStructStore::const_iterator it = new_structs.begin();
-			it != new_structs.end(); ++it ) {
+	for (const auto & new_struct : new_structs) {
 		// don't add round 0 structures (they have conflicting silent struct headers and
 		// mess up columns in the output
-		if ( (*it)->get_energy("round") > 0 ) {
-			sfd.write_silent_struct( *(*it), filename, score_only );
+		if ( new_struct->get_energy("round") > 0 ) {
+			sfd.write_silent_struct( *new_struct, filename, score_only );
 		} else {
 			TR << "Trying to dump structure of round == 0. Refusing plainly. " << std::endl;
 		}
@@ -496,7 +495,7 @@ MPI_LoopHashRefine::format_silent_struct( const core::io::silent::SilentStruct &
 		<< " |"    << F(8,1, ss.get_energy("censcore"))
 		<< " |"    << F(5,1, ss.get_energy("rms") )
 		<< " |"    << I(3,   ss.get_energy("round") )
-		<< " |"    << I(5,   time(NULL) - ss.get_energy("ltime") )
+		<< " |"    << I(5,   time(nullptr) - ss.get_energy("ltime") )
 		<< " |"    << I(3,   ss.get_energy("master") )
 		<< " |"    << I(1,   ss.get_energy("lhcount")) << "]";
 	return sstream.str();

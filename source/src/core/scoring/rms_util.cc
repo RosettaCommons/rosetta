@@ -118,7 +118,7 @@ core::Real gdtsc(const core::pose::Pose& ref,
 	FArray2D<Real> coords_mod(3, expected_num_atoms);
 
 	int count = 1;
-	for ( map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count ) {
+	for ( auto i = residues.begin(); i != residues.end(); ++i, ++count ) {
 		const Size ref_idx = i->first;
 		const Size mod_idx = i->second;
 		const char ref_residue = ref.residue(ref_idx).name1();
@@ -182,7 +182,7 @@ core::Real gdtha(
 	FArray2D<Real> coords_mod(3, expected_num_atoms);
 
 	int count = 1;
-	for ( std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count ) {
+	for ( auto i = residues.begin(); i != residues.end(); ++i, ++count ) {
 		const Size ref_idx = i->first;
 		const Size mod_idx = i->second;
 		const char ref_residue = ref.residue(ref_idx).name1();
@@ -625,9 +625,9 @@ core::Real CA_rmsd(const core::pose::Pose& pose1,
 
 	vector1<Size> residues_1;  // residues in pose1
 	vector1<Size> residues_2;  // residues in pose2
-	for ( std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i ) {
-		Size res_1 = i->first;
-		Size res_2 = i->second;
+	for (const auto & residue : residues) {
+		Size res_1 = residue.first;
+		Size res_2 = residue.second;
 		residues_1.push_back(res_1);
 		residues_2.push_back(res_2);
 	}
@@ -651,9 +651,9 @@ core::Real CA_gdtmm(const core::pose::Pose& pose1,
 
 	vector1<Size> residues_1;  // residues in pose1
 	vector1<Size> residues_2;  // residues in pose2
-	for ( std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i ) {
-		Size res_1 = i->first;
-		Size res_2 = i->second;
+	for (const auto & residue : residues) {
+		Size res_1 = residue.first;
+		Size res_2 = residue.second;
 		residues_1.push_back(res_1);
 		residues_2.push_back(res_2);
 	}
@@ -1031,9 +1031,9 @@ void CA_gdttm(const core::pose::Pose& pose1,
 
 	vector1<Size> residues_1;  // residues in pose1
 	vector1<Size> residues_2;  // residues in pose2
-	for ( std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i ) {
-		Size res_1 = i->first;
-		Size res_2 = i->second;
+	for (const auto & residue : residues) {
+		Size res_1 = residue.first;
+		Size res_2 = residue.second;
 		residues_1.push_back(res_1);
 		residues_2.push_back(res_2);
 	}
@@ -1292,8 +1292,8 @@ create_shuffle_map_recursive_rms(
 	}
 	for ( int i=0; i< N; i++ ) {
 		bool exist (false);
-		for ( int j=0; j < int(sequence.size()); j++ ) {
-			if ( sequence.at(j) == i ) {
+		for (int j : sequence) {
+			if ( j == i ) {
 				exist = true;
 			}
 		}
@@ -1335,22 +1335,22 @@ rms_at_corresponding_atoms(
 
 	utility::vector1< Vector > p1_coords, p2_coords;
 
-	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(), end = atom_id_map.end(); iter != end; ++iter ) {
+	for (const auto & iter : atom_id_map) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
-		if ( tr.Debug.visible() && ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
-				ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
-			conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
-			conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
-			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
-				<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
+		if ( tr.Debug.visible() && ( mod_pose.residue( (iter.first).rsd() ).atom_name(  (iter.first).atomno() ) !=
+				ref_pose.residue( (iter.second).rsd() ).atom_name(  (iter.second).atomno() ) ) ) {
+			conformation::Residue const & mod_res( mod_pose.residue( (iter.first).rsd() ) );
+			conformation::Residue const & ref_res( ref_pose.residue( (iter.second).rsd() ) );
+			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter.first).atomno() )
+				<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter.second).atomno() ) << " in rmsd calculation." << std::endl;
 		}
 
-		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
+		if ( !is_calc_rms[ (iter.first).rsd() ] ) continue;
 
-		Vector const & p1(  mod_pose.xyz( iter->first ));
-		Vector const & p2(  ref_pose.xyz( iter->second ));
+		Vector const & p1(  mod_pose.xyz( iter.first ));
+		Vector const & p2(  ref_pose.xyz( iter.second ));
 		p1_coords.push_back(  p1 );
 		p2_coords.push_back(  p2 );
 	}
@@ -1367,20 +1367,20 @@ rms_at_all_corresponding_atoms(
 {
 	utility::vector1< Vector > p1_coords, p2_coords;
 
-	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(), end = atom_id_map.end(); iter != end; ++iter ) {
+	for (const auto & iter : atom_id_map) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
-		if ( tr.Debug.visible() && ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
-				ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
-			conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
-			conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
-			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
-				<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
+		if ( tr.Debug.visible() && ( mod_pose.residue( (iter.first).rsd() ).atom_name(  (iter.first).atomno() ) !=
+				ref_pose.residue( (iter.second).rsd() ).atom_name(  (iter.second).atomno() ) ) ) {
+			conformation::Residue const & mod_res( mod_pose.residue( (iter.first).rsd() ) );
+			conformation::Residue const & ref_res( ref_pose.residue( (iter.second).rsd() ) );
+			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter.first).atomno() )
+				<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter.second).atomno() ) << " in rmsd calculation." << std::endl;
 		}
 
-		Vector const & p1(  mod_pose.xyz( iter->first ));
-		Vector const & p2(  ref_pose.xyz( iter->second ));
+		Vector const & p1(  mod_pose.xyz( iter.first ));
+		Vector const & p2(  ref_pose.xyz( iter.second ));
 		p1_coords.push_back(  p1 );
 		p2_coords.push_back(  p2 );
 	}
@@ -1412,7 +1412,7 @@ rms_at_corresponding_atoms_no_super(
 
 	Size natoms( 0 );
 	Real sum( 0.0 );
-	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(), end = atom_id_map.end(); iter != end; ++iter ) {
+	for (const auto & iter : atom_id_map) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
@@ -1426,11 +1426,11 @@ rms_at_corresponding_atoms_no_super(
 		//    << " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
 		// }
 
-		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
-		if ( mod_pose.residue( (iter->first).rsd() ).is_virtual( (iter->first).atomno() ) ) continue;
-		if ( ref_pose.residue( (iter->second).rsd() ).is_virtual( (iter->second).atomno() ) ) continue;
-		Vector const & p1(  mod_pose.xyz( iter->first ));
-		Vector const & p2(  ref_pose.xyz( iter->second ));
+		if ( !is_calc_rms[ (iter.first).rsd() ] ) continue;
+		if ( mod_pose.residue( (iter.first).rsd() ).is_virtual( (iter.first).atomno() ) ) continue;
+		if ( ref_pose.residue( (iter.second).rsd() ).is_virtual( (iter.second).atomno() ) ) continue;
+		Vector const & p1(  mod_pose.xyz( iter.first ));
+		Vector const & p2(  ref_pose.xyz( iter.second ));
 
 		sum += (p1 - p2).length_squared();
 		natoms++;

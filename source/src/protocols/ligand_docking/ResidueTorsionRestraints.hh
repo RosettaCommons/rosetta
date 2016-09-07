@@ -47,7 +47,7 @@ public:
 		core::Size resid,
 		core::Real stddev_degrees
 	);
-	virtual ~ResidueTorsionRestraints() {}
+	~ResidueTorsionRestraints() override = default;
 
 	/// @brief Constrain residue torsions for specified pose.
 	virtual void enable( core::pose::Pose & pose );

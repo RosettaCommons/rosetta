@@ -48,14 +48,14 @@ private:
 public:
 	/// @brief default ctor
 	MembraneTopology();
-	virtual ~MembraneTopology();
+	~MembraneTopology() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const {
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::simple_moves::MembraneTopology( *this ) ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new MembraneTopology );
 	}
 
@@ -63,7 +63,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	std::string span_file() const { return span_file_; }
 	void span_file( std::string const & s ){ span_file_ = s; }
 

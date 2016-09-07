@@ -42,7 +42,7 @@ public:
 		LocalInserterOP inserter
 	);
 
-	virtual ~LoopHashSampler();
+	~LoopHashSampler() override;
 
 	void set_defaults();
 

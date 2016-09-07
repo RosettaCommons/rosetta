@@ -69,9 +69,7 @@ ZincSecondShell::ZincSecondShell( core::pose::Pose const & pose, utility::vector
 	third_shell_atom_ids_.clear();
 }
 
-ZincSecondShell::~ZincSecondShell()
-{
-}
+ZincSecondShell::~ZincSecondShell() = default;
 
 // basic::MetricValue< std::set<Size> >
 // ZincSecondShell::get_ligand_neighbors() {

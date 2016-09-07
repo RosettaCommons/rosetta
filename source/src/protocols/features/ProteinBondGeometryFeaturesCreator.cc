@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 ProteinBondGeometryFeaturesCreator::ProteinBondGeometryFeaturesCreator() {}
-ProteinBondGeometryFeaturesCreator::~ProteinBondGeometryFeaturesCreator() {}
+ProteinBondGeometryFeaturesCreator::~ProteinBondGeometryFeaturesCreator() = default;
 FeaturesReporterOP ProteinBondGeometryFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ProteinBondGeometryFeatures );
 }

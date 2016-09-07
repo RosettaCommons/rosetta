@@ -73,12 +73,12 @@ public:
 
 public:
 	MinimizationNode( graph::Graph * owner, Size index );
-	virtual ~MinimizationNode();
-	virtual void copy_from( parent const * source );
+	~MinimizationNode() override;
+	void copy_from( parent const * source ) override;
 
-	virtual void print() const;
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	void print() const override;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 	ResSingleMinimizationData const & res_min_data() const { return res_min_data_; }
 	ResSingleMinimizationData & res_min_data() { return res_min_data_; }
@@ -223,17 +223,17 @@ public:
 public:
 	MinimizationEdge( MinimizationGraph * owner, Size n1, Size n2 );
 	MinimizationEdge( MinimizationGraph * owner, MinimizationEdge const & example_edge );
-	virtual ~MinimizationEdge();
+	~MinimizationEdge() override;
 
 	/// @brief Copy the data held on the example edge, source.
 	/// The source edge must be castable to class MinimizationEdge.
-	virtual void copy_from( parent const * source );
+	void copy_from( parent const * source ) override;
 
 	ResPairMinimizationData const & res_pair_min_data() const { return res_pair_min_data_; }
 	ResPairMinimizationData & res_pair_min_data() { return res_pair_min_data_; }
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 	/// @brief Include a particular energy method as part of this edge.  It may not show up
 	/// in the active energy methods should this energy method not define an energy for the
@@ -367,7 +367,7 @@ public:
 	typedef Energies::const_iterator     EnergiesIterator;
 
 public:
-	virtual ~MinimizationGraph();
+	~MinimizationGraph() override;
 
 	MinimizationGraph( Size num_nodes );
 	MinimizationGraph();
@@ -393,7 +393,7 @@ public:
 	MinimizationEdge * find_minimization_edge( Size n1, Size n2);
 	MinimizationEdge const * find_minimization_edge( Size n1, Size n2) const;
 
-	virtual void delete_edge( graph::Edge * edge );
+	void delete_edge( graph::Edge * edge ) override;
 
 	void add_whole_pose_context_enmeth( EnergyMethodCOP enmeth );
 	EnergiesIterator whole_pose_context_enmeths_begin() const;
@@ -403,12 +403,12 @@ public:
 	EnergyMap const & fixed_energies() const;
 
 protected:
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
-	virtual graph::Node * create_new_node( Size index );
-	virtual graph::Edge * create_new_edge( Size index1, Size index2 );
-	virtual graph::Edge * create_new_edge( graph::Edge const * example_edge );
+	graph::Node * create_new_node( Size index ) override;
+	graph::Edge * create_new_edge( Size index1, Size index2 ) override;
+	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
 
 private:
 	Energies whole_pose_context_enmeths_;

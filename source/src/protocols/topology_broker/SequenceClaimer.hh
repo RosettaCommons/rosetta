@@ -50,20 +50,20 @@ class SequenceClaimer : public virtual TopologyClaimer {
 public:
 	SequenceClaimer();
 	SequenceClaimer(
-		std::string const& sequence,
+		std::string sequence,
 		std::string const& label,
-		std::string const& rsd_type_set_identifier
+		std::string rsd_type_set_identifier
 	);
 
 	SequenceClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SequenceClaimer>( TopologyClaimer::shared_from_this() ); }
 
-	virtual TopologyClaimerOP clone() const;
+	TopologyClaimerOP clone() const override;
 
-	virtual void generate_sequence_claims( claims::DofClaims& );
+	void generate_sequence_claims( claims::DofClaims& ) override;
 
 	/// @brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	///if this Sequence has been moved from position 1 --- needs to issue a fixed CUT in the fold-tree
-	virtual void generate_claims( claims::DofClaims& );
+	void generate_claims( claims::DofClaims& ) override;
 
 	// virtual bool allow_claim( DofClaim const& foreign_claim );
 
@@ -72,7 +72,7 @@ public:
 	//  virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -81,14 +81,14 @@ public:
 	}
 
 protected:
-	virtual bool read_tag( std::string tag, std::istream& );
-	virtual void init_after_reading();
+	bool read_tag( std::string tag, std::istream& ) override;
+	void init_after_reading() override;
 
 	void make_sequence_claim();
 
 	void set_sequence( std::string const& str ) {
 		input_sequence_ = str;
-		sequence_claim_ = NULL;
+		sequence_claim_ = nullptr;
 	}
 
 	void set_priority( core::Real pr ){

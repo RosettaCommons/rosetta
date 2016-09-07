@@ -217,7 +217,7 @@ void rotamers_for_trials(
 	core::graph::GraphCOP empty_graph( core::graph::GraphOP( new core::graph::Graph() ) );
 	// Retrieve conformers
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(rsd_no) );
-	if ( reslib.get() == NULL ) return;
+	if ( reslib.get() == nullptr ) return;
 
 	core::chemical::ResidueType const & res_type =  pose.residue_type(rsd_no);
 	utility::vector1< utility::vector1< core::Real > > empty_extra_chi_steps( res_type.nchi(), utility::vector1< core::Real >() );

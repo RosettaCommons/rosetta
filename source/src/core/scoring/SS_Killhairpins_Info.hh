@@ -127,7 +127,7 @@ public:
 
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new SS_Killhairpins_Info( *this ) );
 	}

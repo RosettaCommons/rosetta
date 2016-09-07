@@ -83,11 +83,11 @@ public:
 
 	CCDEndsGraftMover(CCDEndsGraftMover const & src);
 
-	virtual ~CCDEndsGraftMover();
+	~CCDEndsGraftMover() override;
 
 
-	virtual void
-	apply(core::pose::Pose & pose);
+	void
+	apply(core::pose::Pose & pose) override;
 
 public:
 
@@ -100,26 +100,26 @@ public:
 	/// Note: Will disregard flexibility settings, as the movemaps will be used as primary way to define flexibility.
 	/// May want to consider turning off the sampling step when passing crazy movemaps.
 	///
-	virtual void
-	set_movemaps(core::kinematics::MoveMapCOP const scaffold_mm, core::kinematics::MoveMapCOP const insert_mm);
+	void
+	set_movemaps(core::kinematics::MoveMapCOP const scaffold_mm, core::kinematics::MoveMapCOP const insert_mm) override;
 
 
 public:
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 
 private:
 
-	virtual protocols::simple_moves::SmallMoverOP
-	setup_default_small_mover();
+	protocols::simple_moves::SmallMoverOP
+	setup_default_small_mover() override;
 
 }; //Class CCDEndsGraftMover
 

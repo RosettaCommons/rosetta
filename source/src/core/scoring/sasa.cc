@@ -458,7 +458,7 @@ Real normalizing_area(char const res) {
 	static utility::vector1<Real> const area_total=init_normalizing_area_total();
 
 
-	//std::cout << "INDEX: " << res << " " << index << " " << area_sc[index] << " " << area_total[index] << std::endl;;
+	//std::cout << "INDEX: " << res << " " << index << " " << area_sc[index] << " " << area_total[index] << std::endl;
 	return area_sc[index];
 
 

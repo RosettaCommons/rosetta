@@ -16,6 +16,7 @@
 // Package headers
 
 // Project headers
+#include <utility>
 #include <utility/string_util.hh>
 
 
@@ -47,7 +48,7 @@ LocalPosition::LocalPosition():
 	position_( 0 )
 {}
 
-LocalPosition::LocalPosition( std::string const& label, core::Size const& position ):
+LocalPosition::LocalPosition( std::string const & label, core::Size const& position ):
 	ReferenceCount(),
 	label_( label ),
 	position_( position )

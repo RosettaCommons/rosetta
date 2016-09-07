@@ -40,7 +40,7 @@ MMTMinPackingJob::MMTMinPackingJob() :
 	nonideal_( false )
 {}
 
-MMTMinPackingJob::~MMTMinPackingJob() {}
+MMTMinPackingJob::~MMTMinPackingJob() = default;
 
 void MMTMinPackingJob::setup()
 {
@@ -101,7 +101,7 @@ void MMTMinPackingJob::update_pose( core::pose::Pose & final_pose )
 
 bool MMTMinPackingJob::best_assignment_exists() const
 {
-	return best_assignment_ != 0;
+	return best_assignment_ != nullptr;
 }
 
 

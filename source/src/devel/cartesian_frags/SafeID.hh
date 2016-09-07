@@ -20,6 +20,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 
 #include <string>
@@ -85,9 +86,9 @@ public:
 class SafeBondID {
 public:
 
-	SafeBondID( SafeAtomID const & a1, SafeAtomID const & a2 ):
-		atom1( a1 ),
-		atom2( a2 )
+	SafeBondID( SafeAtomID  a1, SafeAtomID  a2 ):
+		atom1(std::move( a1 )),
+		atom2(std::move( a2 ))
 	{}
 
 
@@ -121,18 +122,10 @@ public:
 		dir( dir_in )
 	{}
 
-	TorsionStubID( TorsionStubID const & src ):
-		id ( src.id ),
-		dir( src.dir )
-	{}
+	TorsionStubID( TorsionStubID const & ) = default;
 
 	TorsionStubID &
-	operator=( TorsionStubID const & src )
-	{
-		id = src.id;
-		dir = src.dir;
-		return *this;
-	}
+	operator=( TorsionStubID const & ) = default;
 
 
 	/// tmp public

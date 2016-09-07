@@ -31,7 +31,7 @@ namespace scoring {
 
 ///////////////////////////////////////////////////////
 
-DenseNeighborIterator::~DenseNeighborIterator(){}
+DenseNeighborIterator::~DenseNeighborIterator()= default;
 
 DenseNeighborIterator::DenseNeighborIterator(
 	Size const pos1_in,
@@ -146,7 +146,7 @@ DenseNeighborIterator::energy_computed() const
 
 /////////////////////////////////////////////////////
 
-DenseNeighborConstIterator::~DenseNeighborConstIterator(){}
+DenseNeighborConstIterator::~DenseNeighborConstIterator()= default;
 
 DenseNeighborConstIterator::DenseNeighborConstIterator(
 	Size const pos1_in,
@@ -239,7 +239,7 @@ DenseNeighborConstIterator::energy_computed() const
 
 /////////////////////////////////////////////////////////////////////////
 
-DenseEnergyContainer::~DenseEnergyContainer() {}
+DenseEnergyContainer::~DenseEnergyContainer() = default;
 
 LREnergyContainerOP
 DenseEnergyContainer::clone() const

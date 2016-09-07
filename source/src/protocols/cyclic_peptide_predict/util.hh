@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #include <map>
 

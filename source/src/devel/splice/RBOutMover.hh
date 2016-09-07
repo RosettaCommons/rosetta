@@ -29,23 +29,23 @@ namespace splice {
 class RBOutMover : public protocols::moves::Mover {
 public:
 	RBOutMover();
-	~RBOutMover();
+	~RBOutMover() override;
 
 	core::kinematics::Jump get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose );
 
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	std::string template_pdb_fname() const {return template_pdb_fname_; }
 	void template_pdb_fname( std::string const s ){ template_pdb_fname_ = s; }

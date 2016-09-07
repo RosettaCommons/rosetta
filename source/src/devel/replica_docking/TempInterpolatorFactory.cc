@@ -40,7 +40,7 @@ using devel::replica_docking::TempInterpolatorFactory;
 template <> std::mutex utility::SingletonBase< TempInterpolatorFactory >::singleton_mutex_{};
 template <> std::atomic< TempInterpolatorFactory * > utility::SingletonBase< TempInterpolatorFactory >::instance_( 0 );
 #else
-template <> TempInterpolatorFactory * utility::SingletonBase< TempInterpolatorFactory >::instance_( 0 );
+template <> TempInterpolatorFactory * utility::SingletonBase< TempInterpolatorFactory >::instance_( nullptr );
 #endif
 
 }
@@ -52,7 +52,7 @@ static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.TempInterpolatorFac
 
 TempInterpolatorFactory::TempInterpolatorFactory(){}
 
-TempInterpolatorFactory::~TempInterpolatorFactory(){}
+TempInterpolatorFactory::~TempInterpolatorFactory() = default;
 
 TempInterpolatorFactory *
 TempInterpolatorFactory::create_singleton_instance()

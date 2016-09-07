@@ -96,14 +96,9 @@ SidechainMetropolisHastingsMover::SidechainMetropolisHastingsMover( core::Size s
 	stride_( stride )
 {}
 
-SidechainMetropolisHastingsMover::SidechainMetropolisHastingsMover(
-	SidechainMetropolisHastingsMover const & other
-) :
-	protocols::canonical_sampling::MetropolisHastingsMover(other),
-	stride_( other.stride_ )
-{}
+SidechainMetropolisHastingsMover::SidechainMetropolisHastingsMover( SidechainMetropolisHastingsMover const & ) = default;
 
-SidechainMetropolisHastingsMover::~SidechainMetropolisHastingsMover(){}
+SidechainMetropolisHastingsMover::~SidechainMetropolisHastingsMover() = default;
 
 bool
 SidechainMetropolisHastingsMover::pass_metropolis(core::Real delta_energy, core::Real last_proposal_density_ratio ) const {
@@ -161,14 +156,14 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	}
 
 
-	runtime_assert( ig != 0 );
+	runtime_assert( ig != nullptr );
 
 	ig->initialize( pose );
 	Real last_accepted_prop_density( 1.0 );
 	Real last_accepted_dE( 0.0 );
 	for ( Size ct = 1; ct <= ntrials(); ct++ ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP move = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::sidechain_moves::SidechainMoverBase > ( random_mover() );
-		runtime_assert( move != 0 ); //fow now only Sidechain Movers...
+		runtime_assert( move != nullptr ); //fow now only Sidechain Movers...
 
 		Size resid = move->suggest_residue_number( pose );
 		conformation::ResidueOP new_state( new conformation::Residue( pose.residue( resid ) ) );

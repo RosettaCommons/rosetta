@@ -52,7 +52,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.constraints_additional.Constrai
 namespace protocols {
 namespace constraints_additional {
 
-ConstraintEvaluatorCreator::~ConstraintEvaluatorCreator() {}
+ConstraintEvaluatorCreator::~ConstraintEvaluatorCreator() = default;
 
 void ConstraintEvaluatorCreator::register_options() {
 	using namespace basic::options;

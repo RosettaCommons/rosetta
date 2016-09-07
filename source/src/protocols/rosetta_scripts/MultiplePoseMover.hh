@@ -50,21 +50,21 @@ public:
 	MultiplePoseMover();
 
 	/// @brief Virtual destructor
-	virtual ~MultiplePoseMover() {};
+	~MultiplePoseMover() override = default;
 
-	protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new MultiplePoseMover(*this) );
 	}
 
-	protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new MultiplePoseMover() );
 	}
 
-	void apply(core::pose::Pose& pose);
-	core::pose::PoseOP get_additional_output();
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose& pose) override;
+	core::pose::PoseOP get_additional_output() override;
+	std::string get_name() const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief Used by RosettaScripts to set the previous mover to pull poses from
 	void set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }

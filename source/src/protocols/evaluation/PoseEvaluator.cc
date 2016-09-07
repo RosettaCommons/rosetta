@@ -46,9 +46,8 @@ void PoseEvaluator::apply(  io::silent::SilentStruct &pss) const {
 }
 
 void MetaPoseEvaluator::apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss) const {
-	for ( EvaluatorList::const_iterator it=evaluators_.begin(), eit=evaluators_.end();
-			it!=eit; ++it ) {
-		(*it)->apply( pose, tag, pss );
+	for (const auto & evaluator : evaluators_) {
+		evaluator->apply( pose, tag, pss );
 	}
 }
 
@@ -56,7 +55,7 @@ std::string MetaPoseEvaluator::name( core::Size ind ) const {
 	runtime_assert( ind <= size() );
 	Size s( 0 );
 	Size last_s( 0 );
-	EvaluatorList::const_iterator it = evaluators_.begin();
+	auto it = evaluators_.begin();
 	for ( ; it != evaluators_.end() && s < ind; ++it ) {
 		last_s = s;
 		s += (*it)->size();

@@ -70,17 +70,17 @@ public:
 	BoltzmannRotamerMover( BoltzmannRotamerMover const & rval );
 
 	/// @brief destructor
-	virtual ~BoltzmannRotamerMover();
+	~BoltzmannRotamerMover() override;
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief create this type of object
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 
 	// helpers
 	core::Size select_rotamer(
@@ -114,7 +114,7 @@ public:
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 protected:
 

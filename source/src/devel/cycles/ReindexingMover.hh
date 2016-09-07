@@ -24,13 +24,13 @@ class ReindexingMover : public protocols::moves::Mover {
 		ReindexingMover(Size offset=0);
 
 		/// Clean up the mover.
-		~ReindexingMover();
+		~ReindexingMover() override;
 
 		/// Cyclically reindex all of the residues in the given pose.
-		void apply(pose::Pose &pose);
+		void apply(pose::Pose &pose) override;
 
 		/// Return "ReindexingMover".
-		std::string get_name() const { return "ReindexingMover"; }
+		std::string get_name() const override { return "ReindexingMover"; }
 
 		/// Specify how many residues to rotate on future apply() calls.
 		void set_offset(Size offset) { offset_ = offset; }

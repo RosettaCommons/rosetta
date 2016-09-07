@@ -72,35 +72,35 @@ public:
 		core::scoring::ScoreType scoretype = core::scoring::coordinate_constraint
 	);
 
-	virtual core::scoring::constraints::ConstraintOP clone() const {
+	core::scoring::constraints::ConstraintOP clone() const override {
 		return core::scoring::constraints::ConstraintOP( new COMCoordinateConstraint( atms_, COM_target_, stdv_, interval_ ) );
 	}
 
-	virtual core::scoring::constraints::ConstraintOP remapped_clone(
+	core::scoring::constraints::ConstraintOP remapped_clone(
 		core::pose::Pose const& src,
 		core::pose::Pose const& dest,
 		core::id::SequenceMappingCOP smap
-	) const ;
+	) const override ;
 
-	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;
 
-	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const override;
 
 
 
 	void
 	score( core::scoring::func::XYZ_Func const & xyz,
-		core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const;
+		core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const override;
 
 	// do some pre-scoring calculations
 	void setup_for_scoring( core::scoring::func::XYZ_Func const & xyz,
-		core::scoring::ScoreFunction const &scfxn ) const;
+		core::scoring::ScoreFunction const &scfxn ) const override;
 
 	// call the setup_for_derivatives for each constraint
-	void setup_for_derivatives(  core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
+	void setup_for_derivatives(  core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const override;
 
 	// atom deriv
-	virtual
+	
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -108,28 +108,28 @@ public:
 		core::Vector & F1,
 		core::Vector & F2,
 		core::scoring::EnergyMap const & weights
-	) const;
+	) const override;
 
-	std::string type() const;
+	std::string type() const override;
 
 
 	Size
-	natoms() const;
+	natoms() const override;
 
-	virtual
+	
 	core::scoring::constraints::ConstraintOP
-	remap_resid( core::id::SequenceMapping const & ) const { return NULL; }
+	remap_resid( core::id::SequenceMapping const & ) const override { return nullptr; }
 
 
 	AtomID const &
-	atom( Size const n ) const;
+	atom( Size const n ) const override;
 
-	void show( std::ostream& out ) const;
+	void show( std::ostream& out ) const override;
 
-	void show_def( std::ostream& out, core::pose::Pose const & pose ) const;
-	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
+	void show_def( std::ostream& out, core::pose::Pose const & pose ) const override;
+	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory ) override;
 
-	Size show_violations( std::ostream & out, core::pose::Pose const & pose, Size verbose_level, core::Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream & out, core::pose::Pose const & pose, Size verbose_level, core::Real threshold = 1.0 ) const override;
 
 	//protected:
 	//void init( pose::Pose const & start_pose );

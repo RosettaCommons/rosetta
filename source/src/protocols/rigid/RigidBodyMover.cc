@@ -111,7 +111,7 @@ RigidBodyMover::RigidBodyMover( RigidBodyMover const & src ) :
 	freeze_(src.freeze_)
 {}
 
-RigidBodyMover::~RigidBodyMover() {}
+RigidBodyMover::~RigidBodyMover() = default;
 
 std::string
 RigidBodyMover::get_name() const {
@@ -240,8 +240,7 @@ RigidBodyPerturbMover::RigidBodyPerturbMover( RigidBodyPerturbMover const & src 
 	movable_jumps_( src.movable_jumps_ )
 {}
 
-RigidBodyPerturbMover::~RigidBodyPerturbMover()
-{}
+RigidBodyPerturbMover::~RigidBodyPerturbMover() = default;
 
 void
 RigidBodyPerturbMover::apply( core::pose::Pose & pose )
@@ -321,7 +320,7 @@ std::ostream
 
 //Implementation of RigidBodyPerturbRandomJumpMover, which takes a random jump and calls RigidBodyPerturbMover
 RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover() : rot_mag_in_(3.0), trans_mag_in_(8.0), num_jump_(0){}
-RigidBodyPerturbRandomJumpMover::~RigidBodyPerturbRandomJumpMover(){}
+RigidBodyPerturbRandomJumpMover::~RigidBodyPerturbRandomJumpMover()= default;
 
 RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover(
 	core::Real const& rot_mag_in,
@@ -438,7 +437,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	movable_jumps_( src.movable_jumps_ )
 {}
 
-RigidBodyPerturbNoCenterMover::~RigidBodyPerturbNoCenterMover() {}
+RigidBodyPerturbNoCenterMover::~RigidBodyPerturbNoCenterMover() = default;
 
 void
 RigidBodyPerturbNoCenterMover::add_jump( core::Size jump_id ) {
@@ -514,7 +513,7 @@ RigidBodyRandomizeMover::RigidBodyRandomizeMover( RigidBodyRandomizeMover const 
 	psi_angle_( src.psi_angle_ )
 {}
 
-RigidBodyRandomizeMover::~RigidBodyRandomizeMover() {}
+RigidBodyRandomizeMover::~RigidBodyRandomizeMover() = default;
 
 void
 RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
@@ -600,7 +599,7 @@ RigidBodySpinMover::RigidBodySpinMover( RigidBodySpinMover const & src ) :
 	update_spin_axis_( src.update_spin_axis_ )
 {}
 
-RigidBodySpinMover::~RigidBodySpinMover() {}
+RigidBodySpinMover::~RigidBodySpinMover() = default;
 
 void
 RigidBodySpinMover::spin_axis ( core::Vector spin_axis_in )
@@ -675,12 +674,9 @@ RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( int const rb_j
 	update_spin_axis_ = false;
 }
 
-RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src ) :
-	parent( src ),
-	angle_magnitude_( src.angle_magnitude_)
-{}
+RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & ) = default;
 
-RigidBodyDeterministicSpinMover::~RigidBodyDeterministicSpinMover() {}
+RigidBodyDeterministicSpinMover::~RigidBodyDeterministicSpinMover() = default;
 
 void
 RigidBodyDeterministicSpinMover::angle_magnitude( float angle_magnitude )
@@ -758,16 +754,9 @@ RigidBodyTiltMover::RigidBodyTiltMover(
 	moves::Mover::type( "RigidBodyTilt" );
 }
 
-RigidBodyTiltMover::RigidBodyTiltMover( RigidBodyTiltMover const & src ) :
-	parent( src ),
-	tilt1_mag_(src.tilt1_mag_),
-	tilt2_mag_(src.tilt2_mag_),
-	tilt1_center_(src.tilt1_center_),
-	tilt2_center_(src.tilt2_center_),
-	spin_axis_( src.spin_axis_ )
-{}
+RigidBodyTiltMover::RigidBodyTiltMover( RigidBodyTiltMover const & ) = default;
 
-RigidBodyTiltMover::~RigidBodyTiltMover() {}
+RigidBodyTiltMover::~RigidBodyTiltMover() = default;
 
 void
 RigidBodyTiltMover::spin_axis ( core::Vector const & spin_axis_in )
@@ -947,7 +936,7 @@ RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & src ) :
 	vary_stepsize_ ( src.vary_stepsize_ )
 {}
 
-RigidBodyTransMover::~RigidBodyTransMover() {}
+RigidBodyTransMover::~RigidBodyTransMover() = default;
 
 core::Vector
 RigidBodyTransMover::centroid_axis(core::pose::Pose const & pose_in) const
@@ -1076,7 +1065,7 @@ UniformSphereTransMover::UniformSphereTransMover( UniformSphereTransMover const 
 
 {}
 
-UniformSphereTransMover::~UniformSphereTransMover() {}
+UniformSphereTransMover::~UniformSphereTransMover() = default;
 
 void UniformSphereTransMover::reset_trans_axis(){
 	do {
@@ -1133,7 +1122,7 @@ RigidBodyDofRandomizeMover::RigidBodyDofRandomizeMover( RigidBodyDofRandomizeMov
 	dof_( src.dof_ )
 {}
 
-RigidBodyDofRandomizeMover::~RigidBodyDofRandomizeMover() {}
+RigidBodyDofRandomizeMover::~RigidBodyDofRandomizeMover() = default;
 
 void RigidBodyDofRandomizeMover::apply( core::pose::Pose & pose )
 {
@@ -1239,7 +1228,7 @@ RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover(
 	dofs_( src.dofs_ )
 {}
 
-RigidBodyDofSeqRandomizeMover::~RigidBodyDofSeqRandomizeMover() {}
+RigidBodyDofSeqRandomizeMover::~RigidBodyDofSeqRandomizeMover() = default;
 
 
 // @details go through and perturb all movable dofs in sequence
@@ -1248,8 +1237,8 @@ void RigidBodyDofSeqRandomizeMover::apply( core::pose::Pose & pose )
 	using namespace core::conformation::symmetry;
 
 	std::map< Size, SymDof >::iterator it;
-	std::map< Size, SymDof >::iterator it_begin = dofs_.begin();
-	std::map< Size, SymDof >::iterator it_end = dofs_.end();
+	auto it_begin = dofs_.begin();
+	auto it_end = dofs_.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		int jump_nbr ( (*it).first );
 		SymDof dof ( (*it).second );
@@ -1325,8 +1314,8 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 
 	// Save jumps that are allowed to move and have a translation dof
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+	auto it_begin = dofs.begin();
+	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		core::conformation::symmetry::SymDof dof ( (*it).second );
 		if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
@@ -1340,7 +1329,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 		return;
 	}
 	rb_jump_ = numeric::random::rg().random_element( trans_jumps );
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator =
+	auto jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
 		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
@@ -1372,7 +1361,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover( RigidBodyDofTransMover const & s
 	trans_axis_( src.trans_axis_ )
 {}
 
-RigidBodyDofTransMover::~RigidBodyDofTransMover() {}
+RigidBodyDofTransMover::~RigidBodyDofTransMover() = default;
 
 
 void RigidBodyDofTransMover::apply( core::pose::Pose & pose )
@@ -1428,8 +1417,8 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover(
 	trans_axis_ = Vector(1,0,0);
 	// Save jumps that are allowed to move and have a translation dof
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+	auto it_begin = dofs.begin();
+	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		core::conformation::symmetry::SymDof dof ( (*it).second );
 		if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
@@ -1456,7 +1445,7 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover( RigidBodyDofSeqTransMover 
 	trans_axis_( src.trans_axis_ )
 {}
 
-RigidBodyDofSeqTransMover::~RigidBodyDofSeqTransMover() {}
+RigidBodyDofSeqTransMover::~RigidBodyDofSeqTransMover() = default;
 
 void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
 {
@@ -1514,8 +1503,8 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
 	trans_axis_ = Vector(1,0,0);
 	// Save jumps that are allowed to move and have a translation dof
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+	auto it_begin = dofs.begin();
+	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		core::conformation::symmetry::SymDof dof ( (*it).second );
 		if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
@@ -1541,7 +1530,7 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover( RigidBodyDofRandomTr
 	trans_axis_( src.trans_axis_ )
 {}
 
-RigidBodyDofRandomTransMover::~RigidBodyDofRandomTransMover() {}
+RigidBodyDofRandomTransMover::~RigidBodyDofRandomTransMover() = default;
 
 
 void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
@@ -1620,8 +1609,8 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 	moves::Mover::type( "RigidBodyDofPerturbMover" );
 
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+	auto it_begin = dofs.begin();
+	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		moving_jumps.push_back( (*it).first );
 	}
@@ -1631,7 +1620,7 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 		return;
 	}
 	rb_jump_ = numeric::random::rg().random_element( moving_jumps );
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator =
+	auto jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
 		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
@@ -1649,7 +1638,7 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover( RigidBodyDofPerturbMover con
 	trans_mag_( src.trans_mag_ )
 {}
 
-RigidBodyDofPerturbMover::~RigidBodyDofPerturbMover() {}
+RigidBodyDofPerturbMover::~RigidBodyDofPerturbMover() = default;
 
 void RigidBodyDofPerturbMover::apply( core::pose::Pose & pose )
 {
@@ -1712,8 +1701,8 @@ RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
 	moves::Mover::type( "RigidBodyDofSeqPerturbMover" );
 
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+	auto it_begin = dofs.begin();
+	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		moving_jumps.push_back( (*it).first );
 	}
@@ -1737,7 +1726,7 @@ RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
 	trans_mag_( src.trans_mag_ )
 {}
 
-RigidBodyDofSeqPerturbMover::~RigidBodyDofSeqPerturbMover() {}
+RigidBodyDofSeqPerturbMover::~RigidBodyDofSeqPerturbMover() = default;
 
 void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 {

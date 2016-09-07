@@ -39,16 +39,16 @@ public:
 		core::Real scorescale,
 		bool exact, bool verbose, bool deriv_check );
 
-	virtual ~BfactorMultifunc() {}
+	~BfactorMultifunc() override = default;
 
-	virtual core::Real
-	operator ()( core::optimization::Multivec const & vars ) const;
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
-	virtual void
-	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
+	void
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
-	virtual void
-	dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const;
+	void
+	dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const override;
 
 	// helper functions
 	void
@@ -83,19 +83,19 @@ private:
 class BfactorFittingMover : public moves::Mover {
 public:
 	BfactorFittingMover();
-	virtual ~BfactorFittingMover() {}
+	~BfactorFittingMover() override = default;
 
 	void init();
 
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const { return "BfactorFitting"; }
+	std::string get_name() const override { return "BfactorFitting"; }
 
-	moves::MoverOP clone() const { return moves::MoverOP( new BfactorFittingMover( *this ) ); }
-	moves::MoverOP fresh_instance() const { return moves::MoverOP( new BfactorFittingMover ); }
+	moves::MoverOP clone() const override { return moves::MoverOP( new BfactorFittingMover( *this ) ); }
+	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new BfactorFittingMover ); }
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 private:
 	core::Real scorescale_;  // overall weighing on score

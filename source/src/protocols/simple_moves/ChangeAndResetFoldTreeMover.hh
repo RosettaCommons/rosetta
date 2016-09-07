@@ -67,17 +67,17 @@ public:
 
 	ChangeAndResetFoldTreeMover(ChangeAndResetFoldTreeMover const & src);
 
-	virtual ~ChangeAndResetFoldTreeMover();
+	~ChangeAndResetFoldTreeMover() override;
 
 public:
 
 	/// @brief Set the main mover to apply
-	virtual void
-	set_mover(protocols::moves::MoverOP main_mover);
+	void
+	set_mover(protocols::moves::MoverOP main_mover) override;
 
 	/// @brief Get the main mover
-	virtual protocols::moves::MoverOP
-	mover() const;
+	protocols::moves::MoverOP
+	mover() const override;
 
 	/// @brief Set the ChangeFoldTreeMover
 	void
@@ -93,8 +93,8 @@ public:
 	///  2) Applies the ChangeFoldTreeMover
 	///  3) Applies the Main mover
 	///  4) Returns the Pose's original FoldTree
-	virtual void
-	apply(core::pose::Pose & pose);
+	void
+	apply(core::pose::Pose & pose) override;
 
 public:
 
@@ -110,7 +110,7 @@ public:
 public:
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	//void parse_my_tag(
 	// TagCOP tag,
@@ -121,11 +121,11 @@ public:
 	// );
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	//ChangeAndResetFoldTreeMover & operator=(ChangeAndResetFoldTreeMover const & src);
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private:
 	protocols::moves::MoverOP main_mover_;

@@ -94,8 +94,7 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 /// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-MPIWorkPoolJobDistributor::~MPIWorkPoolJobDistributor()
-{ }
+MPIWorkPoolJobDistributor::~MPIWorkPoolJobDistributor() = default;
 
 /// @brief dummy for master/slave version
 void

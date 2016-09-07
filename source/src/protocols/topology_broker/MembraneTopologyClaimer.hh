@@ -46,42 +46,42 @@ public:
 	MembraneTopologyClaimer( core::pose::Pose const& input_pose );
 
 	//clone
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new MembraneTopologyClaimer( *this ) );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
-	virtual bool claimer_builds_own_fold_tree();
+	bool claimer_builds_own_fold_tree() override;
 
-	virtual void set_pose_from_broker(core::pose::Pose& pose);
+	void set_pose_from_broker(core::pose::Pose& pose) override;
 
-	virtual void pre_process(core::pose::Pose& pose);
+	void pre_process(core::pose::Pose& pose) override;
 
-	virtual void generate_claims( claims::DofClaims& dof_claims);
+	void generate_claims( claims::DofClaims& dof_claims) override;
 
-	virtual void build_fold_tree(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree_in);
+	void build_fold_tree(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree_in) override;
 
-	virtual core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose& pose);
+	core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose& pose) override;
 
 	static std::string _static_type_name() {
 		return "MembraneTopologyClaimer";
 	}
 
-	virtual void add_mover(
+	void add_mover(
 		moves::RandomMover& random_mover,
 		core::pose::Pose const& pose,
 		abinitio::StageID stageID,
 		core::scoring::ScoreFunction const& scorefxn,
 		core::Real progress
-	);
+	) override;
 
-	virtual void initialize_dofs( core::pose::Pose&,
+	void initialize_dofs( core::pose::Pose&,
 		claims::DofClaims const& init_claims,
-		claims::DofClaims& /*failed_to_init*/ );
+		claims::DofClaims& /*failed_to_init*/ ) override;
 
 	void addVirtualResAsRootMembrane( core::pose::Pose & pose );
 

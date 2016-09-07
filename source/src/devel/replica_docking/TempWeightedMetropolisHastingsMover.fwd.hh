@@ -12,7 +12,7 @@
 /// @author  Zhe Zhang
 
 #ifndef INCLUDED_devel_replica_docking_TempWeightedMetropolisHastingsMover_fwd_hh
-#define INCLUDED_devel_replica_docking_TempWeightedTempWeightedMetropolisHastingsMover_fwd_hh
+#define INCLUDED_devel_replica_docking_TempWeightedMetropolisHastingsMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

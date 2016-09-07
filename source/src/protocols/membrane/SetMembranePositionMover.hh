@@ -63,29 +63,29 @@ public:
 	operator=( SetMembranePositionMover const & src );
 
 	/// @brief Destructor
-	~SetMembranePositionMover();
+	~SetMembranePositionMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Apply Rotation/Translation to Membrane
 	/// @brief Translate the membrane position in this pose
 	/// to the new center position, and rotate to new normal
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -94,7 +94,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 private:
 
@@ -133,28 +133,28 @@ public:
 	operator=( SetMembraneNormalMover const & src );
 
 	/// @brief Destructor
-	~SetMembraneNormalMover();
+	~SetMembraneNormalMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Apply Rotation to Membrane
 	/// @brief Rotate the membrane to the new normal position
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -163,7 +163,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 private:
 
@@ -199,28 +199,28 @@ public:
 	operator=( SetMembraneCenterMover const & src );
 
 	/// @brief Destructor
-	~SetMembraneCenterMover();
+	~SetMembraneCenterMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -229,7 +229,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 private:
 

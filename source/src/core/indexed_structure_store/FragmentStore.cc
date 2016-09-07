@@ -35,7 +35,7 @@ FragmentStore::FragmentStore(
 	fragment_coordinates(num_fragments * fragment_specification.coordinates_per_fragment() )
 {
 	num_fragments_ = num_fragments;
-	fragLookupOP_=NULL;
+	fragLookupOP_=nullptr;
 }
 
 void FragmentStore::resize(numeric::Size num_fragments)
@@ -47,8 +47,8 @@ void FragmentStore::resize(numeric::Size num_fragments)
 
 void FragmentStore::add_threshold_distance_allFrag(numeric::Real distance)
 {
-	for ( numeric::Size ii=0; ii< fragment_threshold_distances.size(); ++ii ) {
-		fragment_threshold_distances[ii]=distance;
+	for (double & fragment_threshold_distance : fragment_threshold_distances) {
+		fragment_threshold_distance=distance;
 	}
 }
 
@@ -84,7 +84,7 @@ void FragmentStore::generate_subset_fragment_store(std::vector<numeric::Size> re
 
 //done so that the fragmentLookup is cached when calculated.
 FragmentLookupOP FragmentStore::get_fragmentLookup(){
-	if ( fragLookupOP_==NULL ) {
+	if ( fragLookupOP_==nullptr ) {
 		fragLookupOP_ = FragmentLookupOP(new FragmentLookup(this->get_self_ptr()));
 	}
 	return(fragLookupOP_);

@@ -45,7 +45,7 @@ TreeBuilderOP TreeBuilderFactory::get_builder(const std::string& builder_name) {
 	} else {
 		utility_exit_with_message("Invalid builder_type: " + type);
 	}
-	return NULL;
+	return nullptr;
 }
 
 }  // namespace nonlocal

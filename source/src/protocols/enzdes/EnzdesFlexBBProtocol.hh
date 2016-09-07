@@ -51,10 +51,10 @@ class EnzdesFlexBBProtocol : public protocols::enzdes::EnzdesBaseProtocol
 public:
 
 	EnzdesFlexBBProtocol();
-	~EnzdesFlexBBProtocol();
+	~EnzdesFlexBBProtocol() override;
 
-	void apply( core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose) override;
+	std::string get_name() const override;
 
 	static void register_options();
 
@@ -86,7 +86,7 @@ public:
 	remap_resid(
 		core::pose::Pose const & pose,
 		core::id::SequenceMapping const & smap
-	);
+	) override;
 
 	void
 	add_flexible_region(
@@ -208,7 +208,7 @@ public:
 		EnzdesFlexBBProtocolCAP enz_prot
 	);
 
-	~EnzdesFlexibleRegion();
+	~EnzdesFlexibleRegion() override;
 
 	core::Size
 	no_ranked_frags() const{

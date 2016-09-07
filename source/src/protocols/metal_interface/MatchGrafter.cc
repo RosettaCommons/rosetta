@@ -57,8 +57,7 @@ MatchGrafter::MatchGrafter() // default constructor
 }
 
 MatchGrafter::~MatchGrafter()
-{
-}
+= default;
 
 
 /// @brief Takes match pose (2 residues + zinc) and partner pose, grafts match onto partner, returns grafted partner

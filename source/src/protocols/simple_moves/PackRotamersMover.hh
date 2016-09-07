@@ -79,12 +79,12 @@ public:
 	/// Size (int)     nloop      /number of rounds to run packing
 	PackRotamersMover(
 		ScoreFunctionCOP scorefxn,
-		PackerTaskCOP task = 0,
+		PackerTaskCOP task = nullptr,
 		core::Size nloop = 1
 	);
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~PackRotamersMover();
+	~PackRotamersMover() override;
 
 	// copy constructor
 	PackRotamersMover( PackRotamersMover const & other );
@@ -99,21 +99,21 @@ public:
 	/// See Also:
 	///     PackerTask
 	///     ScoreFunction
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
@@ -132,10 +132,10 @@ public:
 		Pose const & );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	// setters
 

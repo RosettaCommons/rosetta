@@ -46,19 +46,19 @@ public:
 	MutateResidue(MutateResidue const& dm);
 	/// @brief Mutate a single residue to a new amino acid
 	/// @details new_res is three letter code in capital letters, example PHE
-	MutateResidue( core::Size const target, std::string const &new_res );
+	MutateResidue( core::Size const target, std::string new_res ); // moving string
 	MutateResidue( core::Size const target, int new_res/*one letter code*/);  // Changing char --> int so PyRosetta could use overloaded function
 
 	MutateResidue( core::Size const target, core::chemical::AA const aa);
 
-	virtual ~MutateResidue() {};
+	~MutateResidue() override = default;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const {
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::simple_moves::MutateResidue( *this ) ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new MutateResidue );
 	}
 
@@ -66,7 +66,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	/// @brief Set this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

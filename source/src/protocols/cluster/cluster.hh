@@ -26,6 +26,7 @@
 #include <iostream>
 #include <string>
 #include <deque>
+#include <utility>
 #include <vector>
 #include <algorithm>
 
@@ -47,8 +48,8 @@ public:
 	void set_filter( core::Real filter );
 	core::Real get_filter() const;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	bool check_tag( const std::string &query_tag );
 
@@ -106,7 +107,7 @@ public:
 	//EnsembleConstraints* clone() const = 0;
 #endif
 	virtual void createConstraints( std::ostream &out ) = 0;
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 };
 
 
@@ -121,10 +122,10 @@ public:
 		minimum_width_ = minimum_width;
 	};
 #ifndef BOINC // gives windows build error
-	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new EnsembleConstraints_Simple( *this ) ) ; }
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new EnsembleConstraints_Simple( *this ) ) ; }
 #endif
-	virtual void createConstraints( std::ostream &out);
-	virtual std::string get_name() const;
+	void createConstraints( std::ostream &out) override;
+	std::string get_name() const override;
 
 protected:
 	core::Real minimum_width_;
@@ -184,7 +185,7 @@ public:
 	core::Size size() const { return member.size(); }
 	void clear(){ member.clear(); }
 	void erase( core::Size j ){
-		std::deque< int >::iterator it = member.begin();
+		auto it = member.begin();
 		it += j;
 		member.erase(it);
 	}
@@ -196,7 +197,7 @@ public:
 class ClusterBase: public GatherPosesMover {
 public:
 	ClusterBase();
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	void set_cluster_radius( core::Real cluster_radius );
 	void set_population_weight( core::Real population_weight );
 
@@ -253,9 +254,9 @@ typedef utility::pointer::shared_ptr< ClusterPhilStyle const > ClusterPhilStyleC
 class ClusterPhilStyle: public ClusterBase {
 public:
 	ClusterPhilStyle();
-	virtual ~ClusterPhilStyle() {};
-	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new ClusterPhilStyle( *this ) ) ; }
-	virtual std::string get_name() const;
+	~ClusterPhilStyle() override = default;
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new ClusterPhilStyle( *this ) ) ; }
+	std::string get_name() const override;
 	virtual void do_clustering( core::Size max_total_cluster );
 
 	// this ensures every structure is in the cluster to who's cluster center it is most similar too
@@ -268,17 +269,17 @@ public:
 	: loop_def_(loop_def)
 	{}
 
-	virtual ~ClusterPhilStyle_Loop() {}
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const {
+	~ClusterPhilStyle_Loop() override = default;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new ClusterPhilStyle_Loop( *this ) );
 	}
 
-	virtual core::Real
+	core::Real
 	get_distance_measure(
 		const core::pose::Pose & pose1,
 		const core::pose::Pose & pose2
-	) const;
+	) const override;
 
 private:
 	protocols::loops::Loops loop_def_;
@@ -287,20 +288,20 @@ private:
 class ClusterPhilStyle_PoseReporter : public ClusterPhilStyle {
 public:
 	ClusterPhilStyle_PoseReporter( protocols::rosetta_scripts::PosePropertyReporterOP reporter )
-	: reporter_(reporter)
+	: reporter_(std::move(reporter))
 	{}
 
-	virtual ~ClusterPhilStyle_PoseReporter() {}
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const {
+	~ClusterPhilStyle_PoseReporter() override = default;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new ClusterPhilStyle_PoseReporter( *this ) );
 	}
 
-	virtual core::Real
+	core::Real
 	get_distance_measure(
 		const core::pose::Pose & pose1,
 		const core::pose::Pose & pose2
-	) const;
+	) const override;
 
 private:
 	protocols::rosetta_scripts::PosePropertyReporterOP reporter_;
@@ -314,12 +315,12 @@ class AssignToClustersMover: public GatherPosesMover {
 public:
 	AssignToClustersMover( ClusterBaseOP cluster_base );
 #ifndef BOINC // gives windows build error
-	protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new AssignToClustersMover( *this ) );
 	}
 #endif
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 
 protected:

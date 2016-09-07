@@ -28,7 +28,7 @@ namespace fourier {
 
 // replace the global variables with classes that protect access to buffer data
 kiss_fft_cpx* get_scratch_buff( size_t nbuf ) {
-	static kiss_fft_cpx *scratchbuf=NULL;
+	static kiss_fft_cpx *scratchbuf=nullptr;
 	static size_t nscratchbuf=0;
 	if ( nscratchbuf < nbuf ) {
 		delete [] scratchbuf;
@@ -39,13 +39,13 @@ kiss_fft_cpx* get_scratch_buff( size_t nbuf ) {
 	// amw: do not check <= 0 as it is a size_t, eq is sufficient
 	if ( nbuf == 0 ) {
 		delete [] scratchbuf;
-		scratchbuf = NULL;
+		scratchbuf = nullptr;
 		nscratchbuf = 0;
 	}
 	return (scratchbuf);
 }
 kiss_fft_cpx* get_tmp_buff( size_t nbuf ) {
-	static kiss_fft_cpx *tmpbuf=NULL;
+	static kiss_fft_cpx *tmpbuf=nullptr;
 	static size_t ntmpbuf=0;
 	if ( ntmpbuf < nbuf ) {
 		delete [] tmpbuf;
@@ -55,7 +55,7 @@ kiss_fft_cpx* get_tmp_buff( size_t nbuf ) {
 	// free memory
 	if ( nbuf == 0 ) {
 		delete [] tmpbuf;
-		tmpbuf = NULL;
+		tmpbuf = nullptr;
 		ntmpbuf = 0;
 	}
 	return (tmpbuf);

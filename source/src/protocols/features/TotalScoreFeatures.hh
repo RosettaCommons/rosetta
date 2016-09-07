@@ -39,10 +39,10 @@ public:
 	TotalScoreFeatures(core::scoring::ScoreFunctionOP scorefxn);
 
 	/// @brief Default destructor.
-	~TotalScoreFeatures();
+	~TotalScoreFeatures() override;
 
 	/// @copydoc FeaturesReporter::type_name
-	std::string type_name() const;
+	std::string type_name() const override;
 
 	/// @brief Get the score function being reported by this object.
 	core::scoring::ScoreFunctionCOP scorefxn() const;
@@ -56,18 +56,18 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose);
+		core::pose::Pose const & pose) override;
 
 	/// @copydoc FeaturesReporter::write_schema_to_db
 	void write_schema_to_db(
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) const override;
 
 	/// @copydoc FeaturesReporter::report_features
 	core::Size report_features(
 		core::pose::Pose const & pose,
 		utility::vector1<bool> const & relevant_residues,
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session) override;
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;

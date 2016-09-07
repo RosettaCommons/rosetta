@@ -20,6 +20,7 @@
 #include <protocols/jd2/JobOutputterObserver.hh>
 
 #include <core/types.hh>
+#include <utility>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.hh>
@@ -58,7 +59,7 @@ public:
 			protocols::filters::FilterOP filter,
 			bool report_filter_at_end = false ) :
 			first( std::make_pair( mover, mover_name ) ),
-			second( filter ),
+			second(std::move( filter )),
 			report_filter_at_end_( report_filter_at_end )
 		{}
 		protocols::filters::Filter const& filter() const { return *second; }
@@ -74,10 +75,10 @@ public:
 
 public:
 	ParsedProtocol();
-	virtual ~ParsedProtocol();
-	virtual void apply( Pose & pose );
-	virtual core::pose::PoseOP get_additional_output( );
-	virtual std::string get_name() const;
+	~ParsedProtocol() override;
+	void apply( Pose & pose ) override;
+	core::pose::PoseOP get_additional_output( ) override;
+	std::string get_name() const override;
 	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;
@@ -85,8 +86,8 @@ public:
 	void report_filters_to_pose( Pose & pose ); // as above but reports to pose DataCache
 	void report_filters_to_job( Pose const & pose ) const;  // as above but reports to job object
 	//as above but is called directly from JobOutputter via Observer pattern
-	virtual
-	void add_values_to_job( Pose const & pose, protocols::jd2::Job & ) const;
+	
+	void add_values_to_job( Pose const & pose, protocols::jd2::Job & ) const override;
 
 
 	// void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
@@ -109,10 +110,10 @@ public:
 		bool const report_filter_at_end=false
 	);
 
-	void set_resid( core::Size const resid );
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new ParsedProtocol ); }
-	virtual void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ); // this is defined as public here, b/c I need to circumvent the name-check, since this is called both by the Movers section (as ParsedProtocol) and the PROTOCOLS section.
+	void set_resid( core::Size const resid ) override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new ParsedProtocol ); }
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override; // this is defined as public here, b/c I need to circumvent the name-check, since this is called both by the Movers section (as ParsedProtocol) and the PROTOCOLS section.
 	void clear() { movers_.clear(); }
 	std::string mode() const{ return mode_; }
 	iterator begin();

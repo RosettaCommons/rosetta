@@ -41,9 +41,9 @@ public:
 		core::Real threshold = -0.5,
 		bool base_only = true
 	);
-	virtual ~RotamerDNAHBondFilter();
+	~RotamerDNAHBondFilter() override;
 
-	virtual
+	
 	bool
 	operator() (
 		core::conformation::ResidueOP rotamer,
@@ -52,7 +52,7 @@ public:
 		core::pack::task::ResidueLevelTask const & rtask,
 		core::graph::GraphCOP packer_neighbor_graph,
 		core::pack::dunbrack::ChiSetOP chi_set
-	);
+	) override;
 
 	void report() const;
 

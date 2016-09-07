@@ -35,7 +35,7 @@ public:
 		utility::vector1< screener::StepWiseScreenerOP > screener );
 
 	//destructor
-	~StepWiseSampleAndScreen();
+	~StepWiseSampleAndScreen() override;
 
 
 public:

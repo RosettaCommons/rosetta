@@ -43,20 +43,20 @@ public:
 	LoopHashLibraryOptions();
 
 	/// @brief Destructor.
-	virtual ~LoopHashLibraryOptions();
+	~LoopHashLibraryOptions() override;
 
 	/// @brief Read the configuration of the LoopHashLibrary %resource from the tag generated from the resource definition
 	/// file.
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
-	);
+	) override;
 
 	/// @brief Return the name of this class (LoopHashLibraryOptions).
-	virtual
+	
 	std::string
-	type() const;
+	type() const override;
 
 	/// @brief Return a %vector of loop sizes that will be used to construct a LoopHashLibrary.
 	utility::vector1<core::Size>

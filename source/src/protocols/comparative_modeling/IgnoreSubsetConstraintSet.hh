@@ -53,25 +53,25 @@ public:
 		ConstraintSet const & other
 	);
 
-	virtual
+	
 	ConstraintSet &
-	operator = ( ConstraintSet const & rhs );
+	operator = ( ConstraintSet const & rhs ) override;
 
-	virtual
+	
 	ConstraintSetOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	void
-	detached_copy( ConstraintSet const & src );
+	detached_copy( ConstraintSet const & src ) override;
 
-	virtual
+	
 	ConstraintSetOP
-	detached_clone() const;
+	detached_clone() const override;
 
-	virtual
+	
 	bool
-	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const;
+	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const override;
 
 	void
 	residue_pair_energy(
@@ -80,11 +80,11 @@ public:
 		Pose const & pose,
 		core::scoring::ScoreFunction const & scorefxn,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	/// @brief Allow the parent class implementation to add the residue constraints
 	/// for this residue to the res_data_cache if this residue is not being ignored.
-	virtual
+	
 	void
 	setup_for_minimizing_for_residue(
 		core::conformation::Residue const & rsd,
@@ -92,12 +92,12 @@ public:
 		core::scoring::ScoreFunction const & sfxn,
 		core::kinematics::MinimizerMapBase const & minmap,
 		core::scoring::ResSingleMinimizationData & res_data_cache
-	) const;
+	) const override;
 
 
 	/// @brief Allow the parent class implenetation to add the residue-pair constraints
 	/// for this residue pair to the respair_data_cache if neither residues are being ignored.
-	virtual
+	
 	void
 	setup_for_minimizing_for_residue_pair(
 		core::conformation::Residue const & rsd1,
@@ -108,7 +108,7 @@ public:
 		core::scoring::ResSingleMinimizationData const & res1_data_cache,
 		core::scoring::ResSingleMinimizationData const & res2_data_cache,
 		core::scoring::ResPairMinimizationData & respair_data_cache
-	) const;
+	) const override;
 
 	/// @brief Returns true if we're supposed to ignore this sequence position,
 	/// false otherwise.
@@ -120,7 +120,7 @@ public:
 
 
 	bool
-	residue_pair_constraint_exists( int const pos1, int const pos2 ) const
+	residue_pair_constraint_exists( int const pos1, int const pos2 ) const override
 	{
 		if ( ignore(pos1) || ignore(pos2) ) return false;
 		return ConstraintSet::residue_pair_constraint_exists( pos1, pos2 );

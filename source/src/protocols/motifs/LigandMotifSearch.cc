@@ -75,8 +75,7 @@ namespace motifs {
 
 static THREAD_LOCAL basic::Tracer ms_tr( "protocols.motifs.LigandMotifSearch", basic::t_info );
 
-LigandMotifSearch::~LigandMotifSearch()
-{}
+LigandMotifSearch::~LigandMotifSearch() = default;
 
 LigandMotifSearch::LigandMotifSearch()
 : motif_library_(),
@@ -511,11 +510,9 @@ LigandMotifSearch::incorporate_motifs(
 
 	//For each motif in library
 
-	for ( protocols::motifs::MotifCOPs::iterator motifcop_itr = motif_library.begin(), end_itr = motif_library.end();
-			motifcop_itr != end_itr; ++motifcop_itr ) {
+	for (auto motifcop : motif_library) {
 
-		protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-		int motif_atom1_int(motifcop->res2_atom1_int());
+			int motif_atom1_int(motifcop->res2_atom1_int());
 		int motif_atom2_int(motifcop->res2_atom2_int());
 		int motif_atom3_int(motifcop->res2_atom3_int());
 		// ms_tr << "Motif atom 1 type: " << motif_atom1_name << ";  Motif atom 2 type: " << motif_atom2_name <<  ";  Motif atom 3 type: " << motif_atom3_name <<  std::endl;
@@ -696,9 +693,8 @@ LigandMotifSearch::incorporate_motifs(
 			if ( allowedtypes.empty() ) {
 				allowed = true;
 			}
-			for ( std::set< std::string >::const_iterator ir2(allowedtypes.begin() ), end_ir2( allowedtypes.end() );
-					ir2 != end_ir2; ++ir2 ) {
-				if ( (*ir2) == motifcop->restype_name1() ) {
+			for (const auto & allowedtype : allowedtypes) {
+				if ( allowedtype == motifcop->restype_name1() ) {
 					allowed = true;
 				}
 			}
@@ -973,9 +969,8 @@ LigandMotifSearch::incorporate_motifs(
 			for ( std::map< std::string, std::map< Real, MotifHitOP > >::const_iterator bh( best_mhits_all.begin() ),
 					end( best_mhits_all.end() ); bh != end; ++bh ) {
 				Size hits = 0;
-				for ( std::map< Real, MotifHitOP >::const_iterator bh2( (bh->second).begin() ),
-						end2( (bh->second).end() ); bh2 != end2; ++bh2 ) {
-					MotifHitOP motifhitop( bh2->second );
+				for (const auto & bh2 : (bh->second)) {
+					MotifHitOP motifhitop( bh2.second );
 					if ( ! minimize_ ) {
 						(*ir)->keep_rotamer( *(motifhitop->build_rotamer()) );
 						++hits;
@@ -1210,11 +1205,10 @@ LigandMotifSearch::get_sphere_aa(
 		core::Real cut3_sq = cut3 * cut3;
 		core::Real cut4_sq = cut4 * cut4;
 
-		for ( std::set< core::Size >::const_iterator targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());
-				targ_it != targ_end; ++targ_it ) {
+		for (unsigned long interface_target_re : interface_target_res) {
 
 			// on protein side, have to do distance check
-			core::conformation::Residue const & targ_rsd = pose.residue( *targ_it );
+			core::conformation::Residue const & targ_rsd = pose.residue( interface_target_re );
 			core::Size targ_res_atom_start = 1;
 			if ( targ_rsd.is_protein() ) {
 				targ_res_atom_start = targ_rsd.first_sidechain_atom();
@@ -1474,10 +1468,8 @@ LigandMotifSearch::set_motif_library(
 	MotifLibrary & motiflibrary
 )
 {
-	for ( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motiflibrary.begin(), end_itr = motiflibrary.end();
-			motifcop_itr != end_itr; ++motifcop_itr ) {
-		protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-		motif_library_.push_back( motifcop );
+	for (auto motifcop : motiflibrary) {
+			motif_library_.push_back( motifcop );
 	}
 }
 

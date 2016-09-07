@@ -31,10 +31,10 @@ class ResidueTypesFeaturesCreator : public FeaturesReporterCreator
 {
 public:
 	ResidueTypesFeaturesCreator();
-	virtual ~ResidueTypesFeaturesCreator();
+	~ResidueTypesFeaturesCreator() override;
 
-	virtual FeaturesReporterOP create_features_reporter() const;
-	virtual std::string type_name() const;
+	FeaturesReporterOP create_features_reporter() const override;
+	std::string type_name() const override;
 };
 
 } //namespace features

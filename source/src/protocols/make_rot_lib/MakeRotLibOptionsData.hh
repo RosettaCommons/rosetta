@@ -66,7 +66,7 @@ public:
 	MakeRotLibOptionsData( std::string filename );
 
 	/// @brief dtor
-	~MakeRotLibOptionsData() {}
+	~MakeRotLibOptionsData() override = default;
 
 	/// @brief acessors
 	std::string get_name() const { return name_; }

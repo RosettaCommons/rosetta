@@ -158,9 +158,9 @@ VallData::get_frags(
 
 	Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
-	for ( utility::vector1< Size >::const_iterator it=homs_to_exclude.begin(); it != homs_to_exclude.end(); ++it ) {
-		TR.Trace << "Excluding chain " << *it << " from fragment picking" << std::endl;
-		exclude_chain[ *it ] = true;
+	for (unsigned long it : homs_to_exclude) {
+		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
+		exclude_chain[ it ] = true;
 	}
 
 	for ( Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
@@ -308,9 +308,9 @@ VallData::get_frags(
 
 	Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
-	for ( utility::vector1< Size >::const_iterator it=homs_to_exclude.begin(); it != homs_to_exclude.end(); ++it ) {
-		TR.Trace << "Excluding chain " << *it << " from fragment picking" << std::endl;
-		exclude_chain[ *it ] = true;
+	for (unsigned long it : homs_to_exclude) {
+		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
+		exclude_chain[ it ] = true;
 	}
 
 	for ( Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
@@ -445,9 +445,9 @@ VallData::get_cheating_frags(
 
 	Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
-	for ( utility::vector1< Size >::const_iterator it=homs_to_exclude.begin(); it != homs_to_exclude.end(); ++it ) {
-		TR.Trace << "Excluding chain " << *it << " from fragment picking" << std::endl;
-		exclude_chain[ *it ] = true;
+	for (unsigned long it : homs_to_exclude) {
+		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
+		exclude_chain[ it ] = true;
 	}
 
 	for ( Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows

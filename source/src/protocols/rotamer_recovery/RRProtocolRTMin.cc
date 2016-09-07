@@ -60,12 +60,9 @@ RRProtocolRTMin::RRProtocolRTMin() :
 	cartesian_(false)
 {}
 
-RRProtocolRTMin::RRProtocolRTMin(RRProtocolRTMin const & src) : RRProtocol(src),
-	nonideal_(src.nonideal_),
-	cartesian_(src.cartesian_)
-{}
+RRProtocolRTMin::RRProtocolRTMin(RRProtocolRTMin const & ) = default;
 
-RRProtocolRTMin::~RRProtocolRTMin() {}
+RRProtocolRTMin::~RRProtocolRTMin() = default;
 
 string
 RRProtocolRTMin::get_name() const {

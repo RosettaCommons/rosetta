@@ -44,7 +44,7 @@ public:
 	typedef protocols::moves::MoverOP MoverOP;
 public:
 
-	virtual ~Parser();
+	~Parser() override;
 
 	/// @brief generate_mover_from_job is the function called by the job
 	/// distributor to request a mover.  It is defined in the base class (this

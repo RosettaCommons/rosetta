@@ -96,7 +96,7 @@ TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &) :
 	// run_once_(src.run_once_)
 {}
 
-TaskOperationFeatures::~TaskOperationFeatures() {}
+TaskOperationFeatures::~TaskOperationFeatures() = default;
 
 string
 TaskOperationFeatures::type_name() const { return "TaskOperationFeatures"; }
@@ -202,18 +202,17 @@ TaskOperationFeatures::parse_my_tag(
 	Size taskop_id(0);
 	std::string taskop_list = tag->getOption< std::string >("task_operations");
 	utility::vector0< std::string > const taskop_keys( utility::string_split( taskop_list, ',' ) );
-	for ( utility::vector0< std::string>::const_iterator taskop_key( taskop_keys.begin() ),
-			end( taskop_keys.end() ); taskop_key != end; ++taskop_key ) {
+	for (const auto & taskop_key : taskop_keys) {
 		taskop_id++;
-		if ( data.has( "task_operations", *taskop_key ) ) {
+		if ( data.has( "task_operations", taskop_key ) ) {
 			TaskFactoryOP new_task_factory( new TaskFactory );
 			new_task_factory->push_back( data.get_ptr< TaskOperation >
-				( "task_operations", *taskop_key ) );
-			taskops_.push_back(Taskop_id_name_factory_(taskop_id, *taskop_key, new_task_factory) );
+				( "task_operations", taskop_key ) );
+			taskops_.push_back(Taskop_id_name_factory_(taskop_id, taskop_key, new_task_factory) );
 			//   taskop_keys_factories_.insert(
 			//    std::pair<std::string const, TaskFactoryCOP>(*taskop_key, new_task_factory));
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *taskop_key + " not found in DataMap.");
+			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + taskop_key + " not found in DataMap.");
 		}
 	}
 }
@@ -265,11 +264,10 @@ TaskOperationFeatures::report_features(
 	for ( Size resNum = 1; resNum <= pose.n_residue(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
-		for ( std::map<core::Size, PackerTaskCOP>::iterator task = tasks.begin(),
-				task_end = tasks.end(); task != task_end; ++task ) {
-			bool const pack = (task->second)->pack_residue(resNum);
-			bool const design = (task->second)->design_residue(resNum);
-			Size taskop_id = task->first;
+		for (auto & task : tasks) {
+			bool const pack = (task.second)->pack_residue(resNum);
+			bool const design = (task.second)->design_residue(resNum);
+			Size taskop_id = task.first;
 			insert_task_operation_residue_effects_row(struct_id, resNum,
 				taskop_id, pack, design, db_session);
 		}

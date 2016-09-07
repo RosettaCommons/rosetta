@@ -43,6 +43,7 @@
 // C++ headers
 #include <set>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -60,7 +61,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.ModifyStoredLigandRBConf
 ModifyStoredRBConfs::ModifyStoredRBConfs( std::string const & name )
 : parent( name ) {}
 
-ModifyStoredRBConfs::~ModifyStoredRBConfs(){}
+ModifyStoredRBConfs::~ModifyStoredRBConfs()= default;
 
 std::string
 ModifyStoredRBConfs::get_name() const {
@@ -121,8 +122,8 @@ ModifyStoredRBConfs::get_rigid_body_confs( core::pose::Pose const & pose ) const
 	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ); //toolbox::match_enzdes_util::get_enzdes_observer with const pose can return NULL
 	if ( !enz_obs ) return to_return;
 	std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > > const & rb_confs( enz_obs->lig_rigid_body_confs() );
-	for ( std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > >::const_iterator map_it = rb_confs.begin(); map_it != rb_confs.end(); ++map_it ) {
-		if ( pose.residue( map_it->first ).type().is_ligand() ) to_return.push_back( map_it->second );
+	for (const auto & rb_conf : rb_confs) {
+		if ( pose.residue( rb_conf.first ).type().is_ligand() ) to_return.push_back( rb_conf.second );
 	}
 	return to_return;
 }
@@ -153,7 +154,7 @@ GenerateStoredRBConfs::GenerateStoredRBConfs(
 ) :  parent( "GenerateStoredRBConfs" ),
 	num_total_rbconfs_( num_total_rbconfs ), include_metals_(include_metals) {}
 
-GenerateStoredRBConfs::~GenerateStoredRBConfs(){}
+GenerateStoredRBConfs::~GenerateStoredRBConfs()= default;
 
 std::string
 GenerateStoredRBConfs::get_name() const {
@@ -203,7 +204,7 @@ GenerateStoredRBConfs::apply(
 ApplyRandomStoredRBConf::ApplyRandomStoredRBConf()
 : parent( "ApplyRandomStoredRBConf" ) {}
 
-ApplyRandomStoredRBConf::~ApplyRandomStoredRBConf(){}
+ApplyRandomStoredRBConf::~ApplyRandomStoredRBConf()= default;
 
 
 void
@@ -232,9 +233,9 @@ ApplyRandomStoredRBConf::get_name() const {
 
 
 MinimizeStoredRBConfs::MinimizeStoredRBConfs( core::scoring::ScoreFunctionCOP sfxn )
-: parent( "MinimizeStoredRBConfs" ), sfxn_(sfxn), min_rms_(0.08) {}
+: parent( "MinimizeStoredRBConfs" ), sfxn_(std::move(sfxn)), min_rms_(0.08) {}
 
-MinimizeStoredRBConfs::~MinimizeStoredRBConfs(){}
+MinimizeStoredRBConfs::~MinimizeStoredRBConfs()= default;
 
 
 void
@@ -342,7 +343,7 @@ DiversifyStoredRBConfs::DiversifyStoredRBConfs(
 	Real min_rms )
 : parent( "DiversifyStoredRBConfs" ), min_rms_(min_rms), max_trials_(10) {}
 
-DiversifyStoredRBConfs::~DiversifyStoredRBConfs(){}
+DiversifyStoredRBConfs::~DiversifyStoredRBConfs()= default;
 
 void
 DiversifyStoredRBConfs::apply(

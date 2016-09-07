@@ -99,13 +99,13 @@ input_pdb_files_from_command_line()
 	if ( option[ in::file::list ].active() ) {
 		vector1< FileName > better_list_file_names;
 		better_list_file_names = option[in::file::list ]().vector(); // make a copy (-list)
-		for ( vector1< FileName >::iterator i = better_list_file_names.begin(), i_end = better_list_file_names.end(); i != i_end; ++i ) {
-			list_file_names.push_back(*i); // make a copy (-l)
+		for (auto & better_list_file_name : better_list_file_names) {
+			list_file_names.push_back(better_list_file_name); // make a copy (-l)
 		}
 	}
 
-	for ( vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
-		std::string filename( i->name() );
+	for (auto & list_file_name : list_file_names) {
+		std::string filename( list_file_name.name() );
 		utility::io::izstream data( filename.c_str() );
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
@@ -208,13 +208,13 @@ JobOP get_current_job() {
 		= JobDistributor::get_instance();
 	if ( jd && jd->job_inputter() ) {
 		return jd->current_job();
-	} else return NULL;
+	} else return nullptr;
 }
 
 core::pose::PoseCOP get_current_jobs_starting_pose() {
 	JobDistributor* jd
 		= JobDistributor::get_instance();
-	core::pose::PoseCOP pose( NULL );
+	core::pose::PoseCOP pose( nullptr );
 	if ( jd && jd->job_outputter() && jd->job_inputter() && jd->current_job() ) {
 		JobOP job = jd->current_job();
 		core::pose::PoseOP aPose( new core::pose::Pose );
@@ -227,16 +227,14 @@ core::pose::PoseCOP get_current_jobs_starting_pose() {
 void add_job_data_to_ss( core::io::silent::SilentStructOP ss, JobCOP job_op ) {
 	using namespace core::pose;
 
-	typedef Job::StringStringPairs::const_iterator str_iter;
-	for ( str_iter iter = job_op->output_string_string_pairs_begin(),
+	for ( auto iter = job_op->output_string_string_pairs_begin(),
 			end = job_op->output_string_string_pairs_end();
 			iter != end; ++iter
 			) {
 		ss->add_string_value(iter->first, iter->second );
 	}
 
-	typedef Job::StringRealPairs::const_iterator real_iter;
-	for ( real_iter iter = job_op->output_string_real_pairs_begin(),
+	for ( auto iter = job_op->output_string_real_pairs_begin(),
 			end = job_op->output_string_real_pairs_end();
 			iter != end; ++iter
 			) {

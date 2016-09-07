@@ -56,17 +56,17 @@ public:
 
 	SymmetricFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SymmetricFragmentMover>( ClassicFragmentMover::shared_from_this() ); }
 
-	virtual
+	
 	bool
 	apply_fragment(
 		core::fragment::Frame const& frame,
 		Size frag_num,
 		core::kinematics::MoveMap const& movemap,
 		core::pose::Pose &pose
-	) const;
+	) const override;
 
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 protected:
 	/// @brief alternative Constructor to be used by derived classes
@@ -102,7 +102,7 @@ public:
 
 	SmoothSymmetricFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SmoothSymmetricFragmentMover>( ClassicFragmentMover::shared_from_this() ); }
 
-	virtual std::string get_name() const { return "SmoothSymmetricFragmentMover"; }
+	std::string get_name() const override { return "SmoothSymmetricFragmentMover"; }
 
 protected:
 	/// @brief alternative Constructor to be used by derived classes
@@ -118,13 +118,13 @@ protected:
 		SmoothFragmentMover( fragset, movemap, cost, type )
 	{}
 
-	virtual
+	
 	bool
 	choose_fragment(
 		core::fragment::FrameList const& fl,
 		core::pose::Pose const& p,
 		Size &frame_num,
-		Size &frag_num) const {
+		Size &frag_num) const override {
 		return SmoothFragmentMover::choose_fragment(fl, p, frame_num, frag_num);
 	}
 

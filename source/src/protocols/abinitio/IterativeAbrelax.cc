@@ -159,9 +159,9 @@ namespace protocols {
 
 
 	void IterativeAbrelax::idle() {
-		int start_time( time(NULL) );
+		int start_time( time(nullptr) );
 		centroid_archive_.idle();
-		int later( time(NULL) );
+		int later( time(nullptr) );
 		int centroid_idle( later-start_time);
 		if ( centroid_idle > 10 ) {
 			tr.Debug << "spend " << centroid_idle << " seconds in idle() function of " << centroid_archive_.name() << std::endl;
@@ -169,7 +169,7 @@ namespace protocols {
 			return;
 		}
 		if ( fullatom_ ) fullatom_archive_.idle();
-		int final( time(NULL) );
+		int final( time(nullptr) );
 		int fullatom_idle( final-later );
 		if ( fullatom_idle > 10 ) {
 			tr.Debug << "spend " << fullatom_idle << " seconds in idle() function of " << fullatom_archive_.name() << std::endl;

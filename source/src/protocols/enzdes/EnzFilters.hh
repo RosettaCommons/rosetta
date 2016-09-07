@@ -53,19 +53,19 @@ public:
 public:
 	LigDSasaFilter() : Filter( "LigDSasa" ) {}
 	LigDSasaFilter( core::Real const lower_threshold, core::Real const upper_threshold );
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
+	FilterOP clone() const override {
 		return FilterOP( new LigDSasaFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new LigDSasaFilter() );
 	}
 
-	virtual ~LigDSasaFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~LigDSasaFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Real lower_threshold_, upper_threshold_;
 };
@@ -82,19 +82,19 @@ public:
 	LigBurialFilter() : Filter( "LigBurial"  ) {}
 	LigBurialFilter( core::Size lig_id, core::Size const numneighbors, core::Real const distance_threshold ) :
 		Filter( "LigBurial" ), lig_id_( lig_id), neighbors_( numneighbors ), distance_threshold_( distance_threshold ) {}
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
+	FilterOP clone() const override {
 		return FilterOP( new LigBurialFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new LigBurialFilter() );
 	}
 
-	virtual ~LigBurialFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~LigBurialFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Size lig_id_;
 	core::Size neighbors_;
@@ -118,22 +118,22 @@ public:
 		core::Real const interface_distance_cutoff =  8.0 );
 
 	LigInterfaceEnergyFilter( LigInterfaceEnergyFilter const &init );
-	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	FilterOP clone() const override {
 		return FilterOP( new LigInterfaceEnergyFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new LigInterfaceEnergyFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	core::Real constraint_energy( core::pose::Pose const & pose, int which_res ) const;
 
-	virtual ~LigInterfaceEnergyFilter();
+	~LigInterfaceEnergyFilter() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
 
 
 private:
@@ -156,25 +156,25 @@ public:
 public:
 	EnzScoreFilter() : Filter( "EnzScore" ) {}
 
-	EnzScoreFilter(  core::Size const resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn,
+	EnzScoreFilter(  core::Size const resnum, std::string cstid, core::scoring::ScoreFunctionOP scorefxn,
 		core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE
 	);
 
 	EnzScoreFilter( EnzScoreFilter const &init );
-	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	FilterOP clone() const override {
 		return FilterOP( new EnzScoreFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new EnzScoreFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	//core::Size get_resid_from_cstid( core::pose::Pose const & pose, core::Size const & cstid) const;
-	virtual ~EnzScoreFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	~EnzScoreFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
 private:
 	core::Size resnum_;
 	std::string cstid_;
@@ -198,19 +198,19 @@ public:
 
 	DiffAtomSasaFilter( core::Size resid1, core::Size resid2, std::string atomname1, std::string atomane2, std::string sample_type );
 	//DiffAtomSasaFilter( DiffAtomSasaFilter const &init );
-	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	FilterOP clone() const override {
 		return FilterOP( new DiffAtomSasaFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new DiffAtomSasaFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	bool compute( core::pose::Pose const & pose ) const;
-	virtual ~DiffAtomSasaFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	~DiffAtomSasaFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
 private:
 	core::Size resid1_, resid2_;
 	std::string aname1_, aname2_, sample_type_;
@@ -228,19 +228,19 @@ public:
 	RepackWithoutLigandFilter() : Filter( "RepackWithoutLigand" ) {}
 
 	RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, utility::vector1< core::Size > rms_target_res  );
-	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	FilterOP clone() const override {
 		return FilterOP( new RepackWithoutLigandFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new RepackWithoutLigandFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	virtual ~RepackWithoutLigandFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	virtual ~RepackWithoutLigandFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn){ scorefxn_ = scorefxn; }
 	void set_cstid_list( std::string setting){ cstid_list_ = setting; }
 private:
@@ -288,21 +288,21 @@ public:
 
 	EnzdesScorefileFilter();
 	EnzdesScorefileFilter( EnzdesScorefileFilter const & other);
-	~EnzdesScorefileFilter();
+	~EnzdesScorefileFilter() override;
 
 	//filter interface
 public:
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
-	FilterOP clone() const {
+	FilterOP clone() const override {
 		return FilterOP( new EnzdesScorefileFilter( *this ) );
 	}
 
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new EnzdesScorefileFilter() );
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
 
 	// specific stuff
 public:
@@ -382,23 +382,23 @@ public:
 
 	ResidueConformerFilter();
 	ResidueConformerFilter( ResidueConformerFilter const & other);
-	~ResidueConformerFilter();
+	~ResidueConformerFilter() override;
 
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
-	FilterOP clone() const {
+	FilterOP clone() const override {
 		return FilterOP( new ResidueConformerFilter( *this ) );
 	}
 
-	FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new ResidueConformerFilter() );
 	}
 
-	virtual void report( std::ostream &, core::pose::Pose const & pose ) const;
+	void report( std::ostream &, core::pose::Pose const & pose ) const override;
 
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
 
 	core::Size
 	get_current_conformer( core::pose::Pose const & pose ) const;

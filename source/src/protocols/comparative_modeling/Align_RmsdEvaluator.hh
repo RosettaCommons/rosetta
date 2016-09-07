@@ -39,21 +39,21 @@ public:
 		core::pose::PoseCOP native_pose,
 		std::string tag = "",
 		bool calc_gdt = true,
-		core::sequence::SequenceAlignmentOP aln = 0,
+		core::sequence::SequenceAlignmentOP aln = nullptr,
 		bool gdt_by_TM = false
 	);
 
-	~Align_RmsdEvaluator();
+	~Align_RmsdEvaluator() override;
 
-	virtual void apply(
+	void apply(
 		core::pose::Pose & pose,
 		std::string tag,
 		core::io::silent::SilentStruct & ss
-	) const;
+	) const override;
 
-	virtual core::Real apply(
+	core::Real apply(
 		core::pose::Pose & /*pose*/
-	) const {
+	) const override {
 		return 0;
 	}
 

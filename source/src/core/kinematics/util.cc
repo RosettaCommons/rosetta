@@ -20,6 +20,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/types.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -54,7 +55,7 @@ add_atom(
 	// create new atom
 	AtomOP const atom_p( add_jump_atom ? static_cast< Atom* >( new JumpAtom() ) : static_cast< Atom* >( new BondedAtom() ) );
 	// fill in the atom_ptr data
-	debug_assert( atom_ptr[ atomno ] == 0 );
+	debug_assert( atom_ptr[ atomno ] == nullptr );
 	atom_ptr[ atomno ] = atom_p;
 	// set the atom_id information
 	atom_p->id( AtomID( atomno, seqpos ) );
@@ -62,7 +63,7 @@ add_atom(
 	utility::vector1< Size > const & nbrs( links[ atomno ] );
 	for ( Size i = 1, i_end = nbrs.size(); i <= i_end; ++i ) {
 		int const nbr( nbrs[i] );
-		if ( atom_ptr[ nbr ] != 0 ) continue;
+		if ( atom_ptr[ nbr ] != nullptr ) continue;
 		atom_p->append_atom( add_atom( nbr, seqpos, links, atom_ptr, false ) );
 	}
 	return atom_p;
@@ -256,7 +257,7 @@ setup_backrub_atom_tree(
 	}
 	return root;
 	*/
-	return 0;
+	return nullptr;
 }
 
 /// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
@@ -372,11 +373,11 @@ simple_visualize_fold_tree_and_movemap_bb_chi( FoldTree const & fold_tree, MoveM
 core::kinematics::FoldTree
 linearize_fold_tree( core::kinematics::FoldTree const & tree ) {
 	core::kinematics::FoldTree newtree;
-	for ( core::kinematics::FoldTree::const_iterator it(tree.begin()), end(tree.end()); it != end; ++it ) {
+	for (const auto & it : tree) {
 		//if it is not a jump, we don't modify it
-		if ( !it->is_jump() ) newtree.add_edge(*it);
+		if ( !it.is_jump() ) newtree.add_edge(it);
 		//if it is a jump, we move start() to stop-1.  This is naive but works for the intended case.
-		else newtree.add_edge(core::kinematics::Edge(it->stop()-1, it->stop(), it->label()));
+		else newtree.add_edge(core::kinematics::Edge(it.stop()-1, it.stop(), it.label()));
 	}
 	return newtree;
 }
@@ -426,10 +427,10 @@ pad_dash_right ( Size npad, std::string s ) {
 
 struct Node {
 	Node( std::string _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark = ( char )NULL, Size _follows = 0 )
-	: name( _name ), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent( NULL ) {}
+	: name(std::move( _name )), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent( nullptr ) {}
 
 	~Node() {
-		for ( utility::vector1< Node* >::iterator i = children.begin(); i != children.end(); ++i ) delete *i;
+		for (auto & i : children) delete i;
 	}
 
 	void
@@ -440,7 +441,7 @@ struct Node {
 
 	Node*
 	root() {
-		return parent == NULL ? this : parent->root();
+		return parent == nullptr ? this : parent->root();
 	}
 
 	std::string
@@ -529,8 +530,8 @@ struct TreeVizBuilder {
 	void
 	expand_node_labels_partial_by_contig( std::map< Size, std::string > & node_labels_partial ) {
 		utility::vector1< Size > tocheck;
-		for ( std::map< Size,std::string >::iterator i = node_labels_partial.begin(); i != node_labels_partial.end(); ++i ) {
-			tocheck.push_back( i->first );
+		for (auto & i : node_labels_partial) {
+			tocheck.push_back( i.first );
 		}
 		for ( utility::vector1< Size >::const_iterator i = tocheck.begin(); i != tocheck.end(); ++i ) {
 			for ( utility::vector1< Size >::const_iterator j = tocheck.begin(); j != tocheck.end(); ++j ) {
@@ -663,21 +664,19 @@ remodel_fold_tree_to_account_for_insertion(
 		throw utility::excn::EXCN_Msg_Exception("FoldTree utility remodel_fold_tree_to_account_for_insertion: I do not know how to handle insertion points that are also jump points - does the jump stay where it was or move to the end of the insert?");
 	}
 	core::kinematics::FoldTree return_tree;
-	typedef std::vector< core::kinematics::Edge > EdgeList; //I am not responsible for the std::vector!
-	typedef EdgeList::const_iterator ELconst_iterator;
-	for ( ELconst_iterator it(input_tree.begin()), end(input_tree.end()); it!=end; ++it ) {
+	for (const auto & it : input_tree) {
 		//get a copy of the old Edge's start/stop, and update them as necessary
-		core::Size start(it->start()), stop(it->stop());
+		core::Size start(it.start()), stop(it.stop());
 		if ( start>insert_after ) start = start+insert_size;
 		if ( stop>insert_after )  stop  = stop+insert_size;
 		//copy old edge to new edge
 		core::kinematics::Edge const new_edge(
 			start,
 			stop,
-			it->label(),
-			it->start_atom(),
-			it->stop_atom(),
-			it->keep_stub_in_residue());
+			it.label(),
+			it.start_atom(),
+			it.stop_atom(),
+			it.keep_stub_in_residue());
 		//put in new fold tree
 		return_tree.add_edge(new_edge);
 	}
@@ -692,9 +691,8 @@ get_residues_from_movemap_with_id( id::TorsionType query_torsion, MoveMap const 
 
 	typedef id::TorsionType TorsionType;
 	typedef std::pair< Size, TorsionType > MoveMapTorsionID;
-	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
 
-	for ( MoveMapTorsionID_Map::const_iterator it = movemap.movemap_torsion_id_begin(), it_end = movemap.movemap_torsion_id_end();
+	for ( auto it = movemap.movemap_torsion_id_begin(), it_end = movemap.movemap_torsion_id_end();
 			it != it_end; ++it ) {
 		MoveMapTorsionID mmtorsionID = it->first;
 		Size res = mmtorsionID.first;

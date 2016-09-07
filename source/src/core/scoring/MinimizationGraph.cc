@@ -42,7 +42,7 @@ MinimizationNode::MinimizationNode( Graph * owner, Size index ) :
 	parent( owner, index )
 {}
 
-MinimizationNode::~MinimizationNode() {}
+MinimizationNode::~MinimizationNode() = default;
 
 
 void MinimizationNode::print() const
@@ -122,7 +122,7 @@ MinimizationNode::setup_for_minimizing(
 	ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & min_map
 ) {
-	for ( OneBodyEnergiesIterator iter = active_1benmeths_begin(),
+	for ( auto iter = active_1benmeths_begin(),
 			iter_end = active_1benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_minimizing_for_residue( rsd, pose, sfxn, min_map, res_min_data_ );
 	}
@@ -138,12 +138,12 @@ void MinimizationNode::setup_for_scoring(
 	ScoreFunction const & sfxn
 ) {
 	/// 1a 1body energy methods
-	for ( OneBodyEnergiesIterator iter = sfs_req_1benmeths_begin(),
+	for ( auto iter = sfs_req_1benmeths_begin(),
 			iter_end = sfs_req_1benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_scoring_for_residue( rsd, pose, sfxn, res_min_data_ );
 	}
 	/// 1b 2body intraresidue contributions
-	for ( TwoBodyEnergiesIterator iter = sfs_req_2benmeths_begin(),
+	for ( auto iter = sfs_req_2benmeths_begin(),
 			iter_end = sfs_req_2benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_scoring_for_residue( rsd, pose, sfxn, res_min_data_ );
 	}
@@ -155,12 +155,12 @@ void MinimizationNode::setup_for_derivatives(
 	ScoreFunction const & sfxn
 ) {
 	/// 1a 1body energy methods
-	for ( OneBodyEnergiesIterator iter = sfd_req_1benmeths_begin(),
+	for ( auto iter = sfd_req_1benmeths_begin(),
 			iter_end = sfd_req_1benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_derivatives_for_residue( rsd, pose, sfxn, res_min_data_ );
 	}
 	/// 1b 2body intraresidue contributions
-	for ( TwoBodyEnergiesIterator iter = sfd_req_2benmeths_begin(),
+	for ( auto iter = sfd_req_2benmeths_begin(),
 			iter_end = sfd_req_2benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_derivatives_for_residue( rsd, pose, sfxn, res_min_data_ );
 	}
@@ -428,9 +428,7 @@ MinimizationEdge::MinimizationEdge(
 
 /// @brief virtual dstor; The MinimizationEdge must free the array pool element it
 /// holds before it disappears.
-MinimizationEdge::~MinimizationEdge()
-{
-}
+MinimizationEdge::~MinimizationEdge() = default;
 
 /// @brief copies data from MinimizationEdge const * source;
 ///
@@ -512,7 +510,7 @@ void MinimizationEdge::setup_for_scoring(
 	ScoreFunction const & sfxn
 )
 {
-	for ( TwoBodyEnergiesIterator iter = sfs_req_2benmeths_begin(),
+	for ( auto iter = sfs_req_2benmeths_begin(),
 			iter_end = sfs_req_2benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_scoring_for_residue_pair(
 			rsd1, rsd2,
@@ -529,7 +527,7 @@ void MinimizationEdge::setup_for_derivatives(
 	ScoreFunction const & sfxn
 )
 {
-	for ( TwoBodyEnergiesIterator iter = sfd_req_2benmeths_begin(),
+	for ( auto iter = sfd_req_2benmeths_begin(),
 			iter_end = sfd_req_2benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->setup_for_derivatives_for_residue_pair(
 			rsd1, rsd2,
@@ -650,7 +648,7 @@ MinimizationEdge * MinimizationGraph::find_minimization_edge( Size n1, Size n2)
 		return static_cast< MinimizationEdge * > ( edge );
 		//return utility::down_cast< MinimizationEdge * > ( edge );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -661,7 +659,7 @@ MinimizationEdge const * MinimizationGraph::find_minimization_edge( Size n1, Siz
 		return static_cast< MinimizationEdge const * > ( edge );
 		//return utility::down_cast< MinimizationEdge const * > ( edge );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -697,7 +695,7 @@ MinimizationGraph::MinimizationGraph( MinimizationGraph const & src )
 
 MinimizationGraph::~MinimizationGraph() {
 	delete_everything();
-	delete minimization_edge_pool_; minimization_edge_pool_ = 0;
+	delete minimization_edge_pool_; minimization_edge_pool_ = nullptr;
 }
 
 

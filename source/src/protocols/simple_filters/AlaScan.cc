@@ -99,7 +99,7 @@ AlaScan::AlaScan( bool const chain1, bool const chain2, core::Size const repeats
 	else scorefxn_ = scorefxn->clone();
 }
 
-AlaScan::~AlaScan() {}
+AlaScan::~AlaScan() = default;
 
 bool
 AlaScan::repack() const

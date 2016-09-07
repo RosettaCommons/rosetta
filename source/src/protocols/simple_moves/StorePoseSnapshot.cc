@@ -77,7 +77,7 @@ StorePoseSnapshotCreator::mover_name()
 	return "StorePoseSnapshot";
 }
 
-StorePoseSnapshot::~StorePoseSnapshot() {}
+StorePoseSnapshot::~StorePoseSnapshot() = default;
 
 /// @brief Default constructor
 ///
@@ -89,11 +89,7 @@ StorePoseSnapshot::StorePoseSnapshot() :
 
 /// @brief Copy constructor
 ///
-StorePoseSnapshot::StorePoseSnapshot( StorePoseSnapshot const &src ) :
-	parent(src),
-	reference_pose_name_( src.reference_pose_name_ ),
-	overwrite_current_refpose_(src.overwrite_current_refpose_)
-{}
+StorePoseSnapshot::StorePoseSnapshot( StorePoseSnapshot const &) = default;
 
 /// @brief Apply function -- actually apply this mover to the pose, modifying the pose.
 ///

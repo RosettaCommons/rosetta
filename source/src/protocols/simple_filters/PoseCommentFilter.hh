@@ -29,18 +29,18 @@ class PoseComment : public filters::Filter
 {
 public:
 	PoseComment();
-	virtual ~PoseComment();
-	filters::FilterOP clone() const {
+	~PoseComment() override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new PoseComment( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new PoseComment() );
 	}
 
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & ) override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	std::string comment_name() const { return comment_name_; }

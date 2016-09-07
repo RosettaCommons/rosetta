@@ -50,25 +50,23 @@ protected: // Creation
 
 	/// @brief Copy constructor
 	inline
-	VectorOption( VectorOption const & option ) :
-		Super( option )
-	{}
+	VectorOption( VectorOption const & ) = default;
 
 
 public: // Creation
 
 
 	/// @brief Clone this
-	virtual
+	
 	VectorOption *
-	clone() const = 0;
+	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	virtual
-	~VectorOption()
-	{}
+	
+	~VectorOption() override
+	= default;
 
 
 protected: // Assignment
@@ -87,41 +85,41 @@ public: // Methods
 
 
 	/// @brief Activate
-	virtual
+	
 	VectorOption &
-	activate() = 0;
+	activate() override = 0;
 
 
 	/// @brief Deactivate
-	virtual
+	
 	VectorOption &
-	deactivate() = 0;
+	deactivate() override = 0;
 
 
 	/// @brief Set to default value, if any
-	virtual
+	
 	VectorOption &
-	to_default() = 0;
+	to_default() override = 0;
 
 
 	/// @brief Clear
-	virtual
+	
 	VectorOption &
-	clear() = 0;
+	clear() override = 0;
 
 
 	/// @brief Value assignment from a command line string
-	virtual
+	
 	VectorOption &
-	cl_value( std::string const & value_str ) = 0;
+	cl_value( std::string const & value_str ) override = 0;
 
 	/// @brief Value assignemt from a command line string but without
 	/// a VectorOption & return type. This will separate arguments into
 	/// blocks grouped by quotes, and then separate the non-quote-delimited
 	/// arguments by whitespace
-	virtual
+	
 	void
-	set_cl_value( std::string const & value_str ) {
+	set_cl_value( std::string const & value_str ) override {
 		cl_value( value_str );
 	}
 

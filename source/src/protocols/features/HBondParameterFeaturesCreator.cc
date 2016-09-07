@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 HBondParameterFeaturesCreator::HBondParameterFeaturesCreator() {}
-HBondParameterFeaturesCreator::~HBondParameterFeaturesCreator() {}
+HBondParameterFeaturesCreator::~HBondParameterFeaturesCreator() = default;
 FeaturesReporterOP HBondParameterFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new HBondParameterFeatures );
 }

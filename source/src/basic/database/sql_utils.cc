@@ -262,7 +262,7 @@ get_db_session(
 		utility_exit_with_message(
 			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
 	}
-	return 0;
+	return nullptr;
 }
 
 /// @
@@ -527,8 +527,8 @@ check_statement_sanity(
 	}
 
 	int semicolon_count=0;
-	for ( size_t i = 0; i < sql.size(); i++ ) {
-		if ( sql[i] == ';' ) {
+	for (char i : sql) {
+		if ( i == ';' ) {
 			semicolon_count++;
 		}
 	}
@@ -974,7 +974,7 @@ parse_database_connection(
 			"Unrecognized database mode: '" +
 			name_from_database_mode(database_mode) + "'");
 	}
-	return 0;
+	return nullptr;
 }
 
 }

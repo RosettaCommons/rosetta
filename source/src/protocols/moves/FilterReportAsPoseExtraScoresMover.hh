@@ -48,41 +48,41 @@ public:
 	//FilterReportAsPoseExtraScoresMover( FilterReportAsPoseExtraScoresMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~FilterReportAsPoseExtraScoresMover();
+	~FilterReportAsPoseExtraScoresMover() override;
 
 	static std::string
 	class_name();
 
 public:
 	// mover virtual API
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	virtual void
-	show( std::ostream & output = std::cout ) const;
+	void
+	show( std::ostream & output = std::cout ) const override;
 
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	//not defined, which means filter_ will do shallow copies, change that if you need it.
 	//FilterReportAsPoseExtraScoresMover & operator=( FilterReportAsPoseExtraScoresMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 	/// @brief set filter we report from
 	void set_filter( protocols::filters::FilterOP filter );

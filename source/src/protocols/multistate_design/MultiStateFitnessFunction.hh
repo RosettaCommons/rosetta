@@ -47,12 +47,12 @@ public:
 	typedef utility::pointer::shared_ptr< MultiStateFitnessFunction > OP;
 
 	MultiStateFitnessFunction();
-	virtual ~MultiStateFitnessFunction();
+	~MultiStateFitnessFunction() override;
 
 	virtual void add_state( SingleStateOP state );
 	virtual void add_state( core::pose::Pose const & pose, bool is_positive );
 
-	virtual core::Real evaluate( protocols::genetic_algorithm::Entity & entity );
+	core::Real evaluate( protocols::genetic_algorithm::Entity & entity ) override;
 	virtual core::Real evaluate( protocols::genetic_algorithm::Entity & entity, core::Size single_state_num ) = 0;
 	virtual core::Real evaluate_positive_states( protocols::genetic_algorithm::Entity & entity );
 

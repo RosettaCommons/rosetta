@@ -46,12 +46,12 @@ public:
 	// default constructor (nmoves=1)
 	ModifyVariantTypeMover();
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	core::pack::task::TaskFactoryOP task_factory_;

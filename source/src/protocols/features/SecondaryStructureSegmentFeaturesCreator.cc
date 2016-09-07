@@ -25,7 +25,7 @@ namespace protocols {
 namespace features {
 
 SecondaryStructureSegmentFeaturesCreator::SecondaryStructureSegmentFeaturesCreator() {}
-SecondaryStructureSegmentFeaturesCreator::~SecondaryStructureSegmentFeaturesCreator() {}
+SecondaryStructureSegmentFeaturesCreator::~SecondaryStructureSegmentFeaturesCreator() = default;
 FeaturesReporterOP SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new SecondaryStructureSegmentFeatures );
 }

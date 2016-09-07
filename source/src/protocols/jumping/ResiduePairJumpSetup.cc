@@ -78,7 +78,7 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 
 	std::string line, tag;
 	core::Size root = 1;
-	ResiduePairJumpOP residue_pair_jump = NULL;
+	ResiduePairJumpOP residue_pair_jump = nullptr;
 	while ( getline(data, line ) ) {
 		std::istringstream in( line );
 		in >> tag;
@@ -88,7 +88,7 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 		} else if ( tag == "END" ) {
 			residue_pair_jump->init_mini_pose();
 			add_residue_pair_jump( residue_pair_jump );
-			residue_pair_jump = NULL;
+			residue_pair_jump = nullptr;
 			continue;
 		} else if ( tag == "ROOT" ) {
 			in >> root;
@@ -168,7 +168,7 @@ ResiduePairJumpSetup::generate_jump_frags( JumpSample const& jumps, kinematics::
 	//runtime_assert( jumps.total_residue() == total_residue() );
 	ObjexxFCL::FArray2D_int const & in_jumps ( jumps.jumps() );
 	int ct = 1;
-	for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
+	for ( auto it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
 		Size jump_number = 0;
 		for ( Size i = 1; i <= jumps.size(); ++i ) {
 			if  ( ( in_jumps( 1, i ) == int( it->jump_.start_) ) && ( in_jumps( 2, i ) == int( it->jump_.end_ ) ) ) {
@@ -207,7 +207,7 @@ ResiduePairJumpSetup::create_jump_sample() const
 
 	int ct = 1;
 	Size total_residue = total_residue_;
-	for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
+	for ( auto it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
 		jumps( 1, ct ) = it->jump_.start_;
 		jumps( 2, ct ) = it->jump_.end_;
 		Size const crs ( it->cut_reg_.start_ );

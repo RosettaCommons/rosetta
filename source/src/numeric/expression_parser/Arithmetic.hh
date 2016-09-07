@@ -56,7 +56,7 @@ class Token : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Token();
+	~Token() override;
 	virtual
 	TokenType
 	type() const = 0;
@@ -72,13 +72,13 @@ public:
 	LiteralToken();
 	LiteralToken( numeric::Real value );
 
-	virtual
+	
 	TokenType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	std::string
-	to_string() const;
+	to_string() const override;
 
 	numeric::Real
 	value() const;
@@ -96,13 +96,13 @@ public:
 	VariableToken();
 	VariableToken( std::string const & name );
 
-	virtual
+	
 	TokenType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	std::string
-	to_string() const;
+	to_string() const override;
 
 	std::string name() const;
 	void name( std::string const & name );
@@ -116,13 +116,13 @@ public:
 	FunctionToken();
 	FunctionToken( std::string const & name, numeric::Size nargs );
 
-	virtual
+	
 	TokenType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	std::string
-	to_string() const;
+	to_string() const override;
 
 	std::string name() const;
 	void name( std::string const & name );
@@ -140,13 +140,13 @@ public:
 	SimpleToken();
 	SimpleToken( TokenType type );
 
-	virtual
+	
 	TokenType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	std::string
-	to_string() const;
+	to_string() const override;
 
 	void
 	set_token_type( TokenType type );
@@ -159,7 +159,7 @@ class TokenSet : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~TokenSet();
+	~TokenSet() override;
 	TokenSet();
 
 	void append( TokenCOP token );
@@ -189,7 +189,7 @@ class ArithmeticScanner : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ArithmeticScanner();
+	~ArithmeticScanner() override;
 	/// @brief Constructor which adds the "standard" set of min, max and sqrt functions.
 	ArithmeticScanner();
 	/// @brief Constructor which does not add the "standard" set of min, max and sqrt functions.
@@ -233,7 +233,7 @@ class ArithmeticASTNode : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ArithmeticASTNode();
+	~ArithmeticASTNode() override;
 	virtual
 	void
 	visit( ASTVisitor & visitor ) const = 0;
@@ -242,9 +242,9 @@ public:
 class ArithmeticASTExpression : public ArithmeticASTNode
 {
 public:
-	virtual
+	
 	void
-	visit( ASTVisitor & visitor ) const;
+	visit( ASTVisitor & visitor ) const override;
 
 	virtual
 	void
@@ -264,11 +264,11 @@ private:
 class ArithmeticASTFunction : public ArithmeticASTNode
 {
 public:
-	~ArithmeticASTFunction();
+	~ArithmeticASTFunction() override;
 
-	virtual
+	
 	void
-	visit( ASTVisitor & visitor ) const;
+	visit( ASTVisitor & visitor ) const override;
 
 	virtual
 	void
@@ -292,9 +292,9 @@ private:
 class ArithmeticASTTerm : public ArithmeticASTNode
 {
 public:
-	virtual
+	
 	void
-	visit( ASTVisitor & visitor ) const;
+	visit( ASTVisitor & visitor ) const override;
 
 	virtual
 	void
@@ -314,11 +314,11 @@ private:
 class ArithmeticASTFactor : public ArithmeticASTNode
 {
 public:
-	~ArithmeticASTFactor();
+	~ArithmeticASTFactor() override;
 
-	virtual
+	
 	void
-	visit( ASTVisitor & visitor ) const;
+	visit( ASTVisitor & visitor ) const override;
 
 	virtual
 	void
@@ -336,11 +336,11 @@ class ArithmeticASTValue : public ArithmeticASTNode
 {
 public:
 	ArithmeticASTValue();
-	~ArithmeticASTValue();
+	~ArithmeticASTValue() override;
 
-	virtual
+	
 	void
-	visit( ASTVisitor & visitor ) const;
+	visit( ASTVisitor & visitor ) const override;
 
 	virtual
 	void
@@ -362,9 +362,9 @@ class ArithmeticASTRestTerm : public ArithmeticASTNode
 public:
 	ArithmeticASTRestTerm();
 
-	virtual
+	
 	void
-	visit( ASTVisitor & visitor ) const;
+	visit( ASTVisitor & visitor ) const override;
 
 	virtual
 	void
@@ -390,9 +390,9 @@ class ArithmeticASTRestExpression : public ArithmeticASTNode
 public:
 	ArithmeticASTRestExpression();
 
-	virtual
+	
 	void
-	visit( ASTVisitor & visitor ) const;
+	visit( ASTVisitor & visitor ) const override;
 
 	virtual
 	void
@@ -418,7 +418,7 @@ class ASTVisitor : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ASTVisitor();
+	~ASTVisitor() override;
 
 	virtual
 	void
@@ -461,38 +461,38 @@ class ASTPrinter : public ASTVisitor
 public:
 	ASTPrinter();
 
-	virtual
+	
 	void
-	visit( ArithmeticASTExpression const & );
+	visit( ArithmeticASTExpression const & ) override;
 
 
-	virtual
+	
 	void
-	visit( ArithmeticASTFunction const & );
+	visit( ArithmeticASTFunction const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTTerm const & );
+	visit( ArithmeticASTTerm const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTFactor const & );
+	visit( ArithmeticASTFactor const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTValue const & );
+	visit( ArithmeticASTValue const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTRestTerm const & );
+	visit( ArithmeticASTRestTerm const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTRestExpression const & );
+	visit( ArithmeticASTRestExpression const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTNode const & );
+	visit( ArithmeticASTNode const & ) override;
 
 	std::string
 	ast_string( ArithmeticASTNode const & node );
@@ -525,39 +525,39 @@ class ExpressionCreator : public ASTVisitor
 {
 public:
 	ExpressionCreator();
-	~ExpressionCreator();
+	~ExpressionCreator() override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTExpression const & );
+	visit( ArithmeticASTExpression const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTFunction const & );
+	visit( ArithmeticASTFunction const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTTerm const & );
+	visit( ArithmeticASTTerm const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTFactor const & );
+	visit( ArithmeticASTFactor const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTValue const & );
+	visit( ArithmeticASTValue const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTRestTerm const & );
+	visit( ArithmeticASTRestTerm const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTRestExpression const & );
+	visit( ArithmeticASTRestExpression const & ) override;
 
-	virtual
+	
 	void
-	visit( ArithmeticASTNode const & );
+	visit( ArithmeticASTNode const & ) override;
 
 	ExpressionCOP
 	create_expression_tree( ArithmeticASTExpression const & );
@@ -596,9 +596,9 @@ public:
 	void
 	add_variable( std::string const & varname );
 
-	virtual
+	
 	ExpressionCOP
-	handle_variable_expression( ArithmeticASTValue const & );
+	handle_variable_expression( ArithmeticASTValue const & ) override;
 
 	VariableExpressionOP
 	get_variable( std::string const & varname );
@@ -620,12 +620,12 @@ public:
 	BooleanExpressionCreator();
 	BooleanExpressionCreator( std::list< std::string > const & varnames );
 
-	virtual
+	
 	ExpressionCOP
 	handle_function_expression(
 		FunctionTokenCOP function,
 		utility::vector1< ExpressionCOP > const & args
-	);
+	) override;
 
 };
 
@@ -640,7 +640,7 @@ class Expression : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Expression();
+	~Expression() override;
 
 	virtual
 	numeric::Real
@@ -667,18 +667,18 @@ public:
 
 	void set_value( numeric::Real value );
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
 	/// @brief Returns null, since the derivative for a literal is always zero
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 private:
 	numeric::Real value_;
@@ -691,22 +691,22 @@ public:
 	VariableExpression( std::string const & name );
 	VariableExpression( std::string const & name, numeric::Real value );
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
 	void set_value( numeric::Real value );
 
 	std::string name() const;
 
 	/// @brief Returns the literal expression 1 if name_ == varname_ and null otherwise
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 private:
 	std::string name_;
@@ -718,14 +718,14 @@ class UnaryExpression : public Expression
 {
 public:
 	UnaryExpression();
-	~UnaryExpression();
+	~UnaryExpression() override;
 	UnaryExpression( ExpressionCOP ex );
 
 	void set_expression( ExpressionCOP ex );
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 public:
 	ExpressionCOP ex() const;
@@ -739,15 +739,15 @@ class BinaryExpression : public Expression
 {
 public:
 	BinaryExpression();
-	~BinaryExpression();
+	~BinaryExpression() override;
 	BinaryExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	void set_first_expression( ExpressionCOP e1 );
 	void set_second_expression( ExpressionCOP e2 );
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 public:
 	ExpressionCOP e1() const;
@@ -780,13 +780,13 @@ public:
 	SquarerootExpression();
 	SquarerootExpression( ExpressionCOP ex );
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -796,13 +796,13 @@ public:
 	AbsoluteValueExpression();
 	AbsoluteValueExpression( ExpressionCOP ex );
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -813,13 +813,13 @@ public:
 	AddExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the sum of expression 1 and expression 2.
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -830,13 +830,13 @@ public:
 	SubtractExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the difference between expression 1 and expression 2.
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -848,13 +848,13 @@ public:
 	MultiplyExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the product of expression 1 and expression 2
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -865,13 +865,13 @@ public:
 	DivideExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the quotient of expression 1 and expression 2
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -882,17 +882,17 @@ public:
 	MaxExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the max of e1 and e2.
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 };
 
@@ -903,17 +903,17 @@ public:
 	MinExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the min of e1 and e2
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 };
 
@@ -925,17 +925,17 @@ public:
 	//MetaMaxExpression();
 	MetaMaxExpression( ExpressionCOP e1, ExpressionCOP e2, ExpressionCOP ee1, ExpressionCOP ee2 );
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 private:
 	ExpressionCOP e1_, e2_;
@@ -950,17 +950,17 @@ public:
 	//MetaMinExpression();
 	MetaMinExpression( ExpressionCOP e1, ExpressionCOP e2, ExpressionCOP ee1, ExpressionCOP ee2 );
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 private:
 	ExpressionCOP e1_, e2_;
@@ -976,15 +976,15 @@ class EqualsExpression : public BinaryExpression
 public:
 	EqualsExpression();
 	EqualsExpression( ExpressionCOP e1, ExpressionCOP e2 );
-	virtual ~EqualsExpression();
+	~EqualsExpression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -994,15 +994,15 @@ class GT_Expression : public BinaryExpression
 public:
 	GT_Expression();
 	GT_Expression( ExpressionCOP e1, ExpressionCOP e2 );
-	virtual ~GT_Expression();
+	~GT_Expression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -1012,15 +1012,15 @@ class GTE_Expression : public BinaryExpression
 public:
 	GTE_Expression();
 	GTE_Expression( ExpressionCOP e1, ExpressionCOP e2 );
-	virtual ~GTE_Expression();
+	~GTE_Expression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -1030,15 +1030,15 @@ class LT_Expression : public BinaryExpression
 public:
 	LT_Expression();
 	LT_Expression( ExpressionCOP e1, ExpressionCOP e2 );
-	virtual ~LT_Expression();
+	~LT_Expression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -1048,15 +1048,15 @@ class LTE_Expression : public BinaryExpression
 public:
 	LTE_Expression();
 	LTE_Expression( ExpressionCOP e1, ExpressionCOP e2 );
-	virtual ~LTE_Expression();
+	~LTE_Expression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -1067,15 +1067,15 @@ class AndExpression : public BinaryExpression
 public:
 	AndExpression();
 	AndExpression( ExpressionCOP e1, ExpressionCOP e2 );
-	virtual ~AndExpression();
+	~AndExpression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -1084,15 +1084,15 @@ class OrExpression : public BinaryExpression
 public:
 	OrExpression();
 	OrExpression( ExpressionCOP e1, ExpressionCOP e2 );
-	virtual ~OrExpression();
+	~OrExpression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -1101,15 +1101,15 @@ class NotExpression : public UnaryExpression
 public:
 	NotExpression();
 	NotExpression( ExpressionCOP e );
-	virtual ~NotExpression();
+	~NotExpression() override;
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -1123,13 +1123,13 @@ public:
 		ExpressionCOP else_clause
 	);
 
-	virtual
+	
 	numeric::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 	ExpressionCOP
 	condition() const;
@@ -1140,9 +1140,9 @@ public:
 	ExpressionCOP
 	else_expression() const;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 
 private:

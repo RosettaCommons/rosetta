@@ -54,7 +54,7 @@ public:
 	DockTaskFactory( DockTaskFactory const & old_instance );
 
 	// destructor
-	virtual ~DockTaskFactory();
+	~DockTaskFactory() override;
 
 	/// @brief Creates an appropriate TaskFactory based on command line options and attach it to a DockingHighResOP
 	///  Two arguments: DockingHighResOP and a pose.

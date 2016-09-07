@@ -43,14 +43,14 @@ class OP_const_iterator {
 
 public:
 	/// @brief empty constructor
-	OP_const_iterator() {}
+	OP_const_iterator() = default;
 
 	/// @brief Constructor, given an iterator into the Structure_Map.
 	OP_const_iterator( const_iterator s_iter ) {
 		it_ = s_iter;
 	}
 
-	~OP_const_iterator() {}
+	~OP_const_iterator() = default;
 
 	OP_const_iterator& operator=( const OP_const_iterator& src ) {
 		it_ = src.it_;
@@ -94,7 +94,7 @@ private:
 class DecoySetEvaluation : public utility::pointer::ReferenceCount {
 public:
 	DecoySetEvaluation();
-	virtual ~DecoySetEvaluation();
+	~DecoySetEvaluation() override;
 
 	static void register_options();
 

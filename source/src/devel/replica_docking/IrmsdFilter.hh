@@ -39,19 +39,19 @@ class IrmsdFilter : public protocols::filters::Filter
 public:
 	IrmsdFilter();
 	IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb_jump=1, core::Real const lower_threshold=0, core::Real const upper_threshold=9999 );
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const; // which residue numbers are neighbors
-	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 
 	void register_options();
 
-	virtual ~IrmsdFilter();
+	~IrmsdFilter() override;
 	void jump( core::Size const jump_id );
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Real lower_threshold_;
 	core::Real upper_threshold_;

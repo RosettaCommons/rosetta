@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 ProteinBackboneTorsionAngleFeaturesCreator::ProteinBackboneTorsionAngleFeaturesCreator() {}
-ProteinBackboneTorsionAngleFeaturesCreator::~ProteinBackboneTorsionAngleFeaturesCreator() {}
+ProteinBackboneTorsionAngleFeaturesCreator::~ProteinBackboneTorsionAngleFeaturesCreator() = default;
 FeaturesReporterOP ProteinBackboneTorsionAngleFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ProteinBackboneTorsionAngleFeatures );
 }

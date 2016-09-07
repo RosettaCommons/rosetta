@@ -96,7 +96,7 @@ TryDisulfPermutations::TryDisulfPermutations( TryDisulfPermutations const & src 
 
 
 /// @brief Destructor for TryDisulfPermutations mover.
-TryDisulfPermutations::~TryDisulfPermutations() {}
+TryDisulfPermutations::~TryDisulfPermutations() = default;
 
 
 /// @brief Clone operator to create a pointer to a fresh TryDisulfPermutations object that copies this one.

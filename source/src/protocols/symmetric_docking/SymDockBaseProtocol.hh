@@ -34,13 +34,13 @@ public:
 
 	SymDockBaseProtocol();
 
-	virtual ~SymDockBaseProtocol();
+	~SymDockBaseProtocol() override;
 
 	core::scoring::ScoreFunctionOP get_lowres_scorefxn() { return scorefxn_lowres_; }
 	core::scoring::ScoreFunctionOP get_highres_scorefxn() { return scorefxn_hires_; }
 
-	virtual void apply( core::pose::Pose & /*pose*/ ) { utility_exit_with_message("Not intended to actually be used!"); }
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & /*pose*/ ) override { utility_exit_with_message("Not intended to actually be used!"); }
+	std::string get_name() const override;
 
 protected:
 

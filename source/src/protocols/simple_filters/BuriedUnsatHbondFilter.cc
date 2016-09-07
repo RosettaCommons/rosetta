@@ -48,7 +48,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 
 BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() : filters::Filter( "BuriedUnsatHbonds" ) {}
 
-BuriedUnsatHbondFilter::~BuriedUnsatHbondFilter(){}
+BuriedUnsatHbondFilter::~BuriedUnsatHbondFilter()= default;
 
 void
 BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
@@ -135,7 +135,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		unbound_string = calc_unbound.get( "residue_bur_unsat_polars", unbound );
 		buried_unsat_hbond_filter_tracer << "UNBOUND: " << unbound_string << std::endl;
 	} else unsat_hbonds = mv_bound.value();
-	if ( task_factory_ != NULL ) {
+	if ( task_factory_ != nullptr ) {
 		std::string unbound_tmp, bound_tmp;
 
 		/// clean the silly stuff in the string. Unfortunately the calculators are organized in such a way that there's no direct access to the values they report so this hack uses the string output...

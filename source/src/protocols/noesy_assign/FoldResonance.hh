@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <assert.h>
+#include <cassert>
 
 // C++ headers
 #include <string>

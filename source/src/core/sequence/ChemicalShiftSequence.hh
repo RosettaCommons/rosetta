@@ -80,18 +80,18 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~ChemicalShiftSequence() {}
+	~ChemicalShiftSequence() override = default;
 
 	/// @brief Returns an owning pointer to a new ChemicalShiftSequence object,
 	/// with data that is a deep copy of the information in this object.
-	virtual SequenceOP clone() const {
+	SequenceOP clone() const override {
 		SequenceOP new_seq_op( new ChemicalShiftSequence( *this ) );
 		return new_seq_op;
 	}
 
 	/// @brief Read an profile matrix from the given filename using the
 	/// 2nd_inCS.tab format.
-	void read_from_file( FileName const & fn );
+	void read_from_file( FileName const & fn ) override;
 
 	/// @brief Return the alphabet used by this sequence profile. This is an
 	/// N-dimensional vector1 where N is the width of the profile, and the ith

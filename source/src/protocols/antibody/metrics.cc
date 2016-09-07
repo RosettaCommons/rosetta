@@ -191,9 +191,9 @@ kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibody
 	std::vector<Vector> Catoms = ab_info.kink_cation_atoms(pose); // 0
 
 	Real HBdist = 100.0;
-	for ( std::vector<Vector>::iterator Aa = Aatoms.begin(); Aa != Aatoms.end(); ++Aa ) {
-		for ( std::vector<Vector>::iterator Ca = Catoms.begin(); Ca != Catoms.end(); ++Ca ) {
-			HBdist = std::min( HBdist, (*Aa - *Ca).norm());
+	for (auto & Aatom : Aatoms) {
+		for (auto & Catom : Catoms) {
+			HBdist = std::min( HBdist, (Aatom - Catom).norm());
 		}
 	}
 	if ( HBdist == 100.0 ) {

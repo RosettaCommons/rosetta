@@ -53,16 +53,16 @@ public:
 	static const std::string DEFAULT_APBS_PATH;
 
 	SetupPoissonBoltzmannPotential();
-	virtual ~SetupPoissonBoltzmannPotential();
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void parse_my_tag( utility::tag::TagCOP,
+	~SetupPoissonBoltzmannPotential() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void parse_my_tag( utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const &);
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	protocols::moves::MoverOP clone() const;
+		core::pose::Pose const &) override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	protocols::moves::MoverOP clone() const override;
 
 private:
 	protocols::simple_moves::ddGOP ddg_;  // used as pre-scoring & caching state data

@@ -29,7 +29,7 @@ using basic::datacache::WriteableCacheableDataFactory;
 template <> std::mutex utility::SingletonBase< WriteableCacheableDataFactory >::singleton_mutex_{};
 template <> std::atomic< WriteableCacheableDataFactory * > utility::SingletonBase< WriteableCacheableDataFactory >::instance_( 0 );
 #else
-template <> WriteableCacheableDataFactory * utility::SingletonBase< WriteableCacheableDataFactory >::instance_( 0 );
+template <> WriteableCacheableDataFactory * utility::SingletonBase< WriteableCacheableDataFactory >::instance_( nullptr );
 #endif
 
 }

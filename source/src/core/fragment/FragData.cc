@@ -93,7 +93,7 @@ Size FragData::apply( MoveMap const& mm, pose::Pose& pose, Size start, Size end 
 	if ( !is_valid() ) return 0;
 	Size pos = start;
 	Size ct( 0 );
-	for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++pos ) {
+	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++pos ) {
 		//success = success && data_[ pos-start+1 ]->apply( pose, pos );
 		if ( pos > end ) break;
 		if ( pos > pose.total_residue() ) break;
@@ -108,7 +108,7 @@ Size FragData::apply( pose::Pose& pose, Size start, Size end ) const {
 	Size pos = start;
 	Size ct ( 0 );
 	if ( !is_valid() ) return 0;
-	for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++pos ) {
+	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++pos ) {
 		if ( pos > end ) break;
 		if ( !(*it)->apply( pose, pos ) ) continue;
 		++ct;
@@ -124,7 +124,7 @@ Size FragData::apply( MoveMap const& mm, pose::Pose& pose, Frame const& frame ) 
 	}
 	Size ct ( 0 );
 	Size ipos( 1 );
-	for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
+	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
 		if ( frame.seqpos( ipos ) > pose.total_residue() ) continue;
 		if ( !(*it)->is_applicable( mm, ipos, frame ) ) continue;
 		if ( !(*it)->apply( mm, pose, ipos, frame ) ) continue;
@@ -138,7 +138,7 @@ Size FragData::apply( pose::Pose& pose, Frame const& frame ) const {
 	if ( !is_valid() ) return 0;
 	Size ipos( 1 );
 	Size ct ( 0 );
-	for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
+	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
 		if ( frame.seqpos( ipos ) > pose.total_residue() ) continue;
 		if ( !(*it)->apply( pose, ipos, frame ) ) continue;
 		++ct;
@@ -150,7 +150,7 @@ Size FragData::apply_ss( MoveMap const& mm, std::string& ss, Frame const& frame 
 	Size ipos ( 1 );
 	Size ct( 0 );
 	if ( !is_valid() ) return 0;
-	for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
+	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
 		if ( !(*it)->is_applicable( mm, ipos, frame ) ) continue;
 		if ( !(*it)->apply_ss( ss, ipos, frame ) ) continue;
 		++ct;
@@ -223,7 +223,7 @@ FragDataOP FragData::generate_sub_fragment( Size start, Size stop ) const {
 
 bool FragData::is_compatible( FragData const& frag_data ) const {
 	if ( frag_data.size() != size() ) return false;
-	for ( SRFD_List::const_iterator it1= data_.begin(), it2=frag_data.data_.begin(), eit1=data_.end(); it1!=eit1; ++it1,++it2 ) {
+	for ( auto it1= data_.begin(), it2=frag_data.data_.begin(), eit1=data_.end(); it1!=eit1; ++it1,++it2 ) {
 		//  if ( typeid( *it1 ) != typeid( *it2 ) ) return false;
 		if ( ! (*it1)->is_compatible( **it2 ) ) return false;
 	}
@@ -233,10 +233,10 @@ bool FragData::is_compatible( FragData const& frag_data ) const {
 void FragData::show( std::ostream &os, Frame const& frame ) const {
 	Size i = 1;
 	if ( is_valid() ) {
-		for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it ) {
+		for (const auto & it : data_) {
 			os << ObjexxFCL::format::RJ( 10, frame.seqpos( i++ ) ) << " " << ObjexxFCL::format::RJ( 5, pdbpos() ) << " " << pdbid() <<" ";
 			//   std::cerr << "FragData::show " << i-1 << std::endl;
-			(*it)->show( os );
+			it->show( os );
 			os << std::endl;
 			//   std::cerr << "FragData:show -- done" << std::endl;
 		}
@@ -248,9 +248,9 @@ void FragData::show( std::ostream &os, Frame const& frame ) const {
 void FragData::show( std::ostream &os ) const {
 	Size i = 1;
 	if ( is_valid() ) {
-		for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it ) {
+		for (const auto & it : data_) {
 			os << ObjexxFCL::format::RJ( 10, i++ ) << " " << ObjexxFCL::format::RJ( 5, pdbpos() ) << " " << pdbid() << " " ;
-			(*it)->show( os );
+			it->show( os );
 			os << std::endl;
 		}
 	} else {
@@ -259,9 +259,9 @@ void FragData::show( std::ostream &os ) const {
 }
 
 void FragData::show_classic( std::ostream &os ) const {
-	for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it ) {
+	for (const auto & it : data_) {
 		os << " 1xxx X   111 ";
-		(*it)->show( os );
+		it->show( os );
 		os << std::endl;
 	}
 }

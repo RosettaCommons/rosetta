@@ -200,10 +200,9 @@ protected:
 		pair<X,bool> max( maximum(), false);
 		pair<X,bool> step( step_, false);
 
-		for ( map<string,string>::const_iterator param = params.begin();
-				param != params.end(); ++param ) {
-			string key( param->first);
-			string value(param->second);
+		for (const auto & param : params) {
+			string key( param.first);
+			string value(param.second);
 			//to lowercase
 			transform(key.begin(), key.end(), key.begin(), ::tolower );
 
@@ -378,7 +377,7 @@ public:
 	}
 
 	/// @brief destructor
-	inline ~Histogram() { }
+	inline ~Histogram() override = default;
 
 
 	/// @brief The densities array.

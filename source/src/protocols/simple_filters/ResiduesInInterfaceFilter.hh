@@ -33,11 +33,11 @@ public:
 		residues_in_interface_threshold_ = residues_in_interface_threshold;
 		rb_jump_ = rb_jump;
 	}
-	bool apply( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new ResiduesInInterfaceFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new ResiduesInInterfaceFilter() );
 	}
 	ResiduesInInterfaceFilter( ResiduesInInterfaceFilter const & init ) :
@@ -46,11 +46,11 @@ public:
 		residues_in_interface_threshold_ = init.residues_in_interface_threshold_;
 		rb_jump_ = init.rb_jump_;
 	}
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	virtual ~ResiduesInInterfaceFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~ResiduesInInterfaceFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Size residues_in_interface_threshold_, rb_jump_;
 };

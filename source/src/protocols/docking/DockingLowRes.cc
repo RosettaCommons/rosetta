@@ -78,7 +78,7 @@ namespace docking {
 DockingLowRes::DockingLowRes() :
 	Mover()
 {
-	init(utility::tools::make_vector1<core::SSize>(1), NULL);
+	init(utility::tools::make_vector1<core::SSize>(1), nullptr);
 }
 
 
@@ -111,7 +111,7 @@ void DockingLowRes::init(
 	// they will get overwritten by the options and/or passed values
 	set_default();
 
-	if ( scorefxn == NULL ) {
+	if ( scorefxn == nullptr ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	} else scorefxn_ = scorefxn;
 
@@ -121,7 +121,7 @@ void DockingLowRes::init(
 
 
 //destructor
-DockingLowRes::~DockingLowRes() {}
+DockingLowRes::~DockingLowRes() = default;
 
 protocols::moves::MoverOP
 DockingLowRes::clone() const {
@@ -157,8 +157,8 @@ void DockingLowRes::set_default() {
 
 void DockingLowRes::sync_objects_with_flags()
 {
-	rb_mover_ = NULL;
-	docking_lowres_protocol_ = NULL;
+	rb_mover_ = nullptr;
+	docking_lowres_protocol_ = nullptr;
 
 	// the movable dof's -- jumps only in this case
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );

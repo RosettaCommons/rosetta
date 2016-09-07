@@ -34,7 +34,7 @@ public:
 	MCAligner( Real kT ) : kT_( kT ) {}
 
 	/// @brief destructor
-	virtual ~MCAligner() {}
+	~MCAligner() override = default;
 
 	/// @brief Sets the kT used in the align method. A optimal value of kT means
 	/// acceptance of less optimal decisions along the dynamic programming matrix.
@@ -61,12 +61,12 @@ public:
 	/// is stored as a member variable of the MCAligner class, and accessor methods
 	/// are provided above.
 
-	virtual
+	
 	SequenceAlignment align(
 		SequenceOP seq_y,
 		SequenceOP seq_x,
 		ScoringSchemeOP ss
-	);
+	) override;
 
 private:
 	Real kT_;

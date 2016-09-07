@@ -95,12 +95,12 @@ ScoreFunctionFeatures::ScoreFunctionFeatures() :
 
 ScoreFunctionFeatures::ScoreFunctionFeatures(
 	ScoreFunctionOP scfxn,
-	std::string const & scfxn_name
+	std::string  scfxn_name
 ) :
-	scfxn_(scfxn),
-	scfxn_name_(scfxn_name)
+	scfxn_(std::move(scfxn)),
+	scfxn_name_(std::move(scfxn_name))
 {
-	if ( scfxn_ == 0 ) {
+	if ( scfxn_ == nullptr ) {
 		utility_exit_with_message( "ScoreFunctionFeatures may not be constructed with a null-pointer ScoreFunctionOP" );
 	}
 }
@@ -113,7 +113,7 @@ ScoreFunctionFeatures::ScoreFunctionFeatures(
 	scfxn_name_(src.scfxn_name_)
 {}
 
-ScoreFunctionFeatures::~ScoreFunctionFeatures() {}
+ScoreFunctionFeatures::~ScoreFunctionFeatures() = default;
 
 string
 ScoreFunctionFeatures::type_name() const { return "ScoreFunctionFeatures"; }

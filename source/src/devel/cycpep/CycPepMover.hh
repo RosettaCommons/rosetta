@@ -79,11 +79,11 @@ typedef utility::pointer::owning_ptr< CycPepMover const > CycPepMoverCOP;
 class CycPepMover : public moves::Mover {
 public:
 	CycPepMover();
-	virtual ~CycPepMover();
+	~CycPepMover() override;
 	void minimize(pose::Pose& workpose);
 	void packRotamers(pose::Pose& workpose);
-	void apply(pose::Pose& workpose);
-	virtual std::string get_name() const;
+	void apply(pose::Pose& workpose) override;
+	std::string get_name() const override;
 private:
 	core::scoring::constraints::ConstraintSetOP prolineConstraint(pose::Pose& workpose);
 	core::scoring::constraints::ConstraintSetOP IleConstraint(pose::Pose& workpose);

@@ -59,32 +59,32 @@ public:
 		IterativeBase( "centroid_pool" ),
 		fullatom_pool_ptr_( fullatom_pool_ptr ) {};
 
-	virtual void gen_diversity_pool( jd2::archive::Batch& batch, bool fullatom = false );
+	void gen_diversity_pool( jd2::archive::Batch& batch, bool fullatom = false ) override;
 
-	virtual void update_noesy_filter_files(
+	void update_noesy_filter_files(
 		std::string const& current,
 		bool fullatom
-	);
+	) override;
 
 	/// @brief save and restore archive to file-system
-	virtual void save_to_file( std::string suffix = "" );
-	virtual bool restore_from_file();
+	void save_to_file( std::string suffix = "" ) override;
+	bool restore_from_file() override;
 
 protected:
 
 
-	virtual void erase_decoy(
+	void erase_decoy(
 		std::string const& tag
-	);
+	) override;
 
 	/// @brief call to insert structure at position given by iterator
-	virtual void add_structure_at_position (
+	void add_structure_at_position (
 		SilentStructs::iterator iss,
 		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy
-	);
+	) override;
 
-	virtual void collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys );
+	void collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys ) override;
 
 private:
 	/// @brief also have to keep the stage2 decoys for the stage2 resampling (stages IV and VI)

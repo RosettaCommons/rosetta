@@ -72,7 +72,7 @@ public:
 
 	CalcInterNeighborGroup( CalcInterNeighborGroup const & calculator );
 
-	~CalcInterNeighborGroup();
+	~CalcInterNeighborGroup() override;
 
 	void
 	compute( core::pose::Pose const & pose );

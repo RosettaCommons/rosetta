@@ -52,24 +52,24 @@ class GeneralizedKIC : public protocols::moves::Mover
 public:
 	GeneralizedKIC();
 	GeneralizedKIC(GeneralizedKIC const &src);
-	virtual ~GeneralizedKIC();
+	~GeneralizedKIC() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 
 	/// @brief Actually apply the mover to the pose.
-	virtual void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const &
-	);
+	) override;
 
 
 	/// @brief Add a residue (by index in the pose) to the list of residues making up the loop to be closed.

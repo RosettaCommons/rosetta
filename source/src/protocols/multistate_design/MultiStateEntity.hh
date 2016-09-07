@@ -41,14 +41,14 @@ public:
 
 	MultiStateEntity();
 	MultiStateEntity( MultiStateEntity const & entity );
-	virtual ~MultiStateEntity();
+	~MultiStateEntity() override;
 
-	virtual EntityOP clone() const;
+	EntityOP clone() const override;
 
-	virtual void show( std::ostream & os ) const;
+	void show( std::ostream & os ) const override;
 
-	virtual void write_checkpoint( std::ostream & os ) const;
-	virtual bool read_checkpoint( std::istream & is );
+	void write_checkpoint( std::ostream & os ) const override;
+	bool read_checkpoint( std::istream & is ) override;
 
 	utility::vector1< SingleStateEntityData > const & single_state_entity_data() const;
 	utility::vector1< SingleStateEntityData > & single_state_entity_data();

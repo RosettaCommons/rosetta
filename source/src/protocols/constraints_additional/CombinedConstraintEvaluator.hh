@@ -57,15 +57,15 @@ class CombinedConstraintEvaluator : public evaluation::PoseEvaluator {
 public:
 	CombinedConstraintEvaluator( std::string tag, std::string filename, Size constraints_combine_ratio_ = 2, Size repeat = 10 );
 	//sets xxx_cst and xxx_viol columns
-	virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+	void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const override;
 
 	using evaluation::PoseEvaluator::apply;
 
 	//returns constraint score
 	virtual core::Real apply( core::pose::Pose& pose ) const;
 
-	virtual core::Size size() const { return 2; }
-	virtual std::string name( core::Size i ) const;
+	core::Size size() const override { return 2; }
+	std::string name( core::Size i ) const override;
 
 private:
 	utility::vector1< ConstraintEvaluator > cst_lib_;

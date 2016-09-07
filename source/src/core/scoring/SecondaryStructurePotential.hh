@@ -61,8 +61,8 @@ public: // construct/destruct
 
 	/// @brief default destructor
 	inline
-	~SecondaryStructurePotential()
-	{}
+	~SecondaryStructurePotential() override
+	= default;
 
 
 public: // scoring

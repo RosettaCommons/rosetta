@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 BetaTurnDetectionFeaturesCreator::BetaTurnDetectionFeaturesCreator() {}
-BetaTurnDetectionFeaturesCreator::~BetaTurnDetectionFeaturesCreator() {}
+BetaTurnDetectionFeaturesCreator::~BetaTurnDetectionFeaturesCreator() = default;
 FeaturesReporterOP BetaTurnDetectionFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new BetaTurnDetectionFeatures );
 }

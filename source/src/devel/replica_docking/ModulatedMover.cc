@@ -59,7 +59,7 @@ ModulatedMover::ModulatedMover( ModulatedMover const& other ) : ThermodynamicMov
 	interps_2_ = other.interps_2_;
 }
 
-ModulatedMover::~ModulatedMover() {}
+ModulatedMover::~ModulatedMover() = default;
 
 std::string
 ModulatedMover::get_name() const
@@ -114,9 +114,8 @@ ModulatedMover::parse_my_tag(
 	utility::vector1< std::string > keys;
 
 
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
-		utility::tag::TagCOP const subtag = *subtag_it;
-		Interpolators interpolators;
+	for (auto subtag : subtags) {
+			Interpolators interpolators;
 		tr.Debug << "subtag->getName() " << subtag->getName() << std::endl;
 		if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) { //// weight is interpreted in TempWeightedMetropolisHastingsMover
 			core::Size dim = subtag->getOption< core::Size >( "dim", 1);
@@ -133,16 +132,16 @@ ModulatedMover::parse_my_tag(
 		}
 	}
 	/// for debug
-	for ( utility::vector1< std::string >::iterator key_it = keys.begin(); key_it != keys.end(); ++key_it ) {
-		tr.Debug << "check if key " << *key_it << " is provided" << std::endl;
+	for (auto & key : keys) {
+		tr.Debug << "check if key " << key << " is provided" << std::endl;
 
-		if ( interps_1_.find( *key_it ) == interps_1_.end() ) {
-			interps_1_[ *key_it ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
-			tr.Debug << "parameter for " << *key_it << " not provided for 1st dim, will use fix value 1" << std::endl;
+		if ( interps_1_.find( key ) == interps_1_.end() ) {
+			interps_1_[ key ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
+			tr.Debug << "parameter for " << key << " not provided for 1st dim, will use fix value 1" << std::endl;
 		}
-		if ( interps_2_.find( *key_it ) == interps_2_.end() ) {
-			interps_2_[ *key_it ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
-			tr.Debug << "parameter for " << *key_it << " not provided for 2nd dim, will use fix value 1" << std::endl;
+		if ( interps_2_.find( key ) == interps_2_.end() ) {
+			interps_2_[ key ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
+			tr.Debug << "parameter for " << key << " not provided for 2nd dim, will use fix value 1" << std::endl;
 		}
 	}
 
@@ -181,13 +180,13 @@ ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& pr
 	if ( grid_coord.size()==1 ) grid_coord.push_back(1);
 
 	tag->setOption< std::string >("name",prefix+"_"+ ObjexxFCL::string_of(temp_level));
-	for ( Interpolators::const_iterator it=interps_1_.begin(); it!=interps_1_.end(); ++it ) {
+	for (const auto & it : interps_1_) {
 		// string key=it->first
 		//      InterpolatorOP interpolator_ptr=it->second
-		std::string key( it->first );
+		std::string key( it.first );
 		if ( interps_2_.find( key ) != interps_2_.end() ) {
-			tag->setOption< core::Real >( it->first, (it->second->get_value(grid_coord[1]) )*interps_2_.find(key)->second->get_value( grid_coord[2]));
-			tr.Debug << "level " << temp_level << " modulated " << it->first << " is " << tag->getOption< core::Real >( it->first ) << std::endl;
+			tag->setOption< core::Real >( it.first, (it.second->get_value(grid_coord[1]) )*interps_2_.find(key)->second->get_value( grid_coord[2]));
+			tr.Debug << "level " << temp_level << " modulated " << it.first << " is " << tag->getOption< core::Real >( it.first ) << std::endl;
 		} else {
 			throw utility::excn::EXCN_RosettaScriptsOption( "key value is not provided for the 2nd dim" );
 		}

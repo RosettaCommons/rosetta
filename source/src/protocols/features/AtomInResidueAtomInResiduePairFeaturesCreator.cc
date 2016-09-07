@@ -25,7 +25,7 @@ namespace protocols {
 namespace features {
 
 AtomInResidueAtomInResiduePairFeaturesCreator::AtomInResidueAtomInResiduePairFeaturesCreator() {}
-AtomInResidueAtomInResiduePairFeaturesCreator::~AtomInResidueAtomInResiduePairFeaturesCreator() {}
+AtomInResidueAtomInResiduePairFeaturesCreator::~AtomInResidueAtomInResiduePairFeaturesCreator() = default;
 FeaturesReporterOP AtomInResidueAtomInResiduePairFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new AtomInResidueAtomInResiduePairFeatures );
 }

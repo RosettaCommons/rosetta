@@ -74,10 +74,8 @@ create_entity_resfile_contents(
 			entity_resfile_contents->commands_for_residue( ii )
 			: entity_resfile_contents->default_commands() );
 
-		for ( std::list< ResfileCommandCOP >::const_iterator
-				iter = ii_command_list.begin(), iter_end = ii_command_list.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->residue_action( *entity_task, ii );
+		for (const auto & iter : ii_command_list) {
+			iter->residue_action( *entity_task, ii );
 		}
 	}
 }
@@ -109,10 +107,8 @@ initialize_task_from_entity_resfile_and_secondary_resfile(
 			secondary_resfile_contents.commands_for_residue( ii ) :
 			secondary_resfile_contents.default_commands() ));
 
-		for ( std::list< ResfileCommandCOP >::const_iterator
-				iter = ii_command_list.begin(), iter_end = ii_command_list.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->residue_action( *task, ii );
+		for (const auto & iter : ii_command_list) {
+			iter->residue_action( *task, ii );
 		}
 	}
 }

@@ -49,7 +49,7 @@ namespace protocols {
 namespace features {
 
 /// @details Auto-generated virtual destructor
-FeaturesReporter::~FeaturesReporter() {}
+FeaturesReporter::~FeaturesReporter() = default;
 
 using basic::Tracer;
 using basic::datacache::CacheableString;
@@ -251,16 +251,16 @@ FeaturesReporter::check_relevant_residues(
 ) const {
 	switch(relevant_residues_mode_){
 	case RelevantResiduesMode::Exclusive : {
-		for ( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii ) {
-			if ( !relevant_residues[*ii] ) {
+		for (unsigned long residue : residues) {
+			if ( !relevant_residues[residue] ) {
 				return false;
 			}
 		}
 		return true;
 	}
 	case RelevantResiduesMode::Inclusive : {
-		for ( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii ) {
-			if ( relevant_residues[*ii] ) {
+		for (unsigned long residue : residues) {
+			if ( relevant_residues[residue] ) {
 				return true;
 			}
 		}

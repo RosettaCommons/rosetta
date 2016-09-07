@@ -37,7 +37,7 @@ namespace protocols {
 namespace frag_picker {
 
 // @brief Auto-generated virtual destructor
-SidechainContactDistCutoff::~SidechainContactDistCutoff() {}
+SidechainContactDistCutoff::~SidechainContactDistCutoff() = default;
 
 using namespace core;
 

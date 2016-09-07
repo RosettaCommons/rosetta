@@ -44,7 +44,7 @@ AddConstraints::AddConstraints( ConstraintGeneratorCOPs const & generators ):
 {
 }
 
-AddConstraints::~AddConstraints(){}
+AddConstraints::~AddConstraints()= default;
 
 void
 AddConstraints::parse_my_tag(
@@ -54,7 +54,7 @@ AddConstraints::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
-	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
+	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
 		ConstraintGeneratorOP new_cg = ConstraintGeneratorFactory::get_instance()->new_constraint_generator( (*subtag)->getName(), *subtag, data );
 		add_generator( new_cg );
 		TR << "Added constraint generator " << new_cg->id() << "." << std::endl;

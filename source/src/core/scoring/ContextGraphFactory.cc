@@ -41,7 +41,7 @@ ContextGraphFactory::create_context_graph( ContextGraphType type ) {
 		utility_exit_with_message( "Error in ContextGraphFactory.cc.  Unsupported context graph requested" );
 		break;
 	}
-	return 0;
+	return nullptr;
 }
 
 } // scoring

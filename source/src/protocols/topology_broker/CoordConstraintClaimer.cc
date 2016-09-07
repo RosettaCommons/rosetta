@@ -47,6 +47,7 @@
 #include <protocols/topology_broker/Exceptions.hh>
 
 //#include <utility/io/izstream.hh>
+#include <utility>
 #include <utility/io/ozstream.hh> //fur dump cst
 //#include <utility/io/util.hh>
 #include <basic/Tracer.hh>
@@ -87,7 +88,7 @@ CoordConstraintClaimer::CoordConstraintClaimer() :
 {}
 
 CoordConstraintClaimer::CoordConstraintClaimer( std::string filename ) :
-	filename_( filename ),
+	filename_(std::move( filename )),
 	constraints_( /* NULL */ ),
 	root_( 1 ),
 	bRegenerateFromInputPose_ ( false ),
@@ -97,7 +98,7 @@ CoordConstraintClaimer::CoordConstraintClaimer( std::string filename ) :
 	bLocal_( false )
 {}
 
-CoordConstraintClaimer::~CoordConstraintClaimer() {}
+CoordConstraintClaimer::~CoordConstraintClaimer() = default;
 
 void CoordConstraintClaimer::new_decoy() {
 	if ( !constraints_ && !bUseXYZ_in_cstfile_ ) {
@@ -172,7 +173,7 @@ void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 		}
 
 		//constraints_ should be defined, since new_decoy()
-		runtime_assert( constraints_ != 0 );
+		runtime_assert( constraints_ != nullptr );
 
 		//get constraints
 		if ( !bUseXYZ_in_cstfile_ ) {
@@ -202,15 +203,15 @@ void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 }
 
 void CoordConstraintClaimer::set_cst_root() {
-	runtime_assert( cst_pose_ != 0 );
+	runtime_assert( cst_pose_ != nullptr );
 	id::StubID cst_fix_stub_ID( core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N","CA","C", root_ ), *cst_pose_ ));
-	runtime_assert( constraints_ != 0 );
+	runtime_assert( constraints_ != nullptr );
 	ConstraintCOPs all_cst = constraints_->get_all_constraints();
 	ConstraintSetOP new_set( new ConstraintSet );
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it ) {
 		ConstraintOP new_cst = (*it)->clone();
 		LocalCoordinateConstraintOP ll_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::LocalCoordinateConstraint > ( new_cst );
-		runtime_assert( ll_cst != 0 ); //only these should be in the constraint set!
+		runtime_assert( ll_cst != nullptr ); //only these should be in the constraint set!
 		ll_cst->set_fixed_stub( cst_fix_stub_ID );
 		new_set->add_constraint( ll_cst );
 	}
@@ -229,9 +230,8 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 	if ( !rigid.size() ) rigid.add_loop( 1, cst_pose.total_residue(), 0 );
 
 	//go thru regions and generate constraints
-	for ( loops::Loops::const_iterator it = rigid.begin(), eit = rigid.end();
-			it!=eit; ++it ) {
-		for ( Size pos = it->start(); pos <= it->stop(); ++pos ) {
+	for (const auto & it : rigid) {
+		for ( Size pos = it.start(); pos <= it.stop(); ++pos ) {
 
 			//generate constraint for ( CA, pos )
 			conformation::Residue const & rsd( cst_pose.residue( pos ) );
@@ -304,7 +304,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it, ++n ) {
 		//  ConstraintOP new_cst = (*it)->clone();
 		LocalCoordinateConstraintCOP ll_cst = utility::pointer::dynamic_pointer_cast< LocalCoordinateConstraint const > ( *it );
-		runtime_assert( ll_cst != 0 ); //only these should be in the constraint set!
+		runtime_assert( ll_cst != nullptr ); //only these should be in the constraint set!
 		Vector xyz_ref( pose.xyz( ll_cst->atom( 1 ) ) );
 		//n = ll_cst->atom( 1 ).rsd(); //uncomment for debugging
 		tr.Trace << "constraint for atom " << ll_cst->atom( 1 ) << std::endl;

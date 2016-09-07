@@ -49,22 +49,22 @@ public:
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 	}
-	virtual ~SheetFilter() {}
+	~SheetFilter() override = default;
 
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new SheetFilter( *this ) ); }
 
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new SheetFilter() ); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
-	virtual
-	bool apply( core::pose::Pose const & pose ) const;
+	
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	static int const max_nstr = 50;
 
-	virtual std::string name() const {
+	std::string name() const override {
 		return "SheetFilter";
 	}
 

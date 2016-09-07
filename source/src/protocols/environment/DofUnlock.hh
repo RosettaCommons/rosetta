@@ -36,7 +36,7 @@ class DofUnlock : public utility::pointer::ReferenceCount {
 
 public:
 	DofUnlock( core::conformation::Conformation&, core::environment::DofPassportCOP );
-	~DofUnlock();
+	~DofUnlock() override;
 
 private:
 	core::conformation::Conformation& conformation_;

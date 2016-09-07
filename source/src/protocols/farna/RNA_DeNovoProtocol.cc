@@ -60,6 +60,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
+#include <utility>
 #include <utility/file/file_sys_util.hh>
 
 #include <core/types.hh>
@@ -115,10 +116,10 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.farna.RNA_DeNovoProtocol" );
 RNA_DeNovoProtocol::RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options,
 	RNA_DeNovoParametersCOP params):
 	Mover(),
-	options_( options ),
-	rna_params_( params )
+	options_(std::move( options )),
+	rna_params_(std::move( params ))
 {
-	if ( rna_params_ == 0 ) {
+	if ( rna_params_ == nullptr ) {
 		if ( options_->rna_params_file().size() > 0 ) {
 			rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
 		} else {
@@ -134,7 +135,7 @@ protocols::moves::MoverOP RNA_DeNovoProtocol::clone() const {
 }
 
 //////////////////////////////////////////////////
-RNA_DeNovoProtocol::~RNA_DeNovoProtocol() {}
+RNA_DeNovoProtocol::~RNA_DeNovoProtocol() = default;
 
 /// @details  Apply the RNA de novo modeling protocol to a pose.
 ///
@@ -378,7 +379,7 @@ RNA_DeNovoProtocol::output_silent_struct(
 	if ( get_native_pose() ) add_number_native_base_pairs( pose, s );
 
 	// hopefully these will end up in silent file...
-	if ( options_->output_filters() && ( rna_fragment_monte_carlo_ != 0 ) ) {
+	if ( options_->output_filters() && ( rna_fragment_monte_carlo_ != nullptr ) ) {
 		s.add_energy(  "lores_early", rna_fragment_monte_carlo_->lores_score_early() );
 		if ( options_->minimize_structure() ) s.add_energy( "lores_final", rna_fragment_monte_carlo_->lores_score_final() );
 	}

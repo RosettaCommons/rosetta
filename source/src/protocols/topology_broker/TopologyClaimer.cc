@@ -54,10 +54,9 @@ using namespace core;
 
 void TopologyClaimer::initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init ) {
 	claims::DofClaims my_claims;
-	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-			it != eit; ++it ) {
-		if ( (*it)->owner().lock().get() == this ) {
-			my_claims.push_back( *it );
+	for (const auto & init_dof : init_dofs) {
+		if ( init_dof->owner().lock().get() == this ) {
+			my_claims.push_back( init_dof );
 		}
 	}
 	if ( my_claims.size() ) {

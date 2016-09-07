@@ -39,13 +39,13 @@ class AddHydrogens : public protocols::moves::Mover{
 
 public:
 	AddHydrogens();
-	virtual ~AddHydrogens();
+	~AddHydrogens() override;
 	AddHydrogens(AddHydrogens const & that);
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -53,7 +53,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 
 private:

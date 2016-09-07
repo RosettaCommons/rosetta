@@ -276,7 +276,7 @@ void ScoreFunctionFactory::apply_user_defined_reweighting_(
 			}
 
 			// iterate over all pairs
-			for ( utility::vector1<std::string>::const_iterator iter(ref_offsets.begin()), iter_end(ref_offsets.end());
+			for ( auto iter(ref_offsets.begin()), iter_end(ref_offsets.end());
 					iter != iter_end; ++iter ) {
 				// get the aa type from the pair
 				std::istringstream aa_iss(*iter);

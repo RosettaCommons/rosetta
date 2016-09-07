@@ -40,10 +40,10 @@ class AddHydrogen : public protocols::moves::Mover{
 public:
 	AddHydrogen();
 	AddHydrogen(core::Size const residue, core::Size const connection_id);
-	virtual ~AddHydrogen();
+	~AddHydrogen() override;
 	AddHydrogen(AddHydrogen const & that);
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	core::Size residue_index_;

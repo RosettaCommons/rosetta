@@ -32,6 +32,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/prof.hh>
@@ -58,7 +59,7 @@ EvaluatedTrialMover::EvaluatedTrialMover(
 	std::string tag
 ) :
 	TrialMover( mover_in, mc_in),
-	tag_( tag )
+	tag_(std::move( tag ))
 {
 	using protocols::evaluation::PoseEvaluatorOP;
 	evaluator_ = evaluation::MetaPoseEvaluatorOP( new evaluation::MetaPoseEvaluator );
@@ -66,7 +67,7 @@ EvaluatedTrialMover::EvaluatedTrialMover(
 	evaluator_->add_evaluation( evaluator_in );
 }
 
-EvaluatedTrialMover::~EvaluatedTrialMover() {}
+EvaluatedTrialMover::~EvaluatedTrialMover() = default;
 
 void
 EvaluatedTrialMover::apply( pose::Pose& pose ) {

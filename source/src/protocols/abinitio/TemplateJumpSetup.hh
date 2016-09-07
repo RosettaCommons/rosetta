@@ -56,22 +56,22 @@ public:
 		core::scoring::dssp::PairingList const& helix_pairings
 	);
 
-	~TemplateJumpSetup();
-	std::string type_name() const {
+	~TemplateJumpSetup() override;
+	std::string type_name() const override {
 		return "TemplateJumpSetup";
 	}
 
-	virtual
-	jumping::JumpSample create_jump_sample() const;
+	
+	jumping::JumpSample create_jump_sample() const override;
 
-	jumping::JumpSample clean_jumps( jumping::JumpSample const& ) const;
+	jumping::JumpSample clean_jumps( jumping::JumpSample const& ) const override;
 
 	//' jumping::JumpSample
 	// create_jump_sample( std::string ModelID ) const;
 	/// @brief returns an ordered FragSet that is compatible with the JumpSample
 	/// default: generate jumps from ss-library according to JumpSample
-	virtual
-	core::fragment::FragSetOP generate_jump_frags( jumping::JumpSample const&, core::kinematics::MoveMap const& ) const;
+	
+	core::fragment::FragSetOP generate_jump_frags( jumping::JumpSample const&, core::kinematics::MoveMap const& ) const override;
 
 	bool is_helix_jump( core::scoring::dssp::Pairing const& p ) const;
 
@@ -88,12 +88,12 @@ class FixTemplateJumpSetup : public TemplateJumpSetup {
 public:
 	FixTemplateJumpSetup( TemplatesCOP templates, core::fragment::SecondaryStructureCOP secstruct, PairingStatisticsCOP, core::scoring::dssp::PairingList const&,
 		jumping::BaseJumpSetupOP jump_def );
-	~FixTemplateJumpSetup();
+	~FixTemplateJumpSetup() override;
 
 	FixTemplateJumpSetup( TemplateJumpSetup const& templ, jumping::BaseJumpSetupOP jump_def );
 
-	virtual
-	jumping::JumpSample create_jump_sample() const;
+	
+	jumping::JumpSample create_jump_sample() const override;
 
 private:
 	jumping::BaseJumpSetupOP jump_def_;

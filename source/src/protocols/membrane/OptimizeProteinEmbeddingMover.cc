@@ -68,7 +68,7 @@ OptimizeProteinEmbeddingMover::OptimizeProteinEmbeddingMover() : protocols::move
 }
 
 /// @brief Destructor
-OptimizeProteinEmbeddingMover::~OptimizeProteinEmbeddingMover() {}
+OptimizeProteinEmbeddingMover::~OptimizeProteinEmbeddingMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

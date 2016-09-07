@@ -43,7 +43,7 @@ class LocalInserter : public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~LocalInserter();
+	~LocalInserter() override;
 
 	LocalInserter(){
 	}
@@ -109,32 +109,32 @@ public:
 		core::scoring::ScoreFunction const & scorefxn
 	);
 
-	virtual
+	
 	core::Real
 	make_local_bb_change(
 		core::pose::Pose &start_pose,
 		const core::pose::Pose &original_pose,
 		const protocols::loophash::BackboneSegment &new_bs,
 		core::Size res_pos
-	);
+	) override;
 
-	virtual
+	
 	core::Real
 	make_local_bb_change_close_gaps(
 		core::pose::Pose &start_pose,
 		const core::pose::Pose &original_pose,
 		const protocols::loophash::BackboneSegment &new_bs,
 		core::Size res_pos
-	);
+	) override;
 
-	virtual
+	
 	core::Real
 	make_local_bb_change_include_cut(
 		core::pose::Pose &start_pose,
 		const core::pose::Pose &original_pose,
 		const protocols::loophash::BackboneSegment &new_bs,
 		core::Size res_pos
-	);
+	) override;
 
 private:
 	// setup scorefunctions for

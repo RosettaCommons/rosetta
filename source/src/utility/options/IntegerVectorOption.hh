@@ -70,7 +70,7 @@ public: // Creation
 	/// @brief Clone this
 	inline
 	IntegerVectorOption *
-	clone() const
+	clone() const override
 	{
 		return new IntegerVectorOption( *this );
 	}
@@ -78,9 +78,9 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~IntegerVectorOption()
-	{}
+	
+	~IntegerVectorOption() override
+	= default;
 
 
 public: // Properties
@@ -89,7 +89,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type?
 	inline
 	bool
-	is_value( std::string const & value_str ) const
+	is_value( std::string const & value_str ) const override
 	{
 		return ObjexxFCL::is_int( value_str );
 	}
@@ -98,7 +98,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type and a legal command line value?
 	inline
 	bool
-	is_cl_value( std::string const & value_str ) const
+	is_cl_value( std::string const & value_str ) const override
 	{
 		return is_value( value_str ) || ObjexxFCL::is_ints( value_str );
 	}
@@ -107,7 +107,7 @@ public: // Properties
 	/// @brief Option type code string representation
 	inline
 	std::string
-	type_string() const
+	type_string() const override
 	{
 		return "(I" + size_constraint_string() + ')';
 	}
@@ -119,7 +119,7 @@ protected: // Methods
 	/// @brief Value of a string
 	inline
 	Value
-	value_of( std::string const & value_str ) const
+	value_of( std::string const & value_str ) const override
 	{
 		if ( ( value_str.empty() ) || ( ! ObjexxFCL::is_int( value_str ) ) ) {
 			std::cerr << "ERROR: Illegal value for integer option -" << id()
@@ -132,7 +132,7 @@ protected: // Methods
 	/// @brief Value of a string
 	inline
 	Values
-	values_of( std::string const & value_str ) const
+	values_of( std::string const & value_str ) const override
 	{
 		if ( value_str.empty() || ( ! ObjexxFCL::is_ints( value_str ) ) ) {
 			std::cerr << "ERROR: Illegal value for integer option -" << id()
@@ -143,7 +143,7 @@ protected: // Methods
 
 		//convert to utility vector1. This is a workaround to prevent ObjexxFCL from knowing about vector1.
 		Values vector1_ints;
-		for ( Size n = 0; n < std_vector_ints.size(); n++ ) vector1_ints.push_back(  std_vector_ints[ n ] );
+		for (int & std_vector_int : std_vector_ints) vector1_ints.push_back(  std_vector_int );
 		return vector1_ints;
 	}
 

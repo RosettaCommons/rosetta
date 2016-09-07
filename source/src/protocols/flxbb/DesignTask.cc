@@ -33,6 +33,7 @@
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -68,7 +69,7 @@ DesignTask::DesignTask(
 	String const & resfile
 ):
 	ncycle_( ncycle ),
-	scorefxn_( sfxn ),
+	scorefxn_( sfxn ), 
 	mover_( mover ),
 	filter_structs_( filter_structs ),
 	task_( taskf ),
@@ -89,7 +90,7 @@ DesignTask::DesignTask( DesignTask const & rval ) :
 {}
 
 /// @brief destructor
-DesignTask::~DesignTask() {}
+DesignTask::~DesignTask() = default;
 
 /// @brief the number of cycles of fixbb design and mover
 Size
@@ -185,8 +186,8 @@ DesignTask::dump_packertask( std::ostream & os )
 void
 DesignTask::add_task_operations( utility::vector1< TaskOperationOP > const & tops )
 {
-	for ( utility::vector1< TaskOperationOP >::const_iterator it=tops.begin(); it!=tops.end(); ++it ) {
-		add_task_operation( *it );
+	for (const auto & top : tops) {
+		add_task_operation( top );
 	}
 }
 
@@ -220,7 +221,7 @@ DesignTask_Layer::DesignTask_Layer(
 {}
 
 /// @brief destructor
-DesignTask_Layer::~DesignTask_Layer() {}
+DesignTask_Layer::~DesignTask_Layer() = default;
 
 /// @brief setup PackerTask
 void DesignTask_Layer::setup( pose::Pose const & pose, pack::task::PackerTaskOP const task )
@@ -273,7 +274,7 @@ DesignTask_Normal::DesignTask_Normal(
 {}
 
 /// @brief destructor
-DesignTask_Normal::~DesignTask_Normal() {}
+DesignTask_Normal::~DesignTask_Normal() = default;
 
 /// @brief set up packer task
 void DesignTask_Normal::setup( pose::Pose const & pose, pack::task::PackerTaskOP const task ){

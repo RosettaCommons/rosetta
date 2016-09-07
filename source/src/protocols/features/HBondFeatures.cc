@@ -144,7 +144,7 @@ HBondFeatures::HBondFeatures() :
 
 HBondFeatures::HBondFeatures(
 	ScoreFunctionOP scfxn) :
-	scfxn_(scfxn),
+	scfxn_(std::move(scfxn)),
 	definition_type_(hbdef_ENERGY),
 	definition_threshold_(0)
 {}
@@ -156,7 +156,7 @@ HBondFeatures::HBondFeatures(HBondFeatures const & src) :
 	definition_threshold_(src.definition_threshold_)
 {}
 
-HBondFeatures::~HBondFeatures() {}
+HBondFeatures::~HBondFeatures() = default;
 
 string
 HBondFeatures::type_name() const { return "HBondFeatures"; }
@@ -197,8 +197,8 @@ HBondFeatures::write_hbond_chem_types_table_schema(
 	//insert static values
 	string const t("hbond_chem_types");
 	std::vector< string > c;
-	c.push_back("chem_type");
-	c.push_back("label");
+	c.emplace_back("chem_type");
+	c.emplace_back("label");
 	insert_or_ignore(t, c, list_of("hbacc_NONE")("aNONE"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_PBA")("aPBA: bb"), db_session);
 	insert_or_ignore(t, c, list_of("hbacc_CXA")("aCXA: n,q"), db_session);
@@ -696,7 +696,7 @@ HBondFeatures::report_features(
 
 		Residue const & res(pose.residue(resNum));
 		// donor sites
-		for ( AtomIndices::const_iterator
+		for ( auto
 				atmNum  = res.Hpos_polar().begin(),
 				atmNume = res.Hpos_polar().end(); atmNum != atmNume; ++atmNum ) {
 
@@ -707,25 +707,23 @@ HBondFeatures::report_features(
 			insert_site_environment_row(pose, resNum, *atmNum, struct_id, site_id, atom_sasa_s, atom_sasa_m, atom_sasa_l, site_partners, site_hbond_energies, db_session);
 			insert_site_atoms_row(pose, resNum, *atmNum, struct_id, site_id, db_session);
 
-			vector1< HBondCOP >::iterator partners_begin( site_partners(resNum, *atmNum).begin());
-			vector1< HBondCOP >::iterator partners_end( site_partners(resNum, *atmNum).end() );
+			auto partners_begin( site_partners(resNum, *atmNum).begin());
+			auto partners_end( site_partners(resNum, *atmNum).end() );
 
 			sort(partners_begin, partners_end, HBond::hbond_energy_comparer);
 
 		}
 		// acceptor sites
-		for ( AtomIndices::const_iterator
-				atmNum  = res.accpt_pos().begin(),
-				atmNume = res.accpt_pos().end(); atmNum != atmNume; ++atmNum ) {
+		for (unsigned long atmNum : res.accpt_pos()) {
 			site_id++;
-			insert_site_row(pose, struct_id, site_id, resNum, *atmNum, false /*is not donor*/, db_session);
-			site_ids(resNum,*atmNum) = site_id;
-			insert_site_pdb_row(pose, resNum, *atmNum, *atmNum, struct_id, site_id, db_session);
-			insert_site_environment_row(pose, resNum, *atmNum, struct_id, site_id, atom_sasa_s, atom_sasa_m, atom_sasa_l, site_partners, site_hbond_energies, db_session);
-			insert_site_atoms_row(pose, resNum, *atmNum, struct_id, site_id, db_session);
+			insert_site_row(pose, struct_id, site_id, resNum, atmNum, false /*is not donor*/, db_session);
+			site_ids(resNum,atmNum) = site_id;
+			insert_site_pdb_row(pose, resNum, atmNum, atmNum, struct_id, site_id, db_session);
+			insert_site_environment_row(pose, resNum, atmNum, struct_id, site_id, atom_sasa_s, atom_sasa_m, atom_sasa_l, site_partners, site_hbond_energies, db_session);
+			insert_site_atoms_row(pose, resNum, atmNum, struct_id, site_id, db_session);
 
-			sort(site_partners(resNum,*atmNum).begin(),
-				site_partners(resNum,*atmNum).end(),
+			sort(site_partners(resNum,atmNum).begin(),
+				site_partners(resNum,atmNum).end(),
 				HBond::hbond_energy_comparer);
 		}
 	}

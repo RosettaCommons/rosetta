@@ -47,8 +47,7 @@ StructFileRep::StructFileRep() : utility::pointer::ReferenceCount(),
 	additional_string_output_( "" )
 {}
 
-StructFileRep::~StructFileRep()
-{}
+StructFileRep::~StructFileRep() = default;
 
 /// @details Uses the compiler-default copy constructor.
 StructFileRepOP

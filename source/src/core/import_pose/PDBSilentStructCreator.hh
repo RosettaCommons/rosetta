@@ -31,10 +31,10 @@ class PDBSilentStructCreator : public core::io::silent::SilentStructCreator
 {
 public:
 	PDBSilentStructCreator();
-	virtual ~PDBSilentStructCreator();
+	~PDBSilentStructCreator() override;
 
-	virtual core::io::silent::SilentStructOP create_silent_struct() const;
-	virtual std::string keyname() const;
+	core::io::silent::SilentStructOP create_silent_struct() const override;
+	std::string keyname() const override;
 };
 
 } //namespace import_pose

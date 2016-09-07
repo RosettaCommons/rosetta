@@ -25,6 +25,7 @@
 #include <string>
 
 #include <platform/types.hh>
+#include <utility>
 #include <utility/down_cast.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -47,9 +48,9 @@ namespace datacache {
 class CacheableString : public CacheableData
 {
 public:
-	CacheableString( std::string str ) : CacheableData(), str_(str) {}
-	virtual ~CacheableString(){};
-	virtual CacheableDataOP clone() const { return CacheableDataOP( new CacheableString(*this) ); }
+	CacheableString( std::string str ) : CacheableData(), str_(std::move(str)) {}
+	~CacheableString() override= default;
+	CacheableDataOP clone() const override { return CacheableDataOP( new CacheableString(*this) ); }
 	virtual std::string const & str() const { return str_; }
 
 	CacheableStringOP shared_from_this() { return utility::pointer::static_pointer_cast<CacheableString>( CacheableData::shared_from_this() ); }

@@ -89,7 +89,7 @@ void RefineOneCDRLoopCentroid::set_default() {
 
 
 // default destructor
-RefineOneCDRLoopCentroid::~RefineOneCDRLoopCentroid() {}
+RefineOneCDRLoopCentroid::~RefineOneCDRLoopCentroid() = default;
 
 
 std::string RefineOneCDRLoopCentroid::get_name() const {

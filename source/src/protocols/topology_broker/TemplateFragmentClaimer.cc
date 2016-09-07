@@ -57,7 +57,7 @@ TemplateFragmentClaimer::TemplateFragmentClaimer() : frag_size_( 9 ), config_fil
 {}
 
 TemplateFragmentClaimer::TemplateFragmentClaimer( std::string config_file, core::Size fragsize, weights::AbinitioMoverWeightOP weight )
-: FragmentClaimer( NULL, "template-frags", weight ),
+: FragmentClaimer( nullptr, "template-frags", weight ),
 	frag_size_( fragsize )
 {
 	read_config_file( config_file );

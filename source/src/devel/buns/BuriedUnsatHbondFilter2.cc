@@ -52,7 +52,7 @@ BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( core::Size const upper_thresho
 
 BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2() : protocols::filters::Filter( "BuriedUnsatHbonds2" ) {}
 
-BuriedUnsatHbondFilter2::~BuriedUnsatHbondFilter2(){}
+BuriedUnsatHbondFilter2::~BuriedUnsatHbondFilter2() = default;
 
 void
 BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
@@ -124,7 +124,7 @@ BuriedUnsatHbondFilter2::report_sm( core::pose::Pose const & pose ) const {
 core::Size
 BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 
-	if ( pose.pdb_info() != 0 ) {
+	if ( pose.pdb_info() != nullptr ) {
 		TR << "PDB: " << pose.pdb_info()->name() << std::endl;
 	}
 
@@ -170,7 +170,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 
 	core::Size unsat_hbonds( 0 );
 
-	if ( task_factory_ == NULL ) {
+	if ( task_factory_ == nullptr ) {
 		unsat_hbonds = total_buns_bound.value() - total_buns_unbound.value();
 	} else {
 		utility::vector1< core::Size > const selected_residues(

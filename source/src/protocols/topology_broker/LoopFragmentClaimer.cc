@@ -55,14 +55,14 @@ LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags ) :
 	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
 	"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
 {
-	runtime_assert( frags != 0 );
+	runtime_assert( frags != nullptr );
 }
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags, std::string label ) :
 	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
 	"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
 {
-	runtime_assert( frags != 0 );
+	runtime_assert( frags != nullptr );
 	set_label( label );
 }
 

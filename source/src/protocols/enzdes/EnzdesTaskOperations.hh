@@ -46,15 +46,15 @@ public:
 public:
 
 	SetCatalyticResPackBehavior();
-	~SetCatalyticResPackBehavior();
+	~SetCatalyticResPackBehavior() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 	/// @brief Change a packer task in some way.  The input pose is the one to which the input
 	/// task will be later applied.
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 
-	virtual void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SetCatalyticResPackBehavior"; }
 
@@ -85,18 +85,18 @@ public:
 public:
 
 	DetectProteinLigandInterface();
-	~DetectProteinLigandInterface();
+	~DetectProteinLigandInterface() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 	/// @brief Initialize the class based on the command line options.
 	void init_from_options();
 
 	/// @brief Change a packer task in some way.  The input pose is the one to which the input
 	/// task will be later applied.
-	virtual void apply( Pose const & pose, PackerTask & task) const;
+	void apply( Pose const & pose, PackerTask & task) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DetectProteinLigandInterface"; }
 
@@ -185,18 +185,18 @@ public:
 public:
 
 	ProteinLigandInterfaceUpweighter();
-	~ProteinLigandInterfaceUpweighter();
+	~ProteinLigandInterfaceUpweighter() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 	/// @brief Initialize the class based on the command line options.
 	void init_from_options();
 
 	/// @brief Change a packer task in some way.  The input pose is the one to which the input
 	/// task will be later applied.
-	virtual void apply( Pose const & pose, PackerTask & task) const;
+	void apply( Pose const & pose, PackerTask & task) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "ProteinLigandInterfaceUpweighter"; }
 
@@ -222,17 +222,17 @@ public:
 public:
 
 	AddRigidBodyLigandConfs();
-	~AddRigidBodyLigandConfs();
+	~AddRigidBodyLigandConfs() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "AddRigidBodyLigandConfs"; }
 
 	/// @brief Change a packer task in some way.  The input pose is the one to which the input
 	/// task will be later applied.
-	virtual void apply( Pose const &, PackerTask & ) const;
+	void apply( Pose const &, PackerTask & ) const override;
 
 };
 
@@ -252,19 +252,19 @@ private:
 public:
 
 	AddLigandMotifRotamers();
-	~AddLigandMotifRotamers();
+	~AddLigandMotifRotamers() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 	static void register_options();
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "AddLigandMotifRotamers"; }
 
 	/// @brief Change a packer task in some way.  The input pose is the one to which the input
 	/// task will be later applied.
-	virtual void apply( Pose const &, PackerTask & ) const;
+	void apply( Pose const &, PackerTask & ) const override;
 
 };
 

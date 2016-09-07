@@ -51,8 +51,7 @@ namespace protocols {
 namespace ncbb {
 
 //Destructor
-SecStructMinimizeMover::~SecStructMinimizeMover()
-{}
+SecStructMinimizeMover::~SecStructMinimizeMover() = default;
 
 void
 SecStructMinimizeMover::apply( core::pose::Pose & pose )

@@ -38,19 +38,17 @@ namespace motifs {
 MotifLibrary::MotifLibrary()
 {}
 
-MotifLibrary::~MotifLibrary()
-{}
+MotifLibrary::~MotifLibrary() = default;
 
 MotifLibrary::MotifLibrary(
 	FileNames & motif_filenames
 )
 {
-	for ( FileNames::const_iterator filename( motif_filenames.begin() );
-			filename != motif_filenames.end(); ++filename ) {
-		if ( !utility::file::file_exists( *filename ) ) {
+	for (const auto & motif_filename : motif_filenames) {
+		if ( !utility::file::file_exists( motif_filename ) ) {
 			continue;
 		}
-		SingleMotifOP new_motif = single_motif_from_filename( *filename );
+		SingleMotifOP new_motif = single_motif_from_filename( motif_filename );
 		add_to_library( *new_motif );
 	}
 }
@@ -115,8 +113,8 @@ MotifLibrary::add_from_file( std::string const & motif_filename )
 	MotifLibrary new_library( motif_file );
 
 	// Add to this library
-	for ( MotifCOPs::const_iterator pmot = new_library.begin() ; pmot != new_library.end() ; ++pmot ) {
-		add_to_library( **pmot );
+	for (const auto & pmot : new_library) {
+		add_to_library( *pmot );
 	}
 }
 
@@ -124,8 +122,8 @@ std::ostream & operator <<(
 	std::ostream & os, MotifLibrary const & mlib
 )
 {
-	for ( MotifCOPs::const_iterator pmot = mlib.begin() ; pmot != mlib.end() ; ++pmot ) {
-		os << (*pmot)->print();
+	for (const auto & pmot : mlib) {
+		os << pmot->print();
 	}
 	return os;
 }
@@ -145,8 +143,8 @@ MotifLibrary::add_ligand_from_file( std::string const & motif_filename )
 	MotifLibrary new_library( motif_file, ligand_marker );
 
 	// Add to this library
-	for ( MotifCOPs::const_iterator pmot = new_library.begin() ; pmot != new_library.end() ; ++pmot ) {
-		add_to_library( **pmot );
+	for (const auto & pmot : new_library) {
+		add_to_library( *pmot );
 	}
 }
 

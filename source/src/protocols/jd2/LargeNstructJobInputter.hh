@@ -44,27 +44,27 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.
-	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job ) override;
 
 	/// @brief This function determines what jobs exist.
 	/// @details  Unlike the GenericJobInputter, this version only ever has a subset of total jobs in
 	/// memory at any given time.
-	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
+	void fill_jobs( protocols::jd2::JobsContainer & jobs ) override;
 
 	/// @brief This function is only called by certain JobInputters to update the jobs list after it has already been created.
 	/// @details An example case would be the LargeNstructJobInputter, which uses this function to load additional jobs after
 	/// the first N have started to come back.
-	virtual void update_jobs_list( JobsContainerOP jobs );
+	void update_jobs_list( JobsContainerOP jobs ) override;
 
 	/// @brief Return the type of input source that the LargeNstructJobInputter is currently
 	///  using.
 	/// @return Always <em>POSE</em>.
-	virtual protocols::jd2::JobInputterInputSource::Enum input_source() const;
+	protocols::jd2::JobInputterInputSource::Enum input_source() const override;
 
 	/// @brief Does this type of JobInputter update the jobs list?
 	/// @details False by default.  Override this function in derived classes to make it true.
 	/// The LargeNstructJobInputter overrides this, and returns true.
-	virtual bool updates_jobs_list() const { return true; }
+	bool updates_jobs_list() const override { return true; }
 
 
 private:

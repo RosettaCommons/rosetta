@@ -64,7 +64,7 @@ void ReportFSC::init() {
 	nresbins_=50;
 	asymm_only_=false;
 	mask_=true;
-	testmap_ = NULL;
+	testmap_ = nullptr;
 	bin_squared_=false;
 }
 

@@ -33,7 +33,7 @@ PseudoBond::PseudoBond() :
 	nbonds_( 0 )
 {}
 
-PseudoBond::~PseudoBond() {}
+PseudoBond::~PseudoBond() = default;
 
 PseudoBond::PseudoBond( PseudoBond const & src ) :
 	ReferenceCount(),
@@ -103,7 +103,7 @@ SAVE_AND_LOAD_SERIALIZABLE( PseudoBond );
 // PBs can be added to the collection, and iterated over, but cannot
 // be modified.
 PseudoBondCollection::PseudoBondCollection() {}
-PseudoBondCollection::~PseudoBondCollection() {}
+PseudoBondCollection::~PseudoBondCollection() = default;
 
 PseudoBondCollectionCOP
 PseudoBondCollection::clone_with_new_sequence_numbering(
@@ -111,7 +111,7 @@ PseudoBondCollection::clone_with_new_sequence_numbering(
 ) const
 {
 	PseudoBondCollectionOP new_pbc( new PseudoBondCollection );
-	for ( PBIter pbiter = iter_begin(), pbiter_end = iter_end();
+	for ( auto pbiter = iter_begin(), pbiter_end = iter_end();
 			pbiter != pbiter_end; ++pbiter ) {
 		PseudoBond new_pb( *pbiter );
 		new_pb.lr( old2new[ pbiter->lr() ] );

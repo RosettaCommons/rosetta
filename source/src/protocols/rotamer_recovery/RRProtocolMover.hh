@@ -44,17 +44,17 @@ public: // constructors destructors
 	RRProtocolMover(
 		protocols::moves::MoverOP mover);
 
-	~RRProtocolMover();
+	~RRProtocolMover() override;
 
 	RRProtocolMover( RRProtocolMover const & );
 
 public: // public interface
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	std::string
-	get_parameters() const;
+	get_parameters() const override;
 
 	// Undefined, commenting out to fix PyRosetta build  void set_mover(protocols::moves::MoverOP mover);
 
@@ -64,7 +64,7 @@ public: // public interface
 		RRReporterOP reporter,
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const &,
-		core::pack::task::PackerTask const & packer_task);
+		core::pack::task::PackerTask const & packer_task) override;
 
 private: // member data
 

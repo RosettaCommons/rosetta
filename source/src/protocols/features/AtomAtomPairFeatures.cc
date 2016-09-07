@@ -133,16 +133,9 @@ AtomAtomPairFeatures::AtomAtomPairFeatures() :
 
 }
 
-AtomAtomPairFeatures::AtomAtomPairFeatures(AtomAtomPairFeatures const & src) : FeaturesReporter(src),
-	min_dist_(src.min_dist_),
-	max_dist_(src.max_dist_),
-	nbins_(src.nbins_),
-	relevant_atom_names_(src.relevant_atom_names_),
-	atom_index_to_relevant_atom_index_(src.atom_index_to_relevant_atom_index_),
-	relevant_elements_(src.relevant_elements_)
-{}
+AtomAtomPairFeatures::AtomAtomPairFeatures(AtomAtomPairFeatures const & ) = default;
 
-AtomAtomPairFeatures::~AtomAtomPairFeatures(){}
+AtomAtomPairFeatures::~AtomAtomPairFeatures()= default;
 
 string
 AtomAtomPairFeatures::type_name() const { return "AtomAtomPairFeatures"; }

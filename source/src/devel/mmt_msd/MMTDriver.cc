@@ -140,7 +140,7 @@ OneGenerationJobInfo::OneGenerationJobInfo(
 	full_seqinds_2_newseqinds_.resize( ga.max_population_size() );
 
 	core::Size count( 0 ), count_new( 0 );
-	for ( GeneticAlgorithmBase::pop_const_iter
+	for ( auto
 			iter = ga.current_generation_begin(),
 			iter_end = ga.current_generation_end();
 			iter != iter_end; ++iter ) {
@@ -198,7 +198,7 @@ void OneGenerationJobInfo::push_outstanding( JobID const & job )
 
 void OneGenerationJobInfo::remove_outstanding( JobID const & job )
 {
-	std::set< JobID >::iterator iter = work_outstanding_.find( job );
+	auto iter = work_outstanding_.find( job );
 	assert( iter != work_outstanding_.end() );
 	work_outstanding_.erase( iter );
 	job_completed_[ job.first ][ job.second ] = true;
@@ -211,7 +211,7 @@ JobsForSequence::JobsForSequence( core::Size n_states, core::Size n_npd_properti
 	npd_properties_.resize( n_npd_properties );
 }
 
-JobsForSequence::~JobsForSequence() {}
+JobsForSequence::~JobsForSequence() = default;
 
 void JobsForSequence::entity( protocols::genetic_algorithm::EntityOP setting )
 {
@@ -237,11 +237,8 @@ void JobsForSequence::finalize_state_energies_and_npd_properties()
 {
 	for ( core::Size ii = 1; ii <= jobs_.size(); ++ii ) {
 		state_energies_[ ii ] = jobs_[ ii ].energy();
-		for ( PackingJobRecord::npd_properties::const_iterator
-				iter = jobs_[ ii ].npd_props().begin(),
-				iter_end = jobs_[ ii ].npd_props().end();
-				iter != iter_end; ++iter ) {
-			npd_properties_[ iter->first ] = npd_properties_[ iter->second ];
+		for (const auto & iter : jobs_[ ii ].npd_props()) {
+			npd_properties_[ iter.first ] = npd_properties_[ iter.second ];
 		}
 	}
 }
@@ -268,8 +265,7 @@ MMTDriver::MMTDriver() :
 	n_top_results_to_output_( 1 )
 {}
 
-MMTDriver::~MMTDriver()
-{}
+MMTDriver::~MMTDriver() = default;
 
 void MMTDriver::set_nworkers( core::Size setting ) { n_workers_ = setting; node_stats_.resize( setting ); }
 void MMTDriver::set_ngenerations( core::Size setting ) { ga_ngenerations_ = setting; }
@@ -553,7 +549,7 @@ MMTDriver::send_state_info_to_node(
 	// now send the list of non-pairwise decomposable properties that need to be computed for the
 	// final structure for this state.
 	utility::send_integer_to_node( node_index, daf_->num_npd_properties_for_state( state_index ) );
-	for ( std::list< std::pair< core::Size, std::string > >::const_iterator
+	for ( auto
 			npditer     = daf_->npd_variable_indices_for_state_begin( state_index ),
 			npditer_end = daf_->npd_variable_indices_for_state_end( state_index );
 			npditer != npditer_end; ++npditer ) {
@@ -620,8 +616,8 @@ MMTDriver::evaluate_entity_fitnesses()
 			instruct_receivers_to_keep_job_data_for_entity( ii );
 		}
 
-		for ( std::list< protocols::genetic_algorithm::EntityOP >::iterator iter = dropped.begin(); iter != dropped.end(); ++iter ) {
-			instruct_receivers_to_drop_old_job_data_for_entity( *iter );
+		for (auto & iter : dropped) {
+			instruct_receivers_to_drop_old_job_data_for_entity( iter );
 		}
 
 	}
@@ -650,7 +646,7 @@ MMTDriver::instruct_receivers_to_drop_old_job_data_for_entity(
 {
 	std::string sequence = sequence_from_entity( *entity );
 
-	SavedJobsForSequence::iterator iter = top_jobs_archive_.find(sequence );
+	auto iter = top_jobs_archive_.find(sequence );
 	assert( iter != top_jobs_archive_.end() );
 	JobsForSequence const & jobs_for_seq =  *iter->second;
 	for ( core::Size ii = 1; ii <= daf_->num_states(); ++ii ) {

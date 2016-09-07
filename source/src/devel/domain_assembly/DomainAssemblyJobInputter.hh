@@ -37,18 +37,18 @@ public:
 
 	DomainAssemblyJobInputter();
 
-	virtual ~DomainAssemblyJobInputter();
+	~DomainAssemblyJobInputter() override;
 
 	/// @brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference
-	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job ) override;
 
 	/// @brief this function determines what jobs exist using the da options file name and nstruct
-	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
+	void fill_jobs( protocols::jd2::JobsContainer & jobs ) override;
 
 	/// @brief Return the type of input source that the DomainAssemblyJobInputter is currently
 	///  using.
 	/// @return Always <em>PDB_FILE</em>.
-	virtual protocols::jd2::JobInputterInputSource::Enum input_source() const;
+	protocols::jd2::JobInputterInputSource::Enum input_source() const override;
 
 }; // DomainAssemblyJobInputter
 

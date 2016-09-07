@@ -43,7 +43,7 @@ ResidueNetwork::ResidueNetwork()
 }
 
 /// @brief destructor
-ResidueNetwork::~ResidueNetwork() {}
+ResidueNetwork::~ResidueNetwork() = default;
 
 core::Real
 ResidueNetwork::connectivity_index( core::Size const resi ) const
@@ -54,9 +54,9 @@ ResidueNetwork::connectivity_index( core::Size const resi ) const
 	dijkstras( resi );
 
 	core::Real running_sum = 0.0;
-	for ( std::list< NodeOP >::const_iterator it = nodes_.begin(); it != nodes_.end(); ++it ) {
-		core::Size shortest_path = (*it)->distanceFromStart;
-		TR.Debug << "Shortest path from " << resi << " to " << (*it)->resi << " is " << shortest_path << std::endl;
+	for (const auto & node : nodes_) {
+		core::Size shortest_path = node->distanceFromStart;
+		TR.Debug << "Shortest path from " << resi << " to " << node->resi << " is " << shortest_path << std::endl;
 		running_sum += shortest_path;
 	} // for each residue
 	return ( nodes_.size() - 1 ) / running_sum;
@@ -71,12 +71,12 @@ ResidueNetwork::average_shortest_path_length() const
 	core::Real total_path_length = 0.0;
 
 	//iterate over all starting notes
-	for ( std::list< NodeOP >::const_iterator it = nodes_.begin(); it != nodes_.end(); ++it ) {
+	for ( auto it = nodes_.begin(); it != nodes_.end(); ++it ) {
 		dijkstras ((*it)->resi);
 
 		//add the paths from resi it to all other residues
-		for ( std::list< NodeOP >::const_iterator it2 = nodes_.begin(); it2 != nodes_.end(); ++it2 ) {
-			core::Size shortest_path = (*it2)->distanceFromStart;
+		for (const auto & node : nodes_) {
+			core::Size shortest_path = node->distanceFromStart;
 			total_path_length += shortest_path;
 		}
 	}
@@ -92,12 +92,12 @@ void
 ResidueNetwork::dijkstras( core::Size const resi ) const
 {
 	// reset nodes
-	for ( std::list< NodeOP >::const_iterator it = nodes_.begin(); it != nodes_.end(); ++it ) {
-		(*it)->in_list = true;
-		if ( (*it)->resi == resi ) {
-			(*it)->distanceFromStart = 0;
+	for (const auto & node : nodes_) {
+		node->in_list = true;
+		if ( node->resi == resi ) {
+			node->distanceFromStart = 0;
 		} else {
-			(*it)->distanceFromStart = INT_MAX;
+			node->distanceFromStart = INT_MAX;
 		}
 	}
 
@@ -115,11 +115,11 @@ ResidueNetwork::dijkstras( core::Size const resi ) const
 		}
 		std::list< NodeOP > const & adjacentNodes( AdjacentRemainingNodes( smallest ) );
 		TR.Debug << "Nodes adjacent to " << smallest->resi << ": ";
-		for ( std::list< NodeOP >::const_iterator it = adjacentNodes.begin(); it != adjacentNodes.end(); ++it ) {
-			TR.Debug << " " << (*it)->resi;
+		for (const auto & adjacentNode : adjacentNodes) {
+			TR.Debug << " " << adjacentNode->resi;
 			int distance = smallest->distanceFromStart + 1;
-			if ( distance < (*it)->distanceFromStart ) {
-				(*it)->distanceFromStart = distance;
+			if ( distance < adjacentNode->distanceFromStart ) {
+				adjacentNode->distanceFromStart = distance;
 			}
 		}
 		TR.Debug << std::endl;
@@ -153,9 +153,9 @@ NodeOP
 ExtractSmallest( std::list< NodeOP > & nodes )
 {
 	// AMW: cppcheck thinks this conditional might be inefficient
-	if ( nodes.empty() /*size() == 0 */ ) return NULL;
-	std::list< NodeOP >::iterator smallest( nodes.begin() );
-	for ( std::list< NodeOP >::iterator current = ++(nodes.begin()); current != nodes.end(); ++current ) {
+	if ( nodes.empty() /*size() == 0 */ ) return nullptr;
+	auto smallest( nodes.begin() );
+	for ( auto current = ++(nodes.begin()); current != nodes.end(); ++current ) {
 		if ( (*current)->distanceFromStart < (*smallest)->distanceFromStart ) {
 			smallest = current;
 		}
@@ -188,8 +188,8 @@ AdjacentRemainingNodes( NodeOP node )
 bool
 Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 {
-	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
-		if ( node == *it ) {
+	for (const auto & it : nodes) {
+		if ( node == it ) {
 			return true;
 		}
 	}
@@ -200,8 +200,8 @@ Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 void
 ResidueNetwork::clear_edges()
 {
-	for ( std::list< NodeOP >::const_iterator res_it_1 = nodes().begin(); res_it_1 != nodes().end(); ++res_it_1 ) {
-		(*res_it_1)->neighbors.clear();
+	for (const auto & res_it_1 : nodes()) {
+		res_it_1->neighbors.clear();
 	}
 }
 
@@ -214,11 +214,11 @@ DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose )
 	core::Real const distance_threshold( 5.0 );
 	core::Real const max_possible_dist( 12.5 + distance_threshold );
 
-	for ( std::list< NodeOP >::const_iterator res_it_1 = nodes().begin(); res_it_1 != nodes().end(); ++res_it_1 ) {
+	for ( auto res_it_1 = nodes().begin(); res_it_1 != nodes().end(); ++res_it_1 ) {
 		core::conformation::Residue const & res_target( pose.residue( (*res_it_1)->resi ) );
 
-		std::list< NodeOP >::const_iterator res_it_start = res_it_1;
-		for ( std::list< NodeOP >::const_iterator res_it_2 = (++res_it_start); res_it_2 != nodes().end(); ++res_it_2 ) {
+		auto res_it_start = res_it_1;
+		for ( auto res_it_2 = (++res_it_start); res_it_2 != nodes().end(); ++res_it_2 ) {
 			core::conformation::Residue const & resj( pose.residue( (*res_it_2)->resi ) );
 			core::Real closest( -1.0 );
 			// if the distance is less than the maximum possible interaction distance (arg side chain + arg side chain ~= 12.5 A)
@@ -263,9 +263,9 @@ CovalentResidueNetwork::generate_edges( core::pose::Pose const & pose )
 	clear_edges();
 
 	//identify covalent bonds between residues
-	std::list< NodeOP >::const_iterator res_it_1 = nodes().begin();
+	auto res_it_1 = nodes().begin();
 	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
-		std::list< NodeOP >::const_iterator res_it_2 = nodes().begin();
+		auto res_it_2 = nodes().begin();
 		std::advance(res_it_2,i);
 		for ( core::Size j=i + 1; j != pose.total_residue() + 1; ++j ) {
 			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {

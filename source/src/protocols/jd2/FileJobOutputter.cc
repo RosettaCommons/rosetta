@@ -97,7 +97,7 @@ void FileJobOutputter::set_defaults() {
 	}
 }
 
-FileJobOutputter::~FileJobOutputter(){}
+FileJobOutputter::~FileJobOutputter()= default;
 
 void FileJobOutputter::scorefile(
 	JobCOP job,
@@ -116,14 +116,14 @@ void FileJobOutputter::scorefile(
 	ScoreMap::score_map_from_scored_pose( score_map, pose );
 
 	// Adds StringReal job info into the score map for output in the scorefile.
-	for ( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
+	for ( auto it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
 			it != end;
 			++it ) {
 		score_map[it->first] = it->second;
 	}
 
 	// Adds StringString job info into a map for output in the scorefile.
-	for ( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
+	for ( auto it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
 			it != end;
 			++it ) {
 		string_map[it->first] = it->second;
@@ -136,12 +136,10 @@ void FileJobOutputter::scorefile(
 		basic::datacache::CacheableStringFloatMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		assert( data.get() != NULL );
+		assert( data.get() != nullptr );
 
-		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
-			score_map[it->first] = it->second;
+		for (const auto & it : data->map()) {
+			score_map[it.first] = it.second;
 		}
 	}
 
@@ -150,12 +148,10 @@ void FileJobOutputter::scorefile(
 		basic::datacache::CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		assert( data.get() != NULL );
+		assert( data.get() != nullptr );
 
-		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
-			string_map[it->first] = it->second;
+		for (const auto & it : data->map()) {
+			string_map[it.first] = it.second;
 		}
 	}
 

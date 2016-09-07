@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 RotamerBoltzmannWeightFeaturesCreator::RotamerBoltzmannWeightFeaturesCreator() {}
-RotamerBoltzmannWeightFeaturesCreator::~RotamerBoltzmannWeightFeaturesCreator() {}
+RotamerBoltzmannWeightFeaturesCreator::~RotamerBoltzmannWeightFeaturesCreator() = default;
 FeaturesReporterOP RotamerBoltzmannWeightFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new RotamerBoltzmannWeightFeatures );
 }

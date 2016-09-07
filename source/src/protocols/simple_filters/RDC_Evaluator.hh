@@ -52,7 +52,7 @@ public:
 	//  RDC_Evaluator( utility::vector1< std::string > const& rdc_files, std::string tag = "rdc" );
 
 	/// @brief evaluate pose
-	virtual core::Real apply( core::pose::Pose& ) const;
+	core::Real apply( core::pose::Pose& ) const override;
 
 private:
 	std::string tag_;
@@ -62,8 +62,8 @@ private:
 
 class SelectRDC_Evaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-	SelectRDC_Evaluator( core::scoring::ResidueSelection const& selection, std::string tag = "", std::string file ="" );
-	SelectRDC_Evaluator( utility::vector1< core::Size> const& selection, std::string tag = "" , std::string file ="");
+	SelectRDC_Evaluator( core::scoring::ResidueSelection selection, std::string tag = "", std::string file ="" );
+	SelectRDC_Evaluator( utility::vector1< core::Size> const & selection, std::string tag = "" , std::string file ="");
 
 	//work it out by yourself from missing density == whacky random coords
 	SelectRDC_Evaluator( core::pose::PoseCOP, std::string tag = "" );
@@ -72,7 +72,7 @@ public:
 	SelectRDC_Evaluator( core::pose::Pose const&, std::string tag = "" );
 
 	/// @brief evaluate pose
-	virtual core::Real apply( core::pose::Pose& ) const;
+	core::Real apply( core::pose::Pose& ) const override;
 
 private:
 

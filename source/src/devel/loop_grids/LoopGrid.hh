@@ -66,7 +66,7 @@ public:
 	//residue
 	bool occupied( Residue const &res, Size nres ) const;
 
-	virtual ~LoopGrid();
+	~LoopGrid() override;
 
 private:
 	utility::vector1< Bool3DGridOP > grids_; //grids for each res of the loop 2 ~ n-1

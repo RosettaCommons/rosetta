@@ -17,7 +17,7 @@
 namespace basic {
 namespace resource_manager {
 
-ResourceOptionsCreator::~ResourceOptionsCreator() {}
+ResourceOptionsCreator::~ResourceOptionsCreator() = default;
 
 } // namespace resource_manager
 } // namespace basic

@@ -112,7 +112,7 @@ RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num, core::An
 : moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(angle), lower_angle_(angle)
 { moves::Mover::type( "RotateJumpAxisMover" ); }
 
-RotateJumpAxisMover::~RotateJumpAxisMover(){}
+RotateJumpAxisMover::~RotateJumpAxisMover()= default;
 
 }//rigid
 }//protocols

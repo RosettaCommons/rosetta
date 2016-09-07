@@ -48,7 +48,7 @@ public: // Creation
 	MetricRecorder();
 
 	/// @brief Default destructor.
-	~MetricRecorder();
+	~MetricRecorder() override;
 
 	/// @brief Copy constructor.
 	MetricRecorder( MetricRecorder const & );
@@ -60,22 +60,22 @@ public: // Creation
 public: // Methods
 
 	/// @brief Return a copy of this mover.
-	virtual
+	
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Return a newly instantiated mover.
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	/// @brief Return the name of this mover.
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief Use a RosettaScripts tag to configure this mover.
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -83,12 +83,12 @@ public: // Methods
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief Return true.  This mover needs to be reinitialized for each job.
-	virtual
+	
 	bool
-	reinitialize_for_each_job() const { return true; };
+	reinitialize_for_each_job() const override { return true; };
 
 	/// @brief Return the name of the file being written to.
 	std::string const &
@@ -168,7 +168,7 @@ public: // Methods
 	void
 	reset(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
 	);
 
 	/// @brief Write information like temperature, score, and torsion angles to a
@@ -176,36 +176,36 @@ public: // Methods
 	void
 	update_after_boltzmann(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
 	);
 
 	/// @brief Just invoke update_after_boltzmann() with a const pose.
-	virtual
+	
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 private: // Fields
 

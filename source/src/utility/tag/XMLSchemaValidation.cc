@@ -76,12 +76,12 @@ std::string element_type_name(
 int
 length_of_message( const char * message, va_list args )
 {
-	return vsnprintf(NULL, 0, message, args );
+	return vsnprintf(nullptr, 0, message, args );
 }
 
 char *
 make_message( int length, const char * message, va_list args ) {
-	char * formatted_message = new char[ length+1 ];
+	auto * formatted_message = new char[ length+1 ];
 	vsnprintf( formatted_message, length+1, message, args );
 	//std::cout << "message: " << formatted_message << std::endl;
 	return formatted_message;
@@ -221,8 +221,8 @@ void XMLValidationOutput::warnings( std::list< std::string > const & warning_lis
 
 std::string concat_stringlist( std::list< std::string > const & strings ) {
 	std::ostringstream oss;
-	for ( std::list< std::string >::const_iterator iter = strings.begin(); iter != strings.end(); ++iter ) {
-		oss << *iter;
+	for (const auto & iter : strings) {
+		oss << iter;
 	}
 	return oss.str();
 }
@@ -244,7 +244,7 @@ recurse_through_tree(
 	XMLErrorHandler handler
 )
 {
-	if ( node == 0 ) return 0;
+	if ( node == nullptr ) return 0;
 	handler.push_node( node );
 	int error = xmlSchemaValidateOneElement( ctxt, node );
 	xmlNodePtr child = xmlFirstElementChild( node );

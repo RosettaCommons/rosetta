@@ -34,11 +34,11 @@ public:
 	ChainSplitMover();
 	ChainSplitMover( core::Size cutpoint );
 	ChainSplitMover( ChainSplitMover const & src );
-	~ChainSplitMover();
-	virtual void apply( core::pose::Pose & pose );
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	~ChainSplitMover() override;
+	void apply( core::pose::Pose & pose ) override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 	/// @brief Retrieve the cutpoint at which the pose will be split
 	// Undefined, commenting out to fix PyRosetta build  core::Size cutpoint( ) const ;

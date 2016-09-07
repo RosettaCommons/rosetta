@@ -302,7 +302,7 @@ pdbslice( core::pose::Pose & new_pose,
 	}
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
-	if ( pdb_info != 0 ) {
+	if ( pdb_info != nullptr ) {
 		utility::vector1< Size > new_numbering;
 		utility::vector1< char > new_chains;
 		for ( Size n = 1; n <= slice_res.size(); n++ ) {
@@ -415,7 +415,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 	// As a result, jumps must be renumbered.
 	uint last_jump_id( 0 );
 	bool prevent_forward_edge( false );  // Use to prevent a custom reverse edge from being overwritten.
-	for ( FoldTree::const_iterator i( origft.begin() ), i_end( origft.end() ); i != i_end; ++i ) {
+	for ( auto i( origft.begin() ), i_end( origft.end() ); i != i_end; ++i ) {
 		Edge e( *i );
 		if ( TR.Trace.visible() ) {
 			TR.Trace << "checking if if " << e << " is reasonable for this Pose..." << endl;
@@ -760,8 +760,8 @@ dump_comment_pdb(
 	out << "##Begin comments##" << std::endl;
 	using namespace std;
 	map< string, string > const comments = core::pose::get_all_comments(pose);
-	for ( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
-		out << i->first<<" "<<i->second << std::endl;
+	for (const auto & comment : comments) {
+		out << comment.first<<" "<<comment.second << std::endl;
 	}
 	out << "##End comments##" << std::endl;
 	out.close();
@@ -784,7 +784,7 @@ hasPoseExtraScore(
 	CacheableStringFloatMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	assert( data.get() != NULL );
+	assert( data.get() != nullptr );
 
 	return (  data->map().find( name ) != data->map().end() );
 }
@@ -807,9 +807,9 @@ bool getPoseExtraScore(
 	CacheableStringFloatMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	debug_assert( data.get() != NULL );
+	debug_assert( data.get() != nullptr );
 
-	std::map< std::string, float >::const_iterator it = data->map().find( name );
+	auto it = data->map().find( name );
 	if ( it == data->map().end() ) {
 		return false;
 	}
@@ -844,9 +844,9 @@ bool getPoseExtraScore(
 	CacheableStringMapCOP data
 		= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
 		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-	debug_assert( data.get() != NULL );
+	debug_assert( data.get() != nullptr );
 
-	std::map< std::string, std::string >::const_iterator it = data->map().find( name );
+	auto it = data->map().find( name );
 	if ( it == data->map().end() ) {
 		return false;
 	}
@@ -878,7 +878,7 @@ void setPoseExtraScore(
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap >
 		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
-	runtime_assert( data.get() != NULL );
+	runtime_assert( data.get() != nullptr );
 	data->map()[name] = value;
 }
 
@@ -905,7 +905,7 @@ void setPoseExtraScore(
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
 		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA) );
 
-	runtime_assert( data.get() != NULL );
+	runtime_assert( data.get() != nullptr );
 	data->map()[name] = value;
 }
 
@@ -932,7 +932,7 @@ void add_comment(
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
 		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
 
-	runtime_assert( data.get() != NULL );
+	runtime_assert( data.get() != nullptr );
 	data->map()[key] = val;
 } // add_comment
 
@@ -958,7 +958,7 @@ void add_score_line_string(
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
 		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS) );
 
-	runtime_assert( data.get() != NULL );
+	runtime_assert( data.get() != nullptr );
 	data->map()[key] = val;
 }
 
@@ -1018,7 +1018,7 @@ void clearPoseExtraScore(
 		CacheableStringFloatMapOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap >
 			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		debug_assert( data.get() != NULL );
+		debug_assert( data.get() != nullptr );
 
 		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 	}
@@ -1027,7 +1027,7 @@ void clearPoseExtraScore(
 		CacheableStringMapOP data
 			= utility::pointer::dynamic_pointer_cast< CacheableStringMap >
 			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		debug_assert( data.get() != NULL );
+		debug_assert( data.get() != nullptr );
 
 		if ( data->map().find( name ) != data->map().end() ) data->map().erase( name );
 	}
@@ -1100,7 +1100,7 @@ get_all_score_line_strings(
 			= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
 		score_line_strings = data->map();
-		runtime_assert( data.get() != NULL );
+		runtime_assert( data.get() != nullptr );
 	}
 	return score_line_strings;
 }
@@ -1119,7 +1119,7 @@ get_all_comments(
 			= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 		comments = data->map();
-		runtime_assert( data.get() != NULL );
+		runtime_assert( data.get() != nullptr );
 	}
 	return comments;
 }
@@ -1208,7 +1208,7 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 		int const conf = pose.chain( i );
 		char const pdb = pose.pdb_info()->chain( i );
 
-		Conf2PDB::iterator c2p = conf2pdb.find( conf );
+		auto c2p = conf2pdb.find( conf );
 		if ( c2p != conf2pdb.end() ) { // must check if existing record inconsistent
 			if ( c2p->second != pdb ) {
 
@@ -1254,8 +1254,8 @@ utility::vector1< int > get_chains( core::pose::Pose const & pose ) {
 	utility::vector1< int > keys;
 
 	// go through map and push back into vector
-	for ( std::map< int, char >::iterator it = chain_map.begin(); it != chain_map.end(); ++it ) {
-		keys.push_back( it->first );
+	for (auto & it : chain_map) {
+		keys.push_back( it.first );
 	}
 	return keys;
 }
@@ -1522,10 +1522,10 @@ bool renumber_pdbinfo_based_on_conf_chains(
 			// First either remove or rotate any existing chains to the end of
 			// the list.
 			std::string letters( utility::UPPERCASE_LETTERS );
-			for ( Conf2PDB::iterator i = conf2pdb.begin(), ie = conf2pdb.end(); i != ie; ++i ) {
-				if ( i->second == PDBInfo::empty_record() )  continue;
+			for (auto & i : conf2pdb) {
+				if ( i.second == PDBInfo::empty_record() )  continue;
 
-				std::string::size_type const j = letters.find( i->second );
+				std::string::size_type const j = letters.find( i.second );
 				if ( j == std::string::npos )  continue;
 
 				if ( rotate_chain_ids ) { // rotating
@@ -1537,14 +1537,14 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 			// Now fill in empty records.
 			Size lidx = 0;
-			for ( Conf2PDB::iterator i = conf2pdb.begin(), ie = conf2pdb.end(); i != ie; ++i ) {
-				if ( i->second != PDBInfo::empty_record() )  continue;
+			for (auto & i : conf2pdb) {
+				if ( i.second != PDBInfo::empty_record() )  continue;
 
 				if ( rotate_chain_ids ) { // rotating
-					i->second = letters.at( lidx % letters.size() );
+					i.second = letters.at( lidx % letters.size() );
 				} else { // fixed length
 					runtime_assert( lidx < letters.size() );
-					i->second = letters.at( lidx );
+					i.second = letters.at( lidx );
 				}
 				++lidx;
 			}
@@ -2289,7 +2289,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 
 	/////////////////////////
 	// DOFs set individually
-	for ( kinematics::MoveMap::DOF_ID_Map::const_iterator it=mm.dof_id_begin(), it_end=mm.dof_id_end();
+	for ( auto it=mm.dof_id_begin(), it_end=mm.dof_id_end();
 			it != it_end; ++it ) {
 		dof_mask[ it->first ] = it->second;
 	}
@@ -2327,7 +2327,7 @@ has_chain(core::Size chain_id, core::pose::Pose const & pose){
 std::set<core::Size>
 get_jump_ids_from_chain_ids(std::set<core::Size> const & chain_ids, core::pose::Pose const & pose){
 	std::set<core::Size> jump_ids;
-	std::set<core::Size>::const_iterator chain_id= chain_ids.begin();
+	auto chain_id= chain_ids.begin();
 	for ( ; chain_id != chain_ids.end(); ++chain_id ) {
 		core::Size jump_id= get_jump_id_from_chain_id(*chain_id, pose);
 		jump_ids.insert(jump_id);
@@ -2659,20 +2659,19 @@ initialize_disulfide_bonds(
 			utility::vector1< Size > disulf_two;
 
 			// Prepare a list of pose-numbered disulfides!
-			for ( std::map< std::string, utility::vector1< io::SSBondInformation > >::const_iterator
-					ssbond = sfr.ssbond_map().begin(), end = sfr.ssbond_map().end(); ssbond != end; ++ssbond ) {
+			for (const auto & ssbond : sfr.ssbond_map()) {
 
 				// For now we really hope the vector1 is just a single element!
-				if ( ssbond->second.size() != 1 ) {
+				if ( ssbond.second.size() != 1 ) {
 					// We can salvage if it's double-entry: just take the first.
 					// The length isn't actually used anyway, and so it doesn't
 					// affect what conformation is preferred.
 
 					// Are they all the same?
-					std::string id1 = ssbond->second[1].resID2;
+					std::string id1 = ssbond.second[1].resID2;
 					bool identical = true;
-					for ( Size i = 2; i <= ssbond->second.size(); ++i ) {
-						if ( ssbond->second[ i ].resID2 != id1 ) {
+					for ( Size i = 2; i <= ssbond.second.size(); ++i ) {
+						if ( ssbond.second[ i ].resID2 != id1 ) {
 							identical = false; break;
 						}
 					}
@@ -2682,8 +2681,8 @@ initialize_disulfide_bonds(
 					}
 				}
 
-				Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1, ssbond->second[1].iCode1 );
-				Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2, ssbond->second[1].iCode2 );
+				Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID1, ssbond.second[1].resSeq1, ssbond.second[1].iCode1 );
+				Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond.second[1].chainID2, ssbond.second[1].resSeq2, ssbond.second[1].iCode2 );
 
 				if ( seqpos_one != 0 && seqpos_two != 0 ) {
 					disulf_one.push_back( seqpos_one );
@@ -2705,7 +2704,7 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
 		CacheableStringOP data =  utility::pointer::dynamic_pointer_cast< CacheableString > (  (pose.data().get_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
-		if ( data.get() == NULL ) return std::string("UnknownTag");
+		if ( data.get() == nullptr ) return std::string("UnknownTag");
 		else                      return data->str();
 	}
 
@@ -2968,8 +2967,8 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 	core::pose::Pose const & pose ){
 	id::AtomID_Map< id::AtomID > atom_ID_map;
 	initialize_atomid_map( atom_ID_map, pose, id::BOGUS_ATOM_ID );
-	for ( std::map< id::AtomID, id::AtomID >::const_iterator it = atom_map.begin(), end = atom_map.end(); it != end; ++it ) {
-		atom_ID_map.set( it->first, it->second );
+	for (const auto & it : atom_map) {
+		atom_ID_map.set( it.first, it.second );
 	}
 	return atom_ID_map;
 }
@@ -3064,30 +3063,29 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 	CircularHarmonicFuncOP ang90_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_2(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 
-	for ( std::map< std::string, utility::vector1< io::LinkInformation > >::const_iterator it = sfr.link_map().begin(),
-			end = sfr.link_map().end(); it != end; ++it ) {
-		for ( Size ii = 1; ii <= it->second.size(); ++ii ) {
-			TR << "|"<<it->second[ii].chainID1 << "| |" << it->second[ii].resSeq1 << "|" << std::endl;
-			TR << "|"<<it->second[ii].chainID2 << "| |" << it->second[ii].resSeq2 << "|" << std::endl;
+	for (const auto & it : sfr.link_map()) {
+		for ( Size ii = 1; ii <= it.second.size(); ++ii ) {
+			TR << "|"<<it.second[ii].chainID1 << "| |" << it.second[ii].resSeq1 << "|" << std::endl;
+			TR << "|"<<it.second[ii].chainID2 << "| |" << it.second[ii].resSeq2 << "|" << std::endl;
 
-			Size id1 = pose.pdb_info()->pdb2pose( it->second[ii].chainID1, it->second[ii].resSeq1 );
-			Size id2 = pose.pdb_info()->pdb2pose( it->second[ii].chainID2, it->second[ii].resSeq2 );
+			Size id1 = pose.pdb_info()->pdb2pose( it.second[ii].chainID1, it.second[ii].resSeq1 );
+			Size id2 = pose.pdb_info()->pdb2pose( it.second[ii].chainID2, it.second[ii].resSeq2 );
 			conformation::Residue const & NUC = pose.residue( id1 );
 			conformation::Residue const & ELEC = pose.residue( id2 );
 
-			id::AtomID aidNUC( NUC.atom_index( it->second[ii].name1 ), id1 );
-			id::AtomID aidC( ELEC.atom_index( it->second[ii].name2 ), id2 );
+			id::AtomID aidNUC( NUC.atom_index( it.second[ii].name1 ), id1 );
+			id::AtomID aidC( ELEC.atom_index( it.second[ii].name2 ), id2 );
 
-			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( it->second[ii].length, 0.05 ) );
+			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( it.second[ii].length, 0.05 ) );
 
 			scoring::constraints::ConstraintCOP atompair(
 				new scoring::constraints::AtomPairConstraint( aidNUC, aidC, harm_func ) );
 			pose.add_constraint( atompair );
-			TR << "Adding harmonic constraint between residue " << id1 << " atom " << it->second[ii].name1;
-			TR << "and residue " << id2 << " atom " << it->second[ii].name2 << " with length " << it->second[ii].length << std::endl;
+			TR << "Adding harmonic constraint between residue " << id1 << " atom " << it.second[ii].name1;
+			TR << "and residue " << id2 << " atom " << it.second[ii].name2 << " with length " << it.second[ii].length << std::endl;
 
 			// Cover cyclization case first
-			if ( it->second[ii].name1 == " N  " && it->second[ii].name2 == " C  " ) {
+			if ( it.second[ii].name1 == " N  " && it.second[ii].name2 == " C  " ) {
 
 				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
@@ -3119,7 +3117,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				TR << "Adding harmonic constraints to the angle formed by atoms N, C, O ( 120 ) and ";
 				TR << "the improper torsion N, C, O, CA (180) and the dihedral CA, N, C, CA ( 180 ) " <<std::endl;
 
-			} else if ( it->second[ii].name1 == " C  " && it->second[ii].name2 == " N  " ) {
+			} else if ( it.second[ii].name1 == " C  " && it.second[ii].name2 == " N  " ) {
 				// swapped; nuc is actually elec and vice versa
 
 				id::AtomID aidCA2( ELEC.atom_index( "CA" ), id2 );
@@ -3151,7 +3149,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 			}
 
 			// Now let's add constraints based on residue identities and atom names. For example, let's cover
-			if ( it->second[ii].name2 == " CZ " && it->second[ii].resName2 == "VDP" ) {
+			if ( it.second[ii].name2 == " CZ " && it.second[ii].resName2 == "VDP" ) {
 				// thiol-ene conjugation to acryl residue
 				// (don't check name1 because we don't care SG/SD/SG1)
 				// someday we will be fancy and check vs type.get_disulfide_atom_name()
@@ -3168,7 +3166,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				TR << "Assuming thiol-ene, adding harmonic constraints to the angle formed by CB, SG, CZ ( 90 )" << std::endl;// and ";
 				//TR << "the dihedral CB, SG, CZ, CE2 ( 180 ) " << std::endl;
 
-			} else if ( it->second[ii].name2 == " C  " ) {
+			} else if ( it.second[ii].name2 == " C  " ) {
 				// the C-terminal conjugation case:
 				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
@@ -3178,7 +3176,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				scoring::constraints::ConstraintCOP dih(
 					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( it->second[ii].name2 == " CD " ) {
+			} else if ( it.second[ii].name2 == " CD " ) {
 				// The sidechain conjugation to glx case
 				id::AtomID aidCA( ELEC.atom_index( "CG" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OE1" ), id2 );
@@ -3188,7 +3186,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				scoring::constraints::ConstraintCOP dih(
 					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( it->second[ii].name2 == " CG " ) {
+			} else if ( it.second[ii].name2 == " CG " ) {
 				// The sidechain conjugation to asx case
 				id::AtomID aidCA( ELEC.atom_index( "CB" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OD1" ), id2 );
@@ -3198,7 +3196,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				scoring::constraints::ConstraintCOP dih(
 					new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-				if ( it->second[ii].name1 == " NE " ) {
+				if ( it.second[ii].name1 == " NE " ) {
 					// ornithine
 					id::AtomID aidH( NUC.atom_index( "1HE" ), id2 );
 					id::AtomID aidCG( NUC.atom_index( "CG" ), id2 );
@@ -3221,7 +3219,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
 					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
 
-				} else if ( it->second[ii].name1 == " NZ " ) {
+				} else if ( it.second[ii].name1 == " NZ " ) {
 					// lysine
 					id::AtomID aidH( NUC.atom_index( "1HZ" ), id2 );
 					id::AtomID aidCD( NUC.atom_index( "CD" ), id2 );

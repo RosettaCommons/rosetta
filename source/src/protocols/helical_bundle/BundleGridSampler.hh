@@ -81,24 +81,24 @@ public: //Typedefs
 public:
 	BundleGridSampler();
 	BundleGridSampler( BundleGridSampler const &src );
-	virtual ~BundleGridSampler();
+	~BundleGridSampler() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 
 	/// @brief Actually apply the mover to the pose.
-	virtual void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const &
-	);
+	) override;
 
 public:
 	////////////////////////////////////////////////////////////////////////////////

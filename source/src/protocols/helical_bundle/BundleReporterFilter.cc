@@ -95,7 +95,7 @@ BundleReporterFilterCreator::keyname() const { return "BundleReporter"; }
 
 /// @brief Destructor.
 ///
-BundleReporterFilter::~BundleReporterFilter() {}
+BundleReporterFilter::~BundleReporterFilter() = default;
 
 /// @brief Parse XML (RosettaScripts) setup.
 ///

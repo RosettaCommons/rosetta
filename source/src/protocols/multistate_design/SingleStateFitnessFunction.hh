@@ -32,7 +32,7 @@ class SingleStateFitnessFunction : public utility::pointer::ReferenceCount {
 
 public:
 	SingleStateFitnessFunction() {}
-	virtual ~SingleStateFitnessFunction() {}
+	~SingleStateFitnessFunction() override = default;
 
 	virtual core::Real evaluate( core::pose::Pose const & pose ) const;
 

@@ -61,7 +61,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.RdcEvaluatorCreator" 
 namespace protocols {
 namespace simple_filters {
 
-RdcEvaluatorCreator::~RdcEvaluatorCreator() {}
+RdcEvaluatorCreator::~RdcEvaluatorCreator() = default;
 
 void RdcEvaluatorCreator::register_options() {
 	using namespace basic::options;
@@ -83,7 +83,7 @@ void RdcEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval )
 		typedef utility::vector1< std::string > RdcVector;
 		RdcVector const& rdc( option[ OptionKeys::evaluation::rdc ]() );
 		utility::vector1< core::Size> empty_selection;
-		for ( RdcVector::const_iterator it=rdc.begin(); it!=rdc.end(); ++it ) {
+		for ( auto it=rdc.begin(); it!=rdc.end(); ++it ) {
 			std::string fname( *it );
 			std::string column;
 			++it;

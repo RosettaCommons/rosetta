@@ -20,6 +20,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -53,9 +54,9 @@ SwitchResidueTypeSetMover::SwitchResidueTypeSetMover()
 : moves::Mover("SwitchResidueTypeSetMover")
 {}
 
-SwitchResidueTypeSetMover::SwitchResidueTypeSetMover( std::string const & type_set_tag_in )
+SwitchResidueTypeSetMover::SwitchResidueTypeSetMover( std::string  type_set_tag_in )
 : moves::Mover("SwitchResidueTypeSetMover"),
-	type_set_tag_( type_set_tag_in )
+	type_set_tag_(std::move( type_set_tag_in ))
 {}
 
 std::string

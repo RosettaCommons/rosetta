@@ -93,7 +93,7 @@ RestrictRegionCreator::mover_name()
 /// @brief initialize static member variable
 utility::vector1< core::Size > RestrictRegion::last_residues_restricted_;
 utility::vector1< std::string > RestrictRegion::permanently_restricted_residues_;
-core::pose::PoseOP RestrictRegion::previous_pose_ = NULL;
+core::pose::PoseOP RestrictRegion::previous_pose_ = nullptr;
 
 /// @brief default constructor
 RestrictRegion::RestrictRegion() :
@@ -135,8 +135,7 @@ RestrictRegion::RestrictRegion( RestrictRegion const & rval ) :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-RestrictRegion::~RestrictRegion()
-{}
+RestrictRegion::~RestrictRegion() = default;
 
 
 /// Return a copy of ourselves
@@ -542,7 +541,7 @@ RestrictRegion::compatible_with_task( core::pack::task::PackerTaskOP task,
 bool
 residue_is_allowed( core::pack::task::PackerTaskCOP task, core::Size const seqpos, core::chemical::AA const aa )
 {
-	core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter res_iter( task->residue_task( seqpos ).allowed_residue_types_begin() );
+	auto res_iter( task->residue_task( seqpos ).allowed_residue_types_begin() );
 	while ( res_iter != task->residue_task( seqpos ).allowed_residue_types_end() ) {
 		if ( (*res_iter)->aa() == aa ) {
 			return true;
@@ -566,7 +565,7 @@ std::string
 RestrictRegion::residues_allowed( core::pack::task::PackerTaskCOP task, core::Size const seqpos ) const
 {
 	std::string aas;
-	core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter res_iter( task->residue_task( seqpos ).allowed_residue_types_begin() );
+	auto res_iter( task->residue_task( seqpos ).allowed_residue_types_begin() );
 	while ( res_iter != task->residue_task( seqpos ).allowed_residue_types_end() ) {
 		// don't do anything if this residue type is restricted
 		if ( ! is_restricted( (*res_iter)->name1(), seqpos ) ) {
@@ -594,9 +593,9 @@ allow_in_resfile_line( std::string const & cmd_orig, char const aa )
 			TR << "NOTAA line = " << cmds[i] << std::endl;
 			++i;
 			std::string newstr;
-			for ( core::Size j=0; j<cmds[i].size(); ++j ) {
-				if ( cmds[i][j] != aa ) {
-					newstr += cmds[i][j];
+			for (char j : cmds[i]) {
+				if ( j != aa ) {
+					newstr += j;
 				}
 			}
 			if ( newstr.size() ) {

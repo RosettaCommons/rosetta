@@ -68,14 +68,14 @@ DumpPdb::DumpPdb():
 	addtime_(false)
 {}
 
-DumpPdb::DumpPdb( std::string const & fname ) :
+DumpPdb::DumpPdb( std::string  fname ) :
 	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
-	fname_(fname),
+	fname_(std::move(fname)),
 	scorefxn_(/* 0 */),
 	addtime_(false)
 {}
 
-DumpPdb::~DumpPdb() {}
+DumpPdb::~DumpPdb() = default;
 
 void DumpPdb::apply( core::pose::Pose & pose ) {
 	std::string name( fname_ );

@@ -45,8 +45,7 @@ public:
 		return frags_per_pos_;
 	}
 
-	virtual ~FragmentSelectingRule() {
-	}
+	~FragmentSelectingRule() override = default;
 
 private:
 	Size frags_per_pos_;

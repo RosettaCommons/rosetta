@@ -45,23 +45,23 @@ public:
 	HelixFromSequence( HelixFromSequence const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~HelixFromSequence();
+	~HelixFromSequence() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Apply the mover
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Show the contents of the Mover
-	virtual void
-	show( std::ostream & output=std::cout ) const;
+	void
+	show( std::ostream & output=std::cout ) const override;
 
 	/// @brief Get the name of the Mover
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Support ///
@@ -73,17 +73,17 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	//HelixFromSequence & operator=( HelixFromSequence const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 private: // methods
 

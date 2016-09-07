@@ -20,6 +20,7 @@
 
 #include <core/sequence/AnnotatedSequence.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 
 namespace core {
@@ -29,18 +30,12 @@ AnnotatedSequence::AnnotatedSequence()
 : map_is_clean_( true )
 {}
 
-AnnotatedSequence::AnnotatedSequence( std::string const& str_in )
-: std::string( str_in ),
+AnnotatedSequence::AnnotatedSequence( std::string  str_in )
+: std::string(std::move( str_in )),
 	map_is_clean_( false )
 {}
 
-AnnotatedSequence::AnnotatedSequence( AnnotatedSequence const& other ) :
-	std::string( other ),
-	pos_map_( other.pos_map_ ),
-	map_is_clean_( other.map_is_clean_ ),
-	one_letter_sequence_( other.one_letter_sequence_ ),
-	length_( other.length_ )
-{}
+AnnotatedSequence::AnnotatedSequence( AnnotatedSequence const& ) = default;
 
 AnnotatedSequence& AnnotatedSequence::operator=( AnnotatedSequence const& other ) {
 	if ( this==&other ) return *this;

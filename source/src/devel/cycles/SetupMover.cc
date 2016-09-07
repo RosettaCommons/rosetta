@@ -28,7 +28,7 @@ static THREAD_LOCAL basic::Tracer TR( "devel.cycles.SetupMover" );
 
 SetupMover::SetupMover() {}
 
-SetupMover::~SetupMover() {}
+SetupMover::~SetupMover() = default;
 
 std::string SetupMover::get_name() const {
 	return "SetupMover"; 

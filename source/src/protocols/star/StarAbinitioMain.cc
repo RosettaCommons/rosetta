@@ -75,7 +75,7 @@ void* graphics_main(protocols::moves::MoverOP mover) {
 		std::cerr << "Exception: " << std::endl;
 		e.show(std::cerr);
 	}
-	return 0;
+	return nullptr;
 }
 
 void* StarAbinitio_main(void*) {

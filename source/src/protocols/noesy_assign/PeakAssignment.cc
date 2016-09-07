@@ -52,7 +52,7 @@ namespace protocols {
 namespace noesy_assign {
 
 /// @details Auto-generated virtual destructor
-PeakAssignment::~PeakAssignment() {}
+PeakAssignment::~PeakAssignment() = default;
 using namespace core;
 
 PeakAssignment::PeakAssignment( CrossPeak * cp, core::Size assign_spin1, core::Size assign_spin2 )
@@ -201,7 +201,7 @@ core::Size PeakAssignment::label_resonance_id( core::Size select ) const {
 	return crosspeak_->label( select ).assignment( spin_id( select ) );
 }
 
-PeakAssignment const BOGUS_ASSIGNMENT( NULL, 0, 0 );
+PeakAssignment const BOGUS_ASSIGNMENT( nullptr, 0, 0 );
 
 bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) const {
 	bool match=true;

@@ -79,7 +79,7 @@ AtomCoordinateCstMover::AtomCoordinateCstMover() :
 	task_segments_()
 {}
 
-AtomCoordinateCstMover::~AtomCoordinateCstMover() {}
+AtomCoordinateCstMover::~AtomCoordinateCstMover() = default;
 
 protocols::moves::MoverOP AtomCoordinateCstMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new AtomCoordinateCstMover );

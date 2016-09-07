@@ -41,6 +41,7 @@
 #include <core/pose/util.hh>
 
 //Utility Headers
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
@@ -96,21 +97,21 @@ CoMTrackerCM::CoMTrackerCM():
 	ClientMover()
 {}
 
-CoMTrackerCM::CoMTrackerCM( std::string const& name,
+CoMTrackerCM::CoMTrackerCM( std::string  name,
 	core::select::residue_selector::ResidueSelectorCOP mobile_selector,
-	std::string const& stationary_label ):
+	std::string  stationary_label ):
 	ClientMover(),
-	name_( name ),
-	stationary_label_( stationary_label ),
-	mobile_selector_( mobile_selector )
+	name_(std::move( name )),
+	stationary_label_(std::move( stationary_label )),
+	mobile_selector_(std::move( mobile_selector ))
 {}
 
-CoMTrackerCM::CoMTrackerCM( std::string const& name,
+CoMTrackerCM::CoMTrackerCM( std::string  name,
 	core::select::residue_selector::ResidueSelectorCOP mobile_selector ):
 	ClientMover(),
-	name_( name ),
+	name_(std::move( name )),
 	stationary_label_( GENERATE_STATIONARY_ATTACHMENT_POINT ),
-	mobile_selector_( mobile_selector )
+	mobile_selector_(std::move( mobile_selector ))
 {}
 
 void CoMTrackerCM::passport_updated(){
@@ -134,7 +135,7 @@ numeric::xyzVector< core::Real > com_calc( core::pose::Pose const& pose,
 
 	for ( core::Size i = 1; i <= rsds.size(); ++i ) {
 		if ( rsds[i] ) {
-			for ( Atoms::const_iterator it = pose.residue( i ).atom_begin();
+			for ( auto it = pose.residue( i ).atom_begin();
 					it != pose.residue( i ).heavyAtoms_end(); ++it ) {
 				coords.push_back( it->xyz() );
 			}

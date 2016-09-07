@@ -56,7 +56,7 @@ RRProtocolRotamerTrials::RRProtocolRotamerTrials() {}
 
 RRProtocolRotamerTrials::RRProtocolRotamerTrials( RRProtocolRotamerTrials const & ) : RRProtocol() {}
 
-RRProtocolRotamerTrials::~RRProtocolRotamerTrials() {}
+RRProtocolRotamerTrials::~RRProtocolRotamerTrials() = default;
 
 string
 RRProtocolRotamerTrials::get_name() const {

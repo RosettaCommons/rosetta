@@ -42,8 +42,8 @@ namespace id {
 class CacheableAtomID_MapVector : public basic::datacache::CacheableData {
 public:
 	CacheableAtomID_MapVector();
-	virtual ~CacheableAtomID_MapVector();
-	virtual basic::datacache::CacheableDataOP clone() const;
+	~CacheableAtomID_MapVector() override;
+	basic::datacache::CacheableDataOP clone() const override;
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & map() { return map_; }
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > const & map() const { return map_; }
 private:

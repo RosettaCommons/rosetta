@@ -30,7 +30,7 @@ Scheduler::Scheduler()
 	clear(); // just for initializing
 }
 
-Scheduler::~Scheduler(){}
+Scheduler::~Scheduler()= default;
 
 void
 Scheduler::set_default(){
@@ -444,7 +444,7 @@ Scheduler::pick_enrich_methods( protocols::wum::SilentStructStore const &decoys,
 	utility::vector1< core::Real > scores_total;
 
 	core::Size i( 0 );
-	for ( protocols::wum::SilentStructStore::const_iterator it = decoys.begin();
+	for ( auto it = decoys.begin();
 			it != decoys.end(); ++it, ++i ) {
 		core::Size imethod = (*it)->get_energy( "samplemethod" );
 		if ( imethod == 0 ) continue;

@@ -39,10 +39,9 @@ public:
 	DiversifyCrmsdByClustering(core::Size frags_per_pos) : FragmentSelectingRule(frags_per_pos) {}
 
 	/// @brief  Selects desired number of fragments from a given set of candidates
-	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& );
+	void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& ) override;
 
-	virtual ~DiversifyCrmsdByClustering() {
-	}
+	~DiversifyCrmsdByClustering() override = default;
 
 private:
 	void copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst);

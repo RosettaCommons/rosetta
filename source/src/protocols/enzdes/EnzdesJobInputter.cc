@@ -63,8 +63,7 @@ EnzdesJobInputter::EnzdesJobInputter()
 	}
 }
 
-EnzdesJobInputter::~EnzdesJobInputter(){
-}
+EnzdesJobInputter::~EnzdesJobInputter()= default;
 
 void
 EnzdesJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job){

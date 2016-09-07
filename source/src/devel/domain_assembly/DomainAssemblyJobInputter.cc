@@ -52,7 +52,7 @@ devel::domain_assembly::DomainAssemblyJobInputter::DomainAssemblyJobInputter(){
 	TR << "Instantiate DomainAssemblyJobInputter" << std::endl;
 }
 
-devel::domain_assembly::DomainAssemblyJobInputter::~DomainAssemblyJobInputter(){}
+devel::domain_assembly::DomainAssemblyJobInputter::~DomainAssemblyJobInputter() = default;
 
 /// @details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
 void devel::domain_assembly::DomainAssemblyJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job){

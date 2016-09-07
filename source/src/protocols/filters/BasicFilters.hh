@@ -42,36 +42,36 @@ namespace filters {
 class TrueFilter : public Filter {
 public:
 	TrueFilter() : Filter( "TrueFilter" ) {}
-	bool apply( core::pose::Pose const & ) const { return true; }
-	FilterOP clone() const { return FilterOP( new TrueFilter ); }
-	FilterOP fresh_instance() const { return FilterOP( new TrueFilter ); }
+	bool apply( core::pose::Pose const & ) const override { return true; }
+	FilterOP clone() const override { return FilterOP( new TrueFilter ); }
+	FilterOP fresh_instance() const override { return FilterOP( new TrueFilter ); }
 };
 
 class FalseFilter : public Filter {
 public:
 	FalseFilter() : Filter( "FalseFilter" ) {}
-	bool apply( core::pose::Pose const & ) const { return false; }
-	FilterOP clone() const { return FilterOP( new FalseFilter ); }
-	FilterOP fresh_instance() const { return FilterOP( new FalseFilter ); }
+	bool apply( core::pose::Pose const & ) const override { return false; }
+	FilterOP clone() const override { return FilterOP( new FalseFilter ); }
+	FilterOP fresh_instance() const override { return FilterOP( new FalseFilter ); }
 };
 
 class StochasticFilter : public Filter {
 
 public:
 	StochasticFilter();
-	virtual ~StochasticFilter();
+	~StochasticFilter() override;
 	StochasticFilter( core::Real const confidence );
-	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const;
-	FilterOP fresh_instance() const;
-	void report( std::ostream &, core::pose::Pose const & ) const {}
+	bool apply( core::pose::Pose const & pose ) const override;
+	FilterOP clone() const override;
+	FilterOP fresh_instance() const override;
+	void report( std::ostream &, core::pose::Pose const & ) const override {}
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 private:
 	core::Real confidence_;
@@ -88,20 +88,20 @@ public:
 
 public:
 	CompoundFilter();
-	virtual ~CompoundFilter();
-	CompoundFilter( CompoundStatement const & );
-	bool apply( core::pose::Pose const & ) const;
-	FilterOP clone() const;
-	FilterOP fresh_instance() const;
-	void report( std::ostream &, core::pose::Pose const & ) const;
-	core::Real report_sm( core::pose::Pose const & ) const;
+	~CompoundFilter() override;
+	CompoundFilter( CompoundStatement ); // moving
+	bool apply( core::pose::Pose const & ) const override;
+	FilterOP clone() const override;
+	FilterOP fresh_instance() const override;
+	void report( std::ostream &, core::pose::Pose const & ) const override;
+	core::Real report_sm( core::pose::Pose const & ) const override;
 	bool compute( core::pose::Pose const & ) const;
-	void clear();
+	void clear() override;
 	iterator begin();
 	const_iterator begin() const;
 	iterator end();
 	const_iterator end() const;
-	virtual void set_resid( core::Size const resid );
+	void set_resid( core::Size const resid ) override;
 	void invert( bool const inv );
 	void set_reset_filters( utility::vector1<FilterOP> const & reset_filters );
 	void reset_filters();
@@ -112,7 +112,7 @@ public:
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 private:
 	core::Real threashold_;
@@ -129,12 +129,12 @@ public:
 	typedef utility::vector1< FilterWeightPair > FilterList;
 
 	CombinedFilter();
-	virtual ~CombinedFilter();
-	bool apply( core::pose::Pose const & ) const;
-	FilterOP clone() const;
-	FilterOP fresh_instance() const;
-	void report( std::ostream &, core::pose::Pose const & ) const;
-	core::Real report_sm( core::pose::Pose const & ) const;
+	~CombinedFilter() override;
+	bool apply( core::pose::Pose const & ) const override;
+	FilterOP clone() const override;
+	FilterOP fresh_instance() const override;
+	void report( std::ostream &, core::pose::Pose const & ) const override;
+	core::Real report_sm( core::pose::Pose const & ) const override;
 	core::Real compute( core::pose::Pose const & ) const;
 	void set_reset_filters( utility::vector1<FilterOP> const & reset_filters );
 	void reset_filters();
@@ -160,7 +160,7 @@ public:
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 private:
 	core::Real threshold_;
@@ -175,12 +175,12 @@ class MoveBeforeFilter : public Filter
 public:
 	MoveBeforeFilter();
 	MoveBeforeFilter(moves::MoverOP mover, FilterCOP filter);
-	virtual ~MoveBeforeFilter();
-	bool apply( core::pose::Pose const & ) const;
-	FilterOP clone() const;
-	FilterOP fresh_instance() const;
-	void report( std::ostream &, core::pose::Pose const & ) const;
-	core::Real report_sm( core::pose::Pose const & ) const;
+	~MoveBeforeFilter() override;
+	bool apply( core::pose::Pose const & ) const override;
+	FilterOP clone() const override;
+	FilterOP fresh_instance() const override;
+	void report( std::ostream &, core::pose::Pose const & ) const override;
+	core::Real report_sm( core::pose::Pose const & ) const override;
 	//No compute(), as it passes everything on to the sub-mover
 
 	void parse_my_tag(
@@ -188,7 +188,7 @@ public:
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 private:
 	FilterCOP subfilter_;
@@ -201,12 +201,12 @@ class IfThenFilter : public Filter
 public:
 	IfThenFilter();
 	//IfThenFilter(moves::MoverOP mover, FilterCOP filter);
-	virtual ~IfThenFilter();
-	bool apply( core::pose::Pose const & ) const;
-	FilterOP clone() const;
-	FilterOP fresh_instance() const;
-	void report( std::ostream &, core::pose::Pose const & ) const;
-	core::Real report_sm( core::pose::Pose const & ) const;
+	~IfThenFilter() override;
+	bool apply( core::pose::Pose const & ) const override;
+	FilterOP clone() const override;
+	FilterOP fresh_instance() const override;
+	void report( std::ostream &, core::pose::Pose const & ) const override;
+	core::Real report_sm( core::pose::Pose const & ) const override;
 	core::Real compute( core::pose::Pose const & ) const;
 
 	void threshold( core::Real threshold ) { threshold_ = threshold; }
@@ -228,7 +228,7 @@ public:
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 private:
 	utility::vector1< FilterCOP > iffilters_;

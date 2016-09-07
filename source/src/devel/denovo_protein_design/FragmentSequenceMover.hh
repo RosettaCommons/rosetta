@@ -41,9 +41,9 @@ public:
 	/// @brief
 	FragmentSequenceMover( core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap );
 
-	virtual ~FragmentSequenceMover();
+	~FragmentSequenceMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 private:
 	core::fragment::FragSetCOP fragset_;

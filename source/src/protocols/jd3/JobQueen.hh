@@ -57,7 +57,7 @@ class JobQueen : public utility::pointer::ReferenceCount
 public:
 
 	JobQueen();
-	virtual ~JobQueen();
+	~JobQueen() override;
 
 	/// @brief All JobQueens must describe their job input XML format in the form of an XSD
 	/// (XML Schema Definition), and they must validate their job input files against their XSDs.

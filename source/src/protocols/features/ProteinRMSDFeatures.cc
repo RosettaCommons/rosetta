@@ -101,7 +101,7 @@ ProteinRMSDFeatures::reference_pose(
 
 ProteinRMSDFeatures::ProteinRMSDFeatures(
 	PoseCOP reference_pose ) :
-	reference_pose_(reference_pose)
+	reference_pose_(std::move(reference_pose))
 {}
 
 void

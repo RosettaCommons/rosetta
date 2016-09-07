@@ -75,7 +75,7 @@ FullatomRelaxMover::FullatomRelaxMover( FullatomRelaxMover const & src) : Mover(
 }
 
 //destructor
-FullatomRelaxMover::~FullatomRelaxMover() {}
+FullatomRelaxMover::~FullatomRelaxMover() = default;
 
 protocols::moves::MoverOP
 FullatomRelaxMover::clone() const

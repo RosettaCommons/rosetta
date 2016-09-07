@@ -91,7 +91,7 @@ public:
 public:
 
 	MMTReceiver();
-	~MMTReceiver();
+	~MMTReceiver() override;
 
 	void set_max_capacity( core::Size nthreads_max );
 

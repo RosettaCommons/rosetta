@@ -34,7 +34,7 @@ namespace conformation {
 class ResidueMatcher : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ResidueMatcher();
+	~ResidueMatcher() override;
 	virtual
 	bool
 	operator()( Residue const & rsd1, Residue const & rsd2 ) const = 0;
@@ -43,16 +43,16 @@ public:
 
 class WatsonCrickResidueMatcher : public ResidueMatcher {
 public:
-	virtual
+	
 	bool
-	operator()( Residue const & rsd1, Residue const & rsd2 ) const;
+	operator()( Residue const & rsd1, Residue const & rsd2 ) const override;
 };
 
 class ExactResidueMatcher : public ResidueMatcher {
 public:
-	virtual
+	
 	bool
-	operator()( Residue const & rsd1, Residue const & rsd2 ) const;
+	operator()( Residue const & rsd1, Residue const & rsd2 ) const override;
 };
 
 

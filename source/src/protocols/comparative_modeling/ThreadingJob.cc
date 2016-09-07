@@ -92,15 +92,15 @@ protocols::loops::Loops ThreadingJob::loops( core::Size nres ) const {
 
 	// remove loops that overlap stolen residues
 	Loops valid_loops;
-	for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end(); it != it_end; ++it ) {
+	for (const auto & it : *loops) {
 		bool valid(true);
 		for ( Size ii = 1; ii <= extra_residues_to_steal_.size(); ++ii ) {
 			Size const extra_res( extra_residues_to_steal_[ii] );
-			if ( it->start() <= extra_res && extra_res <= it->stop() ) {
+			if ( it.start() <= extra_res && extra_res <= it.stop() ) {
 				valid = false;
 			}
 		}
-		if ( valid ) valid_loops.add_loop( *it );
+		if ( valid ) valid_loops.add_loop( it );
 	}
 
 	return valid_loops;

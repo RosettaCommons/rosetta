@@ -44,7 +44,7 @@ public:
 
 	WorkUnitBase();
 
-	virtual ~WorkUnitBase (){}
+	~WorkUnitBase () override= default;
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnitBase( *this ) );
@@ -199,14 +199,14 @@ public:
 		header.extra_data_1_ = wait_time;
 	}
 
-	virtual ~WorkUnit_Wait(){}
+	~WorkUnit_Wait() override= default;
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_Wait( *this ) );
 	}
 
 	// @brief Run the workunit - overloaded by children of this class
-	virtual void run();
+	void run() override;
 private:
 };
 
@@ -220,20 +220,20 @@ public:
 	{
 	}
 
-	virtual ~WorkUnit_SilentStructStore(){}
+	~WorkUnit_SilentStructStore() override= default;
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_SilentStructStore( *this ) );
 	}
 
 	/// @brief This Work unit doesnt do *anything* - its just keeps the structures
-	virtual void run(){};
+	void run() override{};
 
 	/// @brief write decoys into serial data store overwritinge whatever was there before. It basically syncs the silent struct store with the derial data
-	virtual void serialize();
+	void serialize() override;
 
 	/// @brief Make ready for working
-	virtual void deserialize();
+	void deserialize() override;
 
 	/// @brief Accessor for decoy store
 	const protocols::wum::SilentStructStore& decoys() const { return decoys_; }
@@ -255,14 +255,14 @@ class WorkUnit_MoverWrapper : public WorkUnit_SilentStructStore {
 public:
 	WorkUnit_MoverWrapper( protocols::moves::MoverOP the_mover );
 
-	virtual ~WorkUnit_MoverWrapper(){}
+	~WorkUnit_MoverWrapper() override= default;
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_MoverWrapper( *this ) );
 	}
 
 	// @brief Run the workunit - overloaded by children of this class
-	virtual void run();
+	void run() override;
 
 protected:
 

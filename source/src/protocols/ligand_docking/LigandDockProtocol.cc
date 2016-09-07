@@ -134,7 +134,7 @@ LigandDockProtocol::LigandDockProtocol():
 }
 
 LigandDockProtocol::LigandDockProtocol(
-	std::string const & protocol,
+	std::string  protocol,
 	bool const minimize_ligand,
 	bool const minimize_backbone,
 	bool const tether_ligand,
@@ -145,7 +145,7 @@ LigandDockProtocol::LigandDockProtocol(
 	core::Size const ligand_shear_moves
 ):
 	LigandBaseProtocol(),
-	protocol_(protocol),
+	protocol_(std::move(protocol)),
 	minimize_ligand_(minimize_ligand),
 	minimize_backbone_(minimize_backbone),
 	tether_ligand_(tether_ligand),
@@ -187,7 +187,7 @@ LigandDockProtocol::LigandDockProtocol(LigandDockProtocol const & /*that*/):
 }
 
 
-LigandDockProtocol::~LigandDockProtocol() {}
+LigandDockProtocol::~LigandDockProtocol() = default;
 
 
 /// @brief Creates a new hierarchy of Movers for each Pose passed in.
@@ -254,7 +254,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, minimize_backbone_, minimize_ligand_, minimize_water_);
 
 	// Only want to do this once the ligand is in its "final" starting place.
-	core::scoring::constraints::ConstraintOP ligand_tether( NULL );
+	core::scoring::constraints::ConstraintOP ligand_tether( nullptr );
 	if ( protocol_ != "unbound" ) {
 		if ( tether_ligand_ ) ligand_tether = restrain_ligand_nbr_atom(pose, lig_id, ligand_tether_stddev_Ang_);
 	}

@@ -68,7 +68,7 @@ RRComparerAutomorphicRMSD::RRComparerAutomorphicRMSD( RRComparerAutomorphicRMSD 
 	recovery_threshold_( src.recovery_threshold_ )
 {}
 
-RRComparerAutomorphicRMSD::~RRComparerAutomorphicRMSD() {}
+RRComparerAutomorphicRMSD::~RRComparerAutomorphicRMSD() = default;
 
 bool
 RRComparerAutomorphicRMSD::measure_rotamer_recovery(

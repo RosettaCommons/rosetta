@@ -35,10 +35,10 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include <string.h>
+#include <cstring>
 #include <string>
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include "pathways_partial_data_manager.h"
 #include "pathways_DOFs_manager.h"
 

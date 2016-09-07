@@ -62,7 +62,7 @@ ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset):C
 ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap):ClassicFragmentMover( fragset, movemap, "ResTypeFragmentMover"){}
 
 
-ResTypeFragmentMover::~ResTypeFragmentMover() {}
+ResTypeFragmentMover::~ResTypeFragmentMover() = default;
 
 bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::FrameList const& frames ) const {
 	Size frame_num;

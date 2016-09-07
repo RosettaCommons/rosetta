@@ -58,7 +58,7 @@ VirtualRootMover::VirtualRootMover() :
 	removable_(false)
 {}
 
-VirtualRootMover::~VirtualRootMover() {}
+VirtualRootMover::~VirtualRootMover() = default;
 
 moves::MoverOP VirtualRootMover::clone() const {
 	return moves::MoverOP( new VirtualRootMover( *this ) );

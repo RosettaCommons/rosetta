@@ -67,7 +67,7 @@ EnzdesConstraintReporter::EnzdesConstraintReporter() : utility::pointer::Referen
 	ligand_seqpos_( 0 )
 {}
 
-EnzdesConstraintReporter::~EnzdesConstraintReporter() {}
+EnzdesConstraintReporter::~EnzdesConstraintReporter() = default;
 
 EnzdesConstraintReporter::EnzdesConstraintReporter( EnzdesConstraintReporter const & src ) :
 	utility::pointer::ReferenceCount(),
@@ -92,7 +92,7 @@ EnzdesConstraintReporter::find_constraints_to_ligand(
 	// Each residue constraint is a map container
 	// of Size and ConstraintsOP, defining a residue number
 	//and constraints object respectively.
-	for ( ConstraintSet::ResiduePairConstraintsIterator
+	for ( auto
 			rpc_start = constraint_set->residue_pair_constraints_begin(ligand_seqpos_),
 			rpc_end=constraint_set->residue_pair_constraints_end(ligand_seqpos_);
 			rpc_start != rpc_end; ++rpc_start ) {
@@ -101,15 +101,12 @@ EnzdesConstraintReporter::find_constraints_to_ligand(
 		ConstraintsOP constraints;
 		constraints=rpc_start->second;
 
-		for ( Constraints::const_iterator
-				iter     = constraints->begin(),
-				iter_end = constraints->end();
-				iter != iter_end; ++iter ) {
-			mv_tr.Info <<(*iter)->type() << std::endl;
-			if ( (*iter)->type() == "MultiConstraint" || (*iter)->type() == "AmbiguousConstraint" ) {
-				add_constrained_atoms_from_multiconstraint( utility::pointer::dynamic_pointer_cast <MultiConstraint const > (*iter) );
-			} else if ( ((*iter)->type()) == "AtomPair" ) {
-				add_constrained_atoms_from_atom_pair_constraint( utility::pointer::dynamic_pointer_cast <AtomPairConstraint const > (*iter) );
+		for (const auto & iter : *constraints) {
+			mv_tr.Info <<iter->type() << std::endl;
+			if ( iter->type() == "MultiConstraint" || iter->type() == "AmbiguousConstraint" ) {
+				add_constrained_atoms_from_multiconstraint( utility::pointer::dynamic_pointer_cast <MultiConstraint const > (iter) );
+			} else if ( (iter->type()) == "AtomPair" ) {
+				add_constrained_atoms_from_atom_pair_constraint( utility::pointer::dynamic_pointer_cast <AtomPairConstraint const > (iter) );
 			} // else, ignore this constraint
 		}
 	}
@@ -212,7 +209,7 @@ PredesignPerturbMover::PredesignPerturbMover():
 	dock_trials_ = basic::options::option[basic::options::OptionKeys::enzdes::dock_trials];
 }
 
-PredesignPerturbMover::~PredesignPerturbMover(){}
+PredesignPerturbMover::~PredesignPerturbMover()= default;
 
 void
 PredesignPerturbMover::set_docking_pose(
@@ -274,10 +271,8 @@ PredesignPerturbMover::find_geometric_center_for_constrained_lig_atoms(
 	assert( constraint_reporter_.constrained_lig_atoms().size() != 0 );
 
 	core::Vector geometric_center( 0.0 );
-	for ( utility::vector1< core::Size >::const_iterator
-			it = constraint_reporter_.constrained_lig_atoms().begin();
-			it != constraint_reporter_.constrained_lig_atoms().end(); ++it ) {
-		geometric_center+=pose.residue( constraint_reporter_.ligand_resno() ).xyz(*it);
+	for (unsigned long it : constraint_reporter_.constrained_lig_atoms()) {
+		geometric_center+=pose.residue( constraint_reporter_.ligand_resno() ).xyz(it);
 	}
 
 	geometric_center /= constraint_reporter_.constrained_lig_atoms().size();
@@ -294,7 +289,7 @@ PredesignPerturbMover::apply(
 	protocols::enzdes::EnzdesBaseProtocolOP enzprot( new protocols::enzdes::EnzdesBaseProtocol() );
 	core::pose::Pose org_Pose(pose);
 	core::pack::task::PackerTaskOP task;
-	if ( task_factory_ !=0 ) task = task_factory_->create_task_and_apply_taskoperations( pose );
+	if ( task_factory_ !=nullptr ) task = task_factory_->create_task_and_apply_taskoperations( pose );
 	else {
 		task = enzprot -> create_enzdes_pack_task( pose, true );
 	}
@@ -350,7 +345,7 @@ PredesignPerturbMover::parse_my_tag(
 	dock_trials_ = tag -> getOption< core::Size >( "dock_trials", 100 );
 	constraint_reporter_.ligand_resno( (core::Size) pose.fold_tree().downstream_jump_residue( pose.num_jump() ));
 	if ( tag->hasOption("task_operations") ) task_factory_ = ( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	else task_factory_ = NULL;
+	else task_factory_ = nullptr;
 
 }
 
@@ -375,7 +370,7 @@ PredesignPerturbMover::get_name() const
 //-------RepackLigandSiteWithoutLigandMover----------//
 
 RepackLigandSiteWithoutLigandMover::RepackLigandSiteWithoutLigandMover()
-: sfxn_(/* NULL */), lig_seqpos_(0), enzcst_io_(NULL), calculate_silent_Es_(false)
+: sfxn_(/* NULL */), lig_seqpos_(0), enzcst_io_(nullptr), calculate_silent_Es_(false)
 {
 	silent_Es_.clear();
 }
@@ -383,12 +378,12 @@ RepackLigandSiteWithoutLigandMover::RepackLigandSiteWithoutLigandMover()
 RepackLigandSiteWithoutLigandMover::RepackLigandSiteWithoutLigandMover(
 	core::scoring::ScoreFunctionCOP sfxn,
 	bool calculate_silent_Es
-) : sfxn_(sfxn), lig_seqpos_(0), enzcst_io_(/* NULL */), calculate_silent_Es_(calculate_silent_Es)
+) : sfxn_(std::move(sfxn)), lig_seqpos_(0), enzcst_io_(/* NULL */), calculate_silent_Es_(calculate_silent_Es)
 {
 	silent_Es_.clear();
 }
 
-RepackLigandSiteWithoutLigandMover::~RepackLigandSiteWithoutLigandMover(){}
+RepackLigandSiteWithoutLigandMover::~RepackLigandSiteWithoutLigandMover()= default;
 
 void
 RepackLigandSiteWithoutLigandMover::set_sfxn(
@@ -422,7 +417,7 @@ void
 RepackLigandSiteWithoutLigandMover::apply(
 	core::pose::Pose & pose )
 {
-	runtime_assert( sfxn_ != 0 );
+	runtime_assert( sfxn_ != nullptr );
 	//tmp hack
 	//the constraints can be a headache in this situation, so well completely take them out for now
 	// the problem is that some constrained interactions can be covalent, and the EnzConstraintIO
@@ -502,7 +497,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 		if ( enzcst_io_->contains_position( pose, lig_seqpos_ ) ) {
 			enzcst_io_->remove_position_from_template_res( pose, lig_seqpos_ );
 			//for now we'll wipe out the cst cache
-			toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL );
+			toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( nullptr );
 		}
 	}
 	// PG 21-05-2013
@@ -559,7 +554,7 @@ UpdateEnzdesHeaderMoverCreator::mover_name()
 
 UpdateEnzdesHeaderMover::UpdateEnzdesHeaderMover(){}
 
-UpdateEnzdesHeaderMover::~UpdateEnzdesHeaderMover(){}
+UpdateEnzdesHeaderMover::~UpdateEnzdesHeaderMover()= default;
 
 void
 UpdateEnzdesHeaderMover::apply(

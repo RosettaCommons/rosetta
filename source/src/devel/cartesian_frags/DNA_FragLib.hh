@@ -44,7 +44,7 @@ namespace cartesian_frags {
 class DNA_FragLib : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~DNA_FragLib();
+	~DNA_FragLib() override;
 
 	utility::vector1< CartesianFragment > const &
 	base_pairs( std::string const & bp ) const

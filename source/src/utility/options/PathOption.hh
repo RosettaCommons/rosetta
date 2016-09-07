@@ -78,7 +78,7 @@ public: // Creation
 	/// @brief Clone this
 	inline
 	PathOption *
-	clone() const
+	clone() const override
 	{
 		return new PathOption( *this );
 	}
@@ -86,9 +86,9 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~PathOption()
-	{}
+	
+	~PathOption() override
+	= default;
 
 
 public: // Methods
@@ -140,7 +140,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type?
 	inline
 	bool
-	is_value( std::string const & ) const
+	is_value( std::string const & ) const override
 	{
 		return true;
 	}
@@ -149,7 +149,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type and a legal command line value?
 	inline
 	bool
-	is_cl_value( std::string const & value_str ) const
+	is_cl_value( std::string const & value_str ) const override
 	{
 		return ( ( value_str.empty() ) || ( ! ObjexxFCL::is_any_of( value_str[ 0 ], "-@" ) ) );
 	}
@@ -158,7 +158,7 @@ public: // Properties
 	/// @brief Option type code string representation
 	inline
 	std::string
-	type_string() const
+	type_string() const override
 	{
 		return "P";
 	}
@@ -170,7 +170,7 @@ protected: // Methods
 	/// @brief Value of a string
 	inline
 	Value
-	value_of( std::string const & value_str ) const
+	value_of( std::string const & value_str ) const override
 	{
 		return PathName( value_str );
 	}

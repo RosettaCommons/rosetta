@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 HelixCapFeaturesCreator::HelixCapFeaturesCreator() {}
-HelixCapFeaturesCreator::~HelixCapFeaturesCreator() {}
+HelixCapFeaturesCreator::~HelixCapFeaturesCreator() = default;
 FeaturesReporterOP HelixCapFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new HelixCapFeatures );
 }

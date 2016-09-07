@@ -44,13 +44,13 @@ public:
 	typedef graph::Node parent;
 
 public:
-	virtual ~TenANeighborNode();
+	~TenANeighborNode() override;
 	TenANeighborNode( graph::Graph*, Size node_id );
 
-	virtual void copy_from( Node const * source );
+	void copy_from( Node const * source ) override;
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 	/// @brief set the neighbor mass for a vertex
 	void neighbor_mass( Real mass );
@@ -106,13 +106,13 @@ public:
 	typedef graph::Edge parent;
 
 public:
-	virtual ~TenANeighborEdge();
+	~TenANeighborEdge() override;
 	TenANeighborEdge(graph::Graph* owner, Size first_node_ind, Size second_node_ind);
 
-	virtual void copy_from( graph::Edge const * source );
+	void copy_from( graph::Edge const * source ) override;
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 private:
 	inline
@@ -138,44 +138,44 @@ public:
 
 public:
 
-	virtual ~TenANeighborGraph();
+	~TenANeighborGraph() override;
 
 	TenANeighborGraph();
 	TenANeighborGraph(Size num_nodes);
 	TenANeighborGraph( TenANeighborGraph const & source );
 	TenANeighborGraph & operator = ( TenANeighborGraph const & source );
 
-	virtual
+	
 	Distance
-	neighbor_cutoff() const;
+	neighbor_cutoff() const override;
 
-	virtual
+	
 	void
 	conditionally_add_edge(
 		Size lower_node_id,
 		Size upper_node_id,
 		DistanceSquared dsq
-	);
+	) override;
 
-	virtual
+	
 	ContextGraphOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	void update_from_pose(
 		pose::Pose const & pose
-	);
+	) override;
 
-	virtual void delete_edge( graph::Edge * edge );
+	void delete_edge( graph::Edge * edge ) override;
 
 protected:
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
-	virtual graph::Node * create_new_node( Size node_index );
-	virtual graph::Edge * create_new_edge( Size index1, Size index2);
-	virtual graph::Edge * create_new_edge( graph::Edge const * example_edge );
+	graph::Node * create_new_node( Size node_index ) override;
+	graph::Edge * create_new_edge( Size index1, Size index2) override;
+	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
 
 private:
 	static Distance const tenA_;

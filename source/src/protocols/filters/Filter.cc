@@ -24,6 +24,7 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/pose/util.hh>
@@ -38,7 +39,7 @@ using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
 typedef utility::tag::TagCOP TagCOP;
 
-FilterCollection::~FilterCollection() {}
+FilterCollection::~FilterCollection() = default;
 
 bool
 FilterCollection::apply( core::pose::Pose const & pose ) const
@@ -66,9 +67,9 @@ Filter::Filter()
 	scorename_("defaultscorename")
 {}
 
-Filter::Filter( std::string const & type )
+Filter::Filter( std::string  type )
 : utility::pointer::ReferenceCount(),
-	type_( type ),
+	type_(std::move( type )),
 	scorename_("defaultscorename")
 {}
 
@@ -80,7 +81,7 @@ Filter::Filter( Filter const & init )
 
 {}
 
-Filter::~Filter() {}
+Filter::~Filter() = default;
 
 void
 Filter::parse_my_tag(

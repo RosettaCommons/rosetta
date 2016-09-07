@@ -33,7 +33,7 @@
 
 // C++ Headers
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 
 namespace protocols {
@@ -74,7 +74,7 @@ BackboneGridSamplerHelper::BackboneGridSamplerHelper( BackboneGridSamplerHelper 
 {
 }
 
-BackboneGridSamplerHelper::~BackboneGridSamplerHelper() {}
+BackboneGridSamplerHelper::~BackboneGridSamplerHelper() = default;
 
 
 /// @brief make a copy of this BackboneGridSamplerHelper object (allocate actual memory for it)

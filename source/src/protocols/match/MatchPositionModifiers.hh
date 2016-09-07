@@ -49,7 +49,7 @@ class MatchPositionModifier : public utility::pointer::ReferenceCount {
 public:
 	MatchPositionModifier();
 
-	virtual ~MatchPositionModifier();
+	~MatchPositionModifier() override;
 
 	/// @brief the positions in the vector1< Size > that is returned
 	/// by this function will replace the match positions in the MatcherTask.
@@ -70,15 +70,15 @@ class SecondaryStructureMPM : public MatchPositionModifier {
 public:
 	SecondaryStructureMPM( utility::vector1< std::string > const & input_tokens );
 
-	~SecondaryStructureMPM();
+	~SecondaryStructureMPM() override;
 
-	virtual
+	
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
 		core::pose::Pose const & match_pose,
 		protocols::match::MatcherTaskCOP mtask
-	) const;
+	) const override;
 
 private:
 
@@ -102,15 +102,15 @@ class NumNeighborsMPM : public MatchPositionModifier {
 public:
 	NumNeighborsMPM( utility::vector1< std::string > const & input_tokens );
 
-	~NumNeighborsMPM();
+	~NumNeighborsMPM() override;
 
-	virtual
+	
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
 		core::pose::Pose const & match_pose,
 		protocols::match::MatcherTaskCOP mtask
-	) const;
+	) const override;
 
 	bool
 	passes_com_vector_criterion(
@@ -140,15 +140,15 @@ class BfactorMPM : public MatchPositionModifier {
 public:
 	BfactorMPM( utility::vector1< std::string > const & input_tokens );
 
-	~BfactorMPM();
+	~BfactorMPM() override;
 
-	virtual
+	
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
 		core::pose::Pose const & match_pose,
 		protocols::match::MatcherTaskCOP mtask
-	) const;
+	) const override;
 
 	utility::vector1< core::Real >
 	get_ca_bfactors( core::pose::Pose const & pose ) const;
@@ -168,15 +168,15 @@ class AddAllPositionsMPM : public MatchPositionModifier {
 public:
 	AddAllPositionsMPM();
 
-	~AddAllPositionsMPM();
+	~AddAllPositionsMPM() override;
 
-	virtual
+	
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
 		core::pose::Pose const & match_pose,
 		protocols::match::MatcherTaskCOP mtask
-	) const;
+	) const override;
 
 
 private:
@@ -191,15 +191,15 @@ public:
 
 	RemoveNorCTermMPM( utility::vector1< std::string > const & input_tokens );
 
-	~RemoveNorCTermMPM();
+	~RemoveNorCTermMPM() override;
 
-	virtual
+	
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
 		core::pose::Pose const & match_pose,
 		protocols::match::MatcherTaskCOP mtask
-	) const;
+	) const override;
 
 
 private:
@@ -220,15 +220,15 @@ public:
 		utility::vector1< std::string > const & input_tokens
 	);
 
-	~TaskOperationMPM();
+	~TaskOperationMPM() override;
 
-	virtual
+	
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
 		core::pose::Pose const & match_pose,
 		protocols::match::MatcherTaskCOP mtask
-	) const;
+	) const override;
 
 
 private:

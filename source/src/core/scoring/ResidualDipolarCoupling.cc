@@ -103,7 +103,7 @@ extern ResidualDipolarCouplingCOP retrieve_RDC_from_pose(
 		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling const > ( pose.data().get_const_ptr(
 			core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 extern ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose& pose) {
@@ -112,14 +112,14 @@ extern ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose& pose) 
 		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling > ( pose.data().get_ptr(
 			core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 void ResidualDipolarCoupling::show(std::ostream& out) const {
 	Size ct=0;
-	for ( RDC_lines::const_iterator it = All_RDC_lines_.begin(), end = All_RDC_lines_.end(); it!= end; ++it ) {
+	for (const auto & All_RDC_line : All_RDC_lines_) {
 		out << "RDC "<<++ct << "     ";
-		out << (*it) << std::endl;
+		out << All_RDC_line << std::endl;
 	}
 }
 
@@ -237,10 +237,9 @@ void ResidualDipolarCoupling::read_RDC_file() {
 				throw(utility::excn::EXCN_BadInput(" invalid line " + line
 					+ " in rdc-weight-file " + filename));
 			}
-			for ( RDC_lines::iterator it = All_RDC_lines_.begin(); it
-					!= All_RDC_lines_.end(); ++it ) {
-				if ( it->res1() == res1 ) {
-					it->weight(weight);
+			for (auto & All_RDC_line : All_RDC_lines_) {
+				if ( All_RDC_line.res1() == res1 ) {
+					All_RDC_line.weight(weight);
 					tr.Info << "set tensor-weight for RDCs to " << weight
 						<< " at residue (res1) " << res1 << std::endl;
 				}
@@ -602,21 +601,20 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 	Size irow(0);
 	Size ex(0);
-	for ( utility::vector1<core::scoring::RDC>::iterator it =
-			All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
+	for (auto & All_RDC_line : All_RDC_lines_) {
 
 		//check for cutpoints!!!
 		kinematics::FoldTree const& ft(pose.fold_tree());
-		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
-			tr.Warning << "non-existing residue, ignore RDC" << *it << std::endl;
+		if ( All_RDC_line.res1() > pose.total_residue() || All_RDC_line.res2() > pose.total_residue() ) {
+			tr.Warning << "non-existing residue, ignore RDC" << All_RDC_line << std::endl;
 			continue;
 		}
-		if ( (ft.is_cutpoint(std::min((int) it->res1(), (int) it->res2())))
-				&& it->res1() != it->res2() ) {
-			tr.Warning << "cutpoint: ignore RDC " << *it << std::endl;
+		if ( (ft.is_cutpoint(std::min((int) All_RDC_line.res1(), (int) All_RDC_line.res2())))
+				&& All_RDC_line.res1() != All_RDC_line.res2() ) {
+			tr.Warning << "cutpoint: ignore RDC " << All_RDC_line << std::endl;
 			continue;
 		}
-		if ( it->res1() == 1 || it->res2() == 1  ) {
+		if ( All_RDC_line.res1() == 1 || All_RDC_line.res2() == 1  ) {
 			tr.Warning << "residue 1, always problematic with 1H vs H, just ignore RDC" << std::endl;
 			continue;
 		}
@@ -624,18 +622,18 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		++irow;
 		Size const d(irow - 1);
 
-		ex = it->expid();
+		ex = All_RDC_line.expid();
 
-		Real computed_coupling = it->Jdipolar_computed_ = S_[ex][0][0] * D_[d][0] + S_[ex][0][1] * D_[d][1] + S_[ex][0][2] * D_[d][2] + S_[ex][1][1] * D_[d][3] + S_[ex][1][2] * D_[d][4];
+		Real computed_coupling = All_RDC_line.Jdipolar_computed_ = S_[ex][0][0] * D_[d][0] + S_[ex][0][1] * D_[d][1] + S_[ex][0][2] * D_[d][2] + S_[ex][1][1] * D_[d][3] + S_[ex][1][2] * D_[d][4];
 
-		RDC& rdc = *it;
+		RDC& rdc = All_RDC_line;
 		numeric::xyzVector<Real> r( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
 		core::Real r2 = r.norm_squared();
 		core::Real invr = 1.0 / sqrt(r2);
 		core::Real invr2 = sqr(invr);
-		Real obs = it->Jdipolar();
+		Real obs = All_RDC_line.Jdipolar();
 		Real dev = computed_coupling - obs;
-		Real weight = it->weight()*Smax[ex]; //force constant
+		Real weight = All_RDC_line.weight()*Smax[ex]; //force constant
 
 		//compute derivatives
 		//prefactor used in derivative calculations
@@ -1077,7 +1075,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	Real Qnorm = 0;
 
 	Size irow(0);
-	for ( utility::vector1<core::scoring::RDC>::iterator it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
+	for ( auto it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
 
 		Size ex = it->expid();
 

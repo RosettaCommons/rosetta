@@ -33,18 +33,18 @@ class DumpPdb : public protocols::moves::Mover
 {
 public:
 	DumpPdb();
-	DumpPdb( std::string const & fname );
-	virtual ~DumpPdb();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const {
+	DumpPdb( std::string fname ); // argument is moved
+	~DumpPdb() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new DumpPdb( *this ) ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DumpPdb ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new DumpPdb ); }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
 	void tag_time(bool setting) { addtime_ = setting; }
 	bool tag_time() const { return addtime_; }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	std::string fname_;
 	/// @brief Dump a scored pdb?

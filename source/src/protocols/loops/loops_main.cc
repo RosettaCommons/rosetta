@@ -115,7 +115,7 @@ void read_loop_fragments(
 	}
 
 	Size prev_size(10000);
-	FragSetOP prev_lib_op(0);
+	FragSetOP prev_lib_op(nullptr);
 
 	// Loop over the temporary map to generate missing/noninitialized fragment
 	// libraries
@@ -150,7 +150,7 @@ void read_loop_fragments(
 
 	if ( option[ OptionKeys::loops::stealfrags ].user() ) {
 		utility::vector1< FileName > pdbfiles = option[  OptionKeys::loops::stealfrags ]();
-		utility::vector1< FileName >::iterator file_it = pdbfiles.begin(), file_it_end = pdbfiles.end();
+		auto file_it = pdbfiles.begin(), file_it_end = pdbfiles.end();
 		// Loop over all the islent input files
 		for ( ; file_it != file_it_end; ++file_it ) {
 			std::string infile  = *file_it;
@@ -596,19 +596,18 @@ loops_set_move_map(
 	mm.set_chi( false );
 	mm.set_jump( false );
 	// allow phi/psi in loops to move
-	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end();
-			it != it_end; ++it ) {
+	for (const auto & loop : loops) {
 
-		for ( Size i=it->start(); i<=it->stop(); ++i ) {
+		for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
 			mm.set_bb(i, true);
 			if ( !allow_omega_move ) mm.set(TorsionID(i,BB,3), false); // omega is fixed by default
 			mm.set_chi(i, true); // chi of loop residues
 		}
 
 		if ( allow_takeoff_torsion_move ) {
-			mm.set( TorsionID( it->start()-1, BB, 2 ), true );
-			if ( allow_omega_move ) mm.set( TorsionID( it->start()-1, BB, 3 ), true );
-			mm.set( TorsionID( it->stop()+1, BB, 1 ), true );
+			mm.set( TorsionID( loop.start()-1, BB, 2 ), true );
+			if ( allow_omega_move ) mm.set( TorsionID( loop.start()-1, BB, 3 ), true );
+			mm.set( TorsionID( loop.stop()+1, BB, 1 ), true );
 		}
 
 	}
@@ -734,13 +733,13 @@ add_loop_flank_residues_bb_to_movemap(
 	core::Size flank_size
 ){
 
-	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
+	for (const auto & loop : loops) {
 
-		for ( Size i=(it->start()-flank_size); i<=(it->start()-1); i++ ) {
+		for ( Size i=(loop.start()-flank_size); i<=(loop.start()-1); i++ ) {
 			mm.set_bb(i, true);
 		}
 
-		for ( Size i=(it->stop()+1); i<=(it->stop()+flank_size); i++ ) {
+		for ( Size i=(loop.stop()+1); i<=(loop.stop()+flank_size); i++ ) {
 			mm.set_bb(i, true);
 		}
 
@@ -762,8 +761,8 @@ ccd_close_loops(
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
 	ccd_loop_closure_mover.movemap( kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 
-	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end(); it != it_end; ++it ) {
-		ccd_loop_closure_mover.loop( *it );
+	for (const auto & loop : loops) {
+		ccd_loop_closure_mover.loop( loop );
 		ccd_loop_closure_mover.apply( pose );
 	}
 }
@@ -782,9 +781,8 @@ void select_loop_residues(
 	Real neighbor_dist
 )
 {
-	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end();
-			it != it_end; ++it ) {
-		for ( Size i=it->start(); i<=it->stop(); ++i ) {
+	for (const auto & loop : loops) {
+		for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
 			if ( pose.residue(i).type().is_disulfide_bonded() ) {
 				map[i] = false;
 			} else {
@@ -876,8 +874,8 @@ void filter_loop_neighbors_by_distance(
 
 	utility::vector1< bool > loop_selection(pose.total_residue(), false);
 
-	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
-		for ( Size j=it->start(); j<=it->stop(); ++j ) {
+	for (const auto & loop : loops) {
+		for ( Size j=loop.start(); j<=loop.stop(); ++j ) {
 			loop_selection[ j ] = true;
 		}
 	}
@@ -1420,8 +1418,8 @@ core::Real native_loop_core_CA_rmsd(
 	for ( core::Size ir = 1; ir <= pose.total_residue(); ir ++ ) {
 		if ( !pose.residue_type(ir).is_protein() ) continue;
 		bool exclude = false;
-		for ( core::Size p = 0; p < residue_exclusion.size(); p++ ) {
-			if ( ir == residue_exclusion[p] ) {
+		for (unsigned long p : residue_exclusion) {
+			if ( ir == p ) {
 				exclude = true;
 				break;
 			}
@@ -1518,9 +1516,8 @@ loop_rmsd(
 
 	Real rms = 0.0;
 	int atom_count(0);
-	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end();
-			it != it_end; ++it ) {
-		for ( Size i = it->start(); i<=it->stop(); ++i ) {
+	for (const auto & loop : loops) {
+		for ( Size i = loop.start(); i<=loop.stop(); ++i ) {
 			if ( i > pose1.total_residue() ) {
 				tt.Warning <<  "[Warning]: Pose1: Loop residue " << i << "exceeds pose1 size " << pose1.total_residue() << std::endl;
 				continue;
@@ -1572,16 +1569,15 @@ loop_local_rmsd(
 		return rms;
 	}
 
-	for ( Loops::const_iterator it=loops.begin(), it_end=loops.end();
-			it != it_end; ++it ) {
-		int natoms = 4 * it->size() ;
+	for (const auto & loop : loops) {
+		int natoms = 4 * loop.size() ;
 		//FArray2D_double p1a(3, natoms);
 		//FArray2D_double p2a(3, natoms);
 		FArray2D< core::Real > p1a(3, natoms);
 		FArray2D< core::Real > p2a(3, natoms);
 
 		int atom_count(0);
-		for ( Size i = it->start(); i<=it->stop(); ++i ) {
+		for ( Size i = loop.start(); i<=loop.stop(); ++i ) {
 			for ( Size j = 1; j <= 4; ++j ) {
 				const numeric::xyzVector< Real > & vec1( pose1.residue(i).xyz( j ) );
 				const numeric::xyzVector< Real > & vec2( pose2.residue(i).xyz( j ) );

@@ -44,7 +44,7 @@ class PNatAAOptERotamerData : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~PNatAAOptERotamerData();
+	~PNatAAOptERotamerData() override;
 	typedef core::Real Real;
 	typedef core::chemical::AA AA;
 	typedef core::Size Size;
@@ -101,7 +101,7 @@ class PNatRotOptERotamerData : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~PNatRotOptERotamerData();
+	~PNatRotOptERotamerData() override;
 	typedef core::Real Real;
 	typedef core::Size Size;
 
@@ -171,7 +171,7 @@ public:
 		fixed_data_( fixed_data )
 	{}
 
-	virtual ~SingleStructureData() {}
+	~SingleStructureData() override = default;
 
 	Real
 	operator [] ( Size const i ) const {
@@ -218,7 +218,7 @@ public:
 public:
 	OptEPositionData();
 
-	virtual ~OptEPositionData();
+	~OptEPositionData() override;
 
 	virtual
 	Real
@@ -333,9 +333,9 @@ public:
 public:
 	PNatAAOptEPositionData();
 
-	virtual ~PNatAAOptEPositionData();
+	~PNatAAOptEPositionData() override;
 
-	virtual
+	
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -348,9 +348,9 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	print_score(
 		std::ostream & ostr,
@@ -364,47 +364,47 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	range(
 		ScoreTypes const & free_score_list,
 		ScoreTypes const & fixed_score_list,
 		EnergyMap & lower_bound,
 		EnergyMap & upper_bound
-	) const;
+	) const override;
 
-	virtual
+	
 	Size
-	size() const
+	size() const override
 	{
 		return data_.size();
 	}
 
-	virtual
+	
 	OptEPositionDataType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	void
-	write_to_file( std::ofstream & outfile ) const ;
+	write_to_file( std::ofstream & outfile ) const override ;
 
-	virtual
+	
 	void
-	read_from_file( std::ifstream & infile );
+	read_from_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	void
-	write_to_binary_file( std::ofstream & outfile ) const;
+	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_binary_file( std::ifstream & infile );
+	read_from_binary_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	Size
-	memory_use() const;
+	memory_use() const override;
 
 
 #ifdef USEMPI
@@ -507,11 +507,11 @@ public:
 
 	PSSMOptEPositionData();
 
-	virtual ~PSSMOptEPositionData();
+	~PSSMOptEPositionData() override;
 
 	void set_pssm_probabilities( utility::vector1< Real > const & pssm_probs );
 
-	virtual
+	
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -524,9 +524,9 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	print_score(
 		std::ostream & ostr,
@@ -540,31 +540,31 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	OptEPositionDataType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	void
-	write_to_file( std::ofstream & outfile ) const ;
+	write_to_file( std::ofstream & outfile ) const override ;
 
-	virtual
+	
 	void
-	read_from_file( std::ifstream & infile );
+	read_from_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	void
-	write_to_binary_file( std::ofstream & outfile ) const;
+	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_binary_file( std::ifstream & infile );
+	read_from_binary_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	Size
-	memory_use() const;
+	memory_use() const override;
 
 #ifdef USEMPI
 	virtual
@@ -587,9 +587,9 @@ class PNatRotOptEPositionData : public OptEPositionData
 public:
 	PNatRotOptEPositionData();
 
-	virtual ~PNatRotOptEPositionData();
+	~PNatRotOptEPositionData() override;
 
-	virtual
+	
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -602,9 +602,9 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	print_score(
 		std::ostream & ostr,
@@ -618,7 +618,7 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
 	Real
 	process_score(
@@ -636,42 +636,42 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const;
 
-	virtual
+	
 	void
 	range(
 		ScoreTypes const & free_score_list,
 		ScoreTypes const & fixed_score_list,
 		EnergyMap & lower_bound,
 		EnergyMap & upper_bound
-	) const;
+	) const override;
 
-	virtual
+	
 	Size
-	size() const;
+	size() const override;
 
-	virtual
+	
 	OptEPositionDataType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	void
-	write_to_file( std::ofstream & outfile ) const;
+	write_to_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_file( std::ifstream & infile );
+	read_from_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	void
-	write_to_binary_file( std::ofstream & outfile ) const;
+	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_binary_file( std::ifstream & infile );
+	read_from_binary_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	Size
-	memory_use() const;
+	memory_use() const override;
 
 
 #ifdef USEMPI
@@ -755,9 +755,9 @@ class PNatStructureOptEData : public OptEPositionData
 {
 public:
 	PNatStructureOptEData();
-	virtual ~PNatStructureOptEData();
+	~PNatStructureOptEData() override;
 
-	virtual
+	
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -770,9 +770,9 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	print_score(
 		std::ostream & ostr,
@@ -786,7 +786,7 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
 	Real
 	process_score(
@@ -804,42 +804,42 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const;
 
-	virtual
+	
 	void
 	range(
 		ScoreTypes const & free_score_list,
 		ScoreTypes const & fixed_score_list,
 		EnergyMap & lower_bound,
 		EnergyMap & upper_bound
-	) const;
+	) const override;
 
-	virtual
+	
 	Size
-	size() const;
+	size() const override;
 
-	virtual
+	
 	OptEPositionDataType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	void
-	write_to_file( std::ofstream & outfile ) const;
+	write_to_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_file( std::ifstream & infile );
+	read_from_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	void
-	write_to_binary_file( std::ofstream & outfile ) const;
+	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_binary_file( std::ifstream & infile );
+	read_from_binary_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	Size
-	memory_use() const;
+	memory_use() const override;
 
 #ifdef USEMPI
 	virtual
@@ -914,9 +914,9 @@ public:
 
 public:
 	DDGMutationOptEData();
-	virtual ~DDGMutationOptEData();
+	~DDGMutationOptEData() override;
 
-	virtual
+	
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -929,9 +929,9 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	print_score(
 		std::ostream & ostr,
@@ -945,7 +945,7 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
 	Real
 	process_score(
@@ -963,42 +963,42 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const;
 
-	virtual
+	
 	void
 	range(
 		ScoreTypes const & free_score_list,
 		ScoreTypes const & fixed_score_list,
 		EnergyMap & lower_bound,
 		EnergyMap & upper_bound
-	) const;
+	) const override;
 
-	virtual
+	
 	Size
-	size() const;
+	size() const override;
 
-	virtual
+	
 	OptEPositionDataType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	void
-	write_to_file( std::ofstream & outfile ) const;
+	write_to_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_file( std::ifstream & infile );
+	read_from_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	void
-	write_to_binary_file( std::ofstream & outfile ) const;
+	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_binary_file( std::ifstream & infile );
+	read_from_binary_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	Size
-	memory_use() const;
+	memory_use() const override;
 
 #ifdef USEMPI
 	virtual
@@ -1060,11 +1060,11 @@ public:
 
 	ConstraintedOptimizationWeightFunc( ScoreTypes const & score_list );
 
-	virtual ~ConstraintedOptimizationWeightFunc();
+	~ConstraintedOptimizationWeightFunc() override;
 	void
 	initialize_constraints_from_file( std::ifstream & infile );
 
-	virtual
+	
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -1077,9 +1077,9 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	print_score(
 		std::ostream & ostr,
@@ -1093,44 +1093,44 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	range(
 		ScoreTypes const & free_score_list,
 		ScoreTypes const & fixed_score_list,
 		EnergyMap & lower_bound,
 		EnergyMap & upper_bound
-	) const;
+	) const override;
 
-	virtual
+	
 	Size
-	size() const;
+	size() const override;
 
-	virtual
+	
 	OptEPositionDataType
-	type() const;
+	type() const override;
 
-	virtual
+	
 	void
-	write_to_file( std::ofstream & outfile ) const ;
+	write_to_file( std::ofstream & outfile ) const override ;
 
-	virtual
+	
 	void
-	read_from_file( std::ifstream & infile );
+	read_from_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	void
-	write_to_binary_file( std::ofstream & outfile ) const;
+	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	virtual
+	
 	void
-	read_from_binary_file( std::ifstream & infile );
+	read_from_binary_file( std::ifstream & infile ) override;
 
-	virtual
+	
 	Size
-	memory_use() const;
+	memory_use() const override;
 
 
 #ifdef USEMPI
@@ -1188,7 +1188,7 @@ class OptEData : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~OptEData();
+	~OptEData() override;
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef core::optimization::Multivec Multivec;

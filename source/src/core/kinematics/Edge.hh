@@ -21,11 +21,11 @@
 
 // In a perfect world, I would ifdef for Windows PyRosetta. A perfect world this isn't.
 #include <string>
+#include <utility>
 
 
 namespace core {
 namespace kinematics {
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// \brief single edge of the fold_tree
@@ -43,8 +43,8 @@ class Edge
 public:
 
 	/// APL -- CODE DUPLICATION -- FIX THIS IN A BETTER WAY TO RESOLVE THE CIRCULAR DEPENDENCY
-	static int const PEPTIDE = -1; // must be negative, see Edge::is_jump()
-	static int const CHEMICAL = -2; // for fold-tree edges that connect two chemically-bound residues
+	constexpr static int PEPTIDE{-1}; // must be negative, see Edge::is_jump()
+	constexpr static int CHEMICAL{-2}; // for fold-tree edges that connect two chemically-bound residues
 
 public:
 
@@ -271,25 +271,25 @@ public:
 
 	/// @brief CHEMICAL Edge constructor (requires atomno info) -- note: a chemical
 	/// edge may be built from any constructor, this one is for convenience only
-	Edge( int const start_in, int const stop_in, std::string const& start_atom, std::string const& stop_atom ):
+	Edge( int const start_in, int const stop_in, std::string  start_atom, std::string  stop_atom ):
 		start_( start_in ),
 		stop_( stop_in ),
 		label_( CHEMICAL ),
-		start_atom_( start_atom ),
-		stop_atom_( stop_atom ),
+		start_atom_(std::move( start_atom )),
+		stop_atom_(std::move( stop_atom )),
 		bKeepStubInResidue_( false )
 	{}
 
 	/// @brief JUMP Edge constructor (requires atomno info) -- note: a chemical
 	/// edge may be built from any constructor, this one is for convenience only
 	Edge( int const start_in, int const stop_in, int label,
-		std::string const& start_atom, std::string const& stop_atom,
+		std::string  start_atom, std::string  stop_atom,
 		bool bKeepStubInResidue ):
 		start_( start_in ),
 		stop_( stop_in ),
 		label_( label ),
-		start_atom_( start_atom ),
-		stop_atom_( stop_atom ),
+		start_atom_(std::move( start_atom )),
+		stop_atom_(std::move( stop_atom )),
 		bKeepStubInResidue_( bKeepStubInResidue )
 	{}
 
@@ -337,7 +337,6 @@ public:
 #endif // SERIALIZATION
 
 }; // Edge
-
 
 } // namespace kinematics
 } // namespace core

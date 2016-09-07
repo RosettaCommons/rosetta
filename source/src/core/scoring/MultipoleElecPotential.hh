@@ -71,7 +71,7 @@ public:
 	typedef  numeric::xyzVector< Real > Vector;
 
 public:
-	virtual ~MultipoleElecResidueInfo();
+	~MultipoleElecResidueInfo() override;
 
 	MultipoleElecResidueInfoOP
 	copy_clone() const
@@ -80,7 +80,7 @@ public:
 	}
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new MultipoleElecResidueInfo( *this ) );
 	}
@@ -410,7 +410,7 @@ public:
 	MultipoleElecPoseInfo( MultipoleElecPoseInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new MultipoleElecPoseInfo( *this ) );
 	}
@@ -521,7 +521,7 @@ public:
 
 	///
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new MultipoleElecRotamerSetInfo( *this ) );
 	}
@@ -598,7 +598,7 @@ public:
 	typedef numeric::xyzVector< Real > Vector;
 	typedef numeric::xyzMatrix< Real > Matrix;
 
-	virtual ~MultipoleParameter(){};
+	~MultipoleParameter() override= default;
 
 	MultipoleParameter( MultipoleAxisType coord_type_in,
 		utility::vector1< Size > & atom_type_in,

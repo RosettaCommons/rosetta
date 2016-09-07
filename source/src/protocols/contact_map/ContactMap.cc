@@ -90,25 +90,10 @@ ContactMap::ContactMap() :
 }
 
 /// @brief Copy constructor
-ContactMap::ContactMap(ContactMap const & contact_map) :
-	Mover(contact_map),
-	contacts_(contact_map.contacts_),
-	output_matrix_(contact_map.output_matrix_),
-	column_names_(contact_map.column_names_),
-	row_names_(contact_map.row_names_),
-	output_prefix_(contact_map.output_prefix_),
-	n_poses_(contact_map.n_poses_),
-	distance_cutoff_(contact_map.distance_cutoff_),
-	models_per_file_(contact_map.models_per_file_),
-	reset_count_(contact_map.reset_count_),
-	row_format_(contact_map.row_format_),
-	distance_matrix_(contact_map.distance_matrix_)
-{
-}
+ContactMap::ContactMap(ContactMap const & ) = default;
 
 /// @brief Destructor
-ContactMap::~ContactMap() {
-}
+ContactMap::~ContactMap() = default;
 
 
 moves::MoverOP ContactMap::clone() const {
@@ -355,20 +340,20 @@ void ContactMap::apply(Pose & pose) {
 	n_poses_++;
 
 	// Iterate over contacts
-	for ( utility::vector1<Contact>::iterator it = contacts_.begin(), end = contacts_.end(); it != end; ++it ) {
-		ContactPartner * p1(it->partner1());
-		ContactPartner * p2(it->partner2());
+	for (auto & contact : contacts_) {
+		ContactPartner * p1(contact.partner1());
+		ContactPartner * p2(contact.partner2());
 		// Get coordinates of both contact partners and calculate distance
 		numeric::xyzVector<core::Real> v1 = pose.residue(p1->seqpos()).atom(p1->atomname()).xyz();
 		numeric::xyzVector<core::Real> v2 = pose.residue(p2->seqpos()).atom(p2->atomname()).xyz();
 		core::Real distance = v1.distance(v2);
 		// Add distance to contact if it's below the cutoff value
 		if ( distance_matrix_ ) {
-			it->add_distance(distance);
+			contact.add_distance(distance);
 			continue;
 		}
 		if ( distance <= distance_cutoff_ ) {
-			it->add_distance();
+			contact.add_distance();
 		}
 	}
 
@@ -400,8 +385,8 @@ void ContactMap::apply(Pose & pose) {
 /// @brief Resets the movers n_poses_ variable and the counts of all contacts to 0
 void ContactMap::reset(){
 	n_poses_ = 0;
-	for ( utility::vector1<Contact>::iterator it = contacts_.begin(), end = contacts_.end(); it != end; ++it ) {
-		it->reset_count();
+	for (auto & contact : contacts_) {
+		contact.reset_count();
 	}
 }
 
@@ -428,8 +413,8 @@ ContactMap::write_to_stream(std::ostream & output_stream) {
 	output_stream << "# Number of Models:\t" << n_poses_ <<"\tDistance Cutoff:\t"<< distance_cutoff_<< std::endl
 		<< std::endl;
 	if ( row_format_ ) {
-		for ( utility::vector1<Contact>::iterator it = contacts_.begin(), end = contacts_.end(); it != end; ++it ) {
-			output_stream << it->long_string_rep() << std::endl;
+		for (auto & contact : contacts_) {
+			output_stream << contact.long_string_rep() << std::endl;
 		}
 	} else {
 

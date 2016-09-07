@@ -73,7 +73,7 @@ public: // public constructors / destructors
 		core::pose::Pose const & native_pose
 	);
 
-	virtual ~PerNativeRRReporterHuman();
+	~PerNativeRRReporterHuman() override;
 
 	PerNativeRRReporterHuman( PerNativeRRReporterHuman const & src );
 
@@ -133,7 +133,7 @@ public: // constructors destructors
 
 	RRReporterHuman( RRReporterHuman const & src );
 
-	~RRReporterHuman();
+	~RRReporterHuman() override;
 
 private: // private helper functions
 
@@ -148,18 +148,18 @@ public: // public interface
 	void
 	set_comparer_info(
 		std::string const & comparer_name,
-		std::string const & comparer_params);
+		std::string const & comparer_params) override;
 
 	void
 	set_protocol_info(
 		std::string const & protocol_name,
-		std::string const & protocol_params);
+		std::string const & protocol_params) override;
 
-	virtual
+	
 	void
-	reset_recovery();
+	reset_recovery() override;
 
-	virtual
+	
 	void
 	report_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -168,19 +168,19 @@ public: // public interface
 		core::conformation::Residue const & res2,
 		core::Real score,
 		bool recovered
-	);
+	) override;
 
-	virtual
+	
 	core::Real
-	recovery_rate() const;
+	recovery_rate() const override;
 
-	virtual
+	
 	void
-	show(std::ostream & out ) const;
+	show(std::ostream & out ) const override;
 
-	virtual
+	
 	void
-	show() const;
+	show() const override;
 
 private:
 

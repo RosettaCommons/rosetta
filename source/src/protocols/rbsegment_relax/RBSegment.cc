@@ -304,8 +304,8 @@ void read_RBSegment_file(
 
 	// place remaining simple structs in vector
 	// ids no longer matter
-	for ( std::map < int, RBSegment >::iterator i=simple_segments.begin(); i!=simple_segments.end(); ++i ) {
-		rbsegs.push_back( i->second );
+	for (auto & simple_segment : simple_segments) {
+		rbsegs.push_back( simple_segment.second );
 	}
 
 	// sort by start residue

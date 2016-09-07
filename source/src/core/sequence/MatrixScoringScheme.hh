@@ -69,7 +69,7 @@ public:
 
 	/// @brief returns owning pointer to a new object with a deep copy of
 	/// this object's values.
-	ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		return ScoringSchemeOP( new MatrixScoringScheme(
 			gap_open(),
 			gap_extend(),
@@ -78,15 +78,15 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~MatrixScoringScheme() {}
+	~MatrixScoringScheme() override = default;
 
 	/// @brief Read an alignment matrix from the given database filename using the
 	/// NCBI BLOSUM format for matrices.
 	void read_from_database( std::string name="BLOSUM62" );
 	/// @brief Read an alignment matrix from the given filename using the
 	/// NCBI BLOSUM format for matrices.
-	void read_from_file( utility::file::FileName const & fn );
-	void read_data( utility::io::izstream & input );
+	void read_from_file( utility::file::FileName const & fn ) override;
+	void read_data( utility::io::izstream & input ) override;
 
 	/// @brief Get the values for amino acid aa, in Rosetta aa order.
 	utility::vector1< Real > values_for_aa( char aa );
@@ -94,7 +94,7 @@ public:
 	utility::vector1< Real > values_for_aa( core::chemical::AA aa );
 	utility::vector1< utility::vector1< Real > > scoring_matrix() const;
 
-	virtual Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 );
+	Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 ) override;
 
 private:
 	void init_type() {

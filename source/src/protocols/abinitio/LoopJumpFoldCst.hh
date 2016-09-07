@@ -46,6 +46,7 @@
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -70,18 +71,18 @@ public:
 		bool bCstAllAtom = false //false = CA atoms only
 	) :
 		KinematicTaskControl( sampler ),
-		jump_def_ ( jump_def ),
+		jump_def_ (std::move( jump_def )),
 		loops_( loops ),
-		ss_def_( ss_def ),
+		ss_def_(std::move( ss_def )),
 		coordinate_constraint_weight_( coord_cst_weight ),
 		bCstAllAtom_( bCstAllAtom )
 	{
 		dump_weights_file_ = "NO_DUMP";
 	};
 
-	~LoopJumpFoldCst();
+	~LoopJumpFoldCst() override;
 	//@brief make a new KinematicControl...
-	virtual KinematicControlOP new_kinematics( core::pose::Pose &pose );
+	KinematicControlOP new_kinematics( core::pose::Pose &pose ) override;
 
 	void set_coord_cst_weight_array( utility::vector1< core::Real > const& vec ) {
 		coordinate_constraint_weights_ = vec;
@@ -91,7 +92,7 @@ public:
 		dump_weights_file_ = str;
 	}
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 protected:
 	/// @brief heuristic to select subset of loops from loops_

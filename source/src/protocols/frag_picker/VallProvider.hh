@@ -43,7 +43,7 @@ public:
 		cached_pose_id_ = "";
 		largest_chunk_size_ = 0;
 	}
-	virtual ~VallProvider();
+	~VallProvider() override;
 
 	inline VallProviderCOP get_self_ptr() const { return shared_from_this(); }
 	inline VallProviderOP  get_self_ptr() { return shared_from_this(); }

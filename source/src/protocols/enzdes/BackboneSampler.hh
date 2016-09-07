@@ -43,19 +43,19 @@ public:
 	);
 
 	void
-	apply( Pose & pose );
+	apply( Pose & pose ) override;
 
-	virtual
-	std::string get_name() const;
+	
+	std::string get_name() const override;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	protocols::moves::MoverOP fresh_instance() const
+	protocols::moves::MoverOP fresh_instance() const override
 	{
 		return protocols::moves::MoverOP( new BackboneSampler );
 	}
 
-	virtual ~BackboneSampler();
+	~BackboneSampler() override;
 
 protected:
 
@@ -65,7 +65,7 @@ protected:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const &
-	);
+	) override;
 
 private:
 	core::Size bb_moves_;

@@ -40,7 +40,7 @@ class EnzdesBaseProtocol : public protocols::ligand_docking::LigandBaseProtocol
 public:
 
 	EnzdesBaseProtocol();
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	//virtual void apply( core::pose::Pose & pose) const = 0;
 

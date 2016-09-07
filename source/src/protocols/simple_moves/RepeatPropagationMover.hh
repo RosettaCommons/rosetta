@@ -40,10 +40,10 @@ class RepeatPropagationMover : public protocols::moves::Mover
 {
 public:
 	RepeatPropagationMover();
-	virtual void apply( Pose & pose );
-	std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new RepeatPropagationMover( *this ) ); }
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	moves::MoverOP clone() const override { return moves::MoverOP( new RepeatPropagationMover( *this ) ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	void initialize_repeat_pose( core::pose::Pose & pose, core::pose::Pose & repeat_pose);
 	void duplicate_residues_by_type(core::pose::Pose & pose, core::pose::Pose & repeat_pose);

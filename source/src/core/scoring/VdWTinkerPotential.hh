@@ -65,7 +65,7 @@ public:
 	typedef  numeric::xyzVector< Real > Vector;
 
 public:
-	virtual ~VdWTinkerResidueInfo();
+	~VdWTinkerResidueInfo() override;
 
 	VdWTinkerResidueInfoOP
 	copy_clone() const
@@ -74,7 +74,7 @@ public:
 	}
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new VdWTinkerResidueInfo( *this ) );
 	}
@@ -131,7 +131,7 @@ public:
 	VdWTinkerPoseInfo( VdWTinkerPoseInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new VdWTinkerPoseInfo( *this ) );
 	}
@@ -236,7 +236,7 @@ public:
 
 	///
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new VdWTinkerRotamerSetInfo( *this ) );
 	}

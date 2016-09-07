@@ -26,6 +26,7 @@
 #include <core/conformation/Conformation.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
@@ -87,13 +88,13 @@ MoveMapBuilder::MoveMapBuilder(
 	bool minimize_water
 ):
 	ReferenceCount(),
-	sc_interface_builder_(sc),
-	bb_interface_builder_(bb),
+	sc_interface_builder_(std::move(sc)),
+	bb_interface_builder_(std::move(bb)),
 	minimize_water_(minimize_water)
 {}
 
 
-MoveMapBuilder::~MoveMapBuilder() {}
+MoveMapBuilder::~MoveMapBuilder() = default;
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -172,7 +173,7 @@ MoveMapBuilder::set_all_chi(
 	for ( core::Size chain_id = 1; chain_id <= pose.conformation().num_chains(); ++chain_id ) {
 		char const chain= core::pose::get_chain_from_chain_id(chain_id, pose);
 		LigandAreas const & ligand_areas= sc_interface_builder_->get_ligand_areas();
-		LigandAreas::const_iterator ligand_area= ligand_areas.find(chain);
+		auto ligand_area= ligand_areas.find(chain);
 		if ( ligand_area == ligand_areas.end() ) continue;
 		if ( ligand_area->second->minimize_ligand_ > 0 ) continue;
 		// else if we aren't minimizing the ligand set_chi for this ligand to false

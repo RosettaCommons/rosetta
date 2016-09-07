@@ -32,6 +32,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -85,12 +86,12 @@ DomainAssembly::DomainAssembly(
 	protocols::moves::Mover( DomainAssemblyCreator::mover_name() ),
 	linker_start_( linker_start ),
 	linker_end_( linker_end ),
-	fragset_large_( fragset_large ),
-	fragset_small_( fragset_small ),
+	fragset_large_(std::move( fragset_large )),
+	fragset_small_(std::move( fragset_small )),
 	fragments_set_( true )
 {}
 
-DomainAssembly::~DomainAssembly() {}
+DomainAssembly::~DomainAssembly() = default;
 
 protocols::moves::MoverOP
 DomainAssembly::clone() const {

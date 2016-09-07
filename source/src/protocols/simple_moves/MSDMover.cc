@@ -73,14 +73,14 @@ MSDMover::MSDMover() :
 {}
 
 MSDMover::MSDMover( protocols::moves::MoverOP mover, utility::vector1< std::string > resfiles ) :
-	design_mover_( mover ),
+	design_mover_(std::move( mover )),
 	resfiles_( resfiles ),
 	weight_(0.5),
 	current_pose_( 1 ),
 	debug_( false )
 {}
 
-MSDMover::~MSDMover() {}
+MSDMover::~MSDMover() = default;
 
 moves::MoverOP MSDMover::clone() const {
 	return MSDMoverOP ( new MSDMover( *this ) );
@@ -165,7 +165,7 @@ void MSDMover::parse_my_tag(
 
 	if ( tag->hasOption("design_mover") ) {
 		std::string const design_mover_key = tag->getOption<std::string>("design_mover");
-		moves::Movers_map::const_iterator  find_mover = movers.find( design_mover_key );
+		auto  find_mover = movers.find( design_mover_key );
 
 		if ( find_mover == movers.end() && design_mover_key != "" ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Mover " + design_mover_key + " not found in data map");
@@ -277,7 +277,7 @@ MSDMover::update_packer_task () {
 
 		// If mover already has task factory modify it -> otherwise create a new one
 		core::pack::task::TaskFactoryOP factory;
-		if ( design_packer->task_factory() == 0 ) {
+		if ( design_packer->task_factory() == nullptr ) {
 			factory = core::pack::task::TaskFactoryOP ( new core::pack::task::TaskFactory );
 		} else {
 			factory =  design_packer->task_factory()->clone();

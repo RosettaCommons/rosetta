@@ -96,7 +96,7 @@ public:
 
 public:
 	PackDaemon();
-	virtual ~PackDaemon();
+	~PackDaemon() override;
 
 	// Initialize the PackDaemon with the appropriate data before
 	// calling setup().
@@ -217,7 +217,7 @@ public:
 	typedef std::pair< core::Size, NPDPropCalculatorOP > NPDIndAndCalc;
 public:
 	DaemonSet();
-	virtual ~DaemonSet();
+	~DaemonSet() override;
 
 	void set_entity_resfile( std::string const & resfile );
 	void set_entity_resfile( std::istream & resfile, std::string const & resfile_name );
@@ -371,7 +371,7 @@ class NPDPropCalculator : public utility::pointer::ReferenceCount
 {
 public:
 	NPDPropCalculator();
-	virtual ~NPDPropCalculator();
+	~NPDPropCalculator() override;
 
 	virtual
 	void
@@ -390,7 +390,7 @@ class NPDPropCalculatorCreator : public utility::pointer::ReferenceCount
 {
 public:
 	NPDPropCalculatorCreator();
-	virtual ~NPDPropCalculatorCreator();
+	~NPDPropCalculatorCreator() override;
 
 	virtual
 	std::string
@@ -423,7 +423,7 @@ public:
 		RotamerSetsOP          rot_sets
 	);
 
-	virtual ~QuickRepacker();
+	~QuickRepacker() override;
 
 	virtual
 	RotamerAssignmentAndEnergy
@@ -457,11 +457,11 @@ public:
 		RotamerSetsOP             rot_sets
 	);
 
-	virtual ~BasicSimAnnealerRepacker();
+	~BasicSimAnnealerRepacker() override;
 
-	virtual
+	
 	RotamerAssignmentAndEnergy
-	repack( utility::vector0< int > const & rot_to_pack );
+	repack( utility::vector0< int > const & rot_to_pack ) override;
 
 private:
 
@@ -485,7 +485,7 @@ public:
 		RotamerSetsOP          rot_sets
 	);
 
-	~RotamerSubsetRepacker();
+	~RotamerSubsetRepacker() override;
 
 public:
 
@@ -510,12 +510,12 @@ public:
 		RotamerSetsOP             rotsets
 	);
 
-	virtual ~DenseIGRepacker();
+	~DenseIGRepacker() override;
 	void set_MCA(); // once done, cannot be undone
 
-	virtual
+	
 	RotamerAssignmentAndEnergy
-	repack( utility::vector0< int > const & rot_to_pack );
+	repack( utility::vector0< int > const & rot_to_pack ) override;
 
 	DensePDInteractionGraphOP
 	create_dense_pdig_from_rot_to_pack(
@@ -539,11 +539,11 @@ public:
 		RotamerSetsOP             rotsets
 	);
 
-	virtual ~DoubleDenseIGRepacker();
+	~DoubleDenseIGRepacker() override;
 
-	virtual
+	
 	RotamerAssignmentAndEnergy
-	repack( utility::vector0< int > const & rot_to_pack );
+	repack( utility::vector0< int > const & rot_to_pack ) override;
 
 	DoubleDensePDInteractionGraphOP
 	create_dense_pdig_from_rot_to_pack(
@@ -567,11 +567,11 @@ public:
 		RotamerSetsOP             rotsets
 	);
 
-	virtual ~FASTER_IG_Repacker();
+	~FASTER_IG_Repacker() override;
 
-	virtual
+	
 	RotamerAssignmentAndEnergy
-	repack( utility::vector0< int > const & rot_to_pack );
+	repack( utility::vector0< int > const & rot_to_pack ) override;
 
 	FASTERInteractionGraphOP
 	create_faster_ig_from_rot_to_pack(

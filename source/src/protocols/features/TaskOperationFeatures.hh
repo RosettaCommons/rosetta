@@ -29,6 +29,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -44,16 +45,16 @@ public:
 
 	TaskOperationFeatures( TaskOperationFeatures const & src );
 
-	virtual ~TaskOperationFeatures();
+	~TaskOperationFeatures() override;
 
 	/// @brief return string with class name
 	std::string
-	type_name() const;
+	type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
-		utility::sql_database::sessionOP db_session) const;
+		utility::sql_database::sessionOP db_session) const override;
 
 private:
 	void
@@ -66,7 +67,7 @@ private:
 
 public:
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	void
 	parse_my_tag(
@@ -74,7 +75,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/);
+		core::pose::Pose const & /*pose*/) override;
 
 	/// @brief collect all the feature data for the pose
 	core::Size
@@ -82,7 +83,7 @@ public:
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session) override;
 
 	void
 	insert_task_operations_row(
@@ -111,7 +112,7 @@ private:
 			Size i,
 			std::string n,
 			core::pack::task::TaskFactoryCOP t
-		) : id(i), name(n), tf(t) {}
+		) : id(i), name(std::move(n)), tf(std::move(t)) {}
 		core::Size id;
 		std::string name;
 		core::pack::task::TaskFactoryCOP tf;

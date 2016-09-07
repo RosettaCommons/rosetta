@@ -43,21 +43,21 @@ public:
 	LoopsFileLoader();
 
 	/// @brief Destructor.
-	virtual ~LoopsFileLoader();
+	~LoopsFileLoader() override;
 
 	/// @brief Return a LoopsFileDataOP constructed from the given input stream (istream).
-	virtual
+	
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
 		basic::resource_manager::LocatorID const & locator_id,
 		std::istream & istream
-	) const;
+	) const override;
 
 	/// @brief Return a ResourceOptionsOP with the default set of options.
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const;
+	default_options() const override;
 
 };
 

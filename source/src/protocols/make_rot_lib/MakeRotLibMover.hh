@@ -42,11 +42,11 @@ public:
 	MakeRotLibMover();
 
 	// dtor
-	virtual ~MakeRotLibMover(){}
+	~MakeRotLibMover() override= default;
 
 	// pose interface
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "MakeRotLibMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "MakeRotLibMover"; }
 
 	// setup methods
 	void init_centroids( CentroidRotNumVecVec const & centroid_data, core::Size num_chi, bool semirotameric );

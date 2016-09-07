@@ -86,7 +86,7 @@ LoopProtocol::LoopProtocol() { // {{{1
 	protocol_ = add_child( LoopMoverGroupOP( new LoopMoverGroup ) );
 	movers_ = protocol_->add_mover_group();
 	refiners_ = protocol_->add_mover_group();
-	monte_carlo_ = NULL;
+	monte_carlo_ = nullptr;
 
 	sfxn_cycles_ = 1;
 	temp_cycles_ = 1;
@@ -103,7 +103,7 @@ LoopProtocol::LoopProtocol() { // {{{1
 	test_run_ = false;
 }
 
-LoopProtocol::~LoopProtocol() {} // {{{1
+LoopProtocol::~LoopProtocol() = default; // {{{1
 
 void LoopProtocol::parse_my_tag( // {{{1
 	TagCOP tag,

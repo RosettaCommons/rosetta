@@ -28,6 +28,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
@@ -164,15 +165,15 @@ public:
 
 	// constructor
 	DOF_Node(
-		DOF_ID const & id_in,
+		DOF_ID  id_in,
 		DOF_NodeOP parent_in
 	):
 		utility::pointer::ReferenceCount(),
 		F1_(0.0),
 		F2_(0.0),
 		depth_(-1),
-		id( id_in ),
-		parent_( parent_in ),
+		id(std::move( id_in )),
+		parent_(std::move( parent_in )),
 		torsion_id_( id::BOGUS_TORSION_ID ),
 		dependent_( false )
 	{}
@@ -221,7 +222,7 @@ inline
 int
 DOF_Node::depth() const
 {
-	if ( parent_ == 0 ) {
+	if ( parent_ == nullptr ) {
 		depth_ = 0;
 	} else if ( depth_ < 0 ) {
 		depth_ = parent_->depth() + 1;

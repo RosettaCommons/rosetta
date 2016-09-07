@@ -46,17 +46,17 @@ public:
 		LoopHashLibraryOP library
 	);
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
 	void manual_call( core::pose::Pose& pose );
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "LoopHashRelaxProtocol";
 	}
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private:
 	LoopHashLibraryOP library_;

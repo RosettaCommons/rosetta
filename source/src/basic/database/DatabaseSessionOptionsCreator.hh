@@ -25,14 +25,14 @@ class DatabaseSessionOptionsCreator : public basic::resource_manager::ResourceOp
 {
 public:
 	DatabaseSessionOptionsCreator();
-	~DatabaseSessionOptionsCreator();
+	~DatabaseSessionOptionsCreator() override;
 
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	create_options() const;
+	create_options() const override;
 
-	virtual
-	std::string options_type() const;
+	
+	std::string options_type() const override;
 
 };
 

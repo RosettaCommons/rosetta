@@ -33,12 +33,12 @@ public:
 		bool const centroid = false,
 		bool const on_defined_segment = false );
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_bbGauss( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
 	void set_nstruct( core::Size setting ){ header.extra_data_1_ = setting; }
 	void set_kT( core::Real const setting ){ header.extra_data_2_ = (core::Size)(setting*1000); }
@@ -71,12 +71,12 @@ public:
 		core::Real const cstweight = 0.0,
 		bool const looponly = false );
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_MD( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
 	void set_relaxtype( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_scoretype( core::Size const setting ){ header.extra_data_2_ = setting; }
@@ -109,12 +109,12 @@ public:
 		core::Size const nrepeat = 0,
 		core::Real const cstweight = 0.0 );
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_Relax( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
 	void set_relaxtype( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_scoretype( core::Size const setting ){ header.extra_data_2_ = setting; }

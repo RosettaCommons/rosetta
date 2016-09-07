@@ -70,7 +70,7 @@
 #include <core/optimization/CartesianMinimizerMap.hh>
 
 #include <numeric/random/random.hh>
-#include <math.h>
+#include <cmath>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -92,7 +92,7 @@ static basic::Tracer TR("protocols.moves.PeriodicBoxMover");
 #include <core/pose/util.hh>
 
 #include <fstream>
-#include <math.h>
+#include <cmath>
 
 namespace protocols {
 namespace simple_moves {
@@ -552,7 +552,7 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 		EnergyEdge const * edge(egraph.find_energy_edge(ires, ires));
 		EnergyMap pair_energies;
 
-		if ( edge != 0 ) {
+		if ( edge != nullptr ) {
 			EnergyMap unwt_pair_energies( edge->fill_energy_map() );
 			pair_energies += unwt_pair_energies * weights;
 		}
@@ -949,7 +949,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 	core::Size nvolume_change( 0 ), nvolume_change_accept( 0 );
 	core::Size nperturb( 0 ), nperturb_accept( 0 );
 	core::Real starttime, currtime;
-	starttime = time(NULL);
+	starttime = time(nullptr);
 
 	// get initial thermodynamics properties
 
@@ -967,7 +967,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 		}
 
 		// this is for scorefile
-		currtime = time(NULL);
+		currtime = time(nullptr);
 		if ( report_every_>0 && i%report_every_ == 0 ) {
 			core::Real dt_in_min = ( currtime - starttime ) / 60.0;
 			TR << "[equilibrate cycle " << i << ", time(min) " << dt_in_min << "]" << std::endl;
@@ -1048,7 +1048,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 			if ( accept ) nperturb_accept++;
 		}
 
-		currtime = time(NULL);
+		currtime = time(nullptr);
 		if ( report_every_>0 && i%report_every_ == 0 ) {
 			core::Real dt_in_min = ( currtime - starttime ) / 60.0;
 			TR << "[simulate cycle " << i << ", time(min) " << dt_in_min << "]" << std::endl;

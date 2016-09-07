@@ -49,7 +49,7 @@ static THREAD_LOCAL basic::Tracer RotamerTracer( "protocols.RotamerDump.RotamerD
 
 RotamerDumpMover::RotamerDumpMover(core::pack::task::TaskFactoryOP task_factory,
 	core::scoring::ScoreFunctionOP score_function) :
-	task_factory_(task_factory), score_function_(score_function)
+	task_factory_(std::move(task_factory)), score_function_(std::move(score_function))
 {
 
 }

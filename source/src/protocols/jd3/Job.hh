@@ -50,7 +50,7 @@ class Job : public utility::pointer::ReferenceCount
 public:
 
 	Job();
-	virtual ~Job();
+	~Job() override;
 
 	/// @brief This is the main function of the Job object. It will be invoked by the JobDistributor.
 	/// The Job will return a JobResult at the conclusion of its execution, and the JobResult will

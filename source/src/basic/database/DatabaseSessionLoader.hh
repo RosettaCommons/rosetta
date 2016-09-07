@@ -31,19 +31,19 @@ namespace database {
 class DatabaseSessionLoader : public basic::resource_manager::ResourceLoader
 {
 public:
-	virtual ~DatabaseSessionLoader() {}
+	~DatabaseSessionLoader() override = default;
 
-	virtual
+	
 	basic::resource_manager::ResourceOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const &,
 		basic::resource_manager::LocatorID const &,
 		std::istream & istream
-	) const;
+	) const override;
 
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const { return basic::resource_manager::ResourceOptionsOP( new DatabaseSessionOptions() );}
+	default_options() const override { return basic::resource_manager::ResourceOptionsOP( new DatabaseSessionOptions() );}
 };
 
 } // database

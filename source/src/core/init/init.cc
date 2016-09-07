@@ -18,7 +18,7 @@
 #endif
 
 // Unit headers
-#include <time.h>
+#include <ctime>
 #include <core/init/init.hh>
 
 // Project Headers
@@ -904,7 +904,7 @@ init_random_number_generators(){
 			//iwd  Thus we multiply the time by some number larger than the largest expected value of seed_offset.
 			//iwd  If anyone's using this on more than 1000 machines at a time, we need to increase this value.
 			//iwd  (Rosetta++ used a multiplier of 20, which helps some, but is nonetheless too small.)
-			seed = time(0);
+			seed = time(nullptr);
 			//seed = seed%10000; // PB-- USE THIS ON OUR CLUSTER TO GET UNIQUE RUNS
 			//real_seed = seed + seed_offset;
 			real_seed = 1000*seed + seed_offset;
@@ -1015,7 +1015,7 @@ init_random_number_generators(){
 	// seed default random generator, this will hopefully expose all code that use
 	// non-approved random methods -- assuming that code is invoked in an integration
 	// test
-	srand( time(NULL) );
+	srand( time(nullptr) );
 }
 
 /// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
@@ -1222,7 +1222,7 @@ void init( utility::vector1<std::string> const & args )
 {
 	// create arguments in argc/argv format
 	int argc = args.size();
-	char **argv = new char*[ argc ];
+	auto **argv = new char*[ argc ];
 	for ( int ii = 0; ii < argc; ++ii ) {
 		argv[ ii ] = new char[ args[ii+1].size()+1 ];
 		strncpy( argv[ii], args[ii+1].c_str(), args[ii+1].size() );

@@ -326,23 +326,23 @@ ShapeComplementarityFilter::setup_from_selectors( Pose const & pose, ShapeComple
 	if ( tr.Info.visible() ) {
 		tr.Info << "Using residues for molecule surface (rosetta numbering):" << std::endl;
 		tr.Info << "  Surface 1: ";
-		for ( ResidueVector::const_iterator r = residues1.begin(); r != residues1.end(); ++r ) {
+		for ( auto r = residues1.begin(); r != residues1.end(); ++r ) {
 			tr.Info << (r == residues1.begin() ? "" : ", ") << *r;
 		}
 		tr.Info << std::endl;
 		tr.Info << "  Surface 2: ";
-		for ( ResidueVector::const_iterator r = residues2.begin(); r != residues2.end(); ++r ) {
+		for ( auto r = residues2.begin(); r != residues2.end(); ++r ) {
 			tr.Info << (r == residues2.begin() ? "" : ", ") << *r;
 		}
 		tr.Info << std::endl;
 	}
 
-	for ( ResidueVector::const_iterator r=residues1.begin(); r!=residues1.end(); ++r ) {
-		scc.AddResidue( 0, pose.residue( *r ) );
+	for (unsigned long r : residues1) {
+		scc.AddResidue( 0, pose.residue( r ) );
 	}
 
-	for ( ResidueVector::const_iterator r=residues2.begin(); r!=residues2.end(); ++r ) {
-		scc.AddResidue( 1, pose.residue( *r ) );
+	for (unsigned long r : residues2) {
+		scc.AddResidue( 1, pose.residue( r ) );
 	}
 }
 

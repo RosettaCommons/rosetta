@@ -79,7 +79,7 @@ OrbitalsFeatures::OrbitalsFeatures( OrbitalsFeatures const & ) :
 	}
 }
 
-OrbitalsFeatures::~OrbitalsFeatures(){}
+OrbitalsFeatures::~OrbitalsFeatures()= default;
 
 string
 OrbitalsFeatures::type_name() const { return "OrbitalsFeatures"; }
@@ -655,7 +655,7 @@ OrbitalsFeatures::set_OrbH_features_data(
 
 	}
 	if ( res2name == "ARG" ) {
-		Bxyz = res2.atom(res2.atom_index(" CZ ")).xyz();;
+		Bxyz = res2.atom(res2.atom_index(" CZ ")).xyz();
 	}
 
 	xyzVector<Real> AHunit = Orbxyz - Hxyz;
@@ -679,7 +679,7 @@ OrbitalsFeatures::set_OrbH_features_data(
 		}
 	}
 	if ( res1name == "ARG" ) {
-		Bxyz = res1.atom(res1.atom_index(" CZ ")).xyz();;
+		Bxyz = res1.atom(res1.atom_index(" CZ ")).xyz();
 	}
 	AHunit = Hxyz - Orbxyz;
 	AHunit.normalize();

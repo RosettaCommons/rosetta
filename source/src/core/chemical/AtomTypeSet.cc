@@ -153,7 +153,7 @@ AtomTypeSet::name() const {
 int
 AtomTypeSet::atom_type_index( std::string const & atom_type_name ) const
 {
-	std::map< std::string, int >::const_iterator
+	auto
 		iter( atom_type_index_.find( atom_type_name ) );
 	if ( iter == atom_type_index_.end() ) {
 		std::string trimmed( utility::trim(atom_type_name) ); // Try with stripped whitespace
@@ -213,7 +213,7 @@ AtomTypeSet::read_file( std::string const & filename )
 
 			//   std::string const name( line.substr(0,4) );
 			std::string const element( tag );
-			AtomType* atom_type_ptr( new AtomType( name_wo_whitespace, element ) );
+			auto* atom_type_ptr( new AtomType( name_wo_whitespace, element ) );
 
 			// now parse the parameters
 			for ( Size i=1; i<= ntags; ++i ) {
@@ -457,7 +457,7 @@ AtomTypeSet::create_atom_type_from_database(
 		>> lazaridis_karplus_degrees_of_freedom
 		>> lazaridis_karplus_volume;
 
-	AtomType * atom_type_ptr(new AtomType(atom_type_name, element));
+	auto * atom_type_ptr(new AtomType(atom_type_name, element));
 	atom_type_ptr->set_parameter("LJ_RADIUS", lennard_jones_radius);
 	atom_type_ptr->set_parameter("LJ_WDEPTH", lennard_jones_well_depth);
 	atom_type_ptr->set_parameter("LK_LAMBDA", lazaridis_karplus_lambda);
@@ -567,7 +567,7 @@ AtomTypeSet::clone_atom_types_from_commandline()
 
 		Size const atom_index( atom_type_index( atom_name ) );
 
-		AtomType* new_atom_type_ptr( new AtomType( *atoms_[ atom_index ] ) );
+		auto* new_atom_type_ptr( new AtomType( *atoms_[ atom_index ] ) );
 		new_atom_type_ptr->name( new_atom_name );
 		atoms_.push_back( new_atom_type_ptr );
 		atom_type_index_[ new_atom_name ] = atoms_.size();

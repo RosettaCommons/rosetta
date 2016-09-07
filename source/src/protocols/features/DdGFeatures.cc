@@ -91,13 +91,9 @@ DdGFeatures::DdGFeatures(
 	ddG_scan_mover_ = ddG_scan_mover;
 }
 
-DdGFeatures::DdGFeatures( DdGFeatures const & src) :
-	FeaturesReporter(src),
-	ddG_scan_mover_(src.ddG_scan_mover_)
-{}
+DdGFeatures::DdGFeatures( DdGFeatures const & ) = default;
 
-DdGFeatures::~DdGFeatures()
-{}
+DdGFeatures::~DdGFeatures() = default;
 
 string
 DdGFeatures::type_name() const { return "DdGFeatures"; }

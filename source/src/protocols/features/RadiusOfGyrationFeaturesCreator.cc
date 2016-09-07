@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 RadiusOfGyrationFeaturesCreator::RadiusOfGyrationFeaturesCreator() {}
-RadiusOfGyrationFeaturesCreator::~RadiusOfGyrationFeaturesCreator() {}
+RadiusOfGyrationFeaturesCreator::~RadiusOfGyrationFeaturesCreator() = default;
 FeaturesReporterOP RadiusOfGyrationFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new RadiusOfGyrationFeatures );
 }

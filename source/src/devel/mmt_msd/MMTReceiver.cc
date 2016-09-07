@@ -56,7 +56,7 @@ namespace mmt_msd {
 static THREAD_LOCAL basic::Tracer TR( "devel.mmt_msd.MMTReceiver" );
 
 StateData::StateData() {}
-StateData::~StateData() {}
+StateData::~StateData() = default;
 
 MMTReceiver::MMTReceiver() :
 	my_mpi_rank_( 0 ),
@@ -70,7 +70,7 @@ MMTReceiver::MMTReceiver() :
 	my_mpi_rank_ = utility::mpi_rank();
 }
 
-MMTReceiver::~MMTReceiver() {}
+MMTReceiver::~MMTReceiver() = default;
 
 void MMTReceiver::set_max_capacity( core::Size nthreads_max )
 {
@@ -154,7 +154,7 @@ MMTReceiver::start_new_generation()
 			return true;
 		}
 
-		for ( RunningJobsList::iterator iter = running_jobs_.begin(); iter != running_jobs_.end(); /* no increment */ ) {
+		for ( auto iter = running_jobs_.begin(); iter != running_jobs_.end(); /* no increment */ ) {
 			if ( iter->second->optimization_complete() ) {
 				//TR << "Sending completed job to node 0" << std::endl;
 				send_job_result_to_node0( *iter );
@@ -188,7 +188,7 @@ void MMTReceiver::send_job_result_to_node0( RunningJob const & job )
 	utility::send_double_to_node( 0, job.second->final_energy() );
 	utility::send_double_to_node( 0, job.second->running_time() );
 	utility::send_integer_to_node( 0, job.second->n_npd_properties() );
-	for ( MMTPackingJob::npd_properties::const_iterator
+	for ( auto
 			iter = job.second->npd_properties_begin(),
 			iter_end = job.second->npd_properties_end();
 			iter != iter_end; ++iter ) {
@@ -212,7 +212,7 @@ bool MMTReceiver::discard_old_result()
 	core::Size  state_index  = utility::receive_integer_from_node( 0 );
 	std::string seqstring    = utility::receive_string_from_node( 0 );
 	StateAndSequencePair job_ssp = std::make_pair( state_index, seqstring );
-	best_jobs_[ job_ssp ] = 0; // set the job pointer to 0; leave the element in the map
+	best_jobs_[ job_ssp ] = nullptr; // set the job pointer to 0; leave the element in the map
 	return true;
 }
 
@@ -228,7 +228,7 @@ bool MMTReceiver::recreate_previously_generated_result_pose()
 
 	MMTPackingJobOP job = best_jobs_[ job_ssp ];
 
-	if ( job == 0 ) {
+	if ( job == nullptr ) {
 		utility::send_integer_to_node( 0, error );
 		std::string emessage = "Could not find result for previously generated pose. Node " + utility::to_string( utility::mpi_rank() ) + "\n";
 		utility::send_string_to_node( 0, emessage );
@@ -361,7 +361,7 @@ MMTReceiver::receive_new_job()
 
 	StateAndSequencePair job_ssp = std::make_pair( sid.state_index, seqstring );
 	curr_gen_jobs_[ job_ssp ] = job;
-	running_jobs_.push_back( std::make_pair( job_ssp, job ) );
+	running_jobs_.emplace_back(std::make_pair( job_ssp, job ) );
 	++curr_njobs_running_;
 
 }
@@ -433,7 +433,7 @@ void
 MMTReceiver::delete_running_job( RunningJobsList::iterator & iter )
 {
 	--curr_njobs_running_;
-	RunningJobsList::iterator iternext = iter;
+	auto iternext = iter;
 	++iternext;
 	running_jobs_.erase( iter );
 	iter = iternext;

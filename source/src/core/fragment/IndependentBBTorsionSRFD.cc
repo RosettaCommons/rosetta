@@ -47,13 +47,11 @@ IndependentBBTorsionSRFD::IndependentBBTorsionSRFD(
 
 
 /// @brief copy constructor
-IndependentBBTorsionSRFD::IndependentBBTorsionSRFD( IndependentBBTorsionSRFD const & rval ) :
-	Super( rval )
-{}
+IndependentBBTorsionSRFD::IndependentBBTorsionSRFD( IndependentBBTorsionSRFD const & ) = default;
 
 
 /// @brief default destructor
-IndependentBBTorsionSRFD::~IndependentBBTorsionSRFD() {}
+IndependentBBTorsionSRFD::~IndependentBBTorsionSRFD() = default;
 
 
 /// @brief copy assignment

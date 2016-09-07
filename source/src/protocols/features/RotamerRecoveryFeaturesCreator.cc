@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 RotamerRecoveryFeaturesCreator::RotamerRecoveryFeaturesCreator() {}
-RotamerRecoveryFeaturesCreator::~RotamerRecoveryFeaturesCreator() {}
+RotamerRecoveryFeaturesCreator::~RotamerRecoveryFeaturesCreator() = default;
 FeaturesReporterOP RotamerRecoveryFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new RotamerRecoveryFeatures );
 }

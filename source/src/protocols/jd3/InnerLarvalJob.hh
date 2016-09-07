@@ -60,7 +60,7 @@ public:
 	InnerLarvalJob();
 	InnerLarvalJob( core::Size nstruct );
 
-	virtual ~InnerLarvalJob();
+	~InnerLarvalJob() override;
 
 	/// @brief Determine if two jobs are defined with the same set of PoseInputSources
 	bool sources_same( InnerLarvalJob const & other ) const;

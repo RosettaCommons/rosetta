@@ -29,8 +29,8 @@ namespace enzdes {
 class RemoveLigandFilterCreator : public filters::FilterCreator
 {
 public:
-	virtual filters::FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	filters::FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 

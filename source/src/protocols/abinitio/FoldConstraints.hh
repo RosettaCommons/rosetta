@@ -96,17 +96,17 @@ public:
 	FoldConstraints( FoldConstraints const & src );
 
 	/// @brief Explicit destructor to handle OPs
-	~FoldConstraints();
+	~FoldConstraints() override;
 
 	/// @brief ...
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 	/// @brief run the protocol
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// @brief sets the usual scores ( score0,score1, score2/5 etc. ) and additionally atom_pair_constraints to 1.0
-	void set_default_scores();
+	void set_default_scores() override;
 
 	/// @brief
 	void set_constraint_weight( core::Real setting ) {
@@ -114,7 +114,7 @@ public:
 		set_score_weight( core::scoring::atom_pair_constraint, constraint_weight_ );
 	};
 
-	virtual void set_default_options();
+	void set_default_options() override;
 	static void register_options();
 
 	void set_show_viol_level( core::Size setting ) {
@@ -122,19 +122,19 @@ public:
 	}
 protected:
 	//overload some methods of ClassicAbinitio to change the MaxSeqSep of the Constraints throughout the protocol
-	bool prepare_stage1( core::pose::Pose& pose );
-	bool prepare_stage2( core::pose::Pose& pose );
-	bool prepare_stage4( core::pose::Pose& pose );
-	bool prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations );
-	bool prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations );
+	bool prepare_stage1( core::pose::Pose& pose ) override;
+	bool prepare_stage2( core::pose::Pose& pose ) override;
+	bool prepare_stage4( core::pose::Pose& pose ) override;
+	bool prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) override;
+	bool prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) override;
 
-	bool do_stage1_cycles( core::pose::Pose& pose );
-	bool do_stage2_cycles( core::pose::Pose& pose );
+	bool do_stage1_cycles( core::pose::Pose& pose ) override;
+	bool do_stage2_cycles( core::pose::Pose& pose ) override;
 
 	virtual void setup_default_min_move();
 
 	//@brief change the movemap ( is propagated to mover-objects )
-	virtual void set_movemap ( core::kinematics::MoveMapCOP mm );
+	void set_movemap ( core::kinematics::MoveMapCOP mm ) override;
 
 	void set_min_move( protocols::simple_moves::MinMoverOP mm);
 

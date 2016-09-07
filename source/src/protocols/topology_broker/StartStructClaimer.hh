@@ -70,30 +70,30 @@ public:
 
 	StartStructClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<StartStructClaimer>( FragmentClaimer::shared_from_this() ); }
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new StartStructClaimer( *this ) );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
 	/// @brief overloaded to allow perturbation of start structure
-	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
-	virtual void generate_claims( claims::DofClaims& );
+	void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) override;
+	void generate_claims( claims::DofClaims& ) override;
 
 
 	static std::string _static_type_name() {
 		return "StartStructClaimer";
 	}
 
-	virtual void new_decoy( core::pose::Pose const& );
-	virtual void new_decoy( );
-	virtual bool read_tag( std::string tag, std::istream & );
+	void new_decoy( core::pose::Pose const& ) override;
+	void new_decoy( ) override;
+	bool read_tag( std::string tag, std::istream & ) override;
 
-	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const
-	{ return NULL; }; /*does not provide mover*/
+	moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const override
+	{ return nullptr; }; /*does not provide mover*/
 
 protected:
 	void generate_init_frags( core::pose::Pose const& );

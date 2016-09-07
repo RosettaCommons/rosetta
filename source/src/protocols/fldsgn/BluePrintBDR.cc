@@ -198,7 +198,7 @@ BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
 }
 
 /// @brief default destructor
-BluePrintBDR::~BluePrintBDR() {}
+BluePrintBDR::~BluePrintBDR() = default;
 
 /// @brief clone this object
 BluePrintBDR::MoverOP

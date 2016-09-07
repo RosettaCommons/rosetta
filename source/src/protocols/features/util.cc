@@ -248,7 +248,7 @@ write_features_reporters_table(
 	features_reporters_schema.write(db_session);
 
 	std::vector< std::string > column_names;
-	column_names.push_back("report_name");
+	column_names.emplace_back("report_name");
 	std::vector< std::string > values;
 
 	BOOST_FOREACH ( FeaturesReporterOP const & reporter, features_reporters ) {
@@ -392,7 +392,7 @@ struct_ids_from_tag(
 std::string serialize_residue_xyz_coords(core::conformation::Residue const & residue)
 {
 	//6bitencode and decode work best with arrays
-	core::Real* coord_data = new core::Real[residue.natoms()*3];
+	auto* coord_data = new core::Real[residue.natoms()*3];
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 		core::Size array_index = (atom_index - 1)*3;
 		numeric::xyzVector<core::Real> xyz_coords(residue.xyz(atom_index));
@@ -413,7 +413,7 @@ std::string serialize_residue_xyz_coords(core::conformation::Residue const & res
 utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::string const & data, core::Size natoms)
 {
 	//natoms really needs to be correct
-	core::Real* coord_data = new core::Real[natoms*3];
+	auto* coord_data = new core::Real[natoms*3];
 	//core::Size memory_size = natoms*3*sizeof(core::Real);  // unused ~Labonte
 	utility::decode6bit((unsigned char*)coord_data,data);
 

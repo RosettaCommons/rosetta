@@ -46,7 +46,7 @@ namespace antibody {
 
 // default constructor
 RefineBetaBarrel::RefineBetaBarrel() : Mover() {}
-RefineBetaBarrel::~RefineBetaBarrel() {}
+RefineBetaBarrel::~RefineBetaBarrel() = default;
 
 
 RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info) : Mover() {

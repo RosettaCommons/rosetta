@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 ProteinRMSDFeaturesCreator::ProteinRMSDFeaturesCreator() {}
-ProteinRMSDFeaturesCreator::~ProteinRMSDFeaturesCreator() {}
+ProteinRMSDFeaturesCreator::~ProteinRMSDFeaturesCreator() = default;
 FeaturesReporterOP ProteinRMSDFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ProteinRMSDFeatures );
 }

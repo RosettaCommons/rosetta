@@ -66,18 +66,18 @@ public:
 	operator=( UniformRotationMover const & src );
 
 	/// @brief Destructor
-	~UniformRotationMover();
+	~UniformRotationMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Apply Rotation
 	/// @brief Rotate the membrane to the new normal position
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 private: // methods
 
@@ -121,18 +121,18 @@ public:
 	operator=( UniformTranslationMover const & src );
 
 	/// @brief Destructor
-	~UniformTranslationMover();
+	~UniformTranslationMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 private:
 

@@ -66,7 +66,7 @@ BalancedKicMover::BalancedKicMover() { // {{{1
 	is_fold_tree_stale_ = true;
 }
 
-BalancedKicMover::~BalancedKicMover() {} // {{{1
+BalancedKicMover::~BalancedKicMover() = default; // {{{1
 
 void BalancedKicMover::apply(Pose & pose) { // {{{1
 	ClosureProblemOP problem( new ClosureProblem() );
@@ -197,7 +197,7 @@ bool BalancedKicMover::is_solution_trivial(
 	SolutionList const & perturbed_solutions)
 {
 	Real distance, closest_distance = numeric_limits<Real>::infinity();
-	ClosureSolutionCOP closest_solution = NULL;
+	ClosureSolutionCOP closest_solution = nullptr;
 	ChainedSolutionList all_solutions(
 		unperturbed_solutions, perturbed_solutions);
 
@@ -209,7 +209,7 @@ bool BalancedKicMover::is_solution_trivial(
 		}
 	}
 
-	runtime_assert(closest_solution.get() != NULL);
+	runtime_assert(closest_solution.get() != nullptr);
 	return picked_solution.get() == closest_solution.get();
 }
 // }}}1

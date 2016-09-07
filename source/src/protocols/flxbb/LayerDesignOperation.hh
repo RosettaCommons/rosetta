@@ -130,10 +130,10 @@ public:
 	LayerDesignOperation( LayerDesignOperation const & rval );
 
 	/// @brief destructor
-	virtual ~LayerDesignOperation();
+	~LayerDesignOperation() override;
 
 	/// @brief make clone
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
 public:
 
@@ -233,7 +233,7 @@ public:
 
 public:
 
-	void parse_tag( TagCOP tag, DataMap & );
+	void parse_tag( TagCOP tag, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "LayerDesign"; }
 
@@ -255,7 +255,7 @@ public:
 public:
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 
 private:
 	/// @brief gets a list of allowed amino acids, and includes the current amino acid in addition to those allowed by layer
@@ -366,9 +366,9 @@ class CombinedTaskOperation : public core::pack::task::operation::TaskOperation 
 public:
 	CombinedTaskOperation(VecTaskOP ops);
 	/// @brief apply
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	void apply( Pose const & pose, PackerTask & task ) const override;
 	/// @brief make clone
-	virtual TaskOperationOP clone() const { return TaskOperationOP( new CombinedTaskOperation( *this ) ); }
+	TaskOperationOP clone() const override { return TaskOperationOP( new CombinedTaskOperation( *this ) ); }
 
 private:
 	VecTaskOP task_operations_;

@@ -75,15 +75,15 @@ SetReturningPackRotamersMover::apply( pose::Pose & pose ) {
 	pose.update_residue_neighbors();
 
 	// guarantee of valid ScoreFunction and PackerTask postponed until now
-	if ( this->score_function() == 0 ) {
+	if ( this->score_function() == nullptr ) {
 		TR << "undefined ScoreFunction -- creating a default one" << std::endl;
 		this->score_function( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 	}
 
 	// if present, task_factory_ always overrides/regenerates task_
-	if ( this->task_factory() != 0 ) {
+	if ( this->task_factory() != nullptr ) {
 		this->task( (this->task_factory())->create_task_and_apply_taskoperations( pose ) );
-	} else if ( this->task() == 0 ) {
+	} else if ( this->task() == nullptr ) {
 		TR << "undefined PackerTask -- creating a default one" << std::endl;
 		this->task( task::TaskFactory::create_packer_task( pose ) );
 	} else runtime_assert( task_is_valid( pose ) );

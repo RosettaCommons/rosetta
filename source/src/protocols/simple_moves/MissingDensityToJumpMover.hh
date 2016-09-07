@@ -46,12 +46,12 @@ public:
 	/// @brief Copy constructor
 	MissingDensityToJumpMover(MissingDensityToJumpMover const & object_to_copy);
 
-	~MissingDensityToJumpMover();
+	~MissingDensityToJumpMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 };
 

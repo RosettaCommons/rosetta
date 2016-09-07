@@ -32,7 +32,7 @@ public:
 	typedef std::map<std::string, basic::MetricValueBaseOP > MetricValueMap;
 
 	SingleStateEntityData() : fitness_(0) {}
-	virtual ~SingleStateEntityData() {}
+	virtual ~SingleStateEntityData() = default;
 
 	core::Real fitness() const { return fitness_; }
 	void fitness(core::Real fitness) { fitness_ = fitness; }
@@ -42,8 +42,8 @@ public:
 		std::string const & name
 	) const
 	{
-		MetricValueMap::const_iterator iter(metric_value_map_.find(name));
-		if ( iter != metric_value_map_.end() ) return NULL;
+		auto iter(metric_value_map_.find(name));
+		if ( iter != metric_value_map_.end() ) return nullptr;
 		return iter->second;
 	}
 

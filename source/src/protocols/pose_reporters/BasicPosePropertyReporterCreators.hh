@@ -22,20 +22,20 @@ namespace pose_reporters {
 
 class EnergyReporterCreator : public protocols::rosetta_scripts::PosePropertyReporterCreator {
 public:
-	virtual protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const;
-	virtual std::string keyname() const { return "EnergyReporter"; }
+	protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const override;
+	std::string keyname() const override { return "EnergyReporter"; }
 };
 
 class FilterReporterCreator : public protocols::rosetta_scripts::PosePropertyReporterCreator {
 public:
-	virtual protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const;
-	virtual std::string keyname() const { return "FilterReporter"; }
+	protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const override;
+	std::string keyname() const override { return "FilterReporter"; }
 };
 
 class RMSDReporterCreator : public protocols::rosetta_scripts::PosePropertyReporterCreator {
 public:
-	virtual protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const;
-	virtual std::string keyname() const { return "RMSDReporter"; }
+	protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const override;
+	std::string keyname() const override { return "RMSDReporter"; }
 };
 
 }

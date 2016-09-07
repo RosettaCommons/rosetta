@@ -50,6 +50,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.farna.RNA_FragmentMonteCarlo" );
 
@@ -78,7 +79,7 @@ namespace farna {
 
 //Constructor
 RNA_FragmentMonteCarlo::RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP options ):
-	options_( options ),
+	options_(std::move( options )),
 	monte_carlo_cycles_max_default_( 100000 ),
 	monte_carlo_cycles_( 0 ), // will be updated later based on options
 	rounds_( 0 ), // will be updated later based on options
@@ -92,8 +93,7 @@ RNA_FragmentMonteCarlo::RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP
 {}
 
 //Destructor
-RNA_FragmentMonteCarlo::~RNA_FragmentMonteCarlo()
-{}
+RNA_FragmentMonteCarlo::~RNA_FragmentMonteCarlo() = default;
 
 ////////////////////////////////////////////////////////////////////////////
 void
@@ -123,14 +123,14 @@ RNA_FragmentMonteCarlo::initialize_parameters() {
 void
 RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
 
-	if ( user_input_rna_chunk_library_ != 0 ) {
+	if ( user_input_rna_chunk_library_ != nullptr ) {
 		rna_chunk_library_ = user_input_rna_chunk_library_->clone();
 	} else {
 		rna_chunk_library_ = RNA_ChunkLibraryOP( new RNA_ChunkLibrary( pose ) );
 		if ( options_->disallow_bps_at_extra_min_res() ) rna_chunk_library_->atom_level_domain_map()->disallow_movement_of_input_res( pose );
 	}
 
-	if ( rna_base_pair_handler_ == 0 ) rna_base_pair_handler_ = RNA_BasePairHandlerOP( new RNA_BasePairHandler( pose ) );
+	if ( rna_base_pair_handler_ == nullptr ) rna_base_pair_handler_ = RNA_BasePairHandlerOP( new RNA_BasePairHandler( pose ) );
 
 	if ( options_->bps_moves() ) {
 		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_base_pair_handler_->get_canonical_base_pair_steps(),
@@ -207,13 +207,13 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 	for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
 
-		time_t pdb_start_time = time(NULL);
+		time_t pdb_start_time = time(nullptr);
 
 		if ( ntries > 1 ) TR << TR.Red << "Did not pass filters. Trying the model again: trial " << ntries << " out of " << max_tries << TR.Reset << std::endl;
 
 		pose = start_pose;
 
-		if ( !refine_pose_ && rna_de_novo_pose_initializer_ != 0 ) rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *rna_jump_mover_, atom_level_domain_map_ );
+		if ( !refine_pose_ && rna_de_novo_pose_initializer_ != nullptr ) rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *rna_jump_mover_, atom_level_domain_map_ );
 
 		if ( !options_->bps_moves() ) rna_base_pair_handler_->setup_base_pair_constraints( pose, atom_level_domain_map_, options_->suppress_bp_constraint() ); // needs to happen after setting cutpoint variants, etc.
 
@@ -314,7 +314,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			}
 		}
 
-		time_t pdb_end_time = time(NULL);
+		time_t pdb_end_time = time(nullptr);
 		if ( options_->verbose() ) TR << "Finished fragment assembly of " << out_file_tag_ << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 
 		if ( !found_solution ) { // Just try again if early exit from above
@@ -809,7 +809,7 @@ RNA_FragmentMonteCarlo::get_rmsd_no_superimpose( core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
 
-	runtime_assert( get_native_pose() != 0 );
+	runtime_assert( get_native_pose() != nullptr );
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map;
 	setup_matching_heavy_atoms( *get_native_pose(), pose, atom_id_map ); // no virtuals, no hydrogens.
 	check_for_loop_modeling_case( atom_id_map );
@@ -822,7 +822,7 @@ core::Real
 RNA_FragmentMonteCarlo::get_rmsd_stems_no_superimpose ( core::pose::Pose const & pose ) const {
 	using namespace core::scoring;
 
-	runtime_assert( get_native_pose() != 0 );
+	runtime_assert( get_native_pose() != nullptr );
 	utility::vector1< Size > stem_residues( rna_base_pair_handler()->get_stem_residues( pose ) );
 	if ( stem_residues.empty() ) return 0.0;
 

@@ -64,7 +64,7 @@ string RuntimeFeaturesCreator::type_name() const { // {{{1
 
 RuntimeFeatures::RuntimeFeatures() {} // {{{1
 
-RuntimeFeatures::~RuntimeFeatures() {} // {{{1
+RuntimeFeatures::~RuntimeFeatures() = default; // {{{1
 
 vector1 <string> RuntimeFeatures::features_reporter_dependencies() const { // {{{1
 	return make_vector1("StructureFeatures");

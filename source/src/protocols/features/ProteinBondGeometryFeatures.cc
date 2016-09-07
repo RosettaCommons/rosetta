@@ -73,7 +73,7 @@ ProteinBondGeometryFeatures::ProteinBondGeometryFeatures( ProteinBondGeometryFea
 {
 }
 
-ProteinBondGeometryFeatures::~ProteinBondGeometryFeatures(){}
+ProteinBondGeometryFeatures::~ProteinBondGeometryFeatures()= default;
 
 string
 ProteinBondGeometryFeatures::type_name() const { return "ProteinBondGeometryFeatures"; }

@@ -60,16 +60,12 @@ struct Line {
 
 	/// @brief copy constructor
 	inline
-	Line( Line const & rval ) :
-		slope( rval.slope ),
-		intercept( rval.intercept ),
-		region( rval.region )
-	{}
+	Line( Line const & ) = default;
 
 
 	/// @brief default destructor
 	inline
-	~Line() {}
+	~Line() = default;
 
 
 	/// @brief copy assignment
@@ -132,7 +128,7 @@ public:
 	}
 
 	/// @brief destrurctor
-	~ABEGO() {}
+	~ABEGO() = default;
 
 public: // accessor
 
@@ -183,7 +179,7 @@ public:
 	ABEGOManager();
 
 	/// @brief value constructor
-	virtual ~ABEGOManager() ; // auto-removing definition from header{}
+	~ABEGOManager() override ; // auto-removing definition from header{}
 
 	/// @brief copy constructor
 	ABEGOManager( ABEGOManager const & rval );

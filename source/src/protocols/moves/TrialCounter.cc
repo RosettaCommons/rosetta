@@ -44,9 +44,8 @@ TrialCounter::reset()
 core::Size
 TrialCounter::total_trials() const {
 	Size ntrials( 0 );
-	for ( std::map< std::string, int >::const_iterator
-			it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
-		ntrials += it->second;
+	for (const auto & it : trial_counter_) {
+		ntrials += it.second;
 	}
 	return ntrials;
 }
@@ -60,16 +59,15 @@ TrialCounter::show( std::ostream& os, std::string line_header, bool endline ) co
 	if ( line_header.size() ) {
 		line_header=line_header+" ";
 	}
-	for ( std::map< std::string, int >::const_iterator
-			it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
-		std::string const & tag( it->first );
-		int const ntrials( it->second );
+	for (const auto & it : trial_counter_) {
+		std::string const & tag( it.first );
+		int const ntrials( it.second );
 		if ( accept_counter_.count( tag ) ) {
 			int const accepts( accept_counter_.find( tag )->second );
 			os << line_header << A( 16, tag ) <<
 				" trials= " << I( 6, ntrials ) << "; " <<
 				" accepts= " << F( 6, 4, core::Real( accepts )/ntrials ) << "; ";
-			std::map< std::string, core::Real >::const_iterator edc_it = energy_drop_counter_.find( tag );
+			auto edc_it = energy_drop_counter_.find( tag );
 			if ( edc_it != energy_drop_counter_.end() ) {
 				core::Real const energy_drop( edc_it->second );
 				os << " energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials );

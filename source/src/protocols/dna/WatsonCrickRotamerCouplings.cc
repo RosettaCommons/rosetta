@@ -67,7 +67,7 @@ std::string WatsonCrickRotamerCouplingsCreator::keyname() const
 	return WatsonCrickRotamerCouplings::keyname();
 }
 
-WatsonCrickRotamerCouplings::~WatsonCrickRotamerCouplings() {}
+WatsonCrickRotamerCouplings::~WatsonCrickRotamerCouplings() = default;
 
 TaskOperationOP WatsonCrickRotamerCouplings::clone() const
 {

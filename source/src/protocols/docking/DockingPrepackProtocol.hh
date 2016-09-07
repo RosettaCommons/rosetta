@@ -48,7 +48,7 @@ public:
 	/// @brief Default constructor
 	DockingPrepackProtocol();
 
-	~DockingPrepackProtocol();
+	~DockingPrepackProtocol() override;
 
 	/// @brief Assigns default values to members
 	void setup_defaults();
@@ -57,9 +57,9 @@ public:
 	void setup_pack_operation_movers();
 
 
-	void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Scores and outputs the pose - jd2 compatible.
 	void score_and_output(std::string filename,core::pose::Pose &);

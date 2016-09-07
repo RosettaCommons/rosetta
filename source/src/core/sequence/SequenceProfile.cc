@@ -376,9 +376,8 @@ SequenceProfile::occurrence_data() const {
 /// @brief Multiply all profile weights by factor
 void SequenceProfile::rescale(core::Real factor) {
 	for ( Size ii = 1; ii <= profile().size(); ++ii ) {
-		for ( utility::vector1< core::Real >::iterator
-				it = profile_[ii].begin(), end = profile_[ii].end(); it != end; ++it ) {
-			*it *= factor;
+		for (double & it : profile_[ii]) {
+			it *= factor;
 		}
 	}
 	if ( factor < 0 ) {
@@ -465,7 +464,7 @@ void SequenceProfile::delete_position(
 	runtime_assert( pos <= length() );
 
 	vector1< vector1< Real > > new_prof( profile() );
-	vector1< vector1< Real > >::iterator it
+	auto it
 		= new_prof.begin() + pos - start();
 
 	runtime_assert( it != new_prof.end() );
@@ -519,23 +518,19 @@ void SequenceProfile::scores_to_probs_(
 	// calculate partition (aka Z), with this definition:
 	// Z = sum( exp( score / kT ) )
 	core::Real partition( 0.0 );
-	for ( vector1< core::Real >::iterator
-			it = scores.begin(), end = scores.end(); it != end; ++it
-			) {
+	for (double & score : scores) {
 		if ( negative_better ) {
-			*it = exp( -1 * *it / kT );
+			score = exp( -1 * score / kT );
 		} else {
-			*it = exp( *it / kT );
+			score = exp( score / kT );
 		}
-		partition += *it;
+		partition += score;
 	}
 
 	// transform scores using the partition calculated above:
 	// P(s) = exp( -1  * score / kT ) ) / Z
-	for ( utility::vector1< core::Real >::iterator
-			it = scores.begin(), end = scores.end(); it != end; ++it
-			) {
-		*it = *it / partition;
+	for (double & score : scores) {
+		score = score / partition;
 	}
 } // scores_to_probs_
 

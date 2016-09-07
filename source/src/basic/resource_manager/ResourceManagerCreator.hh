@@ -37,8 +37,8 @@ class ResourceManagerCreator : public utility::pointer::ReferenceCount {
 public:
 	friend class ResourceManagerFactory;
 
-	virtual
-	~ResourceManagerCreator();
+	
+	~ResourceManagerCreator() override;
 
 private:
 	/// @brief Returns a raw pointer, not an owning pointer, to the ResourceManager.

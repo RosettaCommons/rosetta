@@ -18,6 +18,7 @@
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/WorkUnitList.hh>
 
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -53,7 +54,7 @@ public:
 public:
 	WorkUnitQueue():memory_limit_(0) {};
 
-	virtual ~WorkUnitQueue(){};
+	virtual ~WorkUnitQueue()= default;
 
 	virtual core::Size  size() const { return wus_.size(); }
 
@@ -99,19 +100,19 @@ private:
 // as above but uses a disk-swap to prevent overflows
 class WorkUnitQueue_Swapped: public WorkUnitQueue {
 public:
-	WorkUnitQueue_Swapped( WorkUnitManager *wum, const std::string & swap_file, core::Size memory_limit ):
+	WorkUnitQueue_Swapped( WorkUnitManager *wum, std::string  swap_file, core::Size memory_limit ):
 		WorkUnitQueue(),
-		swap_file_( swap_file ),
+		swap_file_(std::move( swap_file )),
 		memory_limit_( memory_limit ),
 		wum_( wum )
 	{
 	}
 
-	virtual ~WorkUnitQueue_Swapped(){};
+	~WorkUnitQueue_Swapped() override= default;
 
 	//virtual core::Size  size();
 
-	virtual void add( WorkUnitBaseOP new_wu );
+	void add( WorkUnitBaseOP new_wu ) override;
 
 	const std::string &swap_file() const { return swap_file_; }
 
@@ -148,7 +149,7 @@ public:
 	WorkUnitManager(){
 	}
 
-	virtual ~WorkUnitManager(){}
+	~WorkUnitManager() override= default;
 
 	// @brief Main loop
 	void virtual go()=0;

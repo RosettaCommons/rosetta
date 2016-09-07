@@ -41,7 +41,7 @@ class RRComparer : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~RRComparer();
+	~RRComparer() override;
 
 	// RRComparer();
 	//
@@ -82,26 +82,26 @@ public: // constructors destructors
 
 	RRComparerRotBins();
 
-	~RRComparerRotBins();
+	~RRComparerRotBins() override;
 
 	RRComparerRotBins( RRComparerRotBins const & );
 
 public: // public interface
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	std::string
-	get_parameters() const;
+	get_parameters() const override;
 
-	virtual
+	
 	void
 	set_recovery_threshold(
-		core::Real const recovery_threshold);
+		core::Real const recovery_threshold) override;
 
-	virtual
+	
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -109,7 +109,7 @@ public: // public interface
 		core::conformation::Residue const & res1,
 		core::conformation::Residue const & res2,
 		core::Real & score,
-		bool & recovered);
+		bool & recovered) override;
 
 private: // data members
 
@@ -123,28 +123,28 @@ public: // constructors destructors
 
 	RRComparerChiDiff();
 
-	~RRComparerChiDiff();
+	~RRComparerChiDiff() override;
 
 	RRComparerChiDiff( RRComparerChiDiff const & );
 
 public: // public interface
 
-	virtual void set_recovery_threshold( core::Real const setting );
+	void set_recovery_threshold( core::Real const setting ) override;
 
 	virtual
 	void
 	set_max_chi_considered( core::Size const max_chi );
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 
-	virtual
+	
 	std::string
-	get_parameters() const;
+	get_parameters() const override;
 
-	virtual
+	
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -152,7 +152,7 @@ public: // public interface
 		core::conformation::Residue const & res1,
 		core::conformation::Residue const & res2,
 		core::Real & score,
-		bool & recovered);
+		bool & recovered) override;
 
 private: // data members
 	core::Real tolerance_;

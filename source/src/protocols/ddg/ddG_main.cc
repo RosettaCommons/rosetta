@@ -320,7 +320,7 @@ ddG_main()
 
 		for ( Size i =1; i<=pose.total_residue(); i++ ) {
 			if ( storage_task->design_residue(i) ) {
-				for ( ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
+				for ( auto aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
 						aa_end(storage_task->residue_task(i).allowed_residue_types_end());
 						aa_iter != aa_end; ++aa_iter ) {
 					utility::vector1<core::chemical::AA> residues_to_mutate(pose.total_residue(),core::chemical::aa_unk);

@@ -34,14 +34,14 @@ public:
 		core::Size cycles = 0 );
 
 	//destructor
-	~FARNA_Optimizer();
+	~FARNA_Optimizer() override;
 
 public:
 
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "FARNA_Optimizer"; }
+	std::string get_name() const override{ return "FARNA_Optimizer"; }
 
 	void set_cycles( core::Size const & setting ){ cycles_ = setting; }
 	core::Size cycles() const { return cycles_; }

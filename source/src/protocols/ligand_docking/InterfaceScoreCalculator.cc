@@ -89,7 +89,7 @@ InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator cons
 	prefix_(that.prefix_)
 {}
 
-InterfaceScoreCalculator::~InterfaceScoreCalculator() {}
+InterfaceScoreCalculator::~InterfaceScoreCalculator() = default;
 
 protocols::moves::MoverOP InterfaceScoreCalculator::clone() const {
 	return protocols::moves::MoverOP( new InterfaceScoreCalculator( *this ) );

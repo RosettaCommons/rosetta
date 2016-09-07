@@ -64,7 +64,7 @@ CAcstGeneratorCreator::mover_name()
 	return "CAcstGenerator";
 }
 
-CAcstGenerator::~CAcstGenerator() {}
+CAcstGenerator::~CAcstGenerator() = default;
 
 CAcstGenerator::CAcstGenerator() :
 	protocols::moves::Mover( CAcstGeneratorCreator::mover_name() )

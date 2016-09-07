@@ -54,15 +54,15 @@ public:
 		core::Real tolerance_in
 	);
 
-	~JumpOutMover();
+	~JumpOutMover() override;
 
 	/// @brief Applies a move, and conditionally applies a second move.
 	/// @details This mover applies the first move, and checks if the score
 	/// difference between the initial score and the score after the first move is
 	/// within a tolerance. If the score after the first move is within the
 	/// tolerance, the second move is applied.
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	MoverOP first_mover_, second_mover_;

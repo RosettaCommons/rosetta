@@ -69,7 +69,7 @@ ResidueTypeConstraintMover::ResidueTypeConstraintMover( std::string const & type
 }
 
 // destructor
-ResidueTypeConstraintMover::~ResidueTypeConstraintMover(){}
+ResidueTypeConstraintMover::~ResidueTypeConstraintMover()= default;
 
 
 void

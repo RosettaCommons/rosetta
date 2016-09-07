@@ -131,8 +131,8 @@ IterativeLoophashLoopInserter::apply(
 
 	//core::Size max_lh_fragment_size = created_loop_.size() + (2*num_flanking_residues_to_match_);
 	core::Size min_lh_fragment_size=100000;
-	for ( core::Size i=0; i<lh_library_->hash_sizes().size(); ++i ) {
-		min_lh_fragment_size = std::min(min_lh_fragment_size, lh_library_->hash_sizes()[i]);
+	for (unsigned long i : lh_library_->hash_sizes()) {
+		min_lh_fragment_size = std::min(min_lh_fragment_size, i);
 	}
 
 	//restrict future loophash lookups to be maximally the size we just created

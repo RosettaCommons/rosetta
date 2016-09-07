@@ -40,7 +40,7 @@ public:
 	///  read in from the commandline
 	ScoreMover();
 
-	~ScoreMover();
+	~ScoreMover() override;
 
 	/// @brief constructor
 	/// @details creates the ScoreMover with the names passed in rather than
@@ -52,16 +52,16 @@ public:
 	/// @details creates the ScoreMover with the scorefunction itself passed in
 	ScoreMover( ScoreFunctionOP );
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual
+	
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	static void register_options();
 
@@ -71,9 +71,9 @@ public:
 	/// functions to be able to do the actual calculation in the protocols::moves::Mover
 	void insert_rms( core::Real rms ) { score_map_["rms"] = rms; }
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	virtual void test_move( Pose & pose )
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	void test_move( Pose & pose ) override
 	{
 		apply(pose);
 	}

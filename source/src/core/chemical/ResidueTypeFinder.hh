@@ -37,7 +37,7 @@ public:
 	ResidueTypeFinder( core::chemical::ResidueTypeSet const & residue_type_set );
 
 	//destructor
-	~ResidueTypeFinder();
+	~ResidueTypeFinder() override;
 
 public:
 

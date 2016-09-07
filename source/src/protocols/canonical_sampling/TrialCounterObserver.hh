@@ -43,12 +43,12 @@ public:
 	TrialCounterObserver();
 
 	/// @brief Default destructor.
-	virtual
-	~TrialCounterObserver();
+	
+	~TrialCounterObserver() override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void
 	parse_my_tag(
@@ -57,33 +57,33 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 	/// @brief Return false, as a valid pose is not required for counting trials.
-	virtual
+	
 	bool
-	requires_pose() { return false; }
+	requires_pose() override { return false; }
 
 private:
 	protocols::canonical_sampling::MultiTemperatureTrialCounter counters_;

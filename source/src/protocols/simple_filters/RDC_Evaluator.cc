@@ -36,6 +36,7 @@
 
 
 #include <protocols/evaluation/util.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.RMSD" );
@@ -62,11 +63,11 @@ RDC_Evaluator::apply( core::pose::Pose& pose ) const {
 	return energy_evaluator.eval_dipolar( pose, rdc_data_ ); //const
 }
 /// @brief evaluate pose
-SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size > const& selection, std::string tag, std::string file )
+SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size >  selection, std::string tag, std::string file )
 : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
-	selection_( selection ),
+	selection_(std::move( selection )),
 	tag_ ( tag ),
-	rdc_file_( file )
+	rdc_file_(std::move( file ))
 {
 	init_rdcs();
 }
@@ -74,7 +75,7 @@ SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size > const& selection, st
 SelectRDC_Evaluator::SelectRDC_Evaluator( utility::vector1< Size> const& selection, std::string tag, std::string file )
 : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 	tag_( tag ),
-	rdc_file_ ( file )
+	rdc_file_ (std::move( file ))
 {
 	copy( selection.begin(), selection.end(), std::back_inserter( selection_ ) );
 	init_rdcs();
@@ -105,15 +106,15 @@ SelectRDC_Evaluator::apply( core::pose::Pose& pose ) const {
 void
 SelectRDC_Evaluator::init_rdcs() {
 	using namespace scoring;
-	ResidualDipolarCoupling orig_rdcs( rdc_file_ );;
+	ResidualDipolarCoupling orig_rdcs( rdc_file_ );
 	ResidualDipolarCoupling::RDC_lines const& rdcs = orig_rdcs.get_RDC_data();
 	if ( selection_.size() ) {
 		ResidualDipolarCoupling::RDC_lines filtered;
-		for ( ResidualDipolarCoupling::RDC_lines::const_iterator it = rdcs.begin(); it != rdcs.end(); ++it ) {
-			core::scoring::ResidueSelection::const_iterator iter1 = find( selection_.begin(), selection_.end(), it->res1() );
-			core::scoring::ResidueSelection::const_iterator iter2 = find( selection_.begin(), selection_.end(), it->res2() );
+		for (const auto & rdc : rdcs) {
+			core::scoring::ResidueSelection::const_iterator iter1 = find( selection_.begin(), selection_.end(), rdc.res1() );
+			core::scoring::ResidueSelection::const_iterator iter2 = find( selection_.begin(), selection_.end(), rdc.res2() );
 			if ( iter1 != selection_.end() && iter2 != selection_.end() ) {
-				filtered.push_back( *it );
+				filtered.push_back( rdc );
 			}
 		}
 		rdc_data_ = core::scoring::ResidualDipolarCouplingOP( new ResidualDipolarCoupling( filtered ) );

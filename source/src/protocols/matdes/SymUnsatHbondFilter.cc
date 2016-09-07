@@ -97,17 +97,7 @@ SymUnsatHbondFilter::SymUnsatHbondFilter( core::Size const upper_cutoff, core::S
 {}
 
 // @brief copy constructor
-SymUnsatHbondFilter::SymUnsatHbondFilter( SymUnsatHbondFilter const & rval ):
-	Super( rval ),
-	upper_threshold_( rval.upper_threshold_ ),
-	jump_num_( rval.jump_num_ ),
-	sym_dof_names_( rval.sym_dof_names_ ),
-	verbose_( rval.verbose_ ),
-	write2pdb_( rval.write2pdb_ ),
-	mode_( rval.mode_ ),
-	compare_to_ref_( rval.compare_to_ref_ ),
-	reference_pose_( rval.reference_pose_ )
-{}
+SymUnsatHbondFilter::SymUnsatHbondFilter( SymUnsatHbondFilter const & )= default;
 
 protocols::filters::FilterOP
 SymUnsatHbondFilter::fresh_instance() const{

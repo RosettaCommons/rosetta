@@ -28,15 +28,15 @@ public:
 
   //  virtual ~AddEncounterConstraintMover();
 
-  virtual protocols::moves::MoverOP clone() const;
+  protocols::moves::MoverOP clone() const override;
 
-  virtual void apply( core::pose::Pose & pose );
+  void apply( core::pose::Pose & pose ) override;
   void compute_interface( core::pose::Pose & pose ) const;
 
   protocols::scoring::InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
   protocols::scoring::InterfaceInfo & nonconst_interface_from_pose( core::pose::Pose & ) const;
 
-  virtual std::string get_name() const;
+  std::string get_name() const override;
 
   void parse_my_tag(
 		    utility::tag::TagCOP tag,
@@ -44,7 +44,7 @@ public:
 		    protocols::filters::Filters_map const &,
 		    protocols::moves::Movers_map const &,
 		    core::pose::Pose const &
-  );
+  ) override;
 
 private:
 

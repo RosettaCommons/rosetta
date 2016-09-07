@@ -46,45 +46,45 @@ protected:
 public:
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-	virtual ~FileSystemJobDistributor();
+	~FileSystemJobDistributor() override;
 
-	virtual void restart();
+	void restart() override;
 
-	virtual
+	
 	core::Size
-	get_new_job_id();
+	get_new_job_id() override;
 
-	virtual
+	
 	void
-	mark_current_job_id_for_repetition();
+	mark_current_job_id_for_repetition() override;
 
-	virtual
+	
 	void
-	remove_bad_inputs_from_job_list();
+	remove_bad_inputs_from_job_list() override;
 
-	virtual
+	
 	void
-	current_job_finished();
+	current_job_finished() override;
 
-	virtual
+	
 	void
-	go( protocols::moves::MoverOP mover );
+	go( protocols::moves::MoverOP mover ) override;
 
 	friend class JobDistributorFactory; // calls protected ctor
 protected:
 
 	/// @brief This function is called upon a successful job completion; it has been virtualized so BOINC and MPI can delay/protect output
 	///base implementation is just a call to the job outputter
-	virtual
+	
 	void
-	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag );
+	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag ) override;
 
 	/// @brief This function is called when we five up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
-	virtual
+	
 	void
-	job_failed( core::pose::Pose & pose, bool will_retry );
+	job_failed( core::pose::Pose & pose, bool will_retry ) override;
 
-	virtual void handle_interrupt();
+	void handle_interrupt() override;
 
 private:
 	/// @brief delete all temporary files for this job

@@ -43,28 +43,28 @@ public:
 	IteratedConvergenceMover( MoverOP submover, filters::FilterCOP filter, core::Real delta=0.1, core::Size cycles=1, core::Size maxcycles=1000 );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~IteratedConvergenceMover();
+	~IteratedConvergenceMover() override;
 
 	// copy constructor
 	IteratedConvergenceMover( IteratedConvergenceMover const & other );
 
 	// methods
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 	// setters
 	void submover( MoverOP mover );

@@ -223,12 +223,11 @@ DarcParticleSwarmMinimizer::DarcPSO_fp_compare_(
 	core::Size num_rays = 0;
 	core::Real underpack_dist = 0, steric_dist = 0, rays_missing_ligand = 0, rays_missing_pocket = 0;
 
-	for ( std::list<spherical_coor_triplet>::const_iterator ni = nfp_.triplet_fingerprint_data().begin();
-			ni != nfp_.triplet_fingerprint_data().end(); ++ni ) {
+	for (const auto & ni : nfp_.triplet_fingerprint_data()) {
 
-		core::Real curr_phi = ni->phi;
-		core::Real curr_psi = ni->psi;
-		core::Size curr_ori = ni->ori;
+		core::Real curr_phi = ni.phi;
+		core::Real curr_psi = ni.psi;
+		core::Size curr_ori = ni.ori;
 		core::Real best_rho_sq(9999.);
 		//    core::Size best_intersecting_atom(0);
 		for ( Size i = 1, i_end = ligand_natoms_shapecalc_; i <= i_end; ++i ) {
@@ -266,22 +265,22 @@ DarcParticleSwarmMinimizer::DarcPSO_fp_compare_(
 			plaid_rho = sqrt(best_rho_sq);
 		}
 
-		if ( (plaid_rho > 9998.) && (ni->rho > 0.001) ) {
+		if ( (plaid_rho > 9998.) && (ni.rho > 0.001) ) {
 			Total_score += missing_point_weight;
 			rays_missing_ligand++;
 			num_rays++;
 		}
-		if ( (plaid_rho < 9999.) && (ni->rho < 0.001 ) ) {
+		if ( (plaid_rho < 9999.) && (ni.rho < 0.001 ) ) {
 			Total_score += extra_point_weight;
 			rays_missing_pocket++;
 			num_rays++;
 		}
-		if ( (plaid_rho < 9999.) && (ni->rho > 0.001 ) ) {
-			core::Real distance_deviation = std::abs( ni->rho - plaid_rho );
-			if ( plaid_rho > ni->rho ) underpack_dist += distance_deviation;
-			if ( plaid_rho < ni->rho ) steric_dist += distance_deviation;
-			core::Real dist_deviation = ( plaid_rho - ni->rho );
-			if ( dist_deviation < 0.0 ) dist_deviation = ( ni->rho - plaid_rho ) * steric_weight;
+		if ( (plaid_rho < 9999.) && (ni.rho > 0.001 ) ) {
+			core::Real distance_deviation = std::abs( ni.rho - plaid_rho );
+			if ( plaid_rho > ni.rho ) underpack_dist += distance_deviation;
+			if ( plaid_rho < ni.rho ) steric_dist += distance_deviation;
+			core::Real dist_deviation = ( plaid_rho - ni.rho );
+			if ( dist_deviation < 0.0 ) dist_deviation = ( ni.rho - plaid_rho ) * steric_weight;
 			Total_score += dist_deviation;
 			num_rays++;
 		}

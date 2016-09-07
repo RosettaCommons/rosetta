@@ -38,7 +38,7 @@ class TemplateHistory:  public basic::datacache::CacheableData {
 public:
 	TemplateHistory( core::pose::Pose &pose );
 
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new TemplateHistory(*this) );
 	}
 

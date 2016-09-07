@@ -35,6 +35,7 @@
 #include <core/chemical/types.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1_bool.hh>
 
 // C++ headers
@@ -64,24 +65,18 @@ public:
 	{}
 
 	Orbital(
-		std::string const & name_in,
+		std::string  name_in,
 		Size const orbital_type_index,
 		Vector const & xyz
 	):
-		name_( name_in ),
+		name_(std::move( name_in )),
 		orbital_type_index_(orbital_type_index),
 		ideal_xyz_(xyz),
 		icoor_(),
 		new_icoor_()
 	{}
 
-	Orbital(Orbital const & src) :
-		name_( src.name_ ),
-		orbital_type_index_(src.orbital_type_index_),
-		ideal_xyz_(src.ideal_xyz_),
-		icoor_(src.icoor_),
-		new_icoor_(src.new_icoor_)
-	{}
+	Orbital(Orbital const & ) = default;
 
 	void
 	print( std::ostream & out ) const;

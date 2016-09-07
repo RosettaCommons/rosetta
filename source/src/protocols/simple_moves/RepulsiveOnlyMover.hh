@@ -42,10 +42,10 @@ class RepulsiveOnlyMover : public protocols::moves::Mover {
 public:
 	// default constructor (nmoves=1)
 	RepulsiveOnlyMover();
-	~RepulsiveOnlyMover();//deconstructor
+	~RepulsiveOnlyMover() override;//deconstructor
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 	void set_mutate_to_glycine( bool setting ) {
 		mutate_to_glycine_ = setting;
 	}

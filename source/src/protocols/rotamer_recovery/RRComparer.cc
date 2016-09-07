@@ -44,7 +44,7 @@ namespace protocols {
 namespace rotamer_recovery {
 
 /// @details Auto-generated virtual destructor
-RRComparer::~RRComparer() {}
+RRComparer::~RRComparer() = default;
 
 static Tracer TR("protocol.moves.RRComparer");
 
@@ -57,7 +57,7 @@ RRComparerRotBins::RRComparerRotBins( RRComparerRotBins const & src) :
 	recovery_threshold_(src.recovery_threshold_)
 {}
 
-RRComparerRotBins::~RRComparerRotBins() {}
+RRComparerRotBins::~RRComparerRotBins() = default;
 
 void
 RRComparerRotBins::set_recovery_threshold(
@@ -127,7 +127,7 @@ RRComparerChiDiff::RRComparerChiDiff( RRComparerChiDiff const & src ) :
 	max_chi_considered_( src.max_chi_considered_ )
 {}
 
-RRComparerChiDiff::~RRComparerChiDiff() {}
+RRComparerChiDiff::~RRComparerChiDiff() = default;
 
 void
 RRComparerChiDiff::set_recovery_threshold( core::Real const setting ) { tolerance_ = setting; }

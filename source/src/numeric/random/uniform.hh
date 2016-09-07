@@ -28,7 +28,7 @@
 #include <string>
 #include <cstdlib> //required by GCC 4.3.2
 
-#include <assert.h>
+#include <cassert>
 
 namespace numeric {
 namespace random {
@@ -40,7 +40,7 @@ class uniform_RG : public utility::pointer::ReferenceCount
 public:
 	uniform_RG() {}
 
-	virtual ~uniform_RG() {}
+	~uniform_RG() override = default;
 
 	virtual void setSeed(int const seed) = 0;
 
@@ -66,19 +66,19 @@ public:
 		seed_(0) // Clear, for consistent starting state
 	{}
 
-	inline virtual ~standard_RG() {}
+	inline ~standard_RG() override = default;
 
-	inline void setSeed(int const seed) { seed_ = seed; srand( seed_ ); }
+	inline void setSeed(int const seed) override { seed_ = seed; srand( seed_ ); }
 
-	inline void setSeed(std::string const &) { assert( false ); } // Not implemented yet!
+	inline void setSeed(std::string const &) override { assert( false ); } // Not implemented yet!
 
-	inline int getSeed() { return seed_; }
+	inline int getSeed() override { return seed_; }
 
-	inline double getRandom() { return (double)rand() / (double)RAND_MAX; }
+	inline double getRandom() override { return (double)rand() / (double)RAND_MAX; }
 
-	virtual void saveState(std::ostream & /*out*/) { assert( false ); } // Not implemented yet!
+	void saveState(std::ostream & /*out*/) override { assert( false ); } // Not implemented yet!
 
-	virtual void restoreState(std::istream & /*in*/) { assert( false ); } // Not implemented yet!
+	void restoreState(std::istream & /*in*/) override { assert( false ); } // Not implemented yet!
 
 private:
 	int seed_;

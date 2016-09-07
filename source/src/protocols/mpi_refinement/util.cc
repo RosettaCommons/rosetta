@@ -52,8 +52,8 @@
 #include <core/scoring/rms_util.hh>
 #include <numeric/model_quality/rms.hh>
 
-#include <math.h>
-#include <stdlib.h> // atoi
+#include <cmath>
+#include <cstdlib> // atoi
 #include <algorithm> // for sort
 #include <fstream> // for ifstream
 #include <ObjexxFCL/FArray1D.hh>

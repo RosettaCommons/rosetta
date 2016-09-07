@@ -16,6 +16,7 @@
 
 #include <protocols/cryst/cryst_movers_creator.hh>
 
+#include <utility>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
@@ -37,12 +38,12 @@ public:
 		Mover(), verbose_(false) {}
 
 	ReportGradientsMover(core::scoring::ScoreFunctionOP sfin) :
-		Mover(), verbose_(false), score_function_(sfin) {}
+		Mover(), verbose_(false), score_function_(std::move(sfin)) {}
 
-	virtual std::string get_name() const { return ReportGradientsMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new ReportGradientsMover( *this ) ) ); }
+	std::string get_name() const override { return ReportGradientsMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new ReportGradientsMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	// compute gradients
 	core::Real compute(core::pose::Pose & pose );
@@ -50,12 +51,12 @@ public:
 	// helper function normalizes gradients for a single atom
 	core::Real normalization(core::pose::Pose & pose, core::id::AtomID atmid, core::scoring::ScoreFunctionOP sfxn );
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	bool verbose_;
@@ -68,16 +69,16 @@ public:
 	SetCrystWeightMover() :
 		Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0), weight_min_(1.0) {}
 
-	virtual std::string get_name() const { return SetCrystWeightMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }
+	std::string get_name() const override { return SetCrystWeightMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	bool autoset_wt_;
@@ -94,16 +95,16 @@ class RecomputeDensityMapMover : public moves::Mover {
 public:
 	RecomputeDensityMapMover() : Mover(), keep_sidechains_(true) {}
 
-	virtual std::string get_name() const { return RecomputeDensityMapMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new RecomputeDensityMapMover( *this ) ) ); }
+	std::string get_name() const override { return RecomputeDensityMapMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new RecomputeDensityMapMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 
 private:
@@ -115,16 +116,16 @@ class LoadDensityMapMover : public moves::Mover {
 public:
 	LoadDensityMapMover() : Mover(), mapfile_("") {}
 
-	virtual std::string get_name() const { return LoadDensityMapMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new LoadDensityMapMover( *this ) ) ); }
+	std::string get_name() const override { return LoadDensityMapMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new LoadDensityMapMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 
 private:
@@ -138,16 +139,16 @@ class FitBfactorsMover : public moves::Mover {
 public:
 	FitBfactorsMover() : Mover(), adp_strategy_("individual"), b_min_(5.0), b_max_(5.0) {}
 
-	virtual std::string get_name() const { return FitBfactorsMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new FitBfactorsMover( *this ) ) ); }
+	std::string get_name() const override { return FitBfactorsMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new FitBfactorsMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	void randomize_bs( core::pose::Pose & pose );
@@ -160,16 +161,16 @@ class UpdateSolventMover : public moves::Mover {
 public:
 	UpdateSolventMover() : Mover(), update_mask_(true), update_fcalc_(true), optimize_mask_(false), optimize_params_(false) {}
 
-	virtual std::string get_name() const { return UpdateSolventMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new UpdateSolventMover( *this ) ) ); }
+	std::string get_name() const override { return UpdateSolventMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new UpdateSolventMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	bool update_mask_ , update_fcalc_, optimize_mask_, optimize_params_;
@@ -180,16 +181,16 @@ class TagPoseWithRefinementStatsMover : public moves::Mover {
 public:
 	TagPoseWithRefinementStatsMover() : Mover(), tag_(""), dump_pose_(false),report_grads_(false) {}
 
-	virtual std::string get_name() const { return TagPoseWithRefinementStatsMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover( *this ) ) ); }
+	std::string get_name() const override { return TagPoseWithRefinementStatsMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	std::string tag_;
@@ -202,16 +203,16 @@ public:
 		Mover(), res_high_(0.0), res_low_(0.0), sharpen_b_(0.0), twin_law_(""), algo_(""), target_(""), map_type_(""), setmap_type_(false)
 	{}
 
-	virtual std::string get_name() const { return SetRefinementOptionsMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetRefinementOptionsMover( *this ) ) ); }
+	std::string get_name() const override { return SetRefinementOptionsMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetRefinementOptionsMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	core::Real res_high_, res_low_;

@@ -27,20 +27,20 @@ class FoldTreeFromLoops : public protocols::moves::Mover
 {
 public:
 	FoldTreeFromLoops();
-	virtual ~FoldTreeFromLoops();
+	~FoldTreeFromLoops() override;
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag(
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const &
-	);
+	) override;
 
 	void loop_str( std::string const & str );
 

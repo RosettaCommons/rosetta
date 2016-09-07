@@ -44,10 +44,10 @@ public:
 	/// @brief constructor for single value - these angles are in degrees, not radians!
 	RotateJumpAxisMover( core::Size const rb_jump_num, core::Angle const angle );
 
-	virtual ~RotateJumpAxisMover();
+	~RotateJumpAxisMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	core::Angle calc_angle();

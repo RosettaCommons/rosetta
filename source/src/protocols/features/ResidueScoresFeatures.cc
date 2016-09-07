@@ -96,7 +96,7 @@ ResidueScoresFeatures::ResidueScoresFeatures() :
 
 ResidueScoresFeatures::ResidueScoresFeatures(
 	ScoreFunctionOP scfxn) :
-	scfxn_(scfxn)
+	scfxn_(std::move(scfxn))
 {}
 
 ResidueScoresFeatures::ResidueScoresFeatures( ResidueScoresFeatures const & src) :
@@ -104,8 +104,7 @@ ResidueScoresFeatures::ResidueScoresFeatures( ResidueScoresFeatures const & src)
 	scfxn_(src.scfxn_)
 {}
 
-ResidueScoresFeatures::~ResidueScoresFeatures()
-{}
+ResidueScoresFeatures::~ResidueScoresFeatures() = default;
 
 string
 ResidueScoresFeatures::type_name() const { return "ResidueScoresFeatures"; }
@@ -378,11 +377,11 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 			emap.clear();
 			scfxn_->eval_ci_1b(rsd, pose, emap);
-			for ( ScoreTypes::const_iterator st = ci_1b.begin(), ste = ci_1b.end(); st != ste; ++st ) {
-				if ( !emap[*st] ) continue;
+			for (auto st : ci_1b) {
+				if ( !emap[st] ) continue;
 
-				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
-				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
+				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 				insert_onebody.add_row(
 					make_vector(
@@ -395,14 +394,12 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 			emap.clear();
 			scfxn_->eval_cd_1b(rsd, pose, emap);
-			for ( ScoreTypes::const_iterator
-					st = cd_1b.begin(), ste = cd_1b.end();
-					st != ste; ++st ) {
+			for (auto st : cd_1b) {
 
-				if ( !emap[*st] ) continue;
+				if ( !emap[st] ) continue;
 
-				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
-				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
+				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 				insert_onebody.add_row(
 					make_vector(
@@ -479,11 +476,11 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 				emap.clear();
 				scfxn_->eval_ci_2b(rsd, otherRsd, pose, emap);
-				for ( ScoreTypes::const_iterator st = ci_2b.begin(), ste = ci_2b.end(); st != ste; ++st ) {
-					if ( !emap[*st] ) continue;
+				for (auto st : ci_2b) {
+					if ( !emap[st] ) continue;
 
-					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
-					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
+					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 					insert_twobody.add_row(
 						make_vector(
@@ -497,11 +494,11 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 				EnergyMap emap;
 				scfxn_->eval_cd_2b(rsd, otherRsd, pose, emap);
-				for ( ScoreTypes::const_iterator st = cd_2b.begin(), ste = cd_2b.end(); st != ste; ++st ) {
-					if ( !emap[*st] ) continue;
+				for (auto st : cd_2b) {
+					if ( !emap[st] ) continue;
 
-					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
-					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
+					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 					insert_twobody.add_row(
 						make_vector(
@@ -545,7 +542,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	{ // Context Independent Long Range Two Body Energies
 		RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", false) );
 
-		for ( ScoreFunction::CI_LR_2B_Methods::const_iterator
+		for ( auto
 				iter = scfxn_->ci_lr_2b_methods_begin(),
 				iter_end = scfxn_->ci_lr_2b_methods_end();
 				iter != iter_end; ++iter ) {
@@ -579,14 +576,11 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
 					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
-					for (
-							ScoreTypes::const_iterator
-							st = ci_lr_2b.begin(), ste = ci_lr_2b.end();
-							st != ste; ++st ) {
-						if ( !emap[*st] ) continue;
+					for (auto st : ci_lr_2b) {
+						if ( !emap[st] ) continue;
 
-						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
-						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
+						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 						insert_twobody_longrange.add_row(
 							make_vector(
@@ -603,7 +597,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	{
 		RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", true) );
 
-		for ( ScoreFunction::CD_LR_2B_Methods::const_iterator
+		for ( auto
 				iter = scfxn_->cd_lr_2b_methods_begin(),
 				iter_end = scfxn_->cd_lr_2b_methods_end();
 				iter != iter_end; ++iter ) {
@@ -639,7 +633,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
 					for (
-							ScoreTypes::const_iterator
+							auto
 							st = ci_lr_2b.begin(), ste = cd_lr_2b.end();
 							st != ste; ++st ) {
 						if ( !emap[*st] ) continue;

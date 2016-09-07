@@ -62,7 +62,7 @@ PDBTrajectoryRecorder::PDBTrajectoryRecorder()
 	file_name(file_name()+".pdb");
 }
 
-PDBTrajectoryRecorder::~PDBTrajectoryRecorder() {}
+PDBTrajectoryRecorder::~PDBTrajectoryRecorder() = default;
 
 PDBTrajectoryRecorder::PDBTrajectoryRecorder(
 	PDBTrajectoryRecorder const & other
@@ -132,7 +132,7 @@ PDBTrajectoryRecorder::write_model(
 	std::string job( metropolis_hastings_mover ? metropolis_hastings_mover->output_name() : "" );
 	core::Size replica = protocols::jd2::current_replica();
 
-	TemperingBase const * tempering = 0;
+	TemperingBase const * tempering = nullptr;
 	if ( metropolis_hastings_mover ) {
 		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering().get() );
 	}

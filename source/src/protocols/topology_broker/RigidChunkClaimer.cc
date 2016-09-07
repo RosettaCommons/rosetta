@@ -191,10 +191,9 @@ void RigidChunkClaimer::select_parts() {
 	if ( rigid_core_.size() == 0 ) return;//nothing to select
 	while ( current_rigid_core_.size() == 0 && attempts < 50 ) {
 		++attempts;
-		for ( loops::Loops::const_iterator it = rigid_core_.begin(), eit = rigid_core_.end();
-				it != eit; ++it ) {
-			if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
-				current_rigid_core_.push_back( *it );
+		for (const auto & it : rigid_core_) {
+			if ( numeric::random::rg().uniform() >= it.skip_rate() )  {
+				current_rigid_core_.push_back( it );
 			}
 		}
 	}
@@ -221,8 +220,8 @@ void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	tr.Trace << "region selected: " << current_rigid_core_ << std::endl;
 
 	// new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
-	for ( Loops::const_iterator loop_it = current_rigid_core_.begin(); loop_it != current_rigid_core_.end(); ++loop_it ) {
-		for ( Size pos = loop_it->start(); pos <= loop_it->stop(); ++pos ) {
+	for (const auto & loop_it : current_rigid_core_) {
+		for ( Size pos = loop_it.start(); pos <= loop_it.stop(); ++pos ) {
 			new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(),
 				std::make_pair( label(), pos ),
 				claims::DofClaim::EXCLUSIVE ) ) );
@@ -277,7 +276,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 	claims::JumpClaim const *jump_ptr( dynamic_cast< const claims::JumpClaim* >( &foreign_claim ) );
 
 	if ( jump_ptr ) {
-		runtime_assert( current_jump_calculator_ != 0 );
+		runtime_assert( current_jump_calculator_ != nullptr );
 		if ( current_jump_calculator_->irrelevant_jump( jump_ptr->global_pos1(), jump_ptr->global_pos2() ) ) {
 			return true;
 		} else if ( !current_jump_calculator_->good_jump( jump_ptr->global_pos1(), jump_ptr->global_pos2() ) ) {
@@ -294,15 +293,15 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 	claims::CutClaim const *cut_ptr( dynamic_cast< const claims::CutClaim* >( &foreign_claim ) );
 
 	if ( cut_ptr ) {
-		for ( loops::Loops::const_iterator region = current_rigid_core_.begin(); region != current_rigid_core_.end(); ++region ) {
+		for (const auto & region : current_rigid_core_) {
 
 			//TODO: ensure that the label setting code is correctly functioning in this claimer
 
 			claims::LocalPosition cut_position = cut_ptr->get_position();
 			Size absolute_cut_position = broker().sequence_number_resolver().find_global_pose_number( cut_position );
 
-			if ( absolute_cut_position >= region->start() &&
-					absolute_cut_position < region->stop() ) { // cut claim can be at the chunk end
+			if ( absolute_cut_position >= region.start() &&
+					absolute_cut_position < region.stop() ) { // cut claim can be at the chunk end
 				return false; // no cuts within our rigid-core boundaries
 			}
 		}
@@ -427,8 +426,8 @@ void fix_mainchain_connect( pose::Pose& pose, pose::Pose const& ref_pose, core::
 void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::Loops core ) {
 	///fpd if there are post modifications to pose (not in ref_pose), we can't just copy ref_pose->pose
 	///fpd    instead ... make xyz copy in rigid regions
-	for ( loops::Loops::const_iterator region = core.begin(); region != core.end(); ++region ) {
-		for ( Size i=region->start(); i<=region->stop(); ++i ) {
+	for (const auto & region : core) {
+		for ( Size i=region.start(); i<=region.stop(); ++i ) {
 			core::conformation::Residue const &rsd_i = ref_pose.residue(i);
 			pose.replace_residue ( i , rsd_i , false );
 		}
@@ -441,9 +440,9 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 
 	///fpd fix connections
 	///fpd this requires that the input pose have one flanking residue on each side of each region
-	for ( loops::Loops::const_iterator region = core.begin(); region != core.end(); ++region ) {
-		Size loop_start = region->start();
-		Size loop_stop  = region->stop();
+	for (const auto & region : core) {
+		Size loop_start = region.start();
+		Size loop_stop  = region.stop();
 
 		bool lower_connect = ( loop_start > 1
 			&& !pose.residue(loop_start).is_lower_terminus()
@@ -499,15 +498,15 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 	//fpd   (strictly greater-than since we have to have a flanking res on each side of each region)
 	//fpd   we still need missing dens in the gaps (but not at c term now!)
 	core::Size lastChunk=1;
-	for ( loops::Loops::const_iterator it = current_rigid_core_.begin(); it!=current_rigid_core_.end(); ++it ) {
-		lastChunk = std::max( lastChunk , it->stop() );
+	for (const auto & it : current_rigid_core_) {
+		lastChunk = std::max( lastChunk , it.stop() );
 	}
 	runtime_assert ( lastChunk <= centroid_input_pose_.total_residue() );
 
 	bool missing_density( false );
 	//sanity check: no missing density in backbon in any of the rigid_core residues?
-	for ( loops::Loops::const_iterator it = current_rigid_core_.begin(); it!=current_rigid_core_.end(); ++it ) {
-		for ( Size pos = it->start(); pos <=it->stop(); ++pos ) {
+	for (const auto & it : current_rigid_core_) {
+		for ( Size pos = it.start(); pos <=it.stop(); ++pos ) {
 			// Do we really have Sidechains ?
 			// check this my making sure that no SC atom is more than 20A (?) away from CA
 			numeric::xyzVector< core::Real> ca_pos = input_pose_.residue( pos ).atom("CA").xyz();
@@ -537,8 +536,8 @@ void RigidChunkClaimer::switch_to_fullatom( core::pose::Pose& pose , utility::ve
 
 	// copy sidechain torsions from input pose
 	tr.Debug << "copy side chains for residues with * / missing density residues with - ";
-	for ( loops::Loops::const_iterator it = region.begin(); it!=region.end(); ++it ) {
-		for ( Size pos = it->start(); pos <=it->stop(); ++pos ) {
+	for (const auto & it : region) {
+		for ( Size pos = it.start(); pos <=it.stop(); ++pos ) {
 			bNeedToRepack[ pos ] = false; //in principle our residues don't need a repack since we have a side-chains for them.
 			// Do we really have Sidechains ?
 			// check this my making sure that no SC atom is more than 20A (?) away from CA

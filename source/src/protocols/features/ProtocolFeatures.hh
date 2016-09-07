@@ -39,7 +39,7 @@ public:
 
 	ProtocolFeatures( ProtocolFeatures const & src );
 
-	virtual ~ProtocolFeatures();
+	~ProtocolFeatures() override;
 
 	/// @brief return string with class name
 	std::string

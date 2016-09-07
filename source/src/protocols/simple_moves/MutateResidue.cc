@@ -26,6 +26,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/ResidueFactory.hh>
 //parsing
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
@@ -96,10 +97,10 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 /// @param target The residue index to mutate
 /// @param new_res The name of the replacement residue
 
-MutateResidue::MutateResidue( core::Size const target, string const &new_res ) :
+MutateResidue::MutateResidue( core::Size const target, string new_res ) :
 	parent(),
 	target_(""),
-	res_name_(new_res),
+	res_name_(std::move(new_res)),
 	preserve_atom_coords_(false),
 	mutate_self_(false)
 {

@@ -44,40 +44,40 @@ public:
 		core::Real rotation_mag_ = 3.0,
 		core::Real translation_mag_ = 8.0 );
 
-	virtual
-	~UniformRigidBodyMover() {};
+	
+	~UniformRigidBodyMover() override = default;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& ) override;
 
-	virtual void
+	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
-	virtual
-	moves::MoverOP fresh_instance() const;
+		core::pose::Pose const & pose ) override;
+	
+	moves::MoverOP fresh_instance() const override;
 
-	virtual
-	moves::MoverOP clone() const;
+	
+	moves::MoverOP clone() const override;
 
 	void jump_number( JumpNumber );
 
 	JumpNumber jump_number() const;
 
-	virtual
+	
 	void
-	set_preserve_detailed_balance( bool ) {};
+	set_preserve_detailed_balance( bool ) override {};
 
-	virtual
+	
 	bool
-	preserve_detailed_balance() const { return true; }
+	preserve_detailed_balance() const override { return true; }
 
-	virtual
+	
 	utility::vector1<core::id::TorsionID_Range>
-	torsion_id_ranges( core::pose::Pose & pose );
+	torsion_id_ranges( core::pose::Pose & pose ) override;
 
 private:
 	JumpNumber target_jump_;

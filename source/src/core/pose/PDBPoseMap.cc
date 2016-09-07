@@ -58,15 +58,11 @@ PDBPoseMap::PDBPoseMap( PDBInfo const & info ) :
 
 
 /// @brief copy constructor
-PDBPoseMap::PDBPoseMap( PDBPoseMap const & map ) :
-	Super( map ),
-	pdb2pose_( map.pdb2pose_ )
-{}
+PDBPoseMap::PDBPoseMap( PDBPoseMap const & ) = default;
 
 
 /// @brief default destructor
-PDBPoseMap::~PDBPoseMap()
-{}
+PDBPoseMap::~PDBPoseMap() = default;
 
 
 /// @brief copy assignment

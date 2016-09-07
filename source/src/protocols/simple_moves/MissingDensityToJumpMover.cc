@@ -49,11 +49,9 @@ MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover(
 {}
 
 // Copy constructor
-MissingDensityToJumpMover::MissingDensityToJumpMover(MissingDensityToJumpMover const & object_to_copy) :
-	Mover(object_to_copy)
-{}
+MissingDensityToJumpMover::MissingDensityToJumpMover(MissingDensityToJumpMover const & ) = default;
 
-MissingDensityToJumpMover::~MissingDensityToJumpMover() {}
+MissingDensityToJumpMover::~MissingDensityToJumpMover() = default;
 
 void
 MissingDensityToJumpMover::apply( core::pose::Pose & pose ) {

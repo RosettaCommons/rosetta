@@ -42,18 +42,18 @@ public:
 
 public:
 	PosType();
-	virtual ~PosType();
+	~PosType() override;
 	PosType( core::Size index, core::chemical::AA type );
 	PosType( std::string word );
 
-	virtual EntityElementOP clone();
-	virtual EntityElementOP fresh_instance();
-	virtual Size hash() const;
-	virtual bool operator <  ( EntityElement const & rhs ) const;
-	virtual bool operator == ( EntityElement const & rhs ) const;
-	virtual EntityElement & operator =  ( EntityElement const & rhs );
-	virtual std::string to_string() const;
-	virtual std::string name() const; // Each entity element must have a distinct name
+	EntityElementOP clone() override;
+	EntityElementOP fresh_instance() override;
+	Size hash() const override;
+	bool operator <  ( EntityElement const & rhs ) const override;
+	bool operator == ( EntityElement const & rhs ) const override;
+	EntityElement & operator =  ( EntityElement const & rhs ) override;
+	std::string to_string() const override;
+	std::string name() const override; // Each entity element must have a distinct name
 
 	//core::Size index() const; -- base class defines this now
 	core::chemical::AA type() const;
@@ -67,9 +67,9 @@ class PosTypeCreator : public genetic_algorithm::EntityElementCreator {
 public:
 	typedef genetic_algorithm::EntityElementOP EntityElementOP;
 public:
-	virtual ~PosTypeCreator();
-	virtual std::string widget_name() const;
-	virtual EntityElementOP new_entity( std::string const & word );
+	~PosTypeCreator() override;
+	std::string widget_name() const override;
+	EntityElementOP new_entity( std::string const & word ) override;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ public:
 		num_packs_(1)
 	{}
 
-	virtual ~MultiStatePacker(){}
+	~MultiStatePacker() override= default;
 
 	MultiStatePacker( core::Size num_packs )
 	: MultiStateFitnessFunction(),
@@ -89,10 +89,10 @@ public:
 	{}
 
 	virtual void single_state_design( bool restrict_to_canonical = true );
-	virtual core::Real evaluate(
+	core::Real evaluate(
 		protocols::genetic_algorithm::Entity & entity,
 		core::Size single_state_num
-	);
+	) override;
 
 	virtual void set_num_packs( core::Size num ) { num_packs_ = num; }
 

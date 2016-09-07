@@ -46,7 +46,7 @@ class DomainAssemblyCommand : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~DomainAssemblyCommand();
+	~DomainAssemblyCommand() override;
 	//@brief domain_action is the activity code for the option
 	virtual
 	void domain_action(
@@ -63,12 +63,12 @@ class PDB : public DomainAssemblyCommand
 {
 public:
 
-	virtual
+	
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		DomainInfo & domain
-	) const;
+	) const override;
 
 	static std::string name() {return "PDB";}
 };
@@ -79,12 +79,12 @@ class NTermLinker : public DomainAssemblyCommand
 {
 public:
 
-	virtual
+	
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		DomainInfo & domain
-	) const;
+	) const override;
 
 	static std::string name() {return "NTermLinker";}
 };
@@ -95,12 +95,12 @@ class CTermLinker : public DomainAssemblyCommand
 {
 public:
 
-	virtual
+	
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		DomainInfo & domain
-	) const;
+	) const override;
 
 	static std::string name() {return "CTermLinker";}
 };
@@ -111,12 +111,12 @@ class NTrim : public DomainAssemblyCommand
 {
 public:
 
-	virtual
+	
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		DomainInfo & domain
-	) const;
+	) const override;
 
 	static std::string name() {return "NTrim";}
 };
@@ -127,12 +127,12 @@ class CTrim : public DomainAssemblyCommand
 {
 public:
 
-	virtual
+	
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
 		DomainInfo & domain
-	) const;
+	) const override;
 
 	static std::string name() {return "CTrim";}
 };

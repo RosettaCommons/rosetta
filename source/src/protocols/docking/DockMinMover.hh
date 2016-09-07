@@ -63,7 +63,7 @@ public:
 		moves::MonteCarloOP mc
 	);
 
-	~DockMinMover();
+	~DockMinMover() override;
 
 	/// @brief Sets up the default values for the obejct including the movemap and minimization type.
 	void set_default();
@@ -72,9 +72,9 @@ public:
 	void set_min_type( std::string min_type ) { min_type_ = min_type; }
 	void set_min_tolerance( core::Real min_tolerance ) { min_tolerance_ = min_tolerance; }
 
-	void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 private:

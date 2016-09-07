@@ -43,7 +43,7 @@ FoldTreeFromLoops::FoldTreeFromLoops() :
 }
 
 
-FoldTreeFromLoops::~FoldTreeFromLoops() {}
+FoldTreeFromLoops::~FoldTreeFromLoops() = default;
 
 protocols::moves::MoverOP FoldTreeFromLoops::clone() const
 {

@@ -73,8 +73,8 @@ pack_rotamers(
 	using namespace interaction_graph;
 	using namespace rotamer_set;
 
-	task::PackerTaskCOP working_task = NULL;
-	rotamer_set::RotamerSetsOP rotsets = NULL;
+	task::PackerTaskCOP working_task = nullptr;
+	rotamer_set::RotamerSetsOP rotsets = nullptr;
 
 	//fpd safety check for symmetry
 	//replace this with RotSetsFactory
@@ -90,7 +90,7 @@ pack_rotamers(
 
 	pack_scorefxn_pose_handshake( pose, scfxn);
 
-	AnnealableGraphBaseOP ig = NULL;
+	AnnealableGraphBaseOP ig = nullptr;
 
 	pack_rotamers_setup( pose, scfxn, task, rotsets, ig );
 	pack_rotamers_run( pose, task, rotsets, ig );
@@ -144,7 +144,7 @@ pack_rotamers_loop(
 	using namespace rotamer_set;
 
 	rotamer_set::RotamerSetsOP rotsets( new rotamer_set::RotamerSets() );
-	AnnealableGraphBaseOP ig = NULL;
+	AnnealableGraphBaseOP ig = nullptr;
 	pack_rotamers_setup( pose, scfxn, task, rotsets, ig );
 
 	Real best_bestenergy( 0.0 );

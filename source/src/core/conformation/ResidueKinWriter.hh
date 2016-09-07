@@ -46,7 +46,7 @@ public:
 
 public:
 	ResidueKinWriter();
-	virtual ~ResidueKinWriter();
+	~ResidueKinWriter() override;
 
 	/// @brief write the header for the kinemage to center on this residue
 	void write_kin_header(
@@ -97,7 +97,7 @@ public:
 	ConformationKinWriter():
 		write_virtual_atoms_(false)
 	{}
-	virtual ~ConformationKinWriter();
+	~ConformationKinWriter() override;
 
 	/// @brief Write out the coordinates for an entire conformation; this includes
 	/// inter-residue bonds that would be missed by the ResidueKinWriter.

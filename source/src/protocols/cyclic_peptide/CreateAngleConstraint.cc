@@ -47,7 +47,7 @@ namespace cyclic_peptide {
 
 CreateAngleConstraint::CreateAngleConstraint() //:
 {}
-CreateAngleConstraint::~CreateAngleConstraint(){}
+CreateAngleConstraint::~CreateAngleConstraint()= default;
 
 void CreateAngleConstraint::apply( core::pose::Pose & pose )
 {

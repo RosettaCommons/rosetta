@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 #include <map>
 
 #define SimpleCycpepPredictApplication_PEPBOND_LENGTH 1.328685
@@ -60,7 +60,7 @@ public:
 
 	/// @brief Explicit virtual destructor.
 	///
-	virtual ~SimpleCycpepPredictApplication();
+	~SimpleCycpepPredictApplication() override;
 
 	/// @brief Explicit copy constructor.
 	///

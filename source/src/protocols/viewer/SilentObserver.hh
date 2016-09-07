@@ -54,7 +54,7 @@ public:
 	SilentObserver( std::string const & name, bool fullatom );
 
 	/// @brief default destructor
-	virtual ~SilentObserver();
+	~SilentObserver() override;
 
 private: // disallow copy
 

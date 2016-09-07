@@ -74,13 +74,13 @@ public:
 	void
 	init();
 
-	virtual ~RotamerTrialsMinMover();
+	~RotamerTrialsMinMover() override;
 
 	/// @brief Apply Rotamer-Trials with minimization to pose, using the score function
 	///       and tasks provided by the constructor
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 
 	//PackerTaskMover/RotamerTrialsMinMover needs to have a parent class that implements this?
 	//bool task_is_valid( core::pose::Pose const & pose ) const;
@@ -91,17 +91,17 @@ public:
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
 
 	/// @brief Parse XML for RosettaScripts
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	/// @brief Return a new mover instance (for RosettaScripts)
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 	/// @brief Return a copy of this mover instance (for RosettaScripts)
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 protected:
 
@@ -160,17 +160,17 @@ public:
 		core::Real energycut_in
 	);
 
-	virtual
-	~EnergyCutRotamerTrialsMinMover();
+	
+	~EnergyCutRotamerTrialsMinMover() override;
 
 public:
 
 	/// @brief apply this mover to a pose
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 

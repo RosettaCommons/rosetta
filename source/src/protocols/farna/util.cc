@@ -115,10 +115,9 @@ get_base_pairing_info( pose::Pose const & pose,
 	bool forms_canonical_base_pair( false ), forms_base_pair( false );
 
 	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
-	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-			it != scored_base_pair_list.end(); ++it ) {
+	for (const auto & it : scored_base_pair_list) {
 
-		BasePair const base_pair = it->second;
+		BasePair const base_pair = it.second;
 
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
@@ -189,10 +188,9 @@ get_base_pairing_list( pose::Pose & pose,
 
 	std::list < std::pair< Size,Size > > base_pair_list0;
 
-	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-			it != scored_base_pair_list.end(); ++it ) {
+	for (const auto & it : scored_base_pair_list) {
 
-		BasePair const base_pair = it->second;
+		BasePair const base_pair = it.second;
 
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
@@ -495,10 +493,9 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 	FArray1D_bool forms_canonical_base_pair( nres, false );
 	FArray1D_int  WC_base_pair_partner( nres, 0 );
 
-	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-			it != scored_base_pair_list.end(); ++it ) {
+	for (const auto & it : scored_base_pair_list) {
 
-		BasePair const base_pair = it->second;
+		BasePair const base_pair = it.second;
 
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
@@ -517,7 +514,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 			//   }
 		}
 
-		TR << rsd_i.name1() << I(3,i) << "--" << rsd_j.name1() << I(3,j) << "  WC:" << WC_base_pair << "  score: " << F(10,6,it->first) << std::endl;
+		TR << rsd_i.name1() << I(3,i) << "--" << rsd_j.name1() << I(3,j) << "  WC:" << WC_base_pair << "  score: " << F(10,6,it.first) << std::endl;
 
 		if ( WC_base_pair ) {
 			forms_canonical_base_pair( i ) = true;

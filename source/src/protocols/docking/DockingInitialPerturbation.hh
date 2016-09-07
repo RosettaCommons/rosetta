@@ -67,12 +67,12 @@ public:
 	);
 
 	//destructor
-	~DockingInitialPerturbation();
+	~DockingInitialPerturbation() override;
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void apply_body(core::pose::Pose & pose, core::Size jump_number );
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Calls set_dault, register_from_options and init_from_options
 	void init();
@@ -119,8 +119,8 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
-	virtual protocols::moves::MoverOP clone() const; //zhe for scripts
+	) override;
+	protocols::moves::MoverOP clone() const override; //zhe for scripts
 
 private:
 	/// do slide into context?
@@ -165,14 +165,14 @@ public:
 	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis );
 
 	//destructor
-	~DockingSlideIntoContact();
+	~DockingSlideIntoContact() override;
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	void show(std::ostream & output=std::cout) const override;
 
 	// getters
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	core::Size get_jump_num() const { return rb_jump_; }
 
 private:
@@ -200,11 +200,11 @@ public:
 	FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis );
 
 	//destructor
-	~FaDockingSlideIntoContact();
+	~FaDockingSlideIntoContact() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 	core::Size get_jump_num() const { return rb_jump_; }
 	core::Real get_tolerance() const { return tolerance_; }
 
@@ -236,11 +236,11 @@ public:
 	SlideIntoContact( core::Size const jump );
 
 	/// @brief destructor
-	~SlideIntoContact();
+	~SlideIntoContact() override;
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	void show(std::ostream & output=std::cout) const override;
 
 	// setters
 	void slide_axis( core::Vector const & slide_axis );
@@ -253,7 +253,7 @@ public:
 	void scorefunction( std::string sfxn_name, std::string scoretype_for_sliding );
 
 	// getters
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	core::Size get_jump_num() const;
 	core::Real get_stepsize() const;
 	std::string get_sfxn_name() const;

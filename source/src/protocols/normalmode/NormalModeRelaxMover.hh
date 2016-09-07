@@ -54,28 +54,28 @@ public:
 		Real const distcut
 	);
 
-	~NormalModeRelaxMover();
+	~NormalModeRelaxMover() override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	clone() const { return protocols::moves::MoverOP( new NormalModeRelaxMover(*this) ); }
+	clone() const override { return protocols::moves::MoverOP( new NormalModeRelaxMover(*this) ); }
 
-	std::string get_name() const; //{ return NormalModeMinimizerCreator::mover_name(); }
+	std::string get_name() const override; //{ return NormalModeMinimizerCreator::mover_name(); }
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void apply_on_pose( core::pose::Pose & pose );
 
 	/// Virtual functions from Mover
-	virtual protocols::moves::MoverOP fresh_instance() const { return clone(); };
+	protocols::moves::MoverOP fresh_instance() const override { return clone(); };
 
-	virtual
+	
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & pose
-	);
+	) override;
 
 	void set_default();
 

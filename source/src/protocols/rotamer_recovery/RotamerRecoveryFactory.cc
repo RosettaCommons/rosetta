@@ -48,7 +48,7 @@ using protocols::rotamer_recovery::RotamerRecoveryFactory;
 template <> std::mutex utility::SingletonBase< RotamerRecoveryFactory >::singleton_mutex_{};
 template <> std::atomic< RotamerRecoveryFactory * > utility::SingletonBase< RotamerRecoveryFactory >::instance_( 0 );
 #else
-template <> RotamerRecoveryFactory * utility::SingletonBase< RotamerRecoveryFactory >::instance_( 0 );
+template <> RotamerRecoveryFactory * utility::SingletonBase< RotamerRecoveryFactory >::instance_( nullptr );
 #endif
 
 }
@@ -73,7 +73,7 @@ RotamerRecoveryFactory::create_singleton_instance()
 /// @details Private constructor insures correctness of singleton.
 RotamerRecoveryFactory::RotamerRecoveryFactory() {}
 
-RotamerRecoveryFactory::~RotamerRecoveryFactory() {}
+RotamerRecoveryFactory::~RotamerRecoveryFactory() = default;
 
 /*
 20140630: Additional factory_register() methods disabled because of ambiguouity below.
@@ -171,7 +171,7 @@ RotamerRecoveryFactory::get_rotamer_recovery_protocol(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 
 RRComparerOP
@@ -197,7 +197,7 @@ RotamerRecoveryFactory::get_rotamer_recovery_comparer(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 
 RRReporterOP
@@ -223,7 +223,7 @@ RotamerRecoveryFactory::get_rotamer_recovery_reporter(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 
 RotamerRecoveryOP

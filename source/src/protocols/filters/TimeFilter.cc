@@ -36,15 +36,15 @@ TimeFilter::TimeFilter() :
 	toc_( 0 )
 {}
 
-TimeFilter::~TimeFilter() {}
+TimeFilter::~TimeFilter() = default;
 
 core::Real
 TimeFilter::compute( core::pose::Pose const & ) const
 {
 	if ( tic_ == 0 ) {
-		tic_ = time( NULL );
+		tic_ = time( nullptr );
 	} else {
-		toc_ = time( NULL );
+		toc_ = time( nullptr );
 		return toc_ - tic_;
 	}
 	return 0;

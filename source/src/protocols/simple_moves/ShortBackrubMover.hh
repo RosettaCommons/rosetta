@@ -50,23 +50,23 @@ public:
 	ShortBackrubMover( ShortBackrubMover const & rval );
 
 	/// @brief destructor
-	virtual ~ShortBackrubMover();
+	~ShortBackrubMover() override;
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief create this type of object
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	// setters
 	void set_resnum( core::Size resnum );
 	void set_rotation_std_dev( core::Real rotation_std_dev );
 	void set_randomize_resnum( bool randomize_resnum );
 	void set_uniform_backrub( bool uniform_backrub );
-	virtual void set_input_pose( core::pose::PoseCOP pose );
+	void set_input_pose( core::pose::PoseCOP pose ) override;
 
 	// getters
 	core::Size get_resnum() const;
@@ -80,7 +80,7 @@ public:
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 private:
 

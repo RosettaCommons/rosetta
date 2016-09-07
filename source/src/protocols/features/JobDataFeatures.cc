@@ -56,7 +56,7 @@ JobDataFeatures::JobDataFeatures() {}
 
 JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) : protocols::features::FeaturesReporter() {}
 
-JobDataFeatures::~JobDataFeatures() {}
+JobDataFeatures::~JobDataFeatures() = default;
 
 std::string JobDataFeatures::type_name() const
 {
@@ -158,7 +158,7 @@ void JobDataFeatures::insert_string_rows(StructureID struct_id, utility::sql_dat
 	string_insert.add_column("struct_id");
 	string_insert.add_column("data_key");
 
-	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
+	auto it(job->output_strings_begin());
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 	for ( ; it != job->output_strings_end(); ++it ) {
@@ -207,7 +207,7 @@ void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::
 	string_string_insert.add_column("data_key");
 	string_string_insert.add_column("data_value");
 
-	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
+	auto it(job->output_string_string_pairs_begin());
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
@@ -260,7 +260,7 @@ void JobDataFeatures::insert_string_real_rows(StructureID struct_id, utility::sq
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
+	auto it(job->output_string_real_pairs_begin());
 
 	for ( ; it != job->output_string_real_pairs_end(); ++it ) {
 

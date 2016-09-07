@@ -32,7 +32,7 @@ class WriteableCacheableDataCreator : public utility::pointer::ReferenceCount
 {
 public:
 	WriteableCacheableDataCreator();
-	virtual ~WriteableCacheableDataCreator();
+	~WriteableCacheableDataCreator() override;
 
 	virtual WriteableCacheableDataOP create_data( std::istream &in ) const = 0;
 	virtual std::string keyname() const = 0;

@@ -77,14 +77,14 @@ public:
 
 
 	//default dtor
-	virtual ~NcbbDockDesignProtocol(){}
+	~NcbbDockDesignProtocol() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "NcbbDockDesignProtocol"; }
-	protocols::moves::MoverOP fresh_instance() const { return NcbbDockDesignProtocolOP( new NcbbDockDesignProtocol ); }
-	protocols::moves::MoverOP clone() const;
-	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "NcbbDockDesignProtocol"; }
+	protocols::moves::MoverOP fresh_instance() const override { return NcbbDockDesignProtocolOP( new NcbbDockDesignProtocol ); }
+	protocols::moves::MoverOP clone() const override;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;

@@ -47,7 +47,7 @@ namespace cyclic_peptide {
 
 CreateTorsionConstraint::CreateTorsionConstraint() //:
 {}
-CreateTorsionConstraint::~CreateTorsionConstraint(){}
+CreateTorsionConstraint::~CreateTorsionConstraint()= default;
 
 void CreateTorsionConstraint::apply( core::pose::Pose & pose )
 {

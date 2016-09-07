@@ -125,28 +125,7 @@ RangeRelaxMover::RangeRelaxMover( core::Size center_resnumber ) :
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-RangeRelaxMover::RangeRelaxMover( RangeRelaxMover const & src ) :
-	protocols::moves::Mover( src ),
-	native_( src.native_ ),
-	center_resnumber_( src.center_resnumber_ ),
-	angle_max_( src.angle_max_ ),
-	moves_( src.moves_ ),
-	nmoves_( src.nmoves_ ),
-	movemap_( src.movemap_ ),
-	sfxn_( src.sfxn_ ),
-	sfxn_nocst_( src.sfxn_nocst_ ),
-	cst_file_( src.cst_file_ ),
-	cst_weight_( src.cst_weight_ ),
-	cst_to_start_( src.cst_to_start_ ),
-	cst_to_native_( src.cst_to_native_ ),
-	addmem_( src.addmem_ ),
-	optmem_( src.optmem_ ),
-	repack_again_( src.repack_again_ ),
-	cycles_ ( src.cycles_ ),
-	min_cycles_ ( src.min_cycles_ ),
-	spherical_wave_( src.spherical_wave_ ),
-	idealize_( src.idealize_ )
-{}
+RangeRelaxMover::RangeRelaxMover( RangeRelaxMover const & ) = default;
 
 /// @brief Assignment Operator
 RangeRelaxMover & RangeRelaxMover::operator = ( RangeRelaxMover const & src ) {
@@ -161,7 +140,7 @@ RangeRelaxMover & RangeRelaxMover::operator = ( RangeRelaxMover const & src ) {
 }
 
 /// @brief Destructor
-RangeRelaxMover::~RangeRelaxMover() {}
+RangeRelaxMover::~RangeRelaxMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -442,7 +421,7 @@ void RangeRelaxMover::register_options() {
 void RangeRelaxMover::set_defaults() {
 
 	// native
-	native_ = 0;
+	native_ = nullptr;
 
 	// center residue number
 	center_resnumber_ = 0;
@@ -549,7 +528,7 @@ void RangeRelaxMover::init_from_cmd() {
 	if ( option[ OptionKeys::relax::constrain_relax_to_native_coords ].user() ) {
 		cst_to_native_ = option[ OptionKeys::relax::constrain_relax_to_native_coords ]();
 
-		if ( cst_to_native_ == true && native_ == 0 ) {
+		if ( cst_to_native_ == true && native_ == nullptr ) {
 			utility_exit_with_message( "You want to constrain the coordinates to the native structure without a native given. Please provide a native structure with -in:file:native. Quitting." );
 		}
 		if ( cst_file_.size() != 0 ) {
@@ -681,7 +660,7 @@ core::kinematics::FoldTree RangeRelaxMover::finalize_setup( Pose & pose ) {
 	}
 
 	// fill native if still empty
-	if ( native_ == 0 ) {
+	if ( native_ == nullptr ) {
 		TR << "WARNING: Setting native to input structure because either no native given or you chose the option -relax:constrain_relax_to_start_coords!" << std::endl;
 		native_ = pose.clone();
 	}

@@ -62,7 +62,7 @@ NetChargeFilterCreator::create_filter() const { return protocols::filters::Filte
 std::string
 NetChargeFilterCreator::keyname() const { return "NetCharge"; }
 
-NetChargeFilter::~NetChargeFilter(){}
+NetChargeFilter::~NetChargeFilter()= default;
 
 void
 NetChargeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )

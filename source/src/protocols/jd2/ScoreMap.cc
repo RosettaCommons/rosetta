@@ -32,7 +32,7 @@ namespace protocols {
 namespace jd2 {
 
 /// @details Auto-generated virtual destructor
-ScoreMap::~ScoreMap() {}
+ScoreMap::~ScoreMap() = default;
 
 /// Score output helper functions
 /// @details
@@ -72,9 +72,9 @@ ScoreMap::score_map_from_scored_pose(
 
 	core::Real total(0);
 
-	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
-		core::Real const some_score( weights[(*ii)] * pose.energies().total_energies()[ *ii ] );
-		score_map[ name_from_score_type(*ii) ] = some_score;
+	for (auto & score_type : score_types) {
+		core::Real const some_score( weights[score_type] * pose.energies().total_energies()[ score_type ] );
+		score_map[ name_from_score_type(score_type) ] = some_score;
 		total += some_score;
 	}
 	score_map[ name_from_score_type(core::scoring::total_score) ] = total;

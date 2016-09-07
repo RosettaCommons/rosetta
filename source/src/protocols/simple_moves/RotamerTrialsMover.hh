@@ -74,17 +74,17 @@ public:
 	RotamerTrialsMover( RotamerTrialsMover const & rval );
 
 	/// @brief destructor
-	virtual ~RotamerTrialsMover();
+	~RotamerTrialsMover() override;
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief create this type of object
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 
 	//PackerTaskMover/RotamerTrialsMover needs to have a parent class that implements this?
 	//bool task_is_valid( core::pose::Pose const & pose ) const;
@@ -100,7 +100,7 @@ public:
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 protected:
 
@@ -157,17 +157,17 @@ public:
 		core::Real energycut_in
 	);
 
-	virtual
-	~EnergyCutRotamerTrialsMover();
+	
+	~EnergyCutRotamerTrialsMover() override;
 
 public:
 
 	/// @brief apply this mover to a pose
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 protected:
 

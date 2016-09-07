@@ -21,10 +21,10 @@
 //
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
+#include <cfloat>
 #include <new>
 #include <numeric/nls/lmmin.hh>
 

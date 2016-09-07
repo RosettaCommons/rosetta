@@ -52,7 +52,7 @@ class DofPassport : public utility::pointer::ReferenceCount {
 	friend class core::environment::EnvCore;
 
 public:
-	virtual ~DofPassport();
+	~DofPassport() override;
 
 	void show( std::ostream& ) const;
 

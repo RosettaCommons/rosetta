@@ -115,7 +115,7 @@ ubi_e2c_modeler::ubi_e2c_modeler() : Mover(),
 }
 
 // default destructor
-ubi_e2c_modeler::~ubi_e2c_modeler() {}
+ubi_e2c_modeler::~ubi_e2c_modeler() = default;
 
 //clone
 protocols::moves::MoverOP ubi_e2c_modeler::clone() const {
@@ -728,7 +728,7 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 		score_map_["AK_d77_rms"] = calc_Lrmsd( pose_in, start_pose,
 			e2_d77_jump_ );
 		score_map_["AI_rms"] = score_map_["AJ_k48r_rms"] +
-			score_map_["AK_d77_rms"];;
+			score_map_["AK_d77_rms"];
 	} else {
 		score_map_["AL_k48r_tail_rmsg"] = calc_Lrmsd( pose_in, start_pose,
 			flex_cter_ ); // option

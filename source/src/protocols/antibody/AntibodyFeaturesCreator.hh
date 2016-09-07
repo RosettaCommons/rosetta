@@ -30,10 +30,10 @@ class AntibodyFeaturesCreator : public features::FeaturesReporterCreator
 {
 public:
 	AntibodyFeaturesCreator();
-	virtual ~AntibodyFeaturesCreator();
+	~AntibodyFeaturesCreator() override;
 
-	virtual features::FeaturesReporterOP create_features_reporter() const;
-	virtual std::string type_name() const;
+	features::FeaturesReporterOP create_features_reporter() const override;
+	std::string type_name() const override;
 };
 
 } //namespace antibody

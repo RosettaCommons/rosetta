@@ -33,7 +33,7 @@ public:
 	SampleGrid( core::pose::Pose const & pose );
 
 	//destructor
-	~SampleGrid();
+	~SampleGrid() override;
 
 public:
 

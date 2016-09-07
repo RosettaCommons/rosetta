@@ -37,7 +37,7 @@ public:
 	typedef Entity::COP EntityCOP;
 
 	EntityRandomizer();
-	virtual ~EntityRandomizer();
+	~EntityRandomizer() override;
 	virtual EntityOP random_entity();
 	virtual void mutate( Entity & entity ) = 0;
 	virtual void crossover( Entity & entity1, Entity & entity2 );
@@ -62,11 +62,11 @@ private:
 class DiscreteRandomizer : public EntityRandomizer {
 public:
 
-	virtual ~DiscreteRandomizer();
+	~DiscreteRandomizer() override;
 	virtual void add_choice( EntityElementOP const & choice );
 	virtual void set_choices( EntityElements const & choices );
-	virtual void mutate( Entity & entity );
-	virtual core::Size library_size() const;
+	void mutate( Entity & entity ) override;
+	core::Size library_size() const override;
 	virtual EntityElements const & choices() const;
 private:
 	EntityElements choices_;
@@ -79,10 +79,10 @@ public:
 	typedef utility::pointer::shared_ptr< PositionSpecificRandomizer > OP;
 	typedef utility::pointer::shared_ptr< PositionSpecificRandomizer const > COP;
 
-	virtual ~PositionSpecificRandomizer();
+	~PositionSpecificRandomizer() override;
 	virtual void append_choices( EntityElements const & choices );
-	virtual void mutate( Entity & entity );
-	virtual core::Size library_size() const;
+	void mutate( Entity & entity ) override;
+	core::Size library_size() const override;
 	virtual utility::vector1< EntityElements > const & choices() const;
 private:
 	utility::vector1< EntityElements > choices_;

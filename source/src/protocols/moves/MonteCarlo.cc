@@ -61,10 +61,10 @@ using namespace ObjexxFCL::format;
 /// a copy of a Monte Carlo object could corrupt the state held in the original MonteCarlo object.
 MonteCarlo::MonteCarlo( MonteCarlo const & src ) :
 	utility::pointer::ReferenceCount(),
-	last_accepted_pose_( src.last_accepted_pose_ ? new core::pose::Pose( * src.last_accepted_pose_ ) : 0 ),
-	lowest_score_pose_( src.lowest_score_pose_ ? new core::pose::Pose( * src.lowest_score_pose_ ) : 0 ),
+	last_accepted_pose_( src.last_accepted_pose_ ? new core::pose::Pose( * src.last_accepted_pose_ ) : nullptr ),
+	lowest_score_pose_( src.lowest_score_pose_ ? new core::pose::Pose( * src.lowest_score_pose_ ) : nullptr ),
 	temperature_( src.temperature_ ),
-	score_function_( src.score_function_ ? src.score_function_->clone() : core::scoring::ScoreFunctionOP(0) ),
+	score_function_( src.score_function_ ? src.score_function_->clone() : core::scoring::ScoreFunctionOP(nullptr) ),
 	autotemp_( src.autotemp_ ),
 	quench_temp_( src.quench_temp_ ),
 	last_accept_( src.last_accept_ ),
@@ -136,8 +136,7 @@ MonteCarlo::MonteCarlo(
 
 
 MonteCarlo::~MonteCarlo()
-{
-}
+= default;
 
 
 void MonteCarlo::clear_poses() {
@@ -615,8 +614,8 @@ MonteCarlo::autotemp_accept()
 void
 MonteCarlo::evaluate_convergence_checks( core::pose::Pose const& pose, bool reject, bool /*final*/ ) {
 	if ( !reject || numeric::mod( last_check_++, check_frequency_ ) == 0 ) {
-		for ( utility::vector1< moves::MonteCarloExceptionConvergeOP >::iterator it = convergence_checks_.begin(); it != convergence_checks_.end(); ++it ) {
-			(**it)( pose, *this, reject );
+		for (auto & convergence_check : convergence_checks_) {
+			(*convergence_check)( pose, *this, reject );
 		}
 	}
 }

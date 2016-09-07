@@ -92,7 +92,7 @@ namespace utility {
 namespace tag {
 
 /// @details Auto-generated virtual destructor
-Tag::~Tag() {}
+Tag::~Tag() = default;
 
 using namespace std;
 
@@ -141,7 +141,7 @@ Tag::operator=(Tag const &other) {
 }
 
 void Tag::die_for_unaccessed_options() const {
-	options_t::const_iterator option= mOptions_.begin();
+	auto option= mOptions_.begin();
 	for ( ; option != mOptions_.end(); ++option ) {
 		std::string const & option_key= option->first;
 		options_t::const_iterator const & found= accessed_options_.find(option_key);
@@ -158,7 +158,7 @@ void Tag::die_for_unaccessed_options() const {
 
 void Tag::die_for_unaccessed_options_recursively() const {
 	die_for_unaccessed_options();
-	tags_t::const_iterator begin= vTags_.begin();
+	auto begin= vTags_.begin();
 	for ( ; begin != vTags_.end(); ++begin ) {
 		(*begin)->die_for_unaccessed_options_recursively();
 	}
@@ -171,7 +171,7 @@ void Tag::setName(string const& name) {
 
 bool
 Tag::hasOption( string const& key ) const {
-	options_t::const_iterator i = mOptions_.find(key);
+	auto i = mOptions_.find(key);
 	return i != mOptions_.end() && i->second.size() != 0 ;
 }
 
@@ -188,7 +188,7 @@ Tag::getTags() const {
 
 utility::vector0< TagCOP > const &
 Tag::getTags( string const& name ) const {
-	map< string, utility::vector0< TagCOP > >::const_iterator i = mvTags_.find(name);
+	auto i = mvTags_.find(name);
 	if ( i == mvTags_.end() ) {
 		return vEmpty_;
 	}
@@ -219,10 +219,10 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 	string tabs(num_tabs,'\t');
 
 	out << tabs << "<" << name_;
-	for ( options_t::const_iterator i = mOptions_.begin(), end_i = mOptions_.end(); i != end_i; ++i ) {
-		out << " " << i->first << "=";
+	for (const auto & mOption : mOptions_) {
+		out << " " << mOption.first << "=";
 		if ( quote_options_ ) out << "\"";
-		out << i->second;
+		out << mOption.second;
 		if ( quote_options_ ) out << "\"";
 	}
 
@@ -230,9 +230,8 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 		out << "/>\n";
 	} else {
 		out << ">\n";
-		for ( tags_t::const_iterator i = vTags_.begin(), end_i = vTags_.end(); i != end_i; ++i ) {
-			TagCOP tag = *i;
-			tag->write(out,num_tabs+1);
+		for (auto tag : vTags_) {
+				tag->write(out,num_tabs+1);
 		}
 		out << tabs << "</" << name_ << ">\n";
 	}
@@ -241,8 +240,8 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 
 size_t Tag::size() const {
 	size_t rval = 1;
-	for ( tags_t::const_iterator i = vTags_.begin(), end_i = vTags_.end(); i != end_i; ++i ) {
-		rval += (**i).size();
+	for (const auto & vTag : vTags_) {
+		rval += (*vTag).size();
 	}
 	return rval;
 } // Tag::size
@@ -255,7 +254,7 @@ size_t Tag::size() const {
 template<>
 bool
 Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
-	options_t::const_iterator i = mOptions_.find(key);
+	auto i = mOptions_.find(key);
 	if ( i == mOptions_.end() ) {
 		accessed_options_[key]= key;
 		return t_default;
@@ -274,7 +273,7 @@ Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
 template<>
 bool
 Tag::getOption<bool>(std::string const& key) const {
-	options_t::const_iterator i = mOptions_.find(key);
+	auto i = mOptions_.find(key);
 	if ( i == mOptions_.end() ) {
 		std::stringstream error_message;
 		error_message << "Option '" << key << "' not found in Tag named '" << this->getName() << "'.";
@@ -326,8 +325,8 @@ void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 {
 	tag = TagOP( new Tag() );
 	tag->setName( v.first );
-	for (  map<string,string>::const_iterator i = v.second.begin(), end_i = v.second.end(); i != end_i ; ++i ) {
-		tag->setOption( i->first, i->second );
+	for (const auto & i : v.second) {
+		tag->setOption( i.first, i.second );
 	}
 } // set_name_and_options
 
@@ -511,8 +510,8 @@ void Tag::read(std::istream& in ) {
 	} else {
 		stringstream err_msg;
 		err_msg << "Tag::read - parse error, printing backtrace.\n" << endl;
-		for ( size_t k = 0; k < g.errors.size(); ++k ) {
-			print_error(err_msg,str,g.errors[k]);
+		for (auto & error : g.errors) {
+			print_error(err_msg,str,error);
 		}
 
 		throw utility::excn::EXCN_BadInput( err_msg.str() );

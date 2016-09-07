@@ -144,21 +144,21 @@ public:
 	ClassicAbinitio( ClassicAbinitio const & src );
 
 	/// @brief Explicit destructor since this class contains OPs of other classes
-	~ClassicAbinitio();
+	~ClassicAbinitio() override;
 
 	//@brief setup moves, mc-object, scores
 	//@details can't call this from constructor; virtual functions don't operate
 	//until construction has completed.
-	virtual
-	void init( core::pose::Pose const& pose );
+	
+	void init( core::pose::Pose const& pose ) override;
 
 	//@brief ClassicAbinitio has virtual functions... use this to obtain a new instance
-	virtual
-	moves::MoverOP clone() const;
+	
+	moves::MoverOP clone() const override;
 
 	//@brief run protocol on pose
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	//@brief return FramgentMover for smooth_small fragment insertions (i.e., stage4 moves)
 	simple_moves::FragmentMoverOP smooth_move_small();
@@ -381,7 +381,7 @@ public:
 	}
 
 protected:
-	void output_debug_structure( core::pose::Pose & pose, std::string prefix );
+	void output_debug_structure( core::pose::Pose & pose, std::string prefix ) override;
 
 	//@brief obtain currently used monte-carlo object --> use to obtain current score-func: mc().score_function()
 	moves::MonteCarloOP mc_ptr();

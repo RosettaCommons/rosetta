@@ -31,7 +31,7 @@ numeric::Real sq_vec_distance(
 	static Size n_comp( 0 );
 
 	numeric::Real dist( 0.0 );
-	for ( vector1< Real >::const_iterator
+	for ( auto
 			it1 = vec1.begin(), it2 = vec2.begin(),
 			end1 = vec1.end(), end2 = vec2.end();
 			it1 != end1 && it2 != end2; ++it1, ++it2

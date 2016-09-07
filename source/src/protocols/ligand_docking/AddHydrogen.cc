@@ -65,7 +65,7 @@ AddHydrogen::AddHydrogen(AddHydrogen const & that):
 	connection_id_(that.connection_id_)
 {}
 
-AddHydrogen::~AddHydrogen() {}
+AddHydrogen::~AddHydrogen() = default;
 
 std::string AddHydrogen::get_name() const{
 	return "AddHydrogen";

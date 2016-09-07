@@ -31,7 +31,7 @@ class Region : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Region();
+	~Region() override;
 	/// @brief Creates a new region with the specified start/stop residues
 	Region(Size start_pos, Size stop_pos);
 

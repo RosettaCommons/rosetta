@@ -25,8 +25,8 @@ class QCP_Kernel
 {
 
 public:
-	QCP_Kernel() {}
-	virtual ~QCP_Kernel() {}
+	QCP_Kernel() = default;
+	virtual ~QCP_Kernel() = default;
 
 	///////////////////////////////////////////////////////////////
 	/// \remarks

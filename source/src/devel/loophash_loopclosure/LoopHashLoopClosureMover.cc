@@ -73,10 +73,9 @@ std::ostream& operator<< (std::ostream& out , const MyLoop & loop ) {
 	return out;
 }
 
-LoopHashLoopClosureMoverCreator::LoopHashLoopClosureMoverCreator()
-{}
-LoopHashLoopClosureMoverCreator::~LoopHashLoopClosureMoverCreator()
-{}
+LoopHashLoopClosureMoverCreator::LoopHashLoopClosureMoverCreator() = default;
+LoopHashLoopClosureMoverCreator::~LoopHashLoopClosureMoverCreator() = default;
+
 protocols::moves::MoverOP
 LoopHashLoopClosureMoverCreator::create_mover() const
 {
@@ -97,8 +96,7 @@ LoopHashLoopClosureMoverCreator::mover_name()
 LoopHashLoopClosureMover::LoopHashLoopClosureMover()
 {
 }
-LoopHashLoopClosureMover::~LoopHashLoopClosureMover()
-{}
+LoopHashLoopClosureMover::~LoopHashLoopClosureMover() = default;
 void
 LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 {
@@ -151,8 +149,8 @@ LoopHashLoopClosureMover::tokenize( const std::string& in_str,
 	if ( in_str == "" ) return tokens;
 
 	map<char, char> delim_lookup;
-	for ( Size i=0; i<delimiters.size(); i++ ) {
-		delim_lookup[delimiters[i]] = delimiters[i];
+	for (char delimiter : delimiters) {
+		delim_lookup[delimiter] = delimiter;
 	}
 
 	std::string token = "";
@@ -186,8 +184,8 @@ LoopHashLoopClosureMover::make_loops(const std::string & in_str) const {
 	}
 	// iterate over tuples and create a Loop object for each
 	vector<MyLoop> loop_list;
-	for ( Size i=0; i<tuples.size(); i++ ) {
-		std::vector<std::string> rclrc = tokenize(tuples[i], ": " );
+	for (auto & tuple : tuples) {
+		std::vector<std::string> rclrc = tokenize(tuple, ": " );
 		runtime_assert(rclrc.size() >=3);
 		std::vector<std::string> r1_vec = tokenize( rclrc[0], utility::UPPERCASE_LETTERS );
 		std::vector<std::string> c1_vec = tokenize( rclrc[0], utility::NUMERALS );
@@ -258,8 +256,8 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 	// Validate the start and end res numbers relationship at the same time.
 	// As of Mar 6, 2013, this system cannot build a loop between non-adjacent residues.
 	std::map<Size, MyLoop> lookup_by_r1;
-	for ( Size i=0; i<loops.size(); ++i ) {
-		lookup_by_r1[loops[i].r1_] = loops[i];
+	for (const auto & loop : loops) {
+		lookup_by_r1[loop.r1_] = loop;
 	}
 	std::ofstream bp( bpname.c_str() );
 	runtime_assert( bp.good() );

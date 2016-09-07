@@ -83,20 +83,17 @@ void
 error_check_requested_adducts( std::map< std::string, int > const & add_map,
 	ResidueTypeCOPs const & rsd_types ) {
 
-	for ( std::map< std::string, int >::const_iterator this_add = add_map.begin() ;
+	for ( auto this_add = add_map.begin() ;
 			this_add != add_map.end() ; ++this_add ) {
 		bool not_found( true );
 
-		for ( ResidueTypeCOPs::const_iterator this_rsd = rsd_types.begin(),
-				end_rsd = rsd_types.end(); this_rsd != end_rsd ; ++this_rsd ) {
+		for (const auto & rsd_type : rsd_types) {
 			// shortcircuit if we've already found an instance of the adduct
-			ResidueType const & rsd( **this_rsd );
+			ResidueType const & rsd( *rsd_type );
 			if ( not_found == false ) break;
 
-			for ( utility::vector1< Adduct >::const_iterator rsd_add = rsd.defined_adducts().begin(),
-					end_rsd_add = rsd.defined_adducts().end() ;
-					rsd_add != end_rsd_add ; ++rsd_add ) {
-				std::string check_name( rsd_add->adduct_name() );
+			for (const auto & rsd_add : rsd.defined_adducts()) {
+				std::string check_name( rsd_add.adduct_name() );
 				// compare case-insensitively for convenience
 				if ( ObjexxFCL::equali( this_add->first, check_name ) ) {
 					not_found = false;
@@ -125,8 +122,8 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 	std::string new_rsd_name( rsd.name() );
 
 	// Throw in all the applicable adducts
-	utility::vector1< bool >::iterator mask_iter = add_mask.begin();
-	for ( utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ,
+	auto mask_iter = add_mask.begin();
+	for ( auto add_iter = rsd.defined_adducts().begin() ,
 			end_add_iter = rsd.defined_adducts().end() ; add_iter != end_add_iter ;
 			++add_iter, ++mask_iter )  {
 
@@ -211,10 +208,8 @@ place_adducts( ResidueTypeSet & rsd_type_set )
 	// Set up a starting point map where the int value is the number
 	// of adducts of a given type placed
 	AdductMap blank_map( add_map );
-	for ( AdductMap::iterator add_iter = blank_map.begin(),
-			end_iter = blank_map.end() ;
-			add_iter != end_iter ; ++add_iter ) {
-		add_iter->second = 0;
+	for (auto & add_iter : blank_map) {
+		add_iter.second = 0;
 	}
 
 	// Process the residues in turn
@@ -254,7 +249,7 @@ create_adduct_combinations(
 		// Make this combo and return;
 		//  std::cout << "Making an adduct" << std::endl;
 
-		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
+		auto add_iter = rsd.defined_adducts().begin() ;
 		BOOST_FOREACH ( bool make, add_mask ) {
 			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << make << std::endl;
 			++add_iter;
@@ -269,7 +264,7 @@ create_adduct_combinations(
 	// Traverse the 'make' branch for this adduct if:
 	// 1. The adduct is in the map of requested adducts
 	// 2. we haven't exceeded the count limit for this adduct
-	AdductMap::iterator test_iter =
+	auto test_iter =
 		ref_map.find( work_iter->adduct_name() );
 
 	if ( test_iter != ref_map.end() &&

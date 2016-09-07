@@ -110,7 +110,7 @@ public:
 	typedef TopologyClaimers::const_iterator const_iterator;
 	///constructor
 	TopologyBroker();
-	virtual ~TopologyBroker();
+	~TopologyBroker() override;
 	TopologyBroker( TopologyBroker const & );
 	TopologyBroker & operator = ( TopologyBroker const & );
 
@@ -182,7 +182,7 @@ public:
 	bool has_chainbreaks_to_close() const;
 
 	/// @brief add chainbreak variant residue to the unphysical chainbreaks
-	void add_chainbreak_variants( core::pose::Pose & pose, core::Size max_dist = 0, core::kinematics::ShortestPathInFoldTreeCOP sp = NULL) const;
+	void add_chainbreak_variants( core::pose::Pose & pose, core::Size max_dist = 0, core::kinematics::ShortestPathInFoldTreeCOP sp = nullptr) const;
 	/// @brief check that each chainbreak residue has a chainbreak variant
 	bool check_chainbreak_variants( core::pose::Pose & pose ) const;
 
@@ -201,7 +201,7 @@ public:
 	core::kinematics::FoldTree & final_fold_tree() const {
 		//std::cout << "Broker FinalFoldTree is:  ";
 		//final_fold_tree_->show(std::cout);
-		runtime_assert( final_fold_tree_ != 0 );
+		runtime_assert( final_fold_tree_ != nullptr );
 		return *final_fold_tree_;
 	};
 
@@ -212,7 +212,7 @@ public:
 	//core::Size resolve_residue( std::string const & chain_label, core::Size pos ) const;
 
 	const SequenceNumberResolver & sequence_number_resolver() const {
-		runtime_assert( sequence_number_resolver_ != 0 );
+		runtime_assert( sequence_number_resolver_ != nullptr );
 		return *sequence_number_resolver_;
 	}
 

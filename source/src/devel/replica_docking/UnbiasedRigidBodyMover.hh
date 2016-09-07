@@ -42,26 +42,26 @@ public:
 	UnbiasedRigidBodyPerturbNoCenterMover();
 	UnbiasedRigidBodyPerturbNoCenterMover( UnbiasedRigidBodyPerturbNoCenterMover const & );
 
-	virtual ~UnbiasedRigidBodyPerturbNoCenterMover();
+	~UnbiasedRigidBodyPerturbNoCenterMover() override;
 
 	/// @brief overload it to use random unit quaternion to unbiasedly sample rotation instead of Jump::gaussian_move
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void initialize( core::pose::Pose const &);
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	//   virtual void
 	//   initialize_simulation(

@@ -56,7 +56,7 @@ namespace protocols {
 namespace pockets {
 
 PocketConstraintCreator::PocketConstraintCreator() {}
-PocketConstraintCreator::~PocketConstraintCreator() {}
+PocketConstraintCreator::~PocketConstraintCreator() = default;
 
 core::scoring::constraints::ConstraintOP
 PocketConstraintCreator::create_constraint() const {
@@ -177,7 +177,7 @@ PocketConstraint::PocketConstraint( const PocketConstraint& old ):
 }
 
 
-PocketConstraint::~PocketConstraint() {}
+PocketConstraint::~PocketConstraint() = default;
 
 
 void PocketConstraint::set_target_res( core::pose::Pose const & pose, Size new_seqpos ){

@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
-#include <time.h>
+#include <ctime>
 namespace protocols {
 namespace simple_filters {
 
@@ -38,10 +38,10 @@ ExpiryFilter::ExpiryFilter() :
 	protocols::filters::Filter( "Expiry" ),
 	seconds_( 0 )
 {
-	start_time_ = time( NULL );
+	start_time_ = time( nullptr );
 }
 
-ExpiryFilter::~ExpiryFilter() {}
+ExpiryFilter::~ExpiryFilter() = default;
 
 void
 ExpiryFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
@@ -68,7 +68,7 @@ core::Real
 ExpiryFilter::compute(
 	core::pose::Pose const & /*pose*/
 ) const {
-	return( time( NULL ) - start_time() );
+	return( time( nullptr ) - start_time() );
 }
 
 core::Size

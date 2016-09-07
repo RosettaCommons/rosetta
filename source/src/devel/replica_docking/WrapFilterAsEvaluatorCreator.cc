@@ -59,7 +59,7 @@ static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.WrapFilterAsEvaluat
 namespace devel {
 namespace replica_docking {
 
-WrapFilterAsEvaluatorCreator::~WrapFilterAsEvaluatorCreator() {}
+WrapFilterAsEvaluatorCreator::~WrapFilterAsEvaluatorCreator() = default;
 
 void WrapFilterAsEvaluatorCreator::register_options() {
 	using namespace basic::options;

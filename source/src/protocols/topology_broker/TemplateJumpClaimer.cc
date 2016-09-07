@@ -67,14 +67,14 @@ TemplateJumpClaimer::TemplateJumpClaimer() : templates_( /* NULL */ )
 }
 
 TemplateJumpClaimer::TemplateJumpClaimer( std::string config_file,  weights::AbinitioMoverWeightOP weight )
-: FragmentJumpClaimer( NULL, "template-jumps", weight )
+: FragmentJumpClaimer( nullptr, "template-jumps", weight )
 {
 	set_keep_jumps_from_input_pose( false );
 	read_config_file( config_file );
 }
 
 void TemplateJumpClaimer::read_config_file( std::string const& file ) {
-	templates_ = abinitio::TemplatesOP( new abinitio::Templates( file, NULL /* native_pose_*/ ) );
+	templates_ = abinitio::TemplatesOP( new abinitio::Templates( file, nullptr /* native_pose_*/ ) );
 	// templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
 	// want to pick fragments from templates... make sure they are not initialized yet
 	//runtime_assert( !fragset_large_ );
@@ -82,7 +82,7 @@ void TemplateJumpClaimer::read_config_file( std::string const& file ) {
 	if ( !templates_->is_good() ) {
 		utility_exit_with_message("ERRORS occured during template setup. check BAD_SEQUENCES file!");
 	}
-	set_jump_def( templates_->create_jump_def( NULL ) );
+	set_jump_def( templates_->create_jump_def( nullptr ) );
 	/*NULL for ss_def_ ---- it will be determined from templates.. and is basically not used, since broker builds fold-tree himself;*/
 
 }
@@ -98,7 +98,7 @@ void TemplateJumpClaimer::read_topol_file( std::string const& file ) {
 	core::scoring::dssp::PairingList helix_pairings; //empty for now
 	core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure );
 	ss_def->extend( 1500 ); //HACK number of residues
-	set_jump_def( jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) ) );
+	set_jump_def( jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( nullptr, ss_def, ps, helix_pairings ) ) );
 }
 
 bool TemplateJumpClaimer::read_tag( std::string tag, std::istream& is ) {

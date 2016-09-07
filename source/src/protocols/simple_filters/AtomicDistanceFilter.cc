@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 
 //parsing
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
@@ -47,8 +48,8 @@ AtomicDistanceFilter::AtomicDistanceFilter( core::Size const res1, core::Size co
 	parent( "AtomicDistance" ),
 	residue1_( res1 ),
 	residue2_( res2 ),
-	atomdesg1_( atom_desig1 ),
-	atomdesg2_( atom_desig2 ),
+	atomdesg1_(std::move( atom_desig1 )),
+	atomdesg2_(std::move( atom_desig2 )),
 	astype1_( as_type1 ),
 	astype2_( as_type2 ),
 	distance_( distance )

@@ -145,7 +145,7 @@ LoopModeler::LoopModeler() { // {{{1
 	setup_kic_config();
 }
 
-LoopModeler::~LoopModeler() {} // {{{1
+LoopModeler::~LoopModeler() = default; // {{{1
 
 MoverOP LoopModeler::clone() const { // {{{1
 	// This is dangerous.  It only works if something else is holding a shared
@@ -256,10 +256,10 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	// Build stage
 
 	if ( is_build_stage_enabled_ ) {
-		long start_time = time(NULL);
+		long start_time = time(nullptr);
 		TR << "Build Stage" << endl;
 		build_stage_->apply(pose);
-		long end_time = time(NULL);
+		long end_time = time(nullptr);
 		TR << "Build Time: " << end_time - start_time << " sec" << endl;
 	}
 
@@ -290,21 +290,21 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	// Centroid stage
 
 	if ( is_centroid_stage_enabled_ ) {
-		long start_time = time(NULL);
+		long start_time = time(nullptr);
 		TR << "Centroid Stage" << endl;
 		centroid_stage_->apply(pose);
-		long end_time = time(NULL);
+		long end_time = time(nullptr);
 		TR << "Centroid Time: " << end_time - start_time << " sec" << endl;
 	}
 
 	// Fullatom stage
 
 	if ( is_fullatom_stage_enabled_ ) {
-		long start_time = time(NULL);
+		long start_time = time(nullptr);
 		TR << "Fullatom Stage" << endl;
 		prepare_for_fullatom_->apply(pose);
 		fullatom_stage_->apply(pose);
-		long end_time = time(NULL);
+		long end_time = time(nullptr);
 		TR << "Fullatom Time: " << end_time - start_time << " sec" << endl;
 	}
 

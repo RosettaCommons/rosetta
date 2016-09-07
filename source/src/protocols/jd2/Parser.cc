@@ -30,7 +30,7 @@
 namespace protocols {
 namespace jd2 {
 
-protocols::jd2::Parser::~Parser(){}
+protocols::jd2::Parser::~Parser()= default;
 
 /// @details the impetus for this function is that Parser is a friend of the
 /// InnerJob class and can modify the pose - actual mover generation/pose

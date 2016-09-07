@@ -28,7 +28,7 @@ public:
 	RigidBodyInfo();
 	void add_jump( core::Size );
 	utility::vector1< core::Size > const& movable_jumps() const { return movable_jumps_; }
-	virtual ~RigidBodyInfo();
+	~RigidBodyInfo() override;
 
 private:
 	utility::vector1< core::Size > movable_jumps_;

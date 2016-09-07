@@ -65,7 +65,7 @@ public:
 		core::Real design_shell = -1.0,
 		core::Real repack_shell = 8.0
 	);
-	virtual ~PointMutationCalculator();
+	~PointMutationCalculator() override;
 
 	void mutate_and_relax(
 		core::pose::Pose & pose,

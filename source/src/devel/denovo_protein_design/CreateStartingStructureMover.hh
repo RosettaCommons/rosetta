@@ -37,10 +37,10 @@ public:
 	/// @brief
 	CreateStartingStructureMover();
 
-	virtual ~CreateStartingStructureMover();
+	~CreateStartingStructureMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 

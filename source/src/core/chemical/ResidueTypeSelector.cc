@@ -27,10 +27,10 @@ namespace core {
 namespace chemical {
 
 /// @details Auto-generated virtual destructor
-ResidueTypeSelector::~ResidueTypeSelector() {}
+ResidueTypeSelector::~ResidueTypeSelector() = default;
 
 /// @details Auto-generated virtual destructor
-ResidueTypeSelectorSingle::~ResidueTypeSelectorSingle() {}
+ResidueTypeSelectorSingle::~ResidueTypeSelectorSingle() = default;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ residue_selector_single_from_line( std::string const & line )
 	std::istringstream l( line );
 	std::string tag;
 	l >> tag;
-	if ( l.fail() ) return 0;
+	if ( l.fail() ) return nullptr;
 
 	bool desired_result( true );
 	if ( tag == "NOT" ) {
@@ -103,7 +103,7 @@ residue_selector_single_from_line( std::string const & line )
 		if ( !selector_string.empty() ) return ResidueTypeSelectorSingleOP( new Selector_CMDFLAG( selector_string, desired_result ) );
 	}
 	std::cout << "residue_selector_single: unrecognized line: " << line << std::endl;
-	return 0;
+	return nullptr;
 }
 
 Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const result) : ResidueTypeSelectorSingle( result )
@@ -112,9 +112,8 @@ Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const resu
 	using namespace basic::options::OptionKeys;
 	b_flag_is_present_ = false;
 	if ( !option[ OptionKeys::chemical::patch_selectors ].user() ) return;
-	for ( StringVectorOption::const_iterator it = option[ OptionKeys::chemical::patch_selectors ]().begin(),
-			eit = option[ OptionKeys::chemical::patch_selectors ]().end(); it != eit ; ++ it ) {
-		if ( *it == flag_in ) {
+	for (const auto & it : option[ OptionKeys::chemical::patch_selectors ]()) {
+		if ( it == flag_in ) {
 			b_flag_is_present_ = true;
 			break;
 		}

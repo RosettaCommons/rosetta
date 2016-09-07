@@ -12,7 +12,7 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 //C++ headers
-#include <math.h>
+#include <cmath>
 
 // Unit headers
 #include <numeric/types.hh>

@@ -31,13 +31,13 @@ class PalesEvaluatorCreator : public evaluation::EvaluatorCreator
 {
 public:
 	PalesEvaluatorCreator() : options_registered_(false) {};
-	virtual ~PalesEvaluatorCreator();
+	~PalesEvaluatorCreator() override;
 
 	virtual void register_options();
 
-	virtual void add_evaluators( evaluation::MetaPoseEvaluator & eval ) const;
+	void add_evaluators( evaluation::MetaPoseEvaluator & eval ) const override;
 
-	virtual std::string type_name() const;
+	std::string type_name() const override;
 
 private:
 	bool options_registered_;

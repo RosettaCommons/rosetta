@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 UnrecognizedAtomFeaturesCreator::UnrecognizedAtomFeaturesCreator() {}
-UnrecognizedAtomFeaturesCreator::~UnrecognizedAtomFeaturesCreator() {}
+UnrecognizedAtomFeaturesCreator::~UnrecognizedAtomFeaturesCreator() = default;
 FeaturesReporterOP UnrecognizedAtomFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new UnrecognizedAtomFeatures );
 }

@@ -58,7 +58,7 @@ HelixCapFeatures::HelixCapFeatures( HelixCapFeatures const & /*src*/ ) : Feature
 {
 }
 
-HelixCapFeatures::~HelixCapFeatures(){}
+HelixCapFeatures::~HelixCapFeatures()= default;
 
 /// @brief return string with class name
 std::string

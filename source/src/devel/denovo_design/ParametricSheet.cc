@@ -51,7 +51,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //C++ Headers
-#include <math.h>
+#include <cmath>
 #include <fstream>
 
 #ifdef GL_GRAPHICS
@@ -105,7 +105,7 @@ ParametricSheet::ParametricSheet() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-ParametricSheet::~ParametricSheet() {}
+ParametricSheet::~ParametricSheet() = default;
 
 void
 ParametricSheet::parse_tags( utility::vector1< utility::tag::TagCOP > const & tags )
@@ -644,7 +644,7 @@ ParametricSheet::dump_ca_coords( std::string const & pdb_name ) const
 				// 31-38 x, 39-46 y, 47-54 z
 				outfile << std::setfill(' ') << std::setw( 8 ) << std::setprecision( 3 ) << ca_coords_[i][j].x();
 				outfile << std::setfill(' ') << std::setw( 8 ) << std::setprecision( 3 ) << ca_coords_[i][j].y();
-				outfile << std::setfill(' ') << std::setw( 8 ) << std::setprecision( 3 ) << ca_coords_[i][j].z() << std::endl;;
+				outfile << std::setfill(' ') << std::setw( 8 ) << std::setprecision( 3 ) << ca_coords_[i][j].z() << std::endl;
 				++atomid;
 			}
 		}

@@ -31,7 +31,7 @@ using namespace core;
 
 DnaChains::DnaChains() : utility::pointer::ReferenceCount() {}
 
-DnaChains::~DnaChains(){}
+DnaChains::~DnaChains()= default;
 
 DnaChains::DnaChains( DnaChains const & other )
 : utility::pointer::ReferenceCount()
@@ -52,9 +52,8 @@ DnaChains::contains( Size index ) const
 		return true;
 	}
 	// bottom strand check
-	for ( DnaPositions::const_iterator pos( positions_.begin() );
-			pos != positions_.end(); ++pos ) {
-		if ( index == pos->second.bottom() ) return true;
+	for (const auto & position : positions_) {
+		if ( index == position.second.bottom() ) return true;
 	}
 	return false;
 }
@@ -66,11 +65,10 @@ DnaChains::print(
 ) const
 {
 	os << "There are " << positions_.size() << " dna positions:" << '\n';
-	for ( DnaPositions::const_iterator iter( positions_.begin() );
-			iter != positions_.end(); ++iter ) {
+	for (const auto & position : positions_) {
 
-		Size const top_i( iter->first );
-		DnaPosition const & pos( iter->second );
+		Size const top_i( position.first );
+		DnaPosition const & pos( position.second );
 		runtime_assert( top_i == pos.top() );
 		os << I( 4, top_i );
 		if ( pose.pdb_info() ) {

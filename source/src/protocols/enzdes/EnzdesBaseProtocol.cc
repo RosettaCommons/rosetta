@@ -659,17 +659,17 @@ EnzdesBaseProtocol::cst_minimize(
 
 					utility::vector1< std::string > const new_var_types( pose.residue_type( i ).properties().get_list_of_variants() );
 					utility::vector1< std::string > const old_var_types( old_Pose.residue_type( i ).properties().get_list_of_variants() );
-					for ( utility::vector1< std::string >::const_iterator newvars = new_var_types.begin(); newvars  != new_var_types.end(); ++newvars ) {
-						if ( !old_Pose.residue_type( i ).has_variant_type( *newvars ) ) {
+					for (const auto & new_var_type : new_var_types) {
+						if ( !old_Pose.residue_type( i ).has_variant_type( new_var_type ) ) {
 							core::pose::remove_variant_type_from_pose_residue( pose,
-								core::chemical::ResidueProperties::get_variant_from_string( *newvars ), i );
+								core::chemical::ResidueProperties::get_variant_from_string( new_var_type ), i );
 						}
 					}
 
-					for ( utility::vector1< std::string >::const_iterator oldvars = old_var_types.begin(); oldvars  != old_var_types.end(); ++oldvars ) {
-						if ( !pose.residue_type( i ).has_variant_type( *oldvars ) ) {
+					for (const auto & old_var_type : old_var_types) {
+						if ( !pose.residue_type( i ).has_variant_type( old_var_type ) ) {
 							core::pose::add_variant_type_to_pose_residue( pose,
-								core::chemical::ResidueProperties::get_variant_from_string( *oldvars ), i );
+								core::chemical::ResidueProperties::get_variant_from_string( old_var_type ), i );
 						}
 					}
 				} //if variants don't match
@@ -772,12 +772,12 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 
 		//now we also have to change the remarks
 		core::io::Remarks & remarks = pose.pdb_info()->remarks();
-		for ( std::vector< core::io::RemarkInfo >::iterator rem_it = remarks.begin(); rem_it != remarks.end(); ++rem_it ) {
+		for (auto & remark : remarks) {
 
 			std::string chainA(""), resA(""),chainB(""),resB("");
 			core::Size cst_block(0), exgeom_id(0);
 			int seqposA(0), seqposB(0);
-			if ( toolbox::match_enzdes_util::split_up_remark_line( rem_it->value, chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id ) ) {
+			if ( toolbox::match_enzdes_util::split_up_remark_line( remark.value, chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id ) ) {
 
 				bool line_changed( false );
 
@@ -794,7 +794,7 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 				}
 
 				if ( line_changed ) {
-					rem_it->value = toolbox::match_enzdes_util::assemble_remark_line( chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id );
+					remark.value = toolbox::match_enzdes_util::assemble_remark_line( chainA, resA, seqposA, chainB, resB, seqposB, cst_block, exgeom_id );
 				}
 			}
 		}
@@ -824,10 +824,9 @@ EnzdesBaseProtocol::design_targets_score(
 	core::Real return_val(0.0);
 	using namespace core::scoring;
 
-	for ( std::set< core::Size >::const_iterator des_it = design_targets_.begin();
-			des_it != design_targets_.end(); ++des_it ) {
+	for (unsigned long design_target : design_targets_) {
 
-		return_val += pose.energies().residue_total_energy( *des_it );
+		return_val += pose.energies().residue_total_energy( design_target );
 	}
 
 	return return_val;

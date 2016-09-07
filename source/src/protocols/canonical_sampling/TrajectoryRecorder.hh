@@ -48,7 +48,7 @@ public:
 	TrajectoryRecorder();
 
 	/// @brief Destructor.
-	~TrajectoryRecorder();
+	~TrajectoryRecorder() override;
 
 	/// @brief Copy constructor.
 	TrajectoryRecorder( TrajectoryRecorder const & );
@@ -62,16 +62,16 @@ private:
 public:
 
 	/// @brief Return the name of this mover.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Configure this mover from a RosettaScripts tag.
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief Return the file name for the trajectory.
 	std::string const & file_name() const {
@@ -139,13 +139,13 @@ public:
 	/// @brief Callback executed whenever the simulation is initialized or reset.
 	virtual void reset(
 		protocols::moves::MonteCarlo const& mc,
-		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
 	);
 
 	/// @copydoc ThermodynamicObserver::apply
 	void update_after_boltzmann(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
 	);
 
 	/// @copydoc ThermodynamicObserver::apply
@@ -154,26 +154,26 @@ public:
 	);
 
 	/// @copydoc ThermodynamicObserver::apply
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
 	/// @copydoc ThermodynamicObserver::initialize_simulation
-	virtual void initialize_simulation(
+	void initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
 	/// @copydoc ThermodynamicObserver::observe_after_metropolis
-	virtual void observe_after_metropolis(
+	void observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 protected:
 
 	/// @brief Pure virtual method called to write a model to the output file.
 	virtual void  write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
 	) = 0;
 
 private:

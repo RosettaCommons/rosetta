@@ -52,7 +52,7 @@ public: // Creation
 	/// @note  Only works if Keys have default constructors
 	inline
 	Key3Tuple()
-	{}
+	= default;
 
 
 	/// @brief Key constructor
@@ -71,7 +71,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~Key3Tuple()
-	{}
+	= default;
 
 
 public: // Properties

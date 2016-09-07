@@ -108,7 +108,7 @@ DockingProtocol::DockingProtocol()
 {
 	user_defined_ = false;
 	if_ensemble_ = false; // valgrind complains about uninitialized variable w/o this.
-	init(utility::tools::make_vector1<core::SSize>(1), false, false, true, NULL, NULL);
+	init(utility::tools::make_vector1<core::SSize>(1), false, false, true, nullptr, nullptr);
 }
 
 DockingProtocol::DockingProtocol(
@@ -166,7 +166,7 @@ void DockingProtocol::init(
 	}
 
 	// correctly set up the score functions from either passed in values or defaults
-	if ( docking_score_low == NULL ) {
+	if ( docking_score_low == nullptr ) {
 		//docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 		docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen",
 			basic::options::option[ basic::options::OptionKeys::score::patch ]()
@@ -176,7 +176,7 @@ void DockingProtocol::init(
 		docking_scorefxn_low_ = docking_score_low;
 	}
 
-	if ( docking_score_high == NULL ) {
+	if ( docking_score_high == nullptr ) {
 		docking_scorefxn_high_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
 		docking_scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;
 		docking_scorefxn_output_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
@@ -228,8 +228,8 @@ DockingProtocol::set_default()
 	lowres_outer_cycles_ = 10;
 
 	// initialize the ensemble movers and file strings
-	ensemble1_ = NULL;
-	ensemble2_ = NULL;
+	ensemble1_ = nullptr;
+	ensemble2_ = nullptr;
 	ensemble1_filename_ = "";
 	ensemble2_filename_ = "";
 	recover_sidechains_filename_ = "";
@@ -239,20 +239,20 @@ DockingProtocol::set_default()
 void DockingProtocol::setup_objects()
 {
 	// initialize to null
-	lowres_filter_ = NULL;
-	highres_filter_ = NULL;
+	lowres_filter_ = nullptr;
+	highres_filter_ = nullptr;
 
 	// initialize constraint set mover
-	docking_constraint_ = NULL;
+	docking_constraint_ = nullptr;
 
 	// stores the sequence of the previous pose, so that the DockingProtocol can re setup the fold tree
 	previous_sequence_ = "";
 
 	fold_tree_ = core::kinematics::FoldTree(); // apl NOTE: was NULL, but fold_tree_ is not a pointer.
-	init_task_factory_ = NULL;
-	perturber_ = NULL;
-	docking_lowres_mover_ = NULL;
-	docking_highres_mover_ = NULL;
+	init_task_factory_ = nullptr;
+	perturber_ = nullptr;
+	docking_lowres_mover_ = nullptr;
+	docking_highres_mover_ = nullptr;
 
 	// Residue movers
 	to_centroid_ = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
@@ -290,19 +290,19 @@ void DockingProtocol::sync_objects_with_flags()
 			lowres_filter_ = protocols::docking::DockingLowResFilterOP( new protocols::docking::DockingLowResFilter() );
 		}
 	} else {
-		perturber_ = NULL;
-		docking_lowres_mover_ = NULL;
+		perturber_ = nullptr;
+		docking_lowres_mover_ = nullptr;
 	}
 
 	if ( !low_res_protocol_only_ ) {
 		if ( dock_min_ ) {
 			if ( docking_highres_mover_ ) {
-				if ( docking_highres_mover_->get_name() != "DockMinMover" ) docking_highres_mover_ = NULL;
+				if ( docking_highres_mover_->get_name() != "DockMinMover" ) docking_highres_mover_ = nullptr;
 			}
 			if ( !docking_highres_mover_ ) docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockMinMover( movable_jumps_, docking_scorefxn_high_ ) );
 		} else if ( use_legacy_protocol_ ) {
 			if ( docking_highres_mover_ ) {
-				if ( docking_highres_mover_->get_name() != "DockingHighResLegacy" ) docking_highres_mover_ = NULL;
+				if ( docking_highres_mover_->get_name() != "DockingHighResLegacy" ) docking_highres_mover_ = nullptr;
 			}
 			if ( !docking_highres_mover_ ) {
 				docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ ) );
@@ -312,7 +312,7 @@ void DockingProtocol::sync_objects_with_flags()
 			}
 		} else {
 			if ( docking_highres_mover_ ) {
-				if ( docking_highres_mover_->get_name() != "DockMCMProtocol" ) docking_highres_mover_ = NULL;
+				if ( docking_highres_mover_->get_name() != "DockMCMProtocol" ) docking_highres_mover_ = nullptr;
 			}
 			if ( !docking_highres_mover_ ) {
 				// uses docking_scorefxn_output because three scorefunction still exist
@@ -328,16 +328,16 @@ void DockingProtocol::sync_objects_with_flags()
 			highres_filter_ = protocols::docking::DockingHighResFilterOP( new protocols::docking::DockingHighResFilter() );
 		}
 	} else {
-		docking_highres_mover_ = NULL;
+		docking_highres_mover_ = nullptr;
 	}
 	if ( no_filters_ ) {
-		highres_filter_ = NULL;
-		lowres_filter_ = NULL;
+		highres_filter_ = nullptr;
+		lowres_filter_ = nullptr;
 	}
 
 	// set up constraint set mover
 	if ( !use_csts_ ) {
-		docking_constraint_ = NULL;
+		docking_constraint_ = nullptr;
 	} else {
 		if ( !docking_constraint_ ) {
 			docking_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new protocols::simple_moves::ConstraintSetMover() );
@@ -408,7 +408,7 @@ DockingProtocol::init_from_options()
 		core::import_pose::pose_from_file( *native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		set_native_pose( native_pose );
 	} else {
-		set_native_pose(NULL);
+		set_native_pose(nullptr);
 	}
 
 	if ( option[ OptionKeys::cluster::output_score_filter ].user() ) {
@@ -521,7 +521,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		ensemble2_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ ) );
 
 		// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
-		recover_sidechains_ = NULL;
+		recover_sidechains_ = nullptr;
 
 		// add ensemble conformer energies to low res scorefunction
 		core::scoring::ScoreFunctionOP docking_scorefxn_ens, docking_highres_ens;
@@ -547,7 +547,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 			recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( *get_input_pose() ) );
 		} else {
 			// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble fi
-			recover_sidechains_ = NULL;
+			recover_sidechains_ = nullptr;
 		}
 	} //if ensemble docking
 
@@ -596,7 +596,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 }
 
 //destructor
-DockingProtocol::~DockingProtocol() {}
+DockingProtocol::~DockingProtocol() = default;
 
 /// @brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -1108,13 +1108,13 @@ DockingProtocol::show( std::ostream & out ) const {
 	int spaces_so_far = 23;
 
 	bool first = true;
-	for ( DockJumps::const_iterator it = movable_jumps_.begin() ; it != movable_jumps_.end() ; ++it ) {
+	for (int movable_jump : movable_jumps_) {
 		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;
 		} else first = false;
 
-		out << ObjexxFCL::format::I( 1, *it );
+		out << ObjexxFCL::format::I( 1, movable_jump );
 		spaces_so_far += 1;
 	}
 

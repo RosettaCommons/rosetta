@@ -54,7 +54,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
-#include <stdio.h>
+#include <cstdio>
 
 namespace protocols {
 namespace boinc {

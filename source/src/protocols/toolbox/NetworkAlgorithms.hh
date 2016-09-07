@@ -21,6 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
@@ -44,7 +45,7 @@ public:
 	ResidueNetwork();
 
 	/// @brief destructor
-	virtual ~ResidueNetwork();
+	~ResidueNetwork() override;
 
 	/// @brief create a network from a pose
 	void
@@ -87,16 +88,16 @@ private:
 class DistanceResidueNetwork : public ResidueNetwork
 {
 public:
-	virtual void
-	generate_edges( core::pose::Pose const & pose );
+	void
+	generate_edges( core::pose::Pose const & pose ) override;
 };
 
 /// @brief Creates networks based on covalent connections between residues
 class CovalentResidueNetwork : public ResidueNetwork
 {
 public:
-	virtual void
-	generate_edges( core::pose::Pose const & pose );
+	void
+	generate_edges( core::pose::Pose const & pose ) override;
 };
 
 // Helper functions
@@ -113,8 +114,8 @@ Contains( std::list< NodeOP > const & nodes, NodeCOP node );
 class Node : public utility::pointer::ReferenceCount
 {
 public:
-	Node( std::string const & id, core::Size const resi)
-	: resi(resi), id(id),
+	Node( std::string  id, core::Size const resi)
+	: resi(resi), id(std::move(id)),
 		distanceFromStart(9999),
 		in_list( false )
 	{

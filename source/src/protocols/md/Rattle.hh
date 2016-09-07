@@ -61,7 +61,7 @@ public:
 		setup_constraint( pose, min_map );
 	}
 
-	~Rattle(){}
+	~Rattle()= default;
 
 	Size
 	ncst(){ return cst_.size(); }

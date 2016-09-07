@@ -25,24 +25,24 @@ namespace znhash {
 class InsertZincCoordinationRemarkLinesCreator : public protocols::moves::MoverCreator
 {
 public:
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 };
 
 class DisableZnCoordinationResiduesTaskOpCreator : public core::pack::task::operation::TaskOperationCreator
 {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
-	virtual std::string keyname() const;
+	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+	std::string keyname() const override;
 
 };
 
 class LoadZnCoordNumHbondCalculatorMoverCreator : public protocols::moves::MoverCreator
 {
 public:
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 };
 
 }

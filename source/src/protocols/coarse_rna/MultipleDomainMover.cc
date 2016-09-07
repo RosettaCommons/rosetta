@@ -33,6 +33,7 @@
 
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
@@ -61,7 +62,7 @@ MultipleDomainMover::MultipleDomainMover( pose::Pose const & pose, protocols::co
 	rot_mag_( 10.0 ),
 	trans_mag_( 0.5 ),
 	num_domains_( 0 ),
-	rna_loop_closer_( rna_loop_closer )
+	rna_loop_closer_(std::move( rna_loop_closer ))
 {
 	Mover::type("MultipleDomainMover");
 	initialize( pose, rna_loop_closer_->atom_level_domain_map() );

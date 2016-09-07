@@ -91,7 +91,7 @@ Translate::Translate(Translate const & that):
 	tag_along_jumps_(that.tag_along_jumps_)
 {}
 
-Translate::~Translate() {}
+Translate::~Translate() = default;
 
 protocols::moves::MoverOP Translate::clone() const {
 	return protocols::moves::MoverOP( new Translate( *this ) );
@@ -165,7 +165,7 @@ void Translate::apply(core::pose::Pose & pose) {
 	core::Size const begin(pose.conformation().chain_begin(translate_info_.chain_id));
 
 	{// add this Translate's chain conditionally (for use with CompoundTranslate)
-		utility::vector1<core::Size>::iterator found=
+		auto found=
 			find(chain_ids_to_exclude_.begin(), chain_ids_to_exclude_.end(), translate_info_.chain_id);
 		if ( found ==  chain_ids_to_exclude_.end() ) {
 			chain_ids_to_exclude_.push_back(translate_info_.chain_id);

@@ -15,6 +15,7 @@
 #include <protocols/filters/ReplicateFilterCreator.hh>
 
 #include <core/pose/Pose.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -45,7 +46,7 @@ ReplicateFilter::ReplicateFilter() :
 
 ReplicateFilter::ReplicateFilter(protocols::filters::FilterOP subfilter, core::Size replicates, core::Size upper_trim, core::Size lower_trim) :
 	Filter( "ReplicateFilter" ),
-	subfilter_(subfilter),
+	subfilter_(std::move(subfilter)),
 	replicates_(replicates),
 	upper_trim_(upper_trim),
 	lower_trim_(lower_trim),
@@ -74,7 +75,7 @@ ReplicateFilter::report( std::ostream & out, core::pose::Pose const & pose) cons
 
 core::Real
 ReplicateFilter::compute(core::pose::Pose const & pose) const {
-	runtime_assert( subfilter_ != 0 );
+	runtime_assert( subfilter_ != nullptr );
 	if ( lower_trim_ + upper_trim_ >= replicates_ ) {
 		TR.Warning << "Replicate Filter trims off all values - returning 0." << std::endl;
 	}

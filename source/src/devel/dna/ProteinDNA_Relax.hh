@@ -19,6 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/vector1.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -48,7 +49,7 @@ public:
 		Real const rot_mag_in
 	):
 		protocols::moves::Mover( "RB_Mover" ),
-		mm_( mm_in ),
+		mm_(std::move( mm_in )),
 		trans_mag_( trans_mag_in ),
 		rot_mag_( rot_mag_in ),
 		moved_jump_( 0 )
@@ -56,8 +57,8 @@ public:
 
 
 	void
-	apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	Size
 	moved_jump() const
@@ -135,8 +136,8 @@ public:
 
 
 	void
-	apply( core::pose::Pose & pose );
-	std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	ScoreFunctionOP scorefxn_;

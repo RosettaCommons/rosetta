@@ -43,6 +43,7 @@
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -71,15 +72,15 @@ public:
 		LoopJumpFoldCst( jump_def, extended_loops, sampler, ss_def, coord_cst_weight, bCstAllAtom ),
 		rigid_loops_( rigid_core ),
 		extended_loops_( extended_loops ),
-		stage1_sampler_( extended_chain_sampler )
+		stage1_sampler_(std::move( extended_chain_sampler ))
 	{}
 
-	~DoubleLayerKinematicAbinitio();
+	~DoubleLayerKinematicAbinitio() override;
 
 	//@brief make a new KinematicControl...
-	virtual KinematicControlOP new_kinematics( core::pose::Pose &pose );
+	KinematicControlOP new_kinematics( core::pose::Pose &pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	// virtual void init( core::pose::Pose const& pose );
 
@@ -87,7 +88,7 @@ protected:
 	/// @brief heuristic to select subset of loops from loops_
 	virtual void select_core_loops( loops::Loops& loops_select ) const;
 
-	virtual bool inner_loop( core::pose::Pose& pose );
+	bool inner_loop( core::pose::Pose& pose ) override;
 private:
 	loops::Loops rigid_loops_; //if empty rebuild whole structure
 	loops::Loops extended_loops_;

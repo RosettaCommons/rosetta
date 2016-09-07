@@ -50,11 +50,11 @@ public:
 	FilterMover( MoverOP const & my_mover, FilterOP const & my_filter, Size const max_tries,
 		MoverStatus const mover_status = FAIL_DO_NOT_RETRY );
 
-	~FilterMover();
+	~FilterMover() override;
 
 	// @brief main operation
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	// @brief add filter
 	void add_filter( FilterOP const & my_filter );

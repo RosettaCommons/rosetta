@@ -27,6 +27,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 
 // External headers
@@ -39,7 +40,7 @@ namespace core {
 namespace pose {
 
 // @brief Auto-generated virtual destructor
-MiniPose::~MiniPose() {}
+MiniPose::~MiniPose() = default;
 
 ///////////////////////////////////////////////////////////////////////
 MiniPose::MiniPose( core::pose::Pose const & pose )

@@ -41,6 +41,7 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <string>
 
@@ -69,8 +70,8 @@ FlexPepDockingLowRes::FlexPepDockingLowRes
 	core::scoring::ScoreFunctionOP scorefxn_in,
 	core::kinematics::MoveMapOP movemap_in,
 	Size const rb_jump_in )
-: flags_(flags_in),
-	movemap_(movemap_in),
+: flags_(std::move(flags_in)),
+	movemap_(std::move(movemap_in)),
 	rb_jump_(rb_jump_in)
 {
 	using namespace basic::options;
@@ -97,7 +98,7 @@ FlexPepDockingLowRes::FlexPepDockingLowRes
 
 // empty destructor - for good inclusion of OP clasesses
 FlexPepDockingLowRes::~FlexPepDockingLowRes()
-{}
+= default;
 
 
 ///////////////////////////////////////////////

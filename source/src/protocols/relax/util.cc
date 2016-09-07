@@ -114,7 +114,7 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 		// default relax should be a quick sequence relax
 		if ( NULL_if_no_flag ) {
 			TR.Debug << "no relax protocol specified at command line" << std::endl;
-			return NULL;
+			return nullptr;
 		}
 		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn ) );
 	}

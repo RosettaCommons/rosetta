@@ -84,7 +84,7 @@ public:
 	//Copy constructor
 	DockingHighRes( DockingHighRes const & old_instance );
 
-	virtual ~DockingHighRes();
+	~DockingHighRes() override;
 
 	//clone
 	//protocols::moves::MoverOP clone() const = 0;
@@ -103,8 +103,8 @@ public:
 	core::pack::task::TaskFactoryCOP task_factory();
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose ) = 0;
-	virtual std::string get_name() const = 0;
+	void apply( core::pose::Pose & pose ) override = 0;
+	std::string get_name() const override = 0;
 
 	void set_sc_min( bool sc_min ){ sc_min_ = sc_min; }
 	void set_rt_min( bool rt_min ){ rt_min_ = rt_min; }

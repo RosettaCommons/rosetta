@@ -99,7 +99,7 @@ TMHTopologySamplerClaimer::TMHTopologySamplerClaimer(TopologyBrokerOP /*broker*/
 	set_defaults();
 }
 
-TMHTopologySamplerClaimer::~TMHTopologySamplerClaimer() {}
+TMHTopologySamplerClaimer::~TMHTopologySamplerClaimer() = default;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -409,16 +409,16 @@ TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofC
 	core::kinematics::MoveMapOP init_map( new core::kinematics::MoveMap );
 	init_map->set_jump( false );
 
-	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end(); it != eit; ++it ) {
-		if ( (*it)->owner().lock().get() == this && (*it)->str_type() == "JUMP" ) {
+	for (const auto & init_dof : init_dofs) {
+		if ( init_dof->owner().lock().get() == this && init_dof->str_type() == "JUMP" ) {
 			if ( tr.Trace.visible() ) {
-				(*it)->show(tr.Trace);
+				init_dof->show(tr.Trace);
 				tr.Trace << std::endl;
 			}
-			(*it)->toggle( *init_map, true );
+			init_dof->toggle( *init_map, true );
 		} else {
 			if ( tr.Trace.visible() ) {
-				(*it)->show(tr.Trace);
+				init_dof->show(tr.Trace);
 				tr.Trace << std::endl;
 				tr.Trace << "No need to init dof in MoveMap" << std::endl;
 			}
@@ -603,10 +603,10 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 					break;
 				}
 		bool gp_exists(false);
-		for ( utility::vector1<core::Vector>::iterator used_gp_it=used_grid_points.begin(), end =used_grid_points.end(); used_gp_it != end; ++used_gp_it ) {
-			if ( *used_gp_it == origin+add_vector ) {
+		for (auto & used_grid_point : used_grid_points) {
+			if ( used_grid_point == origin+add_vector ) {
 				if ( tr.Trace.visible() ) {
-					tr.Trace << "*used_gp_it:  " << used_gp_it->x() << " " << used_gp_it->y() << " " << used_gp_it->z() << std::endl;
+					tr.Trace << "*used_gp_it:  " << used_grid_point.x() << " " << used_grid_point.y() << " " << used_grid_point.z() << std::endl;
 					tr.Trace << "origin+add_vector:  " << (origin+add_vector).x() << " " << (origin+add_vector).y() << " " << (origin+add_vector).z() << std::endl;
 					tr.Trace << "grid point already exists, try another!" << std::endl;
 				}

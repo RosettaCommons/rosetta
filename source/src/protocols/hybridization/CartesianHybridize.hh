@@ -69,7 +69,7 @@ public:
 	void init();
 
 	// run the protocol
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	// set the centroid scorefunctions
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in);
@@ -99,10 +99,10 @@ public:
 		residue_sample_abinitio_ = residue_sample_abinitio_in;
 	}
 
-	std::string get_name() const { return "CartesianHybridize"; }
+	std::string get_name() const override { return "CartesianHybridize"; }
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 protected:
 	// apply a homologue fragment

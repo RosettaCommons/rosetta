@@ -194,9 +194,8 @@ void bounded_loops_from_alignment(
 
 	// Ensure the aligned regions meet size constraints.
 	unaligned_residues.clear();
-	for ( Loops::const_iterator i = unaligned_ok->begin(); i != unaligned_ok->end(); ++i ) {
-		const Loop& loop = *i;
-		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
+	for (const auto & loop : *unaligned_ok) {
+			for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
 			unaligned_residues.push_back(j);
 		}
 	}
@@ -334,7 +333,7 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 	Size loop_stop ( *unaligned_residues.begin() );
 	Size loop_start( *unaligned_residues.begin() );
 
-	for ( vector1< Size >::const_iterator it = unaligned_residues.begin(),
+	for ( auto it = unaligned_residues.begin(),
 			next = it + 1,
 			end  = unaligned_residues.end();
 			next != end; ++it, ++next
@@ -595,12 +594,11 @@ poses_from_cmd_line(
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
-		if ( file_exists(*it) ) {
+	for (const auto & it : fn_list) {
+		if ( file_exists(it) ) {
 			Pose pose;
-			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
-			string name = utility::file_basename( *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);
+			string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
 		}
@@ -677,7 +675,7 @@ void randomize_selected_atoms(
 	using core::Size;
 	for ( Size pos = 1; pos <= query_pose.total_residue(); ++pos ) {
 		Size atomj( 1 );
-		for ( core::id::AtomID_Mask::AtomMap::const_iterator
+		for ( auto
 				it = selected[ pos ].begin(), eit = selected[ pos ].end(); it != eit;
 				++it, ++atomj
 				) {

@@ -75,7 +75,7 @@ namespace abinitio {
 class KinematicControl : public utility::pointer::ReferenceCount {
 public:
 	KinematicControl();
-	virtual ~KinematicControl();
+	~KinematicControl() override;
 
 	//@brief setup things in pose: e.g., set correct fold-tree, set jump-geometries to initial values...
 	bool prepare_pose_for_sampling( core::pose::Pose& pose ) const;
@@ -151,7 +151,7 @@ public:
 		final_weight_( final_weight )
 	{}
 
-	virtual void add_score_weights( core::scoring::ScoreFunction&, core::Real progress ) const;
+	void add_score_weights( core::scoring::ScoreFunction&, core::Real progress ) const override;
 
 private:
 	bool ramp_;

@@ -70,7 +70,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.RmsdTargetEvaluatorCr
 namespace protocols {
 namespace simple_filters {
 
-RmsdTargetEvaluatorCreator::~RmsdTargetEvaluatorCreator() {}
+RmsdTargetEvaluatorCreator::~RmsdTargetEvaluatorCreator() = default;
 
 void RmsdTargetEvaluatorCreator::register_options() {
 	using namespace basic::options;

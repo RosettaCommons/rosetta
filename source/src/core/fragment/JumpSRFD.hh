@@ -49,40 +49,40 @@ public:
 	{};
 
 	/// @brief clone
-	SingleResidueFragDataOP clone() const {
+	SingleResidueFragDataOP clone() const override {
 		return SingleResidueFragDataOP( new UpJumpSRFD( *this ) );
 	};
 
 	/// @brief create a new instance of this object
-	virtual
-	SingleResidueFragDataOP create() const {
+	
+	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new UpJumpSRFD() );
 	}
 
-	virtual bool apply( pose::Pose&, Size const, Frame const& ) const {
+	bool apply( pose::Pose&, Size const, Frame const& ) const override {
 		return true;
 	}
 
-	virtual bool apply( kinematics::MoveMap const &, pose::Pose &, Size const, Frame const & ) const {
+	bool apply( kinematics::MoveMap const &, pose::Pose &, Size const, Frame const & ) const override {
 		return true;
 	}
 
-	virtual bool apply_ss( std::string&, Size, Frame const& ) const {
+	bool apply_ss( std::string&, Size, Frame const& ) const override {
 		return true;
 	};
 
-	bool steal( pose::Pose const&, Size, Frame const& ) {
+	bool steal( pose::Pose const&, Size, Frame const& ) override {
 		return true;
 	}
 
-	bool is_compatible( SingleResidueFragData const& ) const;
+	bool is_compatible( SingleResidueFragData const& ) const override;
 
-	bool is_applicable( kinematics::MoveMap const&, Size ) const {
+	bool is_applicable( kinematics::MoveMap const&, Size ) const override {
 		return true;
 	}
 
-	virtual
-	std::string type() const {
+	
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -93,7 +93,7 @@ public:
 
 	// for UpJumpSRFD these functions should never be called
 	// might obsolet these completely and only use SRFDs via the func (pose, ipos, Frame ) variant
-	virtual bool apply(pose::Pose &, Size) const {
+	bool apply(pose::Pose &, Size) const override {
 		debug_assert( 0 );
 		return false;
 	}
@@ -101,19 +101,19 @@ public:
 	/// @brief for UpJumpSRFD this function should never be called, instead use Frame version
 	/// @return always false
 	/// @warning will trigger a false runtime assert
-	virtual bool apply( kinematics::MoveMap const &, pose::Pose &, Size const ) const {
+	bool apply( kinematics::MoveMap const &, pose::Pose &, Size const ) const override {
 		runtime_assert( 0 );
 		return false;
 	}
 
 	// insert fragment_data sec-struct into ss-string at position seq_pos
-	virtual bool apply_ss( std::string&, Size) const {
+	bool apply_ss( std::string&, Size) const override {
 		debug_assert( 0 );
 		return false;
 	}
 
 	// insert fragment_data into pose at position seq_pos
-	virtual bool steal(pose::Pose const&, Size)  {
+	bool steal(pose::Pose const&, Size) override  {
 		debug_assert( 0 );
 		return false;
 	}
@@ -143,13 +143,13 @@ public:
 	};
 
 	/// @brief clone
-	SingleResidueFragDataOP clone() const {
+	SingleResidueFragDataOP clone() const override {
 		return SingleResidueFragDataOP( new DownJumpSRFD( *this ) );
 	};
 
 	/// @brief create a new instance of this object
-	virtual
-	SingleResidueFragDataOP create() const {
+	
+	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new DownJumpSRFD() );
 	}
 
@@ -168,18 +168,18 @@ public:
 
 	/// @brief the seq_pos is hijacked for the rt_nr
 
-	virtual bool apply( pose::Pose&, Size const intra_frame_pos, Frame const& ) const;
-	virtual bool apply( kinematics::MoveMap const &, pose::Pose &, Size const intra_frame_pos, Frame const & ) const;
-	virtual bool apply_ss( std::string&, Size, Frame const& ) const { return true; }; //does nothing as jump has no ss
+	bool apply( pose::Pose&, Size const intra_frame_pos, Frame const& ) const override;
+	bool apply( kinematics::MoveMap const &, pose::Pose &, Size const intra_frame_pos, Frame const & ) const override;
+	bool apply_ss( std::string&, Size, Frame const& ) const override { return true; }; //does nothing as jump has no ss
 
-	bool steal( pose::Pose const&, Size pos, Frame const& );
-	bool is_compatible( SingleResidueFragData const& ) const;
-	bool is_applicable( kinematics::MoveMap const&, Size pos, Frame const& ) const;
+	bool steal( pose::Pose const&, Size pos, Frame const& ) override;
+	bool is_compatible( SingleResidueFragData const& ) const override;
+	bool is_applicable( kinematics::MoveMap const&, Size pos, Frame const& ) const override;
 
 
 	// for DownJumpSRFD these functions should never be called
 	// might obsolet these completely and only use SRFDs via the func (pose, ipos, Frame ) variant
-	virtual bool apply(pose::Pose &, Size) const {
+	bool apply(pose::Pose &, Size) const override {
 		debug_assert( 0 );
 		return false;
 	}
@@ -187,23 +187,23 @@ public:
 	/// @brief for DownJumpSRFD this function should never be called, instead use Frame version
 	/// @return always false
 	/// @warning will trigger a false runtime assert
-	virtual bool apply( kinematics::MoveMap const &, pose::Pose &, Size const ) const;
+	bool apply( kinematics::MoveMap const &, pose::Pose &, Size const ) const override;
 
 	// insert fragment_data sec-struct into ss-string at position seq_pos
-	virtual bool apply_ss( std::string&, Size) const {
+	bool apply_ss( std::string&, Size) const override {
 		debug_assert( 0 );
 		return false;
 	}
 
 	// insert fragment_data into pose at position seq_pos
-	virtual bool steal(pose::Pose const&, Size)  {
+	bool steal(pose::Pose const&, Size) override  {
 		debug_assert( 0 );
 		return false;
 	}
 
 
-	virtual bool
-	is_applicable( kinematics::MoveMap const&, Size ) const {
+	bool
+	is_applicable( kinematics::MoveMap const&, Size ) const override {
 		debug_assert( 0 );
 		return false;
 	}
@@ -215,8 +215,8 @@ public:
 	//   id::StubID &down_stub
 	//  ) const;
 
-	virtual
-	std::string type() const {
+	
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -224,8 +224,8 @@ public:
 		return "DownJump";
 	}
 
-	virtual
-	void show( std::ostream &out ) const;
+	
+	void show( std::ostream &out ) const override;
 
 	virtual
 	void read( std::istream &in );

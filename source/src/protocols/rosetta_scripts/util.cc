@@ -86,13 +86,12 @@ parse_task_operations( std::string const & task_list, basic::datacache::DataMap 
 	typedef utility::vector1< std::string > StringVec;
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 	TR<<"Adding the following task operations\n";
-	for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-			t_o_key != end; ++t_o_key ) {
-		if ( data.has( "task_operations", *t_o_key ) ) {
-			new_task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
-			TR<<*t_o_key<<' ';
+	for (const auto & t_o_key : t_o_keys) {
+		if ( data.has( "task_operations", t_o_key ) ) {
+			new_task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
+			TR<<t_o_key<<' ';
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 	TR<<std::endl;
@@ -128,14 +127,13 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 	TR<<"Adding the following task operations to mover "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
 
-	for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-			t_o_key != end; ++t_o_key ) {
+	for (const auto & t_o_key : t_o_keys) {
 
-		if ( data.has( "task_operations", *t_o_key ) ) {
-			task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
-			TR<<*t_o_key<<' ';
+		if ( data.has( "task_operations", t_o_key ) ) {
+			task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
+			TR<<t_o_key<<' ';
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 	TR<<std::endl;
@@ -153,12 +151,11 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 	String const t_o_val( tag->getOption<String>("task_operations", "" ) );
 	if ( t_o_val != "" ) {
 		utility::vector1< String > const t_o_keys( utility::string_split( t_o_val, ',' ) );
-		for ( utility::vector1< String >::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-				t_o_key != end; ++t_o_key ) {
-			if ( data.has( "task_operations", *t_o_key ) ) {
-				task_operations.push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
+		for (const auto & t_o_key : t_o_keys) {
+			if ( data.has( "task_operations", t_o_key ) ) {
+				task_operations.push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 	}
@@ -327,7 +324,7 @@ core::pose::PoseOP
 saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map, std::string const & tag_name ){
 
 	if ( in_tag->hasOption(tag_name) ) {
-		core::pose::PoseOP refpose(NULL);
+		core::pose::PoseOP refpose(nullptr);
 		std::string refpose_name(in_tag->getOption<std::string>( tag_name) );
 		TR<<"Loading PDB: "<<refpose_name<<std::endl;
 
@@ -338,7 +335,7 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 
 		return refpose;
 	} else std::cerr << "WARNING: saved_reference_pose function called even though tag has no " + tag_name + " entry. something's unclean somewhere." << std::endl;
-	return NULL;
+	return nullptr;
 }
 
 /// @brief utility function for parse_movemap which goes over each of the tags in a movemap section
@@ -427,7 +424,7 @@ parse_movemap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if ( in_tag == NULL ) return;
+	if ( in_tag == nullptr ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
@@ -468,7 +465,7 @@ parse_movemap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if ( in_tag == NULL ) return;
+	if ( in_tag == nullptr ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
@@ -584,7 +581,7 @@ add_movemaps_to_datamap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if ( in_tag == NULL ) return;
+	if ( in_tag == nullptr ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
@@ -624,7 +621,7 @@ has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name){
 
 protocols::filters::FilterOP
 parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & filters ){
-	protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
+	auto filter_it( filters.find( filter_name ) );
 	if ( filter_it == filters.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
 	}
@@ -633,7 +630,7 @@ parse_filter( std::string const & filter_name, protocols::filters::Filters_map c
 
 protocols::moves::MoverOP
 parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & movers ){
-	protocols::moves::Movers_map::const_iterator mover_it( movers.find( mover_name ) );
+	auto mover_it( movers.find( mover_name ) );
 	if ( mover_it == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Mover "+mover_name+" not found" );
 	}

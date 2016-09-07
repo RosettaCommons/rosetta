@@ -16,9 +16,9 @@
 
 
 /// @brief Lookup functors
-utility::keys::lookup::has  < KeyType > const has  ; // Provides has( id ) and has( key )
-utility::keys::lookup::key  < KeyType > const key  ; // Provides key( id ) and key( key )
-utility::keys::lookup::gen  < KeyType > const gen  ; // Provides gen( id, identifier, code ) and gen( key )
-utility::keys::lookup::n_key< KeyType > const n_key; // Provides n_key()
-utility::keys::lookup::begin< KeyType > const begin; // Provides begin()
-utility::keys::lookup::end  < KeyType > const end  ; // Provides end()
+utility::keys::lookup::has  < KeyType > const has{}  ; // Provides has( id ) and has( key )
+utility::keys::lookup::key  < KeyType > const key{}  ; // Provides key( id ) and key( key )
+utility::keys::lookup::gen  < KeyType > const gen{}  ; // Provides gen( id, identifier, code ) and gen( key )
+utility::keys::lookup::n_key< KeyType > const n_key{}; // Provides n_key()
+utility::keys::lookup::begin< KeyType > const begin{}; // Provides begin()
+utility::keys::lookup::end  < KeyType > const end{}  ; // Provides end()

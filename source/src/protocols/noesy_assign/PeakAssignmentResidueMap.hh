@@ -57,7 +57,7 @@ public:
 	typedef utility::vector1< PeakAssignmentMap > ResidueList;
 
 	PeakAssignmentResidueMap();
-	virtual ~PeakAssignmentResidueMap();
+	~PeakAssignmentResidueMap() override;
 
 	/// @brief add all PeakAssignments in all Crosspeaks of list
 	void add( CrossPeakList const& );

@@ -74,10 +74,7 @@ ScreeningJobInputter::ScreeningJobInputter()
 
 }
 
-ScreeningJobInputter::~ScreeningJobInputter()
-{
-
-}
+ScreeningJobInputter::~ScreeningJobInputter() = default;
 
 void ScreeningJobInputter::pose_from_job(core::pose::Pose & pose, JobOP job)
 {
@@ -128,8 +125,8 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 //parse params files and insert them into the chemical manager
 	if ( param_group_data.size() > 0 ) {
-		for ( core::Size i = 0; i < param_group_data.size(); ++i ) {
-			std::string param_name = param_group_data[i].get_str();
+		for (auto & i : param_group_data) {
+			std::string param_name = i.get_str();
 			core::chemical::ChemicalManager::get_instance()->
 				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_custom_residue_type(param_name);
 
@@ -144,8 +141,8 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 {
 		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'jobs' section");
 	}
-	for ( core::Size i = 0; i < job_group_data.size(); ++i ) {
-		utility::json_spirit::mObject group_map(job_group_data[i].get_obj());
+	for (auto & i : job_group_data) {
+		utility::json_spirit::mObject group_map(i.get_obj());
 
 		std::string group_name;
 		utility::json_spirit::mArray protein_path_data;
@@ -191,11 +188,11 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 			native_present = true;
 		}
 		//Make a job for each combination of a protein and a ligand defined in the group
-		for ( core::Size protein_path_index = 0; protein_path_index < protein_path_data.size(); ++protein_path_index ) {
-			std::string protein_path(protein_path_data[protein_path_index].get_str());
+		for (auto & protein_path_index : protein_path_data) {
+			std::string protein_path(protein_path_index.get_str());
 
-			for ( core::Size ligand_path_index = 0; ligand_path_index < ligand_path_data.size(); ++ligand_path_index ) {
-				std::string ligand_path(ligand_path_data[ligand_path_index].get_str());
+			for (auto & ligand_path_index : ligand_path_data) {
+				std::string ligand_path(ligand_path_index.get_str());
 				//multiple pdb paths combined with a space get concatenated into a single pose
 				std::string input_tag(protein_path + " " + ligand_path);
 

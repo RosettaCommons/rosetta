@@ -50,7 +50,7 @@ PartitionAggregateFunction::PartitionAggregateFunction(
 	compare_all_to_ground_state_( compare_to_ground_state )
 {}
 
-PartitionAggregateFunction::~PartitionAggregateFunction() {}
+PartitionAggregateFunction::~PartitionAggregateFunction() = default;
 
 core::Real PartitionAggregateFunction::temp() const { return temp_; }
 void PartitionAggregateFunction::set_temp( core::Real temp ) { temp_ = temp; }

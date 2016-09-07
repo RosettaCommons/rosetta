@@ -54,10 +54,10 @@ public:
 	/// @brief constructor for single value - these angles are in degrees, not radians!
 	TorsionDOFMover( core::id::AtomID const & atom1, core::id::AtomID const & atom2, core::id::AtomID const & atom3, core::id::AtomID const & atom4, core::Angle const angle );
 
-	virtual ~TorsionDOFMover();
+	~TorsionDOFMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	//////////////////////////////////getters, setters////////////////////////////////////////
 	/// @brief set range of desired change - on [180, -180) degrees

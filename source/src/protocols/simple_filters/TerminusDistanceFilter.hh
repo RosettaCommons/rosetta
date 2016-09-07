@@ -38,19 +38,19 @@ class TerminusDistanceFilter : public filters::Filter
 public:
 	TerminusDistanceFilter() : filters::Filter( "TerminusDistance" ) {}
 	//TerminusDistanceFilter( core::Size const distance, core::Size const jump_num );
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new TerminusDistanceFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new TerminusDistanceFilter() );
 	}
 
-	virtual ~TerminusDistanceFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~TerminusDistanceFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Size distance_;
 	core::Size jump_num_;

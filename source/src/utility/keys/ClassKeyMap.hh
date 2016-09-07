@@ -111,7 +111,7 @@ public: // Creation
 	/// @brief Default constructor
 	inline
 	ClassKeyMap()
-	{}
+	= default;
 
 
 	/// @brief Copy constructor
@@ -139,7 +139,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~ClassKeyMap()
-	{}
+	= default;
 
 
 public: // Assignment

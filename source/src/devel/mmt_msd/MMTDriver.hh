@@ -138,7 +138,7 @@ class JobsForSequence : public utility::pointer::ReferenceCount
 {
 public:
 	JobsForSequence( core::Size n_states, core::Size n_npd_properties );
-	~JobsForSequence();
+	~JobsForSequence() override;
 
 	void entity( protocols::genetic_algorithm::EntityOP setting );
 	protocols::genetic_algorithm::EntityOP entity();
@@ -166,7 +166,7 @@ public:
 	typedef std::map< std::string, JobsForSequenceOP > SavedJobsForSequence;
 public:
 	MMTDriver();
-	~MMTDriver();
+	~MMTDriver() override;
 
 	void set_nworkers( core::Size setting );
 	void set_ngenerations( core::Size setting );

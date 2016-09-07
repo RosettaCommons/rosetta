@@ -73,7 +73,7 @@ DisulfideEntropyFilter::DisulfideEntropyFilter(
 
 {}
 
-DisulfideEntropyFilter::~DisulfideEntropyFilter() {}
+DisulfideEntropyFilter::~DisulfideEntropyFilter() = default;
 
 filters::FilterOP
 DisulfideEntropyFilter::clone() const {

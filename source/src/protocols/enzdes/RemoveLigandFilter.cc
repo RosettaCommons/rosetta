@@ -141,8 +141,8 @@ RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 	const std::string mover_name = tag->getOption< std::string >( "mover", "");
 	const std::string filter_name = tag->getOption< std::string >( "filter", "");
 
-	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
-	Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	auto  find_mover ( movers.find( mover_name ));
+	auto find_filter( filters.find( filter_name ));
 	if ( find_mover == movers.end() && mover_name != "" ) {
 		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );

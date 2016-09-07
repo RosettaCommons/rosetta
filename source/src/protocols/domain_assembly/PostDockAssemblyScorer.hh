@@ -19,6 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <string>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -32,16 +33,16 @@ public:
 		Mover("PostDockAssemblyScorer"),
 		score_prefix_("rebuild_dist")
 	{}
-	PostDockAssemblyScorer( std::string const & prefix ) :
+	PostDockAssemblyScorer( std::string  prefix ) :
 		Mover("PostDockAssemblyScorer"),
-		score_prefix_(prefix)
+		score_prefix_(std::move(prefix))
 	{}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "PostDockAssemblyScorer";
 	}
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 private:
 	std::string const score_prefix_;

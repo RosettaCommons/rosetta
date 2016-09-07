@@ -35,7 +35,7 @@ public:
 	/// @brief
 	MatchGrafter();
 
-	virtual ~MatchGrafter();
+	~MatchGrafter() override;
 
 	virtual Pose graft( Pose & match, Pose & partner_ungrafted );
 	virtual Pose build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & partner2 );

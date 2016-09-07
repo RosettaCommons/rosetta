@@ -131,7 +131,7 @@ main( int argc, char * argv [] ) {
 			option[ out::nooutput ].value( true );
 		}
 
-		int time_start = time(NULL);
+		int time_start = time(nullptr);
 
 		MoverOP mover;
 		core::scoring::ScoreFunctionOP sfxn;
@@ -198,9 +198,9 @@ main( int argc, char * argv [] ) {
 
 		mover = clustering;
 
-		int time_readin = time(NULL);
+		int time_readin = time(nullptr);
 		clustering->do_clustering( option[ OptionKeys::cluster::max_total_cluster ]() );
-		int time_initialc = time(NULL);
+		int time_initialc = time(nullptr);
 		clustering->do_redistribution();
 
 		// Process any remaining structures by asigning to clusters or forming new clusters
@@ -219,7 +219,7 @@ main( int argc, char * argv [] ) {
 		clustering->print_summary();
 
 		// Post processing
-		int time_total = time(NULL);
+		int time_total = time(nullptr);
 		// clustering->sort_each_group_by_energy();
 		if ( option[ sort_groups_by_energy ] ) {
 			clustering->sort_groups_by_energy();
@@ -268,9 +268,9 @@ main( int argc, char * argv [] ) {
 		clustering->print_cluster_assignment();
 		std::vector < Cluster >  const & clusterlist=clustering->get_cluster_list();
 		std::list < int > sorted_list;
-		for ( int i=0; i<(int)clusterlist.size(); i++ ) {
-			for ( int j=0; j<(int)clusterlist[i].size(); j++ ) {
-				sorted_list.push_back(  clusterlist[i][j]  );
+		for (const auto & i : clusterlist) {
+			for ( int j=0; j<(int)i.size(); j++ ) {
+				sorted_list.push_back(  i[j]  );
 			}
 		}
 

@@ -89,7 +89,7 @@ CutChainMover::CutChainMover() :
 }
 
 
-CutChainMover::~CutChainMover() {}
+CutChainMover::~CutChainMover() = default;
 
 protocols::moves::MoverOP
 CutChainMover::clone() const

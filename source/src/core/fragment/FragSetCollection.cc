@@ -45,11 +45,8 @@ namespace fragment {
 using namespace kinematics;
 
 FragSetCollection::FragSetCollection() {}
-FragSetCollection::~FragSetCollection() {}
-FragSetCollection::FragSetCollection( FragSetCollection const & src ) :
-	Parent( src ),
-	fragset_list_( src.fragset_list_ )
-{}
+FragSetCollection::~FragSetCollection() = default;
+FragSetCollection::FragSetCollection( FragSetCollection const & ) = default;
 
 FragSetOP FragSetCollection::clone() const {
 	return FragSetOP( new FragSetCollection( *this ) );
@@ -69,9 +66,8 @@ FragSetCollection::region(
 	FrameList &frames
 ) const {
 	Size count ( 0 );
-	for ( FragSetList::const_iterator it = fragset_list_.begin(), eit = fragset_list_.end();
-			it != eit; ++it ) {
-		count += (*it)->region(  move_map, start, end, min_overlap, min_length, frames );
+	for (const auto & it : fragset_list_) {
+		count += it->region(  move_map, start, end, min_overlap, min_length, frames );
 	}
 	return count;
 }
@@ -112,8 +108,8 @@ FrameIterator FragSetCollection::nonconst_end() {
 }
 
 bool FragSetCollection::empty() const {
-	for ( FragSetList::const_iterator it = fragset_list_.begin(); it != fragset_list_.end(); ++it ) {
-		if ( !(*it)->empty() ) return false;
+	for (const auto & it : fragset_list_) {
+		if ( !it->empty() ) return false;
 	}
 	return true;
 }

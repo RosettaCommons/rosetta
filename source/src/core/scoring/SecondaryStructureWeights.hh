@@ -67,8 +67,8 @@ public: // construct/destruct
 	{}
 
 	/// @brief default destructor
-	virtual
-	~SecondaryStructureWeights();
+	
+	~SecondaryStructureWeights() override;
 
 
 public: // assignment

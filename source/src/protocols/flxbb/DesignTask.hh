@@ -65,8 +65,8 @@ public:
 		Size const ncycle,
 		ScoreFunctionOP const sfxn,
 		MoverOP const mover,
-		FilterStructsOP const filter_structs=0,
-		PackerTaskOP const taskf=0,
+		FilterStructsOP const filter_structs=nullptr,
+		PackerTaskOP const taskf=nullptr,
 		String const & resfile=""
 	);
 
@@ -74,7 +74,7 @@ public:
 	DesignTask( DesignTask const & rval );
 
 	/// @brief destructor
-	virtual ~DesignTask();
+	~DesignTask() override;
 
 	/// @brief setup packer task
 	virtual void setup( Pose const &, PackerTaskOP const ) = 0;
@@ -184,11 +184,11 @@ public:
 		Size ncycle,
 		ScoreFunctionOP sfxn,
 		MoverOP mover,
-		FilterStructsOP filter_structs=0 );
+		FilterStructsOP filter_structs=nullptr );
 
-	virtual ~DesignTask_Normal();
+	~DesignTask_Normal() override;
 
-	virtual void setup( Pose const & pose, PackerTaskOP const task );
+	void setup( Pose const & pose, PackerTaskOP const task ) override;
 
 };
 
@@ -212,11 +212,11 @@ public:
 		Size ncycle,
 		ScoreFunctionOP sfxn,
 		MoverOP mover,
-		FilterStructsOP filter_structs=0 );
+		FilterStructsOP filter_structs=nullptr );
 
-	virtual ~DesignTask_Layer();
+	~DesignTask_Layer() override;
 
-	virtual void setup( Pose const & pose, PackerTaskOP const task );
+	void setup( Pose const & pose, PackerTaskOP const task ) override;
 
 private:
 

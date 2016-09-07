@@ -100,9 +100,9 @@ ParallelTemperingCreator::mover_name() {
 
 ParallelTempering::ParallelTempering() :
 	rank_( -1 ),
-	last_energies_( NULL ),
-	rank2tlevel_( NULL ),
-	tlevel2rank_( NULL ),
+	last_energies_( nullptr ),
+	rank2tlevel_( nullptr ),
+	tlevel2rank_( nullptr ),
 	start_time_(0),
 	total_mpi_wait_time_(0)
 {
@@ -119,9 +119,9 @@ ParallelTempering::ParallelTempering( ParallelTempering const & other ) :
 	Parent( other ),
 	exchange_schedules_( other.exchange_schedules_ ),
 	last_exchange_schedule_( other.last_exchange_schedule_ ),
-	last_energies_( NULL ),
-	rank2tlevel_( NULL ),
-	tlevel2rank_( NULL ),
+	last_energies_( nullptr ),
+	rank2tlevel_( nullptr ),
+	tlevel2rank_( nullptr ),
 	start_time_( other.start_time_ ),
 	total_mpi_wait_time_( other.total_mpi_wait_time_ )
 {
@@ -268,9 +268,9 @@ void ParallelTempering::deallocate_buffers() {
 		delete [] rank2tlevel_;
 		delete [] tlevel2rank_;
 	}
-	last_energies_ = NULL;
-	rank2tlevel_ = NULL;
-	tlevel2rank_ = NULL;
+	last_energies_ = nullptr;
+	rank2tlevel_ = nullptr;
+	tlevel2rank_ = nullptr;
 }
 
 core::Real

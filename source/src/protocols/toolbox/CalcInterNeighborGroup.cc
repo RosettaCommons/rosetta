@@ -81,7 +81,7 @@ CalcInterNeighborGroup::CalcInterNeighborGroup( CalcInterNeighborGroup const & c
 : groups_(calculator.groups_), dist_cutoff_(calculator.dist_cutoff_), num_neighbors_(calculator.num_neighbors_), neighbors_(calculator.neighbors_)
 {}
 
-CalcInterNeighborGroup::~CalcInterNeighborGroup() {}
+CalcInterNeighborGroup::~CalcInterNeighborGroup() = default;
 
 
 void
@@ -115,7 +115,7 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 	//for each group/domain pair
 	for ( core::Size i(1), vecsize(groups_.size()); i <= vecsize; ++i ) {
 		//for the first member of the group/domain, iterate through its residues
-		for ( one_group::const_iterator it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it ) {
+		for ( auto it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it ) {
 			//for all edges of that node
 			for ( core::graph::Graph::EdgeListConstIter edge_iter = neighborgraph.get_node(*it)->const_edge_list_begin(),
 					edge_end_iter = neighborgraph.get_node(*it)->const_edge_list_end();

@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -47,7 +48,7 @@ public:
 	/// @brief ctor
 	Sequence() : id_( "blank" ), start_( 1 ), gap_char_('-') {}
 	Sequence( std::string seq, std::string id, core::Size start = 1 ) :
-		id_( id ),
+		id_(std::move( id )),
 		start_( start ),
 		gap_char_('-')
 	{
@@ -65,7 +66,7 @@ public:
 
 public: // virtual functions
 	/// @brief dtor
-	virtual ~Sequence();
+	~Sequence() override;
 
 	/// @brief Returns an owning pointer to a copy of this sequence.
 	virtual SequenceOP clone() const;

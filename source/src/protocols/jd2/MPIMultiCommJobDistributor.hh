@@ -52,18 +52,18 @@ protected:
 	/// @brief ctor is protected; singleton pattern
 	MPIMultiCommJobDistributor( core::Size sub_size );
 
-	virtual void handle_interrupt() {}
+	void handle_interrupt() override {}
 
 public:
 
 	/// @brief dummy for master/slave version
-	virtual core::Size get_new_job_id();
+	core::Size get_new_job_id() override;
 
 	/// @brief overloaded to suppress message from higher-rank replicas
-	virtual void job_succeeded(core::pose::Pose & pose, core::Real run_timei, std::string const & tag);
+	void job_succeeded(core::pose::Pose & pose, core::Real run_timei, std::string const & tag) override;
 
 	/// @brief overloaded to suppress message from higher-rank replicas
-	virtual void job_failed( core::pose::Pose & pose, bool );
+	void job_failed( core::pose::Pose & pose, bool ) override;
 
 #ifdef USEMPI
 	/// @brief return current communicator ( or MPI_COMM_WORLD ).

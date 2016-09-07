@@ -36,16 +36,16 @@ namespace star {
 class StarAbinitio : public protocols::moves::Mover {
 public:
 	StarAbinitio();
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	/// @detail Uses the copy constructor to create a new instance
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @detail Uses the no-argument constructor to create a new instance
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @detail Returns the name of this mover
-	std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	/// @detail Sets up kinematics to keep the orientation of the aligned regions

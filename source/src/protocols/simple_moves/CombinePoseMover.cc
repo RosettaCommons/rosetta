@@ -54,7 +54,7 @@ CombinePoseMover::CombinePoseMover( core::scoring::ScoreFunctionCOP sfxn,
 	// sfxn is not used currently; will be used as minimization added
 }
 
-CombinePoseMover::~CombinePoseMover(){}
+CombinePoseMover::~CombinePoseMover()= default;
 
 void
 CombinePoseMover::set_default(){

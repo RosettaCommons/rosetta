@@ -97,7 +97,7 @@ class FrameIterator : public ConstFrameIterator {
 public:
 	FrameIterator( FrameIteratorWorker_OP it ) : ConstFrameIterator( it ) {};
 	FrameIterator() {};
-	~FrameIterator() {};
+	~FrameIterator() = default;
 
 	// bool operator != ( FrameIterator const& fi) const;
 	// bool operator == ( FrameIterator const& fi) const;

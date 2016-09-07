@@ -46,7 +46,7 @@ class CamShiftEvaluator : public ExternalEvaluator {
 public:
 	CamShiftEvaluator( std::string tag, std::string cst_file );
 	//  virtual core::Real apply( core::pose::Pose& pose ) const;
-	virtual bool applicable( core::pose::Pose const&pose ) const;
+	bool applicable( core::pose::Pose const&pose ) const override;
 private:
 
 };

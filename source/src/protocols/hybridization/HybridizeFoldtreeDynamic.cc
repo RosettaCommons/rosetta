@@ -147,7 +147,7 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 
 						// Clamp insertion position to closed interval [start, stop]
 						Size position = static_cast<Size>(sampler.sample());
-						position = numeric::clamp<core::Size>(position, 1, cut_residues.size());;
+						position = numeric::clamp<core::Size>(position, 1, cut_residues.size());
 
 						cut = cut_residues[position];
 					} else {
@@ -268,7 +268,7 @@ void HybridizeFoldtreeDynamic::initialize(
 	} // strand pairings
 
 	//symmetry
-	core::conformation::symmetry::SymmetryInfoCOP symm_info=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symm_info=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
@@ -611,8 +611,8 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			join_edges = false;
 			core::kinematics::FoldTree const const_tree( tree );
 			tmp_tree.clear();
-			for ( core::kinematics::FoldTree::const_iterator it = const_tree.begin(), it_end = const_tree.end(); it != it_end; ++it ) {
-				core::kinematics::FoldTree::const_iterator it_next = it+1;
+			for ( auto it = const_tree.begin(), it_end = const_tree.end(); it != it_end; ++it ) {
+				auto it_next = it+1;
 				if ( it_next != it_end ) {
 					if ( it->label() == core::kinematics::Edge::PEPTIDE && it_next->label() == core::kinematics::Edge::PEPTIDE &&
 							it->stop() == it_next->start() ) {
@@ -633,20 +633,20 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		// join continuous peptide edges starting from a rooted jump point
 		utility::vector1< core::Size > jump_points;
 		core::kinematics::FoldTree const const_tree( tree );
-		for ( core::kinematics::FoldTree::const_iterator it = const_tree.begin(), it_end = const_tree.end(); it != it_end; ++it ) {
-			if ( it->start() == (int)jump_root ) jump_points.push_back(it->stop());
+		for (const auto & it : const_tree) {
+			if ( it.start() == (int)jump_root ) jump_points.push_back(it.stop());
 		}
 		for ( core::Size i=1; i<=jump_points.size(); ++i ) {
 			std::set< std::pair< core::Size, core::Size > > remove; // keep track of edges to replace
 			tmp_tree.clear();
 			core::kinematics::FoldTree const const_new_tree( tree );
-			for ( core::kinematics::FoldTree::const_iterator it = const_new_tree.begin(), it_end = const_new_tree.end(); it != it_end; ++it ) {
+			for ( auto it = const_new_tree.begin(), it_end = const_new_tree.end(); it != it_end; ++it ) {
 				std::set< std::pair< core::Size, core::Size > > remove_tmp;
 				if ( it->start() == (int)jump_points[i] && it->label() == core::kinematics::Edge::PEPTIDE ) {
 					core::Size start = it->start();
 					core::Size stop = it->stop();
 					remove_tmp.insert(std::pair< core::Size, core::Size >( start, stop ));
-					for ( core::kinematics::FoldTree::const_iterator jt = it+1, jt_end = const_new_tree.end(); jt != jt_end; ++jt ) {
+					for ( auto jt = it+1, jt_end = const_new_tree.end(); jt != jt_end; ++jt ) {
 						if ( jt->start() == (int)stop && jt->label() == core::kinematics::Edge::PEPTIDE ) {
 							stop = jt->stop();
 							remove_tmp.insert(std::pair< core::Size, core::Size >( jt->start(), jt->stop() ));
@@ -660,9 +660,9 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			}
 			core::kinematics::FoldTree const const_tmp_tree( tmp_tree );
 			core::kinematics::FoldTree new_tree;
-			for ( core::kinematics::FoldTree::const_iterator it = const_tmp_tree.begin(), it_end = const_tmp_tree.end(); it != it_end; ++it ) {
-				if ( !remove.count(std::pair< core::Size, core::Size >( it->start(), it->stop() )) ) {
-					new_tree.add_edge( it->start(), it->stop(), it->label() );
+			for (const auto & it : const_tmp_tree) {
+				if ( !remove.count(std::pair< core::Size, core::Size >( it.start(), it.stop() )) ) {
+					new_tree.add_edge( it.start(), it.stop(), it.label() );
 				} else {
 					updated = true;
 				}

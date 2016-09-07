@@ -37,8 +37,8 @@ namespace resource_manager {
 class ResourceStream : public utility::pointer::ReferenceCount
 {
 public:
-	virtual
-	~ResourceStream();
+	
+	~ResourceStream() override;
 
 	/// @brief Return an istream reference so that the ResourceLoader can access arbitrary data
 	/// returned by the %ResourceLocator
@@ -74,7 +74,7 @@ public:
 	/// @brief Copy construct a %ResourceLocator from an example locator
 	ResourceLocator( ResourceLocator const & src );
 
-	virtual ~ResourceLocator();
+	~ResourceLocator() override;
 
 
 	/// @brief Create and return a ResourceStream object from the given locator_id

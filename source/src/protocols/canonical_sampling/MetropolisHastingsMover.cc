@@ -143,7 +143,7 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 
 }
 
-MetropolisHastingsMover::~MetropolisHastingsMover(){}
+MetropolisHastingsMover::~MetropolisHastingsMover()= default;
 
 /// @details The return value indicates the number of cycles that have already
 /// been run, if the simulation is not being started or restarted.  I'm not
@@ -215,7 +215,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 		movers_[i]->initialize_simulation(pose, *this, cycle_number);
 	}
 
-	runtime_assert( monte_carlo_ != 0 );
+	runtime_assert( monte_carlo_ != nullptr );
 	monte_carlo_->reset(pose);
 	monte_carlo_->reset_counters();
 
@@ -345,7 +345,7 @@ MetropolisHastingsMover::get_checkpoints() {
 	std::sort( checkpoint_indics.begin(), checkpoint_indics.end() ); // sort by checkpoint index
 
 	// starting from the last checkpoint, if all temp_levels are collected, then return
-	std::vector< int >::reverse_iterator rit = checkpoint_indics.rbegin();
+	auto rit = checkpoint_indics.rbegin();
 	for ( ; rit != checkpoint_indics.rend(); ++rit ) {
 		tr.Debug << "checkpoint_indics: " << *rit << std::endl;
 
@@ -356,7 +356,7 @@ MetropolisHastingsMover::get_checkpoints() {
 				checkpoint_count_ = *rit;
 
 				// delete any checkpoint file before the successfully collected checkpoint
-				std::vector< int >::reverse_iterator d_rit = ++rit;
+				auto d_rit = ++rit;
 				for ( ; d_rit != checkpoint_indics.rend(); ++d_rit ) utility::file::file_delete( filename_pattern+ObjexxFCL::string_of( *d_rit )+".out" );
 				tr.Debug << "checkpoint for restart: " << checkpoint_ids_.front() << std::endl;
 				return true;
@@ -383,7 +383,7 @@ MetropolisHastingsMover::get_checkpoints() {
 					checkpoint_ids_.push_back( filename_pattern + ObjexxFCL::string_of( *rit ) );
 					checkpoint_count_ = *rit;
 					// delete any checkpoint file before the successfully collected checkpoint
-					std::vector< int >::reverse_iterator d_rit = ++rit;
+					auto d_rit = ++rit;
 					for ( ; d_rit != checkpoint_indics.rend(); ++d_rit ) utility::file::file_delete( filename_pattern+ObjexxFCL::string_of( *d_rit )+".out" );
 					tr.Debug << "checkpoint for restart: " << checkpoint_ids_.front() << std::endl;
 					return true;
@@ -485,12 +485,11 @@ MetropolisHastingsMover::parse_my_tag(
 
 	//add movers and observers
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
-		TagCOP const subtag = *subtag_it;
-		protocols::moves::MoverOP mover;
+	for (auto subtag : subtags) {
+			protocols::moves::MoverOP mover;
 		if ( subtag->getName() == "Add" ) { //add existing mover
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
-			protocols::moves::Movers_map::const_iterator mover_iter( movers.find( mover_name ) );
+			auto mover_iter( movers.find( mover_name ) );
 			if ( mover_iter == movers.end() ) {
 				tr.Error<< "Mover not found for XML tag:\n" << subtag << std::endl;
 				throw utility::excn::EXCN_RosettaScriptsOption("");

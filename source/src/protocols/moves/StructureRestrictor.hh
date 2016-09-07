@@ -47,13 +47,13 @@ public:
 
 	StructureRestrictor(StructureRestrictor const & src);
 
-	virtual ~StructureRestrictor();
+	~StructureRestrictor() override;
 
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
-	virtual std::string get_name() const { return "StructureRestrictor"; }
+	std::string get_name() const override { return "StructureRestrictor"; }
 
 
 	// So this this can be called from RosettaScripts
@@ -63,7 +63,7 @@ public:
 		basic::datacache::DataMap & /*data*/,
 		Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		Pose const & /*pose*/ );
+		Pose const & /*pose*/ ) override;
 
 	void
 	setup_relevant_chains(
@@ -74,7 +74,7 @@ public:
 	// this is a hack because poses do not have canonical names!
 	std::string pose_name(Pose const & pose);
 
-	void apply( Pose& pose );
+	void apply( Pose& pose ) override;
 
 private:
 	std::map<std::string, std::string> chain_map;

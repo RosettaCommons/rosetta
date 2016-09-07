@@ -155,9 +155,9 @@ LigDSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Fil
 	TR<<"LigDSasaFilter with lower threshold of "<<lower_threshold_<<" and upper threshold of "<< upper_threshold_ <<std::endl;
 }
 
-LigDSasaFilter::~LigDSasaFilter() {}
+LigDSasaFilter::~LigDSasaFilter() = default;
 
-DiffAtomSasaFilter::DiffAtomSasaFilter( core::Size resid1, core::Size resid2, std::string atomname1, std::string atomname2, std::string sample_type ) : Filter( "DiffAtomBurial" ), resid1_( resid1 ), resid2_( resid2), aname1_( atomname1 ), aname2_( atomname2 ), sample_type_( sample_type ) {}
+DiffAtomSasaFilter::DiffAtomSasaFilter( core::Size resid1, core::Size resid2, std::string atomname1, std::string atomname2, std::string sample_type ) : Filter( "DiffAtomBurial" ), resid1_( resid1 ), resid2_( resid2), aname1_(std::move( atomname1 )), aname2_(std::move( atomname2 )), sample_type_(std::move( sample_type )) {}
 
 bool
 DiffAtomSasaFilter::apply( core::pose::Pose const & pose ) const {
@@ -224,7 +224,7 @@ DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 	TR<<" Defined LigDSasaFilter "<< std::endl;
 }
 
-DiffAtomSasaFilter::~DiffAtomSasaFilter() {}
+DiffAtomSasaFilter::~DiffAtomSasaFilter() = default;
 
 bool
 LigBurialFilter::apply( core::pose::Pose const & pose ) const {
@@ -281,7 +281,7 @@ LigBurialFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Fi
 	TR.flush();
 }
 
-LigBurialFilter::~LigBurialFilter() {}
+LigBurialFilter::~LigBurialFilter() = default;
 
 LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real const threshold, bool const include_cstE, core::Size const rb_jump, core::Real const interface_distance_cutoff ) : Filter( "LigInterfaceEnergy" ), threshold_( threshold ),  include_cstE_ ( include_cstE ), rb_jump_ ( rb_jump ), interface_distance_cutoff_ ( interface_distance_cutoff )  {
 
@@ -435,9 +435,9 @@ LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::Data
 
 }
 
-LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() {}
+LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() = default;
 
-EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_( cstid ), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
+EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string  cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_(std::move( cstid )), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
 
 	using namespace core::scoring;
 
@@ -567,9 +567,9 @@ EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 		TR<<"EnzScoreFilter for residue or cstid with cutoff "<<threshold_<<std::endl;
 	}
 }
-EnzScoreFilter::~EnzScoreFilter() {}
+EnzScoreFilter::~EnzScoreFilter() = default;
 
-RepackWithoutLigandFilter::RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, utility::vector1< core::Size > rms_target_res  ) : Filter( "RepackWithoutLigand" ), scorefxn_(scorefxn), rms_threshold_( rms_thresh ), energy_threshold_( energy_thresh ), target_res_( rms_target_res ) {}
+RepackWithoutLigandFilter::RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, utility::vector1< core::Size > rms_target_res  ) : Filter( "RepackWithoutLigand" ), scorefxn_(std::move(scorefxn)), rms_threshold_( rms_thresh ), energy_threshold_( energy_thresh ), target_res_( rms_target_res ) {}
 
 bool
 RepackWithoutLigandFilter::apply( core::pose::Pose const & pose ) const
@@ -646,7 +646,7 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 		}
 
 		trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
-		utility::vector1< core::Size >::iterator last = std::unique( trg_res.begin(), trg_res.end() );
+		auto last = std::unique( trg_res.begin(), trg_res.end() );
 		trg_res.erase( last, trg_res.end() );
 
 		TR<<"Calculating RMS for residues ";
@@ -710,14 +710,14 @@ RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	TR<<" Defined RepackWithoutLigandFilter "<< std::endl;
 }
 
-RepackWithoutLigandFilter::~RepackWithoutLigandFilter() {}
+RepackWithoutLigandFilter::~RepackWithoutLigandFilter() = default;
 
 ValueEvaluator::ValueEvaluator( CompareMode const mode, core::Real const cutoff )
 : mode_(mode),
 	cutoff_(cutoff)
 {}
 
-ValueEvaluator::~ValueEvaluator(){}
+ValueEvaluator::~ValueEvaluator()= default;
 
 bool
 ValueEvaluator::value_passes( core::Real const value ) const
@@ -774,7 +774,7 @@ EnzdesScorefileFilter::EnzdesScorefileFilter( EnzdesScorefileFilter const & othe
 {}
 
 
-EnzdesScorefileFilter::~EnzdesScorefileFilter(){}
+EnzdesScorefileFilter::~EnzdesScorefileFilter()= default;
 
 
 bool
@@ -790,7 +790,7 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 	for ( utility::vector1< core::io::silent::SilentEnergy >::const_iterator sco_it(silent_Es_.begin()), sco_end(silent_Es_.end()); sco_it != sco_end; ++sco_it ) {
 
 		//std::cerr << "iterating " << sco_it->name() << " val " << sco_it->value() << std::endl;
-		std::map< std::string, ValueEvaluator >::const_iterator val_it(evaluators.find(sco_it->name() ) );
+		auto val_it(evaluators.find(sco_it->name() ) );
 		if ( val_it != evaluators.end() ) {
 			found_evaluators.insert( sco_it->name() );
 			if ( !val_it->second.value_passes( sco_it->value() ) ) {
@@ -803,8 +803,8 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 	if ( found_evaluators.size() != evaluators.size() ) {
 		std::cerr << "Not all parameters from requirement file " << reqfile_name_ << " were found in EnzdesScorefileFilter values, filering likely not working correctly." << std::endl;
 		std::cerr << "Missing parameters: ";
-		for ( std::map< std::string, ValueEvaluator >::const_iterator val_it(evaluators.begin()), val_end(evaluators.end()); val_it != val_end; ++val_it ) {
-			if ( found_evaluators.find( val_it->first ) == found_evaluators.end() ) std::cerr << val_it->first << ", ";
+		for (const auto & evaluator : evaluators) {
+			if ( found_evaluators.find( evaluator.first ) == found_evaluators.end() ) std::cerr << evaluator.first << ", ";
 		}
 		std::cerr << std::endl;
 	}
@@ -840,7 +840,7 @@ EnzdesScorefileFilter::examine_pose(
 	//ligand out of the pose will crash. for now, let's make a copy
 	//of the pose and remove the cst cache from it
 	core::pose::Pose calc_pose = pose;
-	toolbox::match_enzdes_util::get_enzdes_observer( calc_pose )->set_cst_cache( NULL );
+	toolbox::match_enzdes_util::get_enzdes_observer( calc_pose )->set_cst_cache( nullptr );
 	(*sfxn_)( calc_pose );
 
 	if ( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ) {
@@ -848,25 +848,24 @@ EnzdesScorefileFilter::examine_pose(
 	}
 
 	bool separate_out_constraints = false;
-	utility::vector1< std::string >::const_iterator cstfind = find( relevant_scoreterms_.begin(), relevant_scoreterms_.end(),"all_cst");
+	auto cstfind = find( relevant_scoreterms_.begin(), relevant_scoreterms_.end(),"all_cst");
 	if ( cstfind != relevant_scoreterms_.end() ) separate_out_constraints = true;
 
 	setup_pose_metric_calculators( pose, separate_out_constraints );
 
 	//first write out the relevant score terms for the pose total
-	for ( utility::vector1< std::string >::const_iterator sco_it = relevant_scoreterms_.begin();
-			sco_it != relevant_scoreterms_.end(); ++sco_it ) {
-		std::string sco_name = *sco_it;
+	for (const auto & relevant_scoreterm : relevant_scoreterms_) {
+		std::string sco_name = relevant_scoreterm;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
 
 		SilentEnergy new_se;
-		if ( *sco_it == "all_cst" ) {
+		if ( relevant_scoreterm == "all_cst" ) {
 			new_se = SilentEnergy ( sco_name, enzutil::sum_constraint_scoreterms(pose, -1 ), 1, width);
-		} else if ( separate_out_constraints && ( *sco_it == "total_score" ) ) {
-			core::Real desired_value = pose.energies().total_energies()[ core::scoring::score_type_from_name( *sco_it ) ] - enzutil::sum_constraint_scoreterms(pose, -1 );
+		} else if ( separate_out_constraints && ( relevant_scoreterm == "total_score" ) ) {
+			core::Real desired_value = pose.energies().total_energies()[ core::scoring::score_type_from_name( relevant_scoreterm ) ] - enzutil::sum_constraint_scoreterms(pose, -1 );
 			new_se = SilentEnergy(sco_name, desired_value, 1, width);
 		} else {
-			new_se = SilentEnergy ( sco_name, pose.energies().total_energies()[ core::scoring::score_type_from_name( *sco_it ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( *sco_it ) ], 1 ,width);
+			new_se = SilentEnergy ( sco_name, pose.energies().total_energies()[ core::scoring::score_type_from_name( relevant_scoreterm ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( relevant_scoreterm ) ], 1 ,width);
 		}
 		silent_Es_.push_back( new_se );
 
@@ -876,21 +875,20 @@ EnzdesScorefileFilter::examine_pose(
 	if ( totcalc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
-		for ( utility::vector1< std::pair< std::string, std::string > >::const_iterator calc_it = tot_calculators.begin();
-				calc_it != tot_calculators.end(); ++calc_it ) {
+		for (const auto & tot_calculator : tot_calculators) {
 
-			std::string calc_name = "tot_" + calc_it->first;
-			if ( calc_it->first == "charges_pm" ) calc_name = "tot_" + calc_it->second;
+			std::string calc_name = "tot_" + tot_calculator.first;
+			if ( tot_calculator.first == "charges_pm" ) calc_name = "tot_" + tot_calculator.second;
 			int width = std::max( 10, (int) calc_name.length() + 3 );
 
 			core::Real calc_value;
 
 			//following lines fairly hacky, but don't know a better solution at the moment
-			if ( calc_it->first == "hbond_pm" || calc_it->first == "burunsat_pm" || calc_it->first == "NLconts_pm" || calc_it->second == "total_pos_charges" || calc_it->second == "total_neg_charges" ) {
+			if ( tot_calculator.first == "hbond_pm" || tot_calculator.first == "burunsat_pm" || tot_calculator.first == "NLconts_pm" || tot_calculator.second == "total_pos_charges" || tot_calculator.second == "total_neg_charges" ) {
 				basic::MetricValue< core::Size > mval_size;
-				calc_pose.metric( calc_it->first, calc_it->second, mval_size );
+				calc_pose.metric( tot_calculator.first, tot_calculator.second, mval_size );
 				calc_value = mval_size.value();
-			} else if ( calc_it->first == "seq_recovery" ) {
+			} else if ( tot_calculator.first == "seq_recovery" ) {
 				if ( toolbox::match_enzdes_util::get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() ) {
 					calc_value = toolbox::match_enzdes_util::get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() -> sequence_recovery( calc_pose );
 				} else {
@@ -898,7 +896,7 @@ EnzdesScorefileFilter::examine_pose(
 				}
 			} else {
 				basic::MetricValue< core::Real > mval_real;
-				calc_pose.metric( calc_it->first, calc_it->second, mval_real );
+				calc_pose.metric( tot_calculator.first, tot_calculator.second, mval_real );
 				calc_value = mval_real.value();
 			}
 
@@ -960,7 +958,7 @@ void
 EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const & filename )
 {
 
-	std::map< std::string, std::map< std::string, ValueEvaluator > >::iterator map_it( evaluator_map_.find( filename ) );
+	auto map_it( evaluator_map_.find( filename ) );
 	if ( map_it != evaluator_map_.end() ) return; //means this has already been done
 
 	evaluator_map_.insert( std::pair< std::string, std::map< std::string, ValueEvaluator > >( filename, std::map< std::string, ValueEvaluator >() ) );
@@ -1014,25 +1012,24 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 
 	using namespace core::io::silent;
 
-	for ( utility::vector1< std::string >::const_iterator sco_it = relevant_scoreterms_.begin();
-			sco_it != relevant_scoreterms_.end(); ++sco_it ) {
+	for (const auto & relevant_scoreterm : relevant_scoreterms_) {
 
-		std::string sco_name = sub_name + "_" +  *sco_it ;
+		std::string sco_name = sub_name + "_" +  relevant_scoreterm ;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
 
 		SilentEnergy new_se;
-		if ( *sco_it == "all_cst" ) {
+		if ( relevant_scoreterm == "all_cst" ) {
 			core::Real value(0.0);
 			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) value += enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii]);
 			new_se = SilentEnergy ( sco_name, value , 1, width);
-		} else if ( separate_out_constraints && ( *sco_it == "total_score" ) ) {
+		} else if ( separate_out_constraints && ( relevant_scoreterm == "total_score" ) ) {
 			core::Real desired_value(0.0);
-			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) desired_value += calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( *sco_it ) ] - enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii] );
+			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) desired_value += calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( relevant_scoreterm ) ] - enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii] );
 			new_se = SilentEnergy(sco_name, desired_value, 1, width);
 		} else {
 			core::Real value(0.0);
-			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) value += calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( *sco_it ) ];
-			value *= calc_pose.energies().weights()[ core::scoring::score_type_from_name( *sco_it ) ];
+			for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) value += calc_pose.energies().residue_total_energies( res_subset[ii] )[ core::scoring::score_type_from_name( relevant_scoreterm ) ];
+			value *= calc_pose.energies().weights()[ core::scoring::score_type_from_name( relevant_scoreterm ) ];
 			new_se = SilentEnergy ( sco_name, value, 1 ,width);
 		}
 
@@ -1046,9 +1043,9 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 	if ( res_calc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > calculators_this_res = res_calc_it->second;
-		for ( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin(), end = calculators_this_res.end(); calc_it != end; ++calc_it ) {
+		for (auto & calculators_this_re : calculators_this_res) {
 
-			std::string res_calc_name = sub_name + "_" + calc_it->first;
+			std::string res_calc_name = sub_name + "_" + calculators_this_re.first;
 			int width = std::max( 10, (int) res_calc_name.length() + 3 );
 
 			core::Real calc_value(0.0);
@@ -1058,19 +1055,19 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 			basic::MetricValue< utility::vector1< core::Real > >mval_realvec;
 
 			//following lines fairly hacky, but don't know a better solution at the moment
-			if ( ( calc_it->first == "hbond_pm") || ( calc_it->first == "burunsat_pm") || ( calc_it->first == "NLconts_pm" ) ) {
-				calc_pose.metric( calc_it->first, calc_it->second, mval_sizevec );
+			if ( ( calculators_this_re.first == "hbond_pm") || ( calculators_this_re.first == "burunsat_pm") || ( calculators_this_re.first == "NLconts_pm" ) ) {
+				calc_pose.metric( calculators_this_re.first, calculators_this_re.second, mval_sizevec );
 				for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_sizevec.value()[ res_subset[ii] ];
-			} else if ( calc_it->first == "nlsurfaceE_pm" ) {
-				calc_pose.metric( calc_it->first, calc_it->second, mval_realvec );
+			} else if ( calculators_this_re.first == "nlsurfaceE_pm" ) {
+				calc_pose.metric( calculators_this_re.first, calculators_this_re.second, mval_realvec );
 				for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_realvec.value()[ res_subset[ii] ];
-			} else if ( (calc_it->first == "pstat_pm") || (calc_it->first == "nlpstat_pm" ) ) {
-				calc_pose.metric( calc_it->first, calc_it->second, mval_realvec );
+			} else if ( (calculators_this_re.first == "pstat_pm") || (calculators_this_re.first == "nlpstat_pm" ) ) {
+				calc_pose.metric( calculators_this_re.first, calculators_this_re.second, mval_realvec );
 				core::Real pstat_sum(0.0);
 				for ( core::Size ii =1; ii <= res_subset.size(); ++ii ) pstat_sum += mval_realvec.value()[ res_subset[ii] ];
 				calc_value = pstat_sum / res_subset.size();
 			} else {
-				calc_pose.metric( calc_it->first, calc_it->second, mval_real );
+				calc_pose.metric( calculators_this_re.first, calculators_this_re.second, mval_real );
 				//for( core::Size ii =1; ii <= res_subset.size(); ++ii ) calc_value += mval_realvec.value()[ res_subset[ii] ];
 				calc_value = mval_real.value();
 			}
@@ -1206,9 +1203,8 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 		if ( pose.residue_type( *vecit ).is_ligand() ) {
 			Size lig_chain = pose.chain( *vecit );
 			std::string lig_ch_string = utility::to_string( lig_chain );
-			for ( std::set< core::Size >::const_iterator vecit2(protein_chains.begin()); vecit2!=protein_chains.end(); ++vecit2 ) {
-				Size prot_chain=*vecit2;
-				std::string prot_ch_string = utility::to_string( prot_chain );
+			for (unsigned long prot_chain : protein_chains) {
+					std::string prot_ch_string = utility::to_string( prot_chain );
 				if ( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
 
 				std::string lig_interface_neighbor_calc_name = "neighbor_def_" + prot_ch_string + "_" + lig_ch_string;
@@ -1278,27 +1274,21 @@ EnzdesScorefileFilter::rnl_pose()
 void
 EnzdesScorefileFilter::clear_rnl_pose()
 {
-	rnl_pose_ = NULL;
+	rnl_pose_ = nullptr;
 }
 
 ResidueConformerFilter::ResidueConformerFilter()
 : Filter(),
-	restype_(NULL), seqpos_(0),
+	restype_(nullptr), seqpos_(0),
 	desired_conformer_(0), max_rms_(0.5),
 	lig_conformer_builder_(/* NULL */)
 {
 	relevant_atom_indices_.clear();
 }
 
-ResidueConformerFilter::ResidueConformerFilter( ResidueConformerFilter const & other)
-: Filter( other ),
-	restype_(other.restype_), seqpos_(other.seqpos_),
-	desired_conformer_(other.desired_conformer_), max_rms_(other.max_rms_),
-	relevant_atom_indices_(other.relevant_atom_indices_),
-	lig_conformer_builder_(other.lig_conformer_builder_)
-{}
+ResidueConformerFilter::ResidueConformerFilter( ResidueConformerFilter const & ) = default;
 
-ResidueConformerFilter::~ResidueConformerFilter(){}
+ResidueConformerFilter::~ResidueConformerFilter()= default;
 
 bool
 ResidueConformerFilter::apply( core::pose::Pose const & pose ) const

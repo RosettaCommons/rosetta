@@ -72,8 +72,7 @@ ResidueFeatures::ResidueFeatures( ResidueFeatures const & ) :
 	FeaturesReporter()
 {}
 
-ResidueFeatures::~ResidueFeatures()
-{}
+ResidueFeatures::~ResidueFeatures() = default;
 
 string
 ResidueFeatures::type_name() const { return "ResidueFeatures"; }

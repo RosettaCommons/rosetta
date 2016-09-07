@@ -37,7 +37,7 @@ class SingleState : public utility::pointer::ReferenceCount {
 
 public:
 	SingleState();
-	virtual ~SingleState();
+	~SingleState() override;
 
 	SingleState( core::pose::Pose const & pose, bool is_positive );
 	SingleState( SingleState const & other );

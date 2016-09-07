@@ -31,13 +31,13 @@ class JumpNrEvaluatorCreator : public evaluation::EvaluatorCreator
 {
 public:
 	JumpNrEvaluatorCreator() : options_registered_(false) {};
-	virtual ~JumpNrEvaluatorCreator();
+	~JumpNrEvaluatorCreator() override;
 
 	virtual void register_options();
 
-	virtual void add_evaluators( evaluation::MetaPoseEvaluator & eval ) const;
+	void add_evaluators( evaluation::MetaPoseEvaluator & eval ) const override;
 
-	virtual std::string type_name() const;
+	std::string type_name() const override;
 
 private:
 	bool options_registered_;

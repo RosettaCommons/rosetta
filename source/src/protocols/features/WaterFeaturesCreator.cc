@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 WaterFeaturesCreator::WaterFeaturesCreator() {}
-WaterFeaturesCreator::~WaterFeaturesCreator() {}
+WaterFeaturesCreator::~WaterFeaturesCreator() = default;
 FeaturesReporterOP WaterFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new WaterFeatures );
 }

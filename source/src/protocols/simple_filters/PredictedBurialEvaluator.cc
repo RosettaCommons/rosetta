@@ -34,7 +34,7 @@ PredictedBurialEvaluator::PredictedBurialEvaluator(
 	init_from_file(fn);
 }
 
-PredictedBurialEvaluator::~PredictedBurialEvaluator() {}
+PredictedBurialEvaluator::~PredictedBurialEvaluator() = default;
 
 void PredictedBurialEvaluator::apply(
 	core::pose::Pose & pose,

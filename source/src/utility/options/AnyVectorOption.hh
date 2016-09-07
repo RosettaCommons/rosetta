@@ -59,7 +59,7 @@ protected: // Creation
 	/// @brief Default constructor
 	inline
 	AnyVectorOption()
-	{}
+	= default;
 
 
 	/// @brief Copy constructor
@@ -92,7 +92,7 @@ public: // Creation
 	inline
 	virtual
 	~AnyVectorOption()
-	{}
+	= default;
 
 
 protected: // Assignment

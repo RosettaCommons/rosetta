@@ -51,7 +51,7 @@ public:
 	/// @brief input constructor from pose, assumes anchorfile
 	Anchor( core::pose::Pose const & pose );
 
-	virtual ~Anchor();
+	~Anchor() override;
 
 	/// @brief copy ctor
 	Anchor( Anchor const & rhs );

@@ -48,7 +48,7 @@ namespace antibody {
 ModelCDRH3::ModelCDRH3() : Mover() {}
 
 
-ModelCDRH3::~ModelCDRH3() {}
+ModelCDRH3::~ModelCDRH3() = default;
 
 ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info) : Mover() {
 	user_defined_ = false;

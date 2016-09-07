@@ -86,7 +86,7 @@ extern ChemicalShiftAnisotropyCOP retrieve_CSA_from_pose( core::pose::Pose const
 		return utility::pointer::static_pointer_cast< core::scoring::ChemicalShiftAnisotropy const > ( pose.data().get_const_ptr(
 			core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 extern ChemicalShiftAnisotropyOP retrieve_CSA_from_pose(core::pose::Pose& pose) {
@@ -94,14 +94,14 @@ extern ChemicalShiftAnisotropyOP retrieve_CSA_from_pose(core::pose::Pose& pose) 
 		return utility::pointer::static_pointer_cast< core::scoring::ChemicalShiftAnisotropy > ( pose.data().get_ptr(
 			core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 void ChemicalShiftAnisotropy::show(std::ostream& out) const {
 	Size ct=0;
-	for ( CSA_lines::const_iterator it = All_CSA_lines_.begin(), end = All_CSA_lines_.end(); it != end; ++it ) {
+	for (const auto & All_CSA_line : All_CSA_lines_) {
 		out << "CSA "<<++ct << "     ";
-		out << (*it) << std::endl;
+		out << All_CSA_line << std::endl;
 	}
 }
 
@@ -204,13 +204,13 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 	tr.Trace << "memnorm.x(): " << memnorm.x() << " memnorm.y() " << memnorm.y() << " memnorm.z() " << memnorm.z() << std::endl;
 
 
-	for ( utility::vector1<core::scoring::CSA>::iterator it = All_CSA_lines_.begin(); it != All_CSA_lines_.end(); ++it ) {
+	for (auto & All_CSA_line : All_CSA_lines_) {
 		//      tr.Trace << "it->res1(): " << it->res1() << " it->atom1() " << it->atom1() << std::endl;
 		//      tr.Trace << "it->res2(): " << it->res2() << " it->atom2() " << it->atom2() << std::endl;
 		//      tr.Trace << "it->res3(): " << it->res3() << " it->atom3() " << it->atom3() << std::endl;
-		numeric::xyzVector<Real> v1( pose.residue(it->res2()).atom(it->atom2()).xyz() - pose.residue(it->res1()).atom(it->atom1()).xyz());
+		numeric::xyzVector<Real> v1( pose.residue(All_CSA_line.res2()).atom(All_CSA_line.atom2()).xyz() - pose.residue(All_CSA_line.res1()).atom(All_CSA_line.atom1()).xyz());
 		numeric::xyzVector<Real> u1=v1.normalized();
-		numeric::xyzVector<Real> v2( pose.residue(it->res3()).atom(it->atom3()).xyz() - pose.residue(it->res1()).atom(it->atom1()).xyz());
+		numeric::xyzVector<Real> v2( pose.residue(All_CSA_line.res3()).atom(All_CSA_line.atom3()).xyz() - pose.residue(All_CSA_line.res1()).atom(All_CSA_line.atom1()).xyz());
 		numeric::xyzVector<Real> u2=v2.normalized();
 		//the cross product order is flipped
 		numeric::xyzVector<Real> b=(u2.cross_product(u1)).normalized();
@@ -218,22 +218,22 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 		numeric::xyzMatrix<Real> F(numeric::xyzMatrix<Real>::cols(u1.x(),u1.y(),u1.z(),n.x(),n.y(),n.z(),b.x(),b.y(),b.z()));
 
 		//apply matrix rotation here
-		numeric::xyzMatrix< Real > malpha = numeric::x_rotation_matrix_degrees( it->alpha() );
-		numeric::xyzMatrix< Real > mbeta  = numeric::z_rotation_matrix_degrees( it->beta() );
+		numeric::xyzMatrix< Real > malpha = numeric::x_rotation_matrix_degrees( All_CSA_line.alpha() );
+		numeric::xyzMatrix< Real > mbeta  = numeric::z_rotation_matrix_degrees( All_CSA_line.beta() );
 		numeric::xyzMatrix< Real > PAF(F*mbeta*malpha);
 
-		numeric::xyzMatrix<Real> sigmas(numeric::xyzMatrix<Real>::cols(it->sigma3(),0,0,0,it->sigma1(),0,0,0,it->sigma2()));
+		numeric::xyzMatrix<Real> sigmas(numeric::xyzMatrix<Real>::cols(All_CSA_line.sigma3(),0,0,0,All_CSA_line.sigma1(),0,0,0,All_CSA_line.sigma2()));
 
 
 		//compute the observed CSA
-		Real compCSA = it->CSAval_computed_=dot_product(memnorm,numeric::product(PAF*sigmas*PAF.transposed(),memnorm));
+		Real compCSA = All_CSA_line.CSAval_computed_=dot_product(memnorm,numeric::product(PAF*sigmas*PAF.transposed(),memnorm));
 
 		//compute the difference and then energy
-		Real devCSA = fabs(compCSA - it->CSAval()) < it->CSAerr() ? 0.0 : fabs(fabs(compCSA - it->CSAval())-it->CSAerr());
+		Real devCSA = fabs(compCSA - All_CSA_line.CSAval()) < All_CSA_line.CSAerr() ? 0.0 : fabs(fabs(compCSA - All_CSA_line.CSAval())-All_CSA_line.CSAerr());
 		//Add weight to energy and derivatives
-		total_dev += it->weight()*devCSA*devCSA;
+		total_dev += All_CSA_line.weight()*devCSA*devCSA;
 
-		tr.Trace << "resi: " << it->res1() << " compCSA: " << compCSA << " expCSA: " << it->CSAval() << " expErr " << it->CSAerr() << " devCSA: " << devCSA  << " total_dev "<< total_dev << std::endl;
+		tr.Trace << "resi: " << All_CSA_line.res1() << " compCSA: " << compCSA << " expCSA: " << All_CSA_line.CSAval() << " expErr " << All_CSA_line.CSAerr() << " devCSA: " << devCSA  << " total_dev "<< total_dev << std::endl;
 
 		//derivatives
 		numeric::xyzVector<Real> v0(numeric::xyzVector<Real> (0.0,0.0,0.0));
@@ -263,8 +263,8 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 		Real dE_yC=0.0;
 		Real dE_zC=0.0;
 
-		CSA& csa = *it;
-		if ( fabs(compCSA - it->CSAval()) <= it->CSAerr() ) {
+		CSA& csa = All_CSA_line;
+		if ( fabs(compCSA - All_CSA_line.CSAval()) <= All_CSA_line.CSAerr() ) {
 			//    tr.Info << "deri 0: " << fabs(compCSA - it->CSAval()) << " , " << it->CSAerr() << std::endl;
 			csa.f1ij_[0] = 0;
 			csa.f1ij_[1] = 0;
@@ -275,7 +275,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			csa.f3ij_[0] = 0;
 			csa.f3ij_[1] = 0;
 			csa.f3ij_[2] = 0;
-		} else if ( compCSA - it->CSAval() > it->CSAerr() ) {
+		} else if ( compCSA - All_CSA_line.CSAval() > All_CSA_line.CSAerr() ) {
 			//    tr.Info << "deri 1: " << compCSA - it->CSAval() << " , " << it->CSAerr() << std::endl;
 
 			//xA
@@ -289,7 +289,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_xA=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_xA=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f1ij_[0]=dE_xA;
 			//tr.Info << "csa.f1ij_[0]: " << csa.f1ij_[0] << std::endl;
 
@@ -304,7 +304,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_yA=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_yA=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f1ij_[1]=dE_yA;
 			//tr.Info << "csa.f1ij_[1]: " << csa.f1ij_[1] << std::endl;
 
@@ -319,7 +319,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_zA=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_zA=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f1ij_[2]=dE_zA;
 			//tr.Info << "csa.f1ij_[2]: " << csa.f1ij_[2] << std::endl;
 
@@ -334,7 +334,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_xB=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_xB=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f2ij_[0]=dE_xB;
 			//tr.Info << "csa.f2ij_[0]: " << csa.f2ij_[0] << std::endl;
 
@@ -349,7 +349,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_yB=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_yB=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f2ij_[1]=dE_yB;
 			//tr.Info << "csa.f2ij_[1]: " << csa.f2ij_[1] << std::endl;
 
@@ -364,7 +364,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_zB=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_zB=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f2ij_[2]=dE_zB;
 			//tr.Info << "csa.f2ij_[2]: " << csa.f2ij_[2] << std::endl;
 
@@ -379,7 +379,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_xC=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_xC=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f3ij_[0]=dE_xC;
 			//tr.Info << "csa.f3ij_[0]: " << csa.f3ij_[0] << std::endl;
 
@@ -394,7 +394,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_yC=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_yC=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f3ij_[1]=dE_yC;
 			//tr.Info << "csa.f3ij_[1]: " << csa.f3ij_[1] << std::endl;
 
@@ -409,7 +409,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_zC=it->weight()*2*( compCSA - it->CSAval() - it->CSAerr() )*dcompCSA_dx;
+			dE_zC=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() - All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f3ij_[2]=dE_zC;
 			//tr.Info << "csa.f3ij_[2]: " << csa.f3ij_[2] << std::endl;
 
@@ -427,7 +427,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_xA=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_xA=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f1ij_[0]=dE_xA;
 			//tr.Info << "csa.f1ij_[0]: " << csa.f1ij_[0] << std::endl;
 
@@ -442,7 +442,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_yA=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_yA=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f1ij_[1]=dE_yA;
 			//tr.Info << "csa.f1ij_[1]: " << csa.f1ij_[1] << std::endl;
 
@@ -457,7 +457,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_zA=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_zA=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f1ij_[2]=dE_zA;
 			//tr.Info << "csa.f1ij_[2]: " << csa.f1ij_[2] << std::endl;
 
@@ -472,7 +472,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_xB=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_xB=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f2ij_[0]=dE_xB;
 			//tr.Info << "csa.f2ij_[0]: " << csa.f2ij_[0] << std::endl;
 
@@ -487,7 +487,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_yB=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_yB=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f2ij_[1]=dE_yB;
 			//tr.Info << "csa.f2ij_[1]: " << csa.f2ij_[1] << std::endl;
 
@@ -502,7 +502,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_zB=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_zB=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f2ij_[2]=dE_zB;
 			//tr.Info << "csa.f2ij_[2]: " << csa.f2ij_[2] << std::endl;
 
@@ -517,7 +517,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_xC=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_xC=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f3ij_[0]=dE_xC;
 			//tr.Info << "csa.f3ij_[0]: " << csa.f3ij_[0] << std::endl;
 
@@ -532,7 +532,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_yC=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_yC=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f3ij_[1]=dE_yC;
 			//tr.Info << "csa.f3ij_[1]: " << csa.f3ij_[1] << std::endl;
 
@@ -547,7 +547,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 			dF_dx=F*S;
 			dPAF_dx=dF_dx*mbeta*malpha;
 			dcompCSA_dx=2*dot_product(memnorm,numeric::product(dPAF_dx*sigmas*PAF.transposed(),memnorm));
-			dE_zC=it->weight()*2*( compCSA - it->CSAval() + it->CSAerr() )*dcompCSA_dx;
+			dE_zC=All_CSA_line.weight()*2*( compCSA - All_CSA_line.CSAval() + All_CSA_line.CSAerr() )*dcompCSA_dx;
 			csa.f3ij_[2]=dE_zC;
 			//tr.Info << "csa.f3ij_[2]: " << csa.f3ij_[2] << std::endl;
 		}

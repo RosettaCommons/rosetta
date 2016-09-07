@@ -17,6 +17,7 @@
 #include <core/environment/DofPassport.hh>
 
 // Project headers
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 
 // tracer
@@ -33,12 +34,12 @@ namespace environment {
 
 core::Size EnvCore::current_maximum_id_ = 0;
 
-EnvCore::EnvCore( std::string const& name ):
-	name_( name ),
+EnvCore::EnvCore( std::string  name ):
+	name_(std::move( name )),
 	id_( generate_id() )
 {}
 
-EnvCore::~EnvCore() {}
+EnvCore::~EnvCore() = default;
 
 std::string const& EnvCore::name() const{
 	return name_;

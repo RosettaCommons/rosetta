@@ -170,7 +170,7 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 	Multivec dummy( local_vars.size(), 0.0 );
 
 	// Summing over positions
-	for ( OptEPositionDataOPs::const_iterator itr = opte_data_.position_data_begin(),
+	for ( auto itr = opte_data_.position_data_begin(),
 			e_itr = opte_data_.position_data_end() ; itr != e_itr ; ++itr  ) {
 		Real const s = (*itr)->get_score( component_weights_, local_vars, dummy,
 			num_energy_dofs_, num_ref_dofs_, num_total_dofs_,
@@ -250,7 +250,7 @@ OptEMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 
 	// over positions
 	Real score( 0.0 );
-	for ( OptEPositionDataOPs::const_iterator itr = opte_data_.position_data_begin(),
+	for ( auto itr = opte_data_.position_data_begin(),
 			e_itr = opte_data_.position_data_end() ; itr != e_itr ; ++itr  ) {
 		score += (*itr)->get_score( component_weights_, local_vars, local_dE_dvars,
 			num_energy_dofs_, num_ref_dofs_, num_total_dofs_,
@@ -296,9 +296,8 @@ OptEMultifunc::get_dofs_from_energy_map( EnergyMap const & start_vals ) const
 	Multivec dofs( fix_reference_energies_ ? num_energy_dofs_ : num_total_dofs_, 0.0 );
 
 	Size dof_index( 1 );
-	for ( ScoreTypes::const_iterator itr = score_list_.begin(),
-			end_itr = score_list_.end(); itr != end_itr; ++itr ) {
-		dofs[ dof_index++ ] = start_vals[ *itr ];
+	for (auto itr : score_list_) {
+		dofs[ dof_index++ ] = start_vals[ itr ];
 	}
 	if ( ! fix_reference_energies_ ) {
 		for ( Size ii = 1; ii <= starting_reference_energies_.size(); ++ii ) {
@@ -320,18 +319,14 @@ OptEMultifunc::get_energy_map_from_dofs( Multivec const & dofs) const
 
 	// This covers the variable weights
 	Size dof_index( 1 );
-	for ( ScoreTypes::const_iterator itr = score_list_.begin(),
-			end_itr = score_list_.end() ;
-			itr != end_itr ; ++itr ) {
-		return_map[ *itr ] = dofs[ dof_index++ ];
+	for (auto itr : score_list_) {
+		return_map[ itr ] = dofs[ dof_index++ ];
 	}
 
 	// Now the fixed weights - but I think we should have them from the
 	// copy constructor above, so this is probably a total waste....
-	for ( ScoreTypes::const_iterator itr = fixed_score_list_.begin(),
-			end_itr = fixed_score_list_.end() ;
-			itr != end_itr ; ++itr ) {
-		return_map[ *itr ] = fixed_terms_[ *itr ];
+	for (auto itr : fixed_score_list_) {
+		return_map[ itr ] = fixed_terms_[ itr ];
 	}
 
 	return return_map;
@@ -551,7 +546,7 @@ void WrapperOptEMultifunc::init(
 	using namespace core::scoring;
 
 	// XCode doesn't like shorthand if statements in the initializer list
-	optE_dof_expressions_.resize( optEfunc->fix_reference_energies() ? free_count : free_count + chemical::num_canonical_aas, 0 );
+	optE_dof_expressions_.resize( optEfunc->fix_reference_energies() ? free_count : free_count + chemical::num_canonical_aas, nullptr );
 	active_variables_.resize( optE_dof_expressions_.size() );
 
 	//std::cout << "WrapperOptEMultifunc ctor: free_count= " << free_count << " free_score_list.size()= " << free_score_list.size() << std::endl;
@@ -643,7 +638,7 @@ void WrapperOptEMultifunc::init(
 	}
 
 	for ( Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
-		if ( optE_dof_expressions_[ ii ] == 0 ) {
+		if ( optE_dof_expressions_[ ii ] == nullptr ) {
 			/// Need to create a variable expression for this dof so that it may be updated
 			/// in each function evaluation
 			/// Two cases: ii is a named dof, or ii is a reference energy.
@@ -673,22 +668,20 @@ void WrapperOptEMultifunc::init(
 
 	n_real_dofs_ = dof_variables_.size();
 	Size count_real_dofs( 1 );
-	for ( std::map< std::string, OptEVariableExpressionOP >::iterator
-			iter = dof_variables_.begin(), iter_end = dof_variables_.end();
-			iter != iter_end; ++iter ) {
-		iter->second->set_id( count_real_dofs );
+	for (auto & dof_variable : dof_variables_) {
+		dof_variable.second->set_id( count_real_dofs );
 		++count_real_dofs;
 	}
 	real_dof_deriviative_expressions_.resize( n_real_dofs_ );
 
 	for ( Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
 		numeric::expression_parser::ExpressionCOP iiexp = optE_dof_expressions_[ ii ];
-		for ( std::set< std::string >::const_iterator
+		for ( auto
 				variter = active_variables_[ ii ].begin(),
 				variter_end = active_variables_[ ii ].end();
 				variter != variter_end; ++variter ) {
 			numeric::expression_parser::ExpressionCOP iiexp_dvar = iiexp->differentiate( *variter );
-			if ( iiexp_dvar == 0 ) {
+			if ( iiexp_dvar == nullptr ) {
 				utility_exit_with_message( "Error constructing parital derivative for '" +
 					name_from_score_type( free_score_list[ ii ] ) +
 					"' by variable '" + *variter + "'.  Null pointer returned." );
@@ -734,7 +727,7 @@ WrapperOptEMultifunc::dfunc(
 	multifunc_->dfunc( optEvars, dmultifunc_dvars );
 
 	for ( Size ii = 1; ii <= real_dof_deriviative_expressions_.size(); ++ii ) {
-		for ( std::list< std::pair< Size, numeric::expression_parser::ExpressionCOP > >::const_iterator
+		for ( auto
 				iter = real_dof_deriviative_expressions_[ ii ].begin(),
 				iter_end = real_dof_deriviative_expressions_[ ii ].end();
 				iter != iter_end; ++iter ) {
@@ -760,10 +753,8 @@ WrapperOptEMultifunc::derived_dofs( Multivec const & vars ) const
 {
 	//std::cout << "WrapperOptEMultifunc::derived_dofs()\n";
 	utility::vector1< Real > optEvars( optE_dof_expressions_.size() );
-	for ( std::map< std::string, OptEVariableExpressionOP >::const_iterator
-			iter = dof_variables_.begin(), iter_end = dof_variables_.end();
-			iter != iter_end; ++iter ) {
-		iter->second->update_value_from_list( vars );
+	for (const auto & dof_variable : dof_variables_) {
+		dof_variable.second->update_value_from_list( vars );
 		//std::cout << "variable: " << iter->first << " " << (*iter->second)() << "\n";
 	}
 	for ( Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
@@ -783,11 +774,9 @@ WrapperOptEMultifunc::print_dofs(
 ) const
 {
 	ostr << "WrapperOptEMultifunc dofs:\n";
-	for ( std::map< std::string, OptEVariableExpressionOP >::const_iterator
-			iter = dof_variables_.begin(), iter_end = dof_variables_.end();
-			iter != iter_end; ++iter ) {
-		iter->second->update_value_from_list( vars );
-		ostr << iter->first << " : " << (*(iter->second))() << "\n";
+	for (const auto & dof_variable : dof_variables_) {
+		dof_variable.second->update_value_from_list( vars );
+		ostr << dof_variable.first << " : " << (*(dof_variable.second))() << "\n";
 	}
 }
 
@@ -823,28 +812,22 @@ WrapperOptEMultifunc::register_variable_expression( std::string varname )
 		} else {
 			std::cerr << "Error: variable expression with name '" << varname << "' is not a valid variable name." << std::endl;
 			std::cerr << "Free variables:" << std::endl;
-			for ( std::set< std::string >::const_iterator
-					iter = free_score_names_.begin(), iter_end = free_score_names_.end();
-					iter != iter_end; ++iter ) {
-				std::cerr << *iter << std::endl;
+			for (const auto & free_score_name : free_score_names_) {
+				std::cerr << free_score_name << std::endl;
 			}
 			std::cerr << "Fixed variables:" << std::endl;
-			for ( std::set< std::string >::const_iterator
-					iter = fixed_score_names_.begin(), iter_end = fixed_score_names_.end();
-					iter != iter_end; ++iter ) {
-				std::cerr << *iter << std::endl;
+			for (const auto & fixed_score_name : fixed_score_names_) {
+				std::cerr << fixed_score_name << std::endl;
 			}
 			std::cerr << "New variables:" << std::endl;
-			for ( std::set< std::string >::const_iterator
-					iter = new_dof_names_.begin(), iter_end = new_dof_names_.end();
-					iter != iter_end; ++iter ) {
-				std::cerr << *iter << std::endl;
+			for (const auto & new_dof_name : new_dof_names_) {
+				std::cerr << new_dof_name << std::endl;
 			}
 		}
 
 		utility_exit_with_message("Could not register variable '" + varname + "' as it is neither a valid free, fixed nor new DOF" );
 	}
-	return 0;
+	return nullptr;
 }
 
 void
@@ -882,10 +865,10 @@ WrappedOptEExpressionCreator::WrappedOptEExpressionCreator()
 WrappedOptEExpressionCreator::WrappedOptEExpressionCreator(
 	WrapperOptEMultifuncAP multifunc
 )
-: multifunc_( multifunc )
+: multifunc_(std::move( multifunc ))
 {}
 
-WrappedOptEExpressionCreator::~WrappedOptEExpressionCreator() {}
+WrappedOptEExpressionCreator::~WrappedOptEExpressionCreator() = default;
 
 numeric::expression_parser::ExpressionCOP
 WrappedOptEExpressionCreator::handle_variable_expression( ArithmeticASTValue const & node )
@@ -901,7 +884,7 @@ WrappedOptEExpressionCreator::handle_function_expression(
 )
 {
 	utility_exit_with_message( "WrappedOptEExpressionCreator cannot process function " + function->name() );
-	return 0;
+	return nullptr;
 }
 
 void

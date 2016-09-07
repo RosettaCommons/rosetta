@@ -231,7 +231,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 
 }
 
-protocols::anchored_design::AnchorMoversData::~AnchorMoversData(){}
+protocols::anchored_design::AnchorMoversData::~AnchorMoversData()= default;
 
 /// @brief copy ctor
 AnchorMoversData::AnchorMoversData( AnchorMoversData const & rhs ) :
@@ -417,16 +417,16 @@ void protocols::anchored_design::AnchorMoversData::input_loops_into_tuples(proto
 {
 	loops_and_fa_mms_.clear();
 	loops_and_cen_mms_.clear();
-	for ( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
+	for (const auto & loop : loops) {
 		//instantiate tuple
 		loops_and_fa_mms_.push_back( Loop_mm_tuple(
-			*it,
+			loop,
 			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
 			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
 			) );
 
 		loops_and_cen_mms_.push_back( Loop_mm_tuple(
-			*it,
+			loop,
 			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
 			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
 			) );
@@ -921,7 +921,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 	//generate N constraints; add directly to pose
 	core::Size const this_many_constraints(4);
 	core::Real const sd(sqrt(0.5));
-	std::set< dist_resid >::const_iterator opp_CA(distances.begin());
+	auto opp_CA(distances.begin());
 	for ( core::Size i(1); i<=this_many_constraints; ++i, ++opp_CA ) {
 		using namespace core::scoring::constraints;
 

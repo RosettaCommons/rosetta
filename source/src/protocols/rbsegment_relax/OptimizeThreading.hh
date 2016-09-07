@@ -48,17 +48,17 @@ public:
 		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
 	}
 
-	virtual std::string get_name() const { return OptimizeThreadingMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new OptimizeThreadingMover( *this ) ) ); }
+	std::string get_name() const override { return OptimizeThreadingMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new OptimizeThreadingMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	// helper function

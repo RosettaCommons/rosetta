@@ -32,13 +32,13 @@ public:
 	MoverForPoseList();
 
 	//destructor
-	~MoverForPoseList();
+	~MoverForPoseList() override;
 
 public:
 
 	using protocols::moves::Mover::apply;
 
-	virtual void apply( Pose & ) = 0;
+	void apply( Pose & ) override = 0;
 
 	// just apply to each member of the pose_list.
 	virtual void apply( utility::vector1< core::pose::PoseOP > & pose_list );

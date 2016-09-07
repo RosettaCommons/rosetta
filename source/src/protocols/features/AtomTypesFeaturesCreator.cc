@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 AtomTypesFeaturesCreator::AtomTypesFeaturesCreator() {}
-AtomTypesFeaturesCreator::~AtomTypesFeaturesCreator() {}
+AtomTypesFeaturesCreator::~AtomTypesFeaturesCreator() = default;
 FeaturesReporterOP AtomTypesFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new AtomTypesFeatures );
 }

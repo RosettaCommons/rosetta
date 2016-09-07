@@ -53,36 +53,36 @@ public:
 		Pose const &,
 		core::Size,
 		core::Size,
-		SequenceCouplingOP profile = NULL
+		SequenceCouplingOP profile = nullptr
 	);
 
 	SequenceCouplingConstraint(
 		core::Size,
 		core::Size,
-		SequenceCouplingOP profile = NULL
+		SequenceCouplingOP profile = nullptr
 	);
 
-	virtual ~SequenceCouplingConstraint();
+	~SequenceCouplingConstraint() override;
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;
 
-	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const override;
 
-	virtual std::string type() const { return "SequenceCoupling"; }
+	std::string type() const override { return "SequenceCoupling"; }
 
 	/// @brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
-	virtual void
+	void
 	read_def(
 		std::istream &,
 		Pose const &,
 		FuncFactory const &
-	);
+	) override;
 
-	virtual void show_def( std::ostream &, Pose const & ) const;
+	void show_def( std::ostream &, Pose const & ) const override;
 
-	virtual void show( std::ostream & out ) const;
+	void show( std::ostream & out ) const override;
 
 	core::Size seqpos1() const { return seqpos1_; }
 	core::Size seqpos2() const { return seqpos2_; }
@@ -91,31 +91,31 @@ public:
 	SequenceCouplingOP sequence_coupling();
 	SequenceCouplingCOP sequence_coupling() const;
 
-	virtual core::Size natoms() const { return 0; };
-	virtual AtomID const & atom( Size const ) const {
+	core::Size natoms() const override { return 0; };
+	AtomID const & atom( Size const ) const override {
 		utility_exit_with_message("SequenceCouplingConstraint is not atom-based!.");
 		return core::id::BOGUS_ATOM_ID;  // required for compilation on Windows
 	}
 
-	virtual utility::vector1< core::Size > residues() const;
+	utility::vector1< core::Size > residues() const override;
 
 	//virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
 
-	virtual void
+	void
 	score(
 		XYZ_Func const &,
 		EnergyMap const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual void
+	void
 	fill_f1_f2(
 		AtomID const &,
 		XYZ_Func const &,
 		core::Vector &,
 		core::Vector &,
 		EnergyMap const &
-	) const;
+	) const override;
 
 private:
 	core::Size seqpos1_;

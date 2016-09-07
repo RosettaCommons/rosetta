@@ -165,12 +165,12 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		std::vector< core::Size > diffs;
 		diffs.clear();
 		TR<<"differences at positions: ";
-		for ( std::map< core::Size, core::Size >::const_iterator aln=alignment_.begin(); aln!=alignment_.end(); ++aln ) {
-			char const res1_name(pose()->conformation().residue( aln->first ).name1());
-			char const res2_name(p.conformation().residue( aln->second ).name1());
+		for (const auto & aln : alignment_) {
+			char const res1_name(pose()->conformation().residue( aln.first ).name1());
+			char const res2_name(p.conformation().residue( aln.second ).name1());
 			if ( res1_name != res2_name ) {
-				diffs.push_back( aln->first );
-				TR<<res1_name<<aln->first<<res2_name<<", ";
+				diffs.push_back( aln.first );
+				TR<<res1_name<<aln.first<<res2_name<<", ";
 			}
 		}
 		TR<<std::endl;
@@ -367,7 +367,7 @@ RelativePoseFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new RelativePoseFilter() );
 }
 
-RelativePoseFilter::~RelativePoseFilter(){}
+RelativePoseFilter::~RelativePoseFilter()= default;
 
 protocols::filters::FilterOP
 RelativePoseFilter::clone() const{

@@ -59,17 +59,17 @@ public:
 
 public:
 	SheetConstraintGenerator();
-	virtual ~SheetConstraintGenerator();
+	~SheetConstraintGenerator() override;
 
-	virtual protocols::constraint_generator::ConstraintGeneratorOP
-	clone() const;
+	protocols::constraint_generator::ConstraintGeneratorOP
+	clone() const override;
 
 	core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	apply( core::pose::Pose const & pose ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	/// @brief sets the secondary structure to be used for constraint generation

@@ -34,11 +34,11 @@ public:
 	CloseOneCDRLoop( core::Size query_start, core::Size query_end  );
 
 	// default destructor
-	~CloseOneCDRLoop();
+	~CloseOneCDRLoop() override;
 
 	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 
 	/// @brief enable benchmark mode

@@ -70,7 +70,7 @@ public:
 		core::pose::PoseCOP  template_pose,
 		std::map <core::Size, core::Size> & seqpos_alignment );
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	void set_template(core::Size const template_number);
 	void set_max_registry_shift( core::Size max_registry_shift_in );
@@ -78,7 +78,7 @@ public:
 	void pick_random_template();
 	void pick_random_chunk(core::pose::Pose & pose);
 	Size trial_counter(Size ires);
-	std::string get_name() const;
+	std::string get_name() const override;
 	bool has_valid_moves( ) { return has_valid_moves_; }
 
 	void set_templates_to_ignore( std::set< core::Size> template_indices_in ) {

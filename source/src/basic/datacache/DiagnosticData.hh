@@ -28,6 +28,7 @@
 #include <string>
 
 #include <platform/types.hh>
+#include <utility>
 #include <utility/down_cast.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -50,9 +51,9 @@ namespace datacache {
 class DiagnosticData : public CacheableData
 {
 public:
-	DiagnosticData( std::map < std::string, double >  data_in ) : CacheableData(), data_(data_in) {}
-	virtual ~DiagnosticData(){};
-	virtual CacheableDataOP clone() const { return CacheableDataOP( new DiagnosticData(*this) ); }
+	DiagnosticData( std::map < std::string, double >  data_in ) : CacheableData(), data_(std::move(data_in)) {}
+	~DiagnosticData() override= default;
+	CacheableDataOP clone() const override { return CacheableDataOP( new DiagnosticData(*this) ); }
 	virtual std::map < std::string, double > const & data() const { return data_; }
 
 	DiagnosticDataOP shared_from_this() { return utility::pointer::static_pointer_cast<DiagnosticData>( CacheableData::shared_from_this() ); }

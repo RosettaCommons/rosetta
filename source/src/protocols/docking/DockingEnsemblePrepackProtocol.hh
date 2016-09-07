@@ -42,7 +42,7 @@ public:
 	/// @brief Default constructor
 	DockingEnsemblePrepackProtocol();
 
-	~DockingEnsemblePrepackProtocol();
+	~DockingEnsemblePrepackProtocol() override;
 
 	/// @brief Assigns default values to members
 	void setup_defaults();
@@ -51,9 +51,9 @@ public:
 	void setup_pack_operation_movers();
 
 
-	void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_ensemble1( std::string ensemble1 ) { ensemble1_filename_ = ensemble1; }
 	void set_ensemble2( std::string ensemble2 ) { ensemble2_filename_ = ensemble2; }

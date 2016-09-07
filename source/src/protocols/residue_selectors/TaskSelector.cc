@@ -68,7 +68,7 @@ TaskSelector::TaskSelector(
 	bool const select_designable,
 	bool const select_packable,
 	bool const select_fixed ):
-	tf_( tf ),
+	tf_(std::move( tf )),
 	select_designable_( select_designable ),
 	select_packable_( select_packable ),
 	select_fixed_( select_fixed )
@@ -82,7 +82,7 @@ TaskSelector::clone() const
 	return core::select::residue_selector::ResidueSelectorOP( new TaskSelector(*this) );
 }
 
-TaskSelector::~TaskSelector() {}
+TaskSelector::~TaskSelector() = default;
 
 void
 quit_no_tf()
@@ -128,13 +128,13 @@ TaskSelector::parse_my_tag(
 
 	utility::vector1< std::string > const task_op_names = utility::string_split( task_operations_str, ',' );
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
-	for ( utility::vector1< std::string >::const_iterator t=task_op_names.begin(); t!=task_op_names.end(); ++t ) {
-		if ( data.has( "task_operations", *t ) ) {
-			tf->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t ) );
+	for (const auto & task_op_name : task_op_names) {
+		if ( data.has( "task_operations", task_op_name ) ) {
+			tf->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", task_op_name ) );
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t + " not found in basic::datacache::DataMap.");
+			throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + task_op_name + " not found in basic::datacache::DataMap.");
 		}
-		TR << "Adding task operation " << *t << std::endl;
+		TR << "Adding task operation " << task_op_name << std::endl;
 	}
 	set_task_factory( tf );
 

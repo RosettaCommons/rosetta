@@ -50,7 +50,7 @@ RRProtocolMinPack::RRProtocolMinPack( RRProtocolMinPack const & ) :
 	RRProtocol()
 {}
 
-RRProtocolMinPack::~RRProtocolMinPack() {}
+RRProtocolMinPack::~RRProtocolMinPack() = default;
 
 string
 RRProtocolMinPack::get_name() const {

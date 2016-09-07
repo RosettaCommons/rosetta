@@ -143,10 +143,10 @@ MembraneAbinitio::MembraneAbinitio(
 	simple_moves::FragmentMoverOP smooth_move_small,
 	int  /*dummy otherwise the two constructors are ambiguous */
 ) :
-	brute_move_small_( brute_move_small ),
-	brute_move_small_top25_( brute_move_small_top25 ),
+	brute_move_small_(std::move( brute_move_small )),
+	brute_move_small_top25_(std::move( brute_move_small_top25 )),
 	brute_move_large_( brute_move_large ),
-	smooth_move_small_( smooth_move_small ),
+	smooth_move_small_(std::move( smooth_move_small )),
 	checkpoint_( "MembraneAbinitio" )
 	// output_tag_( "debug ")
 {
@@ -1047,10 +1047,8 @@ public:
 private:
 
 	void compute_insert_pos( core::fragment::InsertMap const& insert_map ) {
-		for ( core::fragment::InsertMap::const_iterator it = insert_map.begin(),
-				eit = insert_map.end(); it != eit; ++it ) {
-			Size const pos ( *it );
-			if ( pos > insert_pos_.size() ) break;
+		for (unsigned long pos : insert_map) {
+				if ( pos > insert_pos_.size() ) break;
 			insert_pos_[ pos ] = true;
 		}
 	}
@@ -1065,7 +1063,7 @@ private:
 	}
 
 public:
-	virtual bool operator() ( const core::pose::Pose & pose ) {
+	bool operator() ( const core::pose::Pose & pose ) override {
 		assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
 		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
 			if ( initial_phis[i] == pose.phi(i) && insert_pos_[ i ] ) {

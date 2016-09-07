@@ -27,20 +27,20 @@ class VirtualRootMover : public moves::Mover {
 
 public:
 	VirtualRootMover();
-	~VirtualRootMover();
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	~VirtualRootMover() override;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual
+	
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	void set_remove( bool const remove );
 	void set_removable( bool const removable );

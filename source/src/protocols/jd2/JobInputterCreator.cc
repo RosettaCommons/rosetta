@@ -17,7 +17,7 @@ namespace protocols {
 namespace jd2 {
 
 JobInputterCreator::JobInputterCreator() {}
-JobInputterCreator::~JobInputterCreator() {}
+JobInputterCreator::~JobInputterCreator() = default;
 
 } //namespace jd2
 } //namespace protocols

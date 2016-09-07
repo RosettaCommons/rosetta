@@ -188,7 +188,7 @@ WorkUnit_LoopHash::run()
 	}
 
 	TR.Debug << "Running loophash function: Start: " << get_start() << " End: " << get_end() << std::endl;
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	core::scoring::ScoreFunctionCOP sfxn_loc = get_energy( "talaris2013_cart" );
 
@@ -209,16 +209,16 @@ WorkUnit_LoopHash::run()
 	}
 
 	// Run minpack before storing
-	for ( core::Size i_str = 0; i_str < decoys_tmp.size(); ++i_str ) {
+	for (auto & i_str : decoys_tmp) {
 		core::pose::Pose pose_tmp;
-		decoys_tmp[i_str]->fill_pose( pose_tmp );
+		i_str->fill_pose( pose_tmp );
 
 		// Final boolean option: ramp (4steps) or not?
 		ramp_minpack_loop2( pose_tmp, loopres, sfxn_loc, true, false, false, 6.0 );
 		store_to_decoys( start_struct, pose_tmp );
 	}
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Debug << "Build " << decoys().size() << " structures in " << endtime - starttime << " s " << std::endl;
 
 }
@@ -267,7 +267,7 @@ WorkUnit_FragInsert::run()
 	core::Size const n( 1 ); //let's just run once
 
 	TR << "Executing WorkUnit_FragInsert on " << get_res1() << " " << get_res2() << std::endl;
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	// Starts here
 	// 1. Score function setup
@@ -388,7 +388,7 @@ WorkUnit_FragInsert::run()
 		store_to_decoys( start_struct, pose_work );
 	}
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Debug << "Build " << decoys().size() << " structures in ";
 	TR.Debug << endtime - starttime << " s " << std::endl;
 
@@ -444,7 +444,7 @@ WorkUnit_KicCloser::run()
 	// get number of runs
 	core::Size const n( get_nsteps() );
 
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	utility::vector1< core::Size > loopres;
 	loopres.resize( 0 );
@@ -542,7 +542,7 @@ WorkUnit_KicCloser::run()
 
 	store_to_decoys( start_struct, pose_min );
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Debug << "Build " << decoys().size() << " structures in " << endtime - starttime << " s " << std::endl;
 
 }
@@ -651,7 +651,7 @@ WorkUnit_PartialAbinitio::run()
 	decoys().clear();
 
 	// get number of runs
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	core::pose::Pose pose_work( pose0 );
 	tocen->apply( pose_work );
@@ -905,7 +905,7 @@ WorkUnit_PartialAbinitio::run()
 	// copy coordinates
 	if ( contains_loop ) copy_pose_crd( pose0, pose_work, loopregions );
 
-	core::Size chktime = time(NULL);
+	core::Size chktime = time(nullptr);
 	TR.Debug << "Abinitio part: " << chktime - starttime << " s " << std::endl;
 	TR.Debug << "after pack: " << sfxn_famin->score( pose_work ) << std::endl;
 
@@ -924,7 +924,7 @@ WorkUnit_PartialAbinitio::run()
 
 	store_to_decoys( start_struct, pose_work );
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Debug << "Build " << decoys().size() << " structures in " << endtime - starttime << " s " << std::endl;
 }
 

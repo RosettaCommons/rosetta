@@ -67,8 +67,7 @@ Hairpin::Hairpin( core::Size s1_1, core::Size s1_2, core::Size s2_1, core::Size 
 	range_pair_( std::make_pair( std::make_pair( s1_1, s1_2 ), std::make_pair( s2_1, s2_2 ) ) )
 {}
 
-Hairpin::~Hairpin()
-{}
+Hairpin::~Hairpin() = default;
 
 core::Size
 Hairpin::s1_start() const { return range_pair_.first.first; }
@@ -108,14 +107,10 @@ Hairpins::Hairpins()
 {}
 
 /// @brief copy constructor
-Hairpins::Hairpins(
-	Hairpins const & s
-) : hairpin_list_( s.hairpin_list_ )
-{}
+Hairpins::Hairpins( Hairpins const & ) = default;
 
 /// @brief default destructor
-Hairpins::~Hairpins()
-{}
+Hairpins::~Hairpins() = default;
 
 /// @brief copy assignment
 Hairpins &
@@ -161,7 +156,7 @@ operator<< ( std::ostream & out, Hairpins const & s )
 	utility::vector1< Hairpin > temp_list( s.list() );
 	core::Size count(0);
 
-	for ( utility::vector1< Hairpin >::iterator it= temp_list.begin(),
+	for ( auto it= temp_list.begin(),
 			ite= temp_list.end(); it != ite; ++it ) {
 		count++;
 	}

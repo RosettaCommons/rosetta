@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 DdGFeaturesCreator::DdGFeaturesCreator() {}
-DdGFeaturesCreator::~DdGFeaturesCreator() {}
+DdGFeaturesCreator::~DdGFeaturesCreator() = default;
 FeaturesReporterOP DdGFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new DdGFeatures );
 }

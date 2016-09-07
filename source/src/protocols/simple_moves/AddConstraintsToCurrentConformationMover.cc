@@ -86,7 +86,7 @@ AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMov
 	selector_( new core::select::residue_selector::TrueResidueSelector )
 {}
 
-AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover() {}
+AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover() = default;
 
 void
 AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
@@ -296,7 +296,7 @@ AddConstraintsToCurrentConformationMover::parse_task_operations(
 	Pose const &
 ) {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0 ) return;
+	if ( new_task_factory == nullptr ) return;
 	task_factory( new_task_factory );
 }
 
@@ -308,7 +308,7 @@ AddConstraintsToCurrentConformationMover::residue_selector( core::select::residu
 
 void AddConstraintsToCurrentConformationMover::task_factory( TaskFactoryOP tf )
 {
-	runtime_assert( tf != 0 );
+	runtime_assert( tf != nullptr );
 	protocols::residue_selectors::TaskSelectorOP task_selector( new protocols::residue_selectors::TaskSelector( tf, false, false, true ) );
 	residue_selector( task_selector );
 }

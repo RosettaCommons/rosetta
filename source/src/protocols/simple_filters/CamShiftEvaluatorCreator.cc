@@ -60,7 +60,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.CamShiftEvaluatorCrea
 namespace protocols {
 namespace simple_filters {
 
-CamShiftEvaluatorCreator::~CamShiftEvaluatorCreator() {}
+CamShiftEvaluatorCreator::~CamShiftEvaluatorCreator() = default;
 
 void CamShiftEvaluatorCreator::register_options() {
 	using namespace basic::options;
@@ -82,7 +82,7 @@ void CamShiftEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & e
 		typedef utility::vector1< std::string > CSVector;
 		CSVector const& cs_shifts( option[ OptionKeys::evaluation::cam_shifts ]() );
 
-		for ( CSVector::const_iterator it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {
+		for ( auto it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {
 			std::string fname( *it );
 			std::string column;
 			++it;

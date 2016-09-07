@@ -53,7 +53,7 @@ namespace protocols {
 namespace jumping {
 
 /// @details Auto-generated virtual destructor
-MembraneJump::~MembraneJump() {}
+MembraneJump::~MembraneJump() = default;
 using namespace core;
 using namespace fragment;
 static THREAD_LOCAL basic::Tracer tr( "protocols.jumping.MembraneJump" );

@@ -32,7 +32,7 @@ class JobOutputterCreator : public utility::pointer::ReferenceCount
 {
 public:
 	JobOutputterCreator();
-	virtual ~JobOutputterCreator();
+	~JobOutputterCreator() override;
 
 	virtual JobOutputterOP create_JobOutputter() const = 0;
 	virtual std::string keyname() const = 0;

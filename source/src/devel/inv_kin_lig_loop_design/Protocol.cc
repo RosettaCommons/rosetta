@@ -62,8 +62,8 @@ namespace inv_kin_lig_loop_design {
 namespace {
 
 bool contains(vector<Loop> const& loops, int seqpos ) {
-	for ( Size k = 0; k < loops.size(); ++k ) {
-		if ( loops[k].lo <= seqpos && seqpos <= loops[k].hi ) {
+	for (const auto & loop : loops) {
+		if ( loop.lo <= seqpos && seqpos <= loop.hi ) {
 			return true;
 		}
 	}
@@ -71,8 +71,8 @@ bool contains(vector<Loop> const& loops, int seqpos ) {
 }
 
 bool is_anchor(vector<Loop> const& loops, int seqpos ) {
-	for ( Size k = 0; k < loops.size(); ++k ) {
-		if ( loops[k].to == seqpos ) {
+	for (const auto & loop : loops) {
+		if ( loop.to == seqpos ) {
 			return true;
 		}
 	}
@@ -160,10 +160,8 @@ void Protocol::phase_lores() {
 			//g.setUseNb(false);
 
 			// start with a completely random configuration
-			for ( Size k = 0; k < loops_shuffled.size(); ++k ) { // !!! first generate a completely random
-				const Loop& loop = loops_shuffled[k];
-
-				mover.randomFragments( loop.lo, loop.hi, 1 );
+			for (auto & loop : loops_shuffled) { // !!! first generate a completely random
+					mover.randomFragments( loop.lo, loop.hi, 1 );
 				mover.randomFragments( loop.lo, loop.hi, 3 );
 
 				if ( loop.to != 0 ) {
@@ -183,10 +181,9 @@ void Protocol::phase_lores() {
 			min_start_3mer_inner.boltzmann( *pose );
 			min_start_3mer_inner.recover_low( *pose );
 
-			for ( Size k = 0; k < loops_shuffled.size(); ++k ) {
+			for (auto & loop : loops_shuffled) {
 
-				const Loop& loop = loops_shuffled[k];
-				int const a = loop.lo;
+					int const a = loop.lo;
 				int const b = loop.hi;
 
 				if ( loop.to != 0 ) {
@@ -411,9 +408,9 @@ void Protocol::phase_hires() {
 	core::pack::task::PackerTaskOP design_task( core::pack::task::TaskFactory::create_packer_task( *pose ) );
 	//design_task->initialize_from_command_line(); // .read_resfile().or_include_current( true );
 
-	for ( Size k = 0; k < loops.size(); ++k ) {
-		for ( int i = loops[k].lo; i <= loops[k].hi ; ++i ) {
-			if ( i != loops[k].to ) {
+	for (auto & loop : loops) {
+		for ( int i = loop.lo; i <= loop.hi ; ++i ) {
+			if ( i != loop.to ) {
 				residues_allowed_to_be_packed[i] = true;
 			}
 		}

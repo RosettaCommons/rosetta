@@ -75,7 +75,7 @@ H3PerturbCCD::H3PerturbCCD() : Mover() {
 }
 
 // default destructor
-H3PerturbCCD::~H3PerturbCCD() {}
+H3PerturbCCD::~H3PerturbCCD() = default;
 
 
 H3PerturbCCD::H3PerturbCCD( AntibodyInfoOP antibody_in ) : Mover() {

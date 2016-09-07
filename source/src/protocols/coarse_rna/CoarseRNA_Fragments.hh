@@ -45,7 +45,7 @@ class SourcePositions : public utility::pointer::ReferenceCount{
 public:
 
 	SourcePositions(){}
-	virtual ~SourcePositions();
+	~SourcePositions() override;
 	core::Size size() const { return source_positions_.size(); }
 	void push_back( core::Size const & value ){ source_positions_.push_back( value ); }
 	core::Size operator[]( core::Size num ){ return source_positions_[ num ]; }
@@ -65,19 +65,19 @@ public:
 
 	//Constructor -- needs vall_torsions_file to get started.
 	// CoarseRNA_Fragments();
-	CoarseRNA_Fragments( std::string const & filename );
-	virtual ~CoarseRNA_Fragments();
+	CoarseRNA_Fragments( std::string filename );
+	~CoarseRNA_Fragments() override;
 
-	virtual void
+	void
 	apply_random_fragment(
 		core::pose::Pose & pose,
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const override;
 
-	virtual bool
-	is_fullatom();
+	bool
+	is_fullatom() override;
 
 private:
 

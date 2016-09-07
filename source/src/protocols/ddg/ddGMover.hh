@@ -53,7 +53,7 @@ public:
 		utility::vector1<core::chemical::AA> res_to_mutate
 	);
 
-	virtual ~ddGMover();
+	~ddGMover() override;
 
 	//setter function
 	void neighbor_cutoff(double cutoff);
@@ -104,8 +104,8 @@ public:
 	double get_mutant_averaged_totals();
 	double get_mutant_min_totals();
 	double ddG();
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
 	bool is_wt_calc_complete();
 	bool is_mutant_calc_complete();
 	bool is_properly_initialized(pose::Pose & pose);

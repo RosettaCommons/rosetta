@@ -73,7 +73,7 @@ OversaturatedHbondAcceptorFilter::OversaturatedHbondAcceptorFilter(
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 ///
 OversaturatedHbondAcceptorFilter::~OversaturatedHbondAcceptorFilter()
-{}
+= default;
 
 
 /// @brief Required in the context of the parser/scripting scheme.

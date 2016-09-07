@@ -55,7 +55,7 @@ get_element_color(std::string const & element) {
 ResidueTypeKinWriter::ResidueTypeKinWriter()
 {}
 
-ResidueTypeKinWriter::~ResidueTypeKinWriter() {}
+ResidueTypeKinWriter::~ResidueTypeKinWriter() = default;
 
 void ResidueTypeKinWriter::write_kin_header(
 	std::ostream & ostr,

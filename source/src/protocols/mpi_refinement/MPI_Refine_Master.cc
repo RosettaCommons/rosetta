@@ -134,9 +134,8 @@ MPI_Refine_Master::init(){
 	// be aware of it when using multiple inputs (which haven't been tried anyway)
 
 	// Assign loop info
-	for ( SilentStructStore::iterator it = library_ref().begin(), end =  library_ref().end();
-			it != end; ++it ) {
-		assign_loop_info( *it );
+	for (auto & it : library_ref()) {
+		assign_loop_info( it );
 	}
 
 	// perturb loop and very short min
@@ -481,7 +480,7 @@ MPI_Refine_Master::process_inbound_wus(){
 			= utility::pointer::dynamic_pointer_cast<  WorkUnit_SilentStructStore > ( next_wu );
 
 		// If upcast was unsuccessful - warn and ignore.
-		if ( structure_wu.get() == NULL ) {
+		if ( structure_wu.get() == nullptr ) {
 			TR << "Cannot save structural data for WU: " << std::endl;
 			next_wu->print( TR );
 			continue;
@@ -655,7 +654,7 @@ MPI_Refine_Master::process_outbound_wus(){
 			// iterate over whole ref structures given...
 			// make sure each createWU is not loading too heavy queues...
 			core::Size i( 0 );
-			for ( SilentStructStore::iterator it = library_ref().begin(),
+			for ( auto it = library_ref().begin(),
 					end =  library_ref().end(); it != end; ++it, i++ ) {
 
 				TR << "Create on structure: " << (*it)->decoy_tag() << std::endl;
@@ -999,7 +998,7 @@ MPI_Refine_Master::feedback_structures_to_emperor( bool get_feedback,
 	}
 
 	core::Size i( 0 );
-	for ( SilentStructStore::iterator it = library_central().begin(), end = library_central().end(); it != end; ++it, i++ ) {
+	for ( auto it = library_central().begin(), end = library_central().end(); it != end; ++it, i++ ) {
 		// Add only if used at lease once for sampling
 		//if( (*it)->get_energy( "nuse" ) > 0 ){
 		resultfeedback->decoys().add( *it );
@@ -1195,11 +1194,11 @@ MPI_Refine_Master::get_average_structure( SilentStructStore &decoys,
 // the emperor.
 void
 MPI_Refine_Master::check_library_expiry_dates(){
-	core::Size current_time = time(NULL);
+	core::Size current_time = time(nullptr);
 
-	SilentStructStore::iterator jt_last = library_central().begin();
+	auto jt_last = library_central().begin();
 
-	for ( SilentStructStore::iterator jt =  library_central().begin(),
+	for ( auto jt =  library_central().begin(),
 			end = library_central().end(); jt != end; ++jt ) {
 		TR.Debug << "Checking structure.." << std::endl;
 		//core::Size struct_time = (core::Size)(*jt)->get_energy("ltime");
@@ -1240,7 +1239,7 @@ MPI_Refine_Master::check_library_expiry_dates(){
 		// assume that false blacklisting from currently processing loophash WU is unlikely
 
 		core::Size erase_count = 0;
-		for ( WorkUnitQueue::iterator iter = outbound().begin(); iter != outbound().end(); ) {
+		for ( auto iter = outbound().begin(); iter != outbound().end(); ) {
 			if ( ((*iter)->get_wu_type() == "local_loophasher" || ((*iter)->get_wu_type() == "global_loophasher") )
 					&& ssid == (*iter)->extra_data_3() ) {
 				TRDEBUG<<"erasing wu" <<std::endl;

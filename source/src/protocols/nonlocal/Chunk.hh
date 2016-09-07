@@ -56,7 +56,7 @@ public:
 	Chunk(const Chunk& other);
 
 	/// @brief Destructor
-	virtual ~Chunk() ; // auto-removing definition from header{}
+	~Chunk() override ; // auto-removing definition from header{}
 
 	/// @brief Assignment operator
 	Chunk& operator=(const Chunk& other);

@@ -30,8 +30,7 @@ MetalSiteResidue::MetalSiteResidue()
 }
 
 MetalSiteResidue::~MetalSiteResidue()
-{
-}
+= default;
 
 
 core::Size

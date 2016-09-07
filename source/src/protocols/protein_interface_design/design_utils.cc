@@ -135,10 +135,10 @@ ReportSequenceDifferences::calculate( pose::Pose const & pose1_in, pose::Pose co
 void
 ReportSequenceDifferences::report( std::ostream & out ) const
 {
-	std::map< Size, core::Real >::const_iterator it_energy1=res_energy1_.begin();
-	std::map< Size, core::Real >::const_iterator it_energy2=res_energy2_.begin();
-	std::map< Size, std::string >::const_iterator it_name1=res_name1_.begin();
-	std::map< Size, std::string >::const_iterator it_name2=res_name2_.begin();
+	auto it_energy1=res_energy1_.begin();
+	auto it_energy2=res_energy2_.begin();
+	auto it_name1=res_name1_.begin();
+	auto it_name2=res_name2_.begin();
 
 	if ( it_energy1 == res_energy1_.end() ) {
 		out<<"No changes\n";
@@ -212,10 +212,10 @@ Revert::apply( pose::Pose & pose_wt, pose::Pose & pose_des ) const
 	std::string ignored_resids( "select resi " );
 	std::string done_resids( "select resi " );
 	bool first_pass_ignored( true ), first_pass_done( true );
-	for ( EnMap::const_iterator it2 = energy_map2->begin(); it2!=energy_map2->end(); ++it2 ) {
+	for (const auto & it2 : *energy_map2) {
 		using boost::lexical_cast;
 		using std::string;
-		core::Size const seqpos( it2->first );
+		core::Size const seqpos( it2.first );
 
 		TR<<pose_des.residue(seqpos).name3()<<seqpos<<"->"<<pose_wt.residue(seqpos).name3()<<" ";
 		pose_des.copy_segment( 1, pose_wt, seqpos, seqpos );
@@ -242,8 +242,8 @@ Revert::apply( pose::Pose & pose_wt, pose::Pose & pose_des ) const
 			}
 			ignored_resids += lexical_cast< string >( seqpos );
 
-			if ( it2->second > 0 ) {
-				TR<<"but the total energy for "<<pose_des.residue(seqpos).name3()<<seqpos<<" is "<<it2->second<<" testing an Ala substitution\n";
+			if ( it2.second > 0 ) {
+				TR<<"but the total energy for "<<pose_des.residue(seqpos).name3()<<seqpos<<" is "<<it2.second<<" testing an Ala substitution\n";
 				TR<<"mutation "<<pose_des.residue(seqpos).name3()<<seqpos<<"->ALA has ddG ";
 				point_mutation( pose_des, scorefxn_des, seqpos, chemical::aa_ala );
 				core::Real const ddG_ala( ddG_cycles( pose_des, scorefxn_des, ddg_cycles_ ));
@@ -371,13 +371,13 @@ MinimizeInterface(
 	if ( optimize_foldtree && target_residues.size() > 0 ) { //setup new fold_tree for better numerical behaviour between the residue at the centre of target_residues and the nearest residue on the partner
 		core::Real min_mean_dist=10000;
 		core::Size central_residue( *target_residues.begin() );
-		for ( utility::vector1<core::Size>::const_iterator res_it1=target_residues.begin(); res_it1!=target_residues.end(); ++res_it1 ) {
+		for ( auto res_it1=target_residues.begin(); res_it1!=target_residues.end(); ++res_it1 ) {
 			runtime_assert( *res_it1 <= pose.total_residue() );
 
 			core::conformation::Residue const res1( pose.residue(*res_it1) );
 			core::Real mean_distance( 0.0 );
-			for ( utility::vector1<core::Size>::const_iterator res_it2=res_it1+1; res_it2!=target_residues.end(); ++res_it2 ) {
-				core::conformation::Residue const res2( pose.residue(*res_it2) );
+			for ( auto res_it2=res_it1+1; res_it2!=target_residues.end(); ++res_it2 ) {
+				core::conformation::Residue const& res2( pose.residue(*res_it2) );
 
 				mean_distance += res1.xyz( res1.nbr_atom() ).distance( res2.xyz( res2.nbr_atom() ) ) ;
 			}
@@ -559,8 +559,8 @@ hbonded(
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
-	for ( std::set< core::Size >::const_iterator binder_it=binders.begin(); binder_it!=binders.end(); ++binder_it ) {
-		core::conformation::Residue const resj( pose.residue(*binder_it) );
+	for (unsigned long binder : binders) {
+		core::conformation::Residue const resj( pose.residue(binder) );
 
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 		if ( distance > distance_cutoff ) continue;
@@ -606,12 +606,12 @@ hbonded(
 				core::Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
 				Residue const & don_rsd( pose.residue( don_res_i ) ),
 					acc_rsd( pose.residue( acc_res_i ) );
-				if ( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) ||
-						( don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it ) ) {
-					hbonded_list.push_back( *binder_it );
+				if ( (don_rsd.seqpos() == binder && acc_rsd.seqpos() == target_residue) ||
+						( don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == binder ) ) {
+					hbonded_list.push_back( binder );
 					core::Size const width( 10 );
 					TR  << I( width, target_residue )
-						<< I( width, *binder_it )
+						<< I( width, binder )
 						<< A( width, resi.name1() )
 						<< A( width, resj.name1() )
 						<< F( width, 3, hbond_emap[ hbond_sr_bb ] )
@@ -654,8 +654,8 @@ hbonded_atom(
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
-	for ( std::set< core::Size >::const_iterator binder_it=binders.begin(); binder_it!=binders.end(); ++binder_it ) {
-		core::conformation::Residue const resj( pose.residue(*binder_it) );
+	for (unsigned long binder : binders) {
+		core::conformation::Residue const resj( pose.residue(binder) );
 
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 		if ( distance > distance_cutoff ) continue;
@@ -706,15 +706,15 @@ hbonded_atom(
 				core::Size const don_atom_i( hb.don_hatm() ), acc_atom_i( hb.acc_atm() );
 				core::Size target_atom_id=resi.atom_index(target_atom);
 
-				if ( ( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) && ( don_atom_i==target_atom_id || don_atom_i_base==target_atom_id ) ) ||
-						( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) && acc_atom_i==target_atom_id ) ||
-						( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it) && ( don_atom_i==target_atom_id || don_atom_i_base==target_atom_id ) ) ||
-						( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it) && acc_atom_i==target_atom_id ) ) {
-					hbonded_list.push_back( *binder_it );
+				if ( ( (don_rsd.seqpos() == binder && acc_rsd.seqpos() == target_residue) && ( don_atom_i==target_atom_id || don_atom_i_base==target_atom_id ) ) ||
+						( (don_rsd.seqpos() == binder && acc_rsd.seqpos() == target_residue) && acc_atom_i==target_atom_id ) ||
+						( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == binder) && ( don_atom_i==target_atom_id || don_atom_i_base==target_atom_id ) ) ||
+						( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == binder) && acc_atom_i==target_atom_id ) ) {
+					hbonded_list.push_back( binder );
 					core::Size const width( 10 );
 					TR  << I( width, target_residue )
 						<< I( width, target_atom )
-						<< I( width, *binder_it )
+						<< I( width, binder )
 						<< A( width, resi.name1() )
 						<< A( width, resj.name1() )
 						<< F( width, 3, hbond_emap[ hbond_sr_bb ] )

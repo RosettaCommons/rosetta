@@ -34,37 +34,37 @@ public:
 	enum DDG_Bind_File_Index { WT_COMPLEXES_LIST_FILE = 1, MUT_COMPLEXES_LIST_FILE, WT_UNBOUNDS_LIST_FILE, MUT_UNBOUNDS_LIST_FILE };
 
 	DDGBindOptEData();
-	virtual ~DDGBindOptEData();
+	~DDGBindOptEData() override;
 
-	virtual Real get_score(
+	Real get_score(
 		Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
-		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
+		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
-	virtual void print_score(
+	void print_score(
 		std::ostream & ostr, Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
-		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
+		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	Real process_score(
 		std::ostream & ostr, bool print, Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
 
-	virtual OptEPositionDataType type() const;
-	virtual void range( ScoreTypes const & free_score_list, ScoreTypes const & fixed_score_list, EnergyMap & lower_bound, EnergyMap & upper_bound ) const;
-	virtual Size size() const;
-	virtual Size memory_use() const;
+	OptEPositionDataType type() const override;
+	void range( ScoreTypes const & free_score_list, ScoreTypes const & fixed_score_list, EnergyMap & lower_bound, EnergyMap & upper_bound ) const override;
+	Size size() const override;
+	Size memory_use() const override;
 
 #ifdef USEMPI
 	virtual void send_to_node( int const destination_node, int const tag ) const;
 	virtual void receive_from_node( int const source_node, int const tag );
 #endif
 
-	virtual void write_to_file( std::ofstream & /* outfile */ ) const {}
-	virtual void read_from_file( std::ifstream & /* infile */ ) {}
-	virtual void write_to_binary_file( std::ofstream & /* outfile */ ) const {}
-	virtual void read_from_binary_file( std::ifstream & /* infile */ ) {}
+	void write_to_file( std::ofstream & /* outfile */ ) const override {}
+	void read_from_file( std::ifstream & /* infile */ ) override {}
+	void write_to_binary_file( std::ofstream & /* outfile */ ) const override {}
+	void read_from_binary_file( std::ifstream & /* infile */ ) override {}
 
 	// setters
 	void set_experimental_ddg_bind( Real exp_ddg_bind );

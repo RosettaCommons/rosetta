@@ -104,8 +104,8 @@ bool PairingStatEntry::compatible( core::scoring::dssp::StrandPairing const& str
 }
 
 bool PairingStatEntry::has_model( std::string const& model ) const {
-	for ( ModelList::const_iterator it = models_.begin(), eit = models_.end(); it != eit; ++it ) {
-		if ( model == *it ) return true;
+	for (const auto & it : models_) {
+		if ( model == it ) return true;
 	}
 	return false;
 }
@@ -148,11 +148,10 @@ void PairingStatistics::add_entry(core::scoring::dssp::StrandPairing const& ps, 
 
 void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet const& topology, Model const& id ) {
 	// if (! topology.size() ) return; //also add empty sets  -- otherwise the modelname floats around and can't be found in this list
-	for ( core::scoring::dssp::StrandPairingSet::const_iterator it = topology.begin(), eit = topology.end();
-			it != eit; ++it  ) {
+	for (const auto & it : topology) {
 		//bool merged ( false );
-		tr.Trace << "adding stand pairing to hash.. " << *it << std::endl;
-		add_entry( *it, id );
+		tr.Trace << "adding stand pairing to hash.. " << it << std::endl;
+		add_entry( it, id );
 	}
 	topols_[ id ] = topology;
 }
@@ -160,9 +159,8 @@ void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet cons
 
 void PairingStatistics::compute( Templates const& templates ) {
 	ModelFreq model_freq;  //count of the underlying structures ( letters 1-4 of model-name )
-	for ( Templates::const_iterator it = templates.begin(), eit = templates.end();
-			it != eit; ++it ) {
-		Template const& model( *it->second );
+	for (const auto & it : templates) {
+		Template const& model( *it.second );
 		core::scoring::dssp::PairingList template_pairings, target_pairings;
 		model.strand_pairings().get_beta_pairs( template_pairings );
 		model.map_pairings2target( template_pairings, target_pairings );
@@ -180,7 +178,7 @@ PairingStatistics::PairingStatistics( core::scoring::dssp::StrandPairingSet cons
 	compute_model_weights( model_freq );
 }
 
-PairingStatistics::~PairingStatistics() {}
+PairingStatistics::~PairingStatistics() = default;
 
 core::Real PairingStatistics::strand_weight( core::scoring::dssp::StrandPairing const& pairing ) const {
 	StatEntries::const_iterator itentry = entries_.find( pairing );
@@ -198,8 +196,8 @@ core::Real PairingStatistics::strand_weight( core::scoring::dssp::StrandPairing 
 
 
 core::Real PairingStatistics::weight( Model id ) const {
-	for ( ModelWeight::const_iterator top = model_weight_.begin(); top != model_weight_.end(); ++top ) {
-		if ( top->second==id ) return top->first;
+	for (const auto & top : model_weight_) {
+		if ( top.second==id ) return top.first;
 	}
 	utility_exit_with_message("Model name not known: " + id );
 	return 0.0;
@@ -213,10 +211,9 @@ void PairingStatistics::compute_model_weights(  ModelFreq& model_freq ) {
 		Real score( 0 );
 		Real const norm( sqrt( (Real)  model_freq[ top->first.substr(0,4) ]  ) );
 		// loop over pairings and find them in entries_
-		for ( core::scoring::dssp::StrandPairingSet::const_iterator pairing = top->second.begin(),
-				epairing = top->second.end(); pairing != epairing; ++pairing ) {
+		for (const auto & pairing : top->second) {
 			// find pairing in entries
-			StatEntries::iterator itentry = entries_.find( *pairing );
+			StatEntries::iterator itentry = entries_.find( pairing );
 			if ( itentry != entries_.end() ) {
 				Real const weight( 1.0/norm * itentry->second.frequency() * ( itentry->second.size()-1.0
 					+ contact_order_weight * ( std::max( 0, (int) itentry->second.contact_order() - 20)) ) );
@@ -292,10 +289,10 @@ std::ostream& operator<< ( std::ostream& out, PairingStatistics const& ps ) {
 	//     out << it->first << " " << it->second  << "\nPAIRSTAT: ";
 	//   }
 	//   out << " -----------------------------\nPAIRSTAT: ";
-	for ( PairingStatistics::ModelWeight::const_iterator it = ps.model_weight_.begin(), eit = ps.model_weight_.end();
+	for ( auto it = ps.model_weight_.begin(), eit = ps.model_weight_.end();
 			it != eit; ++it ) {
 		out << "\nSTRAND_TOPOLOGY " << " " << ps.topology( it->second ).size() << " " << it->first << " " << it->second;
-		for ( core::scoring::dssp::StrandPairingSet::const_iterator isp = ps.topology( it->second ).begin(),
+		for ( auto isp = ps.topology( it->second ).begin(),
 				eisp = ps.topology( it->second ).end(); isp != eisp; ++isp ) {
 			if ( !isp->range_check() ) {
 				tr.Error << "[ERROR] skip inconsistent pairing... " << *isp << std::endl;
@@ -319,9 +316,8 @@ void PairingStatEntry::show( std::ostream& out ) const {
 		return;
 	}
 	out << "PAIRSTAT_ENTRY: " << F(5,2,weight() ) << " " << frequency() << " " <<strand_pairing_ << " ";
-	for ( ModelList::const_iterator it = models_.begin(), eit = models_.end();
-			it != eit; ++it ) {
-		out << *it << " ";
+	for (const auto & model : models_) {
+		out << model << " ";
 	}
 }
 
@@ -343,9 +339,8 @@ std::istream& operator>> ( std::istream& is, PairingStatEntry& ps ) {
 }
 
 std::ostream& operator<< (std::ostream& out, StatEntries const& ps ) {
-	for ( StatEntries::const_iterator it = ps.begin(), eit = ps.end();
-			it != eit; ++it ) {
-		out << it->second << "\n";
+	for (const auto & p : ps) {
+		out << p.second << "\n";
 	}
 	return out;
 }

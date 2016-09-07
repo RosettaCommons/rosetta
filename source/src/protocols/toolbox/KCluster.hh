@@ -41,7 +41,7 @@ class KClusterElement : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~KClusterElement();
+	~KClusterElement() override;
 	typedef utility::vector1< core::Size > ClusterNdxList;
 	typedef utility::vector1< core::Size > ClusterTypList;
 	typedef utility::vector1< core::Real > ClusterDisList;
@@ -203,7 +203,7 @@ class KClusterData : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~KClusterData();
+	~KClusterData() override;
 	typedef ObjexxFCL::FArray1D_double FA1Dd;
 	typedef ObjexxFCL::FArray2D_double FA2Dd;
 	typedef ObjexxFCL::FArray2_double FA2d;
@@ -271,7 +271,7 @@ public:
 	typedef ObjexxFCL::FArray2D_double FA2Dd;
 
 	KCluster();
-	virtual ~KCluster();
+	~KCluster() override;
 	virtual void init(KClusterElementOP, core::Size first=0)=0;
 	virtual void update(KClusterElementOP, KClusterData&)=0;
 	virtual bool whoami()=0;
@@ -295,12 +295,12 @@ class KMedoid : public KCluster
 public:
 	KMedoid();
 
-	bool whoami();
-	core::Real get_threshold();
-	void init(KClusterElementOP, core::Size first=0);
-	core::Real assign(KClusterElementOP, KClusterData&);
-	void update(KClusterElementOP, KClusterData&);
-	void set_threshold(core::Real);
+	bool whoami() override;
+	core::Real get_threshold() override;
+	void init(KClusterElementOP, core::Size first=0) override;
+	core::Real assign(KClusterElementOP, KClusterData&) override;
+	void update(KClusterElementOP, KClusterData&) override;
+	void set_threshold(core::Real) override;
 protected:
 	core::Size cur_ncluster_;
 	core::Real threshold_;
@@ -316,12 +316,12 @@ class GreedyKCenter : public KCluster
 public:
 	GreedyKCenter();
 
-	bool whoami();
-	core::Real get_threshold();
-	void init(KClusterElementOP, core::Size first=0);
-	core::Real assign(KClusterElementOP, KClusterData&);
-	void update(KClusterElementOP, KClusterData&);
-	void set_threshold(core::Real);
+	bool whoami() override;
+	core::Real get_threshold() override;
+	void init(KClusterElementOP, core::Size first=0) override;
+	core::Real assign(KClusterElementOP, KClusterData&) override;
+	void update(KClusterElementOP, KClusterData&) override;
+	void set_threshold(core::Real) override;
 protected:
 	core::Real radius_;
 };

@@ -31,7 +31,7 @@ class PosePropertyReporterCreator : public utility::pointer::ReferenceCount
 {
 public:
 	PosePropertyReporterCreator();
-	virtual ~PosePropertyReporterCreator();
+	~PosePropertyReporterCreator() override;
 
 	virtual PosePropertyReporterOP create_reporter() const = 0;
 	virtual std::string keyname() const = 0;

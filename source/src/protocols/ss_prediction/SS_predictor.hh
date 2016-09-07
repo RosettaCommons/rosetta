@@ -42,7 +42,7 @@ class SS_predictor : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Reads in models for SS prediction etc.
 	SS_predictor(string type);
-	~SS_predictor();
+	~SS_predictor() override;
 	vector1<vector1 <Real> > predict_ss(string fasta);
 
 private:

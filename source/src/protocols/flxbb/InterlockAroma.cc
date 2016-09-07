@@ -82,19 +82,10 @@ InterlockAroma::InterlockAroma() :
 
 
 /// @brief copy constructor
-InterlockAroma::InterlockAroma( InterlockAroma const & rval ) :
-	Super( rval ),
-	scorefxn_( rval.scorefxn_ ),
-	input_ss_ ( rval.input_ss_ ),
-	max_repulsion_energy_( rval.max_repulsion_energy_ ),
-	min_env_energy_( rval.min_env_energy_ ),
-	limit_aroma_chi2_( rval.limit_aroma_chi2_ ),
-	output_pdbs_( rval.output_pdbs_ ),
-	verbose_( rval.verbose_ )
-{}
+InterlockAroma::InterlockAroma( InterlockAroma const & ) = default;
 
 /// @brief destructor
-InterlockAroma::~InterlockAroma(){}
+InterlockAroma::~InterlockAroma()= default;
 
 /// @brief clone this object
 InterlockAroma::MoverOP
@@ -186,13 +177,13 @@ InterlockAroma::apply( Pose & pose )
 		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( core::graph::GraphOP( new core::graph::Graph( polyala_pose.total_residue() ) ) ), false );
 
 		Size rotnum( 0 );
-		for ( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ) {
+		for (const auto & rotamer : *rotset) {
 
 			rotnum++;
 			Pose work_pose( polyala_pose );
 
 			// farep score after the insertion of rotamer
-			work_pose.replace_residue( ii, **rotamer, false/*orient bb*/ );
+			work_pose.replace_residue( ii, *rotamer, false/*orient bb*/ );
 
 			(*scorefxn_)( work_pose );
 			Real farepE_mut = work_pose.energies().total_energies()[ core::scoring::fa_rep ];

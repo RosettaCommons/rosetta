@@ -41,13 +41,13 @@ public: // Creation
 
 	/// @brief Destructor
 	///
-	virtual ~FitSimpleHelixMultiFunc();
+	~FitSimpleHelixMultiFunc() override;
 
 	/// @brief Constructor
 	///
 	FitSimpleHelixMultiFunc(
 		core::pose::Pose const &pose,
-		std::string const &atom_name,
+		std::string atom_name,
 		core::Size const first_res_index,
 		core::Size const res_per_repeat,
 		core::Size const start_index,
@@ -60,21 +60,21 @@ public: // Methods
 
 	/// @brief Calculate function value (rms squared)
 	///
-	virtual
+	
 	Real
-	operator ()( Multivec const & vars ) const;
+	operator ()( Multivec const & vars ) const override;
 
 	/// @brief Calculate function value derivatives
 	///
-	virtual
+	
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const;
+	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
 
 	/// @brief Error state reached -- derivative does not match gradient
 	///
-	virtual
+	
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const;
+	dump( Multivec const & vars, Multivec const & vars2 ) const override;
 
 private:
 

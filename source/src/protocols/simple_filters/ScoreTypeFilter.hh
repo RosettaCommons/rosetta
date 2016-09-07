@@ -49,12 +49,12 @@ public:
 	///
 	ScoreTypeFilter( core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const score_type_threshold );
 
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new ScoreTypeFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new ScoreTypeFilter() );
 	}
 
@@ -71,11 +71,11 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	inline void set_threshold( core::Real const &thresh_in) { score_type_threshold_ = thresh_in; return; }
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const &pose ) const;
-	virtual ~ScoreTypeFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~ScoreTypeFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	core::Real score_type_threshold_;

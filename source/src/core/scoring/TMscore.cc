@@ -60,7 +60,7 @@ TMscore::TMscore( FArray2D< core::Real > const &p1 )
 	set_default();
 }
 
-TMscore::~TMscore(){}
+TMscore::~TMscore()= default;
 
 void
 TMscore::set_default()

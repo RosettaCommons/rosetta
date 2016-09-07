@@ -61,7 +61,7 @@ public:
 	FallbackConfiguration() {}
 
 	/// @brief Destructor for the FallbackConfiguration does nothing
-	virtual ~FallbackConfiguration();
+	~FallbackConfiguration() override;
 
 	/// @brief Return true if a fallback been provided for the given resource description.
 	/// It is possible that the fallback configuration would be unable to deliver

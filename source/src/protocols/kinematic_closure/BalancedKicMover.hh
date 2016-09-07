@@ -65,15 +65,15 @@ public:
 	BalancedKicMover();
 
 	/// @brief Default destructor.
-	~BalancedKicMover();
+	~BalancedKicMover() override;
 
 public:
 
 	/// @copydoc KicMover::apply
-	void apply(Pose & pose);
+	void apply(Pose & pose) override;
 
 	/// @copydoc KicMover::get_name
-	std::string get_name() const { return "BalancedKicMover"; }
+	std::string get_name() const override { return "BalancedKicMover"; }
 
 public:
 
@@ -89,17 +89,17 @@ public:
 public:
 
 	/// @brief Return true, because this mover always obeys detailed balance.
-	bool preserve_detailed_balance() const { return true; }
+	bool preserve_detailed_balance() const override { return true; }
 
 	/// @brief This mover always obeys detailed balance, so this is a no-op.
-	void set_preserve_detailed_balance(bool) {}
+	void set_preserve_detailed_balance(bool) override {}
 
 	/// @details Right now the proposal probabilities are balanced internally, so
 	/// this ratio will always be unity.  This could change eventually, though.
-	Real last_proposal_density_ratio() { return 1; }
+	Real last_proposal_density_ratio() override { return 1; }
 
 	/// @brief Indicate that each torsion in the loop may take on any value.
-	utility::vector1<core::id::TorsionID_Range> torsion_id_ranges(Pose & pose);
+	utility::vector1<core::id::TorsionID_Range> torsion_id_ranges(Pose & pose) override;
 
 public:
 

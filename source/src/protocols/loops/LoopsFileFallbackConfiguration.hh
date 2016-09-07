@@ -33,29 +33,29 @@ public:
 	LoopsFileFallbackConfiguration();
 
 	/// @brief Determine if the fallback configuration has been specified and return true or false.
-	virtual
+	
 	bool
-	fallback_specified( ResourceDescription const & desc ) const;
+	fallback_specified( ResourceDescription const & desc ) const override;
 
 	/// @brief Return the type of loader that is required for this %resource.
-	virtual
+	
 	basic::resource_manager::LoaderType
-	get_resource_loader( ResourceDescription const & desc ) const;
+	get_resource_loader( ResourceDescription const & desc ) const override;
 
 	/// @brief Return the %locator_id that will be used to construct this %resource.
-	virtual
+	
 	basic::resource_manager::LocatorID
-	get_locator_id( ResourceDescription const & desc ) const;
+	get_locator_id( ResourceDescription const & desc ) const override;
 
 	/// @brief Return an owning pointer to a ResourceOptions instance to configure this %resource.
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	get_resource_options( ResourceDescription const & desc ) const;
+	get_resource_options( ResourceDescription const & desc ) const override;
 
 	/// @brief Return a string that should be displayed if the %resource could not be created.
-	virtual
+	
 	std::string
-	could_not_create_resource_error_message( ResourceDescription const & desc ) const;
+	could_not_create_resource_error_message( ResourceDescription const & desc ) const override;
 
 private:
 	/// @brief Find and return the %locator_id for this %resource from the options system.

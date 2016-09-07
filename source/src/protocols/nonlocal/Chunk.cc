@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 // Project headers
@@ -36,7 +37,7 @@ namespace protocols {
 namespace nonlocal {
 
 // @brief Auto-generated virtual destructor
-Chunk::~Chunk() {}
+Chunk::~Chunk() = default;
 
 /// @brief A small, positive value added to the standard deviation of each chunk.
 /// The distribution requires its standard deviation to be strictly positive.
@@ -56,7 +57,7 @@ using utility::pointer::ReferenceCount;
 // Remember: scoped_ptr's aren't copyable. We need to allocate new memory for
 // <sampler_> in the copy constructor and assignment operator.
 
-Chunk::Chunk(const RegionOP& region, const MoveMapOP& movable)
+Chunk::Chunk(RegionOP const & region, MoveMapOP const & movable)
 : ReferenceCount(), region_(region), movable_(movable) {
 	using namespace boost::accumulators;
 

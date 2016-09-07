@@ -55,14 +55,14 @@ private:
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~NoesyModule();
+	~NoesyModule() override;
 	/// @brief register options
 	static void register_options();
 
 public:
 
 	/// @brief constructor  -- initialize with fast-sequence
-	NoesyModule( std::string const& fasta_sequence );
+	NoesyModule( std::string fasta_sequence );
 
 	/// @brief assign NOE data, use models provided by DecoyIterator for scoring and restraint exclusion, if cycle=0 read cycle from cmd-line
 	template< class DecoyIterator >

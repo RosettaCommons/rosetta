@@ -49,13 +49,9 @@ ClientMover::ClientMover():
 	passports_()
 {}
 
-ClientMover::ClientMover( ClientMover const& other ):
-	Mover( other ),
-	passports_( other.passports_ )
-{
-}
+ClientMover::ClientMover( ClientMover const& )= default;
 
-ClientMover::~ClientMover() {}
+ClientMover::~ClientMover() = default;
 
 bool ang_delta( core::Real const& a, core::Real const& b ){
 	return std::abs( std::cos( a ) - std::cos( b ) ) > TOLERANCE;

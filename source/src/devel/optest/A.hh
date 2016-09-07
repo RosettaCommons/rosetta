@@ -11,7 +11,7 @@ namespace optest {
 class A : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~A();
+	~A() override;
 	A() : my_int_( ++instance_count_ ) {}
 
 	void my_int( int setting )      { my_int_ = setting; }

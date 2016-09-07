@@ -26,22 +26,22 @@ namespace ligand_docking {
 class InterfaceBuilderLoaderCreator : public jd2::parser::DataLoaderCreator
 {
 public:
-	virtual jd2::parser::DataLoaderOP create_loader() const;
-	virtual std::string keyname() const;
+	jd2::parser::DataLoaderOP create_loader() const override;
+	std::string keyname() const override;
 };
 
 class MoveMapBuilderLoaderCreator : public jd2::parser::DataLoaderCreator
 {
 public:
-	virtual jd2::parser::DataLoaderOP create_loader() const;
-	virtual std::string keyname() const;
+	jd2::parser::DataLoaderOP create_loader() const override;
+	std::string keyname() const override;
 };
 
 class LigandAreaLoaderCreator : public jd2::parser::DataLoaderCreator
 {
 public:
-	virtual jd2::parser::DataLoaderOP create_loader() const;
-	virtual std::string keyname() const;
+	jd2::parser::DataLoaderOP create_loader() const override;
+	std::string keyname() const override;
 };
 
 } //namespace ligand_docking

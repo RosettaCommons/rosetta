@@ -20,6 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
@@ -34,7 +35,7 @@ namespace wum {
 class find_SilentStructOPs
 {
 public:
-	find_SilentStructOPs(std::string field, core::Real value ): field_(field), value_(value) {}
+	find_SilentStructOPs(std::string field, core::Real value ): field_(std::move(field)), value_(value) {}
 
 	bool operator () (const core::io::silent::SilentStructOP& check);
 
@@ -46,7 +47,7 @@ private:
 class SilentStructStore : public utility::pointer::ReferenceCount  {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~SilentStructStore();
+	~SilentStructStore() override;
 	SilentStructStore()
 	{
 

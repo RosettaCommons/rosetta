@@ -123,15 +123,15 @@ PackRotamersMover::PackRotamersMover(
 	Size nloop
 ) :
 	protocols::moves::Mover("PackRotamersMover"),
-	scorefxn_( scorefxn ),
-	task_( task ),
+	scorefxn_(std::move( scorefxn )),
+	task_(std::move( task )),
 	nloop_( nloop ),
 	task_factory_(/* 0 */),
 	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
 	ig_(/* 0 */)
 {}
 
-PackRotamersMover::~PackRotamersMover(){}
+PackRotamersMover::~PackRotamersMover()= default;
 
 PackRotamersMover::PackRotamersMover( PackRotamersMover const & other ) :
 	//utility::pointer::ReferenceCount(),
@@ -180,7 +180,7 @@ void
 PackRotamersMover::show(std::ostream & output) const
 {
 	Mover::show(output);
-	if ( score_function() != 0 ) {
+	if ( score_function() != nullptr ) {
 		output << "Score function: " << score_function()->get_name() << std::endl;
 	} else { output << "Score function: none" << std::endl; }
 }
@@ -233,7 +233,7 @@ PackRotamersMover::parse_score_function(
 )
 {
 	ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
-	if ( new_score_function == 0 ) return;
+	if ( new_score_function == nullptr ) return;
 	score_function( new_score_function );
 }
 
@@ -248,7 +248,7 @@ PackRotamersMover::parse_task_operations(
 )
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0 ) return;
+	if ( new_task_factory == nullptr ) return;
 	task_factory( new_task_factory );
 }
 
@@ -272,15 +272,15 @@ void PackRotamersMover::setup( Pose & pose )
 	// jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc
 	pose.update_residue_neighbors();
 	// guarantee of valid ScoreFunction and PackerTask postponed until now
-	if ( scorefxn_ == 0 ) {
+	if ( scorefxn_ == nullptr ) {
 		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
 		scorefxn_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
 	// if present, task_factory_ always overrides/regenerates task_
-	if ( task_factory_ != 0 ) {
+	if ( task_factory_ != nullptr ) {
 		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
-	} else if ( task_ == 0 ) {
+	} else if ( task_ == nullptr ) {
 		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
 		task_ = TaskFactory::create_packer_task( pose );
 	} else runtime_assert( task_is_valid( pose ) );
@@ -329,7 +329,7 @@ void PackRotamersMover::note_packertask_settings( Pose const & pose )
 // setters
 void PackRotamersMover::score_function( ScoreFunctionCOP sf )
 {
-	runtime_assert( sf != 0 );
+	runtime_assert( sf != nullptr );
 	scorefxn_ = sf;
 }
 
@@ -337,7 +337,7 @@ void PackRotamersMover::task( task::PackerTaskCOP t ) { task_ = t; }
 
 void PackRotamersMover::task_factory( TaskFactoryCOP tf )
 {
-	runtime_assert( tf != 0 );
+	runtime_assert( tf != nullptr );
 	task_factory_ = tf;
 }
 

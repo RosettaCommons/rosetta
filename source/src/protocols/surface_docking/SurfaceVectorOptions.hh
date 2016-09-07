@@ -33,17 +33,17 @@ class SurfaceVectorOptions : public basic::resource_manager::ResourceOptions
 {
 public:
 	SurfaceVectorOptions();
-	virtual ~SurfaceVectorOptions();
+	~SurfaceVectorOptions() override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
-	);
+	) override;
 
-	virtual
+	
 	std::string
-	type() const;
+	type() const override;
 
 };
 

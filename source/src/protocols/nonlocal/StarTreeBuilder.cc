@@ -79,9 +79,8 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	// Define jumps, cuts
 	vector1<int> cuts;
 	vector1<std::pair<int, int> > jumps;
-	for ( Loops::const_iterator i = chunks.begin(); i != chunks.end(); ++i ) {
-		const Loop& chunk = *i;
-		const Size cut_point  = chunk.stop();
+	for (const auto & chunk : chunks) {
+			const Size cut_point  = chunk.stop();
 		const Size jump_point = choose_anchor_position(chunk);
 
 		cuts.push_back(cut_point);
@@ -176,7 +175,7 @@ core::Size StarTreeBuilder::choose_anchor_position(const protocols::loops::Loop&
 
 	// Clamp insertion position to closed interval [start, stop]
 	Size position = static_cast<Size>(sampler.sample());
-	return numeric::clamp<Size>(position, chunk.start(), chunk.stop());;
+	return numeric::clamp<Size>(position, chunk.start(), chunk.stop());
 }
 
 }  // namespace nonlocal

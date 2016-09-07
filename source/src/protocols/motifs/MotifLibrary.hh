@@ -46,7 +46,7 @@ public:
 	MotifLibrary();
 
 	// Destructor
-	virtual ~MotifLibrary();
+	~MotifLibrary() override;
 
 	// Constructor for loading motifs from motif PDBs
 	MotifLibrary(

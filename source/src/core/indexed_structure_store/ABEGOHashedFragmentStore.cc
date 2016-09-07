@@ -45,7 +45,7 @@ namespace utility {
 template <> std::mutex utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::singleton_mutex_{};
 template <> std::atomic< core::indexed_structure_store::ABEGOHashedFragmentStore * > utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::instance_( 0 );
 #else
-template <> core::indexed_structure_store::ABEGOHashedFragmentStore * utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::instance_( 0 );
+template <> core::indexed_structure_store::ABEGOHashedFragmentStore * utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::instance_( nullptr );
 #endif
 }
 
@@ -156,15 +156,15 @@ void ABEGOHashedFragmentStore::generate_ss_stub_to_abego(){
 	std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
 	for ( fragStoreMap_iter = ABEGOHashedFragmentStore_.begin(); fragStoreMap_iter != ABEGOHashedFragmentStore_.end(); fragStoreMap_iter++ ) {
 		set<std::string> valid_ss_stubs = get_ss_stubs_per_fragmentStoreOP(fragStoreMap_iter->first,fragStoreMap_iter->second);
-		for ( set<std::string>::iterator itr=valid_ss_stubs.begin(); itr!= valid_ss_stubs.end(); itr++ ) {
-			ss_stub_to_abego_[*itr].push_back(fragStoreMap_iter->first);
-			if ( fragStoreMap_iter->second->fragmentStore_groups.count(*itr)==0 ) { //checking for map existance
+		for (const auto & valid_ss_stub : valid_ss_stubs) {
+			ss_stub_to_abego_[valid_ss_stub].push_back(fragStoreMap_iter->first);
+			if ( fragStoreMap_iter->second->fragmentStore_groups.count(valid_ss_stub)==0 ) { //checking for map existance
 				std::vector<Size> residues;
 				residues.push_back(0);
 				residues.push_back(1);
-				residues.push_back(itr->size()-2);
-				residues.push_back(itr->size()-1);
-				fragStoreMap_iter->second->generate_subset_fragment_store(residues,*itr);
+				residues.push_back(valid_ss_stub.size()-2);
+				residues.push_back(valid_ss_stub.size()-1);
+				fragStoreMap_iter->second->generate_subset_fragment_store(residues,valid_ss_stub);
 			}
 		}
 	}
@@ -286,7 +286,6 @@ Real ABEGOHashedFragmentStore::lookback(pose::Pose const pose, Size resid,string
 std::vector< numeric::xyzVector<numeric::Real> > ABEGOHashedFragmentStore::lookback_xyz(pose::Pose const pose, Size resid){
 	using namespace core::indexed_structure_store;
 	core::sequence::ABEGOManager AM;
-	typedef numeric::xyzVector<Real> Vec;
 	utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("Error not designed to work with symmetric pose");
@@ -316,7 +315,7 @@ std::vector< numeric::xyzVector<numeric::Real> > ABEGOHashedFragmentStore::lookb
 		Real xTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].x();
 		Real yTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].y();
 		Real zTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].z();
-		fragCoordinates.push_back(Vec(xTmp,yTmp,zTmp));
+		fragCoordinates.emplace_back(xTmp,yTmp,zTmp);
 	}
 	return(fragCoordinates);
 }
@@ -339,9 +338,9 @@ vector<FragmentLookupResult> ABEGOHashedFragmentStore::get_N_fragments(std::stri
 				random_frag = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
 		chosen_fragments.push_back(random_frag);
 	}
-	for ( Size ii=0; ii<chosen_fragments.size(); ++ii ) {
+	for (unsigned long chosen_fragment : chosen_fragments) {
 		FragmentLookupResult tmpFragInfo;
-		tmpFragInfo.match_index = chosen_fragments[ii];
+		tmpFragInfo.match_index = chosen_fragment;
 		lookupResults.push_back(tmpFragInfo);
 	}
 	return(lookupResults);
@@ -430,14 +429,14 @@ FragmentStoreOP ABEGOHashedFragmentStore::get_fragment_store(std::string fragmen
 	if ( ABEGOHashedFragmentStore_.find(base5index) != ABEGOHashedFragmentStore_.end() ) {
 		return(ABEGOHashedFragmentStore_.at(base5index));
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 FragmentStoreOP ABEGOHashedFragmentStore::get_fragment_store(Size base5index){
 	if ( ABEGOHashedFragmentStore_.find(base5index) != ABEGOHashedFragmentStore_.end() ) {
 		return(ABEGOHashedFragmentStore_.at(base5index));
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 FragmentStoreOP ABEGOHashedFragmentStore::get_fragment_store(){

@@ -156,20 +156,20 @@ LoopRelaxMover::LoopRelaxMover() : moves::Mover(),
 // AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 // NOT BE INITIALIZED
 LoopRelaxMover::LoopRelaxMover(
-	std::string const & remodel,
-	std::string const & intermedrelax,
-	std::string const & refine,
-	std::string const & relax,
+	std::string  remodel,
+	std::string  intermedrelax,
+	std::string  refine,
+	std::string  relax,
 	loops::Loops const & loops
 ) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
 	rebuild_filter_( 999 ),
-	remodel_( remodel ),
-	intermedrelax_( intermedrelax ),
-	refine_( refine ),
-	relax_( relax ),
+	remodel_(std::move( remodel )),
+	intermedrelax_(std::move( intermedrelax )),
+	refine_(std::move( refine )),
+	relax_(std::move( relax )),
 	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops ) ))
 {}
 
@@ -177,39 +177,39 @@ LoopRelaxMover::LoopRelaxMover(
 // AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 // NOT BE INITIALIZED
 LoopRelaxMover::LoopRelaxMover(
-	std::string const & remodel,
-	std::string const & intermedrelax,
-	std::string const & refine,
-	std::string const & relax,
+	std::string  remodel,
+	std::string  intermedrelax,
+	std::string  refine,
+	std::string  relax,
 	loops::LoopsFileData const & loops_from_file
 ) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
 	rebuild_filter_( 999 ),
-	remodel_( remodel ),
-	intermedrelax_( intermedrelax ),
-	refine_( refine ),
-	relax_( relax ),
+	remodel_(std::move( remodel )),
+	intermedrelax_(std::move( intermedrelax )),
+	refine_(std::move( refine )),
+	relax_(std::move( relax )),
 	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops_from_file ) ))
 {}
 
 LoopRelaxMover::LoopRelaxMover(
-	std::string const & remodel,
-	std::string const & intermedrelax,
-	std::string const & refine,
-	std::string const & relax,
+	std::string  remodel,
+	std::string  intermedrelax,
+	std::string  refine,
+	std::string  relax,
 	loops::GuardedLoopsFromFileOP guarded_loops
 ) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
 	rebuild_filter_( 999 ),
-	remodel_( remodel ),
-	intermedrelax_( intermedrelax ),
-	refine_( refine ),
-	relax_( relax ),
-	guarded_loops_( guarded_loops ) // shallow copy
+	remodel_(std::move( remodel )),
+	intermedrelax_(std::move( intermedrelax )),
+	refine_(std::move( refine )),
+	relax_(std::move( relax )),
+	guarded_loops_(std::move( guarded_loops )) // shallow copy
 {}
 
 /// @brief Copy-ctor; shallow copy of all data object.
@@ -253,7 +253,7 @@ LoopRelaxMover::operator = ( LoopRelaxMover const & rhs )
 
 
 //destructor
-LoopRelaxMover::~LoopRelaxMover() {}
+LoopRelaxMover::~LoopRelaxMover() = default;
 
 void LoopRelaxMover::frag_libs(
 	utility::vector1< core::fragment::FragSetOP > new_libs
@@ -421,14 +421,12 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// this is not great behavior, BUT the code is already tolerant of missing density treated in this fashion
 	bool remove_extended_loops = option[ OptionKeys::loops::remove_extended_loops ]();
 	if ( remove_extended_loops ) {
-		for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end();
-				it != it_end; ++it
-				) {
-			if ( it->is_extended() && it->skip_rate() == 0.0 ) {
-				TR << "Removing loop: " << *it << std::endl;
-				int lstart = it->start(); if ( lstart != 1 ) lstart++;
+		for (const auto & it : *loops) {
+			if ( it.is_extended() && it.skip_rate() == 0.0 ) {
+				TR << "Removing loop: " << it << std::endl;
+				int lstart = it.start(); if ( lstart != 1 ) lstart++;
 
-				for ( core::Size r = lstart; r<= it->stop(); ++r ) {
+				for ( core::Size r = lstart; r<= it.stop(); ++r ) {
 					for ( core::Size k = 1; k<= pose.residue(r).natoms(); ++k ) {
 						numeric::xyzVector< core::Real > rnd_atm(
 							900.000 + numeric::random::uniform()*100.000,
@@ -536,7 +534,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////
 
 
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 	bool all_loops_closed = true;
 	//bool tmp_all_loops_closed = false;
 	if ( remodel() != "no" ) {
@@ -757,7 +755,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		checkpoints_.debug( curr_job_tag, "remodel", (*cen_scorefxn_)( pose ) );
 	} else { all_loops_closed = true; } // if ( remodel != no ) // AS 03/16/2012: hack to allow refinement without a preceding perturb stage
 
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 
 	TR << "Buildtime: " << endtime - starttime << std::endl;
 
@@ -821,9 +819,9 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 				// if remodelling was done, repack the loops - otherwise leave it.
 				if ( remodel() != "no" ) {
-					for ( loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it != it_end; ++it ) {
-						if (    i >= core::Size( it->start() ) - 3
-								&& i <= core::Size( it->stop() ) + 3 ) {
+					for (const auto & it : *loops) {
+						if (    i >= core::Size( it.start() ) - 3
+								&& i <= core::Size( it.stop() ) + 3 ) {
 							// allow 3-residue leeway on either side for 'random_loops'
 							// this kind of sucks.
 							TR.Debug << "Repacking because in loop: " << i << std::endl;
@@ -1109,7 +1107,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		TR << "===   Refine " << std::endl;
 		TR << "===" << std::endl;
 
-		long starttime = time(NULL);
+		long starttime = time(nullptr);
 
 		if ( compute_rmsd() ) {
 			setPoseExtraScore( pose, "bref_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
@@ -1240,7 +1238,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		// restore simple fold tree
 		pose.fold_tree( f_orig );
 
-		endtime = time(NULL);
+		endtime = time(nullptr);
 
 		TR << "Refinetime: " << endtime - starttime << std::endl;
 

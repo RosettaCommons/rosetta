@@ -191,7 +191,7 @@ CanonicalSamplingMover::CanonicalSamplingMover(
 	mc_(protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( *sfxn, basic::options::option[ basic::options::OptionKeys::canonical_sampling::sampling::mc_kt ]() ) ) ),
 	sfxn_(sfxn),
 	randmove_(moves::RandomMoverOP( new protocols::moves::RandomMover() )),
-	pool_rms_(ptr),
+	pool_rms_(std::move(ptr)),
 	interval_posedump_(1000),
 	interval_transitiondump_(100),
 	ntrials_(ntrial),
@@ -205,7 +205,7 @@ CanonicalSamplingMover::CanonicalSamplingMover(
 	boinc_mode_(false)
 {
 	set_defaults_from_cmdline();
-	runtime_assert( sfxn != 0 );
+	runtime_assert( sfxn != nullptr );
 }
 
 void CanonicalSamplingMover::set_defaults_from_cmdline() {
@@ -256,8 +256,8 @@ CanonicalSamplingMover::periodic_range(
 std::string CanonicalSamplingMover::get_ABGEO_string( core::pose::Pose & pose, protocols::loops::Loops & loop ) {
 
 	std::string ABGEO_assignment = "";
-	for ( protocols::loops::Loops::const_iterator itr = loop.begin(), end = loop.end(); itr != end; ++itr ) {
-		for ( core::Size ii = itr->start(); ii <= itr->stop(); ii++ ) {
+	for (const auto & itr : loop) {
+		for ( core::Size ii = itr.start(); ii <= itr.stop(); ii++ ) {
 			core::Real phi = pose.phi(ii);
 			core::Real psi = pose.psi(ii);
 			core::Real omega = pose.omega(ii);
@@ -421,8 +421,8 @@ void CanonicalSamplingMover::dump_decoy_or_score(
 			&& loop_to_dump.num_loop() > 0 ) {
 		// make pose with just loop coordinates
 
-		for ( loops::Loops::const_iterator itr = loop_to_dump.begin(), end = loop_to_dump.end(); itr != end; ++itr ) {
-			core::pose::Pose looponly( pose, itr->start(), itr->stop() );
+		for (const auto & itr : loop_to_dump) {
+			core::pose::Pose looponly( pose, itr.start(), itr.stop() );
 			ss->fill_struct(looponly, decoy_tag);
 			//looponly.copy_segment(itr->size(),pose,looponly.total_residue()+1,itr->start());
 		}
@@ -455,7 +455,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	PROF_START( basic::MPICANONICALSAMPLING );
 	std::string jobname = protocols::jd2::current_output_name();
 
-	runtime_assert( pool_rms_ != 0 );
+	runtime_assert( pool_rms_ != nullptr );
 
 	// set up loop definition if we're only sampling loop conformations.
 	// even if we're not sampling loop defs, make empty loop definition
@@ -631,7 +631,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 		}
 	}
 
-	runtime_assert( mc_ != 0 ); //are we initialized ?
+	runtime_assert( mc_ != nullptr ); //are we initialized ?
 	mc_->reset( pose );
 
 	//setup Rg score calculator
@@ -713,8 +713,8 @@ CanonicalSamplingMover::apply(Pose & pose){
 					utility::vector1< core::Size > address(hpool_ptr->nlevels(), 0 );
 					utility::vector1< core::Real > rms_to_cluster(hpool_ptr->nlevels(), 0.0);
 					if ( save_loops_only_ && loops.num_loop() > 0 ) {
-						for ( loops::Loops::const_iterator itr = loops.begin(), end = loops.end(); itr != end; ++itr ) {
-							looponly = core::pose::Pose( pose, itr->start(), itr->stop() );
+						for (const auto & loop : loops) {
+							looponly = core::pose::Pose( pose, loop.start(), loop.stop() );
 						}
 						hpool_ptr->evaluate( looponly, cluster_center, rms_to_cluster, address );
 					} else {
@@ -754,8 +754,8 @@ CanonicalSamplingMover::apply(Pose & pose){
 				}
 			} else { //use MPIPool
 				if ( save_loops_only_ && loops.num_loop() > 0 ) {
-					for ( loops::Loops::const_iterator itr = loops.begin(), end = loops.end(); itr != end; ++itr ) {
-						looponly = core::pose::Pose( pose, itr->start(), itr->stop() );
+					for (const auto & loop : loops) {
+						looponly = core::pose::Pose( pose, loop.start(), loop.stop() );
 					}
 					pool_rms_->evaluate_and_add( looponly, cluster_center, rms_to_cluster, transition_threshold_ );
 				} else {

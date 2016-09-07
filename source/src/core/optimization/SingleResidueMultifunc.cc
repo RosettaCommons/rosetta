@@ -29,6 +29,7 @@
 
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -46,10 +47,10 @@ SingleResidueMultifunc::SingleResidueMultifunc(
 ):
 	AtomTreeMultifunc(pose_in, min_map_in, scorefxn_in, deriv_check_in, deriv_check_verbose_in),
 	rsd_id_(rsd_id_in),
-	packer_neighbor_graph_(packer_neighbor_graph_in)
+	packer_neighbor_graph_(std::move(packer_neighbor_graph_in))
 {}
 
-SingleResidueMultifunc::~SingleResidueMultifunc() {}
+SingleResidueMultifunc::~SingleResidueMultifunc() = default;
 
 // func
 Real
@@ -96,7 +97,7 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 	// long-range energy interactions
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = score_function_.long_range_energies_begin(),
 			lr_end  = score_function_.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -118,7 +119,7 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 
 	// give energyfunctions a chance update/finalize energies
 	// etable nblist calculation is performed here (?)
-	for ( ScoreFunction::AllMethodsIterator it=score_function_.all_energies_begin(),
+	for ( auto it=score_function_.all_energies_begin(),
 			it_end = score_function_.all_energies_end(); it != it_end; ++it ) {
 		(*it)->finalize_total_energy( pose_, score_function_, emap );
 	}

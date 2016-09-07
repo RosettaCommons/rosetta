@@ -101,7 +101,7 @@ namespace docking {
 //// ----------------------------------- BEGIN CONSTRUCTORS --------------------------------------------------
 // Constructors
 TemperedDocking::TemperedDocking() {
-	init( utility::tools::make_vector1<core::SSize>(1), NULL, NULL);
+	init( utility::tools::make_vector1<core::SSize>(1), nullptr, nullptr);
 }
 
 void TemperedDocking::init(
@@ -301,13 +301,13 @@ std::ostream & operator<<(std::ostream& out, const TemperedDocking & dp )
 
 	core::Size spaces_so_far = 23;
 	bool first = true;
-	for ( DockJumps::const_iterator it = dp.movable_jumps_.begin() ; it != dp.movable_jumps_.end() ; ++it ) {
+	for (int movable_jump : dp.movable_jumps_) {
 		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;
 		} else first = false;
 
-		out << I( 1, *it );
+		out << I( 1, movable_jump );
 		spaces_so_far += 1;
 	}
 	core::Size remaining_spaces = 80 - spaces_so_far;
@@ -337,7 +337,7 @@ TemperedDocking::set_defaults()
 void TemperedDocking::setup_objects()
 {
 	// initialize constraint set mover
-	docking_constraint_ = NULL;
+	docking_constraint_ = nullptr;
 
 	// stores the sequence of the previous pose, so that the TemperedDocking can re setup the fold tree
 	previous_sequence_ = "";
@@ -371,7 +371,7 @@ void TemperedDocking::sync_objects_with_flags()
 {
 	// set up constraint set mover
 	if ( !use_csts_ ) {
-		docking_constraint_ = NULL;
+		docking_constraint_ = nullptr;
 	} else {
 		if ( !docking_constraint_ ) {
 			docking_constraint_ = protocols::moves::MoverOP( new protocols::simple_moves::ConstraintSetMover() );

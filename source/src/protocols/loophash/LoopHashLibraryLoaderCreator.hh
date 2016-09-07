@@ -27,13 +27,13 @@ class LoopHashLibraryLoaderCreator : public basic::resource_manager::ResourceLoa
 {
 public:
 	/// @brief Return a up-casted owning pointer (ResourceLoaderOP) to the resource loader.
-	virtual
+	
 	basic::resource_manager::ResourceLoaderOP
-	create_resource_loader() const;
+	create_resource_loader() const override;
 
 	/// @brief Return the string identifier for the associated ResourceLoader (LoopHashLibrary).
-	virtual
-	std::string loader_type() const;
+	
+	std::string loader_type() const override;
 
 };
 

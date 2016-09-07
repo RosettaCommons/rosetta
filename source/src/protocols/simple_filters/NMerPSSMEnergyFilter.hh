@@ -39,20 +39,20 @@ public:
 		core::Real const score_type_threshold,
 		std::string string_resnums
 	);
-	bool apply( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new NMerPSSMEnergyFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new NMerPSSMEnergyFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute_residue( core::pose::Pose const & pose, core::Size const seqpos ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
-	virtual ~NMerPSSMEnergyFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~NMerPSSMEnergyFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Real score_type_threshold_;
 	std::string string_resnums_;

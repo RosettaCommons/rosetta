@@ -25,7 +25,7 @@ namespace core {
 namespace conformation {
 
 /// @details Auto-generated virtual destructor
-ResidueMatcher::~ResidueMatcher() {}
+ResidueMatcher::~ResidueMatcher() = default;
 
 
 bool

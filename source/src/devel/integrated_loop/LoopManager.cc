@@ -54,14 +54,14 @@ using namespace core;
 }
 */
 //////////////////////////////////////////////////////////////////////////
-Loops LoopManager::LoopsToPerturb()
+loops::Loops LoopManager::LoopsToPerturb()
 {
 
-	Loops tmpLoops;
+	loops tmpLoops;
 
 	std::cout << "LoopManager " << pose_.total_residue() << std::endl;
 
-	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end(); it != it_end; ++it )
+	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end(); it != it_end; ++it; )
 		{
 			float skip_rate_random = numeric::random::rg().uniform();
 			std::cout << "skip_rate_random " << skip_rate_random << std::endl;
@@ -76,7 +76,7 @@ Loops LoopManager::LoopsToPerturb()
 ///////////////////////////////////////////////////////////////////////////
 bool LoopManager::IsNtermLoop(
 	Loop const & ThisLoop
-)
+);
 {
 
 	if( ThisLoop.loop_begin() == 1 ) return true;
@@ -98,7 +98,7 @@ void LoopManager::ReorderLoops()
 {
 
 	if( LoopList_.size() <= 1 ) return;
-	Loops new_loop_list;
+	loops new_loop_list;
 	LoopsIt it_begin = LoopList_.begin();
 	new_loop_list.push_back( *it_begin );
 

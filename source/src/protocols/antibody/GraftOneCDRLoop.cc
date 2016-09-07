@@ -52,12 +52,12 @@ GraftOneCDRLoop::GraftOneCDRLoop( CDRNameEnum const & cdr_name,
 }
 
 
-GraftOneCDRLoop::~GraftOneCDRLoop() {}
+GraftOneCDRLoop::~GraftOneCDRLoop() = default;
 
 
 void GraftOneCDRLoop::set_default() {
-	ab_info_=NULL;
-	ab_t_info_=NULL;
+	ab_info_=nullptr;
+	ab_t_info_=nullptr;
 	stem_copy_size_ = 2;
 	flank_size_ = 4 ;
 	// JQX:  the default value of flank_size_ is equle to 4, meaning there are 4 residues

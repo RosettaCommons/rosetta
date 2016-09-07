@@ -49,7 +49,7 @@ using basic::Warning;
 
 //constructor
 PDBDumpMover::PDBDumpMover(std::string name_in)
-: Mover(), name_(name_in), num_(0)
+: Mover(), name_(std::move(name_in)), num_(0)
 {
 	//tracer_.init(tr);
 
@@ -57,7 +57,7 @@ PDBDumpMover::PDBDumpMover(std::string name_in)
 }
 
 //destructor
-PDBDumpMover::~PDBDumpMover() {}
+PDBDumpMover::~PDBDumpMover() = default;
 
 void PDBDumpMover::apply( core::pose::Pose & pose )
 {
@@ -87,7 +87,7 @@ ProfilerMover::ProfilerMover() :
 }
 
 //destructor
-ProfilerMover::~ProfilerMover() {}
+ProfilerMover::~ProfilerMover() = default;
 
 void ProfilerMover::apply( core::pose::Pose & /*pose*/ )
 {
@@ -101,13 +101,13 @@ ProfilerMover::get_name() const {
 
 //constructor
 MCShowMover::MCShowMover( MonteCarloOP mc_in ) :
-	Mover(), mc_( mc_in )
+	Mover(), mc_(std::move( mc_in ))
 {
 	Mover::type( "MCShow" );
 }
 
 //destructor
-MCShowMover::~MCShowMover() {}
+MCShowMover::~MCShowMover() = default;
 
 void MCShowMover::apply( core::pose::Pose & pose )
 {

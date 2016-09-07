@@ -40,26 +40,26 @@ class RepeatParameterFilter : public filters::Filter
 {
 public:
 	RepeatParameterFilter();
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 	//Real score( core::pose::Pose & pose);
-	core::Real report_sm( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out,const core::pose::Pose & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out,const core::pose::Pose & pose ) const override;
 	void calculate_helical_parameters( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
 	//void align_to_frame(core::pose::Pose & pose) const; //This seems to have been prototyped but never used.  Removing -- VKM, 19 March 2015.
 	void apply_transformation(core::pose::Pose & mod_pose, std::list <core::Size> const & residue_list, numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT) const;
 	void matrix3f_to_xyzMatrix( Eigen::Matrix3f const & Re, numeric::xyzMatrix< core::Real> & R  ) const;
 	void identity_matrix( numeric::xyzMatrix< core::Real> & R ) const;
 	void calculate_helical_parameters_helper( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new RepeatParameterFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new RepeatParameterFilter() );
 	}
 
-	virtual ~RepeatParameterFilter();
+	~RepeatParameterFilter() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	Size numb_repeats_;
 	Size startAtRepeat_;

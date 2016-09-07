@@ -21,8 +21,8 @@ namespace qsar {
 
 class qsarCreator : public protocols::moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
 };
 

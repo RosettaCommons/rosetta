@@ -50,7 +50,7 @@ public:
 	BoincCurrentPoseObserver( bool const is_ghost );
 
 	/// @brief default destructor
-	virtual ~BoincCurrentPoseObserver();
+	~BoincCurrentPoseObserver() override;
 
 private: // disallow copy
 

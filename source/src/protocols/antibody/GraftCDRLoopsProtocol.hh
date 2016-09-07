@@ -41,15 +41,15 @@ public:
 	GraftCDRLoopsProtocol();
 
 	// default destructor
-	~GraftCDRLoopsProtocol();
+	~GraftCDRLoopsProtocol() override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Assigns default values to primitive members
 	void set_default();
 
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	// simple inline setters
 	void set_graft_l1( bool graft_l1 ) {
@@ -97,7 +97,7 @@ public:
 	void set_rt_min (bool rtmin) {
 		rt_min_ = rtmin ;
 	}
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 	/// @brief Associates relevant options with the AntibodyModeler class
@@ -105,7 +105,7 @@ public:
 
 	void display_constraint_residues( core::pose::Pose & pose );
 
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_2 );
 
 

@@ -55,7 +55,7 @@ namespace protocols {
 namespace simple_moves {
 
 /// @details Auto-generated virtual destructor
-MinimalRotamer::~MinimalRotamer() {}
+MinimalRotamer::~MinimalRotamer() = default;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.GreenPacker" );
 
@@ -309,9 +309,9 @@ MinimalRotamer::aa() const
 
 ///// Group Discriminators
 
-GroupDiscriminator::~GroupDiscriminator() {}
+GroupDiscriminator::~GroupDiscriminator() = default;
 
-ChainGroupDiscriminator::~ChainGroupDiscriminator() {}
+ChainGroupDiscriminator::~ChainGroupDiscriminator() = default;
 
 GroupDiscriminatorOP ChainGroupDiscriminator::clone() const
 {
@@ -326,7 +326,7 @@ ChainGroupDiscriminator::group_id( Pose const & pose, Size seqpos ) const
 
 
 //////////////////////////////////////////////////////////////////////
-UserDefinedGroupDiscriminator::~UserDefinedGroupDiscriminator() {}
+UserDefinedGroupDiscriminator::~UserDefinedGroupDiscriminator() = default;
 
 GroupDiscriminatorOP UserDefinedGroupDiscriminator::clone() const
 {
@@ -347,7 +347,7 @@ UserDefinedGroupDiscriminator::set_group_ids( utility::vector1< core::Size > con
 
 GreenPacker::GreenPacker() : create_reference_data_( true ) {}
 
-GreenPacker::~GreenPacker() {}
+GreenPacker::~GreenPacker() = default;
 
 
 void
@@ -939,7 +939,7 @@ GreenPacker::compute_absent_energies(
 	/// 2.  Absent long ranged context independent two body energies
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = ci_sfxn_->long_range_energies_begin(),
 			lr_end  = ci_sfxn_->long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {

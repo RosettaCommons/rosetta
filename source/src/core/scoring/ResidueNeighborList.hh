@@ -287,9 +287,9 @@ public:
 
 public:
 	ResidueNblistData();
-	virtual ~ResidueNblistData();
+	~ResidueNblistData() override;
 
-	CacheableDataOP clone() const;
+	CacheableDataOP clone() const override;
 
 	/// @brief Initialize the residue-nblist; if there are no intra-residue interactions, then provide a null-pointing
 	/// count-pair function.
@@ -325,8 +325,8 @@ public:
 
 public:
 	ResiduePairNeighborList();
-	virtual ~ResiduePairNeighborList();
-	CacheableDataOP clone() const;
+	~ResiduePairNeighborList() override;
+	CacheableDataOP clone() const override;
 
 	void initialize_from_residues(
 		Real vvd2,

@@ -100,7 +100,7 @@ void ReportEffectivePKA::init() {
 
 void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 
-	if ( task_factory() != 0 ) {
+	if ( task_factory() != nullptr ) {
 		task_ = task_factory()->create_task_and_apply_taskoperations( pose );
 	}
 
@@ -112,7 +112,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 	}
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
-		if ( task_factory() != 0 && !task_->residue_task(i).being_designed() ) {
+		if ( task_factory() != nullptr && !task_->residue_task(i).being_designed() ) {
 			// if task operation is used, only calculated pka for the residue that is being designed
 			continue;
 		}

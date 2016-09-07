@@ -57,7 +57,7 @@ typedef core::pose::Pose Pose;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 StochasticFilter::StochasticFilter() : Filter( "Stochastic" ) {}
-StochasticFilter::~StochasticFilter() {}
+StochasticFilter::~StochasticFilter() = default;
 
 StochasticFilter::StochasticFilter( core::Real const confidence )
 : Filter( "Stochastic" ), confidence_( confidence )
@@ -110,11 +110,11 @@ CompoundFilter::CompoundFilter() :
 	invert_(false),
 	reset_filters_(false)
 {}
-CompoundFilter::~CompoundFilter() {}
+CompoundFilter::~CompoundFilter() = default;
 
-CompoundFilter::CompoundFilter( CompoundStatement const & compound_statement ) :
+CompoundFilter::CompoundFilter( CompoundStatement  compound_statement ) :
 	Filter( "CompoundStatement" ),
-	compound_statement_( compound_statement ),
+	compound_statement_(std::move( compound_statement )),
 	invert_(false),
 	reset_filters_(false)
 {}
@@ -147,7 +147,7 @@ CompoundFilter::report( std::ostream & out, Pose const & pose ) const
 		//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
 		bool confidence( false );
 		CompoundStatement::const_iterator non_stochastic_filter;
-		for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+		for ( auto it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
 			if ( it->first->get_type() == "Stochastic" ) confidence = true;
 			else non_stochastic_filter = it;
 		}
@@ -165,7 +165,7 @@ CompoundFilter::report_sm( Pose const & pose ) const
 		//special case for filters that are defined with a confidence value. In that case, we want to report the value of the filter regardless of the stochastic filter
 		bool confidence( false );
 		CompoundStatement::const_iterator non_stochastic_filter;
-		for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+		for ( auto it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
 			if ( it->first->get_type() == "Stochastic" ) confidence = true;
 			else non_stochastic_filter = it;
 		}
@@ -181,7 +181,7 @@ CompoundFilter::compute( Pose const & pose ) const
 
 	bool value( true );
 
-	for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
+	for ( auto it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
 		if ( it - compound_statement_.begin() == 0 ) {
 			// first logical op may only be NOT
 			// ANDNOT and ORNOT are also treated as NOT (with a warning)
@@ -286,8 +286,8 @@ CompoundFilter::clear_reset_filters()
 void
 CompoundFilter::set_resid( core::Size const resid )
 {
-	for ( iterator it( compound_statement_.begin() ); it!=compound_statement_.end(); ++it ) {
-		protocols::moves::modify_ResId_based_object( it->first, resid );
+	for (auto & it : compound_statement_) {
+		protocols::moves::modify_ResId_based_object( it.first, resid );
 	}
 }
 
@@ -318,7 +318,7 @@ CompoundFilter::parse_my_tag(
 		}
 		std::string const filter_name( cmp_tag_ptr->getOption<std::string>( "filter_name" ) );
 
-		Filters_map::const_iterator find_filter( filters.find( filter_name ));
+		auto find_filter( filters.find( filter_name ));
 		bool const filter_found( find_filter!=filters.end() );
 		if ( filter_found ) {
 			filter_pair.first = find_filter->second->clone();
@@ -334,7 +334,7 @@ CompoundFilter::parse_my_tag(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief Used to combine multiple seperate filters into a single filter value
 CombinedFilter::CombinedFilter() : Filter( "CombinedValue" ), threshold_(0.0) {}
-CombinedFilter::~CombinedFilter() {}
+CombinedFilter::~CombinedFilter() = default;
 
 bool
 CombinedFilter::apply( core::pose::Pose const & pose ) const
@@ -434,7 +434,7 @@ CombinedFilter::parse_my_tag(
 
 		FilterOP filter;
 		std::string const filter_name( tag_ptr->getOption<std::string>( "filter_name" ) );
-		Filters_map::const_iterator find_filter( filters.find( filter_name ));
+		auto find_filter( filters.find( filter_name ));
 		bool const filter_found( find_filter!=filters.end() );
 		if ( filter_found ) {
 			filter = find_filter->second->clone();
@@ -449,8 +449,8 @@ CombinedFilter::parse_my_tag(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Apply a sub-mover prior to calculating a filter value
 MoveBeforeFilter::MoveBeforeFilter() : Filter( "MoveBeforeFilter" ) {}
-MoveBeforeFilter::MoveBeforeFilter(moves::MoverOP mover, FilterCOP filter) : Filter( "MoveBeforeFilter" ), subfilter_(filter), submover_(mover) {}
-MoveBeforeFilter::~MoveBeforeFilter() {}
+MoveBeforeFilter::MoveBeforeFilter(moves::MoverOP mover, FilterCOP filter) : Filter( "MoveBeforeFilter" ), subfilter_(std::move(filter)), submover_(std::move(mover)) {}
+MoveBeforeFilter::~MoveBeforeFilter() = default;
 
 bool
 MoveBeforeFilter::apply( core::pose::Pose const & pose ) const
@@ -503,8 +503,8 @@ MoveBeforeFilter::parse_my_tag(
 	if ( tag->hasOption("filter") ) filter_name = tag->getOption< std::string >( "filter" );
 	if ( tag->hasOption("filter_name") ) filter_name = tag->getOption< std::string >( "filter_name" );
 
-	moves::Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
-	Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	auto  find_mover ( movers.find( mover_name ));
+	auto find_filter( filters.find( filter_name ));
 
 	if ( find_mover == movers.end() ) {
 		TR.Error << "ERROR !! mover '"<<mover_name<<"' not found in map: \n" << tag << std::endl;
@@ -530,7 +530,7 @@ IfThenFilter::IfThenFilter() :
 	threshold_(0),
 	floor_(false)
 {}
-IfThenFilter::~IfThenFilter() {}
+IfThenFilter::~IfThenFilter() = default;
 
 void
 IfThenFilter::add_condition( FilterCOP testfilter, FilterCOP valuefilter, core::Real value, bool invert, core::Real weight) {
@@ -640,7 +640,7 @@ IfThenFilter::parse_my_tag(
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 	BOOST_FOREACH ( TagCOP tag_ptr, sub_tags ) {
 		std::string const tagname = tag_ptr->getName();
-		FilterOP valuefilter = 0; //default NULL
+		FilterOP valuefilter = nullptr; //default NULL
 		if ( tag_ptr->hasOption("valuefilter") ) {
 			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), filters);
 		}

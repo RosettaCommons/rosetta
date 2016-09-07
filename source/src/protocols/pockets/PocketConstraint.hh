@@ -43,7 +43,7 @@ namespace pockets {
 class PocketConstraint : public core::scoring::constraints::Constraint
 {
 public:
-	virtual std::string type() const {
+	std::string type() const override {
 		return "Pocket";
 	}
 
@@ -54,19 +54,19 @@ public:
 	void init(core::pose::Pose const & pose);
 
 	core::Size target_res() const { return seqpos_; }
-	virtual ~PocketConstraint();
+	~PocketConstraint() override;
 
-	virtual core::Size natoms() const { return atom_ids_.size(); };
+	core::Size natoms() const override { return atom_ids_.size(); };
 
-	virtual core::id::AtomID const & atom( core::Size const index ) const { return atom_ids_[index]; };
+	core::id::AtomID const & atom( core::Size const index ) const override { return atom_ids_[index]; };
 
-	void show_def( std::ostream& out, core::pose::Pose const & pose ) const;
-	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
+	void show_def( std::ostream& out, core::pose::Pose const & pose ) const override;
+	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory ) override;
 
-	virtual
-	void score( core::scoring::func::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const;
+	
+	void score( core::scoring::func::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const override;
 
-	virtual
+	
 	void
 	fill_f1_f2(
 		core::id::AtomID const & ,
@@ -74,13 +74,13 @@ public:
 		core::Vector & ,
 		core::Vector & ,
 		core::scoring::EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual
-	core::scoring::constraints::ConstraintOP clone() const;
+	
+	core::scoring::constraints::ConstraintOP clone() const override;
 
-	virtual bool operator == ( core::scoring::constraints::Constraint const & other ) const;
-	virtual bool same_type_as_me ( core::scoring::constraints::Constraint const & other ) const;
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;
+	bool same_type_as_me ( core::scoring::constraints::Constraint const & other ) const override;
 
 	void set_target_res( core::pose::Pose const & pose, core::Size new_seqpos );
 	void set_target_res_pdb(core::pose::Pose const & pose, std::string resid );

@@ -111,7 +111,7 @@ ShortBackrubMover::ShortBackrubMover( ShortBackrubMover const & rval ):
 {}
 
 // destructor
-ShortBackrubMover::~ShortBackrubMover(){}
+ShortBackrubMover::~ShortBackrubMover()= default;
 
 // clone this object
 ShortBackrubMover::MoverOP

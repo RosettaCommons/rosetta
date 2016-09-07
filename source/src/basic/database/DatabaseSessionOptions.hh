@@ -34,17 +34,17 @@ public:
 
 	DatabaseSessionOptions(std::string const & name);
 
-	virtual ~DatabaseSessionOptions();
+	~DatabaseSessionOptions() override;
 
-	virtual
+	
 	void
-	parse_my_tag(utility::tag::TagCOP);
+	parse_my_tag(utility::tag::TagCOP) override;
 
 	utility::sql_database::sessionOP
 	database_session() const;
 
 	std::string
-	type() const;
+	type() const override;
 
 private:
 

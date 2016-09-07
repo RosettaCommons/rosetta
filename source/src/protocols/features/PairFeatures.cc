@@ -61,7 +61,7 @@ PairFeatures::PairFeatures( PairFeatures const & ) :
 	FeaturesReporter()
 {}
 
-PairFeatures::~PairFeatures(){}
+PairFeatures::~PairFeatures()= default;
 
 string
 PairFeatures::type_name() const { return "PairFeatures"; }

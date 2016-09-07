@@ -21,6 +21,7 @@
 #include <protocols/scoring/Interface.hh>
 
 #include <core/kinematics/Jump.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -41,12 +42,12 @@ SymRestrictTaskForDocking::SymRestrictTaskForDocking(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	bool include_current,
 	core::Real distance
-) : scorefxn_( scorefxn ),
+) : scorefxn_(std::move( scorefxn )),
 	include_current_( include_current ),
 	distance_( distance )
 {}
 
-SymRestrictTaskForDocking::~SymRestrictTaskForDocking(){}
+SymRestrictTaskForDocking::~SymRestrictTaskForDocking()= default;
 
 
 task::operation::TaskOperationOP SymRestrictTaskForDocking::clone() const
@@ -62,12 +63,12 @@ SymRestrictTaskForDocking::apply(
 {
 	task.initialize_from_command_line().restrict_to_repacking().or_include_current( include_current_ );
 
-	assert( scorefxn_ != 0 );
+	assert( scorefxn_ != nullptr );
 	// (existing comment) /// why is this still necessary???
 	// (*scorefxn_)(pose);
 	// scorefxn_->accumulate_residue_total_energies( pose );
 
-	runtime_assert( scorefxn_ != 0 );
+	runtime_assert( scorefxn_ != nullptr );
 	runtime_assert( distance_ );
 
 	protocols::scoring::Interface interface( 1 );

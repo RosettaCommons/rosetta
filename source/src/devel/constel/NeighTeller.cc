@@ -109,7 +109,7 @@ bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose co
 		bool found = false;
 		for ( Size j=1; j<=i; ++j ) {
 			Size t = tree_in[j];
-			for ( std::list<Size>::iterator p = tree_out.begin(), end = tree_out.end(); p!=end; ++p ) {
+			for ( auto p = tree_out.begin(), end = tree_out.end(); p!=end; ++p ) {
 				if ( nmap[t][*p] ) {
 					tree_in.push_back(*p);
 					tree_out.erase(p);

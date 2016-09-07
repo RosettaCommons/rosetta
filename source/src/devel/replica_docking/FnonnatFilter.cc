@@ -118,7 +118,7 @@ FnonnatFilter::FnonnatFilter( core::scoring::ScoreFunctionOP sfxn, core::Size co
 
 }
 
-FnonnatFilter::~FnonnatFilter(){}
+FnonnatFilter::~FnonnatFilter() = default;
 
 protocols::filters::FilterOP
 FnonnatFilter::clone() const{

@@ -64,7 +64,7 @@ ClosureProblem::ClosureProblem() { // {{{1
 	frame_called_ = false;
 }
 
-ClosureProblem::~ClosureProblem() {} // {{{1
+ClosureProblem::~ClosureProblem() = default; // {{{1
 // }}}1
 
 void ClosureProblem::frame( // {{{1

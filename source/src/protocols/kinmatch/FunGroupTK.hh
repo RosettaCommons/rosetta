@@ -78,7 +78,7 @@ protected:
 	core::chemical::ResidueTypeSetCAP frs_;
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FunGroupTK();
+	~FunGroupTK() override;
 	FunGroupTK(
 		core::pose::Pose & p_in,
 		utility::vector1<Size> & pos
@@ -118,29 +118,29 @@ public:
 		utility::vector1<Size> pos=utility::vector1<Size>()
 	);
 
-	virtual
+	
 	void
 	place_c(
 		KRSQuery const & q,
 		core::conformation::Residue const & qrsd,
 		utility::vector1<core::conformation::ResidueOP> & hits
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	place_h(
 		KRSQuery const & q,
 		core::conformation::Residue const & qrsd,
 		utility::vector1<core::conformation::ResidueOP> & hits
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	place_d(
 		KRSQuery const & q,
 		core::conformation::Residue const & qrsd,
 		utility::vector1<core::conformation::ResidueOP> & hits
-	) const;
+	) const override;
 
 };
 
@@ -152,29 +152,29 @@ public:
 	);
 
 
-	virtual
+	
 	void
 	place_c(
 		KRSQuery const & q,
 		core::conformation::Residue const & qrsd,
 		utility::vector1<core::conformation::ResidueOP> & hits_out
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	place_h(
 		KRSQuery const & q,
 		core::conformation::Residue const & qrsd,
 		utility::vector1<core::conformation::ResidueOP> & hits
-	) const;
+	) const override;
 
-	virtual
+	
 	void
 	place_d(
 		KRSQuery const & q,
 		core::conformation::Residue const & qrsd,
 		utility::vector1<core::conformation::ResidueOP> & hits
-	) const;
+	) const override;
 
 };
 

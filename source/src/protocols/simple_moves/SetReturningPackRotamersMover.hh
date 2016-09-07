@@ -42,8 +42,8 @@ public:
 	// custom constructor
 	SetReturningPackRotamersMover( core::scoring::ScoreFunctionCOP scorefxn, core::pack::task::PackerTaskCOP task, core::Size ndruns );
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 	void get_repacked_poses( utility::vector1< core::pose::Pose > & v );
 	void output_repacked_poses( std::string filename_prefix );
 

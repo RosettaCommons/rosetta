@@ -122,8 +122,7 @@ VallResidue::VallResidue(VallResidue const & rval) :
 }
 
 /// @brief default destructor
-VallResidue::~VallResidue() {
-}
+VallResidue::~VallResidue() = default;
 
 /// @brief copy assignment
 VallResidue & VallResidue::operator =(VallResidue const & rval) {

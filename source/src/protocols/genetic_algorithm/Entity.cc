@@ -43,7 +43,7 @@ using protocols::genetic_algorithm::EntityElementFactory;
 template <> std::mutex utility::SingletonBase< EntityElementFactory >::singleton_mutex_{};
 template <> std::atomic< EntityElementFactory * > utility::SingletonBase< EntityElementFactory >::instance_( 0 );
 #else
-template <> EntityElementFactory * utility::SingletonBase< EntityElementFactory >::instance_( 0 );
+template <> EntityElementFactory * utility::SingletonBase< EntityElementFactory >::instance_( nullptr );
 #endif
 
 }
@@ -75,7 +75,7 @@ EntityElement::EntityElement( std::string & word ) : parent()
 	}
 }
 
-EntityElement::~EntityElement() {}
+EntityElement::~EntityElement() = default;
 
 void EntityElement::index( Size ind ) { index_ = ind; }
 EntityElement::Size EntityElement::index() const { return index_; }
@@ -106,7 +106,7 @@ std::string EntityElement::to_string() const
 	return oss.str();
 }
 
-EntityElementCreator::~EntityElementCreator() {}
+EntityElementCreator::~EntityElementCreator() = default;
 
 //////////// Entity Element Factory ////////////
 
@@ -138,7 +138,7 @@ EntityElementFactory::element_from_string( std::string const & entity_element_na
 
 	//std::cout << "type: " << type << " desc: " << desc << std::endl;
 
-	CreatorMap::const_iterator iter = creators().find( type );
+	auto iter = creators().find( type );
 	if ( iter == creators().end() ) {
 		std::cerr << "ERROR: Could not find EntityElement type " << type << " in EntityElementFactory" << std::endl;
 		utility_exit_with_message( "EntityElementFactory type lookup failure" );
@@ -176,7 +176,7 @@ Entity::Entity( Entity const & entity ) :
 		if ( entity.traits_[ ii ] ) {
 			traits_[ ii ] = entity.traits_[ ii ]->clone();
 		} else {
-			traits_[ ii ] = 0;
+			traits_[ ii ] = nullptr;
 		}
 	}
 }
@@ -199,7 +199,7 @@ Entity::operator = ( Entity const & rhs ) {
 				if ( rhs.traits_[ ii ] ) {
 					traits_[ ii ] = rhs.traits_[ ii ]->clone();
 				} else {
-					traits_[ ii ] = 0;
+					traits_[ ii ] = nullptr;
 				}
 			}
 		}
@@ -208,7 +208,7 @@ Entity::operator = ( Entity const & rhs ) {
 }
 
 
-Entity::~Entity(){}
+Entity::~Entity()= default;
 
 Entity::OP Entity::clone() const { return Entity::OP( new Entity(*this) ); }
 
@@ -298,10 +298,8 @@ void Entity::show( std::ostream & os ) const
 {
 	os << "Entity with traits:";
 	EntityElements const & seq( this->traits() );
-	for ( EntityElements::const_iterator
-			it( seq.begin() ), end( seq.end() );
-			it != end; ++it ) {
-		os << " " << (*it)->to_string();
+	for (const auto & it : seq) {
+		os << " " << it->to_string();
 	}
 	os << " and fitness " << format::F(6,3,this->fitness());
 }
@@ -315,10 +313,8 @@ std::string Entity::to_string() const {
 std::string Entity::traits_string() const
 {
 	std::ostringstream os;
-	for ( EntityElements::const_iterator
-			it( traits_.begin() ), end( traits_.end() );
-			it != end; ++it ) {
-		os << " " << (*it)->to_string();
+	for (const auto & trait : traits_) {
+		os << " " << trait->to_string();
 	}
 	return os.str();
 }
@@ -330,9 +326,8 @@ Entity::write_checkpoint(
 ) const
 {
 	os << "traits";
-	for ( EntityElements::const_iterator
-			key( traits_.begin() ), end( traits_.end() ); key != end; ++key ) {
-		os << " " << (*key)->to_string();
+	for (const auto & trait : traits_) {
+		os << " " << trait->to_string();
 	}
 	os << " fitness " << fitness_;
 }

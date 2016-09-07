@@ -49,17 +49,17 @@ class AbrelaxMover : public moves::Mover {
 public:
 	AbrelaxMover();
 
-	virtual ~AbrelaxMover();
+	~AbrelaxMover() override;
 
-	virtual void apply( core::pose::Pose &pose );
+	void apply( core::pose::Pose &pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_defaults();
 
 	void clear(); //set's all pointers to zero
 
-	virtual moves::MoverOP fresh_instance() const { return moves::MoverOP( new AbrelaxMover() ); }
+	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new AbrelaxMover() ); }
 
 	FragmentSamplerOP sampling_protocol();
 

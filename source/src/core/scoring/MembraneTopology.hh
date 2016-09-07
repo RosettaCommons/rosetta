@@ -51,7 +51,7 @@ public:
 	MembraneTopology( MembraneTopology const & src);
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new MembraneTopology( *this ) );
 	}

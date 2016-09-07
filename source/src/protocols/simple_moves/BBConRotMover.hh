@@ -42,10 +42,10 @@ public:
 
 public:
 	BBConRotMover();
-	~BBConRotMover();
+	~BBConRotMover() override;
 
-	void apply(Pose &);
-	virtual std::string get_name() const;
+	void apply(Pose &) override;
+	std::string get_name() const override;
 	void factorA( core::Real const fA );
 	void factorB( core::Real const fB );
 	void factorC( core::Real const fC );

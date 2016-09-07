@@ -42,7 +42,7 @@ class FragInsertAndAlignMover : public protocols::moves::Mover {
 public:
 	/// @brief constructor
 	FragInsertAndAlignMover();
-	~FragInsertAndAlignMover();
+	~FragInsertAndAlignMover() override;
 
 	FragInsertAndAlignMover(
 		utility::vector1< RBSegment > const &rbsegs,
@@ -50,7 +50,7 @@ public:
 		core::Real randomness=0.0 );
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new FragInsertAndAlignMover(*this) );
 	}
 
@@ -58,9 +58,9 @@ public:
 	void bootstrapCATrace( core::pose::Pose & start_pose );
 
 	/// @brief insert one RB fragment + realign
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	using protocols::moves::Mover::apply;
 

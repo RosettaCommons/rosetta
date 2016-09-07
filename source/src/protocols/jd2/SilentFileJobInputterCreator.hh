@@ -21,8 +21,8 @@ namespace jd2 {
 
 class SilentFileJobInputterCreator : public protocols::jd2::JobInputterCreator {
 public:
-	virtual JobInputterOP create_JobInputter() const;
-	virtual std::string keyname() const;
+	JobInputterOP create_JobInputter() const override;
+	std::string keyname() const override;
 
 };
 

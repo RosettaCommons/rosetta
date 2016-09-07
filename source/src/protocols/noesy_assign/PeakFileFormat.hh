@@ -56,7 +56,7 @@ public:
 		minimum_peak_intensity_( 0.0 )
 	{};
 
-	virtual ~PeakFileFormat_Base() {
+	~PeakFileFormat_Base() override {
 		if ( info1_ && info2_ ) { //should this really be in the destructor ?
 			info1_->set_filename( filename() );
 			info2_->set_filename( filename() );
@@ -143,27 +143,27 @@ class PeakFileFormat : public PeakFileFormat_Base {
 public:
 	PeakFileFormat();
 	//  PeakFileFormat( ResonanceListOP const& );
-	virtual ~PeakFileFormat();
-	virtual void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const;
-	virtual void write_resonances( std::ostream&, CrossPeak const& ) const;
-	virtual void write_strength( std::ostream&, CrossPeak const& ) const;
-	virtual void write_assignments( std::ostream&, CrossPeak const&, std::string const& first_line_end ) const;
+	~PeakFileFormat() override;
+	void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const override;
+	void write_resonances( std::ostream&, CrossPeak const& ) const override;
+	void write_strength( std::ostream&, CrossPeak const& ) const override;
+	void write_assignments( std::ostream&, CrossPeak const&, std::string const& first_line_end ) const override;
 	virtual void write_assignment( std::ostream&, PeakAssignment const& ) const;
 	virtual void write_assignment_indent( std::ostream&, CrossPeak const& ) const;
 	virtual void write_assignment_stats( std::ostream& os, PeakAssignment& pa ) const;
 	virtual void write_nil_assignment( std::ostream&) const {};
-	virtual void read_resonances( std::istream&, CrossPeak& ) const;
-	virtual void read_assignments( std::istream& is, std::istream& rest_line, CrossPeak&, std::string& next_line ) const;
-	virtual void read_strength( std::istream&, CrossPeak& ) const;
+	void read_resonances( std::istream&, CrossPeak& ) const override;
+	void read_assignments( std::istream& is, std::istream& rest_line, CrossPeak&, std::string& next_line ) const override;
+	void read_strength( std::istream&, CrossPeak& ) const override;
 
-	virtual CrossPeakOP read_peak( std::istream&, std::string& next_line ) const;
-	virtual void read_header( std::istream&, std::string& next_line );
+	CrossPeakOP read_peak( std::istream&, std::string& next_line ) const override;
+	void read_header( std::istream&, std::string& next_line ) override;
 	//  virtual void write_header( std::ostream& );
-	virtual void output_diagnosis( std::ostream& ) const;
+	void output_diagnosis( std::ostream& ) const override;
 
-	virtual void set_format_from_peak( CrossPeak const& );
-	virtual void write_header( std::ostream& );
-	virtual bool compatible_with_current_format( CrossPeak const& ) const;
+	void set_format_from_peak( CrossPeak const& ) override;
+	void write_header( std::ostream& ) override;
+	bool compatible_with_current_format( CrossPeak const& ) const override;
 
 	static void register_options();
 

@@ -33,8 +33,8 @@ class RotamerDumpMover : public protocols::moves::Mover
 public:
 
 	RotamerDumpMover(core::pack::task::TaskFactoryOP task_factory, core::scoring::ScoreFunctionOP score_function);
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const ;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override ;
 
 private:
 	/// @brief dump the one body energy table

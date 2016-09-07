@@ -107,7 +107,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication" );
 
@@ -182,8 +182,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	suppress_checkpoints_(false),
 	silent_out_(false),
 	silentlist_out_(false),
-	silentlist_(NULL),
-	summarylist_(NULL),
+	silentlist_(nullptr),
+	summarylist_(nullptr),
 	native_pose_(),
 	out_filename_("S_"),
 	out_scorefilename_("default.sc"),
@@ -243,7 +243,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 
 /// @brief Explicit virtual destructor.
 ///
-SimpleCycpepPredictApplication::~SimpleCycpepPredictApplication() {}
+SimpleCycpepPredictApplication::~SimpleCycpepPredictApplication() = default;
 
 
 /// @brief Explicit copy constructor.
@@ -1303,14 +1303,14 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//Create the pre-selection mover and set options.
 	protocols::rosetta_scripts::ParsedProtocolOP pp( new protocols::rosetta_scripts::ParsedProtocol );
-	pp->add_mover_filter_pair( NULL, "Total_Hbonds", total_hbond );
+	pp->add_mover_filter_pair( nullptr, "Total_Hbonds", total_hbond );
 
 	//Filter out poses with oversaturated hydrogen bond acceptors.
 	if ( filter_oversaturated_hbond_acceptors_ ) {
 		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat1( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
 		oversat1->set_scorefxn( sfxn_default );
 		oversat1->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
-		pp->add_mover_filter_pair( NULL, "Oversaturated_Hbond_Acceptors", oversat1 );
+		pp->add_mover_filter_pair( nullptr, "Oversaturated_Hbond_Acceptors", oversat1 );
 	}
 
 	core::Size disulf_count(0);
@@ -1333,7 +1333,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_L_alpha->initialize_from_file_contents_and_check( abba_bins_ );
 			L_alpha_cst->create_constraint_from_file_contents( comp_file_contents_L_alpha_ );
 			L_alpha_cst->add_residue_selector( select_L_alpha );
-			pp->add_mover_filter_pair( L_alpha_cst, "Add_L_Alpha_AACompositionConstraints", NULL );
+			pp->add_mover_filter_pair( L_alpha_cst, "Add_L_Alpha_AACompositionConstraints", nullptr );
 		}
 		if ( D_alpha_comp_file_exists_ ) {
 			protocols::aa_composition::AddCompositionConstraintMoverOP D_alpha_cst( new protocols::aa_composition::AddCompositionConstraintMover );
@@ -1342,7 +1342,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_D_alpha->initialize_from_file_contents_and_check( abba_bins_ );
 			D_alpha_cst->create_constraint_from_file_contents( comp_file_contents_D_alpha_ );
 			D_alpha_cst->add_residue_selector( select_D_alpha );
-			pp->add_mover_filter_pair( D_alpha_cst, "Add_D_Alpha_AACompositionConstraints", NULL );
+			pp->add_mover_filter_pair( D_alpha_cst, "Add_D_Alpha_AACompositionConstraints", nullptr );
 		}
 		if ( L_beta_comp_file_exists_ ) {
 			protocols::aa_composition::AddCompositionConstraintMoverOP L_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
@@ -1351,7 +1351,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_L_beta->initialize_from_file_contents_and_check( abba_bins_ );
 			L_beta_cst->create_constraint_from_file_contents( comp_file_contents_L_beta_ );
 			L_beta_cst->add_residue_selector( select_L_beta );
-			pp->add_mover_filter_pair( L_beta_cst, "Add_L_Beta_AACompositionConstraints", NULL );
+			pp->add_mover_filter_pair( L_beta_cst, "Add_L_Beta_AACompositionConstraints", nullptr );
 		}
 		if ( D_beta_comp_file_exists_ ) {
 			protocols::aa_composition::AddCompositionConstraintMoverOP D_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
@@ -1360,36 +1360,36 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_D_beta->initialize_from_file_contents_and_check( abba_bins_ );
 			D_beta_cst->create_constraint_from_file_contents( comp_file_contents_D_beta_ );
 			D_beta_cst->add_residue_selector( select_D_beta );
-			pp->add_mover_filter_pair( D_beta_cst, "Add_D_Beta_AACompositionConstraints", NULL );
+			pp->add_mover_filter_pair( D_beta_cst, "Add_D_Beta_AACompositionConstraints", nullptr );
 		}
 
 		protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
 		set_up_design_taskoperations( fdes, cyclic_offset, pose->n_residue() );
-		pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", NULL );
+		pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", nullptr );
 
 		protocols::aa_composition::ClearCompositionConstraintsMoverOP clear_aacomp_cst( new protocols::aa_composition::ClearCompositionConstraintsMover );
-		pp->add_mover_filter_pair( clear_aacomp_cst, "Clear_AACompositionConstraints", NULL );
+		pp->add_mover_filter_pair( clear_aacomp_cst, "Clear_AACompositionConstraints", nullptr );
 	} else {
 		protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
-		pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", NULL );
+		pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", nullptr );
 	}
 
 	//Update O and H atoms at the cyclization point:
 	protocols::cyclic_peptide::DeclareBondOP update_OH( new protocols::cyclic_peptide::DeclareBond );
 	set_up_termini_mover( update_OH, pose );
-	pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_O_and_H_atoms", NULL );
+	pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_O_and_H_atoms", nullptr );
 
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {
 		protocols::simple_filters::ScoreTypeFilterOP disulf_filter2( new protocols::simple_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
-		pp->add_mover_filter_pair( NULL, "Postrelax_disulfide_filter", disulf_filter2 );
+		pp->add_mover_filter_pair( nullptr, "Postrelax_disulfide_filter", disulf_filter2 );
 	}
 
 	if ( filter_oversaturated_hbond_acceptors_ ) {
 		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat2( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
 		oversat2->set_scorefxn( sfxn_default );
 		oversat2->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
-		pp->add_mover_filter_pair( NULL, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
+		pp->add_mover_filter_pair( nullptr, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
 	}
 
 	//Create the mover and set options:

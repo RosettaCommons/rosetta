@@ -73,7 +73,7 @@ public:
 	/// default constructor -- fill this in
 	ScoreFunctionInfo();
 	ScoreFunctionInfo( ScoreFunctionInfo const & src );
-	virtual ~ScoreFunctionInfo();
+	~ScoreFunctionInfo() override;
 
 
 	/// copy constructor -- fill this in

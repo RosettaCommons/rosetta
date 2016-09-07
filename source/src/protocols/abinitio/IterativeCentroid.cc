@@ -69,7 +69,7 @@ void IterativeCentroid::update_noesy_filter_files(
 
 class OrderSortPredicate {
 public:
-	OrderSortPredicate() {};
+	OrderSortPredicate() = default;
 	bool operator() ( core::io::silent::SilentStructOP const& pss1, core::io::silent::SilentStructOP const& pss2 ) {
 		return pss1->get_silent_energy( "_archive_index" ).value() < pss2->get_silent_energy( "_archive_index" ).value();
 	}
@@ -88,11 +88,11 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 
 	tr.Info << "resample_stage2 \n";
 
-	for ( SilentStructs::iterator sit = stage2_decoys_.begin(); sit != stage2_decoys_.end(); ++sit ) {
-		std::string batch_prefix( (*sit)->decoy_tag() );
+	for (auto & stage2_decoy : stage2_decoys_) {
+		std::string batch_prefix( stage2_decoy->decoy_tag() );
 		batch_prefix='f'+batch_prefix.substr(9,3);
-		core::io::silent::SilentStructOP new_decoy=(*sit)->clone();
-		new_decoy->set_decoy_tag( batch_prefix+"_"+(*sit)->decoy_tag().substr(14,5) );
+		core::io::silent::SilentStructOP new_decoy=stage2_decoy->clone();
+		new_decoy->set_decoy_tag( batch_prefix+"_"+stage2_decoy->decoy_tag().substr(14,5) );
 		output_decoys.push_back( new_decoy );
 	}
 
@@ -180,7 +180,7 @@ void IterativeCentroid::add_structure_at_position (
 ) {
 
 	if ( alternative_decoy ) {
-		SilentStructs::iterator alt_iss = stage2_decoys_.begin();
+		auto alt_iss = stage2_decoys_.begin();
 		if ( iss != decoys().end() ) {
 			std::string const& tag( (*iss)->decoy_tag() );
 			std::cerr << "try to add alternative decoy with tag " << alternative_decoy->decoy_tag() << " before decoy with tag " << tag << std::endl;

@@ -25,6 +25,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.FilterMover" );
 
 #include <string>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -48,7 +49,7 @@ FilterMover::FilterMover(
 	ms_whenfail_( mover_status )
 {}
 
-FilterMover::~FilterMover(){}
+FilterMover::~FilterMover()= default;
 
 void FilterMover::add_filter( FilterOP const & my_filter ){
 	my_filter_ = my_filter;

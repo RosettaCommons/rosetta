@@ -49,8 +49,8 @@ public:
 	/// @brief Constructor with chain
 	DeleteChainsMover( std::string const & chains, core::pose::Pose const & pose );
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	//////////////// Accessors + Mutators //////////////////////////////////////
 
@@ -84,21 +84,21 @@ public:
 	//////////////// Mover Methods /////////////////////////////////////////////
 
 public:
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
-	virtual moves::MoverOP
-	clone() const;
+	moves::MoverOP
+	clone() const override;
 
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 
 	void set_defaults();

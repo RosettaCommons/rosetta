@@ -30,6 +30,7 @@
 
 //Auto Headers
 #include <protocols/moves/Mover.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -56,7 +57,7 @@ RRProtocolMover::RRProtocolMover() :
 RRProtocolMover::RRProtocolMover(
 	MoverOP mover
 ) :
-	mover_(mover)
+	mover_(std::move(mover))
 {}
 
 RRProtocolMover::RRProtocolMover( RRProtocolMover const & src) :
@@ -64,7 +65,7 @@ RRProtocolMover::RRProtocolMover( RRProtocolMover const & src) :
 	mover_(src.mover_)
 {}
 
-RRProtocolMover::~RRProtocolMover() {}
+RRProtocolMover::~RRProtocolMover() = default;
 
 string
 RRProtocolMover::get_name() const {

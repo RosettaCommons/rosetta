@@ -64,7 +64,7 @@ extern ResidualDipolarCoupling_RohlCOP retrieve_RDC_ROHL_from_pose( core::pose::
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) ) {
 		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling_Rohl const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 extern ResidualDipolarCoupling_RohlOP retrieve_RDC_ROHL_from_pose( core::pose::Pose& pose ) {
@@ -72,7 +72,7 @@ extern ResidualDipolarCoupling_RohlOP retrieve_RDC_ROHL_from_pose( core::pose::P
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) ) {
 		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling_Rohl > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 
@@ -128,8 +128,8 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 			tr.Error << "[Error] reading rdc-weight-file " << filename << std::endl;
 			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-weight-file "+filename));
 		}
-		for ( RDC_lines::iterator it = All_RDC_lines.begin(); it != All_RDC_lines.end(); ++it ) {
-			if ( it->res() == res1 ) it->weight( weight );
+		for (auto & All_RDC_line : All_RDC_lines) {
+			if ( All_RDC_line.res() == res1 ) All_RDC_line.weight( weight );
 		}
 	}
 }
@@ -176,7 +176,7 @@ core::scoring::RDC_Rohl::save( Archive & arc ) const {
 	arc( CEREAL_NVP( type_ ) ); // Size
 	arc( CEREAL_NVP( res_ ) ); // Size
 	arc( CEREAL_NVP( Jdipolar_ ) ); // Real
-	arc( CEREAL_NVP( Reduced_Jdipolar_ ) ); // Real
+	//arc( CEREAL_NVP( Reduced_Jdipolar_ ) ); // Real Removed this member because it was unused
 	arc( CEREAL_NVP( weight_ ) ); // Real
 }
 
@@ -187,7 +187,7 @@ core::scoring::RDC_Rohl::load( Archive & arc ) {
 	arc( type_ ); // Size
 	arc( res_ ); // Size
 	arc( Jdipolar_ ); // Real
-	arc( Reduced_Jdipolar_ ); // Real
+	//arc( Reduced_Jdipolar_ ); // Real
 	arc( weight_ ); // Real
 }
 

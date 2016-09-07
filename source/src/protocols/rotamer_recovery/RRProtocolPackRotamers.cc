@@ -51,7 +51,7 @@ RRProtocolPackRotamers::RRProtocolPackRotamers( RRProtocolPackRotamers const & )
 	RRProtocol()
 {}
 
-RRProtocolPackRotamers::~RRProtocolPackRotamers() {}
+RRProtocolPackRotamers::~RRProtocolPackRotamers() = default;
 
 string
 RRProtocolPackRotamers::get_name() const {

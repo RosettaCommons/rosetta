@@ -26,8 +26,8 @@ namespace vardist_solaccess {
 class LoadVarSolDistSasaCalculatorMoverCreator : public protocols::moves::MoverCreator
 {
 public:
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Handles sphere-sphere overlap calculations
@@ -35,19 +35,19 @@ class LoadVarSolDistSasaCalculatorMover : public protocols::moves::Mover {
 
 public:
 	LoadVarSolDistSasaCalculatorMover(core::Real probe_radius=1.4, core::Real wobble=0.0);
-	~LoadVarSolDistSasaCalculatorMover();
+	~LoadVarSolDistSasaCalculatorMover() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual void apply( core::pose::Pose & p );
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
+	void apply( core::pose::Pose & p ) override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP const,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11

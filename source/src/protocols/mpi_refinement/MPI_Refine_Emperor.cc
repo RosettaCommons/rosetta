@@ -149,7 +149,7 @@ MPI_Refine_Emperor::process_inbound_wus(){
 		WorkUnit_SilentStructStoreOP structure_wu =
 			utility::pointer::dynamic_pointer_cast<  WorkUnit_SilentStructStore > ( next_wu );
 
-		if ( structure_wu.get() == NULL ) {
+		if ( structure_wu.get() == nullptr ) {
 			TR << "Cannot save structural data for WU: " << std::endl;
 			next_wu->print( TR );
 			continue;
@@ -270,7 +270,7 @@ MPI_Refine_Emperor::process_termination(){
 
 	if ( process_termination_ ) {
 		// Erase all the queues first
-		for ( WorkUnitQueue::iterator iter = outbound().begin(); iter != outbound().end(); ) {
+		for ( auto iter = outbound().begin(); iter != outbound().end(); ) {
 			iter->reset();
 			iter = outbound().erase( iter );
 		}

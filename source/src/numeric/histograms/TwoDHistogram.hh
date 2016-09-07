@@ -39,9 +39,7 @@ class TwoDHistogram {
 
 
 public:
-	TwoDHistogram() {
-
-	}
+	TwoDHistogram() = default;
 
 	/// @brief increase the counts of a histogram using paired keys
 	void increase_count(std::pair<key1, key2> paired_keys){

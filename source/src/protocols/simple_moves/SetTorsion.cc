@@ -89,7 +89,7 @@ SetTorsionCreator::mover_name()
 	return "SetTorsion";
 }
 
-SetTorsion::~SetTorsion() {}
+SetTorsion::~SetTorsion() = default;
 
 /// @brief default ctor
 SetTorsion::SetTorsion() :

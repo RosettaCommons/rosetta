@@ -43,11 +43,11 @@ public:
 
 	void init();
 
-	void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual std::string get_name() const { return "MRMover"; }
-	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new MRMover( *this ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new MRMover ); }
+	std::string get_name() const override { return "MRMover"; }
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new MRMover( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new MRMover ); }
 
 	// density weight
 	void set_centroid_density_weight( core::Real newval ) {

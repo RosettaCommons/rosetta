@@ -107,10 +107,10 @@ protocols::backrub::BackrubSegment::end_atoms2(
 {
 	end_atoms1(pose, end_atom_m1, end_atom, end_atom_p1);
 
-	runtime_assert(end_atom_m1 != 0);
+	runtime_assert(end_atom_m1 != nullptr);
 
 	end_atom_m2 = end_atom_m1->parent();
-	end_atom_p2 = end_atom_p1 ? end_atom_p1->get_nonjump_atom(0) : core::kinematics::tree::AtomCOP(0) ;
+	end_atom_p2 = end_atom_p1 ? end_atom_p1->get_nonjump_atom(0) : core::kinematics::tree::AtomCOP(nullptr) ;
 }
 
 protocols::backrub::BackrubSegment::BondAngleKey

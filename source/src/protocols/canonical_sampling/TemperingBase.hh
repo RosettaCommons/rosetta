@@ -61,14 +61,14 @@ public:
 	TemperingBase( TemperingBase const& );
 
 	/// @brief No-op implemented only to satisfy the Mover interface.
-	virtual
-	void apply( core::pose::Pose& ) {};
+	
+	void apply( core::pose::Pose& ) override {};
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -76,16 +76,16 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual void
+	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -93,32 +93,32 @@ public:
 		core::Size level,
 		core::Real temperature,
 		core::Size cycle
-	);
+	) override;
 
-	virtual
+	
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 	/// @brief Return the temperature of the underlying MonteCarlo object.
-	core::Real temperature() const;
+	core::Real temperature() const override;
 
 	/// @brief  Return the temperature of the given level.
-	core::Real temperature( core::Size level ) const;
+	core::Real temperature( core::Size level ) const override;
 
-	core::Size temperature_level() const {
+	core::Size temperature_level() const override {
 		return current_temp_;
 	}
 
-	core::Size n_temp_levels() const;
+	core::Size n_temp_levels() const override;
 
 protected:
 	/// @brief Help the constructor initialize the object.

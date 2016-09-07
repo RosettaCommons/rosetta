@@ -195,7 +195,7 @@ RotamerBoltzmannWeight::apply(core::pose::Pose const & ) const
 utility::vector1< core::Size >
 RotamerBoltzmannWeight::first_pass_ala_scan( core::pose::Pose const & pose ) const
 {
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	TR<<"----------First pass alanine scanning to identify hot spot residues------------"<<std::endl;
 	utility::vector1< core::Size > hotspot_residues;
 	hotspot_residues.clear();
@@ -400,9 +400,9 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::Real const init_score( stf.compute( const_min_pose ) );
 	TR<<"Total score for input pose: "<<init_score<<std::endl;
 	utility::vector1< core::Real > scores;
-	for ( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ) {
+	for (const auto & rotamer : *rotset) {
 		pose = const_min_pose;
-		pose.replace_residue( resi, **rotamer, false/*orient bb*/ );
+		pose.replace_residue( resi, *rotamer, false/*orient bb*/ );
 		core::pack::pack_rotamers( pose, *scorefxn(), task );
 		// std::cerr << "CHI " << rotamer->chi1() << " " << rotamer->chi2() << std::endl;
 		min_mover->apply( pose );
@@ -548,7 +548,7 @@ RotamerBoltzmannWeight::fresh_instance() const{
 	return protocols::filters::FilterOP( new RotamerBoltzmannWeight() );
 }
 
-RotamerBoltzmannWeight::~RotamerBoltzmannWeight(){}
+RotamerBoltzmannWeight::~RotamerBoltzmannWeight()= default;
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeight::clone() const{

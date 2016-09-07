@@ -62,6 +62,7 @@
 #include <devel/loop_creation/KICLoopCloser.hh>
 
 //Utility
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -133,8 +134,8 @@ LoopCreationMover::LoopCreationMover(
 	bool minimize_loops
 ):
 	Mover("LoopCreationMover"),
-	loop_inserter_(loop_inserter),
-	loop_closer_(loop_closer),
+	loop_inserter_(std::move(loop_inserter)),
+	loop_closer_(std::move(loop_closer)),
 	attempts_per_anchor_(attempts_per_anchor),
 	refine_(refine),
 	design_loops_(design_loops),
@@ -184,13 +185,13 @@ LoopCreationMover::apply(
 	using utility::vector1;
 
 	//Sanity checks
-	if ( loop_closer_ == 0 ) {
+	if ( loop_closer_ == nullptr ) {
 		utility_exit_with_message("No LoopCloser given to LoopCreationMover!");
 	}
-	if ( loop_inserter_ == 0 ) {
+	if ( loop_inserter_ == nullptr ) {
 		utility_exit_with_message("No LoopInserter given to LoopCreationMover!");
 	}
-	if ( loop_filter_ == 0 ) {
+	if ( loop_filter_ == nullptr ) {
 		loop_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );//default to true filter
 	}
 	TR.Debug << "Fold tree prior to LoopCreationMover: " << pose.fold_tree() << endl;
@@ -487,7 +488,7 @@ LoopCreationMover::refine_loop(
 	TR << "REFINE LOOP" << std::endl;
 
 	core::scoring::ScoreFunctionOP scorefxn_min;
-	if ( scorefxn_ == 0 ) {
+	if ( scorefxn_ == nullptr ) {
 		scorefxn_ = scoring::get_score_function();
 		scorefxn_min = scorefxn_->clone();
 	} else {
@@ -608,7 +609,7 @@ LoopCreationMover::parse_my_tag(
 	//****REQUIRED TAGS****//
 	if ( tag->hasOption("loop_inserter") ) {
 		string const loop_inserter_name( tag->getOption< string >( "loop_inserter" ) );
-		protocols::moves::Movers_map::const_iterator find_mover( movers.find( loop_inserter_name ) );
+		auto find_mover( movers.find( loop_inserter_name ) );
 		bool const mover_found( find_mover != movers.end() );
 		if ( mover_found ) {
 			loop_inserter_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopInserter > ( find_mover->second );
@@ -621,7 +622,7 @@ LoopCreationMover::parse_my_tag(
 
 	if ( tag->hasOption("loop_closer") ) {
 		string const loop_closer_name( tag->getOption< string >( "loop_closer" ) );
-		protocols::moves::Movers_map::const_iterator find_mover( movers.find( loop_closer_name ) );
+		auto find_mover( movers.find( loop_closer_name ) );
 		bool const mover_found( find_mover != movers.end() );
 		if ( mover_found ) {
 			loop_closer_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopCloser > ( find_mover->second );

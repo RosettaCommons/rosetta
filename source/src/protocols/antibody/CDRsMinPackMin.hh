@@ -51,10 +51,10 @@ public:
 	);
 
 	// default destructor
-	~CDRsMinPackMin();
+	~CDRsMinPackMin() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void set_task_factory(core::pack::task::TaskFactoryCOP tf);
 	void set_move_map(core::kinematics::MoveMapCOP movemap);
@@ -70,7 +70,7 @@ public:
 		turnoff_minimization_=setting;
 	}
 
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 );
 
 

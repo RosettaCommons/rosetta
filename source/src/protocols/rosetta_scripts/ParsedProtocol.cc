@@ -105,8 +105,7 @@ ParsedProtocol::ParsedProtocol() :
 {
 }
 
-ParsedProtocol::~ParsedProtocol() {
-}
+ParsedProtocol::~ParsedProtocol() = default;
 
 /// @details Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
 /// be setup in derived classes to setup variables before and after these cycles.
@@ -232,12 +231,11 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 
 void
 ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
-	for ( MoverFilterVector::const_iterator mover_it = movers_.begin();
-			mover_it != movers_.end(); ++mover_it ) {
-		if ( mover_it->report_filter_at_end_ ) {
-			core::Real const filter_value( (*mover_it).second->report_sm( pose ) );
+	for (const auto & mover : movers_) {
+		if ( mover.report_filter_at_end_ ) {
+			core::Real const filter_value( mover.second->report_sm( pose ) );
 			if ( filter_value > -9999 ) {
-				job.add_string_real_pair((*mover_it).second->get_user_defined_name(), filter_value);
+				job.add_string_real_pair(mover.second->get_user_defined_name(), filter_value);
 			}
 		}
 	}
@@ -313,10 +311,10 @@ ParsedProtocol::add_mover_filter_pair(
 /// @details sets resid for the constituent filters and movers
 void
 ParsedProtocol::set_resid( core::Size const resid ){
-	for ( iterator it( movers_.begin() ); it!=movers_.end(); ++it ) {
+	for (auto & mover : movers_) {
 		using namespace protocols::moves;
-		modify_ResId_based_object( it->first.first, resid );
-		modify_ResId_based_object( it->second, resid );
+		modify_ResId_based_object( mover.first.first, resid );
+		modify_ResId_based_object( mover.second, resid );
 	}
 }
 
@@ -333,20 +331,20 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 	core::pose::Pose const& pose ) {
 	using namespace protocols::moves;
 
-	MoverOP mover_to_add = NULL;
+	MoverOP mover_to_add = nullptr;
 	std::string mover_name; // user must specify a mover name. there is no valid default.
 
 	runtime_assert( !( tag_ptr->hasOption("mover_name") && tag_ptr->hasOption("mover") ) );
 	if ( tag_ptr->hasOption( "mover_name" ) ) {
 		mover_name = tag_ptr->getOption<string>( "mover_name" );
-		Movers_map::const_iterator find_mover( movers.find( mover_name ) );
+		auto find_mover( movers.find( mover_name ) );
 		if ( find_mover == movers.end() ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Mover " + mover_name + " not found in map");
 		}
 		mover_to_add = find_mover->second;
 	} else if ( tag_ptr->hasOption( "mover" ) ) {
 		mover_name = tag_ptr->getOption<string>( "mover" );
-		Movers_map::const_iterator find_mover( movers.find( mover_name ) );
+		auto find_mover( movers.find( mover_name ) );
 		if ( find_mover == movers.end() ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("Mover " + mover_name + " not found in map");
 		}
@@ -402,7 +400,7 @@ ParsedProtocol::parse_my_tag(
 	utility::vector0< TagCOP > const & dd_tags( tag->getTags() );
 	utility::vector1< core::Real > a_probability( dd_tags.size(), 1.0/dd_tags.size() );
 	core::Size count( 1 );
-	for ( utility::vector0< TagCOP >::const_iterator dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
+	for ( auto dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
 		TagCOP const tag_ptr( *dd_it );
 
 		std::pair< MoverOP, std::string > mover_add_pair = parse_mover_subtag( tag_ptr, data, filters, movers, pose );
@@ -423,7 +421,7 @@ ParsedProtocol::parse_my_tag(
 		}
 
 		if ( filter_defined ) {
-			protocols::filters::Filters_map::const_iterator find_filter( filters.find( filter_name ));
+			auto find_filter( filters.find( filter_name ));
 			if ( find_filter == filters.end() ) {
 				throw utility::excn::EXCN_RosettaScriptsOption("Filter " + filter_name + " not found in map");
 			}
@@ -460,7 +458,7 @@ ParsedProtocol::parse_my_tag(
 core::pose::PoseOP
 ParsedProtocol::get_additional_output( )
 {
-	core::pose::PoseOP pose=NULL;
+	core::pose::PoseOP pose=nullptr;
 	MoverFilterVector::const_reverse_iterator rmover_it;
 	const MoverFilterVector::const_reverse_iterator movers_crend = movers_.rend();
 
@@ -473,7 +471,7 @@ ParsedProtocol::get_additional_output( )
 				return mover->get_additional_output();
 			}
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	// Legacy Protocol resume support:
@@ -494,7 +492,7 @@ ParsedProtocol::get_additional_output( )
 	}
 
 	// no saved poses?  return now
-	if ( !pose ) return NULL;
+	if ( !pose ) return nullptr;
 
 	// if mode_ is not 'sequence' then checkpointing is unsupported
 	if ( mode_ != "sequence" ) {
@@ -502,7 +500,7 @@ ParsedProtocol::get_additional_output( )
 	}
 
 	// otherwise pick up from the checkpoint
-	for ( MoverFilterVector::const_iterator mover_it = rmover_it.base();
+	for ( auto mover_it = rmover_it.base();
 			mover_it!=movers_.end(); ++mover_it ) {
 		apply_mover( *pose, *mover_it );
 		if ( !apply_filter( *pose, *mover_it ) ) {
@@ -611,7 +609,7 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 void
 ParsedProtocol::sequence_protocol( Pose & pose,
 	MoverFilterVector::const_iterator mover_it_in ) {
-	for ( MoverFilterVector::const_iterator mover_it = mover_it_in;
+	for ( auto mover_it = mover_it_in;
 			mover_it!=movers_.end(); ++mover_it ) {
 		apply_mover( pose, *mover_it );
 		if ( !apply_filter( pose, *mover_it ) ) {

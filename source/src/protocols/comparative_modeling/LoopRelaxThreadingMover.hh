@@ -36,9 +36,9 @@ public:
 
 	void setup();
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	// Undefinded comminting out to fix PyRosetta build  bool apply_mt( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	utility::vector1< core::fragment::FragSetOP > frag_libs_;

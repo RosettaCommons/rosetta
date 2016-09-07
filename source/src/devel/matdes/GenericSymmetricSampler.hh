@@ -52,22 +52,22 @@ public:
 	GenericSymmetricSampler();
 
 	// --- virtual functions from mover ---
-	virtual std::string get_name() const { return "GenericSymmetricSampler"; }
-	virtual void apply(Pose& pose);
+	std::string get_name() const override { return "GenericSymmetricSampler"; }
+	void apply(Pose& pose) override;
 
 	// --- virtual copy constructors
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 
 	/// @brief create this type of object
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 private:
 	std::string dof_id_;

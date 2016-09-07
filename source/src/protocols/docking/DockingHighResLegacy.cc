@@ -109,7 +109,7 @@ DockingHighResLegacy::DockingHighResLegacy() : DockingHighRes()
 	//scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
 	//scorefxn_pack() = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	moves::Mover::type( "DockingHighResLegacy" );
-	init_task_factory_ = NULL;
+	init_task_factory_ = nullptr;
 	design_ = false;
 }
 
@@ -123,7 +123,7 @@ DockingHighResLegacy::DockingHighResLegacy(
 {
 	//movable_jumps_.push_back( rb_jump_in );
 	moves::Mover::type( "DockingHighResLegacy" );
-	init_task_factory_ = NULL;
+	init_task_factory_ = nullptr;
 	design_ = false;
 }
 
@@ -137,7 +137,7 @@ DockingHighResLegacy::DockingHighResLegacy(
 {
 	//movable_jumps_.push_back( rb_jump_in );
 	moves::Mover::type( "DockingHighResLegacy" );
-	init_task_factory_ = NULL;
+	init_task_factory_ = nullptr;
 	design_ = false;
 }
 
@@ -151,12 +151,12 @@ DockingHighResLegacy::DockingHighResLegacy(
 {
 	//movable_jumps_ = movable_jumps;
 	moves::Mover::type( "DockingHighResLegacy" );
-	init_task_factory_ = NULL;
+	init_task_factory_ = nullptr;
 	design_ = false;
 }
 
 //destructor
-DockingHighResLegacy::~DockingHighResLegacy() {}
+DockingHighResLegacy::~DockingHighResLegacy() = default;
 
 //clone
 protocols::moves::MoverOP DockingHighResLegacy::clone() const {
@@ -628,14 +628,14 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	// set up protocol
 	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for ( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_away_vec.end(); ++it ) {
-		docking_highres_protocol_mover_->add_mover( *it );
+	for (auto & it : trans_away_vec) {
+		docking_highres_protocol_mover_->add_mover( it );
 	}
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );
 	if ( rt_min() ) docking_highres_protocol_mover_->add_mover( rtmin_mover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for ( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_back_vec.begin(); it != trans_back_vec.end(); ++it ) {
-		docking_highres_protocol_mover_->add_mover( *it );
+	for (auto & it : trans_back_vec) {
+		docking_highres_protocol_mover_->add_mover( it );
 	}
 }
 

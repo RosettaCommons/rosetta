@@ -56,12 +56,12 @@ FlexPacker::FlexPacker(
 	core::pack::task::PackerTaskCOP task, // SHOULD TAKE A TASK FACTORY, NOT A TASK COP!
 	utility::vector1< core::fragment::FrameOP > const & frames,
 	core::scoring::ScoreFunctionCOP scorefxn
-) : task_(task), scorefxn_(scorefxn)
+) : task_(std::move(task)), scorefxn_(std::move(scorefxn))
 {
 	this->set_frames( frames );
 }
 
-FlexPacker::~FlexPacker() {}
+FlexPacker::~FlexPacker() = default;
 
 void
 FlexPacker::set_sfxn( core::scoring::ScoreFunctionCOP sfxn ){
@@ -211,9 +211,9 @@ FlexPacker::set_frames(
 )
 {
 
-	for ( utility::vector1< core::fragment::FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ) {
+	for (const auto & frame : frames) {
 
-		frames_.push_back( *frame_it );
+		frames_.push_back( frame );
 	}
 
 } //set_frames

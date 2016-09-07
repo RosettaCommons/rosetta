@@ -33,13 +33,13 @@ class LoopsFileFallbackConfigurationCreator : public basic::resource_manager::Fa
 {
 public:
 	/// @brief Return a up-casted owning pointer (FallbackConfigurationOP) to the resource.
-	virtual
+	
 	basic::resource_manager::FallbackConfigurationOP
-	create_fallback_configuration() const;
+	create_fallback_configuration() const override;
 
 	/// @brief Return the string identifier for the associated Resource (loops_file).
-	virtual
-	std::string resource_description() const;
+	
+	std::string resource_description() const override;
 
 };
 

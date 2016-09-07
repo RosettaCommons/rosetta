@@ -56,7 +56,7 @@ namespace chemical {
 class ResidueTypeSelectorSingle : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ResidueTypeSelectorSingle();
+	~ResidueTypeSelectorSingle() override;
 
 	// constructor
 	ResidueTypeSelectorSingle( bool const result ):
@@ -93,7 +93,7 @@ public:
 
 	// select by AA type
 	bool
-	operator[]( ResidueType const & rsd ) const {
+	operator[]( ResidueType const & rsd ) const override {
 		// left-hand side will be TRUE if rsd.aa() is present in our list of AA's
 		//std::cout << "Selector_AA: " << rsd.aa() << ' ' << aas_.size() << ' ' << desired_result() << std::endl;
 		return ( ( std::find( aas_.begin(), aas_.end(), rsd.aa() ) != aas_.end() ) == desired_result() );
@@ -117,7 +117,7 @@ public:
 
 	// select by AA type
 	bool
-	operator[]( ResidueType const & ) const {
+	operator[]( ResidueType const & ) const override {
 		return b_flag_is_present_ == desired_result();
 	}
 
@@ -142,7 +142,7 @@ public:
 
 	// select by three-letter code
 	bool
-	operator[]( ResidueType const & rsd ) const {
+	operator[]( ResidueType const & rsd ) const override {
 		return (  ( std::find( name3s_.begin(), name3s_.end(), rsd.name3() ) != name3s_.end() ) == desired_result() );
 	}
 
@@ -165,10 +165,9 @@ public:
 
 	// select by PROPERTY
 	bool
-	operator[]( ResidueType const & rsd ) const {
-		for ( utility::vector1< std::string >::const_iterator it = properties_.begin(),
-				it_end = properties_.end(); it!= it_end; ++it ) {
-			if ( rsd.has_property( *it ) ) return desired_result();
+	operator[]( ResidueType const & rsd ) const override {
+		for (const auto & propertie : properties_) {
+			if ( rsd.has_property( propertie ) ) return desired_result();
 		}
 		return !desired_result();
 	}
@@ -192,10 +191,9 @@ public:
 
 	// select by VARIANT_TYPE
 	bool
-	operator[]( ResidueType const & rsd ) const {
-		for ( utility::vector1< std::string >::const_iterator it = variants_.begin(),
-				it_end = variants_.end(); it!= it_end; ++it ) {
-			if ( rsd.has_variant_type( *it ) ) return desired_result();
+	operator[]( ResidueType const & rsd ) const override {
+		for (const auto & variant : variants_) {
+			if ( rsd.has_variant_type( variant ) ) return desired_result();
 		}
 		return !desired_result();
 	}
@@ -228,7 +226,7 @@ public:
 	/// chain position.  If needed for another residue subclass, one would need to modify this method.  OR, it would be
 	/// better to create a datum for storing the main-chain position in ResidueType.
 	bool
-	operator[](ResidueType const & rsd) const {
+	operator[](ResidueType const & rsd) const override {
 		if ( rsd.is_carbohydrate() ) {  // only option for now
 			if ( rsd.carbohydrate_info()->mainchain_glycosidic_bond_acceptor() == position_ ) {
 				return desired_result();
@@ -256,10 +254,9 @@ public:
 
 	// select by VARIANT_TYPE
 	bool
-	operator[]( ResidueType const & rsd ) const {
-		for ( utility::vector1< std::string >::const_iterator it = variants_.begin(),
-				it_end = variants_.end(); it!= it_end; ++it ) {
-			if ( !rsd.has_variant_type( *it ) ) return !desired_result(); // rsd is missing one of our variants
+	operator[]( ResidueType const & rsd ) const override {
+		for (const auto & variant : variants_) {
+			if ( !rsd.has_variant_type( variant ) ) return !desired_result(); // rsd is missing one of our variants
 		}
 		if ( rsd.properties().get_list_of_variants().size() == variants_.size() ) return desired_result();
 		return !desired_result(); // residue has an extra variant
@@ -283,7 +280,7 @@ public:
 
 	// select by VARIANT_TYPE
 	bool
-	operator[]( ResidueType const & rsd ) const {
+	operator[]( ResidueType const & rsd ) const override {
 		return ( rsd.properties().get_list_of_variants().empty() == desired_result() );
 	}
 };
@@ -303,7 +300,7 @@ public:
 
 	// select by name1 type
 	bool
-	operator[]( ResidueType const & rsd ) const {
+	operator[]( ResidueType const & rsd ) const override {
 		return ( ( rsd.name1() == name1_ ) == desired_result() );
 	}
 
@@ -324,7 +321,7 @@ residue_selector_single_from_line( std::string const & line );
 class ResidueTypeSelector : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ResidueTypeSelector();
+	~ResidueTypeSelector() override;
 
 	// [] operator: selector[ResidueType] => yes or no
 	bool

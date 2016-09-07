@@ -39,12 +39,12 @@ class MinimizeLigand : public protocols::moves::Mover
 public:
 	MinimizeLigand();
 	MinimizeLigand(char chain, core::Real degrees);
-	virtual ~MinimizeLigand();
+	~MinimizeLigand() override;
 	MinimizeLigand(MinimizeLigand const & that);
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	bool operator==(char const & chain) const;
 

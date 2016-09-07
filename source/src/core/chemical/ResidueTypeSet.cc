@@ -331,7 +331,7 @@ void ResidueTypeSet::init(
 
 ResidueTypeSet::ResidueTypeSet() {}
 
-ResidueTypeSet::~ResidueTypeSet() {}
+ResidueTypeSet::~ResidueTypeSet() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details the file contains a list of names of residue type parameter files
@@ -494,7 +494,7 @@ ResidueType const &
 ResidueTypeSet::name_map( std::string const & name_in ) const
 {
 	ResidueTypeCOP restype( name_mapOP( name_in ) );
-	runtime_assert_string_msg( restype != 0, "The residue " + name_in + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
+	runtime_assert_string_msg( restype != nullptr, "The residue " + name_in + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
 	return *restype;
 }
 
@@ -510,7 +510,7 @@ ResidueTypeSet::name_mapOP( std::string const & name_in ) const
 	if ( generate_residue_type( name ) ) {
 		return cache_->name_map( name );
 	} else {
-		return ResidueTypeCOP( 0 );
+		return ResidueTypeCOP( nullptr );
 	}
 }
 
@@ -564,7 +564,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 
 		ResidueTypeOP rsd_instantiated ( needed_patch->apply( rsd_base ) );
 
-		if ( rsd_instantiated == 0 ) {
+		if ( rsd_instantiated == nullptr ) {
 			return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
 		}
 		if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
@@ -600,7 +600,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 
 			ResidueTypeOP rsd_instantiated = p->apply( rsd_base );
 
-			if ( rsd_instantiated == 0 ) {
+			if ( rsd_instantiated == nullptr ) {
 				return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
 			}
 			if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
@@ -861,14 +861,14 @@ ResidueTypeSet::get_all_types_with_variants_name3( std::string const &  name3, u
 bool
 ResidueTypeSet::has_name3( std::string const & name3 ) const
 {
-	return ( get_representative_type_name3( name3 ) != 0 );
+	return ( get_representative_type_name3( name3 ) != nullptr );
 }
 
 bool
 ResidueTypeSet::has_interchangeability_group( std::string const & interchangeability_group ) const
 {
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).interchangeability_group( interchangeability_group ).get_representative_type();
-	return ( rsd_type != 0 );
+	return ( rsd_type != nullptr );
 }
 
 
@@ -895,7 +895,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 
-	if ( rsd_type == 0 ) {
+	if ( rsd_type == nullptr ) {
 		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " +
 			ResidueProperties::get_string_from_variant( new_type ) );
 	}
@@ -937,7 +937,7 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 
-	if ( rsd_type == 0 ) {
+	if ( rsd_type == nullptr ) {
 		utility_exit_with_message( "unable to find desired non-variant residue: " + init_rsd.name() + " " + base_name +
 			" " + ResidueProperties::get_string_from_variant( old_type ) );
 	}
@@ -985,7 +985,7 @@ void
 ResidueTypeSet::remove_custom_residue_type( std::string const & name )
 {
 	ResidueTypeCOP rsd_type( cache_->name_map( name ) );
-	ResidueTypeCOPs::iterator res_it = std::find( custom_residue_types_.begin(), custom_residue_types_.end(), rsd_type );
+	auto res_it = std::find( custom_residue_types_.begin(), custom_residue_types_.end(), rsd_type );
 	runtime_assert( res_it != custom_residue_types_.end() );
 	custom_residue_types_.erase( res_it );
 	cache_->remove_residue_type( name );
@@ -995,7 +995,7 @@ void
 ResidueTypeSet::remove_base_residue_type_DO_NOT_USE( std::string const & name )
 {
 	ResidueTypeCOP rsd_type( cache_->name_map( name ) );
-	ResidueTypeCOPs::iterator res_it = std::find( base_residue_types_.begin(), base_residue_types_.end(), rsd_type );
+	auto res_it = std::find( base_residue_types_.begin(), base_residue_types_.end(), rsd_type );
 	runtime_assert( res_it != base_residue_types_.end() );
 	base_residue_types_.erase( res_it );
 	cache_->remove_residue_type( name );
@@ -1092,7 +1092,7 @@ ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 					tr.Warning << "   For information on how to obtain the file and set it for use with Rosetta, visit: \n\n";
 					tr.Warning << "  https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation#setting-up-rosetta-3_obtaining-additional-files_pdb-chemical-components-dictionary  \n" << std::endl;
 				}
-				return ResidueTypeOP( 0 );
+				return ResidueTypeOP( nullptr );
 			}
 		}
 
@@ -1122,7 +1122,7 @@ ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 		if ( lines.size() == 0 ) {
 			tr.Warning << "Could not find: '" << pdb_id << "' in pdb components file '" << pdb_components_filename_
 				<< "'! Skipping residue..." << std::endl;
-			return ResidueTypeOP(0);
+			return ResidueTypeOP(nullptr);
 		}
 
 		utility::vector1< core::chemical::sdf::MolFileIOMoleculeOP> molecules;
@@ -1131,7 +1131,7 @@ ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 
 		return new_rsd_type;
 	}
-	return ResidueTypeOP(0);
+	return ResidueTypeOP(nullptr);
 }
 
 } // pose

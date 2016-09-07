@@ -133,7 +133,7 @@ positions_incompatible_with_task(
 
 			// check to see if pose residue type is in list of allowed residue types
 			core::pack::task::ResidueLevelTask const & residueleveltask(packertask.residue_task(i));
-			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+			for ( auto iter(residueleveltask.allowed_residue_types_begin());
 					iter != residueleveltask.allowed_residue_types_end(); ++iter ) {
 
 				if ( (*iter)->name() == pose.residue_type(i).name() ) incompatible = false;
@@ -150,12 +150,10 @@ utility::vector1<core::Size>
 get_pivot_residues_from_movemap( core::kinematics::MoveMapCOP movemap) {
 
 	using namespace core::kinematics;
-	typedef std::pair< core::Size, core::id::TorsionType > MoveMapTorsionID;
-	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
 
 	utility::vector1<core::Size> pivot_residues;
 
-	for ( MoveMapTorsionID_Map::const_iterator it=movemap->movemap_torsion_id_begin(), it_end=movemap->movemap_torsion_id_end(); it !=it_end; ++it ) {
+	for ( auto it=movemap->movemap_torsion_id_begin(), it_end=movemap->movemap_torsion_id_end(); it !=it_end; ++it ) {
 		//Scaffold to new MM
 		if ( it->first.second == core::id::BB && it->second ) {
 			pivot_residues.push_back(it->first.first);

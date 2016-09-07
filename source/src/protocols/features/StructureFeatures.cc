@@ -84,7 +84,7 @@ StructureFeatures::StructureFeatures( StructureFeatures const & ) :
 	FeaturesReporter()
 {}
 
-StructureFeatures::~StructureFeatures(){}
+StructureFeatures::~StructureFeatures()= default;
 
 string
 StructureFeatures::type_name() const { return "StructureFeatures"; }

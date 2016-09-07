@@ -38,7 +38,7 @@ static THREAD_LOCAL basic::Tracer tr( "core.fragment" );
 
 FragID FrameList::fragID ( Size flat_nr ) {
 	Size passed_frags( 0 );
-	iterator it = begin(), eit=end();
+	auto it = begin(), eit=end();
 
 	while ( it!=eit && (passed_frags + (*it)->nr_frags()) < flat_nr )
 			{
@@ -56,8 +56,8 @@ FragID FrameList::fragID ( Size flat_nr ) {
 
 Size FrameList::flat_size() const {
 	Size frags( 0 );
-	for ( const_iterator it=begin(), eit=end(); it!=eit ; ++it ) {
-		frags += (*it)->nr_frags();
+	for (const auto & it : *this) {
+		frags += it->nr_frags();
 	}
 	return frags;
 }
@@ -68,8 +68,8 @@ utility::vector1<FrameOP> FrameList::frame_vector()
 }
 
 std::ostream& operator<< ( std::ostream& out, FrameList const& frags) {
-	for ( FrameList::const_iterator it=frags.begin(), eit=frags.end(); it!=eit; ++it ) {
-		(*it)->show( out );
+	for (const auto & frag : frags) {
+		frag->show( out );
 	}
 	return out;
 }

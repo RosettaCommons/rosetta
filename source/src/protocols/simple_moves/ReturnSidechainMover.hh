@@ -59,13 +59,13 @@ public:
 	/// @brief copy constructor
 	ReturnSidechainMover(ReturnSidechainMover const & object_to_copy);
 
-	virtual ~ReturnSidechainMover();
+	~ReturnSidechainMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	bool copy_all_chi_;
 	utility::vector1<bool> allow_chi_copy_;

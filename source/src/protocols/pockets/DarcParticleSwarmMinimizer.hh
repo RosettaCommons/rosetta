@@ -44,9 +44,9 @@ public:
 		steric_(steric_weight),
 		extra_pt_(extra_point_weight){}
 
-	~DarcParticleSwarmMinimizer() {}
+	~DarcParticleSwarmMinimizer() override = default;
 
-	void score_all_particles(core::optimization::Multifunc & f_fitness, core::optimization::ParticleOPs & particles);
+	void score_all_particles(core::optimization::Multifunc & f_fitness, core::optimization::ParticleOPs & particles) override;
 
 private:
 

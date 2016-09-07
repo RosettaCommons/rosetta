@@ -58,25 +58,25 @@ public:
 
 	FusePosesNtoCMover( FusePosesNtoCMover const & other );
 
-	~FusePosesNtoCMover();
+	~FusePosesNtoCMover() override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 
 	/// @brief function to set up a fold tree
@@ -236,24 +236,24 @@ public:
 
 	SetupCoiledCoilFoldTreeMover( SetupCoiledCoilFoldTreeMover const & other );
 
-	~SetupCoiledCoilFoldTreeMover();
+	~SetupCoiledCoilFoldTreeMover() override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 
 private:

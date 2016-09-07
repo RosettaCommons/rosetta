@@ -82,8 +82,8 @@ public:
 
 	void set_poolrmsd(protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr);
 
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
 
 private:
 

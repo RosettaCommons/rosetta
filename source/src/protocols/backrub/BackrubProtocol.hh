@@ -44,10 +44,10 @@ class BackrubProtocol : public protocols::moves::Mover {
 public:
 	BackrubProtocol();
 	BackrubProtocol(BackrubProtocol const & bp);
-	virtual ~BackrubProtocol();
+	~BackrubProtocol() override;
 
-	virtual void
-	apply( core::pose::Pose& pose );
+	void
+	apply( core::pose::Pose& pose ) override;
 
 
 
@@ -96,13 +96,13 @@ public:
 	write_database();
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	//virtual void
 	//parse_my_tag(

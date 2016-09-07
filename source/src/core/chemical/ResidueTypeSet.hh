@@ -77,7 +77,7 @@ public:
 		std::string const & directory
 	);
 
-	virtual ~ResidueTypeSet();
+	~ResidueTypeSet() override;
 
 	void init(
 		std::vector< std::string > const & extra_res_param_files = std::vector< std::string >(),

@@ -73,10 +73,10 @@ public:
 	);
 
 	// destructor
-	~DockMCMProtocol();
+	~DockMCMProtocol() override;
 
 	//clone
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Performs the setup specific to this subclass of DockingHighRes (sets up filters).
 	void init();
@@ -84,8 +84,8 @@ public:
 	void set_filter( DockingHighResFilterOP filter );
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void set_move_map(core::kinematics::MoveMapOP movemap );
 	void set_second_cycle(Size const & num);

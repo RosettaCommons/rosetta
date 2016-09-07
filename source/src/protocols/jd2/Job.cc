@@ -24,6 +24,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/basic_sys_util.hh>
 
@@ -42,7 +43,7 @@ namespace jd2 {
 
 ////////////////////////////Job/////////////////////////////
 Job::Job( InnerJobOP inner_job, core::Size nstruct_index )
-: inner_job_(inner_job),
+: inner_job_(std::move(inner_job)),
 	nstruct_index_(nstruct_index),
 	status_prefix_( "" ),
 	long_strings_(),
@@ -74,7 +75,7 @@ Job::Job( Job const &src )
 	//TR.Trace << "Using Job (base class) for JobDistributor" << std::endl;
 }
 
-Job::~Job(){}
+Job::~Job()= default;
 
 
 
@@ -151,7 +152,7 @@ core::pose::PoseCOP Job::get_pose() const {
 		return aPose;
 	}
 	utility_exit_with_message( "Programming error: you asked for Job::get_pose() but there is neither a job_inputter nor a pose loaded into the Job-Object ");
-	return NULL;
+	return nullptr;
 }
 
 
@@ -220,7 +221,7 @@ core::Size Job::elapsed_time() const {
 		return 0;
 	} else if ( end_time_ == 0 ) {
 		// In the middle of job
-		return time(NULL) - start_time_;
+		return time(nullptr) - start_time_;
 	}
 	// job completed
 	runtime_assert( end_time_ >= start_time_ );
@@ -232,14 +233,14 @@ std::string Job::timestamp() const {
 }
 
 void Job::start_timing() {
-	start_time_ = time(NULL);
+	start_time_ = time(nullptr);
 	end_time_ = 0;
 	timestamp_ = utility::timestamp_short();
 }
 
 void Job::end_timing() {
 	debug_assert( start_time_ != 0 );
-	end_time_ = time(NULL);
+	end_time_ = time(nullptr);
 }
 
 void Job::add_output_observer( JobOutputterObserverAP an_observer ) {
@@ -253,11 +254,8 @@ void Job::remove_output_observer( JobOutputterObserverAP an_observer ) {
 
 void Job::call_output_observers( core::pose::Pose const & pose )
 {
-	for ( JobOutputterObservers::const_iterator
-			it     = output_observers_.begin(),
-			it_end = output_observers_.end();
-			it != it_end; ++it ) {
-		JobOutputterObserverOP observer = (*it).lock();
+	for (const auto & output_observer : output_observers_) {
+		JobOutputterObserverOP observer = output_observer.lock();
 		if ( observer ) {
 			observer->add_values_to_job( pose, *this );
 		}
@@ -309,32 +307,23 @@ Job::show(
 		<< "nstruct index: " << nstruct_index_ << std::endl
 		<< "status_prefix: " << status_prefix_ << std::endl
 		<< "long_strings:" << std::endl;
-	for (
-			Strings::const_iterator
-			s = long_strings_.begin(), se = long_strings_.end();
-			s != se; ++s ) {
-		out << *s << std::endl;
+	for (const auto & long_string : long_strings_) {
+		out << long_string << std::endl;
 	}
 
 	out
 		<< "completed: " << completed_ << std::endl
 		<< "can be deleted: " << (can_be_deleted_ ? "true" : "false") << std::endl
 		<< "String -> String Pairs:" << std::endl;
-	for (
-			StringStringPairs::const_iterator
-			s = string_string_pairs_.begin(), se = string_string_pairs_.end();
-			s != se; ++s ) {
+	for (const auto & string_string_pair : string_string_pairs_) {
 		out
-			<< "\t" << s->first << ": " << s->second << std::endl;
+			<< "\t" << string_string_pair.first << ": " << string_string_pair.second << std::endl;
 	}
 
 	out << "String -> Real Pairs:" << std::endl;
-	for (
-			StringRealPairs::const_iterator
-			s = string_real_pairs_.begin(), se = string_real_pairs_.end();
-			s != se; ++s ) {
+	for (const auto & string_real_pair : string_real_pairs_) {
 		out
-			<< "\t" << s->first << ": " << s->second << std::endl;
+			<< "\t" << string_real_pair.first << ": " << string_real_pair.second << std::endl;
 	}
 }
 

@@ -47,16 +47,16 @@ public:
 
 	FullatomRelaxMover(FullatomRelaxMover const & src);
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	//destructor
-	~FullatomRelaxMover();
+	~FullatomRelaxMover() override;
 
-	void apply( core::pose::Pose & pose);
+	void apply( core::pose::Pose & pose) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_nmoves(const core::Size);
 

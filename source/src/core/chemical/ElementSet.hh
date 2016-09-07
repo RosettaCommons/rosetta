@@ -46,7 +46,7 @@ class ElementSet : public utility::pointer::ReferenceCount {
 
 public:
 	ElementSet();
-	virtual ~ElementSet();
+	~ElementSet() override;
 
 	/// @brief Number of elements in the set
 	Size

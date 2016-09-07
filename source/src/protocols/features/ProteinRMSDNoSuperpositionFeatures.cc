@@ -102,7 +102,7 @@ ProteinRMSDNoSuperpositionFeatures::reference_pose(
 
 ProteinRMSDNoSuperpositionFeatures::ProteinRMSDNoSuperpositionFeatures(
 	PoseCOP reference_pose ) :
-	reference_pose_(reference_pose)
+	reference_pose_(std::move(reference_pose))
 {}
 
 void

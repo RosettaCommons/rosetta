@@ -55,7 +55,7 @@ SymSidechainMinMover::SymSidechainMinMover() : moves::Mover()
 }
 
 //construtor with arguments
-SymSidechainMinMover::SymSidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn_in) : moves::Mover(), scorefxn_(scorefxn_in)
+SymSidechainMinMover::SymSidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn_in) : moves::Mover(), scorefxn_(std::move(scorefxn_in))
 {
 	Mover::type( "SymSidechainMin" );
 	set_default_options();
@@ -65,7 +65,7 @@ SymSidechainMinMover::SymSidechainMinMover( core::scoring::ScoreFunctionCOP scor
 SymSidechainMinMover::SymSidechainMinMover(
 	core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::kinematics::MoveMapOP movemap_in
-) : moves::Mover(), scorefxn_(scorefxn_in), movemap_(movemap_in), update_movemap_(false)
+) : moves::Mover(), scorefxn_(std::move(scorefxn_in)), movemap_(std::move(movemap_in)), update_movemap_(false)
 {
 	Mover::type( "SymSidechainMin" );
 	set_default_options();
@@ -74,7 +74,7 @@ SymSidechainMinMover::SymSidechainMinMover(
 //constructor with arguments
 SymSidechainMinMover::SymSidechainMinMover(
 	core::scoring::ScoreFunctionCOP scorefxn_in,
-	core::pack::task::PackerTaskOP task_in) : moves::Mover(), scorefxn_(scorefxn_in), task_(task_in), update_movemap_(true)
+	core::pack::task::PackerTaskOP task_in) : moves::Mover(), scorefxn_(std::move(scorefxn_in)), task_(std::move(task_in)), update_movemap_(true)
 {
 	Mover::type( "SymSidechainMin" );
 	set_default_options();
@@ -83,14 +83,14 @@ SymSidechainMinMover::SymSidechainMinMover(
 //constructor with arguments
 SymSidechainMinMover::SymSidechainMinMover(
 	core::scoring::ScoreFunctionCOP scorefxn_in,
-	core::pack::task::TaskFactoryOP tf_in) : moves::Mover(), scorefxn_(scorefxn_in), tf_(tf_in), update_movemap_(true)
+	core::pack::task::TaskFactoryOP tf_in) : moves::Mover(), scorefxn_(std::move(scorefxn_in)), tf_(std::move(tf_in)), update_movemap_(true)
 {
 	Mover::type( "SymSidechainMin" );
 	set_default_options();
 }
 
 //destructor
-SymSidechainMinMover::~SymSidechainMinMover() {}
+SymSidechainMinMover::~SymSidechainMinMover() = default;
 
 void SymSidechainMinMover::set_minmover( protocols::simple_moves::MinMoverOP minmover_in ){ minmover_ = minmover_in; }
 
@@ -148,7 +148,7 @@ SymInterfaceSidechainMinMover::SymInterfaceSidechainMinMover(
 }
 
 //destructor
-SymInterfaceSidechainMinMover::~SymInterfaceSidechainMinMover() {}
+SymInterfaceSidechainMinMover::~SymInterfaceSidechainMinMover() = default;
 
 void SymInterfaceSidechainMinMover::set_interface_dist( core::Real interface_dist_in)
 {

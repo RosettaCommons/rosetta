@@ -78,7 +78,7 @@ AtomID_Mapper::clone() const {
 
 //Destructor
 AtomID_Mapper::~AtomID_Mapper()
-{}
+= default;
 
 
 //////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ AtomID_Mapper::initialize_from_pose( core::pose::Pose const & pose ) {
 bool
 AtomID_Mapper::has_atom_id( AtomID const & atom_id ) const
 {
-	std::map< AtomID, AtomID >::const_iterator it_reference = map_to_reference_.find( atom_id );
+	auto it_reference = map_to_reference_.find( atom_id );
 	return ( it_reference != map_to_reference_.end() );
 }
 
@@ -141,7 +141,7 @@ AtomID_Mapper::has_atom_id( AtomID const & atom_id ) const
 AtomID const &
 AtomID_Mapper::map_to_reference( AtomID const & atom_id ) const
 {
-	std::map< AtomID, AtomID >::const_iterator it_reference = map_to_reference_.find( atom_id );
+	auto it_reference = map_to_reference_.find( atom_id );
 	runtime_assert( it_reference != map_to_reference_.end() );
 	return ( it_reference->second );
 }
@@ -150,7 +150,7 @@ AtomID_Mapper::map_to_reference( AtomID const & atom_id ) const
 AtomID const &
 AtomID_Mapper::map_from_reference( AtomID const & atom_id ) const
 {
-	std::map< AtomID, AtomID >::const_iterator it_reference = map_from_reference_.find( atom_id );
+	auto it_reference = map_from_reference_.find( atom_id );
 	runtime_assert( it_reference != map_from_reference_.end() );
 	return ( it_reference->second );
 }
@@ -165,22 +165,22 @@ AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
 	std::map< AtomID, AtomID > atom_id_map;
 
 	std::map< core::Size, core::Size > in_source_res; //basically reverse of res_map.
-	for ( std::map< Size, Size >::const_iterator  it  = res_map.begin(), end = res_map.end(); it != end; ++it ) {
-		Size const & target_pos = it->first;
-		Size const & source_pos = it->second;
+	for (const auto & it : res_map) {
+		Size const & target_pos = it.first;
+		Size const & source_pos = it.second;
 		in_source_res[ source_pos ] = target_pos;
 	}
 
-	for ( std::map< Size, Size >::const_iterator  it  = res_map.begin(), end = res_map.end(); it != end; ++it ) {
+	for (const auto & it : res_map) {
 
-		Size const & target_pos = it->first;
-		Size const & source_pos = it->second;
+		Size const & target_pos = it.first;
+		Size const & source_pos = it.second;
 
 		for ( Size j = 1; j <= target_pose.residue_type( target_pos ).natoms(); j++ ) {
 
 			AtomID const target_atom_id( j, target_pos );
 
-			std::map< AtomID, AtomID >::const_iterator it_reference = map_to_reference_.find( target_atom_id );
+			auto it_reference = map_to_reference_.find( target_atom_id );
 			if ( it_reference == map_to_reference_.end() )  continue;
 
 			AtomID reference_atom_id = it_reference->second;
@@ -196,7 +196,7 @@ AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
 			if ( rsd_offset == -1 && source_fold_tree.is_cutpoint( source_pos-1 ) ) continue;
 
 			AtomID source_atom_id( source_atomno, source_pos + rsd_offset );
-			if ( source_mapper_to_vanilla != 0 ) {
+			if ( source_mapper_to_vanilla != nullptr ) {
 				source_atom_id = source_mapper_to_vanilla->map_from_reference( source_atom_id ); /* note 'reverse': from a vanilla pose to source pose. */
 			}
 

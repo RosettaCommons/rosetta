@@ -61,11 +61,11 @@ public:
 
 	TrajectoryReportToDB(TrajectoryReportToDB const & src);
 
-	virtual ~TrajectoryReportToDB();
+	~TrajectoryReportToDB() override;
 
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 	void
 	parse_my_tag(
@@ -73,7 +73,7 @@ public:
 		basic::datacache::DataMap & data,
 		Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	void
 	parse_stride_tag_item(
@@ -82,11 +82,11 @@ public:
 	void
 	apply(
 		Pose& pose
-	);
+	) override;
 
 	// Getters/Setters
-	virtual std::string name() { return "TrajectoryReportToDB"; }
-	virtual std::string get_name() const { return "TrajectoryReportToDB"; }
+	std::string name() override { return "TrajectoryReportToDB"; }
+	std::string get_name() const override { return "TrajectoryReportToDB"; }
 
 	void
 	set_stride(

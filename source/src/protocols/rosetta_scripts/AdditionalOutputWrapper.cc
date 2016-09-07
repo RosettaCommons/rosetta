@@ -97,10 +97,10 @@ void AdditionalOutputWrapper::apply(core::pose::Pose& pose)
 core::pose::PoseOP AdditionalOutputWrapper::get_additional_output()
 {
 	if ( !reference_pose_ ) {
-		return NULL;
+		return nullptr;
 	}
 	if ( (max_poses_ > 0) && (n_poses_ >= max_poses_) ) {
-		return NULL;
+		return nullptr;
 	}
 
 	core::pose::PoseOP new_pose( new core::pose::Pose(*reference_pose_) );
@@ -116,7 +116,7 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 	basic::datacache::DataMap data;
 	protocols::filters::Filters_map filters;
 	protocols::moves::Movers_map movers;
-	MoverOP mover(NULL);
+	MoverOP mover(nullptr);
 
 	if ( !mover && rosetta_scripts_tag_ ) {
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
@@ -127,7 +127,7 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 		mover = MoverFactory::get_instance()->newMover(mover_tag_, data, filters, movers, pose );
 	}
 
-	runtime_assert( mover != 0 );
+	runtime_assert( mover != nullptr );
 	mover->apply(pose);
 
 	if ( ! pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {

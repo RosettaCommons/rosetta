@@ -113,7 +113,7 @@ namespace jd2 {
 #if defined MULTI_THREADED
 std::atomic< JobDistributor * > JobDistributor::instance_( 0 );
 #else
-JobDistributor * JobDistributor::instance_( 0 );
+JobDistributor * JobDistributor::instance_( nullptr );
 #endif
 
 #ifdef MULTI_THREADED
@@ -186,7 +186,7 @@ JobDistributor::JobDistributor(bool empty)
 	if ( !empty ) {
 		init_jd();
 	} else {
-		job_inputter_ = NULL;
+		job_inputter_ = nullptr;
 		job_outputter_ = JobOutputterOP( new NoOutputJobOutputter );
 		parser_ = JobDistributorFactory::create_parser();
 		jobs_ = JobsContainerOP( new JobsContainer );
@@ -246,9 +246,7 @@ void JobDistributor::restart()
 
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-JobDistributor::~JobDistributor()
-{
-}
+JobDistributor::~JobDistributor() = default;
 
 void JobDistributor::go(protocols::moves::MoverOP mover)
 {
@@ -283,7 +281,7 @@ JobDistributor::go( protocols::moves::MoverOP mover, JobInputterOP ji, JobOutput
 void JobDistributor::go_main(protocols::moves::MoverOP mover)
 {
 	using namespace basic::options;
-	time_t const allstarttime = time(NULL);
+	time_t const allstarttime = time(nullptr);
 	core::Size tried_jobs(0); //did we try any jobs?
 
 	std::string last_inner_job_tag, last_output_tag;
@@ -309,7 +307,7 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 		tr.Info << jobs_->size() << " jobs considered, ";
 	}
 	tr.Info << tried_jobs << " jobs attempted in "
-		<< (time(NULL) - allstarttime) << " seconds" << std::endl;
+		<< (time(nullptr) - allstarttime) << " seconds" << std::endl;
 	if ( tried_jobs == 0 ) {
 		tr.Info << "no jobs were attempted, did you forget to pass -overwrite?"
 			<< std::endl;
@@ -453,7 +451,7 @@ JobDistributor::check_for_parser_in_go_main() {
 }
 
 bool JobDistributor::using_parser() const {
-	return parser_ != 0;
+	return parser_ != nullptr;
 }
 
 bool
@@ -481,7 +479,7 @@ JobDistributor::run_one_job(
 
 	if ( (option[OptionKeys::run::maxruntime].user())
 			&& (option[OptionKeys::run::maxruntime]() > 0) ) {
-		core::Size const elapsedtime(time(NULL) - allstarttime);
+		core::Size const elapsedtime(time(nullptr) - allstarttime);
 		core::Size targettime( option[OptionKeys::run::maxruntime]() );
 		core::Size time_estimate(0);
 		if ( option[OptionKeys::run::maxruntime_bufferfactor].user() ) {
@@ -505,7 +503,7 @@ JobDistributor::run_one_job(
 	current_job_->start_timing();
 
 	// setup profiling
-	evaluation::TimeEvaluatorOP run_time(NULL);
+	evaluation::TimeEvaluatorOP run_time(nullptr);
 	if ( !option[OptionKeys::run::no_prof_info_in_silentout] ) {
 		job_outputter_->add_evaluation(run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator )); //just don't use this in integration tests!
 	}
@@ -585,7 +583,7 @@ JobDistributor::run_one_job(
 
 		if ( !first_job && last_completed_job_ != 0 && jobs_->has_job(last_completed_job_) ) {
 			tr.Debug << "deleting pose from job " << last_completed_job_ << std::endl;
-			(*jobs_)[last_completed_job_]->inner_job_nonconst()->set_pose( 0 );
+			(*jobs_)[last_completed_job_]->inner_job_nonconst()->set_pose( nullptr );
 		}
 	}
 	//delete pointer to pose of last input; if that was last pointer
@@ -1013,7 +1011,7 @@ void JobDistributor::load_new_batch()
 
 	//remaking job_inputter has the advantage, that we will also get one, if
 	//this is the first batch!
-	job_inputter_ = NULL; //triggers destructor --> restores options
+	job_inputter_ = nullptr; //triggers destructor --> restores options
 	tr.Info << "start batch " << batches_[current_batch_id_] << std::endl;
 	job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[current_batch_id_]) );
 

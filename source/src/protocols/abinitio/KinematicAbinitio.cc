@@ -139,7 +139,7 @@ namespace abinitio {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-KinematicAbinitio::~KinematicAbinitio() {}
+KinematicAbinitio::~KinematicAbinitio() = default;
 
 //@detail c'stor
 KinematicAbinitio::KinematicAbinitio(
@@ -152,7 +152,7 @@ KinematicAbinitio::KinematicAbinitio(
 	bRampChainbreaks_( true )
 {
 	BaseClass::type( "KinematicAbinitio" );
-	full_constraint_set_=NULL;
+	full_constraint_set_=nullptr;
 }
 
 
@@ -164,7 +164,7 @@ KinematicAbinitio::KinematicAbinitio(
 	bRampChainbreaks_( true )
 {
 	BaseClass::type( "KinematicAbinitio" );
-	full_constraint_set_=NULL;
+	full_constraint_set_=nullptr;
 }
 
 void
@@ -341,9 +341,8 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			core::fragment::FrameList jump_frames;
 			target_jumps.generate_jump_frames( jump_frames, kinematics().movemap() );
 			core::scoring::dssp::PairingsList library_pairings;
-			for ( FrameList::iterator jump_frame = jump_frames.begin();
-					jump_frame != jump_frames.end(); ++jump_frame ) {
-				core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
+			for (auto & jump_frame : jump_frames) {
+				core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( jump_frame->start(), jump_frame->stop() ) );
 				library_pairings.push_back( target_pairing );
 			}
 			//fill remaining frames from ss-library
@@ -362,7 +361,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			recovered_control->set_jump_mover( jump_mover );
 		} else {
 			tr.Warning << "disable JUMP MOVES in resampling... probably not much of difference" << std::endl;
-			recovered_control->set_jump_mover( NULL ); // this mover will not have the correct jumps ... but jump-moves seem ineffective in stage3 an
+			recovered_control->set_jump_mover( nullptr ); // this mover will not have the correct jumps ... but jump-moves seem ineffective in stage3 an
 		}
 		recovered_control->set_sampling_fold_tree( pose.fold_tree() );
 		set_kinematics( recovered_control );
@@ -404,7 +403,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace scoring::constraints;
-	ConstraintSetOP orig_constraints( NULL );
+	ConstraintSetOP orig_constraints( nullptr );
 
 	if ( option[ fold_cst::keep_skipped_csts ] ) {
 		// if this is active we let the pose leave this class with the modulated constraint set... thus we reset it each time again
@@ -689,7 +688,7 @@ JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 	// run protocol
 	if ( jump_mover && option[ jumps::no_sample_ss_jumps ] ) {
 		jump_mover->apply_at_all_positions( pose ); //make sure each jump is initialized
-		kc->set_jump_mover( NULL ); //but no sampling
+		kc->set_jump_mover( nullptr ); //but no sampling
 	}
 
 	set_kinematics( kc );
@@ -714,7 +713,7 @@ JumpingFoldConstraintsWrapper::JumpingFoldConstraintsWrapper(
 	jumping::BaseJumpSetupOP jump_def,
 	int dummy /* otherwise the two constructors are ambigous */
 ) : KinematicAbinitio ( brute_move_small, brute_move_large, smooth_move_small, dummy ),
-	jump_def_ ( jump_def )
+	jump_def_ (std::move( jump_def ))
 {
 	BaseClass::type( "JumpingFoldConstraintsWrapper" );
 }
@@ -726,7 +725,7 @@ JumpingFoldConstraintsWrapper::JumpingFoldConstraintsWrapper(
 	core::kinematics::MoveMapCOP movemap,
 	jumping::BaseJumpSetupOP jump_def
 ) : KinematicAbinitio ( fragset3mer, fragset9mer, movemap ),
-	jump_def_( jump_def )
+	jump_def_(std::move( jump_def ))
 {
 	BaseClass::type( "JumpingFoldConstraintsWrapper" );
 }

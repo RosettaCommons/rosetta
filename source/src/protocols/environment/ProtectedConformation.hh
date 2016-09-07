@@ -55,7 +55,7 @@ public:
 	ProtectedConformation( ProtectedConformation const& src );
 	ProtectedConformation( EnvironmentCAP, core::conformation::Conformation const& );
 
-	virtual ~ProtectedConformation();
+	~ProtectedConformation() override;
 
 	//Environment-related functions
 	EnvironmentCAP environment() const;
@@ -64,7 +64,7 @@ public:
 		environment_exists_ = false;
 	}
 
-	virtual bool is_protected() const { return true; }
+	bool is_protected() const override { return true; }
 
 	//@brief return a copy of in_rsd with variants matched to seqpos in this conformation
 	ResidueOP match_variants( core::Size seqpos, Residue const& in_rsd ) const;
@@ -74,48 +74,48 @@ public:
 
 	SequenceAnnotationCOP annotations() const { return resolver(); }
 
-	virtual core::conformation::ConformationOP clone() const;
+	core::conformation::ConformationOP clone() const override;
 
 	//Security overloads:
-	virtual Conformation& operator=( Conformation const& src );
+	Conformation& operator=( Conformation const& src ) override;
 
-	virtual void set_torsion( TorsionID const & id, core::Real setting );
+	void set_torsion( TorsionID const & id, core::Real setting ) override;
 
-	virtual void set_jump( AtomID const&, core::kinematics::Jump const& );
+	void set_jump( AtomID const&, core::kinematics::Jump const& ) override;
 
-	virtual void set_jump( int, core::kinematics::Jump const& );
+	void set_jump( int, core::kinematics::Jump const& ) override;
 
-	virtual void set_secstruct( Size seqpos, char setting );
+	void set_secstruct( Size seqpos, char setting ) override;
 
-	virtual void replace_residue( Size seqpos, core::conformation::Residue const & new_rsd,
-		utility::vector1< std::pair< std::string, std::string > > const& atom_pairs );
+	void replace_residue( Size seqpos, core::conformation::Residue const & new_rsd,
+		utility::vector1< std::pair< std::string, std::string > > const& atom_pairs ) override;
 
-	virtual void replace_residue( Size seqpos, core::conformation::Residue const& new_rsd, bool orient_backbone );
+	void replace_residue( Size seqpos, core::conformation::Residue const& new_rsd, bool orient_backbone ) override;
 
 	virtual void set_stub_transform( core::id::StubID const & stub_id1,
 		core::id::StubID const & stub_id2,
 		core::kinematics::RT const & target_rt );
 
-	virtual void set_dof( DOF_ID const& id, core::Real setting );
+	void set_dof( DOF_ID const& id, core::Real setting ) override;
 
-	virtual void set_torsion_angle( AtomID const & atom1,
+	void set_torsion_angle( AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
 		core::Real setting,
-		bool quiet=false);
+		bool quiet=false) override;
 
-	virtual void set_bond_angle( AtomID const & atom1, AtomID const & atom2, AtomID const & atom3,
-		core::Real setting );
+	void set_bond_angle( AtomID const & atom1, AtomID const & atom2, AtomID const & atom3,
+		core::Real setting ) override;
 
-	virtual void set_bond_length( AtomID const & atom1, AtomID const & atom2, core::Real setting );
+	void set_bond_length( AtomID const & atom1, AtomID const & atom2, core::Real setting ) override;
 
 	virtual void insert_fragment( core::id::StubID const& instub_id, FragRT const& outstub_transforms,
 		FragXYZ const& frag_xyz );
 
 	// Always-failing Security Overloads
 	// The parameters aren't named on purpose. You're not supposed to use these functions.
-	virtual void fold_tree( FoldTree const& );
+	void fold_tree( FoldTree const& ) override;
 
 	virtual void chain_endings( utility::vector1< Size > const& );
 
@@ -127,9 +127,9 @@ public:
 
 	virtual void chains_from_termini();
 
-	virtual void append_residue_by_jump( core::conformation::Residue const &, Size ,
+	void append_residue_by_jump( core::conformation::Residue const &, Size ,
 		std::string const& = "", std::string const& = "",
-		bool _= false );
+		bool _= false ) override;
 
 	virtual void append_polymer_residue_after_seqpos( core::conformation::Residue const&, Size ,
 		bool );
@@ -149,10 +149,10 @@ public:
 
 	virtual void delete_residue_range_slow( Size range_begin, Size range_end );
 
-	virtual void declare_chemical_bond( Size, std::string const&, Size, std::string const& );
+	void declare_chemical_bond( Size, std::string const&, Size, std::string const& ) override;
 
-	virtual void insert_conformation_by_jump( Conformation const&, Size , Size, Size,
-		Size, std::string const& = "",  std::string const& = "" );
+	void insert_conformation_by_jump( Conformation const&, Size , Size, Size,
+		Size, std::string const& = "",  std::string const& = "" ) override;
 
 	virtual void rebuild_polymer_bond_dependent_atoms( Size );
 
@@ -170,9 +170,9 @@ public:
 	//virtual void detect_disulfides();
 
 	// TODO: decide what to do with direct xyz settings.
-	virtual void set_xyz( AtomID const & id, core::PointPosition const & position );
-	virtual void batch_set_xyz( utility::vector1<AtomID> const & id,
-		utility::vector1< core::PointPosition > const & position );
+	void set_xyz( AtomID const & id, core::PointPosition const & position ) override;
+	void batch_set_xyz( utility::vector1<AtomID> const & id,
+		utility::vector1< core::PointPosition > const & position ) override;
 
 
 	virtual void reset_move_data();
@@ -194,7 +194,7 @@ public:
 	// virtual void detect_pseudobonds();
 
 	//Misc overloads:
-	virtual bool same_type_as_me( Conformation const & other, bool recurse /* = true */ ) const;
+	bool same_type_as_me( Conformation const & other, bool recurse /* = true */ ) const override;
 
 	// Verification Helpers:
 private:
@@ -217,11 +217,11 @@ private:
 
 	// Passport Management:
 private:
-	void push_passport( core::environment::DofPassportCOP );
+	void push_passport( core::environment::DofPassportCOP ) override;
 
-	core::environment::DofPassportCOP pop_passport();
+	core::environment::DofPassportCOP pop_passport() override;
 
-	bool has_passport() const;
+	bool has_passport() const override;
 
 	void set_environment( EnvironmentCAP );
 

@@ -49,7 +49,7 @@ ConservedPosMutationFilter::ConservedPosMutationFilter() :
 {
 }
 
-ConservedPosMutationFilter::~ConservedPosMutationFilter(){}
+ConservedPosMutationFilter::~ConservedPosMutationFilter()= default;
 
 filters::FilterOP
 ConservedPosMutationFilter::clone() const {

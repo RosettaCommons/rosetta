@@ -78,7 +78,7 @@ SeedSetupMoverCreator::mover_name()
 	return "SeedSetupMover";
 }
 
-SeedSetupMover::~SeedSetupMover() {}
+SeedSetupMover::~SeedSetupMover() = default;
 
 SeedSetupMover::SeedSetupMover() :
 	protocols::moves::Mover( SeedSetupMoverCreator::mover_name() ){

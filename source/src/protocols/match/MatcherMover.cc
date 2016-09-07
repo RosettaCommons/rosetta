@@ -89,16 +89,9 @@ MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
 }
 
-MatcherMover::~MatcherMover(){}
+MatcherMover::~MatcherMover() = default;
 
-MatcherMover::MatcherMover( MatcherMover const & rval ) :
-	protocols::rosetta_scripts::MultiplePoseMover( rval ),
-	incorporate_matches_into_pose_( rval.incorporate_matches_into_pose_ ),
-	return_single_random_match_( rval.return_single_random_match_ ),
-	ligres_( rval.ligres_ ),
-	match_positions_( rval.match_positions_ ),
-	selectors_( rval.selectors_ )
-{}
+MatcherMover::MatcherMover( MatcherMover const & ) = default;
 
 /// @brief clone this object
 MatcherMover::MoverOP MatcherMover::clone() const
@@ -181,7 +174,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 
 	if ( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
 
-	time_t const matcher_start_time = time(NULL);
+	time_t const matcher_start_time = time(nullptr);
 	protocols::match::MatcherOP matcher( new protocols::match::Matcher );
 	matcher->initialize_from_task( *mtask );
 
@@ -190,16 +183,16 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 	time_t find_hits_end_time = 0;
 	time_t processing_time = 0;
 	if ( matcher->find_hits() ) {
-		find_hits_end_time = time(NULL);
-		time_t process_start_time( time(NULL) );
+		find_hits_end_time = time(nullptr);
+		time_t process_start_time( time(nullptr) );
 		matcher->process_matches( *processor );
-		processing_time = (long) (time(NULL) - process_start_time);
+		processing_time = (long) (time(nullptr) - process_start_time);
 
 	} else {
-		find_hits_end_time = time(NULL);
+		find_hits_end_time = time(nullptr);
 	}
 	long find_hits_time = (long)(find_hits_end_time - matcher_start_time );
-	time_t matcher_end_time = time(NULL);
+	time_t matcher_end_time = time(nullptr);
 	std::string const success_str( processor->match_processing_successful() ? "successful." : "not sucessful." );
 	tr << "Matcher ran for " << (long)(matcher_end_time - matcher_start_time)
 		<< " seconds, where finding hits took " << find_hits_time
@@ -253,7 +246,7 @@ MatcherMover::setup_seqpos_from_selectors( protocols::match::MatcherTask & mtask
 	mtask.use_different_build_points_for_each_geometric_constraint( selectors_.size() );
 
 	core::Size cst_idx = 1;
-	for ( utility::vector1< core::select::residue_selector::ResidueSelectorCOP >::const_iterator s=selectors_.begin(); s!=selectors_.end(); ++s, ++cst_idx ) {
+	for ( auto s=selectors_.begin(); s!=selectors_.end(); ++s, ++cst_idx ) {
 		core::select::residue_selector::ResidueSubset const subset = (*s)->apply( pose );
 		utility::vector1< core::Size > residues;
 		for ( core::Size resid=1; resid<=subset.size(); ++resid ) {
@@ -292,13 +285,13 @@ MatcherMover::parse_my_tag(
 	if ( tag->hasOption( "residues_for_geomcsts" ) ) {
 		std::string const selector_str = tag->getOption< std::string >( "residues_for_geomcsts" );
 		utility::vector1< std::string > const selector_strs = utility::string_split( selector_str, ',' );
-		for ( utility::vector1< std::string >::const_iterator s = selector_strs.begin(); s != selector_strs.end(); ++s ) {
+		for (const auto & selector_str : selector_strs) {
 			core::select::residue_selector::ResidueSelectorCOP selector;
 			try {
-				selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", *s );
+				selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str );
 			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 				std::stringstream error_msg;
-				error_msg << "Failed to find ResidueSelector named '" << *s << "' from the Datamap from MatcherMover::parse_my_tag.\n";
+				error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from MatcherMover::parse_my_tag.\n";
 				error_msg << e.msg();
 				throw utility::excn::EXCN_RosettaScriptsOption( error_msg.str() );
 			}
@@ -371,11 +364,11 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
 	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get( ligpose.residue_type( 1 ) ) );
 
-	if ( res_rotlib != 0 ) {
+	if ( res_rotlib != nullptr ) {
 		SingleLigandRotamerLibraryCOP lig_rotlib(
 			utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const > ( res_rotlib ));
 
-		if ( lig_rotlib == 0 ) {
+		if ( lig_rotlib == nullptr ) {
 			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "
 				+ ligpose.residue_type(1).name() + " after finding the flag match::ligand_rotamer_index <int> on the command line");
 		}

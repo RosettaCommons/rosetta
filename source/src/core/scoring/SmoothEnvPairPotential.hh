@@ -50,7 +50,7 @@ public:
 		calculated_( src.calculated_ )
 	{}
 
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new SigmoidWeightedCenList( *this ) );
 	}
 

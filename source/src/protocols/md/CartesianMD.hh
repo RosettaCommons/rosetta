@@ -42,7 +42,7 @@ public:
 	//constructor
 	CartesianMD( core::pose::Pose const &pose,
 		core::scoring::ScoreFunctionCOP sfxn,
-		core::kinematics::MoveMapCOP movemap = 0 );
+		core::kinematics::MoveMapCOP movemap = nullptr );
 
 	CartesianMD( core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const &sfxn );
@@ -55,20 +55,20 @@ public:
 	init( );
 
 	//destructor
-	virtual ~CartesianMD();
+	~CartesianMD() override;
 
 	// From Mover
-	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new CartesianMD() ); };
-	virtual protocols::moves::MoverOP clone() const;
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new CartesianMD() ); };
+	protocols::moves::MoverOP clone() const override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	// From MDbase
-	virtual void set_movemap(
+	void set_movemap(
 		core::pose::Pose const &,
-		core::kinematics::MoveMapCOP movemap);
+		core::kinematics::MoveMapCOP movemap) override;
 
-	virtual core::kinematics::MoveMapOP movemap() const { return movemap_; }
+	core::kinematics::MoveMapOP movemap() const override { return movemap_; }
 
 	void use_rattle( bool const value );
 
@@ -84,13 +84,13 @@ public:
 		Multivec &prv_eqxyz,
 		CartesianMinimizerMap const &min_map ) const;
 
-	virtual
+	
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	void
 	parse_opts(

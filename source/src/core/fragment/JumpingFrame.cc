@@ -64,7 +64,7 @@ using namespace ObjexxFCL::format;
 bool
 NonContinuousFrame::align( core::id::SequenceMapping const& map ) {
 	bool success = Parent::align( map );
-	for ( PosList::iterator it = pos_.begin(),
+	for ( auto it = pos_.begin(),
 			eit = pos_.end(); it!=eit && success; ++it )  {
 		Size newpos( map[ *it ] );
 		if ( newpos > 0 ) {
@@ -96,9 +96,8 @@ void NonContinuousFrame::read( std::istream &in ) {
 }
 
 void NonContinuousFrame::show_pos( std::ostream &out ) const {
-	for ( PosList::const_iterator it = pos_.begin(),
-			eit = pos_.end(); it!=eit; ++it ) {
-		out << RJ( 3, *it ) << " ";
+	for (unsigned long po : pos_) {
+		out << RJ( 3, po ) << " ";
 	}
 }
 
@@ -110,15 +109,14 @@ void NonContinuousFrame::shift_to( core::Size setting ) {
 
 void NonContinuousFrame::shift_by( int offset ) {
 	Parent::shift_by( offset );
-	for ( PosList::iterator it = pos_.begin(),
-			eit = pos_.end(); it!=eit; ++it ) {
-		int new_pos = *it + offset;
+	for (unsigned long & po : pos_) {
+		int new_pos = po + offset;
 		if ( new_pos < 1 ) {
 			std::ostringstream msg;
 			msg << "offset " << offset << " would shift at least one position of Frame " << *this << " to negative or zero" << std::endl;
 			throw utility::excn::EXCN_RangeError( msg.str() );
 		}
-		*it = new_pos;
+		po = new_pos;
 	}
 }
 

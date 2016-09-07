@@ -16,6 +16,7 @@
 #include <numeric/kdtree/WrappedReal.hh>
 #include <numeric/kdtree/KDPoint.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
@@ -27,7 +28,7 @@ namespace numeric {
 namespace kdtree {
 
 /// @details Auto-generated virtual destructor
-KDPoint::~KDPoint() {}
+KDPoint::~KDPoint() = default;
 
 KDPoint::KDPoint() {}
 
@@ -41,7 +42,7 @@ KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location,
 	utility::pointer::ReferenceCountOP data
 ) :
-	location_( location ), data_( data ), distance_( 0.0 )
+	location_( location ), data_(std::move( data )), distance_( 0.0 )
 {}
 
 KDPoint::KDPoint(
@@ -56,7 +57,7 @@ KDPoint::KDPoint(
 	utility::pointer::ReferenceCountOP data,
 	numeric::Real distance
 ) :
-	location_( location ), data_( data ), distance_( distance )
+	location_( location ), data_(std::move( data )), distance_( distance )
 {}
 
 KDPoint::KDPoint( KDPoint const & src ) : ReferenceCount() {
@@ -129,7 +130,7 @@ std::string KDPoint::to_string() const {
 	std::string retval("KDPOINT ");
 
 	retval += string_of( size() ) + " ";
-	for ( utility::vector1< Real >::const_iterator
+	for ( auto
 			it = location_.begin(), end = location_.end() - 1;
 			it != end; ++it
 			) {

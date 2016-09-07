@@ -105,7 +105,7 @@ ScoreFunction::ScoreFunction()
 }
 
 
-ScoreFunction::~ScoreFunction() {}
+ScoreFunction::~ScoreFunction() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 ScoreFunctionOP
@@ -525,9 +525,8 @@ ScoreFunction::assign( ScoreFunction const & src )
 	// copy the methods:
 	initialize_methods_arrays(); // clears & sizes the arrays
 
-	for ( AllMethods::const_iterator it = src.all_methods_.begin(),
-			ite = src.all_methods_.end(); it != ite; ++it ) {
-		add_method( (*it)->clone() );
+	for (const auto & all_method : src.all_methods_) {
+		add_method( all_method->clone() );
 	}
 	update_intrares_energy_status();
 	debug_assert( check_methods() );
@@ -673,8 +672,8 @@ ScoreFunction::show_line( std::ostream & out,  pose::Pose const & pose ) const
 ///////////////////////////////////////////////////////////////////////////////
 void
 ScoreFunction::show_additional( std::ostream & out,  pose::Pose & pose, bool verbose ) const {
-	for ( AllMethods::const_iterator it=all_methods_.begin(),it_end = all_methods_.end(); it != it_end; ++it ) {
-		(*it)->show_additional_info(out, pose, verbose);
+	for (const auto & all_method : all_methods_) {
+		all_method->show_additional_info(out, pose, verbose);
 	}
 }
 
@@ -762,9 +761,8 @@ ScoreFunction::operator()( pose::Pose & pose ) const
 	PROF_START( basic::SCORE_FINALIZE );
 	// give energyfunctions a chance update/finalize energies
 	// etable nblist calculation is performed here
-	for ( AllMethods::const_iterator it=all_methods_.begin(),
-			it_end = all_methods_.end(); it != it_end; ++it ) {
-		(*it)->finalize_total_energy( pose, *this, pose.energies().finalized_energies() );
+	for (const auto & all_method : all_methods_) {
+		all_method->finalize_total_energy( pose, *this, pose.energies().finalized_energies() );
 	}
 
 	pose.energies().total_energies() += pose.energies().finalized_energies();
@@ -885,9 +883,8 @@ ScoreFunction::get_sub_score(
 	//////////////////////////////////////////////////
 	///  Context Independent Long Range 2Body methods
 
-	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
-			iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
+	for (const auto & ci_lr_2b_method : ci_lr_2b_methods_) {
+		LREnergyContainerCOP lrec = pose.energies().long_range_container( ci_lr_2b_method->long_range_type() );
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
@@ -909,10 +906,9 @@ ScoreFunction::get_sub_score(
 	/////////////////////////////////////////////////////
 	///  Context Independent Long Range twobody methods
 
-	for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
-			iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for (const auto & cd_lr_2b_method : cd_lr_2b_methods_) {
 		LREnergyContainerCOP lrec =
-			pose.energies().long_range_container( (*iter)->long_range_type() );
+			pose.energies().long_range_container( cd_lr_2b_method->long_range_type() );
 		// Potentially O(N^2) operation...
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( !residue_mask[ii] ) continue;
@@ -1016,10 +1012,9 @@ ScoreFunction::get_sub_score(
 	//////////////////////////////////////////////////
 	///  Context Independent Long Range 2Body methods
 
-	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
-			iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for (const auto & ci_lr_2b_method : ci_lr_2b_methods_) {
 		LREnergyContainerCOP lrec =
-			pose.energies().long_range_container((*iter)->long_range_type());
+			pose.energies().long_range_container(ci_lr_2b_method->long_range_type());
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
@@ -1041,10 +1036,9 @@ ScoreFunction::get_sub_score(
 		/////////////////////////////////////////////////////
 		///  Context Independent Long Range twobody methods
 
-		for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
-				iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+		for (const auto & cd_lr_2b_method : cd_lr_2b_methods_) {
 			LREnergyContainerCOP lrec =
-				pose.energies().long_range_container((*iter)->long_range_type());
+				pose.energies().long_range_container(cd_lr_2b_method->long_range_type());
 			// Potentially O(N^2) operation...
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				if ( !residue_mask[ii] ) continue;
@@ -1084,11 +1078,8 @@ ScoreFunction::get_sub_score_exclude_res(
 ) const {
 
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for (
-			utility::vector1< Size >::const_iterator
-			ii = exclude_res.begin(), ie = exclude_res.end();
-			ii != ie; ++ii ) {
-		residue_mask[*ii] = false;
+	for (unsigned long exclude_re : exclude_res) {
+		residue_mask[exclude_re] = false;
 	}
 	return get_sub_score(pose, residue_mask);
 }
@@ -1104,11 +1095,8 @@ ScoreFunction::get_sub_score_exclude_res(
 	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for (
-			utility::vector1< Size >::const_iterator
-			ii = exclude_res.begin(), ie = exclude_res.end();
-			ii != ie; ++ii ) {
-		residue_mask[*ii] = false;
+	for (unsigned long exclude_re : exclude_res) {
+		residue_mask[exclude_re] = false;
 	}
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask);
 }
@@ -1122,11 +1110,8 @@ ScoreFunction::get_sub_score_exclude_res(
 	EnergyMap & emap
 ) const {
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for (
-			utility::vector1< Size >::const_iterator
-			ii = exclude_res.begin(), ie = exclude_res.end();
-			ii != ie; ++ii ) {
-		residue_mask[*ii] = false;
+	for (unsigned long exclude_re : exclude_res) {
+		residue_mask[exclude_re] = false;
 	}
 	get_sub_score(pose, residue_mask, emap);
 }
@@ -1143,11 +1128,8 @@ ScoreFunction::get_sub_score_exclude_res(
 	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for (
-			utility::vector1< Size >::const_iterator
-			ii = exclude_res.begin(), ie = exclude_res.end();
-			ii != ie; ++ii ) {
-		residue_mask[*ii] = false;
+	for (unsigned long exclude_re : exclude_res) {
+		residue_mask[exclude_re] = false;
 	}
 	get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask, emap);
 }
@@ -1256,10 +1238,9 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 	bool const minimizing( pose.energies().use_nblist() );
 	if ( minimizing ) return; // long range energies are handled as part of the 2-body energies in the minimization graph
 
-	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
-			iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for (const auto & ci_lr_2b_method : ci_lr_2b_methods_) {
 
-		LREnergyContainerOP lrec = pose.energies().nonconst_long_range_container( (*iter)->long_range_type() );
+		LREnergyContainerOP lrec = pose.energies().nonconst_long_range_container( ci_lr_2b_method->long_range_type() );
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
@@ -1270,7 +1251,7 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 					(*rni) != (*rniend); ++(*rni) ) {
 				EnergyMap emap;
 				if ( ! rni->energy_computed() ) {
-					(*iter)->residue_pair_energy(
+					ci_lr_2b_method->residue_pair_energy(
 						pose.residue(ii),
 						pose.residue( rni->upper_neighbor_id() ),
 						pose, *this, emap );
@@ -1292,11 +1273,10 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 
 	}
 
-	for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
-			iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for (const auto & cd_lr_2b_method : cd_lr_2b_methods_) {
 
 		LREnergyContainerOP lrec
-			= pose.energies().nonconst_long_range_container( (*iter)->long_range_type() );
+			= pose.energies().nonconst_long_range_container( cd_lr_2b_method->long_range_type() );
 
 		// Potentially O(N^2) operation...
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -1306,7 +1286,7 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 					(*rni) != (*rniend); ++(*rni) ) {
 
 				EnergyMap emap;
-				(*iter)->residue_pair_energy(
+				cd_lr_2b_method->residue_pair_energy(
 					pose.residue(ii),
 					pose.residue( rni->upper_neighbor_id() ),
 					pose, *this, emap );
@@ -1383,13 +1363,11 @@ ScoreFunction::eval_intrares_energy(
 	EnergyMap & emap
 ) const {
 	if ( ! any_intrares_energies_ ) return;
-	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
-			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->eval_intrares_energy( rsd, pose, *this, emap );
+	for (const auto & ci_2b_intrare : ci_2b_intrares_) {
+		ci_2b_intrare->eval_intrares_energy( rsd, pose, *this, emap );
 	}
-	for ( TWO_B_Methods::const_iterator iter = cd_2b_intrares_.begin(),
-			iter_end = cd_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->eval_intrares_energy( rsd, pose, *this, emap );
+	for (const auto & cd_2b_intrare : cd_2b_intrares_) {
+		cd_2b_intrare->eval_intrares_energy( rsd, pose, *this, emap );
 	}
 }
 
@@ -1400,13 +1378,11 @@ ScoreFunction::evaluate_rotamer_intrares_energies(
 	utility::vector1< core::PackerEnergy > & energies
 ) const {
 	if ( ! any_intrares_energies_ ) return;
-	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
-			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_intrares_energies( set, pose, *this, energies );
+	for (const auto & ci_2b_intrare : ci_2b_intrares_) {
+		ci_2b_intrare->evaluate_rotamer_intrares_energies( set, pose, *this, energies );
 	}
-	for ( TWO_B_Methods::const_iterator iter = cd_2b_intrares_.begin(),
-			iter_end = cd_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_intrares_energies( set, pose, *this, energies );
+	for (const auto & cd_2b_intrare : cd_2b_intrares_) {
+		cd_2b_intrare->evaluate_rotamer_intrares_energies( set, pose, *this, energies );
 	}
 }
 
@@ -1417,13 +1393,11 @@ ScoreFunction::evaluate_rotamer_intrares_energy_maps(
 	utility::vector1< EnergyMap > & emaps
 ) const {
 	if ( ! any_intrares_energies_ ) return;
-	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
-			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_intrares_energy_maps( set, pose, *this, emaps );
+	for (const auto & ci_2b_intrare : ci_2b_intrares_) {
+		ci_2b_intrare->evaluate_rotamer_intrares_energy_maps( set, pose, *this, emaps );
 	}
-	for ( TWO_B_Methods::const_iterator iter = cd_2b_intrares_.begin(),
-			iter_end = cd_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_intrares_energy_maps( set, pose, *this, emaps );
+	for (const auto & cd_2b_intrare : cd_2b_intrares_) {
+		cd_2b_intrare->evaluate_rotamer_intrares_energy_maps( set, pose, *this, emaps );
 	}
 }
 
@@ -1434,9 +1408,8 @@ ScoreFunction::eval_ci_intrares_energy(
 	EnergyMap & emap
 ) const {
 	if ( ! any_intrares_energies_ ) return;
-	for ( TWO_B_Methods::const_iterator iter = ci_2b_intrares_.begin(),
-			iter_end = ci_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->eval_intrares_energy( rsd, pose, *this, emap );
+	for (const auto & ci_2b_intrare : ci_2b_intrares_) {
+		ci_2b_intrare->eval_intrares_energy( rsd, pose, *this, emap );
 	}
 }
 
@@ -1447,9 +1420,8 @@ ScoreFunction::eval_cd_intrares_energy(
 	EnergyMap & emap
 ) const {
 	if ( ! any_intrares_energies_ ) return;
-	for ( TWO_B_Methods::const_iterator iter = cd_2b_intrares_.begin(),
-			iter_end = cd_2b_intrares_.end(); iter != iter_end; ++iter ) {
-		(*iter)->eval_intrares_energy( rsd, pose, *this, emap );
+	for (const auto & cd_2b_intrare : cd_2b_intrares_) {
+		cd_2b_intrare->eval_intrares_energy( rsd, pose, *this, emap );
 	}
 }
 
@@ -1461,9 +1433,8 @@ ScoreFunction::eval_ci_1b(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
-			iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->residue_energy( rsd, pose, emap );
+	for (const auto & ci_1b_method : ci_1b_methods_) {
+		ci_1b_method->residue_energy( rsd, pose, emap );
 	}
 }
 
@@ -1473,9 +1444,8 @@ ScoreFunction::eval_cd_1b(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CD_1B_Methods::const_iterator iter = cd_1b_methods_.begin(),
-			iter_end = cd_1b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->residue_energy( rsd, pose, emap );
+	for (const auto & cd_1b_method : cd_1b_methods_) {
+		cd_1b_method->residue_energy( rsd, pose, emap );
 	}
 }
 
@@ -1488,9 +1458,8 @@ ScoreFunction::eval_ci_2b(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->residue_pair_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->residue_pair_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1502,9 +1471,8 @@ ScoreFunction::eval_ci_2b_bb_bb(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->backbone_backbone_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->backbone_backbone_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1516,9 +1484,8 @@ ScoreFunction::eval_ci_2b_bb_sc(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->backbone_sidechain_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->backbone_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1529,9 +1496,8 @@ ScoreFunction::eval_ci_2b_sc_sc(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->sidechain_sidechain_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->sidechain_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1544,10 +1510,8 @@ ScoreFunction::eval_cd_2b(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CD_2B_Methods::const_iterator
-			iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->residue_pair_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->residue_pair_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1558,9 +1522,8 @@ ScoreFunction::eval_cd_2b_bb_bb(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->backbone_backbone_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->backbone_backbone_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1572,9 +1535,8 @@ ScoreFunction::eval_cd_2b_bb_sc(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->backbone_sidechain_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->backbone_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1585,9 +1547,8 @@ ScoreFunction::eval_cd_2b_sc_sc(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->sidechain_sidechain_energy( rsd1, rsd2, pose, *this, emap );
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->sidechain_sidechain_energy( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1607,13 +1568,11 @@ ScoreFunction::bump_check_full(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->bump_energy_full( rsd1, rsd2, pose, *this, emap );
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->bump_energy_full( rsd1, rsd2, pose, *this, emap );
 	}
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->bump_energy_full( rsd1, rsd2, pose, *this, emap );
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->bump_energy_full( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1633,13 +1592,11 @@ ScoreFunction::bump_check_backbone(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->bump_energy_backbone( rsd1, rsd2, pose, *this, emap );
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->bump_energy_backbone( rsd1, rsd2, pose, *this, emap );
 	}
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->bump_energy_backbone( rsd1, rsd2, pose, *this, emap );
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->bump_energy_backbone( rsd1, rsd2, pose, *this, emap );
 	}
 }
 
@@ -1650,14 +1607,12 @@ ScoreFunction::evaluate_rotamer_pair_energies(
 	pose::Pose const & pose,
 	FArray2D< core::PackerEnergy > & energy_table
 ) const {
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_pair_energies(
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->evaluate_rotamer_pair_energies(
 			set1, set2, pose, *this, weights(), energy_table );
 	}
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_pair_energies(
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->evaluate_rotamer_pair_energies(
 			set1, set2, pose, *this, weights(), energy_table );
 	}
 }
@@ -1686,9 +1641,8 @@ ScoreFunction::any_lr_residue_pair_energy(
 	Size res1,
 	Size res2
 ) const {
-	for ( LR_2B_Methods::const_iterator iter = lr_2b_methods_.begin(),
-			iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_residue_pair_energy( pose, res1, res2 ) ) {
+	for (const auto & lr_2b_method : lr_2b_methods_) {
+		if ( lr_2b_method->defines_residue_pair_energy( pose, res1, res2 ) ) {
 			return true;
 		}
 	}
@@ -1813,14 +1767,12 @@ ScoreFunction::evaluate_rotamer_background_energies(
 	pose::Pose const & pose,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const {
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_background_energies(
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		cd_2b_method->evaluate_rotamer_background_energies(
 			set1, residue2, pose, *this, weights(), energy_vector );
 	}
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->evaluate_rotamer_background_energies(
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		ci_2b_method->evaluate_rotamer_background_energies(
 			set1, residue2, pose, *this, weights(), energy_vector );
 	}
 }
@@ -1844,10 +1796,8 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 
 			// check to see if there's a non-zero weight for this method
 			bool has_nonzero_weight( false );
-			for ( ScoreTypes::const_iterator
-					iter     = method->score_types().begin(),
-					iter_end = method->score_types().end(); iter != iter_end; ++iter ) {
-				if ( weights_[ *iter ] != 0.0 ) {
+			for (auto iter : method->score_types()) {
+				if ( weights_[ iter ] != 0.0 ) {
 					has_nonzero_weight = true;
 					break;
 				}
@@ -1919,10 +1869,9 @@ ScoreFunction::check_methods() const
 	EnergyMap counter;
 	// counter indexes scoretypes to the number of energy methods. Each scoretype should only
 	// map to one energy method.
-	for ( AllMethods::const_iterator it=all_methods_.begin(),
-			it_end = all_methods_.end(); it != it_end; ++it ) {
-		for ( ScoreTypes::const_iterator t=(*it)->score_types().begin(),
-				t_end=(*it)->score_types().end(); t != t_end; ++t ) {
+	for (const auto & all_method : all_methods_) {
+		for ( auto t=all_method->score_types().begin(),
+				t_end=all_method->score_types().end(); t != t_end; ++t ) {
 			//++counter[ *t ]; //++ not defined for floats, right?
 			counter[ *t ] += 1;
 		}
@@ -1985,9 +1934,8 @@ ScoreFunction::setup_for_scoring(
 	pose::Pose & pose
 ) const {
 	if ( ! pose.energies().use_nblist() ) {
-		for ( AllMethods::const_iterator it=all_methods_.begin(),
-				it_end = all_methods_.end(); it != it_end; ++it ) {
-			(*it)->setup_for_scoring( pose, *this );
+		for (const auto & all_method : all_methods_) {
+			all_method->setup_for_scoring( pose, *this );
 		}
 	} else {
 		debug_assert( pose.energies().minimization_graph() );
@@ -2010,7 +1958,7 @@ ScoreFunction::setup_for_scoring(
 		}
 
 		/// 3. Whole-pose-context energies should be allowed to setup for scoring now.
-		for ( MinimizationGraph::Energies::const_iterator
+		for ( auto
 				iter     = mingraph->whole_pose_context_enmeths_begin(),
 				iter_end = mingraph->whole_pose_context_enmeths_end();
 				iter != iter_end; ++iter ) {
@@ -2026,9 +1974,8 @@ ScoreFunction::setup_for_packing(
 	utility::vector1< bool > const & residues_repacking,
 	utility::vector1< bool > const & residues_designing
 ) const {
-	for ( AllMethods::const_iterator iter=all_methods_.begin(),
-			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->setup_for_packing( pose, residues_repacking, residues_designing );
+	for (const auto & all_method : all_methods_) {
+		all_method->setup_for_packing( pose, residues_repacking, residues_designing );
 	}
 }
 
@@ -2038,9 +1985,8 @@ ScoreFunction::prepare_rotamers_for_packing(
 	pose::Pose const & pose,
 	conformation::RotamerSetBase & set
 ) const {
-	for ( AllMethods::const_iterator iter=all_methods_.begin(),
-			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->prepare_rotamers_for_packing( pose, set );
+	for (const auto & all_method : all_methods_) {
+		all_method->prepare_rotamers_for_packing( pose, set );
 	}
 }
 
@@ -2050,9 +1996,8 @@ ScoreFunction::update_residue_for_packing(
 	pose::Pose & pose,
 	Size resid
 ) const {
-	for ( AllMethods::const_iterator iter=all_methods_.begin(),
-			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->update_residue_for_packing( pose, resid );
+	for (const auto & all_method : all_methods_) {
+		all_method->update_residue_for_packing( pose, resid );
 	}
 }
 
@@ -2084,7 +2029,7 @@ ScoreFunction::setup_for_derivatives(
 	}
 
 	/// 3. Whole-pose-context energies should be allowed to setup for derivatives now.
-	for ( MinimizationGraph::Energies::const_iterator
+	for ( auto
 			iter     = mingraph->whole_pose_context_enmeths_begin(),
 			iter_end = mingraph->whole_pose_context_enmeths_end();
 			iter != iter_end; ++iter ) {
@@ -2098,9 +2043,8 @@ ScoreFunction::finalize_after_derivatives(
 	pose::Pose & pose
 ) const {
 	//std::cout << "ScoreFunction::setup_for_derivatives" << std::endl;
-	for ( AllMethods::const_iterator iter=all_methods_.begin(),
-			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-		(*iter)->finalize_after_derivatives( pose, *this );
+	for (const auto & all_method : all_methods_) {
+		all_method->finalize_after_derivatives( pose, *this );
 	}
 }
 
@@ -2128,10 +2072,9 @@ ScoreFunction::setup_for_minimizing(
 
 	MinimizationGraphOP g( new MinimizationGraph( pose.total_residue() ) );
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
-	for ( AllMethods::const_iterator iter=all_methods_.begin(),
-			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_high_order_terms( pose ) || (*iter)->minimize_in_whole_structure_context( pose ) ) {
-			eval_derivs_with_pose_enmeths.push_back( *iter );
+	for (const auto & all_method : all_methods_) {
+		if ( all_method->defines_high_order_terms( pose ) || all_method->minimize_in_whole_structure_context( pose ) ) {
+			eval_derivs_with_pose_enmeths.push_back( all_method );
 		}
 	}
 
@@ -2178,7 +2121,7 @@ ScoreFunction::setup_for_minimizing(
 	///    v.   adding a new edge if necessary,
 	///    vi.  and prepare the minimization data for this edge
 
-	for ( LR_2B_MethodIterator
+	for ( auto
 			iter = long_range_energies_begin(),
 			iter_end = long_range_energies_end();
 			iter != iter_end; ++iter ) {
@@ -2267,44 +2210,39 @@ ScoreFunction::setup_for_minimizing_for_node(
 	kinematics::DomainMap const & domain_map( min_map.domain_map() );
 	Size seqpos( rsd.seqpos() );
 	/// 1a: context-independent 1body energies
-	for ( CI_1B_Methods::const_iterator iter = ci_1b_methods_.begin(),
-			iter_end = ci_1b_methods_.end(); iter != iter_end; ++iter ) {
+	for (const auto & ci_1b_method : ci_1b_methods_) {
 
-		min_node.add_onebody_enmeth( *iter, rsd, pose, domain_map( seqpos ) );
+		min_node.add_onebody_enmeth( ci_1b_method, rsd, pose, domain_map( seqpos ) );
 		if ( domain_map( seqpos ) != 0 &&  accumulate_fixed_energies ) {
-			fixed_energies.accumulate( pose.energies().onebody_energies( seqpos ), (*iter)->score_types() );
+			fixed_energies.accumulate( pose.energies().onebody_energies( seqpos ), ci_1b_method->score_types() );
 		}
 	}
 	/// 1b: context-dependent 1body energies
-	for ( CD_1B_Methods::const_iterator iter = cd_1b_methods_.begin(),
-			iter_end = cd_1b_methods_.end(); iter != iter_end; ++iter ) {
+	for (const auto & cd_1b_method : cd_1b_methods_) {
 		// domain map check here?
 		// continue; -- BUG!
-		min_node.add_onebody_enmeth( *iter, rsd, pose, domain_map( seqpos ) );
+		min_node.add_onebody_enmeth( cd_1b_method, rsd, pose, domain_map( seqpos ) );
 	}
 	/// 1c: context-independent 2body energies
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
+	for (const auto & ci_2b_method : ci_2b_methods_) {
 		// domain map check here?
 		//std::cout << "seqpos " << seqpos << " " << domain_map( seqpos ) <<  std::endl;
-		min_node.add_twobody_enmeth( *iter, rsd, pose, weights_, domain_map( seqpos ) );
+		min_node.add_twobody_enmeth( ci_2b_method, rsd, pose, weights_, domain_map( seqpos ) );
 		if ( domain_map( seqpos ) != 0 && accumulate_fixed_energies ) {
 			//std::cout << "accumulating one body energies for " << seqpos << std::endl;
-			fixed_energies.accumulate( pose.energies().onebody_energies( seqpos ), (*iter)->score_types() );
+			fixed_energies.accumulate( pose.energies().onebody_energies( seqpos ), ci_2b_method->score_types() );
 		}
 	}
 
 	/// 1d: context-dependent 2body energies
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		min_node.add_twobody_enmeth( *iter, rsd, pose, weights_, domain_map( seqpos ) );
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		min_node.add_twobody_enmeth( cd_2b_method, rsd, pose, weights_, domain_map( seqpos ) );
 	}
 	/// 1e: all long-range 2body energies -- maybe this should be divided into ci and cd loops?
-	for ( LR_2B_Methods::const_iterator iter = lr_2b_methods_.begin(),
-			iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		min_node.add_twobody_enmeth( *iter, rsd, pose, weights_, domain_map( seqpos ) );
-		if ( domain_map( seqpos ) == 0 && accumulate_fixed_energies && (*iter)->method_type() == methods::ci_lr_2b ) {
-			fixed_energies.accumulate( pose.energies().onebody_energies( seqpos ), (*iter)->score_types() );
+	for (const auto & lr_2b_method : lr_2b_methods_) {
+		min_node.add_twobody_enmeth( lr_2b_method, rsd, pose, weights_, domain_map( seqpos ) );
+		if ( domain_map( seqpos ) == 0 && accumulate_fixed_energies && lr_2b_method->method_type() == methods::ci_lr_2b ) {
+			fixed_energies.accumulate( pose.energies().onebody_energies( seqpos ), lr_2b_method->score_types() );
 		}
 	}
 	min_node.setup_for_minimizing( rsd, pose, *this, min_map );
@@ -2339,20 +2277,18 @@ ScoreFunction::setup_for_minimizing_sr2b_enmeths_for_minedge(
 
 	/// First, the context-independent 2body energies
 	if ( res_moving_wrt_eachother ) {
-		for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-				iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-			min_edge.add_twobody_enmeth( *iter, res1, res2, pose, res_moving_wrt_eachother );
+		for (const auto & ci_2b_method : ci_2b_methods_) {
+			min_edge.add_twobody_enmeth( ci_2b_method, res1, res2, pose, res_moving_wrt_eachother );
 		}
 	} else if ( accumulate_fixed_energies ) {
 		energy_edge->add_to_energy_map( fixed_energies, ci_2b_types() );
 	}
 
 	/// Second, the context-dependent 2body energies
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( ! min_edge.add_twobody_enmeth( *iter, res1, res2, pose, res_moving_wrt_eachother )
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		if ( ! min_edge.add_twobody_enmeth( cd_2b_method, res1, res2, pose, res_moving_wrt_eachother )
 				&& accumulate_fixed_energies )  {
-			energy_edge->add_to_energy_map( fixed_energies, (*iter)->score_types() );
+			energy_edge->add_to_energy_map( fixed_energies, cd_2b_method->score_types() );
 		}
 	}
 }
@@ -2409,7 +2345,7 @@ ScoreFunction::eval_npd_atom_derivative(
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
 	/// Whole-pose-context energies should have their contribution calculated here.
-	for ( MinimizationGraph::Energies::const_iterator
+	for ( auto
 			iter     = mingraph->whole_pose_context_enmeths_begin(),
 			iter_end = mingraph->whole_pose_context_enmeths_end();
 			iter != iter_end; ++iter ) {
@@ -2464,7 +2400,7 @@ ScoreFunction::add_method( methods::EnergyMethodOP method )
 	all_methods_.push_back( method );
 
 	// mapping from ScoreType to EnergyMethod
-	for ( ScoreTypes::const_iterator
+	for ( auto
 			iter     = method->score_types().begin(),
 			iter_end = method->score_types().end(); iter != iter_end; ++iter ) {
 		methods_by_score_type_[ *iter ] = method;
@@ -2545,9 +2481,9 @@ ScoreFunction::add_extra_method(
 	std::map< ScoreType, Real > const & new_weights,
 	methods::EnergyMethod const & new_method
 ) {
-	for ( std::map< ScoreType, Real >::const_iterator it= new_weights.begin(); it != new_weights.end(); ++it ) {
-		ScoreType const new_type( it->first );
-		Real const new_weight( it->second );
+	for (const auto & it : new_weights) {
+		ScoreType const new_type( it.first );
+		Real const new_weight( it.second );
 		if ( ( weights_[ new_type ] != Real(0.0) ) ||
 				( std::find( new_method.score_types().begin(), new_method.score_types().end(), new_type ) ==
 				new_method.score_types().end() ) ) {
@@ -2579,10 +2515,10 @@ ScoreFunction::remove_method( methods::EnergyMethodOP method )
 	vector1_remove( all_methods_, methods::EnergyMethodCOP(method) );
 
 	// mapping from ScoreType to EnergyMethod
-	for ( ScoreTypes::const_iterator
+	for ( auto
 			iter     = method->score_types().begin(),
 			iter_end = method->score_types().end(); iter != iter_end; ++iter ) {
-		methods_by_score_type_[ *iter ] = 0;
+		methods_by_score_type_[ *iter ] = nullptr;
 		vector1_remove( score_types_by_method_type_[ method->method_type() ], *iter );
 	}
 
@@ -2663,8 +2599,8 @@ ScoreFunction::initialize_methods_arrays()
 	ws_methods_.clear();
 
 	// some need resizing
-	methods_by_score_type_.resize( n_score_types, 0 );
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) { methods_by_score_type_[ ii ] = 0; }
+	methods_by_score_type_.resize( n_score_types, nullptr );
+	for ( Size ii = 1; ii <= n_score_types; ++ii ) { methods_by_score_type_[ ii ] = nullptr; }
 	score_types_by_method_type_.resize( methods::n_energy_method_types );
 	for ( Size ii = 1; ii <= methods::n_energy_method_types; ++ii ) {
 		score_types_by_method_type_[ ii ].clear();
@@ -2678,22 +2614,19 @@ Distance
 ScoreFunction::max_atomic_interaction_cutoff() const {
 	Distance max_cutoff = 0;
 
-	for ( CD_2B_Methods::const_iterator iter = cd_2b_methods_.begin(),
-			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->atomic_interaction_cutoff() > max_cutoff ) {
-			max_cutoff = (*iter)->atomic_interaction_cutoff();
+	for (const auto & cd_2b_method : cd_2b_methods_) {
+		if ( cd_2b_method->atomic_interaction_cutoff() > max_cutoff ) {
+			max_cutoff = cd_2b_method->atomic_interaction_cutoff();
 		}
 	}
-	for ( CI_2B_Methods::const_iterator iter = ci_2b_methods_.begin(),
-			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->atomic_interaction_cutoff() > max_cutoff ) {
-			max_cutoff = (*iter)->atomic_interaction_cutoff();
+	for (const auto & ci_2b_method : ci_2b_methods_) {
+		if ( ci_2b_method->atomic_interaction_cutoff() > max_cutoff ) {
+			max_cutoff = ci_2b_method->atomic_interaction_cutoff();
 		}
 	}
-	for ( WS_Methods::const_iterator iter = ws_methods_.begin(),
-			iter_end = ws_methods_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->atomic_interaction_cutoff() > max_cutoff ) {
-			max_cutoff = (*iter)->atomic_interaction_cutoff();
+	for (const auto & ws_method : ws_methods_) {
+		if ( ws_method->atomic_interaction_cutoff() > max_cutoff ) {
+			max_cutoff = ws_method->atomic_interaction_cutoff();
 		}
 	}
 
@@ -2709,9 +2642,8 @@ ScoreFunction::indicate_required_context_graphs(
 	utility::vector1< bool > & context_graphs_required
 ) const
 {
-	for ( AllMethods::const_iterator it=all_methods_.begin(),
-			it_end = all_methods_.end(); it != it_end; ++it ) {
-		(*it)->indicate_required_context_graphs(context_graphs_required);
+	for (const auto & all_method : all_methods_) {
+		all_method->indicate_required_context_graphs(context_graphs_required);
 	}
 }
 
@@ -2758,12 +2690,11 @@ ScoreFunction::check_methods_in_right_order( ScoreType const & score_type_in_fir
 	ScoreType const & score_type_in_second_method ) const
 {
 	bool first_method_found( false );
-	for ( AllMethods::const_iterator it=all_methods_.begin(),
-			it_end = all_methods_.end(); it != it_end; ++it ) {
+	for (const auto & all_method : all_methods_) {
 
-		if ( ( (*it)->score_types() ).has_value( score_type_in_first_method ) ) first_method_found = true;
+		if ( ( all_method->score_types() ).has_value( score_type_in_first_method ) ) first_method_found = true;
 
-		if ( ( (*it)->score_types() ).has_value( score_type_in_second_method ) &&  !first_method_found ) return false;
+		if ( ( all_method->score_types() ).has_value( score_type_in_second_method ) &&  !first_method_found ) return false;
 
 	}
 	return true;

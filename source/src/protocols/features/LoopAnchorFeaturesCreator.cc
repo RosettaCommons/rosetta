@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 LoopAnchorFeaturesCreator::LoopAnchorFeaturesCreator() {}
-LoopAnchorFeaturesCreator::~LoopAnchorFeaturesCreator() {}
+LoopAnchorFeaturesCreator::~LoopAnchorFeaturesCreator() = default;
 FeaturesReporterOP LoopAnchorFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new LoopAnchorFeatures );
 }

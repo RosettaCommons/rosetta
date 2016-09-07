@@ -93,7 +93,7 @@ close_chainbreaks(
 		final_fold_tree = final_fold_tree_in;
 	}
 	//some sanity checks
-	runtime_assert( closure_protocol != 0 );
+	runtime_assert( closure_protocol != nullptr );
 	//runtime_assert  that all cut-points in final_fold_tree are also contained the actual fold_tree
 	for ( Size ncut = 1; ncut <= (Size)final_fold_tree.num_cutpoint(); ncut++ ) {
 		if ( !open_pose.fold_tree().is_cutpoint( final_fold_tree.cutpoint( ncut ) ) ) {
@@ -140,9 +140,8 @@ close_chainbreaks(
 		cuts.sort();
 
 		if ( tr.Debug.visible() ) {
-			for ( std::list< std::pair< Size, Size > >::iterator it = cuts.begin(), eit = cuts.end();
-					it != eit; ++it ) {
-				tr.Debug << "cut " << it->second << " max_loop_size " << it->first << std::endl;
+			for (auto & cut : cuts) {
+				tr.Debug << "cut " << cut.second << " max_loop_size " << cut.first << std::endl;
 			}
 		}
 		if ( cuts.empty() ) { //size() == 0 ) {
@@ -157,7 +156,7 @@ close_chainbreaks(
 
 
 		if ( ! checkpoint.recover_checkpoint(
-				open_pose, NULL, decoy_tag,  "_lc_" + ObjexxFCL::string_of( close_count ), false, checkpoint_foldtree ) ) {
+				open_pose, nullptr, decoy_tag,  "_lc_" + ObjexxFCL::string_of( close_count ), false, checkpoint_foldtree ) ) {
 			if ( remove_cut( cutpoint, pose, final_fold_tree ) ) {
 				if ( tr.Debug.visible() ) {
 					tr.Debug << "current fold-trees " << std::endl;
@@ -174,7 +173,7 @@ close_chainbreaks(
 					open_pose.fold_tree( pose.fold_tree() );
 				}
 			}
-			checkpoint.checkpoint( open_pose, NULL, decoy_tag,  "_lc_" + ObjexxFCL::string_of( close_count ), checkpoint_foldtree );
+			checkpoint.checkpoint( open_pose, nullptr, decoy_tag,  "_lc_" + ObjexxFCL::string_of( close_count ), checkpoint_foldtree );
 		} else {
 			// make sure the two poses have the same foldtree brefore removing one of the cuts in
 			// the closed pose. (this is not necessary when checkpointing is not active, but since only the

@@ -54,22 +54,22 @@ private:
 public:
 	FloatingResonance();
 	FloatingResonance( Resonance const& res, FloatList const&, ResonanceList* );
-	~FloatingResonance();
+	~FloatingResonance() override;
 
-	virtual ResonanceOP clone() {
+	ResonanceOP clone() override {
 		return ResonanceOP( new FloatingResonance( *this ) );
 	}
 
-	virtual core::Real pmatch( core::Real peakfreq, core::Real error, FoldResonance const& folder ) const;
-	virtual void write_to_stream( std::ostream& os ) const;
-	virtual void write_to_stream( std::ostream&, core::chemical::AA aa ) const;
-	virtual core::Size ambiguity() const {
+	core::Real pmatch( core::Real peakfreq, core::Real error, FoldResonance const& folder ) const override;
+	void write_to_stream( std::ostream& os ) const override;
+	void write_to_stream( std::ostream&, core::chemical::AA aa ) const override;
+	core::Size ambiguity() const override {
 		return partner_ids_.size();
 	}
-	virtual core::Size float_label( core::Size ifloat ) const;
+	core::Size float_label( core::Size ifloat ) const override;
 
 	/// @brief match the proton and corresponding label atom at same time
-	virtual bool match2D(
+	bool match2D(
 		core::Real proton_freq,
 		core::Real proton_error,
 		FoldResonance const& proton_folder,
@@ -77,7 +77,7 @@ public:
 		core::Real label_error,
 		FoldResonance const& label_folder,
 		ResonancePairs& matches
-	) const;
+	) const override;
 
 private:
 	void _write_partner_ids( std::ostream& os ) const;

@@ -428,12 +428,11 @@ combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
 	TR<<"Combining movemaps"<<std::endl;
 	//typedef core::id::TorsionID TorsionID;
 	typedef std::pair< Size, core::id::TorsionType > MoveMapTorsionID;
-	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
 
 	//Assert that a piece is set.
 
 	//Copy Nterminal MoveMapTorsionIDs
-	for ( MoveMapTorsionID_Map::const_iterator it=scaffold_mm->movemap_torsion_id_begin(), it_end=scaffold_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
+	for ( auto it=scaffold_mm->movemap_torsion_id_begin(), it_end=scaffold_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
 		//Scaffold to new MM
 		if ( it->first.first<=start ) {
 			MoveMapTorsionID new_id = MoveMapTorsionID(it->first.first, it->first.second);
@@ -442,7 +441,7 @@ combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
 	}
 
 	//Set insert residues
-	for ( MoveMapTorsionID_Map::const_iterator it=insert_mm->movemap_torsion_id_begin(), it_end=insert_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
+	for ( auto it=insert_mm->movemap_torsion_id_begin(), it_end=insert_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
 		//Add from start_
 		Size new_resnum = start + it->first.first -  cter_overhang_start;
 		MoveMapTorsionID new_id = MoveMapTorsionID(new_resnum, it->first.second);
@@ -451,7 +450,7 @@ combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
 
 	//Set Cterminal residues after insert. We may have a deletion then an insertion that we need to change the numbers for.
 	Size deleted_residues = original_end-start-1;
-	for ( MoveMapTorsionID_Map::const_iterator it=scaffold_mm->movemap_torsion_id_begin(), it_end=scaffold_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
+	for ( auto it=scaffold_mm->movemap_torsion_id_begin(), it_end=scaffold_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
 		//Check if residue exists in movemap.  Copy that info no matter what it is to the new movemap.
 		if ( it->first.first >=original_end ) {
 			//Add insertion length
@@ -482,28 +481,28 @@ perturb_backbone_for_test(Pose& pose, MoveMapOP mm){
 void
 add_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
 	core::Size i = 0;
-	for ( protocols::loops::Loops::const_iterator it = loops.begin(); it != loops.end(); ++it ) {
+	for (const auto & loop : loops) {
 		++i;
 		TR <<"Loop: "<< i << std::endl;
-		TR << "Add variant to: " << it->cut() << std::endl;
-		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, it->cut());
-		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, it->cut()+1);
+		TR << "Add variant to: " << loop.cut() << std::endl;
+		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, loop.cut());
+		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, loop.cut()+1);
 	}
 
 }
 
 void
 remove_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
-	for ( protocols::loops::Loops::const_iterator it = loops.begin(); it != loops.end(); ++it ) {
-		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, it->cut());
-		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, it->cut()+1);
+	for (const auto & loop : loops) {
+		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, loop.cut());
+		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, loop.cut()+1);
 	}
 }
 
 bool
 graft_closed(Pose & pose, Loops & loops){
-	for ( protocols::loops::Loops::const_iterator it = loops.begin(); it != loops.end(); ++it ) {
-		std::pair<bool, Size> peptide_bond_issues = protocols::loops::has_severe_pep_bond_geom_issues(pose, it->cut(), true, true, 1.5, 15, 15);
+	for (const auto & loop : loops) {
+		std::pair<bool, Size> peptide_bond_issues = protocols::loops::has_severe_pep_bond_geom_issues(pose, loop.cut(), true, true, 1.5, 15, 15);
 		if ( peptide_bond_issues.first == true ) {
 			return false;
 		}

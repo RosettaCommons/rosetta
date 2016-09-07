@@ -41,19 +41,19 @@ namespace util {
 ///  that they form a near-ideal disulfide bond.  Supports symmetric poses.
 void rebuild_disulfide( core::pose::Pose & pose,
 	core::Size lower_res, core::Size upper_res,
-	core::pack::task::PackerTaskOP packer_task = 0,
-	core::scoring::ScoreFunctionOP packer_score = 0,
-	core::kinematics::MoveMapOP mm = 0,
-	core::scoring::ScoreFunctionOP minimizer_score = 0 );
+	core::pack::task::PackerTaskOP packer_task = nullptr,
+	core::scoring::ScoreFunctionOP packer_score = nullptr,
+	core::kinematics::MoveMapOP mm = nullptr,
+	core::scoring::ScoreFunctionOP minimizer_score = nullptr );
 
 /// @brief Rebuild a number of pairs of cysteines (and possibly surrounding
 ///  residues) so that they form near-ideal disulfide bonds
 void rebuild_disulfide( core::pose::Pose & pose,
 	utility::vector1<std::pair<core::Size, core::Size> > disulfides,
-	core::pack::task::PackerTaskOP packer_task = 0,
-	core::scoring::ScoreFunctionOP packer_score = 0,
-	core::kinematics::MoveMapOP mm = 0,
-	core::scoring::ScoreFunctionOP minimizer_score = 0 );
+	core::pack::task::PackerTaskOP packer_task = nullptr,
+	core::scoring::ScoreFunctionOP packer_score = nullptr,
+	core::kinematics::MoveMapOP mm = nullptr,
+	core::scoring::ScoreFunctionOP minimizer_score = nullptr );
 
 } // util
 } // core

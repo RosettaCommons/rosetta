@@ -39,20 +39,20 @@ public:
 	LoopsFileOptions();
 
 	/// @brief Destructor.
-	virtual ~LoopsFileOptions();
+	~LoopsFileOptions() override;
 
 	/// @brief Read the configuration of the LoopsFile %resource from the tag generated from the resource definition
 	/// file.
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
-	);
+	) override;
 
 	/// @brief Return the name of this class (LoopsFileOptions).
-	virtual
+	
 	std::string
-	type() const;
+	type() const override;
 
 	/// @brief Return the value of the prohibit_single_residue_loops property.
 	bool prohibit_single_residue_loops() const;

@@ -21,8 +21,8 @@ namespace enzdes {
 
 class EnzdesJobInputterCreator : public protocols::jd2::JobInputterCreator {
 public:
-	virtual protocols::jd2::JobInputterOP create_JobInputter() const;
-	virtual std::string keyname() const;
+	protocols::jd2::JobInputterOP create_JobInputter() const override;
+	std::string keyname() const override;
 
 };
 

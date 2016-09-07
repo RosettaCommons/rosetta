@@ -31,21 +31,21 @@ public:
 	ScreeningFeatures();
 	ScreeningFeatures(ScreeningFeatures const & src);
 
-	virtual ~ScreeningFeatures();
+	~ScreeningFeatures() override;
 
-	std::string type_name() const;
+	std::string type_name() const override;
 
-	virtual void write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	void write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
-	utility::vector1<std::string> features_reporter_dependencies() const;
+	utility::vector1<std::string> features_reporter_dependencies() const override;
 
 
-	virtual core::Size
+	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & /*relevant_residues*/,
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session) override;
 
 	void
 	parse_my_tag(
@@ -53,7 +53,7 @@ public:
 		basic::datacache::DataMap & /*data*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/);
+		core::pose::Pose const & /*pose*/) override;
 
 private:
 	std::vector<utility::json_spirit::Pair> get_desriptor_data() const;

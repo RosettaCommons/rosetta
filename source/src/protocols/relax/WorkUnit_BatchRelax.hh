@@ -30,10 +30,10 @@ typedef utility::pointer::shared_ptr< WorkUnit_BatchRelax const > WorkUnit_Batch
 class WorkUnit_BatchRelax : public protocols::wum::WorkUnit_SilentStructStore {
 public:
 	WorkUnit_BatchRelax();
-	~WorkUnit_BatchRelax();
+	~WorkUnit_BatchRelax() override;
 
 	// @brief Run the workunit - overloaded by children of this class
-	virtual void run();
+	void run() override;
 
 	// @brief Hook for post processing such as rescoring etc.
 	virtual void pre_process();
@@ -41,7 +41,7 @@ public:
 	// @brief Hook for post processing such as rescoring etc.
 	virtual void post_process();
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const;
+	protocols::wum::WorkUnitBaseOP clone() const override;
 
 	void
 	set_native_pose( core::pose::PoseCOP native_pose);
@@ -57,17 +57,17 @@ private:
 class WorkUnit_BatchRelax_and_PostRescore : public WorkUnit_BatchRelax{
 public:
 	WorkUnit_BatchRelax_and_PostRescore();
-	~WorkUnit_BatchRelax_and_PostRescore();
+	~WorkUnit_BatchRelax_and_PostRescore() override;
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const;
+	protocols::wum::WorkUnitBaseOP clone() const override;
 
 	void set_defaults();
 
 	// @brief Hook for post processing such as rescoring etc.
-	virtual void pre_process();
+	void pre_process() override;
 
 	// @brief Hook for post processing such as rescoring etc.
-	virtual void post_process();
+	void post_process() override;
 
 	// @brief Hook for post processing such as rescoring etc.
 	virtual void rescore_all_decoys();

@@ -226,9 +226,9 @@ LoophashLoopInserter::find_fragments(
 ){
 	core::Size max_size=0;
 	core::Size min_size=100000;
-	for ( core::Size i = 0; i < lh_library_->hash_sizes().size(); i++ ) {
-		max_size = std::max(max_size, lh_library_->hash_sizes()[i]);
-		min_size = std::min(min_size, lh_library_->hash_sizes()[i]);
+	for (unsigned long i : lh_library_->hash_sizes()) {
+		max_size = std::max(max_size, i);
+		min_size = std::min(min_size, i);
 	}
 	return find_fragments(pose, lh_fragment_begin, lh_fragment_end, min_size, max_size);
 }

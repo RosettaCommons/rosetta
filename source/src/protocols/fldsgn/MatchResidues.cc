@@ -62,7 +62,7 @@ MatchResidues::MatchResidues()
 
 
 // @brief destructor
-MatchResidues::~MatchResidues() {}
+MatchResidues::~MatchResidues() = default;
 
 
 core::Real
@@ -128,8 +128,8 @@ MatchResidues::cart_product(
 	}
 
 	const VecSize& mevi = *me;
-	for ( VecSize::const_iterator it = mevi.begin(), mend = mevi.end(); it != mend; ++it ) {
-		rvi.push_back(*it);
+	for (unsigned long it : mevi) {
+		rvi.push_back(it);
 		cart_product(rvvi, rvi, me+1, end);
 		rvi.pop_back();
 	}

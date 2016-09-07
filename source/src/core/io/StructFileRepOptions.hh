@@ -46,14 +46,14 @@ public:
 	/// @brief Constructor that takes default values from a provided OptionCollection object
 	StructFileRepOptions( utility::options::OptionCollection const & options );
 
-	virtual ~StructFileRepOptions();
+	~StructFileRepOptions() override;
 
 	/// @brief Copy this object and return an owning pointer to the copy.
 	virtual StructFileRepOptionsOP clone() const;
 
-	virtual void parse_my_tag( utility::tag::TagCOP tag );
+	void parse_my_tag( utility::tag::TagCOP tag ) override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
 	// accessors
 	std::string const & check_if_residues_are_Ntermini() const;

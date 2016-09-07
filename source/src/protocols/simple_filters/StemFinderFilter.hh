@@ -31,18 +31,18 @@ class StemFinder : public filters::Filter
 {
 public:
 	StemFinder();
-	virtual ~StemFinder();
-	filters::FilterOP clone() const {
+	~StemFinder() override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new StemFinder( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new StemFinder() );
 	}
 
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	core::Real from_res() const{ return from_res_; }
 	void from_res( core::Real const r ){ from_res_ = r; }

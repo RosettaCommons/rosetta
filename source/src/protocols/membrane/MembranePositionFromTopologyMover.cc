@@ -66,13 +66,10 @@ MembranePositionFromTopologyMover::MembranePositionFromTopologyMover() :
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover
-MembranePositionFromTopologyMover::MembranePositionFromTopologyMover( MembranePositionFromTopologyMover const & src ) :
-	protocols::moves::Mover( src ),
-	anchor_at_res1_( src.anchor_at_res1_ )
-{}
+MembranePositionFromTopologyMover::MembranePositionFromTopologyMover( MembranePositionFromTopologyMover const & ) = default;
 
 /// @brief Destructor
-MembranePositionFromTopologyMover::~MembranePositionFromTopologyMover() {}
+MembranePositionFromTopologyMover::~MembranePositionFromTopologyMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

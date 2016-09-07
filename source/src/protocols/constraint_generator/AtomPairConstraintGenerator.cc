@@ -60,8 +60,7 @@ AtomPairConstraintGenerator::AtomPairConstraintGenerator():
 {
 }
 
-AtomPairConstraintGenerator::~AtomPairConstraintGenerator()
-{}
+AtomPairConstraintGenerator::~AtomPairConstraintGenerator() = default;
 
 protocols::constraint_generator::ConstraintGeneratorOP
 AtomPairConstraintGenerator::clone() const
@@ -212,13 +211,13 @@ AtomPairConstraintGenerator::add_constraints(
 	MappedAtoms const & iatoms,
 	MappedAtoms const & jatoms ) const
 {
-	for ( MappedAtoms::const_iterator iatom=iatoms.begin(); iatom!=iatoms.end(); ++iatom ) {
-		for ( MappedAtoms::const_iterator jatom=jatoms.begin(); jatom!=jatoms.end(); ++jatom ) {
-			core::Real const dist = ref_ires.xyz( iatom->ref_atom ).distance( ref_jres.xyz( jatom->ref_atom ) );
+	for (auto iatom : iatoms) {
+		for (auto jatom : jatoms) {
+			core::Real const dist = ref_ires.xyz( iatom.ref_atom ).distance( ref_jres.xyz( jatom.ref_atom ) );
 			if ( dist > max_distance_ ) continue;
 
-			core::id::AtomID const pose_atom1( iatom->pose_atom, pose_resid1 );
-			core::id::AtomID const pose_atom2( jatom->pose_atom, pose_resid2 );
+			core::id::AtomID const pose_atom1( iatom.pose_atom, pose_resid1 );
+			core::id::AtomID const pose_atom2( jatom.pose_atom, pose_resid2 );
 			core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, sd_ ) );
 			core::scoring::func::FuncOP weighted_func = scalar_weighted( sog_func, weight_ );
 			core::scoring::constraints::ConstraintCOP newcst(

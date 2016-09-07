@@ -96,7 +96,7 @@ EnzRepackMinimize::EnzRepackMinimize(std::string const & name) :
 	n_cycles_( 1 )
 {}
 
-EnzRepackMinimize::~EnzRepackMinimize() {}
+EnzRepackMinimize::~EnzRepackMinimize() = default;
 
 protocols::moves::MoverOP
 EnzRepackMinimize::clone() const
@@ -122,7 +122,7 @@ EnzRepackMinimize::apply( pose::Pose & pose )
 	for ( core::Size i=1; i<=n_cycles_; ++i ) {
 		(*scorefxn_repack_)(pose);
 		if ( cst_opt_ ) design_=true; // to enable poly-ala conversion
-		if ( task_factory_ ==0 ) task_ = enzprot->create_enzdes_pack_task( pose, design_ );
+		if ( task_factory_ ==nullptr ) task_ = enzprot->create_enzdes_pack_task( pose, design_ );
 		else task_ = create_ptask( pose );
 		if ( cst_opt_ ) {
 			TR<<"Starting PolyAla CstOptimization..."<<std::endl;
@@ -144,7 +144,7 @@ EnzRepackMinimize::apply( pose::Pose & pose )
 		if ( backrub_ ) {
 			core::pose::Pose old_Pose = pose;
 			design_ = false;
-			if ( task_factory_ ==0 ) task_ = enzprot->create_enzdes_pack_task( pose, design_ );
+			if ( task_factory_ ==nullptr ) task_ = enzprot->create_enzdes_pack_task( pose, design_ );
 			else task_ = create_ptask( pose );
 			enzprot->set_minimize_options(min_sc_, false/*min_bb*/,min_rb_,min_lig_,true/*backrub*/);
 			core::kinematics::MoveMapOP movemap = enzprot->create_enzdes_movemap( pose, task_, minimize_prot_jumps_  );
@@ -229,7 +229,7 @@ void
 EnzRepackMinimize::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
 
 	if ( tag->hasOption("task_operations") ) task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	else task_factory_ = NULL;
+	else task_factory_ = nullptr;
 
 	n_cycles_ = tag->getOption<core::Size>( "cycles", 1 );
 

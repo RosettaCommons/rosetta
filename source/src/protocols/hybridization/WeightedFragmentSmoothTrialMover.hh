@@ -48,8 +48,8 @@ public:
 	);
 	void update_sampler_weights( utility::vector1< core::Real > const residue_weights );
 
-	void apply(core::pose::Pose & pose);
-	std::string get_name() const;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
 	core::Size get_total_frames() { return total_frames_; }
 	core::Size get_nr_frags() { return nr_frags_; }
 private:

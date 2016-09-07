@@ -69,23 +69,23 @@ public:
 		std::string filename_root = "dnapacker"
 	);
 
-	virtual ~DnaInterfacePacker(); // important for properly "releasing" owning pointer data
+	~DnaInterfacePacker() override; // important for properly "releasing" owning pointer data
 
-	virtual moves::MoverOP fresh_instance() const;
-	virtual moves::MoverOP clone() const;
-	virtual std::string get_name() const;
+	moves::MoverOP fresh_instance() const override;
+	moves::MoverOP clone() const override;
+	std::string get_name() const override;
 
-	virtual void apply( Pose & );
+	void apply( Pose & ) override;
 
 	bool initialized() const;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	core::Real unbound_score( Pose const &, bool output_pdb = false, std::string pdbname = "" );
 

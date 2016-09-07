@@ -31,8 +31,7 @@ Svm_node_rosetta::Svm_node_rosetta(platform::Size index, platform::Real value){
 	value_ = value;
 }
 
-Svm_node_rosetta::~Svm_node_rosetta(){
-}
+Svm_node_rosetta::~Svm_node_rosetta()= default;
 
 
 Svm_rosetta::Svm_rosetta(string model_filename){
@@ -52,7 +51,7 @@ platform::Size Svm_rosetta::get_nr_class(){
 vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_rosettaOP> & features){
 	// TL 5/2013: Changed to use new and delete[] to avoid problems
 	//struct svm_node *x = (struct svm_node *) malloc((features.size()+1)*sizeof(struct svm_node));
-	struct svm_node *x = new svm_node[features.size()+1];
+	auto *x = new svm_node[features.size()+1];
 	for ( platform::Size ii=1; ii<=features.size(); ++ii ) {
 		x[ii-1].index = (int)features[ii]->index();
 		x[ii-1].value = (double)features[ii]->value();
@@ -60,7 +59,7 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 	x[features.size()].index = -1;
 	int nr_class = svm_get_nr_class(svm_model_);
 	//double *prob_estimates = (double *) malloc(nr_class*sizeof(double));
-	double *prob_estimates = new double[nr_class];
+	auto *prob_estimates = new double[nr_class];
 	/*double predict_label =*/ svm_predict_probability(svm_model_,x,prob_estimates);
 	vector1 <platform::Real> probs_to_return;
 	for ( int ii=0; ii<nr_class; ++ii ) {
@@ -75,7 +74,7 @@ platform::Real Svm_rosetta::predict( const vector1 <Svm_node_rosettaOP> & featur
 {
 	// TL 5/2013: Changed to use new and delete[] to avoid problems
 	//struct svm_node *x = (struct svm_node *) malloc((features.size()+1)*sizeof(struct svm_node));
-	struct svm_node *x = new svm_node[features.size()+1];
+	auto *x = new svm_node[features.size()+1];
 	for ( platform::Size ii=1; ii<=features.size(); ++ii ) {
 		x[ii-1].index = (int)features[ii]->index();
 		x[ii-1].value = (double)features[ii]->value();

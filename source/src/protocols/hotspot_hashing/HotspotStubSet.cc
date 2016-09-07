@@ -146,7 +146,7 @@ HotspotStubSet::HotspotStubSet( HotspotStubSet const & init ) :
 	hotspot_length_( init.hotspot_length_ )
 {}
 
-HotspotStubSet::~HotspotStubSet() {}
+HotspotStubSet::~HotspotStubSet() = default;
 
 void HotspotStubSet::clear() {
 	stub_set_.clear();
@@ -209,7 +209,7 @@ HotspotStubSetOP HotspotStubSet::colonyE( ) {
 		for ( std::multimap<core::Real, HotspotStubOP >::const_iterator i = res_stub_set.begin(); i != res_stub_set.end(); ++i ) {
 			core::Real stubi_E(0);
 			HotspotStubCOP stubi = i->second;
-			for ( std::multimap<core::Real, HotspotStubOP >::const_iterator j = i; j != res_stub_set.end(); ++j ) {
+			for ( auto j = i; j != res_stub_set.end(); ++j ) {
 				HotspotStubCOP stubj = j->second;
 				core::Real const rms = residue_sc_rmsd_no_super( stubi->residue(), stubj->residue() );
 				stubi_E += exp( 0-stubi->bonus_value() - pow(rms,3)/6*nres );
@@ -270,7 +270,7 @@ HotspotStubSetOP HotspotStubSet::cluster( ) {
 		for ( utility::vector1< HotspotStubCOP >::const_iterator i = stub_vec.begin(); i != stub_vec.end(); ++i ) {
 			HotspotStubCOP stub1 = *i;
 			core::Size stubidx_k( stubidx_i );
-			for ( utility::vector1< HotspotStubCOP >::const_iterator k = i; k != stub_vec.end(); ++k ) {
+			for ( auto k = i; k != stub_vec.end(); ++k ) {
 				HotspotStubCOP stub2 = *k;
 				core::Real const rms = residue_sc_rmsd_no_super( stub1->residue(), stub2->residue(), fxnal_group ); // do clustering only based on functional group
 				TR.Debug << "rmsd " << stubidx_i << " " << stubidx_k << " " << rms << std::endl;
@@ -417,22 +417,22 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 	// make a dummy stub with the same residue as the first stub and a user-supplied score
 	//HotspotStub scorecut_stub( stub_set_.begin()->second.begin()->residue(), scorecut );
 
-	for ( Hs_map::const_iterator ss_iter= stub_set_.begin(); ss_iter != stub_set_.end(); ++ss_iter ) {
+	for (const auto & ss_iter : stub_set_) {
 
 		if ( ( scorecut > 0) && ( scorecut <= 1 ) ) {
 			// add 0.5 to get rounding up
-			Size n_return = static_cast<Size>(ss_iter->second.size() * scorecut + 0.5);
+			Size n_return = static_cast<Size>(ss_iter.second.size() * scorecut + 0.5);
 			TR << "Finding the top " << n_return << " stubs." << std::endl;
 			if ( n_return < 1 ) n_return = 1;
 			Size i = 1;
-			for ( Hotspots::const_iterator stub_iter = ss_iter->second.begin(); stub_iter != ss_iter->second.end(); ++stub_iter ) {
+			for ( auto stub_iter = ss_iter.second.begin(); stub_iter != ss_iter.second.end(); ++stub_iter ) {
 				if ( i <= n_return ) {
 					new_set->add_stub_( stub_iter->second );
 					++i;
 				}
 			}
 		} else if ( scorecut <= 0 ) {
-			for ( Hotspots::const_iterator stub_iter = ss_iter->second.begin(); stub_iter != ss_iter->second.upper_bound( scorecut ) ; ++stub_iter ) {
+			for ( auto stub_iter = ss_iter.second.begin(); stub_iter != ss_iter.second.upper_bound( scorecut ) ; ++stub_iter ) {
 				//    if( stub_iter->bonus_value() <= scorecut ) {
 				new_set->add_stub_( stub_iter->second );
 				//    }
@@ -447,17 +447,17 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 HotspotStubCOP
 HotspotStubSet::get_best_energy_stub() const {
 	core::Real min_energy( 100000.0 );
-	HotspotStubOP ret( NULL );
-	for ( Hs_map::const_iterator hs_map_it=stub_set_.begin(); hs_map_it!=stub_set_.end(); ++hs_map_it ) {
+	HotspotStubOP ret( nullptr );
+	for (const auto & hs_map_it : stub_set_) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
-		for ( Hotspots::const_iterator hs_it=hs_map_it->second.begin(); hs_it!=hs_map_it->second.end(); ++hs_it ) {
+		for ( auto hs_it=hs_map_it.second.begin(); hs_it!=hs_map_it.second.end(); ++hs_it ) {
 			if ( min_energy > hs_it->first ) {
 				min_energy = hs_it->first;
 				ret = HotspotStubOP( new HotspotStub( *hs_it->second ) );
 			}
 		}
 	}
-	runtime_assert( ret != 0 );
+	runtime_assert( ret != nullptr );
 	return( ret );
 }
 
@@ -466,12 +466,12 @@ HotspotStubCOP
 HotspotStubSet::get_nearest_stub( core::conformation::ResidueCOP residue ) const {
 	using namespace core::conformation;
 
-	HotspotStubCOP nearest_stub( NULL );
+	HotspotStubCOP nearest_stub( nullptr );
 	core::Real nearest_distance( 100000.0 );
 	numeric::xyzVector< core::Real > const residue_CA( residue->xyz( "CA" ) );
-	for ( Hs_map::const_iterator map_it=stub_set_.begin(); map_it!=stub_set_.end(); ++map_it ) {
+	for (const auto & map_it : stub_set_) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
-		for ( Hotspots::const_iterator stub_it=map_it->second.begin(); stub_it!=map_it->second.end(); ++stub_it ) {
+		for ( auto stub_it=map_it.second.begin(); stub_it!=map_it.second.end(); ++stub_it ) {
 			numeric::xyzVector< core::Real > const stub_CA( stub_it->second->residue()->xyz( "CA" ) );
 
 			core::Real const distance( stub_CA.distance( residue_CA ) );
@@ -481,7 +481,7 @@ HotspotStubSet::get_nearest_stub( core::conformation::ResidueCOP residue ) const
 			}
 		}
 	}
-	runtime_assert( nearest_stub != 0 );
+	runtime_assert( nearest_stub != nullptr );
 	return( nearest_stub );
 }
 
@@ -495,15 +495,15 @@ HotspotStubSet::find_neighboring_stubs( HotspotStubCOP stub ) const {
 
 	core::Real const dist_threshold( 3.0 );
 
-	for ( Hs_map::const_iterator hs_map_it=stub_set_.begin(); hs_map_it!=stub_set_.end(); ++hs_map_it ) {
+	for (const auto & hs_map_it : stub_set_) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
-		for ( Hotspots::const_iterator hs_it=hs_map_it->second.begin(); hs_it!=hs_map_it->second.end(); ++hs_it ) {
+		for ( auto hs_it=hs_map_it.second.begin(); hs_it!=hs_map_it.second.end(); ++hs_it ) {
 			Residue const potential_neighbor( *(hs_it->second->residue()) );
-			for ( Atoms::const_iterator stub_atom_it=stub_rsd.atom_begin(); stub_atom_it!=stub_rsd.atom_end(); ++stub_atom_it ) {
-				for ( Atoms::const_iterator pot_neigh_it=potential_neighbor.atom_begin(); pot_neigh_it!=potential_neighbor.atom_end(); ++pot_neigh_it ) {
+			for ( auto stub_atom_it=stub_rsd.atom_begin(); stub_atom_it!=stub_rsd.atom_end(); ++stub_atom_it ) {
+				for ( auto pot_neigh_it=potential_neighbor.atom_begin(); pot_neigh_it!=potential_neighbor.atom_end(); ++pot_neigh_it ) {
 					core::Real const dist( stub_atom_it->xyz().distance( pot_neigh_it->xyz() ) );
 					if ( dist <= dist_threshold ) {
-						stub_subset.insert( std::make_pair( hs_map_it->first, hs_it->first ) );
+						stub_subset.insert( std::make_pair( hs_map_it.first, hs_it->first ) );
 						break;
 					}
 				}
@@ -516,20 +516,20 @@ HotspotStubSet::find_neighboring_stubs( HotspotStubCOP stub ) const {
 HotspotStubSet::Hotspots::const_iterator
 HotspotStubSet::get_stub( std::string const & residue_name3, core::Real const score ) const
 {
-	Hs_map::const_iterator hs_it( stub_set_.find( residue_name3 ) );
+	auto hs_it( stub_set_.find( residue_name3 ) );
 	return( hs_it->second.find( score ) );
 }
 
 /// @details removes the first occurence of stub in the stubset
 bool
 HotspotStubSet::remove_stub( HotspotStubCOP stub ){
-	for ( Hs_map::iterator datum( stub_set_.begin() ); datum!=stub_set_.end(); ++datum ) {
-		Hotspots::iterator it( datum->second.begin() );
-		for ( ; it!= datum->second.end(); ++it ) {
+	for (auto & datum : stub_set_) {
+		auto it( datum.second.begin() );
+		for ( ; it!= datum.second.end(); ++it ) {
 			if ( it->second == stub ) break;
 		}
-		if ( it != datum->second.end() ) {
-			datum->second.erase( it );
+		if ( it != datum.second.end() ) {
+			datum.second.erase( it );
 			handshake_stub_sets();
 			return( true );
 		}
@@ -541,9 +541,9 @@ HotspotStubSet::remove_stub( HotspotStubCOP stub ){
 /// @details removes a set of stubs from the stub_set_
 void
 HotspotStubSet::remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const & stubs ) {
-	for ( std::set< std::pair< std::string, core::Real > >::const_iterator stub_it=stubs.begin(); stub_it!=stubs.end(); ++stub_it ) {
-		Hs_map::iterator hs_it( stub_set_.find( stub_it->first ) );
-		hs_it->second.erase( get_stub( stub_it->first, stub_it->second )->first );
+	for (const auto & stub : stubs) {
+		auto hs_it( stub_set_.find( stub.first ) );
+		hs_it->second.erase( get_stub( stub.first, stub.second )->first );
 	}
 	handshake_stub_sets();
 }
@@ -573,16 +573,16 @@ void HotspotStubSet::read_data( std::string const & filename ) {
 	utility::vector1< core::pose::Pose > poses;
 	core::import_pose::pose_from_file( poses, filename , core::import_pose::PDB_file);
 
-	core::pose::PoseOP nonconstpose( NULL );//SJF pose will be attached later
-	for ( utility::vector1<core::pose::Pose>::iterator it = poses.begin(); it!= poses.end(); ++it ) {
+	core::pose::PoseOP nonconstpose( nullptr );//SJF pose will be attached later
+	for (auto & pose : poses) {
 		// get REMARKS associated with the pose
-		core::pose::PDBInfoCOP pdbinfo = it->pdb_info();
+		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		core::io::Remarks const & remarks ( pdbinfo->remarks() );
 		core::Real score = 0;
-		for ( std::vector< core::io::RemarkInfo >::const_iterator remark_it = remarks.begin(); remark_it != remarks.end(); ++remark_it ) {
+		for (const auto & remark : remarks) {
 			// special remark code for theoretical scores
-			if ( remark_it->num == 221 ) {
-				score = std::atof( remark_it->value.c_str() );
+			if ( remark.num == 221 ) {
+				score = std::atof( remark.value.c_str() );
 				if ( score >= -0.0001 ) {
 					TR<<"****WARNING WARNING**** stub score has zero or higher weight. Reading nonetheless."<<std::endl;
 				}
@@ -595,7 +595,7 @@ void HotspotStubSet::read_data( std::string const & filename ) {
 		//{
 		// make a stub from the last residue on the pose (which should only have one residue) and add it to the set
 		//using namespace core::chemical;
-		core::conformation::ResidueCOP residue( core::conformation::ResidueOP( new core::conformation::Residue( it->residue( it->total_residue() ) ) ) );
+		core::conformation::ResidueCOP residue( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( pose.total_residue() ) ) ) );
 		HotspotStubCOP stub( HotspotStubOP( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
 		add_stub_( stub );
 		//}
@@ -651,8 +651,8 @@ void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::Sco
 	amino_acids.push_back( "TRP" );
 	amino_acids.push_back( "TYR" );
 	amino_acids.push_back( "VAL" );
-	for ( utility::vector1<std::string>::iterator it = amino_acids.begin(); it != amino_acids.end(); ++it ) {
-		fill( pose, scorefxn, *it, n_stubs );
+	for (auto & amino_acid : amino_acids) {
+		fill( pose, scorefxn, amino_acid, n_stubs );
 	}
 	return;
 }
@@ -844,9 +844,9 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 	TR << "Rescoring hotspots...\n";
 	TR << "Original Rescored\n";
 	for ( Hs_map::const_iterator it = stub_set_.begin(); it != stub_set_.end(); ++it ) {
-		for ( Hotspots::const_iterator stub_it = it->second.begin(); stub_it != it->second.end(); ++stub_it ) {
+		for (const auto & stub_it : it->second) {
 			pose::Pose working_pose = pose;
-			conformation::ResidueCOP residue = stub_it->second->residue();
+			conformation::ResidueCOP residue = stub_it.second->residue();
 
 			// append the residue
 			working_pose.append_residue_by_jump( *residue, working_pose.total_residue(), "", "", true );
@@ -857,7 +857,7 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 				core::pose::add_variant_type_to_pose_residue( working_pose, core::chemical::SHOVE_BB, pose.total_residue() );
 			}
 			core::Real const score = get_residue_score_( working_pose, scorefxn, placed_seqpos );
-			TR << stub_it->first << " " << score << "\n";
+			TR << stub_it.first << " " << score << "\n";
 			HotspotStubCOP stub( HotspotStubOP( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
 			new_set->add_stub_( stub );
 		}
@@ -873,8 +873,8 @@ void HotspotStubSet::write_all( std::string const & filename ) const
 	// convenience number. would be better to read the last atom number prior to appending the new residue.
 	Size i = 0;
 	std::string tag( "" );
-	for ( Hs_map::const_iterator it = stub_set_.begin(); it != stub_set_.end(); ++it ) {
-		for ( Hotspots::const_iterator stub_it = it->second.begin(); stub_it != it->second.end(); ++stub_it ) {
+	for (const auto & it : stub_set_) {
+		for ( auto stub_it = it.second.begin(); stub_it != it.second.end(); ++stub_it ) {
 			tag = "S_" + stub_it->second->residue()->name3() + "_" + lead_zero_string_of( i, 9 );
 			write_stub( outstream, stub_it->second, tag );
 			++i;
@@ -909,8 +909,8 @@ void HotspotStubSet::pair_with_scaffold( core::pose::Pose const & pose, core::Si
 	std::vector< StubStatus > temp_status( chain_end-chain_beg+1, unchecked );
 
 	core::pose::PoseOP nonconstpose( new core::pose::Pose( *pose_ ) );
-	for ( Hs_map::iterator set_it=stub_set_.begin(); set_it!=stub_set_.end(); ++set_it ) {
-		for ( Hotspots::iterator stub_it = set_it->second.begin(); stub_it != set_it->second.end(); ++stub_it ) {
+	for (auto & set_it : stub_set_) {
+		for ( auto stub_it = set_it.second.begin(); stub_it != set_it.second.end(); ++stub_it ) {
 			// makes sure contained stubs know their StubSet parent
 			//   stub_it->second.set_stub_parent_( *this );
 			// readies stubs for setting of scaffold_status vector
@@ -924,8 +924,8 @@ void HotspotStubSet::pair_with_scaffold( core::pose::Pose const & pose, core::Si
 core::Size HotspotStubSet::size() const
 {
 	core::Size n_stubs(0);
-	for ( Hs_map::const_iterator it = stub_set_.begin(); it != stub_set_.end(); ++it ) {
-		n_stubs += it->second.size();
+	for (const auto & it : stub_set_) {
+		n_stubs += it.second.size();
 	}
 	return n_stubs;
 }
@@ -1319,11 +1319,10 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 
 			// Loop over all stubs with this restype
 			Hotspots res_stub_set( hotspot_stub_set->retrieve( (*restype )->name3() ) );
-			for ( std::multimap<core::Real,HotspotStubOP >::iterator hs_stub = res_stub_set.begin();
-					hs_stub != res_stub_set.end(); ++hs_stub ) {
+			for (auto & hs_stub : res_stub_set) {
 
 				// prevent Gly/Pro constraints
-				if ( (hs_stub->second->residue()->aa() == core::chemical::aa_gly) || (hs_stub->second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
+				if ( (hs_stub.second->residue()->aa() == core::chemical::aa_gly) || (hs_stub.second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
 					TR << "ERROR - Gly/Pro stubs cannot be used for constraints." << std::endl;
 					continue;
 				}
@@ -1334,11 +1333,11 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 					continue;
 				}
 
-				core::Real stub_bonus_value = hs_stub->second->bonus_value();
+				core::Real stub_bonus_value = hs_stub.second->bonus_value();
 				//TR << "stub: " << hs_stub->second->residue()->name3() << " pose" << pose.residue(resnum).name3() << " " << resnum << " StubEnergy=" << stub_bonus_value << std::endl;
 				// Evaluate how this stub fits on the scaffold
 				// orient the stub onto the pose
-				core::conformation::Residue placed_stub_res = *(hs_stub->second->residue());
+				core::conformation::Residue placed_stub_res = *(hs_stub.second->residue());
 				placed_stub_res.orient_onto_residue( unbound_pose.residue(resnum) );
 				// set phi,psi of the placed stub res to match the pose
 				placed_stub_res.mainchain_torsions()[1] = unbound_pose.phi(resnum);
@@ -1348,16 +1347,16 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 				if ( bump_energy > bump_cutoff ) {
 					// force cutoff to fail
 					stub_bonus_value = worst_allowed_stub_bonus + 0.1;
-					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+					hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 					//TR << " FailBumpEnergy=" << bump_energy;
 				} else if ( apply_self_energies ) {
 					//TR << " SuccBumpEnergy=" << bump_energy;
 					// note: if the pose can move, these energies won't be totally accurate (but they'll still be good estimates if the movement is small)
 					stub_bonus_value += evaluate_stub_self_energy_( placed_stub_res, unbound_pose, resnum, unbound_neighbor_graph, full_scorefxn );
-					TR.Debug << resnum << " InitBonus " << hs_stub->second->bonus_value() << "    SelfEBonus " << stub_bonus_value << std::endl;
+					TR.Debug << resnum << " InitBonus " << hs_stub.second->bonus_value() << "    SelfEBonus " << stub_bonus_value << std::endl;
 				}
 				if ( stub_bonus_value < worst_allowed_stub_bonus ) {
-					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
+					hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
 					//TR << " SuccSelfEnergy=" << stub_bonus_value << std::endl;
 					// ****** accept the pairing -- do we really want this? better to just reject, since bb fit doesn't necessarily mean good pair
 					// ****** hs_stub->scaffold_status( resnum, accept );
@@ -1365,12 +1364,12 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 					// Build a BackboneStubConstraint from this stub
 					if ( apply_ambiguous_constraints ) {
 						// Push it onto ambig_csts for this residue
-						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					} else {
 						// Apply it directly
-						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					}
-				} else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+				} else hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
 				// ****** reject the pairing
 				// ******else hs_stub->scaffold_status( resnum, reject );
@@ -1493,11 +1492,10 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 
 			// Loop over all stubs with this restype
 			Hotspots res_stub_set( hotspot_stub_set->retrieve( (*restype )->name3() ) );
-			for ( std::multimap<core::Real,HotspotStubOP >::iterator hs_stub = res_stub_set.begin();
-					hs_stub != res_stub_set.end(); ++hs_stub ) {
+			for (auto & hs_stub : res_stub_set) {
 
 				// prevent Gly/Pro constraints
-				if ( (hs_stub->second->residue()->aa() == core::chemical::aa_gly) || (hs_stub->second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
+				if ( (hs_stub.second->residue()->aa() == core::chemical::aa_gly) || (hs_stub.second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
 					TR << "ERROR - Gly/Pro stubs cannot be used for constraints." << std::endl;
 					continue;
 				}
@@ -1508,11 +1506,11 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 					continue;
 				}
 
-				core::Real stub_bonus_value = hs_stub->second->bonus_value();
+				core::Real stub_bonus_value = hs_stub.second->bonus_value();
 				//TR << "stub: " << hs_stub->second->residue()->name3() << " pose" << pose.residue(resnum).name3() << " " << resnum << " StubEnergy=" << stub_bonus_value;
 				// Evaluate how this stub fits on the scaffold
 				// orient the stub onto the pose
-				core::conformation::Residue placed_stub_res = *(hs_stub->second->residue());
+				core::conformation::Residue placed_stub_res = *(hs_stub.second->residue());
 				placed_stub_res.orient_onto_residue( unbound_pose.residue(resnum) );
 				// set phi,psi of the placed stub res to match the pose
 				placed_stub_res.mainchain_torsions()[1] = unbound_pose.phi(resnum);
@@ -1522,16 +1520,16 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 				if ( bump_energy > bump_cutoff ) {
 					// force cutoff to fail
 					stub_bonus_value = worst_allowed_stub_bonus + 0.1;
-					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+					hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 					//TR << " FailBumpEnergy=" << bump_energy;
 				} else if ( apply_self_energies ) {
 					//TR << " SuccBumpEnergy=" << bump_energy;
 					// note: if the pose can move, these energies won't be totally accurate (but they'll still be good estimates if the movement is small)
 					stub_bonus_value += evaluate_stub_self_energy_( placed_stub_res, unbound_pose, resnum, unbound_neighbor_graph, full_scorefxn );
-					TR.Debug << resnum << " InitBonus " << hs_stub->second->bonus_value() << "    SelfEBonus " << stub_bonus_value << std::endl;
+					TR.Debug << resnum << " InitBonus " << hs_stub.second->bonus_value() << "    SelfEBonus " << stub_bonus_value << std::endl;
 				}
 				if ( stub_bonus_value < worst_allowed_stub_bonus ) {
-					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
+					hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
 					//TR << " SuccSelfEnergy=" << stub_bonus_value << std::endl;
 					// ****** accept the pairing -- do we really want this? better to just reject, since bb fit doesn't necessarily mean good pair
 					// ****** hs_stub->scaffold_status( resnum, accept );
@@ -1539,12 +1537,12 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 					// Build a BackboneStubLinearConstraint from this stub
 					if ( apply_ambiguous_constraints ) {
 						// Push it onto ambig_csts for this residue
-						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					} else {
 						// Apply it directly
-						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					}
-				} else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+				} else hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
 				// ****** reject the pairing
 				// ******else hs_stub->scaffold_status( resnum, reject );

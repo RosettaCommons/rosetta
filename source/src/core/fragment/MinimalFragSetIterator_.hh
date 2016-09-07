@@ -74,7 +74,7 @@ protected:
 		}
 	};
 
-	virtual bool operator != ( FrameIteratorWorker_ const& fiw ) const {
+	bool operator != ( FrameIteratorWorker_ const& fiw ) const override {
 		MinimalFragSetIterator_ const& fsit ( dynamic_cast< MinimalFragSetIterator_ const& > ( fiw ) );
 		bool bOut ( outer_!=fsit.outer_ );
 		if ( !bOut && fsit.outer_ != fsit.outer_end_ && outer_ != outer_end_ ) {
@@ -82,7 +82,7 @@ protected:
 		} else return bOut;
 	};
 
-	virtual FrameIteratorWorker_& operator++ () {
+	FrameIteratorWorker_& operator++ () override {
 		if ( increment_inner() ) return *this; //increment inner-loop to the end
 		increment_outer(); //then increment outer-loop
 		return *this;
@@ -108,7 +108,7 @@ protected:
 	}
 
 
-	virtual FrameIteratorWorker_& operator = ( FrameIteratorWorker_ const& fiw ) {
+	FrameIteratorWorker_& operator = ( FrameIteratorWorker_ const& fiw ) override {
 		MinimalFragSetIterator_ const& fsit ( dynamic_cast< MinimalFragSetIterator_ const& > ( fiw ) );
 		inner_ = fsit.inner_;
 		inner_end_ = fsit.inner_end_;
@@ -117,11 +117,11 @@ protected:
 		return *this;
 	}
 
-	virtual FrameOP frame_ptr() {
+	FrameOP frame_ptr() override {
 		return *inner_; //call get() of owning_ptr
 	}
 
-	virtual FrameCOP frame_ptr() const {
+	FrameCOP frame_ptr() const override {
 		return *inner_; //call get() of owning_ptr
 	}
 

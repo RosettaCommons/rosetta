@@ -106,7 +106,7 @@ CloseFoldCreator::mover_name()
 }
 
 
-CloseFold::~CloseFold() {}
+CloseFold::~CloseFold() = default;
 
 CloseFold::CloseFold() :
 	protocols::moves::Mover( CloseFoldCreator::mover_name() )
@@ -288,8 +288,8 @@ CloseFold::find_loops(   pose::Pose & pose,
 bool
 CloseFold::is_cut( utility::vector1<Size> & cut_points, Size residue){
 	bool res_cut = false;
-	for ( utility::vector1<Size>::iterator it = cut_points.begin(); it != cut_points.end(); ++it ) {
-		if ( *it == residue ) {
+	for (unsigned long & cut_point : cut_points) {
+		if ( cut_point == residue ) {
 			res_cut = true;
 		}
 	}
@@ -303,7 +303,7 @@ CloseFold::fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP con
 	core::kinematics::FoldTree f_orig = pose.fold_tree();
 
 	//improvisory loop closure protocol from Frank
-	for ( Loops::iterator it=loops->v_begin(), it_end=loops->v_end(); it != it_end; ++it ) {
+	for ( auto it=loops->v_begin(), it_end=loops->v_end(); it != it_end; ++it ) {
 		Loop buildloop( *it );
 		set_single_loop_fold_tree( pose, buildloop );
 		set_extended_torsions( pose, buildloop );
@@ -386,7 +386,7 @@ CloseFold::apply( core::pose::Pose & pose ){
 	TR <<"residues " <<residues <<" ss assignment: "<< secstructure_.length();
 
 	if ( residues != secstructure_.length() ) {
-		TR.Debug <<"residues vs " <<residues <<" ss assignment: "<< secstructure_.size() << std::endl;;
+		TR.Debug <<"residues vs " <<residues <<" ss assignment: "<< secstructure_.size() << std::endl;
 		utility_exit_with_message("input residues under considerations do not agree with the number of secondary strcutres assignments");
 	}
 

@@ -26,6 +26,7 @@
 
 // Utility headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
+#include <utility>
 #include <utility/vector1_bool.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -212,7 +213,7 @@ is_nbr_atom(
 class Predicate: public utility::pointer::ReferenceCount {
 public:
 	Predicate() {};
-	virtual ~Predicate() {}
+	~Predicate() override = default;
 	virtual bool operator()(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
@@ -226,12 +227,12 @@ typedef utility::pointer::shared_ptr< Predicate const > PredicateCOP;
 class IsProteinCAPredicate: public Predicate {
 public:
 	IsProteinCAPredicate() {}
-	virtual ~IsProteinCAPredicate() {}
-	virtual bool operator()(
+	~IsProteinCAPredicate() override = default;
+	bool operator()(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
 		core::Size resno,
-		core::Size atomno) const { return is_protein_CA(pose1, pose2, resno, atomno); }
+		core::Size atomno) const override { return is_protein_CA(pose1, pose2, resno, atomno); }
 };
 
 // (Fill in others as needed.)
@@ -241,13 +242,13 @@ public:
 
 class ResRangePredicate: public Predicate {
 public:
-	ResRangePredicate( core::Size start, core::Size end, PredicateCOP predicate ) : start_(start), end_(end), pred_(predicate) {}
-	virtual ~ResRangePredicate() {}
-	virtual bool operator()(
+	ResRangePredicate( core::Size start, core::Size end, PredicateCOP predicate ) : start_(start), end_(end), pred_(std::move(predicate)) {}
+	~ResRangePredicate() override = default;
+	bool operator()(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
 		core::Size resno,
-		core::Size atomno) const;
+		core::Size atomno) const override;
 private:
 	core::Size start_;
 	core::Size end_;
@@ -256,13 +257,13 @@ private:
 
 class SelectedResPredicate: public Predicate {
 public:
-	SelectedResPredicate( std::list< core::Size > const & selected, PredicateCOP predicate ) : selected_(selected), pred_(predicate) {}
-	virtual ~SelectedResPredicate() {}
-	virtual bool operator()(
+	SelectedResPredicate( std::list< core::Size >  selected, PredicateCOP predicate ) : selected_(std::move(selected)), pred_(std::move(predicate)) {}
+	~SelectedResPredicate() override = default;
+	bool operator()(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
 		core::Size resno,
-		core::Size atomno) const;
+		core::Size atomno) const override;
 private:
 	std::list< core::Size > selected_;
 	PredicateCOP pred_;
@@ -270,13 +271,13 @@ private:
 
 class ExcludedResPredicate: public Predicate {
 public:
-	ExcludedResPredicate( utility::vector1< Size > const & excluded, PredicateCOP predicate ) : excluded_(excluded), pred_(predicate) {}
-	virtual ~ExcludedResPredicate() {}
-	virtual bool operator()(
+	ExcludedResPredicate( utility::vector1< Size > const & excluded, PredicateCOP predicate ) : excluded_(excluded), pred_(std::move(predicate)) {}
+	~ExcludedResPredicate() override = default;
+	bool operator()(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
 		core::Size resno,
-		core::Size atomno) const;
+		core::Size atomno) const override;
 private:
 	utility::vector1< Size > const & excluded_;
 	PredicateCOP pred_;

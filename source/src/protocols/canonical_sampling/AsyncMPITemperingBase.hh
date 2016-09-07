@@ -68,20 +68,20 @@ public:
 	AsyncMPITemperingBase();
 	AsyncMPITemperingBase( AsyncMPITemperingBase const& );
 	AsyncMPITemperingBase& operator=( AsyncMPITemperingBase const& );
-	virtual ~AsyncMPITemperingBase();
+	~AsyncMPITemperingBase() override;
 
-	virtual
-	void apply( core::pose::Pose& ) {};
+	
+	void apply( core::pose::Pose& ) override {};
 
 	/// @brief callback executed before any Monte Carlo trials
-	virtual void
+	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -89,18 +89,18 @@ public:
 		core::Size level,
 		core::Real temperature,
 		core::Size cycle
-	);
+	) override;
 
 	/// @brief callback executed after all Monte Carlo trials
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
-	virtual
-	bool finished_simulation( core::Size trials, core::Size ntrials);
+	
+	bool finished_simulation( core::Size trials, core::Size ntrials) override;
 
 protected:
 #ifdef USEMPI
@@ -112,8 +112,8 @@ protected:
 
 #endif
 
-	virtual
-	bool time_for_temp_move();
+	
+	bool time_for_temp_move() override;
 
 	int rank() {
 		return rank_;

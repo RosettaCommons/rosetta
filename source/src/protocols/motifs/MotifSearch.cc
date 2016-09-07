@@ -68,8 +68,7 @@ namespace motifs {
 
 static THREAD_LOCAL basic::Tracer ms_tr( "protocols.motifs.MotifSearch", basic::t_info );
 
-MotifSearch::~MotifSearch()
-{}
+MotifSearch::~MotifSearch() = default;
 
 MotifSearch::MotifSearch()
 : motif_library_(),
@@ -376,9 +375,8 @@ MotifSearch::incorporate_motifs(
 			if ( allowedtypes.empty() ) {
 				allowed = true;
 			}
-			for ( std::set< std::string >::const_iterator ir2(allowedtypes.begin() ), end_ir2( allowedtypes.end() );
-					ir2 != end_ir2; ++ir2 ) {
-				if ( (*ir2) == motifcop->restype_name1() ) {
+			for (const auto & allowedtype : allowedtypes) {
+				if ( allowedtype == motifcop->restype_name1() ) {
 					allowed = true;
 				}
 			}
@@ -428,9 +426,8 @@ MotifSearch::incorporate_motifs(
 				for ( Sizes::const_iterator bpos( target_positions.begin() ), end( target_positions.end() );
 						bpos != end; ++bpos ) {
 					std::set< std::string > allowed_types( target_positions_[*bpos] );
-					for ( std::set< std::string >::const_iterator type( allowed_types.begin()), atend( allowed_types.end() );
-							type != atend; ++type ) {
-						if ( basetype == *type ) {
+					for (const auto & allowed_type : allowed_types) {
+						if ( basetype == allowed_type ) {
 							// Should have a test to ensure that it has the atom types I'll be using?
 							Real dtest1( atm.xyz().distance_squared( posecopy.residue( *bpos ).xyz( "C1'" ) ) );
 							Real dtest1_auto(100);
@@ -585,9 +582,8 @@ MotifSearch::incorporate_motifs(
 			for ( std::map< std::string, std::map< Real, MotifHitOP > >::const_iterator bh( best_mhits_all.begin() ),
 					end( best_mhits_all.end() ); bh != end; ++bh ) {
 				Size hits = 0;
-				for ( std::map< Real, MotifHitOP >::const_iterator bh2( (bh->second).begin() ),
-						end2( (bh->second).end() ); bh2 != end2; ++bh2 ) {
-					MotifHitOP motifhitop( bh2->second );
+				for (const auto & bh2 : (bh->second)) {
+					MotifHitOP motifhitop( bh2.second );
 					if ( ! minimize_ ) {
 						(*ir)->keep_rotamer( *(motifhitop->build_rotamer()) );
 						(*ir)->keep_motif( *(motifhitop->motifcop()) );
@@ -725,9 +721,8 @@ MotifSearch::bp_rotamers(
 			}
 			Size rs( ((*ir)->best_rotamers()).size() );
 			for ( Size r(1) ; r <= rs; ++r ) {
-				for ( std::set< std::string >::const_iterator ir2(allowedtypes.begin() ), end_ir2( allowedtypes.end() );
-						ir2 != end_ir2; ++ir2 ) {
-					if ( (*ir2) == ((*ir)->best_rotamers()[r])->name3() ) {
+				for (const auto & allowedtype : allowedtypes) {
+					if ( allowedtype == ((*ir)->best_rotamers()[r])->name3() ) {
 						best_rotamers.push_back( (*ir)->best_rotamers()[r] );
 					}
 				}
@@ -1006,10 +1001,8 @@ MotifSearch::set_motif_library(
 	MotifLibrary & motiflibrary
 )
 {
-	for ( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motiflibrary.begin(), end_itr = motiflibrary.end();
-			motifcop_itr != end_itr; ++motifcop_itr ) {
-		protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-		motif_library_.push_back( motifcop );
+	for (auto motifcop : motiflibrary) {
+			motif_library_.push_back( motifcop );
 	}
 }
 

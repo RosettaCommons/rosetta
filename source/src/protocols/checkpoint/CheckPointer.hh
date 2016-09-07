@@ -32,6 +32,7 @@
 #endif
 
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 
@@ -51,8 +52,8 @@ namespace checkpoint {
 
 class FileBuffer {
 public:
-	FileBuffer( std::string const & filename, bool gzipped = false ):
-		filename_( filename ),
+	FileBuffer( std::string  filename, bool gzipped = false ):
+		filename_(std::move( filename )),
 		gzipped_( gzipped )
 	{
 	}
@@ -73,9 +74,9 @@ private:
 
 class CheckPointer : public utility::pointer::ReferenceCount {
 public:
-	CheckPointer( std::string const& type );
+	CheckPointer( std::string type ); // move-constructed
 
-	virtual ~CheckPointer() {
+	~CheckPointer() override {
 		clear_checkpoints();
 	}
 
@@ -112,7 +113,7 @@ public:
 		bool foldtree = false
 	)
 	{
-		return recover_checkpoint( pose, NULL, current_tag, id, fullatom, foldtree );
+		return recover_checkpoint( pose, nullptr, current_tag, id, fullatom, foldtree );
 	}
 
 	void checkpoint(
@@ -139,7 +140,7 @@ public:
 		std::string const& id,
 		bool foldtree = false
 	){
-		checkpoint( pose, NULL, current_tag, id, foldtree );
+		checkpoint( pose, nullptr, current_tag, id, foldtree );
 	}
 
 

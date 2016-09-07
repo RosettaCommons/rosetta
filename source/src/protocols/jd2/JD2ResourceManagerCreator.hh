@@ -35,15 +35,15 @@ namespace jd2 {
 class JD2ResourceManagerCreator : public basic::resource_manager::ResourceManagerCreator
 {
 public:
-	virtual
-	~JD2ResourceManagerCreator();
+	
+	~JD2ResourceManagerCreator() override;
 
-	virtual
+	
 	basic::resource_manager::ResourceManager *
-	create_resource_manager() const;
+	create_resource_manager() const override;
 
-	virtual
-	std::string manager_type() const;
+	
+	std::string manager_type() const override;
 
 
 };

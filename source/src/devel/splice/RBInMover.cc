@@ -72,9 +72,7 @@ RBInMover::RBInMover(): moves::Mover("RBIn"),
 	jump_library_.clear();
 }
 
-RBInMover::~RBInMover()
-{
-}
+RBInMover::~RBInMover() = default;
 
 void
 RBInMover::jump_library( utility::vector1< core::kinematics::Jump > j ){ jump_library_ = j; }

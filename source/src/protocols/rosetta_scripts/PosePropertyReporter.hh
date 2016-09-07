@@ -37,7 +37,7 @@ class PosePropertyReporter : public utility::pointer::ReferenceCount {
 
 protected:
 	PosePropertyReporter();
-	virtual ~PosePropertyReporter();
+	~PosePropertyReporter() override;
 
 public:
 	static std::string name() {

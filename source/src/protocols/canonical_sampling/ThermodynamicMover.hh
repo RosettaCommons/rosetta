@@ -60,8 +60,8 @@ public:
 	ThermodynamicMover();
 
 	/// @brief Default destructor.
-	virtual
-	~ThermodynamicMover();
+	
+	~ThermodynamicMover() override;
 
 	/// @brief Callback executed before any Monte Carlo trials are attempted.
 	virtual
@@ -80,9 +80,9 @@ public:
 	);
 
 	/// @brief Return the proposal density ratio for last apply method.
-	virtual
+	
 	core::Real
-	last_proposal_density_ratio();
+	last_proposal_density_ratio() override;
 
 	/// @brief Callback executed after all Monte Carlo trials are completed.
 	virtual

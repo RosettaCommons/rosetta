@@ -40,20 +40,20 @@ public:
 		set_defaults();
 	}
 
-	virtual ~MPI_Refine_Master(){};
+	~MPI_Refine_Master() override= default;
 
 	void set_defaults();
 
 public:
-	virtual void go();
+	void go() override;
 
 protected: // overloaded functions
 
-	virtual void init();
+	void init() override;
 
-	virtual void process_inbound_wus();
+	void process_inbound_wus() override;
 
-	virtual void process_outbound_wus();
+	void process_outbound_wus() override;
 
 	// not an overloaded, but for clarity - same level with process_inbound/outbound
 	bool process_round();
@@ -75,7 +75,7 @@ protected: // Added functions
 
 	void load_sample_weight();
 
-	virtual bool add_structure_to_library( core::io::silent::SilentStructOP ss, std::string add_algorithm = "" );
+	bool add_structure_to_library( core::io::silent::SilentStructOP ss, std::string add_algorithm = "" ) override;
 
 	void feedback_structures_to_emperor( bool get_feedback,
 		std::string const pick_strategy,

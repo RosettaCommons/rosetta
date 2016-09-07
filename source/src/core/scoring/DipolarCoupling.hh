@@ -67,10 +67,10 @@ public:
 	DipolarCoupling& operator=(DipolarCoupling const & other);
 
 	//explicit destructor because we use raw pointers for buffers
-	~DipolarCoupling() {}
+	~DipolarCoupling() override = default;
 
 	//this class lives in the PoseCache.... need to provide clone()
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new DipolarCoupling(*this) );
 	}
 

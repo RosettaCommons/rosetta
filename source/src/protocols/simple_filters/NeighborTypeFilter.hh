@@ -36,19 +36,19 @@ public:
 		filters::Filter( "NeighborType" ) {
 		target_residue_ = target_residue; residue_types_ = residue_types; distance_threshold_ = distance_threshold;
 	}
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	std::vector< core::Size > compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new NeighborTypeFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new NeighborTypeFilter() );
 	}
-	void clear() { residue_types_.clear(); }
-	virtual ~NeighborTypeFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void clear() override { residue_types_.clear(); }
+	~NeighborTypeFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Size target_residue_;
 	utility::vector1< bool > residue_types_;

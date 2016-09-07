@@ -52,7 +52,7 @@ public:
 	LigandDockProtocol();
 
 	LigandDockProtocol(
-		std::string const & protocol,
+		std::string protocol,
 		bool const minimize_ligand,
 		bool const minimize_backbone,
 		bool const tether_ligand,
@@ -63,15 +63,15 @@ public:
 		core::Size const ligand_shear_moves=0
 	);
 
-	virtual ~LigandDockProtocol();
+	~LigandDockProtocol() override;
 
 
 	LigandDockProtocolOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<LigandDockProtocol>( Mover::shared_from_this() ); }
 
 	void add_start_from(core::Real x, core::Real y, core::Real z);
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void
 	append_ligand_docking_scores(
@@ -79,7 +79,7 @@ public:
 		core::pose::Pose const & after,
 		core::scoring::ScoreFunctionCOP scorefxn,
 		std::map< std::string, core::Real > & scores, //< appended to for output
-		protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP constraint_io = NULL
+		protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP constraint_io = nullptr
 	) const;
 
 private:

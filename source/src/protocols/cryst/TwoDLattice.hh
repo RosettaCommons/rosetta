@@ -139,14 +139,14 @@ public:
 	);
 
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "MakeLayerMover";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP(new MakeLayerMover(*this)); }
-	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP(new MakeLayerMover()); }
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLayerMover(*this)); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLayerMover()); }
 
 	void
 	wallpaper_group( WallpaperGroup const & wg_in ) {
@@ -163,7 +163,7 @@ public:
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 

@@ -62,7 +62,7 @@ class Environment : public core::environment::EnvCore, public utility::pointer::
 
 public:
 	Environment( std::string name );
-	virtual ~Environment();
+	~Environment() override;
 
 	//@brief register the given mover and, recursively, and submovers yielded by yield_submovers.
 	void register_mover( moves::MoverOP );

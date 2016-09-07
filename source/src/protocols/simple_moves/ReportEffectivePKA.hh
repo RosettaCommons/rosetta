@@ -73,22 +73,22 @@ private:
 class ReportEffectivePKA : public moves::Mover {
 public:
 	ReportEffectivePKA();
-	virtual ~ReportEffectivePKA() {}
+	~ReportEffectivePKA() override = default;
 
 	void init();
 
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const { return "ReportEffectivePKA"; }
+	std::string get_name() const override { return "ReportEffectivePKA"; }
 
-	moves::MoverOP clone() const { return moves::MoverOP( new ReportEffectivePKA( *this ) ); }
-	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ReportEffectivePKA ); }
+	moves::MoverOP clone() const override { return moves::MoverOP( new ReportEffectivePKA( *this ) ); }
+	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ReportEffectivePKA ); }
 
 	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL

@@ -120,7 +120,7 @@ Ab_TemplateInfo::set_default( bool camelid ) {
 pose::Pose Ab_TemplateInfo::get_one_template_pose(std::string cdr_name) {
 
 	//TemplatePoseMap::iterator iter = templates_poses_.begin();
-	TemplatePoseMap::iterator iter = templates_poses_.find(cdr_name);
+	auto iter = templates_poses_.find(cdr_name);
 	if ( iter == templates_poses_.end() ) {
 		utility_exit_with_message("Cannot find pose to return!");
 	}

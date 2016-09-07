@@ -60,7 +60,7 @@ public:
 
 public:
 	PseudoBond();
-	virtual ~PseudoBond();
+	~PseudoBond() override;
 	PseudoBond( PseudoBond const &);
 	PseudoBond & operator = ( PseudoBond const & rhs );
 
@@ -121,7 +121,7 @@ public:
 
 public:
 	PseudoBondCollection();
-	virtual ~PseudoBondCollection();
+	~PseudoBondCollection() override;
 
 	PseudoBondCollectionCOP
 	clone_with_new_sequence_numbering(

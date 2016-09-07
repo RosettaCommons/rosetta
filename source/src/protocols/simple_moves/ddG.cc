@@ -237,8 +237,8 @@ void ddG::parse_my_tag(
 
 	if ( tag->hasOption("chain_name") ) {
 		utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
-		for ( utility::vector1<std::string>::iterator chain_name_it = chain_names.begin(); chain_name_it != chain_names.end(); ++chain_name_it ) {
-			chain_ids_.push_back(core::pose::get_chain_id_from_chain(*chain_name_it,pose));
+		for (auto & chain_name : chain_names) {
+			chain_ids_.push_back(core::pose::get_chain_id_from_chain(chain_name,pose));
 		}
 	}
 
@@ -275,7 +275,7 @@ void ddG::parse_my_tag(
 	TR.flush();
 }
 
-ddG::~ddG() {}
+ddG::~ddG() = default;
 
 void ddG::scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in ) {
 	scorefxn_ = scorefxn_in->clone();
@@ -305,7 +305,7 @@ void ddG::apply(Pose & pose)
 		calculate(pose);
 
 		// Carry on the gathered PB energy info.
-		if ( pb_cached_data_ != 0 ) {
+		if ( pb_cached_data_ != nullptr ) {
 			pose.data().set(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, pb_cached_data_);
 		}
 
@@ -326,8 +326,8 @@ void ddG::apply(Pose & pose)
 	}
 
 	average_ddg /= repeats_;
-	for ( std::map<Size,Real>::iterator avg_it = average_per_residue_ddgs.begin(); avg_it != average_per_residue_ddgs.end(); ++avg_it ) {
-		avg_it->second /= repeats_;
+	for (auto & average_per_residue_ddg : average_per_residue_ddgs) {
+		average_per_residue_ddg.second /= repeats_;
 	}
 
 	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
@@ -385,19 +385,16 @@ ddG::report_ddG( std::ostream & out ) const
 	out << "-----------------------------------------\n";
 	out << " Scores                       Wghtd.Score\n";
 	out << "-----------------------------------------\n";
-	std::map< ScoreType, Real >::const_iterator unbound_it=unbound_energies_.begin();
-	for ( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
-			bound_it!=bound_energies_.end();
-			++bound_it
-			) {
+	auto unbound_it=unbound_energies_.begin();
+	for (const auto & bound_energie : bound_energies_) {
 		if ( unbound_it != unbound_energies_.end() ) {
-			if ( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_it->second ) > 0.001 ) {
-				out << ' ' << LJ( 24, bound_it->first ) << ' ' << F( 9,3, bound_it->second - unbound_it->second )<<'\n';
+			if ( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_energie.second ) > 0.001 ) {
+				out << ' ' << LJ( 24, bound_energie.first ) << ' ' << F( 9,3, bound_energie.second - unbound_it->second )<<'\n';
 			}
 			++unbound_it;
 		} else {
-			if ( std::abs( bound_it->second ) > 0.001 ) {
-				out << ' ' << LJ( 24, bound_it->first ) << ' ' << F( 9,3, bound_it->second )<<'\n';
+			if ( std::abs( bound_energie.second ) > 0.001 ) {
+				out << ' ' << LJ( 24, bound_energie.first ) << ' ' << F( 9,3, bound_energie.second )<<'\n';
 			}
 		}
 	}
@@ -411,16 +408,13 @@ ddG::sum_ddG() const
 {
 	Real sum_energy(0.0);
 
-	std::map< ScoreType, Real >::const_iterator unbound_it=unbound_energies_.begin();
-	for ( std::map< ScoreType, Real >::const_iterator bound_it=bound_energies_.begin();
-			bound_it!=bound_energies_.end();
-			++bound_it
-			) {
+	auto unbound_it=unbound_energies_.begin();
+	for (const auto & bound_energie : bound_energies_) {
 		if ( unbound_it != unbound_energies_.end() ) {
-			sum_energy += bound_it->second - unbound_it->second;
+			sum_energy += bound_energie.second - unbound_it->second;
 			++unbound_it;
 		} else {
-			sum_energy += bound_it->second;
+			sum_energy += bound_energie.second;
 		}
 	}
 	return sum_energy;
@@ -449,13 +443,13 @@ ddG::calculate( pose::Pose const & pose_original )
 	// Save the original state if pb
 	//----------------------------------
 	// The state is marked in pose's data-cache.
-	PBLifetimeCacheOP cached_data = 0;
+	PBLifetimeCacheOP cached_data = nullptr;
 	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
 
 	// First see if this method is called as part of PB-electrostatic computation.
 	if ( pb_enabled_ ) {
 		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
-		runtime_assert( cached_data != 0 );
+		runtime_assert( cached_data != nullptr );
 		original_state = cached_data->get_energy_state();
 	}
 
@@ -566,9 +560,8 @@ ddG::unbind( pose::Pose & pose ) const
 	} else if ( chain_ids_.size() > 0 ) {
 		//We want to translate each chain the same direction, though it doesnt matter much which one
 		Vector translation_axis(1,0,0);
-		for ( utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end(); ++chain_it ) {
-			core::Size current_chain_id = *chain_it;
-			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
+		for (unsigned long current_chain_id : chain_ids_) {
+				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 			translate->step_size( translate_by_ );

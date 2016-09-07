@@ -156,8 +156,7 @@ FlexPepDockingProtocol::FlexPepDockingProtocol(
 
 // empty destructor - for good includiong of OP clasesses
 FlexPepDockingProtocol::~FlexPepDockingProtocol()
-{
-}
+= default;
 
 // cloner
 protocols::moves::MoverOP FlexPepDockingProtocol::clone() const
@@ -571,7 +570,7 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
 		core::scoring::constraints::ConstraintSetOP site_cstset( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_file_option(), core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose  ) );
 		TR << "Read Site Constraints: " << ( site_cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
-		utility::vector1< core::scoring::constraints::ConstraintCOP > site_cstset_list( site_cstset->get_all_constraints() );;
+		utility::vector1< core::scoring::constraints::ConstraintCOP > site_cstset_list( site_cstset->get_all_constraints() );
 
 		utility::vector1< Size > site_cst_residues;
 		utility::vector1< Size > binding_site_residues;
@@ -709,7 +708,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 
 	if ( pcs_num == 1 ) {
 		Size rand_num = (Size)(numeric::random::uniform() + 0.5);
-		float rot_angle = 180.0*(rand_num);;
+		float rot_angle = 180.0*(rand_num);
 		TR << "Flipping the peptide " << std::endl;
 		rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
 		spin_mover.apply(pose);
@@ -1279,7 +1278,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	TR << "apply" << std::endl;
 
 	// if no native provided, use pose as pseudo-native reference
-	if ( get_native_pose().get() == NULL ) {
+	if ( get_native_pose().get() == nullptr ) {
 		set_native_pose( PoseCOP( PoseOP( new pose::Pose(pose) ) ) ); // TODO: debug this - will it work for PoseCOP;
 		TR.Warning << "WARNING: No native supplied by used - using starting structure as reference for statistics" << std::endl;
 	}

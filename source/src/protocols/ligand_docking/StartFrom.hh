@@ -37,12 +37,12 @@ class StartFrom : public protocols::moves::Mover
 {
 public:
 	StartFrom();
-	virtual ~StartFrom();
+	~StartFrom() override;
 	StartFrom(StartFrom const & that);
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -50,7 +50,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// @brief Add the given coordinates as a valid starting position for the given pdb_tag
 	void add_coords(core::Vector const & coords, std::string const & pdb_tag = "default");
@@ -70,7 +70,7 @@ public:
 	/// @brief Get whether we should use the neighbor atom or the all-atom centroid to center the ligand
 	bool use_nbr() { return use_nbr_; }
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	/// @brief Parse the json-format startfrom file
 	void parse_startfrom_file(std::string const & filename);

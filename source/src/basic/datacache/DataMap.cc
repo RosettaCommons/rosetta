@@ -23,7 +23,7 @@ namespace datacache {
 static THREAD_LOCAL basic::Tracer TR( "basic.datacache.DataMap" );
 
 DataMap::DataMap() {}
-DataMap::~DataMap() {}
+DataMap::~DataMap() = default;
 
 bool
 DataMap::add( std::string const & type, std::string const & name, utility::pointer::ReferenceCountOP const op ){

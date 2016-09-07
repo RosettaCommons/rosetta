@@ -49,16 +49,16 @@ public:
 
 	RenderGridsToKinemage();
 	RenderGridsToKinemage(RenderGridsToKinemage const & mover);
-	virtual ~RenderGridsToKinemage();
-	virtual moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual void apply(core::pose::Pose & pose);
-	virtual void parse_my_tag(utility::tag::TagCOP tag,
+	~RenderGridsToKinemage() override;
+	moves::MoverOP clone() const override;
+	std::string get_name() const override;
+	void apply(core::pose::Pose & pose) override;
+	void parse_my_tag(utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 private:
 
 	void setup_colors();

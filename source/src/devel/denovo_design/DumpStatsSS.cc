@@ -79,7 +79,7 @@ DumpStatsSS::DumpStatsSS(DumpStatsSS const &rval):
 {}
 
 
-DumpStatsSS::~DumpStatsSS() {}
+DumpStatsSS::~DumpStatsSS() = default;
 
 void DumpStatsSS::apply( core::pose::Pose & pose ) {
 	using namespace ObjexxFCL::format;
@@ -107,7 +107,7 @@ void DumpStatsSS::apply( core::pose::Pose & pose ) {
 }
 
 core::Real DumpStatsSS::compute_svm_prob(std::string sequence, std::string wanted_ss){
-	runtime_assert( ss_predictor_ != 0 );
+	runtime_assert( ss_predictor_ != nullptr );
 	runtime_assert( sequence.size() == wanted_ss.size() );
 	utility::vector1< utility::vector1< core::Real > > ss_pred( ss_predictor_->predict_ss( sequence ) );
 	utility::vector1< core::Real > probabilities;
@@ -120,7 +120,7 @@ core::Real DumpStatsSS::compute_svm_prob(std::string sequence, std::string wante
 core::Real
 DumpStatsSS::compute_psipred_prob(core::pose::Pose & pose, std::string wanted_ss)
 {
-	runtime_assert( psipred_interface_ != 0 );
+	runtime_assert( psipred_interface_ != nullptr );
 	core::io::external::PsiPredResult const & psipred_result =
 		psipred_interface_->run_psipred( pose, wanted_ss );
 	return compute_boltz_sum( generate_prob( psipred_result, wanted_ss ) );

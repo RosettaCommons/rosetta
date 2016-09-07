@@ -124,7 +124,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 }
 
 //destruction!
-GreedyOptMutationMover::~GreedyOptMutationMover(){}
+GreedyOptMutationMover::~GreedyOptMutationMover()= default;
 
 //creators
 protocols::moves::MoverOP
@@ -826,7 +826,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	//load relax mover
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
+	auto mover_it( movers.find( relax_mover_name ) );
 	if ( mover_it == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
 	}
@@ -851,7 +851,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
 			BOOST_FOREACH ( utility::tag::TagCOP const ftag, filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
-				Filters_map::const_iterator find_filt( filters.find( filter_name ));
+				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
 					TR.Error << "Error !! filter not found in map: \n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
@@ -868,7 +868,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	{
 		std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
 		if ( filter_name != "true_filter" || filters_.size() < 1 ) {
-			protocols::filters::Filters_map::const_iterator find_filt( filters.find( filter_name ) );
+			auto find_filt( filters.find( filter_name ) );
 			if ( find_filt == filters.end() ) {
 				throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
 			}

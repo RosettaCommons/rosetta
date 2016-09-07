@@ -67,8 +67,7 @@ CoordinateConstraintGenerator::CoordinateConstraintGenerator():
 {
 }
 
-CoordinateConstraintGenerator::~CoordinateConstraintGenerator()
-{}
+CoordinateConstraintGenerator::~CoordinateConstraintGenerator() = default;
 
 ConstraintGeneratorOP
 CoordinateConstraintGenerator::clone() const

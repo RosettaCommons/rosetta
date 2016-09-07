@@ -41,9 +41,9 @@ ReplicaExchangeMC::ReplicaExchangeMC(
 	//noutput_(200),
 	ntrials_(0),
 	Tlist_(tlist),
-	last_energylist(NULL),
-	T_tag(NULL),
-	T_rev(NULL),
+	last_energylist(nullptr),
+	T_tag(nullptr),
+	T_rev(nullptr),
 	T_ndx(0)
 {
 	init();
@@ -60,9 +60,9 @@ ReplicaExchangeMC::ReplicaExchangeMC(
 	//noutput_(200),
 	ntrials_(0),
 	Tlist_(tlist),
-	last_energylist(NULL),
-	T_tag(NULL),
-	T_rev(NULL),
+	last_energylist(nullptr),
+	T_tag(nullptr),
+	T_rev(nullptr),
 	T_ndx(0)
 {
 	init();
@@ -128,9 +128,9 @@ void ReplicaExchangeMC::init()
 
 ReplicaExchangeMC::~ReplicaExchangeMC()
 {
-	if ( last_energylist!=NULL ) delete [] last_energylist;
-	if ( T_tag!=NULL ) delete [] T_tag;
-	if ( T_rev!=NULL ) delete [] T_rev;
+	if ( last_energylist!=nullptr ) delete [] last_energylist;
+	if ( T_tag!=nullptr ) delete [] T_tag;
+	if ( T_rev!=nullptr ) delete [] T_rev;
 }
 
 void ReplicaExchangeMC::build_temperature_list(double *elist)

@@ -45,7 +45,7 @@ public:
 	);
 
 	// Destructor, copy constructor, clone method
-	virtual ~MotifHit();
+	~MotifHit() override;
 	MotifHit( MotifHit const & src );
 	MotifHitOP clone() const;
 

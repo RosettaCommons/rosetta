@@ -22,6 +22,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.farna.FARNA_Optimizer" );
 
@@ -36,14 +37,13 @@ FARNA_Optimizer::FARNA_Optimizer( utility::vector1< pose::PoseOP > const & pose_
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::Size cycles /* = 0 */):
 	pose_list_( pose_list ),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	cycles_( cycles )
 {}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //Destructor
-FARNA_Optimizer::~FARNA_Optimizer()
-{}
+FARNA_Optimizer::~FARNA_Optimizer() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void

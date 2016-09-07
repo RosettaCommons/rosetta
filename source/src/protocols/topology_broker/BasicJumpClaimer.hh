@@ -34,21 +34,21 @@ namespace topology_broker {
 class BasicJumpClaimer : public virtual TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
-	virtual ~BasicJumpClaimer() {}
+	~BasicJumpClaimer() override = default;
 
 	BasicJumpClaimer() {}
 
 	BasicJumpClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<BasicJumpClaimer>( TopologyClaimer::shared_from_this() ); }
 
-	TopologyClaimerOP clone() const { return TopologyClaimerOP( new BasicJumpClaimer( *this ) ); }
+	TopologyClaimerOP clone() const override { return TopologyClaimerOP( new BasicJumpClaimer( *this ) ); }
 
-	std::string type() const { return _static_type_name(); }
+	std::string type() const override { return _static_type_name(); }
 
 	static std::string _static_type_name() { return "BasicJumpClaimer"; }
 
-	virtual void generate_claims( claims::DofClaims& );
+	void generate_claims( claims::DofClaims& ) override;
 
-	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const&, claims::DofClaims&);
+	void initialize_dofs( core::pose::Pose&, claims::DofClaims const&, claims::DofClaims&) override;
 
 	const std::string& end_label() const {
 		return end_label_;
@@ -83,7 +83,7 @@ public:
 	}
 
 protected:
-	virtual bool read_tag( std::string, std::istream& );
+	bool read_tag( std::string, std::istream& ) override;
 
 private:
 	std::string start_label_;

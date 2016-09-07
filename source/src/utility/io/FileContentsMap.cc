@@ -13,6 +13,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit headers
+#include <utility>
 #include <utility/io/FileContentsMap.hh>
 
 // Utility headers
@@ -65,7 +66,7 @@ void FileContentsMap::set_nread_limit_for_file( std::string const & fname, platf
 
 void FileContentsMap::increment_nread_limit( std::string const & fname )
 {
-	std::map< std::string, platform::Size >::iterator iter = read_limit_.find( fname );
+	auto iter = read_limit_.find( fname );
 	if ( iter == read_limit_.end() ) {
 		read_limit_[ fname ] = 1;
 		read_counts_[ fname ] = 0;
@@ -76,28 +77,28 @@ void FileContentsMap::increment_nread_limit( std::string const & fname )
 platform::Size
 FileContentsMap::nreads_for_file( std::string const & fname ) const
 {
-	std::map< std::string, platform::Size >::const_iterator iter = read_counts_.find( fname );
+	auto iter = read_counts_.find( fname );
 	return iter == read_counts_.end() ? 0 : iter->second;
 }
 
 platform::Size
 FileContentsMap::nread_limit_for_file( std::string const & fname ) const
 {
-	std::map< std::string, platform::Size >::const_iterator iter = read_limit_.find( fname );
+	auto iter = read_limit_.find( fname );
 	return iter == read_limit_.end() ? 0 : iter->second;
 }
 
 bool
 FileContentsMap::has_read_limit_for_file( std::string const & fname ) const
 {
-	std::map< std::string, platform::Size >::const_iterator iter = read_limit_.find( fname );
+	auto iter = read_limit_.find( fname );
 	return iter != read_limit_.end();
 }
 
 bool
 FileContentsMap::has_file_contents( std::string const & fname ) const
 {
-	std::map< std::string, std::string >::const_iterator iter = file_contents_.find( fname );
+	auto iter = file_contents_.find( fname );
 	return iter != file_contents_.end();
 }
 
@@ -109,7 +110,7 @@ void FileContentsMap::set_file_contents( std::string const & fname, std::string 
 
 void FileContentsMap::delete_file_contents( std::string const & fname )
 {
-	std::map< std::string, std::string >::iterator iter = file_contents_.find( fname );
+	auto iter = file_contents_.find( fname );
 	if ( iter == file_contents_.end() ) return;
 	file_contents_.erase( iter );
 }
@@ -129,8 +130,8 @@ std::string
 FileContentsMap::get_file_contents( std::string const & filename )
 {
 	std::map< std::string, platform::Size >::const_iterator rl_iter = read_limit_.find( filename );
-	std::map< std::string, platform::Size >::iterator rc_iter = read_counts_.find( filename );
-	std::map< std::string, std::string >::iterator fc_iter = file_contents_.find( filename );
+	auto rc_iter = read_counts_.find( filename );
+	auto fc_iter = file_contents_.find( filename );
 
 	if ( refuse_unexpected_files_ ) {
 		if ( rl_iter == read_limit_.end() ) {
@@ -188,9 +189,9 @@ FileContentsMap::get_file_contents( std::string const & filename )
 std::string const &
 FileContentsMap::get_file_contents_ref( std::string const & filename )
 {
-	std::map< std::string, platform::Size >::iterator rc_iter = read_counts_.find( filename );
-	std::map< std::string, platform::Size >::iterator rl_iter = read_limit_.find( filename );
-	std::map< std::string, std::string >::iterator fc_iter = file_contents_.find( filename );
+	auto rc_iter = read_counts_.find( filename );
+	auto rl_iter = read_limit_.find( filename );
+	auto fc_iter = file_contents_.find( filename );
 
 	if ( rc_iter == read_counts_.end() ) {
 		read_counts_[ filename ] = 1;

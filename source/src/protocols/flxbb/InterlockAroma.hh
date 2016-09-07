@@ -63,39 +63,39 @@ public: // constructor/destructor
 	InterlockAroma( InterlockAroma const & rval );
 
 	/// @brief destructor
-	virtual ~InterlockAroma();
+	~InterlockAroma() override;
 
 
 public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	MoverOP clone() const;
+	
+	MoverOP clone() const override;
 
 
 	/// @brief create this type of object
-	virtual
-	MoverOP fresh_instance() const;
+	
+	MoverOP fresh_instance() const override;
 
 
 public: // virtual main operation
 
 
 	/// @brief mover apply
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 public:// parser
 
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 private:

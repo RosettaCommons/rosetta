@@ -42,10 +42,10 @@ class EnzdesRemodelProtocol : public protocols::enzdes::EnzdesFlexBBProtocol
 public:
 	EnzdesRemodelProtocol();
 
-	~EnzdesRemodelProtocol();
+	~EnzdesRemodelProtocol() override;
 
-	void apply( core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose) override;
+	std::string get_name() const override;
 
 private:
 
@@ -71,13 +71,13 @@ public:
 		protocols::enzdes::EnzdesFlexibleRegionCOP flex_region
 	);
 
-	~EnzdesRemodelMover();
+	~EnzdesRemodelMover() override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	void apply( core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose) override;
+	std::string get_name() const override;
 
 	void
 	parse_my_tag(
@@ -86,7 +86,7 @@ public:
 		Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
 	void set_task( core::pack::task::PackerTaskCOP task );
 

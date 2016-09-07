@@ -43,7 +43,7 @@ class InsertChunkMover: public protocols::moves::Mover
 public:
 
 	InsertChunkMover();
-	~InsertChunkMover();
+	~InsertChunkMover() override;
 
 	void init();
 
@@ -68,9 +68,9 @@ public:
 
 	Size trial_counter(Size ires);
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	core::pose::PoseCOP template_pose_;

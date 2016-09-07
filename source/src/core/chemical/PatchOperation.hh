@@ -21,6 +21,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Utility header
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -34,7 +35,7 @@ namespace chemical {
 class PatchOperation : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~PatchOperation();
+	~PatchOperation() override;
 
 	/// @brief Returns true to signal failure, false to indicate success.
 	virtual
@@ -103,11 +104,11 @@ public:
 
 	/// @brief delete an atom from ResidueType rsd
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
-	virtual
+	
 	std::string
-	deletes_atom(){ return atom_name_; }
+	deletes_atom() override{ return atom_name_; }
 
 private:
 	/// name of the atom to be deleted
@@ -123,7 +124,7 @@ public:
 
 	/// set an atom in ResidueType rsd as backbone heavy atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	// name of the atom to be set
@@ -140,7 +141,7 @@ public:
 
 	/// @brief set an atom in ResidueType rsd as a polymer connection atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	// "NONE" to delete the connection by setting its atomno to ZERO
@@ -163,7 +164,7 @@ public:
 
 	/// add a property
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string const connect_atom_;
@@ -187,12 +188,12 @@ public:
 
 	/// @brief add a property
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 	/// @brief Which property, if any, is added.
-	virtual
+	
 	std::string
-	adds_property(){ return property_; }
+	adds_property() override{ return property_; }
 
 private:
 	/// property to be added
@@ -211,12 +212,12 @@ public:
 
 	/// @brief delete a property
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 	/// @brief Which property, if any, is deleted.
-	virtual
+	
 	std::string
-	deletes_property(){ return property_; }
+	deletes_property() override{ return property_; }
 
 private:
 	// property to be added
@@ -233,12 +234,12 @@ public:
 	DeleteVariantType( std::string const & variant_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	virtual bool apply( ResidueType & rsd ) const;
+	bool apply( ResidueType & rsd ) const override;
 
 	/// @brief Which variant, if any, is deleted.
-	virtual
+	
 	std::string
-	deletes_variant(){ return variant_; }
+	deletes_variant() override{ return variant_; }
 
 private:
 	std::string variant_;
@@ -265,7 +266,7 @@ public:
 		std::string const & atom4_in);
 
 	/// @brief Add a chi angle.
-	bool apply(ResidueType & rsd) const;
+	bool apply(ResidueType & rsd) const override;
 
 private:
 	bool no_index_;  // indicates that no chi index is provided, and the new chi will be added to the end of the list
@@ -291,7 +292,7 @@ public:
 
 	/// add a proton chi angle
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atoms between which a chi angle is added
@@ -318,7 +319,7 @@ public:
 
 	/// redefine a chi angle
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atoms between which a chi angle is added
@@ -339,7 +340,7 @@ public:
 
 	/// redefine a chi angle
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 };
 
@@ -352,7 +353,7 @@ public:
 	DeleteMetalbindingAtom( std::string const & atom_name );
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 private:
 	std::string atom_name_;
 
@@ -367,7 +368,7 @@ public:
 	DeleteActCoordAtom( std::string const & atom_name );
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 private:
 	std::string atom_name_;
 
@@ -386,7 +387,7 @@ public:
 	AddChiRotamer(Angle const & mean_in, Angle const & sdev_in);
 
 	/// @brief Add a rotamer sample.
-	bool apply(ResidueType & rsd) const;
+	bool apply(ResidueType & rsd) const override;
 
 private:
 	bool no_index_;  // indicates that no chi index is provided, and the rotamer sample will be added to the last chi
@@ -406,7 +407,7 @@ public:
 	ClearChiRotamers( core::uint const chi_no_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	virtual bool apply( ResidueType & rsd ) const;
+	bool apply( ResidueType & rsd ) const override;
 
 private:
 	core::uint chi_no_;
@@ -436,11 +437,11 @@ public:
 
 	/// add an atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
-	virtual
+	
 	std::string
-	adds_atom(){ return atom_name_; }
+	adds_atom() override{ return atom_name_; }
 
 private:
 	std::string atom_name_;
@@ -461,11 +462,11 @@ public:
 	AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	virtual bool apply( ResidueType & rsd ) const;
+	bool apply( ResidueType & rsd ) const override;
 
-	virtual
+	
 	std::string
-	adds_atom(){ return alias_; }
+	adds_atom() override{ return alias_; }
 
 private:
 	std::string rosetta_atom_name_;
@@ -486,7 +487,7 @@ public:
 
 	/// add a bond
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atoms between which a bond is added
@@ -509,7 +510,7 @@ public:
 		std::string const & bond_type_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	virtual bool apply( ResidueType & rsd ) const;
+	bool apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom1_;
@@ -532,7 +533,7 @@ public:
 		std::string const & new_bond_type_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	bool apply( ResidueType & rsd ) const;
+	bool apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom1_;
@@ -555,7 +556,7 @@ public:
 
 	/// set an atom's charge
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atom's name
@@ -574,7 +575,7 @@ public:
 	SetFormalCharge( std::string const & atom_name_in, core::SSize charge_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	virtual bool apply( ResidueType & rsd ) const;
+	bool apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_name_;
@@ -594,7 +595,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atom's name
@@ -615,16 +616,16 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 	/// @brief Generates name3.
-	virtual
+	
 	std::string
-	generates_name3(){ return name3_; }
+	generates_name3() override{ return name3_; }
 
-	virtual
+	
 	bool
-	applies_to_placeholder() const { return true; }
+	applies_to_placeholder() const override { return true; }
 
 private:
 	std::string const name3_;
@@ -641,10 +642,10 @@ public:
 	);
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 	std::string
-	generates_interchangeability_group(){ return intgrp_; }
+	generates_interchangeability_group() override{ return intgrp_; }
 
 private:
 	std::string const intgrp_;
@@ -663,7 +664,7 @@ public:
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atom's name
@@ -689,7 +690,7 @@ public:
 
 	/// set an atom's AtomICoord
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atom's name
@@ -718,7 +719,7 @@ public:
 
 	/// @brief change the ancestory, but leave the icoors intact.
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	/// atom's name
@@ -738,7 +739,7 @@ public:
 	ResetBondLength( std::string const & atm_in, core::Distance d_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
-	virtual bool apply( ResidueType & rsd ) const;
+	bool apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atm_;
@@ -755,7 +756,7 @@ public:
 
 	/// @brief set an atom to be the first mainchain atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_name_;
@@ -770,7 +771,7 @@ public:
 
 	/// @brief set an atom to be the last mainchain atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_name_;
@@ -785,7 +786,7 @@ public:
 
 	/// @brief set an atom to be the last mainchain atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string target_;
@@ -801,7 +802,7 @@ public:
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_name_;
@@ -816,7 +817,7 @@ public:
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	Real radius_;
@@ -831,7 +832,7 @@ public:
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 };
 
@@ -842,7 +843,7 @@ public:
 	SetOrientAtom(bool force_nbr_atom_orient);
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	bool force_nbr_atom_orient_;
@@ -857,7 +858,7 @@ public:
 
 	/// @brief set the NCAA rotamer library path in the residue type
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string path_;
@@ -871,7 +872,7 @@ public:
 	ConnectSulfurAndMakeVirtualProton() {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -881,18 +882,18 @@ public:
 	/// @brief constructor
 	ChiralFlipNaming() {}// std::string const atom1, std::string const atom2 ): atom1_( atom1 ), atom2_( atom2 ) {};
 
-	virtual
+	
 	bool
-	applies_to_placeholder() const { return true; }
+	applies_to_placeholder() const override { return true; }
 
 	/// @brief Generates a new aa
-	virtual
+	
 	bool
-	may_change_aa(){ return true; }
+	may_change_aa() override{ return true; }
 
 	/// @brief set the NCAA rotamer library path in the residue type
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 
@@ -907,7 +908,7 @@ public:
 	/// @brief set the NCAA rotamer library path in the residue type
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 
@@ -918,10 +919,10 @@ private:
 class ReplaceProtonWithMethoxy: public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithMethoxy( std::string const & atom ): atom_( atom ) {};
+	ReplaceProtonWithMethoxy( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -932,10 +933,10 @@ private:
 class ReplaceProtonWithEthyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithEthyl( std::string const & atom ): atom_( atom ) {};
+	ReplaceProtonWithEthyl( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -946,10 +947,10 @@ private:
 class ReplaceProtonWithMethyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithMethyl( std::string const & atom ): atom_( atom ) {};
+	ReplaceProtonWithMethyl( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -960,10 +961,10 @@ private:
 class ReplaceProtonWithTrifluoromethyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithTrifluoromethyl( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithTrifluoromethyl( std::string atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -974,10 +975,10 @@ private:
 class ReplaceProtonWithChlorine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithChlorine( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithChlorine( std::string atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -988,10 +989,10 @@ private:
 class ReplaceProtonWithFluorine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithFluorine( std::string const & atom ): atom_( atom ) {};
+	ReplaceProtonWithFluorine( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -1002,10 +1003,10 @@ private:
 class ReplaceProtonWithBromine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithBromine( std::string const & atom ): atom_( atom ) {};
+	ReplaceProtonWithBromine( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -1016,10 +1017,10 @@ private:
 class ReplaceProtonWithIodine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithIodine( std::string const & atom ): atom_( atom ) {};
+	ReplaceProtonWithIodine( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -1030,10 +1031,10 @@ private:
 class ReplaceProtonWithHydroxyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithHydroxyl( std::string const & atom ): atom_( atom ) {};
+	ReplaceProtonWithHydroxyl( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -1044,10 +1045,10 @@ private:
 class AddConnectAndTrackingVirt : public PatchOperation {
 public:
 	/// @brief constructor
-	AddConnectAndTrackingVirt( std::string const & atom ): atom_( atom ) {};
+	AddConnectAndTrackingVirt( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -1058,10 +1059,10 @@ private:
 class AddConnectDeleteChildProton : public PatchOperation {
 public:
 	/// @brief constructor
-	AddConnectDeleteChildProton( std::string const & atom ): atom_( atom ) {};
+	AddConnectDeleteChildProton( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;
@@ -1072,10 +1073,10 @@ private:
 class DeleteChildProton : public PatchOperation {
 public:
 	/// @brief constructor
-	DeleteChildProton( std::string const & atom ): atom_( atom ) {};
+	DeleteChildProton( std::string  atom ): atom_(std::move( atom )) {};
 
 	bool
-	apply( ResidueType & rsd ) const;
+	apply( ResidueType & rsd ) const override;
 
 private:
 	std::string atom_;

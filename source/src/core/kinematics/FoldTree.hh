@@ -71,7 +71,7 @@ class FoldTree : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FoldTree();
+	~FoldTree() override;
 	// types
 	typedef std::vector< Edge > EdgeList;
 	typedef EdgeList::iterator iterator;

@@ -82,7 +82,7 @@ switch_to_residue_type_set(
 	pose.energies().clear();
 
 	//fpd only do this over the asymmetric unit if the pose is symmetric
-	symmetry::SymmetryInfoCOP symm_info=NULL;
+	symmetry::SymmetryInfoCOP symm_info=nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symmetry::SymmetricConformation const & symm_conf ( dynamic_cast< symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		symm_info = symm_conf.Symmetry_Info();
@@ -122,7 +122,7 @@ switch_to_residue_type_set(
 			}
 
 			//gen new residue
-			core::conformation::ResidueOP new_rsd( 0 );
+			core::conformation::ResidueOP new_rsd( nullptr );
 			if ( (rsd.aa()==aa_unk) || (rsd.aa()==aa_vrt) ) {
 				//skip
 				continue;
@@ -260,7 +260,7 @@ switch_to_residue_type_set(
 
 		// get all residue types with same AA
 
-		core::conformation::ResidueOP new_rsd( 0 );
+		core::conformation::ResidueOP new_rsd( nullptr );
 		if ( ( rsd.aa() == aa_unk ) || ( rsd.name().substr(0,5) == "HIS_D" ) ) {
 			// ligand or metal ions are all defined as "UNK" AA, so check a rsdtype with same name
 			// for HIS_D tautomer, we want to keep its tautomer state
@@ -346,7 +346,7 @@ switch_to_residue_type_set(
 			}
 
 			// Rebuild disulfides
-			core::util:: rebuild_disulfide(pose, disulfides, task, NULL, mm, NULL);
+			core::util:: rebuild_disulfide(pose, disulfides, task, nullptr, mm, nullptr);
 		}
 	}
 }

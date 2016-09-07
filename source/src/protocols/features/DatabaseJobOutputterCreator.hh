@@ -21,8 +21,8 @@ namespace features {
 
 class DatabaseJobOutputterCreator : public protocols::jd2::JobOutputterCreator {
 public:
-	virtual protocols::jd2::JobOutputterOP create_JobOutputter() const;
-	virtual std::string keyname() const;
+	protocols::jd2::JobOutputterOP create_JobOutputter() const override;
+	std::string keyname() const override;
 
 };
 

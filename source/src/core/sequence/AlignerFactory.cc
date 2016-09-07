@@ -40,7 +40,7 @@ AlignerFactory::get_aligner(
 		utility_exit_with_message(
 			"AlignerFactory: unknown Aligner type: " + type
 		);
-		return NULL;
+		return nullptr;
 	}
 }
 

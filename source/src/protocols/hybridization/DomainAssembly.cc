@@ -169,7 +169,7 @@ utility::vector1<Size> find_uncovered_residues (core::pose::Pose const & pose,
 	utility::vector1 <Size> const covered_residues) {
 	utility::vector1<Size> uncovered_residues;
 	for ( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
-		if ( pose.pdb_info() != 0 ) {
+		if ( pose.pdb_info() != nullptr ) {
 			bool covered(false);
 			for ( Size i=1; i<=covered_residues.size(); ++i ) {
 				if ( pose.pdb_info()->number(ires) == (int)covered_residues[i] ) {

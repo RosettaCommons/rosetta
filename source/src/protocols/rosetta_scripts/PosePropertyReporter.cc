@@ -34,9 +34,7 @@ PosePropertyReporter::PosePropertyReporter()
 {
 }
 
-PosePropertyReporter::~PosePropertyReporter()
-{
-}
+PosePropertyReporter::~PosePropertyReporter() = default;
 
 core::Real PosePropertyReporter::report_property( core::pose::Pose & ) const
 {

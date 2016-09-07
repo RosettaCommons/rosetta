@@ -61,12 +61,12 @@ public:
 		evaluation::PoseEvaluatorOP evaluator_in,
 		std::string tag
 	);
-	~EvaluatedTrialMover();
+	~EvaluatedTrialMover() override;
 
 	/// apply does a single trial (which is a mover apply and a boltzmann)
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// write all collected output to file (appends if file exist )
 	void dump_file( std::string fn );

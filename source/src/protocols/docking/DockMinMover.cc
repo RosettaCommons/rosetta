@@ -93,7 +93,7 @@ DockMinMover::DockMinMover(
 	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
-DockMinMover::~DockMinMover(){}
+DockMinMover::~DockMinMover()= default;
 
 void DockMinMover::set_default() {
 

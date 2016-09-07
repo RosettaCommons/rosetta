@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 
 namespace protocols {
 namespace cyclic_peptide_predict {
@@ -54,7 +54,7 @@ public:
 
 	/// @brief Explicit virtual destructor.
 	///
-	virtual ~SimpleCycpepPredictApplication_MPI_JobResultsSummary();
+	~SimpleCycpepPredictApplication_MPI_JobResultsSummary() override;
 
 public:
 	/// ------------- Getters -------------------------------

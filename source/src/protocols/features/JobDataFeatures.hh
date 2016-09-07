@@ -32,19 +32,19 @@ class JobDataFeatures :public protocols::features::FeaturesReporter {
 public:
 	JobDataFeatures();
 	JobDataFeatures(JobDataFeatures const & src);
-	virtual ~JobDataFeatures();
+	~JobDataFeatures() override;
 
 	/// @brief return string with class name
-	std::string type_name() const;
+	std::string type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
-	virtual void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	/// @brief collect all the feature data for the pose
 	core::Size
@@ -53,19 +53,19 @@ public:
 		utility::vector1<bool> const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-	);
+	) override;
 
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
 		core::pose::Pose & pose
-	);
+	) override;
 
 	void delete_record(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-	);
+	) override;
 private:
 	void insert_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
 

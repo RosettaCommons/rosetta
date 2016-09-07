@@ -72,22 +72,11 @@ WeightedSampler::WeightedSampler(
 }
 
 
-WeightedSampler::~WeightedSampler()
-{
-}
+WeightedSampler::~WeightedSampler() = default;
 
 
 WeightedSampler &
-WeightedSampler::operator=(
-	WeightedSampler const & weighted_sampler
-)
-{
-	weights_ = weighted_sampler.weights_;
-	cumulative_distribution_ = weighted_sampler.cumulative_distribution_;
-	cumulative_distribution_valid_ = weighted_sampler.cumulative_distribution_valid_;
-
-	return *this;
-}
+WeightedSampler::operator=( WeightedSampler const & ) = default;
 
 
 // void owning_ptr_acquire(WeightedSampler * p)

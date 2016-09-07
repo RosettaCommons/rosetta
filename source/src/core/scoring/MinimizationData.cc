@@ -26,13 +26,13 @@ namespace core {
 namespace scoring {
 
 ResSingleMinimizationData::ResSingleMinimizationData() : data_cache_( n_min_single_data ) {}
-ResSingleMinimizationData::~ResSingleMinimizationData() {}
+ResSingleMinimizationData::~ResSingleMinimizationData() = default;
 ResSingleMinimizationData::ResSingleMinimizationData( ResSingleMinimizationData const & other ) :
 	utility::pointer::ReferenceCount(),
 	data_cache_( n_min_single_data )
 {
 	for ( Size ii = 1; ii <= n_min_single_data; ++ii ) {
-		data_cache_[ ii ] = other.data_cache_[ ii ] ? other.data_cache_[ ii ]->clone() : CacheableDataOP( 0 );
+		data_cache_[ ii ] = other.data_cache_[ ii ] ? other.data_cache_[ ii ]->clone() : CacheableDataOP( nullptr );
 	}
 }
 
@@ -40,7 +40,7 @@ ResSingleMinimizationData &
 ResSingleMinimizationData::operator = ( ResSingleMinimizationData const & rhs ) {
 	if ( this != & rhs ) {
 		for ( Size ii = 1; ii <= n_min_single_data; ++ii ) {
-			data_cache_[ ii ] = rhs.data_cache_[ ii ] ? rhs.data_cache_[ ii ]->clone() : CacheableDataOP( 0 );
+			data_cache_[ ii ] = rhs.data_cache_[ ii ] ? rhs.data_cache_[ ii ]->clone() : CacheableDataOP( nullptr );
 		}
 	}
 	return *this;
@@ -64,13 +64,13 @@ ResSingleMinimizationData::get_data( min_single_data index ) const
 
 
 ResPairMinimizationData::ResPairMinimizationData() : data_cache_( n_min_pair_data ) {}
-ResPairMinimizationData::~ResPairMinimizationData() {}
+ResPairMinimizationData::~ResPairMinimizationData() = default;
 ResPairMinimizationData::ResPairMinimizationData( ResPairMinimizationData const & other ) :
 	utility::pointer::ReferenceCount(),
 	data_cache_( n_min_pair_data )
 {
 	for ( Size ii = 1; ii <= n_min_pair_data; ++ii ) {
-		data_cache_[ ii ] = other.data_cache_[ ii ] ? other.data_cache_[ ii ]->clone() : CacheableDataOP( 0 );
+		data_cache_[ ii ] = other.data_cache_[ ii ] ? other.data_cache_[ ii ]->clone() : CacheableDataOP( nullptr );
 	}
 }
 
@@ -79,7 +79,7 @@ ResPairMinimizationData::operator = ( ResPairMinimizationData const & rhs )
 {
 	if ( this != & rhs ) {
 		for ( Size ii = 1; ii <= n_min_pair_data; ++ii ) {
-			data_cache_[ ii ] = rhs.data_cache_[ ii ] ? rhs.data_cache_[ ii ]->clone() : CacheableDataOP( 0 );
+			data_cache_[ ii ] = rhs.data_cache_[ ii ] ? rhs.data_cache_[ ii ]->clone() : CacheableDataOP( nullptr );
 		}
 	}
 	return *this;

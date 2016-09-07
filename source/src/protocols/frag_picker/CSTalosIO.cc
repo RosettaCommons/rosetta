@@ -155,7 +155,7 @@ void CSTalosIO::write(std::ostream& out) {
 void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
 	char, std::string, Real> > results) {
 
-	std::multimap<Size, Size>::iterator iter = resids_to_entries_map_.find(
+	auto iter = resids_to_entries_map_.find(
 		residue_id);
 
 	//while (iter != resids_to_entries_map_.end()) {
@@ -168,7 +168,7 @@ void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
 void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
 	char, std::string, Real> > & results) const {
 
-	std::multimap<Size, Size>::const_iterator iter =
+	auto iter =
 		resids_to_entries_map_.find(residue_id);
 
 	//while (iter != resids_to_entries_map_.end()) {
@@ -181,7 +181,7 @@ void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
 
 bool CSTalosIO::has_atom(Size residue_id, std::string const & atom_name) const {
 
-	std::multimap<Size, Size>::const_iterator iterat =
+	auto iterat =
 		resids_to_entries_map_.find(residue_id);
 	if ( iterat == resids_to_entries_map_.end() ) {
 		return false;
@@ -208,7 +208,7 @@ bool CSTalosIO::has_atom(Size residue_id, std::string const & atom_name) const {
 
 Real CSTalosIO::get_shift(Size residue_id, std::string const & atom_name) const {
 
-	std::multimap<Size, Size>::const_iterator iterat =
+	auto iterat =
 		resids_to_entries_map_.find(residue_id);
 	if ( iterat == resids_to_entries_map_.end() ) {
 		return false;

@@ -105,7 +105,7 @@ public:
 	);
 
 	/// @brief Empty destructor in C++ file to reduce number of necessary includes
-	virtual ~MonteCarlo();
+	~MonteCarlo() override;
 
 	virtual
 	MonteCarloOP clone() {

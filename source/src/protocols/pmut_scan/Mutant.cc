@@ -49,7 +49,7 @@ MutationData::MutationData( char wt_residue, char mut_residue, core::Size pose_r
 /// @brief
 /// Destructor for MutationData objects. No dynamically allocated memory held in MutationData objects so nothing to do here.
 ///
-MutationData::~MutationData() {}
+MutationData::~MutationData() = default;
 
 ///
 /// @brief
@@ -119,7 +119,7 @@ Mutant::Mutant() {}
 
 /// @brief
 /// Mutant class destructor
-Mutant::~Mutant() {}
+Mutant::~Mutant() = default;
 
 ///
 /// @brief

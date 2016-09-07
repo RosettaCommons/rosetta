@@ -71,7 +71,7 @@ public:
 	FragSet() : min_pos_ ( 100000 ), max_pos_( 0 ), max_frag_length_( 0 ), global_offset_ (0)
 	{}
 
-	virtual ~FragSet() {}
+	~FragSet() override = default;
 
 	/// @brief clone and copy the pointer of all Frames (Frames will not be copied)
 	virtual FragSetOP clone() const = 0;

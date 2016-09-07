@@ -49,26 +49,26 @@ public:
 	FoldandDockClaimer( core::pose::Pose const& input_pose );
 
 	//clone
-	virtual TopologyClaimerOP clone() const;
+	TopologyClaimerOP clone() const override;
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const;
+	std::string type() const override;
 
 	static std::string _static_type_name();
 
-	virtual void add_mover(
+	void add_mover(
 		moves::RandomMover& random_mover,
 		core::pose::Pose const& pose,
 		abinitio::StageID stageID,
 		core::scoring::ScoreFunction const& scorefxn,
 		core::Real progress
-	);
+	) override;
 
-	virtual void initialize_dofs( core::pose::Pose&,
+	void initialize_dofs( core::pose::Pose&,
 		claims::DofClaims const& init_claims,
-		claims::DofClaims& /*failed_to_init*/ );
+		claims::DofClaims& /*failed_to_init*/ ) override;
 
-	virtual void generate_claims( claims::DofClaims& new_claims );
+	void generate_claims( claims::DofClaims& new_claims ) override;
 
 private:
 

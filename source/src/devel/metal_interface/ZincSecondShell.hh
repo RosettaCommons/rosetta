@@ -44,7 +44,7 @@ public:
   /// @brief
   ZincSecondShell( core::pose::Pose const & pose, utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr );
 
-  virtual ~ZincSecondShell();
+  ~ZincSecondShell() override;
 
 
   virtual void register_calculators();

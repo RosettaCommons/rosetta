@@ -34,7 +34,7 @@ static THREAD_LOCAL basic::Tracer tr( "core.chemical.ElementSet" );
 
 ElementSet::ElementSet() {}
 
-ElementSet::~ElementSet() {}
+ElementSet::~ElementSet() = default;
 
 /// @details Initialize an ElementSet from an external file "filename",
 /// and set parameters and properties for each Element.
@@ -90,7 +90,7 @@ bool
 ElementSet::contains_element_type( std::string const & element_symbol ) const
 {
 	std::locale loc;
-	std::map< std::string, core::Size >::const_iterator
+	auto
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
 	// (Cl versus CL)
@@ -117,7 +117,7 @@ Size
 ElementSet::element_index( std::string const & element_symbol ) const
 {
 	std::locale loc;
-	std::map< std::string, core::Size >::const_iterator
+	auto
 		iter( element_index_.find( element_symbol ) );
 	// If we can't find it straight-away, we may need to title case it.
 	// (Cl versus CL)

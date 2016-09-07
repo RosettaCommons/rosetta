@@ -38,18 +38,14 @@ HyperRectangleOP get_percentile_bounds(
 	using std::max;
 	using numeric::Real;
 	using utility::vector1;
-	typedef vector1< vector1< Real > >::iterator row_iter;
-	typedef vector1< Real >::iterator pt_iter;
 
 	// define lower/upper values
 	vector1< Real >
 		lower( points.front().begin(), points.front().end() ),
 		upper( points.front().begin(), points.front().end() );
 
-	for ( row_iter it = points.begin(), end = points.end();
-			it != end; ++it
-			) {
-		for ( pt_iter p_it = it->begin(), p_end = it->end(),
+	for (auto & point : points) {
+		for ( auto p_it = point.begin(), p_end = point.end(),
 				l_it = lower.begin(), l_end = lower.end(),
 				u_it = upper.begin(), u_end = upper.end();
 				p_it != p_end && l_it != l_end && u_it != u_end;
@@ -74,8 +70,7 @@ void transform_percentile_single_pt(
 	vector1< Real >
 		lower( bounds->lower() ),
 		upper( bounds->upper() );
-	typedef vector1< Real >::iterator pt_iter;
-	for ( pt_iter p_it = point.begin(), p_end = point.end(),
+	for ( auto p_it = point.begin(), p_end = point.end(),
 			l_it = lower.begin(), l_end = lower.end(),
 			u_it = upper.begin(), u_end = upper.end();
 			p_it != p_end && l_it != l_end && u_it != u_end;
@@ -93,8 +88,6 @@ void transform_percentile(
 	using std::max;
 	using numeric::Real;
 	using utility::vector1;
-	typedef vector1< vector1< Real > >::iterator row_iter;
-	typedef vector1< Real >::iterator pt_iter;
 
 	// define lower/upper values
 	vector1< Real >
@@ -102,10 +95,8 @@ void transform_percentile(
 		upper( bounds->upper() );
 
 	// transform values
-	for ( row_iter it = points.begin(), end = points.end();
-			it != end; ++it
-			) {
-		for ( pt_iter p_it = it->begin(), p_end = it->end(),
+	for (auto & point : points) {
+		for ( auto p_it = point.begin(), p_end = point.end(),
 				l_it = lower.begin(), l_end = lower.end(),
 				u_it = upper.begin(), u_end = upper.end();
 				p_it != p_end && l_it != l_end && u_it != u_end;
@@ -130,13 +121,10 @@ utility::vector1< KDPointOP > make_points(
 
 	using numeric::Real;
 	using utility::vector1;
-	typedef vector1< vector1< Real > >::const_iterator p_iter;
 
 	vector1< KDPointOP > new_data;
-	for ( p_iter p_it = points.begin(), p_end = points.end();
-			p_it != p_end; ++p_it
-			) {
-		KDPointOP pt( new KDPoint( *p_it ) );
+	for (const auto & point : points) {
+		KDPointOP pt( new KDPoint( point ) );
 		new_data.push_back( pt );
 	}
 
@@ -153,12 +141,10 @@ utility::vector1< KDPointOP > make_points(
 	using numeric::Real;
 	using utility::vector1;
 	using utility::pointer::ReferenceCountOP;
-	typedef vector1< vector1< Real >  >::const_iterator p_iter;
-	typedef vector1< ReferenceCountOP >::const_iterator d_iter;
 
 	vector1< KDPointOP > new_data;
-	d_iter d_it = data.begin(), d_end = data.end();
-	for ( p_iter p_it = points.begin(), p_end = points.end();
+	auto d_it = data.begin(), d_end = data.end();
+	for ( auto p_it = points.begin(), p_end = points.end();
 			p_it != p_end && d_it != d_end;
 			++p_it, ++d_it
 			) {
@@ -175,14 +161,13 @@ void print_points(
 ) {
 	using numeric::Real;
 	using utility::vector1;
-	for ( vector1< vector1< Real > >::const_iterator pt = points.begin(),
-			end = points.end(); pt != end; ++pt ) {
+	for (const auto & point : points) {
 		//for ( vector1< Real >::const_iterator val = pt->begin(),
 		//  val_end = pt->end(); val != val_end; ++val
 		//) {
 		// out << ' ' << *val;
 		//}
-		print_point( out, *pt );
+		print_point( out, point );
 		out << std::endl;
 	} // for points
 }
@@ -193,10 +178,8 @@ void print_point(
 ) {
 	using numeric::Real;
 	using utility::vector1;
-	for ( vector1< Real >::const_iterator val = point.begin(),
-			val_end = point.end(); val != val_end; ++val
-			) {
-		out << ' ' << *val;
+	for (double val : point) {
+		out << ' ' << val;
 	}
 }
 

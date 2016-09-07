@@ -70,7 +70,7 @@ public: // Creation
 	/// @brief Clone this
 	inline
 	RealVectorOption *
-	clone() const
+	clone() const override
 	{
 		return new RealVectorOption( *this );
 	}
@@ -78,9 +78,9 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~RealVectorOption()
-	{}
+	
+	~RealVectorOption() override
+	= default;
 
 
 public: // Properties
@@ -89,7 +89,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type?
 	inline
 	bool
-	is_value( std::string const & value_str ) const
+	is_value( std::string const & value_str ) const override
 	{
 		return ObjexxFCL::is_double( value_str );
 	}
@@ -98,7 +98,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type and a legal command line value?
 	inline
 	bool
-	is_cl_value( std::string const & value_str ) const
+	is_cl_value( std::string const & value_str ) const override
 	{
 		return is_value( value_str );
 	}
@@ -107,7 +107,7 @@ public: // Properties
 	/// @brief Option type code string representation
 	inline
 	std::string
-	type_string() const
+	type_string() const override
 	{
 		return "(R" + size_constraint_string() + ')';
 	}
@@ -119,7 +119,7 @@ protected: // Methods
 	/// @brief Value of a string
 	inline
 	Value
-	value_of( std::string const & value_str ) const
+	value_of( std::string const & value_str ) const override
 	{
 		if ( ( value_str.empty() ) || ( ! ObjexxFCL::is_double( value_str ) ) ) {
 			std::cerr << "ERROR: Illegal value for real option -" << id()
@@ -131,9 +131,9 @@ protected: // Methods
 
 
 	/// @brief Setup stream state for the Option value type
-	virtual
+	
 	void
-	stream_setup( std::ostream & stream ) const
+	stream_setup( std::ostream & stream ) const override
 	{
 		stream << std::setprecision( 15 );
 	}

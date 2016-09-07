@@ -19,7 +19,7 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <sstream>
-#include <stdlib.h>
+#include <cstdlib>
 
 static basic::Tracer TR("devel.constel.SingResCnlCrea");
 

@@ -19,7 +19,7 @@
 namespace protocols {
 namespace pack_daemon {
 
-MultistateAggregateFunction::~MultistateAggregateFunction() {}
+MultistateAggregateFunction::~MultistateAggregateFunction() = default;
 
 }
 }

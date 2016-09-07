@@ -49,7 +49,7 @@ RadiusOfGyrationFeatures::RadiusOfGyrationFeatures( RadiusOfGyrationFeatures con
 	FeaturesReporter()
 {}
 
-RadiusOfGyrationFeatures::~RadiusOfGyrationFeatures(){}
+RadiusOfGyrationFeatures::~RadiusOfGyrationFeatures()= default;
 
 string
 RadiusOfGyrationFeatures::type_name() const { return "RadiusOfGyrationFeatures"; }

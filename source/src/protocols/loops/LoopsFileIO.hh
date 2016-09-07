@@ -55,9 +55,9 @@ public:
 	LoopFromFileData();
 
 	LoopFromFileData(
-		core::pose::ResidueIndexDescriptionFromFile const & start_res,
-		core::pose::ResidueIndexDescriptionFromFile const & cutpoint_res,
-		core::pose::ResidueIndexDescriptionFromFile const & end_res,
+		core::pose::ResidueIndexDescriptionFromFile start_res,
+		core::pose::ResidueIndexDescriptionFromFile cutpoint_res,
+		core::pose::ResidueIndexDescriptionFromFile end_res,
 		core::Real skip_rate,
 		bool extended,
 		bool prohibit_single_residue_loops = true
@@ -107,7 +107,7 @@ class LoopsFileData : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~LoopsFileData();
+	~LoopsFileData() override;
 
 	LoopsOP resolve_loops( core::pose::Pose const & pose ) const;
 	SerializedLoopList resolve_as_serialized_loops( core::pose::Pose const & pose ) const;
@@ -148,7 +148,7 @@ public:
 	GuardedLoopsFromFile( GuardedLoopsFromFile const & src, bool  );
 
 	/// @brief virtual dstor
-	virtual ~GuardedLoopsFromFile();
+	~GuardedLoopsFromFile() override;
 
 	/// @brief assignment operator; takes it's "in charge" state from rhs
 	GuardedLoopsFromFile & operator = ( GuardedLoopsFromFile const & rhs );
@@ -209,7 +209,7 @@ public:
 	LoopsFileIO( const LoopsFileIO & src );
 
 	// destructor
-	virtual ~LoopsFileIO();
+	~LoopsFileIO() override;
 
 	friend std::ostream & operator<<( std::ostream & os, const LoopsFileIO & loops_file_io );
 

@@ -43,20 +43,20 @@ public:
 	AddLoopResidues();
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @details we accumulate state, so we definitely need to reinitialize
-	virtual bool
-	reinitialize_for_new_input() const;
+	bool
+	reinitialize_for_new_input() const override;
 
-	virtual void
-	apply( Pose & pose );
+	void
+	apply( Pose & pose ) override;
 
 	void
 	update_anchors(
@@ -84,7 +84,7 @@ public:
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const &movers,
 		Pose const & pose
-	);
+	) override;
 
 private:
 

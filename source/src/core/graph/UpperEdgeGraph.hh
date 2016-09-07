@@ -97,9 +97,8 @@ public:
 	}
 
 	/// @brief dstor, should be non-virtual
-	~UEVertex()
-	{
-	}
+	~UEVertex() override
+	= default;
 
 private:
 
@@ -396,7 +395,7 @@ public:
 		copy_from( other );
 	}
 
-	virtual ~UpperEdgeGraph() {};
+	~UpperEdgeGraph() override = default;
 
 	UpperEdgeGraph< V, E > const &
 	operator = ( UpperEdgeGraph< V, E > const & other )

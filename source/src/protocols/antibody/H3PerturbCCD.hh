@@ -51,15 +51,15 @@ public:
 	H3PerturbCCD(AntibodyInfoOP antibody_in,
 		core::scoring::ScoreFunctionCOP highres_scorefxn);
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief default destructor
-	~H3PerturbCCD();
+	~H3PerturbCCD() override;
 
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "H3PerturbCCD";
 	}
 

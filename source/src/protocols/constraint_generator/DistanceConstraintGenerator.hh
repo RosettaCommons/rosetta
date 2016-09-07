@@ -35,20 +35,20 @@ class DistanceConstraintGenerator : public protocols::constraint_generator::Cons
 public:
 	DistanceConstraintGenerator();
 
-	virtual ~DistanceConstraintGenerator();
+	~DistanceConstraintGenerator() override;
 
 	static std::string
 	class_name();
 
 	protocols::constraint_generator::ConstraintGeneratorOP
-	clone() const;
+	clone() const override;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	void

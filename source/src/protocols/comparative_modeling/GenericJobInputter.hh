@@ -43,15 +43,15 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.
-	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job ) override;
 
 	/// @brief this function determines what jobs exist
-	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
+	void fill_jobs( protocols::jd2::JobsContainer & jobs ) override;
 
 	/// @brief Return the type of input source that the GenericJobInputter is currently
 	///  using.
 	/// @return Always <em>POSE</em>.
-	virtual protocols::jd2::JobInputterInputSource::Enum input_source() const;
+	protocols::jd2::JobInputterInputSource::Enum input_source() const override;
 
 }; // GenericJobInputter
 

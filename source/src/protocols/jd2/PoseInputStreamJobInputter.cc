@@ -46,7 +46,7 @@ PoseInputStreamJobInputter::PoseInputStreamJobInputter() {
 	tr.Debug << "Instantiate PoseInputStreamJobInputter" << std::endl;
 }
 
-PoseInputStreamJobInputter::~PoseInputStreamJobInputter() {}
+PoseInputStreamJobInputter::~PoseInputStreamJobInputter() = default;
 
 void PoseInputStreamJobInputter::pose_from_job(
 	core::pose::Pose & pose, JobOP /*job*/

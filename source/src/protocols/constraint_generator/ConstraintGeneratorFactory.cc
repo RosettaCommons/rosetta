@@ -64,7 +64,7 @@ ConstraintGeneratorFactory::new_constraint_generator(
 		std::string err_msg =  "No ConstraintGeneratorCreator with the name '" + constraint_generator_name + "' has been registered with the ConstraintGeneratorFactory";
 		throw utility::excn::EXCN_Msg_Exception( err_msg );
 	}
-	CreatorMap::const_iterator iter = creator_map_.find( constraint_generator_name );
+	auto iter = creator_map_.find( constraint_generator_name );
 	ConstraintGeneratorOP new_constraint_generator = iter->second->create_constraint_generator();
 	new_constraint_generator->parse_my_tag( tag, datamap );
 	return new_constraint_generator;
@@ -82,7 +82,7 @@ using protocols::constraint_generator::ConstraintGeneratorFactory;
 template<> std::mutex utility::SingletonBase< ConstraintGeneratorFactory >::singleton_mutex_{};
 template<> std::atomic< ConstraintGeneratorFactory * > utility::SingletonBase< ConstraintGeneratorFactory >::instance_( NULL );
 #else
-template<> ConstraintGeneratorFactory * utility::SingletonBase< ConstraintGeneratorFactory >::instance_( NULL );
+template<> ConstraintGeneratorFactory * utility::SingletonBase< ConstraintGeneratorFactory >::instance_( nullptr );
 #endif
 
 } // namespace utility

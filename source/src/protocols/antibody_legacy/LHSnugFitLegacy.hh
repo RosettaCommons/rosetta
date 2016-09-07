@@ -45,17 +45,17 @@ public:
 	LHSnugFitLegacy(antibody::AntibodyInfoOP antibody_in );
 	LHSnugFitLegacy(antibody::AntibodyInfoOP antibody_in, bool camelid );
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief default destructor
-	~LHSnugFitLegacy();
+	~LHSnugFitLegacy() override;
 
 	void set_default();
 
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_task_factory(core::pack::task::TaskFactoryCOP tf) {
 		tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*tf) );

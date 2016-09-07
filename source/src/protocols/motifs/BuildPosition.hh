@@ -56,11 +56,11 @@ public:
 	BuildPosition(
 		Size const seqpos,
 		utility::vector1< Size > const & target_positions,
-		std::set< std::string > const & allowed_types
+		std::set< std::string > allowed_types
 	);
 
 	// Destructor, copy constructor, clone method
-	virtual ~BuildPosition();
+	~BuildPosition() override;
 	BuildPosition( BuildPosition const & src );
 	BuildPositionOP clone() const;
 

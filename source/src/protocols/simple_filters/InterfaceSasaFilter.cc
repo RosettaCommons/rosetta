@@ -78,7 +78,7 @@ InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool
 	}
 }
 
-InterfaceSasaFilter::~InterfaceSasaFilter(){}
+InterfaceSasaFilter::~InterfaceSasaFilter()= default;
 
 filters::FilterOP
 InterfaceSasaFilter::clone() const{
@@ -126,8 +126,8 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 		for ( Size j = 1; j <= nslidedofs; j++ ) {
 			sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num(pose, j ));
 		}
-		for ( std::set<core::Size>::iterator it=sym_aware_jump_ids.begin(); it!=sym_aware_jump_ids.end(); ++it ) {
-			sym_dof_names_.push_back(core::pose::symmetry::jump_num_sym_dof(pose,*it));
+		for (unsigned long sym_aware_jump_id : sym_aware_jump_ids) {
+			sym_dof_names_.push_back(core::pose::symmetry::jump_num_sym_dof(pose,sym_aware_jump_id));
 		}
 	} else {
 		TR.Debug << "Defaulting to jump 1. " << std::endl;

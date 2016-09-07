@@ -36,18 +36,18 @@ class SchemePlaceMotifsMover : public protocols::moves::Mover {
 
 public:
 	SchemePlaceMotifsMover();
-	virtual std::string get_name() const { return "SchemePlaceMotifs"; }
-	virtual void apply(Pose& pose);
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override { return "SchemePlaceMotifs"; }
+	void apply(Pose& pose) override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filtermap,
 		protocols::moves::Movers_map const & movermap,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 private:
 	utility::vector1<std::string> motif_sets_;

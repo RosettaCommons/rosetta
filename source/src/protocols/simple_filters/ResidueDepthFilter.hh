@@ -34,7 +34,7 @@
 #endif
 
 #include <utility/vector1.hh>
-#include <math.h>
+#include <cmath>
 
 namespace protocols {
 namespace simple_filters {
@@ -58,7 +58,7 @@ class ResidueDepthFrag : public utility::pointer::ReferenceCount
 {
 public:
 	ResidueDepthFrag();
-	~ResidueDepthFrag();
+	~ResidueDepthFrag() override;
 	utility::vector1< Vector > get_CENcrd() const;
 	utility::vector1< Vector > get_CAcrd() const;
 
@@ -184,18 +184,18 @@ class ResidueDepthFilter : public filters::Filter
 {
 public:
 	ResidueDepthFilter() : filters::Filter( "ResidueDepth" ) {}
-	~ResidueDepthFilter();
+	~ResidueDepthFilter() override;
 
 	//ResidueDepthFilter( ResidueDepthFilter const &init );
 	ResidueDepthFilter( core::pose::Pose const &pose );
 
-	bool apply( core::pose::Pose const & ) const;
+	bool apply( core::pose::Pose const & ) const override;
 
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new ResidueDepthFilter( *this ) );
 	}
 
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new ResidueDepthFilter() );
 	}
 
@@ -211,7 +211,7 @@ public:
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	// setters
 	void set_report_crd( bool const value ){ RDC_.report_crd( value ); }

@@ -80,7 +80,7 @@ extern ResidualDipolarCouplingRigidSegmentsCOP retrieve_RDC_segments_from_pose(
 		return utility::pointer::static_pointer_cast< protocols::scoring::ResidualDipolarCouplingRigidSegments const > ( pose.data().get_const_ptr(
 			core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(core::pose::Pose& pose) {
@@ -89,7 +89,7 @@ extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(co
 		return utility::pointer::static_pointer_cast< protocols::scoring::ResidualDipolarCouplingRigidSegments > ( pose.data().get_ptr(
 			core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 
@@ -106,8 +106,8 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		core::Size n_of_exps = rdc_segments_[1]->get_n_alignments();
 		//Loop over all experiments caution: indexing starts at 0
 		for ( Size exp=0; exp < n_of_exps; ++exp ) {
-			for ( RDC_Segments::const_iterator it1=rdc_segments_.begin(); it1 != rdc_segments_.end(); ++it1 ) {
-				for ( RDC_Segments::const_iterator it2=it1; (it2+1) != rdc_segments_.end(); ++it2 ) {
+			for ( auto it1=rdc_segments_.begin(); it1 != rdc_segments_.end(); ++it1 ) {
+				for ( auto it2=it1; (it2+1) != rdc_segments_.end(); ++it2 ) {
 					utility::vector0< ResidualDipolarCoupling::Tensor > & S1 = (*it1)->tensor();
 					utility::vector0< ResidualDipolarCoupling::Tensor > & S2 = (*it2)->tensor();
 					Real dot = (S1[exp][0][0] * S2[exp][0][0]) + (S1[exp][0][1] * S2[exp][0][1]) +
@@ -133,17 +133,17 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		for ( Size exp=0; exp < n_of_exps; ++exp ) {
 			ndata = 0;
 			score_temp = 0;
-			for ( RDC_Segments::const_iterator it1=rdc_segments_.begin(); it1 != rdc_segments_.end(); ++it1 ) {
+			for (const auto & rdc_segment : rdc_segments_) {
 				Real trace(0);
 				ndata_segment = 0;
 				//loop over RDCs in segment and find number of data points for this experiment
-				RDC_lines myrdcs = (*it1)->get_RDC_data();
+				RDC_lines myrdcs = rdc_segment->get_RDC_data();
 				for ( RDC_lines::const_iterator it = myrdcs.begin(); it!=myrdcs.end(); ++it ) {
 					id = it->expid();
 					if ( id == exp ) { ++ndata_segment; }
 				}
 
-				trace = (*it1)->get_al_tensor_trace(exp);
+				trace = rdc_segment->get_al_tensor_trace(exp);
 				score_temp +=  ( 3 - trace ) * ndata_segment;
 				ndata += ndata_segment;
 			}
@@ -165,17 +165,17 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		for ( Size exp=0; exp < n_of_exps; ++exp ) {
 			ndata = 0;
 			score_temp = 0;
-			for ( RDC_Segments::const_iterator it1=rdc_segments_.begin(); it1 != rdc_segments_.end(); ++it1 ) {
+			for (const auto & rdc_segment : rdc_segments_) {
 				Real maxz(0);
 				ndata_segment = 0;
 				//loop over RDCs in segment and find number of data points for this experiment
-				RDC_lines myrdcs = (*it1)->get_RDC_data();
+				RDC_lines myrdcs = rdc_segment->get_RDC_data();
 				for ( RDC_lines::const_iterator it = myrdcs.begin(); it!=myrdcs.end(); ++it ) {
 					id = it->expid();
 					if ( id == exp ) { ++ndata_segment; }
 				}
 
-				maxz = (*it1)->get_al_tensor_max_z(exp);
+				maxz = rdc_segment->get_al_tensor_max_z(exp);
 				score_temp +=  ( 1 - maxz ) * ndata_segment;
 				ndata += ndata_segment;
 			}
@@ -193,10 +193,10 @@ Real ResidualDipolarCouplingRigidSegments::compute_total_score(core::pose::Pose 
 	Real score(0);
 	Real n_rdcs(0);
 	Real total_lines(0);
-	for ( RDC_Segments::const_iterator it=rdc_segments_.begin(); it!=rdc_segments_.end(); ++it ) {
-		n_rdcs = (*it)->get_RDC_data().size();
+	for (const auto & rdc_segment : rdc_segments_) {
+		n_rdcs = rdc_segment->get_RDC_data().size();
 		total_lines += n_rdcs;
-		score += ( (*it)->compute_dipscore(pos) ) * n_rdcs;
+		score += ( rdc_segment->compute_dipscore(pos) ) * n_rdcs;
 	}
 	return score / total_lines;
 }
@@ -243,26 +243,26 @@ void ResidualDipolarCouplingRigidSegments::sort_into_segments(RDC_lines all_rdcs
 
 	//process all lines and assign into segments
 
-	for ( RDC_lines::iterator line_it=all_rdcs.begin(); line_it!=all_rdcs.end(); ++line_it ) {
+	for (auto & all_rdc : all_rdcs) {
 		// std::cout << line_it->res1() <<std::endl;
-		Size segid( find_segid_from_RDC_line( *line_it ) );
+		Size segid( find_segid_from_RDC_line( all_rdc ) );
 		if ( segid >0 ) {
-			rdc_segm_data[ segid ].push_back( *line_it );
+			rdc_segm_data[ segid ].push_back( all_rdc );
 		}
 	}
 
 
 	//create new RDC objects for all Segments
-	for ( RDC_lines_collection::iterator it=rdc_segm_data.begin(); it!=rdc_segm_data.end(); ++it ) {
-		rdc_segments_.push_back( core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling( *it ) ) );
+	for (auto & it : rdc_segm_data) {
+		rdc_segments_.push_back( core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling( it ) ) );
 	}
 }
 
 void ResidualDipolarCouplingRigidSegments::show(std::ostream& out) const {
 	Size ct (0);
-	for ( RDC_Segments::const_iterator it=rdc_segments_.begin(); it!=rdc_segments_.end(); ++it ) {
+	for (const auto & rdc_segment : rdc_segments_) {
 		out <<"SEGMENT " << ++ct <<std::endl;
-		(*it)->show(out);
+		rdc_segment->show(out);
 		out << std::endl;
 	}
 }

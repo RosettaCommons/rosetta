@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/conformation/Conformation.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
@@ -147,14 +148,14 @@ SymmetricMotifFilter::SymmetricMotifFilter() :
 }
 
 SymmetricMotifFilter::SymmetricMotifFilter( utility::vector1<core::pose::PoseOP> reference_motifs, std::string symm_type_in)
-: protocols::filters::Filter( "SymmetricMotif" ), symm_type_(symm_type_in)
+: protocols::filters::Filter( "SymmetricMotif" ), symm_type_(std::move(symm_type_in))
 {
 	ref_motifs_ = reference_motifs;
 	process_motifs();
 	set_defaults();
 }
 
-SymmetricMotifFilter::~SymmetricMotifFilter() {}
+SymmetricMotifFilter::~SymmetricMotifFilter() = default;
 
 void
 SymmetricMotifFilter::set_defaults() {

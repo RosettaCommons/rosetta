@@ -50,7 +50,7 @@ public:
 
 	Resonance();
 	Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID const& id, core::chemical::AA, core::Real intensity = 1.0 );
-	~Resonance();
+	~Resonance() override;
 
 	virtual ResonanceOP clone() = 0;
 

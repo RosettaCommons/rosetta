@@ -37,12 +37,12 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
-#include <math.h>
+#include <cmath>
 #include <set>
 #include <sstream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include <string>
 #include "pathways_algorithms.h"
 
@@ -1634,7 +1634,7 @@ void Towards_partial_data_RRT::run()
     _owner->get_src_pose() /*template*/ ,
     _owner->get_dofs_manager(),
     true /* is_score_valid*/,
-    new Node_rmsd_info(_owner->get_src_pose()) );;
+    new Node_rmsd_info(_owner->get_src_pose()) );
   allocated_nodes++; // DEBUG
   // add the root to the DAG (meaningless for single algo - for compatibility)
   _conf_DAG.add_node(root, NULL);
@@ -1754,7 +1754,7 @@ Towards_partial_data_RRT::find_nearest_nodes_by_DOFs_vector(
 	    partial_target_dist_tmp = measure_distance_from_partial_data(*it);
 	    if(partial_target_dist_tmp < partial_target_dist){
 	      result_partial_data = *it;
-	      partial_target_dist = partial_target_dist_tmp;;
+	      partial_target_dist = partial_target_dist_tmp;
 	    }
 	  }
 

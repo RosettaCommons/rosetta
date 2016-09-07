@@ -68,9 +68,9 @@ public:
 public:
 	BBGaussianMover(); //default: no seglist, no endlist
 	BBGaussianMover( Size, Size, Size );
-	~BBGaussianMover();
+	~BBGaussianMover() override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	//go through all the residue, count how many movable residue passed
 	//count > n_pert_res (depends on the n_dof_angle)
@@ -78,7 +78,7 @@ public:
 	//DONE: apply smallmover to the end segment if their length is not
 	//satisfy the n_pert_res_, dof: L-(n-1) => L+(n+1)
 
-	void apply(Pose &pose);
+	void apply(Pose &pose) override;
 
 	void init();
 	void resize(Size, Size, Size);
@@ -102,17 +102,17 @@ public:
 
 	using moves::Mover::last_proposal_density_ratio;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief get the ratio of proposal densities for the last move
-	virtual Real last_proposal_density_ratio();
+	Real last_proposal_density_ratio() override;
 	/// @brief get whether detailed balance is preserved (i.e. no Ramachandran biasing)
-	virtual bool preserve_detailed_balance() const;
+	bool preserve_detailed_balance() const override;
 	/// @brief set whether detailed balance is preserved (i.e. no Ramachandran biasing)
-	virtual void set_preserve_detailed_balance( bool preserve_detailed_balance );
+	void set_preserve_detailed_balance( bool preserve_detailed_balance ) override;
 	/// dummy
-	virtual utility::vector1<core::id::TorsionID_Range>
-	torsion_id_ranges( core::pose::Pose & /*pose*/ ) {
+	utility::vector1<core::id::TorsionID_Range>
+	torsion_id_ranges( core::pose::Pose & /*pose*/ ) override {
 		return utility::vector1<core::id::TorsionID_Range>();
 	}
 
@@ -140,12 +140,12 @@ protected:
 	}
 
 	// for rosetta_scripts
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	//foreward
 	Real cholesky_fw(Matrix &, Size, Vector &, Vector &, Size from=1, Size to=0, Real scale=1.0);
@@ -201,13 +201,13 @@ protected:
 class BBG8T3AMover : public BBGaussianMover
 {
 public:
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 public:
 	BBG8T3AMover();
-	~BBG8T3AMover();
+	~BBG8T3AMover() override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 };
 
 }//namespace simple_moves

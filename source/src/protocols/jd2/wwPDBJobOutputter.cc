@@ -67,7 +67,7 @@ protocols::jd2::wwPDBJobOutputter::wwPDBJobOutputter()
 	}
 }
 
-protocols::jd2::wwPDBJobOutputter::~wwPDBJobOutputter(){}
+protocols::jd2::wwPDBJobOutputter::~wwPDBJobOutputter()= default;
 
 //////////////////////////////creating output functions/////////////////////////////////////////
 
@@ -148,21 +148,21 @@ protocols::jd2::wwPDBJobOutputter::extract_data_from_Job(
 
 	std::stringstream out;
 
-	for ( Job::Strings::const_iterator it(job->output_strings_begin()), end(job->output_strings_end());
+	for ( auto it(job->output_strings_begin()), end(job->output_strings_end());
 			it != end;
 			++it ) {
 		out << *it << std::endl;
 		//TR << *it << std::endl;
 	}
 
-	for ( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
+	for ( auto it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
 			it != end;
 			++it ) {
 		out << it->first << " " << it->second << std::endl;
 		//TR << it->first << " " << it->second << std::endl;
 	}
 
-	for ( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
+	for ( auto it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
 			it != end;
 			++it ) {
 		out << it->first << " " << it->second << std::endl;

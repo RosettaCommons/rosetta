@@ -36,13 +36,13 @@ class MetricCalculatorFitnessFunction : public SingleStateFitnessFunction {
 public:
 	MetricCalculatorFitnessFunction() : SingleStateFitnessFunction() {}
 	MetricCalculatorFitnessFunction(
-		std::string const & calculator_name,
-		std::string const & key
+		std::string calculator_name,
+		std::string key
 	);
 
-	virtual ~MetricCalculatorFitnessFunction() {}
+	~MetricCalculatorFitnessFunction() override = default;
 
-	virtual core::Real evaluate( core::pose::Pose const & pose ) const;
+	core::Real evaluate( core::pose::Pose const & pose ) const override;
 
 private:
 	std::string calculator_name_;

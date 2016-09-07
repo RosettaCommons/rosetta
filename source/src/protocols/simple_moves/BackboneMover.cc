@@ -89,7 +89,7 @@ BackboneMover::BackboneMover(
 	core::Real temperature_in,
 	core::Size nmoves_in
 ) : protocols::canonical_sampling::ThermodynamicMover(),
-	movemap_( movemap_in ),
+	movemap_(std::move( movemap_in )),
 	scorefxn_(),
 	temperature_( temperature_in),
 	nmoves_( nmoves_in ),
@@ -141,7 +141,7 @@ BackboneMover::BackboneMover( BackboneMover const &src ) :
 }
 
 //destructor
-BackboneMover::~BackboneMover() {}
+BackboneMover::~BackboneMover() = default;
 
 
 void BackboneMover::temperature( core::Real const temperature_in ) { temperature_ = temperature_in; }
@@ -411,7 +411,7 @@ SmallMover::SmallMover(
 }
 
 //destructor
-SmallMover::~SmallMover() {}
+SmallMover::~SmallMover() = default;
 
 std::string
 SmallMover::get_name() const {
@@ -601,7 +601,7 @@ ShearMover::ShearMover(
 }
 
 //destructor
-ShearMover::~ShearMover() {}
+ShearMover::~ShearMover() = default;
 
 std::string
 ShearMover::get_name() const {

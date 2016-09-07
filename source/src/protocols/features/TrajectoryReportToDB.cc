@@ -87,7 +87,7 @@ TrajectoryReportToDB::TrajectoryReportToDB(
 	trajectory_map_features_reporter_(src.trajectory_map_features_reporter_)
 {}
 
-TrajectoryReportToDB::~TrajectoryReportToDB(){}
+TrajectoryReportToDB::~TrajectoryReportToDB()= default;
 
 // Functions
 

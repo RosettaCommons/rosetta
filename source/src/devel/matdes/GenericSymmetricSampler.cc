@@ -189,16 +189,16 @@ GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
 
 	// manditory: mover
 	std::string mover_name( tag->getOption< std::string >( "mover_name"));
-	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
+	auto  find_mover ( movers.find( mover_name ));
 	runtime_assert( find_mover!=movers.end() );
 	mover_ = find_mover->second;
 
 	// optional: filter
 	std::string filter_name( tag->getOption< std::string >( "filter_name", "true_filter" ) );
-	Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	auto find_filter( filters.find( filter_name ));
 	runtime_assert( find_filter!=filters.end() );
 	filter_ = find_filter->second;
-	runtime_assert( filter_ != 0 );
+	runtime_assert( filter_ != nullptr );
 
 
 	// optional scorefunction ... overrides filter

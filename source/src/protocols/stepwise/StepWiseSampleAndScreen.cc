@@ -21,6 +21,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
 #include <protocols/moves/CompositionMover.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
@@ -57,7 +58,7 @@ namespace stepwise {
 //Constructor
 StepWiseSampleAndScreen::StepWiseSampleAndScreen( sampler::StepWiseSamplerBaseOP sampler,
 	utility::vector1< screener::StepWiseScreenerOP > screeners ):
-	sampler_( sampler ),
+	sampler_(std::move( sampler )),
 	screeners_( screeners ),
 	max_ntries_( 0 ),
 	num_random_samples_( 0 ),
@@ -69,7 +70,7 @@ StepWiseSampleAndScreen::StepWiseSampleAndScreen( sampler::StepWiseSamplerBaseOP
 
 //Destructor
 StepWiseSampleAndScreen::~StepWiseSampleAndScreen()
-{}
+= default;
 
 //////////////////////////////////////////////////////////////////////
 void

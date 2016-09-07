@@ -48,7 +48,7 @@ public:
 	CentroidRelaxMover(CentroidRelaxMover const & src);
 
 	//Destructor
-	~CentroidRelaxMover();
+	~CentroidRelaxMover() override;
 
 	// Standard Rosetta methods ////////////////////////////////////////////////
 	//General Methods
@@ -56,21 +56,21 @@ public:
 	// Undefined, commenting out to fix PyRosetta build static void register_options();
 
 	/// @brief Generate string representation of CentroidRelaxMover
-	void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	//Insertion operator (overloaded so that CentroidRelaxMover can be "printed" in PyRosetta.
 	// Undefined, commenting out to fix PyRosetta build friend std::ostream & operator<<(std::ostream & output, CentroidRelaxMover const & object_to_output);
 
 	// Mover Methods
 	/// @brief Return the name of the Mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Apply the corresponding move to <input_pose>
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	//Accessors/Mutators
 	void set_nmoves(const core::Size setting);

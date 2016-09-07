@@ -67,32 +67,32 @@ public:// constructor/destructor
 	SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory,
 		utility::vector1<core::Size> const & selected_resis,
 		bool const designable_only,
-		std::string const & resfile_name,
-		std::string const & resfile_suffix,
-		std::string const & resfile_prefix,
-		std::string const & resfile_general_property,
-		std::string const & selected_resis_property
+		std::string resfile_name,
+		std::string resfile_suffix,
+		std::string resfile_prefix,
+		std::string resfile_general_property,
+		std::string selected_resis_property
 	);
 
 	// @brief copy constructor
 	SaveResfileToDiskFilter( SaveResfileToDiskFilter const & rval );
 
-	virtual ~SaveResfileToDiskFilter();
+	~SaveResfileToDiskFilter() override;
 
 
 public:// virtual constructor
 
 	// @brief make clone
-	virtual protocols::filters::FilterOP clone() const;
+	protocols::filters::FilterOP clone() const override;
 
 	// @brief make fresh instance
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	protocols::filters::FilterOP fresh_instance() const override;
 
 
 public:// accessor
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "SaveResfileToDisk"; }
+	std::string name() const override { return "SaveResfileToDisk"; }
 
 public:// setters
 
@@ -119,17 +119,17 @@ public:// getters
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	// @brief public functions
 	utility::vector1< core::Size > select_residues( Pose const & pose ) const;

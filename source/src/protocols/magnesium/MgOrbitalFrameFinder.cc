@@ -39,7 +39,7 @@ MgOrbitalFrameFinder::MgOrbitalFrameFinder()
 
 //Destructor
 MgOrbitalFrameFinder::~MgOrbitalFrameFinder()
-{}
+= default;
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -169,7 +169,7 @@ MgOrbitalFrameFinder::sample_orbital_frame( pose::Pose & pose,
 	using namespace core::id;
 
 	Vector const xyz_mg =  pose.xyz( NamedAtomID( "MG  ", i ) );
-	if ( urs_ == 0 ) urs_ = get_octahedral_uniform_rotation_sampler();
+	if ( urs_ == nullptr ) urs_ = get_octahedral_uniform_rotation_sampler();
 
 	utility::vector1< Vector > r_lig;
 	for ( Size n = 1; n <= ligands.size(); n++ ) {

@@ -174,7 +174,7 @@ public: // Creation
 	inline
 	virtual
 	~UserKey()
-	{}
+	= default;
 
 
 public: // Assignment

@@ -43,21 +43,21 @@ public:
 	LoopHashLibraryLoader();
 
 	/// @brief Destructor.
-	virtual ~LoopHashLibraryLoader() {}
+	~LoopHashLibraryLoader() override = default;
 
 	/// @brief Return a LoopHashLibraryOP constructed from the given ResourceOptions.
-	virtual
+	
 	basic::resource_manager::ResourceOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
 		basic::resource_manager::LocatorID const &,
 		std::istream &
-	) const;
+	) const override;
 
 	/// @brief Return a ResourceOptionsOP with the default set of options.
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const { return basic::resource_manager::ResourceOptionsOP( new LoopHashLibraryOptions() );}
+	default_options() const override { return basic::resource_manager::ResourceOptionsOP( new LoopHashLibraryOptions() );}
 };
 
 } // namespace

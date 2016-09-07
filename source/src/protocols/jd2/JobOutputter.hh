@@ -52,7 +52,7 @@ public:
 	/// @brief constructor -- reads cmd-line to initialize evaluators
 	JobOutputter();
 
-	virtual ~JobOutputter();
+	~JobOutputter() override;
 
 	/// @brief this function is meant to be redefined in child classes to allow for flushing of memory buffers.
 	/// Here's the long version: The SilentFileJobOutputter wanted to buffer output, but needed to guaruntee that

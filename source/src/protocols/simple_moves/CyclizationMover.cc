@@ -59,6 +59,7 @@
 // c++ headers
 #include <string>
 #include <algorithm>
+#include <utility>
 
 namespace protocols {
 namespace simple_moves {
@@ -86,8 +87,8 @@ CyclizationMover::CyclizationMover( core::Size chain_to_cyclize, bool add_constr
 	add_constraints_( add_constraints ),
 	minimize_( minimize ),
 	minimization_rebuild_rounds_( minimization_rebuild_rounds ),
-	score_fxn_( score_fxn ),
-	move_map_( move_map ),
+	score_fxn_(std::move( score_fxn )),
+	move_map_(std::move( move_map )),
 	mm_torsion_library_( core::scoring::ScoringManager::get_instance()->get_MMTorsionLibrary() )
 {}
 
@@ -341,7 +342,7 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 					id::AtomID a3( resconn_atomno2, cterm_rsd_num_ );
 					id::AtomID a4( kk_term_atomno, cterm_rsd_num_ );
 
-					for ( core::scoring::mm::mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+					for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 						scoring::func::FuncOP cpf_temp( new CharmmPeriodicFunc( (i->second).key3() /*x0*/, (i->second).key1() /*n*/, (i->second).key2() /*k*/ ) );
 						ConstraintOP d_temp( new DihedralConstraint( a1, a2, a3, a4, cpf_temp ) );
 						pose.add_constraint( d_temp );
@@ -389,7 +390,7 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				id::AtomID a3( resconn_atomno1, nterm_rsd_num_ );
 				id::AtomID a4( resconn_atomno2, cterm_rsd_num_ );
 
-				for ( core::scoring::mm::mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+				for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 					scoring::func::FuncOP cpf_temp( new CharmmPeriodicFunc( (i->second).key3() /*x0*/, (i->second).key1() /*n*/, (i->second).key2() /*k*/ ) );
 					ConstraintOP d_temp( new DihedralConstraint( a1, a2, a3, a4, cpf_temp ) );
 					pose.add_constraint( d_temp );
@@ -435,7 +436,7 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 				id::AtomID a3( jj_atom3, cterm_rsd_num_ );
 				id::AtomID a4( jj_atom4, cterm_rsd_num_ );
 
-				for ( core::scoring::mm::mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+				for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 					scoring::func::FuncOP cpf_temp( new CharmmPeriodicFunc( (i->second).key3() /*x0*/, (i->second).key1() /*n*/, (i->second).key2() /*k*/ ) );
 					ConstraintOP d_temp( new DihedralConstraint( a1, a2, a3, a4, cpf_temp ) );
 					pose.add_constraint( d_temp );
@@ -458,7 +459,7 @@ CyclizationMover::setup_scorefunction()
 	using namespace core;
 	using namespace scoring;
 
-	if ( score_fxn_ == 0 ) {
+	if ( score_fxn_ == nullptr ) {
 		TR << "Creating score function and setting geometric constraint weights to 1" << std::endl;
 		score_fxn_ = get_score_function();
 		score_fxn_->set_weight( atom_pair_constraint, 1 );
@@ -481,7 +482,7 @@ CyclizationMover::setup_minimizer( core::pose::Pose & pose )
 	using namespace core;
 	using namespace kinematics;
 
-	if ( move_map_ == 0 ) {
+	if ( move_map_ == nullptr ) {
 		TR << "Creating move map and setting all backbone and sidechain DOFs to movable" << std::endl;
 		move_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 		move_map_->set_bb_true_range( pose.conformation().chain_begin( chain_to_cyclize_ ), pose.conformation().chain_end( chain_to_cyclize_ ) );

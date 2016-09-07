@@ -27,7 +27,7 @@ ResId::ResId() {
 	modifiable( true );
 }
 
-ResId::~ResId() {}
+ResId::~ResId() = default;
 
 ResId::ResId( core::Size const r ){
 	set_resid( r );

@@ -62,7 +62,7 @@ StructAvrgMover::StructAvrgMover( pose::Pose const &pose,
 	}
 }
 
-StructAvrgMover::~StructAvrgMover(){}
+StructAvrgMover::~StructAvrgMover()= default;
 
 void
 StructAvrgMover::set_default()

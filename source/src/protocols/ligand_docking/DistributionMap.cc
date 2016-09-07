@@ -27,7 +27,7 @@ namespace ligand_docking {
 #if defined MULTI_THREADED
 std::atomic< DistributionMap * > DistributionMap::instance_( 0 );
 #else
-DistributionMap * DistributionMap::instance_( 0 );
+DistributionMap * DistributionMap::instance_( nullptr );
 #endif
 
 

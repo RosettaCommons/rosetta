@@ -136,7 +136,7 @@ class ResidueType : public utility::pointer::ReferenceCount, public utility::poi
 {
 public:
 	/// @brief destructor
-	virtual ~ResidueType();
+	~ResidueType() override;
 
 	/// @brief constructor
 	/// @details We use the AtomTypeSet object to assign atom_types to atoms inside add_atom,

@@ -41,7 +41,7 @@ public:
 
 public:
 	MMTPackingJob();
-	virtual ~MMTPackingJob();
+	~MMTPackingJob() override;
 
 	void set_pose( core::pose::Pose const & pose );
 	void set_sfxn( core::scoring::ScoreFunction const & sfxn );

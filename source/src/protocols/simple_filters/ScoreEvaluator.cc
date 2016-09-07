@@ -75,7 +75,7 @@ ScoreEvaluator::ScoreEvaluator( std::string tag, core::scoring::ScoreFunctionOP 
 	tr.Info << std::endl;
 }
 
-ScoreEvaluator::~ScoreEvaluator() {}
+ScoreEvaluator::~ScoreEvaluator() = default;
 
 core::Real
 ScoreEvaluator::apply(
@@ -117,8 +117,8 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 	nres_ = 400; //no worries: if the pose turns out to be larger we repeat that inversion in apply().
 	evaluation::invert_include_residues( 400, selection_, exclude_list_ );
 	if ( tr.Trace.visible() ) {
-		for ( core::scoring::ResidueSelectionVector::const_iterator it = selection.begin(); it != selection.end(); ++it ) {
-			tr.Trace << *it << " ";
+		for (unsigned long it : selection) {
+			tr.Trace << it << " ";
 		}
 		tr.Trace << std::endl;
 		scorefxn->show( tr.Trace );
@@ -129,7 +129,7 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 	}
 }
 
-TruncatedScoreEvaluator::~TruncatedScoreEvaluator() {}
+TruncatedScoreEvaluator::~TruncatedScoreEvaluator() = default;
 
 Real TruncatedScoreEvaluator::apply( core::pose::Pose& pose ) const {
 	// core::Pose my_pose( pose );

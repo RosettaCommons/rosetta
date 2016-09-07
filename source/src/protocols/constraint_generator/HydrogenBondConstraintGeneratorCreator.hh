@@ -22,8 +22,8 @@ namespace constraint_generator {
 
 class HydrogenBondConstraintGeneratorCreator : public protocols::constraint_generator::ConstraintGeneratorCreator {
 public:
-	virtual protocols::constraint_generator::ConstraintGeneratorOP create_constraint_generator() const;
-	virtual std::string keyname() const;
+	protocols::constraint_generator::ConstraintGeneratorOP create_constraint_generator() const override;
+	std::string keyname() const override;
 
 };
 

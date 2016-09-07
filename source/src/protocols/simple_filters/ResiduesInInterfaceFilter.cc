@@ -75,7 +75,7 @@ ResiduesInInterfaceFilterCreator::create_filter() const { return protocols::filt
 std::string
 ResiduesInInterfaceFilterCreator::keyname() const { return "ResInInterface"; }
 
-ResiduesInInterfaceFilter::~ResiduesInInterfaceFilter() {}
+ResiduesInInterfaceFilter::~ResiduesInInterfaceFilter() = default;
 
 /// @details a utility for docking_filter
 core::Size ResiduesInInterfaceFilter::compute( core::pose::Pose const & pose ) const

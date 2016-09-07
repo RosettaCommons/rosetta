@@ -47,8 +47,8 @@ class RampingFunc : public utility::pointer::ReferenceCount
 public:
 	typedef core::Real Real;
 public:
-	virtual
-	~RampingFunc();
+	
+	~RampingFunc() override;
 
 	/// @brief Func must be defined (and finite) over the range from 0 and 1.
 	virtual
@@ -60,11 +60,11 @@ public:
 class LinearFunc : public RampingFunc
 {
 public:
-	virtual ~LinearFunc();
+	~LinearFunc() override;
 
-	virtual
+	
 	Real
-	func( Real x ) const
+	func( Real x ) const override
 	{
 		return x;
 	}
@@ -78,10 +78,10 @@ public:
 		Real xval_end_ramp
 	);
 
-	virtual ~FastLinearFunc();
-	virtual
+	~FastLinearFunc() override;
+	
 	Real
-	func( Real x ) const;
+	func( Real x ) const override;
 
 private:
 	Real xval_start_ramp_;
@@ -99,11 +99,11 @@ public:
 	GeometricFunc( Real xval_at_0p5 );
 	GeometricFunc();
 
-	virtual ~GeometricFunc();
+	~GeometricFunc() override;
 
-	virtual
+	
 	Real
-	func( Real x ) const;
+	func( Real x ) const override;
 
 private:
 	Real inv_xval_at_0p5_;
@@ -119,11 +119,11 @@ public:
 	InvGeometricFunc( Real xval_at_0p5 );
 	InvGeometricFunc();
 
-	virtual ~InvGeometricFunc();
+	~InvGeometricFunc() override;
 
-	virtual
+	
 	Real
-	func( Real x ) const;
+	func( Real x ) const override;
 
 private:
 	Real inv_one_minus_xval_at_0p5_;
@@ -137,7 +137,7 @@ public:
 	// have mutators for the majority of the parameters?
 	RampingMover();
 
-	~RampingMover();
+	~RampingMover() override;
 
 	/// Takes a scorefunciton OP because the score function it modifies is shared
 	/// between many movers.
@@ -161,17 +161,17 @@ public:
 		MonteCarloOP  mc_in
 	);
 
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tags,
 		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose);
+		core::pose::Pose const & pose) override;
 
 	void sfxn( core::scoring::ScoreFunctionOP );
 	void start_weight( core::Real start_weight_in );

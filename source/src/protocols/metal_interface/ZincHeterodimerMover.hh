@@ -40,15 +40,15 @@ public:
 	/// @param[in] metal_to_mobile this is a core::kinematic::Edge which represents a bond from the metal center to a liganding residue on the mobile partner with rigid body freedom.  The bond will be rotated by RotateJumpAxisMover
 	ZincHeterodimerMover(
 		utility::vector1< core::Size > const & metal_site,
-		core::kinematics::Edge const & fixed_to_metal,
-		core::kinematics::Edge const & metal_to_mobile
+		core::kinematics::Edge fixed_to_metal,
+		core::kinematics::Edge metal_to_mobile
 	);
 
-	virtual ~ZincHeterodimerMover();
+	~ZincHeterodimerMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	/// @brief constructor helper function - generates scorefunctions

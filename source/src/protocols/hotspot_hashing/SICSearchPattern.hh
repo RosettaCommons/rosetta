@@ -54,7 +54,7 @@ public:
 		SearchPatternOP slide_pattern,
 		core::Real starting_displacement = default_displacement);
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints();
+	utility::vector1<core::kinematics::Stub> Searchpoints() override;
 
 private:
 	protocols::sic_dock::SICFast sic_fast_;

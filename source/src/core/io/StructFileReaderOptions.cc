@@ -40,7 +40,7 @@ StructFileReaderOptions::StructFileReaderOptions( utility::options::OptionCollec
 	init_from_options( options );
 }
 
-StructFileReaderOptions::~StructFileReaderOptions() {}
+StructFileReaderOptions::~StructFileReaderOptions() = default;
 
 void StructFileReaderOptions::parse_my_tag( utility::tag::TagCOP tag )
 {

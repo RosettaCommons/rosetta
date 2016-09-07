@@ -54,7 +54,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.RdcTargetEvaluatorCre
 namespace protocols {
 namespace simple_filters {
 
-RdcTargetEvaluatorCreator::~RdcTargetEvaluatorCreator() {}
+RdcTargetEvaluatorCreator::~RdcTargetEvaluatorCreator() = default;
 
 void RdcTargetEvaluatorCreator::register_options() {
 	using namespace basic::options;

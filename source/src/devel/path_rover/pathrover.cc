@@ -39,14 +39,14 @@
 // C++ Headers
 #include <algorithm>
 #include <cstdlib>
-#include <ctype.h>
+#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <math.h>
+#include <cmath>
 #include <set>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 
 namespace protocols{

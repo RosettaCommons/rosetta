@@ -32,6 +32,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <core/types.hh>
 
@@ -99,7 +100,7 @@ LoopRebuild::LoopRebuild(
 	core::scoring::ScoreFunctionOP scorefxn,
 	protocols::loops::Loops Loops_in
 ) : Mover(),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	Loops_in_( Loops_in )
 {
 	protocols::loops::read_loop_fragments( frag_libs_ );
@@ -107,7 +108,7 @@ LoopRebuild::LoopRebuild(
 	set_default_settings();
 }
 
-LoopRebuild::~LoopRebuild() {}
+LoopRebuild::~LoopRebuild() = default;
 
 /// @brief Clone this object
 protocols::moves::MoverOP
@@ -226,9 +227,9 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 	int const nres( pose.total_residue() );
 
 	std::vector< int > free_res; // stores residue numbers in real loops
-	for ( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
-		TR.Debug << "Loop res " <<  it->start() << " " <<  it->stop() << std::endl;
-		for ( int k = (int)it->start(); k <= (int)it->stop(); ++k ) {
+	for (const auto & it : Loops_in_) {
+		TR.Debug << "Loop res " <<  it.start() << " " <<  it.stop() << std::endl;
+		for ( int k = (int)it.start(); k <= (int)it.stop(); ++k ) {
 			free_res.push_back(k);
 		}
 	}
@@ -283,7 +284,7 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 
 		int final_loop_begin=0;
 		int final_loop_end=0;
-		int time_start = time(NULL);
+		int time_start = time(nullptr);
 		float time_per_build = 0.0;
 		int nclosurefail = 0;
 		int nrmsfail = 0;
@@ -364,7 +365,7 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 			final_loop_end   = loop_end;
 		}//accepted this loop
 
-		int time_end = time(NULL);
+		int time_end = time(nullptr);
 		time_per_build = float(time_end - time_start) / float(nfail);
 
 		using namespace ObjexxFCL::format;
@@ -620,7 +621,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 
 	// OK! Let's go !
-	int   starttime    = time(NULL);
+	int   starttime    = time(nullptr);
 	int   frag_count   = 0;
 	scorefxn_->show_line_headers( TR );
 
@@ -757,7 +758,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		}
 	} // if-else get_ccd_closure_exist
 
-	int looptime = time(NULL) - starttime;
+	int looptime = time(nullptr) - starttime;
 	TR << "FragCount: " << frag_count << std::endl;
 	TR << "Looptime " << looptime << std::endl;
 
@@ -1155,7 +1156,7 @@ void LoopRebuild::extend_barcode_regions_if_chain_break(
 	TR.Debug << "loop_begin and loop_end  " << loop_begin << " " << loop_end << " " << chain_break_score << std::endl;
 	scorefxn_->show(  TR , pose );
 	TR.Debug << "*****\n*****\n*****\n";
-	TR.Debug << pose.fold_tree() << std::endl;;
+	TR.Debug << pose.fold_tree() << std::endl;
 	TR.Debug << "*****\n*****\n*****\n";
 
 	// extend more barcode regionsi
@@ -1320,9 +1321,8 @@ void LoopRefine::apply(
 
 	protocols::loops::LoopsOP LoopsToRefine( new protocols::loops::Loops() );
 
-	for ( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
-		Loop refine_loop( *it );
-		refine_loop.choose_cutpoint( pose );
+	for (auto refine_loop : Loops_in_) {
+			refine_loop.choose_cutpoint( pose );
 		LoopsToRefine->add_loop( refine_loop );
 	}
 

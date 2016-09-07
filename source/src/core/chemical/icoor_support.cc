@@ -319,7 +319,7 @@ fill_ideal_xyz_from_icoor(
 	std::set< VD > assigned;
 	std::queue< VD > atom_queue;
 	VIterPair allverts( boost::vertices( graph ) );
-	for ( VIter iter(allverts.first); iter != allverts.second; ++iter ) {
+	for ( auto iter(allverts.first); iter != allverts.second; ++iter ) {
 		// AMW: skip virtual atoms?
 		//if ( restype.is_virtual( restype.atom_index( *iter ) ) ) continue;
 		atom_queue.push( *iter );

@@ -31,7 +31,7 @@ namespace jd2 {
 class ScoreMap : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ScoreMap();
+	~ScoreMap() override;
 	/// @brief full atom energies for output
 	static void nonzero_energies(
 		std::map< std::string, core::Real> & score_map,

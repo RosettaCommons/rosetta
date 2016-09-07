@@ -40,7 +40,7 @@ enum RBSegmentType { RB_HELIX=1, RB_SHEET, RB_DEFAULT };
 /////////////////////////////////////////////////////////
 class RBResidueRange {
 public:
-	RBResidueRange() {}
+	RBResidueRange() = default;
 
 	RBResidueRange( int begin, int end , RBSegmentType type=RB_DEFAULT ) :
 		res_first( begin ),

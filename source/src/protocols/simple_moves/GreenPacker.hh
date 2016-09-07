@@ -47,7 +47,7 @@ class MinimalRotamer : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~MinimalRotamer();
+	~MinimalRotamer() override;
 	typedef core::chemical::AA          AA;
 	typedef core::chemical::ResidueType ResidueType;
 	typedef core::conformation::Residue Residue;
@@ -137,7 +137,7 @@ public:
 	typedef core::Size       Size;
 
 public:
-	virtual ~GroupDiscriminator();
+	~GroupDiscriminator() override;
 
 	virtual
 	protocols::simple_moves::GroupDiscriminatorOP clone() const = 0;
@@ -155,14 +155,14 @@ public:
 	typedef core::Size       Size;
 
 public:
-	virtual ~UserDefinedGroupDiscriminator();
+	~UserDefinedGroupDiscriminator() override;
 
-	virtual
-	protocols::simple_moves::GroupDiscriminatorOP clone() const;
+	
+	protocols::simple_moves::GroupDiscriminatorOP clone() const override;
 
-	virtual
+	
 	Size
-	group_id( Pose const & pose, Size seqpos ) const;
+	group_id( Pose const & pose, Size seqpos ) const override;
 
 	void
 	set_group_ids( utility::vector1<Size > const & group_ids_input );
@@ -177,14 +177,14 @@ class ChainGroupDiscriminator : public GroupDiscriminator
 {
 
 public:
-	virtual ~ChainGroupDiscriminator();
+	~ChainGroupDiscriminator() override;
 
-	virtual
-	protocols::simple_moves::GroupDiscriminatorOP clone() const;
+	
+	protocols::simple_moves::GroupDiscriminatorOP clone() const override;
 
-	virtual
+	
 	Size
-	group_id( Pose const & pose, Size seqpos ) const;
+	group_id( Pose const & pose, Size seqpos ) const override;
 };
 
 class GreenPacker : public protocols::moves::Mover
@@ -212,12 +212,12 @@ public:
 
 public:
 	GreenPacker();
-	virtual ~GreenPacker();
+	~GreenPacker() override;
 
-	virtual
+	
 	void
-	apply( Pose & );
-	virtual std::string get_name() const;
+	apply( Pose & ) override;
+	std::string get_name() const override;
 
 	// Undefined, commentin out to make PyRosetta compile
 	// void reset();

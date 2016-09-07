@@ -13,11 +13,12 @@
 
 //unit headers
 #include <basic/resource_manager/ResourceLocator.hh>
+#include <utility>
 
 namespace basic {
 namespace resource_manager {
 
-ResourceStream::~ResourceStream() {}
+ResourceStream::~ResourceStream() = default;
 
 ResourceLocator::ResourceLocator() :
 	locator_tag_("")
@@ -36,7 +37,7 @@ ResourceLocator::ResourceLocator(
 	locator_tag_( src.locator_tag() )
 {}
 
-ResourceLocator::~ResourceLocator() {}
+ResourceLocator::~ResourceLocator() = default;
 
 void
 ResourceLocator::locator_tag(

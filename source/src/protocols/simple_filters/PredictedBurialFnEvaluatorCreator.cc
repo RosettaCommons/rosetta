@@ -55,7 +55,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.PredictedBurialFnEval
 namespace protocols {
 namespace simple_filters {
 
-PredictedBurialFnEvaluatorCreator::~PredictedBurialFnEvaluatorCreator() {}
+PredictedBurialFnEvaluatorCreator::~PredictedBurialFnEvaluatorCreator() = default;
 
 void PredictedBurialFnEvaluatorCreator::register_options() {
 	using namespace basic::options;

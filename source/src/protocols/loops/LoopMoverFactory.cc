@@ -48,7 +48,7 @@ using protocols::loops::LoopMoverFactory;
 template <> std::mutex utility::SingletonBase< LoopMoverFactory >::singleton_mutex_{};
 template <> std::atomic< LoopMoverFactory * > utility::SingletonBase< LoopMoverFactory >::instance_( 0 );
 #else
-template <> LoopMoverFactory * utility::SingletonBase< LoopMoverFactory >::instance_( 0 );
+template <> LoopMoverFactory * utility::SingletonBase< LoopMoverFactory >::instance_( nullptr );
 #endif
 
 }
@@ -73,7 +73,7 @@ LoopMoverFactory::create_singleton_instance()
 /// @details Private constructor insures correctness of singleton.
 LoopMoverFactory::LoopMoverFactory() {}
 
-LoopMoverFactory::~LoopMoverFactory() {}
+LoopMoverFactory::~LoopMoverFactory() = default;
 
 loop_mover::LoopMoverOP
 LoopMoverFactory::create_loop_mover(

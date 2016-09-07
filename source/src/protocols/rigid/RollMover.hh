@@ -45,26 +45,26 @@ public:
 		numeric::xyzVector< core::Real > translate
 	);
 
-	virtual ~RollMover();
+	~RollMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void set_min_max_angles( core::Real min_angle, core::Real max_angle );
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		TagCOP /*tag*/,
 		basic::datacache::DataMap & /*data*/,
 		Filters_map const & /*filters*/,
 		moves::Movers_map const & /*movers*/,
-		Pose const & /*pose*/);
+		Pose const & /*pose*/) override;
 
 
 private:

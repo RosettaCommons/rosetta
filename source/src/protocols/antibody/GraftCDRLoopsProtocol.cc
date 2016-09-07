@@ -72,7 +72,7 @@ GraftCDRLoopsProtocol::GraftCDRLoopsProtocol() : Mover() {
 }
 
 // default destructor
-GraftCDRLoopsProtocol::~GraftCDRLoopsProtocol() {}
+GraftCDRLoopsProtocol::~GraftCDRLoopsProtocol() = default;
 
 //clone
 protocols::moves::MoverOP GraftCDRLoopsProtocol::clone() const {
@@ -194,7 +194,7 @@ void GraftCDRLoopsProtocol::init_from_options() {
 		core::import_pose::pose_from_file( *native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		set_native_pose( native_pose );
 	} else {
-		set_native_pose(NULL);
+		set_native_pose(nullptr);
 	}
 
 
@@ -209,12 +209,12 @@ void GraftCDRLoopsProtocol::init_from_options() {
 
 void GraftCDRLoopsProtocol::setup_objects() {
 
-	ab_info_ = NULL;
-	ab_t_info_ = NULL;
+	ab_info_ = nullptr;
+	ab_t_info_ = nullptr;
 
-	graft_sequence_ = NULL;
+	graft_sequence_ = nullptr;
 
-	tf_ = NULL;
+	tf_ = nullptr;
 
 	scorefxn_pack_ = core::scoring::get_score_function();
 

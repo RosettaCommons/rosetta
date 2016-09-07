@@ -17,7 +17,7 @@
 namespace basic {
 namespace resource_manager {
 
-FallbackConfigurationCreator::~FallbackConfigurationCreator() {}
+FallbackConfigurationCreator::~FallbackConfigurationCreator() = default;
 
 } // namespace resource_manager
 } // namespace basic

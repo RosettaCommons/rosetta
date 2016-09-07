@@ -74,13 +74,13 @@ void DiversifyCrmsdSelector::select_fragments(
 			Real rms = numeric::model_quality::rms_wrapper(len,fi_,fj_);
 			if ( rms<cutoff_ ) {
 				is_ok = false;
-				trDiversifyCrmsdSelector.Trace<<"Crmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;;
+				trDiversifyCrmsdSelector.Trace<<"Crmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;
 				break;
 			}
 		}
 		if ( is_ok ) {
 			out.push_back( in[i] );
-			trDiversifyCrmsdSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;;
+			trDiversifyCrmsdSelector.Trace<<"Fragment "<< *in[i].first<<" passed"<<std::endl;
 		}
 	}
 	trDiversifyCrmsdSelector<<out.size()<<" fragments passed through DiversifyCrmsdSelector at query position "

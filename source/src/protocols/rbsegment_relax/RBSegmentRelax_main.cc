@@ -91,7 +91,7 @@ RBSegmentRelaxImpl::RBSegmentRelaxImpl(){
 
 }
 
-RBSegmentRelaxImpl::~RBSegmentRelaxImpl(){}
+RBSegmentRelaxImpl::~RBSegmentRelaxImpl()= default;
 
 void RBSegmentRelaxImpl::apply( core::pose::Pose & pose ){
 	core::pose::set_ss_from_phipsi( pose ); // TODO is this line really necessary? is this not already in import_pose.cc

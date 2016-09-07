@@ -65,7 +65,7 @@ BatchFeatures::BatchFeatures(){}
 
 BatchFeatures::BatchFeatures( BatchFeatures const & ) : utility::pointer::ReferenceCount() {}
 
-BatchFeatures::~BatchFeatures(){}
+BatchFeatures::~BatchFeatures()= default;
 
 string
 BatchFeatures::type_name() const { return "BatchFeatures"; }

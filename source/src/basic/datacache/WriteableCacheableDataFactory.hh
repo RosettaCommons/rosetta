@@ -53,7 +53,7 @@ public:
 	typedef std::map< std::string, WriteableCacheableDataCreatorOP > WriteableCacheableDataMap;
 
 public:
-	virtual ~WriteableCacheableDataFactory() {}
+	virtual ~WriteableCacheableDataFactory() = default;
 
 
 	void factory_register( WriteableCacheableDataCreatorOP creator );

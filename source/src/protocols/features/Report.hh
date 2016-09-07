@@ -48,7 +48,7 @@ public:
 
 	Report(Report const & src);
 
-	virtual ~Report();
+	~Report() override;
 
 	virtual
 	core::Size

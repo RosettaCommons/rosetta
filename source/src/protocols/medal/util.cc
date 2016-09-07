@@ -78,9 +78,8 @@ void chunk_probabilities(const protocols::loops::Loops& chunks, Probabilities* p
 	assert(p);
 
 	p->clear();
-	for ( Loops::const_iterator i = chunks.begin(); i != chunks.end(); ++i ) {
-		const Loop& chunk = *i;
-		for ( unsigned j = chunk.start(); j <= chunk.stop(); ++j ) {
+	for (const auto & chunk : chunks) {
+			for ( unsigned j = chunk.start(); j <= chunk.stop(); ++j ) {
 			p->push_back(chunk.length());
 		}
 	}
@@ -129,8 +128,8 @@ void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* 
 
 	s->clear();
 
-	for ( protocols::loops::Loops::const_iterator i = loops->begin(); i != loops->end(); ++i ) {
-		for ( core::Size j = i->start(); j <= i->stop(); ++j ) {
+	for (const auto & i : *loops) {
+		for ( core::Size j = i.start(); j <= i.stop(); ++j ) {
 			s->insert(j);
 		}
 	}

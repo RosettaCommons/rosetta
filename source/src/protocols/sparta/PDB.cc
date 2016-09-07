@@ -76,7 +76,7 @@ string PDB::getField(const string &str, int index)
 			case 11 : return str.substr(60,6); // B-factor
 			}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -96,7 +96,7 @@ void PDB::loadPDB_Entry(const string &str, PDB_Entry &entry)
 	entry.X = atof( getField(str,7).c_str() );
 	entry.Y = atof( getField(str,8).c_str() );
 	entry.Z = atof( getField(str,9).c_str() );
-	entry.B_Factor = atof( getField(str,11).c_str() );;
+	entry.B_Factor = atof( getField(str,11).c_str() );
 
 	entry.Coord[0] = entry.X;
 	entry.Coord[1] = entry.Y;
@@ -665,7 +665,7 @@ void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
 
 
 	for ( PairList::const_iterator itA = acceptorList.begin(), endA = acceptorList.end(); itA != endA; ++itA ) {//loop over acceptor list
-		PDB_Entry A = conf[ itA->first ], A_Heavy = conf[ itA->second ];;
+		PDB_Entry A = conf[ itA->first ], A_Heavy = conf[ itA->second ];
 		//search for donors
 		for ( PairList::const_iterator itD = donorList.begin(), endD = donorList.end(); itD != endD; ++itD ) {
 			PDB_Entry D = conf[ itD->first ], D_Heavy = conf[ itD->second ];

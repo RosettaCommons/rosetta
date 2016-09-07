@@ -48,19 +48,19 @@ public:
 	);
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	void
 	init();
 
 	void
-	apply ( core::pose::Pose & );
+	apply ( core::pose::Pose & ) override;
 
 	/// @brief parse tag for use in RosettaScripts
 	void
@@ -70,7 +70,7 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
-	);
+	) override;
 
 	void
 	prepare_fold_tree(

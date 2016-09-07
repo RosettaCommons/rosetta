@@ -34,6 +34,7 @@
 
 // Utility headers
 #include <ObjexxFCL/format.hh>
+#include <utility>
 #include <utility/string_util.hh>
 // #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
@@ -68,10 +69,10 @@ namespace protocols {
 namespace noesy_assign {
 
 
-ResonanceList::ResonanceList( std::string const& sequence ) : sequence_( sequence )
+ResonanceList::ResonanceList( std::string  sequence ) : sequence_(std::move( sequence ))
 {}
 
-ResonanceList::~ResonanceList() {}
+ResonanceList::~ResonanceList() = default;
 
 /// translate sequence information into AA
 core::chemical::AA ResonanceList::aa_from_resid( core::Size resi ) const {
@@ -244,7 +245,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		if ( aa == aa_ile && name == "HD1" ) name = "QD1";
 
 		bool is_proton = ( name[ 0 ]=='Q' || ( name.find("H") != std::string::npos && name[ 0 ] != 'C' /*not CH2 on TRP*/ ) );
-		ResonanceOP save_resonance( NULL );
+		ResonanceOP save_resonance( nullptr );
 		if ( is_proton ) {
 			save_resonance = ResonanceOP( new ProtonResonance( label, freq, error, core::id::NamedAtomID( name, resn ), aa, intensity ) );
 		} else {
@@ -311,7 +312,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 
 /// @brief write ResonanceList to stream
 void ResonanceList::write_to_stream( std::ostream& os   ) const {
-	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
+	for ( auto it = map_.begin(); it != map_.end(); ++it ) {
 		runtime_assert( it->first == it->second->label() );
 		if ( sequence_.size() ) {
 			using namespace core::chemical; //for AA
@@ -348,7 +349,7 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 
 
 	///write resonances
-	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
+	for ( auto it = map_.begin(); it != map_.end(); ++it ) {
 		runtime_assert( it->first == it->second->label() );
 		if ( sequence_.size() < it->second->resid() ) {
 			tr.Error << " no sequence information for residue " << it->second->resid() << std::endl;
@@ -381,11 +382,11 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 
 ///retrieve Resonance --- throws EXCN_UnknonwResonance if atom not found
 Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom ) const {
-	ResidueMap::const_iterator it_res( by_resid_.find( atom.rsd() ) );
+	auto it_res( by_resid_.find( atom.rsd() ) );
 	if ( it_res != by_resid_.end() ) {
 		Resonances const& reso_list( it_res->second );
-		for ( Resonances::const_iterator it = reso_list.begin(); it != reso_list.end(); ++it ) {
-			if ( (*it)->atom() == atom ) return **it;
+		for (const auto & it : reso_list) {
+			if ( it->atom() == atom ) return *it;
 		}
 	}
 	throw EXCN_UnknownResonance( atom, "can't find atom ");
@@ -394,7 +395,7 @@ Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom )
 
 ///retrieve Resonance ---  throws EXCN_UnknonwResonance if atom not found
 Resonance const& ResonanceList::operator[] ( core::Size key ) const {
-	ResonanceIDs::const_iterator iter = map_.find( key );
+	auto iter = map_.find( key );
 	if ( iter == map_.end() ) {
 		throw EXCN_UnknownResonance( id::BOGUS_NAMED_ATOM_ID, "can't find resonance " + ObjexxFCL::string_of( key ) );
 	}
@@ -412,7 +413,7 @@ void ResonanceList::update_residue_map() {
 
 ///retrieve list of Resonance at certain residue ---  throws EXCN_UnknonwResonance if residue number not found
 ResonanceList::Resonances const& ResonanceList::resonances_at_residue( core::Size resid ) const {
-	ResidueMap::const_iterator it_res( by_resid_.find( resid ) );
+	auto it_res( by_resid_.find( resid ) );
 	if ( it_res != by_resid_.end() ) {
 		return it_res->second;
 	}
@@ -488,10 +489,10 @@ std::string label_atom_name( std::string const& proton_name, core::chemical::AA 
 
 void ResonanceList::update_bond_connections() {
 	std::set< core::id::NamedAtomID > unknown_resonances_;
-	for ( const_iterator it = begin(); it != end(); ++it ) {
-		it->second->clear_connected_resonances();
+	for (const auto & it : *this) {
+		it.second->clear_connected_resonances();
 	}
-	for ( const_iterator it = begin(); it != end(); ++it ) {
+	for ( auto it = begin(); it != end(); ++it ) {
 		if ( !it->second->is_proton() ) continue; //do this from the proton
 		ResonanceOP proton( it->second );
 		Size resid( it->second->atom().rsd() );

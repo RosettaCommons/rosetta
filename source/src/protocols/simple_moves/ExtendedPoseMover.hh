@@ -36,15 +36,15 @@ class ExtendedPoseMover : public protocols::moves::Mover {
 	typedef std::string string;
 
 public:
-	ExtendedPoseMover(const string& sequence = "",
-		const string& residue_type_set_ = "centroid");
+	ExtendedPoseMover(string sequence = "", // moved
+		string residue_type_set_ = "centroid");
 
 	/// @brief Creates an extended, idealized pose from the sequence and residue
 	/// type set specified in the constructor.
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Returns the name of this mover
-	string get_name() const;
+	string get_name() const override;
 
 	/// @brief Returns true if this instance is valid (i.e. contains a sequence).
 	/// Since RosettaScripts mandates the existence of a no-argument constructor,
@@ -67,17 +67,17 @@ public:
 
 	// -- RosettaScripts -- //
 	/// @brief Creates a replica of this protocols::moves::Mover
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Creates a new instance by calling the no-argument constructor
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief protocols::moves::Mover-specific parsing required by RosettaScripts
 	void parse_my_tag(utility::tag::TagCOP tag,
 		basic::datacache::DataMap& data,
 		const protocols::filters::Filters_map& filters,
 		const protocols::moves::Movers_map& movers,
-		const core::pose::Pose& pose);
+		const core::pose::Pose& pose) override;
 
 	string chain() const { return chain_; }
 

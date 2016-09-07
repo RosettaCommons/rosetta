@@ -81,30 +81,30 @@ public:
 
 	RigidBodyMover( RigidBodyMover const & src );
 
-	virtual ~RigidBodyMover();
+	~RigidBodyMover() override;
 
 	/// @brief Manual override of rotation center.
 	void rot_center( core::Vector const & rot_center_in ) { rot_center_ = rot_center_in; }
 
-	virtual void apply( core::pose::Pose & pose ) = 0;
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override = 0;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 
-	virtual
+	
 	bool
-	preserve_detailed_balance() const { return true; }
+	preserve_detailed_balance() const override { return true; }
 
 	/// @brief set whether detailed balance is preserved (i.e. no branch angle optimization during moves)
-	virtual
+	
 	void
 	set_preserve_detailed_balance(
 		bool
-	) {};
+	) override {};
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::TorsionID_Range>
-	torsion_id_ranges( core::pose::Pose & pose );
+	torsion_id_ranges( core::pose::Pose & pose ) override;
 
 	// data
 protected:
@@ -174,11 +174,11 @@ public:
 	);
 
 	RigidBodyPerturbMover( RigidBodyPerturbMover const & );
-	virtual ~RigidBodyPerturbMover();
+	~RigidBodyPerturbMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 
@@ -213,10 +213,10 @@ public:
 		core::Real const& rot_mag_in,
 		core::Real const& trans_mag_in,
 		core::Size const& num_jump_in);
-	void apply(core::pose::Pose& pose);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose& pose) override;
+	std::string get_name() const override;
 
-	virtual ~RigidBodyPerturbRandomJumpMover();
+	~RigidBodyPerturbRandomJumpMover() override;
 
 private:
 	core::Real rot_mag_in_;
@@ -260,20 +260,20 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	RigidBodyPerturbNoCenterMover( RigidBodyPerturbNoCenterMover const & src );
-	virtual ~RigidBodyPerturbNoCenterMover();
+	~RigidBodyPerturbNoCenterMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
 
 	void add_jump( core::Size );
 	void clear_jumps();
 
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 protected:
 	/// perturbation magnitudes (rotational and translational)
@@ -304,11 +304,11 @@ public:
 	);
 
 	RigidBodyRandomizeMover( RigidBodyRandomizeMover const & );
-	virtual ~RigidBodyRandomizeMover();
+	~RigidBodyRandomizeMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 
 	core::Size get_phi() const;
 	core::Size get_psi() const;
@@ -338,13 +338,13 @@ public:
 	RigidBodySpinMover( int const rb_jump_in );
 
 	RigidBodySpinMover( RigidBodySpinMover const & src );
-	~RigidBodySpinMover();
+	~RigidBodySpinMover() override;
 
 	void spin_axis( core::Vector spin_axis_in );
 	void rot_center( core::Vector const & rot_center_in );
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 protected:
 	core::Vector spin_axis_;
@@ -370,10 +370,10 @@ public:
 	RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src );
 
 	//dtor
-	~RigidBodyDeterministicSpinMover();
+	~RigidBodyDeterministicSpinMover() override;
 	void angle_magnitude( float angle_magnitude );
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	float angle_magnitude_;
@@ -401,7 +401,7 @@ public:
 	);
 
 	RigidBodyTiltMover( RigidBodyTiltMover const & src );
-	~RigidBodyTiltMover();
+	~RigidBodyTiltMover() override;
 
 	void spin_axis( core::Vector const & spin_axis_in );
 	void tilt1_mag(core::Real const tilt1_mag_in ){tilt1_mag_ =tilt1_mag_in;}
@@ -409,8 +409,8 @@ public:
 	void tilt1_center(core::Size const tilt1_center_in ){tilt1_center_ =tilt1_center_in;}
 	void tilt2_center(core::Size const tilt2_center_in ){tilt2_center_ =tilt2_center_in;}
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -418,9 +418,9 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	) override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 
 private:
@@ -471,7 +471,7 @@ public:
 	RigidBodyTransMover( core::Vector const & trans_axis, int const rb_jump_in=1, bool vary_stepsize=false );
 
 
-	virtual ~RigidBodyTransMover();
+	~RigidBodyTransMover() override;
 
 	RigidBodyTransMover( RigidBodyTransMover const & src );
 	core::Vector & trans_axis() { return trans_axis_; }
@@ -482,16 +482,16 @@ public:
 	core::Real step_size() { return step_size_ ;}
 	void vary_stepsize( bool vary ) { vary_stepsize_ = vary; }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag( utility::tag::TagCOP tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const &);
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+		core::pose::Pose const &) override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private:
 	core::Vector centroid_axis(core::pose::Pose const & pose_in) const;
@@ -521,10 +521,10 @@ public:
 	);
 
 	UniformSphereTransMover( UniformSphereTransMover const & );
-	~UniformSphereTransMover();
+	~UniformSphereTransMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	void reset_trans_axis();
@@ -552,10 +552,10 @@ public:
 	);
 
 	RigidBodyDofRandomizeMover( RigidBodyDofRandomizeMover const & src );
-	virtual ~RigidBodyDofRandomizeMover();
+	~RigidBodyDofRandomizeMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	core::conformation::symmetry::SymDof dof_;
@@ -577,10 +577,10 @@ public:
 	);
 
 	RigidBodyDofSeqRandomizeMover( RigidBodyDofSeqRandomizeMover const & );
-	virtual ~RigidBodyDofSeqRandomizeMover();
+	~RigidBodyDofSeqRandomizeMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
@@ -611,7 +611,7 @@ public:
 	);
 
 	RigidBodyDofTransMover( RigidBodyDofTransMover const & );
-	~RigidBodyDofTransMover();
+	~RigidBodyDofTransMover() override;
 
 	core::Vector & trans_axis() { return trans_axis_; }
 	core::Vector trans_axis() const { return trans_axis_; }
@@ -621,8 +621,8 @@ public:
 
 	bool last_slide_good( ) { return last_slide_good_; }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	bool last_slide_good_;
@@ -650,15 +650,15 @@ public:
 	);
 
 	RigidBodyDofSeqTransMover( RigidBodyDofSeqTransMover const & );
-	~RigidBodyDofSeqTransMover();
+	~RigidBodyDofSeqTransMover() override;
 
 	core::Vector & trans_axis() { return trans_axis_; }
 	core::Vector trans_axis() const { return trans_axis_; }
 	void trans_axis( core::Vector trans_axis_in ) { trans_axis_ = trans_axis_in; }
 	void step_size( core::Real step_size_in ) { step_size_ = step_size_in; }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	// allowed dofs
@@ -687,15 +687,15 @@ public:
 	);
 
 	RigidBodyDofRandomTransMover( RigidBodyDofRandomTransMover const & src );
-	~RigidBodyDofRandomTransMover();
+	~RigidBodyDofRandomTransMover() override;
 
 	core::Vector & trans_axis() { return trans_axis_; }
 	core::Vector trans_axis() const { return trans_axis_; }
 	void trans_axis( core::Vector trans_axis_in ) { trans_axis_ = trans_axis_in; }
 	void step_size( core::Real step_size_in ) { step_size_ = step_size_in; }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	/// allowed dofs
@@ -738,10 +738,10 @@ public:
 	);
 
 	RigidBodyDofPerturbMover( RigidBodyDofPerturbMover const & );
-	virtual ~RigidBodyDofPerturbMover();
+	~RigidBodyDofPerturbMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
@@ -772,10 +772,10 @@ public:
 		core::Real const trans_mag_in = 3.0
 	);
 	RigidBodyDofSeqPerturbMover( RigidBodyDofSeqPerturbMover const & );
-	virtual ~RigidBodyDofSeqPerturbMover();
+	~RigidBodyDofSeqPerturbMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }

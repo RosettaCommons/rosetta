@@ -51,12 +51,7 @@ FavorSymmetricSequence::FavorSymmetricSequence(core::Size symmetric_units, core:
 
 }
 
-FavorSymmetricSequence::FavorSymmetricSequence(FavorSymmetricSequence const & src) : Mover(src),
-	symmetric_units_(src.symmetric_units_),
-	penalty_(src.penalty_)
-{
-
-}
+FavorSymmetricSequence::FavorSymmetricSequence(FavorSymmetricSequence const & ) = default;
 
 protocols::moves::MoverOP FavorSymmetricSequence::clone() const
 {

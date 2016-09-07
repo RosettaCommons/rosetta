@@ -42,22 +42,22 @@ class ClusterPoseSelector : public protocols::rosetta_scripts::PoseSelector {
 
 public:
 	ClusterPoseSelector();
-	virtual ~ClusterPoseSelector() {}
+	~ClusterPoseSelector() override = default;
 
 	static std::string name() { return "ClusterPoseSelector"; }
-	virtual std::string get_name() const { return name(); }
-	rosetta_scripts::PoseSelectorFlags get_flags() const { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
+	std::string get_name() const override { return name(); }
+	rosetta_scripts::PoseSelectorFlags get_flags() const override { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
 
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) override;
 
 private:
 	protocols::rosetta_scripts::PosePropertyReporterOP reporter_;

@@ -55,14 +55,14 @@ private:
 public:
 	/// @brief default ctor
 	SetTorsion();
-	virtual ~SetTorsion();
+	~SetTorsion() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const {
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::simple_moves::SetTorsion( *this ) ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new SetTorsion );
 	}
 
@@ -83,7 +83,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	std::string torsion_name(core::Size const iset) {
 		return torsion_name_[iset];

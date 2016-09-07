@@ -145,7 +145,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 	while ( inbound().size() > 0 )
 			{
 		WorkUnitBaseOP  next_wu =  inbound().pop_next();
-		runtime_assert( next_wu != 0 );
+		runtime_assert( next_wu != nullptr );
 
 		// skip returning waiting WUs
 		if ( next_wu->get_wu_type() == "waitwu" ) continue;
@@ -154,7 +154,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( next_wu );
 
 		// If upcast was unsuccessful - warn and ignore.
-		if ( structure_wu.get() == NULL ) {
+		if ( structure_wu.get() == nullptr ) {
 			TR << "Cannot save structural data for WU: " << std::endl;
 			next_wu->print( TR );
 			continue;
@@ -168,8 +168,8 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 			totaltime_loophash() += structure_wu->get_run_time();
 			TR << "LoopHash return: " << decoys.size() << " structs in " << structure_wu->get_run_time() << "s " << " frm " << structure_wu->last_received_from() << std::endl;
 			// Add the node that returned to the blacklist of all WUs with the same ssid and start_ir
-			for ( WorkUnitQueue::iterator iter = outbound().begin(), end = outbound().end(); iter != end; ++iter ) {
-				if ( (*iter)->get_wu_type() == "loophasher" ) {
+			for (auto & iter : outbound()) {
+				if ( iter->get_wu_type() == "loophasher" ) {
 					/*   // Upcast to a StructureModifier WU
 					// Why use dynamic cast when we're sure of type? (copied from above)
 					// So slow!
@@ -179,9 +179,9 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 					if( ( core::Size )(*i->decoys().begin())->get_energy("ssid") == (core::Size)(*decoys.begin())->get_energy("ssid") ) {
 					// i->extra_data_1() == structure_wu->extra_data_1() ) {
 					// */
-					if ( (*iter)->extra_data_1() == structure_wu->extra_data_1() && (*iter)->extra_data_3() == structure_wu->extra_data_3() ) {
-						(*iter)->add_blacklist( structure_wu->last_received_from() );
-						TRDEBUG << "Added node " << structure_wu->last_received_from() << " to blacklist of WU " << (*iter)->id() << std::endl;
+					if ( iter->extra_data_1() == structure_wu->extra_data_1() && iter->extra_data_3() == structure_wu->extra_data_3() ) {
+						iter->add_blacklist( structure_wu->last_received_from() );
+						TRDEBUG << "Added node " << structure_wu->last_received_from() << " to blacklist of WU " << iter->id() << std::endl;
 					}
 				}
 			}
@@ -230,14 +230,14 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 		// pick a random structure from the library
 
 		core::Size finished_structures=0;
-		for ( SilentStructStore::iterator it = library_central().begin(), end = library_central().end(); it != end; ++it ) {
-			if ( max_loophash_per_structure_ > (*it)->get_energy("lhcount") ) {
-				TRDEBUG << "Adding: " << (*it) << "  " << (*it)->get_energy("lhcount") << std::endl;
-				(*it)->add_energy( "lhcount",  (*it)->get_energy("lhcount") + 1.0 );
-				create_loophash_WUs( *it );
+		for (auto & it : library_central()) {
+			if ( max_loophash_per_structure_ > it->get_energy("lhcount") ) {
+				TRDEBUG << "Adding: " << it << "  " << it->get_energy("lhcount") << std::endl;
+				it->add_energy( "lhcount",  it->get_energy("lhcount") + 1.0 );
+				create_loophash_WUs( it );
 			} else {
 				finished_structures += 1;
-				TRDEBUG << "Already done: " << (*it) << "  " << (*it)->get_energy("lhcount") << std::endl;
+				TRDEBUG << "Already done: " << it << "  " << it->get_energy("lhcount") << std::endl;
 			}
 		}
 		TR << "WARNING: " << finished_structures << "  " << library_central().size() << std::endl;
@@ -253,7 +253,7 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 void
 MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentStructOP &start_struct ){
 
-	runtime_assert( start_struct != 0 );
+	runtime_assert( start_struct != nullptr );
 	core::pose::Pose start_pose;
 	start_struct->fill_pose( start_pose );
 	core::util::switch_to_residue_type_set( start_pose, core::chemical::CENTROID);
@@ -360,11 +360,11 @@ MPI_LoopHashRefine_Master::add_relax_batch( SilentStructStore &start_decoys ){
 // the emperor.
 void
 MPI_LoopHashRefine_Master::check_library_expiry_dates(){
-	core::Size current_time = time(NULL);
+	core::Size current_time = time(nullptr);
 
-	SilentStructStore::iterator jt_last = library_central().begin();
+	auto jt_last = library_central().begin();
 
-	for ( SilentStructStore::iterator jt =  library_central().begin(),
+	for ( auto jt =  library_central().begin(),
 			end = library_central().end(); jt != end; ++jt ) {
 		TR.Debug << "Checking structure.." << std::endl;
 		core::Size struct_time = (core::Size)(*jt)->get_energy("ltime");
@@ -404,7 +404,7 @@ MPI_LoopHashRefine_Master::check_library_expiry_dates(){
 		// assume that false blacklisting from currently processing loophash WU is unlikely
 
 		core::Size erase_count = 0;
-		for ( WorkUnitQueue::iterator iter = outbound().begin(); iter != outbound().end(); ) {
+		for ( auto iter = outbound().begin(); iter != outbound().end(); ) {
 			if ( (*iter)->get_wu_type() == "loophasher" && ssid == (*iter)->extra_data_3() ) {
 				TRDEBUG<<"erasing wu" <<std::endl;
 				iter->reset(); // to NULL

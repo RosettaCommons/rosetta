@@ -56,7 +56,7 @@ public:
 		core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief default destructor
-	~RefineOneCDRLoop();
+	~RefineOneCDRLoop() override;
 
 
 	void turn_on_benchmark() {
@@ -77,14 +77,14 @@ public:
 	void set_refine_mode(std::string refine_mode) {
 		refine_mode_ = refine_mode;
 	}
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 
 	void set_score_function(core::scoring::ScoreFunctionCOP scorefxn);
 
 	void pass_start_pose(core::pose::Pose & start_pose);
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
 
 
 private:

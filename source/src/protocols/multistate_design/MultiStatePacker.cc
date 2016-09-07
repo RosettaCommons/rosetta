@@ -59,7 +59,7 @@ using core::Size;
 using core::Real;
 
 PosType::PosType() : parent(), type_(core::chemical::aa_unk) {}
-PosType::~PosType() {}
+PosType::~PosType() = default;
 PosType::PosType( Size index, core::chemical::AA type ) : parent( index ), type_(type) {}
 PosType::PosType( std::string word ) : parent( word ), type_( core::chemical::aa_unk )
 {
@@ -143,7 +143,7 @@ core::chemical::AA PosType::type() const { return type_; }
 
 /// PosTypeCreator
 
-PosTypeCreator::~PosTypeCreator() {}
+PosTypeCreator::~PosTypeCreator() = default;
 
 std::string PosTypeCreator::widget_name() const { return "AA"; }
 
@@ -157,10 +157,9 @@ PosTypeCreator::new_entity( std::string const & word )
 void
 MultiStatePacker::single_state_design( bool restrict_to_canonical /* = true */ )
 {
-	for ( SingleStateOPs::iterator ss( states().begin() ), end( states().end() );
-			ss != end; ++ss ) {
-		PackingStateOP state = utility::pointer::dynamic_pointer_cast< PackingState >( (*ss) );
-		runtime_assert( state != 0 );
+	for (auto & ss : states()) {
+		PackingStateOP state = utility::pointer::dynamic_pointer_cast< PackingState >( ss );
+		runtime_assert( state != nullptr );
 		utility::vector0< int > rot_to_pack;
 		// this is important if alternate states are represented in the rotamer set (e.g. for DNA)
 		if ( restrict_to_canonical ) restrict_to_canonical_aas( *state, rot_to_pack );
@@ -179,7 +178,7 @@ MultiStatePacker::evaluate(
 )
 {
 	PackingStateOP state = utility::pointer::dynamic_pointer_cast< PackingState >( states()[single_state_num] );
-	runtime_assert( state != 0 );
+	runtime_assert( state != nullptr );
 
 	// Filter down to the rotamers needed for this single sequence
 	utility::vector0<int> rot_to_pack;
@@ -199,11 +198,10 @@ MultiStatePacker::evaluate(
 				protocols::multistate_design::MultiStateEntity & multi_state_entity =
 					static_cast< protocols::multistate_design::MultiStateEntity & >( entity );
 				multi_state_entity.single_state_entity_data()[single_state_num].fitness(E);
-				for ( MetricValueGetterMap::const_iterator iter = metric_value_getters().begin();
-						iter != metric_value_getters().end(); ++iter ) {
+				for (const auto & iter : metric_value_getters()) {
 					multi_state_entity.single_state_entity_data()[single_state_num].metric_value(
-						iter->first,
-						iter->second.get(state->pose())
+						iter.first,
+						iter.second.get(state->pose())
 					);
 				}
 			}
@@ -231,15 +229,13 @@ limit_rotamer_set(
 		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type().get_self_ptr() );
 
 		core::chemical::AA seq_type( core::chemical::aa_unk );
-		for ( vector1< genetic_algorithm::EntityElementOP >::const_iterator
-				it( seq.begin() ), end( seq.end() );
-				it != end; ++it ) {
-			if ( ! it->get() ) {
+		for (const auto & it : seq) {
+			if ( ! it.get() ) {
 				utility_exit_with_message( "Null pointer in EntityElement array" );
 			}
-			PosTypeCOP postype( utility::pointer::dynamic_pointer_cast< PosType const > ( *it ) );
+			PosTypeCOP postype( utility::pointer::dynamic_pointer_cast< PosType const > ( it ) );
 			if ( ! postype ) {
-				utility_exit_with_message( "Dynamic cast to PosType failed for object of type " + (*it)->name() );
+				utility_exit_with_message( "Dynamic cast to PosType failed for object of type " + it->name() );
 			}
 			if ( postype->index() == rot_pos ) { seq_type = postype->type(); break; }
 		}

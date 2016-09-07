@@ -132,9 +132,8 @@ void WorkUnitManager::read_queue( WorkUnitQueue &the_queue, std::istream &fin ){
 
 
 void WorkUnitManager::write_queue( const WorkUnitQueue &the_queue, std::ostream &out ) const {
-	for ( WorkUnitQueue::const_iterator it = the_queue.begin();
-			it != the_queue.end(); ++it ) {
-		write_work_unit( *it, out );
+	for (const auto & it : the_queue) {
+		write_work_unit( it, out );
 	}
 }
 
@@ -165,7 +164,7 @@ void WorkUnitManager::write_work_unit( const WorkUnitBaseOP& MPI_ONLY(wu), std::
 
 bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istream &in ){
 	unsigned int size_of_raw_data=0;
-	unsigned char * raw_data_ptr=NULL;
+	unsigned char * raw_data_ptr=nullptr;
 	TR.Debug << "Reading a workunit..."  << std::endl;
 
 	unsigned int my_WUB_magic_header_integer=0;
@@ -201,7 +200,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 	TR.Debug << "  READ WU: Data: " << std::endl;
 
 	WorkUnitBaseOP wu( new WorkUnitBase );
-	runtime_assert( wu != 0 );
+	runtime_assert( wu != nullptr );
 	wu->raw_data_load( raw_data_ptr, size_of_raw_data );
 	delete [] raw_data_ptr;
 
@@ -211,7 +210,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 	// for the interpretation of the serial data can take place.
 
 	qualified_wu = work_unit_list().get_work_unit( *wu )->clone();
-	runtime_assert( qualified_wu != 0 );
+	runtime_assert( qualified_wu != nullptr );
 	// cope over data (the header and the serial data)
 	(*qualified_wu) = (*wu);
 
@@ -245,16 +244,15 @@ WorkUnitQueue::mem_stats(
 	structs_memory=0;
 	WU_memory=0;
 
-	for ( const_iterator it = begin(), itend = end(); it != itend; ++it ) {
-		WU_memory += (*it)->mem_footprint();
-		WorkUnitBaseOP wu_op = *it;
+	for (const auto & it : *this) {
+		WU_memory += it->mem_footprint();
+		WorkUnitBaseOP wu_op = it;
 		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( wu_op );
-		if ( structure_wu.get() == NULL ) continue;
+		if ( structure_wu.get() == nullptr ) continue;
 		SilentStructStore &decoys = structure_wu->decoys();
 		n_structs += structure_wu->decoys().size();
-		for ( SilentStructStore::iterator jt =  decoys.begin(),
-				end = decoys.end(); jt != end; ++jt ) {
-			structs_memory += (*jt)->mem_footprint();
+		for (auto & decoy : decoys) {
+			structs_memory += decoy->mem_footprint();
 		}
 	}
 

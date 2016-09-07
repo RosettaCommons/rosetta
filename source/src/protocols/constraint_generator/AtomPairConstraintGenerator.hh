@@ -51,20 +51,20 @@ public:
 public:
 	AtomPairConstraintGenerator();
 
-	virtual ~AtomPairConstraintGenerator();
+	~AtomPairConstraintGenerator() override;
 
 	static std::string
 	class_name() { return "AtomPairConstraintGenerator"; }
 
 	protocols::constraint_generator::ConstraintGeneratorOP
-	clone() const;
+	clone() const override;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	void

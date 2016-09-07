@@ -100,7 +100,7 @@ GrowPeptidesCreator::mover_name(){
 GrowPeptides::GrowPeptides()
 {}
 
-GrowPeptides::~GrowPeptides() {}
+GrowPeptides::~GrowPeptides() = default;
 
 
 protocols::moves::MoverOP

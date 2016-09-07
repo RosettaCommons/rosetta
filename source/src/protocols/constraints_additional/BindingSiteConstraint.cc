@@ -368,7 +368,7 @@ BindingSiteConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) co
 	if ( atms_remap.size() > 2 ) {
 		return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint( atms_remap , tgt_pos_, tgt_pos_centroid_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

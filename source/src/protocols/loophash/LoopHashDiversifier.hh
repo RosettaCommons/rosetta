@@ -64,19 +64,19 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn_rama_cst
 	);
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	// core::pose::PoseOP get_additional_output();
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new LoopHashDiversifier( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopHashDiversifier ); }
-	virtual ~LoopHashDiversifier();
+	) override;
+	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new LoopHashDiversifier( *this ) ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopHashDiversifier ); }
+	~LoopHashDiversifier() override;
 
 	Real min_inter_ss_bbrms() const;
 	void min_inter_ss_bbrms( Real const min_inter_ss_bbrms );

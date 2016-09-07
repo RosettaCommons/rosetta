@@ -44,21 +44,21 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~FingerprintMultifunc()
-	{}
+	
+	~FingerprintMultifunc() override
+	= default;
 
 public: // Methods
 
 	// func
-	virtual
+	
 	core::Real
-	operator ()( core::optimization::Multivec const & vars ) const;
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	// dfunc
-	virtual
+	
 	void
-	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
 	using core::optimization::Multifunc::dump;
 

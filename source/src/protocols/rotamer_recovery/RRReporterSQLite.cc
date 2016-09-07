@@ -95,8 +95,8 @@ RRReporterSQLite::RRReporterSQLite() :
 {}
 
 RRReporterSQLite::RRReporterSQLite(
-	string const & database_name,
-	string const & database_pq_schema /* = "" */,
+	string  database_name,
+	string  database_pq_schema /* = "" */,
 	OutputLevel output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
@@ -107,8 +107,8 @@ RRReporterSQLite::RRReporterSQLite(
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
-	database_name_(database_name),
-	database_pq_schema_(database_pq_schema),
+	database_name_(std::move(database_name)),
+	database_pq_schema_(std::move(database_pq_schema)),
 	db_session_()
 {}
 
@@ -126,7 +126,7 @@ RRReporterSQLite::RRReporterSQLite(
 	rotamers_recovered_( 0 ),
 	database_name_(),
 	database_pq_schema_(),
-	db_session_( db_session )
+	db_session_(std::move( db_session ))
 {}
 
 
@@ -146,7 +146,7 @@ RRReporterSQLite::RRReporterSQLite( RRReporterSQLite const & src ) :
 	db_session_( src.db_session_ )
 {}
 
-RRReporterSQLite::~RRReporterSQLite() {}
+RRReporterSQLite::~RRReporterSQLite() = default;
 
 void
 RRReporterSQLite::write_schema_to_db(
@@ -193,8 +193,8 @@ RRReporterSQLite::write_nchi_table_schema(
 	// insert values
 	string table_name("nchi");
 	std::vector<string> column_names;
-	column_names.push_back("name3");
-	column_names.push_back("nchi");
+	column_names.emplace_back("name3");
+	column_names.emplace_back("nchi");
 	insert_or_ignore(table_name, column_names, list_of("ARG")("4"), db_session);
 	insert_or_ignore(table_name, column_names, list_of("LYS")("4"), db_session);
 	insert_or_ignore(table_name, column_names, list_of("MET")("3"), db_session);

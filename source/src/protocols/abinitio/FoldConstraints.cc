@@ -137,7 +137,7 @@ FoldConstraints::FoldConstraints( FoldConstraints const & src ) :
 	constraint_threshold_ = src.constraint_threshold_;
 }
 
-FoldConstraints::~FoldConstraints() {}
+FoldConstraints::~FoldConstraints() = default;
 
 
 moves::MoverOP
@@ -350,7 +350,7 @@ FoldConstraints::set_default_scores() {
 void
 FoldConstraints::apply( core::pose::Pose & pose ) {
 	// setup constraints to allow for MaxSeqSep
-	core::scoring::constraints::ConstraintSetOP orig_constraints( NULL );
+	core::scoring::constraints::ConstraintSetOP orig_constraints( nullptr );
 	if ( !bIgnoreSequenceSeparation() ) {
 		tr.Debug << "introduce MaxSeqSep Filter for constraints \n";
 		orig_constraints = pose.constraint_set()->clone();

@@ -29,18 +29,18 @@ class AddChainMover : public moves::Mover {
 public:
 	AddChainMover();
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	void fname( std::string const & f ){ fname_ = f; }
 	std::string fname() const{ return fname_; }

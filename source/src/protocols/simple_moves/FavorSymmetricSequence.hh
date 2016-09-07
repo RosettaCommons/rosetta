@@ -24,19 +24,19 @@ public:
 	FavorSymmetricSequence();
 	FavorSymmetricSequence(core::Size symmetric_units, core::Real penalty);
 	FavorSymmetricSequence(FavorSymmetricSequence const & src);
-	virtual ~FavorSymmetricSequence() {};
+	~FavorSymmetricSequence() override = default;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const;
-	virtual void parse_my_tag(
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 private:
 	core::Size symmetric_units_;

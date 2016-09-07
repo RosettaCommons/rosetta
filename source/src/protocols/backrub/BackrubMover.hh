@@ -60,13 +60,13 @@ public:
 		BackrubMover const & mover
 	);
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void
 	init_with_options();
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -74,22 +74,22 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
 	// @brief apply the backrub move to a Pose object
 	void
 	apply(
 		Pose & pose
-	);
-	virtual std::string get_name() const;
+	) override;
+	std::string get_name() const override;
 
 	/// @brief get the segment ID for a given starting and ending atom
 	/// @details
@@ -267,16 +267,16 @@ public:
 	);
 
 	/// @brief get whether detailed balance is preserved (i.e. no branch angle optimization during moves)
-	virtual
+	
 	bool
-	preserve_detailed_balance() const;
+	preserve_detailed_balance() const override;
 
 	/// @brief set whether detailed balance is preserved (i.e. no branch angle optimization during moves)
-	virtual
+	
 	void
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
-	);
+	) override;
 
 	/// @brief get whether to exit during initialize_simulation if the mm_bend term isn't turned on
 	bool
@@ -289,18 +289,18 @@ public:
 	);
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief do a manual rotation about the given segment
 	void
@@ -403,7 +403,7 @@ backrub_rotation_constants(
 	utility::vector0<double> & constants,
 	core::Real const alpha_min = 0,
 	core::Real const alpha_max = numeric::NumericTraits<core::Real>::pi(),
-	numeric::IntervalSet<core::Real> *tau_intervals = NULL
+	numeric::IntervalSet<core::Real> *tau_intervals = nullptr
 );
 
 /// @brief calculate internal coordinate values for any tau value

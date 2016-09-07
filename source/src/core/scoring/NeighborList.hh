@@ -190,8 +190,8 @@ public:
 		Real const HH_cutoff
 	);
 
-	virtual
-	~NeighborList();
+	
+	~NeighborList() override;
 
 	// Clone method used in copy ctors of classes that contain NeighborListOP's
 	// like, for example, Energies.

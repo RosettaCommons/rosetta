@@ -28,6 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/excn/Exceptions.hh>
@@ -46,11 +47,11 @@ template< class T>
 class MapCacheUnit : public core::fragment::BaseCacheUnit {
 	typedef std::map< core::Size, T > TMap;
 public:
-	BaseCacheUnitOP clone() const {
+	BaseCacheUnitOP clone() const override {
 		return BaseCacheUnitOP( new MapCacheUnit<T> );
 	};
 
-	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) {
+	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) override {
 		T value;
 		bool succ = dynamic_cast< MapCacheUnit<T> const& > (source).retrieve( source_id, value );
 		if ( succ ) {
@@ -84,11 +85,11 @@ template< class T>
 class VectorCacheUnit : public core::fragment::BaseCacheUnit {
 	typedef utility::vector1< T > TVector;
 public:
-	BaseCacheUnitOP clone() const {
+	BaseCacheUnitOP clone() const override {
 		return BaseCacheUnitOP( new VectorCacheUnit<T> );
 	}
 
-	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) {
+	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) override {
 		T value;
 		dynamic_cast< VectorCacheUnit<T> const& > (source).retrieve( source_id, value );
 		store( new_id, value );
@@ -133,11 +134,11 @@ public:
 
 public:
 	CacheWrapper( std::string tag ) :
-		tag_ ( tag ),
+		tag_ (std::move( tag )),
 		new_cache_ ( new TCacheUnit )
 	{};
 
-	~CacheWrapper() { };
+	~CacheWrapper() = default;
 
 	bool retrieve( Frame const& frame, core::Size frag_num, T& score) const {
 		return cache( frame ).retrieve( frame.frag_id( frag_num ), score );

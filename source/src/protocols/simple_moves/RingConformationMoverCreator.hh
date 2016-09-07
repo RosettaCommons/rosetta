@@ -26,10 +26,10 @@ namespace simple_moves {
 class RingConformationMoverCreator: public protocols::moves::MoverCreator {
 public:
 	/// @brief  Return an up-casted owning pointer (MoverOP) to the mover.
-	virtual protocols::moves::MoverOP create_mover() const;
+	protocols::moves::MoverOP create_mover() const override;
 
 	/// @brief  Return the string identifier for the associated Mover (RingConformationMover).
-	virtual std::string keyname() const;
+	std::string keyname() const override;
 
 	/// @brief  Static method that returns the keyname for performance reasons.
 	static std::string mover_name();

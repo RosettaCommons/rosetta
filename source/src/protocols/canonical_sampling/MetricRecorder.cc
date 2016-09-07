@@ -83,7 +83,7 @@ MetricRecorder::MetricRecorder() :
 {}
 
 MetricRecorder::~MetricRecorder()
-{}
+= default;
 
 MetricRecorder::MetricRecorder(
 	MetricRecorder const & other
@@ -142,11 +142,9 @@ MetricRecorder::parse_my_tag(
 
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
+	for (auto subtag : subtags) {
 
-		TagCOP const subtag = *subtag_it;
-
-		protocols::moves::MoverOP mover;
+			protocols::moves::MoverOP mover;
 
 		if ( subtag->getName() == "Torsion" ) {
 
@@ -332,7 +330,7 @@ MetricRecorder::update_after_boltzmann(
 
 	core::Size replica = protocols::jd2::current_replica();
 
-	TemperingBaseCOP tempering = 0;
+	TemperingBaseCOP tempering = nullptr;
 	if ( metropolis_hastings_mover ) {
 		tempering = utility::pointer::dynamic_pointer_cast< TemperingBase const >( metropolis_hastings_mover->tempering() );
 	}
@@ -355,7 +353,7 @@ MetricRecorder::update_after_boltzmann(
 			recorder_stream_ << std::endl;
 			recorder_stream_.flush();
 		}
-		last_flush_ = time(NULL);
+		last_flush_ = time(nullptr);
 	}
 
 	if ( step_count_ % stride_ == 0 ) {
@@ -372,7 +370,7 @@ MetricRecorder::update_after_boltzmann(
 
 		recorder_stream_ << std::endl;
 
-		time_t now = time(NULL);
+		time_t now = time(nullptr);
 		if ( now-last_flush_ > 10 ) {
 			recorder_stream_.flush();
 			last_flush_ = now;
@@ -387,7 +385,7 @@ MetricRecorder::apply(
 	core::pose::Pose & pose
 )
 {
-	update_after_boltzmann(pose, 0);
+	update_after_boltzmann(pose, nullptr);
 }
 
 void

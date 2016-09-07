@@ -58,7 +58,7 @@ PeptideStubMover::PeptideStubMover( PeptideStubMover const &src ) :
 {
 }
 
-PeptideStubMover::~PeptideStubMover(){}
+PeptideStubMover::~PeptideStubMover()= default;
 
 void PeptideStubMover::init() {
 	reset_ = false;
@@ -92,7 +92,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 		pose.update_residue_neighbors();
 	}
 	for ( core::Size istub=1; istub<=stub_rsd_names_.size(); ++istub ) {
-		core::conformation::ResidueOP new_rsd( NULL );
+		core::conformation::ResidueOP new_rsd( nullptr );
 		new_rsd = core::conformation::ResidueFactory::create_residue( standard_residues->name_map(stub_rsd_names_[istub]) );
 
 		// first stub always starts with a jump
@@ -367,7 +367,7 @@ void PeptideStubMover::update_pdb_numbering (
 	char const chainids []="0ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
 	core::pose::PDBInfoOP pdbinfo = pose.pdb_info();
-	if ( pdbinfo.get() != NULL ) {
+	if ( pdbinfo.get() != nullptr ) {
 		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
 			pdbinfo->set_resinfo(ir, (pose.chain(ir) <=62 ? chainids[ pose.chain(ir) ] : '0'), static_cast<int>(ir));
 		}

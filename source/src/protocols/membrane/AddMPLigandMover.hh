@@ -71,17 +71,17 @@ public: // constructors
 	AddMPLigandMover( AddMPLigandMover const & src );
 
 	/// @brief Destructor
-	virtual ~AddMPLigandMover();
+	~AddMPLigandMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -90,17 +90,17 @@ public: // constructors
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Mover Apply Method
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Show the name of this mvoer
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 

@@ -29,7 +29,7 @@ using protocols::noesy_assign::CovalentCompliance;
 template <> std::mutex utility::SingletonBase< CovalentCompliance >::singleton_mutex_{};
 template <> std::atomic< CovalentCompliance * > utility::SingletonBase< CovalentCompliance >::instance_( 0 );
 #else
-template <> CovalentCompliance * utility::SingletonBase< CovalentCompliance >::instance_( 0 );
+template <> CovalentCompliance * utility::SingletonBase< CovalentCompliance >::instance_( nullptr );
 #endif
 
 }

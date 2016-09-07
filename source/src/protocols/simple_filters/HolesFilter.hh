@@ -69,17 +69,17 @@ public:// constructor/destructor
 	// @brief copy constructor
 	HolesFilter( HolesFilter const & rval );
 
-	virtual ~HolesFilter(){}
+	~HolesFilter() override= default;
 
 
 public:// virtual constructor
 
 
 	// @brief make clone
-	virtual filters::FilterOP clone() const { return filters::FilterOP( new HolesFilter( *this ) ); }
+	filters::FilterOP clone() const override { return filters::FilterOP( new HolesFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual filters::FilterOP fresh_instance() const { return filters::FilterOP( new HolesFilter() ); }
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP( new HolesFilter() ); }
 
 
 public:// mutator
@@ -93,16 +93,16 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "HolesFilter"; }
+	std::string name() const override { return "HolesFilter"; }
 
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:// virtual main operation
@@ -110,13 +110,13 @@ public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
-	virtual bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	/// @brief
-	virtual Real report_sm( Pose const & pose ) const;
+	Real report_sm( Pose const & pose ) const override;
 
 	/// @brief used to report score
-	virtual void report( std::ostream & out, Pose const & pose ) const;
+	void report( std::ostream & out, Pose const & pose ) const override;
 
 	/// @brief
 	Real compute( Pose const & pose ) const;

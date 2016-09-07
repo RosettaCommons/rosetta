@@ -78,7 +78,7 @@ SequenceCouplingConstraint::SequenceCouplingConstraint(
 	Constraint( res_type_constraint ),
 	seqpos1_(seqpos1),
 	seqpos2_(seqpos2),
-	sequence_coupling_( coupling)
+	sequence_coupling_(std::move( coupling))
 {}
 
 SequenceCouplingConstraint::SequenceCouplingConstraint(
@@ -89,10 +89,10 @@ SequenceCouplingConstraint::SequenceCouplingConstraint(
 	Constraint( res_type_constraint ),
 	seqpos1_( seqpos1 ),
 	seqpos2_( seqpos2 ),
-	sequence_coupling_( sequence_coupling )
+	sequence_coupling_(std::move( sequence_coupling ))
 {}
 
-SequenceCouplingConstraint::~SequenceCouplingConstraint() {}
+SequenceCouplingConstraint::~SequenceCouplingConstraint() = default;
 
 ConstraintOP
 SequenceCouplingConstraint::clone() const {
@@ -236,7 +236,7 @@ SequenceCouplingConstraint::score(
 ) const
 {
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
-	runtime_assert( sequence_coupling_ != 0 );
+	runtime_assert( sequence_coupling_ != nullptr );
 
 	chemical::AA aa1( xyz_func.residue( seqpos1_ ).type().aa() );
 	chemical::AA aa2( xyz_func.residue( seqpos2_ ).type().aa() );

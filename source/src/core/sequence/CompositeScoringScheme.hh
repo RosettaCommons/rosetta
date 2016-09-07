@@ -48,7 +48,7 @@ public:
 		type("Composite");
 	}
 
-	ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		// maybe clone the scoring_schemes() if object re-use ever causes a weird
 		// problem.
 		return ScoringSchemeOP( new CompositeScoringScheme(
@@ -69,11 +69,11 @@ public:
 	void add_scoring_scheme( ScoringSchemeOP scheme );
 
 	/// @brief dtor
-	virtual ~CompositeScoringScheme() {}
+	~CompositeScoringScheme() override = default;
 
-	virtual void read_from_file( utility::file::FileName const & fn );
+	void read_from_file( utility::file::FileName const & fn ) override;
 
-	virtual Real score( SequenceOP seq1, SequenceOP seq2, core::Size pos1, core::Size pos2 );
+	Real score( SequenceOP seq1, SequenceOP seq2, core::Size pos1, core::Size pos2 ) override;
 
 private:
 	utility::vector1< ScoringSchemeOP > scoring_schemes_;

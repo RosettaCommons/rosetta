@@ -63,7 +63,7 @@ class MembraneJump : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~MembraneJump();
+	~MembraneJump() override;
 	MembraneJump();
 
 	void

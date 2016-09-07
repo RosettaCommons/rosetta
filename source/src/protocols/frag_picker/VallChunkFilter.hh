@@ -33,7 +33,7 @@ namespace frag_picker {
 /// @see AllowPdbIdFilter and DenyPdbIdFilter for implementations
 class VallChunkFilter: public utility::pointer::ReferenceCount {
 public:
-	virtual ~VallChunkFilter() {}
+	~VallChunkFilter() override = default;
 	/// @brief if a chunk seems to be interesting, return true. Otherwise say false
 	virtual bool test_chunk(VallChunkOP) = 0;
 };

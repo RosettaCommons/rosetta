@@ -31,21 +31,21 @@ public:
 	/// c-tor and d-tor
 	PDDFScoreFilter();
 
-	virtual ~PDDFScoreFilter() {}
+	~PDDFScoreFilter() override = default;
 
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new PDDFScoreFilter( *this ) ); }
 
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new PDDFScoreFilter() );
 	}
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
-	virtual
-	bool apply( core::pose::Pose const & pose ) const;
+	
+	bool apply( core::pose::Pose const & pose ) const override;
 
-	virtual std::string name() const {
+	std::string name() const override {
 		return "PDDFScoreFilter";
 	}
 

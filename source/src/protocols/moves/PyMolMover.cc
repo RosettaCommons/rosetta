@@ -61,7 +61,7 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 #include <basic/Tracer.hh>
 
 // c++ headers
-#include <time.h>
+#include <ctime>
 
 //#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
 //#endif
@@ -88,12 +88,12 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.moves.PyMolMover" );
 numeric::random::uniform_RG_OP
 getRG()
 {
-	static numeric::random::uniform_RG_OP RG = 0;
+	static numeric::random::uniform_RG_OP RG = nullptr;
 
-	if ( RG == 0 ) {
+	if ( RG == nullptr ) {
 		//RG = new numeric::random::mt19937_RG;
 		RG = numeric::random::uniform_RG_OP( new numeric::random::standard_RG );
-		RG->setSeed( time(NULL) );
+		RG->setSeed( time(nullptr) );
 	}
 
 	return RG;
@@ -114,7 +114,7 @@ UDPSocketClient::UDPSocketClient(std::string const & address, int port) : sentCo
 
 	//#ifndef WIN_PYROSETTA
 	// generating random uuid by hands
-	for ( unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++ ) uuid_.shorts_[i] = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
+	for (unsigned short & i : uuid_.shorts_) i = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
 
 	memset(&socket_addr_, '\0', sizeof(sockaddr_in));
 
@@ -168,7 +168,7 @@ void UDPSocketClient::sendMessage(std::string msg)
 			Sleep(10); // Sleep function takes milliseconds.
 #else
 			timespec ts;  ts.tv_sec=0;  ts.tv_nsec=1000000; //time to sleep in nanoseconds, we want to take a nap for ~0.001sec
-			nanosleep(&ts, NULL);
+			nanosleep(&ts, nullptr);
 #endif
 		}
 	}
@@ -203,14 +203,14 @@ UDPSocketClient::show(std::ostream & output) const
 	output << "socket handel: " << socket_h_ << std::endl;
 
 	output << "uuid short: ";
-	for ( unsigned int i(0); i < sizeof(uuid_.shorts_) / sizeof(uuid_.shorts_[0]); ++i ) {
-		output << uuid_.shorts_[i] << " ";
+	for (unsigned short i : uuid_.shorts_) {
+		output << i << " ";
 	}
 	output << std::endl;
 
 	output << "uuid byte: ";
-	for ( unsigned char i(0); i < sizeof(uuid_.bytes_) / sizeof(uuid_.bytes_[0]); ++i ) {
-		output << static_cast<int>(uuid_.bytes_[i]) << " ";
+	for (char byte : uuid_.bytes_) {
+		output << static_cast<int>(byte) << " ";
 	}
 	output << std::endl;
 
@@ -244,20 +244,9 @@ PyMolMover::PyMolMover(std::string const & address, int port) :
 {}
 
 /// @brief cctor
-PyMolMover::PyMolMover( PyMolMover const & other ) :
-	protocols::moves::Mover( other ),
-	link_( other.link_ ),
-	update_energy_( other.update_energy_ ),
-	energy_type_( other.energy_type_ ),
-	update_membrane_( other.update_membrane_ ),
-	keep_history_( other.keep_history_ ),
-	update_interval_( other.update_interval_ ),
-	last_packet_sent_time_( other.last_packet_sent_time_ ),
-	pymol_name_( other.pymol_name_ )
-{}
+PyMolMover::PyMolMover( PyMolMover const & ) = default;
 
-PyMolMover::~PyMolMover()
-{}
+PyMolMover::~PyMolMover() = default;
 
 std::string PyMolMover::get_name() const
 {
@@ -276,7 +265,7 @@ std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 		core::pose::PDBInfoCOP info = pose.pdb_info();
 		if ( info && info->name().size() ) {
 			std::string n = info->name();
-			for ( unsigned int i=0; i<n.size(); i++ ) if ( n[i] == '/' ) n[i] = '_';
+			for (char & i : n) if ( i == '/' ) i = '_';
 			return n;
 		} else {
 			return "pose";
@@ -289,7 +278,7 @@ bool PyMolMover::is_it_time()
 {
 	// First let's check if enough time have passes since last time we send info...
 	//double t = clock() / CLOCKS_PER_SEC;
-	double t = time(NULL);
+	double t = time(nullptr);
 	//TR << "t=" << t << " cl="<< clock() << std::endl;
 	if ( t - last_packet_sent_time_ < update_interval_ ) return false;
 	last_packet_sent_time_ = t;
@@ -540,13 +529,13 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 #ifndef  __native_client__
 	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
 
-	for ( std::map<int, int>:: const_iterator i = colors.begin(); i!=colors.end(); ++i ) {
-		PyAssert( (*i).first >=1 && (*i).first <= static_cast<int>(pose.total_residue()),
+	for (const auto & color : colors) {
+		PyAssert( color.first >=1 && color.first <= static_cast<int>(pose.total_residue()),
 			"PyMolMover::send_colors residue index is out of range!");
-		PyAssert( (*i).second >= XC_first_color && (*i).second <= XC_last_color,
+		PyAssert( color.second >= XC_first_color && color.second <= XC_last_color,
 			"PyMolMover::send_colors color index is out of range!");
 
-		energies[ (*i).first ] = (*i).second;  // for r in colors: energies[r-1] = X11Colors[ colors[r] ][0]
+		energies[ color.first ] = color.second;  // for r in colors: energies[r-1] = X11Colors[ colors[r] ][0]
 	}
 	send_RAW_Energies(pose, "X11Colors", energies);  //self._send_RAW_Energies(pose, 'X11Colors', energies, autoscale=False)
 #endif

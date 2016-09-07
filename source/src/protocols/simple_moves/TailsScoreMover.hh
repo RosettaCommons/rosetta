@@ -44,8 +44,8 @@ public:
 		ScoreMover(scorefxn_in)
 	{}
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 private:
 	double score_mode1(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);
 	double score_mode2(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, core::pose::Pose & pose);

@@ -50,8 +50,8 @@ public:
 	void phi( core::Real const p ){ phi_ = p; }
 	void psi( core::Real const p ){ psi_ = p; }
 	void omega( core::Real const o ){ omega_ = o; }
-	void resn( std::string const r ){ resn_ = r; }
-	virtual ~BBDofs();
+	void resn( std::string const& r ){ resn_ = r; }
+	~BBDofs() override;
 private:
 	core::Size resid_; /// this is currently not used in splice
 	core::Real phi_, psi_, omega_;
@@ -68,7 +68,7 @@ public:
 	typedef bbdof_list::const_iterator const_iterator;
 
 	ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ), source_pdb_(""), aa_sequence_(""), dssp_("") { clear(); }
-	virtual ~ResidueBBDofs();
+	~ResidueBBDofs() override;
 	void cut_site( core::Size const c ){ cut_site_ = c; }
 	core::Size cut_site() const { return cut_site_; }
 	void clear() { bbdofs_.clear(); }
@@ -111,12 +111,12 @@ public:
 	typedef utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > DataccacheBoolDataOP;
 public:
 	Splice();
-	void apply( Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new Splice ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	virtual ~Splice();
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new Splice ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	~Splice() override;
 
 	void from_res( core::Size const f ){ from_res_ = f; }
 	core::Size from_res() const { return from_res_; }
@@ -211,7 +211,7 @@ public:
 	void add_sequence_constraints( core::pose::Pose & pose ); // add SequenceProfileConstraints based on the sequence profile
 	/// @brief add dihedral constraint to grafted loop according to source pdb dihedral angles
 	void add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to );
-	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor,std::string atom_type="CA",core::pack::task::PackerTaskOP task=NULL);
+	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor,std::string atom_type="CA",core::pack::task::PackerTaskOP task=nullptr);
 
 	void profile_weight_away_from_interface( core::Real const p );
 	core::Real profile_weight_away_from_interface() const;

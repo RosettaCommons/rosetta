@@ -37,16 +37,16 @@ namespace medal {
 class MedalExchangeMover : public protocols::moves::Mover {
 public:
 	MedalExchangeMover();
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Uses the copy constructor to create a new instance
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Uses the no-argument constructor to create a new instance
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Returns the name of this mover
-	std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	/// @brief Computes the probability of selecting each residue as a candidate

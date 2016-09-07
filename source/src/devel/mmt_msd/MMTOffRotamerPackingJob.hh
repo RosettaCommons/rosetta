@@ -36,21 +36,21 @@ public:
 
 public:
 	MMTOffRotamerPackingJob();
-	virtual ~MMTOffRotamerPackingJob();
+	~MMTOffRotamerPackingJob() override;
 
-	virtual void setup();
-	virtual void optimize();
-	virtual void update_pose( core::pose::Pose & pose );
+	void setup() override;
+	void optimize() override;
+	void update_pose( core::pose::Pose & pose ) override;
 
 	bool best_assignment_exists() const;
 
 	SidechainStateAssignment const &
 	get_best_assignment() const;
 
-	virtual core::Real final_energy() const;
+	core::Real final_energy() const override;
 
 protected:
-	virtual void clean_up();
+	void clean_up() override;
 
 private:
 

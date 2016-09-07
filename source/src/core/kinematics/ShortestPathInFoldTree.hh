@@ -66,7 +66,7 @@ public:
 	ShortestPathInFoldTree( ShortestPathInFoldTree const & src );
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ShortestPathInFoldTree();
+	~ShortestPathInFoldTree() override;
 
 
 	/// @brief returns the shortest distance of two residues going along Fold-Tree edges.
@@ -87,7 +87,7 @@ private:
 
 	/// @brief if seqpos is a jump_res resturn its internal number
 	int get_jump( Size seqpos ) const {
-		std::map< Size, Size >::const_iterator fit = jump_res_.find ( seqpos );
+		auto fit = jump_res_.find ( seqpos );
 		if ( fit != jump_res_.end() ) {
 			return fit->second;
 		} else {

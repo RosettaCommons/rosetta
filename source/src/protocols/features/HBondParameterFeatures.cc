@@ -89,7 +89,7 @@ HBondParameterFeatures::HBondParameterFeatures(
 	scfxn_(src.scfxn_)
 {}
 
-HBondParameterFeatures::~HBondParameterFeatures() {}
+HBondParameterFeatures::~HBondParameterFeatures() = default;
 
 string
 HBondParameterFeatures::type_name() const { return "HBondParameterFeatures"; }

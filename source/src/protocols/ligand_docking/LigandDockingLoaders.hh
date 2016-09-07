@@ -30,15 +30,15 @@ class InterfaceBuilderLoader : public jd2::parser::DataLoader
 {
 public:
 	InterfaceBuilderLoader();
-	virtual ~InterfaceBuilderLoader();
+	~InterfaceBuilderLoader() override;
 
 	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
-	virtual
+	
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 };
 
@@ -49,15 +49,15 @@ class MoveMapBuilderLoader : public jd2::parser::DataLoader
 {
 public:
 	MoveMapBuilderLoader();
-	virtual ~MoveMapBuilderLoader();
+	~MoveMapBuilderLoader() override;
 
 	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
-	virtual
+	
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 };
 
@@ -65,15 +65,15 @@ class LigandAreaLoader : public jd2::parser::DataLoader
 {
 public:
 	LigandAreaLoader();
-	virtual ~LigandAreaLoader();
+	~LigandAreaLoader() override;
 
 	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
-	virtual
+	
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
-	) const;
+	) const override;
 
 };
 

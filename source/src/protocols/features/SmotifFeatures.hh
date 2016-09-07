@@ -54,20 +54,20 @@ public:
 
 	SmotifFeatures( SmotifFeatures const & src );
 
-	virtual ~SmotifFeatures();
+	~SmotifFeatures() override;
 
 	/// @brief return string with class name
 	std::string
-	type_name() const;
+	type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	void
 	parse_my_tag(
@@ -75,7 +75,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/);
+		core::pose::Pose const & /*pose*/) override;
 
 	void
 	calculate_angles(
@@ -102,7 +102,7 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-	);
+	) override;
 };
 
 } // namespace

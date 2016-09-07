@@ -51,7 +51,7 @@ public:
 
 	HotspotStub( HotspotStub const & src );
 
-	virtual ~HotspotStub();
+	~HotspotStub() override;
 
 #ifndef BOINC // gives windows build error
 #ifndef WIN32 // gives windows build error

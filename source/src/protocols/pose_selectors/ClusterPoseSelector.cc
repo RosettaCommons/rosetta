@@ -102,7 +102,7 @@ void ClusterPoseSelector::parse_my_tag(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
 			newPosePropertyReporter( curr_tag, data, filters, movers, pose )
 		);
-		runtime_assert( new_reporter != 0 );
+		runtime_assert( new_reporter != nullptr );
 		reporter_ = new_reporter;
 		TR << "Defined pose property reporter of type " << curr_tag->getName() << std::endl;
 		// Only first reporter used -- add warning when multiple defined?
@@ -125,7 +125,7 @@ utility::vector1<bool> ClusterPoseSelector::select_poses(
 
 	// Cluster initial set
 	core::Size n_poses = 0;
-	utility::vector1< core::pose::PoseOP >::iterator pose_it = poses.begin();
+	auto pose_it = poses.begin();
 
 	while ( pose_it != poses.end() && ++n_poses <= initial_cluster_set_size_ ) {
 		core::pose::PoseOP p( *pose_it );

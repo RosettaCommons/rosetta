@@ -25,7 +25,7 @@ namespace protocols {
 namespace features {
 
 SmotifFeaturesCreator::SmotifFeaturesCreator() {}
-SmotifFeaturesCreator::~SmotifFeaturesCreator() {}
+SmotifFeaturesCreator::~SmotifFeaturesCreator() = default;
 FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new SmotifFeatures );
 }

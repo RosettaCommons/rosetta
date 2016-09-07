@@ -65,14 +65,14 @@ SICFast::SICFast(core::Real clash_dis) :
 	CLD(clash_dis),
 	CLD2(sqr(CLD)),
 	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
-	h1_(NULL),h2_(NULL)
+	h1_(nullptr),h2_(nullptr)
 {}
 
 SICFast::SICFast() :
 	CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()),
 	CLD2(sqr(CLD)),
 	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
-	h1_(NULL),h2_(NULL)
+	h1_(nullptr),h2_(nullptr)
 {}
 
 SICFast::~SICFast(){
@@ -145,13 +145,13 @@ get_bounds_intersection(
 	// get bounds for plane hashess
 	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9;
 	xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-	for ( vector1<Vec>::const_iterator ia = pb.begin(); ia != pb.end(); ++ia ) {
-		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
-		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
+	for (const auto & ia : pb) {
+		xmx1 = max(xmx1,ia.x()); xmn1 = min(xmn1,ia.x());
+		ymx1 = max(ymx1,ia.y()); ymn1 = min(ymn1,ia.y());
 	}
-	for ( vector1<Vec>::const_iterator ib = pa.begin(); ib != pa.end(); ++ib ) {
-		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
-		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
+	for (const auto & ib : pa) {
+		xmx = max(xmx,ib.x()); xmn = min(xmn,ib.x());
+		ymx = max(ymx,ib.y()); ymn = min(ymn,ib.y());
 	}
 	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
 	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
@@ -183,19 +183,19 @@ fill_plane_hash(
 	hb.dimension(xub-xlb+1,yub-ylb+1,Vec(0,0, 9e9));
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
-	for ( vector1<Vec>::const_iterator ia = pb.begin(); ia != pb.end(); ++ia ) {
-		int const ix = (int)((ia->x()/BIN)-xlb+0.999999999);
-		int const iy = (int)((ia->y()/BIN)-ylb+0.999999999);
+	for (const auto & ia : pb) {
+		int const ix = (int)((ia.x()/BIN)-xlb+0.999999999);
+		int const iy = (int)((ia.y()/BIN)-ylb+0.999999999);
 		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-		if ( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
+		if ( ha(ix,iy).z() < ia.z() ) ha(ix,iy) = ia;
 		// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize) && ha(ix,iy).z() < ia->z();
 		// ha(ix,iy) = test ? *ia : ha(ix,iy);
 	}
-	for ( vector1<Vec>::const_iterator ib = pa.begin(); ib != pa.end(); ++ib ) {
-		int const ix = (int)((ib->x()/BIN)-xlb+0.999999999);
-		int const iy = (int)((ib->y()/BIN)-ylb+0.999999999);
+	for (const auto & ib : pa) {
+		int const ix = (int)((ib.x()/BIN)-xlb+0.999999999);
+		int const iy = (int)((ib.y()/BIN)-ylb+0.999999999);
 		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
-		if ( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
+		if ( hb(ix,iy).z() > ib.z() ) hb(ix,iy) = ib;
 		// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) && hb(ix,iy).z() > ib->z();
 		// hb(ix,iy) = test ? *ib : hb(ix,iy);
 	}
@@ -274,8 +274,8 @@ refine_mindis_with_xyzHash(
 	Vec hash_ori = xform_to_struct2_start.R.transposed() * ori;
 	while ( true ) {
 		CorrectionVisitor visitor(hash_ori,clash_dis_sq);
-		vector1<Real>::const_iterator irad = radii.begin();
-		for ( vector1<Vec>::const_iterator ipa = pa.begin(); ipa != pa.end(); ++ipa,++irad ) {
+		auto irad = radii.begin();
+		for ( auto ipa = pa.begin(); ipa != pa.end(); ++ipa,++irad ) {
 			Vec const v = ~xform_to_struct2_start*(Rori*((*ipa)-Vec(0,0,mindis)));
 			xh->visit_lax(v,*irad,visitor);
 		}
@@ -299,7 +299,7 @@ SICFast::slide_into_contact(
 
 	// get rotated points
 	utility::vector1<Vec> pa(h1_->natom()), pb(h2_->natom());
-	utility::vector1<Vec>::iterator ipa(pa.begin()),ipb(pb.begin());
+	auto ipa(pa.begin()),ipb(pb.begin());
 	for ( xyzStripeHashPose::const_iterator i = h1_->begin(); i != h1_->end(); ++i,++ipa ) *ipa = xa*(*i-h1_->translation());
 	for ( xyzStripeHashPose::const_iterator i = h2_->begin(); i != h2_->end(); ++i,++ipb ) *ipb = xb*(*i-h2_->translation());
 	utility::vector1<Real> ra;
@@ -311,8 +311,8 @@ SICFast::slide_into_contact(
 
 	// rotate points, should merge with above
 	Mat rot = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori)/2.0 , 180.0 );
-	for ( vector1<Vec>::iterator ia = pb.begin(); ia != pb.end(); ++ia ) *ia = rot*(*ia);
-	for ( vector1<Vec>::iterator ib = pa.begin(); ib != pa.end(); ++ib ) *ib = rot*(*ib);
+	for (auto & ia : pb) ia = rot*ia;
+	for (auto & ib : pa) ib = rot*ib;
 
 	if ( ! get_bounds_intersection(pb,pa,xmx,xmn,ymx,ymn) ) return 9e9;
 

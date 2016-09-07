@@ -32,17 +32,17 @@ namespace core {
 namespace optimization {
 
 /// @details Auto-generated virtual destructor
-MinimizerOptions::~MinimizerOptions() {}
+MinimizerOptions::~MinimizerOptions() = default;
 
 MinimizerOptions::MinimizerOptions(
-	std::string const & min_type_in,
+	std::string  min_type_in,
 	Real const minimize_tolerance_in,
 	bool const use_nblist_in,
 	bool const deriv_check_in,
 	bool const deriv_check_verbose_in
 ):
 	max_iter_(2000),
-	min_type_( min_type_in ),
+	min_type_(std::move( min_type_in )),
 	minimize_tolerance_( minimize_tolerance_in ),
 	use_nblist_( use_nblist_in ),
 	nblist_auto_update_( false ),

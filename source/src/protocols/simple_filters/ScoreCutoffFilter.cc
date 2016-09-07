@@ -122,17 +122,15 @@ ScoreCutoffFilter::get_score( core::pose::Pose const & pose ) const {
 
 	if ( positions_.size() == 0 ) { //means we're interested in pose totals
 
-		for ( utility::vector1< ScoreType >::const_iterator sco_it = score_types_.begin();
-				sco_it != score_types_.end(); ++sco_it ) {
+		for (auto score_type : score_types_) {
 
-			emap[ *sco_it ] = pose.energies().total_energies()[ *sco_it ];
+			emap[ score_type ] = pose.energies().total_energies()[ score_type ];
 		}
 	} else {
-		for ( utility::vector1< core::Size >::const_iterator pos_it = positions_.begin(); pos_it != positions_.end(); ++pos_it ) {
+		for (unsigned long position : positions_) {
 
-			for ( utility::vector1< ScoreType >::const_iterator sco_it = score_types_.begin();
-					sco_it != score_types_.end(); ++sco_it ) {
-				emap[ *sco_it ] += pose.energies().residue_total_energies( *pos_it )[ *sco_it ];
+			for (auto score_type : score_types_) {
+				emap[ score_type ] += pose.energies().residue_total_energies( position )[ score_type ];
 			}
 		}
 	} // else
@@ -164,11 +162,10 @@ ScoreCutoffFilter::report( std::ostream & ostr, core::pose::Pose const & pose ) 
 	if ( report_residue_pair_energies_ ) output_residue_pair_energies( ostr, pose );
 	else {
 		using namespace core::scoring;
-		for ( utility::vector1< ScoreType >::const_iterator sco_it = score_types_.begin();
-				sco_it != score_types_.end(); ++sco_it ) {
+		for (auto score_type : score_types_) {
 			EnergyMap emap;
-			emap[ *sco_it ] = pose.energies().total_energies()[ *sco_it ];
-			ostr << " Scoretype: " << *sco_it << " score: " << emap.sum() << ", cutoff: " << cutoff_ << std::endl;
+			emap[ score_type ] = pose.energies().total_energies()[ score_type ];
+			ostr << " Scoretype: " << score_type << " score: " << emap.sum() << ", cutoff: " << cutoff_ << std::endl;
 		}
 	}
 }
@@ -230,7 +227,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 				EnergyMap lr_emap;
 				core::Size other_ind( rni->upper_neighbor_id() );
 				rni->retrieve_energy( lr_emap );
-				std::map< core::Size, EnergyMap >::iterator map_it = upper_interactions.find( other_ind );
+				auto map_it = upper_interactions.find( other_ind );
 				if ( map_it == upper_interactions.end() ) upper_interactions.insert( std::pair<Size, EnergyMap >(other_ind, lr_emap ) );
 				else map_it->second += lr_emap;
 			} // loop over all lr interactions for this res

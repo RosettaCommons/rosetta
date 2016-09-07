@@ -47,7 +47,7 @@ public:
 
 	DatabaseJobOutputter();
 
-	virtual ~DatabaseJobOutputter();
+	~DatabaseJobOutputter() override;
 
 	static void register_options();
 
@@ -73,38 +73,38 @@ public:
 
 
 	/// @brief see parent class for explanation
-	virtual void flush();
+	void flush() override;
 
 	/// @brief this function outputs the final result of a job.
-	virtual
-	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag );
+	
+	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag ) override;
 
 	/// @brief this function is intended for saving mid-protocol poses;
 	/// for example the final centroid structure in a combined
 	/// centroid/fullatom protocol.
-	virtual
+	
 	void other_pose(
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & pose,
 		std::string const & tag,
 		int copy_count = -1,
 		bool score_only = false
-	);
+	) override;
 
 	/// @brief this function is not used for output, but it belongs here
 	/// since it needs to check the same output locations as the class
 	/// normally writes to.  This class checks wherever output goes to
 	/// see if the job's expected output already exists (on disk or
 	/// whatever).  This is the most basic form of checkpointing.
-	virtual
-	bool job_has_completed( protocols::jd2::JobCOP job );
+	
+	bool job_has_completed( protocols::jd2::JobCOP job ) override;
 
 public: // accessors
 
 	/// @brief this is the master function for determining the
 	/// unique output identifier for a job
-	virtual
-	std::string output_name( protocols::jd2::JobCOP job );
+	
+	std::string output_name( protocols::jd2::JobCOP job ) override;
 
 private: // members
 

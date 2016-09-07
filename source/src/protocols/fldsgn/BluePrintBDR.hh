@@ -98,7 +98,7 @@ public: // construct/destruct
 	BluePrintBDR( BluePrintBDR const & rval );
 
 	/// @brief default destructor
-	virtual ~BluePrintBDR();
+	~BluePrintBDR() override;
 
 
 private: // disallow assignment
@@ -113,12 +113,12 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	MoverOP clone() const;
+	
+	MoverOP clone() const override;
 
 	/// @brief create this type of object
-	virtual
-	MoverOP fresh_instance() const;
+	
+	MoverOP fresh_instance() const override;
 
 
 public: // accessors
@@ -221,11 +221,11 @@ public: // virtual main methods
 
 
 	/// @brief apply defined moves to given Pose
-	virtual
-	void apply( Pose & pose );
+	
+	void apply( Pose & pose ) override;
 
-	virtual
-	std::string get_name() const;
+	
+	std::string get_name() const override;
 
 
 public: //parser
@@ -236,7 +236,7 @@ public: //parser
 		basic::datacache::DataMap & data,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 private: // protocol methods

@@ -22,8 +22,8 @@ namespace pose_selectors {
 
 class ClusterPoseSelectorCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
-	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const;
-	virtual std::string keyname() const { return "ClusterPoseSelector"; }
+	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
+	std::string keyname() const override { return "ClusterPoseSelector"; }
 };
 
 }

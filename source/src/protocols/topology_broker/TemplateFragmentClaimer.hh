@@ -59,16 +59,16 @@ namespace topology_broker {
 class TemplateFragmentClaimer : public FragmentClaimer {
 public:
 	TemplateFragmentClaimer(); //for factory
-	TemplateFragmentClaimer( std::string config_file, core::Size fragsize, weights::AbinitioMoverWeightOP weight = NULL );
+	TemplateFragmentClaimer( std::string config_file, core::Size fragsize, weights::AbinitioMoverWeightOP weight = nullptr );
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new TemplateFragmentClaimer( *this ) );
 	}
 
 	void read_config_file( std::string const& file );
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -77,8 +77,8 @@ public:
 	}
 
 protected:
-	virtual bool read_tag( std::string tag, std::istream& is );
-	virtual void init_after_reading();
+	bool read_tag( std::string tag, std::istream& is ) override;
+	void init_after_reading() override;
 private:
 	// info about homologues structures --- if available
 	abinitio::TemplatesOP templates_;

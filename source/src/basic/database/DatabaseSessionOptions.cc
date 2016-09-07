@@ -33,7 +33,7 @@ DatabaseSessionOptions::DatabaseSessionOptions(
 	ResourceOptions(name)
 {}
 
-DatabaseSessionOptions::~DatabaseSessionOptions() {}
+DatabaseSessionOptions::~DatabaseSessionOptions() = default;
 
 void
 DatabaseSessionOptions::parse_my_tag(

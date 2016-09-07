@@ -46,14 +46,14 @@ public:
 	/// @brief assignment operator
 	AnchoredDesignMover & operator=( AnchoredDesignMover const & rhs );
 
-	virtual ~AnchoredDesignMover();
+	~AnchoredDesignMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual bool reinitialize_for_new_input() const;
-	virtual bool reinitialize_for_each_job() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	bool reinitialize_for_new_input() const override;
+	bool reinitialize_for_each_job() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private:
 	/// @initializes internals; must wait for a pose to initialize
@@ -184,10 +184,10 @@ public:
 	//@brief constructor with arguments
 	AnchoredPerturbMover( protocols::anchored_design::AnchorMoversDataOP interface_in );
 
-	virtual ~AnchoredPerturbMover();
+	~AnchoredPerturbMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	//option system replacement
 	/// @brief debugging mode activates a bunch of extra output
@@ -263,10 +263,10 @@ public:
 	//@brief constructor with arguments
 	AnchoredRefineMover( protocols::anchored_design::AnchorMoversDataOP interface_in );
 
-	virtual ~AnchoredRefineMover();
+	~AnchoredRefineMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	//option system replacement
 	/// @brief debugging mode activates a bunch of extra output

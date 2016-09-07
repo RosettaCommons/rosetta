@@ -65,7 +65,7 @@ private:
 public:
 	P_AA();
 
-	virtual ~P_AA();
+	~P_AA() override;
 private:
 
 	/// @brief Gets whether this amino acid enum type is a canonical D-amino acid.

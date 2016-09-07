@@ -36,7 +36,7 @@ namespace ligand_docking {
 class LigandArea: public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~LigandArea();
+	~LigandArea() override;
 
 	LigandArea();
 

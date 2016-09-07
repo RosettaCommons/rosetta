@@ -59,7 +59,7 @@ static THREAD_LOCAL basic::Tracer tr( "devel.domain_insertion.FusePosesNtoCMover
 
 FusePosesNtoCMover::FusePosesNtoCMover()
 :
-	fuse_pose_(/* NULL */), sfxn_(NULL), sfxn_nocb_(NULL),
+	fuse_pose_(/* NULL */), sfxn_(nullptr), sfxn_nocb_(nullptr),
 	//mostly arbitrary numbers, but can be modified through RS tag
 	superpose_window_(3), relax_window_(0), max_number_allowed_clashes_(10),
 	hardsphere_clash_limit_(2.5), max_allowed_rms_(5.0),
@@ -73,23 +73,10 @@ FusePosesNtoCMover::FusePosesNtoCMover()
 	jumps_to_move_.clear();
 }
 
-FusePosesNtoCMover::FusePosesNtoCMover( FusePosesNtoCMover const & other )
-: parent( other ),
-	fuse_pose_(other.fuse_pose_), sfxn_(other.sfxn_), sfxn_nocb_(other.sfxn_nocb_), chains_to_use_(other.chains_to_use_),
-	chain_mappings_(other.chain_mappings_), fuse_positions_(other.fuse_positions_),
-	fusion_regions_(other.fusion_regions_), jumps_to_move_(other.jumps_to_move_),
-	candidate_pdbpos_pose_(other.candidate_pdbpos_pose_),
-	candidate_pdbpos_fuse_pose_(other.candidate_pdbpos_fuse_pose_),
-	superpose_window_(other.superpose_window_), relax_window_(other.relax_window_),
-	max_number_allowed_clashes_(other.max_number_allowed_clashes_),
-	hardsphere_clash_limit_(other.hardsphere_clash_limit_), max_allowed_rms_(other.max_allowed_rms_),
-	nterm_span_tag_(other.nterm_span_tag_),
-	relax_mover_(other.relax_mover_), rs_specified_relax_mover_(other.rs_specified_relax_mover_),
-	debugmode_(other.debugmode_)
-{}
+FusePosesNtoCMover::FusePosesNtoCMover( FusePosesNtoCMover const & ) = default;
 
 
-FusePosesNtoCMover::~FusePosesNtoCMover(){}
+FusePosesNtoCMover::~FusePosesNtoCMover()= default;
 
 protocols::moves::MoverOP
 FusePosesNtoCMover::clone() const{
@@ -295,34 +282,34 @@ FusePosesNtoCMover::setup_relax_fold_tree(
 		tr.flush();
 	}
 
-	for ( core::kinematics::FoldTree::const_iterator e = old_fold_tree.begin(); e != old_fold_tree.end(); ++e ) {
+	for (const auto & e : old_fold_tree) {
 
 		//sanity check: we need to make sure that we don't have edges
 		//originating or terminating in the fusion regions
-		if ( ((e->start() >= (int) fusion_regions_[1].first) && (e->start() <= (int) fusion_regions_[1].second))
-				|| ((e->stop() >= (int) fusion_regions_[1].first) && (e->stop() <= (int) fusion_regions_[1].second))
-				|| ((e->start() >= (int) fusion_regions_[2].first) && (e->start() <= (int) fusion_regions_[2].second))
-				|| ((e->stop() >= (int) fusion_regions_[2].first) && (e->stop() <= (int) fusion_regions_[2].second)) ) {
+		if ( ((e.start() >= (int) fusion_regions_[1].first) && (e.start() <= (int) fusion_regions_[1].second))
+				|| ((e.stop() >= (int) fusion_regions_[1].first) && (e.stop() <= (int) fusion_regions_[1].second))
+				|| ((e.start() >= (int) fusion_regions_[2].first) && (e.start() <= (int) fusion_regions_[2].second))
+				|| ((e.stop() >= (int) fusion_regions_[2].first) && (e.stop() <= (int) fusion_regions_[2].second)) ) {
 			utility_exit_with_message("Incipient fold tree has edges originating or terminating in the fusion regions, don't know what to do.");
 		}
 		//is this the chemical edge spanning the chain 1 fusion?
-		if ( (e->start() < (int) fusion_regions_[1].first) && (e->stop() > (int) fusion_regions_[1].second) && !e->is_jump() ) {
-			new_ft.add_edge( e->start(), fusion_regions_[1].first - 1, e->label() ); //a.
-			new_ft.add_edge( fusion_regions_[1].first -1, fuse_positions_[1], e->label() ); //b.
+		if ( (e.start() < (int) fusion_regions_[1].first) && (e.stop() > (int) fusion_regions_[1].second) && !e.is_jump() ) {
+			new_ft.add_edge( e.start(), fusion_regions_[1].first - 1, e.label() ); //a.
+			new_ft.add_edge( fusion_regions_[1].first -1, fuse_positions_[1], e.label() ); //b.
 			new_ft.add_edge( fusion_regions_[1].first-1, fuse_positions_[1] + 1, jump_count ); //c.
 			jumps_to_move_.push_back( jump_count );
 			++jump_count;
-			new_ft.add_edge( fuse_positions_[1] + 1, e->stop(), e->label() ); //d.
-			chain1_span_end = e->stop();
-		} else if ( (e->start() < (int) fusion_regions_[2].first) && (e->stop() > (int) fusion_regions_[2].second) && !e->is_jump() ) {
+			new_ft.add_edge( fuse_positions_[1] + 1, e.stop(), e.label() ); //d.
+			chain1_span_end = e.stop();
+		} else if ( (e.start() < (int) fusion_regions_[2].first) && (e.stop() > (int) fusion_regions_[2].second) && !e.is_jump() ) {
 			//or is this the chemical edge spanning the chain 2 fusion?
-			new_ft.add_edge( e->start(), fuse_positions_[2], e->label() ); //e.
+			new_ft.add_edge( e.start(), fuse_positions_[2], e.label() ); //e.
 			if ( chain1_span_end ==0 ) utility_exit_with_message("Edge spanning a later chain was first detected in FoldTree.");
-			new_ft.add_edge( chain1_span_end, e->stop(), jump_count ); //f.
-			new_ft.add_edge( e->stop(), fuse_positions_[2] + 1, e->label() ); //g.
+			new_ft.add_edge( chain1_span_end, e.stop(), jump_count ); //f.
+			new_ft.add_edge( e.stop(), fuse_positions_[2] + 1, e.label() ); //g.
 		} else {
 			//otherwise we keep it
-			new_ft.add_edge( e->start(), e->stop(), e->label() );
+			new_ft.add_edge( e.start(), e.stop(), e.label() );
 		}
 	}
 
@@ -753,15 +740,10 @@ SetupCoiledCoilFoldTreeMover::SetupCoiledCoilFoldTreeMover()
 	chain2_cutpos_(0), add_chainbreak_variants_(false)
 {}
 
-SetupCoiledCoilFoldTreeMover::SetupCoiledCoilFoldTreeMover( SetupCoiledCoilFoldTreeMover const & other)
-: Mover( other ),
-	coiled_coil_chains_(other.coiled_coil_chains_),
-	chain2_cutpos_(other.chain2_cutpos_), add_chainbreak_variants_(other.add_chainbreak_variants_)
-{}
+SetupCoiledCoilFoldTreeMover::SetupCoiledCoilFoldTreeMover( SetupCoiledCoilFoldTreeMover const & ) = default;
 
 
-SetupCoiledCoilFoldTreeMover::~SetupCoiledCoilFoldTreeMover()
-{}
+SetupCoiledCoilFoldTreeMover::~SetupCoiledCoilFoldTreeMover() = default;
 
 protocols::moves::MoverOP
 SetupCoiledCoilFoldTreeMover::clone() const{
@@ -810,20 +792,20 @@ SetupCoiledCoilFoldTreeMover::apply( core::pose::Pose & pose )
 	tr << "CoiledCoilFoldTreeMover Incoming foldtree: " << std::endl << old_fold_tree << std::endl << " and cut_seqpos is " << cut_seqpos << std::endl;
 	tr.flush();
 	bool relevant_jump_found(false);
-	for ( core::kinematics::FoldTree::const_iterator e = old_fold_tree.begin(); e != old_fold_tree.end(); ++e ) {
+	for (const auto & e : old_fold_tree) {
 
-		std::cout << "looping edge with label " << e-> label() << ", start " << e->start() << " and stop " << e->stop() << std::endl;
+		std::cout << "looping edge with label " << e. label() << ", start " << e.start() << " and stop " << e.stop() << std::endl;
 
-		if ( (e->label() == core::kinematics::Edge::PEPTIDE) && (e->start() < (int) cut_seqpos) && (e->stop() > (int) cut_seqpos) ) {
+		if ( (e.label() == core::kinematics::Edge::PEPTIDE) && (e.start() < (int) cut_seqpos) && (e.stop() > (int) cut_seqpos) ) {
 			std::cout << "MEEP" << std::endl;
-			new_ft.add_edge( e->start(), cut_seqpos, e->label() );
-			new_ft.add_edge( e->stop(), cut_seqpos + 1, e->label() );
-		} else if ( (e->is_jump() ) && ( pose.chain( e->start() ) == (int) pose_chains[1]) && ( pose.chain( e->stop() ) == (int) pose_chains[2] ) ) {
+			new_ft.add_edge( e.start(), cut_seqpos, e.label() );
+			new_ft.add_edge( e.stop(), cut_seqpos + 1, e.label() );
+		} else if ( (e.is_jump() ) && ( pose.chain( e.start() ) == (int) pose_chains[1]) && ( pose.chain( e.stop() ) == (int) pose_chains[2] ) ) {
 			relevant_jump_found = true;
-			new_ft.add_edge( pose.conformation().chain_begin( pose_chains[1] ), pose.conformation().chain_begin( pose_chains[2] ), e->label() );
+			new_ft.add_edge( pose.conformation().chain_begin( pose_chains[1] ), pose.conformation().chain_begin( pose_chains[2] ), e.label() );
 			new_ft.add_edge( pose.conformation().chain_end( pose_chains[1] ), pose.conformation().chain_end( pose_chains[2] ), jump_count );
 		} else {
-			new_ft.add_edge( e->start(), e->stop(), e->label() );
+			new_ft.add_edge( e.start(), e.stop(), e.label() );
 		}
 	} //loop over fold tree edges
 

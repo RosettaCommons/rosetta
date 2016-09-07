@@ -32,6 +32,7 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/conformation/Residue.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <numeric/conversions.hh>
@@ -86,7 +87,7 @@ BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
 ) :
 	all_bur_unsat_polars_( 0 ),
 	special_region_bur_unsat_polars_(0),
-	name_of_weak_bunsat_calc_( weak_bunsat_calc ),
+	name_of_weak_bunsat_calc_(std::move( weak_bunsat_calc )),
 	layered_sasa_(option[OptionKeys::bunsat_calc2::layered_sasa]),
 	generous_hbonds_(option[OptionKeys::bunsat_calc2::generous_hbonds]),
 	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),
@@ -105,12 +106,12 @@ BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
 
 BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
 	std::string weak_bunsat_calc,
-	std::set< core::Size > const & special_region
+	std::set< core::Size >  special_region
 ) :
 	all_bur_unsat_polars_(0),
 	special_region_bur_unsat_polars_(0),
-	name_of_weak_bunsat_calc_( weak_bunsat_calc ),
-	special_region_( special_region ),
+	name_of_weak_bunsat_calc_(std::move( weak_bunsat_calc )),
+	special_region_(std::move( special_region )),
 	layered_sasa_(option[OptionKeys::bunsat_calc2::layered_sasa]),
 	generous_hbonds_(option[OptionKeys::bunsat_calc2::generous_hbonds]),
 	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),
@@ -408,21 +409,16 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 	Size num_hbonds = 0;
 
 	if ( bunsat_is_donor ) {
-		for ( std::set<Size>::const_iterator test_res_it = neighbors.value().begin();
-				test_res_it != neighbors.value().end(); ++test_res_it ) {
-			Size const test_resi = *test_res_it;
-
-			//std::string test_res_debug = pose.pdb_info()->pose2pdb(test_resi);
+		for (unsigned long test_resi : neighbors.value()) {
+				//std::string test_res_debug = pose.pdb_info()->pose2pdb(test_resi);
 			//TR << "checking if donates to " << test_resi << std::endl;
 
 			bunsat_donor_nbr_residue_check(pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi, num_hbonds);
 		}
 	}
 	if ( bunsat_is_acceptor ) {
-		for ( std::set<Size>::const_iterator test_res_it = neighbors.value().begin();
-				test_res_it != neighbors.value().end(); ++test_res_it ) {
-			Size const test_resi = *test_res_it;
-			bunsat_acc_nbr_residue_check(pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi, num_hbonds);
+		for (unsigned long test_resi : neighbors.value()) {
+				bunsat_acc_nbr_residue_check(pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi, num_hbonds);
 		}
 	}
 
@@ -466,7 +462,7 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_donor_nbr_residue_check(
 	Residue const & test_rsd(pose.residue(test_resi));
 
 	AtomIndices const & test_accpt_pos = test_rsd.accpt_pos();
-	for ( vector1< Size >::const_iterator test_atom_it = test_accpt_pos.begin();
+	for ( auto test_atom_it = test_accpt_pos.begin();
 			test_atom_it < test_accpt_pos.end(); ++test_atom_it ) {
 		Size const test_atom_num = *test_atom_it;
 
@@ -524,7 +520,7 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_acc_nbr_residue_check(
 	Residue const & test_rsd(pose.residue(test_resi));
 
 	AtomIndices const & test_hpos_polar = test_rsd.Hpos_polar();
-	for ( vector1< Size>::const_iterator test_atom_it = test_hpos_polar.begin();
+	for ( auto test_atom_it = test_hpos_polar.begin();
 			test_atom_it < test_hpos_polar.end(); ++test_atom_it ) {
 		Size const test_atom_num = *test_atom_it;
 		// exclude neighboring backbone-backbone

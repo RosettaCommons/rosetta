@@ -33,7 +33,7 @@ public:
 	typedef utility::pointer::shared_ptr< MultiStateAggregateFunction const > COP;
 
 	MultiStateAggregateFunction() {}
-	virtual ~MultiStateAggregateFunction() {}
+	~MultiStateAggregateFunction() override = default;
 
 	virtual
 	core::Real

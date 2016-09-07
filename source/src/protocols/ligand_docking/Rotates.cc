@@ -68,7 +68,7 @@ Rotates::Rotates(Rotates const & that):
 	protocols::moves::Mover( that )
 {}
 
-Rotates::~Rotates() {}
+Rotates::~Rotates() = default;
 
 protocols::moves::MoverOP Rotates::clone() const {
 	return protocols::moves::MoverOP( new Rotates( *this ) );

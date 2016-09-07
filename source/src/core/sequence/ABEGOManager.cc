@@ -25,7 +25,7 @@ namespace core {
 namespace sequence {
 
 // @brief Auto-generated virtual destructor
-ABEGOManager::~ABEGOManager() {}
+ABEGOManager::~ABEGOManager() = default;
 
 /// @brief add line to specify abego region
 void
@@ -475,8 +475,8 @@ ABEGOManager::get_abego_string( utility::vector1< std::string > abego )
 		if ( length > 1 ) {
 			std::ostringstream multi;
 			multi << "[";
-			for ( Size jj=0; jj<abego[ ii ].length(); ++jj ) {
-				multi << abego[ ii ].at( jj );
+			for (char jj : abego[ ii ]) {
+				multi << jj;
 			}
 			multi << "]";
 			output << multi.str();

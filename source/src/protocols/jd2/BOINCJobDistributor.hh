@@ -41,17 +41,17 @@ protected:
 	/// @brief ctor is protected; singleton pattern
 	BOINCJobDistributor();
 
-	virtual
+	
 	void
-	job_failed( core::pose::Pose & pose, bool will_retry );
+	job_failed( core::pose::Pose & pose, bool will_retry ) override;
 
-	virtual
+	
 	void
-	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag );
+	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag ) override;
 
-	virtual
+	
 	void
-	mark_current_job_id_for_repetition();
+	mark_current_job_id_for_repetition() override;
 
 	virtual
 	void
@@ -64,20 +64,20 @@ protected:
 	core::Size total_completed_nstruct_; // for graphics display
 
 public:
-	virtual ~BOINCJobDistributor();
+	~BOINCJobDistributor() override;
 	void checkpoint_read();
 	void checkpoint_write();
 	void checkpoint_clear();
 
 	friend class JobDistributorFactory; //ctor access
 
-	virtual
+	
 	void
-	go( protocols::moves::MoverOP mover );
+	go( protocols::moves::MoverOP mover ) override;
 
-	virtual
+	
 	core::Size
-	get_new_job_id();
+	get_new_job_id() override;
 };
 
 }//jd2

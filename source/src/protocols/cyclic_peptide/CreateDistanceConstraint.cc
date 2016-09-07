@@ -50,7 +50,7 @@ namespace cyclic_peptide {
 
 CreateDistanceConstraint::CreateDistanceConstraint() //:
 {}
-CreateDistanceConstraint::~CreateDistanceConstraint(){}
+CreateDistanceConstraint::~CreateDistanceConstraint()= default;
 
 void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 {

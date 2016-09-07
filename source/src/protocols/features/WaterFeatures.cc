@@ -201,9 +201,8 @@ WaterFeatures::parse_my_tag(
 		//throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 		std::string water_names_list = tag->getOption< std::string >("targets");
 		utility::vector0< std::string > const water_names( utility::string_split( water_names_list, ',' ) );
-		for ( utility::vector0< std::string>::const_iterator water_name( water_names.begin() ),
-				end( water_names.end() ); water_name != end; ++water_name ) {
-			utility::vector0< std::string > const resn_atomn( utility::string_split( *water_name, ':' ) );
+		for (const auto & water_name : water_names) {
+			utility::vector0< std::string > const resn_atomn( utility::string_split( water_name, ':' ) );
 			std::string resname = resn_atomn[0];
 			std::string atomname = resn_atomn[1];
 			names_for_water_.push_back(std::make_pair(resname, atomname));
@@ -215,10 +214,8 @@ WaterFeatures::parse_my_tag(
 		names_for_water_.push_back(std::make_pair("DOD", "O"));
 		names_for_water_.push_back(std::make_pair("WAT", "O"));
 	}
-	for ( utility::vector1< std::pair<std::string, std::string> >::iterator
-			ur_ua_it = names_for_water_.begin(), ur_ua_preend = names_for_water_.end();
-			ur_ua_it != ur_ua_preend; ++ur_ua_it ) {
-		TR << "Name for water: " << "resName: " << ur_ua_it->first << ", atomName: " << ur_ua_it->second << std::endl;
+	for (auto & ur_ua_it : names_for_water_) {
+		TR << "Name for water: " << "resName: " << ur_ua_it.first << ", atomName: " << ur_ua_it.second << std::endl;
 	}
 
 	acc_dist_cutoff_ = tag->getOption<core::Length>("acc_dist_cutoff", 3.0);
@@ -277,7 +274,7 @@ WaterFeatures::report_features(
 		"\tua.struct_id = ? AND\n"
 		"\t(\n";
 
-	for ( utility::vector1< std::pair<std::string, std::string> >::iterator
+	for ( auto
 			ur_ua_it = names_for_water_.begin(), ur_ua_preend = names_for_water_.end() - 1;
 			ur_ua_it != ur_ua_preend; ++ur_ua_it ) {
 		water_ss << "   (ur.name3 = ? AND ua.atom_name = ?) OR\n";

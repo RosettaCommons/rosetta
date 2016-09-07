@@ -50,11 +50,11 @@ public:
 
 	void add_sequence( SequenceOP seq );
 
-	virtual Size length() const;
+	Size length() const override;
 
-	virtual void delete_position( core::Size pos );
+	void delete_position( core::Size pos ) override;
 
-	virtual void insert_char( core::Size pos, char new_char );
+	void insert_char( core::Size pos, char new_char ) override;
 
 	SequenceOP seq( core::Size idx ) const;
 
@@ -76,15 +76,15 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~CompositeSequence();
+	~CompositeSequence() override;
 
 	/// @brief Returns an owning pointer to a new CompositeSequence object,
 	/// with data that is a deep copy of the information in this object.
-	virtual SequenceOP clone() const;
+	SequenceOP clone() const override;
 
-	virtual std::string to_string() const;
+	std::string to_string() const override;
 
-	virtual std::string type() const;
+	std::string type() const override;
 
 private:
 	utility::vector1< SequenceOP > seqs_;

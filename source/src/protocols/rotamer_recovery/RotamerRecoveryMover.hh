@@ -50,7 +50,7 @@ public: // constructors destructors
 		core::scoring::ScoreFunctionOP scfxn,
 		core::pack::task::TaskFactoryOP task_factory);
 
-	~RotamerRecoveryMover();
+	~RotamerRecoveryMover() override;
 
 	RotamerRecoveryMover( RotamerRecoveryMover const & src);
 
@@ -60,35 +60,35 @@ public: // functional interface
 	void
 	register_options() const ;
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief make a copy
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 	/// @brief make a copy but use default constructor
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		TagCOP /*tag*/,
 		basic::datacache::DataMap & /*data*/,
 		Filters_map const & /*filters*/,
 		moves::Movers_map const & movers,
-		Pose const &);
+		Pose const &) override;
 
 	/// @brief this function informs the job distributor (august 08
 	///vintage) whether this object needs to be freshly regenerated on
 	///each use.
-	virtual
+	
 	bool
-	reinitialize_for_each_job() const;
+	reinitialize_for_each_job() const override;
 
 
 	/// @brief this function informs the job distributor (august 08
@@ -96,9 +96,9 @@ public: // functional interface
 	///input pose is about to change (for example, if the mover has
 	///special code on the first apply() that is only valid for that
 	///one input pose).
-	virtual
+	
 	bool
-	reinitialize_for_new_input() const;
+	reinitialize_for_new_input() const override;
 
 	core::scoring::ScoreFunctionOP
 	score_function();
@@ -111,11 +111,11 @@ public: // functional interface
 	void
 	show() const;
 
-	virtual
+	
 	void
 	show(
 		std::ostream & out
-	) const;
+	) const override;
 
 private: // data
 

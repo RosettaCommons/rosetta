@@ -118,7 +118,7 @@ AnchoredGraftMover::AnchoredGraftMover(
 	copy_pdbinfo(copy_pdb_info);
 }
 
-AnchoredGraftMover::~AnchoredGraftMover() {}
+AnchoredGraftMover::~AnchoredGraftMover() = default;
 
 AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 	GraftMoverBase(src),
@@ -151,12 +151,12 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 
 void
 AnchoredGraftMover::set_defaults(){
-	cen_scorefxn_ = NULL;
-	fa_scorefxn_ = NULL;
-	movemap_ = NULL;
-	scaffold_movemap_ =NULL;
-	insert_movemap_ = NULL;
-	tag_ = NULL;
+	cen_scorefxn_ = nullptr;
+	fa_scorefxn_ = nullptr;
+	movemap_ = nullptr;
+	scaffold_movemap_ =nullptr;
+	insert_movemap_ = nullptr;
+	tag_ = nullptr;
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 
 	idealize_insert(false);

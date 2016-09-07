@@ -50,7 +50,7 @@ EntityCorrespondence::EntityCorrespondence() :
 	funcnames_[ func_residues_for_entity_end   ] = "residues_for_entity_end";
 
 }
-EntityCorrespondence::~EntityCorrespondence() {}
+EntityCorrespondence::~EntityCorrespondence() = default;
 
 EntityCorrespondence::EntityCorrespondence(EntityCorrespondence const & src ) :
 	parent(),
@@ -79,7 +79,7 @@ void EntityCorrespondence::set_pose( core::pose::PoseCOP pose )
 {
 	using namespace core::pose;
 
-	if ( pose_ == 0 || pose_->total_residue() != pose->total_residue() ) {
+	if ( pose_ == nullptr || pose_->total_residue() != pose->total_residue() ) {
 		resid_2_entity_id_.resize( pose->total_residue() );
 		std::fill( resid_2_entity_id_.begin(), resid_2_entity_id_.end(), 0 );
 	}

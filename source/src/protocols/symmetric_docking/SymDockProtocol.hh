@@ -88,7 +88,7 @@ public:
 	);
 
 	/// @brief Destructor
-	virtual ~SymDockProtocol();
+	~SymDockProtocol() override;
 
 	/// @brief Register Options from the Commandline
 	void register_options();
@@ -158,12 +158,12 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// Mover Methods /////////
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
 
 private:
 

@@ -100,7 +100,7 @@ SheetConstraintGenerator::SheetConstraintGenerator():
 {}
 
 /// @brief
-SheetConstraintGenerator::~SheetConstraintGenerator() {}
+SheetConstraintGenerator::~SheetConstraintGenerator() = default;
 
 protocols::constraint_generator::ConstraintGeneratorOP
 SheetConstraintGenerator::clone() const
@@ -137,9 +137,9 @@ SheetConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	protocols::fldsgn::topology::SS_Info2_OP ssinfo( new protocols::fldsgn::topology::SS_Info2( pose, secstruct ) );
 	protocols::fldsgn::topology::StrandPairingSet spairset( spair_str, ssinfo, abego );
 	ResiduePairs const respairs = compute_residue_pairs( spairset.strand_pairings() );
-	for ( ResiduePairs::const_iterator pair=respairs.begin(); pair!=respairs.end(); ++pair ) {
-		core::Size const iaa = pair->first;
-		core::Size const jaa = pair->second;
+	for (const auto & respair : respairs) {
+		core::Size const iaa = respair.first;
+		core::Size const jaa = respair.second;
 
 		// Residues probably need to be protein to get 'E' secondary structure.
 		// However, these checks are fast and could prevent issues
@@ -169,10 +169,10 @@ SheetConstraintGenerator::apply( core::pose::Pose const & pose ) const
 
 		// angle
 		if ( constrain_bb_angle_ ) {
-			if ( pair->orientation == 'P' ) {
+			if ( respair.orientation == 'P' ) {
 				csts.push_back( create_bb_angle_constraint( resi_n, resi_c, resj_c, bb_angle_func ) );
 				csts.push_back( create_bb_angle_constraint( resj_n, resj_c, resi_c, bb_angle_func ) );
-			} else if ( pair->orientation == 'A' ) {
+			} else if ( respair.orientation == 'A' ) {
 				csts.push_back( create_bb_angle_constraint( resi_n, resi_c, resj_n, bb_angle_func ) );
 				csts.push_back( create_bb_angle_constraint( resj_n, resj_c, resi_n, bb_angle_func ) );
 			}
@@ -409,15 +409,15 @@ ResiduePairs
 SheetConstraintGenerator::compute_residue_pairs( topology::StrandPairings const & spairs ) const
 {
 	ResiduePairs res_pairs;
-	for ( topology::StrandPairings::const_iterator sp=spairs.begin(); sp!=spairs.end(); ++sp ) {
-		TR << "Pair " << **sp << " from " << (*sp)->begin1() << " to " << (*sp)->end1() << " has bulge? " << (*sp)->has_bulge() << std::endl;
-		for ( core::Size resid=(*sp)->begin1(); resid<=(*sp)->end1(); ++resid ) {
-			if ( (*sp)->is_bulge( resid ) ) {
+	for (const auto & spair : spairs) {
+		TR << "Pair " << *spair << " from " << spair->begin1() << " to " << spair->end1() << " has bulge? " << spair->has_bulge() << std::endl;
+		for ( core::Size resid=spair->begin1(); resid<=spair->end1(); ++resid ) {
+			if ( spair->is_bulge( resid ) ) {
 				TR << "Skipping residue " << resid << " because it is a bulge" << std::endl;
 				continue;
 			}
-			core::Size const paired_resid = (*sp)->residue_pair( resid );
-			res_pairs.push_back( ResiduePair( resid, paired_resid, (*sp)->orient() ) );
+			core::Size const paired_resid = spair->residue_pair( resid );
+			res_pairs.push_back( ResiduePair( resid, paired_resid, spair->orient() ) );
 			TR.Debug << "Added paired residues " << resid << " <--> " << paired_resid << std::endl;
 		}
 	}

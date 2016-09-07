@@ -31,50 +31,50 @@ namespace filters {
 class TrueFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 class FalseFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 class StochasticFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 class CompoundFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 class CombinedFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 class MoveBeforeFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 class IfThenFilterCreator : public FilterCreator
 {
 public:
-	virtual FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 } //namespace filters

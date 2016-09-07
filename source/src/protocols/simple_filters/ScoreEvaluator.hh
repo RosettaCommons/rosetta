@@ -49,10 +49,10 @@ namespace simple_filters {
 class ScoreEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
 	ScoreEvaluator( std::string tag, core::scoring::ScoreFunctionOP scorefxn, bool fullname=false );
-	~ScoreEvaluator();
-	virtual core::Real
-	apply( core::pose::Pose& pose ) const;
-	virtual bool applicable( core::pose::Pose const&pose ) const;
+	~ScoreEvaluator() override;
+	core::Real
+	apply( core::pose::Pose& pose ) const override;
+	bool applicable( core::pose::Pose const&pose ) const override;
 protected:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
@@ -61,10 +61,10 @@ protected:
 class TruncatedScoreEvaluator : public ScoreEvaluator {
 public:
 
-	TruncatedScoreEvaluator( std::string tag, core::scoring::ResidueSelectionVector const&, core::scoring::ScoreFunctionOP scorefxn=NULL, bool fullname=false );
-	virtual ~TruncatedScoreEvaluator();
+	TruncatedScoreEvaluator( std::string tag, core::scoring::ResidueSelectionVector const&, core::scoring::ScoreFunctionOP scorefxn=nullptr, bool fullname=false );
+	~TruncatedScoreEvaluator() override;
 	/// @brief evaluate pose
-	virtual core::Real apply( core::pose::Pose& ) const;
+	core::Real apply( core::pose::Pose& ) const override;
 private:
 	core::scoring::ResidueSelectionVector selection_;
 	mutable core::scoring::ResidueSelectionVector exclude_list_;

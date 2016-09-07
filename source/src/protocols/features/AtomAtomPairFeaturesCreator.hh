@@ -31,10 +31,10 @@ class AtomAtomPairFeaturesCreator : public FeaturesReporterCreator
 {
 public:
 	AtomAtomPairFeaturesCreator();
-	virtual ~AtomAtomPairFeaturesCreator();
+	~AtomAtomPairFeaturesCreator() override;
 
-	virtual FeaturesReporterOP create_features_reporter() const;
-	virtual std::string type_name() const;
+	FeaturesReporterOP create_features_reporter() const override;
+	std::string type_name() const override;
 };
 
 } //namespace features

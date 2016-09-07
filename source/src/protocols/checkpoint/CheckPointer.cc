@@ -13,6 +13,7 @@
 // Project headers
 // This has to come before boinc_util.hh or we get this error on VC++
 // '_read' : is not a member of 'std::basic_istream<_Elem,_Traits>'
+#include <utility>
 #include <utility/io/izstream.hh>
 
 // must be here to avoid VC++ ambiguous symbol w/ ObjexxFCL::byte
@@ -134,8 +135,8 @@ bool pose_from_binary_silent_file( const std::string &filename, const std::strin
 	return true;
 }
 
-CheckPointer::CheckPointer( std::string const& type ):
-	type_ ( type ),
+CheckPointer::CheckPointer( std::string  type ):
+	type_ (std::move( type )),
 	disabled_( false ),
 	count_checkpoint_recoveries_( 0 )
 {
@@ -157,8 +158,8 @@ void CheckPointer::debug( const std::string &tag, const std::string &label, core
 
 void CheckPointer::flush_checkpoints()
 {
-	for ( core::Size i=0; i < file_buffer.size() ; i ++ ) {
-		file_buffer[i].dump();
+	for (auto & i : file_buffer) {
+		i.dump();
 	}
 	file_buffer.clear();
 }
@@ -166,8 +167,8 @@ void CheckPointer::flush_checkpoints()
 core::Size CheckPointer::file_buffer_size()
 {
 	core::Size total_size = 0;
-	for ( core::Size i=0; i < file_buffer.size() ; i ++ ) {
-		total_size += file_buffer[i].size();
+	for (auto & i : file_buffer) {
+		total_size += i.size();
 	}
 	return total_size;
 }
@@ -234,7 +235,7 @@ void CheckPointer::checkpoint(
 
 	/// Create the unique checkpoint ID
 	std::string mcstr( "_MC" );
-	if ( mc == 0 ) mcstr = "";
+	if ( mc == nullptr ) mcstr = "";
 	std::string checkpoint_id( "chk_" + current_tag + "_" + type() + "_" + mcstr + "_" + id );
 	if ( pose.is_fullatom() ) checkpoint_id += "_fa";
 
@@ -256,7 +257,7 @@ void CheckPointer::checkpoint(
 
 
 	//std::string notag="";
-	if ( mc != 0 ) {
+	if ( mc != nullptr ) {
 		{
 			FileBuffer new_file(  checkpoint_id + "mc_last.out"  );
 			std::stringstream ss_stream;
@@ -337,7 +338,7 @@ bool CheckPointer::recover_checkpoint(
 		<< std::endl;
 
 	std::string mcstr( "_MC" );
-	if ( mc == 0 ) mcstr = "";
+	if ( mc == nullptr ) mcstr = "";
 	// must be same as in checkpoint function
 	std::string checkpoint_id( "chk_" + current_tag + "_" + type() + "_" + mcstr + "_" + id );
 	if ( fullatom ) checkpoint_id += "_fa";
@@ -424,12 +425,12 @@ void CheckPointer::clear_checkpoints() {
 	if ( disabled_ ) return;
 	using namespace basic::options;
 	if ( delete_checkpoints_ ) {
-		for ( core::Size i = 0; i < checkpoint_ids_.size(); i++ ) {
+		for (auto & checkpoint_id : checkpoint_ids_) {
 			//std::cerr << "deleting checkpoint files with id: " << checkpoint_ids_[i] << std::endl;
-			utility::file::file_delete( checkpoint_ids_[i] + ".mc_last.out" );
-			utility::file::file_delete( checkpoint_ids_[i] + ".mc_low.out" );
-			utility::file::file_delete( checkpoint_ids_[i] + ".out" );
-			utility::file::file_delete( checkpoint_ids_[i] + ".rng.state.gz" );
+			utility::file::file_delete( checkpoint_id + ".mc_last.out" );
+			utility::file::file_delete( checkpoint_id + ".mc_low.out" );
+			utility::file::file_delete( checkpoint_id + ".out" );
+			utility::file::file_delete( checkpoint_id + ".rng.state.gz" );
 		}
 	} else {
 		TR.Debug << "Checkpoint deletion disabled!" << std::endl;

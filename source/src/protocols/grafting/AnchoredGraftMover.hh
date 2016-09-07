@@ -85,7 +85,7 @@ public:
 
 	AnchoredGraftMover(AnchoredGraftMover const & src);
 
-	virtual ~AnchoredGraftMover();
+	~AnchoredGraftMover() override;
 
 	void
 	set_cycles(core::Size cycles);
@@ -96,26 +96,26 @@ public:
 	/// @brief Grafts the piece into the pose, uses CCD to close the connection.  Insert does not change dihedral space, but DOES change cartesian space by default.
 	///Does not repack any sidechains.
 	///Deletes overhang and region between start and end if residues are present.
-	virtual void
-	apply(core::pose::Pose & pose);
+	void
+	apply(core::pose::Pose & pose) override;
 
 public:
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 
 public:
@@ -197,7 +197,7 @@ public:
 	};
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 protected:
 

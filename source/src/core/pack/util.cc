@@ -170,7 +170,7 @@ utility::vector1< utility::vector1< Real > > get_rotamer_angle_diffs( Pose & pos
 	core::Size j = 0; // for ref pose
 	while ( i < pose.total_residue() && j < ref_pose.total_residue() ) {
 
-		++i;;
+		++i;
 		++j;
 
 		// skip the membrane residue(s)

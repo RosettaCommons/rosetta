@@ -43,7 +43,7 @@ class OneToAllNeighborIterator : public ResidueNeighborIterator
 {
 	OneToAllNeighborIterator & operator = (OneToAllNeighborIterator const & src );
 public:
-	virtual ~OneToAllNeighborIterator();
+	~OneToAllNeighborIterator() override;
 
 	OneToAllNeighborIterator(
 		Size const pos1_in,
@@ -54,33 +54,33 @@ public:
 		utility::vector1< bool > * computed_in
 	);
 
-	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src );
+	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src ) override;
 
-	virtual ResidueNeighborIterator const & operator ++ ();
+	ResidueNeighborIterator const & operator ++ () override;
 
-	virtual bool operator == ( ResidueNeighborIterator const & other ) const;
+	bool operator == ( ResidueNeighborIterator const & other ) const override;
 
-	virtual bool operator != ( ResidueNeighborIterator const & other ) const;
+	bool operator != ( ResidueNeighborIterator const & other ) const override;
 
-	virtual Size upper_neighbor_id() const;
+	Size upper_neighbor_id() const override;
 
-	virtual Size lower_neighbor_id() const;
+	Size lower_neighbor_id() const override;
 
-	virtual Size residue_iterated_on() const;
+	Size residue_iterated_on() const override;
 
-	virtual Size neighbor_id() const;
+	Size neighbor_id() const override;
 
-	virtual void save_energy( EnergyMap const & emap );
+	void save_energy( EnergyMap const & emap ) override;
 
-	virtual void retrieve_energy( EnergyMap & emap ) const;
+	void retrieve_energy( EnergyMap & emap ) const override;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const;
+	void accumulate_energy( EnergyMap & emap ) const override;
 
-	virtual void mark_energy_computed();
+	void mark_energy_computed() override;
 
-	virtual void mark_energy_uncomputed();
+	void mark_energy_uncomputed() override;
 
-	virtual bool energy_computed() const;
+	bool energy_computed() const override;
 
 private:
 	Size pos1_;
@@ -98,7 +98,7 @@ class OneToAllNeighborConstIterator : public ResidueNeighborConstIterator
 {
 	OneToAllNeighborConstIterator & operator = (OneToAllNeighborConstIterator const & src );
 public:
-	virtual ~OneToAllNeighborConstIterator();
+	~OneToAllNeighborConstIterator() override;
 
 	OneToAllNeighborConstIterator(
 		Size const pos1_in,
@@ -109,27 +109,27 @@ public:
 		utility::vector1< bool > const * computed_in
 	);
 
-	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src );
+	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src ) override;
 
-	virtual ResidueNeighborConstIterator const & operator ++ ();
+	ResidueNeighborConstIterator const & operator ++ () override;
 
-	virtual bool operator == ( ResidueNeighborConstIterator const & other ) const;
+	bool operator == ( ResidueNeighborConstIterator const & other ) const override;
 
-	virtual bool operator != ( ResidueNeighborConstIterator const & other ) const;
+	bool operator != ( ResidueNeighborConstIterator const & other ) const override;
 
-	virtual Size upper_neighbor_id() const;
+	Size upper_neighbor_id() const override;
 
-	virtual Size lower_neighbor_id() const;
+	Size lower_neighbor_id() const override;
 
-	virtual Size residue_iterated_on() const;
+	Size residue_iterated_on() const override;
 
-	virtual Size neighbor_id() const;
+	Size neighbor_id() const override;
 
-	virtual void retrieve_energy( EnergyMap & emap ) const;
+	void retrieve_energy( EnergyMap & emap ) const override;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const;
+	void accumulate_energy( EnergyMap & emap ) const override;
 
-	virtual bool energy_computed() const;
+	bool energy_computed() const override;
 
 private:
 	Size pos1_;
@@ -146,28 +146,28 @@ private:
 class OneToAllEnergyContainer : public LREnergyContainer
 {
 public:
-	virtual
-	~OneToAllEnergyContainer();
+	
+	~OneToAllEnergyContainer() override;
 
-	virtual
-	LREnergyContainerOP clone() const;
+	
+	LREnergyContainerOP clone() const override;
 
 	OneToAllEnergyContainer( int const fixed_res_idx, Size const size_in, ScoreType const score_type_in );
 
-	virtual
-	bool empty() const;
+	
+	bool empty() const override;
 
-	virtual
+	
 	void
-	set_num_nodes( Size size_in );
+	set_num_nodes( Size size_in ) override;
 
-	virtual
+	
 	bool
-	any_neighbors_for_residue( int ) const;
+	any_neighbors_for_residue( int ) const override;
 
-	virtual
+	
 	bool
-	any_upper_neighbors_for_residue( int resid ) const;
+	any_upper_neighbors_for_residue( int resid ) const override;
 
 	Size
 	size() const;
@@ -176,38 +176,38 @@ public:
 	fixed() const;
 
 	//////////////////// const versions
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_begin( int resid ) const;
+	const_neighbor_iterator_begin( int resid ) const override;
 
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_end( int resid ) const;
+	const_neighbor_iterator_end( int resid ) const override;
 
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_begin( int resid ) const;
+	const_upper_neighbor_iterator_begin( int resid ) const override;
 
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_end( int resid ) const;
+	const_upper_neighbor_iterator_end( int resid ) const override;
 
 	//////////////////// non-const versions
-	virtual
+	
 	ResidueNeighborIteratorOP
-	neighbor_iterator_begin( int resid );
+	neighbor_iterator_begin( int resid ) override;
 
-	virtual
+	
 	ResidueNeighborIteratorOP
-	neighbor_iterator_end( int resid );
+	neighbor_iterator_end( int resid ) override;
 
-	virtual
+	
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_begin( int resid );
+	upper_neighbor_iterator_begin( int resid ) override;
 
-	virtual
+	
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_end( int resid );
+	upper_neighbor_iterator_end( int resid ) override;
 
 private:
 	int fixed_;

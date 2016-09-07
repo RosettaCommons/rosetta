@@ -43,23 +43,23 @@ class LogicalSelector : public protocols::rosetta_scripts::PoseSelector {
 
 protected:
 	LogicalSelector();
-	virtual ~LogicalSelector();
+	~LogicalSelector() override;
 
 public:
 	static std::string name() { return "LogicalSelector"; }
-	virtual std::string get_name() const { return name(); }
-	rosetta_scripts::PoseSelectorFlags get_flags() const;
+	std::string get_name() const override { return name(); }
+	rosetta_scripts::PoseSelectorFlags get_flags() const override;
 
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) override;
 
 protected:
 	// virtual inline bool selection_operation( bool a, bool b ) const = 0;
@@ -78,14 +78,14 @@ class AndSelector : public LogicalSelector {
 
 public:
 	AndSelector() {}
-	~AndSelector() {}
+	~AndSelector() override = default;
 
 	static std::string name() { return "AndSelector"; }
-	std::string get_name() const { return name(); }
+	std::string get_name() const override { return name(); }
 
 protected:
-	inline bool selection_operation( bool a, bool b ) const { return a && b; }
-	inline bool get_default() const { return true; }
+	inline bool selection_operation( bool a, bool b ) const override { return a && b; }
+	inline bool get_default() const override { return true; }
 
 }; // AndSelector
 
@@ -95,14 +95,14 @@ class OrSelector : public LogicalSelector {
 
 public:
 	OrSelector() {}
-	~OrSelector() {}
+	~OrSelector() override = default;
 
 	static std::string name() { return "OrSelector"; }
-	std::string get_name() const { return name(); }
+	std::string get_name() const override { return name(); }
 
 protected:
-	inline bool selection_operation( bool a, bool b ) const { return a || b; }
-	inline bool get_default() const { return false; }
+	inline bool selection_operation( bool a, bool b ) const override { return a || b; }
+	inline bool get_default() const override { return false; }
 
 }; // OrSelector
 
@@ -112,22 +112,22 @@ class TopNByProperty : public protocols::rosetta_scripts::PoseSelector {
 
 public:
 	TopNByProperty();
-	~TopNByProperty() {}
+	~TopNByProperty() override = default;
 
 	static std::string name() { return "TopNByProperty"; }
-	std::string get_name() const { return name(); }
-	rosetta_scripts::PoseSelectorFlags get_flags() const { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
+	std::string get_name() const override { return name(); }
+	rosetta_scripts::PoseSelectorFlags get_flags() const override { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
 
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) override;
 
 protected:
 
@@ -145,22 +145,22 @@ class Filter : public protocols::rosetta_scripts::PoseSelector {
 
 public:
 	Filter();
-	~Filter() {}
+	~Filter() override = default;
 
 	static std::string name() { return "Filter"; }
-	std::string get_name() const { return name(); }
-	rosetta_scripts::PoseSelectorFlags get_flags() const { return rosetta_scripts::PSF_NONE; }
+	std::string get_name() const override { return name(); }
+	rosetta_scripts::PoseSelectorFlags get_flags() const override { return rosetta_scripts::PSF_NONE; }
 
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses );
+	utility::vector1<bool> select_poses( utility::vector1< core::pose::PoseOP > poses ) override;
 
 protected:
 

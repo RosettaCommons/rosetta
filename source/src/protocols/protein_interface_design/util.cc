@@ -155,7 +155,7 @@ make_hotspot_foldtree( core::pose::Pose const & pose )
 		connection_points.push_back( nearest_resi_on_target );
 	}
 	std::sort( connection_points.begin(), connection_points.end() );
-	utility::vector1< core::Size >::iterator last = std::unique( connection_points.begin(), connection_points.end() );
+	auto last = std::unique( connection_points.begin(), connection_points.end() );
 	connection_points.erase( last, connection_points.end() );
 	core::Size upstream_position( 1 );
 	BOOST_FOREACH ( core::Size const con, connection_points ) {

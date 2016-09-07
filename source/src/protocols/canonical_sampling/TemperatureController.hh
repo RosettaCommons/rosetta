@@ -77,31 +77,31 @@ public:
 	TemperatureController( TemperatureController const& );
 
 	/// @brief No-op implemented only to satisfy the Mover interface.
-	virtual
-	void apply( core::pose::Pose& ) {};
+	
+	void apply( core::pose::Pose& ) override {};
 
 	/// @brief Return the name of this class.
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief Return false.  This class does not need to be reinitialized for
 	/// each job.
-	virtual
+	
 	bool
-	reinitialize_for_each_job() const { return false; };
+	reinitialize_for_each_job() const override { return false; };
 
 	/// @brief Return false.  This class does not need to be reinitialized for
 	/// new input.
-	virtual
+	
 	bool
-	reinitialize_for_new_input() const { return false; };
+	reinitialize_for_new_input() const override { return false; };
 
-	virtual
+	
 	void
 	observe_after_metropolis(
 		MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 	/// @brief Execute the temperature move.
 	/// @details This method is called by observe_after_metropolis() and is
@@ -159,13 +159,13 @@ public:
 		core::Size cycle
 	);
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose &,
 		MetropolisHastingsMover const &,
 		core::Size
-	) {};
+	) override {};
 
 	/// @brief Return the number of temperature levels used by this controller.
 	/// @see temperature_level()
@@ -209,18 +209,18 @@ public:
 
 	/// @brief Return a copy of this mover.
 	protocols::moves::MoverOP
-	clone() const { return protocols::moves::MoverOP( new protocols::canonical_sampling::FixedTemperatureController( temperature_ ) ); };
+	clone() const override { return protocols::moves::MoverOP( new protocols::canonical_sampling::FixedTemperatureController( temperature_ ) ); };
 
-	virtual
+	
 	std::string
-	get_name() const { return "FixedTemperatureContoller"; }
+	get_name() const override { return "FixedTemperatureContoller"; }
 
 	/// @brief Return the same constant temperature every time.
-	virtual core::Real temperature_move( core::Real ) { return temperature_; };
+	core::Real temperature_move( core::Real ) override { return temperature_; };
 
-	virtual core::Real temperature() const { return temperature_; };
+	core::Real temperature() const override { return temperature_; };
 
-	virtual core::Real temperature( core::Size ) const { return temperature_; };
+	core::Real temperature( core::Size ) const override { return temperature_; };
 
 private:
 	core::Real temperature_;

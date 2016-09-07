@@ -29,7 +29,7 @@ namespace loophash {
 ///// LoopHashLibraryOptionsCreator /////
 LoopHashLibraryOptionsCreator::LoopHashLibraryOptionsCreator() {}
 
-LoopHashLibraryOptionsCreator::~LoopHashLibraryOptionsCreator() {}
+LoopHashLibraryOptionsCreator::~LoopHashLibraryOptionsCreator() = default;
 
 /// @details Return an owning pointer to a newly constructed default instance of LoopHashLibraryOptions.
 basic::resource_manager::ResourceOptionsOP
@@ -45,7 +45,7 @@ LoopHashLibraryOptionsCreator::options_type() const {
 
 ///// LoopHashLibraryOptions /////
 LoopHashLibraryOptions::LoopHashLibraryOptions() {}
-LoopHashLibraryOptions::~LoopHashLibraryOptions() {}
+LoopHashLibraryOptions::~LoopHashLibraryOptions() = default;
 
 /// @details Read the resource definitions file's tag and parse the loop_sizes option to generate a vector of valid
 /// loops lenths that will be used to generate a LoopHashLibrary. If this option is omitted execution is halted and a

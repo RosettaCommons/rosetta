@@ -26,7 +26,7 @@ namespace protocols {
 namespace jd3 {
 
 MoverAndPoseJob::MoverAndPoseJob() {}
-MoverAndPoseJob::~MoverAndPoseJob() {}
+MoverAndPoseJob::~MoverAndPoseJob() = default;
 
 JobResultOP MoverAndPoseJob::run() {
 	mover_->apply( *pose_ );
@@ -59,7 +59,7 @@ void MoverAndPoseJob::finalize_results( PoseJobResultOP ) {}
 
 
 PoseJobResult::PoseJobResult() {}
-PoseJobResult::~PoseJobResult() {}
+PoseJobResult::~PoseJobResult() = default;
 
 JobStatus PoseJobResult::status() const { return jd3_job_status_success; }
 

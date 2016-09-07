@@ -27,7 +27,7 @@
 //Numeric Headers
 #include <numeric/xyzVector.hh>
 //C++ Headers
-#include <math.h>
+#include <cmath>
 #include <numeric/xyz.io.hh>
 
 using basic::T;
@@ -50,7 +50,7 @@ SurfaceOrientMover::SurfaceOrientMover():Mover()
 }
 
 //destructor
-SurfaceOrientMover::~SurfaceOrientMover() {}
+SurfaceOrientMover::~SurfaceOrientMover() = default;
 
 void SurfaceOrientMover::apply(pose::Pose & pose)
 {

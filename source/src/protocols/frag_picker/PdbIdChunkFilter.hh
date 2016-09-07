@@ -79,7 +79,7 @@ public:
 
 	/// @brief say if a given chunk looks promising.
 	/// @details Simply if its pdb id is on a list then it will pass the test
-	bool test_chunk(VallChunkOP a_chunk);
+	bool test_chunk(VallChunkOP a_chunk) override;
 };
 
 /// @brief Denies a chunk based on the pdb id of the source protein
@@ -90,7 +90,7 @@ public:
 
 	/// @brief say if a given chunk looks promising.
 	/// @details Simply if its pdb id is on a list then it will be rejected
-	bool test_chunk(VallChunkOP a_chunk);
+	bool test_chunk(VallChunkOP a_chunk) override;
 };
 
 } // frag_picker

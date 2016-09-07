@@ -26,6 +26,7 @@
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
@@ -34,14 +35,13 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.moves.ConstraintGenerator" );
 namespace protocols {
 namespace constraint_generator {
 
-ConstraintGenerator::ConstraintGenerator( std::string const & class_name ):
+ConstraintGenerator::ConstraintGenerator( std::string  class_name ):
 	utility::pointer::ReferenceCount(),
-	class_name_( class_name ),
+	class_name_(std::move( class_name )),
 	id_( "unnamed_constraint_generator" )
 {}
 
-ConstraintGenerator::~ConstraintGenerator()
-{}
+ConstraintGenerator::~ConstraintGenerator() = default;
 
 /// @brief This is called if this mover is instantiated from XML
 void

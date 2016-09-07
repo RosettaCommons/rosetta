@@ -104,7 +104,7 @@ izstream::open(
 		zip_stream_p_ = new zip_istream( if_stream_ );
 		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) || ( !zip_stream_p_->is_gzip() ) ) {
 			// zip_stream not in good state
-			delete zip_stream_p_; zip_stream_p_ = 0;
+			delete zip_stream_p_; zip_stream_p_ = nullptr;
 			if_stream_.close();
 			if_stream_.setstate( ios_base::failbit ); // set failbit so failure can be detected
 		}

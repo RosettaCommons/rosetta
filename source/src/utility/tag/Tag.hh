@@ -38,7 +38,7 @@ class Tag : public utility::pointer::ReferenceCount, public utility::pointer::en
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Tag();
+	~Tag() override;
 
 	typedef std::map<std::string, std::string > options_t;
 	typedef utility::vector0< TagCOP > tags_t;
@@ -86,7 +86,7 @@ public:
 	template< class T >
 	T
 	getOption(std::string const& key, T const& t_default) const {
-		options_t::const_iterator i = mOptions_.find(key);
+		auto i = mOptions_.find(key);
 		if ( i == mOptions_.end() ) {
 			accessed_options_[key]= key;
 			return t_default;
@@ -110,7 +110,7 @@ public:
 	template< class T >
 	T
 	getOption(std::string const& key) const {
-		options_t::const_iterator i = mOptions_.find(key);
+		auto i = mOptions_.find(key);
 		if ( i == mOptions_.end() ) {
 			std::stringstream error_message;
 			error_message << "Option " << key << " not found.\n";

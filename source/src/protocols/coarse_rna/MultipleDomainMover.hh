@@ -51,14 +51,14 @@ public:
 	MultipleDomainMover( core::pose::Pose const & pose, protocols::coarse_rna::CoarseRNA_LoopCloserOP rna_loop_closer  );
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new MultipleDomainMover(*this) );
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	Size
 	apply_and_return_jump( core::pose::Pose & pose );

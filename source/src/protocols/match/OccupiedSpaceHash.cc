@@ -34,7 +34,7 @@ namespace protocols {
 namespace match {
 
 OccupiedSpaceHash::OccupiedSpaceHash() : initialized_( false ), revision_id_( 1 ) {}
-OccupiedSpaceHash::~OccupiedSpaceHash() {}
+OccupiedSpaceHash::~OccupiedSpaceHash() = default;
 
 void
 OccupiedSpaceHash::set_bounding_box(
@@ -173,9 +173,8 @@ OccupiedSpaceHash::prepare_to_note_hits_for_completed_round()
 	/// Rounds that use secondary matching on upstream residues will not
 	++revision_id_;
 
-	for ( ActiveVoxelSet::iterator iter = hash_.begin(), iter_end = hash_.end();
-			iter != iter_end; ++iter ) {
-		iter->second = 0;
+	for (auto & iter : hash_) {
+		iter.second = 0;
 	}
 
 	reset_3d_projection();

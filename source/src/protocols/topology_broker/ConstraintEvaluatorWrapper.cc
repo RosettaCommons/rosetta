@@ -23,6 +23,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
@@ -43,9 +44,9 @@ namespace topology_broker {
 using namespace core;
 using namespace scoring::constraints;
 using namespace scoring;
-ConstraintEvaluatorWrapper::ConstraintEvaluatorWrapper( std::string const& name, ConstraintClaimerCOP claimer ) :
-	name_( name ),
-	claimer_( claimer )
+ConstraintEvaluatorWrapper::ConstraintEvaluatorWrapper( std::string  name, ConstraintClaimerCOP claimer ) :
+	name_(std::move( name )),
+	claimer_(std::move( claimer ))
 {}
 
 Real ConstraintEvaluatorWrapper::apply( core::pose::Pose& pose_in ) const {

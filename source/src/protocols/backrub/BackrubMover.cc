@@ -348,7 +348,7 @@ protocols::backrub::BackrubMover::add_segment(
 {
 	PoseCOP input_pose(get_input_pose());
 
-	runtime_assert( input_pose != 0);
+	runtime_assert( input_pose != nullptr);
 
 	// get references to Atom tree atoms
 	kinematics::tree::AtomCOP start_atom(input_pose->atom_tree().atom(start_atomid).get_self_ptr());
@@ -601,7 +601,7 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 	Size nsegments(0);
 
 	std::sort(resnums.begin(), resnums.end());
-	utility::vector1<core::Size>::iterator new_end(std::unique(resnums.begin(), resnums.end()));
+	auto new_end(std::unique(resnums.begin(), resnums.end()));
 	resnums.erase(new_end, resnums.end());
 
 	TR << "Segment lengths: " << min_atoms << "-" << max_atoms << " atoms" << std::endl;
@@ -676,10 +676,9 @@ protocols::backrub::BackrubMover::optimize_branch_angles(
 	Pose & pose
 )
 {
-	for ( std::map<protocols::backrub::BackrubSegment::BondAngleKey, core::Size>::iterator iter(bond_angle_map_.begin());
-			iter != bond_angle_map_.end(); ++iter ) {
+	for (auto & iter : bond_angle_map_) {
 
-		BackrubSegment::BondAngleKey const & bond_angle_key(iter->first);
+		BackrubSegment::BondAngleKey const & bond_angle_key(iter.first);
 		if ( bond_angle_key.key1().valid() && bond_angle_key.key2().valid() && bond_angle_key.key3().valid() ) {
 			TR.Debug << "Optimizing angles for:" << bond_angle_key.key1() << bond_angle_key.key2() << bond_angle_key.key3()
 				<< std::endl;
@@ -863,7 +862,7 @@ protocols::backrub::BackrubMover::dof_id_ranges(
 		kinematics::tree::AtomCOP start_atom2(pose.atom_tree().atom(segment.start_atomid2()).get_self_ptr());
 		kinematics::tree::AtomCOP end_atom(pose.atom_tree().atom(segment.end_atomid()).get_self_ptr());
 		kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
-		kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP( 0 ) );
+		kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP( nullptr ) );
 
 		// Only proceed if stub_atom2 != start_atom1
 		if ( start_atom->stub_atom2()->id() != segment.start_atomid1() ) {
@@ -943,7 +942,7 @@ protocols::backrub::BackrubMover::random_angle(
 	kinematics::tree::AtomCOP start_atom2(pose.atom_tree().atom(segment.start_atomid2()).get_self_ptr());
 	kinematics::tree::AtomCOP end_atom(pose.atom_tree().atom(segment.end_atomid()).get_self_ptr());
 	kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
-	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(0) );
+	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(nullptr) );
 
 	//TR << "Start Atom:" << segment.start_atomid() << std::endl;
 	//TR << "End Atom:" << segment.end_atomid() << std::endl;
@@ -1056,7 +1055,7 @@ protocols::backrub::BackrubMover::rotate_segment(
 	kinematics::tree::AtomCOP start_atom2(pose.atom_tree().atom(segment.start_atomid2()).get_self_ptr());
 	kinematics::tree::AtomCOP end_atom(pose.atom_tree().atom(segment.end_atomid()).get_self_ptr());
 	kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
-	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(0) );
+	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(nullptr) );
 
 	/*
 	PointPosition end_atom_xyz(pose.xyz(end_atom->id()));
@@ -1380,7 +1379,7 @@ backrub_rotation_constants(
 		constants[14] = tau_w1n;
 	}
 
-	if ( tau_intervals != NULL && alpha_min >= 0 && alpha_max > alpha_min ) {
+	if ( tau_intervals != nullptr && alpha_min >= 0 && alpha_max > alpha_min ) {
 
 		if ( alpha_min == 0 && alpha_max == pi ) {
 

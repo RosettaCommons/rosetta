@@ -37,7 +37,7 @@ ConstraintsManager::ConstraintsManager():
 {
 }
 
-ConstraintsManager::~ConstraintsManager(){}
+ConstraintsManager::~ConstraintsManager()= default;
 
 ConstraintsManager *
 ConstraintsManager::create_singleton_instance()
@@ -57,7 +57,7 @@ ConstraintsManager::remove_constraints( core::pose::Pose & pose, std::string con
 	if ( !pose.data().has( MY_TYPE ) ) return;
 
 	ConstraintsMap & map = retrieve_constraints_map( pose );
-	ConstraintsMap::iterator cst_it = map.find( name );
+	auto cst_it = map.find( name );
 
 	// do nothing if no constraints are found under this name
 	if ( cst_it == map.end() ) return;
@@ -117,7 +117,7 @@ ConstraintsManager::store_constraints(
 	ConstraintCOPs const & csts ) const
 {
 	ConstraintsMap & map = retrieve_constraints_map( pose );
-	ConstraintsMap::iterator cst_it = map.find( name );
+	auto cst_it = map.find( name );
 	if ( cst_it == map.end() ) {
 		cst_it = map.insert( name, csts );
 	} else {
@@ -136,7 +136,7 @@ ConstraintsManager::retrieve_constraints(
 	std::string const & name ) const
 {
 	ConstraintsMap const & map = retrieve_constraints_map( pose );
-	ConstraintsMap::const_iterator cst_it = map.find( name );
+	auto cst_it = map.find( name );
 	if ( cst_it == map.end() ) {
 		std::stringstream msg;
 		msg << "No constraints were found in the pose datacache under the name "
@@ -170,7 +170,7 @@ using protocols::constraint_generator::ConstraintsManager;
 template<> std::mutex utility::SingletonBase< ConstraintsManager >::singleton_mutex_{};
 template<> std::atomic< ConstraintsManager * > utility::SingletonBase< ConstraintsManager >::instance_( NULL );
 #else
-template<> ConstraintsManager * utility::SingletonBase< ConstraintsManager >::instance_( NULL );
+template<> ConstraintsManager * utility::SingletonBase< ConstraintsManager >::instance_( nullptr );
 #endif
 
 } // namespace utility

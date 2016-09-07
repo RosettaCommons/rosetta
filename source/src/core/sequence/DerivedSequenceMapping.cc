@@ -36,7 +36,7 @@ namespace sequence {
 
 using namespace ObjexxFCL;
 
-DerivedSequenceMapping::~DerivedSequenceMapping() {}
+DerivedSequenceMapping::~DerivedSequenceMapping() = default;
 
 DerivedSequenceMapping::DerivedSequenceMapping( DerivedSequenceMapping const & src )
 : SequenceMapping(src)

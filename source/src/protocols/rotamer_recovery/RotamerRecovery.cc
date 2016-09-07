@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/vector1.hh>
 
 // option key includes
@@ -67,16 +68,16 @@ RotamerRecovery::RotamerRecovery(
 	RRProtocolOP protocol,
 	RRComparerOP comparer,
 	RRReporterOP reporter) :
-	protocol_( protocol ),
-	comparer_( comparer ),
-	reporter_( reporter ),
+	protocol_(std::move( protocol )),
+	comparer_(std::move( comparer )),
+	reporter_(std::move( reporter )),
 	ignore_unrecognized_res_(false)
 {
 	reporter_->set_protocol_info( protocol_->get_name(), protocol_->get_parameters() );
 	reporter_->set_comparer_info( comparer_->get_name(), comparer_->get_parameters() );
 }
 
-RotamerRecovery::~RotamerRecovery() {}
+RotamerRecovery::~RotamerRecovery() = default;
 
 RotamerRecovery::RotamerRecovery(
 	RotamerRecovery const & src

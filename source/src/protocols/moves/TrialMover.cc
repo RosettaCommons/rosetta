@@ -46,12 +46,12 @@ MonteCarloUtil::MonteCarloUtil() : mc_(/* 0 */)
 
 }
 
-MonteCarloUtil::MonteCarloUtil( protocols::moves::MonteCarloOP mc) : mc_(mc)
+MonteCarloUtil::MonteCarloUtil( protocols::moves::MonteCarloOP mc) : mc_(std::move(mc))
 {
 
 }
 
-MonteCarloUtil::~MonteCarloUtil() {}
+MonteCarloUtil::~MonteCarloUtil() = default;
 
 void MonteCarloUtil::apply(Pose & pose)
 {
@@ -137,7 +137,7 @@ TrialMover::TrialMover(TrialMover const & object_to_copy) : Mover(object_to_copy
 	stats_type_(object_to_copy.stats_type_)
 {}
 
-TrialMover::~TrialMover() {}
+TrialMover::~TrialMover() = default;
 
 // set the weights for the score_type for ramping
 void TrialMover::initialize_weights(
@@ -263,7 +263,7 @@ void TrialMover::parse_my_tag(
 	if ( movername == "" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover requires the 'mover' option which was not provided" );
 	}
-	Movers_map::const_iterator  find_mover ( movers.find( movername ));
+	auto  find_mover ( movers.find( movername ));
 	if ( find_mover == movers.end() && movername != "" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover was not able to find the mover named '" + movername + "' in the Movers_map" );
 	}
@@ -293,7 +293,7 @@ std::ostream &operator<< (std::ostream &os, TrialMover const &mover)
 		"Moves were accepted: " << mover.num_accepts() << " times." << std::endl <<
 		"Acceptance rate:     " << mover.stats_.acceptance_rate() << std::endl;
 	os << "MonteCarlo:          ";
-	if ( mover.mc_ != 0 ) { os << mover.mc_ << std::endl; }
+	if ( mover.mc_ != nullptr ) { os << mover.mc_ << std::endl; }
 	else { os << "none" << std::endl; }
 
 	return os;

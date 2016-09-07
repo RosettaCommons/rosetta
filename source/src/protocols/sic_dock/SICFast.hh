@@ -33,7 +33,7 @@ public:
 	SICFast();
 	SICFast(core::Real clash_dis);
 
-	virtual ~SICFast();
+	~SICFast() override;
 
 	void init(
 		core::pose::Pose const & pose1

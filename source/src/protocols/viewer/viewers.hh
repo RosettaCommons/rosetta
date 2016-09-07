@@ -103,7 +103,7 @@ add_monte_carlo_viewer(
 
 inline
 int
-viewer_main( VoidFunc worker_main ){ worker_main(NULL); return 0; }
+viewer_main( VoidFunc worker_main ){ worker_main(nullptr); return 0; }
 
 #else // GL_GRAPHICS ////////////////////////////////////////////////////
 

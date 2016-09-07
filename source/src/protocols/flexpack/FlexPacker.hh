@@ -46,13 +46,13 @@ public:
 	);
 
 
-	virtual ~FlexPacker();
+	~FlexPacker() override;
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	set_sfxn( core::scoring::ScoreFunctionCOP sfxn );

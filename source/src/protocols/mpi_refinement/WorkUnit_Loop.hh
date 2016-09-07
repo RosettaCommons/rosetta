@@ -33,14 +33,14 @@ public:
 	WorkUnit_LoopHash( core::Size start_ir = 0, core::Size end_ir = 0, core::Size ssid = 0,
 		core::Size is_global = 0);
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_LoopHash( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
-	virtual void init_from_cmd( const core::Size );
+	void init_from_cmd( const core::Size ) override;
 
 	void set_start( core::Size start_ir ){ header.extra_data_1_ = start_ir; }
 	void set_end( core::Size end_ir ){ header.extra_data_2_ = end_ir; }
@@ -74,12 +74,12 @@ public:
 		core::Size const res2 = 0,
 		bool const fullatom = false
 	);
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_FragInsert( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
 	//void set_nstruct( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_nsteps( core::Size const setting ){ header.extra_data_1_ = setting; }
@@ -116,12 +116,12 @@ public:
 		core::Size const res2 = 0,
 		bool const kicclose = true
 	);
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_KicCloser( *this ));
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
 	void set_nsteps( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_scoretype( core::Size const setting ){ header.extra_data_2_ = setting; }
@@ -151,12 +151,12 @@ public:
 	WorkUnit_PartialAbinitio( core::Size const nsteps = 0,
 		bool const reconstruct = false
 	);
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_PartialAbinitio( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
 	void set_nsteps( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_res1( core::Size const setting ){ header.extra_data_2_ = setting; }

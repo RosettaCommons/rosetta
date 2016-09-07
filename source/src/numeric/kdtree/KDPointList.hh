@@ -32,7 +32,7 @@ struct KDPoint_MinDist {
 class KDPointList : public utility::pointer::ReferenceCount {
 public: // iterators
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~KDPointList();
+	~KDPointList() override;
 
 	typedef utility::vector1< KDPointOP >::iterator iterator;
 	typedef utility::vector1< KDPointOP >::const_iterator const_iterator;

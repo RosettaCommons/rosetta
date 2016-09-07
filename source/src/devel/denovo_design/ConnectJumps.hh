@@ -34,16 +34,16 @@ public:
 	ConnectJumps();
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~ConnectJumps();
+	~ConnectJumps() override;
 
 	/// @brief Return the name of this mover.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Apply the ConnectJumps. Overloaded apply function from mover base class.
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 };
 
 

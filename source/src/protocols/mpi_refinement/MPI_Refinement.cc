@@ -139,10 +139,10 @@ MPI_Refinement::set_defaults(){
 	TR << "IDENT: " << ident_string_ << std::endl;
 
 	// make sure the state saves are randomly staggered - otherwise all the masters dump several hundred megs at once!
-	last_save_state_ = time(NULL)  + core::Size( numeric::random::rg().uniform()  * (core::Real) save_state_interval_) ;
-	TR.Debug << "Interlace dumps: " << last_save_state_ << "  " << time(NULL)  << "  " << last_save_state_ - time(NULL) << "  " << save_state_interval_ << "  " << std::endl;
+	last_save_state_ = time(nullptr)  + core::Size( numeric::random::rg().uniform()  * (core::Real) save_state_interval_) ;
+	TR.Debug << "Interlace dumps: " << last_save_state_ << "  " << time(nullptr)  << "  " << last_save_state_ - time(nullptr) << "  " << save_state_interval_ << "  " << std::endl;
 
-	starttime_ = time(NULL);
+	starttime_ = time(nullptr);
 }
 
 void
@@ -247,19 +247,19 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 void
 MPI_Refinement::save_state(std::string prefix ){
 	start_timer( TIMING_IO_WRITE );
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 	write_queues_to_file( prefix + "." + ObjexxFCL::string_of(mpi_rank()) );
 	library_central_.serialize_to_file( prefix + "." + ObjexxFCL::string_of(mpi_rank())+ ".lib.library_central" );
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR << "Saved state: " << endtime - starttime << "s " << inbound().size() << " + " << outbound().size() << " + " <<  library_central_.size() << " + " << ( inbound().size() + outbound().size() + library_central_.size() ) << std::endl;
 	start_timer( TIMING_CPU );
 }
 
 void
 MPI_Refinement::save_state_auto(){
-	if ( (core::Size)(last_save_state_ + save_state_interval_ ) < (core::Size)time(NULL) ) {
+	if ( (core::Size)(last_save_state_ + save_state_interval_ ) < (core::Size)time(nullptr) ) {
 		TR << "Saving state.. " << std::endl;
-		last_save_state_ = time(NULL);
+		last_save_state_ = time(nullptr);
 		save_state( ident_string_ );
 	}
 }
@@ -278,8 +278,8 @@ MPI_Refinement::load_state(std::string prefix ){
 void
 MPI_Refinement::print_stats(){
 	static int lasttime = 0;
-	if ( (time(NULL) - lasttime) < 300 ) return;
-	lasttime = time(NULL);
+	if ( (time(nullptr) - lasttime) < 300 ) return;
+	lasttime = time(nullptr);
 
 	TR.Debug << "STATL: "
 		<< wall_time() << "s  "
@@ -369,7 +369,7 @@ MPI_Refinement::add_structure_to_library_add_n_replace( core::io::silent::Silent
 
 	//for( core::Size i = 0; i < library_central_.size(); ++i ){
 	//core::io::silent::SilentStructOP ss = library_central_.get_struct( i );
-	for ( SilentStructStore::iterator jt =  library_central_.begin(),
+	for ( auto jt =  library_central_.begin(),
 			end = library_central_.end(); jt != end; ++jt ) {
 
 		core::Real the_dist( 0.0 );
@@ -442,7 +442,7 @@ MPI_Refinement::add_structure_to_library_single_replace( core::io::silent::Silen
 
 	// now find the library structure with the same ssid
 	find_SilentStructOPs predic("ssid", ssid);
-	SilentStructStore::iterator ssid_match = std::find_if( library_central_.begin(), library_central_.end(), predic );
+	auto ssid_match = std::find_if( library_central_.begin(), library_central_.end(), predic );
 
 	if ( ssid_match == library_central_.end() ) {
 		TR << "Add: SingleReplace, ssid expired: " + ObjexxFCL::string_of( ssid ) + " - rejected structure" << std::endl;
@@ -509,7 +509,7 @@ MPI_Refinement::print_summary( std::string const prefix )
 		TR << " " << F(8,2, lib_loc.get_struct( 0 )->get_energy( objname ) );
 	}
 
-	core::Real endtime = time(NULL);
+	core::Real endtime = time(nullptr);
 	core::Real dt_in_min = (endtime - starttime_)/60.0;
 	TR << " " << F(6,1,dt_in_min);
 	TR << std::endl;
@@ -607,10 +607,9 @@ MPI_Refinement::dump_structures( const SilentStructStore &new_structs,
 	std::string filename = jobname_ + "." + prefix + ObjexxFCL::string_of( mpi_rank() ) + ".out";
 
 	core::Size istr( 0 );
-	for ( SilentStructStore::const_iterator it = new_structs.begin();
-			it != new_structs.end(); ++it ) {
+	for (const auto & new_struct : new_structs) {
 		istr++;
-		sfd.write_silent_struct( *(*it), filename, score_only );
+		sfd.write_silent_struct( *new_struct, filename, score_only );
 	}
 	core::Real write_time = start_timer( TIMING_CPU );
 	TRDEBUG << "Write time: " << write_time << std::endl;
@@ -842,7 +841,7 @@ MPI_Refinement::format_silent_struct( const core::io::silent::SilentStructOP &ss
 
 void
 MPI_Refinement::report_time( ) const {
-	core::Real endtime = time(NULL);
+	core::Real endtime = time(nullptr);
 	core::Real dt = endtime - starttime_;
 	core::Real dm = int(dt/60.0);
 	core::Real ds = dt - dm*60.0;

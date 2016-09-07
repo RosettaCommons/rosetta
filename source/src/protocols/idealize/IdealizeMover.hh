@@ -54,11 +54,11 @@ public:
 	}
 
 	/// @brief clone has to be overridden only if clone invocation is expected.
-	virtual moves::MoverOP clone() const {
+	moves::MoverOP clone() const override {
 		return moves::MoverOP( new IdealizeMover( *this ) );
 	}
 
-	virtual moves::MoverOP fresh_instance() const {
+	moves::MoverOP fresh_instance() const override {
 		return moves::MoverOP( new IdealizeMover );
 	}
 
@@ -104,16 +104,16 @@ public:
 	}
 
 	void
-	apply( Pose & pose );
+	apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Sets the list of residue positions to idealize.
 	void set_pos_list( utility::vector1< Size > pos_list ) {
 		pos_list_ = pos_list;
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	utility::vector1< core::Size > ignore_residues_in_csts() const;
 	void ignore_residues_in_csts( utility::vector1< core::Size > const & i );
 	void impose_constraints( bool const i ){ impose_constraints_ = i; }

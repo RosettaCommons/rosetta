@@ -87,14 +87,14 @@ AbrelaxMover::AbrelaxMover() :
 	basic::mem_tr << "AbrelaxMover CStor end" << std::endl;
 }
 
-AbrelaxMover::~AbrelaxMover() {}
+AbrelaxMover::~AbrelaxMover() = default;
 
 void AbrelaxMover::clear() {
-	topology_broker_ = NULL;
-	sampling_protocol_ = NULL;
-	loop_closure_protocol_ = NULL;
-	relax_protocol_ = NULL;
-	post_loop_closure_protocol_ = NULL;
+	topology_broker_ = nullptr;
+	sampling_protocol_ = nullptr;
+	loop_closure_protocol_ = nullptr;
+	relax_protocol_ = nullptr;
+	post_loop_closure_protocol_ = nullptr;
 }
 
 void AbrelaxMover::set_defaults() {
@@ -238,8 +238,8 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	using namespace basic::options;
 
-	runtime_assert( sampling_protocol() != 0 );
-	runtime_assert( topology_broker() != 0 );
+	runtime_assert( sampling_protocol() != nullptr );
+	runtime_assert( topology_broker() != nullptr );
 
 	tr.Info << "AbrelaxMover: " << get_current_tag() << std::endl;
 	basic::mem_tr << "AbrelaxMover::apply" << std::endl;
@@ -305,7 +305,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
 
-	scoring::ScoreFunctionCOP last_scorefxn_cop(NULL); // holding handle for clone
+	scoring::ScoreFunctionCOP last_scorefxn_cop(nullptr); // holding handle for clone
 	scoring::ScoreFunction const * last_scorefxn ( & sampling_protocol()->current_scorefxn() );
 
 	// Make sure score columns always the same.
@@ -439,7 +439,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	//
 	if ( ( loop_success || option[ OptionKeys::abinitio::relax_failures ]() ) && relax_protocol() && option[ OptionKeys::abinitio::final_clean_relax ]() ) {
 		tr << "AbrelaxMover: final relax " << std::endl;
-		pose.constraint_set( NULL );
+		pose.constraint_set( nullptr );
 		if ( !checkpoints.recover_checkpoint( pose, get_current_tag(), "finalrelax", true, true) ) {
 			relax_protocol()->apply( pose );
 			checkpoints.checkpoint( pose, get_current_tag(), "finalrelax", true ); //since relax_protocol throws away its checkpoints right here

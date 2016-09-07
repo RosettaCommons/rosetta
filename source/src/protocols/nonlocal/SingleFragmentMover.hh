@@ -74,7 +74,7 @@ public:
 		const MoveMapOP& movable,
 		const PolicyOP& policy);
 
-	~SingleFragmentMover() {}
+	~SingleFragmentMover() override = default;
 
 	/// @brief Performs a single fragment insertion on <pose>, drawn from the set
 	/// of fragments specified in the constructor. Respects the underlying
@@ -89,23 +89,23 @@ public:
 	///   - <pose> is centroid-level (warning if full-atom)
 	///   - The combination of FoldTree and MoveMap provide an unambiguous
 	///     definition of what's movable and what's not
-	void apply(Pose& pose);
+	void apply(Pose& pose) override;
 
 	/// @brief Returns the name of this mover
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Creates a new instance using the copy constructor
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 	/// @brief Creates a new instance using the default constructor
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 	/// @brief Mover-specific parsing required by RosettaScripts
 	void parse_my_tag(utility::tag::TagCOP tag,
 		basic::datacache::DataMap& data,
 		const protocols::filters::Filters_map& filters,
 		const protocols::moves::Movers_map& movers,
-		const Pose& pose);
+		const Pose& pose) override;
 
 	/// @brief Returns true if this instance is in a usable state, false otherwise
 	bool valid() const;

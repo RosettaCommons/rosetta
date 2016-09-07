@@ -51,20 +51,20 @@ public:
 	typedef numeric::expression_parser::ExpressionCOP ExpressionCOP;
 
 public:
-	VectorExpression( std::string const & name );
-	virtual ~VectorExpression();
+	VectorExpression( std::string name );
+	~VectorExpression() override;
 
 	/// @brief DO NOT CALL THIS FUNCTION.  Vector expressions return
 	/// vectors of values instead of a singular value.
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
 	/// @brief DO NOT CALL THIS FUNCTION.  Vector expressions cannot
 	/// be differentiated.
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 	virtual
 	values
@@ -95,24 +95,24 @@ public:
 
 public:
 	VariableVectorExpression( std::string const & name, VariableExpressions const & vars );
-	~VariableVectorExpression();
+	~VariableVectorExpression() override;
 
-	virtual
+	
 	values
-	vector_values() const;
+	vector_values() const override;
 
 	/// @brief Returns the number of variable expressions this VectorExpression points at
-	virtual
+	
 	core::Size
-	size() const;
+	size() const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
-	virtual
+	
 	utility::vector1< std::list< std::string > >
-	active_variables_vector() const;
+	active_variables_vector() const override;
 
 
 private:
@@ -129,7 +129,7 @@ public:
 	typedef numeric::expression_parser::VariableExpressionCOP    VariableExpressionCOP;
 public:
 	IterativeVectorExpression( std::string const & name );
-	~IterativeVectorExpression();
+	~IterativeVectorExpression() override;
 
 	void initialize(
 		std::map< std::string, VectorExpressionCOP > const & vector_varnames,
@@ -137,24 +137,24 @@ public:
 		VectorExpressionCreator & expression_creator // holds a reference to my owning DynamicAggregateFunction
 	);
 
-	virtual
+	
 	values
-	vector_values() const;
+	vector_values() const override;
 
-	virtual
+	
 	core::Size
-	size() const;
+	size() const override;
 
 	numeric::expression_parser::VariableExpressionCOP
 	local_variable( std::string const & varname ) const;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
-	virtual
+	
 	utility::vector1< std::list< std::string > >
-	active_variables_vector() const;
+	active_variables_vector() const override;
 
 
 private:
@@ -174,7 +174,7 @@ public:
 public:
 
 	VectorFunction( VectorExpressionCOP ex );
-	virtual ~VectorFunction();
+	~VectorFunction() override;
 
 protected:
 	VectorExpressionCOP vec_ex() const;
@@ -193,7 +193,7 @@ public:
 public:
 
 	VectorFunction2( VectorExpressionCOP ex1, VectorExpressionCOP ex2 );
-	virtual ~VectorFunction2();
+	~VectorFunction2() override;
 
 protected:
 	VectorExpressionCOP vec_ex1() const;
@@ -212,19 +212,19 @@ public:
 public:
 
 	Mean( VectorExpressionCOP ex );
-	virtual ~Mean();
+	~Mean() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 };
 
@@ -237,19 +237,19 @@ public:
 public:
 
 	VMax( VectorExpressionCOP ex );
-	virtual ~VMax();
+	~VMax() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 };
 
@@ -261,19 +261,19 @@ public:
 public:
 	VMin( VectorExpressionCOP ex );
 
-	virtual ~VMin();
+	~VMin() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 };
 
@@ -287,19 +287,19 @@ public:
 public:
 
 	VMaxBy( VectorExpressionCOP ex1, VectorExpressionCOP ex2 );
-	virtual ~VMaxBy();
+	~VMaxBy() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 };
 
@@ -313,19 +313,19 @@ public:
 public:
 	VMinBy( VectorExpressionCOP ex1, VectorExpressionCOP ex2 );
 
-	virtual ~VMinBy();
+	~VMinBy() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 };
 
@@ -337,15 +337,15 @@ public:
 
 public:
 	PowExpression( ExpressionCOP base, ExpressionCOP exponent );
-	virtual ~PowExpression();
+	~PowExpression() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -357,15 +357,15 @@ public:
 
 public:
 	ExpExpression( ExpressionCOP ex );
-	virtual ~ExpExpression();
+	~ExpExpression() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -377,15 +377,15 @@ public:
 
 public:
 	LnExpression( ExpressionCOP ex );
-	virtual ~LnExpression();
+	~LnExpression() override;
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 };
 
@@ -400,17 +400,17 @@ public:
 
 public:
 	InSetExpression( ExpressionCOP ex );
-	virtual ~InSetExpression();
+	~InSetExpression() override;
 
 	void value_set( utility::vector1< core::Real > const & values );
 
-	virtual
+	
 	core::Real
-	operator() () const;
+	operator() () const override;
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 private:
 	utility::vector1< core::Real > value_set_;
@@ -429,16 +429,16 @@ public:
 	SurrogateVariableExpression( std::string const & );
 	SurrogateVariableExpression( std::string const & , core::Real value );
 
-	virtual
+	
 	std::list< std::string >
-	active_variables() const;
+	active_variables() const override;
 
 	void
 	root_expression( ExpressionCOP setting );
 
-	virtual
+	
 	ExpressionCOP
-	differentiate( std::string const & varname ) const;
+	differentiate( std::string const & varname ) const override;
 
 private:
 	ExpressionCOP root_expression_;
@@ -453,7 +453,7 @@ public:
 	typedef numeric::expression_parser::ExpressionCOP     ExpressionCOP;
 public:
 	VectorExpressionCreator( DynamicAggregateFunction const & owner );
-	virtual ~VectorExpressionCreator();
+	~VectorExpressionCreator() override;
 
 	/// @brief Override the parent-class definition of this function to trap
 	/// one specific kind of function call: max or min with a vector variable
@@ -462,16 +462,16 @@ public:
 	//void
 	//visit( numeric::expression_parser::ArithmeticASTFunction const & );
 
-	virtual
+	
 	ExpressionCOP
-	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & );
+	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) override;
 
-	virtual
+	
 	ExpressionCOP
 	handle_function_expression(
 		numeric::expression_parser::FunctionTokenCOP function,
 		utility::vector1< ExpressionCOP > const & args
-	);
+	) override;
 
 private:
 	DynamicAggregateFunction const & owner_;
@@ -508,7 +508,7 @@ public:
 
 public:
 	DynamicAggregateFunction();
-	virtual ~DynamicAggregateFunction();
+	~DynamicAggregateFunction() override;
 
 	void set_num_entity_elements( Size setting );
 	void set_score_function( core::scoring::ScoreFunction const & sfxn );
@@ -517,8 +517,8 @@ public:
 	core::Size num_npd_properties() const;
 	core::Size num_npd_properties_for_state( core::Size state_id ) const;
 
-	virtual core::Real   evaluate( StateEnergies const &, StateEnergies const & npd_properties, Entity const &  );
-	virtual StateIndices select_relevant_states( StateEnergies const & en, StateEnergies const & npd, Entity const & );
+	core::Real   evaluate( StateEnergies const &, StateEnergies const & npd_properties, Entity const &  ) override;
+	StateIndices select_relevant_states( StateEnergies const & en, StateEnergies const & npd, Entity const & ) override;
 
 
 	ExpressionCOP
@@ -816,18 +816,18 @@ public:
 	typedef numeric::expression_parser::ExpressionCOP     ExpressionCOP;
 public:
 	EntityFuncExpressionCreator( EntityFunc const & owner );
-	virtual ~EntityFuncExpressionCreator();
+	~EntityFuncExpressionCreator() override;
 
-	virtual
+	
 	ExpressionCOP
-	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & );
+	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) override;
 
-	virtual
+	
 	ExpressionCOP
 	handle_function_expression(
 		numeric::expression_parser::FunctionTokenCOP function,
 		utility::vector1< ExpressionCOP > const & args
-	);
+	) override;
 
 private:
 	EntityFunc const & owner_;
@@ -856,7 +856,7 @@ public:
 
 public:
 	EntityFunc();
-	virtual ~EntityFunc();
+	~EntityFunc() override;
 
 	void set_num_entity_elements( Size num_ee );
 

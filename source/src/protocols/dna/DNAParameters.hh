@@ -141,7 +141,7 @@ class DNAParameters : public utility::pointer::ReferenceCount {
 public: // constructors
 	DNAParameters(){};
 	DNAParameters( core::pose::Pose const & pose ) { calculate( pose ); }
-	~DNAParameters(){};
+	~DNAParameters() override = default;
 
 	core::Size number_of_bases() { return bases_.size(); }
 	core::Size number_of_basepairs() { return basepairs_.size(); }

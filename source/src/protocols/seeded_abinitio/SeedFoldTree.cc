@@ -81,8 +81,7 @@ SeedFoldTreeCreator::mover_name()
 	return "SeedFoldTree";
 }
 
-SeedFoldTree::~SeedFoldTree() {
-}
+SeedFoldTree::~SeedFoldTree() = default;
 
 SeedFoldTree::SeedFoldTree() :
 	protocols::moves::Mover( SeedFoldTreeCreator::mover_name() ),
@@ -696,7 +695,7 @@ SeedFoldTree::apply( core::pose::Pose & pose )
 		utility_exit_with_message( "more than 2 chains as input are currently not supported" );
 	}
 
-	runtime_assert( fold_tree_ != 0 );
+	runtime_assert( fold_tree_ != nullptr );
 
 	TR<<"Previous fold tree: "<< pose.fold_tree()<<'\n';
 	pose.fold_tree( *fold_tree_ );

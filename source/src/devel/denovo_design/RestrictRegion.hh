@@ -55,7 +55,7 @@ public:
 	RestrictRegion( RestrictRegion const & rval );
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~RestrictRegion();
+	~RestrictRegion() override;
 
 	/// @brief Parses the RestrictRegion tags
 	void parse_my_tag(
@@ -64,16 +64,16 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// @brief Return the name of this mover.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Apply the RestrictRegion. Overloaded apply function from mover base class.
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief static method that tells the last residue affected by any RestrictRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
 	static utility::vector1< core::Size > const &

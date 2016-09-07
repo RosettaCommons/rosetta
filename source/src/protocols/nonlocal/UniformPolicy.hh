@@ -39,8 +39,8 @@ public:
 	explicit UniformPolicy(FragSetCOP fragments);
 
 	/// @brief Selects uniformly among the set of possible fragments in <frame>
-	virtual core::Size choose(const core::fragment::Frame& frame,
-		const core::pose::Pose&);
+	core::Size choose(const core::fragment::Frame& frame,
+		const core::pose::Pose&) override;
 };
 
 }  // namespace nonlocal

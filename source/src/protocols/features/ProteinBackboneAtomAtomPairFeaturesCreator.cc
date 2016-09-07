@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 ProteinBackboneAtomAtomPairFeaturesCreator::ProteinBackboneAtomAtomPairFeaturesCreator() {}
-ProteinBackboneAtomAtomPairFeaturesCreator::~ProteinBackboneAtomAtomPairFeaturesCreator() {}
+ProteinBackboneAtomAtomPairFeaturesCreator::~ProteinBackboneAtomAtomPairFeaturesCreator() = default;
 FeaturesReporterOP ProteinBackboneAtomAtomPairFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ProteinBackboneAtomAtomPairFeatures );
 }

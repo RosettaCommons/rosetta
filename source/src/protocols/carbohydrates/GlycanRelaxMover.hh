@@ -67,10 +67,10 @@ public:
 	GlycanRelaxMover( GlycanRelaxMover const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~GlycanRelaxMover();
+	~GlycanRelaxMover() override;
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 public:
 
@@ -99,11 +99,11 @@ public:
 	set_defaults();
 
 public:
-	virtual void
-	show( std::ostream & output=std::cout ) const;
+	void
+	show( std::ostream & output=std::cout ) const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
@@ -111,22 +111,22 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 
 
 	//GlycanRelaxMover & operator=( GlycanRelaxMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual bool
-	reinitialize_for_each_job() const {
+	bool
+	reinitialize_for_each_job() const override {
 		return true;
 	}
 

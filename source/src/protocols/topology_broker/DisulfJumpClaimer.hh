@@ -59,29 +59,29 @@ class DisulfJumpClaimer : public FragmentClaimer {
 	typedef FragmentClaimer Parent;
 public:
 	DisulfJumpClaimer(); //for factory
-	~DisulfJumpClaimer();
+	~DisulfJumpClaimer() override;
 
-	virtual TopologyClaimerOP clone() const;
+	TopologyClaimerOP clone() const override;
 
 	void generate_jump_frags( protocols::jumping::DisulfPairingLibrary const& lib, core::fragment::FrameList& all_frames) const;
 
-	virtual void generate_claims( claims::DofClaims& );
+	void generate_claims( claims::DofClaims& ) override;
 
-	virtual void new_decoy( core::pose::Pose const& );
-	virtual void new_decoy();
+	void new_decoy( core::pose::Pose const& ) override;
+	void new_decoy() override;
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
-	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
+	void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) override;
 
 	static std::string _static_type_name() {
 		return "DisulfJumpClaimer";
 	}
 
-	virtual bool read_tag( std::string tag, std::istream& is );
+	bool read_tag( std::string tag, std::istream& is ) override;
 
 private:
 	utility::vector1< claims::JumpClaimOP > local_disulf_data_;

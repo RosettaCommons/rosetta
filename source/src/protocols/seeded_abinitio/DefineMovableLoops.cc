@@ -79,7 +79,7 @@ DefineMovableLoopsCreator::mover_name()
 	return "DefineMovableLoops";
 }
 
-DefineMovableLoops::~DefineMovableLoops() {}
+DefineMovableLoops::~DefineMovableLoops() = default;
 
 DefineMovableLoops::DefineMovableLoops() :
 	protocols::moves::Mover( DefineMovableLoopsCreator::mover_name() )
@@ -214,8 +214,8 @@ DefineMovableLoops::find_loops(   pose::Pose & pose,
 bool
 DefineMovableLoops::is_cut( utility::vector1<Size> & cut_points, Size residue){
 	bool res_cut = false;
-	for ( utility::vector1<Size>::iterator it = cut_points.begin(); it != cut_points.end(); ++it ) {
-		if ( *it == residue ) {
+	for (unsigned long & cut_point : cut_points) {
+		if ( cut_point == residue ) {
 			res_cut = true;
 		}
 	}
@@ -236,7 +236,7 @@ DefineMovableLoops::apply( core::pose::Pose & pose ){
 	TR.Debug <<"residues " <<residues <<" ss assignment: "<< secstructure_.length();
 
 	if ( residues != secstructure_.length() ) {
-		TR <<"residues vs " <<residues <<" ss assignment: "<< secstructure_.size() << std::endl;;
+		TR <<"residues vs " <<residues <<" ss assignment: "<< secstructure_.size() << std::endl;
 		utility_exit_with_message("input residues under considerations do not agree with the number of secondary strcutres assignments");
 	}
 

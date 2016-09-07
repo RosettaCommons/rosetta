@@ -38,7 +38,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.filters.FilterFactory" );
 #if defined MULTI_THREADED
 std::atomic< FilterFactory * > FilterFactory::instance_( 0 );
 #else
-FilterFactory * FilterFactory::instance_( 0 );
+FilterFactory * FilterFactory::instance_( nullptr );
 #endif
 
 #ifdef MULTI_THREADED
@@ -67,13 +67,13 @@ FilterFactory::create_singleton_instance()
 FilterFactory::FilterFactory()
 {}
 
-FilterFactory::~FilterFactory(){}
+FilterFactory::~FilterFactory()= default;
 
 /// @brief add a Filter prototype, using its default type name as the map key
 void
 FilterFactory::factory_register( FilterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const filter_type( creator->keyname() );
 	if ( filter_type == "UNDEFINED NAME" ) {
 		utility_exit_with_message("Can't map derived Filter with undefined type name.");
@@ -105,7 +105,7 @@ FilterFactory::newFilter( std::string const & filter_type )
 		}
 		TR<<std::endl;
 		utility_exit_with_message( filter_type + " is not known to the FilterFactory. Was it registered via a FilterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -134,7 +134,7 @@ FilterFactory::newFilter(
 	core::pose::Pose const & pose )
 {
 	FilterOP filter( newFilter( tag->getName() ) );
-	runtime_assert( filter != 0 );
+	runtime_assert( filter != nullptr );
 	if ( ! tag->hasOption("name") ) {
 		utility_exit_with_message("Can't define unnamed Filter");
 	}

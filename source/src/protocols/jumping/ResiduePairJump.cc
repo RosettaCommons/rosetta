@@ -61,7 +61,7 @@ namespace jumping {
 
 ResiduePairJumpSingle::ResiduePairJumpSingle() {}
 
-ResiduePairJumpSingle::~ResiduePairJumpSingle() {}
+ResiduePairJumpSingle::~ResiduePairJumpSingle() = default;
 
 
 /// @brief constructed by residue_type
@@ -123,7 +123,7 @@ ResiduePairJumpSingle::residueType() const
 
 // empty constructor
 ResiduePairJump::ResiduePairJump() {}
-ResiduePairJump::~ResiduePairJump() {}
+ResiduePairJump::~ResiduePairJump() = default;
 
 // constructed by two input ResidueTypes
 ResiduePairJump::ResiduePairJump(
@@ -169,7 +169,7 @@ ResiduePairJump::set_cstInfo(
 	core::Real value
 )
 {
-	cstInfoMapIterator it = cstInfoMap_.find( type );
+	auto it = cstInfoMap_.find( type );
 	if ( it == cstInfoMap_.end() ) {
 		// not in map yet, add it
 		utility::vector1< core::Real > value_vector;
@@ -385,10 +385,9 @@ ResiduePairJump::apply_dof_conformer(
 	std::map< dofType, core::Size > const & conformer_map
 )
 {
-	for ( std::map< dofType, core::Size >::const_iterator it = conformer_map.begin(), it_end = conformer_map.end();
-			it != it_end; ++it ) {
-		dofType type = it->first;
-		core::Size index = it->second;
+	for (const auto & it : conformer_map) {
+		dofType type = it.first;
+		core::Size index = it.second;
 		if ( ( type == rot1 ) || (type == rot2) ) { // sidechain rotamer dofs
 			core::Size seqpos = (type==rot1) ? 1 : 2;
 			core::conformation::ResidueCOP rotamer = rotsets_[seqpos]->rotamer(index);
@@ -461,9 +460,9 @@ ResiduePairJump::build_cst_conformer_jumps()
 	for ( Size i = 1; i <= cst_conformers_.size(); ++i ) {
 		std::map< cstType, core::Size > const & conformer( cst_conformers_[i] );
 		utility::vector1< core::Real > cst_values(6);
-		for ( std::map< cstType, core::Size >::const_iterator it = conformer.begin(), it_end = conformer.end(); it != it_end; ++it ) {
-			cstType type = it->first;
-			Size index = it->second;
+		for (const auto & it : conformer) {
+			cstType type = it.first;
+			Size index = it.second;
 			core::Real value = cstInfoMap_.find(type)->second[index];
 			if ( type != disAB ) value = numeric::conversions::radians(value);
 			cst_values[Size(type)] = value;
@@ -508,8 +507,8 @@ ResiduePairJump::diversify_cst_conformers(
 void
 ResiduePairJump::diversify_cst_conformers()
 {
-	for (  cstInfoMapIterator it = cstInfoMap_.begin(), it_end = cstInfoMap_.end(); it != it_end; ++it ) {
-		diversify_cst_conformers( it->first, it->second.size() );
+	for (auto & it : cstInfoMap_) {
+		diversify_cst_conformers( it.first, it.second.size() );
 	}
 	return;
 }

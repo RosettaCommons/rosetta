@@ -84,7 +84,7 @@ PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy(
 	protocols::moves::Mover("PackRotamersMoverPartGreedy"),
 	scorefxn_repack_ (scorefxn),
 	scorefxn_minimize_ (scorefxn),
-	task_ (task),
+	task_ (std::move(task)),
 	target_residues_ (target_residues)
 {}
 
@@ -105,7 +105,7 @@ PackRotamersMoverPartGreedyCreator::mover_name()
 }
 
 
-PackRotamersMoverPartGreedy::~PackRotamersMoverPartGreedy(){}
+PackRotamersMoverPartGreedy::~PackRotamersMoverPartGreedy()= default;
 
 void
 PackRotamersMoverPartGreedy::parse_my_tag(
@@ -118,7 +118,7 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 {
 	//task operations
 	if ( tag->hasOption("task_operations") ) task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	else task_factory_ = NULL;
+	else task_factory_ = nullptr;
 	//Scorefunctions
 	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", datamap )->clone();
 	scorefxn_repack_greedy_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack_greedy", datamap )->clone();
@@ -165,7 +165,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	using namespace core::pack::task;
 	core::pose::Pose greedy_pose = pose;
 	TR<<"Creating packer task based on specified task operations..."<< std::endl;
-	if ( task_factory_ !=0 ) {
+	if ( task_factory_ !=nullptr ) {
 		task_factory_->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 		task_ = task_factory_->create_task_and_apply_taskoperations( greedy_pose );
 	} else {
@@ -178,14 +178,14 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 		utility::vector1< core::Size > trg_res;
 		protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, greedy_pose, trg_res );
 		target_residues_.insert( target_residues_.begin(), trg_res.begin(), trg_res.end() );
-		utility::vector1< core::Size >::iterator last = std::unique( target_residues_.begin(), target_residues_.end() );
+		auto last = std::unique( target_residues_.begin(), target_residues_.end() );
 		target_residues_.erase( last, target_residues_.end() );
 
 	}
 	if ( n_best_>0 ) {
 		utility::vector1< core::Size > n_best_res = choose_n_best( greedy_pose, n_best_ );
 		target_residues_.insert( target_residues_.begin(), n_best_res.begin(), n_best_res.end() );
-		utility::vector1< core::Size >::iterator last = std::unique( target_residues_.begin(), target_residues_.end() );
+		auto last = std::unique( target_residues_.begin(), target_residues_.end() );
 		target_residues_.erase( last, target_residues_.end() );
 	}
 	runtime_assert(target_residues_.size()>0);
@@ -240,15 +240,15 @@ PackRotamersMoverPartGreedy::greedy_around(
 	core::pose::Pose cur_pose = pose;
 
 
-	for ( utility::vector1< core::Size >::const_iterator pos_it = target_residues.begin(); pos_it != target_residues.end(); ++pos_it ) {
-		TR<<"Considering target residue "<< cur_pose.residue( *pos_it ).name3() << *pos_it <<": "<<std::endl;
-		utility::vector1< core::Size > neighbors  = compute_designable_neighbors( *pos_it, task, cur_pose );
+	for (unsigned long target_residue : target_residues) {
+		TR<<"Considering target residue "<< cur_pose.residue( target_residue ).name3() << target_residue <<": "<<std::endl;
+		utility::vector1< core::Size > neighbors  = compute_designable_neighbors( target_residue, task, cur_pose );
 		utility::vector1< core::Size > cur_neighbors = neighbors;
 		utility::vector1< bool > allow_minimization (pose.total_residue(), false);
 		for ( utility::vector1< core::Size>::const_iterator iter = neighbors.begin(); iter != neighbors.end(); ++iter ) {
 			allow_minimization[ *iter ] = true;
 		}
-		allow_minimization[*pos_it] = true;
+		allow_minimization[target_residue] = true;
 		// Iterate neighbors.size() times
 		TR << "Total number of neighbors are "<<neighbors.size()<<std::endl;
 		for ( core::Size ii=1; ii<=neighbors.size(); ++ii ) {
@@ -271,7 +271,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 				utility::vector1< core::Size > upweight_1;
 				upweight_1.push_back( *neigh_it );
 				utility::vector1< core::Size > upweight_2 = neighbors;
-				upweight_2.push_back( *pos_it );
+				upweight_2.push_back( target_residue );
 				//upweight interactions between this position and neighbors
 				IGEdgeReweighterOP ig_up( new protocols::toolbox::ResidueGroupIGEdgeUpweighter( 2.5, upweight_1 , upweight_2 ) );
 				mutate_residue->set_IGEdgeReweights()->add_reweighter( ig_up );
@@ -395,7 +395,7 @@ PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core
 	//Sort and return n_best
 	residue_energies.sort( utility::SortSecond< core::Size, core::Real >() );
 	core::Size counter(1);
-	for ( std::list< std::pair<core::Size, core::Real> >::iterator it = residue_energies.begin(); counter<=n_best; ++it ) {
+	for ( auto it = residue_energies.begin(); counter<=n_best; ++it ) {
 		chosen_residues.push_back( it->first );
 		TR << "Chose residue "<<it->first<<" with interface energy "<<it->second <<std::endl;
 		counter++;

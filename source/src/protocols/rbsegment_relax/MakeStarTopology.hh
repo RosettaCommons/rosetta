@@ -35,16 +35,16 @@ class MakeStarTopologyMover : public moves::Mover {
 public:
 	MakeStarTopologyMover() : Mover(), mode_(""), restore_(false) {}
 
-	virtual std::string get_name() const { return MakeStarTopologyMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new MakeStarTopologyMover( *this ) ) ); }
+	std::string get_name() const override { return MakeStarTopologyMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new MakeStarTopologyMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag(
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	std::string mode_;

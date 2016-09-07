@@ -29,10 +29,10 @@ class ModelFeaturesCreator : public protocols::features::FeaturesReporterCreator
 {
 public:
 	ModelFeaturesCreator();
-	virtual ~ModelFeaturesCreator();
+	~ModelFeaturesCreator() override;
 
-	virtual protocols::features::FeaturesReporterOP create_features_reporter() const;
-	virtual std::string type_name() const;
+	protocols::features::FeaturesReporterOP create_features_reporter() const override;
+	std::string type_name() const override;
 };
 
 } //namespace sewing

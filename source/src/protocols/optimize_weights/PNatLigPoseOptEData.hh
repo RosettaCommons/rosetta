@@ -35,7 +35,7 @@ class PNatLigPoseOptEData : public PNatStructureOptEData
 public:
 
 	PNatLigPoseOptEData();
-	virtual ~PNatLigPoseOptEData();
+	~PNatLigPoseOptEData() override;
 
 	// my invention to avoid code duplication
 	virtual
@@ -56,7 +56,7 @@ public:
 	) const;
 
 	// inherited from OptEPositionData
-	virtual
+	
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -69,10 +69,10 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const
+	) const override
 	{ return do_score(std::cout, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list, false /* don't print */); }
 
-	virtual
+	
 	void
 	print_score(
 		std::ostream & ostr,
@@ -86,7 +86,7 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const
+	) const override
 	{ do_score(ostr, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list, true /* do print */); }
 
 	/*
@@ -95,9 +95,9 @@ public:
 	size() const;
 	*/
 
-	virtual
+	
 	OptEPositionDataType
-	type() const;
+	type() const override;
 
 	/*
 	virtual

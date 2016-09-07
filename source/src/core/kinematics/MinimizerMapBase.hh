@@ -47,7 +47,7 @@ public:
 	MinimizerMapBase();
 
 	/// @brief dstor
-	virtual ~MinimizerMapBase();
+	~MinimizerMapBase() override;
 
 
 	/// @brief Allow the AtomTree to communicate to this class that a particular torsion

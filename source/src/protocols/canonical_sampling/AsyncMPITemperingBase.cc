@@ -83,12 +83,12 @@ AsyncMPITemperingBase::AsyncMPITemperingBase() :
 	comm_size_( 0 ),
 	ready_for_exchange_( false ),
 	finished_( false ),
-	recv_level_buffer_( NULL ),
-	send_level_buffer_( NULL ),
-	swap_invite_send_buffer_( NULL ),
-	swap_invite_recv_buffer_( NULL ),
-	finished_recv_buffer_( NULL ),
-	finished_send_buffer_( NULL )
+	recv_level_buffer_( nullptr ),
+	send_level_buffer_( nullptr ),
+	swap_invite_send_buffer_( nullptr ),
+	swap_invite_recv_buffer_( nullptr ),
+	finished_recv_buffer_( nullptr ),
+	finished_send_buffer_( nullptr )
 {
 #ifdef USEMPI
 	recv_level_requests_ = NULL;
@@ -107,12 +107,12 @@ AsyncMPITemperingBase::AsyncMPITemperingBase( AsyncMPITemperingBase const& other
 	comm_size_( other.comm_size_ ),
 	ready_for_exchange_( other.ready_for_exchange_ ),
 	finished_( other.finished_ ),
-	recv_level_buffer_( NULL ),
-	send_level_buffer_( NULL ),
-	swap_invite_send_buffer_( NULL ),
-	swap_invite_recv_buffer_( NULL ),
-	finished_recv_buffer_( NULL ),
-	finished_send_buffer_( NULL )
+	recv_level_buffer_( nullptr ),
+	send_level_buffer_( nullptr ),
+	swap_invite_send_buffer_( nullptr ),
+	swap_invite_recv_buffer_( nullptr ),
+	finished_recv_buffer_( nullptr ),
+	finished_send_buffer_( nullptr )
 {
 #ifdef USEMPI
 	recv_level_requests_ = NULL;
@@ -132,12 +132,12 @@ AsyncMPITemperingBase& AsyncMPITemperingBase::operator=( AsyncMPITemperingBase c
 	comm_size_ = other.comm_size_;
 	ready_for_exchange_ = other.ready_for_exchange_;
 	finished_ = other.finished_;
-	recv_level_buffer_ = NULL;
-	send_level_buffer_ = NULL;
-	swap_invite_send_buffer_ = NULL;
-	swap_invite_recv_buffer_ = NULL;
-	finished_recv_buffer_ = NULL;
-	finished_send_buffer_ = NULL;
+	recv_level_buffer_ = nullptr;
+	send_level_buffer_ = nullptr;
+	swap_invite_send_buffer_ = nullptr;
+	swap_invite_recv_buffer_ = nullptr;
+	finished_recv_buffer_ = nullptr;
+	finished_send_buffer_ = nullptr;
 #ifdef USEMPI
 	set_mpi_comm( other.mpi_comm() );
 #endif
@@ -173,12 +173,12 @@ void AsyncMPITemperingBase::deallocate_buffers() {
 	if ( swap_invite_send_buffer_ ) delete [] swap_invite_send_buffer_;
 	if ( finished_send_buffer_ ) delete [] finished_send_buffer_;
 	if ( finished_recv_buffer_ ) delete [] finished_recv_buffer_;
-	recv_level_buffer_ = NULL;
-	send_level_buffer_ = NULL;
-	swap_invite_send_buffer_ = NULL;
-	swap_invite_recv_buffer_ = NULL;
-	finished_send_buffer_ = NULL;
-	finished_recv_buffer_ = NULL;
+	recv_level_buffer_ = nullptr;
+	send_level_buffer_ = nullptr;
+	swap_invite_send_buffer_ = nullptr;
+	swap_invite_recv_buffer_ = nullptr;
+	finished_send_buffer_ = nullptr;
+	finished_recv_buffer_ = nullptr;
 #ifdef USEMPI
 	if ( swap_invite_send_requests_ ) delete [] swap_invite_send_requests_;
 	if ( recv_level_requests_ ) delete [] recv_level_requests_;
@@ -330,11 +330,11 @@ void AsyncMPITemperingBase::remove_cycles_from_request_list() {
 }
 
 void AsyncMPITemperingBase::process_match_list( MatchList const& matches ) {
-	for ( MatchList::const_iterator it = matches.begin(); it != matches.end(); ++it ) {
-		exchange_requests_.erase( exchange_requests_.find( it->first.level_ ) );
-		exchange_requests_.erase( exchange_requests_.find( it->second.level_ ) );
-		send_swap_invites( it->first, it->second );
-		send_swap_invites( it->second, it->first );
+	for (const auto & matche : matches) {
+		exchange_requests_.erase( exchange_requests_.find( matche.first.level_ ) );
+		exchange_requests_.erase( exchange_requests_.find( matche.second.level_ ) );
+		send_swap_invites( matche.first, matche.second );
+		send_swap_invites( matche.second, matche.first );
 	}
 }
 

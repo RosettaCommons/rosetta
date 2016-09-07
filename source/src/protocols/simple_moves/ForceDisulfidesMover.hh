@@ -32,15 +32,15 @@ class ForceDisulfidesMover : public moves::Mover {
 
 public:
 	ForceDisulfidesMover();
-	~ForceDisulfidesMover();
+	~ForceDisulfidesMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void disulfides( utility::vector1< std::pair< core::Size, core::Size > > );
 	utility::vector1< std::pair< core::Size, core::Size > > disulfides() const;

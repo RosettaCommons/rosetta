@@ -85,9 +85,9 @@ ScoreTypeFeatures::ScoreTypeFeatures() :
 ScoreTypeFeatures::ScoreTypeFeatures(
 	ScoreFunctionOP scfxn
 ) :
-	scfxn_(scfxn)
+	scfxn_(std::move(scfxn))
 {
-	if ( scfxn_ == 0 ) {
+	if ( scfxn_ == nullptr ) {
 		utility_exit_with_message( "ScoreTypeFeatures may not be constructed with a null-pointer ScoreFunctionOP" );
 	}
 }
@@ -99,7 +99,7 @@ ScoreTypeFeatures::ScoreTypeFeatures(
 	scfxn_(src.scfxn_)
 {}
 
-ScoreTypeFeatures::~ScoreTypeFeatures() {}
+ScoreTypeFeatures::~ScoreTypeFeatures() = default;
 
 string
 ScoreTypeFeatures::type_name() const { return "ScoreTypeFeatures"; }
@@ -179,9 +179,9 @@ ScoreTypeFeatures::insert_score_type_rows(
 		string const table_name("score_types");
 
 		std::vector<std::string> column_names;
-		column_names.push_back("batch_id");
-		column_names.push_back("score_type_id");
-		column_names.push_back("score_type_name");
+		column_names.emplace_back("batch_id");
+		column_names.emplace_back("score_type_id");
+		column_names.emplace_back("score_type_name");
 
 		std::string protocol_id_s = utility::to_string (protocol_id);
 

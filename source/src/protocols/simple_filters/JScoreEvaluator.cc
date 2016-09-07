@@ -37,7 +37,7 @@ JScoreEvaluator::JScoreEvaluator(
 	col_name_(weights)
 {}
 
-JScoreEvaluator::~JScoreEvaluator() {}
+JScoreEvaluator::~JScoreEvaluator() = default;
 
 void JScoreEvaluator::apply(
 	core::pose::Pose & pose_in,

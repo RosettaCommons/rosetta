@@ -88,8 +88,7 @@ namespace fold_from_loops {
 FoldFromLoopsMover::FoldFromLoopsMover()
 {}
 
-FoldFromLoopsMover::~FoldFromLoopsMover()
-{}
+FoldFromLoopsMover::~FoldFromLoopsMover() = default;
 
 
 void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )

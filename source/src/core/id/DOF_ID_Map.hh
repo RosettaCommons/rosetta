@@ -109,7 +109,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~DOF_ID_Map()
-	{}
+	= default;
 
 
 public: // Methods

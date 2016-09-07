@@ -46,7 +46,7 @@ class HeaderInformation : public utility::pointer::ReferenceCount {
 public:
 	HeaderInformation();
 	HeaderInformation(HeaderInformation const & src);
-	~HeaderInformation();
+	~HeaderInformation() override;
 
 	void
 	store_record( pdb::Record & R );

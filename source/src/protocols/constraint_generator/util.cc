@@ -121,11 +121,11 @@ parse_constraint_generators( utility::tag::TagCOP tag, basic::datacache::DataMap
 	ConstraintGeneratorCOPs cgs;
 	std::string const generators_str = tag->getOption< std::string >( "constraint_generators", "" );
 	utility::vector1< std::string > const generator_strs = utility::string_split( generators_str, ',' );
-	for ( utility::vector1< std::string >::const_iterator cg=generator_strs.begin(); cg!=generator_strs.end(); ++cg ) {
-		ConstraintGeneratorCOP new_cg = data.get_ptr< ConstraintGenerator const >( "ConstraintGenerators", *cg );
+	for (const auto & generator_str : generator_strs) {
+		ConstraintGeneratorCOP new_cg = data.get_ptr< ConstraintGenerator const >( "ConstraintGenerators", generator_str );
 		if ( !new_cg ) {
 			std::stringstream msg;
-			msg << "RemoveConstraints: Could not find a constraint generator named " << *cg <<
+			msg << "RemoveConstraints: Could not find a constraint generator named " << generator_str <<
 				" in the datamap.  Make sure it is defined in an AddConstraints mover before RemoveConstraints is defined." << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 		}

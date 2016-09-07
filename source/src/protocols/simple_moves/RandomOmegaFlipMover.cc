@@ -27,6 +27,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 // utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
@@ -55,7 +56,7 @@ RandomOmegaFlipMover::RandomOmegaFlipMover() :
 
 RandomOmegaFlipMover::RandomOmegaFlipMover( core::kinematics::MoveMapOP move_map ) :
 	Mover("RandomOmegaFlipMover"),
-	move_map_( move_map )
+	move_map_(std::move( move_map ))
 {}
 
 RandomOmegaFlipMover::RandomOmegaFlipMover( RandomOmegaFlipMover const & other ) :
@@ -63,7 +64,7 @@ RandomOmegaFlipMover::RandomOmegaFlipMover( RandomOmegaFlipMover const & other )
 	move_map_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) ) )
 {}
 
-RandomOmegaFlipMover::~RandomOmegaFlipMover(){}
+RandomOmegaFlipMover::~RandomOmegaFlipMover()= default;
 
 void
 RandomOmegaFlipMover::apply( core::pose::Pose & pose )

@@ -103,14 +103,14 @@ class WriteOut_MpiFileBuffer : public  MpiFileBuffer {
 public:
 	WriteOut_MpiFileBuffer( core::Size rank ) : MpiFileBuffer ( rank ) { };
 protected:
-	virtual SingleFileBufferOP generate_new_channel( std::string const& filename, core::Size channel, bool append, core::Size &status );
+	SingleFileBufferOP generate_new_channel( std::string const& filename, core::Size channel, bool append, core::Size &status ) override;
 };
 
 class DebugOut_MpiFileBuffer : public  MpiFileBuffer {
 public:
 	DebugOut_MpiFileBuffer( core::Size rank ) : MpiFileBuffer ( rank ) { };
 protected:
-	virtual SingleFileBufferOP generate_new_channel( std::string const& filename, core::Size channel, bool append, core::Size &status );
+	SingleFileBufferOP generate_new_channel( std::string const& filename, core::Size channel, bool append, core::Size &status ) override;
 };
 
 }

@@ -73,7 +73,7 @@ PerturbBundleOptions::PerturbBundleOptions( PerturbBundleOptions const & src ) :
 {
 }
 
-PerturbBundleOptions::~PerturbBundleOptions() {}
+PerturbBundleOptions::~PerturbBundleOptions() = default;
 
 
 /// @brief make a copy of this PerturbBundleOptions object (allocate actual memory for it)

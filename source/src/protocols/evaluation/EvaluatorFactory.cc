@@ -45,7 +45,7 @@ using protocols::evaluation::EvaluatorFactory;
 template <> std::mutex utility::SingletonBase< EvaluatorFactory >::singleton_mutex_{};
 template <> std::atomic< EvaluatorFactory * > utility::SingletonBase< EvaluatorFactory >::instance_( 0 );
 #else
-template <> EvaluatorFactory * utility::SingletonBase< EvaluatorFactory >::instance_( 0 );
+template <> EvaluatorFactory * utility::SingletonBase< EvaluatorFactory >::instance_( nullptr );
 #endif
 
 }
@@ -77,13 +77,13 @@ EvaluatorFactory::create_singleton_instance()
 /// @details Private constructor insures correctness of singleton.
 EvaluatorFactory::EvaluatorFactory() {}
 
-EvaluatorFactory::~EvaluatorFactory() {}
+EvaluatorFactory::~EvaluatorFactory() = default;
 
 void
 EvaluatorFactory::factory_register(
 	EvaluatorCreatorCOP creator
 ) {
-	types_.push_back(pair<string,EvaluatorCreatorCOP>(creator->type_name(), creator));
+	types_.emplace_back(creator->type_name(), creator);
 }
 
 

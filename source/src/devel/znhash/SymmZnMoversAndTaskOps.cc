@@ -45,6 +45,7 @@
 #include <protocols/enzdes/EnzdesMovers.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/FixedSizeLexicographicalIterator.hh>
 #include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 
@@ -135,7 +136,7 @@ using namespace core::pack::task::operation;
 using namespace utility::tag;
 
 /// @details Auto-generated virtual destructor
-FindZnCoordinatingResidues::~FindZnCoordinatingResidues() {}
+FindZnCoordinatingResidues::~FindZnCoordinatingResidues() = default;
 
 static THREAD_LOCAL basic::Tracer TR( "devel.znhash.SymmZnMoversAndTaskOps" );
 
@@ -175,7 +176,7 @@ InitializeZNCoordinationConstraintMover::get_name() const
 void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 {
 	recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( p ) );
-	if ( zn_score_ == 0 ) {
+	if ( zn_score_ == nullptr ) {
 		zn_score_ = ZnCoordinationScorerOP( new devel::znhash::ZnCoordinationScorer );
 
 		zn_score_->set_zn_reach( znreach_ );
@@ -250,7 +251,7 @@ protocols::simple_moves::ReturnSidechainMoverOP InitializeZNCoordinationConstrai
 
 ZNCoordinationConstraintReporterMover::ZNCoordinationConstraintReporterMover(
 	InitializeZNCoordinationConstraintMoverOP init_zn
-) : parent( "ZNCoordinationConstraintReporterMover" ), init_zn_( init_zn ) {}
+) : parent( "ZNCoordinationConstraintReporterMover" ), init_zn_(std::move( init_zn )) {}
 
 ZNCoordinationConstraintReporterMover::MoverOP
 ZNCoordinationConstraintReporterMover::clone() const {
@@ -411,7 +412,7 @@ ZNCoordinationConstraintPlacerMover::ZNCoordinationConstraintPlacerMover(
 	InitializeZNCoordinationConstraintMoverOP init_zn
 ) :
 	parent( "ZNCoordinationConstraintPlacerMover" ),
-	init_zn_( init_zn ),
+	init_zn_(std::move( init_zn )),
 	constraint_energy_cutoff_( 25.0 )
 {
 }
@@ -762,7 +763,7 @@ ZNCoordinationConstraintPlacerMover::minimize_zinc_coordination( core::pose::Pos
 	end_weights[ core::scoring::angle_constraint     ] = 50.0;
 	end_weights[ core::scoring::dihedral_constraint  ] = 50.0;
 
-	protocols::moves::RampingMoverOP ramp( new protocols::moves::RampingMover(symminmover, fa_sfxn, start_weights, end_weights, 10, 1, 0 ) );
+	protocols::moves::RampingMoverOP ramp( new protocols::moves::RampingMover(symminmover, fa_sfxn, start_weights, end_weights, 10, 1, nullptr ) );
 	ramp->apply( p );
 
 	//TR << "After minimization score: ";
@@ -962,7 +963,7 @@ std::string InsertZincCoordinationRemarkLinesCreator::keyname() const
 /////////////////////////////////////////////////////////////////////
 
 InsertZincCoordinationRemarkLines::InsertZincCoordinationRemarkLines() {}
-InsertZincCoordinationRemarkLines::~InsertZincCoordinationRemarkLines() {}
+InsertZincCoordinationRemarkLines::~InsertZincCoordinationRemarkLines() = default;
 
 protocols::moves::MoverOP
 InsertZincCoordinationRemarkLines::clone() const { return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines ); }
@@ -1053,7 +1054,7 @@ std::string DisableZnCoordinationResiduesTaskOpCreator::keyname() const
 ////////////////////////////////////////////////////////////////////
 
 DisableZnCoordinationResiduesTaskOp::DisableZnCoordinationResiduesTaskOp() {}
-DisableZnCoordinationResiduesTaskOp::~DisableZnCoordinationResiduesTaskOp() {}
+DisableZnCoordinationResiduesTaskOp::~DisableZnCoordinationResiduesTaskOp() = default;
 
 DisableZnCoordinationResiduesTaskOp::TaskOperationOP
 DisableZnCoordinationResiduesTaskOp::clone() const
@@ -1227,8 +1228,7 @@ LoadZnCoordNumHbondCalculatorMover::LoadZnCoordNumHbondCalculatorMover() :
 	protocols::moves::Mover( "LoadZnCoordNumHbondCalculatorMover" )
 {}
 
-LoadZnCoordNumHbondCalculatorMover::~LoadZnCoordNumHbondCalculatorMover()
-{}
+LoadZnCoordNumHbondCalculatorMover::~LoadZnCoordNumHbondCalculatorMover() = default;
 
 protocols::moves::MoverOP
 LoadZnCoordNumHbondCalculatorMover::clone() const {

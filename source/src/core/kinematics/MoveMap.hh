@@ -87,7 +87,7 @@ namespace kinematics {
 class MoveMap: public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~MoveMap();
+	~MoveMap() override;
 	// ids
 	typedef id::AtomID AtomID;
 	typedef id::AtomID_Mask AtomID_Mask;

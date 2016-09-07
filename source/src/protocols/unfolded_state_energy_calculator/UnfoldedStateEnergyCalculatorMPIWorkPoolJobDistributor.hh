@@ -52,7 +52,7 @@ public:
 
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-	virtual ~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor();
+	~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor() override;
 
 	/// @brief dummy for master/slave version
 	void
@@ -65,9 +65,9 @@ public:
 protected:
 
 	/// @brief
-	virtual
+	
 	void
-	master_go( protocols::moves::MoverOP mover );
+	master_go( protocols::moves::MoverOP mover ) override;
 
 private:
 

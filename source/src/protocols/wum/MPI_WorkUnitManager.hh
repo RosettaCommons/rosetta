@@ -53,10 +53,10 @@ public:
 		char machine_letter
 	);
 
-	virtual ~MPI_WorkUnitManager(){}
+	~MPI_WorkUnitManager() override= default;
 
 	// @brief Main start function. This gets overloaded of course
-	virtual void go() = 0;
+	void go() override = 0;
 
 protected: // Emperor specific fucntions
 

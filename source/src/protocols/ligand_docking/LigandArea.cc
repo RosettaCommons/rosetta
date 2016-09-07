@@ -45,7 +45,7 @@ LigandArea::LigandArea():
 	all_atom_mode_(false)
 {}
 
-LigandArea::~LigandArea() {}
+LigandArea::~LigandArea() = default;
 
 void LigandArea::parse_my_tag(
 	utility::tag::TagCOP tag

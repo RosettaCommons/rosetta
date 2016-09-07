@@ -59,14 +59,14 @@ public:
 		core::Real intensity
 	);
 
-	~ProtonResonance();
+	~ProtonResonance() override;
 
-	virtual ResonanceOP clone() {
+	ResonanceOP clone() override {
 		return ResonanceOP( new ProtonResonance( *this ) );
 	}
 
 	/// @brief match the proton and corresponding label atom at same time
-	virtual bool match2D(
+	bool match2D(
 		core::Real proton_freq,
 		core::Real proton_error,
 		FoldResonance const& proton_folder,
@@ -74,7 +74,7 @@ public:
 		core::Real label_error,
 		FoldResonance const& label_folder,
 		ResonancePairs& matches
-	) const;
+	) const override;
 
 };
 

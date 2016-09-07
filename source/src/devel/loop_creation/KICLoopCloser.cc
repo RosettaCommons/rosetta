@@ -63,7 +63,7 @@ KICLoopCloserCreator::mover_name()
 
 //****END CREATOR METHODS****//
 /// @brief default constructor
-KICLoopCloser::KICLoopCloser():
+KICLoopCloser::KICLoopCloser() = default;
 //	max_closure_attempts_(10),
 //	max_KIC_moves_per_closure_attempt_(10000),
 //	max_rama_score_increase_( 2.0 ),
@@ -71,7 +71,6 @@ KICLoopCloser::KICLoopCloser():
 //	max_total_delta_strand_( 15 ),
 //	max_total_delta_loop_( 15 ),
 //	tolerance_( 0.01 )
-{}
 
 /// @brief explicit constructor
 //KICLoopCloser::KICLoopCloser(
@@ -119,7 +118,7 @@ KICLoopCloser::apply(
 	
 	protocols::loops::loop_closure::kinematic_closure::KinematicMover kic_mover;
 	protocols::loops::loop_closure::kinematic_closure::KinematicPerturberOP kic_perturber =
-		new protocols::loops::loop_closure::kinematic_closure::NullKinematicPerturber(&kic_mover);
+		new protocols::loops::loop_closure::kinematic_closure::KinematicPerturber(&kic_mover);
 	kic_mover.set_perturber(kic_perturber);
 	
 	kic_mover.set_idealize_loop_first(true);

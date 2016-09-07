@@ -38,7 +38,7 @@ public:
 		n_sorts_ = 0;
 	}
 
-	~LazySortedVector1() {
+	~LazySortedVector1() override {
 
 		//     std::cerr<<n_inserts_<<" "<<n_denied_<<" "<<n_sorts_<<'\n';
 	}

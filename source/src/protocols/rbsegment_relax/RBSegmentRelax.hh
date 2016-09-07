@@ -54,11 +54,11 @@ public:
 	RBSegmentRelax( core::scoring::ScoreFunctionOP scorefxn,
 		utility::vector1< RBSegment > const &RBSegment_input,
 		protocols::loops::Loops const &Loops_input );
-	~RBSegmentRelax();
+	~RBSegmentRelax() override;
 
 	void initialize( utility::vector1< core::fragment::FragSetOP > const &frag_libs , core::Real rnd=0.0);
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void add_helixMover( RBSegmentMoverOP newMover );
 	void add_strandMover( RBSegmentMoverOP newMover );

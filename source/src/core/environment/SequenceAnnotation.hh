@@ -48,7 +48,7 @@ class SequenceAnnotation : public utility::pointer::ReferenceCount {
 public:
 	SequenceAnnotation( core::Size length );
 
-	virtual ~SequenceAnnotation() {}
+	~SequenceAnnotation() override = default;
 
 	void add_seq_label( std::string const&, std::vector< core::Size > const& );
 

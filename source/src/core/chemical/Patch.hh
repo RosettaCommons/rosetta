@@ -49,7 +49,7 @@ utility::vector1< std::string > get_patch_names( ResidueType const & rsd_type );
 class PatchCase : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~PatchCase();
+	~PatchCase() override;
 
 	/// @brief whether the PatchCase is applicable to this ResidueType?
 	bool
@@ -133,10 +133,10 @@ case_from_lines(
 class Patch : public utility::pointer::ReferenceCount {
 public:
 	Patch() {}
-	Patch( std::string res_type_set_name ) : res_type_set_name_(res_type_set_name) {}
+	Patch( std::string res_type_set_name ) : res_type_set_name_(std::move(res_type_set_name)) {}
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Patch();
+	~Patch() override;
 	/// @brief constructor from file
 	void
 	read_file( std::string const & filename );

@@ -66,8 +66,7 @@ AddZincSiteConstraints::AddZincSiteConstraints( utility::vector1< protocols::met
 }
 
 AddZincSiteConstraints::~AddZincSiteConstraints()
-{
-}
+= default;
 
 /// @details Adds distance, tetrahedral angle, angle, and dihedral constraints to pose metal site
 void
@@ -324,7 +323,7 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 	//Distances
 	for ( Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
-		AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
+		//AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
 
 		TR << "CONSTRAINT: Distance: "
 			<< pose.residue(lig_atom_id.rsd()).name3() << " "

@@ -42,14 +42,14 @@ public:
 	CoarseRNA_LoopCloser();
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new CoarseRNA_LoopCloser(*this) );
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	using protocols::moves::Mover::apply;
-	virtual
-	void apply( core::pose::Pose & pose );
+	
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	bool
@@ -58,7 +58,7 @@ public:
 	bool
 	apply_after_jump_change( core::pose::Pose & pose, Size const & jumpno );
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	choose_best_solution_based_on_score_function( core::scoring::ScoreFunctionOP scorefxn );

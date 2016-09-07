@@ -29,8 +29,8 @@ namespace simple_filters {
 class PoseCommentFilterCreator : public protocols::filters::FilterCreator
 {
 public:
-	virtual protocols::filters::FilterOP create_filter() const;
-	virtual std::string keyname() const;
+	protocols::filters::FilterOP create_filter() const override;
+	std::string keyname() const override;
 };
 
 }

@@ -46,9 +46,7 @@ RemoveConstraints::RemoveConstraints( ConstraintGeneratorCOPs const & generators
 {
 }
 
-RemoveConstraints::~RemoveConstraints()
-{
-}
+RemoveConstraints::~RemoveConstraints() = default;
 
 void
 RemoveConstraints::parse_my_tag(

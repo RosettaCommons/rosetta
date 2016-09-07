@@ -83,7 +83,7 @@ private:
 
 public:
 
-	~RandomGenerator();
+	~RandomGenerator() override;
 
 	/// Return from range [0, 1] (?) uniform random number
 	///

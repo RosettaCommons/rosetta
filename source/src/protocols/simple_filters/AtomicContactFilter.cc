@@ -76,11 +76,10 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 	}
 	core::Real nearest_distance( 10000 );
 	Residue const res2( pose.residue( get_resid() ) );
-	for ( utility::vector1< core::Size >::const_iterator it=range1_.begin(); it!=range1_.end(); ++it ) {
-		core::Size residue1=*it;
-		Residue const res1( pose.residue( residue1 ) );
+	for (unsigned long residue1 : range1_) {
+			Residue const res1( pose.residue( residue1 ) );
 
-		Atoms::const_iterator atom1_begin( res1.atom_begin() ), atom1_end( res1.atom_end() ), atom2_begin( res2.atom_begin() ), atom2_end( res2.atom_end() );
+		auto atom1_begin( res1.atom_begin() ), atom1_end( res1.atom_end() ), atom2_begin( res2.atom_begin() ), atom2_end( res2.atom_end() );
 		if ( sidechain_ && !backbone_ ) {
 			atom1_begin = res1.sidechainAtoms_begin();
 			atom2_begin = res2.sidechainAtoms_begin();
@@ -93,8 +92,8 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 			atom1_end = res1.heavyAtoms_end();
 			atom2_end = res2.heavyAtoms_end();
 		}
-		for ( Atoms::const_iterator atom1=atom1_begin; atom1!=atom1_end; ++atom1 ) {
-			for ( Atoms::const_iterator atom2=atom2_begin; atom2!=atom2_end; ++atom2 ) {
+		for ( auto atom1=atom1_begin; atom1!=atom1_end; ++atom1 ) {
+			for ( auto atom2=atom2_begin; atom2!=atom2_end; ++atom2 ) {
 				core::Real const dist( atom1->xyz().distance( atom2->xyz() ) );
 				if ( dist <= nearest_distance ) nearest_distance = dist;
 			}//foreach atom2

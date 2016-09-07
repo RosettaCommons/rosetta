@@ -232,7 +232,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 
 			ResidueTypeCOP rsd_type = get_rsd_type_from_aa( residue_set, my_aa, is_lower_terminus, is_upper_terminus );
 
-			if ( rsd_type == 0 ) {
+			if ( rsd_type == nullptr ) {
 				utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
 					" in sequence "+ sequence_in);
 			}
@@ -597,7 +597,7 @@ void make_pose_from_sequence(
 	for ( Size i = 1, ie = requested_types.size(); i <= ie; ++i ) {
 		// grab the new residue
 		chemical::ResidueType const & rsd_type = *requested_types[ i ];
-		core::conformation::ResidueOP new_rsd( NULL );
+		core::conformation::ResidueOP new_rsd( nullptr );
 		new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 
 		tr.Trace << "make_pose_from_sequence():  seqpos: " << i << " " << new_rsd->aa() << std::endl;
@@ -846,11 +846,11 @@ std::string annotated_to_oneletter_sequence(
 ) {
 	bool add( true );
 	std::string oneletter_seq;
-	for ( Size i = 0; i < annotated_seq.length(); ++i ) {
-		if ( annotated_seq.at(i) == '/' ) continue;
-		if ( annotated_seq.at(i) == '[' ) add = false;
-		if ( add ) oneletter_seq += annotated_seq.at(i);
-		if ( annotated_seq.at(i) == ']' ) add = true;
+	for (char i : annotated_seq) {
+		if ( i == '/' ) continue;
+		if ( i == '[' ) add = false;
+		if ( add ) oneletter_seq += i;
+		if ( i == ']' ) add = true;
 	}
 
 	return oneletter_seq;

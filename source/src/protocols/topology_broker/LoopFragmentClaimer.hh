@@ -61,7 +61,7 @@ public:
 
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -69,11 +69,11 @@ public:
 		return "LoopFragmentClaimer";
 	}
 
-	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const {
-		return NULL; //override FragmentClaimer functionality
+	moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const override {
+		return nullptr; //override FragmentClaimer functionality
 	}
 
-	core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap& movemap) const;
+	core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap& movemap) const override;
 	// { virtual void loop_frags( core::fragment::FragSet& ) const;
 
 }; //class LoopFragmentClaimer

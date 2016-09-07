@@ -37,7 +37,7 @@ KDNodeOP construct_kd_tree(
 	using numeric::Size;
 	using utility::vector1;
 	if ( points.size() == 0 ) {
-		return NULL;
+		return nullptr;
 	}
 
 	numeric::Size width = points.front()->size();

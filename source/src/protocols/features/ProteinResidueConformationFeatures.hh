@@ -41,20 +41,20 @@ public:
 	ProteinResidueConformationFeatures(
 		ProteinResidueConformationFeatures const & );
 
-	virtual ~ProteinResidueConformationFeatures(){}
+	~ProteinResidueConformationFeatures() override= default;
 
 	/// @brief generate the table schemas and write them to the database
-	virtual void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	/// @brief return string with class name
 	std::string
-	type_name() const;
+	type_name() const override;
 
 	/// @brief collect all the feature data for the pose
 	core::Size
@@ -62,12 +62,12 @@ public:
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session) override;
 
 	void
 	delete_record(
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session) override;
 
 	using protocols::features::FeaturesReporter::load_into_pose;
 

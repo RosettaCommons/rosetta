@@ -32,19 +32,19 @@ public:
 	ResidueDistanceFilter() : filters::Filter( "ResidueDistance"  ) {}
 	ResidueDistanceFilter( core::Size const res1, core::Size const res2, core::Real const distance_threshold ) :
 		Filter( "ResidueDistance" ), res1_( res1 ), res2_( res2 ), distance_threshold_( distance_threshold ) {}
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new ResidueDistanceFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new ResidueDistanceFilter() );
 	}
 
-	virtual ~ResidueDistanceFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~ResidueDistanceFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Size res1_, res2_;
 	core::Real distance_threshold_;

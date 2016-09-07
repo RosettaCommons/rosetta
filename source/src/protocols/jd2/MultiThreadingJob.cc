@@ -27,7 +27,7 @@ InnerMultiThreadingJobOP MultiThreadingJob::multi_threading_inner_job() {
 	return inner_job_;
 }
 
-MultiThreadingJob::~MultiThreadingJob() {}
+MultiThreadingJob::~MultiThreadingJob() = default;
 
 } // namespace jd2
 } // namespace protocols

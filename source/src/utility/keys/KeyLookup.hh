@@ -96,7 +96,7 @@ private: // Creation
 	/// @brief Default constructor
 	inline
 	KeyLookup()
-	{}
+	= default;
 
 
 	/// @brief Copy constructor
@@ -107,7 +107,7 @@ private: // Creation
 	/// @brief Destructor
 	inline
 	~KeyLookup()
-	{}
+	= default;
 
 
 private: // Assignment
@@ -465,7 +465,7 @@ struct has
 	/// @brief Default constructor
 	inline
 	has()
-	{}
+	= default;
 
 
 	/// @brief Has a key with an identifier?
@@ -507,7 +507,7 @@ struct key
 	/// @brief Default constructor
 	inline
 	key()
-	{}
+	= default;
 
 
 	/// @brief Key with an id
@@ -540,7 +540,7 @@ struct gen
 	/// @brief Default constructor
 	inline
 	gen()
-	{}
+	= default;
 
 
 	/// @brief Key with an id: Generate if not present
@@ -565,7 +565,7 @@ struct n_key
 	/// @brief Default constructor
 	inline
 	n_key()
-	{}
+	= default;
 
 
 	/// @brief Number of keys with distinct indexes
@@ -596,7 +596,7 @@ struct begin
 	/// @brief Default constructor
 	inline
 	begin()
-	{}
+	= default;
 
 
 	/// @brief Key collection begin iterator
@@ -627,7 +627,7 @@ struct end
 	/// @brief Default constructor
 	inline
 	end()
-	{}
+	= default;
 
 
 	/// @brief Key collection end iterator

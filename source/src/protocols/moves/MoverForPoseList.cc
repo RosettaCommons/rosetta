@@ -31,7 +31,7 @@ MoverForPoseList::MoverForPoseList():
 
 //Destructor
 MoverForPoseList::~MoverForPoseList()
-{}
+= default;
 
 // Yup, that's all this is for.
 void

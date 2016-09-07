@@ -35,7 +35,7 @@ namespace matdes {
 #if defined MULTI_THREADED
 std::atomic< SymmetrizerSampler * > SymmetrizerSampler::instance_( 0 );
 #else
-SymmetrizerSampler * SymmetrizerSampler::instance_( 0 );
+SymmetrizerSampler * SymmetrizerSampler::instance_( nullptr );
 #endif
 
 #ifdef MULTI_THREADED

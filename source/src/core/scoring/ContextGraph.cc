@@ -19,7 +19,7 @@
 namespace core {
 namespace scoring {
 
-ContextGraph::~ContextGraph() {}
+ContextGraph::~ContextGraph() = default;
 
 
 ContextGraph::ContextGraph()

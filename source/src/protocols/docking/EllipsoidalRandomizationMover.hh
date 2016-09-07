@@ -48,7 +48,7 @@ public:
 	EllipsoidalRandomizationMover & operator=( EllipsoidalRandomizationMover const & object_to_copy );
 
 	/// @brief Destructor
-	~EllipsoidalRandomizationMover();
+	~EllipsoidalRandomizationMover() override;
 
 	/// @brief Sets up the default values for the object including the movemap and minimization type.
 	void set_default();
@@ -56,17 +56,17 @@ public:
 	void init_from_options();
 
 	/// @brief Applies EllipsoidalRandomizationMover mover.
-	void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
 	/// @brief Returns mover name.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Generates string representation of EllipsoidalRandomizationMover.
-	virtual void show( std::ostream & output=std::cout ) const;
+	void show( std::ostream & output=std::cout ) const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Defines geometry required for docking move.
 	std::pair< numeric::xyzMatrix< core::Real >, Vector > calculate_geometry( core::pose::Pose & );

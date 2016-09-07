@@ -52,7 +52,7 @@ public:
 		fitness_pbest_(0.0)
 	{}
 
-	virtual ~Particle() {}
+	~Particle() override = default;
 
 	Real score(Multifunc & f)
 	{
@@ -135,7 +135,7 @@ class ParticleSwarmMinimizer : public utility::pointer::ReferenceCount
 public:
 
 	ParticleSwarmMinimizer(Multivec p_min, Multivec p_max);
-	virtual ~ParticleSwarmMinimizer();
+	~ParticleSwarmMinimizer() override;
 
 	ParticleOPs run(Size num_cycles, Multifunc & f_fitness, Size num_part = 50);
 	ParticleOPs run(Size num_cycles, Multifunc & f_fitness, Size num_part, Multivec init_values );

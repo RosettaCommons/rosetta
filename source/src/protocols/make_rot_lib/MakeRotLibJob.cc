@@ -17,6 +17,7 @@
 
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
+#include <utility>
 
 namespace protocols {
 namespace make_rot_lib {
@@ -29,7 +30,7 @@ MakeRotLibJob::MakeRotLibJob( jd2::InnerJobOP inner_job, core::Size nstruct_inde
 	bbs_( bbs ),
 	bb_ids_( bb_ids ),
 	eps_( eps ),
-	mrlod_( mrlod ),
+	mrlod_(std::move( mrlod )),
 	semirotameric_( semirotameric )
 {}
 

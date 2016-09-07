@@ -117,7 +117,7 @@ TorsionDOFMover::TorsionDOFMover( core::id::AtomID const & atom1, core::id::Atom
 	tries_(1)
 { protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
-TorsionDOFMover::~TorsionDOFMover(){}
+TorsionDOFMover::~TorsionDOFMover()= default;
 
 void TorsionDOFMover::apply( core::pose::Pose & pose ){
 

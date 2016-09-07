@@ -470,8 +470,8 @@ SymDofMover::apply(Pose & pose) {
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 			std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
 			std::map< Size, SymDof >::iterator it;
-			std::map< Size, SymDof >::iterator it_begin = dofs.begin();
-			std::map< Size, SymDof >::iterator it_end = dofs.end();
+			auto it_begin = dofs.begin();
+			auto it_end = dofs.end();
 			for ( it=it_begin; it != it_end; ++it ) {
 				core::kinematics::Jump j(pose.jump(it->first));
 				Vec t = j.get_translation();

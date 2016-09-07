@@ -22,7 +22,7 @@
 namespace basic {
 namespace datacache {
 
-CacheableData::~CacheableData() {}
+CacheableData::~CacheableData() = default;
 
 }
 }

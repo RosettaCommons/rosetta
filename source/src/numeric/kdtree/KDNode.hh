@@ -38,7 +38,7 @@ public:
 	/// @brief Constructor for a KDNode. Takes a const-refence
 	/// a KDTree that should contain this KDNode.
 	KDNode( KDTree const & tree );
-	virtual ~KDNode();
+	~KDNode() override;
 
 	/// @brief Returns the parent of this KDNode in the tree,
 	/// or NULL if there is no parent.

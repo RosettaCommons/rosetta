@@ -35,7 +35,7 @@ class ResidueTypeKinWriter : public utility::pointer::ReferenceCount
 {
 public:
 	ResidueTypeKinWriter();
-	virtual ~ResidueTypeKinWriter();
+	~ResidueTypeKinWriter() override;
 
 	/// @brief write the header for the kinemage to center on this residue
 	void write_kin_header(

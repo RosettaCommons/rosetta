@@ -48,7 +48,7 @@ public:
 	SymSidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn_in, core::pack::task::TaskFactoryOP );
 
 	// destructor
-	~SymSidechainMinMover();
+	~SymSidechainMinMover() override;
 
 	void set_default_options();
 
@@ -56,8 +56,8 @@ public:
 
 	void update_movemap( core::pose::Pose & pose );
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 protected:
 
@@ -84,14 +84,14 @@ public:
 	);
 
 	// destructor
-	~SymInterfaceSidechainMinMover();
+	~SymInterfaceSidechainMinMover() override;
 
 	void set_default_options();
 
 	void set_interface_dist( core::Real interface_dist_in);
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 

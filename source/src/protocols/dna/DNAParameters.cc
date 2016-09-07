@@ -134,7 +134,7 @@ DNABasestep::DNABasestep( conformation::Residue const & rsd1, conformation::Resi
 DNABase const &
 DNAParameters::base( core::Size resid ) const
 {
-	std::map< core::Size, DNABase >::const_iterator find_itr( bases_.find( resid ) );
+	auto find_itr( bases_.find( resid ) );
 	assert( find_itr != bases_.end() );
 
 	return find_itr->second;
@@ -144,7 +144,7 @@ DNAParameters::base( core::Size resid ) const
 DNABasepair const &
 DNAParameters::basepair( core::Size resid ) const
 {
-	std::map< core::Size, DNABasepair >::const_iterator find_itr( basepairs_.find( resid ) );
+	auto find_itr( basepairs_.find( resid ) );
 	assert( find_itr != basepairs_.end() );
 
 	return find_itr->second;
@@ -155,7 +155,7 @@ DNAParameters::basepair( core::Size resid ) const
 DNABasestep const &
 DNAParameters::basestep( core::Size resid ) const
 {
-	std::map< core::Size, DNABasestep >::const_iterator find_itr( basesteps_.find( resid ) );
+	auto find_itr( basesteps_.find( resid ) );
 	assert( find_itr != basesteps_.end() );
 
 	return find_itr->second;

@@ -29,6 +29,7 @@
 
 // Utility Headers
 #include <numeric/random/random.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
@@ -90,7 +91,7 @@ const & Ligand_info::get_residues() const{
 Rotate::Rotate(): Mover("Rotate")
 {}
 
-Rotate::Rotate(Rotate_info rotate_info): Mover("Rotate"), rotate_info_(rotate_info)
+Rotate::Rotate(Rotate_info rotate_info): Mover("Rotate"), rotate_info_(std::move(rotate_info))
 {}
 
 Rotate::Rotate(Rotate const & that):
@@ -99,7 +100,7 @@ Rotate::Rotate(Rotate const & that):
 	rotate_info_(that.rotate_info_)
 {}
 
-Rotate::~Rotate() {}
+Rotate::~Rotate() = default;
 
 protocols::moves::MoverOP Rotate::clone() const {
 	return protocols::moves::MoverOP( new Rotate( *this ) );

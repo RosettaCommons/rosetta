@@ -37,6 +37,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
@@ -53,7 +54,7 @@ namespace protocols {
 namespace jumping {
 
 /// @details Auto-generated virtual destructor
-BaseJumpSetup::~BaseJumpSetup() {}
+BaseJumpSetup::~BaseJumpSetup() = default;
 
 using namespace core;
 using namespace fragment;
@@ -111,9 +112,9 @@ JumpSetup::read_file( std::string fname ) {
 JumpSelector::JumpSelector()
 : total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
 JumpSelector::JumpSelector( std::string ss )
-: secstruct_( ss), total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
+: secstruct_(std::move( ss)), total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
 
-JumpSelector::~JumpSelector() {}
+JumpSelector::~JumpSelector() = default;
 
 
 void
@@ -375,8 +376,8 @@ JumpSelector::select_random() const {
 
 	Real ran = numeric::random::rg().uniform() * total_weight_;
 	Real cumsum = 0.0;
-	const_iterator it = begin();
-	const_iterator eit = end();
+	auto it = begin();
+	auto eit = end();
 
 	int ct = 1;
 	cumsum += it->weight_;

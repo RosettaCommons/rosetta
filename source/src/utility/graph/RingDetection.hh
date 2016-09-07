@@ -98,12 +98,11 @@ public:
 	//! @return list of rings (all closed paths)
 	const utility::vector1<utility::vector1<VD> > GetRings() const{
 		utility::vector1<utility::vector1<VD> > rings;
-		for ( std::list<std::vector<size_t> >::const_iterator it = rings_.begin(); it != rings_.end(); ++it ) {
+		for ( auto it = rings_.begin(); it != rings_.end(); ++it ) {
 			utility::vector1<VD> vertices;
 			std::vector<size_t> list_ring = *it;
-			for ( size_t j=0; j < list_ring.size(); ++j ) {
-				size_t number = list_ring[j];
-				VD lwrg_vd = index_to_vd_.find(number)->second;
+			for (unsigned long number : list_ring) {
+					VD lwrg_vd = index_to_vd_.find(number)->second;
 				vertices.push_back( lwrg_vd );
 			}
 			rings.push_back(vertices);
@@ -165,16 +164,16 @@ private:
 			}
 
 
-			for ( utility::vector1<size_t>::iterator itr_edge_target = source_vertex_number_neighbors.begin(); itr_edge_target != source_vertex_number_neighbors.end(); ++itr_edge_target ) {
-				if ( shortest_cycles[ *itr_edge_target ] > graph_size ) { // the edge target vertex is not part of any cycle
+			for (unsigned long & source_vertex_number_neighbor : source_vertex_number_neighbors) {
+				if ( shortest_cycles[ source_vertex_number_neighbor ] > graph_size ) { // the edge target vertex is not part of any cycle
 					continue;
 				}
 				//continue;
 
-				if ( source_vertex_number <= *itr_edge_target ) {
+				if ( source_vertex_number <= source_vertex_number_neighbor ) {
 					std::vector<size_t> initial_path(2);
 					initial_path[0] = source_vertex_number;
-					initial_path[1] = *itr_edge_target;
+					initial_path[1] = source_vertex_number_neighbor;
 					paths_.push_back(initial_path);
 
 				}
@@ -194,12 +193,12 @@ private:
 		std::list<std::vector<size_t> > paths_with_vertex;
 
 		// transfer any paths that end in vertex into paths_with_vertex
-		for ( std::list<std::vector<size_t> >::iterator itr_paths(paths_.begin()),
+		for ( auto itr_paths(paths_.begin()),
 				itr_paths_end(paths_.end());
 				itr_paths != itr_paths_end;
 				) {
 			if ( vertex == itr_paths->front() || vertex == itr_paths->back() ) {
-				std::list<std::vector<size_t> >::iterator old_itr_paths(itr_paths);
+				auto old_itr_paths(itr_paths);
 				++itr_paths;
 				paths_with_vertex.splice(paths_with_vertex.end(), paths_, old_itr_paths);
 			} else {
@@ -217,14 +216,14 @@ private:
 		std::vector< bool> vertex_is_in_path( graph_size_);
 
 		//update paths
-		for ( std::list<std::vector<size_t> >::iterator itr_paths(paths_with_vertex.begin()),
+		for ( auto itr_paths(paths_with_vertex.begin()),
 				itr_paths_end(paths_with_vertex.end());
 				itr_paths != itr_paths_end;
 				++itr_paths ) {
 			const std::size_t path_size( itr_paths->size() - 2);
 			SetupAdjacencyVector( vertex_is_in_path, *itr_paths);
 
-			std::list< std::vector<size_t> >::iterator itr_paths_match(itr_paths);
+			auto itr_paths_match(itr_paths);
 			++itr_paths_match;
 
 			while ( itr_paths_match != itr_paths_end )
@@ -237,7 +236,7 @@ private:
 					// combine the paths and add them to paths_
 					paths_.insert( paths_.begin(), CombinePaths( vertex, *itr_paths, *itr_paths_match));
 
-					std::list< std::vector< size_t> >::iterator itr_begin( paths_.begin());
+					auto itr_begin( paths_.begin());
 
 					// check whether the new ring was actually a path
 					if ( itr_begin->front() == itr_begin->back() ) {
@@ -264,7 +263,7 @@ private:
 	) const {
 		std::vector< size_t> new_path( path_b.size() + path_a.size() - 1);
 
-		std::vector< size_t>::iterator new_path_itr( new_path.begin());
+		auto new_path_itr( new_path.begin());
 
 		// copy path A such that the common vertex is last
 		if ( COMMON_vertex == path_a.back() ) {
@@ -298,14 +297,8 @@ private:
 	) const {
 		// check all internal elements in path_a for occurrence in path_b
 		for
-			(
-					std::vector< size_t>::const_iterator
-					itr_path( path_b.begin() ),
-					itr_path_end( path_b.end());
-					itr_path != itr_path_end;
-					++itr_path
-					) {
-			if ( vertex_is_in_path_a[ *itr_path] ) {
+			(unsigned long itr_path : path_b) {
+			if ( vertex_is_in_path_a[ itr_path] ) {
 				return true;
 			}
 		}
@@ -324,7 +317,7 @@ private:
 		vertex_is_in_path.assign( graph_size_, false);
 		for
 			(
-					std::vector< size_t>::const_iterator itr_path( ++path.begin()), itr_path_end( --path.end());
+					auto itr_path( ++path.begin()), itr_path_end( --path.end());
 					itr_path != itr_path_end;
 					++itr_path
 					) {
@@ -440,9 +433,8 @@ private:
 					target_row.push_back(vd_to_index_[target]);
 				}
 
-				for ( std::size_t i( 0), number_seen( target_row.size()); i < number_seen; i++ ) {
-					const std::size_t new_vertex( target_row[ i]);
-					if ( !can_visit_ref[ new_vertex] ) {
+				for (unsigned long new_vertex : target_row) {
+						if ( !can_visit_ref[ new_vertex] ) {
 						// do nothing; can't visit the associated vertex
 					} else if ( distances[ new_vertex] == unseen_flag ) { // found a vertex in the target list of vertex seen_vertices_queue(vertex_queue_position)
 						seen_vertices_queue.push_back(new_vertex);

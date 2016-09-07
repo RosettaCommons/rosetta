@@ -72,7 +72,7 @@ Resonance::Resonance(  core::Size label, core::Real freq, core::Real error, core
 	calibration_atom_type_ = PeakCalibrator::atom_type( id, aa_ );
 }
 
-Resonance::~Resonance() {}
+Resonance::~Resonance() = default;
 
 core::Real Resonance::pmatch( core::Real peakfreq, core::Real error, FoldResonance const& folder ) const {
 	return _pmatch( peakfreq, error, folder );

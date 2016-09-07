@@ -64,25 +64,25 @@ public:
 
 	InsertionSiteTestMover( InsertionSiteTestMover const & other );
 
-	~InsertionSiteTestMover();
+	~InsertionSiteTestMover() override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	core::pack::task::PackerTaskCOP
 	make_insert_task(

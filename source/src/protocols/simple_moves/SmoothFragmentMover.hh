@@ -27,6 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -40,8 +41,8 @@ typedef utility::vector1< core::Real > ScoreList;
 class FragmentCost : public utility::pointer::ReferenceCount {
 protected:
 	// Constructor protected for base class
-	FragmentCost( std::string type, core::Real cutoff ) : type_( type ), cutoff_( cutoff ) {};
-	virtual ~FragmentCost();
+	FragmentCost( std::string type, core::Real cutoff ) : type_(std::move( type )), cutoff_( cutoff ) {};
+	~FragmentCost() override;
 public:
 	// accesor
 	std::string const& type() {
@@ -77,11 +78,11 @@ public:
 		core::kinematics::MoveMapCOP movemap,
 		FragmentCostOP cost );
 
-	~SmoothFragmentMover();
+	~SmoothFragmentMover() override;
 
 	SmoothFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SmoothFragmentMover>( Mover::shared_from_this() ); }
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	//  void apply( core::pose::Pose & );
 protected:
@@ -92,14 +93,14 @@ protected:
 		std::string move_type );
 
 	// frame and fragment of choice, returns false if no good fragment is found
-	virtual
+	
 	bool
 	choose_fragment(
 		core::fragment::FrameList const&,
 		core::pose::Pose const&,
 		Size &frame_num,
 		Size &frag_num
-	) const;
+	) const override;
 
 	virtual
 	bool

@@ -73,16 +73,16 @@ public:
 public:
 	MakeBundleHelix();
 	MakeBundleHelix( MakeBundleHelix const &src );
-	virtual ~MakeBundleHelix();
+	~MakeBundleHelix() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 
 	/// @brief Actually apply the mover to the pose.
-	virtual void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/*virtual void parse_my_tag(
 	utility::tag::TagCOP tag,

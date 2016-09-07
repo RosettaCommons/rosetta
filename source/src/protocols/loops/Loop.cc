@@ -43,7 +43,7 @@ namespace protocols {
 namespace loops {
 
 /// @details Auto-generated virtual destructor
-Loop::~Loop() {}
+Loop::~Loop() = default;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.loops.Loop" );
 

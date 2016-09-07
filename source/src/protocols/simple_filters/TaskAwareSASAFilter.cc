@@ -63,7 +63,7 @@ TaskAwareSASAFilter::TaskAwareSASAFilter():
 
 // @brief constructor with arguments
 TaskAwareSASAFilter::TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, bool const d, bool const s, core::Real const r, core::Size const j ):
-	task_factory_( task_factory ),
+	task_factory_(std::move( task_factory )),
 	threshold_( t ),
 	designable_only_( d ),
 	sc_only_( s ),
@@ -72,18 +72,10 @@ TaskAwareSASAFilter::TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_f
 {}
 
 // @brief copy constructor
-TaskAwareSASAFilter::TaskAwareSASAFilter( TaskAwareSASAFilter const & rval ):
-	Super( rval ),
-	task_factory_( rval.task_factory_ ),
-	threshold_( rval.threshold_ ),
-	designable_only_( rval.designable_only_),
-	sc_only_( rval.sc_only_ ),
-	probe_radius_( rval.probe_radius_ ),
-	jump_id_( rval.jump_id_ )
-{}
+TaskAwareSASAFilter::TaskAwareSASAFilter( TaskAwareSASAFilter const & )= default;
 
 // @brief destructor
-TaskAwareSASAFilter::~TaskAwareSASAFilter() {}
+TaskAwareSASAFilter::~TaskAwareSASAFilter() = default;
 
 protocols::filters::FilterOP
 TaskAwareSASAFilter::fresh_instance() const{
@@ -117,7 +109,7 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 
 	core::pose::Pose pose = p;
 
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// If a jump has been provided by the user, separate the pose by that jump.

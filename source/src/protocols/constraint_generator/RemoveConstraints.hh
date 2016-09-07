@@ -40,17 +40,17 @@ public:
 	RemoveConstraints( ConstraintGeneratorCOPs const & generators );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~RemoveConstraints();
+	~RemoveConstraints() override;
 
 	static std::string
 	class_name() { return "RemoveConstraints"; }
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 public:
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
@@ -58,15 +58,15 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 public:
 	void
@@ -82,7 +82,7 @@ public:
 	EXCN_RemoveCstsFailed():
 		utility::excn::EXCN_Base()
 	{}
-	virtual void show( std::ostream & os ) const { os << "Remodel constraints somehow got lost along the way" << std::endl; }
+	void show( std::ostream & os ) const override { os << "Remodel constraints somehow got lost along the way" << std::endl; }
 };
 
 } //protocols

@@ -56,9 +56,9 @@ public: // Creation
 
 
 	/// @brief Destructor
-	virtual
-	~Multifunc()
-	{}
+	
+	~Multifunc() override
+	= default;
 
 
 protected: // Assignment

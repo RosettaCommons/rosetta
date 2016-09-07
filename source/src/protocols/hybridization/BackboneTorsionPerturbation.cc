@@ -76,7 +76,7 @@ BackboneTorsionPerturbation::BackboneTorsionPerturbation() {
 	init();
 }
 
-BackboneTorsionPerturbation::~BackboneTorsionPerturbation() {}
+BackboneTorsionPerturbation::~BackboneTorsionPerturbation() = default;
 
 void BackboneTorsionPerturbation::init() {
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "talaris2013" ) );
@@ -253,7 +253,7 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
 	//local_tf->push_back(new core::pack::task::operation::RestrictToRepacking());
 	// if present, task_factory_ always overrides/regenerates task_
 	core::pack::task::PackerTaskOP task;
-	if ( task_factory_ != 0 ) {
+	if ( task_factory_ != nullptr ) {
 		task = task_factory_->create_task_and_apply_taskoperations( pose );
 		task->restrict_to_repacking();
 	} else {
@@ -336,7 +336,7 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
 
 void BackboneTorsionPerturbation::task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-	runtime_assert( tf != 0 );
+	runtime_assert( tf != nullptr );
 	task_factory_ = tf;
 }
 
@@ -380,7 +380,7 @@ BackboneTorsionPerturbation::parse_my_tag(
 	}
 
 	core::pack::task::TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0 ) return;
+	if ( new_task_factory == nullptr ) return;
 	task_factory( new_task_factory );
 
 	if ( tag->hasOption( "dump_snapshots" ) ) {

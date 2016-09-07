@@ -42,7 +42,7 @@ namespace loophash {
 static THREAD_LOCAL basic::Tracer TR( "LocalInserter" );
 
 /// @details Auto-generated virtual destructor
-LocalInserter::~LocalInserter() {}
+LocalInserter::~LocalInserter() = default;
 
 
 /// @brief set the score function for the first round of minimization

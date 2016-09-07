@@ -91,23 +91,23 @@ protected:
 
 public:
 
-	virtual
+	
 	void
-	clear();
+	clear() override;
 
 	static
 	JD2ResourceManager *
 	get_jd2_resource_manager_instance();
 
-	virtual ~JD2ResourceManager();
+	~JD2ResourceManager() override;
 
 	basic::resource_manager::ResourceOP
 	get_resource(
-		basic::resource_manager::ResourceDescription const & resource_description);
+		basic::resource_manager::ResourceDescription const & resource_description) override;
 
 	bool
 	has_resource_with_description(
-		basic::resource_manager::ResourceDescription const & resource_description);
+		basic::resource_manager::ResourceDescription const & resource_description) override;
 
 	/// @brief Read the portion of an XML file that declares ResourceLocator objects
 	void
@@ -163,125 +163,125 @@ private:
 
 public: // options access
 
-	virtual
+	
 	bool
 	get_option(
-		utility::options::BooleanOptionKey key ) const;
+		utility::options::BooleanOptionKey key ) const override;
 
-	virtual
+	
 	utility::vector1< bool > const &
 	get_option(
-		utility::options::BooleanVectorOptionKey key ) const;
+		utility::options::BooleanVectorOptionKey key ) const override;
 
-	virtual
+	
 	utility::file::FileName const &
 	get_option(
-		utility::options::FileOptionKey key ) const;
+		utility::options::FileOptionKey key ) const override;
 
-	virtual
+	
 	utility::vector1< utility::file::FileName > const &
 	get_option(
-		utility::options::FileVectorOptionKey key ) const;
+		utility::options::FileVectorOptionKey key ) const override;
 
-	virtual
+	
 	int
 	get_option(
-		utility::options::IntegerOptionKey key ) const;
+		utility::options::IntegerOptionKey key ) const override;
 
-	virtual
+	
 	utility::vector1< int > const &
 	get_option(
-		utility::options::IntegerVectorOptionKey key ) const;
+		utility::options::IntegerVectorOptionKey key ) const override;
 
-	virtual
+	
 	utility::file::PathName const &
 	get_option(
-		utility::options::PathOptionKey key ) const;
+		utility::options::PathOptionKey key ) const override;
 
-	virtual
+	
 	utility::vector1< utility::file::PathName > const &
 	get_option(
-		utility::options::PathVectorOptionKey key ) const;
+		utility::options::PathVectorOptionKey key ) const override;
 
-	virtual
+	
 	platform::Real
 	get_option(
-		utility::options::RealOptionKey key ) const;
+		utility::options::RealOptionKey key ) const override;
 
-	virtual
+	
 	utility::vector1< platform::Real > const &
 	get_option(
-		utility::options::RealVectorOptionKey key ) const;
+		utility::options::RealVectorOptionKey key ) const override;
 
-	virtual
+	
 	std::string const &
 	get_option(
-		utility::options::StringOptionKey key ) const;
+		utility::options::StringOptionKey key ) const override;
 
-	virtual
+	
 	utility::vector1< std::string > const &
 	get_option(
-		utility::options::StringVectorOptionKey key ) const;
+		utility::options::StringVectorOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::BooleanOptionKey key ) const;
+		utility::options::BooleanOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::BooleanVectorOptionKey key ) const;
+		utility::options::BooleanVectorOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::FileOptionKey key ) const;
+		utility::options::FileOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::FileVectorOptionKey key ) const;
+		utility::options::FileVectorOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::IntegerOptionKey key ) const;
+		utility::options::IntegerOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::IntegerVectorOptionKey key ) const;
+		utility::options::IntegerVectorOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::PathOptionKey key ) const;
+		utility::options::PathOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::PathVectorOptionKey key ) const;
+		utility::options::PathVectorOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::RealOptionKey key ) const;
+		utility::options::RealOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::RealVectorOptionKey key ) const;
+		utility::options::RealVectorOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::StringOptionKey key ) const;
+		utility::options::StringOptionKey key ) const override;
 
-	virtual
+	
 	bool
 	has_option(
-		utility::options::StringVectorOptionKey key ) const;
+		utility::options::StringVectorOptionKey key ) const override;
 
 private:
 

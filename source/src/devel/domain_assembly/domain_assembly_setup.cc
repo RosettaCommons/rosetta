@@ -129,8 +129,8 @@ DomainInfo::process_domain( )
 	if ( linker_sequence.length() > 0 ) {
 		core::pose::remove_upper_terminus_type_from_pose_residue( temp_pose, temp_pose.total_residue());
 	}
-	for ( Size pos = 0; pos < linker_sequence.length(); ++pos ) {
-		char aa = linker_sequence[pos]; // string indexing is zero-based!
+	for (char aa : linker_sequence) {
+		// string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
 		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa )) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
@@ -188,7 +188,7 @@ connect_domains(
 		} else {
 			core::pose::remove_upper_terminus_type_from_pose_residue( full_pose, full_pose.total_residue( ) );
 			core::pose::remove_lower_terminus_type_from_pose_residue( domain_pose, 1 );
-			domain_begin = full_pose.total_residue( ) + 1;;
+			domain_begin = full_pose.total_residue( ) + 1;
 			//Will add sequential amino acid residues to the first domain until no more amino acids are detected
 			for ( Size i = 1; i <= domain_pose.total_residue( ); ++i ) {
 				if ( !((domain_pose.residue_type(i)).is_NA()) ) {

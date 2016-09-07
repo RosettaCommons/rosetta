@@ -32,12 +32,12 @@ class StoreQuasiSymmetricTaskMover : public protocols::moves::Mover {
 public:
 
 	StoreQuasiSymmetricTaskMover();
-	~StoreQuasiSymmetricTaskMover();
+	~StoreQuasiSymmetricTaskMover() override;
 
-	virtual void apply( core::pose::Pose & pose  );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose  ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void
 	parse_my_tag(
@@ -46,7 +46,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
   // setters
   void quasi_symm_comp( std::string const quasi_symm_comp );

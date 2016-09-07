@@ -248,7 +248,7 @@ DeltaFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new DeltaFilter() );
 }
 
-DeltaFilter::~DeltaFilter(){}
+DeltaFilter::~DeltaFilter()= default;
 
 protocols::filters::FilterOP
 DeltaFilter::clone() const{

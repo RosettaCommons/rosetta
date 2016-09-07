@@ -55,7 +55,7 @@ JobsContainer::JobsContainer() :
 {
 }
 
-JobsContainer::~JobsContainer(){}
+JobsContainer::~JobsContainer()= default;
 
 /// @brief Get a specific job, by number.
 /// @details Should work even if jobs have been deleted, since this uses a
@@ -192,14 +192,14 @@ JobOP JobsContainer::back() {
 ///
 void JobsContainer::shuffle() {
 	utility::vector1<core::Size> keys;
-	for ( std::map<core::Size,JobOP>::iterator it=joblist_.begin(); it!=joblist_.end(); ++it ) {
-		keys.push_back( it->first );
+	for (auto & it : joblist_) {
+		keys.push_back( it.first );
 	}
 	numeric::random::random_permutation( keys, numeric::random::rg() );
 	std::map<core::Size, JobOP> newjoblist_;
 	core::Size j=1;
-	for ( std::map<core::Size,JobOP>::iterator it=joblist_.begin(); it!=joblist_.end(); ++it ) {
-		newjoblist_.insert( std::pair<core::Size, JobOP>( keys[j], it->second ) );
+	for (auto & it : joblist_) {
+		newjoblist_.insert( std::pair<core::Size, JobOP>( keys[j], it.second ) );
 		++j;
 	}
 	joblist_=newjoblist_;
@@ -232,8 +232,8 @@ bool JobsContainer::can_be_deleted ( core::Size const index ) const {
 void JobsContainer::get_loaded_job_indices( utility::vector1 < core::Size > &output) const {
 	output.clear();
 	output.reserve( joblist_.size() );
-	for ( std::map<core::Size,JobOP>::const_iterator it = joblist_.begin(); it!=joblist_.end(); ++it ) {
-		output.push_back( it->first );
+	for (const auto & it : joblist_) {
+		output.push_back( it.first );
 	}
 	return;
 }

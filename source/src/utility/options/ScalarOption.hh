@@ -50,25 +50,23 @@ protected: // Creation
 
 	/// @brief Copy constructor
 	inline
-	ScalarOption( ScalarOption const & option ) :
-		Super( option )
-	{}
+	ScalarOption( ScalarOption const & ) = default;
 
 
 public: // Creation
 
 
 	/// @brief Clone this
-	virtual
+	
 	ScalarOption *
-	clone() const = 0;
+	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ScalarOption()
-	{}
+	
+	~ScalarOption() override
+	= default;
 
 
 protected: // Assignment
@@ -87,39 +85,39 @@ public: // Methods
 
 
 	/// @brief Activate
-	virtual
+	
 	ScalarOption &
-	activate() = 0;
+	activate() override = 0;
 
 
 	/// @brief Deactivate
-	virtual
+	
 	ScalarOption &
-	deactivate() = 0;
+	deactivate() override = 0;
 
 
 	/// @brief Set to default value, if any
-	virtual
+	
 	ScalarOption &
-	to_default() = 0;
+	to_default() override = 0;
 
 
 	/// @brief Clear
-	virtual
+	
 	ScalarOption &
-	clear() = 0;
+	clear() override = 0;
 
 
 	/// @brief Value assignment from a command line string
-	virtual
+	
 	ScalarOption &
-	cl_value( std::string const & value_str ) = 0;
+	cl_value( std::string const & value_str ) override = 0;
 
 	/// @brief Value assignemt from a command line string but without
 	/// a ScalarOption & return type.
-	virtual
+	
 	void
-	set_cl_value( std::string const & value_str ) {
+	set_cl_value( std::string const & value_str ) override {
 		cl_value( value_str );
 	}
 

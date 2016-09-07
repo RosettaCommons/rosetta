@@ -36,10 +36,10 @@ class LoopsFileOptionsCreator : public basic::resource_manager::ResourceOptionsC
 public:
 
 	/// @brief Return the string identifier for the associated ResourceOptions (LoopsFileOptions).
-	virtual std::string options_type() const;
+	std::string options_type() const override;
 
 	/// @brief Return a up-casted owning pointer (ResourceOptionsOP) to the resource options.
-	virtual basic::resource_manager::ResourceOptionsOP create_options() const;
+	basic::resource_manager::ResourceOptionsOP create_options() const override;
 
 };
 

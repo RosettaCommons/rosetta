@@ -29,7 +29,7 @@ namespace scoring {
 class ResidueNeighborIterator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~ResidueNeighborIterator();
+	~ResidueNeighborIterator() override;
 
 	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & ) = 0;
 	virtual ResidueNeighborIterator const & operator ++ () = 0;
@@ -56,7 +56,7 @@ public:
 class ResidueNeighborConstIterator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~ResidueNeighborConstIterator();
+	~ResidueNeighborConstIterator() override;
 
 	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & ) = 0;
 	virtual ResidueNeighborConstIterator const & operator ++ () = 0;
@@ -79,8 +79,8 @@ public:
 class LREnergyContainer : public utility::pointer::ReferenceCount
 {
 public:
-	virtual
-	~LREnergyContainer();
+	
+	~LREnergyContainer() override;
 
 	virtual
 	LREnergyContainerOP clone() const = 0;

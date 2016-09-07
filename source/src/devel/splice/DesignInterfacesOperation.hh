@@ -48,15 +48,15 @@ public:
 	void design_shell( core::Real const radius );
 	core::Real design_shell() const{ return design_shell_; }
 
-	virtual ~DesignInterfacesOperation();
+	~DesignInterfacesOperation() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual
+	
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 	static std::string keyname() { return "DesignInterfacesOperation"; }
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 

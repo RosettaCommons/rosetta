@@ -45,7 +45,7 @@ EnergyNode::EnergyNode( Graph * owner, Size index ) :
 	parent( owner, index )//, moved_( false )
 {}
 
-EnergyNode::~EnergyNode() {}
+EnergyNode::~EnergyNode() = default;
 
 
 void EnergyNode::print() const
@@ -176,7 +176,7 @@ EnergyEdge * EnergyGraph::find_energy_edge( Size n1, Size n2)
 		return static_cast< EnergyEdge * > ( edge );
 		//return utility::down_cast< EnergyEdge * > ( edge );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -187,7 +187,7 @@ EnergyEdge const * EnergyGraph::find_energy_edge( Size n1, Size n2) const
 		return static_cast< EnergyEdge const * > ( edge );
 		//return utility::down_cast< EnergyEdge const * > ( edge );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -230,7 +230,7 @@ EnergyGraph::EnergyGraph( EnergyGraph const & src )
 
 EnergyGraph::~EnergyGraph() {
 	delete_everything();
-	delete energy_edge_pool_; energy_edge_pool_ = 0;
+	delete energy_edge_pool_; energy_edge_pool_ = nullptr;
 }
 
 void

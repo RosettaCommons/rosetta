@@ -45,19 +45,19 @@ public:
 
 	void init();
 
-	~ReplicaExchangeMC();
+	~ReplicaExchangeMC() override;
 
 	void build_temperature_list(double *elist);
 
 	using Parent::boltzmann;
 
-	virtual bool
+	bool
 	boltzmann(
 		Pose & pose,//PoseOP pose,
 		std::string const & move_type = "unk",
 		core::Real const proposal_density_ratio = 1,
 		core::Real const inner_score_delta_over_temperature = 0
-	);
+	) override;
 
 	//void set_noutput(core::Size n){noutput_=n;}
 

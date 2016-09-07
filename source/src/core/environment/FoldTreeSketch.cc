@@ -190,8 +190,8 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 		tr.Debug << "Cuts were: ";
 		BOOST_FOREACH ( Size cut, cuts ) { tr.Debug << cut << ", "; }
 		tr.Debug << std::endl << "Jumps were: ";
-		for ( std::set< std::pair< Size, Size > >::iterator it = jumps.begin(); it != jumps.end(); ++it ) {
-			tr.Debug << "(" << it->first << "," << it->second << "), ";
+		for (const auto & jump : jumps) {
+			tr.Debug << "(" << jump.first << "," << jump.second << "), ";
 		}
 		tr.Debug << std::endl;
 
@@ -204,8 +204,8 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 	ObjexxFCL::FArray1D_int cut_array( (int) cuts.size() );
 	ObjexxFCL::FArray2D_int jump_array( 2, (int) jumps.size() );
 
-	std::set< std::pair< core::Size, core::Size > >::iterator jump_it = jumps.begin();
-	std::set< core::Size >::iterator cut_it = cuts.begin();
+	auto jump_it = jumps.begin();
+	auto cut_it = cuts.begin();
 	for ( int i = 1; i <= (int) jumps.size(); ++i ) {
 		cut_array(i) = (int) *cut_it;
 		jump_array( 1, i ) = (int) jump_it->first;
@@ -260,10 +260,9 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
 	// If it's a disconnected net, we might not've found the cycle. Check for
 	// disconnected nodes and recurse on the first disconnected node we find.
 	if ( cycle_path.empty() ) {
-		for ( utility::vector1< NodeOP >::const_iterator n_it = nodes_.begin();
-				n_it != nodes_.end(); ++n_it ) {
-			if ( !(*n_it)->visited() ) {
-				return cycle( (*n_it)->seqid() );
+		for (const auto & node : nodes_) {
+			if ( !node->visited() ) {
+				return cycle( node->seqid() );
 			}
 		}
 	}
@@ -275,9 +274,8 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
 		cycle_path.pop();
 	}
 
-	for ( utility::vector1< NodeOP >::const_iterator n_it = nodes_.begin();
-			n_it != nodes_.end(); ++n_it ) {
-		(*n_it)->unvisit();
+	for (const auto & node : nodes_) {
+		node->unvisit();
 	}
 
 	return out_vect;
@@ -347,9 +345,8 @@ std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > c
 			tr.Trace << "found cycle: " << utility::to_string( cycle ) << std::endl;
 		}
 
-		for ( utility::vector1< Size >::iterator resid_it = cycle.begin();
-				resid_it != cycle.end(); ++resid_it ) {
-			sum += bias[ *resid_it ];
+		for (unsigned long & resid_it : cycle) {
+			sum += bias[ resid_it ];
 		}
 		if ( sum == 0 ) {
 			throw EXCN_FTSketchGraph( "All-zero cut biased cycles cannot be automatically resolved. Cycle: "

@@ -51,8 +51,8 @@ void FilterBySASA::init( Real const smax, Pose const& ps ) {
 
 	utility::vector1<std::string> v;
 	v.push_back("All");
-	for ( unsigned int i=0; i<AA1.length(); ++i ) {
-		aa_sasa_atoms[ AA1[i] ] = v;
+	for (char i : AA1) {
+		aa_sasa_atoms[ i ] = v;
 	}
 	/*
 	// Asp

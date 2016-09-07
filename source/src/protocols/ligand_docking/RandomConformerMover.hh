@@ -35,10 +35,10 @@ class RandomConformerMover : public protocols::moves::Mover
 public:
 
 	RandomConformerMover(core::Size resid);
-	virtual ~RandomConformerMover();
+	~RandomConformerMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	core::Size resid_;

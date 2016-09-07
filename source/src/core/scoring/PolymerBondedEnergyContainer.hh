@@ -49,7 +49,7 @@ class PolymerBondedNeighborIterator : public ResidueNeighborIterator
 	PolymerBondedNeighborIterator & operator = (PolymerBondedNeighborIterator const & src );
 
 public:
-	virtual ~PolymerBondedNeighborIterator();
+	~PolymerBondedNeighborIterator() override;
 
 	PolymerBondedNeighborIterator(
 		Size const base_in,
@@ -57,33 +57,33 @@ public:
 		PolymerBondedEnergyContainer & parent
 	);
 
-	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src );
+	ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src ) override;
 
-	virtual ResidueNeighborIterator const & operator ++ ();
+	ResidueNeighborIterator const & operator ++ () override;
 
-	virtual bool operator == ( ResidueNeighborIterator const & other ) const;
+	bool operator == ( ResidueNeighborIterator const & other ) const override;
 
-	virtual bool operator != ( ResidueNeighborIterator const & other ) const;
+	bool operator != ( ResidueNeighborIterator const & other ) const override;
 
-	virtual Size upper_neighbor_id() const;
+	Size upper_neighbor_id() const override;
 
-	virtual Size lower_neighbor_id() const;
+	Size lower_neighbor_id() const override;
 
-	virtual Size residue_iterated_on() const;
+	Size residue_iterated_on() const override;
 
-	virtual Size neighbor_id() const;
+	Size neighbor_id() const override;
 
-	virtual void save_energy( EnergyMap const & emap );
+	void save_energy( EnergyMap const & emap ) override;
 
-	virtual void retrieve_energy( EnergyMap & emap ) const;
+	void retrieve_energy( EnergyMap & emap ) const override;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const;
+	void accumulate_energy( EnergyMap & emap ) const override;
 
-	virtual void mark_energy_computed();
+	void mark_energy_computed() override;
 
-	virtual void mark_energy_uncomputed();
+	void mark_energy_uncomputed() override;
 
-	virtual bool energy_computed() const;
+	bool energy_computed() const override;
 
 private:
 	Size base_, curr_idx_;
@@ -98,7 +98,7 @@ class PolymerBondedNeighborConstIterator : public ResidueNeighborConstIterator
 {
 	PolymerBondedNeighborConstIterator & operator = (PolymerBondedNeighborConstIterator const & src );
 public:
-	virtual ~PolymerBondedNeighborConstIterator();
+	~PolymerBondedNeighborConstIterator() override;
 
 	PolymerBondedNeighborConstIterator(
 		Size const base_in,
@@ -106,27 +106,27 @@ public:
 		PolymerBondedEnergyContainer const & parent
 	);
 
-	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src );
+	ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src ) override;
 
-	virtual ResidueNeighborConstIterator const & operator ++ ();
+	ResidueNeighborConstIterator const & operator ++ () override;
 
-	virtual bool operator == ( ResidueNeighborConstIterator const & other ) const;
+	bool operator == ( ResidueNeighborConstIterator const & other ) const override;
 
-	virtual bool operator != ( ResidueNeighborConstIterator const & other ) const;
+	bool operator != ( ResidueNeighborConstIterator const & other ) const override;
 
-	virtual Size upper_neighbor_id() const;
+	Size upper_neighbor_id() const override;
 
-	virtual Size lower_neighbor_id() const;
+	Size lower_neighbor_id() const override;
 
-	virtual Size residue_iterated_on() const;
+	Size residue_iterated_on() const override;
 
-	virtual Size neighbor_id() const;
+	Size neighbor_id() const override;
 
-	virtual void retrieve_energy( EnergyMap & emap ) const;
+	void retrieve_energy( EnergyMap & emap ) const override;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const;
+	void accumulate_energy( EnergyMap & emap ) const override;
 
-	virtual bool energy_computed() const;
+	bool energy_computed() const override;
 
 private:
 	Size base_, curr_idx_;
@@ -138,11 +138,11 @@ private:
 
 class PolymerBondedEnergyContainer : public LREnergyContainer {
 public:
-	virtual
-	~PolymerBondedEnergyContainer();
+	
+	~PolymerBondedEnergyContainer() override;
 
-	virtual
-	LREnergyContainerOP clone() const;
+	
+	LREnergyContainerOP clone() const override;
 
 	/// @brief Pose constructor.
 	/// @details Initializes PolymerBondedEnergyContainer from a pose, facilitating calculations involving non-canonical connections
@@ -150,52 +150,52 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	PolymerBondedEnergyContainer( core::pose::Pose const & pose, utility::vector1< ScoreType > const & score_type_in );
 
-	virtual
-	bool empty() const;
+	
+	bool empty() const override;
 
-	virtual
+	
 	bool
-	any_neighbors_for_residue( int /*resid*/ ) const;
+	any_neighbors_for_residue( int /*resid*/ ) const override;
 
-	virtual
+	
 	bool
-	any_upper_neighbors_for_residue( int /*resid*/ ) const;
+	any_upper_neighbors_for_residue( int /*resid*/ ) const override;
 
 	Size
 	size() const;
 
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_begin( int resid ) const;
+	const_neighbor_iterator_begin( int resid ) const override;
 
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_end( int resid ) const;
+	const_neighbor_iterator_end( int resid ) const override;
 
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_begin( int resid ) const;
+	const_upper_neighbor_iterator_begin( int resid ) const override;
 
-	virtual
+	
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_end( int resid ) const;
+	const_upper_neighbor_iterator_end( int resid ) const override;
 
 	//////////////////// non-const versions
-	virtual
+	
 	ResidueNeighborIteratorOP
-	neighbor_iterator_begin( int resid );
+	neighbor_iterator_begin( int resid ) override;
 
-	virtual
+	
 	ResidueNeighborIteratorOP
-	neighbor_iterator_end( int resid );
+	neighbor_iterator_end( int resid ) override;
 
-	virtual
+	
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_begin( int resid );
+	upper_neighbor_iterator_begin( int resid ) override;
 
-	virtual
+	
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_end( int resid );
+	upper_neighbor_iterator_end( int resid ) override;
 
 	/// @brief Is this PolymerBondedEnergyContainer properly set up for the pose?
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

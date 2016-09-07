@@ -32,15 +32,15 @@ public:
 	MgMinimizer();
 
 	//destructor
-	~MgMinimizer();
+	~MgMinimizer() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	using protocols::moves::MoverForPoseList::apply;
 
-	virtual std::string get_name() const{ return "MgMinimizer"; }
+	std::string get_name() const override{ return "MgMinimizer"; }
 
 	void set_mg_res( utility::vector1<Size> const & setting ){ mg_res_ = setting; }
 	utility::vector1<Size> mg_res() const { return mg_res_; }

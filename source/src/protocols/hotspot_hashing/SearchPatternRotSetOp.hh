@@ -44,22 +44,22 @@ public:
 	SearchPatternRotSetOp( SearchPatternOP pattern );
 	SearchPatternRotSetOp( SearchPatternRotSetOp const & other );
 
-	virtual
+	
 	core::pack::rotamer_set::RotamerSetOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	utility::vector1< core::conformation::ResidueCOP > get_rigid_body_confs(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & ptask,
-		core::Size residue_index);
+		core::Size residue_index) override;
 
-	virtual
+	
 	core::Real increase_packer_residue_radius(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTaskCOP,
 		core::Size residue_index
-	);
+	) override;
 
 private:
 	utility::vector1<core::kinematics::Stub> search_stubs_;
@@ -70,13 +70,13 @@ class AddSearchPatternRotSetOp : public core::pack::task::operation::TaskOperati
 {
 public:
 	AddSearchPatternRotSetOp(core::Size target_residue, SearchPatternOP pattern);
-	~AddSearchPatternRotSetOp();
+	~AddSearchPatternRotSetOp() override;
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_tag( TagCOP tag , DataMap & ) override;
 
-	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 
 private:
 	core::Size target_residue_;

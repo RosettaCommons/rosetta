@@ -16,6 +16,7 @@
 #include <protocols/qsar/qsarOptFunc.hh>
 #include <basic/database/sql_utils.hh>
 #include <numeric/roc_curve.hh>
+#include <utility>
 #include <utility/exit.hh>
 
 //Auto Headers
@@ -27,7 +28,7 @@ namespace qsar {
 qsarOptFunc::qsarOptFunc(
 	utility::sql_database::sessionOP db_session,
 	core::optimization::Multivec const & initial_values,
-	std::map<std::string,core::Size> const & grid_indices) : core::optimization::Multifunc(), initial_values_(initial_values), grid_indices_(grid_indices), cutoff_(0.0)
+	std::map<std::string,core::Size>  grid_indices) : core::optimization::Multifunc(), initial_values_(initial_values), grid_indices_(std::move(grid_indices)), cutoff_(0.0)
 {
 	std::string value_string =
 		"SELECT job_string_real_data.data_value\n"
@@ -78,11 +79,11 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 
 	numeric::RocCurve roc_curve;
 
-	for ( std::list<qsarOptData>::const_iterator data_it = data_map_.begin(); data_it != data_map_.end(); ++data_it ) {
+	for (const auto & data_it : data_map_) {
 
 		core::Real total_score = 0.0;
 
-		for ( std::map<std::string,core::Real>::const_iterator score_it = data_it->score_map.begin(); score_it != data_it->score_map.end(); ++score_it ) {
+		for ( auto score_it = data_it.score_map.begin(); score_it != data_it.score_map.end(); ++score_it ) {
 			core::Size vec_index = grid_indices_.find(score_it->first)->second;
 			core::Real initial_weight = initial_values_[vec_index];
 			core::Real current_weight = vars[vec_index];
@@ -92,7 +93,7 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 		}
 
 		bool predicted(total_score < cutoff_);
-		roc_curve.insert_point(predicted,data_it->activity,data_it->tag,total_score);
+		roc_curve.insert_point(predicted,data_it.activity,data_it.tag,total_score);
 	}
 
 	roc_curve.generate_roc_curve();
@@ -124,13 +125,13 @@ qsarOptData qsarOptFunc::get_struct_data(core::Size const & struct_id )
 	score_selection_.bind(2,struct_id);
 	std::map<std::string,core::Real> score_map;
 
-	for ( std::map<std::string,core::Size>::iterator grid_it = grid_indices_.begin(); grid_it != grid_indices_.end(); ++grid_it ) {
-		score_selection_.bind(1,grid_it->first+"_score_X");
+	for (auto & grid_indice : grid_indices_) {
+		score_selection_.bind(1,grid_indice.first+"_score_X");
 		cppdb::result score_result(basic::database::safely_read_from_database(score_selection_));
 		if ( score_result.next() ) {
 			core::Real component_score;
 			score_result >> component_score;
-			score_map.insert(std::make_pair(grid_it->first,component_score));
+			score_map.insert(std::make_pair(grid_indice.first,component_score));
 
 		}
 	}

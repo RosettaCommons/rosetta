@@ -52,7 +52,7 @@ namespace matdes {
 StoreQuasiSymmetricTaskMover::StoreQuasiSymmetricTaskMover() {}
 
 // @brief destructor
-StoreQuasiSymmetricTaskMover::~StoreQuasiSymmetricTaskMover() {}
+StoreQuasiSymmetricTaskMover::~StoreQuasiSymmetricTaskMover() = default;
 
 // @brief getters
 char StoreQuasiSymmetricTaskMover::quasi_symm_comp() const { return quasi_symm_comp_[0]; }
@@ -77,7 +77,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
   using namespace utility;
 
 	// Create the raw PackerTask using the TaskFactory created in parse_my_tag
-	runtime_assert( task_factory_ != 0 );
+	runtime_assert( task_factory_ != nullptr );
 	core::pack::task::PackerTaskOP raw_task = task_factory_->create_task_and_apply_taskoperations( pose );
 	//core::pack::task::PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );			//raw_task vs task???
 
@@ -241,8 +241,8 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
       				}
       		}
       		TR << "RotamerLinks set for residue " << ir << ": sele chain " << get_component_of_residue(pose,ir) << " and resi ";
-      			for ( utility::vector1< core::Size >::iterator i=list.begin(); i!=list.end(); ++i ) {
-							TR << *i << "+";
+      			for (unsigned long & i : list) {
+							TR << i << "+";
     				} TR << std::endl;
       }
       

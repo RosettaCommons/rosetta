@@ -51,7 +51,7 @@ UnfoldedStatePotential::UnfoldedStatePotential( std::string const & filename ) {
 	read_database_file( filename );
 }
 
-UnfoldedStatePotential::~UnfoldedStatePotential() {}
+UnfoldedStatePotential::~UnfoldedStatePotential() = default;
 
 
 void
@@ -152,7 +152,7 @@ void
 UnfoldedStatePotential::raw_unfolded_state_energymap( std::string const & aa_name3, scoring::EnergyMap & e ) const {
 
 	// the energies stored in the database file aren't probabilities; don't take the log of them, that doesn't make sense!
-	std::map< std::string, core::scoring::EnergyMap >::const_iterator i( unfolded_energy_.find( aa_name3 ) );
+	auto i( unfolded_energy_.find( aa_name3 ) );
 	e = i->second;
 	debug_assert(i->first == aa_name3) // assert that the name3 is in the map, if this fails, you are missing params for that residue type
 		}

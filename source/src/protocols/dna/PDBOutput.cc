@@ -85,7 +85,7 @@ PDBOutput::PDBOutput()
 	enabled_(true)
 {}
 
-PDBOutput::~PDBOutput(){}
+PDBOutput::~PDBOutput()= default;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details pose is const here, so it must be scored already if score information is expected in output file
@@ -136,7 +136,7 @@ void
 PDBOutput::output_pdb( ozstream & pdbout )
 {
 	if ( ! enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
-	runtime_assert( pose_copy_ != 0 );
+	runtime_assert( pose_copy_ != nullptr );
 	if ( ! score_function_ ) score_function_ = get_score_function();
 	( *score_function_ )( *pose_copy_ );
 	// if the sparse_pdb_output option is used, this limits most output to residues which differ from the reference structure (if it exists)
@@ -198,9 +198,8 @@ PDBOutput::output_info( ozstream & pdbout )
 			itr != end; ++itr ) {
 		// the 'key' or title for this particular set of information
 		pdbout << itr->first << '\n';
-		for ( Strings::const_iterator line( itr->second.begin() ), end2( itr->second.end() );
-				line != end2; ++line ) {
-			pdbout << *line << '\n';
+		for (const auto & line : itr->second) {
+			pdbout << line << '\n';
 		}
 		pdbout << "REMARK\n";
 	}
@@ -214,13 +213,13 @@ PDBOutput::add_info(
 	bool append /* = true */
 )
 {
-	StringsMap::iterator finditer( info_map_.find( key ) );
+	auto finditer( info_map_.find( key ) );
 	if ( finditer == info_map_.end() || !append ) {
 		info_map_[ key ] = info;
 	} else {
 		Strings & existing_info( finditer->second );
-		for ( Strings::const_iterator it( info.begin() ), end( info.end() ); it != end; ++it ) {
-			existing_info.push_back( *it );
+		for (const auto & it : info) {
+			existing_info.push_back( it );
 		}
 	}
 }
@@ -247,7 +246,7 @@ PDBOutput::residues_are_different(
 	if ( res1.nheavyatoms() != res2.nheavyatoms() ) return true;
 	// check sidechain torsions
 	vector1< Real > const & res1chi( res1.chi() ), res2chi( res2.chi() );
-	for ( vector1< Real >::const_iterator it1( res1chi.begin() ), it2( res2chi.begin() ),
+	for ( auto it1( res1chi.begin() ), it2( res2chi.begin() ),
 			end1( res1chi.end() ), end2( res2chi.end() ); it1 != end1 && it2 != end2; ++it1, ++it2 ) {
 		if ( std::abs( *it1 - *it2 ) > chi_diff_threshold_ ) {
 			//   TR(t_info) << "Chis differ: " << F(6,3,*it1) << " " << F(6,3,*it2) << std::endl;
@@ -256,7 +255,7 @@ PDBOutput::residues_are_different(
 	}
 	// check mainchain torsions
 	vector1< Real > const & res1mc( res1.mainchain_torsions() ), res2mc( res2.mainchain_torsions() );
-	for ( vector1< Real >::const_iterator it1( res1mc.begin() ), it2( res2mc.begin() ),
+	for ( auto it1( res1mc.begin() ), it2( res2mc.begin() ),
 			end1( res1mc.end() ), end2( res2mc.end() ); it1 != end1 && it2 != end2; ++it1, ++it2 ) {
 		if ( std::abs( *it1 - *it2 ) > mainchain_torsion_diff_threshold_ ) {
 			//   TR(t_info) << "mainchain dihedrals differ: " << F(6,3,*it1) << " " << F(6,3,*it2) << std::endl;
@@ -294,8 +293,7 @@ string_join(
 )
 {
 	std::string os;
-	for ( std::list< std::string >::const_iterator it( list.begin() ), end( list.end() );
-			it != end; ++it ) os += sep + *it;
+	for (const auto & it : list) os += sep + it;
 	return os;
 }
 
@@ -594,7 +592,7 @@ make_subdirs( std::string const & name )
 	// for names that include directory paths: try to create any such directories that do not yet exist
 	typedef utility::vector1< std::string > StringVec;
 	StringVec const subdirs( string_split( name, '/' ) );
-	for ( StringVec::const_iterator dir( subdirs.begin() ); dir != subdirs.end()-1; ++dir ) {
+	for ( auto dir( subdirs.begin() ); dir != subdirs.end()-1; ++dir ) {
 		if ( utility::file::file_exists( dir->c_str() ) ) continue;
 		utility::file::create_directory( dir->c_str() );
 	}

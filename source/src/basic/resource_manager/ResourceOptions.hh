@@ -51,7 +51,7 @@ public:
 		std::string const & name
 	);
 
-	virtual ~ResourceOptions();
+	~ResourceOptions() override;
 
 	/// @brief Describe this instance to a given output stream
 	virtual

@@ -58,34 +58,23 @@ SaveResfileToDiskFilter::SaveResfileToDiskFilter():
 {}
 
 // @brief constructor with arguments
-SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> const & r, bool const d, std::string const & n, std::string const & s, std::string const & p, std::string const & g, std::string const &  srp ):
-	task_factory_( task_factory ),
+SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> const & r, bool const d, std::string  n, std::string  s, std::string  p, std::string  g, std::string   srp ):
+	task_factory_(std::move( task_factory )),
 	selected_resis_( r ),
 	designable_only_( d ),
 	renumber_pdb_( false ),
-	resfile_name_( n ),
-	resfile_suffix_( s ),
-	resfile_prefix_( p ),
-	resfile_general_property_( g ),
-	selected_resis_property_( srp )
+	resfile_name_(std::move( n )),
+	resfile_suffix_(std::move( s )),
+	resfile_prefix_(std::move( p )),
+	resfile_general_property_(std::move( g )),
+	selected_resis_property_(std::move( srp ))
 {}
 
 // @brief copy constructor
-SaveResfileToDiskFilter::SaveResfileToDiskFilter( SaveResfileToDiskFilter const & rval ):
-	Super( rval ),
-	task_factory_( rval.task_factory_ ),
-	selected_resis_( rval.selected_resis_ ),
-	designable_only_( rval.designable_only_ ),
-	renumber_pdb_( rval.renumber_pdb_ ),
-	resfile_name_( rval.resfile_name_ ),
-	resfile_suffix_( rval.resfile_suffix_ ),
-	resfile_prefix_( rval.resfile_prefix_ ),
-	resfile_general_property_( rval.resfile_general_property_ ),
-	selected_resis_property_( rval.selected_resis_property_ )
-{}
+SaveResfileToDiskFilter::SaveResfileToDiskFilter( SaveResfileToDiskFilter const & )= default;
 
 // @brief destructor
-SaveResfileToDiskFilter::~SaveResfileToDiskFilter() {}
+SaveResfileToDiskFilter::~SaveResfileToDiskFilter() = default;
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::fresh_instance() const{
@@ -127,7 +116,7 @@ utility::vector1< core::Size > SaveResfileToDiskFilter::select_residues( Pose co
 	utility::vector1< core::Size > selected_residues;
 
 	// Prepare the PackerTask
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	core::pack::task::PackerTaskCOP task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// Find out which residues are packable or designable

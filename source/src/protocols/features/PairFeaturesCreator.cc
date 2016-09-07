@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 PairFeaturesCreator::PairFeaturesCreator() {}
-PairFeaturesCreator::~PairFeaturesCreator() {}
+PairFeaturesCreator::~PairFeaturesCreator() = default;
 FeaturesReporterOP PairFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new PairFeatures );
 }

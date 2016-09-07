@@ -97,10 +97,9 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 				utility::vector1< std::string > const & variant_types ( rsd_type.properties().get_list_of_variants() );
 				utility::vector1< std::string > missing_variant_types;
 
-				for ( utility::vector1< std::string >::const_iterator it = variant_types.begin(),
-						it_end=variant_types.end(); it != it_end; ++it ) {
-					if ( !saved_rsd_type.has_variant_type( *it ) ) {
-						missing_variant_types.push_back( *it );
+				for (const auto & variant_type : variant_types) {
+					if ( !saved_rsd_type.has_variant_type( variant_type ) ) {
+						missing_variant_types.push_back( variant_type );
 					}
 				}
 
@@ -165,16 +164,9 @@ ReturnSidechainMover::ReturnSidechainMover(
 }
 
 // copy constructor
-ReturnSidechainMover::ReturnSidechainMover(ReturnSidechainMover const & object_to_copy) :
-	protocols::moves::Mover(object_to_copy),
-	copy_all_chi_(object_to_copy.copy_all_chi_),
-	allow_chi_copy_(object_to_copy.allow_chi_copy_),
-	remembered_pose_(object_to_copy.remembered_pose_),
-	start_res_(object_to_copy.start_res_),
-	end_res_(object_to_copy.end_res_)
-{}
+ReturnSidechainMover::ReturnSidechainMover(ReturnSidechainMover const & ) = default;
 
-ReturnSidechainMover::~ReturnSidechainMover() {}
+ReturnSidechainMover::~ReturnSidechainMover() = default;
 
 void
 ReturnSidechainMover::show(std::ostream & output) const

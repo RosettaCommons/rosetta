@@ -51,17 +51,10 @@ ScreeningFeatures::ScreeningFeatures()
 
 }
 
-ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & src) : protocols::features::FeaturesReporter(src),
-	chain_(src.chain_),
-	descriptors_(src.descriptors_)
-{
-}
+ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & ) = default;
 
 
-ScreeningFeatures::~ScreeningFeatures()
-{
-
-}
+ScreeningFeatures::~ScreeningFeatures() = default;
 
 std::string ScreeningFeatures::type_name() const
 {
@@ -131,10 +124,10 @@ ScreeningFeatures::report_features(
 	jd2::JobCOP current_job = job_distributor->current_job();
 	std::string group_name;
 
-	jd2::Job::StringStringPairs::const_iterator string_string_begin = current_job->output_string_string_pairs_begin();
-	jd2::Job::StringStringPairs::const_iterator string_string_end = current_job->output_string_string_pairs_end();
+	auto string_string_begin = current_job->output_string_string_pairs_begin();
+	auto string_string_end = current_job->output_string_string_pairs_end();
 
-	for ( jd2::Job::StringStringPairs::const_iterator it = string_string_begin; it != string_string_end; ++it ) {
+	for ( auto it = string_string_begin; it != string_string_end; ++it ) {
 		if ( it->first == "input_group_name" ) {
 			group_name = it->second;
 		}
@@ -204,22 +197,22 @@ std::vector<utility::json_spirit::Pair>  ScreeningFeatures::get_desriptor_data()
 	jd2::JobDistributor* job_distributor = jd2::JobDistributor::get_instance();
 	jd2::JobCOP current_job = job_distributor->current_job();
 
-	Job::StringStringPairs::const_iterator string_string_begin = current_job->output_string_string_pairs_begin();
-	Job::StringStringPairs::const_iterator string_string_end = current_job->output_string_string_pairs_end();
+	auto string_string_begin = current_job->output_string_string_pairs_begin();
+	auto string_string_end = current_job->output_string_string_pairs_end();
 
-	Job::StringRealPairs::const_iterator string_real_begin = current_job->output_string_real_pairs_begin();
-	Job::StringRealPairs::const_iterator string_real_end = current_job->output_string_real_pairs_end();
+	auto string_real_begin = current_job->output_string_real_pairs_begin();
+	auto string_real_end = current_job->output_string_real_pairs_end();
 
 	std::vector<utility::json_spirit::Pair>  descriptor_data;
 
-	for ( Job::StringStringPairs::const_iterator it = string_string_begin; it != string_string_end; ++it ) {
+	for ( auto it = string_string_begin; it != string_string_end; ++it ) {
 		if ( std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end() ) {
 			utility::json_spirit::Pair data_pair(it->first,it->second);
 			descriptor_data.push_back(data_pair);
 		}
 	}
 
-	for ( Job::StringRealPairs::const_iterator it = string_real_begin; it != string_real_end; ++it ) {
+	for ( auto it = string_real_begin; it != string_real_end; ++it ) {
 		if ( std::find(descriptors_.begin(),descriptors_.end(),it->first) != descriptors_.end() ) {
 			utility::json_spirit::Pair data_pair(it->first,it->second);
 			descriptor_data.push_back(data_pair);

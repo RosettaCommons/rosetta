@@ -42,7 +42,7 @@ SpliceSegment::SpliceSegment(){
 	pdb_to_profile_map_.clear();
 }
 
-SpliceSegment::~SpliceSegment() {}
+SpliceSegment::~SpliceSegment() = default;
 
 
 void//rapper function for read_profile to accomedate the new way of reading profiles
@@ -56,9 +56,9 @@ SpliceSegment::read_many( string const Protein_family_path , string const segmen
 
 	DIR *dir;
 	const char * c =target_path.c_str();
-	if ( (dir = opendir (c))!= NULL ) {
+	if ( (dir = opendir (c))!= nullptr ) {
 		struct dirent *ent;
-		while ( (ent = readdir (dir)) != NULL ) {
+		while ( (ent = readdir (dir)) != nullptr ) {
 			//TR<<"Loading PSSM from file "<<target_path+ent->d_name<<std::endl;
 			utility::io::izstream data( target_path+ent->d_name);
 			if ( !data ) {
@@ -214,7 +214,7 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 
 	DIR *dir;
 	const char * c =target_path.c_str();
-	if ( (dir = opendir (c))!= NULL ) {
+	if ( (dir = opendir (c))!= nullptr ) {
 		string fileName(target_path+"pdb_profile_match."+segment);
 		utility::io::izstream data( fileName );
 		if ( !data ) {

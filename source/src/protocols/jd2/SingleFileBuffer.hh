@@ -27,6 +27,7 @@
 #include <core/types.hh>
 
 //utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -48,8 +49,8 @@ protected:
 	typedef utility::vector1< std::string > LineBuffer;
 	typedef std::map< int, LineBuffer> BufferMap;
 public:
-	SingleFileBuffer( std::string const & filename, core::Size channel, core::Size&  status ) : filename_( filename ), mpi_channel_( channel ) { status = 0; };
-	virtual ~SingleFileBuffer();
+	SingleFileBuffer( std::string  filename, core::Size channel, core::Size&  status ) : filename_(std::move( filename )), mpi_channel_( channel ) { status = 0; };
+	~SingleFileBuffer() override;
 	void flush( core::Size slave );
 	void store_line( core::Size slave, core::Size channel, std::string const & line );
 	core::Size length( core::Size slave );
@@ -70,10 +71,10 @@ private:
 class WriteFileSFB : public SingleFileBuffer {
 public:
 	typedef SingleFileBuffer Base;
-	virtual ~WriteFileSFB();
+	~WriteFileSFB() override;
 	WriteFileSFB( std::string const & filename, core::Size channel, bool append, core::Size& status );
-	virtual void write_lines( LineBuffer const & );
-	virtual void block( core::Size slave );
+	void write_lines( LineBuffer const & ) override;
+	void block( core::Size slave ) override;
 private:
 	/// @brief PyRosetta workaround, make copy constructor private so it will not try to create copy methods
 	WriteFileSFB( WriteFileSFB const & src );

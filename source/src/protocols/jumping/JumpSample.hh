@@ -61,16 +61,16 @@ namespace jumping {
 class ChainbreakDistFunc : public core::scoring::func::Func {
 public:
 	ChainbreakDistFunc( core::Real const x0_in );
-	virtual ~ChainbreakDistFunc();
+	~ChainbreakDistFunc() override;
 
 	core::scoring::func::FuncOP
-	clone() const;
+	clone() const override;
 
-	virtual bool operator == ( core::scoring::func::Func const & other ) const;
-	virtual bool same_type_as_me( core::scoring::func::Func const & other ) const;
+	bool operator == ( core::scoring::func::Func const & other ) const override;
+	bool same_type_as_me( core::scoring::func::Func const & other ) const override;
 
-	virtual core::Real func( core::Real const x ) const;
-	virtual core::Real dfunc( core::Real const x ) const;
+	core::Real func( core::Real const x ) const override;
+	core::Real dfunc( core::Real const x ) const override;
 
 private:
 	core::Real d2target_;
@@ -98,7 +98,7 @@ public:
 		bValidTree_( false )
 	{};
 
-	~JumpSample() {};
+	~JumpSample() = default;
 	JumpSample ( JumpSetup const& );
 
 	// generate fold-tree from jumps and cuts

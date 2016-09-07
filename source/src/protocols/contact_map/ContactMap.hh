@@ -48,22 +48,22 @@ public:
 	ContactMap(ContactMap const &);
 
 	/// @brief Destructor
-	~ContactMap();
+	~ContactMap() override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
-	virtual void test_move( Pose & pose ){
+	std::string get_name() const override;
+	void test_move( Pose & pose ) override{
 		apply(pose);
 	}
 
@@ -148,8 +148,8 @@ public:
 	/// @brief Default constructor
 	ContactPartner(core::Size seqpos = 0, std::string resname = "", std::string aname= "") :
 		seqpos_(seqpos),
-		resname_(resname),
-		atomname_(aname){}
+		resname_(std::move(resname)),
+		atomname_(std::move(aname)){}
 
 	/// @brief Returns string representation of the ContactPartner
 	std::string string_rep() const;
@@ -172,8 +172,8 @@ class Contact{
 public:
 	/// @brief Default constructor
 	Contact(ContactPartner p1 = ContactPartner(), ContactPartner p2 = ContactPartner()) :
-		partner1_(p1),
-		partner2_(p2),
+		partner1_(std::move(p1)),
+		partner2_(std::move(p2)),
 		count_(0),
 		distance_(0.0){}
 

@@ -186,7 +186,7 @@ CartesianMultifunc::CartesianMultifunc(
 	deriv_check_result_( /* 0 */ )
 {}
 
-CartesianMultifunc::~CartesianMultifunc() {}
+CartesianMultifunc::~CartesianMultifunc() = default;
 
 CartesianMinimizerMap const &
 CartesianMultifunc::min_map() const {

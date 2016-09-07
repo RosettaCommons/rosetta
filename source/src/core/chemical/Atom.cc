@@ -50,17 +50,17 @@ Atom::Atom() :
 
 /// @details Rosetta AtomTypes should be set through the ResidueType to ensure data consistency.
 Atom::Atom(
-	std::string const & name_in,
-	std::string const & mm_name,
+	std::string  name_in,
+	std::string  mm_name,
 	Size const mm_atom_type_index,
 	ElementCOP element,
 	Real const charge,
 	Vector const & ideal_xyz ) :
-	name_( name_in ),
-	mm_name_( mm_name ),
+	name_(std::move( name_in )),
+	mm_name_(std::move( mm_name )),
 	atom_type_index_( 0 ),
 	mm_atom_type_index_( mm_atom_type_index ),
-	element_( element ),
+	element_(std::move( element )),
 	gasteiger_atom_type_( /* 0 */ ),
 	formal_charge_( 0 ),
 	charge_( charge ),
@@ -90,7 +90,7 @@ Atom::Atom( Atom const & src ) :
 	greek_d_( src.greek_d_ )
 {}
 
-Atom::~Atom() {}
+Atom::~Atom() = default;
 
 //because you have an owning pointer in private member data, you need to implement an = operator
 Atom &

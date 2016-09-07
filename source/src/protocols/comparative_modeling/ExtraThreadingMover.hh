@@ -46,7 +46,7 @@ public:
 		utility::vector1< core::Size > const & residue_selection
 	);
 
-	virtual ~ExtraThreadingMover() {}
+	~ExtraThreadingMover() override = default;
 
 	/// @brief Returns the index of the query sequence in SequenceAlignment
 	/// object.
@@ -66,9 +66,9 @@ public:
 
 	/// @brief Threads the given Pose onto the template_pose with the
 	/// SequenceAlignment provided.
-	virtual void apply( core::pose::Pose & query_pose );
+	void apply( core::pose::Pose & query_pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private: // data members
 	core::Size query_index_, template_index_;

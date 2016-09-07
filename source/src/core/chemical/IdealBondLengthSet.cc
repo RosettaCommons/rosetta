@@ -35,7 +35,7 @@ IdealBondLengthSet::IdealBondLengthSet():
 	bond_lengths_()
 {}
 
-IdealBondLengthSet::~IdealBondLengthSet() {}
+IdealBondLengthSet::~IdealBondLengthSet() = default;
 
 bool IdealBondLengthSet::contains_bond_length(std::string const & atom_type_name1, std::string const & atom_type_name2) const{
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();

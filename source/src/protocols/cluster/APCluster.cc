@@ -71,7 +71,7 @@ APCluster::APCluster(core::Size total_pts, core::Size max_sims_per_pt /*= 0*/):
 }
 
 
-APCluster::~APCluster() {}
+APCluster::~APCluster() = default;
 
 
 /// @details Adding s(i,j) is not the same as adding s(j,i) -- you must do both if you want symmetry.
@@ -442,7 +442,7 @@ bool APCluster::save_binary(std::string const & filename) const
 {
 	using namespace std;
 	FILE* f = fopen( filename.c_str(), "wb" );
-	if ( f == NULL ) return false;
+	if ( f == nullptr ) return false;
 	core::Size const N = pts_.size(); write1(f, N);
 	for ( core::Size i = 1; i <= N; ++i ) {
 		DataPoint const & p = pts_[i];
@@ -466,7 +466,7 @@ bool APCluster::load_binary(std::string const & filename)
 {
 	using namespace std;
 	FILE* f = fopen( filename.c_str(), "rb" );
-	if ( f == NULL ) return false;
+	if ( f == nullptr ) return false;
 	pts_.clear();
 	core::Size N; read1(f, N);
 	for ( core::Size i = 1; i <= N; ++i ) {

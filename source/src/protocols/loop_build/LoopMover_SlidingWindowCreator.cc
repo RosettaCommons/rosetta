@@ -23,7 +23,7 @@
 namespace protocols {
 namespace loop_build {
 
-LoopMover_SlidingWindowCreator::~LoopMover_SlidingWindowCreator() {}
+LoopMover_SlidingWindowCreator::~LoopMover_SlidingWindowCreator() = default;
 
 moves::MoverOP LoopMover_SlidingWindowCreator::create_mover() const {
 	return moves::MoverOP( new loop_build::LoopMover_SlidingWindow() );

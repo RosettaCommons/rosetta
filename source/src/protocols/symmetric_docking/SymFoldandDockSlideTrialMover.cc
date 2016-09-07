@@ -52,7 +52,7 @@ SymFoldandDockSlideTrialMover::SymFoldandDockSlideTrialMover()
 	rotate_anchor_to_x_ = option[ OptionKeys::fold_and_dock::rotate_anchor_to_x ]();
 }
 
-SymFoldandDockSlideTrialMover::~SymFoldandDockSlideTrialMover(){}
+SymFoldandDockSlideTrialMover::~SymFoldandDockSlideTrialMover()= default;
 
 void
 SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {

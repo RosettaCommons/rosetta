@@ -35,14 +35,14 @@ public:
 	WorkUnit_CombinePose( core::Size nstruct = 10,
 		bool const cartesian = false );
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_CombinePose( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
-	virtual void init_from_cmd( const core::Size );
+	void init_from_cmd( const core::Size ) override;
 
 	void set_maxfrac( core::Real const setting ){ maxfrac_ = setting; }
 	void set_minfrac( core::Real const setting ){ minfrac_ = setting; }
@@ -75,14 +75,14 @@ public:
 		core::Real const maxscale = 0.0
 	);
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_NormalMode( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
-	virtual void init_from_cmd( const core::Size );
+	void init_from_cmd( const core::Size ) override;
 
 protected:
 
@@ -133,14 +133,14 @@ public:
 		core::Size const res2 = 0,
 		core::Real const kT = 0.0
 	);
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_RamaPerturber( *this ) );
 	}
 
 	// Pure virtual functions
-	virtual void run();
+	void run() override;
 
-	virtual void init_from_cmd( const core::Size );
+	void init_from_cmd( const core::Size ) override;
 
 	void set_nsteps( core::Size const setting ){ header.extra_data_1_ = setting; }
 	void set_res1( core::Size const setting ){ header.extra_data_2_ = setting; }

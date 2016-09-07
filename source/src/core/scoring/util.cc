@@ -47,7 +47,7 @@ eval_scsc_sr2b_energies(
 ) {
 	Real const scsc_d2 = r1sc_centroid.distance_squared( r2sc_centroid );
 	Real const scsc_radsum = r1sc_radius + r2sc_radius;
-	for ( ScoreFunction::CI_2B_Methods::const_iterator
+	for ( auto
 			iter = sfxn.ci_2b_begin(), iter_end = sfxn.ci_2b_end();
 			iter != iter_end; ++iter ) {
 		Real cutoff = scsc_radsum + (*iter)->atomic_interaction_cutoff();
@@ -55,7 +55,7 @@ eval_scsc_sr2b_energies(
 			(*iter)->sidechain_sidechain_energy( r1, r2, pose, sfxn, emap );
 		}
 	}
-	for ( ScoreFunction::CD_2B_Methods::const_iterator
+	for ( auto
 			iter = sfxn.cd_2b_begin(), iter_end = sfxn.cd_2b_end();
 			iter != iter_end; ++iter ) {
 		Real cutoff = scsc_radsum + (*iter)->atomic_interaction_cutoff();
@@ -79,7 +79,7 @@ eval_bbsc_sr2b_energies(
 ) {
 	Real const bbsc_d2 = r1bb_centroid.distance_squared( r2sc_centroid );
 	Real const bbsc_radsum = r1bb_radius + r2sc_radius;
-	for ( ScoreFunction::CI_2B_Methods::const_iterator
+	for ( auto
 			iter = sfxn.ci_2b_begin(), iter_end = sfxn.ci_2b_end();
 			iter != iter_end; ++iter ) {
 		if ( (*iter)->divides_backbone_and_sidechain_energetics() ) {
@@ -89,7 +89,7 @@ eval_bbsc_sr2b_energies(
 			}
 		}
 	}
-	for ( ScoreFunction::CD_2B_Methods::const_iterator
+	for ( auto
 			iter = sfxn.cd_2b_begin(), iter_end = sfxn.cd_2b_end();
 			iter != iter_end; ++iter ) {
 		if ( (*iter)->divides_backbone_and_sidechain_energetics() ) {
@@ -115,7 +115,7 @@ eval_bbbb_sr2b_energies(
 ) {
 	Real const bbbb_d2 = r1bb_centroid.distance_squared( r2bb_centroid );
 	Real const bbbb_radsum = r1bb_radius + r2bb_radius;
-	for ( ScoreFunction::CI_2B_Methods::const_iterator
+	for ( auto
 			iter = sfxn.ci_2b_begin(), iter_end = sfxn.ci_2b_end();
 			iter != iter_end; ++iter ) {
 		if ( (*iter)->divides_backbone_and_sidechain_energetics() ) {
@@ -125,7 +125,7 @@ eval_bbbb_sr2b_energies(
 			}
 		}
 	}
-	for ( ScoreFunction::CD_2B_Methods::const_iterator
+	for ( auto
 			iter = sfxn.cd_2b_begin(), iter_end = sfxn.cd_2b_end();
 			iter != iter_end; ++iter ) {
 		if ( (*iter)->divides_backbone_and_sidechain_energetics() ) {

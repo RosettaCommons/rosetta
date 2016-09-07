@@ -37,11 +37,11 @@ public:
 
 
 	/// @brief return string with class name
-	virtual std::string
-	type_name() const;
+	std::string
+	type_name() const override;
 
 	void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
 	void
 	write_ab_metrics_schema_to_db(
@@ -70,21 +70,21 @@ public:
 	//virtual utility::vector1<std::string>
 	//features_reporter_dependencies() const;
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose);
+		core::pose::Pose const & pose) override;
 
 	/// @brief collect all the feature data for the pose
-	virtual core::Size
+	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		features::StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session) override;
 
 
 
@@ -135,7 +135,7 @@ public:
 	/// @brief Set intermediate interface chains: Example: L_A, H_A, L_H, LH_A (A stands for antigen)
 	/// @brief Any other chains, use InterfaceFeatures.
 	void
-	set_interface_chains(utility::vector1< std::string > const & intermediate_interfaces);
+	set_interface_chains(utility::vector1< std::string > const & intermediate_interfaces) override;
 
 private:
 

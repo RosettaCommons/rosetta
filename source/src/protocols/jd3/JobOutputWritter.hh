@@ -43,7 +43,7 @@ class JobOutputWriter : public utility::pointer::ReferenceCount
 public:
 
 	JobOutputWriter();
-	virtual ~JobOutputWriter();
+	~JobOutputWriter() override;
 
 	virtual
 	void write_output_for_job( LarvalJobOP, JobOutputOP ) = 0;

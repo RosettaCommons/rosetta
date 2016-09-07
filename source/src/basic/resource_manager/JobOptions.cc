@@ -35,7 +35,7 @@ namespace resource_manager {
 JobOptions::JobOptions() : track_insertion_order_( false ) {}
 
 /// @details Auto-generated virtual destructor
-JobOptions::~JobOptions() {}
+JobOptions::~JobOptions() = default;
 
 using platform::Real;
 using utility::options::BooleanOptionKey;

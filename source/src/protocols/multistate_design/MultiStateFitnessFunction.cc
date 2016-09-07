@@ -35,7 +35,7 @@ MultiStateFitnessFunction::MultiStateFitnessFunction()
 	best_fitness_(0.)
 {}
 
-MultiStateFitnessFunction::~MultiStateFitnessFunction(){}
+MultiStateFitnessFunction::~MultiStateFitnessFunction()= default;
 
 void
 MultiStateFitnessFunction::add_state( core::pose::Pose const & pose, bool is_positive )
@@ -60,7 +60,7 @@ MultiStateFitnessFunction::add_state( SingleStateOP state )
 core::Real
 MultiStateFitnessFunction::evaluate( protocols::genetic_algorithm::Entity & entity )
 {
-	runtime_assert(aggregate_function_ != 0);
+	runtime_assert(aggregate_function_ != nullptr);
 
 	if ( dynamic_cast< protocols::multistate_design::MultiStateEntity * >( &entity ) ) {
 		protocols::multistate_design::MultiStateEntity & multi_state_entity =
@@ -79,10 +79,10 @@ MultiStateFitnessFunction::evaluate( protocols::genetic_algorithm::Entity & enti
 	if ( fitness < best_fitness_ ) {
 		best_fitness_ = fitness;
 		// real-time pose tracking of best traits vs. positive state pose(s) (graphics)
-		utility::vector1< core::pose::PoseOP >::iterator pose( best_entity_positive_states_.begin() );
-		for ( SingleStateOPs::iterator s( states_.begin() ), end( states_.end() ); s != end; ++s ) {
-			if ( (*s)->is_positive_state() ) {
-				**pose = (*s)->pose();
+		auto pose( best_entity_positive_states_.begin() );
+		for (auto & state : states_) {
+			if ( state->is_positive_state() ) {
+				**pose = state->pose();
 				++pose;
 			}
 		}
@@ -95,9 +95,9 @@ core::Real
 MultiStateFitnessFunction::evaluate_positive_states( protocols::genetic_algorithm::Entity & entity )
 {
 	core::Real fitness(0.);
-	for ( SingleStateOPs::iterator s( states_.begin() ), end( states_.end() ); s != end; ++s ) {
-		if ( !(*s)->is_positive_state() ) continue;
-		fitness += evaluate( entity, *s ? 1 : 0 ); // FIXME: is this correct? OP -> core::Size
+	for (auto & state : states_) {
+		if ( !state->is_positive_state() ) continue;
+		fitness += evaluate( entity, state ? 1 : 0 ); // FIXME: is this correct? OP -> core::Size
 	}
 	return fitness;
 }
@@ -125,10 +125,9 @@ SingleStateCOPs
 MultiStateFitnessFunction::const_states( bool positive_only /* = false */ ) const
 {
 	SingleStateCOPs const_states;
-	for ( SingleStateOPs::const_iterator s( states_.begin() ), end( states_.end() );
-			s != end; ++s ) {
-		if ( positive_only && !(*s)->is_positive_state() ) continue;
-		const_states.push_back( *s );
+	for (const auto & state : states_) {
+		if ( positive_only && !state->is_positive_state() ) continue;
+		const_states.push_back( state );
 	}
 	return const_states;
 }
@@ -140,9 +139,8 @@ core::Size
 MultiStateFitnessFunction::num_states( bool pos_neg ) const
 {
 	core::Size n(0);
-	for ( SingleStateOPs::const_iterator s( states_.begin() ), end( states_.end() );
-			s != end; ++s ) {
-		if ( (*s)->is_positive_state() != pos_neg ) continue;
+	for (const auto & state : states_) {
+		if ( state->is_positive_state() != pos_neg ) continue;
 		++n;
 	}
 	return n;

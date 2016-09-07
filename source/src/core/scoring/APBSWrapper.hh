@@ -42,7 +42,7 @@ public:
 	APBSWrapper(pose::Pose const & pose,
 		std::map<std::string, bool> const & charged_residues,
 		int dbg, bool calcenergy);
-	virtual ~APBSWrapper();
+	~APBSWrapper() override;
 	APBSResultCOP exec();
 private:
 	// Count the number of non-virtual atoms
@@ -54,7 +54,7 @@ private:
 class PQR : public utility::pointer::ReferenceCount {
 public:
 	PQR(pose::Pose const &pose, int natoms, std::map<std::string, bool> const & charged_residues);
-	virtual ~PQR();
+	~PQR() override;
 	inline int get_natoms() { return natoms_; }
 	static std::string const chains;
 	int natoms_;
@@ -69,7 +69,7 @@ public:
 		int calcforce, int calcenergy,
 		int write_pot, int write_charge, int write_smol,
 		int write_kappa, int write_diel, int write_atompot ) ;
-	virtual ~APBSResult();
+	~APBSResult() override;
 
 	std::vector<double> esEnergy;
 	std::vector<double> npEnergy;
@@ -133,7 +133,7 @@ public:
 		int use_diel;
 
 		I_PARAM();
-		~I_PARAM();
+		~I_PARAM() override;
 		int * raw_array();
 	};
 
@@ -146,12 +146,12 @@ public:
 	public:
 		double pdie, nsdie, srad, swin, temp, sdens, gamma, smpbe_vol, smpbe_size;
 		R_PARAM();
-		~R_PARAM();
+		~R_PARAM() override;
 		double * raw_array();
 	};
 
 	APBSConfig(pose::Pose const & pose, int natoms, int dbg, bool calcenergy);
-	virtual ~APBSConfig();
+	~APBSConfig() override;
 
 	// APBS debug level
 	int dbg;

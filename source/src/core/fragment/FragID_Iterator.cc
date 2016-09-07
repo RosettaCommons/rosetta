@@ -28,6 +28,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
@@ -47,10 +48,10 @@ namespace fragment {
 
 FragID_Iterator::FragID_Iterator( FrameIterator it ) : it_( it.it_ ), ipos_(1) {}
 FragID_Iterator::FragID_Iterator( ConstFrameIterator it ) : it_( it.it_ ), ipos_(1) {}
-FragID_Iterator::FragID_Iterator( FrameIteratorWorker_OP it ) : it_( it ), ipos_(1) {}
+FragID_Iterator::FragID_Iterator( FrameIteratorWorker_OP it ) : it_(std::move( it )), ipos_(1) {}
 FragID_Iterator::FragID_Iterator( FrameList::iterator it ) : it_( FrameIteratorWorker_OP( new FrameListIterator_( it ) ) ), ipos_( 1 ) {}
 
-FragID_Iterator::~FragID_Iterator() {}
+FragID_Iterator::~FragID_Iterator() = default;
 
 FragID_Iterator::FragID_Iterator() : it_( /* NULL */ ) {}
 

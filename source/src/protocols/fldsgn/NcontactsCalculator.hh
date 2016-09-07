@@ -69,14 +69,14 @@ public:// constructor/destructor
 	NcontactsCalculator( NcontactsCalculator const & rval );
 
 	/// @brief destructor
-	virtual ~NcontactsCalculator();
+	~NcontactsCalculator() override;
 
 
 public:// virtual constructor
 
 
 	/// @brief make clone
-	PoseMetricCalculatorOP clone() const { return PoseMetricCalculatorOP( new NcontactsCalculator( *this ) ); }
+	PoseMetricCalculatorOP clone() const override { return PoseMetricCalculatorOP( new NcontactsCalculator( *this ) ); }
 
 
 public:// mutator
@@ -99,9 +99,9 @@ public:// mutator
 protected:
 
 
-	virtual void lookup( String const & key, MetricValueBase * valptr ) const;
-	virtual std::string print( String const & key ) const;
-	virtual void recompute( Pose const & this_pose );
+	void lookup( String const & key, MetricValueBase * valptr ) const override;
+	std::string print( String const & key ) const override;
+	void recompute( Pose const & this_pose ) override;
 
 
 private:

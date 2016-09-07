@@ -183,10 +183,10 @@ void initialize_group_list(
 		//  std::string name( utility::trim( pose.residue_type( pos ).atom_name( iatom1 ) ) );
 		MethylNames const& methyls( methyl_lib[ rsd.aa() ] );
 		AtomGrps new_grps;
-		for ( MethylNames::const_iterator it = methyls.begin(); it != methyls.end(); ++it ) {
+		for (const auto & methyl : methyls) {
 			SizeList indices;
-			tr.Info << "pos " << pos << " " << it->first << " ";
-			for ( MethylNames::AtomList::const_iterator ait = it->second.begin(); ait != it->second.end(); ++ait ) {
+			tr.Info << "pos " << pos << " " << methyl.first << " ";
+			for ( auto ait = methyl.second.begin(); ait != methyl.second.end(); ++ait ) {
 				std::string atom( *ait );
 				if ( pos == 1 && atom == "H" ) {
 					atom="1H";
@@ -194,7 +194,7 @@ void initialize_group_list(
 				indices.push_back( rsd.atom_index( atom ) );
 				tr.Info << atom << " ";
 			}
-			new_grps.push_back( std::make_pair( it->first, indices ) );
+			new_grps.push_back( std::make_pair( methyl.first, indices ) );
 			//   tr.Info << "CONTROL: " << it->first << " " << new_grps.back().first << std::endl;
 			tr.Info << std::endl;
 		}
@@ -213,9 +213,9 @@ bool FragsToAtomDist::check_sequence(std::string const& other_sequence) const {
 
 FragsToAtomDist::DistanceRecord const& FragsToAtomDist::distance_record( core::id::NamedAtomID atom1, core::id::NamedAtomID atom2 ) const {
 	swap_atoms( atom1, atom2 );
-	NamedDistanceMap::const_iterator it1 = named_distmap_.find( atom1 );
+	auto it1 = named_distmap_.find( atom1 );
 	if ( it1 != named_distmap_.end() ) {
-		NamedInnerMap::const_iterator it2 = it1->second.find( atom2 );
+		auto it2 = it1->second.find( atom2 );
 		if ( it2 != it1->second.end() ) {
 			return it2->second;
 		}
@@ -227,11 +227,11 @@ FragsToAtomDist::DistanceRecord const& FragsToAtomDist::distance_record( core::i
 
 void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 	Size count =1;
-	for ( std::string::const_iterator i = sequence_.begin(); i != sequence_.end(); ++i ) {
+	for (char i : sequence_) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
 		}
-		output << *i;
+		output << i;
 		if ( count%50 == 0 ) {
 			output << endl;
 		}
@@ -265,11 +265,11 @@ void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 
 void FragsToAtomDist::write_hist_to_stream(std::ostream& output) const {
 	Size count =1;
-	for ( std::string::const_iterator i = sequence_.begin(); i != sequence_.end(); ++i ) {
+	for (char i : sequence_) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
 		}
-		output << *i;
+		output << i;
 		if ( count%50 == 0 ) {
 			output << endl;
 		}
@@ -326,9 +326,9 @@ void FragsToAtomDist::read_from_stream(std::istream& input) {
 		if ( line.substr(0,4)=="DATA" ) {
 			if ( line.substr(0,13)=="DATA SEQUENCE" ) {
 				line.erase(0,14);
-				for ( std::string::iterator i = line.begin(); i != line.end(); ++i ) {
-					if ( *i !=' ' ) {
-						sequence_+=*i;
+				for (char & i : line) {
+					if ( i !=' ' ) {
+						sequence_+=i;
 					}
 				}
 			}
@@ -427,10 +427,10 @@ void store_distance_snapshot(
 				AtomGrps const& group2( grps[ rsd2+start-1 ] );
 				for ( core::Size igrp2 = ( rsd2==rsd1 ? igrp1+1 : 1 ); igrp2<=group2.size(); igrp2++ ) {
 					Real cumdist( 0 );
-					for ( SizeList::const_iterator atom1 = group1[igrp1].second.begin(); atom1 != group1[igrp1].second.end(); ++atom1 ) {
+					for ( auto atom1 = group1[igrp1].second.begin(); atom1 != group1[igrp1].second.end(); ++atom1 ) {
 						PointPosition const & xyz_1 = short_pose.xyz( id::AtomID( *atom1, rsd1  ) );
-						for ( SizeList::const_iterator atom2 = group2[igrp2].second.begin(); atom2 != group2[igrp2].second.end(); ++atom2 ) {
-							PointPosition const & xyz_2 = short_pose.xyz( id::AtomID( *atom2, rsd2 ) );
+						for (unsigned long atom2 : group2[igrp2].second) {
+							PointPosition const & xyz_2 = short_pose.xyz( id::AtomID( atom2, rsd2 ) );
 							Real const inv_dist2( 1.0/xyz_1.distance_squared( xyz_2 ) );
 							Real const inv_dist6( inv_dist2 * inv_dist2 * inv_dist2 );
 							cumdist += inv_dist6;

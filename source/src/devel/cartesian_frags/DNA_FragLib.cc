@@ -38,7 +38,7 @@ namespace devel {
 namespace cartesian_frags {
 
 /// @details Auto-generated virtual destructor
-DNA_FragLib::~DNA_FragLib() {}
+DNA_FragLib::~DNA_FragLib() = default;
 
 using namespace core;
 

@@ -62,17 +62,17 @@ public:
 
 	/// @brief Sets the input Pose for both the container
 	/// and the contained movers, for rmsd
-	virtual void set_input_pose( PoseCOP pose );
+	void set_input_pose( PoseCOP pose ) override;
 
 	// @brief Sets the native pose for both the container
 	// and the contained movers, for rmsd
-	virtual void set_native_pose( PoseCOP pose );
+	void set_native_pose( PoseCOP pose ) override;
 
 	// @brief Sets the current tag for both the container
 	// and the contained movers
-	virtual void set_current_tag( std::string const & new_tag );
+	void set_current_tag( std::string const & new_tag ) override;
 
-	virtual void apply( core::pose::Pose & pose ) = 0;
+	void apply( core::pose::Pose & pose ) override = 0;
 	Size nr_moves() { return movers_.size(); };
 	Size size() const { return movers_.size(); };
 
@@ -131,9 +131,9 @@ public:
 
 
 	/// @brief deep copy of all contained movers.
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 	/// @brief MoverStatus of the mover will be evaluated after each mover
 	void use_mover_status( bool const flag ){
@@ -152,8 +152,8 @@ public:
 	///     RepeatMover
 	///     SequenceMover
 	///     TrialMover
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 
@@ -178,15 +178,15 @@ public:
 	/// @brief Copy constructor.  Performs a deep copy of all contained movers.
 	RandomMover( RandomMover const & );
 
-	virtual MoverOP clone() const;
-	virtual MoverOP fresh_instance() const;
+	MoverOP clone() const override;
+	MoverOP fresh_instance() const override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	std::string get_name_individual_mover(core::Size index);
 
-	core::Real last_proposal_density_ratio();
+	core::Real last_proposal_density_ratio() override;
 
 	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent
 	void parse_my_tag(
@@ -194,7 +194,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 private:
 	Size nmoves_;
@@ -216,13 +216,13 @@ public:
 	CycleMover( CycleMover const & source );
 
 	/// @brief Clone returns a new instance of CycleMover representing a deep copy of this mover.
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 	void reset_cycle_index(); //JQX: add reset the cycle mover index next_move_
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	Size next_move_; //< index into movers_, may need modulo operation first

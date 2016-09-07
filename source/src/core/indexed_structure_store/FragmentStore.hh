@@ -14,6 +14,7 @@
 #ifndef INCLUDED_core_indexed_structure_store_FragmentStore_hh
 #define INCLUDED_core_indexed_structure_store_FragmentStore_hh
 
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 
@@ -44,7 +45,7 @@ struct FragmentSpecification
 
 	FragmentSpecification(numeric::Size fragment_length, std::vector<std::string> fragment_atoms) :
 		fragment_length(fragment_length),
-		fragment_atoms(fragment_atoms)
+		fragment_atoms(std::move(fragment_atoms))
 	{
 
 	}

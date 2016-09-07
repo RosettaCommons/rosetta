@@ -29,7 +29,7 @@ class AlignmentSet {
 
 public:
 	AlignmentSet () {}
-	virtual ~AlignmentSet() {}
+	virtual ~AlignmentSet() = default;
 
 	/// @brief Gets the next alignment from the stream. Might be the same
 	/// alignment every time, or might be a different alignment after each

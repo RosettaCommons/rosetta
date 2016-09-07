@@ -195,7 +195,7 @@ protocols::moves::MoverOP ClassicRelax::clone() const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ClassicRelax::~ClassicRelax(){}
+ClassicRelax::~ClassicRelax()= default;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -547,7 +547,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
 
-	runtime_assert( get_scorefxn() != 0 );
+	runtime_assert( get_scorefxn() != nullptr );
 	(*get_scorefxn())(pose);
 
 	/// Invoke parent local_movemap initialization routines
@@ -789,7 +789,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	// add scores to map for output
 	std::map < std::string, core::Real > score_map;
 	protocols::jd2::ScoreMap::nonzero_energies( score_map, get_scorefxn(), pose );
-	if ( get_native_pose()!=0 ) {
+	if ( get_native_pose()!=nullptr ) {
 		score_map["rms"] = CA_rmsd( *get_native_pose(), pose );
 	}
 

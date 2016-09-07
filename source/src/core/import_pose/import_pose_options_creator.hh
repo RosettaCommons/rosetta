@@ -24,10 +24,10 @@ class ImportPoseOptionsCreator : public basic::resource_manager::ResourceOptions
 {
 public:
 	ImportPoseOptionsCreator();
-	virtual ~ImportPoseOptionsCreator();
+	~ImportPoseOptionsCreator() override;
 
-	virtual basic::resource_manager::ResourceOptionsOP create_options() const;
-	virtual std::string options_type() const;
+	basic::resource_manager::ResourceOptionsOP create_options() const override;
+	std::string options_type() const override;
 
 };
 

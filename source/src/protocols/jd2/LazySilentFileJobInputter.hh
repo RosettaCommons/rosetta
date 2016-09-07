@@ -29,15 +29,15 @@ public:
 
 	LazySilentFileJobInputter();
 
-	virtual ~LazySilentFileJobInputter();
+	~LazySilentFileJobInputter() override;
 
-	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	void pose_from_job( core::pose::Pose & pose, JobOP job ) override;
 
 	virtual core::io::silent::SilentStruct const& struct_from_job( JobOP job );
 
-	virtual void fill_jobs( JobsContainer & jobs );
+	void fill_jobs( JobsContainer & jobs ) override;
 
-	virtual JobInputterInputSource::Enum input_source() const;
+	JobInputterInputSource::Enum input_source() const override;
 
 	core::io::silent::SilentFileData const& silent_file_data() const { return sfd_; };
 

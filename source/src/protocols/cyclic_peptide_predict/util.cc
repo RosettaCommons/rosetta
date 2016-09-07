@@ -30,7 +30,7 @@
 #include <utility/string_util.hh>
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide_predict.util" );
 

@@ -57,7 +57,7 @@ SplitUnfoldedTwoBodyPotential::SplitUnfoldedTwoBodyPotential(std::string filenam
 void SplitUnfoldedTwoBodyPotential::get_restype_emap(const chemical::ResidueType & restype,EnergyMap & emap) const
 {
 	std::string resname=restype.name();
-	std::map<std::string,EnergyMap>::const_iterator iter=residue_two_body_energies_.find(resname);
+	auto iter=residue_two_body_energies_.find(resname);
 	if ( iter != residue_two_body_energies_.end() ) {
 		EnergyMap retmap=iter->second;
 		emap=retmap;
@@ -103,7 +103,7 @@ EnergyMap SplitUnfoldedTwoBodyPotential::calculate_residue_emap(const chemical::
 		//now need to add the energies for this atom to the running total
 		//not sure this is the best way to do this...
 		//hacky workaround to avoid using the [] operator, which const functions disallow for some reason.
-		std::map<std::string,core::scoring::EnergyMap>::const_iterator curratomiter=atom_two_body_energies_.find(curratomname);
+		auto curratomiter=atom_two_body_energies_.find(curratomname);
 		if ( curratomiter==atom_two_body_energies_.end() ) {
 			TR << "ENERGY FOR ATOM TYPE " << curratomname << " IN " << restype.name() << " NOT FOUND!" << std::endl;
 		}

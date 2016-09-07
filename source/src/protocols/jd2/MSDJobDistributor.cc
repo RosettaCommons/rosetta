@@ -46,7 +46,7 @@ namespace jd2 {
 
 static basic::Tracer TR ("protocols.jd2.MSDJobDistributor");
 
-MSDJobDistributor::~MSDJobDistributor() {}
+MSDJobDistributor::~MSDJobDistributor() = default;
 
 core::Size
 MSDJobDistributor::get_new_job_id() {
@@ -78,7 +78,7 @@ MSDJobDistributor::handle_interrupt() {
 void
 MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 
-	time_t const allstarttime = time(NULL);
+	time_t const allstarttime = time(nullptr);
 
 	// mover is not defined yet - can't instantiate until it's defined as a parsed protocol below
 	current_nstruct_ = 1;
@@ -106,7 +106,7 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 
 		while ( retry_counter < ntrials ) {
 
-			time_t job_time = time(NULL);
+			time_t job_time = time(nullptr);
 
 			// Keep a record of the order that poses should be handled for randomization of inputs
 			utility::vector1< core::Size > pose_order;
@@ -142,7 +142,7 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 					job_outputter_->final_pose(current_jobs[ i ], *working_poses[ i ], "");
 					job_outputter_->flush();
 				}
-				TR << "Current job completed in " << (time(NULL) - job_time) << " seconds " << std::endl;
+				TR << "Current job completed in " << (time(nullptr) - job_time) << " seconds " << std::endl;
 				break;
 			}
 
@@ -156,7 +156,7 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 		++current_nstruct_;
 
 	}
-	TR << "All jobs completed in " << (time(NULL) - allstarttime ) << " seconds " << std::endl;
+	TR << "All jobs completed in " << (time(nullptr) - allstarttime ) << " seconds " << std::endl;
 
 }
 

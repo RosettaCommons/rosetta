@@ -46,14 +46,14 @@ public:
 	/// @brief Copy constructor
 	RepeatMover(RepeatMover const & object_to_copy);
 
-	~RepeatMover();
+	~RepeatMover() override;
 
 	/// @brief Repeats the input Mover a specified number of times
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	core::Size get_nmoves() const;
 	std::string get_mover() const;

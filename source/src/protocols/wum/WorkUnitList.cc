@@ -32,7 +32,7 @@ void WorkUnitList::register_work_unit( const std::string &name, WorkUnitBaseOP t
 
 const WorkUnitBaseCOP WorkUnitList::get_work_unit( const std::string &name ) const{
 	TR.Debug << "Getting WorkUnit.." << std::endl;
-	std::map< std::string, WorkUnitBaseCOP >::const_iterator iter = work_unit_list_.find( name );
+	auto iter = work_unit_list_.find( name );
 	if ( iter == work_unit_list_.end() ) {
 		utility_exit_with_message( "ERROR: Cannot find WorkUnit named '" + name + "'" );
 	}
@@ -41,9 +41,8 @@ const WorkUnitBaseCOP WorkUnitList::get_work_unit( const std::string &name ) con
 
 // Copy over all the WorkUnitOPs from source to the current workUnitlist.
 void WorkUnitList::merge( const WorkUnitList & source ){
-	for ( std::map< std::string, WorkUnitBaseCOP >::const_iterator it = source.work_unit_list_.begin(),
-			end = source.work_unit_list_.end(); it != end; ++it ) {
-		work_unit_list_[ it->first ] = it->second;
+	for (const auto & it : source.work_unit_list_) {
+		work_unit_list_[ it.first ] = it.second;
 	}
 }
 

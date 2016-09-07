@@ -35,10 +35,10 @@ public:
 
 	PackStatMover();
 
-	virtual void apply(
+	void apply(
 		core::pose::Pose & pose
-	);
-	virtual std::string get_name() const;
+	) override;
+	std::string get_name() const override;
 
 	// void set_verbose( bool _verbose ) { verbose_ = _verbose; }
 	// bool get_verbose( ) { return verbose_; }

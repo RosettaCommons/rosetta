@@ -22,30 +22,30 @@ namespace cryst {
 
 class UpdateCrystInfoCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class DockLatticeMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class MakeLatticeMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 
 class MakeLayerMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 

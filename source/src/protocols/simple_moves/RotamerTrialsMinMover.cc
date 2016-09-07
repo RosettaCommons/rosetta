@@ -60,7 +60,7 @@ RotamerTrialsMinMover::RotamerTrialsMinMover() : protocols::moves::Mover()
 RotamerTrialsMinMover::RotamerTrialsMinMover(
 	ScoreFunctionCOP scorefxn_in,
 	PackerTask & task_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( /* NULL */ )
+) : protocols::moves::Mover(), scorefxn_(std::move( scorefxn_in )), factory_( /* NULL */ )
 {
 	protocols::moves::Mover::type( "RotamerTrialsMin" );
 	task_ = task_in.clone();
@@ -71,7 +71,7 @@ RotamerTrialsMinMover::RotamerTrialsMinMover(
 RotamerTrialsMinMover::RotamerTrialsMinMover(
 	ScoreFunctionCOP scorefxn_in,
 	TaskFactoryCOP factory_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( /* NULL */ ), factory_( factory_in )
+) : protocols::moves::Mover(), scorefxn_(std::move( scorefxn_in )), task_( /* NULL */ ), factory_(std::move( factory_in ))
 {
 	protocols::moves::Mover::type( "RotamerTrialsMin" );
 	init();
@@ -85,7 +85,7 @@ RotamerTrialsMinMover::init()
 }
 
 
-RotamerTrialsMinMover::~RotamerTrialsMinMover() {}
+RotamerTrialsMinMover::~RotamerTrialsMinMover() = default;
 
 // setters
 void RotamerTrialsMinMover::score_function( core::scoring::ScoreFunctionCOP sf ) { scorefxn_ = sf; }
@@ -112,7 +112,7 @@ void
 RotamerTrialsMinMover::show(std::ostream & output) const
 {
 	Mover::show(output);
-	if ( scorefxn() != 0 ) {
+	if ( scorefxn() != nullptr ) {
 		output << "Score function: " << scorefxn()->get_name() << std::endl;
 	} else { output << "Score function: none" << std::endl; }
 }
@@ -149,14 +149,14 @@ RotamerTrialsMinMover::parse_my_tag(
 	assert( tag->getName() == "RotamerTrialsMinMover" );
 
 	core::scoring::ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
-	if ( new_score_function == 0 ) {
+	if ( new_score_function == nullptr ) {
 		TR << "Using default score function for RotamerTrialsMinMover." << std::endl;
 		new_score_function = core::scoring::get_score_function();
 	}
 	score_function( new_score_function );
 
 	core::pack::task::TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0 ) {
+	if ( new_task_factory == nullptr ) {
 		TR << "Using default Task Operations for RotamerTrialsMinMover." << std::endl;
 		new_task_factory = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
 	}
@@ -223,7 +223,7 @@ EnergyCutRotamerTrialsMinMover::EnergyCutRotamerTrialsMinMover(
 	PackerTask & task_in,
 	protocols::moves::MonteCarloOP mc_in,
 	core::Real energycut_in
-) : protocols::simple_moves::RotamerTrialsMinMover(scorefxn_in, task_in), mc_( mc_in ), energycut_( energycut_in )
+) : protocols::simple_moves::RotamerTrialsMinMover(scorefxn_in, task_in), mc_(std::move( mc_in )), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "EnergyCutRotamerTrialsMin" );
 	init();
@@ -235,13 +235,13 @@ EnergyCutRotamerTrialsMinMover::EnergyCutRotamerTrialsMinMover(
 	TaskFactoryCOP factory_in,
 	protocols::moves::MonteCarloOP mc_in,
 	core::Real energycut_in
-) : protocols::simple_moves::RotamerTrialsMinMover(scorefxn_in, factory_in), mc_( mc_in ), energycut_( energycut_in )
+) : protocols::simple_moves::RotamerTrialsMinMover(scorefxn_in, factory_in), mc_(std::move( mc_in )), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "EnergyCutRotamerTrialsMin" );
 	init();
 }
 
-EnergyCutRotamerTrialsMinMover::~EnergyCutRotamerTrialsMinMover() {}
+EnergyCutRotamerTrialsMinMover::~EnergyCutRotamerTrialsMinMover() = default;
 
 void
 EnergyCutRotamerTrialsMinMover::apply( core::pose::Pose & pose )

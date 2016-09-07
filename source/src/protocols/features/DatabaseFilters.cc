@@ -64,11 +64,11 @@ core::Real get_current_model_score(core::pose::Pose const & pose, core::Size sco
 
 DatabaseFilterOP get_DB_filter_ptr(){
 	if ( ! basic::options::option[basic::options::OptionKeys::out::database_filter].user() ) {
-		return NULL;// just leave the database_filter pointer null
+		return nullptr;// just leave the database_filter pointer null
 	}
 	utility::vector1<std::string> filter_option=
 		basic::options::option[basic::options::OptionKeys::out::database_filter];
-	utility::vector1<std::string>::iterator begin = filter_option.begin();
+	auto begin = filter_option.begin();
 	std::string type= *begin;
 	++begin;
 	utility::vector1<std::string> arguments(begin, filter_option.end());
@@ -79,7 +79,7 @@ DatabaseFilterOP get_DB_filter_ptr(){
 	if ( type == "TopCountOfAllInputs" ) return DatabaseFilterOP( new TopCountOfAllInputs(arguments) );
 
 	utility_exit_with_message(type+" is not a valid Database Filter name");
-	return NULL; // To keep the compiler happy
+	return nullptr; // To keep the compiler happy
 }
 
 WriteDeletePair get_write_delete_pair(
@@ -127,7 +127,7 @@ WriteDeletePair get_write_delete_pair(
 		protocols::jd2::JobCOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 		//The job data is stored as a list instead of a map so we have to actually iterate over the whole thing
 		//In order to pull out one particular item
-		protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
+		auto it(job->output_string_real_pairs_begin());
 		for ( ; it != job->output_string_real_pairs_end(); ++it ) {
 			if ( it->first == score_term ) {
 				current_model_score = it->second;

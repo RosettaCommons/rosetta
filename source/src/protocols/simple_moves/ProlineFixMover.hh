@@ -38,10 +38,10 @@ namespace simple_moves {
 class ProlineFixMover : public protocols::moves::Mover {
 public:
 	ProlineFixMover()  {}
-	~ProlineFixMover() {}
+	~ProlineFixMover() override = default;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 }; // ProlineFixMover
 
 } // moves

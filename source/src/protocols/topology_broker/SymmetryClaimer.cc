@@ -84,10 +84,9 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
 	asymmetric_res_ = pose.total_residue();
 
 	utility::vector1< claims::SequenceClaimOP > original_claims;
-	for ( claims::DofClaims::iterator claim = pre_accepted.begin();
-			claim != pre_accepted.end(); ++claim ) {
-		claims::SequenceClaimOP seq_ptr( utility::pointer::dynamic_pointer_cast< claims::SequenceClaim >( *claim ) );
-		runtime_assert( seq_ptr != 0 );
+	for (auto & claim : pre_accepted) {
+		claims::SequenceClaimOP seq_ptr( utility::pointer::dynamic_pointer_cast< claims::SequenceClaim >( claim ) );
+		runtime_assert( seq_ptr != nullptr );
 		original_claims.push_back( seq_ptr );
 	}
 

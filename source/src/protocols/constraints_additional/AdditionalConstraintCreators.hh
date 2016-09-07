@@ -29,10 +29,10 @@ class BindingSiteConstraintCreator : public core::scoring::constraints::Constrai
 {
 public:
 	BindingSiteConstraintCreator();
-	virtual ~BindingSiteConstraintCreator();
+	~BindingSiteConstraintCreator() override;
 
-	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	core::scoring::constraints::ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the SequenceCoupling1BDconstraint
@@ -40,10 +40,10 @@ class SequenceCoupling1BDConstraintCreator : public core::scoring::constraints::
 {
 public:
 	SequenceCoupling1BDConstraintCreator();
-	virtual ~SequenceCoupling1BDConstraintCreator();
+	~SequenceCoupling1BDConstraintCreator() override;
 
-	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	core::scoring::constraints::ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief Mover creator for the SequenceCouplingconstraint
@@ -51,10 +51,10 @@ class SequenceCouplingConstraintCreator : public core::scoring::constraints::Con
 {
 public:
 	SequenceCouplingConstraintCreator();
-	virtual ~SequenceCouplingConstraintCreator();
+	~SequenceCouplingConstraintCreator() override;
 
-	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	core::scoring::constraints::ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 /// @brief This class can be used to replace the standard AtomPairConstraintsCreator; see BrokerMain.cc for an example
@@ -62,10 +62,10 @@ class NamedAtomPairConstraintCreator : public core::scoring::constraints::Constr
 {
 public:
 	NamedAtomPairConstraintCreator();
-	virtual ~NamedAtomPairConstraintCreator();
+	~NamedAtomPairConstraintCreator() override;
 
-	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	core::scoring::constraints::ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 

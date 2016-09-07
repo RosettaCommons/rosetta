@@ -50,20 +50,20 @@ public:
 
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options = 0,
-		RNA_DeNovoParametersCOP params = 0);
+	RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options = nullptr,
+		RNA_DeNovoParametersCOP params = nullptr);
 
-	~RNA_DeNovoProtocol();
+	~RNA_DeNovoProtocol() override;
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Apply the RNA denovo modeling protocol to the input pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	void
 	output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag,

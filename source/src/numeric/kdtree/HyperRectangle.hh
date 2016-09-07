@@ -27,7 +27,7 @@ class HyperRectangle : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~HyperRectangle();
+	~HyperRectangle() override;
 	HyperRectangle();
 
 	HyperRectangle(

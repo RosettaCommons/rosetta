@@ -311,7 +311,7 @@ FastRelax::FastRelax(
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-FastRelax::~FastRelax() {}
+FastRelax::~FastRelax() = default;
 
 
 /// Return a copy of ourselves
@@ -971,23 +971,23 @@ void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
 	runtime_assert( repeats > 0 );
 
 	// repeat 1
-	filelines.push_back( "ramp_repack_min 0.02  0.01"  );
-	filelines.push_back( "batch_shave 0.25"  );
-	filelines.push_back( "ramp_repack_min 0.250 0.01"  );
-	filelines.push_back( "batch_shave 0.25"  );
-	filelines.push_back( "ramp_repack_min 0.550 0.01"  );
-	filelines.push_back( "batch_shave 0.25"  );
-	filelines.push_back( "ramp_repack_min 1     0.00001"  );
-	filelines.push_back( "accept_to_best"  );
+	filelines.emplace_back("ramp_repack_min 0.02  0.01"  );
+	filelines.emplace_back("batch_shave 0.25"  );
+	filelines.emplace_back("ramp_repack_min 0.250 0.01"  );
+	filelines.emplace_back("batch_shave 0.25"  );
+	filelines.emplace_back("ramp_repack_min 0.550 0.01"  );
+	filelines.emplace_back("batch_shave 0.25"  );
+	filelines.emplace_back("ramp_repack_min 1     0.00001"  );
+	filelines.emplace_back("accept_to_best"  );
 
 	// repeats 2->n
 	for ( core::Size i=2; i<=repeats; ++i ) {
-		filelines.push_back( "ramp_repack_min 0.02  0.01"  );
-		filelines.push_back( "ramp_repack_min 0.250 0.01"  );
-		filelines.push_back( "batch_shave 0.25"  );
-		filelines.push_back( "ramp_repack_min 0.550 0.01"  );
-		filelines.push_back( "ramp_repack_min 1     0.00001"  );
-		filelines.push_back( "accept_to_best"  );
+		filelines.emplace_back("ramp_repack_min 0.02  0.01"  );
+		filelines.emplace_back("ramp_repack_min 0.250 0.01"  );
+		filelines.emplace_back("batch_shave 0.25"  );
+		filelines.emplace_back("ramp_repack_min 0.550 0.01"  );
+		filelines.emplace_back("ramp_repack_min 1     0.00001"  );
+		filelines.emplace_back("accept_to_best"  );
 	}
 
 	set_script_from_lines( filelines );
@@ -1038,51 +1038,51 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	runtime_assert( standard_repeats > 0 );
 	if ( script_file == "" && dualspace_ ) {
 		TR << "================== Using dualspace script ==================" << std::endl;
-		filelines.push_back( "switch:torsion"           );
+		filelines.emplace_back("switch:torsion"           );
 		filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
-		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
+		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
+		filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
+		filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
+		filelines.emplace_back("accept_to_best"                  );
+		filelines.emplace_back("endrepeat "                      );
 
-		filelines.push_back( "switch:cartesian"           );
-		filelines.push_back( "repeat 1"                  );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
-		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
+		filelines.emplace_back("switch:cartesian"           );
+		filelines.emplace_back("repeat 1"                  );
+		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
+		filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
+		filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
+		filelines.emplace_back("accept_to_best"                  );
+		filelines.emplace_back("endrepeat "                      );
 	} else if ( script_file == "" ) {
 		TR << "================== Using default script ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
-		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
+		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
+		filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
+		filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
+		filelines.emplace_back("accept_to_best"                  );
+		filelines.emplace_back("endrepeat "                      );
 	} else if ( script_file == "NO CST RAMPING" && dualspace_ ) {
 		TR << "================== Using dualspace script - no constraint ramping ==================" << std::endl;
-		filelines.push_back( "switch:torsion"                  );
+		filelines.emplace_back("switch:torsion"                  );
 		filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
+		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.250 0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.550 0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 1     0.00001  1.0"      );
+		filelines.emplace_back("accept_to_best"                  );
+		filelines.emplace_back("endrepeat "                      );
 
-		filelines.push_back( "switch:cartesian"                  );
-		filelines.push_back( "repeat 1"                                );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
+		filelines.emplace_back("switch:cartesian"                  );
+		filelines.emplace_back("repeat 1"                                );
+		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.250 0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.550 0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 1     0.00001  1.0"      );
+		filelines.emplace_back("accept_to_best"                  );
+		filelines.emplace_back("endrepeat "                      );
 		/*
 		}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualfaster ]() ){
 		TR << "================== Using faster dualspace script ==================" << std::endl;
@@ -1107,12 +1107,12 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	} else if ( script_file == "NO CST RAMPING" ) {
 		TR << "================== Using default script - no constraint ramping ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
-		filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
+		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.250 0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 0.550 0.01     1.0"      );
+		filelines.emplace_back("ramp_repack_min 1     0.00001  1.0"      );
+		filelines.emplace_back("accept_to_best"                  );
+		filelines.emplace_back("endrepeat "                      );
 	} else {
 		std::ifstream infile( script_file.c_str() );
 		TR.Debug << "================== Reading script file: ==================" << std::endl;
@@ -1322,27 +1322,27 @@ void FastRelax::batch_apply(
 				pose.dump_pdb( "dump_" + right_string_of( index, 4, '0' ) + "_" + right_string_of( (int) cmd.param1, 4, '0' ) );
 			}
 		} else if ( cmd.command == "repack" ) {
-			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
-				if ( !relax_decoys[index].active ) continue;
-				relax_decoys[index].current_struct->fill_pose( pose );
+			for (auto & relax_decoy : relax_decoys) {
+				if ( !relax_decoy.active ) continue;
+				relax_decoy.current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
 				pack_full_repack_->apply( pose );
 				core::Real score = (*local_scorefxn)(pose);
-				relax_decoys[index].current_score = score;
-				relax_decoys[index].current_struct->fill_struct( pose );
+				relax_decoy.current_score = score;
+				relax_decoy.current_struct->fill_struct( pose );
 			}
 
 		} else if ( cmd.command == "min" ) {
 			if ( cmd.nparams < 1 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 
-			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
-				if ( !relax_decoys[index].active ) continue;
-				relax_decoys[index].current_struct->fill_pose( pose );
+			for (auto & relax_decoy : relax_decoys) {
+				if ( !relax_decoy.active ) continue;
+				relax_decoy.current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
 				do_minimize( pose, cmd.param1, local_movemap, local_scorefxn  );
 				core::Real score = (*local_scorefxn)(pose);
-				relax_decoys[index].current_score = score;
-				relax_decoys[index].current_struct->fill_struct( pose );
+				relax_decoy.current_score = score;
+				relax_decoy.current_struct->fill_struct( pose );
 			}
 		} else if ( cmd.command.substr(0,5) == "scale" ) {
 			// no input validation as of now, relax will just die
@@ -1374,11 +1374,11 @@ void FastRelax::batch_apply(
 			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * cmd.param1 );
 
 
-			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
+			for (auto & relax_decoy : relax_decoys) {
 				try {
 					clock_t starttime = clock();
-					if ( !relax_decoys[index].active ) continue;
-					relax_decoys[index].current_struct->fill_pose( pose );
+					if ( !relax_decoy.active ) continue;
+					relax_decoy.current_struct->fill_pose( pose );
 					if ( input_csts ) pose.constraint_set( input_csts );
 					if ( total_repeat_count > 1 && repeat_count > 2 ) {
 						if ( cmd.param1 < 0.2 ) {
@@ -1390,16 +1390,16 @@ void FastRelax::batch_apply(
 
 					pack_full_repack_->apply( pose );
 					do_minimize( pose, cmd.param2, local_movemap, local_scorefxn  );
-					relax_decoys[index].current_score = (*local_scorefxn)(pose);
-					relax_decoys[index].current_struct->fill_struct( pose );
+					relax_decoy.current_score = (*local_scorefxn)(pose);
+					relax_decoy.current_struct->fill_struct( pose );
 
 					clock_t endtime = clock();
-					TR.Debug << "time:" << endtime - starttime << " Score: " << relax_decoys[index].current_score << std::endl;
+					TR.Debug << "time:" << endtime - starttime << " Score: " << relax_decoy.current_score << std::endl;
 				} catch ( utility::excn::EXCN_Base& excn ) {
 					std::cerr << "Ramp_repack_min exception: " << std::endl;
 					excn.show( std::cerr );
 					// just deactivate this pose
-					relax_decoys[index].active = false;
+					relax_decoy.active = false;
 					// and need to "reset scoring" of the pose we reuse
 					TR << "Throwing out one structure due to scoring problems!" << std::endl;
 					pose.scoring_end(*local_scorefxn);
@@ -1414,11 +1414,11 @@ void FastRelax::batch_apply(
 			TR.Debug << "SHAVE FACTOR: " << reduce_factor << std::endl;
 
 			std::vector < core::Real > energies;
-			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
-				if ( !relax_decoys[index].active ) continue;
-				TR.Debug << "SHAVE: " << relax_decoys[index].current_score << std::endl;
-				energies.push_back( relax_decoys[index].current_score );
-				TR.Debug << relax_decoys[index].current_score << std::endl;
+			for (auto & relax_decoy : relax_decoys) {
+				if ( !relax_decoy.active ) continue;
+				TR.Debug << "SHAVE: " << relax_decoy.current_score << std::endl;
+				energies.push_back( relax_decoy.current_score );
+				TR.Debug << relax_decoy.current_score << std::endl;
 			}
 
 			if ( energies.size() < 1 ) {
@@ -1505,9 +1505,9 @@ void FastRelax::batch_apply(
 			}
 			std::sort( energies.begin(), energies.end() );
 			core::Real cutoff_energy = energies[ core::Size( floor(core::Real(energies.size()) * (decay_rate)) )];
-			for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
-				if ( !relax_decoys[index].active ) continue;
-				if ( relax_decoys[index].best_score > cutoff_energy ) relax_decoys[index].active = false;
+			for (auto & relax_decoy : relax_decoys) {
+				if ( !relax_decoy.active ) continue;
+				if ( relax_decoy.best_score > cutoff_energy ) relax_decoy.active = false;
 			}
 
 		} else if ( cmd.command == "exit" ) {
@@ -1525,10 +1525,10 @@ void FastRelax::batch_apply(
 
 	input_structs.clear();
 	// Finally return all the scores;
-	for ( core::Size index=0; index < relax_decoys.size(); ++ index ) {
-		relax_decoys[index].best_struct->fill_pose( pose );
+	for (auto & relax_decoy : relax_decoys) {
+		relax_decoy.best_struct->fill_pose( pose );
 		if ( input_csts ) pose.constraint_set( input_csts );
-		setPoseExtraScore( pose, "giveup", relax_decoys[index].accept_count  );
+		setPoseExtraScore( pose, "giveup", relax_decoy.accept_count  );
 		core::Real rms = 0;
 		core::Real gdtmm = 0;
 		if ( get_native_pose() ) {
@@ -1539,20 +1539,20 @@ void FastRelax::batch_apply(
 		//pose.dump_pdb("best_relax_step_"+string_of( index )+".pdb" );
 		core::Real score = (*local_scorefxn)( pose );
 		TR << "BRELAX: Rms: "<< rms
-			<< " CenScore: "  << relax_decoys[index].initial_score
-			<< " CenRMS: "    << relax_decoys[index].initial_rms
+			<< " CenScore: "  << relax_decoy.initial_score
+			<< " CenRMS: "    << relax_decoy.initial_rms
 			<< " FAScore: "   << score
-			<< " Check: "     << relax_decoys[index].best_score
-			<< " Acc: "       << relax_decoys[index].accept_count
-			<< " Go: "        << (relax_decoys[index].active ? "  1" : "  0") <<  std::endl;
+			<< " Check: "     << relax_decoy.best_score
+			<< " Acc: "       << relax_decoy.accept_count
+			<< " Go: "        << (relax_decoy.active ? "  1" : "  0") <<  std::endl;
 
-		if ( !relax_decoys[index].active ) continue;
+		if ( !relax_decoy.active ) continue;
 
 		SilentStructOP new_struct =  force_nonideal_?
 			SilentStructFactory::get_instance()->get_silent_struct("binary") :
 			SilentStructFactory::get_instance()->get_silent_struct_out();
 		new_struct->fill_struct( pose );
-		new_struct->copy_scores( *(relax_decoys[index].start_struct) );
+		new_struct->copy_scores( *(relax_decoy.start_struct) );
 		new_struct->energies_from_pose( pose );
 		new_struct->add_energy("rms", rms, 1.0 );
 		new_struct->add_energy("gdtmm", gdtmm, 1.0 );

@@ -72,7 +72,7 @@ NMerPSSMEnergyFilter::NMerPSSMEnergyFilter(
 	string_resnums_ = string_resnums;
 }
 
-NMerPSSMEnergyFilter::~NMerPSSMEnergyFilter() {}
+NMerPSSMEnergyFilter::~NMerPSSMEnergyFilter() = default;
 
 void
 NMerPSSMEnergyFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )

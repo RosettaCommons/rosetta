@@ -22,26 +22,26 @@ namespace pose_selectors {
 
 class AndSelectorCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
-	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const;
-	virtual std::string keyname() const { return "AndSelector"; }
+	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
+	std::string keyname() const override { return "AndSelector"; }
 };
 
 class OrSelectorCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
-	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const;
-	virtual std::string keyname() const { return "OrSelector"; }
+	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
+	std::string keyname() const override { return "OrSelector"; }
 };
 
 class TopNByPropertyCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
-	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const;
-	virtual std::string keyname() const { return "TopNByProperty"; }
+	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
+	std::string keyname() const override { return "TopNByProperty"; }
 };
 
 class FilterCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
-	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const;
-	virtual std::string keyname() const { return "Filter"; }
+	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
+	std::string keyname() const override { return "Filter"; }
 };
 
 }

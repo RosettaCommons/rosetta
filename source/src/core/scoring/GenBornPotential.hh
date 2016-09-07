@@ -69,7 +69,7 @@ public:
 	typedef conformation::Residue Residue;
 
 public:
-	virtual ~GenBornResidueInfo();
+	~GenBornResidueInfo() override;
 
 	GenBornResidueInfoOP
 	clone() const
@@ -172,7 +172,7 @@ public:
 	GenBornPoseInfo( GenBornPoseInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new GenBornPoseInfo( *this ) );
 	}
@@ -281,7 +281,7 @@ public:
 
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new GenBornRotamerSetInfo( *this ) );
 	}

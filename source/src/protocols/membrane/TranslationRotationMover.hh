@@ -100,17 +100,17 @@ public:
 	TranslationMover( TranslationMover const & src );
 
 	/// @brief Destructor
-	virtual ~TranslationMover();
+	~TranslationMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -119,17 +119,17 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (TranslationMover)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Translate the pose along the defined vector
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 private: // methods
 
@@ -204,17 +204,17 @@ public:
 	RotationMover( RotationMover const & src );
 
 	/// @brief Destructor
-	virtual ~RotationMover();
+	~RotationMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -223,17 +223,17 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (RotationMover)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Rotate the pose - see above
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 private: // methods
 
@@ -308,17 +308,17 @@ public:
 	TranslationRotationMover( TranslationRotationMover const & src );
 
 	/// @brief Destructor
-	virtual ~TranslationRotationMover();
+	~TranslationRotationMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -327,17 +327,17 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (TranslationRotationMover)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Translate the pose along the defined vector
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 private: // methods
 

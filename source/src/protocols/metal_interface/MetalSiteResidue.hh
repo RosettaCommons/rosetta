@@ -34,7 +34,7 @@ public:
 
 	MetalSiteResidue();
 
-	virtual ~MetalSiteResidue();
+	~MetalSiteResidue() override;
 
 	virtual core::Size get_seqpos();
 	virtual void set_seqpos( core::Size seqpos );

@@ -60,8 +60,7 @@ DistanceConstraintGenerator::DistanceConstraintGenerator():
 {
 }
 
-DistanceConstraintGenerator::~DistanceConstraintGenerator()
-{}
+DistanceConstraintGenerator::~DistanceConstraintGenerator() = default;
 
 protocols::constraint_generator::ConstraintGeneratorOP
 DistanceConstraintGenerator::clone() const
@@ -117,11 +116,11 @@ DistanceConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	ResidueVector const subset1 = selector1_->apply( pose );
 	ResidueVector const subset2 = selector2_->apply( pose );
 
-	for ( ResidueVector::const_iterator r=subset1.begin(); r!=subset1.end(); ++r ) {
-		for ( ResidueVector::const_iterator r2=subset2.begin(); r2!=subset2.end(); ++r2 ) {
+	for (unsigned long r : subset1) {
+		for (unsigned long r2 : subset2) {
 			// don't create dist cst to same residue
-			if ( *r == *r2 ) continue;
-			csts.push_back( create_constraint( pose, *r, *r2 ) );
+			if ( r == r2 ) continue;
+			csts.push_back( create_constraint( pose, r, r2 ) );
 		}
 	}
 

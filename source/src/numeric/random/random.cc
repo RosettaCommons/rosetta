@@ -37,13 +37,13 @@ namespace random {
 
 // Use a "thread_local" declaration to ensure that the each thread has its own
 // random_generator pointer.
-static THREAD_LOCAL RandomGeneratorOP random_generator( 0 );
+static THREAD_LOCAL RandomGeneratorOP random_generator( nullptr );
 
 RandomGenerator & rg()
 {
 	// If you want thread saftety mechanisms but don't want to use C++11 (foldit?) then
 	// you'll want to edit this logic.
-	if ( random_generator == 0 ) {
+	if ( random_generator == nullptr ) {
 		random_generator = RandomGeneratorOP( new RandomGenerator );
 	}
 	return *random_generator;
@@ -65,7 +65,7 @@ createRG(string const & type )
 	if ( type == "mt19937" ) return uniform_RG_OP( new mt19937_RG() );
 
 	utility_exit_with_message("Unknown random number generator type: " + type);
-	return 0;
+	return nullptr;
 }
 
 RandomGenerator::RandomGenerator() :
@@ -73,8 +73,7 @@ RandomGenerator::RandomGenerator() :
 	gaussian_gset_( 0 )
 {}
 
-RandomGenerator::~RandomGenerator()
-{}
+RandomGenerator::~RandomGenerator() = default;
 
 
 double

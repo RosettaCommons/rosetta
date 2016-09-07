@@ -99,7 +99,7 @@ SequenceMapping::SequenceMapping(
 	for ( Size i = downstream_res; i <= old_num_res; ++i ) mapping_.push_back( i + event.length_change );
 }
 
-SequenceMapping::~SequenceMapping() {}
+SequenceMapping::~SequenceMapping() = default;
 
 
 SequenceMapping::SequenceMapping( SequenceMapping const & src )

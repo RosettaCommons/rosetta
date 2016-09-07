@@ -13,6 +13,7 @@
 #include <protocols/sic_dock/Rose.fwd.hh>
 
 #include <platform/types.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
@@ -53,9 +54,9 @@ public:
 	Rose(PoseCOP p, core::id::AtomID_Map<Real>  const & clash_atoms  );
 
 	inline
-	Rose(RCR r, XCR x_in) : p(r.p), h(r.h), x(x_in) {}
+	Rose(RCR r, XCR x_in) : p(r.p), h(r.h), x(std::move(x_in)) {}
 
-	virtual ~Rose() {}
+	virtual ~Rose() = default;
 
 	inline bool clashes (VCR point) const { return h->clash(~x*point); }
 	bool clashes (RCR other) const;

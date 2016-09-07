@@ -66,9 +66,9 @@ TotalScoreFeatures::TotalScoreFeatures()
 : scorefxn_(core::scoring::get_score_function()) {}
 
 TotalScoreFeatures::TotalScoreFeatures(ScoreFunctionOP scorefxn)
-: scorefxn_(scorefxn) {}
+: scorefxn_(std::move(scorefxn)) {}
 
-TotalScoreFeatures::~TotalScoreFeatures() {}
+TotalScoreFeatures::~TotalScoreFeatures() = default;
 
 string TotalScoreFeatures::type_name() const {
 	return "TotalScoreFeatures";
@@ -126,7 +126,7 @@ Size TotalScoreFeatures::report_features(
 	// score calculation; the relevant residues_parameter is ignored.
 
 	Pose non_const_pose = pose;
-	runtime_assert(scorefxn_.get() != 0);
+	runtime_assert(scorefxn_.get() != nullptr);
 	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scorefxn_);
 	Real total_score = scorefxn_->score(non_const_pose);
 

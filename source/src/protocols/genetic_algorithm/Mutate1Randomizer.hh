@@ -31,8 +31,8 @@ public:
 
 public:
 
-	virtual ~Mutate1Randomizer();
-	virtual void mutate( protocols::genetic_algorithm::Entity & entity );
+	~Mutate1Randomizer() override;
+	void mutate( protocols::genetic_algorithm::Entity & entity ) override;
 
 };
 

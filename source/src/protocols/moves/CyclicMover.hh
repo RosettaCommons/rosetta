@@ -44,12 +44,12 @@ public:
 	void enqueue(MoverOP mover);
 
 	// -- mover -- //
-	std::string get_name() const;
-	void apply(core::pose::Pose& pose);
+	std::string get_name() const override;
+	void apply(core::pose::Pose& pose) override;
 
 	// -- jd2 -- //
-	MoverOP clone() const;
-	MoverOP fresh_instance() const;
+	MoverOP clone() const override;
+	MoverOP fresh_instance() const override;
 
 private:
 	/// @brief Tracks the number of calls to apply()

@@ -35,14 +35,14 @@ public:
 	NWAligner() {}
 
 	/// @brief dtor
-	virtual ~NWAligner() {}
+	~NWAligner() override = default;
 
-	virtual
+	
 	SequenceAlignment align(
 		SequenceOP seq_y,
 		SequenceOP seq_x,
 		ScoringSchemeOP ss
-	);
+	) override;
 
 	static void init_matrix(
 		Size y_len,

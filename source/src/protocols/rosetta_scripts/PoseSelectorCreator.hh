@@ -31,7 +31,7 @@ class PoseSelectorCreator : public utility::pointer::ReferenceCount
 {
 public:
 	PoseSelectorCreator();
-	virtual ~PoseSelectorCreator();
+	~PoseSelectorCreator() override;
 
 	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const = 0;
 	virtual std::string keyname() const = 0;

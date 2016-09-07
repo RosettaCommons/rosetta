@@ -62,18 +62,18 @@ public:
 	SheetBuilder( SheetBuilder const& );
 
 	//d'stor
-	virtual ~SheetBuilder();
+	~SheetBuilder() override;
 
-	std::string type_name() const {
+	std::string type_name() const override {
 		return "SheetBuilder";
 	}
 
-	virtual
+	
 	JumpSample
-	create_jump_sample() const;
+	create_jump_sample() const override;
 
 	JumpSample
-	clean_jumps( JumpSample const& js ) const
+	clean_jumps( JumpSample const& js ) const override
 	{
 		std::cerr << "ERROR: JumpSetup::clean_jumps() not implemented" << std::endl;
 		return js;

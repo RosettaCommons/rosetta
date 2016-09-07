@@ -85,7 +85,7 @@ UnbiasedRigidBodyPerturbNoCenterMover::UnbiasedRigidBodyPerturbNoCenterMover( Un
 	max_rot_angle_ = other.max_rot_angle_;
 }
 
-UnbiasedRigidBodyPerturbNoCenterMover::~UnbiasedRigidBodyPerturbNoCenterMover() {}
+UnbiasedRigidBodyPerturbNoCenterMover::~UnbiasedRigidBodyPerturbNoCenterMover() = default;
 
 std::string
 UnbiasedRigidBodyPerturbNoCenterMover::get_name() const

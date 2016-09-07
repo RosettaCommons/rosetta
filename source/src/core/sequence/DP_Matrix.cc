@@ -31,9 +31,9 @@ using utility::vector1;
 using ObjexxFCL::format::A;
 using ObjexxFCL::format::F;
 
-Cell::~Cell() {}
+Cell::~Cell() = default;
 
-DP_Matrix::~DP_Matrix() {}
+DP_Matrix::~DP_Matrix() = default;
 
 void
 DP_Matrix::clear() {

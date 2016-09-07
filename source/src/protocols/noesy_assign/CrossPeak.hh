@@ -108,7 +108,7 @@ public:
 
 	CrossPeak( Spin const&, Spin const&, core::Real strength );
 	CrossPeak();
-	virtual ~CrossPeak();
+	~CrossPeak() override;
 	virtual CrossPeakOP empty_clone() {
 		return CrossPeakOP( new CrossPeak );
 	}
@@ -335,16 +335,16 @@ class CrossPeak3D : public CrossPeak {
 public:
 	CrossPeak3D( Spin const& sp1, Spin const& sp2, Spin const& label1, core::Real strength );
 	CrossPeak3D();
-	~CrossPeak3D();
-	virtual CrossPeakOP empty_clone() {
+	~CrossPeak3D() override;
+	CrossPeakOP empty_clone() override {
 		return CrossPeakOP( new CrossPeak3D );
 	}
-	virtual void assign_spin( Size spin_id );
-	virtual core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ); //provide array with spin 1 spin 2 label 1 label 2
+	void assign_spin( Size spin_id ) override;
+	core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ) override; //provide array with spin 1 spin 2 label 1 label 2
 	virtual void assign_labelled_spin( Size proton );
-	virtual bool has_label( core::Size i ) const { return i==1; }
-	virtual Spin& label( core::Size ) { return label1_; }
-	virtual Spin const& label( core::Size ) const { return label1_; }
+	bool has_label( core::Size i ) const override { return i==1; }
+	Spin& label( core::Size ) override { return label1_; }
+	Spin const& label( core::Size ) const override { return label1_; }
 private:
 	Spin label1_;
 };
@@ -353,15 +353,15 @@ class CrossPeak4D : public CrossPeak3D {
 public:
 	CrossPeak4D( Spin const& sp1,  Spin const& sp2, Spin const& label1, Spin const& label2, core::Real strength );
 	CrossPeak4D();
-	~CrossPeak4D();
-	virtual CrossPeakOP empty_clone() {
+	~CrossPeak4D() override;
+	CrossPeakOP empty_clone() override {
 		return CrossPeakOP( new CrossPeak4D );
 	}
-	virtual void assign_spin( Size proton );
-	virtual core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ); //provide array with spin 1 spin 2 label 1 label 2
-	virtual bool has_label( core::Size ) const { return true; }
-	Spin& label( core::Size i ) { return i==1 ? CrossPeak3D::label( 1 ) : label2_; }
-	Spin const& label( core::Size i ) const { return i==1 ? CrossPeak3D::label( 1 ) : label2_; }
+	void assign_spin( Size proton ) override;
+	core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ) override; //provide array with spin 1 spin 2 label 1 label 2
+	bool has_label( core::Size ) const override { return true; }
+	Spin& label( core::Size i ) override { return i==1 ? CrossPeak3D::label( 1 ) : label2_; }
+	Spin const& label( core::Size i ) const override { return i==1 ? CrossPeak3D::label( 1 ) : label2_; }
 private:
 	Spin label2_;
 };

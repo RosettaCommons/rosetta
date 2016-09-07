@@ -21,6 +21,7 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -46,17 +47,16 @@ BuildPosition::BuildPosition(
 BuildPosition::BuildPosition(
 	Size const seqpos,
 	utility::vector1< Size > const & target_positions,
-	std::set< std::string > const & allowed_types
+	std::set< std::string >  allowed_types
 ) : seqpos_( seqpos ),
 	target_positions_( target_positions ),
-	allowed_types_( allowed_types ),
+	allowed_types_(std::move( allowed_types )),
 	best_rotamers_(/* 0 */),
 	best_motifs_(/* 0 */),
 	best_motifhits_(/* 0 */)
 {}
 
-BuildPosition::~BuildPosition()
-{}
+BuildPosition::~BuildPosition() = default;
 
 BuildPosition::BuildPosition( BuildPosition const & src ) :
 	utility::pointer::ReferenceCount( src ),

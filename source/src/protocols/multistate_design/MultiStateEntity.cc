@@ -42,7 +42,7 @@ MultiStateEntity::MultiStateEntity( MultiStateEntity const & entity ) :
 	single_state_entity_data_(entity.single_state_entity_data())
 {}
 
-MultiStateEntity::~MultiStateEntity() {}
+MultiStateEntity::~MultiStateEntity() = default;
 
 MultiStateEntity::EntityOP
 MultiStateEntity::clone() const { return MultiStateEntity::EntityOP( new MultiStateEntity(*this) ); }
@@ -53,10 +53,8 @@ void MultiStateEntity::show( std::ostream & os ) const
 
 	os << "MultiStateEntity with traits:";
 	genetic_algorithm::EntityElements const & seq( this->traits() );
-	for ( genetic_algorithm::EntityElements::const_iterator
-			it( seq.begin() ), end( seq.end() );
-			it != end; ++it ) {
-		os << " " << (*it)->to_string();
+	for (const auto & it : seq) {
+		os << " " << it->to_string();
 	}
 	os << " and fitness " << F(6,3,this->fitness());
 	for ( core::Size i = 1; i <= single_state_entity_data_.size(); ++i ) {

@@ -75,7 +75,7 @@ KicMover::KicMover() { // {{{1
 	solution_picker_ = solution_pickers::SolutionPickerOP( new solution_pickers::FilteredSolutions );
 }
 
-KicMover::~KicMover() {} // {{{1
+KicMover::~KicMover() = default; // {{{1
 
 bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	ClosureProblemOP problem( new ClosureProblem() );

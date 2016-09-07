@@ -50,7 +50,7 @@ public:
 	/// @brief assignment operator
 	FloppyTailMover & operator=( FloppyTailMover const & rhs );
 
-	virtual ~FloppyTailMover();
+	~FloppyTailMover() override;
 
 	/// @brief set the movemap instead of initializing it from cmd-line
 	virtual void set_movemap(core::kinematics::MoveMapOP const movemap);
@@ -59,19 +59,19 @@ public:
 
 	virtual void set_cen_scorefxn(core::scoring::ScoreFunctionOP const cen_scorefunction);
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	virtual void low_res( core::pose::Pose & pose );
 
 	virtual void high_res( core::pose::Pose & pose );
 
-	virtual std::string get_name() const { return "FloppyTailMover"; }
+	std::string get_name() const override { return "FloppyTailMover"; }
 
-	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FloppyTailMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new FloppyTailMover ); }
 
-	virtual bool reinitialize_for_each_job() const { return false; }
+	bool reinitialize_for_each_job() const override { return false; }
 
-	virtual bool reinitialize_for_new_input() const { return true; }
+	bool reinitialize_for_new_input() const override { return true; }
 
 private:
 	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  The job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply()).

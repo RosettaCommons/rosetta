@@ -48,7 +48,7 @@ Sigmoid::Sigmoid() :
 {
 }
 
-Sigmoid::~Sigmoid() {}
+Sigmoid::~Sigmoid() = default;
 
 /// @brief The first MC trajectory should not read the baseline from the checkpoint file, instead, it should set the baseline
 /// attempt_read_from_checkpoint determines whether a read attempt from checkpoint should be attempted

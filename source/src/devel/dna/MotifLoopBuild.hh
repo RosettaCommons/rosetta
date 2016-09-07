@@ -29,11 +29,11 @@ class MotifLoopBuild : public devel::enzdes::EnzdesRemodelMover
 public:
 	//For parser
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	//Class functionality
 	MotifLoopBuild();
-	~MotifLoopBuild();
+	~MotifLoopBuild() override;
 
 	void irc_build(core::pose::Pose & pose);
 	void place_motifs( core::pose::Pose & pose,

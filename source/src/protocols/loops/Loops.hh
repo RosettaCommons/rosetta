@@ -86,7 +86,7 @@ public:
 	Loops & operator =( Loops const & src );
 
 	// destructor
-	virtual ~Loops();
+	~Loops() override;
 
 	friend std::ostream & operator<<( std::ostream & os, const Loops & loops );
 

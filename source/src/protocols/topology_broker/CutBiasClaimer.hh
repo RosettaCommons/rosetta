@@ -61,17 +61,17 @@ public:
 
 	CutBiasClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<CutBiasClaimer>( TopologyClaimer::shared_from_this() ); }
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new CutBiasClaimer( *this ) );
 	}
 
-	virtual void generate_claims( claims::DofClaims& ) {};
+	void generate_claims( claims::DofClaims& ) override {};
 
 	/// @brief read definition of Claimer from setup file, i.e., a CLAIMER <type> ... END_CLAIMER block
-	virtual void read( std::istream & ) {};
+	void read( std::istream & ) override {};
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -79,7 +79,7 @@ public:
 		return "CutBiasClaimer";
 	}
 
-	virtual void manipulate_cut_bias( utility::vector1< core::Real >& /*cut_bias*/ );
+	void manipulate_cut_bias( utility::vector1< core::Real >& /*cut_bias*/ ) override;
 
 protected:
 private:

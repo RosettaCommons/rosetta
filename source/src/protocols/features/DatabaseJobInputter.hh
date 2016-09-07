@@ -48,7 +48,7 @@ public:
 
 	DatabaseJobInputter();
 
-	virtual ~DatabaseJobInputter();
+	~DatabaseJobInputter() override;
 
 	static void register_options();
 
@@ -99,16 +99,16 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.  This implementation uses pose_from_pdb
-	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
+	void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job ) override;
 
 	/// @brief this function determines what jobs exist from -in::file::silent and
 	/// -in::file::tags.
-	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
+	void fill_jobs( protocols::jd2::JobsContainer & jobs ) override;
 
 	/// @brief Return the type of input source that the DatabaseJobInputter is currently
 	///  using.
 	/// @return Always <em>DATABASE</em>.
-	virtual protocols::jd2::JobInputterInputSource::Enum input_source() const;
+	protocols::jd2::JobInputterInputSource::Enum input_source() const override;
 
 private:
 	core::scoring::ScoreFunctionOP scfxn_;

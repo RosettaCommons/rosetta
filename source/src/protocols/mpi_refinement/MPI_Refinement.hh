@@ -37,7 +37,7 @@ public:
 
 	void set_defaults();
 
-	virtual ~MPI_Refinement(){}
+	~MPI_Refinement() override= default;
 
 protected: // overloaded functions
 
@@ -54,7 +54,7 @@ protected: // added functions
 
 	void load_state(std::string prefix = "default" );
 
-	void print_stats();
+	void print_stats() override;
 
 	void print_summary( std::string const prefix = "SUMM " );
 

@@ -100,7 +100,7 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 	nus_( rsd_type_.n_nus(), 0.0 ),
 	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
 	actcoord_( 0.0 ),
-	data_cache_( 0 ),
+	data_cache_( nullptr ),
 	nonstandard_polymer_( false ),
 	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
@@ -128,7 +128,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	nus_( rsd_type_.n_nus(), 0.0 ),
 	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
 	actcoord_( 0.0 ),
-	data_cache_( 0 ),
+	data_cache_( nullptr ),
 	nonstandard_polymer_( false ),
 	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
@@ -164,7 +164,7 @@ Residue::Residue(
 	nus_( current_rsd.nus() ),
 	mainchain_torsions_( current_rsd.mainchain_torsions() ),
 	actcoord_( 0.0 ),
-	data_cache_( 0 ),
+	data_cache_( nullptr ),
 	nonstandard_polymer_( current_rsd.nonstandard_polymer_ ),
 	connect_map_( current_rsd.connect_map_ ),
 	connections_to_residues_( current_rsd.connections_to_residues_ ),
@@ -240,7 +240,7 @@ Residue::Residue( Residue const & src, bool const flip_chirality ):
 	init_residue_from_other( src );
 }
 
-Residue::~Residue() {}
+Residue::~Residue() = default;
 
 /// @brief Function called by both copy constructors, to avoid code duplication.
 /// @details As private member variables are added, add them to this to copy them.
@@ -257,8 +257,8 @@ Residue::init_residue_from_other(
 	nus_ = src.nus_;
 	mainchain_torsions_ = src.mainchain_torsions_;
 	actcoord_ = src.actcoord_;
-	if ( src.data_cache_ != 0 ) {
-		if ( data_cache_ != 0 ) ( *data_cache_) = (*src.data_cache_);
+	if ( src.data_cache_ != nullptr ) {
+		if ( data_cache_ != nullptr ) ( *data_cache_) = (*src.data_cache_);
 		else data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( *src.data_cache_) );
 	}
 	nonstandard_polymer_ = src.nonstandard_polymer_;
@@ -445,11 +445,11 @@ bool Residue::connections_match( Residue const & other ) const
 	for ( Size ii = 1; ii <= connect_map_.size(); ++ii ) {
 		if ( connect_map_[ ii ] != other.connect_map_[ ii ] ) return false;
 	}
-	for ( std::map< Size, PseudoBondCollectionCOP >::const_iterator
+	for ( auto
 			iter = pseudobonds_.begin(), iter_end = pseudobonds_.end(),
 			other_iter_end = other.pseudobonds_.end();
 			iter != iter_end; ++iter ) {
-		std::map< Size, PseudoBondCollectionCOP >::const_iterator other_iter = other.pseudobonds_.find( iter->first );
+		auto other_iter = other.pseudobonds_.find( iter->first );
 		if ( other_iter == other_iter_end ) return false;
 		if ( iter->second != other_iter->second ) return false; // pointer comparison
 		//if ( ! (*(iter->second) == *(other_iter->second) ) ) return false;
@@ -1328,11 +1328,11 @@ Residue::first_adjacent_heavy_atom( uint const atom_index ) const
 PseudoBondCollectionCOP
 Residue::get_pseudobonds_to_residue( Size resid ) const
 {
-	std::map< Size, PseudoBondCollectionCOP >::const_iterator iter( pseudobonds_.find( resid ) );
+	auto iter( pseudobonds_.find( resid ) );
 	if ( iter != pseudobonds_.end() ) {
 		return iter->second;
 	}
-	return 0;
+	return nullptr;
 }
 
 void
@@ -1682,7 +1682,7 @@ Residue::data_ptr() const
 basic::datacache::BasicDataCacheOP
 Residue::nonconst_data_ptr()
 {
-	if ( data_cache_ == 0 ) {
+	if ( data_cache_ == nullptr ) {
 		data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( residue_datacache::n_cacheable_types ) );
 	}
 	return data_cache_;

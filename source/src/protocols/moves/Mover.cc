@@ -60,11 +60,11 @@ Mover::Mover()
 	last_status_( MS_SUCCESS )
 {}
 
-Mover::~Mover(){}
+Mover::~Mover()= default;
 
-Mover::Mover( std::string const & type_name ) :
+Mover::Mover( std::string  type_name ) :
 	utility::pointer::ReferenceCount(),
-	type_( type_name ),
+	type_(std::move( type_name )),
 	current_tag_( "NoTag" ),
 	input_pose_(/* 0 */),
 	native_pose_(/* 0 */),
@@ -142,7 +142,7 @@ Mover::get_current_job() const {
 /// @details Mechanism by which a mover may return multiple output poses from a single input pose.  After apply is called, calling this function will return subsequent output poses.  NULL is returned if the mover has no more output poses remaining.  The base class implementation returns NULL always; multi-output movers must override this.  RosettaScripts uses this interface to produce a 'branched' protocol.
 core::pose::PoseOP
 Mover::get_additional_output() {
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////start Job Distributor interface//////////////////////////////////
@@ -165,14 +165,14 @@ bool Mover::reinitialize_for_new_input() const { return false; }
 MoverOP Mover::fresh_instance() const
 {
 	utility_exit_with_message("fresh_instance has been called on a Mover which has not overridden the base class implementation.  Probably you tried to pass a Mover to the job distributor which does not have fresh_instance implemented.  Implement the function and try again.\n");
-	return MoverOP(NULL);
+	return MoverOP(nullptr);
 	//return MoverOP( new Mover ); //this is what your Mover should return - it's illegal here because Mover does not define the pure virtual function apply().
 }
 
 /// @details clone is meant to return an OP'ed deep copy of this object.  This really should be a pure virtual in the base class, but adding pure virtuals to Mover would massively disrupt the code.  This default implementation crashes at runtime instead of compiletime if you try to call it.  If this code is causing you problems, your Mover needs to override this function.
 MoverOP Mover::clone() const {
 	utility_exit_with_message( "clone has been called on a Mover which has not overridden the base class implementation.  Probably you tried to pass a Mover to the job distributor or parser which does not have clone implemented.  Implement the function and try again.\n");
-	return MoverOP(NULL);
+	return MoverOP(nullptr);
 }
 
 // Outputs details about the Mover, including current settings.

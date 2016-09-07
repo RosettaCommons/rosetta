@@ -119,13 +119,7 @@ FlipMover::FlipMover( core::Size jump_num, core::Vector axis, core::Real angle )
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-FlipMover::FlipMover( FlipMover const & src ) : protocols::moves::Mover( src ),
-	jump_num_( src.jump_num_ ),
-	axis_( src.axis_ ),
-	angle_( src.angle_ ),
-	random_angle_( src.random_angle_ ),
-	max_angle_dev_( src.max_angle_dev_ )
-{}
+FlipMover::FlipMover( FlipMover const & ) = default;
 
 /// @brief Assignment Operator
 FlipMover & FlipMover::operator = ( FlipMover const & src ) {
@@ -140,7 +134,7 @@ FlipMover & FlipMover::operator = ( FlipMover const & src ) {
 }
 
 /// @brief Destructor
-FlipMover::~FlipMover() {}
+FlipMover::~FlipMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

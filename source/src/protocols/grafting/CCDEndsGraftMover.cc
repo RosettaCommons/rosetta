@@ -89,13 +89,9 @@ CCDEndsGraftMover::CCDEndsGraftMover(
 	copy_pdbinfo(copy_pdb_info);
 }
 
-CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& src):
-	AnchoredGraftMover(src)
-{
+CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& )= default;
 
-}
-
-CCDEndsGraftMover::~CCDEndsGraftMover() {}
+CCDEndsGraftMover::~CCDEndsGraftMover() = default;
 
 
 void
@@ -148,11 +144,7 @@ CCDEndsGraftMover::setup_default_small_mover(){
 
 	core::Size nmoves = 0;
 
-	typedef std::pair< Size, core::id::TorsionType > MoveMapTorsionID;
-	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
-
-
-	for ( MoveMapTorsionID_Map::const_iterator it=movemap()->movemap_torsion_id_begin(), it_end=movemap()->movemap_torsion_id_end(); it !=it_end; ++it ) {
+	for ( auto it=movemap()->movemap_torsion_id_begin(), it_end=movemap()->movemap_torsion_id_end(); it !=it_end; ++it ) {
 		//Scaffold to new MM
 		if ( it->second && it->first.second == core::id::BB ) {
 			nmoves+=1;
@@ -300,12 +292,12 @@ CCDEndsGraftMover::apply(Pose & pose){
 		TR <<"round "<<i <<std::endl;
 		if ( !skip_sampling() ) { small->apply(combined);}
 
-		for ( protocols::loops::Loops::const_iterator it=loop_set->begin(), it_end=loop_set->end(); it!=it_end; ++it ) {
+		for (const auto & it : *loop_set) {
 
-			loop_set_map[*it]->apply(combined);
-			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
+			loop_set_map[it]->apply(combined);
+			combined.conformation().insert_ideal_geometry_at_polymer_bond(it.cut());
 			min_mover->apply(combined);
-			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
+			combined.conformation().insert_ideal_geometry_at_polymer_bond(it.cut());
 
 		}
 		if ( stop_at_closure() && graft_closed(combined, *loop_set) ) {

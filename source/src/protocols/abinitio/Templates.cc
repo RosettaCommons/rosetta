@@ -103,15 +103,15 @@ using namespace basic::options::OptionKeys;
 class StructureStore : public utility::pointer::ReferenceCount {
 public:
 	bool has( std::string const& name ) const {
-		StructureMap::const_iterator iter = poses_.find( name );
+		auto iter = poses_.find( name );
 		return ( iter != poses_.end() );
 	};
 
 	pose::PoseCOP operator[] ( std::string const& name ) const{
-		StructureMap::const_iterator iter = poses_.find( name );
+		auto iter = poses_.find( name );
 		if ( iter != poses_.end() ) {
 			return (iter->second);
-		} else return NULL;
+		} else return nullptr;
 	};
 
 	void add( std::string const& file_name );
@@ -138,12 +138,12 @@ void StructureStore::add( std::string const& file_name ) {
 	}
 }
 
-Templates::~Templates() {}
+Templates::~Templates() = default;
 
 using namespace core;
 using namespace fragment;
 Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
-	native_( native )
+	native_(std::move( native ))
 {
 	utility::io::izstream in( config_file);
 	tr.Info << "read homolog-template information from " << config_file << std::endl;
@@ -242,10 +242,9 @@ Templates::get_cst_list( TemplateList& cst_list, TemplateList& cull_list ) const
 	}
 
 	// first get list of Templates with constraints
-	for ( TemplateMap::const_iterator it=templates_.begin(),
-			eit = templates_.end(); it!=eit; ++it ) {
+	for (const auto & it : templates_) {
 		// if template has constraints
-		TemplateCOP aTemplate( it->second );
+		TemplateCOP aTemplate( it.second );
 		if ( aTemplate->has_constraints() ) {
 			cst_list.push_back( aTemplate );
 		}
@@ -269,9 +268,8 @@ Templates::scored_fragpick_list( TemplateList& frag_list ) const {
 		wExtern = option[ templates::fragsteal::wExtern ];
 	}
 
-	for ( TemplateMap::const_iterator it=templates_.begin(),
-			eit = templates_.end(); it!=eit; ++it ) {
-		frag_list.push_back( it->second );
+	for (const auto & it : templates_) {
+		frag_list.push_back( it.second );
 	}
 	_get_scored_list( frag_list, option[ templates::fragsteal::topN ], wTopol, wExtern );
 }
@@ -288,9 +286,8 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 	bool bScoreFilter = true;
 
 	// first get list of Templates with constraints
-	for ( TemplateMap::const_iterator it=templates_.begin(),
-			eit = templates_.end(); it!=eit; ++it ) {
-		TemplateCOP aTemplate( it->second );
+	for (const auto & it : templates_) {
+		TemplateCOP aTemplate( it.second );
 		if ( bScoreFilter ) {
 			sum_extern += aTemplate->external_score();
 			sum_extern2 += aTemplate->external_score()*aTemplate->external_score();
@@ -336,10 +333,9 @@ Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type,
 		frames.push_back( frame );
 	}
 
-	for ( TemplateList::const_iterator it=fragpick_list_.begin(),
-			eit = fragpick_list_.end(); it!=eit; ++it ) {
-		tr.Info << "pick from template " << (*it)->name() << std::endl;
-		Size nr_frags = (*it)->steal_frags( frames, frag_set, ncopies );
+	for (const auto & it : fragpick_list_) {
+		tr.Info << "pick from template " << it->name() << std::endl;
+		Size nr_frags = it->steal_frags( frames, frag_set, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;
 		total+=nr_frags;
 	}
@@ -402,10 +398,9 @@ Size Templates::pick_large_frags(
 	core::Size ncopies /*default = 1*/
 ) const {
 	Size total( 0 );
-	for ( TemplateList::const_iterator it=fragpick_list_.begin(),
-			eit = fragpick_list_.end(); it!=eit; ++it ) {
-		tr.Info << "pick large frag from template " << (*it)->name() << std::endl;
-		Size nr_frags = (*it)->pick_large_frags( frag_set, frag_type, ncopies );
+	for (const auto & it : fragpick_list_) {
+		tr.Info << "pick large frag from template " << it->name() << std::endl;
+		Size nr_frags = it->pick_large_frags( frag_set, frag_type, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;
 		total+=nr_frags;
 	}
@@ -428,7 +423,7 @@ Templates::read_pairings( std::string const& filename, core::scoring::dssp::Pair
 	core::scoring::dssp::PairingsList raw_pairings;
 	read_pairing_list( in, raw_pairings );
 	tr.Debug << " read pairings for template " << pdb << "\n" << raw_pairings << std::endl;
-	const_iterator iter = templates_.find( pdb );
+	auto iter = templates_.find( pdb );
 	if ( iter == templates_.end() ) {
 		utility_exit_with_message("unrecognized template name "+pdb+" --- this name has to be in template:config file");
 	}

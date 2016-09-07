@@ -62,6 +62,7 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -74,7 +75,7 @@ using namespace core;
 using basic::Error;
 
 RBSegmentRelax::RBSegmentRelax() {}
-RBSegmentRelax::~RBSegmentRelax() {}
+RBSegmentRelax::~RBSegmentRelax() = default;
 
 RBSegmentRelax::RBSegmentRelax(
 	core::scoring::ScoreFunctionOP scorefxn,
@@ -82,7 +83,7 @@ RBSegmentRelax::RBSegmentRelax(
 	protocols::loops::Loops      const & loops_input
 ) :
 	Mover("RBSegmentRelax"),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	rbsegs_input_( rbsegs_input ),
 	loops_input_( loops_input )
 {
@@ -228,8 +229,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 
 	// loop over segments, add a mover for each
 	int nmovers=0;
-	for ( RBIt it_seg = rbsegs_remap_.begin(), it_seg_end = rbsegs_remap_.end();
-			it_seg != it_seg_end; ++it_seg ) {
+	for (auto & it_seg : rbsegs_remap_) {
 		// hardcoded since it needs a few extra things
 		// initialize the frag-insert mover
 		if ( doFragInserts ) {
@@ -239,69 +239,63 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 
 		// add the whole structure movers
 		// add a copy for each RB segment
-		for ( std::vector< protocols::moves::MoverOP >::iterator it_mover = WholeStructureMoveSet_.begin(),
-				it_mover_end = WholeStructureMoveSet_.end();
-				it_mover != it_mover_end; ++it_mover ) {
-			SegmentRandomizeMover->add_mover( *it_mover );
+		for (auto & it_mover : WholeStructureMoveSet_) {
+			SegmentRandomizeMover->add_mover( it_mover );
 			nmovers++;
 		}
 
 		//////////////////////
 		// HELIX SEGMENTS
-		if ( it_seg->isHelix() ) {
+		if ( it_seg.isHelix() ) {
 			// add each mover from the helix moveset
 			// resids refer to those in the loop-removed pose
-			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = HelixMoveSet_.begin(),
-					it_mover_end = HelixMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone());  // make a deep copy of the mover
-				moverToAdd->setResidueRange( *it_seg );
-				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
+			for (auto & it_mover : HelixMoveSet_) {
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >(it_mover->clone());  // make a deep copy of the mover
+				moverToAdd->setResidueRange( it_seg );
+				if ( it_seg.initialized() ) moverToAdd->set_movement(it_seg);  // override default movement params
 				SegmentRandomizeMover->add_mover( moverToAdd );
 				nmovers++;
 			}
 
 			//////////////////////
 			// SHEET SEGMENTS
-		} else if ( it_seg->isSheet() ) {
+		} else if ( it_seg.isSheet() ) {
 			// add each mover from the strand moveset
 			// resids refer to those in the loop-removed pose
-			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = StrandMoveSet_.begin(),
-					it_mover_end = StrandMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone()); // make a deep copy of the mover
-				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
-				moverToAdd->setResidueRange( *it_seg );
+			for (auto & it_mover : StrandMoveSet_) {
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >(it_mover->clone()); // make a deep copy of the mover
+				if ( it_seg.initialized() ) moverToAdd->set_movement(it_seg);  // override default movement params
+				moverToAdd->setResidueRange( it_seg );
 				SegmentRandomizeMover->add_mover( moverToAdd );
 				nmovers++;
 			}
 
 			//////////////////////
 			// GENERIC RB SEGMENTS
-		} else if ( it_seg->isGenericRB() ) {
+		} else if ( it_seg.isGenericRB() ) {
 			// Neither helix nor strand, we can include more logic here to be more specific
 			// add each genericRB mover
 			// resids refer to those in the loop-removed pose
-			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = GenericRBMoveSet_.begin(),
-					it_mover_end = GenericRBMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone());  // make a deep copy of the mover
-				moverToAdd->setResidueRange( *it_seg );
-				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
+			for (auto & it_mover : GenericRBMoveSet_) {
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >(it_mover->clone());  // make a deep copy of the mover
+				moverToAdd->setResidueRange( it_seg );
+				if ( it_seg.initialized() ) moverToAdd->set_movement(it_seg);  // override default movement params
 				SegmentRandomizeMover->add_mover( moverToAdd );
 				nmovers++;
 			}
 
 			//////////////////////
 			// COMPOUND SEGMENTS
-		} else if ( it_seg->isCompound() ) {
-			if ( ! it_seg->initialized() ) {
-				it_seg->set_movement( genericRB_sigT, genericRB_sigR );
+		} else if ( it_seg.isCompound() ) {
+			if ( ! it_seg.initialized() ) {
+				it_seg.set_movement( genericRB_sigT, genericRB_sigR );
 			}
 			// add each genericRB mover
 			// resids refer to those in the loop-removed pose
-			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = CompositeSegmentMoveSet_.begin(),
-					it_mover_end = CompositeSegmentMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone()); // make a deep copy of the mover
-				moverToAdd->setResidueRange( *it_seg );
-				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
+			for (auto & it_mover : CompositeSegmentMoveSet_) {
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >(it_mover->clone()); // make a deep copy of the mover
+				moverToAdd->setResidueRange( it_seg );
+				if ( it_seg.initialized() ) moverToAdd->set_movement(it_seg);  // override default movement params
 				SegmentRandomizeMover->add_mover( moverToAdd );
 				nmovers++;
 			}
@@ -425,7 +419,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 		// cut loops & restore original loop conformation
 		// dilate loops
 		protocols::loops::LoopsOP loops( new protocols::loops::Loops( loops_input_ ) );
-		for ( loops::Loops::iterator it = loops->v_begin(), it_end = loops->v_end(); it != it_end; ++it ) {
+		for ( auto it = loops->v_begin(), it_end = loops->v_end(); it != it_end; ++it ) {
 			if ( !pose.fold_tree().is_cutpoint( it->start() - 1 ) ) {
 				it->set_start( it->start() - 1 );
 			}
@@ -441,9 +435,9 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 		//pose.dump_pdb("precopy.pdb");
 		//protocols::viewer::add_conformation_viewer( pose.conformation() );   // <<<< added in looprelax mover
 		pose.fold_tree( f );
-		for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end(); it != it_end; ++it ) {
-			core::Size lstart = it->start(), lstop = it->stop();
-			idealize_loop( pose, *it );
+		for (const auto & it : *loops) {
+			core::Size lstart = it.start(), lstop = it.stop();
+			idealize_loop( pose, it );
 			for ( core::Size k=lstart; k<lstop; ++k ) {
 				pose.set_phi( k, pose_input.phi(k) );
 				pose.set_psi( k, pose_input.psi(k) );

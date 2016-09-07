@@ -109,7 +109,7 @@ MinMover::MinMover( std::string const & name ) :
 	min_options_ = MinimizerOptionsOP( new MinimizerOptions( "linmin", 0.01, true, false, false ) );
 }
 
-MinMover::~MinMover(){}
+MinMover::~MinMover()= default;
 
 // constructor with arguments
 MinMover::MinMover(
@@ -121,8 +121,8 @@ MinMover::MinMover(
 	bool deriv_check_in /* = false */,
 	bool deriv_check_verbose_in /* = false */
 ) : Parent("MinMover"),
-	movemap_( movemap_in ),
-	scorefxn_( scorefxn_in ),
+	movemap_(std::move( movemap_in )),
+	scorefxn_(std::move( scorefxn_in )),
 	min_options_(/* 0 */),
 	threshold_(1000000.0), // TODO: line can be deleted?
 	cartesian_(false),
@@ -153,7 +153,7 @@ MinMover::min_options( MinimizerOptionsOP min_options) {
 void
 MinMover::movemap( MoveMapCOP movemap_in )
 {
-	runtime_assert( movemap_in != 0 );
+	runtime_assert( movemap_in != nullptr );
 	movemap_ = core::kinematics::MoveMapOP( new MoveMap( *movemap_in ) );
 }
 
@@ -170,7 +170,7 @@ MinMover::movemap() const
 void
 MinMover::score_function( ScoreFunctionCOP scorefxn_in )
 {
-	runtime_assert( scorefxn_in != 0 );
+	runtime_assert( scorefxn_in != nullptr );
 	scorefxn_ = scorefxn_in;
 }
 
@@ -220,25 +220,23 @@ MinMover::apply_dof_tasks_to_movemap(
 	MoveMap & movemap
 ) const {
 
-	for (
-			DOF_TaskMap::const_iterator t=dof_tasks_.begin(), te=dof_tasks_.end();
-			t != te; ++t ) {
+	for (const auto & dof_task : dof_tasks_) {
 		//generate task
-		PackerTaskOP task( t->second->create_task_and_apply_taskoperations( pose ) );
+		PackerTaskOP task( dof_task.second->create_task_and_apply_taskoperations( pose ) );
 
 		//modify movemap by task
 		Size const nres( task->total_residue() );
 
 		//Set DOFs by task operations:
 		for ( Size i(1); i <= nres; ++i ) {
-			if ( t->first.first == core::id::PHI ) {
+			if ( dof_task.first.first == core::id::PHI ) {
 				core::kinematics::MoveMap::MoveMapTorsionID mmid;
 				mmid.first = i;
-				mmid.second = t->first.second;
+				mmid.second = dof_task.first.second;
 				movemap.set( mmid, task->pack_residue( i ) );
 			} else {
 				for ( Size ia=1,iamax=pose.residue(i).natoms(); ia<=iamax; ++ia ) {
-					movemap.set( core::id::DOF_ID( core::id::AtomID(ia,i), t->first.first  ), task->pack_residue(i) );
+					movemap.set( core::id::DOF_ID( core::id::AtomID(ia,i), dof_task.first.first  ), task->pack_residue(i) );
 				}
 				//movemap.set( t->first.first, task->pack_residue( i ) );
 			}
@@ -295,12 +293,12 @@ MinMover::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output << "Minimization type:\t" << min_type() << "\nScorefunction:\t\t";
-	if ( score_function() != 0 ) {
+	if ( score_function() != nullptr ) {
 		output  << score_function()->get_name() << std::endl;
 	} else { output << "none" << std::endl; }
 	output << "Score tolerance:\t" << tolerance() << "\nNb list:\t\t" << (nb_list() ? "True" : "False") <<
 		"\nDeriv check:\t\t" << (deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
-	if ( movemap() != 0 ) {
+	if ( movemap() != nullptr ) {
 		movemap()->show(output);
 	}
 }

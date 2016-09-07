@@ -22,6 +22,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -147,7 +148,7 @@ NcbbDockDesignProtocol::NcbbDockDesignProtocol(
 	bool const keep_history
 
 ): Mover("NcbbDockDesignProtocol"),
-	score_fxn_(score_function),
+	score_fxn_(std::move(score_function)),
 	mc_temp_ (mc_temp),
 	pert_mc_temp_(pert_mc_temp),
 	pert_dock_rot_mag_(pert_dock_rot_mag),
@@ -184,7 +185,7 @@ NcbbDockDesignProtocol::NcbbDockDesignProtocol(
 	bool const pymol,
 	bool const keep_history
 ): Mover("NcbbDockDesignProtocol"),
-	score_fxn_(score_function),
+	score_fxn_(std::move(score_function)),
 	mc_temp_ (mc_temp),
 	pert_mc_temp_ (0.8),
 	pert_dock_rot_mag_ (pert_dock_rot_mag),

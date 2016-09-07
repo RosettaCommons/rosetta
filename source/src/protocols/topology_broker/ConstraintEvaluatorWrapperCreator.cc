@@ -52,7 +52,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.topology_broker.ConstraintEvalu
 namespace protocols {
 namespace topology_broker {
 
-ConstraintEvaluatorWrapperCreator::~ConstraintEvaluatorWrapperCreator() {}
+ConstraintEvaluatorWrapperCreator::~ConstraintEvaluatorWrapperCreator() = default;
 
 void ConstraintEvaluatorWrapperCreator::register_options() {
 	using namespace basic::options;

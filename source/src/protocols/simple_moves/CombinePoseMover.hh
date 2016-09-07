@@ -40,13 +40,13 @@ public:
 	CombinePoseMover( core::scoring::ScoreFunctionCOP sfxn,
 		pose::Pose const &pose_ref );
 
-	virtual ~CombinePoseMover();
+	~CombinePoseMover() override;
 
-	virtual
-	void apply( pose::Pose &pose2 );
+	
+	void apply( pose::Pose &pose2 ) override;
 
-	virtual
-	std::string get_name() const { return "CombinePoseMover"; }
+	
+	std::string get_name() const override { return "CombinePoseMover"; }
 
 	void set_default();
 

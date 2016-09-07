@@ -90,7 +90,7 @@ public: // construct/destruct
 	/// @brief default destructor
 	inline
 	virtual
-	~BufferedSignalHub() {}
+	~BufferedSignalHub() = default;
 
 
 private: // disallow copy construction and assignment

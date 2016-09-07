@@ -39,11 +39,11 @@ public:
 		Ab_TemplateInfoOP ab_t_info);
 
 
-	~GraftOneCDRLoop();
+	~GraftOneCDRLoop() override;
 
-	virtual void apply( core::pose::Pose & pose_in );
+	void apply( core::pose::Pose & pose_in ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 	/// @brief enable benchmark mode

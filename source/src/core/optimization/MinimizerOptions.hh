@@ -32,14 +32,14 @@ class MinimizerOptions : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~MinimizerOptions();
+	~MinimizerOptions() override;
 	/////////////////////////////////////////////////////////////////////////////
 	// c-tor's -- might want to add a number of c-tors or a string-switched
 	// c-tor to replicate the dependence of, eg, xx_init on the current
 	// func_switch setting
 
 	MinimizerOptions(
-		std::string const & min_type_in,
+		std::string min_type_in,
 		Real const minimize_tolerance_in,
 		bool const use_nblist_in, // see core/scoring/NeighborList.hh
 		bool const deriv_check_in = false,

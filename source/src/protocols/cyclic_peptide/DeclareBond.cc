@@ -38,7 +38,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-#include <stdio.h>
+#include <cstdio>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
 
@@ -56,7 +56,7 @@ DeclareBond::DeclareBond():
 	kic_res2_(0),
 	rebuild_fold_tree_(false)
 {}
-DeclareBond::~DeclareBond(){}
+DeclareBond::~DeclareBond()= default;
 
 void
 DeclareBond::set( core::Size const res1,

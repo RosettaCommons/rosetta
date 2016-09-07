@@ -19,9 +19,9 @@ namespace protocols {
 class RBSegmentRelaxImpl : public protocols::moves::Mover{
 public:
 	RBSegmentRelaxImpl();
-	~RBSegmentRelaxImpl();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	~RBSegmentRelaxImpl() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 private:
 	core::scoring::ScoreFunctionOP scorefxn_rb_;
 };

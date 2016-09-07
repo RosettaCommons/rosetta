@@ -43,6 +43,7 @@
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -65,23 +66,23 @@ public:
 	}
 
 	KinematicTaskControl( ProtocolOP sampler ) :
-		sampling_protocol_( sampler )
+		sampling_protocol_(std::move( sampler ))
 	{
 		return_centroid( false );//default
 	}
 
-	~KinematicTaskControl();
+	~KinematicTaskControl() override;
 
 	//@brief generate a new KinematicControl object
 	virtual KinematicControlOP new_kinematics( core::pose::Pose &pose ) = 0;
 
-	virtual void apply( core::pose::Pose &pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose &pose ) override;
+	std::string get_name() const override;
 
-	virtual void init( core::pose::Pose const& pose );
+	void init( core::pose::Pose const& pose ) override;
 
 	KinematicControlOP current_kinematics() {
-		runtime_assert( current_kinematics_ != 0 );
+		runtime_assert( current_kinematics_ != nullptr );
 		return current_kinematics_;
 	}
 
@@ -101,7 +102,7 @@ public:
 		return sampling_protocol_;
 	}
 
-	virtual checkpoint::CheckPointer &get_checkpoints() { return sampling_protocol_->get_checkpoints(); }
+	checkpoint::CheckPointer &get_checkpoints() override { return sampling_protocol_->get_checkpoints(); }
 
 protected:
 	virtual bool inner_loop( core::pose::Pose &pose );

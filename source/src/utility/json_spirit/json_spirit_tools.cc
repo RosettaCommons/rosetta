@@ -21,7 +21,7 @@ namespace json_spirit {
 
 bool has_value(const mObject& obj, const std::string& name )
 {
-	mObject::const_iterator i = obj.find(name);
+	auto i = obj.find(name);
 
 	if ( i != obj.end() ) return true;
 	return false;
@@ -29,7 +29,7 @@ bool has_value(const mObject& obj, const std::string& name )
 
 mValue get_value(const mObject& obj, const std::string& name )
 {
-	mObject::const_iterator i = obj.find(name);
+	auto i = obj.find(name);
 	if ( i == obj.end() ) {
 		throw utility::excn::EXCN_Msg_Exception("Cannot find member '" + name + "'" );
 	}

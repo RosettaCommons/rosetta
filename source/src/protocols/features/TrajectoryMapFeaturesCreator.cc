@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 TrajectoryMapFeaturesCreator::TrajectoryMapFeaturesCreator() {}
-TrajectoryMapFeaturesCreator::~TrajectoryMapFeaturesCreator() {}
+TrajectoryMapFeaturesCreator::~TrajectoryMapFeaturesCreator() = default;
 FeaturesReporterOP TrajectoryMapFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new TrajectoryMapFeatures );
 }

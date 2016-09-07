@@ -83,7 +83,7 @@ protocols::anchored_design::Anchor::Anchor( core::pose::Pose const & pose):
 }
 
 /// @details virtual destructors make c++ happy
-protocols::anchored_design::Anchor::~Anchor(){}
+protocols::anchored_design::Anchor::~Anchor()= default;
 
 /// @brief copy ctor
 Anchor::Anchor( Anchor const & rhs ) :

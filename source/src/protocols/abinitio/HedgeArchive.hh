@@ -49,24 +49,24 @@ public:
 	HedgeArchive( std::string name );
 
 	//called when new decoy is available
-	virtual bool add_evaluated_structure(
+	bool add_evaluated_structure(
 		core::io::silent::SilentStructOP,
 		core::io::silent::SilentStructOP alternative_decoy,
 		jd2::archive::Batch const& batch
-	);
+	) override;
 
-	virtual void generate_batch() {};
+	void generate_batch() override {};
 
-	virtual void rescore() {}; //do nothing since we don't care about scores
+	void rescore() override {}; //do nothing since we don't care about scores
 
 	/// @brief save and restore status of archive to file-system
 	// will also call save_pending_decoys and restore 'incoming_structures_' from the pending-decoy files
-	virtual void save_status( std::ostream& ) const;
-	virtual void restore_status( std::istream& );
+	void save_status( std::ostream& ) const override;
+	void restore_status( std::istream& ) override;
 
 
 	/// @brief overloaded to make input decoys appear the same as decoys coming from batches
-	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& ) {};
+	void init_from_decoy_set( core::io::silent::SilentFileData const& ) override {};
 	void collect( jd2::archive::Batch const& batch, core::io::silent::SilentStructOPs& ) const;
 protected:
 

@@ -42,6 +42,7 @@
 #include <numeric/random/random.hh>
 
 //utility
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 namespace devel {
@@ -71,7 +72,7 @@ CartminLoopCloserCreator::mover_name()
 
 /// @brief default constructor
 CartminLoopCloser::CartminLoopCloser():
-	scorefxn_(0),
+	scorefxn_(nullptr),
 	minimization_tolerance_( 0.01 ),
 	max_chainbreak_( 0.1 )
 {
@@ -84,7 +85,7 @@ CartminLoopCloser::CartminLoopCloser(
 	core::Real minimization_tolerance,
 	core::Real max_chainbreak
 ):
-	scorefxn_(scorefxn),
+	scorefxn_(std::move(scorefxn)),
 	minimization_tolerance_(minimization_tolerance),
 	max_chainbreak_(max_chainbreak)
 {

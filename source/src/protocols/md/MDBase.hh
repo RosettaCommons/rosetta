@@ -55,12 +55,12 @@ public:
 
 	MDBase();
 
-	~MDBase();
+	~MDBase() override;
 
 	//virtual protocols::moves::MoverOP clone() const;
 
-	virtual void apply( core::pose::Pose & pose ) = 0;
-	virtual std::string get_name() const = 0;
+	void apply( core::pose::Pose & pose ) override = 0;
+	std::string get_name() const override = 0;
 
 	//virtual void initialize_movemap( core::kinematics::MoveMap & movemap ) = 0;
 	// Undefinded commenting out to fix PyRostta build. static void register_options();

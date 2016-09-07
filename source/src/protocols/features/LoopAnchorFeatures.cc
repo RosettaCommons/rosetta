@@ -80,7 +80,7 @@ LoopAnchorFeatures::LoopAnchorFeatures( LoopAnchorFeatures const & src) :
 	max_loop_length_(src.max_loop_length_)
 {}
 
-LoopAnchorFeatures::~LoopAnchorFeatures() {}
+LoopAnchorFeatures::~LoopAnchorFeatures() = default;
 
 string
 LoopAnchorFeatures::type_name() const { return "LoopAnchorFeatures"; }
@@ -228,8 +228,8 @@ LoopAnchorFeatures::report_features(
 	statement loop_anchor_transforms_stmt(
 		safely_prepare_statement(loop_anchor_transforms_stmt_string, db_session));
 
-	vector1<Size>::const_iterator chain_ending(pose.conformation().chain_endings().begin());
-	vector1<Size>::const_iterator chain_ending_end(pose.conformation().chain_endings().end());
+	auto chain_ending(pose.conformation().chain_endings().begin());
+	auto chain_ending_end(pose.conformation().chain_endings().end());
 
 	Size local_min_loop_length = min_loop_length( relevant_residues );
 	Size local_max_loop_length = max_loop_length( relevant_residues );
@@ -293,8 +293,8 @@ Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relev
 {
 	if ( use_relevant_residues_as_loop_length_ ) {
 		Size number_of_residues = 0;
-		for ( vector1< bool >::const_iterator it = relevant_residue.begin(); it != relevant_residue.end(); ++it ) {
-			if ( *it ) ++number_of_residues;
+		for ( auto it : relevant_residue) {
+			if ( it ) ++number_of_residues;
 		}
 		return number_of_residues;
 	}

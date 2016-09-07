@@ -64,29 +64,29 @@ class FragmentJumpClaimer : public FragmentClaimer {
 	typedef FragmentClaimer Parent;
 public:
 	FragmentJumpClaimer(); //for factory
-	FragmentJumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& mover_tag = "JumpMove",  weights::AbinitioMoverWeightOP weight = NULL );
+	FragmentJumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& mover_tag = "JumpMove",  weights::AbinitioMoverWeightOP weight = nullptr );
 	FragmentJumpClaimer( FragmentJumpClaimer const & src );
-	~FragmentJumpClaimer();
+	~FragmentJumpClaimer() override;
 
-	virtual TopologyClaimerOP clone() const;
+	TopologyClaimerOP clone() const override;
 
-	virtual void generate_claims( claims::DofClaims& );
+	void generate_claims( claims::DofClaims& ) override;
 
-	virtual void new_decoy( core::pose::Pose const& );
-	virtual void new_decoy();
+	void new_decoy( core::pose::Pose const& ) override;
+	void new_decoy() override;
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
-	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
+	void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) override;
 
 	static std::string _static_type_name() {
 		return "FragmentJumpClaimer";
 	}
 
-	virtual bool read_tag( std::string tag, std::istream& is );
+	bool read_tag( std::string tag, std::istream& is ) override;
 
 protected:
 	void set_jump_def( jumping::BaseJumpSetupOP jump_def ) {

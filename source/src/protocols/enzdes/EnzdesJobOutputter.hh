@@ -42,21 +42,21 @@ public: //constructor / destructor
 
 	EnzdesJobOutputter();
 
-	~EnzdesJobOutputter();
+	~EnzdesJobOutputter() override;
 
-	virtual void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag );
+	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag ) override;
 
-	virtual bool job_has_completed( protocols::jd2::JobCOP job );
+	bool job_has_completed( protocols::jd2::JobCOP job ) override;
 
 protected: //Job Outputter interface
 
-	virtual void scorefile(
+	void scorefile(
 		protocols::jd2::JobCOP job,
 		core::pose::Pose const & pose,
 		std::string tag = "",
 		std::string suffix_tag = "",
 		std::string scorefile = ""
-	);
+	) override;
 
 private: //data
 

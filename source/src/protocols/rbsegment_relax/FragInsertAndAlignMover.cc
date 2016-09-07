@@ -56,7 +56,7 @@ static THREAD_LOCAL basic::Tracer TR( "FragInsertAndAlignMover" );
 
 
 FragInsertAndAlignMover::FragInsertAndAlignMover() {}
-FragInsertAndAlignMover::~FragInsertAndAlignMover() {}
+FragInsertAndAlignMover::~FragInsertAndAlignMover() = default;
 
 
 FragInsertAndAlignMover::FragInsertAndAlignMover(

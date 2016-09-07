@@ -35,7 +35,7 @@ MMTOffRotamerPackingJob::MMTOffRotamerPackingJob() :
 	MMTPackingJob()
 {}
 
-MMTOffRotamerPackingJob::~MMTOffRotamerPackingJob() {}
+MMTOffRotamerPackingJob::~MMTOffRotamerPackingJob() = default;
 
 void MMTOffRotamerPackingJob::setup()
 {
@@ -91,7 +91,7 @@ void MMTOffRotamerPackingJob::update_pose( core::pose::Pose & final_pose )
 
 bool MMTOffRotamerPackingJob::best_assignment_exists() const
 {
-	return best_assignment_ != 0;
+	return best_assignment_ != nullptr;
 }
 
 

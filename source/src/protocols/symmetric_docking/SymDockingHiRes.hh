@@ -66,9 +66,9 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn_pack_in
 	);
 
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
-	virtual ~SymDockingHiRes();
+	~SymDockingHiRes() override;
 
 	void set_default( core::pose::Pose & pose );
 	void set_move_map(core::kinematics::MoveMapOP movemap_in);
@@ -89,8 +89,8 @@ public:
 	bool design() const;
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	//void call_pack();  // Undefined function, commenting out to make python bindginds
 

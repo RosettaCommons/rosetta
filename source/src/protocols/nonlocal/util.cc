@@ -106,11 +106,11 @@ protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
 	using protocols::loops::Loops;
 
 	Loops combined;
-	for ( Loops::const_iterator i = aligned_regions->begin(); i != aligned_regions->end(); ++i ) {
-		combined.push_back(*i);
+	for (const auto & i : *aligned_regions) {
+		combined.push_back(i);
 	}
-	for ( Loops::const_iterator i = unaligned_regions->begin(); i != unaligned_regions->end(); ++i ) {
-		combined.push_back(*i);
+	for (const auto & i : *unaligned_regions) {
+		combined.push_back(i);
 	}
 
 	// trim back the final loop to nres() - min_chunk_sz
@@ -131,7 +131,7 @@ void limit_chunk_size(core::Size min_chunk_sz,
 	assert(min_chunk_sz <= max_chunk_sz);
 
 	protocols::loops::LoopsOP output( new protocols::loops::Loops() );
-	for ( Loops::const_iterator i = regions->begin(); i != regions->end(); ++i ) {
+	for ( auto i = regions->begin(); i != regions->end(); ++i ) {
 		utility::vector1<Loop> pieces;
 		decompose(min_chunk_sz, max_chunk_sz, *i, &pieces);
 

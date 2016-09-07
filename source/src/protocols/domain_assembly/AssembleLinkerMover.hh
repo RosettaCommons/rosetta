@@ -19,6 +19,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/fragment/FragSet.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
@@ -31,21 +32,21 @@ class AssembleLinkerMover : public protocols::moves::Mover {
 public:
 
 	AssembleLinkerMover(
-		std::string const & loop_mover_name,
+		std::string  loop_mover_name,
 		Size const min_loop_size,
 		utility::vector1< core::fragment::FragSetOP > frags
 	) :
 		Mover("AssembleLinkerMover"),
-		loop_mover_name_(loop_mover_name),
+		loop_mover_name_(std::move(loop_mover_name)),
 		min_loop_size_(min_loop_size),
 		frag_libs_(frags)
 	{}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "AssembleLinkerMover";
 	}
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 private:
 	// fragments
 	std::string const loop_mover_name_;

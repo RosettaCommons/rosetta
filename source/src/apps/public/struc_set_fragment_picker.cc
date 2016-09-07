@@ -134,7 +134,7 @@ void *
 main_local( void* ) {
 
 	run();
-	return 0;
+	return nullptr;
 
 }
 
@@ -149,7 +149,7 @@ main( int argc, char * argv [] )
 		register_options();
 		devel::init( argc, argv );
 
-		main_local(NULL);
+		main_local(nullptr);
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception caught: " << std::endl;
 		excn.show( std::cerr );

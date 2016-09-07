@@ -66,7 +66,7 @@ MgHydrater::MgHydrater( utility::vector1< Size > const & mg_res_list ):
 
 //Destructor
 MgHydrater::~MgHydrater()
-{}
+= default;
 
 ///////////////////////////////////////////
 void
@@ -200,7 +200,7 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 	}
 
 	if ( rotation_matrices.size() == 0 ) {
-		if ( urs_ == 0 ) urs_ = get_octahedral_uniform_rotation_sampler( 15.0, true );
+		if ( urs_ == nullptr ) urs_ = get_octahedral_uniform_rotation_sampler( 15.0, true );
 		for ( core::Size ctr=1; ctr<=urs_->nrots() ; ++ctr ) {
 			Matrix R;
 			urs_->get(ctr, R);
@@ -264,7 +264,7 @@ MgHydrater::update_full_model_info_with_new_waters( pose::Pose & pose,
 	utility::vector1< Size > water_res;
 	for ( Size n = 1; n <= full_model_parameters.size(); n++ ) {
 		if ( full_sequence[ n - 1 ] != 'w' ) continue;
-		std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( n );
+		auto it = non_standard_residue_map.find( n );
 		if ( it == non_standard_residue_map.end() ) continue;
 		if ( it->second != "HOH" ) continue;
 		if ( res_list.has_value( n ) ) continue;

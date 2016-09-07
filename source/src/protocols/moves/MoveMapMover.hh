@@ -39,9 +39,9 @@ class MoveMapMover : public Mover {
 public:
 	MoveMapMover(): Parent() {}
 	MoveMapMover( std::string const& name ) : Parent( name ) {}
-	MoveMapMover( MoveMapMover const & other ) : Parent( other ) {}
+	MoveMapMover( MoveMapMover const & ) = default;
 
-	virtual ~MoveMapMover() {};
+	~MoveMapMover() override = default;
 
 	virtual void set_movemap( core::kinematics::MoveMapCOP ) = 0;
 

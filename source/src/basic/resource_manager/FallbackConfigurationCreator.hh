@@ -49,8 +49,8 @@ namespace resource_manager {
 class FallbackConfigurationCreator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual
-	~FallbackConfigurationCreator();
+	
+	~FallbackConfigurationCreator() override;
 
 	virtual
 	FallbackConfigurationOP

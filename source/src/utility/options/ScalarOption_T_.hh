@@ -118,16 +118,16 @@ public: // Creation
 
 
 	/// @brief Clone this
-	virtual
+	
 	ScalarOption_T_ *
-	clone() const = 0;
+	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ScalarOption_T_()
-	{}
+	
+	~ScalarOption_T_() override
+	= default;
 
 
 protected: // Assignment
@@ -158,8 +158,8 @@ protected: // Assignment
 public: // copying
 
 	/// @brief Copy operation
-	virtual
-	void copy_from( Option const & other ) {
+	
+	void copy_from( Option const & other ) override {
 		debug_assert( (dynamic_cast< ScalarOption_T_< K, T > const * > ( &other )) );
 
 		ScalarOption_T_< K, T > const & scalar_opt_other =
@@ -197,7 +197,7 @@ public: // Methods
 	/// @brief Activate
 	inline
 	ScalarOption_T_ &
-	activate()
+	activate() override
 	{
 		state_ = USER;
 		return *this;
@@ -207,7 +207,7 @@ public: // Methods
 	/// @brief Deactivate
 	inline
 	ScalarOption_T_ &
-	deactivate()
+	deactivate() override
 	{
 		state_ = INACTIVE;
 		return *this;
@@ -217,7 +217,7 @@ public: // Methods
 	/// @brief Set to default value, if any
 	inline
 	ScalarOption_T_ &
-	to_default()
+	to_default() override
 	{
 		if ( default_state_ == DEFAULT ) {
 			state_ = DEFAULT;
@@ -230,7 +230,7 @@ public: // Methods
 	/// @brief Clear
 	inline
 	ScalarOption_T_ &
-	clear()
+	clear() override
 	{
 		default_state_ = INACTIVE;
 		default_value_ = Value();
@@ -336,7 +336,7 @@ public: // Methods
 	/// @brief Value assignment from a command line string
 	inline
 	ScalarOption_T_ &
-	cl_value( std::string const & value_str )
+	cl_value( std::string const & value_str ) override
 	{
 		Value const old_value( value_ );
 		bool const check_override( state_ == USER );
@@ -394,7 +394,7 @@ public: // Methods
 	/// @brief Legal specifications check: Report and return error state
 	inline
 	bool
-	legal_specs_report() const
+	legal_specs_report() const override
 	{
 		return ( ( legal_limits_report() ) && ( legal_default_report() ) );
 	}
@@ -403,7 +403,7 @@ public: // Methods
 	/// @brief Legal value limits check: Report and return error state
 	inline
 	bool
-	legal_limits_report() const
+	legal_limits_report() const override
 	{
 		bool error( false );
 		if ( ( lower_.active() ) && ( upper_.active() ) ) {
@@ -424,7 +424,7 @@ public: // Methods
 	/// @brief Legal size limits check: Report and return error state
 	inline
 	bool
-	legal_size_report() const
+	legal_size_report() const override
 	{
 		return true; // Scalar options have size 1
 	}
@@ -433,7 +433,7 @@ public: // Methods
 	/// @brief Legal default value check: Report and return error state
 	inline
 	bool
-	legal_default_report() const
+	legal_default_report() const override
 	{
 		bool error( false );
 		if ( ! legal_default() ) {
@@ -448,7 +448,7 @@ public: // Methods
 	/// @brief Legal default value check
 	inline
 	void
-	legal_default_check() const
+	legal_default_check() const override
 	{
 		if ( ! legal_default() ) {
 			std::cerr << "ERROR: Illegal default value in option -" << id()
@@ -474,7 +474,7 @@ public: // Methods
 	/// @brief Legal value check: Report and return error state
 	inline
 	bool
-	legal_report() const
+	legal_report() const override
 	{
 		bool error( false );
 		if ( ! legal() ) {
@@ -488,7 +488,7 @@ public: // Methods
 	/// @brief Legal value check
 	inline
 	void
-	legal_check() const
+	legal_check() const override
 	{
 		if ( ! legal() ) {
 			mpi_safe_std_err("ERROR: Illegal value specified for option -"+id()+" : "+value_string());
@@ -513,7 +513,7 @@ public: // Methods
 	/// @brief Required specified option check: Report and return error state
 	inline
 	bool
-	specified_report() const
+	specified_report() const override
 	{
 		bool error( false );
 		if ( ! user() ) {
@@ -527,7 +527,7 @@ public: // Methods
 	/// @brief Required specified option check
 	inline
 	void
-	specified_check() const
+	specified_check() const override
 	{
 		if ( ! user() ) {
 			std::cerr << "ERROR: Unspecified option -" << id() << " is required" << std::endl;
@@ -542,7 +542,7 @@ public: // Properties
 	/// @brief Key
 	inline
 	Key const &
-	key() const
+	key() const override
 	{
 		return key_;
 	}
@@ -551,7 +551,7 @@ public: // Properties
 	/// @brief ID
 	inline
 	std::string const &
-	id() const
+	id() const override
 	{
 		return key_.id();
 	}
@@ -560,7 +560,7 @@ public: // Properties
 	/// @brief Identifier
 	inline
 	std::string const &
-	identifier() const
+	identifier() const override
 	{
 		return key_.identifier();
 	}
@@ -569,7 +569,7 @@ public: // Properties
 	/// @brief Code
 	inline
 	std::string const &
-	code() const
+	code() const override
 	{
 		return key_.code();
 	}
@@ -578,7 +578,7 @@ public: // Properties
 	/// @brief Name
 	inline
 	std::string const &
-	name() const
+	name() const override
 	{
 		return key_.id();
 	}
@@ -587,7 +587,7 @@ public: // Properties
 	/// @brief Description
 	inline
 	std::string const &
-	description() const
+	description() const override
 	{
 		return description_;
 	}
@@ -595,7 +595,7 @@ public: // Properties
 	/// @brief Short Description
 	inline
 	std::string const &
-	short_description() const
+	short_description() const override
 	{
 		return short_description_;
 	}
@@ -614,7 +614,7 @@ public: // Properties
 	/// @brief Legal or inactive default value?
 	inline
 	bool
-	legal_default() const
+	legal_default() const override
 	{
 		return ( ( default_inactive() ) || ( unconstrained() ) || ( default_is_legal() ) || ( default_obeys_bounds() ) );
 	}
@@ -623,7 +623,7 @@ public: // Properties
 	/// @brief Legal value?
 	inline
 	bool
-	legal() const
+	legal() const override
 	{
 		return ( ( !active() ) || ( unconstrained() ) || ( value_is_legal() ) || ( value_obeys_bounds() ) );
 	}
@@ -641,7 +641,7 @@ public: // Properties
 	/// @brief Has a default?
 	inline
 	bool
-	has_default() const
+	has_default() const override
 	{
 		return ( default_state_ == DEFAULT );
 	}
@@ -650,7 +650,7 @@ public: // Properties
 	/// @brief Default active?
 	inline
 	bool
-	default_active() const
+	default_active() const override
 	{
 		return ( default_state_ == DEFAULT );
 	}
@@ -659,7 +659,7 @@ public: // Properties
 	/// @brief Default inactive?
 	inline
 	bool
-	default_inactive() const
+	default_inactive() const override
 	{
 		return ( default_state_ == INACTIVE );
 	}
@@ -668,7 +668,7 @@ public: // Properties
 	/// @brief Active?  That is, the option has some value, either the default one or specified on the command line.
 	inline
 	bool
-	active() const
+	active() const override
 	{
 		return ( state_ != INACTIVE );
 	}
@@ -678,7 +678,7 @@ public: // Properties
 	/// You should probably use active() instead in almost all cases!
 	inline
 	bool
-	user() const
+	user() const override
 	{
 		been_accessed();
 		return ( state_ == USER );
@@ -688,7 +688,7 @@ public: // Properties
 	/// @brief Can another value be added and stay within any size constraints?
 	inline
 	bool
-	can_hold_another() const
+	can_hold_another() const override
 	{
 		return true; // Always hold another since new value replaces old in scalar
 	}
@@ -697,7 +697,7 @@ public: // Properties
 	/// @brief Default size (number of default values)
 	inline
 	Size
-	default_size() const
+	default_size() const override
 	{
 		return ( default_state_ == INACTIVE ? 0u : 1u );
 	}
@@ -706,7 +706,7 @@ public: // Properties
 	/// @brief Number of default values (default size)
 	inline
 	Size
-	n_default_value() const
+	n_default_value() const override
 	{
 		return ( default_state_ == INACTIVE ? 0u : 1u );
 	}
@@ -715,7 +715,7 @@ public: // Properties
 	/// @brief Size (number of values)
 	inline
 	Size
-	size() const
+	size() const override
 	{
 		return ( state_ == INACTIVE ? 0u : 1u );
 	}
@@ -724,7 +724,7 @@ public: // Properties
 	/// @brief Number of values (size)
 	inline
 	Size
-	n_value() const
+	n_value() const override
 	{
 		return ( state_ == INACTIVE ? 0u : 1u );
 	}
@@ -734,9 +734,9 @@ public: // Properties
 	inline bool has_any_of_characters(std::string const & str_, std::string const & s ) const
 	{
 		size_type const s_len( s.length() );
-		for ( size_type i = 0; i < str_.size(); ++i ) {
+		for (char i : str_) {
 			for ( size_type j = 0; j < s_len; ++j ) {
-				if ( str_[ i ] == s[ j ] ) return true;
+				if ( i == s[ j ] ) return true;
 			}
 		}
 		return false; // No matches
@@ -746,7 +746,7 @@ public: // Properties
 	/// @brief Legal value string representation
 	inline
 	std::string
-	legal_string() const
+	legal_string() const override
 	{
 		if ( ( legal_.empty() ) && ( lower_.inactive() ) && ( upper_.inactive() ) ) {
 			return std::string();
@@ -789,7 +789,7 @@ public: // Properties
 	/// @brief Size constraint string representation
 	inline
 	std::string
-	size_constraint_string() const
+	size_constraint_string() const override
 	{
 		return std::string(); // Scalar options have no size constraints
 	}
@@ -798,7 +798,7 @@ public: // Properties
 	/// @brief Default value string representation
 	inline
 	std::string
-	default_string() const
+	default_string() const override
 	{
 		if ( default_state_ == DEFAULT ) {
 			return '[' + value_string_of( default_value_ ) + ']';
@@ -809,7 +809,7 @@ public: // Properties
 
 	inline
 	std::string
-	raw_default_string() const
+	raw_default_string() const override
 	{
 		if ( default_state_ == DEFAULT ) {
 			return value_string_of( default_value_ );
@@ -822,7 +822,7 @@ public: // Properties
 	/// @brief Value string representation
 	inline
 	std::string
-	value_string() const
+	value_string() const override
 	{
 		if ( state_ != INACTIVE ) {
 			return value_string_of( value_ );
@@ -833,7 +833,7 @@ public: // Properties
 
 	inline
 	std::string
-	raw_value_string() const
+	raw_value_string() const override
 	{
 		return value_string();
 	}
@@ -841,7 +841,7 @@ public: // Properties
 	/// @brief =Value string representation
 	inline
 	std::string
-	equals_string() const
+	equals_string() const override
 	{
 		if ( state_ != INACTIVE ) {
 			return '=' + value_string();

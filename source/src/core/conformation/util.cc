@@ -754,33 +754,31 @@ build_tree(
 	}
 
 	// traverse tree, build edges
-	for ( kinematics::FoldTree::const_iterator it = fold_tree.begin(),
-			it_end = fold_tree.end(); it != it_end; ++it ) {
+	for (const auto & it : fold_tree) {
 
-		if ( it->is_jump() ) {
-			build_jump_edge( *it, residues, atom_pointer );
+		if ( it.is_jump() ) {
+			build_jump_edge( it, residues, atom_pointer );
 
-		} else if ( it->label() == kinematics::Edge::PEPTIDE ) {
+		} else if ( it.label() == kinematics::Edge::PEPTIDE ) {
 			// build a peptide edge
-			build_polymer_edge( *it, residues, atom_pointer );
+			build_polymer_edge( it, residues, atom_pointer );
 
-		} else if ( it->label() == kinematics::Edge::CHEMICAL ) {
-			build_chemical_edge( *it, residues, atom_pointer );
+		} else if ( it.label() == kinematics::Edge::CHEMICAL ) {
+			build_chemical_edge( it, residues, atom_pointer );
 
 		} else {
 			if ( TR.Error.visible() ) {
 				TR.Error << "Failed to identify kinematics::Edge label in core/kinematics/util.cc::build_tree()" << std::endl;
-				TR.Error << "Label = " << it->label() << std::endl;
+				TR.Error << "Label = " << it.label() << std::endl;
 			}
 			utility_exit();
 		}
 	}
 
 	// now guarantee that jump stubs are residue-internal if desired
-	for ( kinematics::FoldTree::const_iterator it = fold_tree.begin(),
-			it_end = fold_tree.end(); it != it_end; ++it ) {
-		if ( it->is_jump() && it->keep_stub_in_residue() ) {
-			promote_sameresidue_child_of_jump_atom( *it, residues, atom_pointer );
+	for (const auto & it : fold_tree) {
+		if ( it.is_jump() && it.keep_stub_in_residue() ) {
+			promote_sameresidue_child_of_jump_atom( it, residues, atom_pointer );
 		}
 	}
 }
@@ -1435,10 +1433,10 @@ get_residue_connections(
 	// setup the outgoing connections
 	new_rsd_out.clear();
 	utility::vector1< kinematics::Edge > const outgoing_edges( fold_tree.get_outgoing_edges( seqpos ) );
-	for ( utility::vector1< kinematics::Edge >::const_iterator it= outgoing_edges.begin(); it != outgoing_edges.end(); ++it ) {
+	for (const auto & outgoing_edge : outgoing_edges) {
 		Size anchor_atomno, root_atomno;
-		Size const root_pos( ( it->is_polymer() ) ? seqpos + it->polymer_direction() : it->stop() );
-		get_anchor_and_root_atoms( new_rsd, *residues[ root_pos ], *it, anchor_atomno, root_atomno );
+		Size const root_pos( ( outgoing_edge.is_polymer() ) ? seqpos + outgoing_edge.polymer_direction() : outgoing_edge.stop() );
+		get_anchor_and_root_atoms( new_rsd, *residues[ root_pos ], outgoing_edge, anchor_atomno, root_atomno );
 		new_rsd_out.push_back( id::BondID( id::AtomID( anchor_atomno, seqpos ), id::AtomID( root_atomno, root_pos ) ) );
 	}
 }
@@ -1686,7 +1684,7 @@ promote_sameresidue_child_of_jump_atom(
 	get_anchor_and_root_atoms( *residues[ edge.start() ], *residues[ root_pos ], edge, anchor_atomno, root_atomno );
 	kinematics::tree::AtomOP root_atom( atom_pointer[ id::AtomID( root_atomno, root_pos ) ] );
 	debug_assert( root_atom->is_jump() );
-	kinematics::tree::AtomOP same_residue_child( 0 );
+	kinematics::tree::AtomOP same_residue_child( nullptr );
 	for ( Size i=0; i< root_atom->n_nonjump_children(); ++i ) {
 		kinematics::tree::AtomOP child( atom_pointer[ root_atom->get_nonjump_atom( i )->id() ] ); // want nonconst, use atom_pointer
 		if ( Size(child->id().rsd()) == root_pos ) {

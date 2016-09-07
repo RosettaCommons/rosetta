@@ -54,13 +54,13 @@ public :
 		bool write2pdb
 	);
 	DdGScan( DdGScan const & rval );
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
-	virtual ~DdGScan();
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
+	~DdGScan() override;
 	void initialize();
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "DdGScan"; }
+	std::string name() const override { return "DdGScan"; }
 
 	// Setters
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
@@ -78,7 +78,7 @@ public :
 	protocols::simple_moves::ddGOP ddG_mover() const;
 
 	// Dummy apply function
-	virtual bool apply( core::pose::Pose const & ) const;
+	bool apply( core::pose::Pose const & ) const override;
 
 	// Parse xml
 	void parse_my_tag(
@@ -87,7 +87,7 @@ public :
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const &
-	);
+	) override;
 
 	// Effector functions
 	core::Real ddG_for_single_residue(
@@ -104,7 +104,7 @@ public :
 		std::string const & residue_name,
 		core::Real const & ddG
 	) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	utility::vector1< ddG_data_tuple > calculate( std::ostream & out, core::pose::Pose const & pose ) const;
 
 private:

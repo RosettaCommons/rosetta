@@ -36,10 +36,9 @@ public:
 	}
 
 	/// @brief  Selects desired number of fragments from a given set of candidates
-	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& );
+	void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& ) override;
 
-	virtual ~DiversifyDihedralsSelector() {
-	}
+	~DiversifyDihedralsSelector() override = default;
 
 	core::Real dihedral_rmsd(FragmentCandidateOP,FragmentCandidateOP);
 

@@ -64,7 +64,7 @@ using protocols::scoring::InterchainPotential;
 template <> std::mutex utility::SingletonBase< InterchainPotential >::singleton_mutex_{};
 template <> std::atomic< InterchainPotential * > utility::SingletonBase< InterchainPotential >::instance_( 0 );
 #else
-template <> InterchainPotential * utility::SingletonBase< InterchainPotential >::instance_( 0 );
+template <> InterchainPotential * utility::SingletonBase< InterchainPotential >::instance_( nullptr );
 #endif
 
 }

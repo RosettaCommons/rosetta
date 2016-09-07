@@ -36,7 +36,7 @@ public:
 
 public:
 	ConstraintSetMover();
-	virtual ~ConstraintSetMover();
+	~ConstraintSetMover() override;
 	ConstraintSetMover( std::string const & );
 
 	void read_options();
@@ -46,17 +46,17 @@ public:
 	ConstraintSetOP constraint_set();
 	ConstraintSetCOP constraint_set() const;
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Associates relevant options with the ConstraintSetMover class
 	static void register_options();
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & ) override;
 
 	void add_constraints( bool const a ){ add_constraints_ = a; }
 	bool add_constraints() const { return add_constraints_; }

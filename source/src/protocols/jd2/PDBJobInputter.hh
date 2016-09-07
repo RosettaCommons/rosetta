@@ -38,18 +38,18 @@ public:
 
 	PDBJobInputter();
 
-	virtual ~PDBJobInputter();
+	~PDBJobInputter() override;
 
 	/// @brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.  This implementation uses pose_from_pdb
-	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	void pose_from_job( core::pose::Pose & pose, JobOP job ) override;
 
 	/// @brief this function determines what jobs exist from -s/-l
-	virtual void fill_jobs( JobsContainer & jobs );
+	void fill_jobs( JobsContainer & jobs ) override;
 
 	/// @brief Return the type of input source that the PDBJobInputter is currently
 	///  using.
 	/// @return Always <em>PDB_FILE</em>.
-	virtual JobInputterInputSource::Enum input_source() const;
+	JobInputterInputSource::Enum input_source() const override;
 
 }; // PDBJobInputter
 

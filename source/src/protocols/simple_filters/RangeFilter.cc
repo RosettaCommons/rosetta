@@ -25,6 +25,7 @@
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -41,8 +42,8 @@ namespace simple_filters {
 RangeFilter::RangeFilter() : protocols::filters::Filter()
 {}
 
-RangeFilter::RangeFilter(Real lower_bound, Real upper_bound, FilterOP const & filter ) : protocols::filters::Filter(),
-	filter_(filter),
+RangeFilter::RangeFilter(Real lower_bound, Real upper_bound, FilterOP  filter ) : protocols::filters::Filter(),
+	filter_(std::move(filter)),
 	lower_bound_( lower_bound ),
 	upper_bound_( upper_bound )
 {}
@@ -87,7 +88,7 @@ RangeFilter::parse_my_tag(
 	Pose const & )
 {
 	std::string const filter_name( tag->getOption< std::string >( "filter") );
-	filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
+	auto filter_it( filters.find( filter_name ) );
 	if ( filter_it == filters.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
 	}

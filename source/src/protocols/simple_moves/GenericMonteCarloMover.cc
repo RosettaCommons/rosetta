@@ -134,15 +134,15 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	Size const task_scaling,
 	MoverOP const & mover,
 	Real const temperature,
-	String const & sample_type,
+	String  sample_type,
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
     max_accepted_trials_( max_accepted_trials ),
 	task_scaling_( task_scaling ),
-	mover_( mover ),
+	mover_(std::move( mover )),
 	temperature_( temperature ),
-	sample_type_( sample_type ),
+	sample_type_(std::move( sample_type )),
 	drift_( drift ),
 	preapply_( true ),
 	recover_low_( true ),
@@ -176,17 +176,17 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	MoverOP const & mover,
 	TaskFactoryOP factory_in,
 	Real const temperature,
-	String const & sample_type,
+	String  sample_type,
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
     max_accepted_trials_( max_accepted_trials ),
 	task_scaling_( task_scaling ),
-	mover_( mover ),
+	mover_(std::move( mover )),
 	task_( /* NULL */ ),
-	factory_ (factory_in),
+	factory_ (std::move(factory_in)),
 	temperature_( temperature ),
-	sample_type_( sample_type ),
+	sample_type_(std::move( sample_type )),
 	drift_( drift ),
 	preapply_( true ),
 	recover_low_( true ),
@@ -205,7 +205,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 
 
 /// @brief destructor
-GenericMonteCarloMover::~GenericMonteCarloMover(){}
+GenericMonteCarloMover::~GenericMonteCarloMover()= default;
 
 /// @brief clone this object
 GenericMonteCarloMover::MoverOP
@@ -344,7 +344,7 @@ GenericMonteCarloMover::add_filter( FilterOP filter, bool const adaptive, Real c
 	sample_types_.push_back( sample_type );
 	last_accepted_scores_.assign( filters_.size(), 100000 );
 	num_rejections_.push_back(0);
-	scorefxn_ = NULL;
+	scorefxn_ = nullptr;
 }
 
 /// @brief set scorefxn
@@ -568,7 +568,7 @@ GenericMonteCarloMover::accept( Pose & pose,
 		copy( provisional_scores.begin(), provisional_scores.end(), lowest_scores_.begin() );
 		mc_accepted_ = MCA_accepted_score_beat_low;
 		if ( saved_accept_file_name_ != "" ) {
-			if ( mover_tag_ != NULL ) {
+			if ( mover_tag_ != nullptr ) {
 				TR<<"Adding accepted mover tag to pose comments"<<std::endl;
 				//      std::ofstream f;
 				//      std::string const fname( saved_accept_file_name_ + ".mover_tag" );
@@ -668,8 +668,8 @@ GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > c
             using namespace std;
             string stringed_comments("");
             map< string, string > const comments = core::pose::get_all_comments(pose);
-            for ( map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
-                stringed_comments += i->first + ":" + i->second + " ";
+            for (const auto & comment : comments) {
+                stringed_comments += comment.first + ":" + comment.second + " ";
             }
             data<<trial_counter_<<" "<<accepted<<" "<<filter_val<<" "<<stringed_comments<<" "<<pose_sequence<<'\n';
             data.flush();
@@ -741,7 +741,7 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 			f.close();
 		}//fi f.good()
 	}// fi saved_trial_number_file_ != ""
-	if ( mover_tag_ != NULL ) {
+	if ( mover_tag_ != nullptr ) {
 		std::string const fname( saved_trial_number_file_ + ".mover_tag" );
 		ifstream f_mover_tag( fname.c_str(), ios::in );
 		if ( f_mover_tag.good() ) {
@@ -764,9 +764,9 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 				call_reset = true;
 			} else if ( filter->get_type() == "CompoundStatement" ) { // fi Operator /// User defined filters with confidence!=1 in RosettaScripts are all CompoundFilter, so poke inside...
 				CompoundFilterOP comp_filt_op( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter ) );
-				runtime_assert( comp_filt_op != 0 );
-				for ( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ) {
-					FilterOP filt( cs_it->first );
+				runtime_assert( comp_filt_op != nullptr );
+				for (auto & cs_it : *comp_filt_op) {
+					FilterOP filt( cs_it.first );
 					if ( filt->get_type() == "Operator" ) {
 						TR<<"Resetting Operator filter's baseline"<<std::endl;
 						OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filt ) );
@@ -902,7 +902,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 	utility::vector1< core::Size > mover_accepts;// count how many accepts each mover in the parsedprotocol made
 	mover_accepts.clear();
 	if ( adaptive_movers() ) {
-		runtime_assert( mover_pp != 0 );
+		runtime_assert( mover_pp != nullptr );
 		runtime_assert( mover_pp->mode() == "single_random" );
 		mover_accepts = utility::vector1< core::Size >( mover_pp->size(), 1 ); /// each mover gets a pseudocount of 1. This ensures that the running probability of each mover never goes to 0
 	}
@@ -1036,8 +1036,8 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	}
 
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
-	Movers_map::const_iterator  find_mover ( movers.find( user_defined_mover_name_ ));
-	Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	auto  find_mover ( movers.find( user_defined_mover_name_ ));
+	auto find_filter( filters.find( filter_name ));
 	if ( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
 		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
@@ -1051,7 +1051,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	}
 
 	if ( adaptive_movers() ) { /// adaptive movers only works if the mover being called is of type parsedprotocol
-		runtime_assert( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol >( mover_ ) != 0 );
+		runtime_assert( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol >( mover_ ) != nullptr );
 	}
     
 	bool const adaptive( tag->getOption< bool >( "adaptive", true ) );
@@ -1068,7 +1068,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
                 filters_.clear();
         //} CNCNCN debug
 	} else {
-		scorefxn_ = NULL;
+		scorefxn_ = nullptr;
 	}
     
 	parse_task_operations( tag, data, filters, movers );
@@ -1095,7 +1095,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 			utility::vector1< TagCOP > const filters_tags( btag->getTags() );
 			BOOST_FOREACH ( TagCOP const ftag, filters_tags ) {
 				String const filter_name( ftag->getOption< String >( "filter_name" ) );
-				Filters_map::const_iterator find_filt( filters.find( filter_name ));
+				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
 					TR.Error << "Error !! filter not found in map: \n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
@@ -1148,7 +1148,7 @@ void GenericMonteCarloMover::parse_task_operations(
 	if ( ( tag->hasOption("task_operations") ) ) {
 		TR << "Found a task operation" << std::endl;
 		TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-		if ( new_task_factory == 0 ) return;
+		if ( new_task_factory == nullptr ) return;
 		task_factory( new_task_factory );
 	}
 }

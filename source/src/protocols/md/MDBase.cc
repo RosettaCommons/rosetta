@@ -50,7 +50,7 @@ MDBase::MDBase() :
 	uniform_coord_constrained_( false )
 {}
 
-MDBase::~MDBase() {}
+MDBase::~MDBase() = default;
 
 void
 MDBase::report_as_silent( std::string const filename,
@@ -124,8 +124,8 @@ MDBase::parse_schfile( std::string const schfile ) {
 	mdsch_.resize( 0 );
 
 	// Put in by reading line by line
-	for ( Size i = 0; i < filelines.size(); i++ ) {
-		line = filelines[i];
+	for (auto & fileline : filelines) {
+		line = fileline;
 		TR.Debug << line << std::endl;
 		utility::vector1< std::string > tokens ( utility::split( line ) );
 		// Format: sch nstep temp0

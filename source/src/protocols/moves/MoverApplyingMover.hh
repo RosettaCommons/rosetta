@@ -36,9 +36,9 @@ class MoverApplyingMover : public Mover {
 	typedef Mover Parent;
 public:
 	MoverApplyingMover( std::string const& name ) : Parent( name ) {}
-	MoverApplyingMover( MoverApplyingMover const & other ) : Parent( other ) {}
+	MoverApplyingMover( MoverApplyingMover const & ) = default;
 
-	virtual ~MoverApplyingMover() {};
+	~MoverApplyingMover() override = default;
 
 	virtual void set_mover( MoverOP ) = 0;
 

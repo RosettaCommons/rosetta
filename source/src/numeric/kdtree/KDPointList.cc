@@ -27,7 +27,7 @@ namespace numeric {
 namespace kdtree {
 
 /// @details Auto-generated virtual destructor
-KDPointList::~KDPointList() {}
+KDPointList::~KDPointList() = default;
 
 bool KDPoint_MinDist::operator() ( KDPointOP const & a, KDPointOP const & b ) {
 	return ( a->distance() < b->distance() );
@@ -103,20 +103,15 @@ utility::vector1< KDPointOP > KDPointList::sorted_values() {
 /// This calls insert which is a little slow, and is a candidate for
 /// optimization if the insert() method shows up in profiling.
 void KDPointList::merge( KDPointList const & other ) {
-	for ( const_iterator it = other.begin(), end = other.end();
-			it != end; ++it
-			) {
-		KDPointOP tmp = *it;
-		insert( tmp );
+	for (auto tmp : other) {
+			insert( tmp );
 	}
 }
 
 void KDPointList::show( std::ostream & out ) const {
 	out << "KDPointList with " << size() << " points." << std::endl;
-	for ( const_iterator it = container_.begin(), end = container_.end();
-			it != end; ++it
-			) {
-		(*it)->show( out );
+	for (const auto & it : container_) {
+		it->show( out );
 		out << std::endl;
 	}
 }

@@ -51,7 +51,7 @@ core::Size
 get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::string const & prefix/*=""*/ ) {
 	core::Size resnum( 0 );
 	bool const pdb_num_used( tag_ptr->hasOption( prefix + "pdb_num" ) );
-	if ( pose.pdb_info().get() == NULL ) { //no pdbinfo for this pose (e.g., silent file), resort to using just the residue number
+	if ( pose.pdb_info().get() == nullptr ) { //no pdbinfo for this pose (e.g., silent file), resort to using just the residue number
 		if ( pdb_num_used ) {
 			TR<<"Bad tag: "<< *tag_ptr<<std::endl;
 			utility_exit_with_message( "pdb_num used but no pdb_info found. Use res_num instead" );
@@ -140,7 +140,7 @@ parse_resnum(
 	if ( chain.size() == 1 ) { // PDB Number
 		TR.Trace << "Interpretting " << n << chain << " as a pdb number." << std::endl;
 		pose::PDBInfoCOP info = pose.pdb_info();
-		runtime_assert(info != 0);
+		runtime_assert(info != nullptr);
 		return info->pdb2pose( chain[0], n );
 	} else { // Rosetta Number
 		TR.Trace << "Interpreting " << n << " as a Rosetta residue number." << std::endl;
@@ -195,7 +195,7 @@ get_resnum_list(
 	resnums.clear();
 	resnums.insert( resnums.begin(), resnums_set.begin(), resnums_set.end() );
 	sort( resnums.begin(), resnums.end() );
-	vector1<Size>::iterator last = unique( resnums.begin(), resnums.end() );
+	auto last = unique( resnums.begin(), resnums.end() );
 	resnums.erase(last, resnums.end() );
 
 	return resnums;
@@ -230,9 +230,8 @@ get_resnum_list(
 			}
 		}
 		utility::vector1<core::Size> const nums( parse_selection_block( res, pose ) );
-		for ( utility::vector1<core::Size>::const_iterator i = nums.begin(); i != nums.end(); ++i ) {
-			Size num = *i;
-			runtime_assert_string_msg( num, "Error in core::pose::selection::get_resnum_list(): A residue index could not be parsed." );
+		for (unsigned long num : nums) {
+				runtime_assert_string_msg( num, "Error in core::pose::selection::get_resnum_list(): A residue index could not be parsed." );
 			resid.insert( num );
 		}
 	}//foreach
@@ -270,9 +269,8 @@ get_resnum_list_ordered(
 			}
 		}
 		utility::vector1<core::Size> const nums( parse_selection_block( res, pose ) );
-		for ( utility::vector1<core::Size>::const_iterator i = nums.begin(); i != nums.end(); ++i ) {
-			Size num = *i;
-			runtime_assert( num );
+		for (unsigned long num : nums) {
+				runtime_assert( num );
 			resid.push_back( num );
 		}
 	}//foreach
@@ -322,8 +320,8 @@ bool is_referencepose_number(
 	//Parse the number in the reference pose:
 	std::string const refpose_resnumber_string_out( str.substr(commaposition+1, endbracketposition-commaposition-1) );
 	//TR << "refpose_resnumber_string_out=" << refpose_resnumber_string_out << std::endl;
-	for ( core::Size i=0, imax=refpose_resnumber_string_out.length(); i<imax; ++i ) {
-		if ( refpose_resnumber_string_out[i]<'0' || refpose_resnumber_string_out[i]>'9' ) return false; //Fail if there isn't a number between the comma and the close of the parentheses
+	for (char i : refpose_resnumber_string_out) {
+		if ( i<'0' || i>'9' ) return false; //Fail if there isn't a number between the comma and the close of the parentheses
 	}
 	core::Size refpose_resnumber_out(0);
 	{ //Scope for temporary istringstream variable:

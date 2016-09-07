@@ -26,7 +26,7 @@ SingleStateEntityData::write_checkpoint(
 {
 	os << "fitness " << fitness_;
 	os << " metrics " << metric_value_map_.size();
-	for ( MetricValueMap::const_iterator iter = metric_value_map_.begin(); iter != metric_value_map_.end(); ++iter ) {
+	for ( auto iter = metric_value_map_.begin(); iter != metric_value_map_.end(); ++iter ) {
 		os << " " << iter->first << " ";
 		runtime_assert(basic::write_metric_value(os, *(iter->second)));
 	}

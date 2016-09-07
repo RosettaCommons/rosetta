@@ -49,8 +49,8 @@ void UltraLightResidue::transform(numeric::xyzMatrix<core::Real> const & rotatio
 	PointPosition old_center = numeric::center_of_mass(coords_);
 	center_ = old_center+translation_vector;
 	numeric::xyzTransform<core::Real> transformer(numeric::xyzTransform<core::Real>::rot(rotation_matrix,old_center,center_));
-	for ( utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it ) {
-		*it = transformer*(*it);
+	for (auto & coord : coords_) {
+		coord = transformer*coord;
 	}
 }
 
@@ -77,8 +77,8 @@ void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue
 
 	//coords_ and target_coords get recentered to 0,0,0.  rot_matrix gets set to the correct rotation matrix. sigma3 is set but nobody cares
 	//setup the transform, use the last move center to recenter away from zero
-	for ( utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it ) {
-		*it = transformer*(*it);
+	for (auto & coord : coords_) {
+		coord = transformer*coord;
 	}
 
 	center_ = numeric::center_of_mass(coords_);
@@ -89,8 +89,8 @@ void UltraLightResidue::slide(core::Vector const & translation_vector)
 {
 	numeric::xyzMatrix<core::Real> identity(numeric::xyzMatrix<core::Real>::identity());
 	numeric::xyzTransform<core::Real> transformer(numeric::xyzTransform<core::Real>::rot(identity,translation_vector));
-	for ( utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it ) {
-		*it = translation_vector+(*it);
+	for (auto & coord : coords_) {
+		coord = translation_vector+coord;
 	}
 	center_ = numeric::center_of_mass(coords_);
 }

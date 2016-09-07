@@ -99,7 +99,7 @@ JD2ResourceManagerJobInputter::JD2ResourceManagerJobInputter() :
 	last_input_tag_("")
 {}
 
-JD2ResourceManagerJobInputter::~JD2ResourceManagerJobInputter() {}
+JD2ResourceManagerJobInputter::~JD2ResourceManagerJobInputter() = default;
 
 void
 JD2ResourceManagerJobInputter::pose_from_job(
@@ -214,7 +214,7 @@ JD2ResourceManagerJobInputter::cleanup_after_job_completion(
 	jd2_resource_manager->mark_job_tag_as_complete(job_tag);
 	std::list<ResourceTag> resources_for_job(jd2_resource_manager->get_resource_tags_for_job_tag(job_tag));
 
-	std::list<ResourceTag>::iterator resource_list_it = resources_for_job.begin();
+	auto resource_list_it = resources_for_job.begin();
 	for ( ; resource_list_it != resources_for_job.end(); ++resource_list_it ) {
 		core::Size job_count(jd2_resource_manager->get_count_of_jobs_associated_with_resource_tag(*resource_list_it));
 		if ( job_count == 0 ) {
@@ -248,7 +248,7 @@ JD2ResourceManagerJobInputter::fill_jobs_from_stream( std::istream & instream, J
 
 	utility::tag::TagCOP resource_tags = utility::tag::Tag::create( instream );
 
-	for ( utility::tag::Tag::tags_t::const_iterator
+	for ( auto
 			tag_iter = resource_tags->getTags().begin(),
 			tag_iter_end = resource_tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
@@ -275,7 +275,7 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 	std::map< std::string, std::string > generic_resources_for_job;
 	JobOptionsOP generic_job_options( new JobOptions() );
 
-	for ( utility::tag::Tag::tags_t::const_iterator
+	for ( auto
 			tag_iter = jobs_tags->getTags().begin(),
 			tag_iter_end = jobs_tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
@@ -291,7 +291,7 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 	}
 
 
-	for ( utility::tag::Tag::tags_t::const_iterator
+	for ( auto
 			tag_iter = jobs_tags->getTags().begin(),
 			tag_iter_end = jobs_tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
@@ -331,7 +331,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 	}
 
 	JobOptionsOP job_options( new JobOptions(generic_job_options) );
-	for ( utility::tag::Tag::tags_t::const_iterator
+	for ( auto
 			tag_iter = jobs_tag->getTags().begin(),
 			tag_iter_end = jobs_tag->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
@@ -498,10 +498,8 @@ JD2ResourceManagerJobInputter::record_job(
 
 	using namespace basic::options;
 
-	for ( std::map< string, string >::const_iterator
-			iter = resources_for_job.begin(), iter_end = resources_for_job.end();
-			iter != iter_end; ++iter ) {
-		jd2rm->add_resource_tag_by_job_tag( iter->first, job_name, iter->second );
+	for (const auto & iter : resources_for_job) {
+		jd2rm->add_resource_tag_by_job_tag( iter.first, job_name, iter.second );
 	}
 
 	JD2ResourceManager::get_jd2_resource_manager_instance()->add_job_options(
@@ -546,12 +544,9 @@ JD2ResourceManagerJobInputter::read_Option_subtag_for_job(
 	JobOptionsOP job_options
 )
 {
-	for ( utility::tag::Tag::options_t::const_iterator
-			opt_iter = options_tag->getOptions().begin(),
-			opt_iter_end = options_tag->getOptions().end();
-			opt_iter != opt_iter_end; ++opt_iter ) {
-		std::string const & optname = opt_iter->first;
-		std::string const & val = opt_iter->second;
+	for (const auto & opt_iter : options_tag->getOptions()) {
+		std::string const & optname = opt_iter.first;
+		std::string const & val = opt_iter.second;
 		parse_options_name_and_value(optname, val, job_options);
 	}
 }
@@ -858,12 +853,9 @@ JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 		err <<std::endl;
 		throw EXCN_Msg_Exception( err.str() );
 	}
-	for ( utility::tag::Tag::options_t::const_iterator
-			opt_iter = options_tag->getOptions().begin(),
-			opt_iter_end = options_tag->getOptions().end();
-			opt_iter != opt_iter_end; ++opt_iter ) {
-		if ( opt_iter->first == "resource_tag" ) {
-			rname = opt_iter->second;
+	for (const auto & opt_iter : options_tag->getOptions()) {
+		if ( opt_iter.first == "resource_tag" ) {
+			rname = opt_iter.second;
 			resources_for_job["residue"] = rname;
 		}
 	}
@@ -896,24 +888,21 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	std::string desc;
 	std::string rname;
 	std::string locator = "";
-	for ( utility::tag::Tag::options_t::const_iterator
-			opt_iter = data_tag->getOptions().begin(),
-			opt_iter_end = data_tag->getOptions().end();
-			opt_iter != opt_iter_end; ++opt_iter ) {
-		if ( opt_iter->first == "desc" ) {
-			if ( opt_iter->second == "startstruct" ) {
+	for (const auto & opt_iter : data_tag->getOptions()) {
+		if ( opt_iter.first == "desc" ) {
+			if ( opt_iter.second == "startstruct" ) {
 				local_startstruct_found = true;
 			}
 			desc_found = true;
-			desc = opt_iter->second;
-		} else if ( opt_iter->first == "resource_tag" ) {
+			desc = opt_iter.second;
+		} else if ( opt_iter.first == "resource_tag" ) {
 			resource_found = true;
-			rname = opt_iter->second;
-		} else if ( opt_iter->first == "pdb" ) {
+			rname = opt_iter.second;
+		} else if ( opt_iter.first == "pdb" ) {
 			pdb_found = true;
-			rname = opt_iter->second;
-		} else if ( opt_iter->first == "locator" ) {
-			locator = opt_iter->second;
+			rname = opt_iter.second;
+		} else if ( opt_iter.first == "locator" ) {
+			locator = opt_iter.second;
 		}
 	}
 
@@ -954,11 +943,8 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 			err << "for job whose starstruct is given as '" << resources_for_job[ "startstruct" ] << "'";
 		}
 		err << ".\nOptions given:\n";
-		for ( utility::tag::Tag::options_t::const_iterator
-				opt_iter = data_tag->getOptions().begin(),
-				opt_iter_end = data_tag->getOptions().end();
-				opt_iter != opt_iter_end; ++opt_iter ) {
-			err << "\t(" << opt_iter->first << ", " << opt_iter->second << ")\n";
+		for (const auto & opt_iter : data_tag->getOptions()) {
+			err << "\t(" << opt_iter.first << ", " << opt_iter.second << ")\n";
 		}
 		err << "Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 		throw EXCN_Msg_Exception( err.str() );
@@ -998,13 +984,11 @@ JD2ResourceManagerJobInputter::check_each_job_has_startstruct(
 	JD2ResourceManager * jd2rm(
 		JD2ResourceManager::get_jd2_resource_manager_instance());
 
-	for (
-			Jobs::const_iterator job=jobs.begin(), jobs_end=jobs.end();
-			job != jobs_end; ++job ) {
-		if ( !(jd2rm->has_resource_tag_by_job_tag("startstruct", (*job)->input_tag())) ) {
+	for (const auto & job : jobs) {
+		if ( !(jd2rm->has_resource_tag_by_job_tag("startstruct", job->input_tag())) ) {
 			std::stringstream errmsg;
 			errmsg
-				<< "Error: Job '" << (*job)->input_tag() << "' given without a 'startstruct'";
+				<< "Error: Job '" << job->input_tag() << "' given without a 'startstruct'";
 			throw EXCN_Msg_Exception( errmsg.str() );
 		}
 	}

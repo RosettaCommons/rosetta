@@ -38,16 +38,16 @@ public:
 	MgHydrater( utility::vector1< Size > const & mg_res_list );
 
 	//destructor
-	~MgHydrater();
+	~MgHydrater() override;
 
 	void set_use_fast_frame_heuristic( bool const & setting ){ use_fast_frame_heuristic_ = setting; }
 	bool use_fast_frame_heuristic() const { return use_fast_frame_heuristic_; }
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "MgHydrater"; }
+	std::string get_name() const override{ return "MgHydrater"; }
 
 	void set_excise_mini_pose( bool const & setting ){ excise_mini_pose_ = setting; }
 	bool excise_mini_pose() const { return excise_mini_pose_; }

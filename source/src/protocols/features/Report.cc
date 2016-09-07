@@ -33,7 +33,7 @@ Report::Report(Report const &) :
 	reporters_()
 {}
 
-Report::~Report() {}
+Report::~Report() = default;
 
 
 } //namesapce

@@ -37,7 +37,7 @@ FragmentLookupResult::FragmentLookupResult() :
 }
 
 FragmentLookup::FragmentLookup(FragmentStoreOP store) :
-	store_(store),
+	store_(std::move(store)),
 	lookup_(
 	&(store_->fragment_coordinates[0].x()),
 	&(store_->fragment_threshold_distances[0]),
@@ -88,7 +88,7 @@ std::vector< std::pair< Size, Size > > FragmentLookup::get_fragment_residue_span
 		Size next_start = break_and_start.second;
 
 		if ( next_break >= span_start ) {
-			valid_residue_spans.push_back(ResidueSpan(span_start, next_break));
+			valid_residue_spans.emplace_back(span_start, next_break);
 			span_start = next_start;
 		}
 	}

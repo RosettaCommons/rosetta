@@ -43,11 +43,11 @@ public:
 		core::scoring::ScoreFunctionOP score_fxn, core::kinematics::MoveMapOP move_map );
 
 	// dtor
-	virtual ~CyclizationMover(){}
+	~CyclizationMover() override= default;
 
 	// mover interface
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "CyclizationMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "CyclizationMover"; }
 
 private:
 	// mover specific

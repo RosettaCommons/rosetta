@@ -53,7 +53,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 #include <sstream>
 #include <string>

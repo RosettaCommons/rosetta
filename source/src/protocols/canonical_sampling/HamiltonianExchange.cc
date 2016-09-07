@@ -54,6 +54,7 @@
 #include <numeric/random/random.hh>
 
 // utility headers
+#include <utility>
 #include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
@@ -143,8 +144,7 @@ HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& 
 	return *this;
 }
 
-HamiltonianExchange::~HamiltonianExchange() {
-}
+HamiltonianExchange::~HamiltonianExchange() = default;
 
 
 std::string
@@ -289,19 +289,19 @@ void HamiltonianExchange::setup_exchange_schedule() {
 			}
 
 			//sort witin groups
-			for ( Groups::iterator it = groups.begin(); it != groups.end(); ++it ) {
-				it->second.sort();
+			for (auto & group : groups) {
+				group.second.sort();
 			}
 
 			for ( Size phase = 1; phase <= 2; ++phase ) {
 				//PHASE 2  2<->3, 4<->5...
 				list.clear();
 				for ( Groups::const_iterator git = groups.begin(); git != groups.end(); ++git ) {
-					Level2GridpointList::const_iterator lit=git->second.begin();
+					auto lit=git->second.begin();
 					if ( phase==2 && git->second.size() > 2 ) ++lit;   //if more than 2 elements we need to switch phases
 					for ( ; lit != git->second.end(); ++lit ) {
-						Level2GridpointList::const_iterator first_lit = lit;
-						Level2GridpointList::const_iterator second_lit = ++lit;
+						auto first_lit = lit;
+						auto second_lit = ++lit;
 						if ( second_lit != git->second.end() ) {
 							std::pair<int, int> elem( first_lit->second, second_lit->second );
 							list.push_back(elem);
@@ -445,14 +445,14 @@ using namespace core::scoring;
 class PatchOperation {
 public:
 
-	PatchOperation( ScoreType st, std::string const& op, Real wt ) :
+	PatchOperation( ScoreType st, std::string  op, Real wt ) :
 		score_type_( st ),
-		op_ ( op ),
+		op_ (std::move( op )),
 		wt_ ( wt ),
 		is_file_ (false)
 	{}
 
-	PatchOperation( std::string const& file ) : file_( file ) {
+	PatchOperation( std::string  file ) : file_(std::move( file )) {
 		is_file_ = true; //cheap Polymorphism
 	}
 
@@ -691,12 +691,11 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 
 	os << line_marker << repeat( 74, '=' ) << line_marker << std::endl;
 	os << line_marker << A( 40, "Exchange Schedules " ) << std::endl;
-	for ( utility::vector0< ExchangeSchedule >::const_iterator ex_it = exchange_schedules_.begin(); ex_it != exchange_schedules_.end(); ++ex_it ) {
-		ExchangeSchedule const& ex( *ex_it );
-		os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
-		for ( ExchangeSchedule::const_iterator it = ex.begin(); it != ex.end(); ++it ) {
-			GridCoord const& coord1( exchange_grid_[ it->first ] );
-			GridCoord const& coord2( exchange_grid_[ it->second ] );
+	for (const auto & ex : exchange_schedules_) {
+			os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
+		for (const auto & it : ex) {
+			GridCoord const& coord1( exchange_grid_[ it.first ] );
+			GridCoord const& coord2( exchange_grid_[ it.second ] );
 			Size const n_dim( exchange_grid_dimension_ );
 			os << line_marker << A( 20, "( ");
 			for ( Size d=1; d<=n_dim; ++d ) {

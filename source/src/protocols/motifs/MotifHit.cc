@@ -44,8 +44,7 @@ MotifHit::MotifHit(
 	target_conformer_(/* 0 */)
 {}
 
-MotifHit::~MotifHit()
-{}
+MotifHit::~MotifHit() = default;
 
 MotifHit::MotifHit( MotifHit const & src ) :
 	utility::pointer::ReferenceCount( src ),

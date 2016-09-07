@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 PoseCommentsFeaturesCreator::PoseCommentsFeaturesCreator() {}
-PoseCommentsFeaturesCreator::~PoseCommentsFeaturesCreator() {}
+PoseCommentsFeaturesCreator::~PoseCommentsFeaturesCreator() = default;
 FeaturesReporterOP PoseCommentsFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new PoseCommentsFeatures );
 }

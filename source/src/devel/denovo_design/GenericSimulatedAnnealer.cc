@@ -77,7 +77,7 @@ GenericSimulatedAnnealer::GenericSimulatedAnnealer():
 }
 
 /// @brief destructor
-GenericSimulatedAnnealer::~GenericSimulatedAnnealer(){}
+GenericSimulatedAnnealer::~GenericSimulatedAnnealer() = default;
 
 /// @brief clone this object
 protocols::moves::MoverOP
@@ -129,8 +129,8 @@ GenericSimulatedAnnealer::scale_temperatures( core::Real const temp_factor )
 void
 GenericSimulatedAnnealer::recompute_rank_scores()
 {
-	for ( utility::vector1< AcceptedScores >::iterator s=accepted_scores_.begin(); s!=accepted_scores_.end(); ++s ) {
-		s->set_rank_score( calc_boltz_score( *s ) );
+	for (auto & accepted_score : accepted_scores_) {
+		accepted_score.set_rank_score( calc_boltz_score( accepted_score ) );
 	}
 }
 
@@ -261,7 +261,7 @@ GenericSimulatedAnnealer::calculate_temps()
 	// this uses the same temperature scheduler as the packer
 	TR << "accepted_scores_=";
 	for ( utility::vector1< AcceptedScores >::const_iterator s=accepted_scores_.begin(); s!=accepted_scores_.end(); ++s ) {
-		TR << " " << *s << std::endl;;
+		TR << " " << *s << std::endl;
 	}
 	core::Real temp_factor( -1.0 );
 	if ( temp_step_ >= history_ ) {
@@ -308,9 +308,9 @@ std::string
 GenericSimulatedAnnealer::create_tag( std::string const & suffix ) const
 {
 	std::string cp = checkpoint_file_ + '_' + suffix;
-	for ( std::string::iterator c=cp.begin(); c!=cp.end(); ++c ) {
-		if ( ( *c == '/' )  ||  ( *c == ' ' ) || ( *c == '\t' ) ) {
-			*c = '_';
+	for (char & c : cp) {
+		if ( ( c == '/' )  ||  ( c == ' ' ) || ( c == '\t' ) ) {
+			c = '_';
 		}
 	}
 	return cp;
@@ -338,8 +338,8 @@ std::ostream &
 operator<<( std::ostream & os, AcceptedScores const & scores )
 {
 	os << scores.iteration() << " " << scores.rank_score() << " ";
-	for ( AcceptedScores::const_iterator s=scores.begin(); s!=scores.end(); ++s ) {
-		os << *s << " ";
+	for (double score : scores) {
+		os << score << " ";
 	}
 	return os;
 }
@@ -432,8 +432,8 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 	// save total # of accepted scores
 	saved_file << " " << boost::lexical_cast< std::string >( accepted_scores_.size() ) << std::endl;
 	// save accepted score list
-	for ( utility::vector1< AcceptedScores >::const_iterator s=accepted_scores_.begin(); s!=accepted_scores_.end(); ++s ) {
-		saved_file << *s << std::endl;
+	for (const auto & accepted_score : accepted_scores_) {
+		saved_file << accepted_score << std::endl;
 	}
 	// save best scores
 	saved_file << AcceptedScores( current_trial_, calc_boltz_score( lowest_scores() ), lowest_scores() ) << std::endl;
@@ -561,7 +561,7 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 	if ( tf ) {
 		core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
 		trials = task_scaling() * num_designable( pose, task );
-		task_factory( NULL );
+		task_factory( nullptr );
 	}
 
 	//re-initialize MC statistics
@@ -736,7 +736,7 @@ GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
 	checkpoint_file_ = tag->getOption< std::string >( "checkpoint_file", checkpoint_file_ );
 	keep_checkpoint_file_ = tag->getOption< bool >( "keep_checkpoint_file", keep_checkpoint_file_ );
 	if ( mover_name != "" ) {
-		Movers_map::const_iterator find_mover( movers.find( mover_name ) );
+		auto find_mover( movers.find( mover_name ) );
 		if ( find_mover == movers.end() ) {
 			TR.Error << "Error! Mover not found in map: " << mover_name << std::endl;
 		}

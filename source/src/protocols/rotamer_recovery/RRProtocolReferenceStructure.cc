@@ -55,7 +55,7 @@ RRProtocolReferenceStructure::RRProtocolReferenceStructure() :
 RRProtocolReferenceStructure::RRProtocolReferenceStructure(
 	PoseCOP reference_pose
 ) :
-	reference_pose_(reference_pose)
+	reference_pose_(std::move(reference_pose))
 {}
 
 RRProtocolReferenceStructure::RRProtocolReferenceStructure( RRProtocolReferenceStructure const & src) :
@@ -63,7 +63,7 @@ RRProtocolReferenceStructure::RRProtocolReferenceStructure( RRProtocolReferenceS
 	reference_pose_(src.reference_pose_)
 {}
 
-RRProtocolReferenceStructure::~RRProtocolReferenceStructure() {}
+RRProtocolReferenceStructure::~RRProtocolReferenceStructure() = default;
 
 string
 RRProtocolReferenceStructure::get_name() const {

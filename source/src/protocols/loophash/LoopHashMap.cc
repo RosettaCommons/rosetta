@@ -349,13 +349,7 @@ LoopHashMap::LoopHashMap( core::Size loop_size){
 	setup(loop_size);
 }
 
-LoopHashMap::LoopHashMap(LoopHashMap const & other ) :
-	hash_(other.hash_),
-	backbone_index_map_(other.backbone_index_map_),
-	loopdb_(other.loopdb_),
-	loop_size_(other.loop_size_)
-
-{ }
+LoopHashMap::LoopHashMap(LoopHashMap const & ) = default;
 
 LoopHashMap & LoopHashMap::operator=(LoopHashMap const & other)
 {
@@ -534,10 +528,10 @@ void LoopHashMap::radial_lookup( core::Size radius,  numeric::geometry::hashing:
 	//TR.Info << "center:  " << center[4] << " " << center[5] << std::endl;
 	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
 
-	for ( core::Size i = 0; i < bin_index_vec.size(); ++i ) {
+	for ( auto & i : bin_index_vec) {
 		//TR.Info << "bin_index_vec[i]:  " << bin_index_vec[i] << std::endl;
 		// now get an iterator over that map entry
-		std::pair< BackboneIndexMap::iterator,BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( bin_index_vec[i] );
+		std::pair< BackboneIndexMap::iterator,BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( i );
 		for ( BackboneIndexMap::iterator it = range.first; it != range.second; ++it ) {
 			//TR.Info << "result:  " << result << std::endl;
 			result.push_back( it->second );
@@ -551,8 +545,8 @@ Size LoopHashMap::radial_count( core::Size radius, numeric::geometry::hashing::R
 	center[5] = numeric::nonnegative_principal_angle_degrees(center[5] );
 	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
 	Size count = 0;
-	for ( core::Size i = 0; i < bin_index_vec.size(); ++i ) {
-		count += backbone_index_map_.count( bin_index_vec[i] );
+	for (auto & i : bin_index_vec) {
+		count += backbone_index_map_.count( i );
 	}
 	return count;
 }
@@ -607,7 +601,7 @@ void LoopHashMap::read_legacydb(std::string filename )
 {
 	// use basic C input - C++ are too memory hungry to deal with these potentially v large files
 	FILE *file = fopen( filename.c_str(), "r" );
-	if ( file == NULL ) throw EXCN_DB_IO_Failed( filename, "read" );
+	if ( file == nullptr ) throw EXCN_DB_IO_Failed( filename, "read" );
 
 	loopdb_.clear();
 	while ( !feof( file ) ) {
@@ -628,8 +622,8 @@ void LoopHashMap::read_legacydb(std::string filename )
 void LoopHashMap::write_db( std::string filename ){
 	std::ofstream file( filename.c_str() );
 	if ( !file ) throw EXCN_DB_IO_Failed( filename, "write" );
-	for ( core::Size i = 0; i < loopdb_.size(); i++ ) {
-		file << loopdb_[i].index << " " << loopdb_[i].offset << " " << loopdb_[i].key << std::endl;
+	for (auto & i : loopdb_) {
+		file << i.index << " " << i.offset << " " << i.key << std::endl;
 	}
 	file.close();
 }

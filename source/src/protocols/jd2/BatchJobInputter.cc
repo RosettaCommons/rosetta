@@ -63,7 +63,7 @@ JobInputterInputSource::Enum BatchJobInputter::input_source() const {
 
 void BatchJobInputter::check_batch() {
 	JobDistributor* jd( protocols::jd2::JobDistributor::get_instance() );
-	if ( jd != NULL && current_batch_ != jd->get_current_batch() ) {
+	if ( jd != nullptr && current_batch_ != jd->get_current_batch() ) {
 		current_batch_ = jd->get_current_batch();
 		read_batch();
 	}

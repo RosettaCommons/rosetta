@@ -56,7 +56,7 @@ static THREAD_LOCAL basic::Tracer trGunnCost( "protocols.FragmentMover.GunnCost"
 
 GunnCost::GunnCost() : FragmentCost( "GunnCost", 7.0 /*cutoff*/ ), frag_cache_("GunnCost")  {}
 GunnCost::GunnCost( core::Real cutoff ) :  FragmentCost( "GunnCost", cutoff ), frag_cache_("GunnCost")  {}
-GunnCost::~GunnCost() {}
+GunnCost::~GunnCost() = default;
 
 void GunnCost::score( core::fragment::Frame const& frame, core::pose::Pose const& pose, ScoreList &scores ) {
 	runtime_assert ( frame.is_continuous() );
@@ -91,7 +91,7 @@ void GunnCost::compute_gunn( core::fragment::Frame const& frame, core::Size frag
 		various_length_poses_.resize( frame.length() );
 	}
 	PoseOP & poseptr = various_length_poses_[ frame.length()  ];
-	if ( poseptr == 0 ) {
+	if ( poseptr == nullptr ) {
 		poseptr = PoseOP( new Pose );
 		frame.fragment_as_pose( frag_num, *poseptr, chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ) );
 	} else {

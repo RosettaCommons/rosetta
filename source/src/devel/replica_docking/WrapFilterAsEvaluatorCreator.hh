@@ -31,13 +31,13 @@ class WrapFilterAsEvaluatorCreator : public protocols::evaluation::EvaluatorCrea
 {
 public:
 	WrapFilterAsEvaluatorCreator() : options_registered_(false) {};
-	virtual ~WrapFilterAsEvaluatorCreator();
+	~WrapFilterAsEvaluatorCreator() override;
 
 	virtual void register_options();
 
-	virtual void add_evaluators( protocols::evaluation::MetaPoseEvaluator & eval ) const;
+	void add_evaluators( protocols::evaluation::MetaPoseEvaluator & eval ) const override;
 
-	virtual std::string type_name() const;
+	std::string type_name() const override;
 
 private:
 	bool options_registered_;

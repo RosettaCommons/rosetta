@@ -17,6 +17,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/MetricValue.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -24,12 +25,12 @@ namespace protocols {
 namespace multistate_design {
 
 MetricCalculatorFitnessFunction::MetricCalculatorFitnessFunction(
-	std::string const & calculator_name,
-	std::string const & key
+	std::string  calculator_name,
+	std::string  key
 ) :
 	SingleStateFitnessFunction(),
-	calculator_name_(calculator_name),
-	key_(key)
+	calculator_name_(std::move(calculator_name)),
+	key_(std::move(key))
 {
 	if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ) {
 		basic::Error() << "Tried to tie MetricCalculatorFitnessFunction to PoseMetricCalculator " <<

@@ -190,7 +190,7 @@ DockingInitialPerturbation::clone() const {
 }
 
 //destructor
-DockingInitialPerturbation::~DockingInitialPerturbation() {}
+DockingInitialPerturbation::~DockingInitialPerturbation() = default;
 
 // ALERT!
 // register_options() and init_from_options() are not called anywhere yet!!!!!
@@ -496,7 +496,7 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 }
 
 //destructor
-DockingSlideIntoContact::~DockingSlideIntoContact() {}
+DockingSlideIntoContact::~DockingSlideIntoContact() = default;
 
 
 void DockingSlideIntoContact::apply( core::pose::Pose & pose )
@@ -673,7 +673,7 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact( core::Size const rb_jump, 
 }
 
 //destructor
-FaDockingSlideIntoContact::~FaDockingSlideIntoContact() {}
+FaDockingSlideIntoContact::~FaDockingSlideIntoContact() = default;
 
 void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
@@ -693,13 +693,8 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	} else if ( rb_jumps_.size()<1 ) {
 		trans_movers.push_back( rigid::RigidBodyTransMover( pose,rb_jump_ ));
 	} else {
-		for (
-				utility::vector1<core::Size>::iterator jump_idx = rb_jumps_.begin(),
-				end = rb_jumps_.end();
-				jump_idx != end;
-				++jump_idx
-				) {
-			trans_movers.push_back( rigid::RigidBodyTransMover(pose, *jump_idx ));
+		for (unsigned long & rb_jump : rb_jumps_) {
+			trans_movers.push_back( rigid::RigidBodyTransMover(pose, rb_jump ));
 		}
 	}
 
@@ -710,7 +705,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	// Repeat with 1A steps, 0.5A steps, 0.25A steps, etc until you're as close are you want.
 	for ( core::Real stepsize = 2.0; stepsize > tolerance_; stepsize /= 2.0 ) {
 		for (
-				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
+				auto trans_mover(trans_movers.begin());
 				trans_mover != end;
 				++trans_mover
 				) {
@@ -722,7 +717,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 		do
 		{
 			for (
-					utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
+					auto trans_mover(trans_movers.begin());
 					trans_mover != end;
 					++trans_mover
 					) {
@@ -743,7 +738,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 			set_current_tag( "fail" );
 		}
 		for (
-				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
+				auto trans_mover(trans_movers.begin());
 				trans_mover != end;
 				++trans_mover
 				) {
@@ -788,7 +783,7 @@ SlideIntoContact::SlideIntoContact() : Mover(),
 	vary_stepsize_( false ),
 	stepsize_( 1.0 ),
 	move_apart_first_ ( true ),
-	scorefxn_( 0 ),
+	scorefxn_( nullptr ),
 	scoretype_( ),
 	threshold_( 1.0 ),
 	starting_rep_( 0 )
@@ -801,14 +796,14 @@ SlideIntoContact::SlideIntoContact( core::Size const jump ) : Mover(),
 	vary_stepsize_( false ),
 	stepsize_( 1.0 ),
 	move_apart_first_ ( true ),
-	scorefxn_( 0 ),
+	scorefxn_( nullptr ),
 	scoretype_( ),
 	threshold_( 1.0 ),
 	starting_rep_( 0 )
 {}
 
 /// @brief destructor
-SlideIntoContact::~SlideIntoContact() {}
+SlideIntoContact::~SlideIntoContact() = default;
 
 /// @brief apply
 void SlideIntoContact::apply( core::pose::Pose & pose ) {
@@ -821,7 +816,7 @@ void SlideIntoContact::apply( core::pose::Pose & pose ) {
 	init_from_cmd();
 
 	// use centroid scorefunction if not previously defined
-	if ( scorefxn_ == 0 ) {
+	if ( scorefxn_ == nullptr ) {
 		scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 		scoretype_ = score_type_from_name( "interchain_contact" );
 	}

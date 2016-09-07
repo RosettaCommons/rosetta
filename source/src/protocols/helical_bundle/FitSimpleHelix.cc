@@ -91,7 +91,7 @@ FitSimpleHelix::FitSimpleHelix():
 
 
 /// @brief Destructor for FitSimpleHelix mover.
-FitSimpleHelix::~FitSimpleHelix() {}
+FitSimpleHelix::~FitSimpleHelix() = default;
 
 
 /// @brief Clone operator to create a pointer to a fresh FitSimpleHelix object that copies this one.

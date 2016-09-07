@@ -34,7 +34,7 @@ namespace id {
 
 CacheableAtomID_MapVector::CacheableAtomID_MapVector() {}
 
-CacheableAtomID_MapVector::~CacheableAtomID_MapVector(){}
+CacheableAtomID_MapVector::~CacheableAtomID_MapVector()= default;
 
 basic::datacache::CacheableDataOP
 CacheableAtomID_MapVector::clone() const {

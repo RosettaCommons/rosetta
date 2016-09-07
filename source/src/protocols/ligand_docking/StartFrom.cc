@@ -91,15 +91,9 @@ StartFrom::StartFrom():
 	use_nbr_(false)
 {}
 
-StartFrom::StartFrom(StartFrom const & that):
-	protocols::moves::Mover( that ),
-	chain_(that.chain_),
-	use_nbr_(that.use_nbr_),
-	starting_positions_(that.starting_positions_),
-	hash_starting_positions_(that.hash_starting_positions_)
-{}
+StartFrom::StartFrom(StartFrom const & )= default;
 
-StartFrom::~StartFrom() {}
+StartFrom::~StartFrom() = default;
 
 protocols::moves::MoverOP StartFrom::clone() const {
 	return protocols::moves::MoverOP( new StartFrom( *this ) );
@@ -300,8 +294,8 @@ void StartFrom::parse_startfrom_file(std::string const & filename)
 	// If you just have the x/y/z coordinates, they will be added to the default set.
 
 	utility::json_spirit::mArray start_positions = startfrom_data.get_array();
-	for ( utility::json_spirit::mArray::iterator start_it = start_positions.begin(); start_it != start_positions.end(); ++start_it ) {
-		utility::json_spirit::mObject position_data(start_it->get_obj());
+	for (auto & start_position : start_positions) {
+		utility::json_spirit::mObject position_data(start_position.get_obj());
 
 		core::Real x = position_data["x"].get_real();
 		core::Real y = position_data["y"].get_real();

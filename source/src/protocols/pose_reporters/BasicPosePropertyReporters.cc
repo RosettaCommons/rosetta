@@ -133,7 +133,7 @@ void FilterReporter::parse_my_tag(
 	using namespace utility::tag;
 	using namespace protocols::rosetta_scripts;
 
-	TagCOP filter_tag(NULL);
+	TagCOP filter_tag(nullptr);
 
 	if ( tag->hasOption("filter") ) {
 		// Find a filter by name defined somewhere upstream in the script

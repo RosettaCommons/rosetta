@@ -38,9 +38,7 @@ class OneDHistogram {
 
 public:
 
-	OneDHistogram<key1>(){
-
-	}
+	OneDHistogram<key1>()= default;
 
 	void insert_data(key1 key_1, platform::Size counts){
 		histogram_.insert(std::make_pair(key_1, counts));

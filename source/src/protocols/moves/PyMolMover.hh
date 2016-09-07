@@ -291,10 +291,10 @@ public:
 	PyMolMover( PyMolMover const & other );
 
 	/// @brief dtor
-	virtual ~PyMolMover();
+	~PyMolMover() override;
 
-	virtual std::string get_name() const;
-	virtual void apply( Pose & );
+	std::string get_name() const override;
+	void apply( Pose & ) override;
 
 	using protocols::moves::Mover::apply;
 
@@ -352,16 +352,16 @@ public:
 	/// @brief  Return current update interval.
 	core::Real update_interval() { return update_interval_; };
 
-	void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	/// @brief Parses tag for rosetta scripts
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	///@brief Set the pymol model name
 	void
@@ -416,18 +416,18 @@ public:
 
 	PyMolObserver();
 	PyMolObserver(PyMolObserver const & rval);
-	virtual ~PyMolObserver();
+	~PyMolObserver() override;
 
 	PyMolObserver &
 	operator= (PyMolObserver const &rval);
 
-	virtual
+	
 	core::pose::datacache::CacheableObserverOP
-	clone();
+	clone() override;
 
-	virtual
+	
 	core::pose::datacache::CacheableObserverOP
-	create();
+	create() override;
 
 	void
 	set_type( ObserverType setting);
@@ -438,8 +438,8 @@ public:
 	ObserverType
 	get_type() const { return type_; };
 
-	virtual bool
-	is_attached() const;
+	bool
+	is_attached() const override;
 
 	virtual void generalEvent( core::pose::signals::GeneralEvent const & ev) {
 		pymol_.apply( *ev.pose );
@@ -463,11 +463,11 @@ public:
 
 protected:
 
-	virtual void
-	attach_impl(core::pose::Pose &pose);
+	void
+	attach_impl(core::pose::Pose &pose) override;
 
-	virtual void
-	detach_impl();
+	void
+	detach_impl() override;
 
 	void
 	update_links();

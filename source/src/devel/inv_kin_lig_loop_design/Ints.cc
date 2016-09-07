@@ -87,12 +87,12 @@ void Ints::fromString(const string& s) {
 
 	pair<string,string> p;
 
-	for ( size_t k = 0; k < s.size(); ++k ) {
+	for (char k : s) {
 
 		switch( state ) {
 		case STATE_0 :
 
-			switch( s[k] ) {
+			switch( k ) {
 			case ',' :
 				add( atoi( p.first.c_str() ) );
 				p.first.clear();
@@ -101,14 +101,14 @@ void Ints::fromString(const string& s) {
 				state = STATE_1;
 				break;
 			default :
-				p.first += s[k];
+				p.first += k;
 				break;
 			} // switch
 			break;
 
 		case STATE_1 :
 
-			switch( s[k] ) {
+			switch( k ) {
 			case ',' :
 				add( make_pair( atoi(p.first.c_str()), atoi(p.second.c_str()) ) );
 				p.first.clear();
@@ -116,7 +116,7 @@ void Ints::fromString(const string& s) {
 				state = STATE_0;
 				break;
 			default :
-				p.second += s[k];
+				p.second += k;
 				break;
 			} // switch
 

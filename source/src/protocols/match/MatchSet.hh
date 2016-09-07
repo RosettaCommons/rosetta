@@ -63,7 +63,7 @@ public:
 
 public:
 	HitHasher();
-	virtual ~HitHasher();
+	~HitHasher() override;
 
 	void
 	set_bounding_box(
@@ -142,7 +142,7 @@ public:
 
 public:
 	HitNeighborFinder();
-	virtual ~HitNeighborFinder();
+	~HitNeighborFinder() override;
 
 	/// @brief Use the same bounding box as the HitHasher / OccupiedSpaceHash
 	void
@@ -244,7 +244,7 @@ public:
 
 public:
 	MatchCounter();
-	virtual ~MatchCounter();
+	~MatchCounter() override;
 
 	/// @brief Use the same bounding box as the HitHasher / OccupiedSpaceHash
 	void

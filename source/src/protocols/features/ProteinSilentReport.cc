@@ -127,7 +127,7 @@ ProteinSilentReport::ProteinSilentReport(ProteinSilentReport const & src) :
 	job_data_features_ ( src.job_data_features_)
 {}
 
-ProteinSilentReport::~ProteinSilentReport() {}
+ProteinSilentReport::~ProteinSilentReport() = default;
 
 Size
 ProteinSilentReport::version() { return 1; }

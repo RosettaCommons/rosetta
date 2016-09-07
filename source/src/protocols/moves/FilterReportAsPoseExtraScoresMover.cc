@@ -44,13 +44,13 @@ FilterReportAsPoseExtraScoresMover::FilterReportAsPoseExtraScoresMover(
 	protocols::filters::FilterOP filter,
 	std::string report_as ):
 	protocols::moves::Mover( FilterReportAsPoseExtraScoresMover::class_name() ),
-	filter_(filter),
-	report_as_(report_as)
+	filter_(std::move(filter)),
+	report_as_(std::move(report_as))
 {
 
 }
 
-FilterReportAsPoseExtraScoresMover::~FilterReportAsPoseExtraScoresMover(){}
+FilterReportAsPoseExtraScoresMover::~FilterReportAsPoseExtraScoresMover()= default;
 
 void
 FilterReportAsPoseExtraScoresMover::parse_my_tag(
@@ -62,7 +62,7 @@ FilterReportAsPoseExtraScoresMover::parse_my_tag(
 {
 	//borrowed from GenericMonteCarloMover.cc:parse_my_tag
 	std::string const filter_name( tag->getOption< std::string >( "filter_name", "true_filter" ) );
-	Filters_map::const_iterator find_filter( filters.find( filter_name ) );
+	auto find_filter( filters.find( filter_name ) );
 	if ( find_filter == filters.end() ) {
 		TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );

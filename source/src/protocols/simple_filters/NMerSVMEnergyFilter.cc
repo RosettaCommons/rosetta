@@ -74,7 +74,7 @@ NMerSVMEnergyFilter::NMerSVMEnergyFilter(
 	string_resnums_ = string_resnums;
 }
 
-NMerSVMEnergyFilter::~NMerSVMEnergyFilter() {}
+NMerSVMEnergyFilter::~NMerSVMEnergyFilter() = default;
 
 void
 NMerSVMEnergyFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
@@ -188,7 +188,7 @@ NMerSVMEnergyFilter::compute(
 		vector1< Real > rsd_svm_energies( energy_method_.n_svms(), Real( 0. ) );
 		energy_method_.get_residue_energy_by_svm( pose, seqpos, rsd_energy, rsd_svm_energies );
 		std::string pdb_seqpos( utility::to_string( seqpos ) );
-		if ( pose.pdb_info().get() != NULL ) pdb_seqpos = pose.pdb_info()->pose2pdb( seqpos );
+		if ( pose.pdb_info().get() != nullptr ) pdb_seqpos = pose.pdb_info()->pose2pdb( seqpos );
 		//get this nmer sequence, just ignore if we fall off the end
 		std::string nmer_seq( "" );
 		if ( seqpos <= pose.total_residue() - energy_method_.nmer_length() + 1 ) {

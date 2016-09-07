@@ -73,7 +73,7 @@ Serial_Refine::Serial_Refine()
 	init();
 }
 
-Serial_Refine::~Serial_Refine(){}
+Serial_Refine::~Serial_Refine()= default;
 
 void
 Serial_Refine::set_defaults(){
@@ -153,7 +153,7 @@ Serial_Refine::apply( core::pose::Pose &pose,
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::wum;
 
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 
 	// load structure
 	load_structures_from_cmdline_into_library( pose, library_ref_ );
@@ -192,12 +192,11 @@ Serial_Refine::apply( core::pose::Pose &pose,
 		for ( core::Size irun = 1; irun <= params.nrun; ++irun ) {
 			core::Size rerelax_type = params.rerelax_type;
 
-			for ( SilentStructStore::iterator it = library_ref_.begin(),
-					end =  library_ref_.end(); it != end; ++it ) {
-				TR << "Create on structure: " << (*it)->decoy_tag() << std::endl;
+			for (auto & it : library_ref_) {
+				TR << "Create on structure: " << it->decoy_tag() << std::endl;
 
 				// perturb
-				SilentStructStore pert_structs = perturb( params, *it );
+				SilentStructStore pert_structs = perturb( params, it );
 				fobj_->add_objective_function_info( pert_structs );
 				for ( SilentStructStore::const_iterator it2 = pert_structs.begin();
 						it2 != pert_structs.end(); ++it2, ++igen ) {
@@ -258,7 +257,7 @@ Serial_Refine::apply( core::pose::Pose &pose,
 		get_average_structure( library_central_, methods_picked,
 		"samplemethod", true );
 
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	// report time
 	core::Real ds = (core::Real)(endtime - starttime);
 	core::Size elapsemin = (core::Size)(ds/60.0);
@@ -308,10 +307,9 @@ Serial_Refine::dump_structures( protocols::wum::SilentStructStore const &new_str
 	std::string filename = prefix + ".out";
 
 	core::Size istr( 0 );
-	for ( SilentStructStore::const_iterator it = new_structs.begin();
-			it != new_structs.end(); ++it ) {
+	for (const auto & new_struct : new_structs) {
 		istr++;
-		sfd.write_silent_struct( *(*it), filename, score_only );
+		sfd.write_silent_struct( *new_struct, filename, score_only );
 	}
 }
 

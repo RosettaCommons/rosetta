@@ -37,7 +37,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyRep
 #if defined MULTI_THREADED
 std::atomic< PosePropertyReporterFactory * > PosePropertyReporterFactory::instance_( 0 );
 #else
-PosePropertyReporterFactory * PosePropertyReporterFactory::instance_( 0 );
+PosePropertyReporterFactory * PosePropertyReporterFactory::instance_( nullptr );
 #endif
 
 #ifdef MULTI_THREADED
@@ -64,13 +64,13 @@ PosePropertyReporterFactory::create_singleton_instance()
 
 PosePropertyReporterFactory::PosePropertyReporterFactory(){}
 
-PosePropertyReporterFactory::~PosePropertyReporterFactory(){}
+PosePropertyReporterFactory::~PosePropertyReporterFactory()= default;
 
 /// @brief add a PosePropertyReporter prototype, using its default type name as the map key
 void
 PosePropertyReporterFactory::factory_register( PosePropertyReporterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const pose_selector_type( creator->keyname() );
 	if ( pose_selector_type == "UNDEFINED NAME" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived PosePropertyReporter with undefined type name.");
@@ -99,7 +99,7 @@ PosePropertyReporterFactory::newPosePropertyReporter( std::string const & pose_s
 		}
 		TR<<std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( pose_selector_type + " is not known to the PosePropertyReporterFactory. Was it registered via a PosePropertyReporterRegistrator in one of the init.cc files?" );
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -113,7 +113,7 @@ PosePropertyReporterFactory::newPosePropertyReporter(
 	core::pose::Pose const & pose
 ) {
 	PosePropertyReporterOP selector( newPosePropertyReporter( tag->getName() ) );
-	runtime_assert( selector != 0 );
+	runtime_assert( selector != nullptr );
 	selector->parse_my_tag( tag, data, filters, movers, pose );
 	return selector;
 }

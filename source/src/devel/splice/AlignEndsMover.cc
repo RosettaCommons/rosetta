@@ -73,9 +73,7 @@ AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	residues_to_align_on_template_.clear();
 }
 
-AlignEndsMover::~AlignEndsMover()
-{
-}
+AlignEndsMover::~AlignEndsMover() = default;
 
 void
 AlignEndsMover::template_pose( core::pose::PoseOP p ){ template_pose_ = p; }

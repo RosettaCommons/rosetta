@@ -32,6 +32,7 @@
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
@@ -78,7 +79,7 @@ GrowLigand::GrowLigand():
 
 GrowLigand::GrowLigand(std::string chain):
 	Mover("GrowLigand"),
-	chain_(chain)
+	chain_(std::move(chain))
 {
 	set_fragments();
 }
@@ -90,7 +91,7 @@ GrowLigand::GrowLigand(GrowLigand const & that):
 	fragments_(that.fragments_)
 {}
 
-GrowLigand::~GrowLigand() {}
+GrowLigand::~GrowLigand() = default;
 
 void
 GrowLigand::set_fragments(){
@@ -148,7 +149,7 @@ GrowLigand::apply( core::pose::Pose & pose )
 
 	utility::vector1<core::Size> unconnected_residues;
 	{
-		core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);;
+		core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
 		core::Size const start = pose.conformation().chain_begin(chain_id);
 		core::Size const end = pose.conformation().chain_end(chain_id);
 		unconnected_residues=find_unconnected_residues(pose, start, end);
@@ -176,7 +177,7 @@ GrowLigand::apply( core::pose::Pose & pose )
 
 void GrowLigand::fragments_to_string() const{
 	for ( core::Size i=1; i <= fragments_.size(); ++i ) {
-		utility::vector1< core::conformation::ResidueCOP>::const_iterator  begin= fragments_.begin();
+		auto  begin= fragments_.begin();
 		for ( ; begin != fragments_.end(); ++begin ) {
 			//core::conformation::Residue const & res= *begin;
 			//core::Size connect_id= begin;

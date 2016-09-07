@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 OrbitalsFeaturesCreator::OrbitalsFeaturesCreator() {}
-OrbitalsFeaturesCreator::~OrbitalsFeaturesCreator() {}
+OrbitalsFeaturesCreator::~OrbitalsFeaturesCreator() = default;
 FeaturesReporterOP OrbitalsFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new OrbitalsFeatures );
 }

@@ -32,26 +32,26 @@ class MSDJobDistributor : public JobDistributor {
 
 public:
 
-	virtual
-	~MSDJobDistributor();
+	
+	~MSDJobDistributor() override;
 
-	virtual core::Size
-	get_new_job_id();
+	core::Size
+	get_new_job_id() override;
 
-	virtual JobOP
-	current_job() const;
+	JobOP
+	current_job() const override;
 
-	virtual void
-	mark_current_job_id_for_repetition();
+	void
+	mark_current_job_id_for_repetition() override;
 
-	virtual void
+	void
 	job_failed( core::pose::Pose & /*pose*/,
-		bool /*will_retry*/ );
+		bool /*will_retry*/ ) override;
 
-	virtual void handle_interrupt();
+	void handle_interrupt() override;
 
-	virtual void
-	go( protocols::moves::MoverOP mover );
+	void
+	go( protocols::moves::MoverOP mover ) override;
 
 	friend class JobDistributorFactory;
 

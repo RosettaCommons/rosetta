@@ -50,7 +50,7 @@ public:
 	EntityElement();
 	EntityElement( Size index );
 	EntityElement( std::string & word ); // This constructor nibbles away at the input string
-	virtual ~EntityElement();
+	~EntityElement() override;
 
 	virtual EntityElementOP clone() = 0;
 	virtual EntityElementOP fresh_instance() = 0;
@@ -74,7 +74,7 @@ private:
 
 class EntityElementCreator : public utility::pointer::ReferenceCount {
 public:
-	virtual ~EntityElementCreator();
+	~EntityElementCreator() override;
 	virtual std::string widget_name() const = 0;
 	virtual EntityElementOP new_entity( std::string const & word ) = 0;
 };
@@ -89,11 +89,11 @@ public:
 	friend class utility::SingletonBase< EntityElementFactory >;
 
 public:
-	virtual ~EntityElementFactory() {};
+	~EntityElementFactory() override = default;
 
 	EntityElementOP element_from_string( std::string const & );
 
-	virtual std::string factory_name() const;
+	std::string factory_name() const override;
 
 private:
 	EntityElementFactory();
@@ -131,7 +131,7 @@ public:
 	Entity( Entity const & entity );
 	Entity & operator = ( Entity const & );
 
-	virtual ~Entity();
+	~Entity() override;
 
 	//// @brief construct Entity from std::string (e.g. from file)
 	Entity( std::string const & line );
@@ -191,9 +191,8 @@ struct
 	Vec1Hash {
 	std::size_t operator() ( EntityElements const & vec1 ) const {
 		std::size_t seed = 0;
-		for ( EntityElements::const_iterator
-				iter = vec1.begin(), iter_end = vec1.end(); iter != iter_end; ++iter ) {
-			boost::hash_combine( seed, (*iter)->hash() );
+		for (const auto & iter : vec1) {
+			boost::hash_combine( seed, iter->hash() );
 		}
 		return seed;
 	}

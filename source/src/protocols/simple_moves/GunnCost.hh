@@ -64,9 +64,9 @@ class GunnCost : public FragmentCost {
 public:
 	GunnCost();
 	GunnCost( core::Real cutoff );
-	~GunnCost();
+	~GunnCost() override;
 
-	void score( core::fragment::Frame const&, core::pose::Pose const& pose, ScoreList& scores );
+	void score( core::fragment::Frame const&, core::pose::Pose const& pose, ScoreList& scores ) override;
 
 	//private:
 	void compute_gunn( core::fragment::Frame const& frame, core::Size frag_num, GunnTuple &data );

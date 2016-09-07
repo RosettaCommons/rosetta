@@ -63,7 +63,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.ChiWellRmsdEvaluator
 namespace protocols {
 namespace simple_filters {
 
-ChiWellRmsdEvaluatorCreator::~ChiWellRmsdEvaluatorCreator() {}
+ChiWellRmsdEvaluatorCreator::~ChiWellRmsdEvaluatorCreator() = default;
 
 void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval ) const {
 	using namespace core;
@@ -73,7 +73,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 	tr.Info << "Evaluation Creator active ... " << std::endl;
 	if ( option[ OptionKeys::evaluation::chirmsd ].user() ) {
 
-		core::pose::PoseOP native_pose = NULL;
+		core::pose::PoseOP native_pose = nullptr;
 		if ( option[ in::file::native ].user() ) {
 			native_pose = core::pose::PoseOP( new core::pose::Pose );
 			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
@@ -90,8 +90,8 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 		///   selection: file or special tag: FULL
 		///   modifier: EXCLUDE ( take the inverse of the selection )
 		///                INLINE r1 r2 r3 ... rm END_INLINE   -- select residues r1, r2, r3, ..., rm
-		for ( RmsdVector::const_iterator it=rmsd.begin(); it!=rmsd.end(); ++it ) {
-			core::pose::PoseOP target_pose = NULL;
+		for ( auto it=rmsd.begin(); it!=rmsd.end(); ++it ) {
+			core::pose::PoseOP target_pose = nullptr;
 			std::string fname( *it );
 			std::string column;
 			std::string selection_file;

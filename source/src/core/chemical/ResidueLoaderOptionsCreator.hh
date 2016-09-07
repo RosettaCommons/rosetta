@@ -28,8 +28,8 @@ class ResidueLoaderOptionsCreator : public basic::resource_manager::ResourceOpti
 {
 public:
 
-	virtual std::string options_type() const;
-	virtual basic::resource_manager::ResourceOptionsOP create_options() const;
+	std::string options_type() const override;
+	basic::resource_manager::ResourceOptionsOP create_options() const override;
 
 };
 

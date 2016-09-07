@@ -32,17 +32,17 @@ public:
 		std::string const & fn
 	);
 
-	~PredictedBurialEvaluator();
+	~PredictedBurialEvaluator() override;
 
-	virtual void apply(
+	void apply(
 		core::pose::Pose & pose,
 		std::string tag,
 		core::io::silent::SilentStruct & ss
-	) const;
+	) const override;
 
-	virtual core::Real apply(
+	core::Real apply(
 		core::pose::Pose & /*pose*/
-	) const {
+	) const override {
 		return 0;
 	}
 

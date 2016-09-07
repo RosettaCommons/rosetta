@@ -60,12 +60,12 @@ public:
 		bool constrain = false
 	);
 
-	virtual ~SecStructFinder(){}
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const { return "SecStructFinder"; }
-	protocols::moves::MoverOP fresh_instance() const { return SecStructFinderOP( new SecStructFinder ); }
-	protocols::moves::MoverOP clone() const;
-	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~SecStructFinder() override= default;
+	void apply( Pose & pose ) override;
+	std::string get_name() const override { return "SecStructFinder"; }
+	protocols::moves::MoverOP fresh_instance() const override { return SecStructFinderOP( new SecStructFinder ); }
+	protocols::moves::MoverOP clone() const override;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;

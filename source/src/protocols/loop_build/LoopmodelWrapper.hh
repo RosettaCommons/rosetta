@@ -28,7 +28,7 @@ class LoopmodelWrapper : public protocols::moves::Mover {
 public:
 
 	/// @copydoc protocols::moves::Mover::get_name
-	std::string get_name() const { return "LoopmodelWrapper"; }
+	std::string get_name() const override { return "LoopmodelWrapper"; }
 
 	/// @copydoc {parent}::parse_my_tag
 	void parse_my_tag(
@@ -36,9 +36,9 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose);
+		core::pose::Pose const & pose) override;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Invoke the loopmodel app.
 	/// @details This mover is a very thin wrapper around the command-line
@@ -46,7 +46,7 @@ public:
 	/// for the loopmodel application in rosetta scripts.  The behavior of loop
 	/// modeling cannot be controlled at all from this mover and must instead be
 	/// controlled using the usual command-line flags.
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 };
 

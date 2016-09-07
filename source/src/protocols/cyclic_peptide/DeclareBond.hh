@@ -23,16 +23,16 @@ namespace cyclic_peptide {
 class DeclareBond : public moves::Mover {
 public:
 	DeclareBond();
-	virtual ~DeclareBond();
+	~DeclareBond() override;
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 	void
 	set( core::Size const res1,

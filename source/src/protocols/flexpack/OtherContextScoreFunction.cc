@@ -38,7 +38,7 @@ OtherContextScoreFunction::OtherContextScoreFunction() :
 {
 }
 
-OtherContextScoreFunction::~OtherContextScoreFunction() {}
+OtherContextScoreFunction::~OtherContextScoreFunction() = default;
 
 OtherContextScoreFunction::OtherContextScoreFunction(
 	core::pose::Pose const & context_pose

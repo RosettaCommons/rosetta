@@ -32,19 +32,19 @@ public:
 	TotalSasaFilter();
 	TotalSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0, bool report_per_residue_sasa=false );
 
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	core::pack::task::TaskFactoryOP task_factory();
 	/// @brief Set the task factory to limit SASA calculation to packable residues
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	filters::FilterOP clone() const;
-	filters::FilterOP fresh_instance() const;
+	filters::FilterOP clone() const override;
+	filters::FilterOP fresh_instance() const override;
 
-	virtual ~TotalSasaFilter();
+	~TotalSasaFilter() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	core::Real lower_threshold_;

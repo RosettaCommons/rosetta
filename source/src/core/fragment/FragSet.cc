@@ -92,11 +92,11 @@ Size FragSet::overlapping_with_region(
 void FragSet::insert_fragID_list( FragID_List& list ) {
 	utility::vector1< bool > handled(list.size(), false );
 	Size pos( 1 );
-	for ( FragID_List::iterator it=list.begin(), eit=list.end(); it!=eit; ++it,++pos ) {
+	for ( auto it=list.begin(), eit=list.end(); it!=eit; ++it,++pos ) {
 		if ( !handled[ pos ] ) {
 			FrameOP new_frame = it->frame().clone();
 			Size spos( pos );
-			for ( FragID_List::iterator sit=it; sit!=eit; ++sit, spos++ ) {
+			for ( auto sit=it; sit!=eit; ++sit, spos++ ) {
 				if ( sit->frame_ptr() == it->frame_ptr() ) {
 					handled[ spos ] = true;
 					new_frame->add_fragment( sit->fragment().get_self_ptr() );
@@ -136,11 +136,10 @@ void FragSet::add( FragID const& frag_id ) {
 	FrameList present_frames;
 	Size nr_present = frames( start, present_frames );
 	if ( nr_present ) {
-		for ( FrameList::iterator it = present_frames.begin(),
-				eit = present_frames.end(); it!=eit; ++it ) {
-			if ( (*it)->is_mergeable( aFrame ) ) {
-				Size const new_id( (*it)->add_fragment( utility::pointer::const_pointer_cast< FragData >( frag_id.fragment_ptr() ) ) );
-				(*it)->clone_cache_data( aFrame, frag_id.id(), new_id );
+		for (auto & present_frame : present_frames) {
+			if ( present_frame->is_mergeable( aFrame ) ) {
+				Size const new_id( present_frame->add_fragment( utility::pointer::const_pointer_cast< FragData >( frag_id.fragment_ptr() ) ) );
+				present_frame->clone_cache_data( aFrame, frag_id.id(), new_id );
 				return; //finished early
 			}
 		}
@@ -230,10 +229,9 @@ FragSet::add( FrameCOP aFrame ) {
 	if ( !nr_present ) {
 		add_( aFrame->clone_with_frags() );
 	} else {
-		for ( FrameList::iterator it = present_frames.begin(),
-				eit = present_frames.end(); it!=eit; ++it ) {
-			if ( (*it)->is_mergeable( *aFrame ) ) {
-				(*it)->merge( *aFrame );
+		for (auto & present_frame : present_frames) {
+			if ( present_frame->is_mergeable( *aFrame ) ) {
+				present_frame->merge( *aFrame );
 				return; //finished early
 			}
 		}
@@ -244,8 +242,8 @@ FragSet::add( FrameCOP aFrame ) {
 
 void
 FragSet::add( FrameList const& frames ) {
-	for ( FrameList::const_iterator it=frames.begin(), eit=frames.end(); it!=eit; ++it ) {
-		add( *it );
+	for (const auto & frame : frames) {
+		add( frame );
 	}
 }
 
@@ -270,7 +268,7 @@ void FragSet::shift_by( int offset ) {
 		for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
 			//this should read ( *it != NULL ) but for some-reason gcc throws a warning that NULL needs to get converted to an unsigned int
 			//somehow the returned FrameOP cannot be compared with NULL. calling .get() on the owning_pointer interface retrieves the naked pointer
-			if ( (*it).get() != NULL ) {
+			if ( (*it).get() != nullptr ) {
 				it->shift_by( offset );
 			}
 		}

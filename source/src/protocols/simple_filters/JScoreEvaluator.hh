@@ -36,17 +36,17 @@ public:
 		std::string const & type_set_name = "fa_standard"
 	);
 
-	~JScoreEvaluator();
+	~JScoreEvaluator() override;
 
-	virtual void apply(
+	void apply(
 		core::pose::Pose & pose,
 		std::string tag,
 		core::io::silent::SilentStruct & ss
-	) const;
+	) const override;
 
-	virtual core::Real apply(
+	core::Real apply(
 		core::pose::Pose & /*pose*/
-	) const {
+	) const override {
 		return 0;
 	}
 

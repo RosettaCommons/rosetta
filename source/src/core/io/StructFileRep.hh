@@ -131,7 +131,7 @@ public:  // Standard Methods //////////////////////////////////////////////////
 	StructFileRep();
 
 	/// @brief empty destructor in C++ file to reduce number of necessary includes.
-	~StructFileRep();
+	~StructFileRep() override;
 
 	/// @brief Create a copy and return an owning pointer to the copy.
 	StructFileRepOP clone() const;

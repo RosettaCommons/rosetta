@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 SaltBridgeFeaturesCreator::SaltBridgeFeaturesCreator() {}
-SaltBridgeFeaturesCreator::~SaltBridgeFeaturesCreator() {}
+SaltBridgeFeaturesCreator::~SaltBridgeFeaturesCreator() = default;
 FeaturesReporterOP SaltBridgeFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new SaltBridgeFeatures );
 }

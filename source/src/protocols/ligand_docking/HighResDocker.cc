@@ -54,6 +54,7 @@
 #include <core/pack/task/PackerTask.hh>
 
 // Scripter Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
@@ -116,7 +117,7 @@ HighResDocker::HighResDocker(
 	core::scoring::ScoreFunctionOP score_fxn,
 	MoveMapBuilderOP movemap_builder,
 	std::string resfile
-): num_cycles_(num_cycles), repack_every_Nth_(repack_every_Nth), chains_(chains), score_fxn_(score_fxn), movemap_builder_(movemap_builder), resfile_(resfile){}
+): num_cycles_(num_cycles), repack_every_Nth_(repack_every_Nth), chains_(std::move(chains)), score_fxn_(std::move(score_fxn)), movemap_builder_(std::move(movemap_builder)), resfile_(std::move(resfile)){}
 
 
 HighResDocker::HighResDocker(HighResDocker const & that):
@@ -129,7 +130,7 @@ HighResDocker::HighResDocker(HighResDocker const & that):
 	movemap_builder_(that.movemap_builder_)
 {}
 
-HighResDocker::~HighResDocker() {}
+HighResDocker::~HighResDocker() = default;
 
 protocols::moves::MoverOP HighResDocker::clone() const {
 	return protocols::moves::MoverOP( new HighResDocker( *this ) );
@@ -185,7 +186,7 @@ HighResDocker::setup_ligands_to_minimize(core::pose::Pose pose){
 
 	LigandAreas const ligand_areas =
 		movemap_builder_->get_sc_interface_builder()->get_ligand_areas();
-	LigandAreas::const_iterator ligand_area_itr= ligand_areas.begin();
+	auto ligand_area_itr= ligand_areas.begin();
 	LigandAreas::const_iterator const ligand_area_end= ligand_areas.end();
 	//TODO Use BOOST_FOREACH
 	for ( ; ligand_area_itr != ligand_area_end; ++ligand_area_itr ) {
@@ -207,7 +208,7 @@ HighResDocker::tether_ligands(core::pose::Pose & pose){
 
 	LigandAreas const ligand_areas =
 		movemap_builder_->get_sc_interface_builder()->get_ligand_areas();
-	LigandAreas::const_iterator ligand_area_itr= ligand_areas.begin();
+	auto ligand_area_itr= ligand_areas.begin();
 	LigandAreas::const_iterator const ligand_area_end= ligand_areas.end();
 
 	for ( ; ligand_area_itr != ligand_area_end; ++ligand_area_itr ) {

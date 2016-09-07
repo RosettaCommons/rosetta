@@ -144,9 +144,9 @@ ClassicAbinitio::ClassicAbinitio(
 	simple_moves::FragmentMoverOP smooth_move_small,
 	int  /*dummy otherwise the two constructors are ambiguous */
 ) :
-	brute_move_small_( brute_move_small ),
+	brute_move_small_(std::move( brute_move_small )),
 	brute_move_large_( brute_move_large ),
-	smooth_move_small_( smooth_move_small )
+	smooth_move_small_(std::move( smooth_move_small ))
 {
 	BaseClass::type( "ClassicAbinitio" );
 	get_checkpoints().set_type("ClassicAbinitio");
@@ -265,8 +265,7 @@ ClassicAbinitio::ClassicAbinitio( ClassicAbinitio const & src ) :
 /// @brief Explicit destructor is needed to destroy all the OPs
 /// The compiler does all the work, but it requires that we place
 /// the destructor in the .cc file.
-ClassicAbinitio::~ClassicAbinitio()
-{}
+ClassicAbinitio::~ClassicAbinitio() = default;
 
 /// @brief setup moves, mc-object, scores
 /// @details can't call this from constructor; virtual functions don't operate until construction has completed.
@@ -317,7 +316,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 			output_debug_structure( pose, "stage0" );
 		}
 		if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), "stage_1", false /* fullatom*/, true /*fold tree */ ) ) {
-			ConstraintSetOP orig_constraints(NULL);
+			ConstraintSetOP orig_constraints(nullptr);
 			orig_constraints = pose.constraint_set()->clone();
 			success = do_stage1_cycles( pose );
 
@@ -371,7 +370,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 		}
 
 		if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), "stage_2", false /* fullatom */, true /*fold tree */ ) ) {
-			ConstraintSetOP orig_constraints(NULL);
+			ConstraintSetOP orig_constraints(nullptr);
 			orig_constraints = pose.constraint_set()->clone();
 
 			success = do_stage2_cycles( pose );
@@ -613,17 +612,17 @@ void ClassicAbinitio::update_moves() {
 //@detail create instances of TrialMover for our FragmentMover objects
 void ClassicAbinitio::set_trials() {
 	// setup loop1
-	runtime_assert( brute_move_large_ != 0 );
+	runtime_assert( brute_move_large_ != nullptr );
 	trial_large_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_large_, mc_ ) );
 	//trial_large_->set_keep_stats( true );
 	trial_large_->keep_stats_type( moves::accept_reject );
 
-	runtime_assert( brute_move_small_ != 0 );
+	runtime_assert( brute_move_small_ != nullptr );
 	trial_small_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_, mc_ ) );
 	//trial_small_->set_keep_stats( true );
 	trial_small_->keep_stats_type( moves::accept_reject );
 
-	runtime_assert( smooth_move_small_ != 0 );
+	runtime_assert( smooth_move_small_ != nullptr );
 	smooth_trial_small_ = moves::TrialMoverOP( new moves::TrialMover( smooth_move_small_, mc_ ) );
 	//smooth_trial_small_->set_keep_stats( true );
 	smooth_trial_small_->keep_stats_type( moves::accept_reject );
@@ -790,14 +789,13 @@ void ClassicAbinitio::set_default_options() {
 	short_insert_region_ = false;  // apply small fragments in phase 2!
 
 	if ( option[ OptionKeys::abinitio::recover_low_in_stages ].user() ) {
-		for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::recover_low_in_stages ]().begin(),
-				eit = option[ OptionKeys::abinitio::recover_low_in_stages ]().end(); it!=eit; ++it ) {
-			if ( *it == 1 ) recover_low_stages_.push_back( STAGE_1 );
-			else if ( *it == 2 ) recover_low_stages_.push_back( STAGE_2 );
-			else if ( *it == 3 ) {
+		for (int it : option[ OptionKeys::abinitio::recover_low_in_stages ]()) {
+			if ( it == 1 ) recover_low_stages_.push_back( STAGE_1 );
+			else if ( it == 2 ) recover_low_stages_.push_back( STAGE_2 );
+			else if ( it == 3 ) {
 				recover_low_stages_.push_back( STAGE_3a );
 				recover_low_stages_.push_back( STAGE_3b );
-			} else if ( *it == 4 ) recover_low_stages_.push_back( STAGE_4 );
+			} else if ( it == 4 ) recover_low_stages_.push_back( STAGE_4 );
 		}
 	} else {
 		recover_low_stages_.clear();
@@ -830,7 +828,7 @@ public:
 		runtime_assert( trials_->keep_stats_type() < moves::no_stats );
 		last_move_ = 0;
 	}
-	virtual bool operator() ( const core::pose::Pose & pose );
+	bool operator() ( const core::pose::Pose & pose ) override;
 private:
 	pose::Pose very_old_pose_;
 	bool bInit_;
@@ -846,7 +844,7 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
 		very_old_pose_ = pose;
 		return true;
 	}
-	runtime_assert( trials_ != 0 );
+	runtime_assert( trials_ != nullptr );
 	tr.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
 	if ( numeric::mod(trials_->num_accepts(),100) != 0 ) return true;
 	if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
@@ -932,7 +930,7 @@ bool ClassicAbinitio::do_stage3_cycles( pose::Pose &pose ) {
 		nloop2 = 5;
 	}
 
-	hConvergenceCheckOP convergence_checker ( NULL );
+	hConvergenceCheckOP convergence_checker ( nullptr );
 	if ( !option[ basic::options::OptionKeys::abinitio::skip_convergence_check ] ) {
 		convergence_checker = hConvergenceCheckOP( new hConvergenceCheck );
 	}

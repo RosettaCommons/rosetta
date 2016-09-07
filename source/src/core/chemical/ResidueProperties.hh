@@ -51,7 +51,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	ResidueProperties( ResidueProperties const & object_to_copy, ResidueType const * new_owner );
 
 	// Destructor
-	virtual ~ResidueProperties();
+	~ResidueProperties() override;
 
 private:
 	// Empty constructor -- should not ever be called; not implemented

@@ -375,7 +375,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;
 
 		// set foldtree + variants
-		for ( protocols::loops::Loops::iterator it=loops_->v_begin(), it_end=loops_->v_end(); it!=it_end; ++it ) {
+		for ( auto it=loops_->v_begin(), it_end=loops_->v_end(); it!=it_end; ++it ) {
 			// if loop crosses a cut maintain that cut
 			bool crosses_cut=false;
 			Size i = 0;
@@ -398,8 +398,8 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
-		for ( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
-			for ( Size i=it->start(); i<=it->stop(); ++i ) {
+		for (const auto & it : *loops_) {
+			for ( Size i=it.start(); i<=it.stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true);
 			}
@@ -411,8 +411,8 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		// pick 3mers only in unaligned regions
 		std::string tgt_seq = pose.sequence();
 		core::fragment::FragSetOP frags3( new core::fragment::ConstantLengthFragSet( 3 ) );
-		for ( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
-			for ( Size i=it->start(); i+2<=it->stop(); ++i ) {
+		for (const auto & it : *loops_) {
+			for ( Size i=it.start(); i+2<=it.stop(); ++i ) {
 				core::fragment::FrameOP frame( new core::fragment::Frame( i, 3 ) );
 				frame->add_fragment(
 					core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( "DDD", tgt_seq.substr( i-1, 3 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );

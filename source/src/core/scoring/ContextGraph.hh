@@ -34,7 +34,7 @@ public:
 
 public:
 
-	virtual ~ContextGraph();
+	~ContextGraph() override;
 
 	ContextGraph();
 	ContextGraph(Size num_nodes);
@@ -64,8 +64,8 @@ public:
 	) = 0;
 
 protected:
-	virtual Size count_static_memory() const = 0;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override = 0;
+	Size count_dynamic_memory() const override;
 
 
 };

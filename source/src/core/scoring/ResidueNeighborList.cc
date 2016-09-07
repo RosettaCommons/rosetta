@@ -43,7 +43,7 @@ namespace core {
 namespace scoring {
 
 ResidueNblistData::ResidueNblistData() {}
-ResidueNblistData::~ResidueNblistData() {}
+ResidueNblistData::~ResidueNblistData() = default;
 
 ResiduePairNeighborList::CacheableDataOP
 ResidueNblistData::clone() const
@@ -84,7 +84,7 @@ void ResidueNblistData::initialize(
 }
 
 ResiduePairNeighborList::ResiduePairNeighborList() {}
-ResiduePairNeighborList::~ResiduePairNeighborList() {}
+ResiduePairNeighborList::~ResiduePairNeighborList() = default;
 
 ResiduePairNeighborList::CacheableDataOP ResiduePairNeighborList::clone() const { return ResiduePairNeighborList::CacheableDataOP( new ResiduePairNeighborList( *this ) ); }
 
@@ -146,11 +146,11 @@ ResiduePairNeighborList::initialize_from_residues(
 	cutoffs[ 2 ] = hhd2;
 
 	for ( Size ii = 1; ii <= r1.natoms(); ++ii ) {
-		std::map<core::Size,core::Size>::const_iterator iter_i = r1_map.find(ii);
+		auto iter_i = r1_map.find(ii);
 		int ii_rep = iter_i == r1_map.end() ? ii : iter_i->second;
 		int ii_isH = r1.atom_is_hydrogen( ii );
 		for ( Size jj = 1; jj <= r2.natoms(); ++jj ) {
-			std::map<core::Size,core::Size>::const_iterator iter_j = r2_map.find(jj);
+			auto iter_j = r2_map.find(jj);
 			int jj_rep = iter_j == r2_map.end() ? jj : iter_j->second;
 			int jj_isH = r2.atom_is_hydrogen( jj );
 			Real weight( 1.0 );

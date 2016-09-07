@@ -27,7 +27,7 @@ namespace protocols {
 namespace features {
 
 GeometricSolvationFeaturesCreator::GeometricSolvationFeaturesCreator() {}
-GeometricSolvationFeaturesCreator::~GeometricSolvationFeaturesCreator() {}
+GeometricSolvationFeaturesCreator::~GeometricSolvationFeaturesCreator() = default;
 FeaturesReporterOP GeometricSolvationFeaturesCreator::create_features_reporter() const {
 
 	core::scoring::methods::EnergyMethodOptions options;

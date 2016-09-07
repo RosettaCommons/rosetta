@@ -38,7 +38,7 @@ using protocols::rosetta_scripts::PoseSelectorFactory;
 template <> std::mutex utility::SingletonBase< PoseSelectorFactory >::singleton_mutex_{};
 template <> std::atomic< PoseSelectorFactory * > utility::SingletonBase< PoseSelectorFactory >::instance_( 0 );
 #else
-template <> PoseSelectorFactory * utility::SingletonBase< PoseSelectorFactory >::instance_( 0 );
+template <> PoseSelectorFactory * utility::SingletonBase< PoseSelectorFactory >::instance_( nullptr );
 #endif
 
 }
@@ -56,13 +56,13 @@ PoseSelectorFactory::create_singleton_instance()
 
 PoseSelectorFactory::PoseSelectorFactory(){}
 
-PoseSelectorFactory::~PoseSelectorFactory(){}
+PoseSelectorFactory::~PoseSelectorFactory()= default;
 
 /// @brief add a PoseSelector prototype, using its default type name as the map key
 void
 PoseSelectorFactory::factory_register( PoseSelectorCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const pose_selector_type( creator->keyname() );
 	if ( pose_selector_type == "UNDEFINED NAME" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived PoseSelector with undefined type name.");
@@ -91,7 +91,7 @@ PoseSelectorFactory::newPoseSelector( std::string const & pose_selector_type )
 		}
 		TR<<std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( pose_selector_type + " is not known to the PoseSelectorFactory. Was it registered via a PoseSelectorRegistrator in one of the init.cc files?" );
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -105,7 +105,7 @@ PoseSelectorFactory::newPoseSelector(
 	core::pose::Pose const & pose
 ) {
 	PoseSelectorOP selector( newPoseSelector( tag->getName() ) );
-	runtime_assert( selector != 0 );
+	runtime_assert( selector != nullptr );
 	selector->parse_my_tag( tag, data, filters, movers, pose );
 	return selector;
 }

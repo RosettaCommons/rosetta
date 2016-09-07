@@ -34,17 +34,17 @@ class GrowPeptides : public protocols::moves::Mover
 public:
 	GrowPeptides();
 
-	virtual ~GrowPeptides();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	~GrowPeptides() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag(     utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	// Undefined, commenting out to fix PyRosetta build   void add_chainbreakterm( bool ac );
 

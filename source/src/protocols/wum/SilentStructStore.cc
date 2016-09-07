@@ -78,18 +78,18 @@ namespace protocols {
 namespace wum {
 
 /// @details Auto-generated virtual destructor
-SilentStructStore::~SilentStructStore() {}
+SilentStructStore::~SilentStructStore() = default;
 
 
 class sort_SilentStructOPs
 {
 public:
-	sort_SilentStructOPs(std::string field = "score" ): field_(field) {}
+	sort_SilentStructOPs(std::string field = "score" ): field_(std::move(field)) {}
 
 	bool operator () (const SilentStructOP& left, const SilentStructOP& right)
 	{
-		runtime_assert( left != 0 );
-		runtime_assert( right != 0 );
+		runtime_assert( left != nullptr );
+		runtime_assert( right != nullptr );
 		return left->get_energy( field_ ) < right->get_energy( field_ );
 	}
 private:
@@ -150,7 +150,7 @@ SilentStructStore::add( SilentStructStore &mergestore ) {
 	for ( std::vector < SilentStructOP >::const_iterator it = mergestore.store_.begin();
 			it != mergestore.store_.end();
 			++it ) {
-		runtime_assert( *it != 0 );
+		runtime_assert( *it != nullptr );
 		store_.push_back( *it );
 	}
 }
@@ -236,11 +236,9 @@ void SilentStructStore::serialize( std::ostream & out ) const {
 	} else {
 		(*store_.begin())->print_header( out );
 		SilentFileData sfd;
-		for ( std::vector < SilentStructOP >::const_iterator it = store_.begin();
-				it != store_.end();
-				++it ) {
-			runtime_assert( *it != 0 );
-			sfd.write_silent_struct( (*(*it)), out );
+		for (const auto & it : store_) {
+			runtime_assert( it != nullptr );
+			sfd.write_silent_struct( (*it), out );
 		}
 	}
 }
@@ -266,12 +264,10 @@ void SilentStructStore::print( std::ostream & out ) const {
 	SilentFileData sfd;
 	core::Size count=0;
 	out << "----------------------------------------------" << std::endl;
-	for ( std::vector < SilentStructOP >::const_iterator it = store_.begin();
-			it != store_.end();
-			++it ) {
+	for (const auto & it : store_) {
 		out << count << " ";
-		runtime_assert( *it != 0 );
-		(*it)->print_scores( out );
+		runtime_assert( it != nullptr );
+		it->print_scores( out );
 	}
 	out << "----------------------------------------------" << std::endl;
 }
@@ -280,10 +276,8 @@ void SilentStructStore::print( std::ostream & out ) const {
 core::Size
 SilentStructStore::mem_footprint() const {
 	core::Size total = 0;
-	for ( std::vector < SilentStructOP >::const_iterator it = store_.begin();
-			it != store_.end();
-			++it ) {
-		total += (*it)->mem_footprint();
+	for (const auto & it : store_) {
+		total += it->mem_footprint();
 	}
 	return total;
 }
@@ -301,20 +295,16 @@ SilentStructStore::sort_by( std::string field )
 void
 SilentStructStore::all_add_energy( std::string scorename, core::Real value, core::Real weight )
 {
-	for ( std::vector < SilentStructOP >::iterator it = store_.begin();
-			it != store_.end();
-			++it ) {
-		(*it)->add_energy( scorename, value, weight );
+	for (auto & it : store_) {
+		it->add_energy( scorename, value, weight );
 	}
 }
 
 void
 SilentStructStore::all_sort_silent_scores()
 {
-	for ( std::vector < SilentStructOP >::iterator it = store_.begin();
-			it != store_.end();
-			++it ) {
-		(*it)->sort_silent_scores( );
+	for (auto & it : store_) {
+		it->sort_silent_scores( );
 	}
 }
 

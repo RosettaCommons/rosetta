@@ -30,7 +30,7 @@ namespace splice {
 class FoldUnitUtils : public utility::pointer::ReferenceCount {
 public:
 	FoldUnitUtils() : fragment_dbase_( "" ), pair_dbase_( "" ), overlap_length_( 10 ), n_term_entry_( 0 ), c_term_entry_( 0 ), min_overlap_( 0 ), max_length_( 0 ), max_rmsd_( 0.0 ) { legal_bbdofs_.clear(); entry_pairs_.clear(); overlap_length_.clear(); overlap_rmsd_.clear(); };
-	~FoldUnitUtils();
+	~FoldUnitUtils() override;
 	bool read_dbase(); //return whether read is successful
 	void fragment_dbase( std::string const dbase ){ fragment_dbase_ = dbase; }
 	std::string fragment_dbase() const{ return fragment_dbase_; }
@@ -86,7 +86,7 @@ private:
 class PoseFragmentInfo : public utility::pointer::ReferenceCount{
 public:
 	PoseFragmentInfo(){ fragment_map_.clear(); };
-	~PoseFragmentInfo();
+	~PoseFragmentInfo() override;
 	void load_fragment_info_from_pose( core::pose::Pose const & pose ); // set the object according to comments in the pose
 	void set_fragment_info_in_pose( core::pose::Pose & pose ) const; // set the pose comments according to the object
 	void fragment_start_end( FoldUnitUtils const fuu, core::Size const fragment, core::Size & start, core::Size & end ); // provide start/end residues for fragment #fragment
@@ -102,20 +102,20 @@ private:
 class AddFoldUnitMover : public protocols::moves::Mover {
 public:
 	AddFoldUnitMover();
-	~AddFoldUnitMover();
+	~AddFoldUnitMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	std::string fragment_dbase() const{ return fragment_dbase_; }
 	void fragment_dbase( std::string const s ){ fragment_dbase_ = s; }
@@ -157,20 +157,20 @@ private:
 class StartFreshMover : public protocols::moves::Mover {
 public:
 	StartFreshMover();
-	~StartFreshMover();
+	~StartFreshMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	std::string residue_type_set() const{ return residue_type_set_; }
 	void residue_type_set( std::string const s ){ residue_type_set_ = s; }

@@ -41,7 +41,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.Align_Rmsd
 namespace protocols {
 namespace comparative_modeling {
 
-Align_RmsdEvaluator::~Align_RmsdEvaluator() {}
+Align_RmsdEvaluator::~Align_RmsdEvaluator() = default;
 
 Align_RmsdEvaluator::Align_RmsdEvaluator(
 	core::pose::PoseCOP native_pose,

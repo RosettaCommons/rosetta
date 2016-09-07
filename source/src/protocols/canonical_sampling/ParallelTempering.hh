@@ -36,7 +36,7 @@
 #include <utility/vector0.hh>
 
 // C Headers
-#include <time.h>
+#include <ctime>
 
 namespace protocols {
 namespace canonical_sampling {
@@ -58,7 +58,7 @@ public:
 	ParallelTempering();
 
 	/// @brief Non-trivial destructor used to free some C-style arrays.
-	~ParallelTempering();
+	~ParallelTempering() override;
 
 	/// @brief Copy constructor.
 	ParallelTempering( ParallelTempering const& );
@@ -66,21 +66,21 @@ public:
 	/// @brief Assignment operator.
 	ParallelTempering& operator=( ParallelTempering const& );
 
-	virtual
-	void apply( core::pose::Pose& ) {};
+	
+	void apply( core::pose::Pose& ) override {};
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -88,28 +88,28 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	core::Real
-	temperature_move( core::Real score);
+	temperature_move( core::Real score) override;
 
-	virtual void
+	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle  //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 protected:
 	void set_defaults();
-	void init_from_options();
+	void init_from_options() override;
 
 #ifdef USEMPI
 	MPI_Comm const& mpi_comm() const {

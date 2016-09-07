@@ -23,6 +23,7 @@
 #include <core/id/DOF_ID.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -81,7 +82,7 @@ private:
 class SimpleDerivCheckResult : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~SimpleDerivCheckResult();
+	~SimpleDerivCheckResult() override;
 	SimpleDerivCheckResult( Size const nangles, Size const nsteps ) :
 		step_data_( nangles ),
 		abs_deriv_dev_( nangles, 0.0 ),
@@ -143,8 +144,8 @@ public:
 	{}
 
 	DOF_DataPoint(
-		id::DOF_ID const & dof_id,
-		id::DOF_ID const & parent_id,
+		id::DOF_ID  dof_id,
+		id::DOF_ID  parent_id,
 		Size   natoms,
 		Real   num_deriv,
 		Real   ana_deriv,
@@ -154,8 +155,8 @@ public:
 		Real   f22,
 		Real   dof_val
 	) :
-		dof_id_( dof_id ),
-		parent_id_( parent_id ),
+		dof_id_(std::move( dof_id )),
+		parent_id_(std::move( parent_id )),
 		natoms_( natoms ),
 		num_deriv_( num_deriv ),
 		ana_deriv_( ana_deriv ),
@@ -205,7 +206,7 @@ public:
 		}
 	}
 
-	virtual ~NumDerivCheckData() {}
+	~NumDerivCheckData() override = default;
 
 	void dof_step_data( Size dof_ind, Size step_ind, DOF_DataPoint const & dofdp ) {
 		dof_step_data_[ dof_ind ][ step_ind ] = dofdp;
@@ -226,7 +227,7 @@ public:
 
 public:
 	NumericalDerivCheckResult();
-	virtual ~NumericalDerivCheckResult();
+	~NumericalDerivCheckResult() override;
 
 	void send_to_stdout( bool setting ) { send_to_stdout_ = setting; }
 	bool send_to_stdout() const { return send_to_stdout_; }

@@ -74,7 +74,7 @@ symmetrizeBfactors( core::pose::Pose & pose ) {
 		core::conformation::Residue const & rsd( pose.residue(resid) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 
-		for ( core::conformation::symmetry::SymmetryInfo::Clones::const_iterator pos=symm_info->bb_clones( resid ).begin(),
+		for ( auto pos=symm_info->bb_clones( resid ).begin(),
 				epos=symm_info->bb_clones( resid ).end(); pos != epos; ++pos ) {
 			core::Size natoms = rsd.natoms();
 			for ( core::Size atmid = 1; atmid <= natoms; ++atmid ) {
@@ -134,7 +134,7 @@ BfactorMultifunc::BfactorMultifunc(
 ///  pose with B factors --> multivec
 void
 BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimization::Multivec &y ) const {
-	runtime_assert( pose.pdb_info() != 0 );  // must exist
+	runtime_assert( pose.pdb_info() != nullptr );  // must exist
 
 	core::Size natoms = moving_atoms_.size();
 	y.resize(natoms);
@@ -150,7 +150,7 @@ BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimizati
 ///   multivec ---> pose B factors
 void
 BfactorMultifunc::multivec2poseBfacts( core::optimization::Multivec const &y, core::pose::Pose & pose ) const {
-	runtime_assert( pose.pdb_info() != 0 );  // must exist
+	runtime_assert( pose.pdb_info() != nullptr );  // must exist
 
 	core::Size natoms = moving_atoms_.size();
 	runtime_assert( y.size() == natoms );
@@ -184,7 +184,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd ( pose_copy.residue(i) );
 			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-			dens_score -= core::scoring::electron_density::getDensityMap().matchResFast( i, rsd, pose_copy, NULL );
+			dens_score -= core::scoring::electron_density::getDensityMap().matchResFast( i, rsd, pose_copy, nullptr );
 		}
 	} else {
 		core::scoring::electron_density::poseCoords litePose;

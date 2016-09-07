@@ -44,11 +44,11 @@ public:
 	AutoCutData( core::Size const& hash,
 		std::set< Size > const& cuts );
 
-	void write( std::ostream &out ) const;
+	void write( std::ostream &out ) const override;
 
-	basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const override;
 
-	std::string datatype() const;
+	std::string datatype() const override;
 
 	utility::vector1< Size > const& cuts() const{
 		return auto_cuts_;

@@ -39,20 +39,20 @@ namespace constraint_generator {
 class CoordinateConstraintGenerator : public protocols::constraint_generator::ConstraintGenerator {
 public:
 	CoordinateConstraintGenerator();
-	virtual ~CoordinateConstraintGenerator();
+	~CoordinateConstraintGenerator() override;
 
 	static std::string
 	class_name() { return "CoordinateConstraintGenerator"; }
 
 	ConstraintGeneratorOP
-	clone() const;
+	clone() const override;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const override;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 public:
 	void

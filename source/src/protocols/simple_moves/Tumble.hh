@@ -55,11 +55,11 @@ public:
 	Tumble();
 
 	//destructor
-	~Tumble();
+	~Tumble() override;
 
 	numeric::xyzVector<core::Real> center_of_mass(core::pose::Pose const & pose);
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void
 	parse_my_tag(
@@ -68,13 +68,13 @@ public:
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	std::string get_name() const;
+	std::string get_name() const override;
 
 
 private:

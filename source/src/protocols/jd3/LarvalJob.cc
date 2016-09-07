@@ -22,13 +22,13 @@ namespace protocols {
 namespace jd3 {
 
 LarvalJob::LarvalJob( InnerLarvalJobOP inner_job, core::Size nstruct_index ) :
-	inner_job_( inner_job ),
+	inner_job_(std::move( inner_job )),
 	nstruct_index_( nstruct_index ),
 	completed_( false ),
 	bad_( false )
 {}
 
-LarvalJob::~LarvalJob() {}
+LarvalJob::~LarvalJob() = default;
 
 /// @details Are two larval jobs equivalent? This ignores the data that
 /// describes the status of the job's execution.  Intentionally ignored
@@ -39,7 +39,7 @@ LarvalJob::~LarvalJob() {}
 /// bad_
 bool
 LarvalJob::operator == ( LarvalJob const & rhs ) const {
-	return ( inner_job_ == rhs.inner_job_ || ( inner_job_ != 0 && rhs.inner_job_ != 0 && *inner_job_ == *rhs.inner_job_ ));
+	return ( inner_job_ == rhs.inner_job_ || ( inner_job_ != nullptr && rhs.inner_job_ != nullptr && *inner_job_ == *rhs.inner_job_ ));
 }
 
 bool

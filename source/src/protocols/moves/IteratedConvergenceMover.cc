@@ -20,6 +20,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
@@ -60,15 +61,15 @@ IteratedConvergenceMover::IteratedConvergenceMover() :
 
 IteratedConvergenceMover::IteratedConvergenceMover( MoverOP submover, filters::FilterCOP filter, core::Real delta, core::Size cycles, core::Size maxcycles ) :
 	Mover("IteratedConvergenceMover"),
-	submover_(submover),
-	filter_(filter),
+	submover_(std::move(submover)),
+	filter_(std::move(filter)),
 	cycles_(cycles),
 	maxcycles_(maxcycles)
 {
 	this->delta(delta);
 }
 
-IteratedConvergenceMover::~IteratedConvergenceMover(){}
+IteratedConvergenceMover::~IteratedConvergenceMover()= default;
 
 IteratedConvergenceMover::IteratedConvergenceMover( IteratedConvergenceMover const & other ) :
 	//utility::pointer::ReferenceCount(),
@@ -83,8 +84,8 @@ IteratedConvergenceMover::IteratedConvergenceMover( IteratedConvergenceMover con
 void
 IteratedConvergenceMover::apply( Pose & pose )
 {
-	runtime_assert(submover_ != 0);
-	runtime_assert(filter_ != 0);
+	runtime_assert(submover_ != nullptr);
+	runtime_assert(filter_ != nullptr);
 
 	core::Real refval(filter_->report_sm(pose));
 	core::Size ncyc(0);
@@ -135,8 +136,8 @@ IteratedConvergenceMover::parse_my_tag(
 	if ( tag->hasOption("filter") ) filter_name = tag->getOption< std::string >( "filter" );
 	if ( tag->hasOption("filter_name") ) filter_name = tag->getOption< std::string >( "filter_name" );
 
-	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
-	Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	auto  find_mover ( movers.find( mover_name ));
+	auto find_filter( filters.find( filter_name ));
 
 	if ( find_mover == movers.end() ) {
 		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
@@ -169,13 +170,13 @@ IteratedConvergenceMover::clone() const
 // setters
 void IteratedConvergenceMover::submover( MoverOP mover )
 {
-	runtime_assert( mover != 0 );
+	runtime_assert( mover != nullptr );
 	submover_ = mover;
 }
 
 void IteratedConvergenceMover::filter( filters::FilterCOP filter )
 {
-	runtime_assert( filter != 0 );
+	runtime_assert( filter != nullptr );
 	filter_ = filter;
 }
 

@@ -80,9 +80,9 @@ public:
 	void set_reference_pdb( std::string const & fname );
 	void set_match_pdb_listfilename( std::string const & fname );
 
-	virtual MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual void apply( core::pose::Pose & p );
+	MoverOP clone() const override;
+	std::string get_name() const override;
+	void apply( core::pose::Pose & p ) override;
 	ZnCoordinationScorerOP zn_score() const;
 
 	protocols::simple_moves::ReturnSidechainMoverOP recover_sidechains() const;
@@ -118,9 +118,9 @@ public:
 		InitializeZNCoordinationConstraintMoverOP init_zn
 	);
 
-	virtual MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual void apply( core::pose::Pose & p );
+	MoverOP clone() const override;
+	std::string get_name() const override;
+	void apply( core::pose::Pose & p ) override;
 private:
 	InitializeZNCoordinationConstraintMoverOP init_zn_;
 
@@ -214,9 +214,9 @@ public:
 	void set_constraint_energy_cutoff( core::Real setting );
 	void set_four_residue_cst_fname( std::string const & fname );
 
-	virtual MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual void apply( core::pose::Pose & p );
+	MoverOP clone() const override;
+	std::string get_name() const override;
+	void apply( core::pose::Pose & p ) override;
 private:
 	void mutate_the_interface_to_alanine( core::pose::Pose & p );
 
@@ -252,7 +252,7 @@ class FindZnCoordinatingResidues : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FindZnCoordinatingResidues();
+	~FindZnCoordinatingResidues() override;
 	FindZnCoordinatingResidues();
 	void fail_on_absent_coordinators( bool setting );
 	void find_coordinating_residues( core::pose::Pose const & p );
@@ -284,19 +284,19 @@ class InsertZincCoordinationRemarkLines : public protocols::moves::Mover
 {
 public:
 	InsertZincCoordinationRemarkLines();
-	~InsertZincCoordinationRemarkLines();
+	~InsertZincCoordinationRemarkLines() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual void apply( core::pose::Pose & p );
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
+	void apply( core::pose::Pose & p ) override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP const,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 };
 
 
@@ -308,16 +308,16 @@ public:
 	typedef core::pack::task::operation::TaskOperation    parent;
 public:
 	DisableZnCoordinationResiduesTaskOp();
-	virtual ~DisableZnCoordinationResiduesTaskOp();
+	~DisableZnCoordinationResiduesTaskOp() override;
 
-	virtual TaskOperationOP clone() const;
+	TaskOperationOP clone() const override;
 
-	virtual void apply(
+	void apply(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask & task
-	) const;
+	) const override;
 
-	virtual void parse_tag( TagCOP, DataMap & );
+	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "DisableZnCoordinationResiduesTaskOp"; }
 
@@ -330,14 +330,14 @@ public:
 
 	ZnCoordNumHbondCalculator();
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const;
-	virtual void notify_structure_change();
-	virtual void notify_energy_change();
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
+	void notify_structure_change() override;
+	void notify_energy_change() override;
 
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 private:
 	core::Size all_Hbonds_;
@@ -361,19 +361,19 @@ class LoadZnCoordNumHbondCalculatorMover : public protocols::moves::Mover {
 
 public:
 	LoadZnCoordNumHbondCalculatorMover();
-	~LoadZnCoordNumHbondCalculatorMover();
+	~LoadZnCoordNumHbondCalculatorMover() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual void apply( core::pose::Pose & p );
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
+	void apply( core::pose::Pose & p ) override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP const,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 };
 

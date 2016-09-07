@@ -37,6 +37,7 @@
 #include <core/scoring/Energies.hh>
 
 // Utility eaders
+#include <utility>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -54,7 +55,7 @@ namespace unfolded_state_energy_calculator {
 
 /// @brief dtor
 UnfoldedStateEnergyCalculatorMover::~UnfoldedStateEnergyCalculatorMover()
-{}
+= default;
 
 /// @brief cctor
 UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm ) :
@@ -91,13 +92,13 @@ UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover(
 ):
 	Mover( "UnfoldedStateEnergyCalculatorMover" ),
 	job_dist_( job_dist ),
-	pack_scrfxn_( pack_scrfxn ),
-	score_scrfxn_( score_scrfxn ),
+	pack_scrfxn_(std::move( pack_scrfxn )),
+	score_scrfxn_(std::move( score_scrfxn )),
 	frag_length_( frag_length ),
-	mut_aa_( mut_aa ),
+	mut_aa_(std::move( mut_aa )),
 	repack_fragments_( repack_fragments ),
 	native_sequence_( native_sequence ),
-	sequence_match_sequence_( sequence_match_sequence ),
+	sequence_match_sequence_(std::move( sequence_match_sequence )),
 	sequence_match_position_( sequence_match_position ),
 	sequence_matched_fragments_( sequence_matched_fragments )
 {}

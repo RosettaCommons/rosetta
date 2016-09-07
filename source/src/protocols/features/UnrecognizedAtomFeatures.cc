@@ -105,8 +105,7 @@ UnrecognizedAtomFeatures::UnrecognizedAtomFeatures(
 	neighbor_distance_cutoff_(src.neighbor_distance_cutoff_)
 {}
 
-UnrecognizedAtomFeatures::~UnrecognizedAtomFeatures()
-{}
+UnrecognizedAtomFeatures::~UnrecognizedAtomFeatures() = default;
 
 string
 UnrecognizedAtomFeatures::type_name() const { return "UnrecognizedAtomFeatures"; }
@@ -273,18 +272,14 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 
 	map< Size, UnrecognizedAtomRecord const * > ur_found;
 
-	for (
-			vector1< UnrecognizedAtomRecord >::const_iterator
-			ua(pdb_info->get_unrecognized_atoms().begin()),
-			ua_end(pdb_info->get_unrecognized_atoms().end());
-			ua != ua_end; ++ua ) {
+	for (const auto & ua : pdb_info->get_unrecognized_atoms()) {
 		map< Size, UnrecognizedAtomRecord const * >::const_iterator
-			i(ur_found.find(ua->res_num()));
+			i(ur_found.find(ua.res_num()));
 		if ( i == ur_found.end() ) {
-			ur_found[ua->res_num()] = &(*ua);
+			ur_found[ua.res_num()] = &ua;
 		} else {
-			if ( i->second->temp() > ua->temp() ) {
-				ur_found[ua->res_num()] = &(*ua);
+			if ( i->second->temp() > ua.temp() ) {
+				ur_found[ua.res_num()] = &ua;
 			}
 		}
 	}

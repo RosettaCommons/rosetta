@@ -93,7 +93,7 @@ public:
 	{}
 
 
-	~MinimizerMap();
+	~MinimizerMap() override;
 
 
 	void
@@ -103,20 +103,20 @@ public:
 	);
 
 
-	virtual
+	
 	void
 	add_torsion(
 		DOF_ID const & new_torsion,
 		DOF_ID const & parent
-	);
+	) override;
 
 
-	virtual
+	
 	void
 	add_atom(
 		AtomID const & atom_id,
 		DOF_ID const & dof_id
-	);
+	) override;
 
 
 	const_iterator
@@ -208,9 +208,9 @@ public:
 	) const;
 
 
-	virtual
+	
 	kinematics::DomainMap const &
-	domain_map() const
+	domain_map() const override
 	{
 		return domain_map_;
 	}
@@ -219,10 +219,10 @@ public:
 	DOF_NodeOP
 	dof_node_from_id( DOF_ID const &id )
 	{
-		DOF_NodeOP node = 0;
+		DOF_NodeOP node = nullptr;
 		if ( id.valid() ) {
 			node = dof_node_pointer_[ id ];
-			if ( node == 0 ) {
+			if ( node == nullptr ) {
 				std::cerr << "DOF_ID does not exist in map! torsion= " << id << std::endl;
 				utility_exit();
 			}

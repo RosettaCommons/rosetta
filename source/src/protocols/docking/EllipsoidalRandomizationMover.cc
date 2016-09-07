@@ -93,7 +93,7 @@ EllipsoidalRandomizationMover::operator=( EllipsoidalRandomizationMover const & 
 	return *this;
 }
 
-EllipsoidalRandomizationMover::~EllipsoidalRandomizationMover(){}
+EllipsoidalRandomizationMover::~EllipsoidalRandomizationMover()= default;
 
 void
 EllipsoidalRandomizationMover::set_default()

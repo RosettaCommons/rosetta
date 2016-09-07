@@ -58,11 +58,11 @@ public:
 	);
 
 	// empty destructor - for good inclusion of OP clasesses
-	~FlexPepDockingLowRes();
+	~FlexPepDockingLowRes() override;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 

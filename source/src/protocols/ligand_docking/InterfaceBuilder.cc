@@ -63,7 +63,7 @@ InterfaceBuilder::InterfaceBuilder(InterfaceBuilder const & that):
 	extension_window_(that.extension_window_)
 {}
 
-InterfaceBuilder::~InterfaceBuilder() {}
+InterfaceBuilder::~InterfaceBuilder() = default;
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -97,7 +97,7 @@ void InterfaceBuilder::find_interface_residues(
 	ligand_options::Interface & interface,
 	core::pose::Pose const & pose
 )const{
-	LigandAreas::const_iterator ligand_area= ligand_areas_.begin();
+	auto ligand_area= ligand_areas_.begin();
 	for ( ; ligand_area != ligand_areas_.end(); ++ligand_area ) {
 		char const & chain= ligand_area->first;
 		utility::vector1<core::Size> chain_ids= core::pose::get_chain_ids_from_chain(chain, pose);
@@ -156,7 +156,7 @@ bool InterfaceBuilder::is_interface_residue(
 	core::Size const potential_interface_neighbor_atom_id= potential_interface_residue.nbr_atom();
 	core::Vector const potential_interface_vector= potential_interface_residue.xyz(potential_interface_neighbor_atom_id);
 
-	LigandAreas::const_iterator found= ligand_areas_.find(chain);
+	auto found= ligand_areas_.find(chain);
 	assert(found != ligand_areas_.end());
 	LigandAreaOP const ligand_area = found->second;
 

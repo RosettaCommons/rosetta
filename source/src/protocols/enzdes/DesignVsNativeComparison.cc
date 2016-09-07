@@ -49,7 +49,7 @@ DesignVsNativeComparison::DesignVsNativeComparison(){
 	native_poses_.clear();
 }
 
-DesignVsNativeComparison::~DesignVsNativeComparison(){}
+DesignVsNativeComparison::~DesignVsNativeComparison()= default;
 
 void
 DesignVsNativeComparison::compare_to_native(
@@ -62,7 +62,7 @@ DesignVsNativeComparison::compare_to_native(
 	//first, extract the pdb code from the pose input tag
 	std::string pdb_code = enzutil::get_pdb_code_from_pose_tag( pose );
 
-	std::map<  std::string, core::pose::PoseOP >::iterator map_it = native_poses_.find( pdb_code );
+	auto map_it = native_poses_.find( pdb_code );
 
 	if ( map_it == native_poses_.end() ) {
 
@@ -109,21 +109,20 @@ DesignVsNativeComparison::compare_to_native(
 
 	core::Real poseval, nativeval;
 
-	for ( utility::vector1< std::pair< std::string, std::string > >::const_iterator calc_it = calculators.begin();
-			calc_it != calculators.end(); ++calc_it ) {
+	for (const auto & calculator : calculators) {
 
 
-		if ( calc_it->first == "hbond_pm" || calc_it->first == "burunsat_pm" || calc_it->first == "NLconts_pm" || calc_it->second == "total_pos_charges" || calc_it->second == "total_neg_charges" ) {
-			pureprotpose->metric( calc_it->first, calc_it->second, mval_size );
+		if ( calculator.first == "hbond_pm" || calculator.first == "burunsat_pm" || calculator.first == "NLconts_pm" || calculator.second == "total_pos_charges" || calculator.second == "total_neg_charges" ) {
+			pureprotpose->metric( calculator.first, calculator.second, mval_size );
 			poseval = mval_size.value();
 
-			native->metric( calc_it->first, calc_it->second, mval_size );
+			native->metric( calculator.first, calculator.second, mval_size );
 			nativeval = mval_size.value();
 		} else {
-			pureprotpose->metric( calc_it->first, calc_it->second, mval_real );
+			pureprotpose->metric( calculator.first, calculator.second, mval_real );
 			poseval = mval_real.value();
 
-			native->metric( calc_it->first, calc_it->second, mval_real );
+			native->metric( calculator.first, calculator.second, mval_real );
 			nativeval = mval_real.value();
 		}
 
@@ -131,8 +130,8 @@ DesignVsNativeComparison::compare_to_native(
 
 		//now create a silent energy out of the calculated value
 		core::Real native_diff = poseval - nativeval;
-		std::string se_name = "NaCo_"+calc_it->first;
-		if ( calc_it->first == "charges_pm" ) se_name = "NaCo_" + calc_it->second;
+		std::string se_name = "NaCo_"+calculator.first;
+		if ( calculator.first == "charges_pm" ) se_name = "NaCo_" + calculator.second;
 		int width = std::max( 10, (int) se_name.length() + 3 );
 
 		//core::io::SilentEnergy se( se_name , native_diff, 1, width );

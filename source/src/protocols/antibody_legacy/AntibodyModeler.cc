@@ -101,7 +101,7 @@ AntibodyModeler::AntibodyModeler() : Mover(),
 }
 
 // default destructor
-AntibodyModeler::~AntibodyModeler() {}
+AntibodyModeler::~AntibodyModeler() = default;
 
 //clone
 protocols::moves::MoverOP AntibodyModeler::clone() const {
@@ -586,15 +586,14 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 		nres ) );
 
 	// make sure rb jumps do not reside in the loop region
-	for ( loops::Loops::const_iterator it= loops_in.begin(),
-			it_end = loops_in.end(); it != it_end; ++it ) {
-		if ( jump_pos1 >= ( it->start() - 1 ) &&
-				jump_pos1 <= ( it->stop() + 1) ) {
-			jump_pos1 = it->stop() + 2;
+	for (const auto & it : loops_in) {
+		if ( jump_pos1 >= ( it.start() - 1 ) &&
+				jump_pos1 <= ( it.stop() + 1) ) {
+			jump_pos1 = it.stop() + 2;
 		}
-		if ( jump_pos2 >= ( it->start() - 1 ) &&
-				jump_pos2 <= ( it->stop() + 1) ) {
-			jump_pos2 = it->start() - 2;
+		if ( jump_pos2 >= ( it.start() - 1 ) &&
+				jump_pos2 <= ( it.stop() + 1) ) {
+			jump_pos2 = it.start() - 2;
 		}
 	}
 
@@ -605,20 +604,18 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 	// delete some old edge accordingly
 	FoldTree f( pose_in.fold_tree() );
 
-	for ( loops::Loops::const_iterator it=loops_in.begin(),
-			it_end=loops_in.end(); it != it_end; ++it ) {
-		Size const loop_start ( it->start() );
-		Size const loop_stop ( it->stop() );
-		Size const loop_cutpoint ( it->cut() );
+	for (const auto & it : loops_in) {
+		Size const loop_start ( it.start() );
+		Size const loop_stop ( it.stop() );
+		Size const loop_cutpoint ( it.cut() );
 		Size edge_start(0), edge_stop(0);
 		//bool edge_found = false;
 		const FoldTree & f_const = f;
 		Size const num_jump = f_const.num_jump();
-		for ( FoldTree::const_iterator it2=f_const.begin(),
-				it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
-			edge_start = std::min( it2->start(), it2->stop() );
-			edge_stop = std::max( it2->start(), it2->stop() );
-			if ( ! it2->is_jump() && loop_start > edge_start
+		for (const auto & it2 : f_const) {
+			edge_start = std::min( it2.start(), it2.stop() );
+			edge_stop = std::max( it2.start(), it2.stop() );
+			if ( ! it2.is_jump() && loop_start > edge_start
 					&& loop_stop < edge_stop ) {
 				//edge_found = true;  // set but never used ~Labonte
 				break;
@@ -711,10 +708,9 @@ AntibodyModeler::repulsive_ramp(
 	loops::remove_cutpoint_variants( pose_in, true );
 
 	using namespace core::chemical;
-	for ( loops::Loops::const_iterator it = loops_in.begin(),
-			it_end = loops_in.end(); it != it_end; ++it ) {
-		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it->cut() );
-		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it->cut()+1);
+	for (const auto & it : loops_in) {
+		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it.cut() );
+		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it.cut()+1);
 	}
 	// add scores to map
 	( *scorefxn )( pose_in );
@@ -833,10 +829,9 @@ AntibodyModeler::snugfit_mcm_protocol(
 	loops::remove_cutpoint_variants( pose_in, true );
 
 	using namespace core::chemical;
-	for ( loops::Loops::const_iterator it = loops_in.begin(),
-			it_end = loops_in.end(); it != it_end; ++it ) {
-		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it->cut() );
-		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it->cut()+1);
+	for (const auto & it : loops_in) {
+		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it.cut() );
+		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it.cut()+1);
 	}
 
 	//setting MoveMap

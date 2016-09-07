@@ -42,7 +42,7 @@ public:
 		core::pack::task::TaskFactoryOP surface_selection,
 		core::Real surface_density);
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints();
+	utility::vector1<core::kinematics::Stub> Searchpoints() override;
 	utility::vector1<VectorPair> surface_vectors() { return surface_vectors_; }
 
 private:

@@ -57,7 +57,7 @@ LabelResonance::LabelResonance(
 ) : Resonance( label, freq, error, id, aa, intensity )
 {}
 
-LabelResonance::~LabelResonance() {}
+LabelResonance::~LabelResonance() = default;
 
 /// @brief match the proton and corresponding label atom at same time
 bool LabelResonance::match2D(
@@ -79,8 +79,8 @@ bool LabelResonance::match2D(
 	if ( !has_connected_resonances() ) return false;
 
 	// does the label match?
-	for ( ResonanceAPs::const_iterator pit = connected_resonances().begin(); pit != connected_resonances().end(); ++pit ) {
-		ResonanceOP r( *pit );
+	for (const auto & pit : connected_resonances()) {
+		ResonanceOP r( pit );
 		Resonance const& proton( *r );
 		matches.push_back( std::make_pair( proton.label(), label() ) );
 	}

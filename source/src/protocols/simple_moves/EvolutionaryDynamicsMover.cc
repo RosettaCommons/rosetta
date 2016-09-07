@@ -54,7 +54,7 @@
 #include <fstream>
 #include <utility/io/izstream.hh>
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <core/pose/util.hh>
 #include <protocols/simple_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
@@ -101,7 +101,7 @@ EvolutionaryDynamicsMover::EvolutionaryDynamicsMover():
 
 
 /// @brief destructor
-EvolutionaryDynamicsMover::~EvolutionaryDynamicsMover(){}
+EvolutionaryDynamicsMover::~EvolutionaryDynamicsMover()= default;
 
 /// @brief clone this object
 EvolutionaryDynamicsMover::MoverOP
@@ -247,8 +247,8 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 		using namespace std;
 		string stringed_comments("");
 		map< string, string > const comments = core::pose::get_all_comments(pose);
-		for ( map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
-			stringed_comments += i->first + ":" + i->second + " ";
+		for (const auto & comment : comments) {
+			stringed_comments += comment.first + ":" + comment.second + " ";
 		}
         
         core::Real energy = scoring(pose);

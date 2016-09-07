@@ -38,17 +38,17 @@ class AlaScan : public filters::Filter
 public :
 	AlaScan();
 	AlaScan( bool const chain1, bool const chain2, core::Size const repeats, core::Real const dist, core::scoring::ScoreFunctionCOP scorefxn, core::Size const jump, bool const symmetry );
-	bool apply( core::pose::Pose const & ) const{ return true; }
-	filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & ) const override{ return true; }
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new AlaScan( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new AlaScan() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	void report_symmetry( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & ) const { return (0.0); };
+	core::Real report_sm( core::pose::Pose const & ) const override { return (0.0); };
 	void chain1( bool const c1 ){ chain1_ = c1; }
 	void chain2( bool const c2 ){ chain2_ = c2; }
 	void dist( core::Real const d ){ distance_threshold_ = d; }
@@ -61,10 +61,10 @@ public :
 	core::Size jump() const { return jump_; }
 	void jump( core::Size const j ) { jump_ = j; }
 	core::Real dist() const{ return distance_threshold_; }
-	virtual ~AlaScan();
+	~AlaScan() override;
 	void repack( bool const repack );
 	bool repack() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	bool chain1_, chain2_;
 	core::Size repeats_;

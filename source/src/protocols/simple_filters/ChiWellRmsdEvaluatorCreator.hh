@@ -31,11 +31,11 @@ class ChiWellRmsdEvaluatorCreator : public evaluation::EvaluatorCreator
 {
 public:
 	ChiWellRmsdEvaluatorCreator() {};
-	virtual ~ChiWellRmsdEvaluatorCreator();
+	~ChiWellRmsdEvaluatorCreator() override;
 
-	virtual void add_evaluators( evaluation::MetaPoseEvaluator & eval ) const;
+	void add_evaluators( evaluation::MetaPoseEvaluator & eval ) const override;
 
-	virtual std::string type_name() const;
+	std::string type_name() const override;
 };
 
 } //namespace

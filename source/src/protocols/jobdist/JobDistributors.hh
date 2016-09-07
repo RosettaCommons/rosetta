@@ -99,7 +99,7 @@ public:
 
 	BaseJobDistributor(JobVector jobs);
 	BaseJobDistributor( BaseJobDistributor const & );
-	virtual ~BaseJobDistributor();
+	~BaseJobDistributor() override;
 
 	/// @brief If true, sets the next Job and nstruct number to be processed.
 	/// Deliberately not virtual:  should not be overriden.  Uses the "find_available_job"
@@ -274,7 +274,7 @@ protected:
 public:
 
 	AtomTreeDiffJobDistributor(JobVector jobs, std::string outfile_name);
-	virtual ~AtomTreeDiffJobDistributor();
+	~AtomTreeDiffJobDistributor() override;
 
 	/// @brief Appends pose to the silent file
 	virtual void dump_pose(
@@ -291,11 +291,11 @@ public:
 		int bondlen_precision
 	);
 
-	virtual void shutdown();
+	void shutdown() override;
 
 protected:
 
-	virtual bool is_finished(BasicJobOP const & job, int struct_n );
+	bool is_finished(BasicJobOP const & job, int struct_n ) override;
 
 private:
 
@@ -328,10 +328,10 @@ protected:
 public:
 
 	PlainPdbJobDistributor(JobVector jobs, std::string outfile_name="none");
-	virtual ~PlainPdbJobDistributor();
+	~PlainPdbJobDistributor() override;
 
 	/// @brief Allows setting of inprogress.
-	virtual void startup();
+	void startup() override;
 
 	using parent::get_output_filename;
 
@@ -339,18 +339,18 @@ public:
 	virtual std::string get_output_filename(std::string const & tag);
 
 	/// @brief Writes pose and basic score data to a standard PDB file.
-	virtual void dump_pose_and_map(
+	void dump_pose_and_map(
 		std::string const & tag,
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief Opens a temp file (.in_progress)
-	virtual void temp_file(std::string const & tag);
+	void temp_file(std::string const & tag) override;
 
-	void score_map( std::map < std::string, core::Real > & score_map_in ) { score_map_ = score_map_in; }
+	void score_map( std::map < std::string, core::Real > & score_map_in ) override { score_map_ = score_map_in; }
 protected:
 
-	virtual bool is_finished(BasicJobOP const & job, int struct_n );
+	bool is_finished(BasicJobOP const & job, int struct_n ) override;
 
 	/// @brief Writes score data to PDB file in YAML format.
 	virtual void dump_scores(
@@ -393,13 +393,13 @@ public:
 
 	PlainRawJobDistributor(JobVector jobs, std::string outfile_name);
 
-	virtual ~PlainRawJobDistributor();
+	~PlainRawJobDistributor() override;
 
 	/// @brief Writes pose and basic score data to a standard silent file.
-	virtual void dump_pose_and_map(
+	void dump_pose_and_map(
 		std::string const & tag,
 		core::pose::Pose & pose
-	);
+	) override;
 
 	using parent::get_output_filename;
 
@@ -407,10 +407,10 @@ public:
 	virtual std::string get_output_filename(std::string const & tag);
 	virtual std::string get_output_tag( int const & struct_n );
 
-	void score_map( std::map < std::string, core::Real > & score_map_in ) { score_map_ = score_map_in; }
+	void score_map( std::map < std::string, core::Real > & score_map_in ) override { score_map_ = score_map_in; }
 protected:
 
-	virtual bool is_finished(BasicJobOP const & job, int struct_n );
+	bool is_finished(BasicJobOP const & job, int struct_n ) override;
 
 private:
 
@@ -444,7 +444,7 @@ public:
 
 	PlainSilentFileJobDistributor(JobVector jobs);
 
-	virtual ~PlainSilentFileJobDistributor();
+	~PlainSilentFileJobDistributor() override;
 
 	/// @brief Writes pose and basic score data to a standard silent file.
 	virtual void dump_pose(
@@ -465,16 +465,16 @@ public:
 	);
 
 	virtual std::string get_output_tag( BasicJobOP const & job, int const & struct_n ) const;
-	virtual std::string get_current_output_tag();
-	virtual std::string get_output_filename();
+	std::string get_current_output_tag() override;
+	std::string get_output_filename() override;
 
-	virtual void startup();
+	void startup() override;
 
-	virtual void shutdown();
+	void shutdown() override;
 
 protected:
 
-	virtual bool is_finished(BasicJobOP const & job, int struct_n );
+	bool is_finished(BasicJobOP const & job, int struct_n ) override;
 
 private:
 

@@ -98,7 +98,7 @@ SymDockingHiRes::SymDockingHiRes() : Mover()
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 	scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	moves::Mover::type( "SymDockingHiRes" );
-	init_task_factory_=NULL;
+	init_task_factory_=nullptr;
 	design_ = false;
 }
 
@@ -106,15 +106,15 @@ SymDockingHiRes::SymDockingHiRes() : Mover()
 SymDockingHiRes::SymDockingHiRes(
 	core::scoring::ScoreFunctionOP scorefxn_in,
 	core::scoring::ScoreFunctionOP scorefxn_pack_in
-) : Mover(), scorefxn_(scorefxn_in), scorefxn_pack_(scorefxn_pack_in)
+) : Mover(), scorefxn_(std::move(scorefxn_in)), scorefxn_pack_(scorefxn_pack_in)
 {
 	moves::Mover::type( "SymDockingHRes" );
-	init_task_factory_=NULL;
+	init_task_factory_=nullptr;
 	design_ = false;
 }
 
 //destructor
-SymDockingHiRes::~SymDockingHiRes() {}
+SymDockingHiRes::~SymDockingHiRes() = default;
 
 //clone
 protocols::moves::MoverOP SymDockingHiRes::clone() const {
@@ -399,8 +399,8 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 	//fpd -- repack any interface formed by a movable jump
 	utility::vector1<int> movable_jumps;
-	for ( std::map<Size,SymDof>::iterator i=dofs.begin(),i_end=dofs.end(); i!=i_end; ++i ) {
-		movable_jumps.push_back( i->first );
+	for (auto & dof : dofs) {
+		movable_jumps.push_back( dof.first );
 	}
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( movable_jumps ) ) );
 

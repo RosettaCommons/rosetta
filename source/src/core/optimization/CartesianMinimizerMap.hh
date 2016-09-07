@@ -49,29 +49,29 @@ public:
 	{}
 
 
-	~CartesianMinimizerMap();
+	~CartesianMinimizerMap() override;
 
 
-	virtual
+	
 	kinematics::DomainMap const &
-	domain_map() const
+	domain_map() const override
 	{
 		return domain_map_;
 	}
 
-	virtual
+	
 	void
 	add_torsion(
 		DOF_ID const & new_torsion,
 		DOF_ID const & parent
-	);
+	) override;
 
-	virtual
+	
 	void
 	add_atom(
 		AtomID const & AtomID,
 		DOF_ID const & dof_id
-	);
+	) override;
 
 
 	void

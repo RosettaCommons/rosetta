@@ -25,9 +25,9 @@ public:
 
 	LoopBuildMover(protocols::comparative_modeling::LoopRelaxMover loop_relax_mover);
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	protocols::comparative_modeling::LoopRelaxMover loop_relax_mover_;

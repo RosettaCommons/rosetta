@@ -51,7 +51,7 @@ static THREAD_LOCAL basic::Tracer tr( "core.fragments" );
 
 
 OrderedFragSet::OrderedFragSet() {}
-OrderedFragSet::~OrderedFragSet() {}
+OrderedFragSet::~OrderedFragSet() = default;
 
 FragSetOP OrderedFragSet::clone() const {
 	return FragSetOP( new OrderedFragSet( *this ) );
@@ -81,7 +81,7 @@ Size OrderedFragSet::region(
 /// there is no frame at the specified position.
 Size OrderedFragSet::frames( Size pos, FrameList &out_frames ) const
 {
-	FrameMap::const_iterator it = frames_.find(pos);
+	auto it = frames_.find(pos);
 	if ( it == frames_.end() ) return 0;
 	if ( it->second.begin() != it->second.end() ) {
 		copy( it->second.begin(), it->second.end(), back_inserter( out_frames ) ); // should append frames

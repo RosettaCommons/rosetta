@@ -77,21 +77,9 @@ TrajectoryRecorder::TrajectoryRecorder() :
 	file_name_ = "traj";
 }
 
-TrajectoryRecorder::~TrajectoryRecorder()
-{}
+TrajectoryRecorder::~TrajectoryRecorder() = default;
 
-TrajectoryRecorder::TrajectoryRecorder(
-	TrajectoryRecorder const & other
-) :
-	protocols::canonical_sampling::ThermodynamicObserver(other),
-	stride_(other.stride_),
-	model_count_(other.model_count_),
-	step_count_(other.step_count_),
-	cache_limit_(other.cache_limit_),
-	file_name_(other.file_name_),
-	cumulate_jobs_( other.cumulate_jobs_ ),
-	cumulate_replicas_( other.cumulate_replicas_ )
-{}
+TrajectoryRecorder::TrajectoryRecorder( TrajectoryRecorder const & ) = default;
 
 TrajectoryRecorder&
 TrajectoryRecorder::operator=( TrajectoryRecorder const & /* other */ )

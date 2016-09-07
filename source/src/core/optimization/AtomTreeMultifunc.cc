@@ -215,7 +215,7 @@ AtomTreeMultifunc::AtomTreeMultifunc(
 	deriv_check_result_( /* 0 */ )
 {}
 
-AtomTreeMultifunc::~AtomTreeMultifunc() {}
+AtomTreeMultifunc::~AtomTreeMultifunc() = default;
 
 MinimizerMap const & AtomTreeMultifunc::min_map() const {
 	return min_map_;

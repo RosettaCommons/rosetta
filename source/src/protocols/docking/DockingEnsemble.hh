@@ -52,7 +52,7 @@ class DockingEnsemble : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~DockingEnsemble();
+	~DockingEnsemble() override;
 
 	//default constructor
 	DockingEnsemble() :

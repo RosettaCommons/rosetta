@@ -45,7 +45,7 @@ public:
 
 public:
 	RamaPrePro();
-	~RamaPrePro() {}
+	~RamaPrePro() override = default;
 
 	void
 	eval_rpp_rama_score(

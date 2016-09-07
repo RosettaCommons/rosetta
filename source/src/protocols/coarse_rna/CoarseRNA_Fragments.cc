@@ -42,6 +42,7 @@
 
 
 //C++ headers
+#include <utility>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -60,9 +61,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.coarse_rna.coarse_rna_fragment_
 namespace protocols {
 namespace coarse_rna {
 
-SourcePositions::~SourcePositions() {}
+SourcePositions::~SourcePositions() = default;
 
-CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
+CoarseRNA_Fragments::~CoarseRNA_Fragments() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This sort of repeats a lot of stuff in protocols/farna/fragments/RNA_Fragments
@@ -71,9 +72,9 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CoarseRNA_Fragments::CoarseRNA_Fragments( std::string const & frag_source_file ):
+CoarseRNA_Fragments::CoarseRNA_Fragments( std::string  frag_source_file ):
 	RNA_Fragments(),
-	frag_source_file_( frag_source_file )
+	frag_source_file_(std::move( frag_source_file ))
 {
 	initialize_frag_source_pose();
 }

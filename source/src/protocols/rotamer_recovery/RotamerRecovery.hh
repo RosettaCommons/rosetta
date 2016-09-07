@@ -56,7 +56,7 @@ public: // constructors destructors
 		RRReporterOP reporter);
 
 	/// @brief destructor
-	virtual ~RotamerRecovery();
+	~RotamerRecovery() override;
 
 	/// @brief copy constructor
 	RotamerRecovery( RotamerRecovery const & src);

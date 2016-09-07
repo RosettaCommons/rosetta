@@ -37,7 +37,7 @@ class PackingState : public SingleState {
 public:
 	PackingState();
 	PackingState( core::pose::Pose const & pose_in, bool is_positive );
-	virtual ~PackingState();
+	~PackingState() override;
 
 	void
 	create_packer_data(

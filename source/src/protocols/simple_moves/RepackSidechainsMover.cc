@@ -83,7 +83,7 @@ RepackSidechainsMover::RepackSidechainsMover(
 	ScoreFunctionCOP scorefxn
 ) :
 	protocols::moves::Mover("RepackSidechainsMover"),
-	scorefxn_( scorefxn )
+	scorefxn_(std::move( scorefxn ))
 {}
 
 RepackSidechainsMover::RepackSidechainsMover( RepackSidechainsMover const & other ) :
@@ -146,7 +146,7 @@ RepackSidechainsMover::parse_score_function(
 )
 {
 	core::scoring::ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
-	if ( new_score_function == 0 ) return;
+	if ( new_score_function == nullptr ) return;
 	set_scorefxn( new_score_function );
 }
 

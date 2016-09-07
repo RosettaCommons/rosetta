@@ -31,7 +31,7 @@ namespace scoring {
 
 /////////////////////////////////////////////////////
 
-OneToAllNeighborIterator::~OneToAllNeighborIterator(){}
+OneToAllNeighborIterator::~OneToAllNeighborIterator()= default;
 
 OneToAllNeighborIterator::OneToAllNeighborIterator(
 	Size const pos1_in,
@@ -134,7 +134,7 @@ bool OneToAllNeighborIterator::energy_computed() const
 
 /////////////////////////////////////////////////////
 
-OneToAllNeighborConstIterator::~OneToAllNeighborConstIterator(){}
+OneToAllNeighborConstIterator::~OneToAllNeighborConstIterator()= default;
 
 OneToAllNeighborConstIterator::OneToAllNeighborConstIterator(
 	Size const pos1_in,
@@ -219,7 +219,7 @@ bool OneToAllNeighborConstIterator::energy_computed() const
 
 /////////////////////////////////////////////////////////////////////////
 
-OneToAllEnergyContainer::~OneToAllEnergyContainer() {}
+OneToAllEnergyContainer::~OneToAllEnergyContainer() = default;
 
 LREnergyContainerOP OneToAllEnergyContainer::clone() const
 {

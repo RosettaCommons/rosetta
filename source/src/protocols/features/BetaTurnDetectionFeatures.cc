@@ -52,7 +52,7 @@ BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() : FeaturesReporter(), btd
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & from ) :
 	FeaturesReporter(), btd_( BetaTurnDetectionCOP( BetaTurnDetectionOP( new BetaTurnDetection( * from.btd_ ) ) ) ) {}
 
-BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() {}
+BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() = default;
 
 string
 BetaTurnDetectionFeatures::type_name() const { return "BetaTurnDetectionFeatures"; }

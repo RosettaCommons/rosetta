@@ -72,7 +72,7 @@ ResidueBurialFeatures::ResidueBurialFeatures(ResidueBurialFeatures const & src) 
 	nv_score_(src.nv_score_)
 {}
 
-ResidueBurialFeatures::~ResidueBurialFeatures(){}
+ResidueBurialFeatures::~ResidueBurialFeatures()= default;
 
 string
 ResidueBurialFeatures::type_name() const { return "ResidueBurialFeatures"; }

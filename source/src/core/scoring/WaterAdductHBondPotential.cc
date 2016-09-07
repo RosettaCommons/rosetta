@@ -57,7 +57,7 @@ WaterAdductHBondPotential::WaterAdductHBondPotential() :
 	hbondoptions_->use_sp2_chi_penalty( false ); // do not use the chi penalty -- override command line
 }
 
-WaterAdductHBondPotential::~WaterAdductHBondPotential() {}
+WaterAdductHBondPotential::~WaterAdductHBondPotential() = default;
 
 Real
 WaterAdductHBondPotential::water_adduct_hbond_score(

@@ -58,7 +58,7 @@ DsspMover::DsspMover():
 {}
 
 DsspMover::~DsspMover()
-{}
+= default;
 
 /// @brief clone this object
 DsspMover::MoverOP DsspMover::clone() const {

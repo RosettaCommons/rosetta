@@ -68,7 +68,7 @@ public:
 	AnchorMoversData( core::pose::Pose const & pose );
 
 	/// @brief virtual dtors make c++ happy
-	virtual ~AnchorMoversData();
+	~AnchorMoversData() override;
 
 	/// @brief copy ctor
 	AnchorMoversData( AnchorMoversData const & rhs );

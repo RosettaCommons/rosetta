@@ -98,7 +98,7 @@ RestrictDesignToProteinDNAInterface::RestrictDesignToProteinDNAInterface()
 	contact_threshold_( 3.7 * 3.7 )
 {}
 
-RestrictDesignToProteinDNAInterface::~RestrictDesignToProteinDNAInterface() {}
+RestrictDesignToProteinDNAInterface::~RestrictDesignToProteinDNAInterface() = default;
 
 TaskOperationOP RestrictDesignToProteinDNAInterface::clone() const
 {
@@ -230,19 +230,18 @@ RestrictDesignToProteinDNAInterface::apply(
 	// configure the packer task for any specified targeted top-stranded DNA basepair positions
 	if ( ! targeted_dna_.empty() ) {
 		// (by default, targeted_dna_ is an empty vector, so none of the following applies)
-		for ( DnaDesignDefOPs::const_iterator def( targeted_dna_.begin() );
-				def != targeted_dna_.end(); ++def ) {
-			Size index( (*def)->pdbpos );
+		for (const auto & def : targeted_dna_) {
+			Size index( def->pdbpos );
 			if ( pose.pdb_info() ) {
 				// if pose has PDB numbering and chain info, assume DNA defs refer to them
 				PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
-				index = pdb_pose_map.find( (*def)->chain, (*def)->pdbpos );
+				index = pdb_pose_map.find( def->chain, def->pdbpos );
 			}
 			if ( ! pose.residue_type( index ).is_DNA() ) {
-				std::cerr << "ERROR: DNA design def " << **def << " indicates a non-DNA position"
+				std::cerr << "ERROR: DNA design def " << *def << " indicates a non-DNA position"
 					<< std::endl; utility_exit();
 			} else if ( ! dna_chains_->is_top( index ) ) {
-				std::cerr << "ERROR: DNA design def " << **def << " is DNA but is not in the 'top' strand"
+				std::cerr << "ERROR: DNA design def " << *def << " is DNA but is not in the 'top' strand"
 					<< std::endl; utility_exit();
 			}
 			DnaPosition const & pos( (*dna_chains_)[ index ] );
@@ -251,14 +250,14 @@ RestrictDesignToProteinDNAInterface::apply(
 			toptask.add_behavior("TARGET");
 			if ( pos.paired() ) ptask.nonconst_residue_task( pos.bottom() ).add_behavior("TARGET");
 
-			if ( ! (*def)->name3.empty() ) {
+			if ( ! def->name3.empty() ) {
 				// specifying the appropriate ResidueType here is tricky, because there are multiple possible 'name3's for the nucleotides, AND because we must make sure to indicate a ResidueType that is already represented in the ResidueLevelTask
 				ResidueTypeSetCOP rts( pose.residue(1).residue_type_set() );
 				// a list of all existing residue types that match the input name3
 				// AMW: can this be improved?
-				ResidueTypeCOPs const & name3map( ResidueTypeFinder( *rts ).name3( (*def)->name3 ).get_all_possible_residue_types() );
+				ResidueTypeCOPs const & name3map( ResidueTypeFinder( *rts ).name3( def->name3 ).get_all_possible_residue_types() );
 				// use the first ResidueType represented in the ResidueLevelTask that corresponds to one in the name3 map
-				for ( ResidueLevelTask::ResidueTypeCOPListConstIter
+				for ( auto
 						allowed_type( toptask.allowed_residue_types_begin() ),
 						end( toptask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 					if ( std::find( name3map.begin(), name3map.end(), *allowed_type ) != name3map.end() ) {
@@ -269,15 +268,15 @@ RestrictDesignToProteinDNAInterface::apply(
 					}
 				}
 				if ( ! toptask.target_type() ) {
-					TR(t_info) << "Error: target type " << (*def)->name3
+					TR(t_info) << "Error: target type " << def->name3
 						<< " does not correspond to an allowed type at position " << pos.top()
 						<< std::endl; utility_exit();
 				}
 				if ( pos.paired() ) {
-					std::string const comp_name3( dna_comp_name_str( (*def)->name3 ) );
+					std::string const comp_name3( dna_comp_name_str( def->name3 ) );
 					ResidueTypeCOPs const & name3map_comp( ResidueTypeFinder( *rts ).name3( comp_name3 ).get_all_possible_residue_types() );
 					ResidueLevelTask & bottask( ptask.nonconst_residue_task( pos.bottom() ) );
-					for ( ResidueLevelTask::ResidueTypeCOPListConstIter
+					for ( auto
 							allowed_type( bottask.allowed_residue_types_begin() ),
 							end( bottask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 						if ( std::find( name3map_comp.begin(), name3map_comp.end(), *allowed_type ) !=
@@ -332,8 +331,8 @@ RestrictDesignToProteinDNAInterface::apply(
 			}
 		} else {
 			// targeted dna design positions exist: limit interface to within the vicinity of these
-			for ( DnaPositions::iterator it( dna_chains_->begin() ); it != dna_chains_->end(); ++it ) {
-				Size resid( it->first ); DnaPosition & dnapos( it->second );
+			for (auto & it : *dna_chains_) {
+				Size resid( it.first ); DnaPosition & dnapos( it.second );
 				ResidueLevelTask & toptask( ptask.nonconst_residue_task( resid ) );
 				if ( !toptask.has_behavior("TARGET") && !toptask.has_behavior("SCAN") ) continue;
 				dna_design_positions.push_back( resid );
@@ -381,10 +380,9 @@ RestrictDesignToProteinDNAInterface::apply(
 	/// Step 4: apply any new restrictions to resfile pack/design settings, and any existing constraints
 	bool const repack_only( option[ OptionKeys::dna::design::repack_only ]() );
 	ConstraintSetCOP constraint_set( pose.constraint_set() );
-	for ( DnaNeighbors::const_iterator itr( interface_->protein_neighbors().begin() ),
-			end( interface_->protein_neighbors().end() ); itr != end; ++itr ) {
-		Size const index( itr->first );
-		DnaNeighbor const & neighbor( itr->second );
+	for (const auto & itr : interface_->protein_neighbors()) {
+		Size const index( itr.first );
+		DnaNeighbor const & neighbor( itr.second );
 
 		ResidueLevelTask & restask( ptask.nonconst_residue_task( index ) );
 		// residues with constraints will not be designed
@@ -418,14 +416,13 @@ RestrictDesignToProteinDNAInterface::apply(
 			TR << ":";
 			// set used here to avoid redundant name3's from extra adduct variant allowed_types
 			std::set< std::string > name3set;
-			for ( ResidueLevelTask::ResidueTypeCOPListConstIter
+			for ( auto
 					allowed_type( rlt.allowed_residue_types_begin() ),
 					typesend( rlt.allowed_residue_types_end() ); allowed_type != typesend; ++allowed_type ) {
 				name3set.insert( (*allowed_type)->name3() );
 			}
-			for ( std::set< std::string >::const_iterator n3( name3set.begin() ), n3end( name3set.end() );
-					n3 != n3end; ++n3 ) {
-				TR << *n3 << ",";
+			for (const auto & n3 : name3set) {
+				TR << n3 << ",";
 			}
 			TR << '\n';
 			continue;

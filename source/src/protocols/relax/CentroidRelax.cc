@@ -95,7 +95,7 @@ CentroidRelax::CentroidRelax(MoveMapOP mm, ScoreFunctionOP cen_scorefxn_in):
 }
 
 //Mover Methods
-CentroidRelax::~CentroidRelax(){}
+CentroidRelax::~CentroidRelax()= default;
 
 protocols::moves::MoverOP
 CentroidRelax::clone() const {

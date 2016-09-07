@@ -77,17 +77,17 @@ public:
 	TiltMover & operator = ( TiltMover const & src );
 
 	/// @brief Destructor
-	virtual ~TiltMover();
+	~TiltMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -96,17 +96,17 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (TiltMover)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Flip the downstream partner in the membrane
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Set Random tilt angle between -20 and 20 degrees to keep
 	///   protein oriented in the membrane correctly

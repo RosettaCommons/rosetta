@@ -57,7 +57,7 @@ public:
 
 	}
 
-	virtual ~CartGrid()
+	~CartGrid() override
 	{
 		if ( zones_ !=NULL ) {
 			delete [] zones_;

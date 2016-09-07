@@ -40,17 +40,17 @@ class FlipChiralityMover : public moves::Mover {
 
 public:
 	FlipChiralityMover();
-	virtual ~FlipChiralityMover();
+	~FlipChiralityMover() override;
 	FlipChiralityMover( FlipChiralityMover const &src );
 
-	virtual void apply( core::pose::Pose & );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & ) override;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 	numeric::xyzVector <core::Real> const & get_normal();
 	numeric::xyzVector <core::Real> const & get_center(core::select::residue_selector::ResidueSubset, core::pose::Pose const &);

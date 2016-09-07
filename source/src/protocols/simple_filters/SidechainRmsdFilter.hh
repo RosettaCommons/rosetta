@@ -31,15 +31,15 @@ class SidechainRmsdFilter : public filters::Filter
 public:
 	SidechainRmsdFilter();
 	SidechainRmsdFilter( core::Size const res1, core::Size const res2, core::Real const rmsd_threshold );
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const;
-	filters::FilterOP fresh_instance() const;
+	filters::FilterOP clone() const override;
+	filters::FilterOP fresh_instance() const override;
 
-	virtual ~SidechainRmsdFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &);
+	~SidechainRmsdFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) override;
 private:
 	core::Size res1_, res2_;
 	core::Real rmsd_threshold_;

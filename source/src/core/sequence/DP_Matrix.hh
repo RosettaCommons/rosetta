@@ -54,7 +54,7 @@ public:
 		backptr_.reset();
 	}
 
-	virtual ~Cell();
+	~Cell() override;
 
 	void score( const Real & score ) {
 		score_ = score;
@@ -127,7 +127,7 @@ public:
 			scoring_matrix_.push_back( temp );
 		}
 	}
-	virtual ~DP_Matrix();
+	~DP_Matrix() override;
 
 	void clear();
 

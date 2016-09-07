@@ -59,37 +59,37 @@ public:
 public:
 
 	MinimalFragSet();
-	~MinimalFragSet();
+	~MinimalFragSet() override;
 
-	virtual FragSetOP clone() const;
-	virtual FragSetOP empty_clone() const;
+	FragSetOP clone() const override;
+	FragSetOP empty_clone() const override;
 
-	virtual Size region(
+	Size region(
 		kinematics::MoveMap const& mm,
 		core::Size start,
 		core::Size end, //not used
 		core::Size , //min_overlap not used
 		core::Size , //min_length not used
 		FrameList &frames
-	) const;
+	) const override;
 
 	/// @brief Accessor for the Frame at the specified insertion position. Returns false if
 	/// there is no frame at the specified position.
-	virtual Size frames( Size pos, FrameList &frames ) const;
+	Size frames( Size pos, FrameList &frames ) const override;
 
-	virtual ConstFrameIterator begin() const;
-	virtual ConstFrameIterator end() const;
+	ConstFrameIterator begin() const override;
+	ConstFrameIterator end() const override;
 
-	virtual FrameIterator nonconst_begin();
-	virtual FrameIterator nonconst_end();
+	FrameIterator nonconst_begin() override;
+	FrameIterator nonconst_end() override;
 
-	virtual bool empty() const;
+	bool empty() const override;
 
 	void read_fragment_file( std::string filename, Size top25 = 0, Size ncopies = 1 );
 
 protected:
 
-	virtual void add_( FrameOP aframe );
+	void add_( FrameOP aframe ) override;
 
 
 private:

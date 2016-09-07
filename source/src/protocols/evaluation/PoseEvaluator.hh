@@ -47,7 +47,7 @@ namespace evaluation {
 class PoseEvaluator : public utility::pointer::ReferenceCount {
 public:
 	PoseEvaluator() {};
-	virtual ~PoseEvaluator() {};
+	~PoseEvaluator() override = default;
 	// we may put a cache for user values into the pose, then it will just return a pose
 	// or return just the Map from strings to values...
 
@@ -67,23 +67,23 @@ public:
 template <class T >
 class SingleValuePoseEvaluator : public PoseEvaluator {
 public:
-	SingleValuePoseEvaluator( std::string name = "UNSPECIFIED_SingleValuePoseEvaluator" ) : name_( name ) {};
+	SingleValuePoseEvaluator( std::string name = "UNSPECIFIED_SingleValuePoseEvaluator" ) : name_(std::move( name )) {};
 
 	/// @brief evaluate pose and store values in Silent_Struct
 	/// why is this specific to a specific type of SilentStruct? that seems needlessly pointless and overly constraining.
-	virtual void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
+	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const override;
 	// void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 
 	using PoseEvaluator::apply;
 
 	/// @brief evaluate pose
 	virtual T apply( core::pose::Pose& ) const = 0;
-	virtual bool applicable( core::pose::Pose const& ) const { return true; }
+	bool applicable( core::pose::Pose const& ) const override { return true; }
 
 	// void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 
-	virtual core::Size size() const { return 1; }
-	virtual std::string name( core::Size ) const {
+	core::Size size() const override { return 1; }
+	std::string name( core::Size ) const override {
 		return name_;
 	}
 
@@ -102,8 +102,8 @@ public:
 
 	MetaPoseEvaluator() {};
 
-	virtual void
-	apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+	void
+	apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const override;
 
 	void
 	add_evaluation( PoseEvaluatorOP pe) {
@@ -127,15 +127,15 @@ public:
 		return *this;
 	}
 
-	Size size() const {
+	Size size() const override {
 		Size s( 0 );
-		for ( EvaluatorList::const_iterator it = evaluators_.begin(); it != evaluators_.end(); ++it ) {
-			s += (*it)->size();
+		for (const auto & evaluator : evaluators_) {
+			s += evaluator->size();
 		}
 		return s;
 	}
 
-	virtual std::string name( core::Size ind ) const;
+	std::string name( core::Size ind ) const override;
 
 	EvaluatorList const& evaluators() { return evaluators_; }
 

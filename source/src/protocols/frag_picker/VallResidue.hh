@@ -68,7 +68,7 @@ public:
 	VallResidue(VallResidue const & rval);
 
 	/// @brief default destructor
-	virtual ~VallResidue();
+	~VallResidue() override;
 
 public:
 	/// @brief copy assignment

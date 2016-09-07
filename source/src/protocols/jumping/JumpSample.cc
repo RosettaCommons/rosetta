@@ -76,7 +76,7 @@ using namespace core;
 using namespace ObjexxFCL::format;
 
 ChainbreakDistFunc::ChainbreakDistFunc( Real const x0_in ) : d2target_( x0_in*x0_in ) {}
-ChainbreakDistFunc::~ChainbreakDistFunc() {}
+ChainbreakDistFunc::~ChainbreakDistFunc() = default;
 
 core::scoring::func::FuncOP
 ChainbreakDistFunc::clone() const { return core::scoring::func::FuncOP( new ChainbreakDistFunc( *this ) ); }
@@ -115,7 +115,7 @@ JumpSample::JumpSample( JumpSetup const& def ) :
 {
 	resize( def.size() );
 	int ct = 1;
-	for ( JumpSetup::const_iterator it=def.begin(), eit=def.end(); it!=eit; ++it, ++ct ) {
+	for ( auto it=def.begin(), eit=def.end(); it!=eit; ++it, ++ct ) {
 		jumps_( 1, ct ) = it->jump_.start_;
 		jumps_( 2, ct ) = it->jump_.end_;
 		jump_atoms_( 1, ct ) = "";
@@ -164,11 +164,10 @@ JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList c
 
 	// first fill jumps_ array:
 	njump_ = 0;
-	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings.begin(),
-			eit = jump_pairings.end(); it != eit; ++it ) {
+	for (const auto & jump_pairing : jump_pairings) {
 		njump_++;
-		jumps_(1,njump_) = it->Pos1();
-		jumps_(2,njump_) = it->Pos2();
+		jumps_(1,njump_) = jump_pairing.Pos1();
+		jumps_(2,njump_) = jump_pairing.Pos2();
 		jump_atoms_(1,njump_) = "";
 		jump_atoms_(2,njump_) = "";
 	}
@@ -191,11 +190,10 @@ JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList c
 
 	// first fill jumps_ array:
 	njump_ = 0;
-	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings.begin(),
-			eit = jump_pairings.end(); it != eit; ++it ) {
+	for (const auto & jump_pairing : jump_pairings) {
 		njump_++;
-		jumps_(1,njump_) = it->Pos1();
-		jumps_(2,njump_) = it->Pos2();
+		jumps_(1,njump_) = jump_pairing.Pos1();
+		jumps_(2,njump_) = jump_pairing.Pos2();
 		jump_atoms_(1,njump_) = "";
 		jump_atoms_(2,njump_) = "";
 	}
@@ -213,7 +211,7 @@ JumpSample::correct_jump_atoms_for_fragments() const {
 	//this method could also live in the FoldTree
 	using namespace kinematics;
 	if ( !bValidTree_ ) return;
-	runtime_assert( fold_tree_ != 0 );
+	runtime_assert( fold_tree_ != nullptr );
 	for ( Size i = 1; i <= njump_; ++i ) {
 		fold_tree_->set_jump_atoms( i, jump_atoms_(1,i), jump_atoms_(2,i) );
 	}
@@ -309,14 +307,14 @@ JumpSample::resize( Size njump ) {
 
 void
 JumpSample::set_fold_tree_in_pose( pose::Pose &pose ) const {
-	runtime_assert( fold_tree_ != 0 );
+	runtime_assert( fold_tree_ != nullptr );
 	runtime_assert( bValidTree_ != 0 );
 	pose.fold_tree( *fold_tree_ );
 }
 
 void
 JumpSample::safe_secstruct( pose::Pose &pose ) const {
-	runtime_assert( fold_tree_ != 0 );
+	runtime_assert( fold_tree_ != nullptr );
 	runtime_assert( total_residue_ == pose.total_residue() );
 	runtime_assert( *fold_tree_ == pose.fold_tree() );
 
@@ -444,10 +442,9 @@ bool JumpSample::has_orientation_and_pleating() const {
 core::scoring::dssp::Pairing
 JumpSample::get_pairing( Size res1, Size res2 ) const {
 	runtime_assert ( has_orientation_and_pleating() );
-	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings_.begin(), eit = jump_pairings_.end();
-			it != eit; ++it ) {
-		if ( it->Pos1() == res1 && it->Pos2() == res2 ) return *it;
-		if ( it->Pos1() == res2 && it->Pos2() == res1 ) return it->generate_reversed();
+	for (const auto & jump_pairing : jump_pairings_) {
+		if ( jump_pairing.Pos1() == res1 && jump_pairing.Pos2() == res2 ) return jump_pairing;
+		if ( jump_pairing.Pos1() == res2 && jump_pairing.Pos2() == res1 ) return jump_pairing.generate_reversed();
 	}
 	return core::scoring::dssp::Pairing( 0, 0, 0, 0 );
 }
@@ -471,10 +468,9 @@ JumpSample::generate_jump_frags(
 	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );
-	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings_.begin(), eit = jump_pairings_.end();
-			it != eit; ++it ) {
-		Size o_key ( it->Orientation() ); // < 0 ? 1 : 2 );
-		Size p_key ( it->Pleating() ); // < 0 ? 1 : 2 );
+	for (const auto & jump_pairing : jump_pairings_) {
+		Size o_key ( jump_pairing.Orientation() ); // < 0 ? 1 : 2 );
+		Size p_key ( jump_pairing.Pleating() ); // < 0 ? 1 : 2 );
 		jump_kind[ std::make_pair( o_key, p_key ) ].push_back( jump_nr++ );
 	}
 
@@ -486,10 +482,8 @@ JumpSample::generate_jump_frags(
 		Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
 		FragDataOPs frag_data;
 		lib.create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
-		for ( JumpList::const_iterator jit=it->second.begin(), ejit=it->second.end();
-				jit!=ejit; ++jit ) {
-			int const jump_nr ( *jit );
-			int const startpos( jumps_( 1, jump_nr ) );
+		for (int jump_nr : it->second) {
+				int const startpos( jumps_( 1, jump_nr ) );
 			int const endpos( jumps_( 2, jump_nr ) );
 
 			runtime_assert( o_key == jump_pairings_[ jump_nr ].Orientation() );

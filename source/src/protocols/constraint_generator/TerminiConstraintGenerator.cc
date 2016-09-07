@@ -57,8 +57,7 @@ TerminiConstraintGenerator::TerminiConstraintGenerator():
 {
 }
 
-TerminiConstraintGenerator::~TerminiConstraintGenerator()
-{}
+TerminiConstraintGenerator::~TerminiConstraintGenerator() = default;
 
 ConstraintGeneratorOP
 TerminiConstraintGenerator::clone() const

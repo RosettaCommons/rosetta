@@ -82,7 +82,7 @@ ProQPotential::ProQPotential()
 	utility::io::izstream stream;
 	for ( Size i=1; i<= num_models_; ++i ) {
 		std::ostringstream i_stream;
-		i_stream << i;;
+		i_stream << i;
 		//std::cout << file << "\n";
 		//utility::io::izstream stream;
 		std::string file("scoring/ProQ/ProQM_model." + i_stream.str() + ".linear_retrained_for_rosetta");
@@ -117,7 +117,7 @@ ProQPotential::ProQPotential()
 	b_proq2_.dimension(num_models_);
 	for ( Size i=1; i<= num_models_; ++i ) {
 		std::ostringstream i_stream;
-		i_stream << i;;
+		i_stream << i;
 		std::string file("scoring/ProQ/ProQ2_model." + i_stream.str() + ".linear_retrained_for_rosetta"); //_retrained_for_rosetta");
 		basic::database::open( stream, file);
 		for ( Size j=1; j<=num_features_proq2_+num_head; ++j ) {

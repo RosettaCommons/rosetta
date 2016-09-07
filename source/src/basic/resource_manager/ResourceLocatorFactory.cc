@@ -32,7 +32,7 @@ using basic::resource_manager::ResourceLocatorFactory;
 template <> std::mutex utility::SingletonBase< ResourceLocatorFactory >::singleton_mutex_{};
 template <> std::atomic< ResourceLocatorFactory * > utility::SingletonBase< ResourceLocatorFactory >::instance_( 0 );
 #else
-template <> ResourceLocatorFactory * utility::SingletonBase< ResourceLocatorFactory >::instance_( 0 );
+template <> ResourceLocatorFactory * utility::SingletonBase< ResourceLocatorFactory >::instance_( nullptr );
 #endif
 
 }
@@ -40,7 +40,7 @@ template <> ResourceLocatorFactory * utility::SingletonBase< ResourceLocatorFact
 namespace basic {
 namespace resource_manager {
 
-ResourceLocatorFactory::~ResourceLocatorFactory() {}
+ResourceLocatorFactory::~ResourceLocatorFactory() = default;
 
 ResourceLocatorFactory *
 ResourceLocatorFactory::create_singleton_instance()
@@ -59,7 +59,7 @@ ResourceLocatorFactory::create_resource_locator(
 	utility::tag::TagCOP tags
 ) const
 {
-	std::map< std::string, ResourceLocatorCreatorOP >::const_iterator iter = creator_map_.find( locator_type );
+	auto iter = creator_map_.find( locator_type );
 	if ( iter == creator_map_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "No ResourceLocatorCreator resposible for the ResourceLocator named " + locator_type + " was found in the ResourceLocatorFactory.  Was it correctly registered?" );
 	}

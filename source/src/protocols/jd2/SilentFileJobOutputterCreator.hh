@@ -21,8 +21,8 @@ namespace jd2 {
 
 class SilentFileJobOutputterCreator : public protocols::jd2::JobOutputterCreator {
 public:
-	virtual JobOutputterOP create_JobOutputter() const;
-	virtual std::string keyname() const;
+	JobOutputterOP create_JobOutputter() const override;
+	std::string keyname() const override;
 
 };
 

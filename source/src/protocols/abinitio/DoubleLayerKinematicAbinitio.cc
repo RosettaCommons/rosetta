@@ -63,7 +63,7 @@ namespace abinitio {
 
 using namespace core;
 
-DoubleLayerKinematicAbinitio::~DoubleLayerKinematicAbinitio() {}
+DoubleLayerKinematicAbinitio::~DoubleLayerKinematicAbinitio() = default;
 
 std::string
 DoubleLayerKinematicAbinitio::get_name() const {
@@ -79,10 +79,9 @@ void DoubleLayerKinematicAbinitio::select_core_loops(
 	loops_out.clear();
 	int ntries = 0;
 	while ( loops_out.size() == 0 && ntries++ < 50 ) {
-		for ( loops::Loops::const_iterator it = rigid_loops_.begin(), eit = rigid_loops_.end();
-				it != eit; ++it ) {
-			if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
-				loops_out.push_back( *it );
+		for (const auto & rigid_loop : rigid_loops_) {
+			if ( numeric::random::rg().uniform() >= rigid_loop.skip_rate() )  {
+				loops_out.push_back( rigid_loop );
 			}
 		}
 	}
@@ -109,7 +108,7 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
 	}
 	tr.Debug << rigid_core << std::endl;
 
-	KinematicControlOP current_kinematics( NULL );
+	KinematicControlOP current_kinematics( nullptr );
 	if ( rigid_core.size() && coordinate_constraint_weight_ > 0.0 ) {
 		current_kinematics = KinematicControlOP( new CoordinateConstraintKC( false /*ramp*/, coordinate_constraint_weight_ ) );
 	} else {
@@ -148,7 +147,7 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
 		success &= add_rigidity_jumps( rigid_core, current_kinematics );
 		if ( !success ) {
 			tr.Warning << "[WARNING] was not able to fix rigid regions with jumps...retry" << std::endl;
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -169,7 +168,7 @@ bool  DoubleLayerKinematicAbinitio::inner_loop( core::pose::Pose& pose ) {
 	bool success( false );
 
 	Size fail( 0 );
-	current_kinematics_ = NULL;
+	current_kinematics_ = nullptr;
 	while ( fail++ <= 10 && !current_kinematics_ ) {// get new setup
 		//this may add constraints to the pose ...or should this be handled via the KinematicControl object?!
 		current_kinematics_ = new_kinematics( pose );

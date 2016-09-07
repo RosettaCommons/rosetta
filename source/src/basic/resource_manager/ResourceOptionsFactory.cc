@@ -40,7 +40,7 @@ using basic::resource_manager::ResourceOptionsFactory;
 template <> std::mutex utility::SingletonBase< ResourceOptionsFactory >::singleton_mutex_{};
 template <> std::atomic< ResourceOptionsFactory * > utility::SingletonBase< ResourceOptionsFactory >::instance_( 0 );
 #else
-template <> ResourceOptionsFactory * utility::SingletonBase< ResourceOptionsFactory >::instance_( 0 );
+template <> ResourceOptionsFactory * utility::SingletonBase< ResourceOptionsFactory >::instance_( nullptr );
 #endif
 
 }
@@ -54,7 +54,7 @@ ResourceOptionsFactory::create_singleton_instance()
 	return new ResourceOptionsFactory;
 }
 
-ResourceOptionsFactory::~ResourceOptionsFactory() {}
+ResourceOptionsFactory::~ResourceOptionsFactory() = default;
 
 ResourceOptionsOP
 ResourceOptionsFactory::create_resource_options(
@@ -62,7 +62,7 @@ ResourceOptionsFactory::create_resource_options(
 	utility::tag::TagCOP tag
 ) const
 {
-	ResourceOptionsCreatorMap::const_iterator iter = creator_map_.find( options_type );
+	auto iter = creator_map_.find( options_type );
 	if ( iter == creator_map_.end() ) {
 		std::stringstream error_msg;
 		error_msg

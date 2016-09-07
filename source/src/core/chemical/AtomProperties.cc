@@ -50,7 +50,7 @@ AtomProperties::AtomProperties( AtomProperties const & object_to_copy ) :
 }
 
 // Destructor
-AtomProperties::~AtomProperties() {}
+AtomProperties::~AtomProperties() = default;
 
 // Assignment operator
 AtomProperties &

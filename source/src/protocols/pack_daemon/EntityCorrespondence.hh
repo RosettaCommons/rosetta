@@ -41,7 +41,7 @@ public:
 	typedef utility::pointer::ReferenceCount parent;
 public:
 	EntityCorrespondence();
-	virtual ~EntityCorrespondence();
+	~EntityCorrespondence() override;
 	EntityCorrespondence(EntityCorrespondence const &);
 	EntityCorrespondence & operator = ( EntityCorrespondence const & );
 

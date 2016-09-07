@@ -46,19 +46,19 @@ public:
 
 	PcsEnergyController(); // Construct
 
-	~PcsEnergyController(); // Destruct
+	~PcsEnergyController() override; // Destruct
 
 	PcsEnergyController(PcsEnergyController const & other); // copy
 
 
-	virtual TopologyClaimerOP // clone
-	clone() const {
+	TopologyClaimerOP // clone
+	clone() const override {
 		return TopologyClaimerOP( new PcsEnergyController( *this ) );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string
-	type() const {
+	std::string
+	type() const override {
 		return _static_type_name();
 	}
 
@@ -69,25 +69,25 @@ public:
 	}
 
 	/// @brief This is called to process each tag
-	virtual bool
-	read_tag( std::string tag, std::istream & );
+	bool
+	read_tag( std::string tag, std::istream & ) override;
 
 	/// @brief Called any time the CLAIMER is being read (before any tag is read)
-	virtual void
-	set_defaults();
+	void
+	set_defaults() override;
 
 	/// @brief This is called each time the stageID is changed
-	virtual void
+	void
 	add_mover(moves::RandomMover& /* random_mover */,
 		core::pose::Pose const& /*pose*/,
 		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
 		core::scoring::ScoreFunction const& /*scorefxn*/,
 		core::Real /* progress */ /* progress within stage */
-	);
+	) override;
 
 	/// @brief Called Each time END CLAIMER is processed
-	virtual void
-	init_after_reading();
+	void
+	init_after_reading() override;
 
 private:
 

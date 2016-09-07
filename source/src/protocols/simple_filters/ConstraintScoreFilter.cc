@@ -42,7 +42,7 @@ ConstraintScoreFilter::ConstraintScoreFilter():
 }
 
 ConstraintScoreFilter::~ConstraintScoreFilter()
-{}
+= default;
 
 void
 ConstraintScoreFilter::parse_my_tag(

@@ -83,7 +83,7 @@ SetCatalyticResPackBehavior::SetCatalyticResPackBehavior():
 	behavior_non_catalytic_("")
 {}
 
-SetCatalyticResPackBehavior::~SetCatalyticResPackBehavior(){}
+SetCatalyticResPackBehavior::~SetCatalyticResPackBehavior()= default;
 
 core::pack::task::operation::TaskOperationOP
 SetCatalyticResPackBehavior::clone() const
@@ -261,7 +261,7 @@ DetectProteinLigandInterface::DetectProteinLigandInterface():
 	design_target_res_.clear();
 }
 
-DetectProteinLigandInterface::~DetectProteinLigandInterface() {}
+DetectProteinLigandInterface::~DetectProteinLigandInterface() = default;
 
 core::pack::task::operation::TaskOperationOP
 DetectProteinLigandInterface::clone() const
@@ -380,7 +380,7 @@ void DetectProteinLigandInterface::apply(
 		if ( ( interface_target_res.empty() /*size() == 0 */) && use_cstid_list_ ) {
 			utility::vector1< core::Size > trg_res;
 			protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, pose, trg_res );
-			utility::vector1< core::Size >::iterator last = std::unique( trg_res.begin(), trg_res.end() );
+			auto last = std::unique( trg_res.begin(), trg_res.end() );
 			std::set< core::Size > trg_set( trg_res.begin(), last ); //trg_res.end() );
 			interface_target_res = trg_set;
 		}
@@ -404,8 +404,8 @@ void DetectProteinLigandInterface::apply(
 		}
 
 		tr.Info << "Choosing the following residues as targets for detecting interface: ";
-		for ( std::set< core::Size >::const_iterator targ_it( interface_target_res.begin()),targ_end(interface_target_res.end()); targ_it != targ_end; ++targ_it ) {
-			tr.Info << *targ_it << "+";
+		for (unsigned long interface_target_re : interface_target_res) {
+			tr.Info << interface_target_re << "+";
 		}
 		tr.Info <<  std::endl;
 
@@ -508,7 +508,7 @@ DetectProteinLigandInterface::find_design_interface(
 	core::Real cut3_sq = cut3 * cut3;
 	core::Real cut4_sq = cut4 * cut4;
 
-	for ( std::set< core::Size >::const_iterator targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());
+	for ( auto targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());
 			targ_it != targ_end; ++targ_it ) {
 
 		repack_res[ *targ_it ] = true;
@@ -617,7 +617,7 @@ DetectProteinLigandInterface::find_design_interface_arg_sweep(
 	core::Real cut3_sq = cut3 * cut3;
 	core::Real cut4_sq = cut4 * cut4;
 
-	for ( std::set< core::Size >::const_iterator targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());
+	for ( auto targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());
 			targ_it != targ_end; ++targ_it ) {
 
 		repack_res[ *targ_it ] = true;
@@ -771,7 +771,7 @@ ProteinLigandInterfaceUpweighter::ProteinLigandInterfaceUpweighter()
 	catres_packer_weight_=1.0;
 }
 
-ProteinLigandInterfaceUpweighter::~ProteinLigandInterfaceUpweighter() {}
+ProteinLigandInterfaceUpweighter::~ProteinLigandInterfaceUpweighter() = default;
 
 core::pack::task::operation::TaskOperationOP
 ProteinLigandInterfaceUpweighter::clone() const
@@ -858,7 +858,7 @@ std::string AddRigidBodyLigandConfsCreator::keyname() const
 
 AddRigidBodyLigandConfs::AddRigidBodyLigandConfs(){}
 
-AddRigidBodyLigandConfs::~AddRigidBodyLigandConfs(){}
+AddRigidBodyLigandConfs::~AddRigidBodyLigandConfs()= default;
 
 core::pack::task::operation::TaskOperationOP
 AddRigidBodyLigandConfs::clone() const
@@ -894,7 +894,7 @@ AddRigidBodyLigandConfs::apply(
 
 	std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > > const & rb_map = enz_obs->lig_rigid_body_confs();
 
-	for ( std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > >::const_iterator lig_it = rb_map.begin(); lig_it != rb_map.end(); ++lig_it ) {
+	for ( auto lig_it = rb_map.begin(); lig_it != rb_map.end(); ++lig_it ) {
 
 		if ( !task.being_packed( lig_it->first ) ) continue;
 		if ( lig_it->second.size() == 0 ) continue;
@@ -917,7 +917,7 @@ AddLigandMotifRotamers::register_options()
 
 AddLigandMotifRotamers::AddLigandMotifRotamers(){}
 
-AddLigandMotifRotamers::~AddLigandMotifRotamers(){}
+AddLigandMotifRotamers::~AddLigandMotifRotamers()= default;
 
 core::pack::task::operation::TaskOperationOP
 AddLigandMotifRotamers::clone() const

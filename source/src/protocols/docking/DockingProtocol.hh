@@ -82,8 +82,8 @@ public:
 		bool const low_res_protocol_only = false, // if true: skip high resolution docking
 		bool const docking_local_refine = false, // if true: skip low resolution docking
 		bool const autofoldtree = true,
-		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP( NULL ),
-		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP( NULL )
+		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP( nullptr ),
+		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP( nullptr )
 	);
 
 	DockingProtocol(
@@ -91,8 +91,8 @@ public:
 		bool const low_res_protocol_only = false, // if true: skip high resolution docking
 		bool const docking_local_refine = false, // if true: skip low resolution docking
 		bool const autofoldtree = true,
-		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP( NULL ),
-		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP( NULL )
+		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP( nullptr ),
+		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP( nullptr )
 	);
 
 	/// @brief Assigns default values to primitive members
@@ -102,14 +102,14 @@ public:
 	void sync_objects_with_flags();
 
 	//destructor
-	~DockingProtocol();
+	~DockingProtocol() override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-	virtual bool reinitialize_for_new_input() const;// {return true;};
+	bool reinitialize_for_new_input() const override;// {return true;};
 
 	/// @brief copy ctor
 	DockingProtocol( DockingProtocol const & rhs );
@@ -159,7 +159,7 @@ public:
 	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
 	utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	// score_only is no longer implemented.  It remains here until a decision is made about what to do with it.
 	// void score_only( core::pose::Pose & pose );
@@ -168,7 +168,7 @@ public:
 	/// @brief returns the docking partners chain identifiers
 	std::string partners() const { return partners_;}
 
-	virtual std::string get_name() const { return "DockingProtocol"; }
+	std::string get_name() const override { return "DockingProtocol"; }
 
 	/// @brief returns ref to the jumps vector for docking
 	DockJumps & movable_jumps(){ return movable_jumps_;}
@@ -212,10 +212,10 @@ public:
 	// Other member functions
 	void add_jump( core::Size const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
 
-	virtual void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 
 	// function for the parser with lots of accessors
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	/// information about the mode

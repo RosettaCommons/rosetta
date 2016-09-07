@@ -33,19 +33,19 @@ class FoldUnitsFilter : public protocols::filters::Filter
 public:
 	//default ctor
 	FoldUnitsFilter();
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new FoldUnitsFilter( *this ) );
 	}
-	protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override{
 		return protocols::filters::FilterOP( new FoldUnitsFilter() );
 	}
 
 	core::Real compute( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual ~FoldUnitsFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	~FoldUnitsFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	void write_to_file( std::string const pdb, core::Size const from_res, core::Size const to_res, std::string const dssp, std::string const sequence, core::pose::Pose const & pose ) const;
 

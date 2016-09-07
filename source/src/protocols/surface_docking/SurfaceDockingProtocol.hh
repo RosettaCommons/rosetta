@@ -56,7 +56,7 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  SurfaceDockingProtocol & operator=(SurfaceDockingProtocol const & src);
 
 	//destructor
-	~SurfaceDockingProtocol();
+	~SurfaceDockingProtocol() override;
 
 	//Standard Rosetta methods /////////////////////////////////////
 	//General methods
@@ -64,7 +64,7 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  static void register_options();
 
 	/// @brief Generate string representation of SurfaceDockingProtocol for debugging purposes
-	void show(std::ostream & ouput=std::cout) const;
+	void show(std::ostream & ouput=std::cout) const override;
 
 	/// Insertion operator (overloaded so that SurfaceDockingProtocol can be "printed" in Pyrosetta).
 	//friend std::ostream & operator<<(std::ostream & output, SurfaceDockingProtocol const & object_to_output);
@@ -74,14 +74,14 @@ public:
 
 	// Mover methods
 	/// @brief Return the name of the Mover.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Apply the corresponding move to the pose
-	virtual void apply( core::pose::Pose & pose);
+	void apply( core::pose::Pose & pose) override;
 
 private:
 	// Private methods //////////////////////////////////////////

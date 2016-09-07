@@ -296,7 +296,7 @@ CreateStartingStructureMover::CreateStartingStructureMover(
 	Mover::type( "CreateStartingStructureMover" );
 }
 
-CreateStartingStructureMover::~CreateStartingStructureMover(){}
+CreateStartingStructureMover::~CreateStartingStructureMover() = default;
 
 std::string
 CreateStartingStructureMover::get_name() const {

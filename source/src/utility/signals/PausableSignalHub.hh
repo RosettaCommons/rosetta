@@ -78,7 +78,7 @@ public: // construct/destruct
 	/// @brief default destructor
 	inline
 	virtual
-	~PausableSignalHub() {}
+	~PausableSignalHub() = default;
 
 
 private: // disallow copy construction and assignment

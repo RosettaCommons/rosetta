@@ -35,7 +35,7 @@ using basic::mpi::MessageListenerFactory;
 template <> std::mutex utility::SingletonBase< MessageListenerFactory >::singleton_mutex_{};
 template <> std::atomic< MessageListenerFactory * > utility::SingletonBase< MessageListenerFactory >::instance_( 0 );
 #else
-template <> MessageListenerFactory * utility::SingletonBase< MessageListenerFactory >::instance_( 0 );
+template <> MessageListenerFactory * utility::SingletonBase< MessageListenerFactory >::instance_( nullptr );
 #endif
 
 }

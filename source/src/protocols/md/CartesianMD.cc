@@ -119,7 +119,7 @@ CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	core::scoring::ScoreFunctionCOP sfxn,
 	core::kinematics::MoveMapCOP movemap )
 {
-	if ( movemap == 0 ) {
+	if ( movemap == nullptr ) {
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		movemap_->set_jump( true ); movemap_->set_bb( true ); movemap_->set_chi( true );
 		movemap_->set( core::id::THETA, true ); movemap_->set( core::id::D, true);
@@ -217,7 +217,7 @@ CartesianMD::init()
 	Gamma_ = 0.0;
 }
 
-CartesianMD::~CartesianMD() {}
+CartesianMD::~CartesianMD() = default;
 
 protocols::moves::MoverOP
 CartesianMD::clone() const {
@@ -278,7 +278,7 @@ void CartesianMD::do_initialize( core::pose::Pose &pose )
 
 	// Check initial time
 #ifndef WIN32
-	gettimeofday(&inittime_, NULL );
+	gettimeofday(&inittime_, nullptr );
 #endif
 	// Allocate
 	xyz_.resize( n_dof() );
@@ -799,7 +799,7 @@ void CartesianMD::report_MD( core::pose::Pose &pose,
 
 	timeval currtime;
 #ifndef WIN32
-	gettimeofday(&currtime, NULL );
+	gettimeofday(&currtime, nullptr );
 #endif
 	Real elapsedTime = (currtime.tv_sec - inittime_.tv_sec) * 1000.0;
 	elapsedTime += (currtime.tv_usec - inittime_.tv_usec) / 1000.0;

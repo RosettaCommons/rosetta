@@ -24,10 +24,10 @@ class ResidueGridScoresFeaturesCreator : public protocols::features::FeaturesRep
 {
 public:
 	ResidueGridScoresFeaturesCreator();
-	virtual ~ResidueGridScoresFeaturesCreator();
+	~ResidueGridScoresFeaturesCreator() override;
 
-	virtual protocols::features::FeaturesReporterOP create_features_reporter() const;
-	virtual std::string type_name() const;
+	protocols::features::FeaturesReporterOP create_features_reporter() const override;
+	std::string type_name() const override;
 };
 
 

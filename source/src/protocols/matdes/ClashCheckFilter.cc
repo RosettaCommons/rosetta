@@ -73,10 +73,10 @@ ClashCheckFilter::ClashCheckFilter():
 {}
 
 // @brief constructor with arguments
-ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const & s, core::Size const n, core::Size const t, bool const v, bool const w ):
-	task_factory_( task_factory ),
+ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string  s, core::Size const n, core::Size const t, bool const v, bool const w ):
+	task_factory_(std::move( task_factory )),
 	clash_dist_( c ),
-	sym_dof_names_( s ),
+	sym_dof_names_(std::move( s )),
 	nsub_bblock_( n ),
 	threshold_( t ),
 	verbose_( v ),
@@ -84,19 +84,10 @@ ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory
 {}
 
 // @brief copy constructor
-ClashCheckFilter::ClashCheckFilter( ClashCheckFilter const & rval ):
-	Super( rval ),
-	task_factory_( rval.task_factory_ ),
-	clash_dist_( rval.clash_dist_ ),
-	sym_dof_names_( rval.sym_dof_names_ ),
-	nsub_bblock_( rval.nsub_bblock_ ),
-	threshold_( rval.threshold_ ),
-	verbose_( rval.verbose_ ),
-	write_( rval.write_ )
-{}
+ClashCheckFilter::ClashCheckFilter( ClashCheckFilter const & )= default;
 
 // @brief destructor
-ClashCheckFilter::~ClashCheckFilter() {}
+ClashCheckFilter::~ClashCheckFilter() = default;
 
 protocols::filters::FilterOP
 ClashCheckFilter::fresh_instance() const{
@@ -148,7 +139,7 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 		intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
 	}
 
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	utility::vector1<Real> clashing_pos;

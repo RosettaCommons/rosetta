@@ -70,39 +70,39 @@ public:
 	RotamerBoltzmannWeight2( RotamerBoltzmannWeight2 const & rval );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~RotamerBoltzmannWeight2();
+	~RotamerBoltzmannWeight2() override;
 
 	/// @brief returns true if the structure passes the filter, false otherwise
-	virtual bool
-	apply( core::pose::Pose const & pose ) const;
+	bool
+	apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief required for reporting score values
-	virtual core::Real
-	report_sm( core::pose::Pose const & pose ) const;
+	core::Real
+	report_sm( core::pose::Pose const & pose ) const override;
 
 	/// @brief allows printing data to a stream
-	virtual void
-	report( std::ostream & os, core::pose::Pose const & pose ) const;
+	void
+	report( std::ostream & os, core::pose::Pose const & pose ) const override;
 
 public:
 	virtual std::string
 	get_name() const;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::filters::FilterOP
-	fresh_instance() const;
+	protocols::filters::FilterOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::filters::FilterOP
-	clone() const;
+	protocols::filters::FilterOP
+	clone() const override;
 
 public:
 	void

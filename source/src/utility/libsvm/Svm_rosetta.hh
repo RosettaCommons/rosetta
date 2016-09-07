@@ -37,7 +37,7 @@ using std::string;
 class Svm_node_rosetta: public utility::pointer::ReferenceCount {
 public:
 	Svm_node_rosetta(platform::Size index, platform::Real value);
-	~Svm_node_rosetta();
+	~Svm_node_rosetta() override;
 	void set_index(platform::Size index){
 		index_ = index;
 	};
@@ -59,7 +59,7 @@ private:
 class Svm_rosetta: public utility::pointer::ReferenceCount {
 public:
 	Svm_rosetta(string model_filename);
-	~Svm_rosetta();
+	~Svm_rosetta() override;
 	platform::Size get_nr_class();
 	vector1< platform::Real > predict_probability(vector1< Svm_node_rosettaOP > & features);
 	platform::Real predict( const vector1< Svm_node_rosettaOP > & features);

@@ -125,7 +125,7 @@ class FragmentSampler :  public moves::Mover {    //when changing to new jobdist
 	typedef moves::Mover BaseClass; //happens to be same as Parent
 
 public:
-	virtual ~FragmentSampler();
+	~FragmentSampler() override;
 	//@brief register cmd-line options in option system ( call before core::init::init )
 	static void register_options();
 
@@ -134,12 +134,12 @@ public:
 	FragmentSampler( topology_broker::TopologyBrokerOP broker );
 
 	//@brief FragmentSampler has virtual functions... use this to obtain a new instance
-	virtual
-	moves::MoverOP clone() const;
+	
+	moves::MoverOP clone() const override;
 
 	//@brief run protocol on pose
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	//@brief override cycle setting ( init() -> sets it according to cmd-line options )
 	virtual void set_cycles( core::Real increase_cycles = 1.0 );

@@ -59,17 +59,17 @@ class CoordConstraintClaimer : public TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	CoordConstraintClaimer(); //for factory
-	~CoordConstraintClaimer(); //for factory
+	~CoordConstraintClaimer() override; //for factory
 	CoordConstraintClaimer( std::string pdb_file );
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new CoordConstraintClaimer( *this ) );
 	}
 
-	virtual void generate_claims( claims::DofClaims& );
+	void generate_claims( claims::DofClaims& ) override;
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -78,11 +78,11 @@ public:
 	}
 
 
-	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
+	void add_constraints( core::pose::Pose& /*pose*/ ) const override;
 
-	virtual void new_decoy();
+	void new_decoy() override;
 
-	virtual void new_decoy( core::pose::Pose const& );
+	void new_decoy( core::pose::Pose const& ) override;
 
 	/// @brief superimpose xyz coords in constraints_ with pose
 	void superimpose( core::pose::Pose const& ) const;
@@ -90,9 +90,9 @@ public:
 protected:
 
 	/// @brief virtual functions for IO
-	virtual bool read_tag( std::string tag, std::istream & );
-	virtual void set_defaults();
-	virtual void init_after_reading();
+	bool read_tag( std::string tag, std::istream & ) override;
+	void set_defaults() override;
+	void init_after_reading() override;
 
 private:
 	void read_cst_pose();

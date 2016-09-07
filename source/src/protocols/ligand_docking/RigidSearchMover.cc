@@ -28,6 +28,7 @@
 
 #include <cmath>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -44,7 +45,7 @@ RigidSearchMover::RigidSearchMover(int jump_id, int num_trials, core::scoring::S
 	Mover(),
 	jump_id_(jump_id),
 	num_trials_(num_trials),
-	scorefxn_(scorefxn),
+	scorefxn_(std::move(scorefxn)),
 	temperature_(2),
 	rotate_deg_(3),
 	translate_Ang_(0.1),
@@ -73,8 +74,7 @@ RigidSearchMover::RigidSearchMover(RigidSearchMover const & that):
 
 
 RigidSearchMover::~RigidSearchMover()
-{
-}
+= default;
 
 
 void RigidSearchMover::apply(core::pose::Pose & pose)

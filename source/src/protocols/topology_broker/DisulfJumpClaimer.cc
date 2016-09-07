@@ -49,7 +49,7 @@ DisulfJumpClaimer::DisulfJumpClaimer() :
 	set_bInitDofs( true ); //we want to initialize jumps
 }
 
-DisulfJumpClaimer::~DisulfJumpClaimer() {}
+DisulfJumpClaimer::~DisulfJumpClaimer() = default;
 
 TopologyClaimerOP DisulfJumpClaimer::clone() const {
 	return TopologyClaimerOP( new DisulfJumpClaimer( *this ) );
@@ -182,11 +182,8 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	using std::pair;
 
 	//Initialize all_jump_pairings_ list with the data gathered during read_tag
-	for ( utility::vector1< claims::JumpClaimOP >::iterator bond_it = local_disulf_data_.begin();
-			bond_it != local_disulf_data_.end(); ++bond_it ) {
-		claims::JumpClaimOP claim( *bond_it );
-
-		core::Size pos1 = claim->global_pos1();
+	for (auto claim : local_disulf_data_) {
+			core::Size pos1 = claim->global_pos1();
 		core::Size pos2 = claim->global_pos2();
 
 		protocols::jumping::DisulfPairing dis_pair;

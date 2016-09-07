@@ -108,7 +108,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~NamedAtomID_Map()
-	{}
+	= default;
 
 
 public: // Methods

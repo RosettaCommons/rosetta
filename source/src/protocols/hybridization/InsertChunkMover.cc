@@ -92,7 +92,7 @@ InsertChunkMover::init() {
 	align_trial_counter_.clear();
 }
 
-InsertChunkMover::~InsertChunkMover() {}
+InsertChunkMover::~InsertChunkMover() = default;
 
 void InsertChunkMover::set_template(core::pose::PoseCOP template_pose, core::Size template_id,
 	std::map <core::Size, core::Size> const & sequence_alignment) {

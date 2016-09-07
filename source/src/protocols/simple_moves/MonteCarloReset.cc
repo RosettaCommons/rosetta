@@ -74,7 +74,7 @@ MonteCarloReset::MonteCarloReset():
 }
 
 /// @brief destructor
-MonteCarloReset::~MonteCarloReset(){}
+MonteCarloReset::~MonteCarloReset()= default;
 
 /// @brief clone this object
 MoverOP
@@ -103,7 +103,7 @@ MonteCarloReset::set_MC( GenericMonteCarloMoverOP mc ){
 void
 MonteCarloReset::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &movers, Pose const & pose ){
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
-	Movers_map::const_iterator find_mover( movers.find( mc_name ) );
+	auto find_mover( movers.find( mc_name ) );
 	if ( find_mover == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloReset" );
 	}

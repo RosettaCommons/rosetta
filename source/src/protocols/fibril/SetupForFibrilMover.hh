@@ -40,7 +40,7 @@ public:
 
 	//SetupForFibrilMover( std::string const & );
 
-	~SetupForFibrilMover();
+	~SetupForFibrilMover() override;
 
 	void
 	align(
@@ -50,8 +50,8 @@ public:
 		protocols::loops::Loops ref_core
 	);
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 };
 

@@ -49,7 +49,7 @@ struct Segment {
 	int nres_pre,nres_post; // LOOP: number of residues before and after the chainbreak, ANCHORED_LOOP: number of residues between [lo,to) and (to,hi]
 	int jumpno; // ANCHORED_LOOP: the jump assigned to the jump between from & to
 
-	Segment() : lo_res(0), hi_res(0), from_res(0), to_res(0), type(0), /*, lo(0), hi(0),*/nres_pre(0), nres_post(0), jumpno(0) {}
+	Segment() : lo_res(nullptr), hi_res(nullptr), from_res(nullptr), to_res(nullptr), type(0), /*, lo(0), hi(0),*/nres_pre(0), nres_post(0), jumpno(0) {}
 
 	int size() { return hi_res->seqpos() - lo_res->seqpos() + 1; }
 

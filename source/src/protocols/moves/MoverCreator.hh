@@ -32,7 +32,7 @@ class MoverCreator : public utility::pointer::ReferenceCount
 {
 public:
 	MoverCreator();
-	virtual ~MoverCreator();
+	~MoverCreator() override;
 
 	/// @brief Return a new mover.
 	virtual MoverOP create_mover() const = 0;

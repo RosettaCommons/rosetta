@@ -49,7 +49,7 @@ std::string RepeatParameterFilterCreator::keyname() const { return "RepeatParame
 
 RepeatParameterFilter::RepeatParameterFilter() : Filter( "RepeatParameter" ) {}
 
-RepeatParameterFilter::~RepeatParameterFilter() {}
+RepeatParameterFilter::~RepeatParameterFilter() = default;
 
 bool RepeatParameterFilter::apply( core::pose::Pose const & pose ) const {
 	if ( !filter_ ) {
@@ -138,9 +138,8 @@ void RepeatParameterFilter::apply_transformation(core::pose::Pose & mod_pose,std
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
 
-	for ( std::list<core::Size>::const_iterator it = residue_list.begin(); it != residue_list.end(); ++it ) {
-		core::Size ires = *it;
-		for ( core::Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+	for (unsigned long ires : residue_list) {
+			for ( core::Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 			ids.push_back(core::id::AtomID(iatom,ires));
 			positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));
 		}

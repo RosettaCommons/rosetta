@@ -85,7 +85,7 @@ ResidueTotalScoresFeatures::ResidueTotalScoresFeatures() :
 
 ResidueTotalScoresFeatures::ResidueTotalScoresFeatures(
 	ScoreFunctionOP scfxn) :
-	scfxn_(scfxn)
+	scfxn_(std::move(scfxn))
 {}
 
 ResidueTotalScoresFeatures::ResidueTotalScoresFeatures( ResidueTotalScoresFeatures const & src) :
@@ -94,7 +94,7 @@ ResidueTotalScoresFeatures::ResidueTotalScoresFeatures( ResidueTotalScoresFeatur
 {}
 
 ResidueTotalScoresFeatures::~ResidueTotalScoresFeatures()
-{}
+= default;
 
 string
 ResidueTotalScoresFeatures::type_name() const { return "ResidueTotalScoresFeatures"; }

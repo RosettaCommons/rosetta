@@ -101,7 +101,7 @@ LoopBuilder::LoopBuilder() { // {{{1
 	minimizer_ = add_child( MinimizationRefinerOP( new MinimizationRefiner ) );
 }
 
-LoopBuilder::~LoopBuilder() {} // {{{1
+LoopBuilder::~LoopBuilder() = default; // {{{1
 
 void LoopBuilder::parse_my_tag( // {{{1
 	TagCOP tag,

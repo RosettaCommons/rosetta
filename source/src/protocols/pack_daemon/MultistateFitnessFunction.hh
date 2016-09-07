@@ -99,9 +99,9 @@ public:
 
 public:
 	MultistateFitnessFunction();
-	virtual ~MultistateFitnessFunction();
+	~MultistateFitnessFunction() override;
 
-	virtual core::Real evaluate( Entity & entity );
+	core::Real evaluate( Entity & entity ) override;
 
 	StateEnergies const & state_energies() const;
 	StateEnergies const & npd_properties() const;
@@ -159,7 +159,7 @@ class MPIMultistateFitnessFunction : public MultistateFitnessFunction
 {
 public:
 	MPIMultistateFitnessFunction();
-	virtual ~MPIMultistateFitnessFunction();
+	~MPIMultistateFitnessFunction() override;
 
 	/// @brief Inform this MPIMultistateFitnessFunction how many PackDaemons
 	/// are running on all nodes (counting this one) which it may be unaware of.
@@ -185,25 +185,25 @@ protected:
 	/// entity to all slave nodes, and waiting for them to report the energies
 	/// from their PackDaemons for that entity.  If this node has PackDaemons,
 	/// then it will evaluate their energies, too.
-	virtual void compute_state_energies( Entity const & entity );
+	void compute_state_energies( Entity const & entity ) override;
 
 	/// @brief Broadcast the instruction to DaemonSets on all other nodes to keep
 	/// the entity that was just evaluated.
-	virtual void instruct_daemons_to_keep_last_entity();
+	void instruct_daemons_to_keep_last_entity() override;
 
 	/// @brief Broadcast the instruction to DaemonSets on all other nodes to discard
 	/// an old entity which had been previously held on to.
-	virtual void instruct_daemons_to_drop_entity( Entity const & entity );
+	void instruct_daemons_to_drop_entity( Entity const & entity ) override;
 
 	//// @brief Broadcast the entity and the set of states that correspond to
 	/// a set of poses that are important.  The entity had better still live
 	/// on the distant nodes.
-	virtual
+	
 	std::list< std::pair< Size, PoseOP > >
 	recover_poses_from_states(
 		Entity const &,
 		utility::vector1< core::Size > const & which_states
-	);
+	) override;
 
 private:
 

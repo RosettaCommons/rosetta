@@ -56,10 +56,8 @@ private:
 	void compute_insert_pos( core::fragment::InsertMap const& insert_map,
 		core::kinematics::MoveMap const& mm
 	) {
-		for ( core::fragment::InsertMap::const_iterator it = insert_map.begin(),
-				eit = insert_map.end(); it != eit; ++it ) {
-			Size const pos ( *it );
-			if ( pos > insert_pos_.size() ) break;
+		for (unsigned long pos : insert_map) {
+				if ( pos > insert_pos_.size() ) break;
 			if ( mm.get_bb( pos ) ) {
 				insert_pos_[ pos ] = true;
 			}
@@ -92,7 +90,7 @@ public:
 		out << std::endl;
 	}
 
-	virtual bool operator() ( const core::pose::Pose & pose ) {
+	bool operator() ( const core::pose::Pose & pose ) override {
 		runtime_assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
 		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
 			if ( ! pose.residue(i).is_protein() ) continue;

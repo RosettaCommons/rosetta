@@ -48,8 +48,8 @@ namespace relax {
 
 class ClassicRelaxCreator : public protocols::moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
 };
 
@@ -73,9 +73,9 @@ public:
 
 	ClassicRelax();
 
-	virtual ~ClassicRelax();
+	~ClassicRelax() override;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	static void register_options();
 	// Default settings
@@ -86,8 +86,8 @@ public:
 	///
 	/// Central Apply function
 	///
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 
 	///////////////////////////////////////////////////////////////////////////////////

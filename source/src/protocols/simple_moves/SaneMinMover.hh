@@ -46,8 +46,8 @@ public:
 		bool cartesian = false
 	);
 
-	virtual ~SaneMinMover();
-	virtual protocols::moves::MoverOP clone() const;
+	~SaneMinMover() override;
+	protocols::moves::MoverOP clone() const override;
 
 	// getters
 	bool cartesian() const;
@@ -56,9 +56,9 @@ public:
 	core::optimization::MinimizerOptionsOP min_options() const;
 
 	/// @brief Minimizes the DOFs of pose specified in the MoveMap
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	// set reasonable defaults for scorefxn_, movemap_ and min_options_

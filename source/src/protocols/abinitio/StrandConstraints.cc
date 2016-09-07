@@ -59,7 +59,7 @@ namespace protocols {
 namespace abinitio {
 
 /// @details Auto-generated virtual destructor
-StrandConstraints::~StrandConstraints() {}
+StrandConstraints::~StrandConstraints() = default;
 
 //using namespace jumping;
 
@@ -73,14 +73,13 @@ bool AlternativePairings::compatible( core::scoring::dssp::StrandPairing const& 
 	Size const new_reg ( strand_pairing.get_register() );
 
 	//get list of pairs for all pairings that roughly match the register of the new strand_pairing
-	for ( Pairings::const_iterator it=pairings_.begin(), eit = pairings_.end();
-			it!=eit; ++it ) {
+	for (const auto & pairing : pairings_) {
 		//check register
-		Size const reg ( it->pairing().get_register() );
+		Size const reg ( pairing.pairing().get_register() );
 		if ( std::abs( (int)new_reg  - (int)reg ) > (int)register_cutoff ) return false;
 		//good register... get residues
-		if ( (int) strand_pairing.end1() <  ( (int) it->pairing().begin1() - (int) residue_cutoff ) ) return false; //really no overlap
-		if ( strand_pairing.begin1() > it->pairing().end1() + residue_cutoff ) return false;
+		if ( (int) strand_pairing.end1() <  ( (int) pairing.pairing().begin1() - (int) residue_cutoff ) ) return false; //really no overlap
+		if ( strand_pairing.begin1() > pairing.pairing().end1() + residue_cutoff ) return false;
 	}
 	// should one also check the begin2, end2 residues?
 
@@ -107,10 +106,9 @@ bool AlternativePairings::add_pairing( PairingStatEntry const& pairing_entry ) {
 
 void AlternativePairings::show( std::ostream& out ) const {
 	out << "\n\n Set of alternative strand pairings: \n";
-	for ( Pairings::const_iterator it = pairings_.begin(), eit = pairings_.end();
-			it!=eit; ++it ) {
-		out << it->weight() << " " << it->pairing() << " ";
-		for ( PairingStatEntry::ModelList::const_iterator mit = it->models().begin(), emit = it->models().end();
+	for (const auto & pairing : pairings_) {
+		out << pairing.weight() << " " << pairing.pairing() << " ";
+		for ( auto mit = pairing.models().begin(), emit = pairing.models().end();
 				mit != emit; ++mit ) {
 			out << *mit << " ";
 		}
@@ -155,12 +153,11 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 	//find frequency of start residues
 	std::map< Size, Real > freq; //it will count the score values
 	Real max_freq( 0 );
-	for ( Pairings::const_iterator it = pairings_.begin(), eit = pairings_.end();
-			it != eit; ++it ) {
-		Size const start( it->pairing().begin1() );
-		Size const end( it->pairing().end1() );
+	for (const auto & pairing : pairings_) {
+		Size const start( pairing.pairing().begin1() );
+		Size const end( pairing.pairing().end1() );
 		for ( Size pos = start; pos <= end; pos++ ) {
-			if ( ! it->pairing().is_bulge( pos ) ) freq[ pos ] += it->weight();
+			if ( ! pairing.pairing().is_bulge( pos ) ) freq[ pos ] += pairing.weight();
 			if ( max_freq < freq[ pos ] ) max_freq = freq[ pos ];
 		}
 	}
@@ -186,9 +183,8 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 			std::map< Size, bool > done;
 
 			//for all end-atoms:
-			for ( Pairings::const_iterator pit = pairings_.begin(), epit = pairings_.end();
-					pit != epit; ++pit ) {
-				Size pair( pit->pairing().get_pair( pos ) );
+			for (const auto & pairing : pairings_) {
+				Size pair( pairing.pairing().get_pair( pos ) );
 				if ( pair ) { //we have a pairing make a constraint for this guy
 					if ( !done[ pair ] ) {
 						done[ pair ] = true;
@@ -196,8 +192,8 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 
 						//get distance-function parameters right
 						core::scoring::func::FuncOP myfunc;
-						if ( pit->pairing().antiparallel() ) {
-							if ( pit->pairing().get_pleating( pos ) == 2 ) { // Inward
+						if ( pairing.pairing().antiparallel() ) {
+							if ( pairing.pairing().get_pleating( pos ) == 2 ) { // Inward
 								myfunc = CAfuncAI.clone();
 							} else { // Outward
 								myfunc = CAfuncAO.clone();
@@ -207,7 +203,7 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 						}
 
 						//make the constraint
-						tr.Debug << " add constraint for " << pos << "->" << pair << " " << pit->pairing().get_pleating( pos ) << std::endl;
+						tr.Debug << " add constraint for " << pos << "->" << pair << " " << pairing.pairing().get_pleating( pos ) << std::endl;
 						constraints.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(
 							core::pose::named_atom_id_to_atom_id( atom1, pose),
 							core::pose::named_atom_id_to_atom_id( atom2, pose),
@@ -236,7 +232,7 @@ void StrandConstraints::add_pairing( core::scoring::dssp::StrandPairing const& p
 void StrandConstraints::add_pairing( PairingStatEntry const& pairing_entry ) {
 	bool success( false );
 	tr.Debug << "add pairing to FuzzyTopology "<< pairing_entry << std::endl;
-	for ( FuzzyTopology::iterator it = fuzzy_topology_.begin(), eit = fuzzy_topology_.end();
+	for ( auto it = fuzzy_topology_.begin(), eit = fuzzy_topology_.end();
 			it != eit && !success; ++it ) {
 		success = it->add_pairing( pairing_entry );
 	}
@@ -249,25 +245,22 @@ void StrandConstraints::add_pairing( PairingStatEntry const& pairing_entry ) {
 
 
 StrandConstraints::StrandConstraints( PairingStatistics const& strand_stats ) {
-	for ( PairingStatistics::const_iterator it = strand_stats.begin(), eit = strand_stats.end();
-			it != eit; ++it ) {
-		add_pairing( it->second );
+	for (const auto & strand_stat : strand_stats) {
+		add_pairing( strand_stat.second );
 	}
 	tr.Info << (*this) << std::endl;
 }
 
 void StrandConstraints::show( std::ostream& out ) const {
-	for ( FuzzyTopology::const_iterator it = fuzzy_topology_.begin(), eit = fuzzy_topology_.end();
-			it != eit; ++it ) {
-		it->show( out );
+	for (const auto & it : fuzzy_topology_) {
+		it.show( out );
 	}
 }
 
 scoring::constraints::ConstraintCOPs StrandConstraints::build_constraints( pose::Pose const& pose ) const {
 	scoring::constraints::ConstraintCOPs all_constraints;
-	for ( FuzzyTopology::const_iterator it = fuzzy_topology_.begin(), eit = fuzzy_topology_.end();
-			it != eit; ++it ) {
-		it->build_constraints( pose, all_constraints );
+	for (const auto & it : fuzzy_topology_) {
+		it.build_constraints( pose, all_constraints );
 	}
 
 	//   for ( scoring::constraints::ConstraintCOPs::iterator it = all_constraints.begin(), eit = all_constraints.end();

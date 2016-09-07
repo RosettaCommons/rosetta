@@ -38,7 +38,7 @@ public:
 
 	SurfaceParameters( SurfaceParameters const & src );
 
-	~SurfaceParameters();
+	~SurfaceParameters() override;
 
 	SurfaceParametersOP clone() const;
 

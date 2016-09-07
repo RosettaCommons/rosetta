@@ -68,7 +68,7 @@ class TopologyClaimer : public utility::pointer::ReferenceCount, public utility:
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~TopologyClaimer(){}
+	~TopologyClaimer() override= default;
 
 	TopologyClaimer() :
 		abinitio_mover_weight_ ( weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 1.0 ) ) ),
@@ -103,7 +103,7 @@ public:
 	// virtual void set_pose_from_broker(core::pose::Pose& pose) {};
 
 	/// @brief in case a claimer has its own fold_tree.  get_fold_tree() is called by the broker
-	virtual core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose&) {return NULL;}
+	virtual core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose&) {return nullptr;}
 
 	//virtual core::pose::PoseOP get_pose() {return NULL;}
 
@@ -161,7 +161,7 @@ public:
 	/// @brief return fragments that can be used for loop-sampling... unfortunately some loop-samplers need fragments, rather then fragmovers
 	/// (e.g. short-loop closure since it remaps them on a short pose containing only the loop-residues. )
 	/// overloaded e.g., by LoopFragmentClaimer.. returns a movemap and fragset good for loop-sampling
-	virtual core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap& /*returned! */ ) const { return NULL; };
+	virtual core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap& /*returned! */ ) const { return nullptr; };
 
 	/// @brief claimers can add movers to the RandomMover (Container).
 	/// add your moves, make it dependent on stage if you want to. So far this is called only by abinitio...
@@ -207,7 +207,7 @@ public:
 	/// @brief return the broker we are collaborating with
 	TopologyBroker const& broker() const{
 		TopologyBrokerCOP broker( broker_ );
-		runtime_assert( broker != 0 ); //don't use before claimer is added to its broker
+		runtime_assert( broker != nullptr ); //don't use before claimer is added to its broker
 		return *broker; // NEEDS FIXING: returning reference to temporairly locked weak_ptr
 	}
 
@@ -229,12 +229,12 @@ public:
 	virtual void receive_message( ClaimerMessage& ) {};
 
 	//getter function to retrieve this claimer's current_pose (to get after moving spans)
-	virtual core::pose::PoseOP get_pose_from_claimer() {return NULL;};
+	virtual core::pose::PoseOP get_pose_from_claimer() {return nullptr;};
 
 protected:
 
 	/// @brief what is your mover ... called by add_mover --- overload this or add_mover if you have movers too supply
-	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const { return NULL; };
+	virtual moves::MoverOP get_mover( core::pose::Pose const& /*pose*/ ) const { return nullptr; };
 
 	virtual bool read_tag( std::string tag, std::istream& is );
 

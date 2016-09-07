@@ -69,17 +69,11 @@ HelixFromSequence::HelixFromSequence():
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-HelixFromSequence::HelixFromSequence( HelixFromSequence const & src ):
-	protocols::moves::Mover( src ),
-	seq_ ( src.seq_ ),
-	mem_ ( src.mem_ ),
-	opt_mem_ ( src.opt_mem_ ),
-	skip_rlx_ ( src.skip_rlx_ )
-{}
+HelixFromSequence::HelixFromSequence( HelixFromSequence const & )= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-HelixFromSequence::~HelixFromSequence(){}
+HelixFromSequence::~HelixFromSequence()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

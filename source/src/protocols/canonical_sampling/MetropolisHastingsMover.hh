@@ -68,42 +68,42 @@ public:
 	);
 
 	/// @brief Destructor.
-	virtual
-	~MetropolisHastingsMover();
+	
+	~MetropolisHastingsMover() override;
 
 	/// @brief Run the Metropolis-Hastings simulation.
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Return the name of this mover.
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief Return a copy of this mover.
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Return a newly instantiated mover.
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	/// @brief Return false.  This mover does not need to be reinitialized for
 	/// each job.
-	virtual
+	
 	bool
-	reinitialize_for_each_job() const;
+	reinitialize_for_each_job() const override;
 
 	/// @brief Return false.  This mover does not need to be reinitialized for
 	/// new input.
-	virtual
+	
 	bool
-	reinitialize_for_new_input() const;
+	reinitialize_for_new_input() const override;
 
 	/// @brief Use a RosettaScripts tag to configure this mover.
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -111,7 +111,7 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief Return the MonteCarlo object being used by this simulation.
 	protocols::moves::MonteCarloCOP

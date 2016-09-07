@@ -115,7 +115,7 @@ public:
 	/// ctor
 	ScoreFunction();
 
-	virtual ~ScoreFunction();
+	~ScoreFunction() override;
 
 	/// self pointers
 	inline ScoreFunctionCOP get_self_ptr() const { return shared_from_this(); }

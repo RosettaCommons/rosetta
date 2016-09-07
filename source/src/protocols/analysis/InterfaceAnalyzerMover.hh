@@ -187,7 +187,7 @@ public:
 	InterfaceAnalyzerMover(
 		core::Size interface_jump = 1,
 		bool const tracer = false,
-		core::scoring::ScoreFunctionCOP sf = NULL,
+		core::scoring::ScoreFunctionCOP sf = nullptr,
 		bool compute_packstat = false,
 		bool pack_input = false,
 		bool pack_separated = false,
@@ -199,7 +199,7 @@ public:
 	InterfaceAnalyzerMover(
 		std::set<int> fixed_chains,
 		bool const tracer = false,
-		core::scoring::ScoreFunctionCOP sf = NULL,
+		core::scoring::ScoreFunctionCOP sf = nullptr,
 		bool compute_packstat = false,
 		bool pack_input = false,
 		bool pack_separated = false,
@@ -212,17 +212,17 @@ public:
 	InterfaceAnalyzerMover(
 		std::string dock_chains,
 		bool const tracer = false,
-		core::scoring::ScoreFunctionCOP sf = NULL,
+		core::scoring::ScoreFunctionCOP sf = nullptr,
 		bool compute_packstat = false,
 		bool pack_input = false,
 		bool pack_separated = false,
 		bool use_jobname = true
 	);
 
-	virtual ~InterfaceAnalyzerMover();
+	~InterfaceAnalyzerMover() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	//virtual bool
 	//reinitialize_for_new_input() const {return true;}
@@ -232,24 +232,24 @@ public:
 	init_on_new_input(const core::pose::Pose & pose);
 
 	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Apply method for const pose.  Used by InterfaceFeatures reporter
 	virtual void
 	apply_const(core::pose::Pose const & pose);
 
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 
 	///Print data to tracer or scorefile if tracer is not set (default).
 	virtual void
@@ -262,9 +262,9 @@ public:
 	add_score_info_to_pose(core::pose::Pose & pose);
 
 
-	virtual bool reinitialize_for_each_job() const { return true; }
+	bool reinitialize_for_each_job() const override { return true; }
 
-	virtual bool reinitialize_for_new_input() const { return true; }
+	bool reinitialize_for_new_input() const override { return true; }
 
 
 	///////////////////////////////////////////////////

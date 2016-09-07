@@ -76,16 +76,16 @@ public:
 
 	ConstantLengthFragSet() {};
 
-	~ConstantLengthFragSet();
+	~ConstantLengthFragSet() override;
 
 	ConstantLengthFragSet( FragSet const& fragments );
 
-	virtual FragSetOP clone() const
+	FragSetOP clone() const override
 	{
 		return FragSetOP( new ConstantLengthFragSet( *this ) );
 	}
 
-	virtual FragSetOP empty_clone() const
+	FragSetOP empty_clone() const override
 	{
 		return FragSetOP( new ConstantLengthFragSet() );
 	}
@@ -114,7 +114,7 @@ public:
 		core::Size , //min_overlap not used
 		core::Size , //min_length not used
 		FrameList &frames
-	) const;
+	) const override;
 
 	/// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
 	///(also allows those frames that start before the region and reach into it)
@@ -125,7 +125,7 @@ public:
 		core::Size min_overlap,
 		core::Size min_length,
 		FrameList &frames
-	) const;
+	) const override;
 
 
 	//  /// @brief Accessor for the Frames at the specified insertion position. Returns 0=false if
@@ -136,18 +136,18 @@ public:
 	//  );
 
 	/// @brief iterate over contents
-	ConstFrameIterator begin() const;
-	ConstFrameIterator end() const;
+	ConstFrameIterator begin() const override;
+	ConstFrameIterator end() const override;
 
 
-	virtual FrameIterator nonconst_begin();
-	virtual FrameIterator nonconst_end();
+	FrameIterator nonconst_begin() override;
+	FrameIterator nonconst_end() override;
 
-	virtual bool empty() const {
+	bool empty() const override {
 		return frames_.size()==0;
 	}
 protected:
-	virtual void add_( FrameOP aframe );
+	void add_( FrameOP aframe ) override;
 
 private:
 	FrameList frames_;

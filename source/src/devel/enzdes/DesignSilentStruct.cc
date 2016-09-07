@@ -109,9 +109,8 @@ void
 DesignSilentStruct::print_header( std::ostream& out ) const {
 
 	out << LJ( 50, "#Design_name");
-	for ( utility::vector1< SilentEnergy >::const_iterator it = additional_info_silent_energy_.begin();
-			it != additional_info_silent_energy_.end(); ++it ) {
-		out << " " << A( it->width(), it->name() );
+	for (const auto & it : additional_info_silent_energy_) {
+		out << " " << A( it.width(), it.name() );
 	}
 
 	out << "\n";
@@ -137,9 +136,8 @@ DesignSilentStruct::add_to_additional_silent_energies(
 	utility::vector1< core::io::silent::SilentEnergy > const & silent_Es)
 {
 
-	for ( utility::vector1< SilentEnergy >::const_iterator it = silent_Es.begin();
-			it != silent_Es.end(); ++it ) {
-		additional_info_silent_energy_.push_back( *it );
+	for (const auto & silent_E : silent_Es) {
+		additional_info_silent_energy_.push_back( silent_E );
 	}
 
 }
@@ -151,9 +149,8 @@ DesignSilentStruct::print_additional_info( std::ostream& out) const
 
 	out << LJ( 50, decoy_tag() );
 
-	for ( utility::vector1< SilentEnergy >::const_iterator it = additional_info_silent_energy_.begin();
-			it != additional_info_silent_energy_.end(); ++it ) {
-		out << " " << F( it->width(), precision, it->value() );
+	for (const auto & it : additional_info_silent_energy_) {
+		out << " " << F( it.width(), precision, it.value() );
 	}
 
 	out << "\n";
@@ -169,49 +166,47 @@ DesignSilentStruct::calculate_additional_info(
 {
 
 	bool separate_out_constraints = false;
-	utility::vector1< std::string >::const_iterator cstfind = find( score_terms.begin(), score_terms.end(),"all_cst");
+	auto cstfind = find( score_terms.begin(), score_terms.end(),"all_cst");
 	if ( cstfind != score_terms.end() ) separate_out_constraints = true;
 
 	//first write out the relevant score terms for the pose total
-	for ( utility::vector1< std::string >::const_iterator sco_it = score_terms.begin();
-			sco_it != score_terms.end(); ++sco_it ) {
-		std::string sco_name = *sco_it;
+	for (const auto & score_term : score_terms) {
+		std::string sco_name = score_term;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
 
 		SilentEnergy new_se;
-		if ( *sco_it == "all_cst" ) {
+		if ( score_term == "all_cst" ) {
 			new_se = SilentEnergy ( sco_name, sum_constraint_terms(pose, -1 ), 1, width);
-		} else if ( separate_out_constraints && ( *sco_it == "total_score" ) ) {
-			core::Real desired_value = pose.energies().total_energies()[ core::scoring::score_type_from_name( *sco_it ) ] - sum_constraint_terms(pose, -1 );
+		} else if ( separate_out_constraints && ( score_term == "total_score" ) ) {
+			core::Real desired_value = pose.energies().total_energies()[ core::scoring::score_type_from_name( score_term ) ] - sum_constraint_terms(pose, -1 );
 			new_se = SilentEnergy(sco_name, desired_value, 1, width);
 		} else {
-			new_se = SilentEnergy ( sco_name, pose.energies().total_energies()[ core::scoring::score_type_from_name( *sco_it ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( *sco_it ) ], 1 ,width);
+			new_se = SilentEnergy ( sco_name, pose.energies().total_energies()[ core::scoring::score_type_from_name( score_term ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( score_term ) ], 1 ,width);
 		}
 		additional_info_silent_energy_.push_back( new_se );
 
 	}
 
 	//pose metric calculators for pose total
-	std::map< Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator totcalc_it = calculators.find( 0 );
+	auto totcalc_it = calculators.find( 0 );
 	if ( totcalc_it != calculators.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
-		for ( utility::vector1< std::pair< std::string, std::string > >::const_iterator calc_it = tot_calculators.begin();
-				calc_it != tot_calculators.end(); ++calc_it ) {
+		for (const auto & tot_calculator : tot_calculators) {
 
-			std::string calc_name = "tot_" + calc_it->first;
+			std::string calc_name = "tot_" + tot_calculator.first;
 			int width = std::max( 10, (int) calc_name.length() + 3 );
 
 			core::Real calc_value;
 
 			//following lines fairly hacky, but don't know a better solution at the moment
-			if ( calc_it->first == "hbond_pm" || calc_it->first == "burunsat_pm" || calc_it->first == "NLconts_pm" ) {
+			if ( tot_calculator.first == "hbond_pm" || tot_calculator.first == "burunsat_pm" || tot_calculator.first == "NLconts_pm" ) {
 				basic::MetricValue< core::Size > mval_size;
-				pose.metric( calc_it->first, calc_it->second, mval_size );
+				pose.metric( tot_calculator.first, tot_calculator.second, mval_size );
 				calc_value = mval_size.value();
 			} else {
 				basic::MetricValue< core::Real > mval_real;
-				pose.metric( calc_it->first, calc_it->second, mval_real );
+				pose.metric( tot_calculator.first, tot_calculator.second, mval_real );
 				calc_value = mval_real.value();
 			}
 
@@ -225,7 +220,7 @@ DesignSilentStruct::calculate_additional_info(
 
 	//then write out the relevant scoreterms (and potentially pose metrics) for each of the special residues
 	Size spec_res_counter(0);
-	for ( utility::vector1<Size>::const_iterator res_it = special_res.begin(), end = special_res.end(); res_it != end; ++res_it ) {
+	for (unsigned long special_re : special_res) {
 
 		spec_res_counter++;
 		//for convenience, the sequence number of the residue will be written out
@@ -233,23 +228,22 @@ DesignSilentStruct::calculate_additional_info(
 		temp << spec_res_counter;
 		std::string spec_res_name = "SR_" + temp.str();
 		//std::cerr << "name for res " << *res_it << " is " << spec_res_name ;
-		SilentEnergy res_name(spec_res_name, *res_it, 1, 10);
+		SilentEnergy res_name(spec_res_name, special_re, 1, 10);
 		additional_info_silent_energy_.push_back( res_name );
 
-		for ( utility::vector1< std::string >::const_iterator sco_it = score_terms.begin();
-				sco_it != score_terms.end(); ++sco_it ) {
+		for (const auto & score_term : score_terms) {
 
-			std::string sco_name = spec_res_name + "_" +  *sco_it ;
+			std::string sco_name = spec_res_name + "_" +  score_term ;
 			int width = std::max( 10, (int) sco_name.length() + 3 );
 
 			SilentEnergy new_se;
-			if ( *sco_it == "all_cst" ) {
-				new_se = SilentEnergy ( sco_name, sum_constraint_terms(pose, *res_it), 1, width);
-			} else if ( separate_out_constraints && ( *sco_it == "total_score" ) ) {
-				core::Real desired_value = pose.energies().residue_total_energies( *res_it )[ core::scoring::score_type_from_name( *sco_it ) ] - sum_constraint_terms(pose, *res_it );
+			if ( score_term == "all_cst" ) {
+				new_se = SilentEnergy ( sco_name, sum_constraint_terms(pose, special_re), 1, width);
+			} else if ( separate_out_constraints && ( score_term == "total_score" ) ) {
+				core::Real desired_value = pose.energies().residue_total_energies( special_re )[ core::scoring::score_type_from_name( score_term ) ] - sum_constraint_terms(pose, special_re );
 				new_se = SilentEnergy(sco_name, desired_value, 1, width);
 			} else {
-				new_se = SilentEnergy ( sco_name, pose.energies().residue_total_energies( *res_it )[ core::scoring::score_type_from_name( *sco_it ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( *sco_it ) ], 1 ,width);
+				new_se = SilentEnergy ( sco_name, pose.energies().residue_total_energies( special_re )[ core::scoring::score_type_from_name( score_term ) ] * pose.energies().weights()[ core::scoring::score_type_from_name( score_term ) ], 1 ,width);
 			}
 
 			additional_info_silent_energy_.push_back( new_se );
@@ -258,14 +252,13 @@ DesignSilentStruct::calculate_additional_info(
 
 		//if there are calculators that need to be evaluated for this residue, let's do that now
 		//note: section still under development, right now only calculators that return reals are supported
-		std::map< Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator res_calc_it = calculators.find( *res_it );
+		auto res_calc_it = calculators.find( special_re );
 		if ( res_calc_it != calculators.end() ) {
 
 			utility::vector1< std::pair< std::string, std::string > > calculators_this_res = res_calc_it->second;
-			for ( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin(), end = calculators_this_res.end();
-					calc_it != end; ++calc_it ) {
+			for (auto & calculators_this_re : calculators_this_res) {
 
-				std::string res_calc_name = spec_res_name + "_" + calc_it->first;
+				std::string res_calc_name = spec_res_name + "_" + calculators_this_re.first;
 				int width = std::max( 10, (int) res_calc_name.length() + 3 );
 
 				core::Real calc_value;
@@ -275,14 +268,14 @@ DesignSilentStruct::calculate_additional_info(
 				basic::MetricValue< utility::vector1< core::Real > >mval_realvec;
 
 				//following lines fairly hacky, but don't know a better solution at the moment
-				if ( ( calc_it->first == "hbond_pm") || ( calc_it->first == "burunsat_pm") ) {
-					pose.metric( calc_it->first, calc_it->second, mval_sizevec );
-					calc_value = mval_sizevec.value()[*res_it];
-				} else if ( (calc_it->first == "pstat_pm") || (calc_it->first == "nlpstat_pm" ) ) {
-					pose.metric( calc_it->first, calc_it->second, mval_realvec );
-					calc_value = mval_realvec.value()[*res_it];
+				if ( ( calculators_this_re.first == "hbond_pm") || ( calculators_this_re.first == "burunsat_pm") ) {
+					pose.metric( calculators_this_re.first, calculators_this_re.second, mval_sizevec );
+					calc_value = mval_sizevec.value()[special_re];
+				} else if ( (calculators_this_re.first == "pstat_pm") || (calculators_this_re.first == "nlpstat_pm" ) ) {
+					pose.metric( calculators_this_re.first, calculators_this_re.second, mval_realvec );
+					calc_value = mval_realvec.value()[special_re];
 				} else {
-					pose.metric( calc_it->first, calc_it->second, mval_real );
+					pose.metric( calculators_this_re.first, calculators_this_re.second, mval_real );
 					calc_value = mval_real.value();
 				}
 				//std::cerr << " hehe, just executed pose metric for " << calc_it->first << " calculator   ";
@@ -290,8 +283,8 @@ DesignSilentStruct::calculate_additional_info(
 
 				//special case: if this is an interface calculation, we do not want to include constraint terms
 				//hacky at the moment, haven't figured out yet how to do this really clean
-				if ( separate_out_constraints && ( calc_it->first == "interf_E_1_2") ) {
-					calc_value = calc_value - ( 2 * sum_constraint_terms(pose, *res_it) );
+				if ( separate_out_constraints && ( calculators_this_re.first == "interf_E_1_2") ) {
+					calc_value = calc_value - ( 2 * sum_constraint_terms(pose, special_re) );
 				}
 				SilentEnergy new_se( res_calc_name, calc_value, 1, width);
 				additional_info_silent_energy_.push_back( new_se );

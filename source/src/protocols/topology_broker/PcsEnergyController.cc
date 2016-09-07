@@ -67,8 +67,7 @@ PcsEnergyController::PcsEnergyController(PcsEnergyController const &):
 }
 
 
-PcsEnergyController::~PcsEnergyController(){
-}
+PcsEnergyController::~PcsEnergyController()= default;
 
 void
 PcsEnergyController::set_defaults( ){

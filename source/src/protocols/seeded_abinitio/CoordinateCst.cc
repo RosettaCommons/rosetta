@@ -81,7 +81,7 @@ CoordinateCstCreator::mover_name()
 	return "CoordinateCst";
 }
 
-CoordinateCst::~CoordinateCst() {}
+CoordinateCst::~CoordinateCst() = default;
 
 CoordinateCst::CoordinateCst() :
 	protocols::moves::Mover( CoordinateCstCreator::mover_name() )

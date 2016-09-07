@@ -44,7 +44,7 @@ class SpliceSegment : public utility::pointer::ReferenceCount
 {
 public:
 	SpliceSegment();
-	virtual ~SpliceSegment();
+	~SpliceSegment() override;
 	void read_profile( std::string const file_name, std::string const segment_name ); /// read pssm
 	void read_many( std::string const protein_family , std::string const segmetn); /// read pssm
 	void all_pdb_profile(std::string const s, std::string const );

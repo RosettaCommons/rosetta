@@ -63,7 +63,7 @@ TotalSasaFilter::TotalSasaFilter( core::Real const lower_threshold, bool const h
 	report_per_residue_sasa_(per_residue_sasa)
 {}
 
-TotalSasaFilter::~TotalSasaFilter(){}
+TotalSasaFilter::~TotalSasaFilter()= default;
 
 filters::FilterOP
 TotalSasaFilter::clone() const{
@@ -97,7 +97,7 @@ TotalSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 	if ( tag->hasOption("task_operations") ) {
 		task_factory( protocols::rosetta_scripts::parse_task_operations(tag, data) );
 	} else {
-		task_factory( 0 ); // No task factory - use all residues.
+		task_factory( nullptr ); // No task factory - use all residues.
 	}
 
 	if ( polar_ && hydrophobic_ ) {

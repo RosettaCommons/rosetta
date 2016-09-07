@@ -54,13 +54,13 @@ void StructureDependentPeakCalibrator::init_calibrator() {
 
 void StructureDependentPeakCalibrator::generate_constraints() {
 	core::Size npeaks( peaks().size() );
-	constraints_.resize( npeaks, NULL );
-	core::scoring::constraints::ConstraintOP dummy( NULL );
+	constraints_.resize( npeaks, nullptr );
+	core::scoring::constraints::ConstraintOP dummy( nullptr );
 	core::pose::Pose dummy_pose;
 	core::Size ct( 1 );
 	runtime_assert( structures_.size() );
 	core::pose::Pose const& pose( **(structures_.begin()) );
-	for ( utility::vector1< CrossPeakOP >::const_iterator it = peaks().begin(); it != peaks().end(); ++it, ++ct ) {
+	for ( auto it = peaks().begin(); it != peaks().end(); ++it, ++ct ) {
 		(*it)->create_fa_and_cen_constraint( constraints_[ ct ], dummy, pose, dummy_pose, 1, 0.0 /*padding*/, true /*only fa cst*/ );
 	}
 }
@@ -107,7 +107,7 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 	RealVector distance_deltas( structures_.size(), 0.0 );
 
 
-	for ( utility::vector1< CrossPeakOP >::const_iterator it = peaks().begin(); it != peaks().end(); ++it, ++ct ) {
+	for ( auto it = peaks().begin(); it != peaks().end(); ++it, ++ct ) {
 		if ( !constraints_[ ct ] ) continue;
 		Size violated( 0 );
 		Size pose_ct( 1 );

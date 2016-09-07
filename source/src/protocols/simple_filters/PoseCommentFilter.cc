@@ -42,7 +42,7 @@ PoseComment::PoseComment() :
 {
 }
 
-PoseComment::~PoseComment() {}
+PoseComment::~PoseComment() = default;
 
 void
 PoseComment::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
@@ -94,8 +94,8 @@ PoseComment::compute(
 		if ( comments.empty() ) { //size() == 0 )
 			return 0.0;
 		}
-		for ( std::map< std::string, std::string >::const_iterator it = comments.begin(); it != comments.end(); ++it ) {// iterate over all comments and find the one with the value
-			if ( it->second == comment_value() ) {
+		for (const auto & comment : comments) {// iterate over all comments and find the one with the value
+			if ( comment.second == comment_value() ) {
 				return 1.0;
 			}
 		}

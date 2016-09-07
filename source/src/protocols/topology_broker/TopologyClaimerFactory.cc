@@ -68,7 +68,7 @@ namespace topology_broker {
 #if defined MULTI_THREADED
 std::atomic< TopologyClaimerFactory * > TopologyClaimerFactory::instance_( 0 );
 #else
-TopologyClaimerFactory * TopologyClaimerFactory::instance_( 0 );
+TopologyClaimerFactory * TopologyClaimerFactory::instance_( nullptr );
 #endif
 
 #ifdef MULTI_THREADED
@@ -147,7 +147,7 @@ TopologyClaimerOP TopologyClaimerFactory::newTopologyClaimer(const std::string& 
 		utility_exit_with_message(ss.str());
 
 		// purely superficial return statement to quiet the compiler
-		return NULL;
+		return nullptr;
 	}
 }
 

@@ -54,16 +54,16 @@ public:
 	AntibodyModeler();
 
 	// default destructor
-	~AntibodyModeler();
+	~AntibodyModeler() override;
 
 	void set_default();
 
 	void init_from_options();
 
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	virtual void init_on_new_input();
 

@@ -61,11 +61,7 @@ public: // Creation
 
 	/// @brief Copy constructor
 	inline
-	TorsionID( TorsionID const & src ) :
-		rsd_( src.rsd_ ),
-		type_( src.type_ ),
-		torsion_( src.torsion_ )
-	{}
+	TorsionID( TorsionID const & ) = default;
 
 	/// @brief Property constructor
 	inline

@@ -37,22 +37,22 @@ class SurfaceVectorLoader : public basic::resource_manager::ResourceLoader
 {
 public:
 	SurfaceVectorLoader();
-	virtual ~SurfaceVectorLoader();
+	~SurfaceVectorLoader() override;
 
 	/// @brief Returns a SurfaceParametersOP which is constructed from the given input
 	/// stream (istream).
-	virtual
+	
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
 		basic::resource_manager::LocatorID const & locator_id,
 		std::istream & istream
-	) const;
+	) const override;
 
 	/// @brief Returns the default options for SurfaceParameters
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const;
+	default_options() const override;
 
 };
 

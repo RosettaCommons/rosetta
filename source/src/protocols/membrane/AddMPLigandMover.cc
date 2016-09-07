@@ -82,14 +82,10 @@ AddMPLigandMover::AddMPLigandMover( core::Size closest_rsd, core::Size ligand_se
 
 /// @brief Copy Constructor
 /// @details Mkae a deep copy of this mover
-AddMPLigandMover::AddMPLigandMover( AddMPLigandMover const & src ) :
-	protocols::moves::Mover( src ),
-	closest_rsd_( src.closest_rsd_ ),
-	ligand_seqpos_( src.ligand_seqpos_ )
-{}
+AddMPLigandMover::AddMPLigandMover( AddMPLigandMover const & ) = default;
 
 /// @brief Destructor
-AddMPLigandMover::~AddMPLigandMover() {}
+AddMPLigandMover::~AddMPLigandMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

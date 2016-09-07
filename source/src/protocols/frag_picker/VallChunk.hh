@@ -38,7 +38,7 @@ class VallChunk: public utility::pointer::ReferenceCount, public utility::pointe
 {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~VallChunk();
+	~VallChunk() override;
 
 	VallChunk(VallProviderAP provider);
 

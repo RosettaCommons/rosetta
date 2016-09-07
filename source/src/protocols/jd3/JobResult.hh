@@ -43,7 +43,7 @@ class JobResult : public utility::pointer::ReferenceCount
 public:
 
 	JobResult();
-	virtual ~JobResult();
+	~JobResult() override;
 
 	virtual JobStatus status() const = 0;
 

@@ -62,10 +62,9 @@ std::ostream & operator<< (
 	ClusterBase::ClusterList const & cl
 ) {
 	Size ncl( 1 );
-	for ( ClusterBase::ClusterList::const_iterator it = cl.begin(), eit = cl.end();
-			it != eit; ++it ) {
-		out << "CLUSTER " << RJ(3, ncl++ ) << " " << RJ(4, it->size()) << " ";
-		for ( ClusterBase::IntraClusterIterator cit = it->begin(), ecit = it->end();
+	for (const auto & it : cl) {
+		out << "CLUSTER " << RJ(3, ncl++ ) << " " << RJ(4, it.size()) << " ";
+		for ( auto cit = it.begin(), ecit = it.end();
 				cit != ecit; ++cit ) {
 			out << RJ( 4, *cit ) << " ";
 		}
@@ -209,7 +208,7 @@ void ClusterPhilStyle::compute() {
 			if ( lowrmsi != i ) { // is a different cluster centre closer to us than our current centre ?
 				// switch over;
 				clusterlist_[ lowrmsi ].push_back( clusterlist_[i][j-1] );
-				std::deque< Size >::iterator it = clusterlist_[i].begin();
+				auto it = clusterlist_[i].begin();
 				it += j-1;
 				clusterlist_[ i ].erase( it );
 			}

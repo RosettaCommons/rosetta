@@ -37,8 +37,8 @@ namespace resource_manager {
 class ResourceLoaderCreator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual
-	~ResourceLoaderCreator();
+	
+	~ResourceLoaderCreator() override;
 
 	/// @brief Instantiate a ResourceLoader
 	virtual

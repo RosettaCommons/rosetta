@@ -33,6 +33,7 @@
 #include <numeric/random/random_permutation.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
@@ -56,17 +57,17 @@ using namespace core;
 using namespace fragment;
 using namespace jumping;
 
-TemplateJumpSetup::~TemplateJumpSetup() {}
-FixTemplateJumpSetup::~FixTemplateJumpSetup() {}
+TemplateJumpSetup::~TemplateJumpSetup() = default;
+FixTemplateJumpSetup::~FixTemplateJumpSetup() = default;
 
 TemplateJumpSetup::TemplateJumpSetup(
 	TemplatesCOP templates,
 	core::fragment::SecondaryStructureCOP secstruct,
 	PairingStatisticsCOP strand_stats,
 	core::scoring::dssp::PairingsList const& helix_pairings
-) : templates_( templates ),
-	secstruct_( secstruct ),
-	strand_stats_( strand_stats ),
+) : templates_(std::move( templates )),
+	secstruct_(std::move( secstruct )),
+	strand_stats_(std::move( strand_stats )),
 	helix_pairings_( helix_pairings )
 {}
 
@@ -75,7 +76,7 @@ TemplateJumpSetup::create_jump_sample() const {
 	if ( templates_ ) {
 		tr.Debug << "create JumpSample from Templates: nres = " << templates_->target_total_residue() << "\n" << templates_->pairings() << std::endl;
 	}
-	runtime_assert( strand_stats_ != 0 );
+	runtime_assert( strand_stats_ != nullptr );
 
 	if ( !strand_stats_->nr_models() ) {
 		core::scoring::dssp::PairingList no_jumps; //create empty pairing list
@@ -135,7 +136,7 @@ TemplateJumpSetup::create_jump_sample() const {
 		//check if pairing is in templates...
 		bool found( false );
 		if ( templates_ ) {
-			for ( Templates::const_iterator it=templates_->begin(),
+			for ( auto it=templates_->begin(),
 					eit = templates_->end(); it!=eit && !found; ++it ) {
 				//check if at least 1 template has pairing .. we know all its pairings already aligned in targe-sequence...
 				// its in the strand_stats_
@@ -149,36 +150,35 @@ TemplateJumpSetup::create_jump_sample() const {
 	// 1.) don't want to have two pairings with same register in close vicinity...
 	// 2.) don't want to apply very local pairings very often ... use only 20% of time
 	core::scoring::dssp::PairingList final_selection;
-	for ( core::scoring::dssp::PairingList::iterator it = target_pairings.begin(), eit = target_pairings.end();
-			it!=eit; ++it ) {
+	for (auto & target_pairing : target_pairings) {
 
 		bool ignore( false );
 
 		// is a very short sequence separation?
-		if ( std::abs( (int) it->Pos2() - (int) it->Pos1() ) < 15 ) {
-			tr.Debug << "pairing " << *it << " is close in sequence..." << std::endl;
+		if ( std::abs( (int) target_pairing.Pos2() - (int) target_pairing.Pos1() ) < 15 ) {
+			tr.Debug << "pairing " << target_pairing << " is close in sequence..." << std::endl;
 			if ( numeric::random::rg().uniform() < 0.2 ) {
 				tr.Debug << "selected with 20% chance " << std::endl;
-				final_selection.push_back( *it );
+				final_selection.push_back( target_pairing );
 			} else ignore = true;
 		}
 
 		// are already pairings selected with same register and not far away ?
-		Size const my_reg = it->get_register();
+		Size const my_reg = target_pairing.get_register();
 
-		for ( core::scoring::dssp::PairingList::iterator fit = final_selection.begin(), efit = final_selection.end();
+		for ( auto fit = final_selection.begin(), efit = final_selection.end();
 				fit!=efit && !ignore; ++fit ) {
 			if ( my_reg == fit->get_register() ) {
-				if ( std::abs( (int) it->Pos1() - (int) fit->Pos1() ) < 15
-						|| std::abs( (int) it->Pos1() - (int) fit->Pos2() ) < 15
-						|| std::abs( (int) it->Pos2() - (int) fit->Pos1() ) < 15
-						|| std::abs( (int) it->Pos2() - (int) fit->Pos2() ) < 15 ) {
+				if ( std::abs( (int) target_pairing.Pos1() - (int) fit->Pos1() ) < 15
+						|| std::abs( (int) target_pairing.Pos1() - (int) fit->Pos2() ) < 15
+						|| std::abs( (int) target_pairing.Pos2() - (int) fit->Pos1() ) < 15
+						|| std::abs( (int) target_pairing.Pos2() - (int) fit->Pos2() ) < 15 ) {
 					ignore = true;
 				}
 			}
 		}
-		if ( !ignore ) final_selection.push_back( *it );
-		else tr.Debug << "pairing " << *it << " ignored because it is redundant " << std::endl;
+		if ( !ignore ) final_selection.push_back( target_pairing );
+		else tr.Debug << "pairing " << target_pairing << " ignored because it is redundant " << std::endl;
 	}
 
 	if ( helix_pairings_.size() ) {
@@ -197,7 +197,7 @@ TemplateJumpSetup::create_jump_sample() const {
 
 jumping::JumpSample
 TemplateJumpSetup::clean_jumps( JumpSample const& target_jumps ) const {
-	runtime_assert( strand_stats_ != 0 );
+	runtime_assert( strand_stats_ != nullptr );
 
 	if ( !strand_stats_->nr_models() ) {
 		core::scoring::dssp::PairingList no_jumps; //create empty pairing list
@@ -214,9 +214,8 @@ TemplateJumpSetup::clean_jumps( JumpSample const& target_jumps ) const {
 	target_jumps.generate_jump_frames( jump_frames,mm );
 
 	// treat each jump individually ---> want to select frags only from templates that have compatible pairings
-	for ( FrameList::iterator jump_frame = jump_frames.begin();
-			jump_frame != jump_frames.end(); ++jump_frame ) {
-		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
+	for (auto & jump_frame : jump_frames) {
+		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( jump_frame->start(), jump_frame->stop() ) );
 		bool found( false );
 		for ( PairingStatistics::const_iterator it = strand_stats_->begin(); !found && it != strand_stats_->end(); ++it ) {
 			found =  it->second.pairing().has_pairing( target_pairing );
@@ -229,7 +228,7 @@ TemplateJumpSetup::clean_jumps( JumpSample const& target_jumps ) const {
 }
 
 bool TemplateJumpSetup::is_helix_jump( core::scoring::dssp::Pairing const& p ) const {
-	core::scoring::dssp::PairingList::const_iterator iter =  find( helix_pairings_.begin(), helix_pairings_.end(), p );
+	auto iter =  find( helix_pairings_.begin(), helix_pairings_.end(), p );
 	if ( iter != helix_pairings_.end() ) return true;
 	core::scoring::dssp::Pairing rev = p;
 	rev.reverse();
@@ -250,32 +249,29 @@ TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinemati
 	target_jumps.generate_jump_frames( jump_frames,mm );
 
 	// treat each jump individually ---> want to select frags only from templates that have compatible pairings
-	for ( FrameList::iterator jump_frame = jump_frames.begin();
-			jump_frame != jump_frames.end(); ++jump_frame ) {
-		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
+	for (auto & jump_frame : jump_frames) {
+		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( jump_frame->start(), jump_frame->stop() ) );
 		Size nr_frags( 0 );
 		tr.Debug << "get frags for pairing " << target_pairing << std::endl;
 		if ( templates_ ) {
 			if ( !is_helix_jump( target_pairing ) ) {
-				for ( Templates::const_iterator it=templates_->begin(),
-						eit = templates_->end(); it!=eit; ++it ) {
+				for (const auto & it : *templates_) {
 
 					//check if template has pairing .. we know all its pairings already aligned in targe-sequence...
 					// its in the strand_stats_
-					std::string const& model_id( it->first );
+					std::string const& model_id( it.first );
 					if ( strand_stats_->topology( model_id ).has_pairing( target_pairing ) ) {
 						nr_frags++;
-						FrameList aFrame; aFrame.push_back( *jump_frame );
-						it->second->steal_frags( aFrame, *jump_frags  );
+						FrameList aFrame; aFrame.push_back( jump_frame );
+						it.second->steal_frags( aFrame, *jump_frags  );
 					}
 				}
 			} else { //get here if pairing is helix jump
 				tr.Debug << "has been found in helix-list blindly collect all jump-geometries from models with an H" << std::endl;
-				FrameList aFrame; aFrame.push_back( *jump_frame );
-				for ( Templates::TemplateList::const_iterator it = templates_->helixjump_picks().begin(),
-						eit =  templates_->helixjump_picks().end(); it != eit; ++it ) {
+				FrameList aFrame; aFrame.push_back( jump_frame );
+				for (const auto & it : templates_->helixjump_picks()) {
 					nr_frags++;
-					(*it)->steal_frags( aFrame, *jump_frags );
+					it->steal_frags( aFrame, *jump_frags );
 				}
 			}
 		}
@@ -305,14 +301,14 @@ FixTemplateJumpSetup::FixTemplateJumpSetup(
 	core::scoring::dssp::PairingsList const& helix_pairings,
 	BaseJumpSetupOP jump_def
 ) : TemplateJumpSetup(  templates , secstruct, strand_stats, helix_pairings ),
-	jump_def_( jump_def )
+	jump_def_(std::move( jump_def ))
 {}
 
 FixTemplateJumpSetup::FixTemplateJumpSetup(
 	TemplateJumpSetup const& templ,
 	BaseJumpSetupOP jump_def
 ) : TemplateJumpSetup( templ ),
-	jump_def_( jump_def )
+	jump_def_(std::move( jump_def ))
 {}
 
 JumpSample

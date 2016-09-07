@@ -60,17 +60,17 @@ namespace topology_broker {
 class MetalloClaimer : public SequenceClaimer, public FragmentJumpClaimer {
 public:
 	MetalloClaimer(); //for factory
-	~MetalloClaimer() {};
+	~MetalloClaimer() override = default;
 	//MetalloClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
 	//MetalloClaimer( simple_moves::FragmentMoverOP );
 
 	MetalloClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<MetalloClaimer>( TopologyClaimer::shared_from_this() ); }
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new MetalloClaimer( *this ) );
 	}
 
-	virtual void generate_sequence_claims( claims::DofClaims& dc ) {
+	void generate_sequence_claims( claims::DofClaims& dc ) override {
 		FragmentJumpClaimer::generate_sequence_claims( dc );
 		SequenceClaimer::generate_sequence_claims( dc );
 	};
@@ -78,12 +78,12 @@ public:
 	///mainly calls parent function... but is also used to figure out what residue number we are jumping to.
 	// virtual void initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init );
 
-	virtual void generate_claims( protocols::topology_broker::claims::DofClaims& dc);
+	void generate_claims( protocols::topology_broker::claims::DofClaims& dc) override;
 
 	/// @brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	//virtual DofClaims finalize_claims( DofClaims& );
 
-	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) {
+	void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) override {
 		claims::DofClaims my_failures;
 		FragmentJumpClaimer::initialize_dofs( pose, init_claims, my_failures );
 		SequenceClaimer::initialize_dofs( pose, my_failures, failed_to_init );
@@ -92,7 +92,7 @@ public:
 	// virtual bool accept_declined_claim( DofClaim const& was_declined );
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -100,7 +100,7 @@ public:
 		return "MetalloClaimer";
 	}
 
-	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
+	void add_constraints( core::pose::Pose& /*pose*/ ) const override;
 
 	//void set_mover( simple_moves::FragmentMoverOP mover ) {
 	//  mover_ = mover;
@@ -119,9 +119,9 @@ public:
 
 protected:
 
-	virtual void set_defaults();
-	virtual bool read_tag( std::string tag, std::istream& );
-	virtual void init_after_reading();
+	void set_defaults() override;
+	bool read_tag( std::string tag, std::istream& ) override;
+	void init_after_reading() override;
 
 	//  simple_moves::FragmentMover const& mover() const {
 	//   return *mover_;

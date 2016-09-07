@@ -56,8 +56,8 @@ public:
 	//SymDofMover(const SymDofMover& rval);
 
 	// --- virtual functions from mover ---
-	virtual std::string get_name() const { return "SymDofMover"; }
-	virtual void apply(Pose& pose);
+	std::string get_name() const override { return "SymDofMover"; }
+	void apply(Pose& pose) override;
 	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, Size start, Size end );
@@ -66,19 +66,19 @@ public:
 	// virtual void alignaxis(core::pose::Pose & pose, numeric::xyzVector<Real> newaxis, numeric::xyzVector<Real> oldaxis, numeric::xyzVector<Real> cen , Size start, Size end );
 
 	// --- virtual copy constructors
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 
 	/// @brief create this type of object
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		DataMap &,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	void add_components_to_pose_if_necessary(Pose & pose);
 

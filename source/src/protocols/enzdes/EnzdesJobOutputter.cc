@@ -69,7 +69,7 @@ EnzdesJobOutputter::EnzdesJobOutputter()
 	}
 }
 
-EnzdesJobOutputter::~EnzdesJobOutputter(){}
+EnzdesJobOutputter::~EnzdesJobOutputter()= default;
 
 void
 EnzdesJobOutputter::final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag )
@@ -107,7 +107,7 @@ EnzdesJobOutputter::scorefile(
 	utility::vector1< core::io::silent::SilentEnergy > silent_Es( enz_scofile_->silent_Es() );
 
 	//also add eventual filter reports to the scorefile
-	for ( protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), it_end(job->output_string_real_pairs_end());
+	for ( auto it(job->output_string_real_pairs_begin()), it_end(job->output_string_real_pairs_end());
 			it != it_end; ++it ) {
 		silent_Es.push_back( core::io::silent::SilentEnergy(  it->first, it->second, 1.0, std::max( 10, (int) (it->first).length() + 3 )  ) );
 	}

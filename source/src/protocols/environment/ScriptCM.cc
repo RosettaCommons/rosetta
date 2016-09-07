@@ -106,7 +106,7 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 	core::pose::Pose const& pose ) {
 	name_ = tag->getOption< std::string >( "name" );
 
-	for ( utility::vector0< utility::tag::TagCOP>::const_iterator tag_it = tag->getTags().begin();
+	for ( auto tag_it = tag->getTags().begin();
 			tag_it != tag->getTags().end(); ++tag_it ) {
 		TagCOP subtag = *tag_it;
 		if ( (*tag_it)->getName() == "Mover" ) {

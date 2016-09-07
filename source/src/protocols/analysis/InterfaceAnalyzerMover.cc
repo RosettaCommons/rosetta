@@ -70,6 +70,7 @@
 #include <basic/MetricValue.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 //#include <utility/exit.hh>
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -170,7 +171,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 ) :
 	Mover(),
 	interface_jump_(1),
-	fixed_chains_(fixed_chains),
+	fixed_chains_(std::move(fixed_chains)),
 	tracer_(tracer),
 	compute_packstat_(compute_packstat),
 	explicit_constructor_(true),
@@ -215,7 +216,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	dock_chains_ = dock_chains;
 }
 
-InterfaceAnalyzerMover::~InterfaceAnalyzerMover() {}
+InterfaceAnalyzerMover::~InterfaceAnalyzerMover() = default;
 
 void
 InterfaceAnalyzerMover::set_defaults() {
@@ -531,14 +532,14 @@ void InterfaceAnalyzerMover::make_interface_set( core::pose::Pose & pose ){
 	//Transform interface_set_ to vector1<bool> to match all the per residue data and regular data.
 	data_.interface_nres[ total ] = interface_set_.size();
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		std::set< core::Size >::iterator it =  interface_set_.find( i );
+		auto it =  interface_set_.find( i );
 		if ( it != interface_set_.end() ) {
 
 			per_residue_data_.interface_residues[ i ] = true;
 			data_.interface_residues[ total ][ i ] = true;
 
 			core::Size chain = pose.residue( i ).chain();
-			std::set< core::Size >::iterator it_chain =  upstream_chains_.find( chain );
+			auto it_chain =  upstream_chains_.find( chain );
 			InterfaceRegion region;
 
 			if ( it_chain != upstream_chains_.end() ) {
@@ -570,7 +571,7 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 	//itterate over all residues determine what part of the interface they are
 	//also select what chain(s) are upstream and downstream of the interface
 	for ( Size ii = 1; ii<= pose.total_residue(); ++ii ) {
-		std::set< core::Size >::const_iterator it_chain = ignored_chains_.find( pose.chain( ii ) );
+		auto it_chain = ignored_chains_.find( pose.chain( ii ) );
 		if ( it_chain != ignored_chains_.end() ) {
 			include_residue_[ii] = false; // Ignore this residue in total energy/Sasa calculations
 		}
@@ -1035,13 +1036,12 @@ void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pos
 		TR << "No interface detected.  Skipping per residue data calculation." << std::endl;
 		return;
 	}
-	for ( std::set< core::Size >::const_iterator it( interface_set_.begin() ), end( interface_set_.end() );
-			it != end; ++it ) {
-		complexed_residue_score = complexed_pose.energies().residue_total_energies( *it )[ ScoreType( total_score ) ];
-		separated_residue_score = separated_pose.energies().residue_total_energies( *it )[ ScoreType( total_score ) ];
+	for (unsigned long it : interface_set_) {
+		complexed_residue_score = complexed_pose.energies().residue_total_energies( it )[ ScoreType( total_score ) ];
+		separated_residue_score = separated_pose.energies().residue_total_energies( it )[ ScoreType( total_score ) ];
 
 		InterfaceRegion region;
-		core::Size chain = complexed_pose.residue( *it ).chain();
+		core::Size chain = complexed_pose.residue( it ).chain();
 		if ( upstream_chains_.count( chain ) ) {
 			region = side1;
 		} else {
@@ -1054,27 +1054,27 @@ void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pos
 		data_.separated_interface_score[ region ] += separated_residue_score;
 		data_.separated_interface_score[ total ] += separated_residue_score;
 
-		data_.dSASA[ region ] += per_residue_data_.dSASA[ *it ];
-		data_.dhSASA[ region ] += per_residue_data_.dhSASA[ *it ];
-		data_.dhSASA_rel_by_charge[ region ] += per_residue_data_.dhSASA_rel_by_charge[ *it ];
+		data_.dSASA[ region ] += per_residue_data_.dSASA[ it ];
+		data_.dhSASA[ region ] += per_residue_data_.dhSASA[ it ];
+		data_.dhSASA_rel_by_charge[ region ] += per_residue_data_.dhSASA_rel_by_charge[ it ];
 
-		if ( complexed_pose.residue( *it ).is_aromatic() ) {
+		if ( complexed_pose.residue( it ).is_aromatic() ) {
 			data_.aromatic_nres[ region ] += 1;
 			core::Real dG = complexed_residue_score- separated_residue_score;
 			aromatic_dG[ total ] += dG;
 			aromatic_dG[ region ] += dG;
 			if ( data_.dSASA[ total ] > 0.0 ) {
-				aromatic_dSASA[ total ]+= per_residue_data_.dSASA[ *it ];
-				aromatic_dSASA[ region ] += per_residue_data_.dSASA[ *it ];
+				aromatic_dSASA[ total ]+= per_residue_data_.dSASA[ it ];
+				aromatic_dSASA[ region ] += per_residue_data_.dSASA[ it ];
 			}
 		}
 		//SS
 		//skip non-protein residues for SS calculation
-		if ( complexed_pose.residue( *it ).is_protein() ) {
-			if ( dssp.get_dssp_secstruct( *it ) =='E' ) {
+		if ( complexed_pose.residue( it ).is_protein() ) {
+			if ( dssp.get_dssp_secstruct( it ) =='E' ) {
 				data_.ss_sheet_nres[ region ] += 1;
 				data_.ss_sheet_nres[ total ] += 1;
-			} else if ( dssp.get_dssp_secstruct( *it ) == 'H' ) {
+			} else if ( dssp.get_dssp_secstruct( it ) == 'H' ) {
 				data_.ss_helix_nres[ region ] += 1;
 				data_.ss_helix_nres[ total ] += 1;
 			} else {
@@ -1120,9 +1120,8 @@ void InterfaceAnalyzerMover::compute_interface_packstat( core::pose::Pose & pose
 		return;
 	}
 
-	for ( std::set< Size >::const_iterator it( interface_set_.begin() ), end( interface_set_.end() );
-			it != end; ++it ) {
-		interface_pack_score_sum += interface_pack_scores[ *it ];
+	for (unsigned long it : interface_set_) {
+		interface_pack_score_sum += interface_pack_scores[ it ];
 		++interface_num_res;
 	}
 	//fills the selection for pymol output, doesn't print anything here
@@ -1156,13 +1155,12 @@ void InterfaceAnalyzerMover::compute_interface_delta_hbond_unsat( core::pose::Po
 	//loop over the interface set and figure out what's burried/unsat
 	core::Size delta_unsat_hbond_counter( 0 );
 	utility::vector1< core::id::AtomID > delta_unsat_hbond_atid_vector;
-	for ( std::set< core::Size >::const_iterator it(interface_set_.begin()), end(interface_set_.end());
-			it != end; ++it ) {
+	for (unsigned long it : interface_set_) {
 		//TR << "UnsatHbond res " << *it << std::endl;
 		//iterate over all its atoms, check if they're in the map of missing, and print their string name
-		core::chemical::ResidueType const & res( complexed_pose.residue_type( *it ) );
+		core::chemical::ResidueType const & res( complexed_pose.residue_type( it ) );
 		for ( core::Size i=1 ; i <= res.natoms(); ++i ) {
-			core::id::AtomID const atid(i, *it);
+			core::id::AtomID const atid(i, it);
 
 			//TR << "UnsatHbond atom " << i << std::endl;
 
@@ -1346,16 +1344,14 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
 	//now calculate and print results
 	TR << "Computing Shape Complementarity Score..." << std::endl;
 	TR << "Upstream chain(s) numbers: ";
-	for ( std::set< core::Size >::const_iterator it ( upstream_chains_.begin() ), end( upstream_chains_.end() );
-			it != end; ++it ) {
-		TR << *it << ", ";
+	for (unsigned long upstream_chain : upstream_chains_) {
+		TR << upstream_chain << ", ";
 	}
 	TR << std::endl;
 
 	TR << "Downstream chain(s) numbers: ";
-	for ( std::set< core::Size >::const_iterator it( downstream_chains_.begin() ), end( downstream_chains_.end() );
-			it != end; ++it ) {
-		TR << *it << ", ";
+	for (unsigned long downstream_chain : downstream_chains_) {
+		TR << downstream_chain << ", ";
 	}
 	TR << std::endl;
 
@@ -1389,10 +1385,9 @@ void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::po
 	utility::vector1< bool > allowed_aa( chemical::num_canonical_aas, false ); //no allowed residues
 	allowed_aa[ core::chemical::aa_from_oneletter_code( 'G' ) ] = true; //allow gly only
 	//allow all interface residues to be mutated to Gly
-	for ( std::set< core::Size >::const_iterator it( interface_set_.begin() ), end( interface_set_.end() );
-			it != end; ++it ) {
-		task->nonconst_residue_task( *it ).restrict_absent_canonical_aas( allowed_aa );
-		packable[ *it ] = true;
+	for (unsigned long it : interface_set_) {
+		task->nonconst_residue_task( it ).restrict_absent_canonical_aas( allowed_aa );
+		packable[ it ] = true;
 	}
 	task->restrict_to_residues( packable );  //prevents non interface res from changing
 
@@ -1591,9 +1586,8 @@ void InterfaceAnalyzerMover::report_data(){
 
 	} else {
 		//or report to job
-		typedef std::map< std::string , core::Real >::iterator it_type;
-		for ( it_type it = score_data_.begin(); it != score_data_.end(); it++ ) {
-			current_job->add_string_real_pair(it->first, it->second);
+		for (auto & it : score_data_) {
+			current_job->add_string_real_pair(it.first, it.second);
 		}
 	}
 }
@@ -1636,11 +1630,10 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::
 	bool first_sel_complete( false );
 	core::Size resnum;
 	char /*chain_char, */chain_char_last( 'z' );
-	for ( std::set< core::Size >::const_iterator it( interface_set.begin()), end(interface_set.end() );
-			it != end; ++it ) {
+	for (unsigned long it : interface_set) {
 		//sets the current values
-		resnum = pose.pdb_info()->number( *it );
-		char chain_char = pose.pdb_info()->chain( *it );
+		resnum = pose.pdb_info()->number( it );
+		char chain_char = pose.pdb_info()->chain( it );
 		//special print if the first time through
 		if ( !first_sel_complete ) {
 			interface_sele << "cmd.select(\"/" << pymol_obj_for_interface_sel << "//" << chain_char << "/"
@@ -1699,8 +1692,8 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 		atomname = pose.residue(id.rsd()).atom_name(id.atomno());
 		//get rid of whitespace in the atomname
 		std::string temp;
-		for ( unsigned int j = 0; j < atomname.length(); j++ ) {
-			if ( atomname[ j ] != ' ' ) { temp += atomname[ j ]; }
+		for (char j : atomname) {
+			if ( j != ' ' ) { temp += j; }
 		}
 		atomname = temp;
 		//do the tracer/job output

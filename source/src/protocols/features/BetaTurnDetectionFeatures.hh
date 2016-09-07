@@ -37,16 +37,16 @@ public:
 
 	BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & from );
 
-	virtual ~BetaTurnDetectionFeatures();
+	~BetaTurnDetectionFeatures() override;
 
 	/// @brief return string with class name
-	virtual std::string
-	type_name() const;
+	std::string
+	type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
-		utility::sql_database::sessionOP db_session ) const;
+		utility::sql_database::sessionOP db_session ) const override;
 
 private:
 	/// @brief generate the beta_turns table schema
@@ -57,16 +57,16 @@ private:
 public:
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
-	virtual utility::vector1< std::string >
-	features_reporter_dependencies() const;
+	utility::vector1< std::string >
+	features_reporter_dependencies() const override;
 
 	/// @brief collect all the feature data for the pose
-	virtual core::Size
+	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & /*relevant_residues*/,
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session );
+		utility::sql_database::sessionOP db_session ) override;
 
 private:
 	BetaTurnDetectionCOP btd_;

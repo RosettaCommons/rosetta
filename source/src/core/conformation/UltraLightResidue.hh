@@ -37,7 +37,7 @@ public:
 
 	UltraLightResidue(UltraLightResidue const & src);
 
-	virtual ~UltraLightResidue() {};
+	~UltraLightResidue() override = default;
 
 	/// @brief update conformation with current coords. Slow.
 	void update_conformation(Conformation & conformation) const;

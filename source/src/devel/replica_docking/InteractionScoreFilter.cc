@@ -72,7 +72,7 @@ InteractionScoreFilter::InteractionScoreFilter( core::scoring::ScoreFunctionCOP 
 	scorefxn_ = scorefxn->clone();
 }
 
-InteractionScoreFilter::~InteractionScoreFilter(){}
+InteractionScoreFilter::~InteractionScoreFilter() = default;
 
 protocols::filters::FilterOP
 InteractionScoreFilter::clone() const{

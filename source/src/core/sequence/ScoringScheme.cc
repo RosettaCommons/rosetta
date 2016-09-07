@@ -32,7 +32,7 @@ namespace sequence {
 ScoringScheme::ScoringScheme() {}
 
 /// @brief dtor
-ScoringScheme::~ScoringScheme() {}
+ScoringScheme::~ScoringScheme() = default;
 
 /// @brief Initialize from a file.
 void ScoringScheme::read_from_file(

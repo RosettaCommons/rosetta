@@ -34,6 +34,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/types.hh>
 
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
@@ -185,7 +186,7 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 	assert( utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
 }
 
-EnvClaimBroker::~EnvClaimBroker() {}
+EnvClaimBroker::~EnvClaimBroker() = default;
 
 EnvClaimBroker::BrokerResult const & EnvClaimBroker::result() const {
 	return result_;
@@ -257,7 +258,7 @@ core::Size find_implied_cut( utility::vector1< core::Size > const & cycle,
 		}
 	}
 
-	tr.Debug << "  Looking for implied cuts from spatial information indicating cuts at: " << cuts << std::endl;;
+	tr.Debug << "  Looking for implied cuts from spatial information indicating cuts at: " << cuts << std::endl;
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 		core::Size const & cut = cuts[i];
 		if ( std::find( cycle.begin(), cycle.end(), cut ) != cycle.end() ) {
@@ -601,7 +602,7 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
 			assert( element.id.valid() );
 		}
 
-		std::pair< ControlStrength, ClientMoverOP > prev_str = std::make_pair( DOES_NOT_CONTROL, ClientMoverOP( NULL ) );
+		std::pair< ControlStrength, ClientMoverOP > prev_str = std::make_pair( DOES_NOT_CONTROL, ClientMoverOP( nullptr ) );
 
 		if ( max_strength.find( element.id ) != max_strength.end() ) {
 			prev_str = max_strength[ element.id ];
@@ -668,8 +669,6 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 	core::pose::Pose& pose ) {
 	using namespace basic::datacache;
 	using namespace core::pose::datacache;
-	typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
-	typedef std::set< WriteableCacheableDataOP > DataSet;
 
 	EnvClaims claims;
 
@@ -685,13 +684,12 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 	WriteableCacheableMapOP new_cached_data( new WriteableCacheableMap() );
 
 	//Claiming
-	for ( MoverPassMap::const_iterator mp_it = movers_and_passes.begin();
-			mp_it != movers_and_passes.end(); ++mp_it ) {
+	for (const auto & movers_and_passe : movers_and_passes) {
 
 		// a modifiable sandbox_map must be passed in separately, as pose is a const &.
 		WriteableCacheableMapOP sandbox_map( new WriteableCacheableMap( *orig_map ) );
 
-		claims::EnvClaims in_claims = mp_it->first->yield_claims( pose, sandbox_map );
+		claims::EnvClaims in_claims = movers_and_passe.first->yield_claims( pose, sandbox_map );
 		BOOST_FOREACH ( EnvClaimOP claim, in_claims ) {
 			if ( claim ) {
 				claim->annotate( pose, ann_ );
@@ -707,22 +705,20 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 		}
 
 		// Copy any new data from the sandbox map into the "new" map.
-		for ( DataMap::const_iterator subset_it = sandbox_map->begin(); subset_it != sandbox_map->end(); ++subset_it ) {
-			for ( DataSet::const_iterator data_it = subset_it->second.begin();
-					data_it != subset_it->second.end(); ++data_it  ) {
-				if ( !orig_map->has( *data_it ) ) {
-					new_cached_data->insert( *data_it );
+		for ( auto subset_it = sandbox_map->begin(); subset_it != sandbox_map->end(); ++subset_it ) {
+			for (const auto & data_it : subset_it->second) {
+				if ( !orig_map->has( data_it ) ) {
+					new_cached_data->insert( data_it );
 				}
 			}
 		}
 	}
 
 	//Write the items from the new_cache into the old cache.
-	for ( DataMap::const_iterator newmap_it = new_cached_data->begin();
+	for ( auto newmap_it = new_cached_data->begin();
 			newmap_it != new_cached_data->end(); ++newmap_it ) {
-		for ( DataSet::const_iterator data_it = newmap_it->second.begin();
-				data_it != newmap_it->second.end(); ++data_it ) {
-			orig_map->insert( *data_it );
+		for (const auto & data_it : newmap_it->second) {
+			orig_map->insert( data_it );
 		}
 	}
 
@@ -737,9 +733,9 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 
 void EnvClaimBroker::process_elements( ResElemVect const & elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
 
-	for ( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ) {
-		ResidueElement const & element = e_it->first;
-		ClientMoverCOP owner = e_it->second;
+	for (const auto & elem : elems) {
+		ResidueElement const & element = elem.first;
+		ClientMoverCOP owner = elem.second;
 
 		if ( !element.allow_duplicates ) {
 			if ( ann_->has_seq_label( element.label ) ) {
@@ -756,9 +752,9 @@ void EnvClaimBroker::process_elements( ResElemVect const & elems, FoldTreeSketch
 		}
 	}
 
-	for ( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ) {
-		ResidueElement const & element = e_it->first;
-		ClientMoverCOP owner = e_it->second;
+	for (const auto & elem : elems) {
+		ResidueElement const & element = elem.first;
+		ClientMoverCOP owner = elem.second;
 
 		if ( element.allow_duplicates ) {
 			if ( !ann_->has_seq_label( element.label ) ) {
@@ -896,10 +892,10 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
 
 }
 
-EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size > const & positions,
+EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size >  positions,
 	std::pair< std::string, std::string > const & atoms,
 	bool put_jump_stub_intra_residue  ) :
-	pos( positions ),
+	pos(std::move( positions )),
 	atoms( atoms ),
 	put_jump_stub_intra_residue( put_jump_stub_intra_residue )
 {

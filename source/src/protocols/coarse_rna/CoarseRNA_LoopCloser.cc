@@ -790,7 +790,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 
 	} else if ( choose_best_solution_ ) {
 
-		assert( scorefxn_ != 0 );
+		assert( scorefxn_ != nullptr );
 
 		Real best_score( 0.0 );
 		Size best_sol( 0 );

@@ -17,6 +17,7 @@
 
 
 // Unit Headers
+#include <utility>
 #include <utility/excn/Exceptions.fwd.hh>
 
 #include <utility/excn/EXCN_Base.hh>
@@ -61,9 +62,9 @@ public:
 
 class EXCN_Msg_Exception : public EXCN_Exception {
 public:
-	EXCN_Msg_Exception( std::string const& msg ) : msg_( msg ) {};
-	virtual void show( std::ostream& ) const;
-	virtual std::string const msg() const { return msg_; };
+	EXCN_Msg_Exception( std::string  msg ) : msg_(std::move( msg )) {};
+	void show( std::ostream& ) const override;
+	std::string const msg() const override { return msg_; };
 	virtual void add_msg( std::string const& str ) {
 		msg_ = msg_+"\n"+str;
 	}

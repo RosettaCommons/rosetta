@@ -111,7 +111,7 @@ public:
 	core::Real angle( core::Size index, core::Size offset );
 
 	// Always grab extra data from Vall
-	void add_pose( const core::pose::Pose &pose, core::Size nres, core::Size &offset, protocols::frag_picker::VallChunkOP chunk = NULL );
+	void add_pose( const core::pose::Pose &pose, core::Size nres, core::Size &offset, protocols::frag_picker::VallChunkOP chunk = nullptr );
 
 	//obsolete?
 	//void add_backbone_segment( const BackboneSegment &bs, core::Size &offset );

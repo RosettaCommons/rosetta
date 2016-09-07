@@ -74,39 +74,39 @@ FragmentClaimer::FragmentClaimer() :
 
 FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight ) :
 	TopologyClaimer( weight ),
-	mover_( mover ),
-	mover_tag_( tag ),
+	mover_(std::move( mover )),
+	mover_tag_(std::move( tag )),
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
-	runtime_assert( fragments() != 0 );
+	runtime_assert( fragments() != nullptr );
 }
 
 FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP frags ) :
 	TopologyClaimer( weight ),
-	mover_( mover ),
-	mover_tag_( tag ),
+	mover_(std::move( mover )),
+	mover_tag_(std::move( tag )),
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 	set_label( label );
 	set_fragments( frags );
-	runtime_assert( fragments() != 0 );
+	runtime_assert( fragments() != nullptr );
 }
 
 
 FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover ) :
 	TopologyClaimer(),
-	mover_( mover ),
+	mover_(std::move( mover )),
 	mover_tag_( "NoTag" ),
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
 	if ( mover_ ) mover_tag_ = mover_->type();
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
-	runtime_assert( fragments() != 0 );
+	runtime_assert( fragments() != nullptr );
 }
 
 
@@ -124,7 +124,7 @@ FragmentClaimer::FragmentClaimer( FragmentClaimer const & src ) :
 }
 
 
-FragmentClaimer::~FragmentClaimer() {}
+FragmentClaimer::~FragmentClaimer() = default;
 
 void FragmentClaimer::get_sequence_region( std::set< Size >& start_region ) const {
 	//TODO: this should probably use local positions rather than absolute positions, but AIN'T NOBODY GOT TIME FOR REFACTORING
@@ -254,10 +254,9 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims
 	init_map->set_bb( false );
 	init_map->set_jump( false );
 
-	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
-			it != eit; ++it ) {
-		if ( (*it)->owner().lock().get() == this ) {
-			(*it)->toggle( *init_map, true );
+	for (const auto & init_dof : init_dofs) {
+		if ( init_dof->owner().lock().get() == this ) {
+			init_dof->toggle( *init_map, true );
 			//don't really know how this looks for jumps
 			//   Size pos( (*it)->pos( 1 ) );
 			//if ( pos >= insert_size.size() + insert_size.back() || ( pos<= insert_size.size() && !insert_size[ pos ] ) ) {

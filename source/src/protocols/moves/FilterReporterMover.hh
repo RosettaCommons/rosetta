@@ -55,16 +55,16 @@ public:
 		std::ostream &, protocols::moves::MoverStatus const =
 		protocols::moves::FAIL_DO_NOT_RETRY);
 	FilterReporterMover(FilterReporterMover const &);
-	~FilterReporterMover();
+	~FilterReporterMover() override;
 
 	// assignment operator
 	FilterReporterMover & operator=(FilterReporterMover const & rhs);
 
 	// pure virtual overrides
-	virtual void apply(core::pose::Pose & pose);
-	virtual protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	void apply(core::pose::Pose & pose) override;
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	// accessors
 	protocols::moves::MoverOP get_mover() const;

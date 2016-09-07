@@ -62,7 +62,7 @@ public:
 	{};
 
 	/// @brief clone method, new frame with same alignment position, fragments are not copied!
-	virtual FrameOP clone() const;
+	FrameOP clone() const override;
 
 	//  -- cloneing with fragments is taken care of by base-class...
 
@@ -74,18 +74,18 @@ public:
 
 
 	/// @brief translate intra-frame position into sequence position. (trivial for base-class)
-	virtual core::Size seqpos( core::Size intra_pos ) const { // BaseClass --> continuous frames
+	core::Size seqpos( core::Size intra_pos ) const override { // BaseClass --> continuous frames
 		runtime_assert( intra_pos <= length() );
 		return pos_[ intra_pos ];
 	}
 
-	virtual bool moves_residue( core::Size pos ) const {
-		PosList::const_iterator it = find( pos_.begin(), pos_.end(), pos );
+	bool moves_residue( core::Size pos ) const override {
+		auto it = find( pos_.begin(), pos_.end(), pos );
 		return it != pos_.end();
 	}
 
 	/// @brief true if frame is continuous
-	virtual bool is_continuous() const
+	bool is_continuous() const override
 	{ return false; };
 
 	/// @brief assign sequence position or jump_nr to internal position pos
@@ -95,15 +95,15 @@ public:
 	}
 
 	/// @brief shift to new start position ( change end accordingly )
-	virtual void shift_to( core::Size setting );
+	void shift_to( core::Size setting ) override;
 
 	/// @brief shift frame by offset relative to current start position ( change end accordingly )
-	virtual void shift_by( int offset );
+	void shift_by( int offset ) override;
 
-	virtual void show( std::ostream& ) const;
-	virtual void read( std::istream& );
+	void show( std::ostream& ) const override;
+	void read( std::istream& ) override;
 
-	virtual bool align( core::id::SequenceMapping const& map );
+	bool align( core::id::SequenceMapping const& map ) override;
 
 protected:
 	void show_pos( std::ostream &out ) const;
@@ -132,7 +132,7 @@ public:
 	//FragDataOP generate_fragdata( SingleResidueFragDataOP frag_res_type, SingleResidueFragDataOP jump_frag_type  )
 
 	/// @brief clone method, new frame with same alignment position, fragments are not copied!
-	virtual FrameOP clone() const {
+	FrameOP clone() const override {
 		JumpingFrameOP newFrame( new JumpingFrame( start(), end(), length() ) );
 		newFrame->pos() = pos();
 		return newFrame;
@@ -142,7 +142,7 @@ public:
 		return "JUMPFRAME";
 	}
 
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 	/// fragment_as_pose ????

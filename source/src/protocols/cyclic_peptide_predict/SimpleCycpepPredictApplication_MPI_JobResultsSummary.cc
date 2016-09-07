@@ -31,7 +31,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_JobResultsSummary" );
 
@@ -69,7 +69,7 @@ SimpleCycpepPredictApplication_MPI_JobResultsSummary::SimpleCycpepPredictApplica
 
 /// @brief Explicit virtual destructor.
 ///
-SimpleCycpepPredictApplication_MPI_JobResultsSummary::~SimpleCycpepPredictApplication_MPI_JobResultsSummary() {}
+SimpleCycpepPredictApplication_MPI_JobResultsSummary::~SimpleCycpepPredictApplication_MPI_JobResultsSummary() = default;
 
 /// @brief Print a summary of this object to a stream.
 ///

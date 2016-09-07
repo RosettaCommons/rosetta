@@ -163,9 +163,8 @@ void steal_frag_set_from_pose (
 	FrameOP frame;
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
-	for ( std::set< core::Size >::const_iterator pos = selected_residues.begin();
-			pos != selected_residues.end(); ++pos ) {
-		frame = FrameOP( new Frame( *pos, frag_type ) );
+	for (unsigned long selected_residue : selected_residues) {
+		frame = FrameOP( new Frame( selected_residue, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );
 	}
@@ -250,7 +249,7 @@ merge_frags( FragSet const& good_frags, FragSet const& filling, Size min_nr_frag
 				numeric::random::random_permutation( frag_ids, numeric::random::rg() ); //playing safe
 			}
 
-			for ( FragID_List::iterator it = frag_ids.begin(), eit = frag_ids.end();
+			for ( auto it = frag_ids.begin(), eit = frag_ids.end();
 					it != eit && nr_fill; ++it, --nr_fill ) {
 				merged_frags->add( *it );
 				// book keeping: raise counter for affected residues
@@ -324,15 +323,15 @@ void dump_frames_as_pdb(
 	outfile << "REMARK  666  Fragment set for outtag pose \n";
 
 	//now let's go through every fragment of every frame and dump to pdb
-	for ( utility::vector1< FrameOP >::const_iterator frame_it = frames.begin(); frame_it != frames.end(); ++frame_it ) {
+	for (const auto & frame : frames) {
 
-		for ( Size frag = start_frag; frag <= (*frame_it)->nr_frags(); ++frag ) {
+		for ( Size frag = start_frag; frag <= frame->nr_frags(); ++frag ) {
 
-			(*frame_it)->apply( frag, frame_pose );
+			frame->apply( frag, frame_pose );
 
 			outfile << "MODEL" << I(9, model_count) << "\n";
 
-			for ( Size rescount = (*frame_it)->start(); rescount <= (*frame_it)->end(); ++rescount ) {
+			for ( Size rescount = frame->start(); rescount <= frame->end(); ++rescount ) {
 
 				core::io::pdb::dump_pdb_residue( frame_pose.residue( rescount ), atom_counter, outfile );
 

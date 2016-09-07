@@ -52,6 +52,7 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/string_util.hh>
 
 
@@ -86,7 +87,7 @@ SecondaryMatchProtocol::SecondaryMatchProtocol() :
 	found_res_compatibility_.clear();
 }
 
-SecondaryMatchProtocol::~SecondaryMatchProtocol(){}
+SecondaryMatchProtocol::~SecondaryMatchProtocol()= default;
 
 void
 SecondaryMatchProtocol::apply(
@@ -184,10 +185,9 @@ SecondaryMatchProtocol::do_matching(
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP missing_template = (*param_it)->get_missing_template_res( start_pose );
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP present_template = (*param_it)->get_missing_template_other_res( start_pose );
 
-		for ( utility::vector1< core::pose::PoseOP >::iterator pose_it = poses_to_process.begin();
-				pose_it != poses_to_process.end(); ++pose_it ) {
+		for (auto & poses_to_proces : poses_to_process) {
 
-			add_enz_cst_interaction_to_pose( **pose_it, *param_it, missing_template, present_template, cstio);
+			add_enz_cst_interaction_to_pose( *poses_to_proces, *param_it, missing_template, present_template, cstio);
 
 		} // loop over all poses to process
 
@@ -229,7 +229,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 	utility::vector1< core::Size > target_residues;
 
 	tr.Info << "Trying to add interaction of pose residue(s) ";
-	for ( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator
+	for ( auto
 			pos_it = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_begin(),
 			pos_end = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_end();
 			pos_it != pos_end; ++pos_it ) {
@@ -320,7 +320,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			core::scoring::EnergyEdge const * eedge = pose.energies().energy_graph().find_energy_edge( *pos_try_it, target_residue );
 
-			if ( eedge != 0 ) {
+			if ( eedge != nullptr ) {
 				// apl -- removing TwoBodyEnergyMap + making this call a little more efficient.
 				try_targ_clash = eedge->dot( reduced_scofx_->weights() );
 			}
@@ -427,20 +427,18 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 		) ) );
 
 
-	for ( utility::vector1< utility::vector1< core::conformation::ResidueOP > >::iterator param_it = found_resis_.begin();
-			param_it != found_resis_.end(); ++param_it ) {
+	for (auto & found_resi : found_resis_) {
 
 		//utility::vector1< core::pose::PoseCOP > temp_poses;
 		utility::vector1< PoseFoundResiduesCombinationOP > temp_combos;
 
-		for ( utility::vector1< core::conformation::ResidueOP >::iterator res_it = param_it->begin();
-				res_it != param_it->end(); ++res_it ) {
+		for ( auto res_it = found_resi.begin();
+				res_it != found_resi.end(); ++res_it ) {
 
-			for ( utility::vector1< PoseFoundResiduesCombinationOP >::iterator pp_it = process_combos.begin();
-					pp_it != process_combos.end(); ++pp_it ) {
+			for (auto & process_combo : process_combos) {
 				//core::pose::PoseOP success_pose = new core::pose::Pose(**pp_it);
 				//success_pose->replace_residue( (*res_it)->seqpos(), **res_it, true);
-				PoseFoundResiduesCombinationOP success_combo( new PoseFoundResiduesCombination( **pp_it ) );
+				PoseFoundResiduesCombinationOP success_combo( new PoseFoundResiduesCombination( *process_combo ) );
 				success_combo->add_residue( *res_it );
 				temp_combos.push_back( success_combo );
 			}
@@ -458,9 +456,8 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	bool successful = false;
 
-	for ( utility::vector1< PoseFoundResiduesCombinationOP >::iterator pp_it = process_combos.begin();
-			pp_it != process_combos.end(); ++pp_it ) {
-		if ( (*pp_it)->construct_and_dump_outpose( match_params_ ) ) successful = true;
+	for (auto & process_combo : process_combos) {
+		if ( process_combo->construct_and_dump_outpose( match_params_ ) ) successful = true;
 	}
 
 	return successful;
@@ -512,13 +509,13 @@ SecondaryMatchProtocol::residues_compatible(
 	}
 
 
-	std::map< ResidueCOP, std::map< ResidueCOP, core::Size > >::const_iterator map_this_res = found_res_compatibility_.find( res1 );
+	auto map_this_res = found_res_compatibility_.find( res1 );
 
 	if ( map_this_res == found_res_compatibility_.end() ) {
 		utility_exit_with_message( "Error: no residue compatibility map found for residue "+utility::to_string( res1->seqpos() )+"." );
 	}
 
-	std::map< ResidueCOP, core::Size>::const_iterator res2_it = map_this_res->second.find( res2 );
+	auto res2_it = map_this_res->second.find( res2 );
 
 	if ( res2_it == map_this_res->second.end() ) {
 		utility_exit_with_message( "Error: no residue compatibility info found for res1 "+utility::to_string( res1->seqpos() )+" and res2 "+utility::to_string( res2->seqpos() ) +"." );
@@ -581,13 +578,13 @@ SecondaryMatchProtocol::determine_found_residues_compatibility(
 } // determine_found_residues_compatibility
 
 
-PoseFoundResiduesCombination::~PoseFoundResiduesCombination() {}
+PoseFoundResiduesCombination::~PoseFoundResiduesCombination() = default;
 
 PoseFoundResiduesCombination::PoseFoundResiduesCombination(
 	core::pose::PoseCOP ref_pose_in,
 	SecondaryMatchProtocolCAP secmatch_in
-) : ref_pose_( ref_pose_in ),
-	secmatch_prot_( secmatch_in )
+) : ref_pose_(std::move( ref_pose_in )),
+	secmatch_prot_(std::move( secmatch_in ))
 {
 	combine_resis_.clear();
 }
@@ -645,7 +642,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP other_template( match_params[i]->get_missing_template_other_res( outpose ) );
 		toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP other_template_cache( toolbox::match_enzdes_util::get_enzdes_observer( outpose )->cst_cache()->param_cache( match_params[i]->cst_block() )->template_res_cache( other_template->param_index() ) );
 
-		for ( std::map< Size, toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = other_template_cache->seqpos_map_begin(), pos_end = other_template_cache->seqpos_map_end();
+		for ( auto pos_it = other_template_cache->seqpos_map_begin(), pos_end = other_template_cache->seqpos_map_end();
 				pos_it != pos_end; ++pos_it ) {
 			//for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = match_params[i]->get_missing_template_other_res( outpose )->respos_map_begin();
 			//pos_it != match_params[i]->get_missing_template_other_res( outpose )->respos_map_end(); ++pos_it ){

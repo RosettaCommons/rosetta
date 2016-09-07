@@ -47,7 +47,7 @@ protocols::jd2::PDBJobInputter::PDBJobInputter(){
 	TR << "Instantiate PDBJobInputter" << std::endl;
 }
 
-protocols::jd2::PDBJobInputter::~PDBJobInputter(){}
+protocols::jd2::PDBJobInputter::~PDBJobInputter()= default;
 
 /// @details This function will first see if the pose already exists in the Job.  If not,
 /// it will read it into the pose reference, and hand a COP cloned from that pose to the

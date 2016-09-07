@@ -38,7 +38,7 @@ namespace core {
 namespace fragment {
 
 /// @details Auto-generated virtual destructor
-SingleResidueFragData::~SingleResidueFragData() {}
+SingleResidueFragData::~SingleResidueFragData() = default;
 
 //static basic::Tracer tr("core.fragment");
 

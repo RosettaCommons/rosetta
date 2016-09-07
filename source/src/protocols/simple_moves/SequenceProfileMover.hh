@@ -29,18 +29,18 @@ namespace simple_moves {
 
 class SequenceProfileMover : public moves::Mover {
 public:
-	~SequenceProfileMover();
+	~SequenceProfileMover() override;
 	SequenceProfileMover();
-	virtual void apply( core::pose::Pose& pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose& pose ) override;
+	std::string get_name() const override;
 
 	// function for the parser with lots of accessors
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	void set_cst_file_name( std::string const& cst_file_name ) { cst_file_name_ = cst_file_name; }
 	void set_profile_wgt( core::Real const profile_wgt ) { profile_wgt_ = profile_wgt; }
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	core::Real get_profile_wgt() const { return profile_wgt_; }
 	std::string const& get_cst_file_name() const { return cst_file_name_; }

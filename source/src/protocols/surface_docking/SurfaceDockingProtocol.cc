@@ -86,7 +86,7 @@ SurfaceDockingProtocol::SurfaceDockingProtocol(SurfaceDockingProtocol const & sr
 
 /// @brief
 //Destructor
-SurfaceDockingProtocol::~SurfaceDockingProtocol() {}
+SurfaceDockingProtocol::~SurfaceDockingProtocol() = default;
 
 protocols::moves::MoverOP SurfaceDockingProtocol::clone() const
 {
@@ -179,16 +179,16 @@ void SurfaceDockingProtocol::init()
 	score_sidechain_pack_ = scoring::get_score_function();
 	TR << "Setting Weights for talaris" << std::endl;
 	score_sidechain_pack_->set_weight( core::scoring::fa_elec, 1.0 );
-	surface_parameters_ = NULL;
+	surface_parameters_ = nullptr;
 	sec_struct_ = "";
-	to_centroid_ = NULL;
-	to_full_atom_ = NULL;
-	surface_orient_ = NULL;
-	abinitio_ = NULL;
-	centroid_relax_ = NULL;
-	pack_rotamers_fullatom_ = NULL;
-	slide_away_from_surface_ = NULL;
-	fullatom_relax_ = NULL;
+	to_centroid_ = nullptr;
+	to_full_atom_ = nullptr;
+	surface_orient_ = nullptr;
+	abinitio_ = nullptr;
+	centroid_relax_ = nullptr;
+	pack_rotamers_fullatom_ = nullptr;
+	slide_away_from_surface_ = nullptr;
+	fullatom_relax_ = nullptr;
 }
 
 bool

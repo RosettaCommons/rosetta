@@ -102,14 +102,14 @@ public:
 	// check fragments ... if they do not exist dynamically allocate them
 	void check_and_create_fragments( Pose & );
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & ) override;
 
 	// set options
 	void set_batch_relax( core::Size newval ) { batch_relax_ = newval; }

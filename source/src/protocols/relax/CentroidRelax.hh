@@ -61,11 +61,11 @@ public:
 	CentroidRelax(MoveMapOP mm, ScoreFunctionOP cen_scorefxn_in);
 
 	//Specific functions for Mover...
-	virtual ~CentroidRelax();
+	~CentroidRelax() override;
 
-	virtual string get_name() const;
+	string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void set_defaults();
 
@@ -102,7 +102,7 @@ public:
 	///
 	/// @details Setting ramp_rama and ramp_vdw to false switches to the BASIC protocol
 	/// which is rounds of the centroid minmover
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 private:
 

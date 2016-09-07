@@ -42,7 +42,7 @@ ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover() :
 
 ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(MoverOP main_mover):
 	MoverApplyingMover("ChangeAndResetFoldTreeMover"),
-	main_mover_(main_mover),
+	main_mover_(std::move(main_mover)),
 	ft_mover_(/* NULL */),
 	scorefxn_(/* NULL */)
 {
@@ -51,8 +51,8 @@ ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(MoverOP main_mover):
 
 ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(MoverOP main_mover, ChangeFoldTreeMoverOP ft_mover):
 	MoverApplyingMover("ChangeAndResetFoldTreeMover"),
-	main_mover_(main_mover),
-	ft_mover_(ft_mover),
+	main_mover_(std::move(main_mover)),
+	ft_mover_(std::move(ft_mover)),
 	scorefxn_(/* NULL */)
 {
 
@@ -61,23 +61,16 @@ ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(MoverOP main_mover, Cha
 ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(
 	MoverOP main_mover, ChangeFoldTreeMoverOP ft_mover, core::scoring::ScoreFunctionCOP scorefxn):
 	MoverApplyingMover("ChangeAndResetFoldTreeMover"),
-	main_mover_(main_mover),
-	ft_mover_(ft_mover),
-	scorefxn_(scorefxn)
+	main_mover_(std::move(main_mover)),
+	ft_mover_(std::move(ft_mover)),
+	scorefxn_(std::move(scorefxn))
 {
 
 }
 
-ChangeAndResetFoldTreeMover::~ChangeAndResetFoldTreeMover() {}
+ChangeAndResetFoldTreeMover::~ChangeAndResetFoldTreeMover() = default;
 
-ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(ChangeAndResetFoldTreeMover const & src) :
-	MoverApplyingMover(src),
-	main_mover_(src.main_mover_),
-	ft_mover_(src.ft_mover_),
-	scorefxn_(src.scorefxn_)
-{
-
-}
+ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(ChangeAndResetFoldTreeMover const & ) = default;
 
 MoverOP
 ChangeAndResetFoldTreeMover::clone() const {

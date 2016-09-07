@@ -60,7 +60,7 @@ SavePoseMover::SavePoseMover() :
 {
 }
 
-SavePoseMover::~SavePoseMover() {}
+SavePoseMover::~SavePoseMover() = default;
 
 void
 SavePoseMover::apply( core::pose::Pose & pose )

@@ -50,9 +50,9 @@ class CacheableStringMap : public CacheableData
 public:
 	CacheableStringMap() : CacheableData() {}
 
-	virtual ~CacheableStringMap() {}
+	~CacheableStringMap() override = default;
 
-	virtual CacheableDataOP clone() const {
+	CacheableDataOP clone() const override {
 		return CacheableDataOP( new CacheableStringMap(*this) );
 	}
 

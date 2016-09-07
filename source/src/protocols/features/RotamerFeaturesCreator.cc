@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 RotamerFeaturesCreator::RotamerFeaturesCreator() {}
-RotamerFeaturesCreator::~RotamerFeaturesCreator() {}
+RotamerFeaturesCreator::~RotamerFeaturesCreator() = default;
 FeaturesReporterOP RotamerFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new RotamerFeatures );
 }

@@ -213,7 +213,7 @@ MetapatchEnumeration::generate_derived_types(
 
 			Pose mut_pose = pose_;
 			ResidueOP new_res = ResidueFactory::create_residue( rt, mut_pose.residue( resi ), mut_pose.conformation(), true );
-			if ( new_res == NULL ) continue;
+			if ( new_res == nullptr ) continue;
 
 			TR << "\tEvaluating mutation: " << full_name << "." << std::endl;
 

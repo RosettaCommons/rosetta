@@ -36,20 +36,20 @@ public:
 		core::pose::PoseCOP native_pose,
 		std::string tag = "rot_",
 		core::Real const chi_dev = 30,
-		core::sequence::SequenceAlignmentOP aln = 0
+		core::sequence::SequenceAlignmentOP aln = nullptr
 	);
 
-	~Align_RotamerEvaluator();
+	~Align_RotamerEvaluator() override;
 
-	virtual void apply(
+	void apply(
 		core::pose::Pose & pose,
 		std::string tag,
 		core::io::silent::SilentStruct & ss
-	) const;
+	) const override;
 
-	virtual core::Real apply(
+	core::Real apply(
 		core::pose::Pose & /*pose*/
-	) const {
+	) const override {
 		return 0;
 	}
 

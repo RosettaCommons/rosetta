@@ -18,6 +18,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -56,11 +57,7 @@ public:
 	{
 	};
 
-	VectorPair(const VectorPair& src) :
-		position(src.position),
-		direction(src.direction)
-	{
-	};
+	VectorPair(const VectorPair& ) = default;
 
 	Vector position;
 	Vector direction;
@@ -141,10 +138,10 @@ public:
 	{}
 
 	ConstPattern(core::kinematics::Stub target) :
-		target_stub(target)
+		target_stub(std::move(target))
 	{}
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		utility::vector1<core::kinematics::Stub> searchpoints;
 		searchpoints.push_back(target_stub);
@@ -161,7 +158,7 @@ public:
 	{
 	}
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		utility::vector1<core::kinematics::Stub> searchpoints;
 
@@ -207,7 +204,7 @@ public:
 
 	}
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		utility::vector1<core::kinematics::Stub> searchpoints;
 
@@ -321,7 +318,7 @@ public:
 		return searchpoints;
 	}
 
-	utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		return searchpoints_;
 	}
@@ -390,7 +387,7 @@ public:
 		return searchpoints;
 	}
 
-	utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		return searchpoints_;
 	}
@@ -465,7 +462,7 @@ public:
 		return searchpoints;
 	}
 
-	utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		return searchpoints_;
 	}
@@ -480,14 +477,14 @@ public:
 		SearchPatternOP source_pattern,
 		core::Size partition,
 		core::Size total_partitions) :
-		source_pattern_(source_pattern),
+		source_pattern_(std::move(source_pattern)),
 		partition_(partition),
 		total_partitions_(total_partitions)
 	{
 		runtime_assert(partition < total_partitions);
 	}
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
 
@@ -513,11 +510,11 @@ public:
 	ComposeSearchPatterns(
 		SearchPatternOP source_pattern_a,
 		SearchPatternOP source_pattern_b) :
-		source_pattern_a(source_pattern_a),
-		source_pattern_b(source_pattern_b)
+		source_pattern_a(std::move(source_pattern_a)),
+		source_pattern_b(std::move(source_pattern_b))
 	{ }
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		utility::vector1<core::kinematics::Stub> sourcepoints_a = source_pattern_a->Searchpoints();
 		utility::vector1<core::kinematics::Stub> sourcepoints_b = source_pattern_b->Searchpoints();
@@ -547,10 +544,10 @@ class SearchPatternTransform : public SearchPattern
 {
 public:
 	SearchPatternTransform( SearchPatternOP source_pattern ) :
-		source_pattern_(source_pattern)
+		source_pattern_(std::move(source_pattern))
 	{}
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
 
@@ -574,10 +571,10 @@ class SearchPatternExpansion : public SearchPattern
 {
 public:
 	SearchPatternExpansion( SearchPatternOP source_pattern ) :
-		source_pattern_(source_pattern)
+		source_pattern_(std::move(source_pattern))
 	{}
 
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	utility::vector1<core::kinematics::Stub> Searchpoints() override
 	{
 		utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
 

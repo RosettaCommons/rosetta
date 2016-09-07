@@ -84,7 +84,7 @@ public:
 		runtime_assert( natoms_ == natoms2 );
 		curr_.assign(natoms_, 1); // = [1, 1, 1, ..., 1]
 	}
-	virtual ~AutomorphismIterator() {}
+	~AutomorphismIterator() override = default;
 
 	/// @brief Returns the next automorphism for this residue type
 	/// as a vector that maps "old" atom indices to "new" atom indices.

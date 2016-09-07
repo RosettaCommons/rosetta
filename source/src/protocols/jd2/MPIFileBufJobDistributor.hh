@@ -66,12 +66,12 @@ protected:
 	/// @brief protected ctor for child-classes
 	MPIFileBufJobDistributor( core::Size master_rank, core::Size file_buf_rank, core::Size min_client_rank, bool start_empty=false );
 
-	virtual void handle_interrupt() {}
+	void handle_interrupt() override {}
 
 public:
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-	virtual ~MPIFileBufJobDistributor();
+	~MPIFileBufJobDistributor() override;
 
 	core::Size increment_client_rank(){
 		return ++min_client_rank_;
@@ -84,34 +84,34 @@ public:
 
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	go( protocols::moves::MoverOP mover );
+	go( protocols::moves::MoverOP mover ) override;
 
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	core::Size
-	get_new_job_id();
+	get_new_job_id() override;
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	mark_current_job_id_for_repetition();
+	mark_current_job_id_for_repetition() override;
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	remove_bad_inputs_from_job_list();
+	remove_bad_inputs_from_job_list() override;
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	job_succeeded(core::pose::Pose & pose, core::Real runtime, std::string const & tag);
+	job_succeeded(core::pose::Pose & pose, core::Real runtime, std::string const & tag) override;
 
-	virtual
+	
 	void
-	job_failed( core::pose::Pose & pose, bool will_retry );
+	job_failed( core::pose::Pose & pose, bool will_retry ) override;
 
 	friend class JobDistributorFactory; //ctor access
 
@@ -127,7 +127,7 @@ protected:
 	);
 
 	//overloaded so that slave-nodes never automatically switch to next_batch when spinning down.
-	virtual bool next_batch();
+	bool next_batch() override;
 
 	/// @brief Handles the receiving of job requests and the sending of job ids to and from slaves
 	void master_go( protocols::moves::MoverOP mover );

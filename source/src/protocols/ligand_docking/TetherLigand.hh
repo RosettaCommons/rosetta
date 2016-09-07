@@ -40,12 +40,12 @@ class TetherLigand : public protocols::moves::Mover
 public:
 	TetherLigand();
 	TetherLigand(const char & chain, const core::Real & angstroms);
-	virtual ~TetherLigand();
+	~TetherLigand() override;
 	TetherLigand(TetherLigand const & that);
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void release(core::pose::Pose & pose);
 

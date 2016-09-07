@@ -81,7 +81,7 @@ PerturbBundleHelix::PerturbBundleHelix():
 
 
 /// @brief Destructor for PerturbBundleHelix mover.
-PerturbBundleHelix::~PerturbBundleHelix() {}
+PerturbBundleHelix::~PerturbBundleHelix() = default;
 
 
 /// @brief Clone operator to create a pointer to a fresh PerturbBundleHelix object that copies this one.

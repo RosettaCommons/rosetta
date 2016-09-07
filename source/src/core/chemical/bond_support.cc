@@ -114,7 +114,7 @@ void quick_ring_detection( ResidueType & res){
 			it != ring_edges.end(); ++it
 			) {
 		for (
-				std::map<VD, bool >::const_iterator second_it = it->second.begin();
+				auto second_it = it->second.begin();
 				second_it != it->second.end(); ++second_it
 				) {
 			if ( second_it->second ) {

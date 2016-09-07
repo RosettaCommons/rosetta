@@ -30,19 +30,19 @@ class AddJobPairData : public moves::Mover {
 public:
 	AddJobPairData();
 	AddJobPairData(AddJobPairData const & src);
-	virtual ~AddJobPairData();
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	~AddJobPairData() override;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 private:
 

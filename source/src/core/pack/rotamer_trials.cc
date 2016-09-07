@@ -263,14 +263,11 @@ symmetric_rotamer_trials(
 			SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 			//fpd replace_residue is symmetric now ... still need to update scorefxn though
-			for ( std::vector< Size>::const_iterator
-					clone     = symm_info->bb_clones( resid ).begin(),
-					clone_end = symm_info->bb_clones( resid ).end();
-					clone != clone_end; ++clone ) {
+			for (unsigned long clone : symm_info->bb_clones( resid )) {
 				//    conformation::ResidueOP sym_rsd = newresidue->clone();
 				//     sym_rsd->orient_onto_residue(pose.residue( *clone) );
 				//    pose.replace_residue ( *clone, *sym_rsd, false );
-				scfxn.update_residue_for_packing( pose, *clone );
+				scfxn.update_residue_for_packing( pose, clone );
 			}
 			//   TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' << one_body_energies[ bestrot ];
 			if ( rotset->id_for_current_rotamer() != 0 ) { //more output in this case

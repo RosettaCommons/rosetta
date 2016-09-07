@@ -42,7 +42,7 @@ class NormalModeMultifunc : public Multifunc
 public: // Creation
 
 	/// @brief Destructor
-	virtual ~NormalModeMultifunc();
+	~NormalModeMultifunc() override;
 
 	// c-tor
 	NormalModeMultifunc(
@@ -58,21 +58,21 @@ public: // Creation
 public: // Methods
 
 	// func
-	virtual
+	
 	Real
-	operator ()( Multivec const & vars ) const;
+	operator ()( Multivec const & vars ) const override;
 
 	// dfunc
-	virtual
+	
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const;
+	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
 
 	void set_deriv_check_result( NumericalDerivCheckResultOP deriv_check_result );
 
 	/// @brief Error state reached -- derivative does not match gradient
-	virtual
+	
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const;
+	dump( Multivec const & vars, Multivec const & vars2 ) const override;
 
 	void set_modes( utility::vector1< Size > );
 

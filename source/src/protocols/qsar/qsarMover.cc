@@ -95,13 +95,13 @@ void qsarMover::apply(core::pose::Pose & pose)
 		TR << "WARNING: no grids specified, QSAR scoring function will be empty!!" <<std::endl;
 		return;
 	} else if ( !initialize_ ) {
-		utility::vector1<std::string>::iterator grid_iterator(grids_to_use_.begin());
+		auto grid_iterator(grids_to_use_.begin());
 		for ( ; grid_iterator != grids_to_use_.end(); ++grid_iterator ) {
 			//grid_manager->make_new_grid(*grid_iterator);
 			grid_manager->get_grid(*grid_iterator);
 			TR.Debug << "getting grid: " << *grid_iterator << std::endl;
 		}
-		if ( qsar_map_ == 0 ) {
+		if ( qsar_map_ == nullptr ) {
 
 			qsar_map_ = qsarMapOP( new qsarMap("default",residue) );
 

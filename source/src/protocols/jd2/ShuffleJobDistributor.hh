@@ -41,21 +41,21 @@ protected:
 	/// @brief ctor is protected; singleton pattern
 	ShuffleFileSystemJobDistributor();
 
-	virtual void handle_interrupt() {}
+	void handle_interrupt() override {}
 
 public:
-	virtual ~ShuffleFileSystemJobDistributor();
+	~ShuffleFileSystemJobDistributor() override;
 
 
 	friend class JobDistributorFactory; //ctor access
 
-	virtual
+	
 	core::Size
-	get_new_job_id();
+	get_new_job_id() override;
 
-	virtual
+	
 	void
-	mark_current_job_id_for_repetition();
+	mark_current_job_id_for_repetition() override;
 
 	core::Size                     next_random_job() { return next_random_job_; }
 

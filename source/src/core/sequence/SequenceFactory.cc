@@ -36,7 +36,7 @@ using core::sequence::SequenceFactory;
 template <> std::mutex utility::SingletonBase< SequenceFactory >::singleton_mutex_{};
 template <> std::atomic< SequenceFactory * > utility::SingletonBase< SequenceFactory >::instance_( 0 );
 #else
-template <> SequenceFactory * utility::SingletonBase< SequenceFactory >::instance_( 0 );
+template <> SequenceFactory * utility::SingletonBase< SequenceFactory >::instance_( nullptr );
 #endif
 
 }
@@ -99,7 +99,7 @@ SequenceFactory::get_sequence( std::string const & type_name )
 
 		utility_exit_with_message( msg );
 	}
-	return 0;
+	return nullptr;
 }
 
 /// @details DANGER DANGER DANGER: NOT THREADSAFE!
@@ -111,9 +111,8 @@ SequenceFactory::get_seq_names() const {
 	using utility::vector1;
 
 	vector1< string > seq_names;
-	for ( SequenceCreatorMap::const_iterator
-			it = seq_types_.begin(), end = seq_types_.end(); it != end; ++it ) {
-		seq_names.push_back( it->first );
+	for (const auto & seq_type : seq_types_) {
+		seq_names.push_back( seq_type.first );
 	}
 
 	return seq_names;
@@ -141,7 +140,7 @@ SequenceFactory::get_creator( std::string const & type_name )
 
 		utility_exit_with_message( msg );
 	}
-	return 0;
+	return nullptr;
 }
 
 } // sequence

@@ -50,11 +50,9 @@ string ProgressBarObserverCreator::mover_name() { // {{{1
 ProgressBarObserver::ProgressBarObserver() // {{{1
 : ThermodynamicObserver(), progress_(0) {}
 
-ProgressBarObserver::ProgressBarObserver( // {{{1
-	ProgressBarObserver const & other)
-: ThermodynamicObserver(other), progress_(other.progress_) {}
+ProgressBarObserver::ProgressBarObserver( ProgressBarObserver const & ) = default;
 
-ProgressBarObserver::~ProgressBarObserver() {} // {{{1
+ProgressBarObserver::~ProgressBarObserver() = default; // {{{1
 
 MoverOP ProgressBarObserver::clone() const { // {{{1
 	return MoverOP( new ProgressBarObserver( *this ) );

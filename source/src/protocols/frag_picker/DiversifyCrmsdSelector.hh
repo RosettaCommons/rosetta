@@ -43,9 +43,9 @@ public:
 	}
 
 	/// @brief  Selects desired number of fragments from a given set of candidates
-	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& );
+	void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& ) override;
 
-	virtual ~DiversifyCrmsdSelector() { }
+	~DiversifyCrmsdSelector() override = default;
 
 private:
 	void copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst);

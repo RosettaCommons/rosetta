@@ -27,46 +27,46 @@ namespace sequence {
 class SimpleSequenceCreator : public SequenceCreator {
 public:
 	SimpleSequenceCreator();
-	virtual ~SimpleSequenceCreator();
+	~SimpleSequenceCreator() override;
 
-	virtual SequenceOP create_sequence() const;
-	virtual std::string keyname() const;
+	SequenceOP create_sequence() const override;
+	std::string keyname() const override;
 };
 
 class SequenceProfileCreator : public SequenceCreator {
 public:
 	SequenceProfileCreator();
-	virtual ~SequenceProfileCreator();
+	~SequenceProfileCreator() override;
 
-	virtual SequenceOP create_sequence() const;
-	virtual std::string keyname() const;
+	SequenceOP create_sequence() const override;
+	std::string keyname() const override;
 };
 
 class SequenceCouplingCreator : public SequenceCreator {
 public:
 	SequenceCouplingCreator();
-	virtual ~SequenceCouplingCreator();
+	~SequenceCouplingCreator() override;
 
-	virtual SequenceOP create_sequence() const;
-	virtual std::string keyname() const;
+	SequenceOP create_sequence() const override;
+	std::string keyname() const override;
 };
 
 class CompositeSequenceCreator : public SequenceCreator {
 public:
 	CompositeSequenceCreator();
-	virtual ~CompositeSequenceCreator();
+	~CompositeSequenceCreator() override;
 
-	virtual SequenceOP create_sequence() const;
-	virtual std::string keyname() const;
+	SequenceOP create_sequence() const override;
+	std::string keyname() const override;
 };
 
 class ChemicalShiftSequenceCreator : public SequenceCreator {
 public:
 	ChemicalShiftSequenceCreator();
-	virtual ~ChemicalShiftSequenceCreator();
+	~ChemicalShiftSequenceCreator() override;
 
-	virtual SequenceOP create_sequence() const;
-	virtual std::string keyname() const;
+	SequenceOP create_sequence() const override;
+	std::string keyname() const override;
 };
 
 } //namespace sequence

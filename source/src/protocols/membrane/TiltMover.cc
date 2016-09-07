@@ -99,12 +99,7 @@ TiltMover::TiltMover( core::Size jump_num, core::Real angle ) :
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-TiltMover::TiltMover( TiltMover const & src ) :
-	protocols::moves::Mover( src ),
-	jump_num_( src.jump_num_ ),
-	angle_( src.angle_ ),
-	random_angle_( src.random_angle_ )
-{}
+TiltMover::TiltMover( TiltMover const & ) = default;
 
 /// @brief Assignment Operator
 TiltMover & TiltMover::operator = ( TiltMover const & src ) {
@@ -119,7 +114,7 @@ TiltMover & TiltMover::operator = ( TiltMover const & src ) {
 }
 
 /// @brief Destructor
-TiltMover::~TiltMover() {}
+TiltMover::~TiltMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

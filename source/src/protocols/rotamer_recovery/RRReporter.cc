@@ -28,7 +28,7 @@ namespace protocols {
 namespace rotamer_recovery {
 
 /// @details Auto-generated virtual destructor
-RRReporter::~RRReporter() {}
+RRReporter::~RRReporter() = default;
 
 using std::endl;
 using std::ostream;
@@ -51,7 +51,7 @@ RRReporterSimple::RRReporterSimple( RRReporterSimple const & src ) :
 	rotamers_recovered_(src.rotamers_recovered_)
 {}
 
-RRReporterSimple::~RRReporterSimple() {}
+RRReporterSimple::~RRReporterSimple() = default;
 
 void
 RRReporterSimple::reset_recovery(){

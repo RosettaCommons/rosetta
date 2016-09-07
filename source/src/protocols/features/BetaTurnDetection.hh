@@ -47,7 +47,7 @@ public:
 
 	BetaTurnDetection( BetaTurnDetection const & );
 
-	virtual ~BetaTurnDetection();
+	~BetaTurnDetection() override;
 
 	/// @brief return string with class name
 	virtual std::string

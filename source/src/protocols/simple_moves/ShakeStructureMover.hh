@@ -46,7 +46,7 @@ public:
 		core::Real ens_diversity,
 		core::Real ens_div_tolerance);
 
-	virtual ~ShakeStructureMover();
+	~ShakeStructureMover() override;
 
 	//setters
 	void set_skip_low_temp_phase( bool truefalse);
@@ -78,8 +78,8 @@ public:
 	core::Size get_nrounds();
 	//run-time
 
-	void apply(core::pose::Pose & p);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & p) override;
+	std::string get_name() const override;
 
 protected:
 	// for derived classes

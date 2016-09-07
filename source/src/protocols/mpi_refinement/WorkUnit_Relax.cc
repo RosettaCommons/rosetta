@@ -430,144 +430,144 @@ WorkUnit_Relax::set_relax_schedule() const
 
 	// Special schedule for rerelax-style
 	if ( get_relaxtype() == 10 ) { //prv 5
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "repeat 1" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 0.0 200");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("repeat 1" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001 0.0 200");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	} else if ( get_relaxtype() == 11 ) { // veryshort, prv 6
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "repeat 1" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 0.0 10");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("repeat 1" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001 0.0 10");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	} else if ( get_relaxtype() == 12 ) { // prv7
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "repeat 1" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 1.0 200");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("repeat 1" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001 1.0 200");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	} else if ( get_relaxtype() == 13 ) { //prv 8
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "repeat 1" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 10.0 200");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("repeat 1" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001 10.0 200");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	} else if ( get_relaxtype() == 14 ) { //prv 9
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "repeat 1" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001  0.0 200");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("repeat 1" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001  0.0 200");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	} else if ( get_relaxtype() == 15 ) {
 		// special relax, ramping but restricting CA, soft pack
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "repeat 1" );
-		cmdlines.push_back( "scale:coordinate_constraint 10.0" );
-		cmdlines.push_back( "scale:fa_rep 0.01" );
-		cmdlines.push_back( "scale:fa_atr 0.0" );
-		cmdlines.push_back( "repack" );
-		cmdlines.push_back( "scale:fa_rep 1.0" );
-		cmdlines.push_back( "scale:fa_atr 1.0" );
-		cmdlines.push_back( "min 0.01 50" );
-		cmdlines.push_back( "ramp_repack_min 0.250 0.01    10.0  50");
-		cmdlines.push_back( "ramp_repack_min 0.550 0.01    10.0 100");
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 10.0 200");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("repeat 1" );
+		cmdlines.emplace_back("scale:coordinate_constraint 10.0" );
+		cmdlines.emplace_back("scale:fa_rep 0.01" );
+		cmdlines.emplace_back("scale:fa_atr 0.0" );
+		cmdlines.emplace_back("repack" );
+		cmdlines.emplace_back("scale:fa_rep 1.0" );
+		cmdlines.emplace_back("scale:fa_atr 1.0" );
+		cmdlines.emplace_back("min 0.01 50" );
+		cmdlines.emplace_back("ramp_repack_min 0.250 0.01    10.0  50");
+		cmdlines.emplace_back("ramp_repack_min 0.550 0.01    10.0 100");
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001 10.0 200");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	} else if ( get_relaxtype() == 16 ) {
-		cmdlines.push_back( "switch:torsion" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.001    1.0 100");
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001  1.0 200");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:torsion" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.001    1.0 100");
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001  1.0 200");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	} else if ( get_relaxtype() == 17 ) {
-		cmdlines.push_back( "switch:torsion" );
-		cmdlines.push_back( "ramp_repack_min 0.02  0.001    1.0  50");
-		cmdlines.push_back( "ramp_repack_min 0.25  0.001    0.5  50");
-		cmdlines.push_back( "ramp_repack_min 0.55  0.001    0.0 100");
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001  0.0 200");
-		cmdlines.push_back( "switch:cartesian" );
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001  0.0 200");
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("switch:torsion" );
+		cmdlines.emplace_back("ramp_repack_min 0.02  0.001    1.0  50");
+		cmdlines.emplace_back("ramp_repack_min 0.25  0.001    0.5  50");
+		cmdlines.emplace_back("ramp_repack_min 0.55  0.001    0.0 100");
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001  0.0 200");
+		cmdlines.emplace_back("switch:cartesian" );
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001  0.0 200");
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 		return cmdlines;
 	}
 
 	// Torsion first
 	if ( get_relaxtype() == 2 || get_relaxtype() == 4 || get_relaxtype() == 5
 			|| get_relaxtype() == 6 || get_relaxtype() == 9 ) {
-		cmdlines.push_back( "switch:torsion" );
+		cmdlines.emplace_back("switch:torsion" );
 		if ( get_relaxtype() == 5 || get_relaxtype() == 6 ) {
-			cmdlines.push_back( "repeat 2" );
+			cmdlines.emplace_back("repeat 2" );
 		} else {
-			cmdlines.push_back( "repeat 3" );
+			cmdlines.emplace_back("repeat 3" );
 		}
 		// iter1: stdpack or probpack
 		if ( get_relaxtype() == 4 || get_relaxtype() == 5 ) { //probpack
-			cmdlines.push_back( "scale:coordinate_constraint 1.0" );
-			cmdlines.push_back( "scale:fa_rep 0.01" );
-			cmdlines.push_back( "scale:fa_atr 0.0" );
-			cmdlines.push_back( "repack" );
-			cmdlines.push_back( "scale:fa_rep 1.0" );
+			cmdlines.emplace_back("scale:coordinate_constraint 1.0" );
+			cmdlines.emplace_back("scale:fa_rep 0.01" );
+			cmdlines.emplace_back("scale:fa_atr 0.0" );
+			cmdlines.emplace_back("repack" );
+			cmdlines.emplace_back("scale:fa_rep 1.0" );
 			//cmdlines.push_back( "scale:fa_rep 0.02" );
-			cmdlines.push_back( "scale:fa_atr 1.0" );
-			cmdlines.push_back( "min 0.01 50" );
+			cmdlines.emplace_back("scale:fa_atr 1.0" );
+			cmdlines.emplace_back("min 0.01 50" );
 
 		} else { //stdpack
-			cmdlines.push_back( "ramp_repack_min 0.02  0.01    1.0  50");
+			cmdlines.emplace_back("ramp_repack_min 0.02  0.01    1.0  50");
 		}
 
-		cmdlines.push_back( "accept_to_best" );
-		cmdlines.push_back( "endrepeat" );
+		cmdlines.emplace_back("accept_to_best" );
+		cmdlines.emplace_back("endrepeat" );
 	}
 
 	if ( get_relaxtype() == 6 ) return cmdlines;
 
 	// Add cartesian
-	cmdlines.push_back( "switch:cartesian" );
+	cmdlines.emplace_back("switch:cartesian" );
 	if ( get_relaxtype() == 5 ) {
-		cmdlines.push_back( "repeat 2" );
+		cmdlines.emplace_back("repeat 2" );
 	} else {
-		cmdlines.push_back( "repeat 1" );
+		cmdlines.emplace_back("repeat 1" );
 	}
 
 	if ( get_relaxtype() == 1 || get_relaxtype() == 2 || get_relaxtype() == 7 ) { //stdpack
-		cmdlines.push_back( "ramp_repack_min 0.02  0.01    1.0  50");
+		cmdlines.emplace_back("ramp_repack_min 0.02  0.01    1.0  50");
 
 	} else if ( get_relaxtype() == 3 || get_relaxtype() == 4 ||
 			get_relaxtype() == 5 || get_relaxtype() == 8 || get_relaxtype() == 9 ) { // probpack
-		cmdlines.push_back( "scale:coordinate_constraint 1.0" );
-		cmdlines.push_back( "scale:fa_rep 0.01" );
-		cmdlines.push_back( "scale:fa_atr 0.0" );
-		cmdlines.push_back( "repack" );
-		cmdlines.push_back( "scale:fa_rep 1.0" );
+		cmdlines.emplace_back("scale:coordinate_constraint 1.0" );
+		cmdlines.emplace_back("scale:fa_rep 0.01" );
+		cmdlines.emplace_back("scale:fa_atr 0.0" );
+		cmdlines.emplace_back("repack" );
+		cmdlines.emplace_back("scale:fa_rep 1.0" );
 		//cmdlines.push_back( "scale:fa_rep 0.02" );
-		cmdlines.push_back( "scale:fa_atr 1.0" );
-		cmdlines.push_back( "min 0.01 50" );
+		cmdlines.emplace_back("scale:fa_atr 1.0" );
+		cmdlines.emplace_back("min 0.01 50" );
 	}
 
 	// fixed relax
 	if ( get_relaxtype() == 7 || get_relaxtype() == 8 || get_relaxtype() == 9 ) {
-		cmdlines.push_back( "ramp_repack_min 0.250 0.01    0.5  50");
-		cmdlines.push_back( "ramp_repack_min 0.550 0.01    0.1 100");
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 0.1 200");
+		cmdlines.emplace_back("ramp_repack_min 0.250 0.01    0.5  50");
+		cmdlines.emplace_back("ramp_repack_min 0.550 0.01    0.1 100");
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001 0.1 200");
 	} else { // normal relax
-		cmdlines.push_back( "ramp_repack_min 0.250 0.01    0.5  50");
-		cmdlines.push_back( "ramp_repack_min 0.550 0.01    0.0 100");
-		cmdlines.push_back( "ramp_repack_min 1.0   0.00001 0.0 200");
+		cmdlines.emplace_back("ramp_repack_min 0.250 0.01    0.5  50");
+		cmdlines.emplace_back("ramp_repack_min 0.550 0.01    0.0 100");
+		cmdlines.emplace_back("ramp_repack_min 1.0   0.00001 0.0 200");
 	}
 
-	cmdlines.push_back( "accept_to_best" );
-	cmdlines.push_back( "endrepeat" );
+	cmdlines.emplace_back("accept_to_best" );
+	cmdlines.emplace_back("endrepeat" );
 
 	return cmdlines;
 }

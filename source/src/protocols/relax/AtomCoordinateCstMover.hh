@@ -42,15 +42,15 @@ public:
 public:
 
 	AtomCoordinateCstMover();
-	~AtomCoordinateCstMover();
+	~AtomCoordinateCstMover() override;
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const { return "AtomCoordinateCstMover"; }
+	std::string get_name() const override { return "AtomCoordinateCstMover"; }
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const override;
+	protocols::moves::MoverOP clone() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -58,7 +58,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	virtual void set_refstruct( core::pose::PoseCOP ref );
 

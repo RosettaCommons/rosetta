@@ -44,27 +44,27 @@ class FrameListIterator_ : public FrameIteratorWorker_ {
 protected:
 	FrameListIterator_( FrameList::iterator it ) : it_( it ) {};
 
-	bool operator != ( FrameIteratorWorker_ const& fiw ) const {
+	bool operator != ( FrameIteratorWorker_ const& fiw ) const override {
 		FrameListIterator_ const& fsit ( dynamic_cast< FrameListIterator_ const& > ( fiw ) );
 		return it_!=fsit.it_;
 	};
 
-	FrameIteratorWorker_& operator++ () {
+	FrameIteratorWorker_& operator++ () override {
 		++it_;
 		return *this;
 	}
 
-	FrameIteratorWorker_& operator = ( FrameIteratorWorker_ const& fiw ) {
+	FrameIteratorWorker_& operator = ( FrameIteratorWorker_ const& fiw ) override {
 		FrameListIterator_ const& fsit ( dynamic_cast< FrameListIterator_ const& > ( fiw ) );
 		it_= fsit.it_;
 		return *this;
 	}
 
-	FrameOP frame_ptr() {
+	FrameOP frame_ptr() override {
 		return *it_;
 	}
 
-	FrameCOP frame_ptr() const {
+	FrameCOP frame_ptr() const override {
 		return *it_;
 	}
 

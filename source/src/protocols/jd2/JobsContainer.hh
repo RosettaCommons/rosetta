@@ -51,7 +51,7 @@ public:
 
 	/// @brief JobsContainer destructor.
 	///
-	virtual ~JobsContainer();
+	~JobsContainer() override;
 
 	/// @brief Get self const owning pointers.
 	///

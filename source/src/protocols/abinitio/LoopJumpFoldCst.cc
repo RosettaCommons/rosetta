@@ -71,7 +71,7 @@ namespace abinitio {
 
 using namespace core;
 
-LoopJumpFoldCst::~LoopJumpFoldCst() {}
+LoopJumpFoldCst::~LoopJumpFoldCst() = default;
 
 std::string
 LoopJumpFoldCst::get_name() const {
@@ -87,10 +87,9 @@ void LoopJumpFoldCst::select_loops(
 	loops_out.clear();
 	int ntries = 0;
 	while ( loops_out.size() == 0 && ntries++ < 50 ) {
-		for ( loops::Loops::const_iterator it = loops_.begin(), eit = loops_.end();
-				it != eit; ++it ) {
-			if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
-				loops_out.push_back( *it );
+		for (const auto & loop : loops_) {
+			if ( numeric::random::rg().uniform() >= loop.skip_rate() )  {
+				loops_out.push_back( loop );
 			}
 		}
 	}
@@ -159,7 +158,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
 	}
 	tr.Debug << loops << std::endl;
 
-	KinematicControlOP current_kinematics( NULL );
+	KinematicControlOP current_kinematics( nullptr );
 	if ( loops.size() && coordinate_constraint_weight_ > 0.0 ) {
 		current_kinematics = KinematicControlOP( new CoordinateConstraintKC( false /*ramp*/, coordinate_constraint_weight_ ) );
 	} else {
@@ -196,7 +195,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
 		success &= add_rigidity_jumps( rigid_core, current_kinematics );
 		if ( !success ) {
 			tr.Warning << "[WARNING] was not able to fix rigid regions with jumps...retry" << std::endl;
-			return NULL;
+			return nullptr;
 		}
 	}
 	pose.fold_tree( current_kinematics->sampling_fold_tree() );
@@ -287,8 +286,8 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 		visited[ root_reg ] = 1;
 	}
 
-	for (  jumping::JumpList::iterator it = rigid_jumps.begin(), eit = rigid_jumps.end(); it !=eit; ++it ) {
-		tr.Debug << "Fix_jumps: " << it->start_<< " " << it->end_ << std::endl;
+	for (auto & rigid_jump : rigid_jumps) {
+		tr.Debug << "Fix_jumps: " << rigid_jump.start_<< " " << rigid_jump.end_ << std::endl;
 	}
 	tr.Debug << "now add more fix-jumps " << std::endl;
 
@@ -310,8 +309,8 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 
 
 	ObjexxFCL::FArray1D_float new_cut_prob( cut_probability );
-	for ( loops::Loops::const_iterator it = rigid.begin(), eit = rigid.end(); it != eit; ++it ) {
-		for ( Size pos = it->start(); pos <= it->stop(); pos++ ) {
+	for (const auto & it : rigid) {
+		for ( Size pos = it.start(); pos <= it.stop(); pos++ ) {
 			new_cut_prob( pos ) = 0;
 		}
 	}
@@ -319,12 +318,12 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 	Size total_njump( rigid_jumps.size() + flex_jumps.size() );
 	ObjexxFCL::FArray2D_int jumps( 2, total_njump );
 	Size ct = 1;
-	for ( jumping::JumpList::iterator it = rigid_jumps.begin(), eit = rigid_jumps.end(); it !=eit; ++it, ++ct ) {
+	for ( auto it = rigid_jumps.begin(), eit = rigid_jumps.end(); it !=eit; ++it, ++ct ) {
 		jumps( 1, ct ) = it->start_;
 		jumps( 2, ct ) = it->end_;
 		tr.Debug << "Fix_jumps: " << it->start_<< " " << it->end_ << std::endl;
 	}
-	for ( jumping::JumpList::iterator it = flex_jumps.begin(), eit = flex_jumps.end(); it !=eit; ++it, ++ct ) {
+	for ( auto it = flex_jumps.begin(), eit = flex_jumps.end(); it !=eit; ++it, ++ct ) {
 		jumps( 1, ct ) = it->start_;
 		jumps( 2, ct ) = it->end_;
 		tr.Debug << "Flex_jumps: " << it->start_<< " " << it->end_ << std::endl;
@@ -350,8 +349,8 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 		kinematics::MoveMapOP  mm( new kinematics::MoveMap( current_kinematics->movemap() ) );
 		mm->set_jump( false );
 		//find flexible jump-nr in fold tree and update movemap accordingly
-		for ( jumping::JumpList::iterator it = flex_jumps.begin(), eit = flex_jumps.end(); it !=eit; ++it ) {
-			mm->set_jump( it->start_, it->end_, true );
+		for (auto & flex_jump : flex_jumps) {
+			mm->set_jump( flex_jump.start_, flex_jump.end_, true );
 		}
 		current_kinematics->set_movemap( mm );
 	}

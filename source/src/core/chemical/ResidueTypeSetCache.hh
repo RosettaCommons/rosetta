@@ -38,7 +38,7 @@ public:
 	ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set );
 
 	//destructor
-	~ResidueTypeSetCache();
+	~ResidueTypeSetCache() override;
 
 public:
 

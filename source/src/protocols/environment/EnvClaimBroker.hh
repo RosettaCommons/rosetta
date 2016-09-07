@@ -77,7 +77,7 @@ public:
 		core::pose::Pose const& in_pose,
 		SequenceAnnotationOP ann );
 
-	virtual ~EnvClaimBroker();
+	~EnvClaimBroker() override;
 
 	struct BrokerResult {
 		core::pose::Pose pose;
@@ -95,7 +95,7 @@ private:
 	/// @brief an inner class for tracking the properties of jumps that've been brokered.
 	class BrokeredJumpData : public utility::pointer::ReferenceCount {
 	public:
-		BrokeredJumpData( std::pair< core::Size, core::Size > const& positions,
+		BrokeredJumpData( std::pair< core::Size, core::Size > positions, // move-constructed
 			std::pair< std::string, std::string > const& atoms,
 			bool put_jump_stub_intra_residue  );
 		bool operator==( BrokeredJumpData const& ) const;
@@ -122,7 +122,7 @@ private:
 
 	void annotate_fold_tree( core::kinematics::FoldTreeOP,
 		JumpDataMap const& new_jumps,
-		SequenceAnnotationOP = NULL );
+		SequenceAnnotationOP = nullptr );
 
 	void add_virtual_residues( Conformation&,
 		SizeToStringMap const& new_vrts,

@@ -181,10 +181,10 @@ namespace chemical {
 
 
 /// @details Auto-generated virtual destructor
-Patch::~Patch() {}
+Patch::~Patch() = default;
 
 /// @details Auto-generated virtual destructor
-PatchCase::~PatchCase() {}
+PatchCase::~PatchCase() = default;
 
 static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
 
@@ -258,7 +258,7 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 		//    instead, we make make a dummy residue type with only name1, name3, and aa set
 		//    this could be expanded to deal with more complicated selector logic
 		//    it is possible as well more complicated selector logic (which queries ResidueType in more detail) could break this ...
-		ResidueType dummy( NULL,NULL,NULL,NULL );
+		ResidueType dummy( nullptr,nullptr,nullptr,nullptr );
 		AA aatype = aa_from_name(tokens[2]);
 		dummy.aa(aatype);
 		dummy.name(tokens[2]);
@@ -331,13 +331,12 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 		rsd = rsd_in.placeholder_clone();
 	}
 
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		if ( !instantiate && !( *iter )->applies_to_placeholder() ) { continue; }
-		bool const fail( ( *iter )->apply( *rsd ) );
+	for (const auto & operation : operations_) {
+		if ( !instantiate && !operation->applies_to_placeholder() ) { continue; }
+		bool const fail( operation->apply( *rsd ) );
 		if ( fail ) {
 			utility_exit_with_message( "Failed to apply a PatchOperation to " + rsd->name() );
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -350,9 +349,8 @@ utility::vector1< std::string >
 PatchCase::adds_atoms() const
 {
 	utility::vector1< std::string > atom_names;
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		std::string const atom_name = ( *iter )->adds_atom();
+	for (const auto & operation : operations_) {
+		std::string const atom_name = operation->adds_atom();
 		if ( atom_name.size() > 0 ) atom_names.push_back( atom_name );
 	}
 	return atom_names;
@@ -363,9 +361,8 @@ utility::vector1< std::string >
 PatchCase::deletes_atoms() const
 {
 	utility::vector1< std::string > atom_names;
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		std::string const atom_name = ( *iter )->deletes_atom();
+	for (const auto & operation : operations_) {
+		std::string const atom_name = operation->deletes_atom();
 		if ( atom_name.size() > 0 ) atom_names.push_back( atom_name );
 	}
 	return atom_names;
@@ -376,9 +373,8 @@ utility::vector1< std::string >
 PatchCase::adds_properties() const
 {
 	utility::vector1< std::string > property_names;
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		std::string const property_name = ( *iter )->adds_property();
+	for (const auto & operation : operations_) {
+		std::string const property_name = operation->adds_property();
 		if ( property_name.size() > 0 ) property_names.push_back( property_name );
 	}
 	return property_names;
@@ -389,9 +385,8 @@ utility::vector1< std::string >
 PatchCase::deletes_properties() const
 {
 	utility::vector1< std::string > property_names;
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		std::string const property_name = ( *iter )->deletes_property();
+	for (const auto & operation : operations_) {
+		std::string const property_name = operation->deletes_property();
 		if ( property_name.size() > 0 ) property_names.push_back( property_name );
 	}
 	return property_names;
@@ -402,9 +397,8 @@ utility::vector1< std::string >
 PatchCase::deletes_variants() const
 {
 	utility::vector1< std::string > variant_names;
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		std::string const variant_name = ( *iter )->deletes_variant();
+	for (const auto & operation : operations_) {
+		std::string const variant_name = operation->deletes_variant();
 		if ( variant_name.size() > 0 ) variant_names.push_back( variant_name );
 	}
 	return variant_names;
@@ -414,9 +408,8 @@ PatchCase::deletes_variants() const
 std::string
 PatchCase::generates_new_name3() const {
 	std::string new_name3( "" );
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		std::string const name3 = ( *iter )->generates_name3();
+	for (const auto & operation : operations_) {
+		std::string const name3 = operation->generates_name3();
 		if ( name3.size() > 0 ) {
 			runtime_assert( new_name3.size() == 0 ); // do not allow Patch to define more than one new name3
 			new_name3 =  name3;
@@ -429,9 +422,8 @@ PatchCase::generates_new_name3() const {
 std::string
 PatchCase::generates_interchangeability_group() const {
 	std::string new_interchangeability_group( "" );
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		std::string const interchangeability_group = ( *iter )->generates_interchangeability_group();
+	for (const auto & operation : operations_) {
+		std::string const interchangeability_group = operation->generates_interchangeability_group();
 		if ( interchangeability_group.size() > 0 ) {
 			runtime_assert( new_interchangeability_group.size() == 0 ); // do not allow Patch to define more than one new interchangeability_group
 			new_interchangeability_group =  interchangeability_group;
@@ -443,9 +435,8 @@ PatchCase::generates_interchangeability_group() const {
 /// @brief returns list of new interchangeability_group, useful for identifying patches that go with PDB residues
 bool
 PatchCase::may_change_aa() const {
-	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-			iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		if ( ( *iter )->may_change_aa() ) return true;
+	for (const auto & operation : operations_) {
+		if ( operation->may_change_aa() ) return true;
 	}
 	return false;
 }
@@ -546,20 +537,18 @@ Patch::read_file( std::string const & filename )
 ResidueTypeOP
 Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ ) const
 {
-	if ( !applies_to( rsd_type ) ) { return 0; }  // I don't know how to patch this residue.
+	if ( !applies_to( rsd_type ) ) { return nullptr; }  // I don't know how to patch this residue.
 
 	using namespace basic;
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
-		if ( ( *iter )->applies_to( rsd_type ) ) {
+	for (const auto & iter : cases_) {
+		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			ResidueTypeOP patched_rsd_type( ( *iter )->apply( rsd_type, instantiate ) );
+			ResidueTypeOP patched_rsd_type( iter->apply( rsd_type, instantiate ) );
 			if ( patched_rsd_type ) {
 				// patch succeeded!
 				if ( !replaces_residue_type_ ) { // This is bananas. Shouldn't just forget that patch was applied. -- rhiju.
-					for ( utility::vector1< std::string >::const_iterator iter2=types_.begin(),
-							iter2_end = types_.end(); iter2 != iter2_end; ++iter2 ) {
+					for (const auto & type : types_) {
 						// Custom variant type--must account for.
 						// Issue: this means that variants in Patch files that are misspelled or
 						// something won't be caught--they'll just silently and ineffectually
@@ -570,7 +559,7 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 							// Need custom variant types.
 							patched_rsd_type->enable_custom_variant_types();
 						}
-						patched_rsd_type->add_variant_type( *iter2 );
+						patched_rsd_type->add_variant_type( type );
 					}
 					// AMW: Special case for the D patch. In ONLY THIS CASE,
 					// application of the D patch prepends the letter D. No ':'.
@@ -616,7 +605,7 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 	// If there is a genuine error in patching, the PatchOperations (or ResidueType) will error during the actual
 	// patching, so I believe this is completely safe. ~Labonte
 	//utility_exit_with_message( "no patch applied? " + name_ + " to " + rsd_type.name() );
-	return 0;
+	return nullptr;
 }
 
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
@@ -627,12 +616,11 @@ Patch::adds_atoms( ResidueType const & rsd_type ) const
 	utility::vector1< std::string > atom_names;
 	if ( !applies_to( rsd_type ) ) return atom_names;  // I don't know how to patch this residue.
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+	for (const auto & iter : cases_) {
 
-		if ( (*iter)->applies_to( rsd_type ) ) {
+		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			utility::vector1< std::string > atom_names_for_patch_case = ( *iter )->adds_atoms();
+			utility::vector1< std::string > atom_names_for_patch_case = iter->adds_atoms();
 			for ( Size n = 1; n <= atom_names_for_patch_case.size(); n++ ) {
 				atom_names.push_back(  atom_names_for_patch_case[ n ] );
 			}
@@ -650,12 +638,11 @@ Patch::deletes_atoms( ResidueType const & rsd_type ) const
 	utility::vector1< std::string > atom_names;
 	if ( !applies_to( rsd_type ) ) return atom_names;  // I don't know how to patch this residue.
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+	for (const auto & iter : cases_) {
 
-		if ( (*iter)->applies_to( rsd_type ) ) {
+		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			utility::vector1< std::string > atom_names_for_patch_case = ( *iter )->deletes_atoms();
+			utility::vector1< std::string > atom_names_for_patch_case = iter->deletes_atoms();
 			for ( Size n = 1; n <= atom_names_for_patch_case.size(); n++ ) {
 				atom_names.push_back(  atom_names_for_patch_case[ n ] );
 			}
@@ -673,12 +660,11 @@ Patch::adds_properties( ResidueType const & rsd_type ) const
 	utility::vector1< std::string > properties;
 	if ( !applies_to( rsd_type ) ) return properties;  // I don't know how to patch this residue.
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+	for (const auto & iter : cases_) {
 
-		if ( (*iter)->applies_to( rsd_type ) ) {
+		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			utility::vector1< std::string > properties_for_patch_case = ( *iter )->adds_properties();
+			utility::vector1< std::string > properties_for_patch_case = iter->adds_properties();
 			for ( Size n = 1; n <= properties_for_patch_case.size(); n++ ) {
 				properties.push_back(  properties_for_patch_case[ n ] );
 			}
@@ -696,12 +682,11 @@ Patch::deletes_properties( ResidueType const & rsd_type ) const
 	utility::vector1< std::string > properties;
 	if ( !applies_to( rsd_type ) ) return properties;  // I don't know how to patch this residue.
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+	for (const auto & iter : cases_) {
 
-		if ( (*iter)->applies_to( rsd_type ) ) {
+		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			utility::vector1< std::string > properties_for_patch_case = ( *iter )->deletes_properties();
+			utility::vector1< std::string > properties_for_patch_case = iter->deletes_properties();
 			for ( Size n = 1; n <= properties_for_patch_case.size(); n++ ) {
 				properties.push_back(  properties_for_patch_case[ n ] );
 			}
@@ -719,12 +704,11 @@ Patch::deletes_variants( ResidueType const & rsd_type ) const
 	utility::vector1< std::string > variants;
 	if ( !applies_to( rsd_type ) ) return variants;  // I don't know how to patch this residue.
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+	for (const auto & iter : cases_) {
 
-		if ( (*iter)->applies_to( rsd_type ) ) {
+		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			utility::vector1< std::string > variants_for_patch_case = ( *iter )->deletes_variants();
+			utility::vector1< std::string > variants_for_patch_case = iter->deletes_variants();
 			for ( Size n = 1; n <= variants_for_patch_case.size(); n++ ) {
 				variants.push_back(  variants_for_patch_case[ n ] );
 			}
@@ -742,10 +726,9 @@ Patch::generates_new_name3( ResidueType const & rsd_type ) const
 	std::string new_name3( "" );
 	if ( !applies_to( rsd_type ) ) return new_name3;
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->applies_to( rsd_type ) ) {
-			std::string name3 = ( *iter )->generates_new_name3();
+	for (const auto & iter : cases_) {
+		if ( iter->applies_to( rsd_type ) ) {
+			std::string name3 = iter->generates_new_name3();
 			if ( name3.size() > 0 ) {
 				runtime_assert( new_name3.size() == 0 );
 				new_name3 = name3;
@@ -765,10 +748,9 @@ Patch::generates_interchangeability_group( ResidueType const & rsd_type ) const
 	std::string new_interchangeability_group( "" );
 	if ( !applies_to( rsd_type ) ) return new_interchangeability_group;
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->applies_to( rsd_type ) ) {
-			std::string interchangeability_group = ( *iter )->generates_interchangeability_group();
+	for (const auto & iter : cases_) {
+		if ( iter->applies_to( rsd_type ) ) {
+			std::string interchangeability_group = iter->generates_interchangeability_group();
 			if ( interchangeability_group.size() > 0 ) {
 				runtime_assert( new_interchangeability_group.size() == 0 );
 				new_interchangeability_group = interchangeability_group;
@@ -789,9 +771,8 @@ Patch::generates_aa( ResidueType const & rsd_type ) const
 	chemical::AA new_aa( aa_none );
 	if ( !applies_to( rsd_type ) ) return new_aa;
 
-	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
-			iter_end = cases_.end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->applies_to( rsd_type ) && ( *iter )->may_change_aa() ) {
+	for (const auto & iter : cases_) {
+		if ( iter->applies_to( rsd_type ) && iter->may_change_aa() ) {
 			ResidueTypeOP rsd_type_apply = apply( rsd_type, false /* do not need to instantiate */ );
 			chemical::AA aa = rsd_type_apply->aa();
 			if ( aa == rsd_type.aa() ) aa = aa_none;

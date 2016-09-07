@@ -95,8 +95,8 @@ OptionCollection::add_built_in_options()
 /// @brief Checks is option has been registered as relevant.
 bool
 OptionCollection::is_relevant( OptionKey const & key ){
-	for ( unsigned int i=0; i<relevant_.size(); i++ ) {
-		if ( relevant_[i]->id() == key.id() ) return true;
+	for (auto & i : relevant_) {
+		if ( i->id() == key.id() ) return true;
 	}
 	return false;
 }
@@ -124,7 +124,7 @@ OptionCollection::check_specs() const
 	bool error( false );
 
 	// Check specs
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option: Check it
 			if ( ! option( key ).legal_specs_report() ) {
@@ -148,9 +148,9 @@ OptionCollection::load(
 	if ( args.size() == 0 ) return;
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
-	for ( std::vector<std::string>::const_iterator arg = args.begin(); arg != args.end();  ++arg ) {
-		arg_strings.push_back( *arg );
-		argv_copy_ += " " + (*arg);
+	for (const auto & arg : args) {
+		arg_strings.push_back( arg );
+		argv_copy_ += " " + arg;
 	}
 
 	load( "", arg_strings, free_args);
@@ -170,7 +170,7 @@ OptionCollection::load(
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
 	for ( int iarg = 1; iarg < argc; ++iarg ) {
-		arg_strings.push_back( argv[ iarg ] );
+		arg_strings.emplace_back(argv[ iarg ] );
 		std::string temp( argv[ iarg ] );
 		argv_copy_ += " " + temp;
 	}
@@ -503,7 +503,7 @@ OptionCollection::check_values() const
 	bool error( false );
 
 	// Check values are legal
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option: Check it
 			if ( ! option( key ).legal_report() ) error = true;
@@ -551,12 +551,12 @@ OptionCollection::show_help( std::ostream & stream )
 
 	if ( relevant_.size() > 0 ) {
 		stream << "\nShowing only relevant options...";
-		for ( unsigned int i=0; i<relevant_.size(); i++ ) {
-			OptionKey const & key( *relevant_[i] );
+		for (auto & i : relevant_) {
+			OptionKey const & key( *i );
 			show_option_help(key, group, stream);
 		}
 	} else {
-		for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+		for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 			OptionKey const & key( *i );
 			show_option_help(key, group, stream);
 		}
@@ -648,12 +648,12 @@ OptionCollection::show_help_hier( std::ostream & stream )
 		stream << "\nShowing only relevant options...\n\n\n";
 		stream << RJ( COL1, "Option" ) << " | " << A( COL2, " Setting " ) << " |" << A(4,"Type") << "| "  << LJ( COL3, " Description" ) << "\n";
 		stream << "--------------------------------------------------------------------------------------\n";
-		for ( unsigned int i=0; i<relevant_.size(); i++ ) {
-			OptionKey const & key( *relevant_[i] );
+		for (auto & i : relevant_) {
+			OptionKey const & key( *i );
 			show_option_help_hier( key, group, stream );
 		}
 	} else {
-		for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+		for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 			OptionKey const & key( *i );
 			show_option_help_hier( key, group, stream );
 		}
@@ -669,7 +669,7 @@ OptionCollection::show_user( std::ostream & stream ) const
 
 	stream << "\n# User Specified Options:\n";
 	string group; // Previous option group name
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option
 			Option const & opt( option( key ) );
@@ -695,7 +695,7 @@ OptionCollection::show_inaccessed_user_options( std::ostream & stream ) const
 {
 	using std::string;
 
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option
 			Option const& opt( option( key ) );
@@ -716,7 +716,7 @@ OptionCollection::show_all( std::ostream & stream ) const
 
 	stream << "\nOptions:   [Specify on command line or in @file]\n";
 	string group; // Previous option group name
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option
 			Option const & opt( option( key ) );
@@ -741,7 +741,7 @@ OptionCollection::show_all_hier( std::ostream & stream ) const
 
 	stream << "\nOptions:   [Specify on command line or in @file]\n";
 	string group; // Previous option group name
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option
 			Option const & opt( option( key ) );
@@ -769,7 +769,7 @@ OptionCollection::show_table_text( std::ostream & stream ) const
 
 	stream << "\nOption Definitions Table\n";
 	string group; // Previous option group name
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option
 			Option const & opt( option( key ) );
@@ -800,7 +800,7 @@ OptionCollection::show_table_Wiki( std::ostream & stream ) const
 	using std::string;
 
 	string group; // Previous option group name
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( has( key ) ) { // Active option
 			Option const & opt( option( key ) );
@@ -863,7 +863,7 @@ void OptionCollection::show_accessed_options(std::ostream & stream) const {
 
 	std::sort(sv.begin(), sv.end());
 
-	for ( unsigned int i=0; i<sv.size(); i++ ) stream << sv[i] << '\n';
+	for (auto & i : sv) stream << i << '\n';
 
 	stream << std::endl;
 }
@@ -909,8 +909,8 @@ void OptionCollection::show_unused_options(std::ostream & stream) const {
 
 		// '\n' instead of std::endl so that the options won't get prefixed if stream is a tracer.
 		stream << "WARNING: The following options have been set, but have not yet been used:\n";
-		for ( unsigned int i=0; i<sv.size(); i++ ) {
-			stream << "\t" << sv[i] << '\n';
+		for (auto & i : sv) {
+			stream << "\t" << i << '\n';
 		}
 		stream << std::endl; // Now we flush
 	}
@@ -925,7 +925,7 @@ OptionCollection::get_argv() const {
 std::ostream &
 operator <<( std::ostream & stream, OptionCollection const & options )
 {
-	for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+	for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 		OptionKey const & key( *i );
 		if ( options.has( key ) ) { // Active option
 			Option const & opt( options.option( key ) );
@@ -1163,10 +1163,9 @@ void
 OptionCollection::add_edits( std::set<std::string> & items ) {
 	std::set< std::string > new_edits;
 	std::string const charset( "abcdefghijklmnopqrstuvwxyz1234567890" ); // all lowercase, no underscores
-	for ( std::set< std::string >::const_iterator itr( items.begin() ), itr_end( items.end() ); itr != itr_end; ++itr ) {
+	for (const auto & instring : items) {
 		// keep the unmodified item
-		std::string const & instring( *itr );
-		new_edits.insert( instring );
+			new_edits.insert( instring );
 		//delete a single charachter
 		for ( unsigned long ii(0); ii < instring.size(); ++ii ) {
 			//delete a single charachter (ii)
@@ -1178,18 +1177,18 @@ OptionCollection::add_edits( std::set<std::string> & items ) {
 				transposed[ii-1] = instring[ii];
 				new_edits.insert( transposed );
 			}
-			for ( unsigned long jj(0); jj < charset.size(); ++jj ) {
+			for (char jj : charset) {
 				// add a single charachter before ii
-				new_edits.insert( instring.substr(0,ii) + charset[jj] + instring.substr(ii) );
+				new_edits.insert( instring.substr(0,ii) + jj + instring.substr(ii) );
 				// replace a charachter at ii
 				std::string replaced( instring );
-				replaced[ii] = charset[jj];
+				replaced[ii] = jj;
 				new_edits.insert( replaced );
 			}
 		}
 		// add a single charachter at the end of the string
-		for ( unsigned long jj(0); jj < charset.size(); ++jj ) {
-			new_edits.insert( instring + charset[jj] );
+		for (char jj : charset) {
+			new_edits.insert( instring + jj );
 		}
 	}
 	items = new_edits;
@@ -1244,7 +1243,7 @@ OptionCollection::find_key_cl(
 		std::vector< std::string > possible_matches; //what matches could it be; for error reporting
 		int n_best( 0 );
 		bool found_relevant( false );
-		for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+		for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 			OptionKey const & key( *i );
 			string sid;
 			if ( suffix( key.id(), k_part ) == key_string ) {
@@ -1275,8 +1274,8 @@ OptionCollection::find_key_cl(
 			kid = bid;
 		} else if ( n_best > 1 ) { // Nonunique matches found
 			std::string too_many_choices_error("Unique best command line context option match not found for -" + key_string + ".\nPossible matches include:\n");
-			for ( unsigned long i(0); i < possible_matches.size(); ++i ) {
-				too_many_choices_error += ("\t -" + possible_matches[i]) += "\n";
+			for (auto & possible_matche : possible_matches) {
+				too_many_choices_error += ("\t -" + possible_matche) += "\n";
 			}
 			too_many_choices_error += "Either specify namespace from command line; or in code, use add_relevant() to register option.\n";
 			throw ( excn::EXCN_Msg_Exception( too_many_choices_error ) );
@@ -1299,7 +1298,7 @@ OptionCollection::find_key_cl(
 
 		std::set< std::string > possible_fixes; // The set will sort the entries
 
-		for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
+		for ( auto i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 			OptionKey const & key( *i );
 			if ( all_edits.count( lower_no_under( suffix( key.id() ) ) ) == 1 ) {
 				possible_fixes.insert( key.id() );
@@ -1308,8 +1307,8 @@ OptionCollection::find_key_cl(
 
 		if ( ! possible_fixes.empty() ) {
 			not_found_error += "\nDid you mean:\n";
-			for ( std::set< std::string >::const_iterator itr( possible_fixes.begin() ); itr != possible_fixes.end(); ++itr ) {
-				not_found_error += "\t -" + *itr + "\n";
+			for (const auto & possible_fixe : possible_fixes) {
+				not_found_error += "\t -" + possible_fixe + "\n";
 			}
 		}
 		throw ( excn::EXCN_Msg_Exception( not_found_error ) );
@@ -1527,8 +1526,8 @@ OptionCollection::cleaned( std::string const & s )
 			t += s[i];
 		}
 	}
-	for ( size_type i = 0, e = t.size(); i < e; ++i ) {
-		if ( t[i] == '.' ) t[i] = ':';
+	for (char & i : t) {
+		if ( i == '.' ) i = ':';
 	}
 	return t;
 }

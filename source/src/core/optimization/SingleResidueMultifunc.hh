@@ -55,12 +55,12 @@ public:
 		bool const deriv_check_verbose_in = false
 	);
 
-	virtual ~SingleResidueMultifunc();
+	~SingleResidueMultifunc() override;
 
 	// func
-	virtual
+	
 	Real
-	operator ()( Multivec const & vars ) const;
+	operator ()( Multivec const & vars ) const override;
 
 private:
 	Size rsd_id_;

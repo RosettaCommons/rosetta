@@ -59,8 +59,8 @@ ResidueIEFilter::ResidueIEFilter():
 }
 
 ResidueIEFilter::ResidueIEFilter(
-	std::string const & resnums,
-	std::string const & restype,
+	std::string  resnums,
+	std::string  restype,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::scoring::ScoreType const score_type,
 	core::Real const threshold,
@@ -73,8 +73,8 @@ ResidueIEFilter::ResidueIEFilter(
 	bool const report_energy
 ) :
 	filters::Filter( "ResidueIE" ),
-	resnum_str_( resnums ),
-	restype_( restype ),
+	resnum_str_(std::move( resnums )),
+	restype_(std::move( restype )),
 	score_type_( score_type ),
 	threshold_( threshold ),
 	whole_pose_( whole_pose ),
@@ -157,7 +157,7 @@ ResidueIEFilter::resnums( std::string const & resnums_str ){
 	resnum_str_ = resnums_str;
 }
 
-ResidueIEFilter::~ResidueIEFilter() {}
+ResidueIEFilter::~ResidueIEFilter() = default;
 
 void
 ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )

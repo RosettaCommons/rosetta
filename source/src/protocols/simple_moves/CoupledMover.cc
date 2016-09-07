@@ -164,30 +164,10 @@ CoupledMover::CoupledMover(
 }
 
 // copy constructor
-CoupledMover::CoupledMover( CoupledMover const & rval ):
-	protocols::moves::Mover( rval ),
-	resnum_( rval.resnum_ ),
-	randomize_resnum_( rval.randomize_resnum_ ),
-	fix_backbone_( rval.fix_backbone_ ),
-	rotation_std_dev_( rval.rotation_std_dev_ ),
-	uniform_backrub_( rval.uniform_backrub_ ),
-	temperature_( rval.temperature_ ),
-	bias_sampling_( rval.bias_sampling_ ),
-	bump_check_( rval.bump_check_ ),
-	ligand_resnum_( rval.ligand_resnum_ ),
-	ligand_jump_id_( rval.ligand_jump_id_ ),
-	ligand_weight_( rval.ligand_weight_ ),
-	rotation_magnitude_( rval.rotation_magnitude_ ),
-	translation_magnitude_( rval.translation_magnitude_ ),
-	short_backrub_mover_( rval.short_backrub_mover_ ),
-	boltzmann_rotamer_mover_( rval.boltzmann_rotamer_mover_ ),
-	rigid_body_mover_( rval.rigid_body_mover_ ),
-	score_fxn_( rval.score_fxn_ ),
-	packer_task_( rval.packer_task_ )
-{}
+CoupledMover::CoupledMover( CoupledMover const & )= default;
 
 // destructor
-CoupledMover::~CoupledMover(){}
+CoupledMover::~CoupledMover()= default;
 
 // clone this object
 CoupledMover::MoverOP

@@ -45,7 +45,7 @@ class InterfaceBuilder: public utility::pointer::ReferenceCount
 {
 public:
 	InterfaceBuilder();
-	virtual ~InterfaceBuilder();
+	~InterfaceBuilder() override;
 	InterfaceBuilder(utility::vector1<LigandAreaOP> ligand_areas, core::Size extension_window = 0);
 	InterfaceBuilder(InterfaceBuilder const & that);
 

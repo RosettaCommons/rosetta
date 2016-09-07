@@ -51,7 +51,7 @@ ReportFilter::ReportFilter() :
 	checkpointing_file_("")
 {}
 
-ReportFilter::~ReportFilter() {}
+ReportFilter::~ReportFilter() = default;
 
 void
 ReportFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
@@ -112,10 +112,10 @@ ReportFilter::report( std::ostream & out, core::pose::Pose const & /*pose*/ ) co
 	out<<"filter: "<<report_filter_name_;
 	protocols::jd2::JobOP job2 = jd2::JobDistributor::get_instance()->current_job();
 	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
-	if ( report_string_ != NULL && report_string_->obj.length() > 0 ) {
+	if ( report_string_ != nullptr && report_string_->obj.length() > 0 ) {
 		out<<"job name: "<<job_name<<" report_string: "<<report_string_->obj<<std::endl;
 	}
-	if ( filter_ != NULL ) {
+	if ( filter_ != nullptr ) {
 		out<<"job name: "<<job_name<<" reporting filter value: ";
 	}
 	out<<"Internal filter's value is: "<<filter_val()<<std::endl;

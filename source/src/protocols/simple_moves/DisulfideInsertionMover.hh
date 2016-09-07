@@ -45,7 +45,7 @@ public:
 
 	// ctor
 	DisulfideInsertionMover(core::Size const peptide_chain,
-		core::scoring::ScoreFunctionOP scorefxn = NULL, core::kinematics::MoveMapOP mm = NULL,
+		core::scoring::ScoreFunctionOP scorefxn = nullptr, core::kinematics::MoveMapOP mm = nullptr,
 		bool const is_cyd_res_at_termini = true,
 		core::Size const n_cyd_seqpos = 0, core::Size const c_cyd_seqpos = 0);
 
@@ -53,14 +53,14 @@ public:
 	DisulfideInsertionMover( DisulfideInsertionMover const & );
 
 	// dtor
-	virtual ~DisulfideInsertionMover(){}
+	~DisulfideInsertionMover() override= default;
 
 	// clone
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	// mover interface
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "DisulfideInsertionMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "DisulfideInsertionMover"; }
 
 	/// @brief checks if residues next to a putative derived peptide are near enough in space to be mutated to cysteins that might form a cyclic peptide.
 	static DisulfideCyclizationViability determine_cyclization_viability(
@@ -73,7 +73,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	void set_scorefxn ( core::scoring::ScoreFunctionOP const score_function) { scorefxn_ = score_function; }
 	core::scoring::ScoreFunctionOP get_scorefxn() const { return scorefxn_;}

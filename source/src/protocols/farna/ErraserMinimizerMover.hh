@@ -52,24 +52,24 @@ public:
 
 	ErraserMinimizerMover();
 
-	virtual ~ErraserMinimizerMover() {}
+	~ErraserMinimizerMover() override = default;
 
-	std::string get_name() const { return "ErraserMinimizerMover"; }
+	std::string get_name() const override { return "ErraserMinimizerMover"; }
 
 	void pyrimidine_flip_trial( Pose & pose );
 	void setup_fold_tree( Pose & pose );
 
 	void initialize_from_options();
 
-	void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & /*data*/,
 		Filters_map const & /*filters*/,
 		Movers_map const & /*movers*/,
 		Pose const & /*pose*/
-	);
+	) override;
 
 	bool
 	check_in_bonded_list(

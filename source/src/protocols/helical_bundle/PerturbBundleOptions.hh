@@ -59,7 +59,7 @@ public:
 
 	PerturbBundleOptions( PerturbBundleOptions const & src );
 
-	~PerturbBundleOptions();
+	~PerturbBundleOptions() override;
 
 	/// @brief Copy this residue( allocate actual memory for it )
 	///

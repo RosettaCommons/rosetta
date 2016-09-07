@@ -56,15 +56,15 @@ class RNA_FragmentMonteCarlo: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP = 0 );
+	RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP = nullptr );
 
 	//destructor
-	~RNA_FragmentMonteCarlo();
+	~RNA_FragmentMonteCarlo() override;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const { return "RNA_FragmentMonteCarlo"; }
+	std::string get_name() const override { return "RNA_FragmentMonteCarlo"; }
 
 	void
 	set_refine_pose( bool const setting ){ refine_pose_ = setting; }
@@ -108,7 +108,7 @@ public:
 
 	RNA_ChunkLibraryCOP rna_chunk_library() const { return rna_chunk_library_; }
 
-	void show(std::ostream & output) const;
+	void show(std::ostream & output) const override;
 
 	void
 	align_pose( core::pose::Pose & pose, bool const verbose = false ) const;

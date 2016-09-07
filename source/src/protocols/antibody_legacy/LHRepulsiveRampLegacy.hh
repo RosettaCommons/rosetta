@@ -57,10 +57,10 @@ public:
 		core::scoring::ScoreFunctionCOP dock_scorefxn,
 		core::scoring::ScoreFunctionCOP pack_scorefxn );
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief default destructor
-	~LHRepulsiveRampLegacy();
+	~LHRepulsiveRampLegacy() override;
 
 	void set_default();
 
@@ -72,9 +72,9 @@ public:
 		pack_scorefxn_ = pack_scorefxn->clone();
 	}
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 
 	void set_task_factory(core::pack::task::TaskFactoryCOP tf);

@@ -31,11 +31,11 @@ public:
 
 	CombineChainsMover() : Mover("CombineChainsMover") {}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "CombineChainsMover";
 	}
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 };
 
 }//namespace domain_assembly

@@ -79,9 +79,9 @@ public:
 
 	ModelFeatures();
 
-	virtual
+	
 	std::string
-	type_name() const  {
+	type_name() const override  {
 		return "ModelFeatures";
 	};
 
@@ -89,14 +89,14 @@ public:
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	/// @brief generate the table schemas and write them to the database
-	virtual
+	
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session
-	) const;
+	) const override;
 
 	/// @brief get the vector of beginnings/ends of secondary structure segments
 	utility::vector1<Segment>
@@ -113,14 +113,14 @@ public:
 	) const;
 
 	/// @brief collect all the feature data for the pose
-	virtual
+	
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1<bool> const & relevant_residues,
 		protocols::features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-	);
+	) override;
 
 	void
 	write_clique_to_db(
@@ -130,7 +130,7 @@ public:
 	) const;
 
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -138,7 +138,7 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 private:
 

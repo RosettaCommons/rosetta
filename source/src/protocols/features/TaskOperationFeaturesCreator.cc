@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 TaskOperationFeaturesCreator::TaskOperationFeaturesCreator() {}
-TaskOperationFeaturesCreator::~TaskOperationFeaturesCreator() {}
+TaskOperationFeaturesCreator::~TaskOperationFeaturesCreator() = default;
 FeaturesReporterOP TaskOperationFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new TaskOperationFeatures );
 }

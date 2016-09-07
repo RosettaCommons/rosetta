@@ -44,6 +44,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/FixedSizeLexicographicalIterator.hh>
 #include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 
@@ -72,7 +73,7 @@ namespace devel {
 namespace znhash {
 
 /// @details Auto-generated virtual destructor
-ZnHash::~ZnHash() {}
+ZnHash::~ZnHash() = default;
 
 static THREAD_LOCAL basic::Tracer TR( "devel.znhash.ZnHash" );
 
@@ -81,19 +82,9 @@ ZnMatchData::ZnMatchData() :
 	res2_(0)
 {}
 
-ZnMatchData::~ZnMatchData() {}
+ZnMatchData::~ZnMatchData() = default;
 
-ZnMatchData::ZnMatchData( ZnMatchData const & src ) :
-	index_( src.index_ ),
-	res1_( src.res1_ ),
-	res2_( src.res2_ ),
-	zn_and_orbitals_( src.zn_and_orbitals_ ),
-	match_pdb_file_( src.match_pdb_file_ ),
-	match_cst_file_( src.match_cst_file_ ),
-	res1conf_( src.res1conf_ ),
-	res2conf_( src.res2conf_ ),
-	znconf_( src.znconf_ )
-{}
+ZnMatchData::ZnMatchData( ZnMatchData const & ) = default;
 
 ZnMatchData const &
 ZnMatchData::operator = ( ZnMatchData const & src )
@@ -200,11 +191,11 @@ void ZnHash::build_hash()
 	ndim_prods_[2] = ngrid_cells_[3];
 	ndim_prods_[1] = ndim_prods_[2]*ngrid_cells_[2];
 
-	ZnCoordinateHash::iterator hash_end = zn_hash_.end();
+	auto hash_end = zn_hash_.end();
 	for ( std::list< ZnCoord >::const_iterator iter = zn_coords_.begin(), iter_end = zn_coords_.end();
 			iter != iter_end; ++iter ) {
 		boost::uint64_t iter_bin = bin_for_point( (*iter)[1] );
-		ZnCoordinateHash::iterator hash_iter = zn_hash_.find( iter_bin );
+		auto hash_iter = zn_hash_.find( iter_bin );
 		if ( hash_iter == hash_end ) {
 			zn_hash_[ iter_bin ].push_back( *iter );
 		} else {
@@ -299,7 +290,7 @@ ZnCoordinationScorer::ZnCoordinationScorer() : utility::pointer::ReferenceCount(
 		"ramp", 0, 1, -1, 0, 1, 12, 4, coeffs ) );
 }
 
-ZnCoordinationScorer::~ZnCoordinationScorer() {}
+ZnCoordinationScorer::~ZnCoordinationScorer() = default;
 
 ZnCoordinationScorer::ZnCoordinationScorer( ZnCoordinationScorer const & src ) : utility::pointer::ReferenceCount(),
 	znx_ideal_coords_( src.znx_ideal_coords_ ),
@@ -710,7 +701,7 @@ ZnCoordinationScorer::score_and_index_for_best_match(
 	utility::vector1< core::Vector > symmclone_coords_res1( max_natoms_, core::Vector( 0.0 ) );
 	utility::vector1< core::Vector > symmclone_coords_res2( max_natoms_, core::Vector( 0.0 ) );
 
-	for ( ZnHash::ZnCoordinateHash::const_iterator
+	for ( auto
 			hash_iter = hash_->hash_begin(), hash_iter_end = hash_->hash_end();
 			hash_iter != hash_iter_end; ++hash_iter ) {
 		utility::vector1< ZnCoord > const & zncoords( hash_iter->second );
@@ -731,7 +722,7 @@ ZnCoordinationScorer::score_and_index_for_best_match(
 				core::Vector query_coord;
 				for ( Size jj = 1; jj <= 3; ++jj ) query_coord(jj) = ii_zn_local_coord(jj)+step_sizes[lex[jj]];
 				if ( ! bb.contains( query_coord ) ) continue;
-				ZnHash::ZnCoordinateHash::const_iterator query_hits = hash_->query_hash( query_coord );
+				auto query_hits = hash_->query_hash( query_coord );
 				if ( query_hits == hash_iter_end ) continue;
 				utility::vector1< ZnCoord > const & query_hit_coords( query_hits->second );
 				for ( Size jj = 1, jjend = query_hit_coords.size(); jj <= jjend; ++jj ) {
@@ -1063,12 +1054,12 @@ ZnCoordinationScorer::reset_znx_orbital_coords()
 ZnCoordinationConstraint::ZnCoordinationConstraint( ZnCoordinationScorerCOP zn_score
 ):
 	core::scoring::constraints::Constraint( core::scoring::metalhash_constraint ),
-	zn_score_( zn_score )
+	zn_score_(std::move( zn_score ))
 {
 	assert( zn_score_ ); // do not create this with a null pointer
 }
 
-ZnCoordinationConstraint::~ZnCoordinationConstraint() {}
+ZnCoordinationConstraint::~ZnCoordinationConstraint() = default;
 
 core::scoring::constraints::ConstraintOP
 ZnCoordinationConstraint::clone() const {

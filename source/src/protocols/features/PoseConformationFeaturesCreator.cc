@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 PoseConformationFeaturesCreator::PoseConformationFeaturesCreator() {}
-PoseConformationFeaturesCreator::~PoseConformationFeaturesCreator() {}
+PoseConformationFeaturesCreator::~PoseConformationFeaturesCreator() = default;
 FeaturesReporterOP PoseConformationFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new PoseConformationFeatures );
 }

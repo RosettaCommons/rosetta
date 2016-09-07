@@ -161,7 +161,7 @@ void H3RefineCCD::set_default() {
 
 
 // default destructor
-H3RefineCCD::~H3RefineCCD() {}
+H3RefineCCD::~H3RefineCCD() = default;
 
 //clone
 protocols::moves::MoverOP H3RefineCCD::clone() const {

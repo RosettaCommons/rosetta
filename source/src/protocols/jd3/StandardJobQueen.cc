@@ -51,7 +51,7 @@ namespace protocols {
 namespace jd3 {
 
 PreliminaryLarvalJob::PreliminaryLarvalJob() {}
-PreliminaryLarvalJob::~PreliminaryLarvalJob() {}
+PreliminaryLarvalJob::~PreliminaryLarvalJob() = default;
 PreliminaryLarvalJob::PreliminaryLarvalJob( PreliminaryLarvalJob const & src ) :
 	inner_job( src.inner_job ),
 	job_tag( src.job_tag )
@@ -75,7 +75,7 @@ StandardJobQueen::StandardJobQueen()
 	// TO DO: same thing for the PoseOutputterFactory.
 }
 
-StandardJobQueen::~StandardJobQueen() {}
+StandardJobQueen::~StandardJobQueen() = default;
 
 utility::options::OptionTypes
 option_type_from_key(
@@ -189,9 +189,9 @@ StandardJobQueen::job_definition_xsd() const
 		XMLSchemaSimpleSubelementList option_subelements;
 
 		std::set< utility::keys::VariantKey< utility::options::OptionKey > > already_output_options;
-		for ( OptionKeyList::const_iterator iter = options_.begin(); iter != options_.end(); ++iter ) {
+		for (const auto & iter : options_) {
 			AttributeList attributes;
-			utility::options::OptionKey const & opt_key( (*iter)() );
+			utility::options::OptionKey const & opt_key( iter() );
 
 			// only output each option once, even if it is read in more than
 			// one context
@@ -213,7 +213,7 @@ StandardJobQueen::job_definition_xsd() const
 					attributes + XMLSchemaAttribute::required_attribute( "value", value_attribute_type );
 				}
 			}
-			option_subelements.add_simple_subelement( iter->identifier(), attributes );
+			option_subelements.add_simple_subelement( iter.identifier(), attributes );
 		}
 		option_generator.element_name( "Options" )
 			.complex_type_naming_func( & job_complex_type_name )
@@ -440,14 +440,14 @@ StandardJobQueen::create_job( LarvalJobCOP ) const
 void StandardJobQueen::add_options( utility::options::OptionKeyList const & opts )
 {
 	using namespace utility::options;
-	for ( OptionKeyList::const_iterator iter = opts.begin(); iter != opts.end(); ++iter ) {
-		options_.push_back( *iter );
+	for (const auto & opt : opts) {
+		options_.push_back( opt );
 	}
 }
 
 void StandardJobQueen::add_option( utility::options::OptionKey const & key )
 {
-	options_.push_back( key );
+	options_.emplace_back(key );
 }
 
 void StandardJobQueen::remove_default_input_element() {}
@@ -539,8 +539,8 @@ StandardJobQueen::options_from_tag( utility::tag::TagCOP job_options_tag ) const
 		common_options_tag = common_block_tags_->getTag( "Options" );
 	}
 
-	for ( OptionKeyList::const_iterator iter = options_.begin(); iter != options_.end(); ++iter ) {
-		utility::options::OptionKey const & opt( (*iter)() );
+	for (const auto & option : options_) {
+		utility::options::OptionKey const & opt( option() );
 		OptionTypes opt_type = option_type_from_key( opt );
 
 		if ( job_options_tag && job_options_tag->hasTag( opt.identifier() ) ) {
@@ -590,9 +590,8 @@ StandardJobQueen::determine_job_list_from_xml_file(
 	// with all of the options that are within the <Option> subtag, if present -- and reading any options
 	// not present in the tag from the (global) options system.
 	Tag::tags_t const & subtags = job_def_tag->getTags();
-	for ( Tag::tags_t::const_iterator iter = subtags.begin(); iter != subtags.end(); ++iter ) {
-		TagCOP subtag = *iter;
-		if ( subtag->getName() != "Job" ) {
+	for (auto subtag : subtags) {
+			if ( subtag->getName() != "Job" ) {
 			debug_assert( subtag->getName() == "Common" );
 			common_block_tags_ = subtag;
 			continue;
@@ -685,12 +684,11 @@ StandardJobQueen::expand_preliminary_larval_job(
 	// for this preliminary job
 	InnerLarvalJobs one_input_pose_inner_jobs = refine_preliminary_job( prelim_job );
 
-	for ( InnerLarvalJobs::iterator inner_larval_job_iter = one_input_pose_inner_jobs.begin();
-			inner_larval_job_iter != one_input_pose_inner_jobs.end(); ++inner_larval_job_iter ) {
+	for (auto & one_input_pose_inner_job : one_input_pose_inner_jobs) {
 		// now ask the job outputter to devise the job_tag for each inner job
-		outputter->determine_job_tag( output_tag, *job_options, **inner_larval_job_iter );
+		outputter->determine_job_tag( output_tag, *job_options, *one_input_pose_inner_job );
 		// and then expand the list of inner-larval jobs into a list of larval jobs, one for each nstruct
-		LarvalJobs one_input_pose_jobs = expand_job_list( *inner_larval_job_iter );
+		LarvalJobs one_input_pose_jobs = expand_job_list( one_input_pose_inner_job );
 		jobs.splice( jobs.end(), one_input_pose_jobs );
 	}
 

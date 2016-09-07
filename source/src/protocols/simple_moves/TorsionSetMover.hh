@@ -38,12 +38,12 @@ public:
 		utility::vector1< core::Real > torsion_values );
 
 	//destructor
-	~TorsionSetMover();
+	~TorsionSetMover() override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "TorsionSetMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "TorsionSetMover"; }
 
 private:
 

@@ -20,7 +20,7 @@ namespace protocols {
 namespace simple_moves {
 
 ClearConstraintsMover::ClearConstraintsMover(){}
-ClearConstraintsMover::~ClearConstraintsMover(){}
+ClearConstraintsMover::~ClearConstraintsMover()= default;
 
 void ClearConstraintsMover::apply( core::pose::Pose & pose )
 {

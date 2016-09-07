@@ -25,10 +25,10 @@ class PocketConstraintCreator : public core::scoring::constraints::ConstraintCre
 {
 public:
 	PocketConstraintCreator();
-	virtual ~PocketConstraintCreator();
+	~PocketConstraintCreator() override;
 
-	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
-	virtual std::string keyname() const;
+	core::scoring::constraints::ConstraintOP create_constraint() const override;
+	std::string keyname() const override;
 };
 
 

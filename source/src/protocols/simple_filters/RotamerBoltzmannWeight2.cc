@@ -54,8 +54,7 @@ RotamerBoltzmannWeight2::RotamerBoltzmannWeight2():
 }
 
 RotamerBoltzmannWeight2::~RotamerBoltzmannWeight2()
-{
-}
+= default;
 
 RotamerBoltzmannWeight2::RotamerBoltzmannWeight2( RotamerBoltzmannWeight2 const & rval ):
 	protocols::filters::Filter( rval ),
@@ -173,11 +172,11 @@ RotamerBoltzmannWeight2::report( std::ostream & out, core::pose::Pose const & po
 	pose.metric( calculator_id_, "probabilities", probabilities_metricvalue );
 	RotamerProbabilities const & probabilities = probabilities_metricvalue.value();
 
-	out << "Residue\tProbability\tEnergy_Reduction" << std::endl;;
-	for ( RotamerProbabilities::const_iterator rp=probabilities.begin(); rp!=probabilities.end(); ++rp ) {
-		core::Real const energy_reduction = compute_modified_residue_energy( rp->second );
-		out << pose.residue(rp->first).name() << rp->first << '\t'
-			<< rp->second << '\t' << energy_reduction << std::endl;
+	out << "Residue\tProbability\tEnergy_Reduction" << std::endl;
+	for (const auto & probabilitie : probabilities) {
+		core::Real const energy_reduction = compute_modified_residue_energy( probabilitie.second );
+		out << pose.residue(probabilitie.first).name() << probabilitie.first << '\t'
+			<< probabilitie.second << '\t' << energy_reduction << std::endl;
 	}
 
 	out << "Final score: " << compute_score( pose, probabilities ) << std::endl;
@@ -189,8 +188,8 @@ compute_mean_probability( protocols::toolbox::pose_metric_calculators::RotamerPr
 	using protocols::toolbox::pose_metric_calculators::RotamerProbabilities;
 
 	core::Real sum = 0.0;
-	for ( RotamerProbabilities::const_iterator rp=probs.begin(); rp!=probs.end(); ++rp ) {
-		sum += rp->second;
+	for (const auto & prob : probs) {
+		sum += prob.second;
 	}
 	return sum / static_cast< core::Real >( probs.size() );
 }
@@ -203,7 +202,7 @@ compute_max_probability( protocols::toolbox::pose_metric_calculators::RotamerPro
 	if ( probs.empty() ) return 0.0;
 
 	core::Real max = probs.begin()->second;
-	for ( RotamerProbabilities::const_iterator rp=(++probs.begin()); rp!=probs.end(); ++rp ) {
+	for ( auto rp=(++probs.begin()); rp!=probs.end(); ++rp ) {
 		if ( rp->second > max ) max = rp->second;
 	}
 	return max;
@@ -233,12 +232,12 @@ RotamerBoltzmannWeight2::compute_modified_ddg(
 
 	core::Real const ddg_in = compute_ddg( pose );
 	core::Real modified_ddG = ddg_in;
-	for ( RotamerProbabilities::const_iterator rp=probs.begin(); rp!=probs.end(); ++rp ) {
-		core::Size const res( rp->first );
-		core::Real const energy = compute_modified_residue_energy( rp->second );
+	for (const auto & prob : probs) {
+		core::Size const res( prob.first );
+		core::Real const energy = compute_modified_residue_energy( prob.second );
 		modified_ddG += energy;
 		TR.Debug << pose.residue( res ).name3() << pose.pdb_info()->number( res ) << '\t'
-			<< '\t' << rp->second << '\t' << energy << std::endl;
+			<< '\t' << prob.second << '\t' << energy << std::endl;
 	}
 	TR.Debug << "ddG before, after modification: " << ddg_in << ", " << modified_ddG << std::endl;
 	return modified_ddG;
@@ -427,7 +426,7 @@ using protocols::simple_filters::IdManager;
 template<> std::mutex utility::SingletonBase< IdManager< core::Size > >::singleton_mutex_{};
 template<> std::atomic< IdManager< core::Size > * > utility::SingletonBase< IdManager< core::Size > >::instance_( 0 );
 #else
-template<> IdManager< core::Size > * utility::SingletonBase< IdManager< core::Size > >::instance_( 0 );
+template<> IdManager< core::Size > * utility::SingletonBase< IdManager< core::Size > >::instance_( nullptr );
 #endif
 
 }

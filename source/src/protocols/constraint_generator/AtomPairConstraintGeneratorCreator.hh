@@ -25,11 +25,11 @@ namespace constraint_generator {
 
 class AtomPairConstraintGeneratorCreator : public protocols::constraint_generator::ConstraintGeneratorCreator {
 public:
-	virtual protocols::constraint_generator::ConstraintGeneratorOP
-	create_constraint_generator() const;
+	protocols::constraint_generator::ConstraintGeneratorOP
+	create_constraint_generator() const override;
 
-	virtual std::string
-	keyname() const;
+	std::string
+	keyname() const override;
 };
 
 } //protocols

@@ -36,7 +36,7 @@ public:
 	Metapatch();
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Metapatch();
+	~Metapatch() override;
 	/// @brief constructor from file
 	void
 	read_file( std::string const & filename );

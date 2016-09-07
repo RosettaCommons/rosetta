@@ -70,7 +70,7 @@ public:
 
 public:
 	ResSingleMinimizationData();
-	virtual ~ResSingleMinimizationData();
+	~ResSingleMinimizationData() override;
 	ResSingleMinimizationData( ResSingleMinimizationData const & ); // deep copy
 	ResSingleMinimizationData & operator = ( ResSingleMinimizationData const & ); // deep copy
 
@@ -96,7 +96,7 @@ public:
 
 public:
 	ResPairMinimizationData();
-	virtual ~ResPairMinimizationData();
+	~ResPairMinimizationData() override;
 	ResPairMinimizationData( ResPairMinimizationData const & ); // deep copy
 	ResPairMinimizationData & operator = ( ResPairMinimizationData const & ); // deep copy
 

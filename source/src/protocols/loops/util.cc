@@ -102,10 +102,9 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 		weights.resize( pose.total_residue() );
 	}
 
-	for ( Loops::const_iterator it = rigid.begin(), eit = rigid.end();
-			it!=eit; ++it ) {
-		for ( Size pos = it->start(); pos <= it->stop(); ++pos ) {
-			Size const seq_dist( std::min( (int) pos - it->start(), (int) it->stop() - pos ) + 1);
+	for (const auto & it : rigid) {
+		for ( Size pos = it.start(); pos <= it.stop(); ++pos ) {
+			Size const seq_dist( std::min( (int) pos - it.start(), (int) it.stop() - pos ) + 1);
 			Real coord_sdev;
 			if ( bReadWeights ) {
 				coord_sdev = weights[ pos ];
@@ -174,11 +173,10 @@ void select_loop_frags(
 		Size const size ( insert_size[ pos ] );
 		FrameList copy_frames;
 		source.frames( pos, copy_frames );
-		for ( FrameList::iterator it = copy_frames.begin(), eit = copy_frames.end();
-				it!=eit; ++it ) {
-			TR.Trace << "add frame at pos " << pos << " " << (*it)->length() << " insert_size " << size << std::endl;
-			if ( (*it)->length() == size ) loop_frags.add( *it );
-			else if ( shorten && size > shorten ) loop_frags.add( (*it)->generate_sub_frame( size ) );
+		for (auto & copy_frame : copy_frames) {
+			TR.Trace << "add frame at pos " << pos << " " << copy_frame->length() << " insert_size " << size << std::endl;
+			if ( copy_frame->length() == size ) loop_frags.add( copy_frame );
+			else if ( shorten && size > shorten ) loop_frags.add( copy_frame->generate_sub_frame( size ) );
 		}
 	}
 } //select_loop_frags
@@ -207,10 +205,8 @@ void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loo
 	TR.Debug << "extend structure for " << loops << std::endl;
 
 	Conformation& conf = pose.conformation();
-	for ( Loops::const_iterator i = loops.begin(); i != loops.end(); ++i ) {
-		const Loop& loop = *i;
-
-		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
+	for (const auto & loop : loops) {
+			for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
 			core::conformation::idealize_position(j, conf);
 			pose.set_phi(j, EXT_PHI);
 			pose.set_psi(j, EXT_PSI);
@@ -467,8 +463,8 @@ void define_scorable_core_from_secondary_structure(
 
 	//elongate loops if they are terminated by a short helix
 	loops::Loops removed_short_helices( unscored_loops );
-	for ( loops::Loops::const_iterator it=unscored_loops.begin(); it != unscored_loops.end(); ++it ) {
-		Size npos( it->stop() + 1 );
+	for (const auto & unscored_loop : unscored_loops) {
+		Size npos( unscored_loop.stop() + 1 );
 		while ( short_helix[ npos ] ) {
 			removed_short_helices.add_loop( npos-1, npos );
 			npos++;
@@ -671,9 +667,8 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
 
-	for ( core::Size i_ss = 0; i_ss < extracted_ss_types.size(); ++i_ss ) {
-		char ss = extracted_ss_types[i_ss];
-		Loops secondary_structure_chunks_this_ss;
+	for (char ss : extracted_ss_types) {
+			Loops secondary_structure_chunks_this_ss;
 
 		// this order might be the best to deal with chain breaks in the middle of secondary structure chunk
 		secondary_structure_chunks_this_ss = extract_secondary_structure_chunks(pose, ss);

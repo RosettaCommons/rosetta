@@ -78,8 +78,7 @@ ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & res
 {}
 
 //Destructor
-ResidueTypeFinder::~ResidueTypeFinder()
-{}
+ResidueTypeFinder::~ResidueTypeFinder() = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOP
@@ -96,7 +95,7 @@ ResidueTypeFinder::get_representative_type() const
 	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_custom_residue_types();
 
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
-	if ( rsd_types.size() == 0 ) return 0;
+	if ( rsd_types.size() == 0 ) return nullptr;
 	return rsd_types[ 1 ];
 }
 
@@ -146,7 +145,7 @@ ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1<
 
 	Size const n_types( rsd_types.size() );
 	if ( n_types == 0 ) {
-		return 0;
+		return nullptr;
 	}
 
 	if ( TR.Debug.visible() ) {

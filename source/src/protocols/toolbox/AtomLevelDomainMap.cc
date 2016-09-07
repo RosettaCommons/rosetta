@@ -86,7 +86,7 @@ AtomLevelDomainMap::AtomLevelDomainMap( core::pose::Pose const & pose,
 }
 
 //////////////////////////////////////////////////////////////////
-AtomLevelDomainMap::~AtomLevelDomainMap() {}
+AtomLevelDomainMap::~AtomLevelDomainMap() = default;
 
 //////////////////////////////////////////////////////////////////
 AtomLevelDomainMapOP
@@ -171,7 +171,7 @@ AtomLevelDomainMap::has_domain( core::id::AtomID const & atom_id ) const{
 Size
 AtomLevelDomainMap::get_domain( core::id::AtomID const & atom_id  ) const {
 	if ( !atom_id_mapper_->has_atom_id( atom_id ) ) return FIXED_DOMAIN;
-	std::map< core::id::AtomID, Size >::const_iterator it = domain_map_.find( atom_id_mapper_->map_to_reference( atom_id ) );
+	auto it = domain_map_.find( atom_id_mapper_->map_to_reference( atom_id ) );
 	if ( it == domain_map_.end() )  utility_exit_with_message( "Asked atom_level_domain_map for an atom_id it does not know about!" );
 	return it->second;
 }
@@ -217,9 +217,8 @@ AtomLevelDomainMap::set_domain( core::id::NamedAtomID const & named_atom_id, pos
 void
 AtomLevelDomainMap::set_domain( Size const & setting  )
 {
-	for ( std::map< AtomID, Size >::iterator it = domain_map_.begin(),
-			end = domain_map_.end(); it != end; ++it ) {
-		it->second = setting;
+	for (auto & it : domain_map_) {
+		it.second = setting;
 	}
 }
 

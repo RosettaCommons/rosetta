@@ -71,7 +71,7 @@ void Timer::reset() {
 
 bool Timer::is_on_ = false;
 int Timer::interval_ = 600;
-time_t Timer::time_ = time(0);
+time_t Timer::time_ = time(nullptr);
 
 
 } // checkpoint

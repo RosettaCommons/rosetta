@@ -80,7 +80,7 @@ RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures(RotamerBoltzmannW
 	rotamer_boltzmann_weight_(src.rotamer_boltzmann_weight_)
 {}
 
-RotamerBoltzmannWeightFeatures::~RotamerBoltzmannWeightFeatures(){}
+RotamerBoltzmannWeightFeatures::~RotamerBoltzmannWeightFeatures()= default;
 
 string
 RotamerBoltzmannWeightFeatures::type_name() const { return "RotamerBoltzmannWeightFeatures"; }

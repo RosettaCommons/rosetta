@@ -92,7 +92,7 @@ DdGScan::DdGScan(
 	bool write2pdb
 ):
 	Filter( "DdGScan" ),
-	task_factory_( task_factory ),
+	task_factory_(std::move( task_factory )),
 	repeats_( repeats ),
 	report_diffs_( report_diffs ),
 	write2pdb_( write2pdb )
@@ -101,18 +101,10 @@ DdGScan::DdGScan(
 }
 
 /// @brief copy constructor
-DdGScan::DdGScan( DdGScan const & rval ):
-	Filter( rval ),
-	task_factory_( rval.task_factory_ ),
-	repeats_( rval.repeats_ ),
-	scorefxn_( rval.scorefxn_ ),
-	report_diffs_( rval.report_diffs_ ),
-	write2pdb_( rval.write2pdb_ ),
-	ddG_mover_( rval.ddG_mover_ )
-{}
+DdGScan::DdGScan( DdGScan const & )= default;
 
 /// @brief destructor
-DdGScan::~DdGScan() {}
+DdGScan::~DdGScan() = default;
 
 void DdGScan::initialize() {
 	ddG_mover( protocols::simple_moves::ddGOP( new protocols::simple_moves::ddG() ) );
@@ -231,7 +223,7 @@ DdGScan::calculate( std::ostream & out, core::pose::Pose const & const_pose ) co
 
 	// Apply TaskOperations from xml
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-	if ( task_factory_ != 0 ) {
+	if ( task_factory_ != nullptr ) {
 		task = task_factory_->create_task_and_apply_taskoperations( pose );
 	} else {
 		TR << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
@@ -258,7 +250,7 @@ DdGScan::calculate( std::ostream & out, core::pose::Pose const & const_pose ) co
 			// Loop through designable residues at this position (AKA make packer do each one one at a time instead of try all at once)
 			// allowed_residue_types only contain residues defined through PIKAA - so a NATRO-only residue that made it this far won't have nything else happen
 			for (
-					core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter = task->nonconst_residue_task( resi ).allowed_residue_types_begin();
+					auto aa_iter = task->nonconst_residue_task( resi ).allowed_residue_types_begin();
 					aa_iter != task->nonconst_residue_task( resi ).allowed_residue_types_end();
 					++aa_iter
 					) {

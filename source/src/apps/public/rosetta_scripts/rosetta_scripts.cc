@@ -20,7 +20,6 @@
 #include <core/types.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 
-
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 

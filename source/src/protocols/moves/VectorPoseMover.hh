@@ -32,15 +32,15 @@ public:
 	/// @brief Constructor
 	VectorPoseMover();
 
-	virtual ~VectorPoseMover();
+	~VectorPoseMover() override;
 
 	VectorPoseMover( std::string const& name );
 
 	VectorPoseMover( VectorPoseMover const & other );
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void apply ( core::pose::Pose& pose ) = 0;
+	void apply ( core::pose::Pose& pose ) override = 0;
 
 	/// @brief Set the vector of poses for the mover to act upon
 	void set_poses( utility::vector1< core::pose::PoseOP > const & poses );

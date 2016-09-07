@@ -37,7 +37,7 @@ namespace core {
 namespace chemical {
 
 /// @details Auto-generated virtual destructor
-Metapatch::~Metapatch() {}
+Metapatch::~Metapatch() = default;
 
 static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
 

@@ -151,7 +151,7 @@ FloppyTailMover::FloppyTailMover() :
 
 }
 
-FloppyTailMover::~FloppyTailMover(){}
+FloppyTailMover::~FloppyTailMover()= default;
 
 /// @brief copy ctor
 FloppyTailMover::FloppyTailMover( FloppyTailMover const & rhs ) :
@@ -354,13 +354,13 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
 
 		core::Size guess(onestart);
-		for ( std::set<core::Size>::const_iterator iter(vector_of_pairs[i].first.begin()), end(vector_of_pairs[i].first.end()); iter != end; ++iter ) {
-			if ( guess++ != *iter ) TR.Error << "non-contiguous set, debug me!" << std::endl;
+		for (unsigned long iter : vector_of_pairs[i].first) {
+			if ( guess++ != iter ) TR.Error << "non-contiguous set, debug me!" << std::endl;
 			//TR << *iter << std::endl;
 		}
 		guess = twostart;
-		for ( std::set<core::Size>::const_iterator iter(vector_of_pairs[i].second.begin()), end(vector_of_pairs[i].second.end()); iter != end; ++iter ) {
-			if ( guess++ != *iter ) TR.Error << "non-contiguous set, debug me!" << std::endl;
+		for (unsigned long iter : vector_of_pairs[i].second) {
+			if ( guess++ != iter ) TR.Error << "non-contiguous set, debug me!" << std::endl;
 			//TR << *iter << std::endl;
 		}
 

@@ -52,7 +52,7 @@ MultipleSigmoids::MultipleSigmoids() :
 {
 }
 
-MultipleSigmoids::~MultipleSigmoids() {}
+MultipleSigmoids::~MultipleSigmoids() = default;
 
 void
 MultipleSigmoids::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){

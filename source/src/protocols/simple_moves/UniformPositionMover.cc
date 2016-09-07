@@ -73,12 +73,7 @@ UniformRotationMover::UniformRotationMover(
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-UniformRotationMover::UniformRotationMover( UniformRotationMover const & src ) :
-	Mover( src ),
-	alpha_( src.alpha_ ),
-	axis_( src.axis_ ),
-	rb_jump_( src.rb_jump_ )
-{}
+UniformRotationMover::UniformRotationMover( UniformRotationMover const & ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -97,7 +92,7 @@ UniformRotationMover::operator=( UniformRotationMover const & src )
 }
 
 /// @brief Destructor
-UniformRotationMover::~UniformRotationMover() {}
+UniformRotationMover::~UniformRotationMover() = default;
 
 /////////////////////
 /// Mover Methods ///
@@ -159,11 +154,7 @@ UniformTranslationMover::UniformTranslationMover(
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-UniformTranslationMover::UniformTranslationMover( UniformTranslationMover const & src ) :
-	Mover( src ),
-	new_position_( src.new_position_ ),
-	rb_jump_( src.rb_jump_ )
-{}
+UniformTranslationMover::UniformTranslationMover( UniformTranslationMover const & ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -182,7 +173,7 @@ UniformTranslationMover::operator=( UniformTranslationMover const & src )
 }
 
 /// @brief Destructor
-UniformTranslationMover::~UniformTranslationMover() {}
+UniformTranslationMover::~UniformTranslationMover() = default;
 
 /////////////////////
 /// Mover Methods ///

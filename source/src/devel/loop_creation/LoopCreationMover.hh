@@ -57,18 +57,18 @@ public:
 		bool minimize_loops
 	);
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void
 	init();
 
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	void
 	copy_last_loop_to_new_anchor(
@@ -110,7 +110,7 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 private:
 

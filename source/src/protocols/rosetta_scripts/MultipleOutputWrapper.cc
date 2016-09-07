@@ -102,15 +102,15 @@ void MultipleOutputWrapper::apply(core::pose::Pose& pose)
 core::pose::PoseOP MultipleOutputWrapper::get_additional_output()
 {
 	if ( !reference_pose_ ) {
-		return NULL;
+		return nullptr;
 	}
 	if ( (max_poses_ > 0) && (n_poses_ >= max_poses_) ) {
-		return NULL;
+		return nullptr;
 	}
 
 	core::pose::PoseOP new_pose( new core::pose::Pose(*reference_pose_) );
 	if ( !generate_pose(*new_pose) ) {
-		return NULL;
+		return nullptr;
 	}
 
 	return new_pose;
@@ -123,7 +123,7 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 	protocols::filters::Filters_map filters;
 	protocols::moves::Movers_map movers;
 	if ( !keep_mover_state_ ) {
-		mover_ = NULL;
+		mover_ = nullptr;
 	}
 
 	if ( !mover_ && rosetta_scripts_tag_ ) {
@@ -135,7 +135,7 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 		mover_ = MoverFactory::get_instance()->newMover(mover_tag_, data, filters, movers, pose );
 	}
 
-	runtime_assert( mover_ != 0 );
+	runtime_assert( mover_ != nullptr );
 
 	core::Size attempts;
 	for ( attempts = 1; attempts <= max_attempts_; ++attempts ) {

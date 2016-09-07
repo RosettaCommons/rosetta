@@ -60,14 +60,14 @@ public:
 	ConstraintClaimer( std::string cst_file, std::string tag = "" );
 	ConstraintClaimer( bool CmdFlag, bool centroid = true, bool fullatom = false );
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new ConstraintClaimer( *this ) );
 	}
 
-	virtual void generate_claims( claims::DofClaims& );
+	void generate_claims( claims::DofClaims& ) override;
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -75,11 +75,11 @@ public:
 		return "ConstraintClaimer";
 	}
 
-	virtual void new_decoy();
+	void new_decoy() override;
 
-	virtual bool read_tag( std::string tag, std::istream & );
+	bool read_tag( std::string tag, std::istream & ) override;
 
-	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
+	void add_constraints( core::pose::Pose& /*pose*/ ) const override;
 
 	// ConstraintSetCOP constraints() const { return constraints_; }
 	// ConstraintSetCOP fa_constraints() const { return fa_constraints_; }

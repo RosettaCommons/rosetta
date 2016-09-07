@@ -47,7 +47,7 @@ static THREAD_LOCAL basic::Tracer TR( "basic.datacache.ConstDataMap" );
 ConstDataMap::ConstDataMap() {}
 ConstDataMap::ConstDataMap( ConstDataMap const & src ) : data_map_( src.data_map_ ) {}
 
-ConstDataMap::~ConstDataMap() {}
+ConstDataMap::~ConstDataMap() = default;
 
 /// @details merge-sort style iteration over the elements of both data-maps. This
 /// implementation may not be necessary as the STL library may already implement
@@ -56,15 +56,15 @@ ConstDataMap &
 ConstDataMap::operator = ( ConstDataMap const & rhs )
 {
 	if ( this != &rhs ) {
-		iterator this_cat_iter = data_map_.begin();
-		const_iterator rhs_cat_iter = rhs.data_map_.begin();
+		auto this_cat_iter = data_map_.begin();
+		auto rhs_cat_iter = rhs.data_map_.begin();
 		while ( this_cat_iter != data_map_.end() && rhs_cat_iter != rhs.data_map_.end() ) {
 			if ( this_cat_iter->first == rhs_cat_iter->first ) {
 				NamedConstObjectMap & this_ncom( this_cat_iter->second );
 				NamedConstObjectMap const & rhs_ncom( rhs_cat_iter->second );
 
-				NamedConstObjectMap::iterator this_ncom_iter = this_ncom.begin();
-				NamedConstObjectMap::const_iterator rhs_ncom_iter = rhs_ncom.begin();
+				auto this_ncom_iter = this_ncom.begin();
+				auto rhs_ncom_iter = rhs_ncom.begin();
 				while ( this_ncom_iter != this_ncom.end() && rhs_ncom_iter != rhs_ncom.end() ) {
 					if ( this_ncom_iter->first == rhs_ncom_iter->first ) {
 						if ( this_ncom_iter->second.get() != rhs_ncom_iter->second.get() ) {
@@ -74,7 +74,7 @@ ConstDataMap::operator = ( ConstDataMap const & rhs )
 						++this_ncom_iter;
 						++rhs_ncom_iter;
 					} else if ( this_ncom_iter->first < rhs_ncom_iter->first ) {
-						NamedConstObjectMap::iterator next_this_ncom_iter( this_ncom_iter );
+						auto next_this_ncom_iter( this_ncom_iter );
 						++next_this_ncom_iter;
 						this_ncom.erase( this_ncom_iter );
 						this_ncom_iter = next_this_ncom_iter;
@@ -86,7 +86,7 @@ ConstDataMap::operator = ( ConstDataMap const & rhs )
 
 				// delete all extra contents from this_ncom
 				while ( this_ncom_iter != this_ncom.end() ) {
-					NamedConstObjectMap::iterator next_this_ncom_iter( this_ncom_iter );
+					auto next_this_ncom_iter( this_ncom_iter );
 					++next_this_ncom_iter;
 					this_ncom.erase( this_ncom_iter );
 					this_ncom_iter = next_this_ncom_iter;
@@ -101,7 +101,7 @@ ConstDataMap::operator = ( ConstDataMap const & rhs )
 				++this_cat_iter;
 				++rhs_cat_iter;
 			} else if ( this_cat_iter->first < rhs_cat_iter->first ) {
-				iterator next_this_cat_iter( this_cat_iter );
+				auto next_this_cat_iter( this_cat_iter );
 				++next_this_cat_iter;
 				data_map_.erase( this_cat_iter );
 				this_cat_iter = next_this_cat_iter;
@@ -113,7 +113,7 @@ ConstDataMap::operator = ( ConstDataMap const & rhs )
 
 		// delete extra elements from data_map_
 		while ( this_cat_iter != data_map_.end() ) {
-			iterator next_this_cat_iter( this_cat_iter );
+			auto next_this_cat_iter( this_cat_iter );
 			++next_this_cat_iter;
 			data_map_.erase( this_cat_iter );
 			this_cat_iter = next_this_cat_iter;
@@ -183,10 +183,10 @@ ConstDataMap::has( std::string const & type ) const {
 
 bool
 ConstDataMap::has( std::string const & type, std::string const & name ) const {
-	const_iterator it = data_map_.find( type );
+	auto it = data_map_.find( type );
 	if ( it == data_map_.end() ) return false;
 
-	NamedConstObjectMap::const_iterator it2 = it->second.find( name );
+	auto it2 = it->second.find( name );
 	if ( it2 == it->second.end() ) return false;
 
 	return true;
@@ -200,8 +200,8 @@ ConstDataMap::operator []( std::string const & type ) {
 platform::Size
 ConstDataMap::size() const {
 	platform::Size count = 0;
-	for ( const_iterator iter = data_map_.begin(); iter != data_map_.end(); ++iter ) {
-		count += iter->second.size();
+	for (const auto & iter : data_map_) {
+		count += iter.second.size();
 	}
 	return count;
 }

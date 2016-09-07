@@ -37,7 +37,7 @@ class RRReporter : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~RRReporter();
+	~RRReporter() override;
 
 public: // public interface
 
@@ -91,7 +91,7 @@ public: // constructors destructors
 
 	RRReporterSimple( RRReporterSimple const & );
 
-	~RRReporterSimple();
+	~RRReporterSimple() override;
 
 
 public: // public interface
@@ -99,18 +99,18 @@ public: // public interface
 	void
 	set_protocol_info(
 		std::string const & /*protocol_name*/,
-		std::string const & /*protocol_params*/){}
+		std::string const & /*protocol_params*/) override{}
 
 	void
 	set_comparer_info(
 		std::string const & /*comparer_name*/,
-		std::string const & /*comparer_params*/){}
+		std::string const & /*comparer_params*/) override{}
 
-	virtual
+	
 	void
-	reset_recovery();
+	reset_recovery() override;
 
-	virtual
+	
 	void
 	report_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -119,19 +119,19 @@ public: // public interface
 		core::conformation::Residue const & res2,
 		core::Real score,
 		bool recovered
-	);
+	) override;
 
-	virtual
+	
 	core::Real
-	recovery_rate() const;
+	recovery_rate() const override;
 
-	virtual
+	
 	void
-	show(std::ostream & out ) const;
+	show(std::ostream & out ) const override;
 
-	virtual
+	
 	void
-	show() const;
+	show() const override;
 
 private: // data members
 

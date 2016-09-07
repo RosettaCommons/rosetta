@@ -41,14 +41,14 @@ ScoringSchemeOP
 ScoringSchemeFactory::get_scoring_scheme(
 	std::string const & type
 ) const {
-	ScoringSchemeTypes::const_iterator iter = scheme_types_.find( type );
+	auto iter = scheme_types_.find( type );
 	if ( iter != scheme_types_.end() ) {
 		return iter->second->clone();
 	} else {
 		utility_exit_with_message(
 			"ScoringSchemeFactory: unknown ScoringScheme type: " + type
 		);
-		return NULL;
+		return nullptr;
 	}
 }
 

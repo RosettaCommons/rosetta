@@ -32,10 +32,10 @@ public:
 	MiniRelax( core::scoring::ScoreFunctionOP scorefxn_in );
 	MiniRelax( MiniRelax const & other );
 
-	virtual ~MiniRelax();
-	virtual protocols::moves::MoverOP clone() const;
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	~MiniRelax() override;
+	protocols::moves::MoverOP clone() const override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;

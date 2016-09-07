@@ -69,7 +69,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.NativeEvaluatorCreato
 namespace protocols {
 namespace simple_filters {
 
-NativeEvaluatorCreator::~NativeEvaluatorCreator() {}
+NativeEvaluatorCreator::~NativeEvaluatorCreator() = default;
 
 void NativeEvaluatorCreator::register_options() {
 	using namespace basic::options;
@@ -89,7 +89,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 	using namespace basic::options::OptionKeys;
 	using protocols::evaluation::PoseEvaluatorOP;
 
-	core::pose::PoseOP native_pose = NULL;
+	core::pose::PoseOP native_pose = nullptr;
 	if ( option[ in::file::native ].user() ) {
 		native_pose = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);

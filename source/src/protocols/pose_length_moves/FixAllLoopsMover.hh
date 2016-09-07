@@ -46,10 +46,10 @@ using utility::vector1;
 class FixAllLoopsMover : public protocols::moves::Mover {
 public:
 	FixAllLoopsMover();
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new FixAllLoopsMover( *this ) ); }
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	moves::MoverOP clone() const override { return moves::MoverOP( new FixAllLoopsMover( *this ) ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	protocols::loops::Loops get_loops(core::pose::Pose const & pose);
 	int resAdjustmentStartLow_;

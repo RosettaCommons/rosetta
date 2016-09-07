@@ -95,18 +95,18 @@ public:
 	}
 
 	/// @brief dtor
-	~SequenceProfile() {}
+	~SequenceProfile() override = default;
 
 	/// @brief Returns an owning pointer to a new SequenceProfile object,
 	/// with data that is a deep copy of the information in this object.
-	virtual SequenceOP clone() const {
+	SequenceOP clone() const override {
 		SequenceOP new_seq_op( new SequenceProfile( *this ) );
 		return new_seq_op;
 	}
 
 	/// @brief Read an profile matrix from the given filename using the NCBI
 	/// PSSM format for a position-specific scoring matrix.
-	virtual void read_from_file( FileName const & fn );
+	void read_from_file( FileName const & fn ) override;
 
 	/// @brief Generate the profile matrix from a sequence and a given substitution matrix
 	virtual void generate_from_sequence( Sequence const & seq, std::string matrix="BLOSUM62" );
@@ -144,13 +144,13 @@ public:
 	);
 
 	/// @brief Inserts a character at the given position.
-	virtual void insert_char( core::Size pos, char new_char );
+	void insert_char( core::Size pos, char new_char ) override;
 
 	/// @brief Deletes the given position from the Sequence and shifts
 	/// everything else back by one.
-	virtual void delete_position( core::Size pos );
+	void delete_position( core::Size pos ) override;
 
-	virtual std::string type() const {
+	std::string type() const override {
 		return "sequence_profile";
 	}
 

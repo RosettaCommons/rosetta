@@ -84,11 +84,11 @@ public:
 
 	EnsembleJobInputter();
 
-	virtual ~EnsembleJobInputter();
+	~EnsembleJobInputter() override;
 
 
 	/// @brief this function determines what jobs exist from -s/-l
-	virtual void fill_jobs( JobsContainer & jobs );
+	void fill_jobs( JobsContainer & jobs ) override;
 
 private:
 

@@ -65,7 +65,7 @@ SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ ) : FeaturesRepor
 {
 }
 
-SmotifFeatures::~SmotifFeatures(){}
+SmotifFeatures::~SmotifFeatures()= default;
 
 /// @brief return string with class name
 std::string

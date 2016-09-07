@@ -123,7 +123,7 @@ public: // constructors
 public: // destructor
 
 	/// @brief default destructor
-	virtual ~PDBPoseMap();
+	~PDBPoseMap() override;
 
 
 public: // assignment
@@ -155,7 +155,7 @@ public: // methods
 		char const ins_code = ' '
 	) const
 	{
-		Pdb2Pose::const_iterator i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code ) );
+		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code ) );
 
 		if ( i == pdb2pose_.end() ) { // not found
 			return 0;
@@ -194,7 +194,7 @@ public: // methods
 		Size const pose_res
 	)
 	{
-		Pdb2Pose::iterator i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code ) );
+		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code ) );
 		if ( i != pdb2pose_.end() && i->second == pose_res ) {
 			pdb2pose_.erase( i );
 			return true;

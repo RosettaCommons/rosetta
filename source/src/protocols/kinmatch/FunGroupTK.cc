@@ -40,7 +40,7 @@ namespace protocols {
 namespace kinmatch {
 
 /// @details Auto-generated virtual destructor
-FunGroupTK::~FunGroupTK() {}
+FunGroupTK::~FunGroupTK() = default;
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
@@ -141,10 +141,10 @@ FunGroupTK::FunGroupTK(
 	res_types.push_back("HIS");
 	for ( vector1<string>::const_iterator it = res_types.begin(); it != res_types.end(); ++it ) {
 		rsd_[*it].resize(pose_->n_residue());
-		for ( vector1<Size>::const_iterator i=pos_.begin(); i!=pos_.end(); ++i ) {
-			ResidueOP rsd = core::conformation::ResidueFactory::create_residue(frs->name_map(*it),pose_->residue(*i),pose_->conformation());
+		for (unsigned long po : pos_) {
+			ResidueOP rsd = core::conformation::ResidueFactory::create_residue(frs->name_map(*it),pose_->residue(po),pose_->conformation());
 			stb_[*it].push_back(Stub(rsd->xyz(5),rsd->xyz(2),rsd->xyz(1)));
-			rsd_[*it][*i] = rsd;
+			rsd_[*it][po] = rsd;
 		}
 	}
 }
@@ -162,9 +162,9 @@ BruteFunGroupTK::place_c(
 	Residue const & qrsd,
 	vector1<core::conformation::ResidueOP> & hits
 ) const {
-	vector1<Size>::const_iterator ip = pos_.begin();
+	auto ip = pos_.begin();
 	vector1<Stub> const & stb(stb_.find("CYS")->second);
-	for ( vector1<Stub>::const_iterator is = stb.begin(); is!=stb.end(); ++is,++ip ) {
+	for ( auto is = stb.begin(); is!=stb.end(); ++is,++ip ) {
 		Real cbd2 = q.cen.distance_squared(is->v);
 		if ( *ip==qrsd.seqpos() ) continue;
 		if ( cbd2 > 14.0 ) continue;
@@ -221,9 +221,9 @@ BruteFunGroupTK::place_d(
 	Residue const & qrsd,
 	vector1<core::conformation::ResidueOP> & hits
 ) const {
-	vector1<Size>::const_iterator ip = pos_.begin();
+	auto ip = pos_.begin();
 	vector1<Stub> const & stb(stb_.find("ASP")->second);
-	for ( vector1<Stub>::const_iterator is = stb.begin(); is!=stb.end(); ++is,++ip ) {
+	for ( auto is = stb.begin(); is!=stb.end(); ++is,++ip ) {
 		Real cbd2 = q.cen.distance_squared(is->v);
 		if ( *ip==qrsd.seqpos() ) continue;
 		if ( cbd2 > 36.0 ) continue;
@@ -296,12 +296,12 @@ KinFunGroupTK::place_c(
 	Real const r3o2 = sqrt(3.0)/2.0;
 	Real const dis2ub = sqr(        CYS_CB_HG_DIS+q.disth );
 	Real const dis2lb = sqr(max(0.0,CYS_CB_HG_DIS-q.disth));
-	vector1<Size>::const_iterator ip = pos_.begin();
+	auto ip = pos_.begin();
 	vector1<Stub> const & stb(stb_.find("CYS")->second);
 	vector1<ResidueOP> const & rsdlst(rsd_.find("CYS")->second);
-	for ( vector1<Stub>::const_iterator is = stb.begin(); is!=stb.end(); ++is,++ip ) {
+	for ( auto is = stb.begin(); is!=stb.end(); ++is,++ip ) {
 		if ( *ip==qrsd.seqpos() ) continue;
-		core::conformation::ResidueOP rtmp = rsdlst[*ip];;
+		core::conformation::ResidueOP rtmp = rsdlst[*ip];
 		Real const cbd2 = q.cen.distance_squared(is->v);
 		if ( dis2ub < cbd2 || cbd2 < dis2lb ) continue;
 		Vec  const qcen0(is->global2local(q.cen));
@@ -377,10 +377,10 @@ KinFunGroupTK::place_h(
 	Real const r3o2 = sqrt(3.0)/2.0;
 	Real const dis2ub = sqr(        HIS_CB_HG_DIS+q.disth );
 	Real const dis2lb = sqr(max(0.0,HIS_CB_HG_DIS-q.disth));
-	vector1<Size>::const_iterator ip = pos_.begin();
+	auto ip = pos_.begin();
 	vector1<Stub> const & stb(stb_.find("HIS")->second);
 	vector1<ResidueOP> const & rsdlst(rsd_.find("HIS")->second);
-	for ( vector1<Stub>::const_iterator is = stb.begin(); is!=stb.end(); ++is,++ip ) {
+	for ( auto is = stb.begin(); is!=stb.end(); ++is,++ip ) {
 		if ( *ip==qrsd.seqpos() ) continue;
 		core::conformation::ResidueOP rtmp = rsdlst[*ip];
 

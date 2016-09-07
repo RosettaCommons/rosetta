@@ -39,9 +39,7 @@ static THREAD_LOCAL basic::Tracer TR( "core/scoring/APBSWrapper" );
 namespace core {
 namespace scoring {
 std::string const PQR::chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
-APBSWrapper::~APBSWrapper()
-{
-}
+APBSWrapper::~APBSWrapper() = default;
 
 APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 	std::map<std::string, bool> const & charged_residues,
@@ -120,7 +118,7 @@ APBSWrapper::exec() {
 		raw_grid_data.data() );
 #endif
 
-	if ( ret != 0 ) return NULL;
+	if ( ret != 0 ) return nullptr;
 	return result;
 }
 
@@ -168,7 +166,7 @@ PQR::PQR(core::pose::Pose const & pose, int natoms,
 	}
 }
 
-PQR::~PQR(){}
+PQR::~PQR() = default;
 
 APBSResult::APBSResult(int nsims, int natoms, int grid_dimes[3],
 	int calcforce, int calcenergy,
@@ -207,7 +205,7 @@ APBSResult::APBSResult(int nsims, int natoms, int grid_dimes[3],
 		grid_data.push_back( i_data );
 	}
 }
-APBSResult::~APBSResult(){}
+APBSResult::~APBSResult()= default;
 
 APBSConfig::I_PARAM::I_PARAM() :
 	sim_type(1),
@@ -238,7 +236,7 @@ APBSConfig::I_PARAM::I_PARAM() :
 {
 }
 
-APBSConfig::I_PARAM::~I_PARAM() {}
+APBSConfig::I_PARAM::~I_PARAM() = default;
 
 int * APBSConfig::I_PARAM::raw_array()
 {
@@ -280,7 +278,7 @@ APBSConfig::R_PARAM::R_PARAM() :
 	gamma(0.105)
 {}
 
-APBSConfig::R_PARAM::~R_PARAM() {}
+APBSConfig::R_PARAM::~R_PARAM() = default;
 
 double * APBSConfig::R_PARAM::raw_array()
 {
@@ -336,8 +334,7 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 	}
 }
 
-APBSConfig::~APBSConfig()
-{}
+APBSConfig::~APBSConfig() = default;
 
 
 }

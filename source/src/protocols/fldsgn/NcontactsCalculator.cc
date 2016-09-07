@@ -109,7 +109,7 @@ NcontactsCalculator::NcontactsCalculator( NcontactsCalculator const & rval ):
 {}
 
 /// @brief destructor
-NcontactsCalculator::~NcontactsCalculator(){}
+NcontactsCalculator::~NcontactsCalculator()= default;
 
 /// @brief
 void

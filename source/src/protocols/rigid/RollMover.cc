@@ -266,7 +266,7 @@ RollMover::RollMover(
 	moves::Mover::type( "RollMover" );
 }
 
-RollMover::~RollMover(){}
+RollMover::~RollMover()= default;
 
 } //rigid
 } //protocols

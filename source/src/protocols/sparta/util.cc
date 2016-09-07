@@ -19,7 +19,7 @@
 #include <iterator>
 #include <utility/exit.hh>
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <utility/vector0.hh>
 

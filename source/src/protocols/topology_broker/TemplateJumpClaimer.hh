@@ -63,9 +63,9 @@ namespace topology_broker {
 class TemplateJumpClaimer : public FragmentJumpClaimer {
 public:
 	TemplateJumpClaimer(); //for factory
-	TemplateJumpClaimer( std::string config_file,  weights::AbinitioMoverWeightOP weight = NULL );
+	TemplateJumpClaimer( std::string config_file,  weights::AbinitioMoverWeightOP weight = nullptr );
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new TemplateJumpClaimer( *this ) );
 	}
 
@@ -73,7 +73,7 @@ public:
 	void read_topol_file( std::string const& file );
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -82,8 +82,8 @@ public:
 	}
 
 protected:
-	virtual bool read_tag( std::string tag, std::istream& is );
-	virtual void init_after_reading();
+	bool read_tag( std::string tag, std::istream& is ) override;
+	void init_after_reading() override;
 private:
 	// info about homologues structures --- if available
 	abinitio::TemplatesOP templates_;

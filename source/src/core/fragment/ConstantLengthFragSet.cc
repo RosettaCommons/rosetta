@@ -60,7 +60,7 @@ using std::endl;
 
 static THREAD_LOCAL basic::Tracer tr( "core.fragments.ConstantLengthFragSet" );
 
-ConstantLengthFragSet::~ConstantLengthFragSet() {}
+ConstantLengthFragSet::~ConstantLengthFragSet() = default;
 
 ConstantLengthFragSet::ConstantLengthFragSet( Size frag_length, std::string filename ) {
 	set_max_frag_length( frag_length );
@@ -139,9 +139,9 @@ void ConstantLengthFragSet::add_( FrameOP aframe ) {
 	if ( max_frag_length() ) runtime_assert( aframe->length() == max_frag_length() );
 	Size seqpos( aframe->start() );
 	if ( frames_.size() < seqpos ) {
-		frames_.resize( seqpos, NULL );
+		frames_.resize( seqpos, nullptr );
 	}
-	runtime_assert( frames_[ seqpos ] == 0 ); //I consider this as error... don't add incompatible frames to a ConstantLengthFragSet
+	runtime_assert( frames_[ seqpos ] == nullptr ); //I consider this as error... don't add incompatible frames to a ConstantLengthFragSet
 	frames_[ seqpos ] = aframe;
 }
 
@@ -169,7 +169,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 	string line;
 
 	Size insertion_pos = 1;
-	FragDataOP current_fragment( NULL );
+	FragDataOP current_fragment( nullptr );
 	FrameOP frame;
 
 	Size n_frags( 0 );
@@ -190,7 +190,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 			}
 
 			// create a new current_fragment
-			current_fragment = NULL;
+			current_fragment = nullptr;
 			continue;
 		}
 

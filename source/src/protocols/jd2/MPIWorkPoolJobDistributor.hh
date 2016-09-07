@@ -81,47 +81,47 @@ protected:
 	/// @brief ctor is protected; singleton pattern
 	MPIWorkPoolJobDistributor();
 
-	virtual void handle_interrupt() {}
+	void handle_interrupt() override {}
 
 public:
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-	virtual ~MPIWorkPoolJobDistributor();
+	~MPIWorkPoolJobDistributor() override;
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	go( protocols::moves::MoverOP mover );
+	go( protocols::moves::MoverOP mover ) override;
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	core::Size
-	get_new_job_id();
+	get_new_job_id() override;
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	mark_current_job_id_for_repetition();
+	mark_current_job_id_for_repetition() override;
 
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	remove_bad_inputs_from_job_list();
+	remove_bad_inputs_from_job_list() override;
 
 	/// @brief dummy for master/slave version
-	virtual
+	
 	void
-	job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag);
+	job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag) override;
 
 	/// @brief Called if job fails.
 	///
-	virtual
-	void job_failed(core::pose::Pose &pose, bool will_retry);
+	
+	void job_failed(core::pose::Pose &pose, bool will_retry) override;
 
 	/// @brief should the go() function call MPI_finalize()? It probably should, this is true by default.
-	virtual
-	void mpi_finalize(bool finalize);
+	
+	void mpi_finalize(bool finalize) override;
 
 	friend class JobDistributorFactory; //ctor access
 

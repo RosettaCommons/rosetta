@@ -124,7 +124,7 @@ public:
 	HierarchicalDataMap();
 
 	/// @brief Default destructor.
-	virtual ~HierarchicalDataMap();
+	~HierarchicalDataMap() override;
 
 public:
 

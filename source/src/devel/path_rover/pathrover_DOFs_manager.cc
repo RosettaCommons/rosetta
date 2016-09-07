@@ -200,24 +200,24 @@ void DOFs_manager::apply_uniform_sample_all(core::pose::Pose& pose) // apply uni
   bool local_debug = false;//true;
   assert(_is_initialized);
   // iteratoe over phi dofs:
-  for( std::set<DOF_info>::const_iterator iter = _free_phi_list.begin(), end = _free_phi_list.end(); iter != end; ++iter)
+  for(const auto & iter : _free_phi_list)
     {
     double new_val = numeric::nonnegative_principal_angle_degrees(
-	iter->uniform_sample(pose.phi(iter->poseres_id)) );
+	iter.uniform_sample(pose.phi(iter.poseres_id)) );
       if(local_debug)
-	cout << "applying phi sampling to phi(" << iter->poseres_id << ")"
-	     << "from " << pose.phi(iter->poseres_id)
+	cout << "applying phi sampling to phi(" << iter.poseres_id << ")"
+	     << "from " << pose.phi(iter.poseres_id)
 	     << "to " << new_val << std::endl;
-      pose.set_phi(iter->poseres_id, new_val);
+      pose.set_phi(iter.poseres_id, new_val);
     }
   // iterate over psi dofs:
-  for( std::set<DOF_info>::const_iterator iter = _free_psi_list.begin(), end = _free_psi_list.end(); iter != end; ++iter )
+  for(const auto & iter : _free_psi_list)
     {
       if(local_debug)
-	cout << "applying psi sampling to psi(" << iter->poseres_id << ")" << endl;
+	cout << "applying psi sampling to psi(" << iter.poseres_id << ")" << endl;
     double new_val = numeric::nonnegative_principal_angle_degrees(
-	iter->uniform_sample(pose.psi(iter->poseres_id)) );
-      pose.set_psi(iter->poseres_id, new_val);
+	iter.uniform_sample(pose.psi(iter.poseres_id)) );
+      pose.set_psi(iter.poseres_id, new_val);
     }
 }
 
@@ -259,16 +259,16 @@ void DOFs_manager::apply_gaussian_sample_all(core::pose::Pose& pose)
 {
   assert(_is_initialized);
   // iteratoe over phi dofs:
-  for ( std::set<DOF_info>::const_iterator iter = _free_phi_list.begin(), end = _free_phi_list.end(); iter != end; ++iter ) {
+  for (const auto & iter : _free_phi_list) {
     double new_val = numeric::nonnegative_principal_angle_degrees(
-      iter->gaussian_sample(pose.phi(iter->poseres_id)) );
-    pose.set_phi(iter->poseres_id, new_val);
+      iter.gaussian_sample(pose.phi(iter.poseres_id)) );
+    pose.set_phi(iter.poseres_id, new_val);
   }
   // iterate over psi dofs:
-  for( std::set<DOF_info>::const_iterator iter = _free_psi_list.begin(), end = _free_psi_list.end(); iter != end; ++iter ) {
+  for(const auto & iter : _free_psi_list) {
     double new_val = numeric::nonnegative_principal_angle_degrees(
-      iter->gaussian_sample(pose.psi(iter->poseres_id)) );
-    pose.set_psi(iter->poseres_id, new_val);
+      iter.gaussian_sample(pose.psi(iter.poseres_id)) );
+    pose.set_psi(iter.poseres_id, new_val);
   }
 }
 
@@ -416,7 +416,7 @@ void DOFs_manager::import_flexible_dofs_from_movemap_torsionids
   // prepate a template with correct var & max_dev
   DOF_info template_dof(0, default_var, default_max_dev);
   // TorsionID
-  for ( MoveMap::TorsionID_Map::const_iterator
+  for ( auto
 	  i = new_movemap->torsion_id_begin() ;
 	i != new_movemap->torsion_id_end();
 	++i )

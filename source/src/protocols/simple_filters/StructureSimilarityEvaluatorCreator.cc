@@ -59,7 +59,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.StructureSimilarityEv
 namespace protocols {
 namespace simple_filters {
 
-StructureSimilarityEvaluatorCreator::~StructureSimilarityEvaluatorCreator() {}
+StructureSimilarityEvaluatorCreator::~StructureSimilarityEvaluatorCreator() = default;
 
 void StructureSimilarityEvaluatorCreator::register_options() {
 	using namespace basic::options;

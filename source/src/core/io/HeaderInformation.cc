@@ -102,7 +102,7 @@ HeaderInformation::HeaderInformation(
 	experimental_technique_in_progress_(src.experimental_technique_in_progress_)
 {}
 
-HeaderInformation::~HeaderInformation() {}
+HeaderInformation::~HeaderInformation() = default;
 
 
 void
@@ -395,7 +395,7 @@ HeaderInformation::fill_keyword_records(
 	if ( keywords_.empty() ) return;
 
 	string keywords;
-	list< string >::const_iterator k = keywords_.begin(), ke = keywords_.end();
+	auto k = keywords_.begin(), ke = keywords_.end();
 	for ( ; k!= ke; ++k ) {
 		if ( !keywords.empty() ) keywords.append(", ");
 		keywords.append(*k);
@@ -723,7 +723,7 @@ bool
 HeaderInformation::is_experimental_technique(
 	HeaderInformation::ExperimentalTechnique technique
 ) const {
-	list< HeaderInformation::ExperimentalTechnique >::const_iterator
+	auto
 		t = find(experimental_techniques_.begin(), experimental_techniques_.end(),
 		technique);
 
@@ -745,7 +745,7 @@ HeaderInformation::fill_experimental_technique_records(
 
 	if ( experimental_techniques_.empty() ) return;
 	string techniques;
-	ExperimentalTechniques::const_iterator
+	auto
 		k = experimental_techniques_.begin(),
 		ke= experimental_techniques_.end();
 	for ( ; k != ke; ++k ) {

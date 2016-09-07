@@ -56,7 +56,7 @@ namespace protocols {
 namespace docking {
 
 /// @details Auto-generated virtual destructor
-DockingEnsemble::~DockingEnsemble() {}
+DockingEnsemble::~DockingEnsemble() = default;
 
 
 //constructor with arguments
@@ -72,8 +72,8 @@ DockingEnsemble::DockingEnsemble(
 	start_res_(start_res),
 	end_res_(end_res),
 	jump_id_(jump_id),
-	ensemble_file_path_(ensemble_file_path),
-	partner_(partner)
+	ensemble_file_path_(std::move(ensemble_file_path)),
+	partner_(std::move(partner))
 {
 	// initialize current conf_num to zero
 	conf_num_ = 0;

@@ -45,13 +45,13 @@ namespace simple_moves {
 class FragmentMover : public moves::MoveMapMover {
 	typedef moves::MoveMapMover Parent;
 public:
-	~FragmentMover();
+	~FragmentMover() override;
 
 	using Parent::apply;
 
 	/// @brief apply a fragment at pos to movemable dofs
 	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief apply at all movemable positions --- honors movemap
 	virtual Size apply_at_all_positions( core::pose::Pose& ) const; //apply one fragment at each insertable position
@@ -63,9 +63,9 @@ public:
 	virtual void set_fragments( core::fragment::FragSetCOP new_frags_ );
 
 	/// @brief setter for the movemap
-	virtual void set_movemap( core::kinematics::MoveMapCOP movemap );
+	void set_movemap( core::kinematics::MoveMapCOP movemap ) override;
 
-	core::kinematics::MoveMapCOP movemap() const;
+	core::kinematics::MoveMapCOP movemap() const override;
 
 	core::fragment::InsertMap const& insert_map() const {
 		return insert_map_;
@@ -137,7 +137,7 @@ public:
 		core::kinematics::MoveMap const & movemap
 	);
 
-	~ClassicFragmentMover();
+	~ClassicFragmentMover() override;
 
 	using FragmentMover::apply;
 
@@ -149,12 +149,12 @@ public:
 	///     ClassicFragmentMover
 	///     Pose
 	///     ConstantLengthFragSet
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	// Not defined, commenting out to make Python binding compile
 	//bool apply( core::pose::Pose &, Size pos );
@@ -209,7 +209,7 @@ protected:
 		std::string type
 	);
 
-	virtual bool apply_frames( core::pose::Pose &, core::fragment::FrameList const& ) const;
+	bool apply_frames( core::pose::Pose &, core::fragment::FrameList const& ) const override;
 
 public: //this is actually protected: but need public for some unit-testing
 	/// @brief apply the chosen fragment,
@@ -257,7 +257,7 @@ public: //this is actually protected: but need public for some unit-testing
 	}
 
 	/// @brief is called from set_fragments()
-	void on_new_fragments() {
+	void on_new_fragments() override {
 	}
 
 	virtual bool end_bias_check( core::pose::Pose const&, Size window_start ) const;
@@ -293,25 +293,25 @@ class LoggedFragmentMover : public ClassicFragmentMover {
 	};
 
 public:
-	~LoggedFragmentMover();
+	~LoggedFragmentMover() override;
 
 	LoggedFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap
 	);
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual
+	
 	bool
 	apply_fragment(
 		core::fragment::Frame const& frame,
 		Size frag_num,
 		core::kinematics::MoveMap const& movemap,
 		core::pose::Pose &pose
-	) const;
+	) const override;
 
-	void show( std::ostream& ) const;
+	void show( std::ostream& ) const override;
 	void clear();
 private:
 	typedef utility::vector1< Item > Storage;

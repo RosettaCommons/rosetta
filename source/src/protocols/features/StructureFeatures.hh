@@ -39,20 +39,20 @@ public:
 
 	StructureFeatures( StructureFeatures const & src );
 
-	virtual ~StructureFeatures();
+	~StructureFeatures() override;
 
 	/// @brief return string with class name
 	std::string
-	type_name() const;
+	type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
-	virtual void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	/// @brief collect all the feature data for the pose
 	core::Size
@@ -61,7 +61,7 @@ public:
 		utility::vector1< bool > const &,
 		StructureID,
 		utility::sql_database::sessionOP
-	) {
+	) override {
 		utility_exit_with_message(
 			"The Structure features reporter is a special feature reporter "
 			" Please use the other interface for report_features");
@@ -90,13 +90,13 @@ public:
 	void delete_record(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-	);
+	) override;
 
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
-		core::pose::Pose & pose);
+		core::pose::Pose & pose) override;
 
 	void
 	load_tag(

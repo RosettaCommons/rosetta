@@ -61,27 +61,27 @@ public:
 	);
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	protocols::canonical_sampling::ThermodynamicMoverOP
-	random_mover() const;
+	random_mover() const override;
 
-	virtual
+	
 	void
 	add_mover(
 		protocols::canonical_sampling::ThermodynamicMoverOP mover,
 		core::Real weight,
 		utility::tag::TagCOP const& subtag
-	) ;
+	) override ;
 
 protected:
 

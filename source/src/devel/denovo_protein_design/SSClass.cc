@@ -35,9 +35,8 @@ static THREAD_LOCAL basic::Tracer tr( "SS" );
 
 std::ostream & operator<< ( std::ostream & os, const SSs & sss_ ) {
 	os << "SS  begin  end  type" << std::endl;
-	for ( SSs::const_iterator it = sss_.begin(), it_end = sss_.end();
-			it != it_end; ++it ) {
-		os << *it << std::endl;
+	for (const auto & ss : sss_) {
+		os << ss << std::endl;
 	}
 	return os;
 }
@@ -56,9 +55,8 @@ SSs::write_ss_to_file(
 		utility_exit_with_message( "Couldn't write check point ss file " );
 	}
 
-	for ( SSs::const_iterator it= this->begin(), it_end=this->end();
-			it != it_end; ++it ) {
-		data << "SS " << it->start() << " " << it->stop() << " " << it->sstype() << std::endl;
+	for (const auto & it : *this) {
+		data << "SS " << it.start() << " " << it.stop() << " " << it.sstype() << std::endl;
 	}
 
 	data.close();
@@ -105,7 +103,7 @@ SSs::delete_ss(
 {
 	runtime_assert( start < stop );
 
-	for ( iterator it=sss_.begin(), it_end=sss_.end();
+	for ( auto it=sss_.begin(), it_end=sss_.end();
 			it != it_end; ++it ) {
 		if ( start == it->start() && stop == it->stop() ) {
 			sss_.erase( it );
@@ -120,7 +118,7 @@ SSs::one_random_ss_element() const {
 	runtime_assert( size > 0 );
 	Size index =0;
 	Size const end = static_cast< Size >( numeric::random::uniform()*size );
-	const_iterator it = sss_.begin();
+	auto it = sss_.begin();
 	while ( index != end ) { ++index; ++it; }
 	return it;
 

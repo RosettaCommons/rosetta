@@ -67,7 +67,7 @@ AlterSpecDisruptionDriver::AlterSpecDisruptionDriver( utility::vector1< std::str
 /// @brief
 /// Destructor.
 ///
-AlterSpecDisruptionDriver::~AlterSpecDisruptionDriver() {}
+AlterSpecDisruptionDriver::~AlterSpecDisruptionDriver() = default;
 
 /// @details calculate dG of binding by scoring, separating, repacking, and rescoring
 
@@ -102,10 +102,9 @@ bool AlterSpecDisruptionDriver::reject_mutant( Mutant const & mutant, core::pose
 bool AlterSpecDisruptionDriver::reject_on_chains( Mutant const & mutant ){
 
 	if ( mutant.n_mutations() >= 2 ) { //if there is more than one mutation, check that they are on the same chain.  Disruptions on different chains are likely unrecoverable clashes.
-		typedef utility::vector1< MutationData >::const_iterator mut_iter;
 
 		char const chain(mutant.mutations_begin()->pdb_chain());
-		for ( mut_iter it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
+		for ( auto it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
 			if ( chain != it->pdb_chain() ) {
 				//TR << "skipping Mutant " << mutant << " because it has a mutation on chain " << it->pdb_chain() << " which does not match the first mutation's chain " << chain << std::endl;
 				return true;
@@ -119,7 +118,6 @@ bool AlterSpecDisruptionDriver::reject_on_chains( Mutant const & mutant ){
 /// @brief reject Mutant based on interface-ness of constituent mutations.  This function accumulates state - on first call it determines what the interface is, and assumes that interface is the same for all subsequent calls!  If you are trying to use different Poses this may cause problems.
 bool AlterSpecDisruptionDriver::reject_on_interface( Mutant const & mutant, core::pose::Pose const & pose )
 {
-
 	if ( interface_set_.empty() ) {
 		IAM_->set_compute_interface_energy(false); //speed
 
@@ -135,10 +133,8 @@ bool AlterSpecDisruptionDriver::reject_on_interface( Mutant const & mutant, core
 		IAM_->set_compute_interface_energy(true); //speed
 	}
 
-	typedef utility::vector1< MutationData >::const_iterator mut_iter;
-
 	std::set< core::Size >::iterator const interface_end(interface_set_.end());
-	for ( mut_iter it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
+	for ( auto it(mutant.mutations_begin()), end(mutant.mutations_end()); it != end; ++it ) {
 		core::Size const resid(it->pose_resnum());
 		if ( interface_set_.find(resid) == interface_end ) { //if a mutation is not in the interface set, skip this Mutant
 			//TR << "skipping Mutant " << mutant << " because it contains position " << resid << " which is not in the interface" << std::endl;

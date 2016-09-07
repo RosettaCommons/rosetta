@@ -106,5 +106,5 @@ my_main( void* )
 
 	// write parameters for any sets of branching atoms for which there were not optimization coefficients
 	backrub_protocol->write_database();
-	return 0;
+	return nullptr;
 }

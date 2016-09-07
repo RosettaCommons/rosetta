@@ -96,7 +96,7 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	}
 }
 
-DdgFilter::~DdgFilter() {}
+DdgFilter::~DdgFilter() = default;
 
 filters::FilterOP DdgFilter::clone() const {
 	return filters::FilterOP( new DdgFilter( *this ) );
@@ -301,9 +301,8 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		if ( chain_ids_.size() > 0 ) {
 			//We want to translate each chain the same direction, though it doesnt matter much which one
 			core::Vector translation_axis(1,0,0);
-			for ( utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end(); ++chain_it ) {
-				core::Size current_chain_id = *chain_it;
-				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,split_pose);
+			for (unsigned long current_chain_id : chain_ids_) {
+					core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,split_pose);
 				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, current_jump_id) );
 				translate->step_size( translate_by_ );
 				translate->trans_axis(translation_axis);

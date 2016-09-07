@@ -36,6 +36,7 @@
 // Utility Headers
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
@@ -57,17 +58,17 @@ StoreResidueSubsetMover::StoreResidueSubsetMover():
 
 StoreResidueSubsetMover::StoreResidueSubsetMover(
 	core::select::residue_selector::ResidueSelectorCOP selector,
-	std::string const & subset_name,
+	std::string  subset_name,
 	bool const overwrite ):
 	protocols::moves::Mover(),
-	selector_( selector ),
-	subset_name_( subset_name ),
+	selector_(std::move( selector )),
+	subset_name_(std::move( subset_name )),
 	overwrite_( overwrite )
 {}
 
 // @brief destructor
 StoreResidueSubsetMover::~StoreResidueSubsetMover()
-{}
+= default;
 
 void
 StoreResidueSubsetMover::apply( core::pose::Pose & pose )

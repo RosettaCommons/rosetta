@@ -273,7 +273,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 			edge_iter = g->edge_list_begin(),
 			edge_iter_end = g->edge_list_end(),
 			dedge_iter = dg->edge_list_begin(),
-			dedge_iter_end = dg->edge_list_end(),
+			//dedge_iter_end = dg->edge_list_end(),
 			ee_edge_iter = pose.energies().energy_graph().edge_list_begin();
 			edge_iter != edge_iter_end; ++edge_iter, ++dedge_iter, ++ee_edge_iter ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();

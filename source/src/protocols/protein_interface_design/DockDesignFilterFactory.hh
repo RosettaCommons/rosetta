@@ -45,7 +45,7 @@ public:
 
 public:
 	DockDesignFilterFactory();
-	virtual ~DockDesignFilterFactory();
+	~DockDesignFilterFactory() override;
 
 	/// @brief add a Filter prototype, using its default type name as the map key
 	void add_type( protocols::filters::FilterOP );

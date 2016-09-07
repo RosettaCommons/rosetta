@@ -56,7 +56,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~PathName()
-	{}
+	= default;
 
 
 public: // Assignment

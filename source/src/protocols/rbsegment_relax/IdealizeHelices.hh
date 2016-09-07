@@ -39,17 +39,17 @@ public:
 		scorefxn_->set_weight( core::scoring::coordinate_constraint , cst_weight_ );
 	}
 
-	virtual std::string get_name() const { return IdealizeHelicesMoverCreator::mover_name(); }
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new IdealizeHelicesMover( *this ) ) ); }
+	std::string get_name() const override { return IdealizeHelicesMoverCreator::mover_name(); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new IdealizeHelicesMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;

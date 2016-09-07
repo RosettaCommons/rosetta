@@ -112,7 +112,7 @@ bool contains_stageid( utility::vector1< abinitio::StageID > vec, abinitio::Stag
 /// small(stage2/stage3/stage4)
 /// smooth_small ( stage3/stage4)
 FragmentSampler::FragmentSampler( topology_broker::TopologyBrokerOP broker )
-: topology_broker_( broker ),
+: topology_broker_(std::move( broker )),
 	checkpoints_("FragmentSampler")
 {
 	BaseClass::type( "FragmentSampler" );
@@ -120,7 +120,7 @@ FragmentSampler::FragmentSampler( topology_broker::TopologyBrokerOP broker )
 	set_defaults();
 }
 
-FragmentSampler::~FragmentSampler() {}
+FragmentSampler::~FragmentSampler() = default;
 
 /// @brief FragmentSampler has virtual functions... use this to obtain a new instance
 moves::MoverOP
@@ -186,7 +186,7 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 
 	tr.Info << "Fragment Sampler: " << get_current_tag() << std::endl;
 
-	runtime_assert( topology_broker_ != 0 ); // really this protocol doesn't make much sense without it
+	runtime_assert( topology_broker_ != nullptr ); // really this protocol doesn't make much sense without it
 	mc().clear_poses(); // these two statements were only necessary after march 18 2009... something ALF did recently ?
 	mc().reset( pose );
 	// current_scorefxn()( pose );
@@ -283,7 +283,7 @@ void FragmentSampler::topology_broker( topology_broker::TopologyBrokerOP set ) {
 }
 
 topology_broker::TopologyBroker const& FragmentSampler::topology_broker() {
-	runtime_assert( topology_broker_ != 0 );
+	runtime_assert( topology_broker_ != nullptr );
 	return *topology_broker_;
 }
 
@@ -399,24 +399,22 @@ void FragmentSampler::set_default_options() {
 
 	skip_stages_.clear();
 	if ( option[ OptionKeys::abinitio::skip_stages ].user() ) {
-		for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::skip_stages ]().begin(),
-				eit = option[ OptionKeys::abinitio::skip_stages ]().end(); it!=eit; ++it ) {
-			if ( *it == 1 ) skip_stages_.push_back( STAGE_1 );
-			else if ( *it == 2 ) skip_stages_.push_back( STAGE_2 );
-			else if ( *it == 3 ) skip_stages_.push_back( STAGE_3 );
-			else if ( *it == 4 ) skip_stages_.push_back( STAGE_4 );
+		for (int it : option[ OptionKeys::abinitio::skip_stages ]()) {
+			if ( it == 1 ) skip_stages_.push_back( STAGE_1 );
+			else if ( it == 2 ) skip_stages_.push_back( STAGE_2 );
+			else if ( it == 3 ) skip_stages_.push_back( STAGE_3 );
+			else if ( it == 4 ) skip_stages_.push_back( STAGE_4 );
 		}
 	}
 
 	if ( option[ OptionKeys::abinitio::recover_low_in_stages ].user() ) {
-		for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::recover_low_in_stages ]().begin(),
-				eit = option[ OptionKeys::abinitio::recover_low_in_stages ]().end(); it!=eit; ++it ) {
-			if ( *it == 1 ) recover_low_stages_.push_back( STAGE_1 );
-			else if ( *it == 2 ) recover_low_stages_.push_back( STAGE_2 );
-			else if ( *it == 3 ) {
+		for (int it : option[ OptionKeys::abinitio::recover_low_in_stages ]()) {
+			if ( it == 1 ) recover_low_stages_.push_back( STAGE_1 );
+			else if ( it == 2 ) recover_low_stages_.push_back( STAGE_2 );
+			else if ( it == 3 ) {
 				recover_low_stages_.push_back( STAGE_3a );
 				recover_low_stages_.push_back( STAGE_3b );
-			} else if ( *it == 4 ) recover_low_stages_.push_back( STAGE_4 );
+			} else if ( it == 4 ) recover_low_stages_.push_back( STAGE_4 );
 		}
 	} else {
 		recover_low_stages_.clear();
@@ -695,7 +693,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	std::pair <core::Size,core::Size> loop_and_counts(0,0);
 
 	//Loop through loop library (hashes) and figure out, for the RT, does it return any hashes? (i.e., is there a loop in the DB that has this RT)
-	for ( std::vector< core::Size >::const_iterator jt = library->hash_sizes().begin(); jt != library->hash_sizes().end(); ++jt ) {
+	for ( auto jt = library->hash_sizes().begin(); jt != library->hash_sizes().end(); ++jt ) {
 		core::Size loop_size = *jt;
 		num_loop_sizes = library->hash_sizes().size();
 		tr.Info << "num_loop_sizes:  " << num_loop_sizes << "\tloop_size:  " << loop_size << std::endl;
@@ -716,10 +714,10 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 
 	//To maintain conformational sampling, implement tunable fuzzy filter.  If not all loop sizes have loophash DB hits (radial counts), want to use fuzzy filter
 	bool use_fuzzy_filter(false);
-	for ( utility::vector1<std::pair<core::Size,core::Size> >::iterator it = loop_size_hits.begin(), end = loop_size_hits.end(); it != end; ++it ) {
-		tr.Info << "loop_size:  " << it->first << "  radial_counts:  " << it->second << std::endl;
+	for (auto & loop_size_hit : loop_size_hits) {
+		tr.Info << "loop_size:  " << loop_size_hit.first << "  radial_counts:  " << loop_size_hit.second << std::endl;
 		//as long as, for this loop radial counts >= 0 (found hits in loophash DB), don't need the fuzzy filter
-		if ( it->second > 0 ) {
+		if ( loop_size_hit.second > 0 ) {
 			use_fuzzy_filter = false;
 		} else { //however, if you run into a loop size where no hits are found, use fuzzy filter, default acceptance rate is 0.5
 			use_fuzzy_filter = true;

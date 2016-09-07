@@ -44,9 +44,9 @@ public:
 	qsarOptFunc(
 		utility::sql_database::sessionOP db_session,
 		core::optimization::Multivec const & initial_values,
-		std::map<std::string,core::Size> const & grid_indices);
+		std::map<std::string,core::Size> grid_indices); // move-constructed
 
-	virtual ~qsarOptFunc() {}
+	~qsarOptFunc() override = default;
 
 
 	void setup_data_map();
@@ -54,19 +54,19 @@ public:
 	void set_initial_values(core::optimization::Multivec const & initial_values);
 
 	// func
-	virtual
+	
 	core::Real
-	operator ()( core::optimization::Multivec const & vars ) const;
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	// dfunc
-	virtual
+	
 	void
-	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
 	/// @brief Error state reached -- derivative does not match gradient
-	virtual
+	
 	void
-	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const & vars2 ) const;
+	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const & vars2 ) const override;
 
 private:
 

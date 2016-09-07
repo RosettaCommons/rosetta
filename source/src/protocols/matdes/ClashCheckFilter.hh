@@ -59,28 +59,28 @@ public:// constructor/destructor
 	ClashCheckFilter();
 
 	// @brief constructor with arguments
-	ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const & s, core::Size const n, core::Size const t, bool const v, bool const w );
+	ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string s, core::Size const n, core::Size const t, bool const v, bool const w );
 
 	// @brief copy constructor
 	ClashCheckFilter( ClashCheckFilter const & rval );
 
-	virtual ~ClashCheckFilter();
+	~ClashCheckFilter() override;
 
 
 public:// virtual constructor
 
 
 	// @brief make clone
-	virtual protocols::filters::FilterOP clone() const;
+	protocols::filters::FilterOP clone() const override;
 
 	// @brief make fresh instance
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	protocols::filters::FilterOP fresh_instance() const override;
 
 
 public:// accessor
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "ClashCheck"; }
+	std::string name() const override { return "ClashCheck"; }
 
 public:// setters
 
@@ -103,21 +103,21 @@ public:// getters
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 
 	/// @brief calc oligomeric AverageDegree
 	core::Size compute( core::pose::Pose const & pose, bool const & v, bool const & w ) const;

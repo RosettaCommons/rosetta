@@ -45,9 +45,9 @@ public:
 	DesignRepackMover();
 	DesignRepackMover( std::string const & name );
 	void setup_packer_and_movemap( core::pose::Pose const & pose );
-	protocols::moves::MoverOP clone() const = 0; // this is a pure virtual class that cannot be instantiated
-	protocols::moves::MoverOP fresh_instance() const = 0;
-	virtual void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP clone() const override = 0; // this is a pure virtual class that cannot be instantiated
+	protocols::moves::MoverOP fresh_instance() const override = 0;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	// managing minimization options
 	void min_rb( utility::vector1< bool > const & min_rb ) { min_rb_ = min_rb; min_rb_set_ = true;}
 	/// @brief in most cases, there would only be one rb dof making it useful to have a non-vector accessor to min_rb_. However, if the pose has multiple jumps, setting min_rb_ in this way might cause trouble in other parts of the code.
@@ -63,8 +63,8 @@ public:
 	bool optimize_foldtree() const { return optimize_foldtree_; }
 	void optimize_foldtree( bool const opt ) { optimize_foldtree_ = opt; }
 	/// @brief a dummy apply so that instantiation of this baseclass would be possible.
-	virtual void apply( core::pose::Pose & ) {}
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & ) override {}
+	std::string get_name() const override;
 	void prevent_repacking( utility::vector1< core::Size > const &  p ) { prevent_repacking_ = p; }
 	utility::vector1< core::Size > const & prevent_repacking() const { return( prevent_repacking_ ); }
 	void restrict_to_repacking( utility::vector1< core::Size > const & p ) { restrict_to_repacking_ = p; }
@@ -86,7 +86,7 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP p );
 	core::pack::task::TaskFactoryOP & task_factory();
 	core::pack::task::TaskFactoryOP task_factory() const;
-	virtual ~DesignRepackMover();
+	~DesignRepackMover() override;
 
 protected:
 	core::scoring::ScoreFunctionOP scorefxn_repack_;

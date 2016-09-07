@@ -28,7 +28,7 @@ namespace numeric {
 namespace kdtree {
 
 /// @details Auto-generated virtual destructor
-KDTree::~KDTree() {}
+KDTree::~KDTree() = default;
 
 KDTree::KDTree() :
 	size_( 0 ),

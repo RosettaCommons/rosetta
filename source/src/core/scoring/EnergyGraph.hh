@@ -47,12 +47,12 @@ public:
 
 public:
 	EnergyNode( graph::Graph * owner, Size index );
-	virtual ~EnergyNode();
-	virtual void copy_from( parent const * source );
+	~EnergyNode() override;
+	void copy_from( parent const * source ) override;
 
-	virtual void print() const;
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	void print() const override;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 	bool moved() const; // getter
 	void moved( bool ); // setter
@@ -90,11 +90,11 @@ public:
 public:
 	EnergyEdge( EnergyGraph * owner, Size n1, Size n2 );
 	EnergyEdge( EnergyGraph * owner, EnergyEdge const & example_edge );
-	virtual ~EnergyEdge();
+	~EnergyEdge() override;
 
 	/// @brief Copy the data held on the example edge, source.
 	/// The source edge must be castable to class EnergyEdge.
-	virtual void copy_from( parent const * source );
+	void copy_from( parent const * source ) override;
 
 	/// @brief Store the energies held in the input emap on this edge; only
 	/// those ScoreTypes which are active are stored.
@@ -131,8 +131,8 @@ public:
 
 	bool energies_not_yet_computed() const { return energies_not_yet_computed_;}
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 #ifdef    SERIALIZATION
 	/// @brief Serialization function, but one that is called by the graph so that
@@ -180,7 +180,7 @@ public:
 	typedef graph::Graph parent;
 
 public:
-	virtual ~EnergyGraph();
+	~EnergyGraph() override;
 
 	EnergyGraph( Size num_nodes );
 	EnergyGraph();
@@ -225,7 +225,7 @@ public:
 	EnergyEdge * find_energy_edge( Size n1, Size n2);
 	EnergyEdge const * find_energy_edge( Size n1, Size n2) const;
 
-	virtual void delete_edge( graph::Edge * edge );
+	void delete_edge( graph::Edge * edge ) override;
 
 	/// @brief As an edge is deleted from the graph, it must reliquish hold over its
 	/// array-pool element so that the element may be reused by new edges.
@@ -255,12 +255,12 @@ public:
 #endif // SERIALIZATION
 
 protected:
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
-	virtual graph::Node * create_new_node( Size index );
-	virtual graph::Edge * create_new_edge( Size index1, Size index2 );
-	virtual graph::Edge * create_new_edge( graph::Edge const * example_edge );
+	graph::Node * create_new_node( Size index ) override;
+	graph::Edge * create_new_edge( Size index1, Size index2 ) override;
+	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
 
 private:
 

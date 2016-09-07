@@ -51,7 +51,7 @@ public:
 
 	bool load_pssm_data(std::string const & native_filename);
 
-	virtual ~ReportPSSMDifferences() {};
+	virtual ~ReportPSSMDifferences() = default;
 private:
 	std::map< Size, std::string > res_name1_;
 	utility::vector1< std::pair< core::chemical::AA, utility::vector1< Real > > > pssm_data_;

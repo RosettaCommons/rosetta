@@ -88,7 +88,7 @@ SuperimposeMover::SuperimposeMover(Pose const & ref_pose, core::Size ref_start, 
 {
 }
 
-SuperimposeMover::~SuperimposeMover() {}
+SuperimposeMover::~SuperimposeMover() = default;
 
 protocols::moves::MoverOP
 SuperimposeMover::clone() const
@@ -202,7 +202,7 @@ void
 SuperimposeMover::apply( Pose & pose ) {
 	using namespace basic::options;
 
-	if ( ref_pose_ == 0 ) {
+	if ( ref_pose_ == nullptr ) {
 		TR << "using -in:file:native as the reference pose " <<  std::endl;
 		ref_pose_ = core::import_pose::pose_from_file( option[ OptionKeys::in::file::native ].value() , core::import_pose::PDB_file);
 	}

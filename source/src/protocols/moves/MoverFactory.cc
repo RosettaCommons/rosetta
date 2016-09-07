@@ -40,7 +40,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.moves.MoverFactory" );
 #if defined MULTI_THREADED
 std::atomic< MoverFactory * > MoverFactory::instance_( 0 );
 #else
-MoverFactory * MoverFactory::instance_( 0 );
+MoverFactory * MoverFactory::instance_( nullptr );
 #endif
 
 #ifdef MULTI_THREADED
@@ -78,13 +78,13 @@ MoverFactory::MoverFactory()
 	//original loop mover names over
 }
 
-MoverFactory::~MoverFactory(){}
+MoverFactory::~MoverFactory()= default;
 
 /// @brief add a Mover prototype, using its default type name as the map key
 void
 MoverFactory::factory_register( MoverCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const mover_type( creator->keyname() );
 	if ( mover_type == "UNDEFINED NAME" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived Mover with undefined type name.");
@@ -119,7 +119,7 @@ MoverFactory::newMover( std::string const & mover_type )
 		}
 		TR << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -133,7 +133,7 @@ MoverFactory::newMover(
 	Pose const & pose )
 {
 	MoverOP mover( newMover( tag->getName() ) );
-	runtime_assert( mover != 0 );
+	runtime_assert( mover != nullptr );
 	mover->parse_my_tag( tag, data, filters, movers, pose );
 	return mover;
 }

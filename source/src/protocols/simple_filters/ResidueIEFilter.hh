@@ -35,8 +35,8 @@ public:
 	ResidueIEFilter();
 
 	ResidueIEFilter(
-		std::string const & resnums,
-		std::string const & restype,
+		std::string resnums, // move-constructed
+		std::string restype, // move-constructed
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::scoring::ScoreType const score_type = core::scoring::total_score,
 		core::Real const threshold = 0.0,
@@ -49,19 +49,19 @@ public:
 		bool const report_energy = false );
 
 	ResidueIEFilter( ResidueIEFilter const &init );
-	bool apply( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new ResidueIEFilter( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new ResidueIEFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	virtual ~ResidueIEFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~ResidueIEFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	std::string const & resnums() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreType score_type() const;

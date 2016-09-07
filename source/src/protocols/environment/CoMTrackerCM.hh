@@ -43,45 +43,45 @@ class CoMTrackerCM : public environment::ClientMover {
 public:
 	CoMTrackerCM();
 
-	CoMTrackerCM( std::string const& name,
+	CoMTrackerCM( std::string name, // move-constructed
 		core::select::residue_selector::ResidueSelectorCOP mobile_selector,
-		std::string const& stationary_label );
+		std::string stationary_label ); // move-constructed
 
-	CoMTrackerCM( std::string const& name,
+	CoMTrackerCM( std::string name, // move-constructed
 		core::select::residue_selector::ResidueSelectorCOP mobile_selector );
 
-	virtual
-	~CoMTrackerCM() {};
+	
+	~CoMTrackerCM() override = default;
 
-	virtual
+	
 	EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+		basic::datacache::WriteableCacheableMapOP ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void initialize( core::pose::Pose& pose );
+	void initialize( core::pose::Pose& pose ) override;
 
-	virtual void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& ) override;
 
-	virtual void
+	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	std::string const& name() const { return name_; }
 
 	void name( std::string const& name ) { name_ = name; }
 
-	virtual
-	moves::MoverOP fresh_instance() const;
+	
+	moves::MoverOP fresh_instance() const override;
 
-	virtual
-	moves::MoverOP clone() const;
+	
+	moves::MoverOP clone() const override;
 
 protected:
-	virtual void passport_updated();
+	void passport_updated() override;
 
 private:
 	void update_tracking_residue( core::kinematics::RT::Vector new_position,

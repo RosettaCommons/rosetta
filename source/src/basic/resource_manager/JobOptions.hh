@@ -58,7 +58,7 @@ public: // management methods
 	JobOptions();
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~JobOptions();
+	~JobOptions() override;
 
 	/// @brief Describe this %JobOptions to the given output stream
 	virtual

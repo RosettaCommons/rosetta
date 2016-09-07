@@ -39,7 +39,7 @@ public:
 
 
 	FlexPepDockingPoseMetrics(FlexPepDockingFlagsCOP flags)
-	: flags_(flags)
+	: flags_(std::move(flags))
 	{} // TODO: move to .cc
 
 	core::Real calc_frac_native_contacts ( core::pose::Pose const& native,

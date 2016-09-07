@@ -59,7 +59,7 @@ public:
 	TemperedDocking();
 
 	/// @brief clone
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief copy ctor
 	TemperedDocking( TemperedDocking const & rhs );
@@ -95,7 +95,7 @@ public:
 
 	void set_sc_min( bool sc_min );
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 
 	//getters for const access to movers and data of docking protocol
@@ -103,7 +103,7 @@ public:
 
 	std::string partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
 
-	virtual std::string get_name() const { return "TemperedDocking"; }
+	std::string get_name() const override { return "TemperedDocking"; }
 
 	DockJumps & movable_jumps(){ return movable_jumps_;} /// @brief returns ref to the jumps vector for docking
 
@@ -121,11 +121,11 @@ public:
 
 
 	void add_jump( core::SSize const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const TemperedDocking & dp );
 
 	// function for the parser with lots of accessors
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 protected:
 	/// @brief Assigns user specified values to primitive members using command line options

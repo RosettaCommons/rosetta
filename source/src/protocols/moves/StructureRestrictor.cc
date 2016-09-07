@@ -70,7 +70,7 @@ StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
 	initialized = src.initialized;
 }
 
-StructureRestrictor::~StructureRestrictor(){}
+StructureRestrictor::~StructureRestrictor()= default;
 
 MoverOP StructureRestrictor::fresh_instance() const { return MoverOP( new StructureRestrictor ); }
 
@@ -147,7 +147,7 @@ StructureRestrictor::apply( Pose& pose ){
 
 
 	string const & name = pose_name(pose);
-	map<string, string>::iterator i(chain_map.find(name));
+	auto i(chain_map.find(name));
 	if ( i == chain_map.end() ) {
 		TR_SR << "No chain information found for structure " << name << "." << endl;
 		return;

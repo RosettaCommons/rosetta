@@ -52,7 +52,7 @@ MgMonteCarlo::MgMonteCarlo():
 
 //Destructor
 MgMonteCarlo::~MgMonteCarlo()
-{}
+= default;
 
 void
 MgMonteCarlo::apply( pose::Pose & pose ) {

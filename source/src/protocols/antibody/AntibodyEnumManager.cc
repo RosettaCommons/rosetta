@@ -28,7 +28,7 @@ AntibodyEnumManager::AntibodyEnumManager() {
 	setup();
 }
 
-AntibodyEnumManager::~AntibodyEnumManager() {}
+AntibodyEnumManager::~AntibodyEnumManager() = default;
 
 void
 AntibodyEnumManager::setup() {
@@ -166,7 +166,7 @@ CDRNameEnum
 AntibodyEnumManager::cdr_name_string_to_enum(std::string const & cdr_name) const {
 
 	//This is here due to const correctness issues with [] operator
-	std::map< std::string, CDRNameEnum >::const_iterator iter( cdr_name_to_enum_.find( cdr_name ) );
+	auto iter( cdr_name_to_enum_.find( cdr_name ) );
 	//utility::PyAssert((iter != cdr_name_to_enum_.end()), "CDR Name not found");
 	return iter->second;
 }
@@ -179,7 +179,7 @@ AntibodyEnumManager::cdr_name_enum_to_string(CDRNameEnum const cdr_name) const {
 bool
 AntibodyEnumManager::cdr_name_is_present(std::string const & cdr_name) const {
 
-	std::map< std::string, CDRNameEnum >::const_iterator iter( cdr_name_to_enum_.find( cdr_name ) );
+	auto iter( cdr_name_to_enum_.find( cdr_name ) );
 	return iter != cdr_name_to_enum_.end();
 }
 
@@ -189,7 +189,7 @@ AntibodyNumberingSchemeEnum
 AntibodyEnumManager::numbering_scheme_string_to_enum(std::string const & numbering_scheme) const {
 
 	//This is here due to const correctness issues with [] operator
-	std::map< std::string, AntibodyNumberingSchemeEnum >::const_iterator iter( numbering_scheme_to_enum_.find( numbering_scheme ) );
+	auto iter( numbering_scheme_to_enum_.find( numbering_scheme ) );
 	//utility::PyAssert((iter != numbering_scheme_to_enum_.end()), "Numbering not found");
 	return iter->second;
 }
@@ -200,8 +200,8 @@ AntibodyEnumManager::numbering_scheme_enum_to_string(AntibodyNumberingSchemeEnum
 }
 
 bool
-AntibodyEnumManager::numbering_scheme_is_present(std::string numbering_scheme) const {
-	std::map< std::string, AntibodyNumberingSchemeEnum >::const_iterator iter( numbering_scheme_to_enum_.find( numbering_scheme ) );
+AntibodyEnumManager::numbering_scheme_is_present( std::string const & numbering_scheme) const {
+	auto iter( numbering_scheme_to_enum_.find( numbering_scheme ) );
 	return iter != numbering_scheme_to_enum_.end();
 }
 
@@ -211,7 +211,7 @@ CDRDefinitionEnum
 AntibodyEnumManager::cdr_definition_string_to_enum(std::string const & cdr_definition) const {
 
 	//This is here due to const correctness issues with [] operator
-	std::map< std::string, CDRDefinitionEnum >::const_iterator iter( cdr_definition_to_enum_.find( cdr_definition ) );
+	auto iter( cdr_definition_to_enum_.find( cdr_definition ) );
 	//utility::PyAssert((iter != numbering_scheme_to_enum_.end()), "Numbering not found");
 	return iter->second;
 }
@@ -223,7 +223,7 @@ AntibodyEnumManager::cdr_definition_enum_to_string(CDRDefinitionEnum const cdr_d
 
 bool
 AntibodyEnumManager::cdr_definition_is_present(std::string const & cdr_definition) const {
-	std::map< std::string, CDRDefinitionEnum >::const_iterator iter( cdr_definition_to_enum_.find( cdr_definition ) );
+	auto iter( cdr_definition_to_enum_.find( cdr_definition ) );
 	return iter != cdr_definition_to_enum_.end();
 }
 
@@ -231,7 +231,7 @@ AntibodyEnumManager::cdr_definition_is_present(std::string const & cdr_definitio
 ///////////////// LightChain Types ////////////////////////////////////////////
 LightChainTypeEnum
 AntibodyEnumManager::light_chain_type_string_to_enum(const std::string& light_chain) const {
-	std::map< std::string, LightChainTypeEnum>::const_iterator iter( light_chain_type_to_enum_.find( light_chain ) );
+	auto iter( light_chain_type_to_enum_.find( light_chain ) );
 	return iter->second;
 }
 
@@ -242,7 +242,7 @@ AntibodyEnumManager::light_chain_type_enum_to_string(const LightChainTypeEnum li
 
 bool
 AntibodyEnumManager::light_chain_type_is_present(const std::string& light_chain) const {
-	std::map< std::string, LightChainTypeEnum >::const_iterator iter( light_chain_type_to_enum_.find( light_chain) );
+	auto iter( light_chain_type_to_enum_.find( light_chain) );
 	return iter != light_chain_type_to_enum_.end();
 }
 
@@ -252,7 +252,7 @@ H3BaseTypeEnum
 AntibodyEnumManager::h3_base_type_string_to_enum(std::string const & base_type) const {
 
 	//This is here due to const correctness issues with [] operator
-	std::map< std::string, H3BaseTypeEnum >::const_iterator iter( h3_base_type_to_enum_.find( base_type ) );
+	auto iter( h3_base_type_to_enum_.find( base_type ) );
 	//utility::PyAssert((iter != h3_base_type_to_enum_.end()), "H3 base type not found");
 	return iter->second;
 }
@@ -268,7 +268,7 @@ PackingAngleEnum
 AntibodyEnumManager::packing_angle_string_to_enum(std::string const & angle_type) const {
 
 	//This is here due to const correctness issues with [] operator
-	std::map< std::string, PackingAngleEnum >::const_iterator iter( packing_angle_to_enum_.find( angle_type ) );
+	auto iter( packing_angle_to_enum_.find( angle_type ) );
 	//utility::PyAssert((iter != packing_angle_to_enum_.end()), "Packing Angle not found");
 	return iter->second;
 }
@@ -287,13 +287,13 @@ AntibodyEnumManager::cdr_landmark_enum_to_string(CDRLandmarkEnum const landmark)
 
 CDRLandmarkEnum
 AntibodyEnumManager::cdr_landmark_string_to_enum(std::string const &landmark) const {
-	std::map< std::string, CDRLandmarkEnum >::const_iterator iter( cdr_landmark_to_enum_.find( landmark ) );
+	auto iter( cdr_landmark_to_enum_.find( landmark ) );
 	return iter->second;
 }
 
 bool
 AntibodyEnumManager::cdr_landmark_is_present(std::string const &landmark) const {
-	std::map< std::string, CDRLandmarkEnum >::const_iterator iter( cdr_landmark_to_enum_.find( landmark ) );
+	auto iter( cdr_landmark_to_enum_.find( landmark ) );
 	return iter != cdr_landmark_to_enum_.end();
 }
 
@@ -305,7 +305,7 @@ AntibodyEnumManager::antibody_region_enum_to_string(AntibodyRegionEnum const ant
 
 AntibodyRegionEnum
 AntibodyEnumManager::antibody_region_string_to_enum(std::string const & antibody_region) const {
-	std::map< std::string, AntibodyRegionEnum >::const_iterator iter( antibody_region_to_enum_.find( antibody_region ) );
+	auto iter( antibody_region_to_enum_.find( antibody_region ) );
 	return iter->second;
 }
 

@@ -325,7 +325,7 @@ compute_avge_scores(
 	bool const ignore_gly_paa( true ), ignore_pro_close( true ), ignore_omega( true ), ignore_fa_dun( true ),
 		ignore_fa_rep( true );
 
-	static ScoreFunctionOP fa_scorefxn( 0 );
+	static ScoreFunctionOP fa_scorefxn( nullptr );
 
 	if ( !fa_scorefxn ) {
 		fa_scorefxn = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );

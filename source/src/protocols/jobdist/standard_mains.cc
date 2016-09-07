@@ -100,19 +100,19 @@ utility::vector1< BasicJobOP > load_s_and_l()
 	vector1< BasicJobOP > jobs;
 	int const nstruct_flag = option[ out::nstruct ];
 	int const nstruct = std::max( 1, nstruct_flag );
-	for ( vector1< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i ) {
-		std::string native_file (i->base()+".native.pdb");
+	for (auto & pdb_file_name : pdb_file_names) {
+		std::string native_file (pdb_file_name.base()+".native.pdb");
 		//TR << "Looking for native: " << native_file << " ... ";
 		if ( option[ in::file::native ].user() ) {
 			native_file = option[ in::file::native ]().name();
 		} else if ( !utility::file::file_exists(native_file) ) {
-			native_file = i->name();
+			native_file = pdb_file_name.name();
 			//TR << " not found!" << std::endl;
 		} else {
 			//TR << " found!" << std::endl;
 		}
 
-		BasicJobOP job( new BasicJob(i->name(), native_file, nstruct) );
+		BasicJobOP job( new BasicJob(pdb_file_name.name(), native_file, nstruct) );
 		jobs.push_back( job );
 	}
 
@@ -242,8 +242,8 @@ int universal_main(
 			list_file_names = option[ in::file::silent_list ]();
 		}
 
-		for ( utility::vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
-			std::string filename( i->name() );
+		for (auto & list_file_name : list_file_names) {
+			std::string filename( list_file_name.name() );
 			utility::io::izstream data( filename.c_str() );
 			if ( !data.good() ) { utility_exit_with_message( "Unable to open file: " + filename + '\n' ); }
 			std::string line;
@@ -289,7 +289,7 @@ int universal_main(
 			if ( option[ in::file::tags ].user() ) {
 				// Attempt to find the tag in the requested tag list
 				bool foundtag = false;
-				utility::vector1< std::string >::iterator it = requested_tags.begin(), end = requested_tags.end();
+				auto it = requested_tags.begin(), end = requested_tags.end();
 				for ( ; it != end; ++it ) {
 					if ( iter->decoy_tag() ==  (*it) ) {
 						foundtag = true; break;
@@ -303,7 +303,7 @@ int universal_main(
 			if ( option[ in::file::user_tags ].user() ) {
 				// Attempt to find the user_tag in the requested user_tag list
 				bool founduser_tag = false;
-				utility::vector1< std::string >::iterator it = requested_user_tags.begin(), end = requested_user_tags.end();
+				auto it = requested_user_tags.begin(), end = requested_user_tags.end();
 				std::cout << iter->get_comment("user_tag") << std::endl;
 				for ( ; it != end; ++it ) {
 					if ( iter->get_comment("user_tag") == (*it) ) {
@@ -355,7 +355,7 @@ int universal_main(
 
 				if ( iter->decoy_tag() != curr_job->input_tag() ) continue;
 
-				time_t pdb_start_time = time(NULL);
+				time_t pdb_start_time = time(nullptr);
 
 				std::string curr_job_tag = curr_job->output_tag(curr_nstruct);
 #ifdef BOINC
@@ -468,7 +468,7 @@ int universal_main(
 
 				prev_job = curr_job; // pointer assignment, not a copy op
 				//num_structures_processed += 1;
-				time_t pdb_end_time = time(NULL);
+				time_t pdb_end_time = time(nullptr);
 				TR << "Finished " << curr_job_tag << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 
 			} // iterate over silent structures from a silent-file
@@ -487,7 +487,7 @@ int universal_main(
 	if ( option[ in::file::s ].user() ||  option[ in::file::l ].user()  ) {
 
 		// are we reading PDBs ?
-		time_t overall_start_time = time(NULL);
+		time_t overall_start_time = time(nullptr);
 		utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 
 		BaseJobDistributorOP jobdist;
@@ -539,12 +539,12 @@ int universal_main(
 
 			std::string curr_job_tag = curr_job->output_tag(curr_nstruct);
 			mover.set_current_tag( curr_job_tag );
-			time_t pdb_start_time = time(NULL);
+			time_t pdb_start_time = time(nullptr);
 			//std::cerr << "Starting work on PDB structure: " << curr_job_tag << " <--- " << curr_job->input_tag() << std::endl;
 			TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 			// we read each PDB just once to save on disk I/O
-			if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+			if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 				input_pose = core::pose::PoseOP( new core::pose::Pose() );
 				if ( option[ in::file::centroid_input ].user() ) {
 					core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
@@ -621,12 +621,12 @@ int universal_main(
 
 			prev_job = curr_job; // pointer assignment, not a copy op
 			num_structures_processed += 1;
-			time_t pdb_end_time = time(NULL);
+			time_t pdb_end_time = time(nullptr);
 			TR << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 		} // loop over jobs and nstructs
 		jobdist->shutdown();
 
-		time_t overall_end_time = time(NULL);
+		time_t overall_end_time = time(nullptr);
 		TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
 		if ( num_structures_processed == 0 ) {
 			basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or to use the -overwrite flag?" << std::endl;
@@ -664,7 +664,7 @@ int main_plain_mover(
 	//using basic::datacache::CacheableString;
 	using namespace basic::datacache;
 
-	time_t overall_start_time = time(NULL);
+	time_t overall_start_time = time(nullptr);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 
 #ifndef USEMPI
@@ -703,12 +703,12 @@ int main_plain_mover(
 
 	jobdist->startup();
 	while ( jobdist->next_job(curr_job, curr_nstruct) ) {
-		time_t pdb_start_time = time(NULL);
+		time_t pdb_start_time = time(nullptr);
 		TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 		jobdist->temp_file( curr_job->output_tag(curr_nstruct) );
 
 		// we read each PDB just once to save on disk I/O
-		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
@@ -731,7 +731,7 @@ int main_plain_mover(
 
 		prev_job = curr_job; // pointer assignment, not a copy op
 		num_structures_processed += 1;
-		time_t pdb_end_time = time(NULL);
+		time_t pdb_end_time = time(nullptr);
 		TR << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 
 		score_map = get_score_map( *the_pose );
@@ -746,7 +746,7 @@ int main_plain_mover(
 	} // loop over jobs and nstructs
 	jobdist->shutdown();
 
-	time_t overall_end_time = time(NULL);
+	time_t overall_end_time = time(nullptr);
 	TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
 	if ( num_structures_processed == 0 ) {
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them?" << std::endl;
@@ -770,7 +770,7 @@ int main_plain_pdb_mover(
 	//using basic::datacache::CacheableString;
 	using namespace basic::datacache;
 
-	time_t overall_start_time = time(NULL);
+	time_t overall_start_time = time(nullptr);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 
 #ifndef USEMPI
@@ -810,11 +810,11 @@ int main_plain_pdb_mover(
 	core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!
 	jobdist->startup();
 	while ( jobdist->next_job(curr_job, curr_nstruct) ) {
-		time_t pdb_start_time = time(NULL);
+		time_t pdb_start_time = time(nullptr);
 		TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 		// we read each PDB just once to save on disk I/O
-		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
@@ -858,12 +858,12 @@ int main_plain_pdb_mover(
 
 		prev_job = curr_job; // pointer assignment, not a copy op
 		num_structures_processed += 1;
-		time_t pdb_end_time = time(NULL);
+		time_t pdb_end_time = time(nullptr);
 		TR << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 	} // loop over jobs and nstructs
 	jobdist->shutdown();
 
-	time_t overall_end_time = time(NULL);
+	time_t overall_end_time = time(nullptr);
 	TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
 	if ( num_structures_processed == 0 ) {
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or to use the -overwrite flag?" << std::endl;
@@ -886,7 +886,7 @@ int main_atom_tree_diff_mover(
 	//using basic::datacache::CacheableString;
 	using namespace basic::datacache;
 
-	time_t overall_start_time = time(NULL);
+	time_t overall_start_time = time(nullptr);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 	// Reduce read contention between processes by randomizing the order in which structures are processed
 	numeric::random::random_permutation( input_jobs, numeric::random::rg() );
@@ -897,11 +897,11 @@ int main_atom_tree_diff_mover(
 	core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!
 	jobdist.startup();
 	while ( jobdist.next_job(curr_job, curr_nstruct) ) {
-		time_t pdb_start_time = time(NULL);
+		time_t pdb_start_time = time(nullptr);
 		TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 		// we read each PDB just once to save on disk I/O
-		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 		}
@@ -918,12 +918,12 @@ int main_atom_tree_diff_mover(
 
 		prev_job = curr_job; // pointer assignment, not a copy op
 		num_structures_processed += 1;
-		time_t pdb_end_time = time(NULL);
+		time_t pdb_end_time = time(nullptr);
 		TR << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 	} // loop over jobs and nstructs
 	jobdist.shutdown();
 
-	time_t overall_end_time = time(NULL);
+	time_t overall_end_time = time(nullptr);
 	TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
 	if ( num_structures_processed == 0 ) {
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or use the -overwrite flag?" << std::endl;

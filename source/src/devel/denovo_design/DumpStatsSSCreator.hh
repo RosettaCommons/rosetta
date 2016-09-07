@@ -25,8 +25,8 @@ namespace denovo_design {
 class DumpStatsSSCreator : public protocols::moves::MoverCreator
 {
 public:
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 
 };

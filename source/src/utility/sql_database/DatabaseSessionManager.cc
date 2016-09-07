@@ -128,19 +128,17 @@ session::force_commit_transaction(){
 
 DatabaseSessionManager *
 DatabaseSessionManager::get_instance(){
-	if ( instance_.get() == 0 ) {
+	if ( instance_.get() == nullptr ) {
 		instance_.reset( new DatabaseSessionManager() );
 	}
 	return instance_.get();
 }
 
-DatabaseSessionManager::DatabaseSessionManager() {}
+DatabaseSessionManager::DatabaseSessionManager() = default;
 
-DatabaseSessionManager::DatabaseSessionManager(
-	const DatabaseSessionManager &
-) {}
+DatabaseSessionManager::DatabaseSessionManager( const DatabaseSessionManager & ) = default;
 
-DatabaseSessionManager::~DatabaseSessionManager() {}
+DatabaseSessionManager::~DatabaseSessionManager() = default;
 
 
 sessionOP
@@ -189,7 +187,7 @@ DatabaseSessionManager::get_db_session(
 		utility_exit_with_message(
 			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
 	}
-	return 0;
+	return nullptr;
 }
 
 
@@ -253,7 +251,7 @@ DatabaseSessionManager::get_session_mysql(
 #ifndef USEMYSQL
 	utility_exit_with_message(
 		"If you want to use a mysql database, build with extras=mysql");
-	return 0;
+	return nullptr;
 #else
 
 	sessionOP s(new session());
@@ -325,7 +323,7 @@ DatabaseSessionManager::get_session_postgres(
 #ifndef USEPOSTGRES
 	utility_exit_with_message(
 		"If you want to use a postgres database, build with extras=postgres");
-	return 0;
+	return nullptr;
 #else
 
 	sessionOP s(new session());

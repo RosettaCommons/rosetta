@@ -24,8 +24,8 @@ namespace simple_moves {
 
 class ExtendedPoseMoverCreator : public protocols::moves::MoverCreator {
 public:
-	protocols::moves::MoverOP create_mover() const;
-	std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
 };
 

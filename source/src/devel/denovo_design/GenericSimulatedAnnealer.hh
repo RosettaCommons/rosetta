@@ -74,25 +74,25 @@ public:
 	GenericSimulatedAnnealer();
 
 	/// @brief destructor
-	~GenericSimulatedAnnealer();
+	~GenericSimulatedAnnealer() override;
 
 	/// @brief create copy constructor
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief create this type of objectt
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief apply GenericSimulatedAnnealer (Mover)
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
-		Pose const & );
+		Pose const & ) override;
 
 	virtual void reset( Pose & pose );
 

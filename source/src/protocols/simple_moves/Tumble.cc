@@ -46,7 +46,7 @@ namespace simple_moves {
 Tumble::Tumble() {
 }
 
-Tumble::~Tumble() {}
+Tumble::~Tumble() = default;
 
 numeric::xyzVector<core::Real>
 Tumble::center_of_mass(core::pose::Pose const & pose) {

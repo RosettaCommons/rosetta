@@ -11,6 +11,7 @@
 /// @brief
 /// @author
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -56,8 +57,8 @@ SICPatternAtTransform::SICPatternAtTransform(
 	core::Real starting_displacement) :
 	sic_fast_(),
 	starting_displacement_(starting_displacement),
-	slide_pattern_(slide_pattern),
-	source_pattern_(source_pattern)
+	slide_pattern_(std::move(slide_pattern)),
+	source_pattern_(std::move(source_pattern))
 {
 	TR.Debug << "Initializing SICPatternAtTransform." << std::endl;
 	sic_fast_.init(placed_pose, source_pose);
@@ -70,7 +71,7 @@ SICPatternAtTransform::SICPatternAtTransform(
 	core::Real starting_displacement) :
 	sic_fast_(),
 	starting_displacement_(starting_displacement),
-	slide_pattern_(slide_pattern),
+	slide_pattern_(std::move(slide_pattern)),
 	source_pattern_(SearchPatternOP( new ConstPattern() ))
 {
 	TR.Debug << "Creating SICPatternAtTransform with no source pattern."<< std::endl;

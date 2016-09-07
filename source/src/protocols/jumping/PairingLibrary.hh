@@ -76,7 +76,7 @@ public:
 
 class BasePairingLibrary : public utility::pointer::ReferenceCount {
 public:
-	virtual ~BasePairingLibrary();
+	~BasePairingLibrary() override;
 
 	virtual void
 	create_jump_fragments(
@@ -144,7 +144,7 @@ public:
 		int const pleating,
 		bool bWithTorsion,
 		core::fragment::FragDataOPs &
-	) const;
+	) const override;
 
 	core::Size
 	size() const {
@@ -157,7 +157,7 @@ public:
 		core::kinematics::MoveMap const & mm,
 		bool bWithTorsion,
 		core::fragment::FragSet & frags_accumulator
-	);
+	) override;
 
 private:
 	PairingTemplateMap pairings_;

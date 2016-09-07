@@ -30,19 +30,19 @@ namespace electron_density {
 class ScaleMapIntensities : public moves::Mover {
 public:
 	ScaleMapIntensities();
-	virtual ~ScaleMapIntensities() {}
+	~ScaleMapIntensities() override = default;
 
 	void init();
 
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const { return "ScaleMapIntensities"; }
+	std::string get_name() const override { return "ScaleMapIntensities"; }
 
-	moves::MoverOP clone() const { return moves::MoverOP( new ScaleMapIntensities( *this ) ); }
-	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ScaleMapIntensities ); }
+	moves::MoverOP clone() const override { return moves::MoverOP( new ScaleMapIntensities( *this ) ); }
+	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ScaleMapIntensities ); }
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 private:
 	core::Real res_low_, res_high_, fade_width_, b_sharpen_;

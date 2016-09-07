@@ -39,7 +39,7 @@ public: // constructors
 	DnaPosition( core::Size i ) : top_(i), bottom_(0), paired_(false) {}
 	// construct a double-stranded position (a basepair)
 	DnaPosition( core::Size i, core::Size j ) : top_(i), bottom_(j), paired_(true) {}
-	~DnaPosition(){}
+	~DnaPosition()= default;
 
 public: // const methods
 	core::Size top() const { return top_; }
@@ -59,7 +59,7 @@ class DnaChains : public utility::pointer::ReferenceCount {
 	// this class is a light wrapper for DnaPositions (a map which is typedefed above)
 public: // constructors
 	DnaChains();
-	virtual ~DnaChains();
+	~DnaChains() override;
 	DnaChains( DnaChains const & other );
 	DnaChainsOP clone() const;
 

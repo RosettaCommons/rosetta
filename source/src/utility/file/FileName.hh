@@ -68,7 +68,7 @@ public: // Creation
 	inline
 	FileName( std::vector<FileName> const & file_names)
 	{
-		std::vector<FileName>::const_iterator begin= file_names.begin();
+		auto begin= file_names.begin();
 
 		erase();
 		if ( begin == file_names.end() ) return;
@@ -88,7 +88,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~FileName()
-	{}
+	= default;
 
 
 public: // Assignment

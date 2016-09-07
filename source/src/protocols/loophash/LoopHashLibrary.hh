@@ -42,7 +42,7 @@ public:
 
 	LoopHashLibrary( const utility::vector1< core::Size > &init_sizes = utility::vector1< core::Size >(), const core::Size num_partitions = 1, const core::Size assigned_num = 0);
 
-	void extract_data_from_pose( core::pose::Pose& pose, core::Size nres, protocols::frag_picker::VallChunkOP chunk = NULL );
+	void extract_data_from_pose( core::pose::Pose& pose, core::Size nres, protocols::frag_picker::VallChunkOP chunk = nullptr );
 
 	void extract_data_from_pose( core::pose::Pose& pose );
 
@@ -71,18 +71,18 @@ public:
 		core::Real max_rms   = 100.0
 	);
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new LoopHashLibrary( *this ) );
 	}
 
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "LoopHashLibrary";
 	}
 
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new LoopHashLibrary );
 	}
 

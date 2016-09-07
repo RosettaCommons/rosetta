@@ -96,7 +96,7 @@ MinPackMover::MinPackMover(
 	ScoreFunctionCOP scorefxn
 ) :
 	protocols::moves::Mover("MinPackMover"),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	task_( /* 0 */ ),
 	task_factory_(/* 0 */),
 	off_rotamer_pack_( false )
@@ -110,15 +110,15 @@ MinPackMover::MinPackMover(
 	PackerTaskCOP task
 ) :
 	protocols::moves::Mover("MinPackMover"),
-	scorefxn_( scorefxn ),
-	task_( task ),
+	scorefxn_(std::move( scorefxn )),
+	task_(std::move( task )),
 	task_factory_(/* 0 */),
 	off_rotamer_pack_( false )
 {
 	init();
 }
 
-MinPackMover::~MinPackMover(){}
+MinPackMover::~MinPackMover()= default;
 
 void
 MinPackMover::init()
@@ -142,7 +142,7 @@ MinPackMover::MinPackMover( MinPackMover const & other ) :
 void
 MinPackMover::apply( Pose & pose )
 {
-	if ( scorefxn_ == 0 ) {
+	if ( scorefxn_ == nullptr ) {
 		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
 		scorefxn_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
@@ -151,7 +151,7 @@ MinPackMover::apply( Pose & pose )
 	if ( task_factory_ ) {
 		task = task_factory_->create_task_and_apply_taskoperations( pose );
 	} else {
-		runtime_assert( task_ != 0 );
+		runtime_assert( task_ != nullptr );
 		runtime_assert( task_is_valid( pose ) );
 		task = task_;
 	}
@@ -222,7 +222,7 @@ MinPackMover::parse_score_function(
 )
 {
 	ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
-	if ( new_score_function == 0 ) return;
+	if ( new_score_function == nullptr ) return;
 	score_function( new_score_function );
 }
 
@@ -237,7 +237,7 @@ MinPackMover::parse_task_operations(
 )
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0 ) return;
+	if ( new_task_factory == nullptr ) return;
 	task_factory( new_task_factory );
 }
 
@@ -259,7 +259,7 @@ MinPackMover::clone() const
 // setters
 void MinPackMover::score_function( ScoreFunctionCOP sf )
 {
-	runtime_assert( sf != 0 );
+	runtime_assert( sf != nullptr );
 	scorefxn_ = sf;
 }
 
@@ -267,7 +267,7 @@ void MinPackMover::task( task::PackerTaskCOP t ) { task_ = t; }
 
 void MinPackMover::task_factory( TaskFactoryCOP tf )
 {
-	runtime_assert( tf != 0 );
+	runtime_assert( tf != nullptr );
 	task_factory_ = tf;
 }
 

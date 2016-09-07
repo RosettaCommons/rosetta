@@ -103,7 +103,7 @@ LHSnugFitLegacy::LHSnugFitLegacy(antibody::AntibodyInfoOP antibody_in, bool came
 
 
 // default destructor
-LHSnugFitLegacy::~LHSnugFitLegacy() {}
+LHSnugFitLegacy::~LHSnugFitLegacy() = default;
 
 //clone
 protocols::moves::MoverOP LHSnugFitLegacy::clone() const {
@@ -156,10 +156,9 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	loops::remove_cutpoint_variants( pose, true );
 
 	using namespace core::chemical;
-	for ( loops::Loops::const_iterator it = all_loops_->begin(),
-			it_end = all_loops_->end(); it != it_end; ++it ) {
-		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
-		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
+	for (const auto & it : *all_loops_) {
+		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it.cut() );
+		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it.cut()+1);
 	}
 
 	//setting MoveMap

@@ -21,6 +21,7 @@
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <utility>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 #include <core/id/AtomID_Map.hh>
@@ -39,7 +40,7 @@
 namespace protocols {
 namespace sic_dock {
 
-protocols::loophash::LoopHashLibraryOP LinkerScore::loop_hash_library_ = NULL;
+protocols::loophash::LoopHashLibraryOP LinkerScore::loop_hash_library_ = nullptr;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.sic_dock.RigidScore" );
 
@@ -150,8 +151,8 @@ CBScore::score(
 	BOOST_FOREACH ( Xform const & x1,x1s ) {
 		BOOST_FOREACH ( Xform const & x2,x2s ) {
 			Xform const xhp(multstubs(invstub(hash_pose1_?x1:x2),hash_pose1_?x2:x1));
-			Reals::const_iterator iwb = weights_.begin();
-			for ( Vecs::const_iterator i = points_.begin(); i != points_.end(); ++i,++iwb ) {
+			auto iwb = weights_.begin();
+			for ( auto i = points_.begin(); i != points_.end(); ++i,++iwb ) {
 				xyzhash_.visit(xhp*(*i),*iwb,hash_visitor);
 			}
 		}
@@ -164,13 +165,13 @@ LinkerScore::LinkerScore(
 	Pose const & pose2,
 	Size max_loop_len,
 	Size lookup_radius,
-	std::string const & outtag
+	std::string  outtag
 ):
 	loopsizes_( range(3,max_loop_len+1) ),
 	lookup_radius_( lookup_radius ),
 	pose1_(pose1),
 	pose2_(pose2),
-	outtag_(outtag)
+	outtag_(std::move(outtag))
 {
 	if ( ! basic::options::option[ basic::options::OptionKeys::lh::db_path ].user() ) {
 		utility_exit_with_message("user must specify -lh:db_path for loop hash database");
@@ -206,19 +207,19 @@ LinkerScore::score(
 	BOOST_FOREACH ( Xform const & x1,x1s ) {
 		BOOST_FOREACH ( Xform const & x2,x2s ) {
 
-			for ( TermInfo::const_iterator c1 = lowers1_.begin(); c1 != lowers1_.end(); ++c1 ) {
-				for ( TermInfo::const_iterator n2 = uppers2_.begin(); n2 != uppers2_.end(); ++n2 ) {
-					Xform const lower = vec3_to_stub(x1,c1->second);
-					Xform const upper = vec3_to_stub(x2,n2->second);
+			for (const auto & c1 : lowers1_) {
+				for (const auto & n2 : uppers2_) {
+					Xform const lower = vec3_to_stub(x1,c1.second);
+					Xform const upper = vec3_to_stub(x2,n2.second);
 					Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
 					Real s = linker_count2score(n);
 					lkscore += s;
 				}
 			}
-			for ( TermInfo::const_iterator c2 = lowers2_.begin(); c2 != lowers2_.end(); ++c2 ) {
-				for ( TermInfo::const_iterator n1 = uppers1_.begin(); n1 != uppers1_.end(); ++n1 ) {
-					Xform const lower = vec3_to_stub(x2,c2->second);
-					Xform const upper = vec3_to_stub(x1,n1->second);
+			for (const auto & c2 : lowers2_) {
+				for (const auto & n1 : uppers1_) {
+					Xform const lower = vec3_to_stub(x2,c2.second);
+					Xform const upper = vec3_to_stub(x1,n1.second);
 					Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
 					Real s = linker_count2score(n);
 					lkscore += s;
@@ -264,17 +265,17 @@ LinkerScore::dump_linkers(
 ) const {
 	// TR << "LinkerScore test " << lkscore << std::endl;
 	Size ndumped = 0;
-	for ( TermInfo::const_iterator c1 = lowers1_.begin(); c1 != lowers1_.end(); ++c1 ) {
-		for ( TermInfo::const_iterator n2 = uppers2_.begin(); n2 != uppers2_.end(); ++n2 ) {
-			Xform const lower = vec3_to_stub(x1,c1->second);
-			Xform const upper = vec3_to_stub(x2,n2->second);
+	for (const auto & c1 : lowers1_) {
+		for (const auto & n2 : uppers2_) {
+			Xform const lower = vec3_to_stub(x1,c1.second);
+			Xform const upper = vec3_to_stub(x2,n2.second);
 			ndumped += dump_loophash_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_, out_perfix );
 		}
 	}
-	for ( TermInfo::const_iterator c2 = lowers2_.begin(); c2 != lowers2_.end(); ++c2 ) {
-		for ( TermInfo::const_iterator n1 = uppers1_.begin(); n1 != uppers1_.end(); ++n1 ) {
-			Xform const lower = vec3_to_stub(x2,c2->second);
-			Xform const upper = vec3_to_stub(x1,n1->second);
+	for (const auto & c2 : lowers2_) {
+		for (const auto & n1 : uppers1_) {
+			Xform const lower = vec3_to_stub(x2,c2.second);
+			Xform const upper = vec3_to_stub(x1,n1.second);
 			ndumped += dump_loophash_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_, out_perfix );
 		}
 	}
@@ -305,9 +306,9 @@ public:
 		Xform const & x1,
 		Xform const & x2
 	) :
-		start_coords_(start_coords), x1_(x1), x2_(x2), dummy_pose_(NULL)
+		start_coords_(start_coords), x1_(x1), x2_(x2), dummy_pose_(nullptr)
 	{}
-	Vec const & operator()( AtomID const & id ) const {
+	Vec const & operator()( AtomID const & id ) const override {
 		if ( id.rsd()>1000000 ) {
 			result_hack_awful_1 = x2_ * start_coords_.find(id)->second;
 			return result_hack_awful_1;
@@ -317,9 +318,9 @@ public:
 		}
 	}
 
-	virtual
+	
 	Residue const &
-	residue( Size ) const {
+	residue( Size ) const override {
 		utility_exit_with_message("no Residue for NoPoseXYX_Func");
 		return dummy_pose_->residue(1234567890);
 	}
@@ -341,8 +342,8 @@ ConstraintSetScore::ConstraintSetScore(
 	csts_(cstset.get_all_constraints())
 {
 	using namespace core::scoring::constraints;
-	for ( ConstraintCOPs::const_iterator i = csts_.begin(); i != csts_.end(); ++i ) {
-		Constraint const & cst(**i);
+	for (const auto & i : csts_) {
+		Constraint const & cst(*i);
 		for ( Size j = 1; j <= cst.natoms(); ++j ) {
 			AtomID aid = cst.atom(j);
 			Vec xyz = aid.rsd() > 1000000 ? pose2.xyz(AtomID(aid.atomno(),aid.rsd()-1000000)) : pose1.xyz(aid);
@@ -356,8 +357,8 @@ core::Real ConstraintSetScore::score( Xforms const & x1s, Xforms const & x2s ) c
 	BOOST_FOREACH ( Xform const & x1,x1s ) {
 		BOOST_FOREACH ( Xform const & x2,x2s ) {
 			NoPoseXYX_Func tmp_xyz_func(start_coords_,x1,x2);
-			for ( ConstraintCOPs::const_iterator i = csts_.begin(); i != csts_.end(); ++i ) {
-				Constraint const & cst(**i);
+			for (const auto & i : csts_) {
+				Constraint const & cst(*i);
 				// cout << cst.atom(1) << " " << cst.atom(2) << " " << cst.dist(tmp_xyz_func) << " " << tmp_xyz_func(cst.atom(1)) << " " << tmp_xyz_func(cst.atom(2)) << endl;
 				s += cst.get_func().func(cst.dist(tmp_xyz_func));
 			}
@@ -416,8 +417,8 @@ JointScore::score(
 	Xforms const & x2
 ) const {
 	Real score = 0.0;
-	Reals::const_iterator w = weights_.begin();
-	for ( Scores::const_iterator s = scores_.begin(); s != scores_.end(); ++s,++w ) {
+	auto w = weights_.begin();
+	for ( auto s = scores_.begin(); s != scores_.end(); ++s,++w ) {
 		if ( fabs(*w) == 0 ) continue;
 		score += (*s)->score(x1,x2) * (*w);
 		// if(score < minscore_hack_ || score > maxscore_hack_ ) break;
@@ -427,14 +428,14 @@ JointScore::score(
 
 
 void JointScore::show(std::ostream & out, int width) const {
-	for ( Scores::const_iterator s = scores_.begin(); s != scores_.end(); ++s ) {
-		(*s)->show(out,width);
+	for (const auto & score : scores_) {
+		score->show(out,width);
 		out << " ";
 	}
 }
 void JointScore::show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width) const {
-	for ( Scores::const_iterator s = scores_.begin(); s != scores_.end(); ++s ) {
-		(*s)->show(out,x1,x2,width);
+	for (const auto & score : scores_) {
+		score->show(out,x1,x2,width);
 		out << " ";
 	}
 }

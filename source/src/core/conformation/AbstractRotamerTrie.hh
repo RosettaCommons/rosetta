@@ -33,7 +33,7 @@ namespace conformation {
 class AbstractRotamerTrie : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~AbstractRotamerTrie() {}
+	~AbstractRotamerTrie() override = default;
 
 #ifdef    SERIALIZATION
 public:

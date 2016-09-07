@@ -61,7 +61,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.PalesEvaluatorCreator
 namespace protocols {
 namespace simple_filters {
 
-PalesEvaluatorCreator::~PalesEvaluatorCreator() {}
+PalesEvaluatorCreator::~PalesEvaluatorCreator() = default;
 
 void PalesEvaluatorCreator::register_options() {
 	using namespace basic::options;
@@ -83,7 +83,7 @@ void PalesEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval
 		typedef utility::vector1< std::string > CSVector;
 		CSVector const& pales( option[ OptionKeys::evaluation::pales ]() );
 
-		for ( CSVector::const_iterator it=pales.begin(); it!=pales.end(); ++it ) {
+		for ( auto it=pales.begin(); it!=pales.end(); ++it ) {
 			std::string fname( *it );
 			std::string column;
 			++it;

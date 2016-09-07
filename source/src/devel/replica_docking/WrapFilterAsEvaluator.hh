@@ -46,8 +46,8 @@ namespace replica_docking {
 class WrapFilterAsEvaluator : public protocols::evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
 	WrapFilterAsEvaluator( protocols::filters::FilterOP, std::string );
-	virtual core::Real apply( core::pose::Pose& pose ) const;
-	virtual bool applicable( core::pose::Pose const&pose ) const;
+	core::Real apply( core::pose::Pose& pose ) const override;
+	bool applicable( core::pose::Pose const&pose ) const override;
 private:
 	protocols::filters::FilterOP filter_; //since this class is far from const-correct..
 };

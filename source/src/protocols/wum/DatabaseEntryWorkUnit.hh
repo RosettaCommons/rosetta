@@ -40,9 +40,9 @@ public:
 
 	DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map );
 
-	virtual ~DatabaseEntryWorkUnit(){}
+	~DatabaseEntryWorkUnit() override= default;
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
+	protocols::wum::WorkUnitBaseOP clone() const override {
 		return protocols::wum::WorkUnitBaseOP( new DatabaseEntryWorkUnit( *this ) );
 	}
 
@@ -53,10 +53,10 @@ protected:
 	//    void set_defaults();
 
 	/// @brief Serialize the row_map_
-	virtual void serialize();
+	void serialize() override;
 
 	/// @brief Deserialize the row_map_
-	virtual void deserialize();
+	void deserialize() override;
 
 protected:
 

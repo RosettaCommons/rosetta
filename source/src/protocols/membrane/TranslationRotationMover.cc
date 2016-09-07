@@ -112,14 +112,10 @@ TranslationMover::TranslationMover(
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-TranslationMover::TranslationMover( TranslationMover const & src ) :
-	protocols::moves::Mover( src ),
-	translation_vector_( src.translation_vector_ ),
-	jumpnum_( src.jumpnum_ )
-{}
+TranslationMover::TranslationMover( TranslationMover const & ) = default;
 
 /// @brief Destructor
-TranslationMover::~TranslationMover() {}
+TranslationMover::~TranslationMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -331,16 +327,10 @@ RotationMover::RotationMover(
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-RotationMover::RotationMover( RotationMover const & src ) :
-	protocols::moves::Mover( src ),
-	old_normal_( src.old_normal_ ),
-	new_normal_( src.new_normal_ ),
-	rot_center_( src.rot_center_ ),
-	jumpnum_( src.jumpnum_ )
-{}
+RotationMover::RotationMover( RotationMover const & ) = default;
 
 /// @brief Destructor
-RotationMover::~RotationMover() {}
+RotationMover::~RotationMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -550,7 +540,7 @@ TranslationRotationMover::TranslationRotationMover( TranslationRotationMover con
 {}
 
 /// @brief Destructor
-TranslationRotationMover::~TranslationRotationMover() {}
+TranslationRotationMover::~TranslationRotationMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

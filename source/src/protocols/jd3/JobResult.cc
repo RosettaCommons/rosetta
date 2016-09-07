@@ -19,7 +19,7 @@ namespace protocols {
 namespace jd3 {
 
 JobResult::JobResult() {}
-JobResult::~JobResult() {}
+JobResult::~JobResult() = default;
 
 
 } // namespace jd3

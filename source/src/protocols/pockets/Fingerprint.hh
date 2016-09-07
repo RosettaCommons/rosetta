@@ -101,14 +101,14 @@ protected:
 public:
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FingerprintBase();
+	~FingerprintBase() override;
 
 };
 
 class NonPlaidFingerprint : public FingerprintBase {
 public:
 	NonPlaidFingerprint();
-	~NonPlaidFingerprint();
+	~NonPlaidFingerprint() override;
 	numeric::xyzVector<core::Real> pocket_CoM_;
 	std::list< numeric::xyzVector<core::Real> > egg_and_ext_list_;
 	std::list< numeric::xyzVector<core::Real> > eggshell_list_;

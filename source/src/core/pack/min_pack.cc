@@ -154,13 +154,13 @@ create_minimization_graph(
 		sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
 			pose.residue( node1 ), pose.residue( node2 ),
 			minedge, sc_min_map, pose, true, false,
-			static_cast< scoring::EnergyEdge const * > ( 0 ), dummy );
+			static_cast< scoring::EnergyEdge const * > ( nullptr ), dummy );
 	}
 
 	/// Now initialize the long-range edges
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( ! task.being_packed( ii ) ) continue;
-		for ( scoring::ScoreFunction::LR_2B_MethodIterator
+		for ( auto
 				iter = sfxn.long_range_energies_begin(),
 				iter_end = sfxn.long_range_energies_end();
 				iter != iter_end; ++iter ) {
@@ -603,7 +603,7 @@ void compare_mingraph_and_energy_graph(
 		if ( ii != resid && jj != resid ) continue; // only compare nodes that are involved in the current optimization
 		MinimizationEdge const * minedge = static_cast< MinimizationEdge const * > ( mingraph.find_edge( ii, jj ) );
 		EnergyEdge const * eedge = static_cast< EnergyEdge const * > ( *iter );
-		EnergyMap emap = eedge->fill_energy_map();;
+		EnergyMap emap = eedge->fill_energy_map();
 
 		if ( ! minedge ) {
 			std::cout << "Minimization edge " << ii << " " << jj << " missing from minimization graph" << std::endl;
@@ -1242,7 +1242,7 @@ off_rotamer_pack_optimize(
 				if ( any_previously_unassigned ) {
 					if ( last_unassigned_assigned ) {
 						/// This is the last un-assigned residue that needs assigning; save the total energy for current & best
-						Real totalE = ig.total_energy();;
+						Real totalE = ig.total_energy();
 						curr_state.assign_energy( totalE );
 						best_state = curr_state;
 					}

@@ -104,7 +104,7 @@ DockMCMCycle::DockMCMCycle(
 	core::Size const rb_jump,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::ScoreFunctionOP scorefxn_pack
-) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
+) : Mover(), scorefxn_(std::move(scorefxn)), scorefxn_pack_(std::move(scorefxn_pack))
 {
 	movable_jumps_.push_back( rb_jump );
 	moves::Mover::type( "DockMCMCycle" );
@@ -117,7 +117,7 @@ DockMCMCycle::DockMCMCycle(
 	DockJumps const movable_jumps,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::ScoreFunctionOP scorefxn_pack
-) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
+) : Mover(), scorefxn_(std::move(scorefxn)), scorefxn_pack_(std::move(scorefxn_pack))
 {
 	movable_jumps_ = movable_jumps;
 	moves::Mover::type( "DockMCMCycle" );
@@ -125,7 +125,7 @@ DockMCMCycle::DockMCMCycle(
 }
 
 //destructor
-DockMCMCycle::~DockMCMCycle() {}
+DockMCMCycle::~DockMCMCycle() = default;
 
 //clone
 protocols::moves::MoverOP DockMCMCycle::clone() const {
@@ -161,7 +161,7 @@ void DockMCMCycle::set_default()
 	scmin_ = false;
 
 	// setup scoring with defaults
-	if ( scorefxn_ == NULL ) {
+	if ( scorefxn_ == nullptr ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 		scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
@@ -348,13 +348,13 @@ std::ostream & operator<<(std::ostream& out, const DockMCMCycle & dp )
 
 	core::Size spaces_so_far = 23;
 	bool first = true;
-	for ( DockJumps::const_iterator it = dp.movable_jumps_.begin() ; it != dp.movable_jumps_.end() ; ++it ) {
+	for (int movable_jump : dp.movable_jumps_) {
 		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;
 		} else first = false;
 
-		out << I( 1, *it );
+		out << I( 1, movable_jump );
 		spaces_so_far += 1;
 	}
 	core::Size remaining_spaces = 80 - spaces_so_far;

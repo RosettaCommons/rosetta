@@ -32,20 +32,20 @@ class ResidueLoader : public basic::resource_manager::ResourceLoader
 {
 public:
 	ResidueLoader() {}
-	virtual ~ResidueLoader() {}
+	~ResidueLoader() override = default;
 
 	/// @brief returns a pointer to a ResidueType object originated from the data_source specified to the ResourceManager
-	virtual
+	
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
 		basic::resource_manager::LocatorID const & locator_id,
 		std::istream & istream
-	) const;
+	) const override;
 
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const;
+	default_options() const override;
 
 };
 

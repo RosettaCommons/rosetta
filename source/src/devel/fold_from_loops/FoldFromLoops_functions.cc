@@ -130,9 +130,8 @@ std::vector<Size> define_cut_points (
 
 	// defining cut points both out of the loop ranges
 	std::vector<Size> cut_points;
-	for ( Size i=0; i < loop_dividers.size(); ++i ) {
-		int cutpoint = loop_dividers[i];
-		char ss = nat_pose.secstruct( cutpoint );
+	for (int cutpoint : loop_dividers) {
+			char ss = nat_pose.secstruct( cutpoint );
 
 		if ( ss == 'L' ) {
 			cut_points.push_back(cutpoint);
@@ -218,8 +217,8 @@ void fold_tree_cutpoints_generator(
 bool is_cut( std::vector<Size> & cut_points,
 	Size & residue){
 	bool res_cut = false;
-	for ( std::vector<Size>::iterator it = cut_points.begin(); it != cut_points.end(); ++it ) {
-		if ( *it == residue ) { res_cut = true; }
+	for (unsigned long & cut_point : cut_points) {
+		if ( cut_point == residue ) { res_cut = true; }
 
 	}
 	return res_cut;
@@ -1044,10 +1043,10 @@ void new_pose_generator(
 void refresh_cutpoints( core::pose::Pose & pose,
 	std::vector<Size> & cut_points){
 
-	for ( std::vector<Size>::iterator it = cut_points.begin(); it != cut_points.end(); ++it ) {
+	for (unsigned long & cut_point : cut_points) {
 
-		TR << "Refresh cut_point "<< *it <<std::endl;
-		Size residue = *it;
+		TR << "Refresh cut_point "<< cut_point <<std::endl;
+		Size residue = cut_point;
 		core::pose::add_variant_type_to_pose_residue(pose, chemical::CUTPOINT_LOWER,residue ); // residue on the pose has to be assigned as a cut
 		core::pose::add_variant_type_to_pose_residue(pose, chemical::CUTPOINT_UPPER, residue + 1);
 

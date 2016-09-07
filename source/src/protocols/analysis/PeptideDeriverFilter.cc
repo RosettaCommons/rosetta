@@ -70,6 +70,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/ocstream.hh>
@@ -403,7 +404,7 @@ PeptideDeriverPoseOutputter::PeptideDeriverPoseOutputter( bool const is_dump_bes
 	is_dump_best_peptide_pose_(is_dump_best_peptide_pose),
 	is_dump_prepared_pose_(is_dump_prepared_pose),
 	is_dump_cyclic_poses_(is_dump_cyclic_poses),
-	scorefxn_(scorefxn) { }
+	scorefxn_(std::move(scorefxn)) { }
 
 void PeptideDeriverPoseOutputter::chain_pair_pose_prepared(core::pose::Pose const & pose) {
 	// note: we use the term 'prepared' and 'minimized' interchangeably
@@ -1192,10 +1193,10 @@ PeptideDeriverFilter::calculate_per_residue_interface_score(
 	(*scorefxn_deriver_)(unbound_pair);
 
 	//go over each interface residue and calculate its energetical contribution to binding
-	for ( std::set< core::Size >::const_iterator it(interface_residues.begin()), end(interface_residues.end()); it != end; ++it ) {
+	for (unsigned long interface_residue : interface_residues) {
 		// delta between total energy in the bound and unbound states is in fact the interface score
-		core::Real res_isc = chain_pair_pose.energies().residue_total_energy(*it) - unbound_pair.energies().residue_total_energy(*it);
-		report_out << "residue " << *it << " in chain " << chain_pair_pose.residue(*it).chain() << " has interface score " << res_isc << std::endl;
+		core::Real res_isc = chain_pair_pose.energies().residue_total_energy(interface_residue) - unbound_pair.energies().residue_total_energy(interface_residue);
+		report_out << "residue " << interface_residue << " in chain " << chain_pair_pose.residue(interface_residue).chain() << " has interface score " << res_isc << std::endl;
 	}
 
 }

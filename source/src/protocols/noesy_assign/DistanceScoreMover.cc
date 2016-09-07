@@ -61,13 +61,13 @@ DistanceScoreMover::DistanceScoreMover( CrossPeakList& cpl, pose::Pose const& po
 
 #ifndef WIN32
 
-	for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it ) {
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			try {
 				constraints_.push_back( (*ait)->create_constraint( pose ) );
 			} catch ( core::id::EXCN_AtomNotFound& excn ) {
 				tr.Error << "while setting up constraints in DistanceScoreMover: " << excn << std::endl;
-				constraints_.push_back( NULL );
+				constraints_.push_back( nullptr );
 			}
 		}
 	}
@@ -82,9 +82,9 @@ void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default fal
 	used_for_calibration_ = use_for_calibration;
 
 	Size ct( 1 );
-	for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct ) {
+	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct ) {
 		if ( !used_for_calibration_ ) {
-			for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+			for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 				(*ait)->set_decoy_compatibility( 0.0 );
 			}
 		}
@@ -178,7 +178,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 	if ( !used_for_calibration_ ) {
 		tr.Debug << "DistanceScoreMover is not used in calibration mode " << std::endl;
 	}
-	for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
+	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
 		//for each CrossPeak do the following:
 		// ct_peaks .. number of peak, ct ... number of assignment / peak
 		// a) iterate over all initial assignments and get effective distance (i.e., QD1 is evaluated with d^-6 averaging )
@@ -192,7 +192,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 		Size ct_assignments( 1 );
 		Real sum_dist( 0.0 );
 		Real sum_dist_filt( 0.0 ); //accumulate only distances where Vk > Vmin  --> used for calibration ( eq. (12)  ).
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait, ++ct_assignments ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait, ++ct_assignments ) {
 			runtime_assert( constraint_it != constraints_.end() );
 			Real dist,invd6;
 			if ( !( *constraint_it ) ) {
@@ -239,7 +239,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 			//now add to Dk in Assignments  --- formulas (6)+(7) on p.214  eta --> final_dist_power
 			//d_ak,bk is distance of individual PeakAssignment (computed in for-loop above --> dist_buf[] ).
 			ct_assignments = 1;
-			for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait, ++ct_assignments ) {
+			for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait, ++ct_assignments ) {
 				//    if ( dist_buf[ ct_assignments ] == 0 ) {
 				//          tr.Trace << "Crosspeak: " << (*it)->peak_id() << " assignment " << ct_assignments << " has zero dist_buf " << std::endl;
 				//    }
@@ -261,8 +261,8 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 void DistanceScoreMover::finalize_scoring() const {
 #ifndef WIN32
 	Size ct_peaks( 1 );
-	for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->set_decoy_compatibility( (*ait)->decoy_compatibility()/count_decoys_ );
 		}
 	}

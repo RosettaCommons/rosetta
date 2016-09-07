@@ -37,7 +37,7 @@ using basic::resource_manager::ResourceLoaderFactory;
 template <> std::mutex utility::SingletonBase< ResourceLoaderFactory >::singleton_mutex_{};
 template <> std::atomic< ResourceLoaderFactory * > utility::SingletonBase< ResourceLoaderFactory >::instance_( 0 );
 #else
-template <> ResourceLoaderFactory * utility::SingletonBase< ResourceLoaderFactory >::instance_( 0 );
+template <> ResourceLoaderFactory * utility::SingletonBase< ResourceLoaderFactory >::instance_( nullptr );
 #endif
 
 }
@@ -56,7 +56,7 @@ ResourceLoaderFactory::create_resource_loader(
 	std::string const & loader_type
 ) const
 {
-	std::map< std::string, ResourceLoaderCreatorOP >::const_iterator iter = creator_map_.find( loader_type );
+	auto iter = creator_map_.find( loader_type );
 	if ( iter == creator_map_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "No ResourceLoaderCreator resposible for the ResourceLoader named " + loader_type + " was found in the ResourceLoaderFactory.  Was it correctly registered?" );
 	}
@@ -76,9 +76,8 @@ std::list< std::string >
 ResourceLoaderFactory::available_resource_loaders() const
 {
 	std::list< std::string > loader_types;
-	for ( std::map< std::string, ResourceLoaderCreatorOP >::const_iterator
-			iter = creator_map_.begin(), iter_end = creator_map_.end(); iter != iter_end; ++iter ) {
-		loader_types.push_back( iter->first );
+	for (const auto & iter : creator_map_) {
+		loader_types.push_back( iter.first );
 	}
 	return loader_types;
 }

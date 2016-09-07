@@ -62,7 +62,7 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 		Histogram( Histogram const& );
 		Histogram& operator=( Histogram const& );
 
-		~Histogram();
+		~Histogram() override;
 
 #ifdef USEMPI
 		void mpi_exchange( int partner, MPI_Comm const& mpi_comm );
@@ -95,12 +95,12 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 public:
 	BiasEnergy();
 	BiasEnergy( core::Size stride, core::Real omega, core::Real gamma );
-	virtual ~BiasEnergy();
+	~BiasEnergy() override;
 	virtual core::Real evaluate( core::pose::Pose const& ) const;
 
 	//for trajectory output...
-	virtual
-	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::Job & ) const;
+	
+	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::Job & ) const override;
 
 #ifdef USEMPI
 	//in replica exchange
@@ -120,7 +120,7 @@ public:
 
 	void set_temperature( core::Real setting );
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -128,30 +128,30 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose &,
 		MetropolisHastingsMover const &,
 		core::Size //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	observe_after_metropolis(
 		MetropolisHastingsMover const &
-	) {};
+	) override {};
 
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose &,
 		MetropolisHastingsMover const &
-	);
+	) override;
 
-	virtual
+	
 	bool
 	restart_simulation(
 		core::pose::Pose &,
@@ -159,7 +159,7 @@ public:
 		core::Size& cycle,
 		core::Size& temp_level,
 		core::Real& temperature
-	);
+	) override;
 
 protected:
 	virtual core::Real extract_collective_var( core::pose::Pose const& ) const = 0;

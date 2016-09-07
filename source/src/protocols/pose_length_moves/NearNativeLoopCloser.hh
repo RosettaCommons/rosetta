@@ -50,7 +50,7 @@ using utility::vector1;
 class PossibleLoop : public utility::pointer::ReferenceCount {
 public:
 	PossibleLoop(int resAdjustmentBeforeLoop, int resAdjustmentAfterLoop,Size loopLength,Size resBeforeLoop, Size resAfterLoop, char resTypeBeforeLoop, char resTypeAfterLoop, Size insertedBeforeLoopRes, Size insertedAfterLoopRes, core::pose::PoseOP fullLengthPoseOP, core::pose::Pose const originalPose);
-	~PossibleLoop();
+	~PossibleLoop() override;
 	void evaluate_distance_closure();
 	void generate_stub_rmsd();
 	void generate_uncached_stub_rmsd();
@@ -121,15 +121,15 @@ public:
 	NearNativeLoopCloser();
 	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
 		char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed);
-	virtual std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new NearNativeLoopCloser( *this ) ); }
-	virtual void apply( Pose & pose );
+	std::string get_name() const override;
+	moves::MoverOP clone() const override { return moves::MoverOP( new NearNativeLoopCloser( *this ) ); }
+	void apply( Pose & pose ) override;
 	void combine_chains(Pose & pose);
 	void extendRegion(bool towardCTerm, Size resStart, char neighborResType, Size numberAddRes,core::pose::PoseOP & poseOP);
 	core::pose::PoseOP create_maximum_length_pose(char resTypeBeforeLoop, char resTypeAfterLoop, core::pose::Pose const pose);
 	vector1<PossibleLoopOP> create_potential_loops(core::pose::Pose const pose);
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	core::pose::PoseOP get_additional_output();
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	core::pose::PoseOP get_additional_output() override;
 private:
 	int resAdjustmentStartLow_;
 	int resAdjustmentStartHigh_;

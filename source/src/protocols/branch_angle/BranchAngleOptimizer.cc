@@ -72,23 +72,9 @@ BranchAngleOptimizer::BranchAngleOptimizer():
 	initialized_(false)
 {}
 
-BranchAngleOptimizer::BranchAngleOptimizer(
-	BranchAngleOptimizer const & src
-) :
-	mm_bondangle_library_(src.mm_bondangle_library_),
-	bond_angle_residue_type_param_set_(src.bond_angle_residue_type_param_set_), // not a true deep copy
-	coef1_(src.coef1_),
-	coef2_(src.coef2_),
-	coef_map1_(src.coef_map1_),
-	coef_map2_(src.coef_map2_),
-	undefined_coef1_(src.undefined_coef1_),
-	undefined_coef2_(src.undefined_coef2_),
-	tolerance_(src.tolerance_),
-	initialized_(src.initialized_)
-{}
+BranchAngleOptimizer::BranchAngleOptimizer( BranchAngleOptimizer const & ) = default;
 
-BranchAngleOptimizer::~BranchAngleOptimizer()
-{}
+BranchAngleOptimizer::~BranchAngleOptimizer() = default;
 
 BranchAngleOptimizer const &
 BranchAngleOptimizer::operator=(BranchAngleOptimizer const & /*src*/)
@@ -190,7 +176,7 @@ BranchAngleOptimizer::optimize_angles(
 		// lookup the branching angle coefficients, returning 0 if they can't be found
 		BranchParam1 const params(param1(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1));
 
-		std::map<BranchParam1, Size>::iterator coef_map_iter(coef_map1_.find(params));
+		auto coef_map_iter(coef_map1_.find(params));
 		if ( coef_map_iter == coef_map1_.end() ) {
 			undefined_coef1_.insert(params);
 			return 0;
@@ -251,7 +237,7 @@ BranchAngleOptimizer::optimize_angles(
 		// lookup the branching angle coefficients, returning 0 if they can't be found
 		BranchParam2 const params(param2(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1, branch_atomid2));
 
-		std::map<BranchParam2, Size>::iterator coef_map_iter(coef_map2_.find(params));
+		auto coef_map_iter(coef_map2_.find(params));
 		if ( coef_map_iter == coef_map2_.end() ) {
 			undefined_coef2_.insert(params);
 			return 0;
@@ -353,7 +339,7 @@ BranchAngleOptimizer::overall_params(
 		// lookup the branching angle coefficients
 		BranchParam1 const params(param1(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1));
 
-		std::map<BranchParam1, Size>::iterator coef_map_iter(coef_map1_.find(params));
+		auto coef_map_iter(coef_map1_.find(params));
 		if ( coef_map_iter == coef_map1_.end() ) {
 			undefined_coef1_.insert(params);
 			Ktheta = params.m1_m2_Ktheta();
@@ -391,7 +377,7 @@ BranchAngleOptimizer::overall_params(
 		// lookup the branching angle coefficients
 		BranchParam2 const params(param2(pose, main_atomid1, center_atomid, main_atomid2, branch_atomid1, branch_atomid2));
 
-		std::map<BranchParam2, Size>::iterator coef_map_iter(coef_map2_.find(params));
+		auto coef_map_iter(coef_map2_.find(params));
 		if ( coef_map_iter == coef_map2_.end() ) {
 			undefined_coef2_.insert(params);
 			Ktheta = params.m1_m2_Ktheta();
@@ -637,7 +623,7 @@ BranchAngleOptimizer::read_coef1(
 			b1_torsion_offset_A, b1_torsion_offset_B, b1_torsion_offset_C,
 			b1_bond_angle_A, b1_bond_angle_B, b1_bond_angle_C);
 
-		std::map<BranchParam1, core::Size>::iterator iter(coef_map1_.find(params));
+		auto iter(coef_map1_.find(params));
 
 		if ( iter == coef_map1_.end() ) {
 			// if the parameter key doesn't exist, add a new coefficient record and map entry
@@ -771,7 +757,7 @@ BranchAngleOptimizer::read_coef2(
 			b2_torsion_offset_A, b2_torsion_offset_B, b2_torsion_offset_C,
 			b2_bond_angle_A, b2_bond_angle_B, b2_bond_angle_C);
 
-		std::map<BranchParam2, core::Size>::iterator iter(coef_map2_.find(params));
+		auto iter(coef_map2_.find(params));
 
 		if ( iter == coef_map2_.end() ) {
 			// if the parameter key doesn't exist, add a new coefficient record and map entry
@@ -897,9 +883,8 @@ BranchAngleOptimizer::write_undefined_coef1(
 {
 	std::streamsize oldprecision = out.precision();
 	out << std::setprecision(16);
-	for ( std::set<BranchParam1>::const_iterator iter(undefined_coef1_.begin()); iter != undefined_coef1_.end(); ++iter ) {
-		BranchParam1 const & params(*iter);
-		out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
+	for (const auto & params : undefined_coef1_) {
+			out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
 		out << params.m1_b1_Ktheta() << " " << numeric::conversions::degrees(params.m1_b1_theta0()) << std::endl;
 		out << params.m2_b1_Ktheta() << " " << numeric::conversions::degrees(params.m2_b1_theta0()) << std::endl;
 		out << std::endl;
@@ -1034,9 +1019,8 @@ BranchAngleOptimizer::write_undefined_coef2(
 {
 	std::streamsize oldprecision = out.precision();
 	out << std::setprecision(16);
-	for ( std::set<BranchParam2>::const_iterator iter(undefined_coef2_.begin()); iter != undefined_coef2_.end(); ++iter ) {
-		BranchParam2 const & params(*iter);
-		out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
+	for (const auto & params : undefined_coef2_) {
+			out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
 		out << params.m1_b1_Ktheta() << " " << numeric::conversions::degrees(params.m1_b1_theta0()) << std::endl;
 		out << params.m2_b1_Ktheta() << " " << numeric::conversions::degrees(params.m2_b1_theta0()) << std::endl;
 		out << params.m1_b2_Ktheta() << " " << numeric::conversions::degrees(params.m1_b2_theta0()) << std::endl;
@@ -1183,12 +1167,12 @@ get_branching_atoms2(
 	kinematics::tree::AtomCOP const parent(main_atom2->parent());
 
 	// check to see if parent exsits and that the correct number of bonded atoms are present
-	runtime_assert(parent != 0);
-	runtime_assert(parent->get_nonjump_atom(3) != 0);
+	runtime_assert(parent != nullptr);
+	runtime_assert(parent->get_nonjump_atom(3) != nullptr);
 	runtime_assert(!parent->get_nonjump_atom(4));
 
-	branch_atom1 = 0;
-	branch_atom2 = 0;
+	branch_atom1 = nullptr;
+	branch_atom2 = nullptr;
 
 	// iterate through the bonded atoms and find the two siblings
 	for ( Size i = 1; i <= 3; ++i ) {
@@ -1203,8 +1187,8 @@ get_branching_atoms2(
 		}
 	}
 
-	runtime_assert(branch_atom1 != 0);
-	runtime_assert(branch_atom2 != 0);
+	runtime_assert(branch_atom1 != nullptr);
+	runtime_assert(branch_atom2 != nullptr);
 
 	// get dihedral offsets of the two branching atoms adjusted to [0, 2*pi)
 	Real dihedral1(parent->dihedral_between_bonded_children(*main_atom2, *branch_atom1));

@@ -37,11 +37,11 @@ public:
 
 	SymRestrictTaskForDocking( core::scoring::ScoreFunctionCOP scorefxn, bool include_current, core::Real distance = 8  );
 
-	virtual ~SymRestrictTaskForDocking();
+	~SymRestrictTaskForDocking() override;
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
 
-	virtual void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
+	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const override;
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;

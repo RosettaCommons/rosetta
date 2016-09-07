@@ -46,16 +46,16 @@ public:
 	SheetTranslate(const protocols::loops::Loop& sheet, double distance_ang);
 
 	/// @brief Translates the sheet by the specified distance (in Angstroms)
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Returns the protocol's name
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Creates a new instance with the copy constructor
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 	/// @brief Creates a new instance with the default constructor
-	moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
 	/// @brief Returns the sheet to be modified
 	const protocols::loops::Loop& get_sheet() const;

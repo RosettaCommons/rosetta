@@ -79,24 +79,11 @@ public:
 	{}
 
 	/// @brief copy constructor
-	Jump ( const Jump & src ):
-		rt_( src.rt_ ),
-		rb_delta( src.rb_delta ),
-		rb_center( src.rb_center ),
-		invert_upstream_(src.invert_upstream_),
-		invert_downstream_(src.invert_downstream_)
-	{}
+	Jump ( const Jump & )= default;
 
 	/// @brief copy operator
 	Jump &
-	operator =( Jump const & src ) {
-		rt_ = src.rt_;
-		rb_delta = src.rb_delta;
-		rb_center = src.rb_center;
-		invert_upstream_ = src.invert_upstream_;
-		invert_downstream_ = src.invert_downstream_;
-		return *this;
-	}
+	operator =( Jump const & ) = default;
 
 	/// @brief get a jump from two stubs
 	void

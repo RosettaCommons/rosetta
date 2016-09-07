@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/prof.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
@@ -57,7 +58,7 @@ SaneMinMover::SaneMinMover( std::string const & name ) :
 	set_defaults_();
 }
 
-SaneMinMover::~SaneMinMover() {}
+SaneMinMover::~SaneMinMover() = default;
 
 // constructor with arguments
 SaneMinMover::SaneMinMover(
@@ -67,9 +68,9 @@ SaneMinMover::SaneMinMover(
 	bool cartesian_in
 ) : protocols::moves::Mover("SaneMinMover"),
 	cartesian_(cartesian_in),
-	movemap_(movemap_in),
-	scorefxn_(scorefxn_in),
-	min_options_(min_options_in)
+	movemap_(std::move(movemap_in)),
+	scorefxn_(std::move(scorefxn_in)),
+	min_options_(std::move(min_options_in))
 {}
 
 bool SaneMinMover::cartesian() const {

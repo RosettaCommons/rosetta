@@ -52,8 +52,8 @@ Real CompositeScoringScheme::score(
 	Real total_score( 0.0 );
 	CompositeSequenceOP cs1( utility::pointer::dynamic_pointer_cast< core::sequence::CompositeSequence > ( seq1 ) );
 	CompositeSequenceOP cs2( utility::pointer::dynamic_pointer_cast< core::sequence::CompositeSequence > ( seq2 ) );
-	runtime_assert( cs1 != 0 );
-	runtime_assert( cs2 != 0 );
+	runtime_assert( cs1 != nullptr );
+	runtime_assert( cs2 != nullptr );
 	runtime_assert( cs1->n_seqs() == cs2->n_seqs() );
 	runtime_assert( count()       == cs2->n_seqs() );
 

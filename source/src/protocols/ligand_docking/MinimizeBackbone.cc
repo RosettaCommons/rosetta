@@ -34,6 +34,7 @@
 
 // Utility Headers
 #include <numeric/random/random.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
@@ -89,7 +90,7 @@ MinimizeBackbone::MinimizeBackbone():
 
 MinimizeBackbone::MinimizeBackbone(InterfaceBuilderOP interface_builder):
 	protocols::moves::Mover(),
-	interface_builder_(interface_builder)
+	interface_builder_(std::move(interface_builder))
 {}
 
 MinimizeBackbone::MinimizeBackbone(MinimizeBackbone const & that):
@@ -98,7 +99,7 @@ MinimizeBackbone::MinimizeBackbone(MinimizeBackbone const & that):
 	interface_builder_(that.interface_builder_)
 {}
 
-MinimizeBackbone::~MinimizeBackbone() {}
+MinimizeBackbone::~MinimizeBackbone() = default;
 
 protocols::moves::MoverOP MinimizeBackbone::clone() const {
 	return protocols::moves::MoverOP( new MinimizeBackbone( *this ) );
@@ -200,21 +201,17 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 
 	int new_jump = f->num_jump();
 
-	for (
-			core::kinematics::FoldTree::const_iterator edge_itr = f->begin();
-			edge_itr != f->end();
-			++edge_itr
-			) {
+	for (const auto & edge_itr : *f) {
 
-		if ( !edge_itr->is_polymer() ) {
-			f_new->add_edge(*edge_itr);
+		if ( !edge_itr.is_polymer() ) {
+			f_new->add_edge(edge_itr);
 			continue; // only subdivide "peptide" edges of the fold tree
 		}
 
-		utility::vector1< protocols::loops::Loop> loops = add_cut_points( *edge_itr, interface, pose);
+		utility::vector1< protocols::loops::Loop> loops = add_cut_points( edge_itr, interface, pose);
 
-		const int e_start = edge_itr->start();
-		const int e_stop = edge_itr->stop();
+		const int e_start = edge_itr.start();
+		const int e_stop = edge_itr.stop();
 
 		int last_rigid = e_start;
 		for ( Size i = 1; i <= loops.size(); ++i ) {
@@ -300,28 +297,23 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 		new_fold_tree = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
 	} else {
 
-		for (
-				core::kinematics::FoldTree::const_iterator e = f_const.begin(),
-				edge_end = f_const.end();
-				e != edge_end;
-				++e
-				) {
-			std::map<core::Size, core::Size>::const_iterator const jump_attach = jump_to_attach.find(e->label());
+		for (const auto & e : f_const) {
+			std::map<core::Size, core::Size>::const_iterator const jump_attach = jump_to_attach.find(e.label());
 			if ( jump_attach != jump_to_attach.end() ) {
 				core::Size const jump_id = jump_attach->first;
 				core::Size const attach_pt = jump_attach->second;
 				core::Size const ligand_residue_id = pose.fold_tree().downstream_jump_residue(jump_id);
 				new_fold_tree->add_edge(attach_pt, ligand_residue_id, jump_id);
 			} else {
-				core::Size const attach_pt= find_peptide_attach_pt(e->start(), e->stop(), jump_to_attach);
+				core::Size const attach_pt= find_peptide_attach_pt(e.start(), e.stop(), jump_to_attach);
 
-				if ( e->label() == core::kinematics::Edge::PEPTIDE && attach_pt != 0 ) {
-					new_fold_tree->add_edge(e->start(), attach_pt, core::kinematics::Edge::PEPTIDE);
-					new_fold_tree->add_edge(attach_pt, e->stop(), core::kinematics::Edge::PEPTIDE);
-				} else if ( e->label() == core::kinematics::Edge::CHEMICAL ) {
-					new_fold_tree->add_edge(e->start(), e->stop(), e->start_atom(), e->stop_atom());
+				if ( e.label() == core::kinematics::Edge::PEPTIDE && attach_pt != 0 ) {
+					new_fold_tree->add_edge(e.start(), attach_pt, core::kinematics::Edge::PEPTIDE);
+					new_fold_tree->add_edge(attach_pt, e.stop(), core::kinematics::Edge::PEPTIDE);
+				} else if ( e.label() == core::kinematics::Edge::CHEMICAL ) {
+					new_fold_tree->add_edge(e.start(), e.stop(), e.start_atom(), e.stop_atom());
 				} else { // add a jump edge
-					new_fold_tree->add_edge(e->start(), e->stop(), e->label());
+					new_fold_tree->add_edge(e.start(), e.stop(), e.label());
 				}
 			}
 		}
@@ -372,7 +364,7 @@ void MinimizeBackbone::restrain_protein_Calpha(
 	}
 	char const & ligand_chain= interface[residue_id].chain;
 	std::map<char, LigandAreaOP> const & ligand_areas= interface_builder_->get_ligand_areas();
-	std::map<char, LigandAreaOP>::const_iterator found= ligand_areas.find(ligand_chain);
+	auto found= ligand_areas.find(ligand_chain);
 	assert( found != ligand_areas.end() );// this shouldn't be possible
 	LigandAreaOP const ligand_area= found->second;
 	core::id::AtomID const atom_ID(residue.atom_index("CA"), residue_id);
@@ -415,7 +407,7 @@ core::Size find_peptide_attach_pt (
 	int const & stop,
 	std::map<core::Size, core::Size> const & jump_to_attach
 ){
-	std::map<core::Size, core::Size>::const_iterator index =
+	auto index =
 		jump_to_attach.begin();
 	std::map<core::Size, core::Size>::const_iterator const end =
 		jump_to_attach.end();

@@ -167,7 +167,7 @@ MotifDnaPacker::MotifDnaPacker(
 }
 
 /// @brief destructor
-MotifDnaPacker::~MotifDnaPacker(){}
+MotifDnaPacker::~MotifDnaPacker()= default;
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
@@ -587,7 +587,7 @@ MotifDnaPacker::expand_motifs(
 		std::set< std::string > name3s( types_map[it->first] );
 		std::set< core::Size > current_pos( src_pos );
 		current_pos.erase( it->first );
-		for ( std::set< std::string >::const_iterator it2( name3s.begin() ),
+		for ( auto it2( name3s.begin() ),
 				end2( name3s.end() ); it2 != end2; ++it2 ) {
 			motif_expansion_inner_loop( pose, current_pos, it, it2, rotamer_map, info_lines, taskfactory );
 		}
@@ -621,14 +621,13 @@ MotifDnaPacker::motif_expansion_inner_loop(
 	ms_rsoop->set_new_rots( restricted_rotamers );
 	my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
 
-	for ( std::set< core::Size >::const_iterator it3( current_pos.begin() ),
-			end3( current_pos.end() ); it3 != end3; ++it3 ) {
-		if ( rotamer_map[*it3].empty() ) continue;
+	for (unsigned long current_po : current_pos) {
+		if ( rotamer_map[current_po].empty() ) continue;
 		pack::rotamer_set::Rotamers other_rotamers;
-		for ( core::Size it4(1); it4<=(rotamer_map[*it3]).size(); ++it4 ) {
-			other_rotamers.push_back( rotamer_map[*it3][it4] );
+		for ( core::Size it4(1); it4<=(rotamer_map[current_po]).size(); ++it4 ) {
+			other_rotamers.push_back( rotamer_map[current_po][it4] );
 		}
-		protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( *it3 ) );
+		protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( current_po ) );
 		ms_rsoop2->set_new_rots( other_rotamers );
 		my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop2 ) ) );
 	}
@@ -701,17 +700,16 @@ MotifDnaPacker::aromatic_motifs(
 		current_pos.erase( it->first );
 		bool aromatics( false );
 		std::set< std::string > name3_arom;
-		for ( std::set< std::string >::const_iterator zt( name3s.begin() ),
-				end2( name3s.end() ); zt != end2; ++zt ) {
-			if ( *zt == "TYR" || *zt == "PHE" || *zt == "TRP" ) {
+		for (const auto & name3 : name3s) {
+			if ( name3 == "TYR" || name3 == "PHE" || name3 == "TRP" ) {
 				aromatics = true;
-				name3_arom.insert( *zt );
+				name3_arom.insert( name3 );
 			}
 		}
 		if ( !aromatics ) {
 			continue;
 		}
-		for ( std::set< std::string >::const_iterator it2( name3_arom.begin() ),
+		for ( auto it2( name3_arom.begin() ),
 				end2( name3_arom.end() ); it2 != end2; ++it2 ) {
 			motif_expansion_inner_loop( pose, current_pos, it, it2, rotamer_map, info_lines, taskfactory );
 		}

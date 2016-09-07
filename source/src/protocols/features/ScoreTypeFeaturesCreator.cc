@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 ScoreTypeFeaturesCreator::ScoreTypeFeaturesCreator() {}
-ScoreTypeFeaturesCreator::~ScoreTypeFeaturesCreator() {}
+ScoreTypeFeaturesCreator::~ScoreTypeFeaturesCreator() = default;
 FeaturesReporterOP ScoreTypeFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ScoreTypeFeatures );
 }

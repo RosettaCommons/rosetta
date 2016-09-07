@@ -66,16 +66,16 @@ public:
 	LoopProtocol();
 
 	/// @brief Default destructor.
-	~LoopProtocol();
+	~LoopProtocol() override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "LoopProtocol"; }
+	string get_name() const override { return "LoopProtocol"; }
 
 protected:
 
 	/// @brief Use a Monte Carlo simulation to search for the best
 	/// conformations for the given loops.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 public:
 
@@ -85,7 +85,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 private:
 

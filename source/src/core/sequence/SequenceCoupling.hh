@@ -72,12 +72,12 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~SequenceCoupling() {}
+	~SequenceCoupling() override = default;
 
 	/// @brief Read a SequenceCoupling model in GREMLIN format .
-	virtual void read_from_file( FileName const & fn );
+	void read_from_file( FileName const & fn ) override;
 
-	std::string type() const {
+	std::string type() const override {
 		return "sequence_coupling";
 	}
 
@@ -124,11 +124,11 @@ public:
 	/// .checkpoint format.
 	///void read_from_checkpoint( FileName const & fn );
 	//
-	virtual void insert_char( core::Size pos, char new_char );
+	void insert_char( core::Size pos, char new_char ) override;
 
 	/// @brief Deletes the given position from the Sequence and shifts
 	/// everything else back by one.
-	virtual void delete_position( core::Size pos );
+	void delete_position( core::Size pos ) override;
 
 	///Size width() const;
 

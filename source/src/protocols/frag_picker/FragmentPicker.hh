@@ -118,7 +118,7 @@ public:
 
 	// destructor
 
-	virtual ~FragmentPicker();
+	~FragmentPicker() override;
 
 public:
 	inline FragmentPickerCOP get_self_ptr() const { return shared_from_this(); }
@@ -241,7 +241,7 @@ public:
 		if ( query_ss_profile_.find(prediction_name) != query_ss_profile_.end() ) {
 			return query_ss_profile_.find(prediction_name)->second;
 		} else {
-			return 0;
+			return nullptr;
 		}
 	}
 

@@ -42,7 +42,7 @@ struct ResourceConfiguration {
 
 public: // show methods
 
-	virtual ~ResourceConfiguration() {}
+	virtual ~ResourceConfiguration() = default;
 
 	virtual
 	void
@@ -72,7 +72,7 @@ protected:
 	LazyResourceManager();
 
 public:
-	virtual ~LazyResourceManager();
+	~LazyResourceManager() override;
 
 
 public: // work with resources by ResourceDescription + JobTag
@@ -139,9 +139,9 @@ public:
 
 	/// @brief wipe out all data; useful for unit testing, but hard to fathom how it would be useful
 	/// otherwise.
-	virtual
+	
 	void
-	clear();
+	clear() override;
 
 public: // Work with options with OptionKey + JobTag
 
@@ -198,16 +198,16 @@ public: // helper functions relating to resource configuration and creation
 		ResourceOptionsTag const & resource_options_tag) const;
 
 	/// @brief Does a resource with a given name exist?
-	virtual
+	
 	bool
 	has_resource(
-		ResourceTag const & resource_tag) const;
+		ResourceTag const & resource_tag) const override;
 
 	/// @brief Get a resource with a given name.
-	virtual
+	
 	ResourceOP
 	find_resource(
-		ResourceTag const & resource_tag);
+		ResourceTag const & resource_tag) override;
 
 	virtual
 	ResourceOP
@@ -229,9 +229,9 @@ public: // Interface to for creating and accessing resources
 	//ResourceOP
 	//get_resource( ResourceDescription const & );
 
-	virtual
+	
 	void
-	show( std::ostream & out ) const;
+	show( std::ostream & out ) const override;
 
 	friend
 	std::ostream &

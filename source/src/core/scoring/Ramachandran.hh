@@ -79,7 +79,7 @@ public:
 		bool use_bicubic_interpolation
 	);
 
-	virtual ~Ramachandran() ; // auto-removing definition from header{}
+	~Ramachandran() override ; // auto-removing definition from header{}
 
 	/// @brief Given a custom Rama table type, get the filename of the database file containing
 	/// the data.

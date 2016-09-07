@@ -421,7 +421,7 @@ oneletter_code_from_aa( AA aa ) {
 AA
 aa_from_oneletter_code( char onelettercode )
 {
-	std::map< char, AA >::iterator item( oneletter2aa().find( onelettercode ) );
+	auto item( oneletter2aa().find( onelettercode ) );
 	if ( item == oneletter2aa().end() ) {
 		return aa_unk; // Not ideal, but better than a random value or a crash later on.
 	} else {

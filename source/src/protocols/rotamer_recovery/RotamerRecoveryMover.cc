@@ -139,12 +139,12 @@ RotamerRecoveryMover::RotamerRecoveryMover(
 	RotamerRecoveryOP rotamer_recovery,
 	ScoreFunctionOP scfxn,
 	TaskFactoryOP task_factory) :
-	rotamer_recovery_(rotamer_recovery),
-	scfxn_( scfxn ),
-	task_factory_( task_factory )
+	rotamer_recovery_(std::move(rotamer_recovery)),
+	scfxn_(std::move( scfxn )),
+	task_factory_(std::move( task_factory ))
 {}
 
-RotamerRecoveryMover::~RotamerRecoveryMover(){}
+RotamerRecoveryMover::~RotamerRecoveryMover()= default;
 
 RotamerRecoveryMover::RotamerRecoveryMover( RotamerRecoveryMover const & src):
 	//utility::pointer::ReferenceCount(),
@@ -189,7 +189,7 @@ RotamerRecoveryMover::reinitialize_for_new_input() const {
 void
 RotamerRecoveryMover::apply( Pose & pose
 ) {
-	runtime_assert( rotamer_recovery_ != 0 );
+	runtime_assert( rotamer_recovery_ != nullptr );
 	ScoreFunctionOP scfxn( score_function());
 	scfxn->setup_for_scoring(pose);
 	PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ));

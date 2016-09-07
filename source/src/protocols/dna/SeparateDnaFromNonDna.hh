@@ -43,23 +43,23 @@ public:
 	SeparateDnaFromNonDna( numeric::xyzVector< core::Real > const & xyz );
 	SeparateDnaFromNonDna( SeparateDnaFromNonDna const & other );
 
-	virtual ~SeparateDnaFromNonDna();
+	~SeparateDnaFromNonDna() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 	numeric::xyzVector< core::Real > translation() const { return translation_; }
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 private:
 	numeric::xyzVector< core::Real > translation_;

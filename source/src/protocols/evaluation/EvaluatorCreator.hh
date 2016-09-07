@@ -35,7 +35,7 @@ class EvaluatorCreator : public utility::pointer::ReferenceCount
 {
 public:
 	EvaluatorCreator() {}
-	virtual ~EvaluatorCreator() {}
+	~EvaluatorCreator() override = default;
 
 	virtual void add_evaluators( MetaPoseEvaluator & ) const = 0;
 	virtual std::string type_name() const = 0;

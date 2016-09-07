@@ -45,9 +45,9 @@ public:
 	SymDockingLowRes( core::scoring::ScoreFunctionCOP scorefxn_in );
 	// default constructor
 
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
-	~SymDockingLowRes();
+	~SymDockingLowRes() override;
 
 	void set_default( core::pose::Pose & pose );
 	void set_default_mc( core::pose::Pose & pose );
@@ -57,9 +57,9 @@ public:
 	moves::MonteCarloOP get_mc();
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void rigid_body_trial( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	// protocol stuff

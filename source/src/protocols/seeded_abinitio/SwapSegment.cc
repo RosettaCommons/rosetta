@@ -78,7 +78,7 @@ SwapSegmentCreator::mover_name(){
 }
 
 
-SwapSegment::~SwapSegment() {}
+SwapSegment::~SwapSegment() = default;
 
 SwapSegment::SwapSegment():
 	protocols::moves::Mover( SwapSegmentCreator::mover_name() ){

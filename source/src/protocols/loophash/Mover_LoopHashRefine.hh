@@ -26,6 +26,7 @@
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <core/kinematics/Jump.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -43,23 +44,23 @@ public:
 	Mover_LoopHashRefine(
 		protocols::loophash::LoopHashLibraryOP library
 	):
-		library_(library),
+		library_(std::move(library)),
 		checkpoints_("LoopHash")
 	{
 	}
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new Mover_LoopHashRefine( *this ) );
 	}
 
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "Mover_LoopHashRefine";
 	}
 
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new Mover_LoopHashRefine( library_ ) );
 	}
 

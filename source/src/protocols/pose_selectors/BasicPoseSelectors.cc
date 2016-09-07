@@ -51,9 +51,7 @@ LogicalSelector::LogicalSelector()
 {
 }
 
-LogicalSelector::~LogicalSelector()
-{
-}
+LogicalSelector::~LogicalSelector() = default;
 
 protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
 {
@@ -78,7 +76,7 @@ void LogicalSelector::parse_my_tag(
 			protocols::rosetta_scripts::PoseSelectorFactory::get_instance()->
 			newPoseSelector( curr_tag, data, filters, movers, pose )
 		);
-		runtime_assert( new_selector != 0 );
+		runtime_assert( new_selector != nullptr );
 		selectors_.push_back( new_selector );
 		TR << "Defined pose selector of type " << curr_tag->getName() << std::endl;
 	}
@@ -99,7 +97,7 @@ utility::vector1<bool> LogicalSelector::select_poses(
 
 		// Merge sets using logical operator
 		for (
-				utility::vector1<bool>::iterator
+				auto
 				i = selected_poses.begin(),
 				j = selector_selected_poses.begin();
 				i != selected_poses.end() &&
@@ -185,7 +183,7 @@ void TopNByProperty::parse_my_tag(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
 			newPosePropertyReporter( curr_tag, data, filters, movers, pose )
 		);
-		runtime_assert( new_reporter != 0 );
+		runtime_assert( new_reporter != nullptr );
 		reporter_ = new_reporter;
 		TR << "Defined pose property reporter of type " << curr_tag->getName() << std::endl;
 		// Only first reporter used -- add warning when multiple defined?
@@ -227,9 +225,8 @@ utility::vector1<bool> TopNByProperty::select_poses(
 
 	// Debug
 	TR.Debug << "Sorted poses:" << std::endl;
-	for ( utility::vector1<Pose_Property>::iterator it=pose_properties.begin(); it!=pose_properties.end(); ++it ) {
-		Pose_Property &p = *it;
-		TR.Debug << p.first << " = " << p.second << std::endl;
+	for (auto & p : pose_properties) {
+			TR.Debug << p.first << " = " << p.second << std::endl;
 	}
 
 	// Create selected poses vector
@@ -267,7 +264,7 @@ void Filter::parse_my_tag(
 	using namespace utility::tag;
 	using namespace protocols::rosetta_scripts;
 
-	TagCOP filter_tag(NULL);
+	TagCOP filter_tag(nullptr);
 	std::string filter_name;
 
 	if ( tag->hasOption("filter") ) {

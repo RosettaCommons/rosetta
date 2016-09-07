@@ -132,8 +132,8 @@ GatherPosesMover::GatherPosesMover() : Mover()
 		template_scores = read_template_scores( option[ OptionKeys::cluster::template_scores]() );
 
 		tr.Info << "Read template scores: " << std::endl;
-		for ( std::map<std::string, core::Real >::iterator ii=template_scores.begin(); ii!=template_scores.end(); ++ii ) {
-			tr.Info << (*ii).first << ": " << (*ii).second << std::endl;
+		for (auto & template_score : template_scores) {
+			tr.Info << template_score.first << ": " << template_score.second << std::endl;
 		}
 	}
 
@@ -416,7 +416,7 @@ void ClusterBase::sort_each_group_by_energy( ) {
 			if ( !getPoseExtraScore( poselist[ clusterlist[i][j] ], "silent_score", score ) ) {
 				tr.Error << "Warning: no score available for " << std::endl;
 			}
-			cluster_energies.push_back( std::pair< int, Real > ( clusterlist[i][j], score ) );
+			cluster_energies.emplace_back( clusterlist[i][j], score );
 		}
 
 		std::sort( cluster_energies.begin(), cluster_energies.end(), compareIndexEnergyPair );
@@ -442,7 +442,7 @@ void ClusterBase::remove_highest_energy_member_of_each_group() {
 				tr.Error << "Warning: no score available for " << std::endl;
 			}
 
-			cluster_energies.push_back( std::pair< int, Real > ( clusterlist[i][j], score ) );
+			cluster_energies.emplace_back( clusterlist[i][j], score );
 		}
 		std::sort( cluster_energies.begin(), cluster_energies.end(), compareIndexEnergyPair );
 		clusterlist[i].clear();
@@ -468,7 +468,7 @@ void ClusterBase::sort_groups_by_energy() {
 		}
 
 		Real combo_score = (1.0 - population_weight_ ) * score -  population_weight_  * clusterlist[i].group_size() ;  // group size keeps trakc of the size of the clsuter, even with pruning
-		cluster_energies.push_back( std::pair< int, Real > ( i, combo_score ) );
+		cluster_energies.emplace_back( i, combo_score );
 	}
 
 	std::sort( cluster_energies.begin(), cluster_energies.end(), compareIndexEnergyPair );
@@ -1106,9 +1106,9 @@ void EnsembleConstraints_Simple::createConstraints( std::ostream &out) {
 
 			Real lowdist=1000000.0;
 			Real highdist=-100000.0;
-			for ( Size i=0; i<poselist.size(); i++ ) {
-				Vector ir_CA = poselist[i].residue(ir).xyz( "CA" );
-				Vector jr_CA = poselist[i].residue(jr).xyz( "CA" );
+			for (auto & i : poselist) {
+				Vector ir_CA = i.residue(ir).xyz( "CA" );
+				Vector jr_CA = i.residue(jr).xyz( "CA" );
 				Real dist = ir_CA.distance( jr_CA );
 				if ( dist < lowdist ) lowdist = dist;
 				if ( dist > highdist ) highdist = dist;

@@ -118,7 +118,7 @@ SmallMol::SmallMol(const SmallMol &other) {
 	parent = this;
 }
 
-SmallMol::~SmallMol() { }
+SmallMol::~SmallMol() = default;
 
 void SmallMol::add_atom(string line) {
 	pdbContent.append(line + "\n");
@@ -168,10 +168,10 @@ core::Real SmallMol::calRMSD(SmallMol &mol1, SmallMol &mol2) {
 	vector< vector<core::Real> > coord2 = mol2.coordinates;
 	core::Real sumRMSD = 0.0;
 
-	for ( unsigned int i = 0; i < coord1.size(); i++ ) {
+	for (auto & i : coord1) {
 		core::Real minDist = 999999999.0;
-		for ( unsigned int j = 0; j < coord2.size(); j++ ) {
-			core::Real currentDist = calDist(coord1[i], coord2[j]);
+		for (auto & j : coord2) {
+			core::Real currentDist = calDist(i, j);
 			if ( currentDist < minDist ) {
 				minDist = currentDist;
 			}
@@ -184,10 +184,9 @@ core::Real SmallMol::calRMSD(SmallMol &mol1, SmallMol &mol2) {
 
 void SmallMol::printCoordinates() const {
 	cout << molName << endl;
-	for ( unsigned int i = 0; i < coordinates.size(); i++ ) {
-		vector<core::Real> currentAtom = coordinates[i];
-		for ( unsigned int k = 0; k < currentAtom.size(); k++ ) {
-			cout << currentAtom[k] << "\t";
+	for (auto currentAtom : coordinates) {
+			for (double k : currentAtom) {
+			cout << k << "\t";
 		}
 		cout << endl;
 	}
@@ -218,9 +217,9 @@ core::Real SmallMol::cal_min_dist(SmallMol *other) {
 	vector< vector<core::Real> > const &coord2 = other->get_coordinates();
 	core::Real min_dist = 9999999999.9;
 
-	for ( unsigned int i = 0; i < coord1.size(); i++ ) {
-		for ( unsigned int j = 0; j < coord2.size(); j++ ) {
-			core::Real currentDist = calDist(coord1[i], coord2[j]);
+	for (const auto & i : coord1) {
+		for (const auto & j : coord2) {
+			core::Real currentDist = calDist(i, j);
 			if ( currentDist < min_dist ) {
 				min_dist = currentDist;
 			}
@@ -312,7 +311,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 		//int target=0;
 
 		//fill in points that are ideal for a hydrogen acceptor with an O
-		for ( core::chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+		for ( auto hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Size const hatm( *hnum );
 			// Skip buried residues
 			if ( atom_sasas(j, hatm) < 0.1 && atom_sasas(j, rsd.atom_base(hatm)) < 0.1 ) {
@@ -331,7 +330,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 		}
 
 		//fill in points that are ideal for a hydrogen donor with an N
-		for ( core::chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+		for ( auto anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const aatm( *anum );
 			// Skip buried residues
 			if ( atom_sasas(j, aatm) < 0.1 ) {
@@ -390,14 +389,14 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 			protein_atom_coord.x() = curr_rsd.atom(i).xyz()(1);
 			protein_atom_coord.y() = curr_rsd.atom(i).xyz()(2);
 			protein_atom_coord.z() = curr_rsd.atom(i).xyz()(3);
-			for ( std::list< numeric::xyzVector<core::Real> >::iterator aa = acp_coord_list.begin(); aa != acp_coord_list.end(); /* ++aa */ ) {
+			for ( auto aa = acp_coord_list.begin(); aa != acp_coord_list.end(); /* ++aa */ ) {
 				if ( protein_atom_coord.distance(*aa) <= clash_dist ) {
 					aa = acp_coord_list.erase(aa);
 				} else {
 					++aa;
 				}
 			}
-			for ( std::list< numeric::xyzVector<core::Real> >::iterator bb = dnr_coord_list.begin(); bb != dnr_coord_list.end(); /* ++bb */ ) {
+			for ( auto bb = dnr_coord_list.begin(); bb != dnr_coord_list.end(); /* ++bb */ ) {
 				if ( protein_atom_coord.distance(*bb) <= clash_dist ) {
 					bb = dnr_coord_list.erase(bb);
 				} else {
@@ -409,7 +408,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open("NPHR.pdb", std::ios::out);
 
-	for ( std::list< numeric::xyzVector<core::Real> >::iterator aa = acp_coord_list.begin(); aa != acp_coord_list.end(); ++aa ) {
+	for (auto & aa : acp_coord_list) {
 		outPDB_stream
 			<<std::setw(6)<<"ATOM  "
 			<<std::setw(5)<<" 1  "
@@ -420,9 +419,9 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 			<<std::setw(1)<<"A"
 			<<std::setw(4)<<" 1  "
 			<<"    "
-			<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa->z()<<std::endl;
+			<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.z()<<std::endl;
 	}
-	for ( std::list< numeric::xyzVector<core::Real> >::iterator bb = dnr_coord_list.begin(); bb != dnr_coord_list.end(); ++bb ) {
+	for (auto & bb : dnr_coord_list) {
 		outPDB_stream
 			<<std::setw(6)<<"ATOM  "
 			<<std::setw(5)<<" 1  "
@@ -433,7 +432,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 			<<std::setw(1)<<"B"
 			<<std::setw(4)<<" 2  "
 			<<"    "
-			<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb->z()<<std::endl;
+			<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb.z()<<std::endl;
 	}
 
 	outPDB_stream.close();

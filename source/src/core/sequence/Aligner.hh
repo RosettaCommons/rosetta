@@ -37,7 +37,7 @@ public:
 	Aligner() {}
 
 	/// @brief dtor
-	virtual ~Aligner() {}
+	~Aligner() override = default;
 
 	virtual
 	SequenceAlignment align(

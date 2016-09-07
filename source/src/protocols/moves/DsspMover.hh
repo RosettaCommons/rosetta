@@ -49,19 +49,19 @@ public:
 	DsspMover();
 
 	// @brief destructor
-	~DsspMover();
+	~DsspMover() override;
 
 	/// @brief clone this object
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 	/// @brief create this type of object
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 	// @brief virtual main operation
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	void parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+	void parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & ) override;
 
 private:
 	bool reduced_IG_as_L_;

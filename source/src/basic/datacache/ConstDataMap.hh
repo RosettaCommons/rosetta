@@ -60,7 +60,7 @@ public:
 
 	ConstDataMap();
 	ConstDataMap( ConstDataMap const & src );
-	virtual ~ConstDataMap();
+	~ConstDataMap() override;
 
 	/// @brief Performs a shallow copy of all of the pointers stored in rhs into this.
 	ConstDataMap & operator = ( ConstDataMap const & rhs );
@@ -132,7 +132,7 @@ ConstDataMap::get( std::string const & type, std::string const & name ) const {
 	}
 
 	NamedConstObjectMap const & dm( data_map_.find( type )->second );
-	NamedConstObjectMap::const_iterator it = dm.find( name );
+	auto it = dm.find( name );
 	utility::pointer::shared_ptr< Ty const > data_ptr( dynamic_pointer_cast< Ty const > ( it->second ) );
 	if ( ! data_ptr ) {
 		std::stringstream error_message;
@@ -160,7 +160,7 @@ ConstDataMap::get_ptr( std::string const & type, std::string const & name ) cons
 	}
 
 	NamedConstObjectMap const & dm( data_map_.find( type )->second );
-	NamedConstObjectMap::const_iterator it = dm.find( name );
+	auto it = dm.find( name );
 	utility::pointer::shared_ptr< Ty const > data_ptr( dynamic_pointer_cast< Ty const > ( it->second ) );
 	if ( ! data_ptr ) {
 		std::stringstream error_message;

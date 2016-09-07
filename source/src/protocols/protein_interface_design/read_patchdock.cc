@@ -73,7 +73,7 @@ PatchdockReader::PatchdockReader(){
 	}
 }
 
-PatchdockReader::~PatchdockReader() {}
+PatchdockReader::~PatchdockReader() = default;
 
 void
 PatchdockReader::clear_internals()
@@ -82,7 +82,7 @@ PatchdockReader::clear_internals()
 	patchdock_entry_num_ = 0;
 	saved_input_tag_ = "";
 	saved_native_tag_ = "";
-	saved_input_pose_ = saved_native_pose_ = NULL;
+	saved_input_pose_ = saved_native_pose_ = nullptr;
 	saved_transformations_.clear();
 }
 

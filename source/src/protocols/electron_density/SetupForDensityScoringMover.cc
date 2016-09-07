@@ -104,8 +104,8 @@ SetupForDensityScoringMover::get_name() const {
 
 void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) {
 	mask_reses_.clear();
-	for ( protocols::loops::Loops::LoopList::const_iterator it=loops.loops().begin(), it_end=loops.loops().end(); it != it_end; ++it ) {
-		for ( core::Size i=it->start(), i_end=it->stop(); i<i_end; ++i ) {
+	for (const auto & it : loops.loops()) {
+		for ( core::Size i=it.start(), i_end=it.stop(); i<i_end; ++i ) {
 			mask_reses_.push_back(i);
 		}
 	}

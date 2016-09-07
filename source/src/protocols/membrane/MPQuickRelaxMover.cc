@@ -119,19 +119,7 @@ MPQuickRelaxMover::MPQuickRelaxMover(
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-MPQuickRelaxMover::MPQuickRelaxMover( MPQuickRelaxMover const & src ) : protocols::moves::Mover( src ),
-	native_( src.native_ ),
-	angle_max_( src.angle_max_ ),
-	moves_( src.moves_ ),
-	nmoves_( src.nmoves_ ),
-	movemap_( src.movemap_ ),
-	sfxn_( src.sfxn_ ),
-	cst_file_( src.cst_file_ ),
-	cst_weight_( src.cst_weight_ ),
-	addmem_( src.addmem_ ),
-	mem_from_topo_ ( src.mem_from_topo_ ),
-	opt_mem_( src.opt_mem_ )
-{}
+MPQuickRelaxMover::MPQuickRelaxMover( MPQuickRelaxMover const & ) = default;
 
 /// @brief Assignment Operator
 MPQuickRelaxMover & MPQuickRelaxMover::operator = ( MPQuickRelaxMover const & src ) {
@@ -146,7 +134,7 @@ MPQuickRelaxMover & MPQuickRelaxMover::operator = ( MPQuickRelaxMover const & sr
 }
 
 /// @brief Destructor
-MPQuickRelaxMover::~MPQuickRelaxMover() {}
+MPQuickRelaxMover::~MPQuickRelaxMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

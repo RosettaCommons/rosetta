@@ -57,7 +57,7 @@ DualMonteCarlo::DualMonteCarlo(
 	reset( DMC_pose, MC_pose );
 }
 
-DualMonteCarlo::~DualMonteCarlo() {}
+DualMonteCarlo::~DualMonteCarlo() = default;
 
 void
 DualMonteCarlo::reset( core::pose::Pose const & DMC_pose, core::pose::Pose const & MC_pose )

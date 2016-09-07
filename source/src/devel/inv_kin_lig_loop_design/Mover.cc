@@ -56,8 +56,7 @@ Mover::Mover(core::pose::Pose* pose) :
 {} // Mover::Mover
 
 /// @details DANGER DANGER DANGER Pose is not deallocated
-Mover::~Mover()
-{}
+Mover::~Mover() = default;
 
 void Mover::setPhiPsi(const int seqpos, const double phi, const double psi ) const {
 	pose->set_phi( seqpos, phi );
@@ -215,7 +214,7 @@ const Fragment::File* Mover::getFragmentFile(int seqpos, const int len) const {
 
 		// let's use two different ways of doing things
 
-		const Fragment::File* frag_file = 0;
+		const Fragment::File* frag_file = nullptr;
 
 		if ( len == 1 ) {
 			const char ss = pose->secstruct(seqpos);
@@ -230,7 +229,7 @@ const Fragment::File* Mover::getFragmentFile(int seqpos, const int len) const {
 			assert( false );
 		}
 
-		assert( frag_file != 0 );
+		assert( frag_file != nullptr );
 		mFragmentFiles[make_pair(seqpos,len)] = frag_file;
 		return frag_file;
 	} else { // i

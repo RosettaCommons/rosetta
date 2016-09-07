@@ -38,13 +38,13 @@ namespace environment {
 
 using core::kinematics::MoveMapOP;
 
-DofPassport::DofPassport( std::string const& mover,
+DofPassport::DofPassport( std::string const & mover,
 	core::Size env ) :
 	mover_( mover ),
 	env_id_( env )
 {}
 
-DofPassport::~DofPassport() {}
+DofPassport::~DofPassport() = default;
 
 std::set< core::id::DOF_ID >::const_iterator DofPassport::begin() const {
 	if ( accessible_dofs_.size() == 0 ) {
@@ -67,9 +67,8 @@ MoveMapOP DofPassport::render_movemap() const {
 }
 
 void DofPassport::render_movemap( core::kinematics::MoveMapOP mm ) const {
-	for ( std::set<core::id::DOF_ID>::iterator id_it = accessible_dofs_.begin();
-			id_it != accessible_dofs_.end(); ++id_it ) {
-		mm->set( *id_it, true);
+	for (const auto & accessible_dof : accessible_dofs_) {
+		mm->set( accessible_dof, true);
 	}
 
 	for ( core::Size seqpos = 1; seqpos <= conf_->size(); ++seqpos ) {

@@ -14,6 +14,7 @@
 //#include <protocols/qsar/qsarTypeManager.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <map>
 
@@ -24,16 +25,16 @@ namespace protocols {
 namespace qsar {
 
 /// @details Auto-generated virtual destructor
-qsarMap::~qsarMap() {}
+qsarMap::~qsarMap() = default;
 
 /// @details Auto-generated virtual destructor
-qsarPoint::~qsarPoint() {}
+qsarPoint::~qsarPoint() = default;
 
 static THREAD_LOCAL basic::Tracer qsarMapTracer( "protocols.qsar.qsarMap" );
 
 
 qsarPoint::qsarPoint(std::string type, core::Real value, std::string name, core::conformation::ResidueOP residue ):
-	type_(type), value_(value), atom_name_(name), residue_(residue)
+	type_(std::move(type)), value_(value), atom_name_(std::move(name)), residue_(std::move(residue))
 {}
 
 void qsarPoint::set_value(core::Real value)
@@ -62,7 +63,7 @@ core::conformation::ResidueOP qsarPoint::get_residue()
 }
 
 qsarMap::qsarMap(std::string map_name, core::conformation::ResidueOP residue) :
-	map_name_(map_name), residue_(residue)
+	map_name_(std::move(map_name)), residue_(std::move(residue))
 { }
 
 core::Size qsarMap::size()
@@ -151,9 +152,9 @@ void qsarMap::clear()
 
 qsarPointOP qsarMap::get_point(std::string const & point_name)
 {
-	std::map<std::string,qsarPointOP>::iterator point(qsar_map_.find(point_name));
+	auto point(qsar_map_.find(point_name));
 	if ( point == qsar_map_.end() ) {
-		return 0;
+		return nullptr;
 	} else {
 		return point->second;
 	}
@@ -161,10 +162,10 @@ qsarPointOP qsarMap::get_point(std::string const & point_name)
 
 qsarPointOP qsarMap::get_point(core::Size const atom_id, std::string const & type)
 {
-	std::multimap<core::Size, qsarPointOP>::iterator lower_bound(atom_map_.lower_bound(atom_id));
-	std::multimap<core::Size, qsarPointOP>::iterator upper_bound(atom_map_.upper_bound(atom_id));
+	auto lower_bound(atom_map_.lower_bound(atom_id));
+	auto upper_bound(atom_map_.upper_bound(atom_id));
 
-	std::multimap<core::Size,qsarPointOP>::iterator current_point(lower_bound);
+	auto current_point(lower_bound);
 	for ( ; current_point !=upper_bound; ++current_point ) {
 		qsarPointOP point = current_point->second;
 		if ( point->get_type() == type ) {
@@ -172,7 +173,7 @@ qsarPointOP qsarMap::get_point(core::Size const atom_id, std::string const & typ
 		}
 	}
 	qsarMapTracer << "couldn't find a point, returning 0" <<std::endl;
-	return 0;
+	return nullptr;
 
 }
 
@@ -185,10 +186,10 @@ utility::vector1<qsarPointOP> qsarMap::find_points_for_atom(core::Size const ato
 {
 	utility::vector1<qsarPointOP> points;
 
-	std::multimap<core::Size, qsarPointOP>::iterator lower_bound(atom_map_.lower_bound(atom_id));
-	std::multimap<core::Size, qsarPointOP>::iterator upper_bound(atom_map_.upper_bound(atom_id));
+	auto lower_bound(atom_map_.lower_bound(atom_id));
+	auto upper_bound(atom_map_.upper_bound(atom_id));
 
-	std::multimap<core::Size,qsarPointOP>::iterator current_point(lower_bound);
+	auto current_point(lower_bound);
 	for ( ; current_point != upper_bound; ++current_point ) {
 		points.push_back(current_point->second);
 	}
@@ -201,10 +202,10 @@ utility::vector1<qsarPointOP> qsarMap::find_points_of_type(std::string const & t
 {
 	utility::vector1<qsarPointOP> points;
 
-	std::multimap<std::string, qsarPointOP>::iterator lower_bound(type_map_.lower_bound(type));
-	std::multimap<std::string, qsarPointOP>::iterator upper_bound(type_map_.upper_bound(type));
+	auto lower_bound(type_map_.lower_bound(type));
+	auto upper_bound(type_map_.upper_bound(type));
 
-	std::multimap<std::string,qsarPointOP>::iterator current_point(lower_bound);
+	auto current_point(lower_bound);
 	for ( ; current_point != upper_bound; ++current_point ) {
 		points.push_back(current_point->second);
 	}

@@ -32,7 +32,7 @@ namespace protocols {
 namespace frag_picker {
 
 /// @details Auto-generated virtual destructor
-VallChunk::~VallChunk() {}
+VallChunk::~VallChunk() = default;
 
 VallChunk::VallChunk(VallProviderAP provider) {
 	sequence_ = "";

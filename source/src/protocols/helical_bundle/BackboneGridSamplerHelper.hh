@@ -52,7 +52,7 @@ public:
 
 	BackboneGridSamplerHelper( BackboneGridSamplerHelper const & src );
 
-	~BackboneGridSamplerHelper();
+	~BackboneGridSamplerHelper() override;
 
 	/// @brief Copy this BackboneGridSamplerHelper object( allocate actual memory for it )
 	///

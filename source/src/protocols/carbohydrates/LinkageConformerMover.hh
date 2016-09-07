@@ -71,7 +71,7 @@ public:
 	// copy constructor
 	LinkageConformerMover( LinkageConformerMover const & src );
 
-	virtual ~LinkageConformerMover();
+	~LinkageConformerMover() override;
 
 	///@brief Set the Movemap.  Each apply will randomly sample on the movemap.
 	/// If the conformer is not found, will set move status to false.
@@ -83,8 +83,8 @@ public:
 	void
 	set_single_resnum( core::Size resnum );
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 
 public:
@@ -129,11 +129,11 @@ public:
 
 
 public:
-	virtual void
-	show( std::ostream & output=std::cout ) const;
+	void
+	show( std::ostream & output=std::cout ) const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
@@ -141,24 +141,24 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 
 	//LinkageConformerMover & operator=( LinkageConformerMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual bool reinitialize_for_each_job() const {
+	bool reinitialize_for_each_job() const override {
 		return true;
 	}
 
-	virtual bool reinitialize_for_new_input() const {
+	bool reinitialize_for_new_input() const override {
 		return true;
 	}
 

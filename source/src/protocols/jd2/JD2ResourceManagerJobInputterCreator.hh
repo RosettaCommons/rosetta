@@ -25,11 +25,11 @@ class JD2ResourceManagerJobInputterCreator : public protocols::jd2::JobInputterC
 public:
 
 	/// @brief Create the JD2ResourceManagerJobInputter
-	virtual JobInputterOP create_JobInputter() const;
+	JobInputterOP create_JobInputter() const override;
 
 	/// @brief Return the name of the JobInputter this class instantiates:
 	/// "JD2ResourceManagerJobInputter"
-	virtual std::string keyname() const;
+	std::string keyname() const override;
 
 };
 

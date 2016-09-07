@@ -22,57 +22,57 @@ namespace cryst {
 
 class ReportGradientsMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class SetCrystWeightMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class RecomputeDensityMapMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class LoadDensityMapMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class FitBfactorsMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class UpdateSolventMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class TagPoseWithRefinementStatsMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 
 class SetRefinementOptionsMoverCreator : public moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static  std::string mover_name();
 };
 

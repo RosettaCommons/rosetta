@@ -42,20 +42,20 @@ public:
 	/// @brief default ctor
 	RotamerBoltzmannWeight();
 	/// @brief Constructor with a single target residue
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	virtual ~RotamerBoltzmannWeight();
+	~RotamerBoltzmannWeight() override;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	utility::vector1< core::Size > first_pass_ala_scan( core::pose::Pose const & pose ) const; // return a list of residues that pass the ddG threshold
 	core::Real compute_Boltzmann_weight( core::pose::Pose const & pose, core::Size const resi ) const;

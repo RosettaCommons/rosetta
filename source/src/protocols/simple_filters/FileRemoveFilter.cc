@@ -21,7 +21,7 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <fstream>
 
 
@@ -47,7 +47,7 @@ FileRemoveFilter::FileRemoveFilter() :
 	file_names_.clear();
 }
 
-FileRemoveFilter::~FileRemoveFilter() {}
+FileRemoveFilter::~FileRemoveFilter() = default;
 
 void
 FileRemoveFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )

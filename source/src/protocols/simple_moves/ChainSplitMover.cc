@@ -38,7 +38,7 @@ ChainSplitMover::ChainSplitMover( ChainSplitMover const & src ):
 	cutpoint_( src.cutpoint_ )
 {}
 
-ChainSplitMover::~ChainSplitMover() {}
+ChainSplitMover::~ChainSplitMover() = default;
 
 void
 ChainSplitMover::apply( core::pose::Pose & pose )

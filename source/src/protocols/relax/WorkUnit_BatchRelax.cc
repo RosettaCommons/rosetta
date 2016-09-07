@@ -56,7 +56,7 @@ static THREAD_LOCAL basic::Tracer TR( "WorkUnit_BatchRelax" );
 
 WorkUnit_BatchRelax::WorkUnit_BatchRelax(): protocols::wum::WorkUnit_SilentStructStore() {}
 
-WorkUnit_BatchRelax::~WorkUnit_BatchRelax() {}
+WorkUnit_BatchRelax::~WorkUnit_BatchRelax() = default;
 
 protocols::wum::WorkUnitBaseOP
 WorkUnit_BatchRelax::clone() const {
@@ -153,7 +153,7 @@ WorkUnit_BatchRelax_and_PostRescore::set_defaults(){
 }
 
 
-WorkUnit_BatchRelax_and_PostRescore::~WorkUnit_BatchRelax_and_PostRescore(){}
+WorkUnit_BatchRelax_and_PostRescore::~WorkUnit_BatchRelax_and_PostRescore()= default;
 
 protocols::wum::WorkUnitBaseOP
 WorkUnit_BatchRelax_and_PostRescore::clone() const
@@ -193,7 +193,7 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 
 	if ( !basic::options::option[ OptionKeys::wum::extra_scorefxn ].user() ) return;
 
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	core::scoring::ScoreFunctionOP extra_scorefxn;
 	std::string weight_set = option[ OptionKeys::wum::extra_scorefxn];
@@ -204,9 +204,9 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 	combined_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( weight_set );
 	combined_scorefxn->merge( *scorefxn_ );
 
-	for ( protocols::wum::SilentStructStore::iterator struc = decoys().begin(); struc != decoys().end(); ++ struc ) {
+	for (auto & struc : decoys()) {
 		core::pose::Pose pose;
-		(*struc)->fill_pose( pose );
+		struc->fill_pose( pose );
 
 		if ( !pose.is_fullatom() ) {
 			TR.Debug << "Switching struct to fullatom" << std::endl;
@@ -233,14 +233,14 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 			// combine the score functions into one
 
 
-			core::Size pre_relax_time = time(NULL);
+			core::Size pre_relax_time = time(nullptr);
 			relax::FastRelax final_relax( combined_scorefxn, option[ OptionKeys::wum::extra_scorefxn_relax]() );
 			final_relax.apply( pose );
 
 			// make sure the total score reflects the normal score, not the combined score. (that is saved seperately)
 			core::Real normal_score = (*scorefxn_)( pose );
-			(*struc)->fill_struct( pose );
-			core::Size post_relax_time = time(NULL);
+			struc->fill_struct( pose );
+			core::Size post_relax_time = time(nullptr);
 
 			TR << "extra_scorefxn_relax time: " << (post_relax_time - pre_relax_time ) << "  " << normal_score << std::endl;
 
@@ -248,12 +248,12 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 		}
 
 
-		(*struc)->add_energy( "extra_score", the_extra_score );
-		(*struc)->add_energy( "combined_score", the_extra_score +  (*struc)->get_energy("score") );
-		TR << "ExtraScore: " << the_extra_score << "  " << the_extra_score +  (*struc)->get_energy("score") << std::endl;
+		struc->add_energy( "extra_score", the_extra_score );
+		struc->add_energy( "combined_score", the_extra_score +  struc->get_energy("score") );
+		TR << "ExtraScore: " << the_extra_score << "  " << the_extra_score +  struc->get_energy("score") << std::endl;
 	}
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 
 	TR << "rescore_all_decoys.end " << (endtime - starttime) << std::endl;
 

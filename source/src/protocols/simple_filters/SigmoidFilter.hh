@@ -32,18 +32,18 @@ class Sigmoid : public filters::Filter
 {
 public:
 	Sigmoid();
-	virtual ~Sigmoid();
-	filters::FilterOP clone() const {
+	~Sigmoid() override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new Sigmoid( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new Sigmoid() );
 	}
 
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & ) override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	core::Real steepness() const{ return steepness_; }
 	void steepness( core::Real const s ){ steepness_ = s; }

@@ -66,13 +66,13 @@ CrossPeakList::CrossPeakList() :
 	peaks_()
 {}
 
-CrossPeakList::~CrossPeakList() {}
+CrossPeakList::~CrossPeakList() = default;
 
 Size CrossPeakList::count_assignments() const {
 	Size total_size( 0 );
 #ifndef WIN32
-	for ( const_iterator it = begin(); it != end(); ++it ) {
-		total_size+=(*it)->assignments().size();
+	for (const auto & it : *this) {
+		total_size+=it->assignments().size();
 	}
 #endif
 	return total_size;
@@ -82,9 +82,9 @@ void CrossPeakList::delete_diagonal_peaks() {
 	tr.Info << "remove diagonal peaks..." << std::endl;
 #ifndef WIN32
 
-	for ( iterator it = begin(); it != end(); ) {
+	for ( auto it = begin(); it != end(); ) {
 		bool delete_peak( false );
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			if ( (*ait)->resonance_id( 1 )==(*ait)->resonance_id( 2 ) ) {
 				delete_peak = true;
 				break;
@@ -97,7 +97,7 @@ void CrossPeakList::delete_diagonal_peaks() {
 		}
 		++it;
 	}
-	assignments_ = NULL;
+	assignments_ = nullptr;
 #endif
 }
 
@@ -138,13 +138,13 @@ void CrossPeakList::write_to_stream( std::ostream& os, PeakFileFormat& output_ad
 	output_adaptor.set_format_from_peak( **peaks_.begin() );
 	output_adaptor.write_header( os );
 	Size last_peak_id( 0 );
-	for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
-		if ( last_peak_id > (*it)->peak_id() ) {
-			output_adaptor.set_format_from_peak( **it );
+	for (const auto & peak : peaks_) {
+		if ( last_peak_id > peak->peak_id() ) {
+			output_adaptor.set_format_from_peak( *peak );
 			output_adaptor.write_header( os );
 		}
-		last_peak_id=(*it)->peak_id();
-		output_adaptor.write_peak( os, (*it)->peak_id(), **it );
+		last_peak_id=peak->peak_id();
+		output_adaptor.write_peak( os, peak->peak_id(), *peak );
 		os << std::endl;
 	}
 }
@@ -164,16 +164,16 @@ void CrossPeakList::write_peak_files( std::string const& prefix, PeakFileFormat&
 
 	output_adaptor.write_header( os );
 	Size last_peak_id( 0 );
-	for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
-		if ( last_peak_id > (*it)->peak_id() ) {
-			output_adaptor.set_format_from_peak( **it );
-			std::string filename( (**it).filename() );
+	for (const auto & peak : peaks_) {
+		if ( last_peak_id > peak->peak_id() ) {
+			output_adaptor.set_format_from_peak( *peak );
+			std::string filename( (*peak).filename() );
 			os.close();
 			open_stream( os, prefix, filename );
 			output_adaptor.write_header( os );
 		}
-		last_peak_id=(*it)->peak_id();
-		output_adaptor.write_peak( os, (*it)->peak_id(), **it );
+		last_peak_id=peak->peak_id();
+		output_adaptor.write_peak( os, peak->peak_id(), *peak );
 		os << std::endl;
 	}
 }
@@ -184,7 +184,7 @@ void CrossPeakList::find_assignments() {
 	for ( CrossPeaks::const_iterator it = peaks_.begin(); it != peaks_.end(); ++it ) {
 		(*it)->find_assignments();
 	}
-	assignments_ = NULL;
+	assignments_ = nullptr;
 }
 
 void CrossPeakList::update_assignment_list() {
@@ -203,9 +203,9 @@ void CrossPeakList::update_peak_volumina() {
 #ifndef WIN32
 	PROF_START( NOESY_ASSIGN_UPDATE_PEAK_VOL );
 	tr.Info << "update peak volumina..."  << std::endl;
-	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
+	for ( auto it = begin(); it != end(); ++it ) {
 		Real sum_volume( 0.0 );
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			sum_volume+=(*ait)->peak_volume();
 		}
 		(*it)->set_cumulative_peak_volume( sum_volume );
@@ -217,8 +217,8 @@ void CrossPeakList::update_peak_volumina() {
 void CrossPeakList::update_chemshiftscore() {
 #ifndef WIN32
 	tr.Info << "compute chemical shift score..." << std::endl;
-	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+	for ( auto it = begin(); it != end(); ++it ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->update_chemshiftscore_from_peak();
 		}
 	}
@@ -228,8 +228,8 @@ void CrossPeakList::update_chemshiftscore() {
 void CrossPeakList::update_upperdistance_score() {
 #ifndef WIN32
 	tr.Info << "compute uppder distance (covalent) score " << std::endl;
-	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+	for ( auto it = begin(); it != end(); ++it ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->update_upperdistance_score();
 		}
 	}
@@ -240,9 +240,9 @@ void CrossPeakList::update_upperdistance_score() {
 void CrossPeakList::set_trivial_decoy_compatibility_score() {
 #ifndef WIN32
 	tr.Info << "set trivial 1/n decoy compatibility" << std::endl;
-	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
+	for ( auto it = begin(); it != end(); ++it ) {
 		Real invn = 1.0/(*it)->n_assigned();
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->set_decoy_compatibility( invn );
 		}
 	}
@@ -253,7 +253,7 @@ void CrossPeakList::set_trivial_decoy_compatibility_score() {
 void CrossPeakList::update_symmetry_score() {
 	tr.Info << " symmetry score " << std::endl;
 	if ( !assignments_ ) update_assignment_list();
-	runtime_assert( assignments_ != 0 );
+	runtime_assert( assignments_ != nullptr );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real const min_sym_cont( params.min_contribution_symmetric_peaks_ );
 	assignments().check_for_symmetric_peaks( *this, min_sym_cont < 0.99 );
@@ -262,7 +262,7 @@ void CrossPeakList::update_symmetry_score() {
 void CrossPeakList::network_analysis() { //ResonanceList const& resonances ) {
 	tr.Info << " network analysis ... " << std::endl;
 	if ( !assignments_ ) update_assignment_list();
-	runtime_assert( assignments_ != 0 );
+	runtime_assert( assignments_ != nullptr );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	if ( params.network_mode_ == "orig" ) {
 		Size n_assignments( count_assignments() );
@@ -275,7 +275,7 @@ void CrossPeakList::network_analysis() { //ResonanceList const& resonances ) {
 }
 
 void CrossPeakList::eliminate_spurious_peaks() {
-	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
+	for ( auto it = begin(); it != end(); ++it ) {
 		(*it)->eliminated( true /*recompute*/ );
 	}
 }
@@ -283,7 +283,7 @@ void CrossPeakList::eliminate_spurious_peaks() {
 Real CrossPeakList::calibrate( PeakCalibrator const& calibrator ) {
 	Real average_dist( 0.0 );
 	Size ct( 0 );
-	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
+	for ( auto it = begin(); it != end(); ++it ) {
 		PeakCalibrator::TypeCumulator calibration_types;
 		(*it)->calibrate( calibrator, calibration_types );
 		average_dist += (*it)->distance_bound();
@@ -307,35 +307,35 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 ) const {
 	//count for normalization:
 	core::Size ct( 0 );
-	for ( CrossPeakList::const_iterator it = begin(); it != end(); ++it ) {
-		if ( (*it)->eliminated() ) continue;
-		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
+	for (const auto & it : *this) {
+		if ( it->eliminated() ) continue;
+		if ( it->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
 		//  if ( !(*it)->has_inter_residue_assignment( resonances(), 0.1 ) ) continue; //ignore peaks that have confident intra-residue assignment
 		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {
-			Size const quality( (*it)->quality_class() );
+			Size const quality( it->quality_class() );
 			if ( quality < min_quali || quality > max_quali ) continue;
 		}
 		++ct;
 	}
-	for ( CrossPeakList::const_iterator it = begin(); it != end(); ++it ) {
-		if ( (*it)->eliminated() ) continue;
-		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
+	for (const auto & it : *this) {
+		if ( it->eliminated() ) continue;
+		if ( it->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
 		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {
-			Size const quality( (*it)->quality_class() );
+			Size const quality( it->quality_class() );
 			if ( quality < min_quali || quality > max_quali ) continue;
 		}
 		if ( !ignore_elimination_candidates ) {
-			if ( (*it)->is_elimination_candidate() != elimination_candidates ) continue;
+			if ( it->is_elimination_candidate() != elimination_candidates ) continue;
 		}
 		try {
 			core::scoring::constraints::ConstraintOP fa_cst;
 			core::scoring::constraints::ConstraintOP cen_cst;
-			(*it)->create_fa_and_cen_constraint( fa_cst, cen_cst, pose, centroid_pose, ct, padding );
+			it->create_fa_and_cen_constraint( fa_cst, cen_cst, pose, centroid_pose, ct, padding );
 			runtime_assert( fa_cst && cen_cst );
 			fa_set->add_constraint( fa_cst );
 			cen_set->add_constraint( cen_cst );
 		} catch ( core::id::EXCN_AtomNotFound& excn ) {
-			tr.Error << "failed to generate " << "constraint for peak: " << (**it) << std::endl;
+			tr.Error << "failed to generate " << "constraint for peak: " << (*it) << std::endl;
 			tr.Error  << excn << std::endl;
 			tr.Info << " residue-type in pose: " << pose.residue_type( excn.atom().rsd() ).name3() << " " << excn.atom().rsd() << std::endl;
 			tr.Debug << " with these atoms ";

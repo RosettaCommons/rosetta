@@ -82,16 +82,9 @@ AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
 	sfxn_->set_weight( core::scoring::dihedral_constraint, 1.0 );
 }
 
-AddOrRemoveMatchCsts::AddOrRemoveMatchCsts( AddOrRemoveMatchCsts const & other ) :
-	Mover( other ),
-	option_cstfile_(other.option_cstfile_), cstfile_(other.cstfile_),
-	cst_action_(other.cst_action_), keep_covalent_(other.keep_covalent_),
-	accept_blocks_missing_header_(other.accept_blocks_missing_header_),
-	fail_on_constraints_missing_(other.fail_on_constraints_missing_),
-	sfxn_(other.sfxn_)
-{}
+AddOrRemoveMatchCsts::AddOrRemoveMatchCsts( AddOrRemoveMatchCsts const & ) = default;
 
-AddOrRemoveMatchCsts::~AddOrRemoveMatchCsts(){}
+AddOrRemoveMatchCsts::~AddOrRemoveMatchCsts()= default;
 
 protocols::moves::MoverOP
 AddOrRemoveMatchCsts::clone() const
@@ -176,7 +169,7 @@ AddOrRemoveMatchCsts::get_const_EnzConstraintIO_for_cstfile( std::string cstfile
 	std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP>::const_iterator enzio_it = cstfile_map_.find( cstfile );
 	if ( enzio_it == cstfile_map_.end() ) {
 		tr.Warning << "WARNING: trying to get an EnzConstraintIOOP object for cstfile " << cstfile << " that hasn't been instantiated yet. Returning NULL pointer." << std::endl;
-		return NULL;
+		return nullptr;
 	}
 	return enzio_it->second;
 
@@ -186,7 +179,7 @@ toolbox::match_enzdes_util::EnzConstraintIOOP
 AddOrRemoveMatchCsts::get_EnzConstraintIO_for_cstfile(
 	std::string const & cstfile )
 {
-	std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP >::iterator cstio_it = cstfile_map_.find( cstfile );
+	auto cstio_it = cstfile_map_.find( cstfile );
 
 	if ( cstio_it == cstfile_map_.end() ) {
 		toolbox::match_enzdes_util::EnzConstraintIOOP new_cst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );

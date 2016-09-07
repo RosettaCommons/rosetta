@@ -47,7 +47,7 @@ namespace core {
 namespace optimization {
 
 /// @details Auto-generated virtual destructor
-LineMinimizationAlgorithm::~LineMinimizationAlgorithm() {}
+LineMinimizationAlgorithm::~LineMinimizationAlgorithm() = default;
 
 void
 func_1d::dump( Real displacement ) {

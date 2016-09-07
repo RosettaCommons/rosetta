@@ -69,7 +69,7 @@ private: // Creation
 	/// @brief Default constructor
 	inline
 	Factory()
-	{}
+	= default;
 
 
 public: // Static methods
@@ -121,7 +121,7 @@ public: // Static methods
 	void
 	remove( KeyP const & key_p )
 	{
-		ptr_registry().erase( key_p );;
+		ptr_registry().erase( key_p );
 	}
 
 
@@ -131,7 +131,7 @@ public: // Static methods
 	void
 	remove( KeyFxn key_fxn )
 	{
-		fxn_registry().erase( key_fxn );;
+		fxn_registry().erase( key_fxn );
 	}
 
 

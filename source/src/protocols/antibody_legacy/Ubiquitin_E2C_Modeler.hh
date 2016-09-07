@@ -38,14 +38,14 @@ public:
 	ubi_e2c_modeler();
 
 	// default destructor
-	~ubi_e2c_modeler();
+	~ubi_e2c_modeler() override;
 
 	void set_default();
 
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	// find out domain ends and center of masses
 	void

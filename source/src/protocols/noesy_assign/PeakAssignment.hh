@@ -57,7 +57,7 @@ namespace noesy_assign {
 class PeakAssignment : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~PeakAssignment();
+	~PeakAssignment() override;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraintOP NmrConstraintOP;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraint NmrConstraint;
 
@@ -110,13 +110,13 @@ public:
 
 	core::scoring::constraints::ConstraintOP create_constraint(
 		core::pose::Pose const& pose,
-		core::scoring::func::FuncOP = NULL  ) const;
+		core::scoring::func::FuncOP = nullptr  ) const;
 
 
 	NmrConstraintOP create_constraint(
 		core::pose::Pose const& pose,
 		core::Size ifloat, //if float ambiguity is present enumerate all possible constraints with 1<=ifloat <=float_ambiguity()
-		core::scoring::func::FuncOP = NULL  ) const;
+		core::scoring::func::FuncOP = nullptr  ) const;
 
 	/// @brief returns residue number of a1 or a2 of the assigned cross-peak, --- might throw Exception if atom not found
 	core::Size resid( core::Size iatom ) const {
@@ -198,7 +198,7 @@ private:
 
 	core::scoring::constraints::AmbiguousNMRConstraintOP create_float_constraint(
 		core::pose::Pose const& pose,
-		core::scoring::func::FuncOP = NULL  ) const;
+		core::scoring::func::FuncOP = nullptr  ) const;
 
 	CrossPeak * crosspeak_;
 	core::Size spin_assign_index1_; //points to assignment of spin1 and spin2

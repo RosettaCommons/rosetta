@@ -49,7 +49,7 @@ public:
 		TM = 0.0;
 		TM10 = 0.0;
 	}
-	~TMscoreStore(){}
+	~TMscoreStore()= default;
 
 	void
 	set_nseq(core::Size const nseq ){ nseq_ = (core::Real)(nseq); }

@@ -62,7 +62,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.AlignRmsdT
 namespace protocols {
 namespace comparative_modeling {
 
-AlignRmsdTargetEvaluatorCreator::~AlignRmsdTargetEvaluatorCreator() {}
+AlignRmsdTargetEvaluatorCreator::~AlignRmsdTargetEvaluatorCreator() = default;
 
 void AlignRmsdTargetEvaluatorCreator::register_options() {
 	using namespace basic::options;
@@ -106,7 +106,7 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 			core::import_pose::pose_from_file( *rmsd_pose, align_rmsd_target[ii] , core::import_pose::PDB_file);
 			//string const tag( align_rmsd_target[ii] );
 			string const tag( align_rmsd_col_names[ii] );
-			core::sequence::SequenceAlignmentOP aln(0);
+			core::sequence::SequenceAlignmentOP aln(nullptr);
 			if ( align_rmsd_fns.size() >= ii ) {
 				*aln = core::sequence::read_aln(
 					align_rmsd_fns[ii], option[ OptionKeys::evaluation::align_rmsd_format ]()

@@ -78,12 +78,12 @@ RotamerizeMover::RotamerizeMover(
 	PackerTaskOP task
 ) :
 	Mover("RotamerizeMover"),
-	task_( task ),
+	task_(std::move( task )),
 	task_factory_(/* 0 */),
 	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) )
 {}
 
-RotamerizeMover::~RotamerizeMover(){}
+RotamerizeMover::~RotamerizeMover()= default;
 
 RotamerizeMover::RotamerizeMover( RotamerizeMover const & other )
 : Mover( other )
@@ -103,10 +103,9 @@ RotamerizeMover::apply( Pose & pose )
 	// Now loop through positions and find the best geometric fit, taking into account
 	// silly symmetries due to goofy renaming of atoms
 
-	for ( utility::vector1< RotamerSetOP >::const_iterator itr = rotamer_sets_->begin() ;
-			itr != rotamer_sets_->end() ; ++itr ) {
+	for (const auto & itr : *rotamer_sets_) {
 
-		Size this_resid( (*itr)->resid() );
+		Size this_resid( itr->resid() );
 
 		if ( pose.residue_type( this_resid ).is_NA() ) continue;
 
@@ -117,7 +116,7 @@ RotamerizeMover::apply( Pose & pose )
 		bool best_is_flipped( false );
 
 		// Process the rotamers for this site
-		for ( Rotamers::const_iterator r_itr = (*itr)->begin() ; r_itr != (*itr)->end() ; ++r_itr ) {
+		for ( auto r_itr = itr->begin() ; r_itr != itr->end() ; ++r_itr ) {
 
 			ResidueCOP rotamer( *r_itr );
 
@@ -248,9 +247,9 @@ void RotamerizeMover::setup( Pose & pose )
 	core::pack::interaction_graph::AnnealableGraphBaseOP ig;
 
 	// if present, task_factory_ always overrides/regenerates task_
-	if ( task_factory_ != 0 ) {
+	if ( task_factory_ != nullptr ) {
 		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
-	} else if ( task_ == 0 ) {
+	} else if ( task_ == nullptr ) {
 		Warning() << "undefined PackerTask -- creating a default one" << std::endl;
 		task_ = TaskFactory::create_packer_task( pose );
 	} else runtime_assert( task_is_valid( pose ) );
@@ -268,7 +267,7 @@ void RotamerizeMover::task( task::PackerTaskOP t ) { task_ = t; }
 
 void RotamerizeMover::task_factory( TaskFactoryCOP tf )
 {
-	runtime_assert( tf != 0 );
+	runtime_assert( tf != nullptr );
 	task_factory_ = tf;
 }
 

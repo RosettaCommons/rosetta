@@ -43,7 +43,7 @@ class PoseSelector : public utility::pointer::ReferenceCount {
 
 protected:
 	PoseSelector();
-	virtual ~PoseSelector();
+	~PoseSelector() override;
 
 public:
 	static std::string name() {

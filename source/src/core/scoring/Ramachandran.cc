@@ -75,7 +75,7 @@ namespace scoring {
 
 
 // @brief Auto-generated virtual destructor
-Ramachandran::~Ramachandran() {}
+Ramachandran::~Ramachandran() = default;
 
 typedef Ramachandran R;
 

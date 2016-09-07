@@ -42,7 +42,7 @@ public:
 		type("DP");
 	}
 
-	ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		return ScoringSchemeOP( new DPScoringScheme(
 			gap_open(),
 			gap_extend()
@@ -50,9 +50,9 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~DPScoringScheme() {}
+	~DPScoringScheme() override = default;
 
-	virtual Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 );
+	Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 ) override;
 }; // class DPScoringScheme
 
 } // sequence

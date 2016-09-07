@@ -76,7 +76,7 @@ public:
 		core::Real repack_shell = 8.0,
 		bool force_natro = false
 	);
-	virtual ~MatDesPointMutationCalculator();
+	~MatDesPointMutationCalculator() override;
 
 	void mutate_and_relax(
 		core::pose::Pose & pose,

@@ -110,7 +110,7 @@ ResidueKinWriter::ResidueKinWriter() :
 	write_virtual_atoms_( false )
 {}
 
-ResidueKinWriter::~ResidueKinWriter() {}
+ResidueKinWriter::~ResidueKinWriter() = default;
 
 void ResidueKinWriter::write_kin_header(
 	std::ostream & ostr,
@@ -169,9 +169,8 @@ ResidueKinWriter::write_rsd_coords(
 	if ( ! is_instance ) {
 		for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 			core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-			for ( core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
-				core::Size atom_j = *j;
-				if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
+			for (unsigned long atom_j : nbrs) {
+					if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 				bool const is_H = rsd.atom_is_hydrogen(atom_j) || rsd.atom_is_hydrogen(atom_i);
 
 				if ( is_H && ! write_apolar_hydrogens_ && ! write_polar_hydrogens_ ) continue;
@@ -205,7 +204,7 @@ void ResidueKinWriter::write_apolar_hydrogens(   bool setting ) { write_apolar_h
 void ResidueKinWriter::write_polar_hydrogens(    bool setting ) { write_polar_hydrogens_ = setting; }
 void ResidueKinWriter::write_backbone_hydrogens( bool setting ) { write_backbone_hydrogens_ = setting; }
 
-ConformationKinWriter::~ConformationKinWriter() {}
+ConformationKinWriter::~ConformationKinWriter() = default;
 
 /// @brief Write out the coordinates for an entire conformation; this includes
 /// inter-residue bonds that would be missed by the ResidueKinWriter.

@@ -54,7 +54,7 @@ public:
 	{}
 
 	/// @brief dtor
-	~DerivedSequenceMapping();
+	~DerivedSequenceMapping() override;
 
 	/// @brief copy constructor
 	DerivedSequenceMapping( DerivedSequenceMapping const & src );
@@ -62,8 +62,8 @@ public:
 	DerivedSequenceMapping &
 	operator=( DerivedSequenceMapping const & src );
 
-	virtual bool operator == ( SequenceMapping const & rhs ) const;
-	virtual bool same_type_as_me( SequenceMapping const & other ) const;
+	bool operator == ( SequenceMapping const & rhs ) const override;
+	bool same_type_as_me( SequenceMapping const & other ) const override;
 
 public:
 

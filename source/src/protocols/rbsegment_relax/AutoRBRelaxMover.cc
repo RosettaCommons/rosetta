@@ -61,6 +61,7 @@
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -79,19 +80,19 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.rbsegment_relax.RBSegment.AutoR
 class CCDMoveWrapper : public protocols::moves::Mover {
 public:
 	CCDMoveWrapper( core::kinematics::MoveMapOP movemap, core::Size start, core::Size stop, core::Size cut) :
-		movemap_(movemap),
+		movemap_(std::move(movemap)),
 		start_(start),
 		stop_(stop),
 		cut_(cut) { }
 
-	void apply( Pose & pose ) {
+	void apply( Pose & pose ) override {
 		protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_mover(
 			protocols::loops::Loop( start_, stop_, cut_ ), movemap_ );
 		ccd_mover.max_cycles( 125 );
 		ccd_mover.apply( pose );
 	}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return ("CCDMoveWrapper");
 	}
 
@@ -248,7 +249,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 				if ( numeric::random::uniform()*nouter_cycles_ > n1 ) {
 					random_move.apply(pose);
 				} else {
-					protocols::loops::Loops::const_iterator it( loops_.one_random_loop() );
+					auto it( loops_.one_random_loop() );
 					protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_mover( *it, movemap_ );
 					ccd_mover.max_cycles( 25 );
 					ccd_mover.apply( pose );

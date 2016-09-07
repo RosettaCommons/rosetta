@@ -45,7 +45,7 @@ public:
 
 public:
 	OmegaTether();
-	~OmegaTether() {}
+	~OmegaTether() override = default;
 
 	Real
 	eval_omega_score_residue(

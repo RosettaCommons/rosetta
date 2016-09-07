@@ -30,19 +30,19 @@ class PeptideStubMover : public moves::Mover {
 
 public:
 	PeptideStubMover();
-	virtual ~PeptideStubMover();
+	~PeptideStubMover() override;
 	PeptideStubMover( PeptideStubMover const &src );
 
 	void init();
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 
 	/// @brief Reset mover data

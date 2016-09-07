@@ -62,8 +62,8 @@ public:
 
 	/// @brief Given the current state of <pose>, selects the fragment in <frame>
 	/// that minimizes overall distortion
-	virtual core::Size choose(const core::fragment::Frame& frame,
-		const core::pose::Pose&);
+	core::Size choose(const core::fragment::Frame& frame,
+		const core::pose::Pose&) override;
 
 private:
 	GunnCost scorer_;

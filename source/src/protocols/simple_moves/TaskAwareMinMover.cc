@@ -32,6 +32,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
@@ -82,8 +83,8 @@ TaskAwareMinMover::TaskAwareMinMover(
 	protocols::simple_moves::MinMoverOP minmover_in,
 	core::pack::task::TaskFactoryCOP factory_in
 ) : protocols::moves::Mover("TaskAwareMinMover"),
-	minmover_(minmover_in),
-	factory_(factory_in),
+	minmover_(std::move(minmover_in)),
+	factory_(std::move(factory_in)),
 	chi_(true),
 	bb_(false),
 	jump_(false)
@@ -91,12 +92,12 @@ TaskAwareMinMover::TaskAwareMinMover(
 	protocols::moves::Mover::type( "TaskAwareMinMover" );
 }
 
-TaskAwareMinMover::~TaskAwareMinMover(){}
+TaskAwareMinMover::~TaskAwareMinMover()= default;
 
 /// @details apply will extract the movemap from your minmover, modify it to include sidechain DOFs that are packable according to some TaskFactory, run the minmover with this movemap, and revert the minmover to its original movemap.
 void TaskAwareMinMover::apply( core::pose::Pose & pose ){
-	runtime_assert( minmover_ != 0 );
-	runtime_assert( factory_ != 0 );
+	runtime_assert( minmover_ != nullptr );
+	runtime_assert( factory_ != nullptr );
 
 	using core::kinematics::MoveMapOP;
 	using core::kinematics::MoveMap;
@@ -191,7 +192,7 @@ TaskAwareMinMover::parse_task_operations(
 {
 	using namespace core::pack::task;
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
-	if ( new_task_factory == 0 ) return;
+	if ( new_task_factory == nullptr ) return;
 	factory_ = new_task_factory;
 }
 

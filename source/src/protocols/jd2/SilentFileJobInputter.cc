@@ -49,7 +49,7 @@ protocols::jd2::SilentFileJobInputter::SilentFileJobInputter()
 	tr.Debug << "Instantiate SilentFileJobInputter" << std::endl;
 }
 
-protocols::jd2::SilentFileJobInputter::~SilentFileJobInputter() {}
+protocols::jd2::SilentFileJobInputter::~SilentFileJobInputter() = default;
 
 
 /// @brief this function returns the SilentStruct that belongs to the given job
@@ -129,10 +129,8 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 
 	utility::vector1< FileName > const silent_files( option[ in::file::silent ]() );
 
-	for ( vector1< FileName >::const_iterator current_fn_ = silent_files.begin();
-			current_fn_ != silent_files.end(); ++current_fn_
-			) {
-		tr.Debug << "reading " << *current_fn_ << std::endl;
+	for (const auto & silent_file : silent_files) {
+		tr.Debug << "reading " << silent_file << std::endl;
 		if ( option[ in::file::tags ].user() || option[ in::file::tagfile ].user() ) {
 			utility::vector1< string > tags;
 			if ( option[ in::file::tags ].user() ) {
@@ -145,9 +143,9 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 				std::copy( std::istream_iterator< std::string >( tag_file ), std::istream_iterator< std::string >(),
 					std::back_inserter( tags ) );
 			}
-			sfd_.read_file( *current_fn_, tags );
+			sfd_.read_file( silent_file, tags );
 		} else {
-			sfd_.read_file( *current_fn_ );
+			sfd_.read_file( silent_file );
 		}
 	}
 

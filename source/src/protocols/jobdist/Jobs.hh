@@ -73,13 +73,13 @@ public:
 
 	/// @brief You MUST ensure that input_tag is a UNIQUE identifier for this Job!
 	BasicJob(std::string input_tag, std::string native_tag, int nstruct=1):
-		input_id_(input_tag),
-		native_id_(native_tag),
+		input_id_(std::move(input_tag)),
+		native_id_(std::move(native_tag)),
 		nstruct_(nstruct),
 		preserve_whole_input_tag_(false)
 	{}
 
-	virtual ~BasicJob() {}
+	~BasicJob() override = default;
 
 	/// @brief The number of times this job should be repeated.
 	virtual int nstruct() const

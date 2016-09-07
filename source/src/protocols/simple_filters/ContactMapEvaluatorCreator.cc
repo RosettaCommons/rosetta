@@ -62,7 +62,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.ContactMapEvaluatorCr
 namespace protocols {
 namespace simple_filters {
 
-ContactMapEvaluatorCreator::~ContactMapEvaluatorCreator() {}
+ContactMapEvaluatorCreator::~ContactMapEvaluatorCreator() = default;
 
 void ContactMapEvaluatorCreator::register_options() {
 	using namespace basic::options;
@@ -81,7 +81,7 @@ void ContactMapEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 
 
 	if ( option[ OptionKeys::evaluation::contact_map ] ) {
-		core::pose::PoseOP native_pose = NULL;
+		core::pose::PoseOP native_pose = nullptr;
 		if ( option[ in::file::native ].user() ) {
 			native_pose = core::pose::PoseOP( new core::pose::Pose );
 			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);

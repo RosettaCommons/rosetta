@@ -79,14 +79,14 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	coordinates_file.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
 	coordinates_file.open(coordinates_path.c_str(),std::ios::in|std::ios::binary);
 
-	for ( numeric::Size i = 0; i < fragment_store->fragment_coordinates.size(); i++ ) {
+	for (auto & fragment_coordinate : fragment_store->fragment_coordinates) {
 		// Stored precision may not be double
 		double read_coordinate[3];
 		coordinates_file.read((char*)&read_coordinate[0], sizeof(double) * 3);
 
-		fragment_store->fragment_coordinates[i].x() = read_coordinate[0];
-		fragment_store->fragment_coordinates[i].y() = read_coordinate[1];
-		fragment_store->fragment_coordinates[i].z() = read_coordinate[2];
+		fragment_coordinate.x() = read_coordinate[0];
+		fragment_coordinate.y() = read_coordinate[1];
+		fragment_coordinate.z() = read_coordinate[2];
 	}
 	coordinates_file.close();
 
@@ -95,12 +95,12 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	threshold_distance_file.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
 	threshold_distance_file.open(threshold_distance_path.c_str(),std::ios::in|std::ios::binary);
 
-	for ( numeric::Size i = 0; i < fragment_store->fragment_threshold_distances.size(); i++ ) {
+	for (double & fragment_threshold_distance : fragment_store->fragment_threshold_distances) {
 		// Stored precision may not be double
 		double read_coordinate;
 		threshold_distance_file.read((char*)&read_coordinate, sizeof(double));
 
-		fragment_store->fragment_threshold_distances[i] = read_coordinate;
+		fragment_threshold_distance = read_coordinate;
 	}
 	threshold_distance_file.close();
 

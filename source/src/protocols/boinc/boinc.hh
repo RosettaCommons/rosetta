@@ -221,7 +221,7 @@ public:
 
 private:
 
-	Boinc(void) {}
+	Boinc(void) = default;
 
 	static bool worker_initialized_;
 	static double fraction_done_;

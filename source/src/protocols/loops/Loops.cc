@@ -121,7 +121,7 @@ Loops::Loops( utility::vector1< bool > const& selection,
 }
 
 // destructor
-Loops::~Loops(){}
+Loops::~Loops()= default;
 
 void Loops::init(
 	LoopList const & loops_in,
@@ -177,8 +177,8 @@ void Loops::center_of_mass(const core::pose::Pose& pose,
 	center->zero();
 
 	Real count = 0;
-	for ( const_iterator i = begin(); i != end(); ++i ) {
-		for ( Size j = i->start(); j <= i->stop(); ++j ) {
+	for (const auto & i : *this) {
+		for ( Size j = i.start(); j <= i.stop(); ++j ) {
 			(*center) += pose.xyz(NamedAtomID("CA", j));
 			++count;
 		}
@@ -195,8 +195,8 @@ Loops::switch_movemap(
 	id::TorsionType id,
 	bool allow_moves
 ) const {
-	for ( Loops::const_iterator it = begin(), eit = end(); it != eit; ++it ) {
-		it->switch_movemap( movemap, id, allow_moves );
+	for (const auto & it : *this) {
+		it.switch_movemap( movemap, id, allow_moves );
 	}
 }
 
@@ -204,9 +204,8 @@ Loops::switch_movemap(
 //////////////////////////////////////////////////////////////////////
 std::ostream & operator<< ( std::ostream & os, const Loops & loops ) {
 	os << "LOOP  begin  end  cut  skip_rate  extended" << std::endl;
-	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end();
-			it != it_end; ++it ) {
-		os << *it << std::endl;
+	for (const auto & loop : loops) {
+		os << loop << std::endl;
 	}
 	return os;
 }
@@ -238,10 +237,9 @@ Loops::write_loops_to_stream(
 ) const
 {
 
-	for ( Loops::const_iterator it= this->begin(), it_end=this->end();
-			it != it_end; ++it ) {
-		data << token << " " << it->start() << " " << it->stop() << " " << it->cut() << " "
-			<< it->skip_rate() << " " << it->is_extended() << std::endl;
+	for (const auto & it : *this) {
+		data << token << " " << it.start() << " " << it.stop() << " " << it.cut() << " "
+			<< it.skip_rate() << " " << it.is_extended() << std::endl;
 	}
 }
 
@@ -253,7 +251,7 @@ Loops::add_loop( loops::Loop loop, core::Size minimal_gap ) {
 	Size const cut( loop.cut() );
 	tr.Trace << "adding loop " << loop << std::endl;
 	if (  ( cut == 0 || ( cut>=start-1 && cut <= stop )) && start <= stop ) {
-		for ( iterator it = loops_.begin(), it_end = loops_.end(); it != it_end; ++it ) {
+		for ( auto it = loops_.begin(), it_end = loops_.end(); it != it_end; ++it ) {
 			// check for conflicts
 			if ( stop+minimal_gap >= it->start() && start <= it->stop() + minimal_gap ) {
 				Loop new_loop(
@@ -322,9 +320,8 @@ Loops::push_back(
 /////////////////////////////////////////////////////////////////////////////
 void
 Loops::add_overlap_loop( Loops loops ) {
-	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end();
-			it != it_end; ++it ) {
-		add_overlap_loop( *it );
+	for (const auto & loop : loops) {
+		add_overlap_loop( loop );
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -387,7 +384,7 @@ Loops::delete_loop(
 {
 	runtime_assert( start < stop );
 
-	for ( iterator it=loops_.begin(), it_end=loops_.end();
+	for ( auto it=loops_.begin(), it_end=loops_.end();
 			it != it_end; ++it ) {
 		if ( start == it->start() && stop == it->stop() ) {
 			loops_.erase( it );
@@ -402,7 +399,7 @@ Loops::one_random_loop() const {
 	runtime_assert( size > 0 );
 	Size index =0;
 	Size const end = static_cast< Size >( numeric::random::uniform()*size );
-	const_iterator it = loops_.begin();
+	auto it = loops_.begin();
 	while ( index != end ) { ++index; ++it; }
 	return it;
 }
@@ -418,9 +415,8 @@ Loops::loop_size(
 Size
 Loops::loop_size() const {
 	Size size = 0;
-	for ( const_iterator it=loops_.begin(), it_end=loops_.end();
-			it != it_end; ++it ) {
-		size += it->size();
+	for (const auto & loop : loops_) {
+		size += loop.size();
 	}
 	return size;
 }
@@ -436,17 +432,17 @@ core::Size Loops::nr_residues() const {
 bool
 Loops::is_loop_residue( Size const seqpos, int const offset ) const
 {
-	for ( const_iterator it=loops_.begin(), it_end=loops_.end(); it != it_end; ++it ) {
-		if ( seqpos >= (it->start()+offset) && seqpos <= (it->stop()-offset) ) return true;
+	for (const auto & loop : loops_) {
+		if ( seqpos >= (loop.start()+offset) && seqpos <= (loop.stop()-offset) ) return true;
 	}
 	return false;
 }
 
 bool
 Loops::loop_of_residue( core::Size const seqpos, Loop& loop ) const {
-	for ( const_iterator it=loops_.begin(), it_end=loops_.end(); it != it_end; ++it ) {
-		if ( seqpos >= it->start() && seqpos <= it->stop() ) {
-			loop = *it;
+	for (const auto & it : loops_) {
+		if ( seqpos >= it.start() && seqpos <= it.stop() ) {
+			loop = it;
 			return true;
 		}
 	}
@@ -456,7 +452,7 @@ Loops::loop_of_residue( core::Size const seqpos, Loop& loop ) const {
 Size
 Loops::loop_index_of_residue( core::Size const seqpos ) const {
 	Size ct( 1 );
-	for ( const_iterator it=loops_.begin(), it_end=loops_.end(); it != it_end; ++it,++ct ) {
+	for ( auto it=loops_.begin(), it_end=loops_.end(); it != it_end; ++it,++ct ) {
 		if ( seqpos >= it->start() && seqpos <= it->stop() ) {
 			return ct;
 		}
@@ -467,7 +463,7 @@ Loops::loop_index_of_residue( core::Size const seqpos ) const {
 void
 Loops::remove_terminal_loops( pose::Pose const & pose ){
 	LoopList new_loops_;
-	iterator it_begin = loops_.begin();
+	auto it_begin = loops_.begin();
 	for ( const_iterator it = it_begin, it_end = loops_.end();
 			it != it_end; ++it ) {
 		if ( !it->is_terminal( pose ) ) {
@@ -497,8 +493,8 @@ LoopsFileIOOP Loops::get_loop_file_reader()
 Loops::LoopList Loops::setup_loops_from_data( SerializedLoopList const & loop_data )
 {
 	LoopList tmp_loops;
-	for (  SerializedLoopList::const_iterator it=loop_data.begin(), it_end=loop_data.end(); it != it_end; ++it ) {
-		tmp_loops.push_back( Loop( *it ) );
+	for (const auto & it : loop_data) {
+		tmp_loops.push_back( Loop( it ) );
 	}
 	// sort by start residue
 	std::sort( tmp_loops.begin(), tmp_loops.end(), Loop_lt() );
@@ -564,19 +560,19 @@ bool Loops::has( core::Size const seqpos, int const offset ) const {
 }
 
 void Loops::set_extended( bool input ) {
-	for ( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
+	for ( auto it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->set_extended( input );
 	}
 }
 
 void Loops::auto_choose_cutpoints( core::pose::Pose const & pose ) {
-	for ( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
+	for ( auto it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->auto_choose_cutpoint( pose );
 	}
 }
 
 void Loops::choose_cutpoints( core::pose::Pose const & pose ) {
-	for ( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
+	for ( auto it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->choose_cutpoint( pose );
 	}
 }
@@ -586,18 +582,18 @@ void Loops::verify_against( core::pose::Pose const & pose ) const {
 	using core::Size;
 	Size nres = pose.total_residue();
 
-	for ( Loops::const_iterator it=begin(), it_end=end(); it != it_end; ++it ) {
-		if ( it->start() <= 0 ) {
-			tr.Error << "ERROR invalid loop " << it->start() << " " << it->stop() << " " << it->cut() << ": Beginning less than 1" <<  std::endl;
+	for (const auto & it : *this) {
+		if ( it.start() <= 0 ) {
+			tr.Error << "ERROR invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": Beginning less than 1" <<  std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
 		}
-		if ( it->stop() > nres ) {
-			tr.Error << "ERROR invalid loop " << it->start() << " " << it->stop() << " " << it->cut() << ": End more than nres(" << nres << ")" << std::endl;
+		if ( it.stop() > nres ) {
+			tr.Error << "ERROR invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": End more than nres(" << nres << ")" << std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
 		}
-		Size loopbegin_i = std::min(  it->start() , (Size)1 );
-		Size loopend_i = std::max(  it->stop() , nres );
-		Size cutpt_i = it->cut();
+		Size loopbegin_i = std::min(  it.start() , (Size)1 );
+		Size loopend_i = std::max(  it.stop() , nres );
+		Size cutpt_i = it.cut();
 		if ( cutpt_i != 0 && ( cutpt_i > loopend_i || cutpt_i < loopbegin_i ) ) {
 			tr.Error << "ERROR invalid loop " << loopbegin_i << " " << loopend_i << " " << cutpt_i << std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
@@ -732,7 +728,7 @@ void Loops::grow_loop(
 	tr.Debug << "NewLoop before loop check: " << new_start << "  " << new_stop << std::endl;
 
 	//grow loops to the start of previous or next loop
-	for ( Loops::iterator it=loops_.v_begin(), it_end=loops_.v_end();
+	for ( auto it=loops_.v_begin(), it_end=loops_.v_end();
 			it != it_end; ++it ) {
 		if ( (*it) != originalloop ) {
 			//case where the start has grown into the previous loop
@@ -778,8 +774,8 @@ void Loops::grow_loop(
 
 void Loops::get_residues( utility::vector1< Size >& selection ) const {
 	selection.clear();
-	for ( const_iterator it = loops_.begin(); it != loops_.end(); ++it ) {
-		it->get_residues( selection );
+	for (const auto & loop : loops_) {
+		loop.get_residues( selection );
 	}
 }
 std::string const & Loops::loop_file_name()
@@ -831,8 +827,8 @@ Loops & Loops::operator =( Loops const & src )
 bool Loops::operator== ( Loops const& other ) const
 {
 	if ( other.size() != size() ) return false;
-	const_iterator other_it = other.loops_.begin();
-	for ( const_iterator it = loops_.begin(); it != loops_.end(); ++it, ++other_it ) {
+	auto other_it = other.loops_.begin();
+	for ( auto it = loops_.begin(); it != loops_.end(); ++it, ++other_it ) {
 		if ( *other_it != *it ) return false;
 	}
 	return true;
@@ -846,7 +842,7 @@ bool Loops::operator!=( Loops const& other ) const
 void
 Loops::make_sequence_shift( int shift )
 {
-	for ( Loops::iterator it = v_begin(), it_end = v_end();
+	for ( auto it = v_begin(), it_end = v_end();
 			it != it_end; ++it ) {
 		it->set_start( core::Size( it->start() + shift ) );
 		it->set_stop( it->stop() + shift );

@@ -41,9 +41,9 @@ void Aligner::validate_input(
 	SequenceOP seq_x,
 	ScoringSchemeOP ss
 ) {
-	runtime_assert( ss    != 0 );
-	runtime_assert( seq_x != 0 );
-	runtime_assert( seq_y != 0 );
+	runtime_assert( ss    != nullptr );
+	runtime_assert( seq_x != nullptr );
+	runtime_assert( seq_y != nullptr );
 
 	// must have ungapped sequences!
 	runtime_assert( seq_y->ungapped_length() == seq_y->length() );

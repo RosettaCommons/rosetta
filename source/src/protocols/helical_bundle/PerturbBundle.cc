@@ -132,7 +132,7 @@ PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 
 
 /// @brief Destructor for PerturbBundle mover.
-PerturbBundle::~PerturbBundle() {}
+PerturbBundle::~PerturbBundle() = default;
 
 
 /// @brief Clone operator to create a pointer to a fresh PerturbBundle object that copies this one.
@@ -394,31 +394,31 @@ PerturbBundle::parse_my_tag(
 
 	//Parse options for specific helices:
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for ( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
-			runtime_assert_string_msg( (*tag_it)->hasOption("helix_index"), "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was added, but no helix index has been indicated." );
-			core::Size helix_index( (*tag_it)->getOption<core::Size>("helix_index", 0) );
+	for (const auto & branch_tag : branch_tags) {
+		if ( branch_tag->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
+			runtime_assert_string_msg( branch_tag->hasOption("helix_index"), "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was added, but no helix index has been indicated." );
+			core::Size helix_index( branch_tag->getOption<core::Size>("helix_index", 0) );
 			runtime_assert_string_msg(helix_index>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was added, but its index was set to 0.  This is not allowed." );
 			core::Size const this_helix( add_helix(helix_index) ); //Add and initialize this helix.  By default, no degrees of freedom may be perturbed.  Store the current helix index in this_helix.
 			bool has_perturbable_dofs(false);
 
-			if ( (*tag_it)->hasOption("r0_copies_helix") ) {
-				core::Size copyhelix( (*tag_it)->getOption<core::Size>("r0_copies_helix", 0) );
+			if ( branch_tag->hasOption("r0_copies_helix") ) {
+				core::Size copyhelix( branch_tag->getOption<core::Size>("r0_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				r0(this_helix)->set_helix_to_copy( copyhelix );
 				TR << "Set helix " << helix_index << "'s r0 value to copy that of helix " << copyhelix << std::endl;
 				has_perturbable_dofs=true;
 			} else {
-				if ( (*tag_it)->hasOption("r0_perturbation") ) {
-					core::Real r0pert( (*tag_it)->getOption<core::Real>("r0_perturbation", 0.0) );
+				if ( branch_tag->hasOption("r0_perturbation") ) {
+					core::Real r0pert( branch_tag->getOption<core::Real>("r0_perturbation", 0.0) );
 					r0(this_helix)->set_perturbation_magnitude(r0pert);
 					if ( TR.visible() ) TR << "Set r0 perturbation magnitude to " << r0pert << std::endl;
 					has_perturbable_dofs=true;
 				}
-				if ( (*tag_it)->hasOption("r0_perturbation_type") ) {
+				if ( branch_tag->hasOption("r0_perturbation_type") ) {
 					if ( r0(this_helix)->is_perturbable() ) {
-						std::string perttype( (*tag_it)->getOption<std::string>("r0_perturbation_type", "") );
+						std::string perttype( branch_tag->getOption<std::string>("r0_perturbation_type", "") );
 						runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
 							"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
 						if ( perttype=="gaussian" ) r0(this_helix)->set_perturbation_type(pt_gaussian);
@@ -433,36 +433,36 @@ PerturbBundle::parse_my_tag(
 			}
 
 			// Note that omega0 has additional code in it for the special case of copying the pitch angle instead of the omega0 value.
-			if ( (*tag_it)->hasOption("pitch_from_helix") ) {
+			if ( branch_tag->hasOption("pitch_from_helix") ) {
 				runtime_assert_string_msg(
-					!(*tag_it)->hasOption("omega0_copies_helix") &&
-					!(*tag_it)->hasOption("omega0_perturbation"),
+					!branch_tag->hasOption("omega0_copies_helix") &&
+					!branch_tag->hasOption("omega0_perturbation"),
 					"When parsing options for the BundleGridSampler mover, found \"pitch_from_helix\" alongside omega0 options.  This does not make sense.  EITHER a helix copies its pitch angle from another, OR the omega0 value can be perturbed/copied."
 				);
-				core::Size const val( (*tag_it)->getOption<core::Size>("pitch_from_helix", 0) );
+				core::Size const val( branch_tag->getOption<core::Size>("pitch_from_helix", 0) );
 				runtime_assert_string_msg( val>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( val!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				if ( TR.visible() ) TR << "Setting omega0 for helix " << this_helix << " to be set to match the pitch angle for helix " << val << "." << std::endl;
 				omega0(this_helix)->set_helix_to_copy( val );
 				omega0(this_helix)->set_omega0_copies_pitch_instead(true); //We're going to copy the pitch angle instead of the omega0 value.
 			} else { //All that follows resembles the code for the other parameters.
-				if ( (*tag_it)->hasOption("omega0_copies_helix") ) {
-					core::Size copyhelix( (*tag_it)->getOption<core::Size>("omega0_copies_helix", 0) );
+				if ( branch_tag->hasOption("omega0_copies_helix") ) {
+					core::Size copyhelix( branch_tag->getOption<core::Size>("omega0_copies_helix", 0) );
 					runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 					runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 					omega0(this_helix)->set_helix_to_copy( copyhelix );
 					TR << "Set helix " << helix_index << "'s omega0 value to copy that of helix " << copyhelix << std::endl;
 					has_perturbable_dofs=true;
 				} else {
-					if ( (*tag_it)->hasOption("omega0_perturbation") ) {
-						core::Real omega0pert( (*tag_it)->getOption<core::Real>("omega0_perturbation", 0.0) );
+					if ( branch_tag->hasOption("omega0_perturbation") ) {
+						core::Real omega0pert( branch_tag->getOption<core::Real>("omega0_perturbation", 0.0) );
 						omega0(this_helix)->set_perturbation_magnitude( convert_angle( omega0pert ) );
 						if ( TR.visible() ) TR << "Set omega0 perturbation magnitude to " << omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 						has_perturbable_dofs=true;
 					}
-					if ( (*tag_it)->hasOption("omega0_perturbation_type") ) {
+					if ( branch_tag->hasOption("omega0_perturbation_type") ) {
 						if ( omega0(this_helix)->is_perturbable() ) {
-							std::string perttype( (*tag_it)->getOption<std::string>("omega0_perturbation_type", "") );
+							std::string perttype( branch_tag->getOption<std::string>("omega0_perturbation_type", "") );
 							runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
 								"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
 							if ( perttype=="gaussian" ) omega0(this_helix)->set_perturbation_type(pt_gaussian);
@@ -477,23 +477,23 @@ PerturbBundle::parse_my_tag(
 				}
 			}
 
-			if ( (*tag_it)->hasOption("delta_omega0_copies_helix") ) {
-				core::Size copyhelix( (*tag_it)->getOption<core::Size>("delta_omega0_copies_helix", 0) );
+			if ( branch_tag->hasOption("delta_omega0_copies_helix") ) {
+				core::Size copyhelix( branch_tag->getOption<core::Size>("delta_omega0_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				delta_omega0(this_helix)->set_helix_to_copy( copyhelix );
 				TR << "Set helix " << helix_index << "'s delta_omega0 value to copy that of helix " << copyhelix << std::endl;
 				has_perturbable_dofs=true;
 			} else {
-				if ( (*tag_it)->hasOption("delta_omega0_perturbation") ) {
-					core::Real delta_omega0pert( (*tag_it)->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
+				if ( branch_tag->hasOption("delta_omega0_perturbation") ) {
+					core::Real delta_omega0pert( branch_tag->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
 					delta_omega0(this_helix)->set_perturbation_magnitude( convert_angle( delta_omega0pert ) );
 					if ( TR.visible() ) TR << "Set delta_omega0 perturbation magnitude to " << delta_omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 					has_perturbable_dofs=true;
 				}
-				if ( (*tag_it)->hasOption("delta_omega0_perturbation_type") ) {
+				if ( branch_tag->hasOption("delta_omega0_perturbation_type") ) {
 					if ( delta_omega0(this_helix)->is_perturbable() ) {
-						std::string perttype( (*tag_it)->getOption<std::string>("delta_omega0_perturbation_type", "") );
+						std::string perttype( branch_tag->getOption<std::string>("delta_omega0_perturbation_type", "") );
 						runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
 							"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
 						if ( perttype=="gaussian" ) delta_omega0(this_helix)->set_perturbation_type(pt_gaussian);
@@ -507,23 +507,23 @@ PerturbBundle::parse_my_tag(
 				}
 			}
 
-			if ( (*tag_it)->hasOption("delta_omega1_copies_helix") ) {
-				core::Size copyhelix( (*tag_it)->getOption<core::Size>("delta_omega1_copies_helix", 0) );
+			if ( branch_tag->hasOption("delta_omega1_copies_helix") ) {
+				core::Size copyhelix( branch_tag->getOption<core::Size>("delta_omega1_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				delta_omega1(this_helix)->set_helix_to_copy( copyhelix );
 				TR << "Set helix " << helix_index << "'s delta_omega1 value to copy that of helix " << copyhelix << std::endl;
 				has_perturbable_dofs=true;
 			} else {
-				if ( (*tag_it)->hasOption("delta_omega1_perturbation") ) {
-					core::Real delta_omega1pert( (*tag_it)->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
+				if ( branch_tag->hasOption("delta_omega1_perturbation") ) {
+					core::Real delta_omega1pert( branch_tag->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
 					delta_omega1(this_helix)->set_perturbation_magnitude( convert_angle( delta_omega1pert) );
 					if ( TR.visible() ) TR << "Set delta_omega1 perturbation magnitude to " << delta_omega1pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 					has_perturbable_dofs=true;
 				}
-				if ( (*tag_it)->hasOption("delta_omega1_perturbation_type") ) {
+				if ( branch_tag->hasOption("delta_omega1_perturbation_type") ) {
 					if ( delta_omega1(this_helix)->is_perturbable() ) {
-						std::string perttype( (*tag_it)->getOption<std::string>("delta_omega1_perturbation_type", "") );
+						std::string perttype( branch_tag->getOption<std::string>("delta_omega1_perturbation_type", "") );
 						runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
 							"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
 						if ( perttype=="gaussian" ) delta_omega1(this_helix)->set_perturbation_type(pt_gaussian);
@@ -537,23 +537,23 @@ PerturbBundle::parse_my_tag(
 				}
 			}
 
-			if ( (*tag_it)->hasOption("delta_t_copies_helix") ) {
-				core::Size copyhelix( (*tag_it)->getOption<core::Size>("delta_t_copies_helix", 0) );
+			if ( branch_tag->hasOption("delta_t_copies_helix") ) {
+				core::Size copyhelix( branch_tag->getOption<core::Size>("delta_t_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				delta_t(this_helix)->set_helix_to_copy( copyhelix );
 				TR << "Set helix " << helix_index << "'s delta_t value to copy that of helix " << copyhelix << std::endl;
 				has_perturbable_dofs=true;
 			} else {
-				if ( (*tag_it)->hasOption("delta_t_perturbation") ) {
-					core::Real delta_tpert( (*tag_it)->getOption<core::Real>("delta_t_perturbation", 0.0) );
+				if ( branch_tag->hasOption("delta_t_perturbation") ) {
+					core::Real delta_tpert( branch_tag->getOption<core::Real>("delta_t_perturbation", 0.0) );
 					delta_t(this_helix)->set_perturbation_magnitude(delta_tpert);
 					if ( TR.visible() ) TR << "Set delta_t perturbation magnitude to " << delta_tpert << std::endl;
 					has_perturbable_dofs=true;
 				}
-				if ( (*tag_it)->hasOption("delta_t_perturbation_type") ) {
+				if ( branch_tag->hasOption("delta_t_perturbation_type") ) {
 					if ( delta_t(this_helix)->is_perturbable() ) {
-						std::string perttype( (*tag_it)->getOption<std::string>("delta_t_perturbation_type", "") );
+						std::string perttype( branch_tag->getOption<std::string>("delta_t_perturbation_type", "") );
 						runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
 							"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
 						if ( perttype=="gaussian" ) delta_t(this_helix)->set_perturbation_type(pt_gaussian);
@@ -567,23 +567,23 @@ PerturbBundle::parse_my_tag(
 				}
 			}
 
-			if ( (*tag_it)->hasOption("z1_offset_copies_helix") ) {
-				core::Size copyhelix( (*tag_it)->getOption<core::Size>("z1_offset_copies_helix", 0) );
+			if ( branch_tag->hasOption("z1_offset_copies_helix") ) {
+				core::Size copyhelix( branch_tag->getOption<core::Size>("z1_offset_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				z1_offset(this_helix)->set_helix_to_copy( copyhelix );
 				TR << "Set helix " << helix_index << "'s z1_offset value to copy that of helix " << copyhelix << std::endl;
 				has_perturbable_dofs=true;
 			} else {
-				if ( (*tag_it)->hasOption("z1_offset_perturbation") ) {
-					core::Real z1_offsetpert( (*tag_it)->getOption<core::Real>("z1_offset_perturbation", 0.0) );
+				if ( branch_tag->hasOption("z1_offset_perturbation") ) {
+					core::Real z1_offsetpert( branch_tag->getOption<core::Real>("z1_offset_perturbation", 0.0) );
 					z1_offset(this_helix)->set_perturbation_magnitude(z1_offsetpert);
 					if ( TR.visible() ) TR << "Set z1_offset perturbation magnitude to " << z1_offsetpert << std::endl;
 					has_perturbable_dofs=true;
 				}
-				if ( (*tag_it)->hasOption("z1_offset_perturbation_type") ) {
+				if ( branch_tag->hasOption("z1_offset_perturbation_type") ) {
 					if ( z1_offset(this_helix)->is_perturbable() ) {
-						std::string perttype( (*tag_it)->getOption<std::string>("z1_offset_perturbation_type", "") );
+						std::string perttype( branch_tag->getOption<std::string>("z1_offset_perturbation_type", "") );
 						runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
 							"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
 						if ( perttype=="gaussian" ) z1_offset(this_helix)->set_perturbation_type(pt_gaussian);
@@ -597,23 +597,23 @@ PerturbBundle::parse_my_tag(
 				}
 			}
 
-			if ( (*tag_it)->hasOption("z0_offset_copies_helix") ) {
-				core::Size copyhelix( (*tag_it)->getOption<core::Size>("z0_offset_copies_helix", 0) );
+			if ( branch_tag->hasOption("z0_offset_copies_helix") ) {
+				core::Size copyhelix( branch_tag->getOption<core::Size>("z0_offset_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				z0_offset(this_helix)->set_helix_to_copy( copyhelix );
 				TR << "Set helix " << helix_index << "'s z0_offset value to copy that of helix " << copyhelix << std::endl;
 				has_perturbable_dofs=true;
 			} else {
-				if ( (*tag_it)->hasOption("z0_offset_perturbation") ) {
-					core::Real z0_offsetpert( (*tag_it)->getOption<core::Real>("z0_offset_perturbation", 0.0) );
+				if ( branch_tag->hasOption("z0_offset_perturbation") ) {
+					core::Real z0_offsetpert( branch_tag->getOption<core::Real>("z0_offset_perturbation", 0.0) );
 					z0_offset(this_helix)->set_perturbation_magnitude(z0_offsetpert);
 					if ( TR.visible() ) TR << "Set z0_offset perturbation magnitude to " << z0_offsetpert << std::endl;
 					has_perturbable_dofs=true;
 				}
-				if ( (*tag_it)->hasOption("z0_offset_perturbation_type") ) {
+				if ( branch_tag->hasOption("z0_offset_perturbation_type") ) {
 					if ( z0_offset(this_helix)->is_perturbable() ) {
-						std::string perttype( (*tag_it)->getOption<std::string>("z0_offset_perturbation_type", "") );
+						std::string perttype( branch_tag->getOption<std::string>("z0_offset_perturbation_type", "") );
 						runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
 							"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
 						if ( perttype=="gaussian" ) z0_offset(this_helix)->set_perturbation_type(pt_gaussian);

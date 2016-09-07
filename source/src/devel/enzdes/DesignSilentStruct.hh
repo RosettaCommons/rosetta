@@ -95,9 +95,9 @@ public:
 	//write out the values for the relevant score terms as well as the evaluate the metric calculators
 	void print_additional_info(std::ostream& out) const;
 
-	void print_header( std::ostream& out ) const;
+	void print_header( std::ostream& out ) const override;
 
-	void print_scores( std::ostream& out ) const;
+	void print_scores( std::ostream& out ) const override;
 
 	core::Real sum_constraint_terms( core::pose::Pose const & pose, int which_res);
 

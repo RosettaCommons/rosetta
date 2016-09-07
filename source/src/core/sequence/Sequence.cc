@@ -62,7 +62,7 @@ Sequence::Sequence( core::pose::Pose const & pose ):
 	sequence( pose.sequence() );
 }
 
-Sequence::~Sequence() {}
+Sequence::~Sequence() = default;
 
 SequenceOP Sequence::clone() const {
 	SequenceOP new_seq_op( new Sequence( *this ) );

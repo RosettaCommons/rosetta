@@ -99,14 +99,14 @@ core::kinematics::FoldTree
 remove_all_jump_atoms( core::kinematics::FoldTree const & orig )
 {
 	core::kinematics::FoldTree ft;
-	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=orig.begin(); e!=orig.end(); ++e ) {
-		if ( e->is_jump() && e->has_atom_info() ) {
-			core::kinematics::Edge newedge = *e;
+	for (const auto & e : orig) {
+		if ( e.is_jump() && e.has_atom_info() ) {
+			core::kinematics::Edge newedge = e;
 			newedge.start_atom() = "";
 			newedge.stop_atom() = "";
 			ft.add_edge( newedge );
 		} else {
-			ft.add_edge( *e );
+			ft.add_edge( e );
 		}
 	}
 	TR.Debug << "Removed all jump atoms, fold tree=" << ft << std::endl;
@@ -119,16 +119,16 @@ core::kinematics::FoldTree
 remove_missing_jump_atoms( core::pose::Pose const & pose, core::kinematics::FoldTree const & orig )
 {
 	core::kinematics::FoldTree ft;
-	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=orig.begin(); e!=orig.end(); ++e ) {
-		if ( e->is_jump() && e->has_atom_info() ) {
-			core::kinematics::Edge newedge = *e;
-			if ( ( !pose.residue(e->start()).has(e->start_atom()) ) || ( !pose.residue(e->stop()).has(e->stop_atom()) ) ) {
+	for (const auto & e : orig) {
+		if ( e.is_jump() && e.has_atom_info() ) {
+			core::kinematics::Edge newedge = e;
+			if ( ( !pose.residue(e.start()).has(e.start_atom()) ) || ( !pose.residue(e.stop()).has(e.stop_atom()) ) ) {
 				newedge.start_atom() = "";
 				newedge.stop_atom() = "";
 			}
 			ft.add_edge( newedge );
 		} else {
-			ft.add_edge( *e );
+			ft.add_edge( e );
 		}
 	}
 	TR.Debug << "Removed jump atoms, fold tree=" << ft << std::endl;
@@ -169,20 +169,20 @@ void construct_poly_ala_pose(
 	// remove jump atoms, which may cause problems in mutating residues
 	pose.fold_tree( remove_all_jump_atoms( pose.fold_tree() ) );
 
-	for ( std::set< core::Size >::const_iterator resid=res_set.begin(); resid!=res_set.end(); ++resid ) {
-		if ( !pose.residue( *resid ).is_protein() ) continue;
+	for (unsigned long resid : res_set) {
+		if ( !pose.residue( resid ).is_protein() ) continue;
 
-		if ( !keep_chirality || !pose.residue( *resid ).type().is_d_aa() ) positions.push_back( *resid );
-		else if ( keep_chirality && pose.residue( *resid ).type().is_d_aa() ) d_positions.push_back( *resid );
+		if ( !keep_chirality || !pose.residue( resid ).type().is_d_aa() ) positions.push_back( resid );
+		else if ( keep_chirality && pose.residue( resid ).type().is_d_aa() ) d_positions.push_back( resid );
 
-		if ( !keep_disulf && ( pose.residue( *resid ).type().is_disulfide_bonded() ) ) {
-			core::Size const bonded_partner( core::conformation::get_disulf_partner( pose.conformation(), *resid ) );
-			core::conformation::break_disulfide( pose.conformation(), *resid, bonded_partner );
-			if ( pose.residue( *resid ).type().is_l_aa() || !keep_chirality ) {
-				protocols::simple_moves::MutateResidue mut( *resid, "ALA" );
+		if ( !keep_disulf && ( pose.residue( resid ).type().is_disulfide_bonded() ) ) {
+			core::Size const bonded_partner( core::conformation::get_disulf_partner( pose.conformation(), resid ) );
+			core::conformation::break_disulfide( pose.conformation(), resid, bonded_partner );
+			if ( pose.residue( resid ).type().is_l_aa() || !keep_chirality ) {
+				protocols::simple_moves::MutateResidue mut( resid, "ALA" );
 				mut.apply( pose );
 			} else {
-				protocols::simple_moves::MutateResidue mut( *resid, "DALA" );
+				protocols::simple_moves::MutateResidue mut( resid, "DALA" );
 				mut.apply( pose );
 			}
 			if ( pose.residue(bonded_partner).type().is_l_aa() || !keep_chirality ) {
@@ -265,7 +265,7 @@ std::string
 abego_str( utility::vector1< std::string > const & abego )
 {
 	std::string ab = "";
-	for ( utility::vector1< std::string >::const_iterator a=abego.begin(), enda=abego.end(); a!=enda; ++a ) {
+	for ( auto a=abego.begin(), enda=abego.end(); a!=enda; ++a ) {
 		assert( a->size() == 1 );
 		ab += *a;
 	}
@@ -277,9 +277,9 @@ utility::vector1< std::string >
 abego_vector( std::string const & ab )
 {
 	utility::vector1< std::string > abego;
-	for ( std::string::const_iterator c=ab.begin(), endc=ab.end(); c!=endc; ++c ) {
+	for (char c : ab) {
 		std::string res_abego = "";
-		res_abego += *c;
+		res_abego += c;
 		abego.push_back( res_abego );
 	}
 	assert( abego.size() == ab.size() );
@@ -398,14 +398,14 @@ int find_jump_rec(
 	}
 
 	// search for jump edges that contains this residue
-	for ( core::kinematics::FoldTree::const_iterator e = ft.begin(); e != ft.end(); ++e ) {
-		if ( ( e->label() > 0 ) && ( e->stop() == residue ) ) {
-			return e->label();
+	for (const auto & e : ft) {
+		if ( ( e.label() > 0 ) && ( e.stop() == residue ) ) {
+			return e.label();
 		}
 	}
 
 	// search upstream for peptide edges containing this residue
-	for ( core::kinematics::FoldTree::const_iterator e = ft.begin(); e != ft.end(); ++e ) {
+	for ( auto e = ft.begin(); e != ft.end(); ++e ) {
 		if ( e->label() < 0 ) {
 			if ( ( ( e->start() < residue ) && ( residue <= e->stop() ) ) ||
 					( ( e->stop() <= residue ) && ( residue < e->start() ) ) ) {
@@ -425,53 +425,53 @@ void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Ed
 	utility::vector1< core::kinematics::Edge > new_edges;
 	utility::vector1< core::kinematics::Edge > remove_edges;
 	core::kinematics::FoldTree const & ft_const = ft; // ugly hack needed to prevent gcc from trying to use the protected non-const FoldTree::begin() method...
-	for ( core::kinematics::FoldTree::const_iterator it=ft_const.begin(); it != ft_const.end(); ++it ) {
-		if ( it->label() != core::kinematics::Edge::PEPTIDE ) continue;
-		if ( it->start() <= pos1 && it->stop() >= pos1 ) {
+	for (const auto & it : ft_const) {
+		if ( it.label() != core::kinematics::Edge::PEPTIDE ) continue;
+		if ( it.start() <= pos1 && it.stop() >= pos1 ) {
 			//disallow edges to self
-			if ( it->start() != pos1 ) {
-				new_edges.push_back( core::kinematics::Edge( it->start(), pos1, core::kinematics::Edge::PEPTIDE ) );
+			if ( it.start() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( it.start(), pos1, core::kinematics::Edge::PEPTIDE ) );
 			}
-			if ( it->stop() != pos1 ) {
-				new_edges.push_back( core::kinematics::Edge( pos1, it->stop(), core::kinematics::Edge::PEPTIDE ) );
+			if ( it.stop() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( pos1, it.stop(), core::kinematics::Edge::PEPTIDE ) );
 			}
-			remove_edges.push_back( *it );
-		} else if ( it->stop() <= pos1 && it->start() >= pos1 ) { // edges not always in sequential order (eg - jump in middle of chain)
+			remove_edges.push_back( it );
+		} else if ( it.stop() <= pos1 && it.start() >= pos1 ) { // edges not always in sequential order (eg - jump in middle of chain)
 			//disallow edges to self
-			if ( it->start() != pos1 ) {
-				new_edges.push_back( core::kinematics::Edge( pos1, it->start(), core::kinematics::Edge::PEPTIDE ) );
+			if ( it.start() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( pos1, it.start(), core::kinematics::Edge::PEPTIDE ) );
 			}
-			if ( it->stop() != pos1 ) {
-				new_edges.push_back( core::kinematics::Edge( it->stop(), pos1, core::kinematics::Edge::PEPTIDE ) );
+			if ( it.stop() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( it.stop(), pos1, core::kinematics::Edge::PEPTIDE ) );
 			}
-			remove_edges.push_back( *it );
+			remove_edges.push_back( it );
 		}
-		if ( it->start() <= pos2 && it->stop() >= pos2 ) {
-			if ( it->start() != pos2 ) {
-				new_edges.push_back( core::kinematics::Edge( it->start(), pos2, core::kinematics::Edge::PEPTIDE ) );
+		if ( it.start() <= pos2 && it.stop() >= pos2 ) {
+			if ( it.start() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( it.start(), pos2, core::kinematics::Edge::PEPTIDE ) );
 			}
-			if ( it->stop() != pos2 ) {
-				new_edges.push_back( core::kinematics::Edge( pos2, it->stop(), core::kinematics::Edge::PEPTIDE ) );
+			if ( it.stop() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( pos2, it.stop(), core::kinematics::Edge::PEPTIDE ) );
 			}
-			remove_edges.push_back( *it );
-		} else if ( it->stop() <= pos2 && it->start() >= pos2 ) { // the backwards version of the above
+			remove_edges.push_back( it );
+		} else if ( it.stop() <= pos2 && it.start() >= pos2 ) { // the backwards version of the above
 			//TR.Debug << "start-pos2-stop " << start <<" " << pos2 << " " << stop << std::endl;
-			if ( it->start() != pos2 ) {
-				new_edges.push_back( core::kinematics::Edge( pos2, it->start(), core::kinematics::Edge::PEPTIDE ) );
+			if ( it.start() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( pos2, it.start(), core::kinematics::Edge::PEPTIDE ) );
 			}
-			if ( it->stop() != pos2 ) {
-				new_edges.push_back( core::kinematics::Edge( it->stop(), pos2, core::kinematics::Edge::PEPTIDE ) );
+			if ( it.stop() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( it.stop(), pos2, core::kinematics::Edge::PEPTIDE ) );
 			}
-			remove_edges.push_back( *it );
+			remove_edges.push_back( it );
 		}
 	}
-	for ( utility::vector1< core::kinematics::Edge >::iterator it=remove_edges.begin(); it!=remove_edges.end(); ++it ) {
-		TR.Debug << "Removing edge " << *it << std::endl;
-		ft.delete_edge( *it );
+	for (auto & remove_edge : remove_edges) {
+		TR.Debug << "Removing edge " << remove_edge << std::endl;
+		ft.delete_edge( remove_edge );
 	}
-	for ( utility::vector1< core::kinematics::Edge >::iterator it=new_edges.begin(); it!=new_edges.end(); ++it ) {
-		TR.Debug << "Adding edge " << *it << std::endl;
-		ft.add_edge( *it );
+	for (auto & new_edge : new_edges) {
+		TR.Debug << "Adding edge " << new_edge << std::endl;
+		ft.add_edge( new_edge );
 	}
 	TR.Debug << "FT after peptide edge redo: " << ft << std::endl;
 }
@@ -579,13 +579,13 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 	}
 	// copy remarks
 	if ( to_add->pdb_info() ) {
-		for ( core::io::Remarks::const_iterator r=to_add->pdb_info()->remarks().begin(); r!=to_add->pdb_info()->remarks().end(); ++r ) {
-			TR.Debug << "Copying remark to new pose: " << r->value << std::endl;
+		for (const auto & r : to_add->pdb_info()->remarks()) {
+			TR.Debug << "Copying remark to new pose: " << r.value << std::endl;
 			if ( !combined->pdb_info() ) {
 				combined->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *combined, true ) ) );
 			}
 			debug_assert( combined->pdb_info() );
-			combined->pdb_info()->remarks().push_back( *r );
+			combined->pdb_info()->remarks().push_back( r );
 		}
 	}
 	TR << "Added segment to pose of length " << to_add->total_residue() << std::endl;
@@ -697,11 +697,11 @@ slide_jump(
 	debug_assert( jump_idx > 0 );
 	debug_assert( jump_idx <= ft_orig.num_jump() );
 	core::kinematics::Edge jedge = ft_orig.jump_edge( jump_idx );
-	core::kinematics::FoldTree::EdgeList::const_iterator begin_edge = ft_orig.begin();
+	auto begin_edge = ft_orig.begin();
 	debug_assert( begin_edge != ft_orig.end() );
 
 	if ( ft_orig.root() == jedge.start() ) {
-		for ( core::kinematics::FoldTree::EdgeList::const_iterator e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
+		for ( auto e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
 			if ( ( e->start() == ft_orig.root() ) && ( *e != jedge ) &&
 					( static_cast< core::Size >( e->stop() ) != new_start ) &&
 					( static_cast< core::Size >( e->stop() ) != new_stop ) ) {
@@ -713,7 +713,7 @@ slide_jump(
 	TR << "Selected new begin edge: " << *begin_edge << std::endl;
 
 	ft.add_edge( *begin_edge );
-	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
+	for ( auto e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
 		if ( (e != begin_edge) && (*e != jedge) ) {
 			ft.add_edge( *e );
 		}
@@ -728,7 +728,7 @@ slide_jump(
 void
 add_cutpoints( core::pose::Pose & pose, components::StructureData const & sd )
 {
-	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+	for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 		core::Size const cut = sd.segment( *s ).cutpoint();
 		if ( cut ) {
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, cut );
@@ -928,10 +928,10 @@ parse_motif_string( std::string const & motif_str, std::string & secstruct, std:
 	abego.clear();
 
 	utility::vector1< std::string > const motifs = utility::string_split( motif_str, '-' );
-	for ( utility::vector1< std::string >::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {
+	for (const auto & motif : motifs) {
 		// here, we can accept "3LX" or "3:LX"
 		std::string motif_seg = "";
-		for ( std::string::const_iterator c=m->begin(); c!=m->end(); ++c ) {
+		for ( std::string::const_iterator c=motif.begin(); c!=motif.end(); ++c ) {
 			if ( *c == ' ' ) continue;
 			if ( *c == '\t' ) continue;
 			if ( *c == '\n' ) continue;

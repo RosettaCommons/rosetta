@@ -73,7 +73,7 @@ public:
 	Membrane_FAEmbed( Membrane_FAEmbed const & src );
 
 	/// @brief Cacheable Data base Mehtod - Clone Object
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new Membrane_FAEmbed( *this ) );
 	}
 

@@ -23,6 +23,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/string_util.hh>
 
 #include <basic/options/option.hh>
@@ -48,8 +49,8 @@ LoopHashSampler::LoopHashSampler(
 	LoopHashLibraryOP library,
 	LocalInserterOP inserter
 ):
-	library_(library),
-	inserter_(inserter),
+	library_(std::move(library)),
+	inserter_(std::move(inserter)),
 	start_res_ ( 2 ),
 	stop_res_  ( 0 ),
 	min_bbrms_ ( 0.0 ),
@@ -64,7 +65,7 @@ LoopHashSampler::LoopHashSampler(
 	set_defaults();
 }
 
-LoopHashSampler::~LoopHashSampler() {}
+LoopHashSampler::~LoopHashSampler() = default;
 
 void
 LoopHashSampler::set_defaults(){
@@ -189,9 +190,9 @@ LoopHashSampler::build_structures(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	runtime_assert( library_ != 0 );
+	runtime_assert( library_ != nullptr );
 
-	long starttime = time(NULL);
+	long starttime = time(nullptr);
 
 	// Statistics counters
 	Size count_filter_rejects = 0;
@@ -430,7 +431,7 @@ LoopHashSampler::build_structures(
 
 
 	// Now just print some final statistics
-	long endtime = time(NULL);
+	long endtime = time(nullptr);
 	TR.Info << "LHS: " << start_res << "-" << stop_res << ":  "
 		<< " struc " << lib_structs.size()
 		<< " (max) " << max_struct_
@@ -447,9 +448,8 @@ LoopHashSampler::build_structures(
 
 		<< std::endl;
 
-	for ( std::vector< core::io::silent::SilentStructOP >::iterator it=lib_structs.begin();
-			it != lib_structs.end(); ++it ) {
-		TR.Debug << "Samples: " << (*it)->get_energy("censcore") << std::endl;
+	for (auto & lib_struct : lib_structs) {
+		TR.Debug << "Samples: " << lib_struct->get_energy("censcore") << std::endl;
 	}
 
 

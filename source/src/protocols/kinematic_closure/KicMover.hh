@@ -77,16 +77,16 @@ public:
 	KicMover();
 
 	/// @brief Default destructor.
-	~KicMover();
+	~KicMover() override;
 
 	/// @brief Return the name of this mover.
-	std::string get_name() const { return "KicMover"; }
+	std::string get_name() const override { return "KicMover"; }
 
 public:
 
 	/// @copydoc LoopMover::get_children_names
 	void get_children_names(
-		utility::vector1<std::string> & names, std::string indent="") const;
+		utility::vector1<std::string> & names, std::string indent="") const override;
 
 	/// @brief Return the PivotPicker being used by this mover.
 	pivot_pickers::PivotPickerOP get_pivot_picker();
@@ -107,12 +107,12 @@ public:
 	void set_solution_picker(solution_pickers::SolutionPickerOP picker);
 
 	/// @copydoc LoopMover::request_fold_tree
-	protocols::loop_modeling::FoldTreeRequest request_fold_tree() const;
+	protocols::loop_modeling::FoldTreeRequest request_fold_tree() const override;
 
 protected:
 
 	/// @brief Sample a new backbone conformation for the given loop.
-	bool do_apply(Pose & pose, Loop const & loop);
+	bool do_apply(Pose & pose, Loop const & loop) override;
 
 private:
 	perturbers::PerturberSetOP perturbers_;

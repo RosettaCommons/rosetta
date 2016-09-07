@@ -62,7 +62,7 @@ MinimizeLigand::MinimizeLigand(MinimizeLigand const & that):
 	degrees_(that.degrees_)
 {}
 
-MinimizeLigand::~MinimizeLigand() {}
+MinimizeLigand::~MinimizeLigand() = default;
 
 std::string MinimizeLigand::get_name() const{
 	return "MinimizeLigand";

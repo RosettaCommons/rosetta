@@ -41,7 +41,7 @@ public:
 		type("L1");
 	}
 
-	ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		return ScoringSchemeOP( new L1ScoringScheme(
 			gap_open(),
 			gap_extend()
@@ -49,9 +49,9 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~L1ScoringScheme() {}
+	~L1ScoringScheme() override = default;
 
-	virtual Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 );
+	Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 ) override;
 }; // class L1ScoringScheme
 
 } // sequence

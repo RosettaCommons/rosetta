@@ -126,7 +126,7 @@ LHRepulsiveRampLegacy::LHRepulsiveRampLegacy( AntibodyInfoOP antibody_in,
 
 
 // default destructor
-LHRepulsiveRampLegacy::~LHRepulsiveRampLegacy() {}
+LHRepulsiveRampLegacy::~LHRepulsiveRampLegacy() = default;
 
 //clone
 protocols::moves::MoverOP LHRepulsiveRampLegacy::clone() const {
@@ -256,10 +256,9 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 	// "true" forces removal of variants even from non-cutpoints
 	loops::remove_cutpoint_variants( pose, true );
 	using namespace core::chemical;
-	for ( loops::Loops::const_iterator it = all_loops_.begin(),
-			it_end = all_loops_.end(); it != it_end; ++it ) {
-		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
-		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
+	for (const auto & all_loop : all_loops_) {
+		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, all_loop.cut() );
+		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,all_loop.cut()+1);
 	}
 
 	// add scores to map

@@ -73,9 +73,9 @@ private:
 
 public:
 	/// @brief Constructor
-	ResonanceList( std::string const& sequence );
+	ResonanceList( std::string sequence );
 
-	virtual ~ResonanceList();
+	~ResonanceList() override;
 
 	/// @brief read chemical shift assignments
 	void read_from_stream( std::istream& );

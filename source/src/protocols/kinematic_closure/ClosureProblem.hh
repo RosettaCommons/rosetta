@@ -59,7 +59,7 @@ public:
 	ClosureProblem();
 
 	/// @brief Default destructor.
-	~ClosureProblem();
+	~ClosureProblem() override;
 
 	// Methods to solve the problem {{{1
 public:

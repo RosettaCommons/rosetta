@@ -27,7 +27,7 @@ namespace antibody {
 using namespace protocols::features;
 
 AntibodyFeaturesCreator::AntibodyFeaturesCreator() {}
-AntibodyFeaturesCreator::~AntibodyFeaturesCreator() {}
+AntibodyFeaturesCreator::~AntibodyFeaturesCreator() = default;
 FeaturesReporterOP AntibodyFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new AntibodyFeatures );
 }

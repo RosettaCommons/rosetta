@@ -94,12 +94,12 @@ public:
 		const core::Size ATOMIC_NUMBER,
 		const core::Size PERIOD,
 		const core::Size MAIN_GROUP,
-		const std::string &CHEMICAL_SYMBOL,
-		const std::string &CHEMICAL_NAME,
+		std::string CHEMICAL_SYMBOL, // moving
+		std::string CHEMICAL_NAME, // moving
 		const core::Real MASS,
 		const core::Real COVALENT_RADIUS,
 		const core::Real VDW_RADIUS,
-		const ElectronConfiguration &ELECTRON_CONFIGURATION
+		ElectronConfiguration ELECTRON_CONFIGURATION
 	);
 
 	//! @brief virtual copy constructor

@@ -80,7 +80,7 @@ DockingLowResEnsemble::DockingLowResEnsemble(
 }
 
 //destructor
-DockingLowResEnsemble::~DockingLowResEnsemble() {}
+DockingLowResEnsemble::~DockingLowResEnsemble() = default;
 
 
 protocols::moves::MoverOP DockingLowResEnsemble::clone() const {

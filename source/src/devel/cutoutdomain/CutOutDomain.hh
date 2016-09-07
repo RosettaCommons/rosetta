@@ -31,19 +31,19 @@ class CutOutDomain : public protocols::moves::Mover
 {
 public:
 	CutOutDomain();
-	virtual ~CutOutDomain();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const {
+	~CutOutDomain() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new CutOutDomain( *this ) ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new CutOutDomain ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new CutOutDomain ); }
 
 	void start_res(core::Size s) {start_res_ = s;}
 	void start_end(core::Size e) {end_res_ = e;}
 	void suffix(std::string suf) {suffix_ = suf;}
 	void source_pdb_name(std::string name) {source_pdb_name_ = name;}
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	core::Size start_res_;//where the domain will be cut from
 	core::Size end_res_;//where the domain will be cut to

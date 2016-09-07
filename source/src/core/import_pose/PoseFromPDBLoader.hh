@@ -36,22 +36,22 @@ class PoseFromPDBLoader : public basic::resource_manager::ResourceLoader
 {
 public:
 	PoseFromPDBLoader();
-	virtual ~PoseFromPDBLoader();
+	~PoseFromPDBLoader() override;
 
 	/// @brief Returns an owning pointer to a import_pose_options object
 	/// which is constructed from the given input stream (istream) which in tern
 	/// originates from a particular data source (given by the name input_tag)
-	virtual
+	
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
 		basic::resource_manager::LocatorID const & locator_id,
 		std::istream & istream
-	) const;
+	) const override;
 
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const;
+	default_options() const override;
 
 };
 

@@ -95,11 +95,7 @@ DbTrajectoryRecorder::DbTrajectoryRecorder(Size job_id) // {{{1
 : TrajectoryRecorder(),
 	job_id_(job_id) {}
 
-DbTrajectoryRecorder::DbTrajectoryRecorder( // {{{1
-	DbTrajectoryRecorder const & other)
-: TrajectoryRecorder(other),
-	job_id_(other.job_id_),
-	frame_cache_(other.frame_cache_) {}
+DbTrajectoryRecorder::DbTrajectoryRecorder( DbTrajectoryRecorder const & ) = default;
 
 MoverOP DbTrajectoryRecorder::clone() const { // {{{1
 	return MoverOP( new protocols::canonical_sampling::DbTrajectoryRecorder( *this ) );

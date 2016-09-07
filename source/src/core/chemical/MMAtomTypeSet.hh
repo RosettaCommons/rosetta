@@ -45,7 +45,7 @@ class MMAtomTypeSet : public utility::pointer::ReferenceCount {
 
 public:
 	MMAtomTypeSet();
-	virtual ~MMAtomTypeSet();
+	~MMAtomTypeSet() override;
 
 	/// @brief Number of MM atom types in the set
 	Size
@@ -59,7 +59,7 @@ public:
 	bool
 	contains_atom_type( std::string const & atom_type_name ) const
 	{
-		std::map< std::string, int >::const_iterator
+		auto
 			iter( atom_type_index_.find( atom_type_name ) );
 		return iter != atom_type_index_.end();
 	}
@@ -69,7 +69,7 @@ public:
 	int
 	atom_type_index( std::string const & atom_type_name ) const
 	{
-		std::map< std::string, int >::const_iterator
+		auto
 			iter( atom_type_index_.find( atom_type_name ) );
 		if ( iter == atom_type_index_.end() ) {
 			utility_exit_with_message("unrecognized mm_atom_type_name "+atom_type_name);

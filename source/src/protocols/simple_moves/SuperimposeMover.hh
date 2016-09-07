@@ -38,10 +38,10 @@ public:
 
 	SuperimposeMover( core::pose::Pose const & ref_pose , core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end, bool CA_only);
 
-	~SuperimposeMover();
+	~SuperimposeMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void set_reference_pose( core::pose::Pose const & pose, Size start=1, Size end=0);
 	// Undefined, commenting out to fix PyRosetta build  void set_target_pose( Size start=1, Size end=-1);
@@ -49,10 +49,10 @@ public:
 
 	void set_ca_only(bool setting);
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private:
 	core::Real superimpose( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, Size ref_start, Size ref_end, Size target_start, Size target_end);

@@ -33,6 +33,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <numeric/random/random.hh>
@@ -68,7 +69,7 @@ using namespace std;
 
 ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 : evaluation::SingleValuePoseEvaluator<core::Real>( tag ),
-	command_( command )
+	command_(std::move( command ))
 {
 	// this probably shouldn't go on BOINC
 #ifndef WIN32
@@ -101,7 +102,7 @@ ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 		string dircmd( "echo `dirname "+dir+"` | sed s@/@_@g");
 		FILE* get_dir = popen(dircmd.c_str(),"r");
 		char buf[500];
-		if ( fgets(buf, 500, get_dir) == NULL ) {
+		if ( fgets(buf, 500, get_dir) == nullptr ) {
 			tr.Error << "Read error!" << std::endl;
 		}
 		buf[strlen(buf)-1]='\0';
@@ -121,7 +122,7 @@ ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 		string dircmd( "pwd | sed s@/@_@g");
 		FILE* get_dir = popen(dircmd.c_str(),"r");
 		char buf[500];
-		if ( fgets(buf, 500, get_dir) == NULL ) {
+		if ( fgets(buf, 500, get_dir) == nullptr ) {
 			tr.Error << "Read error!" << std::endl;
 		}
 		buf[strlen(buf)-1]='\0';

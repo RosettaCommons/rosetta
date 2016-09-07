@@ -62,7 +62,7 @@ public:
 		Size buffer_factor = 5
 	) {
 
-		FragmentCandidateOP worst_f( new FragmentCandidate(1,1,0,1) );
+		FragmentCandidateOP worst_f( new FragmentCandidate(1,1,nullptr,1) );
 		scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_score_terms) );
 		for ( Size i=1; i<=n_score_terms; i++ ) {
 			worst_s->set_score_component(99999.9999,i);
@@ -79,7 +79,7 @@ public:
 	}
 
 	/// @brief  Insert a fragment candidate to the container
-	inline bool add( ScoredCandidate new_canditate) {
+	inline bool add( ScoredCandidate new_canditate) override {
 
 		return storage_[new_canditate.first->get_first_index_in_query()].push(
 			new_canditate);
@@ -87,13 +87,13 @@ public:
 
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// APL Note: you cannot have inlined virtual functions
-	inline Size count_candidates(Size seq_pos) const {
+	inline Size count_candidates(Size seq_pos) const override {
 		return storage_[seq_pos].size();
 	}
 
 	/// @brief  Check how many candidates have been already collected for all positions
 	/// APL Note: you cannot have inlined virtual functions
-	inline Size count_candidates() const {
+	inline Size count_candidates() const override {
 
 		Size response = 0;
 		for ( Size i=1; i<=storage_.size(); ++i ) {
@@ -105,15 +105,15 @@ public:
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be able to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	inline Size query_length() const {
+	inline Size query_length() const override {
 		return storage_.size();
 	}
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(Size pos, CandidatesCollectorOP collector) {
+	void insert(Size pos, CandidatesCollectorOP collector) override {
 		BoundedCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::BoundedCollector<class protocols::frag_picker::CompareTotalScore> > ( collector );
-		if ( c == 0 ) {
+		if ( c == nullptr ) {
 			utility_exit_with_message("Cant' cast candidates' collector to BoundedCollector.");
 		}
 		ScoredCandidatesVector1 & content = c->get_candidates(pos);
@@ -121,11 +121,11 @@ public:
 	}
 
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline  ScoredCandidatesVector1 & get_candidates( Size position_in_query ) {
+	inline  ScoredCandidatesVector1 & get_candidates( Size position_in_query ) override {
 		return storage_.at(position_in_query).expose_data();
 	}
 
-	inline void clear() {
+	inline void clear() override {
 
 		for ( Size i_pos = 1; i_pos <= storage_.size(); ++i_pos ) {
 			storage_[i_pos].clear();
@@ -133,7 +133,7 @@ public:
 	}
 
 	/// @brief prints how many candidates have been collected for each position and how good they are
-	void print_report(std::ostream& out, scores::FragmentScoreManagerOP scoring) const {
+	void print_report(std::ostream& out, scores::FragmentScoreManagerOP scoring) const override {
 		using namespace ObjexxFCL::format;
 		out
 			<< "\n pos  count   best     worst  | pos  count   best    worst   | pos  count    best    worst  |\n";

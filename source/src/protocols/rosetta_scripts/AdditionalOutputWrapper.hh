@@ -47,21 +47,21 @@ public:
 	AdditionalOutputWrapper();
 
 	/// @brief Virtual destructor
-	virtual ~AdditionalOutputWrapper() {};
+	~AdditionalOutputWrapper() override = default;
 
-	protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new AdditionalOutputWrapper(*this) );
 	}
 
-	protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new AdditionalOutputWrapper() );
 	}
 
-	void apply(core::pose::Pose& pose);
-	core::pose::PoseOP get_additional_output();
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose& pose) override;
+	core::pose::PoseOP get_additional_output() override;
+	std::string get_name() const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	std::string name_;

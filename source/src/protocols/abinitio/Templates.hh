@@ -65,15 +65,15 @@ public:
 
 	static void register_options();
 
-	Templates( std::string const& config_file, core::pose::PoseCOP native = NULL );
-	virtual ~Templates();
+	Templates( std::string const& config_file, core::pose::PoseCOP native = nullptr );
+	~Templates() override;
 
 	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataCOP frag_type, Size min_nr_frags, Size ncopies = 1 ) const;
 	Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type, Size ncopies = 1 ) const;
 
 	void read_pairings( std::string const& filename, core::scoring::dssp::PairingsList& ) const;
 
-	TemplateJumpSetupOP create_jump_def( core::fragment::SecondaryStructureCOP = NULL ) const;
+	TemplateJumpSetupOP create_jump_def( core::fragment::SecondaryStructureCOP = nullptr ) const;
 
 	bool has_pairings() const {
 		return pairings_.size();
@@ -115,7 +115,7 @@ public:
 	}
 
 	Template const& get_template( std::string const& ModelID ) const {
-		TemplateMap::const_iterator iter ( templates_.find( ModelID ) );
+		auto iter ( templates_.find( ModelID ) );
 		if ( iter == templates_.end() ) {
 			utility_exit_with_message("Unknown model name: " + ModelID );
 		}

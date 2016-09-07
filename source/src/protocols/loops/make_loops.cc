@@ -109,7 +109,7 @@ void loops_around_residues(
 	Size seg_begin( residue_indices.front() ), seg_end( residue_indices.front() );
 	int last_chain( pose.chain( residue_indices.front() ) );
 	Size const nres( pose.total_residue() );
-	for ( vector1< Size >::const_iterator index( residue_indices.begin() );
+	for ( auto index( residue_indices.begin() );
 			index != residue_indices.end(); ++index ) {
 		runtime_assert( *index > 0 );
 		runtime_assert( *index <= nres );

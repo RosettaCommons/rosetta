@@ -29,10 +29,10 @@ class ResidueTotalScoresFeaturesCreator : public FeaturesReporterCreator
 {
 public:
 	ResidueTotalScoresFeaturesCreator();
-	virtual ~ResidueTotalScoresFeaturesCreator();
+	~ResidueTotalScoresFeaturesCreator() override;
 
-	virtual FeaturesReporterOP create_features_reporter() const;
-	virtual std::string type_name() const;
+	FeaturesReporterOP create_features_reporter() const override;
+	std::string type_name() const override;
 };
 
 } //namespace features

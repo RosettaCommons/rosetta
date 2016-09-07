@@ -166,21 +166,10 @@ Strands::Strands(
 }
 
 /// @brief copy constructor
-Strands::Strands(
-	Strands const & s
-) : total_SS_dimer( s.total_SS_dimer ),
-	SS_resnum( s.SS_resnum ),
-	total_strands( s.total_strands ),
-	SS_strand( s.SS_strand ),
-	SS_dimer( s.SS_dimer ),
-	SS_strand_end( s.SS_strand_end ),
-	dimer_neighbor( s.dimer_neighbor )
-	//strand_strand_score( s.strand_strand_score )
-{}
+Strands::Strands( Strands const & ) = default;
 
 /// @brief default destructor
-Strands::~Strands()
-{}
+Strands::~Strands() = default;
 
 void
 Strands::resize( Size const nres )
@@ -261,8 +250,7 @@ Helices::Helices(
 	HH_helix_end( h.HH_helix_end )
 {}
 
-Helices::~Helices()
-{}
+Helices::~Helices() = default;
 
 Helices &
 Helices::operator =( Helices const & h )

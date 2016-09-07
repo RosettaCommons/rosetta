@@ -153,7 +153,7 @@ PointMutationCalculator::PointMutationCalculator(
 }
 
 //destruction!
-PointMutationCalculator::~PointMutationCalculator(){}
+PointMutationCalculator::~PointMutationCalculator()= default;
 
 //creators
 protocols::design_opt::PointMutationCalculatorOP
@@ -467,13 +467,13 @@ PointMutationCalculator::calc_point_mut_filters(
 	vector1< pair< Size, vector1< pair< AA, vector1< Real > > > > > seqpos_aa_vals_vec;
 	calc_point_mut_filters( pose, seqpos_aa_vals_vec );
 	//iter thru tmp container and use vals to populate input container
-	for ( vector1< pair< core::Size, vector1< pair< AA, vector1< Real > > > > >::iterator seqpos_aa_vals = seqpos_aa_vals_vec.begin();
+	for ( auto seqpos_aa_vals = seqpos_aa_vals_vec.begin();
 			seqpos_aa_vals != seqpos_aa_vals_vec.end(); ++seqpos_aa_vals ) {
 		Size seqpos( seqpos_aa_vals->first );
 		//seqpos_aa_vals->second is a seqpos' vector of aa/vals pairs
 		assert( !seqpos_aa_vals->second.empty() );
 		vector1< pair< AA, Real > > aa_val;
-		for ( vector1< pair< AA, vector1< Real > > >::iterator aa_vals = seqpos_aa_vals->second.begin();
+		for ( auto aa_vals = seqpos_aa_vals->second.begin();
 				aa_vals != seqpos_aa_vals->second.end(); ++aa_vals ) {
 			//aa_vals->second is an aa's vector of vals
 			assert( !aa_vals->second.empty() );

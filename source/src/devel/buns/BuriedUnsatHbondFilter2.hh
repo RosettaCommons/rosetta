@@ -38,15 +38,15 @@ class BuriedUnsatHbondFilter2 : public protocols::filters::Filter
 public:
 	BuriedUnsatHbondFilter2();
 	BuriedUnsatHbondFilter2( core::Size const upper_threshold, core::Size const jump_num );
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 
-	virtual ~BuriedUnsatHbondFilter2();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~BuriedUnsatHbondFilter2() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP task_factory() const;
 private:

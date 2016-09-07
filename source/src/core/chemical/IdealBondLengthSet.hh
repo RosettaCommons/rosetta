@@ -47,7 +47,7 @@ class IdealBondLengthSet : public utility::pointer::ReferenceCount {
 
 public:
 	IdealBondLengthSet();
-	virtual ~IdealBondLengthSet();
+	~IdealBondLengthSet() override;
 
 	/// @brief Check if an ideal bond length is known for this pair of atom types...
 	bool contains_bond_length( std::string const & atom_type_name1, std::string const & atom_type_name2) const;

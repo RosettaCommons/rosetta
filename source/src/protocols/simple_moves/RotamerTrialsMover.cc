@@ -76,7 +76,7 @@ RotamerTrialsMover::RotamerTrialsMover() : protocols::moves::Mover()
 RotamerTrialsMover::RotamerTrialsMover(
 	ScoreFunctionCOP scorefxn_in,
 	PackerTask & task_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( /* NULL */ ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_(std::move( scorefxn_in )), factory_( /* NULL */ ), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "RotamerTrials" );
 	task_ = task_in.clone();
@@ -86,7 +86,7 @@ RotamerTrialsMover::RotamerTrialsMover(
 RotamerTrialsMover::RotamerTrialsMover(
 	ScoreFunctionCOP scorefxn_in,
 	TaskFactoryCOP factory_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( /* NULL */ ), factory_( factory_in ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_(std::move( scorefxn_in )), task_( /* NULL */ ), factory_(std::move( factory_in )), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "RotamerTrials" );
 }
@@ -102,7 +102,7 @@ RotamerTrialsMover::RotamerTrialsMover( RotamerTrialsMover const & rval ):
 {}
 
 // destructor
-RotamerTrialsMover::~RotamerTrialsMover(){}
+RotamerTrialsMover::~RotamerTrialsMover()= default;
 
 // clone this object
 RotamerTrialsMover::MoverOP
@@ -143,7 +143,7 @@ void
 RotamerTrialsMover::show(std::ostream & output) const
 {
 	Mover::show(output);
-	if ( scorefxn() != 0 ) {
+	if ( scorefxn() != nullptr ) {
 		output << "Score function: " << scorefxn()->get_name() << std::endl;
 	} else { output << "Score function: none" << std::endl; }
 }
@@ -206,7 +206,7 @@ EnergyCutRotamerTrialsMover::EnergyCutRotamerTrialsMover(
 	PackerTask & task_in,
 	protocols::moves::MonteCarloOP mc_in,
 	core::Real energycut_in
-) : protocols::simple_moves::RotamerTrialsMover(scorefxn_in, task_in), mc_( mc_in ), energycut_( energycut_in )
+) : protocols::simple_moves::RotamerTrialsMover(scorefxn_in, task_in), mc_(std::move( mc_in )), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "EnergyCutRotamerTrials" );
 }
@@ -217,12 +217,12 @@ EnergyCutRotamerTrialsMover::EnergyCutRotamerTrialsMover(
 	TaskFactoryCOP factory_in,
 	protocols::moves::MonteCarloOP mc_in,
 	core::Real energycut_in
-) : protocols::simple_moves::RotamerTrialsMover(scorefxn_in, factory_in), mc_( mc_in ), energycut_( energycut_in )
+) : protocols::simple_moves::RotamerTrialsMover(scorefxn_in, factory_in), mc_(std::move( mc_in )), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "EnergyCutRotamerTrials" );
 }
 
-EnergyCutRotamerTrialsMover::~EnergyCutRotamerTrialsMover() {}
+EnergyCutRotamerTrialsMover::~EnergyCutRotamerTrialsMover() = default;
 
 void
 EnergyCutRotamerTrialsMover::apply( core::pose::Pose & pose )

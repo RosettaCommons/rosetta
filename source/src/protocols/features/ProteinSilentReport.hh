@@ -61,10 +61,10 @@ public:
 
 	ProteinSilentReport(ProteinSilentReport const & src);
 
-	virtual ~ProteinSilentReport();
+	~ProteinSilentReport() override;
 
 	core::Size
-	version();
+	version() override;
 
 	bool is_initialized() const;
 
@@ -73,7 +73,7 @@ public:
 	void
 	apply(
 		core::pose::Pose const & pose,
-		utility::sql_database::sessionOP db_sesion);
+		utility::sql_database::sessionOP db_sesion) override;
 
 	void
 	apply(

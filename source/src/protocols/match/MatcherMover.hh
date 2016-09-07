@@ -53,7 +53,7 @@ public:
 
 	/// Construction and Destruction
 	MatcherMover( bool incorporate_matches_into_pose = true );
-	virtual ~MatcherMover();
+	~MatcherMover() override;
 
 	/// @brief copy constructor
 	MatcherMover( MatcherMover const & rval );
@@ -63,30 +63,30 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	virtual
-	MoverOP clone() const;
+	
+	MoverOP clone() const override;
 
 
 	/// @brief create this type of object
-	virtual
-	MoverOP fresh_instance() const;
+	
+	MoverOP fresh_instance() const override;
 
-	virtual
+	
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:
 
 	void
 	apply(
-		core::pose::Pose & pose );
+		core::pose::Pose & pose ) override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	void
 	set_ligres(
@@ -103,7 +103,7 @@ public:
 	set_return_single_random_match( bool const single_random );
 
 protected:
-	virtual bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );
+	bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & ) override;
 	void setup_seqpos_from_selectors( protocols::match::MatcherTask & mtask, core::pose::Pose const & pose ) const;
 
 private:

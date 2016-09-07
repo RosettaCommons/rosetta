@@ -53,15 +53,9 @@ TetherLigand::TetherLigand(const char & chain, const core::Real & angstroms):
 	angstroms_(angstroms)
 {}
 
-TetherLigand::TetherLigand(TetherLigand const & that):
-	protocols::moves::Mover( that ),
-	chain_(that.chain_),
-	angstroms_(that.angstroms_), //size of one stdev for ligand restraint
-	ligand_tether_(that.ligand_tether_)
+TetherLigand::TetherLigand(TetherLigand const & )= default;
 
-{}
-
-TetherLigand::~TetherLigand() {}
+TetherLigand::~TetherLigand() = default;
 
 std::string TetherLigand::get_name() const{
 	return "TetherLigand";

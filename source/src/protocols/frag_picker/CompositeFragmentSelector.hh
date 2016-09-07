@@ -38,9 +38,9 @@ public:
 	}
 
 	/// @brief  Selects desired number of fragments from a given set of candidates
-	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& );
+	void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& ) override;
 
-	virtual ~CompositeFragmentSelector() {}
+	~CompositeFragmentSelector() override = default;
 
 	void add_selector(FragmentSelectingRuleOP new_selector) { selectors_.push_back( new_selector ); }
 private:

@@ -48,10 +48,10 @@ public:
 	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 	/// NOT BE INITIALIZED.
 	LoopRelaxMover(
-		std::string const & remodel,
-		std::string const & intermedrelax,
-		std::string const & refine,
-		std::string const & relax,
+		std::string remodel,
+		std::string intermedrelax,
+		std::string refine,
+		std::string relax,
 		loops::Loops const & loops
 	);
 
@@ -60,10 +60,10 @@ public:
 	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 	/// NOT BE INITIALIZED.
 	LoopRelaxMover(
-		std::string const & remodel,
-		std::string const & intermedrelax,
-		std::string const & refine,
-		std::string const & relax,
+		std::string remodel,
+		std::string intermedrelax,
+		std::string refine,
+		std::string relax,
 		loops::LoopsFileData const & loops_from_file
 	);
 
@@ -75,10 +75,10 @@ public:
 	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 	/// NOT BE INITIALIZED.
 	LoopRelaxMover(
-		std::string const & remodel,
-		std::string const & intermedrelax,
-		std::string const & refine,
-		std::string const & relax,
+		std::string remodel,
+		std::string intermedrelax,
+		std::string refine,
+		std::string relax,
 		loops::GuardedLoopsFromFileOP guarded_loops
 	);
 
@@ -90,14 +90,14 @@ public:
 
 
 	//destructor
-	virtual ~LoopRelaxMover();
+	~LoopRelaxMover() override;
 
 	/// @brief Apply the loop-relax protocol to a Pose.  At the call to this function, the
 	/// loop indices originating from the loop file (which may list indices with PDB identifiers
 	/// i.e. res+insertioncode+chain ) will be resolved. Until this point, the Loops object
 	/// in the LoopRelaxMover cannot be used.
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	// getters and setters
 	void scorefxns( core::scoring::ScoreFunctionOP cen_scorefxn, core::scoring::ScoreFunctionOP fa_scorefxn );
@@ -191,8 +191,8 @@ public:
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs() const;
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 	void compute_rmsd( bool const c ){ compute_rmsd_ = c; }
 	bool compute_rmsd() const { return compute_rmsd_; }
 
@@ -202,7 +202,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	// void task_factory( core::pack::task::TaskFactoryOP tf ); /// currently taskfactory is not supported
 	// core::pack::task::TaskFactoryOP task_factory() const;

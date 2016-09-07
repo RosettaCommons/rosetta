@@ -40,18 +40,18 @@ public:
 	FragmentLoopInserter();
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	void
 	find_loop_fragments(
@@ -76,7 +76,7 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 private:
 

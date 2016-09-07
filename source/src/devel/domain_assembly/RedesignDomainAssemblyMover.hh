@@ -25,14 +25,14 @@ class RedesignDomainAssemblyMover : public DomainAssemblyMover
 {
 public:
 	RedesignDomainAssemblyMover();
-	~RedesignDomainAssemblyMover();
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	~RedesignDomainAssemblyMover() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 private: // protocol stages
-	virtual void run_fullatom_stage( core::pose::Pose & pose );
-	virtual void run_fullatom_relax( core::pose::Pose & pose );
+	void run_fullatom_stage( core::pose::Pose & pose ) override;
+	void run_fullatom_relax( core::pose::Pose & pose ) override;
 private: // initializers
 	void initialize();
 	void initialize_repack_only();

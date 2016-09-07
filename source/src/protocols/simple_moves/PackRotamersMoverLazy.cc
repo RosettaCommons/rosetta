@@ -58,7 +58,7 @@ PackRotamersMoverLazy::PackRotamersMoverLazy(
 PackRotamersMoverLazy::PackRotamersMoverLazy() : protocols::simple_moves::PackRotamersMover( std::string("PackRotamersMoverLazy") )
 {}
 
-PackRotamersMoverLazy::~PackRotamersMoverLazy(){}
+PackRotamersMoverLazy::~PackRotamersMoverLazy()= default;
 
 void
 PackRotamersMoverLazy::parse_my_tag(

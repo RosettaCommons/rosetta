@@ -52,10 +52,10 @@
 #include <core/pose/Pose.hh>
 
 // C math
-#include <math.h>
+#include <cmath>
 
 // C output headers:
-#include <stdio.h>
+#include <cstdio>
 #include <sstream>
 
 using basic::T;
@@ -171,7 +171,7 @@ BundleGridSampler::BundleGridSampler( BundleGridSampler const & src ):
 
 
 /// @brief Destructor for BundleGridSampler mover.
-BundleGridSampler::~BundleGridSampler() {}
+BundleGridSampler::~BundleGridSampler() = default;
 
 
 /// @brief Clone operator to create a pointer to a fresh BundleGridSampler object that copies this one.
@@ -889,44 +889,44 @@ BundleGridSampler::parse_my_tag(
 
 	//Parse options for each helix (sub-tags):
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for ( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) { //Loop through all sub-tags
-		if ( (*tag_it)->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
+	for (const auto & branch_tag : branch_tags) { //Loop through all sub-tags
+		if ( branch_tag->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
 			at_least_one_helix = true;
 			add_helix(); //This updates this mover and the MakeBundle mover
 			core::Size const helix_index(n_helices());
 			if ( TR.visible() ) TR << "Added a helix." << std::endl;
 
 			//Set crick_params_file, set_bondlengths, set_bondangles, and set_dihedrals options for this helix, based on the tag:
-			make_bundle_->set_helix_params_from_tag( helix_index, (*tag_it) );
+			make_bundle_->set_helix_params_from_tag( helix_index, branch_tag );
 
 			//Set omega1, z1, and delta_omega1 for this helix, based on the tag:
-			make_bundle_->set_minor_helix_params_from_tag( helix_index, (*tag_it) );
+			make_bundle_->set_minor_helix_params_from_tag( helix_index, branch_tag );
 
 			//Set residue_name, invert, and helix_length for this helix, based on the tag:
-			make_bundle_->set_other_helix_params_from_tag( helix_index, (*tag_it) );
+			make_bundle_->set_other_helix_params_from_tag( helix_index, branch_tag );
 
 			//Parse options that could be sampled for this helix:
-			if ( (*tag_it)->hasOption("r0") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("r0_copies_helix"),
+			if ( branch_tag->hasOption("r0") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("r0_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found r0 defined alongside an r0_copies_helix statement.  This does not makes sense: either r0 is fixed, or its value copies the r0 value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("r0_min") && !(*tag_it)->hasOption("r0_max"),
+				runtime_assert_string_msg(!branch_tag->hasOption("r0_min") && !branch_tag->hasOption("r0_max"),
 					"When parsing options for the BundleGridSampler mover, found r0 defined alongside r0_min or r0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				core::Real const val( (*tag_it)->getOption<core::Real>("r0", 0.0) );
+				core::Real const val( branch_tag->getOption<core::Real>("r0", 0.0) );
 				runtime_assert_string_msg( val>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an r0 value less than 0." );
 				if ( TR.visible() ) TR << "Setting the r0 value for helix " << helix_index << " to " << val << "." << std::endl;
 				r0(helix_index)->set_default_value(val);
 				r0(helix_index)->set_perturbable(false);
 				r0(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_r0(val);
-			} else if ( (*tag_it)->hasOption("r0_min") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("r0_copies_helix"),
+			} else if ( branch_tag->hasOption("r0_min") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("r0_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found r0_min defined alongside an r0_copies_helix statement.  This does not makes sense: either r0 is sampled, or its value copies the r0 value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("r0"),
+				runtime_assert_string_msg(!branch_tag->hasOption("r0"),
 					"When parsing options for the BundleGridSampler mover, found r0 defined alongside r0_min or r0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				runtime_assert_string_msg((*tag_it)->hasOption("r0_max"),
+				runtime_assert_string_msg(branch_tag->hasOption("r0_max"),
 					"When parsing options for the BundleGridSampler mover, found r0_min but no r0_max.  This does not make sense.");
-				core::Real const val1( (*tag_it)->getOption<core::Real>("r0_min", 0.0) );
-				core::Real const val2( (*tag_it)->getOption<core::Real>("r0_max", 0.0) );
+				core::Real const val1( branch_tag->getOption<core::Real>("r0_min", 0.0) );
+				core::Real const val2( branch_tag->getOption<core::Real>("r0_max", 0.0) );
 				runtime_assert_string_msg( val1>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an r0_min value less than 0." );
 				runtime_assert_string_msg( val2>=(-0.000000001), "When parsing options for the BundleGridSampler mover, found an r0_max value less than 0." );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an r0_max value less than or equal to the r0_min value.");
@@ -936,18 +936,18 @@ BundleGridSampler::parse_my_tag(
 				r0(helix_index)->set_perturbable(true);
 				r0(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_r0(val1);
-				runtime_assert_string_msg( (*tag_it)->hasOption("r0_samples"),
+				runtime_assert_string_msg( branch_tag->hasOption("r0_samples"),
 					"When parsing options for the BundleGridSampler mover, found r0_min and r0_max options, but no r0_samples option.  The number of r0 samples must be specified." );
-				core::Size const val3( (*tag_it)->getOption<core::Size>( "r0_samples", 0 ) );
+				core::Size const val3( branch_tag->getOption<core::Size>( "r0_samples", 0 ) );
 				runtime_assert_string_msg( val3 > 1,
 					"The number of r0 samples must be greater than 1." );
 				if ( TR.visible() ) TR << "Setting r0 samples for helix " << helix_index << " to " << val3 << "." << std::endl;
 				r0(helix_index)->set_samples(val3);
-			} else if ( (*tag_it)->hasOption("r0_max") ) {
-				runtime_assert_string_msg((*tag_it)->hasOption("r0_min"),
+			} else if ( branch_tag->hasOption("r0_max") ) {
+				runtime_assert_string_msg(branch_tag->hasOption("r0_min"),
 					"When parsing options for the BundleGridSampler mover, found r0_max but no r0_min.  This does not make sense.");
-			} else if ( (*tag_it)->hasOption("r0_copies_helix") ) {
-				core::Size const val( (*tag_it)->getOption<core::Size>("r0_copies_helix", 0) );
+			} else if ( branch_tag->hasOption("r0_copies_helix") ) {
+				core::Size const val( branch_tag->getOption<core::Size>("r0_copies_helix", 0) );
 				runtime_assert_string_msg(val > 0 && val < helix_index,
 					"When parsing options for the BundleGridSampler mover, found an r0_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
 				if ( TR.visible() ) TR << "Setting r0 for helix " << helix_index << " to copy the r0 value for helix " << val << "." << std::endl;
@@ -957,16 +957,16 @@ BundleGridSampler::parse_my_tag(
 			}
 
 			// Note that omega0 has additional code in it for the special case of copying the pitch angle instead of the omega0 value.
-			if ( (*tag_it)->hasOption("pitch_from_helix") ) {
+			if ( branch_tag->hasOption("pitch_from_helix") ) {
 				runtime_assert_string_msg(
-					!(*tag_it)->hasOption("omega0") &&
-					!(*tag_it)->hasOption("omega0_copies_helix") &&
-					!(*tag_it)->hasOption("omega0_min") &&
-					!(*tag_it)->hasOption("omega0_max") &&
-					!(*tag_it)->hasOption("omega0_samples"),
+					!branch_tag->hasOption("omega0") &&
+					!branch_tag->hasOption("omega0_copies_helix") &&
+					!branch_tag->hasOption("omega0_min") &&
+					!branch_tag->hasOption("omega0_max") &&
+					!branch_tag->hasOption("omega0_samples"),
 					"When parsing options for the BundleGridSampler mover, found \"pitch_from_helix\" alongside omega0 options.  This does not make sense.  EITHER a helix copies its pitch angle from another, OR the omega0 value can be set/sampled/copied."
 				);
-				core::Size const val( (*tag_it)->getOption<core::Size>("pitch_from_helix", 0) );
+				core::Size const val( branch_tag->getOption<core::Size>("pitch_from_helix", 0) );
 				runtime_assert_string_msg(val > 0 && val < helix_index,
 					"When parsing options for the BundleGridSampler mover, found a \"pitch_from_helix\" option with a nonsensical value.  Please specify an already-defined helix index.");
 				if ( TR.visible() ) TR << "Setting omega0 for helix " << helix_index << " to be set to match the pitch angle for helix " << val << "." << std::endl;
@@ -975,26 +975,26 @@ BundleGridSampler::parse_my_tag(
 				omega0(helix_index)->set_helix_to_copy(val);
 				omega0(helix_index)->set_omega0_copies_pitch_instead(true); //We're going to copy the pitch angle instead of the omega0 value.
 			} else { //All that follows resembles the code for the other parameters.
-				if ( (*tag_it)->hasOption("omega0") ) {
-					runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_copies_helix"),
+				if ( branch_tag->hasOption("omega0") ) {
+					runtime_assert_string_msg(!branch_tag->hasOption("omega0_copies_helix"),
 						"When parsing options for the BundleGridSampler mover, found omega0 defined alongside an omega0_copies_helix statement.  This does not makes sense: either omega0 is fixed, or its value copies the omega0 value of another helix (not both).");
-					runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_min") && !(*tag_it)->hasOption("omega0_max"),
+					runtime_assert_string_msg(!branch_tag->hasOption("omega0_min") && !branch_tag->hasOption("omega0_max"),
 						"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-					core::Real const val( (*tag_it)->getOption<core::Real>("omega0", 0.0) );
+					core::Real const val( branch_tag->getOption<core::Real>("omega0", 0.0) );
 					if ( TR.visible() ) TR << "Setting the omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
 					omega0(helix_index)->set_default_value( make_bundle_->convert_angle(val) );
 					omega0(helix_index)->set_perturbable(false);
 					omega0(helix_index)->set_use_defaults(false);
 					make_bundle_->helix(helix_index)->set_omega0( make_bundle_->convert_angle(val) );
-				} else if ( (*tag_it)->hasOption("omega0_min") ) {
-					runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_copies_helix"),
+				} else if ( branch_tag->hasOption("omega0_min") ) {
+					runtime_assert_string_msg(!branch_tag->hasOption("omega0_copies_helix"),
 						"When parsing options for the BundleGridSampler mover, found omega0_min defined alongside an omega0_copies_helix statement.  This does not makes sense: either omega0 is sampled, or its value copies the omega0 value of another helix (not both).");
-					runtime_assert_string_msg(!(*tag_it)->hasOption("omega0"),
+					runtime_assert_string_msg(!branch_tag->hasOption("omega0"),
 						"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-					runtime_assert_string_msg((*tag_it)->hasOption("omega0_max"),
+					runtime_assert_string_msg(branch_tag->hasOption("omega0_max"),
 						"When parsing options for the BundleGridSampler mover, found omega0_min but no omega0_max.  This does not make sense.");
-					core::Real const val1( (*tag_it)->getOption<core::Real>("omega0_min", 0.0) );
-					core::Real const val2( (*tag_it)->getOption<core::Real>("omega0_max", 0.0) );
+					core::Real const val1( branch_tag->getOption<core::Real>("omega0_min", 0.0) );
+					core::Real const val2( branch_tag->getOption<core::Real>("omega0_max", 0.0) );
 					runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an omega0_max value less than or equal to the omega0_min value.");
 					if ( TR.visible() ) TR << "Setting omega0_min and omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 					omega0(helix_index)->set_lower_value( make_bundle_->convert_angle(val1) );
@@ -1002,18 +1002,18 @@ BundleGridSampler::parse_my_tag(
 					omega0(helix_index)->set_perturbable(true);
 					omega0(helix_index)->set_use_defaults(false);
 					make_bundle_->helix(helix_index)->set_omega0( make_bundle_->convert_angle(val1) );
-					runtime_assert_string_msg( (*tag_it)->hasOption("omega0_samples"),
+					runtime_assert_string_msg( branch_tag->hasOption("omega0_samples"),
 						"When parsing options for the BundleGridSampler mover, found omega0_min and omega0_max options, but no omega0_samples option.  The number of omega0 samples must be specified." );
-					core::Size const val3( (*tag_it)->getOption<core::Size>( "omega0_samples", 0 ) );
+					core::Size const val3( branch_tag->getOption<core::Size>( "omega0_samples", 0 ) );
 					runtime_assert_string_msg( val3 > 1,
 						"The number of omega0 samples must be greater than 1." );
 					if ( TR.visible() ) TR << "Setting omega0 samples for helix " << helix_index << " to " << val3 << "." << std::endl;
 					omega0(helix_index)->set_samples(val3);
-				} else if ( (*tag_it)->hasOption("omega0_max") ) {
-					runtime_assert_string_msg((*tag_it)->hasOption("omega0_min"),
+				} else if ( branch_tag->hasOption("omega0_max") ) {
+					runtime_assert_string_msg(branch_tag->hasOption("omega0_min"),
 						"When parsing options for the BundleGridSampler mover, found omega0_max but no omega0_min.  This does not make sense.");
-				} else if ( (*tag_it)->hasOption("omega0_copies_helix") ) {
-					core::Size const val( (*tag_it)->getOption<core::Size>("omega0_copies_helix", 0) );
+				} else if ( branch_tag->hasOption("omega0_copies_helix") ) {
+					core::Size const val( branch_tag->getOption<core::Size>("omega0_copies_helix", 0) );
 					runtime_assert_string_msg(val > 0 && val < helix_index,
 						"When parsing options for the BundleGridSampler mover, found an omega0_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
 					if ( TR.visible() ) TR << "Setting omega0 for helix " << helix_index << " to copy the omega0 value for helix " << val << "." << std::endl;
@@ -1023,26 +1023,26 @@ BundleGridSampler::parse_my_tag(
 				}
 			}
 
-			if ( (*tag_it)->hasOption("delta_omega0") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega0_copies_helix"),
+			if ( branch_tag->hasOption("delta_omega0") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega0_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside an delta_omega0_copies_helix statement.  This does not makes sense: either delta_omega0 is fixed, or its value copies the delta_omega0 value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega0_min") && !(*tag_it)->hasOption("delta_omega0_max"),
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega0_min") && !branch_tag->hasOption("delta_omega0_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside delta_omega0_min or delta_omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				core::Real const val( (*tag_it)->getOption<core::Real>("delta_omega0", 0.0) );
+				core::Real const val( branch_tag->getOption<core::Real>("delta_omega0", 0.0) );
 				if ( TR.visible() ) TR << "Setting the delta_omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
 				delta_omega0(helix_index)->set_default_value( make_bundle_->convert_angle(val) );
 				delta_omega0(helix_index)->set_perturbable(false);
 				delta_omega0(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_delta_omega0( make_bundle_->convert_angle(val) );
-			} else if ( (*tag_it)->hasOption("delta_omega0_min") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega0_copies_helix"),
+			} else if ( branch_tag->hasOption("delta_omega0_min") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega0_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0_min defined alongside an delta_omega0_copies_helix statement.  This does not makes sense: either delta_omega0 is sampled, or its value copies the delta_omega0 value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega0"),
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega0"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside delta_omega0_min or delta_omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				runtime_assert_string_msg((*tag_it)->hasOption("delta_omega0_max"),
+				runtime_assert_string_msg(branch_tag->hasOption("delta_omega0_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0_min but no delta_omega0_max.  This does not make sense.");
-				core::Real const val1( (*tag_it)->getOption<core::Real>("delta_omega0_min", 0.0) );
-				core::Real const val2( (*tag_it)->getOption<core::Real>("delta_omega0_max", 0.0) );
+				core::Real const val1( branch_tag->getOption<core::Real>("delta_omega0_min", 0.0) );
+				core::Real const val2( branch_tag->getOption<core::Real>("delta_omega0_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega0_max value less than or equal to the delta_omega0_min value.");
 				if ( TR.visible() ) TR << "Setting delta_omega0_min and delta_omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				delta_omega0(helix_index)->set_lower_value( make_bundle_->convert_angle(val1) );
@@ -1050,18 +1050,18 @@ BundleGridSampler::parse_my_tag(
 				delta_omega0(helix_index)->set_perturbable(true);
 				delta_omega0(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_delta_omega0( make_bundle_->convert_angle(val1) );
-				runtime_assert_string_msg( (*tag_it)->hasOption("delta_omega0_samples"),
+				runtime_assert_string_msg( branch_tag->hasOption("delta_omega0_samples"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0_min and delta_omega0_max options, but no delta_omega0_samples option.  The number of delta_omega0 samples must be specified." );
-				core::Size const val3( (*tag_it)->getOption<core::Size>( "delta_omega0_samples", 0 ) );
+				core::Size const val3( branch_tag->getOption<core::Size>( "delta_omega0_samples", 0 ) );
 				runtime_assert_string_msg( val3 > 1,
 					"The number of delta_omega0 samples must be greater than 1." );
 				if ( TR.visible() ) TR << "Setting delta_omega0 samples for helix " << helix_index << " to " << val3 << "." << std::endl;
 				delta_omega0(helix_index)->set_samples(val3);
-			} else if ( (*tag_it)->hasOption("delta_omega0_max") ) {
-				runtime_assert_string_msg((*tag_it)->hasOption("delta_omega0_min"),
+			} else if ( branch_tag->hasOption("delta_omega0_max") ) {
+				runtime_assert_string_msg(branch_tag->hasOption("delta_omega0_min"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0_max but no delta_omega0_min.  This does not make sense.");
-			} else if ( (*tag_it)->hasOption("delta_omega0_copies_helix") ) {
-				core::Size const val( (*tag_it)->getOption<core::Size>("delta_omega0_copies_helix", 0) );
+			} else if ( branch_tag->hasOption("delta_omega0_copies_helix") ) {
+				core::Size const val( branch_tag->getOption<core::Size>("delta_omega0_copies_helix", 0) );
 				runtime_assert_string_msg(val > 0 && val < helix_index,
 					"When parsing options for the BundleGridSampler mover, found an delta_omega0_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
 				if ( TR.visible() ) TR << "Setting delta_omega0 for helix " << helix_index << " to copy the delta_omega0 value for helix " << val << "." << std::endl;
@@ -1070,26 +1070,26 @@ BundleGridSampler::parse_my_tag(
 				delta_omega0(helix_index)->set_helix_to_copy(val);
 			}
 
-			if ( (*tag_it)->hasOption("delta_omega1") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega1_copies_helix"),
+			if ( branch_tag->hasOption("delta_omega1") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega1_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside an delta_omega1_copies_helix statement.  This does not makes sense: either delta_omega1 is fixed, or its value copies the delta_omega1 value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega1_min") && !(*tag_it)->hasOption("delta_omega1_max"),
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega1_min") && !branch_tag->hasOption("delta_omega1_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside delta_omega1_min or delta_omega1_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				core::Real const val( (*tag_it)->getOption<core::Real>("delta_omega1", 0.0) );
+				core::Real const val( branch_tag->getOption<core::Real>("delta_omega1", 0.0) );
 				if ( TR.visible() ) TR << "Setting the delta_omega1 value for helix " << helix_index << " to " << val << "." << std::endl;
 				delta_omega1(helix_index)->set_default_value( make_bundle_->convert_angle(val) );
 				delta_omega1(helix_index)->set_perturbable(false);
 				delta_omega1(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_delta_omega1_all( make_bundle_->convert_angle(val) );
-			} else if ( (*tag_it)->hasOption("delta_omega1_min") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega1_copies_helix"),
+			} else if ( branch_tag->hasOption("delta_omega1_min") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega1_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1_min defined alongside an delta_omega1_copies_helix statement.  This does not makes sense: either delta_omega1 is sampled, or its value copies the delta_omega1 value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega1"),
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_omega1"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside delta_omega1_min or delta_omega1_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				runtime_assert_string_msg((*tag_it)->hasOption("delta_omega1_max"),
+				runtime_assert_string_msg(branch_tag->hasOption("delta_omega1_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1_min but no delta_omega1_max.  This does not make sense.");
-				core::Real const val1( (*tag_it)->getOption<core::Real>("delta_omega1_min", 0.0) );
-				core::Real const val2( (*tag_it)->getOption<core::Real>("delta_omega1_max", 0.0) );
+				core::Real const val1( branch_tag->getOption<core::Real>("delta_omega1_min", 0.0) );
+				core::Real const val2( branch_tag->getOption<core::Real>("delta_omega1_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega1_max value less than or equal to the delta_omega1_min value.");
 				if ( TR.visible() ) TR << "Setting delta_omega1_min and delta_omega1_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				delta_omega1(helix_index)->set_lower_value( make_bundle_->convert_angle(val1) );
@@ -1097,18 +1097,18 @@ BundleGridSampler::parse_my_tag(
 				delta_omega1(helix_index)->set_perturbable(true);
 				delta_omega1(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_delta_omega1_all( make_bundle_->convert_angle(val1) );
-				runtime_assert_string_msg( (*tag_it)->hasOption("delta_omega1_samples"),
+				runtime_assert_string_msg( branch_tag->hasOption("delta_omega1_samples"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1_min and delta_omega1_max options, but no delta_omega1_samples option.  The number of delta_omega1 samples must be specified." );
-				core::Size const val3( (*tag_it)->getOption<core::Size>( "delta_omega1_samples", 0 ) );
+				core::Size const val3( branch_tag->getOption<core::Size>( "delta_omega1_samples", 0 ) );
 				runtime_assert_string_msg( val3 > 1,
 					"The number of delta_omega1 samples must be greater than 1." );
 				if ( TR.visible() ) TR << "Setting delta_omega1 samples for helix " << helix_index << " to " << val3 << "." << std::endl;
 				delta_omega1(helix_index)->set_samples(val3);
-			} else if ( (*tag_it)->hasOption("delta_omega1_max") ) {
-				runtime_assert_string_msg((*tag_it)->hasOption("delta_omega1_min"),
+			} else if ( branch_tag->hasOption("delta_omega1_max") ) {
+				runtime_assert_string_msg(branch_tag->hasOption("delta_omega1_min"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1_max but no delta_omega1_min.  This does not make sense.");
-			} else if ( (*tag_it)->hasOption("delta_omega1_copies_helix") ) {
-				core::Size const val( (*tag_it)->getOption<core::Size>("delta_omega1_copies_helix", 0) );
+			} else if ( branch_tag->hasOption("delta_omega1_copies_helix") ) {
+				core::Size const val( branch_tag->getOption<core::Size>("delta_omega1_copies_helix", 0) );
 				runtime_assert_string_msg(val > 0 && val < helix_index,
 					"When parsing options for the BundleGridSampler mover, found an delta_omega1_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
 				if ( TR.visible() ) TR << "Setting delta_omega1 for helix " << helix_index << " to copy the delta_omega1 value for helix " << val << "." << std::endl;
@@ -1117,26 +1117,26 @@ BundleGridSampler::parse_my_tag(
 				delta_omega1(helix_index)->set_helix_to_copy(val);
 			}
 
-			if ( (*tag_it)->hasOption("delta_t") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_t_copies_helix"),
+			if ( branch_tag->hasOption("delta_t") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_t_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found delta_t defined alongside an delta_t_copies_helix statement.  This does not makes sense: either delta_t is fixed, or its value copies the delta_t value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_t_min") && !(*tag_it)->hasOption("delta_t_max"),
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_t_min") && !branch_tag->hasOption("delta_t_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_t defined alongside delta_t_min or delta_t_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				core::Real const val( (*tag_it)->getOption<core::Real>("delta_t", 0.0) );
+				core::Real const val( branch_tag->getOption<core::Real>("delta_t", 0.0) );
 				if ( TR.visible() ) TR << "Setting the delta_t value for helix " << helix_index << " to " << val << "." << std::endl;
 				delta_t(helix_index)->set_default_value(val);
 				delta_t(helix_index)->set_perturbable(false);
 				delta_t(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_delta_t(val);
-			} else if ( (*tag_it)->hasOption("delta_t_min") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_t_copies_helix"),
+			} else if ( branch_tag->hasOption("delta_t_min") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_t_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found delta_t_min defined alongside an delta_t_copies_helix statement.  This does not makes sense: either delta_t is sampled, or its value copies the delta_t value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("delta_t"),
+				runtime_assert_string_msg(!branch_tag->hasOption("delta_t"),
 					"When parsing options for the BundleGridSampler mover, found delta_t defined alongside delta_t_min or delta_t_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				runtime_assert_string_msg((*tag_it)->hasOption("delta_t_max"),
+				runtime_assert_string_msg(branch_tag->hasOption("delta_t_max"),
 					"When parsing options for the BundleGridSampler mover, found delta_t_min but no delta_t_max.  This does not make sense.");
-				core::Real const val1( (*tag_it)->getOption<core::Real>("delta_t_min", 0.0) );
-				core::Real const val2( (*tag_it)->getOption<core::Real>("delta_t_max", 0.0) );
+				core::Real const val1( branch_tag->getOption<core::Real>("delta_t_min", 0.0) );
+				core::Real const val2( branch_tag->getOption<core::Real>("delta_t_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_t_max value less than or equal to the delta_t_min value.");
 				if ( TR.visible() ) TR << "Setting delta_t_min and delta_t_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				delta_t(helix_index)->set_lower_value(val1);
@@ -1144,18 +1144,18 @@ BundleGridSampler::parse_my_tag(
 				delta_t(helix_index)->set_perturbable(true);
 				delta_t(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_delta_t(val1);
-				runtime_assert_string_msg( (*tag_it)->hasOption("delta_t_samples"),
+				runtime_assert_string_msg( branch_tag->hasOption("delta_t_samples"),
 					"When parsing options for the BundleGridSampler mover, found delta_t_min and delta_t_max options, but no delta_t_samples option.  The number of delta_t samples must be specified." );
-				core::Size const val3( (*tag_it)->getOption<core::Size>( "delta_t_samples", 0 ) );
+				core::Size const val3( branch_tag->getOption<core::Size>( "delta_t_samples", 0 ) );
 				runtime_assert_string_msg( val3 > 1,
 					"The number of delta_t samples must be greater than 1." );
 				if ( TR.visible() ) TR << "Setting delta_t samples for helix " << helix_index << " to " << val3 << "." << std::endl;
 				delta_t(helix_index)->set_samples(val3);
-			} else if ( (*tag_it)->hasOption("delta_t_max") ) {
-				runtime_assert_string_msg((*tag_it)->hasOption("delta_t_min"),
+			} else if ( branch_tag->hasOption("delta_t_max") ) {
+				runtime_assert_string_msg(branch_tag->hasOption("delta_t_min"),
 					"When parsing options for the BundleGridSampler mover, found delta_t_max but no delta_t_min.  This does not make sense.");
-			} else if ( (*tag_it)->hasOption("delta_t_copies_helix") ) {
-				core::Size const val( (*tag_it)->getOption<core::Size>("delta_t_copies_helix", 0) );
+			} else if ( branch_tag->hasOption("delta_t_copies_helix") ) {
+				core::Size const val( branch_tag->getOption<core::Size>("delta_t_copies_helix", 0) );
 				runtime_assert_string_msg(val > 0 && val < helix_index,
 					"When parsing options for the BundleGridSampler mover, found an delta_t_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
 				if ( TR.visible() ) TR << "Setting delta_t for helix " << helix_index << " to copy the delta_t value for helix " << val << "." << std::endl;
@@ -1164,26 +1164,26 @@ BundleGridSampler::parse_my_tag(
 				delta_t(helix_index)->set_helix_to_copy(val);
 			}
 
-			if ( (*tag_it)->hasOption("z1_offset") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset_copies_helix"),
+			if ( branch_tag->hasOption("z1_offset") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("z1_offset_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside an z1_offset_copies_helix statement.  This does not makes sense: either z1_offset is fixed, or its value copies the z1_offset value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset_min") && !(*tag_it)->hasOption("z1_offset_max"),
+				runtime_assert_string_msg(!branch_tag->hasOption("z1_offset_min") && !branch_tag->hasOption("z1_offset_max"),
 					"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside z1_offset_min or z1_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				core::Real const val( (*tag_it)->getOption<core::Real>("z1_offset", 0.0) );
+				core::Real const val( branch_tag->getOption<core::Real>("z1_offset", 0.0) );
 				if ( TR.visible() ) TR << "Setting the z1_offset value for helix " << helix_index << " to " << val << "." << std::endl;
 				z1_offset(helix_index)->set_default_value(val);
 				z1_offset(helix_index)->set_perturbable(false);
 				z1_offset(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_z1_offset(val);
-			} else if ( (*tag_it)->hasOption("z1_offset_min") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset_copies_helix"),
+			} else if ( branch_tag->hasOption("z1_offset_min") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("z1_offset_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found z1_offset_min defined alongside an z1_offset_copies_helix statement.  This does not makes sense: either z1_offset is sampled, or its value copies the z1_offset value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset"),
+				runtime_assert_string_msg(!branch_tag->hasOption("z1_offset"),
 					"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside z1_offset_min or z1_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				runtime_assert_string_msg((*tag_it)->hasOption("z1_offset_max"),
+				runtime_assert_string_msg(branch_tag->hasOption("z1_offset_max"),
 					"When parsing options for the BundleGridSampler mover, found z1_offset_min but no z1_offset_max.  This does not make sense.");
-				core::Real const val1( (*tag_it)->getOption<core::Real>("z1_offset_min", 0.0) );
-				core::Real const val2( (*tag_it)->getOption<core::Real>("z1_offset_max", 0.0) );
+				core::Real const val1( branch_tag->getOption<core::Real>("z1_offset_min", 0.0) );
+				core::Real const val2( branch_tag->getOption<core::Real>("z1_offset_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an z1_offset_max value less than or equal to the z1_offset_min value.");
 				if ( TR.visible() ) TR << "Setting z1_offset_min and z1_offset_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				z1_offset(helix_index)->set_lower_value(val1);
@@ -1191,18 +1191,18 @@ BundleGridSampler::parse_my_tag(
 				z1_offset(helix_index)->set_perturbable(true);
 				z1_offset(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_z1_offset(val1);
-				runtime_assert_string_msg( (*tag_it)->hasOption("z1_offset_samples"),
+				runtime_assert_string_msg( branch_tag->hasOption("z1_offset_samples"),
 					"When parsing options for the BundleGridSampler mover, found z1_offset_min and z1_offset_max options, but no z1_offset_samples option.  The number of z1_offset samples must be specified." );
-				core::Size const val3( (*tag_it)->getOption<core::Size>( "z1_offset_samples", 0 ) );
+				core::Size const val3( branch_tag->getOption<core::Size>( "z1_offset_samples", 0 ) );
 				runtime_assert_string_msg( val3 > 1,
 					"The number of z1_offset samples must be greater than 1." );
 				if ( TR.visible() ) TR << "Setting z1_offset samples for helix " << helix_index << " to " << val3 << "." << std::endl;
 				z1_offset(helix_index)->set_samples(val3);
-			} else if ( (*tag_it)->hasOption("z1_offset_max") ) {
-				runtime_assert_string_msg((*tag_it)->hasOption("z1_offset_min"),
+			} else if ( branch_tag->hasOption("z1_offset_max") ) {
+				runtime_assert_string_msg(branch_tag->hasOption("z1_offset_min"),
 					"When parsing options for the BundleGridSampler mover, found z1_offset_max but no z1_offset_min.  This does not make sense.");
-			} else if ( (*tag_it)->hasOption("z1_offset_copies_helix") ) {
-				core::Size const val( (*tag_it)->getOption<core::Size>("z1_offset_copies_helix", 0) );
+			} else if ( branch_tag->hasOption("z1_offset_copies_helix") ) {
+				core::Size const val( branch_tag->getOption<core::Size>("z1_offset_copies_helix", 0) );
 				runtime_assert_string_msg(val > 0 && val < helix_index,
 					"When parsing options for the BundleGridSampler mover, found an z1_offset_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
 				if ( TR.visible() ) TR << "Setting z1_offset for helix " << helix_index << " to copy the z1_offset value for helix " << val << "." << std::endl;
@@ -1211,26 +1211,26 @@ BundleGridSampler::parse_my_tag(
 				z1_offset(helix_index)->set_helix_to_copy(val);
 			}
 
-			if ( (*tag_it)->hasOption("z0_offset") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset_copies_helix"),
+			if ( branch_tag->hasOption("z0_offset") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("z0_offset_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside an z0_offset_copies_helix statement.  This does not makes sense: either z0_offset is fixed, or its value copies the z0_offset value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset_min") && !(*tag_it)->hasOption("z0_offset_max"),
+				runtime_assert_string_msg(!branch_tag->hasOption("z0_offset_min") && !branch_tag->hasOption("z0_offset_max"),
 					"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside z0_offset_min or z0_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				core::Real const val( (*tag_it)->getOption<core::Real>("z0_offset", 0.0) );
+				core::Real const val( branch_tag->getOption<core::Real>("z0_offset", 0.0) );
 				if ( TR.visible() ) TR << "Setting the z0_offset value for helix " << helix_index << " to " << val << "." << std::endl;
 				z0_offset(helix_index)->set_default_value(val);
 				z0_offset(helix_index)->set_perturbable(false);
 				z0_offset(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_z0_offset(val);
-			} else if ( (*tag_it)->hasOption("z0_offset_min") ) {
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset_copies_helix"),
+			} else if ( branch_tag->hasOption("z0_offset_min") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("z0_offset_copies_helix"),
 					"When parsing options for the BundleGridSampler mover, found z0_offset_min defined alongside an z0_offset_copies_helix statement.  This does not makes sense: either z0_offset is sampled, or its value copies the z0_offset value of another helix (not both).");
-				runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset"),
+				runtime_assert_string_msg(!branch_tag->hasOption("z0_offset"),
 					"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside z0_offset_min or z0_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-				runtime_assert_string_msg((*tag_it)->hasOption("z0_offset_max"),
+				runtime_assert_string_msg(branch_tag->hasOption("z0_offset_max"),
 					"When parsing options for the BundleGridSampler mover, found z0_offset_min but no z0_offset_max.  This does not make sense.");
-				core::Real const val1( (*tag_it)->getOption<core::Real>("z0_offset_min", 0.0) );
-				core::Real const val2( (*tag_it)->getOption<core::Real>("z0_offset_max", 0.0) );
+				core::Real const val1( branch_tag->getOption<core::Real>("z0_offset_min", 0.0) );
+				core::Real const val2( branch_tag->getOption<core::Real>("z0_offset_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an z0_offset_max value less than or equal to the z0_offset_min value.");
 				if ( TR.visible() ) TR << "Setting z0_offset_min and z0_offset_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
 				z0_offset(helix_index)->set_lower_value(val1);
@@ -1238,18 +1238,18 @@ BundleGridSampler::parse_my_tag(
 				z0_offset(helix_index)->set_perturbable(true);
 				z0_offset(helix_index)->set_use_defaults(false);
 				make_bundle_->helix(helix_index)->set_z0_offset(val1);
-				runtime_assert_string_msg( (*tag_it)->hasOption("z0_offset_samples"),
+				runtime_assert_string_msg( branch_tag->hasOption("z0_offset_samples"),
 					"When parsing options for the BundleGridSampler mover, found z0_offset_min and z0_offset_max options, but no z0_offset_samples option.  The number of z0_offset samples must be specified." );
-				core::Size const val3( (*tag_it)->getOption<core::Size>( "z0_offset_samples", 0 ) );
+				core::Size const val3( branch_tag->getOption<core::Size>( "z0_offset_samples", 0 ) );
 				runtime_assert_string_msg( val3 > 1,
 					"The number of z0_offset samples must be greater than 1." );
 				if ( TR.visible() ) TR << "Setting z0_offset samples for helix " << helix_index << " to " << val3 << "." << std::endl;
 				z0_offset(helix_index)->set_samples(val3);
-			} else if ( (*tag_it)->hasOption("z0_offset_max") ) {
-				runtime_assert_string_msg((*tag_it)->hasOption("z0_offset_min"),
+			} else if ( branch_tag->hasOption("z0_offset_max") ) {
+				runtime_assert_string_msg(branch_tag->hasOption("z0_offset_min"),
 					"When parsing options for the BundleGridSampler mover, found z0_offset_max but no z0_offset_min.  This does not make sense.");
-			} else if ( (*tag_it)->hasOption("z0_offset_copies_helix") ) {
-				core::Size const val( (*tag_it)->getOption<core::Size>("z0_offset_copies_helix", 0) );
+			} else if ( branch_tag->hasOption("z0_offset_copies_helix") ) {
+				core::Size const val( branch_tag->getOption<core::Size>("z0_offset_copies_helix", 0) );
 				runtime_assert_string_msg(val > 0 && val < helix_index,
 					"When parsing options for the BundleGridSampler mover, found an z0_offset_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
 				if ( TR.visible() ) TR << "Setting z0_offset for helix " << helix_index << " to copy the z0_offset value for helix " << val << "." << std::endl;

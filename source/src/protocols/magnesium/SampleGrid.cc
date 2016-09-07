@@ -45,7 +45,7 @@ SampleGrid::SampleGrid( pose::Pose const & pose )
 
 //Destructor
 SampleGrid::~SampleGrid()
-{}
+= default;
 
 ///////////////////////////////////////////////////////////////////////////////
 utility::vector1< Vector >

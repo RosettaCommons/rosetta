@@ -50,8 +50,8 @@ public: // constructors destructors
 	RRReporterSQLite();
 
 	RRReporterSQLite(
-		std::string const & database_name,
-		std::string const & database_pq_schema = "",
+		std::string database_name,
+		std::string database_pq_schema = "",
 		OutputLevel output_level = protocols::rotamer_recovery::OL_full
 	);
 
@@ -60,7 +60,7 @@ public: // constructors destructors
 		OutputLevel output_level = protocols::rotamer_recovery::OL_full
 	);
 
-	~RRReporterSQLite();
+	~RRReporterSQLite() override;
 
 	RRReporterSQLite( RRReporterSQLite const & );
 
@@ -96,12 +96,12 @@ public:
 	void
 	set_protocol_info(
 		std::string const & protocol_name,
-		std::string const & protocol_params);
+		std::string const & protocol_params) override;
 
 	void
 	set_comparer_info(
 		std::string const & comparer_name,
-		std::string const & comparer_params);
+		std::string const & comparer_params) override;
 
 	void
 	db_session(
@@ -126,11 +126,11 @@ public:
 	set_predicted_report_to_db(
 		features::ReportToDBOP report_to_db);
 
-	virtual
+	
 	void
-	reset_recovery();
+	reset_recovery() override;
 
-	virtual
+	
 	void
 	report_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -139,7 +139,7 @@ public:
 		core::conformation::Residue const & res2,
 		core::Real score,
 		bool recovered
-	);
+	) override;
 
 
 	virtual
@@ -171,17 +171,17 @@ public:
 		core::conformation::Residue const & predicted_res
 	);
 
-	virtual
+	
 	core::Real
-	recovery_rate() const;
+	recovery_rate() const override;
 
-	virtual
+	
 	void
-	show(std::ostream & out ) const;
+	show(std::ostream & out ) const override;
 
-	virtual
+	
 	void
-	show() const;
+	show() const override;
 
 private: // data members
 

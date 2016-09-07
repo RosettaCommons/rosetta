@@ -99,7 +99,7 @@ DnaInterfaceMinMover::operator = ( DnaInterfaceMinMover const & src )
 	return *this;
 }
 
-DnaInterfaceMinMover::~DnaInterfaceMinMover(){}
+DnaInterfaceMinMover::~DnaInterfaceMinMover()= default;
 
 DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
 : protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
@@ -107,7 +107,7 @@ DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
 	chi_(true),
 	bb_(false)
 {
-	runtime_assert( interface != 0 );
+	runtime_assert( interface != nullptr );
 	reset_from_interface();
 	min_type( option[ OptionKeys::run::min_type ]() );
 	tolerance( option[ OptionKeys::run::min_tolerance ]() );
@@ -116,7 +116,7 @@ DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
 void
 DnaInterfaceMinMover::use_interface( DnaInterfaceFinderOP interface )
 {
-	runtime_assert( interface != 0 );
+	runtime_assert( interface != nullptr );
 	interface_ = interface;
 	reset_from_interface();
 }
@@ -124,16 +124,15 @@ DnaInterfaceMinMover::use_interface( DnaInterfaceFinderOP interface )
 void
 DnaInterfaceMinMover::reset_from_interface()
 {
-	runtime_assert( interface_ != 0 );
+	runtime_assert( interface_ != nullptr );
 	MoveMapOP new_movemap( new MoveMap );
 	// sidechain minimization for all amino acids in the vicinity of nucleotide bases
 	// (according to 'interface', which need not represent the entire protein-DNA interface)
-	for ( DnaNeighbors::const_iterator itr( interface_->protein_neighbors().begin() ),
-			end( interface_->protein_neighbors().end() ); itr != end; ++itr ) {
-		if ( itr->second.close() ) {
+	for (const auto & itr : interface_->protein_neighbors()) {
+		if ( itr.second.close() ) {
 			// avoid adding pointless 'false' values to std::map if chi_ or bb_ are false
-			if ( chi_ ) new_movemap->set_chi( itr->first, true );
-			if ( bb_ ) new_movemap->set_bb( itr->first, true );
+			if ( chi_ ) new_movemap->set_chi( itr.first, true );
+			if ( bb_ ) new_movemap->set_bb( itr.first, true );
 		}
 	}
 	movemap( new_movemap );

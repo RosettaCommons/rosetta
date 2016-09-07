@@ -45,30 +45,30 @@ public:
 	ModulatedMover();
 	ModulatedMover( ModulatedMover const & );
 
-	virtual ~ModulatedMover();
-	virtual void apply( core::pose::Pose & pose );
+	~ModulatedMover() override;
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual bool preserve_detailed_balance() const { return true; }
+	bool preserve_detailed_balance() const override { return true; }
 
-	virtual void set_preserve_detailed_balance( bool ) {};
+	void set_preserve_detailed_balance( bool ) override {};
 
-	virtual utility::vector1< core::id::TorsionID_Range > torsion_id_ranges( core::pose::Pose & ) {
+	utility::vector1< core::id::TorsionID_Range > torsion_id_ranges( core::pose::Pose & ) override {
 		return utility::vector1< core::id::TorsionID_Range>();
 	}
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	utility::tag::TagCOP generate_mover_tag(
 		core::Size temp_level,
@@ -76,18 +76,18 @@ public:
 		std::map< std::string, std::string > const& common_options
 	) const;
 
-	virtual void
+	void
 	initialize_simulation(
 		core::pose::Pose& pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const& mhm,
 		core::Size cycle
-	);
+	) override;
 
-	virtual void
+	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & mhm
-	);
+	) override;
 
 	//   virtual void
 	//   observe_after_metropolis(

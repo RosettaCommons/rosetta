@@ -67,7 +67,7 @@ std::string get_mover_name( std::stack< DofPassportCOP > const& unlocks ){
 
 ProtectedConformation::ProtectedConformation( EnvironmentCAP env_ap, Conformation const& src ):
 	Conformation( src ),
-	env_( env_ap ),
+	env_(std::move( env_ap )),
 	environment_exists_( true )
 {
 	EnvironmentCOP env( environment() );
@@ -428,7 +428,7 @@ ProtectedConformation::replace_residue_sandbox(
 	//do the actual replacement
 	Parent::replace_residue( seqpos, *new_rsd, p );
 
-	DofMap new_dofs = collect_dofs( seqpos, this );;
+	DofMap new_dofs = collect_dofs( seqpos, this );
 
 	try{
 		// Check to see that the passport was respected.
@@ -441,7 +441,7 @@ ProtectedConformation::replace_residue_sandbox(
 			throw EXCN_Env_Security_Exception( ss.str(), get_mover_name( unlocks_ ), environment() );
 		}
 
-		for ( DofMap::iterator it = old_dofs.begin();
+		for ( auto it = old_dofs.begin();
 				it != old_dofs.end(); ++it ) {
 
 			core::id::DOF_ID const& dof = it->first;
@@ -634,7 +634,7 @@ ProtectedConformation::fail_verification(
 	core::id::DOF_ID const& id,
 	std::string const& mod_type
 ) const {
-	core::environment::DofPassportCOP pass = unlocks_.empty() ? NULL : unlocks_.top();
+	core::environment::DofPassportCOP pass = unlocks_.empty() ? nullptr : unlocks_.top();
 	throw EXCN_Env_Security_Exception( id, pass, mod_type, *this, get_mover_name( unlocks_ ), environment() );
 }
 

@@ -132,7 +132,7 @@ GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 
 
 // Destructor
-GraftMoverBase::~GraftMoverBase() {}
+GraftMoverBase::~GraftMoverBase() = default;
 
 
 void

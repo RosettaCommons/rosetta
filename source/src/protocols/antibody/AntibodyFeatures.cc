@@ -64,7 +64,7 @@ using namespace core::scoring;
 AntibodyFeatures::AntibodyFeatures():
 	InterfaceFeatures()
 {
-	ab_info_ = NULL;
+	ab_info_ = nullptr;
 	skip_antigen_reports_ = false;
 	include_proto_cdr4_ = false;
 }

@@ -28,7 +28,7 @@ NullMover::NullMover() :
 {
 }
 
-NullMover::~NullMover() {}
+NullMover::~NullMover() = default;
 
 void
 NullMover::apply( core::pose::Pose & )

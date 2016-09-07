@@ -50,14 +50,14 @@ TimeEvaluator::TimeEvaluator( std::string const& tag )
 
 void
 TimeEvaluator::reset() {
-	start_time_ = time(NULL);
+	start_time_ = time(nullptr);
 }
 
 
 core::Real
 TimeEvaluator::apply( core::pose::Pose& ) const
 {
-	return time(NULL) - start_time_;
+	return time(nullptr) - start_time_;
 }
 
 }

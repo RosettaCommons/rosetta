@@ -89,7 +89,7 @@ RosettaScriptsParser::RosettaScriptsParser() :
 	register_factory_prototypes();
 }
 
-RosettaScriptsParser::~RosettaScriptsParser(){}
+RosettaScriptsParser::~RosettaScriptsParser()= default;
 
 using utility::tag::TagOP;
 using utility::tag::TagCOP;
@@ -416,7 +416,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 			BOOST_FOREACH ( TagCOP apply_tag_ptr, apply_tags ) {
 				std::string const mover_type( apply_tag_ptr->getName() );
 				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
-				runtime_assert( new_mover != 0 );
+				runtime_assert( new_mover != nullptr );
 				new_mover->apply( pose );
 				TR << "Defined and applied mover of type " << mover_type << std::endl;
 				bool const name_exists( movers.find( mover_type ) != movers.end() );
@@ -486,7 +486,7 @@ void RosettaScriptsParser::instantiate_filter(
 	}
 
 	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, filters, movers, pose ) );
-	runtime_assert( new_filter != 0 );
+	runtime_assert( new_filter != nullptr );
 	filters.insert( std::make_pair( user_defined_name, new_filter ) );
 	TR << "Defined filter named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
@@ -511,7 +511,7 @@ void RosettaScriptsParser::instantiate_mover(
 	}
 
 	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
-	runtime_assert( new_mover != 0 );
+	runtime_assert( new_mover != nullptr );
 	movers.insert( std::make_pair( user_defined_name, new_mover ) );
 	TR << "Defined mover named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
@@ -538,7 +538,7 @@ void RosettaScriptsParser::instantiate_taskoperation(
 	}
 
 	TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, tag_ptr ) );
-	runtime_assert( new_t_o != 0 );
+	runtime_assert( new_t_o != nullptr );
 	data.add("task_operations", user_defined_name, new_t_o );
 	TR << "Defined TaskOperation named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
@@ -561,7 +561,7 @@ TagCOP RosettaScriptsParser::find_rosettascript_tag(
 
 	TagCOP tag( tag_ap.lock() );
 	if ( !tag ) {
-		return NULL;
+		return nullptr;
 	}
 
 	// Look for section_name (MOVERS, FITLERS, ...) directly below ROSETTASCRIPTS
@@ -583,7 +583,7 @@ TagCOP RosettaScriptsParser::find_rosettascript_tag(
 		return find_rosettascript_tag(tagParent, section_name, option_name, option_value);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /// @brief Import filters, movers, ... specified in the IMPORT tag

@@ -50,7 +50,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocol.mover.RepulsiveOnlyMover" );
 
 /// RepulsiveOnlyMover; based on the protocols::moves::Mover basis class
 RepulsiveOnlyMover::RepulsiveOnlyMover() : protocols::moves::Mover(), mutate_to_glycine_( true ) {}
-RepulsiveOnlyMover::~RepulsiveOnlyMover() {}
+RepulsiveOnlyMover::~RepulsiveOnlyMover() = default;
 
 
 // @brief apply function here

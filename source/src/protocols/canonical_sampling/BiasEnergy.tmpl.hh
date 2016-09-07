@@ -19,7 +19,7 @@
 
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/exit.hh>
-#include <math.h>
+#include <cmath>
 #include <iomanip>
 
 

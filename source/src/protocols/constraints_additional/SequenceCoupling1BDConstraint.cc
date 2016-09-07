@@ -74,7 +74,7 @@ SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint(
 	SequenceProfileCOP profile
 ):core::scoring::constraints::SequenceProfileConstraint(numpos, profile)
 {}
-SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() {}
+SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() = default;
 
 ConstraintOP
 SequenceCoupling1BDConstraint::clone() const {
@@ -156,7 +156,7 @@ SequenceCoupling1BDConstraint::score(
 ) const
 {
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
-	runtime_assert( sequence_profile() != 0 );
+	runtime_assert( sequence_profile() != nullptr );
 
 	chemical::AA aa( xyz_func.residue( seqpos()).type().aa() );
 	utility::vector1< utility::vector1< Real > > const & profile( sequence_profile()->profile() );

@@ -24,13 +24,13 @@ class SetupMover : public protocols::moves::Mover {
 		SetupMover();
 
 		/// Clean up the mover.
-		~SetupMover();
+		~SetupMover() override;
 
 		/// Return "SetupMover".
-		std::string get_name() const;
+		std::string get_name() const override;
 
 		/// Prepare the pose to be used by the other cyclic movers.
-		void apply(pose::Pose &pose);
+		void apply(pose::Pose &pose) override;
 
 	private:
 		/// Remove the free amino and carboxyl groups from the termini.

@@ -50,7 +50,7 @@ public: // Creation
 	/// @note  Only works if Keys have default constructors
 	inline
 	Key2Tuple()
-	{}
+	= default;
 
 
 	/// @brief Key constructor
@@ -67,7 +67,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~Key2Tuple()
-	{}
+	= default;
 
 
 public: // Properties

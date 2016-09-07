@@ -78,7 +78,7 @@ public:
 	RangeRelaxMover & operator = ( RangeRelaxMover const & src );
 
 	/// @brief Destructor
-	virtual ~RangeRelaxMover();
+	~RangeRelaxMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -104,10 +104,10 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this Mover (RangeRelaxMover)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Run RangeRelax
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	/// @brief Run AddMembraneMover before?
 	/// @details If you want to keep your anchor point for MEM, then pick no

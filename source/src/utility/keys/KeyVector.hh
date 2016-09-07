@@ -93,7 +93,7 @@ public: // Creation
 	/// @brief Default constructor
 	inline
 	KeyVector()
-	{}
+	= default;
 
 
 	/// @brief Size constructor
@@ -128,7 +128,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~KeyVector()
-	{}
+	= default;
 
 
 public: // Assignment

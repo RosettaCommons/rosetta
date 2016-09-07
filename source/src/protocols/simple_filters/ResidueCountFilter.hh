@@ -29,7 +29,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 //C library
-#include <math.h> // for round, floor, ceil, trunc, sqrt
+#include <cmath> // for round, floor, ceil, trunc, sqrt
 
 namespace protocols {
 namespace simple_filters {
@@ -40,29 +40,29 @@ public:
 	//default ctor
 	ResidueCountFilter();
 
-	virtual ~ResidueCountFilter();
+	~ResidueCountFilter() override;
 
 	bool
 	apply(
 		core::pose::Pose const & pose
-	) const;
+	) const override;
 
 	filters::FilterOP
-	clone() const;
+	clone() const override;
 
 	filters::FilterOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	void
 	report(
 		std::ostream & out,
 		core::pose::Pose const & pose
-	) const;
+	) const override;
 
 	core::Real
 	report_sm(
 		core::pose::Pose const & pose
-	) const;
+	) const override;
 
 	core::Real
 	compute(
@@ -80,7 +80,7 @@ public:
 		filters::Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	core::Size
 	max_residue_count() const;

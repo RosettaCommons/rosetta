@@ -52,7 +52,7 @@ public:
 	DockingLowResEnsemble();
 
 	// destructor
-	~DockingLowResEnsemble();
+	~DockingLowResEnsemble() override;
 
 	/// @brief Constructor with two arguments.  The first is scorefunction to be used for docking, the second is the
 	///  DockJumps.
@@ -61,9 +61,9 @@ public:
 		DockJumps const movable_jumps
 	);
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 
 	// option setters
 	void set_ensemble1( DockingEnsembleOP ensemble1 );
@@ -71,7 +71,7 @@ public:
 
 protected:
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
-	virtual void finalize_setup( core::pose::Pose & pose); // Comment out by DK
+	void finalize_setup( core::pose::Pose & pose) override; // Comment out by DK
 
 private:
 	protocols::docking::ConformerSwitchMoverOP ensemble1_mover_;

@@ -75,19 +75,7 @@ MPMutateRelaxMover::MPMutateRelaxMover() : protocols::moves::Mover()
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-MPMutateRelaxMover::MPMutateRelaxMover( MPMutateRelaxMover const & src ) : protocols::moves::Mover( src ),
-	sfxn_( src.sfxn_ ),
-	mutant_file_( src.mutant_file_ ),
-	wt_res_( src.wt_res_ ),
-	resn_( src.resn_ ),
-	new_res_( src.new_res_ ),
-	nstruct_( src.nstruct_ ),
-	protein_( src.protein_ ),
-	repack_mutation_only_( src.repack_mutation_only_ ),
-	repack_radius_( src.repack_radius_ ),
-	repack_residues_( src.repack_residues_ ),
-	relax_( src.relax_ )
-{}
+MPMutateRelaxMover::MPMutateRelaxMover( MPMutateRelaxMover const & ) = default;
 
 /// @brief Assignment Operator
 MPMutateRelaxMover & MPMutateRelaxMover::operator = ( MPMutateRelaxMover const & src ) {
@@ -102,7 +90,7 @@ MPMutateRelaxMover & MPMutateRelaxMover::operator = ( MPMutateRelaxMover const &
 }
 
 /// @brief Destructor
-MPMutateRelaxMover::~MPMutateRelaxMover() {}
+MPMutateRelaxMover::~MPMutateRelaxMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

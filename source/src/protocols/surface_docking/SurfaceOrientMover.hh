@@ -40,11 +40,11 @@ public:
 	SurfaceOrientMover();
 
 	//destructor
-	~SurfaceOrientMover();
+	~SurfaceOrientMover() override;
 
-	void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_surface_parameters( protocols::surface_docking::SurfaceParametersOP surface_parameters);
 

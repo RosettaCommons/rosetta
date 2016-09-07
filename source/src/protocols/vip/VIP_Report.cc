@@ -30,8 +30,8 @@
 namespace protocols {
 namespace vip {
 
-VIP_Report::VIP_Report() {}
-VIP_Report::~VIP_Report(){}
+VIP_Report::VIP_Report() = default;
+VIP_Report::~VIP_Report()= default;
 
 void
 VIP_Report::get_GOE_repack_report(

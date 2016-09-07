@@ -23,7 +23,7 @@ namespace numeric {
 namespace kdtree {
 
 /// @details Auto-generated virtual destructor
-HyperRectangle::~HyperRectangle() {}
+HyperRectangle::~HyperRectangle() = default;
 
 HyperRectangle::HyperRectangle() {}
 
@@ -34,9 +34,8 @@ HyperRectangle::HyperRectangle(
 	lower_( pts.front() )
 {
 	using utility::vector1;
-	typedef vector1< vector1< Real > >::const_iterator iter;
-	for ( iter it = pts.begin(), end = pts.end(); it != end; ++it ) {
-		extend( *it );
+	for (const auto & pt : pts) {
+		extend( pt );
 	}
 }
 
@@ -78,8 +77,8 @@ void HyperRectangle::extend(
 	using numeric::Real;
 	using utility::vector1;
 
-	vector1< Real >::const_iterator p_it = pt.begin(), p_end = pt.end();
-	for ( vector1< Real >::iterator
+	auto p_it = pt.begin(), p_end = pt.end();
+	for ( auto
 			l_it = lower_.begin(), l_end = lower_.end(),
 			u_it = upper_.begin(), u_end = upper_.end();
 			p_it != p_end && l_it != l_end && u_it != u_end;
@@ -92,13 +91,12 @@ void HyperRectangle::extend(
 
 void HyperRectangle::show( std::ostream & out ) const {
 	out << "HyperRectangle Lower";
-	typedef utility::vector1< Real >::const_iterator iter;
-	for ( iter it = lower_.begin(), end = lower_.end(); it != end; ++it ) {
-		out << " " << *it;
+	for (double it : lower_) {
+		out << " " << it;
 	}
 	out << " Upper ";
-	for ( iter it = upper_.begin(), end = upper_.end(); it != end; ++it ) {
-		out << " " << *it;
+	for (double it : upper_) {
+		out << " " << it;
 	}
 }
 

@@ -39,10 +39,10 @@ public:
 
 	RigidSearchMover(int jump_id, int num_trials, core::scoring::ScoreFunctionCOP scorefxn);
 	RigidSearchMover(RigidSearchMover const & that);
-	virtual ~RigidSearchMover();
+	~RigidSearchMover() override;
 
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
 
 	/// @brief Will the absolute lowest-energy pose be recovered at the end of apply()?
 	bool recover_low() const { return recover_low_; }

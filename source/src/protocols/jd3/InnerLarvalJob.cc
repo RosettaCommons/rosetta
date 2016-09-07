@@ -50,7 +50,7 @@ InnerLarvalJob::InnerLarvalJob( core::Size nstruct ) :
 	const_data_cache_( new basic::datacache::ConstDataMap )
 {}
 
-InnerLarvalJob::~InnerLarvalJob() {}
+InnerLarvalJob::~InnerLarvalJob() = default;
 
 /// @brief Return true if either pointers point at the same object or
 /// if they point at objects that are themselves equal.  Requires that

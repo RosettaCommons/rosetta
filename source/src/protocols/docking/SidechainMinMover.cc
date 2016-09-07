@@ -70,7 +70,7 @@ SidechainMinMover::SidechainMinMover( core::scoring::ScoreFunctionOP scorefxn) :
 SidechainMinMover::SidechainMinMover(
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::kinematics::MoveMapOP movemap
-) : DockingHighRes( 1, scorefxn ), movemap_(movemap), update_movemap_(false)
+) : DockingHighRes( 1, scorefxn ), movemap_(std::move(movemap)), update_movemap_(false)
 {
 	DockingHighRes::type( "SidechainMin" );
 	//scorefxn_ = new core::scoring::ScoreFunction( *scorefxn );
@@ -80,7 +80,7 @@ SidechainMinMover::SidechainMinMover(
 //constructor with arguments
 SidechainMinMover::SidechainMinMover(
 	core::scoring::ScoreFunctionOP scorefxn,
-	core::pack::task::PackerTaskOP task) : DockingHighRes( 1, scorefxn ), task_(task), update_movemap_(true)
+	core::pack::task::PackerTaskOP task) : DockingHighRes( 1, scorefxn ), task_(std::move(task)), update_movemap_(true)
 {
 	DockingHighRes::type( "SidechainMin" );
 	//scorefxn_ = new core::scoring::ScoreFunction( *scorefxn() );
@@ -106,7 +106,7 @@ SidechainMinMover::SidechainMinMover(
 	set_default();
 }
 //destructor
-SidechainMinMover::~SidechainMinMover() {}
+SidechainMinMover::~SidechainMinMover() = default;
 
 void SidechainMinMover::set_minmover( protocols::simple_moves::MinMoverOP minmover ){ minmover_ = minmover; }
 
@@ -165,7 +165,7 @@ InterfaceSidechainMinMover::InterfaceSidechainMinMover(
 }
 
 //destructor
-InterfaceSidechainMinMover::~InterfaceSidechainMinMover() {}
+InterfaceSidechainMinMover::~InterfaceSidechainMinMover() = default;
 
 void InterfaceSidechainMinMover::set_interface_dist( core::Real interface_dist)
 {

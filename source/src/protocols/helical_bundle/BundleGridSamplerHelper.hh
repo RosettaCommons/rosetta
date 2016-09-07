@@ -64,7 +64,7 @@ public:
 
 	BundleGridSamplerHelper( BundleGridSamplerHelper const & src );
 
-	~BundleGridSamplerHelper();
+	~BundleGridSamplerHelper() override;
 
 	/// @brief Copy this BundleGridSamplerHelper object( allocate actual memory for it )
 	///

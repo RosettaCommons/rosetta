@@ -110,7 +110,7 @@ using namespace basic::options::OptionKeys;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.FragmentPicker" );
 
-FragmentPicker::~FragmentPicker() {}
+FragmentPicker::~FragmentPicker() = default;
 
 void FragmentPicker::bounded_protocol() {
 	tr.Info << "pick fragments using bounded protocol..." << std::endl;
@@ -129,7 +129,7 @@ void FragmentPicker::quota_protocol() {
 		quota::QuotaCollectorOP c = (skip_merge) ?
 			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sinks_[1][fragment_size]) :
 			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sink_[fragment_size]); // merged storage
-		if ( c == 0 ) {
+		if ( c == nullptr ) {
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
 		}
 		log_25_.setup_summary(*c);
@@ -598,7 +598,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	Real const min_contacts = (nonlocal_min_contacts_per_res_ < 1.0) ? 1.0 : nonlocal_min_contacts_per_res_*(Real)fragment_size;
 	Size const maxiqpos = size_of_query()-(contacts_min_seq_sep_-1)-fragment_size-fragment_size+1;
 
-	time_t time_start = time(NULL);
+	time_t time_start = time(nullptr);
 
 	utility::vector1<utility::vector1<Size> > qPosi_to_run( max_threads_ );
 	Size positions_cnt = 0;
@@ -903,7 +903,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	// now output pair counts
 	output_pair_counts( fragment_size, neighbors, contact_counts );
 
-	time_t time_end = time(NULL);
+	time_t time_end = time(nullptr);
 
 	tr.Info << "... done.  Processed " << query_positions_.size() << " positions.  Time elapsed: "
 		<< (time_end - time_start) << " seconds." << std::endl;
@@ -919,17 +919,17 @@ FragmentPicker::output_pair_counts(
 	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts
 ) {
 	using namespace ObjexxFCL;
-	for ( std::set<ContactType>::iterator it=contact_types_.begin(), end =contact_types_.end(); it != end; ++it ) {
-		if ( *it == CEN ) {
+	for (auto contact_type : contact_types_) {
+		if ( contact_type == CEN ) {
 			std::string scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 			replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
-			const std::string out_file_name_contacts = prefix_ + "." + contact_name(*it) + "." + string_of(contacts_min_seq_sep_) + "." + scale_factor + "." +
+			const std::string out_file_name_contacts = prefix_ + "." + contact_name(contact_type) + "." + string_of(contacts_min_seq_sep_) + "." + scale_factor + "." +
 				string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.contacts";
 			utility::io::ozstream output_contacts(out_file_name_contacts);
 			output_contacts << "# i j count";
 			if ( neighbors > 0 ) output_contacts << " neighbors_" << neighbors << "_i_j_count";
 			output_contacts << std::endl;
-			std::pair<Real,ContactType> p(0,*it);
+			std::pair<Real,ContactType> p(0,contact_type);
 			std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
 			std::map<std::pair<Size,Size>, Size>::iterator iter, end;
 			for ( iter = query_counts.begin(), end = query_counts.end(); iter != end; ++iter ) {
@@ -948,13 +948,13 @@ FragmentPicker::output_pair_counts(
 			output_contacts.close();
 		} else {
 			for ( Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
-				const std::string out_file_name_contacts = prefix_ + "." + contact_name(*it) + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoffs_squared_[i])) +
+				const std::string out_file_name_contacts = prefix_ + "." + contact_name(contact_type) + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoffs_squared_[i])) +
 					"." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.contacts";
 				utility::io::ozstream output_contacts(out_file_name_contacts);
 				output_contacts << "# i j count";
 				if ( neighbors > 0 ) output_contacts << " neighbors_" << neighbors << "_i_j_count";
 				output_contacts << std::endl;
-				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
+				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],contact_type);
 				std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
 				std::map<std::pair<Size,Size>, Size>::iterator iter, end ;
 				for ( iter = query_counts.begin(), end = query_counts.end(); iter != end; ++iter ) {
@@ -1010,7 +1010,7 @@ void FragmentPicker::pick_candidates() {
 	tr.Info << "Picking candidates..." << std::endl;
 	tr.flush();
 
-	time_t time_start = time(NULL);
+	time_t time_start = time(nullptr);
 
 #if defined MULTI_THREADED || defined USE_BOOST_THREAD
 
@@ -1105,7 +1105,7 @@ void FragmentPicker::pick_candidates() {
 		}
 	} // all chunks done
 
-	time_t time_end = time(NULL);
+	time_t time_end = time(nullptr);
 	tr.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
 		<< (time_end - time_start) << " seconds." << std::endl;
 	tr.flush();
@@ -1625,7 +1625,7 @@ void FragmentPicker::set_query_seq(core::sequence::SequenceProfileOP query_seque
 
 /// @brief sets the query sequence
 void FragmentPicker::set_query_seq(std::string & query_sequence) {
-	if ( query_profile_ == 0 ) {
+	if ( query_profile_ == nullptr ) {
 		query_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile() );
 		tr.Warning << "CAUTION: No sequence profile supplied. Profile-dependant options/scoring will not work." << std::endl;
 	}
@@ -1648,34 +1648,34 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	for ( Size i = 1; i <= scores_[1]->count_components(); ++i ) {
 		ABEGO_SS_ScoreOP s0 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ABEGO_SS_Score > ( scores_[1]->get_component(i) );
-		if ( s0 != 0 ) {
+		if ( s0 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s0->get_id()] );
 		}
 		ProfileScoreL1OP s1 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ProfileScoreL1 > ( scores_[1]->get_component(i) );
-		if ( s1 != 0 ) {
+		if ( s1 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s1->get_id()] );
 		}
 
 		RamaScoreOP s2 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::RamaScore > ( scores_[1]->get_component(i) );
-		if ( s2 != 0 ) {
+		if ( s2 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s2->get_id()] );
 		}
 
 		CSScoreOP s3 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CSScore > ( scores_[1]->get_component(i) );
-		if ( s3 != 0 ) {
+		if ( s3 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s3->get_id()] );
 		}
 
 		SecondarySimilarityOP s4 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::SecondarySimilarity > ( scores_[1]->get_component(i) );
-		if ( s4 != 0 ) {
+		if ( s4 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s4->get_id()] );
 		}
@@ -1727,7 +1727,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 	for ( Size i = 1; i <= scores_[1]->count_components(); ++i ) {
 		ProfileScoreL1OP s1 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ProfileScoreL1 > ( scores_[1]->get_component(i) );
-		if ( s1 != 0 ) {
+		if ( s1 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s1->get_id()] );
 		}
@@ -1742,19 +1742,19 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 		*********/
 		CSScoreOP s3 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CSScore > ( scores_[1]->get_component(i) );
-		if ( s3 != 0 ) {
+		if ( s3 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s3->get_id()] );
 		}
 		ABEGO_SS_ScoreOP s4 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ABEGO_SS_Score > ( scores_[1]->get_component(i) );
-		if ( s4 != 0 ) {
+		if ( s4 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s4->get_id()] );
 		}
 		TorsionBinSimilarityOP s5 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::TorsionBinSimilarity > ( scores_[1]->get_component(i) );
-		if ( s5 != 0 ) {
+		if ( s5 != nullptr ) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s5->get_id()] );
 		}
@@ -1779,7 +1779,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 		// --------- dispatches each Rama into a proper pool
 		for ( Size i = 1; i <= scores_[1]->count_components(); ++i ) {
 			RamaScoreOP sr = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::RamaScore > ( scores_[1]->get_component(i) );
-			if ( sr != 0 ) {
+			if ( sr != nullptr ) {
 				std::string & name = sr->get_prediction_name();
 				if ( ! q_config.is_valid_quota_pool_name( name ) ) continue;
 				components[2] = i;
@@ -1802,7 +1802,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 			//    dynamic_cast<PartialSecondarySimilarity*> (scores_->get_component(i).get());
 			//  }
 
-			if ( ss != 0 ) {
+			if ( ss != nullptr ) {
 				std::string & name = ss->get_prediction_name();
 				if ( ! q_config.is_valid_quota_pool_name( name ) ) continue;
 				components[1] = i;
@@ -1943,7 +1943,7 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 
 			for ( Size fi = 1; fi <= out.size(); ++fi ) {
 
-				FragDataOP current_fragment( NULL );
+				FragDataOP current_fragment( nullptr );
 
 				for ( Size i = 1; i <= out[1].first->get_length(); ++i ) {
 					VallResidueOP r   =  out[fi].first->get_residue(i);

@@ -55,10 +55,10 @@ ScoreFunctionInfo::ScoreFunctionInfo( ScoreFunctionInfo const & src ) : utility:
 	max_context_neighbor_cutoff_( src.max_context_neighbor_cutoff_ ),
 	context_graphs_required_( src.context_graphs_required_ ),
 	scores_present_( src.scores_present_ ),
-	energy_method_options_( src.energy_method_options_ ? new methods::EnergyMethodOptions( * src.energy_method_options_ ) : 0 )
+	energy_method_options_( src.energy_method_options_ ? new methods::EnergyMethodOptions( * src.energy_method_options_ ) : nullptr )
 {}
 
-ScoreFunctionInfo::~ScoreFunctionInfo() {}
+ScoreFunctionInfo::~ScoreFunctionInfo() = default;
 
 ScoreFunctionInfo::ScoreFunctionInfo( ScoreFunction const & scorefxn )
 :

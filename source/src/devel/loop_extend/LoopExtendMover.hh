@@ -47,9 +47,9 @@ public:
 		init_omega_ = 180.0;
 	}
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 

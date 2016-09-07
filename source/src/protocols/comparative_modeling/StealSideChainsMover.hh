@@ -35,8 +35,8 @@ public:
 	);
 
 	/// maps from pose to source_
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	core::pose::Pose const & source_;

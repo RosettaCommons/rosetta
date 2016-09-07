@@ -58,7 +58,7 @@ LeastNativeLike9merFilter::LeastNativeLike9merFilter():
 {}
 
 // @brief destructor
-LeastNativeLike9merFilter::~LeastNativeLike9merFilter() {}
+LeastNativeLike9merFilter::~LeastNativeLike9merFilter() = default;
 
 
 /// @brief
@@ -88,7 +88,7 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 	Real worstRmsd = 0;
 	Size startRes = 1;
 	Size endRes = pose.total_residue()-fragment_length+1;
-	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 		endRes = symminfo->num_independent_residues()-fragment_length+1;

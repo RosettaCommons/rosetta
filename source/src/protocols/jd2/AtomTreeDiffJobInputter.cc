@@ -49,7 +49,7 @@ protocols::jd2::AtomTreeDiffJobInputter::AtomTreeDiffJobInputter()
 	tr.Debug << "Instantiate AtomTreeDiffJobInputter" << std::endl;
 }
 
-protocols::jd2::AtomTreeDiffJobInputter::~AtomTreeDiffJobInputter() {}
+protocols::jd2::AtomTreeDiffJobInputter::~AtomTreeDiffJobInputter() = default;
 
 /// @details This function will first see if the pose already exists in the Job.
 /// If not, it will read it into the pose reference, and hand a COP cloned from
@@ -123,7 +123,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( JobsContainer & jobs ){
 			if ( ! atom_tree_diff_.has_tag(tag) ) {
 				utility_exit_with_message("Input AtomTreeDiff file does not have tag "+tag);
 			}
-			core::import_pose::atom_tree_diffs::TagScoreMap::const_iterator tag_score_iter(atd_tsm.find(tag));
+			auto tag_score_iter(atd_tsm.find(tag));
 			assert( tag_score_iter != atd_tsm.end() ); // Shouldn't happen - we've checked it was present
 			tags[tag] = tag_score_iter->second;
 		}

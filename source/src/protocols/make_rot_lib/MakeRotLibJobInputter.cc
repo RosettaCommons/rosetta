@@ -67,7 +67,7 @@ protocols::make_rot_lib::MakeRotLibJobInputter::MakeRotLibJobInputter() :
 	mrlod_ = MakeRotLibOptionsDataOP( new MakeRotLibOptionsData( option[ OptionKeys::make_rot_lib::options_file ].value() ) );
 }
 
-protocols::make_rot_lib::MakeRotLibJobInputter::~MakeRotLibJobInputter(){}
+protocols::make_rot_lib::MakeRotLibJobInputter::~MakeRotLibJobInputter()= default;
 
 /// @details This function will first see if the pose already exists in the Job. If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it. The Job object (within its InnerJob) contains a PoseCOP. This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
 void

@@ -33,18 +33,20 @@ public:
 	Adduct();
 
 	/// constructor
+	/// @details string fields are moved, not copied, so we are fine - you
+	/// don't have to change these to const &s
 	Adduct(
-		std::string const & adduct_name,
-		std::string const & atom_name,
-		std::string const & atom_type_name,
-		std::string const & mm_atom_type_name,
+		std::string adduct_name,
+		std::string atom_name,
+		std::string atom_type_name,
+		std::string mm_atom_type_name,
 		Real const atom_charge_in,
 		Real const phi_in,
 		Real const theta_in,
 		Real const d_in,
-		std::string const & stub_atom1_name,
-		std::string const & stub_atom2_name,
-		std::string const & stub_atom3_name
+		std::string stub_atom1_name,
+		std::string stub_atom2_name,
+		std::string stub_atom3_name
 	);
 
 public:

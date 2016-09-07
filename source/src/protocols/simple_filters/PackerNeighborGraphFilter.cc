@@ -64,13 +64,13 @@ RegionalConnections::check_if_connected_residues_belong_to_regions(
 
 
 PackerNeighborGraphFilter::PackerNeighborGraphFilter()
-: task_( /* NULL */ ), sfxn_( NULL ), task_invalidated_( false )
+: task_( /* NULL */ ), sfxn_( nullptr ), task_invalidated_( false )
 {
 	required_connections_per_res_.clear();
 	required_connections_between_regions_.clear();
 }
 
-PackerNeighborGraphFilter::~PackerNeighborGraphFilter(){}
+PackerNeighborGraphFilter::~PackerNeighborGraphFilter()= default;
 
 void
 PackerNeighborGraphFilter::set_required_connections_for_residue(
@@ -89,7 +89,7 @@ PackerNeighborGraphFilter::add_required_connection_for_residue(
 	core::Size residue
 ){
 
-	std::map< core::Size, core::Size >::iterator map_it = required_connections_per_res_.find( residue );
+	auto map_it = required_connections_per_res_.find( residue );
 
 	if ( map_it == required_connections_per_res_.end() ) {
 		required_connections_per_res_.insert( std::make_pair( residue, 1 ) );
@@ -114,10 +114,10 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 	//if( task_invalidated_ ) utility_exit_with_message("Calling PackerNeighborGraphFilter apply function even though the task has been invalidated");
 
 	std::map< core::Size, core::Size > connections_for_important_res;
-	utility::vector1< RegionalConnections >::const_iterator regions_end = required_connections_between_regions_.end();
+	auto regions_end = required_connections_between_regions_.end();
 
 	//reset all the regions
-	for ( utility::vector1< RegionalConnections >::const_iterator reg_it = required_connections_between_regions_.begin();
+	for ( auto reg_it = required_connections_between_regions_.begin();
 			reg_it != regions_end; ++reg_it ) {
 		reg_it->reset_num_connections();
 	}
@@ -137,7 +137,7 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 		//check if either of these residues have required connections
 		if ( required_connections_per_res_.find( res1 ) != required_connections_per_res_.end() ) {
 
-			std::map< core::Size, core::Size >::iterator map_it = connections_for_important_res.find( res1 );
+			auto map_it = connections_for_important_res.find( res1 );
 			if ( map_it  == connections_for_important_res.end() ) {
 
 				connections_for_important_res.insert( std::pair< core::Size, core::Size >( res1, 1 ) );
@@ -146,7 +146,7 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 
 		if ( required_connections_per_res_.find( res2 ) != required_connections_per_res_.end() ) {
 
-			std::map< core::Size, core::Size >::iterator map_it = connections_for_important_res.find( res2 );
+			auto map_it = connections_for_important_res.find( res2 );
 			if ( map_it  == connections_for_important_res.end() ) {
 
 				connections_for_important_res.insert( std::pair< core::Size, core::Size >( res2, 1 ) );
@@ -154,7 +154,7 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 		}
 
 		//now check whether these two residues belong to regions that we care about
-		for ( utility::vector1< RegionalConnections >::const_iterator reg_it = required_connections_between_regions_.begin();
+		for ( auto reg_it = required_connections_between_regions_.begin();
 				reg_it != regions_end; ++reg_it ) {
 			reg_it->check_if_connected_residues_belong_to_regions( res1, res2 );
 		}
@@ -164,19 +164,18 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 
 	//aight. now let's check whether the connections in the png satisfy the requirements
 	//first, let's check if all required residues have a sufficient number of connections
-	for ( std::map< core::Size, core::Size >::const_iterator reqmap_it = required_connections_per_res_.begin();
-			reqmap_it != required_connections_per_res_.end(); ++reqmap_it ) {
+	for (const auto & required_connections_per_re : required_connections_per_res_) {
 
-		std::map< core::Size, core::Size >::const_iterator curmap_it = connections_for_important_res.find( reqmap_it->first );
+		std::map< core::Size, core::Size >::const_iterator curmap_it = connections_for_important_res.find( required_connections_per_re.first );
 
 		if ( curmap_it == connections_for_important_res.end() ) return false; //residue was required to have connections but had 0
 
-		else if ( curmap_it->second < reqmap_it->second ) return false;  //residue had too little connections
+		else if ( curmap_it->second < required_connections_per_re.second ) return false;  //residue had too little connections
 
 	}
 
 	//second, check whether all the regions have the right number of connections
-	for ( utility::vector1< RegionalConnections >::const_iterator reg_it = required_connections_between_regions_.begin();
+	for ( auto reg_it = required_connections_between_regions_.begin();
 			reg_it != regions_end; ++reg_it ) {
 		if ( ! reg_it->enough_connections() ) return false;
 	}

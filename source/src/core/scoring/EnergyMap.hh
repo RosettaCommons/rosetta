@@ -113,9 +113,8 @@ public:
 	void
 	zero( ScoreTypes const & l )
 	{
-		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-				iter != iter_end; ++iter ) {
-			operator[]( *iter ) = 0.0;
+		for (auto iter : l) {
+			operator[]( iter ) = 0.0;
 		}
 	}
 
@@ -148,8 +147,8 @@ public:
 	void
 	clear()
 	{
-		for ( int ii = 0; ii < n_score_types; ++ii ) {
-			map_[ ii ] = 0;
+		for (double & ii : map_) {
+			ii = 0;
 		}
 		//memset( map_, 0.0, n_score_types );
 	}
@@ -183,9 +182,8 @@ public:
 	dot( EMapVector const & src,  ScoreTypes const & l ) const
 	{
 		Real total(0.0);
-		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-				iter != iter_end; ++iter ) {
-			total += operator[]( *iter ) * src[ *iter ];
+		for (auto iter : l) {
+			total += operator[]( iter ) * src[ iter ];
 		}
 		return total;
 	}
@@ -213,8 +211,8 @@ public:
 	void
 	operator *= ( Real scalar )
 	{
-		for ( int ii = 0; ii < n_score_types; ++ii ) {
-			map_[ii] *= scalar;
+		for (double & ii : map_) {
+			ii *= scalar;
 		}
 	}
 
@@ -278,9 +276,8 @@ public:
 	void
 	accumulate( EMapVector const & src, ScoreTypes const & l )
 	{
-		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-				iter != iter_end; ++iter ) {
-			operator[]( *iter ) += src[ *iter ];
+		for (auto iter : l) {
+			operator[]( iter ) += src[ iter ];
 		}
 	}
 
@@ -289,9 +286,8 @@ public:
 	void
 	accumulate( EMapVector const & src, ScoreTypes const & l, Real const wt )
 	{
-		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-				iter != iter_end; ++iter ) {
-			operator[]( *iter ) += wt * src[ *iter ];
+		for (auto iter : l) {
+			operator[]( iter ) += wt * src[ iter ];
 		}
 	}
 
@@ -309,8 +305,8 @@ public:
 	sum()
 	{
 		Real total( 0.0 );
-		for ( int ii = 0; ii < n_score_types; ++ii ) {
-			total += map_[ii];
+		for (double ii : map_) {
+			total += ii;
 		}
 		return total;
 	}
@@ -320,10 +316,9 @@ public:
 	norm_squared( ScoreTypes const & l )
 	{
 		Real total( 0.0 );
-		for ( ScoreTypes::const_iterator iter=l.begin(), iter_end=l.end();
-				iter != iter_end; ++iter ) {
+		for (auto iter : l) {
 			// could use numeric::square
-			Real const val( operator[]( *iter ) );
+			Real const val( operator[]( iter ) );
 			total += val * val;
 		}
 		return total;

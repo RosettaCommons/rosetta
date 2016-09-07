@@ -26,6 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <protocols/relax/FastRelax.hh>
 //#include <protocols/match/Hit.fwd.hh>
@@ -87,7 +88,7 @@ static THREAD_LOCAL basic::Tracer TR( "LocalHashRelaxProtocol" );
 namespace protocols {
 namespace loophash {
 
-LoopHashRelaxProtocol::LoopHashRelaxProtocol( LoopHashLibraryOP library ) : library_(library)
+LoopHashRelaxProtocol::LoopHashRelaxProtocol( LoopHashLibraryOP library ) : library_(std::move(library))
 {
 	std::cout << "HERE!" << std::endl;
 }
@@ -156,7 +157,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 	core::pose::set_ss_from_phipsi( pose );
 
 	// Generate alternate structures
-	core::Size starttime2 = time(NULL);
+	core::Size starttime2 = time(nullptr);
 	core::Size sampler_chunk_size = 1;
 	core::Size start_res;
 	core::Size stop_res;
@@ -177,7 +178,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 		lsampler.set_start_res( start_res );
 		lsampler.set_stop_res(  stop_res );
 		lsampler.build_structures( pose, lib_structs );
-		core::Size endtime2 = time(NULL);
+		core::Size endtime2 = time(nullptr);
 		//core::Size loophash_time = endtime2 - starttime2;
 		TR.Info << "FOUND (" << start_res << " to " << stop_res << "): "
 			<< lib_structs.size() << " states in time: "
@@ -196,18 +197,18 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
 	core::Real bestcenscore = MAXIMAL_FLOAT;
 	//core::Size bestcenindex = 0;
-	for ( core::Size h = 0; h < select_lib_structs.size(); h++ ) {
+	for (auto & select_lib_struct : select_lib_structs) {
 		core::pose::Pose rpose;
-		select_lib_structs[h]->fill_pose( rpose );
+		select_lib_struct->fill_pose( rpose );
 
 		//rpose.dump_pdb("struct_" + string_of(h) + ".pdb" );
 
 		core::Real refrms = 0;
 		core::Real rms_factor = 10.0;
-		core::Real decoy_score = select_lib_structs[h]->get_energy("lh_censcore") + refrms * rms_factor;
+		core::Real decoy_score = select_lib_struct->get_energy("lh_censcore") + refrms * rms_factor;
 
-		select_lib_structs[h]->add_energy( "refrms",     refrms,      1.0 );
-		select_lib_structs[h]->add_energy( "comb_score", decoy_score, 1.0 );
+		select_lib_struct->add_energy( "refrms",     refrms,      1.0 );
+		select_lib_struct->add_energy( "comb_score", decoy_score, 1.0 );
 		TR.Info << "refrms: " << refrms << "  Energy: " << decoy_score << std::endl;
 		if ( decoy_score < bestcenscore ) {
 			bestcenscore = decoy_score;
@@ -217,9 +218,9 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 	TR.Info << "Best:" << "  Energy: " << bestcenscore << std::endl;
 
 	/// For fullatom goodness, continue
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	relax->batch_apply( select_lib_structs );
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	//core::Size batchrelax_time = endtime - starttime;
 	TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 

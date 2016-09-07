@@ -55,7 +55,7 @@ ResidueProperties::ResidueProperties( ResidueProperties const & object_to_copy, 
 }
 
 // Destructor
-ResidueProperties::~ResidueProperties() {}
+ResidueProperties::~ResidueProperties() = default;
 
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
@@ -159,7 +159,7 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 					custom_variant_types_.push_back( variant_type );
 				}
 			} else /* setting == false */ {
-				vector1< string >::iterator i =
+				auto i =
 					find( custom_variant_types_.begin(), custom_variant_types_.end(), variant_type );
 				if ( i == custom_variant_types_.end() ) {
 					utility_exit_with_message( "Rosetta does not recognize the custom variant " + variant_type +

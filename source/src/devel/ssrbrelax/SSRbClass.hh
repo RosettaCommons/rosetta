@@ -194,34 +194,32 @@ namespace ssrbrelax {
 											int const & seg_end
 											);
 
-		Vector const
-		X_axis(
+		Vector axis(
 					 core::pose::Pose & pose
 					 );
 
-		Vector const
-		Z_axis(
+		Vector 
+		Z_;
 					 core::pose::Pose & pose
 					 );
 
-		Vector const
-		Y_axis(
-					 core::pose::Pose & pose
+		Vector 
+		Y_axis(	 core::pose::Pose & pose
 					 );
 
-		Vector const
+		Vector 
 		alt_X_axis(
-			core::pose::Pose & pose
+re::pose::Pose & pose
 		);
 
-		Vector const
+		Vector 
 		alt_Y_axis(
-			core::pose::Pose & pose
+			coose::Pose & pose
 		);
 
-		Vector const
+		Vector 
 		alt_Z_axis(
-			core::pose::Pose & pose
+			core::pPose & pose
 		);
 
 	};

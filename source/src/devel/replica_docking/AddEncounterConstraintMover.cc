@@ -75,7 +75,7 @@ AddEncounterConstraintMoverCreator::mover_name()
 AddEncounterConstraintMover::AddEncounterConstraintMover()
 : moves::Mover( AddEncounterConstraintMoverCreator::mover_name() )
 {
-	cst_ = NULL;
+	cst_ = nullptr;
 }
 
 moves::MoverOP
@@ -83,7 +83,7 @@ AddEncounterConstraintMover::clone() const {
 	return moves::MoverOP( new AddEncounterConstraintMover( *this ) );
 }
 
-AddEncounterConstraintMover::~AddEncounterConstraintMover(){}
+AddEncounterConstraintMover::~AddEncounterConstraintMover() = default;
 
 void
 AddEncounterConstraintMover::apply(pose::Pose& pose){

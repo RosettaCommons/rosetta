@@ -59,43 +59,43 @@ public:
 		SequenceProfileCOP profile
 	);
 
-	virtual ~SequenceCoupling1BDConstraint();
+	~SequenceCoupling1BDConstraint() override;
 
-	virtual ConstraintOP clone() const;
+	ConstraintOP clone() const override;
 
-	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;
 
-	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const override;
 
-	virtual std::string type() const { return "SequenceCoupling1BD"; }
+	std::string type() const override { return "SequenceCoupling1BD"; }
 
 	/// @brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
-	virtual void
+	void
 	read_def(
 		std::istream &,
 		Pose const &,
 		FuncFactory const &
-	);
+	) override;
 
-	virtual void show( std::ostream & out ) const;
+	void show( std::ostream & out ) const override;
 
 	//virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
 
-	virtual void
+	void
 	score(
 		XYZ_Func const &,
 		EnergyMap const &,
 		EnergyMap &
-	) const;
+	) const override;
 
-	virtual void
+	void
 	fill_f1_f2(
 		AtomID const &,
 		XYZ_Func const &,
 		core::Vector &,
 		core::Vector &,
 		EnergyMap const &
-	) const;
+	) const override;
 
 #ifdef    SERIALIZATION
 public:

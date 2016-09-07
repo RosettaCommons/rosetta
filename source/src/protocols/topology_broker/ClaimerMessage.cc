@@ -19,6 +19,7 @@
 
 #include <iostream>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -26,15 +27,15 @@ namespace protocols {
 namespace topology_broker {
 
 ClaimerMessage::ClaimerMessage() : label_( "NoAddress" ) {}
-ClaimerMessage::ClaimerMessage( std::string label ) : label_( label ) {}
+ClaimerMessage::ClaimerMessage( std::string label ) : label_(std::move( label )) {}
 
-ClaimerMessage::~ClaimerMessage() {}
+ClaimerMessage::~ClaimerMessage() = default;
 
 
 extern std::ostream& operator << ( std::ostream& os, ClaimerMessage const& cm ) {
 	os << "ClaimerMessage type: " << cm.type() << " received by:\n ";
-	for ( ClaimerMessage::TopologyClaimerCAPs::const_iterator it = cm.received_by_.begin(); it != cm.received_by_.end(); ++it ) {
-		TopologyClaimerCOP claim(*it);
+	for (const auto & it : cm.received_by_) {
+		TopologyClaimerCOP claim(it);
 		os << "      " << claim->label() << " of type " << claim->type() << "\n";
 	}
 	cm.show( os );
@@ -55,7 +56,7 @@ bool ClaimerMessage::received() const {
 }
 
 SuggestValueMessage::SuggestValueMessage( std::string label ) : ClaimerMessage( label ) {}
-SuggestValueMessage::~SuggestValueMessage() {}
+SuggestValueMessage::~SuggestValueMessage() = default;
 
 
 } //topology_broker

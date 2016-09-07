@@ -154,10 +154,10 @@ Splice::Splice() :
 	Mover(SpliceCreator::mover_name()), from_res_(0), to_res_(0), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
 	/* NULL */), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_( /* NULL */),
 	design_task_factory_( /* NULL */), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
-	template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(/* NULL */), start_pose_( NULL),source_pose_(NULL),
+	template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(/* NULL */), start_pose_( nullptr),source_pose_(nullptr),
 	saved_fold_tree_( /* NULL */), design_(false), dbase_iterate_(false), allow_all_aa_(false), thread_original_sequence_(false),
 	rtmin_(true), first_pass_(true), locked_res_( /* NULL */), locked_res_id_(' '), checkpointing_file_(""),
-	loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(/* NULL */), splice_filter_( NULL), Pdb4LetName_(""),
+	loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(/* NULL */), splice_filter_( nullptr), Pdb4LetName_(""),
 	use_sequence_profiles_(false), segment_type_("") {
 	profile_weight_away_from_interface_ = 1.0;
 	restrict_to_repacking_chain2_ = true;
@@ -191,8 +191,7 @@ Splice::Splice() :
 	delete_hairpin_n( 0 );
 }
 
-Splice::~Splice() {
-}
+Splice::~Splice() = default;
 
 /// @brief copy a stretch of aligned phi-psi dofs from source to target. No repacking no nothing.
 /// The core function, copy_segment, copies residues from the source to the target without aligning the residues, thereby delivering all of their dofs
@@ -744,7 +743,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		//adding current segment to pose comments
 		TR << "The currnet segment is: " << segment_type_ << " and the source pdb is " << Pdb4LetName_ << std::endl;
 		core::pose::add_comment(pose, "segment_" + segment_type_, Pdb4LetName_);//change correct association between current loop and pdb file
-		if ( mover_tag_ != NULL ) {
+		if ( mover_tag_ != nullptr ) {
 			mover_tag_->obj = "segment_" + source_pdb_name;
 		}
 		BOOST_FOREACH ( BBDofs & resdofs, dofs ) {
@@ -1049,7 +1048,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	tso->allow_design_around(true); // 21Sep12: from now on the design shell is determined downstream //false );
 	TR << "Source segment sequence: " << threaded_seq << " starting from " << from_res() << std::endl;
 	TaskFactoryOP tf;
-	if ( design_task_factory() == NULL ) {
+	if ( design_task_factory() == nullptr ) {
 		tf = TaskFactoryOP( new TaskFactory );
 	} else {
 		tf = TaskFactoryOP( new TaskFactory(*design_task_factory()) );
@@ -1070,7 +1069,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	}
 
 	DesignAroundOperationOP dao( new DesignAroundOperation );
-	dao->design_shell((design_task_factory() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->design_shell((design_task_factory() == nullptr ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell(repack_shell());
 
 	TR << "Dao design shell: " << dao->design_shell() << ", Dao repack shell: " << repack_shell()
@@ -1208,7 +1207,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			mm->set_bb(i, true);
 
 		}
-		//TR<<""<<std::endl;;
+		//TR<<""<<std::endl;
 		// TR<<"Residues allowed to minimize"<<std::endl;
 
 		mm->show();
@@ -1421,7 +1420,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			}
 
 			DesignAroundOperationOP dao( new DesignAroundOperation );
-			dao->design_shell((design_task_factory() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+			dao->design_shell((design_task_factory() == nullptr ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 			dao->repack_shell(repack_shell());
 			for ( core::Size i = tail_start; i <= tail_end; ++i ) {
 				if ( !pose.residue(i).has_variant_type(DISULFIDE) ) {
@@ -1630,7 +1629,7 @@ void Splice::apply(core::pose::Pose & pose) {
 				for ( std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin(); restype != allowed_aas.end(); ++restype ) {
 					TR<<(*restype )->name1()<<",";
 				}
-				TR<<std::endl;;
+				TR<<std::endl;
 			}
 
 			pose.dump_pdb(mover_name_+"_before_ppk.pdb");
@@ -2033,7 +2032,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 		delta_lengths_.push_back(0);
 	}
 	std::sort(delta_lengths_.begin(), delta_lengths_.end());
-	utility::vector1<int >::iterator last = std::unique(delta_lengths_.begin(), delta_lengths_.end());
+	auto last = std::unique(delta_lengths_.begin(), delta_lengths_.end());
 	delta_lengths_.erase(last, delta_lengths_.end());
 	//TR<<"Deltas from xml: ";
 	//BOOST_FOREACH( int const d, delta_lengths_ )
@@ -2165,7 +2164,7 @@ void Splice::read_torsion_database() {
 				bbdof_entry.source_pdb(omega);
 
 			} else {
-				bbdof_entry.push_back(BBDofs(0/*resstd::map<std::string, core::Size> cys_pos;//store all cysteine positions in the AB chainid*/,std::strtod(phi.c_str(),0), std::strtod(psi.c_str(),0), std::strtod(omega.c_str(),0), resn)); /// resid may one day be used. Currently it isn't
+				bbdof_entry.push_back(BBDofs(0/*resstd::map<std::string, core::Size> cys_pos;//store all cysteine positions in the AB chainid*/,std::strtod(phi.c_str(),nullptr), std::strtod(psi.c_str(),nullptr), std::strtod(omega.c_str(),nullptr), resn)); /// resid may one day be used. Currently it isn't
 			}
 		}
 
@@ -2464,11 +2463,9 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 	TR << "Current ft: " << pose.fold_tree() << std::endl;
 }
 
-BBDofs::~BBDofs() {
-}
+BBDofs::~BBDofs() = default;
 
-ResidueBBDofs::~ResidueBBDofs() {
-}
+ResidueBBDofs::~ResidueBBDofs() = default;
 
 utility::vector1<core::Size>::const_iterator Splice::dbase_begin() const {
 	return dbase_subset_.begin();
@@ -2541,7 +2538,7 @@ Splice::read_splice_segments(std::string const segment_type, std::string const s
 
 core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::Pose & pose) {
 	if ( !use_sequence_profiles_ ) {
-		return NULL;
+		return nullptr;
 	}
 	using namespace core::sequence;
 	using namespace std;
@@ -2592,7 +2589,7 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::
 
 	BOOST_FOREACH ( std::string const segment_type, segment_names_ordered_ ) { //<- Start of PDB segment iterator
 		TR<<"segment_type: "<<segment_type<<std::endl;
-		if ( splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0 ) {
+		if ( splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==nullptr ) {
 			utility_exit_with_message(" could not find the source pdb name: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+" or PSSM file is missing\n");
 		}
 		TR<<"reading profile:"<< pdb_segments_[segment_type]<<std::endl;
@@ -2648,11 +2645,11 @@ void Splice::load_pdb_segments_from_pose_comments(core::pose::Pose const & pose)
 	using namespace std;
 	map<string, string> const comments = core::pose::get_all_comments(pose);
 	TR << "The size of comments is: " << comments.size() << std::endl;
-	for ( std::map<string, string>::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
+	for (const auto & comment : comments) {
 		//TR<<"the size of j is: "<<j<<std::endl;
-		std::string const key(i->first);
+		std::string const key(comment.first);
 		//TR<<"the size of j after i->first is: "<<j<<std::endl;
-		std::string const val(i->second);
+		std::string const val(comment.second);
 		//TR<<"the size of j after i->second is: "<<j<<std::endl;
 		if ( key.substr(0, 7) != "segment" ) { /// the expected format is segment_??, where we're interested in ??
 			continue;
@@ -3052,7 +3049,7 @@ core::Size Splice::find_non_active_site_cut_site(core::pose::Pose const & pose) 
 	TR<<"Placing cut away from functional site"<<std::endl;
 	std::string const source_pdb_name(parse_pdb_code(pose.pdb_info()->name()));
 	//use pssm to find conserved trp
-	if ( splice_segments_[ segment_type_ ]->pdb_profile( source_pdb_name )==0 ) {
+	if ( splice_segments_[ segment_type_ ]->pdb_profile( source_pdb_name )==nullptr ) {
 		utility_exit_with_message(" could not find the source pdb name: "+ source_pdb_name + ", in pdb_profile_match file."+segment_type_+" or PSSM file is missing\n");
 	} else {
 		profile=splice_segments_[ segment_type_ ]->pdb_profile( source_pdb_name );

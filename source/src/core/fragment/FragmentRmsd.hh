@@ -37,7 +37,7 @@ class FragmentRmsd : public utility::pointer::ReferenceCount {
 
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FragmentRmsd();
+	~FragmentRmsd() override;
 	FragmentRmsd(FragSetCOP fragments);
 
 	/// @brief Returns the kth fragment at the specified position

@@ -39,24 +39,24 @@ public:
 		set_defaults();
 	}
 
-	virtual ~MPI_LoopHashRefine_Emperor(){};
+	~MPI_LoopHashRefine_Emperor() override= default;
 
 	void set_defaults();
 
 public:
 
-	virtual void go();
+	void go() override;
 
 protected:
 
-	virtual void init();
+	void init() override;
 
-	virtual void process_inbound_wus();
+	void process_inbound_wus() override;
 
-	virtual void process_outbound_wus();
+	void process_outbound_wus() override;
 
 	// adding arriving structures to library
-	virtual bool add_structures_to_library( protocols::wum::SilentStructStore &new_structs, std::string add_algorithm = "" );
+	bool add_structures_to_library( protocols::wum::SilentStructStore &new_structs, std::string add_algorithm = "" ) override;
 private:
 
 	core::Size max_emperor_lib_round_;

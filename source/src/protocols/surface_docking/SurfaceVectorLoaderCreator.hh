@@ -30,12 +30,12 @@ namespace surface_docking {
 class SurfaceVectorLoaderCreator : public basic::resource_manager::ResourceLoaderCreator
 {
 public:
-	virtual
+	
 	basic::resource_manager::ResourceLoaderOP
-	create_resource_loader() const;
+	create_resource_loader() const override;
 
-	virtual
-	std::string loader_type() const;
+	
+	std::string loader_type() const override;
 
 };
 

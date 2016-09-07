@@ -61,7 +61,7 @@ namespace jumping {
 /// @brief two numbers, i.e., jump start end residue, or cut-regions...
 class Interval {
 public:
-	Interval() {};
+	Interval() = default;
 
 	Interval( core::Size start, core::Size end ) :
 		start_( start ), end_( end ) {};
@@ -83,7 +83,7 @@ class JumpSetup;
 class BaseJumpSetup : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~BaseJumpSetup();
+	~BaseJumpSetup() override;
 	virtual
 	JumpSample
 	create_jump_sample( ) const = 0;
@@ -120,7 +120,7 @@ public:
 		Interval cut_reg_;
 	};
 
-	std::string type_name() const {
+	std::string type_name() const override {
 		return "JumpSetup";
 	}
 public:
@@ -174,11 +174,11 @@ public:
 	read_file( std::string file );
 
 	JumpSample
-	create_jump_sample( ) const
+	create_jump_sample( ) const override
 	{ return jump_sample_; }
 
 	JumpSample
-	clean_jumps( JumpSample const& js ) const
+	clean_jumps( JumpSample const& js ) const override
 	{
 		hh_tr.Error << "ERROR: JumpSetup::clean_jumps() not implemented" << std::endl;
 		return js;
@@ -207,7 +207,7 @@ public:
 	JumpsFromAllPairings( const core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability ) : total_residue_(total_residue), jumps_(jumps), cut_prob_(cut_probability) {
 	}
 
-	JumpSample create_jump_sample() const {
+	JumpSample create_jump_sample() const override {
 		return JumpSample(total_residue_, jumps_, cut_prob_);
 	}
 
@@ -252,7 +252,7 @@ public:
 		core::Real weight_;
 	};
 
-	std::string type_name() const {
+	std::string type_name() const override {
 		return "JumpSelector";
 	}
 
@@ -263,7 +263,7 @@ public:
 
 	JumpSelector();
 	JumpSelector( std::string ss );
-	~JumpSelector();
+	~JumpSelector() override;
 
 	//@brief add a new jump to the list
 	void
@@ -304,10 +304,10 @@ public:
 	select_random() const;
 
 	JumpSample
-	create_jump_sample( ) const;
+	create_jump_sample( ) const override;
 
 	JumpSample
-	clean_jumps( JumpSample const& js ) const {
+	clean_jumps( JumpSample const& js ) const override {
 		hh_tr.Error << "JumpSelector::clean_jumps() is NOT IMPLEMENTED." << std::endl;
 		return js;
 	};

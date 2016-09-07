@@ -17,7 +17,7 @@ namespace protocols {
 namespace rosetta_scripts {
 
 PosePropertyReporterCreator::PosePropertyReporterCreator() {}
-PosePropertyReporterCreator::~PosePropertyReporterCreator() {}
+PosePropertyReporterCreator::~PosePropertyReporterCreator() = default;
 
 } //namespace rosetta_scripts
 } //namespace protocols

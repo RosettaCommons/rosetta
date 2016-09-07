@@ -54,7 +54,7 @@ public:
 	//  ResidualDipolarCoupling_Rohl( ResidualDipolarCoupling_Rohl const & src ){}
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling_Rohl( *this ) );
 	}
@@ -89,7 +89,7 @@ public:
 class RDC_Rohl {
 
 public:
-	RDC_Rohl(){}
+	RDC_Rohl()= default;
 
 	RDC_Rohl(
 		Size type,
@@ -186,7 +186,7 @@ public:
 
 private:
 	Size type_, res_;
-	Real Jdipolar_, Reduced_Jdipolar_;
+	Real Jdipolar_/*, Reduced_Jdipolar_*/;
 	Real weight_;
 };
 

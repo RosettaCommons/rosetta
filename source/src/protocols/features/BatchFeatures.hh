@@ -40,7 +40,7 @@ public:
 
 	BatchFeatures( BatchFeatures const & src );
 
-	virtual ~BatchFeatures();
+	~BatchFeatures() override;
 
 	/// @brief return string with class name
 	std::string

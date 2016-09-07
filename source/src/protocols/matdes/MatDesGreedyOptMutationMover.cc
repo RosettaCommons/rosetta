@@ -144,7 +144,7 @@ MatDesGreedyOptMutationMover::MatDesGreedyOptMutationMover(
 }
 
 //destruction!
-MatDesGreedyOptMutationMover::~MatDesGreedyOptMutationMover(){}
+MatDesGreedyOptMutationMover::~MatDesGreedyOptMutationMover()= default;
 
 //creators
 protocols::moves::MoverOP
@@ -939,7 +939,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	//load relax mover
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
+	auto mover_it( movers.find( relax_mover_name ) );
 	if ( mover_it == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
 	}
@@ -966,7 +966,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
 			BOOST_FOREACH ( utility::tag::TagCOP const ftag, filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
-				Filters_map::const_iterator find_filt( filters.find( filter_name ));
+				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
 					TR.Error << "Error !! filter not found in map: \n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
@@ -983,7 +983,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	{
 		std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
 		if ( filter_name != "true_filter" || filters_.size() < 1 ) {
-			protocols::filters::Filters_map::const_iterator find_filt( filters.find( filter_name ) );
+			auto find_filt( filters.find( filter_name ) );
 			if ( find_filt == filters.end() ) {
 				throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
 			}
@@ -1003,12 +1003,12 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
 		}
-		for ( protocols::filters::Filters_map::const_iterator it=filters.begin(); it!=filters.end(); ++it ) {
-			if ( it->second->get_type() == "CompoundStatement" ) {
-				compound_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( it->second ));
+		for (const auto & filter : filters) {
+			if ( filter.second->get_type() == "CompoundStatement" ) {
+				compound_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter.second ));
 			}
-			if ( it->second->get_type() == "CombinedValue" ) {
-				combined_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CombinedFilter > ( it->second ));
+			if ( filter.second->get_type() == "CombinedValue" ) {
+				combined_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CombinedFilter > ( filter.second ));
 			}
 		}
 	}

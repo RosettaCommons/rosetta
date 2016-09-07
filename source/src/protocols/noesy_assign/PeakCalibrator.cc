@@ -52,14 +52,14 @@ namespace protocols {
 namespace noesy_assign {
 
 /// @details Auto-generated virtual destructor
-PeakCalibratorMap::~PeakCalibratorMap() {}
+PeakCalibratorMap::~PeakCalibratorMap() = default;
 
 /// @details Auto-generated virtual destructor
-PeakCalibrator::~PeakCalibrator() {}
+PeakCalibrator::~PeakCalibrator() = default;
 
 PeakCalibratorMap::PeakCalibratorMap( CrossPeakList& list, PeakCalibratorOP calibrator_template ) {
 	PeakCalibratorOP fresh_calibrator = calibrator_template->fresh_instance();
-	for ( CrossPeakList::iterator it = list.begin(); it != list.end(); ++it ) {
+	for ( auto it = list.begin(); it != list.end(); ++it ) {
 		std::pair< CalibratorMap::iterator, bool > last_insert;
 		last_insert = calibrators_.insert( std::make_pair( (*it)->filename(), fresh_calibrator ) );
 		if ( last_insert.second ) { //true if new element was inserted
@@ -67,33 +67,33 @@ PeakCalibratorMap::PeakCalibratorMap( CrossPeakList& list, PeakCalibratorOP cali
 		}
 		(last_insert.first->second)->add_peak( *it );
 	}
-	for ( CalibratorMap::iterator it=calibrators_.begin(); it!=calibrators_.end(); ++it ) {
-		it->second->init_calibrator();
+	for (auto & calibrator : calibrators_) {
+		calibrator.second->init_calibrator();
 	}
 }
 
 void PeakCalibratorMap::set_new_upper_bounds() {
-	for ( CalibratorMap::iterator it=calibrators_.begin(); it!=calibrators_.end(); ++it ) {
-		it->second->set_new_upper_bounds();
+	for (auto & calibrator : calibrators_) {
+		calibrator.second->set_new_upper_bounds();
 	}
 }
 
 void PeakCalibratorMap::do_calibration() {
-	for ( CalibratorMap::iterator it=calibrators_.begin(); it!=calibrators_.end(); ++it ) {
-		tr.Info << "Calibrate " << it->first << "..." << std::endl;
-		it->second->do_calibration();
+	for (auto & calibrator : calibrators_) {
+		tr.Info << "Calibrate " << calibrator.first << "..." << std::endl;
+		calibrator.second->do_calibration();
 	}
 }
 
 void PeakCalibratorMap::set_target_and_tolerance( core::Real target, core::Real tolerance ) {
-	for ( CalibratorMap::iterator it=calibrators_.begin(); it!=calibrators_.end(); ++it ) {
-		it->second->set_target_and_tolerance( target, tolerance );
+	for (auto & calibrator : calibrators_) {
+		calibrator.second->set_target_and_tolerance( target, tolerance );
 	}
 }
 
 void PeakCalibratorMap::eliminate_violated_constraints() {
-	for ( CalibratorMap::iterator it=calibrators_.begin(); it!=calibrators_.end(); ++it ) {
-		it->second->eliminate_violated_constraints();
+	for (auto & calibrator : calibrators_) {
+		calibrator.second->eliminate_violated_constraints();
 	}
 }
 
@@ -244,7 +244,7 @@ void PeakCalibrator::add_peak( CrossPeakOP peak ) {
 
 void PeakCalibrator::set_new_upper_bounds() {
 	core::Size ct( 1 );
-	for ( utility::vector1< CrossPeakOP >::iterator it = peaks_.begin(); it != peaks_.end(); ++it, ++ct ) {
+	for ( auto it = peaks_.begin(); it != peaks_.end(); ++it, ++ct ) {
 		TypeCumulator types;
 		(*it)->calibrate( *this, types );
 		core::Real dist( (*it)->distance_bound() );

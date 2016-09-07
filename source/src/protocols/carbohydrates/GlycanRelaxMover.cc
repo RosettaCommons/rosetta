@@ -89,7 +89,7 @@ GlycanRelaxMover::GlycanRelaxMover(
 	glycan_movemap_(/*NULL*/),
 	tf_(/*NULL*/),
 	mc_(/* NULL */),
-	scorefxn_(scorefxn),
+	scorefxn_(std::move(scorefxn)),
 	linkage_mover_(/*NULL*/)
 {
 	full_movemap_ = mm->clone();
@@ -97,36 +97,9 @@ GlycanRelaxMover::GlycanRelaxMover(
 	set_rounds(rounds);
 }
 
-GlycanRelaxMover::~GlycanRelaxMover(){}
+GlycanRelaxMover::~GlycanRelaxMover()= default;
 
-GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
-	protocols::moves::Mover( src ),
-	full_movemap_(src.full_movemap_),
-	glycan_movemap_(src.glycan_movemap_),
-	tf_(src.tf_),
-	mc_(src.mc_),
-	scorefxn_(src.scorefxn_),
-	linkage_mover_(src.linkage_mover_),
-	weighted_random_mover_(src.weighted_random_mover_),
-	min_mover_(src.min_mover_),
-	packer_(src.packer_),
-	rounds_(src.rounds_),
-	kt_(src.kt_),
-	accept_log_(src.accept_log_),
-	test_(src.test_),
-	final_min_(src.final_min_),
-	pack_glycans_(src.pack_glycans_),
-	random_start_(src.random_start_),
-	sugar_bb_start_(src.sugar_bb_start_),
-	total_glycan_residues_(src.total_glycan_residues_),
-	pymol_movie_(src.pymol_movie_),
-	ref_pose_name_(src.ref_pose_name_),
-	use_branches_( src.use_branches_),
-	parsed_positions_(src.parsed_positions_),
-	pack_distance_(src.pack_distance_)
-
-{
-}
+GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & )= default;
 
 void
 GlycanRelaxMover::parse_my_tag(

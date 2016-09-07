@@ -84,7 +84,7 @@ FrameOP FragFactory::frame( std::string const& type ) const {
 	if ( iter != frame_types_.end() ) {
 		return iter->second->clone();
 	}
-	return NULL;
+	return nullptr;
 }
 
 SingleResidueFragDataOP
@@ -93,7 +93,7 @@ FragFactory::frag_type( std::string const& frag_name ) const {
 	if ( iter != frag_types_.end() ) {
 		return iter->second->clone();
 	}
-	return NULL;
+	return nullptr;
 }
 
 FragFactory & FragmentIO::get_frag_factory(void) {
@@ -122,7 +122,7 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 	Size const length( new_frames[ 1 ]->length() );
 	tr.Trace << "frags in frame at beginning: " << new_frames[ 1 ]->nr_frags() << std::endl;
 
-	FragDataOP current_fragment = NULL;//new FragData;
+	FragDataOP current_fragment = nullptr;//new FragData;
 	do {
 		if ( !next_line.size() ) continue; //skip empty lines
 		if ( next_line == "ENDFRAME" ) { //can probably vanish soon
@@ -164,20 +164,19 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 		if ( current_fragment->size() == length ) {
 			current_fragment->set_valid();
 			tr.Trace << "read FragData" << std::endl << *current_fragment << std::endl;
-			for ( FrameList::iterator frame = new_frames.begin(), eframe = new_frames.end();
-					frame != eframe; ++frame ) {
+			for (auto & new_frame : new_frames) {
 
 				//jump out if top_ fragments have been read
-				if ( !(*frame)->add_fragment( current_fragment ) ) {
-					tr.Error << "failed to add " << *current_fragment << " to frame " << (**frame) << std::endl;
+				if ( !new_frame->add_fragment( current_fragment ) ) {
+					tr.Error << "failed to add " << *current_fragment << " to frame " << (*new_frame) << std::endl;
 					data.setstate( std::ios_base::failbit );
 				} else {
 					for ( Size i = 2; i<=ncopies_; i++ ) {
-						(*frame)->add_fragment( current_fragment );
+						new_frame->add_fragment( current_fragment );
 					}
 				}
 			} //frames
-			current_fragment = NULL;
+			current_fragment = nullptr;
 		}
 	} while ( getline( data, next_line ) );
 	if ( data.fail() && data.eof() && !data.bad() ) { //stupid getline sets fail bit instead of eof if last line is read.
@@ -206,10 +205,9 @@ void FragmentIO::read_data( std::istream& data, FrameList& all_frames ) {
 		read_frag_data( data, next_line, new_frames );
 		if ( data.fail() ) break;
 
-		for ( FrameList::iterator frame = new_frames.begin(), eframe = new_frames.end();
-				frame != eframe; ++frame ) {
-			if ( (*frame)->nr_frags() ) {
-				all_frames.push_back( *frame );
+		for (auto & new_frame : new_frames) {
+			if ( new_frame->nr_frags() ) {
+				all_frames.push_back( new_frame );
 			}
 		}
 	}

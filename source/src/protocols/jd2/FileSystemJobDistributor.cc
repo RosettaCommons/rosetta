@@ -64,8 +64,7 @@ FileSystemJobDistributor::FileSystemJobDistributor() :
 
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-FileSystemJobDistributor::~FileSystemJobDistributor()
-{}
+FileSystemJobDistributor::~FileSystemJobDistributor() = default;
 
 void FileSystemJobDistributor::restart() {
 	// next_job_to_try_assigning_ = 1;

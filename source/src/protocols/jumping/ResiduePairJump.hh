@@ -64,7 +64,7 @@ public:
 	/// @brief empty constructor
 	ResiduePairJumpSingle();
 
-	virtual ~ResiduePairJumpSingle();
+	~ResiduePairJumpSingle() override;
 
 	/// @brief constructed by residue_type
 	ResiduePairJumpSingle(
@@ -155,7 +155,7 @@ public:
 
 	// empty constructor
 	ResiduePairJump();
-	virtual ~ResiduePairJump();
+	~ResiduePairJump() override;
 
 	// constructed by two input ResidueTypes
 	ResiduePairJump(

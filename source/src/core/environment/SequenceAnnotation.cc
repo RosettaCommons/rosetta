@@ -129,7 +129,7 @@ void SequenceAnnotation::append_seq( std::string const& label ) {
 }
 
 core::Size SequenceAnnotation::resolve_seq( LocalPosition const& local ) const {
-	SeqLabelMap::const_iterator it = label_to_pose_numbers_.find( local.label() );
+	auto it = label_to_pose_numbers_.find( local.label() );
 
 	if ( it == label_to_pose_numbers_.end() ) {
 		std::ostringstream msg;
@@ -148,7 +148,7 @@ core::Size SequenceAnnotation::resolve_seq( LocalPosition const& local ) const {
 
 core::Size SequenceAnnotation::resolve_jump( std::string const& label ) const {
 
-	JumpLabelMap::const_iterator l = jump_label_to_number_.find( label );
+	auto l = jump_label_to_number_.find( label );
 
 	if ( l == jump_label_to_number_.end() ) {
 		std::ostringstream msg;

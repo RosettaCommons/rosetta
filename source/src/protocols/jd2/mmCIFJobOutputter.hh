@@ -46,7 +46,7 @@ public:
 
 	mmCIFJobOutputter();
 
-	virtual ~mmCIFJobOutputter();
+	~mmCIFJobOutputter() override;
 
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
@@ -90,12 +90,12 @@ protected:
 protected:
 	//////////////////////////////////////protected mmCIF output/////////////////////////////////////
 	/// @brief This is the function actually different between mmCIF and PDB output, and unshared by the wwPDB parent class.  Here it causes a cif file to be written.  Pure virtual in the base class.  filename is an optional label for the score data table, not an actual control.
-	virtual
+	
 	void dump_pose(
 		JobCOP job,
 		core::pose::Pose const & pose,
 		utility::io::ozstream & out,
-		std::string const & filename = "" );
+		std::string const & filename = "" ) override;
 
 private:
 	///@details this function takes "extra data" associated with the job and writes it to JOBNAME.extradata.  Filename is the location the parent mmCIF got written to.  It's pretty stupid to do that via this string instead of the Job object, given that that's the Job object's purpose, but otherwise we lose the "tag" ability specified several layers up in wwPDBJO.

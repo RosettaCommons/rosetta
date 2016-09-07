@@ -62,7 +62,7 @@ AveragePathLengthFilter::AveragePathLengthFilter(
 
 {}
 
-AveragePathLengthFilter::~AveragePathLengthFilter() {}
+AveragePathLengthFilter::~AveragePathLengthFilter() = default;
 
 filters::FilterOP
 AveragePathLengthFilter::clone() const {

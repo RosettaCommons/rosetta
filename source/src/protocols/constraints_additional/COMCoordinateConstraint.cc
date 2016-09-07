@@ -34,7 +34,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <math.h>
+#include <cmath>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/SequenceMapping.hh>
@@ -260,8 +260,8 @@ scoring::constraints::ConstraintOP COMCoordinateConstraint::remapped_clone(
 
 	bool validity = true;
 
-	for ( utility::vector1< AtomID >::const_iterator it = atms_.begin(), ite = atms_.end(); it != ite; ++it ) {
-		id::NamedAtomID atom_temp( atom_id_to_named_atom_id( *it, src ) );
+	for (const auto & atm : atms_) {
+		id::NamedAtomID atom_temp( atom_id_to_named_atom_id( atm, src ) );
 		if ( smap ) {
 			atom_temp.rsd() = (*smap)[ atom_temp.rsd() ];
 		}
@@ -277,7 +277,7 @@ scoring::constraints::ConstraintOP COMCoordinateConstraint::remapped_clone(
 	}
 
 	if ( !validity ) {
-		return NULL;
+		return nullptr;
 	} else {
 		return scoring::constraints::ConstraintOP( new COMCoordinateConstraint( map_atom, COM_target_, stdv_, interval_ ) );
 	}

@@ -72,7 +72,7 @@ public:
 
 	/// @brief default destructor
 	inline
-	~LinkUnit() {}
+	~LinkUnit() override = default;
 
 
 	/// @brief return a reference to the function object with requested cast
@@ -121,7 +121,7 @@ struct IsLinkUnitInvalid {
 	operator ()( LinkUnitOP & lu ) const {
 		if ( !lu->valid && lu->fn ) {
 			delete static_cast< Function * >( lu->fn );
-			lu->fn = NULL;
+			lu->fn = nullptr;
 		}
 		return !lu->valid;
 	}

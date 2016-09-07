@@ -35,12 +35,9 @@ FragID::FragID( FrameCOP frame, Size frag_id )
 	debug_assert( frame->nr_frags() >= frag_id );
 }
 
-FragID::FragID( FragID const & src ) :
-	first( src.first ),
-	second( src.second )
-{}
+FragID::FragID( FragID const & ) = default;
 
-FragID::~FragID() {}
+FragID::~FragID() = default;
 
 FragID & FragID::operator = ( FragID const & rhs )
 {

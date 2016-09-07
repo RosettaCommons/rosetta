@@ -75,8 +75,7 @@ forward_threshold_( src.forward_threshold_ ),
 backward_threshold_( src.backward_threshold_ )
 {}*/
 
-WobbleMover::~WobbleMover()
-{}
+WobbleMover::~WobbleMover() = default;
 
 std::string
 WobbleMover::get_name() const {
@@ -89,7 +88,7 @@ bool WobbleMover::ccd_closure(
 	kinematics::MoveMap const & mm ) const
 {
 	// There is only one loop.
-	protocols::loops::Loops::const_iterator it = loops.begin();
+	auto it = loops.begin();
 	protocols::loops::loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
 		*it, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 	ccd_loop_closure_mover.apply( pose );

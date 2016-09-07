@@ -72,11 +72,7 @@ SetMembranePositionMover::SetMembranePositionMover( core::Vector center, core::V
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-SetMembranePositionMover::SetMembranePositionMover( SetMembranePositionMover const & src ) :
-	protocols::moves::Mover( src ),
-	center_( src.center_ ),
-	normal_( src.normal_ )
-{}
+SetMembranePositionMover::SetMembranePositionMover( SetMembranePositionMover const & ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -95,7 +91,7 @@ SetMembranePositionMover::operator=( SetMembranePositionMover const & src )
 }
 
 /// @brief Destructor
-SetMembranePositionMover::~SetMembranePositionMover() {}
+SetMembranePositionMover::~SetMembranePositionMover() = default;
 
 /////////////////////
 /// Mover Methods ///
@@ -208,10 +204,7 @@ SetMembraneNormalMover::SetMembraneNormalMover( core::Vector normal ) :
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-SetMembraneNormalMover::SetMembraneNormalMover( SetMembraneNormalMover const & src ) :
-	protocols::moves::Mover( src ),
-	normal_( src.normal_ )
-{}
+SetMembraneNormalMover::SetMembraneNormalMover( SetMembraneNormalMover const & ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -230,7 +223,7 @@ SetMembraneNormalMover::operator=( SetMembraneNormalMover const & src )
 }
 
 /// @brief Destructor
-SetMembraneNormalMover::~SetMembraneNormalMover() {}
+SetMembraneNormalMover::~SetMembraneNormalMover() = default;
 
 /////////////////////
 /// Mover Methods ///
@@ -335,10 +328,7 @@ SetMembraneCenterMover::SetMembraneCenterMover( core::Vector center ) :
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-SetMembraneCenterMover::SetMembraneCenterMover( SetMembraneCenterMover const & src ) :
-	protocols::moves::Mover( src ),
-	center_( src.center_ )
-{}
+SetMembraneCenterMover::SetMembraneCenterMover( SetMembraneCenterMover const & ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -357,7 +347,7 @@ SetMembraneCenterMover::operator=( SetMembraneCenterMover const & src )
 }
 
 /// @brief Destructor
-SetMembraneCenterMover::~SetMembraneCenterMover() {}
+SetMembraneCenterMover::~SetMembraneCenterMover() = default;
 
 /////////////////////
 /// Mover Methods ///

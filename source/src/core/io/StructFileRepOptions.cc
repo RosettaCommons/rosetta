@@ -44,7 +44,7 @@ StructFileRepOptions::StructFileRepOptions( utility::options::OptionCollection c
 	init_from_options( options );
 }
 
-StructFileRepOptions::~StructFileRepOptions() {}
+StructFileRepOptions::~StructFileRepOptions() = default;
 
 /// @brief Copy this object and return an owning pointer to the copy.
 ///

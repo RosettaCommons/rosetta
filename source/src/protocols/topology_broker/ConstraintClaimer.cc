@@ -37,6 +37,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/io/izstream.hh>
 //#include <utility/io/ozstream.hh>
@@ -76,8 +77,8 @@ ConstraintClaimer::ConstraintClaimer() :
 {}
 
 ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
-	filename_( filename ),
-	tag_( tag ),
+	filename_(std::move( filename )),
+	tag_(std::move( tag )),
 	constraints_( /* NULL */ ),
 	bCentroid_( true ),
 	bFullatom_( false ),
@@ -130,12 +131,12 @@ void ConstraintClaimer::new_decoy() {
 		// reads and sets constraints -- this might be different each time we call this function
 		std::string old_filename = filename_;
 		filename_ = core::scoring::constraints::get_cst_file_option();
-		if ( old_filename != filename_ ) constraints_ = NULL;
+		if ( old_filename != filename_ ) constraints_ = nullptr;
 	}
 	if ( bCmdFlag_ && option[ constraints::cst_fa_file ].user() && bFullatom_ && !bCentroid_ ) {
 		std::string old_filename = filename_;
 		filename_ = core::scoring::constraints::get_cst_fa_file_option();
-		if ( old_filename != filename_ ) constraints_ = NULL;
+		if ( old_filename != filename_ ) constraints_ = nullptr;
 	}
 }
 
@@ -172,7 +173,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 		constraints_ = ConstraintIO::get_instance()->read_constraints( filename_, ConstraintSetOP( new ConstraintSet ), pose );
 		sequence_ = new_sequence;
 	} else {
-		ConstraintSetOP new_cst(NULL);
+		ConstraintSetOP new_cst(nullptr);
 		try {
 			new_cst = constraints_->remapped_clone( constraint_ref_pose_, pose );
 		} catch( core::id::EXCN_AtomNotFound& excn ) {
@@ -236,33 +237,33 @@ bool ConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 
 void ConstraintClaimer::set_cst_file( std::string const& file ) {
 	filename_ = file;
-	constraints_ = NULL;
-	fa_constraints_ = NULL;
+	constraints_ = nullptr;
+	fa_constraints_ = nullptr;
 }
 
 void ConstraintClaimer::set_fullatom( bool setting ) {
 	bFullatom_ = setting;
-	constraints_ = NULL;
-	fa_constraints_ = NULL;
+	constraints_ = nullptr;
+	fa_constraints_ = nullptr;
 }
 
 void ConstraintClaimer::set_centroid( bool setting ) {
 	bCentroid_ = setting;
-	constraints_ = NULL;
-	fa_constraints_ = NULL;
+	constraints_ = nullptr;
+	fa_constraints_ = nullptr;
 }
 
 void ConstraintClaimer::set_skip_redundant( core::Size setting ) {
 	skip_redundant_ = setting > 0;
 	skip_redundant_width_=setting;
-	constraints_ = NULL;
-	fa_constraints_ = NULL;
+	constraints_ = nullptr;
+	fa_constraints_ = nullptr;
 }
 
 void ConstraintClaimer::set_combine_ratio( core::Size setting ) {
 	combine_ratio_ = setting;
-	constraints_ = NULL;
-	fa_constraints_ = NULL;
+	constraints_ = nullptr;
+	fa_constraints_ = nullptr;
 }
 
 void ConstraintClaimer::set_filter_weight( core::Real setting ) {

@@ -136,18 +136,10 @@ SheetBuilder::SheetBuilder( core::fragment::SecondaryStructureOP ss, core::scori
 {}
 
 //copy c'stor
-SheetBuilder::SheetBuilder( SheetBuilder const& other )
-: BaseJumpSetup(other),
-	total_residue_( other.total_residue_ ),
-	pairings_( other.pairings_ ),
-	same_strand_( other.same_strand_ ),
-	secondary_structure_( other.secondary_structure_ ),
-	sheet_sizes_( other.sheet_sizes_ ),
-	bForceSingleSheet_( other.bForceSingleSheet_ ) // this should be set by an option or so
-{}
+SheetBuilder::SheetBuilder( SheetBuilder const & ) = default;
 
 //d'stor
-SheetBuilder::~SheetBuilder() {}
+SheetBuilder::~SheetBuilder() = default;
 
 /// @brief simply random choice of pairing from pool
 void

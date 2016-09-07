@@ -107,7 +107,7 @@ DomainAssemblyMover::DomainAssemblyMover() :
 	// basic initialization here
 }
 
-DomainAssemblyMover::~DomainAssemblyMover() {}
+DomainAssemblyMover::~DomainAssemblyMover() = default;
 
 void
 DomainAssemblyMover::apply( core::pose::Pose & pose )
@@ -215,7 +215,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	small_mover->angle_max( 'L', 4.0 );
 
 	//// STAGE 1 /////
-	protocols::moves::TrialMoverOP centroid_trial_mover = NULL;
+	protocols::moves::TrialMoverOP centroid_trial_mover = nullptr;
 	if ( fragset3mer_ ) {
 		protocols::simple_moves::FragmentMoverOP frag_mover( new protocols::simple_moves::ClassicFragmentMover(fragset3mer_, movemap_ ) );
 		centroid_trial_mover = protocols::moves::TrialMoverOP( new protocols::moves::TrialMover( frag_mover, mc ) );
@@ -260,22 +260,20 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 		// step 2: find all residues requested to be buried
 		// step 3: add a filter with that potential interface
 		// step 4: or-combine the filters, at least one of the domains should bury any
-		for ( std::set< core::Size >::const_iterator buried_it = want_buried.begin();
-				buried_it != want_buried.end();
-				++buried_it ) {
+		for (unsigned long buried_it : want_buried) {
 			std::set< core::Size > residues_in_other_domains;
 			for ( std::vector< std::string >::const_iterator domain_it = domain_definitions.begin();
 					domain_it != domain_definitions.end();
 					++domain_it ) {
 				std::set< core::Size > domain_set( core::pose::get_resnum_list( *domain_it, pose ) );
-				if ( domain_set.find( *buried_it ) == domain_set.end() ) { // residue not contained in domain! Add!
+				if ( domain_set.find( buried_it ) == domain_set.end() ) { // residue not contained in domain! Add!
 					residues_in_other_domains.insert( domain_set.begin(), domain_set.end() );
 				}
 			}
 			if ( !residues_in_other_domains.empty() ) { // this can only happen if we're looking at exactly one domain...
 				protocols::simple_filters::DomainInterfaceFilterOP di_filter( new protocols::simple_filters::DomainInterfaceFilter );
 				std::set< core::Size > one_residue_dummy_set;
-				one_residue_dummy_set.insert( *buried_it );
+				one_residue_dummy_set.insert( buried_it );
 				di_filter->query_region( one_residue_dummy_set );
 				di_filter->target_region( residues_in_other_domains );
 				if ( di_filter->apply( pose ) ) num_true++;
@@ -604,7 +602,7 @@ core::Real DomainAssemblyMover::target_rmsd_no_align( core::pose::Pose const & p
 		core::Size num_match = 0;
 		core::Real sum_sq = 0;
 		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			std::map< core::Size, core::Size >::const_iterator map_pair = target_pose_map_.find( ii );
+			auto map_pair = target_pose_map_.find( ii );
 			if ( map_pair != target_pose_map_.end() && map_pair->second <= target_pose_.total_residue() ) {
 				sum_sq += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( map_pair->second ).xyz( "CA" ) );
 				num_match++;
@@ -711,8 +709,8 @@ void
 DomainAssemblyMover::initialize_fragments_from_commandline()
 {
 	// read fragments file
-	core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
-	core::fragment::ConstantLengthFragSetOP fragset9mer = NULL;
+	core::fragment::ConstantLengthFragSetOP fragset3mer = nullptr;
+	core::fragment::ConstantLengthFragSetOP fragset9mer = nullptr;
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag3].user() ) {
 		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );

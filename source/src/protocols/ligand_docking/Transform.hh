@@ -51,17 +51,7 @@ public:
 		cycles(0),
 		temperature(0.0),
 		repeats(1){};
-	Transform_info(Transform_info const & other) :
-		chain(other.chain),
-		chain_id(other.chain_id),
-		jump_id(other.jump_id),
-		move_distance(other.move_distance),
-		box_size(other.box_size),
-		angle(other.angle),
-		rmsd(other.rmsd),
-		cycles(other.cycles),
-		temperature(other.temperature),
-		repeats(other.repeats){}
+	Transform_info(Transform_info const & ) = default;
 };
 
 class Transform: public protocols::moves::Mover
@@ -77,20 +67,20 @@ public:
 		core::Real const & temp
 	);
 	Transform(Transform const & other);
-	virtual ~Transform();
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	~Transform() override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
-	virtual void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 private:
 

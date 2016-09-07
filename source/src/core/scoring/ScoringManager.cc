@@ -119,7 +119,7 @@ using core::scoring::ScoringManager;
 template <> std::mutex utility::SingletonBase< ScoringManager >::singleton_mutex_{};
 template <> std::atomic< ScoringManager * > utility::SingletonBase< ScoringManager >::instance_( 0 );
 #else
-template <> ScoringManager * utility::SingletonBase< ScoringManager >::instance_( 0 );
+template <> ScoringManager * utility::SingletonBase< ScoringManager >::instance_( nullptr );
 #endif
 
 }
@@ -133,7 +133,7 @@ ScoringManager::create_singleton_instance()
 	return new ScoringManager;
 }
 
-ScoringManager::~ScoringManager() {}
+ScoringManager::~ScoringManager() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 ScoringManager::ScoringManager() :
@@ -188,14 +188,14 @@ ScoringManager::ScoringManager() :
 	memb_etables_(),
 	cp_rep_map_byname_(),
 	aa_composition_setup_helpers_(),
-	method_creator_map_( n_score_types, 0 )
+	method_creator_map_( n_score_types, nullptr )
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
 VdWTinkerPotential const &
 ScoringManager::get_VdWTinkerPotential() const
 {
-	if ( vdw_tinker_potential_ == 0 ) {
+	if ( vdw_tinker_potential_ == nullptr ) {
 		vdw_tinker_potential_ = VdWTinkerPotentialOP( new VdWTinkerPotential() );
 	}
 	return *vdw_tinker_potential_;
@@ -205,7 +205,7 @@ ScoringManager::get_VdWTinkerPotential() const
 PairEPotential const &
 ScoringManager::get_PairEPotential() const
 {
-	if ( pairE_potential_ == 0 ) {
+	if ( pairE_potential_ == nullptr ) {
 		pairE_potential_ = PairEPotentialOP( new PairEPotential() );
 	}
 	return *pairE_potential_;
@@ -223,7 +223,7 @@ ScoringManager::factory_register( methods::EnergyMethodCreatorOP creator )
 	for ( Size ii = 1; ii <= sts.size(); ++ii ) {
 		///std::cout << "Registering " << (int) sts[ ii ] << " to " << creator() << std::endl;
 		// make sure no two EnergyMethodCreators lay claim to the same ScoreType
-		if ( method_creator_map_[ sts[ ii ] ] != 0 ) {
+		if ( method_creator_map_[ sts[ ii ] ] != nullptr ) {
 			utility_exit_with_message( "Cannot register a term to two different EnergyMethodCreators. Term " + utility::to_string( sts[ ii ] ) + " has already been registered!" );
 		}
 		method_creator_map_[ sts[ ii ] ] = creator;
@@ -235,7 +235,7 @@ ScoringManager::factory_register( methods::EnergyMethodCreatorOP creator )
 dna::DNA_BasePotential const &
 ScoringManager::get_DNA_BasePotential() const
 {
-	if ( DNA_base_potential_ == 0 ) {
+	if ( DNA_base_potential_ == nullptr ) {
 		DNA_base_potential_ = dna::DNA_BasePotentialOP( new dna::DNA_BasePotential() );
 	}
 	return *DNA_base_potential_;
@@ -245,7 +245,7 @@ ScoringManager::get_DNA_BasePotential() const
 dna::DNA_DihedralPotential const &
 ScoringManager::get_DNA_DihedralPotential() const
 {
-	if ( dna_dihedral_potential_ == 0 ) {
+	if ( dna_dihedral_potential_ == nullptr ) {
 		dna_dihedral_potential_ = new dna::DNA_DihedralPotential();
 	}
 	return *dna_dihedral_potential_;
@@ -255,7 +255,7 @@ ScoringManager::get_DNA_DihedralPotential() const
 dna::DNA_EnvPairPotential const &
 ScoringManager::get_DNA_EnvPairPotential() const
 {
-	if ( dna_env_pair_potential_ == 0 ) {
+	if ( dna_env_pair_potential_ == nullptr ) {
 		dna_env_pair_potential_ = new dna::DNA_EnvPairPotential();
 	}
 	return *dna_env_pair_potential_;
@@ -265,7 +265,7 @@ ScoringManager::get_DNA_EnvPairPotential() const
 EnvPairPotential const &
 ScoringManager::get_EnvPairPotential() const
 {
-	if ( env_pair_potential_ == 0 ) {
+	if ( env_pair_potential_ == nullptr ) {
 		env_pair_potential_ = EnvPairPotentialOP( new EnvPairPotential() );
 	}
 	return *env_pair_potential_;
@@ -275,7 +275,7 @@ ScoringManager::get_EnvPairPotential() const
 SmoothEnvPairPotential const &
 ScoringManager::get_SmoothEnvPairPotential() const
 {
-	if ( smooth_env_pair_potential_ == 0 ) {
+	if ( smooth_env_pair_potential_ == nullptr ) {
 		smooth_env_pair_potential_ = SmoothEnvPairPotentialOP( new SmoothEnvPairPotential() );
 	}
 	return *smooth_env_pair_potential_;
@@ -285,7 +285,7 @@ ScoringManager::get_SmoothEnvPairPotential() const
 CenRotEnvPairPotential const &
 ScoringManager::get_CenRotEnvPairPotential() const
 {
-	if ( cen_rot_pair_potential_ == 0 ) {
+	if ( cen_rot_pair_potential_ == nullptr ) {
 		cen_rot_pair_potential_ = CenRotEnvPairPotentialOP( new CenRotEnvPairPotential() );
 	}
 	return *cen_rot_pair_potential_;
@@ -295,7 +295,7 @@ ScoringManager::get_CenRotEnvPairPotential() const
 CenHBPotential const &
 ScoringManager::get_CenHBPotential() const
 {
-	if ( cen_hb_potential_ == 0 ) {
+	if ( cen_hb_potential_ == nullptr ) {
 		cen_hb_potential_ = CenHBPotentialOP( new CenHBPotential() );
 	}
 	return *cen_hb_potential_;
@@ -305,7 +305,7 @@ ScoringManager::get_CenHBPotential() const
 MembranePotential const &
 ScoringManager::get_MembranePotential() const
 {
-	if ( membrane_potential_ == 0 ) {
+	if ( membrane_potential_ == nullptr ) {
 		membrane_potential_ = MembranePotentialOP( new MembranePotential() );
 	}
 	return *membrane_potential_;
@@ -315,7 +315,7 @@ ScoringManager::get_MembranePotential() const
 membrane::MembraneData const &
 ScoringManager::get_MembraneData() const
 {
-	if ( mp_base_potential_ == 0 ) {
+	if ( mp_base_potential_ == nullptr ) {
 		mp_base_potential_ = membrane::MembraneDataOP( new membrane::MembraneData() );
 	}
 	return *mp_base_potential_;
@@ -325,7 +325,7 @@ ScoringManager::get_MembraneData() const
 Membrane_FAPotential const &
 ScoringManager::get_Membrane_FAPotential() const //pba
 {
-	if ( membrane_fapotential_ == 0 ) {
+	if ( membrane_fapotential_ == nullptr ) {
 		membrane_fapotential_ = Membrane_FAPotentialOP( new Membrane_FAPotential() );
 	}
 	return *membrane_fapotential_;
@@ -337,7 +337,7 @@ ScoringManager::get_Membrane_FAPotential() const //pba
 ProQPotential const &
 ScoringManager::get_ProQPotential() const
 {
-	if ( ProQ_potential_ == 0 ) {
+	if ( ProQ_potential_ == nullptr ) {
 		ProQ_potential_ = ProQPotentialOP( new ProQPotential() );
 	}
 	return *ProQ_potential_;
@@ -349,7 +349,7 @@ ScoringManager::get_ProQPotential() const
 SecondaryStructurePotential const &
 ScoringManager::get_SecondaryStructurePotential() const
 {
-	if ( secondary_structure_potential_ == 0 ) {
+	if ( secondary_structure_potential_ == nullptr ) {
 		secondary_structure_potential_ = SecondaryStructurePotentialOP( new SecondaryStructurePotential() );
 	}
 	return *secondary_structure_potential_;
@@ -359,7 +359,7 @@ ScoringManager::get_SecondaryStructurePotential() const
 GenBornPotential const &
 ScoringManager::get_GenBornPotential() const
 {
-	if ( gen_born_potential_ == 0 ) {
+	if ( gen_born_potential_ == nullptr ) {
 		gen_born_potential_ = GenBornPotentialOP( new GenBornPotential() );
 	}
 	return *gen_born_potential_;
@@ -369,7 +369,7 @@ ScoringManager::get_GenBornPotential() const
 MultipoleElecPotential const &
 ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const
 {
-	if ( multipole_elec_potential_ == 0 ) {
+	if ( multipole_elec_potential_ == nullptr ) {
 		multipole_elec_potential_ = MultipoleElecPotentialOP( new MultipoleElecPotential() );
 		multipole_elec_potential_->use_polarization = options.use_polarization();
 		multipole_elec_potential_->use_gen_kirkwood = options.use_gen_kirkwood();
@@ -383,7 +383,7 @@ ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const &
 SASAPotential const &
 ScoringManager::get_SASAPotential() const
 {
-	if ( sasa_potential_ == 0 ) {
+	if ( sasa_potential_ == nullptr ) {
 		sasa_potential_ = SASAPotentialOP( new SASAPotential() );
 	}
 	return *sasa_potential_;
@@ -393,7 +393,7 @@ ScoringManager::get_SASAPotential() const
 FACTSPotential const &
 ScoringManager::get_FACTSPotential() const
 {
-	if ( facts_potential_ == 0 ) {
+	if ( facts_potential_ == nullptr ) {
 		facts_potential_ = FACTSPotentialOP( new FACTSPotential() );
 	}
 	return *facts_potential_;
@@ -403,7 +403,7 @@ ScoringManager::get_FACTSPotential() const
 PoissonBoltzmannPotential const &
 ScoringManager::get_PoissonBoltzmannPotential() const
 {
-	if ( PB_potential_ == 0 ) {
+	if ( PB_potential_ == nullptr ) {
 		PB_potential_ = PoissonBoltzmannPotentialOP( new PoissonBoltzmannPotential );
 	}
 	return *PB_potential_;
@@ -423,7 +423,7 @@ ScoringManager::get_AtomVDW( std::string const & atom_type_set_name ) const
 carbon_hbonds::CarbonHBondPotential const &
 ScoringManager::get_CarbonHBondPotential() const
 {
-	if ( carbon_hbond_potential_ == 0 ) {
+	if ( carbon_hbond_potential_ == nullptr ) {
 		carbon_hbond_potential_ = carbon_hbonds::CarbonHBondPotentialOP( new carbon_hbonds::CarbonHBondPotential() );
 	}
 	return *carbon_hbond_potential_;
@@ -433,7 +433,7 @@ ScoringManager::get_CarbonHBondPotential() const
 rna::RNA_AtomVDW const &
 ScoringManager::get_RNA_AtomVDW() const
 {
-	if ( rna_atom_vdw_ == 0 ) {
+	if ( rna_atom_vdw_ == nullptr ) {
 		rna_atom_vdw_ = rna::RNA_AtomVDWOP( new rna::RNA_AtomVDW() );
 	}
 	return *rna_atom_vdw_;
@@ -443,7 +443,7 @@ ScoringManager::get_RNA_AtomVDW() const
 geometric_solvation::DatabaseOccSolEne const &
 ScoringManager::get_DatabaseOccSolEne( std::string const & atom_type_set_name, Real const & min_occ_energy ) const
 {
-	if ( occ_hbond_sol_database_ == 0 ) {
+	if ( occ_hbond_sol_database_ == nullptr ) {
 		occ_hbond_sol_database_ = geometric_solvation::DatabaseOccSolEneOP( new geometric_solvation::DatabaseOccSolEne( atom_type_set_name, min_occ_energy ) );
 	}
 	return *occ_hbond_sol_database_;
@@ -453,7 +453,7 @@ ScoringManager::get_DatabaseOccSolEne( std::string const & atom_type_set_name, R
 rna::RNA_LowResolutionPotential const &
 ScoringManager::get_RNA_LowResolutionPotential() const
 {
-	if ( rna_low_resolution_potential_ == 0 ) {
+	if ( rna_low_resolution_potential_ == nullptr ) {
 		rna_low_resolution_potential_ = rna::RNA_LowResolutionPotentialOP( new rna::RNA_LowResolutionPotential() );
 	}
 	return *rna_low_resolution_potential_;
@@ -493,7 +493,7 @@ ScoringManager::get_RNA_LowResolutionPotential() const
 rna::chemical_shift::RNA_ChemicalShiftPotential const &
 ScoringManager::get_RNA_ChemicalShiftPotential() const
 {
-	if ( rna_chemical_shift_potential_ == 0 ) {
+	if ( rna_chemical_shift_potential_ == nullptr ) {
 		rna_chemical_shift_potential_= rna::chemical_shift::RNA_ChemicalShiftPotentialOP( new rna::chemical_shift::RNA_ChemicalShiftPotential() );
 	}
 	return *rna_chemical_shift_potential_;
@@ -503,7 +503,7 @@ ScoringManager::get_RNA_ChemicalShiftPotential() const
 rna::data::RNA_DMS_Potential &
 ScoringManager::get_RNA_DMS_Potential() const
 {
-	if ( rna_dms_potential_ == 0 ) {
+	if ( rna_dms_potential_ == nullptr ) {
 		rna_dms_potential_ = rna::data::RNA_DMS_PotentialOP( new rna::data::RNA_DMS_Potential );
 	}
 	return *rna_dms_potential_;
@@ -513,7 +513,7 @@ ScoringManager::get_RNA_DMS_Potential() const
 rna::data::RNA_DMS_LowResolutionPotential &
 ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 {
-	if ( rna_dms_low_resolution_potential_ == 0 ) {
+	if ( rna_dms_low_resolution_potential_ == nullptr ) {
 		rna_dms_low_resolution_potential_ = rna::data::RNA_DMS_LowResolutionPotentialOP( new rna::data::RNA_DMS_LowResolutionPotential );
 	}
 	return *rna_dms_low_resolution_potential_;
@@ -523,7 +523,7 @@ ScoringManager::get_RNA_DMS_LowResolutionPotential() const
 dna::DirectReadoutPotential const &
 ScoringManager::get_DirectReadoutPotential() const
 {
-	if ( dna_dr_potential_ == 0 ) {
+	if ( dna_dr_potential_ == nullptr ) {
 		dna_dr_potential_ = dna::DirectReadoutPotentialOP( new dna::DirectReadoutPotential() );
 	}
 	return *dna_dr_potential_;
@@ -532,7 +532,7 @@ ScoringManager::get_DirectReadoutPotential() const
 P_AA const &
 ScoringManager::get_P_AA() const
 {
-	if ( p_aa_ == 0 ) {
+	if ( p_aa_ == nullptr ) {
 		p_aa_ = P_AAOP( new P_AA );
 	}
 	return *p_aa_;
@@ -541,7 +541,7 @@ ScoringManager::get_P_AA() const
 P_AA_ss const &
 ScoringManager::get_P_AA_ss() const
 {
-	if ( p_aa_ss_ == 0 ) {
+	if ( p_aa_ss_ == nullptr ) {
 		p_aa_ss_ = P_AA_ssOP( new P_AA_ss );
 	}
 	return *p_aa_ss_;
@@ -550,7 +550,7 @@ ScoringManager::get_P_AA_ss() const
 WaterAdductHBondPotential const &
 ScoringManager::get_WaterAdductHBondPotential() const
 {
-	if ( water_adduct_hbond_potential_ == 0 ) {
+	if ( water_adduct_hbond_potential_ == nullptr ) {
 		water_adduct_hbond_potential_ = WaterAdductHBondPotentialOP( new WaterAdductHBondPotential );
 	}
 	return *water_adduct_hbond_potential_;
@@ -561,7 +561,7 @@ ScoringManager::get_WaterAdductHBondPotential() const
 RamachandranCOP
 ScoringManager::get_Ramachandran_ptr() const
 {
-	if ( rama_ == 0 ) {
+	if ( rama_ == nullptr ) {
 		rama_ = RamachandranOP( new Ramachandran );
 	}
 	return rama_;
@@ -573,7 +573,7 @@ ScoringManager::get_Ramachandran_ptr() const
 RamachandranOP
 ScoringManager::get_Ramachandran_ptr_nonconst()
 {
-	if ( rama_ == 0 ) {
+	if ( rama_ == nullptr ) {
 		rama_ = RamachandranOP( new Ramachandran );
 	}
 	return rama_;
@@ -597,7 +597,7 @@ ScoringManager::get_Ramachandran_nonconst() {
 Ramachandran2BCOP
 ScoringManager::get_Ramachandran2B_ptr() const
 {
-	if ( rama2b_ == 0 ) {
+	if ( rama2b_ == nullptr ) {
 		rama2b_ = Ramachandran2BOP( new Ramachandran2B );
 	}
 	return rama2b_;
@@ -613,7 +613,7 @@ ScoringManager::get_Ramachandran2B() const
 RamaPrePro const &
 ScoringManager::get_RamaPrePro() const
 {
-	if ( rama_pp_ == 0 ) {
+	if ( rama_pp_ == nullptr ) {
 		rama_pp_ = RamaPreProOP( new RamaPrePro );
 	}
 	return *rama_pp_;
@@ -623,7 +623,7 @@ ScoringManager::get_RamaPrePro() const
 OmegaTether const &
 ScoringManager::get_OmegaTether() const
 {
-	if ( omega_ == 0 ) {
+	if ( omega_ == nullptr ) {
 		omega_ = OmegaTetherOP( new OmegaTether() );
 	}
 	return *omega_;
@@ -633,7 +633,7 @@ ScoringManager::get_OmegaTether() const
 dna::DNABFormPotential const &
 ScoringManager::get_DNABFormPotential() const
 {
-	if ( dnabform_ == 0 ) {
+	if ( dnabform_ == nullptr ) {
 		dnabform_ =  dna::DNABFormPotentialOP( new dna::DNABFormPotential );
 	}
 	return *dnabform_;
@@ -644,7 +644,7 @@ ScoringManager::get_DNABFormPotential() const
 dna::DNATorsionPotential const &
 ScoringManager::get_DNATorsionPotential() const
 {
-	if ( dna_torsion_potential_ == 0 ) {
+	if ( dna_torsion_potential_ == nullptr ) {
 		dna_torsion_potential_ = dna::DNATorsionPotentialOP( new dna::DNATorsionPotential() );
 	}
 	return *dna_torsion_potential_;
@@ -654,7 +654,7 @@ ScoringManager::get_DNATorsionPotential() const
 core::scoring::mm::MMTorsionLibrary const &
 ScoringManager::get_MMTorsionLibrary() const
 {
-	if ( mm_torsion_library_ == 0 ) {
+	if ( mm_torsion_library_ == nullptr ) {
 		mm_torsion_library_ = mm::MMTorsionLibraryOP( new mm::MMTorsionLibrary
 			( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/mm_torsion_params.txt" ),
 			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
@@ -666,7 +666,7 @@ ScoringManager::get_MMTorsionLibrary() const
 core::scoring::mm::MMLJLibrary const &
 ScoringManager::get_MMLJLibrary() const
 {
-	if ( mm_lj_library_ == 0 ) {
+	if ( mm_lj_library_ == nullptr ) {
 		mm_lj_library_ = mm::MMLJLibraryOP( new mm::MMLJLibrary
 			( chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
 	}
@@ -678,7 +678,7 @@ ScoringManager::get_MMLJLibrary() const
 core::scoring::mm::MMLJEnergyTable const &
 ScoringManager::get_MMLJEnergyTable () const
 {
-	if ( mm_lj_energy_table_ == 0 ) {
+	if ( mm_lj_energy_table_ == nullptr ) {
 		mm_lj_energy_table_ = mm::MMLJEnergyTableOP( new mm::MMLJEnergyTable() );
 	}
 	return *mm_lj_energy_table_;
@@ -689,7 +689,7 @@ ScoringManager::get_MMLJEnergyTable () const
 disulfides::FullatomDisulfidePotential &
 ScoringManager::get_FullatomDisulfidePotential() const
 {
-	if ( fa_disulfide_potential_ == 0 ) {
+	if ( fa_disulfide_potential_ == nullptr ) {
 		fa_disulfide_potential_ = disulfides::FullatomDisulfidePotentialOP( new disulfides::FullatomDisulfidePotential );
 	}
 	return *fa_disulfide_potential_;
@@ -698,7 +698,7 @@ ScoringManager::get_FullatomDisulfidePotential() const
 disulfides::CentroidDisulfidePotential &
 ScoringManager::get_CentroidDisulfidePotential() const
 {
-	if ( cen_disulfide_potential_ == 0 ) {
+	if ( cen_disulfide_potential_ == nullptr ) {
 		cen_disulfide_potential_ = disulfides::CentroidDisulfidePotentialOP( new disulfides::CentroidDisulfidePotential );
 	}
 	return *cen_disulfide_potential_;
@@ -707,7 +707,7 @@ ScoringManager::get_CentroidDisulfidePotential() const
 disulfides::DisulfideMatchingPotential &
 ScoringManager::get_DisulfideMatchingPotential() const
 {
-	if ( disulfide_matching_potential_ == 0 ) {
+	if ( disulfide_matching_potential_ == nullptr ) {
 		disulfide_matching_potential_ = disulfides::DisulfideMatchingPotentialOP( new disulfides::DisulfideMatchingPotential );
 	}
 	return *disulfide_matching_potential_;
@@ -719,7 +719,7 @@ ScoringManager::get_DisulfideMatchingPotential() const
 nv::NVlookup const &
 ScoringManager::get_NVLookupTable() const
 {
-	if ( NV_lookup_table_ == 0 ) {
+	if ( NV_lookup_table_ == nullptr ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		NV_lookup_table_ = nv::NVlookupOP( new nv::NVlookup(basic::database::full_name(option[score::NV_table]())) );
@@ -732,7 +732,7 @@ ScoringManager::get_NVLookupTable() const
 orbitals::OrbitalsLookup const &
 ScoringManager::get_OrbitalsLookupTable() const
 {
-	if ( orbitals_lookup_table_ == 0 ) {
+	if ( orbitals_lookup_table_ == nullptr ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		utility::vector1<std::string> DHO_energies;
@@ -768,7 +768,7 @@ ScoringManager::get_OrbitalsLookupTable() const
 interface_::DDPlookup const &
 ScoringManager::get_DDPLookupTable() const
 {
-	if ( DDP_lookup_table_ == 0 ) {
+	if ( DDP_lookup_table_ == nullptr ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		DDP_lookup_table_ = interface_::DDPlookupOP( new interface_::DDPlookup("scoring/score_functions/DDPscore/interface_ddp_score.txt") );
@@ -780,7 +780,7 @@ ScoringManager::get_DDPLookupTable() const
 core::scoring::mm::MMBondAngleLibrary const &
 ScoringManager::get_MMBondAngleLibrary() const
 {
-	if ( mm_bondangle_library_ == 0 ) {
+	if ( mm_bondangle_library_ == nullptr ) {
 		mm_bondangle_library_ = mm::MMBondAngleLibraryOP( new mm::MMBondAngleLibrary
 			( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
 			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
@@ -792,7 +792,7 @@ ScoringManager::get_MMBondAngleLibrary() const
 core::scoring::mm::MMBondLengthLibrary const &
 ScoringManager::get_MMBondLengthLibrary() const
 {
-	if ( mm_bondlength_library_ == 0 ) {
+	if ( mm_bondlength_library_ == nullptr ) {
 		mm_bondlength_library_ = mm::MMBondLengthLibraryOP( new mm::MMBondLengthLibrary
 			( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
 			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
@@ -807,7 +807,7 @@ ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( unf_state_ == 0 ) {
+	if ( unf_state_ == nullptr ) {
 		if ( type == UNFOLDED_SPLIT_USER_DEFINED || option[ unfolded_state::unfolded_energies_file ].user() ) {
 			TR << "Creating unfolded state potential using file: " <<  option[ unfolded_state::unfolded_energies_file ].value() << std::endl;
 			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( option[ unfolded_state::unfolded_energies_file ].value() ) );
@@ -835,7 +835,7 @@ ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( sutbp_ == 0 ) {
+	if ( sutbp_ == nullptr ) {
 		std::string database_path = "";
 		std::string atom_label_type = "";
 
@@ -903,7 +903,7 @@ ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type
 carbohydrates::CHIEnergyFunction const &
 ScoringManager::get_CHIEnergyFunction(bool setup_for_sampling /* false */, Real step_size /* 0.1 */) const
 {
-	if ( CHI_energy_function_ == 0 ) {
+	if ( CHI_energy_function_ == nullptr ) {
 		TR << "Creating chi energy function." <<std::endl;
 		CHI_energy_function_ =  carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
 
@@ -1190,7 +1190,7 @@ ScoringManager::has_energy_method(
 
 	if ( score_type == python ) return false;
 
-	if ( method_creator_map_[score_type] == 0 ) {
+	if ( method_creator_map_[score_type] == nullptr ) {
 		return false;
 	}
 
@@ -1229,9 +1229,9 @@ ScoringManager::energy_method(
 		utility_exit_with_message( "ERROR: Attempted to use an inactive score type" );
 	}
 
-	if ( score_type == python ) return 0; /// python special case; this could now be changed...
+	if ( score_type == python ) return nullptr; /// python special case; this could now be changed...
 
-	if ( method_creator_map_[ score_type ] == 0 ) {
+	if ( method_creator_map_[ score_type ] == nullptr ) {
 		throw utility::excn::EXCN_Msg_Exception( "Requested ScoreType '" + utility::to_string( score_type ) + "' does not have a registered EnergyMethodCreator." );
 	}
 

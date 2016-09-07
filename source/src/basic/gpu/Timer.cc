@@ -21,8 +21,8 @@ namespace basic {
 namespace gpu {
 
 Timer::Timer() {
-	tag_ = NULL;
-	t_ = NULL;
+	tag_ = nullptr;
+	t_ = nullptr;
 	Reset();
 }
 
@@ -31,7 +31,7 @@ Timer::~Timer() {
 }
 
 Timer::Timer(const char *tag) {
-	t_ = NULL;
+	t_ = nullptr;
 	tag_ = tag;
 	Reset();
 }
@@ -56,11 +56,11 @@ double Timer::GetTime() {
 #else
 
 void Timer::Reset() {
-	gettimeofday(&start, NULL);
+	gettimeofday(&start, nullptr);
 }
 
 double Timer::GetTime() {
-	gettimeofday(&end, NULL);
+	gettimeofday(&end, nullptr);
 	double time = ((end.tv_sec - start.tv_sec)*1000 + (end.tv_usec - start.tv_usec)/1000.);
 	return time;
 }

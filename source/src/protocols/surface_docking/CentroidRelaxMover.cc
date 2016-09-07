@@ -58,7 +58,7 @@ CentroidRelaxMover::CentroidRelaxMover(CentroidRelaxMover const & src) : Mover(s
 }
 
 //destructor
-CentroidRelaxMover::~CentroidRelaxMover() {}
+CentroidRelaxMover::~CentroidRelaxMover() = default;
 
 protocols::moves::MoverOP
 CentroidRelaxMover::clone() const

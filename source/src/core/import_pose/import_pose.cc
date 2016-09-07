@@ -94,9 +94,9 @@ read_all_poses(
 	using utility::vector1;
 	debug_assert(poses);
 
-	for ( vector1<string>::const_iterator i = filenames.begin(); i != filenames.end(); ++i ) {
+	for (const auto & filename : filenames) {
 		Pose pose;
-		pose_from_file(pose, *i, core::import_pose::PDB_file);
+		pose_from_file(pose, filename, core::import_pose::PDB_file);
 		poses->push_back(pose);
 	}
 }
@@ -414,10 +414,9 @@ poses_from_files(
 	ImportPoseOptions options;
 
 	vector1< Pose > poses;
-	typedef vector1< string >::const_iterator vec_it;
-	for ( vec_it it = filenames.begin(), end = filenames.end(); it != end; ++it ) {
+	for (const auto & filename : filenames) {
 		Pose pose;
-		core::import_pose::pose_from_file( pose, residue_set, *it, options, read_fold_tree, type);
+		core::import_pose::pose_from_file( pose, residue_set, filename, options, read_fold_tree, type);
 		poses.push_back( pose );
 	}
 
@@ -440,10 +439,9 @@ poseOPs_from_files(
 	using core::pose::Pose;
 
 	vector1< pose::PoseOP > poses;
-	typedef vector1< string >::const_iterator vec_it;
-	for ( vec_it it = filenames.begin(), end = filenames.end(); it != end; ++it ) {
+	for (const auto & filename : filenames) {
 		pose::PoseOP pose( new pose::Pose );
-		core::import_pose::pose_from_file( *pose, residue_set, *it, options, read_fold_tree, type);
+		core::import_pose::pose_from_file( *pose, residue_set, filename, options, read_fold_tree, type);
 		poses.push_back( pose );
 	}
 

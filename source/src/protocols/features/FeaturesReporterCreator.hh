@@ -35,7 +35,7 @@ class FeaturesReporterCreator : public utility::pointer::ReferenceCount
 {
 public:
 	FeaturesReporterCreator() {}
-	virtual ~FeaturesReporterCreator() {}
+	~FeaturesReporterCreator() override = default;
 
 	virtual FeaturesReporterOP create_features_reporter() const = 0;
 	virtual std::string type_name() const = 0;

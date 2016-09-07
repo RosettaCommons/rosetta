@@ -51,7 +51,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	RingConformationMover & operator=( RingConformationMover const & object_to_copy );
 
 	// Destructor
-	virtual ~RingConformationMover();
+	~RingConformationMover() override;
 
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
@@ -60,26 +60,26 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	static void register_options();
 
 	/// @brief  Generate string representation of RingConformationMover for debugging purposes.
-	virtual void show( std::ostream & output=std::cout ) const;
+	void show( std::ostream & output=std::cout ) const override;
 
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & /*filters*/,
 		moves::Movers_map const & /*movers*/,
-		Pose const & pose );
+		Pose const & pose ) override;
 
 	/// @brief  Apply the corresponding move to <input_pose>.
-	virtual void apply( core::pose::Pose & input_pose );
+	void apply( core::pose::Pose & input_pose ) override;
 
 
 public: // Accessors/Mutators /////////////////////////////////////////////////

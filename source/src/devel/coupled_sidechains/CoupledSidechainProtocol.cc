@@ -178,7 +178,7 @@ CoupledSidechainProtocol::CoupledSidechainProtocol(
 	setup_objects();
 }
 
-CoupledSidechainProtocol::~CoupledSidechainProtocol() {}
+CoupledSidechainProtocol::~CoupledSidechainProtocol() = default;
 
 
 void

@@ -147,7 +147,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~SmallKeyVector()
-	{}
+	= default;
 
 
 public: // Assignment

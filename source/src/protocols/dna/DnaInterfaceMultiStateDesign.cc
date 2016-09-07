@@ -119,7 +119,7 @@ DnaInterfaceMultiStateDesign::DnaInterfaceMultiStateDesign()
 	checkpoint_rename_(         option[ OptionKeys::ms::checkpoint::rename ]() )
 {}
 
-DnaInterfaceMultiStateDesign::~DnaInterfaceMultiStateDesign(){}
+DnaInterfaceMultiStateDesign::~DnaInterfaceMultiStateDesign()= default;
 
 void
 DnaInterfaceMultiStateDesign::apply( Pose & pose )
@@ -132,7 +132,7 @@ DnaInterfaceMultiStateDesign::apply( Pose & pose )
 void
 DnaInterfaceMultiStateDesign::copy_dna_chains( DnaChainsOP dna_chains )
 {
-	runtime_assert( dna_chains != 0 );
+	runtime_assert( dna_chains != nullptr );
 	dna_chains_ = DnaChainsOP( new DnaChains( *dna_chains ) );
 }
 
@@ -210,9 +210,8 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 			// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 			std::set< core::chemical::AA > aaset;
 			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
-			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
-					t != end; ++t ) {
-				core::chemical::AA aa( (*t)->aa() );
+			for (const auto & t : allowed) {
+				core::chemical::AA aa( t->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
@@ -307,9 +306,8 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 	TraitEntityHashMap const & cache( gen_alg_->entity_cache() );
 	vector1< EntityOP > sortable;
 	//  std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)
-	for ( TraitEntityHashMap::const_iterator it( cache.begin() ), end( cache.end() );
-			it != end; ++it ) {
-		sortable.push_back( it->second );
+	for (const auto & it : cache) {
+		sortable.push_back( it.second );
 	}
 	std::sort( sortable.begin(), sortable.end(), lt_OP_deref< Entity > );
 
@@ -332,11 +330,9 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 		extra_lines.push_back( ms_info.str() );
 		ms_info.str(""); // funky way to 'empty' ostringstream
 		ms_info << "REMARK MultiState Sequence:";
-		for ( EntityElements::const_iterator
-				pos( entity.traits().begin() ), end( entity.traits().end() );
-				pos != end; ++pos ) {
-			ms_info << " " << (*pos)->to_string();
-			TR(t_info) << (*pos)->to_string() << " ";
+		for (const auto & pos : entity.traits()) {
+			ms_info << " " << pos->to_string();
+			TR(t_info) << pos->to_string() << " ";
 		}
 		TR(t_info) << "fitness " << F(5,4,entity.fitness()) << '\n';
 		extra_lines.push_back( ms_info.str() );
@@ -420,8 +416,8 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 	PackerTaskCOP ptask
 )
 {
-	runtime_assert( dna_chains_ != 0 );
-	runtime_assert( multistate_packer_ != 0 );
+	runtime_assert( dna_chains_ != nullptr );
+	runtime_assert( multistate_packer_ != nullptr );
 
 	// temporary copy of Pose used to build DNA target and competitor states
 	Pose mutpose( pose );

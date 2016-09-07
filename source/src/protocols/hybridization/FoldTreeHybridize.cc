@@ -166,7 +166,7 @@ public:
 	void set_residue_selection_small_frags( std::list< core::Size > const & residue_selection ) {
 		residue_selection_small_frags_ = residue_selection;
 	}
-	virtual bool operator() ( const core::pose::Pose & pose );
+	bool operator() ( const core::pose::Pose & pose ) override;
 private:
 	core::pose::Pose very_old_pose_;
 	bool bInit_;
@@ -186,7 +186,7 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
 		very_old_pose_ = pose;
 		return true;
 	}
-	runtime_assert( trials_ != 0 );
+	runtime_assert( trials_ != nullptr );
 	TR.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
 	if ( numeric::mod(trials_->num_accepts(),200) != 0 ) return true;
 	if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
@@ -826,7 +826,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 	std::set<core::Size>::iterator pairings_iter;
 
 	// this loop should traverse the fold tree downstream starting from the root
-	for ( kinematics::FoldTree::const_iterator it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it ) {
+	for ( auto it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it ) {
 		if ( !it->is_jump() || it->start() == fold_tree.root() ) continue;
 		for ( pairings_iter = strand_pairings_template_indices_.begin(); pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter ) {
 			core::Size resi_pdb = template_poses_[*pairings_iter]->pdb_info()->number(1);
@@ -876,7 +876,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 				}
 				// if we reach this point, try to align to upstream pairs
 				bool do_continue = false;
-				for ( kinematics::FoldTree::const_iterator iti = fold_tree.begin(), iti_end = fold_tree.end(); iti != iti_end; ++iti ) {
+				for ( auto iti = fold_tree.begin(), iti_end = fold_tree.end(); iti != iti_end; ++iti ) {
 					if ( *it == *iti || !iti->is_jump() || iti->start() == fold_tree.root() || iti->stop() != it->start() ) continue;
 					std::set<core::Size>::iterator pairings_iteri;
 					for ( pairings_iteri = strand_pairings_template_indices_.begin(); pairings_iteri != strand_pairings_template_indices_.end(); ++pairings_iteri ) {
@@ -1067,10 +1067,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
 		jump_mover->apply_at_all_positions( pose );
 		// insert strand pairing template chunks (to place template pairs)
-		for ( std::set<core::Size>::iterator pairings_iter = strand_pairings_template_indices_.begin();
-				pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter ) {
-			if ( floating_pairs_.count(*pairings_iter) ) continue;
-			initialize_chunk_mover.set_template(*pairings_iter);
+		for (unsigned long strand_pairings_template_indice : strand_pairings_template_indices_) {
+			if ( floating_pairs_.count(strand_pairings_template_indice) ) continue;
+			initialize_chunk_mover.set_template(strand_pairings_template_indice);
 			initialize_chunk_mover.apply(pose);
 		}
 	}
@@ -1340,7 +1339,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		TR.Info <<  "\n===================================================================\n";
 		TR.Info <<  "   Stage 3                                                         \n";
 		TR.Info <<  "   Folding with score2 and score5 for " << stage3_max_cycles <<std::endl;
-		hConvergenceCheckOP convergence_checker ( NULL );
+		hConvergenceCheckOP convergence_checker ( nullptr );
 		if ( !option[ abinitio::skip_convergence_check ] ) {
 			convergence_checker = hConvergenceCheckOP( new hConvergenceCheck );
 			std::list< core::Size > residue_selection_big_frags;

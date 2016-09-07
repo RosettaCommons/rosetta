@@ -20,9 +20,9 @@ namespace moves {
 
 FilterReporterMover::FilterReporterMover() :
 	Mover(),
-	mover_( NULL ),
-	filter_( NULL ),
-	out_( /*streambuf=*/ NULL )
+	mover_( nullptr ),
+	filter_( nullptr ),
+	out_( /*streambuf=*/ nullptr )
 {
 	filter_mover_ = protocols::moves::FilterMoverOP(
 		new protocols::moves::FilterMover() );
@@ -34,7 +34,7 @@ FilterReporterMover::FilterReporterMover( protocols::moves::MoverOP const & move
 	Mover( mover->type() ),
 	mover_( mover ),
 	filter_( filter ),
-	out_( /*streambuf=*/ NULL ) // default ctor is protected
+	out_( /*streambuf=*/ nullptr ) // default ctor is protected
 {
 	filter_mover_ = protocols::moves::FilterMoverOP(
 		new protocols::moves::FilterMover( mover, filter, max_tries, mover_status ) );
@@ -43,19 +43,19 @@ FilterReporterMover::FilterReporterMover( protocols::moves::MoverOP const & move
 
 FilterReporterMover::FilterReporterMover( FilterReporterMover const & rhs ) :
 	Mover( rhs ),
-	out_( /*streambuf=*/ NULL ) {
+	out_( /*streambuf=*/ nullptr ) {
 	FilterReporterMover::assign( *this, rhs );
 }
 
 FilterReporterMover::~FilterReporterMover() {
-	filter_mover_ = NULL; // it is an OP, so should be destroyed here once assigning
+	filter_mover_ = nullptr; // it is an OP, so should be destroyed here once assigning
 }
 
 void
 FilterReporterMover::apply( core::pose::Pose & pose ) {
 	filter_mover_->apply( pose );
 
-	if ( out_.rdbuf() != NULL ) {
+	if ( out_.rdbuf() != nullptr ) {
 		filter_->report( out_, pose );
 	}
 }

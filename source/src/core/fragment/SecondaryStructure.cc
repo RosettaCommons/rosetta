@@ -58,7 +58,7 @@ namespace core {
 namespace fragment {
 
 /// @details Auto-generated virtual destructor
-SecondaryStructure::~SecondaryStructure() {}
+SecondaryStructure::~SecondaryStructure() = default;
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

@@ -60,7 +60,7 @@ public:
 	CenListInfo( CenListInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new CenListInfo( *this ) );
 	}

@@ -59,7 +59,7 @@ public:
 		set_default_move_map();
 	}
 	*/
-	virtual RbRelax* clone() const	{
+	RbRelax* clone() const override	{
 		return new RbRelax(*this);
 	}
 
@@ -67,7 +67,7 @@ public:
 	//	void set_default_move_map();
 	//	void set_default_mc();
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void apply();
 
 
@@ -88,14 +88,14 @@ private:
 	void segment_rb_move(
 											 core::pose::Pose & pose,
 											 devel::ssrbrelax::RbSegments & rbsegments,
-											 std::map< Size, devel::frags::TorsionFragmentLibraryOP > & frag_libs
+											 std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
 											 );
 
 	void perturb_segment_and_close_loops(
 																			 core::pose::Pose & pose,
 																			 devel::ssrbrelax::RbSegments & rbsegments,
 																			 devel::ssrbrelax::RbSegments & this_segment,
-																			 std::map< Size, devel::frags::TorsionFragmentLibraryOP > & frag_libs
+																			 std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
 																			 );
 
 	void perturb_segment(
@@ -111,13 +111,13 @@ private:
 																	);
 
 	void initialize_fragments(
-														std::map< Size, devel::frags::TorsionFragmentLibraryOP > & frag_libs
+														std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
 														);
 
 	void close_both_loops(
 												core::pose::Pose & pose,
 												devel::ssrbrelax::RbSegments & this_segment,
-												std::map< Size, devel::frags::TorsionFragmentLibraryOP > & frag_libs
+												std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
 												);
 
 	void refine_segment(

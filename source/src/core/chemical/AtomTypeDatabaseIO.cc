@@ -54,7 +54,7 @@ using cppdb::result;
 
 AtomTypeDatabaseIO::AtomTypeDatabaseIO() {}
 
-AtomTypeDatabaseIO::~AtomTypeDatabaseIO() {}
+AtomTypeDatabaseIO::~AtomTypeDatabaseIO() = default;
 
 
 //////////////////////////
@@ -126,7 +126,7 @@ AtomTypeDatabaseIO::write_atom_type_property_values_table_schema(
 	// insert values
 	string const table_name("atom_type_property_values");
 	std::vector<string> column_names;
-	column_names.push_back("property");
+	column_names.emplace_back("property");
 	insert_or_ignore(table_name, column_names, list_of("ACCEPTOR"), db_session);
 	insert_or_ignore(table_name, column_names, list_of("ACCEPTOR"), db_session);
 	insert_or_ignore(table_name, column_names, list_of("DONOR"), db_session);
@@ -330,16 +330,10 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table(
 	string stmt_string = "INSERT INTO atom_type_extra_parameters (atom_type_set_name, name, parameter, value) VALUES (?,?,?,?);";
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 
-	for ( std::map<std::string, int>::const_iterator
-			extra_parameter_index_iter =
-			atom_type_set.extra_parameter_indices().begin(),
-			extra_parameter_index_iter_end =
-			atom_type_set.extra_parameter_indices().end();
-			extra_parameter_index_iter != extra_parameter_index_iter_end;
-			++extra_parameter_index_iter ) {
+	for (const auto & extra_parameter_index_iter : atom_type_set.extra_parameter_indices()) {
 
-		string const extra_parameter_name(extra_parameter_index_iter->first);
-		Size const extra_parameter_index(extra_parameter_index_iter->second);
+		string const extra_parameter_name(extra_parameter_index_iter.first);
+		Size const extra_parameter_index(extra_parameter_index_iter.second);
 		stmt.bind(1, atom_type_set_name);
 		stmt.bind(2, atom_type.name());
 		stmt.bind(3, extra_parameter_name);

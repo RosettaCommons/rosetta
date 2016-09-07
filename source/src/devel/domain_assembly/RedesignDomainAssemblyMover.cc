@@ -90,7 +90,8 @@ RedesignDomainAssemblyMover::RedesignDomainAssemblyMover()
 	// basic initialization here
 }
 
-RedesignDomainAssemblyMover::~RedesignDomainAssemblyMover() {}
+RedesignDomainAssemblyMover::~RedesignDomainAssemblyMover() = default;
+
 void
 RedesignDomainAssemblyMover::apply( core::pose::Pose & pose )
 {
@@ -277,7 +278,7 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 
 	interface_or_linker_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
 	not_interface_or_linker_rs->set_residue_selector( interface_or_linker_rs );
-	operation::OperateOnResidueSubsetOP block_outside_interface_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_interface_or_linker_rs ) );;
+	operation::OperateOnResidueSubsetOP block_outside_interface_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_interface_or_linker_rs ) );
 
 	core::select::residue_selector::ResidueIndexSelectorOP repack_only_rs( new core::select::residue_selector::ResidueIndexSelector( residues_to_repack_only_ ) );
 	operation::OperateOnResidueSubsetOP block_design_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::RestrictToRepackingRLT() ), repack_only_rs ) );

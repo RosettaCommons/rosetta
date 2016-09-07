@@ -65,26 +65,26 @@ public:
 	);
 
 	/// @brief Default destructor
-	virtual
-	~SidechainMetropolisHastingsMover();
+	
+	~SidechainMetropolisHastingsMover() override;
 
 	/// @brief Run the sidechain-only simulation.
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -92,7 +92,7 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief Return true if a move should be accepted, given @a delta_energy
 	/// and @a proposal_density_ratio.

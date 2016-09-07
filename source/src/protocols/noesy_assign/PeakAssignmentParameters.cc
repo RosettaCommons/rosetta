@@ -67,7 +67,7 @@ PeakAssignmentParameters const * PeakAssignmentParameters::get_instance()
 PeakAssignmentParameters *
 PeakAssignmentParameters::create_singleton_instance()
 {
-	PeakAssignmentParameters * inst = new PeakAssignmentParameters;
+	auto * inst = new PeakAssignmentParameters;
 	inst->set_options_from_cmdline();
 	return inst;
 }
@@ -77,14 +77,14 @@ bool PeakAssignmentParameters::options_registered_( false );
 #if defined MULTI_THREADED
 std::atomic< PeakAssignmentParameters * > PeakAssignmentParameters::instance_( 0 );
 #else
-PeakAssignmentParameters * PeakAssignmentParameters::instance_( 0 );
+PeakAssignmentParameters * PeakAssignmentParameters::instance_( nullptr );
 #endif
 
 /// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!
 void
 PeakAssignmentParameters::reset() {
 	if ( instance_ ) delete instance_;
-	instance_ = NULL;
+	instance_ = nullptr;
 }
 
 /// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!

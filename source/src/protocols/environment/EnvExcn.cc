@@ -21,6 +21,7 @@
 
 // tracer
 #include <basic/Tracer.hh>
+#include <utility>
 
 // C++ Headers
 
@@ -50,7 +51,7 @@ std::string dof_id_to_string( core::id::DOF_ID const& id, ProtectedConformation 
 
 
 EXCN_Env_Security_Exception::EXCN_Env_Security_Exception(
-	core::id::DOF_ID const& dof,
+	core::id::DOF_ID const &  dof,
 	core::environment::DofPassportCOP pass,
 	std::string const& mod_type,
 	ProtectedConformation const& conf,

@@ -75,10 +75,10 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
-	~DockMCMCycle();
+	~DockMCMCycle() override;
 
 	//clone
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Sets the default values for all members
 	void set_default();
@@ -90,10 +90,10 @@ public:
 	moves::MonteCarloOP get_mc() { return mc_; }
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const DockMCMCycle & dp );
 
 

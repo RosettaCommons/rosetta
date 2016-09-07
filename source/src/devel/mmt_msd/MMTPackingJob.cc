@@ -32,7 +32,7 @@ namespace mmt_msd {
 static THREAD_LOCAL basic::Tracer TR( "devel.mmt_msd.MMTPackingJob" );
 
 MMTPackingJob::MMTPackingJob() : running_time_( -1.0 ) {}
-MMTPackingJob::~MMTPackingJob() {}
+MMTPackingJob::~MMTPackingJob() = default;
 
 void MMTPackingJob::set_pose( core::pose::Pose const & pose )
 {
@@ -64,9 +64,9 @@ MMTPackingJob::get_sfxn() const { return *sfxn_; }
 core::pack::task::PackerTaskCOP
 MMTPackingJob::get_task() const { return task_; }
 
-bool MMTPackingJob::has_pose() const { return pose_ != 0; }
-bool MMTPackingJob::has_sfxn() const { return sfxn_ != 0; }
-bool MMTPackingJob::has_task() const { return task_ != 0; }
+bool MMTPackingJob::has_pose() const { return pose_ != nullptr; }
+bool MMTPackingJob::has_sfxn() const { return sfxn_ != nullptr; }
+bool MMTPackingJob::has_task() const { return task_ != nullptr; }
 
 void
 MMTPackingJob::go()

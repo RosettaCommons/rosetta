@@ -54,7 +54,7 @@ StemFinder::StemFinder() :
 	filenames_.clear();
 }
 
-StemFinder::~StemFinder() {}
+StemFinder::~StemFinder() = default;
 
 void
 StemFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
@@ -211,7 +211,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			}
 		}
 		std::sort( neighbor_idxs.begin(), neighbor_idxs.end() );
-		vector1< Size >::iterator it = std::unique( neighbor_idxs.begin(), neighbor_idxs.end() );
+		auto it = std::unique( neighbor_idxs.begin(), neighbor_idxs.end() );
 		neighbor_idxs.resize( std::distance( neighbor_idxs.begin(), it ) );
 		BOOST_FOREACH ( Size const n, neighbor_idxs ) {
 			TR<<conf.residue( n ).name1()<<n<<' '<<distances[ n ]<<'\n';

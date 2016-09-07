@@ -70,13 +70,13 @@ namespace protocols {
 namespace optimize_weights {
 
 /// @details Auto-generated virtual destructor
-OptEData::~OptEData() {}
+OptEData::~OptEData() = default;
 
 /// @details Auto-generated virtual destructor
-PNatRotOptERotamerData::~PNatRotOptERotamerData() {}
+PNatRotOptERotamerData::~PNatRotOptERotamerData() = default;
 
 /// @details Auto-generated virtual destructor
-PNatAAOptERotamerData::~PNatAAOptERotamerData() {}
+PNatAAOptERotamerData::~PNatAAOptERotamerData() = default;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.optimize_weights.OptEData" );
 
@@ -86,7 +86,7 @@ std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd )
 	os << rd->rot_number() << "," << rd->this_aa() << ",";
 
 	utility::vector1< Real > const & fixed_data( rd->fixed_data() );
-	for ( utility::vector1< Real >::const_iterator fd( fixed_data.begin() );
+	for ( auto fd( fixed_data.begin() );
 			fd != fixed_data.end(); ++fd ) {
 		if ( fd != fixed_data.begin() ) os << " ";
 		os << *fd;
@@ -94,7 +94,7 @@ std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd )
 	os << ",";
 
 	utility::vector1< Real > const & data( rd->data() );
-	for ( utility::vector1< Real >::const_iterator d( data.begin() );
+	for ( auto d( data.begin() );
 			d != data.end(); ++d ) {
 		if ( d != data.begin() ) os << " ";
 		os << *d;
@@ -110,7 +110,7 @@ OptEPositionData::OptEPositionData()
 {}
 
 OptEPositionData::~OptEPositionData()
-{}
+= default;
 
 void
 OptEPositionData::update_range(
@@ -199,7 +199,7 @@ PNatAAOptEPositionData::PNatAAOptEPositionData()
 {}
 
 PNatAAOptEPositionData::~PNatAAOptEPositionData()
-{}
+= default;
 
 /// Does actual work for OptE minimization
 /// @details Determine the metric for optimization of energy weights.  Original source
@@ -403,7 +403,7 @@ PNatAAOptEPositionData::range(
 	for ( Size ii = 1; ii <= free_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ free_score_list[ ii ] ];
 		Real ii_max = upper_bound[ free_score_list[ ii ] ];
-		for ( PNatAAOptERotamerDataOPs::const_iterator iter = rotamer_data_begin(),
+		for ( auto iter = rotamer_data_begin(),
 				e_itr = rotamer_data_end() ; iter != e_itr; ++iter ) {
 			if ( ii_min > (*iter)->data()[ ii ] ) {
 				ii_min = (*iter)->data()[ ii ];
@@ -419,7 +419,7 @@ PNatAAOptEPositionData::range(
 	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ fixed_score_list[ ii ] ];
 		Real ii_max = upper_bound[ fixed_score_list[ ii ] ];
-		for ( PNatAAOptERotamerDataOPs::const_iterator iter = rotamer_data_begin(),
+		for ( auto iter = rotamer_data_begin(),
 				e_itr = rotamer_data_end() ; iter != e_itr; ++iter ) {
 			if ( ii_min > (*iter)->fixed_data()[ ii ] ) {
 				ii_min = (*iter)->fixed_data()[ ii ];
@@ -447,7 +447,7 @@ PNatAAOptEPositionData::process_rotamers(
 	optimization::Multivec & ref_deriv_weight
 ) const
 {
-	for ( PNatAAOptERotamerDataOPs::const_iterator itr = rotamer_data_begin(), e_itr = rotamer_data_end() ; itr != e_itr; ++itr ) {
+	for ( auto itr = rotamer_data_begin(), e_itr = rotamer_data_end() ; itr != e_itr; ++itr ) {
 		int const this_aa( (*itr)->this_aa() );
 
 		Real weighted_energy( 0.0 );
@@ -503,7 +503,7 @@ PNatAAOptEPositionData::write_to_file( std::ofstream & outfile ) const
 		<< "nataa " << native_aa() << " "
 		<< "neighbor_count " << neighbor_count() << " "
 		<< "nrots " << data_.size() << "\n";
-	for ( PNatAAOptERotamerDataOPs::const_iterator rot( rotamer_data_begin() );
+	for ( auto rot( rotamer_data_begin() );
 			rot != rotamer_data_end(); ++rot ) {
 		outfile << *rot << std::endl;
 	}
@@ -544,15 +544,15 @@ PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 		Strings
 			fixed_vals( string_split( sections[3], ' ' ) ),
 			free_vals( string_split( sections[4], ' ' ) );
-		for ( Strings::iterator fixed_val( fixed_vals.begin() ); fixed_val != fixed_vals.end(); ++fixed_val ) {
+		for (auto & fixed_val : fixed_vals) {
 			Real val;
-			std::istringstream ss( *fixed_val );
+			std::istringstream ss( fixed_val );
 			ss >> val;
 			fixed_energies.push_back( val );
 		}
-		for ( Strings::iterator free_val( free_vals.begin() ); free_val != free_vals.end(); ++free_val ) {
+		for (auto & free_val : free_vals) {
 			Real val;
-			std::istringstream ss( *free_val );
+			std::istringstream ss( free_val );
 			ss >> val;
 			energies.push_back( val );
 		}
@@ -565,9 +565,6 @@ PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 void
 PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 {
-	typedef utility::vector1< Real > Energies;
-	typedef Energies::const_iterator Energies_CItr;
-
 	// compiler wanted these temporary variables instead of calls to class accessor functions,
 	// which produced the error "non-lvalue in unary `&'"
 	//Size const position( (position_ ),
@@ -579,24 +576,23 @@ PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 
 	Size const nrotamers( data().size() );
 	outfile.write( (char*) &nrotamers, sizeof(Size) );
-	for ( PNatAAOptERotamerDataOPs::const_iterator rot( data().begin() );
-			rot != data().end(); ++rot ) {
-		chemical::AA this_aa( (*rot)->this_aa() );
-		Size rot_number( (*rot)->rot_number() );
+	for (const auto & rot : data()) {
+		chemical::AA this_aa( rot->this_aa() );
+		Size rot_number( rot->rot_number() );
 		outfile.write( (char*) &this_aa, sizeof(chemical::AA) );
 		outfile.write( (char*) &rot_number, sizeof(Size) );
 
-		Size const nfree( (*rot)->data().size() );
+		Size const nfree( rot->data().size() );
 		outfile.write( (char*) &nfree, sizeof(Size) );
-		for ( Energies_CItr energy( (*rot)->data().begin() );
-				energy != (*rot)->data().end(); ++energy ) {
+		for ( auto energy( rot->data().begin() );
+				energy != rot->data().end(); ++energy ) {
 			outfile.write( (char*) &(*energy), sizeof(Real) );
 		}
 
-		Size const nfixed( (*rot)->fixed_data().size() );
+		Size const nfixed( rot->fixed_data().size() );
 		outfile.write( (char*) &nfixed, sizeof(Size) );
-		for ( Energies_CItr fixed_energy( (*rot)->fixed_data().begin() );
-				fixed_energy != (*rot)->fixed_data().end(); ++fixed_energy ) {
+		for ( auto fixed_energy( rot->fixed_data().begin() );
+				fixed_energy != rot->fixed_data().end(); ++fixed_energy ) {
 			outfile.write( (char*) &(*fixed_energy), sizeof(Real) );
 		}
 	}
@@ -824,7 +820,7 @@ PNatAAOptEPositionData::receive_from_node( int const source_node, int const tag 
 
 PSSMOptEPositionData::PSSMOptEPositionData() {}
 
-PSSMOptEPositionData::~PSSMOptEPositionData() {}
+PSSMOptEPositionData::~PSSMOptEPositionData() = default;
 
 
 Real
@@ -1221,7 +1217,7 @@ PSSMOptEPositionData::receive_from_node( int const source_node, int const tag )
 
 PNatRotOptEPositionData::PNatRotOptEPositionData() : phi_(0.0), psi_(0.0) {}
 
-PNatRotOptEPositionData::~PNatRotOptEPositionData() {}
+PNatRotOptEPositionData::~PNatRotOptEPositionData() = default;
 
 Real
 PNatRotOptEPositionData::get_score(
@@ -1426,7 +1422,7 @@ PNatRotOptEPositionData::process_score(
 	Size nnearnative( 0 );
 	Size ndecoys( 0 );
 
-	for ( PNatRotOptERotamerDataOPs::const_iterator itr = rotamer_data_begin(),
+	for ( auto itr = rotamer_data_begin(),
 			e_itr = rotamer_data_end() ; itr != e_itr; ++itr ) {
 		utility::vector1< Size > const & this_rotindex( (*itr)->rotamer_index() );
 		Size this_rotwell = rotamer_index_2_well_id( this_rotindex );
@@ -1547,7 +1543,7 @@ PNatRotOptEPositionData::process_score(
 			for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) ostr << " " << native_rotwell[ ii ] << " " << native_chi_[ ii ];
 			ostr << " phi/psi:" << phi_ << " " << psi_ << "\n";
 
-			for ( PNatRotOptERotamerDataOPs::const_iterator itr = rotamer_data_begin(),
+			for ( auto itr = rotamer_data_begin(),
 					e_itr = rotamer_data_end() ; itr != e_itr; ++itr ) {
 
 				ostr << "NON-NATIVE-ROT " << tag() << " ";
@@ -1599,7 +1595,7 @@ PNatRotOptEPositionData::range(
 	for ( Size ii = 1; ii <= free_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ free_score_list[ ii ] ];
 		Real ii_max = upper_bound[ free_score_list[ ii ] ];
-		for ( PNatRotOptERotamerDataOPs::const_iterator iter = rotamer_data_begin(),
+		for ( auto iter = rotamer_data_begin(),
 				e_itr = rotamer_data_end() ; iter != e_itr; ++iter ) {
 			if ( ii_min > (*iter)->free_data()[ ii ] ) {
 				ii_min = (*iter)->free_data()[ ii ];
@@ -1615,7 +1611,7 @@ PNatRotOptEPositionData::range(
 	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ fixed_score_list[ ii ] ];
 		Real ii_max = upper_bound[ fixed_score_list[ ii ] ];
-		for ( PNatRotOptERotamerDataOPs::const_iterator iter = rotamer_data_begin(),
+		for ( auto iter = rotamer_data_begin(),
 				e_itr = rotamer_data_end() ; iter != e_itr; ++iter ) {
 			if ( ii_min > (*iter)->fixed_data()[ ii ] ) {
 				ii_min = (*iter)->fixed_data()[ ii ];
@@ -2108,7 +2104,7 @@ PNatStructureOptEData::PNatStructureOptEData()
 {}
 
 PNatStructureOptEData::~PNatStructureOptEData()
-{}
+= default;
 
 
 Real
@@ -2949,7 +2945,7 @@ ConstraintedOptimizationWeightFunc::ConstraintedOptimizationWeightFunc(
 }
 
 ConstraintedOptimizationWeightFunc::~ConstraintedOptimizationWeightFunc()
-{}
+= default;
 
 
 /// @details Constraint input file format:
@@ -3204,7 +3200,7 @@ DDGMutationOptEData::DDGMutationOptEData()
 {}
 
 DDGMutationOptEData::~DDGMutationOptEData()
-{}
+= default;
 
 Real
 DDGMutationOptEData::get_score(
@@ -3926,9 +3922,8 @@ core::Size
 OptEData::num_rotamers() const
 {
 	core::Size num_rots(0);
-	for ( OptEPositionDataOPs::const_iterator pos( data_.begin() );
-			pos != data_.end(); ++pos ) {
-		num_rots += (*pos)->size();
+	for (const auto & pos : data_) {
+		num_rots += pos->size();
 	}
 	return num_rots;
 }
@@ -3952,11 +3947,11 @@ OptEData::read_from_file( std::string filename )
 	while ( getline( infile, line ) ) {
 		Strings words( string_split( line, ' ' ) );
 		if ( line.substr(0,12) == "fixed terms:" ) {
-			for ( Strings::iterator term( words.begin()+2 ); term != words.end(); ++term ) {
+			for ( auto term( words.begin()+2 ); term != words.end(); ++term ) {
 				fixed_terms.push_back( score_type_from_name( *term ) );
 			}
 		} else if ( line.substr(0,11) == "free terms:" ) {
-			for ( Strings::iterator term( words.begin()+2 ); term != words.end(); ++term ) {
+			for ( auto term( words.begin()+2 ); term != words.end(); ++term ) {
 				free_terms.push_back( score_type_from_name( *term ) );
 			}
 			break; // (free terms expected to come after fixed terms)
@@ -3998,21 +3993,19 @@ OptEData::write_to_file( std::string filename ) const
 		<< "\n";
 
 	outfile << "fixed terms:";
-	for ( ScoreTypes::const_iterator et( fixed_energy_terms_.begin() );
-			et != fixed_energy_terms_.end(); ++et ) {
-		outfile << " " << name_from_score_type( *et );
+	for (auto fixed_energy_term : fixed_energy_terms_) {
+		outfile << " " << name_from_score_type( fixed_energy_term );
 	}
 	outfile << "\n";
 
 	outfile << "free terms:";
-	for ( ScoreTypes::const_iterator et( energy_terms_.begin() );
-			et != energy_terms_.end(); ++et ) {
-		outfile << " " << name_from_score_type( *et );
+	for (auto energy_term : energy_terms_) {
+		outfile << " " << name_from_score_type( energy_term );
 	}
 	outfile << "\n";
 
 	// write data
-	for ( OptEPositionDataOPs::const_iterator pos( position_data_begin() );
+	for ( auto pos( position_data_begin() );
 			pos != position_data_end(); ++pos ) {
 		outfile << "optE_position_data_type " << (*pos)->type() << "\n";
 		(*pos)->write_to_file( outfile );
@@ -4031,10 +4024,10 @@ OptEData::write_to_binary_file( std::string filename ) const
 	std::ofstream outfile( filename.c_str(), std::ios::out | std::ios::binary );
 	Size const npositions( data_.size() );
 	outfile.write( (char*) &npositions, sizeof(Size) );
-	for ( OptEPositionDataOPs::const_iterator pos( data_.begin() ); pos != data_.end(); ++pos ) {
-		OptEPositionDataType pos_data_type = (*pos)->type();
+	for (const auto & pos : data_) {
+		OptEPositionDataType pos_data_type = pos->type();
 		outfile.write( (char*) & pos_data_type, sizeof(OptEPositionDataType) );
-		(*pos)->write_to_binary_file( outfile );
+		pos->write_to_binary_file( outfile );
 	}
 	outfile.close();
 	TR << "Wrote " << num_rotamers() << " rotamers at "
@@ -4104,7 +4097,7 @@ OptEPositionDataFactory::create_position_data( OptEPositionDataType const type )
 	case constrained_optimization_weight_func :
 		return OptEPositionDataOP( new ConstraintedOptimizationWeightFunc );
 	}
-	return 0;
+	return nullptr;
 }
 
 

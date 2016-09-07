@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.CopyDofMover" );
 
@@ -43,7 +44,7 @@ namespace simple_moves {
 CopyDofMover::CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > res_map ):
 	template_pose_( template_pose ),
 	template_mini_pose_( template_pose ),
-	res_map_( res_map ),
+	res_map_(std::move( res_map )),
 	backbone_only_( false ),
 	side_chain_only_( false ),
 	ignore_virtual_( false ),
@@ -52,8 +53,7 @@ CopyDofMover::CopyDofMover( pose::Pose const & template_pose, std::map< Size, Si
 {}
 
 //Destructor
-CopyDofMover::~CopyDofMover()
-{}
+CopyDofMover::~CopyDofMover() = default;
 
 ////////////////////////////////////////////////////////////
 void
@@ -100,8 +100,8 @@ CopyDofMover::pose_string(
 ) const
 {
 	utility::vector1< Size > res_list;
-	for ( std::map< Size, Size >::const_iterator it = res_map_.begin(), end = res_map_.end(); it != end; ++it ) {
-		res_list.push_back( it->first );
+	for (const auto & it : res_map_) {
+		res_list.push_back( it.first );
 	}
 	return pose_string( pose, res_list );
 }

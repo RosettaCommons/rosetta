@@ -42,6 +42,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <basic/datacache/DataMap.hh>
+#include <utility>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -108,9 +109,9 @@ StructureScoresFeatures::StructureScoresFeatures() :
 StructureScoresFeatures::StructureScoresFeatures(
 	ScoreFunctionOP scfxn
 ) :
-	scfxn_(scfxn)
+	scfxn_(std::move(scfxn))
 {
-	if ( scfxn_ == 0 ) {
+	if ( scfxn_ == nullptr ) {
 		utility_exit_with_message( "StructureScoresFeatures may not be constructed with a null-pointer ScoreFunctionOP" );
 	}
 }
@@ -122,7 +123,7 @@ StructureScoresFeatures::StructureScoresFeatures(
 	scfxn_(src.scfxn_)
 {}
 
-StructureScoresFeatures::~StructureScoresFeatures() {}
+StructureScoresFeatures::~StructureScoresFeatures() = default;
 
 string
 StructureScoresFeatures::type_name() const { return "StructureScoresFeatures"; }

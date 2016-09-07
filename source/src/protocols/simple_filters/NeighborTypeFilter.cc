@@ -34,16 +34,15 @@ NeighborTypeFilterCreator::create_filter() const { return protocols::filters::Fi
 std::string
 NeighborTypeFilterCreator::keyname() const { return "NeighborType"; }
 
-NeighborTypeFilter::~NeighborTypeFilter() {}
+NeighborTypeFilter::~NeighborTypeFilter() = default;
 
 void
 NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	residue_types_.assign( core::chemical::num_canonical_aas, false );
 	utility::vector0< utility::tag::TagCOP > const neighbor_type_tags( tag->getTags() );
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator nt_it=neighbor_type_tags.begin(); nt_it!=neighbor_type_tags.end(); ++nt_it ) {
-		utility::tag::TagCOP const nt_tag_ptr = *nt_it;
-		if ( nt_tag_ptr->getName() == "Neighbor" ) {
+	for (auto nt_tag_ptr : neighbor_type_tags) {
+			if ( nt_tag_ptr->getName() == "Neighbor" ) {
 			std::string const type( nt_tag_ptr->getOption<std::string>( "type" ) );
 			residue_types_[ core::chemical::aa_from_name( type ) ] = true;
 		}

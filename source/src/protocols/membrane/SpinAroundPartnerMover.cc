@@ -101,14 +101,7 @@ SpinAroundPartnerMover::SpinAroundPartnerMover(
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & src )
-: protocols::moves::Mover( src ),
-	jump_( src.jump_ ),
-	rand_range_( src.rand_range_ ),
-	range_( src.range_ ),
-	x_( src.x_ ),
-	y_( src.y_ )
-{}
+SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & ) = default;
 
 /// @brief Assignment Operator
 SpinAroundPartnerMover &
@@ -124,7 +117,7 @@ SpinAroundPartnerMover::operator = ( SpinAroundPartnerMover const & src ) {
 }
 
 /// @brief Destructor
-SpinAroundPartnerMover::~SpinAroundPartnerMover() {}
+SpinAroundPartnerMover::~SpinAroundPartnerMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

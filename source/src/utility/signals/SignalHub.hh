@@ -266,7 +266,7 @@ protected: // re-usable link container methods
 
 		remove_invalid( links ); // search and destroy first
 
-		LinkUnits::iterator i = find_connection( bind( fn, ptr, _1 ), links );
+		auto i = find_connection( bind( fn, ptr, _1 ), links );
 		if ( i != links.end() ) {
 			return *i; // implicit LinkUnitOP -> Link creation
 		}
@@ -289,7 +289,7 @@ protected: // re-usable link container methods
 
 		remove_invalid( links ); // search and destroy first
 
-		LinkUnits::iterator i = find_connection( bind( fn, ptr, _1 ), links );
+		auto i = find_connection( bind( fn, ptr, _1 ), links );
 		if ( i == links.end() ) {
 			return false;
 		}
@@ -317,7 +317,7 @@ protected: // re-usable link container methods
 		// Function wrapper objects are not equality comparable due to
 		// implementation ambiguities, so instead we run through
 		// and compare all functions against the functor.
-		for ( LinkUnits::iterator i = links.begin(), ie = links.end(); i != ie ; ++i ) {
+		for ( auto i = links.begin(), ie = links.end(); i != ie ; ++i ) {
 			if ( (*i)->valid && (*i)->fref< Function >() == f ) {
 				return i;
 			}
@@ -341,8 +341,8 @@ protected: // re-usable link container methods
 		currently_sending_ = true;
 
 		// the only links left are valid links
-		for ( LinkUnits::iterator i = links.begin(), ie = links.end(); i != ie ; ++i ) {
-			(*i)->send< Function >( s );
+		for (auto & link : links) {
+			link->send< Function >( s );
 		}
 
 		// mark end of send, allow reallocation of links_ list
@@ -353,9 +353,9 @@ protected: // re-usable link container methods
 	/// @brief invalidate and destroy internals of all links
 	inline
 	void invalidate_all( LinkUnits & links ) const {
-		for ( LinkUnits::iterator i = links.begin(), ie = links.end(); i != ie; ++i ) {
-			(*i)->valid = false;
-			deallocate( **i );
+		for (auto & link : links) {
+			link->valid = false;
+			deallocate( *link );
 		}
 	}
 
@@ -364,7 +364,7 @@ protected: // re-usable link container methods
 	inline
 	void remove_invalid( LinkUnits & links ) const {
 		if ( !currently_sending_ ) {
-			LinkUnits::iterator i = std::remove_if( links.begin(), links.end(), IsLinkUnitInvalid< Function >() );
+			auto i = std::remove_if( links.begin(), links.end(), IsLinkUnitInvalid< Function >() );
 			links.erase( i, links.end() );
 		}
 	}
@@ -377,7 +377,7 @@ protected: // LinkUnit memory management
 	void deallocate( LinkUnit & lu ) const {
 		if ( lu.fn ) {
 			delete static_cast< Function * >( lu.fn );
-			lu.fn = NULL;
+			lu.fn = nullptr;
 		}
 	}
 

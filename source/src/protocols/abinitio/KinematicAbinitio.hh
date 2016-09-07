@@ -77,57 +77,57 @@ public:
 		core::kinematics::MoveMapCOP movemap
 	);
 
-	~KinematicAbinitio();
+	~KinematicAbinitio() override;
 
-	virtual moves::MoverOP clone() const {
+	moves::MoverOP clone() const override {
 		return moves::MoverOP( new KinematicAbinitio(*this) );
 	}
 
 	static void register_options();
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void set_max_seq_sep( core::pose::Pose& pose, Size setting );
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void set_max_seq_sep( core::pose::Pose& pose, Size setting ) override;
 
 	// @brief overload to do start extra-round of jump_cycles()
-	virtual bool prepare_stage1( core::pose::Pose &pose );
-	virtual bool prepare_stage2( core::pose::Pose &pose );
-	virtual bool prepare_stage3( core::pose::Pose &pose );
+	bool prepare_stage1( core::pose::Pose &pose ) override;
+	bool prepare_stage2( core::pose::Pose &pose ) override;
+	bool prepare_stage3( core::pose::Pose &pose ) override;
 
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
-	virtual bool prepare_loop_in_stage3(
+	bool prepare_loop_in_stage3(
 		core::pose::Pose&,
 		Size, /* loop_iteration*/
 		Size  /* total_iterations */
-	);
+	) override;
 
 	//@brief called in each iteration of the loop in stage4 before the stage4_cycles_ of trials commence
-	virtual bool prepare_loop_in_stage4(
+	bool prepare_loop_in_stage4(
 		core::pose::Pose&,
 		Size, /* loop_iteration*/
 		Size  /* total_iterations */
-	);
+	) override;
 
 	//@brief returns the Mover that is applied inside the stage3 double loop
 	//overload from ClassicAbinitio to perform also some wobble-type random moves
-	virtual moves::TrialMoverOP
-	stage1_mover( core::pose::Pose &pose, moves::TrialMoverOP trials_in );
+	moves::TrialMoverOP
+	stage1_mover( core::pose::Pose &pose, moves::TrialMoverOP trials_in ) override;
 
 
 	//@brief returns the Mover that is applied inside the stage3 double loop
 	//overload from ClassicAbinitio to perform also some wobble-type random moves
-	virtual moves::TrialMoverOP
-	stage2_mover( core::pose::Pose &pose, moves::TrialMoverOP trials_in );
+	moves::TrialMoverOP
+	stage2_mover( core::pose::Pose &pose, moves::TrialMoverOP trials_in ) override;
 
 	//@brief returns the Mover that is applied inside the stage3 double loop
 	//overload from ClassicAbinitio to perform also some wobble-type random moves
-	virtual moves::TrialMoverOP
-	stage3_mover( core::pose::Pose &pose, int lct1, int lct2, moves::TrialMoverOP trials_in );
+	moves::TrialMoverOP
+	stage3_mover( core::pose::Pose &pose, int lct1, int lct2, moves::TrialMoverOP trials_in ) override;
 
 	//@brief returns the Mover that is applied inside the stage3 double loop
 	//overload from ClassicAbinitio to perform also some wobble-type random moves
-	virtual moves::TrialMoverOP
-	stage4_mover( core::pose::Pose &pose, int kk, moves::TrialMoverOP trials_in );
+	moves::TrialMoverOP
+	stage4_mover( core::pose::Pose &pose, int kk, moves::TrialMoverOP trials_in ) override;
 
 	/// @brief set the closure_protocol... if not set no closure...
 	void
@@ -137,13 +137,13 @@ public:
 
 protected:
 	//@brief assigns default score-functions to the 4 stages--> score0 / score1 / (score2/score5) / score3
-	virtual void set_default_scores();
+	void set_default_scores() override;
 
 	//@brief read out cmd-line options
-	virtual void set_default_options();
+	void set_default_options() override;
 
 	//@brief overload to set the kinematic control score-terms
-	virtual void replace_scorefxn( core::pose::Pose& pose, StageID, core::Real intra_stage_progress );
+	void replace_scorefxn( core::pose::Pose& pose, StageID, core::Real intra_stage_progress ) override;
 
 private:
 	//@brief helper method to create_bb_moves for the stage3_- and stage4_mover methods.
@@ -194,14 +194,14 @@ public:
 		jumping::BaseJumpSetupOP jump_def
 	);
 
-	virtual moves::MoverOP clone() const {
+	moves::MoverOP clone() const override {
 		return moves::MoverOP( new JumpingFoldConstraintsWrapper(*this) );
 	}
 
 	//static void register_options();
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 protected:
 

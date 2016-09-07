@@ -41,8 +41,8 @@ namespace constraint_generator {
 class ConstraintGenerator : public utility::pointer::ReferenceCount {
 
 public: // constructors / destructors
-	ConstraintGenerator( std::string const & class_name );
-	virtual ~ConstraintGenerator();
+	ConstraintGenerator( std::string class_name ); // move-constructed
+	~ConstraintGenerator() override;
 
 private:
 	ConstraintGenerator();

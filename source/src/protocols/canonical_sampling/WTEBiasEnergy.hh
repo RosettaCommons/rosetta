@@ -34,10 +34,10 @@ public:
 	WTEBiasEnergy();
 
 	std::string
-	get_name() const { return "WTEBiasEnergy"; };
+	get_name() const override { return "WTEBiasEnergy"; };
 
 protected:
-	virtual core::Real extract_collective_var( core::pose::Pose const& ) const;
+	core::Real extract_collective_var( core::pose::Pose const& ) const override;
 };
 
 } //namespace canonical_sampling

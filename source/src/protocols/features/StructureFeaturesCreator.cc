@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 StructureFeaturesCreator::StructureFeaturesCreator() {}
-StructureFeaturesCreator::~StructureFeaturesCreator() {}
+StructureFeaturesCreator::~StructureFeaturesCreator() = default;
 FeaturesReporterOP StructureFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new StructureFeatures );
 }

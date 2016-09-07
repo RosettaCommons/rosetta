@@ -47,7 +47,7 @@ public:
 		type("Simple");
 	}
 
-	ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		return ScoringSchemeOP( new SimpleScoringScheme(
 			match_score(),
 			mismatch_score(),
@@ -57,15 +57,15 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~SimpleScoringScheme() {}
+	~SimpleScoringScheme() override = default;
 
-	virtual void read_from_file( utility::file::FileName const & fn );
+	void read_from_file( utility::file::FileName const & fn ) override;
 
 	Real match_score() const;
 
 	Real mismatch_score() const;
 
-	virtual Real score( SequenceOP seq1, SequenceOP seq2, core::Size pos1, core::Size pos2 );
+	Real score( SequenceOP seq1, SequenceOP seq2, core::Size pos1, core::Size pos2 ) override;
 
 private:
 	Real match_score_;

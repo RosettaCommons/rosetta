@@ -67,7 +67,7 @@ FingerprintBase::FingerprintBase () :
 }
 
 /// @details Auto-generated virtual destructor
-FingerprintBase::~FingerprintBase() {}
+FingerprintBase::~FingerprintBase() = default;
 
 void FingerprintBase::print_to_file(std::string const & output_filename) const {
 
@@ -78,11 +78,11 @@ void FingerprintBase::print_to_file(std::string const & output_filename) const {
 	out_stream<<"/SPACING/"<<" "<<std::fixed<<std::setprecision(4)<< pocketGrid_spacing_<<std::endl;
 	out_stream<<"/COM/"<<" "<<std::fixed<<std::setprecision(4)<< CoM_.x() << "\t" <<std::fixed<<std::setprecision(4)<< CoM_.y() << "\t"<<std::fixed<<std::setprecision(4)<< CoM_.z() <<std::endl;
 	core::Size curr_origin_index = 1;
-	for ( utility::vector1<numeric::xyzVector<core::Real> >::const_iterator i_mori = multi_origin_list_.begin(); i_mori != multi_origin_list_.end(); ++i_mori, ++curr_origin_index ) {
+	for ( auto i_mori = multi_origin_list_.begin(); i_mori != multi_origin_list_.end(); ++i_mori, ++curr_origin_index ) {
 		out_stream<<"/ORI/"<< " " <<std::fixed<<std::setprecision(4)<< i_mori->x() << "\t" <<std::fixed<<std::setprecision(4)<< i_mori->y() << "\t"<<std::fixed<<std::setprecision(4)<< i_mori->z() << "\t" << curr_origin_index <<std::endl;
 	}
-	for ( std::list<spherical_coor_triplet>::const_iterator fi = triplet_fingerprint_data_.begin(); fi != triplet_fingerprint_data_.end(); ++fi ) {
-		out_stream<<"/RAY/"<< " " << fi->phi << "\t" <<fi->psi << "\t"<< fi->rho << "\t"<< fi->ori <<std::endl;
+	for (const auto & fi : triplet_fingerprint_data_) {
+		out_stream<<"/RAY/"<< " " << fi.phi << "\t" <<fi.psi << "\t"<< fi.rho << "\t"<< fi.ori <<std::endl;
 	}
 
 	out_stream.close();
@@ -117,7 +117,7 @@ void FingerprintBase::print_to_pdb(std::string const & output_pdbname, numeric::
 
 	out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()+translation.z()<<std::endl;
 	core::Size curr_origin_index = 1;
-	for ( utility::vector1<numeric::xyzVector<core::Real> >::const_iterator i_mori = multi_origin_list_.begin(); i_mori != multi_origin_list_.end(); ++i_mori, ++curr_origin_index ) {
+	for ( auto i_mori = multi_origin_list_.begin(); i_mori != multi_origin_list_.end(); ++i_mori, ++curr_origin_index ) {
 		//set atom number and residue name for PDB file
 		atom_serial_number = counter;
 		residue_sequence_number = curr_origin_index;
@@ -140,14 +140,14 @@ void FingerprintBase::print_to_pdb(std::string const & output_pdbname, numeric::
 			std::setw(8)<<std::fixed<<std::setprecision(3)<<i_mori->z()<<
 			std::endl;
 	}
-	for ( std::list<spherical_coor_triplet>::const_iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd ) {
+	for (const auto & pd : triplet_fingerprint_data_) {
 		numeric::xyzVector<core::Real> new_coor;
-		convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
-		new_coor += multi_origin_list_[pd->ori];
+		convert_spherical_coor_triplet_to_cartesian( pd, new_coor );
+		new_coor += multi_origin_list_[pd.ori];
 		//set atom number and residue name for PDB file
 		atom_serial_number = counter;
-		residue_sequence_number = pd->ori;
-		residue_name = "EG" + utility::to_string(pd->ori);
+		residue_sequence_number = pd.ori;
+		residue_name = "EG" + utility::to_string(pd.ori);
 		//print eggshell PDB coordinates
 		out_stream<<
 			std::setw(6)<<record_name<<
@@ -370,7 +370,7 @@ void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output
 	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
 
 	Size counter = 0;
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_list_.begin(); pd != eggshell_list_.end(); ++pd ) {
+	for (const auto & pd : eggshell_list_) {
 		++counter;
 		std::string record_name = "ATOM  ";
 		Size atom_serial_number = counter;
@@ -396,14 +396,14 @@ void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output
 			std::setw(4)<<residue_sequence_number<<
 			std::setw(1)<<code_for_insertion_of_residues<<
 			std::setw(3)<<gap3<<
-			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<
-			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<
-			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<
+			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.x()<<
+			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.y()<<
+			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.z()<<
 			std::endl;
 	}
 
 	counter = 0;
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extshell_list_.begin(); pd != extshell_list_.end(); ++pd ) {
+	for (const auto & pd : extshell_list_) {
 		++counter;
 		std::string record_name = "ATOM  ";
 		Size atom_serial_number = counter;
@@ -429,9 +429,9 @@ void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output
 			std::setw(4)<<residue_sequence_number<<
 			std::setw(1)<<code_for_insertion_of_residues<<
 			std::setw(3)<<gap3<<
-			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<
-			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<
-			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<
+			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.x()<<
+			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.y()<<
+			std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.z()<<
 			std::endl;
 	}
 	outPDB_stream.close();
@@ -481,13 +481,13 @@ core::Real NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pos
 
 	core::Real min_rho_difference(0.);
 	core::Size num_points(0);
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pt1 = egg_and_extra_shell.begin(); pt1 != egg_and_extra_shell.end(); ++pt1 ) {
+	for ( auto pt1 = egg_and_extra_shell.begin(); pt1 != egg_and_extra_shell.end(); ++pt1 ) {
 		numeric::xyzVector< core::Real > eggshell_point1 = *pt1 - origin_;
 		spherical_coor_triplet triplet1 = {0,0,0,0};
 		convert_cartesian_to_spherical_coor_triplet( eggshell_point1, triplet1 );
 		core::Real min_angle(999.);
 		spherical_coor_triplet triplet2 = {0,0,0,0};
-		for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pt2 = egg_and_extra_shell.begin(); pt2 != egg_and_extra_shell.end(); ++pt2 ) {
+		for ( auto pt2 = egg_and_extra_shell.begin(); pt2 != egg_and_extra_shell.end(); ++pt2 ) {
 			if ( pt1 == pt2 ) continue;
 			core::Real const curr_angle = std::abs(cos_of( *pt1, *pt2 ));
 			if ( curr_angle < min_angle ) {
@@ -1456,15 +1456,15 @@ void NonPlaidFingerprint::set_origin_away_from_eggshell_plane( std::list< numeri
 	origin_.zero();
 
 	core::Real A11(0.), A12(0.), A13(0.), A22(0.), A23(0.), b1(0.), b2(0.), b3(0.);
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = egg_and_extra_shell.begin(); pd != egg_and_extra_shell.end(); ++pd ) {
-		A11 += pd->x()*pd->x();
-		A12 += pd->x()*pd->y();
-		A13 += pd->x();
-		A22 += pd->y()*pd->y();
-		A23 += pd->y();
-		b1 += pd->x()*pd->z();
-		b2 += pd->y()*pd->z();
-		b3 += pd->z();
+	for (const auto & pd : egg_and_extra_shell) {
+		A11 += pd.x()*pd.x();
+		A12 += pd.x()*pd.y();
+		A13 += pd.x();
+		A22 += pd.y()*pd.y();
+		A23 += pd.y();
+		b1 += pd.x()*pd.z();
+		b2 += pd.y()*pd.z();
+		b3 += pd.z();
 	}
 
 	numeric::xyzMatrix<core::Real> A;
@@ -1493,10 +1493,10 @@ void NonPlaidFingerprint::set_origin_away_from_eggshell_plane( std::list< numeri
 	numeric::xyzVector<core::Real> plane_coord;
 	std::list< numeric::xyzVector<core::Real> > plane_coord_list;
 
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pdebug = egg_and_extra_shell.begin(); pdebug != egg_and_extra_shell.end(); ++pdebug ) {
-		plane_coord.x() = pdebug->x();
-		plane_coord.y() = pdebug->y();
-		plane_coord.z() = best_fit_a * pdebug->x() + best_fit_b * pdebug->y() + best_fit_c;
+	for (const auto & pdebug : egg_and_extra_shell) {
+		plane_coord.x() = pdebug.x();
+		plane_coord.y() = pdebug.y();
+		plane_coord.z() = best_fit_a * pdebug.x() + best_fit_b * pdebug.y() + best_fit_c;
 		plane_coord_list.push_back(plane_coord);
 	}
 
@@ -1556,8 +1556,8 @@ void NonPlaidFingerprint::set_origin_away_from_eggshell(std::list< numeric::xyzV
 	// set origin_ 30 A below the eggshell
 	origin_.zero();
 	numeric::xyzVector<core::Real> temp_vec(0.);
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = egg_and_extra_shell.begin(); pd != egg_and_extra_shell.end(); ++pd ) {
-		temp_vec += (CoM_ - *pd);
+	for (const auto & pd : egg_and_extra_shell) {
+		temp_vec += (CoM_ - pd);
 	}
 	temp_vec.normalize(30.);
 
@@ -1883,11 +1883,11 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 	//Size orig_cpu_total_num = 0;
 	//Size orig_cpu_num_evaluations = 0;
 
-	for ( std::list<spherical_coor_triplet>::const_iterator ni = fp.triplet_fingerprint_data().begin(); ni != fp.triplet_fingerprint_data().end(); ++ni ) {
+	for (const auto & ni : fp.triplet_fingerprint_data()) {
 
-		core::Real curr_phi = ni->phi;
-		core::Real curr_psi = ni->psi;
-		core::Size curr_ori = ni->ori;
+		core::Real curr_phi = ni.phi;
+		core::Real curr_psi = ni.psi;
+		core::Size curr_ori = ni.ori;
 		// if the current phi and/or psi is outside the overall max/min, set best_rho to zero and jumpout (ie. ray misses the ligand)
 		core::Real best_rho_sq(9999.);
 		//core::Size best_intersecting_atom(0);
@@ -2023,7 +2023,7 @@ core::Real PlaidFingerprint::fp_compare( FingerprintBase & fp, core::Real const 
 	using namespace basic::options;
 	bool square  = option[ OptionKeys::fingerprint::square_score ]();
 
-	for ( std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); (pi != fp.triplet_fingerprint_data().end()) &&  (li != triplet_fingerprint_data_.end()); ++pi, ++li ) {
+	for ( auto pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); (pi != fp.triplet_fingerprint_data().end()) &&  (li != triplet_fingerprint_data_.end()); ++pi, ++li ) {
 
 		// jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
 		// these are useful asserts though, it's worth thinking about how to make them valid again...
@@ -2088,8 +2088,8 @@ void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const 
 	core::Real Total_score = 0;
 	core::Real Differentiable_score = 0;
 	core::Size num_rays = 0;
-	std::list<ray_distance_derivs>::const_iterator di = derivs_of_ray_distances_.begin();
-	for ( std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); (pi != fp.triplet_fingerprint_data().end()) && (li != triplet_fingerprint_data_.end()) && (di != derivs_of_ray_distances_.end()); ++pi, ++li, ++di ) {
+	auto di = derivs_of_ray_distances_.begin();
+	for ( auto pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); (pi != fp.triplet_fingerprint_data().end()) && (li != triplet_fingerprint_data_.end()) && (di != derivs_of_ray_distances_.end()); ++pi, ++li, ++di ) {
 		assert( std::abs( pi->phi - li->phi ) < 0.001 );
 		assert( std::abs( pi->psi - li->psi ) < 0.001 );
 
@@ -2617,11 +2617,11 @@ std::list<numeric::xyzVector<core::Real> > NonPlaidFingerprint::combine_xyz_list
 
 	std::list<numeric::xyzVector<core::Real> > combined_list;
 	combined_list.clear();
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = xyz_list_1.begin(); pd != xyz_list_1.end(); ++pd ) {
-		combined_list.push_back(*pd);
+	for (const auto & pd : xyz_list_1) {
+		combined_list.push_back(pd);
 	}
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = xyz_list_2.begin(); pd != xyz_list_2.end(); ++pd ) {
-		combined_list.push_back(*pd);
+	for (const auto & pd : xyz_list_2) {
+		combined_list.push_back(pd);
 	}
 	return combined_list;
 }
@@ -2632,8 +2632,8 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::convert_cart_to_spherical
 	std::list< spherical_coor_triplet > rounded_triplet_list;
 	rounded_triplet_list.clear();
 	spherical_coor_triplet ray_triplet;
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = xyz_list.begin(); pd != xyz_list.end(); ++pd ) {
-		convert_cartesian_to_spherical_coor_triplet( *pd - origin_, ray_triplet );
+	for (const auto & pd : xyz_list) {
+		convert_cartesian_to_spherical_coor_triplet( pd - origin_, ray_triplet );
 		ray_triplet.phi = (floor(ray_triplet.phi * 100+0.5)/100);
 		ray_triplet.psi = (floor(ray_triplet.psi * 100+0.5)/100);
 		ray_triplet.rho = (floor(ray_triplet.rho * 100+0.5)/100);
@@ -2648,8 +2648,8 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::set_rho_to_zero(std::list
 	std::list< spherical_coor_triplet > rho_zero_triplet_list;
 	rho_zero_triplet_list.clear();
 	spherical_coor_triplet ray_triplet;
-	for ( std::list<spherical_coor_triplet>::const_iterator aa = spherical_triplet_list.begin(); aa != spherical_triplet_list.end(); ++aa ) {
-		ray_triplet = *aa;
+	for (const auto & aa : spherical_triplet_list) {
+		ray_triplet = aa;
 		ray_triplet.rho = 0;
 		rho_zero_triplet_list.push_back(ray_triplet);
 	}
@@ -2663,11 +2663,11 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::remove_duplicate_phi_psi(
 	std::list< spherical_coor_triplet > unique_triplet;
 	unique_triplet.clear();
 
-	for ( std::list<spherical_coor_triplet>::const_iterator aa = rounded_triplet.begin(); aa != rounded_triplet.end(); ++aa ) {
+	for (const auto & aa : rounded_triplet) {
 		bool found = false;
-		spherical_coor_triplet best_triplet = *aa;
-		for ( std::list<spherical_coor_triplet>::iterator bb = temp_triplet.begin(); bb != temp_triplet.end(); ) {
-			if ( (aa->phi == bb->phi) && (aa->psi == bb->psi) ) {
+		spherical_coor_triplet best_triplet = aa;
+		for ( auto bb = temp_triplet.begin(); bb != temp_triplet.end(); ) {
+			if ( (aa.phi == bb->phi) && (aa.psi == bb->psi) ) {
 				found = true;
 				if ( bb->rho < best_triplet.rho ) { best_triplet = *bb;}
 				bb = temp_triplet.erase(bb);
@@ -2683,9 +2683,9 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::remove_duplicate_phi_psi(
 std::list<numeric::xyzVector<core::Real> > NonPlaidFingerprint::convert_spherical_list_to_cartesian_list(std::list<spherical_coor_triplet> const & unique_triplet) {
 	std::list<numeric::xyzVector<core::Real> > xyz_list;
 	xyz_list.clear();
-	for ( std::list<spherical_coor_triplet>::const_iterator pd = unique_triplet.begin(); pd != unique_triplet.end(); ++pd ) {
+	for (const auto & pd : unique_triplet) {
 		numeric::xyzVector<core::Real> new_coor;
-		convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
+		convert_spherical_coor_triplet_to_cartesian( pd, new_coor );
 		new_coor += origin_;
 		xyz_list.push_back(new_coor);
 	}
@@ -2900,8 +2900,8 @@ core::Real NonPlaidFingerprint::get_surface_esp( std::list< numeric::xyzVector<c
 	core::Real charge(1.);
 	core::Real surface_esp(0.);
 
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-		surface_esp += get_interpolated_esp_energy(*sf, charge);
+	for (const auto & sf : surfacePoints_list) {
+		surface_esp += get_interpolated_esp_energy(sf, charge);
 	}
 
 	return surface_esp;

@@ -55,7 +55,7 @@
 
 // C++ headers
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 namespace protocols {
 namespace simple_filters {
@@ -79,7 +79,7 @@ ResidueDepthFrag::ResidueDepthFrag()
 {
 	rdds_.resize( 9 );
 }
-ResidueDepthFrag::~ResidueDepthFrag(){}
+ResidueDepthFrag::~ResidueDepthFrag()= default;
 
 utility::vector1< Vector >
 ResidueDepthFrag::get_CAcrd() const {
@@ -101,7 +101,7 @@ ResidueDepthCalculator::ResidueDepthCalculator( core::pose::Pose const &pose )
 	initialize( pose );
 }
 
-ResidueDepthCalculator::~ResidueDepthCalculator() {}
+ResidueDepthCalculator::~ResidueDepthCalculator() = default;
 
 void
 ResidueDepthCalculator::initialize( core::pose::Pose const &pose )
@@ -616,7 +616,7 @@ ResidueDepthFilter::ResidueDepthFilter( core::pose::Pose const &pose )
 	initialize( pose );
 }
 
-ResidueDepthFilter::~ResidueDepthFilter(){}
+ResidueDepthFilter::~ResidueDepthFilter()= default;
 
 /*
 ResidueDepthFilter::ResidueDepthFilter( ResidueDepthFilter const &init )

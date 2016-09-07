@@ -163,7 +163,7 @@ JobDistributorFactory::create_parser()
 	if ( option[ OptionKeys::jd2::dd_parser ].user() ) {
 		return ParserOP( new protocols::rosetta_scripts::RosettaScriptsParser );
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // namespace jd2

@@ -113,9 +113,8 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 	// calculate energy of separated pose over each movable jump
 	// ddG is the "right" way to do this, to properly penalize strained rotamers
 	// but aroop reports that I_sc yields better results for antibodies
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		Size const rb_jump = *it;
-		/*
+	for (Size rb_jump : movable_jumps) {
+			/*
 		Real const threshold = 100000; // dummy threshold
 		Size const repeats = 3;
 		protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( threshold, docking_scorefxn, rb_jump, repeats );
@@ -171,9 +170,8 @@ calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 	using namespace scoring;
 	Real Lrmsd( 0 );
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		Size const rb_jump = *it;
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+	for (Size rb_jump : movable_jumps) {
+			ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
 		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
 		/// this gets the wrong partner, therefore it is stored in a temporary
 		/// array and then the opposite is put in the actualy array that is used
@@ -197,9 +195,8 @@ calc_P1rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose
 	using namespace core::scoring;
 	Real P1rmsd( 0 );
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		Size const rb_jump = *it;
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+	for (Size rb_jump : movable_jumps) {
+			ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
 		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
 
 		/// this gets the wrong partner, therefore it is stored in a temporary
@@ -222,9 +219,8 @@ calc_P2rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose
 	using namespace core::scoring;
 	Real P2rmsd( 0 );
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		Size const rb_jump = *it;
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+	for (Size rb_jump : movable_jumps) {
+			ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
 		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
 
 		/// this gets the wrong partner, therefore it is stored in a temporary
@@ -247,9 +243,8 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 	using namespace scoring;
 	Real Irmsd( 0 );
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
-		if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
+	for (core::Size rb_jump : movable_jumps) {
+			if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
 			TR << "Irmsd calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
@@ -288,9 +283,8 @@ calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_po
 	using namespace scoring;
 	Real Irmsd( 0 );
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
-		//   if (!pose.is_fullatom() || !native_pose.is_fullatom()){
+	for (core::Size rb_jump : movable_jumps) {
+			//   if (!pose.is_fullatom() || !native_pose.is_fullatom()){
 		//    TR << "Irmsd calc called with non-fullatom pose!!!"<<std::endl;
 		//    return 0.0;
 		//   }
@@ -326,10 +320,8 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 	using namespace conformation;
 	Real Fnat( 0 );
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
-
-		if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
+	for (core::Size rb_jump : movable_jumps) {
+			if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
 			TR << "Fnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
@@ -403,7 +395,7 @@ calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJump
 	Real Fnat( 0 );
 	Real cutoff = 5.0;
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+	for ( auto it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		if ( !pose.is_fullatom() ) {
 			TR << "Fnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
@@ -458,10 +450,8 @@ calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pos
 	using namespace conformation;
 	Real Fnonnat( 0 );
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
-
-		if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
+	for (core::Size rb_jump : movable_jumps) {
+			if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
 			TR << "Fnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
@@ -530,7 +520,7 @@ calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pos
 				if ( calc_res_contact( rsd2, rsd1, cutoff ) ) {
 					std::pair< core::Size, core::Size > elem( j, i );
 					//     for ( std::list< std::pair< core::Size, core::Size> >::iterator it = contact_list.begin(); it != contact_list.end(); ++it ) {
-					std::list< std::pair< core::Size, core::Size > >::iterator it = std::find( contact_list.begin(), contact_list.end(), elem );
+					auto it = std::find( contact_list.begin(), contact_list.end(), elem );
 					if ( it != contact_list.end() ) { // found in the contact list
 						TR.Debug << "true positive contact pair " << j << " " << i << std::endl;
 					} else {
@@ -554,10 +544,8 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 	Real Fnonnat( 0 );
 	Real cutoff = 5.0;
 
-	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
-
-		if ( !pose.is_fullatom() ) {
+	for (core::Size rb_jump : movable_jumps) {
+			if ( !pose.is_fullatom() ) {
 			TR << "Fnonnat calc called with non-fullatom pose!!!" << std::endl;
 			return 0.0;
 		}
@@ -622,7 +610,7 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 				if ( calc_res_contact( rsd2, rsd1, cutoff ) ) {
 					std::pair< core::Size, core::Size > elem( j, i );
 					//     for ( std::list< std::pair< core::Size, core::Size> >::iterator it = contact_list.begin(); it != contact_list.end(); ++it ) {
-					std::list< std::pair< core::Size, core::Size > >::iterator it = std::find( contact_list.begin(), contact_list.end(), elem );
+					auto it = std::find( contact_list.begin(), contact_list.end(), elem );
 					if ( it != contact_list.end() ) { // found in the contact list
 						TR.Debug << "true positive contact pair " << j << " " << i << std::endl;
 					} else {

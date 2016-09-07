@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 PdbDataFeaturesCreator::PdbDataFeaturesCreator() {}
-PdbDataFeaturesCreator::~PdbDataFeaturesCreator() {}
+PdbDataFeaturesCreator::~PdbDataFeaturesCreator() = default;
 FeaturesReporterOP PdbDataFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new PdbDataFeatures );
 }

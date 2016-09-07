@@ -39,20 +39,20 @@ public:
 		set_defaults();
 	}
 
-	virtual ~MPI_LoopHashRefine_Master(){};
+	~MPI_LoopHashRefine_Master() override= default;
 
 	void set_defaults();
 
 public:
-	virtual void go();
+	void go() override;
 
 protected: // overloaded functions
 
-	virtual void init();
+	void init() override;
 
-	virtual void process_inbound_wus();
+	void process_inbound_wus() override;
 
-	virtual void process_outbound_wus();
+	void process_outbound_wus() override;
 
 protected: // Added functions
 
@@ -64,7 +64,7 @@ protected: // Added functions
 
 	void load_sample_weight();
 
-	virtual bool add_structure_to_library( core::io::silent::SilentStruct &pss, std::string add_algorithm = "" );
+	bool add_structure_to_library( core::io::silent::SilentStruct &pss, std::string add_algorithm = "" ) override;
 
 	void report_structure_to_emperor(  core::io::silent::SilentStructOP &ss ) ;
 

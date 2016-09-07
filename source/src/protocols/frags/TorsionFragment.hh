@@ -20,6 +20,7 @@
 #include <protocols/moves/Mover.hh>
 
 // ObjexxFCL Headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
@@ -80,7 +81,7 @@ public:
 			torsions_[k].resize( nbb );
 		}
 	}
-	virtual ~TorsionFragment();
+	~TorsionFragment() override;
 
 	/// fragment size, 3mer or 9mer?
 	inline
@@ -171,7 +172,7 @@ public:
 	/// ******************************************************************************************************
 
 public:
-	virtual ~SingleResidueTorsionFragmentLibrary();
+	~SingleResidueTorsionFragmentLibrary() override;
 
 	/// insert one piece of fragment in the front
 	void
@@ -248,7 +249,7 @@ public:
 public:
 	/// default constructor
 	TorsionFragmentLibrary() {}
-	virtual ~TorsionFragmentLibrary();
+	~TorsionFragmentLibrary() override;
 
 	/// constructor with size (number of residue positions)
 	TorsionFragmentLibrary( Size const size_in )
@@ -343,8 +344,8 @@ public:
 
 public:
 
-	FragLib( FragMap const & frag_map ):
-		frag_map_( frag_map )
+	FragLib( FragMap  frag_map ):
+		frag_map_(std::move( frag_map ))
 	{}
 
 	FragLib() {}
@@ -493,8 +494,8 @@ public:
 public:
 	TorsionFragmentMover( FragLibCOP fraglib, core::kinematics::MoveMapCOP mm ):
 		protocols::moves::Mover( "TorsionFragment" ),
-		fraglib_( fraglib ),
-		mm_( mm ),
+		fraglib_(std::move( fraglib )),
+		mm_(std::move( mm )),
 		frag_size_( 0 ),
 		check_ss_lengths_( false ),
 		min_len_helix_( 1 ),
@@ -503,7 +504,7 @@ public:
 	{}
 
 	std::string
-	get_name() const { return "TorsionFragmentMover"; }
+	get_name() const override { return "TorsionFragmentMover"; }
 
 	void
 	check_ss_lengths( bool const setting )
@@ -539,7 +540,7 @@ public:
 	pose_passes_ss_length_check( core::pose::Pose const & pose ) const;
 
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
 
 private:

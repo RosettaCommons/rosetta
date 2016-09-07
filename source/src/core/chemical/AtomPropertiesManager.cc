@@ -31,7 +31,7 @@ using core::chemical::AtomPropertiesManager;
 template <> std::mutex utility::SingletonBase< AtomPropertiesManager >::singleton_mutex_ {};
 template <> std::atomic< AtomPropertiesManager * > utility::SingletonBase< AtomPropertiesManager >::instance_( 0 );
 #else
-template <> AtomPropertiesManager * utility::SingletonBase< AtomPropertiesManager >::instance_( 0 );
+template <> AtomPropertiesManager * utility::SingletonBase< AtomPropertiesManager >::instance_( nullptr );
 #endif
 
 }  // namespace utility

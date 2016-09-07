@@ -156,7 +156,7 @@ AddMembraneMover::AddMembraneMover(
 ) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
-	spanfile_( spanfile ),
+	spanfile_(std::move( spanfile )),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_(),
 	anchor_rsd_( 1 ),
@@ -183,7 +183,7 @@ AddMembraneMover::AddMembraneMover(
 	protocols::moves::Mover(),
 	include_lips_( false ),
 	spanfile_( "" ),
-	topology_( topology ),
+	topology_(std::move( topology )),
 	lipsfile_(),
 	anchor_rsd_( anchor_rsd ),
 	membrane_rsd_( membrane_rsd ),
@@ -232,9 +232,9 @@ AddMembraneMover::AddMembraneMover(
 ) :
 	protocols::moves::Mover(),
 	include_lips_( true ),
-	spanfile_( spanfile ),
+	spanfile_(std::move( spanfile )),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
-	lipsfile_( lips_acc ),
+	lipsfile_(std::move( lips_acc )),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
 	center_( 0, 0, 0 ),
@@ -258,7 +258,7 @@ AddMembraneMover::AddMembraneMover(
 ) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
-	spanfile_( spanfile ),
+	spanfile_(std::move( spanfile )),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_( "" ),
 	anchor_rsd_( 1 ),
@@ -271,23 +271,10 @@ AddMembraneMover::AddMembraneMover(
 {}
 
 /// @brief Create a deep copy of the data in this mover
-AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
-	protocols::moves::Mover( src ),
-	include_lips_( src.include_lips_ ),
-	spanfile_( src.spanfile_ ),
-	topology_( src.topology_ ),
-	lipsfile_( src.lipsfile_ ),
-	anchor_rsd_( src.anchor_rsd_ ),
-	membrane_rsd_( src.membrane_rsd_ ),
-	center_( src.center_ ),
-	normal_( src.normal_ ),
-	thickness_( src.thickness_ ),
-	steepness_( src.steepness_ ),
-	user_defined_( src.user_defined_ )
-{}
+AddMembraneMover::AddMembraneMover( AddMembraneMover const & ) = default;
 
 /// @brief Destructor
-AddMembraneMover::~AddMembraneMover() {}
+AddMembraneMover::~AddMembraneMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

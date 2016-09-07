@@ -92,7 +92,7 @@ core::Real
 ConstraintScoreCutoffFilter::get_score( core::pose::Pose const & pose_in ) const {
 	using namespace core::scoring;
 	core::pose::Pose pose( pose_in );
-	pose.constraint_set( NULL );
+	pose.constraint_set( nullptr );
 	pose.add_constraints( constraints_ );
 	ScoreFunction scorefxn;
 	scorefxn.set_weight( score_type_, 1.0 );

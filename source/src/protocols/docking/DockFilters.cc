@@ -74,7 +74,7 @@ DockingLowResFilter::DockingLowResFilter( const DockingLowResFilter & init ) :
 {
 }
 
-DockingLowResFilter::~DockingLowResFilter() {}
+DockingLowResFilter::~DockingLowResFilter() = default;
 
 void
 DockingLowResFilter::set_use_constraints( bool setting, core::Real cutoff )
@@ -125,7 +125,7 @@ DockingHighResFilter::DockingHighResFilter( const DockingHighResFilter & init ) 
 	scorefunction_ ( init.scorefunction_ ), scorefilter_( init.scorefilter_ )
 {}
 
-DockingHighResFilter::~DockingHighResFilter() {}
+DockingHighResFilter::~DockingHighResFilter() = default;
 
 void DockingHighResFilter::set_score_margin( core::Real new_score_margin )
 {

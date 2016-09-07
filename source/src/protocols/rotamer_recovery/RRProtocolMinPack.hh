@@ -37,17 +37,17 @@ public: // constructors destructors
 
 	RRProtocolMinPack();
 
-	~RRProtocolMinPack();
+	~RRProtocolMinPack() override;
 
 	RRProtocolMinPack( RRProtocolMinPack const & );
 
 public: // public interface
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	std::string
-	get_parameters() const;
+	get_parameters() const override;
 
 	void
 	run(
@@ -55,7 +55,7 @@ public: // public interface
 		RRReporterOP reporter,
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & score_function,
-		core::pack::task::PackerTask const & packer_task);
+		core::pack::task::PackerTask const & packer_task) override;
 };
 
 } // namespace

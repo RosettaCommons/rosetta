@@ -54,17 +54,17 @@ public:
 
 	FragmentCandidate(Size queryPosition, Size inChunkPosition,
 		VallChunkOP chunk, Size fragmentLength) :
-		chunk_(chunk) {
+		chunk_(std::move(chunk)) {
 
 		assert(queryPosition>0);
 		assert(inChunkPosition>0);
 		queryResidueIndex_ = queryPosition;
 		vallResidueIndex_ = inChunkPosition;
 		fragmentLength_ = fragmentLength;
-		pool_name_ = NULL;
+		pool_name_ = nullptr;
 	}
 
-	virtual ~FragmentCandidate() { delete pool_name_; }
+	~FragmentCandidate() override { delete pool_name_; }
 
 	/// @brief returns a pointer to the original chunk from vall the fragment comes from
 	inline VallChunkOP get_chunk() const {
@@ -74,7 +74,7 @@ public:
 	/// @brief returns a given residue from this fragment
 	/// @details the irgument is in the range [1,fragmentLength]
 	inline VallResidueOP get_residue(Size whichOne) const {
-		runtime_assert( chunk_ != 0 );
+		runtime_assert( chunk_ != nullptr );
 		runtime_assert( whichOne >= 1 && whichOne <= fragmentLength_ );
 		return chunk_->at(whichOne + vallResidueIndex_ - 1);
 	}
@@ -156,7 +156,7 @@ public:
 	void print_fragment_index(std::ostream& out, bool vall_index_database_exists);
 
 	/// @brief Prints fragment data, the output can be directly loaded to minirosetta
-	void print_fragment(std::ostream& out, scores::FragmentScoreMapOP sc = NULL, scores::FragmentScoreManagerOP ms = NULL);
+	void print_fragment(std::ostream& out, scores::FragmentScoreMapOP sc = nullptr, scores::FragmentScoreManagerOP ms = nullptr);
 
 	/// @brief Prints fragment sequence, used for generating structure based sequence profiles
 	void print_fragment_seq(std::ostream& out);
@@ -164,13 +164,13 @@ public:
 	/// @brief Prints fragment to silent struct
 	void output_silent(core::io::silent::SilentFileData & sfd, std::string const & sequence, std::string const & silent_file_name, std::string const & tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms);
 
-	inline void set_pool_name(std::string pool_name) {
-		if ( pool_name_!=NULL ) delete pool_name_;
+	inline void set_pool_name(std::string const & pool_name) {
+		if ( pool_name_!=nullptr ) delete pool_name_;
 		pool_name_= new std::string(pool_name);
 	}
 
 	inline std::string get_pool_name() {
-		if ( pool_name_==NULL ) return unknown_pool_name_;
+		if ( pool_name_==nullptr ) return unknown_pool_name_;
 		else return *pool_name_;
 	}
 

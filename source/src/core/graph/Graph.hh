@@ -106,12 +106,12 @@ Graph: create_node, create_edge, delete_edge, count_static_memory, count_dynamic
 class EdgeListElement
 {
 public:
-	EdgeListElement() : edge_( 0 ), previous_( 0 ), next_( 0 ) {}
+	EdgeListElement() : edge_( nullptr ), previous_( nullptr ), next_( nullptr ) {}
 	EdgeListElement( Edge * edge, EdgeListElement * previous, EdgeListElement * next )
 	: edge_( edge ), previous_( previous ), next_( next ) {}
 
 
-	~EdgeListElement() {}
+	~EdgeListElement() = default;
 
 	Edge * edge() {debug_assert( edge_ ); return edge_; }
 	void edge( Edge * setting ) { edge_ = setting; }
@@ -146,11 +146,11 @@ public:
 
 	/// @brief default constructor, owner and element set to null
 	EdgeListIterator()
-	: owner_( 0 ), element_( 0 ) {}
+	: owner_( nullptr ), element_( nullptr ) {}
 
 	/// @brief owner constructor
 	EdgeListIterator( EdgeList const * owner )
-	: owner_( owner ), element_( 0 ) {}
+	: owner_( owner ), element_( nullptr ) {}
 
 	/// @brief owner and element constructor: points at a position in a list
 	EdgeListIterator( EdgeList const * owner, EdgeListElement * element )
@@ -158,18 +158,14 @@ public:
 
 	/// @brief copy constructor
 	EdgeListIterator( EdgeListIterator const & src )
-	: owner_( src.owner_ ), element_( src.element_ ) {}
+	= default;
 
 	/// @brief non-virtual destructor, does nothing
-	~EdgeListIterator() {}
+	~EdgeListIterator() = default;
 
 	/// @brief assignmnet operator
 	EdgeListIterator & operator = ( EdgeListIterator const & rhs )
-	{
-		owner_ = rhs.owner_;
-		element_ = rhs.element_;
-		return *this;
-	}
+	= default;
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline
@@ -231,11 +227,11 @@ public:
 
 	/// @brief default constructor, owner and element set to null
 	EdgeListConstIterator()
-	: owner_( 0 ), element_( 0 ) {}
+	: owner_( nullptr ), element_( nullptr ) {}
 
 	/// @brief owner constructor
 	EdgeListConstIterator( EdgeList const * owner )
-	: owner_( owner ), element_( 0 ) {}
+	: owner_( owner ), element_( nullptr ) {}
 
 	/// @brief owner and element constructor: points at a position in a list
 	EdgeListConstIterator( EdgeList const * owner, EdgeListElement const * element )
@@ -243,7 +239,7 @@ public:
 
 	/// @brief copy constructor
 	EdgeListConstIterator( EdgeListConstIterator const & src )
-	: owner_( src.owner_ ), element_( src.element_ ) {}
+	= default;
 
 	/// @brief const-cast constructor
 	EdgeListConstIterator( EdgeListIterator const & src )
@@ -251,15 +247,11 @@ public:
 
 
 	/// @brief non-virtual destructor, does nothing
-	~EdgeListConstIterator() {}
+	~EdgeListConstIterator() = default;
 
 	/// @brief assignmnet operator
 	EdgeListConstIterator & operator = ( EdgeListConstIterator const & rhs )
-	{
-		owner_ = rhs.owner_;
-		element_ = rhs.element_;
-		return *this;
-	}
+	= default;
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
 	inline
@@ -693,7 +685,7 @@ public:
 
 	/// @brief virtual destructor.  Derived classes must ensure they've destroyed all their
 	/// nodes and edges through a call to "destroy_everything" before this function is arrived at
-	virtual ~Graph();
+	~Graph() override;
 
 	/// @brief ctor
 	Graph();
@@ -889,11 +881,11 @@ private:
 
 inline
 bool EdgeListIterator::valid() const
-{ return ( owner_ != 0 && element_ != 0 && ! owner_->is_end_element( element_ ) );}
+{ return ( owner_ != nullptr && element_ != nullptr && ! owner_->is_end_element( element_ ) );}
 
 inline
 bool EdgeListConstIterator::valid() const
-{ return ( owner_ != 0 && element_ != 0 && ! owner_->is_end_element( element_ ) ); }
+{ return ( owner_ != nullptr && element_ != nullptr && ! owner_->is_end_element( element_ ) ); }
 
 
 } //end namespace graph

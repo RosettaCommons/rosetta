@@ -29,6 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector0.fwd.hh>
 #include <utility/vector1.hh> // there is no forward declaration possible for const_iterator(?)
 
@@ -45,9 +46,9 @@ class PositionType {
 public:
 	PositionType(
 		core::Size pos = 0,
-		core::chemical::ResidueTypeCOP rt = 0,
+		core::chemical::ResidueTypeCOP rt = nullptr,
 		bool design = false
-	) : position( pos ), type( rt ), designable( design ) {}
+	) : position( pos ), type(std::move( rt )), designable( design ) {}
 
 	core::Size position;
 	core::chemical::ResidueTypeCOP type;

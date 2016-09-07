@@ -49,13 +49,7 @@ InterRepeatContactFilter::InterRepeatContactFilter():
 {}
 
 // @brief copy constructor
-InterRepeatContactFilter::InterRepeatContactFilter( InterRepeatContactFilter const & rval ):
-	Super( rval ),
-	filtered_value_( rval.filtered_value_ ),
-	numbRepeats_(rval.numbRepeats_),
-	sequenceSep_(rval.sequenceSep_),
-	distThresh_(rval.distThresh_)
-{}
+InterRepeatContactFilter::InterRepeatContactFilter( InterRepeatContactFilter const & )= default;
 
 // @brief set filtered value
 void InterRepeatContactFilter::filtered_value( Real const & value )

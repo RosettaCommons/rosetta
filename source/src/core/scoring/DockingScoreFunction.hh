@@ -56,19 +56,19 @@ private:
 public:
 
 	/// @brief INTERNAL USE ONLY
-	virtual void assign( ScoreFunction const & src);
+	void assign( ScoreFunction const & src) override;
 
 	/// @brief INTERNAL USE ONLY
 	virtual void assign( DockingScoreFunction const & src);
 
-	virtual ScoreFunctionOP clone() const;
+	ScoreFunctionOP clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// score
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual Real
-	operator ()( pose::Pose & pose ) const;
+	Real
+	operator ()( pose::Pose & pose ) const override;
 
 
 #ifdef    SERIALIZATION

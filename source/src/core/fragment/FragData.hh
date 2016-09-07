@@ -54,7 +54,7 @@ public:
 	FragData( SingleResidueFragDataOP, core::Size n);
 
 	//@brief
-	virtual ~FragData() {};
+	~FragData() override = default;
 
 	virtual
 	FragDataOP clone() const;
@@ -214,22 +214,22 @@ public:
 		initialize(pdb_id, chain, start_pos);
 	}
 
-	virtual FragDataOP clone() const;
+	FragDataOP clone() const override;
 
-	virtual void copy(FragData const& frag_data);
+	void copy(FragData const& frag_data) override;
 
 	//@brief Generates a fragment referencing a subset of the given fragment, does not copy SRFD.
-	virtual FragDataOP generate_sub_fragment( Size start, Size stop ) const;
+	FragDataOP generate_sub_fragment( Size start, Size stop ) const override;
 
-	virtual std::string pdbid() const  {
+	std::string pdbid() const override  {
 		return pdbid_;
 	}
 
-	virtual Size pdbpos() const {
+	Size pdbpos() const override {
 		return startpos_;
 	}
 
-	virtual char chain() const {
+	char chain() const override {
 		return chain_;
 	}
 

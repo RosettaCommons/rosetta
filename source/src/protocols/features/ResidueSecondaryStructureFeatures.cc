@@ -62,7 +62,7 @@ ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures(ResidueSeco
 	FeaturesReporter()
 {}
 
-ResidueSecondaryStructureFeatures::~ResidueSecondaryStructureFeatures() {}
+ResidueSecondaryStructureFeatures::~ResidueSecondaryStructureFeatures() = default;
 
 string
 ResidueSecondaryStructureFeatures::type_name() const { return "ResidueSecondaryStructureFeatures"; }

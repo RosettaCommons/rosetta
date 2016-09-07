@@ -38,6 +38,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
+#include <utility>
 #include <utility/pointer/owning_ptr.hh>
 
 // Mover headers
@@ -81,7 +82,7 @@ class MetapatchEnumeration {
 public:
 	MetapatchEnumeration( Pose pose, MoveMapOP mm, ScoreFunctionOP score_fxn, Size mode, bool pack, Real threshold, utility::vector1< std::string > metapatch_names, Real taboo = 5 ) :
 		pose_( pose ),
-		mm_( mm ),
+		mm_(std::move( mm )),
 		sampling_score_fxn_( score_fxn ),
 		evaluation_score_fxn_( score_fxn ),
 		mode_( mode ),

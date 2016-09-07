@@ -172,7 +172,7 @@ public: // Creation
 	inline
 	virtual
 	~AutoKey()
-	{}
+	= default;
 
 
 public: // Assignment

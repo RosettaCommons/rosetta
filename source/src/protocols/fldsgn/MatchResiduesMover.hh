@@ -60,25 +60,25 @@ public:// constructor/destructor
 	MatchResiduesMover();
 
 
-	virtual ~MatchResiduesMover();
+	~MatchResiduesMover() override;
 
 	// @brief make clone
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 	// @brief make fresh instance
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 	// @brief get name of this mover
-	virtual std::string get_name() const { return "MatchResiduesMover"; }
+	std::string get_name() const override { return "MatchResiduesMover"; }
 
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
-	virtual void  apply( core::pose::Pose & pose );
+	void  apply( core::pose::Pose & pose ) override;
 
 private:
 	bool superimpose_;

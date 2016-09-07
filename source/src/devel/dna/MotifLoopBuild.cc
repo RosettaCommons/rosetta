@@ -83,7 +83,7 @@
 
 #include <core/scoring/rms_util.hh>
 #include <numeric/random/random.hh>
-#include <time.h>
+#include <ctime>
 #include <algorithm>
 
 static THREAD_LOCAL basic::Tracer tr( "devel.dna.MotifLoopBuild" );
@@ -231,8 +231,7 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
 
 }
 
-MotifLoopBuild::~MotifLoopBuild()
-{}
+MotifLoopBuild::~MotifLoopBuild() = default;
 
 void
 MotifLoopBuild::irc_build(core::pose::Pose & pose)

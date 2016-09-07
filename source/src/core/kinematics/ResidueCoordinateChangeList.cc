@@ -42,8 +42,7 @@ ResidueCoordinateChangeList::ResidueCoordinateChangeList()
 {
 }
 
-ResidueCoordinateChangeList::~ResidueCoordinateChangeList()
-{}
+ResidueCoordinateChangeList::~ResidueCoordinateChangeList() = default;
 
 ResidueCoordinateChangeList &
 ResidueCoordinateChangeList::operator = ( ResidueCoordinateChangeList const & rhs )

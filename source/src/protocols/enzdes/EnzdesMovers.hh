@@ -52,7 +52,7 @@ class EnzdesConstraintReporter : public utility::pointer::ReferenceCount
 {
 public:
 	EnzdesConstraintReporter();
-	virtual ~EnzdesConstraintReporter();
+	~EnzdesConstraintReporter() override;
 
 	EnzdesConstraintReporter( EnzdesConstraintReporter const & );
 
@@ -121,7 +121,7 @@ public:
 	PredesignPerturbMover();
 
 	//Deafault constructor
-	~PredesignPerturbMover();
+	~PredesignPerturbMover() override;
 
 	void
 	set_docking_pose(
@@ -147,9 +147,9 @@ public:
 
 	void
 	apply(
-		core::pose::Pose &pose );
+		core::pose::Pose &pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	set_ligand(core::Size res_no);
@@ -177,11 +177,11 @@ public:
 		basic::datacache::DataMap & datamap ,
 		protocols::filters::Filters_map const & ,
 		protocols::moves::Movers_map const & ,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private:
 	EnzdesConstraintReporter constraint_reporter_;
@@ -207,12 +207,12 @@ public:
 		bool calculate_silent_Es
 	);
 
-	~RepackLigandSiteWithoutLigandMover();
+	~RepackLigandSiteWithoutLigandMover() override;
 
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	set_cstio(
@@ -258,14 +258,14 @@ class UpdateEnzdesHeaderMover : public protocols::moves::Mover
 public:
 	UpdateEnzdesHeaderMover();
 
-	~UpdateEnzdesHeaderMover();
+	~UpdateEnzdesHeaderMover() override;
 
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 private:
 

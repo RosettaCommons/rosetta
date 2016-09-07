@@ -102,9 +102,8 @@ std::ostream& operator<< ( std::ostream& out, DisulfPairing const& p) {
 }
 
 std::ostream& operator<< ( std::ostream& out, DisulfPairingsList const& p) {
-	for ( DisulfPairingsList::const_iterator it= p.begin(),
-			eit = p.end(); it!=eit; ++it ) {
-		out << (*it) << "\n";
+	for (const auto & it : p) {
+		out << it << "\n";
 	}
 	return out;
 }

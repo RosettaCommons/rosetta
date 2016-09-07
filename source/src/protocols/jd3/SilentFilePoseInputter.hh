@@ -39,7 +39,7 @@ public:
 
 	SilentFileJobInputter();
 
-	virtual ~SilentFileJobInputter();
+	~SilentFileJobInputter() override;
 
 	/// @brief this function is responsible for filling the pose reference with
 	/// the pose indicated by the job.  The Job object (within its InnerJob)
@@ -47,7 +47,7 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.  This implementation uses pose_from_pdb
-	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	void pose_from_job( core::pose::Pose & pose, JobOP job ) override;
 
 	/// @brief this function returns the SilentStruct that belongs to the given job
 	virtual core::io::silent::SilentStruct const& struct_from_job( JobOP job );
@@ -59,7 +59,7 @@ public:
 	/// @brief Return the type of input source that the SilentFileJobInputter is currently
 	///  using.
 	/// @return Always <em>SILENT_FILE</em>.
-	virtual JobInputterInputSource::Enum input_source() const;
+	JobInputterInputSource::Enum input_source() const override;
 
 	core::io::silent::SilentFileData const& silent_file_data() const { return sfd_; };
 

@@ -26,6 +26,7 @@
 #include <core/conformation/Conformation.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -72,7 +73,7 @@ GetRBDOFValues::GetRBDOFValues():
 // @brief constructor with arguments
 GetRBDOFValues::GetRBDOFValues( int jump, std::string dof_name, bool verb, char ax, bool disp, bool ang, core::Real init_d, core::Real init_a, bool get_init ):
 	jump_id_( jump),
-	sym_dof_name_( dof_name ),
+	sym_dof_name_(std::move( dof_name )),
 	verbose_( verb ),
 	radial_disp_( disp ),
 	angle_( ang ),
@@ -83,21 +84,10 @@ GetRBDOFValues::GetRBDOFValues( int jump, std::string dof_name, bool verb, char 
 {}
 
 // @brief copy constructor
-GetRBDOFValues::GetRBDOFValues( GetRBDOFValues const & rval ):
-	Super( rval ),
-	jump_id_( rval.jump_id_ ),
-	sym_dof_name_( rval.sym_dof_name_ ),
-	verbose_( rval.verbose_ ),
-	radial_disp_( rval.radial_disp_ ),
-	angle_( rval.angle_ ),
-	get_init_value_( rval.get_init_value_ ),
-	axis_( rval.axis_ ),
-	init_disp_( rval.init_disp_ ),
-	init_angle_( rval.init_angle_ )
-{}
+GetRBDOFValues::GetRBDOFValues( GetRBDOFValues const & )= default;
 
 // @brief destructor
-GetRBDOFValues::~GetRBDOFValues() {}
+GetRBDOFValues::~GetRBDOFValues() = default;
 
 protocols::filters::FilterOP
 GetRBDOFValues::fresh_instance() const{

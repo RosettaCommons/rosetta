@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 InterfaceFeaturesCreator::InterfaceFeaturesCreator() {}
-InterfaceFeaturesCreator::~InterfaceFeaturesCreator() {}
+InterfaceFeaturesCreator::~InterfaceFeaturesCreator() = default;
 FeaturesReporterOP InterfaceFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new InterfaceFeatures );
 }

@@ -101,7 +101,7 @@ AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
 	*/
 }
 
-AtomTreeDiffJobOutputter::~AtomTreeDiffJobOutputter(){}
+AtomTreeDiffJobOutputter::~AtomTreeDiffJobOutputter()= default;
 
 void
 AtomTreeDiffJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose, std::string const & /*tag*/ ){
@@ -109,7 +109,7 @@ AtomTreeDiffJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose, 
 	call_output_observers( pose, job );
 
 	std::map< std::string, core::Real > scores;
-	for ( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
+	for ( auto it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
 			it != end; ++it ) {
 		// Need to use operator[], as we want later (more recent) items in the string_real_pairs list to overwrite the earlier ones
 		// (e.g. if we've recomputed a value that was read in from the inital silent file.)

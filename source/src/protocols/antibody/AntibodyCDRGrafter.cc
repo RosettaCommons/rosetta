@@ -32,6 +32,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/option.hh>
@@ -65,7 +66,7 @@ AntibodyCDRGrafter::AntibodyCDRGrafter():
 
 AntibodyCDRGrafter::AntibodyCDRGrafter( AntibodyInfoOP ab_info ):
 	protocols::moves::Mover( "AntibodyCDRGrafter"),
-	ab_info_(ab_info),
+	ab_info_(std::move(ab_info)),
 	donor_structure_(/* NULL */),
 	scorefxn_(/* NULL */),
 	graft_mover_(/* NULL */),
@@ -85,7 +86,7 @@ AntibodyCDRGrafter::AntibodyCDRGrafter(
 	core::Size cter_overhang /* 3 */ ):
 
 	protocols::moves::Mover( "AntibodyCDRGrafter"),
-	ab_info_(ab_info),
+	ab_info_(std::move(ab_info)),
 	donor_structure_(/* NULL */),
 	scorefxn_(/* NULL */),
 	scorefxn_low_(/* NULL */),
@@ -104,7 +105,7 @@ AntibodyCDRGrafter::AntibodyCDRGrafter(
 }
 
 
-AntibodyCDRGrafter::~AntibodyCDRGrafter(){}
+AntibodyCDRGrafter::~AntibodyCDRGrafter()= default;
 
 AntibodyCDRGrafter::AntibodyCDRGrafter( AntibodyCDRGrafter const & src ):
 	protocols::moves::Mover( src ),

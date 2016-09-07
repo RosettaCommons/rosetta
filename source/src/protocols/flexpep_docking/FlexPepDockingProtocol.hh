@@ -50,7 +50,7 @@ public:
 	FlexPepDockingProtocol(Size const rb_jump_in, bool const fullatom, bool const view=false );
 
 	// empty destructor - needed for proper inclusion of OP clasesses
-	~FlexPepDockingProtocol();
+	~FlexPepDockingProtocol() override;
 
 	/// @brief setup that is called from constructor
 	void set_default();
@@ -58,19 +58,19 @@ public:
 	/// @brief setter
 	void view( bool view_in ) { view_=view_in; }
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 private:
 
 	void setup_foldtree( core::pose::Pose & pose );

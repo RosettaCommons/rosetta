@@ -44,7 +44,7 @@ EnzdesFixBBProtocol::EnzdesFixBBProtocol()
 	start_from_random_rb_conf_( basic::options::option[basic::options::OptionKeys::enzdes::start_from_random_rb_conf] )
 {}
 
-EnzdesFixBBProtocol::~EnzdesFixBBProtocol(){}
+EnzdesFixBBProtocol::~EnzdesFixBBProtocol()= default;
 
 void
 EnzdesFixBBProtocol::apply(

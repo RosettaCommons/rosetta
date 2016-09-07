@@ -165,7 +165,7 @@ namespace pathways {
   Vec3d _point;
   Vec3d _direction;
   public:
-	  Line(){}
+	  Line()= default;
 	  Line(const Vec3d& point, const Vec3d& direction);
 	  Line(double pointCoordinates[3], double directionCoordinates[3]);
 
@@ -255,7 +255,7 @@ namespace pathways {
     void read_partial_data();
     // read the residues from the file and add the corresponding indices to
     void test();
-    Partial_Data() {}
+    Partial_Data() = default;
 
     Partial_Data(pathways::Pathways* owner);
 

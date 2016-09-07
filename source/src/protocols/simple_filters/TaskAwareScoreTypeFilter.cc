@@ -181,7 +181,7 @@ TaskAwareScoreTypeFilter::apply(core::pose::Pose const & pose ) const
 
 core::Real
 TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & write ) const{
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size total_residue;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -369,7 +369,7 @@ TaskAwareScoreTypeFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter() );
 }
 
-TaskAwareScoreTypeFilter::~TaskAwareScoreTypeFilter(){}
+TaskAwareScoreTypeFilter::~TaskAwareScoreTypeFilter()= default;
 
 protocols::filters::FilterOP
 TaskAwareScoreTypeFilter::clone() const{

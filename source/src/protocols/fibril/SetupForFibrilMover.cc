@@ -39,7 +39,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.moves.symmetry.SetupForFibrilMo
 SetupForFibrilMover::SetupForFibrilMover()
 : Mover("SetupForFibrilMover") {}
 
-SetupForFibrilMover::~SetupForFibrilMover(){}
+SetupForFibrilMover::~SetupForFibrilMover()= default;
 
 void
 SetupForFibrilMover::apply( core::pose::Pose & pose )

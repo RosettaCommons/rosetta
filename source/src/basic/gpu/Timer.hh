@@ -35,10 +35,10 @@ class Timer {
 	basic::Tracer::TracerProxy *t_;
 public:
 	Timer(const char *tag);
-	Timer(basic::Tracer::TracerProxy& t, const char *tag =NULL);
+	Timer(basic::Tracer::TracerProxy& t, const char *tag =nullptr);
 	Timer();
 	~Timer();
-	void Report(const char *tag =NULL);
+	void Report(const char *tag =nullptr);
 	void Reset();
 	double GetTime();
 };

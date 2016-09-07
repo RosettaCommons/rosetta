@@ -82,7 +82,7 @@ DatabaseJobInputter::DatabaseJobInputter() :
 	load_options_from_option_system();
 }
 
-DatabaseJobInputter::~DatabaseJobInputter() {}
+DatabaseJobInputter::~DatabaseJobInputter() = default;
 
 
 void

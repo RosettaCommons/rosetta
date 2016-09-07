@@ -88,7 +88,7 @@ BBConRotMover::BBConRotMover()
 	factorC_ = 20.0;
 }
 
-BBConRotMover::~BBConRotMover(){}
+BBConRotMover::~BBConRotMover()= default;
 
 std::string BBConRotMover::get_name() const
 {

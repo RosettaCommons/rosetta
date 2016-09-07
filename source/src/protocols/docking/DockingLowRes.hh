@@ -57,7 +57,7 @@ public:
 	DockingLowRes();
 
 	// destructor
-	~DockingLowRes();
+	~DockingLowRes() override;
 
 	/// @brief Constructor with two arguments.  The first is scorefunction to be used for docking, the second is the
 	///  jump to dock over.
@@ -73,7 +73,7 @@ public:
 		DockJumps const movable_jumps
 	);
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Assigns default values to primitive members
 	void set_default();
@@ -85,8 +85,8 @@ public:
 	moves::MonteCarloOP get_mc();
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// @brief Perform a cycle of rigid-body Monte Carlo moves
 	void rigid_body_trial( core::pose::Pose & pose );
@@ -98,7 +98,7 @@ public:
 	void set_trans_magnitude( core::Real trans_magnitude);
 	void set_rot_magnitude( core::Real rot_magnitude);
 
-	virtual void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp );
 
 	bool flags_and_objects_are_in_sync_;

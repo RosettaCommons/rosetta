@@ -69,13 +69,13 @@ OligomericAverageDegreeFilter::OligomericAverageDegreeFilter():
 
 
 // @brief constructor with arguments
-OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string const & dof_names, bool mcomp ):
-	task_factory_( task_factory ),
+OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string  dof_names, bool mcomp ):
+	task_factory_(std::move( task_factory )),
 	threshold_( t ),
 	distance_threshold_( d ),
 	jump_set_( jump_set ),
 	jump_id_( jump ),
-	sym_dof_names_( dof_names ),
+	sym_dof_names_(std::move( dof_names )),
 	multicomp_( mcomp )
 {}
 
@@ -92,7 +92,7 @@ OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( OligomericAverageD
 {}
 
 // @brief destructor
-OligomericAverageDegreeFilter::~OligomericAverageDegreeFilter() {}
+OligomericAverageDegreeFilter::~OligomericAverageDegreeFilter() = default;
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::fresh_instance() const{
@@ -130,7 +130,7 @@ void OligomericAverageDegreeFilter::multicomp( bool const mcomp ) { multicomp_ =
 core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const & verbose, bool const & write ) const
 {
 
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	utility::vector1<std::string> sym_dof_name_list;
 	//std::string sym_dof_name;
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );

@@ -144,7 +144,7 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 					std::map<char,std::map<std::string,std::pair< Real, Real > > >::const_iterator sslimit_at_seqpos( sslimit.find(sequence[seqpos]) );
 					debug_assert( sslimit_at_seqpos != sslimit.end() );
 					if ( sslimit_at_seqpos->second.count(shift_type.second) == 1 ) {
-						std::map<std::string,std::pair< Real, Real > >::const_iterator shift_type_itr( sslimit_at_seqpos->second.find(shift_type.second) );
+						auto shift_type_itr( sslimit_at_seqpos->second.find(shift_type.second) );
 						debug_assert( shift_type_itr != sslimit_at_seqpos->second.end() );
 						Real min( shift_type_itr->second.first );
 						Real max( shift_type_itr->second.second );

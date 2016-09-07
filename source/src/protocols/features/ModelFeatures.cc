@@ -52,7 +52,7 @@
 
 //C++
 #include <string>
-#include <math.h>
+#include <cmath>
 
 //External Headers
 #include <cppdb/frontend.h>
@@ -68,7 +68,7 @@ namespace features {
 ///////////////////////////////////////////////////////////
 
 ModelFeaturesCreator::ModelFeaturesCreator() {}
-ModelFeaturesCreator::~ModelFeaturesCreator() {}
+ModelFeaturesCreator::~ModelFeaturesCreator() = default;
 protocols::features::FeaturesReporterOP ModelFeaturesCreator::create_features_reporter() const {
 	return ModelFeaturesOP( new ModelFeatures );
 }
@@ -238,9 +238,9 @@ ModelFeatures::report_features(
 		core::pose::metrics::CalculatorFactory::Instance().remove_calculator(nb_calc);
 
 		std::set<Segment> ss_group;
-		for ( std::set<core::Size>::const_iterator it = neighbors.begin(); it != neighbors.end(); ++it ) {
-			if ( residue_segments.find(*it) != residue_segments.end() ) {
-				ss_group.insert(residue_segments.find(*it)->second);
+		for (unsigned long neighbor : neighbors) {
+			if ( residue_segments.find(neighbor) != residue_segments.end() ) {
+				ss_group.insert(residue_segments.find(neighbor)->second);
 			}
 		}
 		if ( ss_group.size() >= 3 ) {
@@ -250,18 +250,16 @@ ModelFeatures::report_features(
 
 	TR << "Found " << ss_groups.size() << " unique secondary structure groups of at least 3 segments." << std::endl;
 	core::pose::Pose score_pose(pose);
-	for ( std::set< std::set< Segment > >::iterator groups_it = ss_groups.begin(); groups_it != ss_groups.end(); ++groups_it ) {
-		std::set< Segment > current_group = *groups_it;
-
-		core::scoring::ScoreFunctionOP scorefxn ( new core::scoring::ScoreFunction );
+	for (auto current_group : ss_groups) {
+			core::scoring::ScoreFunctionOP scorefxn ( new core::scoring::ScoreFunction );
 		scorefxn->set_weight(core::scoring::fa_atr, 1.0);
 		scorefxn->score(score_pose);
 
 		core::scoring::EnergyGraph const & eg =
 			score_pose.energies().energy_graph();
 
-		for ( std::set< Segment >::const_iterator it1 = current_group.begin(); it1 != current_group.end(); ++it1 ) {
-			for ( std::set< Segment >::const_iterator it2 = it1; it2!= current_group.end(); ++it2 ) {
+		for ( auto it1 = current_group.begin(); it1 != current_group.end(); ++it1 ) {
+			for ( auto it2 = it1; it2!= current_group.end(); ++it2 ) {
 				if ( it1 == it2 ) { continue; }
 
 				//Principal component angle (crude check for parallelness)
@@ -324,7 +322,7 @@ ModelFeatures::report_features(
 	}
 
 	// Instantiate the visitor for printing cliques
-	std::set< std::set<core::Size> > * cliques = new std::set< std::set<core::Size> >;
+	auto * cliques = new std::set< std::set<core::Size> >;
 	clique_saver vis(cliques);
 
 	// Use the Bron-Kerbosch algorithm to find all cliques, printing them
@@ -332,12 +330,12 @@ ModelFeatures::report_features(
 	bron_kerbosch_all_cliques(graph, vis);
 	TR << "Found " << cliques->size() << " cliques" << std::endl;
 	core::Size clique_counter = 0;
-	for ( std::set< std::set<core::Size> >::const_iterator it= cliques->begin(); it != cliques->end(); ++it ) {
-		if ( it->size() < min_ss_cluster_size_ || it->size() > max_ss_cluster_size_ ) {
+	for (const auto & clique : *cliques) {
+		if ( clique.size() < min_ss_cluster_size_ || clique.size() > max_ss_cluster_size_ ) {
 			continue;
 		}
 		++clique_counter;
-		std::set<core::Size> current_clique = *it;
+		std::set<core::Size> current_clique = clique;
 		//
 		//  core::pose::Pose clique_pose = pose;
 		//  std::set<core::Size> resnums;
@@ -377,9 +375,9 @@ ModelFeatures::write_clique_to_db(
 	std::string model_segment_insert =
 		"INSERT INTO model_segments (model_id, segment_id)  VALUES (?,?);";
 	statement model_segment_insert_stmt(basic::database::safely_prepare_statement(model_segment_insert,db_session));
-	for ( std::set<core::Size>::const_iterator it=clique.begin(); it != clique.end(); ++it ) {
+	for (unsigned long it : clique) {
 		model_segment_insert_stmt.bind(1, model_id);
-		model_segment_insert_stmt.bind(2, *it);
+		model_segment_insert_stmt.bind(2, it);
 		basic::database::safely_write_to_database( model_segment_insert_stmt );
 	}
 

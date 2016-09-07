@@ -33,6 +33,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -66,7 +67,7 @@ std::string BuildingBlockInterfaceOperationCreator::keyname() const
 
 BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock, std::string sym_dof_names, core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */, bool filter_intrabb, bool intrabb_only, bool multicomponent ):
 	nsub_bblock_(nsub_bblock),
-	sym_dof_names_(sym_dof_names),
+	sym_dof_names_(std::move(sym_dof_names)),
 	contact_dist_(contact_dist),
 	bblock_dist_(bblock_dist),
 	fa_rep_cut_(fa_rep_cut),
@@ -75,7 +76,7 @@ BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsu
 	multicomponent_(multicomponent)
 {}
 
-BuildingBlockInterfaceOperation::~BuildingBlockInterfaceOperation() {}
+BuildingBlockInterfaceOperation::~BuildingBlockInterfaceOperation() = default;
 
 core::pack::task::operation::TaskOperationOP BuildingBlockInterfaceOperation::clone() const
 {

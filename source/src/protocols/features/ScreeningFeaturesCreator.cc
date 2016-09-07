@@ -25,7 +25,7 @@ namespace protocols {
 namespace features {
 
 ScreeningFeaturesCreator::ScreeningFeaturesCreator() {}
-ScreeningFeaturesCreator::~ScreeningFeaturesCreator() {}
+ScreeningFeaturesCreator::~ScreeningFeaturesCreator() = default;
 FeaturesReporterOP ScreeningFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ScreeningFeatures );
 }

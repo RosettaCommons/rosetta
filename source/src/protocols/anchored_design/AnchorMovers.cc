@@ -81,6 +81,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
@@ -167,7 +168,7 @@ void dump_cutpoint_info( core::pose::Pose const & pose)
 //@brief constructor with arguments
 AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMoversDataOP interface_in ) :
 	Mover(),
-	interface_( interface_in ),
+	interface_(std::move( interface_in )),
 	RMSD_only_this_pose_( /* 0 */ ),
 	IAM_( protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ) ),
 	rmsd_(false),
@@ -246,7 +247,7 @@ AnchoredDesignMover & AnchoredDesignMover::operator=( AnchoredDesignMover const 
 	return *this;
 }
 
-AnchoredDesignMover::~AnchoredDesignMover() {}
+AnchoredDesignMover::~AnchoredDesignMover() = default;
 
 void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	//don't run this function twice
@@ -278,7 +279,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 
 	if ( !init_for_input_yet_ ) init_on_new_input(pose);
 
-	core::pose::PoseCOP start_pose(0);
+	core::pose::PoseCOP start_pose(nullptr);
 
 	//pre-pre-processing
 	if ( rmsd_ ) {
@@ -421,9 +422,9 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 			//convert this set into the type needed by rmsd_with_super_subset
 			T_design << "interface for rmsd";
 			ObjexxFCL::FArray1D_bool is_interface( pose.total_residue(), false );
-			for ( SizeSet::const_iterator it = sizeset.begin(); it != sizeset.end(); ++it ) {
-				is_interface(*it) = true;
-				T_design << " " << *it;
+			for (unsigned long it : sizeset) {
+				is_interface(it) = true;
+				T_design << " " << it;
 			}
 			T_design << std::endl;
 
@@ -460,18 +461,15 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 			//print possibilities before histidine check
 			T_design << "before HIS/D check, position " << i;
 
-			for ( ResidueLevelTask::ResidueTypeCOPListIter
-					allowed_iter = types.begin(),
-					allowed_end = types.end();
-					allowed_iter != allowed_end;  ++allowed_iter ) {
-				T_design << " " << (*allowed_iter)->name();// << std::endl;
+			for (auto & type : types) {
+				T_design << " " << type->name();// << std::endl;
 			}
 			T_design << std::endl;
 
 			//sweep for histidines
 			core::Size num_histidines(0); //count histidines we find; if more than 2 explode
 			core::chemical::ResidueTypeCOP histidine; //store the most recent histidine we find as we go
-			for ( ResidueLevelTask::ResidueTypeCOPListIter
+			for ( auto
 					allowed_iter = types.begin(),
 					iter_next = types.begin(),
 					allowed_end = types.end();
@@ -495,18 +493,15 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 			//print possibilities after histidine check
 			T_design << "after HIS/D check, position " << i;
 
-			for ( ResidueLevelTask::ResidueTypeCOPListIter
-					allowed_iter = types.begin(),
-					allowed_end = types.end();
-					allowed_iter != allowed_end;  ++allowed_iter ) {
-				T_design << " " << (*allowed_iter)->name();
+			for (auto & type : types) {
+				T_design << " " << type->name();
 			}
 			T_design << std::endl;
 
 			//now that that's out of the way, pick a ResidueType at random
 			core::Size const num_types(types.size());
 			core::Size const chosen_type_index(numeric::random::rg().random_range(1, num_types));
-			ResidueLevelTask::ResidueTypeCOPListIter iter = types.begin();
+			auto iter = types.begin();
 			for ( core::Size add(1); add<chosen_type_index; ++add ) ++iter;
 			core::chemical::ResidueTypeCOP chosen_type(*iter);
 
@@ -900,13 +895,13 @@ void AnchoredDesignMover::read_options(){
 ///////////////////////////AnchoredPerturbMover////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 AnchoredPerturbMover::AnchoredPerturbMover( protocols::anchored_design::AnchorMoversDataOP interface_in) :
-	Mover(), interface_( interface_in )
+	Mover(), interface_(std::move( interface_in ))
 {
 	protocols::moves::Mover::type( "AnchoredPerturb" );
 	read_options();
 }
 
-AnchoredPerturbMover::~AnchoredPerturbMover() {}
+AnchoredPerturbMover::~AnchoredPerturbMover() = default;
 
 /// @details AnchoredPerturbMover takes a pose, swaps it into centroid mode, and perturbs the structure of
 ///its mobile loops.  The perturbation step is under Monte Carlo control so it won't finish with a terrible
@@ -919,7 +914,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	core::pose::Pose const saved_input_pose( pose ); //used to return sidechains later
 
-	core::pose::PoseOP posecopy( NULL );
+	core::pose::PoseOP posecopy( nullptr );
 	//if(debug_) posecopy = new core::pose::Pose( pose ); //after centroid-izing
 	int counter(1);
 	std::stringstream outputfilename;
@@ -1236,13 +1231,13 @@ void AnchoredPerturbMover::read_options(){
 ///////////////////////AnchoredRefineMover/////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 AnchoredRefineMover::AnchoredRefineMover( protocols::anchored_design::AnchorMoversDataOP interface_in) :
-	Mover(), interface_( interface_in )
+	Mover(), interface_(std::move( interface_in ))
 {
 	protocols::moves::Mover::type( "AnchoredRefine" );
 	read_options();
 }
 
-AnchoredRefineMover::~AnchoredRefineMover() {}
+AnchoredRefineMover::~AnchoredRefineMover() = default;
 
 
 /// @details
@@ -1252,7 +1247,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	T_refine << "entering refine steps" << std::endl;
 
 	//variables used for debugging output
-	core::pose::PoseOP posecopy( NULL );
+	core::pose::PoseOP posecopy( nullptr );
 	if ( debug_ ) posecopy = core::pose::PoseOP( new core::pose::Pose(pose) );
 	int counter(1);
 	//std::stringstream outputfilename;

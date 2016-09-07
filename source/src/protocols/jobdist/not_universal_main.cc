@@ -68,8 +68,7 @@ bool pose_matches_user_tag(
 		tr.Error << "can't find user_tag in pose!" << std::endl;
 	}
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = user_tags.begin(), end = user_tags.end();
+	for ( auto it = user_tags.begin(), end = user_tags.end();
 			it != end && !valid_tag && this_id != ""; ++it
 			) {
 		if ( this_id.find( *it ) != std::string::npos ) {

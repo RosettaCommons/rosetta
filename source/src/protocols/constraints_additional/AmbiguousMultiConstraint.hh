@@ -59,17 +59,17 @@ public:
 		core::scoring::constraints::ConstraintCOPs & cst_in ) ;
 
 
-	virtual
-	core::scoring::constraints::ConstraintOP clone() const {
+	
+	core::scoring::constraints::ConstraintOP clone() const override {
 		return core::scoring::constraints::ConstraintOP( new AmbiguousMultiConstraint(*this) );
 	}
 
-	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;
 
-	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const override;
 
 
-	std::string type() const {
+	std::string type() const override {
 		return "AmbiguousMultiConstraint";
 	}
 
@@ -82,12 +82,12 @@ public:
 	score(
 		core::scoring::func::XYZ_Func const & xyz_func,
 		core::scoring::EnergyMap const & weights,
-		core::scoring::EnergyMap & emap ) const;
+		core::scoring::EnergyMap & emap ) const override;
 
 
-	virtual
+	
 	core::scoring::constraints::ConstraintOP
-	remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
 	/// @brief compute atom deriv
 	void
@@ -97,13 +97,13 @@ public:
 		core::Vector & F1,
 		core::Vector & F2,
 		core::scoring::EnergyMap const & weights
-	) const;
+	) const override;
 
-	void show( std::ostream& out) const;
+	void show( std::ostream& out) const override;
 
 	// void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
 
-	Size show_violations( std::ostream& out, core::pose::Pose const& pose, core::Size verbose_level, core::Real threshold = 1.0 ) const;
+	Size show_violations( std::ostream& out, core::pose::Pose const& pose, core::Size verbose_level, core::Real threshold = 1.0 ) const override;
 
 
 private:

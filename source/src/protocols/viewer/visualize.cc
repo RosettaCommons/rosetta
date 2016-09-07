@@ -117,9 +117,8 @@ void dump_residue_kinemage(
 	out << "@vectorlist {} color= " << color << " width= 1 master= {intra-res}\n";
 	for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 		core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-		for ( core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
-			core::Size atom_j = *j;
-			if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
+		for (unsigned long atom_j : nbrs) {
+				if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 			print_node(out, rsd.seqpos(), atom_i, conf, "P");
 			print_node(out, rsd.seqpos(), atom_j, conf);
 		}
@@ -161,7 +160,7 @@ void dump_foldtree_kinemage(
 )
 {
 	out << "@arrowlist {true} color= gold width=3 radius= 0.6 off\n";
-	core::kinematics::FoldTree::const_iterator i = fold_tree.begin(), i_end = fold_tree.end();
+	auto i = fold_tree.begin(), i_end = fold_tree.end();
 	for ( ; i != i_end; ++i ) {
 		//std::cout << i->start() << "," << i->start_atom() << " --> " << i->stop() << "," << i->stop_atom() << std::endl;
 		print_node(out, i->start(), i->start_atom(), conf, "P");
@@ -196,7 +195,7 @@ void visit_atomtree_node(
 	// Easier to just do point-line all the time than to try and see if
 	// previous line was drawn to our parent (it rarely will be).
 
-	if ( katom.parent().get() != NULL ) {
+	if ( katom.parent().get() != nullptr ) {
 		core::id::AtomID const & p_atom_id = katom.parent()->atom_id();
 		int p_residue_num = p_atom_id.rsd();
 		int p_atom_num = p_atom_id.atomno();
@@ -210,7 +209,7 @@ void visit_atomtree_node(
 	else                 print_node(out, residue_num, atom_num, conf);
 
 	// Recursively visit child atoms
-	core::kinematics::tree::Atom::Atoms_ConstIterator i = katom.atoms_begin(), i_end = katom.atoms_end();
+	auto i = katom.atoms_begin(), i_end = katom.atoms_end();
 	for ( ; i != i_end; ++i ) visit_atomtree_node(out, **i, conf);
 }
 

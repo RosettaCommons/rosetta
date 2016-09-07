@@ -41,7 +41,7 @@ using protocols::jd2::JobOutputterFactory;
 template <> std::mutex utility::SingletonBase< JobOutputterFactory >::singleton_mutex_{};
 template <> std::atomic< JobOutputterFactory * > utility::SingletonBase< JobOutputterFactory >::instance_( 0 );
 #else
-template <> JobOutputterFactory * utility::SingletonBase< JobOutputterFactory >::instance_( 0 );
+template <> JobOutputterFactory * utility::SingletonBase< JobOutputterFactory >::instance_( nullptr );
 #endif
 
 }
@@ -60,13 +60,13 @@ JobOutputterFactory::create_singleton_instance()
 JobOutputterFactory::JobOutputterFactory()
 {}
 
-JobOutputterFactory::~JobOutputterFactory(){}
+JobOutputterFactory::~JobOutputterFactory()= default;
 
 /// @brief add a JobOutputter prototype, using its default type name as the map key
 void
 JobOutputterFactory::factory_register( JobOutputterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const job_outputter_type( creator->keyname() );
 	if ( job_outputter_creator_map_.find( job_outputter_type ) != job_outputter_creator_map_.end() ) {
 		utility_exit_with_message("JobOutputterFactory::factory_register already has a mover creator with name \"" + job_outputter_type + "\".  Conflicting JobOutputter names" );
@@ -94,7 +94,7 @@ JobOutputterFactory::get_JobOutputter_from_string( std::string const & job_outpu
 		}
 		TR << std::endl;
 		utility_exit_with_message( job_outputter_type + " is not known to the JobOutputterFactory. Was it registered via a JobOutputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
-		return NULL;
+		return nullptr;
 	}
 }
 

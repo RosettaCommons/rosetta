@@ -14,6 +14,7 @@
 #include <protocols/antibody/AntibodyNumberingParser.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
 
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
@@ -34,13 +35,13 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyNumberingParse
 using utility::vector1;
 
 AntibodyNumberingParser::AntibodyNumberingParser(AntibodyEnumManagerCOP enum_manager):
-	enum_manager_(enum_manager),
+	enum_manager_(std::move(enum_manager)),
 	numbering_database_directory_("sampling/antibodies/numbering_schemes"),
 	scheme_file_("numbering_scheme_definitions.txt"),
 	cdr_definition_file_("cdr_definitions.txt")
 {}
 
-AntibodyNumberingParser::~AntibodyNumberingParser(){}
+AntibodyNumberingParser::~AntibodyNumberingParser()= default;
 
 void
 AntibodyNumberingParser::check_path(std::string const & numbering_file_path) const {
@@ -211,7 +212,7 @@ AntibodyNumberingParser::read_cdr_definition_file(std::string const & file_path,
 	std::string line;
 
 	for ( core::Size i = 1; i <= 6; ++i ) {
-		vector1< PDBLandmarkOP > landmark_vec (CDRLandmarkEnum_total, NULL);
+		vector1< PDBLandmarkOP > landmark_vec (CDRLandmarkEnum_total, nullptr);
 		numbering.cdr_numbering.push_back(landmark_vec);
 	}
 
@@ -252,7 +253,7 @@ AntibodyNumberingParser::read_cdr_definition_transform_line(vector1<std::string>
 			cdr_definitions_defined_using_.push_back(enum_manager_->numbering_scheme_string_to_enum(scheme_used_str));
 			//TR << definition_str << " "<< scheme_used_str << std::endl;
 			for ( core::Size x = 1; x <= 6; ++x ) {
-				vector1< PDBLandmarkOP > landmark_vec (CDRLandmarkEnum_total, NULL);
+				vector1< PDBLandmarkOP > landmark_vec (CDRLandmarkEnum_total, nullptr);
 				numbering.cdr_definition_transform[cdr_definition].push_back(landmark_vec);
 			}
 		} else {
@@ -337,7 +338,7 @@ PDBLandmark::PDBLandmark(char chain, core::Size resnum, char insertion_code) {
 	insertion_code_ = insertion_code;
 }
 
-PDBLandmark::~PDBLandmark(){}
+PDBLandmark::~PDBLandmark()= default;
 
 
 PDBLandmark &

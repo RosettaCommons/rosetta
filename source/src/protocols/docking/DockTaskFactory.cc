@@ -78,7 +78,7 @@ DockTaskFactory::DockTaskFactory( DockTaskFactory const & old_instance ) : utili
 	restrict_to_interface_ = old_instance.restrict_to_interface_;
 }
 //destructor
-DockTaskFactory::~DockTaskFactory() {}
+DockTaskFactory::~DockTaskFactory() = default;
 
 void
 DockTaskFactory::set_default()
@@ -216,8 +216,8 @@ DockTaskFactory::create_and_attach_task_factory(
 	}
 
 	// Add user specified task operations
-	for ( utility::vector1< core::pack::task::operation::TaskOperationOP>::const_iterator operation = additional_task_operations_.begin(); operation != additional_task_operations_.end(); ++operation ) {
-		tf->push_back( *operation );
+	for (const auto & additional_task_operation : additional_task_operations_) {
+		tf->push_back( additional_task_operation );
 	}
 
 	docker->set_task_factory( tf );

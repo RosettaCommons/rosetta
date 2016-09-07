@@ -47,11 +47,11 @@ class SecondaryMatchProtocol : public protocols::enzdes::EnzdesBaseProtocol
 public:
 
 	SecondaryMatchProtocol();
-	~SecondaryMatchProtocol();
+	~SecondaryMatchProtocol() override;
 
-	void apply( core::pose::Pose & start_pose);
+	void apply( core::pose::Pose & start_pose) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	core::Size
 	residues_compatible(
@@ -121,7 +121,7 @@ private:
 class PoseFoundResiduesCombination : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~PoseFoundResiduesCombination();
+	~PoseFoundResiduesCombination() override;
 	PoseFoundResiduesCombination(
 		core::pose::PoseCOP ref_pose_in,
 		SecondaryMatchProtocolCAP seqmatch_in

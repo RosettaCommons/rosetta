@@ -36,7 +36,7 @@ class EXCN_NoesyAssign : public virtual utility::excn::EXCN_Msg_Exception {
 protected:
 	EXCN_NoesyAssign() : EXCN_Msg_Exception( "" ){};
 public:
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		os << "\n[NOE Exception]: ";
 		Parent::show( os );
 	}
@@ -55,7 +55,7 @@ public:
 	: utility::excn::EXCN_Msg_Exception( msg ), atom_( atom ) {};
 
 	core::id::NamedAtomID const& atom() { return atom_; }
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		utility::excn::EXCN_Msg_Exception::show( os );
 		os << "Resonance for atom " << atom_ << " not found ";
 	}

@@ -36,7 +36,7 @@ public:
 
 public:
 	ResidueTypeConstraintMover();
-	virtual ~ResidueTypeConstraintMover();
+	~ResidueTypeConstraintMover() override;
 	ResidueTypeConstraintMover( std::string const & );
 
 	//  void constraint_file( std::string const & );
@@ -45,14 +45,14 @@ public:
 	//  ResidueTypeConstraintOP constraint_set();
 	//  ResidueTypeConstraintCOP constraint_set() const;
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & ) override;
 
 private:
 	std::string AA_name3_;

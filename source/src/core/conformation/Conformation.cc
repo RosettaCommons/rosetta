@@ -161,10 +161,10 @@ Conformation::Conformation( Conformation const & src ) :
 
 	// membranes
 	using namespace core::conformation::membrane;
-	if ( src.membrane_info_ != NULL ) {
+	if ( src.membrane_info_ != nullptr ) {
 		membrane_info_ = MembraneInfoOP( new MembraneInfo( *src.membrane_info_ ) );
-	} else if ( membrane_info_ != NULL ) {
-		membrane_info_ = 0;
+	} else if ( membrane_info_ != nullptr ) {
+		membrane_info_ = nullptr;
 	}
 
 	// chain info
@@ -242,9 +242,9 @@ Conformation::operator=( Conformation const & src )
 		structure_moved_ = src.structure_moved_;
 
 		// length may have radically changed, tell length observers to invalidate their data
-		notify_length_obs( LengthEvent( this, LengthEvent::INVALIDATE, 0, 0, NULL ), false );
+		notify_length_obs( LengthEvent( this, LengthEvent::INVALIDATE, 0, 0, nullptr ), false );
 		// identity may have radically changed, tell length observers to invalidate their data
-		notify_identity_obs( IdentityEvent( this, IdentityEvent::INVALIDATE, 0, NULL ), false );
+		notify_identity_obs( IdentityEvent( this, IdentityEvent::INVALIDATE, 0, nullptr ), false );
 
 		// final update of records -- keep this last in this scope:
 		for ( core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i ) {
@@ -491,8 +491,8 @@ Conformation::chain_endings( utility::vector1< Size > const & endings )
 {
 	// make sure that all positions in the new endings list < the size of
 	// the Conformation
-	for ( utility::vector1< Size >::const_iterator i = endings.begin(), ie = endings.end(); i != ie; ++i ) {
-		if ( (*i) >= size() ) {
+	for (unsigned long ending : endings) {
+		if ( ending >= size() ) {
 			utility_exit_with_message("new chain endings list contains positions >= Conformation::size()");
 		}
 	}
@@ -519,7 +519,7 @@ Conformation::insert_chain_ending( Size const seqpos )
 void
 Conformation::delete_chain_ending( Size const seqpos )
 {
-	utility::vector1< Size >::iterator it( std::find( chain_endings_.begin(), chain_endings_.end(), seqpos ) );
+	auto it( std::find( chain_endings_.begin(), chain_endings_.end(), seqpos ) );
 	if ( it == chain_endings_.end() ) {
 		utility_exit_with_message("tried to delete nonexistent chain ending");
 	}
@@ -1159,7 +1159,7 @@ Conformation::delete_polymer_residue( Size const seqpos )
 
 	debug_assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
-	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
+	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, nullptr ), false );
 }
 
 /// @details  Delete a residue from the Conformation the slow way -- triggers a rebuild of the atomtree
@@ -1177,7 +1177,7 @@ Conformation::delete_residue_slow( Size const seqpos )
 	residues_delete( seqpos );
 
 	// setup_atom_tree() can fire an XYZEvent - make sure the LengthEvent fires first
-	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
+	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, nullptr ), false );
 
 	setup_atom_tree();
 
@@ -1201,7 +1201,7 @@ Conformation::delete_residue_range_slow( Size const range_begin, Size const rang
 	}
 
 	// setup_atom_tree() can fire an XYZEvent - make sure the LengthEvent fires first
-	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, range_begin, -range_size,  NULL ), false );
+	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, range_begin, -range_size,  nullptr ), false );
 
 	setup_atom_tree();
 
@@ -3154,7 +3154,7 @@ Conformation::residues_replace(
 	residues_[ seqpos ]->chain( old_chain );
 
 	residues_[ seqpos ]->copy_residue_connections( *old_residue );
-	if ( residues_[ seqpos ]->data_ptr() != 0 ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
+	if ( residues_[ seqpos ]->data_ptr() != nullptr ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
 	//Loop through all the connections of the new residue and ensure that the residues connected to it have their
 	//connect_map_ updated appropriately:
 	for ( core::Size i=1, imax=residues_[seqpos]->type().n_possible_residue_connections(); i<=imax; ++i ) {
@@ -3230,7 +3230,7 @@ Conformation::residues_insert(
 	}
 	// wipe residue connection data that may have been cloned from the original residue
 	residues_[ seqpos ]->clear_residue_connections();
-	if ( residues_[ seqpos ]->data_ptr() != 0 ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
+	if ( residues_[ seqpos ]->data_ptr() != nullptr ) residues_[ seqpos ]->nonconst_data_ptr()->clear();
 
 	// rederive polymeric connection status from chain id's or termini status
 	update_polymeric_connection( seqpos-1 );
@@ -3315,7 +3315,7 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 	}
 	// wipe residue connection data that may have been cloned from the original residue
 	residues_[ nres ]->clear_residue_connections();
-	if ( residues_[ nres ]->data_ptr() != 0 ) residues_[ nres ]->nonconst_data_ptr()->clear();
+	if ( residues_[ nres ]->data_ptr() != nullptr ) residues_[ nres ]->nonconst_data_ptr()->clear();
 
 	// update polymeric connection status from chain id's and termini status (but only if it's possible they're chemically connected)
 	if ( nres > 1 && ! by_jump ) {
@@ -3954,7 +3954,7 @@ Conformation::update_residue_coordinates() const
 
 
 	PROF_START( basic::UPDATE_RESIDUE_COORDINATES );
-	for ( kinematics::ResidueListIterator iter = atom_tree_->residue_xyz_change_list_begin(),
+	for ( auto iter = atom_tree_->residue_xyz_change_list_begin(),
 			iter_end = atom_tree_->residue_xyz_change_list_end(); iter != iter_end; ++iter ) {
 		update_residue_coordinates( *iter, false );
 	}

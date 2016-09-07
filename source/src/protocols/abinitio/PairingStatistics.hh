@@ -144,7 +144,7 @@ public:
 	typedef std::map< Model, core::Real > Weights;
 
 	PairingStatistics() {};
-	virtual ~PairingStatistics();
+	~PairingStatistics() override;
 
 	PairingStatistics( Templates const& templates ) {
 		compute( templates );
@@ -188,7 +188,7 @@ public:
 	// }
 
 	core::scoring::dssp::StrandPairingSet const& topology( Model id ) const {
-		Topologies::const_iterator iter ( topols_.find( id ) );
+		auto iter ( topols_.find( id ) );
 		if ( iter == topols_.end() ) {
 			utility_exit_with_message("Model name not known: " + id );
 		}

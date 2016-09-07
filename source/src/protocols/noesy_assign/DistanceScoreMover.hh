@@ -56,7 +56,7 @@ public:
 	void prepare_scoring( bool use_for_calibration = false );
 
 	/// @brief sum up decoy_compatibility score in PeakAssignments
-	void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
 	// void find_violators_with_individual_dist_cutoff( PoseVector poses );
 	/// @brief normalize decoy_compatibility of PeakAssignments by count_decoys_
@@ -65,7 +65,7 @@ public:
 	//core::Real compute_violation_percentage() const;
 	//void eliminate_violated_constraints() const;
 
-	virtual std::string get_name() const { return "DistanceScoreMover"; }
+	std::string get_name() const override { return "DistanceScoreMover"; }
 
 	void set_dcut( core::Real setting ) {
 		dcut_ = setting;

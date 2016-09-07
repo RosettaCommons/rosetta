@@ -43,7 +43,7 @@ namespace protocols {
 namespace simple_moves {
 
 /// @details Auto-generated virtual destructor
-FragmentCost::~FragmentCost() {}
+FragmentCost::~FragmentCost() = default;
 
 
 using namespace core;
@@ -78,7 +78,7 @@ SmoothFragmentMover::get_name() const {
 	return "SmoothFragmentMover";
 }
 
-SmoothFragmentMover::~SmoothFragmentMover() {}
+SmoothFragmentMover::~SmoothFragmentMover() = default;
 
 bool
 SmoothFragmentMover::choose_fragment(

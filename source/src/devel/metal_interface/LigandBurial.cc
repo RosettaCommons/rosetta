@@ -58,9 +58,7 @@ LigandBurial::LigandBurial( core::pose::Pose const & pose, std::string ligand_3_
 	}
 }
 
-LigandBurial::~LigandBurial()
-{
-}
+LigandBurial::~LigandBurial() = default;
 
 basic::MetricValue< std::set<Size> >
 LigandBurial::get_ligand_neighbors() {
@@ -132,8 +130,8 @@ LigandBurial::calculate_ligand_neighbors() {
 
 
 	TR << "These are the neighbor residues: " << std::endl;
-	for( std::set<Size>::const_iterator it(ligand_neighbors.value().begin()), end(ligand_neighbors.value().end()); it != end; ++it){
-		TR << *it << "+";
+	for(unsigned long it : ligand_neighbors.value()){
+		TR << it << "+";
 	}
 	TR << std::endl;
 
@@ -148,7 +146,7 @@ LigandBurial::calculate_ligand_sasa() {
 
 	//assume the ligand is the second of 2 chains.
 	//possible to append 1 residue to new pose?
-	PoseOP chain_ligand_only = pose_.split_by_chain(2);
+	Pose chain_ligand_only = pose_.split_by_chain(2);
 
 	using core::id::AtomID;
 	utility::vector1<Real> rsd_sasa(pose_.n_residue(),0.0);

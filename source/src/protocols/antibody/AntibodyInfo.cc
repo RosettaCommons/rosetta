@@ -69,7 +69,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataCache.hh>
 #include <numeric/NumericTraits.hh>
-#include <math.h>
+#include <cmath>
 
 
 // Boost headers
@@ -134,7 +134,7 @@ AntibodyInfo::AntibodyInfo(const pose::Pose & pose,
 	init(pose);
 }
 
-AntibodyInfo::~AntibodyInfo() {}
+AntibodyInfo::~AntibodyInfo() = default;
 
 AntibodyInfo::AntibodyInfo(const AntibodyInfo& src):
 	utility::pointer::ReferenceCount(),
@@ -174,7 +174,7 @@ void AntibodyInfo::set_default() {
 	is_camelid_ = false;
 	has_antigen_ = false;
 	predicted_H3_base_type_ = Kinked;
-	loopsop_having_allcdrs_=NULL;
+	loopsop_having_allcdrs_=nullptr;
 
 
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
@@ -250,7 +250,7 @@ void AntibodyInfo::setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum c
 }
 
 bool AntibodyInfo::cdr_definition_transform_present(const CDRDefinitionEnum cdr_definition) const{
-	std::map< CDRDefinitionEnum, vector1< vector1< PDBLandmarkOP > > >::const_iterator iter( numbering_info_.cdr_definition_transform.find( cdr_definition ) );
+	auto iter( numbering_info_.cdr_definition_transform.find( cdr_definition ) );
 	return iter != numbering_info_.cdr_definition_transform.end();
 }
 
@@ -262,7 +262,7 @@ AntibodyInfo::get_cdr_definition_transform(const CDRDefinitionEnum cdr_definitio
 		utility_exit_with_message("Numbering scheme transform: "+enum_manager_->cdr_definition_enum_to_string(cdr_definition)+\
 			" not present for current numbering scheme: "+enum_manager_->cdr_definition_enum_to_string(numbering_info_.cdr_definition));
 	} else {
-		std::map< CDRDefinitionEnum,vector1< vector1< PDBLandmarkOP > > >::const_iterator iter( numbering_info_.cdr_definition_transform.find( cdr_definition ) );
+		auto iter( numbering_info_.cdr_definition_transform.find( cdr_definition ) );
 		return iter->second;
 	}
 }
@@ -271,14 +271,14 @@ AntibodyInfo::get_cdr_definition_transform(const CDRDefinitionEnum cdr_definitio
 bool
 AntibodyInfo::numbering_scheme_transform_present(const AntibodyNumberingSchemeEnum numbering_scheme) const {
 
-	std::map< AntibodyNumberingSchemeEnum,vector1< PDBLandmarkOP > > ::const_iterator iter( numbering_info_.numbering_scheme_transform.find( numbering_scheme ) );
+	auto iter( numbering_info_.numbering_scheme_transform.find( numbering_scheme ) );
 	return iter != numbering_info_.numbering_scheme_transform.end();
 }
 
 vector1< PDBLandmarkOP >
 AntibodyInfo::get_numbering_scheme_landmarks(const AntibodyNumberingSchemeEnum numbering_scheme) const {
 	if ( numbering_scheme_transform_present(numbering_scheme) ) {
-		std::map< AntibodyNumberingSchemeEnum,vector1< PDBLandmarkOP > > ::const_iterator iter( numbering_info_.numbering_scheme_transform.find( numbering_scheme ) );
+		auto iter( numbering_info_.numbering_scheme_transform.find( numbering_scheme ) );
 		return iter->second;
 	} else {
 		utility_exit_with_message("Undefined Antibody numbering scheme in scheme definitions: "+enum_manager_->numbering_scheme_enum_to_string(numbering_scheme));
@@ -594,7 +594,7 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 		L_begin_pos_num=pose.conformation().chain_begin(L_chain_);
 		L_end_pos_num=pose.conformation().chain_end(L_chain_);
 		H_begin_pos_num=pose.conformation().chain_begin(H_chain_);
-		H_end_pos_num=pose.conformation().chain_end(H_chain_);;
+		H_end_pos_num=pose.conformation().chain_end(H_chain_);
 
 
 		if (  L_begin_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 23, ' ', false)   )  {
@@ -1521,12 +1521,11 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 	// Make sure rb jumps do not reside in the loop region
 	// NOTE: This check is insufficient.  Perhaps the jump adjustment should be done in a while loop.
-	for ( loops::Loops::const_iterator it= get_AllCDRs_in_loopsop()->begin(), it_end = get_AllCDRs_in_loopsop()->end();
-			it != it_end; ++it ) {
-		if ( light_chain_COM >= (it->start() - 1) && light_chain_COM <= (it->stop() + 1) ) {
-			light_chain_COM = it->stop() + 2;
-		} else if ( heavy_chain_COM >= (it->start() - 1) && heavy_chain_COM <= (it->stop() + 1) ) {
-			heavy_chain_COM = it->start() - 2;
+	for (const auto & it : *get_AllCDRs_in_loopsop()) {
+		if ( light_chain_COM >= (it.start() - 1) && light_chain_COM <= (it.stop() + 1) ) {
+			light_chain_COM = it.stop() + 2;
+		} else if ( heavy_chain_COM >= (it.start() - 1) && heavy_chain_COM <= (it.stop() + 1) ) {
+			heavy_chain_COM = it.start() - 2;
 		}
 	}
 
@@ -2246,7 +2245,7 @@ AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name,
 	loops::Loop the_loop = get_CDR_loop(cdr_name);
 
 	for ( Size i=the_loop.start()-left_stem; i<=the_loop.stop()+right_stem; ++i ) {
-		std::map< Size, char >::const_iterator iter(sequence_map_.find(i)); //To keep const
+		auto iter(sequence_map_.find(i)); //To keep const
 		sequence.push_back(iter->second);
 	}
 	std::string seq(sequence.begin(), sequence.end());
@@ -2268,16 +2267,16 @@ AntibodyInfo::get_antibody_sequence() const {
 
 scoring::ScoreFunctionCOP
 get_Pack_ScoreFxn(void) {
-	static scoring::ScoreFunctionOP pack_scorefxn = 0;
-	if ( pack_scorefxn == 0 ) {
+	static scoring::ScoreFunctionOP pack_scorefxn = nullptr;
+	if ( pack_scorefxn == nullptr ) {
 		pack_scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 	return pack_scorefxn;
 }
 scoring::ScoreFunctionCOP
 get_Dock_ScoreFxn(void) {
-	static scoring::ScoreFunctionOP dock_scorefxn = 0;
-	if ( dock_scorefxn == 0 ) {
+	static scoring::ScoreFunctionOP dock_scorefxn = nullptr;
+	if ( dock_scorefxn == nullptr ) {
 		dock_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 		dock_scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 		dock_scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
@@ -2286,8 +2285,8 @@ get_Dock_ScoreFxn(void) {
 }
 scoring::ScoreFunctionCOP
 get_LoopCentral_ScoreFxn(void) {
-	static scoring::ScoreFunctionOP loopcentral_scorefxn = 0;
-	if ( loopcentral_scorefxn == 0 ) {
+	static scoring::ScoreFunctionOP loopcentral_scorefxn = nullptr;
+	if ( loopcentral_scorefxn == nullptr ) {
 		loopcentral_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 		loopcentral_scorefxn->set_weight( scoring::chainbreak, 10./3. );
 	}
@@ -2295,8 +2294,8 @@ get_LoopCentral_ScoreFxn(void) {
 }
 scoring::ScoreFunctionCOP
 get_LoopHighRes_ScoreFxn(void) {
-	static scoring::ScoreFunctionOP loophighres_scorefxn = 0;
-	if ( loophighres_scorefxn == 0 ) {
+	static scoring::ScoreFunctionOP loophighres_scorefxn = nullptr;
+	if ( loophighres_scorefxn == nullptr ) {
 		loophighres_scorefxn = scoring::get_score_function();
 		loophighres_scorefxn->set_weight( scoring::chainbreak, 1.0 );
 		loophighres_scorefxn->set_weight( scoring::overlap_chainbreak, 10./3. );

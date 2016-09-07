@@ -181,11 +181,7 @@ public:
 	friend std::istream & operator >>( std::istream & is, RT & rt );
 
 	/// @brief copy operator
-	RT & operator =( RT const & src ) {
-		rotation = src.rotation;
-		translation = src.translation;
-		return *this;
-	}
+	RT & operator =( RT const & ) = default;
 
 	/// @brief check for orthogonality
 	bool ortho_check() const;

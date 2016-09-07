@@ -93,7 +93,7 @@ VIP_Mover::VIP_Mover(
 	use_stored_best_energy = false;
 }
 
-VIP_Mover::~VIP_Mover(){}
+VIP_Mover::~VIP_Mover()= default;
 
 void VIP_Mover::set_initial_pose( core::pose::Pose pose ){
 	initial_pose = pose;
@@ -215,7 +215,7 @@ VIP_Mover::cull_mutatable_residues(){
 	}
 
 	std::sort( mm_res.begin(), mm_res.end() );
-	utility::vector1<core::Size>::iterator new_end_itr = std::unique( mm_res.begin(), mm_res.end() );
+	auto new_end_itr = std::unique( mm_res.begin(), mm_res.end() );
 
 	utility::vector1<core::Size> unique_mm_res;
 	std::copy( mm_res.begin(), new_end_itr, std::back_inserter( unique_mm_res ) );

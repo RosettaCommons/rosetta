@@ -36,23 +36,23 @@ class TimeFilter : public Filter
 public:
 	/// @brief default ctor
 	TimeFilter();
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 	virtual core::Real compute( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual FilterOP clone() const {
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	FilterOP clone() const override {
 		return FilterOP( new TimeFilter( *this ) );
 	}
-	virtual FilterOP fresh_instance() const{
+	FilterOP fresh_instance() const override{
 		return FilterOP( new TimeFilter() );
 	}
 
-	virtual ~TimeFilter();
-	virtual void parse_my_tag( utility::tag::TagCOP tag,
+	~TimeFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 private:
 	core::Size mutable tic_, toc_;
 };

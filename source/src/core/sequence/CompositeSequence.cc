@@ -78,7 +78,7 @@ SequenceOP CompositeSequence::seq( core::Size idx ) const {
 }
 
 /// @brief dtor
-CompositeSequence::~CompositeSequence() {}
+CompositeSequence::~CompositeSequence() = default;
 
 /// @brief Returns an owning pointer to a new CompositeSequence object,
 /// with data that is a deep copy of the information in this object.

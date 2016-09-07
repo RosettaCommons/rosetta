@@ -61,7 +61,7 @@ ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures( Protei
 	FeaturesReporter()
 {}
 
-ProteinBackboneAtomAtomPairFeatures::~ProteinBackboneAtomAtomPairFeatures(){}
+ProteinBackboneAtomAtomPairFeatures::~ProteinBackboneAtomAtomPairFeatures()= default;
 
 string
 ProteinBackboneAtomAtomPairFeatures::type_name() const { return "ProteinBackboneAtomAtomPairFeatures"; }

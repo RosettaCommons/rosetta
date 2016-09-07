@@ -46,24 +46,24 @@ class FitSimpleHelix : public protocols::moves::Mover
 {
 public:
 	FitSimpleHelix();
-	virtual ~FitSimpleHelix();
+	~FitSimpleHelix() override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 
 	/// @brief Actually apply the mover to the pose.
-	virtual void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const &
-	);
+	) override;
 
 	void set_initial_guesses (core::Real const &r1_initial, core::Real const &omega1_initial, core::Real const &dz1_initial) {
 		r1_initial_ = r1_initial;

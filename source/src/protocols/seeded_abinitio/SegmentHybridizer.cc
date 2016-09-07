@@ -139,7 +139,7 @@ SegmentHybridizer::SegmentHybridizer() :
 }
 
 
-SegmentHybridizer::~SegmentHybridizer() {}
+SegmentHybridizer::~SegmentHybridizer() = default;
 
 protocols::moves::MoverOP SegmentHybridizer::clone() const { return protocols::moves::MoverOP( new SegmentHybridizer( *this ) ); }
 protocols::moves::MoverOP SegmentHybridizer::fresh_instance() const { return protocols::moves::MoverOP( new SegmentHybridizer ); }

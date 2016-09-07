@@ -55,7 +55,7 @@ H3CterInsert::H3CterInsert(antibody::AntibodyInfoOP  antibody_info, bool camelid
 
 
 // H3CterInsert default destructor
-H3CterInsert::~H3CterInsert() {}
+H3CterInsert::~H3CterInsert() = default;
 
 
 void H3CterInsert::init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark) {

@@ -40,6 +40,7 @@
 // Utility headers
 //#include <utility/io/izstream.hh>
 //#include <utility/io/ozstream.hh>
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 //#include <basic/options/option.hh>
@@ -68,8 +69,8 @@ FragmentJumpClaimer::FragmentJumpClaimer() :
 }
 
 FragmentJumpClaimer::FragmentJumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& tag, weights::AbinitioMoverWeightOP weight ) :
-	FragmentClaimer( NULL, tag, weight ),
-	jump_def_ ( jump_def ),
+	FragmentClaimer( nullptr, tag, weight ),
+	jump_def_ (std::move( jump_def )),
 	init_mover_( /* NULL */ ),
 	bKeepJumpsFromInputPose_( true )
 {
@@ -87,7 +88,7 @@ FragmentJumpClaimer::FragmentJumpClaimer( FragmentJumpClaimer const & src ) :
 
 }
 
-FragmentJumpClaimer::~FragmentJumpClaimer() {}
+FragmentJumpClaimer::~FragmentJumpClaimer() = default;
 
 TopologyClaimerOP FragmentJumpClaimer::clone() const
 {
@@ -113,7 +114,7 @@ void FragmentJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofCl
 		set_mover( init_mover_ );
 		FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 		set_mover( frag_mover );
-		init_mover_ = NULL;
+		init_mover_ = nullptr;
 	} else {
 		FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 	}
@@ -149,7 +150,7 @@ void FragmentJumpClaimer::init_jumps() {
 		tr.Debug << "current_jumps " << current_jumps_ << std::endl;
 	} else {
 		if ( !jump_def_ ) return;
-		runtime_assert( jump_def_ != 0 );
+		runtime_assert( jump_def_ != nullptr );
 		tr.Info << type() << ": create new random jumps" << std::endl;
 		Size attempts( 10 );
 		do {
@@ -174,9 +175,8 @@ void FragmentJumpClaimer::init_jumps() {
 
 		current_jumps_.generate_jump_frames( jump_frames,mm );
 
-		for ( core::fragment::FrameList::iterator jump_frame = jump_frames.begin();
-				jump_frame != jump_frames.end(); ++jump_frame ) {
-			(*jump_frame)->steal( input_pose_ );
+		for (auto & jump_frame : jump_frames) {
+			jump_frame->steal( input_pose_ );
 		}
 
 		core::fragment::FragSetOP jump_frags( new core::fragment::OrderedFragSet );
@@ -239,18 +239,18 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 		kinematics::MoveMap jump_mm;
 		jump_mm.set_jump( up, down, true );
 		bool found_frame( false );
-		for ( fragment::FrameList::iterator it = frames.begin(); it!=frames.end(); ++it ) {
-			if ( 2 == (*it)->nr_res_affected( jump_mm ) ) {
+		for (auto & frame : frames) {
+			if ( 2 == frame->nr_res_affected( jump_mm ) ) {
 				//that is our jump-fragment
 				found_frame = true;
 				new_claims.push_back( claims::DofClaimOP( new claims::JumpClaim( get_self_weak_ptr(), local_up, local_dn, up_atom, down_atom, claims::DofClaim::INIT ) ) );
 				kinematics::MoveMap bb_mm;
 				bb_mm.set_bb( false );
 				bb_mm.set_bb( up, true );
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) )  new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_up ) ) ); //up jump always counted
+				if ( 2 == frame->nr_res_affected( bb_mm ) )  new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_up ) ) ); //up jump always counted
 				bb_mm.set_bb( down, true );
 				bb_mm.set_bb( up, false);
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) )  new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ) ); //up jump always counted
+				if ( 2 == frame->nr_res_affected( bb_mm ) )  new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ) ); //up jump always counted
 				break;
 			}
 		}

@@ -60,7 +60,7 @@ void HedgeArchive::incorporate_batch( core::Size batch_id ) {
 		if ( numeric::random::rg().uniform() < (1-add_fuzzy_) ) {
 			set_max_nstruct( static_cast<Size>(1e6) );
 			tr.Debug << "add decoy from batch " << batch_id << std::endl;
-			add_structure_at_position( decoys().end(), sit->second, NULL );
+			add_structure_at_position( decoys().end(), sit->second, nullptr );
 			--ind_max;
 		}
 	}
@@ -98,8 +98,8 @@ void HedgeArchive::save_pending_decoys( SilentStructs const& decoys, core::Size 
 	core::io::silent::SilentFileData sfd;
 	//  utility::io::ozstream output( tmp_filename );
 	//  if ( decoys.begin() != decoys.end() ) (*decoys.begin())->print_header( output );
-	for ( SilentStructs::const_iterator it = decoys.begin(); it != decoys.end(); ++it ) {
-		sfd.add_structure( *(it->second) ); //only add OP to sfd
+	for (const auto & decoy : decoys) {
+		sfd.add_structure( *(decoy.second) ); //only add OP to sfd
 	}
 	sfd.write_all( tmp_filename );
 
@@ -130,7 +130,7 @@ void HedgeArchive::collect( jd2::archive::Batch const& batch, core::io::silent::
 	numeric::random::random_permutation(indices, numeric::random::rg());
 	core::Size i=1;
 	start_decoys.reserve( batch.nstruct() );
-	for ( Parent::SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it, ++i ) {
+	for ( auto it = decoys().begin(); it != decoys().end(); ++it, ++i ) {
 		if ( indices[i] ) {
 			start_decoys.push_back( *it );
 		}
@@ -140,10 +140,10 @@ void HedgeArchive::collect( jd2::archive::Batch const& batch, core::io::silent::
 void HedgeArchive::save_status( std::ostream& os ) const {
 	Parent::save_status( os );
 	os << "OPEN_BATCHES" << std::endl;
-	for ( BatchStructuresMap::const_iterator it=incoming_structures_.begin(); it!=incoming_structures_.end(); ++it ) {
-		if ( !it->second.size() ) continue;
-		os << it->first << std::endl;
-		HedgeArchive::save_pending_decoys( it->second, it->first );
+	for (const auto & incoming_structure : incoming_structures_) {
+		if ( !incoming_structure.second.size() ) continue;
+		os << incoming_structure.first << std::endl;
+		HedgeArchive::save_pending_decoys( incoming_structure.second, incoming_structure.first );
 	}
 	os << "END_BATCHES" << std::endl;
 }

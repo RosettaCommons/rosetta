@@ -73,7 +73,7 @@ RRComparerElecDensDiff::RRComparerElecDensDiff( RRComparerElecDensDiff const & s
 	recovery_threshold_( src.recovery_threshold_ )
 {}
 
-RRComparerElecDensDiff::~RRComparerElecDensDiff() {}
+RRComparerElecDensDiff::~RRComparerElecDensDiff() = default;
 
 bool
 RRComparerElecDensDiff::measure_rotamer_recovery(
@@ -121,8 +121,8 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	(*scorefxn)(pose2);
 
 	// electron density correlation
-	Real pose1_corr = core::scoring::electron_density::getDensityMap().matchRes( res1.seqpos(), res1, pose1, NULL , false);
-	Real pose2_corr = core::scoring::electron_density::getDensityMap().matchRes( res2.seqpos(), res2, pose2, NULL , false);
+	Real pose1_corr = core::scoring::electron_density::getDensityMap().matchRes( res1.seqpos(), res1, pose1, nullptr , false);
+	Real pose2_corr = core::scoring::electron_density::getDensityMap().matchRes( res2.seqpos(), res2, pose2, nullptr , false);
 	Real corr_diff = pose1_corr - pose2_corr;    //if Rosetta fixes an error in native density fitting, count as recovered
 	//pose1 must be native
 

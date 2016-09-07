@@ -58,7 +58,7 @@ public:
 public:
 	/// Creation and initialization
 	Bool3DGrid();
-	virtual ~Bool3DGrid();
+	~Bool3DGrid() override;
 
 	void set_bounding_box( BoundingBox const & bb );
 	void set_bin_width( Real width );
@@ -209,7 +209,7 @@ public:
 public:
 	BumpGrid();
 	BumpGrid( BumpGrid const & );
-	virtual ~BumpGrid();
+	~BumpGrid() override;
 
 	BumpGrid & operator = ( BumpGrid const & );
 

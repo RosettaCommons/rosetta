@@ -45,6 +45,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
@@ -70,16 +71,16 @@ DisulfideInsertionMover::DisulfideInsertionMover(core::Size const peptide_chain,
 	core::Size const n_cyd_seqpos, core::Size const c_cyd_seqpos) :
 	protocols::moves::Mover("DisulfideInsertionMover"),
 	peptide_chain_num_( peptide_chain ),
-	scorefxn_( scorefxn ),
-	movemap_( mm ),
+	scorefxn_(std::move( scorefxn )),
+	movemap_(std::move( mm )),
 	n_cyd_seqpos_(n_cyd_seqpos),
 	c_cyd_seqpos_(c_cyd_seqpos),
 	is_cyd_res_at_termini_(is_cyd_res_at_termini)
 {
-	if ( movemap_ == NULL ) {
+	if ( movemap_ == nullptr ) {
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 	}
-	if ( scorefxn_ == NULL ) {
+	if ( scorefxn_ == nullptr ) {
 		scorefxn_ = core::scoring::get_score_function();
 	}
 	constraint_weight_ = basic::options::option[ basic::options::OptionKeys::run::insert_disulfide_constraint_weight ]();
@@ -230,7 +231,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 	// probably a must for the disulfide to be properly rebuilt, but need to think about this forced DOF
 	movemap_->set_bb_true_range(n_cyd_seqpos_, c_cyd_seqpos_);
 	core::util::rebuild_disulfide(peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_,
-		/*packer_task=*/NULL,
+		/*packer_task=*/nullptr,
 		/*packer_score=*/scorefxn_,
 		/*mm=*/movemap_,
 		/*minimizer_score=*/scorefxn_);

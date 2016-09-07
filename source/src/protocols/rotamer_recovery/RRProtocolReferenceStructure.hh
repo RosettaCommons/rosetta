@@ -43,7 +43,7 @@ public: // constructors destructors
 	RRProtocolReferenceStructure(
 		core::pose::PoseCOP reference_pose);
 
-	~RRProtocolReferenceStructure();
+	~RRProtocolReferenceStructure() override;
 
 	RRProtocolReferenceStructure(
 		RRProtocolReferenceStructure const & src);
@@ -51,10 +51,10 @@ public: // constructors destructors
 public: // public interface
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	std::string
-	get_parameters() const;
+	get_parameters() const override;
 
 	void
 	reference_structure(
@@ -66,7 +66,7 @@ public: // public interface
 		RRReporterOP reporter,
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const &,
-		core::pack::task::PackerTask const & packer_task);
+		core::pack::task::PackerTask const & packer_task) override;
 
 private: // member data
 	core::pose::PoseCOP reference_pose_;

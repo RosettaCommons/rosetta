@@ -87,7 +87,7 @@ public:
 	PeriodicBoxMover();
 	//PeriodicBoxMover( std::string const & );
 
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	void setup_pose( Pose & pose, core::Real &, core::Size & );
 	void change_volume_move( Pose & pose, core::Size, bool& );
@@ -97,17 +97,17 @@ public:
 	//utility::vector1<core::Real> RDF( Pose & pose, core::Real, core::Real, core::Size );
 	//core::Real dist( Pose & pose, core::Size, std::string, core::Size, std::string);
 
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 

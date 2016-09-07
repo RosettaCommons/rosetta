@@ -17,7 +17,7 @@ namespace protocols {
 namespace moves {
 
 MoverCreator::MoverCreator() {}
-MoverCreator::~MoverCreator() {}
+MoverCreator::~MoverCreator() = default;
 
 } //namespace moves
 } //namespace protocols

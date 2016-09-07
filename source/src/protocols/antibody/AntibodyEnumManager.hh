@@ -34,7 +34,7 @@ public:
 
 	AntibodyEnumManager();
 
-	virtual ~AntibodyEnumManager();
+	~AntibodyEnumManager() override;
 
 	////////////////// CDR names ///////////////////////////////////////////////
 
@@ -57,7 +57,7 @@ public:
 	numbering_scheme_enum_to_string(AntibodyNumberingSchemeEnum const numbering_scheme) const;
 
 	bool
-	numbering_scheme_is_present(std::string numbering_scheme) const;
+	numbering_scheme_is_present(std::string const & numbering_scheme) const;
 
 
 	////////////////// CDR Definitions  ///////////////////////////////////////

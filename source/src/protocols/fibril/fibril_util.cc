@@ -177,8 +177,8 @@ superimpose_pose_on_subset_bb(
 	utility::vector1< core::id::AtomID > ref_ids;
 	utility::vector1< core::id::AtomID > ids;
 
-	for ( loops::Loops::const_iterator region = core.begin(); region != core.end(); ++region ) {
-		for ( core::Size i=region->start(); i<= region->stop(); ++i ) {
+	for (const auto & region : core) {
+		for ( core::Size i=region.start(); i<= region.stop(); ++i ) {
 			core::id::AtomID dummy_atomid1( pose.residue(i).atom_index("CA"), i);
 			ids.push_back(dummy_atomid1);
 			core::id::AtomID dummy_atomid2( pose.residue(i).atom_index("N"), i);
@@ -190,8 +190,8 @@ superimpose_pose_on_subset_bb(
 		}
 	}
 
-	for ( loops::Loops::const_iterator region = ref_core.begin(); region != ref_core.end(); ++region ) {
-		for ( core::Size i=region->start(); i<= region->stop(); ++i ) {
+	for (const auto & region : ref_core) {
+		for ( core::Size i=region.start(); i<= region.stop(); ++i ) {
 			core::id::AtomID dummy_atomid1( ref_pose.residue(i).atom_index("CA"), i);
 			ref_ids.push_back(dummy_atomid1);
 			core::id::AtomID dummy_atomid2( ref_pose.residue(i).atom_index("N"), i);

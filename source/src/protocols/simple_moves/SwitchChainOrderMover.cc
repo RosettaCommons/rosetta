@@ -93,7 +93,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 			positions_in_new_pose.push_back( i );
 		}
 		core::Size const new_chain_end( positions_in_new_pose.size() );
-		if ( residue_numbers_ != NULL ) {
+		if ( residue_numbers_ != nullptr ) {
 			BOOST_FOREACH ( core::Size const residue_number, residue_numbers_->obj ) {
 				if ( residue_number >= chain_begin && residue_number <= chain_end ) {
 					new_residue_numbers.push_back( residue_number - ( chain_begin - new_chain_begin ) );
@@ -114,8 +114,8 @@ SwitchChainOrderMover::apply( Pose & pose )
 	//When applying switch then comments are erased from the pose. adding condition that if -pdb comments true flag is turned on then copy comments to new pose. gideonla 1/5/13
 	if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value() ) {
 		std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
-		for ( std::map< std::string, std::string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
-			core::pose::add_comment(new_pose,i->first,i->second);
+		for (const auto & comment : comments) {
+			core::pose::add_comment(new_pose,comment.first,comment.second);
 		}
 	}
 	pose.clear();
@@ -124,7 +124,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	( *scorefxn() ) ( pose );
 	pose.update_residue_neighbors();
 	TR<<"New pose's foldtree "<<pose.fold_tree()<<std::endl;
-	if ( residue_numbers_ != NULL ) {
+	if ( residue_numbers_ != nullptr ) {
 		residue_numbers_->obj = new_residue_numbers;
 		TR<<"new residue numbers: ";
 		BOOST_FOREACH ( core::Size const res, residue_numbers_->obj ) {
@@ -172,8 +172,8 @@ SwitchChainOrderMover::parse_my_tag(
 
 		if ( tag->hasOption("chain_name") ) {
 			utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
-			for ( utility::vector1<std::string>::iterator chain_name_it = chain_names.begin(); chain_name_it != chain_names.end(); ++chain_name_it ) {
-				chain_ids_.push_back(core::pose::get_chain_id_from_chain(*chain_name_it,pose));
+			for (auto & chain_name : chain_names) {
+				chain_ids_.push_back(core::pose::get_chain_id_from_chain(chain_name,pose));
 			}
 		}
 	}

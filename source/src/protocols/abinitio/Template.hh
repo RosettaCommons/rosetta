@@ -54,13 +54,13 @@ namespace abinitio {
 class Template : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Template();
+	~Template() override;
 	typedef utility::vector1< core::scoring::constraints::AtomPairConstraintOP > AtomPairConstraintList;
 	typedef utility::vector1< core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP > NamedAtomPairConstraintList;
 
 	static void register_options();
 
-	Template( std::string const& name, core::pose::PoseCOP, core::sequence::DerivedSequenceMapping const& mapping);
+	Template( std::string name, core::pose::PoseCOP, core::sequence::DerivedSequenceMapping const& mapping);
 	Template( std::string const& name, core::pose::PoseCOP, std::string const& map_file, int offset, core::Real score );
 
 	//@brief pick fragments of <length> from Template according to mapping, return nr of Frames

@@ -43,29 +43,29 @@ public:
 		AveragePathLengthFilter const & src
 	);
 
-	virtual ~AveragePathLengthFilter();
+	~AveragePathLengthFilter() override;
 
 	bool
 	apply(
 		core::pose::Pose const & pose
-	) const;
+	) const override;
 
 	filters::FilterOP
-	clone() const;
+	clone() const override;
 
 	filters::FilterOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	void
 	report(
 		std::ostream & out,
 		core::pose::Pose const & pose
-	) const;
+	) const override;
 
 	core::Real
 	report_sm(
 		core::pose::Pose const & pose
-	) const;
+	) const override;
 
 	core::Real
 	compute(
@@ -79,7 +79,7 @@ public:
 		filters::Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	core::Real
 	max_path_length() const;

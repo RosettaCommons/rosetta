@@ -28,7 +28,7 @@ TempFixValue::TempFixValue( core::Real value ) {
 //   return value_;
 // }
 
-TempFixValue::~TempFixValue(){}
+TempFixValue::~TempFixValue() = default;
 
 TempInterpolator::TempInterpolator( core::Size n_levels, core::Real start, core::Real end, std::string curve ) {
 
@@ -53,7 +53,7 @@ TempInterpolator::TempInterpolator( utility::tag::TagCOP tag, core::Size n_level
 	calculated_ = false;
 	interpolate();
 }
-TempInterpolator::~TempInterpolator(){}
+TempInterpolator::~TempInterpolator()= default;
 
 void TempInterpolator::interpolate() {
 	interpolated_nums_.clear();

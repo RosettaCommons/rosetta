@@ -59,7 +59,7 @@ static Tracer TR("protocols.features.AtomTypesFeatures");
 
 AtomTypesFeatures::AtomTypesFeatures() {}
 
-AtomTypesFeatures::~AtomTypesFeatures() {}
+AtomTypesFeatures::~AtomTypesFeatures() = default;
 
 string
 AtomTypesFeatures::type_name() const { return "AtomTypesFeatures"; }

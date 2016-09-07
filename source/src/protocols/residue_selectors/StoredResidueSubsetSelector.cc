@@ -29,6 +29,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -62,13 +63,13 @@ StoredResidueSubsetSelector::StoredResidueSubsetSelector() :
 	subset_name_( "" )
 {}
 
-StoredResidueSubsetSelector::StoredResidueSubsetSelector( std::string const & subset_name ):
+StoredResidueSubsetSelector::StoredResidueSubsetSelector( std::string  subset_name ):
 	ResidueSelector(),
-	subset_name_( subset_name )
+	subset_name_(std::move( subset_name ))
 {}
 
 StoredResidueSubsetSelector::~StoredResidueSubsetSelector()
-{}
+= default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
@@ -135,7 +136,7 @@ StoredResidueSubsetSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "subset_name", xs_string ));
+	attributes.emplace_back( "subset_name", xs_string );
 	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 }
 

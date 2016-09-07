@@ -104,7 +104,7 @@ CaIrmsdFilter::CaIrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size co
 
 }
 
-CaIrmsdFilter::~CaIrmsdFilter(){}
+CaIrmsdFilter::~CaIrmsdFilter() = default;
 
 protocols::filters::FilterOP
 CaIrmsdFilter::clone() const{

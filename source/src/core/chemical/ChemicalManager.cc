@@ -86,7 +86,7 @@ using core::chemical::ChemicalManager;
 template <> std::mutex utility::SingletonBase< ChemicalManager >::singleton_mutex_{};
 template <> std::atomic< ChemicalManager * > utility::SingletonBase< ChemicalManager >::instance_( 0 );
 #else
-template <> ChemicalManager * utility::SingletonBase< ChemicalManager >::instance_( 0 );
+template <> ChemicalManager * utility::SingletonBase< ChemicalManager >::instance_( nullptr );
 #endif
 
 }

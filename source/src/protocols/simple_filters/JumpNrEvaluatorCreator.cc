@@ -57,7 +57,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.JumpNrEvaluatorCreato
 namespace protocols {
 namespace simple_filters {
 
-JumpNrEvaluatorCreator::~JumpNrEvaluatorCreator() {}
+JumpNrEvaluatorCreator::~JumpNrEvaluatorCreator() = default;
 
 void JumpNrEvaluatorCreator::register_options() {
 	using namespace basic::options;

@@ -257,7 +257,7 @@ Size VarSolDRotamerDots::get_num_atoms() const {
 ///
 core::Vector
 VarSolDRotamerDots::get_atom_coords_xyz( Size atom_index ) const {
-	if ( rotamer_ == 0 ) {
+	if ( rotamer_ == nullptr ) {
 		return numeric::xyzVector< Real >(0,0,0);
 	}
 
@@ -708,8 +708,8 @@ VarSolDistSasaCalculator::VarSolDistSasaCalculator():
 	// probe_radius_(0),
 	// wobble_(0),
 	num_bytes_(21),
-	lg_masks_(0),
-	lg_angles_(0)
+	lg_masks_(nullptr),
+	lg_angles_(nullptr)
 {
 	initialize_sasa_arrays();
 }
@@ -858,8 +858,7 @@ LoadVarSolDistSasaCalculatorMover::LoadVarSolDistSasaCalculatorMover(Real /*prob
 	// wobble_(wobble)
 {}
 
-LoadVarSolDistSasaCalculatorMover::~LoadVarSolDistSasaCalculatorMover()
-{}
+LoadVarSolDistSasaCalculatorMover::~LoadVarSolDistSasaCalculatorMover() = default;
 
 protocols::moves::MoverOP
 LoadVarSolDistSasaCalculatorMover::clone() const {

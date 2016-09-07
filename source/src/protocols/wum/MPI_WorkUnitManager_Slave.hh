@@ -40,16 +40,16 @@ class MPI_WorkUnitManager_Slave: public MPI_WorkUnitManager {
 public:
 	MPI_WorkUnitManager_Slave( core::Size my_master );
 
-	virtual ~MPI_WorkUnitManager_Slave(){}
+	~MPI_WorkUnitManager_Slave() override= default;
 
-	virtual void go();
+	void go() override;
 
 protected:
-	void init(){};
+	void init() override{};
 
-	virtual void process_inbound_wus();
+	void process_inbound_wus() override;
 
-	virtual void process_outbound_wus();
+	void process_outbound_wus() override;
 
 	/// @brief Slave: call a master to ask for more work
 	virtual void request_new_jobs();

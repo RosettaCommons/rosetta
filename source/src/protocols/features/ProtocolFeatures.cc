@@ -71,7 +71,7 @@ ProtocolFeatures::ProtocolFeatures(){}
 
 ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ) : utility::pointer::ReferenceCount() {}
 
-ProtocolFeatures::~ProtocolFeatures(){}
+ProtocolFeatures::~ProtocolFeatures()= default;
 
 string
 ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }

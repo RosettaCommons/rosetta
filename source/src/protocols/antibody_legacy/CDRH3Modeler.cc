@@ -88,7 +88,7 @@ CDRH3Modeler::CDRH3Modeler(
 } // CDRH3Modeler default constructor
 
 // CDRH3Modeler default destructor
-CDRH3Modeler::~CDRH3Modeler() {}
+CDRH3Modeler::~CDRH3Modeler() = default;
 
 void CDRH3Modeler::set_default() {
 	benchmark_ = false;
@@ -739,7 +739,7 @@ void CDRH3Modeler::scored_frag_close (
 	Real const ccd_threshold( 0.1);
 	Size h3_attempts(0);
 	Real h3_fraction = 0.75; // 75% of loops are required to be H3's
-	Real current_h3_prob = numeric::random::rg().uniform();;
+	Real current_h3_prob = numeric::random::rg().uniform();
 	bool H3_found_ever(false);
 	bool loop_found(false);
 	Size total_cycles(0);

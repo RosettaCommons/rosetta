@@ -764,7 +764,7 @@ BBG8T3AMover::clone() const {
 	return static_cast< protocols::moves::MoverOP >(mp);
 }
 
-BBG8T3AMover::~BBG8T3AMover(){}
+BBG8T3AMover::~BBG8T3AMover()= default;
 
 std::string BBG8T3AMover::get_name() const {
 	return "BBG8T3AMover";

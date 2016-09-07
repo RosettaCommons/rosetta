@@ -49,20 +49,20 @@ public:
 		dcalibrate_( dcalibrate )
 	{}
 
-	virtual PeakCalibratorOP fresh_instance() {
+	PeakCalibratorOP fresh_instance() override {
 		return PeakCalibratorOP( new StructureDependentPeakCalibrator( structures_, dcalibrate_ ) );
 	}
 
 
 	//  virtual void reset_statistics();
 	//  virtual bool interpolate_on_statistics();
-	virtual void collect_upperbound_statistics( core::Size /*peak*/, TypeCumulator const& /*types*/ );
-	virtual void init_calibrator(); //to create constraints for example
+	void collect_upperbound_statistics( core::Size /*peak*/, TypeCumulator const& /*types*/ ) override;
+	void init_calibrator() override; //to create constraints for example
 	void generate_constraints();
 
 	// this is a service that has nothing to do with calibration,
 	// however, after calibration we have all the  constraints already generated, that are necessary to do this task
-	void eliminate_violated_constraints();
+	void eliminate_violated_constraints() override;
 
 private:
 	//  core::Real accumulated_viol_percentage_[ MAX_TYPE ];

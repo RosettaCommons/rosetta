@@ -28,6 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Scripter Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
@@ -80,8 +81,8 @@ FinalMinimizer::FinalMinimizer(
 	MoveMapBuilderOP movemap_builder
 ):
 	Mover("FinalMinimizer"),
-	score_fxn_(score_fxn),
-	movemap_builder_(movemap_builder)
+	score_fxn_(std::move(score_fxn)),
+	movemap_builder_(std::move(movemap_builder))
 
 {}
 
@@ -92,7 +93,7 @@ FinalMinimizer::FinalMinimizer(FinalMinimizer const & that):
 	movemap_builder_(that.movemap_builder_)
 {}
 
-FinalMinimizer::~FinalMinimizer() {}
+FinalMinimizer::~FinalMinimizer() = default;
 
 protocols::moves::MoverOP FinalMinimizer::clone() const {
 	return protocols::moves::MoverOP( new FinalMinimizer( *this ) );

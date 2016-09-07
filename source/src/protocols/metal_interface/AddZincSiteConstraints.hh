@@ -39,7 +39,7 @@ class AddZincSiteConstraints : public utility::pointer::ReferenceCount {
 public:
 
 	AddZincSiteConstraints( utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr );
-	virtual ~AddZincSiteConstraints();
+	~AddZincSiteConstraints() override;
 
 	virtual void add_constraints ( pose::Pose & pose );
 	virtual void evaluate_constraints( pose::Pose const & pose );

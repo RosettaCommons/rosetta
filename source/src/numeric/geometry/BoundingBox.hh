@@ -40,7 +40,7 @@ public: // construct/destruct
 	/// @warning no initialization of corners for speed, make sure you reset()
 	/// @warning or otherwise set corners before adding points
 	inline
-	BoundingBox() {}
+	BoundingBox() = default;
 
 	/// @brief point constructor
 	inline
@@ -69,7 +69,7 @@ public: // construct/destruct
 
 	/// @brief default destructor
 	inline
-	~BoundingBox() {}
+	~BoundingBox() = default;
 
 
 public: // assignment

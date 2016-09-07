@@ -31,17 +31,17 @@ class ResidueLoaderOptions : public basic::resource_manager::ResourceOptions
 {
 public:
 	ResidueLoaderOptions();
-	virtual ~ResidueLoaderOptions(){}
+	~ResidueLoaderOptions() override= default;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
-	);
+	) override;
 
-	virtual
+	
 	std::string
-	type() const;
+	type() const override;
 
 	std::string atom_type_set_tag() const;
 	std::string mm_atom_type_set_tag() const;

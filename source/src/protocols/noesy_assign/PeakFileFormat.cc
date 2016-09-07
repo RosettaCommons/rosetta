@@ -78,7 +78,7 @@ PeakFileFormat::PeakFileFormat()
 	runtime_assert( options_registered_ );
 }
 
-PeakFileFormat::~PeakFileFormat() {}
+PeakFileFormat::~PeakFileFormat() = default;
 
 Size const TOL_H_INDIRECT( 1 );
 Size const TOL_H_DIRECT( 2 );
@@ -202,7 +202,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	col2proton_.clear();
 	col2islabel_.clear();
 	column_labels_.clear();
-	info1_ = info2_ = NULL;
+	info1_ = info2_ = nullptr;
 	using namespace ObjexxFCL;
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Size dim( 0 );
@@ -438,7 +438,7 @@ CrossPeakOP PeakFileFormat::read_peak( std::istream& is, std::string& next_line 
 	core::Size id;
 	line_stream >> id;
 	if ( !line_stream.good() ) {
-		return NULL;
+		return nullptr;
 	}
 	next_line = ""; //now we are consuming this line
 	cp->set_peak_id( id );
@@ -552,7 +552,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 			if ( tag3.find(".") != std::string::npos ) return;
 		}
 		//only assign if all spins are assigned.
-		Size *vals = new Size [ncol+1>5?ncol+1:5]; // unfortunate
+		auto *vals = new Size [ncol+1>5?ncol+1:5]; // unfortunate
 		//Size vals[ncol+1>5?ncol+1:5]; // variable length arrays are not ISO compliant
 		for ( Size icol=1; icol<=ncol; ++icol ) {
 			Size val;
@@ -656,8 +656,8 @@ void PeakFileFormat::write_assignments( std::ostream& os, CrossPeak const& cp, s
 
 	if ( write_only_highest_VC() ) {
 		Real bestVC( -1 );
-		CrossPeak::PeakAssignments::const_iterator best_VC_it = cp.assignments().end();
-		for ( CrossPeak::PeakAssignments::const_iterator it = cp.assignments().begin(); it != cp.assignments().end(); ++it ) {
+		auto best_VC_it = cp.assignments().end();
+		for ( auto it = cp.assignments().begin(); it != cp.assignments().end(); ++it ) {
 			Real val( (*it)->normalized_peak_volume() );
 			if ( val > bestVC ) {
 				bestVC = val;
@@ -671,7 +671,7 @@ void PeakFileFormat::write_assignments( std::ostream& os, CrossPeak const& cp, s
 			os << line_end;
 		}
 	} else {
-		for ( CrossPeak::PeakAssignments::const_iterator it = cp.assignments().begin(); it != cp.assignments().end(); ++it ) {
+		for ( auto it = cp.assignments().begin(); it != cp.assignments().end(); ++it ) {
 			Real val( (*it)->normalized_peak_volume() );
 			if ( val >= min_VC_to_write() ) {
 				++assignments_written;

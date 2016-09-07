@@ -79,7 +79,7 @@ basic::resource_manager::ResourceOptionsOP
 LoopsFileFallbackConfiguration::get_resource_options( ResourceDescription const & ) const
 {
 	// use the default loops file options.
-	return NULL;
+	return nullptr;
 }
 
 /// @details Return a string that provides a helpful message to the user so s/he can determine how to correctly use the

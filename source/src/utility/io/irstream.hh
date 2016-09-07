@@ -47,7 +47,7 @@ public: // Creation
 	inline
 	virtual
 	~irstream()
-	{}
+	= default;
 
 
 protected: // Creation
@@ -56,7 +56,7 @@ protected: // Creation
 	/// @brief Default constructor
 	inline
 	irstream()
-	{}
+	= default;
 
 
 private: // Creation

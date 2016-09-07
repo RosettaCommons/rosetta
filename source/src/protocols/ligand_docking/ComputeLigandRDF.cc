@@ -78,22 +78,9 @@ ComputeLigandRDF::ComputeLigandRDF() : mode_(""),ligand_chain_(""),bin_count_(10
 
 }
 
-ComputeLigandRDF::~ComputeLigandRDF()
-{
+ComputeLigandRDF::~ComputeLigandRDF() = default;
 
-}
-
-ComputeLigandRDF::ComputeLigandRDF(ComputeLigandRDF const & that) :
-	Mover(that),
-	mode_(that.mode_),
-	ligand_chain_(that.ligand_chain_),
-	bin_count_(that.bin_count_),
-	smoothing_factor_(that.smoothing_factor_),
-	range_squared_(that.range_squared_),
-	rdf_functions_(that.rdf_functions_)
-{
-
-}
+ComputeLigandRDF::ComputeLigandRDF(ComputeLigandRDF const & ) = default;
 
 protocols::moves::MoverOP ComputeLigandRDF::clone() const {
 	return protocols::moves::MoverOP( new ComputeLigandRDF( *this ) );
@@ -161,8 +148,8 @@ void ComputeLigandRDF::parse_my_tag
 	smoothing_factor_ = tag->getOption<core::Real>("smoothing_factor",100);
 	range_squared_ = pow(tag->getOption<core::Real>("range",10.0),2.0);
 
-	utility::vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
-	utility::vector0< TagCOP >::const_iterator end=tag->getTags().end();
+	auto begin=tag->getTags().begin();
+	auto end=tag->getTags().end();
 
 	for ( ; begin != end; ++begin ) {
 		TagCOP function_tag= *begin;
@@ -343,9 +330,9 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 			core::Real shell_radius = bin_index*step_size;
 			core::Real rdf_bin_value = exp(-smoothing_factor_*(pow((shell_radius-atom_data.atom_atom_distance),2)));
 
-			for ( rdf::RDFResultList::iterator it = total_results.begin(); it != total_results.end(); ++it ) {
-				std::string term_name(it->first);
-				core::Real term_value(it->second);
+			for (auto & total_result : total_results) {
+				std::string term_name(total_result.first);
+				core::Real term_value(total_result.second);
 				rdf_map[term_name][bin_index] += term_value*rdf_bin_value;
 			}
 

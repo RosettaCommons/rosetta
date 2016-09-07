@@ -52,18 +52,18 @@ public:
 
 	RemoveLigandFilter( RemoveLigandFilter const & rval );
 
-	bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	// Undefined, commenting out to fix PyRosetta build  void set_min_mover( MoverOP min_mover );
 
 	// Undefined, commenting out to fix PyRosetta build  core::Real compute( Pose const & pose ) const;
 
-	core::Real report_sm( Pose const & pose ) const;
+	core::Real report_sm( Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
-	FilterOP clone() const { return FilterOP( new RemoveLigandFilter( *this ) ); }
-	FilterOP fresh_instance() const { return FilterOP( new RemoveLigandFilter ); }
+	FilterOP clone() const override { return FilterOP( new RemoveLigandFilter( *this ) ); }
+	FilterOP fresh_instance() const override { return FilterOP( new RemoveLigandFilter ); }
 private:
 	core::Real threshold_;
 	MoverOP mover_;

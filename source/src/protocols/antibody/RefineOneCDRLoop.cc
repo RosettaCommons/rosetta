@@ -117,7 +117,7 @@ void RefineOneCDRLoop::set_default() {
 
 
 // default destructor
-RefineOneCDRLoop::~RefineOneCDRLoop() {}
+RefineOneCDRLoop::~RefineOneCDRLoop() = default;
 
 //clone
 protocols::moves::MoverOP RefineOneCDRLoop::clone() const {

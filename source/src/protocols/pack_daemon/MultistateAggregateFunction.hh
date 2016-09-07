@@ -40,7 +40,7 @@ public:
 
 public:
 	MultistateAggregateFunction() : parent() {}
-	virtual ~MultistateAggregateFunction();
+	~MultistateAggregateFunction() override;
 
 	virtual core::Real   evaluate( StateEnergies const &, StateEnergies const &, Entity const &  ) = 0;
 	virtual StateIndices select_relevant_states( StateEnergies const &, StateEnergies const &, Entity const & ) = 0;

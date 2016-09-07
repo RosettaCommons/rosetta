@@ -44,7 +44,7 @@ private:
 
 class ScoreRmsPoints : public utility::vector1< ScoreRmsPoint > {
 public:
-	ScoreRmsPoints( ScoreRmsPoint const & bg_point );
+	ScoreRmsPoints( ScoreRmsPoint bg_point ); // move-constructed
 	ScoreRmsPoint const & bg() const;
 
 private:
@@ -56,7 +56,7 @@ private:
 class EnergyLandscapeEvaluator : public utility::pointer::ReferenceCount {
 public:
 	EnergyLandscapeEvaluator();
-	virtual ~EnergyLandscapeEvaluator();
+	~EnergyLandscapeEvaluator() override;
 
 	virtual EnergyLandscapeEvaluatorOP
 	clone() const = 0;
@@ -71,13 +71,13 @@ private:
 class RotamerBoltzmannWeightEvaluator : public EnergyLandscapeEvaluator {
 public:
 	RotamerBoltzmannWeightEvaluator( core::Real const temperature, bool const include_bg_point_in_sum );
-	virtual ~RotamerBoltzmannWeightEvaluator();
+	~RotamerBoltzmannWeightEvaluator() override;
 
-	virtual EnergyLandscapeEvaluatorOP
-	clone() const;
+	EnergyLandscapeEvaluatorOP
+	clone() const override;
 
-	virtual core::Real
-	compute( ScoreRmsPoints const & points ) const;
+	core::Real
+	compute( ScoreRmsPoints const & points ) const override;
 
 private:
 	core::Real temperature_;
@@ -90,13 +90,13 @@ private:
 class MulliganPNearEvaluator : public EnergyLandscapeEvaluator {
 public:
 	MulliganPNearEvaluator( core::Real const temperature, core::Real const lambda );
-	virtual ~MulliganPNearEvaluator();
+	~MulliganPNearEvaluator() override;
 
-	virtual EnergyLandscapeEvaluatorOP
-	clone() const;
+	EnergyLandscapeEvaluatorOP
+	clone() const override;
 
-	virtual core::Real
-	compute( ScoreRmsPoints const & points ) const;
+	core::Real
+	compute( ScoreRmsPoints const & points ) const override;
 
 private:
 	core::Real temperature_;

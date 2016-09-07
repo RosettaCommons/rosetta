@@ -110,7 +110,7 @@ WorkUnit_LoopHash::run()
 	// clear the sotre of structures
 	decoys().clear();
 
-	runtime_assert( library_ != 0 );
+	runtime_assert( library_ != nullptr );
 
 	TR << "Executing WorkUnit_LoopHash_Mover..." << std::endl;
 	LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
@@ -130,34 +130,33 @@ WorkUnit_LoopHash::run()
 	core::pose::set_ss_from_phipsi( pose );
 
 	TR.Info << "Running loophash function: Start: " << get_start() << " End: " << get_end() << std::endl;
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	lsampler.build_structures( pose, decoys().store() );
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR.Info << "Build " << decoys().size() << " structures in " << endtime - starttime << " s " << std::endl;
 
 	// transfer any tags from input structure:
 
 	const core::io::silent::SilentStruct *ss2 = &( *start_struct );
 
-	for ( protocols::wum::SilentStructStore::iterator it = decoys().begin();
-			it != decoys().end(); ++ it ) {
+	for (auto & it : decoys()) {
 
-		core::io::silent::SilentStruct *ss = &(*(*it));
+		core::io::silent::SilentStruct *ss = &(*it);
 		// preserve the centroid score!
-		core::Real censcore = (*it)->get_energy("censcore");
-		(*it)->copy_scores( *start_struct );
-		(*it)->add_energy("censcore", censcore );
+		core::Real censcore = it->get_energy("censcore");
+		it->copy_scores( *start_struct );
+		it->add_energy("censcore", censcore );
 		std::string new_usid = protocols::wum::generate_unique_structure_id();
-		(*it)->add_string_value( "husid", (*it)->get_string_value("husid") + "." + new_usid );
-		(*it)->add_string_value( "usid", new_usid );
-		(*it)->add_energy( "state", 1 );
+		it->add_string_value( "husid", it->get_string_value("husid") + "." + new_usid );
+		it->add_string_value( "usid", new_usid );
+		it->add_energy( "state", 1 );
 
 		if ( option[ OptionKeys::lh::bss]() ) {
 			const core::io::silent::BinarySilentStruct *pss2 = dynamic_cast< const core::io::silent::BinarySilentStruct* > ( ss2 );
 			core::io::silent::BinarySilentStruct *pss = dynamic_cast< core::io::silent::BinarySilentStruct* > ( ss );
-			if ( (pss != NULL) && (pss2 != NULL) ) {
+			if ( (pss != nullptr) && (pss2 != nullptr) ) {
 				TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
 			} else {
 				TR << "LoophashResult: ERROR, dynamic cast to BSS failed"  << std::endl;
@@ -165,7 +164,7 @@ WorkUnit_LoopHash::run()
 		} else {
 			const core::io::silent::ProteinSilentStruct *pss2 = dynamic_cast< const core::io::silent::ProteinSilentStruct* > ( ss2 );
 			core::io::silent::ProteinSilentStruct *pss = dynamic_cast< core::io::silent::ProteinSilentStruct* > ( ss );
-			if ( (pss != NULL) && (pss2 != NULL) ) {
+			if ( (pss != nullptr) && (pss2 != nullptr) ) {
 				TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
 			} else {
 				TR << "LoophashResult: ERROR, dynamic cast to PSS failed"  << std::endl;

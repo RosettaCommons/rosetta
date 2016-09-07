@@ -47,7 +47,7 @@
 #endif
 
 // only needed for linux?
-#include <errno.h>
+#include <cerrno>
 
 #include <random>
 
@@ -472,12 +472,12 @@ int list_dir (std::string dir, utility::vector1<std::string> & files)
 #else
 			DIR *dp;
 			struct dirent *dirp;
-			if((dp  = opendir(dir.c_str())) == NULL) {
+			if((dp  = opendir(dir.c_str())) == nullptr) {
 			 //  cout << "Error(" << errno << ") opening " << dir << endl;
 				return errno;
 			}
 
-			while ((dirp = readdir(dp)) != NULL) {
+			while ((dirp = readdir(dp)) != nullptr) {
 				files.push_back(std::string(dirp->d_name));
 			}
 			closedir(dp);
@@ -490,7 +490,7 @@ FileName combine_names(utility::vector1<std::string> file_name_strings){
 	std::vector<FileName> file_names;
 	std::vector<std::string>::const_iterator begin= file_name_strings.begin();
 	for ( ; begin != file_name_strings.end(); ++begin ) {
-		file_names.push_back(FileName(*begin));
+		file_names.emplace_back(*begin);
 	}
 	return FileName(file_names);
 }
@@ -500,7 +500,7 @@ std::string
 cwd()
 {
 	char cwd[1024];
-	if ( getcwd(cwd, sizeof(cwd)) != 0 ) { //necessary to USE return val of getcwd or you get a compiler warning-error for unused return val
+	if ( getcwd(cwd, sizeof(cwd)) != nullptr ) { //necessary to USE return val of getcwd or you get a compiler warning-error for unused return val
 		return cwd;
 	}
 	utility_exit_with_message("cannot detect current working directory.");

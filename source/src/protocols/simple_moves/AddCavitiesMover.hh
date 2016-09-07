@@ -51,12 +51,12 @@ public:
 		core::pose::Pose & pose
 	);
 
-	virtual
+	
 	void
 	apply(
 		core::pose::Pose & pose
-	);
-	virtual std::string get_name() const;
+	) override;
+	std::string get_name() const override;
 
 	core::scoring::packstat::CavBalls
 	get_cavities(

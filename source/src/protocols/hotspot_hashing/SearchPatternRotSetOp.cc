@@ -18,6 +18,7 @@
 #include <basic/Tracer.hh>
 
 //Project headers
+#include <utility>
 #include <utility/exit.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
@@ -133,10 +134,10 @@ AddSearchPatternRotSetOp::AddSearchPatternRotSetOp(
 	core::Size target_residue,
 	SearchPatternOP pattern) :
 	target_residue_(target_residue),
-	pattern_(pattern)
+	pattern_(std::move(pattern))
 {}
 
-AddSearchPatternRotSetOp::~AddSearchPatternRotSetOp(){}
+AddSearchPatternRotSetOp::~AddSearchPatternRotSetOp()= default;
 
 core::pack::task::operation::TaskOperationOP
 AddSearchPatternRotSetOp::clone() const

@@ -54,25 +54,15 @@ HotspotStub::HotspotStub(
 	utility::pointer::ReferenceCount(),
 	residue_(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(*residue) ) )), // jk note: deep copy
 	bonus_value_(bonus_value),
-	pose_( pose ),
-	filter_( filter ),
+	pose_(std::move( pose )),
+	filter_(std::move( filter )),
 	chain_to_design_( chain_to_design )
 	// my_set_( parent_set )
 { }
 
-HotspotStub::HotspotStub( HotspotStub const & src ) :
-	utility::pointer::ReferenceCount( src ),
-	residue_( src.residue_ ),  // jk note: this is NOT a deep copy, since residue_ is effectively const
-	// (no member functions to move it). This must be a deep copy if residue_ can change.
-	bonus_value_( src.bonus_value_ ),
-	pose_( src.pose_ ),
-	filter_( src.filter_ ), // How should we deal with the reference to the containing set, since the new stub might be associ with a diff set?
-	chain_to_design_( src.chain_to_design_ ),
-	// my_set_( src.my_set_ ),
-	scaffold_status_( src.scaffold_status_ )
-{}
+HotspotStub::HotspotStub( HotspotStub const & ) = default;
 
-HotspotStub::~HotspotStub() {}
+HotspotStub::~HotspotStub() = default;
 
 #ifndef BOINC // gives build error
 #ifndef WIN32 // gives build error

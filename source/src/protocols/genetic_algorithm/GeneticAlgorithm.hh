@@ -50,7 +50,7 @@ public:
 
 public:
 	GeneticAlgorithmBase();
-	virtual ~GeneticAlgorithmBase();
+	~GeneticAlgorithmBase() override;
 
 	virtual EntityOP add_entity( EntityElements const & traits );
 	virtual EntityOP add_entity( EntityOP entity );
@@ -148,7 +148,7 @@ public:
 
 public:
 	GeneticAlgorithm();
-	virtual ~GeneticAlgorithm();
+	~GeneticAlgorithm() override;
 
 	virtual void set_func( FitnessFunctionOP f );
 	virtual void evaluate_fitnesses();

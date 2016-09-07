@@ -40,7 +40,7 @@ namespace ligand_docking {
 static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.LigandDockingLoaders" );
 
 InterfaceBuilderLoader::InterfaceBuilderLoader() {}
-InterfaceBuilderLoader::~InterfaceBuilderLoader() {}
+InterfaceBuilderLoader::~InterfaceBuilderLoader() = default;
 
 void InterfaceBuilderLoader::load_data(
 	core::pose::Pose const &,
@@ -73,7 +73,7 @@ std::string
 InterfaceBuilderLoaderCreator::keyname() const { return "INTERFACE_BUILDERS"; }
 
 MoveMapBuilderLoader::MoveMapBuilderLoader() {}
-MoveMapBuilderLoader::~MoveMapBuilderLoader() {}
+MoveMapBuilderLoader::~MoveMapBuilderLoader() = default;
 
 void MoveMapBuilderLoader::load_data(
 	core::pose::Pose const &,
@@ -106,7 +106,7 @@ std::string
 MoveMapBuilderLoaderCreator::keyname() const { return "MOVEMAP_BUILDERS"; }
 
 LigandAreaLoader::LigandAreaLoader() {}
-LigandAreaLoader::~LigandAreaLoader() {}
+LigandAreaLoader::~LigandAreaLoader() = default;
 
 void LigandAreaLoader::load_data(
 	core::pose::Pose const &,

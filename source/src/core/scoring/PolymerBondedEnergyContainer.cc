@@ -41,7 +41,7 @@ namespace scoring {
 
 ///////////////////////////////////////////////////////
 
-PolymerBondedNeighborIterator::~PolymerBondedNeighborIterator(){}
+PolymerBondedNeighborIterator::~PolymerBondedNeighborIterator()= default;
 
 PolymerBondedNeighborIterator::PolymerBondedNeighborIterator(
 	Size const base_in,
@@ -134,7 +134,7 @@ bool PolymerBondedNeighborIterator::energy_computed() const {
 
 /////////////////////////////////////////////////////
 
-PolymerBondedNeighborConstIterator::~PolymerBondedNeighborConstIterator(){}
+PolymerBondedNeighborConstIterator::~PolymerBondedNeighborConstIterator()= default;
 
 PolymerBondedNeighborConstIterator::PolymerBondedNeighborConstIterator(
 	Size const base_in,
@@ -212,7 +212,7 @@ bool PolymerBondedNeighborConstIterator::energy_computed() const {
 
 /// @brief Destructor.
 ///
-PolymerBondedEnergyContainer::~PolymerBondedEnergyContainer() {}
+PolymerBondedEnergyContainer::~PolymerBondedEnergyContainer() = default;
 
 LREnergyContainerOP PolymerBondedEnergyContainer::clone() const {
 	return LREnergyContainerOP( new PolymerBondedEnergyContainer( *this ) );
@@ -262,11 +262,11 @@ PolymerBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
 	}
 
 	utility::vector1<core::Size> neighbors;
-	std::map <core::Size, core::Size >::const_iterator it = peptide_bonded_pair_indices_.find(resid);
+	auto it = peptide_bonded_pair_indices_.find(resid);
 	if ( it != peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(it->second);
 	}
-	std::map <core::Size, core::Size >::const_iterator itinv = inv_peptide_bonded_pair_indices_.find(resid);
+	auto itinv = inv_peptide_bonded_pair_indices_.find(resid);
 	if ( itinv != inv_peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(itinv->second);
 	}
@@ -287,7 +287,7 @@ PolymerBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) c
 	}
 
 	utility::vector1<core::Size> neighbors;
-	std::map <core::Size, core::Size >::const_iterator it = peptide_bonded_pair_indices_.find(resid);
+	auto it = peptide_bonded_pair_indices_.find(resid);
 	if ( it != peptide_bonded_pair_indices_.end() ) {
 		neighbors.push_back(it->second);
 	}

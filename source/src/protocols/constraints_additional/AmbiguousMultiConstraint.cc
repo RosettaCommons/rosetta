@@ -103,12 +103,11 @@ AmbiguousMultiConstraint::score(
 	//low_EMap_.zero( cst_score_types_ );
 
 	// first, we score every constraint and save the result in a list
-	for ( ConstraintCOPs::const_iterator
-			member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
+	for (const auto & member_it : member_constraints()) {
 		EnergyMap cur_emap;
-		(*member_it)->score(xyz_func, weights, cur_emap);
+		member_it->score(xyz_func, weights, cur_emap);
 		core::Real cur_score = calculate_total_cst_score( weights, cur_emap);
-		score_cst_pairs.push_back( score_cst_pair( cur_score, cst_emap_pair( *member_it, cur_emap ) ) );
+		score_cst_pairs.emplace_back( cur_score, cst_emap_pair( member_it, cur_emap ) );
 	}
 
 	//then we sort the list by score
@@ -118,7 +117,7 @@ AmbiguousMultiConstraint::score(
 	//and go through and add the information of the relevant constraints to the emap,
 	//as well as note the active constraints
 	core::Size counter(1);
-	for ( std::list< score_cst_pair >::iterator cst_it = score_cst_pairs.begin() ;
+	for ( auto cst_it = score_cst_pairs.begin() ;
 			counter <= num_active_constraints_; ++cst_it ) {
 
 
@@ -144,14 +143,14 @@ AmbiguousMultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 	using namespace core::scoring::constraints;
 
 	ConstraintCOPs new_csts;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); ++cst_it ) {
-		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
+	for (const auto & cst_it : member_constraints()) {
+		ConstraintOP new_cst = cst_it->remap_resid( seqmap );
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 
 	if ( new_csts.size() > 0 ) {
 		return ConstraintOP( new AmbiguousMultiConstraint( num_active_constraints_, new_csts ) );
-	} else return NULL;
+	} else return nullptr;
 
 }
 
@@ -180,8 +179,8 @@ AmbiguousMultiConstraint::show( std::ostream& out) const
 {
 	using namespace core::scoring::constraints;
 	out << "AmbiguousMultiConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-		(*cst_it)->show(out);
+	for (const auto & cst_it : member_constraints()) {
+		cst_it->show(out);
 	}
 
 	out << " ...all member constraints of this AmbiguousMultiConstraint shown." << std::endl;

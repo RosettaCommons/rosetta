@@ -32,28 +32,28 @@ namespace fldsgn {
 class SheetRemodelConstraintGenerator : public protocols::forge::remodel::RemodelConstraintGenerator {
 public:
 	SheetRemodelConstraintGenerator();
-	virtual ~SheetRemodelConstraintGenerator();
+	~SheetRemodelConstraintGenerator() override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	static std::string
 	class_name() { return "SheetCstGenerator"; }
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 protected:
-	virtual void
-	generate_remodel_constraints( core::pose::Pose const & pose );
+	void
+	generate_remodel_constraints( core::pose::Pose const & pose ) override;
 
 private:
 	SheetConstraintGeneratorOP cg_;

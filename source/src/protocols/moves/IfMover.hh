@@ -40,28 +40,28 @@ public:
 	IfMover() : protocols::moves::Mover("If") {}
 
 	/// @brief Virtual destructor
-	virtual ~IfMover() {};
+	~IfMover() override = default;
 
-	protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new IfMover(*this) );
 	}
 
-	protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new IfMover() );
 	}
 
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	// Required for backwards compatibility.
 	// Synonym for `get_additional_output_true_mover().`
-	core::pose::PoseOP get_additional_output();
+	core::pose::PoseOP get_additional_output() override;
 
 	core::pose::PoseOP get_additional_output_true_mover();
 	core::pose::PoseOP get_additional_output_false_mover();
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	protocols::filters::FilterOP filter_;

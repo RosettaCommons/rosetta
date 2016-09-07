@@ -50,13 +50,13 @@ public:
 
 	ConservedPosMutationFilter();
 
-	~ConservedPosMutationFilter();
+	~ConservedPosMutationFilter() override;
 
-	FilterOP clone() const;
+	FilterOP clone() const override;
 
-	FilterOP fresh_instance() const;
+	FilterOP fresh_instance() const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  ) override;
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
@@ -64,14 +64,14 @@ public:
 	/// mutations at conserved position. the decision whether a given position
 	/// counts as conserved is made by the RestrictConservedLowDdgOperation
 	/// task operation to prevent duplication of code
-	virtual
-	bool apply( core::pose::Pose const & pose ) const;
+	
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	void set_max_allowed_conserved_pos_mutations( core::Size value ){
 		max_allowed_conserved_pos_mutations_ = value;
 	}
 
-	virtual std::string name() const {
+	std::string name() const override {
 		return "ConservedPosMutationFilter";
 	}
 

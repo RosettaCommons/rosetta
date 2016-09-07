@@ -46,23 +46,23 @@ public:  //Constructor / Destructor
 
 	AddOrRemoveMatchCsts( AddOrRemoveMatchCsts const & other );
 
-	~AddOrRemoveMatchCsts();
+	~AddOrRemoveMatchCsts() override;
 
 public:
 
-	protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
 
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	// @brief Set the name of the constraint file. Overwrites the file name that might be read in during parse_my_tag.
 	void cstfile( std::string const & setting );

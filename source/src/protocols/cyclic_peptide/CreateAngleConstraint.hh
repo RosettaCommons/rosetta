@@ -24,16 +24,16 @@ class CreateAngleConstraint : public moves::Mover
 {
 public:
 	CreateAngleConstraint();
-	virtual ~CreateAngleConstraint();
+	~CreateAngleConstraint() override;
 
-	virtual void apply( core::pose::Pose &pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose &pose ) override;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 	utility::vector1<Size> res_center_;

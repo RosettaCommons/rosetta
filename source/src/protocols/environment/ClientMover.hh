@@ -59,7 +59,7 @@ public:
 
 	ClientMover( ClientMover const& );
 
-	virtual ~ClientMover();
+	~ClientMover() override;
 
 	/// @brief   Returns a list of claims for this mover.
 	/// @details The pose passed as an argument is used for reference informational

@@ -19,6 +19,7 @@
 
 // Utility Headers
 
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
@@ -56,7 +57,7 @@ SlideTogetherCreator::mover_name()
 
 SlideTogether::SlideTogether(){}
 
-SlideTogether::SlideTogether(std::string const & chain): chain_(chain), jumps_(){}
+SlideTogether::SlideTogether(std::string  chain): chain_(std::move(chain)), jumps_(){}
 
 SlideTogether::SlideTogether(SlideTogether const & that):
 	//utility::pointer::ReferenceCount(),
@@ -65,7 +66,7 @@ SlideTogether::SlideTogether(SlideTogether const & that):
 	jumps_(that.jumps_)
 {}
 
-SlideTogether::~SlideTogether() {}
+SlideTogether::~SlideTogether() = default;
 
 protocols::moves::MoverOP SlideTogether::clone() const {
 	return protocols::moves::MoverOP( new SlideTogether( *this ) );

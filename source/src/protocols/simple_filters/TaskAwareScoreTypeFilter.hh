@@ -42,18 +42,18 @@ public:
 	/// @brief default ctor
 	TaskAwareScoreTypeFilter();
 	/// @brief Constructor with a single target residue
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 	core::Real compute( core::pose::Pose const & pose, bool const & write ) const;
-	virtual ~TaskAwareScoreTypeFilter();
+	~TaskAwareScoreTypeFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreType score_type() const;

@@ -132,7 +132,7 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 		tmpOmega = omega_;
 	}
 	kinematics::FoldTree backupFt = poseOP->fold_tree();
-	core::conformation::ResidueOP new_rsd( NULL );
+	core::conformation::ResidueOP new_rsd( nullptr );
 	string build_aa_type_one_letter =option[OptionKeys::remodel::generic_aa];
 	string build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_type_one_letter[0]));
 	bool fullatom = poseOP->is_fullatom();
@@ -205,7 +205,7 @@ void InsertResMover::apply(core::pose::Pose & pose) {
 		posesOutputed_.push_back(false);
 	}
 	core::pose::PoseOP poseOP = get_additional_output();
-	if ( poseOP==NULL ) {
+	if ( poseOP==nullptr ) {
 		TR << "no succeful extensions" << std::endl;
 		set_last_move_status(protocols::moves::FAIL_RETRY);
 	} else {
@@ -259,7 +259,7 @@ core::pose::PoseOP InsertResMover::get_additional_output(){
 		}
 	}
 	set_last_move_status(protocols::moves::FAIL_RETRY);
-	return NULL;
+	return nullptr;
 }
 
 }//pose_length_moves

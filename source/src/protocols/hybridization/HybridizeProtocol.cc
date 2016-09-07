@@ -607,8 +607,8 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
-		for ( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
-			for ( Size i=it->start(); i<=it->stop(); ++i ) {
+		for (const auto & it : *loops) {
+			for ( Size i=it.start(); i<=it.stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true); // chi of loop residues
 			}
@@ -626,9 +626,9 @@ HybridizeProtocol::initialize_and_sample_loops(
 		frag9mover->set_check_ss( false ); frag9mover->enable_end_bias_check( false );
 
 		// extend + idealize loops
-		for ( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
-			protocols::loops::Loop to_idealize( *it );
-			protocols::loops::set_extended_torsions( pose, *it );
+		for (const auto & it : *loops) {
+			protocols::loops::Loop to_idealize( it );
+			protocols::loops::set_extended_torsions( pose, it );
 		}
 
 		// setup MC
@@ -1372,9 +1372,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				new CartesianHybridize( templates_aln_, template_weights_, template_chunks_,template_contigs_, frags_big ) );
 
 			// default scorefunctions (cenrot-compatable)
-			if ( stage2_scorefxn_!=NULL ) cart_hybridize->set_scorefunction( stage2_scorefxn_ );
-			if ( stage2pack_scorefxn_!=NULL ) cart_hybridize->set_pack_scorefunction( stage2pack_scorefxn_ );
-			if ( stage2min_scorefxn_!=NULL ) cart_hybridize->set_min_scorefunction( stage2min_scorefxn_ );
+			if ( stage2_scorefxn_!=nullptr ) cart_hybridize->set_scorefunction( stage2_scorefxn_ );
+			if ( stage2pack_scorefxn_!=nullptr ) cart_hybridize->set_pack_scorefunction( stage2pack_scorefxn_ );
+			if ( stage2min_scorefxn_!=nullptr ) cart_hybridize->set_min_scorefunction( stage2min_scorefxn_ );
 
 			// set options
 			cart_hybridize->set_increase_cycles( stage2_increase_cycles_ );

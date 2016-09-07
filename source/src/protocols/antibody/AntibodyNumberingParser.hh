@@ -48,7 +48,7 @@ public:
 	/// Its not a singleton, so instead of global data, we are careful where and when we pass it around.
 	AntibodyNumberingParser(AntibodyEnumManagerCOP enum_manager);
 
-	virtual ~AntibodyNumberingParser();
+	~AntibodyNumberingParser() override;
 
 	/// @brief Read numbering file and return AntibodyNumbering structure
 	AntibodyNumbering
@@ -121,7 +121,7 @@ public:
 	/// @brief Alternative constructor to hold numbering scheme type as well.
 	PDBLandmark(char chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme);
 
-	virtual ~PDBLandmark();
+	~PDBLandmark() override;
 
 	core::Size
 	resnum() const { return resnum_;}

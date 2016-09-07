@@ -84,7 +84,7 @@ using utility::tag::TagCOP;
 
 static Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
 
-JD2ResourceManagerCreator::~JD2ResourceManagerCreator() {}
+JD2ResourceManagerCreator::~JD2ResourceManagerCreator() = default;
 
 ResourceManager *
 JD2ResourceManagerCreator::create_resource_manager() const
@@ -109,7 +109,7 @@ JD2ResourceManager::clear()
 JD2ResourceManager::JD2ResourceManager() {
 }
 
-JD2ResourceManager::~JD2ResourceManager() {}
+JD2ResourceManager::~JD2ResourceManager() = default;
 
 /// @details instantiate all the resource locators given in the input tags, and
 /// put them into the base class.  Make sure no two resource locators share a common
@@ -148,7 +148,7 @@ void JD2ResourceManager::read_resource_locators_tags( TagCOP tags )
 	using utility::tag::Tag;
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
-	for ( Tag::tags_t::const_iterator
+	for ( auto
 			tag_iter = tags->getTags().begin(),
 			tag_iter_end = tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
@@ -234,7 +234,7 @@ void JD2ResourceManager::read_resource_options_tags( TagCOP tags )
 {
 	using utility::tag::Tag;
 
-	for ( Tag::tags_t::const_iterator
+	for ( auto
 			tag_iter = tags->getTags().begin(),
 			tag_iter_end = tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
@@ -305,7 +305,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 		string tag, type, key, value;
 		res >> tag >> type >> key >> value;
 
-		std::map< string, TagOP >::iterator t(tags.find(tag));
+		auto t(tags.find(tag));
 		if ( t == tags.end() ) {
 			TagOP newtag( new Tag() );
 			newtag->setOption("tag", tag);
@@ -578,7 +578,7 @@ resource_options_tag
 void JD2ResourceManager::read_resources_tags( TagCOP tags )
 {
 
-	for ( Tag::tags_t::const_iterator
+	for ( auto
 			tag_iter = tags->getTags().begin(),
 			tag_iter_end = tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
@@ -820,7 +820,7 @@ JD2ResourceManager::get_resource(
 		errmsg << "Thrown from JD2ResourceManager::get_resource\n";
 		throw  utility::excn::EXCN_Msg_Exception( errmsg.str() );
 	}
-	return 0; // appease compiler
+	return nullptr; // appease compiler
 }
 
 bool
@@ -1132,7 +1132,7 @@ JD2ResourceManager::create_resource_from_fallback(
 		fallback->get_resource_loader( resource_description )));
 
 	ResourceOptionsOP resource_options = fallback->get_resource_options( resource_description );
-	if ( resource_options == 0 ) {
+	if ( resource_options == nullptr ) {
 		resource_options = loader->default_options();
 	}
 

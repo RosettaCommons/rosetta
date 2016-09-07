@@ -129,7 +129,7 @@ public:
 
 	/// @brief Destructor.
 	///
-	~Residue();
+	~Residue() override;
 
 private:
 
@@ -1084,7 +1084,7 @@ public:
 	void
 	update_orbital_coords() {
 		for (
-				utility::vector1<core::Size>::const_iterator
+				auto
 				atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
 				atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
 				atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index

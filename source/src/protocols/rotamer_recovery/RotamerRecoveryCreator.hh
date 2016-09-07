@@ -35,7 +35,7 @@ namespace rotamer_recovery {
 class RRProtocolCreator : public utility::pointer::ReferenceCount {
 public:
 	RRProtocolCreator() {}
-	virtual ~RRProtocolCreator() {}
+	~RRProtocolCreator() override = default;
 
 	virtual RRProtocolOP create_protocol() const = 0;
 	virtual std::string type_name() const = 0;
@@ -44,64 +44,64 @@ public:
 class RRProtocolReferenceStructureCreator : public RRProtocolCreator {
 public:
 	RRProtocolReferenceStructureCreator() {}
-	~RRProtocolReferenceStructureCreator() {}
+	~RRProtocolReferenceStructureCreator() override = default;
 
-	RRProtocolOP create_protocol() const;
-	std::string type_name() const;
+	RRProtocolOP create_protocol() const override;
+	std::string type_name() const override;
 };
 
 class RRProtocolRTMinCreator : public RRProtocolCreator {
 public:
 	RRProtocolRTMinCreator() {}
-	~RRProtocolRTMinCreator() {}
+	~RRProtocolRTMinCreator() override = default;
 
-	RRProtocolOP create_protocol() const;
-	std::string type_name() const;
+	RRProtocolOP create_protocol() const override;
+	std::string type_name() const override;
 };
 
 class RRProtocolRotamerTrialsCreator : public RRProtocolCreator {
 public:
 	RRProtocolRotamerTrialsCreator() {}
-	~RRProtocolRotamerTrialsCreator() {}
+	~RRProtocolRotamerTrialsCreator() override = default;
 
-	RRProtocolOP create_protocol() const;
-	std::string type_name() const;
+	RRProtocolOP create_protocol() const override;
+	std::string type_name() const override;
 };
 
 class RRProtocolMinPackCreator : public RRProtocolCreator {
 public:
 	RRProtocolMinPackCreator() {}
-	~RRProtocolMinPackCreator() {}
+	~RRProtocolMinPackCreator() override = default;
 
-	RRProtocolOP create_protocol() const;
-	std::string type_name() const;
+	RRProtocolOP create_protocol() const override;
+	std::string type_name() const override;
 };
 
 class RRProtocolPackRotamersCreator : public RRProtocolCreator {
 public:
 	RRProtocolPackRotamersCreator() {}
-	~RRProtocolPackRotamersCreator() {}
+	~RRProtocolPackRotamersCreator() override = default;
 
-	RRProtocolOP create_protocol() const;
-	std::string type_name() const;
+	RRProtocolOP create_protocol() const override;
+	std::string type_name() const override;
 };
 
 class RRProtocolRelaxCreator : public RRProtocolCreator {
 public:
 	RRProtocolRelaxCreator() {}
-	~RRProtocolRelaxCreator() {}
+	~RRProtocolRelaxCreator() override = default;
 
-	RRProtocolOP create_protocol() const;
-	std::string type_name() const;
+	RRProtocolOP create_protocol() const override;
+	std::string type_name() const override;
 };
 
 class RRProtocolMoverCreator : public RRProtocolCreator {
 public:
 	RRProtocolMoverCreator() {}
-	~RRProtocolMoverCreator() {}
+	~RRProtocolMoverCreator() override = default;
 
-	RRProtocolOP create_protocol() const;
-	std::string type_name() const;
+	RRProtocolOP create_protocol() const override;
+	std::string type_name() const override;
 };
 
 
@@ -110,7 +110,7 @@ public:
 class RRComparerCreator : public utility::pointer::ReferenceCount {
 public:
 	RRComparerCreator() {}
-	virtual ~RRComparerCreator() {}
+	~RRComparerCreator() override = default;
 
 	virtual RRComparerOP create_comparer() const = 0;
 	virtual std::string type_name() const = 0;
@@ -119,37 +119,37 @@ public:
 class RRComparerAutomorphicRMSDCreator : public RRComparerCreator {
 public:
 	RRComparerAutomorphicRMSDCreator() {}
-	~RRComparerAutomorphicRMSDCreator() {}
+	~RRComparerAutomorphicRMSDCreator() override = default;
 
-	RRComparerOP create_comparer() const;
-	std::string type_name() const;
+	RRComparerOP create_comparer() const override;
+	std::string type_name() const override;
 };
 
 class RRComparerRotBinsCreator : public RRComparerCreator {
 public:
 	RRComparerRotBinsCreator() {}
-	~RRComparerRotBinsCreator() {}
+	~RRComparerRotBinsCreator() override = default;
 
-	RRComparerOP create_comparer() const;
-	std::string type_name() const;
+	RRComparerOP create_comparer() const override;
+	std::string type_name() const override;
 };
 
 class RRComparerChiDiffCreator : public RRComparerCreator {
 public:
 	RRComparerChiDiffCreator() {}
-	~RRComparerChiDiffCreator() {}
+	~RRComparerChiDiffCreator() override = default;
 
-	RRComparerOP create_comparer() const;
-	std::string type_name() const;
+	RRComparerOP create_comparer() const override;
+	std::string type_name() const override;
 };
 
 class RRComparerElecDensDiffCreator : public RRComparerCreator {
 public:
 	RRComparerElecDensDiffCreator() {}
-	~RRComparerElecDensDiffCreator() {}
+	~RRComparerElecDensDiffCreator() override = default;
 
-	RRComparerOP create_comparer() const;
-	std::string type_name() const;
+	RRComparerOP create_comparer() const override;
+	std::string type_name() const override;
 };
 
 /// @brief The Creator class is responsible for creating a particular
@@ -157,7 +157,7 @@ public:
 class RRReporterCreator : public utility::pointer::ReferenceCount {
 public:
 	RRReporterCreator() {}
-	virtual ~RRReporterCreator() {}
+	~RRReporterCreator() override = default;
 
 	virtual RRReporterOP create_reporter() const = 0;
 	virtual std::string type_name() const = 0;
@@ -166,28 +166,28 @@ public:
 class RRReporterSimpleCreator : public RRReporterCreator {
 public:
 	RRReporterSimpleCreator() {}
-	~RRReporterSimpleCreator() {}
+	~RRReporterSimpleCreator() override = default;
 
-	RRReporterOP create_reporter() const;
-	std::string type_name() const;
+	RRReporterOP create_reporter() const override;
+	std::string type_name() const override;
 };
 
 class RRReporterHumanCreator : public RRReporterCreator {
 public:
 	RRReporterHumanCreator() {}
-	~RRReporterHumanCreator() {}
+	~RRReporterHumanCreator() override = default;
 
-	RRReporterOP create_reporter() const;
-	std::string type_name() const;
+	RRReporterOP create_reporter() const override;
+	std::string type_name() const override;
 };
 
 class RRReporterSQLiteCreator : public RRReporterCreator {
 public:
 	RRReporterSQLiteCreator() {}
-	~RRReporterSQLiteCreator() {}
+	~RRReporterSQLiteCreator() override = default;
 
-	RRReporterOP create_reporter() const;
-	std::string type_name() const;
+	RRReporterOP create_reporter() const override;
+	std::string type_name() const override;
 };
 
 

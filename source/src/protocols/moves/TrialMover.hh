@@ -76,20 +76,20 @@ class MonteCarloUtil : public Mover {
 public:
 	MonteCarloUtil();
 	MonteCarloUtil(protocols::moves::MonteCarloOP mc);
-	virtual ~MonteCarloUtil();
-	virtual void apply(Pose & pose);
+	~MonteCarloUtil() override;
+	void apply(Pose & pose) override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & /* data */,
 		protocols::filters::Filters_map const & /* filters */,
 		protocols::moves::Movers_map const & /* movers */,
 		core::pose::Pose const & /* pose */
-	);
+	) override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 
 private:
@@ -124,7 +124,7 @@ public:
 	/// @brief Copy constructor
 	TrialMover(TrialMover const & object_to_copy);
 
-	~TrialMover();
+	~TrialMover() override;
 
 
 	// set the weights for the score_type for ramping -- BAD, MOVE TO .CC
@@ -147,11 +147,11 @@ public:
 	///     RepeatMover
 	///     SequenceMover
 	///     TrialMover
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	Real acceptance_rate() const;
 
@@ -187,21 +187,21 @@ public:
 	}
 
 	// @brief Sets the input Pose also for the contained Mover
-	virtual void set_input_pose( PoseCOP pose );
+	void set_input_pose( PoseCOP pose ) override;
 
 	// @brief Sets the native Pose also for the contained Mover
-	virtual void set_native_pose( PoseCOP pose );
+	void set_native_pose( PoseCOP pose ) override;
 
 	/// @brief Requires that a MonteCarlo object has already been
 	/// loaded into the basic::datacache::DataMap in a prior MONTECARLOS objects
 	/// section.
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const &
-	);
+	) override;
 	friend std::ostream &operator<< (std::ostream &os, TrialMover const &mover);
 
 protected:

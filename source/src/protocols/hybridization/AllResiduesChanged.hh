@@ -89,7 +89,7 @@ public:
 		out << std::endl;
 	}
 
-	virtual bool operator() ( const core::pose::Pose & pose ) {
+	bool operator() ( const core::pose::Pose & pose ) override {
 		runtime_assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
 		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
 			if ( ! pose.residue(i).is_protein() ) continue;

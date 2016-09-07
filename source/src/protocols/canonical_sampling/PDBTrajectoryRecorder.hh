@@ -38,7 +38,7 @@ public:
 	PDBTrajectoryRecorder();
 
 	/// @brief Destructor.
-	~PDBTrajectoryRecorder();
+	~PDBTrajectoryRecorder() override;
 
 	/// @brief Copy constructor.
 	PDBTrajectoryRecorder( PDBTrajectoryRecorder const & );
@@ -49,19 +49,19 @@ private:
 	operator=( PDBTrajectoryRecorder const & );
 
 public:
-	virtual
+	
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -69,19 +69,19 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual void reset(
+	void reset(
 		protocols::moves::MonteCarlo const& mc,
-		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
-	);
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
+	) override;
 
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 private:
 
@@ -89,8 +89,8 @@ private:
 	void
 	write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
-	);
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
+	) override;
 
 	utility::io::ozstream trajectory_stream_;
 

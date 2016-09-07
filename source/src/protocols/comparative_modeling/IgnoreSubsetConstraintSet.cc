@@ -24,6 +24,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -63,7 +64,7 @@ IgnoreSubsetConstraintSet::IgnoreSubsetConstraintSet(
 	ConstraintSet const & other
 ) :
 	ConstraintSet( other ),
-	ignore_list_( residues_to_ignore )
+	ignore_list_(std::move( residues_to_ignore ))
 {}
 
 /// @copy constructor. Does nothing.

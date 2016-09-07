@@ -211,7 +211,7 @@ namespace ssrbrelax {
 		<< std::endl;
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		}
-		rb_list.push_back( Rb( index, seg_begin, seg_end, anchor_pos, loop_stub_n, loop_stub_c ) );
+		rb_list.emplace_back( index, seg_begin, seg_end, anchor_pos, loop_stub_n, loop_stub_c );
 	}
 
 	//////////////////////////////////////////////////////////////////

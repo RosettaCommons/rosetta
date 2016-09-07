@@ -96,7 +96,7 @@ MakeBundleHelix::MakeBundleHelix( MakeBundleHelix const &src ):
 
 
 /// @brief Destructor for MakeBundleHelix mover.
-MakeBundleHelix::~MakeBundleHelix() {}
+MakeBundleHelix::~MakeBundleHelix() = default;
 
 
 /// @brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.

@@ -31,7 +31,7 @@ SurfaceVectorOptionsCreator::create_options() const { return basic::resource_man
 
 
 SurfaceVectorOptions::SurfaceVectorOptions() : basic::resource_manager::ResourceOptions() {}
-SurfaceVectorOptions::~SurfaceVectorOptions() {}
+SurfaceVectorOptions::~SurfaceVectorOptions() = default;
 
 void
 SurfaceVectorOptions::parse_my_tag(

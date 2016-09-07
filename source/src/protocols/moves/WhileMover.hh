@@ -49,10 +49,10 @@ public:
 		PoseConditionOP condition
 	);
 
-	~WhileMover();
+	~WhileMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	MoverOP mover_;
@@ -63,7 +63,7 @@ private:
 class PoseCondition : public utility::pointer::ReferenceCount {
 public:
 	PoseCondition() {};
-	virtual ~PoseCondition();
+	~PoseCondition() override;
 	virtual bool operator() ( core::pose::Pose const& ) = 0;
 };
 

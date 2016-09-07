@@ -23,7 +23,7 @@ static THREAD_LOCAL basic::Tracer tr( "devel.cycles.ReindexingMover" );
 
 ReindexingMover::ReindexingMover(Size offset) { offset_ = offset; } 
 
-ReindexingMover::~ReindexingMover() {}
+ReindexingMover::~ReindexingMover() = default;
 
 /// The offset parameter passed to the constructor is used to determine the 
 /// displacement between the input and output poses.  The given pose should 

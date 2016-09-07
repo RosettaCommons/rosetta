@@ -91,8 +91,7 @@ void DockingPrepackProtocol::setup_defaults()
 	movers_setup_ = false;
 }
 
-DockingPrepackProtocol::~DockingPrepackProtocol(){
-}
+DockingPrepackProtocol::~DockingPrepackProtocol()= default;
 
 void DockingPrepackProtocol::init_from_options()
 {

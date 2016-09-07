@@ -45,6 +45,7 @@
 // Utility Headers
 #include <numeric/xyzVector.hh>
 
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -113,7 +114,7 @@ TransformIntoMembraneMover::TransformIntoMembraneMover(
 	jump_( 0 ),
 	new_mem_cntr_( 0, 0, 0 ),
 	new_mem_norm_( 0, 0, 1 ),
-	current_embedding_( current_embedding ),
+	current_embedding_(std::move( current_embedding )),
 	use_default_membrane_( false ),
 	user_defined_membrane_( false )
 {}
@@ -148,25 +149,17 @@ TransformIntoMembraneMover::TransformIntoMembraneMover(
 	jump_( 0 ),
 	new_mem_cntr_( new_mem_cntr ),
 	new_mem_norm_( new_mem_norm ),
-	current_embedding_( current_embedding ),
+	current_embedding_(std::move( current_embedding )),
 	use_default_membrane_( false ),
 	user_defined_membrane_( true )
 {}
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-TransformIntoMembraneMover::TransformIntoMembraneMover( TransformIntoMembraneMover const & src ) :
-	protocols::moves::Mover( src ),
-	jump_( src.jump_ ),
-	new_mem_cntr_( src.new_mem_cntr_ ),
-	new_mem_norm_( src.new_mem_norm_ ),
-	current_embedding_( src.current_embedding_ ),
-	use_default_membrane_( src.use_default_membrane_ ),
-	user_defined_membrane_ ( src.user_defined_membrane_ )
-{}
+TransformIntoMembraneMover::TransformIntoMembraneMover( TransformIntoMembraneMover const & ) = default;
 
 /// @brief Destructor
-TransformIntoMembraneMover::~TransformIntoMembraneMover() {}
+TransformIntoMembraneMover::~TransformIntoMembraneMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

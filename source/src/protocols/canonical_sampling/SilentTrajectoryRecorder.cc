@@ -226,7 +226,7 @@ SilentTrajectoryRecorder::observe_after_metropolis(
 		jd2::JobOP job( jd2::get_current_job() ) ;
 		tr.Info << step_count() << " E=" << pose.energies().total_energy();
 		//output what is in job-object (e.g. temperature )
-		for ( jd2::Job::StringRealPairs::const_iterator it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
+		for ( auto it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
 			tr.Info << " " << it->first << "=" << it->second;
 		}
 		mc.show_counters();

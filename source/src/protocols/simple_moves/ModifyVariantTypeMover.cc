@@ -70,7 +70,7 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 	// Create map of target residues using taskoperation
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 
-	if ( task_factory_ != 0 ) {
+	if ( task_factory_ != nullptr ) {
 		task = task_factory_->create_task_and_apply_taskoperations( pose );
 		TR.Debug << "Initializing from packer task." << std::endl;
 	} else {

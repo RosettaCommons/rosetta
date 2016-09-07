@@ -37,7 +37,7 @@ class MultiObjective : public utility::pointer::ReferenceCount {
 
 public:
 	MultiObjective();
-	~MultiObjective();
+	~MultiObjective() override;
 
 	bool
 	update_library_NSGAII(protocols::wum::SilentStructStore &structs,

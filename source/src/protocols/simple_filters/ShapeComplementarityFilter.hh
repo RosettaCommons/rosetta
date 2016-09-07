@@ -67,18 +67,18 @@ public:// constructor/destructor
 	ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
 		Size const & jump_id, Size const & quick, Size const & verbose);
 
-	virtual ~ShapeComplementarityFilter(){}
+	~ShapeComplementarityFilter() override= default;
 
 public:// virtual constructor
 	// @brief make clone
-	virtual filters::FilterOP clone() const { return filters::FilterOP( new ShapeComplementarityFilter( *this ) ); }
+	filters::FilterOP clone() const override { return filters::FilterOP( new ShapeComplementarityFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual filters::FilterOP fresh_instance() const { return filters::FilterOP( new ShapeComplementarityFilter() ); }
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP( new ShapeComplementarityFilter() ); }
 
 public:// accessor
 	// @brief get name of this filter
-	virtual std::string name() const { return "ShapeComplementarity"; }
+	std::string name() const override { return "ShapeComplementarity"; }
 
 public:// mutator
 	void filtered_sc( Real const & filtered_sc );
@@ -96,19 +96,19 @@ public:// mutator
 	bool multicomp( ) const;
 
 public:// parser
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & filters,
 		Movers_map const & movers,
-		Pose const & pose );
+		Pose const & pose ) override;
 
 public:// virtual main operation
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
-	virtual bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	/// @brief
-	virtual Real report_sm( Pose const & pose ) const;
+	Real report_sm( Pose const & pose ) const override;
 
 public:
 	/// @brief calc shape complementarity, returns results of the ShapeComplementarityCalculator
@@ -181,13 +181,13 @@ private:
 /// @brief Super-simple exception to be thrown when we can't initialize the SC calculator
 class EXCN_InitFailed : public utility::excn::EXCN_Base {
 public:
-	virtual void show( std::ostream & ) const {}
+	void show( std::ostream & ) const override {}
 };
 
 /// @brief Super-simple exception to be thrown when the SC calculator fails to compute
 class EXCN_CalcFailed : public utility::excn::EXCN_Base {
 public:
-	virtual void show( std::ostream & ) const {}
+	void show( std::ostream & ) const override {}
 };
 
 } // filters

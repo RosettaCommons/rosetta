@@ -46,7 +46,7 @@ class JobInputter : public utility::pointer::ReferenceCount, public utility::poi
 {
 public:
 
-	virtual ~JobInputter();
+	~JobInputter() override;
 
 	/// @brief Get self const owning pointers.
 	///

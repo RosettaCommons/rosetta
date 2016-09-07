@@ -35,17 +35,17 @@ class LoopHashLibraryOptionsCreator : public basic::resource_manager::ResourceOp
 {
 public:
 	LoopHashLibraryOptionsCreator();
-	~LoopHashLibraryOptionsCreator();
+	~LoopHashLibraryOptionsCreator() override;
 
 	/// @brief Return the string identifier for the associated ResourceOptions (LoopHashLibraryOptions).
-	virtual
+	
 	std::string
-	options_type() const;
+	options_type() const override;
 
 	/// @brief Return a up-casted owning pointer (ResourceOptionsOP) to the resource options.
-	virtual
+	
 	basic::resource_manager::ResourceOptionsOP
-	create_options() const;
+	create_options() const override;
 
 };
 

@@ -64,7 +64,7 @@ ConstraintSetMover::ConstraintSetMover()
 	read_options();
 }
 
-ConstraintSetMover::~ConstraintSetMover(){}
+ConstraintSetMover::~ConstraintSetMover()= default;
 
 ConstraintSetMover::ConstraintSetMover( std::string const & type )
 : protocols::moves::Mover(type)

@@ -96,7 +96,7 @@ core::Real MotifScoreFilter::compute( core::pose::Pose const & pose ) const {
 				Xform const Xbb = ibb_stub.inverse() * jbb_stub;
 				core::scoring::motif::XformScoreCOP xs_bb_fxn1(mman_->get_xform_score_BB_BB(ss1,ss2,aa1,aa2));
 				core::scoring::motif::XformScoreCOP xs_bb_fxn2(mman_->get_xform_score_BB_BB(ss2,ss1,aa2,aa1));
-				if ( xs_bb_fxn1 != NULL ) {
+				if ( xs_bb_fxn1 != nullptr ) {
 					score += xs_bb_fxn1->score_of_bin(Xbb);
 					score += xs_bb_fxn2->score_of_bin(Xbb.inverse());
 				}

@@ -67,12 +67,12 @@ create_match_position_modifier(
 	else if ( mpm_name == "all" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new AddAllPositionsMPM() ) );
 	else if ( mpm_name == "no_c_n_term" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new RemoveNorCTermMPM( input_tokens ) ) );
 	else if ( mpm_name == "task_operation" ) return MatchPositionModifierCOP( MatchPositionModifierOP( new TaskOperationMPM( geom_cst, input_tokens ) ) );
-	return NULL;
+	return nullptr;
 }
 
 MatchPositionModifier::MatchPositionModifier(){}
 
-MatchPositionModifier::~MatchPositionModifier(){}
+MatchPositionModifier::~MatchPositionModifier()= default;
 
 SecondaryStructureMPM::SecondaryStructureMPM( utility::vector1< std::string > const & input_tokens )
 : MatchPositionModifier()
@@ -91,7 +91,7 @@ SecondaryStructureMPM::SecondaryStructureMPM( utility::vector1< std::string > co
 	}
 }
 
-SecondaryStructureMPM::~SecondaryStructureMPM(){}
+SecondaryStructureMPM::~SecondaryStructureMPM()= default;
 
 utility::vector1< core::Size >
 SecondaryStructureMPM::modified_match_positions(
@@ -176,7 +176,7 @@ NumNeighborsMPM::NumNeighborsMPM( utility::vector1< std::string > const & input_
 			i++;
 		} else if ( input_tokens[ i ] == "max_com_vector_ang" ) {
 			com_vector_criterion_ = true;
-			max_com_vector_ang_cos_ = cos( (( core::Real) atof(input_tokens[i+1].c_str() ) )* numeric::constants::f::degrees_to_radians );;
+			max_com_vector_ang_cos_ = cos( (( core::Real) atof(input_tokens[i+1].c_str() ) )* numeric::constants::f::degrees_to_radians );
 			i++;
 		} else if ( input_tokens[ i ] == "both_criteria_needed_to_pass" ) {
 			both_criteria_needed_to_pass_ = true;
@@ -184,7 +184,7 @@ NumNeighborsMPM::NumNeighborsMPM( utility::vector1< std::string > const & input_
 	}
 }
 
-NumNeighborsMPM::~NumNeighborsMPM(){}
+NumNeighborsMPM::~NumNeighborsMPM()= default;
 
 utility::vector1< core::Size >
 NumNeighborsMPM::modified_match_positions(
@@ -269,7 +269,7 @@ BfactorMPM::BfactorMPM( utility::vector1< std::string > const & input_tokens )
 	}
 }
 
-BfactorMPM::~BfactorMPM(){}
+BfactorMPM::~BfactorMPM()= default;
 
 utility::vector1< core::Size >
 BfactorMPM::modified_match_positions(
@@ -332,7 +332,7 @@ AddAllPositionsMPM::AddAllPositionsMPM()
 : MatchPositionModifier()
 {}
 
-AddAllPositionsMPM::~AddAllPositionsMPM(){}
+AddAllPositionsMPM::~AddAllPositionsMPM()= default;
 
 utility::vector1< core::Size >
 AddAllPositionsMPM::modified_match_positions(
@@ -362,7 +362,7 @@ RemoveNorCTermMPM::RemoveNorCTermMPM( utility::vector1< std::string > const & in
 	}
 }
 
-RemoveNorCTermMPM::~RemoveNorCTermMPM(){}
+RemoveNorCTermMPM::~RemoveNorCTermMPM()= default;
 
 utility::vector1< core::Size >
 RemoveNorCTermMPM::modified_match_positions(
@@ -424,7 +424,7 @@ TaskOperationMPM::TaskOperationMPM(
 	//4. yay :)
 }
 
-TaskOperationMPM::~TaskOperationMPM(){}
+TaskOperationMPM::~TaskOperationMPM()= default;
 
 /// @details
 /// generates a task based on the parsed task operation,
@@ -453,15 +453,15 @@ TaskOperationMPM::modified_match_positions(
 		ResidueLevelTask const & restask( ptask->residue_task( original_positions[i] ));
 		if ( restask.being_packed() ) { //let's only match repackable positions
 
-			for ( ResidueLevelTask::ResidueTypeCOPListConstIter restype_it( restask.allowed_residue_types_begin()), restype_it_end( restask.allowed_residue_types_end() ); restype_it != restype_it_end; ++restype_it ) {
+			for ( auto restype_it( restask.allowed_residue_types_begin()), restype_it_end( restask.allowed_residue_types_end() ); restype_it != restype_it_end; ++restype_it ) {
 
 				//let's be somewhat generous: if any of the upstream residues specified in the cstfile
 				//is allowed at this residue, we consider it good for matching
 				//note: we're doing name3 comparison instead of pointer comparison here because
 				//of variant type uncertainties
 				bool name3_found( false );
-				for ( utility::vector1< core::chemical::ResidueTypeCOP>::const_iterator upres_it( upstream_restypes.begin() ), upres_end(upstream_restypes.end()); upres_it != upres_end; ++ upres_it ) {
-					if ( (*restype_it)->name3() == (*upres_it)->name3() ) {
+				for (const auto & upstream_restype : upstream_restypes) {
+					if ( (*restype_it)->name3() == upstream_restype->name3() ) {
 						//tr << "ARRG residue " << (*restype_it)->name3() << " allowed at pos " << i << ", set to matching " << std::endl;
 						to_return.push_back( original_positions[i] );
 						name3_found = true;

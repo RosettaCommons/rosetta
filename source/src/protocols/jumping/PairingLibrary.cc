@@ -71,7 +71,7 @@ using protocols::jumping::StandardPairingLibrary;
 template <> std::mutex utility::SingletonBase< StandardPairingLibrary >::singleton_mutex_{};
 template <> std::atomic< StandardPairingLibrary * > utility::SingletonBase< StandardPairingLibrary >::instance_( 0 );
 #else
-template <> StandardPairingLibrary * utility::SingletonBase< StandardPairingLibrary >::instance_( 0 );
+template <> StandardPairingLibrary * utility::SingletonBase< StandardPairingLibrary >::instance_( nullptr );
 #endif
 
 }
@@ -86,7 +86,7 @@ using namespace ObjexxFCL;
 namespace protocols {
 namespace jumping {
 
-BasePairingLibrary::~BasePairingLibrary() {}
+BasePairingLibrary::~BasePairingLibrary() = default;
 
 //------------------------------------------------------------------------------
 // the x-axis of this coordinate system is along the p(*,2) -> p(*,1) bond vector
@@ -579,26 +579,25 @@ void PairingLibrary::create_jump_fragments(
 	const int iStart( 1 ); // in templates start residue is number 1
 	const int iStop ( 2 ); // in templates stop residue is number 2
 	frags.reserve( ntemplates );
-	for ( PairingTemplateList::const_iterator it=templates.begin(), eit=templates.end();
-			it!=eit; ++it ) {
+	for (const auto & it : templates) {
 		frags.push_back( core::fragment::FragDataOP( new FragData ) );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
-			start->set_torsion( 1, it->phi( iStart ) );
-			start->set_torsion( 2, it->psi( iStart ) );
-			start->set_torsion( 3, it->omega( iStart ) );
+			start->set_torsion( 1, it.phi( iStart ) );
+			start->set_torsion( 2, it.psi( iStart ) );
+			start->set_torsion( 3, it.omega( iStart ) );
 
 			frags.back()->add_residue( start );
 		}
 
 		frags.back()->add_residue( SingleResidueFragDataOP( new UpJumpSRFD() ) );
-		frags.back()->add_residue( SingleResidueFragDataOP( new DownJumpSRFD( it->rt_, it->atoms_downstream_, it->atoms_upstream_, 'X' ) ) );
+		frags.back()->add_residue( SingleResidueFragDataOP( new DownJumpSRFD( it.rt_, it.atoms_downstream_, it.atoms_upstream_, 'X' ) ) );
 
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP stop( new BBTorsionSRFD( 3, 'E', 'X' ) );
-			stop->set_torsion( 1, it->phi( iStop ) );
-			stop->set_torsion( 2, it->psi( iStop ) );
-			stop->set_torsion( 3, it->omega( iStop ) );
+			stop->set_torsion( 1, it.phi( iStop ) );
+			stop->set_torsion( 2, it.psi( iStop ) );
+			stop->set_torsion( 3, it.omega( iStop ) );
 
 			frags.back()->add_residue( stop );
 		}
@@ -621,10 +620,9 @@ PairingLibrary::generate_jump_frags(
 	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );
-	for ( core::scoring::dssp::PairingsList::const_iterator it = pairings.begin(), eit = pairings.end();
-			it != eit; ++it ) {
-		Size o_key ( it->Orientation() ); // < 0 ? 1 : 2 );
-		Size p_key ( it->Pleating() ); // < 0 ? 1 : 2 );
+	for (const auto & pairing : pairings) {
+		Size o_key ( pairing.Orientation() ); // < 0 ? 1 : 2 );
+		Size p_key ( pairing.Pleating() ); // < 0 ? 1 : 2 );
 		jump_kind[ std::make_pair( o_key, p_key ) ].push_back( jump_nr++ );
 	}
 
@@ -636,10 +634,8 @@ PairingLibrary::generate_jump_frags(
 		Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
 		fragment::FragDataOPs frag_data;
 		create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
-		for ( JumpList::const_iterator jit=it->second.begin(), ejit=it->second.end();
-				jit!=ejit; ++jit ) {
-			int const jump_nr ( *jit );
-			int const startpos( pairings[ jump_nr ].Pos1() );
+		for (int jump_nr : it->second) {
+				int const startpos( pairings[ jump_nr ].Pos1() );
 			int const endpos( pairings[ jump_nr ].Pos2() );
 
 			if ( mm.get_bb( startpos ) && mm.get_bb( endpos ) ) {
@@ -661,7 +657,7 @@ PairingLibrary::generate_jump_frags(
 StandardPairingLibrary *
 StandardPairingLibrary::create_singleton_instance()
 {
-	StandardPairingLibrary * instance = new StandardPairingLibrary;
+	auto * instance = new StandardPairingLibrary;
 	instance->read_from_file( basic::database::full_name("scoring/score_functions/jump_templates_SSpairs_v2.dat") );
 	return instance;
 }

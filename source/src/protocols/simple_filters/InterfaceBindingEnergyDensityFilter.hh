@@ -45,18 +45,18 @@ public:
 		core::Real threshold
 	);
 
-	virtual ~InterfaceBindingEnergyDensityFilter();
+	~InterfaceBindingEnergyDensityFilter() override;
 
 	void set_interface_sasa_filter( InterfaceSasaFilterOP sasa_filter );
 	void set_ddG_filter( DdgFilterOP ddG_filter );
 	void set_upper_threshold( core::Real threshold );
 
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const;
-	filters::FilterOP fresh_instance() const;
+	filters::FilterOP clone() const override;
+	filters::FilterOP fresh_instance() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -64,7 +64,7 @@ public:
 		filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 private:
 	InterfaceSasaFilterOP sasa_filter_;

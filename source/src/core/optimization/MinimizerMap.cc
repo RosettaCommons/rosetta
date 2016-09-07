@@ -69,9 +69,8 @@ MinimizerMap::link_torsion_vectors()
 #ifndef NDEBUG
 	int last_depth = -1; // int depth( 100000 ); -- bad code buries assumptions deep deep into code where no one knows to find it
 #endif
-	for ( iterator it=dof_nodes_.begin(),
-			it_end=dof_nodes_.end(); it != it_end; ++it ) {
-		DOF_Node & dof_node( **it );
+	for (auto & it : dof_nodes_) {
+		DOF_Node & dof_node( *it );
 		debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
 #ifndef NDEBUG
 		last_depth = dof_node.depth();
@@ -84,10 +83,9 @@ MinimizerMap::link_torsion_vectors()
 void
 MinimizerMap::zero_torsion_vectors()
 {
-	for ( iterator iter=dof_nodes_.begin(), iter_end=dof_nodes_.end();
-			iter != iter_end; ++iter ) {
-		(*iter)->F1() = 0.0;
-		(*iter)->F2() = 0.0;
+	for (auto & dof_node : dof_nodes_) {
+		dof_node->F1() = 0.0;
+		dof_node->F2() = 0.0;
 	}
 	for ( Size ii = 1; ii <= atom_derivatives_.size(); ++ii ) {
 		for ( Size jj = 1; jj <= atom_derivatives_[ ii ].size(); ++jj ) {
@@ -112,14 +110,14 @@ MinimizerMap::add_torsion(
 	if ( parent_id.valid() ) {
 		// not the root torsion
 		parent = dof_node_pointer_[ parent_id ];
-		if ( parent == 0 ) {
+		if ( parent == nullptr ) {
 			std::cerr << "parent torsion does not exist in map! torsion= " <<
 				dof_id << " parent= " << parent_id << std::endl;
 			utility_exit();
 		}
 	} else {
 		// root torsion!
-		parent = 0;
+		parent = nullptr;
 	}
 
 	DOF_NodeOP dof( new DOF_Node( dof_id, parent ) );
@@ -140,7 +138,7 @@ MinimizerMap::add_atom(
 
 	if ( dof_id.valid() ) {
 		DOF_NodeOP n( dof_node_pointer_[ dof_id ] );
-		if ( n == 0 ) {
+		if ( n == nullptr ) {
 			std::cout << "torsion does not exist in map! torsion= " <<
 				dof_id << std::endl;
 			utility_exit();
@@ -204,7 +202,7 @@ MinimizerMap::reset( pose::Pose const & pose )
 	clear_dof_nodes();
 
 	// dimension the node_pointers to allow fast lookup
-	DOF_NodeOP tmp(0);
+	DOF_NodeOP tmp(nullptr);
 	pose::initialize_dof_id_map( dof_node_pointer_, pose, tmp );
 	atom_derivatives_.resize( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -220,7 +218,7 @@ MinimizerMap::copy_dofs_from_pose(
 ) const
 {
 	int imap = 1;
-	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
+	for ( auto it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		dofs[ imap ] = torsion_scale_factor( dof_node ) *
@@ -237,7 +235,7 @@ MinimizerMap::copy_dofs_to_pose(
 ) const
 {
 	int imap = 1;
-	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
+	for ( auto it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		pose.set_dof( dof_node.dof_id(),
@@ -254,7 +252,7 @@ MinimizerMap::reset_jump_rb_deltas(
 ) const
 {
 	int imap = 1;
-	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
+	for ( auto it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		if ( DOF_type_is_rb( dof_node.type() ) ) {
@@ -331,9 +329,8 @@ MinimizerMap::assign_rosetta_torsions( pose::Pose const & pose )
 
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 
-	for ( iterator it = dof_nodes_.begin(), it_end = dof_nodes_.end();
-			it != it_end; ++it ) {
-		DOF_Node & dof_node( **it );
+	for (auto & it : dof_nodes_) {
+		DOF_Node & dof_node( *it );
 
 		if ( dof_node.type() == id::PHI ) {
 			id::TorsionID const & id( dof_map[ dof_node.dof_id() ] );

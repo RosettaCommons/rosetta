@@ -59,7 +59,7 @@ struct SerializedLoop {
 class Loop : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~Loop();
+	~Loop() override;
 	/// default constructor
 	Loop():
 		start_(0),

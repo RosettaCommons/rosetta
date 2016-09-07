@@ -45,7 +45,7 @@ class DomainInterfaceFilter : public filters::Filter {
 public:
 	DomainInterfaceFilter();
 	DomainInterfaceFilter( DomainInterfaceFilter const & );
-	virtual ~DomainInterfaceFilter();
+	~DomainInterfaceFilter() override;
 
 	std::string const & query_region_string();
 	std::string const & target_region_string();
@@ -66,7 +66,7 @@ public:
 	void vector_angle_cut( core::Real setting );
 	void vector_dist_cut( core::Real setting );
 
-	std::string get_type() const{ return type_; }
+	std::string get_type() const override{ return type_; }
 	std::string get_user_defined_name() const { return user_defined_name_; }
 	void set_user_defined_name( std::string const & name ) { user_defined_name_ = name; };
 
@@ -79,16 +79,16 @@ public:
 		filters::Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
-	virtual filters::FilterOP clone() const;
-	virtual filters::FilterOP fresh_instance() const;
+	filters::FilterOP clone() const override;
+	filters::FilterOP fresh_instance() const override;
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
-	virtual
-	std::string name() const { return "DomainInterfaceFilter"; };
+	
+	std::string name() const override { return "DomainInterfaceFilter"; };
 
 private:
 	std::string const type_;

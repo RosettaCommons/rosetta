@@ -49,7 +49,7 @@
 #include <core/pose/Pose.hh>
 
 // C output headers:
-#include <stdio.h>
+#include <cstdio>
 #include <sstream>
 
 using basic::T;
@@ -138,7 +138,7 @@ BackboneGridSampler::BackboneGridSampler( BackboneGridSampler const & src ):
 
 ///
 /// @brief Destructor for BackboneGridSampler mover.
-BackboneGridSampler::~BackboneGridSampler() {}
+BackboneGridSampler::~BackboneGridSampler() = default;
 
 ///
 /// @brief Clone operator to create a pointer to a fresh BackboneGridSampler object that copies this one.
@@ -526,34 +526,34 @@ BackboneGridSampler::parse_my_tag(
 
 		/*** Parse Sub-Tags ***/
 		utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-		for ( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) { //Loop through all sub-tags
-			if ( (*tag_it)->getName() == "MainchainTorsion" ) { //A mainchain torsion index has been specified.  Parse its options:
-				if ( !(*tag_it)->hasOption("index") ) {
+		for (const auto & branch_tag : branch_tags) { //Loop through all sub-tags
+			if ( branch_tag->getName() == "MainchainTorsion" ) { //A mainchain torsion index has been specified.  Parse its options:
+				if ( !branch_tag->hasOption("index") ) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a mainchain torsion index with an \"index\" option.\n" );
 				}
-				core::Size index( (*tag_it)->getOption<core::Size>( "index", 0 ) );
-				core::Size resindex( (*tag_it)->getOption<core::Size>( "res_index", 1 ) );
+				core::Size index( branch_tag->getOption<core::Size>( "index", 0 ) );
+				core::Size resindex( branch_tag->getOption<core::Size>( "res_index", 1 ) );
 
-				if ( (*tag_it)->hasOption("value") ) {
-					core::Real val( (*tag_it)->getOption<core::Real>( "value", 0 ) );
+				if ( branch_tag->hasOption("value") ) {
+					core::Real val( branch_tag->getOption<core::Real>( "value", 0 ) );
 					if ( TR.visible() ) {
 						TR << "Adding mainchain torsion index " << index << " for residue " << resindex << " in the repeating unit to be fixed to " << val << " degrees." << std::endl;
 						TR.flush();
 					}
 					add_torsion_to_fix(resindex, index, val);
 				} else {
-					if ( !(*tag_it)->hasOption("start") ) {
+					if ( !branch_tag->hasOption("start") ) {
 						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a start of the torsion range to be sampled with a \"start\" option.  (Values are in DEGREES.)\n" );
 					}
-					if ( !(*tag_it)->hasOption("end") ) {
+					if ( !branch_tag->hasOption("end") ) {
 						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a start of the torsion range to be sampled with a \"end\" option.  (Values are in DEGREES.)\n" );
 					}
-					if ( !(*tag_it)->hasOption("samples") ) {
+					if ( !branch_tag->hasOption("samples") ) {
 						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify the number of samples for a mainchain torsion with a \"samples\" option.\n" );
 					}
-					core::Real start( (*tag_it)->getOption<core::Real>( "start", -180.0 ) );
-					core::Real end( (*tag_it)->getOption<core::Real>( "end", 180.0 ) );
-					core::Size samples( (*tag_it)->getOption<core::Real>( "samples", 2 ) );
+					core::Real start( branch_tag->getOption<core::Real>( "start", -180.0 ) );
+					core::Real end( branch_tag->getOption<core::Real>( "end", 180.0 ) );
+					core::Size samples( branch_tag->getOption<core::Real>( "samples", 2 ) );
 					if ( TR.visible() ) {
 						TR << "Adding mainchain torsion index " << index << " to sample angle range " << start << " to end " << end << " with " << samples << " sample(s)." << std::endl;
 						TR.flush();

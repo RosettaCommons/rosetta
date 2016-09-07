@@ -180,7 +180,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
-	blueprint_( NULL )
+	blueprint_( nullptr )
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
 	design_layer_[std::string("core")]=dsgn_core;
@@ -231,31 +231,11 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 
 /// @brief Copy constructor.
 ///
-LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & rval ):
-	core::pack::task::operation::TaskOperation(rval),
-	add_helix_capping_( rval.add_helix_capping_ ),
-	use_original_( rval.use_original_ ),
-	repack_non_designed_residues_( rval.repack_non_designed_residues_ ),
-	verbose_( rval.verbose_ ),
-	restrict_restypes_( rval.restrict_restypes_ ),
-	make_pymol_script_( rval.make_pymol_script_ ),
-	layer_residues_( rval.layer_residues_ ),
-	layer_nc_residues_( rval.layer_nc_residues_ ),
-	ignore_pikaa_natro_( rval.ignore_pikaa_natro_),
-	design_layer_( rval.design_layer_ ),
-	layer_specification_( rval.layer_specification_ ),
-	layer_operation_( rval.layer_operation_ ),
-	task_layers_( rval.task_layers_ ),
-	srbl_( rval.srbl_ ),
-	blueprint_( rval.blueprint_ ),
-	use_symmetry_(rval.use_symmetry_)
-{
-}
+LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & )= default;
 
 
 /// @brief destructor
-LayerDesignOperation::~LayerDesignOperation() {
-}
+LayerDesignOperation::~LayerDesignOperation() = default;
 
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
@@ -311,7 +291,6 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::s
 {
 	using utility::io::ozstream;
 	typedef utility::vector1<Size> VecSize;
-	typedef std::map< std::string, utility::vector1<bool> > LayerSpecification;
 	TR << "Writing pymol script with the layer information to "<< filename << std::endl;
 	ozstream pymol( filename );
 	TR << "Dumping pose for the script as layer_design_input.pdb" << std::endl;
@@ -342,15 +321,15 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::s
 	colors.push_back( "hotpink" );
 	colors.push_back( "olive" );
 	Size layer = 0;
-	for ( LayerSpecification::const_iterator it = layer_specification.begin(), end = layer_specification.end(); it != end; ++it ) {
+	for (const auto & it : layer_specification) {
 		utility::vector1< Size > pos;
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-			if ( it->second[ i ] ) {
+			if ( it.second[ i ] ) {
 				pos.push_back( i );
 			}
 		}
-		pymol << "cmd.select('"<< it->first  <<"', 'resi  " << pos2select( pos )<< "')" << std::endl;
-		pymol << "cmd.color('" << colors[ layer % 6  ] << "','" << it->first << "')" << std::endl;
+		pymol << "cmd.select('"<< it.first  <<"', 'resi  " << pos2select( pos )<< "')" << std::endl;
+		pymol << "cmd.color('" << colors[ layer % 6  ] << "','" << it.first << "')" << std::endl;
 		layer += 1;
 	}
 	if ( has_ligand ) {
@@ -379,8 +358,8 @@ LayerDesignOperation::init_nc_layerdefinitions( std::string const & layer_name )
 	if ( ( layer_name == "Nterm" ) || ( layer_name == "Cterm" ) ) {
 		def[ "all" ];
 	} else {
-		for ( utility::vector1< std::string >::const_iterator ss = SS_TYPES.begin(); ss != SS_TYPES.end(); ++ss ) {
-			def[ *ss ];
+		for (const auto & ss : SS_TYPES) {
+			def[ ss ];
 		}
 	}
 }
@@ -477,7 +456,7 @@ void LayerDesignOperation::parse_ncaa_list( std::string const &str, utility::vec
 ///
 void LayerDesignOperation::exclude_ncaas( utility::vector1<std::string> const &aas_to_exclude, utility::vector1<std::string> &storage_vect ) {
 	for ( core::Size i=1,imax=aas_to_exclude.size(); i<=imax; ++i ) { //Loop through all aas to exclude.
-		for ( utility::vector1<std::string>::iterator j = storage_vect.begin(); j<storage_vect.end(); ++j ) {
+		for ( auto j = storage_vect.begin(); j<storage_vect.end(); ++j ) {
 			if ( (*j)==aas_to_exclude[i] ) {
 				storage_vect.erase(j);
 			}
@@ -599,13 +578,13 @@ LayerDesignOperation::layer_residues(
 	std::string const & layer_name,
 	std::string const & ss_name ) const
 {
-	LayerResidues::const_iterator it = layer_residues_.find( layer_name );
+	auto it = layer_residues_.find( layer_name );
 	if ( it == layer_residues_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "Layer " + layer_name + " was not found when trying to determine valid residue types." );
 	}
 	debug_assert( it != layer_residues_.end() );
 
-	LayerDefinitions::const_iterator it2 = it->second.find( ss_name );
+	auto it2 = it->second.find( ss_name );
 	if ( it2 == it->second.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid residue types." );
 	}
@@ -620,13 +599,13 @@ LayerDesignOperation::layer_nc_residues(
 	std::string const & layer_name,
 	std::string const & ss_name ) const
 {
-	LayerNCResidues::const_iterator it = layer_nc_residues_.find( layer_name );
+	auto it = layer_nc_residues_.find( layer_name );
 	if ( it == layer_nc_residues_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "Layer " + layer_name + " was not found when trying to determine valid residue types." );
 	}
 	debug_assert( it != layer_nc_residues_.end() );
 
-	LayerNCDefinitions::const_iterator it2 = it->second.find( ss_name );
+	auto it2 = it->second.find( ss_name );
 	if ( it2 == it->second.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "SS type " + ss_name + " in layer " + layer_name + " was not found when trying to determine valid ncaa residue types." );
 	}
@@ -646,7 +625,7 @@ LayerDesignOperation::copy_layer_residues(
 		throw utility::excn::EXCN_Msg_Exception( "LayerDesign: Layer named " + src_layer + " does not exist when trying to copy residue information to layer " + dest_layer );
 	}
 
-	LayerResidues::iterator lr = layer_residues_.find( dest_layer );
+	auto lr = layer_residues_.find( dest_layer );
 	if ( lr == layer_residues_.end() ) {
 		layer_residues_.insert( std::make_pair( dest_layer, src->second ) );
 	} else {
@@ -689,13 +668,13 @@ LayerDesignOperation::set_layer_residues(
 	std::string const & residues,
 	LayerResidues & layer_residues )
 {
-	LayerResidues::iterator it = layer_residues.find( layer_name );
+	auto it = layer_residues.find( layer_name );
 	if ( it == layer_residues.end() ) {
 		it = layer_residues_.insert( std::make_pair( layer_name, LayerDefinitions() ) ).first;
 	}
 	debug_assert( it != layer_residues_.end() );
 
-	LayerDefinitions::iterator it2 = it->second.find( ss_name );
+	auto it2 = it->second.find( ss_name );
 	if ( it2 == it->second.end() ) {
 		it2 = it->second.insert( std::make_pair( ss_name, residues ) ).first;
 		debug_assert( it2->second == residues );
@@ -735,7 +714,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			}
 			fixed_residues.push_back( fixed );
 		}
-		std::map< std::string, LayerSpecificationType >::const_iterator type_it = layer_specification_.find( task_pair.first );
+		auto type_it = layer_specification_.find( task_pair.first );
 		runtime_assert( type_it != layer_specification_.end() );
 		LayerSpecificationType const type = (*type_it).second;
 		if ( type == DESIGNABLE ) {
@@ -896,7 +875,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		bool omit( false );
 		bool design( true );
 		BOOST_FOREACH ( std::string& layer, active_layers ) {
-			std::map< std::string, LayerOperationType >::const_iterator type_it = layer_operation_.find( layer );
+			auto type_it = layer_operation_.find( layer );
 			runtime_assert( type_it != layer_operation_.end() );
 			LayerOperationType const operation = (*type_it).second;
 			if ( operation == OMIT ) {
@@ -937,12 +916,12 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 				//Restrict allowed canonical residues:
 				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, sstype) );
 				//Add allowed noncanonical residues:
-				LayerNCResidues::const_iterator cur_nc_layer = layer_nc_residues_.find(layer);
+				auto cur_nc_layer = layer_nc_residues_.find(layer);
 				if ( cur_nc_layer!=layer_nc_residues_.end() ) {
-					LayerNCDefinitions::const_iterator cur_nc_defs = cur_nc_layer->second.find(sstype);
+					auto cur_nc_defs = cur_nc_layer->second.find(sstype);
 					if ( cur_nc_defs!=cur_nc_layer->second.end() ) {
 						if ( !cur_nc_defs->second.empty() ) { //If there are NCAAs defined for this layer:
-							for ( utility::vector1<std::string>::const_iterator it=cur_nc_defs->second.begin(); it < cur_nc_defs->second.end(); ++it ) { //Loop through all NCAAs defined for this layer.
+							for ( auto it=cur_nc_defs->second.begin(); it < cur_nc_defs->second.end(); ++it ) { //Loop through all NCAAs defined for this layer.
 								task.nonconst_residue_task(i).allow_noncanonical_aa( *it ); //Add the current NCAA to the list allowed for this residue.
 							}
 						}
@@ -1179,7 +1158,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 				continue;
 			}
 
-			LayerDefinitions::iterator ld_it = layer_residues_[ layer.first ].find( ss_def_name );
+			auto ld_it = layer_residues_[ layer.first ].find( ss_def_name );
 			if ( ld_it == layer_residues_[ layer.first ].end() ) {
 				TR << "layer " << layer.first << " has no specification for residues in " << ss_def_name << ".  The layer will be filled with the residues defined for all secondary structure types." << std::endl;
 				set_layer_residues( layer.first, ss_def_name, all_layers_residues );
@@ -1199,7 +1178,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 		}
 
 		BOOST_FOREACH ( std::string const & ss_def_name, SS_TYPES ) {
-			LayerNCDefinitions::iterator ldncaa_it = layer_nc_residues_[ layer.first ].find( ss_def_name );
+			auto ldncaa_it = layer_nc_residues_[ layer.first ].find( ss_def_name );
 			if ( ( ldncaa_it == layer_nc_residues_[ layer.first ].end() ) || ( !ldncaa_it->second.size() ) ) {
 				TR << "layer " << layer.first << " has no specification for noncanonical residues in " << ss_def_name << ".  The layer will be filled with the noncanonical residues defined for all secondary structure types." << std::endl;
 				set_nc_layer_residues( layer.first, ss_def_name, all_layers_ncaa_residues );
@@ -1220,8 +1199,8 @@ utility::vector1< std::string > unique_strs(
 	utility::vector1< std::string > const & orig2 )
 {
 	std::set< std::string > strset( orig.begin(), orig.end() );
-	for ( utility::vector1< std::string >::const_iterator s = orig2.begin(); s != orig2.end(); ++s ) {
-		strset.insert( *s );
+	for (const auto & s : orig2) {
+		strset.insert( s );
 	}
 	return utility::vector1< std::string >( strset.begin(), strset.end() );
 }
@@ -1275,12 +1254,12 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 		}
 		if ( secstruct == "all" ) {
 			TR << "Appending residues " << aas << " to layer " << layer_name << std::endl;
-			LayerResidues::iterator lrs =  layer_residues_.find( layer_name );
-			for ( LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++ ) {
-				std::string const & cur_aas = ld->second;
+			auto lrs =  layer_residues_.find( layer_name );
+			for (auto & ld : lrs->second) {
+				std::string const & cur_aas = ld.second;
 				// prevent appending to all twice
-				if ( ld->first != "all" ) {
-					set_layer_residues( layer_name, ld->first, unique_chars( cur_aas + aas ) );
+				if ( ld.first != "all" ) {
+					set_layer_residues( layer_name, ld.first, unique_chars( cur_aas + aas ) );
 				}
 			}
 		}
@@ -1293,8 +1272,8 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 		defs[ secstruct ] = unique_strs( aas_vec, defs[ secstruct ] );
 
 		TR << "Appending noncanonical residues " << aas << " to layer " << layer_name << std::endl;
-		for ( LayerNCDefinitions::iterator ld = defs.begin(); ld != defs.end(); ld++ ) {
-			ld->second = unique_strs( aas_vec, ld->second );
+		for (auto & def : defs) {
+			def.second = unique_strs( aas_vec, def.second );
 		}
 	}
 	if ( secstruct_tag->hasOption( "exclude" ) ) {
@@ -1314,8 +1293,8 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 
 		TR << "Excluding residues " << aas << " from layer " << layer_name << " secstruct " << secstruct << std::endl;
 		if ( secstruct == "all" ) {
-			LayerResidues::iterator lrs =  layer_residues_.find( layer_name );
-			for ( LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++ ) {
+			auto lrs =  layer_residues_.find( layer_name );
+			for ( auto ld = lrs->second.begin(); ld != lrs->second.end(); ld++ ) {
 				if ( ld->first == "all" ) {
 					continue;
 				}
@@ -1334,8 +1313,8 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 		utility::vector1< std::string > res_to_exclude;
 		parse_ncaa_list( aas, res_to_exclude );
 		exclude_ncaas( res_to_exclude, defs[ secstruct ] );
-		for ( LayerNCDefinitions::iterator ld = defs.begin(); ld != defs.end(); ld++ ) {
-			exclude_ncaas( res_to_exclude, ld->second );
+		for (auto & def : defs) {
+			exclude_ncaas( res_to_exclude, def.second );
 		}
 	}
 

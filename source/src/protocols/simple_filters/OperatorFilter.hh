@@ -30,18 +30,18 @@ class Operator : public filters::Filter
 {
 public:
 	Operator();
-	virtual ~Operator();
-	filters::FilterOP clone() const {
+	~Operator() override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new Operator( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new Operator() );
 	}
 
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & ) override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	utility::vector1< protocols::filters::FilterOP > filters() const;
 	void add_filter( protocols::filters::FilterOP f );

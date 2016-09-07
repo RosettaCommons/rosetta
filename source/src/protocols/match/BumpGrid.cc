@@ -43,7 +43,7 @@ Bool3DGrid::Bool3DGrid() :
 	halfdimprods_( /* 0 */ )
 {}
 
-Bool3DGrid::~Bool3DGrid() {}
+Bool3DGrid::~Bool3DGrid() = default;
 
 void
 Bool3DGrid::set_bounding_box( BoundingBox const & bb ) {
@@ -921,7 +921,7 @@ Bool3DGrid::byte_index_from_doublebin( Bin3D const & doublebin ) const {
 
 /////////////////////// BUMP GRID ////////////////////////////////////
 BumpGrid::BumpGrid() :
-	grids_( n_probe_radii, 0 ),
+	grids_( n_probe_radii, nullptr ),
 	pair_permit_overlap_( n_probe_radii ),
 	general_permit_overlap_( 0.0 )
 {
@@ -952,7 +952,7 @@ BumpGrid::BumpGrid() :
 
 BumpGrid::BumpGrid( BumpGrid const & rhs ) :
 	parent(),
-	grids_( n_probe_radii, 0 ),
+	grids_( n_probe_radii, nullptr ),
 	pair_permit_overlap_( rhs.pair_permit_overlap_ ),
 	general_permit_overlap_( rhs.general_permit_overlap_ )
 {
@@ -961,7 +961,7 @@ BumpGrid::BumpGrid( BumpGrid const & rhs ) :
 	}
 }
 
-BumpGrid::~BumpGrid() {}
+BumpGrid::~BumpGrid() = default;
 
 BumpGrid & BumpGrid::operator = ( BumpGrid const & rhs )
 {
@@ -1316,7 +1316,7 @@ Bool3DGridKinemageWriter::Bool3DGridKinemageWriter() :
 	facet_alpha_( 1.0 )
 {}
 
-Bool3DGridKinemageWriter::~Bool3DGridKinemageWriter() {}
+Bool3DGridKinemageWriter::~Bool3DGridKinemageWriter() = default;
 
 void Bool3DGridKinemageWriter::set_unselectable( bool unselectable ) { unselectable_ = unselectable; }
 void Bool3DGridKinemageWriter::set_line_color( std::string const & line_color ) { line_color_ = line_color; }

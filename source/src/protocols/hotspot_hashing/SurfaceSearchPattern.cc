@@ -53,7 +53,7 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 
 	// Create list of target residues using taskoperation
 	core::pack::task::PackerTaskOP task;
-	if ( surface_selection != 0 ) {
+	if ( surface_selection != nullptr ) {
 		task = surface_selection->create_task_and_apply_taskoperations( pose );
 		TR.Debug << "Initializing from packer task." << std::endl;
 	} else {
@@ -77,13 +77,13 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 	core::Size skipped_dots = 0;
 	core::Size selected_dots = 0;
 
-	for ( core::Size i = 0; i < surface_dots.size(); i++ ) {
-		if ( surface_dots[i].outnml.length() == 0 ) {
+	for (auto & surface_dot : surface_dots) {
+		if ( surface_dot.outnml.length() == 0 ) {
 			zeronormal_dots++;
 			continue;
-		} else if ( task->pack_residue(surface_dots[i].atom->nresidue) ) {
+		} else if ( task->pack_residue(surface_dot.atom->nresidue) ) {
 			selected_dots++;
-			surface_vectors_.push_back(VectorPair(surface_dots[i].coor, -surface_dots[i].outnml));
+			surface_vectors_.push_back(VectorPair(surface_dot.coor, -surface_dot.outnml));
 		} else {
 			skipped_dots++;
 		}

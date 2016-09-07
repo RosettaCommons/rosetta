@@ -34,16 +34,16 @@ class TerminiConstraintGenerator : public protocols::constraint_generator::Const
 public:
 	TerminiConstraintGenerator();
 
-	virtual ~TerminiConstraintGenerator();
+	~TerminiConstraintGenerator() override;
 
 	static std::string
 	class_name() { return "TerminiConstraintGenerator"; }
 
 	ConstraintGeneratorOP
-	clone() const;
+	clone() const override;
 
-	virtual core::scoring::constraints::ConstraintCOPs
-	apply( core::pose::Pose const & pose ) const;
+	core::scoring::constraints::ConstraintCOPs
+	apply( core::pose::Pose const & pose ) const override;
 
 	void
 	set_min_distance( core::Real const dist );
@@ -67,8 +67,8 @@ public:
 	max_distance() const;
 
 protected:
-	virtual void
-	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	void
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;
 
 private:
 	core::Real min_distance_;

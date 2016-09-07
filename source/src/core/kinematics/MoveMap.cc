@@ -52,7 +52,7 @@ namespace core {
 namespace kinematics {
 
 // Auto-generated virtual destructor
-MoveMap::~MoveMap() {}
+MoveMap::~MoveMap() = default;
 
 void MoveMap::set_ranges_unmodifiable(const std::vector<std::pair<Size, Size> >& ranges) {
 	using std::pair;
@@ -220,7 +220,7 @@ MoveMap::set(
 
 bool
 MoveMap::get_jump( id::JumpID const & jump ) const {
-	JumpID_Map::const_iterator jid = jump_id_map_.find( jump );
+	auto jid = jump_id_map_.find( jump );
 	if ( jid != jump_id_map_.end() ) {
 		return jid->second;
 	} else {  //return global setting
@@ -234,7 +234,7 @@ MoveMap::get_jump( id::JumpID const & jump ) const {
 bool
 MoveMap::get( TorsionType const & t ) const
 {
-	TorsionTypeMap::const_iterator i = torsion_type_map_.find( t );
+	auto i = torsion_type_map_.find( t );
 	if ( i == torsion_type_map_.end() ) {
 		return false;
 	}
@@ -248,7 +248,7 @@ MoveMap::get( TorsionType const & t ) const
 bool
 MoveMap::get( MoveMapTorsionID const & id ) const
 {
-	MoveMapTorsionID_Map::const_iterator i = move_map_torsion_id_map_.find( id );
+	auto i = move_map_torsion_id_map_.find( id );
 	if ( i == move_map_torsion_id_map_.end() ) {
 		TorsionType const & t( id.second );
 		return get( t );
@@ -266,7 +266,7 @@ MoveMap::get( TorsionID const & id ) const
 {
 	if ( !id.valid() ) return false;
 
-	TorsionID_Map::const_iterator i = torsion_id_map_.find( id );
+	auto i = torsion_id_map_.find( id );
 	if ( i == torsion_id_map_.end() ) {
 		MoveMapTorsionID const move_map_torsion_id( id.rsd(), id.type() );
 		return get( move_map_torsion_id );
@@ -281,7 +281,7 @@ MoveMap::get(
 	DOF_Type const & type
 ) const
 {
-	DOF_TypeMap::const_iterator iter( dof_type_map_.find( type ) );
+	auto iter( dof_type_map_.find( type ) );
 	if ( iter == dof_type_map_.end() ) {
 		return false;
 	}
@@ -297,7 +297,7 @@ MoveMap::get( DOF_ID const & id ) const
 {
 	if ( !id.valid() ) return false;
 
-	DOF_ID_Map::const_iterator iter( dof_id_map_.find( id ) );
+	auto iter( dof_id_map_.find( id ) );
 	if ( iter == dof_id_map_.end() ) {
 		return get( id.type() );
 	}
@@ -529,7 +529,7 @@ MoveMap::show( std::ostream & out ) const
 	Size prev_resnum = 0;
 	utility::vector1< bool > jumpbool;
 	utility::vector1< Size > jumpnum;
-	for ( MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end();
+	for ( auto it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end();
 			it != it_end; ++it ) {
 		MoveMapTorsionID mmtorsionID = it->first;
 		bool boolean = it->second;
@@ -578,7 +578,7 @@ MoveMap::show( std::ostream & out ) const
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB5)) <<' '<< A(8,( get(id::RB5) ? "TRUE":"FALSE"))<< "\n";
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB6)) <<' '<< A(8,( get(id::RB6) ? "TRUE":"FALSE"))<< "\n";
 	prev_resnum = 0;
-	for ( DOF_ID_Map::const_iterator it = dof_id_begin(), it_end = dof_id_end();
+	for ( auto it = dof_id_begin(), it_end = dof_id_end();
 			it != it_end; ++it ) {
 		DOF_ID const & dofID = it->first;
 		bool boolean = it->second;
@@ -610,7 +610,7 @@ Size MoveMap::import(
 
 	// Step 1: torsions
 	// TorsionType
-	for ( TorsionTypeMap::const_iterator i = rval.torsion_type_begin(), ie = rval.torsion_type_end(); i != ie; ++i ) {
+	for ( auto i = rval.torsion_type_begin(), ie = rval.torsion_type_end(); i != ie; ++i ) {
 		if ( ( import_true_settings && i->second ) || ( import_false_settings && !i->second ) ) {
 			set( i->first, i->second );
 			++n;
@@ -618,7 +618,7 @@ Size MoveMap::import(
 	}
 
 	// MoveMapTorsionID
-	for ( MoveMapTorsionID_Map::const_iterator i = rval.movemap_torsion_id_begin(), ie = rval.movemap_torsion_id_end(); i != ie; ++i ) {
+	for ( auto i = rval.movemap_torsion_id_begin(), ie = rval.movemap_torsion_id_end(); i != ie; ++i ) {
 		if ( ( import_true_settings && i->second ) || ( import_false_settings && !i->second ) ) {
 			set( i->first, i->second );
 			++n;
@@ -626,7 +626,7 @@ Size MoveMap::import(
 	}
 
 	// TorsionID
-	for ( TorsionID_Map::const_iterator i = rval.torsion_id_begin(), ie = rval.torsion_id_end(); i != ie; ++i ) {
+	for ( auto i = rval.torsion_id_begin(), ie = rval.torsion_id_end(); i != ie; ++i ) {
 		if ( ( import_true_settings && i->second ) || ( import_false_settings && !i->second ) ) {
 			set( i->first, i->second );
 			++n;
@@ -635,7 +635,7 @@ Size MoveMap::import(
 
 	// Step 2: DOFs
 	// DOF_Type
-	for ( DOF_TypeMap::const_iterator i = rval.dof_type_begin(), ie = rval.dof_type_end(); i != ie; ++i ) {
+	for ( auto i = rval.dof_type_begin(), ie = rval.dof_type_end(); i != ie; ++i ) {
 		if ( ( import_true_settings && i->second ) || ( import_false_settings && !i->second ) ) {
 			set( i->first, i->second );
 			++n;
@@ -643,7 +643,7 @@ Size MoveMap::import(
 	}
 
 	// DOF_ID
-	for ( DOF_ID_Map::const_iterator i = rval.dof_id_begin(), ie = rval.dof_id_end(); i != ie; ++i ) {
+	for ( auto i = rval.dof_id_begin(), ie = rval.dof_id_end(); i != ie; ++i ) {
 		if ( ( import_true_settings && i->second ) || ( import_false_settings && !i->second ) ) {
 			set( i->first, i->second );
 			++n;
@@ -652,7 +652,7 @@ Size MoveMap::import(
 
 	// Step 3: jumps
 	// JumpID
-	for ( JumpID_Map::const_iterator i = rval.jump_id_begin(), ie = rval.jump_id_end(); i != ie; ++i ) {
+	for ( auto i = rval.jump_id_begin(), ie = rval.jump_id_end(); i != ie; ++i ) {
 		if ( ( import_true_settings && i->second ) || ( import_false_settings && !i->second ) ) {
 			set_jump( i->first, i->second );
 			++n;

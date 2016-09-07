@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 //Auto Headers
+#include <utility>
 #include <utility/vector1_bool.hh>
 
 #ifdef    SERIALIZATION
@@ -67,10 +68,10 @@ public:
 	ChemicalShiftAnisotropy& operator=(ChemicalShiftAnisotropy const & other);
 
 	//explicit destructor because we use raw pointers for buffers
-	~ChemicalShiftAnisotropy() {}
+	~ChemicalShiftAnisotropy() override = default;
 
 	//this class lives in the PoseCache.... need to provide clone()
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new ChemicalShiftAnisotropy(*this) );
 	}
 
@@ -124,10 +125,10 @@ public:
 	{
 	}
 
-	CSA(Size res1, std::string const& atom1, Real sigma1, Real sigma2, Real sigma3, Real CSAval, Real CSAerr, Real weight) :
+	CSA(Size res1, std::string  atom1, Real sigma1, Real sigma2, Real sigma3, Real CSAval, Real CSAerr, Real weight) :
 		CSAval_computed_(-999),f1ij_(0.0),f2ij_(0.0),f3ij_(0.0),
 		res1_(res1), res2_(res1-1), res3_(res1),
-		atom1_(atom1), atom2_("C"), atom3_("CA"),
+		atom1_(std::move(atom1)), atom2_("C"), atom3_("CA"),
 		sigma1_(sigma1), sigma2_(sigma2), sigma3_(sigma3),
 		alpha_(0), beta_(105), gamma_(0),
 		CSAval_(CSAval), CSAerr_(CSAerr),

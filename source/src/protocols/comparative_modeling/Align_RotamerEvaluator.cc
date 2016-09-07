@@ -35,7 +35,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.Align_Rota
 namespace protocols {
 namespace comparative_modeling {
 
-Align_RotamerEvaluator::~Align_RotamerEvaluator() {}
+Align_RotamerEvaluator::~Align_RotamerEvaluator() = default;
 
 Align_RotamerEvaluator::Align_RotamerEvaluator(
 	core::pose::PoseCOP native_pose,

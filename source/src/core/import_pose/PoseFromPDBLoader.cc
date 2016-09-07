@@ -29,7 +29,7 @@ namespace core {
 namespace import_pose {
 
 PoseFromPDBLoader::PoseFromPDBLoader() {}
-PoseFromPDBLoader::~PoseFromPDBLoader() {}
+PoseFromPDBLoader::~PoseFromPDBLoader() = default;
 
 utility::pointer::ReferenceCountOP
 PoseFromPDBLoader::create_resource(

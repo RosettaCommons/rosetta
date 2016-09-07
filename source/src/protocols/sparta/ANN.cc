@@ -23,7 +23,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <utility/vector0.hh>
 
@@ -173,20 +173,20 @@ void ANN::loadWeightBias3( string const& fName,
 
 	int index = 0;
 	int row = N_W_row, col = N_W_col;
-	for ( GDB::EntryList::iterator it = W_Tab.Entries.begin(), end = W_Tab.Entries.end(); it != end; ++it ) {//iterate rows
+	for (auto & Entrie : W_Tab.Entries) {//iterate rows
 		int check = index/row; //cout << check << endl;
 		for ( int  i = 0; i < col; i++ ) {
 			str = itoa(i+1,buf);
-			float w = atof((it->second[str]).c_str());
+			float w = atof((Entrie.second[str]).c_str());
 			if ( check == 0 ) W1[ index ].push_back( w ); // assign to weight matrix 1
 			else if ( check == 1 ) W2[ index-row ].push_back( w ); // assign to weight matrix 2
 			else if ( check == 2 ) W3[ index-row*2 ].push_back( w ); // assign to weight matrix 2
 			else tr.Error << "Wrong size for matrix " << fName << " ... \n";
 		}
 
-		if ( check == 0 ) B1.push_back( atof((it->second["b"]).c_str()) );
-		else if ( check == 1 ) B2.push_back( atof((it->second["b"]).c_str()) );
-		else if ( check == 2 ) B3.push_back( atof((it->second["b"]).c_str()) );
+		if ( check == 0 ) B1.push_back( atof((Entrie.second["b"]).c_str()) );
+		else if ( check == 1 ) B2.push_back( atof((Entrie.second["b"]).c_str()) );
+		else if ( check == 2 ) B3.push_back( atof((Entrie.second["b"]).c_str()) );
 		index++;
 	}
 	// if( index > row ) tr.Error << "Wrong size for matrix " << fName << " ... \n";
@@ -387,7 +387,7 @@ char * ANN::ftoa( float n, char *buff, char f, int prec )
 
 void ANN::getSlashChar()
 {
-	if ( getenv( "PATH" ) != NULL ) {
+	if ( getenv( "PATH" ) != nullptr ) {
 		string temp = getenv( "PATH" );
 		if ( temp.find("/") != string::npos ) slash_char = "/"; // unix
 		else if ( temp.find("\\") != string::npos ) slash_char = "\\"; // Windows

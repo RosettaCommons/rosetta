@@ -55,7 +55,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.features.FeaturesReporterFactor
 #if defined MULTI_THREADED
 std::atomic< FeaturesReporterFactory * > FeaturesReporterFactory::instance_( 0 );
 #else
-FeaturesReporterFactory * FeaturesReporterFactory::instance_( 0 );
+FeaturesReporterFactory * FeaturesReporterFactory::instance_( nullptr );
 #endif
 
 #ifdef MULTI_THREADED
@@ -87,7 +87,7 @@ FeaturesReporterFactory::FeaturesReporterFactory(
 	const FeaturesReporterFactory &
 ) {}
 
-FeaturesReporterFactory::~FeaturesReporterFactory() {}
+FeaturesReporterFactory::~FeaturesReporterFactory() = default;
 
 void
 FeaturesReporterFactory::factory_register(
@@ -119,7 +119,7 @@ FeaturesReporterFactory::get_features_reporter(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 utility::vector1<std::string> FeaturesReporterFactory::get_all_features_names()
 {

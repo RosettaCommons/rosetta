@@ -63,7 +63,7 @@ public:
 		VarSolDistSasaCalculatorCOP vsasa_calc
 	);
 
-	virtual ~VarSolDRotamerDots();
+	~VarSolDRotamerDots() override;
 	VarSolDRotamerDots(const VarSolDRotamerDots& rhs);
 
 	void copy( VarSolDRotamerDots const & rhs );
@@ -204,16 +204,16 @@ public:
 
 
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
 	void set_element_radii(std::string atype_name, core::Real coll_radius, core::Real int_radius, Size nshells);
 	void set_atom_type_radii(std::string atype_name, core::Real coll_radius, core::Real int_radius, Size nshells);
 
 	core::id::AtomID_Map< core::Real > calculate(const core::pose::Pose& pose);
 protected:
-	virtual void lookup(const std::string& key, basic::MetricValueBase* valptr ) const;
-	virtual std::string print(const std::string& key ) const;
-	virtual void recompute(const core::pose::Pose & this_pose );
+	void lookup(const std::string& key, basic::MetricValueBase* valptr ) const override;
+	std::string print(const std::string& key ) const override;
+	void recompute(const core::pose::Pose & this_pose ) override;
 
 private:
 	core::Real probe_radius_;

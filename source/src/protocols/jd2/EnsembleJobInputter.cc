@@ -37,7 +37,7 @@ protocols::jd2::EnsembleJobInputter::EnsembleJobInputter(){
 	TR << "Instantiate EnsembleJobInputter" << std::endl;
 }
 
-protocols::jd2::EnsembleJobInputter::~EnsembleJobInputter(){}
+protocols::jd2::EnsembleJobInputter::~EnsembleJobInputter()= default;
 
 
 /// @details this function determines what jobs exist from -s/-l

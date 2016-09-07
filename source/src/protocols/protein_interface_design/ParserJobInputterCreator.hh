@@ -21,8 +21,8 @@ namespace protein_interface_design {
 
 class ParserJobInputterCreator : public protocols::jd2::JobInputterCreator {
 public:
-	virtual jd2::JobInputterOP create_JobInputter() const;
-	virtual std::string keyname() const;
+	jd2::JobInputterOP create_JobInputter() const override;
+	std::string keyname() const override;
 
 };
 

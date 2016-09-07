@@ -174,7 +174,7 @@ public:
 public:
 	/// Construction and Destruction
 	Matcher();
-	virtual ~Matcher();
+	~Matcher() override;
 
 
 public:

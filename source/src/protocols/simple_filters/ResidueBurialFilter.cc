@@ -53,7 +53,7 @@ ResidueBurialFilterCreator::create_filter() const { return protocols::filters::F
 std::string
 ResidueBurialFilterCreator::keyname() const { return "ResidueBurial"; }
 
-ResidueBurialFilter::~ResidueBurialFilter(){}
+ResidueBurialFilter::~ResidueBurialFilter()= default;
 
 void
 ResidueBurialFilter::task_factory( core::pack::task::TaskFactoryOP tf ){

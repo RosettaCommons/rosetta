@@ -44,7 +44,7 @@ class ResidueCoordinateChangeList : public utility::pointer::ReferenceCount
 public:
 	ResidueCoordinateChangeList();
 
-	virtual ~ResidueCoordinateChangeList();
+	~ResidueCoordinateChangeList() override;
 
 	ResidueCoordinateChangeList &
 	operator = ( ResidueCoordinateChangeList const & rhs );

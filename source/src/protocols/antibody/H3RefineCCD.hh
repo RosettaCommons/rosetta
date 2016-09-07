@@ -62,10 +62,10 @@ public:
 
 	void set_task_factory(core::pack::task::TaskFactoryCOP tf);
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief default destructor
-	~H3RefineCCD();
+	~H3RefineCCD() override;
 
 
 	void pass_start_pose(core::pose::Pose & start_pose);
@@ -79,9 +79,9 @@ public:
 		H3_filter_=false;
 	}
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void set_highres_score_func(core::scoring::ScoreFunctionCOP highres_scorefxn) {
 		highres_scorefxn_ = highres_scorefxn->clone();

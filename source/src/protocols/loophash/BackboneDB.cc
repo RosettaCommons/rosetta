@@ -158,9 +158,9 @@ BackboneSegment::read_from_pose( core::pose::Pose const &pose, core::Size ir, co
 }
 
 void BackboneSegment::print() const {
-	for (  std::vector<core::Real>::const_iterator it = phi_.begin(); it != phi_.end(); ++it ) TR << *it << "  " ;
-	for (  std::vector<core::Real>::const_iterator it = psi_.begin(); it != psi_.end(); ++it ) TR << *it << "  " ;
-	for (  std::vector<core::Real>::const_iterator it = omega_.begin(); it != omega_.end(); ++it ) TR << *it << "  " ;
+	for (double it : phi_) TR << it << "  " ;
+	for (double it : psi_) TR << it << "  " ;
+	for (double it : omega_) TR << it << "  " ;
 	TR << std::endl;
 }
 
@@ -309,17 +309,17 @@ void BackboneDB::write_db( std::string filename )
 		return;
 	}
 	if ( ! extra_ ) throw EXCN_No_Extra_Data_To_Write();
-	for ( core::Size i = 0; i <  data_.size(); i++ ) {
-		file << "pdb " << extra_data_[ data_[i].extra_key ].pdb_id << std::endl;
-		file << "seq " << extra_data_[ data_[i].extra_key ].sequence << std::endl;
+	for (auto & i : data_) {
+		file << "pdb " << extra_data_[ i.extra_key ].pdb_id << std::endl;
+		file << "seq " << extra_data_[ i.extra_key ].sequence << std::endl;
 		file << "rot ";
-		for ( core::Size j = 0; j < extra_data_[ data_[i].extra_key ].rotamer_id.size(); j++ ) {
-			file << extra_data_[ data_[i].extra_key ].rotamer_id[j] << " ";
+		for ( core::Size j = 0; j < extra_data_[ i.extra_key ].rotamer_id.size(); j++ ) {
+			file << extra_data_[ i.extra_key ].rotamer_id[j] << " ";
 		}
 		file << std::endl;
 		file << "ang ";
-		for ( core::Size j = 0; j < data_[i].angles.size(); j++ ) {
-			file << data_[i].angles[j] << " ";
+		for ( core::Size j = 0; j < i.angles.size(); j++ ) {
+			file << i.angles[j] << " ";
 		}
 		file << std::endl;
 	}
@@ -331,7 +331,7 @@ BackboneDB::read_legacydb( std::string filename )
 {
 	// use basic C input - C++ are too memory hungry to deal with these potentially v large files
 	FILE *file = fopen( filename.c_str(), "r" );
-	if ( file == NULL ) throw EXCN_DB_IO_Failed( filename, "read" );
+	if ( file == nullptr ) throw EXCN_DB_IO_Failed( filename, "read" );
 
 	data_.clear();
 	BBData new_protein;

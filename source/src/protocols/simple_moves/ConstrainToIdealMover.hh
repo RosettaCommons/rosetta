@@ -57,16 +57,16 @@ public:
 	ConstrainToIdealMover();
 	// ConstrainToIdealMover(ConstrainToIdealMover const & rhs);
 	ConstrainToIdealMover & operator = ( ConstrainToIdealMover const & rhs );
-	virtual ~ConstrainToIdealMover();
+	~ConstrainToIdealMover() override;
 
 	using Mover::apply;
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void apply( core::pose::Pose & pose, core::kinematics::MoveMap & mm );
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP fresh_instance() const;
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP fresh_instance() const override;
+	moves::MoverOP clone() const override;
 
 	/// @brief setter for AtomLevelDomainMap; makes a shallow copy
 	void set_atom_level_domain_map( protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );

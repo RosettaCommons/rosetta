@@ -75,7 +75,7 @@ public:
 
 	MinMover( std::string const & );
 
-	virtual ~MinMover();
+	~MinMover() override;
 
 	/// @brief constructor with arguments
 	///
@@ -117,24 +117,24 @@ public:
 	///     MinMover
 	///     MinMover.movemap
 	///     MinMover.score_function
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	void show(std::ostream & output=std::cout) const override;
 
 	inline void cartesian( bool newval ) { cartesian_ = newval; }
 	inline bool cartesian( ) const { return cartesian_; }
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Called by protocols::moves::MoverFactory when constructing new protocols::moves::Movers. Takes care of the specific mover's parsing.
-	virtual
+	
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	void parse_opts(
 		TagCOP,
@@ -176,8 +176,8 @@ public:
 	///     MinMover.score_function
 	///     MoveMap
 	virtual void movemap( core::kinematics::MoveMapCOP movemap_in );
-	virtual void set_movemap( core::kinematics::MoveMapCOP movemap_in );
-	virtual core::kinematics::MoveMapCOP movemap() const;
+	void set_movemap( core::kinematics::MoveMapCOP movemap_in ) override;
+	core::kinematics::MoveMapCOP movemap() const override;
 
 	/// @brief Sets the ScoreFunction to  <scorefxn_in>
 	/// determines which function to minimize

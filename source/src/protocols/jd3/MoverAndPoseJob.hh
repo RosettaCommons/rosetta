@@ -37,10 +37,10 @@ class MoverAndPoseJob : public Job
 public:
 
 	MoverAndPoseJob();
-	virtual ~MoverAndPoseJob();
+	~MoverAndPoseJob() override;
 
-	virtual
-	JobResultOP run();
+	
+	JobResultOP run() override;
 
 	void mover( moves::MoverOP setting );
 	void pose( core::pose::PoseOP setting );
@@ -67,9 +67,9 @@ class PoseJobResult : public JobResult
 {
 public:
 	PoseJobResult();
-	virtual ~PoseJobResult();
+	~PoseJobResult() override;
 
-	virtual JobStatus status() const;
+	JobStatus status() const override;
 
 	core::pose::PoseOP pose();
 	void pose( core::pose::PoseOP setting );

@@ -58,7 +58,7 @@ public:
 	CDRH3Modeler( utility::vector1<core::fragment::FragSetOP> cdr_h3_frags);
 
 	/// @brief default destructor
-	~CDRH3Modeler();
+	~CDRH3Modeler() override;
 
 	/// @brief enable CDR H3 loop building
 	inline void model_h3( bool setting ) {
@@ -92,8 +92,8 @@ public:
 	};
 
 	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 	/// @brief Build centroid mode CDR H3 loop
 	void build_centroid_loop();

@@ -211,7 +211,7 @@ void ConstraintFragmentSampler::set_max_seq_sep( pose::Pose& pose, core::Size se
 	bool const bHaveChainbreaks( topology_broker().has_chainbreaks_to_close() );
 
 	if ( bHaveConstraints ) {
-		runtime_assert( constraints_ != 0 );
+		runtime_assert( constraints_ != nullptr );
 	}
 
 	if ( bHaveConstraints || bHaveChainbreaks ) {
@@ -364,7 +364,7 @@ void ConstraintFragmentSampler::apply(core::pose::Pose& pose) {
 	tr.Info << "ConstraintFragment Sampler: " << get_current_tag() << std::endl;
 
 	// take note of the current constraints, as we are responsible for restoring them
-	ConstraintSetOP orig_constraints(NULL);
+	ConstraintSetOP orig_constraints(nullptr);
 	tr.Debug << "introduce MaxSeqSep Filter for constraints" << std::endl;
 	orig_constraints = pose.constraint_set()->clone();
 

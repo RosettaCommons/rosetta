@@ -68,10 +68,10 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
-	~DockingHighResLegacy();
+	~DockingHighResLegacy() override;
 
 	//clone
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void set_default( core::pose::Pose & pose );
 	void set_move_map(core::kinematics::MoveMapOP movemap_in);
@@ -94,8 +94,8 @@ public:
 	core::Real get_rot_magnitude() {return rot_magnitude_;}
 
 	// protocol functions
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void set_dock_min_protocol();
 	void set_dock_mcm_protocol( core::pose::Pose & pose );

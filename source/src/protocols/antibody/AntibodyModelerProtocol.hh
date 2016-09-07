@@ -40,9 +40,9 @@ public:
 	AntibodyModelerProtocol();
 
 	// default destructor
-	~AntibodyModelerProtocol();
+	~AntibodyModelerProtocol() override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Assigns default values to primitive members
 	void set_default();
@@ -50,9 +50,9 @@ public:
 	/// @brief Instantiates non-primitive members based on the value of the primitive members
 	void sync_objects_with_flags();
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Associates relevant options with the AntibodyModeler class
 	static void register_options();
@@ -133,7 +133,7 @@ public:
 
 	void display_constraint_residues( core::pose::Pose & pose );
 
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m );
 
 

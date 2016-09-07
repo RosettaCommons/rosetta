@@ -21,6 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // Random number generator
@@ -63,7 +64,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RigidBodyMover" );
 static THREAD_LOCAL basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
 
 RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(){}
-RigidBodyRandomTMHMover::~RigidBodyRandomTMHMover(){}
+RigidBodyRandomTMHMover::~RigidBodyRandomTMHMover()= default;
 RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(core::Real max_trans, core::Real rotation_mag, core::Real translation_mag, core::Size tmhelix,
 	protocols::topology_broker::TopologyClaimerOP claimer)
 :    max_trans_(max_trans),
@@ -71,7 +72,7 @@ RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(core::Real max_trans, core::Rea
 	trans_mag_in_(translation_mag),
 	rot_mag_in_(rotation_mag),
 	num_jump_(tmhelix),
-	claimer_(claimer)
+	claimer_(std::move(claimer))
 {
 	if ( TR.Trace.visible() ) {
 		TR.Trace << "max_trans:  " << max_trans_ << std::endl;

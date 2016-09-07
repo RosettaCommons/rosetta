@@ -25,7 +25,7 @@ namespace core {
 namespace util {
 
 // Static member initialization
-core::scoring::ScoreFunctionOP ChainbreakUtil::score_ = 0;
+core::scoring::ScoreFunctionOP ChainbreakUtil::score_ = nullptr;
 
 bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) {
 	using core::pose::Pose;

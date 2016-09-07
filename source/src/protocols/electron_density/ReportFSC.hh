@@ -31,19 +31,19 @@ namespace electron_density {
 class ReportFSC : public moves::Mover {
 public:
 	ReportFSC();
-	virtual ~ReportFSC() {}
+	~ReportFSC() override = default;
 
 	void init();
 
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const { return "ReportFSC"; }
+	std::string get_name() const override { return "ReportFSC"; }
 
-	moves::MoverOP clone() const { return moves::MoverOP( new ReportFSC( *this ) ); }
-	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ReportFSC ); }
+	moves::MoverOP clone() const override { return moves::MoverOP( new ReportFSC( *this ) ); }
+	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ReportFSC ); }
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 private:
 	core::Real res_low_, res_high_;

@@ -80,26 +80,26 @@ public: // Creation
 	);
 
 	/// @brief Destructor
-	virtual
-	~OptEMultifunc()
-	{}
+	
+	~OptEMultifunc() override
+	= default;
 
 
 public: // Methods
 
 
 	// @brief OptE func
-	virtual
+	
 	Real
-	operator ()(  Multivec const & vars ) const;
+	operator ()(  Multivec const & vars ) const override;
 
 	/// @brief OptE dfunc
-	virtual
+	
 	void
 	dfunc(
 		Multivec const & vars,
 		Multivec & dE_dvars
-	) const;
+	) const override;
 
 	/// @brief Does actual work for OptE minimization
 	/* Real
@@ -301,7 +301,7 @@ public:
 		OptEMultifuncOP optEfunc
 	);
 
-	~WrapperOptEMultifunc();
+	~WrapperOptEMultifunc() override;
 
 	/// self pointers
 	inline WrapperOptEMultifuncCOP get_self_ptr() const { return shared_from_this(); }
@@ -310,17 +310,17 @@ public:
 	inline WrapperOptEMultifuncAP get_self_weak_ptr() { return WrapperOptEMultifuncAP( shared_from_this() ); }
 
 	// @brief OptE func
-	virtual
+	
 	Real
-	operator ()( Multivec const & vars ) const;
+	operator ()( Multivec const & vars ) const override;
 
 	/// @brief OptE dfunc
-	virtual
+	
 	void
 	dfunc(
 		Multivec const & vars,
 		Multivec & dE_dvars
-	) const;
+	) const override;
 
 	Size
 	n_real_dofs() const;
@@ -404,18 +404,18 @@ class WrappedOptEExpressionCreator : public numeric::expression_parser::Expressi
 public:
 	WrappedOptEExpressionCreator();
 	WrappedOptEExpressionCreator( WrapperOptEMultifuncAP multifunc );
-	virtual ~WrappedOptEExpressionCreator();
+	~WrappedOptEExpressionCreator() override;
 
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
-	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & );
+	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) override;
 
-	virtual
+	
 	numeric::expression_parser::ExpressionCOP
 	handle_function_expression(
 		numeric::expression_parser::FunctionTokenCOP function,
 		utility::vector1< numeric::expression_parser::ExpressionCOP > const & args
-	);
+	) override;
 
 	void
 	set_wrapping_optE_multifunc( WrapperOptEMultifuncAP multifunc );

@@ -63,14 +63,14 @@ class Minimize : public moves::Mover {
 public:
 	Minimize();
 
-	~Minimize();
+	~Minimize() override;
 
-	virtual MoverOP clone() const;
-	virtual MoverOP fresh_instance() const;
+	MoverOP clone() const override;
+	MoverOP fresh_instance() const override;
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	virtual void test_move( Pose & pose )
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	void test_move( Pose & pose ) override
 	{
 		apply(pose);
 	}
@@ -96,7 +96,7 @@ Minimize::Minimize() :
 
 }
 
-Minimize::~Minimize() {}
+Minimize::~Minimize() = default;
 
 MoverOP Minimize::clone() const {
 	return MoverOP( new Minimize( *this ) );

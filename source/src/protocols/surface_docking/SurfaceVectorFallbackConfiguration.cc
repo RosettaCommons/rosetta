@@ -73,7 +73,7 @@ basic::resource_manager::ResourceOptionsOP
 SurfaceVectorFallbackConfiguration::get_resource_options( ResourceDescription const & ) const
 {
 	// use the default surface_vector options.
-	return NULL;
+	return nullptr;
 }
 
 std::string

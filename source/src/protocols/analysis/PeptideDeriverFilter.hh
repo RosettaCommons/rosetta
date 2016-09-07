@@ -108,26 +108,26 @@ public:
 	/// @brief clear all outputters in the list.
 	void clear();
 
-	virtual void begin_structure(core::pose::Pose const & pose, std::string const &);
+	void begin_structure(core::pose::Pose const & pose, std::string const &) override;
 
-	virtual void chain_pair_pose_prepared(core::pose::Pose const & pose);
+	void chain_pair_pose_prepared(core::pose::Pose const & pose) override;
 
-	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
+	void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const total_isc,
-		std::string const & options_string);
+		std::string const & options_string) override;
 
-	virtual void peptide_length(core::Size const pep_length);
+	void peptide_length(core::Size const pep_length) override;
 
-	virtual void peptide_entry(core::pose::Pose const & pose,
+	void peptide_entry(core::pose::Pose const & pose,
 		PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info,
 		bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose,
-		core::Real const cyclic_isc);
+		core::Real const cyclic_isc) override;
 
 
-	virtual void end_receptor_partner_pair();
+	void end_receptor_partner_pair() override;
 
-	virtual void end_structure();
+	void end_structure() override;
 
 private:
 	utility::vector1<PeptideDeriverOutputterOP> list_;
@@ -144,27 +144,27 @@ public:
 	/// @param prefix a string prefix to prepend to each output line
 	PeptideDeriverBasicStreamOutputter(utility::io::orstream & out, std::string prefix);
 
-	virtual void begin_structure(core::pose::Pose const &, std::string const &);
+	void begin_structure(core::pose::Pose const &, std::string const &) override;
 
-	virtual void chain_pair_pose_prepared(core::pose::Pose const & ) {
+	void chain_pair_pose_prepared(core::pose::Pose const & ) override {
 		// do nothing
 	}
-	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
+	void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const total_isc,
-		std::string const & options_string);
+		std::string const & options_string) override;
 
-	virtual void peptide_length(core::Size const pep_length);
+	void peptide_length(core::Size const pep_length) override;
 
 	// TODO : consider using a PeptideDeriverEntry struct to make this signature less verbose and more tolerant to changes in the protocol
 	//        e.g.,  virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntry const & peptide_deriver_entry) --yuvals
-	virtual void peptide_entry(core::pose::Pose const & , PeptideDeriverEntryType const entry_type, core::Size const pep_start,
+	void peptide_entry(core::pose::Pose const & , PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
-		core::pose::Pose const &, core::Real const cyclic_isc);
+		core::pose::Pose const &, core::Real const cyclic_isc) override;
 
 
-	virtual void end_receptor_partner_pair();
+	void end_receptor_partner_pair() override;
 
-	virtual void end_structure();
+	void end_structure() override;
 
 private:
 	utility::io::orstream * out_p_;
@@ -185,28 +185,28 @@ public:
 	/// @param prefix a string prefix to prepend to each output line
 	PeptideDeriverMarkdownStreamOutputter(utility::io::orstream & out, std::string prefix);
 
-	virtual void begin_structure(core::pose::Pose const & pose, std::string const &);
+	void begin_structure(core::pose::Pose const & pose, std::string const &) override;
 
 	// TODO : do we want to output anything here? Probably not.
-	virtual void chain_pair_pose_prepared(core::pose::Pose const &) {
+	void chain_pair_pose_prepared(core::pose::Pose const &) override {
 		// do nothing
 	}
 
-	virtual void end_structure();
+	void end_structure() override;
 
-	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
+	void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const total_isc,
-		std::string const & options_string);
+		std::string const & options_string) override;
 
-	virtual void peptide_length(core::Size const pep_length);
+	void peptide_length(core::Size const pep_length) override;
 
-	virtual void peptide_entry(core::pose::Pose const & pose,
+	void peptide_entry(core::pose::Pose const & pose,
 		PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 		core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info,
 		bool const was_cyclic_pep_modeled, core::pose::Pose const &,
-		core::Real const cyclic_isc );
+		core::Real const cyclic_isc ) override;
 
-	virtual void end_receptor_partner_pair();
+	void end_receptor_partner_pair() override;
 
 private:
 	/// clear accumulating member variables
@@ -245,31 +245,31 @@ public:
 		bool const is_dump_prepared_pose, bool const is_dump_cyclic_poses,
 		core::scoring::ScoreFunctionCOP scorefxn);
 
-	virtual void begin_structure(core::pose::Pose const &, std::string const &) {
+	void begin_structure(core::pose::Pose const &, std::string const &) override {
 		// do nothing
 	}
 
-	virtual void chain_pair_pose_prepared(core::pose::Pose const & pose);
+	void chain_pair_pose_prepared(core::pose::Pose const & pose) override;
 
-	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
+	void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const,
-		std::string const &);
+		std::string const &) override;
 
-	virtual void peptide_length(core::Size const pep_length);
+	void peptide_length(core::Size const pep_length) override;
 
-	virtual void end_receptor_partner_pair() {
+	void end_receptor_partner_pair() override {
 		// do nothing
 	}
 
-	virtual void end_structure() {
+	void end_structure() override {
 		// do nothing
 	}
 
-	virtual void peptide_entry(core::pose::Pose const & pose,
+	void peptide_entry(core::pose::Pose const & pose,
 		PeptideDeriverEntryType const entry_type, core::Size const,
 		core::Real const, core::Real const, std::string const & disulfide_info,
 		bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose,
-		core::Real const);
+		core::Real const) override;
 
 private:
 	/// output a post to the given file
@@ -333,20 +333,20 @@ public:
 	/// @brief assignment operator
 	PeptideDeriverFilter & operator=( PeptideDeriverFilter const & rhs );
 
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 
 	// inline overrides
-	virtual protocols::filters::FilterOP clone() const {
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new PeptideDeriverFilter( *this ) );
 	}
-	virtual protocols::filters::FilterOP fresh_instance() const {
+	protocols::filters::FilterOP fresh_instance() const override {
 		return protocols::filters::FilterOP( new PeptideDeriverFilter );
 	}
 
 	// NOTE : I have no idea why this virtual method exists together with the get_type() method, which
 	//        returns the type_ member initialized upon construction (see constructor).
-	virtual std::string name() const { return "PeptideDeriverFilter"; }
+	std::string name() const override { return "PeptideDeriverFilter"; }
 
 	// accessors
 	utility::vector1<core::Size> get_pep_lengths() const { return pep_lengths_; }
@@ -397,7 +397,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	// Filter-specific methods
 

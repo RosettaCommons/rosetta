@@ -46,8 +46,8 @@ public:
 
 public:
 
-	WidgetFactory() {}
-	virtual ~WidgetFactory() {}
+	WidgetFactory() = default;
+	virtual ~WidgetFactory() = default;
 
 	void factory_register( CreatorOP creator ) {
 		/// This would be an appropriate place to lock a mutex.

@@ -73,13 +73,13 @@ protected: // Creation
 	/// @brief Default constructor
 	inline
 	Key()
-	{}
+	= default;
 
 
 	/// @brief Copy constructor
 	inline
 	Key( Key const & )
-	{}
+	= default;
 
 
 public: // Creation
@@ -95,7 +95,7 @@ public: // Creation
 	inline
 	virtual
 	~Key()
-	{}
+	= default;
 
 
 public: // Assignment

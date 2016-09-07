@@ -40,7 +40,7 @@ using core::indexed_structure_store::StructureStoreManager;
 template <> std::mutex utility::SingletonBase< StructureStoreManager >::singleton_mutex_{};
 template <> std::atomic< StructureStoreManager * > utility::SingletonBase< StructureStoreManager >::instance_( 0 );
 #else
-template <> StructureStoreManager * utility::SingletonBase< StructureStoreManager >::instance_( 0 );
+template <> StructureStoreManager * utility::SingletonBase< StructureStoreManager >::instance_( nullptr );
 #endif
 
 }
@@ -76,7 +76,7 @@ FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_
 //considered caching at this level but I would get double storage
 FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_name, std::string store_path)
 {
-	FragmentStoreOP target_store(NULL);
+	FragmentStoreOP target_store(nullptr);
 
 	std::string resolved_path = resolve_store_path(store_path);
 
@@ -102,7 +102,7 @@ FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_
 
 //considered caching at this level but I would get double storage
 FragmentStoreOP StructureStoreManager::load_fragment_store(std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types){
-	FragmentStoreOP target_store(NULL);
+	FragmentStoreOP target_store(nullptr);
 	std::string resolved_path = resolve_store_path(store_path);
 	if ( resolved_path.empty() ) {
 		utility_exit_with_message("Unable to resolve specified store: " + store_path);
@@ -141,13 +141,13 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		std::map <Size,Size>::iterator type_ct_iter;
 		std::vector<Size> fragsGroupIds = fullStore->int64_groups[group_field];
 		Size fragment_length = fullStore->fragment_specification.fragment_length;
-		for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+		for (unsigned long & fragsGroupId : fragsGroupIds) {
 			//second time id seen increment counter 1st time increment to 1
-			type_ct_iter = type_ct.find(fragsGroupIds[ii]);
+			type_ct_iter = type_ct.find(fragsGroupId);
 			if ( type_ct_iter != type_ct.end() ) {
 				type_ct_iter->second++;
 			} else {
-				type_ct.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
+				type_ct.insert(std::pair<Size,Size>(fragsGroupId,1));
 			}
 		}
 		//create correctly sized fragmentStores
@@ -176,7 +176,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		}//ends the copying of the fragmentCoordinates
 		fullStore->fragment_coordinates.clear();
 		//-------------Copy the real_groups
-		for ( std::map<std::string, std::vector<numeric::Real> >::iterator itr = fullStore->real_groups.begin(); itr !=  fullStore->real_groups.end(); ++itr ) {
+		for ( auto itr = fullStore->real_groups.begin(); itr !=  fullStore->real_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
 			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
 				if ( typed_frags[fragsGroupIds[ii]]->real_groups[tmp_group_name].size() == 0 ) {
@@ -188,7 +188,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		}
 		fullStore->real_groups.clear();
 		//-------------Copy the realVector_groups
-		for ( std::map<std::string, std::vector<std::vector<numeric::Real> > > ::iterator itr = fullStore->realVector_groups.begin(); itr !=  fullStore->realVector_groups.end(); ++itr ) {
+		for ( auto itr = fullStore->realVector_groups.begin(); itr !=  fullStore->realVector_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
 			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
 				if ( typed_frags[fragsGroupIds[ii]]->realVector_groups[tmp_group_name].size() == 0 ) {
@@ -204,7 +204,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		}
 		fullStore->realVector_groups.clear();
 		//-------------Copy the string_groups
-		for ( std::map<std::string, std::vector<std::string > > ::iterator itr = fullStore->string_groups.begin(); itr !=  fullStore->string_groups.end(); ++itr ) {
+		for ( auto itr = fullStore->string_groups.begin(); itr !=  fullStore->string_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
 			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
 				if ( typed_frags[fragsGroupIds[ii]]->string_groups[tmp_group_name].size() == 0 ) {
@@ -216,7 +216,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		}
 		fullStore->string_groups.clear();
 		//-------------Copy & Erase the int64_groups while ignoring group_field
-		for ( std::map<std::string, std::vector<numeric::Size> >::iterator itr = fullStore->int64_groups.begin(); itr !=  fullStore->int64_groups.end(); ++itr ) {
+		for ( auto itr = fullStore->int64_groups.begin(); itr !=  fullStore->int64_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
 			if ( tmp_group_name != group_field ) {
 				for ( Size ii =0; ii<fragsGroupIds.size(); ++ii ) {

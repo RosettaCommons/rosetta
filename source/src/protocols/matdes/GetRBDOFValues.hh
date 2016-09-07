@@ -72,23 +72,23 @@ public:// constructor/destructor
 	// @brief copy constructor
 	GetRBDOFValues( GetRBDOFValues const & rval );
 
-	virtual ~GetRBDOFValues();
+	~GetRBDOFValues() override;
 
 
 public:// virtual constructor
 
 
 	// @brief make clone
-	virtual protocols::filters::FilterOP clone() const;
+	protocols::filters::FilterOP clone() const override;
 
 	// @brief make fresh instance
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	protocols::filters::FilterOP fresh_instance() const override;
 
 
 public:// accessor
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "GetRBDOFValues"; }
+	std::string name() const override { return "GetRBDOFValues"; }
 
 public:// setters
 
@@ -115,20 +115,20 @@ public:// getters
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 public:// virtual main operation
 
 	// @brief always returns true.
-	virtual bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	/// @brief
-	virtual core::Real report_sm( Pose const & pose ) const;
-	virtual void report( std::ostream & out, Pose const & pose ) const;
+	core::Real report_sm( Pose const & pose ) const override;
+	void report( std::ostream & out, Pose const & pose ) const override;
 
 	/// @brief get the translation and rotation for a user specified jump
 	core::Real compute( Pose const & pose, bool const & verb, std::string const & dof_name, int const & jump, char const & ax, bool const & disp, bool const & ang, core::Real const & init_d, core::Real const & init_a, bool const & get_init ) const;

@@ -36,7 +36,7 @@ using basic::resource_manager::ResourceManagerFactory;
 template <> std::mutex utility::SingletonBase< ResourceManagerFactory >::singleton_mutex_{};
 template <> std::atomic< ResourceManagerFactory * > utility::SingletonBase< ResourceManagerFactory >::instance_( 0 );
 #else
-template <> ResourceManagerFactory * utility::SingletonBase< ResourceManagerFactory >::instance_( 0 );
+template <> ResourceManagerFactory * utility::SingletonBase< ResourceManagerFactory >::instance_( nullptr );
 #endif
 
 }
@@ -56,7 +56,7 @@ ResourceManager *
 ResourceManagerFactory::create_resource_manager_from_options_system() const
 {
 	// temporary: always instantiate a JD2 resource manager
-	ResourceManagerCreatorsMap::const_iterator iter = creators_map_.find( "JD2ResourceManager" );
+	auto iter = creators_map_.find( "JD2ResourceManager" );
 	if ( iter == creators_map_.end() ) {
 		utility_exit_with_message( "failed to find JD2ResourceManager; must not have been properly registered" );
 	}

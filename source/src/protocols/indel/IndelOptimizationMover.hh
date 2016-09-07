@@ -37,21 +37,21 @@ public:
 		start_res_( start_res ),
 		end_res_( end_res ),
 		loop_length_( loop_length ),
-		remodel_( remodel ),
-		intermedrelax_( intermedrelax ),
-		refine_( refine ),
-		relax_( relax ),
+		remodel_(std::move( remodel )),
+		intermedrelax_(std::move( intermedrelax )),
+		refine_(std::move( refine )),
+		relax_(std::move( relax )),
 		frag_files_( frag_files ),
 		num_to_dock_( num_to_dock ),
 		dump_initial_results_( dump_initial_results )
 	{}
 
 	//default dtor
-	virtual ~IndelOptimizationMover(){}
+	~IndelOptimizationMover() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "IndelOptimizationMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "IndelOptimizationMover"; }
 
 	// getters
 	Size start_res() {

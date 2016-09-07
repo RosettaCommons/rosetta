@@ -243,10 +243,10 @@ using namespace basic::options;
 // evaluates the PCA
 class PcaEvaluator : public PoseEvaluator {
 public:
-	PcaEvaluator ( PCA_OP pca ) : pca_( pca ) {}
-	virtual void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const;
-	core::Size size() const { return 2; };
-	std::string name( core::Size ) const { return "pca1"; };
+	PcaEvaluator ( PCA_OP pca ) : pca_(std::move( pca )) {}
+	void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const override;
+	core::Size size() const override { return 2; };
+	std::string name( core::Size ) const override { return "pca1"; };
 private:
 	PCA_OP pca_;
 };
@@ -257,9 +257,9 @@ using namespace core::scoring::constraints; // has to be core, now that protocol
 class ShowViolation : public PoseEvaluator {
 public:
 	ShowViolation( ) : constraints_( /* NULL */ ) {}
-	virtual void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const;
-	core::Size size() const { return 1; };
-	std::string name( core::Size ) const { return "viol"; };
+	void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const override;
+	core::Size size() const override { return 1; };
+	std::string name( core::Size ) const override { return "viol"; };
 private:
 	mutable ConstraintSetOP constraints_;
 };
@@ -268,9 +268,9 @@ private:
 class ComputeTotalDistCst : public PoseEvaluator {
 public:
 	ComputeTotalDistCst( ) : constraints_( /* NULL */ ) {};
-	virtual void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const;
-	core::Size size() const { return 1; };
-	std::string name( core::Size ) const { return "total"; };
+	void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const override;
+	core::Size size() const override { return 1; };
+	std::string name( core::Size ) const override { return "total"; };
 private:
 	mutable ConstraintSetOP constraints_;
 };
@@ -292,7 +292,7 @@ AbrelaxApplication::AbrelaxApplication() :
 	abrelax_checkpoints_( "Abrelax" )
 {}
 
-AbrelaxApplication::~AbrelaxApplication() {}
+AbrelaxApplication::~AbrelaxApplication() = default;
 
 /// @details Shallow copy to mimic the pre 9/8/09 compiler-generated version of this
 /// method.  If you add new
@@ -462,7 +462,7 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 		if ( success && option[ OptionKeys::loops::idealize_after_loop_close ]() ) {
 			protocols::idealize::IdealizeMover idealizer;
 			idealizer.fast( false );
-			pose.constraint_set( NULL );
+			pose.constraint_set( nullptr );
 			idealizer.apply( pose );
 			bIdeal = true;
 		}
@@ -620,7 +620,7 @@ public:
 	Stage1Sampler( protocols::simple_moves::FragmentMoverOP brute_move_large )
 	: ClassicAbinitio( brute_move_large, brute_move_large, brute_move_large, 1 /*dummy*/ ) {};
 
-	virtual void apply( core::pose::Pose &pose );
+	void apply( core::pose::Pose &pose ) override;
 };
 
 void Stage1Sampler::apply( core::pose::Pose &pose ) {
@@ -660,12 +660,12 @@ void AbrelaxApplication::do_rerun() {
 	using namespace pose;
 	using namespace basic::options::OptionKeys;
 
-	core::io::silent::SilentFileDataOP outsfd( NULL );
+	core::io::silent::SilentFileDataOP outsfd( nullptr );
 	if ( option[ out::file::silent ].user() ) {
 		outsfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData() );
 	}
 
-	core::scoring::ScoreFunctionOP scorefxn( NULL );
+	core::scoring::ScoreFunctionOP scorefxn( nullptr );
 	if ( option[ in::file::silent ].user() ) {
 		//read silent file for input
 		SilentFileData sfd;
@@ -778,7 +778,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 		option[ OptionKeys::abinitio::fastrelax ]();
 
 	// setup profiling
-	evaluation::TimeEvaluatorOP run_time( NULL );
+	evaluation::TimeEvaluatorOP run_time( nullptr );
 	if ( !option[ OptionKeys::run::no_prof_info_in_silentout ] ) {
 		add_evaluation( run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator ) ); //just don't use this in integration tests!
 	}
@@ -1168,7 +1168,7 @@ void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 
 	// setup jumps
 	bool bDoubleDef = false;
-	jump_def_ = NULL;
+	jump_def_ = nullptr;
 	ss_def_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *fragset_small_, false /*no JustUseCentralResidue */ ) );
 
 	if ( option [ jumps::extra_frags_for_ss ].user() ) {
@@ -1193,16 +1193,16 @@ void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 		jump_def_ = ptr;
 	}
 	if ( option[ jumps::jump_lib ].user() ) {
-		bDoubleDef = jump_def_ != 0;
+		bDoubleDef = jump_def_ != nullptr;
 		JumpSelectorOP ptr( new JumpSelector( native_pose_->secstruct() ) );
 		ptr->read_file( option[ jumps::jump_lib ] );
 		jump_def_ = ptr;
 	}
 	if ( option[ jumps::sheets ].user() || option[ jumps::random_sheets ].user() ) {
-		bDoubleDef = jump_def_ != 0;
+		bDoubleDef = jump_def_ != nullptr;
 
 		// get secondary structure info
-		runtime_assert( fragset_small_ != 0 );
+		runtime_assert( fragset_small_ != nullptr );
 
 		ss_def_->show( tr.Trace );
 		// get pairings file
@@ -1235,7 +1235,7 @@ void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 		}
 		tr.Info << *ps << std::endl;
 		core::scoring::dssp::PairingList helix_pairings; //empty for now
-		jump_def_ = jumping::BaseJumpSetupOP( new TemplateJumpSetup( NULL, ss_def_, ps, helix_pairings ) );
+		jump_def_ = jumping::BaseJumpSetupOP( new TemplateJumpSetup( nullptr, ss_def_, ps, helix_pairings ) );
 	}
 
 	if ( option[ templates::pairings ] ) {
@@ -1244,7 +1244,7 @@ void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 			tr.Info << "use fixed jumps but take jump-geometries from template! " << std::endl;
 			jump_def_ = jumping::BaseJumpSetupOP( new FixTemplateJumpSetup( *templates_->create_jump_def( ss_def_ ), jump_def_ ) );
 		} else {
-			bDoubleDef = jump_def_ != 0;
+			bDoubleDef = jump_def_ != nullptr;
 			jump_def_ = templates_->create_jump_def( ss_def_ );
 		}
 
@@ -1252,7 +1252,7 @@ void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 	}
 
 	if ( option[ jumps::residue_pair_jump_file ].user() ) {
-		bDoubleDef = jump_def_ != 0;
+		bDoubleDef = jump_def_ != nullptr;
 		ResiduePairJumpSetupOP ptr( new ResiduePairJumpSetup( extended_pose.total_residue() ) );
 		ptr->read_file( option[ jumps::residue_pair_jump_file ]() );
 		jump_def_ = ptr;
@@ -1465,7 +1465,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			stage1_sampler->init( res_switch.start_pose() ); //sets default options
 			stage1_sampler->bSkipStage3_ = true;
 			stage1_sampler->bSkipStage4_ = true;
-			stage1_sampler->closure_protocol( NULL );
+			stage1_sampler->closure_protocol( nullptr );
 			loops::Loops rigid_core( loops_in_.invert( extended_pose.total_residue() ) );
 			controller = LoopJumpFoldCstOP( new DoubleLayerKinematicAbinitio(
 				jump_def_,
@@ -1592,7 +1592,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 core::scoring::ScoreFunctionOP AbrelaxApplication::generate_scorefxn( bool fullatom ) {
-	core::scoring::ScoreFunctionOP scorefxn( NULL );
+	core::scoring::ScoreFunctionOP scorefxn( nullptr );
 	if ( fullatom ) {
 		scorefxn = core::scoring::get_score_function();
 	} else {
@@ -1673,7 +1673,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 	abinitio_protocol.set_fullatom_scorefxn( fullatom_scorefxn );
 	abinitio_protocol.set_centroid_scorefxn( centroid_scorefxn );
 
-	evaluation::TimeEvaluatorOP run_time( NULL );
+	evaluation::TimeEvaluatorOP run_time( nullptr );
 	if ( !option[ OptionKeys::run::no_prof_info_in_silentout ]() ) {
 		add_evaluation( run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator ) ); //just don't use this in integration tests!
 		abinitio_protocol.set_evaluation( evaluator_ );
@@ -1681,7 +1681,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 	// production loop
 	while ( jobdist.next_job(curr_job, curr_nstruct) && !bEndrun ) {
-		time_t pdb_start_time = time(NULL);
+		time_t pdb_start_time = time(nullptr);
 		if ( run_time && !option[ OptionKeys::abinitio::no_write_failures ]() ) {  //if we omit decoys we want to count from write-event to write-
 			run_time->reset(); //reset clock of TimeEvaluator
 		}
@@ -1930,7 +1930,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		} //bProcessDecoy ( false if multi-fast_relax )
 
 		// clean up
-		time_t pdb_end_time = time(NULL);
+		time_t pdb_end_time = time(nullptr);
 		tr.Info << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 		abinitio_protocol.get_checkpoints().clear_checkpoints();
 		abrelax_checkpoints_.clear_checkpoints();
@@ -1979,10 +1979,10 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 	}
 
 	// remove constraints if option is set
-	ConstraintSetOP orig_cst = NULL;
+	ConstraintSetOP orig_cst = nullptr;
 	if ( option[ constraints::no_cst_in_relax ] ) {
 		orig_cst = pose.constraint_set()->clone();
-		pose.constraint_set( NULL );
+		pose.constraint_set( nullptr );
 	}
 
 	add_fa_constraints_from_cmdline( pose, *scorefxn );
@@ -2009,7 +2009,7 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 	/// Do a final clean relax without the constraints ?
 	if ( option[ OptionKeys::loops::final_clean_fastrelax ]() ) {
 		if ( !abrelax_checkpoints_.recover_checkpoint( pose,  tag, "final_fastrelax", true, true) ) {
-			pose.constraint_set( NULL );
+			pose.constraint_set( nullptr );
 			relax::FastRelax fast_relax( scorefxn );
 			fast_relax.set_current_tag( tag );
 			fast_relax.apply( pose );

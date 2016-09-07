@@ -54,7 +54,7 @@ public:
 	DockSetupMover();
 
 	/// @brief clone
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief copy ctor
 	DockSetupMover( DockSetupMover const & rhs );
@@ -65,11 +65,11 @@ public:
 	/// @brief Assigns default values to primitive members
 	void set_defaults();
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	std::string const& partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
 
-	virtual std::string get_name() const { return "DockSetupMover"; }
+	std::string get_name() const override { return "DockSetupMover"; }
 
 	// DockJumps & movable_jumps(){ return movable_jumps_;} /// @brief returns ref to the jumps vector for docking
 	// DockJumps const & movable_jumps() const { return movable_jumps_; } /// @ return const ref to the jumps vector for docking
@@ -78,7 +78,7 @@ public:
 	// void set_movable_jumps( DockJumps const& setting ){ movable_jumps_ = setting; }
 	// void add_jump( core::SSize const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
 
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const DockSetupMover & dp );
 
 	// function for the parser with lots of accessors
@@ -88,7 +88,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 protected:
 	void copy( DockSetupMover & lhs, DockSetupMover const & rhs);

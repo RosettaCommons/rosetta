@@ -53,7 +53,7 @@ public:
 	SidechainMinMover( core::Size rb_jump, core::scoring::ScoreFunctionOP scorefxn );
 
 	// destructor
-	~SidechainMinMover();
+	~SidechainMinMover() override;
 
 
 	/// @brief Completes the setup of a default instantiation of a SideChainMinMover
@@ -64,8 +64,8 @@ public:
 
 	void update_movemap( core::pose::Pose & pose );
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 protected:
 	protocols::simple_moves::MinMoverOP minmover_;
@@ -89,13 +89,13 @@ public:
 	);
 
 	// destructor
-	~InterfaceSidechainMinMover();
+	~InterfaceSidechainMinMover() override;
 
 	void set_default();
 
 	void set_interface_dist( core::Real interface_dist);
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 	core::Real interface_dist_;

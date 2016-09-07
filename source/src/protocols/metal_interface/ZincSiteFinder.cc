@@ -50,8 +50,7 @@ ZincSiteFinder::ZincSiteFinder( core::Size zinc_res ) // constructor for known z
 }
 
 ZincSiteFinder::~ZincSiteFinder() // destructor
-{
-}
+= default;
 
 
 void

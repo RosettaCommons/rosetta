@@ -29,19 +29,19 @@ class AngleToVector : public filters::Filter
 {
 public:
 	AngleToVector();
-	virtual ~AngleToVector();
-	filters::FilterOP clone() const {
+	~AngleToVector() override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new AngleToVector( *this ) );
 	}
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new AngleToVector() );
 	}
 
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 	virtual core::Real compute( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	core::Size chain() const{ return chain_; }
 	void chain( core::Size const r ){ chain_ = r; }

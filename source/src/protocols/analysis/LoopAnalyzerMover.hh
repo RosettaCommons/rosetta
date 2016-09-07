@@ -40,7 +40,7 @@ public:
 
 	LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer = false );
 
-	virtual ~LoopAnalyzerMover();
+	~LoopAnalyzerMover() override;
 
 	LoopAnalyzerMover();
 
@@ -52,19 +52,19 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	LoopAnalyzerMover & operator = ( LoopAnalyzerMover const & rhs );
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual bool reinitialize_for_new_input() const {return false;} //reset allows this; true here would break loops
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	bool reinitialize_for_new_input() const override {return false;} //reset allows this; true here would break loops
 
 public:
 	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
-	virtual void apply( core::pose::Pose & input_pose );
+	void apply( core::pose::Pose & input_pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 public: ///////////////////getters, setters/////////////
 	/// @brief set loops object, because public setters/getters are a rule

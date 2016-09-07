@@ -74,7 +74,7 @@ FindEndpointsOperation::FindEndpointsOperation() :
 {
 }
 
-FindEndpointsOperation::~FindEndpointsOperation() {}
+FindEndpointsOperation::~FindEndpointsOperation() = default;
 
 core::pack::task::operation::TaskOperationOP FindEndpointsOperation::clone() const
 {
@@ -86,15 +86,15 @@ core::Size
 neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp, core::Size const sequence_separation ){
 
 	core::Size neighbor_count( 0 );
-	for ( utility::vector1<core::Size>::const_iterator res_jt = neighbors.begin(); res_jt != neighbors.end(); ++res_jt ) {
-		if ( target_res == *res_jt ) { // don't count self as neighbour
+	for (unsigned long neighbor : neighbors) {
+		if ( target_res == neighbor ) { // don't count self as neighbour
 			continue;
 		}
-		if ( std::abs( (int)target_res - (int)*res_jt ) <= (int) sequence_separation ) { // make sure sequence separation is >= sequence separation
+		if ( std::abs( (int)target_res - (int)neighbor ) <= (int) sequence_separation ) { // make sure sequence separation is >= sequence separation
 			continue;
 		}
 		bool intervening_helix( false );
-		for ( core::Size i=std::min( target_res, *res_jt ); i<=std::max( target_res, *res_jt ); ++i ) { /// make sure there is an intervening helix
+		for ( core::Size i=std::min( target_res, neighbor ); i<=std::max( target_res, neighbor ); ++i ) { /// make sure there is an intervening helix
 			if ( dssp.get_dssp_secstruct( i ) == 'H' ) {
 				intervening_helix = true;
 			}
@@ -102,7 +102,7 @@ neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res,
 		if ( !intervening_helix ) {
 			continue;
 		}
-		core::Real const distance(pose.residue( target_res ).xyz( "CA" ).distance( pose.residue( *res_jt ).xyz("CA") ) );
+		core::Real const distance(pose.residue( target_res ).xyz( "CA" ).distance( pose.residue( neighbor ).xyz("CA") ) );
 
 		if ( distance<=dist_threshold ) {
 			++neighbor_count;

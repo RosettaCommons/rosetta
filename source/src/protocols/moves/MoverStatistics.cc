@@ -45,7 +45,7 @@ namespace protocols {
 namespace moves {
 
 /// @details Auto-generated virtual destructor
-MoverStatistics::~MoverStatistics() {}
+MoverStatistics::~MoverStatistics() = default;
 
 typedef core::Real Real;
 using basic::T;
@@ -61,8 +61,8 @@ void MoverStatistics::print( MonteCarloOP mc, std::string const & type )
 	if ( TR.Trace.visible() ) { //change from Debug --> Trace since it produces output every step!
 		std::ostringstream outstring;
 
-		for ( Size ii = 0; ii < score_.size(); ++ii ) {
-			outstring << F( 9, 3, score_[ ii ] ) << " ";
+		for (double & ii : score_) {
+			outstring << F( 9, 3, ii ) << " ";
 		}
 		outstring << F( 9, 3, mc->last_accepted_score() ) << "  " << F( 9, 3, mc->lowest_score() ) << "  " << type << "   ";
 

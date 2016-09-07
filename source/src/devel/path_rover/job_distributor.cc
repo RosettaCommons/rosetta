@@ -112,7 +112,7 @@
 #include <utility/io/ozstream.hh>
 
 // C++ Headers
-#include "time.h"
+#include <ctime>
 
 //Graphics
 #ifdef GL_GRAPHICS

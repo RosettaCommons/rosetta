@@ -74,7 +74,7 @@ class ResourceManager : public utility::pointer::ReferenceCount
 public:
 
 	ResourceManager();
-	virtual ~ResourceManager();
+	~ResourceManager() override;
 
 	/// @brief Deprecated access to a global (not-quite singleton) ResourceManager instance that
 	/// should be removed

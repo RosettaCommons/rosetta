@@ -43,6 +43,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/numeric.functions.hh>
@@ -85,7 +86,7 @@ using namespace core;
 
 /// @brief a ConstraintsSet whose constraints can be switched off, according to sequence separation in residues
 /// between residue pair constraints.
-MaxSeqSepConstraintSet::~MaxSeqSepConstraintSet() {}
+MaxSeqSepConstraintSet::~MaxSeqSepConstraintSet() = default;
 MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, core::kinematics::FoldTree const & f ) :
 	ConstraintSet( other )
 {
@@ -94,15 +95,11 @@ MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, cor
 }
 
 /// @copy constructor. Performs a shallow copy of the constraints and the ShortestPathInFoldTree object
-MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( MaxSeqSepConstraintSet const &other )
-: ConstraintSet( other ),
-	max_seq_sep_ ( other.max_seq_sep_ ),
-	shortest_path_( other.shortest_path_ )
-{ }
+MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( MaxSeqSepConstraintSet const & ) = default;
 
 MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const &other, ShortestPathInFoldTreeCOP sp ) :
 	ConstraintSet( other ),
-	shortest_path_( sp )
+	shortest_path_(std::move( sp ))
 {}
 
 ConstraintSet &
@@ -243,8 +240,8 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 	//non_residue_pair_constraints_.conformation_energy( pose.conformation(), sfxn.weights(), emap );
 	core::scoring::func::ConformationXYZ const xyz_func( pose.conformation() );
 	core::scoring::constraints::ConstraintCOPs const& csts( non_residue_pair_constraints().constraints() );
-	for ( core::scoring::constraints::ConstraintCOPs::const_iterator it=csts.begin(), ite = csts.end(); it != ite; ++it ) {
-		core::scoring::constraints::Constraint const & cst( **it );
+	for (const auto & it : csts) {
+		core::scoring::constraints::Constraint const & cst( *it );
 		if ( cst.effective_sequence_separation( shortest_path() ) < max_seq_sep() ) cst.score( xyz_func, sfxn.weights(), emap );
 	}
 }

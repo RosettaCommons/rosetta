@@ -113,16 +113,16 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 	/// @brief Sample the pose in the regions specified by get_loops().
 	/// @details The parent class apply() method automatically sets up a fold
 	/// tree (if necessary) and keeps track of whether or not the move succeeded.
 	/// Child classes should reimplement do_apply() instead of this method.
-	void apply(Pose & pose);
+	void apply(Pose & pose) override;
 
 	/// @brief Return the name of this mover.
-	virtual string get_name() const { return "LoopMover"; }
+	string get_name() const override { return "LoopMover"; }
 
 public:
 

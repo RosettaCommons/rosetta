@@ -62,7 +62,7 @@ void
 KinematicTaskControl::init( core::pose::Pose const & /* pose */ )  {
 }
 
-KinematicTaskControl::~KinematicTaskControl() {}
+KinematicTaskControl::~KinematicTaskControl() = default;
 
 //@brief basic apply for the generalized protocol:
 void KinematicTaskControl::apply( pose::Pose &pose ) {
@@ -116,7 +116,7 @@ bool KinematicTaskControl::inner_loop( core::pose::Pose& pose ) {
 	bool success( false );
 
 	Size fail( 0 );
-	current_kinematics_ = NULL;
+	current_kinematics_ = nullptr;
 	while ( fail++ <= 10 && !current_kinematics_ ) {// get new setup
 		//this may add constraints to the pose ...or should this be handled via the KinematicControl object?!
 		current_kinematics_ = new_kinematics( pose );
@@ -152,9 +152,9 @@ void KinematicTaskControl::set_extended_torsions_and_idealize_loops( core::pose:
 
 	if ( loops.size() == 0 ) loops.add_loop( 1, pose.total_residue(), 0 );
 	tr.Debug << "extend structure for " << loops << std::endl;
-	for ( loops::Loops::const_iterator it = loops.begin(), eit = loops.end(); it != eit; ++it ) {
-		Size const end_extended ( std::min( (int) it->stop(), (int) pose.total_residue() ) );
-		for ( Size pos = std::max( 1, (int) it->start()); pos<=end_extended; pos++ ) {
+	for (const auto & loop : loops) {
+		Size const end_extended ( std::min( (int) loop.stop(), (int) pose.total_residue() ) );
+		for ( Size pos = std::max( 1, (int) loop.start()); pos<=end_extended; pos++ ) {
 			core::conformation::idealize_position( pos, pose.conformation() );
 		}
 		Real const init_phi  ( -150.0 );
@@ -166,10 +166,10 @@ void KinematicTaskControl::set_extended_torsions_and_idealize_loops( core::pose:
 		//    pose.replace_residue( 1, *new_rsd , false /*orient backbone*/ );
 		//   }
 
-		for ( Size pos = it->start(); pos <= end_extended; pos++ ) {
-			if ( pos != it->start() ) pose.set_phi( pos,  init_phi );
+		for ( Size pos = loop.start(); pos <= end_extended; pos++ ) {
+			if ( pos != loop.start() ) pose.set_phi( pos,  init_phi );
 			if ( pos != end_extended ) pose.set_psi( pos,  init_psi );
-			if ( ( pos != it->start() ) && ( pos != end_extended ) ) pose.set_omega( pos,  init_omega );
+			if ( ( pos != loop.start() ) && ( pos != end_extended ) ) pose.set_omega( pos,  init_omega );
 		}
 	}
 }

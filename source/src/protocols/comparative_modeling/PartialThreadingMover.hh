@@ -45,13 +45,13 @@ public:
 		core::pose::Pose const & template_pose
 	);
 
-	virtual ~PartialThreadingMover() {}
+	~PartialThreadingMover() override = default;
 
 	/// @brief Threads the given Pose onto the template_pose with the
 	/// SequenceAlignment provided.
-	virtual void apply( core::pose::Pose & query_pose );
+	void apply( core::pose::Pose & query_pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		TagCOP tag,
@@ -59,7 +59,7 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
 }; // PartialThreadingMover
 

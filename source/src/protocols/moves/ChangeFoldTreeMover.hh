@@ -60,8 +60,8 @@ public:
 	}
 
 	/// @brief Apply the stored fold tree to the pose
-	virtual void apply( core::pose::Pose & pose ) { pose.fold_tree( fold_tree_ ); }
-	virtual std::string get_name() const { return "ChangeFoldTreeMover"; }
+	void apply( core::pose::Pose & pose ) override { pose.fold_tree( fold_tree_ ); }
+	std::string get_name() const override { return "ChangeFoldTreeMover"; }
 
 private:
 	core::kinematics::FoldTree fold_tree_;

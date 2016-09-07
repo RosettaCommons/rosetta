@@ -58,7 +58,7 @@ public:
 		initialized_( false )
 	{}
 
-	virtual ~DnaInterfaceFinder(){}
+	~DnaInterfaceFinder() override= default;
 
 	DnaInterfaceFinderOP clone() const { return DnaInterfaceFinderOP( new DnaInterfaceFinder(*this) ); }
 

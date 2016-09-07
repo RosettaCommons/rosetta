@@ -85,7 +85,7 @@ BaseJobDistributor::BaseJobDistributor(JobVector jobs):
 	nooutput_( false ),
 	inprogress_( false )
 {
-	start_time_ = time(NULL);
+	start_time_ = time(nullptr);
 }
 
 BaseJobDistributor::BaseJobDistributor( BaseJobDistributor const & src ) :
@@ -131,7 +131,7 @@ bool BaseJobDistributor::next_job(BasicJobOP & job, int & struct_n)
 	JobDistributorTracer << "Node: " << mpi_rank_ << " next_job()" << std::endl;
 #endif
 
-	int elapsedtime = time(NULL) - start_time_;
+	int elapsedtime = time(nullptr) - start_time_;
 	if ( ( basic::options::option[ basic::options::OptionKeys::run::maxruntime ].user() ) &&
 			( basic::options::option[ basic::options::OptionKeys::run::maxruntime ]() > 0 ) &&
 			( basic::options::option[ basic::options::OptionKeys::run::maxruntime ]() < elapsedtime ) ) {
@@ -350,8 +350,8 @@ void BaseJobDistributor::checkpoint_read()
 void BaseJobDistributor::checkpoint_write()
 {
 	begin_critical_section();
-	static time_t last_chkpt_time = time(NULL);
-	time_t time_now = time(NULL);
+	static time_t last_chkpt_time = time(nullptr);
+	time_t time_now = time(nullptr);
 	// Refuse to checkpoint more than once a minute, no matter what BOINC wants.
 	// Random number checkpoint files can be large (100k or more uncompressed).
 	if ( time_now - last_chkpt_time > 60 ) {
@@ -501,7 +501,7 @@ AtomTreeDiffJobDistributor::AtomTreeDiffJobDistributor(JobVector jobs, std::stri
 	BaseJobDistributor(jobs),
 	out_(),
 	used_tags_(),
-	last_ref_pose_(NULL),
+	last_ref_pose_(nullptr),
 	bb_precision_(6),
 	sc_precision_(4),
 	bondlen_precision_(2)
@@ -547,7 +547,7 @@ AtomTreeDiffJobDistributor::AtomTreeDiffJobDistributor(JobVector jobs, std::stri
 	}
 }
 
-AtomTreeDiffJobDistributor::~AtomTreeDiffJobDistributor() {}
+AtomTreeDiffJobDistributor::~AtomTreeDiffJobDistributor() = default;
 
 void AtomTreeDiffJobDistributor::dump_pose(
 	std::string const & tag,
@@ -623,7 +623,7 @@ PlainPdbJobDistributor::PlainPdbJobDistributor(JobVector jobs, std::string outfi
 	}
 }
 
-PlainPdbJobDistributor::~PlainPdbJobDistributor() {}
+PlainPdbJobDistributor::~PlainPdbJobDistributor() = default;
 
 
 /// @details
@@ -750,19 +750,19 @@ void PlainPdbJobDistributor::dump_scores(
 	out << "# All scores below are weighted scores, not raw scores.\n";
 	out << "#BEGIN_POSE_ENERGIES_TABLE " << tag << "\n";
 	out << "label";
-	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
-		out << " " << name_from_score_type(*ii);
+	for (auto & score_type : score_types) {
+		out << " " << name_from_score_type(score_type);
 	}
 	out << " total\n";
 	out << "weights";
-	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
-		out << " " << weights[*ii];
+	for (auto & score_type : score_types) {
+		out << " " << weights[score_type];
 	}
 	out << " NA\n";
 	out << "pose";
 	core::Real pose_total = 0.0;
-	for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
-		core::Real score = (weights[*ii] * pose.energies().total_energies()[ *ii ]);
+	for (auto & score_type : score_types) {
+		core::Real score = (weights[score_type] * pose.energies().total_energies()[ score_type ]);
 		out << " " << score;
 		pose_total += score;
 	}
@@ -770,8 +770,8 @@ void PlainPdbJobDistributor::dump_scores(
 	for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
 		core::Real rsd_total = 0.0;
 		out << pose.residue(j).name() << "_" << j;
-		for ( ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii ) {
-			core::Real score = (weights[*ii] * pose.energies().residue_total_energies(j)[ *ii ]);
+		for (auto & score_type : score_types) {
+			core::Real score = (weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
 			out << " " << score;
 			rsd_total += score;
 		}
@@ -837,7 +837,7 @@ PlainRawJobDistributor::PlainRawJobDistributor(JobVector jobs, std::string outfi
 	}
 }
 
-PlainRawJobDistributor::~PlainRawJobDistributor() {}
+PlainRawJobDistributor::~PlainRawJobDistributor() = default;
 
 void PlainRawJobDistributor::dump_pose_and_map(
 	std::string const & tag,
@@ -903,7 +903,7 @@ PlainSilentFileJobDistributor::PlainSilentFileJobDistributor(JobVector jobs):
 	///... relocated reading of silent files to startup()
 }
 
-PlainSilentFileJobDistributor::~PlainSilentFileJobDistributor() {}
+PlainSilentFileJobDistributor::~PlainSilentFileJobDistributor() = default;
 
 void PlainSilentFileJobDistributor::dump_pose(
 	BasicJobOP const & job,

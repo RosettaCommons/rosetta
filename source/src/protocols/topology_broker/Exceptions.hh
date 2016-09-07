@@ -32,7 +32,7 @@ class EXCN_TopologyBroker : public virtual utility::excn::EXCN_Msg_Exception {
 	typedef EXCN_Msg_Exception Parent;
 protected:
 	EXCN_TopologyBroker() : EXCN_Msg_Exception( "" ){};
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		os << "\n[TopologyBroker Exception]: ";
 		Parent::show( os );
 	}
@@ -42,7 +42,7 @@ class EXCN_Input : public EXCN_TopologyBroker, public utility::excn::EXCN_BadInp
 	typedef EXCN_TopologyBroker Parent;
 public:
 	EXCN_Input( std::string const& msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		os << "*************** Error in Broker Setup: *************** \n";
 		Parent::show( os );
 		os << "\n\n********** Check your (inconsistent) input *************** \n";
@@ -59,7 +59,7 @@ class EXCN_FailedBroking : public EXCN_TopologyBroker {
 	typedef EXCN_TopologyBroker Parent;
 public:
 	EXCN_FailedBroking( std::string const& msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		Parent::show( os );
 		os << "Failed to mediate between different Claimers. " << std::endl;
 	}
@@ -70,7 +70,7 @@ class EXCN_FilterFailed : public EXCN_TopologyBroker {
 public:
 	EXCN_FilterFailed( std::string const& msg ) : utility::excn::EXCN_Msg_Exception( msg ) {};
 
-	virtual void show( std::ostream& os ) const {
+	void show( std::ostream& os ) const override {
 		Parent::show( os );
 		os << "[FILTER] failed... " << std::endl;
 	}

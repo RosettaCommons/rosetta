@@ -48,18 +48,18 @@ public:
 	EnergyReporter();
 
 	static std::string name() { return "EnergyReporter"; }
-	std::string get_name() const { return name(); }
+	std::string get_name() const override { return name(); }
 
-	core::Real report_property( core::pose::Pose & p ) const;
+	core::Real report_property( core::pose::Pose & p ) const override;
 
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 protected:
 
@@ -80,18 +80,18 @@ public:
 	FilterReporter();
 
 	static std::string name() { return "FilterReporter"; }
-	std::string get_name() const { return name(); }
+	std::string get_name() const override { return name(); }
 
-	core::Real report_property( core::pose::Pose & p ) const;
+	core::Real report_property( core::pose::Pose & p ) const override;
 
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 protected:
 
@@ -117,18 +117,18 @@ public:
 	RMSDReporter();
 
 	static std::string name() { return "RMSDReporter"; }
-	std::string get_name() const { return name(); }
+	std::string get_name() const override { return name(); }
 
-	core::Real report_property( core::pose::Pose & p1, core::pose::Pose & p2 ) const;
+	core::Real report_property( core::pose::Pose & p1, core::pose::Pose & p2 ) const override;
 
-	virtual
+	
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 protected:
 

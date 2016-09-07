@@ -50,7 +50,7 @@ public:
 
 	void set_defaults();
 
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	void add_motif( core::pose::PoseOP motif );
 	void set_symm( std::string symm_type_in ) { symm_type_ = symm_type_in; };
@@ -70,10 +70,10 @@ public:
 	// call after all motifs are added; verifies motifs are of correct symmetry & precomputes all transformations
 	void process_motifs();
 
-	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new SymmetricMotifFilter() ); }
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override { return protocols::filters::FilterOP( new SymmetricMotifFilter() ); }
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 
 	// compute angle and rms offsets
 	bool compute( core::pose::Pose const & pose, core::Real &best_score, std::string &motifhit ) const;
@@ -93,16 +93,16 @@ public:
 	}
 
 
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
-	virtual ~SymmetricMotifFilter();
+	~SymmetricMotifFilter() override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & reference_pose );
+		core::pose::Pose const & reference_pose ) override;
 
 private:
 	// symmetry group and motifs

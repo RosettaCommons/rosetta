@@ -84,21 +84,21 @@ namespace cryst {
 
 class UpdateCrystInfo : public protocols::moves::Mover {
 public:
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "UpdateCrystInfo";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP(new UpdateCrystInfo(*this)); }
-	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP(new UpdateCrystInfo()); }
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new UpdateCrystInfo(*this)); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new UpdateCrystInfo()); }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 };
 
@@ -134,7 +134,7 @@ public:
 	void
 	modify_lattice( core::pose::Pose & pose, core::Real mag );
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void set_rot_mag(core::Real rot_mag_in) { rot_mag_=rot_mag_in;}
 	void set_trans_mag(core::Real trans_mag_in) { trans_mag_=trans_mag_in;}
@@ -145,19 +145,19 @@ public:
 
 	void set_temp(core::Real val) { temp_=val; }
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "DockLatticeMover";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP(new DockLatticeMover(*this)); }
-	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP(new DockLatticeMover()); }
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new DockLatticeMover(*this)); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new DockLatticeMover()); }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 };
 
@@ -243,14 +243,14 @@ public:
 	);
 
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "MakeLatticeMover";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP(new MakeLatticeMover(*this)); }
-	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP(new MakeLatticeMover()); }
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLatticeMover(*this)); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLatticeMover()); }
 
 	void
 	spacegroup( Spacegroup const & sg_in ) {
@@ -267,7 +267,7 @@ public:
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 private:
 

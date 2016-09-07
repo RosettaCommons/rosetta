@@ -189,7 +189,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	// save a copy of the pose's constraints
 	scoring::constraints::ConstraintSetOP original_cst_set( pose.constraint_set()->clone() );
 	if ( impose_constraints() ) {
-		pose.constraint_set( NULL );
+		pose.constraint_set( nullptr );
 	}
 	// add virtual residue at the end
 	//Size const old_root( pose.fold_tree().root() );

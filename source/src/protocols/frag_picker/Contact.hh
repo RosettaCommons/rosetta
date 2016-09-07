@@ -43,7 +43,7 @@ public:
 		type_ = type;
 	}
 
-	~Contact(){};
+	~Contact() override = default;
 
 	core::Size & i() {
 		return i_;

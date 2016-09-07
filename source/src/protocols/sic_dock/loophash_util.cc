@@ -147,9 +147,9 @@ count_linkers(
 	numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
 
 	Size count0=0;
-	for ( Sizes::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i ) {
-		if ( dist2 < (10.0*Real(*i)*Real(*i)) ) {
-			count0 += loop_hash_library->gethash(*i).radial_count(radius,rt_6);
+	for (unsigned long loopsize : loopsizes) {
+		if ( dist2 < (10.0*Real(loopsize)*Real(loopsize)) ) {
+			count0 += loop_hash_library->gethash(loopsize).radial_count(radius,rt_6);
 		} // else too far, don't bother lookup
 	}
 	return count0;
@@ -174,10 +174,8 @@ dump_loophash_linkers(
 	protocols::loophash::BackboneDB const & bbdb_ = loop_hash_library->backbone_database();
 	protocols::loophash::BackboneSegment backbone_;
 	core::Size ndumped = 0;
-	for ( Sizes::const_iterator ils = loopsizes.begin(); ils != loopsizes.end(); ++ils ) {
-		Size loopsize(*ils);
-
-		protocols::loophash::LoopHashMap & hashmap( loop_hash_library->gethash(loopsize) );
+	for (unsigned long loopsize : loopsizes) {
+			protocols::loophash::LoopHashMap & hashmap( loop_hash_library->gethash(loopsize) );
 
 		numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
 		if ( rt_6[1]*rt_6[1]+rt_6[2]*rt_6[2]+rt_6[3]*rt_6[3] > 10.0*Real(loopsize)*Real(loopsize) ) continue;
@@ -196,7 +194,7 @@ dump_loophash_linkers(
 		{
 			core::chemical::ResidueTypeSetCOP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 			for ( Size i = 1; i <= loopsize+1; ++i ) {
-				core::conformation::ResidueOP new_rsd( NULL );
+				core::conformation::ResidueOP new_rsd( nullptr );
 				new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
 				// cout << "apending residue " << new_rsd->name() << std::endl;
 				if ( 1==i ) tmp.append_residue_by_jump( *new_rsd, 1 );

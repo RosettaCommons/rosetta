@@ -97,7 +97,7 @@ void BiasEnergy::initialize_simulation(
 	MetropolisHastingsMover const &,
 	core::Size //non-zero if trajectory is restarted
 ) {
-	runtime_assert( bias_grid_ != 0 );
+	runtime_assert( bias_grid_ != nullptr );
 	if ( protocols::jd2::jd2_used() ) {
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer(
 			utility::pointer::dynamic_pointer_cast< protocols::jd2::JobOutputterObserver >( get_self_ptr() )

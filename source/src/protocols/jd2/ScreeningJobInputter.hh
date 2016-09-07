@@ -32,16 +32,16 @@ class ScreeningJobInputter : public protocols::jd2::JobInputter
 public:
 	ScreeningJobInputter();
 
-	virtual ~ScreeningJobInputter();
+	~ScreeningJobInputter() override;
 
 	/// @brief Fill the pose reference with the pose indicated by the job
-	virtual void pose_from_job(core::pose::Pose & pose, JobOP job);
+	void pose_from_job(core::pose::Pose & pose, JobOP job) override;
 
 	/// @brief fill the jobs based on the specified json file
-	virtual void fill_jobs(JobsContainer & jobs);
+	void fill_jobs(JobsContainer & jobs) override;
 
 	/// @brief return the input source
-	virtual JobInputterInputSource::Enum input_source() const;
+	JobInputterInputSource::Enum input_source() const override;
 };
 
 }

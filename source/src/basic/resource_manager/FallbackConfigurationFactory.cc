@@ -31,7 +31,7 @@ using basic::resource_manager::FallbackConfigurationFactory;
 template <> std::mutex utility::SingletonBase< FallbackConfigurationFactory >::singleton_mutex_{};
 template <> std::atomic< FallbackConfigurationFactory * > utility::SingletonBase< FallbackConfigurationFactory >::instance_( 0 );
 #else
-template <> FallbackConfigurationFactory * utility::SingletonBase< FallbackConfigurationFactory >::instance_( 0 );
+template <> FallbackConfigurationFactory * utility::SingletonBase< FallbackConfigurationFactory >::instance_( nullptr );
 #endif
 
 }
@@ -52,7 +52,7 @@ FallbackConfigurationFactory::FallbackConfigurationFactory() :
 FallbackConfigurationOP
 FallbackConfigurationFactory::create_fallback_configuration( std::string const & resource_description ) const
 {
-	FallbackConfigurationCreatorsMap::const_iterator iter = creators_map_.find( resource_description );
+	auto iter = creators_map_.find( resource_description );
 	if ( iter == creators_map_.end() ) {
 		throw utility::excn::EXCN_Msg_Exception( "No FallbackConfigurationCreator resposible for the FallbackConfiguration named " + resource_description + " was found in the FallbackConfigurationFactory.  Was it correctly registered?" );
 	}
@@ -82,7 +82,7 @@ FallbackConfigurationFactory::set_throw_on_double_registration() { throw_on_doub
 bool
 FallbackConfigurationFactory::has_fallback_for_resource( std::string const & desc ) const
 {
-	FallbackConfigurationCreatorsMap::const_iterator resources( creators_map_.find( desc ));
+	auto resources( creators_map_.find( desc ));
 	return (resources != creators_map_.end());
 }
 

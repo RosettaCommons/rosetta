@@ -39,18 +39,18 @@ public:
 	LoophashLoopInserter();
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual void
+	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	HashBuckets
 	find_fragments(
@@ -92,14 +92,14 @@ public:
 		core::Size retrieve_index
 	);
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & /*data*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
-	);
+	) override;
 
 protected:
 

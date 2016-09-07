@@ -55,7 +55,7 @@ public:
 		n_wanted_( wanted )
 	{}
 
-	~ReservoirSampler() {}
+	~ReservoirSampler() = default;
 
 	void add_value( T const & val ) {
 		++n_seen_;

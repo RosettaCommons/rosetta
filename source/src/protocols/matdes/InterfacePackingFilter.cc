@@ -300,7 +300,7 @@ InterfacePackingFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new InterfacePackingFilter() );
 }
 
-InterfacePackingFilter::~InterfacePackingFilter(){}
+InterfacePackingFilter::~InterfacePackingFilter()= default;
 
 protocols::filters::FilterOP
 InterfacePackingFilter::clone() const{

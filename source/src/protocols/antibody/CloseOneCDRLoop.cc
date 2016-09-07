@@ -55,7 +55,7 @@ CloseOneCDRLoop::CloseOneCDRLoop( core::Size query_start, core::Size query_end )
 
 
 // CloseOneCDRLoop default destructor
-CloseOneCDRLoop::~CloseOneCDRLoop() {}
+CloseOneCDRLoop::~CloseOneCDRLoop() = default;
 
 
 void CloseOneCDRLoop::set_default() {

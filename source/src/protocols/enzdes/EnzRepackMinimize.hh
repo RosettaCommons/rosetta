@@ -45,7 +45,7 @@ class EnzRepackMinimize : public protocols::moves::Mover
 public:
 	EnzRepackMinimize();
 	EnzRepackMinimize( std::string const & name );
-	virtual ~EnzRepackMinimize();
+	~EnzRepackMinimize() override;
 
 	/// @brief turns on constraint score terms in case the pose
 	/// has an enzdes cst cache
@@ -60,11 +60,11 @@ public:
 		bool const & min_lig);
 
 	//parser stuff
-	void apply( core::pose::Pose &pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( core::pose::Pose &pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	utility::vector1< core::Size > rb_min_jumps() const;
 	void rb_min_jumps( utility::vector1< core::Size > const );

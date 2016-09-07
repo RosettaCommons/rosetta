@@ -17,9 +17,10 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 
 // C headers
-#include <math.h>
+#include <cmath>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.EnergyLandscapeEvaluator" );
 
@@ -51,9 +52,9 @@ operator<<( std::ostream & os, ScoreRmsPoint const & score )
 	return os;
 }
 
-ScoreRmsPoints::ScoreRmsPoints( ScoreRmsPoint const & bg_val ):
+ScoreRmsPoints::ScoreRmsPoints( ScoreRmsPoint  bg_val ):
 	utility::vector1< ScoreRmsPoint >(),
-	bg_( bg_val )
+	bg_(std::move( bg_val ))
 {}
 
 ScoreRmsPoint const &
@@ -68,7 +69,7 @@ EnergyLandscapeEvaluator::EnergyLandscapeEvaluator():
 
 }
 
-EnergyLandscapeEvaluator::~EnergyLandscapeEvaluator(){}
+EnergyLandscapeEvaluator::~EnergyLandscapeEvaluator()= default;
 
 RotamerBoltzmannWeightEvaluator::RotamerBoltzmannWeightEvaluator( core::Real const temperature, bool const include_bg_point_in_sum ):
 	EnergyLandscapeEvaluator(),
@@ -77,7 +78,7 @@ RotamerBoltzmannWeightEvaluator::RotamerBoltzmannWeightEvaluator( core::Real con
 {}
 
 RotamerBoltzmannWeightEvaluator::~RotamerBoltzmannWeightEvaluator()
-{}
+= default;
 
 EnergyLandscapeEvaluatorOP
 RotamerBoltzmannWeightEvaluator::clone() const
@@ -92,7 +93,7 @@ RotamerBoltzmannWeightEvaluator::compute( ScoreRmsPoints const & points ) const
 	if ( include_bg_ ) {
 		boltz_sum += 1.0; // exp(0) == 1.0
 	}
-	for ( ScoreRmsPoints::const_iterator p=points.begin(); p!=points.end(); ++p ) {
+	for ( auto p=points.begin(); p!=points.end(); ++p ) {
 		boltz_sum += exp( ( points.bg().score() - p->score() ) / temperature_ );
 	}
 
@@ -109,7 +110,7 @@ MulliganPNearEvaluator::MulliganPNearEvaluator( core::Real const temperature, co
 {}
 
 MulliganPNearEvaluator::~MulliganPNearEvaluator()
-{}
+= default;
 
 EnergyLandscapeEvaluatorOP
 MulliganPNearEvaluator::clone() const
@@ -122,7 +123,7 @@ MulliganPNearEvaluator::compute( ScoreRmsPoints const & points ) const
 {
 	core::Real numerator = 1.0; // exp( -(0*0)/lambda_sq )*exp( 0/temp ) == 1.0
 	core::Real denominator = 1.0; // exp( 0/temp ) == 1.0
-	for ( ScoreRmsPoints::const_iterator p=points.begin(); p!=points.end(); ++p ) {
+	for ( auto p=points.begin(); p!=points.end(); ++p ) {
 		core::Real const energy = exp( ( points.bg().score() - p->score() ) / temperature_ );
 		core::Real const nearness = exp( -(p->rms()*p->rms())/(lambda_sq_) );
 		numerator += energy * nearness;

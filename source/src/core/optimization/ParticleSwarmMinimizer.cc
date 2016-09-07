@@ -74,7 +74,7 @@ ParticleSwarmMinimizer::ParticleSwarmMinimizer(Multivec p_min, Multivec p_max):
 }
 
 
-ParticleSwarmMinimizer::~ParticleSwarmMinimizer() {}
+ParticleSwarmMinimizer::~ParticleSwarmMinimizer() = default;
 
 
 ParticleOPs ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, Size num_part /*= 50*/)

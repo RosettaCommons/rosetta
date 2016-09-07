@@ -1,10 +1,10 @@
-#include <math.h>
+#include <cmath>
 #include <cstdio>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <limits.h>
-#include <locale.h>
+#include <cstdlib>
+#include <cstring>
+#include <cstdarg>
+#include <climits>
+#include <clocale>
 #include <iostream>
 #include <cassert>
 
@@ -138,7 +138,7 @@ int Cache::get_data(const int index, Qfloat **data, int len)
 			lru_delete(old);
 			free(old->data);
 			size += old->len;
-			old->data = 0;
+			old->data = nullptr;
 			old->len = 0;
 		}
 
@@ -174,7 +174,7 @@ void Cache::swap_index(int i, int j)
 				lru_delete(h);
 				free(h->data);
 				size += h->len;
-				h->data = 0;
+				h->data = nullptr;
 				h->len = 0;
 			}
 		}
@@ -193,19 +193,19 @@ public:
 	virtual Qfloat *get_Q(int column, int len) const = 0;
 	virtual double *get_QD() const = 0;
 	virtual void swap_index(int i, int j) const = 0;
-	virtual ~QMatrix() {}
+	virtual ~QMatrix() = default;
 };
 
 class Kernel: public QMatrix {
 public:
 	Kernel(int l, svm_node * const * x, const svm_parameter& param);
-	virtual ~Kernel();
+	~Kernel() override;
 
 	static double k_function(const svm_node *x, const svm_node *y,
 		const svm_parameter& param);
-	virtual Qfloat *get_Q(int column, int len) const = 0;
-	virtual double *get_QD() const = 0;
-	virtual void swap_index(int i, int j) const // no so const...
+	Qfloat *get_Q(int column, int len) const override = 0;
+	double *get_QD() const override = 0;
+	void swap_index(int i, int j) const override // no so const...
 	{
 		swap(x[i],x[j]);
 		if ( x_square ) swap(x_square[i],x_square[j]);
@@ -278,7 +278,7 @@ Kernel::Kernel(int l, svm_node * const * x_, const svm_parameter& param)
 			x_square[i] = dot(x[i],x[i]);
 		}
 	} else {
-		x_square = 0;
+		x_square = nullptr;
 	}
 }
 
@@ -381,8 +381,8 @@ double Kernel::k_function(const svm_node *x, const svm_node *y,
 //
 class Solver {
 public:
-	Solver() {};
-	virtual ~Solver() {};
+	Solver() = default;
+	virtual ~Solver() = default;
 
 	struct SolutionInfo {
 		double obj;
@@ -793,7 +793,7 @@ int Solver::select_working_set(int &out_i, int &out_j)
 	}
 
 	int i = Gmax_idx;
-	const Qfloat *Q_i = NULL;
+	const Qfloat *Q_i = nullptr;
 	if ( i != -1 ) { // NULL Q_i not accessed: Gmax=-INF if i=-1
 		Q_i = Q->get_Q(i,active_size);
 	}
@@ -980,10 +980,10 @@ public:
 	}
 private:
 	SolutionInfo *si;
-	int select_working_set(int &i, int &j);
-	double calculate_rho();
+	int select_working_set(int &i, int &j) override;
+	double calculate_rho() override;
 	bool be_shrunk(int i, double Gmax1, double Gmax2, double Gmax3, double Gmax4);
-	void do_shrinking();
+	void do_shrinking() override;
 };
 
 // return 1 if already optimal, return 0 otherwise
@@ -1026,8 +1026,8 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 
 	int ip = Gmaxp_idx;
 	int in = Gmaxn_idx;
-	const Qfloat *Q_ip = NULL;
-	const Qfloat *Q_in = NULL;
+	const Qfloat *Q_ip = nullptr;
+	const Qfloat *Q_in = nullptr;
 	if ( ip != -1 ) { // NULL Q_ip not accessed: Gmaxp=-INF if ip=-1
 		Q_ip = Q->get_Q(ip,active_size);
 	}
@@ -1220,7 +1220,7 @@ public:
 		}
 	}
 
-	Qfloat *get_Q(int i, int len) const
+	Qfloat *get_Q(int i, int len) const override
 	{
 		Qfloat *data;
 		int start;
@@ -1232,12 +1232,12 @@ public:
 		return data;
 	}
 
-	double *get_QD() const
+	double *get_QD() const override
 	{
 		return QD;
 	}
 
-	void swap_index(int i, int j) const
+	void swap_index(int i, int j) const override
 	{
 		cache->swap_index(i,j);
 		Kernel::swap_index(i,j);
@@ -1245,7 +1245,7 @@ public:
 		swap(QD[i],QD[j]);
 	}
 
-	~SVC_Q()
+	~SVC_Q() override
 	{
 		delete[] y;
 		delete cache;
@@ -1270,7 +1270,7 @@ public:
 		}
 	}
 
-	Qfloat *get_Q(int i, int len) const
+	Qfloat *get_Q(int i, int len) const override
 	{
 		Qfloat *data;
 		int start;
@@ -1282,19 +1282,19 @@ public:
 		return data;
 	}
 
-	double *get_QD() const
+	double *get_QD() const override
 	{
 		return QD;
 	}
 
-	void swap_index(int i, int j) const
+	void swap_index(int i, int j) const override
 	{
 		cache->swap_index(i,j);
 		Kernel::swap_index(i,j);
 		swap(QD[i],QD[j]);
 	}
 
-	~ONE_CLASS_Q()
+	~ONE_CLASS_Q() override
 	{
 		delete cache;
 		delete[] QD;
@@ -1328,14 +1328,14 @@ public:
 		next_buffer = 0;
 	}
 
-	void swap_index(int i, int j) const
+	void swap_index(int i, int j) const override
 	{
 		swap(sign[i],sign[j]);
 		swap(index[i],index[j]);
 		swap(QD[i],QD[j]);
 	}
 
-	Qfloat *get_Q(int i, int len) const
+	Qfloat *get_Q(int i, int len) const override
 	{
 		Qfloat *data;
 		int j, real_i = index[i];
@@ -1355,12 +1355,12 @@ public:
 		return buf;
 	}
 
-	double *get_QD() const
+	double *get_QD() const override
 	{
 		return QD;
 	}
 
-	~SVR_Q()
+	~SVR_Q() override
 	{
 		delete cache;
 		delete[] sign;
@@ -1387,8 +1387,8 @@ static void solve_c_svc(
 	double *alpha, Solver::SolutionInfo* si, double Cp, double Cn)
 {
 	int l = prob->l;
-	double *minus_ones = new double[l];
-	schar *y = new schar[l];
+	auto *minus_ones = new double[l];
+	auto *y = new schar[l];
 
 	int i;
 
@@ -1427,7 +1427,7 @@ static void solve_nu_svc(
 	int l = prob->l;
 	double nu = param->nu;
 
-	schar *y = new schar[l];
+	auto *y = new schar[l];
 
 	for ( i=0; i<l; i++ ) {
 		if ( prob->y[i]>0 ) {
@@ -1450,7 +1450,7 @@ static void solve_nu_svc(
 		}
 	}
 
-	double *zeros = new double[l];
+	auto *zeros = new double[l];
 
 	for ( i=0; i<l; i++ ) {
 		zeros[i] = 0;
@@ -1481,8 +1481,8 @@ static void solve_one_class(
 	double *alpha, Solver::SolutionInfo* si)
 {
 	int l = prob->l;
-	double *zeros = new double[l];
-	schar *ones = new schar[l];
+	auto *zeros = new double[l];
+	auto *ones = new schar[l];
 	int i;
 
 	int n = (int)(param->nu*prob->l); // # of alpha's at upper bound
@@ -1515,9 +1515,9 @@ static void solve_epsilon_svr(
 	double *alpha, Solver::SolutionInfo* si)
 {
 	int l = prob->l;
-	double *alpha2 = new double[2*l];
-	double *linear_term = new double[2*l];
-	schar *y = new schar[2*l];
+	auto *alpha2 = new double[2*l];
+	auto *linear_term = new double[2*l];
+	auto *y = new schar[2*l];
 	int i;
 
 	for ( i=0; i<l; i++ ) {
@@ -1552,9 +1552,9 @@ static void solve_nu_svr(
 {
 	int l = prob->l;
 	double C = param->C;
-	double *alpha2 = new double[2*l];
-	double *linear_term = new double[2*l];
-	schar *y = new schar[2*l];
+	auto *alpha2 = new double[2*l];
+	auto *linear_term = new double[2*l];
+	auto *y = new schar[2*l];
 	int i;
 
 	double sum = C * param->nu * l / 2;
@@ -1974,14 +1974,14 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 				max_nr_class *= 2;
 				// AMW cppcheck notes that we need to check for realloc success
 				int *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
-				if ( new_label_data == NULL ) {
+				if ( new_label_data == nullptr ) {
 					info( "\n\n!!! Critical memory error in svm_group_classes, label allocation !!!\n\n" );
 				} else {
 					label = new_label_data;
 				}
 
 				int *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
-				if ( new_count_data == NULL ) {
+				if ( new_count_data == nullptr ) {
 					info( "\n\n!!! Critical memory error in svm_group_classes, count allocation !!!\n\n" );
 				} else {
 					count = new_count_data;
@@ -2028,9 +2028,9 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 			param->svm_type == NU_SVR ) {
 		// regression or one-class-svm
 		model->nr_class = 2;
-		model->label = NULL;
-		model->nSV = NULL;
-		model->probA = NULL; model->probB = NULL;
+		model->label = nullptr;
+		model->nSV = nullptr;
+		model->probA = nullptr; model->probB = nullptr;
 		model->sv_coef = Malloc(double *,1);
 
 		if ( param->probability &&
@@ -2068,9 +2068,9 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 		// classification
 		int l = prob->l;
 		int nr_class;
-		int *label = NULL;
-		int *start = NULL;
-		int *count = NULL;
+		int *label = nullptr;
+		int *start = nullptr;
+		int *count = nullptr;
 		int *perm = Malloc(int,l);
 
 		// group training data of the same class
@@ -2113,7 +2113,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 		}
 		decision_function *f = Malloc(decision_function,nr_class*(nr_class-1)/2);
 
-		double *probA=NULL,*probB=NULL;
+		double *probA=nullptr,*probB=nullptr;
 		if ( param->probability ) {
 			probA=Malloc(double,nr_class*(nr_class-1)/2);
 			probB=Malloc(double,nr_class*(nr_class-1)/2);
@@ -2181,8 +2181,8 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 				model->probB[i] = probB[i];
 			}
 		} else {
-			model->probA=NULL;
-			model->probB=NULL;
+			model->probA=nullptr;
+			model->probB=nullptr;
 		}
 
 		int total_sv = 0;
@@ -2285,9 +2285,9 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 	// Each class to l folds -> some folds may have zero elements
 	if ( (param->svm_type == C_SVC ||
 			param->svm_type == NU_SVC) && nr_fold < l ) {
-		int *start = NULL;
-		int *label = NULL;
-		int *count = NULL;
+		int *start = nullptr;
+		int *label = nullptr;
+		int *count = nullptr;
 		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);
 
 		// random shuffle and then data grouped by fold using the array perm
@@ -2398,7 +2398,7 @@ int svm_get_nr_class(const svm_model *model)
 
 void svm_get_labels(const svm_model *model, int* label)
 {
-	if ( model->label != NULL ) {
+	if ( model->label != nullptr ) {
 		for ( int i=0; i<model->nr_class; i++ ) {
 			label[i] = model->label[i];
 		}
@@ -2407,7 +2407,7 @@ void svm_get_labels(const svm_model *model, int* label)
 
 void svm_get_sv_indices(const svm_model *model, int* indices)
 {
-	if ( model->sv_indices != NULL ) {
+	if ( model->sv_indices != nullptr ) {
 		for ( int i=0; i<model->l; i++ ) {
 			indices[i] = model->sv_indices[i];
 		}
@@ -2422,7 +2422,7 @@ int svm_get_nr_sv(const svm_model *model)
 double svm_get_svr_probability(const svm_model *model)
 {
 	if ( (model->param.svm_type == EPSILON_SVR || model->param.svm_type == NU_SVR) &&
-			model->probA!=NULL ) {
+			model->probA!=nullptr ) {
 		return model->probA[0];
 	} else {
 		fprintf(stderr,"Model doesn't contain information for SVR probability inference\n");
@@ -2533,7 +2533,7 @@ double svm_predict_probability(
 	const svm_model *model, const svm_node *x, double *prob_estimates)
 {
 	if ( (model->param.svm_type == C_SVC || model->param.svm_type == NU_SVC) &&
-			model->probA!=NULL && model->probB!=NULL ) {
+			model->probA!=nullptr && model->probB!=nullptr ) {
 		int i;
 		int nr_class = model->nr_class;
 		double *dec_values = Malloc(double, nr_class*(nr_class-1)/2);
@@ -2573,20 +2573,20 @@ double svm_predict_probability(
 
 static const char *svm_type_table[] =
 {
-"c_svc","nu_svc","one_class","epsilon_svr","nu_svr",NULL
+"c_svc","nu_svc","one_class","epsilon_svr","nu_svr",nullptr
 };
 
 static const char *kernel_type_table[]=
 {
-"linear","polynomial","rbf","sigmoid","precomputed",NULL
+"linear","polynomial","rbf","sigmoid","precomputed",nullptr
 };
 
 int svm_save_model(const char *model_file_name, const svm_model *model)
 {
 	FILE *fp = fopen(model_file_name,"w");
-	if ( fp==NULL ) return -1;
+	if ( fp==nullptr ) return -1;
 
-	char *old_locale = strdup(setlocale(LC_ALL, NULL));
+	char *old_locale = strdup(setlocale(LC_ALL, nullptr));
 	setlocale(LC_ALL, "C");
 
 	const svm_parameter& param = model->param;
@@ -2680,23 +2680,23 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 	else return 0;
 }
 
-static char *line = NULL;
+static char *line = nullptr;
 static int max_line_len;
 
 static char* readline(FILE *input)
 {
-	if ( fgets(line,max_line_len,input) == NULL ) {
-		return NULL;
+	if ( fgets(line,max_line_len,input) == nullptr ) {
+		return nullptr;
 	}
 
-	while ( strrchr(line,'\n') == NULL )
+	while ( strrchr(line,'\n') == nullptr )
 			{
 		max_line_len *= 2;
 		char * newline = (char *) realloc(line,max_line_len);
 		assert( newline ); // realloc returns a null pointer and doesn't free the memory on failure.
 		line = newline;
 		int len = (int) strlen(line);
-		if ( fgets(line+len,max_line_len-len,input) == NULL ) {
+		if ( fgets(line+len,max_line_len-len,input) == nullptr ) {
 			break;
 		}
 	}
@@ -2706,20 +2706,20 @@ static char* readline(FILE *input)
 svm_model *svm_load_model(const char *model_file_name)
 {
 	FILE *fp = fopen(model_file_name,"rb");
-	if ( fp==NULL ) return NULL;
+	if ( fp==nullptr ) return nullptr;
 
-	char *old_locale = strdup(setlocale(LC_ALL, NULL));
+	char *old_locale = strdup(setlocale(LC_ALL, nullptr));
 	setlocale(LC_ALL, "C");
 
 	// read parameters
 
 	svm_model *model = Malloc(svm_model,1);
 	svm_parameter& param = model->param;
-	model->rho = NULL;
-	model->probA = NULL;
-	model->probB = NULL;
-	model->label = NULL;
-	model->nSV = NULL;
+	model->rho = nullptr;
+	model->probA = nullptr;
+	model->probB = nullptr;
+	model->label = nullptr;
+	model->nSV = nullptr;
 
 	char cmd[81];
 	while ( 1 )
@@ -2739,7 +2739,7 @@ svm_model *svm_load_model(const char *model_file_name)
 					break;
 				}
 			}
-			if ( svm_type_table[i] == NULL ) {
+			if ( svm_type_table[i] == nullptr ) {
 				fprintf(stderr,"unknown svm type.\n");
 
 				setlocale(LC_ALL, old_locale);
@@ -2748,7 +2748,7 @@ svm_model *svm_load_model(const char *model_file_name)
 				free(model->label);
 				free(model->nSV);
 				free(model);
-				return NULL;
+				return nullptr;
 			}
 		} else if ( strcmp(cmd,"kernel_type")==0 ) {
 			if ( fscanf(fp,"%80s",cmd) == EOF ) {
@@ -2761,7 +2761,7 @@ svm_model *svm_load_model(const char *model_file_name)
 					break;
 				}
 			}
-			if ( kernel_type_table[i] == NULL ) {
+			if ( kernel_type_table[i] == nullptr ) {
 				fprintf(stderr,"unknown kernel function.\n");
 
 				setlocale(LC_ALL, old_locale);
@@ -2770,7 +2770,7 @@ svm_model *svm_load_model(const char *model_file_name)
 				free(model->label);
 				free(model->nSV);
 				free(model);
-				return NULL;
+				return nullptr;
 			}
 		} else if ( strcmp(cmd,"degree")==0 ) {
 			if ( fscanf(fp,"%d",&param.degree) == EOF ) {
@@ -2848,7 +2848,7 @@ svm_model *svm_load_model(const char *model_file_name)
 			free(model->label);
 			free(model->nSV);
 			free(model);
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -2861,13 +2861,13 @@ svm_model *svm_load_model(const char *model_file_name)
 	line = Malloc(char,max_line_len);
 	char *p,*endptr,*idx,*val;
 
-	while ( readline(fp)!=NULL )
+	while ( readline(fp)!=nullptr )
 			{
 		p = strtok(line,":");
 		while ( 1 )
 				{
-			p = strtok(NULL,":");
-			if ( p == NULL ) {
+			p = strtok(nullptr,":");
+			if ( p == nullptr ) {
 				break;
 			}
 			++elements;
@@ -2885,7 +2885,7 @@ svm_model *svm_load_model(const char *model_file_name)
 		model->sv_coef[i] = Malloc(double,l);
 	}
 	model->SV = Malloc(svm_node*,l);
-	svm_node *x_space = NULL;
+	svm_node *x_space = nullptr;
 	if ( l>0 ) x_space = Malloc(svm_node,elements);
 
 	int j=0;
@@ -2896,16 +2896,16 @@ svm_model *svm_load_model(const char *model_file_name)
 		p = strtok(line, " \t");
 		model->sv_coef[0][i] = strtod(p,&endptr);
 		for ( int k=1; k<m; k++ ) {
-			p = strtok(NULL, " \t");
+			p = strtok(nullptr, " \t");
 			model->sv_coef[k][i] = strtod(p,&endptr);
 		}
 
 		while ( 1 )
 				{
-			idx = strtok(NULL, ":");
-			val = strtok(NULL, " \t");
+			idx = strtok(nullptr, ":");
+			val = strtok(nullptr, " \t");
 
-			if ( val == NULL ) {
+			if ( val == nullptr ) {
 				break;
 			}
 			x_space[j].index = (int) strtol(idx,&endptr,10);
@@ -2921,7 +2921,7 @@ svm_model *svm_load_model(const char *model_file_name)
 	free(old_locale);
 
 	if ( ferror(fp) != 0 || fclose(fp) != 0 ) {
-		return NULL;
+		return nullptr;
 	}
 
 	model->free_sv = 1; // XXX
@@ -2930,7 +2930,7 @@ svm_model *svm_load_model(const char *model_file_name)
 
 void svm_free_model_content(svm_model* model_ptr)
 {
-	if ( model_ptr->free_sv && model_ptr->l > 0 && model_ptr->SV != NULL ) {
+	if ( model_ptr->free_sv && model_ptr->l > 0 && model_ptr->SV != nullptr ) {
 		free((void *)(model_ptr->SV[0]));
 	}
 	if ( model_ptr->sv_coef ) {
@@ -2940,33 +2940,33 @@ void svm_free_model_content(svm_model* model_ptr)
 	}
 
 	free(model_ptr->SV);
-	model_ptr->SV = NULL;
+	model_ptr->SV = nullptr;
 
 	free(model_ptr->sv_coef);
-	model_ptr->sv_coef = NULL;
+	model_ptr->sv_coef = nullptr;
 
 	free(model_ptr->rho);
-	model_ptr->rho = NULL;
+	model_ptr->rho = nullptr;
 
 	free(model_ptr->label);
-	model_ptr->label= NULL;
+	model_ptr->label= nullptr;
 
 	free(model_ptr->probA);
-	model_ptr->probA = NULL;
+	model_ptr->probA = nullptr;
 
 	free(model_ptr->probB);
-	model_ptr->probB= NULL;
+	model_ptr->probB= nullptr;
 
 	free(model_ptr->nSV);
-	model_ptr->nSV = NULL;
+	model_ptr->nSV = nullptr;
 }
 
 void svm_free_and_destroy_model(svm_model** model_ptr_ptr)
 {
-	if ( model_ptr_ptr != NULL && *model_ptr_ptr != NULL ) {
+	if ( model_ptr_ptr != nullptr && *model_ptr_ptr != nullptr ) {
 		svm_free_model_content(*model_ptr_ptr);
 		free(*model_ptr_ptr);
-		*model_ptr_ptr = NULL;
+		*model_ptr_ptr = nullptr;
 	}
 }
 
@@ -3080,14 +3080,14 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 					max_nr_class *= 2;
 					// AMW cppcheck notes that we need to check for realloc success
 					int *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
-					if ( new_label_data == NULL ) {
+					if ( new_label_data == nullptr ) {
 						info( "\n\n!!! Critical memory error in svm_group_classes, label allocation !!!\n\n" );
 					} else {
 						label = new_label_data;
 					}
 
 					int *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
-					if ( new_count_data == NULL ) {
+					if ( new_count_data == nullptr ) {
 						info( "\n\n!!! Critical memory error in svm_group_classes, count allocation !!!\n\n" );
 					} else {
 						count = new_count_data;
@@ -3114,20 +3114,20 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 		free(count);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int svm_check_probability_model(const svm_model *model)
 {
 	return ((model->param.svm_type == C_SVC || model->param.svm_type == NU_SVC) &&
-		model->probA!=NULL && model->probB!=NULL) ||
+		model->probA!=nullptr && model->probB!=nullptr) ||
 		((model->param.svm_type == EPSILON_SVR || model->param.svm_type == NU_SVR) &&
-		model->probA!=NULL);
+		model->probA!=nullptr);
 }
 
 void svm_set_print_string_function(void (*print_func)(const char *))
 {
-	if ( print_func == NULL ) {
+	if ( print_func == nullptr ) {
 		svm_print_string = &print_string_stdout;
 	} else {
 		svm_print_string = print_func;

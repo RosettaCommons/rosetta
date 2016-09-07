@@ -76,9 +76,9 @@ public: // Creation
 	ozstream() :
 		compression_( NONE ),
 		buffer_size_( OZSTREAM_DEFAULT_BUFFER_SIZE ),
-		char_buffer_p_( NULL ),
-		zip_stream_p_( 0 ),
-		mpi_stream_p_( 0 )
+		char_buffer_p_( nullptr ),
+		zip_stream_p_( nullptr ),
+		mpi_stream_p_( nullptr )
 #if defined( USE_FILE_PROVIDER )
 		,file_provider_stream( &bad_stream )
 #endif
@@ -98,9 +98,9 @@ public: // Creation
 		std::streamsize buf_size = OZSTREAM_DEFAULT_BUFFER_SIZE
 	) :
 		compression_( NONE ),
-		char_buffer_p_( NULL ),
-		zip_stream_p_( 0 ),
-		mpi_stream_p_( 0 )
+		char_buffer_p_( nullptr ),
+		zip_stream_p_( nullptr ),
+		mpi_stream_p_( nullptr )
 #if defined( USE_FILE_PROVIDER )
 		,file_provider_stream( &bad_stream )
 #endif
@@ -113,8 +113,8 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ozstream()
+	
+	~ozstream() override
 	{
 		close();
 	}
@@ -125,7 +125,7 @@ public: // Methods: conversion
 
 	/// @brief bool conversion
 	inline
-	operator bool() const
+	operator bool() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -138,7 +138,7 @@ public: // Methods: conversion
 
 	/// @brief Stream conversion
 	inline
-	operator std::ostream const &() const
+	operator std::ostream const &() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -155,7 +155,7 @@ public: // Methods: conversion
 
 	/// @brief Stream conversion
 	inline
-	operator std::ostream &()
+	operator std::ostream &() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -200,7 +200,7 @@ public: // Methods: formatting
 	/// @brief and call ozstream::flush() when passed std::flush
 	inline
 	ozstream &
-	operator <<( manipulator m )
+	operator <<( manipulator m ) override
 	{
 		static manipulator const std_endl = std::endl;
 		static manipulator const std_flush = std::flush;
@@ -259,7 +259,7 @@ public: // Methods: i/o
 	/// @brief Write a char
 	inline
 	ozstream &
-	put( char const c )
+	put( char const c ) override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -282,7 +282,7 @@ public: // Methods: i/o
 	/// @brief Write a string
 	inline
 	ozstream &
-	write( char const * str, std::streamsize const count )
+	write( char const * str, std::streamsize const count ) override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -304,7 +304,7 @@ public: // Methods: i/o
 	/// @brief Write a string
 	inline
 	ozstream &
-	write( std::string const & str, std::streamsize const count )
+	write( std::string const & str, std::streamsize const count ) override
 	{
 		stream().write( str.c_str(), count );
 		return *this;
@@ -325,7 +325,7 @@ public: // Methods: i/o
 	///          rule of thumb.
 	inline
 	ozstream &
-	flush()
+	flush() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -410,7 +410,7 @@ public: // Methods: i/o
 	/// @brief Clear the stream
 	inline
 	void
-	clear()
+	clear() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -436,7 +436,7 @@ public: // Methods: i/o
 #endif
 		if ( zip_stream_p_ ) {
 			zip_stream_p_->zflush_finalize();
-			delete zip_stream_p_; zip_stream_p_ = 0;
+			delete zip_stream_p_; zip_stream_p_ = nullptr;
 		}
 		of_stream_.close();
 		of_stream_.clear();
@@ -444,7 +444,7 @@ public: // Methods: i/o
 			mpi_stream_p_->close();
 			mpi_stream_p_->clear();
 			delete mpi_stream_p_;
-			mpi_stream_p_ = 0;
+			mpi_stream_p_ = nullptr;
 		}
 		compression_ = NONE;
 		filename_.clear();
@@ -459,7 +459,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream const &
-	operator ()() const
+	operator ()() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		return (*file_provider_stream);
@@ -474,7 +474,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream &
-	operator ()()
+	operator ()() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -491,7 +491,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream const &
-	stream() const
+	stream() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -508,7 +508,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream &
-	stream()
+	stream() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -525,7 +525,7 @@ public: // Properties
 	/// @brief Pointer to the stream buffer
 	inline
 	std::streambuf *
-	rdbuf() const
+	rdbuf() const override
 	{
 		return stream().rdbuf();
 	}
@@ -546,7 +546,7 @@ public: // Properties: predicate
 	/// @brief Good?
 	inline
 	bool
-	good() const
+	good() const override
 	{
 		return stream().good();
 	}
@@ -555,7 +555,7 @@ public: // Properties: predicate
 	/// @brief End of file?
 	inline
 	bool
-	eof() const
+	eof() const override
 	{
 		return stream().eof();
 	}
@@ -564,7 +564,7 @@ public: // Properties: predicate
 	/// @brief Fail?
 	inline
 	bool
-	fail() const
+	fail() const override
 	{
 		return stream().fail();
 	}
@@ -573,7 +573,7 @@ public: // Properties: predicate
 	/// @brief Bad?
 	inline
 	bool
-	bad() const
+	bad() const override
 	{
 		return stream().bad();
 	}
@@ -582,7 +582,7 @@ public: // Properties: predicate
 	/// @brief Compressed?
 	inline
 	bool
-	compressed() const
+	compressed() const override
 	{
 		return ( compression_ == GZIP );
 	}
@@ -591,7 +591,7 @@ public: // Properties: predicate
 	/// @brief Uncompressed?
 	inline
 	bool
-	uncompressed() const
+	uncompressed() const override
 	{
 		return ( compression_ == UNCOMPRESSED );
 	}
@@ -600,7 +600,7 @@ public: // Properties: predicate
 	/// @brief gzipped?
 	inline
 	bool
-	gzipped() const
+	gzipped() const override
 	{
 		return ( compression_ == GZIP );
 	}
@@ -709,7 +709,7 @@ private: // buffer management
 	{
 		if ( char_buffer_p_ && !of_stream_.is_open() ) {
 			delete [] char_buffer_p_;
-			char_buffer_p_ = NULL;
+			char_buffer_p_ = nullptr;
 
 			return true;
 		}

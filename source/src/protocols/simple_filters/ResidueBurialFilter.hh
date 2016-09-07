@@ -30,17 +30,17 @@ class ResidueBurialFilter : public filters::Filter
 public:
 	ResidueBurialFilter();
 	// SJF 3Sep13 ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold );
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const;
-	filters::FilterOP fresh_instance() const;
+	filters::FilterOP clone() const override;
+	filters::FilterOP fresh_instance() const override;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 
-	virtual ~ResidueBurialFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~ResidueBurialFilter() override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	core::Real residue_fraction_buried() const { return residue_fraction_buried_; }
 	void residue_fraction_buried( core::Real const r ){ residue_fraction_buried_ = r; }
 

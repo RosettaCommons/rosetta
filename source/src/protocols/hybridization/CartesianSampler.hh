@@ -65,7 +65,7 @@ public:
 	void init();
 
 	// run the protocol
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	// set the centroid scorefunction
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { scorefxn_=scorefxn_in; }
@@ -75,17 +75,17 @@ public:
 	// set the fullatom scorefunction (only used for some option sets)
 	void set_fa_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { fa_scorefxn_=scorefxn_in; }
 
-	std::string get_name() const { return "CartesianSampler"; }
+	std::string get_name() const override { return "CartesianSampler"; }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	// accessors
 	void set_userpos(std::set<core::Size> const &user_pos_in) { user_pos_ = user_pos_in; }

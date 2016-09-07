@@ -49,28 +49,28 @@ public:
 	ConstraintScoreCutoffFilter();
 	ConstraintScoreCutoffFilter( core::Real cutoff_in );
 
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new ConstraintScoreCutoffFilter( *this ) ); }
 
-	filters::FilterOP fresh_instance() const {
+	filters::FilterOP fresh_instance() const override {
 		return filters::FilterOP( new ConstraintScoreCutoffFilter() ); }
 
-	virtual void report( std::ostream & ostr, core::pose::Pose const & pose ) const;
+	void report( std::ostream & ostr, core::pose::Pose const & pose ) const override;
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 	/// In this case, the test is the result of the following comparison:
 	/// sc <= cutoff
 	/// Where cutoff is the cutoff set for this filter, and sc is the value of the
 	/// ScoreType from the Pose Energies object.
-	virtual
-	bool apply( core::pose::Pose const & pose ) const;
+	
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	void set_cutoff( core::Real cutoff_in ){
 		cutoff_ = cutoff_in;
@@ -90,7 +90,7 @@ public:
 	core::Real get_score( core::pose::Pose const & pose ) const;
 	// Undefined commenting out to fix PyRosetta build  void apply_cst( core::pose::Pose const& pose ) const;
 
-	virtual std::string name() const {
+	std::string name() const override {
 		return "ConstraintScoreCutoffFilter";
 	}
 

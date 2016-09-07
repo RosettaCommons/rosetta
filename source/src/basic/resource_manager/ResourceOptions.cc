@@ -17,6 +17,7 @@
 //C++ headers
 #include <string>
 #include <ostream>
+#include <utility>
 
 namespace basic {
 namespace resource_manager {
@@ -48,7 +49,7 @@ ResourceOptions::ResourceOptions(
 	name_( name )
 {}
 
-ResourceOptions::~ResourceOptions() {}
+ResourceOptions::~ResourceOptions() = default;
 
 std::string
 ResourceOptions::name() const {

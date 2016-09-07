@@ -99,22 +99,9 @@ LinkageConformerMover::set_defaults(){
 
 }
 
-LinkageConformerMover::~LinkageConformerMover(){}
+LinkageConformerMover::~LinkageConformerMover()= default;
 
-LinkageConformerMover::LinkageConformerMover( LinkageConformerMover const & src ):
-	protocols::moves::Mover( src ),
-	movemap_residues_(src.movemap_residues_),
-	sample_sd_(src.sample_sd_),
-	use_sugar_bb_data_if_needed_(src.use_sugar_bb_data_if_needed_),
-	idealize_torsions_(src.idealize_torsions_),
-	conformer_found_(src.conformer_found_),
-	use_sd_as_prob_(src.use_sd_as_prob_),
-	sample_protein_linkage_(src.sample_protein_linkage_),
-	use_conformer_population_stats_( src.use_conformer_population_stats_ ),
-	phi_sampler_mover_(src.phi_sampler_mover_),
-	psi_sampler_mover_(src.psi_sampler_mover_),
-	movemap_(src.movemap_)
-{}
+LinkageConformerMover::LinkageConformerMover( LinkageConformerMover const & )= default;
 
 void
 LinkageConformerMover::set_movemap( core::kinematics::MoveMapCOP movemap ){

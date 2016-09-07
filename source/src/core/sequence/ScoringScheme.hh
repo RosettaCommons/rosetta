@@ -45,7 +45,7 @@ public:
 	ScoringScheme();
 
 	/// @brief dtor
-	virtual ~ScoringScheme();
+	~ScoringScheme() override;
 
 	/// @brief clone method.
 	virtual ScoringSchemeOP clone() const = 0;

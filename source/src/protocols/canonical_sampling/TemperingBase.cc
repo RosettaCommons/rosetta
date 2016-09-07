@@ -240,7 +240,7 @@ TemperingBase::finalize_simulation(
 	tr.Trace << "write statistics to " << stats_file_ << "..." << std::endl;
 	trial_counter_.write_to_file( stats_file_, mhm.output_name() );
 	tr.Trace << "done" << stats_file_ << std::endl;
-	job_ = NULL;
+	job_ = nullptr;
 }
 
 bool TemperingBase::check_temp_consistency() {

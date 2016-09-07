@@ -76,7 +76,7 @@ LrmsdFilter::LrmsdFilter( core::Size const rb_jump,core::Real const lower_thresh
 
 }
 
-LrmsdFilter::~LrmsdFilter(){}
+LrmsdFilter::~LrmsdFilter() = default;
 
 protocols::filters::FilterOP
 LrmsdFilter::clone() const{

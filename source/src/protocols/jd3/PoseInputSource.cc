@@ -16,6 +16,7 @@
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
+#include <utility>
 
 
 namespace protocols {
@@ -25,10 +26,10 @@ PoseInputSource::PoseInputSource() :
 	origin_( "unknown" )
 {}
 
-PoseInputSource::PoseInputSource( std::string const & origin ) :
-	origin_( origin )
+PoseInputSource::PoseInputSource( std::string  origin ) :
+	origin_(std::move( origin ))
 {}
-PoseInputSource::~PoseInputSource() {}
+PoseInputSource::~PoseInputSource() = default;
 
 bool PoseInputSource::operator == ( PoseInputSource const & rhs ) const
 {

@@ -71,8 +71,8 @@ public:
 		numeric::xyzVector<Real> coords,
 		Real temp
 	) : res_num_(res_num),
-		res_name_(res_name),
-		atom_name_(atom_name),
+		res_name_(std::move(res_name)),
+		atom_name_(std::move(atom_name)),
 		coords_(coords),
 		temp_(temp)
 	{}
@@ -239,7 +239,7 @@ public: // destructor
 
 
 	/// @brief default destructor
-	virtual ~PDBInfo();
+	~PDBInfo() override;
 
 
 public: // assignment
@@ -1042,7 +1042,7 @@ public: // residue mutators en masse
 		CharIterator const & end
 	)
 	{
-		ResidueRecords::iterator rr = residue_rec_.begin();
+		auto rr = residue_rec_.begin();
 
 		for ( CharIterator i = begin; i < end; ++i, ++rr ) {
 			rr->chainID = *i;
@@ -1083,7 +1083,7 @@ public: // residue mutators en masse
 		IntIterator const & end
 	)
 	{
-		ResidueRecords::iterator rr = residue_rec_.begin();
+		auto rr = residue_rec_.begin();
 
 		for ( IntIterator i = begin; i < end; ++i, ++rr ) {
 			rr->resSeq = *i;
@@ -1124,7 +1124,7 @@ public: // residue mutators en masse
 		CharIterator const & end
 	)
 	{
-		ResidueRecords::iterator rr = residue_rec_.begin();
+		auto rr = residue_rec_.begin();
 
 		for ( CharIterator i = begin; i < end; ++i, ++rr ) {
 			rr->iCode = *i;
@@ -1159,7 +1159,7 @@ public: // residue mutators en masse
 		StringIterator const & begin,
 		StringIterator const & end
 	) {
-		ResidueRecords::iterator rr = residue_rec_.begin();
+		auto rr = residue_rec_.begin();
 
 		for ( StringIterator i = begin; i < end; ++i, ++rr ) {
 			rr->segmentID = *i;

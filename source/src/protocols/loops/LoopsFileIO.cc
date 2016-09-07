@@ -37,7 +37,7 @@ using core::pose::ResidueIndexDescription;
 using core::pose::ResidueIndexDescriptionFromFile;
 
 /// @details Auto-generated virtual destructor
-LoopsFileData::~LoopsFileData() {}
+LoopsFileData::~LoopsFileData() = default;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.loops.LoopsFileIO" );
 
@@ -69,16 +69,16 @@ LoopFromFileData::LoopFromFileData() :
 {}
 
 LoopFromFileData::LoopFromFileData(
-	ResidueIndexDescriptionFromFile const & start_res,
-	ResidueIndexDescriptionFromFile const & cutpoint_res,
-	ResidueIndexDescriptionFromFile const & end_res,
+	ResidueIndexDescriptionFromFile  start_res,
+	ResidueIndexDescriptionFromFile  cutpoint_res,
+	ResidueIndexDescriptionFromFile  end_res,
 	core::Real skip_rate,
 	bool extended,
 	bool prohibit_single_residue_loops
 ) :
-	start_res_( start_res ),
-	cutpoint_res_( cutpoint_res ),
-	end_res_( end_res ),
+	start_res_(std::move( start_res )),
+	cutpoint_res_(std::move( cutpoint_res )),
+	end_res_(std::move( end_res )),
 	skip_rate_( skip_rate ),
 	extended_( extended ),
 	prohibit_single_residue_loops_( prohibit_single_residue_loops )
@@ -192,7 +192,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( LoopsOP loops ) :
 	in_charge_( false ),
 	pose_has_resolved_loop_indices_( true ),
 	rely_on_loopfile_indices_( false ),
-	loops_( loops ) // copy the pointer -- assume this pointer comes from some other GuardedLoopsFromFile object and that I am not in charge
+	loops_(std::move( loops )) // copy the pointer -- assume this pointer comes from some other GuardedLoopsFromFile object and that I am not in charge
 {}
 
 
@@ -227,7 +227,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( GuardedLoopsFromFile const & src, bo
 	loops_( src.loops_ )
 {}
 
-GuardedLoopsFromFile::~GuardedLoopsFromFile() {}
+GuardedLoopsFromFile::~GuardedLoopsFromFile() = default;
 
 GuardedLoopsFromFile &
 GuardedLoopsFromFile::operator = ( GuardedLoopsFromFile const & rhs ) {
@@ -341,7 +341,7 @@ LoopsFileIO::LoopsFileIO( const LoopsFileIO & ) : utility::pointer::ReferenceCou
 }
 
 // destructor
-LoopsFileIO::~LoopsFileIO(){}
+LoopsFileIO::~LoopsFileIO()= default;
 
 //////////////////////////////////////////////////////////////////////
 std::ostream & operator<< ( std::ostream & os, const LoopsFileIO & /*loops*/ ) {
@@ -562,16 +562,16 @@ JSONFormattedLoopsFileReader::parse_json_formatted_data(
 
 	LoopsFileDataOP loops( new LoopsFileData );
 	core::Size count_lines_approximate = linecount_offset_;
-	for ( core::Size i=0; i < array.size(); ++i ) {
-		ensure_all_fields_are_valid( array[ i ], filename );
+	for (auto & i : array) {
+		ensure_all_fields_are_valid( i, filename );
 		LoopFromFileData current_loop = LoopFromFileData();
 
-		current_loop.start_res(    parse_json_residue_info( array[ i ], start,     filename, count_lines_approximate ) );
-		current_loop.end_res(      parse_json_residue_info( array[ i ], stop,      filename, count_lines_approximate ) );
-		current_loop.cutpoint_res( parse_json_residue_info( array[ i ], cut_point, filename, count_lines_approximate ) );
+		current_loop.start_res(    parse_json_residue_info( i, start,     filename, count_lines_approximate ) );
+		current_loop.end_res(      parse_json_residue_info( i, stop,      filename, count_lines_approximate ) );
+		current_loop.cutpoint_res( parse_json_residue_info( i, cut_point, filename, count_lines_approximate ) );
 		current_loop.prohibit_single_residue_loops( prohibit_single_residue_loops );
 
-		parse_configuration_options( array[ i ], current_loop );
+		parse_configuration_options( i, current_loop );
 		loops->push_back( current_loop );
 	}
 	return loops;
@@ -585,7 +585,7 @@ JSONFormattedLoopsFileReader::ensure_all_fields_are_valid( utility::json_spirit:
 	}
 
 	setup_residue_type_map();
-	for ( std::map<std::string,utility::json_spirit::mValue>::iterator it = json_data.get_obj().begin(); it != json_data.get_obj().end(); ++it ) {
+	for ( auto it = json_data.get_obj().begin(); it != json_data.get_obj().end(); ++it ) {
 
 		if ( std::find( valid_loop_file_keys_.begin(), valid_loop_file_keys_.end(), it->first ) == valid_loop_file_keys_.end() ) {
 			utility_exit_with_message( "Unknown key \"" + it->first + ".\"  Please check your input file." );

@@ -77,7 +77,7 @@ has_element( T const & t, utility::vector1< T > const & v )
 }
 
 
-TorsionFragment::~TorsionFragment() {}
+TorsionFragment::~TorsionFragment() = default;
 
 TorsionFragment::TorsionFragment( TorsionFragment const & src ):
 	ReferenceCount(),
@@ -211,7 +211,7 @@ TorsionFragmentLibrary::read_file(
 }
 
 
-TorsionFragmentLibrary::~TorsionFragmentLibrary() {}
+TorsionFragmentLibrary::~TorsionFragmentLibrary() = default;
 
 /// after calling, the size will be the oldsize + current2desired_offset
 ///
@@ -379,8 +379,8 @@ TorsionFragmentLibrary::derive_from_src_lib(
 void
 FragLib::delete_residue( Size const seqpos )
 {
-	for ( FragMap::iterator it = frag_map_.begin(); it != frag_map_.end(); ++it ) {
-		it->second->delete_residue( seqpos );
+	for (auto & it : frag_map_) {
+		it.second->delete_residue( seqpos );
 	}
 }
 
@@ -388,16 +388,16 @@ void
 FragLib::copy_fragments( FragLib const & src )
 {
 	Sizes const fragsizes( src.frag_sizes() );
-	for ( Sizes::const_iterator sz = fragsizes.begin(); sz != fragsizes.end(); ++sz ) {
-		library( *sz ).copy_fragments( src.library( *sz ) );
+	for (unsigned long fragsize : fragsizes) {
+		library( fragsize ).copy_fragments( src.library( fragsize ) );
 	}
 }
 
 void
 FragLib::shift( int const current2desired_offset )
 {
-	for ( FragMap::iterator it= frag_map_.begin(); it != frag_map_.end(); ++it ) {
-		it->second->shift( current2desired_offset );
+	for (auto & it : frag_map_) {
+		it.second->shift( current2desired_offset );
 	}
 }
 
@@ -424,8 +424,8 @@ utility::vector1< Size >
 FragLib::frag_sizes() const
 {
 	utility::vector1< Size > sizes;
-	for ( FragMap::const_iterator it=frag_map_.begin(), ite = frag_map_.end(); it != ite; ++it ) {
-		sizes.push_back( it->first );
+	for (const auto & it : frag_map_) {
+		sizes.push_back( it.first );
 	}
 	return sizes;
 }
@@ -561,9 +561,8 @@ add_vall_fragments(
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
 
-	for ( vector1< Size >::const_iterator sz = frag_sizes.begin(); sz != frag_sizes.end(); ++sz ) {
-		Size const frag_size( *sz );
-		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for (unsigned long frag_size : frag_sizes) {
+			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
@@ -610,9 +609,8 @@ add_vall_fragments(
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
 
-	for ( vector1< Size >::const_iterator sz = frag_sizes.begin(); sz != frag_sizes.end(); ++sz ) {
-		Size const frag_size( *sz );
-		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for (unsigned long frag_size : frag_sizes) {
+			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
@@ -679,9 +677,8 @@ add_vall_cheating_fragments(
 	Size const nres( pose.total_residue() );
 	string const seq( pose.sequence() );
 
-	for ( vector1< Size >::const_iterator sz = frag_sizes.begin(); sz != frag_sizes.end(); ++sz ) {
-		Size const frag_size( *sz );
-		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for (unsigned long frag_size : frag_sizes) {
+			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
@@ -768,9 +765,8 @@ fill_in_gaps(
 	}
 
 	Sizes const frag_sizes( frag_lib.frag_sizes() );
-	for ( Sizes::const_iterator sz = frag_sizes.begin(); sz != frag_sizes.end(); ++sz ) {
-		Size const frag_size( *sz );
-		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for (unsigned long frag_size : frag_sizes) {
+			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		for ( Size i = 1; i<= lib.size(); ++i ) {
 			if ( lib[i].size() > 0 ) continue; // skip windows with at least one fragment
 			bool allowed( true );
@@ -800,7 +796,7 @@ TorsionFragmentLibrary::print( std::ostream & os ) const
 	}
 }
 
-SingleResidueTorsionFragmentLibrary::~SingleResidueTorsionFragmentLibrary() {}
+SingleResidueTorsionFragmentLibrary::~SingleResidueTorsionFragmentLibrary() = default;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -854,7 +850,7 @@ insert_fragment(
 		++ntries;
 		// choose a window in the insertable region
 		int const pos ( static_cast<int>( numeric::random::uniform() * ( region_size - actual_frag_size + 1) ) );
-		insert_pos = ( desired_insert_pos == 0 ? begin + pos : desired_insert_pos );;
+		insert_pos = ( desired_insert_pos == 0 ? begin + pos : desired_insert_pos );
 		runtime_assert ( 1<= insert_pos && insert_pos <= frag_nres );
 		// choose a fragment from the library at that window position
 		nfrags = lib[ insert_pos ].size();
@@ -976,8 +972,8 @@ operator << ( std::ostream & out, FragLib const & lib )
 {
 	Sizes const fragsizes( lib.frag_sizes() );
 	out << "FragLib " << fragsizes.size() << '\n';
-	for ( Sizes::const_iterator sz = fragsizes.begin(); sz != fragsizes.end(); ++sz ) {
-		out << "frag_size " << *sz << ' ' << lib.library( *sz );
+	for (unsigned long fragsize : fragsizes) {
+		out << "frag_size " << fragsize << ' ' << lib.library( fragsize );
 	}
 	return out;
 }

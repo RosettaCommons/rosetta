@@ -65,15 +65,15 @@ public:
 	ConstraintEvaluator( std::string tag, std::string filename, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
 
 	//sets xxx_cst and xxx_viol columns
-	virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+	void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const override;
 
 	using evaluation::PoseEvaluator::apply;
 
 	//returns constraint score
 	virtual core::Real apply( core::pose::Pose& pose ) const;
 
-	virtual core::Size size() const { return 1; }
-	virtual std::string name( core::Size i ) const;
+	core::Size size() const override { return 1; }
+	std::string name( core::Size i ) const override;
 
 	void set_combine_ratio( core::Size setting ) {
 		constraints_combine_ratio_ = setting;

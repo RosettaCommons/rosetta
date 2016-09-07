@@ -73,7 +73,7 @@ public:
 	InterfaceInfo( InterfaceInfo const & src );
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new InterfaceInfo( *this ) );
 	}

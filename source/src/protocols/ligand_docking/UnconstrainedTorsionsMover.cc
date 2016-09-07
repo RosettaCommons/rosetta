@@ -21,6 +21,7 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -33,7 +34,7 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Restraints restraints
 ):
 	Mover(),
-	child_mover_(child_mover),
+	child_mover_(std::move(child_mover)),
 	restraints_(restraints)
 {
 }
@@ -43,7 +44,7 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	std::set<ResidueTorsionRestraintsOP> restraints
 ):
 	Mover(),
-	child_mover_(child_mover)
+	child_mover_(std::move(child_mover))
 {
 	BOOST_FOREACH ( ResidueTorsionRestraintsOP restraint, restraints ) {
 		restraints_.push_back(restraint);
@@ -55,7 +56,7 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	MinimizeLigandOPs minimize_ligands
 ):
 	Mover(),
-	child_mover_(child_mover)
+	child_mover_(std::move(child_mover))
 {
 	BOOST_FOREACH ( MinimizeLigandOP minimize_ligand, minimize_ligands ) {
 		restraints_.insert( restraints_.end(), minimize_ligand->begin(), minimize_ligand->end() );

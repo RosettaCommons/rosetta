@@ -285,7 +285,7 @@ SmoothEnvPairPotential::compute_centroid_environment(
 ) const {
 	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
-	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}
@@ -347,7 +347,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 ) const {
 	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
-	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}

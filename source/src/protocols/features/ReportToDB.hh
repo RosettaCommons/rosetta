@@ -53,7 +53,7 @@ public:
 	ReportToDB(
 		utility::sql_database::sessionOP db_session,
 		std::string const & batch_name,
-		std::string const & batch_description,
+		std::string batch_description,
 		bool use_transactions=true,
 		core::Size cache_size=2000);
 
@@ -61,25 +61,25 @@ public:
 		std::string const & name,
 		utility::sql_database::sessionOP db_session,
 		std::string const & batch_name,
-		std::string const & batch_description,
+		std::string batch_description,
 		bool use_transactions=true,
 		core::Size cache_size=2000
 	);
 
 	ReportToDB(ReportToDB const & src);
 
-	virtual ~ReportToDB();
+	~ReportToDB() override;
 
 	virtual
 	void
 	register_options() const;
 
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 	virtual std::string name() { return "ReportToDB"; }
-	virtual std::string get_name() const { return "ReportToDB"; }
+	std::string get_name() const override { return "ReportToDB"; }
 
 	void
 	set_batch_name(
@@ -182,7 +182,7 @@ public:
 		basic::datacache::DataMap & data,
 		Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	void
 	check_features_reporter_dependencies(
@@ -209,7 +209,7 @@ public:
 
 	void
 	apply(
-		Pose& pose);
+		Pose& pose) override;
 
 	StructureID
 	report_structure_features() const;

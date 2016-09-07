@@ -58,17 +58,17 @@ public:
 	MembranePositionFromTopologyMover( MembranePositionFromTopologyMover const & src );
 
 	/// @brief Destructor
-	~MembranePositionFromTopologyMover();
+	~MembranePositionFromTopologyMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -77,7 +77,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
@@ -86,10 +86,10 @@ public:
 	/// @brief Update Membrane position in pose
 	/// @details Compute membrane posiiton based on sequence or structure
 	/// and then call pose.update_membrane_position() to update the membrane position
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Anchor membrane at residue 1, default is true
 	void anchor_at_res1( bool truefalse );

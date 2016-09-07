@@ -40,17 +40,17 @@ public:
 	CalculatorFilter();
 	CalculatorFilter(std::string equation);
 	CalculatorFilter(CalculatorFilter const & other);
-	virtual ~CalculatorFilter();
+	~CalculatorFilter() override;
 
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 
-	virtual protocols::filters::FilterOP clone() const {
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new CalculatorFilter( *this ) );
 	}
-	virtual protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override{
 		return protocols::filters::FilterOP( new CalculatorFilter() );
 	}
 
@@ -58,7 +58,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	void threshold( core::Real threshold) { threshold_ = threshold; }
 
 	void add_filter( std::string name, protocols::filters::FilterOP filter );

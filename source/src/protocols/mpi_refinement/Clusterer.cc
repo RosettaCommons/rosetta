@@ -36,7 +36,7 @@ Clusterer::Clusterer()
 	set_defaults();
 }
 
-Clusterer::~Clusterer(){}
+Clusterer::~Clusterer()= default;
 
 void
 Clusterer::set_defaults()

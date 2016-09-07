@@ -22,9 +22,9 @@ namespace pb_potential {
 class SetupPoissonBoltzmannPotentialCreator : public protocols::moves::MoverCreator {
 public:
 	SetupPoissonBoltzmannPotentialCreator();
-	virtual ~SetupPoissonBoltzmannPotentialCreator();
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	~SetupPoissonBoltzmannPotentialCreator() override;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
 	static std::string mover_name();
 };
 

@@ -26,6 +26,7 @@
 // tracer
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -52,13 +53,13 @@ JumpOutMover::JumpOutMover(
 	core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::Real tolerance_in
 ) : Mover("JumpOutMover"),
-	first_mover_(first_mover_in),
-	second_mover_(second_mover_in),
-	scorefxn_(scorefxn_in),
+	first_mover_(std::move(first_mover_in)),
+	second_mover_(std::move(second_mover_in)),
+	scorefxn_(std::move(scorefxn_in)),
 	tolerance_(tolerance_in)
 {}
 
-JumpOutMover::~JumpOutMover() {}
+JumpOutMover::~JumpOutMover() = default;
 
 void
 JumpOutMover::apply( core::pose::Pose & pose ) {

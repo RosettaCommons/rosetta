@@ -53,7 +53,7 @@ public:
 		bool shuffle_order = false,
 		bool diversify = false,
 		bool incl_nonopt = false,
-		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
+		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( nullptr )
 	);
 
 	bool pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
@@ -63,18 +63,18 @@ public:
 	void clear_cached_data();
 	void calc_pfront_poses_filter_ranks();
 	void dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const;
-	void apply( Pose & pose );
-	protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new GreedyOptMutationMover ); }
+	void apply( Pose & pose ) override;
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new GreedyOptMutationMover ); }
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	void add_filter(
 		protocols::filters::FilterOP,
 		std::string const sample_type,
 		core::Real filter_delta
 	);
-	virtual ~GreedyOptMutationMover();
+	~GreedyOptMutationMover() override;
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	core::scoring::ScoreFunctionOP scorefxn() const;

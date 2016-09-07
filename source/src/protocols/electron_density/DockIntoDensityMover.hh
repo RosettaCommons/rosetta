@@ -211,7 +211,7 @@ public:
 	void setNative( core::pose::PoseOP native );
 
 	//
-	void apply( core::pose::Pose & pose);
+	void apply( core::pose::Pose & pose) override;
 
 	// apply to multiple poses simultaneously
 	void apply_multi( utility::vector1< core::pose::PoseOP > & poses);
@@ -282,7 +282,7 @@ public:
 	void print_best_rms( core::pose::Pose const &pose, RBfitResultDB const &results );
 
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "DockIntoDensity";
 	}
 

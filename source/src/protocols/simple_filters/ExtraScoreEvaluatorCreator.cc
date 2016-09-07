@@ -68,7 +68,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.ExtraScoreEvaluatorC
 namespace protocols {
 namespace simple_filters {
 
-ExtraScoreEvaluatorCreator::~ExtraScoreEvaluatorCreator() {}
+ExtraScoreEvaluatorCreator::~ExtraScoreEvaluatorCreator() = default;
 
 void ExtraScoreEvaluatorCreator::register_options() {
 	using namespace basic::options;
@@ -106,7 +106,7 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 				}
 				patch = option[ OptionKeys::evaluation::extra_score_patch ]()[ ct ];
 			}
-			ScoreFunctionOP scfxn( NULL );
+			ScoreFunctionOP scfxn( nullptr );
 
 			if ( patch != "NOPATCH" ) {
 				scfxn = ScoreFunctionFactory::create_score_function( extra_scores[ ct ], patch );

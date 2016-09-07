@@ -50,7 +50,7 @@ public:
 	inline CacheableDataCAP get_self_weak_ptr() const { return CacheableDataCAP( shared_from_this() ); }
 	inline CacheableDataAP get_self_weak_ptr() { return CacheableDataAP( shared_from_this() ); }
 
-	virtual ~CacheableData();
+	~CacheableData() override;
 
 	virtual CacheableDataOP clone() const = 0;
 

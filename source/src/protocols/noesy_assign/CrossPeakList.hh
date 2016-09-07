@@ -57,7 +57,7 @@ public:
 	typedef CrossPeaks::const_iterator const_iterator;
 	typedef CrossPeaks::iterator iterator;
 	CrossPeakList();
-	virtual ~CrossPeakList();
+	~CrossPeakList() override;
 
 	void read_from_stream( std::istream&, PeakFileFormat& input_adaptor, ResonanceListOP resonances );
 	void write_to_stream( std::ostream&, PeakFileFormat& output_adaptor ) const;

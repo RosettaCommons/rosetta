@@ -47,7 +47,7 @@ public:
 		ndof_ = ndof;
 	}
 
-	~Thermostat(){}
+	~Thermostat()= default;
 
 	void
 	rescale( Multivec &vel, Real const& dt, Multivec const &mass ){

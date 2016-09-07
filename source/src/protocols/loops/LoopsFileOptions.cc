@@ -33,7 +33,7 @@ LoopsFileOptionsCreator::create_options() const { return basic::resource_manager
 
 /// @details The prohibit_single_residue_loops property is set to true by default.
 LoopsFileOptions::LoopsFileOptions() : prohibit_single_residue_loops_( true ) {}
-LoopsFileOptions::~LoopsFileOptions() {}
+LoopsFileOptions::~LoopsFileOptions() = default;
 
 /// @details Read the resource definitions file's tag and set the value for prohibit_single_residue_loops appropriately.
 /// If this option is omitted it is set to true by default.

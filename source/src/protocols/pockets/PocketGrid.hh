@@ -58,7 +58,7 @@ public:
 
 	PCluster(core::Size x, core::Size y, core::Size z, core::Real step_);
 	PCluster(const PCluster& old);
-	~PCluster() {};
+	~PCluster() = default;
 	int size() const {return points_.size();};
 	bool testNeighbor(PCluster & c2);
 	bool isClose(PCluster const & c2) const;
@@ -141,7 +141,7 @@ public:
 
 	CCluster(core::Size x, core::Size y, core::Size z, std::string atype, core::Real step_, core::Real absX=0., core::Real absY=0., core::Real absZ=0.);
 	CCluster(const CCluster& old);
-	~CCluster() {};
+	~CCluster() = default;
 	int size() const {return points_.size();};
 	bool testNeighbor(CCluster & c2);
 	bool isClose(CCluster const & c2) const;
@@ -290,7 +290,7 @@ protected:
 
 public:
 	PocketGrid();
-	virtual ~PocketGrid();
+	~PocketGrid() override;
 	PocketGrid(const PocketGrid& gr);
 	PocketGrid& operator= (const PocketGrid& gr);
 	numeric::xyzVector<core::Real> dim() const { return dim_; };
@@ -407,7 +407,7 @@ public:
 	//core::Real get_pocket_distance( TargetPocketGrid const & template_pocket ) const { return get_pocket_distance( template_pocket, ""); };
 	//core::Real get_pocket_distance( TargetPocketGrid const & template_pocket, std::string const & comparison_pdbname ) const;
 
-	virtual bool same_type_as_me( PocketGrid const & other ) const;
+	bool same_type_as_me( PocketGrid const & other ) const override;
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;
@@ -452,8 +452,8 @@ public:
 	core::Real get_eggshell_distance( EggshellGrid const & template_eggshell ) const { return get_eggshell_distance( template_eggshell, ""); };
 	core::Real get_eggshell_distance( EggshellGrid const & template_eggshell, std::string const & comparison_pdbname ) const;
 
-	virtual bool operator == ( PocketGrid const & rhs ) const;
-	virtual bool same_type_as_me( PocketGrid const & other ) const;
+	bool operator == ( PocketGrid const & rhs ) const override;
+	bool same_type_as_me( PocketGrid const & other ) const override;
 
 #ifdef    SERIALIZATION
 protected:
@@ -513,8 +513,8 @@ public:
 	void set_protein_esp_to_zero();
 	void cap_espGrid();
 
-	virtual bool operator == ( PocketGrid const & other ) const;
-	virtual bool same_type_as_me( PocketGrid const & other ) const;
+	bool operator == ( PocketGrid const & other ) const override;
+	bool same_type_as_me( PocketGrid const & other ) const override;
 
 #ifdef    SERIALIZATION
 public:

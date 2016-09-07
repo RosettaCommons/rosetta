@@ -352,7 +352,7 @@ bool Environment::is_registered( ClientMoverOP mover ) const {
 EnvironmentCAP Environment::superenv() const{
 	if ( ! Parent::superenv().expired() ) {
 		EnvironmentCOP env = utility::pointer::dynamic_pointer_cast< Environment const >( Parent::superenv().lock() );
-		assert( env != 0 );
+		assert( env != nullptr );
 		return EnvironmentCAP( env );
 	} else {
 		return EnvironmentCAP();

@@ -59,7 +59,7 @@ public:
 	{}
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FeaturesReporter();
+	~FeaturesReporter() override;
 
 	virtual
 	std::string

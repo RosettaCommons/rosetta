@@ -33,10 +33,10 @@ public:
 	WorkUnit_LoopHash( core::Size start_ir=0, core::Size end_ir=0, core::Size ssid=0 );
 
 	// @brief Run the workunit - overloaded by children of this class
-	virtual void run();
+	void run() override;
 
-	virtual protocols::wum::WorkUnitBaseOP clone() const {
-		runtime_assert( library_ != 0 );
+	protocols::wum::WorkUnitBaseOP clone() const override {
+		runtime_assert( library_ != nullptr );
 		return protocols::wum::WorkUnitBaseOP( new WorkUnit_LoopHash( *this ) );
 	}
 

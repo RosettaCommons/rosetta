@@ -77,7 +77,7 @@ public:
 	clone() const;
 
 	//Default destructor
-	virtual ~AntibodyInfo();
+	~AntibodyInfo() override;
 
 public:
 

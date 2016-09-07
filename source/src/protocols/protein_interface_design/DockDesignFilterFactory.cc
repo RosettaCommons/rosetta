@@ -33,13 +33,13 @@ DockDesignFilterFactory::DockDesignFilterFactory()
 	// they must be registered using the add_type method
 }
 
-DockDesignFilterFactory::~DockDesignFilterFactory(){}
+DockDesignFilterFactory::~DockDesignFilterFactory()= default;
 
 /// @brief add a Filter prototype, using its default type name as the map key
 void
 DockDesignFilterFactory::add_type( FilterOP dock_design_filter )
 {
-	runtime_assert( dock_design_filter != 0 );
+	runtime_assert( dock_design_filter != nullptr );
 	std::string const type( dock_design_filter->get_type() );
 	if ( type == "UNDEFINED TYPE" ) {
 		utility_exit_with_message("Can't map derived Filter with undefined type name.");
@@ -51,7 +51,7 @@ DockDesignFilterFactory::add_type( FilterOP dock_design_filter )
 void
 DockDesignFilterFactory::add_type( std::string const & type, FilterOP dock_design_filter )
 {
-	runtime_assert( dock_design_filter != 0 );
+	runtime_assert( dock_design_filter != nullptr );
 	dock_design_filter_map_[ type ] = dock_design_filter;
 }
 
@@ -67,7 +67,7 @@ DockDesignFilterFactory::newFilter( std::string const & type )
 		return iter->second->fresh_instance();
 	} else {
 		utility_exit_with_message( type + " is not known to the FilterFactory. Was it registered via the add_type method?" );
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -81,7 +81,7 @@ DockDesignFilterFactory::newFilter(
 	Pose const & pose )
 {
 	FilterOP filter( newFilter( tag->getName() ) );
-	runtime_assert( filter != 0 );
+	runtime_assert( filter != nullptr );
 	if ( ! tag->hasOption("name") ) {
 		utility_exit_with_message("Can't define unnamed Filter");
 	}

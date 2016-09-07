@@ -87,32 +87,32 @@ public:
 	EvolutionaryDynamicsMover();
 
 	/// @brief destructor
-	~EvolutionaryDynamicsMover();
+	~EvolutionaryDynamicsMover() override;
 
 	/// @brief create copy constructor
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 	/// @brief create this type of objectt
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
     /// @brief apply GenericMonteCarloMover (Mover)
-    virtual void apply( Pose & pose );
+    void apply( Pose & pose ) override;
         
-	virtual String get_name() const;
+	String get_name() const override;
         
     /// @brief core of MC -- evaulates a pose based on the scores/filters + temperatures. random_num is a vector of random numbers between 0 and 1 with size equal to the number of MC criteria
-    bool boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums );
+    bool boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums ) override;
 
 
 
 public: // mutators
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const &
-	);
+	) override;
     
     void population_size( core::Real const s ){ population_size_ = s; };
     core::Real population_size() const{ return population_size_; }

@@ -57,7 +57,7 @@ CalculatorFilter::CalculatorFilter(CalculatorFilter const & other) :
 {}
 
 
-CalculatorFilter::~CalculatorFilter() {}
+CalculatorFilter::~CalculatorFilter() = default;
 
 bool
 CalculatorFilter::apply(core::pose::Pose const & pose) const
@@ -95,7 +95,7 @@ core::Real
 CalculatorFilter::compute(core::pose::Pose const & pose) const {
 	assert(calc_);
 	std::map< std::string, core::Real > vars(values_);
-	for ( std::map<std::string, protocols::filters::FilterOP>::const_iterator iter(filters_.begin()); iter != filters_.end(); ++iter ) {
+	for ( auto iter(filters_.begin()); iter != filters_.end(); ++iter ) {
 		assert(iter->second);
 		vars[ iter->first ] = (iter->second)->report_sm( pose );
 	}
@@ -137,8 +137,8 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	// Now do a quick sanity check for the equation parsing.
 	calc_ = numeric::CalculatorOP( new numeric::Calculator( equation ) );
 	std::map< std::string, core::Real > vars(values_);
-	for ( std::map<std::string, protocols::filters::FilterOP>::iterator iter(filters_.begin()); iter != filters_.end(); ++iter ) {
-		vars[ iter->first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
+	for (auto & filter : filters_) {
+		vars[ filter.first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
 	}
 	numeric::Real dummy;
 	if ( calc_->compute(vars, dummy) ) {

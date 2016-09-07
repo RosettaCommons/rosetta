@@ -87,7 +87,7 @@ extern DipolarCouplingCOP retrieve_DC_from_pose( core::pose::Pose const& pose) {
 		return utility::pointer::static_pointer_cast< core::scoring::DipolarCoupling const > ( pose.data().get_const_ptr(
 			core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 extern DipolarCouplingOP retrieve_DC_from_pose(core::pose::Pose& pose) {
@@ -95,14 +95,14 @@ extern DipolarCouplingOP retrieve_DC_from_pose(core::pose::Pose& pose) {
 		return utility::pointer::static_pointer_cast< core::scoring::DipolarCoupling > ( pose.data().get_ptr(
 			core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
-	return NULL;
+	return nullptr;
 }
 
 void DipolarCoupling::show(std::ostream& out) const {
 	Size ct=0;
-	for ( DC_lines::const_iterator it = All_DC_lines_.begin(), end = All_DC_lines_.end(); it != end; ++it ) {
+	for (const auto & All_DC_line : All_DC_lines_) {
 		out << "DC " << ++ct << "     ";
-		out << (*it) << std::endl;
+		out << All_DC_line << std::endl;
 	}
 }
 
@@ -226,16 +226,16 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 	}
 	tr.Trace << "memnorm.x(): " << memnorm.x() << " memnorm.y() " << memnorm.y() << " memnorm.z() " << memnorm.z() << std::endl;
 
-	for ( utility::vector1<core::scoring::DC>::iterator it = All_DC_lines_.begin(); it != All_DC_lines_.end(); ++it ) {
+	for (auto & All_DC_line : All_DC_lines_) {
 		//        tr.Trace << "it->res1(): " << it->res1() << " it->atom1() " << it->atom1() << std::endl;
 		//        tr.Trace << "it->res2(): " << it->res2() << " it->atom2() " << it->atom2() << std::endl;
-		numeric::xyzVector<Real> v1( pose.residue(it->res2()).atom(it->atom2()).xyz() - pose.residue(it->res1()).atom(it->atom1()).xyz());
+		numeric::xyzVector<Real> v1( pose.residue(All_DC_line.res2()).atom(All_DC_line.atom2()).xyz() - pose.residue(All_DC_line.res1()).atom(All_DC_line.atom1()).xyz());
 		numeric::xyzVector<Real> u1=v1.normalized();
 
 		Real costheta=dot_product(u1,memnorm);
 
 		//compute the observed DC
-		Real compDC=it->DCval_computed_=it->Dconst()*(3*costheta*costheta-1);
+		Real compDC=All_DC_line.DCval_computed_=All_DC_line.Dconst()*(3*costheta*costheta-1);
 
 		//compute the difference and then energy
 		Real devDC;
@@ -253,12 +253,12 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 		Real dv_yB=0.0;
 		Real dv_zB=0.0;
 
-		DC& dc = *it;
+		DC& dc = All_DC_line;
 
-		if ( it->DCval()<=it->Dconst() ) {
+		if ( All_DC_line.DCval()<=All_DC_line.Dconst() ) {
 			//devDC = fabs(fabs(compDC) - it->DCval()) < it->DCerr() ? 0.0 : fabs(fabs(compDC - it->DCval())-it->DCerr());
 			//derivatives
-			if ( fabs(fabs(compDC) - it->DCval()) <= it->DCerr() ) {
+			if ( fabs(fabs(compDC) - All_DC_line.DCval()) <= All_DC_line.DCerr() ) {
 				devDC=0.0;
 				dc.f1ij_[0] = 0;
 				dc.f1ij_[1] = 0;
@@ -268,10 +268,10 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 				dc.f2ij_[2] = 0;
 			} else {
 
-				if ( fabs(compDC) - it->DCval()>it->DCerr() ) {
-					devDC=fabs(compDC) - it->DCval() - it->DCerr();
+				if ( fabs(compDC) - All_DC_line.DCval()>All_DC_line.DCerr() ) {
+					devDC=fabs(compDC) - All_DC_line.DCval() - All_DC_line.DCerr();
 				} else {
-					devDC=fabs(compDC) - it->DCval() + it->DCerr();
+					devDC=fabs(compDC) - All_DC_line.DCval() + All_DC_line.DCerr();
 				}
 				dcos_dxA= ( -memnorm.x()/v1.length()+dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
 				dcos_dyA= ( -memnorm.y()/v1.length()+dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
@@ -280,22 +280,22 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 				dcos_dyB= ( memnorm.y()/v1.length()-dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
 				dcos_dzB= ( memnorm.z()/v1.length()-dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
 
-				dv_xA=6*it->Dconst()*costheta*dcos_dxA;
-				dv_yA=6*it->Dconst()*costheta*dcos_dyA;
-				dv_zA=6*it->Dconst()*costheta*dcos_dzA;
-				dv_xB=6*it->Dconst()*costheta*dcos_dxB;
-				dv_yB=6*it->Dconst()*costheta*dcos_dyB;
-				dv_zB=6*it->Dconst()*costheta*dcos_dzB;
+				dv_xA=6*All_DC_line.Dconst()*costheta*dcos_dxA;
+				dv_yA=6*All_DC_line.Dconst()*costheta*dcos_dyA;
+				dv_zA=6*All_DC_line.Dconst()*costheta*dcos_dzA;
+				dv_xB=6*All_DC_line.Dconst()*costheta*dcos_dxB;
+				dv_yB=6*All_DC_line.Dconst()*costheta*dcos_dyB;
+				dv_zB=6*All_DC_line.Dconst()*costheta*dcos_dzB;
 
-				dc.f1ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xA;
-				dc.f1ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yA;
-				dc.f1ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zA;
-				dc.f2ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xB;
-				dc.f2ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yB;
-				dc.f2ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zB;
+				dc.f1ij_[0] = All_DC_line.weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xA;
+				dc.f1ij_[1] = All_DC_line.weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yA;
+				dc.f1ij_[2] = All_DC_line.weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zA;
+				dc.f2ij_[0] = All_DC_line.weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xB;
+				dc.f2ij_[1] = All_DC_line.weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yB;
+				dc.f2ij_[2] = All_DC_line.weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zB;
 			}
-		} else if ( it->DCval()>it->Dconst() && it->DCval()<=2*it->Dconst() ) {
-			if ( fabs(compDC- it->DCval()) <= it->DCerr() ) {
+		} else if ( All_DC_line.DCval()>All_DC_line.Dconst() && All_DC_line.DCval()<=2*All_DC_line.Dconst() ) {
+			if ( fabs(compDC- All_DC_line.DCval()) <= All_DC_line.DCerr() ) {
 				devDC=0.0;
 				dc.f1ij_[0] = 0;
 				dc.f1ij_[1] = 0;
@@ -305,10 +305,10 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 				dc.f2ij_[2] = 0;
 			} else {
 
-				if ( compDC- it->DCval()>it->DCerr() ) {
-					devDC=compDC- it->DCval() - it->DCerr();
+				if ( compDC- All_DC_line.DCval()>All_DC_line.DCerr() ) {
+					devDC=compDC- All_DC_line.DCval() - All_DC_line.DCerr();
 				} else {
-					devDC=compDC- it->DCval() + it->DCerr();
+					devDC=compDC- All_DC_line.DCval() + All_DC_line.DCerr();
 				}
 
 				dcos_dxA= ( -memnorm.x()/v1.length()+dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
@@ -318,29 +318,29 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 				dcos_dyB= ( memnorm.y()/v1.length()-dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
 				dcos_dzB= ( memnorm.z()/v1.length()-dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
 
-				dv_xA=6*it->Dconst()*costheta*dcos_dxA;
-				dv_yA=6*it->Dconst()*costheta*dcos_dyA;
-				dv_zA=6*it->Dconst()*costheta*dcos_dzA;
-				dv_xB=6*it->Dconst()*costheta*dcos_dxB;
-				dv_yB=6*it->Dconst()*costheta*dcos_dyB;
-				dv_zB=6*it->Dconst()*costheta*dcos_dzB;
+				dv_xA=6*All_DC_line.Dconst()*costheta*dcos_dxA;
+				dv_yA=6*All_DC_line.Dconst()*costheta*dcos_dyA;
+				dv_zA=6*All_DC_line.Dconst()*costheta*dcos_dzA;
+				dv_xB=6*All_DC_line.Dconst()*costheta*dcos_dxB;
+				dv_yB=6*All_DC_line.Dconst()*costheta*dcos_dyB;
+				dv_zB=6*All_DC_line.Dconst()*costheta*dcos_dzB;
 
-				dc.f1ij_[0] = it->weight()*2*devDC*dv_xA;
-				dc.f1ij_[1] = it->weight()*2*devDC*dv_yA;
-				dc.f1ij_[2] = it->weight()*2*devDC*dv_zA;
-				dc.f2ij_[0] = it->weight()*2*devDC*dv_xB;
-				dc.f2ij_[1] = it->weight()*2*devDC*dv_yB;
-				dc.f2ij_[2] = it->weight()*2*devDC*dv_zB;
+				dc.f1ij_[0] = All_DC_line.weight()*2*devDC*dv_xA;
+				dc.f1ij_[1] = All_DC_line.weight()*2*devDC*dv_yA;
+				dc.f1ij_[2] = All_DC_line.weight()*2*devDC*dv_zA;
+				dc.f2ij_[0] = All_DC_line.weight()*2*devDC*dv_xB;
+				dc.f2ij_[1] = All_DC_line.weight()*2*devDC*dv_yB;
+				dc.f2ij_[2] = All_DC_line.weight()*2*devDC*dv_zB;
 			}
 		} else {
 			throw(utility::excn::EXCN_BadInput( "DC value not in resonable range"));
 		}
 
 		//Add weight to energy
-		total_dev+=it->weight()*devDC*devDC;
+		total_dev+=All_DC_line.weight()*devDC*devDC;
 
 		if ( tr.Trace.visible() ) {
-			tr.Trace << "resi: " << it->res1() << " compDC: " << compDC << " expDC: " << it->DCval() << " expErr " << it->DCerr() << " devDC: " << devDC << " total_dev "<< total_dev << std::endl;
+			tr.Trace << "resi: " << All_DC_line.res1() << " compDC: " << compDC << " expDC: " << All_DC_line.DCval() << " expErr " << All_DC_line.DCerr() << " devDC: " << devDC << " total_dev "<< total_dev << std::endl;
 		}
 	}
 

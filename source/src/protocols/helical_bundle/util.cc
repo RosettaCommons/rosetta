@@ -12,7 +12,7 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 
 // Unit Headers
 #include <protocols/helical_bundle/util.hh>

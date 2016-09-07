@@ -45,7 +45,7 @@ public:
 		core::kinematics::FoldTree const & fold_tree,
 		std::string const & sequence );
 
-	virtual ~MiniPose(); // auto-removing definition from header{};
+	~MiniPose() override; // auto-removing definition from header{};
 
 	core::kinematics::FoldTree const & fold_tree() const;
 

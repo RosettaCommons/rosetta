@@ -64,22 +64,22 @@ public:// constructor/destructor
 	RangeFilter();
 
 	// @brief default constructor
-	RangeFilter(Real lower_bound, Real upper_bound, const FilterOP & filter);
+	RangeFilter(Real lower_bound, Real upper_bound, FilterOP filter);
 
 	// @brief copy constructor
 	RangeFilter( RangeFilter const & rval );
 
-	virtual ~RangeFilter(){}
+	~RangeFilter() override= default;
 
 
 public:// virtual constructor
 
 
 	// @brief make clone
-	virtual filters::FilterOP clone() const { return filters::FilterOP( new RangeFilter( *this ) ); }
+	filters::FilterOP clone() const override { return filters::FilterOP( new RangeFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual filters::FilterOP fresh_instance() const { return filters::FilterOP( new RangeFilter() ); }
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP( new RangeFilter() ); }
 
 
 public:// mutator
@@ -89,16 +89,16 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "RangeFilter"; }
+	std::string name() const override { return "RangeFilter"; }
 
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:// virtual main operation
@@ -106,10 +106,10 @@ public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
-	virtual bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	/// @brief used to report score
-	virtual void report( std::ostream & out, Pose const & pose ) const;
+	void report( std::ostream & out, Pose const & pose ) const override;
 
 private:
 	FilterOP filter_;

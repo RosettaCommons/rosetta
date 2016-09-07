@@ -46,12 +46,12 @@ class DockingLowResFilter : public protocols::filters::Filter
 public:
 	DockingLowResFilter();
 	DockingLowResFilter( const DockingLowResFilter & init );
-	~DockingLowResFilter();
+	~DockingLowResFilter() override;
 	void set_use_constraints( bool flag, core::Real cutoff=1.0 ); /// @brief add docking constraints
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose) const;
-	protocols::filters::FilterOP clone() const { return protocols::filters::FilterOP( new DockingLowResFilter( *this ) ); }
-	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new DockingLowResFilter() ); }
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose) const override;
+	protocols::filters::FilterOP clone() const override { return protocols::filters::FilterOP( new DockingLowResFilter( *this ) ); }
+	protocols::filters::FilterOP fresh_instance() const override { return protocols::filters::FilterOP( new DockingLowResFilter() ); }
 
 private:
 	bool use_constraints_;            /// @brief boolean to indicate if constraints are used
@@ -70,15 +70,15 @@ class DockingHighResFilter : public protocols::filters::Filter
 public:
 	DockingHighResFilter();
 	DockingHighResFilter( const DockingHighResFilter & init );
-	~DockingHighResFilter();
+	~DockingHighResFilter() override;
 	void set_score_margin( core::Real new_score_margin );
 	void set_score_cutoff( core::Real new_cutoff ) { scorefilter_->set_cutoff( new_cutoff ); }
 	void set_moveable_jumps( DockJumps const & movable_jumps ) { movable_jumps_ = movable_jumps; }
 	void set_scorefunction( core::scoring::ScoreFunctionOP const scorefunction );
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 	//core::Real report_interface_score() const { return interface_score_; } // only valid after apply()
-	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new DockingHighResFilter() ); }
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override { return protocols::filters::FilterOP( new DockingHighResFilter() ); }
 
 private:
 	DockJumps movable_jumps_;

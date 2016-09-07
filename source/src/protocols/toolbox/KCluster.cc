@@ -52,10 +52,10 @@ namespace protocols {
 namespace toolbox {
 
 /// @details Auto-generated virtual destructor
-KClusterData::~KClusterData() {}
+KClusterData::~KClusterData() = default;
 
 /// @details Auto-generated virtual destructor
-KClusterElement::~KClusterElement() {}
+KClusterElement::~KClusterElement() = default;
 
 KClusterOP get_K_cluster_engine(const string &style)
 {
@@ -184,8 +184,8 @@ KClusterData::KClusterData()
 	natom_ = loops.loop_size();
 	if ( natom_>0 ) {
 		//specified loop region
-		for ( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
-			for ( core::Size i=it->start(), end=it->stop(); i<=end; i++ ) {
+		for (const auto & loop : loops) {
+			for ( core::Size i=loop.start(), end=loop.stop(); i<=end; i++ ) {
 				rmsd_ca_list_.push_back(i);
 			}
 		}
@@ -461,7 +461,7 @@ KCluster::KCluster()
 	n_cluster_ = 0;
 }
 
-KCluster::~KCluster(){}
+KCluster::~KCluster()= default;
 
 void KCluster::cluster(KClusterElementOP c, KClusterData& d, Size first)
 {

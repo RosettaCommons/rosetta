@@ -43,13 +43,13 @@ public:
 	typedef graph::Node parent;
 
 public:
-	virtual ~TwelveANeighborNode();
+	~TwelveANeighborNode() override;
 	TwelveANeighborNode( graph::Graph*, Size node_id );
 
-	virtual void copy_from( Node const * source );
+	void copy_from( Node const * source ) override;
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 private:
 
 };
@@ -60,13 +60,13 @@ public:
 	typedef graph::Edge parent;
 
 public:
-	virtual ~TwelveANeighborEdge();
+	~TwelveANeighborEdge() override;
 	TwelveANeighborEdge(graph::Graph* owner, Size first_node_ind, Size second_node_ind);
 
-	virtual void copy_from( graph::Edge const * source );
+	void copy_from( graph::Edge const * source ) override;
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
 private:
 
@@ -89,44 +89,44 @@ public:
 
 public:
 
-	virtual ~TwelveANeighborGraph();
+	~TwelveANeighborGraph() override;
 
 	TwelveANeighborGraph();
 	TwelveANeighborGraph( Size num_nodes );
 	TwelveANeighborGraph( TwelveANeighborGraph const & source );
 	TwelveANeighborGraph & operator = ( TwelveANeighborGraph const & source );
 
-	virtual
+	
 	Distance
-	neighbor_cutoff() const;
+	neighbor_cutoff() const override;
 
-	virtual
+	
 	void
 	conditionally_add_edge(
 		Size lower_node_id,
 		Size upper_node_id,
 		DistanceSquared dsq
-	);
+	) override;
 
-	virtual
+	
 	ContextGraphOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	void update_from_pose(
 		pose::Pose const & pose
-	);
+	) override;
 
-	virtual void delete_edge( graph::Edge * edge );
+	void delete_edge( graph::Edge * edge ) override;
 
 protected:
 
-	virtual Size count_static_memory() const;
-	virtual Size count_dynamic_memory() const;
+	Size count_static_memory() const override;
+	Size count_dynamic_memory() const override;
 
-	virtual graph::Node * create_new_node( Size node_index );
-	virtual graph::Edge * create_new_edge( Size index1, Size index2);
-	virtual graph::Edge * create_new_edge( graph::Edge const * example_edge );
+	graph::Node * create_new_node( Size node_index ) override;
+	graph::Edge * create_new_edge( Size index1, Size index2) override;
+	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
 
 private:
 	static Distance const twelveA_;

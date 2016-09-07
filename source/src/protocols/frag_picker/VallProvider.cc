@@ -54,7 +54,7 @@ namespace frag_picker {
 
 using namespace core;
 
-VallProvider::~VallProvider() {}
+VallProvider::~VallProvider() = default;
 
 VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, Size residue_id) {
 
@@ -77,7 +77,7 @@ VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, Size res
 		<< residue_id << " in a protein " << pdb_id << " in a chain "
 		<< chain_id << std::endl;
 
-	return 0;
+	return nullptr;
 }
 
 core::pose::PoseOP VallProvider::cache_pose(VallChunkOP source_chunk) {
@@ -126,7 +126,7 @@ core::sequence::SequenceProfileOP VallProvider::cache_profile(VallChunkOP source
 	cached_profile_id_.clear();
 	cached_profile_id_.assign(key);
 
-	if ( cached_profile_ == 0 ) {
+	if ( cached_profile_ == nullptr ) {
 		cached_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile() );
 	}
 	cached_profile_->profile(prof);
@@ -143,9 +143,8 @@ Size VallProvider::vallChunksFromLibraries(utility::vector1< std::string > const
 	using std::string;
 	using utility::vector1;
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fns.begin(), end = fns.end(); it != end; ++it ) {
-		vallChunksFromLibrary( *it );
+	for (const auto & fn : fns) {
+		vallChunksFromLibrary( fn );
 	}
 
 	return 0;
@@ -185,7 +184,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 
 	TR.Info << "Reading Vall library from " << filename << " ... startline: " << startline << "  endline: " << endline << std::endl;
 
-	time_t time_start = time(NULL);
+	time_t time_start = time(nullptr);
 
 	// get last residue key
 	Size last_key = 0;
@@ -295,7 +294,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	Size t = current_section->size();
 	if ( t > largest_chunk_size_ ) largest_chunk_size_ = t;
 
-	time_t time_end = time(NULL);
+	time_t time_end = time(nullptr);
 
 	if ( vall_keys_.size() > 0 && vall_keys_.size() == vall_end_line_.size() && vall_keys_.size() == vall_start_line_.size() && vall_keys_.size() == vall_last_residue_key_.size() ) {
 		TR.Debug << "Vall key: " << vall_keys_.size() << std::endl;

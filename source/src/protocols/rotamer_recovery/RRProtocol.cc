@@ -35,7 +35,7 @@ namespace protocols {
 namespace rotamer_recovery {
 
 /// @details Auto-generated virtual destructor
-RRProtocol::~RRProtocol() {}
+RRProtocol::~RRProtocol() = default;
 
 static Tracer TR("protocol.moves.RRProtocol");
 

@@ -21,7 +21,7 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <fstream>
 #include <protocols/simple_filters/StemFinderFilter.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -56,7 +56,7 @@ FoldUnitsFilter::FoldUnitsFilter() :
 {
 }
 
-FoldUnitsFilter::~FoldUnitsFilter() {}
+FoldUnitsFilter::~FoldUnitsFilter() = default;
 
 void
 FoldUnitsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )

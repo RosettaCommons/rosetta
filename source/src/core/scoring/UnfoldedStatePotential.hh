@@ -48,7 +48,7 @@ class UnfoldedStatePotential : public utility::pointer::ReferenceCount {
 public:
 	/// @brief ctor - calls the function which reads in the database file
 	UnfoldedStatePotential( std::string const & filename );
-	virtual ~UnfoldedStatePotential();
+	~UnfoldedStatePotential() override;
 
 	/// @brief returns the database values for an aa in the unfolded state - these are unweighted values!
 	void

@@ -18,11 +18,11 @@
 namespace core {
 namespace scoring {
 
-ResidueNeighborIterator::~ResidueNeighborIterator() {}
+ResidueNeighborIterator::~ResidueNeighborIterator() = default;
 
-ResidueNeighborConstIterator::~ResidueNeighborConstIterator() {}
+ResidueNeighborConstIterator::~ResidueNeighborConstIterator() = default;
 
-LREnergyContainer::~LREnergyContainer() {}
+LREnergyContainer::~LREnergyContainer() = default;
 
 }
 }

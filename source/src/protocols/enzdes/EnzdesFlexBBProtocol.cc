@@ -98,7 +98,7 @@ namespace enzdes {
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesFlexBBProtocol" );
 
-EnzdesFlexBBProtocol::~EnzdesFlexBBProtocol() {}
+EnzdesFlexBBProtocol::~EnzdesFlexBBProtocol() = default;
 
 EnzdesFlexBBProtocol::EnzdesFlexBBProtocol()
 : EnzdesBaseProtocol(),
@@ -117,7 +117,7 @@ EnzdesFlexBBProtocol::EnzdesFlexBBProtocol()
 
 	//brub_mover_ = new protocols::backrub::BackrubMover();
 	//apparently it's better to initialize the backrub mover new for every structure
-	brub_mover_ = NULL;
+	brub_mover_ = nullptr;
 	brub_pivot_atoms_.push_back("CA");
 
 	/*
@@ -275,9 +275,9 @@ EnzdesFlexBBProtocol::apply(
 
 		flexpack::FlexPackerOP flex_packer( new flexpack::FlexPacker( flex_pack_task, flex_regions_, flexpack_sfxn ) );
 
-		time_t flex_start_time = time( NULL );
+		time_t flex_start_time = time( nullptr );
 		flex_packer->apply( pose );
-		time_t flex_end_time = time( NULL );
+		time_t flex_end_time = time( nullptr );
 
 		tr << " flexpacker took " << long( flex_end_time - flex_start_time ) << " seconds. " << std::endl;
 
@@ -404,10 +404,10 @@ EnzdesFlexBBProtocol::modified_task(
 	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 
 		//first, we need to copy the rotamer and rotamerset operations
-		for ( core::pack::rotamer_set::RotamerOperations::const_iterator rot_it = orig_task.residue_task(i).rotamer_operations().begin(); rot_it != orig_task.residue_task(i).rotamer_operations().end(); ++rot_it ) {
+		for ( auto rot_it = orig_task.residue_task(i).rotamer_operations().begin(); rot_it != orig_task.residue_task(i).rotamer_operations().end(); ++rot_it ) {
 			mod_task->nonconst_residue_task( i ).append_rotamer_operation( *rot_it );
 		}
-		for ( core::pack::rotamer_set::RotSetOperationListIterator rotset_it = orig_task.residue_task(i).rotamer_set_operation_begin(); rotset_it != orig_task.residue_task(i).rotamer_set_operation_end(); ++rotset_it ) {
+		for ( auto rotset_it = orig_task.residue_task(i).rotamer_set_operation_begin(); rotset_it != orig_task.residue_task(i).rotamer_set_operation_end(); ++rotset_it ) {
 			mod_task->nonconst_residue_task( i ).append_rotamerset_operation( *rotset_it );
 		}
 
@@ -446,7 +446,7 @@ EnzdesFlexBBProtocol::modified_task(
 
 				utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
 
-				for ( ResidueLevelTask::ResidueTypeCOPListConstIter res_it = orig_task.residue_task( i ).allowed_residue_types_begin(); res_it != orig_task.residue_task( i ).allowed_residue_types_end(); ++res_it ) {
+				for ( auto res_it = orig_task.residue_task( i ).allowed_residue_types_begin(); res_it != orig_task.residue_task( i ).allowed_residue_types_end(); ++res_it ) {
 
 					keep_aas[ (*res_it)->aa() ] = true;
 				}
@@ -467,7 +467,7 @@ EnzdesFlexBBProtocol::modified_task(
 
 	//don't forget to copy the upweighters
 	if ( orig_task.IGEdgeReweights() ) {
-		for ( utility::vector1< IGEdgeReweighterOP >::const_iterator it = orig_task.IGEdgeReweights()->reweighters_begin(); it != orig_task.IGEdgeReweights()->reweighters_end(); ++it ) {
+		for ( auto it = orig_task.IGEdgeReweights()->reweighters_begin(); it != orig_task.IGEdgeReweights()->reweighters_end(); ++it ) {
 			mod_task->set_IGEdgeReweights()->add_reweighter( *it );
 		}
 	}
@@ -532,7 +532,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 		//if the SpecialSegmentsObserver in the pose cache has been set,
 		//loop start and end will be taken from it, in case another
 		//loop has been previously remodeled with indels
-		core::pose::datacache::SpecialSegmentsObserverCOP segob(NULL);
+		core::pose::datacache::SpecialSegmentsObserverCOP segob(nullptr);
 		if ( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) ) {
 			core::pose::datacache::CacheableObserverCOP cache_ob = pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER);
 			segob = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >( cache_ob );
@@ -664,7 +664,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 	core::Size region
 )
 {
-	time_t start_time = time(NULL);
+	time_t start_time = time(nullptr);
 
 	tr << "Starting to generate ensemble for region " << region << " ( aiming for " << loop_ensemble_size_ << " members, " << loopgen_trials_ << " brub trials for each ) ... " << std::endl;
 	tr.flush();
@@ -761,12 +761,12 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 	}
 
 	minimize_cats_ = false;
-	catmin_movemap_ = NULL;
-	catmin_mover_ = NULL;
-	brub_mover_ = NULL;
+	catmin_movemap_ = nullptr;
+	catmin_mover_ = nullptr;
+	brub_mover_ = nullptr;
 	pose.fold_tree( ft_old );
 
-	time_t end_time = time(NULL);
+	time_t end_time = time(nullptr);
 
 	tr << " done generating ensemble for region " << region << " in " << long(end_time - start_time ) << " seconds. " << std::endl;
 	tr.flush();
@@ -992,7 +992,7 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 			flex_regions_[region]->scale_target_proximity_to_other_conformations( 2 );
 		}
 
-		for ( std::list< std::pair< Real, FragDataOP > >::iterator list_it = scored_confs.begin(),
+		for ( auto list_it = scored_confs.begin(),
 				list_end = scored_confs.end(); list_it != list_end; ) {
 			//std::cout << "ScoredConfs sorted: " << ii << " " << scored_confs[ ii ].first << " accepted: " << flex_regions_[region]->nr_frags() << " nloop_poses: " << loop_poses.size()  << std::endl;
 			list_it->second->apply( local_pose, flex_regions_[region]->start(), flex_regions_[region]->stop() );
@@ -1365,16 +1365,15 @@ EnzdesFlexibleRegion::EnzdesFlexibleRegion(
 
 } //FlexibleRegion constructor
 
-EnzdesFlexibleRegion::~EnzdesFlexibleRegion(){}
+EnzdesFlexibleRegion::~EnzdesFlexibleRegion()= default;
 
 
 bool
 EnzdesFlexibleRegion::contains_catalytic_res() const
 {
 
-	for ( std::set< core::Size >::const_iterator cat_it = design_targets_.begin();
-			cat_it != design_targets_.end(); ++cat_it ) {
-		if ( this->contains_seqpos( *cat_it ) ) return true;
+	for (unsigned long design_target : design_targets_) {
+		if ( this->contains_seqpos( design_target ) ) return true;
 	}
 	return false;
 }
@@ -1536,7 +1535,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 	looptask_template->set_IGEdgeReweights()->add_reweighter( ig_up );
 
 	tr << "Beginning designability screen for " << this->nr_frags() << " ensemble members of flexible region " << index_ << "... " << std::endl;
-	time_t start_time = time(NULL);
+	time_t start_time = time(nullptr);
 
 	//get the native designability score
 	PackerTaskOP looptask = enzutil::recreate_task( pose, *looptask_template );
@@ -1583,7 +1582,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 		lig_part_sum_compare.push_back( designability );
 
 		if ( (designability < native_designability) && (backgroundE < native_backgroundE) ) {
-			frag_designability_list.push_back( SizeRealPair( i, designability ) );
+			frag_designability_list.emplace_back( i, designability );
 			//pose.dump_pdb("loopdes_reg"+utility::to_string( index_ )+"_"+utility::to_string( frag_designability_list.size() )+".pdb");
 		}
 
@@ -1594,7 +1593,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 
 	for ( std::list< SizeRealPair >::const_iterator it = frag_designability_list.begin(); it != frag_designability_list.end(); ++it ) frag_designabilities_.push_back( *it );
 
-	time_t end_time = time(NULL);
+	time_t end_time = time(nullptr);
 	tr << "done with designability screen for region " << index_ << " in " << (long)(end_time - start_time ) << " seconds, " << frag_designabilities_.size() << " of " << this->nr_frags() << " ensemble conformations are potentially better than the native conformation." << std::endl;
 
 	if ( frag_designabilities_.size() > 0 ) {
@@ -1613,8 +1612,8 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 			lig_part_sum_it != lig_part_sums.end(); ++lig_part_sum_it ) {
 
 		tr << "LIGPARTCOMPARE ";
-		for ( utility::vector1< core::Real >::const_iterator comp_it = (*lig_part_sum_it).begin(); comp_it != (*lig_part_sum_it).end(); ++comp_it ) {
-			tr << *comp_it << " ";
+		for (double comp_it : (*lig_part_sum_it)) {
+			tr << comp_it << " ";
 		}
 		tr << std::endl;
 	}
@@ -1652,20 +1651,20 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 
 	//now delete the unnecessary edges from the graph
 	utility::vector1< core::Size > residue_groups( pose.total_residue(), 0 );
-	for ( std::set< core::Size >::const_iterator cat_it = design_targets_.begin(); cat_it != design_targets_.end(); ++cat_it ) {
-		if ( (*cat_it >= *(positions_.begin() ) ) && (*cat_it <= *(positions_.rbegin() ) ) ) {
-			residue_groups[ *cat_it ] = 2;
+	for (unsigned long design_target : design_targets_) {
+		if ( (design_target >= *(positions_.begin() ) ) && (design_target <= *(positions_.rbegin() ) ) ) {
+			residue_groups[ design_target ] = 2;
 			//tr << "CATKEEPGRAPH: resi " << *cat_it << " is part of loop between " << *(positions_.begin() ) << " and " << *(positions_.rbegin() ) << std::endl;
-		} else residue_groups[ *cat_it ] = 1;
+		} else residue_groups[ design_target ] = 1;
 	}
 	core::graph::delete_all_intragroup_edges( *packer_neighbor_graph, residue_groups );
 
 	//and then precompute the energies of (hopefully) only the positions/ligand interactions
 	rotsets->precompute_two_body_energies(  pose, *scorefxn, packer_neighbor_graph, ig );
 
-	for ( utility::vector1< core::Size >::const_iterator pos_it = positions_.begin(); pos_it != positions_.end(); ++pos_it ) {
+	for (unsigned long position : positions_) {
 
-		core::Size moltenid = rotsets->resid_2_moltenres( *pos_it);
+		core::Size moltenid = rotsets->resid_2_moltenres( position);
 
 		core::Real dtps_this_position(0.0);
 
@@ -1727,12 +1726,12 @@ EnzdesFlexibleRegion::extract_lig_designability_score(
 
 	EnergyMap const cur_weights = pose.energies().weights();
 
-	for ( std::set< Size >::const_iterator targ_it = design_targets_.begin(); targ_it != design_targets_.end(); ++targ_it ) {
+	for (unsigned long design_target : design_targets_) {
 
-		for ( core::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( *targ_it )->const_edge_list_begin();
-				egraph_it != pose.energies().energy_graph().get_node( *targ_it )->const_edge_list_end(); ++egraph_it ) {
+		for ( core::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( design_target )->const_edge_list_begin();
+				egraph_it != pose.energies().energy_graph().get_node( design_target )->const_edge_list_end(); ++egraph_it ) {
 
-			core::Size other_res = (*egraph_it)->get_other_ind( *targ_it );
+			core::Size other_res = (*egraph_it)->get_other_ind( design_target );
 			if ( !this->contains_seqpos( other_res ) ) continue;
 
 			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
@@ -1977,9 +1976,9 @@ EnzdesFlexibleRegion::minimize_region(
 
 	//find the edge that spans the end of this segment
 	//tr << "regmindebug setting foldtree for region from " << this->start() << " to " << this->end() << std::endl;
-	for ( core::kinematics::FoldTree::const_iterator e = f_const.begin(); e != f_const.end(); ++e ) {
-		bool is_jump( e->is_jump() ), backward( e->start() > e->stop() ), start_in_seg( e->start() >= (int)this->start() && e->start() <= (int)this->end() ), stop_in_seg( e->stop() >= (int)this->start() && e->stop() <= (int)this->end() );
-		bool span( backward ? ( (e->start() > (int)this->end()) && (e->stop() < (int)this->start()) ) : ( (e->start() < (int)this->start()) && (e->stop() > (int)this->end()) ) );
+	for (const auto & e : f_const) {
+		bool is_jump( e.is_jump() ), backward( e.start() > e.stop() ), start_in_seg( e.start() >= (int)this->start() && e.start() <= (int)this->end() ), stop_in_seg( e.stop() >= (int)this->start() && e.stop() <= (int)this->end() );
+		bool span( backward ? ( (e.start() > (int)this->end()) && (e.stop() < (int)this->start()) ) : ( (e.start() < (int)this->start()) && (e.stop() > (int)this->end()) ) );
 		//tr << "regmindebug dealing with edge from " << e->start() << " to " << e->stop() << " with label " << e->label() << " backward is " << backward << ", span is " << span << ", start_in_seg is " << start_in_seg << ", stop in seg is " << stop_in_seg << ", is_jump is " << is_jump << std::endl;
 
 		//edges only in the segment will be discarded
@@ -1988,32 +1987,32 @@ EnzdesFlexibleRegion::minimize_region(
 			continue;
 		}
 
-		if ( is_jump && start_in_seg ) jump_destinations.push_back( std::pair<core::Size, int>(e->stop(), e->label()) );
-		else if ( is_jump && stop_in_seg ) jump_origins.push_back( std::pair< core::Size, int>(e->start(), e->label() ) );
+		if ( is_jump && start_in_seg ) jump_destinations.push_back( std::pair<core::Size, int>(e.stop(), e.label()) );
+		else if ( is_jump && stop_in_seg ) jump_origins.push_back( std::pair< core::Size, int>(e.start(), e.label() ) );
 		else if ( !is_jump && start_in_seg ) {
 			if ( backward ) {
-				temp_fold_tree.add_edge( this->start(), e->stop(), e->label() );
+				temp_fold_tree.add_edge( this->start(), e.stop(), e.label() );
 				backward_outof_seg = true;
-			} else temp_fold_tree.add_edge( this->end() + 1, e->stop(), e->label() );
+			} else temp_fold_tree.add_edge( this->end() + 1, e.stop(), e.label() );
 		} else if ( !is_jump && stop_in_seg ) {
 			if ( backward ) {
-				temp_fold_tree.add_edge( e->start(), this->end() + 1, e->label() );
+				temp_fold_tree.add_edge( e.start(), this->end() + 1, e.label() );
 				backward_into_seg = true;
-			} else temp_fold_tree.add_edge( e->start(), this->start(), e->label() );
+			} else temp_fold_tree.add_edge( e.start(), this->start(), e.label() );
 		} else if ( !is_jump && span ) {
 			if ( backward ) {
 				//tr << "regmindebug dealing with backward span " << std::endl;
-				temp_fold_tree.add_edge( e->start(), this->end() + 1, e->label() );
-				temp_fold_tree.add_edge( this->start(), e->stop(), e->label() );
+				temp_fold_tree.add_edge( e.start(), this->end() + 1, e.label() );
+				temp_fold_tree.add_edge( this->start(), e.stop(), e.label() );
 				backward_outof_seg = true;
 				backward_into_seg = true;
 			} else {
 				//tr << "regmindebug dealing with forward span " << std::endl;
-				temp_fold_tree.add_edge( e->start(), this->start(), e->label() );
-				temp_fold_tree.add_edge( this->end() + 1, e->stop(), e->label() );
+				temp_fold_tree.add_edge( e.start(), this->start(), e.label() );
+				temp_fold_tree.add_edge( this->end() + 1, e.stop(), e.label() );
 			}
 		} else {
-			temp_fold_tree.add_edge( *e );
+			temp_fold_tree.add_edge( e );
 		}
 	} // loop over edges
 	temp_fold_tree.add_edge( this->start(), this->end(), -1);  // add edge for segment
@@ -2062,8 +2061,8 @@ EnzdesFlexibleRegion::minimize_region(
 
 	}
 
-	for ( std::set< core::Size >::const_iterator chi_it = chi_to_move.begin(); chi_it != chi_to_move.end(); ++chi_it ) {
-		movemap->set_chi( *chi_it, true );
+	for (unsigned long chi_it : chi_to_move) {
+		movemap->set_chi( chi_it, true );
 	}
 
 	//core::scoring::ScoreFunctionOP trial_score = new core::scoring::ScoreFunction( *scorefxn );

@@ -80,7 +80,7 @@ MergeBehaviorManager::MergeBehaviorManager( std::string const & database_directo
 	merge_behaviors_.insert( merge_behaviors.begin(), merge_behaviors.end() );
 }
 
-MergeBehaviorManager::~MergeBehaviorManager() {}
+MergeBehaviorManager::~MergeBehaviorManager() = default;
 
 MergeBehaviorManager::ResidueMergeInstructions const &
 MergeBehaviorManager::merge_behavior_for_name3( std::string const & name3 ) const {

@@ -54,7 +54,7 @@ JobOutputter::JobOutputter() : evaluators_(evaluation::PoseEvaluatorsOP( new pro
 	set_defaults();
 }
 
-JobOutputter::~JobOutputter() {}
+JobOutputter::~JobOutputter() = default;
 
 ///base implementation does nothing
 void JobOutputter::flush() {}
@@ -94,7 +94,7 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 		//combine file names and group name.
 		Job::StringStringPairs string_pairs =job->get_string_string_pairs();
 
-		Job::StringStringPairs::iterator group_name_it(string_pairs.find("input_group_name"));
+		auto group_name_it(string_pairs.find("input_group_name"));
 		assert(group_name_it != string_pairs.end()); //You shouldn't be able to get this far without a properly set group name
 		std::string group_name(group_name_it->second);
 		utility::vector1< std::string > temp_out_names= utility::split( base_name );

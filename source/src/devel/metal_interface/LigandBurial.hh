@@ -39,7 +39,7 @@ public:
   /// @brief
   LigandBurial( Pose const & pose, std::string ligand_3_letter_code );
 
-  virtual ~LigandBurial();
+  ~LigandBurial() override;
 
   virtual core::Size find_ligand();
   virtual void register_calculators();

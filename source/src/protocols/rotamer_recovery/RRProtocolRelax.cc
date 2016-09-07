@@ -61,13 +61,9 @@ RRProtocolRelax::RRProtocolRelax() :
 	cartesian_(false)
 {}
 
-RRProtocolRelax::RRProtocolRelax( RRProtocolRelax const & src ) :
-	RRProtocol(src),
-	nonideal_(src.nonideal_),
-	cartesian_(src.cartesian_)
-{}
+RRProtocolRelax::RRProtocolRelax( RRProtocolRelax const & ) = default;
 
-RRProtocolRelax::~RRProtocolRelax() {}
+RRProtocolRelax::~RRProtocolRelax() = default;
 
 string
 RRProtocolRelax::get_name() const {

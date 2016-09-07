@@ -89,11 +89,11 @@ ResidueType::ResidueType(
 	MMAtomTypeSetCOP mm_atom_types,
 	orbitals::OrbitalTypeSetCOP orbital_types
 ) : utility::pointer::ReferenceCount(),
-	atom_types_( atom_types ),
-	elements_( elements ),
-	mm_atom_types_( mm_atom_types ),
+	atom_types_(std::move( atom_types )),
+	elements_(std::move( elements )),
+	mm_atom_types_(std::move( mm_atom_types )),
 	gasteiger_atom_types_(),
-	orbital_types_( orbital_types),
+	orbital_types_(std::move( orbital_types)),
 	residue_type_set_( /* 0 */ ),
 	graph_(),
 	orbitals_(),
@@ -103,7 +103,7 @@ ResidueType::ResidueType(
 	n_backbone_heavyatoms_(0),
 	first_sidechain_hydrogen_( 0 ),
 	disulfide_atom_name_( "NONE" ),
-	rotamer_library_specification_( 0 ),
+	rotamer_library_specification_( nullptr ),
 	properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
 	aa_( aa_unk ),
 	rotamer_aa_( aa_unk ),
@@ -239,7 +239,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	force_bb_ = residue_type.force_bb_;
 	rna_residue_type_ = residue_type.rna_residue_type_;
 	// CarbohydrateInfo has a back-pointer to ResidueType and must be reset during finalize
-	carbohydrate_info_ = 0; /* NULL */
+	carbohydrate_info_ = nullptr; /* NULL */
 	//rings_and_their_edges_=residue_type.rings_and_their_edges_; //Apparently updated below
 	atom_base_indices_ = residue_type.atom_base_indices_;
 	abase2_indices_ = residue_type.abase2_indices_;
@@ -291,8 +291,8 @@ ResidueType::operator=( ResidueType const & residue_type )
 			vp.first != vp.second;
 			++vp.first, ++old_vp.first
 			) {
-		VIter v_iter= vp.first;
-		VIter old_v_iter= old_vp.first;
+		auto v_iter= vp.first;
+		auto old_v_iter= old_vp.first;
 		VD vd = *v_iter;
 		VD old_vd = *old_v_iter;
 		old_to_new[old_vd] = vd; //Assuming the boost::graph copy preserves ordering within the vertices list
@@ -307,7 +307,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 		//debug_assert(strip_name_vd_inserted.second); // If this is 4 chars, than it will be the same as before.
 	}
 	// We also have to add in the aliased names
-	for ( std::map<std::string,std::string>::iterator iter( atom_aliases_.begin() ), iter_end( atom_aliases_.end() );
+	for ( auto iter( atom_aliases_.begin() ), iter_end( atom_aliases_.end() );
 			iter != iter_end; ++iter ) {
 		debug_assert( !atom_name_to_vd_.count( iter->first ) );
 		debug_assert( atom_name_to_vd_.count( iter->second ) );
@@ -316,7 +316,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	}
 	// Setup the temporary ordered_atoms_ vector for refactor
 	// VKM, 5 Sept 2015: I'm not sure the code below is working as desired.  Valgrind issues might be caused here.
-	VDs::const_iterator begin = residue_type.ordered_atoms_.begin();
+	auto begin = residue_type.ordered_atoms_.begin();
 	VDs::const_iterator const end = residue_type.ordered_atoms_.end();
 	for ( ; begin != end; ++begin ) {
 		VD old_vd = *begin;
@@ -326,9 +326,9 @@ ResidueType::operator=( ResidueType const & residue_type )
 	}
 	std::map<VD, VD> old_atom_base(atom_base_);
 	atom_base_.clear();
-	for ( std::map<VD, VD>::iterator it = old_atom_base.begin(); it != old_atom_base.end(); ++it ) {
-		VD old_key = it->first;
-		VD old_value = it->second;
+	for (auto & it : old_atom_base) {
+		VD old_key = it.first;
+		VD old_value = it.second;
 		VD new_key = old_to_new[old_key];
 		VD new_value = old_to_new[old_value];
 		atom_base_[new_key] = new_value;
@@ -336,9 +336,9 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	std::map<VD, VD> old_atom_shadowed(atom_shadowed_);
 	atom_shadowed_.clear();
-	for ( std::map<VD, VD>::iterator it = old_atom_shadowed.begin(); it != old_atom_shadowed.end(); ++it ) {
-		VD old_key = it->first;
-		VD old_value = it->second;
+	for (auto & it : old_atom_shadowed) {
+		VD old_key = it.first;
+		VD old_value = it.second;
 		VD new_key = old_to_new[old_key];
 		VD new_value = old_to_new[old_value];
 		atom_shadowed_[new_key] = new_value;
@@ -451,10 +451,10 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	for ( Size index=1; index<= natoms(); ++index ) {
 		utility::vector1< core::Size > const orbs(graph_[ordered_atoms_[index]].bonded_orbitals());
-		for ( utility::vector1< core::Size >::const_iterator orb = orbs.begin(); orb != orbs.end(); ++orb ) {
-			orbitals_[*orb].new_icoor().vertex1( old_to_new[ orbitals_[*orb].new_icoor().vertex1()  ] );
-			orbitals_[*orb].new_icoor().vertex2(old_to_new[ orbitals_[*orb].new_icoor().vertex2()  ] );
-			orbitals_[*orb].new_icoor().vertex3( old_to_new[ orbitals_[*orb].new_icoor().vertex3()  ] );
+		for (unsigned long orb : orbs) {
+			orbitals_[orb].new_icoor().vertex1( old_to_new[ orbitals_[orb].new_icoor().vertex1()  ] );
+			orbitals_[orb].new_icoor().vertex2(old_to_new[ orbitals_[orb].new_icoor().vertex2()  ] );
+			orbitals_[orb].new_icoor().vertex3( old_to_new[ orbitals_[orb].new_icoor().vertex3()  ] );
 		}
 	}
 
@@ -495,7 +495,7 @@ ResidueType::clone() const
 ResidueTypeOP
 ResidueType::placeholder_clone() const
 {
-	ResidueTypeOP rsd( new ResidueType( 0, 0, 0, 0 ) );
+	ResidueTypeOP rsd( new ResidueType( nullptr, nullptr, nullptr, nullptr ) );
 	rsd->name ( name() );
 	rsd->name1( name1() );
 	rsd->name3( name3() );
@@ -526,7 +526,7 @@ Atom & ResidueType::atom(std::string const & atom_name){
 	return graph_[ atom_name_to_vd_[atom_name] ];
 }
 Atom const & ResidueType::atom(std::string const & atom_name) const{
-	NameVDMap::const_iterator found = atom_name_to_vd_.find( atom_name );
+	auto found = atom_name_to_vd_.find( atom_name );
 	debug_assert( found != atom_name_to_vd_.end());
 	return graph_[  found->second ];
 }
@@ -603,7 +603,7 @@ ResidueType::set_lower_connect_atom( std::string const & atm_name )
 	if ( atm_name == "NONE" ) {
 		if ( lower_connect_id_ != 0 ) {
 			tr.Debug << "ERASING LOWER_CONNECT: " << lower_connect_id_ << " lcid: " << upper_connect_id_ << std::endl;
-			utility::vector1< ResidueConnection >::iterator to_erase( residue_connections_.begin() );
+			auto to_erase( residue_connections_.begin() );
 			to_erase += lower_connect_id_ - 1;
 			residue_connections_.erase(  to_erase );
 			update_residue_connection_mapping();
@@ -653,7 +653,7 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 	if ( atm_name == "NONE" ) {
 		if ( upper_connect_id_ != 0 ) {
 			tr.Debug << "ERASING UPPER_CONNECT: " << upper_connect_id_ << " lcid: " << lower_connect_id_  << std::endl;
-			utility::vector1< ResidueConnection >::iterator to_erase( residue_connections_.begin() );
+			auto to_erase( residue_connections_.begin() );
 			to_erase += upper_connect_id_ - 1;
 			residue_connections_.erase(  to_erase );
 			debug_assert( n_polymeric_residue_connections_ != 0 );
@@ -1188,7 +1188,7 @@ ResidueType::set_gasteiger_atom_type(
 {
 	gasteiger::GasteigerAtomTypeDataCOP gasteiger_type;
 	if ( gasteiger_atom_type_name == "" ) {
-		gasteiger_type = 0;
+		gasteiger_type = nullptr;
 	} else {
 		if ( ! gasteiger_atom_types_ ) {
 			gasteiger_atom_types_ = ChemicalManager::get_instance()->gasteiger_atom_type_set();
@@ -1213,7 +1213,7 @@ gasteiger::GasteigerAtomTypeSetCOP ResidueType::gasteiger_atom_typeset() const {
 
 VD
 ResidueType::atom_vertex( std::string const & name) const{
-	NameVDMap::const_iterator atom_name_to_vd_iter( atom_name_to_vd_.find( name ) );
+	auto atom_name_to_vd_iter( atom_name_to_vd_.find( name ) );
 	if ( atom_name_to_vd_iter == atom_name_to_vd_.end() ) {
 		tr.Error << "atom name : '" << name << "' not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
@@ -1234,7 +1234,7 @@ ResidueType::dump_vd_info() const {
 	}
 	tr << "-------------" << std::endl;
 	VIterPair allverts( boost::vertices( graph_ ) );
-	for ( VIter iter(allverts.first); iter != allverts.second; ++iter ) {
+	for ( auto iter(allverts.first); iter != allverts.second; ++iter ) {
 		tr << " atom " << atom_name(*iter) << " vd: " << *iter << std::endl;
 	}
 	tr << "-------------" << std::endl;
@@ -2383,7 +2383,7 @@ core::Real
 ResidueType::get_numeric_property(std::string const & tag) const
 {
 	std::map<std::string, core::Real> const numeric_properties( properties_->numeric_properties() );
-	std::map<std::string, core::Real>::const_iterator property_it( numeric_properties.find( tag ) );
+	auto property_it( numeric_properties.find( tag ) );
 	if ( property_it == numeric_properties.end() ) {
 		throw utility::excn::EXCN_KeyError( tag + " does not exist in ResidueType with name " + name3_ );
 		return 0.0; //keep compilers happy
@@ -2396,7 +2396,7 @@ std::string
 ResidueType::get_string_property(std::string const & tag) const
 {
 	std::map<std::string, std::string> const string_properties( properties_->string_properties() );
-	std::map<std::string, std::string>::const_iterator property_it(string_properties.find(tag));
+	auto property_it(string_properties.find(tag));
 	if ( property_it == string_properties.end() ) {
 		throw utility::excn::EXCN_KeyError(tag + " does not exist in ResidueType with name " + name3_);
 		return "";
@@ -2846,7 +2846,7 @@ ResidueType::generate_atom_indices()
 		vd_to_index_[ordered_atoms_[i]] = i;
 	}
 	// Add in aliased atoms
-	for ( std::map<std::string,std::string>::iterator iter( atom_aliases_.begin() ), iter_end( atom_aliases_.end() );
+	for ( auto iter( atom_aliases_.begin() ), iter_end( atom_aliases_.end() );
 			iter != iter_end; ++iter ) {
 		debug_assert( !atom_name_to_vd_.count( iter->first ) );
 		debug_assert( atom_name_to_vd_.count( iter->second ) );
@@ -2957,10 +2957,10 @@ ResidueType::generate_atom_indices()
 
 	for ( Size index=1; index<= natoms(); ++index ) {
 		utility::vector1< core::Size > const orbs(graph_[ordered_atoms_[index]].bonded_orbitals());
-		for ( utility::vector1< core::Size >::const_iterator orb = orbs.begin(); orb != orbs.end(); ++orb ) {
-			orbitals_[*orb].new_icoor().replace_stub1( vd_to_index_[ordered_atoms_[orbitals_[*orb].new_icoor().get_stub1()]] );
-			orbitals_[*orb].new_icoor().replace_stub2( vd_to_index_[ordered_atoms_[orbitals_[*orb].new_icoor().get_stub2()]] );
-			orbitals_[*orb].new_icoor().replace_stub3( vd_to_index_[ordered_atoms_[orbitals_[*orb].new_icoor().get_stub3()]] );
+		for (unsigned long orb : orbs) {
+			orbitals_[orb].new_icoor().replace_stub1( vd_to_index_[ordered_atoms_[orbitals_[orb].new_icoor().get_stub1()]] );
+			orbitals_[orb].new_icoor().replace_stub2( vd_to_index_[ordered_atoms_[orbitals_[orb].new_icoor().get_stub2()]] );
+			orbitals_[orb].new_icoor().replace_stub3( vd_to_index_[ordered_atoms_[orbitals_[orb].new_icoor().get_stub3()]] );
 		}
 	}
 
@@ -3197,17 +3197,15 @@ ResidueType::update_derived_data()
 				}
 
 				// for each pair of dihedral angle start or end atoms create a dihedral angle using central atom
-				for ( utility::vector1< Size >::iterator terminal_atom1 = ca1d1.begin();
-						terminal_atom1 != ca1d1.end(); ++terminal_atom1 ) {
-					for ( utility::vector1< Size >::iterator terminal_atom2 = ca2d1.begin();
-							terminal_atom2 != ca2d1.end(); ++terminal_atom2 ) {
-						dihedral_atom_set temp( *terminal_atom1, central_atom1, central_atom2, *terminal_atom2 );
+				for (unsigned long & terminal_atom1 : ca1d1) {
+					for (unsigned long & terminal_atom2 : ca2d1) {
+						dihedral_atom_set temp( terminal_atom1, central_atom1, central_atom2, terminal_atom2 );
 						dihedral_atom_sets_.push_back( temp );
 						Size const which_dihedral = dihedral_atom_sets_.size();
-						dihedrals_for_atom_[ *terminal_atom1 ].push_back( which_dihedral );
+						dihedrals_for_atom_[ terminal_atom1 ].push_back( which_dihedral );
 						dihedrals_for_atom_[   central_atom1 ].push_back( which_dihedral );
 						dihedrals_for_atom_[   central_atom2 ].push_back( which_dihedral );
-						dihedrals_for_atom_[ *terminal_atom2 ].push_back( which_dihedral );
+						dihedrals_for_atom_[ terminal_atom2 ].push_back( which_dihedral );
 					}
 				}
 
@@ -3243,9 +3241,9 @@ ResidueType::update_derived_data()
 				}
 
 				// for each pair of dihedral angle start or end atoms create a dihedral angle using central atom
-				for ( utility::vector1< Size >::iterator terminal_atom1 = ca1d1.begin();
+				for ( auto terminal_atom1 = ca1d1.begin();
 						terminal_atom1 != ca1d1.end(); ++terminal_atom1 ) {
-					for ( utility::vector1< Size >::iterator terminal_atom2 = terminal_atom1+1;
+					for ( auto terminal_atom2 = terminal_atom1+1;
 							terminal_atom2 != ca1d1.end(); ++terminal_atom2 ) {
 						dihedral_atom_set temp( *terminal_atom1, central_atom1, central_atom2, *terminal_atom2 );
 						improper_dihedral_atom_sets_.push_back( temp );
@@ -3257,9 +3255,9 @@ ResidueType::update_derived_data()
 
 					}
 				}
-				for ( utility::vector1< Size >::iterator terminal_atom1 = ca2d1.begin();
+				for ( auto terminal_atom1 = ca2d1.begin();
 						terminal_atom1 != ca2d1.end(); ++terminal_atom1 ) {
-					for ( utility::vector1< Size >::iterator terminal_atom2 = terminal_atom1+1;
+					for ( auto terminal_atom2 = terminal_atom1+1;
 							terminal_atom2 != ca2d1.end(); ++terminal_atom2 ) {
 						dihedral_atom_set temp( *terminal_atom1, central_atom1, central_atom2, *terminal_atom2 );
 						improper_dihedral_atom_sets_.push_back( temp );
@@ -3526,7 +3524,7 @@ ResidueType::atom_index( std::string const & name ) const
 	// NOTE: Currently we have to iterate twice because atom_name_to_vd_ stores vertex_descriptors not indices.
 	// A substantial change to the interface will fix this, but everyone's code will need to switch too.
 
-	NameVDMap::const_iterator graph_iter( atom_name_to_vd_.find( name ) );
+	auto graph_iter( atom_name_to_vd_.find( name ) );
 	if ( graph_iter == atom_name_to_vd_.end() ) {
 #if defined BOINC
 		// chu temporary graphic fix for boinc
@@ -3590,7 +3588,7 @@ core::Size
 ResidueType::orbital_index( std::string const & name ) const
 {
 
-	std::map< std::string, int >::const_iterator iter
+	auto iter
 		( orbitals_index_.find( name ) );
 	if ( iter == orbitals_index_.end() ) {
 		utility_exit_with_message("unknown orbital_name: " + name3() + "  " + name );
@@ -3614,7 +3612,7 @@ AtomICoor const &
 ResidueType::icoor( Size const atm ) const
 {
 	debug_assert( 1 <= atm && atm <= ordered_atoms_.size() );
-	std::map< VD, AtomICoor >::const_iterator itr( icoor_.find(ordered_atoms_[atm]) );
+	auto itr( icoor_.find(ordered_atoms_[atm]) );
 	debug_assert( itr != icoor_.end() );
 	return itr->second;
 }
@@ -3624,7 +3622,7 @@ AtomICoor const &
 ResidueType::icoor( VD const atm ) const
 {
 	debug_assert( has(atm) );
-	std::map< VD, AtomICoor >::const_iterator itr( icoor_.find(atm) );
+	auto itr( icoor_.find(atm) );
 	debug_assert( itr != icoor_.end() );
 	return itr->second;
 }
@@ -4265,7 +4263,7 @@ void
 ResidueType::show_all_atom_names( std::ostream & out ) const {
 
 	for ( VIterPair vp = boost::vertices(graph_); vp.first != vp.second; ++vp.first ) {
-		VIter v_iter= vp.first;
+		auto v_iter= vp.first;
 		VD vd = *v_iter;
 		Atom a = graph_[vd];
 		out << "'" << a.name() << "' " << &graph_[vd] << std::endl;

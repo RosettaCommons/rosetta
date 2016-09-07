@@ -57,11 +57,11 @@ public:
 	);
 
 
-	virtual ~UnconstrainedTorsionsMover() {}
+	~UnconstrainedTorsionsMover() override = default;
 
 	/// @brief Removes its constraints, runs mover, restores constraints.
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 

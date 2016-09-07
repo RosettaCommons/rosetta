@@ -57,17 +57,17 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~BundleReporterFilter();
+	~BundleReporterFilter() override;
 
 	/// @brief Returns an owning pointer to a new instance of this filter, with copied
 	/// variables (a copy of this filter).
-	filters::FilterOP clone() const {
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new BundleReporterFilter( *this ) );
 	}
 
 	/// @brief Returns an owning pointer to a new instance of this filter, with default
 	/// initialization (NOT a copy).
-	filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new BundleReporterFilter() );
 	}
 
@@ -121,15 +121,15 @@ public:
 	/// @details This scores the pose with the scorefunction, writes out the energy and the
 	/// bundle parameters (if any) to the REPORT tracer, then applies the selected behaviour
 	/// of the filter (always true, always false, or actually filtering by score).
-	bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief Allows reporting of filter values to a stream.
 	///
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 
 	/// @brief Allows reporting of the filter value to a float.
 	///
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
 	/// @brief Generates the text of the full report that the filter writes out to the REPORT tracer.
 	/// @details Called by the APPLY function.  Jobno is the RosettaScripts job number; ignored if set to 0.
@@ -146,7 +146,7 @@ public:
 
 	/// @brief Parse XML (RosettaScripts) setup.
 	///
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief Set whether we report sequences.
 	///

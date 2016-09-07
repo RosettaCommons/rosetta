@@ -186,7 +186,7 @@ public:
 	Pose();
 
 	/// @brief destructor -- > kill data on the heap
-	virtual ~Pose();
+	~Pose() override;
 
 	/// @brief copy constructor
 	Pose( Pose const & src );

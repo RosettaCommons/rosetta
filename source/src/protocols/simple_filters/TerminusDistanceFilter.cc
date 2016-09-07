@@ -68,7 +68,7 @@ TerminusDistanceFilterCreator::create_filter() const { return protocols::filters
 std::string
 TerminusDistanceFilterCreator::keyname() const { return "TerminusDistance"; }
 
-TerminusDistanceFilter::~TerminusDistanceFilter(){}
+TerminusDistanceFilter::~TerminusDistanceFilter()= default;
 
 void
 TerminusDistanceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )

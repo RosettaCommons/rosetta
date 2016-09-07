@@ -76,8 +76,7 @@ TrajectoryMapFeatures::TrajectoryMapFeatures( TrajectoryMapFeatures const & src)
 	current_cycle_(src.current_cycle_)
 {}
 
-TrajectoryMapFeatures::~TrajectoryMapFeatures()
-{}
+TrajectoryMapFeatures::~TrajectoryMapFeatures() = default;
 
 string
 TrajectoryMapFeatures::type_name() const { return "TrajectoryMapFeatures"; }

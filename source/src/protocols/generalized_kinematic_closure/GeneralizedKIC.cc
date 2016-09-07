@@ -174,7 +174,7 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 
 /// @brief Destructor for GeneralizedKIC mover.
 ///
-GeneralizedKIC::~GeneralizedKIC() {}
+GeneralizedKIC::~GeneralizedKIC() = default;
 
 /// @brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
 ///
@@ -311,210 +311,210 @@ GeneralizedKIC::parse_my_tag(
 	}
 	if ( tag->hasOption( "contingent_filter" ) ) {
 		FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "contingent_filter" ), filters  );
-		runtime_assert_string_msg( curfilter != 0, "Invalid filter specified with contingent_filter tag in GeneralizedKIC." );
+		runtime_assert_string_msg( curfilter != nullptr, "Invalid filter specified with contingent_filter tag in GeneralizedKIC." );
 		rosettascripts_filter_exists_=true;
 		rosettascripts_filter_ = utility::pointer::dynamic_pointer_cast< ContingentFilter >(curfilter);
-		runtime_assert_string_msg( rosettascripts_filter_ != 0, "Only a ContingentFilter can be passed to GeneralizedKIC with the contingent_filter tag." );
+		runtime_assert_string_msg( rosettascripts_filter_ != nullptr, "Only a ContingentFilter can be passed to GeneralizedKIC with the contingent_filter tag." );
 		rosettascripts_filter_->set_value(true); //By default, the contingent filter is set to "True".
 		TR << "GeneralizedKIC mover \"" << tag->getOption<std::string>("name", "") << "\" linked to ContingentFilter filter \"" << tag->getOption< std::string >("contingent_filter") << "\".  The filter's value will be set by the success of the kinematic closure." << std::endl;
 	}
 
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for ( utility::vector1< utility::tag::TagCOP >::const_iterator tag_it=branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() == "AddResidue" ) {
-			runtime_assert_string_msg( (*tag_it)->hasOption("res_index"), "RosettaScript parsing error: the <AddResidue> group within a <GeneralizedKIC> block must include a \"res_index=<index>\" statement.");
-			add_loop_residue( (*tag_it)->getOption<core::Size>("res_index", 0) );
-		} else if ( (*tag_it)->getName() == "AddTailResidue" ) {
-			runtime_assert_string_msg( (*tag_it)->hasOption("res_index"), "RosettaScript parsing error: the <AddTailResidue> group within a <GeneralizedKIC> block must include a \"res_index=<index>\" statement.");
-			add_tail_residue( (*tag_it)->getOption<core::Size>("res_index", 0) );
-		} else if ( (*tag_it)->getName() == "SetPivots" ) {
-			runtime_assert_string_msg( (*tag_it)->hasOption("res1"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res1=<index>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("res2"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res2=<index>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("res3"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res3=<index>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("atom1"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"atom1=<atom_name>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("atom2"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"atom2=<atom_name>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("atom3"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"atom3=<atom_name>\" statement.");
+	for (const auto & branch_tag : branch_tags) {
+		if ( branch_tag->getName() == "AddResidue" ) {
+			runtime_assert_string_msg( branch_tag->hasOption("res_index"), "RosettaScript parsing error: the <AddResidue> group within a <GeneralizedKIC> block must include a \"res_index=<index>\" statement.");
+			add_loop_residue( branch_tag->getOption<core::Size>("res_index", 0) );
+		} else if ( branch_tag->getName() == "AddTailResidue" ) {
+			runtime_assert_string_msg( branch_tag->hasOption("res_index"), "RosettaScript parsing error: the <AddTailResidue> group within a <GeneralizedKIC> block must include a \"res_index=<index>\" statement.");
+			add_tail_residue( branch_tag->getOption<core::Size>("res_index", 0) );
+		} else if ( branch_tag->getName() == "SetPivots" ) {
+			runtime_assert_string_msg( branch_tag->hasOption("res1"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res1=<index>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("res2"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res2=<index>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("res3"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res3=<index>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("atom1"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"atom1=<atom_name>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("atom2"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"atom2=<atom_name>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("atom3"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"atom3=<atom_name>\" statement.");
 			set_pivot_atoms(
-				(*tag_it)->getOption<core::Size>("res1", 0),
-				(*tag_it)->getOption<std::string>("atom1", ""),
-				(*tag_it)->getOption<core::Size>("res2", 0),
-				(*tag_it)->getOption<std::string>("atom2", ""),
-				(*tag_it)->getOption<core::Size>("res3", 0),
-				(*tag_it)->getOption<std::string>("atom3", "")
+				branch_tag->getOption<core::Size>("res1", 0),
+				branch_tag->getOption<std::string>("atom1", ""),
+				branch_tag->getOption<core::Size>("res2", 0),
+				branch_tag->getOption<std::string>("atom2", ""),
+				branch_tag->getOption<core::Size>("res3", 0),
+				branch_tag->getOption<std::string>("atom3", "")
 			);
-		} else if  ( (*tag_it)->getName() == "SampleCisPeptideBond" ) {
+		} else if  ( branch_tag->getName() == "SampleCisPeptideBond" ) {
 			add_perturber("sample_cis_peptide_bond");
-			add_value_to_perturber_value_list( (*tag_it)->getOption("cis_prob", 0.1) );
+			add_value_to_perturber_value_list( branch_tag->getOption("cis_prob", 0.1) );
 			//Loop through the sub-tags to find out what information we're adding to this perturber:
-			utility::vector1< utility::tag::TagCOP > const subbranch_tags( (*tag_it)->getTags() );
-			for ( utility::vector1< utility::tag::TagCOP>::const_iterator subbranch_it=subbranch_tags.begin(); subbranch_it!=subbranch_tags.end(); ++subbranch_it ) {
-				if ( (*subbranch_it)->getName() == "AddResidue" ) { //Adding a residue to the PERTURBER'S list of residues.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("index"), "RosettaScript parsing error: the <AddResidue> subgroup within the <SampleCisProline> block in a <GeneralizedKIC> block must include a \"index=<residue_index>\" statement.");
-					add_residue_to_perturber_residue_list ( (*subbranch_it)->getOption<core::Size>("index", 0) );
+			utility::vector1< utility::tag::TagCOP > const subbranch_tags( branch_tag->getTags() );
+			for (const auto & subbranch_tag : subbranch_tags) {
+				if ( subbranch_tag->getName() == "AddResidue" ) { //Adding a residue to the PERTURBER'S list of residues.
+					runtime_assert_string_msg( subbranch_tag->hasOption("index"), "RosettaScript parsing error: the <AddResidue> subgroup within the <SampleCisProline> block in a <GeneralizedKIC> block must include a \"index=<residue_index>\" statement.");
+					add_residue_to_perturber_residue_list ( subbranch_tag->getOption<core::Size>("index", 0) );
 				}
 			}
-		} else if ( (*tag_it)->getName() == "CloseBond" ) {
-			runtime_assert_string_msg( (*tag_it)->hasOption("res1"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"res1=<index>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("res2"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"res2=<index>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("atom1"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"atom1=<atom_name>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("atom2"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"atom2=<atom_name>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("bondlength"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"bondlength=<value>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("angle1"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"angle1=<value>\" statement.");
-			runtime_assert_string_msg( (*tag_it)->hasOption("angle2"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"angle2=<value>\" statement.");
+		} else if ( branch_tag->getName() == "CloseBond" ) {
+			runtime_assert_string_msg( branch_tag->hasOption("res1"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"res1=<index>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("res2"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"res2=<index>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("atom1"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"atom1=<atom_name>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("atom2"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"atom2=<atom_name>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("bondlength"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"bondlength=<value>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("angle1"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"angle1=<value>\" statement.");
+			runtime_assert_string_msg( branch_tag->hasOption("angle2"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"angle2=<value>\" statement.");
 			//runtime_assert_string_msg( (*tag_it)->hasOption("torsion"), "RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must include a \"torsion=<value>\" statement.");
-			if ( (*tag_it)->hasOption("randomize_flanking_torsions") ) {
-				runtime_assert_string_msg( (*tag_it)->hasOption("prioratom_res") && (*tag_it)->hasOption("prioratom"),
+			if ( branch_tag->hasOption("randomize_flanking_torsions") ) {
+				runtime_assert_string_msg( branch_tag->hasOption("prioratom_res") && branch_tag->hasOption("prioratom"),
 					"RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must define the atom before the bond with the \"prioratom_res=<value>\" and \"prioratom=<atom_name>\" statements if the \"randomize_flanking_torsions\" statement is used.");
-				runtime_assert_string_msg( (*tag_it)->hasOption("followingatom_res") && (*tag_it)->hasOption("followingatom"),
+				runtime_assert_string_msg( branch_tag->hasOption("followingatom_res") && branch_tag->hasOption("followingatom"),
 					"RosettaScript parsing error: the <CloseBond> group within a <GeneralizedKIC> block must define the atom after the bond with the \"followingatom_res=<value>\" and \"followingatom=<atom_name>\" statements if the \"randomize_flanking_torsions\" statement is used.");
 			}
 			close_bond (
-				(*tag_it)->getOption<core::Size>("res1", 0),
-				(*tag_it)->getOption<std::string>("atom1", ""),
-				(*tag_it)->getOption<core::Size>("res2", 0),
-				(*tag_it)->getOption<std::string>("atom2", ""),
-				(*tag_it)->getOption<core::Size>("prioratom_res", 0),
-				(*tag_it)->getOption<std::string>("prioratom", ""),
-				(*tag_it)->getOption<core::Size>("followingatom_res", 0),
-				(*tag_it)->getOption<std::string>("followingatom", ""),
-				(*tag_it)->getOption<core::Real>("bondlength", 0.0),
-				(*tag_it)->getOption<core::Real>("angle1", 0.0),
-				(*tag_it)->getOption<core::Real>("angle2", 0.0),
-				(*tag_it)->getOption<core::Real>("torsion", 0.0),
-				!(*tag_it)->hasOption("torsion"), //If the torsion option is not specified, randomize this torsion
-				(*tag_it)->getOption<bool>("randomize_flanking_torsions", false)
+				branch_tag->getOption<core::Size>("res1", 0),
+				branch_tag->getOption<std::string>("atom1", ""),
+				branch_tag->getOption<core::Size>("res2", 0),
+				branch_tag->getOption<std::string>("atom2", ""),
+				branch_tag->getOption<core::Size>("prioratom_res", 0),
+				branch_tag->getOption<std::string>("prioratom", ""),
+				branch_tag->getOption<core::Size>("followingatom_res", 0),
+				branch_tag->getOption<std::string>("followingatom", ""),
+				branch_tag->getOption<core::Real>("bondlength", 0.0),
+				branch_tag->getOption<core::Real>("angle1", 0.0),
+				branch_tag->getOption<core::Real>("angle2", 0.0),
+				branch_tag->getOption<core::Real>("torsion", 0.0),
+				!branch_tag->hasOption("torsion"), //If the torsion option is not specified, randomize this torsion
+				branch_tag->getOption<bool>("randomize_flanking_torsions", false)
 			);
-		} else if ( (*tag_it)->getName() == "AddPerturber" ) { //If we're adding a perturber, need to loop through sub-tags.
-			runtime_assert_string_msg( (*tag_it)->hasOption("effect"), "RosettaScript parsing error: the <AddPerturber> group within a <GeneralizedKIC> block must include a \"effect=<perturber_effect_type>\" statement." );
+		} else if ( branch_tag->getName() == "AddPerturber" ) { //If we're adding a perturber, need to loop through sub-tags.
+			runtime_assert_string_msg( branch_tag->hasOption("effect"), "RosettaScript parsing error: the <AddPerturber> group within a <GeneralizedKIC> block must include a \"effect=<perturber_effect_type>\" statement." );
 
-			std::string effect( (*tag_it)->getOption<std::string>("effect", "") );
+			std::string effect( branch_tag->getOption<std::string>("effect", "") );
 			add_perturber( effect );
 
 			//If this is a perturber that uses torsion bin transition probabilities, we need to initialize the
 			//BinTransitionCalculator object and load a bin_params file:
 			if ( effect=="randomize_backbone_by_bins" || effect=="perturb_backbone_by_bins" || effect=="set_backbone_bin" ) {
-				load_perturber_bin_params( (*tag_it)->getOption<std::string>("bin_params_file", "ABBA") );
+				load_perturber_bin_params( branch_tag->getOption<std::string>("bin_params_file", "ABBA") );
 			}
 			if ( effect=="perturb_backbone_by_bins" ) {
-				core::Size const iterationcount( (*tag_it)->getOption<core::Size>("iterations", 1) );
+				core::Size const iterationcount( branch_tag->getOption<core::Size>("iterations", 1) );
 				set_perturber_iterations( iterationcount );
 				if ( TR.visible() ) TR << "Set iterations for perturb_backbone_by_bins GeneralizedKICperturber to " << iterationcount << "." << std::endl;
-				bool const mustswitch( (*tag_it)->getOption<bool>("must_switch_bins", false) );
+				bool const mustswitch( branch_tag->getOption<bool>("must_switch_bins", false) );
 				set_perturber_must_switch_bins( mustswitch );
 				if ( TR.visible() ) TR << "The perturb_backbone_by_bins GeneralizedKICperturber " << (mustswitch ? "must always " : "need not necessarily ") << "switch torsion bins." << std::endl;
 			}
 			if ( effect=="set_backbone_bin" ) { //Get the bin that we're setting these residues to lie in.
-				if ( !(*tag_it)->hasOption( "bin" ) ) utility_exit_with_message( "RosettaScript parsing error: the set_backbone_bin GeneralizedKICperturber requires a \"bin=\" option to be specified." );
-				std::string const bin( (*tag_it)->getOption<std::string>("bin", "") );
+				if ( !branch_tag->hasOption( "bin" ) ) utility_exit_with_message( "RosettaScript parsing error: the set_backbone_bin GeneralizedKICperturber requires a \"bin=\" option to be specified." );
+				std::string const bin( branch_tag->getOption<std::string>("bin", "") );
 				set_perturber_bin( bin );
 				if ( TR.visible() ) TR << "The set_backbone_bin GeneralizedKICperturber was set to use bin " << bin << "." << std::endl;
 			}
 
 			//If this is the randomize_alpha_backbone_by_rama perturber, the user may have specified a custom Ramachandran map:
 			if ( effect == "randomize_alpha_backbone_by_rama" ) {
-				if ( (*tag_it)->hasOption("custom_rama_table") ) {
-					std::string const custom_table( (*tag_it)->getOption<std::string>("custom_rama_table") );
+				if ( branch_tag->hasOption("custom_rama_table") ) {
+					std::string const custom_table( branch_tag->getOption<std::string>("custom_rama_table") );
 					set_perturber_custom_rama_table( custom_table );
 					if ( TR.visible() ) TR << "The perturb_alpha_backbone_by_rama perturber was set to use the \"" << custom_table << "\" custom Ramachandran table for sampling." << std::endl;
 				}
 			}
 
 			//Loop through the sub-tags to find out what information we're adding to this perturber:
-			utility::vector1< utility::tag::TagCOP > const subbranch_tags( (*tag_it)->getTags() );
-			for ( utility::vector1< utility::tag::TagCOP>::const_iterator subbranch_it=subbranch_tags.begin(); subbranch_it!=subbranch_tags.end(); ++subbranch_it ) {
-				if ( (*subbranch_it)->getName() == "AddResidue" ) { //Adding a residue to the PERTURBER'S list of residues.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("index"), "RosettaScript parsing error: the <AddResidue> subgroup within the <AddPerturber> block in a <GeneralizedKIC> block must include a \"index=<residue_index>\" statement.");
-					add_residue_to_perturber_residue_list ( (*subbranch_it)->getOption<core::Size>("index", 0) );
-				} else if ( (*subbranch_it)->getName() == "AddAtoms" ) { //Adding a set of one, two, three, or four atoms to the PERTURBER'S list of atoms.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("atom1") && (*subbranch_it)->hasOption("res1"), "RosettaScript parsing error: the <AddAtoms> subgroup within the <AddPerturber> block in a <GeneralizedKIC> block must define at least one atom.");
+			utility::vector1< utility::tag::TagCOP > const subbranch_tags( branch_tag->getTags() );
+			for (const auto & subbranch_tag : subbranch_tags) {
+				if ( subbranch_tag->getName() == "AddResidue" ) { //Adding a residue to the PERTURBER'S list of residues.
+					runtime_assert_string_msg( subbranch_tag->hasOption("index"), "RosettaScript parsing error: the <AddResidue> subgroup within the <AddPerturber> block in a <GeneralizedKIC> block must include a \"index=<residue_index>\" statement.");
+					add_residue_to_perturber_residue_list ( subbranch_tag->getOption<core::Size>("index", 0) );
+				} else if ( subbranch_tag->getName() == "AddAtoms" ) { //Adding a set of one, two, three, or four atoms to the PERTURBER'S list of atoms.
+					runtime_assert_string_msg( subbranch_tag->hasOption("atom1") && subbranch_tag->hasOption("res1"), "RosettaScript parsing error: the <AddAtoms> subgroup within the <AddPerturber> block in a <GeneralizedKIC> block must define at least one atom.");
 					utility::vector1 < core::id::NamedAtomID > atomset;
-					if ( (*subbranch_it)->hasOption("atom1") && (*subbranch_it)->hasOption("res1") ) {
-						atomset.push_back( NamedAtomID( (*subbranch_it)->getOption<std::string>("atom1"), (*subbranch_it)->getOption<core::Size>("res1") ) );
+					if ( subbranch_tag->hasOption("atom1") && subbranch_tag->hasOption("res1") ) {
+						atomset.push_back( NamedAtomID( subbranch_tag->getOption<std::string>("atom1"), subbranch_tag->getOption<core::Size>("res1") ) );
 					}
-					if ( (*subbranch_it)->hasOption("atom2") && (*subbranch_it)->hasOption("res2") ) {
-						atomset.push_back( NamedAtomID( (*subbranch_it)->getOption<std::string>("atom2"), (*subbranch_it)->getOption<core::Size>("res2") ) );
+					if ( subbranch_tag->hasOption("atom2") && subbranch_tag->hasOption("res2") ) {
+						atomset.push_back( NamedAtomID( subbranch_tag->getOption<std::string>("atom2"), subbranch_tag->getOption<core::Size>("res2") ) );
 					}
-					if ( (*subbranch_it)->hasOption("atom3") && (*subbranch_it)->hasOption("res3") ) {
-						atomset.push_back( NamedAtomID( (*subbranch_it)->getOption<std::string>("atom3"), (*subbranch_it)->getOption<core::Size>("res3") ) );
+					if ( subbranch_tag->hasOption("atom3") && subbranch_tag->hasOption("res3") ) {
+						atomset.push_back( NamedAtomID( subbranch_tag->getOption<std::string>("atom3"), subbranch_tag->getOption<core::Size>("res3") ) );
 					}
-					if ( (*subbranch_it)->hasOption("atom4") && (*subbranch_it)->hasOption("res4") ) {
-						atomset.push_back( NamedAtomID( (*subbranch_it)->getOption<std::string>("atom4"), (*subbranch_it)->getOption<core::Size>("res4") ) );
+					if ( subbranch_tag->hasOption("atom4") && subbranch_tag->hasOption("res4") ) {
+						atomset.push_back( NamedAtomID( subbranch_tag->getOption<std::string>("atom4"), subbranch_tag->getOption<core::Size>("res4") ) );
 					}
 					add_atomset_to_perturber_atomset_list(atomset);
-				} else if ( (*subbranch_it)->getName() == "AddValue" ) { //Adding a residue to the PERTURBER'S list of residues.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddValue> subgroup within the <AddPerturber> block in a <GeneralizedKIC> block must include a \"value=<real_value>\" statement.");
-					add_value_to_perturber_value_list ( (*subbranch_it)->getOption<core::Real>("value", 0.0) );
+				} else if ( subbranch_tag->getName() == "AddValue" ) { //Adding a residue to the PERTURBER'S list of residues.
+					runtime_assert_string_msg( subbranch_tag->hasOption("value"), "RosettaScript parsing error: the <AddValue> subgroup within the <AddPerturber> block in a <GeneralizedKIC> block must include a \"value=<real_value>\" statement.");
+					add_value_to_perturber_value_list ( subbranch_tag->getOption<core::Real>("value", 0.0) );
 				}
 			}
 
-		} else if ( (*tag_it)->getName() == "AddFilter" ) { //If we're adding a filter, need to loop through sub-tags.
-			runtime_assert_string_msg( (*tag_it)->hasOption("type"), "RosettaScript parsing error: the <AddFilter> group within a <GeneralizedKIC> block must include a \"type=<filter_type>\" statement." );
-			std::string const filtertype( (*tag_it)->getOption<std::string>("type", "") );
+		} else if ( branch_tag->getName() == "AddFilter" ) { //If we're adding a filter, need to loop through sub-tags.
+			runtime_assert_string_msg( branch_tag->hasOption("type"), "RosettaScript parsing error: the <AddFilter> group within a <GeneralizedKIC> block must include a \"type=<filter_type>\" statement." );
+			std::string const filtertype( branch_tag->getOption<std::string>("type", "") );
 			add_filter( filtertype );
 
 			//Parse filter-specific options:
 			if ( filtertype=="backbone_bin" ) {
 				//Residue number:
-				runtime_assert_string_msg( (*tag_it)->hasOption("residue"), "RosettaScript parsing error: when adding a backbone_bin filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
-				core::Size const resnum( (*tag_it)->getOption<core::Size>("residue",0) );
+				runtime_assert_string_msg( branch_tag->hasOption("residue"), "RosettaScript parsing error: when adding a backbone_bin filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
+				core::Size const resnum( branch_tag->getOption<core::Size>("residue",0) );
 				set_filter_resnum(resnum);
 				if ( TR.visible() ) TR << "Set the residue number for backbone_bin filter to " << resnum << "." << std::endl;
 
 				//Bin transition probabilities params file:
-				load_filter_bin_params( (*tag_it)->getOption<std::string>("bin_params_file", "ABBA") );
+				load_filter_bin_params( branch_tag->getOption<std::string>("bin_params_file", "ABBA") );
 
 				//Bin name:
-				runtime_assert_string_msg( (*tag_it)->hasOption("bin"), "RosettaScript parsing error: when adding a backbone_bin filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"bin=\" statement." );
-				std::string const binname( (*tag_it)->getOption<std::string>("bin", "")  );
+				runtime_assert_string_msg( branch_tag->hasOption("bin"), "RosettaScript parsing error: when adding a backbone_bin filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"bin=\" statement." );
+				std::string const binname( branch_tag->getOption<std::string>("bin", "")  );
 				set_filter_bin(binname);
 				if ( TR.visible() ) TR << "Set the bin name for the backbone_bin filter to " << binname << "." << std::endl;
 			} else if ( filtertype=="alpha_aa_rama_check" ) {
 				//Residue number:
-				runtime_assert_string_msg( (*tag_it)->hasOption("residue"), "RosettaScript parsing error: when adding an alpha_aa_rama_check filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
-				core::Size const resnum( (*tag_it)->getOption<core::Size>("residue",0) );
+				runtime_assert_string_msg( branch_tag->hasOption("residue"), "RosettaScript parsing error: when adding an alpha_aa_rama_check filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
+				core::Size const resnum( branch_tag->getOption<core::Size>("residue",0) );
 				set_filter_resnum(resnum);
 				if ( TR.visible() ) TR << "Set the residue number for alpha_aa_rama_check filter to " << resnum << "." << std::endl;
 
-				core::Real const cutoff_energy( (*tag_it)->getOption<core::Real>("rama_cutoff_energy", 0.3) );
+				core::Real const cutoff_energy( branch_tag->getOption<core::Real>("rama_cutoff_energy", 0.3) );
 				set_filter_rama_cutoff_energy( cutoff_energy );
 				if ( TR.visible() ) TR << "Set the rama term cutoff energy for the alpha_aa_rama_check filter to " << cutoff_energy << std::endl;
 			}
 
 			//Loop through the sub-tags to find out what information we're adding to this filter, if any:
-			utility::vector1< utility::tag::TagCOP > const subbranch_tags( (*tag_it)->getTags() );
-			for ( utility::vector1< utility::tag::TagCOP>::const_iterator subbranch_it=subbranch_tags.begin(); subbranch_it!=subbranch_tags.end(); ++subbranch_it ) {
-				if ( (*subbranch_it)->getName() == "AddFilterParameterReal" ) { //Adding a real-valued filter parameter.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<real value>\" statement.");
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
-					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<core::Real>("value") );
-				} else if ( (*subbranch_it)->getName() == "AddFilterParameterInteger" ) { //Adding an integer-valued filter parameter.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterInteger> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<integer value>\" statement.");
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterInteger> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
-					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<core::Size>("value") );
-				} else if ( (*subbranch_it)->getName() == "AddFilterParameterBoolean" ) { //Adding a Boolean-valued filter parameter.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterBoolean> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<Boolean value>\" statement.");
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterBoolean> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
-					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<bool>("value") );
-				} else if ( (*subbranch_it)->getName() == "AddFilterParameterString" ) { //Adding a string-valued filter parameter.
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterString> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<string>\" statement.");
-					runtime_assert_string_msg( (*subbranch_it)->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterString> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
-					add_filter_parameter((*subbranch_it)->getOption<std::string>("name"), (*subbranch_it)->getOption<std::string>("value") );
+			utility::vector1< utility::tag::TagCOP > const subbranch_tags( branch_tag->getTags() );
+			for (const auto & subbranch_tag : subbranch_tags) {
+				if ( subbranch_tag->getName() == "AddFilterParameterReal" ) { //Adding a real-valued filter parameter.
+					runtime_assert_string_msg( subbranch_tag->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<real value>\" statement.");
+					runtime_assert_string_msg( subbranch_tag->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter(subbranch_tag->getOption<std::string>("name"), subbranch_tag->getOption<core::Real>("value") );
+				} else if ( subbranch_tag->getName() == "AddFilterParameterInteger" ) { //Adding an integer-valued filter parameter.
+					runtime_assert_string_msg( subbranch_tag->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterInteger> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<integer value>\" statement.");
+					runtime_assert_string_msg( subbranch_tag->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterInteger> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter(subbranch_tag->getOption<std::string>("name"), subbranch_tag->getOption<core::Size>("value") );
+				} else if ( subbranch_tag->getName() == "AddFilterParameterBoolean" ) { //Adding a Boolean-valued filter parameter.
+					runtime_assert_string_msg( subbranch_tag->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterBoolean> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<Boolean value>\" statement.");
+					runtime_assert_string_msg( subbranch_tag->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterBoolean> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter(subbranch_tag->getOption<std::string>("name"), subbranch_tag->getOption<bool>("value") );
+				} else if ( subbranch_tag->getName() == "AddFilterParameterString" ) { //Adding a string-valued filter parameter.
+					runtime_assert_string_msg( subbranch_tag->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterString> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<string>\" statement.");
+					runtime_assert_string_msg( subbranch_tag->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterString> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");
+					add_filter_parameter(subbranch_tag->getOption<std::string>("name"), subbranch_tag->getOption<std::string>("value") );
 				}
 			}
 
-		} else if ( (*tag_it)->getName() == "AddAtomPairDistanceFilter" ) { //Shorthand for adding an atom_pair_distance filter
-			runtime_assert_string_msg((*tag_it)->hasOption("atom1"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"atom1=<string>\" statement." );
-			runtime_assert_string_msg((*tag_it)->hasOption("atom2"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"atom2=<string>\" statement." );
-			runtime_assert_string_msg((*tag_it)->hasOption("res1"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"res1=<integer value>\" statement." );
-			runtime_assert_string_msg((*tag_it)->hasOption("res2"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"res2=<integer value>\" statement." );
-			runtime_assert_string_msg((*tag_it)->hasOption("distance"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"distance=<real value>\" statement." );
+		} else if ( branch_tag->getName() == "AddAtomPairDistanceFilter" ) { //Shorthand for adding an atom_pair_distance filter
+			runtime_assert_string_msg(branch_tag->hasOption("atom1"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"atom1=<string>\" statement." );
+			runtime_assert_string_msg(branch_tag->hasOption("atom2"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"atom2=<string>\" statement." );
+			runtime_assert_string_msg(branch_tag->hasOption("res1"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"res1=<integer value>\" statement." );
+			runtime_assert_string_msg(branch_tag->hasOption("res2"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"res2=<integer value>\" statement." );
+			runtime_assert_string_msg(branch_tag->hasOption("distance"), "RosettaScript parsing error: the <AddAtomPairDistanceFilter> block in a <GeneralizedKIC> block must include an \"distance=<real value>\" statement." );
 			add_filter( "atom_pair_distance" );
-			add_filter_parameter( "atom1", (*tag_it)->getOption<std::string>("atom1") );
-			add_filter_parameter( "atom2", (*tag_it)->getOption<std::string>("atom2") );
-			add_filter_parameter( "res1", (*tag_it)->getOption<core::Size>("res1") );
-			add_filter_parameter( "res2", (*tag_it)->getOption<core::Size>("res2") );
-			add_filter_parameter( "distance", (*tag_it)->getOption<core::Real>("distance") );
-			if ( (*tag_it)->hasOption("greater_than") ) add_filter_parameter( "greater_than", (*tag_it)->getOption<bool>("greater_than") );
+			add_filter_parameter( "atom1", branch_tag->getOption<std::string>("atom1") );
+			add_filter_parameter( "atom2", branch_tag->getOption<std::string>("atom2") );
+			add_filter_parameter( "res1", branch_tag->getOption<core::Size>("res1") );
+			add_filter_parameter( "res2", branch_tag->getOption<core::Size>("res2") );
+			add_filter_parameter( "distance", branch_tag->getOption<core::Real>("distance") );
+			if ( branch_tag->hasOption("greater_than") ) add_filter_parameter( "greater_than", branch_tag->getOption<bool>("greater_than") );
 		}
 
 	}
@@ -1639,19 +1639,19 @@ GeneralizedKIC::doKIC(
 
 		//Delete solutions for which the preselection mover failed:
 		core::Size solcount(0);
-		for ( utility::vector1< utility::vector1< core::Real > >::iterator it=t_ang[iattempt].begin(); it!=t_ang[iattempt].end(); ) {
+		for ( auto it=t_ang[iattempt].begin(); it!=t_ang[iattempt].end(); ) {
 			++solcount;
 			if ( solutions_to_delete[solcount] ) { t_ang[iattempt].erase( it ); }
 			else { ++it; }
 		}
 		solcount=0;
-		for ( utility::vector1< utility::vector1< core::Real > >::iterator it=b_ang[iattempt].begin(); it!=b_ang[iattempt].end(); ) {
+		for ( auto it=b_ang[iattempt].begin(); it!=b_ang[iattempt].end(); ) {
 			++solcount;
 			if ( solutions_to_delete[solcount] ) { b_ang[iattempt].erase( it ); }
 			else { ++it; }
 		}
 		solcount=0;
-		for ( utility::vector1< utility::vector1< core::Real > >::iterator it=b_len[iattempt].begin(); it!=b_len[iattempt].end(); ) {
+		for ( auto it=b_len[iattempt].begin(); it!=b_len[iattempt].end(); ) {
 			++solcount;
 			if ( solutions_to_delete[solcount] ) { b_len[iattempt].erase( it ); }
 			else { ++it; }

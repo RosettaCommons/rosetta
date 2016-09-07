@@ -98,10 +98,10 @@ public:
 	ResidualDipolarCoupling& operator=(ResidualDipolarCoupling const & other);
 
 	//explicit destructor because we use raw pointers for buffers
-	virtual ~ResidualDipolarCoupling();
+	~ResidualDipolarCoupling() override;
 
 	//this class lives in the PoseCache.... need to provide clone()
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const override {
 		return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling(*this) );
 	}
 
@@ -292,7 +292,7 @@ public:
 	}
 
 	Real& Jcomputed() {
-		return Jdipolar_computed_;;
+		return Jdipolar_computed_;
 	}
 
 	Vector fij() const {

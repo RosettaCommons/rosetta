@@ -145,7 +145,7 @@ ozstream::open(
 		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
 				( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
 			if ( zip_stream_p_ ) delete zip_stream_p_;
-			zip_stream_p_ = 0;
+			zip_stream_p_ = nullptr;
 			of_stream_.close();
 			// Set failbit so failure can be detected
 			of_stream_.setstate( ios_base::failbit );
@@ -213,7 +213,7 @@ ozstream::open_append( std::string const & filename_a )
 		zip_stream_p_ = new zip_ostream( of_stream_, true, static_cast< size_t >( Z_DEFAULT_COMPRESSION ), zlib_stream::DefaultStrategy, 15, 8, buffer_size_ );
 		if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) ||
 				( !zip_stream_p_->is_gzip() ) ) { // zip_stream not in good state
-			delete zip_stream_p_; zip_stream_p_ = 0;
+			delete zip_stream_p_; zip_stream_p_ = nullptr;
 			of_stream_.close();
 			// Set failbit so failure can be detected
 			of_stream_.setstate( ios_base::failbit );

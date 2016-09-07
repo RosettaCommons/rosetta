@@ -85,13 +85,13 @@ namespace scoring {
 Energies::Energies()
 : utility::pointer::ReferenceCount(),
 	size_(0),
-	owner_( 0 ),
+	owner_( nullptr ),
 	energy_graph_( EnergyGraphOP( new EnergyGraph ) ),
-	context_graphs_( scoring::num_context_graph_types, 0 ),
+	context_graphs_( scoring::num_context_graph_types, nullptr ),
 	externally_required_context_graphs_( scoring::num_context_graph_types, false ),
 	required_context_graphs_( scoring::num_context_graph_types, false ),
 	max_context_neighbor_cutoff_( 0.0 ),
-	long_range_energy_containers_( scoring::methods::n_long_range_types, 0 ),
+	long_range_energy_containers_( scoring::methods::n_long_range_types, nullptr ),
 	use_nblist_(false),
 	use_nblist_auto_update_(false),
 	minimization_graph_( /* 0 */ ),
@@ -112,16 +112,16 @@ Energies::Energies()
 Energies::Energies( Energies const & other )
 : utility::pointer::ReferenceCount(),
 	size_( other.size_ ),
-	owner_( 0 ),
+	owner_( nullptr ),
 	energy_graph_( EnergyGraphOP( new EnergyGraph( *other.energy_graph_ ) ) ),
-	context_graphs_( scoring::num_context_graph_types, 0 ),
+	context_graphs_( scoring::num_context_graph_types, nullptr ),
 	externally_required_context_graphs_( other.externally_required_context_graphs_ ),
 	required_context_graphs_( other.required_context_graphs_ ),
 	max_context_neighbor_cutoff_( other.max_context_neighbor_cutoff_ ),
-	long_range_energy_containers_( scoring::methods::n_long_range_types, 0 ),
+	long_range_energy_containers_( scoring::methods::n_long_range_types, nullptr ),
 	use_nblist_( other.use_nblist_ ),
 	use_nblist_auto_update_( other.use_nblist_auto_update_ ),
-	minimization_graph_( other.minimization_graph_ ? new MinimizationGraph( * other.minimization_graph_ ) : 0 ),
+	minimization_graph_( other.minimization_graph_ ? new MinimizationGraph( * other.minimization_graph_ ) : nullptr ),
 	onebody_energies_( other.onebody_energies_ ),
 	residue_total_energies_uptodate_( false ),
 	residue_total_energies_( size_ ),
@@ -155,7 +155,7 @@ Energies::operator = ( Energies const & rhs )
 	context_graphs_.resize( scoring::num_context_graph_types);
 	use_nblist_ =  rhs.use_nblist_;
 	use_nblist_auto_update_ = rhs.use_nblist_auto_update_;
-	minimization_graph_ = MinimizationGraphOP( rhs.minimization_graph_ ? new MinimizationGraph( * rhs.minimization_graph_ ) : 0 );
+	minimization_graph_ = MinimizationGraphOP( rhs.minimization_graph_ ? new MinimizationGraph( * rhs.minimization_graph_ ) : nullptr );
 	onebody_energies_ =  rhs.onebody_energies_;
 	residue_total_energies_uptodate_ = false;
 	residue_total_energy_uptodate_ = rhs.residue_total_energy_uptodate_;
@@ -213,9 +213,9 @@ Energies::clone() const
 
 void
 Energies::set_owner( pose::Pose * owner ) {
-	if ( owner == 0 ) {
-		owner_ = 0;
-	} else if ( owner_ != 0 ) {
+	if ( owner == nullptr ) {
+		owner_ = nullptr;
+	} else if ( owner_ != nullptr ) {
 		utility_exit_with_message( "Attempted to set the owner twice, once with " + utility::to_string( owner_ ) + " and now with " + utility::to_string( owner ) );
 	} else {
 		owner_ = owner;
@@ -353,7 +353,7 @@ scoring::ContextGraphOP
 Energies::context_graph( scoring::ContextGraphType type )
 {
 	debug_assert( graph_state_ == GOOD );
-	if ( context_graphs_[ type ] == 0 ) require_context_graph_( type, true );
+	if ( context_graphs_[ type ] == nullptr ) require_context_graph_( type, true );
 	return context_graphs_[ type ];
 }
 
@@ -362,7 +362,7 @@ scoring::ContextGraphCOP
 Energies::context_graph( scoring::ContextGraphType type ) const
 {
 	debug_assert( graph_state_ == GOOD );
-	if ( context_graphs_[ type ] == 0 ) require_context_graph_( type, true );
+	if ( context_graphs_[ type ] == nullptr ) require_context_graph_( type, true );
 	return context_graphs_[ type ];
 }
 
@@ -461,7 +461,7 @@ Energies::clear_energies()
 	}
 	// is this really what we want to do here?
 	for ( Size ii = 1; ii <= long_range_energy_containers_.size(); ++ii ) {
-		long_range_energy_containers_[ ii ] = 0;
+		long_range_energy_containers_[ ii ] = nullptr;
 	}
 	graph_state_ = BAD;
 	energy_state_ = BAD;
@@ -1007,7 +1007,7 @@ Energies::accumulate_residue_total_energies() const
 
 	for ( Size ii = 1; ii <= long_range_energy_containers_.size(); ++ii ) {
 		LREnergyContainerCOP lrec = long_range_energy_containers_[ ii ];
-		if ( lrec == 0 ) continue;
+		if ( lrec == nullptr ) continue;
 		if ( lrec->empty() ) continue;
 
 		// Potentially O(N^2) operation...
@@ -1068,7 +1068,7 @@ Energies::accumulate_residue_total_energy() const
 
 	for ( Size ii = 1; ii <= long_range_energy_containers_.size(); ++ii ) {
 		LREnergyContainerCOP lrec = long_range_energy_containers_[ ii ];
-		if ( lrec == 0 ) continue;
+		if ( lrec == nullptr ) continue;
 		if ( lrec->empty() ) continue;
 
 		// Potentially O(N^2) operation...
@@ -1110,13 +1110,13 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 					/// did any external (non-energy-method ) peice of code.  It is safe to delete this
 					/// graph and to stop maintaining it during score evaluations.
 					required_context_graphs_[ ii ] = false;
-					context_graphs_[ ii ] = 0;
+					context_graphs_[ ii ] = nullptr;
 					deleted_a_graph = true;
 				}
 			} else {
 				/// Required by the score function, but not externally required, nor required by the previous
 				/// score function.
-				debug_assert( context_graphs_[ ii ] == 0 );
+				debug_assert( context_graphs_[ ii ] == nullptr );
 				debug_assert( externally_required_context_graphs_[ ii ] );
 				require_context_graph_( ContextGraphType (ii), false );
 			}
@@ -1170,7 +1170,7 @@ Energies::update_neighbor_links(
 	//std::cout << "update_neighbor_links: interaction dist: " << scorefxn_info_->max_atomic_interaction_distance() <<
 	// std::endl;
 
-	if ( point_graph_ == 0 ) {
+	if ( point_graph_ == nullptr ) {
 		point_graph_ = conformation::PointGraphOP( new core::conformation::PointGraph );
 	}
 	fill_point_graph( pose, point_graph_ );
@@ -1239,11 +1239,8 @@ Energies::fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP 
 
 void Energies::copy_nblists( Energies const & other )
 {
-	for ( std::map< EnergiesCacheableDataType::Enum, scoring::NeighborListOP >::const_iterator
-			other_nblist_iter = other.nblist_.begin(),
-			other_nblist_end = other.nblist_.end();
-			other_nblist_iter != other_nblist_end; ++other_nblist_iter ) {
-		nblist_[ other_nblist_iter->first ] = other_nblist_iter->second->clone();
+	for (const auto & other_nblist_iter : other.nblist_) {
+		nblist_[ other_nblist_iter.first ] = other_nblist_iter.second->clone();
 	}
 }
 
@@ -1257,7 +1254,7 @@ void Energies::copy_context_graphs( Energies const & other )
 		if ( other.context_graphs_[ ii ] ) {
 			context_graphs_[ ii ] = other.context_graphs_[ ii ]->clone();
 		} else {
-			context_graphs_[ ii ] = 0;
+			context_graphs_[ ii ] = nullptr;
 		}
 	}
 }
@@ -1268,7 +1265,7 @@ void Energies::copy_lr_energy_containers( Energies const & other )
 		if ( other.long_range_energy_containers_[ ii ] ) {
 			long_range_energy_containers_[ ii ] = other.long_range_energy_containers_[ ii ]->clone();
 		} else {
-			long_range_energy_containers_[ ii ] = 0;
+			long_range_energy_containers_[ ii ] = nullptr;
 		}
 	}
 }
@@ -1279,10 +1276,10 @@ void Energies::copy_lr_energy_containers( Energies const & other )
 void
 Energies::require_context_graph_( scoring::ContextGraphType type, bool external ) const
 {
-	debug_assert( context_graphs_[ type ] == 0 );
+	debug_assert( context_graphs_[ type ] == nullptr );
 	required_context_graphs_[ type ] = true;
 	context_graphs_[ type ] = ContextGraphFactory::create_context_graph( type );
-	if ( context_graphs_[ type ] == 0 ) {
+	if ( context_graphs_[ type ] == nullptr ) {
 		utility_exit_with_message( "Error: Null returned from ContextGraphFactory::create_context_graph( " + utility::to_string( type ) + ")" );
 	}
 	context_graphs_[ type ]->set_num_nodes( size_ );

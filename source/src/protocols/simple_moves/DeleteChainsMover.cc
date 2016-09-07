@@ -60,9 +60,8 @@ DeleteChainsMover::set_defaults(){
 void
 DeleteChainsMover::set_chains( std::string const & chains, core::pose::Pose const & pose ){
 	chains_.clear();
-	for ( core::Size i = 0; i < chains.length(); ++i ) {
-		char chain = chains[ i ];
-		core::Size chain_id = core::pose::get_chain_id_from_chain( chain, pose );
+	for (char chain : chains) {
+			core::Size chain_id = core::pose::get_chain_id_from_chain( chain, pose );
 		chains_.push_back(chain_id);
 	}
 }

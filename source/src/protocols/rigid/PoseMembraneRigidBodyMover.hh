@@ -35,10 +35,10 @@ public:
 	//default constructor
 	MovePoseToMembraneCenterMover();
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	core::Vector estimate_membrane_center( core::pose::Pose & pose );
-	std::string  get_name() const;
+	std::string  get_name() const override;
 };
 
 /// perturb the pose along membrane normal
@@ -47,9 +47,9 @@ public:
 	MembraneCenterPerturbationMover (); // default constructor
 	MembraneCenterPerturbationMover (core::Real const & trans_mag_in); // constructor
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	std::string  get_name() const;
+	std::string  get_name() const override;
 private:
 	///data
 	core::Real trans_mag_; //maximum translation magnitude
@@ -62,9 +62,9 @@ public:
 	MembraneNormalPerturbationMover (); // default constructor
 	MembraneNormalPerturbationMover ( core::Real const & rotation_mag_in ); // constructor
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	std::string  get_name() const;
+	std::string  get_name() const override;
 private:
 	///data
 	core::Real rotation_mag_; //maximum translation magnitude
@@ -76,8 +76,8 @@ class WholeBodyTranslationMover :  public moves::Mover {
 public:
 	WholeBodyTranslationMover ( core::Vector const & trans_in );
 
-	void apply( core::pose::Pose & pose );
-	std::string  get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string  get_name() const override;
 
 private:
 	/// data
@@ -89,8 +89,8 @@ class WholeBodyRotationMover :  public moves::Mover {
 public:
 	WholeBodyRotationMover ( core::Vector const & axis, core::Vector const & center, core::Real const & alpha /* degrees */ );
 
-	void apply( core::pose::Pose & pose );
-	std::string  get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string  get_name() const override;
 
 private:
 	/// data

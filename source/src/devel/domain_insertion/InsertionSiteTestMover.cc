@@ -88,7 +88,7 @@ InsertionSiteTestMover::InsertionSiteTestMover( InsertionSiteTestMover const & o
 {}
 
 
-InsertionSiteTestMover::~InsertionSiteTestMover(){}
+InsertionSiteTestMover::~InsertionSiteTestMover() = default;
 
 protocols::moves::MoverOP
 InsertionSiteTestMover::clone() const{
@@ -201,10 +201,9 @@ InsertionSiteTestMover::parse_my_tag(
 	}
 
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator it= subtags.begin(); it!=subtags.end(); ++it ) {
+	for (auto subtag : subtags) {
 
-		utility::tag::TagCOP const subtag = *it;
-		if ( subtag->getName() == "span" ) {
+			if ( subtag->getName() == "span" ) {
 			core::Size const begin( core::pose::get_resnum( subtag, pose, "begin_" ) );
 			core::Size const end( core::pose::get_resnum( subtag, pose, "end_" ) );
 			runtime_assert( end > begin );
@@ -283,7 +282,7 @@ InsertionSiteTestMover::create_raw_insert_pose(
 	core::Real insertpos_start_sasa( full_pose_residue_sasa[ insert_pos ] + full_pose_residue_sasa[ insert_pos + 1] );
 	if ( insertpos_start_sasa < insert_attempt_sasa_cutoff_ ) return false;
 
-	insert_seqmap_ = NULL;
+	insert_seqmap_ = nullptr;
 	enz_flexbb_prot_->add_flexible_region( insert_pos - (flex_window_ - 1), insert_pos + flex_window_, pose, true );
 
 	devel::enzdes::EnzdesRemodelMoverOP enzremodel_mover(make_enzremodel_mover( pose, insert_pos ) );

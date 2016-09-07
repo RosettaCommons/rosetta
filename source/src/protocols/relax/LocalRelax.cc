@@ -111,7 +111,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 #include <sstream>
 #include <string>
@@ -232,7 +232,7 @@ LocalRelax::get_neighbor_graph(
 
 
 	// grab symminfo (if defined) from the pose
-	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation &>(pose.conformation()).Symmetry_Info();
 	}
@@ -348,7 +348,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 	core::Size nres_asu = nres;
 
 	// set up symm
-	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) )  {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation &>(pose.conformation()).Symmetry_Info();
 		nres_asu = symminfo->num_independent_residues();

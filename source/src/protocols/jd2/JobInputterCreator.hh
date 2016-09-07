@@ -32,7 +32,7 @@ class JobInputterCreator : public utility::pointer::ReferenceCount
 {
 public:
 	JobInputterCreator();
-	virtual ~JobInputterCreator();
+	~JobInputterCreator() override;
 
 	virtual JobInputterOP create_JobInputter() const = 0;
 	virtual std::string keyname() const = 0;

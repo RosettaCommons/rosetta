@@ -48,9 +48,9 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ocstream()
-	{}
+	
+	~ocstream() override
+	= default;
 
 
 public: // Methods: conversion
@@ -58,7 +58,7 @@ public: // Methods: conversion
 
 	/// @brief bool conversion
 	inline
-	operator bool() const
+	operator bool() const override
 	{
 		return !!o_stream_;
 	}
@@ -66,7 +66,7 @@ public: // Methods: conversion
 
 	/// @brief Stream conversion
 	inline
-	operator std::ostream const &() const
+	operator std::ostream const &() const override
 	{
 		return o_stream_;
 	}
@@ -74,7 +74,7 @@ public: // Methods: conversion
 
 	/// @brief Stream conversion
 	inline
-	operator std::ostream &()
+	operator std::ostream &() override
 	{
 		return o_stream_;
 	}
@@ -97,7 +97,7 @@ public: // Methods: formatting
 	/// @brief Stream manipulator output
 	inline
 	ocstream &
-	operator <<( manipulator m )
+	operator <<( manipulator m ) override
 	{
 		o_stream_ << m;
 		return *this;
@@ -110,7 +110,7 @@ public: // Methods: i/o
 	/// @brief Write a char
 	inline
 	ocstream &
-	put( char const c )
+	put( char const c ) override
 	{
 		o_stream_.put( c );
 		return *this;
@@ -120,7 +120,7 @@ public: // Methods: i/o
 	/// @brief Write a string
 	inline
 	ocstream &
-	write( char const * str, std::streamsize const count )
+	write( char const * str, std::streamsize const count ) override
 	{
 		o_stream_.write( str, count );
 		return *this;
@@ -130,7 +130,7 @@ public: // Methods: i/o
 	/// @brief Write a string
 	inline
 	ocstream &
-	write( std::string const & str, std::streamsize const count )
+	write( std::string const & str, std::streamsize const count ) override
 	{
 		o_stream_.write( str.c_str(), count );
 		return *this;
@@ -140,7 +140,7 @@ public: // Methods: i/o
 	/// @brief Flush the stream
 	inline
 	ocstream &
-	flush()
+	flush() override
 	{
 		o_stream_.flush();
 		return *this;
@@ -150,7 +150,7 @@ public: // Methods: i/o
 	/// @brief Clear the stream
 	inline
 	void
-	clear()
+	clear() override
 	{
 		o_stream_.clear();
 	}
@@ -162,7 +162,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream const &
-	operator ()() const
+	operator ()() const override
 	{
 		return o_stream_;
 	}
@@ -171,7 +171,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream &
-	operator ()()
+	operator ()() override
 	{
 		return o_stream_;
 	}
@@ -180,7 +180,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream const &
-	stream() const
+	stream() const override
 	{
 		return o_stream_;
 	}
@@ -189,7 +189,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::ostream &
-	stream()
+	stream() override
 	{
 		return o_stream_;
 	}
@@ -198,7 +198,7 @@ public: // Properties
 	/// @brief Pointer to the stream buffer
 	inline
 	std::streambuf *
-	rdbuf() const
+	rdbuf() const override
 	{
 		return o_stream_.rdbuf();
 	}
@@ -210,7 +210,7 @@ public: // Properties: predicate
 	/// @brief Good?
 	inline
 	bool
-	good() const
+	good() const override
 	{
 		return o_stream_.good();
 	}
@@ -219,7 +219,7 @@ public: // Properties: predicate
 	/// @brief End of file?
 	inline
 	bool
-	eof() const
+	eof() const override
 	{
 		return o_stream_.eof();
 	}
@@ -228,7 +228,7 @@ public: // Properties: predicate
 	/// @brief Fail?
 	inline
 	bool
-	fail() const
+	fail() const override
 	{
 		return o_stream_.fail();
 	}
@@ -237,7 +237,7 @@ public: // Properties: predicate
 	/// @brief Bad?
 	inline
 	bool
-	bad() const
+	bad() const override
 	{
 		return o_stream_.bad();
 	}
@@ -246,7 +246,7 @@ public: // Properties: predicate
 	/// @brief Compressed?
 	inline
 	bool
-	compressed() const
+	compressed() const override
 	{
 		return false;
 	}
@@ -255,7 +255,7 @@ public: // Properties: predicate
 	/// @brief Uncompressed?
 	inline
 	bool
-	uncompressed() const
+	uncompressed() const override
 	{
 		return true;
 	}
@@ -264,7 +264,7 @@ public: // Properties: predicate
 	/// @brief gzipped?
 	inline
 	bool
-	gzipped() const
+	gzipped() const override
 	{
 		return false;
 	}

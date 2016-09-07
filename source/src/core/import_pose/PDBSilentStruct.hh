@@ -50,12 +50,12 @@ public:
 		std::string tag = "empty_tag"
 	);
 
-	virtual core::io::silent::SilentStructOP clone() const {
+	core::io::silent::SilentStructOP clone() const override {
 		return core::io::silent::SilentStructOP( new PDBSilentStruct( *this ) );
 	}
 
 	// destructor
-	~PDBSilentStruct() {}
+	~PDBSilentStruct() override = default;
 
 	using core::io::silent::SilentStruct::print_header;
 
@@ -69,34 +69,34 @@ public:
 
 	/// @brief Tells this PDBSilentStruct object to initialize itself from the given set of lines. Lines should
 	/// be of the format
-	virtual bool init_from_lines(
+	bool init_from_lines(
 		utility::vector1< std::string > const & lines,
 		core::io::silent::SilentFileData & container
-	);
+	) override;
 
 	/// @brief Configure the conformation of the given Pose with the conformational data within this PDBSilentStruct.
 	/// Calls pose.clear() and rebuilds Pose from scratch using FA_STANDARD residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose
-	) const;
+	) const override;
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this PDBSilentStruct. Calls pose.clear() and
 	/// rebuilds Pose from scratch using the / user-specified residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set
-	) const;
+	) const override;
 
 	/// @brief opposite of fill_pose
-	virtual void fill_struct(
+	void fill_struct(
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
-	);
+	) override;
 
 	/// @brief Prints the conformation information within this PDBSilentStruct
 	/// to the given std::ostream.
-	virtual void print_conformation( std::ostream & output ) const;
+	void print_conformation( std::ostream & output ) const override;
 
 	/// @brief data getters/setters
 	core::io::StructFileRep const
@@ -114,11 +114,11 @@ public:
 
 	/// @brief returns the positions of the CA atoms in this PDBSilentStruct.
 	/// Useful for RMS calculations.
-	virtual ObjexxFCL::FArray2D< Real > get_CA_xyz() const;
+	ObjexxFCL::FArray2D< Real > get_CA_xyz() const override;
 
 	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from the torsions in this
 	/// PDBSilentStruct and the C-alpha atoms from this PDBSilentStruct.
-	virtual Real get_debug_rmsd();
+	Real get_debug_rmsd() override;
 
 protected:
 	core::io::StructFileRepOP sfr_;

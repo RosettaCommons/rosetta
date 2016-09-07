@@ -98,20 +98,10 @@ PerNativeRRReporterHuman::PerNativeRRReporterHuman(
 	set_native( native_pose );
 }
 
-PerNativeRRReporterHuman::~PerNativeRRReporterHuman()
-{}
+PerNativeRRReporterHuman::~PerNativeRRReporterHuman() = default;
 
 PerNativeRRReporterHuman::PerNativeRRReporterHuman(
-	PerNativeRRReporterHuman const & src ) :
-	ReferenceCount( src ),
-	initialized_( src.initialized_ ),
-	native_pose_( src.native_pose_ ),
-	nat_bb_bins_( src.nat_bb_bins_ ),
-	nat_rots_( src.nat_rots_ ),
-	nat_chis_( src.nat_chis_ ),
-	res_scores_(src.res_scores_),
-	res_recovered_(src.res_recovered_)
-{}
+	PerNativeRRReporterHuman const & ) = default;
 
 
 /// @detail returns
@@ -271,7 +261,7 @@ RRReporterHuman::RRReporterHuman( RRReporterHuman const & src ) :
 	recovery_score_m2_(src.recovery_score_m2_)
 {}
 
-RRReporterHuman::~RRReporterHuman() {}
+RRReporterHuman::~RRReporterHuman() = default;
 
 void
 RRReporterHuman::set_protocol_info(
@@ -368,11 +358,8 @@ RRReporterHuman::show( ostream & out ) const {
 	write_header( out );
 	out << endl;
 
-	for ( map< string, PerNativeRRReporterHuman >::const_iterator
-			nat_it = per_native_recovery_.begin(),
-			nat_it_end = per_native_recovery_.end();
-			nat_it != nat_it_end; ++nat_it ) {
-		nat_it->second.show( out );
+	for (const auto & nat_it : per_native_recovery_) {
+		nat_it.second.show( out );
 		out << endl;
 	}
 

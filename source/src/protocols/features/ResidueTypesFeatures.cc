@@ -64,7 +64,7 @@ ResidueTypesFeatures::ResidueTypesFeatures()
 	version_ = residue_dbio_.get_version();
 }
 
-ResidueTypesFeatures::~ResidueTypesFeatures() {}
+ResidueTypesFeatures::~ResidueTypesFeatures() = default;
 
 string
 ResidueTypesFeatures::type_name() const { return "ResidueTypesFeatures"; }

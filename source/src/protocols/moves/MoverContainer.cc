@@ -140,10 +140,7 @@ SequenceMover::SequenceMover(MoverOP mover1, MoverOP mover2, MoverOP mover3) :
 	add_mover(mover3);
 }
 
-SequenceMover::SequenceMover( SequenceMover const & source ) :
-	MoverContainer( source ),
-	use_mover_status_( source.use_mover_status_ )
-{}
+SequenceMover::SequenceMover( SequenceMover const & ) = default;
 
 MoverOP
 SequenceMover::clone() const {
@@ -260,11 +257,7 @@ std::string RandomMover::get_name_individual_mover(core::Size index)
 	return name;
 }
 
-RandomMover::RandomMover( RandomMover const & source ) :
-	MoverContainer( source ),
-	nmoves_( source.nmoves_ ),
-	last_proposal_density_ratio_( source.last_proposal_density_ratio_ )
-{}
+RandomMover::RandomMover( RandomMover const & ) = default;
 
 MoverOP
 RandomMover::clone() const {
@@ -319,10 +312,7 @@ core::Real RandomMover::last_proposal_density_ratio(){
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-CycleMover::CycleMover( CycleMover const & source ) :
-	MoverContainer( source ),
-	next_move_( source.next_move_ )
-{}
+CycleMover::CycleMover( CycleMover const & ) = default;
 
 MoverOP
 CycleMover::clone() const {

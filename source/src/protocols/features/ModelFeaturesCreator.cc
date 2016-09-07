@@ -28,7 +28,7 @@ namespace features {
 namespace helixAssembly {
 
 HelixBundleFeaturesCreator::HelixBundleFeaturesCreator() {}
-HelixBundleFeaturesCreator::~HelixBundleFeaturesCreator() {}
+HelixBundleFeaturesCreator::~HelixBundleFeaturesCreator() = default;
 FeaturesReporterOP HelixBundleFeaturesCreator::create_features_reporter() const {
 	return new HelixBundleFeatures;
 }

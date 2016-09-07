@@ -85,10 +85,7 @@ PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & ) : FeaturesReporter()
 
 }
 
-PdbDataFeatures::~PdbDataFeatures()
-{
-
-}
+PdbDataFeatures::~PdbDataFeatures() = default;
 
 string PdbDataFeatures::type_name() const
 {

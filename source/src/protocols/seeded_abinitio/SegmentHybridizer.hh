@@ -39,17 +39,17 @@ public:
 
 public:
 	SegmentHybridizer();
-	virtual ~SegmentHybridizer();
+	~SegmentHybridizer() override;
 
-	void apply( core::pose::Pose & pose );
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 	void parse_my_tag(  utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	void init();
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in);
 	void hybridize( core::pose::Pose & pose , core::Size insert_pos_start, core::Size insert_pos_stop);

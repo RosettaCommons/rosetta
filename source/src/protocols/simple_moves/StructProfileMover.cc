@@ -184,14 +184,14 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 		vector<FragmentLookupResult> lookupResults = ABEGOHashedFragmentStore_->get_fragments_below_rms(pose,res,rmsThreshold_);
 		std::string abego_str = ABEGOHashedFragmentStore_->get_abego_string(pose,res);
 		FragmentStoreOP selected_fragStoreOP = ABEGOHashedFragmentStore_->get_fragment_store(abego_str);
-		if ( selected_fragStoreOP == NULL ) {
+		if ( selected_fragStoreOP == nullptr ) {
 			return top_hits_aa;
 		}
 		vector1<LookupResultPlus>lookupResultsPlusV;
-		for ( Size ii=0; ii<lookupResults.size(); ++ii ) {
-			std::vector<Real> cenListFrag = selected_fragStoreOP->realVector_groups["cen"][lookupResults[ii].match_index];
+		for (auto & lookupResult : lookupResults) {
+			std::vector<Real> cenListFrag = selected_fragStoreOP->realVector_groups["cen"][lookupResult.match_index];
 			Real cen_deviation = get_cen_deviation(cenListFrag,cenList);
-			struct LookupResultPlus result_tmp(lookupResults[ii],cen_deviation);
+			struct LookupResultPlus result_tmp(lookupResult,cen_deviation);
 			lookupResultsPlusV.push_back(result_tmp);
 		}
 		//step1 get max and min cen and rmsd
@@ -352,9 +352,8 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 	std::string profile_name( "profile" );
 	utility::io::ozstream profile_out(profile_name);
 	profile_out << "aa     ";
-	for ( Size ii=0; ii<aa_order_.size(); ++ii ) {
-		char currentChar = aa_order_.at(ii);
-		profile_out << currentChar << "       ";
+	for (char currentChar : aa_order_) {
+			profile_out << currentChar << "       ";
 	}
 	profile_out << std::endl;
 	for ( Size ii=1; ii<=profile_score.size(); ++ii ) {

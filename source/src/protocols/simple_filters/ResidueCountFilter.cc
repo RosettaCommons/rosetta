@@ -58,7 +58,7 @@ ResidueCountFilter::ResidueCountFilter() :
 	selector_()
 {}
 
-ResidueCountFilter::~ResidueCountFilter() {}
+ResidueCountFilter::~ResidueCountFilter() = default;
 
 
 filters::FilterOP

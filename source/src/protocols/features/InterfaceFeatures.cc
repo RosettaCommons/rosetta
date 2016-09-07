@@ -55,7 +55,7 @@ using namespace core::scoring;
 InterfaceFeatures::InterfaceFeatures() :
 	FeaturesReporter()
 {
-	interface_analyzer_ = NULL;
+	interface_analyzer_ = nullptr;
 	scorefxn_ = core::scoring::get_score_function();
 	set_defaults();
 }
@@ -63,7 +63,7 @@ InterfaceFeatures::InterfaceFeatures() :
 InterfaceFeatures::InterfaceFeatures(core::scoring::ScoreFunctionCOP scorefxn) :
 	FeaturesReporter()
 {
-	interface_analyzer_ = NULL;
+	interface_analyzer_ = nullptr;
 	scorefxn_ = scorefxn;
 	set_defaults();
 }
@@ -107,7 +107,7 @@ InterfaceFeatures::set_interface_chains(vector1<std::string> const & interfaces)
 	interfaces_ = interfaces;
 }
 
-InterfaceFeatures::~InterfaceFeatures(){}
+InterfaceFeatures::~InterfaceFeatures()= default;
 
 std::string
 InterfaceFeatures::type_name() const {

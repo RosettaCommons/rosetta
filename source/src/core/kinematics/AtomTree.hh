@@ -118,8 +118,8 @@ public: // Creation
 	AtomTree();
 
 	/// @brief Destructor
-	virtual
-	~AtomTree();
+	
+	~AtomTree() override;
 
 	/// @brief copy constructor
 	AtomTree( AtomTree const & src );
@@ -168,7 +168,7 @@ public: // Methods
 	bool
 	has( AtomID const & id ) const
 	{
-		return ( atom_pointer_.has( id ) && ( atom_pointer_[ id ] != 0 ) );
+		return ( atom_pointer_.has( id ) && ( atom_pointer_[ id ] != nullptr ) );
 	}
 
 
@@ -332,7 +332,7 @@ public: // Properties
 	bool
 	empty() const
 	{
-		return ( root_ == 0 );
+		return ( root_ == nullptr );
 	}
 
 	/// @brief  const-access to the root of the tree

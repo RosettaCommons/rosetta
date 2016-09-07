@@ -107,12 +107,12 @@ public:
 	ConstraintFragmentSampler( topology_broker::TopologyBrokerOP broker );
 
 	//@brief ConstraintFragmentSampler has virtual functions... use this to obtain a new instance
-	virtual
-	moves::MoverOP clone() const;
+	
+	moves::MoverOP clone() const override;
 
 	//@brief run protocol on pose
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	//@brief register cmd-line options in option system ( call before core::init::init )
 	static void register_options();
@@ -128,26 +128,26 @@ protected:
 	void set_defaults();
 
 	//@brief run cycles for different scoring_stages, return number of steps used
-	virtual void do_stage1_cycles( core::pose::Pose &pose );
+	void do_stage1_cycles( core::pose::Pose &pose ) override;
 
 	// anything you want to have done before the stages ?
 	//@brief prepare_stageX is called before do_stageX_cycles... overload to change status/scoring/conformation....
-	virtual void prepare_stage1( core::pose::Pose &pose );
-	virtual void prepare_stage2( core::pose::Pose &pose );
+	void prepare_stage1( core::pose::Pose &pose ) override;
+	void prepare_stage2( core::pose::Pose &pose ) override;
 
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
-	virtual void prepare_loop_in_stage3(
+	void prepare_loop_in_stage3(
 		core::pose::Pose&,
 		Size, /* loop_iteration*/
 		Size  /* total_iterations */
-	);
+	) override;
 
 	//@brief called in each iteration of the loop in stage4 before the stage4_cycles_ of trials commence
-	virtual void prepare_loop_in_stage4(
+	void prepare_loop_in_stage4(
 		core::pose::Pose&,
 		Size, /* loop_iteration*/
 		Size  /* total_iterations */
-	);
+	) override;
 
 	void set_show_viol_level( core::Size setting ) {
 		show_viol_level_ = setting;
@@ -177,7 +177,7 @@ protected:
 		seq_sep_stage3_ = setting;
 	}
 
-	virtual void replace_scorefxn( core::pose::Pose& pose, StageID stage, core::Real intra_stage_progress );
+	void replace_scorefxn( core::pose::Pose& pose, StageID stage, core::Real intra_stage_progress ) override;
 
 private:
 	core::Real

@@ -114,12 +114,7 @@ SingleMotif::SingleMotif(
 	)
 {}
 
-SingleMotif::SingleMotif(
-	SingleMotif const & src
-) : Motif(
-	src
-	)
-{}
+SingleMotif::SingleMotif( SingleMotif const & ) = default;
 
 // SingleMotif constructor for ligands
 SingleMotif::SingleMotif(

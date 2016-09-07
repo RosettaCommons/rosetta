@@ -50,7 +50,7 @@ public:
 
 public:
 	RosettaScriptsParser();
-	virtual ~RosettaScriptsParser();
+	~RosettaScriptsParser() override;
 
 	/// @brief Actually read in the XML file.  Called recursively to read in XML files that
 	/// this XML file includes.  At the end of this operation, fin contains the contents
@@ -72,7 +72,7 @@ public:
 	/// the script contained in that file. If new_input is true, run the APPLY_TO_POSE
 	/// block on the input mover.  If both new_input and guarantee_new_mover are false,
 	/// then the input mover is considered up-to-date and the file is not re-read.
-	virtual
+	
 	bool
 	generate_mover_from_pose(
 		protocols::jd2::JobCOP job,
@@ -81,7 +81,7 @@ public:
 		bool new_input,
 		std::string const & xml_fname,
 		bool guarantee_new_mover = false
-	);
+	) override;
 
 	MoverOP
 	generate_mover_for_protocol(

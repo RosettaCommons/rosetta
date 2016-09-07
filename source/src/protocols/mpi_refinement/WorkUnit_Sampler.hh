@@ -35,7 +35,7 @@ public:
 	WorkUnit_Sampler(): WorkUnit_SilentStructStore(){}
 
 	// @brief Run the workunit - overloaded by children of this class
-	virtual void run() = 0;
+	void run() override = 0;
 
 	virtual void init_from_cmd( const core::Size mpi_rank );
 

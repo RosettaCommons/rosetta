@@ -52,7 +52,7 @@ LoadUnboundRotMover::LoadUnboundRotMover()
 : protocols::moves::Mover("LoadUnboundRotMover")
 {}
 
-LoadUnboundRotMover::~LoadUnboundRotMover(){}
+LoadUnboundRotMover::~LoadUnboundRotMover()= default;
 
 /// @details
 void LoadUnboundRotMover::apply( core::pose::Pose & pose ){

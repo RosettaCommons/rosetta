@@ -56,12 +56,12 @@ class Translate : public protocols::moves::Mover
 public:
 	Translate();
 	Translate(Translate_info translate_info);
-	virtual ~Translate();
+	~Translate() override;
 	Translate(Translate const & that);
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -69,9 +69,9 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	core::Size get_chain_id(core::pose::Pose const & pose);
 	void add_excluded_chains(

@@ -98,8 +98,8 @@ close_to_dna(
 {
 	// TR << "pres " << pres << " dres " << dres << std::endl;
 	// iterate over dna base ('sidechain') atoms, check for distance to protein sidechain takeoff point
-	Atoms::const_iterator baseatom = ( base_only ? dres.sidechainAtoms_begin() : dres.atom_begin() );
-	for ( Atoms::const_iterator end( dres.heavyAtoms_end() ); baseatom != end; ++baseatom ) {
+	auto baseatom = ( base_only ? dres.sidechainAtoms_begin() : dres.atom_begin() );
+	for ( auto end( dres.heavyAtoms_end() ); baseatom != end; ++baseatom ) {
 		if ( baseatom->xyz().distance_squared( pres.nbr_atom_xyz() ) < threshold ) return true;
 	}
 	return false;
@@ -156,7 +156,7 @@ argrot_dna_dis2(
 
 	Real shortest_dis2(10000), dis2;
 
-	for ( Rotamers::const_iterator rotamer( rotset->begin() ); rotamer != rotset->end(); ++rotamer ) {
+	for ( auto rotamer( rotset->begin() ); rotamer != rotset->end(); ++rotamer ) {
 		if ( (*rotamer)->aa() != aa_arg ) {
 			// for packer safety, RotamerSet will add in a native rotamer if it didn't actually build any rotamers
 			if ( rotset->num_rotamers() == 1 ) continue;
@@ -164,10 +164,10 @@ argrot_dna_dis2(
 			runtime_assert( false );
 		}
 
-		Atoms::const_iterator prot_begin( (*rotamer)->sidechainAtoms_begin() ),
+		auto prot_begin( (*rotamer)->sidechainAtoms_begin() ),
 			prot_end( (*rotamer)->heavyAtoms_end() ),
 			dna_end( dres.heavyAtoms_end() );
-		Atoms::const_iterator dna_begin =
+		auto dna_begin =
 			( base_only ? dres.sidechainAtoms_begin() : dres.atom_begin() );
 
 		dis2 = contact_distance2( prot_begin, prot_end, dna_begin, dna_end, threshold );
@@ -190,8 +190,8 @@ contact_distance2(
 {
 	Real shortest_dis2(10000), dis2;
 
-	for ( Atoms::const_iterator atm_a( a_begin ); atm_a != a_end; ++atm_a ) {
-		for ( Atoms::const_iterator atm_b( b_begin ); atm_b != b_end; ++atm_b ) {
+	for ( auto atm_a( a_begin ); atm_a != a_end; ++atm_a ) {
+		for ( auto atm_b( b_begin ); atm_b != b_end; ++atm_b ) {
 
 			dis2 = atm_a->xyz().distance_squared( atm_b->xyz() );
 			if ( dis2 < shortest_dis2 ) shortest_dis2 = dis2;
@@ -421,7 +421,7 @@ make_sequence_combinations(
 	Size resid( *seqset_iter );
 	ResidueLevelTask const & restask( ptask->residue_task( resid ) );
 
-	for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( restask.allowed_residue_types_begin() );
+	for ( auto type( restask.allowed_residue_types_begin() );
 			type != restask.allowed_residue_types_end(); ++type ) {
 		// ignore adduct variant types for now (probably hydrated)
 		if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
@@ -442,10 +442,10 @@ make_single_mutants(
 )
 {
 	using namespace task;
-	for ( ResTypeSequence::const_iterator it( sequence.begin() ); it != sequence.end(); ++it ) {
+	for ( auto it( sequence.begin() ); it != sequence.end(); ++it ) {
 		Size index( it->first );
 		ResidueLevelTask const & rtask( ptask->residue_task(index) );
-		for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( rtask.allowed_residue_types_begin() );
+		for ( auto type( rtask.allowed_residue_types_begin() );
 				type != rtask.allowed_residue_types_end(); ++type ) {
 			// ignore adduct variant types for now (probably hydrated)
 			if ( (*type)->has_variant_type( chemical::ADDUCT_VARIANT ) ) continue;
@@ -471,15 +471,14 @@ design_residues_list(
 					!ptask.residue_task(index).has_behavior("SCAN") &&
 					!ptask.residue_task(index).being_designed() ) continue;
 		} else if ( !ptask.pack_residue( index ) ) continue;
-		design_residues.push_back(
-			PositionType( index, pose.residue_type( index ).get_self_ptr(), ptask.design_residue( index ) ) );
+		design_residues.emplace_back( index, pose.residue_type( index ).get_self_ptr(), ptask.design_residue( index ) );
 	}
 }
 
 // (relevant typdefs are in fwd.hh)
 std::ostream & operator << ( std::ostream & os, ResTypeSequence const & seq )
 {
-	for ( ResTypeSequence::const_iterator pos( seq.begin() ); pos != seq.end(); ++pos ) {
+	for ( auto pos( seq.begin() ); pos != seq.end(); ++pos ) {
 		if ( pos != seq.begin() ) os << ", ";
 		os << pos->first << "-" << pos->second->name1();
 	}
@@ -488,16 +487,16 @@ std::ostream & operator << ( std::ostream & os, ResTypeSequence const & seq )
 
 std::string seq_to_str( ResTypeSequence const & seq ) {
 	std::string str;
-	for ( ResTypeSequence::const_iterator pos( seq.begin() ); pos != seq.end(); ++pos ) {
-		str += pos->second->name1();
+	for (const auto & pos : seq) {
+		str += pos.second->name1();
 	}
 	return str;
 }
 
 std::ostream & operator << ( std::ostream & os, ResTypeSequences const & seqs )
 {
-	for ( ResTypeSequences::const_iterator seq( seqs.begin() ); seq != seqs.end(); ++seq ) {
-		os << *seq << '\n';
+	for (const auto & seq : seqs) {
+		os << seq << '\n';
 	}
 	return os;
 }
@@ -508,7 +507,7 @@ std::string seq_pdb_str(
 )
 {
 	std::ostringstream os;
-	for ( ResTypeSequence::const_iterator pos( seq.begin() ); pos != seq.end(); ++pos ) {
+	for ( auto pos( seq.begin() ); pos != seq.end(); ++pos ) {
 		Size const index( pos->first );
 		if ( index < 1 || index > pose.total_residue() ) {
 			assert(false);
@@ -540,8 +539,8 @@ void print_sequences_pdb_nums(
 	std::ostream & os
 )
 {
-	for ( ResTypeSequences::const_iterator seq( seqs.begin() ); seq != seqs.end(); ++seq ) {
-		print_sequence_pdb_nums( *seq, pose, os );
+	for (const auto & seq : seqs) {
+		print_sequence_pdb_nums( seq, pose, os );
 	}
 }
 
@@ -561,7 +560,7 @@ restrict_dna_rotamers(
 		Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
 		ResidueType const & rot_type( rotamer_sets->rotamer(roti)->type() );
 
-		ResTypeSequence::const_iterator seqindex( seq.find( rotpos ) );
+		auto seqindex( seq.find( rotpos ) );
 		if ( seqindex != seq.end() ) {
 			// compare only the name3's on order to allow variants
 			std::string seq_typename( (seqindex->second)->name3() ),
@@ -718,9 +717,8 @@ load_dna_design_defs_from_strings(
 	Strings const & str_defs
 )
 {
-	for ( Strings::const_iterator str_def( str_defs.begin() ), end( str_defs.end() );
-			str_def != end; ++str_def ) {
-		defs.push_back( DnaDesignDefOP( new DnaDesignDef( *str_def ) ) );
+	for (const auto & str_def : str_defs) {
+		defs.push_back( DnaDesignDefOP( new DnaDesignDef( str_def ) ) );
 	}
 }
 

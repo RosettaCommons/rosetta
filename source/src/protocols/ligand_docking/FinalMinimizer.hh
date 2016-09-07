@@ -44,14 +44,14 @@ class FinalMinimizer : public protocols::moves::Mover
 public:
 	FinalMinimizer();
 	FinalMinimizer(core::scoring::ScoreFunctionOP score_fxn, MoveMapBuilderOP movemap_builder);
-	virtual ~FinalMinimizer();
+	~FinalMinimizer() override;
 	FinalMinimizer(FinalMinimizer const & that);
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -59,7 +59,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;

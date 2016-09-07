@@ -166,17 +166,17 @@ public:
 	{}
 	ScaleAnnealerTemperatureOperation( core::Real scale ) : scale_factor_( scale ) {}
 
-	virtual ~ScaleAnnealerTemperatureOperation() {}
+	~ScaleAnnealerTemperatureOperation() override = default;
 
-	virtual
+	
 	core::pack::task::operation::TaskOperationOP
-	clone() const {
+	clone() const override {
 		return core::pack::task::operation::TaskOperationOP( new ScaleAnnealerTemperatureOperation( *this ) );
 	}
 
-	virtual
+	
 	void
-	apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const {
+	apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const override {
 		task.low_temp(    0.3 * scale_factor_ );
 		task.high_temp( 100.0 * scale_factor_ );
 	}
@@ -262,16 +262,14 @@ IterativeOptEDriver::IterativeOptEDriver() :
 
 	// set the using unfolded boolean, by iterating over the score types in both the fixed and free lists and
 	// checking for "unfolded". checking if the emaps have non-zero weights associated with "unfolded" would also work.
-	for ( vector1< ScoreType >::iterator score_type_iter = free_score_list_.begin(), end_iter = free_score_list_.end();
-			score_type_iter != end_iter; ++score_type_iter ) {
-		if ( name_from_score_type( *score_type_iter ) == "unfolded" ) {
+	for (auto & score_type_iter : free_score_list_) {
+		if ( name_from_score_type( score_type_iter ) == "unfolded" ) {
 			TR << "IterativeOptEDriver(): setting 'using_unfolded_energy_term_' to true." << std::endl;
 			using_unfolded_energy_term_ = true;
 		}
 	}
-	for ( vector1< ScoreType >::iterator score_type_iter = fixed_score_list_.begin(), end_iter = fixed_score_list_.end();
-			score_type_iter != end_iter; ++score_type_iter ) {
-		if ( name_from_score_type( *score_type_iter ) == "unfolded" ) {
+	for (auto & score_type_iter : fixed_score_list_) {
+		if ( name_from_score_type( score_type_iter ) == "unfolded" ) {
 			TR << "IterativeOptEDriver(): setting 'using_unfolded_energy_term_' to true." << std::endl;
 			using_unfolded_energy_term_ = true;
 		}
@@ -280,7 +278,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 }
 
 ///
-IterativeOptEDriver::~IterativeOptEDriver() {}
+IterativeOptEDriver::~IterativeOptEDriver() = default;
 
 void
 IterativeOptEDriver::task_factory( core::pack::task::TaskFactoryCOP tf )
@@ -299,8 +297,8 @@ IterativeOptEDriver::read_tagfile_to_taskfactory(std::string tagfile_name,
 	TaskOperationFactory::TaskOperationOPs tops;
 	basic::datacache::DataMap datamap;
 	TaskOperationFactory::get_instance()->newTaskOperations( tops, datamap, tagfile_name );
-	for ( TaskOperationFactory::TaskOperationOPs::iterator it( tops.begin() ), itend( tops.end() ); it != itend; ++it ) {
-		task_factory->push_back( *it );
+	for (auto & top : tops) {
+		task_factory->push_back( top );
 	}
 }
 
@@ -1175,7 +1173,7 @@ void IterativeOptEDriver::collect_rotamer_energies_from_slave_cpus()
 	TR << "collect_rotamer_energies_from_slave_cpus(): master node with " << optE_data_->num_positions() << " positions" << std::endl;
 
 	Size total( 0 );
-	for ( OptEPositionDataOPs::const_iterator
+	for ( auto
 			iter = optE_data_->position_data_begin(),
 			iter_end = optE_data_->position_data_end();
 			iter != iter_end; ++iter ) {
@@ -1206,7 +1204,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 	bool const calc_decoy_score_sd( option[ optE::normalize_decoy_score_spread ].user() );
 
 
-	if ( decoy_discrim_data_ == 0 ) {
+	if ( decoy_discrim_data_ == nullptr ) {
 
 		if ( option[ optE::ramp_nativeness ] ) {
 			if ( option[ optE::min_decoy_rms_to_native ].user()  ) {
@@ -1385,7 +1383,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 		ScoreFunctionOP weighted_sfxn = create_weighted_scorefunction();
 		ScoreFunctionOP unweighted_sfxn = create_unweighted_scorefunction();
 
-		for ( OptEPositionDataOPs::const_iterator
+		for ( auto
 				iter = decoy_discrim_data_->position_data_begin(),
 				iter_end = decoy_discrim_data_->position_data_end();
 				iter != iter_end; ++iter ) {
@@ -1433,7 +1431,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 		}
 	}
 
-	for ( OptEPositionDataOPs::const_iterator
+	for ( auto
 			iter = decoy_discrim_data_->position_data_begin(),
 			iter_end = decoy_discrim_data_->position_data_end();
 			iter != iter_end; ++iter ) {
@@ -1617,7 +1615,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 {
 	using namespace core::pack::rotamer_set;
 
-	if ( ligand_discrim_data_ == 0 ) {
+	if ( ligand_discrim_data_ == nullptr ) {
 
 		ligand_discrim_data_ = OptEDataOP( new OptEData );
 
@@ -1755,7 +1753,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 			ligand_discrim_data_->add_position_data( structure_data );
 		}
 	}
-	for ( OptEPositionDataOPs::const_iterator
+	for ( auto
 			iter = ligand_discrim_data_->position_data_begin(),
 			iter_end = ligand_discrim_data_->position_data_end();
 			iter != iter_end; ++iter ) {
@@ -2210,7 +2208,7 @@ void IterativeOptEDriver::optimize_weights()
 		// release hold of the multifunc that the wrapper wraps, but
 		/// hold on to the wrapper itself for later reuse.  No more calls to func() after this point.
 		if ( option[ optE::wrap_dof_optimization ].user() ) {
-			wrapped_opt_min_->set_multifunc( 0 );
+			wrapped_opt_min_->set_multifunc( nullptr );
 		}
 
 		/// Tell remote nodes that function evaulation is over.
@@ -2228,7 +2226,7 @@ void IterativeOptEDriver::optimize_weights()
 		/// 3. score all the position data
 		utility::vector1< Real > cumulative_score_list(n_optE_data_types,0.0);
 		//int ii = 1;
-		for ( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(),
+		for ( auto itr = optE_data_->position_data_begin(),
 				e_itr = optE_data_->position_data_end(); itr != e_itr ; ++itr  ) {
 			(*itr)->print_score( outlog, component_weights_, vars, dE_dvars,
 				num_energy_dofs, num_ref_dofs, num_total_dofs,
@@ -2268,7 +2266,7 @@ void IterativeOptEDriver::optimize_weights()
 
 		}
 
-		for ( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(),
+		for ( auto itr = optE_data_->position_data_begin(),
 				e_itr = optE_data_->position_data_end(); itr != e_itr ; ++itr  ) {
 			(*itr)->range( score_list, fixed_score_list,
 				rawE_min[(*itr)->type()], rawE_max[(*itr)->type()] );
@@ -2461,7 +2459,7 @@ IterativeOptEDriver::score_position_data()
 		/// 3. score all the position data
 		utility::vector1< Real > cumulative_score_list( n_optE_data_types, 0.0 );
 		//int ii = 1;
-		for ( OptEPositionDataOPs::const_iterator itr = optE_data_->position_data_begin(), e_itr = optE_data_->position_data_end() ; itr != e_itr ; ++itr  ) {
+		for ( auto itr = optE_data_->position_data_begin(), e_itr = optE_data_->position_data_end() ; itr != e_itr ; ++itr  ) {
 			(*itr)->print_score( outlog, component_weights_, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list );
 			cumulative_score_list[(*itr)->type()] +=  (*itr)->get_score( component_weights_, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list );
 			//++ii;
@@ -2907,10 +2905,8 @@ IterativeOptEDriver::free_terms_energy_map_from_dofs(
 
 	// This covers the variable weights
 	Size dof_index( 1 );
-	for ( ScoreTypes::const_iterator itr = free_score_list_.begin(),
-			end_itr = free_score_list_.end() ;
-			itr != end_itr ; ++itr ) {
-		return_map[ *itr ] = dofs[ dof_index++ ];
+	for (auto itr : free_score_list_) {
+		return_map[ itr ] = dofs[ dof_index++ ];
 	}
 
 	return return_map;
@@ -3678,15 +3674,13 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			utility::vector1< Real > fixed_energy_info;
 
 			// put all the energies for the free energy terms into the 'energy_info' vector
-			for ( utility::vector1< ScoreType >::iterator score_type_iter = score_list.begin(),
-					end_iter = score_list.end(); score_type_iter != end_iter; ++score_type_iter ) {
-				energy_info.push_back( emap_total[ *score_type_iter ] );
+			for (auto & score_type_iter : score_list) {
+				energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
 			// put all the energies for the fixed energy terms into the 'fixed_energy_info' vector
-			for ( utility::vector1< ScoreType >::iterator score_type_iter = fixed_score_vec.begin(),
-					end_iter = fixed_score_vec.end(); score_type_iter != end_iter; ++score_type_iter ) {
-				fixed_energy_info.push_back( emap_total[ *score_type_iter ] );
+			for (auto & score_type_iter : fixed_score_vec) {
+				fixed_energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
 			// the data held inside a PNatAAOptERotamerData object is the two vectors we just set above and the amino acid type
@@ -3789,7 +3783,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 			core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type( resi ) ) );
 
 		SingleResidueDunbrackLibraryCOP srdlib( utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( srlib ));
-		runtime_assert( srdlib != 0 );
+		runtime_assert( srdlib != nullptr );
 
 		PNatRotOptEPositionDataOP this_pos_data( new PNatRotOptEPositionData );
 		this_pos_data->aa() = pose.residue( resi ).aa();
@@ -3840,14 +3834,12 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 			utility::vector1< Real > free_energy_info;
 			utility::vector1< Real > fixed_energy_info;
 
-			for ( utility::vector1< ScoreType >::iterator score_type_iter = score_list.begin(),
-					end_iter = score_list.end() ; score_type_iter != end_iter ; ++score_type_iter ) {
-				free_energy_info.push_back( emap_total[ *score_type_iter ] );
+			for (auto & score_type_iter : score_list) {
+				free_energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
-			for ( utility::vector1< ScoreType >::iterator score_type_iter = fixed_score_vec.begin(),
-					end_iter = fixed_score_vec.end() ; score_type_iter != end_iter ; ++score_type_iter ) {
-				fixed_energy_info.push_back( emap_total[ *score_type_iter ] );
+			for (auto & score_type_iter : fixed_score_vec) {
+				fixed_energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
 			utility::vector1< Size > rot_index_vector;
@@ -4016,7 +4008,7 @@ IterativeOptEDriver::collect_dG_of_binding_data()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( dG_binding_data_ == 0 ) {
+	if ( dG_binding_data_ == nullptr ) {
 		dG_binding_data_ = OptEDataOP( new OptEData() );
 		ScoreFunctionOP sfxn = create_unweighted_scorefunction();
 
@@ -4030,7 +4022,7 @@ IterativeOptEDriver::collect_dG_of_binding_data()
 		}
 	}
 
-	for ( OptEPositionDataOPs::const_iterator
+	for ( auto
 			iter = dG_binding_data_->position_data_begin(),
 			iter_end = dG_binding_data_->position_data_end();
 			iter != iter_end; ++iter ) {
@@ -4048,7 +4040,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( ddG_mutation_data_ == 0 ) {
+	if ( ddG_mutation_data_ == nullptr ) {
 		ddG_mutation_data_ = OptEDataOP( new OptEData );
 
 		// rescore wt's less often
@@ -4379,7 +4371,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 		}
 	} // if ddg_mutation_data_ == 0
 
-	for ( OptEPositionDataOPs::const_iterator
+	for ( auto
 			iter = ddG_mutation_data_->position_data_begin(),
 			iter_end = ddG_mutation_data_->position_data_end();
 			iter != iter_end; ++iter ) {
@@ -4400,7 +4392,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( ddG_bind_optE_data_ == 0 ) {
+	if ( ddG_bind_optE_data_ == nullptr ) {
 		ddG_bind_optE_data_ = OptEDataOP( new OptEData );
 
 		// rescore wt's less often
@@ -4706,7 +4698,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 		}
 	} // if ddG_bind_optE_data_ == 0
 
-	for ( OptEPositionDataOPs::const_iterator iter = ddG_bind_optE_data_->position_data_begin(),
+	for ( auto iter = ddG_bind_optE_data_->position_data_begin(),
 			iter_end = ddG_bind_optE_data_->position_data_end(); iter != iter_end; ++iter ) {
 		optE_data_->add_position_data( *iter );
 	}

@@ -34,6 +34,7 @@
 #include <core/pose/util.hh>
 
 #include <core/chemical/VariantType.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -195,7 +196,7 @@ segments_type get_indels(TagCOP const& tag0, resids_type const& resids ) {
 // ==================== Cloner ====================
 // ================================================
 
-Cloner::Cloner( TagCOP const& tag0, core::pose::PoseOP pose0) : tag0( collapse_random_options(tag0) ), pose0(pose0) {
+Cloner::Cloner( TagCOP const& tag0, core::pose::PoseOP pose0) : tag0( collapse_random_options(tag0) ), pose0(std::move(pose0)) {
 	cout << "after random options collapsed: " << endl << tag0 << endl;
 }
 
@@ -215,24 +216,24 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 
 	int n_jump = 1;
 
-	for ( Size k = 0; k < segments.size(); ++k ) {
+	for (auto & segment : segments) {
 
-		Residue* lo_res = segments[k].lo_res; // apl -- this has got to go
-		Residue* hi_res = segments[k].hi_res; // apl -- this has got to go
+		Residue* lo_res = segment.lo_res; // apl -- this has got to go
+		Residue* hi_res = segment.hi_res; // apl -- this has got to go
 
-		if ( segments[k].type == Segment::ORIGINAL ) {
+		if ( segment.type == Segment::ORIGINAL ) {
 			ft.add_edge( find_or_throw(clones,lo_res)->seqpos(),
 				find_or_throw(clones,hi_res)->seqpos(),
 				core::kinematics::Edge::PEPTIDE );
-		} else if ( segments[k].type == Segment::LOOP ) {
+		} else if ( segment.type == Segment::LOOP ) {
 
 			int lo = find_or_throw(clones,lo_res)->seqpos();
 			int hi = find_or_throw(clones,hi_res)->seqpos();
 
-			cout << "InvKinLigLoopDesign::Cloner::adding loop segment " << segments[k].nres_pre << " " << segments[k].nres_post << " " << lo << " " << hi << endl;
+			cout << "InvKinLigLoopDesign::Cloner::adding loop segment " << segment.nres_pre << " " << segment.nres_post << " " << lo << " " << hi << endl;
 
-			ft.add_edge( lo - 1, lo - 1 + segments[k].nres_pre,  core::kinematics::Edge::PEPTIDE );
-			ft.add_edge( hi + 1, hi + 1 - segments[k].nres_post, core::kinematics::Edge::PEPTIDE );
+			ft.add_edge( lo - 1, lo - 1 + segment.nres_pre,  core::kinematics::Edge::PEPTIDE );
+			ft.add_edge( hi + 1, hi + 1 - segment.nres_post, core::kinematics::Edge::PEPTIDE );
 			ft.add_edge( lo-1, hi+1, n_jump++ );
 
 			//   ft.add_edge( lo_res->seqpos()-1, lo_res->seqpos() + segments[k].nres_pre, core::kinetic::Edge::PEPTIDE );
@@ -240,10 +241,10 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 
 			//assert( lo_res->seqpos() + segments[k].nres_pre + 1 == hi_res->seqpos() - segments[k].nres_post );
 
-			cout << "InvKinLigLoopDesign::Cloner::break is between: " << lo - 1 + segments[k].nres_pre << " " << hi + 1 - segments[k].nres_post << endl;
+			cout << "InvKinLigLoopDesign::Cloner::break is between: " << lo - 1 + segment.nres_pre << " " << hi + 1 - segment.nres_post << endl;
 			cout << "InvKinLigLoopDesign::Cloner::jump is between " << lo - 1 << " " << hi + 1 << endl;
 
-		} else if ( segments[k].type == Segment::ANCHORED_LOOP ) {
+		} else if ( segment.type == Segment::ANCHORED_LOOP ) {
 			//assert( false );
 
 			// will want the atom info at this point....
@@ -251,10 +252,10 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 			int lo = find_or_throw(clones,lo_res)->seqpos();
 			int hi = find_or_throw(clones,hi_res)->seqpos();
 
-			int from = find_or_throw( clones, segments[k].from_res )->seqpos();
-			int to   = lo + segments[k].nres_pre;
+			int from = find_or_throw( clones, segment.from_res )->seqpos();
+			int to   = lo + segment.nres_pre;
 
-			segments[k].jumpno = n_jump;
+			segment.jumpno = n_jump;
 
 			//ft.add_edge( from, to, n_jump++ );
 
@@ -264,8 +265,8 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 			//   edge.start_atom() = get_edge_start_atom( pose1, from, segments[k].tag );
 			//   edge.stop_atom() = get_edge_stop_atom( pose1, to, segments[k].tag );
 
-			string const& tag_start_atom = segments[k].tag->getTag("from")->getOption<string>("atom");
-			string const& tag_stop_atom = segments[k].tag->getTag("to")->getOption<string>("atom");
+			string const& tag_start_atom = segment.tag->getTag("from")->getOption<string>("atom");
+			string const& tag_stop_atom = segment.tag->getTag("to")->getOption<string>("atom");
 
 			int tag_start_atom_index = pose1->residue(from).atom_index( tag_start_atom );
 			int tag_stop_atom_index  = pose1->residue(to).atom_index( tag_stop_atom );
@@ -296,8 +297,8 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 			cout << "InvKinLigLoopDesign::Cloner::edge between " << from << " " << hi << endl;
 			cout << "InvKinLigLoopDesign::Cloner::jump between " << lo-1 << " " << hi + 1 << endl;
 
-		} else if ( segments[k].type == Segment::LIGAND ) {
-			assert( segments[k].lo_res == segments[k].hi_res );
+		} else if ( segment.type == Segment::LIGAND ) {
+			assert( segment.lo_res == segment.hi_res );
 			ft.add_edge( 1, find_or_throw(clones,lo_res)->seqpos(), n_jump++ );
 		}
 
@@ -339,9 +340,9 @@ utility::vector1< core::chemical::ResidueTypeCOP > get_seq_from_aas( vector< cor
 		( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
 	utility::vector1< core::chemical::ResidueTypeCOP > rval;
-	for ( Size i = 0; i < aas.size(); ++i ) {
-		core::chemical::ResidueTypeCOP res_type = residue_set->get_representative_type_aa( aas[i] );
-		assert( res_type != 0 );
+	for (auto aa : aas) {
+		core::chemical::ResidueTypeCOP res_type = residue_set->get_representative_type_aa( aa );
+		assert( res_type != nullptr );
 		rval.push_back( res_type );
 	}
 	return rval;
@@ -413,7 +414,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 
 	//core::conformation::ResidueOPs::iterator iter = pose0->res_begin();
 
-	Residue* r_prev = 0; // apl -- this has got to go
+	Residue* r_prev = nullptr; // apl -- this has got to go
 	Residue* r = const_cast< core::conformation::Residue * > ( & pose0->residue( 1 ) );// apl -- this has got to go
 
 	Segment segment;
@@ -426,9 +427,9 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 	while ( ii <= pose0->total_residue() ) {
 		///while( iter != pose0->res_end() ) {
 
-		for ( Size k = 0; k < indels.size(); ++k ) {
+		for (const auto & k : indels) {
 
-			if ( r == indels[k].lo_res ) {
+			if ( r == k.lo_res ) {
 
 				segment.hi_res = r_prev;
 				segments.push_back( segment );
@@ -443,15 +444,15 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 					r_prev = r;
 					r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
 
-				} while( r != indels[k].hi_res );
+				} while( r != k.hi_res );
 
 				segment.lo_res = r;
 
 
 				// now need to instantiate a new pose for the segment
-				if ( indels[k].aas.size() != 0 ) {
+				if ( k.aas.size() != 0 ) {
 					//cout << "creating new pose from indel" << endl;
-					Segment indel = get_segment_from_indel( indels[k] );
+					Segment indel = get_segment_from_indel( k );
 					segments.push_back( indel );
 				}
 
@@ -505,11 +506,11 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 
 	utility::vector1< core::chemical::ResidueTypeCOP > seq;
 
-	for ( Size k = 0; k < segments.size(); ++k ) {
+	for (auto & segment : segments) {
 		//int size = segments[k].hi_res->seqpos() - segments[k].lo_res->seqpos() + 1;
 		//cout << segments[k].lo_res->seqpos() << ":" << segments[k].hi_res->seqpos() << " " << size << endl;
 
-		append_seq(*segments[k].pose,segments[k].lo_res->seqpos(),segments[k].hi_res->seqpos(),seq);
+		append_seq(*segment.pose,segment.lo_res->seqpos(),segment.hi_res->seqpos(),seq);
 	}
 
 	//cout << "creating a pose" << endl;
@@ -711,11 +712,11 @@ void Cloner::setInitialConfig() {
 	//cout << "indels.size() = " << indels.size() << endl;
 	//cout << "segments.size() = " << segments.size() << endl;
 
-	for ( Size k = 0; k < segments.size(); ++k ) {
+	for (auto & segment : segments) {
 
-		if ( segments[k].type == Segment::LOOP ) {
-			int lo = find_or_throw( clones, segments[k].lo_res  )->seqpos();
-			int hi = find_or_throw( clones, segments[k].hi_res )->seqpos();
+		if ( segment.type == Segment::LOOP ) {
+			int lo = find_or_throw( clones, segment.lo_res  )->seqpos();
+			int hi = find_or_throw( clones, segment.hi_res )->seqpos();
 
 			// repair icoor for lo
 			//   repair_icoor(pose1,lo-1);
@@ -733,27 +734,27 @@ void Cloner::setInitialConfig() {
 
 			// NB: need to be a little more careful to preserve the right angles...
 
-		} else if ( segments[k].type == Segment::ANCHORED_LOOP ) {
+		} else if ( segment.type == Segment::ANCHORED_LOOP ) {
 
 			// don't really need this
-			cout << "InvKinLigLoopDesign::Cloner::setting jumpno " << segments[k].jumpno << " to initial value" << endl;
+			cout << "InvKinLigLoopDesign::Cloner::setting jumpno " << segment.jumpno << " to initial value" << endl;
 
 			JumpManager jm;
-			if ( segments[k].tag->hasTag("template") ) {
-				jm.set_template_jump( *pose1, Loop(segments[k], clones) );
-			} else if ( segments[k].tag->hasTag("hbond") ) {
-				jm.set_random_hbond_jump( *pose1, Loop(segments[k], clones) );
+			if ( segment.tag->hasTag("template") ) {
+				jm.set_template_jump( *pose1, Loop(segment, clones) );
+			} else if ( segment.tag->hasTag("hbond") ) {
+				jm.set_random_hbond_jump( *pose1, Loop(segment, clones) );
 			} else {
 				assert( false );
 			}
 
 		}
 
-		if ( segments[k].type == Segment::LOOP ||
-				segments[k].type == Segment::ANCHORED_LOOP ) {
+		if ( segment.type == Segment::LOOP ||
+				segment.type == Segment::ANCHORED_LOOP ) {
 
-			int lo = find_or_throw( clones, segments[k].lo_res  )->seqpos();
-			int hi = find_or_throw( clones, segments[k].hi_res )->seqpos();
+			int lo = find_or_throw( clones, segment.lo_res  )->seqpos();
+			int hi = find_or_throw( clones, segment.hi_res )->seqpos();
 
 			for ( int i = lo; i <= hi ; ++i ) {
 				pose1->set_phi( i, -135.0 );
@@ -762,8 +763,8 @@ void Cloner::setInitialConfig() {
 				pose1->set_secstruct(i,'L');
 			}
 
-			if ( segments[k].tag.get() && segments[k].tag->hasOption("ss") ) {
-				set_secstruct(*pose1,lo,hi,segments[k].tag->getOption<string>("ss") );
+			if ( segment.tag.get() && segment.tag->hasOption("ss") ) {
+				set_secstruct(*pose1,lo,hi,segment.tag->getOption<string>("ss") );
 			}
 
 		}
@@ -785,10 +786,10 @@ void Cloner::setInitialConfig() {
 
 vector< Loop > Cloner::getLoops() {
 	vector< Loop > rval;
-	for ( Size k = 0; k < segments.size(); ++k ) {
-		if ( segments[k].type == Segment::LOOP ||
-				segments[k].type == Segment::ANCHORED_LOOP ) {
-			rval.push_back( Loop( segments[k], clones ) );
+	for (auto & segment : segments) {
+		if ( segment.type == Segment::LOOP ||
+				segment.type == Segment::ANCHORED_LOOP ) {
+			rval.emplace_back( segment, clones );
 		}
 	}
 	return rval;

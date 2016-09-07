@@ -23,6 +23,7 @@
 
 // C++ headers
 #include <string>
+#include <utility>
 
 namespace core {
 namespace chemical {
@@ -39,8 +40,8 @@ class MMAtomType
 public:
 
 	///  @brief Construct a new MMAtomType with its name
-	MMAtomType( std::string const & name_in):
-		name_( name_in ),
+	MMAtomType( std::string  name_in):
+		name_(std::move( name_in )),
 		lj_radius_( 0.0 ),
 		lj_radius_sq_( 0.0 ),
 		lj_wdepth_( 0.0 ),

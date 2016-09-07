@@ -46,8 +46,7 @@ ParserJobInputter::ParserJobInputter(){
 	TR << "Instantiate ParserJobInputter" << std::endl;
 }
 
-ParserJobInputter::~ParserJobInputter(){
-}
+ParserJobInputter::~ParserJobInputter()= default;
 
 /// @details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
 void

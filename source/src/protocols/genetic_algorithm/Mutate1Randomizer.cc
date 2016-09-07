@@ -33,7 +33,7 @@
 namespace protocols {
 namespace genetic_algorithm {
 
-Mutate1Randomizer::~Mutate1Randomizer() {}
+Mutate1Randomizer::~Mutate1Randomizer() = default;
 
 void Mutate1Randomizer::mutate( protocols::genetic_algorithm::Entity & entity )
 {

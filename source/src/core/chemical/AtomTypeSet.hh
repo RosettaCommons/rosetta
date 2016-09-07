@@ -73,7 +73,7 @@ public:
 		std::string const & name,
 		utility::sql_database::sessionOP db_session);
 
-	virtual ~AtomTypeSet();
+	~AtomTypeSet() override;
 
 public:
 
@@ -130,7 +130,7 @@ public:
 	int
 	extra_parameter_index( std::string const & name ) const
 	{
-		std::map< std::string, int >::const_iterator iter( extra_parameter_indices_.find( name ) );
+		auto iter( extra_parameter_indices_.find( name ) );
 		if ( iter == extra_parameter_indices_.end() ) {
 			utility_exit_with_message( "AtomTypeSet: unrecognized atom parameter: "+name );
 		}

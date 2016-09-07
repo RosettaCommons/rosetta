@@ -6,7 +6,7 @@ namespace devel {
 namespace optest {
 
 /// @details Auto-generated virtual destructor
-B2::~B2() {}
+B2::~B2() = default;
 
 
 /*

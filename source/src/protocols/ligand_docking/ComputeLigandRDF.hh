@@ -41,21 +41,21 @@ class ComputeLigandRDF : public protocols::moves::Mover{
 
 public:
 	ComputeLigandRDF();
-	virtual ~ComputeLigandRDF();
+	~ComputeLigandRDF() override;
 	ComputeLigandRDF(ComputeLigandRDF const & that);
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag
+	void parse_my_tag
 	(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
-	);
+	) override;
 
 private:
 

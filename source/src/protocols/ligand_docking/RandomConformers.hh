@@ -26,12 +26,12 @@ class RandomConformers : public protocols::moves::Mover
 {
 public:
 	RandomConformers();
-	virtual ~RandomConformers();
+	~RandomConformers() override;
 	RandomConformers(RandomConformers const & that);
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 	//void set_chain(std::string chain);
 	void parse_my_tag(
@@ -40,9 +40,9 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
-	void apply(core::pose::Pose & pose);
+	void apply(core::pose::Pose & pose) override;
 
 	// Undefined, commenting out to make PyRosetta compile
 	//RandomConformers(

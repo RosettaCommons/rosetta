@@ -53,7 +53,7 @@ public:
 	/// available fragments at the selected insertion position.
 	BiasedFragmentMover(const PolicyOP& policy, const Probabilities& probs);
 
-	~BiasedFragmentMover() {}
+	~BiasedFragmentMover() override = default;
 
 	/// @brief Inserts a single fragment into pose.
 	///
@@ -63,10 +63,10 @@ public:
 	/// in the constructor.
 	///
 	/// Respects the underlying kinematics of the system.
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Returns the name of this mover
-	std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	/// @brief Creates a position-indexable list of Frames

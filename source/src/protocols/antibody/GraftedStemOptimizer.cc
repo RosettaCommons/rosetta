@@ -54,9 +54,9 @@ GraftedStemOptimizer::GraftedStemOptimizer( CDRNameEnum const & cdr_name,
 
 void
 GraftedStemOptimizer::init() {
-	scorefxn_       = NULL;
-	mc_             = NULL;
-	optimize_stems_ = NULL;
+	scorefxn_       = nullptr;
+	mc_             = nullptr;
+	optimize_stems_ = nullptr;
 	benchmark_ = false;
 
 	stem_size_        = 4;
@@ -74,7 +74,7 @@ GraftedStemOptimizer::set_stem_size(Size const & setting) {
 	}
 }
 
-GraftedStemOptimizer::~GraftedStemOptimizer() {}
+GraftedStemOptimizer::~GraftedStemOptimizer() = default;
 
 
 void

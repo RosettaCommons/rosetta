@@ -108,7 +108,7 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	ScoreFunctionOP scfxn) :
-	scfxn_(scfxn),
+	scfxn_(std::move(scfxn)),
 	reporter_(protocols::rotamer_recovery::RRReporterSQLiteOP( new RRReporterSQLite() ) ),
 	protocol_(),
 	comparer_(),
@@ -127,7 +127,7 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	task_factory_(src.task_factory_)
 {}
 
-RotamerRecoveryFeatures::~RotamerRecoveryFeatures() {}
+RotamerRecoveryFeatures::~RotamerRecoveryFeatures() = default;
 
 string
 RotamerRecoveryFeatures::type_name() const { return "RotamerRecoveryFeatures"; }
@@ -296,7 +296,7 @@ RotamerRecoveryFeatures::report_features(
 	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	(*scfxn_)(pose);
 
-	if ( task_factory_ == 0 ) {
+	if ( task_factory_ == nullptr ) {
 		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory() );
 	}
 

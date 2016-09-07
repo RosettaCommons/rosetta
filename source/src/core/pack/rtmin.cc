@@ -103,7 +103,7 @@ RTMin::RTMin(
 // minimize_ligand_jumps_(minimize_ligand_jumps)
 {}
 
-RTMin::~RTMin(){}
+RTMin::~RTMin()= default;
 
 /// @details Don't look, it's not pretty!
 void
@@ -129,14 +129,13 @@ RTMin::rtmin(
 	/// can be used within rtmin, unless it is a whole-structure energy, in which
 	/// case, RTMin will not complain, BUT the energy will not be minimized.
 	bool bad( false );
-	for ( ScoreFunction::AllMethodsIterator iter = scfxn.all_methods().begin(),
-			iter_end = scfxn.all_methods().end(); iter != iter_end; ++iter ) {
+	for (const auto & iter : scfxn.all_methods()) {
 		/// Allow whole-structure energy methods to be present.  They will not be minized!
 		/// When would this be good?  If RG or chainbreak were on.
-		if ( (*iter)->method_type() != ws  && (*iter)->minimize_in_whole_structure_context( pose ) ) {
+		if ( iter->method_type() != ws  && iter->minimize_in_whole_structure_context( pose ) ) {
 			std::cerr << "Scoring term responsible for score types:";
-			for ( Size ii = 1; ii <= (*iter)->score_types().size(); ++ii ) {
-				std::cerr << " " << (*iter)->score_types()[ ii ];
+			for ( Size ii = 1; ii <= iter->score_types().size(); ++ii ) {
+				std::cerr << " " << iter->score_types()[ ii ];
 			}
 			std::cerr << " states that it requires whole-structure context to perform minimization, and thus" <<
 				" cannot be used in RTMin." << std::endl;
@@ -212,7 +211,7 @@ RTMin::rtmin(
 		// packer_neighbor_graph. Make the background nodes the union of
 		// the background nodes from the packer_neighbor_graph and the
 		// background nodes for each LR2B neighbor graph
-		for ( ScoreFunction::LR_2B_MethodIterator
+		for ( auto
 				iter = scfxn.long_range_energies_begin(),
 				iter_end = scfxn.long_range_energies_end();
 				iter != iter_end; ++iter ) {
@@ -325,7 +324,7 @@ RTMin::rtmin(
 				if ( jjresid < iiresid ) {
 					if ( residue_is_inactive_neighbor[ jjresid ] || ! active_residue_has_been_visited[ jjresid ] ) {
 						scfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
-							jjrsd, iirsd, min_edge, *scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
+							jjrsd, iirsd, min_edge, *scminmap, pose, true, false, ( EnergyEdge * ) nullptr, emap_dummy );
 					} else {
 						min_edge.reinitialize_active_energy_methods( iirsd, jjrsd, pose, true);
 					}
@@ -335,7 +334,7 @@ RTMin::rtmin(
 				} else {
 					if ( residue_is_inactive_neighbor[ jjresid ]  || ! active_residue_has_been_visited[ jjresid ] ) {
 						scfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
-							iirsd, jjrsd, min_edge, *scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
+							iirsd, jjrsd, min_edge, *scminmap, pose, true, false, ( EnergyEdge * ) nullptr, emap_dummy );
 					} else {
 						min_edge.reinitialize_active_energy_methods( jjrsd, iirsd, pose, true);
 					}
@@ -344,7 +343,7 @@ RTMin::rtmin(
 				}
 			}
 			//// LONG RANGE SETUP
-			for ( ScoreFunction::LR_2B_MethodIterator
+			for ( auto
 					iter = scfxn.long_range_energies_begin(),
 					iter_end = scfxn.long_range_energies_end();
 					iter != iter_end; ++iter ) {

@@ -48,7 +48,7 @@ ThermodynamicMover::ThermodynamicMover(
 	Mover::type( "ThermodynamicMover" );
 }
 
-ThermodynamicMover::~ThermodynamicMover() {}
+ThermodynamicMover::~ThermodynamicMover() = default;
 
 void
 ThermodynamicMover::initialize_simulation(

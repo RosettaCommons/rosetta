@@ -42,22 +42,22 @@ public:
 	/// @brief default ctor
 	ContingentFilter();
 	/// @brief Constructor with a single target residue
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual protocols::filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new ContingentFilter( *this ) );
 	}
-	virtual protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override{
 		return protocols::filters::FilterOP( new ContingentFilter() );
 	}
 
-	virtual ~ContingentFilter(){};
+	~ContingentFilter() override= default;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	virtual void set_value( bool const value );
 	virtual bool get_value() const;
 private:

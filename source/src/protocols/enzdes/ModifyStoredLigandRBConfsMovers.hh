@@ -46,13 +46,13 @@ public:
 public:
 
 	ModifyStoredRBConfs( std::string const & name );
-	~ModifyStoredRBConfs();
+	~ModifyStoredRBConfs() override;
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose ) = 0;
+	apply( core::pose::Pose & pose ) override = 0;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief helper function to exchange coordinates in a pose
 	/// this function doesn't actually exchange the residues,
@@ -113,11 +113,11 @@ public:
 		Size num_total_rbconfs,
 		bool include_metals );
 
-	~GenerateStoredRBConfs();
+	~GenerateStoredRBConfs() override;
 
 	void
-	apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 private:
 
@@ -137,11 +137,11 @@ public:
 public:
 
 	ApplyRandomStoredRBConf();
-	~ApplyRandomStoredRBConf();
+	~ApplyRandomStoredRBConf() override;
 
 	void
-	apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 };
 
@@ -158,11 +158,11 @@ public:
 public:
 
 	MinimizeStoredRBConfs( core::scoring::ScoreFunctionCOP sfxn );
-	~MinimizeStoredRBConfs();
+	~MinimizeStoredRBConfs() override;
 
 	void
-	apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void
 	rb_minimize_all_confs(
@@ -191,11 +191,11 @@ public:
 	DiversifyStoredRBConfs(
 		Real min_rms );
 
-	~DiversifyStoredRBConfs();
+	~DiversifyStoredRBConfs() override;
 
 	void
-	apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	void
 	diversify_all_confs(

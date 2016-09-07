@@ -79,28 +79,28 @@ protected:
 	/// @brief ctor is protected; singleton pattern
 	MPIWorkPartitionJobDistributor();
 
-	virtual void handle_interrupt() {}
+	void handle_interrupt() override {}
 
 public:
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-	virtual ~MPIWorkPartitionJobDistributor();
+	~MPIWorkPartitionJobDistributor() override;
 
-	virtual
+	
 	void
-	go( protocols::moves::MoverOP mover );
+	go( protocols::moves::MoverOP mover ) override;
 
-	virtual
+	
 	core::Size
-	get_new_job_id();
+	get_new_job_id() override;
 
-	virtual
+	
 	void
-	mark_current_job_id_for_repetition();
+	mark_current_job_id_for_repetition() override;
 
-	virtual
+	
 	void
-	remove_bad_inputs_from_job_list();
+	remove_bad_inputs_from_job_list() override;
 
 	friend class JobDistributorFactory;  //singleton management
 

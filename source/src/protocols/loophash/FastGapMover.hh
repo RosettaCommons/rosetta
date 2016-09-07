@@ -45,18 +45,18 @@ public:
 	FastGapMover();
 
 	/// @brief clone has to be overridden only if clone invocation is expected.
-	virtual moves::MoverOP clone() const {
+	moves::MoverOP clone() const override {
 		return moves::MoverOP( new FastGapMover( *this ) );
 	}
 
-	virtual moves::MoverOP fresh_instance() const {
+	moves::MoverOP fresh_instance() const override {
 		return moves::MoverOP( new FastGapMover );
 	}
 
 	void
-	apply( Pose & pose );
+	apply( Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	FastGapMover &
 	min_rms( core::Real const setting )

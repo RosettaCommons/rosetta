@@ -38,7 +38,7 @@ StructuralSimilarityEvaluator::StructuralSimilarityEvaluator(
 	poses_(poses)
 {}
 
-StructuralSimilarityEvaluator::~StructuralSimilarityEvaluator() {}
+StructuralSimilarityEvaluator::~StructuralSimilarityEvaluator() = default;
 
 void StructuralSimilarityEvaluator::apply(
 	core::pose::Pose & pose,
@@ -50,7 +50,7 @@ void StructuralSimilarityEvaluator::apply(
 	using core::pose::Pose;
 	using utility::vector1;
 
-	vector1< Real > gdtmms( poses_.size(), 0.0 );;
+	vector1< Real > gdtmms( poses_.size(), 0.0 );
 	for ( Size ii = 1; ii <= poses_.size(); ++ii ) {
 		gdtmms[ii] = core::scoring::CA_gdtmm( pose, poses_[ii] );
 	}

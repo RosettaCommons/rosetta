@@ -42,6 +42,7 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/excn/Exceptions.hh>
@@ -137,13 +138,13 @@ namespace protocols {
 namespace noesy_assign {
 
 /// @details Auto-generated virtual destructor
-NoesyModule::~NoesyModule() {}
+NoesyModule::~NoesyModule() = default;
 
 
 ///Constructor   - read input files / requires options to be initialized
-NoesyModule::NoesyModule( std::string const& fasta_sequence ) :
+NoesyModule::NoesyModule( std::string  fasta_sequence ) :
 	crosspeaks_( /* NULL */ ),
-	sequence_( fasta_sequence )
+	sequence_(std::move( fasta_sequence ))
 	//  main_resonances_( new ResonanceList( fasta_sequence ) )
 {
 	read_input_files();
@@ -155,7 +156,7 @@ NoesyModule::NoesyModule( std::string const& fasta_sequence ) :
 
 ///delete all data and read input files again...  aka fresh_instance()
 void NoesyModule::reset() {
-	crosspeaks_ = NULL;
+	crosspeaks_ = nullptr;
 	// main_resonances_ = new ResonanceList( main_resonances_->sequence() );
 	read_input_files();
 }
@@ -248,10 +249,10 @@ void NoesyModule::read_input_files() {
 void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
 #ifndef WIN32
 	using namespace core::scoring::constraints;
-	for ( CrossPeakList::iterator it = crosspeaks_->begin(); it != crosspeaks_->end(); ++it ) {
+	for ( auto it = crosspeaks_->begin(); it != crosspeaks_->end(); ++it ) {
 		if ( (*it)->eliminated() ) continue;
 		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < 1 ) continue;
-		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			core::scoring::func::FuncOP func( new BoundFunc(1.5, (*it)->distance_bound(), 1, "NOE Peak " ) );
 			ConstraintOP new_cst( (*ait)->create_constraint( native_pose, func ) );
 			(*ait)->set_native_distance_viol( new_cst->score( native_pose ) );

@@ -81,12 +81,12 @@ public:
 
 	}
 
-	virtual
-	~LigandDockMain(){};
+	
+	~LigandDockMain() override= default;
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose ) {
+	apply( core::pose::Pose & pose ) override {
 
 		if ( constraints_ ) {
 			constraints_->add_constraints_to_pose( pose, this->get_scorefxn(), false );
@@ -126,25 +126,25 @@ public:
 
 	}
 
-	virtual
+	
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "LigandDockMain";
 	}
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new LigandDockMain );
 	}
 
-	virtual
+	
 	bool
-	reinitialize_for_each_job() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
 
-	virtual
+	
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_new_input() const override { return false; }
 
 private:
 

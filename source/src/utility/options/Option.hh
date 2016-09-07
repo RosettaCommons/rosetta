@@ -94,7 +94,7 @@ public: // Creation
 	inline
 	virtual
 	~Option()
-	{}
+	= default;
 
 
 protected: // Assignment

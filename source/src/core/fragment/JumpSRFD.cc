@@ -195,15 +195,13 @@ void DownJumpSRFD::show( std::ostream &out ) const {
 	//only the downstream_partner has to show his cards
 	out << " "<< rt_;
 	out << " UPSTUB ";
-	for ( AtomList::const_iterator it = upstream_stub_atoms_.begin(),
-			eit = upstream_stub_atoms_.end(); it!=eit; ++it ) {
-		out << A(3, (*it));
+	for (const auto & upstream_stub_atom : upstream_stub_atoms_) {
+		out << A(3, upstream_stub_atom);
 	}
 	if ( upstream_stub_atoms_ != downstream_stub_atoms_ ) {
 		out << " DOWNSTUB ";
-		for ( AtomList::const_iterator it = downstream_stub_atoms_.begin(),
-				eit = downstream_stub_atoms_.end(); it!=eit; ++it ) {
-			out << A(3, (*it));
+		for (const auto & downstream_stub_atom : downstream_stub_atoms_) {
+			out << A(3, downstream_stub_atom);
 		}
 	}
 }

@@ -42,7 +42,7 @@
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
-#include <math.h>
+#include <cmath>
 #include <numeric/random/random.hh>
 
 using namespace ObjexxFCL;
@@ -59,7 +59,7 @@ MultiObjective::MultiObjective()
 	set_defaults();
 }
 
-MultiObjective::~MultiObjective(){}
+MultiObjective::~MultiObjective()= default;
 
 void
 MultiObjective::set_defaults()
@@ -390,7 +390,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 	TR << structs.size() << "/" << new_structs.size() << "/";
 	TR << totalpool.size() << "/" << nmax_filt << std::endl;
 
-	core::Size time1 = time(NULL);
+	core::Size time1 = time(nullptr);
 
 	// Be careful - all the indices start from 0
 	utility::vector0< protocols::wum::SilentStructStore > frontier( 1 );
@@ -444,7 +444,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 		TR.Debug << std::endl;
 	}
 
-	core::Size time2 = time(NULL);
+	core::Size time2 = time(nullptr);
 
 	// Assign frontiers
 	core::Size i( 0 );
@@ -506,7 +506,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 	protocols::wum::SilentStructStore &last_frontier = frontier[ frontier.size()-1 ];
 	//utility::vector0< core::Size > &ilast = ifront[ frontier.size()-1 ];
 
-	core::Size time3 = time(NULL);
+	core::Size time3 = time(nullptr);
 
 	//last_frontier.sort_by( fobjnames(1) );
 	//last_frontier.sort_by( "goap" );
@@ -519,7 +519,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 		}
 	}
 	last_frontier.sort_by( "similarity" );
-	core::Size time4 = time(NULL);
+	core::Size time4 = time(nullptr);
 
 	core::Size const nleft( nmax - sorted_pool.size() );
 

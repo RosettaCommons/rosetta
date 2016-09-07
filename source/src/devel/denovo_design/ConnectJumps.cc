@@ -56,8 +56,7 @@ ConnectJumps::ConnectJumps() :
 }
 
 /// @brief destructor - this class has no dynamic allocation, so
-ConnectJumps::~ConnectJumps()
-{}
+ConnectJumps::~ConnectJumps() = default;
 
 
 /// Return a copy of ourselves

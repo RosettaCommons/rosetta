@@ -73,7 +73,7 @@ SeparateDnaFromNonDna::SeparateDnaFromNonDna( SeparateDnaFromNonDna const & othe
 	translation_( other.translation() )
 {}
 
-SeparateDnaFromNonDna::~SeparateDnaFromNonDna(){}
+SeparateDnaFromNonDna::~SeparateDnaFromNonDna()= default;
 
 /// @brief set up an appropriate fold tree for a non-DNA/DNA interface, and simply pull apart non-DNA and DNA
 /// @details addition fold-tree considerations will have to be made if there are any 'non-DNA' chains that should stick to the DNA instead of to the non-DNA group

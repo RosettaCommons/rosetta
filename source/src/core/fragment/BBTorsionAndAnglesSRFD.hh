@@ -59,17 +59,17 @@ public:
 	{};
 
 
-	SingleResidueFragDataOP clone() const {
+	SingleResidueFragDataOP clone() const override {
 		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD( *this ) );
 	};
 
 	/// @brief create a new instance of this object
-	virtual
-	SingleResidueFragDataOP create() const {
+	
+	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD() );
 	}
 
-	virtual bool apply( pose::Pose&, Size seq_pos ) const;
+	bool apply( pose::Pose&, Size seq_pos ) const override;
 
 	/// @brief insert backbone torsions and angles into pose at position seqpos
 	///  if all bb torsions are moveable in MoveMap
@@ -81,20 +81,20 @@ public:
 	///  explicitly available within this class, meaning there is no way to
 	///  look them up within the MoveMap; the implementation in this class
 	///  must be changed if this is desired.
-	virtual bool apply( kinematics::MoveMap const & movemap, pose::Pose & pose, Size const seqpos ) const;
+	bool apply( kinematics::MoveMap const & movemap, pose::Pose & pose, Size const seqpos ) const override;
 
-	virtual bool steal( pose::Pose const&, Size seq_pos );
-	virtual bool is_compatible( SingleResidueFragData const& ) const;
-	virtual bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const;
+	bool steal( pose::Pose const&, Size seq_pos ) override;
+	bool is_compatible( SingleResidueFragData const& ) const override;
+	bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const override;
 
-	virtual
-	void show( std::ostream &out ) const;
+	
+	void show( std::ostream &out ) const override;
 
 	virtual
 	void read( std::istream &in );
 
-	virtual
-	std::string type() const {
+	
+	std::string type() const override {
 		//  return "BBTorsion";
 		return _static_type_name();
 	}

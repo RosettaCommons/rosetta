@@ -98,7 +98,7 @@ AddCavitiesMover::get_cavities( Pose const & pose, Real nbdis, int nbcount, Real
 	CavBalls cbpr  = prune_cavity_balls( spheres, cbph, opts );
 	compute_cav_ball_neighbor_count( spheres, cbpr, nbdis );
 	CavBalls cbbur;
-	for ( CavBallIter i = cbpr.begin(); i != cbpr.end(); ++i ) if ( i->anb > nbcount ) cbbur.push_back( *i );
+	for (auto & i : cbpr) if ( i.anb > nbcount ) cbbur.push_back( i );
 	CavBalls selcb = select_cav_balls(cbbur,minsep);
 
 	CavBalls cb;
@@ -116,7 +116,7 @@ AddCavitiesMover::clear_suckers( Pose & pose ) {
 	}
 	CacheableDataOP cd = pose.data().get_ptr( CacheableDataType::POSE_BEFORE_CAVITIES_ADDED );
 	core::pose::PoseOP cache_pose = utility::pointer::dynamic_pointer_cast< CacheablePoseRawPtr >(cd)->pose();
-	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, NULL );
+	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, nullptr );
 	Pose orig_pose = *cache_pose;
 	orig_pose.copy_segment( orig_pose.total_residue(), pose, 1, 1 );
 	pose = orig_pose;

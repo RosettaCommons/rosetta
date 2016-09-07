@@ -46,9 +46,9 @@ public:
 	RelaxProtocolBase( core::scoring::ScoreFunctionOP );
 	RelaxProtocolBase( std::string const & movername = "RelaxProtocol" );
 	RelaxProtocolBase( std::string const & movername, core::scoring::ScoreFunctionOP );
-	~RelaxProtocolBase();
+	~RelaxProtocolBase() override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const { return clone(); };
+	protocols::moves::MoverOP fresh_instance() const override { return clone(); };
 
 	static void register_options();
 

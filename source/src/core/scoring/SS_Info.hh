@@ -255,7 +255,7 @@ class SS_Info : public basic::datacache::CacheableData {
 public:
 
 	basic::datacache::CacheableDataOP
-	clone() const
+	clone() const override
 	{
 		return basic::datacache::CacheableDataOP( new SS_Info( *this ) );
 	}

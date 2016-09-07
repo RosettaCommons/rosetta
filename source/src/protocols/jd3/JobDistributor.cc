@@ -44,7 +44,7 @@ JobDistributor::JobDistributor() :
 	next_job_index_( 1 )
 {}
 
-JobDistributor::~JobDistributor() {}
+JobDistributor::~JobDistributor() = default;
 
 void
 JobDistributor::go( JobQueenOP queen ) {
@@ -138,7 +138,7 @@ JobDistributor::select_next_job() {
 	}
 
 	// return 0 if there are no jobs left to run
-	return LarvalJobOP( 0 );
+	return LarvalJobOP( nullptr );
 }
 
 void

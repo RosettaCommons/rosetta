@@ -374,12 +374,12 @@ PDBInfo::resize_atom_records(
 )
 {
 	if ( zero ) {
-		for ( ResidueRecords::iterator i = residue_rec_.begin(), ie = residue_rec_.end(); i != ie; ++i ) {
-			i->atomRec = AtomRecords( n );
+		for (auto & i : residue_rec_) {
+			i.atomRec = AtomRecords( n );
 		}
 	} else {
-		for ( ResidueRecords::iterator i = residue_rec_.begin(), ie = residue_rec_.end(); i != ie; ++i ) {
-			i->atomRec.resize( n );
+		for (auto & i : residue_rec_) {
+			i.atomRec.resize( n );
 		}
 	}
 }
@@ -417,9 +417,9 @@ PDBInfo::tighten_memory()
 	}
 
 	// tighten each of the atom vectors
-	for ( ResidueRecords::iterator i = residue_rec_.begin(), ie = residue_rec_.end(); i != ie; ++i ) {
-		if ( i->atomRec.capacity() > i->atomRec.size() ) {
-			AtomRecords( i->atomRec ).swap( i->atomRec );
+	for (auto & i : residue_rec_) {
+		if ( i.atomRec.capacity() > i.atomRec.size() ) {
+			AtomRecords( i.atomRec ).swap( i.atomRec );
 		}
 	}
 }
@@ -629,7 +629,7 @@ PDBInfo::clear_reslabel(
 /// @brief set all residue chain IDs to a single character
 void
 PDBInfo::set_chains( char const id ) {
-	for ( ResidueRecords::iterator i = residue_rec_.begin(), ie = residue_rec_.end(); i < ie; ++i ) {
+	for ( auto i = residue_rec_.begin(), ie = residue_rec_.end(); i < ie; ++i ) {
 		i->chainID = id;
 	}
 
@@ -813,11 +813,11 @@ PDBInfo::delete_res(
 	Size const n
 )
 {
-	ResidueRecords::iterator start = residue_rec_.begin() + ( res - 1 );
+	auto start = residue_rec_.begin() + ( res - 1 );
 
 	// sync map first (force erase)
 	Size idx = res;
-	for ( ResidueRecords::iterator i = start, ie = start + n; i < ie; ++i, ++idx ) {
+	for ( auto i = start, ie = start + n; i < ie; ++i, ++idx ) {
 		pdb2pose_.erase( i->chainID, i->resSeq, i->iCode );
 	}
 

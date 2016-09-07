@@ -46,7 +46,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	AtomProperties( AtomProperties const & object_to_copy );
 
 	// Destructor
-	virtual ~AtomProperties();
+	~AtomProperties() override;
 
 	// Assignment operator
 	AtomProperties & operator=( AtomProperties const & object_to_copy );

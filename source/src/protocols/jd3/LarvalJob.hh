@@ -43,7 +43,7 @@ class LarvalJob : public utility::pointer::ReferenceCount
 public:
 
 	LarvalJob( InnerLarvalJobOP inner_job, core::Size nstruct_index );
-	virtual ~LarvalJob();
+	~LarvalJob() override;
 
 	/// @brief Are these two jobs equivalent? (It does not ask if they
 	/// are equal).  Used for the sake of identifying bad jobs. This

@@ -32,7 +32,7 @@ public:
 	ZincSiteFinder();
 	ZincSiteFinder( core::Size zinc_res );
 
-	virtual ~ZincSiteFinder();
+	~ZincSiteFinder() override;
 
 	utility::vector1< protocols::metal_interface::MetalSiteResidueOP > find_zinc_site( core::pose::Pose const & pose );
 

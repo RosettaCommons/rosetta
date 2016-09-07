@@ -32,16 +32,16 @@ class VoxelSpacingMultifunc : public core::optimization::Multifunc {
 public:
 	VoxelSpacingMultifunc( core::pose::Pose const &pose );
 
-	virtual ~VoxelSpacingMultifunc() {}
+	~VoxelSpacingMultifunc() override = default;
 
-	virtual core::Real
-	operator ()( core::optimization::Multivec const & vars ) const;
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
-	virtual void
-	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
+	void
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
-	virtual void
-	dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const;
+	void
+	dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const override;
 
 	void
 	getMapSpacingAndOrigin( core::optimization::Multivec & x1, bool aniso );
@@ -58,19 +58,19 @@ private:
 class VoxelSpacingRefinementMover : public moves::Mover {
 public:
 	VoxelSpacingRefinementMover();
-	virtual ~VoxelSpacingRefinementMover() {}
+	~VoxelSpacingRefinementMover() override = default;
 
 	void init();
 
-	virtual void apply( core::pose::Pose & );
+	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const { return "VoxelSpacingRefinement"; }
+	std::string get_name() const override { return "VoxelSpacingRefinement"; }
 
-	moves::MoverOP clone() const { return moves::MoverOP( new VoxelSpacingRefinementMover( *this ) ); }
-	moves::MoverOP fresh_instance() const { return moves::MoverOP( new VoxelSpacingRefinementMover ); }
+	moves::MoverOP clone() const override { return moves::MoverOP( new VoxelSpacingRefinementMover( *this ) ); }
+	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new VoxelSpacingRefinementMover ); }
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 private:
 	std::string minimizer_, mapout_;

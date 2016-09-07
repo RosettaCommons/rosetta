@@ -17,6 +17,7 @@
 #include <protocols/nonlocal/Policy.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 // Project headers
@@ -41,7 +42,7 @@ class Policy : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Provides derived classes with the opportunity to precompute various
 	/// properties of the fragment set from which they will have to make choices.
-	explicit Policy(FragSetCOP fragments) : fragments_(fragments) {}
+	explicit Policy(FragSetCOP fragments) : fragments_(std::move(fragments)) {}
 
 	/// @brief Selects a single fragment from a set of possibilities given the
 	/// current status of the pose.

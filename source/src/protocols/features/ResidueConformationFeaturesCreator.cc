@@ -26,7 +26,7 @@ namespace protocols {
 namespace features {
 
 ResidueConformationFeaturesCreator::ResidueConformationFeaturesCreator() {}
-ResidueConformationFeaturesCreator::~ResidueConformationFeaturesCreator() {}
+ResidueConformationFeaturesCreator::~ResidueConformationFeaturesCreator() = default;
 FeaturesReporterOP ResidueConformationFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ResidueConformationFeatures );
 }

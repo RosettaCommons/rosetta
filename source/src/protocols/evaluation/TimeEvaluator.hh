@@ -51,7 +51,7 @@ public:
 	void reset();
 
 	/// @brief evaluate pose
-	virtual core::Real apply( core::pose::Pose& ) const;
+	core::Real apply( core::pose::Pose& ) const override;
 private:
 	time_t start_time_;
 };

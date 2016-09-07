@@ -59,8 +59,8 @@ std::string comma_separated_partner_chains( std::string const & chains )
 
 	string r;
 	r.reserve( ( chains.size() * 2 ) );
-	for ( string::const_iterator o = chains.begin(); o != chains.end(); ++o ) {
-		r.push_back( * o );
+	for (char chain : chains) {
+		r.push_back( chain );
 		r.push_back( ',' );
 	}
 
@@ -205,8 +205,8 @@ setup_foldtree(
 			utility_exit_with_message( error_msg.str() );
 		}
 
-		for ( vector1< string >::const_iterator it = partners.begin(); it != partners.end(); ++it ) {
-			if ( *it == "" ) {
+		for (const auto & partner : partners) {
+			if ( partner == "" ) {
 				stringstream error_msg;
 				error_msg << "Cannot create FoldTree using the provided partners flag \"" << partner_chainID;
 				error_msg << "\". At least one of the partner chains is empty.";
@@ -275,15 +275,11 @@ setup_foldtree(
 	ft.reorder( 1 );
 
 	// Now add back any CHEMICAL Edges, which will have been converted to JUMPs.
-	for ( vector1< Edge >::const_iterator chemical_edge( chemical_edges.begin() ),
-			after_last_chemical_edge( chemical_edges.end() );
-			chemical_edge != after_last_chemical_edge; ++chemical_edge ) {
+	for (const auto & chemical_edge : chemical_edges) {
 		vector1< Edge > const jump_edges( ft.get_jump_edges() );
-		for ( std::vector< Edge >::const_iterator jump_edge( jump_edges.begin() ),
-				after_last_jump_edge( jump_edges.end() );
-				jump_edge != after_last_jump_edge; ++jump_edge ) {
-			if ( jump_edge->stop() == chemical_edge->stop() ) {
-				ft.replace_edge( *jump_edge, *chemical_edge );
+		for (const auto & jump_edge : jump_edges) {
+			if ( jump_edge.stop() == chemical_edge.stop() ) {
+				ft.replace_edge( jump_edge, chemical_edge );
 				break;
 			}
 		}

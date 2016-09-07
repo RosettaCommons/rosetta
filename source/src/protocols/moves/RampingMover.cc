@@ -49,9 +49,9 @@ namespace moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RampingMover" );
 
-RampingFunc::~RampingFunc() {}
+RampingFunc::~RampingFunc() = default;
 
-LinearFunc::~LinearFunc() {}
+LinearFunc::~LinearFunc() = default;
 
 FastLinearFunc::FastLinearFunc(
 	Real xval_start_ramp,
@@ -65,7 +65,7 @@ FastLinearFunc::FastLinearFunc(
 	runtime_assert( xval_start_ramp <= xval_end_ramp );
 }
 
-FastLinearFunc::~FastLinearFunc() {}
+FastLinearFunc::~FastLinearFunc() = default;
 
 RampingFunc::Real
 FastLinearFunc::func( Real x ) const
@@ -94,7 +94,7 @@ GeometricFunc::GeometricFunc() :
 
 }
 
-GeometricFunc::~GeometricFunc() {}
+GeometricFunc::~GeometricFunc() = default;
 
 /// func(x) = 1 - exp( -1 * x * inv_xval_at_0p5 * 0.6931 );
 RampingFunc::Real
@@ -117,7 +117,7 @@ InvGeometricFunc::InvGeometricFunc() :
 	inv_one_minus_xval_at_0p5_( 1 / ( 1 - 0.66 ))
 {}
 
-InvGeometricFunc::~InvGeometricFunc() {}
+InvGeometricFunc::~InvGeometricFunc() = default;
 
 /// func(x) = exp( -1 * ( 1 - x ) / ( 1 - xval_at_0p5 ) * 0.6931 );
 RampingFunc::Real
@@ -140,7 +140,7 @@ RampingMover::RampingMover() :
 	scorefxn_( /* 0 */ ),
 	ramp_one_weight_( true ),
 	score_type_( core::scoring::fa_rep ),
-	ramping_funcs_for_weights_( core::scoring::n_score_types, 0 ),
+	ramping_funcs_for_weights_( core::scoring::n_score_types, nullptr ),
 	outer_cycles_( 0 ),
 	inner_cycles_( 0 ),
 	mc_( /* 0 */ )
@@ -158,15 +158,15 @@ RampingMover::RampingMover(
 	bool geometric_in
 ) :
 	Mover( RampingMoverCreator::mover_name() ),
-	mover_( mover_in ),
+	mover_(std::move( mover_in )),
 	scorefxn_( scorefxn_in ), // replace this with clone() when symmetry comes online.
 	ramp_one_weight_( true ),
 	score_type_( score_type_in ),
 	start_weights_( scorefxn_in->weights() ),
-	ramping_funcs_for_weights_( core::scoring::n_score_types, 0 ),
+	ramping_funcs_for_weights_( core::scoring::n_score_types, nullptr ),
 	outer_cycles_( outer_cycles_in ),
 	inner_cycles_( inner_cycles_in ),
-	mc_( mc_in )
+	mc_(std::move( mc_in ))
 {
 	start_weights_[ score_type_ ] = 0.2;
 	end_weights_[   score_type_ ] = 1.0;
@@ -183,16 +183,16 @@ RampingMover::RampingMover(
 	MonteCarloOP  mc_in
 ) :
 	Mover( RampingMoverCreator::mover_name() ),
-	mover_( mover_in ),
-	scorefxn_( scorefxn_in ), // replace this with clone() when symmetry comes online.
+	mover_(std::move( mover_in )),
+	scorefxn_(std::move( scorefxn_in )), // replace this with clone() when symmetry comes online.
 	ramp_one_weight_( false ),
 	score_type_( core::scoring::fa_rep ), // unused
 	start_weights_( start_weights ),
 	end_weights_( end_weights ),
-	ramping_funcs_for_weights_( core::scoring::n_score_types, 0 ),
+	ramping_funcs_for_weights_( core::scoring::n_score_types, nullptr ),
 	outer_cycles_( outer_cycles_in ),
 	inner_cycles_( inner_cycles_in ),
-	mc_( mc_in )
+	mc_(std::move( mc_in ))
 {
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		core::scoring::ScoreType iist = (core::scoring::ScoreType) ii;
@@ -202,7 +202,7 @@ RampingMover::RampingMover(
 	}
 }
 
-RampingMover::~RampingMover() {}
+RampingMover::~RampingMover() = default;
 
 MoverOP RampingMover::clone() const
 {
@@ -236,14 +236,14 @@ RampingMover::parse_my_tag(
 	std::string mover_name(tag->getOption<std::string>("mover"));
 
 	core::scoring::ScoreFunctionOP sfxn( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
-	if ( sfxn == 0 ) {
+	if ( sfxn == nullptr ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("scorefxn required to create a RampingMover");
 	}
 	scorefxn_ = sfxn;
 
 
 	//get the mover to ramp out of the movemap
-	Movers_map::const_iterator find_mover(movers.find(mover_name));
+	auto find_mover(movers.find(mover_name));
 	if ( find_mover == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("cannot find "+mover_name+" in mover map.");
 	}
@@ -311,11 +311,8 @@ RampingMover::parse_my_tag(
 
 
 		utility::vector0< TagCOP > const & rampterm_tags( tag->getTags() );
-		for ( utility::vector0< TagCOP >::const_iterator
-				rampterm_it=rampterm_tags.begin(), rampterm_it_end = rampterm_tags.end();
-				rampterm_it!=rampterm_it_end; ++rampterm_it ) {
-			TagCOP const tag_ptr = *rampterm_it;
-			if ( ! tag_ptr->hasOption("score_type") ) {
+		for (auto tag_ptr : rampterm_tags) {
+				if ( ! tag_ptr->hasOption("score_type") ) {
 				throw utility::excn::EXCN_RosettaScriptsOption("Ramping mover Add statement requires the score_type option");
 			}
 			if ( ! tag_ptr->hasOption("start_weight") ) {

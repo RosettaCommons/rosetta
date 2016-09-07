@@ -67,16 +67,16 @@ public:// constructor/destructor
 	// @brief copy constructor
 	SSElementMotifContactFilter( SSElementMotifContactFilter const & rval );
 
-	virtual ~SSElementMotifContactFilter();
+	~SSElementMotifContactFilter() override;
 
 
 public:// virtual constructor
 
 
 	// @brief make clone
-	filters::FilterOP clone() const { return filters::FilterOP(new SSElementMotifContactFilter(*this));}
+	filters::FilterOP clone() const override { return filters::FilterOP(new SSElementMotifContactFilter(*this));}
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const { return filters::FilterOP(new SSElementMotifContactFilter());}
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new SSElementMotifContactFilter());}
 
 
 public:// mutator
@@ -90,20 +90,20 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "SSElementMotifContactFilter"; }
+	std::string name() const override { return "SSElementMotifContactFilter"; }
 
 
 public:// virtual main operation
 
 
-	Real report_sm(const Pose & pose ) const;
-	void report( std::ostream & out,const Pose & pose ) const;
+	Real report_sm(const Pose & pose ) const override;
+	void report( std::ostream & out,const Pose & pose ) const override;
 	protocols::loops::Loops get_ss_elements(const Pose & pose) const;
 	Size which_ssElement(Size res,protocols::loops::Loops ssElements) const;
 	Size get_SSelements_in_contact(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
 	Size get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const;
 	Real compute( const Pose & pose ) const;
-	virtual bool apply(const Pose & pose ) const;
+	bool apply(const Pose & pose ) const override;
 
 
 public:// parser
@@ -112,7 +112,7 @@ public:// parser
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 private:

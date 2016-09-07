@@ -66,37 +66,37 @@ public:
 	MaxSeqSepConstraintSet( ConstraintSet const & other, core::kinematics::FoldTree const&f );
 
 	MaxSeqSepConstraintSet( MaxSeqSepConstraintSet const &other );
-	~MaxSeqSepConstraintSet( );
+	~MaxSeqSepConstraintSet( ) override;
 protected:
 	MaxSeqSepConstraintSet( ConstraintSet const &other, core::kinematics::ShortestPathInFoldTreeCOP sp );
 
 public:
 
-	virtual
+	
 	ConstraintSet &
-	operator = ( ConstraintSet const & rhs );
+	operator = ( ConstraintSet const & rhs ) override;
 
-	virtual
+	
 	ConstraintSetOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	void
-	detached_copy( ConstraintSet const & src );
+	detached_copy( ConstraintSet const & src ) override;
 
-	virtual
+	
 	ConstraintSetOP
-	detached_clone() const;
+	detached_clone() const override;
 
-	virtual
+	
 	bool
-	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const;
+	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const override;
 
-	virtual ConstraintSetOP remapped_clone(
+	ConstraintSetOP remapped_clone(
 		core::pose::Pose const& src,
 		core::pose::Pose const& dest,
-		core::id::SequenceMappingCOP smap = NULL
-	) const;
+		core::id::SequenceMappingCOP smap = nullptr
+	) const override;
 
 	Size max_seq_sep () const {
 		return max_seq_sep_;
@@ -115,7 +115,7 @@ public:
 		Pose const & pose,
 		core::scoring::ScoreFunction const & scorefxn,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 	bool too_far( int const pos1, int const pos2 ) const;
 
@@ -124,7 +124,7 @@ public:
 
 
 	bool
-	residue_pair_constraint_exists( int const pos1, int const pos2 ) const
+	residue_pair_constraint_exists( int const pos1, int const pos2 ) const override
 	{
 		if ( too_far( pos1, pos2 ) ) return false;
 		return Parent::residue_pair_constraint_exists( pos1, pos2 );
@@ -136,7 +136,7 @@ public:
 	/// respair to the respair_data_cache.  This is the only opportunity
 	/// the MaxSeqSepConstraint set has to influence how constraints
 	/// are evaluated during minimization.
-	virtual
+	
 	void
 	setup_for_minimizing_for_residue_pair(
 		core::conformation::Residue const & rsd1,
@@ -147,7 +147,7 @@ public:
 		core::scoring::ResSingleMinimizationData const & res1_data_cache,
 		core::scoring::ResSingleMinimizationData const & res2_data_cache,
 		core::scoring::ResPairMinimizationData & respair_data_cache
-	) const;
+	) const override;
 
 	using Parent::show_violations;
 
@@ -160,11 +160,11 @@ public:
 	}
 
 	void
-	virtual eval_non_residue_pair_energy(
+	eval_non_residue_pair_energy(
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & sfxn,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 
 protected:

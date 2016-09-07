@@ -52,7 +52,7 @@ SymDockBaseProtocol::SymDockBaseProtocol() :
 
 }
 
-SymDockBaseProtocol::~SymDockBaseProtocol() {}
+SymDockBaseProtocol::~SymDockBaseProtocol() = default;
 
 std::string
 SymDockBaseProtocol::get_name() const {

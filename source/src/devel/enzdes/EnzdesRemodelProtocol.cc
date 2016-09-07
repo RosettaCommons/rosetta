@@ -108,7 +108,7 @@ EnzdesRemodelProtocol::EnzdesRemodelProtocol() : EnzdesFlexBBProtocol() {
 	this->reduced_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
 }
 
-EnzdesRemodelProtocol::~EnzdesRemodelProtocol(){}
+EnzdesRemodelProtocol::~EnzdesRemodelProtocol() = default;
 
 void
 EnzdesRemodelProtocol::apply(
@@ -258,33 +258,7 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	user_provided_ss_.clear();
 }
 
-EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
-:
-	protocols::moves::Mover( other ),
-	enz_prot_(other.enz_prot_),
-	orig_task_(other.orig_task_),
-	flex_region_( other.flex_region_),
-	vlb_sfxn_(other.vlb_sfxn_),
-	remodel_positions_(other.remodel_positions_),
-	other_design_positions_(other.other_design_positions_),
-	other_repack_positions_(other.other_repack_positions_),
-	remodel_trials_( other.remodel_trials_ ),
-	remodel_secmatch_( other.remodel_secmatch_ ),
-	reinstate_initial_foldtree_(other.reinstate_initial_foldtree_),
-	keep_existing_aa_identities_(other.keep_existing_aa_identities_),
-	init_aa_(other.init_aa_),
-	region_to_remodel_(other.region_to_remodel_),
-	predesign_filters_(other.predesign_filters_),
-	postdesign_filters_(other.postdesign_filters_),
-	start_to_current_smap_(other.start_to_current_smap_),
-	target_inverse_rotamers_(other.target_inverse_rotamers_),
-	include_existing_conf_as_invrot_target_(other.include_existing_conf_as_invrot_target_),
-	non_remodel_match_pos_(other.non_remodel_match_pos_),
-	rcgs_(other.rcgs_),
-	ss_similarity_probability_(other.ss_similarity_probability_ ),
-	max_allowed_score_increase_(other.max_allowed_score_increase_),
-	user_provided_ss_(other.user_provided_ss_)
-{}
+EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & /*other*/ ) = default;
 
 EnzdesRemodelMover::EnzdesRemodelMover(
 	protocols::enzdes::EnzdesFlexBBProtocolOP enz_prot,
@@ -336,7 +310,7 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 
 } //enzdes remodel mover constructor
 
-EnzdesRemodelMover::~EnzdesRemodelMover(){}
+EnzdesRemodelMover::~EnzdesRemodelMover()= default;
 
 protocols::moves::MoverOP
 EnzdesRemodelMover::clone() const{
@@ -440,7 +414,7 @@ EnzdesRemodelMover::apply(
 	remove_cached_observers( pose );
 
 	//maybe better to get rid of the task, to prepare for next call
-	orig_task_ = NULL;
+	orig_task_ = nullptr;
 }
 
 std::string
@@ -625,10 +599,9 @@ EnzdesRemodelMover::refine_pose(
 
 	//pose.dump_pdb("pose_bef_fa_refine.pdb");
 	core::pose::Pose save_pose = pose;
-	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
-			rcg_it != rcgs_.end(); ++rcg_it ) {
+	for (auto & rcg : rcgs_) {
 
-		(*rcg_it)->add_remodel_constraints_to_pose( pose );
+		rcg->add_remodel_constraints_to_pose( pose );
 
 	}
 	(*(enz_prot_->reduced_scorefxn()))(pose);
@@ -653,9 +626,8 @@ EnzdesRemodelMover::refine_pose(
 	//std::cerr << " done creating fa remcsts." << std::endl;
 	tr << "backbone_stub constraint score after refine is " << pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
 
-	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
-			rcg_it != rcgs_.end(); ++rcg_it ) {
-		(*rcg_it)->remove_remodel_constraints_from_pose( pose );
+	for (auto & rcg : rcgs_) {
+		rcg->remove_remodel_constraints_from_pose( pose );
 	}
 
 	//std::cerr << " done removing fa remcsts." << std::endl;
@@ -901,7 +873,7 @@ void
 EnzdesRemodelMover::apply_random_lowE_ligconf(
 	core::pose::Pose & pose ) const
 {
-	core::scoring::ScoreFunctionCOP scofx(enz_prot_->reduced_scorefxn() );;
+	core::scoring::ScoreFunctionCOP scofx(enz_prot_->reduced_scorefxn() );
 	utility::vector1< core::Size > all_ligands( protocols::ligand_docking::get_ligand_seqpos( pose ) );
 
 	for ( core::Size lig_num = 1; lig_num <= all_ligands.size(); ++lig_num ) {
@@ -945,13 +917,11 @@ EnzdesRemodelMover::translate_atomnames_to_restype_set_atomids(
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_cap );
 	atom_ids.clear();
 
-	for ( utility::vector1< std::string >::const_iterator at_it = atom_names.begin();
-			at_it != atom_names.end(); ++at_it ) {
+	for (auto cur_at_name : atom_names) {
 
 		//lil tricky: the pose will be in centroid when the constraints are being generated,
 		//so we have to make sure to put in the right atom ids
-		std::string cur_at_name = *at_it;
-		std::string cur_res_name = pose.residue_type( seqpos ).name();
+			std::string cur_res_name = pose.residue_type( seqpos ).name();
 
 		//core::Size centroid_id = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )->name_map( cur_res_name ).atom_index( cur_at_name );
 
@@ -1060,10 +1030,10 @@ EnzdesRemodelMover::remove_cached_observers(
 	//by vlb stuff if we have several chains
 	core::kinematics::FoldTree const & old_fold_tree( this->get_native_pose()->fold_tree() );
 	core::kinematics::FoldTree new_fold_tree;
-	for ( core::kinematics::FoldTree::const_iterator e = old_fold_tree.begin(); e != old_fold_tree.end(); ++e ) {
-		core::Size estart = (*start_to_current_smap_)[e->start() ];
-		core::Size estop = (*start_to_current_smap_)[e->stop() ];
-		new_fold_tree.add_edge( estart, estop, e->label() );
+	for (const auto & e : old_fold_tree) {
+		core::Size estart = (*start_to_current_smap_)[e.start() ];
+		core::Size estop = (*start_to_current_smap_)[e.stop() ];
+		new_fold_tree.add_edge( estart, estop, e.label() );
 	}
 	// Debugging information, as this foldtree reset has had issues in the past
 	tr.Debug << "Resetting pose FoldTree." << std::endl;
@@ -1084,13 +1054,12 @@ EnzdesRemodelMover::process_length_change(
 	core::id::combine_sequence_mappings( *start_to_current_smap_, *smap );
 	protocols::enzdes::enzutil::create_remark_headers_from_cstcache( pose );
 
-	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin();
-			rcg_it != rcgs_.end(); ++rcg_it ) {
-		(*rcg_it)->set_seqmap( smap );
+	for (auto & rcg : rcgs_) {
+		rcg->set_seqmap( smap );
 	}
 
-	for ( utility::vector1< core::Size >::iterator other_match_pos_it = non_remodel_match_pos_.begin(); other_match_pos_it != non_remodel_match_pos_.end(); ++other_match_pos_it ) {
-		(*other_match_pos_it) = (*smap)[*other_match_pos_it];
+	for (unsigned long & non_remodel_match_po : non_remodel_match_pos_) {
+		non_remodel_match_po = (*smap)[non_remodel_match_po];
 	}
 }
 
@@ -1139,7 +1108,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 	}
 	if ( !ligres || !(ligres->type().is_ligand()) ) ligres = core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true ) ) );
 
-	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL ); //wipe this out for now, matcher will overwrite
+	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( nullptr ); //wipe this out for now, matcher will overwrite
 	protocols::match::MatcherMoverOP matcher_mover( new protocols::match::MatcherMover() );
 
 	//generate the positions
@@ -1199,8 +1168,7 @@ EnzdesRemodelMover::setup_rcgs(
 	utility::vector1< protocols::forge::remodel::ResidueVicinityInfoOP > fa_rv_infos;
 
 	//loop over all the cst targets in this loop info, i.e. all cst target records in the loop file
-	for ( utility::vector1< CstResInteractions >::const_iterator cst_targ = loopinf->cst_interactions().begin();
-			cst_targ != loopinf->cst_interactions().end(); ++cst_targ ) {
+	for (const auto & cst_targ : loopinf->cst_interactions()) {
 
 		protocols::toolbox::match_enzdes_util::EnzCstTemplateResCOP targ_template;
 		protocols::toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP targ_template_cache;
@@ -1208,12 +1176,12 @@ EnzdesRemodelMover::setup_rcgs(
 		if ( !cstio ) break;
 
 		//which residue of the desired block are we interested in?
-		if ( cst_targ->resA() == true ) {
-			targ_template = cstio->enz_cst_params( cst_targ->cst_block() )->resA();
-			targ_template_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ->cst_block() )->template_res_cache( 1 );
+		if ( cst_targ.resA() == true ) {
+			targ_template = cstio->enz_cst_params( cst_targ.cst_block() )->resA();
+			targ_template_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ.cst_block() )->template_res_cache( 1 );
 		} else {
-			targ_template = cstio->enz_cst_params( cst_targ->cst_block() )->resB();
-			targ_template_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ->cst_block() )->template_res_cache( 1 );
+			targ_template = cstio->enz_cst_params( cst_targ.cst_block() )->resB();
+			targ_template_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ.cst_block() )->template_res_cache( 1 );
 		}
 
 		//loop over all positions that the targ residue is at
@@ -1221,25 +1189,24 @@ EnzdesRemodelMover::setup_rcgs(
 		//old
 		//for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = targ_template->respos_map_begin();
 		//  pos_it != targ_template->respos_map_end(); ++pos_it ){
-		for ( std::map< Size, protocols::toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = targ_template_cache->seqpos_map_begin();
+		for ( auto pos_it = targ_template_cache->seqpos_map_begin();
 				pos_it != targ_template_cache->seqpos_map_end(); ++pos_it ) {
 
-			cen_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, pos_it->first, flex_region_->start(), centroid_set, *cst_targ ) );
-			fa_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, pos_it->first, flex_region_->start(), fa_set, *cst_targ ) );
+			cen_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, pos_it->first, flex_region_->start(), centroid_set, cst_targ ) );
+			fa_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, pos_it->first, flex_region_->start(), fa_set, cst_targ ) );
 
 		} // loop over all positions of cst_target
 	} //loop over all cst_targets
 
 
 	//now loop over all the other desired interactions
-	for ( utility::vector1< ResInteractions >::const_iterator res_int = loopinf->res_interactions().begin();
-			res_int != loopinf->res_interactions().end(); ++res_int ) {
+	for (const auto & res_int : loopinf->res_interactions()) {
 
 		//target residue of this rcgs: we have to correct for eventual length changes that have happened already
-		core::Size targ_res = (*start_to_current_smap_)[ res_int->targ_res() ];
+		core::Size targ_res = (*start_to_current_smap_)[ res_int.targ_res() ];
 
-		cen_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, targ_res, flex_region_->start(), centroid_set, *res_int ) );
-		fa_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, targ_res, flex_region_->start(), fa_set, *res_int ) );
+		cen_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, targ_res, flex_region_->start(), centroid_set, res_int ) );
+		fa_rv_infos.push_back( translate_res_interactions_to_rvinfos( pose, targ_res, flex_region_->start(), fa_set, res_int ) );
 
 	}
 
@@ -1310,7 +1277,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 
 			for ( core::Size template_res = 1; template_res <= param_cache->template_res_cache_size(); ++template_res ) {
 
-				for ( std::map< core::Size, protocols::toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator seqpos_it = param_cache->template_res_cache( template_res )->seqpos_map_begin(), seqpos_end = param_cache->template_res_cache( template_res )->seqpos_map_end();
+				for ( auto seqpos_it = param_cache->template_res_cache( template_res )->seqpos_map_begin(), seqpos_end = param_cache->template_res_cache( template_res )->seqpos_map_end();
 						seqpos_it != seqpos_end; ) {
 
 					if ( flex_region_->contains_seqpos( seqpos_it->first ) ) {

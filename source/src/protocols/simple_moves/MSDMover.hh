@@ -42,25 +42,25 @@ public:
 	MSDMover( protocols::moves::MoverOP mover,
 		utility::vector1< std::string > resfiles);
 
-	~MSDMover();
+	~MSDMover() override;
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual
+	
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	void setup_mover ( Pose & pose );
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	utility::vector1< core::scoring::constraints::ConstraintCOP >
 	apply_linked_constraints( core::pose::Pose & pose );

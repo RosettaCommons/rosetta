@@ -47,19 +47,19 @@ public:
 	{};
 
 
-	SingleResidueFragDataOP clone() const {
+	SingleResidueFragDataOP clone() const override {
 		return SingleResidueFragDataOP( new SecstructSRFD( *this ) );
 	};
 
 	/// @brief create a new instance of this object
-	virtual
-	SingleResidueFragDataOP create() const {
+	
+	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new SecstructSRFD() );
 	}
 
 	/// get secstruct for this position
-	virtual char
-	secstruct() const
+	char
+	secstruct() const override
 	{
 		return secstruct_;
 	}
@@ -68,27 +68,27 @@ public:
 		secstruct_ = ss;
 	}
 
-	virtual bool apply( pose::Pose&, Size seq_pos ) const;
+	bool apply( pose::Pose&, Size seq_pos ) const override;
 
 	/// @brief apply secondary structure fragment data to the pose, movemap has no effect
 	/// @remarks In this version of apply(), by convention MoveMap has no effect
 	///  because a setting for sec.struct currently does not exist within the map.
 	/// @return always true
-	virtual bool apply( kinematics::MoveMap const &, pose::Pose & pose, Size const seqpos ) const;
+	bool apply( kinematics::MoveMap const &, pose::Pose & pose, Size const seqpos ) const override;
 
-	virtual bool apply_ss( std::string&, Size seq_pos) const;
-	virtual bool steal( pose::Pose const&, Size seq_pos );
-	virtual bool is_compatible( SingleResidueFragData const& ) const;
-	virtual bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const;
+	bool apply_ss( std::string&, Size seq_pos) const override;
+	bool steal( pose::Pose const&, Size seq_pos ) override;
+	bool is_compatible( SingleResidueFragData const& ) const override;
+	bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const override;
 
-	virtual
-	void show( std::ostream &out ) const;
+	
+	void show( std::ostream &out ) const override;
 
-	virtual
-	void read_data( std::istream &in );
+	
+	void read_data( std::istream &in ) override;
 
-	virtual
-	std::string type() const {
+	
+	std::string type() const override {
 		return "Secstruct";
 	}
 

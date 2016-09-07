@@ -54,7 +54,7 @@ namespace normalmode {
 using namespace core;
 using namespace core::optimization;
 
-NormalModeMultifunc::~NormalModeMultifunc() {}
+NormalModeMultifunc::~NormalModeMultifunc() = default;
 
 NormalModeMultifunc::NormalModeMultifunc(
 	pose::Pose & pose_in,
@@ -196,7 +196,7 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 		if ( var_type_[i_var].compare("NM") == 0 ) {
 
 			// Get index / scale for the mode in vars
-			std::map< Size, Size >::const_iterator it = map_var_to_modeno_.find( i_var );
+			auto it = map_var_to_modeno_.find( i_var );
 			Size const modeno( it->second );
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 
@@ -205,7 +205,7 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 			// Iter over Normal mode torsions to accummulate into dofs
 			for ( Size i_tor = 1; i_tor <= NM_torID.size(); ++i_tor ) {
 				if ( map_NM_to_DOF_.count( i_tor ) ) {
-					std::map< Size, Size >::const_iterator it = map_NM_to_DOF_.find( i_tor );
+					auto it = map_NM_to_DOF_.find( i_tor );
 					Size const i_dof( it->second );
 					dofs[ i_dof ] += scale * vars[ i_var ]*eigv[ i_tor ];
 				}
@@ -213,7 +213,7 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 
 			// Non-Normal Mode variables: just copy
 		} else {
-			std::map< Size, Size >::const_iterator it = map_var_to_DOF_.find( i_var );
+			auto it = map_var_to_DOF_.find( i_var );
 			Size const i_dof( it->second );
 			// Overwrite values into dofs
 			dofs[ i_dof ] = vars[ i_var ];
@@ -231,7 +231,7 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 
 	for ( Size i_dof = 1; i_dof <= dofs.size(); ++i_dof ) {
 		if ( map_DOF_to_NM_.count( i_dof ) ) {
-			std::map< Size, Size >::const_iterator it = map_DOF_to_NM_.find( i_dof );
+			auto it = map_DOF_to_NM_.find( i_dof );
 			Size const i_tor( it->second );
 			tors_NM[ i_tor ] = dofs[ i_dof ] - dofs_for_pose0( i_dof );
 			//std::cout << "dof! " << i_dof << " " << tors_NM[i_tor];
@@ -251,7 +251,7 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 			Real dotsum( 0.0 );
 
 			// Get index/scale for the modes
-			std::map< Size, Size >::const_iterator it = map_var_to_modeno_.find( i_var );
+			auto it = map_var_to_modeno_.find( i_var );
 			Size const modeno( it->second );
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 			Real const scale( get_modescale( modeno ) );
@@ -263,7 +263,7 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 
 			// 2. Non-Normal Mode vars
 		} else {
-			std::map< Size, Size >::const_iterator it = map_var_to_DOF_.find( i_var );
+			auto it = map_var_to_DOF_.find( i_var );
 			Size const i_dof( it->second );
 			vars[ i_var ] = dofs[ i_dof ];
 
@@ -285,14 +285,14 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 		if ( var_type_[i_var].compare("NM") == 0 ) {
 
 			// Get index/scale for the modes
-			std::map< Size, Size >::const_iterator it = map_var_to_modeno_.find( i_var );
+			auto it = map_var_to_modeno_.find( i_var );
 			Size const modeno( it->second );
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 			Real const scale( get_modescale( modeno ) );
 
 			for ( Size i_tor = 1; i_tor <= eigv.size(); ++i_tor ) {
 				if ( map_NM_to_DOF_.count( i_tor ) ) {
-					std::map< Size, Size >::const_iterator it = map_NM_to_DOF_.find( i_tor );
+					auto it = map_NM_to_DOF_.find( i_tor );
 					Size const i_dof( it->second );
 
 					//std::cout << "NM map, itor/idof: " << i_tor << " " << i_dof;
@@ -304,7 +304,7 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 
 			// 2. Non-Normal Mode vars
 		} else {
-			std::map< Size, Size >::const_iterator it = map_var_to_DOF_.find( i_var );
+			auto it = map_var_to_DOF_.find( i_var );
 			Size const i_dof( it->second );
 			dEdvars[ i_var ] = dEddofs[ i_dof ];
 			//std::cout << "non-NM map, ivar/idof: " << i_var << " " << i_dof;
@@ -342,10 +342,9 @@ NormalModeMultifunc::get_dofs_map()
 
 	// 1. Rigid-Body DOF
 	int imap = 1;
-	for ( std::list< DOF_NodeOP >::const_iterator it=dof_nodes.begin(),
+	for ( auto it=dof_nodes.begin(),
 			it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
 		id::DOF_Type const type( (*it)->type() );
-		id::DOF_ID const dof( (*it)->dof_id() );
 
 		//std::cout << "check: " << imap << " " << dof.rsd() << " " << dof.type() << std::endl;
 

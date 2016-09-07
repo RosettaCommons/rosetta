@@ -27,6 +27,7 @@
 // C++ Headers
 #include <map>
 
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
@@ -60,16 +61,16 @@ public:
 	RBSegmentMover() {}
 
 	/// @brief constructor
-	RBSegmentMover( RBSegment const & seg ) :
-		segment_(seg) { }
+	RBSegmentMover( RBSegment  seg ) :
+		segment_(std::move(seg)) { }
 
 	/// @brief Apply the rigid-body fragment mover to a pose.  Must be defined by derived classes.
-	virtual void apply( core::pose::Pose & pose ) = 0;
+	void apply( core::pose::Pose & pose ) override = 0;
 
 	/// @brief Set the segment this mover is working on
 	virtual void set_segment( RBSegment const & seg) { segment_ = seg; }
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Returns: (a) the matrix that rotates global coordinates into local fragment coordinates and
 	/// (b) the center of rotation of the fragment.
@@ -189,7 +190,7 @@ public:
 	/// @li sigAxisT: the stdev of movement along the helical axis
 	/// @li sigOffAxisR: the stdev of rotation normal to the helical axis
 	/// @li sigOffAxisT: the stdev of movement normal to the helical axis
-	virtual void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0)
+	void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0) override
 	{
 		if ( sigAxisT != 0.0 ) sigAxisT_ = sigAxisT;
 		if ( sigAxisR != 0.0 ) sigAxisR_ = sigAxisR;
@@ -199,18 +200,18 @@ public:
 		std::cerr << "HelicalGaussianMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP( new HelicalGaussianMover(*this) ); }
+	protocols::moves::MoverOP clone() const override { return RBSegmentMoverOP( new HelicalGaussianMover(*this) ); }
 
 	/// @brief Apply a +1 or -1 residue "shift" to this helix
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// @brief Get the fragment center / matrix that rotates global coordinates into local fragment coordinates.
 	/// Defined such that +z points to the C-terminal end of the helix axis,
 	/// +x from the helix axis to the N-terminal residue
 	void getCoordinateTransformation(  core::pose::Pose const & pose,
 		numeric::xyzVector< core::Real > &rotationCenter,
-		numeric::xyzMatrix< core::Real > &coordinateTransform );
+		numeric::xyzMatrix< core::Real > &coordinateTransform ) override;
 };
 
 ///////////////////////////////////////////
@@ -257,16 +258,16 @@ public:
 	{}
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP
-	clone() const { return RBSegmentMoverOP( new SequenceShiftMover(*this) ); }
+	protocols::moves::MoverOP
+	clone() const override { return RBSegmentMoverOP( new SequenceShiftMover(*this) ); }
 
 	/// @brief set movement parameters.  ignore all input args
-	virtual void
-	set_movement( core::Real /*sigAxisR=0.0*/, core::Real /*sigAxisT=0.0*/, core::Real /*sigOffAxisR=0.0*/, core::Real /*sigOffAxisT=0.0*/) { }
+	void
+	set_movement( core::Real /*sigAxisR=0.0*/, core::Real /*sigAxisT=0.0*/, core::Real /*sigOffAxisR=0.0*/, core::Real /*sigOffAxisT=0.0*/) override { }
 
 	/// @brief Apply a + or - residue "shift" to this helix
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Apply a + or - residue "shift" to this helix
 	void
@@ -301,7 +302,7 @@ private:
 
 	bool verbose_;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 };
 
 ///////////////////////////////////////////
@@ -331,7 +332,7 @@ public:
 	/// @brief set movement parameters
 	/// @li sigR: the stdev of rotation
 	/// @li sigT: the stdev of movement
-	virtual void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0)
+	void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0) override
 	{
 		if ( sigAxisT != 0.0 ) sigma_trans = sigAxisT;
 		if ( sigAxisR != 0.0 ) sigma_rot = sigAxisR;
@@ -343,19 +344,19 @@ public:
 	}
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP( new GaussianRBSegmentMover(*this) ); }
+	protocols::moves::MoverOP clone() const override { return RBSegmentMoverOP( new GaussianRBSegmentMover(*this) ); }
 
 	/// @brief Randomly perturb the segment
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Get the fragment center / matrix that rotates global coordinates into local fragment coordinates.
 	/// Defined such that +z points to the C-terminal end of the helix axis,
 	/// +x from the helix axis to the N-terminal residue
 	void getCoordinateTransformation( core::pose::Pose const & pose,
 		numeric::xyzVector< core::Real > &rotationCenter,
-		numeric::xyzMatrix< core::Real > &coordinateTransform );
+		numeric::xyzMatrix< core::Real > &coordinateTransform ) override;
 };
 
 ///////////////////////////////////////////
@@ -405,7 +406,7 @@ public:
 	/// @li sigAxisT: the stdev of movement along the helical axis
 	/// @li sigOffAxisR: the stdev of rotation normal to the helical axis
 	/// @li sigOffAxisT: the stdev of movement normal to the helical axis
-	virtual void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0)
+	void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0) override
 	{
 		if ( sigAxisT != 0.0 ) sigAxisT_ = sigAxisT;
 		if ( sigAxisR != 0.0 ) sigAxisR_ = sigAxisR;
@@ -415,12 +416,12 @@ public:
 		std::cerr << "StrandTwistingMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP( new StrandTwistingMover(*this) ); }
+	protocols::moves::MoverOP clone() const override { return RBSegmentMoverOP( new StrandTwistingMover(*this) ); }
 
 	/// @brief Apply a +1 or -1 residue "shift" to this helix
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Get the fragment center / matrix that rotates global coordinates into local fragment coordinates.
 	/// Defined such that +z points to the C-terminal end of the helix axis,
@@ -429,7 +430,7 @@ public:
 		core::pose::Pose const & pose,
 		numeric::xyzVector< core::Real > &rotationCenter,
 		numeric::xyzMatrix< core::Real > &coordinateTransform
-	);
+	) override;
 };
 
 

@@ -58,7 +58,7 @@ ProtonResonance::ProtonResonance(
 : Resonance( label, freq, error, id, aa, intensity )
 {}
 
-ProtonResonance::~ProtonResonance() {}
+ProtonResonance::~ProtonResonance() = default;
 
 
 /// @brief match the proton and corresponding label atom at same time

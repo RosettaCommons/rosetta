@@ -24,7 +24,7 @@ namespace protocols {
 namespace features {
 
 ChargeChargeFeaturesCreator::ChargeChargeFeaturesCreator() {}
-ChargeChargeFeaturesCreator::~ChargeChargeFeaturesCreator() {}
+ChargeChargeFeaturesCreator::~ChargeChargeFeaturesCreator() = default;
 FeaturesReporterOP ChargeChargeFeaturesCreator::create_features_reporter() const {
 	return FeaturesReporterOP( new ChargeChargeFeatures );
 }

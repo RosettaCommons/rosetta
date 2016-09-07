@@ -101,7 +101,7 @@ BackboneSampler::BackboneSampler
 	scorefxn_repack_ = scorefxn->clone();
 }
 
-BackboneSampler::~BackboneSampler() {}
+BackboneSampler::~BackboneSampler() = default;
 
 protocols::moves::MoverOP
 BackboneSampler::clone() const {

@@ -43,6 +43,7 @@
 #include <basic/options/keys/flxbb.OptionKeys.gen.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
@@ -98,11 +99,11 @@ FlxbbDesignPack::FlxbbDesignPack(
 	PackerTaskCOP task,
 	FilterStructsOP filter ):
 	protocols::simple_moves::PackRotamersMover( scorefxn, task ),
-	filter_( filter )
+	filter_(std::move( filter ))
 {}
 
 /// @brief destructor
-FlxbbDesignPack::~FlxbbDesignPack(){}
+FlxbbDesignPack::~FlxbbDesignPack()= default;
 
 /// @brief main operation
 void
@@ -216,7 +217,7 @@ FlxbbDesign::FlxbbDesign( FlxbbDesign const & rval ) :
 {}
 
 /// @brief destructor
-FlxbbDesign::~FlxbbDesign(){}
+FlxbbDesign::~FlxbbDesign()= default;
 
 /// @brief clone this object
 FlxbbDesign::MoverOP FlxbbDesign::clone() const
@@ -433,7 +434,7 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 				2, scorefxn_design_, rlx_mover, filter1 ) ));
 			// 3rd stage: design only surface without relax and filter sequence of which totalcharge is non-zero
 			dts.push_back( DesignTaskOP( new DesignTask_Layer( false, false, true, true,
-				1, scorefxn_design_, 0, filter2 ) ));
+				1, scorefxn_design_, nullptr, filter2 ) ));
 
 		} else if ( layers.size() == 1 && layer_mode_ == "all" ) {
 			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, true, false,
@@ -514,7 +515,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 		if ( movemap_ ) {
 			TR << "Movemap will be overrided by the definition of movemap in blueprint " << std::endl;
 		}
-		runtime_assert( blueprint_ != 0 );
+		runtime_assert( blueprint_ != nullptr );
 		runtime_assert( pose.total_residue() == blueprint_->total_residue() );
 		movemap_ = MoveMapOP( new core::kinematics::MoveMap );
 		blueprint_->set_movemap( movemap_ );
@@ -558,11 +559,10 @@ void FlxbbDesign::apply( pose::Pose & pose )
 
 	// run
 	Size num_task( 0 );
-	for ( DesignTaskSet::iterator it= design_taskset_.begin(), ite= design_taskset_.end(); it != ite; ++it ) {
+	for (auto design_task : design_taskset_) {
 
 		num_task ++;
-		DesignTaskOP design_task( *it );
-		for ( Size i=1 ; i<=design_task->ncycle() ; i++ ) {
+			for ( Size i=1 ; i<=design_task->ncycle() ; i++ ) {
 
 			TR << "current_cycle/total_cycle: " << i << "/" << design_task->ncycle() << " in DesignTask: " << num_task << std::endl;
 
@@ -573,7 +573,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 				design_task->dump_packertask( TR );
 
 				// run design
-				runtime_assert( design_task->scorefxn() != 0 );
+				runtime_assert( design_task->scorefxn() != nullptr );
 				FlxbbDesignPack pack( design_task->scorefxn(), design_task->packertask(), design_task->filter_structs() );
 				pack.apply( pose );
 

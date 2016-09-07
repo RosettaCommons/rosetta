@@ -191,13 +191,13 @@ ReportToDB::ReportToDB(string const & type):
 ReportToDB::ReportToDB(
 	sessionOP db_session,
 	string const & batch_name,
-	string const & batch_description,
+	string  batch_description,
 	bool use_transactions,
 	Size cache_size) :
 	Mover("ReportToDB"),
-	db_session_(db_session),
+	db_session_(std::move(db_session)),
 	batch_name_(batch_name),
-	batch_description_(batch_description),
+	batch_description_(std::move(batch_description)),
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
 	remove_xray_virt_(false),
@@ -225,14 +225,14 @@ ReportToDB::ReportToDB(
 	string const & name,
 	sessionOP db_session,
 	string const & batch_name,
-	string const & batch_description,
+	string  batch_description,
 	bool use_transactions,
 	Size cache_size
 ) :
 	Mover(name),
-	db_session_(db_session),
+	db_session_(std::move(db_session)),
 	batch_name_(batch_name),
-	batch_description_(batch_description),
+	batch_description_(std::move(batch_description)),
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
 	remove_xray_virt_(false),
@@ -282,7 +282,7 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 {
 }
 
-ReportToDB::~ReportToDB(){}
+ReportToDB::~ReportToDB()= default;
 
 void
 ReportToDB::register_options() const {
@@ -592,8 +592,8 @@ ReportToDB::parse_my_tag(
 
 	task_factory_ = parse_task_operations(tag, data);
 
-	vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
-	vector0< TagCOP >::const_iterator end=tag->getTags().end();
+	auto begin=tag->getTags().begin();
+	auto end=tag->getTags().end();
 
 	for ( ; begin != end; ++begin ) {
 		TagCOP feature_tag= *begin;

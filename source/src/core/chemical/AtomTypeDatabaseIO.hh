@@ -35,7 +35,7 @@ public:
 
 	AtomTypeDatabaseIO();
 
-	virtual ~AtomTypeDatabaseIO();
+	~AtomTypeDatabaseIO() override;
 
 public: // store in a database information associated with an atom type set
 

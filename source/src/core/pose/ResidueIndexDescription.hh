@@ -49,7 +49,7 @@ public:
 		int resindex,
 		char insertion_code = ' ' // space character represents no insertion code
 	);
-	virtual ~ResidueIndexDescription();
+	~ResidueIndexDescription() override;
 
 	/// @breif Turn the internal data into a pose index (in the range from 1 to total residue)
 	/// or throw an exception if the index cannot be resolved.
@@ -98,7 +98,7 @@ public:
 	/// or throw an exception if the index cannot be resolved; the exception thrown by this
 	/// class if the resolution fails includes a statement of the file name and the line
 	/// number in that file.
-	Size resolve_index( core::pose::Pose const & p ) const;
+	Size resolve_index( core::pose::Pose const & p ) const override;
 
 	std::string const & fname() const { return fname_; }
 	Size linenum() const { return linenum_; }

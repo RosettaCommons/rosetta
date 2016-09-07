@@ -40,16 +40,16 @@ public:
 	ThermodynamicObserver();
 
 	/// @brief Destructor.
-	virtual
-	~ThermodynamicObserver();
+	
+	~ThermodynamicObserver() override;
 
 	/// @brief Callback executed after each move is made.
 	/// @details Even though the argument is a reference to a non-const pose,
 	/// this method should not make any changes to the pose.  Making changes to
 	/// the pose is the role of the ThermodynamicMover class.  The role of this
 	/// class is to simply observe the poses being generated.
-	virtual
-	void apply( core::pose::Pose& ) {};
+	
+	void apply( core::pose::Pose& ) override {};
 
 	/// @brief Callback executed before any Monte Carlo trials are attempted.
 	virtual

@@ -47,9 +47,9 @@ namespace filters {
 class Filter : public utility::pointer::ReferenceCount {
 public:
 	Filter();
-	Filter( std::string const  & );
+	Filter( std::string ); // move-constructed
 	Filter( Filter const & );
-	virtual ~Filter();
+	~Filter() override;
 	// allows reporting of filter values to a stream
 	virtual void report( std::ostream &, core::pose::Pose const & ) const {}
 
@@ -95,7 +95,7 @@ protected:
 class FilterCollection : public utility::pointer::ReferenceCount {
 public:
 
-	virtual ~FilterCollection();
+	~FilterCollection() override;
 
 	/// @brief Returns true if the given pose passes all filters, false otherwise.
 	bool apply( core::pose::Pose const & pose ) const;

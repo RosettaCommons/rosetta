@@ -54,6 +54,7 @@
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/file/FileName.hh>
 
 // Numeric Headers
@@ -105,7 +106,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.pmut_scan.PointMutScanDriver" )
 ///
 PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_file_names, bool double_mutant_scan, std::string list_file, bool output_mutant_structures ) :
 	double_mutant_scan_( double_mutant_scan ),
-	mutants_list_file_( list_file ),
+	mutants_list_file_(std::move( list_file )),
 	output_mutant_structures_( output_mutant_structures ),
 	pdb_file_names_( pdb_file_names ),
 	DDG_cutoff_(0),
@@ -950,7 +951,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	// this needs to get recreated each time around
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( calculator_name );
-	mutant_nb_calculator = NULL;
+	mutant_nb_calculator = nullptr;
 
 	return;
 

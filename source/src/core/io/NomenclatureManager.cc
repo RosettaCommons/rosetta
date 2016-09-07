@@ -51,7 +51,7 @@ using core::io::NomenclatureManager;
 template <> std::mutex utility::SingletonBase< NomenclatureManager >::singleton_mutex_ {};
 template <> std::atomic< NomenclatureManager * > utility::SingletonBase< NomenclatureManager >::instance_( 0 );
 #else
-template <> NomenclatureManager * utility::SingletonBase< NomenclatureManager >::instance_( 0 );
+template <> NomenclatureManager * utility::SingletonBase< NomenclatureManager >::instance_( nullptr );
 #endif
 
 }  // namespace utility
@@ -77,7 +77,7 @@ NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 
 	if ( option[ OptionKeys::in::alternate_3_letter_codes ].active() ) {  // Are alternate codes allowed?
 		AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
-		AltCodeMap::const_iterator alt_code_pair( alt_codes.find( pdb_code ) );
+		auto alt_code_pair( alt_codes.find( pdb_code ) );
 		if ( alt_code_pair != alt_codes.end() ) {  // Is there an alternate for this code?
 			// Get the value of this key/value pair.
 			pair< string, string > const & rosetta_names( alt_code_pair->second );

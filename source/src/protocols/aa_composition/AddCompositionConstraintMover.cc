@@ -79,7 +79,7 @@ AddCompositionConstraintMover::AddCompositionConstraintMover( AddCompositionCons
 
 /// @brief Destructor
 ///
-AddCompositionConstraintMover::~AddCompositionConstraintMover(){}
+AddCompositionConstraintMover::~AddCompositionConstraintMover()= default;
 
 /// @brief Copy this object and return a pointer to the copy.
 ///

@@ -35,7 +35,7 @@ public:
 
 	// string constructor
 	DnaDesignDef( std::string const & );
-	virtual ~DnaDesignDef();
+	~DnaDesignDef() override;
 };
 
 std::ostream & operator << ( std::ostream &, DnaDesignDef const & );

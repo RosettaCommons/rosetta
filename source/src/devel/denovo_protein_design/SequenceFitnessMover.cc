@@ -116,7 +116,7 @@ SequenceFitnessMover::SequenceFitnessMover(
 	Mover::type( "SequenceFitnessMover" );
 }
 
-SequenceFitnessMover::~SequenceFitnessMover(){}
+SequenceFitnessMover::~SequenceFitnessMover() = default;
 
 }//DenovoProteinDesign
 }//devel

@@ -89,7 +89,7 @@ CircularPermutation::CircularPermutation( CircularPermutation const & rval ) :
 
 
 /// @brief default destructor
-CircularPermutation::~CircularPermutation() {}
+CircularPermutation::~CircularPermutation() = default;
 
 
 /// @brief clone this object

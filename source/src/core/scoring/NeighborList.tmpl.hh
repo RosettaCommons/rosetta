@@ -394,7 +394,7 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include <time.h>
+#include <ctime>
 #include <typeinfo>
 #include <utility>
 #include <vector>

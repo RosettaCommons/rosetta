@@ -155,7 +155,7 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	sfxn_ = sfxn->clone();
 }
 
-NormalModeRelaxMover::~NormalModeRelaxMover(){}
+NormalModeRelaxMover::~NormalModeRelaxMover()= default;
 
 void
 NormalModeRelaxMover::set_default()

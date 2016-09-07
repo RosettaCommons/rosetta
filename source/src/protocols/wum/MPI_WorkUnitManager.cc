@@ -73,7 +73,7 @@ core::Real get_time(){
 #ifdef USEMPI
 	 return MPI_Wtime();
 #else
-	return (core::Real) time(NULL);
+	return (core::Real) time(nullptr);
 #endif
 }
 
@@ -93,7 +93,7 @@ MPI_WorkUnitManager::MPI_WorkUnitManager( char machine_letter  ):
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	start_time_wall_clock_ = time(NULL);
+	start_time_wall_clock_ = time(nullptr);
 	timing_last_start_time_ = 0;
 	timing_last_type_ = TIMING_CPU;
 	reset_timing_stats();
@@ -370,19 +370,19 @@ core::Real MPI_WorkUnitManager::start_timer( MPI_TIMING timing_mode ) const
 }
 
 void MPI_WorkUnitManager::print_stats_auto(){
-	if ( time(NULL) - last_stats_ > 60 ) {
+	if ( time(nullptr) - last_stats_ > 60 ) {
 		MPI_WorkUnitManager::print_stats();
-		last_stats_ = time(NULL);
+		last_stats_ = time(nullptr);
 	}
 }
 
 void MPI_WorkUnitManager::reset_timing_stats(){
-	for ( core::Size i=0; i<TIMING_end; i++ ) timing_total_[i] = 0;
+	for (double & i : timing_total_) i = 0;
 }
 
 
 long MPI_WorkUnitManager::wall_time() const{
-	return time(NULL) - start_time_wall_clock_;
+	return time(nullptr) - start_time_wall_clock_;
 }
 
 void MPI_WorkUnitManager::print_stats( )

@@ -18,6 +18,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 
+#include <utility>
 #include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -37,7 +38,7 @@ public:
 	AtomCountFilter(std::string chain, core::Size heavy_atom_limit ) :
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "AtomCount" ),
-		chain_(chain),
+		chain_(std::move(chain)),
 		atom_limit_(heavy_atom_limit)
 	{}
 
@@ -49,18 +50,18 @@ public:
 
 	{};
 
-	virtual ~AtomCountFilter(){};
+	~AtomCountFilter() override= default;
 
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new AtomCountFilter( *this ) );
 	}
 
-	protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override{
 		return protocols::filters::FilterOP( new AtomCountFilter() );
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose ) override;
 
 private:
 	std::string chain_;

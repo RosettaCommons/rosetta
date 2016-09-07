@@ -108,7 +108,7 @@ ShakeStructureMover::ShakeStructureMover(core::scoring::ScoreFunctionOP s) :
 	mc_temp(0),
 	ramp_fa_rep(false),
 	min_cst(false),
-	scorefxn(s),
+	scorefxn(std::move(s)),
 	ensemble_ca_rmsd(-1),
 	ensemble_ca_rmsd_tolerance(0.75),
 	is_properly_initialized(false),
@@ -130,7 +130,7 @@ ShakeStructureMover::ShakeStructureMover(
 	mc_temp(temperature),
 	ramp_fa_rep(false),
 	min_cst(false),
-	scorefxn(s),
+	scorefxn(std::move(s)),
 	ensemble_ca_rmsd(-1),
 	ensemble_ca_rmsd_tolerance(0.75),
 	is_properly_initialized(false),
@@ -152,7 +152,7 @@ ShakeStructureMover::ShakeStructureMover(
 	mc_temp(0),
 	ramp_fa_rep(false),
 	min_cst(false),
-	scorefxn(s),
+	scorefxn(std::move(s)),
 	ensemble_ca_rmsd(ens_diversity),
 	ensemble_ca_rmsd_tolerance(ens_div_tolerance),
 	is_properly_initialized(false),
@@ -166,7 +166,7 @@ ShakeStructureMover::ShakeStructureMover(
 	testing_phase(false)
 {}
 
-ShakeStructureMover::~ShakeStructureMover(){}
+ShakeStructureMover::~ShakeStructureMover()= default;
 
 void
 ShakeStructureMover::set_skip_low_temp_phase(bool truefalse){

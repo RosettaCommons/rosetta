@@ -93,7 +93,7 @@ public:
 		Size const task_scaling,
 		MoverOP const & mover,
 		Real const temperature = 0.0,
-		String const & sample_type = "low",
+		String sample_type = "low",
 		bool const drift = true
 	);
 
@@ -117,27 +117,27 @@ public:
 		MoverOP const & mover,
 		TaskFactoryOP factory_in,
 		Real const temperature = 0.0,
-		String const & sample_type = "low",
+		String sample_type = "low",
 		bool const drift = true
 	);
 
 
 	/// @brief destructor
-	~GenericMonteCarloMover();
+	~GenericMonteCarloMover() override;
 
 	/// @brief create copy constructor
-	virtual MoverOP clone() const;
+	MoverOP clone() const override;
 
 	/// @brief create this type of objectt
-	virtual MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 	/// @brief initialize object used in constructor
 	void initialize();
 
 	/// @brief apply GenericMonteCarloMover (Mover)
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-	virtual String get_name() const;
+	String get_name() const override;
 
 	/// @brief reset MC iterations, with pose used for the last & best structures
 	void reset( Pose & pose );
@@ -231,7 +231,7 @@ public: // mutators
 	void set_task_scaling( Size const scaling );
 
 	/// @brief set mover
-	void set_mover( MoverOP mover );
+	void set_mover( MoverOP mover ) override;
 
 	/// @brief Pose is evaluated by ScoreFunctionOP during MC trials
 	void set_scorefxn( ScoreFunctionOP const & sfxn );
@@ -268,13 +268,13 @@ public: // mutators
 	/// @brief show counters of ntrial and acceptance ratio
 	void show_counters( std::ostream & out ) const;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const &
-	);
+	) override;
 
 	/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
@@ -315,7 +315,7 @@ public: // mutators
 	utility::vector1< Real > temperatures() const { return temperatures_; }
 	void temperatures( utility::vector1< Real > const & temps ) { temperatures_ = temps; }
 	bool recover_low() const { return recover_low_; }
-	MoverOP mover() const { return mover_; }
+	MoverOP mover() const override { return mover_; }
 	utility::vector1< FilterOP > const & filters() const { return filters_; }
     utility::vector1< bool > const & adaptive() const { return adaptive_; }
     

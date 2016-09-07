@@ -43,12 +43,12 @@ protected:
 
 public:
 	MedalMover();
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	// -- jd2 -- //
-	std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 protected:
 	/// @brief Closes chainbreaks in <pose>

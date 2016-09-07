@@ -62,7 +62,7 @@ public:
 		atomno_( 0 ),
 		icoor_(),
 		index_( 0 ),
-		vertex_(0)
+		vertex_(nullptr)
 	{}
 
 	/// @brief constructor with atom index number

@@ -64,6 +64,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -130,7 +131,7 @@ SecStructFinder::SecStructFinder(
 	bool cart,
 	bool constrain
 ):
-	residue_( residue ),
+	residue_(std::move( residue )),
 	min_length_( min_length ),
 	//max_length_( max_length ),
 	bin_size_( bin_size ),
@@ -353,7 +354,7 @@ SecStructFinder::apply( Pose & pose )
 	TR << std::endl;
 
 
-	core::conformation::ResidueOP new_rsd( NULL );
+	core::conformation::ResidueOP new_rsd( nullptr );
 	new_rsd = conformation::ResidueFactory::create_residue( restypes[1] );
 	pose.append_residue_by_jump( *new_rsd, 1 );
 	for ( Size i = 2; i <= min_length_; ++i ) {
@@ -422,7 +423,7 @@ SecStructFinder::apply( Pose & pose )
 			show_current_dihedrals( number_dihedral_sets, uniqs, dihedrals );
 
 			Real score = ( *score_fxn_ ) ( pose );
-			TR << "score is " << score << std::endl;;
+			TR << "score is " << score << std::endl;
 
 			if ( min_everything_ ) {
 

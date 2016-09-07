@@ -44,7 +44,7 @@ protected:
 	typedef utility::vector1<RigidScoreCOP> Scores;
 public:
 
-	virtual ~RigidScore() {}
+	~RigidScore() override = default;
 
 	virtual core::Real score( Xforms const & x1, Xforms const & x2 ) const = 0;
 
@@ -57,7 +57,7 @@ public:
 class CBScore : public RigidScore {
 public:
 	// Undefined, commenting out to fix PyRosetta build  CBScore(Real clash_dis, Real contact_dis);
-	virtual ~CBScore(){}
+	~CBScore() override= default;
 	CBScore(
 		Pose const & pose1,
 		Pose const & pose2,
@@ -72,8 +72,8 @@ public:
 		core::id::AtomID_Map<core::Real> const & weights1,
 		core::id::AtomID_Map<core::Real> const & weights2
 	);
-	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
-	std::string type() const { return "CBScore"; }
+	core::Real score( Xforms const & x1, Xforms const & x2 ) const override;
+	std::string type() const override { return "CBScore"; }
 	// Undefinded, commenting out to fix PyRosetta build  Real dist2_score( Real const & sqdist ) const;
 	//private:
 	bool const hash_pose1_;
@@ -104,13 +104,13 @@ public:
 		Pose const & pose2,
 		Size max_loop_len,
 		Size lookup_radius,
-		std::string const & outtag
+		std::string outtag
 	);
-	virtual ~LinkerScore(){}
-	core::Real  score( Xforms const & x1, Xforms const & x2 ) const;
+	~LinkerScore() override= default;
+	core::Real  score( Xforms const & x1, Xforms const & x2 ) const override;
 	// Undefined, commenting out to fix PyRosetta build  void dump_linkers( Xform const & x1, Xform const & x2 ) const;
 	bool dump_linkers( Xform const & x1, Xform const & x2, std::string const & out_perfix ) const;
-	std::string type() const { return "LinkerScore"; }
+	std::string type() const override { return "LinkerScore"; }
 private:
 	static protocols::loophash::LoopHashLibraryOP loop_hash_library_;
 	Sizes const loopsizes_;
@@ -137,9 +137,9 @@ public:
 		Pose const & pose2,
 		core::scoring::constraints::ConstraintSet const & cstset
 	);
-	virtual ~ConstraintSetScore(){}
-	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
-	std::string type() const { return "ConstraintSetScore"; }
+	~ConstraintSetScore() override= default;
+	core::Real score( Xforms const & x1, Xforms const & x2 ) const override;
+	std::string type() const override { return "ConstraintSetScore"; }
 private:
 	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
 	// Pose const & pose1_;
@@ -154,7 +154,7 @@ private:
 class EdgeStandScore : public RigidScore {
 public:
 	//EdgeStandScore();
-	virtual ~EdgeStandScore(){}
+	~EdgeStandScore() override= default;
 	// Undefined, commenting out to fix PyRosetta build  core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
 	Vecs donors,acceptors;
@@ -163,7 +163,7 @@ private:
 class HelixScore : public RigidScore {
 public:
 	//HelixScore();
-	virtual ~HelixScore(){}
+	~HelixScore() override= default;
 	// Undefined, commenting out to fix PyRosetta build  core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
 };
@@ -171,7 +171,7 @@ private:
 class BuriedPolarScore : public RigidScore {
 public:
 	//BuriedPolarScore(); // c'tor should store the buriend unsat polar coords
-	virtual ~BuriedPolarScore(){}
+	~BuriedPolarScore() override= default;
 	// Undefined, commenting out to fix PyRosetta build
 	// core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
@@ -189,11 +189,11 @@ public:
 	);
 	void add_score(RigidScoreCOP score, Real weight);
 
-	virtual ~JointScore(){}
-	std::string type() const { return "JointScore"; }
-	void show(std::ostream & out                                      , int width=10) const;
-	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const;
-	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
+	~JointScore() override= default;
+	std::string type() const override { return "JointScore"; }
+	void show(std::ostream & out                                      , int width=10) const override;
+	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const override;
+	core::Real score( Xforms const & x1, Xforms const & x2 ) const override;
 private:
 	Scores scores_;
 	Reals weights_;

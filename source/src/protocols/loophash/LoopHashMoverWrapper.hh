@@ -40,18 +40,18 @@ class LoopHashMoverWrapper : public protocols::moves::Mover
 public:
 	LoopHashMoverWrapper();
 
-	void apply( core::pose::Pose & pose );
-	core::pose::PoseOP get_additional_output();
+	void apply( core::pose::Pose & pose ) override;
+	core::pose::PoseOP get_additional_output() override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new LoopHashMoverWrapper( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopHashMoverWrapper ); }
-	virtual ~LoopHashMoverWrapper();
+		core::pose::Pose const & ) override;
+	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new LoopHashMoverWrapper( *this ) ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopHashMoverWrapper ); }
+	~LoopHashMoverWrapper() override;
 
 	Real min_bbrms() const;
 	void min_bbrms( Real const min_bbrms );

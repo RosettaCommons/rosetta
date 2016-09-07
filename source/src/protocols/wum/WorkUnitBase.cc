@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -44,7 +45,7 @@ WorkUnitBase::WorkUnitBase ( )
 {
 	TR.Debug << "Setting WorkUnitBaseType" << std::endl;
 	header.id_ = 0;
-	header.unixtime_creation_ = time(NULL);
+	header.unixtime_creation_ = time(nullptr);
 	header.unixtime_start_ = 0;
 	header.unixtime_stop_ = 0;
 	header.extra_data_1_=0;
@@ -194,11 +195,11 @@ std::string WorkUnitBase::get_options() const {
 
 
 void WorkUnitBase::set_run_start(){
-	header.unixtime_start_ = time(NULL);
+	header.unixtime_start_ = time(nullptr);
 }
 
 void WorkUnitBase::set_run_stop(){
-	header.unixtime_stop_ = time(NULL);
+	header.unixtime_stop_ = time(nullptr);
 }
 
 core::Size WorkUnitBase::get_run_time(){
@@ -236,7 +237,7 @@ WorkUnit_SilentStructStore::deserialize()
 
 WorkUnit_MoverWrapper::WorkUnit_MoverWrapper( protocols::moves::MoverOP the_mover ):
 	WorkUnit_SilentStructStore(),
-	the_mover_(the_mover )
+	the_mover_(std::move(the_mover ))
 {
 	// Figure out mover
 	set_defaults();
@@ -260,7 +261,7 @@ WorkUnit_MoverWrapper::run(){
 		TR.Debug << "Applying the mover .. " << std::endl;
 		for ( SilentStructStore::const_iterator it = decoys().begin() ; it != decoys().end(); ++it ) {
 			Pose pose;
-			runtime_assert(*it != 0);
+			runtime_assert(*it != nullptr);
 			(*it)->fill_pose( pose );
 			the_mover_->apply( pose );
 			result_store.add( pose );

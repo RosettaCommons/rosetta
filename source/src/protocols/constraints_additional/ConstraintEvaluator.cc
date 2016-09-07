@@ -44,6 +44,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
+#include <utility>
 #include <utility/file/file_sys_util.hh>
 
 #include <core/id/SequenceMapping.hh>
@@ -62,7 +63,7 @@ using namespace scoring;
 using namespace constraints;
 
 ConstraintEvaluator::ConstraintEvaluator( std::string tag, ConstraintSet const& cst, Size /*viol_level*/, Real /*threshold*/,  Size max_seq_sep )
-: name_( tag ),
+: name_(std::move( tag )),
 	constraints_( core::scoring::constraints::ConstraintSetOP( new ConstraintSet( cst ) ) ),
 	tried_fullatom_pose_( false ),
 	tried_centroid_pose_( false ),
@@ -75,7 +76,7 @@ ConstraintEvaluator::ConstraintEvaluator( std::string tag, ConstraintSet const& 
 {}
 
 ConstraintEvaluator::ConstraintEvaluator( std::string tag, ConstraintCOPs const& csts, Size /*viol_level*/, Real /*threshold*/, Size max_seq_sep )
-: name_( tag ),
+: name_(std::move( tag )),
 	constraints_( core::scoring::constraints::ConstraintSetOP( new ConstraintSet() ) ),
 	tried_fullatom_pose_( false ),
 	tried_centroid_pose_( false ),
@@ -90,11 +91,11 @@ ConstraintEvaluator::ConstraintEvaluator( std::string tag, ConstraintCOPs const&
 }
 
 ConstraintEvaluator::ConstraintEvaluator( std::string tag, std::string file_name, Size /*viol_level*/, Real /*threshold*/, Size max_seq_sep )
-: name_( tag ),
+: name_(std::move( tag )),
 	constraints_( /* NULL */ ),
 	tried_fullatom_pose_( false ),
 	tried_centroid_pose_( false ),
-	file_name_( file_name ),
+	file_name_(std::move( file_name )),
 	// viol_level_ ( viol_level  ),
 	// threshold_( threshold ),
 	max_seq_sep_( max_seq_sep ),
@@ -116,11 +117,11 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 	if ( !now_cst ) {
 
 		if ( pose.is_fullatom() && tried_fullatom_pose_ ) {
-			pose.constraint_set( NULL );
+			pose.constraint_set( nullptr );
 			return;
 		}
 		if ( !pose.is_fullatom() && tried_centroid_pose_ ) {
-			pose.constraint_set( NULL );
+			pose.constraint_set( nullptr );
 			return;
 		}
 
@@ -142,8 +143,8 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 		} catch ( core::id::EXCN_AtomNotFound& excn ) {
 			tr.Warning << " cannot use constraint file " << file_name_ << " on " << ( pose.is_fullatom() ? " fullatom " : " centroid " ) << " pose " << std::endl;
 			tr.Warning << " because: " << excn << std::endl;
-			now_cst = NULL;
-			pose.constraint_set( NULL );
+			now_cst = nullptr;
+			pose.constraint_set( nullptr );
 			if ( pose.is_fullatom() ) tried_fullatom_pose_ = true;
 			else tried_centroid_pose_ = true;
 			return;
@@ -155,9 +156,9 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 
 	}
 
-	runtime_assert( now_cst != 0 );
+	runtime_assert( now_cst != nullptr );
 
-	constraints_additional::MaxSeqSepConstraintSetOP new_cst( NULL );
+	constraints_additional::MaxSeqSepConstraintSetOP new_cst( nullptr );
 	if ( max_seq_sep_ > 0 ) {
 		new_cst = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet( *now_cst, pose.fold_tree() ) );
 		new_cst->set_max_seq_sep( max_seq_sep_ );

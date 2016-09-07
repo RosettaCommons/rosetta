@@ -50,12 +50,12 @@ class PseudocontactShiftEnergyController_Ts1 : public TopologyClaimer {
 public:
 	PseudocontactShiftEnergyController_Ts1(); //for factory
 
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts1( *this ) );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -63,20 +63,20 @@ public:
 		return "PseudocontactShiftEnergyController_Ts1";
 	}
 
-	virtual bool read_tag( std::string tag, std::istream & );
+	bool read_tag( std::string tag, std::istream & ) override;
 
-	virtual void set_defaults(); //eg before reading starts.
+	void set_defaults() override; //eg before reading starts.
 
 
-	virtual void add_mover(
+	void add_mover(
 		moves::RandomMover& /* random_mover */,
 		core::pose::Pose const& /*pose*/,
 		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
 		core::scoring::ScoreFunction const& /*scorefxn*/,
 		core::Real /* progress */ /* progress within stage */
-	);
+	) override;
 
-	virtual void init_after_reading();
+	void init_after_reading() override;
 
 private:
 	void

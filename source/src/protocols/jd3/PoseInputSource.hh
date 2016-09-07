@@ -46,8 +46,8 @@ public:
 
 public:
 	PoseInputSource();
-	PoseInputSource( std::string const & origin );
-	virtual ~PoseInputSource();
+	PoseInputSource( std::string origin ); // move-constructed
+	~PoseInputSource() override;
 
 	bool operator == ( PoseInputSource const & rhs ) const;
 	bool operator != ( PoseInputSource const & rhs ) const;

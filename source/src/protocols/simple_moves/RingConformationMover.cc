@@ -97,7 +97,7 @@ RingConformationMover::operator=( RingConformationMover const & object_to_copy )
 }
 
 // Destructor
-RingConformationMover::~RingConformationMover() {}
+RingConformationMover::~RingConformationMover() = default;
 
 
 // Standard Rosetta methods ///////////////////////////////////////////////////

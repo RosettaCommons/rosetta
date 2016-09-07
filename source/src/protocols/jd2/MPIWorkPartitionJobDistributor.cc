@@ -87,8 +87,7 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 /// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-MPIWorkPartitionJobDistributor::~MPIWorkPartitionJobDistributor()
-{}
+MPIWorkPartitionJobDistributor::~MPIWorkPartitionJobDistributor() = default;
 
 /// @details All processors will get the same Jobs object; this function determines which slice belongs to a particular
 ///processor determined solely by its mpi rank and the number of processors, no communication needed

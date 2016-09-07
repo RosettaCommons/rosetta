@@ -72,10 +72,10 @@ public:
 
 	void apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "DomainAssembly";
 	}
 

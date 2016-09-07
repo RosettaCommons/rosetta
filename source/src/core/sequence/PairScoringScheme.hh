@@ -50,7 +50,7 @@ public:
 		type("Pair");
 	}
 
-	ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		// maybe clone the scoring_schemes() if object re-use ever causes a weird
 		// problem.
 		return ScoringSchemeOP( new PairScoringScheme(
@@ -81,16 +81,16 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~PairScoringScheme() {}
+	~PairScoringScheme() override = default;
 
-	virtual void read_from_file( utility::file::FileName const & fn );
+	void read_from_file( utility::file::FileName const & fn ) override;
 
-	virtual Real score(
+	Real score(
 		SequenceOP seq1,
 		SequenceOP seq2,
 		core::Size pos1,
 		core::Size pos2
-	);
+	) override;
 
 private:
 	utility::vector1< utility::vector1< core::Real > > pairs_;

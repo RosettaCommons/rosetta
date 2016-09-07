@@ -68,11 +68,7 @@ RandomPositionRotationMover::RandomPositionRotationMover(
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-RandomPositionRotationMover::RandomPositionRotationMover( RandomPositionRotationMover const & src ) :
-	protocols::moves::Mover( src ),
-	rot_mag_( src.rot_mag_ ),
-	rb_jump_( src.rb_jump_ )
-{}
+RandomPositionRotationMover::RandomPositionRotationMover( RandomPositionRotationMover const & ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -91,7 +87,7 @@ RandomPositionRotationMover::operator=( RandomPositionRotationMover const & src 
 }
 
 /// @brief Destructor
-RandomPositionRotationMover::~RandomPositionRotationMover() {}
+RandomPositionRotationMover::~RandomPositionRotationMover() = default;
 
 /////////////////////
 /// Mover Methods ///
@@ -158,11 +154,7 @@ RandomPositionTranslationMover::RandomPositionTranslationMover(
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-RandomPositionTranslationMover::RandomPositionTranslationMover( RandomPositionTranslationMover const & src ) :
-	protocols::moves::Mover( src ),
-	trans_mag_( src.trans_mag_ ),
-	rb_jump_( src.rb_jump_ )
-{}
+RandomPositionTranslationMover::RandomPositionTranslationMover( RandomPositionTranslationMover const & ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -180,7 +172,7 @@ RandomPositionTranslationMover::operator=( RandomPositionTranslationMover const 
 }
 
 /// @brief Destructor
-RandomPositionTranslationMover::~RandomPositionTranslationMover() {}
+RandomPositionTranslationMover::~RandomPositionTranslationMover() = default;
 
 /////////////////////
 /// Mover Methods ///

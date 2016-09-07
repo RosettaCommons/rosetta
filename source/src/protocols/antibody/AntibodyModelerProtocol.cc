@@ -91,7 +91,7 @@ AntibodyModelerProtocol::AntibodyModelerProtocol() : Mover() {
 }
 
 // default destructor
-AntibodyModelerProtocol::~AntibodyModelerProtocol() {}
+AntibodyModelerProtocol::~AntibodyModelerProtocol() = default;
 
 //clone
 protocols::moves::MoverOP
@@ -146,7 +146,7 @@ void AntibodyModelerProtocol::set_default() {
 	h3_perturb_type_ = "legacy_perturb_ccd"; // legacy_perturb_ccd, kic, ccd
 	h3_refine_type_  = "legacy_refine_ccd"; // legacy_refine, kic, ccd
 
-	cdr_constraint_ = NULL;
+	cdr_constraint_ = nullptr;
 }
 
 
@@ -272,7 +272,7 @@ void AntibodyModelerProtocol::init_from_options() {
 		core::import_pose::pose_from_file( *native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		set_native_pose( native_pose );
 	} else {
-		set_native_pose(NULL);
+		set_native_pose(nullptr);
 	}
 
 	TR <<  "Finish Reading and Setting Options !!!" << std::endl;

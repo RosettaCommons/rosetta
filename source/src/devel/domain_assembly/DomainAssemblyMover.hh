@@ -43,11 +43,11 @@ class DomainAssemblyMover : public protocols::moves::Mover
 public:
 
 	DomainAssemblyMover();
-	virtual ~DomainAssemblyMover();
-	virtual void apply( core::pose::Pose & pose );
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	~DomainAssemblyMover() override;
+	void apply( core::pose::Pose & pose ) override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 protected: // protocol stages
 	virtual void run_fullatom_stage( core::pose::Pose & pose );

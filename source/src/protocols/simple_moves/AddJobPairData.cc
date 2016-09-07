@@ -48,20 +48,9 @@ AddJobPairData::AddJobPairData() :
 
 }
 
-AddJobPairData::AddJobPairData(AddJobPairData const & src) : Mover(src),
-	string_key_(src.string_key_),
-	string_value_(src.string_value_),
-	real_value_(src.real_value_),
-	value_type_(src.value_type_),
-	ligand_chain_(src.ligand_chain_)
-{
+AddJobPairData::AddJobPairData(AddJobPairData const & ) = default;
 
-}
-
-AddJobPairData::~AddJobPairData()
-{
-
-}
+AddJobPairData::~AddJobPairData() = default;
 
 void AddJobPairData::apply( Pose & pose)
 {

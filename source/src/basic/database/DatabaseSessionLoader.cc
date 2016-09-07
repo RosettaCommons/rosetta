@@ -46,7 +46,7 @@ DatabaseSessionLoader::create_resource(
 ///// DatabaseSessionOptionsCreator /////
 DatabaseSessionOptionsCreator::DatabaseSessionOptionsCreator() {}
 
-DatabaseSessionOptionsCreator::~DatabaseSessionOptionsCreator() {}
+DatabaseSessionOptionsCreator::~DatabaseSessionOptionsCreator() = default;
 
 basic::resource_manager::ResourceOptionsOP
 DatabaseSessionOptionsCreator::create_options() const {

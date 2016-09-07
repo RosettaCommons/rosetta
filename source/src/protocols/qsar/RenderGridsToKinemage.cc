@@ -72,24 +72,7 @@ RenderGridsToKinemage::RenderGridsToKinemage() :
 
 }
 
-RenderGridsToKinemage::RenderGridsToKinemage(
-	RenderGridsToKinemage const & mover
-) :
-	protocols::moves::Mover(mover),
-	filename_(mover.filename_),
-	color_mode_(mover.color_mode_),
-	gradient_bins_(mover.gradient_bins_),
-	stride_(mover.stride_),
-	grid_name_(mover.grid_name_),
-	color_(mover.color_),
-	low_color_(mover.low_color_),
-	zero_color_(mover.zero_color_),
-	high_color_(mover.high_color_),
-	color_data_(mover.color_data_),
-	grid_(mover.grid_)
-{
-
-}
+RenderGridsToKinemage::RenderGridsToKinemage( RenderGridsToKinemage const & ) = default;
 
 RenderGridsToKinemage::~RenderGridsToKinemage()
 {
@@ -316,7 +299,7 @@ void RenderGridsToKinemage::write_points(utility::io::ozstream & kin_file)
 		std::list<std::pair<core::Vector, core::Real> > point_list(
 			grid_->get_point_value_list_within_range(current_color.lower_bound,current_color.upper_bound,stride_));
 
-		std::list<std::pair<core::Vector, core::Real> >::iterator point_iterator = point_list.begin();
+		auto point_iterator = point_list.begin();
 		for ( ; point_iterator != point_list.end(); ++point_iterator ) {
 			core::Vector coords(point_iterator->first);
 			core::Real value(point_iterator->second);

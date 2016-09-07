@@ -100,7 +100,7 @@ DesignRepackMover::get_name() const {
 
 void
 DesignRepackMover::clear_task(){
-	task_ = NULL;
+	task_ = nullptr;
 }
 
 void
@@ -336,9 +336,8 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	}
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
 	utility::vector0< TagCOP > const & repack_tags( tag->getTags() );
-	for ( utility::vector0< TagCOP >::const_iterator repack_it=repack_tags.begin(); repack_it!=repack_tags.end(); ++repack_it ) {
-		TagCOP const repack_ptr = *repack_it;
-		if ( repack_ptr->getName() == "residue" ) {
+	for (auto repack_ptr : repack_tags) {
+			if ( repack_ptr->getName() == "residue" ) {
 			core::Size const resnum( core::pose::get_resnum( repack_ptr, pose ) );
 			target_residues_.push_back( resnum );
 		}
@@ -402,7 +401,7 @@ DesignRepackMover::task_factory() const {
 	return task_factory_;
 }
 
-DesignRepackMover::~DesignRepackMover() {}
+DesignRepackMover::~DesignRepackMover() = default;
 
 core::scoring::ScoreFunctionOP
 DesignRepackMover::scorefxn_repack() const {

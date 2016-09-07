@@ -52,34 +52,34 @@ public:
 
 public:
 	FragSetCollection();
-	~FragSetCollection();
+	~FragSetCollection() override;
 	FragSetCollection( FragSetCollection const & );
 
-	virtual FragSetOP clone() const;
-	virtual FragSetOP empty_clone() const;
+	FragSetOP clone() const override;
+	FragSetOP empty_clone() const override;
 
 	void add_fragset( FragSetOP fragset );
 
-	virtual Size region(
+	Size region(
 		kinematics::MoveMap const& move_map,
 		Size start,
 		Size end,
 		Size min_overlap,
 		Size min_length,
 		FrameList &frames
-	) const;
+	) const override;
 
-	virtual ConstFrameIterator begin() const;
-	virtual ConstFrameIterator end() const;
+	ConstFrameIterator begin() const override;
+	ConstFrameIterator end() const override;
 
-	virtual FrameIterator nonconst_begin();
-	virtual FrameIterator nonconst_end();
+	FrameIterator nonconst_begin() override;
+	FrameIterator nonconst_end() override;
 
-	virtual bool empty() const;
+	bool empty() const override;
 
 
 protected:
-	virtual void add_( FrameOP );
+	void add_( FrameOP ) override;
 
 private:
 	typedef utility::vector1< FragSetOP > FragSetList;

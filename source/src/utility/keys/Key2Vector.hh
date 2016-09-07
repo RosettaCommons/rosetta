@@ -49,7 +49,7 @@ public: // Creation
 	/// @note  Only works if Key has default constructor
 	inline
 	Key2Vector()
-	{}
+	= default;
 
 
 	/// @brief Key constructor
@@ -66,7 +66,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~Key2Vector()
-	{}
+	= default;
 
 
 public: // Properties

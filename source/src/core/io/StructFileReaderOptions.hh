@@ -38,13 +38,13 @@ public:
 	/// @brief Constructor that takes default values from a provided OptionCollection object
 	StructFileReaderOptions( utility::options::OptionCollection const & options );
 
-	virtual ~StructFileReaderOptions();
+	~StructFileReaderOptions() override;
 
-	virtual
-	void parse_my_tag( utility::tag::TagCOP tag );
+	
+	void parse_my_tag( utility::tag::TagCOP tag ) override;
 
-	virtual
-	std::string type() const;
+	
+	std::string type() const override;
 
 	// accessors
 	bool new_chain_order() const;

@@ -43,20 +43,20 @@ public:
 
 	/// c-tor and d-tor
 	AbinitioBaseFilter();
-	virtual ~AbinitioBaseFilter() {}
+	~AbinitioBaseFilter() override = default;
 
-	virtual filters::FilterOP clone() const = 0;
+	filters::FilterOP clone() const override = 0;
 
-	virtual filters::FilterOP fresh_instance() const = 0;
+	filters::FilterOP fresh_instance() const override = 0;
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
-	virtual bool apply( core::pose::Pose const & pose ) const = 0;
+	bool apply( core::pose::Pose const & pose ) const override = 0;
 
 	std::string get_protein_sstype( core::pose::Pose const & pose ) const;
 
-	virtual
-	std::string name() const { return "AbinitioBaseFilter"; };
+	
+	std::string name() const override { return "AbinitioBaseFilter"; };
 
 protected:
 	mutable int max_helix_length_;

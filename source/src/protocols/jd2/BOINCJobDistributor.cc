@@ -75,7 +75,7 @@ BOINCJobDistributor::BOINCJobDistributor() :
 /// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-BOINCJobDistributor::~BOINCJobDistributor() {}
+BOINCJobDistributor::~BOINCJobDistributor() = default;
 
 void
 BOINCJobDistributor::go( protocols::moves::MoverOP mover )
@@ -117,8 +117,8 @@ void
 BOINCJobDistributor::checkpoint_write()
 {
 	begin_critical_section();
-	static time_t last_chkpt_time = time(NULL);
-	time_t time_now = time(NULL);
+	static time_t last_chkpt_time = time(nullptr);
+	time_t time_now = time(nullptr);
 	// Refuse to checkpoint more than once a minute, no matter what BOINC wants.
 	// Random number checkpoint files can be large (100k or more uncompressed).
 	if ( time_now - last_chkpt_time > 60 ) {

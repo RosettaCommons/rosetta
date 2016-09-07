@@ -115,7 +115,7 @@ public:
 	core::Size default_repeats() const { return default_repeats_; }
 
 	/// @brief virtual constructor to allow derivation
-	virtual ~FastRelax();
+	~FastRelax() override;
 
 	/// @brief Parses the FastRelaxTags
 	void parse_my_tag(
@@ -124,24 +124,24 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// @brief Initializes class using option system. This is called by the constructors
 	void set_to_default();
 
 	/// @brief Return the name of this mover.
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Apply the FastRelax. Overloaded apply function from mover base class.
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Batch Relax, a new even faster way to relax entire batches of structures.
 	void batch_apply(
 		std::vector < core::io::silent::SilentStructOP > &  input_structs,
-		core::scoring::constraints::ConstraintSetOP input_csts = NULL,
+		core::scoring::constraints::ConstraintSetOP input_csts = nullptr,
 		core::Real decay_rate = 0.5 );
 
 	/// @brief sets the enable_design option.

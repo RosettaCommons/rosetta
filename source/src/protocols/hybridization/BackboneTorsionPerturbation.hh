@@ -64,7 +64,7 @@ public:
 	BackboneTorsionPerturbation();
 
 	//destructor
-	~BackboneTorsionPerturbation();
+	~BackboneTorsionPerturbation() override;
 
 	void init();
 
@@ -80,7 +80,7 @@ public:
 		bool repack,
 		bool minimize);
 
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
 
@@ -91,13 +91,13 @@ public:
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	std::string get_name() const;
+	std::string get_name() const override;
 
 
 private:

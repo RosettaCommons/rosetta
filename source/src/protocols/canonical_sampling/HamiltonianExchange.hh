@@ -43,27 +43,27 @@ public:
 	HamiltonianExchange();
 
 	//important d'tor to delete some C-style arrays
-	~HamiltonianExchange();
+	~HamiltonianExchange() override;
 
 	HamiltonianExchange( HamiltonianExchange const& );
 
 	HamiltonianExchange& operator=( HamiltonianExchange const& );
 
-	virtual
-	void apply( core::pose::Pose& ) {};
+	
+	void apply( core::pose::Pose& ) override {};
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -71,28 +71,28 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief not possible for HamExchange -- exit with ERROR if called
 	core::Real
-	temperature_move( core::Real score );
+	temperature_move( core::Real score ) override;
 
 	// Undefined, commenting out to fix PyRosetta build  void update_bias_energies( int exchange_partner, bool is_master );
 
 	/// @brief execute the temperatur move ( called by observer_after_metropolis )
 	/// returns the current temperatur in kT.
 	core::Real
-	temperature_move( core::pose::Pose& pose );
+	temperature_move( core::pose::Pose& pose ) override;
 
 	/// @brief callback executed before any Monte Carlo trials
-	virtual void
+	void
 	initialize_simulation(
 		core::pose::Pose& pose,
 		MetropolisHastingsMover const& metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -100,46 +100,46 @@ public:
 		core::Size level,
 		core::Real temperature,
 		core::Size cycle
-	);
+	) override;
 
-	void show( std::ostream& ) const;
+	void show( std::ostream& ) const override;
 
 	void next_exchange_schedule();
 
-	virtual void
+	void
 	set_monte_carlo(
 		protocols::moves::MonteCarloOP monte_carlo
-	);
+	) override;
 
-	virtual GridCoord
-	level_2_grid_coord( core::Size level ) const { // for higher dimension grids
+	GridCoord
+	level_2_grid_coord( core::Size level ) const override { // for higher dimension grids
 		return exchange_grid_[level];
 	}
 
-	virtual core::Size
-	exchange_grid_dim() const {
+	core::Size
+	exchange_grid_dim() const override {
 		return exchange_grid_dimension_;
 	}
 
-	virtual core::Size
-	nlevels_per_dim( core::Size ) const;
+	core::Size
+	nlevels_per_dim( core::Size ) const override;
 
 protected:
 	void set_defaults();
 	/// @brief Assigns user specified values to primitive members using command line options
-	void init_from_options();
+	void init_from_options() override;
 
 	/// @brief return to uninitialized status
 	void clear();
 
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
-	virtual bool initialize_from_file( std::string const& filename );
+	bool initialize_from_file( std::string const& filename ) override;
 
 	/// @brief initialize exchange schedule from file, return false if IO error occurrs
 	virtual bool initialize_exchange_schedule_from_file( std::string const& filename );
 
-	virtual
-	core::Size next_exchange_level() const;
+	
+	core::Size next_exchange_level() const override;
 
 private:
 	void setup_exchange_schedule();

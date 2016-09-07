@@ -40,21 +40,21 @@ public: // constructors destructors
 
 	RRComparerElecDensDiff();
 
-	~RRComparerElecDensDiff();
+	~RRComparerElecDensDiff() override;
 
 	RRComparerElecDensDiff( RRComparerElecDensDiff const & );
 
 public: // public interface
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	std::string
-	get_parameters() const;
+	get_parameters() const override;
 
-	virtual
+	
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -62,14 +62,14 @@ public: // public interface
 		core::conformation::Residue const & res1,
 		core::conformation::Residue const & res2,
 		core::Real & score,
-		bool & recovered);
+		bool & recovered) override;
 
 
-	virtual
+	
 	void
 	set_recovery_threshold(
 		core::Real const recovery_threshold
-	);
+	) override;
 
 	virtual
 	core::Real

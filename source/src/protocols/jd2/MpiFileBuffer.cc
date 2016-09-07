@@ -45,7 +45,7 @@ MpiFileBuffer::MpiFileBuffer( Size file_buf_rank )
 	seconds_to_keep_files_alive_( 100 ) {
 
 	if ( seconds_to_keep_files_alive_<=0 ) bKeepFilesAlive_ = false;
-	last_garbage_collection_ = time(NULL);
+	last_garbage_collection_ = time(nullptr);
 #ifdef USEMPI
 	int my_rank;
 	MPI_Comm_rank (MPI_COMM_WORLD, &my_rank );/* get current process id */
@@ -89,13 +89,13 @@ void MpiFileBuffer::show_status( std::ostream& os ) const {
 }
 
 void MpiFileBuffer::garbage_collection() {
-	time_t const now( time(NULL) );
+	time_t const now( time(nullptr) );
 	//tr.Debug << "last garbage collection " << now-last_garbage_collection_ << " seconds ago" << std::endl;
 	if ( now-last_garbage_collection_ < 30 ) return;
 	if ( tr.Debug.visible() ) show_status( tr.Debug );
 	tr.Debug << "garbage collection active..." << std::endl;
-	for ( GarbageList::iterator it=garbage_collector_.begin(); it!=garbage_collector_.end(); ) {
-		GarbageList::iterator to_erase( it );
+	for ( auto it=garbage_collector_.begin(); it!=garbage_collector_.end(); ) {
+		auto to_erase( it );
 		++it; //move forward now, because to_erase will be erased in "close_file"
 		tr.Debug << "marked " << to_erase->first << " " << now-to_erase->second << " seconds ago." << std::endl;
 		if ( now-to_erase->second > seconds_to_keep_files_alive_ ) {
@@ -201,7 +201,7 @@ void MpiFileBuffer::block_file( Size from_node, std::string const& filename ) {
 	if ( iter != open_files_.end() ) {
 		channel = iter->second;
 		SingleFileBufferOP buf = open_buffers_[ channel ];
-		runtime_assert( buf != 0 ); //consistent?
+		runtime_assert( buf != nullptr ); //consistent?
 		buf->block( from_node ); //closes-file, sends MPI signal back and forth and hangs until release, reopens file
 		tr.Debug << "block released... for file " << filename << std::endl;
 	} else {
@@ -267,7 +267,7 @@ bool MpiFileBuffer::remote_close_file( std::string const& filename ) {
 
 void MpiFileBuffer::release_file( std::string filename ) {
 	//if this is a reference I get seqfault, since it might point into list where I erase from...
-	std::list< std::string >::iterator iter = find( blocked_files_.begin(), blocked_files_.end(), filename );
+	auto iter = find( blocked_files_.begin(), blocked_files_.end(), filename );
 	if ( iter != blocked_files_.end() ) {
 		blocked_files_.erase( iter );
 		runtime_assert( buffer_rank_ != my_rank_ );
@@ -297,7 +297,7 @@ bool MpiFileBuffer::is_open_channel( std::string const& filename ) {
 
 void MpiFileBuffer::clear_channel_from_garbage_collector( core::Size channel ) {
 	//remove from garbage_collector if its in there already
-	GarbageList::iterator giter = garbage_collector_.find( channel );
+	auto giter = garbage_collector_.find( channel );
 	if ( giter != garbage_collector_.end() ) {
 		tr.Debug << "remove channel " << channel << " from garbage-collector list " << std::endl;
 		garbage_collector_.erase( giter );
@@ -360,7 +360,7 @@ void MpiFileBuffer::open_channel( Size , std::string const&, bool, Size& status 
 void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string const& line ) {
 	//tr.Debug << "store channel for slave " << slave << " channel: " << channel << " length: " << line.length() << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel ];
-	runtime_assert( buf != 0 ); //writing to open file ?
+	runtime_assert( buf != nullptr ); //writing to open file ?
 	buf->store_line( slave, channel, line );
 	if ( buf->length(slave) > 5e6 ) {
 		tr.Info << "autoflush threshold (5 MB) triggered for slave " << slave << " channel: " << channel << std::endl;
@@ -371,13 +371,13 @@ void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string cons
 void MpiFileBuffer::flush_channel( Size slave, Size channel_id ) {
 	tr.Debug << "flush channel for slave " << slave << " channel: " << channel_id << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
-	runtime_assert( buf != 0 ); //writing to open file ?
+	runtime_assert( buf != nullptr ); //writing to open file ?
 	buf->flush( slave );
 }
 
 void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
-	runtime_assert( buf != 0 ); //writing to open file ?
+	runtime_assert( buf != nullptr ); //writing to open file ?
 	buf->close( slave );
 	tr.Debug << "close channel "<< channel_id <<" for slave " << slave
 		<< " currently " << buf->nr_open_slaves() << " open slave buffers; open files: " << open_buffers_.size() << std::endl;
@@ -388,7 +388,7 @@ void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
 	} else {
 		if ( !buf->has_open_slaves() ) {
 			tr.Debug << "mark channel " << channel_id << " for closing in " << seconds_to_keep_files_alive_ << std::endl;
-			garbage_collector_[ channel_id ]=time(NULL);
+			garbage_collector_[ channel_id ]=time(nullptr);
 		}
 	}
 	tr.Debug << "currently " << open_buffers_.size() << " open buffers" << std::endl;
@@ -410,10 +410,10 @@ bool MpiFileBuffer::close_file( std::string filename ) {
 }
 
 void MpiFileBuffer::close_file( Size channel_id ) {
-	Buffers::iterator iter = open_buffers_.find( channel_id );
+	auto iter = open_buffers_.find( channel_id );
 	if ( iter != open_buffers_.end() ) {
 		std::string filename( iter->second->filename() );
-		Filenames::iterator file_iter = open_files_.find( filename );
+		auto file_iter = open_files_.find( filename );
 		runtime_assert( file_iter != open_files_.end() ); //if this is not true we have inconsistency between open_buffers and open_files_
 		open_files_.erase( file_iter );
 		open_buffers_.erase( iter );

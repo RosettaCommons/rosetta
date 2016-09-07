@@ -27,7 +27,7 @@ namespace dna {
 
 using namespace core;
 
-DnaDesignDef::~DnaDesignDef(){}
+DnaDesignDef::~DnaDesignDef()= default;
 
 DnaDesignDef::DnaDesignDef( std::string const & strdef )
 : utility::pointer::ReferenceCount()
@@ -51,7 +51,7 @@ std::ostream & operator << ( std::ostream & os, DnaDesignDef const & def )
 
 std::ostream & operator << ( std::ostream & os, DnaDesignDefs const & defs )
 {
-	for ( DnaDesignDefs::const_iterator def( defs.begin() ), end( defs.end() );
+	for ( auto def( defs.begin() ), end( defs.end() );
 			def != end; ++def ) {
 		if ( def != defs.begin() ) os << " ";
 		os << *def;
@@ -61,7 +61,7 @@ std::ostream & operator << ( std::ostream & os, DnaDesignDefs const & defs )
 
 std::ostream & operator << ( std::ostream & os, DnaDesignDefOPs const & defs )
 {
-	for ( DnaDesignDefOPs::const_iterator def( defs.begin() ), end( defs.end() );
+	for ( auto def( defs.begin() ), end( defs.end() );
 			def != end; ++def ) {
 		if ( def != defs.begin() ) os << " ";
 		os << **def;

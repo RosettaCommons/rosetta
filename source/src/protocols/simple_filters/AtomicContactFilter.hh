@@ -40,23 +40,23 @@ public:
 	/// @brief default ctor
 	AtomicContactFilter();
 	AtomicContactFilter( core::Size const res1, core::Size const res2, core::Real const distance=4.0, bool const sidechain=1, bool const backbone=0, bool const protons=0 );
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual filters::FilterOP clone() const {
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	filters::FilterOP clone() const override {
 		return filters::FilterOP( new AtomicContactFilter( *this ) );
 	}
-	virtual filters::FilterOP fresh_instance() const{
+	filters::FilterOP fresh_instance() const override{
 		return filters::FilterOP( new AtomicContactFilter() );
 	}
 
-	virtual ~AtomicContactFilter(){};
+	~AtomicContactFilter() override= default;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 private:
 	core::Size residue1_;/*, residue2_ residue2 is managed by the ResId baseclass*/
 	utility::vector1< core::Size > range1_;

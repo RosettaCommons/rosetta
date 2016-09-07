@@ -30,6 +30,7 @@
 
 
 // Utility Headers
+#include <utility>
 #include <utility/assert.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
@@ -76,8 +77,8 @@ void FragmentSequenceMover::apply( core::pose::Pose & pose ){
 		// get all residue types with same AA
 		char aa = new_seq[i-1];
 		core::chemical::AA this_aa = core::chemical::aa_from_oneletter_code( aa );
-		core::chemical::ResidueTypeCOPs const & rsd_types( residue_set->aa_map( this_aa ) );
-		core::conformation::ResidueOP new_rsd( 0 );
+		core::chemical::ResidueTypeCOPs const & rsd_types( residue_set.aa_map( this_aa ) );
+		core::conformation::ResidueOP new_rsd( nullptr );
 		// now look for a rsdtype with same variants
 		for ( Size j=1; j<= rsd_types.size(); ++j ) {
 			core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
@@ -101,13 +102,13 @@ FragmentSequenceMover::FragmentSequenceMover(
 
 /// @brief
 FragmentSequenceMover::FragmentSequenceMover( core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap
-																							) : Mover(), fragset_(fragset), movemap_(movemap)
+																							) : Mover(), fragset_(std::move(fragset)), movemap_(std::move(movemap))
 {
 	Mover::type( "FragmentSequenceMover" );
 }
 
 
-FragmentSequenceMover::~FragmentSequenceMover(){}
+FragmentSequenceMover::~FragmentSequenceMover() = default;
 
 }//DenovoProteinDesign
 }//devel

@@ -62,16 +62,16 @@ public:
 		bool random_conformer=false
 	);
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	void switch_conformer(
 		core::pose::Pose & pose,
 		core::Size conf_num
 	);
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 	void set_temperature( core::Real temp_in );
 
 	void set_random_confomer( bool rand ) { random_conformer_ = rand; }

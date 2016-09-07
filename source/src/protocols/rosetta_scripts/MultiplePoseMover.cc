@@ -180,7 +180,7 @@ core::pose::PoseOP MultiplePoseMover::generate_pose()
 
 		if ( pose_input_cache_.empty() ) {
 			// No more input poses
-			return NULL;
+			return nullptr;
 		}
 
 		// 2. Select poses
@@ -199,7 +199,7 @@ core::pose::PoseOP MultiplePoseMover::generate_pose()
 
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /// @brief Select poses from set using specified selectors
@@ -233,9 +233,9 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < 
 
 	// Make a new vector of PoseOP's for selected poses for easier handling
 	core::Size i = 1;
-	for ( std::deque < core::pose::PoseOP >::iterator it = poses.begin(); it != poses.end(); ++it ) {
+	for (auto & pose : poses) {
 		if ( selected_poses_by_selectors[i] ) {
-			selected_poses_for_processing.push_back(*it);
+			selected_poses_for_processing.push_back(pose);
 		}
 		++i;
 	}
@@ -346,7 +346,7 @@ void MultiplePoseMover::parse_my_tag(
 					PoseSelectorFactory::get_instance()->
 					newPoseSelector( curr_tag, data, selector_filters_, movers, pose )
 				);
-				runtime_assert( new_selector != 0 );
+				runtime_assert( new_selector != nullptr );
 				selectors_.push_back( new_selector );
 				TR << "Defined selector of type " << curr_tag->getName() << std::endl;
 			}

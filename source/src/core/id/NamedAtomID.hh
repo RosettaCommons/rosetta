@@ -24,6 +24,7 @@
 
 #include <core/types.hh>
 #include <ostream>
+#include <utility>
 
 
 namespace core {
@@ -52,18 +53,15 @@ public: // Creation
 
 	/// @brief Copy constructor
 	inline
-	NamedAtomID( NamedAtomID const & src ) :
-		atom_( src.atom_ ),
-		rsd_( src.rsd_ )
-	{}
+	NamedAtomID( NamedAtomID const & ) = default;
 
 	/// @brief Property constructor
 	inline
 	NamedAtomID(
-		std::string const & atom_in,
+		std::string  atom_in,
 		Size const rsd_in
 	) :
-		atom_( atom_in ),
+		atom_(std::move( atom_in )),
 		rsd_( rsd_in )
 	{}
 

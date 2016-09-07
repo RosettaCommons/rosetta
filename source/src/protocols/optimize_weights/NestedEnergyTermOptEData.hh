@@ -40,29 +40,29 @@ public:
 	//typedef core::chemical::AA AA;
 
 	NestedEnergyTermPNatAAOptEPositionData();
-	virtual ~NestedEnergyTermPNatAAOptEPositionData();
+	~NestedEnergyTermPNatAAOptEPositionData() override;
 
-	virtual Real get_score(
+	Real get_score(
 		Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
-		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
+		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
-	virtual void print_score(
+	void print_score(
 		std::ostream & ostr, Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
-		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
+		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	Real process_score(
 		std::ostream & ostr, bool print, Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
 
-	virtual OptEPositionDataType type() const;
+	OptEPositionDataType type() const override;
 
-	virtual void write_to_file( std::ofstream & outfile ) const ;
-	virtual void read_from_file( std::ifstream & infile );
-	virtual void write_to_binary_file( std::ofstream & outfile ) const;
-	virtual void read_from_binary_file( std::ifstream & infile );
+	void write_to_file( std::ofstream & outfile ) const override ;
+	void read_from_file( std::ifstream & infile ) override;
+	void write_to_binary_file( std::ofstream & outfile ) const override;
+	void read_from_binary_file( std::ifstream & infile ) override;
 
 #ifdef USEMPI
 		virtual void send_to_node( int const destination_node, int const tag ) const;
@@ -94,7 +94,7 @@ public:
 	//PNatAAOptERotamerDataOPs::const_iterator rotamer_data_begin() const { return data_.begin(); }
 	//PNatAAOptERotamerDataOPs::const_iterator rotamer_data_end() const { return data_.end(); }
 
-	virtual Size memory_use() const;
+	Size memory_use() const override;
 
 protected:
 	/// @brief used by derived class as well -- finds the energies for the best rotamer for each amino acid
@@ -123,24 +123,24 @@ public:
 
 public:
 	NestedEnergyTermDDGMutationOptEData();
-	virtual ~NestedEnergyTermDDGMutationOptEData();
+	~NestedEnergyTermDDGMutationOptEData() override;
 
-	virtual Real get_score(
+	Real get_score(
 		Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
-		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
+		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
-	virtual void print_score(
+	void print_score(
 		std::ostream & ostr, Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
-		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
+		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	Real process_score(
 		std::ostream & ostr, bool print, Multivec const & component_weights,
 		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
 
-	virtual OptEPositionDataType type() const;
+	OptEPositionDataType type() const override;
 
 	// Use the base class implementation for these methods. (The read/write methods are all empty anyway.)
 
@@ -152,7 +152,7 @@ public:
 	//virtual void write_to_binary_file( std::ofstream & outfile ) const;
 	//virtual void read_from_binary_file( std::ifstream & infile );
 
-	virtual Size memory_use() const;
+	Size memory_use() const override;
 
 #ifdef USEMPI
 	virtual void send_to_node( int const destination_node, int const tag ) const;

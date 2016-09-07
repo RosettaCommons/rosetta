@@ -58,11 +58,11 @@ public:
 		max_tries_( max_tries )
 	{}
 
-	virtual
+	
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 

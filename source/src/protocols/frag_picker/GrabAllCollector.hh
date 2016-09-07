@@ -55,14 +55,14 @@ public:
 	}
 
 	/// @brief  Insert a fragment candidate to the container
-	inline bool add( ScoredCandidate new_canditate )
+	inline bool add( ScoredCandidate new_canditate ) override
 	{
 		storage_[new_canditate.first->get_first_index_in_query()].push_back(
 			new_canditate);
 		return true;
 	}
 
-	inline void clear()
+	inline void clear() override
 	{
 		for ( Size i=1; i<storage_.size(); ++i ) {
 			storage_[i].clear();
@@ -73,7 +73,7 @@ public:
 	void print_report(
 		std::ostream & output,
 		scores::FragmentScoreManagerOP
-	) const {
+	) const override {
 		output << "\n pos  | count |  pos  | count | pos  | count |\n";
 		for ( Size i = 1; i <= storage_.size(); ++i ) {
 			output << I(5, i) << " |" << I(6, storage_[i].size()) << " |";
@@ -84,12 +84,12 @@ public:
 	}
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	inline Size count_candidates(Size seq_pos) const {
+	inline Size count_candidates(Size seq_pos) const override {
 		return storage_[seq_pos].size();
 	}
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	inline Size count_candidates() const {
+	inline Size count_candidates() const override {
 
 		Size response = 0;
 		for ( Size i=1; i<=storage_.size(); ++i ) {
@@ -101,14 +101,14 @@ public:
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be able to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	inline Size query_length() const {
+	inline Size query_length() const override {
 		return storage_.size();
 	}
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
-	inline void insert(Size pos, CandidatesCollectorOP collector) {
+	inline void insert(Size pos, CandidatesCollectorOP collector) override {
 		GrabAllCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::GrabAllCollector > ( collector );
-		if ( c == 0 ) {
+		if ( c == nullptr ) {
 			utility_exit_with_message("Cant' cast candidates' collector to GrabAllCollector.");
 		}
 		for ( Size j=1; j<=storage_[pos].size(); ++j ) {
@@ -118,7 +118,7 @@ public:
 	}
 
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline virtual ScoredCandidatesVector1 & get_candidates(Size position_in_query) {
+	inline ScoredCandidatesVector1 & get_candidates(Size position_in_query) override {
 		return storage_.at(position_in_query);
 	}
 

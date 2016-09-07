@@ -53,7 +53,7 @@ using std::setw;
 ResourceManager *
 ResourceManager::get_instance()
 {
-	static ResourceManager * instance_( 0 );
+	static ResourceManager * instance_( nullptr );
 	// NOT THREAD SAFE!
 	if ( ! instance_ ) {
 		instance_ = ResourceManagerFactory::get_instance()->create_resource_manager_from_options_system();
@@ -69,7 +69,7 @@ ResourceManager::get_instance()
 
 ResourceManager::ResourceManager() {}
 
-ResourceManager::~ResourceManager() {}
+ResourceManager::~ResourceManager() = default;
 
 
 void
@@ -84,7 +84,7 @@ bool
 ResourceManager::has_resource(
 	ResourceTag const & resource_tag
 ) const {
-	ResourcesMap::const_iterator resource(
+	auto resource(
 		resources_.find(resource_tag));
 	return resource != resources_.end();
 }
@@ -134,12 +134,10 @@ ResourceManager::show(
 	out
 		<< "ResourceManager.resources:" << endl
 		<< std::setiosflags(std::ios::left) << setw(16) << "ResourceTag" << "ResourceExists" << endl;
-	for (
-			ResourceManager::ResourcesMap::const_iterator
-			r = resources_.begin(), re = resources_.end(); r != re; ++r ) {
+	for (const auto & resource : resources_) {
 		out
-			<< std::setiosflags(std::ios::left) << setw(16) << r->first
-			<< (r->second ? "true" : "false") << endl;
+			<< std::setiosflags(std::ios::left) << setw(16) << resource.first
+			<< (resource.second ? "true" : "false") << endl;
 	}
 }
 

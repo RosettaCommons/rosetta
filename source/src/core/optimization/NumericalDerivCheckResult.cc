@@ -21,10 +21,10 @@ namespace core {
 namespace optimization {
 
 /// @details Auto-generated virtual destructor
-SimpleDerivCheckResult::~SimpleDerivCheckResult() {}
+SimpleDerivCheckResult::~SimpleDerivCheckResult() = default;
 
 NumericalDerivCheckResult::NumericalDerivCheckResult() : send_to_stdout_( true ) {}
-NumericalDerivCheckResult::~NumericalDerivCheckResult() {}
+NumericalDerivCheckResult::~NumericalDerivCheckResult() = default;
 
 void
 NumericalDerivCheckResult::add_deriv_data(

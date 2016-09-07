@@ -73,24 +73,24 @@ public:
 		core::pack::dunbrack::RotamerLibrary const & rotamer_library
 	);
 
-	~CoupledSidechainProtocol();
+	~CoupledSidechainProtocol() override;
 
 	void
 	show_counters( std::ostream & out );
 
 
 	//parser stuff
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief apply a sidechain move to a Pose object
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void
 	set_ntrials( core::Size ntrial ){
@@ -123,13 +123,13 @@ public:
 		return *sfxn_;
 	}
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle //non-zero if trajectory is restarted
-	);
+	) override;
 
 private:
 

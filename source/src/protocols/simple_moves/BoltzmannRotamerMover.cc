@@ -91,7 +91,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover() : protocols::moves::Mover()
 BoltzmannRotamerMover::BoltzmannRotamerMover(
 	ScoreFunctionCOP scorefxn_in,
 	PackerTaskOP & task_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( /* NULL */ ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_(std::move( scorefxn_in )), factory_( /* NULL */ ), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "BoltzmannRotamer" );
 	task_ = task_in->clone();
@@ -108,7 +108,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover(
 BoltzmannRotamerMover::BoltzmannRotamerMover(
 	ScoreFunctionCOP scorefxn_in,
 	TaskFactoryCOP factory_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( /* NULL */ ), factory_( factory_in ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_(std::move( scorefxn_in )), task_( /* NULL */ ), factory_(std::move( factory_in )), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "BoltzmannRotamer" );
 	resnum_ = 0;
@@ -138,7 +138,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover( BoltzmannRotamerMover const & rval
 {}
 
 // destructor
-BoltzmannRotamerMover::~BoltzmannRotamerMover(){}
+BoltzmannRotamerMover::~BoltzmannRotamerMover()= default;
 
 // clone this object
 BoltzmannRotamerMover::MoverOP
@@ -307,7 +307,7 @@ void
 BoltzmannRotamerMover::show(std::ostream & output) const
 {
 	Mover::show(output);
-	if ( scorefxn() != 0 ) {
+	if ( scorefxn() != nullptr ) {
 		output << "Score function: " << scorefxn()->get_name() << std::endl;
 	} else { output << "Score function: none" << std::endl; }
 }

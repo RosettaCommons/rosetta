@@ -170,7 +170,7 @@ set_moveable_rna(
 			}
 		}
 	}
-	return atom_level_domain_map;;
+	return atom_level_domain_map;
 }
 
 
@@ -213,7 +213,7 @@ optimize_linkers_centroid_mode(
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn_centroid, 0.8 /*temperature*/ ) );
 
 	// read fragments file
-	core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
+	core::fragment::ConstantLengthFragSetOP fragset3mer = nullptr;
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag3].user() ) {
 		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
@@ -226,7 +226,7 @@ optimize_linkers_centroid_mode(
 	small_mover->angle_max( 'L', 4.0 );
 
 	//// STAGE 1 /////
-	TrialMoverOP centroid_trial_mover = NULL;
+	TrialMoverOP centroid_trial_mover = nullptr;
 	if ( fragset3mer ) {
 		protocols::simple_moves::FragmentMoverOP frag_mover( new protocols::simple_moves::ClassicFragmentMover(fragset3mer, mm) );
 		centroid_trial_mover = TrialMoverOP( new TrialMover( frag_mover, mc ) );

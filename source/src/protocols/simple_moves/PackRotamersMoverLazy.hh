@@ -47,7 +47,7 @@ public:
 
 	PackRotamersMoverLazy(
 		ScoreFunctionCOP scorefxn,
-		PackerTaskCOP task = 0,
+		PackerTaskCOP task = nullptr,
 		core::Size nloop = 1
 	);
 	PackRotamersMoverLazy();
@@ -56,17 +56,17 @@ public:
 	// Undefinede, commenting out to fix PyRosetta build  PackRotamersMoverLazy( std::string const & );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~PackRotamersMoverLazy();
+	~PackRotamersMoverLazy() override;
 
 	// methods
 	virtual void call_setup(Pose & pose);
 	virtual void apply_to_rotpack( Pose & pose,  utility::vector0< int > rot_to_pack);
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 private:
 

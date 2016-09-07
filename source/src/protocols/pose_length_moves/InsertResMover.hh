@@ -50,11 +50,11 @@ public:
 	InsertResMover();
 	numeric::xyzVector<core::Real> center_of_mass(core::pose::Pose const & pose);
 	void extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size length);
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new InsertResMover( *this ) ); }
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	core::pose::PoseOP get_additional_output();
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	moves::MoverOP clone() const override { return moves::MoverOP( new InsertResMover( *this ) ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	core::pose::PoseOP get_additional_output() override;
 private:
 	vector1<core::pose::PoseOP> posesToOutput_;
 	vector1<bool> posesOutputed_;

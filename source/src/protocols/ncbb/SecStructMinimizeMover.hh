@@ -20,6 +20,7 @@
 #include <protocols/ncbb/SecStructMinimizeMover.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+#include <utility>
 
 namespace protocols {
 namespace ncbb {
@@ -37,34 +38,34 @@ public:
 	}
 
 	SecStructMinimizeMover(
-		core::scoring::ScoreFunctionOP const & score_fxn,
-		std::string const & dihedral_pattern,
-		std::string const & alpha_beta_pattern
+		core::scoring::ScoreFunctionOP  score_fxn,
+		std::string  dihedral_pattern,
+		std::string  alpha_beta_pattern
 	):
 		constrain_( false ),
-		score_fxn_( score_fxn ),
-		dihedral_pattern_( dihedral_pattern ),
-		alpha_beta_pattern_( alpha_beta_pattern )
+		score_fxn_(std::move( score_fxn )),
+		dihedral_pattern_(std::move( dihedral_pattern )),
+		alpha_beta_pattern_(std::move( alpha_beta_pattern ))
 	{}
 
 	//destructor
-	~SecStructMinimizeMover();
+	~SecStructMinimizeMover() override;
 
-	protocols::moves::MoverOP fresh_instance() const { return SecStructMinimizeMoverOP( new SecStructMinimizeMover ); }
-	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new SecStructMinimizeMover(
+	protocols::moves::MoverOP fresh_instance() const override { return SecStructMinimizeMoverOP( new SecStructMinimizeMover ); }
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new SecStructMinimizeMover(
 		score_fxn_,
 		dihedral_pattern_,
 		alpha_beta_pattern_ ) ); }
 
 	void add_dihedral_constraints_to_pose( Pose & pose, Size number_dihedral_sets, utility::vector1< char > uniqs );
 
-	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const { return "SecStructMinimizeMover"; }
+	std::string get_name() const override { return "SecStructMinimizeMover"; }
 
 	void set_scorefunction( core::scoring::ScoreFunctionOP const & score_fxn ) {
 		score_fxn_ = score_fxn;

@@ -37,7 +37,7 @@ public:
 	explicit RigidBodyMotionMover(const core::kinematics::FoldTree& tree);
 
 	/// @brief Randomly selects a chunk and perturbs its rigid body transformation
-	void apply(core::pose::Pose& pose);
+	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Returns the magnitude of translation
 	double magnitude_translation() const;
@@ -64,7 +64,7 @@ public:
 	void set_fold_tree(const core::kinematics::FoldTree& tree);
 
 	/// @brief Returns the name of this mover
-	std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	/// @brief Derives chunk definitions from input fold tree

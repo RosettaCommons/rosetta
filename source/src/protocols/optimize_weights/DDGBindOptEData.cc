@@ -48,7 +48,7 @@ DDGBindOptEData::DDGBindOptEData():
 {}
 
 ///
-DDGBindOptEData::~DDGBindOptEData() {}
+DDGBindOptEData::~DDGBindOptEData() = default;
 
 ///
 Real

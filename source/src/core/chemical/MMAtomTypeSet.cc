@@ -39,7 +39,7 @@ MMAtomTypeSet::MMAtomTypeSet():
 }
 
 
-MMAtomTypeSet::~MMAtomTypeSet() {}
+MMAtomTypeSet::~MMAtomTypeSet() = default;
 
 
 /// @details Initialize an MMAtomTypeSet from an external file "filename",
@@ -85,7 +85,7 @@ MMAtomTypeSet::read_file( std::string const & filename )
 				utility_exit_with_message("bad line: "+line);
 			}
 
-			MMAtomType* mm_atom_type_ptr( new MMAtomType( name_wo_whitespace ) );
+			auto* mm_atom_type_ptr( new MMAtomType( name_wo_whitespace ) );
 
 			// now parse the parameters
 			for ( int i=1; i<= ntags; ++i ) {

@@ -42,7 +42,7 @@ static THREAD_LOCAL basic::Tracer tr( "core.import_pose.import_pose_options" );
 ///// ImportPoseOptionsCreator /////
 ImportPoseOptionsCreator::ImportPoseOptionsCreator() {}
 
-ImportPoseOptionsCreator::~ImportPoseOptionsCreator() {}
+ImportPoseOptionsCreator::~ImportPoseOptionsCreator() = default;
 
 basic::resource_manager::ResourceOptionsOP
 ImportPoseOptionsCreator::create_options() const {
@@ -64,7 +64,7 @@ ImportPoseOptions::ImportPoseOptions( utility::options::OptionCollection const &
 	StructFileReaderOptions( options )
 { init_from_options( options ); }
 
-ImportPoseOptions::~ImportPoseOptions() {}
+ImportPoseOptions::~ImportPoseOptions() = default;
 
 std::string ImportPoseOptions::type() const { return "ImportPoseOptions"; }
 

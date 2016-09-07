@@ -199,9 +199,9 @@ ErraserMinimizerMover::check_in_bonded_list(
 	core::id::AtomID const & atom_id1,
 	core::id::AtomID const & atom_id2
 ) {
-	for ( utility::vector1< std::pair< AtomID, AtomID > >::iterator bond = bonded_atom_list_.begin(); bond != bonded_atom_list_.end(); ++bond ) {
-		if ( atom_id1 == bond->first && atom_id2 == bond->second ) return true;
-		if ( atom_id2 == bond->first && atom_id1 == bond->second ) return true;
+	for (auto & bond : bonded_atom_list_) {
+		if ( atom_id1 == bond.first && atom_id2 == bond.second ) return true;
+		if ( atom_id2 == bond.first && atom_id1 == bond.second ) return true;
 	}
 
 	return false;
@@ -213,11 +213,11 @@ ErraserMinimizerMover::check_in_bond_angle_list(
 	core::id::AtomID const & side_one,
 	core::id::AtomID const & side_two
 ) {
-	for ( utility::vector1< std::pair< AtomID, std::pair< AtomID, AtomID > > >::iterator angle = bond_angle_list_.begin(); angle != bond_angle_list_.end(); ++angle ) {
-		if ( central_atom != angle->first ) continue;
+	for (auto & angle : bond_angle_list_) {
+		if ( central_atom != angle.first ) continue;
 
-		if ( side_one == angle->second.first && side_two == angle->second.second ) return true;
-		if ( side_two == angle->second.first && side_one == angle->second.second ) return true;
+		if ( side_one == angle.second.first && side_two == angle.second.second ) return true;
+		if ( side_two == angle.second.first && side_one == angle.second.second ) return true;
 	}
 
 	return false;
@@ -432,20 +432,20 @@ ErraserMinimizerMover::vary_bond_geometry(
 			utility::vector1< AtomID > nbrs( pose.conformation().bonded_neighbor_all_res( j_atomid ) );
 
 			// Constrain all mobile bond lengths.
-			for ( utility::vector1< AtomID >::iterator nbr = nbrs.begin(); nbr != nbrs.end(); ++nbr ) {
-				if ( nbr->rsd() > nres || nbr->rsd() < 1 ) continue;
-				chemical::ResidueType const & residue_type2( pose.residue_type( nbr->rsd() ) );
-				Size const & k( nbr->atomno() );
+			for (auto & nbr : nbrs) {
+				if ( nbr.rsd() > nres || nbr.rsd() < 1 ) continue;
+				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
+				Size const & k( nbr.atomno() );
 
-				if ( ! check_if_connected_in_atom_tree( pose, j_atomid, *nbr ) ) continue;
+				if ( ! check_if_connected_in_atom_tree( pose, j_atomid, nbr ) ) continue;
 
 				if ( i_want_this_atom_to_move( residue_type2, k ) )  {
-					add_bond_constraint( j_atomid, *nbr, pose, cst_set );
+					add_bond_constraint( j_atomid, nbr, pose, cst_set );
 				}
 			}
 
 			// Bond angles
-			for ( utility::vector1< AtomID >::iterator nbr = nbrs.begin(); nbr != nbrs.end(); ++nbr ) {
+			for ( auto nbr = nbrs.begin(); nbr != nbrs.end(); ++nbr ) {
 				if ( nbr->rsd() > nres || nbr->rsd() < 1 ) continue;
 
 				chemical::ResidueType const & residue_type2( pose.residue_type( nbr->rsd() ) );
@@ -454,34 +454,34 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 				Size const & k( nbr->atomno() ) ;
 
-				for ( utility::vector1< AtomID >::iterator ang_nbr = nbrs.begin(); ang_nbr != nbrs.end(); ++ang_nbr ) {
-					if ( ang_nbr->rsd() > nres || ang_nbr->rsd() < 1 ) continue;
-					chemical::ResidueType const & residue_type3( pose.residue_type( ang_nbr->rsd() ) );
+				for (auto & ang_nbr : nbrs) {
+					if ( ang_nbr.rsd() > nres || ang_nbr.rsd() < 1 ) continue;
+					chemical::ResidueType const & residue_type3( pose.residue_type( ang_nbr.rsd() ) );
 
-					if ( !check_if_connected_in_atom_tree( pose, j_atomid, *ang_nbr ) ) continue;
+					if ( !check_if_connected_in_atom_tree( pose, j_atomid, ang_nbr ) ) continue;
 
-					Size const & q( ang_nbr->atomno() ) ;
+					Size const & q( ang_nbr.atomno() ) ;
 
 					if ( i_want_this_atom_to_move( residue_type2, k ) &&
 							i_want_this_atom_to_move( residue_type3, q ) )  {
-						add_bond_angle_constraint( j_atomid, *nbr, *ang_nbr,
+						add_bond_angle_constraint( j_atomid, *nbr, ang_nbr,
 							pose, cst_set );
 					}
 				}
 
 				utility::vector1< AtomID > nbrs2( pose.conformation().bonded_neighbor_all_res( *nbr ) );
 
-				for ( utility::vector1< AtomID >::iterator nbr2 = nbrs2.begin(); nbr2 != nbrs2.end(); ++nbr2 ) {
-					if ( nbr2->rsd() > nres || nbr2->rsd() < 1 ) break;
-					chemical::ResidueType const & residue_type3( pose.residue_type( nbr2->rsd() ) );
+				for (auto & nbr2 : nbrs2) {
+					if ( nbr2.rsd() > nres || nbr2.rsd() < 1 ) break;
+					chemical::ResidueType const & residue_type3( pose.residue_type( nbr2.rsd() ) );
 
-					if ( ! check_if_connected_in_atom_tree( pose, *nbr, *nbr2 ) ) continue;
+					if ( ! check_if_connected_in_atom_tree( pose, *nbr, nbr2 ) ) continue;
 
-					Size const & q( nbr2->atomno() ) ;
+					Size const & q( nbr2.atomno() ) ;
 
 					if ( i_want_this_atom_to_move( residue_type2, k ) &&
 							i_want_this_atom_to_move( residue_type3, q ) )  {
-						add_bond_angle_constraint( j_atomid, *nbr, *nbr2,
+						add_bond_angle_constraint( j_atomid, *nbr, nbr2,
 							pose, cst_set );
 					}
 				}
@@ -713,7 +713,7 @@ ErraserMinimizerMover::apply( Pose & pose ) {
 		TR << "fixed res: ";
 	}
 
-	for ( std::set< Size >::const_iterator fixed_res_num = fixed_res_list_.begin(); fixed_res_num != fixed_res_list_.end(); ++fixed_res_num ) {
+	for ( auto fixed_res_num = fixed_res_list_.begin(); fixed_res_num != fixed_res_list_.end(); ++fixed_res_num ) {
 
 		TR << *fixed_res_num << " ";
 

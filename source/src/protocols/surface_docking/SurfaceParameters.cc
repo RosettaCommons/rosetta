@@ -72,7 +72,7 @@ SurfaceParametersOP SurfaceParameters::clone() const
 	return SurfaceParametersOP( new SurfaceParameters( *this ) );
 }
 
-SurfaceParameters::~SurfaceParameters(){}
+SurfaceParameters::~SurfaceParameters()= default;
 
 
 }// namespace surface_docking

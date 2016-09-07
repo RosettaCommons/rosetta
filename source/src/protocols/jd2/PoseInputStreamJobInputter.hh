@@ -34,17 +34,17 @@ public:
 
 	PoseInputStreamJobInputter();
 
-	virtual ~PoseInputStreamJobInputter();
+	~PoseInputStreamJobInputter() override;
 
 	/// @brief This implementation simply calls fill_pose on the PoseInputStream
 	/// object.
-	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	void pose_from_job( core::pose::Pose & pose, JobOP job ) override;
 
-	virtual void fill_jobs( JobsContainer & jobs );
+	void fill_jobs( JobsContainer & jobs ) override;
 
 	/// @brief Return the type of input source that the PoseInputStreamJobInputter is currently
 	///  using.
-	virtual JobInputterInputSource::Enum input_source() const;
+	JobInputterInputSource::Enum input_source() const override;
 
 private:
 	core::chemical::ResidueTypeSetCOP rsd_set_;

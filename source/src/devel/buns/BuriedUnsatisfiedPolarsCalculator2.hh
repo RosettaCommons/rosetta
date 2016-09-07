@@ -52,11 +52,11 @@ public:
 
 	BuriedUnsatisfiedPolarsCalculator2(
 		std::string weak_bunsat_calc,
-		std::set< Size > const & special_region
+		std::set< Size > special_region
 	);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone()
-	const
+	const override
 	{
 		return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator2( name_of_weak_bunsat_calc_ ) );
 	};
@@ -124,9 +124,9 @@ public:
 	}
 
 protected:
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & this_pose );
+	void lookup( std::string const & key, basic::MetricValueBase * valptr ) const override;
+	std::string print( std::string const & key ) const override;
+	void recompute( core::pose::Pose const & this_pose ) override;
 
 private:
 	virtual void generous_hbond() const;

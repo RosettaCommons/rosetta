@@ -211,9 +211,9 @@ public:
 	XMLSchemaAttribute & is_required( bool setting );
 
 	XMLSchemaType const & type() const;
-	virtual std::string const & element_name() const;
-	virtual void write_definition( int indentation, std::ostream & os ) const;
-	virtual void prepare_for_output( XMLSchemaDefinition & xsd ) const;
+	std::string const & element_name() const override;
+	void write_definition( int indentation, std::ostream & os ) const override;
+	void prepare_for_output( XMLSchemaDefinition & xsd ) const override;
 
 private:
 	std::string name_;
@@ -255,9 +255,9 @@ public:
 	void base_type( XMLSchemaType setting );
 	void add_restriction( XMLSchemaRestrictionType type, std::string const & value );
 
-	virtual std::string const & element_name() const;
-	virtual void write_definition( int indentation, std::ostream & os ) const;
-	virtual void prepare_for_output( XMLSchemaDefinition & xsd ) const;
+	std::string const & element_name() const override;
+	void write_definition( int indentation, std::ostream & os ) const override;
+	void prepare_for_output( XMLSchemaDefinition & xsd ) const override;
 
 private:
 	std::string name_;
@@ -273,7 +273,7 @@ private:
 class XMLSchemaParticle : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaParticle();
-	virtual ~XMLSchemaParticle();
+	~XMLSchemaParticle() override;
 
 	XMLSchemaParticle & min_occurs( int setting );
 	XMLSchemaParticle & max_occurs( int setting );
@@ -298,7 +298,7 @@ private:
 class XMLSchemaModelGroup : public  XMLSchemaParticle {
 public:
 	XMLSchemaModelGroup();
-	virtual ~XMLSchemaModelGroup();
+	~XMLSchemaModelGroup() override;
 	XMLSchemaModelGroup( XMLSchemaModelGroupType type );
 	XMLSchemaModelGroup( XMLSchemaModelGroupType type, std::list< XMLSchemaParticleCOP > const & particles );
 	XMLSchemaModelGroup( std::string const & group_name );
@@ -308,9 +308,9 @@ public:
 	XMLSchemaModelGroup & append_particles( std::list< XMLSchemaParticleCOP > const & particles );
 	XMLSchemaModelGroup & group_name( std::string const & name );
 
-	virtual std::string const & element_name() const;
-	virtual void write_definition( int indentation, std::ostream & os ) const;
-	virtual void prepare_for_output( XMLSchemaDefinition & xsd ) const;
+	std::string const & element_name() const override;
+	void write_definition( int indentation, std::ostream & os ) const override;
+	void prepare_for_output( XMLSchemaDefinition & xsd ) const override;
 
 private:
 	void validate_content() const;
@@ -379,9 +379,9 @@ public:
 	XMLSchemaComplexType & add_attribute( XMLSchemaAttribute attribute );
 	XMLSchemaComplexType & add_attributes( AttributeList const & attributes );
 
-	virtual std::string const & element_name() const;
-	virtual void write_definition( int indentation, std::ostream & os ) const;
-	virtual void prepare_for_output( XMLSchemaDefinition & xsd ) const;
+	std::string const & element_name() const override;
+	void write_definition( int indentation, std::ostream & os ) const override;
+	void prepare_for_output( XMLSchemaDefinition & xsd ) const override;
 
 private:
 	std::string name_;
@@ -424,9 +424,9 @@ public:
 	XMLSchemaElement & element_type_def( XMLSchemaComplexTypeOP setting );
 	//XMLSchemaElement & restriction_type_def( XMLSchemaRestrictionOP setting );
 
-	virtual std::string const & element_name() const;
-	virtual void write_definition( int indentation, std::ostream & os ) const;
-	virtual void prepare_for_output( XMLSchemaDefinition & xsd ) const;
+	std::string const & element_name() const override;
+	void write_definition( int indentation, std::ostream & os ) const override;
+	void prepare_for_output( XMLSchemaDefinition & xsd ) const override;
 
 private:
 
@@ -451,7 +451,7 @@ class XMLSchemaDefinition : public utility::pointer::ReferenceCount
 {
 public:
 	XMLSchemaDefinition();
-	virtual ~XMLSchemaDefinition();
+	~XMLSchemaDefinition() override;
 	void add_top_level_element( XMLSchemaTopLevelElement const & element );
 	bool has_top_level_element( std::string const & element_name ) const;
 	std::string full_definition() const;
@@ -486,7 +486,7 @@ public:
 
 public:
 	XMLSchemaSimpleSubelementList();
-	~XMLSchemaSimpleSubelementList();
+	~XMLSchemaSimpleSubelementList() override;
 	XMLSchemaSimpleSubelementList( XMLSchemaSimpleSubelementList const & src );
 	XMLSchemaSimpleSubelementList & operator = ( XMLSchemaSimpleSubelementList const & rhs );
 
@@ -664,7 +664,7 @@ public:
 public:
 
 	XMLSchemaComplexTypeGenerator();
-	~XMLSchemaComplexTypeGenerator();
+	~XMLSchemaComplexTypeGenerator() override;
 	XMLSchemaComplexTypeGenerator( XMLSchemaComplexTypeGenerator const & src );
 	XMLSchemaComplexTypeGenerator & operator = (  XMLSchemaComplexTypeGenerator const & rhs );
 

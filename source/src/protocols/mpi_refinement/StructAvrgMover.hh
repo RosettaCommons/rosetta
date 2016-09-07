@@ -37,10 +37,10 @@ public:
 		protocols::wum::SilentStructStore const &decoys,
 		bool const minimize );
 
-	~StructAvrgMover();
+	~StructAvrgMover() override;
 
-	virtual std::string get_name() const{ return "StructAvrgMover"; }
-	virtual void apply( core::pose::Pose &ref_pose );
+	std::string get_name() const override{ return "StructAvrgMover"; }
+	void apply( core::pose::Pose &ref_pose ) override;
 
 	void
 	set_default();

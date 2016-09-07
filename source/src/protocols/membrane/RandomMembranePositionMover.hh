@@ -67,17 +67,17 @@ public:
 	operator=( RandomPositionRotationMover const & src );
 
 	/// @brief Destructor
-	~RandomPositionRotationMover();
+	~RandomPositionRotationMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Apply Rotation
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 private:
 
@@ -118,18 +118,18 @@ public:
 	operator=( RandomPositionTranslationMover const & src );
 
 	/// @brief Destructor
-	~RandomPositionTranslationMover();
+	~RandomPositionTranslationMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 private:
 

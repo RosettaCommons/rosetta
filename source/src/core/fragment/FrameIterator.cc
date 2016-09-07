@@ -24,6 +24,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -47,9 +48,9 @@ the *it would change and return a Frame* ...
 namespace core {
 namespace fragment {
 
-ConstFrameIterator::ConstFrameIterator( FrameIteratorWorker_OP it ) : it_( it ) {}
+ConstFrameIterator::ConstFrameIterator( FrameIteratorWorker_OP it ) : it_(std::move( it )) {}
 ConstFrameIterator::ConstFrameIterator() : it_( /* NULL */ ) {}
-ConstFrameIterator::~ConstFrameIterator() {}
+ConstFrameIterator::~ConstFrameIterator() = default;
 
 bool ConstFrameIterator::operator != ( ConstFrameIterator const& fi) const {
 	return (*it_)!=(*fi.it_);

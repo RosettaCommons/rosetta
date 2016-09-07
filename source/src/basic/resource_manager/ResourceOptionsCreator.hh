@@ -38,7 +38,7 @@ namespace resource_manager {
 class ResourceOptionsCreator : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~ResourceOptionsCreator();
+	~ResourceOptionsCreator() override;
 
 	virtual std::string options_type() const = 0;
 	virtual ResourceOptionsOP create_options() const = 0;

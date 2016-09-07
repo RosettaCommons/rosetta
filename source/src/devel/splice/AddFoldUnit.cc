@@ -83,11 +83,11 @@ FoldUnitUtils::entry_subset() const{
 	}
 
 	if ( !n_term_entry() && !c_term_entry() ) {
-		for ( UM::const_iterator it = entry_pairs_quick_access_N_C_.cbegin(); it != entry_pairs_quick_access_N_C_.cend(); ++it ) {
-			bb_dof_entries.push_back( it->first );
+		for (const auto & it : entry_pairs_quick_access_N_C_) {
+			bb_dof_entries.push_back( it.first );
 		}
 		sort( bb_dof_entries.begin(), bb_dof_entries.end() );
-		vector1< Size >::iterator last = unique( bb_dof_entries.begin(), bb_dof_entries.end() );
+		auto last = unique( bb_dof_entries.begin(), bb_dof_entries.end() );
 		bb_dof_entries.erase( last, bb_dof_entries.end());
 		TR<<"Found "<<bb_dof_entries.size()<<" entries that meet restrictions."<<std::endl;
 		return bb_dof_entries;
@@ -337,14 +337,12 @@ AddFoldUnitMover::AddFoldUnitMover(): moves::Mover("AddFoldUnit"),
 	terminus_( 'b' ),
 	replace_fragment_( false ),
 	replace_fragment_segment_number_( 0 ),
-	fold_unit_utils_( NULL ),
+	fold_unit_utils_( nullptr ),
 	max_segments_( 5 )
 {
 }
 
-AddFoldUnitMover::~AddFoldUnitMover()
-{
-}
+AddFoldUnitMover::~AddFoldUnitMover() = default;
 
 void
 AddFoldUnitMover::apply( Pose & pose ){
@@ -484,8 +482,8 @@ PoseFragmentInfo::set_fragment_info_in_pose( core::pose::Pose & pose )const{
 	}
 
 	Size count( 1 );
-	for ( map< Size, Size >::const_iterator frag = fragment_map_.begin(); frag != fragment_map_.end(); ++frag ) {
-		core::pose::add_comment( pose, "fragment_definition" + utility::to_string(count), utility::to_string( frag->second ) ); // fragment_definition# 1_14
+	for (const auto & frag : fragment_map_) {
+		core::pose::add_comment( pose, "fragment_definition" + utility::to_string(count), utility::to_string( frag.second ) ); // fragment_definition# 1_14
 		++count;
 	}
 	TR<<"Added "<<fragment_map_.size()<<" fragment comments to pose"<<std::endl;
@@ -497,7 +495,7 @@ FoldUnitUtils::pair_index( Size const i, Size const j ) const{
 	if ( i == 0 || j == 0 ) {
 		return 0;
 	}
-	vector1< pair< Size, Size > >::const_iterator it = find( entry_pairs_.begin(), entry_pairs_.end(), pair< Size, Size >( i, j ) );
+	auto it = find( entry_pairs_.begin(), entry_pairs_.end(), pair< Size, Size >( i, j ) );
 	return it - entry_pairs_.begin() + 1;
 }
 
@@ -539,12 +537,12 @@ PoseFragmentInfo::operator[] ( core::Size const s ) const {
 	return fragment_map_.at( s );
 }
 
-FoldUnitUtils::~FoldUnitUtils() {}
+FoldUnitUtils::~FoldUnitUtils() = default;
 
-PoseFragmentInfo::~PoseFragmentInfo() {}
+PoseFragmentInfo::~PoseFragmentInfo() = default;
 
 StartFreshMover::StartFreshMover() : Mover( "StartFresh" ), residue_type_set_( "centroid" ) {}
-StartFreshMover::~StartFreshMover() {}
+StartFreshMover::~StartFreshMover() = default;
 
 void
 StartFreshMover::apply( core::pose::Pose & pose ){

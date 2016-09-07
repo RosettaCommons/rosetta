@@ -35,6 +35,7 @@
 
 
 #include <protocols/evaluation/util.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -58,7 +59,7 @@ RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, Size start, Size end, st
 	runtime_assert( end <= pose -> total_residue() );
 }
 
-RmsdEvaluator::~RmsdEvaluator() {}
+RmsdEvaluator::~RmsdEvaluator() = default;
 
 RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, std::string tag, bool bGDT /* default true */ )
 : evaluation::SingleValuePoseEvaluator< Real > ("rms"+tag),
@@ -99,7 +100,7 @@ RmsdEvaluator::apply( core::pose::Pose& pose, std::string tag, core::io::silent:
 }
 
 Real RmsdEvaluator::apply( core::pose::Pose& pose ) const {
-	runtime_assert( rmsd_pose_ != 0 );
+	runtime_assert( rmsd_pose_ != nullptr );
 	core::Real rmsd;
 	if ( start_ == 1 && end_ == rmsd_pose_->total_residue() ) {
 		runtime_assert( pose.total_residue() >= end_ );
@@ -112,10 +113,10 @@ Real RmsdEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 
-SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< Size > const& selection, std::string tag, bool CAonly )
+SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< Size >  selection, std::string tag, bool CAonly )
 : evaluation::SingleValuePoseEvaluator< Real >( "rms"+tag ),
-	rmsd_pose_( pose ),
-	selection_( selection ),
+	rmsd_pose_(std::move( pose )),
+	selection_(std::move( selection )),
 	tag_ ( tag ),
 	CAonly_( CAonly )
 {
@@ -124,7 +125,7 @@ SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< S
 
 SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, utility::vector1< Size> const& selection, std::string tag, bool CAonly )
 : evaluation::SingleValuePoseEvaluator< Real >( "rms"+tag ),
-	rmsd_pose_( pose ),
+	rmsd_pose_(std::move( pose )),
 	tag_( tag ),
 	CAonly_( CAonly )
 {
@@ -175,11 +176,11 @@ SelectRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	return rmsd;
 }
 
-SelectGdtEvaluator::~SelectGdtEvaluator(){}
-SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< Size > const& selection, std::string tag )
+SelectGdtEvaluator::~SelectGdtEvaluator()= default;
+SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< Size >  selection, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( "gdtmm"+tag ),
-	rmsd_pose_( pose ),
-	selection_( selection ),
+	rmsd_pose_(std::move( pose )),
+	selection_(std::move( selection )),
 	tag_ ( tag )
 {
 
@@ -187,7 +188,7 @@ SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< Siz
 
 SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, utility::vector1< Size> const& selection, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( "gdtmm"+tag ),
-	rmsd_pose_( pose ),
+	rmsd_pose_(std::move( pose )),
 	tag_( tag )
 {
 	copy( selection.begin(), selection.end(), std::back_inserter( selection_ ) );
@@ -227,10 +228,10 @@ SelectGdtEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 
-SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::list< Size > const& selection, std::string tag, core::Real rmsd_threshold )
+SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::list< Size >  selection, std::string tag, core::Real rmsd_threshold )
 : evaluation::SingleValuePoseEvaluator< Real >( "maxsub"+tag ),
-	rmsd_pose_( pose ),
-	selection_( selection ),
+	rmsd_pose_(std::move( pose )),
+	selection_(std::move( selection )),
 	tag_ ( tag ),
 	rmsd_threshold_( rmsd_threshold )
 {
@@ -239,7 +240,7 @@ SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::lis
 
 SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, utility::vector1< Size> const& selection, std::string tag, core::Real rmsd_threshold )
 : evaluation::SingleValuePoseEvaluator< Real >( "maxsub"+tag ),
-	rmsd_pose_( pose ),
+	rmsd_pose_(std::move( pose )),
 	tag_( tag ),
 	rmsd_threshold_( rmsd_threshold )
 {
@@ -267,7 +268,7 @@ SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::Pose const& pose, std:
 
 Real
 SelectMaxsubEvaluator::apply( core::pose::Pose& pose ) const {
-	runtime_assert( rmsd_pose_ != 0 );
+	runtime_assert( rmsd_pose_ != nullptr );
 	//  core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 	core::Real maxsub = core::scoring::CA_maxsub( *rmsd_pose_, pose, selection_, rmsd_threshold_ );
 	return maxsub;
@@ -276,9 +277,9 @@ SelectMaxsubEvaluator::apply( core::pose::Pose& pose ) const {
 
 SymmetricRmsdEvaluator::SymmetricRmsdEvaluator( core::pose::PoseCOP pose, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real > ("symmetric_rms"+tag ),
-	rmsd_pose_( pose ) {}
+	rmsd_pose_(std::move( pose )) {}
 
-SymmetricRmsdEvaluator::~SymmetricRmsdEvaluator(){}
+SymmetricRmsdEvaluator::~SymmetricRmsdEvaluator()= default;
 
 Real
 SymmetricRmsdEvaluator::apply( core::pose::Pose& pose ) const {
@@ -288,7 +289,7 @@ SymmetricRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 
 LoopRmsdEvaluator::LoopRmsdEvaluator( core::pose::PoseCOP pose, protocols::loops::Loops loops, std::string tag, bool CAonly, bool superimpose )
 : evaluation::SingleValuePoseEvaluator< Real >( "looprms"+tag ),
-	rmsd_pose_( pose ),
+	rmsd_pose_(std::move( pose )),
 	loops_( loops ),
 	CAonly_( CAonly ),
 	superimpose_( superimpose )
@@ -296,7 +297,7 @@ LoopRmsdEvaluator::LoopRmsdEvaluator( core::pose::PoseCOP pose, protocols::loops
 
 LoopRmsdEvaluator::LoopRmsdEvaluator( core::pose::PoseCOP pose, protocols::loops::Loops loops, protocols::loops::Loops core, std::string tag, bool CAonly, bool superimpose )
 : evaluation::SingleValuePoseEvaluator< Real >( "looprms"+tag ),
-	rmsd_pose_( pose ),
+	rmsd_pose_(std::move( pose )),
 	loops_( loops ),
 	core_( core ),
 	CAonly_( CAonly ),
@@ -320,7 +321,7 @@ LoopRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	} else {
 		rmsd = protocols::loops::loop_rmsd( *target_pose, pose, loops_, CAonly_ /*CA_only*/, false /*bb_only*/ );
 	}
-	if ( temp_pose ) target_pose=NULL;
+	if ( temp_pose ) target_pose=nullptr;
 	return rmsd;
 }
 

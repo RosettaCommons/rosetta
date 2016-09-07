@@ -14,6 +14,7 @@
 #include <protocols/simple_moves/ExtendedPoseMover.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // Project headers
@@ -52,9 +53,9 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover"
 namespace protocols {
 namespace simple_moves {
 
-ExtendedPoseMover::ExtendedPoseMover(const std::string& sequence,
-	const std::string& residue_type_set)
-: sequence_(sequence), residue_type_set_(residue_type_set) {}
+ExtendedPoseMover::ExtendedPoseMover(std::string  sequence,
+	std::string  residue_type_set)
+: sequence_(std::move(sequence)), residue_type_set_(std::move(residue_type_set)) {}
 
 bool ExtendedPoseMover::valid() const {
 	return sequence() != "";

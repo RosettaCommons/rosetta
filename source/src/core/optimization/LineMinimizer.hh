@@ -103,7 +103,7 @@ public:
 class LineMinimizationAlgorithm : public utility::pointer::ReferenceCount
 {
 public:
-	virtual ~LineMinimizationAlgorithm();
+	~LineMinimizationAlgorithm() override;
 	LineMinimizationAlgorithm( Multifunc const & score_fxn, Size dimension ) :
 		_stored_derivatives( dimension, 0.0 ),
 		_last_accepted_step( 1.0 ), _func_to_beat( 0.0 ),
@@ -147,7 +147,7 @@ public:
 		_ax( 0.0 ), _bx( 0.2 ), _xx( 0.1 ), _abs_tolerance( 0.01 ),
 		deriv_cutoff_(0.0001)
 	{};
-	virtual Real operator()( Multivec & curr_pos, Multivec & curr_dir );
+	Real operator()( Multivec & curr_pos, Multivec & curr_dir ) override;
 	void set_deriv_cutoff( core::Real const &val ) { deriv_cutoff_=val; }
 	void MNBRAK( Real & AX, Real & BX, Real & CX, Real & FA, Real & FB,
 		Real & FC, func_1d & func_eval) const;
@@ -170,8 +170,8 @@ public:
 	ArmijoLineMinimization( Multifunc const & score_fxn, bool nonmonotone, Size dim ) :
 		LineMinimizationAlgorithm( score_fxn, dim ),
 		_num_calls( 0 ) { _nonmonotone = nonmonotone; };
-	virtual bool provide_stored_derivatives(){ return false; };
-	virtual Real operator()( Multivec & curr_pos, Multivec & curr_dir );
+	bool provide_stored_derivatives() override{ return false; };
+	Real operator()( Multivec & curr_pos, Multivec & curr_dir ) override;
 	Real Armijo( Real init_step, func_1d & func_eval );
 
 	int _num_calls;
@@ -189,8 +189,8 @@ public:
 		LineMinimizationAlgorithm( score_fxn, dim ),
 		_nonmonotone( nonmonotone ),
 		_num_calls( 0 ) {};
-	virtual bool provide_stored_derivatives(){ return true; };
-	virtual Real operator()( Multivec & curr_pos, Multivec & curr_dir );
+	bool provide_stored_derivatives() override{ return true; };
+	Real operator()( Multivec & curr_pos, Multivec & curr_dir ) override;
 	Real StrongWolfe( Real init_step, func_1d & func_eval );
 	Real zoom( Real alpha_low, Real func_low, Real deriv_low, Real alpha_high, Real func_high, Real deriv_high,
 		Real func_zero, Real deriv_zero, Real & func_return, func_1d & func_eval );

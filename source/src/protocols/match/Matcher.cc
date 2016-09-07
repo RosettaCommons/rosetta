@@ -93,7 +93,7 @@ Matcher::Matcher() :
 	relevant_downstream_atoms_.clear();
 }
 
-Matcher::~Matcher() {}
+Matcher::~Matcher() = default;
 
 void Matcher::set_upstream_pose( core::pose::Pose const & pose )
 {
@@ -159,7 +159,7 @@ void Matcher::set_n_geometric_constraints( Size n_constraints )
 	hits_.resize( n_geometric_constraints_ );
 	upstream_builders_.resize( n_geometric_constraints_ );
 	build_set_id_for_restype_.resize( n_geometric_constraints_ );
-	representative_downstream_algorithm_.resize( n_geometric_constraints_, 0 );
+	representative_downstream_algorithm_.resize( n_geometric_constraints_, nullptr );
 	//std::fill( representative_downstream_algorithm_.begin(), representative_downstream_algorithm_.end(), 0 );
 	downstream_algorithms_.resize( n_geometric_constraints_ );
 	geomcst_is_upstream_only_.resize( n_geometric_constraints_, false );
@@ -699,8 +699,8 @@ void Matcher::initialize_from_file(
 	//std::cout << "APL DEBUG Matcher.cc::initialize_from_file begin" << std::endl;
 	using namespace toolbox::match_enzdes_util;
 
-	runtime_assert( upstream_pose_ != 0 );
-	runtime_assert( downstream_pose_ != 0 );
+	runtime_assert( upstream_pose_ != nullptr );
+	runtime_assert( downstream_pose_ != nullptr );
 	TR << "Matcher::initialize_from_file: n geometric constraints: " << enz_data.mcfi_lists_size() << std::endl;
 
 	set_n_geometric_constraints( enz_data.mcfi_lists_size() );
@@ -891,12 +891,12 @@ void Matcher::initialize_from_file(
 									SingleResidueRotamerLibraryFactory const & rotlibfact( *SingleResidueRotamerLibraryFactory::get_instance() );
 									SingleResidueRotamerLibraryCOP res_rotlib( rotlibfact.get( *upres[ jj ] ) );
 
-									if ( res_rotlib != 0 ) {
+									if ( res_rotlib != nullptr ) {
 
 										SingleResidueDunbrackLibraryCOP dun_rotlib(
 											utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( res_rotlib ));
 
-										if ( dun_rotlib == 0 ) {
+										if ( dun_rotlib == nullptr ) {
 											utility_exit_with_message( "Failed to retrieve a Dunbrack rotamer library for AA: " +
 												utility::to_string( upres[ jj ]->aa() ) +  " named " +  upres[ jj ]->name() );
 										}
@@ -919,25 +919,25 @@ void Matcher::initialize_from_file(
 												SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											case 2 : {
 												SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											case 3 : {
 												SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											case 4 : {
 												SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											default : {
 												utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
@@ -952,25 +952,25 @@ void Matcher::initialize_from_file(
 												SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											case 2 : {
 												SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											case 3 : {
 												SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											case 4 : {
 												SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * >
 													( dun_rotlib.get() );
-												failed_cast = sr2 == 0;
+												failed_cast = sr2 == nullptr;
 											}
 											default : {
 												utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
@@ -1103,7 +1103,7 @@ void Matcher::initialize_from_file(
 				toolbox::match_enzdes_util::ExternalGeomSamplerCOP exgs;
 				if ( !secondary_matching ) {
 					exgs = jj_mcfis[ kk ]->create_exgs();
-					if ( exgs.get() == 0 ) {
+					if ( exgs.get() == nullptr ) {
 						utility_exit_with_message( "ERROR: could not define external geometry between upstream and downstream residues.  All 6 parameters must be defined." );
 					}
 				}
@@ -1218,9 +1218,8 @@ Matcher::process_matches( output::MatchProcessor & processor ) const
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		representative_downstream_algorithm_[ ii ]->prepare_for_match_enumeration( *this );
 	}
-	for ( std::list< downstream::DownstreamBuilderOP >::const_iterator ds_it( all_downstream_builders_.begin() ),
-			ds_end( all_downstream_builders_.end()); ds_it != ds_end; ++ds_it ) {
-		if ( (*ds_it)->hits_potentially_incompatible() ) {
+	for (const auto & all_downstream_builder : all_downstream_builders_) {
+		if ( all_downstream_builder->hits_potentially_incompatible() ) {
 			check_potential_dsbuilder_incompatibility_ = true;
 			break;
 		}
@@ -1273,7 +1272,7 @@ downstream::DownstreamBuilderCOP
 Matcher::downstream_builder( Size geom_cst ) const
 {
 	if ( downstream_builders_[ geom_cst ].empty() ) {
-		return 0;
+		return nullptr;
 	} else {
 		return *(downstream_builders_[ geom_cst ].begin());
 	}
@@ -1283,11 +1282,8 @@ std::list< downstream::DownstreamAlgorithmCOP >
 Matcher::downstream_algorithms( Size cst_id ) const
 {
 	std::list< downstream::DownstreamAlgorithmCOP > dsalgs;
-	for ( std::list< downstream::DownstreamAlgorithmOP >::const_iterator
-			iter = downstream_algorithms_[ cst_id ].begin(),
-			iter_end = downstream_algorithms_[ cst_id ].end();
-			iter != iter_end; ++iter ) {
-		dsalgs.push_back( *iter );
+	for (const auto & iter : downstream_algorithms_[ cst_id ]) {
+		dsalgs.push_back( iter );
 	}
 	return dsalgs;
 }
@@ -1482,7 +1478,7 @@ Matcher::finish_hit_generation_for_constraint( Size cst_id )
 
 	/// During the primary and peripheral hit-list prunings, new elements may be pushed-back
 	/// into the hit-lists-modified-by-primary-deletion list.
-	for ( std::list< Size >::iterator iter = geom_csts_with_primary_hitlist_modificiations_.begin();
+	for ( auto iter = geom_csts_with_primary_hitlist_modificiations_.begin();
 			iter != geom_csts_with_primary_hitlist_modificiations_.end(); /* no increment */ ) {
 
 		representative_downstream_algorithm_[ *iter ]->respond_to_primary_hitlist_change( *this, cst_id );
@@ -1496,7 +1492,7 @@ Matcher::finish_hit_generation_for_constraint( Size cst_id )
 			representative_downstream_algorithm_[ jj ]->respond_to_peripheral_hitlist_change( *this );
 		}
 
-		std::list< Size >::iterator iter_next( iter );
+		auto iter_next( iter );
 		++iter_next;
 		geom_cst_has_primary_modification_[ *iter ] = false;
 		geom_csts_with_primary_hitlist_modificiations_.erase( iter );
@@ -1518,7 +1514,7 @@ Matcher::finish_hit_generation_for_constraint( Size cst_id )
 				iter = all_downstream_builders_.begin(),
 				iter_end = all_downstream_builders_.end();
 				iter != iter_end; ++iter ) {
-			(*iter)->set_occupied_space_hash( 0 );
+			(*iter)->set_occupied_space_hash( nullptr );
 		}
 		occ_space_hash_.reset();
 	}
@@ -1732,7 +1728,7 @@ Matcher::create_ds_builder(
 	runtime_assert( build_set.has_restype() );
 
 	/// Only supports rigid-ligand builders for now... This code will expand in the future.
-	runtime_assert( downstream_pose_ != 0 );
+	runtime_assert( downstream_pose_ != nullptr );
 	runtime_assert( downstream_pose_->total_residue() == 1 );
 
 	for ( Size ii = 1; ii <= 3; ++ii ) {
@@ -1857,7 +1853,7 @@ Matcher::select_hit_representatives(
 			for ( Size jj = 1; jj <= n_hits_per_geomcst[ ii ]; ++jj ) {
 				upstream_hit this_us_hit( *hit_vectors[ii][jj] );
 
-				std::map< upstream_hit, std::set< Size > >::iterator hitmap_it(us_hit_map.find( this_us_hit ));
+				auto hitmap_it(us_hit_map.find( this_us_hit ));
 				if ( hitmap_it == us_hit_map.end() ) {
 					std::set< Size > hits_this_us_hit;
 					hits_this_us_hit.insert( jj );
@@ -1873,11 +1869,10 @@ Matcher::select_hit_representatives(
 			for ( std::map< upstream_hit, std::set< Size> >::const_iterator map_it( us_hit_map.begin() ), map_end( us_hit_map.end() );
 					map_it != map_end; ++map_it ) {
 				Size counter(0);
-				for ( std::set< Size >::const_iterator set_it( map_it->second.begin() ), set_end( map_it->second.end() );
-						set_it != set_end; ++set_it ) {
+				for (unsigned long set_it : map_it->second) {
 					++counter;
 					++n_hits_per_geomcst[ ii ];
-					reps[ii].push_back( *set_it );
+					reps[ii].push_back( set_it );
 					if ( counter >= max_hits_per_us_hit ) break;
 				}
 			}
@@ -2325,7 +2320,7 @@ Matcher::subsample_hits(
 
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		if ( geomcst_is_upstream_only_[ ii ] ) continue;
-		for ( std::list< Hit const * >::const_iterator
+		for ( auto
 				hit_iter = neighbor_hits[ ii ].begin(),
 				hit_iter_end = neighbor_hits[ ii ].end();
 				hit_iter != hit_iter_end; ++hit_iter ) {
@@ -2344,12 +2339,10 @@ Matcher::subsample_hits(
 			// first -- check if there are multiple upstream build points.
 			Size build_point = 0;
 			bool all_same( true );
-			for ( std::list< Hit const * >::const_iterator
-					hit_iter = matches[ ii ].begin(), hit_iter_end = matches[ ii ].end();
-					hit_iter != hit_iter_end; ++hit_iter ) {
+			for (auto hit_iter : matches[ ii ]) {
 				if ( build_point == 0 ) {
-					build_point = (*hit_iter)->first()[ 1 ];
-				} else if ( build_point != (*hit_iter)->first()[ 1 ] ) {
+					build_point = hit_iter->first()[ 1 ];
+				} else if ( build_point != hit_iter->first()[ 1 ] ) {
 					all_same = false;
 					break;
 				}
@@ -2361,7 +2354,7 @@ Matcher::subsample_hits(
 				} else {
 					// pick a random number between 0 and len-1 and increment through the list of hits
 					// that many times to pick a single random hit.
-					std::list< Hit const * >::const_iterator hit_iter = matches[ ii ].begin();
+					auto hit_iter = matches[ ii ].begin();
 					Size nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
 					for ( Size jj = 1; jj <= nsteps; ++jj ) ++hit_iter;
 					subsamples[ ii ].push_back( * hit_iter );
@@ -2369,10 +2362,8 @@ Matcher::subsample_hits(
 			} else {
 				/// insert the hits into an STL map based on the build position; then grab one hit at random from each
 				std::map< Size, std::list< Hit const * > > buildpos_hitmap;
-				for ( std::list< Hit const * >::const_iterator
-						hit_iter = matches[ ii ].begin(), hit_iter_end = matches[ ii ].end();
-						hit_iter != hit_iter_end; ++hit_iter ) {
-					buildpos_hitmap[ (*hit_iter)->first()[ 1 ] ].push_back( *hit_iter );
+				for (auto hit_iter : matches[ ii ]) {
+					buildpos_hitmap[ hit_iter->first()[ 1 ] ].push_back( hit_iter );
 				}
 				for ( std::map< Size, std::list< Hit const * > >::const_iterator
 						builditer = buildpos_hitmap.begin(), builditer_end = buildpos_hitmap.end();
@@ -2383,7 +2374,7 @@ Matcher::subsample_hits(
 					} else {
 						// pick a random number between 0 and len-1 and increment through the list of hits
 						// that many times to pick a single random hit.
-						std::list< Hit const * >::const_iterator hit_iter = builditer->second.begin();
+						auto hit_iter = builditer->second.begin();
 						Size nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
 						for ( Size jj = 1; jj <= nsteps; ++jj ) ++hit_iter;
 						subsamples[ ii ].push_back( * hit_iter );
@@ -2476,7 +2467,7 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 		/// of the ii'th iteration, instead of having all 64 hash maps in memory at the same time.
 		for ( Size jj = 1; jj <= n_geometric_constraints_; ++jj ) {
 			if ( ! geomcst_is_upstream_only_[ jj ] ) {
-				for ( std::list< Hit const * >::const_iterator iter = neighbor_hits[ jj ].begin(),
+				for ( auto iter = neighbor_hits[ jj ].begin(),
 						iter_end = neighbor_hits[ jj ].end(); iter != iter_end; ++iter ) {
 					hit_hasher.insert_hit( ii, jj, (*iter) );
 					//hit_scaff_build_pts[ jj ][ iter->first()[ 1 ] ] = true;
@@ -2532,7 +2523,7 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 						mlite[ jj ] =   hit_vectors[ jj ][ reps[jj][lex[ jj ]] ];
 						m[ jj ]     = *(hit_vectors[ jj ][ reps[jj][lex[ jj ]] ] );
 						m1.upstream_hits[ jj ].copy_hit( m[ jj ] );
-					} else mlite[jj] = NULL; //null pointer to ensure output tracking works
+					} else mlite[jj] = nullptr; //null pointer to ensure output tracking works
 				}
 
 				/// if any of the non-upstream-only hits are incompatible, increment the lex
@@ -2591,7 +2582,7 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 						if ( geomcst_is_upstream_only_[ jj ] ) {
 							upstream_only_hits[ jj ] = representative_downstream_algorithm_[ jj ]->
 								hits_to_include_with_partial_match( m1 );
-							if ( upstream_only_hits[ jj ] == 0 ) {
+							if ( upstream_only_hits[ jj ] == nullptr ) {
 								empty_hitlist_id = jj;
 								break;
 							}
@@ -2655,7 +2646,7 @@ Matcher::process_matches_where_one_geomcst_defines_downstream_location(
 
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		if ( ! geomcst_is_upstream_only_[ ii ] ) {
-			for ( std::list< Hit >::const_iterator hititer = hits_[ ii ].begin(),
+			for ( auto hititer = hits_[ ii ].begin(),
 					hititer_end = hits_[ ii ].end(); hititer != hititer_end; ++hititer ) {
 				Size2 rotid;
 				rotid[ 1 ] = hititer->scaffold_build_id();
@@ -2724,7 +2715,7 @@ Matcher::process_matches_where_one_geomcst_defines_downstream_location(
 		for ( Size jj = 1; jj <= 64; ++jj ) {
 			for ( Size kk = 1; kk <= n_geometric_constraints_; ++kk ) {
 				if ( ! geomcst_is_upstream_only_[ kk ] ) {
-					for ( std::list< Hit >::const_iterator iter = hits_[ kk ].begin(), iter_end = hits_[ kk ].end();
+					for ( auto iter = hits_[ kk ].begin(), iter_end = hits_[ kk ].end();
 							iter != iter_end; ++iter ) {
 						hit_hasher.insert_hit( jj, kk, & (*iter) );
 						hit_scaff_build_pts[ kk ][ iter->first()[ 1 ] ] = true;
@@ -2838,7 +2829,7 @@ Matcher::process_matches_where_one_geomcst_defines_downstream_location(
 								if ( geomcst_is_upstream_only_[ kk ] ) {
 									upstream_only_hits[ kk ] = representative_downstream_algorithm_[ kk ]->
 										hits_to_include_with_partial_match( m1 );
-									if ( upstream_only_hits[ kk ] == 0 ) {
+									if ( upstream_only_hits[ kk ] == nullptr ) {
 										empty_hitlist_id = kk;
 										break;
 									}

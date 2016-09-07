@@ -42,7 +42,7 @@ namespace core {
 namespace chemical {
 
 /// @details Auto-generated virtual destructor
-PatchOperation::~PatchOperation() {}
+PatchOperation::~PatchOperation() = default;
 
 static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
 static THREAD_LOCAL basic::Tracer TR_PatchOperations( "core.chemical.PatchOperations.hh" );
@@ -1885,14 +1885,14 @@ patch_operation_from_patch_file_line(
 	Size chino;
 	SSize formal_charge;
 	l >> tag;
-	if ( l.fail() || tag[0] == '#' ) return 0;
+	if ( l.fail() || tag[0] == '#' ) return nullptr;
 	if ( tag == "ADD_ATOM" ) {
-		if ( line.size() < 25 ) return 0;
+		if ( line.size() < 25 ) return nullptr;
 		atom_name = line.substr( 9,4); l >> tag;
 		l >> atom_type_name; // = line.substr( 14,4);
 		l >> mm_atom_type_name; // = line.substr( 19,4);
 		l >> charge;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 
 		//fd let command line override charge
 		if ( atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) ) != atomic_charge_reassignments.end() ) {
@@ -1909,24 +1909,24 @@ patch_operation_from_patch_file_line(
 #endif
 	} else if ( tag == "DELETE_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new DeleteAtom( atom_name ) );
 
 	} else if ( tag == "ADD_ATOM_ALIAS" ) {
 		l >> atom_name >> atom_alias;
 		if ( l.fail() ) {
-			return NULL;
+			return nullptr;
 		}
 		return PatchOperationOP( new AddAtomAlias( atom_name, atom_alias ) );
 
 	} else if ( tag == "SET_BACKBONE_HEAVYATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new SetBackboneHeavyatom( atom_name ) );
 
 	} else if ( tag == "SET_IO_STRING" ) { // 13 character tag
 		// NOTE - USE FIXED WIDTH IO SINCE NAME3 CAN CONTAIN INTERNAL WHITESPACE (EG DNA,RNA)
-		if ( line.size() < 19 ) return 0;
+		if ( line.size() < 19 ) return nullptr;
 		std::string const three_letter_code( line.substr(14,3) ), one_letter_code( line.substr(18,1) );
 		return PatchOperationOP( new SetIO_String( three_letter_code, one_letter_code[0] ) );
 
@@ -1937,7 +1937,7 @@ patch_operation_from_patch_file_line(
 
 	} else if ( tag == "NBR_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new SetNbrAtom( atom_name ) );
 
 	} else if ( tag == "NBR_RADIUS" ) {
@@ -1947,17 +1947,17 @@ patch_operation_from_patch_file_line(
 
 	} else if ( tag == "ADD_PROPERTY" ) {
 		l >> property;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new AddProperty( property ) );
 
 	} else if ( tag == "DELETE_PROPERTY" ) {
 		l >> property;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new DeleteProperty( property ) );
 
 	} else if ( tag == "DELETE_VARIANT_TYPE" ) {
 		l >> variant;
-		if ( l.fail() ) { return 0; }
+		if ( l.fail() ) { return nullptr; }
 		return PatchOperationOP( new DeleteVariantType( variant ) );
 
 		// Added by Andy M. Chen in June 2009
@@ -1965,11 +1965,11 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "ADD_CHI" ) {
 		if ( line.substr(8, 3) == "N+1" ) {
 			l >> dummy >> atom1 >> atom2 >> atom3 >> atom4;
-			if ( l.fail() ) return 0;
+			if ( l.fail() ) return nullptr;
 			return PatchOperationOP( new AddChi(atom1, atom2, atom3, atom4) );
 		} else {
 			l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
-			if ( l.fail() ) return 0;
+			if ( l.fail() ) return nullptr;
 			return PatchOperationOP( new AddChi(chino, atom1, atom2, atom3, atom4) );
 		}
 
@@ -1991,14 +1991,14 @@ patch_operation_from_patch_file_line(
 		for ( Size ii = 1; ii <= nextra_samples; ++ii ) {
 			l >> extra_samples[ ii ];
 		}
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new AddProtonChi( chino, samples, extra_samples ) );
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "REDEFINE_CHI" ) {
 		l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new RedefineChi( chino, atom1, atom2, atom3, atom4 ) );
 
 	} else if ( tag == "DELETE_TERMINAL_CHI" ) {
@@ -2006,13 +2006,13 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "DELETE_METALBINDING_ATOM" ) {
 		std::string atom_name;
 		l >> atom_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 
 		return PatchOperationOP( new DeleteMetalbindingAtom( atom_name ) );
 	} else if ( tag == "DELETE_ACT_COORD_ATOM" ) {
 		std::string atom_name;
 		l >> atom_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 
 		return PatchOperationOP( new DeleteActCoordAtom( atom_name ) );
 
@@ -2021,30 +2021,30 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "ADD_CHI_ROTAMER" ) {
 		if ( line.substr(16, 1) == "N" ) {
 			l >> dummy >> mean >> sdev;
-			if ( l.fail() ) return 0;
+			if ( l.fail() ) return nullptr;
 			return PatchOperationOP( new AddChiRotamer(mean, sdev) );
 		} else {
 			l >> chino >> mean >> sdev;
-			if ( l.fail() ) return 0;
+			if ( l.fail() ) return nullptr;
 			return PatchOperationOP( new AddChiRotamer(chino, mean, sdev) );
 		}
 
 	} else if ( tag == "CLEAR_CHI_ROTAMERS" ) {
 		l >> chino;
-		if ( l.fail() ) { return 0; }
+		if ( l.fail() ) { return nullptr; }
 		return PatchOperationOP( new ClearChiRotamers( chino ) );
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_BOND" ) {
 		l >> atom1 >> atom2;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		return PatchOperationOP( new AddBond( atom1, atom2 ) );
 
 	} else if ( tag == "ADD_BOND_TYPE" ) {
 		l >> atom1 >> atom2 >> bond_type;
 		if ( l.fail() ) {
-			return NULL;
+			return nullptr;
 		}
 		return PatchOperationOP( new AddBondType( atom1, atom2, bond_type ) );
 
@@ -2052,14 +2052,14 @@ patch_operation_from_patch_file_line(
 		std::string old_bond_type;
 		l >> atom1 >> atom2 >> old_bond_type >> dummy >> bond_type;
 		if ( l.fail() ) {
-			return 0;
+			return nullptr;
 		}
 		return PatchOperationOP( new ChangeBondType( atom1, atom2, old_bond_type, bond_type ) );
 
 	} else if ( tag == "ADD_CONNECT" ) {
 		std::string connect_atom;
 		l >> connect_atom;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) return nullptr;
 		l >> tag;
 		if ( l.fail() ) {
 			return PatchOperationOP( new AddConnect(
@@ -2089,7 +2089,7 @@ patch_operation_from_patch_file_line(
 	} else if ( tag == "SET_FORMAL_CHARGE" ) {
 		l >> atom_name >> formal_charge;
 		if ( l.fail() ) {
-			return NULL;
+			return nullptr;
 		}
 		return PatchOperationOP( new SetFormalCharge( atom_name, formal_charge ) );
 
@@ -2184,7 +2184,7 @@ patch_operation_from_patch_file_line(
 			return PatchOperationOP( new SetOrientAtom(false) );
 		} else {
 			tr.Warning << "Unknown SET_ORIENT ATOM tag: " << tag << std::endl;
-			return 0;
+			return nullptr;
 		}
 	} else if ( tag == "SET_ALL_ATOMS_REPULSIVE" ) {
 		return PatchOperationOP( new SetAllAtomsRepulsive() );
@@ -2247,7 +2247,7 @@ patch_operation_from_patch_file_line(
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 
-	return 0;
+	return nullptr;
 }
 
 } // chemical

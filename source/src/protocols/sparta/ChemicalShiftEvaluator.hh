@@ -48,8 +48,8 @@ namespace sparta {
 class ChemicalShiftEvaluator : public protocols::evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
 	ChemicalShiftEvaluator( std::string tag, std::string cst_file );
-	virtual core::Real apply( core::pose::Pose& pose ) const;
-	virtual bool applicable( core::pose::Pose const&pose ) const;
+	core::Real apply( core::pose::Pose& pose ) const override;
+	bool applicable( core::pose::Pose const&pose ) const override;
 private:
 	mutable sparta::Sparta sparta_; //since this class is far from const-correct..
 };

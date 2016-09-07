@@ -110,11 +110,11 @@ DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA() :
 {}
 
 DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA(
-	std::string const & type,
+	std::string  type,
 	ScoreFunctionCOP scorefxn
 ) :
 	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNACreator::mover_name() ),
-	type_(type),
+	type_(std::move(type)),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),
 	cycles_outer_( option[ OptionKeys::run::cycles_outer ]() ),
@@ -127,7 +127,7 @@ DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA(
 	score_function( scorefxn );
 }
 
-DesignProteinBackboneAroundDNA::~DesignProteinBackboneAroundDNA(){}
+DesignProteinBackboneAroundDNA::~DesignProteinBackboneAroundDNA()= default;
 
 void
 DesignProteinBackboneAroundDNA::targeted_dna( DnaDesignDefOPs const & defs ) {
@@ -272,9 +272,8 @@ DesignProteinBackboneAroundDNA::set_loop_info( Pose const & pose, Loops const & 
 	// clear out (any) pre-existing string info (from previous apply calls)
 	info().clear();
 	// store information about the loops that were modeled
-	for ( Loops::const_iterator loop( loops.begin() ), end( loops.end() );
-			loop != end; ++loop ) {
-		Size const start( loop->start() ), cut( loop->cut() ), stop( loop->stop() );
+	for (const auto & loop : loops) {
+		Size const start( loop.start() ), cut( loop.cut() ), stop( loop.stop() );
 		std::ostringstream loopinfo;
 		loopinfo << "REMARK loop: ";
 		if ( pose.pdb_info() ) {
@@ -333,9 +332,8 @@ DesignProteinBackboneAroundDNA::backrub(
 	// set up backrub segments
 	backrubmover.clear_segments();
 
-	for ( Loops::const_iterator loop( loops->begin() ), end( loops->end() );
-			loop != end; ++loop ) {
-		Size const start( loop->start() ), stop( loop->stop() );
+	for (const auto & loop : *loops) {
+		Size const start( loop.start() ), stop( loop.stop() );
 		backrubmover.add_segment(
 			id::AtomID( pose.residue_type( start ).atom_index(" CA "), start ),
 			id::AtomID( pose.residue_type( stop ).atom_index(" CA "), stop )

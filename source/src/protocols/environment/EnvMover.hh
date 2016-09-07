@@ -37,16 +37,16 @@ class EnvMover : public moves::Mover {
 public:
 	EnvMover();
 
-	virtual void
+	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const& pose );
+		core::pose::Pose const& pose ) override;
 
-	virtual ~EnvMover();
+	~EnvMover() override;
 
-	virtual void apply( Pose& pose );
+	void apply( Pose& pose ) override;
 
 	void add_apply_mover( protocols::moves::MoverOP );
 
@@ -55,9 +55,9 @@ public:
 	Environment& env() { return *env_; }
 
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 private:
 	void parse_subtag( utility::tag::TagCOP tag,

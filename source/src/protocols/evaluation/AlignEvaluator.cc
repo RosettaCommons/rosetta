@@ -25,6 +25,7 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/id/types.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -35,7 +36,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.AlignEvaluator" );
 namespace protocols {
 namespace evaluation {
 
-AlignEvaluator::~AlignEvaluator() {}
+AlignEvaluator::~AlignEvaluator() = default;
 
 AlignEvaluator::AlignEvaluator(
 	core::pose::PoseCOP native_pose,
@@ -44,10 +45,10 @@ AlignEvaluator::AlignEvaluator(
 	core::sequence::SequenceAlignmentOP aln
 ) :
 	SingleValuePoseEvaluator< core::Real >("align_rms" + tag),
-	native_pose_(native_pose),
+	native_pose_(std::move(native_pose)),
 	tag_(tag),
 	report_aln_components_(report_aln_components),
-	aln_(aln)
+	aln_(std::move(aln))
 {}
 
 core::sequence::SequenceAlignmentOP AlignEvaluator::get_alignment(

@@ -34,7 +34,7 @@ public:
 		core::Real omg, utility::vector1< core::Real> bbs, utility::vector1< core::Size > bb_ids, core::Real eps,
 		MakeRotLibOptionsDataOP mrlod, bool semirotameric );
 
-	~MakeRotLibJob() {}
+	~MakeRotLibJob() override = default;
 
 	/// @brief acessors
 	core::Real get_omg() const { return omg_; }

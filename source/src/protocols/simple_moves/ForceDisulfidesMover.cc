@@ -69,7 +69,7 @@ ForceDisulfidesMover::ForceDisulfidesMover() :
 	scorefxn_( /* NULL */ )
 { disulfides_.clear(); }
 
-ForceDisulfidesMover::~ForceDisulfidesMover() {}
+ForceDisulfidesMover::~ForceDisulfidesMover() = default;
 
 protocols::moves::MoverOP
 ForceDisulfidesMover::clone() const

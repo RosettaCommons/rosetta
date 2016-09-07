@@ -27,7 +27,7 @@ class FitnessFunction : public utility::pointer::ReferenceCount {
 public:
 	typedef utility::pointer::shared_ptr< FitnessFunction > OP;
 	typedef utility::pointer::shared_ptr< FitnessFunction const > COP;
-	virtual ~FitnessFunction(){}
+	~FitnessFunction() override= default;
 	virtual core::Real evaluate( Entity & entity ) = 0;
 };
 

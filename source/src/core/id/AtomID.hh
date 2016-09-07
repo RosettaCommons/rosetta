@@ -49,10 +49,7 @@ public: // Creation
 
 	/// @brief Copy constructor
 	inline
-	AtomID( AtomID const & src ) :
-		atomno_( src.atomno_ ),
-		rsd_( src.rsd_ )
-	{}
+	AtomID( AtomID const & ) = default;
 
 	/// @brief Property constructor
 	inline

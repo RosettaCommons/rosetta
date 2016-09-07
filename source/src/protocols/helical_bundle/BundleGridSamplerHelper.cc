@@ -33,7 +33,7 @@
 
 // C++ Headers
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 
 namespace protocols {
@@ -69,7 +69,7 @@ BundleGridSamplerHelper::BundleGridSamplerHelper( BundleGridSamplerHelper const 
 {
 }
 
-BundleGridSamplerHelper::~BundleGridSamplerHelper() {}
+BundleGridSamplerHelper::~BundleGridSamplerHelper() = default;
 
 
 /// @brief make a copy of this BundleGridSamplerHelper object (allocate actual memory for it)

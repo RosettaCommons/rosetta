@@ -21,6 +21,7 @@
 
 //Utility and basic
 #include <basic/database/sql_utils.hh>
+#include <utility>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
 
@@ -36,12 +37,12 @@ namespace wum {
 using namespace std;
 
 DatabaseEntryWorkUnit::DatabaseEntryWorkUnit(utility::sql_database::sessionOP db_session):
-	db_session_(db_session)
+	db_session_(std::move(db_session))
 {}
 
 DatabaseEntryWorkUnit::DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map ):
 	WorkUnitBase(),
-	row_map_(row_map)
+	row_map_(std::move(row_map))
 {}
 
 void

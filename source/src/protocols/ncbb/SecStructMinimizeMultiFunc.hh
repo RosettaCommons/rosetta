@@ -38,7 +38,7 @@ public: // Creation
 
 	/// @brief Destructor
 	///
-	virtual ~SecStructMinimizeMultiFunc();
+	~SecStructMinimizeMultiFunc() override;
 
 	/// @brief Constructor
 	///
@@ -54,15 +54,15 @@ public: // Methods
 
 	/// @brief Calculate function value (rms squared)
 	///
-	virtual
+	
 	Real
-	operator ()( Multivec const & vars ) const;
+	operator ()( Multivec const & vars ) const override;
 
 	/// @brief Calculate function value derivatives
 	///
-	virtual
+	
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const;
+	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
 
 	/// @brief give short set of torsions from full dofs
 	Multivec
@@ -75,9 +75,9 @@ public: // Methods
 
 	/// @brief Error state reached -- derivative does not match gradient
 	///
-	virtual
+	
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const;
+	dump( Multivec const & vars, Multivec const & vars2 ) const override;
 
 private:
 

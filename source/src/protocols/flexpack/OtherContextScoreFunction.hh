@@ -41,7 +41,7 @@ public:
 
 public:
 	OtherContextScoreFunction();
-	~OtherContextScoreFunction();/// ALWAYS EXPLICITLY DEFINE A DSTOR -- *ESPECIALLY* IF THE CLASS CONTAINS AN OP TO SOME OTHER CLASS
+	~OtherContextScoreFunction() override;/// ALWAYS EXPLICITLY DEFINE A DSTOR -- *ESPECIALLY* IF THE CLASS CONTAINS AN OP TO SOME OTHER CLASS
 
 	OtherContextScoreFunction(
 		core::pose::Pose const & context_pose
@@ -69,7 +69,7 @@ public:
 		core::conformation::Residue const & rsd,
 		core::pose::Pose const & pose,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief accumulate unweighted interaction energies between rsd1 and rsd2
@@ -80,7 +80,7 @@ public:
 		core::conformation::Residue const & rsd2,
 		core::pose::Pose const & pose,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 
 	void
@@ -88,7 +88,7 @@ public:
 		core::conformation::Residue const & rsd,
 		core::pose::Pose const & pose,
 		core::scoring::EnergyMap & emap
-	) const;
+	) const override;
 
 
 private:

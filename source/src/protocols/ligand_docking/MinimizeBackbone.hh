@@ -46,14 +46,14 @@ class MinimizeBackbone : public protocols::moves::Mover
 public:
 	MinimizeBackbone();
 	MinimizeBackbone(InterfaceBuilderOP interface_builder);
-	virtual ~MinimizeBackbone();
+	~MinimizeBackbone() override;
 	MinimizeBackbone(MinimizeBackbone const & that);
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -61,7 +61,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 private:
 	// map of ligand chains to minimize backbone around and how much minimization around each chain

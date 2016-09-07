@@ -122,10 +122,10 @@ istream& operator>>(istream& in, File& f) {
 } // operator>>
 
 ostream& operator<<(ostream& out, const File& f) {
-	for ( map<int,vector<Entry> >::const_iterator j = f.getEntries().begin(); j != f.getEntries().end(); ++j ) {
-		const vector<Entry>& vEntries = j->second;
-		for ( size_t i = 0; i < vEntries.size(); ++i ) {
-			out << vEntries[i];
+	for (const auto & j : f.getEntries()) {
+		const vector<Entry>& vEntries = j.second;
+		for (const auto & vEntrie : vEntries) {
+			out << vEntrie;
 		} // i
 	} // j
 	return out;
@@ -141,7 +141,7 @@ void File::addEntry(const Entry& e) {
 
 const Entry& File::getEntry(const int len) const {
 
-	map<int,vector<Entry> >::const_iterator i = mEntries.find(len);
+	auto i = mEntries.find(len);
 
 	if ( i == mEntries.end() ) {
 		assert( false );
@@ -236,7 +236,7 @@ void File::convertEntries(const int from, const int to) {
 
 	assert( to < from );
 
-	map<int,vector<Entry> >::iterator i = mEntries.find(from);
+	auto i = mEntries.find(from);
 
 	if ( i == mEntries.end() ) {
 		return;
@@ -248,11 +248,9 @@ void File::convertEntries(const int from, const int to) {
 	// don't need to clear vEntries_to
 
 	//FORVC(k,Entry,vEntries_from) {
-	for ( vector<Entry>::const_iterator k = vEntries_from.begin(); k != vEntries_from.end(); ++k ) {
+	for (const auto & entry_from : vEntries_from) {
 
-		const Entry& entry_from = *k;
-
-		assert( static_cast<int>(entry_from.vResEntries.size()) == from );
+			assert( static_cast<int>(entry_from.vResEntries.size()) == from );
 
 		for ( int i = 0; i < (from - to); i += to ) {
 			Entry entry_to;
@@ -276,7 +274,7 @@ void File::convertEntries(const int from, const int to) {
 // ===========================================================
 
 const Fragment::File* Librarian::getFragmentFile_loop() {
-	if ( frag_file_loop == 0 ) {
+	if ( frag_file_loop == nullptr ) {
 		frag_file_loop = new Fragment::File(get("LLL"));
 		frag_file_loop->convertEntries(3,1);
 	}
@@ -284,7 +282,7 @@ const Fragment::File* Librarian::getFragmentFile_loop() {
 } // Librarian::getFragmentFile_loop
 
 const Fragment::File* Librarian::getFragmentFile_sheet() {
-	if ( frag_file_sheet == 0 ) {
+	if ( frag_file_sheet == nullptr ) {
 		frag_file_sheet = new Fragment::File(get("EEE"));
 		frag_file_sheet->convertEntries(3,1);
 	}
@@ -292,7 +290,7 @@ const Fragment::File* Librarian::getFragmentFile_sheet() {
 } // Librarian::getFragmentFile_sheet
 
 const Fragment::File* Librarian::getFragmentFile_helix() {
-	if ( frag_file_helix == 0 ) {
+	if ( frag_file_helix == nullptr ) {
 		frag_file_helix = new Fragment::File(get("HHH"));
 		frag_file_helix->convertEntries(3,1);
 	}
@@ -347,7 +345,7 @@ const vector<string> get_acceptable_ss(const string& ss0) {
 
 const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
 
-	map<string,Fragment::File*>::iterator iter = mFragfiles_ss.find(ss0);
+	auto iter = mFragfiles_ss.find(ss0);
 
 	if ( iter == mFragfiles_ss.end() ) {
 		// try to read the fragment file from disc
@@ -359,9 +357,9 @@ const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
 
 		bool found = false;
 
-		Fragment::File* fragfile = 0;
+		Fragment::File* fragfile = nullptr;
 
-		for ( vector<string>::const_iterator i = acceptable_ss.begin(); i != acceptable_ss.end() && !found ; ++i ) {
+		for ( auto i = acceptable_ss.begin(); i != acceptable_ss.end() && !found ; ++i ) {
 
 			const string& ss = i->substr(0,3);
 
@@ -398,7 +396,7 @@ const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
 
 		} // i
 
-		assert( fragfile != 0 );
+		assert( fragfile != nullptr );
 
 		mFragfiles_ss[ss0] = fragfile; // !!! NB: this is only going into the map for key ss0 (the original ss)
 		iter = mFragfiles_ss.find(ss0);

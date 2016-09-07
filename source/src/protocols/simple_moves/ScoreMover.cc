@@ -43,6 +43,7 @@
 #include <protocols/loops/Loops.hh>
 
 // utility headers
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
@@ -96,7 +97,7 @@ ScoreMover::ScoreMover() :
 	scorefile_("")
 {}
 
-ScoreMover::~ScoreMover() {}
+ScoreMover::~ScoreMover() = default;
 
 ScoreMover::ScoreMover(
 	std::string const & weights, std::string const & patch /* = "" */
@@ -117,7 +118,7 @@ ScoreMover::ScoreMover(
 
 ScoreMover::ScoreMover( ScoreFunctionOP score_function_in ) :
 	protocols::moves::Mover( ScoreMoverCreator::mover_name() ),
-	score_function_( score_function_in ),
+	score_function_(std::move( score_function_in )),
 	verbose_(true),
 	scorefile_("")
 {}

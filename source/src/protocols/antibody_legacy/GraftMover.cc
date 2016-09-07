@@ -79,7 +79,7 @@ GraftMover::GraftMover():Mover( "GraftMover" ) {
 } // GraftMover default constructor
 
 // GraftMover default destructor
-GraftMover::~GraftMover() {}
+GraftMover::~GraftMover() = default;
 
 void GraftMover::set_default() {
 	TR <<  "Setting up default settings" << std::endl;

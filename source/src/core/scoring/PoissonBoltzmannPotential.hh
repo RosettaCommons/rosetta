@@ -45,7 +45,7 @@ public:
 
 	PoissonBoltzmannPotential();
 
-	virtual ~PoissonBoltzmannPotential(); // auto-removing definition from header{}
+	~PoissonBoltzmannPotential() override; // auto-removing definition from header{}
 
 	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential,
 		numeric::xyzVector<core::Real> const & cartX) const;

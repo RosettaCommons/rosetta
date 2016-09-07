@@ -36,14 +36,14 @@ public:
 	///  empty constructor fills values with the values
 	///  read in from the commandline
 	NullMover();
-	virtual void apply( core::pose::Pose &  );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
-	virtual void set_movemap( core::kinematics::MoveMapCOP ) {}
-	virtual core::kinematics::MoveMapCOP movemap() const { return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap ); }
-	virtual ~NullMover();
-	virtual void test_move( core::pose::Pose &  ){};
+	void apply( core::pose::Pose &  ) override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void set_movemap( core::kinematics::MoveMapCOP ) override {}
+	core::kinematics::MoveMapCOP movemap() const override { return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap ); }
+	~NullMover() override;
+	void test_move( core::pose::Pose &  ) override{};
 
 private:
 };

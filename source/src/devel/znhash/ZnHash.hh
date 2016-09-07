@@ -54,13 +54,9 @@ public:
 
 public:
 	ZnCoord() : index_(0), nhis_( 0 ), zn_and_orbitals_( Vector( 0 ) ) {}
-	ZnCoord( ZnCoord const & src ) :
-		index_( src.index_ ),
-		nhis_( src.nhis_ ),
-		zn_and_orbitals_( src.zn_and_orbitals_ )
-	{}
+	ZnCoord( ZnCoord const & ) = default;
 
-	~ZnCoord() {}
+	~ZnCoord() = default;
 
 	ZnCoord(
 		core::Size index,
@@ -116,7 +112,7 @@ public:
 class ZnHash : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ZnHash();
+	~ZnHash() override;
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
@@ -223,7 +219,7 @@ public:
 
 public:
 	ZnCoordinationScorer();
-	virtual ~ZnCoordinationScorer();
+	~ZnCoordinationScorer() override;
 	ZnCoordinationScorer( ZnCoordinationScorer const & );
 
 	/// @brief set an individual atom ID to use for determining the refrence frame for the asymmetric unit
@@ -421,37 +417,37 @@ class ZnCoordinationConstraint : public core::scoring::constraints::Constraint
 {
 public:
 	ZnCoordinationConstraint( ZnCoordinationScorerCOP zn_score );
-	virtual ~ZnCoordinationConstraint();
+	~ZnCoordinationConstraint() override;
 
-	virtual
+	
 	core::scoring::constraints::ConstraintOP
-	clone() const;
+	clone() const override;
 
-	virtual bool operator == ( Constraint const & other ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	bool operator == ( Constraint const & other ) const override;
+	bool same_type_as_me( Constraint const & other ) const override;
 
 	/// @brief Returns the number of atoms involved in defining this constraint.
-	virtual
+	
 	core::Size
-	natoms() const;
+	natoms() const override;
 
 	/// @brief Returns the AtomID referred to by index.
-	virtual
+	
 	core::id::AtomID const &
-	atom( Size const index ) const;
+	atom( Size const index ) const override;
 
-	virtual
+	
 	void
 	score(
 		core::scoring::func::XYZ_Func const & xyz_func,
 		core::scoring::EnergyMap const & weights,
-		core::scoring::EnergyMap & emap ) const;
+		core::scoring::EnergyMap & emap ) const override;
 
 	/// @brief Fill the f1 and f2 vectors, necessary for considering the
 	/// derivative this constraint during minimization. (someone please reference
 	/// Bill Wedermeyer's paper here, as I'm in an airport and can't fill it in
 	/// myself!)
-	virtual
+	
 	void
 	fill_f1_f2(
 		core::id::AtomID const & atom,
@@ -459,12 +455,12 @@ public:
 		core::Vector & F1,
 		core::Vector & F2,
 		core::scoring::EnergyMap const & weights
-	) const;
+	) const override;
 
-	virtual void show( std::ostream & /*out*/ ) const {}
+	void show( std::ostream & /*out*/ ) const override {}
 
 	core::scoring::constraints::ConstraintOP
-	remap_resid( core::id::SequenceMapping const &/*seqmap*/ ) const
+	remap_resid( core::id::SequenceMapping const &/*seqmap*/ ) const override
 	{
 		return core::scoring::constraints::ConstraintOP( new ZnCoordinationConstraint( zn_score_ ) );
 	}

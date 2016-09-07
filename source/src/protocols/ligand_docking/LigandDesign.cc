@@ -80,7 +80,7 @@ LigandDesign::LigandDesign(LigandDesign const & that):
 	fragments_(that.fragments_)
 {}
 
-LigandDesign::~LigandDesign() {}
+LigandDesign::~LigandDesign() = default;
 
 void
 LigandDesign::set_fragments(){
@@ -212,7 +212,7 @@ LigandDesign::apply( core::pose::Pose & pose )
 	while ( grow(pose, start, end) ) {
 		utility::vector1<core::Size> unconnected_residues = find_unconnected_residues(pose, start,end);
 		core::Size const & grow_from= numeric::random::rg().random_element(unconnected_residues);
-		core::conformation::ResidueCOP const growth= numeric::random::rg().random_element(fragments_);;
+		core::conformation::ResidueCOP const growth= numeric::random::rg().random_element(fragments_);
 		core::Size grow_from_connection= random_connection(pose.residue(grow_from).get_self_ptr());
 		core::Size growth_connection= random_connection(growth);
 		pose.append_residue_by_bond(*growth, true, growth_connection, grow_from, grow_from_connection);

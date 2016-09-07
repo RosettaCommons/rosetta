@@ -178,7 +178,7 @@ SymDockProtocol::SymDockProtocol(
 	docking_score_pack_ = docking_score_high;
 }
 
-SymDockProtocol::~SymDockProtocol() {}
+SymDockProtocol::~SymDockProtocol() = default;
 
 //clone
 protocols::moves::MoverOP

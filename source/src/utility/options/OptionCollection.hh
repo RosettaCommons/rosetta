@@ -107,7 +107,7 @@ public: // Creation
 
 
 	/// @brief Destructor
-	~OptionCollection();
+	~OptionCollection() override;
 
 
 public: // Methods
@@ -1766,7 +1766,7 @@ public: // Indexers
 	{
 		BooleanVectorOption & option( boolean_vectors_[ key ]);
 		option.check_restricted_access(check_restricted_access);
-		return option;;
+		return option;
 	}
 
 

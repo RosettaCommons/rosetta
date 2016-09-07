@@ -59,13 +59,13 @@ public:
 	LoopModeler();
 
 	/// @brief Default destructor.
-	~LoopModeler();
+	~LoopModeler() override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "LoopModeler"; }
+	string get_name() const override { return "LoopModeler"; }
 
 	/// @brief Return a shallow copy of this object.
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
@@ -73,12 +73,12 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 protected:
 
 	/// @brief Search for the optimal conformation of the given loops.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 public:
 

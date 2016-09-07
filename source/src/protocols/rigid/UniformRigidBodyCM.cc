@@ -31,6 +31,7 @@
 #include <core/pose/util.hh>
 
 //Utility Headers
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
@@ -82,9 +83,9 @@ UniformRigidBodyCM::UniformRigidBodyCM():
 	mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover() ) )
 {}
 
-UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
-	LocalPosition const& mobile_label,
-	LocalPosition const& stationary_label,
+UniformRigidBodyCM::UniformRigidBodyCM( std::string const & name,
+	LocalPosition const & mobile_label,
+	LocalPosition const & stationary_label,
 	core::Real rotation_magnitude,
 	core::Real translation_magnitude ):
 	ClientMover(),

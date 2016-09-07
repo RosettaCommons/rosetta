@@ -54,7 +54,7 @@ public:
 	utility::vector1< core::pose::Pose > const &
 	template_poses() const;
 
-	virtual ~InnerMultiThreadingJob();
+	~InnerMultiThreadingJob() override;
 
 private:
 	utility::vector1< core::sequence::SequenceAlignment > const & alns_;

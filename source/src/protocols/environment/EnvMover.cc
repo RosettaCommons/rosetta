@@ -61,7 +61,7 @@ EnvMover::EnvMover():
 	movers_->use_mover_status( true );
 }
 
-EnvMover::~EnvMover() {}
+EnvMover::~EnvMover() = default;
 
 void EnvMover::apply( Pose& pose ) {
 	if ( movers_->size() == 0 ) {
@@ -76,9 +76,8 @@ void EnvMover::apply( Pose& pose ) {
 
 	env->register_mover( movers_ );
 
-	for ( std::set< moves::MoverOP >::const_iterator mv_it = reg_only_movers_.begin();
-			mv_it != reg_only_movers_.end(); ++mv_it ) {
-		env->register_mover( *mv_it );
+	for (const auto & reg_only_mover : reg_only_movers_) {
+		env->register_mover( reg_only_mover );
 	}
 
 	core::pose::Pose ppose;
@@ -130,8 +129,8 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 	env_->allow_pure_movers( tag->getOption< bool >( "allow_pure_movers", env_->allow_pure_movers() ) );
 
 	TagCOPs const& subtags = tag->getTags();
-	for ( TagCOPs::const_iterator it = subtags.begin(); it != subtags.end(); ++it ) {
-		parse_subtag( *it, data, filters, movers, pose );
+	for (const auto & subtag : subtags) {
+		parse_subtag( subtag, data, filters, movers, pose );
 	}
 }
 

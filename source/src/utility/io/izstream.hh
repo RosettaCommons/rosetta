@@ -69,7 +69,7 @@ public: // Creation
 	inline
 	izstream() :
 		compression_( NONE ),
-		zip_stream_p_( 0 )
+		zip_stream_p_( nullptr )
 #if defined( USE_FILE_PROVIDER )
 		,file_provider_stream( &bad_stream )
 #endif
@@ -85,7 +85,7 @@ public: // Creation
 		std::ios_base::openmode open_mode = std::ios_base::in // Ignored for gzip files
 	) :
 		compression_( NONE ),
-		zip_stream_p_( 0 )
+		zip_stream_p_( nullptr )
 #if defined( USE_FILE_PROVIDER )
 		,file_provider_stream( &bad_stream )
 #endif
@@ -97,8 +97,8 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~izstream()
+	
+	~izstream() override
 	{
 		delete zip_stream_p_;
 		if_stream_.close();
@@ -111,7 +111,7 @@ public: // Methods: conversion
 
 	/// @brief bool conversion
 	inline
-	operator bool() const
+	operator bool() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		// if file is present in inline file provider, return true
@@ -125,7 +125,7 @@ public: // Methods: conversion
 
 	/// @brief Stream conversion
 	inline
-	operator std::istream const &() const
+	operator std::istream const &() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		// if file is present in inline file provider, return that - otherwise return an actual istream
@@ -141,7 +141,7 @@ public: // Methods: conversion
 
 	/// @brief Stream conversion
 	inline
-	operator std::istream &()
+	operator std::istream &() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -179,7 +179,7 @@ public: // Methods: formatting
 	/// @brief Stream manipulator input
 	inline
 	std::istream &
-	operator >>( std_manipulator m )
+	operator >>( std_manipulator m ) override
 	{
 		return m( *this );
 	}
@@ -199,7 +199,7 @@ public: // Methods: i/o
 	/// @brief Clear the stream(s)
 	inline
 	void
-	clear()
+	clear() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		// if the file is coming from the file provider then clear that stream. Otherwise go on to clear the actual file streams.
@@ -228,14 +228,14 @@ public: // Methods: i/o
 		if_stream_.close();
 		if_stream_.clear();
 		filename_.clear();
-		delete zip_stream_p_; zip_stream_p_ = 0;
+		delete zip_stream_p_; zip_stream_p_ = nullptr;
 	}
 
 
 	/// @brief Seek to the beginning
 	inline
 	void
-	seek_beg()
+	seek_beg() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -251,7 +251,7 @@ public: // Methods: i/o
 		if ( zip_stream_p_ ) {
 			delete zip_stream_p_; zip_stream_p_ = new zlib_stream::zip_istream( if_stream_ );
 			if ( ( !zip_stream_p_ ) || ( !( *zip_stream_p_ ) ) || ( !zip_stream_p_->is_gzip() ) ) {
-				delete zip_stream_p_; zip_stream_p_ = 0;
+				delete zip_stream_p_; zip_stream_p_ = nullptr;
 				if_stream_.close();
 				if_stream_.setstate( std::ios_base::failbit ); // set ios state to failbit
 			}
@@ -262,7 +262,7 @@ public: // Methods: i/o
 	/// @brief Get the next character
 	inline
 	int
-	get()
+	get() override
 	{
 		return stream().get();
 	}
@@ -271,7 +271,7 @@ public: // Methods: i/o
 	/// @brief Get the next character
 	inline
 	izstream &
-	get( char & c )
+	get( char & c ) override
 	{
 		stream().get( c );
 		return *this;
@@ -281,7 +281,7 @@ public: // Methods: i/o
 	/// @brief Get the next specified number of characters
 	inline
 	izstream &
-	get( char * str, std::streamsize const count )
+	get( char * str, std::streamsize const count ) override
 	{
 		stream().get( str, count );
 		return *this;
@@ -291,7 +291,7 @@ public: // Methods: i/o
 	/// @brief Get the next specified number of characters
 	inline
 	izstream &
-	get( char * str, std::streamsize const count, char const delim )
+	get( char * str, std::streamsize const count, char const delim ) override
 	{
 		stream().get( str, count, delim );
 		return *this;
@@ -301,9 +301,9 @@ public: // Methods: i/o
 	/// @brief Get the next specified number of characters
 	inline
 	izstream &
-	get( std::string & str, std::streamsize const count )
+	get( std::string & str, std::streamsize const count ) override
 	{
-		char * cp = new char[ count ];
+		auto * cp = new char[ count ];
 		stream().get( cp, count );
 		str = cp;
 		delete[] cp;
@@ -314,9 +314,9 @@ public: // Methods: i/o
 	/// @brief Get the next specified number of characters
 	inline
 	izstream &
-	get( std::string & str, std::streamsize const count, char const delim )
+	get( std::string & str, std::streamsize const count, char const delim ) override
 	{
-		char * cp = new char[ count ];
+		auto * cp = new char[ count ];
 		stream().get( cp, count, delim );
 		str = cp;
 		delete[] cp;
@@ -327,7 +327,7 @@ public: // Methods: i/o
 	/// @brief Get the rest of the line
 	inline
 	izstream &
-	getline( char * line, std::streamsize const count )
+	getline( char * line, std::streamsize const count ) override
 	{
 		stream().getline( line, count );
 		return *this;
@@ -337,7 +337,7 @@ public: // Methods: i/o
 	/// @brief Get the rest of the line
 	inline
 	izstream &
-	getline( char * line, std::streamsize const count, char const delim )
+	getline( char * line, std::streamsize const count, char const delim ) override
 	{
 		stream().getline( line, count, delim );
 		return *this;
@@ -347,7 +347,7 @@ public: // Methods: i/o
 	/// @brief Get the rest of the line
 	inline
 	izstream &
-	getline( std::string & line )
+	getline( std::string & line ) override
 	{
 		std::getline( stream(), line );
 		return *this;
@@ -357,7 +357,7 @@ public: // Methods: i/o
 	/// @brief Get the rest of the line
 	inline
 	izstream &
-	getline( std::string & line, char const delim )
+	getline( std::string & line, char const delim ) override
 	{
 		std::getline( stream(), line, delim );
 		return *this;
@@ -367,7 +367,7 @@ public: // Methods: i/o
 	/// @brief Read the next specified number of characters
 	inline
 	izstream &
-	read( char * str, std::streamsize const count )
+	read( char * str, std::streamsize const count ) override
 	{
 		stream().read( str, count );
 		return *this;
@@ -377,9 +377,9 @@ public: // Methods: i/o
 	/// @brief Read the next specified number of characters
 	inline
 	izstream &
-	read( std::string & str, std::streamsize const count )
+	read( std::string & str, std::streamsize const count ) override
 	{
-		char * cp = new char[ count ];
+		auto * cp = new char[ count ];
 		stream().read( cp, count );
 		str = cp;
 		delete[] cp;
@@ -390,7 +390,7 @@ public: // Methods: i/o
 	/// @brief Read the next available specified number of characters
 	inline
 	std::streamsize
-	readsome( char * str, std::streamsize const count )
+	readsome( char * str, std::streamsize const count ) override
 	{
 		return stream().readsome( str, count );
 	}
@@ -399,9 +399,9 @@ public: // Methods: i/o
 	/// @brief Read the next available specified number of characters
 	inline
 	std::streamsize
-	readsome( std::string & str, std::streamsize const count )
+	readsome( std::string & str, std::streamsize const count ) override
 	{
-		char * cp = new char[ count ];
+		auto * cp = new char[ count ];
 		std::streamsize const n_chars = stream().readsome( cp, count );
 		str = cp;
 		delete[] cp;
@@ -412,7 +412,7 @@ public: // Methods: i/o
 	/// @brief Skip over the next character
 	inline
 	izstream &
-	ignore()
+	ignore() override
 	{
 		stream().ignore();
 		return *this;
@@ -422,7 +422,7 @@ public: // Methods: i/o
 	/// @brief Skip over the next specified number of characters
 	inline
 	izstream &
-	ignore( std::streamsize const count )
+	ignore( std::streamsize const count ) override
 	{
 		stream().ignore( count );
 		return *this;
@@ -432,7 +432,7 @@ public: // Methods: i/o
 	/// @brief Skip over the next specified number of characters
 	inline
 	izstream &
-	ignore( std::streamsize const count, char const delim )
+	ignore( std::streamsize const count, char const delim ) override
 	{
 		stream().ignore( count, delim );
 		return *this;
@@ -442,7 +442,7 @@ public: // Methods: i/o
 	/// @brief Returns the next character without extracting it
 	inline
 	int
-	peek()
+	peek() override
 	{
 		return stream().peek();
 	}
@@ -451,7 +451,7 @@ public: // Methods: i/o
 	/// @brief Put the last character read back into the stream
 	inline
 	izstream &
-	unget()
+	unget() override
 	{
 		stream().unget();
 		return *this;
@@ -462,7 +462,7 @@ public: // Methods: i/o
 	///        that passed character is correct
 	inline
 	izstream &
-	putback( char c )
+	putback( char c ) override
 	{
 		stream().putback( c );
 		return *this;
@@ -475,7 +475,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::istream const &
-	operator ()() const
+	operator ()() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -491,7 +491,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::istream &
-	operator ()()
+	operator ()() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -507,7 +507,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::istream const &
-	stream() const
+	stream() const override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -523,7 +523,7 @@ public: // Properties
 	/// @brief Stream access
 	inline
 	std::istream &
-	stream()
+	stream() override
 	{
 #if defined( USE_FILE_PROVIDER )
 		if ( file_provider_stream->good() ) {
@@ -539,7 +539,7 @@ public: // Properties
 	/// @brief Pointer to the stream buffer
 	inline
 	std::streambuf *
-	rdbuf() const
+	rdbuf() const override
 	{
 		return stream().rdbuf();
 	}
@@ -569,7 +569,7 @@ public: // Properties: predicate
 	/// @brief Good?
 	inline
 	bool
-	good() const
+	good() const override
 	{
 		return stream().good();
 	}
@@ -578,7 +578,7 @@ public: // Properties: predicate
 	/// @brief End of file?
 	inline
 	bool
-	eof() const
+	eof() const override
 	{
 		return stream().eof();
 	}
@@ -587,7 +587,7 @@ public: // Properties: predicate
 	/// @brief Fail?
 	inline
 	bool
-	fail() const
+	fail() const override
 	{
 		return stream().fail();
 	}
@@ -596,7 +596,7 @@ public: // Properties: predicate
 	/// @brief Bad?
 	inline
 	bool
-	bad() const
+	bad() const override
 	{
 		return stream().bad();
 	}
@@ -605,7 +605,7 @@ public: // Properties: predicate
 	/// @brief Compressed?
 	inline
 	bool
-	compressed() const
+	compressed() const override
 	{
 		return ( compression_ == GZIP );
 	}
@@ -614,7 +614,7 @@ public: // Properties: predicate
 	/// @brief Uncompressed?
 	inline
 	bool
-	uncompressed() const
+	uncompressed() const override
 	{
 		return ( compression_ == UNCOMPRESSED );
 	}
@@ -623,7 +623,7 @@ public: // Properties: predicate
 	/// @brief gzipped?
 	inline
 	bool
-	gzipped() const
+	gzipped() const override
 	{
 		return ( compression_ == GZIP );
 	}

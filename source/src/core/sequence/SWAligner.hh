@@ -29,14 +29,14 @@ class SWAligner : public Aligner {
 public:
 
 	/// @brief dtor
-	virtual ~SWAligner() {}
+	~SWAligner() override = default;
 
-	virtual
+	
 	SequenceAlignment align(
 		SequenceOP seq_y,
 		SequenceOP seq_x,
 		ScoringSchemeOP ss
-	);
+	) override;
 
 }; // class SWAligner
 

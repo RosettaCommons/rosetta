@@ -93,7 +93,7 @@ DockingHighRes::DockingHighRes(
 	core::Size const rb_jump,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::ScoreFunctionOP scorefxn_pack
-) : Mover(), scorefxn_( scorefxn ), scorefxn_pack_( scorefxn_pack )
+) : Mover(), scorefxn_(std::move( scorefxn )), scorefxn_pack_(std::move( scorefxn_pack ))
 {
 	init( utility::tools::make_vector1< core::SSize >( rb_jump ) );
 }
@@ -104,7 +104,7 @@ DockingHighRes::DockingHighRes(
 	DockJumps const movable_jumps,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::ScoreFunctionOP scorefxn_pack
-) : Mover(), scorefxn_( scorefxn ), scorefxn_pack_( scorefxn_pack )
+) : Mover(), scorefxn_(std::move( scorefxn )), scorefxn_pack_(std::move( scorefxn_pack ))
 {
 	init( movable_jumps );
 }
@@ -136,12 +136,12 @@ void DockingHighRes::init( DockJumps const movable_jumps )
 	ignore_default_task_ = false; //needs to be false by default
 
 	movable_jumps_ = movable_jumps;
-	tf_ = NULL; //might need this
+	tf_ = nullptr; //might need this
 	tf2_ = protocols::docking::DockTaskFactoryOP( new DockTaskFactory() );
 }
 
 //destructor
-DockingHighRes::~DockingHighRes() {}
+DockingHighRes::~DockingHighRes() = default;
 
 void
 DockingHighRes::set_task_factory( core::pack::task::TaskFactoryCOP tf )

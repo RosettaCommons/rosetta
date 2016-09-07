@@ -33,18 +33,18 @@ namespace seeded_abinitio {
 class SeedSetupMover : public protocols::moves::Mover {
 public:
 	SeedSetupMover();
-	virtual ~SeedSetupMover();
-	void apply( core::pose::Pose & pose );
+	~SeedSetupMover() override;
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	std::string get_name() const override;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	void clear_task_factory();
 	void task_factory( core::pack::task::TaskFactoryOP tf );

@@ -104,8 +104,8 @@ void PeptideStapleMover::apply( core::pose::Pose & pose )
 	}
 
 	core::chemical::ResidueTypeSetCOP residue_set ( pose.residue(1).residue_type_set() );
-	core::chemical::ResidueType const * stapleA_type = NULL;
-	core::chemical::ResidueType const * stapleB_type = NULL;
+	core::chemical::ResidueType const * stapleA_type = nullptr;
+	core::chemical::ResidueType const * stapleB_type = nullptr;
 
 	// AMW cppcheck fix, would dereference a null pointer if staple_gap wasn't 4.
 	if ( staple_gap_ == 4 ) {

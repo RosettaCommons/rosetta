@@ -120,7 +120,7 @@ create_packer_graph(
 				ii_asu = symm_info->bb_follows(ii);
 			}
 			Distance const ii_itxn_rad = residue_radii[ ii_asu ] + atomic_itxn_dist;
-			for ( core::conformation::PointGraph::UpperEdgeListConstIter
+			for ( auto
 					iter = point_graph->get_vertex( ii ).const_upper_edge_list_begin(),
 					iter_end = point_graph->get_vertex( ii ).const_upper_edge_list_end();
 					iter != iter_end; ++iter ) {
@@ -197,7 +197,7 @@ find_residue_max_radii(
 		}
 		} */
 		if ( the_task->pack_residue( ii ) ) {
-			for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
+			for ( auto
 					allowed_iter = the_task->residue_task( ii ).allowed_residue_types_begin(),
 					allowed_end = the_task->residue_task( ii ).allowed_residue_types_end();
 					allowed_iter != allowed_end; ++allowed_iter ) {
@@ -207,7 +207,7 @@ find_residue_max_radii(
 			}
 			//check whether the radius at any position needs to be increased
 			Distance max_rad_change(0.0);
-			for ( rotamer_set::RotSetOperationListIterator
+			for ( auto
 					rotsetop_iter = the_task->residue_task( ii ).rotamer_set_operation_begin(),
 					rotsetop_end = the_task->residue_task( ii ).rotamer_set_operation_end();
 					rotsetop_iter != rotsetop_end; ++rotsetop_iter ) {

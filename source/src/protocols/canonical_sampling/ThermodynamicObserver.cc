@@ -46,7 +46,7 @@ ThermodynamicObserver::ThermodynamicObserver(
 	Mover::type( "ThermodynamicObserver" );
 }
 
-ThermodynamicObserver::~ThermodynamicObserver() {}
+ThermodynamicObserver::~ThermodynamicObserver() = default;
 
 } //moves
 } //protocols

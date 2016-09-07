@@ -50,7 +50,7 @@ MgWaterHydrogenPacker::MgWaterHydrogenPacker( utility::vector1< Size > const & m
 
 //Destructor
 MgWaterHydrogenPacker::~MgWaterHydrogenPacker()
-{}
+= default;
 
 ///////////////////////////////////////////
 // go over each Mg(2+)
@@ -144,7 +144,7 @@ MgWaterHydrogenPacker::pack_mg_water_hydrogens_in_pose( pose::Pose & pose,
 	core::Vector const O ( pose.residue(water_res).xyz("O") );
 
 	// uniformly sample rotations
-	if ( urs_ == 0 ) urs_ = get_water_uniform_rotation_sampler();
+	if ( urs_ == nullptr ) urs_ = get_water_uniform_rotation_sampler();
 
 	chemical::ResidueTypeSetCOP residue_set( pose.residue( water_res ).residue_type_set() );
 	Vector Oc, OH1c, OH2c;

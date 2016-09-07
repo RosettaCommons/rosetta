@@ -34,7 +34,7 @@
 namespace protocols {
 namespace jd2 {
 
-protocols::jd2::JobInputter::~JobInputter(){}
+protocols::jd2::JobInputter::~JobInputter()= default;
 
 /// @brief this code is here to restrict the use of inner_job_nonconst (this class is a friend class and can do it)
 void JobInputter::load_pose_into_job( core::pose::Pose const & pose, JobOP job ){

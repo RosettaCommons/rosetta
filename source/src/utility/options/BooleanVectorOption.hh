@@ -66,7 +66,7 @@ public: // Creation
 	/// @brief Clone this
 	inline
 	BooleanVectorOption *
-	clone() const
+	clone() const override
 	{
 		return new BooleanVectorOption( *this );
 	}
@@ -74,9 +74,9 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~BooleanVectorOption()
-	{}
+	
+	~BooleanVectorOption() override
+	= default;
 
 
 public: // Properties
@@ -85,7 +85,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type?
 	inline
 	bool
-	is_value( std::string const & value_str ) const
+	is_value( std::string const & value_str ) const override
 	{
 		return ( ( is_true_value( value_str ) ) || ( is_false_value( value_str ) ) );
 	}
@@ -94,7 +94,7 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type and a legal command line value?
 	inline
 	bool
-	is_cl_value( std::string const & value_str ) const
+	is_cl_value( std::string const & value_str ) const override
 	{
 		return is_value( value_str );
 	}
@@ -103,7 +103,7 @@ public: // Properties
 	/// @brief Option type code string representation
 	inline
 	std::string
-	type_string() const
+	type_string() const override
 	{
 		return "(B" + size_constraint_string() + ')';
 	}
@@ -112,7 +112,7 @@ public: // Properties
 	/// @brief Legal value string representation
 	inline
 	std::string
-	legal_string() const
+	legal_string() const override
 	{
 		return std::string();
 	}
@@ -124,7 +124,7 @@ protected: // Methods
 	/// @brief Value of a string
 	inline
 	Value
-	value_of( std::string const & value_str ) const
+	value_of( std::string const & value_str ) const override
 	{
 		if ( is_true_value( value_str ) ) {
 			return true;

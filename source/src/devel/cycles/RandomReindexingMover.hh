@@ -24,13 +24,13 @@ class RandomReindexingMover : public protocols::moves::Mover {
 		RandomReindexingMover() {};
 
 		/// Clean up the mover.
-		~RandomReindexingMover() {};
+		~RandomReindexingMover() override = default;
 
 		/// Cyclically reindex the given pose by a random amount.
-		void apply(pose::Pose &pose);
+		void apply(pose::Pose &pose) override;
 
 		/// Return "RandomReindexingMover".
-		std::string get_name() const { return "RandomReindexingMover"; }
+		std::string get_name() const override { return "RandomReindexingMover"; }
 };
 
 } // End 'cycles' namespace

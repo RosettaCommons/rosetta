@@ -91,7 +91,7 @@ LoadPDBMover::parse_my_tag(
 	core::pose::Pose const & )
 {
 	filename( tag->getOption< std::string >( "filename" ) );
-	TR<<"filename: "<<filename_<<std::endl;;
+	TR<<"filename: "<<filename_<<std::endl;
 
 	append( tag->getOption< bool >( "append", false ) );
 }

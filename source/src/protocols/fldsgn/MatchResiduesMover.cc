@@ -64,7 +64,7 @@ MatchResiduesMover::MatchResiduesMover()
 
 
 // @brief destructor
-MatchResiduesMover::~MatchResiduesMover() {}
+MatchResiduesMover::~MatchResiduesMover() = default;
 
 protocols::moves::MoverOP
 MatchResiduesMover::fresh_instance() const{

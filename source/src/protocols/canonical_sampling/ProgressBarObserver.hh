@@ -45,20 +45,20 @@ public:
 	ProgressBarObserver( ProgressBarObserver const & );
 
 	/// @brief Default destructor.
-	~ProgressBarObserver();
+	~ProgressBarObserver() override;
 
-	std::string get_name() const {
+	std::string get_name() const override {
 		return "ProgressBarObserver";
 	}
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void observe_after_metropolis(
-		MetropolisHastingsMover const & metropolis_hastings_mover);
+		MetropolisHastingsMover const & metropolis_hastings_mover) override;
 
 	/// @brief Return false, as a valid pose is not required for printing a
 	/// progress bar.
-	bool requires_pose() { return false; }
+	bool requires_pose() override { return false; }
 
 private:
 	core::Size progress_;

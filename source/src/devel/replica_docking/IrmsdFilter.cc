@@ -104,7 +104,7 @@ IrmsdFilter::IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const 
 
 }
 
-IrmsdFilter::~IrmsdFilter(){}
+IrmsdFilter::~IrmsdFilter() = default;
 
 protocols::filters::FilterOP
 IrmsdFilter::clone() const{

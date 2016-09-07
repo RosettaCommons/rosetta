@@ -31,7 +31,7 @@ namespace protocols {
 namespace loops {
 
 LoopsFileLoader::LoopsFileLoader() {}
-LoopsFileLoader::~LoopsFileLoader() {}
+LoopsFileLoader::~LoopsFileLoader() = default;
 
 /// @details Ensure the %ResourceOptions is a LoopsFileOptions instance and construct a new LoopsFileData from the
 /// istream and the options.  The locator_id is used solely for reporting accurate error messages.

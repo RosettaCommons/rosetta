@@ -39,21 +39,21 @@ public:
 		core::pose::PoseCOP native_pose,
 		std::string tag = "",
 		bool report_aln_components = true,
-		core::sequence::SequenceAlignmentOP aln = 0
+		core::sequence::SequenceAlignmentOP aln = nullptr
 	);
 
-	~AlignEvaluator();
+	~AlignEvaluator() override;
 
-	virtual void apply(
+	void apply(
 		core::pose::Pose & pose,
 		std::string tag,
 		core::io::silent::SilentStruct & ss
-	) const = 0;
+	) const override = 0;
 
 	/// @brief outdated method - don't use!
-	virtual core::Real apply(
+	core::Real apply(
 		core::pose::Pose & /*pose*/
-	) const {
+	) const override {
 		utility_exit_with_message(
 			"Called AlignEvaluator::apply( Pose & pose ). Don't do that!\n"
 		);

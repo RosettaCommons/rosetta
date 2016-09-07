@@ -54,22 +54,22 @@ public:
 		BackrubSidechainMover const & mover
 	);
 
-	virtual
-	~BackrubSidechainMover();
+	
+	~BackrubSidechainMover() override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
+	
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual
+	
 	std::string
-	get_name() const;
+	get_name() const override;
 
-	virtual
+	
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -77,40 +77,40 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	void
 	update_segments(
 		core::pose::Pose const & pose
 	);
 
-	virtual
+	
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
+	
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief callback after the Metropolis criterion is evaluated
-	virtual
+	
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
-	virtual
+	
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+	) override;
 
 	utility::vector1<core::Size> const &
 	pivot_residues() const;
@@ -157,16 +157,16 @@ public:
 	);
 
 	/// @brief get whether detailed balance is preserved
-	virtual
+	
 	bool
-	preserve_detailed_balance() const;
+	preserve_detailed_balance() const override;
 
 	/// @brief set whether detailed balance is preserved
-	virtual
+	
 	void
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
-	);
+	) override;
 
 	/// @brief get whether to exit during initialize_simulation if the mm_bend term isn't turned on
 	bool
@@ -179,11 +179,11 @@ public:
 	);
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	virtual
+	
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get whether to record mover statistics or not
 	bool

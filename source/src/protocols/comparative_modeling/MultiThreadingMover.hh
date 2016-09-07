@@ -49,7 +49,7 @@ public:
 		Poses const & template_poses
 	);
 
-	virtual ~MultiThreadingMover() {}
+	~MultiThreadingMover() override = default;
 
 	/// @brief Returns the SequenceAlignments used in threading.
 	//Alignments alignment();
@@ -87,9 +87,9 @@ public:
 
 	/// @brief Threads the given Pose onto the template_pose with the
 	/// SequenceAlignment provided.
-	virtual void apply( core::pose::Pose & query_pose );
+	void apply( core::pose::Pose & query_pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 private:
 	void check_internals() const;

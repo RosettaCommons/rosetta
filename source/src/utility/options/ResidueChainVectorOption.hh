@@ -71,7 +71,7 @@ public: // Creation
 	/// @brief Clone this
 	inline
 	ResidueChainVectorOption *
-	clone() const
+	clone() const override
 	{
 		return new ResidueChainVectorOption( *this );
 	}
@@ -79,36 +79,36 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	virtual
-	~ResidueChainVectorOption()
-	{}
+	
+	~ResidueChainVectorOption() override
+	= default;
 
 
 public: // copying
 
-	virtual
-	void copy_from( Option const & other );
+	
+	void copy_from( Option const & other ) override;
 
 public: // Properties
 
 	/// @brief Is a string readable as this option's value type?
 	inline
 	bool
-	is_value( std::string const & ) const {
+	is_value( std::string const & ) const override {
 		return true;
 	}
 
 	/// @brief Is a string readable as this option's value type and a legal command line value?
 	inline
 	bool
-	is_cl_value( std::string const & value_str ) const {
+	is_cl_value( std::string const & value_str ) const override {
 		return ( ( value_str.empty() ) || ( ! ObjexxFCL::is_any_of( value_str[ 0 ], "-@" ) ) );
 	}
 
 	/// @brief Option type code string representation
 	inline
 	std::string
-	type_string() const {
+	type_string() const override {
 		return "(RC" + size_constraint_string() + ')';
 	}
 
@@ -118,17 +118,17 @@ public: // Properties
 
 	// @brief specialized cl_value operator that saves value_string.
 	VectorOption_T_< ResidueChainVectorOptionKey, int > &
-	cl_value( std::string const & value_str );
+	cl_value( std::string const & value_str ) override;
 
 protected: // Methods
 
 	/// @brief Value of a string
 	Value
-	value_of( std::string const & value_str ) const;
+	value_of( std::string const & value_str ) const override;
 
 	/// @brief Value of a string
 	Values
-	values_of( std::string const & value_str ) const;
+	values_of( std::string const & value_str ) const override;
 
 
 private:

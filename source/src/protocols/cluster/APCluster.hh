@@ -44,7 +44,7 @@ public:
 		a_ik(0)
 	{}
 
-	~Exemplar() {}
+	~Exemplar() = default;
 
 	/// @brief "Less than" (actually greater than) comparator for making a heap of exemplars
 	static bool min_heap(Exemplar a, Exemplar b);
@@ -79,7 +79,7 @@ public:
 		candidate_for()
 	{}
 
-	~DataPoint() {}
+	~DataPoint() = default;
 
 	/// @brief Set similarity s(i,k), the suitability of point k to be an exemplar for this point.
 	void add_similarity(core::Size k, core::Real s_ik, core::Size max_sims);
@@ -136,7 +136,7 @@ public:
 	/// @brief Create new clustering class for total_pts input data points.
 	/// Optionally, set a limit on the number of similarities stored per point.
 	APCluster(core::Size total_pts, core::Size max_sims_per_pt = 0);
-	virtual ~APCluster();
+	~APCluster() override;
 
 	/// @brief How appropriate is k as an exemplar for i?
 	virtual void set_sim(core::Size i, core::Size k, core::Real sim);

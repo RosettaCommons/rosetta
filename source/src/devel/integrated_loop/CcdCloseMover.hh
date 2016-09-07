@@ -88,7 +88,7 @@ public:
 
 	void apply(
 		core::pose::Pose & pose_
-	);
+	) override;
 
 	private:
 	core::pose::Pose pose_;

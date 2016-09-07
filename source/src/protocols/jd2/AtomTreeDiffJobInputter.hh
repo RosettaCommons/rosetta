@@ -40,7 +40,7 @@ public:
 
 	AtomTreeDiffJobInputter();
 
-	virtual ~AtomTreeDiffJobInputter();
+	~AtomTreeDiffJobInputter() override;
 
 	/// @brief this function is responsible for filling the pose reference with
 	/// the pose indicated by the job.  The Job object (within its InnerJob)
@@ -48,16 +48,16 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.  This implementation uses pose_from_pdb
-	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	void pose_from_job( core::pose::Pose & pose, JobOP job ) override;
 
 	/// @brief this function determines what jobs exist from -in::file::silent and
 	/// -in::file::tags.
-	virtual void fill_jobs( JobsContainer & jobs );
+	void fill_jobs( JobsContainer & jobs ) override;
 
 	/// @brief Return the type of input source that the AtomTreeDiffJobInputter is currently
 	///  using.
 	/// @return Always <em>ATOM_TREE_FILE</em>.
-	virtual JobInputterInputSource::Enum input_source() const;
+	JobInputterInputSource::Enum input_source() const override;
 
 	/// @brief Utility function to allow mutatable (!) access to the reference
 	/// poses of the undelying AtomTreeDiff object. Use with caution.

@@ -27,15 +27,15 @@
 #include "pathways_partial_data_manager.h"
 #include "pose.h"
 #include "score_data.h"
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <algorithm>
 #include <sstream>
 #include <iostream>
 #include <map>
 #include <ostream>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 #define MAX_STEPS_MOVING_AWAY_FROM_PARTIAL_DATA 2
 
@@ -135,7 +135,7 @@ public:
 
 	virtual void run();
 
-	virtual ~Single_tree_RRT() {}
+	virtual ~Single_tree_RRT() = default;
 
 	double energy_function_between_flex_units(pose_ns::Pose* pose);
 
@@ -202,7 +202,7 @@ protected:
 public:
 	biRRT(Pathways* owner);
 
-    void run();
+    void run() override;
 
   //double compute_energy_of_path(std::vector<RRT_node* >& path);
 
@@ -255,7 +255,7 @@ public:
 	  ( Linear_planner_iterator& linplanner_iter,
 	    RRT_node* new_n,
 	    RRT_node* target_n);
-    void run();
+    void run() override;
     void find_close_to_partial_data_conformations(std::vector<RRT_node*>& optional_targets);
 	double measure_distance_from_partial_data(RRT_node* new_n);
     std::vector<RRT_node *> find_nearest_nodes_by_DOFs_vector(RRT_node* n, double& dist );

@@ -44,7 +44,7 @@ class MoveMapBuilder: public utility::pointer::ReferenceCount
 {
 public:
 	MoveMapBuilder();
-	virtual ~MoveMapBuilder();
+	~MoveMapBuilder() override;
 	MoveMapBuilder(MoveMapBuilder const & that);
 	MoveMapBuilder(InterfaceBuilderOP sc, InterfaceBuilderOP bb, bool minimize_water);
 

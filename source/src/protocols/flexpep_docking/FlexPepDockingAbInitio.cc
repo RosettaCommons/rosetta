@@ -50,9 +50,10 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <string>
-#include  <math.h>
+#include  <cmath>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -77,8 +78,8 @@ FlexPepDockingAbInitio::FlexPepDockingAbInitio
 	core::scoring::ScoreFunctionOP scorefxn_in,
 	core::kinematics::MoveMapOP movemap_in,
 	Size const rb_jump_in )
-: flags_(flags_in),
-	movemap_(movemap_in),
+: flags_(std::move(flags_in)),
+	movemap_(std::move(movemap_in)),
 	rb_jump_(rb_jump_in),
 	fragset3mer_(/* NULL */),
 	fragset9mer_(/* NULL */),
@@ -128,7 +129,7 @@ FlexPepDockingAbInitio::FlexPepDockingAbInitio
 
 // empty destructor - for good inclusion of OP clasesses
 FlexPepDockingAbInitio::~FlexPepDockingAbInitio()
-{}
+= default;
 
 
 ///////////////////////////////////////////////
@@ -198,9 +199,9 @@ FlexPepDockingAbInitio::torsions_monte_carlo
 	shear_mover->angle_max('H',180 /*angle - TODO: parametrize, slowly ramp down */);
 	shear_mover->angle_max('E',180 /*angle - TODO: parametrize, slowly ramp down */);
 	ClassicFragmentMoverOP
-		frag3_mover = NULL,
-		frag9_mover = NULL,
-		frag5_mover = NULL;
+		frag3_mover = nullptr,
+		frag9_mover = nullptr,
+		frag5_mover = nullptr;
 	if ( fragset3mer_ ) { //if we have fragments
 		frag3_mover = ClassicFragmentMoverOP( new ClassicFragmentMover(fragset3mer_, movemap_) );
 		frag3_mover->enable_end_bias_check(false);

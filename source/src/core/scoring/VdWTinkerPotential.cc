@@ -76,7 +76,7 @@ typedef numeric::xyzMatrix< core::Real > Matrix;
 namespace core {
 namespace scoring {
 
-VdWTinkerResidueInfo::~VdWTinkerResidueInfo() {}
+VdWTinkerResidueInfo::~VdWTinkerResidueInfo() = default;
 
 bool
 VdWShouldItCount(
@@ -121,8 +121,8 @@ VdWTinkerPoseInfo::VdWTinkerPoseInfo( VdWTinkerPoseInfo const & src ):
 			placeholder_residue_[i] = src.placeholder_residue_[i]->clone();
 			placeholder_info_[i] = src.placeholder_info_[i]->copy_clone();
 		} else {
-			placeholder_residue_[i] = 0;
-			placeholder_info_[i] = 0;
+			placeholder_residue_[i] = nullptr;
+			placeholder_info_[i] = nullptr;
 		}
 	}
 	being_packed_ = src.being_packed_;
@@ -135,9 +135,9 @@ VdWTinkerPoseInfo::initialize( pose::Pose const & pose )
 {
 	Size const nres( pose.total_residue() );
 
-	residue_info_.resize( nres, 0 );
-	placeholder_residue_.resize( nres, 0 );
-	placeholder_info_.resize( nres, 0 );
+	residue_info_.resize( nres, nullptr );
+	placeholder_residue_.resize( nres, nullptr );
+	placeholder_info_.resize( nres, nullptr );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( !residue_info_[i] ) residue_info_[i] = VdWTinkerResidueInfoOP( new VdWTinkerResidueInfo( pose.residue(i) ) );
@@ -465,7 +465,7 @@ VdWTinkerPotential::get_res_res_vdw(
 
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
-	etable::count_pair::CountPairFunctionOP cpfxn( 0 );
+	etable::count_pair::CountPairFunctionOP cpfxn( nullptr );
 
 	if ( same_res ) {
 		cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
@@ -578,7 +578,7 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 	assert( r1_at_derivs.size() >= rsd1.natoms() );
 	assert( r2_at_derivs.size() >= rsd2.natoms() );
 
-	CountPairFunctionOP cpfxn( 0 );
+	CountPairFunctionOP cpfxn( nullptr );
 	if ( same_res ) {
 		cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
 	} else {

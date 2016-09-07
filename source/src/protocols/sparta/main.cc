@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 #include "SPARTA.h"
-#include "time.h"
+#include <ctime>
 #include <sys/timeb.h>
 
 

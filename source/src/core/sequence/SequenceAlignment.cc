@@ -86,7 +86,7 @@ void SequenceAlignment::score( Real const & sc ) {
 
 Real SequenceAlignment::score( std::string const & name ) const {
 
-	std::map< std::string, core::Real >::const_iterator it(
+	auto it(
 		scores_.find(name)
 	);
 
@@ -165,7 +165,7 @@ core::id::SequenceMapping SequenceAlignment::sequence_mapping(
 
 	using core::id::SequenceMapping;
 
-	utility::vector1< SequenceOP >::const_iterator
+	auto
 		it1( sequences_.begin() + (idx1 - 1) ),
 		it2( sequences_.begin() + (idx2 - 1) );
 
@@ -193,11 +193,8 @@ void SequenceAlignment::remove_gapped_positions() {
 	while ( pos <= length() ) {
 		// delete this new position if the entire column is gapped.
 		bool delete_column( true );
-		for ( utility::vector1< SequenceOP >::iterator it = sequences_.begin(),
-				end = sequences_.end();
-				it != end; ++it
-				) {
-			if ( !(*it)->is_gap(pos) ) {
+		for (auto & sequence : sequences_) {
+			if ( !sequence->is_gap(pos) ) {
 				// std::cout << "not deleting column because sequence " << *it
 				// << " has no gap at position " << pos << std::endl;
 				delete_column = false;
@@ -205,11 +202,9 @@ void SequenceAlignment::remove_gapped_positions() {
 		} // for sequences
 
 		if ( delete_column ) {
-			for ( utility::vector1< SequenceOP >::iterator it = sequences_.begin(), end = sequences_.end();
-					it != end; ++it
-					) {
+			for (auto & sequence : sequences_) {
 				// std::cout << "deleting column " << pos << " from " << *it << std::endl;
-				(*it)->delete_position( pos );
+				sequence->delete_position( pos );
 			}
 		} else {
 			++pos;
@@ -350,11 +345,8 @@ utility::vector1< core::Size > SequenceAlignment::sequence_indices(
 
 	utility::vector1< core::Size > indices;
 
-	typedef utility::vector1< SequenceOP > seqlist;
-	for ( seqlist::const_iterator it = sequences_.begin(), end = sequences_.end();
-			it != end; ++it
-			) {
-		indices.push_back( (*it)->resnum(column) );
+	for (const auto & sequence : sequences_) {
+		indices.push_back( sequence->resnum(column) );
 	}
 
 	return indices;
@@ -370,13 +362,10 @@ utility::vector1< std::string > SequenceAlignment::comments() const {
 }
 
 Real SequenceAlignment::max_gap_percentage() const {
-	typedef utility::vector1< SequenceOP > seqlist;
 	Real max_gp(0.0);
-	for ( seqlist::const_iterator it = sequences_.begin(), end = sequences_.end();
-			it != end; ++it
-			) {
+	for (const auto & sequence : sequences_) {
 		Real gap_percentage = static_cast< Real >
-			( (*it)->length() - (*it)->ungapped_length() );
+			( sequence->length() - sequence->ungapped_length() );
 		gap_percentage = gap_percentage / static_cast< Real > ( length() );
 		max_gp = std::max( max_gp, gap_percentage );
 		//std::cout << "length = " << (*it)->length() << std::endl;
@@ -496,8 +485,8 @@ void SequenceAlignment::printGrishinFormat (
 	using utility::vector1;
 
 	vector1< string > keys;
-	for ( map< string, Real >::const_iterator it = scores_.begin(), end = scores_.end(); it != end; ++it ) {
-		keys.push_back( it->first );
+	for (const auto & score : scores_) {
+		keys.push_back( score.first );
 	}
 	std::sort( keys.begin(), keys.end() );
 

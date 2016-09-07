@@ -75,7 +75,7 @@ RandomConformers::RandomConformers(RandomConformers const & that):
 	chain_(that.chain_)
 {}
 
-RandomConformers::~RandomConformers() {}
+RandomConformers::~RandomConformers() = default;
 
 protocols::moves::MoverOP RandomConformers::clone() const {
 	return protocols::moves::MoverOP( new RandomConformers( *this ) );

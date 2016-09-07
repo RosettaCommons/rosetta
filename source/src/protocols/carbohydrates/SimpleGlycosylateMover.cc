@@ -56,20 +56,9 @@ SimpleGlycosylateMover::SimpleGlycosylateMover():
 
 }
 
-SimpleGlycosylateMover::~SimpleGlycosylateMover(){}
+SimpleGlycosylateMover::~SimpleGlycosylateMover()= default;
 
-SimpleGlycosylateMover::SimpleGlycosylateMover( SimpleGlycosylateMover const & src ):
-	protocols::moves::Mover( src ),
-	glycosylations_(src.glycosylations_),
-	glycosylation_weights_( src.glycosylation_weights_ ),
-	parsed_positions_( src.parsed_positions_ ),
-	positions_( src.positions_ ),
-	strip_existing_glycans_( src.strip_existing_glycans_ ),
-	ref_pose_name_( src.ref_pose_name_ ),
-	idealize_glycosylation_( src.idealize_glycosylation_)
-{
-
-}
+SimpleGlycosylateMover::SimpleGlycosylateMover( SimpleGlycosylateMover const & )= default;
 
 void
 SimpleGlycosylateMover::parse_my_tag(

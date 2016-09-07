@@ -38,7 +38,7 @@ public:
 		bool const map_to_vanilla_pose = false );
 
 	//destructor
-	~AtomID_Mapper();
+	~AtomID_Mapper() override;
 
 	//constructor
 	AtomID_Mapper( AtomID_Mapper const & src );
@@ -64,7 +64,7 @@ public:
 	calculate_atom_id_map( core::pose::Pose const & target_pose,
 		std::map< core::Size, core::Size > const & res_map /* from target to source */,
 		core::kinematics::FoldTree const & source_fold_tree,
-		AtomID_MapperCOP source_mapper_to_vanilla = 0 ) const;
+		AtomID_MapperCOP source_mapper_to_vanilla = nullptr ) const;
 
 	core::id::AtomID const &
 	map_to_reference( core::id::AtomID const & atom_id ) const;

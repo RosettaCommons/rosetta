@@ -180,8 +180,8 @@ MutationsFilter::apply(core::pose::Pose const & pose ) const
 
 core::Real
 MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) const{
-	runtime_assert( task_factory() != 0 );
-	runtime_assert( reference_pose() != 0 );
+	runtime_assert( task_factory() != nullptr );
+	runtime_assert( reference_pose() != nullptr );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
 	if ( core::pose::symmetry::is_symmetric( *reference_pose() ) ) {
@@ -258,8 +258,8 @@ MutationsFilter::write_to_pdb( core::pose::Pose const & pose, std::map< core::Si
 
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string user_name = this->get_user_defined_name();
-	std::map< Size, std::string >::const_iterator it_name1 = res_names1.begin();
-	std::map< Size, std::string >::const_iterator it_name2 = res_names2.begin();
+	auto it_name1 = res_names1.begin();
+	auto it_name2 = res_names2.begin();
 	core::Size output_resi = it_name1->first;
 	while ( it_name1 != res_names1.end() ) {
 		if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
@@ -321,7 +321,7 @@ MutationsFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new MutationsFilter() );
 }
 
-MutationsFilter::~MutationsFilter(){}
+MutationsFilter::~MutationsFilter()= default;
 
 
 protocols::filters::FilterOP

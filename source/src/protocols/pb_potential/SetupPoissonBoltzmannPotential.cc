@@ -55,7 +55,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzm
 SetupPBCreator::SetupPoissonBoltzmannPotentialCreator()
 {}
 SetupPBCreator::~SetupPoissonBoltzmannPotentialCreator()
-{}
+= default;
 protocols::moves::MoverOP
 SetupPBCreator::create_mover() const
 {
@@ -77,7 +77,7 @@ const std::string SetupPB::DEFAULT_APBS_PATH = "apbs";
 SetupPB::SetupPoissonBoltzmannPotential()
 {}
 
-SetupPB::~SetupPoissonBoltzmannPotential() {}
+SetupPB::~SetupPoissonBoltzmannPotential() = default;
 
 void
 SetupPB::apply(core::pose::Pose & pose ) {

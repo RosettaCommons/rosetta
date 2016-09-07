@@ -41,9 +41,7 @@ PoseSelector::PoseSelector()
 {
 }
 
-PoseSelector::~PoseSelector()
-{
-}
+PoseSelector::~PoseSelector() = default;
 
 void PoseSelector::parse_my_tag(
 	utility::tag::TagCOP,

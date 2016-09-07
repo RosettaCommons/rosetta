@@ -14,7 +14,7 @@ namespace datacache {
 
 HierarchicalDataMap::HierarchicalDataMap() {}
 
-HierarchicalDataMap::~HierarchicalDataMap() {}
+HierarchicalDataMap::~HierarchicalDataMap() = default;
 
 void HierarchicalDataMap::set_parent(HierarchicalDataMapCAP parent) {
 	parent_ = parent;

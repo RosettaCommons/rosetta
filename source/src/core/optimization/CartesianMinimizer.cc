@@ -49,7 +49,7 @@ static THREAD_LOCAL basic::Tracer TR( "core.optimization.CartesianMinimizer" );
 CartesianMinimizer::CartesianMinimizer()
 {}
 
-CartesianMinimizer::~CartesianMinimizer() {}
+CartesianMinimizer::~CartesianMinimizer() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 Real

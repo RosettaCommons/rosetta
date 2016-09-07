@@ -20,7 +20,7 @@
 #include "pathways_DOFs_manager.h"
 
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 #include <set>
 #include <vector>
 
@@ -39,7 +39,7 @@ class RRT_node;
 
 // custom info that can be attached to a tree node // TODO: should we template this?
 struct Node_custom_info{
- virtual ~Node_custom_info() {} // fake - just want to make it virtual // TODO is this necessary?
+ virtual ~Node_custom_info() = default; // fake - just want to make it virtual // TODO is this necessary?
 };
 
 // info needed to quickly calculate RMSD between nodes
@@ -58,7 +58,7 @@ struct Node_rmsd_info :
 class Distance_functor
 {
  public:
-  virtual ~Distance_functor() {}
+  virtual ~Distance_functor() = default;
   virtual double operator ()(RRT_node const* node1, RRT_node const* node2) = 0;
 };
 
@@ -66,14 +66,14 @@ class Distance_functor
 class CA_RMSD_functor : public Distance_functor
 {
  public:
-  virtual double operator ()(RRT_node const* node1, RRT_node const* node2);
+  double operator ()(RRT_node const* node1, RRT_node const* node2) override;
 };
 
 // L-2 norm (euclidean) over DOFs vector, e.g. internal coordinatesy
 class Dofs_vector_L2_norm_functor : public Distance_functor
 {
  public:
-  virtual double operator ()(RRT_node const* node1, RRT_node const* node2);
+  double operator ()(RRT_node const* node1, RRT_node const* node2) override;
 };
 
 // ******************** class RRT_node: ****************
@@ -106,7 +106,7 @@ public:
 	   core::pose::Pose const& template_pose,
 	   DOFs_manager& dofs_manager,
 	   bool is_score_valid = false,
-	   Node_custom_info* custom_info = NULL)
+	   Node_custom_info* custom_info = nullptr)
     : _template_pose(template_pose),
       _dofs_manager(dofs_manager)
     {
@@ -115,7 +115,7 @@ public:
       //_selected_points = selected_points; // TODO: handle this!!!
       _orig_src_root_id =  -1; // TODO: replace -1 with UNDEFINED define
       _custom_info = custom_info;
-      _owner_DAG = NULL;
+      _owner_DAG = nullptr;
       _is_score_valid = is_score_valid;
       if(_is_score_valid)
 	_score = pose.energies().total_energy();
@@ -143,7 +143,7 @@ public:
 	   std::vector<double> dofs_vector,
 	   core::pose::Pose const& template_pose,
 	   DOFs_manager& dofs_manager,
-	   Node_custom_info* custom_info = NULL)
+	   Node_custom_info* custom_info = nullptr)
     : _template_pose(template_pose),
     _dofs_manager(dofs_manager)
     {
@@ -152,7 +152,7 @@ public:
       //_selected_points = selected_points; // TODO: handle this!!!
       _orig_src_root_id =  -1; // TODO: replace -1 with UNDEFINED define
       _custom_info = custom_info;
-      _owner_DAG = NULL;
+      _owner_DAG = nullptr;
       _is_score_valid = false;
       _is_added = false;
     }
@@ -315,7 +315,7 @@ class RRT_conformation_DAG{
 public:
 
   RRT_conformation_DAG()
-    { }
+    = default;
   void print(){
     std::cout<<"******************* "<< _nodes[0].size()<<"   "<<_nodes[1].size()<<std::endl;
    }

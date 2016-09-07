@@ -57,13 +57,13 @@ public:
 		core::scoring::ScoreFunctionCOP sfxn
 	);
 
-	~ConsensusDesignMover();
+	~ConsensusDesignMover() override;
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	// @brief main operation
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	void
 	set_sasa_cutoff(
@@ -90,9 +90,9 @@ public:
 	) const;
 
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 private:
 

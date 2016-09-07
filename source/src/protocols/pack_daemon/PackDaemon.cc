@@ -85,7 +85,7 @@ PackDaemon::PackDaemon() :
 	last_assignment_.second = 12345;
 }
 
-PackDaemon::~PackDaemon() {}
+PackDaemon::~PackDaemon() = default;
 
 // Initialize the PackDaemon with the appropriate data before
 // calling setup().
@@ -377,7 +377,7 @@ PackDaemon::PoseOP PackDaemon::recreate_pose_for_entity( Entity const & ent ) co
 		TR << "Failed to find entity in entity-hash: " << ent << std::endl;
 		print_entity_history();
 		/// Failed to find this entity -- that's a problem!
-		return 0;
+		return nullptr;
 	}
 	RotamerAssignmentAndEnergy const & rotamer_assignment( iter->second );
 	PoseOP return_pose( new Pose( *pose_ ) );
@@ -413,15 +413,14 @@ void PackDaemon::assign_last_rotamers_to_pose( Pose & pose ) const
 void PackDaemon::print_entity_history() const
 {
 	TR << "Entity History:\n";
-	for ( EntityToRotamerHash::const_iterator hashiter = prev_state_hash_.begin(),
-			hashiter_end = prev_state_hash_.end(); hashiter != hashiter_end; ++hashiter ) {
+	for (const auto & hashiter : prev_state_hash_) {
 		TR << "Stored state:";
-		for ( Size ii = 1; ii <= hashiter->first.size(); ++ii ) {
-			TR << " " << hashiter->first[ ii ]->to_string();
+		for ( Size ii = 1; ii <= hashiter.first.size(); ++ii ) {
+			TR << " " << hashiter.first[ ii ]->to_string();
 		}
-		TR << " fitness: " << hashiter->second.second << " rotamers: ";
-		for ( Size ii = 1; ii <= hashiter->second.first.size(); ++ii ) {
-			TR << " " << hashiter->second.first[ ii ];
+		TR << " fitness: " << hashiter.second.second << " rotamers: ";
+		for ( Size ii = 1; ii <= hashiter.second.first.size(); ++ii ) {
+			TR << " " << hashiter.second.first[ ii ];
 		}
 		TR << "\n";
 	}
@@ -465,7 +464,7 @@ DaemonSet::DaemonSet() :
 {}
 
 DaemonSet::~DaemonSet()
-{}
+= default;
 
 /// @details  The entity resfile is slightly different from a regular resfile.
 /// Its first line should consist of the number of residues that are entity; the
@@ -608,7 +607,7 @@ DaemonSet::add_pack_daemon(
 			continue;
 		}
 
-		core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
+		auto
 			final_task_allowed = task->residue_task( ii ).allowed_residue_types_begin(),
 			entity_task_allowed = entity_task_->residue_task( ii_entity_id ).allowed_residue_types_begin(),
 			final_task_allowed_end = task->residue_task( ii ).allowed_residue_types_end(),
@@ -797,11 +796,10 @@ DaemonSet::ConstDaemonList
 DaemonSet::daemons() const
 {
 	ConstDaemonList return_daemons;
-	for ( DaemonListIter iter = daemons_.begin(), iter_end = daemons_.end();
-			iter != iter_end; ++iter ) {
+	for (const auto & daemon : daemons_) {
 		std::pair< core::Size, PackDaemonCOP > new_element;
-		new_element.first = iter->first;
-		new_element.second = iter->second;
+		new_element.first = daemon.first;
+		new_element.second = daemon.second;
 		return_daemons.push_back( new_element );
 	}
 	return return_daemons;
@@ -829,18 +827,15 @@ DaemonSet::retrieve_relevant_poses_for_entity(
 ) const
 {
 	std::list< std::pair< Size, PoseOP > > return_list;
-	for ( DaemonListIter iter = daemons_.begin(), iter_end = daemons_.end(); iter != iter_end; ++iter ) {
+	for (const auto & daemon : daemons_) {
 		bool generate_pose_for_daemon( false );
-		for ( DaemonIndices::const_iterator
-				index_iter = daemon_indices.begin(),
-				index_iter_end = daemon_indices.end();
-				index_iter != index_iter_end; ++index_iter ) {
-			if ( iter->first == *index_iter ) {
+		for (unsigned long daemon_indice : daemon_indices) {
+			if ( daemon.first == daemon_indice ) {
 				generate_pose_for_daemon = true;
 			}
 		}
 		if ( ! generate_pose_for_daemon ) continue;
-		return_list.push_back( std::make_pair( iter->first, iter->second->recreate_pose_for_entity( ent )) );
+		return_list.push_back( std::make_pair( daemon.first, daemon.second->recreate_pose_for_entity( ent )) );
 	}
 	return return_list;
 }
@@ -1066,7 +1061,7 @@ DaemonSet::recieve_entity() const
 	EntityOP ent( new Entity( entity_string ) );
 	return ent;
 #endif
-	return 0;
+	return nullptr;
 }
 
 
@@ -1091,7 +1086,7 @@ DaemonSet::graceful_exit() const
 }
 
 NPDPropCalculator::NPDPropCalculator() {}
-NPDPropCalculator::~NPDPropCalculator() {}
+NPDPropCalculator::~NPDPropCalculator() = default;
 
 void
 NPDPropCalculator::setup(
@@ -1102,7 +1097,7 @@ NPDPropCalculator::setup(
 
 
 NPDPropCalculatorCreator::NPDPropCalculatorCreator() {}
-NPDPropCalculatorCreator::~NPDPropCalculatorCreator() {}
+NPDPropCalculatorCreator::~NPDPropCalculatorCreator() = default;
 
 QuickRepacker::QuickRepacker(
 	PoseOP                     pose,
@@ -1110,13 +1105,13 @@ QuickRepacker::QuickRepacker(
 	FixedBBInteractionGraphOP  ig,
 	RotamerSetsOP              rot_sets
 ) :
-	pose_( pose ),
-	task_( task ),
-	ig_( ig ),
-	rot_sets_( rot_sets )
+	pose_(std::move( pose )),
+	task_(std::move( task )),
+	ig_(std::move( ig )),
+	rot_sets_(std::move( rot_sets ))
 {}
 
-QuickRepacker::~QuickRepacker() {}
+QuickRepacker::~QuickRepacker() = default;
 
 QuickRepacker::PoseOP                    QuickRepacker::pose() { return pose_; }
 QuickRepacker::PackerTaskOP              QuickRepacker::task() { return task_; }
@@ -1136,7 +1131,7 @@ BasicSimAnnealerRepacker::BasicSimAnnealerRepacker(
 	ig->prepare_for_simulated_annealing();
 }
 
-BasicSimAnnealerRepacker::~BasicSimAnnealerRepacker() {}
+BasicSimAnnealerRepacker::~BasicSimAnnealerRepacker() = default;
 
 BasicSimAnnealerRepacker::RotamerAssignmentAndEnergy
 BasicSimAnnealerRepacker::repack( utility::vector0< int > const & rot_to_pack )
@@ -1168,7 +1163,7 @@ RotamerSubsetRepacker::RotamerSubsetRepacker(
 	parent( pose, task, ig, rotsets )
 {}
 
-RotamerSubsetRepacker::~RotamerSubsetRepacker() {}
+RotamerSubsetRepacker::~RotamerSubsetRepacker() = default;
 
 RotamerSubsetRepacker::RotamerSubsetsOP
 RotamerSubsetRepacker::create_rotamer_subsets_from_rot_to_pack(
@@ -1192,7 +1187,7 @@ DenseIGRepacker::DenseIGRepacker(
 	ig->prepare_for_simulated_annealing();
 }
 
-DenseIGRepacker::~DenseIGRepacker() {}
+DenseIGRepacker::~DenseIGRepacker() = default;
 
 void DenseIGRepacker::set_MCA() {
 	PackerTaskOP copy_task = task()->clone();
@@ -1348,7 +1343,7 @@ DoubleDenseIGRepacker::DoubleDenseIGRepacker(
 	ig->prepare_for_simulated_annealing();
 }
 
-DoubleDenseIGRepacker::~DoubleDenseIGRepacker() {}
+DoubleDenseIGRepacker::~DoubleDenseIGRepacker() = default;
 
 DoubleDenseIGRepacker::RotamerAssignmentAndEnergy
 DoubleDenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
@@ -1458,7 +1453,7 @@ FASTER_IG_Repacker::FASTER_IG_Repacker(
 	ig->prepare_for_simulated_annealing();
 }
 
-FASTER_IG_Repacker::~FASTER_IG_Repacker() {}
+FASTER_IG_Repacker::~FASTER_IG_Repacker() = default;
 
 FASTER_IG_Repacker::RotamerAssignmentAndEnergy
 FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )

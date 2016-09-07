@@ -40,6 +40,7 @@
 
 /// Utility headers
 #include <cmath>
+#include <utility>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
@@ -64,7 +65,7 @@ SecStructMinimizeMultiFunc::uniq_refers_to_beta (
 	return false;
 }
 
-SecStructMinimizeMultiFunc::~SecStructMinimizeMultiFunc() {}
+SecStructMinimizeMultiFunc::~SecStructMinimizeMultiFunc() = default;
 
 SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 	core::pose::Pose &pose,
@@ -160,12 +161,12 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 		sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
 			pose.residue( node1 ), pose.residue( node2 ),
 			minedge, min_map, pose, true, false,
-			static_cast< scoring::EnergyEdge const * > ( 0 ), dummy );
+			static_cast< scoring::EnergyEdge const * > ( nullptr ), dummy );
 	}
 
 	/// Now initialize the long-range edges
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		for ( scoring::ScoreFunction::LR_2B_MethodIterator
+		for ( auto
 				iter = sfxn.long_range_energies_begin(),
 				iter_end = sfxn.long_range_energies_end();
 				iter != iter_end; ++iter ) {
@@ -226,7 +227,7 @@ SecStructMinimizeMultiFunc::vars_to_dofs( Multivec const & vars ) const {
 	Multivec dofs( dofs_for_pose0_ );
 
 	for ( Size i_var = 1; i_var <= vars.size(); ++i_var ) {
-		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
+		auto it = map_BB_to_DOF_.find( i_var );
 		if ( it == map_BB_to_DOF_.end() ) continue;
 
 		utility::vector1< Size > const i_dofs( it->second );
@@ -246,7 +247,7 @@ SecStructMinimizeMultiFunc::dofs_to_vars( Multivec const & dofs ) const
 	Multivec vars( nvar_, 0.0 );
 
 	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
-		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
+		auto it = map_BB_to_DOF_.find( i_var );
 		if ( it == map_BB_to_DOF_.end() ) continue;
 
 		utility::vector1< Size > const i_dofs( it->second );
@@ -269,7 +270,7 @@ SecStructMinimizeMultiFunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 	// obtain dofs corresponding
 	// derivative d var is average derivative d correpsonding dofs.
 	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
-		std::map< Size, utility::vector1< Size > >::const_iterator it = map_BB_to_DOF_.find( i_var );
+		auto it = map_BB_to_DOF_.find( i_var );
 		if ( it == map_BB_to_DOF_.end() ) continue;
 		utility::vector1< Size > const i_dofs( it->second );
 

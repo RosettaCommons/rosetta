@@ -16,7 +16,7 @@
 #define getmax(a,b) a>b?a:b
 #define getmin(a,b) a>b?b:a
 
-#include <math.h>
+#include <cmath>
 #include <string>
 #include <vector>
 #include <iterator>
@@ -103,15 +103,12 @@ int  TMalign::read_pose(
 	std::string & seq, std::vector < int > & resno) {
 	int i=0;
 	seq.resize(residue_list.size());
-	for ( std::list<core::Size>::const_iterator it = residue_list.begin();
-			it != residue_list.end();
-			++it ) {
-		core::Size ires = *it;
-		if ( !pose.residue_type(ires).is_protein() ) continue;
+	for (unsigned long ires : residue_list) {
+			if ( !pose.residue_type(ires).is_protein() ) continue;
 
 		a[i] = pose.residue(ires).xyz("CA");
 		seq[i] = pose.residue_type(ires).name1();
-		if ( pose.pdb_info() != 0 ) {
+		if ( pose.pdb_info() != nullptr ) {
 			resno[i] = pose.pdb_info()->number(ires);
 		} else {
 			resno[i] = ires;
@@ -1545,7 +1542,7 @@ void  TMalign::find_max_frag(
 	if ( r_min > fra_min ) r_min=fra_min;
 
 	int inc=0;
-	double dcu0_cut=dcu0*dcu0;;
+	double dcu0_cut=dcu0*dcu0;
 	double dcu_cut=dcu0_cut;
 
 	while ( Lfr_max < r_min ) {
@@ -1838,11 +1835,11 @@ void  TMalign::alignment2AtomMap(
 	for ( k=0; k<n_ali8_; k++ ) {
 		d=sqrt(dist(xt[m1_[k]], ya[m2_[k]]));
 		if ( d<d0_out_ ) {
-			std::list<core::Size>::const_iterator it1 = residue_list.begin(); advance(it1, m1_[k]);
+			auto it1 = residue_list.begin(); advance(it1, m1_[k]);
 			core::Size ires = *it1;
 			core::id::AtomID const id1( pose.residue_type(ires).atom_index("CA"), ires );
 
-			std::list<core::Size>::const_iterator it2 = ref_residue_list.begin(); advance(it2, m2_[k]);
+			auto it2 = ref_residue_list.begin(); advance(it2, m2_[k]);
 			core::Size jres = *it2;
 			core::id::AtomID const id2( ref_pose.residue_type(jres).atom_index("CA"), jres );
 

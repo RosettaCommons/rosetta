@@ -33,21 +33,21 @@ public:
 
 	LoadUnboundRotMover();
 
-	virtual ~LoadUnboundRotMover();
+	~LoadUnboundRotMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const override;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 private:
 	//woo, no data

@@ -76,6 +76,7 @@
 #include <core/conformation/Residue.hh>
 #include <protocols/jd2/util.hh>
 
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -95,7 +96,7 @@ namespace relax {
 RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) :
 	parent( "RelaxProtocol" ),
 	min_type_("lbfgs_armijo_nonmonotone"),
-	scorefxn_( score_in ),
+	scorefxn_(std::move( score_in )),
 	task_factory_(/* NULL */)
 {
 	set_defaults();
@@ -113,14 +114,14 @@ RelaxProtocolBase::RelaxProtocolBase( std::string const & movername ) :
 RelaxProtocolBase::RelaxProtocolBase( std::string const & movername, core::scoring::ScoreFunctionOP score_in ) :
 	parent( movername ),
 	min_type_("lbfgs_armijo_nonmonotone"),
-	scorefxn_(score_in ),
+	scorefxn_(std::move(score_in )),
 	task_factory_(/* NULL */)
 {
 	set_defaults();
 }
 
 
-RelaxProtocolBase::~RelaxProtocolBase() {}
+RelaxProtocolBase::~RelaxProtocolBase() = default;
 
 void RelaxProtocolBase::initialize_movemap(
 	core::pose::Pose const & pose,

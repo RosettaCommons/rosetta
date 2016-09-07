@@ -52,8 +52,8 @@ using namespace numeric::expression_parser;
 
 ///// class VectorExpression : public Expression
 
-VectorExpression::VectorExpression( std::string const & name ) : parent(), name_( name ) {}
-VectorExpression::~VectorExpression() {}
+VectorExpression::VectorExpression( std::string  name ) : parent(), name_(std::move( name )) {}
+VectorExpression::~VectorExpression() = default;
 
 core::Real
 VectorExpression::operator() () const
@@ -66,7 +66,7 @@ ExpressionCOP
 VectorExpression::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "Illegal call to differentiate() on VectorExpression named " + name() );
-	return 0;
+	return nullptr;
 }
 
 std::string const &
@@ -85,7 +85,7 @@ VariableVectorExpression::VariableVectorExpression(
 	vars_( vars )
 {}
 
-VariableVectorExpression::~VariableVectorExpression() {}
+VariableVectorExpression::~VariableVectorExpression() = default;
 
 VariableVectorExpression::values
 VariableVectorExpression::vector_values() const {
@@ -126,17 +126,17 @@ VariableVectorExpression::active_variables_vector() const
 
 ///////// class VectorFunction
 VectorFunction::VectorFunction( VectorExpressionCOP ex ) : parent( ex ), vec_ex_( ex ) {}
-VectorFunction::~VectorFunction() {}
+VectorFunction::~VectorFunction() = default;
 
 VectorExpressionCOP VectorFunction::vec_ex() const { return vec_ex_; }
 
 
 VectorFunction2::VectorFunction2( VectorExpressionCOP ex1, VectorExpressionCOP ex2 ) :
-	vec_ex1_( ex1 ),
-	vec_ex2_( ex2 )
+	vec_ex1_(std::move( ex1 )),
+	vec_ex2_(std::move( ex2 ))
 {}
 
-VectorFunction2::~VectorFunction2() {}
+VectorFunction2::~VectorFunction2() = default;
 
 VectorExpressionCOP VectorFunction2::vec_ex1() const { return vec_ex1_; }
 VectorExpressionCOP VectorFunction2::vec_ex2() const { return vec_ex2_; }
@@ -144,7 +144,7 @@ VectorExpressionCOP VectorFunction2::vec_ex2() const { return vec_ex2_; }
 
 IterativeVectorExpression::IterativeVectorExpression( std::string const & name ) : parent( name ) {}
 
-IterativeVectorExpression::~IterativeVectorExpression() {}
+IterativeVectorExpression::~IterativeVectorExpression() = default;
 
 void IterativeVectorExpression::initialize(
 	std::map< std::string, VectorExpressionCOP > const & vector_varnames,
@@ -156,14 +156,12 @@ void IterativeVectorExpression::initialize(
 	input_vector_expressions_.resize( s );
 	local_variables_.resize( s );
 	Size count = 0;
-	for ( std::map< std::string, VectorExpressionCOP >::const_iterator
-			iter = vector_varnames.begin(), iter_end = vector_varnames.end();
-			iter != iter_end; ++iter ) {
+	for (const auto & vector_varname : vector_varnames) {
 		++count;
-		VariableExpressionOP varex( new VariableExpression( iter->first, 0.0 ) );
-		input_vector_expressions_[ count ] = iter->second;
+		VariableExpressionOP varex( new VariableExpression( vector_varname.first, 0.0 ) );
+		input_vector_expressions_[ count ] = vector_varname.second;
 		local_variables_[ count ] = varex;
-		local_variable_map_[ iter->first ] = varex;
+		local_variable_map_[ vector_varname.first ] = varex;
 	}
 	for ( Size ii = 2; ii <= s; ++ii ) {
 		if ( input_vector_expressions_[ ii ]->size() != input_vector_expressions_[ ii - 1 ]->size() ) {
@@ -230,11 +228,11 @@ IterativeVectorExpression::size() const
 VariableExpressionCOP
 IterativeVectorExpression::local_variable( std::string const & varname ) const
 {
-	std::map< std::string, VariableExpressionCOP >::const_iterator varit = local_variable_map_.find( varname );
+	auto varit = local_variable_map_.find( varname );
 	if ( varit != local_variable_map_.end() ) {
 		return varit->second;
 	}
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -261,7 +259,7 @@ IterativeVectorExpression::active_variables_vector() const
 /////// class Mean : public VectorFunction
 
 Mean::Mean( VectorExpressionCOP ex ) : parent( ex ) {}
-Mean::~Mean() {}
+Mean::~Mean() = default;
 
 core::Real
 Mean::operator() () const
@@ -278,7 +276,7 @@ ExpressionCOP
 Mean::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "Mean cannot be differentiated" );
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -296,7 +294,7 @@ Mean::active_variables() const
 /////// class VMax : public VectorFunction
 
 VMax::VMax( VectorExpressionCOP ex ) : parent( ex ) {}
-VMax::~VMax() {}
+VMax::~VMax() = default;
 
 core::Real
 VMax::operator() () const
@@ -309,7 +307,7 @@ ExpressionCOP
 VMax::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "VMax cannot be differentiated" );
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -325,7 +323,7 @@ VMax::active_variables() const
 
 VMin::VMin( VectorExpressionCOP ex ) : parent( ex ) {}
 
-VMin::~VMin() {}
+VMin::~VMin() = default;
 
 core::Real
 VMin::operator() () const
@@ -338,7 +336,7 @@ ExpressionCOP
 VMin::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "VMin cannot be differentiated" );
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -358,7 +356,7 @@ VMin::active_variables() const
 
 VMaxBy::VMaxBy( VectorExpressionCOP ex1, VectorExpressionCOP ex2 ) : parent( ex1, ex2 ) {}
 VMaxBy::~VMaxBy()
-{}
+= default;
 
 core::Real
 VMaxBy::operator() () const
@@ -375,7 +373,7 @@ ExpressionCOP
 VMaxBy::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "VMaxBy cannot be differentiated" );
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -392,7 +390,7 @@ VMaxBy::active_variables() const
 
 VMinBy::VMinBy( VectorExpressionCOP ex1, VectorExpressionCOP ex2 ) : parent( ex1, ex2 ) {}
 
-VMinBy::~VMinBy() {}
+VMinBy::~VMinBy() = default;
 
 core::Real
 VMinBy::operator() () const
@@ -409,7 +407,7 @@ ExpressionCOP
 VMinBy::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "VMinBy cannot be differentiated" );
-	return 0;
+	return nullptr;
 }
 
 std::list< std::string >
@@ -427,7 +425,7 @@ VMinBy::active_variables() const
 /////// class PowExpression : public BinaryExpression
 
 PowExpression::PowExpression( ExpressionCOP base, ExpressionCOP exponent ) : parent( base, exponent ) {}
-PowExpression::~PowExpression() {}
+PowExpression::~PowExpression() = default;
 
 core::Real
 PowExpression::operator() () const
@@ -439,13 +437,13 @@ ExpressionCOP
 PowExpression::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "PowExpression::diffrentiate is unimplemented!" );
-	return 0;
+	return nullptr;
 }
 
 /////// class ExpExpression : public UnaryExpression
 
 ExpExpression::ExpExpression( ExpressionCOP ex ) : parent( ex ) {}
-ExpExpression::~ExpExpression() {}
+ExpExpression::~ExpExpression() = default;
 
 core::Real
 ExpExpression::operator() () const
@@ -457,14 +455,14 @@ ExpressionCOP
 ExpExpression::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "ExpExpression::diffrentiate is unimplemented!" );
-	return 0;
+	return nullptr;
 }
 
 
 /////// class LnExpression : public UnaryExpression
 
 LnExpression::LnExpression( ExpressionCOP ex ) : parent( ex ) {}
-LnExpression::~LnExpression() {}
+LnExpression::~LnExpression() = default;
 
 core::Real
 LnExpression::operator() () const
@@ -476,12 +474,12 @@ ExpressionCOP
 LnExpression::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "LnExpression::diffrentiate is unimplemented!" );
-	return 0;
+	return nullptr;
 }
 
 
 InSetExpression::InSetExpression( ExpressionCOP ex ) : parent( ex ) {}
-InSetExpression::~InSetExpression() {}
+InSetExpression::~InSetExpression() = default;
 
 void InSetExpression::value_set( utility::vector1< core::Real > const & values )
 {
@@ -504,14 +502,14 @@ ExpressionCOP
 InSetExpression::differentiate( std::string const & ) const
 {
 	utility_exit_with_message( "InSetExpression::diffrentiate is unimplemented!" );
-	return 0;
+	return nullptr;
 }
 
 
 /////// class VectorExpressionCreator : public ExpressionCreator
 
 VectorExpressionCreator::VectorExpressionCreator( DynamicAggregateFunction const & owner ) : owner_( owner ) {}
-VectorExpressionCreator::~VectorExpressionCreator() {}
+VectorExpressionCreator::~VectorExpressionCreator() = default;
 
 VectorExpressionCreator::ExpressionCOP
 VectorExpressionCreator::handle_variable_expression( ArithmeticASTValue const & node )
@@ -587,7 +585,7 @@ DynamicAggregateFunction::DynamicAggregateFunction() :
 	file_contents_( utility::io::FileContentsMapOP( new utility::io::FileContentsMap ) )
 {}
 
-DynamicAggregateFunction::~DynamicAggregateFunction() {}
+DynamicAggregateFunction::~DynamicAggregateFunction() = default;
 
 void
 DynamicAggregateFunction::set_num_entity_elements( Size setting ) {
@@ -712,31 +710,31 @@ DynamicAggregateFunction::variable_expression( ArithmeticASTValue const & var_no
 		if ( iterative_vector_expression_local_variable ) return iterative_vector_expression_local_variable;
 	}
 
-	std::map< std::string, ExpressionCOP >::const_iterator named_state_iter =
+	auto named_state_iter =
 		named_state_expression_map_.find( var_node.variable_name() );
 	if ( named_state_iter != named_state_expression_map_.end() ) {
 		return named_state_iter->second;
 	}
 
-	std::map< std::string, VariableVectorExpressionOP >::const_iterator vector_variable_iter =
+	auto vector_variable_iter =
 		state_vector_variables_.find( var_node.variable_name() );
 	if ( vector_variable_iter != state_vector_variables_.end() ) {
 		return vector_variable_iter->second;
 	}
 
-	std::map< std::string, VariableExpressionCOP >::const_iterator scalar_expression_iter =
+	auto scalar_expression_iter =
 		scalar_expression_map_.find( var_node.variable_name() );
 	if ( scalar_expression_iter != scalar_expression_map_.end() ) {
 		return scalar_expression_iter->second;
 	}
 
-	std::map< std::string, VectorExpressionCOP >::const_iterator vector_expression_iter =
+	auto vector_expression_iter =
 		vector_expression_map_.find( var_node.variable_name() );
 	if ( vector_expression_iter != vector_expression_map_.end() ) {
 		return vector_expression_iter->second;
 	}
 
-	std::map< std::string, std::pair< EntityFuncOP, VariableExpressionOP > >::const_iterator
+	auto
 		entity_funcs_iter = entity_funcs_.find( var_node.variable_name() );
 	if ( entity_funcs_iter != entity_funcs_.end() ) {
 		return entity_funcs_iter->second.second;
@@ -745,7 +743,7 @@ DynamicAggregateFunction::variable_expression( ArithmeticASTValue const & var_no
 	throw utility::excn::EXCN_Msg_Exception( "Unexpected variable expression encountered while "
 		"forming an expression from an ExpressionAST (after scanning/parsing completed!): " + var_node.variable_name() );
 
-	return 0;
+	return nullptr;
 }
 
 /// @details Handles the functions that the ExpressionCreator base class does not.
@@ -837,7 +835,7 @@ DynamicAggregateFunction::function_expression(
 		return ExpressionCOP( ExpressionOP( new NotExpression( args[ 1 ] ) ) );
 	}
 	throw utility::excn::EXCN_Msg_Exception( "Unrecognized function requested of DynamicAggregateFunction: " + fname );
-	return 0;
+	return nullptr;
 }
 
 void DynamicAggregateFunction::add_file_contents(
@@ -893,7 +891,7 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 	std::map< std::string, std::list< std::string > > vector_variables;
 	std::map< std::string, std::pair< std::map< std::string, std::string >, ArithmeticASTExpressionOP > > vector_expression_asts;
 
-	ArithmeticASTExpressionOP fitness_expression_ast( 0 );
+	ArithmeticASTExpressionOP fitness_expression_ast( nullptr );
 
 	named_state_data_file_names_.clear();
 	state_vector_data_file_names_.clear();
@@ -1279,7 +1277,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		core::Real score = (*sfxn_)( pose );
 		std::string newvar = varname + "_" + *iter;
 		TR << "  Saving score of " << score << " in variable " << newvar << std::endl;
-		pose_energy_variables[ count_pdbs ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( newvar, score ) );;
+		pose_energy_variables[ count_pdbs ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( newvar, score ) );
 	}
 
 	save_vector_variable( varname, line_number );
@@ -1481,7 +1479,7 @@ DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 	// Assuming we made it here, the AST has been correctly parsed.
 	save_scalar_variable( vname, line_number );
 	scalar_expression_asts[ vname ] = expression_ast;
-	expression_evaluation_order_by_name_.push_back( std::make_pair( 1, vname ));
+	expression_evaluation_order_by_name_.emplace_back(std::make_pair( 1, vname ));
 	TR << "SCALAR_EXPRESSION on line " << line_number << " successfully parsed" << std::endl;
 }
 
@@ -1614,7 +1612,7 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 	TR << "VECTOR_EXPRESSION on line " << line_number << " successfully parsed" << std::endl;
 
 	save_vector_variable( vector_varname, line_number );
-	expression_evaluation_order_by_name_.push_back( std::make_pair( 2, vector_varname ));
+	expression_evaluation_order_by_name_.emplace_back(std::make_pair( 2, vector_varname ));
 	vector_expression_asts[ vector_varname ] = std::make_pair( localvar_map, vector_expression_ast );
 }
 
@@ -1832,19 +1830,17 @@ DynamicAggregateFunction::create_state_variable_expressions(
 
 		if ( npd_properties_for_state_variables_.find( iter->first ) != npd_properties_for_state_variables_.end() ) {
 			std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
-			for ( std::list< std::pair< std::string, std::string > >::const_iterator
-					npditer = npdlist.begin(), npditer_end = npdlist.end();
-					npditer != npditer_end; ++npditer ) {
+			for (const auto & npditer : npdlist) {
 				++count_npd_index;
 				++count_variable_index;
-				SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( npditer->second, 0.0 ) );
+				SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( npditer.second, 0.0 ) );
 				surrogate->root_expression( variable_expressions_for_states_[ count_state ] );
 
-				npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer->first ) );
+				npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer.first ) );
 				variable_expressions_for_npd_properties_[ count_npd_index ] =
 					variable_expressions_[ count_variable_index ] = surrogate;
-				variable_name_2_variable_exp_index_[ npditer->second ] = count_variable_index;
-				scalar_expression_map_[ npditer->second ] = variable_expressions_[ count_variable_index ];
+				variable_name_2_variable_exp_index_[ npditer.second ] = count_variable_index;
+				scalar_expression_map_[ npditer.second ] = variable_expressions_[ count_variable_index ];
 			}
 		}
 
@@ -1894,18 +1890,16 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 			/// Create vector expressions for this state and store them in the variable_expressions_for_npd_properties_ array
 			if ( has_npd_properties ) {
 				std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
-				for ( std::list< std::pair< std::string, std::string > >::const_iterator
-						npditer = npdlist.begin(), npditer_end = npdlist.end();
-						npditer != npditer_end; ++npditer ) {
+				for (const auto & npditer : npdlist) {
 					++count_npd_index;
 					++count_variable_index;
-					npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer->first ) );
-					std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
+					npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer.first ) );
+					std::string ii_npd_varname = npditer.second + "_" + utility::to_string( ii );
 					SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( ii_npd_varname, 0.0 ) );
 					surrogate->root_expression( variable_expressions_for_states_[ count_state ] );
 					variable_expressions_for_npd_properties_[ count_npd_index ] =
 						variable_expressions_[ count_variable_index ] = surrogate;
-					npd_property_variables[ npditer->first ].push_back( variable_expressions_[ count_variable_index ] );
+					npd_property_variables[ npditer.first ].push_back( variable_expressions_[ count_variable_index ] );
 					variable_name_2_variable_exp_index_[ ii_npd_varname ] = count_variable_index;
 				}
 			}
@@ -1913,12 +1907,10 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] = protocols::pack_daemon::VariableVectorExpressionOP( new VariableVectorExpression( iter->first, variables ) );
 		if ( has_npd_properties ) {
 			std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
-			for ( std::list< std::pair< std::string, std::string > >::const_iterator
-					npditer = npdlist.begin(), npditer_end = npdlist.end();
-					npditer != npditer_end; ++npditer ) {
+			for (const auto & npditer : npdlist) {
 				//std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
 				//npd_property_variables[ npditer->first ].push_back( new VariableExpressin( ii_npd_varname, 0.0 ) );
-				vector_expression_map_[ npditer->second ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( npditer->second, npd_property_variables[ npditer->first ] ) ) );
+				vector_expression_map_[ npditer.second ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( npditer.second, npd_property_variables[ npditer.first ] ) ) );
 			}
 		}
 		state_indices_for_state_vector_[ iter->first ] = indices;
@@ -1937,33 +1929,29 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 	Size & count_variable_index
 )
 {
-	for ( std::map< std::string, ArithmeticASTExpressionOP >::const_iterator
-			iter = scalar_expression_asts.begin(), iter_end = scalar_expression_asts.end();
-			iter != iter_end; ++iter ) {
+	for (const auto & scalar_expression_ast : scalar_expression_asts) {
 		++count_variable_index;
-		SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( iter->first, 0.0 ) );
+		SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( scalar_expression_ast.first, 0.0 ) );
 		variable_expressions_[ count_variable_index ] = surrogate;
 		surrogate_expression_map_[ count_variable_index ] = surrogate;
-		variable_name_2_variable_exp_index_[ iter->first ] = count_variable_index;
-		scalar_expression_map_[ iter->first ] = variable_expressions_[ count_variable_index ];
+		variable_name_2_variable_exp_index_[ scalar_expression_ast.first ] = count_variable_index;
+		scalar_expression_map_[ scalar_expression_ast.first ] = variable_expressions_[ count_variable_index ];
 	}
 
-	for ( std::map< std::string, std::list< std::string > >::const_iterator
-			vvar_iter = vector_variables.begin(), vvar_iter_end = vector_variables.end();
-			vvar_iter != vvar_iter_end; ++vvar_iter ) {
+	for (const auto & vector_variable : vector_variables) {
 		utility::vector1< VariableExpressionCOP > variables;
-		variables.reserve( vvar_iter->second.size() );
-		for ( std::list< std::string >::const_iterator
-				scalvar_iter = vvar_iter->second.begin(), scalvar_iter_end = vvar_iter->second.end();
+		variables.reserve( vector_variable.second.size() );
+		for ( auto
+				scalvar_iter = vector_variable.second.begin(), scalvar_iter_end = vector_variable.second.end();
 				scalvar_iter != scalvar_iter_end; ++scalvar_iter ) {
 			std::map< std::string, VariableExpressionCOP >::const_iterator scvar = scalar_expression_map_.find( *scalvar_iter );
 			if ( scvar == scalar_expression_map_.end() ) {
 				throw utility::excn::EXCN_Msg_Exception( "Internal error: could not locate requested scalar variable '"
-					+ *scalvar_iter + "' when constructing the VECTOR_VARIABLE '" + vvar_iter->first );
+					+ *scalvar_iter + "' when constructing the VECTOR_VARIABLE '" + vector_variable.first );
 			}
 			variables.push_back( scvar->second );
 		}
-		vector_expression_map_[ vvar_iter->first ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( vvar_iter->first, variables ) ) );
+		vector_expression_map_[ vector_variable.first ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( vector_variable.first, variables ) ) );
 	}
 }
 
@@ -1996,7 +1984,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			iter != iter_end; ++iter ) {
 		if ( iter->first == 1 ) {
 			TR << "Creating scalar expression for " << iter->second << std::endl;
-			std::map< std::string, ArithmeticASTExpressionOP >::const_iterator ast_iter = scalar_expression_asts.find( iter->second );
+			auto ast_iter = scalar_expression_asts.find( iter->second );
 			if ( ast_iter == scalar_expression_asts.end() ) {
 				throw utility::excn::EXCN_Msg_Exception( "Internal error.  Unable to find scalar expression named '" + iter->second + "' in the scalar_expression_asts map" );
 			}
@@ -2009,7 +1997,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			surrogate_expression_map_[ variable_index ]->root_expression( var_expr );
 		} else if ( iter->first == 2 ) {
 			TR << "Creating vector expression for " << iter->second << std::endl;
-			std::map< std::string, std::pair< std::map< std::string, std::string >, ArithmeticASTExpressionOP > >::const_iterator
+			auto
 				ast_iter = vector_expression_asts.find( iter->second );
 			if ( ast_iter == vector_expression_asts.end() ) {
 				throw utility::excn::EXCN_Msg_Exception( "Internal error.  Unable to find vector expression named '" + iter->second + "' in the vector_expression_asts map" );
@@ -2021,14 +2009,12 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			/// Create a mapping between the local-variable names and the vector-expression COPs
 			/// that the local variables are intended to refer to.
 			std::map< std::string, VectorExpressionCOP > vector_varnames;
-			for ( std::map< std::string, std::string >::const_iterator
-					vec_iter = itvecexp_data.first.begin(), vec_iter_end = itvecexp_data.first.end();
-					vec_iter != vec_iter_end; ++vec_iter ) {
+			for (const auto & vec_iter : itvecexp_data.first) {
 				//std::cout << "VectorExpression map: " << vec_iter->first << " " << vec_iter->second  << std::endl;
-				if ( vector_expression_map_.find( vec_iter->second ) == vector_expression_map_.end() ) {
-					throw utility::excn::EXCN_Msg_Exception( "Variable " + vec_iter->second + " absent from the IterativeVectorExpression name map" );
+				if ( vector_expression_map_.find( vec_iter.second ) == vector_expression_map_.end() ) {
+					throw utility::excn::EXCN_Msg_Exception( "Variable " + vec_iter.second + " absent from the IterativeVectorExpression name map" );
 				}
-				vector_varnames[ vec_iter->first ] = vector_expression_map_[ vec_iter->second ];
+				vector_varnames[ vec_iter.first ] = vector_expression_map_[ vec_iter.second ];
 			}
 			IterativeVectorExpressionOP ivec_exp( new IterativeVectorExpression( iter->second ) );
 
@@ -2195,19 +2181,15 @@ DynamicAggregateFunction::count_num_npd_properties() const
 {
 	Size count( 0 );
 	/// 1. count the npd properties for states declared with the STATE command
-	for ( std::map< std::string, StructureFileNames >::const_iterator
-			iter = named_state_data_file_names_.begin(), iter_end = named_state_data_file_names_.end();
-			iter != iter_end; ++iter ) {
-		if ( npd_properties_for_state_variables_.find( iter->first ) != npd_properties_for_state_variables_.end() ) {
-			count += npd_properties_for_state_variables_.find( iter->first )->second.size();
+	for (const auto & named_state_data_file_name : named_state_data_file_names_) {
+		if ( npd_properties_for_state_variables_.find( named_state_data_file_name.first ) != npd_properties_for_state_variables_.end() ) {
+			count += npd_properties_for_state_variables_.find( named_state_data_file_name.first )->second.size();
 		}
 	}
 	/// 2. count the npd properties for the states decalred with the STATE_VECTOR command
-	for ( std::map< std::string, utility::vector1< StructureFileNames > >::const_iterator
-			iter = state_vector_data_file_names_.begin(), iter_end = state_vector_data_file_names_.end();
-			iter != iter_end; ++iter ) {
-		if ( npd_properties_for_state_variables_.find( iter->first ) != npd_properties_for_state_variables_.end() ) {
-			count += npd_properties_for_state_variables_.find( iter->first )->second.size() * iter->second.size();
+	for (const auto & state_vector_data_file_name : state_vector_data_file_names_) {
+		if ( npd_properties_for_state_variables_.find( state_vector_data_file_name.first ) != npd_properties_for_state_variables_.end() ) {
+			count += npd_properties_for_state_variables_.find( state_vector_data_file_name.first )->second.size() * state_vector_data_file_name.second.size();
 		}
 	}
 	return count;
@@ -2338,10 +2320,8 @@ DynamicAggregateFunctionDriver::assign_jobs_to_local_daemon_set(
 	DaemonSetOP daemon_set
 )
 {
-	for ( std::list< int >::const_iterator iter = job_indices.begin(),
-			iter_end = job_indices.end(); iter != iter_end; ++iter ) {
-		int state_id = *iter;
-		StructureFileNames const & sfn = file_inputs_for_job( state_id );
+	for (int state_id : job_indices) {
+			StructureFileNames const & sfn = file_inputs_for_job( state_id );
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdbstring( pose, get_file_contents( sfn.pdb_name_ ));
 		std::istringstream corr_stream( get_file_contents( sfn.correspondence_file_name_ ) );
@@ -2354,7 +2334,7 @@ DynamicAggregateFunctionDriver::assign_jobs_to_local_daemon_set(
 			corr_stream,
 			sfn.resfile_name_,
 			resfile_stream );
-		for ( std::list< std::pair< Size, std::string > >::const_iterator
+		for ( auto
 				npditer = npd_variable_indices_for_state_begin( state_id ),
 				npditer_end = npd_variable_indices_for_state_end( state_id );
 				npditer != npditer_end; ++npditer ) {
@@ -2374,10 +2354,8 @@ DynamicAggregateFunctionDriver::assign_jobs_to_remote_daemon_sets(
 
 	int ndaemons = job_indices.size();
 	utility::send_integer_to_node( proc_id, ndaemons );
-	for ( std::list< int >::const_iterator iter = job_indices.begin(),
-			iter_end = job_indices.end(); iter != iter_end; ++iter ) {
-		int state_id = *iter;
-		StructureFileNames const & sfn = file_inputs_for_job( state_id );
+	for (int state_id : job_indices) {
+			StructureFileNames const & sfn = file_inputs_for_job( state_id );
 		utility::send_integer_to_node( proc_id, state_id );
 		utility::send_string_to_node( proc_id, sfn.pdb_name_ );
 		utility::send_string_to_node( proc_id, get_file_contents( sfn.pdb_name_ ));
@@ -2388,7 +2366,7 @@ DynamicAggregateFunctionDriver::assign_jobs_to_remote_daemon_sets(
 		int n_npd_properties_to_send = num_npd_properties_for_state( state_id );
 		utility::send_integer_to_node( proc_id, n_npd_properties_to_send );
 		//int count_npd = 0;
-		for ( std::list< std::pair< Size, std::string > >::const_iterator
+		for ( auto
 				npditer = npd_variable_indices_for_state_begin( state_id ),
 				npditer_end = npd_variable_indices_for_state_end( state_id );
 				npditer != npditer_end; ++npditer ) {
@@ -2457,7 +2435,7 @@ EntityFuncExpressionCreator::EntityFuncExpressionCreator(
 {}
 
 EntityFuncExpressionCreator::~EntityFuncExpressionCreator()
-{}
+= default;
 
 ExpressionCOP
 EntityFuncExpressionCreator::handle_variable_expression(
@@ -2486,8 +2464,7 @@ EntityFunc::EntityFunc() :
 {}
 
 EntityFunc::~EntityFunc()
-{
-}
+= default;
 
 void EntityFunc::set_num_entity_elements( Size num_ees )
 {
@@ -2502,7 +2479,7 @@ void EntityFunc::initialize_from_input_file( std::istream & input )
 
 	initialize_scanner_and_function_names();
 	std::map< std::string, ArithmeticASTExpressionOP > expression_asts;
-	ArithmeticASTExpressionOP score_expression_ast( 0 );
+	ArithmeticASTExpressionOP score_expression_ast( nullptr );
 	Size count_line( 0 );
 
 	while ( input ) {
@@ -2557,7 +2534,7 @@ EntityFunc::variable_expression( ArithmeticASTValue const & var_node ) const
 			utility::to_string( var_node.literal_value() ));
 	}
 
-	std::map< std::string, VariableExpressionOP >::const_iterator var_iter =
+	auto var_iter =
 		variable_expression_map_.find( var_node.variable_name() );
 	if ( var_iter != variable_expression_map_.end() ) {
 		return var_iter->second;
@@ -2566,7 +2543,7 @@ EntityFunc::variable_expression( ArithmeticASTValue const & var_node ) const
 	throw utility::excn::EXCN_Msg_Exception( "Unable to find variable with name " + var_node.variable_name() + " in"
 		" EntityFunc while trying to build expression trees for the expressions already tokenized and parsed.\n"
 		"Cannot continue.  Contact Andrew Leaver-Fay (aleaverfay@gmail.com)" );
-	return 0;
+	return nullptr;
 }
 
 ExpressionCOP
@@ -2650,7 +2627,7 @@ EntityFunc::function_expression(
 	throw utility::excn::EXCN_Msg_Exception( "Unable to find function with name " + fname + " in"
 		" EntityFunc while trying to build expression trees for the expressions already tokenized and parsed.\n"
 		"Cannot continue.  Contact Andrew Leaver-Fay (aleaverfay@gmail.com)" );
-	return 0;
+	return nullptr;
 
 }
 
@@ -3111,10 +3088,10 @@ EntityFunc::process_SUB_EXPRESSION_line(
 
 	expression_asts[ subexpression_name ] = expression_ast;
 	SurrogateVariableExpressionOP surrogate_expression( new SurrogateVariableExpression( subexpression_name ) );
-	expression_evaluation_order_.push_back( std::make_pair( ExpressionCOP( 0 ), surrogate_expression ) );
+	expression_evaluation_order_.push_back( std::make_pair( ExpressionCOP( nullptr ), surrogate_expression ) );
 
 	variable_expression_map_[ subexpression_name ] = surrogate_expression;
-	subexpression_name_map_[ subexpression_name ] = 0;
+	subexpression_name_map_[ subexpression_name ] = nullptr;
 	subexpression_name_dec_line_[ subexpression_name ] = line_number;
 	scanner_->add_variable( subexpression_name );
 
@@ -3153,9 +3130,9 @@ EntityFunc::turn_expression_ASTs_into_expressions(
 {
 	EntityFuncExpressionCreator expression_creator( *this );
 	for ( Size ii = 1; ii <= expression_evaluation_order_.size(); ++ii ) {
-		if ( expression_evaluation_order_[ ii ].first == 0 ) {
+		if ( expression_evaluation_order_[ ii ].first == nullptr ) {
 			std::string ii_name = expression_evaluation_order_[ ii ].second->name();
-			std::map< std::string, ArithmeticASTExpressionOP >::const_iterator iter = expression_asts.find( ii_name );
+			auto iter = expression_asts.find( ii_name );
 			ExpressionCOP var_expr = expression_creator.create_expression_tree( * iter->second );
 			subexpression_name_map_[ ii_name ] = var_expr;
 			expression_evaluation_order_[ ii ].first = var_expr;

@@ -55,7 +55,7 @@ public:
   double std_dev; // standard deviation for gaussian sampling
   double max_uni_dev; // maximal deviation for uniform sampling
 public:
-  DOF_info() {}
+  DOF_info() = default;
   DOF_info(int poseres_id, double std_dev, double max_uni_dev);
   bool operator<(DOF_info const& other) const;
 
@@ -120,7 +120,7 @@ public:
   //       DOFs vectors.
   //       - "this->set_dofs_dof()" methods can be used to add more DOFs.
   //
-  DOFs_manager(core::pose::Pose& template_pose, core::kinematics::MoveMapCOP in_movemap = NULL);
+  DOFs_manager(core::pose::Pose& template_pose, core::kinematics::MoveMapCOP in_movemap = nullptr);
 
   // does all constructor stuff, see ctr with same params for documentation
   // in_movemap is used to set flexible DOFs (if not NULL)

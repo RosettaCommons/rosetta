@@ -44,14 +44,14 @@ public:
 	}
 
 	/// @brief destructor
-	virtual ~ProfSimScoringScheme() {}
+	~ProfSimScoringScheme() override = default;
 
 	/// @brief Initialize log-probabilities of occurence for each amino acid.
 	void initialize_parameters();
 
 	/// @brief returns owning pointer to a new object with a deep copy of this
 	/// object's values.
-	virtual ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		return ScoringSchemeOP( new ProfSimScoringScheme(
 			gap_open(),
 			gap_extend()
@@ -74,12 +74,12 @@ public:
 	/// J-S divergence between two distributions is defined as:
 	/// D( p1, p2 ) = 0.5 * sum( p1[i] * log( p1[i] / p2[i] ) ) +
 	///               0.5 * sum( p2[i] * log( p2[i] / p1[i] ) )
-	virtual Real score(
+	Real score(
 		SequenceOP seq1,
 		SequenceOP seq2,
 		Size pos1,
 		Size pos2
-	);
+	) override;
 private:
 	utility::vector1< core::Real > prior_probs_;
 }; // class ProfSimScoringScheme

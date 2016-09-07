@@ -52,7 +52,7 @@ public:
 		core::pose::Pose const & template_pose
 	);
 
-	virtual ~ThreadingMover() {}
+	~ThreadingMover() override = default;
 
 	/// @brief Returns the index of the query sequence in SequenceAlignment
 	/// object.
@@ -108,13 +108,13 @@ public:
 
 	/// @brief Threads the given Pose onto the template_pose with the
 	/// SequenceAlignment provided.
-	virtual void apply( core::pose::Pose & query_pose );
+	void apply( core::pose::Pose & query_pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 private: // methods
 

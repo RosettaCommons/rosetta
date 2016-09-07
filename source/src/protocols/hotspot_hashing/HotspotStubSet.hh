@@ -63,7 +63,7 @@ public:
 
 	HotspotStubSet();
 	HotspotStubSet( HotspotStubSet const & init );
-	virtual ~HotspotStubSet();
+	~HotspotStubSet() override;
 	void clear();
 
 	//iterator functions

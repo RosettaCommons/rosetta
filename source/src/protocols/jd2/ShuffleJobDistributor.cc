@@ -49,8 +49,7 @@ ShuffleFileSystemJobDistributor::ShuffleFileSystemJobDistributor() :
 /// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-ShuffleFileSystemJobDistributor::~ShuffleFileSystemJobDistributor()
-{ }
+ShuffleFileSystemJobDistributor::~ShuffleFileSystemJobDistributor() = default;
 
 
 /// @brief dummy for master/slave version

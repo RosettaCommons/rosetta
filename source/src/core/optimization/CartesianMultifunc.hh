@@ -46,26 +46,26 @@ public: // Creation
 	);
 
 	/// @brief Destructor
-	virtual ~CartesianMultifunc();
+	~CartesianMultifunc() override;
 
 public: // Methods
 
 	// func
-	virtual
+	
 	Real
-	operator ()( Multivec const & vars ) const;
+	operator ()( Multivec const & vars ) const override;
 
 	// dfunc
-	virtual
+	
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const;
+	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
 
 	void set_deriv_check_result( NumericalDerivCheckResultOP deriv_check_result );
 
 	/// @brief Error state reached -- derivative does not match gradient
-	virtual
+	
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const;
+	dump( Multivec const & vars, Multivec const & vars2 ) const override;
 
 protected: // accessors for subclasses
 	/// non-const since pose_ is modified by calls to operator()

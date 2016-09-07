@@ -55,7 +55,7 @@ public:
 		Interval cut_reg_;
 	};
 
-	std::string type_name() const {
+	std::string type_name() const override {
 		return "ResiduePairJumpSetup";
 	}
 
@@ -126,16 +126,16 @@ public:
 	read_file( std::string file );
 
 	JumpSample
-	create_jump_sample( ) const;
+	create_jump_sample( ) const override;
 
-	virtual JumpSample
-	clean_jumps( JumpSample const& js) const {
+	JumpSample
+	clean_jumps( JumpSample const& js) const override {
 		std::cerr << "ERROR ERROR ERROR            unimplemented method!;";
 		return js;
 	}
 
 	core::fragment::FragSetOP
-	generate_jump_frags( JumpSample const&, core::kinematics::MoveMap const& mm) const;
+	generate_jump_frags( JumpSample const&, core::kinematics::MoveMap const& mm) const override;
 
 	core::Size
 	total_residue() const {

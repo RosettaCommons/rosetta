@@ -48,28 +48,28 @@ public:
 
 	/// @brief Destructor.
 	///
-	virtual ~AddCompositionConstraintMover();
+	~AddCompositionConstraintMover() override;
 
 	/// @brief Copy this object and return a pointer to the copy.
 	///
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a new object of this type and return a pointer to it.
 	///
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Returns the name of this mover ("AddCompositionConstraintMover").
 	///
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Actually apply the mover to a pose.
 	///
-	virtual void apply( Pose & );
+	void apply( Pose & ) override;
 
 	/// @brief Parse RosettaScripts XML tag to set up the mover.
 	///
-	virtual void
-	parse_my_tag( TagCOP tag, basic::datacache::DataMap &data_map, Filters_map const &filters_map, protocols::moves::Movers_map const &movers_map, Pose const &pose );
+	void
+	parse_my_tag( TagCOP tag, basic::datacache::DataMap &data_map, Filters_map const &filters_map, protocols::moves::Movers_map const &movers_map, Pose const &pose ) override;
 
 	/// @brief Get an owning pointer to the AACompositionConstraint object created by this mover.
 	/// @details NULL unless the create_constraint_from_file() function has been called.

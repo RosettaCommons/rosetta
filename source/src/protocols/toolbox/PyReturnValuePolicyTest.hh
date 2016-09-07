@@ -38,7 +38,7 @@ class DummyClass : public utility::pointer::ReferenceCount {
 public:
 	DummyClass() {};
 	DummyClass(int) {};
-	~DummyClass() {};
+	~DummyClass() override = default;
 
 	DummyClass(DummyClass const &) {};
 
@@ -75,14 +75,14 @@ public:
 
 	SF_Replica() {};
 
-	~SF_Replica() {};
+	~SF_Replica() override = default;
 
 	SF_Replica &
 	operator=( SF_Replica const & ) { return *this; };
 
 	SF_Replica( SF_Replica const & ) {};
 
-	virtual SF_ReplicaOP clone() const { return 0; };
+	virtual SF_ReplicaOP clone() const { return nullptr; };
 
 	virtual core::Real operator ()( core::pose::Pose & pose ) const { return 0.0; };
 

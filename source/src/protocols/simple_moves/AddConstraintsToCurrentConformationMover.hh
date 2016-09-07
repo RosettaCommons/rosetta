@@ -31,24 +31,24 @@ public:
 	typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
 
 	AddConstraintsToCurrentConformationMover();
-	virtual ~AddConstraintsToCurrentConformationMover();
+	~AddConstraintsToCurrentConformationMover() override;
 
-	virtual void
-	apply( Pose & pose );
+	void
+	apply( Pose & pose ) override;
 
 	virtual core::scoring::constraints::ConstraintCOPs
 	generate_constraints( Pose const & pose );
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	void task_factory( TaskFactoryOP tf );
 	void residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
-	virtual moves::MoverOP clone() const;
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	void
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
 
 
 	bool       & use_distance_cst() { return use_distance_cst_; }

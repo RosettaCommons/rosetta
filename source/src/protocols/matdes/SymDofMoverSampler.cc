@@ -46,7 +46,7 @@ using protocols::matdes::SymDofMoverSampler;
 template <> std::mutex utility::SingletonBase< SymDofMoverSampler >::singleton_mutex_{};
 template <> std::atomic< SymDofMoverSampler * > utility::SingletonBase< SymDofMoverSampler >::instance_( 0 );
 #else
-template <> SymDofMoverSampler * utility::SingletonBase< SymDofMoverSampler >::instance_( 0 );
+template <> SymDofMoverSampler * utility::SingletonBase< SymDofMoverSampler >::instance_( nullptr );
 #endif
 
 }

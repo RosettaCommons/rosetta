@@ -19,7 +19,7 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ObjexxFCL.hh>
-#include <stdio.h>
+#include <cstdio>
 #include <algorithm>
 #include <string>
 #include <vector>

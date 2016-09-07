@@ -14,6 +14,7 @@
 #include <core/fragment/FragmentRmsd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 // Project headers
@@ -31,9 +32,9 @@ namespace core {
 namespace fragment {
 
 /// @details Auto-generated virtual destructor
-FragmentRmsd::~FragmentRmsd() {}
+FragmentRmsd::~FragmentRmsd() = default;
 
-FragmentRmsd::FragmentRmsd(FragSetCOP fragments) : fragments_(fragments) {
+FragmentRmsd::FragmentRmsd(FragSetCOP fragments) : fragments_(std::move(fragments)) {
 	for ( ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i ) {
 		FrameCOP frame = *i;
 		frames_[frame->start()] = frame;

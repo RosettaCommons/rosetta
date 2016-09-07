@@ -40,10 +40,7 @@ ResidueGridScoresFeaturesCreator::ResidueGridScoresFeaturesCreator()
 
 }
 
-ResidueGridScoresFeaturesCreator::~ResidueGridScoresFeaturesCreator()
-{
-
-}
+ResidueGridScoresFeaturesCreator::~ResidueGridScoresFeaturesCreator() = default;
 
 protocols::features::FeaturesReporterOP ResidueGridScoresFeaturesCreator::create_features_reporter() const
 {
@@ -60,17 +57,10 @@ ResidueGridScoresFeatures::ResidueGridScoresFeatures() : chain_(' ')
 
 }
 
-ResidueGridScoresFeatures::ResidueGridScoresFeatures(ResidueGridScoresFeatures const & src) : FeaturesReporter(src),
-	chain_(src.chain_)
-{
-
-}
+ResidueGridScoresFeatures::ResidueGridScoresFeatures(ResidueGridScoresFeatures const & ) = default;
 
 
-ResidueGridScoresFeatures::~ResidueGridScoresFeatures()
-{
-
-}
+ResidueGridScoresFeatures::~ResidueGridScoresFeatures() = default;
 
 std::string ResidueGridScoresFeatures::type_name() const
 {

@@ -30,7 +30,7 @@ namespace utility { namespace py {
 class PyExitCallback : public utility::pointer::ReferenceCount //, boost::noncopyable
 {
 public:
-	virtual ~PyExitCallback() {}
+	~PyExitCallback() override = default;
 
 	virtual void exit_callback();
 

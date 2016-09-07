@@ -34,7 +34,7 @@ public:
 		type("ChemicalShift");
 	}
 
-	ScoringSchemeOP clone() const {
+	ScoringSchemeOP clone() const override {
 		return ScoringSchemeOP( new ChemicalShiftScoringScheme(
 			gap_open(),
 			gap_extend()
@@ -42,9 +42,9 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~ChemicalShiftScoringScheme() {}
+	~ChemicalShiftScoringScheme() override = default;
 
-	virtual Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 );
+	Real score( SequenceOP seq1, SequenceOP seq2, Size pos1, Size pos2 ) override;
 }; // class ChemicalShiftScoringScheme
 
 } // sequence

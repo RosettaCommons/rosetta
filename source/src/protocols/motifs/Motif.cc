@@ -39,6 +39,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tools/make_map.hh>
@@ -58,22 +59,22 @@ static THREAD_LOCAL basic::Tracer mt( "protocols.motifs.Motif", basic::t_info );
 
 Motif::Motif(
 	std::string const & resname1,
-	std::string const & res1_atom1,
-	std::string const & res1_atom2,
-	std::string const & res1_atom3,
+	std::string  res1_atom1,
+	std::string  res1_atom2,
+	std::string  res1_atom3,
 	std::string const & resname2,
-	std::string const & res2_atom1,
-	std::string const & res2_atom2,
-	std::string const & res2_atom3,
+	std::string  res2_atom1,
+	std::string  res2_atom2,
+	std::string  res2_atom3,
 	core::kinematics::Jump const & orientation
 ) : restype_name1_( protocols::dna::dna_full_name3( resname1 ) ),
-	res1_atom1_name_( res1_atom1 ),
-	res1_atom2_name_( res1_atom2 ),
-	res1_atom3_name_( res1_atom3 ),
+	res1_atom1_name_(std::move( res1_atom1 )),
+	res1_atom2_name_(std::move( res1_atom2 )),
+	res1_atom3_name_(std::move( res1_atom3 )),
 	restype_name2_( protocols::dna::dna_full_name3( resname2 ) ),
-	res2_atom1_name_( res2_atom1 ),
-	res2_atom2_name_( res2_atom2 ),
-	res2_atom3_name_( res2_atom3 ),
+	res2_atom1_name_(std::move( res2_atom1 )),
+	res2_atom2_name_(std::move( res2_atom2 )),
+	res2_atom3_name_(std::move( res2_atom3 )),
 	forward_jump_( orientation ),
 	backward_jump_( ( orientation.reversed() ) ),
 	has_remark_( false ),
@@ -368,8 +369,7 @@ Motif::clone() const
 	return MotifOP( new Motif( *this ) );
 }
 
-Motif::~Motif()
-{}
+Motif::~Motif() = default;
 
 bool
 Motif::forward_check(
@@ -608,7 +608,7 @@ Motif::place_atoms(
 		mt << "Bad Mojo a! call to Motif::place_atom() with wrong residue(s)!" << std::endl;
 		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << std::endl;
 		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << std::endl;
-		mt << "Neither order matches!" << std::endl;;
+		mt << "Neither order matches!" << std::endl;
 	}
 
 	return;

@@ -35,7 +35,7 @@ KDNode::KDNode( KDTree const & tree ) :
 	tree_( tree )
 {}
 
-KDNode::~KDNode() {}
+KDNode::~KDNode() = default;
 
 KDNodeOP KDNode::parent() const {
 	return parent_;
@@ -115,10 +115,8 @@ std::ostream & operator<< (
 ) {
 	using numeric::Real;
 	using utility::vector1;
-	for ( vector1< Real >::const_iterator val = points.begin(),
-			val_end = points.end(); val != val_end; ++val
-			) {
-		out << ' ' << *val;
+	for (double point : points) {
+		out << ' ' << point;
 	}
 	return out;
 }

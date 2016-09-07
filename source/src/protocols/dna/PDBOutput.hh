@@ -52,16 +52,16 @@ public:
 
 public:
 	PDBOutput();
-	virtual ~PDBOutput();
+	~PDBOutput() override;
 	/// @brief JobDistributor calls this method
-	virtual void final_pose( JobOP, Pose const &, std::string const & );
+	void final_pose( JobOP, Pose const &, std::string const & ) override;
 	/// @brief functor for non-JobDistributor usage
 	void operator() ( Pose const &, std::string const & );
 
 	void enabled( bool value ) const { enabled_ = value; }
 	bool enabled() const { return enabled_; }
 
-	virtual void starting_pose( Pose const & );
+	void starting_pose( Pose const & ) override;
 	virtual void reference_pose( Pose const & );
 	PoseCOP reference_pose() const;
 

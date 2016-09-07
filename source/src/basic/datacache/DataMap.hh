@@ -40,7 +40,7 @@ public:
 
 public:
 	DataMap();
-	virtual ~DataMap();
+	~DataMap() override;
 
 	iterator begin();
 	iterator end();
@@ -95,9 +95,9 @@ DataMap::get( std::string const & type, std::string const & name ) const {
 	}
 
 	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
-	for ( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
-		if ( it->first == name ) {
-			ret = dynamic_cast< Ty >( it->second.get() );
+	for (const auto & it : dm) {
+		if ( it.first == name ) {
+			ret = dynamic_cast< Ty >( it.second.get() );
 			break;
 		}
 	}
@@ -127,9 +127,9 @@ DataMap::get_ptr( std::string const & type, std::string const & name ) const {
 	}
 
 	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
-	for ( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
-		if ( it->first == name ) {
-			ret = utility::pointer::dynamic_pointer_cast< Ty >( it->second );
+	for (const auto & it : dm) {
+		if ( it.first == name ) {
+			ret = utility::pointer::dynamic_pointer_cast< Ty >( it.second );
 			break;
 		}
 	}

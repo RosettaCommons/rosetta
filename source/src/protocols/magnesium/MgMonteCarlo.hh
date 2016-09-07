@@ -30,7 +30,7 @@ public:
 	MgMonteCarlo();
 
 	//destructor
-	~MgMonteCarlo();
+	~MgMonteCarlo() override;
 
 	void set_temperature( core::Real const & setting ){ temperature_ = setting; }
 	core::Real temperature() const { return temperature_; }
@@ -46,8 +46,8 @@ public:
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const{ return "MgMonteCarlo"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override{ return "MgMonteCarlo"; }
 
 private:
 

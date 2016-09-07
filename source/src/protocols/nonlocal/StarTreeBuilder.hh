@@ -51,10 +51,10 @@ public:
 	/// The simplest way to achieve this is a call to Loops::sequential_order().
 	///
 	/// Additionally, every residue in pose must belong to one and only one chunk.
-	void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose);
+	void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose) override;
 
 	/// @brief Removes the virtual residue added to <pose> in calls to set_up()
-	void tear_down(core::pose::Pose* pose);
+	void tear_down(core::pose::Pose* pose) override;
 
 protected:
 	/// @brief Stochastically selects an anchor position

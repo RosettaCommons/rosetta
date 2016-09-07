@@ -53,13 +53,11 @@ class WriteableCacheableMap : public CacheableData
 public:
 	WriteableCacheableMap() : CacheableData() {}
 
-	WriteableCacheableMap( WriteableCacheableMap const& other ): CacheableData(other),
-		map_( other.map_ )
-	{}
+	WriteableCacheableMap( WriteableCacheableMap const& )= default;
 
-	virtual ~WriteableCacheableMap() {}
+	~WriteableCacheableMap() override = default;
 
-	virtual CacheableDataOP clone() const {
+	CacheableDataOP clone() const override {
 		return CacheableDataOP( new WriteableCacheableMap(*this) );
 	}
 

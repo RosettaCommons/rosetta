@@ -101,7 +101,7 @@ public: // Creation
 	/// @brief Default constructor
 	inline
 	ClassKeyVector()
-	{}
+	= default;
 
 
 	/// @brief Copy constructor
@@ -143,7 +143,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	~ClassKeyVector()
-	{}
+	= default;
 
 
 public: // Assignment

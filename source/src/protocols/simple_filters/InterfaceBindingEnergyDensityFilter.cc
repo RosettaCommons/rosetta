@@ -63,8 +63,8 @@ InterfaceBindingEnergyDensityFilter::InterfaceBindingEnergyDensityFilter(
 	core::Real threshold
 ):
 	Filter( "InterfaceBindingEnergyDensityFilter" ),
-	sasa_filter_( sasa_filter ),
-	ddG_filter_( ddG_filter ),
+	sasa_filter_(std::move( sasa_filter )),
+	ddG_filter_(std::move( ddG_filter )),
 	upper_threshold_( threshold )
 {}
 
@@ -73,7 +73,7 @@ void InterfaceBindingEnergyDensityFilter::set_interface_sasa_filter( InterfaceSa
 void InterfaceBindingEnergyDensityFilter::set_ddG_filter( DdgFilterOP ddG_filter ) { ddG_filter_ = ddG_filter; }
 void InterfaceBindingEnergyDensityFilter::set_upper_threshold( core::Real threshold ) { upper_threshold_ = threshold; }
 
-InterfaceBindingEnergyDensityFilter::~InterfaceBindingEnergyDensityFilter(){}
+InterfaceBindingEnergyDensityFilter::~InterfaceBindingEnergyDensityFilter()= default;
 
 filters::FilterOP
 InterfaceBindingEnergyDensityFilter::clone() const{
@@ -102,7 +102,7 @@ InterfaceBindingEnergyDensityFilter::parse_my_tag(
 	}
 
 	std::string sasa_filter_name = tag->getOption< std::string> ("sasa_filter");
-	filters::Filters_map::const_iterator sasaiter = filters_map.find( sasa_filter_name );
+	auto sasaiter = filters_map.find( sasa_filter_name );
 	if ( sasaiter == filters_map.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Could not locate requested sasa_filter with name " + sasa_filter_name + " in the Filters_map." );
 	}
@@ -113,7 +113,7 @@ InterfaceBindingEnergyDensityFilter::parse_my_tag(
 	}
 
 	std::string ddG_filter_name = tag->getOption< std::string> ("ddG_filter");
-	filters::Filters_map::const_iterator ddGiter = filters_map.find( ddG_filter_name );
+	auto ddGiter = filters_map.find( ddG_filter_name );
 	if ( ddGiter == filters_map.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Could not locate requested ddG_filter with name " + ddG_filter_name + " in the Filters_map." );
 	}

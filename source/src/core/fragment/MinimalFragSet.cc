@@ -64,7 +64,7 @@ static THREAD_LOCAL basic::Tracer tr( "core.fragments" );
 
 
 MinimalFragSet::MinimalFragSet() {}
-MinimalFragSet::~MinimalFragSet() {}
+MinimalFragSet::~MinimalFragSet() = default;
 
 FragSetOP MinimalFragSet::clone() const {
 	return FragSetOP( new MinimalFragSet( *this ) );
@@ -94,7 +94,7 @@ Size MinimalFragSet::region(
 /// there is no frame at the specified position.
 Size MinimalFragSet::frames( Size pos, FrameList &out_frames ) const
 {
-	FrameMap::const_iterator it = frames_.find(pos);
+	auto it = frames_.find(pos);
 	if ( it == frames_.end() ) return 0;
 	if ( it->second.begin() != it->second.end() ) {
 		copy( it->second.begin(), it->second.end(), back_inserter( out_frames ) ); // should append frames
@@ -170,7 +170,7 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 			istringstream in( line );
 			Size vall_residue_key;
 			Size fraglen;
-			FragDataOP current_fragment( NULL );
+			FragDataOP current_fragment( nullptr );
 			current_fragment = FragDataOP( new FragData );
 			in >> vall_residue_key >> fraglen;
 			if ( vall_residue_key == 0 ) { // read torsions from fragment file

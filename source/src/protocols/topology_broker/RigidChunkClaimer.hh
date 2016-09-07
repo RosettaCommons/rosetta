@@ -57,12 +57,12 @@ public:
 	RigidChunkClaimer( core::pose::Pose const& input_pose, loops::Loops rigid );
 
 	//clone
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new RigidChunkClaimer( *this ) );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -70,38 +70,38 @@ public:
 		return "RigidChunkClaimer";
 	}
 
-	virtual void new_decoy();
-	virtual void new_decoy( core::pose::Pose const& );
+	void new_decoy() override;
+	void new_decoy( core::pose::Pose const& ) override;
 
 	/// @brief generate DofClaims for BB
-	virtual void generate_claims( claims::DofClaims& ); //add to list ( never call clear() on list )
+	void generate_claims( claims::DofClaims& ) override; //add to list ( never call clear() on list )
 
 	/// @brief has to decline foreign BB claims for rigid regions, reclaim jumps where appropriate
-	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ );
+	bool allow_claim( claims::DofClaim const& /*foreign_claim*/ ) override;
 
 	/// @brief issue jump-claims for jumps yet missing to keep rigid regions fixed
-	virtual void finalize_claims( claims::DofClaims& );
+	void finalize_claims( claims::DofClaims& ) override;
 
 	// virtual void initialize_residues( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
 	/// @brief initialize BB residues and rigid-internal jumps from starting structure --- copying atom-tree dofs
-	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
+	void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) override;
 
 	/// @brief rigid-chunk can probably provide some side-chain info from full-length model
-	virtual void switch_to_fullatom( core::pose::Pose&, utility::vector1< bool > bNeedToRepack ) const;
+	void switch_to_fullatom( core::pose::Pose&, utility::vector1< bool > bNeedToRepack ) const override;
 
 	/// @brief will fail if a BB torsion claim of the rigid region has been declined
-	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
+	bool accept_declined_claim( claims::DofClaim const& was_declined ) override;
 
 	/// @brief multiply your bias to this -- if its zero don't change that, i.e., multiply only
-	virtual void manipulate_cut_bias( utility::vector1< core::Real >& cut_bias );
+	void manipulate_cut_bias( utility::vector1< core::Real >& cut_bias ) override;
 
 	/// @brief disallow torsion moves in relax if bRigidInRelax
-	virtual void adjust_relax_movemap( core::kinematics::MoveMap& ) const;
+	void adjust_relax_movemap( core::kinematics::MoveMap& ) const override;
 
 	// will be required when we have the option to use coord. csts to fix the rigid chunk.
 	//virtual void add_constraints( core::pose::Pose& /*pose*/ );
 	//???? virtual void add_score_weights( core::scoring::ScoreFunction& );
-	virtual void receive_message( ClaimerMessage& cm );
+	void receive_message( ClaimerMessage& cm ) override;
 
 	/// @brief Returns true if we are using loop definitions from ThreadingJob
 	bool use_loops_from_threading_job() const {
@@ -117,11 +117,11 @@ protected:
 	/// @brief select sub-regions from rigid_core_, if skip-rate is specified
 	void select_parts();
 
-	virtual bool read_tag( std::string tag, std::istream& is );
+	bool read_tag( std::string tag, std::istream& is ) override;
 
-	virtual void set_defaults(); //eg before reading starts.
+	void set_defaults() override; //eg before reading starts.
 
-	virtual void init_after_reading();
+	void init_after_reading() override;
 
 
 private:

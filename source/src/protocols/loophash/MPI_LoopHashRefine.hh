@@ -37,7 +37,7 @@ public:
 
 	void set_defaults();
 
-	virtual ~MPI_LoopHashRefine(){}
+	~MPI_LoopHashRefine() override= default;
 
 protected: // overloaded functions
 
@@ -53,7 +53,7 @@ protected: // added functions
 
 	void load_state(std::string prefix = "default" );
 
-	void print_stats();
+	void print_stats() override;
 
 	void print_library();
 

@@ -54,12 +54,12 @@ public:
 	make_fibril( core::pose::Pose & pose );
 
 	//clone
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new FibrilModelingClaimer( *this ) );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -67,26 +67,26 @@ public:
 		return "FibrilModelingClaimer";
 	}
 
-	virtual void add_mover(
+	void add_mover(
 		moves::RandomMover& random_mover,
 		core::pose::Pose const& pose,
 		abinitio::StageID stageID,
 		core::scoring::ScoreFunction const& scorefxn,
 		core::Real progress
-	);
+	) override;
 
-	virtual void initialize_dofs( core::pose::Pose&,
+	void initialize_dofs( core::pose::Pose&,
 		claims::DofClaims const& init_claims,
-		claims::DofClaims& /*failed_to_init*/ );
+		claims::DofClaims& /*failed_to_init*/ ) override;
 
-	virtual void generate_claims( claims::DofClaims& new_claims );
+	void generate_claims( claims::DofClaims& new_claims ) override;
 
 	/// @brief has to decline foreign BB claims for slave regions
-	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ );
+	bool allow_claim( claims::DofClaim const& /*foreign_claim*/ ) override;
 
 protected:
 
-	virtual bool read_tag( std::string tag, std::istream& is );
+	bool read_tag( std::string tag, std::istream& is ) override;
 
 private:
 

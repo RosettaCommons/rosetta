@@ -82,7 +82,7 @@ using protocols::jumping::StandardDisulfPairingLibrary;
 template <> std::mutex utility::SingletonBase< StandardDisulfPairingLibrary >::singleton_mutex_{};
 template <> std::atomic< StandardDisulfPairingLibrary * > utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( 0 );
 #else
-template <> StandardDisulfPairingLibrary * utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( 0 );
+template <> StandardDisulfPairingLibrary * utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( nullptr );
 #endif
 
 }
@@ -97,7 +97,7 @@ namespace protocols {
 namespace jumping {
 
 /// @details Auto-generated virtual destructor
-BaseDisulfPairingLibrary::~BaseDisulfPairingLibrary() {}
+BaseDisulfPairingLibrary::~BaseDisulfPairingLibrary() = default;
 
 //------------------------------------------------------------------------------
 // the x-axis of this coordinate system is along the p(*,2) -> p(*,1) bond vector
@@ -351,26 +351,25 @@ void DisulfPairingLibrary::create_jump_fragments(
 	const int iStart( 1 ); // in templates start residue is number 1
 	const int iStop ( 2 ); // in templates stop residue is number 2
 	frags.reserve( ntemplates );
-	for ( DisulfTemplateList::const_iterator it=templates.begin(), eit=templates.end();
-			it!=eit; ++it ) {
+	for (const auto & it : templates) {
 		frags.push_back( core::fragment::FragDataOP( new FragData ) );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
-			start->set_torsion( 1, it->phi( iStart ) );
-			start->set_torsion( 2, it->psi( iStart ) );
-			start->set_torsion( 3, it->omega( iStart ) );
+			start->set_torsion( 1, it.phi( iStart ) );
+			start->set_torsion( 2, it.psi( iStart ) );
+			start->set_torsion( 3, it.omega( iStart ) );
 
 			frags.back()->add_residue( start );
 		}
 
 		frags.back()->add_residue( SingleResidueFragDataOP( new UpJumpSRFD() ) );
-		frags.back()->add_residue( SingleResidueFragDataOP( new DownJumpSRFD( it->rt_, it->atoms_downstream_, it->atoms_upstream_, 'X' ) ) );
+		frags.back()->add_residue( SingleResidueFragDataOP( new DownJumpSRFD( it.rt_, it.atoms_downstream_, it.atoms_upstream_, 'X' ) ) );
 
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP stop( new BBTorsionSRFD( 3, 'E', 'X' ) );
-			stop->set_torsion( 1, it->phi( iStop ) );
-			stop->set_torsion( 2, it->psi( iStop ) );
-			stop->set_torsion( 3, it->omega( iStop ) );
+			stop->set_torsion( 1, it.phi( iStop ) );
+			stop->set_torsion( 2, it.psi( iStop ) );
+			stop->set_torsion( 3, it.omega( iStop ) );
 
 			frags.back()->add_residue( stop );
 		}
@@ -414,7 +413,7 @@ DisulfPairingLibrary::generate_jump_frags(
 StandardDisulfPairingLibrary *
 StandardDisulfPairingLibrary::create_singleton_instance()
 {
-	StandardDisulfPairingLibrary * instance = new StandardDisulfPairingLibrary;
+	auto * instance = new StandardDisulfPairingLibrary;
 	//instance = new StandardDisulfPairingLibrary();
 	std::cout << "READING START" << std::endl;
 	instance->read_from_file( basic::database::full_name("sampling/disulfide_jump_database_wip.dat") );

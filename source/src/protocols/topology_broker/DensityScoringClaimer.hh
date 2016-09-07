@@ -63,17 +63,17 @@ public:
 
 	DensityScoringClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<DensityScoringClaimer>( TopologyClaimer::shared_from_this() ); }
 
-	virtual TopologyClaimerOP clone() const;
+	TopologyClaimerOP clone() const override;
 
 	///mainly calls parent function... but is also used to figure out what residue number we are jumping to.
 	//virtual void initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init );
 
-	virtual void generate_sequence_claims( claims::DofClaims& );
+	void generate_sequence_claims( claims::DofClaims& ) override;
 
-	virtual void generate_claims( protocols::topology_broker::claims::DofClaims& dc);
+	void generate_claims( protocols::topology_broker::claims::DofClaims& dc) override;
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -81,14 +81,14 @@ public:
 		return "DensityScoringClaimer";
 	}
 
-	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
+	void add_constraints( core::pose::Pose& /*pose*/ ) const override;
 
-	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
+	bool accept_declined_claim( claims::DofClaim const& was_declined ) override;
 protected:
 
-	virtual void set_defaults();
-	virtual bool read_tag( std::string tag, std::istream& );
-	virtual void init_after_reading();
+	void set_defaults() override;
+	bool read_tag( std::string tag, std::istream& ) override;
+	void init_after_reading() override;
 
 private:
 	core::Size  anchor_residue_;  // where does the VRT jump to

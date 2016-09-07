@@ -21,7 +21,7 @@
 namespace basic {
 namespace resource_manager {
 
-ResourceLoader::~ResourceLoader() {}
+ResourceLoader::~ResourceLoader() = default;
 
 
 } // namespace resource_manager

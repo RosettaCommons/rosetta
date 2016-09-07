@@ -82,7 +82,7 @@ CDRsMinPackMin::CDRsMinPackMin(
 }
 
 
-CDRsMinPackMin::~CDRsMinPackMin() {}
+CDRsMinPackMin::~CDRsMinPackMin() = default;
 
 
 void CDRsMinPackMin::init() {
@@ -98,8 +98,8 @@ void CDRsMinPackMin::init() {
 	update_rounds_ = 0;
 
 	if ( !user_defined_ ) {
-		tf_ = NULL;
-		allcdr_map_ = NULL;
+		tf_ = nullptr;
+		allcdr_map_ = nullptr;
 
 		// setup all the scoring functions
 		loop_scorefxn_highres_ = core::scoring::get_score_function();

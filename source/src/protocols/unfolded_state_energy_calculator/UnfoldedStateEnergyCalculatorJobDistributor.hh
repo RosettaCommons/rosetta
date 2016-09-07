@@ -49,12 +49,12 @@ public:
 
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-	virtual ~UnfoldedStateEnergyCalculatorJobDistributor();
+	~UnfoldedStateEnergyCalculatorJobDistributor() override;
 
 	/// @brief
-	virtual
+	
 	void
-	go( protocols::moves::MoverOP mover );
+	go( protocols::moves::MoverOP mover ) override;
 
 	/// @brief
 	void

@@ -52,11 +52,11 @@ public:
 		core::scoring::ScoreFunctionCOP lowres_scorefxn);
 
 	/// @brief default destructor
-	~ModelCDRH3();
+	~ModelCDRH3() override;
 
 	void set_default();
-	virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose_in ) override;
+	std::string get_name() const override;
 
 	/// @brief enable benchmark mode
 	inline void enable_benchmark_mode( bool setting ) {

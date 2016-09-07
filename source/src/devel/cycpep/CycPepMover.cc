@@ -34,9 +34,7 @@ CycPepMover::CycPepMover():Mover() {
 
 }
 
-CycPepMover::~CycPepMover() {
-
-}
+CycPepMover::~CycPepMover() = default;
 
 void CycPepMover::minimize(core::pose::Pose& workpose){
 	core::kinematics::MoveMapOP moveMap = new core::kinematics::MoveMap();

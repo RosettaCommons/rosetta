@@ -57,16 +57,16 @@ public:
 	TMHTopologySamplerClaimer(topology_broker::TopologyBrokerOP broker);
 
 	/// @brief destructor
-	virtual
-	~TMHTopologySamplerClaimer();
+	
+	~TMHTopologySamplerClaimer() override;
 
 	/// @brief TMHTopologySamplerClaimer has virtual functions... use this to obtain a new instance
-	virtual TopologyClaimerOP clone() const {
+	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new TMHTopologySamplerClaimer( *this ) );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer
-	virtual std::string type() const {
+	std::string type() const override {
 		return _static_type_name();
 	}
 
@@ -79,47 +79,47 @@ public:
 	register_options();
 
 	/// @brief get the pose from the boker and set it as this object's pose
-	virtual void set_pose_from_broker(core::pose::Pose& pose);
+	void set_pose_from_broker(core::pose::Pose& pose) override;
 
 	/// @brief read in the pose's spans via the MembraneTopology store din the pose, determine jumps, TMHs, loops, etc.
-	virtual void pre_process(core::pose::Pose& pose);
+	void pre_process(core::pose::Pose& pose) override;
 
 	/// @brief the broker checks if the claimer builds its own fold tree to figure out if needs to build one itself
-	virtual bool claimer_builds_own_fold_tree();
+	bool claimer_builds_own_fold_tree() override;
 
 	//getter function to retrieve this claimer's fold tree for the broker
-	virtual core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose& pose);
+	core::kinematics::FoldTreeOP get_fold_tree(core::pose::Pose& pose) override;
 
 	//getter function to retrieve this claimer's current_pose (to get after moving spans)
-	virtual core::pose::PoseOP get_pose_from_claimer();
+	core::pose::PoseOP get_pose_from_claimer() override;
 
 	/// @brief generate DofClaims
-	virtual void generate_claims( claims::DofClaims& dof_claims); //add to list ( never call clear() on list )
+	void generate_claims( claims::DofClaims& dof_claims) override; //add to list ( never call clear() on list )
 
 	/// @brief make move_map and add the DoF claims from generate_claims() to the movemap.  Now we can move certain parts with certain DOFs.
-	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init);
+	void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init) override;
 
 	/// @brief claimers can add movers to the RandomMover (Container).
 	/// add your moves, make it dependent on stage if you want to. So far this is called only by abinitio...
 	/// if you don't want to do anything special --- don't overload this method!
 	/// default: adds mover given by virtual call get_mover()  with stage-dependent weight given by abinitio_mover_weight_
-	virtual void add_mover(
+	void add_mover(
 		moves::RandomMover& /* random_mover */,
 		core::pose::Pose const& /*pose*/,
 		abinitio::StageID /*stageID*/, /* abinitio sampler stage */
 		core::scoring::ScoreFunction const& /*scorefxn*/,
 		core::Real /* progress */ /* progress within stage */
-	);
+	) override;
 
 	/// @brief this claimer builds its own radial fold tree based on read-in spanfile
-	virtual void build_fold_tree(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree);
+	void build_fold_tree(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree) override;
 
 	/// @brief read tag from topology broker file (setup.tpb)
-	virtual bool read_tag( std::string tag, std::istream& is );
+	bool read_tag( std::string tag, std::istream& is ) override;
 
 protected:
 	/// @brief called by constructor ---  calls all set_default_XXX methods
-	void set_defaults();
+	void set_defaults() override;
 
 	/// @brief Make extended chain an idealized helix
 	void set_pose_torsions(core::pose::Pose& pose);

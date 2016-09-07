@@ -212,12 +212,11 @@ PoseConformationFeatures::report_features_implementation(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( FoldTree::const_iterator
-			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it ) {
+	for (const auto & it : fold_tree) {
 
-		int start_res(it->start()), stop_res(it->stop()), label(it->label());
-		string start_atom(it->start_atom()), stop_atom(it->stop_atom());
-		bool keep_stub_in_residue(it->keep_stub_in_residue());
+		int start_res(it.start()), stop_res(it.stop()), label(it.label());
+		string start_atom(it.start_atom()), stop_atom(it.stop_atom());
+		bool keep_stub_in_residue(it.keep_stub_in_residue());
 
 
 		RowDataBaseOP start_res_data( new RowData<int>("start_res",start_res) );

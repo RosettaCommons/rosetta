@@ -47,21 +47,21 @@ public:
 		core::pack::task::TaskFactoryCOP factory_in
 	);
 
-	virtual ~TaskAwareMinMover();
+	~TaskAwareMinMover() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const override;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	/// @brief parse "task_operations" XML option
 	virtual void parse_task_operations(

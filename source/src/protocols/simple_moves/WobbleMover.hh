@@ -67,10 +67,10 @@ public:
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap );
 
-	~WobbleMover();
-	virtual std::string get_name() const;
+	~WobbleMover() override;
+	std::string get_name() const override;
 
-	void set_defaults() {
+	void set_defaults() override {
 		buffer_length_=3;
 		forward_threshold_ = 0.3;
 		backward_threshold_ = 0.3;
@@ -87,7 +87,7 @@ protected:
 		core::Size frag_num,
 		core::kinematics::MoveMap const& movemap,
 		core::pose::Pose &pose
-	) const;
+	) const override;
 
 	/// @brief close loop and return if successful ( deviations smaller than thresholds )
 	bool ccd_closure(

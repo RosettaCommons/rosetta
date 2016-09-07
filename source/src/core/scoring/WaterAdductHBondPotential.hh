@@ -51,7 +51,7 @@ public:
 public:
 	/// ctor
 	WaterAdductHBondPotential();
-	~WaterAdductHBondPotential();
+	~WaterAdductHBondPotential() override;
 	///
 	Real
 	water_adduct_hbond_score(

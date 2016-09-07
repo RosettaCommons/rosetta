@@ -175,10 +175,10 @@ bool PCluster::isClose(PCluster const & c2) const{
 
 bool PCluster::testNeighbor(PCluster & c2){
 	if ( c2.points_.size()>100 &&points_.size()>100 ) {
-		std::list<Cxyz>::iterator i = points_.begin();
+		auto i = points_.begin();
 		int icount=0;
 		while ( i!=points_.end() ) {
-			std::list<Cxyz>::iterator j = c2.points_.begin();
+			auto j = c2.points_.begin();
 			int ictend=std::min(500,(int)points_.size()-icount);
 			for ( int ict=0; ict<ictend; ++i, ++ict ) {
 				int jcount=0;
@@ -208,8 +208,8 @@ bool PCluster::testNeighbor(PCluster & c2){
 
 	} else {
 
-		for ( std::list<Cxyz>::iterator i = points_.begin(); i!=points_.end(); ++i ) {
-			for ( std::list<Cxyz>::iterator j = c2.points_.begin(); j!=c2.points_.end(); ++j ) {
+		for ( auto i = points_.begin(); i!=points_.end(); ++i ) {
+			for ( auto j = c2.points_.begin(); j!=c2.points_.end(); ++j ) {
 				if ( std::abs((int) i->x - (int) j->x)<=1 ) {
 					if ( std::abs((int) i->y - (int) j->y)<=1 ) {
 						if ( std::abs((int) i->z - (int) j->z)<=1 ) {
@@ -261,12 +261,12 @@ void PClusterSet::join(std::list<PCluster>::iterator c1, std::list<PCluster>::it
 }
 
 void PClusterSet::findClusters(){
-	for ( std::list<PCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i ) {
-		for ( std::list<PCluster>::iterator j = i; j!=clusters_.end(); ++j ) {
+	for ( auto i = clusters_.begin(); i!=clusters_.end(); ++i ) {
+		for ( auto j = i; j!=clusters_.end(); ++j ) {
 			if ( i==j ) continue;
 			if ( j->isClose(*i) ) {
 				if ( j->testNeighbor(*i) ) {
-					std::list<PCluster>::iterator oldI = i;
+					auto oldI = i;
 					--i;
 					clusters_.erase(oldI);
 					break;
@@ -278,12 +278,12 @@ void PClusterSet::findClusters(){
 
 core::Real PClusterSet::getLargestClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface){
 	core::Real largest_size=0.;
-	for ( std::list<PCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i ) {
-		if ( !i->isTarget(numTargets) ) continue;
-		if ( ignoreBuried && !i->isSolventExposed() ) continue;
-		if ( ignoreSurface && i->isSolventExposed() ) continue;
-		if ( i->size()>largest_size ) {
-			largest_size=i->size();
+	for (auto & cluster : clusters_) {
+		if ( !cluster.isTarget(numTargets) ) continue;
+		if ( ignoreBuried && !cluster.isSolventExposed() ) continue;
+		if ( ignoreSurface && cluster.isSolventExposed() ) continue;
+		if ( cluster.size()>largest_size ) {
+			largest_size=cluster.size();
 		}
 	}
 	largest_size = largest_size*pow(stepSize, 3)-minClusterSize;
@@ -294,12 +294,12 @@ core::Real PClusterSet::getLargestClusterSize( core::Real const & stepSize, core
 
 core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface ){
 	core::Real total_size=0.;
-	for ( std::list<PCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i ) {
-		if ( !i->isTarget(numTargets) ) continue;
-		if ( ignoreBuried && !i->isSolventExposed() ) continue;
-		if ( ignoreSurface && i->isSolventExposed() ) continue;
-		if ( i->size()*pow(stepSize, 3) >minClusterSize ) {
-			total_size+=i->size()*pow(stepSize, 3)-minClusterSize;
+	for (auto & cluster : clusters_) {
+		if ( !cluster.isTarget(numTargets) ) continue;
+		if ( ignoreBuried && !cluster.isSolventExposed() ) continue;
+		if ( ignoreSurface && cluster.isSolventExposed() ) continue;
+		if ( cluster.size()*pow(stepSize, 3) >minClusterSize ) {
+			total_size+=cluster.size()*pow(stepSize, 3)-minClusterSize;
 		}
 	}
 	if ( total_size>0 ) return total_size;
@@ -370,8 +370,8 @@ bool CCluster::isClose(CCluster const & c2) const{
 }
 
 bool CCluster::testNeighbor(CCluster & c2){
-	for ( std::list<Cxyz>::iterator i = points_.begin(); i!=points_.end(); ++i ) {
-		for ( std::list<Cxyz>::iterator j = c2.points_.begin(); j!=c2.points_.end(); ++j ) {
+	for ( auto i = points_.begin(); i!=points_.end(); ++i ) {
+		for ( auto j = c2.points_.begin(); j!=c2.points_.end(); ++j ) {
             
             //Do not allow H-bond atoms to be neighbors with other H-bond atoms
             if (filterExemplars_ && (i->atom_type.compare("C") != 0 ) &&(j->atom_type.compare("C") != 0 )){
@@ -427,12 +427,12 @@ void CClusterSet::join(std::list<CCluster>::iterator c1, std::list<CCluster>::it
 }
 
 void CClusterSet::findClusters(){
-	for ( std::list<CCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i ) {
-		for ( std::list<CCluster>::iterator j = i; j!=clusters_.end(); ++j ) {
+	for ( auto i = clusters_.begin(); i!=clusters_.end(); ++i ) {
+		for ( auto j = i; j!=clusters_.end(); ++j ) {
 			if ( i==j ) continue;
 			//    if (j->isClose(*i)) {
 			if ( j->testNeighbor(*i) ) {
-				std::list<CCluster>::iterator oldI = i;
+				auto oldI = i;
 				--i;
 				clusters_.erase(oldI);
 				break;
@@ -444,12 +444,12 @@ void CClusterSet::findClusters(){
 
 core::Real CClusterSet::getLargestClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface){
 	core::Real largest_size=0.;
-	for ( std::list<CCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i ) {
-		if ( !i->isTarget(numTargets) ) continue;
-		if ( ignoreBuried && !i->isSolventExposed() ) continue;
-		if ( ignoreSurface && i->isSolventExposed() ) continue;
-		if ( i->size()>largest_size ) {
-			largest_size=i->size();
+	for (auto & cluster : clusters_) {
+		if ( !cluster.isTarget(numTargets) ) continue;
+		if ( ignoreBuried && !cluster.isSolventExposed() ) continue;
+		if ( ignoreSurface && cluster.isSolventExposed() ) continue;
+		if ( cluster.size()>largest_size ) {
+			largest_size=cluster.size();
 		}
 	}
 	largest_size = largest_size*pow(stepSize, 3)-minClusterSize;
@@ -460,12 +460,12 @@ core::Real CClusterSet::getLargestClusterSize( core::Real const & stepSize, core
 
 core::Real CClusterSet::getNetClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface ){
 	core::Real total_size=0.;
-	for ( std::list<CCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i ) {
-		if ( !i->isTarget(numTargets) ) continue;
-		if ( ignoreBuried && !i->isSolventExposed() ) continue;
-		if ( ignoreSurface && i->isSolventExposed() ) continue;
-		if ( i->size()*pow(stepSize, 3) >minClusterSize ) {
-			total_size+=i->size()*pow(stepSize, 3)-minClusterSize;
+	for (auto & cluster : clusters_) {
+		if ( !cluster.isTarget(numTargets) ) continue;
+		if ( ignoreBuried && !cluster.isSolventExposed() ) continue;
+		if ( ignoreSurface && cluster.isSolventExposed() ) continue;
+		if ( cluster.size()*pow(stepSize, 3) >minClusterSize ) {
+			total_size+=cluster.size()*pow(stepSize, 3)-minClusterSize;
 		}
 	}
 	if ( total_size>0 ) return total_size;
@@ -583,7 +583,7 @@ PocketGrid::PocketGrid(const PocketGrid& gr) :
 
 }
 
-PocketGrid::~PocketGrid() {}
+PocketGrid::~PocketGrid() = default;
 
 PocketGrid& PocketGrid::operator=(const PocketGrid& gr){
 	if ( this != &gr ) {
@@ -1519,10 +1519,10 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 
 	int clustNo=1;
 	bool smallPocket;
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) smallPocket=true;
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) smallPocket=true;
 		else smallPocket=false;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "ATOM  ";
 			std::stringstream  tmp;
@@ -1587,16 +1587,16 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 	int clustNo=1;
 	//bool smallPocket;
 	int count=0;
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
+	for (auto & cluster : c_clusters_.clusters_) {
 		count++;
         
-		if ( !cit->isTarget(numTargets_) ) {
+		if ( !cluster.isTarget(numTargets_) ) {
 			continue;
 		}
 
         //Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
         int ccount = 0;
-        for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+        for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
             if ( pit->atom_type.compare("C") == 0 ) {
                 ccount++;
             }
@@ -1605,7 +1605,7 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
             continue;
         }
 
-		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "HETATM";
 			std::stringstream  tmp;
@@ -1670,10 +1670,10 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 				tmpgrid_[tx][ty].resize(zdim_, EMPTY);
 			}
 		}
-		for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-			if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-			if ( !cit->isTarget(numTargets_) ) continue;
-			for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+		for (auto & cluster : clusters_.clusters_) {
+			if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+			if ( !cluster.isTarget(numTargets_) ) continue;
+			for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 				tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
 			}
 		}
@@ -1691,10 +1691,10 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 
 	int clustNo=1;
 	//bool smallPocket;
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( minipock ) {
 				if ( tmpgrid_[pit->x][pit->y][pit->z] == EMPTY ) continue;
 				if ( pit->x < 2 || pit->y < 2|| pit->z < 2 || pit->x > xdim_-3 || pit->y > ydim_-3|| pit->z > zdim_-3 ) continue;
@@ -1834,10 +1834,10 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, numeric::xyzMatrix<core::Real> rot1, numeric::xyzMatrix<core::Real> rot2, numeric::xyzMatrix<core::Real> rot3 ){
 
 	core::Real xmin = 1,xmax=0,ymin=1,ymax=0,zmin=1,zmax=0;
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			numeric::xyzVector<core::Real> coord(pit->x,pit->y,pit->z);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
@@ -1871,10 +1871,10 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 
 	int clustNo=1;
 	//bool smallPocket;
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "ATOM  ";
 			std::stringstream  tmp;
@@ -1928,10 +1928,10 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
 	outstream << stepSize_ << " " << xdim_ << " " << ydim_ << " " << zdim_ << " " << xcorn_ << " " << ycorn_ << " " << zcorn_ << std::endl;
 
 	// Need to print each grid point if it's of type EGGSHELL along with the corresponding cartesian coors ( for eggshell_coord_list_ )
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) {
 				outstream << pit->x << " " << pit->y << " " << pit->z << " TP_POCKET" << std::endl;
 			}
@@ -1951,10 +1951,10 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
 void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, numeric::xyzMatrix<core::Real> rot1, numeric::xyzMatrix<core::Real> rot2, numeric::xyzMatrix<core::Real> rot3 ){
 
 	core::Real xmin = 1,xmax=0,ymin=1,ymax=0,zmin=1,zmax=0;
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			numeric::xyzVector<core::Real> coord(xcorn_ + stepSize_ * pit->x,ycorn_ + stepSize_ * pit->y,zcorn_ + stepSize_ * pit->z);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
@@ -1997,10 +1997,10 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 	outstream << stepSize_ << " " << new_xdim << " " << new_ydim << " " << new_zdim << " " << new_xcorn << " " << new_ycorn << " " << new_zcorn << std::endl;
 
 	// Need to print each grid point if it's of type EGGSHELL along with the corresponding cartesian coors ( for eggshell_coord_list_ )
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			numeric::xyzVector<core::Real> coord(xcorn_ + pit->x * stepSize_, ycorn_ + pit->y * stepSize_, zcorn_ + pit->z * stepSize_);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
@@ -2081,9 +2081,9 @@ void PocketGrid::clusterPockets(){
 							} else {
 								// If this cluster differs from the one that you just added, merge them
 								if ( cluster_grid[cx][cy][cz]!=cluster_grid[x][y][z] ) {
-									std::list<PCluster>::iterator old = cluster_grid[cx][cy][cz];
-									for ( std::list<PCluster::Cxyz>::iterator pit=old->points_.begin(); pit != old->points_.end(); ++pit ) {
-										cluster_grid[pit->x][pit->y][pit->z]=cluster_grid[x][y][z];
+									auto old = cluster_grid[cx][cy][cz];
+									for (auto & point : old->points_) {
+										cluster_grid[point.x][point.y][point.z]=cluster_grid[x][y][z];
 									}
 									clusters_.join(cluster_grid[x][y][z], old);
 								}
@@ -2156,9 +2156,9 @@ void PocketGrid::clusterCPockets(){
 							} else {
 								// If this cluster differs from the one that you just added, merge them
 								if ( cluster_grid[cx][cy][cz]!=cluster_grid[x][y][z] ) {
-									std::list<PCluster>::iterator old = cluster_grid[cx][cy][cz];
-									for ( std::list<PCluster::Cxyz>::iterator pit=old->points_.begin(); pit != old->points_.end(); ++pit ) {
-										cluster_grid[pit->x][pit->y][pit->z]=cluster_grid[x][y][z];
+									auto old = cluster_grid[cx][cy][cz];
+									for (auto & point : old->points_) {
+										cluster_grid[point.x][point.y][point.z]=cluster_grid[x][y][z];
 									}
 									clusters_.join(cluster_grid[x][y][z], old);
 								}
@@ -2175,10 +2175,10 @@ void PocketGrid::clusterCPockets(){
 			}
 		}
 	}
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		cit->target_=true;
-		cit->subtarget_=true;
-		cit->solventExposed_ = true;
+	for (auto & cluster : clusters_.clusters_) {
+		cluster.target_=true;
+		cluster.subtarget_=true;
+		cluster.solventExposed_ = true;
 	}
 }
 
@@ -2195,14 +2195,14 @@ void PocketGrid::markPocketDepth(core::Real const & surf_d, core::Real const & b
 }
 
 void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur_d ){
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( grid_[pit->x][pit->y][pit->z]==TP_EDGE || grid_[pit->x][pit->y][pit->z]==PO_EDGE ) {
-				bool surf=markOneEdgeDepth(pit->x,pit->y,pit->z, surf_d, bur_d, cit->isTarget(numTargets_));
+				bool surf=markOneEdgeDepth(pit->x,pit->y,pit->z, surf_d, bur_d, cluster.isTarget(numTargets_));
 				if ( surf ) {
-					std::list<PCluster::Cxyz>::iterator tmp = pit;
+					auto tmp = pit;
 					--pit;
-					cit->points_.erase(tmp);
+					cluster.points_.erase(tmp);
 				}
 			}
 		}
@@ -2548,8 +2548,8 @@ void PocketGrid::findClusters(){
 	//      clusters_.findClusters();
 	clusterPockets();
 	//mark target clusters
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			for ( int x = -1; x <2; x++ ) {
 				for ( int y = -1; y <2; y++ ) {
 					for ( int z = -1; z <2; z++ ) {
@@ -2560,16 +2560,16 @@ void PocketGrid::findClusters(){
 						if ( y==1 ) if ( pit->y == ydim_-1 ) continue;
 						if ( z==1 ) if ( pit->z == zdim_-1 ) continue;
 						if ( grid_[pit->x+x][pit->y+y][pit->z+z]==T_SURFACE ) {
-							cit->target_=true;
+							cluster.target_=true;
 						} else if ( grid_[pit->x+x][pit->y+y][pit->z+z]==ST_SURFACE ) {
-							cit->subtarget_=true;
+							cluster.subtarget_=true;
 						}
 						if ( grid_[pit->x+x][pit->y+y][pit->z+z]==EMPTY || grid_[pit->x+x][pit->y+y][pit->z+z]==PO_SURF || grid_[pit->x+x][pit->y+y][pit->z+z]==TP_SURF ) {
-							cit->solventExposed_=true;
+							cluster.solventExposed_=true;
 						}
-						if ( cit->target_ && (cit->subtarget_ || numTargets_ == 1) && cit->solventExposed_ ) {
+						if ( cluster.target_ && (cluster.subtarget_ || numTargets_ == 1) && cluster.solventExposed_ ) {
 							x=2;y=2;z=2;
-							pit=cit->points_.end();
+							pit=cluster.points_.end();
 							--pit;
 						}
 					}
@@ -2579,9 +2579,9 @@ void PocketGrid::findClusters(){
 	}
 
 	//Change target clusters to target types on grid
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( !cit->isTarget(numTargets_) ) {
-			for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( !cluster.isTarget(numTargets_) ) {
+			for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 				if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) grid_[pit->x][pit->y][pit->z]=POCKET;
 				if ( grid_[pit->x][pit->y][pit->z]==TP_SURF ) grid_[pit->x][pit->y][pit->z]=PO_SURF;
 				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) grid_[pit->x][pit->y][pit->z]=PO_BURIED;
@@ -2590,7 +2590,7 @@ void PocketGrid::findClusters(){
 			continue;
 		}
 
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( grid_[pit->x][pit->y][pit->z]==POCKET ) grid_[pit->x][pit->y][pit->z]=TP_POCKET;
 			if ( grid_[pit->x][pit->y][pit->z]==PO_SURF ) grid_[pit->x][pit->y][pit->z]=TP_SURF;
 			if ( grid_[pit->x][pit->y][pit->z]==PO_BURIED ) grid_[pit->x][pit->y][pit->z]=TP_BURIED;
@@ -2618,10 +2618,10 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 		}
 	}
 
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
 		}
 	}
@@ -2656,7 +2656,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 		}*/
 
 		//fill in points that are ideal for a hydrogen acceptor with an O
-		for ( core::chemical::AtomIndices::const_iterator
+		for ( auto
 				hnum  = rsd.Hpos_polar().begin(),
 				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 
@@ -2764,7 +2764,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 		}
 
 		//fill in points that are ideal for a hydrogen donor with an N
-		for ( core::chemical::AtomIndices::const_iterator
+		for ( auto
 				anum  = rsd.accpt_pos().begin(),
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const aatm( *anum );
@@ -2917,8 +2917,8 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	}
 
 	std::cout<<std::endl<<"After Donors/Acceptors"<<std::endl;
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
-		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : c_clusters_.clusters_) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( pit->atom_type.compare("C") == 0 ) {
 				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -2938,10 +2938,10 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 
 	//fill in remaining potential exemplar points with C.
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( tmpgrid_[pit->x][pit->y][pit->z] == EMPTY ) continue;
 			if ( pit->x < 2 || pit->y < 2|| pit->z < 2 || pit->x > xdim_-3 || pit->y > ydim_-3|| pit->z > zdim_-3 ) continue;
 			if ( (tmpgrid_[pit->x+2][pit->y][pit->z] != EMPTY && tmpgrid_[pit->x-2][pit->y][pit->z] != EMPTY) &&
@@ -2976,8 +2976,8 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	}
 
 	std::cout<<std::endl<<"After shape"<<std::endl;
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
-		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : c_clusters_.clusters_) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( pit->atom_type.compare("C") == 0 ) {
 				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -2990,8 +2990,8 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 
 	std::cout<<std::endl<<"After clustering"<<std::endl;
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
-		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : c_clusters_.clusters_) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( pit->atom_type.compare("C") == 0 ) {
 				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -3001,8 +3001,8 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	}
 
 	//int test=1;
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
-		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : c_clusters_.clusters_) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			for ( int x = -1* (int) (5/stepSize_)-1; x <= (int) (5/stepSize_)+1; x++ ) {
 				for ( int y = -1* (int) (5/stepSize_)-1; y <= (int) (5/stepSize_)+1; y++ ) {
 					for ( int z = -1* (int) (5/stepSize_)-1; z <= (int) (5/stepSize_)+1; z++ ) {
@@ -3014,16 +3014,16 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 						if ( (int) pit->z + z > (int) zdim_-1 ) continue;
 						if ( sqrt(pow((double)x,2)+pow((double)y,2)+pow((double)z,2)) > 5./stepSize_ ) continue;
 						if ( grid_[pit->x+x][pit->y+y][pit->z+z]==T_SURFACE ) {
-							cit->target_=true;
+							cluster.target_=true;
 						} else if ( grid_[pit->x+x][pit->y+y][pit->z+z]==ST_SURFACE ) {
-							cit->subtarget_=true;
+							cluster.subtarget_=true;
 						}
 						if ( grid_[pit->x+x][pit->y+y][pit->z+z]==EMPTY || grid_[pit->x+x][pit->y+y][pit->z+z]==PO_SURF || grid_[pit->x+x][pit->y+y][pit->z+z]==TP_SURF ) {
-							cit->solventExposed_=true;
+							cluster.solventExposed_=true;
 						}
-						if ( cit->target_ && (cit->subtarget_ || numTargets_ == 1) && cit->solventExposed_ ) {
+						if ( cluster.target_ && (cluster.subtarget_ || numTargets_ == 1) && cluster.solventExposed_ ) {
 							x=200;y=200;z=200;
-							pit=cit->points_.end();
+							pit=cluster.points_.end();
 							--pit;
 						}
 					}
@@ -3033,8 +3033,8 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 		}
 	}
 	std::cout<<std::endl<<"End of findExemplars"<<std::endl;
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
-		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : c_clusters_.clusters_) {
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( pit->atom_type.compare("C") == 0 ) {
 				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -3049,9 +3049,9 @@ void PocketGrid::findClustersByExemplars(){
 	//clear clusters
 	clusters_.clear();
 	//go through c clusters
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : c_clusters_.clusters_) {
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			for ( int x = -1* (int) (3/stepSize_)-1; x <= (int) (3/stepSize_)+1; x++ ) {
 				for ( int y = -1* (int) (3/stepSize_)-1; y <= (int) (3/stepSize_)+1; y++ ) {
 					for ( int z = -1* (int) (3/stepSize_)-1; z <= (int) (3/stepSize_)+1; z++ ) {
@@ -3079,16 +3079,16 @@ void PocketGrid::findClustersByExemplars(){
 void PocketGrid::linkExemplarsThroughSolvent(){
 
 	//go through c clusters
-	for ( std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
+	for ( auto cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit ) {
 		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<CCluster>::iterator cit2=cit; cit2 != c_clusters_.clusters_.end(); ++cit2 ) {
+		for ( auto cit2=cit; cit2 != c_clusters_.clusters_.end(); ++cit2 ) {
 			if ( cit == cit2 ) continue;
 			if ( !cit2->isTarget(numTargets_) ) continue;
 			core::Real closest=101.;
 			std::list<CCluster::Cxyz>::iterator p1;
 			std::list<CCluster::Cxyz>::iterator p2;
-			for ( std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
-				for ( std::list<CCluster::Cxyz>::iterator pit2=cit2->points_.begin(); pit2 != cit2->points_.end(); ++pit2 ) {
+			for ( auto pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+				for ( auto pit2=cit2->points_.begin(); pit2 != cit2->points_.end(); ++pit2 ) {
 					core::Real dist=pow(pit->x-pit2->x,2)+pow(pit->z-pit2->z,2)+pow(pit->z-pit2->z,2);
 					if ( dist<closest ) {
 						closest=dist;
@@ -3159,10 +3159,10 @@ void PocketGrid::linkExemplarsThroughSolvent(){
 				}
 
 
-				for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-					if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-					if ( !cit->isTarget(numTargets_) ) continue;
-					for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+				for (auto & cluster : clusters_.clusters_) {
+					if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+					if ( !cluster.isTarget(numTargets_) ) continue;
+					for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 						tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
 					}
 				}
@@ -3270,10 +3270,10 @@ core::Vector PocketGrid::whatIsTooSmall() const {
 utility::vector1<core::Real> PocketGrid::getBounds(){
 	utility::vector1<core::Real> tmp(6);
 	bool first=true;
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET || grid_[pit->x][pit->y][pit->z]==TP_BURIED ||
 					grid_[pit->x][pit->y][pit->z]==TP_EDGE ) {
 				if ( first ) {
@@ -3576,12 +3576,12 @@ std::list< numeric::xyzVector<core::Real> > PocketGrid::get_connolly_surfacePoin
 	//core::Size selected_dots = 0;
 	core::pack::task::PackerTaskOP task;
 	task = core::pack::task::TaskFactory::create_packer_task( protein_pose );
-	for ( core::Size i = 0; i < surface_dots.size(); i++ ) {
-		if ( task->pack_residue(surface_dots[i].atom->nresidue) ) {
+	for (auto & surface_dot : surface_dots) {
+		if ( task->pack_residue(surface_dot.atom->nresidue) ) {
 			numeric::xyzVector<core::Real> surf_coord;
-			surf_coord.x() = surface_dots[i].coor.x();
-			surf_coord.y() = surface_dots[i].coor.y();
-			surf_coord.z() = surface_dots[i].coor.z();
+			surf_coord.x() = surface_dot.coor.x();
+			surf_coord.y() = surface_dot.coor.y();
+			surf_coord.z() = surface_dot.coor.z();
 			surfacePoints_list.push_back(surf_coord);
 		}
 	}
@@ -3594,13 +3594,13 @@ std::list< numeric::xyzVector<core::Real> > PocketGrid::get_connolly_surfacePoin
 	std::list< numeric::xyzVector<core::Real> > surfacePoints_within_grid;
 	surfacePoints_within_grid.clear();
 	numeric::xyzVector<core::Real> grid_coord;
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-		convert_cartesian_to_grid(*sf, mid_, dim_, spacing_, grid_coord);
+	for (const auto & sf : surfacePoints_list) {
+		convert_cartesian_to_grid(sf, mid_, dim_, spacing_, grid_coord);
 		//ignore if the surface point goes out of the grid
 		if ( ((grid_coord.x() >= dim_.x())||(grid_coord.x() < 0)) || ((grid_coord.y() >= dim_.y())||(grid_coord.y() < 0)) || ((grid_coord.z() >= dim_.z())||(grid_coord.z() < 0)) ) {
 			continue;
 		} else {
-			surfacePoints_within_grid.push_back(*sf);
+			surfacePoints_within_grid.push_back(sf);
 		}
 	}
 
@@ -3941,11 +3941,11 @@ void PocketGrid::move_pose_to_standard_orie( core::Size const & central_seqpos, 
 	core::Real CoM_z=0.;
 	for ( std::list<PCluster>::const_iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
-		for ( std::list<PCluster::Cxyz>::const_iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
-			if ( (grid_[pit->x][pit->y][pit->z]==TP_POCKET) || (grid_[pit->x][pit->y][pit->z]==TP_SURF) || (grid_[pit->x][pit->y][pit->z]==TP_EDGE) || (grid_[pit->x][pit->y][pit->z]==TP_BURIED) ) {
-				CoM_x += pit->x*stepSize_+xcorn_;
-				CoM_y += pit->y*stepSize_+ycorn_;
-				CoM_z += pit->z*stepSize_+zcorn_;
+		for (const auto & point : cit->points_) {
+			if ( (grid_[point.x][point.y][point.z]==TP_POCKET) || (grid_[point.x][point.y][point.z]==TP_SURF) || (grid_[point.x][point.y][point.z]==TP_EDGE) || (grid_[point.x][point.y][point.z]==TP_BURIED) ) {
+				CoM_x += point.x*stepSize_+xcorn_;
+				CoM_y += point.y*stepSize_+ycorn_;
+				CoM_z += point.z*stepSize_+zcorn_;
 				++num_pocket_points;
 			}
 		}
@@ -3959,12 +3959,12 @@ void PocketGrid::move_pose_to_standard_orie( core::Size const & central_seqpos, 
 	// put pocket points into a matrix for Eigen, subtracting out the CoM so they'll be centered at zero
 	for ( std::list<PCluster>::const_iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
-		for ( std::list<PCluster::Cxyz>::const_iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
-			if ( (grid_[pit->x][pit->y][pit->z]==TP_POCKET) || (grid_[pit->x][pit->y][pit->z]==TP_SURF) || (grid_[pit->x][pit->y][pit->z]==TP_EDGE) || (grid_[pit->x][pit->y][pit->z]==TP_BURIED) ) {
+		for (const auto & point : cit->points_) {
+			if ( (grid_[point.x][point.y][point.z]==TP_POCKET) || (grid_[point.x][point.y][point.z]==TP_SURF) || (grid_[point.x][point.y][point.z]==TP_EDGE) || (grid_[point.x][point.y][point.z]==TP_BURIED) ) {
 				// add this pocket point to the Eigen matrix (subtracting out the pocket CoM)
-				pocket_coors_matrix(pocket_inx,0) = pit->x*stepSize_+xcorn_ - CoM_x;
-				pocket_coors_matrix(pocket_inx,1) = pit->y*stepSize_+ycorn_ - CoM_y;
-				pocket_coors_matrix(pocket_inx,2) = pit->z*stepSize_+zcorn_ - CoM_z;
+				pocket_coors_matrix(pocket_inx,0) = point.x*stepSize_+xcorn_ - CoM_x;
+				pocket_coors_matrix(pocket_inx,1) = point.y*stepSize_+ycorn_ - CoM_y;
+				pocket_coors_matrix(pocket_inx,2) = point.z*stepSize_+zcorn_ - CoM_z;
 				++pocket_inx;
 			}
 		}
@@ -4101,17 +4101,17 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 	// Loop over all points in the template pocket
 	core::Size template_num_points = 0;
 	core::Size common_points = 0;
-	for ( std::list<PCluster>::const_iterator cit=template_pocket.clusters_.clusters_.begin(); cit != template_pocket.clusters_.clusters_.end(); ++cit ) {
+	for ( auto cit=template_pocket.clusters_.clusters_.begin(); cit != template_pocket.clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(template_pocket.stepSize_,3)<template_pocket.minPockSize_ ) continue; // this is a smallpocket
-		for ( std::list<PCluster::Cxyz>::const_iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
-			if ( (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_POCKET) || (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_SURF) || (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_EDGE) || (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_BURIED) ) {
+		for (const auto & point : cit->points_) {
+			if ( (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_POCKET) || (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_SURF) || (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_EDGE) || (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_BURIED) ) {
 
 				++template_num_points;
 
 				// For this template pocket point, get the cartesian coors and convert to comparison's grid
-				core::Real const template_x = pit->x*template_pocket.stepSize_+template_pocket.xcorn_;
-				core::Real const template_y = pit->y*template_pocket.stepSize_+template_pocket.ycorn_;
-				core::Real const template_z = pit->z*template_pocket.stepSize_+template_pocket.zcorn_;
+				core::Real const template_x = point.x*template_pocket.stepSize_+template_pocket.xcorn_;
+				core::Real const template_y = point.y*template_pocket.stepSize_+template_pocket.ycorn_;
+				core::Real const template_z = point.z*template_pocket.stepSize_+template_pocket.zcorn_;
 
 				core::Size const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
 				core::Size const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
@@ -4128,13 +4128,13 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 
 						core::Real curr_weight = partial_match_weight;
 						++common_points;
-						if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_POCKET ) && (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_POCKET) ) {
+						if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_POCKET ) && (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_POCKET) ) {
 							curr_weight = full_match_weight;
-						} else if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_SURF ) && (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_SURF) ) {
+						} else if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_SURF ) && (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_SURF) ) {
 							curr_weight = full_match_weight;
-						} else if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_EDGE ) && (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_EDGE) ) {
+						} else if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_EDGE ) && (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_EDGE) ) {
 							curr_weight = full_match_weight;
-						} else if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_BURIED ) && (template_pocket.grid_[pit->x][pit->y][pit->z]==template_pocket.TP_BURIED) ) {
+						} else if ( ( grid_[self_x_index][self_y_index][self_z_index] == TP_BURIED ) && (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_BURIED) ) {
 							curr_weight = full_match_weight;
 						}
 						match_score += curr_weight;
@@ -4165,9 +4165,9 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 
 
 	core::Size self_num_points = 0;
-	for ( std::list<PCluster>::const_iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
-		for ( std::list<PCluster::Cxyz>::const_iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (const auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( (grid_[pit->x][pit->y][pit->z]==TP_POCKET) || (grid_[pit->x][pit->y][pit->z]==TP_SURF) || (grid_[pit->x][pit->y][pit->z]==TP_EDGE) || (grid_[pit->x][pit->y][pit->z]==TP_BURIED) ) {
 				++self_num_points;
 			}
@@ -4255,10 +4255,10 @@ void TargetPocketGrid::findClusters(){
 	//      clusters_.findClusters();
 	clusterPockets();
 	//mark target clusters
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		cit->target_=true;
-		cit->subtarget_=true;
-		cit->solventExposed_=true;
+	for (auto & cluster : clusters_.clusters_) {
+		cluster.target_=true;
+		cluster.subtarget_=true;
+		cluster.solventExposed_=true;
 	}
 
 }
@@ -4275,10 +4275,10 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 				tmpgrid_[tx][ty].resize(zdim_, EMPTY);
 			}
 		}
-		for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-			if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-			if ( !cit->isTarget(numTargets_) ) continue;
-			for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+		for (auto & cluster : clusters_.clusters_) {
+			if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+			if ( !cluster.isTarget(numTargets_) ) continue;
+			for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 				tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
 			}
 		}
@@ -4303,10 +4303,10 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 
 	int clustNo=1;
 	//bool smallPocket;
-	for ( std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
-		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
-		if ( !cit->isTarget(numTargets_) ) continue;
-		for ( std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
+	for (auto & cluster : clusters_.clusters_) {
+		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
+		if ( !cluster.isTarget(numTargets_) ) continue;
+		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( minipock ) {
 				if ( tmpgrid_[pit->x][pit->y][pit->z] == EMPTY ) continue;
 				if ( pit->x < 2 || pit->y < 2|| pit->z < 2 || pit->x > xdim_-3 || pit->y > ydim_-3|| pit->z > zdim_-3 ) continue;
@@ -4901,8 +4901,8 @@ void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points( std::list<
 				grid_cart.y() = iy * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()-1)/2) * espGrid_spacing_) );
 				grid_cart.z() = iz * espGrid_spacing_ + ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()-1)/2) * espGrid_spacing_) );
 				found_surface = false;
-				for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-					if ( grid_cart.distance(*sf) < 0.5 ) {
+				for (const auto & sf : surfacePoints_list) {
+					if ( grid_cart.distance(sf) < 0.5 ) {
 						typGrid_[ix][iy][iz] = SURFACE;
 						found_surface = true;
 					}
@@ -4918,10 +4918,10 @@ void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points( std::list<
 
 void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points_by_nn( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
 	//nn - nearest neighbour method
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
+	for (const auto & sf : surfacePoints_list) {
 		//convert to grid points
 		numeric::xyzVector<core::Real> grid_coord;
-		convert_cartesian_to_grid(*sf, espGrid_mid_, espGrid_dim_, espGrid_spacing_, grid_coord);
+		convert_cartesian_to_grid(sf, espGrid_mid_, espGrid_dim_, espGrid_spacing_, grid_coord);
 		//rounded grid points are the nearest neighbour points
 		core::Size nnX = (core::Size) std::floor(grid_coord.x()+.5);
 		core::Size nnY = (core::Size) std::floor(grid_coord.y()+.5);
@@ -4989,8 +4989,8 @@ void  ElectrostaticpotentialGrid::assign_esp_for_atom_grid_points( numeric::xyzV
 core::Real  ElectrostaticpotentialGrid::get_atom_dist_from_connolly_surface( numeric::xyzVector<core::Real> atom_coord, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
 
 	core::Real min_dist = 999;
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-		core::Real curr_dist = atom_coord.distance(*sf);
+	for (const auto & sf : surfacePoints_list) {
+		core::Real curr_dist = atom_coord.distance(sf);
 		if ( curr_dist < min_dist ) {
 			min_dist = curr_dist;
 		}
@@ -5002,8 +5002,8 @@ void ElectrostaticpotentialGrid::write_connollySurface_to_pdb( std::list< numeri
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-		outPDB_stream<<"HETATM   "<<std::setw(2)<<3<<"  N   CNY A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf->x() <<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf->y() <<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf->z() <<std::endl;
+	for (const auto & sf : surfacePoints_list) {
+		outPDB_stream<<"HETATM   "<<std::setw(2)<<3<<"  N   CNY A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf.x() <<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf.y() <<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf.z() <<std::endl;
 	}
 	outPDB_stream.close();
 	outPDB_stream.clear();
@@ -5145,8 +5145,8 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 				numeric::xyzVector<core::Real> grid_cart;
 				convert_grid_to_cartesian(grid_coord, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_cart);
 				found_surface = false;
-				for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-					if ( grid_cart.distance(*sf) < 0.5 ) {
+				for (const auto & sf : surfacePoints_list) {
+					if ( grid_cart.distance(sf) < 0.5 ) {
 						eggshell_coord_list_.push_back(grid_cart);
 						found_surface = true;
 					}
@@ -5165,8 +5165,8 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 				numeric::xyzVector<core::Real> grid_cart;
 				convert_grid_to_cartesian(grid_coord, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_cart);
 				found_surface = false;
-				for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-					if ( grid_coord.distance(*sf) < 0.5 ) {
+				for (const auto & sf : surfacePoints_list) {
+					if ( grid_coord.distance(sf) < 0.5 ) {
 						extra_coord_list_.push_back(grid_cart);
 						found_surface = true;
 					}
@@ -5178,7 +5178,7 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 
 	//Now remove 'eggshell point' from extra points
 	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator eg = eggshell_coord_list_.begin(); eg != eggshell_coord_list_.end(); ++eg ) {
-		for ( std::list< numeric::xyzVector<core::Real> >::iterator ex = extra_coord_list_.begin(); ex != extra_coord_list_.end(); ) {
+		for ( auto ex = extra_coord_list_.begin(); ex != extra_coord_list_.end(); ) {
 			if ( eg == ex ) {
 				ex = extra_coord_list_.erase(ex);
 			} else {
@@ -5220,8 +5220,8 @@ void EggshellGrid::get_connolly_eggshell( std::list< numeric::xyzVector<core::Re
 
 	//assign connolly surface point for eggGrid
 	eggshell_coord_list_.clear();
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-		convert_cartesian_to_grid(*sf, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_coord);
+	for (const auto & sf : surfacePoints_list) {
+		convert_cartesian_to_grid(sf, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_coord);
 		//ignore if the surface point goes out of the grid
 		//std::cout<<" GRID SURF : "<<grid_coord.x()<<" "<<grid_coord.y()<<" "<<grid_coord.z()<<std::endl;
 		//std::cout<<" GRID DIM : "<<eggGrid.dim_.x()<<" "<<eggGrid.dim_.y()<<" "<<eggGrid.dim_.z()<<std::endl;
@@ -5230,19 +5230,19 @@ void EggshellGrid::get_connolly_eggshell( std::list< numeric::xyzVector<core::Re
 
 			continue;
 		} else {
-			eggshell_coord_list_.push_back(*sf);
+			eggshell_coord_list_.push_back(sf);
 		}
 	}
 
 	//assign connolly surface point for extGrid
 	extra_coord_list_.clear();
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator sf = surfacePoints_list.begin(); sf != surfacePoints_list.end(); ++sf ) {
-		convert_cartesian_to_grid(*sf, extGrid.mid_, extGrid.dim_, extGrid.spacing_, grid_coord);
+	for (const auto & sf : surfacePoints_list) {
+		convert_cartesian_to_grid(sf, extGrid.mid_, extGrid.dim_, extGrid.spacing_, grid_coord);
 		//ignore if the surface point goes out of the grid
 		if ( ((grid_coord.x() >= extGrid.dim_.x())||(grid_coord.x() < 0)) || ((grid_coord.y() >= extGrid.dim_.y())||(grid_coord.y() < 0)) || ((grid_coord.z() >= extGrid.dim_.z())||(grid_coord.z() < 0)) ) {
 			continue;
 		} else {
-			extra_coord_list_.push_back(*sf);
+			extra_coord_list_.push_back(sf);
 		}
 	}
 
@@ -5319,12 +5319,12 @@ EggshellGrid::EggshellGrid( const PocketGrid& ext_grd, std::list< numeric::xyzVe
 									extra_coord.z() = (z*ext_grd.stepSize_+ext_grd.zcorn_);
 									found = true;
 									bool nearby = false;
-									for ( std::list< numeric::xyzVector<core::Real> >::const_iterator eg = eggshell_coord_list.begin(); eg != eggshell_coord_list.end(); ++eg ) {
-										if ( extra_coord == *eg ) {
+									for (const auto & eg : eggshell_coord_list) {
+										if ( extra_coord == eg ) {
 											nearby = false;
 											break;
 										}
-										if ( extra_coord.distance(*eg) < extra_dist ) {
+										if ( extra_coord.distance(eg) < extra_dist ) {
 											nearby = true;
 										}
 									}
@@ -5582,8 +5582,8 @@ void EggshellGrid::dump_eggshell( std::string const & fname ) const {
 void EggshellGrid::dump_eggshell( std::string const & fname, numeric::xyzMatrix<core::Real> rot1, numeric::xyzMatrix<core::Real> rot2, numeric::xyzMatrix<core::Real> rot3 ) const {
 
 	core::Real xmin = 1,xmax=0,ymin=1,ymax=0,zmin=1,zmax=0;
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pit=eggshell_coord_list_.begin(); pit != eggshell_coord_list_.end(); ++pit ) {
-		numeric::xyzVector<core::Real> coord(pit->x(),pit->y(),pit->z());
+	for (const auto & pit : eggshell_coord_list_) {
+		numeric::xyzVector<core::Real> coord(pit.x(),pit.y(),pit.z());
 		coord = rot1 * coord;
 		coord = rot2 * coord;
 		coord = rot3 * coord;
@@ -5654,11 +5654,11 @@ void EggshellGrid::write_eggshell_to_pdb( std::string const & output_pdbname ) c
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_coord_list_.begin(); pd != eggshell_coord_list_.end(); ++pd ) {
-		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
+	for (const auto & pd : eggshell_coord_list_) {
+		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.z()<<std::endl;
 	}
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extra_coord_list_.begin(); pd != extra_coord_list_.end(); ++pd ) {
-		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  O   EXT B   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
+	for (const auto & pd : extra_coord_list_) {
+		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  O   EXT B   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.z()<<std::endl;
 	}
 	outPDB_stream.close();
 	outPDB_stream.clear();
@@ -5669,15 +5669,15 @@ void EggshellGrid::write_eggshell_to_pdb( std::string const & output_pdbname, nu
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_coord_list_.begin(); pd != eggshell_coord_list_.end(); ++pd ) {
-		numeric::xyzVector<core::Real> coord(pd->x(),pd->y(),pd->z());
+	for (const auto & pd : eggshell_coord_list_) {
+		numeric::xyzVector<core::Real> coord(pd.x(),pd.y(),pd.z());
 		coord = rot1 * coord;
 		coord = rot2 * coord;
 		coord = rot3 * coord;
 		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(2)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(3)<<std::endl;
 	}
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extra_coord_list_.begin(); pd != extra_coord_list_.end(); ++pd ) {
-		numeric::xyzVector<core::Real> coord(pd->x(),pd->y(),pd->z());
+	for (const auto & pd : extra_coord_list_) {
+		numeric::xyzVector<core::Real> coord(pd.x(),pd.y(),pd.z());
 		coord = rot1 * coord;
 		coord = rot2 * coord;
 		coord = rot3 * coord;
@@ -5710,10 +5710,10 @@ void EggshellGrid::write_Grid_to_pdb( const PocketGrid& gr, std::string const & 
 numeric::xyzVector<core::Real> EggshellGrid::calculate_center_xyz(std::list< numeric::xyzVector<core::Real> > const & pocketshell_coord_list ) {
 
 	numeric::xyzVector<core::Real> pocketshell_CoM(0.);
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = pocketshell_coord_list.begin(); pd != pocketshell_coord_list.end(); ++pd ) {
-		pocketshell_CoM.x() += pd->x();
-		pocketshell_CoM.y() += pd->y();
-		pocketshell_CoM.z() += pd->z();
+	for (const auto & pd : pocketshell_coord_list) {
+		pocketshell_CoM.x() += pd.x();
+		pocketshell_CoM.y() += pd.y();
+		pocketshell_CoM.z() += pd.z();
 	}
 	pocketshell_CoM /= pocketshell_coord_list.size();
 	return pocketshell_CoM;
@@ -5740,12 +5740,12 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 	core::Size common_points = 0;
 
 	// Loop over all points in the template eggshell
-	for ( std::list< numeric::xyzVector<core::Real> >::const_iterator pd = template_eggshell.eggshell_coord_list().begin(); pd != template_eggshell.eggshell_coord_list().end(); ++pd ) {
+	for (const auto & pd : template_eggshell.eggshell_coord_list()) {
 
 		// For this template eggshell point, get the cartesian coors and convert to comparison's grid
-		core::Real const template_x = pd->x();
-		core::Real const template_y = pd->y();
-		core::Real const template_z = pd->z();
+		core::Real const template_x = pd.x();
+		core::Real const template_y = pd.y();
+		core::Real const template_z = pd.z();
 		core::Size const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
 		core::Size const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
 		core::Size const self_z_index = (core::Size) floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
@@ -5867,12 +5867,12 @@ core::Real ComparisonGrid::mark (const PocketGrid& gr, core::Real x, core::Real 
 
 core::Real ComparisonGrid::compareCoverage(const PocketGrid& gr){
 	core::Real return_penalty = 0;
-	for ( std::list<PCluster>::const_iterator cit=gr.clusters_.clusters_.begin(); cit != gr.clusters_.clusters_.end(); ++cit ) {
+	for ( auto cit=gr.clusters_.clusters_.begin(); cit != gr.clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(gr.stepSize_,3)<gr.minPockSize_ ) continue; // this is a smallpocket
-		for ( std::list<PCluster::Cxyz>::const_iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit ) {
-			if ( (gr.grid_[pit->x][pit->y][pit->z]==gr.TP_POCKET) || (gr.grid_[pit->x][pit->y][pit->z]==gr.TP_BURIED ||
-					gr.grid_[pit->x][pit->y][pit->z]==gr.TP_EDGE) ) {
-				if ( grid_[pit->x][pit->y][pit->z]==EMPTY ) return_penalty +=1.;
+		for (const auto & point : cit->points_) {
+			if ( (gr.grid_[point.x][point.y][point.z]==gr.TP_POCKET) || (gr.grid_[point.x][point.y][point.z]==gr.TP_BURIED ||
+					gr.grid_[point.x][point.y][point.z]==gr.TP_EDGE) ) {
+				if ( grid_[point.x][point.y][point.z]==EMPTY ) return_penalty +=1.;
 			}
 		}
 	}
