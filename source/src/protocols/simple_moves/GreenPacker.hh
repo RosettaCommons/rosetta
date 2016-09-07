@@ -157,10 +157,10 @@ public:
 public:
 	~UserDefinedGroupDiscriminator() override;
 
-	
+
 	protocols::simple_moves::GroupDiscriminatorOP clone() const override;
 
-	
+
 	Size
 	group_id( Pose const & pose, Size seqpos ) const override;
 
@@ -179,10 +179,10 @@ class ChainGroupDiscriminator : public GroupDiscriminator
 public:
 	~ChainGroupDiscriminator() override;
 
-	
+
 	protocols::simple_moves::GroupDiscriminatorOP clone() const override;
 
-	
+
 	Size
 	group_id( Pose const & pose, Size seqpos ) const override;
 };
@@ -214,7 +214,7 @@ public:
 	GreenPacker();
 	~GreenPacker() override;
 
-	
+
 	void
 	apply( Pose & ) override;
 	std::string get_name() const override;

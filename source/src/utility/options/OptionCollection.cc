@@ -95,7 +95,7 @@ OptionCollection::add_built_in_options()
 /// @brief Checks is option has been registered as relevant.
 bool
 OptionCollection::is_relevant( OptionKey const & key ){
-	for (auto & i : relevant_) {
+	for ( auto & i : relevant_ ) {
 		if ( i->id() == key.id() ) return true;
 	}
 	return false;
@@ -148,7 +148,7 @@ OptionCollection::load(
 	if ( args.size() == 0 ) return;
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
-	for (const auto & arg : args) {
+	 for ( auto const & arg : args ) {
 		arg_strings.push_back( arg );
 		argv_copy_ += " " + arg;
 	}
@@ -551,7 +551,7 @@ OptionCollection::show_help( std::ostream & stream )
 
 	if ( relevant_.size() > 0 ) {
 		stream << "\nShowing only relevant options...";
-		for (auto & i : relevant_) {
+		for ( auto & i : relevant_ ) {
 			OptionKey const & key( *i );
 			show_option_help(key, group, stream);
 		}
@@ -648,7 +648,7 @@ OptionCollection::show_help_hier( std::ostream & stream )
 		stream << "\nShowing only relevant options...\n\n\n";
 		stream << RJ( COL1, "Option" ) << " | " << A( COL2, " Setting " ) << " |" << A(4,"Type") << "| "  << LJ( COL3, " Description" ) << "\n";
 		stream << "--------------------------------------------------------------------------------------\n";
-		for (auto & i : relevant_) {
+		for ( auto & i : relevant_ ) {
 			OptionKey const & key( *i );
 			show_option_help_hier( key, group, stream );
 		}
@@ -863,7 +863,7 @@ void OptionCollection::show_accessed_options(std::ostream & stream) const {
 
 	std::sort(sv.begin(), sv.end());
 
-	for (auto & i : sv) stream << i << '\n';
+	for ( auto & i : sv ) stream << i << '\n';
 
 	stream << std::endl;
 }
@@ -909,7 +909,7 @@ void OptionCollection::show_unused_options(std::ostream & stream) const {
 
 		// '\n' instead of std::endl so that the options won't get prefixed if stream is a tracer.
 		stream << "WARNING: The following options have been set, but have not yet been used:\n";
-		for (auto & i : sv) {
+		for ( auto & i : sv ) {
 			stream << "\t" << i << '\n';
 		}
 		stream << std::endl; // Now we flush
@@ -1163,9 +1163,9 @@ void
 OptionCollection::add_edits( std::set<std::string> & items ) {
 	std::set< std::string > new_edits;
 	std::string const charset( "abcdefghijklmnopqrstuvwxyz1234567890" ); // all lowercase, no underscores
-	for (const auto & instring : items) {
+	 for ( auto const & instring : items ) {
 		// keep the unmodified item
-			new_edits.insert( instring );
+		new_edits.insert( instring );
 		//delete a single charachter
 		for ( unsigned long ii(0); ii < instring.size(); ++ii ) {
 			//delete a single charachter (ii)
@@ -1177,7 +1177,7 @@ OptionCollection::add_edits( std::set<std::string> & items ) {
 				transposed[ii-1] = instring[ii];
 				new_edits.insert( transposed );
 			}
-			for (char jj : charset) {
+			for ( char jj : charset ) {
 				// add a single charachter before ii
 				new_edits.insert( instring.substr(0,ii) + jj + instring.substr(ii) );
 				// replace a charachter at ii
@@ -1187,7 +1187,7 @@ OptionCollection::add_edits( std::set<std::string> & items ) {
 			}
 		}
 		// add a single charachter at the end of the string
-		for (char jj : charset) {
+		for ( char jj : charset ) {
 			new_edits.insert( instring + jj );
 		}
 	}
@@ -1274,7 +1274,7 @@ OptionCollection::find_key_cl(
 			kid = bid;
 		} else if ( n_best > 1 ) { // Nonunique matches found
 			std::string too_many_choices_error("Unique best command line context option match not found for -" + key_string + ".\nPossible matches include:\n");
-			for (auto & possible_matche : possible_matches) {
+			for ( auto & possible_matche : possible_matches ) {
 				too_many_choices_error += ("\t -" + possible_matche) += "\n";
 			}
 			too_many_choices_error += "Either specify namespace from command line; or in code, use add_relevant() to register option.\n";
@@ -1307,7 +1307,7 @@ OptionCollection::find_key_cl(
 
 		if ( ! possible_fixes.empty() ) {
 			not_found_error += "\nDid you mean:\n";
-			for (const auto & possible_fixe : possible_fixes) {
+			 for ( auto const & possible_fixe : possible_fixes ) {
 				not_found_error += "\t -" + possible_fixe + "\n";
 			}
 		}
@@ -1526,7 +1526,7 @@ OptionCollection::cleaned( std::string const & s )
 			t += s[i];
 		}
 	}
-	for (char & i : t) {
+	for ( char & i : t ) {
 		if ( i == '.' ) i = ':';
 	}
 	return t;

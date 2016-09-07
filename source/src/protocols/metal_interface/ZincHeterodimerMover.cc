@@ -309,7 +309,7 @@ void ZincHeterodimerMover::generate_factory(){
 		task_factory->push_back(operation::TaskOperationOP( new operation::ReadResfile ));
 	}
 	operation::PreventRepackingOP prop( new operation::PreventRepacking() );
-	for (unsigned long it : metal_site_) {
+	for ( unsigned long it : metal_site_ ) {
 		prop->include_residue(it);
 	}
 	task_factory->push_back(prop);

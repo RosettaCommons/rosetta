@@ -566,7 +566,7 @@ setup_conformer_map(
 {
 	using namespace core::conformation;
 	std::map< std::string, ResidueOPs > conformer_map;
-	for (const auto & conformerOP : conformerOPs) {
+	 for ( auto const & conformerOP : conformerOPs ) {
 		std::string name( conformerOP->name3() );
 		conformer_map[name].push_back( conformerOP );
 	}
@@ -701,7 +701,7 @@ make_dna_mutations(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	core::scoring::dna::set_base_partner( pose );
-	for (const auto & def : target) {
+	 for ( auto const & def : target ) {
 		// SHOULD INCLUDE JA checks to ensure that the input is DNA and is the correct strand
 		core::Size index( pdb_pose_map.find( def->chain, def->pdbpos ) );
 		if ( ! def->name3.empty() ) {
@@ -731,7 +731,7 @@ defs2vector(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	utility::vector1< core::Size > positions;
-	for (const auto & target : targets) {
+	 for ( auto const & target : targets ) {
 		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		positions.push_back( index );
 	}
@@ -747,7 +747,7 @@ defs2allowedtypes(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	utility::vector1< std::pair< core::Size, utility::vector1< std::string > > > positions;
-	for (const auto & target : targets) {
+	 for ( auto const & target : targets ) {
 		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		utility::vector1< std::string > names;
 		std::string name( target->name3 );
@@ -779,7 +779,7 @@ defs2map(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	std::map< core::Size, std::set< std::string > > positions;
-	for (const auto & target : targets) {
+	 for ( auto const & target : targets ) {
 		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		std::set< std::string > names;
 		std::string name( target->name3 );
@@ -811,11 +811,11 @@ bpdefs2map(
 	using namespace protocols::dna;
 	core::pose::PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
 	std::map< core::Size, std::set< std::string > > positions;
-	for (const auto & target : targets) {
+	 for ( auto const & target : targets ) {
 		core::Size index( pdb_pose_map.find( target->chain, target->pdbpos ) );
 		std::set< std::string > names;
 		std::string name( target->name3 );
-		for (char c : name) {
+		for ( char c : name ) {
 			mu_tr << "Allowing AAtype " << c << " for motif search." << std::endl;
 			// put all canonical AAs in it
 			std::stringstream name1;
@@ -957,7 +957,7 @@ load_build_position_data(
 			}
 		}
 		if ( keep_one_motif ) {
-			for (auto & single_motif : single_motifs) {
+			for ( auto & single_motif : single_motifs ) {
 				bp.keep_motif( *(single_motif.second) );
 			}
 		}
@@ -972,7 +972,7 @@ get_filenames(
 )
 {
 	utility::vector1< utility::file::FileName >  names;
-	for (const auto & listname : listnames) {
+	 for ( auto const & listname : listnames ) {
 		utility::io::izstream list( listname.name().c_str() );
 		while ( list ) {
 			std::string name;
@@ -1033,7 +1033,7 @@ bools_from_sizes(
 )
 {
 	utility::vector1< bool > b( nres, false );
-	for (unsigned long pos : v) b[ pos ] = true;
+	for ( unsigned long pos : v ) b[ pos ] = true;
 	return b;
 }
 

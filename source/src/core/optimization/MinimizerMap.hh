@@ -103,7 +103,7 @@ public:
 	);
 
 
-	
+
 	void
 	add_torsion(
 		DOF_ID const & new_torsion,
@@ -111,7 +111,7 @@ public:
 	) override;
 
 
-	
+
 	void
 	add_atom(
 		AtomID const & atom_id,
@@ -208,7 +208,7 @@ public:
 	) const;
 
 
-	
+
 	kinematics::DomainMap const &
 	domain_map() const override
 	{

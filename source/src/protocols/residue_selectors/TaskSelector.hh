@@ -57,7 +57,7 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & ) override;
 
-	
+
 	std::string
 	get_name() const override;
 

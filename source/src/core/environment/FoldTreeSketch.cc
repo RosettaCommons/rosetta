@@ -190,7 +190,7 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 		tr.Debug << "Cuts were: ";
 		BOOST_FOREACH ( Size cut, cuts ) { tr.Debug << cut << ", "; }
 		tr.Debug << std::endl << "Jumps were: ";
-		for (const auto & jump : jumps) {
+		 for ( auto const & jump : jumps ) {
 			tr.Debug << "(" << jump.first << "," << jump.second << "), ";
 		}
 		tr.Debug << std::endl;
@@ -260,7 +260,7 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
 	// If it's a disconnected net, we might not've found the cycle. Check for
 	// disconnected nodes and recurse on the first disconnected node we find.
 	if ( cycle_path.empty() ) {
-		for (const auto & node : nodes_) {
+		 for ( auto const & node : nodes_ ) {
 			if ( !node->visited() ) {
 				return cycle( node->seqid() );
 			}
@@ -274,7 +274,7 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
 		cycle_path.pop();
 	}
 
-	for (const auto & node : nodes_) {
+	 for ( auto const & node : nodes_ ) {
 		node->unvisit();
 	}
 
@@ -345,7 +345,7 @@ std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > c
 			tr.Trace << "found cycle: " << utility::to_string( cycle ) << std::endl;
 		}
 
-		for (unsigned long & resid_it : cycle) {
+		for ( unsigned long & resid_it : cycle ) {
 			sum += bias[ resid_it ];
 		}
 		if ( sum == 0 ) {

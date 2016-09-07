@@ -115,7 +115,7 @@ get_base_pairing_info( pose::Pose const & pose,
 	bool forms_canonical_base_pair( false ), forms_base_pair( false );
 
 	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
-	for (const auto & it : scored_base_pair_list) {
+	 for ( auto const & it : scored_base_pair_list ) {
 
 		BasePair const base_pair = it.second;
 
@@ -188,7 +188,7 @@ get_base_pairing_list( pose::Pose & pose,
 
 	std::list < std::pair< Size,Size > > base_pair_list0;
 
-	for (const auto & it : scored_base_pair_list) {
+	 for ( auto const & it : scored_base_pair_list ) {
 
 		BasePair const base_pair = it.second;
 
@@ -493,7 +493,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 	FArray1D_bool forms_canonical_base_pair( nres, false );
 	FArray1D_int  WC_base_pair_partner( nres, 0 );
 
-	for (const auto & it : scored_base_pair_list) {
+	 for ( auto const & it : scored_base_pair_list ) {
 
 		BasePair const base_pair = it.second;
 

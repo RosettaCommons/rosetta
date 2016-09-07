@@ -117,7 +117,7 @@ extern ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose& pose) 
 
 void ResidualDipolarCoupling::show(std::ostream& out) const {
 	Size ct=0;
-	for (const auto & All_RDC_line : All_RDC_lines_) {
+	 for ( auto const & All_RDC_line : All_RDC_lines_ ) {
 		out << "RDC "<<++ct << "     ";
 		out << All_RDC_line << std::endl;
 	}
@@ -237,7 +237,7 @@ void ResidualDipolarCoupling::read_RDC_file() {
 				throw(utility::excn::EXCN_BadInput(" invalid line " + line
 					+ " in rdc-weight-file " + filename));
 			}
-			for (auto & All_RDC_line : All_RDC_lines_) {
+			for ( auto & All_RDC_line : All_RDC_lines_ ) {
 				if ( All_RDC_line.res1() == res1 ) {
 					All_RDC_line.weight(weight);
 					tr.Info << "set tensor-weight for RDCs to " << weight
@@ -601,7 +601,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 	Size irow(0);
 	Size ex(0);
-	for (auto & All_RDC_line : All_RDC_lines_) {
+	for ( auto & All_RDC_line : All_RDC_lines_ ) {
 
 		//check for cutpoints!!!
 		kinematics::FoldTree const& ft(pose.fold_tree());

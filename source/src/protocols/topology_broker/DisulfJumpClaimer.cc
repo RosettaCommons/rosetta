@@ -182,8 +182,8 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	using std::pair;
 
 	//Initialize all_jump_pairings_ list with the data gathered during read_tag
-	for (auto claim : local_disulf_data_) {
-			core::Size pos1 = claim->global_pos1();
+	for ( auto claim : local_disulf_data_ ) {
+		core::Size pos1 = claim->global_pos1();
 		core::Size pos2 = claim->global_pos2();
 
 		protocols::jumping::DisulfPairing dis_pair;

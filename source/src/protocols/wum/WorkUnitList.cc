@@ -41,7 +41,7 @@ const WorkUnitBaseCOP WorkUnitList::get_work_unit( const std::string &name ) con
 
 // Copy over all the WorkUnitOPs from source to the current workUnitlist.
 void WorkUnitList::merge( const WorkUnitList & source ){
-	for (const auto & it : source.work_unit_list_) {
+	 for ( auto const & it : source.work_unit_list_ ) {
 		work_unit_list_[ it.first ] = it.second;
 	}
 }

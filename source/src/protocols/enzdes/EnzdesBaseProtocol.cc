@@ -659,14 +659,14 @@ EnzdesBaseProtocol::cst_minimize(
 
 					utility::vector1< std::string > const new_var_types( pose.residue_type( i ).properties().get_list_of_variants() );
 					utility::vector1< std::string > const old_var_types( old_Pose.residue_type( i ).properties().get_list_of_variants() );
-					for (const auto & new_var_type : new_var_types) {
+					 for ( auto const & new_var_type : new_var_types ) {
 						if ( !old_Pose.residue_type( i ).has_variant_type( new_var_type ) ) {
 							core::pose::remove_variant_type_from_pose_residue( pose,
 								core::chemical::ResidueProperties::get_variant_from_string( new_var_type ), i );
 						}
 					}
 
-					for (const auto & old_var_type : old_var_types) {
+					 for ( auto const & old_var_type : old_var_types ) {
 						if ( !pose.residue_type( i ).has_variant_type( old_var_type ) ) {
 							core::pose::add_variant_type_to_pose_residue( pose,
 								core::chemical::ResidueProperties::get_variant_from_string( old_var_type ), i );
@@ -772,7 +772,7 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 
 		//now we also have to change the remarks
 		core::io::Remarks & remarks = pose.pdb_info()->remarks();
-		for (auto & remark : remarks) {
+		for ( auto & remark : remarks ) {
 
 			std::string chainA(""), resA(""),chainB(""),resB("");
 			core::Size cst_block(0), exgeom_id(0);
@@ -824,7 +824,7 @@ EnzdesBaseProtocol::design_targets_score(
 	core::Real return_val(0.0);
 	using namespace core::scoring;
 
-	for (unsigned long design_target : design_targets_) {
+	for ( unsigned long design_target : design_targets_ ) {
 
 		return_val += pose.energies().residue_total_energy( design_target );
 	}

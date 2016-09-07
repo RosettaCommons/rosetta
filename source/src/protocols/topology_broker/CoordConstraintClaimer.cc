@@ -230,7 +230,7 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 	if ( !rigid.size() ) rigid.add_loop( 1, cst_pose.total_residue(), 0 );
 
 	//go thru regions and generate constraints
-	for (const auto & it : rigid) {
+	 for ( auto const & it : rigid ) {
 		for ( Size pos = it.start(); pos <= it.stop(); ++pos ) {
 
 			//generate constraint for ( CA, pos )

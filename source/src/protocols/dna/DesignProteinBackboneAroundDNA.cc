@@ -272,7 +272,7 @@ DesignProteinBackboneAroundDNA::set_loop_info( Pose const & pose, Loops const & 
 	// clear out (any) pre-existing string info (from previous apply calls)
 	info().clear();
 	// store information about the loops that were modeled
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		Size const start( loop.start() ), cut( loop.cut() ), stop( loop.stop() );
 		std::ostringstream loopinfo;
 		loopinfo << "REMARK loop: ";
@@ -332,7 +332,7 @@ DesignProteinBackboneAroundDNA::backrub(
 	// set up backrub segments
 	backrubmover.clear_segments();
 
-	for (const auto & loop : *loops) {
+	 for ( auto const & loop : *loops ) {
 		Size const start( loop.start() ), stop( loop.stop() );
 		backrubmover.add_segment(
 			id::AtomID( pose.residue_type( start ).atom_index(" CA "), start ),

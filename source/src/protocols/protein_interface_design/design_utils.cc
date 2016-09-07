@@ -212,7 +212,7 @@ Revert::apply( pose::Pose & pose_wt, pose::Pose & pose_des ) const
 	std::string ignored_resids( "select resi " );
 	std::string done_resids( "select resi " );
 	bool first_pass_ignored( true ), first_pass_done( true );
-	for (const auto & it2 : *energy_map2) {
+	 for ( auto const & it2 : *energy_map2 ) {
 		using boost::lexical_cast;
 		using std::string;
 		core::Size const seqpos( it2.first );
@@ -559,7 +559,7 @@ hbonded(
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
-	for (unsigned long binder : binders) {
+	for ( unsigned long binder : binders ) {
 		core::conformation::Residue const resj( pose.residue(binder) );
 
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
@@ -654,7 +654,7 @@ hbonded_atom(
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
-	for (unsigned long binder : binders) {
+	for ( unsigned long binder : binders ) {
 		core::conformation::Residue const resj( pose.residue(binder) );
 
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );

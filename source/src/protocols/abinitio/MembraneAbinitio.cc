@@ -1047,8 +1047,8 @@ public:
 private:
 
 	void compute_insert_pos( core::fragment::InsertMap const& insert_map ) {
-		for (unsigned long pos : insert_map) {
-				if ( pos > insert_pos_.size() ) break;
+		for ( unsigned long pos : insert_map ) {
+			if ( pos > insert_pos_.size() ) break;
 			insert_pos_[ pos ] = true;
 		}
 	}

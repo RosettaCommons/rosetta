@@ -99,7 +99,7 @@ extern ChemicalShiftAnisotropyOP retrieve_CSA_from_pose(core::pose::Pose& pose) 
 
 void ChemicalShiftAnisotropy::show(std::ostream& out) const {
 	Size ct=0;
-	for (const auto & All_CSA_line : All_CSA_lines_) {
+	 for ( auto const & All_CSA_line : All_CSA_lines_ ) {
 		out << "CSA "<<++ct << "     ";
 		out << All_CSA_line << std::endl;
 	}
@@ -204,7 +204,7 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 	tr.Trace << "memnorm.x(): " << memnorm.x() << " memnorm.y() " << memnorm.y() << " memnorm.z() " << memnorm.z() << std::endl;
 
 
-	for (auto & All_CSA_line : All_CSA_lines_) {
+	for ( auto & All_CSA_line : All_CSA_lines_ ) {
 		//      tr.Trace << "it->res1(): " << it->res1() << " it->atom1() " << it->atom1() << std::endl;
 		//      tr.Trace << "it->res2(): " << it->res2() << " it->atom2() " << it->atom2() << std::endl;
 		//      tr.Trace << "it->res3(): " << it->res3() << " it->atom3() " << it->atom3() << std::endl;

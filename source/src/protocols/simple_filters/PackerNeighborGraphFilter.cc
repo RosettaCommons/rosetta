@@ -164,7 +164,7 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 
 	//aight. now let's check whether the connections in the png satisfy the requirements
 	//first, let's check if all required residues have a sufficient number of connections
-	for (const auto & required_connections_per_re : required_connections_per_res_) {
+	 for ( auto const & required_connections_per_re : required_connections_per_res_ ) {
 
 		std::map< core::Size, core::Size >::const_iterator curmap_it = connections_for_important_res.find( required_connections_per_re.first );
 

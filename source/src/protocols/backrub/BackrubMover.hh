@@ -66,7 +66,7 @@ public:
 	void
 	init_with_options();
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -76,7 +76,7 @@ public:
 		core::pose::Pose const & pose
 	) override;
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -267,12 +267,12 @@ public:
 	);
 
 	/// @brief get whether detailed balance is preserved (i.e. no branch angle optimization during moves)
-	
+
 	bool
 	preserve_detailed_balance() const override;
 
 	/// @brief set whether detailed balance is preserved (i.e. no branch angle optimization during moves)
-	
+
 	void
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
@@ -289,14 +289,14 @@ public:
 	);
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
 	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose

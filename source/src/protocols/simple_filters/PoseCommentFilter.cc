@@ -94,7 +94,7 @@ PoseComment::compute(
 		if ( comments.empty() ) { //size() == 0 )
 			return 0.0;
 		}
-		for (const auto & comment : comments) {// iterate over all comments and find the one with the value
+		 for ( auto const & comment : comments ) {// iterate over all comments and find the one with the value
 			if ( comment.second == comment_value() ) {
 				return 1.0;
 			}

@@ -164,7 +164,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 	std::sort(rama_list.begin(), rama_list.end(), rama_list_pred);
 
-	for (auto & g : rama_list) {
+	for ( auto & g : rama_list ) {
 		TR << "RAMALIST: " << g.first << "  " << g.second << std::endl;
 	}
 

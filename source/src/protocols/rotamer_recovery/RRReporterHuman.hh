@@ -155,11 +155,11 @@ public: // public interface
 		std::string const & protocol_name,
 		std::string const & protocol_params) override;
 
-	
+
 	void
 	reset_recovery() override;
 
-	
+
 	void
 	report_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -170,15 +170,15 @@ public: // public interface
 		bool recovered
 	) override;
 
-	
+
 	core::Real
 	recovery_rate() const override;
 
-	
+
 	void
 	show(std::ostream & out ) const override;
 
-	
+
 	void
 	show() const override;
 

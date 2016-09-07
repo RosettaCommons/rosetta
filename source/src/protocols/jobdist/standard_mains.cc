@@ -100,7 +100,7 @@ utility::vector1< BasicJobOP > load_s_and_l()
 	vector1< BasicJobOP > jobs;
 	int const nstruct_flag = option[ out::nstruct ];
 	int const nstruct = std::max( 1, nstruct_flag );
-	for (auto & pdb_file_name : pdb_file_names) {
+	for ( auto & pdb_file_name : pdb_file_names ) {
 		std::string native_file (pdb_file_name.base()+".native.pdb");
 		//TR << "Looking for native: " << native_file << " ... ";
 		if ( option[ in::file::native ].user() ) {
@@ -242,7 +242,7 @@ int universal_main(
 			list_file_names = option[ in::file::silent_list ]();
 		}
 
-		for (auto & list_file_name : list_file_names) {
+		for ( auto & list_file_name : list_file_names ) {
 			std::string filename( list_file_name.name() );
 			utility::io::izstream data( filename.c_str() );
 			if ( !data.good() ) { utility_exit_with_message( "Unable to open file: " + filename + '\n' ); }

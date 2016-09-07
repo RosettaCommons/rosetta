@@ -340,7 +340,7 @@ void ContactMap::apply(Pose & pose) {
 	n_poses_++;
 
 	// Iterate over contacts
-	for (auto & contact : contacts_) {
+	for ( auto & contact : contacts_ ) {
 		ContactPartner * p1(contact.partner1());
 		ContactPartner * p2(contact.partner2());
 		// Get coordinates of both contact partners and calculate distance
@@ -385,7 +385,7 @@ void ContactMap::apply(Pose & pose) {
 /// @brief Resets the movers n_poses_ variable and the counts of all contacts to 0
 void ContactMap::reset(){
 	n_poses_ = 0;
-	for (auto & contact : contacts_) {
+	for ( auto & contact : contacts_ ) {
 		contact.reset_count();
 	}
 }
@@ -413,7 +413,7 @@ ContactMap::write_to_stream(std::ostream & output_stream) {
 	output_stream << "# Number of Models:\t" << n_poses_ <<"\tDistance Cutoff:\t"<< distance_cutoff_<< std::endl
 		<< std::endl;
 	if ( row_format_ ) {
-		for (auto & contact : contacts_) {
+		for ( auto & contact : contacts_ ) {
 			output_stream << contact.long_string_rep() << std::endl;
 		}
 	} else {

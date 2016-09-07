@@ -68,7 +68,7 @@ void read_all_alignments(const std::string& format,
 	using utility::vector1;
 
 	debug_assert(alignments);
-	for (const auto & file : files) {
+	 for ( auto const & file : files ) {
 		vector1<SequenceAlignment> current = read_aln(format, file);
 		std::copy(current.begin(), current.end(), std::back_inserter(*alignments));
 	}

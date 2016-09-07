@@ -39,7 +39,7 @@ public:
 	MoverAndPoseJob();
 	~MoverAndPoseJob() override;
 
-	
+
 	JobResultOP run() override;
 
 	void mover( moves::MoverOP setting );

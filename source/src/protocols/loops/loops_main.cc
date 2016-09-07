@@ -596,7 +596,7 @@ loops_set_move_map(
 	mm.set_chi( false );
 	mm.set_jump( false );
 	// allow phi/psi in loops to move
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 
 		for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
 			mm.set_bb(i, true);
@@ -733,7 +733,7 @@ add_loop_flank_residues_bb_to_movemap(
 	core::Size flank_size
 ){
 
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 
 		for ( Size i=(loop.start()-flank_size); i<=(loop.start()-1); i++ ) {
 			mm.set_bb(i, true);
@@ -761,7 +761,7 @@ ccd_close_loops(
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover;
 	ccd_loop_closure_mover.movemap( kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
 
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		ccd_loop_closure_mover.loop( loop );
 		ccd_loop_closure_mover.apply( pose );
 	}
@@ -781,7 +781,7 @@ void select_loop_residues(
 	Real neighbor_dist
 )
 {
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
 			if ( pose.residue(i).type().is_disulfide_bonded() ) {
 				map[i] = false;
@@ -874,7 +874,7 @@ void filter_loop_neighbors_by_distance(
 
 	utility::vector1< bool > loop_selection(pose.total_residue(), false);
 
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		for ( Size j=loop.start(); j<=loop.stop(); ++j ) {
 			loop_selection[ j ] = true;
 		}
@@ -1418,7 +1418,7 @@ core::Real native_loop_core_CA_rmsd(
 	for ( core::Size ir = 1; ir <= pose.total_residue(); ir ++ ) {
 		if ( !pose.residue_type(ir).is_protein() ) continue;
 		bool exclude = false;
-		for (unsigned long p : residue_exclusion) {
+		for ( unsigned long p : residue_exclusion ) {
 			if ( ir == p ) {
 				exclude = true;
 				break;
@@ -1516,7 +1516,7 @@ loop_rmsd(
 
 	Real rms = 0.0;
 	int atom_count(0);
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		for ( Size i = loop.start(); i<=loop.stop(); ++i ) {
 			if ( i > pose1.total_residue() ) {
 				tt.Warning <<  "[Warning]: Pose1: Loop residue " << i << "exceeds pose1 size " << pose1.total_residue() << std::endl;
@@ -1569,7 +1569,7 @@ loop_local_rmsd(
 		return rms;
 	}
 
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		int natoms = 4 * loop.size() ;
 		//FArray2D_double p1a(3, natoms);
 		//FArray2D_double p2a(3, natoms);

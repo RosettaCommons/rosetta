@@ -335,7 +335,7 @@ public:
 
 	~PNatAAOptEPositionData() override;
 
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -350,7 +350,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -366,7 +366,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	range(
 		ScoreTypes const & free_score_list,
@@ -375,34 +375,34 @@ public:
 		EnergyMap & upper_bound
 	) const override;
 
-	
+
 	Size
 	size() const override
 	{
 		return data_.size();
 	}
 
-	
+
 	OptEPositionDataType
 	type() const override;
 
-	
+
 	void
 	write_to_file( std::ofstream & outfile ) const override ;
 
-	
+
 	void
 	read_from_file( std::ifstream & infile ) override;
 
-	
+
 	void
 	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_binary_file( std::ifstream & infile ) override;
 
-	
+
 	Size
 	memory_use() const override;
 
@@ -511,7 +511,7 @@ public:
 
 	void set_pssm_probabilities( utility::vector1< Real > const & pssm_probs );
 
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -526,7 +526,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -542,27 +542,27 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	OptEPositionDataType
 	type() const override;
 
-	
+
 	void
 	write_to_file( std::ofstream & outfile ) const override ;
 
-	
+
 	void
 	read_from_file( std::ifstream & infile ) override;
 
-	
+
 	void
 	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_binary_file( std::ifstream & infile ) override;
 
-	
+
 	Size
 	memory_use() const override;
 
@@ -589,7 +589,7 @@ public:
 
 	~PNatRotOptEPositionData() override;
 
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -604,7 +604,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -636,7 +636,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const;
 
-	
+
 	void
 	range(
 		ScoreTypes const & free_score_list,
@@ -645,31 +645,31 @@ public:
 		EnergyMap & upper_bound
 	) const override;
 
-	
+
 	Size
 	size() const override;
 
-	
+
 	OptEPositionDataType
 	type() const override;
 
-	
+
 	void
 	write_to_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_file( std::ifstream & infile ) override;
 
-	
+
 	void
 	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_binary_file( std::ifstream & infile ) override;
 
-	
+
 	Size
 	memory_use() const override;
 
@@ -757,7 +757,7 @@ public:
 	PNatStructureOptEData();
 	~PNatStructureOptEData() override;
 
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -772,7 +772,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -804,7 +804,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const;
 
-	
+
 	void
 	range(
 		ScoreTypes const & free_score_list,
@@ -813,31 +813,31 @@ public:
 		EnergyMap & upper_bound
 	) const override;
 
-	
+
 	Size
 	size() const override;
 
-	
+
 	OptEPositionDataType
 	type() const override;
 
-	
+
 	void
 	write_to_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_file( std::ifstream & infile ) override;
 
-	
+
 	void
 	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_binary_file( std::ifstream & infile ) override;
 
-	
+
 	Size
 	memory_use() const override;
 
@@ -916,7 +916,7 @@ public:
 	DDGMutationOptEData();
 	~DDGMutationOptEData() override;
 
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -931,7 +931,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -963,7 +963,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const;
 
-	
+
 	void
 	range(
 		ScoreTypes const & free_score_list,
@@ -972,31 +972,31 @@ public:
 		EnergyMap & upper_bound
 	) const override;
 
-	
+
 	Size
 	size() const override;
 
-	
+
 	OptEPositionDataType
 	type() const override;
 
-	
+
 	void
 	write_to_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_file( std::ifstream & infile ) override;
 
-	
+
 	void
 	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_binary_file( std::ifstream & infile ) override;
 
-	
+
 	Size
 	memory_use() const override;
 
@@ -1064,7 +1064,7 @@ public:
 	void
 	initialize_constraints_from_file( std::ifstream & infile );
 
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -1079,7 +1079,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -1095,7 +1095,7 @@ public:
 		ScoreTypes const & fixed_score_list
 	) const override;
 
-	
+
 	void
 	range(
 		ScoreTypes const & free_score_list,
@@ -1104,31 +1104,31 @@ public:
 		EnergyMap & upper_bound
 	) const override;
 
-	
+
 	Size
 	size() const override;
 
-	
+
 	OptEPositionDataType
 	type() const override;
 
-	
+
 	void
 	write_to_file( std::ofstream & outfile ) const override ;
 
-	
+
 	void
 	read_from_file( std::ifstream & infile ) override;
 
-	
+
 	void
 	write_to_binary_file( std::ofstream & outfile ) const override;
 
-	
+
 	void
 	read_from_binary_file( std::ifstream & infile ) override;
 
-	
+
 	Size
 	memory_use() const override;
 

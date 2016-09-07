@@ -48,7 +48,7 @@ public:
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	using protocols::moves::Mover::apply;
-	
+
 	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose

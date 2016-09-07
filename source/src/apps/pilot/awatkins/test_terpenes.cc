@@ -98,7 +98,7 @@ main( int argc, char* argv[] )
 		devel::init(argc, argv);
 
 		ResidueTypeSetCOP rts( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
-		
+
 		ScoreFunctionOP score_fxn = get_score_function();
 
 		Pose pose;
@@ -106,7 +106,7 @@ main( int argc, char* argv[] )
 		ResidueOP lower = conformation::ResidueFactory::create_residue( rts->name_map( "isoprene:terpene_lower_full" ) );
 		ResidueOP inner = conformation::ResidueFactory::create_residue( rts->name_map( "isoprene" ) );
 		ResidueOP upper = conformation::ResidueFactory::create_residue( rts->name_map( "isoprene:terpene_upper_full" ) );
-		
+
 		pose.append_residue_by_jump( *lower, 1, "", "", true );
 		pose.append_residue_by_bond( *inner, true );
 		pose.append_residue_by_bond( *inner, true );
@@ -114,7 +114,7 @@ main( int argc, char* argv[] )
 		pose.append_residue_by_bond( *inner, true );
 		pose.append_residue_by_bond( *inner, true );
 		pose.append_residue_by_bond( *upper, true );
-		
+
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( true );
 		mm->set_chi( true );
@@ -166,7 +166,7 @@ main( int argc, char* argv[] )
 
 		MinMoverOP min( new MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		min->apply( pose );
-		
+
 		pose.dump_pdb( "min.pdb" );
 
 

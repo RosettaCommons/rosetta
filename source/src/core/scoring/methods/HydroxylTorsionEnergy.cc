@@ -128,12 +128,12 @@ HydroxylTorsionEnergy::read_database(
 			>> k >> n >> delta;
 
 		/*
-		boost::unordered_multimap< std::string, TorsionParams >::const_iterator it 
-			= torsion_params_.find( restag );
+		boost::unordered_multimap< std::string, TorsionParams >::const_iterator it
+		= torsion_params_.find( restag );
 		if( it == torsion_params_.end() ){
-			torsion_params_[res3] = utility::vector1< TorsionParams >();
-			torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
-			TR.Debug << "add " << restag << std::endl;
+		torsion_params_[res3] = utility::vector1< TorsionParams >();
+		torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
+		TR.Debug << "add " << restag << std::endl;
 		}
 		*/
 
@@ -158,36 +158,36 @@ HydroxylTorsionEnergy::residue_energy(
 	std::string restag( get_restag( rsd.type() ) );
 
 	tors_iterator it = torsion_params_.find( restag );
-	if( it == torsion_params_.end() ) return;
+	if ( it == torsion_params_.end() ) return;
 
 	Size const natm( rsd.natoms() );
 
-	for( it = torsion_params_.begin(); it != torsion_params_.end(); 
-			 it = torsion_params_.equal_range(it->first).second ){
+	for ( it = torsion_params_.begin(); it != torsion_params_.end();
+			it = torsion_params_.equal_range(it->first).second ) {
 
-		if( it->first != restag ) continue;
+		if ( it->first != restag ) continue;
 
-		if( torsion_params_.count( it->first ) <= 1 ) continue;
+		if ( torsion_params_.count( it->first ) <= 1 ) continue;
 
-		std::pair< tors_iterator, tors_iterator >	range	= torsion_params_.equal_range( restag );
+		std::pair< tors_iterator, tors_iterator > range = torsion_params_.equal_range( restag );
 		tors_iterator it2;
 
-		for( it2 = range.first; it2 != range.second; ++it2 ){
+		for ( it2 = range.first; it2 != range.second; ++it2 ) {
 			TorsionParams const &p = it2->second;
 
 			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-										(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+				(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
 
 			Real tors = numeric::dihedral_radians(
-									rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
 
 			Real score = p.k * ( std::cos( p.n*tors - p.delta ) + 1 );
 			emap[ hxl_tors ] += score;
 			/*
 			printf( "Atms/k/n/delta/tors/score: %2d %2d %2d %2d %5.2f %4.1f %6.4f %6.4f %8.3f\n",
-							int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]),
-							p.k, p.n, p.delta, tors, score
-							);
+			int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]),
+			p.k, p.n, p.delta, tors, score
+			);
 			*/
 		}
 	}
@@ -208,25 +208,25 @@ HydroxylTorsionEnergy::eval_residue_derivatives(
 	Size const natm( rsd.natoms() );
 
 	tors_iterator it = torsion_params_.find( restag );
-	if( it == torsion_params_.end() ) return;
+	if ( it == torsion_params_.end() ) return;
 
-	for( it = torsion_params_.begin(); it != torsion_params_.end(); 
-			 it = torsion_params_.equal_range(it->first).second ){
+	for ( it = torsion_params_.begin(); it != torsion_params_.end();
+			it = torsion_params_.equal_range(it->first).second ) {
 
 		if ( it->first != restag ) continue;
 		if ( torsion_params_.count( it->first ) <= 1 ) continue;
 
 		tors_iterator it2;
-		std::pair< tors_iterator, tors_iterator >	range	= torsion_params_.equal_range( restag );
+		std::pair< tors_iterator, tors_iterator > range = torsion_params_.equal_range( restag );
 
-		for( it2 = range.first; it2 != range.second; ++it2 ){
+		for ( it2 = range.first; it2 != range.second; ++it2 ) {
 			TorsionParams const &p = it2->second;
 
 			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-										(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+				(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
 
 			Real tors = numeric::dihedral_radians(
-			rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
 			Real dE_dtors = -p.k * p.n *( std::sin( p.n*tors - p.delta ) );
 
 			Vector const &xyz1( rsd.xyz( p.atm[1] ) );

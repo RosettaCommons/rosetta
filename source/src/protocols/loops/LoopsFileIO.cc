@@ -562,7 +562,7 @@ JSONFormattedLoopsFileReader::parse_json_formatted_data(
 
 	LoopsFileDataOP loops( new LoopsFileData );
 	core::Size count_lines_approximate = linecount_offset_;
-	for (auto & i : array) {
+	for ( auto & i : array ) {
 		ensure_all_fields_are_valid( i, filename );
 		LoopFromFileData current_loop = LoopFromFileData();
 

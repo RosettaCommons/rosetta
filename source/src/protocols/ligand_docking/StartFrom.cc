@@ -294,7 +294,7 @@ void StartFrom::parse_startfrom_file(std::string const & filename)
 	// If you just have the x/y/z coordinates, they will be added to the default set.
 
 	utility::json_spirit::mArray start_positions = startfrom_data.get_array();
-	for (auto & start_position : start_positions) {
+	for ( auto & start_position : start_positions ) {
 		utility::json_spirit::mObject position_data(start_position.get_obj());
 
 		core::Real x = position_data["x"].get_real();

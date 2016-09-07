@@ -128,7 +128,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Called by protocols::moves::MoverFactory when constructing new protocols::moves::Movers. Takes care of the specific mover's parsing.
-	
+
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,

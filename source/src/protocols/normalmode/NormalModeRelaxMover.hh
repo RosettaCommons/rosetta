@@ -56,7 +56,7 @@ public:
 
 	~NormalModeRelaxMover() override;
 
-	
+
 	protocols::moves::MoverOP
 	clone() const override { return protocols::moves::MoverOP( new NormalModeRelaxMover(*this) ); }
 
@@ -69,7 +69,7 @@ public:
 	/// Virtual functions from Mover
 	protocols::moves::MoverOP fresh_instance() const override { return clone(); };
 
-	
+
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const &,

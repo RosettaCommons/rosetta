@@ -81,7 +81,7 @@ void FingerprintBase::print_to_file(std::string const & output_filename) const {
 	for ( auto i_mori = multi_origin_list_.begin(); i_mori != multi_origin_list_.end(); ++i_mori, ++curr_origin_index ) {
 		out_stream<<"/ORI/"<< " " <<std::fixed<<std::setprecision(4)<< i_mori->x() << "\t" <<std::fixed<<std::setprecision(4)<< i_mori->y() << "\t"<<std::fixed<<std::setprecision(4)<< i_mori->z() << "\t" << curr_origin_index <<std::endl;
 	}
-	for (const auto & fi : triplet_fingerprint_data_) {
+	 for ( auto const & fi : triplet_fingerprint_data_ ) {
 		out_stream<<"/RAY/"<< " " << fi.phi << "\t" <<fi.psi << "\t"<< fi.rho << "\t"<< fi.ori <<std::endl;
 	}
 
@@ -140,7 +140,7 @@ void FingerprintBase::print_to_pdb(std::string const & output_pdbname, numeric::
 			std::setw(8)<<std::fixed<<std::setprecision(3)<<i_mori->z()<<
 			std::endl;
 	}
-	for (const auto & pd : triplet_fingerprint_data_) {
+	 for ( auto const & pd : triplet_fingerprint_data_ ) {
 		numeric::xyzVector<core::Real> new_coor;
 		convert_spherical_coor_triplet_to_cartesian( pd, new_coor );
 		new_coor += multi_origin_list_[pd.ori];
@@ -370,7 +370,7 @@ void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output
 	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
 
 	Size counter = 0;
-	for (const auto & pd : eggshell_list_) {
+	 for ( auto const & pd : eggshell_list_ ) {
 		++counter;
 		std::string record_name = "ATOM  ";
 		Size atom_serial_number = counter;
@@ -403,7 +403,7 @@ void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output
 	}
 
 	counter = 0;
-	for (const auto & pd : extshell_list_) {
+	 for ( auto const & pd : extshell_list_ ) {
 		++counter;
 		std::string record_name = "ATOM  ";
 		Size atom_serial_number = counter;
@@ -1456,7 +1456,7 @@ void NonPlaidFingerprint::set_origin_away_from_eggshell_plane( std::list< numeri
 	origin_.zero();
 
 	core::Real A11(0.), A12(0.), A13(0.), A22(0.), A23(0.), b1(0.), b2(0.), b3(0.);
-	for (const auto & pd : egg_and_extra_shell) {
+	 for ( auto const & pd : egg_and_extra_shell ) {
 		A11 += pd.x()*pd.x();
 		A12 += pd.x()*pd.y();
 		A13 += pd.x();
@@ -1493,7 +1493,7 @@ void NonPlaidFingerprint::set_origin_away_from_eggshell_plane( std::list< numeri
 	numeric::xyzVector<core::Real> plane_coord;
 	std::list< numeric::xyzVector<core::Real> > plane_coord_list;
 
-	for (const auto & pdebug : egg_and_extra_shell) {
+	 for ( auto const & pdebug : egg_and_extra_shell ) {
 		plane_coord.x() = pdebug.x();
 		plane_coord.y() = pdebug.y();
 		plane_coord.z() = best_fit_a * pdebug.x() + best_fit_b * pdebug.y() + best_fit_c;
@@ -1556,7 +1556,7 @@ void NonPlaidFingerprint::set_origin_away_from_eggshell(std::list< numeric::xyzV
 	// set origin_ 30 A below the eggshell
 	origin_.zero();
 	numeric::xyzVector<core::Real> temp_vec(0.);
-	for (const auto & pd : egg_and_extra_shell) {
+	 for ( auto const & pd : egg_and_extra_shell ) {
 		temp_vec += (CoM_ - pd);
 	}
 	temp_vec.normalize(30.);
@@ -1883,7 +1883,7 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 	//Size orig_cpu_total_num = 0;
 	//Size orig_cpu_num_evaluations = 0;
 
-	for (const auto & ni : fp.triplet_fingerprint_data()) {
+	 for ( auto const & ni : fp.triplet_fingerprint_data() ) {
 
 		core::Real curr_phi = ni.phi;
 		core::Real curr_psi = ni.psi;
@@ -2617,10 +2617,10 @@ std::list<numeric::xyzVector<core::Real> > NonPlaidFingerprint::combine_xyz_list
 
 	std::list<numeric::xyzVector<core::Real> > combined_list;
 	combined_list.clear();
-	for (const auto & pd : xyz_list_1) {
+	 for ( auto const & pd : xyz_list_1 ) {
 		combined_list.push_back(pd);
 	}
-	for (const auto & pd : xyz_list_2) {
+	 for ( auto const & pd : xyz_list_2 ) {
 		combined_list.push_back(pd);
 	}
 	return combined_list;
@@ -2632,7 +2632,7 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::convert_cart_to_spherical
 	std::list< spherical_coor_triplet > rounded_triplet_list;
 	rounded_triplet_list.clear();
 	spherical_coor_triplet ray_triplet;
-	for (const auto & pd : xyz_list) {
+	 for ( auto const & pd : xyz_list ) {
 		convert_cartesian_to_spherical_coor_triplet( pd - origin_, ray_triplet );
 		ray_triplet.phi = (floor(ray_triplet.phi * 100+0.5)/100);
 		ray_triplet.psi = (floor(ray_triplet.psi * 100+0.5)/100);
@@ -2648,7 +2648,7 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::set_rho_to_zero(std::list
 	std::list< spherical_coor_triplet > rho_zero_triplet_list;
 	rho_zero_triplet_list.clear();
 	spherical_coor_triplet ray_triplet;
-	for (const auto & aa : spherical_triplet_list) {
+	 for ( auto const & aa : spherical_triplet_list ) {
 		ray_triplet = aa;
 		ray_triplet.rho = 0;
 		rho_zero_triplet_list.push_back(ray_triplet);
@@ -2663,7 +2663,7 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::remove_duplicate_phi_psi(
 	std::list< spherical_coor_triplet > unique_triplet;
 	unique_triplet.clear();
 
-	for (const auto & aa : rounded_triplet) {
+	 for ( auto const & aa : rounded_triplet ) {
 		bool found = false;
 		spherical_coor_triplet best_triplet = aa;
 		for ( auto bb = temp_triplet.begin(); bb != temp_triplet.end(); ) {
@@ -2683,7 +2683,7 @@ std::list<spherical_coor_triplet> NonPlaidFingerprint::remove_duplicate_phi_psi(
 std::list<numeric::xyzVector<core::Real> > NonPlaidFingerprint::convert_spherical_list_to_cartesian_list(std::list<spherical_coor_triplet> const & unique_triplet) {
 	std::list<numeric::xyzVector<core::Real> > xyz_list;
 	xyz_list.clear();
-	for (const auto & pd : unique_triplet) {
+	 for ( auto const & pd : unique_triplet ) {
 		numeric::xyzVector<core::Real> new_coor;
 		convert_spherical_coor_triplet_to_cartesian( pd, new_coor );
 		new_coor += origin_;
@@ -2900,7 +2900,7 @@ core::Real NonPlaidFingerprint::get_surface_esp( std::list< numeric::xyzVector<c
 	core::Real charge(1.);
 	core::Real surface_esp(0.);
 
-	for (const auto & sf : surfacePoints_list) {
+	 for ( auto const & sf : surfacePoints_list ) {
 		surface_esp += get_interpolated_esp_energy(sf, charge);
 	}
 

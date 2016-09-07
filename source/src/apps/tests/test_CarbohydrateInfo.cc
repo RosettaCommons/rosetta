@@ -290,8 +290,8 @@ main( int argc, char *argv[] )
 		pose_from_file( Me_glycoside, PATH + "Me_glycoside.pdb", PDB_file );
 
 		test_sugar( Me_glycoside );
-		
-		
+
+
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating C-linked glycan from sequences: AWAAWA and alpha-D-Manp" << endl;
 

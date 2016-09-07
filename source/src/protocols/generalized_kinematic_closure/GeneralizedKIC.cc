@@ -320,7 +320,7 @@ GeneralizedKIC::parse_my_tag(
 	}
 
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for (const auto & branch_tag : branch_tags) {
+	 for ( auto const & branch_tag : branch_tags ) {
 		if ( branch_tag->getName() == "AddResidue" ) {
 			runtime_assert_string_msg( branch_tag->hasOption("res_index"), "RosettaScript parsing error: the <AddResidue> group within a <GeneralizedKIC> block must include a \"res_index=<index>\" statement.");
 			add_loop_residue( branch_tag->getOption<core::Size>("res_index", 0) );
@@ -347,7 +347,7 @@ GeneralizedKIC::parse_my_tag(
 			add_value_to_perturber_value_list( branch_tag->getOption("cis_prob", 0.1) );
 			//Loop through the sub-tags to find out what information we're adding to this perturber:
 			utility::vector1< utility::tag::TagCOP > const subbranch_tags( branch_tag->getTags() );
-			for (const auto & subbranch_tag : subbranch_tags) {
+			 for ( auto const & subbranch_tag : subbranch_tags ) {
 				if ( subbranch_tag->getName() == "AddResidue" ) { //Adding a residue to the PERTURBER'S list of residues.
 					runtime_assert_string_msg( subbranch_tag->hasOption("index"), "RosettaScript parsing error: the <AddResidue> subgroup within the <SampleCisProline> block in a <GeneralizedKIC> block must include a \"index=<residue_index>\" statement.");
 					add_residue_to_perturber_residue_list ( subbranch_tag->getOption<core::Size>("index", 0) );
@@ -421,7 +421,7 @@ GeneralizedKIC::parse_my_tag(
 
 			//Loop through the sub-tags to find out what information we're adding to this perturber:
 			utility::vector1< utility::tag::TagCOP > const subbranch_tags( branch_tag->getTags() );
-			for (const auto & subbranch_tag : subbranch_tags) {
+			 for ( auto const & subbranch_tag : subbranch_tags ) {
 				if ( subbranch_tag->getName() == "AddResidue" ) { //Adding a residue to the PERTURBER'S list of residues.
 					runtime_assert_string_msg( subbranch_tag->hasOption("index"), "RosettaScript parsing error: the <AddResidue> subgroup within the <AddPerturber> block in a <GeneralizedKIC> block must include a \"index=<residue_index>\" statement.");
 					add_residue_to_perturber_residue_list ( subbranch_tag->getOption<core::Size>("index", 0) );
@@ -482,7 +482,7 @@ GeneralizedKIC::parse_my_tag(
 
 			//Loop through the sub-tags to find out what information we're adding to this filter, if any:
 			utility::vector1< utility::tag::TagCOP > const subbranch_tags( branch_tag->getTags() );
-			for (const auto & subbranch_tag : subbranch_tags) {
+			 for ( auto const & subbranch_tag : subbranch_tags ) {
 				if ( subbranch_tag->getName() == "AddFilterParameterReal" ) { //Adding a real-valued filter parameter.
 					runtime_assert_string_msg( subbranch_tag->hasOption("value"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"value=<real value>\" statement.");
 					runtime_assert_string_msg( subbranch_tag->hasOption("name"), "RosettaScript parsing error: the <AddFilterParameterReal> subgroup within the <AddFilter> block in a <GeneralizedKIC> block must include a \"name=<string>\" statement.");

@@ -34,10 +34,10 @@ class AutoRBMover : public protocols::moves::Mover {
 public:
 	AutoRBMover();
 
-	
+
 	void apply( core::pose::Pose & pose ) override;
 
-	
+
 	std::string get_name() const override { return "AutoRBMover"; }
 
 	virtual

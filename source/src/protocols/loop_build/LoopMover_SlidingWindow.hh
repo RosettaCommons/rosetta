@@ -72,7 +72,7 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	
+
 	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new LoopMover_SlidingWindow( *this ) );
 	}

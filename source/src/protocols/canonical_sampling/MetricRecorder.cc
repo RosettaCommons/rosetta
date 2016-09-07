@@ -142,9 +142,9 @@ MetricRecorder::parse_my_tag(
 
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 
-	for (auto subtag : subtags) {
+	for ( auto subtag : subtags ) {
 
-			protocols::moves::MoverOP mover;
+		protocols::moves::MoverOP mover;
 
 		if ( subtag->getName() == "Torsion" ) {
 

@@ -676,7 +676,7 @@ protocols::backrub::BackrubMover::optimize_branch_angles(
 	Pose & pose
 )
 {
-	for (auto & iter : bond_angle_map_) {
+	for ( auto & iter : bond_angle_map_ ) {
 
 		BackrubSegment::BondAngleKey const & bond_angle_key(iter.first);
 		if ( bond_angle_key.key1().valid() && bond_angle_key.key2().valid() && bond_angle_key.key3().valid() ) {

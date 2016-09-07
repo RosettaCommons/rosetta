@@ -143,7 +143,7 @@ Size VallProvider::vallChunksFromLibraries(utility::vector1< std::string > const
 	using std::string;
 	using utility::vector1;
 
-	for (const auto & fn : fns) {
+	 for ( auto const & fn : fns ) {
 		vallChunksFromLibrary( fn );
 	}
 

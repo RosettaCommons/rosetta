@@ -346,7 +346,7 @@ MakeBundle::parse_my_tag(
 
 	//Parse sub-tags, setting major and minor helix params.  (Note that the add_helix function will automatically set the defaults).
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for (const auto & branch_tag : branch_tags) {
+	 for ( auto const & branch_tag : branch_tags ) {
 		if ( branch_tag->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
 			at_least_one_helix = true;
 			runtime_assert_string_msg( !branch_tag->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );

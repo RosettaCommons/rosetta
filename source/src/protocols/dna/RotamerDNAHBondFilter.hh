@@ -43,7 +43,7 @@ public:
 	);
 	~RotamerDNAHBondFilter() override;
 
-	
+
 	bool
 	operator() (
 		core::conformation::ResidueOP rotamer,

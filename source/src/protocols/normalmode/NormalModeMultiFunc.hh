@@ -58,19 +58,19 @@ public: // Creation
 public: // Methods
 
 	// func
-	
+
 	Real
 	operator ()( Multivec const & vars ) const override;
 
 	// dfunc
-	
+
 	void
 	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
 
 	void set_deriv_check_result( NumericalDerivCheckResultOP deriv_check_result );
 
 	/// @brief Error state reached -- derivative does not match gradient
-	
+
 	void
 	dump( Multivec const & vars, Multivec const & vars2 ) const override;
 

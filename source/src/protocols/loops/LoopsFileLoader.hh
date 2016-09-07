@@ -46,7 +46,7 @@ public:
 	~LoopsFileLoader() override;
 
 	/// @brief Return a LoopsFileDataOP constructed from the given input stream (istream).
-	
+
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
@@ -55,7 +55,7 @@ public:
 	) const override;
 
 	/// @brief Return a ResourceOptionsOP with the default set of options.
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const override;
 

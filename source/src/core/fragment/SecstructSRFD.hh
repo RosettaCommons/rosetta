@@ -52,7 +52,7 @@ public:
 	};
 
 	/// @brief create a new instance of this object
-	
+
 	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new SecstructSRFD() );
 	}
@@ -81,13 +81,13 @@ public:
 	bool is_compatible( SingleResidueFragData const& ) const override;
 	bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const override;
 
-	
+
 	void show( std::ostream &out ) const override;
 
-	
+
 	void read_data( std::istream &in ) override;
 
-	
+
 	std::string type() const override {
 		return "Secstruct";
 	}

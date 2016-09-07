@@ -49,11 +49,11 @@ public:
 
 	friend class JobDistributorFactory; //ctor access
 
-	
+
 	core::Size
 	get_new_job_id() override;
 
-	
+
 	void
 	mark_current_job_id_for_repetition() override;
 

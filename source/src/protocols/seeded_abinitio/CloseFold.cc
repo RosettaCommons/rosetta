@@ -288,7 +288,7 @@ CloseFold::find_loops(   pose::Pose & pose,
 bool
 CloseFold::is_cut( utility::vector1<Size> & cut_points, Size residue){
 	bool res_cut = false;
-	for (unsigned long & cut_point : cut_points) {
+	for ( unsigned long & cut_point : cut_points ) {
 		if ( cut_point == residue ) {
 			res_cut = true;
 		}

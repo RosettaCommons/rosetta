@@ -41,8 +41,8 @@ NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Da
 {
 	residue_types_.assign( core::chemical::num_canonical_aas, false );
 	utility::vector0< utility::tag::TagCOP > const neighbor_type_tags( tag->getTags() );
-	for (auto nt_tag_ptr : neighbor_type_tags) {
-			if ( nt_tag_ptr->getName() == "Neighbor" ) {
+	for ( auto nt_tag_ptr : neighbor_type_tags ) {
+		if ( nt_tag_ptr->getName() == "Neighbor" ) {
 			std::string const type( nt_tag_ptr->getOption<std::string>( "type" ) );
 			residue_types_[ core::chemical::aa_from_name( type ) ] = true;
 		}

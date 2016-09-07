@@ -39,26 +39,26 @@ public: // Constructor/Destructor
 
 	/// @brief Destructor
 	inline
-	
+
 	~PocketExemplarMultifunc() override
 	= default;
 
 public: // Methods
 
 	// objective func
-	
+
 	core::Real
 	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	// dfunc
-	
+
 	void
 	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
 	//using core::optimization::Multifunc::dump;
 
 	/// @brief Error state reached; dump out current pdb.
-	
+
 	void
 	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const &) const override;
 

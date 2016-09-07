@@ -48,7 +48,7 @@ public:
 
 	~FlexPacker() override;
 
-	
+
 	void
 	apply( core::pose::Pose & pose ) override;
 

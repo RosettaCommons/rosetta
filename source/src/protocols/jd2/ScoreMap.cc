@@ -72,7 +72,7 @@ ScoreMap::score_map_from_scored_pose(
 
 	core::Real total(0);
 
-	for (auto & score_type : score_types) {
+	for ( auto & score_type : score_types ) {
 		core::Real const some_score( weights[score_type] * pose.energies().total_energies()[ score_type ] );
 		score_map[ name_from_score_type(score_type) ] = some_score;
 		total += some_score;

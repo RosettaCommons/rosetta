@@ -68,7 +68,7 @@ static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
 // Static constant data access
 std::string RegExManager::H1_pattern() const { return H1_pattern_; }
 std::string RegExManager::H3_pattern() const { return H3_pattern_; }
-	
+
 std::string RegExManager::L1_pattern() const { return L1_pattern_; }
 std::string RegExManager::L3_pattern() const { return L3_pattern_; }
 
@@ -85,24 +85,24 @@ RegExManager::create_singleton_instance()
 
 /// @brief Loads regex from database, easier for user modification this way
 void RegExManager::load_regex_from_db() {
-	
+
 	// find the regex database file
 	// expected format is:
-	
+
 	// # comment
 	// H1:"REGEX_STRING"
-	
+
 	using std::string;
-	
+
 	string dir = "protocol_data/antibody/";
 	string filename = "cdr_regex.txt";
 	string path_to_file = basic::database::find_database_path( dir, filename );
-	
+
 	std::ifstream f(path_to_file);
 	string line;
-	
+
 	TR << "Path to REGEX file is: " << path_to_file << std::endl;
-	
+
 	struct {
 		string cdr_name;
 		string & pattern;

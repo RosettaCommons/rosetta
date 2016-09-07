@@ -43,10 +43,10 @@ class Edge
 public:
 
 	/// APL -- CODE DUPLICATION -- FIX THIS IN A BETTER WAY TO RESOLVE THE CIRCULAR DEPENDENCY
-	constexpr static int PEPTIDE{-1}; // must be negative, see Edge::is_jump()
-	constexpr static int CHEMICAL{-2}; // for fold-tree edges that connect two chemically-bound residues
+	const static int PEPTIDE{-1}; // must be negative, see Edge::is_jump()
+	const static int CHEMICAL{-2}; // for fold-tree edges that connect two chemically-bound residues
 
-public:
+	public:
 
 	/////////////////////////////////////////////////////////////////////////////
 	// member access

@@ -94,7 +94,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 	//  }
 	if ( tr.Trace.visible() ) {
 		tr.Trace << " start region for StartStructClaimer "<< std::endl;
-		for (unsigned long it : start_region) {
+		for ( unsigned long it : start_region ) {
 			tr.Trace << it << " ";
 		}
 		tr.Trace << std::endl;
@@ -136,7 +136,7 @@ void StartStructClaimer::initialize_dofs(
 
 	FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 	if ( perturb_ == 0.0 ) return;
-	for (const auto & init_dof : init_dofs) {
+	 for ( auto const & init_dof : init_dofs ) {
 		//don't really know how this looks for jumps
 
 		claims::BBClaimOP bb_ptr( utility::pointer::dynamic_pointer_cast< claims::BBClaim >( init_dof ) );

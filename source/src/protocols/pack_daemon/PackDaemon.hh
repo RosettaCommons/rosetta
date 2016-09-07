@@ -459,7 +459,7 @@ public:
 
 	~BasicSimAnnealerRepacker() override;
 
-	
+
 	RotamerAssignmentAndEnergy
 	repack( utility::vector0< int > const & rot_to_pack ) override;
 
@@ -513,7 +513,7 @@ public:
 	~DenseIGRepacker() override;
 	void set_MCA(); // once done, cannot be undone
 
-	
+
 	RotamerAssignmentAndEnergy
 	repack( utility::vector0< int > const & rot_to_pack ) override;
 
@@ -541,7 +541,7 @@ public:
 
 	~DoubleDenseIGRepacker() override;
 
-	
+
 	RotamerAssignmentAndEnergy
 	repack( utility::vector0< int > const & rot_to_pack ) override;
 
@@ -569,7 +569,7 @@ public:
 
 	~FASTER_IG_Repacker() override;
 
-	
+
 	RotamerAssignmentAndEnergy
 	repack( utility::vector0< int > const & rot_to_pack ) override;
 

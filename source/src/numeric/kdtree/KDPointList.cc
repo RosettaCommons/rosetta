@@ -103,14 +103,14 @@ utility::vector1< KDPointOP > KDPointList::sorted_values() {
 /// This calls insert which is a little slow, and is a candidate for
 /// optimization if the insert() method shows up in profiling.
 void KDPointList::merge( KDPointList const & other ) {
-	for (auto tmp : other) {
-			insert( tmp );
+	for ( auto tmp : other ) {
+		insert( tmp );
 	}
 }
 
 void KDPointList::show( std::ostream & out ) const {
 	out << "KDPointList with " << size() << " points." << std::endl;
-	for (const auto & it : container_) {
+	 for ( auto const & it : container_ ) {
 		it->show( out );
 		out << std::endl;
 	}

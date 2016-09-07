@@ -96,14 +96,14 @@ dump_cif(
 	core::pose::Pose const & pose,
 	std::string const & file_name,
 	StructFileRepOptionsCOP options )
-	
+
 {
 
 	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
 
 	converter.init_from_pose( pose );
 	StructFileRepOP cif_sfr =  converter.sfr();
-	
+
 	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
 	if ( !file ) {
 		Error() << "cif_writer:dump_cif Unable to open file:" << file_name << " for writing!!!" << std::endl;
@@ -120,7 +120,7 @@ dump_cif(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	StructFileRepOptionsCOP options)
-	
+
 {
 
 	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
@@ -156,7 +156,7 @@ dump_cif(
 	converter.init_from_pose( pose );
 	StructFileRepOP cif_sfr =  converter.sfr();
 	cif_sfr->append_to_additional_string_output( jd2_job_data );
-	
+
 	dump_cif( out, cif_sfr, *options);
 	return cif_sfr;
 
@@ -187,7 +187,7 @@ std::string
 dump_cif(
 	StructFileRepOP sfr,
 	StructFileRepOptions const & options )
-	
+
 {
 	std::ostringstream out;
 	dump_cif( out, sfr, options );
@@ -540,19 +540,19 @@ dump_cif(
 	}
 
 	//Finally, the single string output.  If you have a better way to do this, please refactor this.
-	if ( !sfr->additional_string_output().empty() || ! sfr->foldtree_string().empty()) {
+	if ( !sfr->additional_string_output().empty() || ! sfr->foldtree_string().empty() ) {
 		ISTable* rosetta_additional = new ISTable( "rosetta_additional" );
-			rosetta_additional->AddColumn( "type" );
-			rosetta_additional->AddColumn( "output");
-		
-		if (! sfr->foldtree_string().empty()){
+		rosetta_additional->AddColumn( "type" );
+		rosetta_additional->AddColumn( "output");
+
+		if ( ! sfr->foldtree_string().empty() ) {
 			std::vector< std::string > out;
-			
+
 			out.push_back("fold_tree");
 			out.push_back(sfr->foldtree_string());
 			rosetta_additional->AddRow(out);
 		}
-		if (! sfr->additional_string_output().empty()){
+		if ( ! sfr->additional_string_output().empty() ) {
 			std::vector< std::string > out;
 
 			out.push_back( "etc" );

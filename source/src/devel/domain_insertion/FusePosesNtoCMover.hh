@@ -63,11 +63,11 @@ public:
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	void
 	apply( core::pose::Pose & pose ) override;
 
@@ -238,7 +238,7 @@ public:
 
 	~SetupCoiledCoilFoldTreeMover() override;
 
-	
+
 	std::string
 	get_name() const override;
 

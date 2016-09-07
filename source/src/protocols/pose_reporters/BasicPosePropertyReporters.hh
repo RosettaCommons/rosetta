@@ -52,7 +52,7 @@ public:
 
 	core::Real report_property( core::pose::Pose & p ) const override;
 
-	
+
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -84,7 +84,7 @@ public:
 
 	core::Real report_property( core::pose::Pose & p ) const override;
 
-	
+
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -121,7 +121,7 @@ public:
 
 	core::Real report_property( core::pose::Pose & p1, core::pose::Pose & p2 ) const override;
 
-	
+
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,

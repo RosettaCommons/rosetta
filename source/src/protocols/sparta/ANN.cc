@@ -173,7 +173,7 @@ void ANN::loadWeightBias3( string const& fName,
 
 	int index = 0;
 	int row = N_W_row, col = N_W_col;
-	for (auto & Entrie : W_Tab.Entries) {//iterate rows
+	for ( auto & Entrie : W_Tab.Entries ) {//iterate rows
 		int check = index/row; //cout << check << endl;
 		for ( int  i = 0; i < col; i++ ) {
 			str = itoa(i+1,buf);

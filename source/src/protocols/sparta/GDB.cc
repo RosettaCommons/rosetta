@@ -169,7 +169,7 @@ void GDB::showGDB( std::ostream & out ) {
 	}
 
 	// write the entries
-	for (auto & Entrie : Entries) {
+	for ( auto & Entrie : Entries ) {
 		GDB_Entry ent = Entrie.second;
 
 		for ( int i = 0; i < (int) VARS.size(); i++ ) {

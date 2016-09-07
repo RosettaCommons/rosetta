@@ -311,8 +311,8 @@ RampingMover::parse_my_tag(
 
 
 		utility::vector0< TagCOP > const & rampterm_tags( tag->getTags() );
-		for (auto tag_ptr : rampterm_tags) {
-				if ( ! tag_ptr->hasOption("score_type") ) {
+		for ( auto tag_ptr : rampterm_tags ) {
+			if ( ! tag_ptr->hasOption("score_type") ) {
 				throw utility::excn::EXCN_RosettaScriptsOption("Ramping mover Add statement requires the score_type option");
 			}
 			if ( ! tag_ptr->hasOption("start_weight") ) {

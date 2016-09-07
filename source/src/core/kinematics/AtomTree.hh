@@ -118,7 +118,7 @@ public: // Creation
 	AtomTree();
 
 	/// @brief Destructor
-	
+
 	~AtomTree() override;
 
 	/// @brief copy constructor

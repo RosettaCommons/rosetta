@@ -69,7 +69,7 @@ MinimizerMap::link_torsion_vectors()
 #ifndef NDEBUG
 	int last_depth = -1; // int depth( 100000 ); -- bad code buries assumptions deep deep into code where no one knows to find it
 #endif
-	for (auto & it : dof_nodes_) {
+	for ( auto & it : dof_nodes_ ) {
 		DOF_Node & dof_node( *it );
 		debug_assert( last_depth == -1 || dof_node.depth() <= last_depth );
 #ifndef NDEBUG
@@ -83,7 +83,7 @@ MinimizerMap::link_torsion_vectors()
 void
 MinimizerMap::zero_torsion_vectors()
 {
-	for (auto & dof_node : dof_nodes_) {
+	for ( auto & dof_node : dof_nodes_ ) {
 		dof_node->F1() = 0.0;
 		dof_node->F2() = 0.0;
 	}
@@ -329,7 +329,7 @@ MinimizerMap::assign_rosetta_torsions( pose::Pose const & pose )
 
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 
-	for (auto & it : dof_nodes_) {
+	for ( auto & it : dof_nodes_ ) {
 		DOF_Node & dof_node( *it );
 
 		if ( dof_node.type() == id::PHI ) {

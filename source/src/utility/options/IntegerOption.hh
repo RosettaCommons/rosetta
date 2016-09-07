@@ -77,7 +77,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~IntegerOption() override
 	= default;
 

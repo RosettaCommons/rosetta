@@ -94,11 +94,11 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	
+
 	MoverOP clone() const override;
 
 	/// @brief create this type of object
-	
+
 	MoverOP fresh_instance() const override;
 
 
@@ -130,7 +130,7 @@ public: // virtual main methods
 
 
 	/// @brief apply defined moves to given Pose
-	
+
 	void apply( Pose & pose ) override;
 
 	std::string get_name() const override;

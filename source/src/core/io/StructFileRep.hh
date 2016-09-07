@@ -269,36 +269,36 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	std::map< std::string, std::string > const & pdb_comments() const { return pdb_comments_ ; };
 	std::map< std::string, std::string >       & pdb_comments()       { return pdb_comments_; };
-	
+
 	/// @brief Pose Energies Table lables
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	utility::vector1< std::string > const & score_table_labels() const { return score_table_labels_; };
 	utility::vector1< std::string >       & score_table_labels()       { return score_table_labels_; };
-	
+
 	/// @brief Pose Energies Table weights
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	utility::vector1< core::Real > const & score_table_weights() const { return score_table_weights_; };
 	utility::vector1< core::Real >       & score_table_weights()       { return score_table_weights_; };
-	
+
 	/// @brief Pose Energies Table lines (Yes, std::vector is appropriate to help for cif writing of the colunns.)
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	utility::vector1< std::vector< std::string > > const & score_table_lines() const { return score_table_lines_; };
 	utility::vector1< std::vector< std::string > >      & score_table_lines()        { return score_table_lines_; };
-	
-	/// @brief Pose Energies table filename for PDB output. 
+
+	/// @brief Pose Energies table filename for PDB output.
 	std::string const &  score_table_filename() const { return score_table_filename_; };
 	std::string &        score_table_filename()       { return score_table_filename_; };
-	
+
 	/// @brief Pose Cache - String Data
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	std::map< std::string, std::string > const & pose_cache_string_data() const { return pose_cache_string_data_; };
 	std::map< std::string, std::string >       & pose_cache_string_data()       { return pose_cache_string_data_; };
-	
+
 	/// @brief Pose Cache - Float Data
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	std::map< std::string, float > const & pose_cache_float_data() const        { return pose_cache_float_data_; };
 	std::map< std::string, float >       & pose_cache_float_data()              { return pose_cache_float_data_; };
-	
+
 	/// @brief A catch-all place to store additional data for output.
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	std::string const & additional_string_output() const { return additional_string_output_; };
@@ -326,15 +326,15 @@ private:
 	utility::vector0< ChainAtoms > chains_;
 	std::string foldtree_string_;
 	std::map < std::string, std::string > pdb_comments_;
-	
+
 	utility::vector1< std::string > score_table_labels_;
 	utility::vector1< core::Real > score_table_weights_;
 	utility::vector1< std::vector < std::string > > score_table_lines_;
 	std::string score_table_filename_; //This is to preserve original PDB behavior.
-	
+
 	std::map< std::string, std::string > pose_cache_string_data_;
 	std::map< std::string, float > pose_cache_float_data_; //JAB - was originally a float, keeping it a float.
-	
+
 	std::string additional_string_output_;
 };  // class StructFileRep
 

@@ -230,7 +230,7 @@ RestrictDesignToProteinDNAInterface::apply(
 	// configure the packer task for any specified targeted top-stranded DNA basepair positions
 	if ( ! targeted_dna_.empty() ) {
 		// (by default, targeted_dna_ is an empty vector, so none of the following applies)
-		for (const auto & def : targeted_dna_) {
+		 for ( auto const & def : targeted_dna_ ) {
 			Size index( def->pdbpos );
 			if ( pose.pdb_info() ) {
 				// if pose has PDB numbering and chain info, assume DNA defs refer to them
@@ -331,7 +331,7 @@ RestrictDesignToProteinDNAInterface::apply(
 			}
 		} else {
 			// targeted dna design positions exist: limit interface to within the vicinity of these
-			for (auto & it : *dna_chains_) {
+			for ( auto & it : *dna_chains_ ) {
 				Size resid( it.first ); DnaPosition & dnapos( it.second );
 				ResidueLevelTask & toptask( ptask.nonconst_residue_task( resid ) );
 				if ( !toptask.has_behavior("TARGET") && !toptask.has_behavior("SCAN") ) continue;
@@ -380,7 +380,7 @@ RestrictDesignToProteinDNAInterface::apply(
 	/// Step 4: apply any new restrictions to resfile pack/design settings, and any existing constraints
 	bool const repack_only( option[ OptionKeys::dna::design::repack_only ]() );
 	ConstraintSetCOP constraint_set( pose.constraint_set() );
-	for (const auto & itr : interface_->protein_neighbors()) {
+	 for ( auto const & itr : interface_->protein_neighbors() ) {
 		Size const index( itr.first );
 		DnaNeighbor const & neighbor( itr.second );
 
@@ -421,7 +421,7 @@ RestrictDesignToProteinDNAInterface::apply(
 					typesend( rlt.allowed_residue_types_end() ); allowed_type != typesend; ++allowed_type ) {
 				name3set.insert( (*allowed_type)->name3() );
 			}
-			for (const auto & n3 : name3set) {
+			 for ( auto const & n3 : name3set ) {
 				TR << n3 << ",";
 			}
 			TR << '\n';

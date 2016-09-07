@@ -44,17 +44,17 @@ public:
 	SearchPatternRotSetOp( SearchPatternOP pattern );
 	SearchPatternRotSetOp( SearchPatternRotSetOp const & other );
 
-	
+
 	core::pack::rotamer_set::RotamerSetOperationOP
 	clone() const override;
 
-	
+
 	utility::vector1< core::conformation::ResidueCOP > get_rigid_body_confs(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & ptask,
 		core::Size residue_index) override;
 
-	
+
 	core::Real increase_packer_residue_radius(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTaskCOP,

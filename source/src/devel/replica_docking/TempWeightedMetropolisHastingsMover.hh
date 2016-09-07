@@ -63,19 +63,19 @@ public:
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	protocols::canonical_sampling::ThermodynamicMoverOP
 	random_mover() const override;
 
-	
+
 	void
 	add_mover(
 		protocols::canonical_sampling::ThermodynamicMoverOP mover,

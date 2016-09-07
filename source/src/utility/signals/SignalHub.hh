@@ -341,7 +341,7 @@ protected: // re-usable link container methods
 		currently_sending_ = true;
 
 		// the only links left are valid links
-		for (auto & link : links) {
+		for ( auto & link : links ) {
 			link->send< Function >( s );
 		}
 
@@ -353,7 +353,7 @@ protected: // re-usable link container methods
 	/// @brief invalidate and destroy internals of all links
 	inline
 	void invalidate_all( LinkUnits & links ) const {
-		for (auto & link : links) {
+		for ( auto & link : links ) {
 			link->valid = false;
 			deallocate( *link );
 		}

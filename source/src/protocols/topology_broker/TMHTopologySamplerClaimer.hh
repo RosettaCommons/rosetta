@@ -57,7 +57,7 @@ public:
 	TMHTopologySamplerClaimer(topology_broker::TopologyBrokerOP broker);
 
 	/// @brief destructor
-	
+
 	~TMHTopologySamplerClaimer() override;
 
 	/// @brief TMHTopologySamplerClaimer has virtual functions... use this to obtain a new instance

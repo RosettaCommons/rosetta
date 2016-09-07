@@ -106,7 +106,7 @@ public:
 	bool
 	apply( ResidueType & rsd ) const override;
 
-	
+
 	std::string
 	deletes_atom() override{ return atom_name_; }
 
@@ -191,7 +191,7 @@ public:
 	apply( ResidueType & rsd ) const override;
 
 	/// @brief Which property, if any, is added.
-	
+
 	std::string
 	adds_property() override{ return property_; }
 
@@ -215,7 +215,7 @@ public:
 	apply( ResidueType & rsd ) const override;
 
 	/// @brief Which property, if any, is deleted.
-	
+
 	std::string
 	deletes_property() override{ return property_; }
 
@@ -237,7 +237,7 @@ public:
 	bool apply( ResidueType & rsd ) const override;
 
 	/// @brief Which variant, if any, is deleted.
-	
+
 	std::string
 	deletes_variant() override{ return variant_; }
 
@@ -439,7 +439,7 @@ public:
 	bool
 	apply( ResidueType & rsd ) const override;
 
-	
+
 	std::string
 	adds_atom() override{ return atom_name_; }
 
@@ -464,7 +464,7 @@ public:
 	/// @brief  Apply this patch to the given ResidueType.
 	bool apply( ResidueType & rsd ) const override;
 
-	
+
 	std::string
 	adds_atom() override{ return alias_; }
 
@@ -619,11 +619,11 @@ public:
 	apply( ResidueType & rsd ) const override;
 
 	/// @brief Generates name3.
-	
+
 	std::string
 	generates_name3() override{ return name3_; }
 
-	
+
 	bool
 	applies_to_placeholder() const override { return true; }
 
@@ -882,12 +882,12 @@ public:
 	/// @brief constructor
 	ChiralFlipNaming() {}// std::string const atom1, std::string const atom2 ): atom1_( atom1 ), atom2_( atom2 ) {};
 
-	
+
 	bool
 	applies_to_placeholder() const override { return true; }
 
 	/// @brief Generates a new aa
-	
+
 	bool
 	may_change_aa() override{ return true; }
 

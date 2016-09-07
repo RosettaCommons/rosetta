@@ -89,7 +89,7 @@ public:
 	/// @brief value constructor without score function
 	GenericMonteCarloMover(
 		Size const maxtrials,
-        Size const max_accepted_trials,
+		Size const max_accepted_trials,
 		Size const task_scaling,
 		MoverOP const & mover,
 		Real const temperature = 0.0,
@@ -112,7 +112,7 @@ public:
 	/// @brief value constructor with task operation via TaskFactory
 	GenericMonteCarloMover(
 		Size const maxtrials,
-        Size const max_accepted_trials,
+		Size const max_accepted_trials,
 		Size const task_scaling,
 		MoverOP const & mover,
 		TaskFactoryOP factory_in,
@@ -211,9 +211,9 @@ public: // accessor
 	/// @brief Returns maximum number of trials
 	Size maxtrials() const { return maxtrials_; }
 
-    /// @brief Returns maximum number of accepted trials
-    Size max_accepted_trials() const { return max_accepted_trials_; }
-    
+	/// @brief Returns maximum number of accepted trials
+	Size max_accepted_trials() const { return max_accepted_trials_; }
+
 	/// @brief Returns the task scaling value
 	Size task_scaling() const { return task_scaling_; }
 
@@ -223,9 +223,9 @@ public: // mutators
 
 	/// @brief set max trials of MC trials
 	void set_maxtrials( Size const ntrial );
-    
-    /// @brief set max accepted trials of MC trials
-    void set_max_accepted_trials( Size const n_max_accepted_trial );
+
+	/// @brief set max accepted trials of MC trials
+	void set_max_accepted_trials( Size const n_max_accepted_trial );
 
 	/// @brief set task multiplier to calculate trials from task
 	void set_task_scaling( Size const scaling );
@@ -300,28 +300,28 @@ public: // mutators
 	void save_trial_number_to_checkpoint( core::Size const i ) const;
 	void reset_baselines( bool const r ){ reset_baselines_ = r; };
 	bool reset_baselines() const{ return reset_baselines_; }
-    
-    void set_keep_filters( bool const k ){ keep_filters_ = k; };
-    bool keep_filters() const{ return keep_filters_; }
-    
+
+	void set_keep_filters( bool const k ){ keep_filters_ = k; };
+	bool keep_filters() const{ return keep_filters_; }
+
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP task_factory() const{ return factory_; }
-    
+
 	Size trial_counter() const { return trial_counter_; }
-    void trial_counter( core::Size const i ){ trial_counter_ = i; };
-    
-    //void set_trial_counter
+	void trial_counter( core::Size const i ){ trial_counter_ = i; };
+
+	//void set_trial_counter
 	Size accept_counter() const { return accept_counter_; }
 	utility::vector1< Real > temperatures() const { return temperatures_; }
 	void temperatures( utility::vector1< Real > const & temps ) { temperatures_ = temps; }
 	bool recover_low() const { return recover_low_; }
 	MoverOP mover() const override { return mover_; }
 	utility::vector1< FilterOP > const & filters() const { return filters_; }
-    utility::vector1< bool > const & adaptive() const { return adaptive_; }
-    
-    
-    utility::vector1< core::Size > const & num_rejections() const { return num_rejections_; }
-    
+	utility::vector1< bool > const & adaptive() const { return adaptive_; }
+
+
+	utility::vector1< core::Size > const & num_rejections() const { return num_rejections_; }
+
 	ScoreFunctionOP scorefxn() const { return scorefxn_; }
 	utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > mover_stopping_condition() const { return mover_stopping_condition_; }
 	bool preapply() const { return preapply_; }
@@ -338,8 +338,8 @@ public: // mutators
 	void lowest_score_pose( core::pose::PoseOP pose );
 	void last_accepted_pose( core::pose::PoseOP pose );
 protected:
-    /// @brief evalute pose by ScoreFunctionOP or FilterOP
-    Real scoring( Pose & pose );
+	/// @brief evalute pose by ScoreFunctionOP or FilterOP
+	Real scoring( Pose & pose );
 
 	/// @brief Executes all triggers. The order of trigger execution is undefined.
 	/// Do not assume, depend, or in any way rely on a particular ordering.
@@ -355,21 +355,21 @@ protected:
 
 	std::string progress_file() const{ return progress_file_; }
 	void progress_file( std::string const & s ){ progress_file_ = s; }
-    
-    /// @brief Sets mc_accpeted
-    void set_mc_accepted( MCA const m ){ mc_accepted_ = m; }
-    
-    int trial_counter_;
-    
-    /// @brief Count the number of rejections each filter resulted in.
-    utility::vector1< core::Size > num_rejections_;
-    
+
+	/// @brief Sets mc_accpeted
+	void set_mc_accepted( MCA const m ){ mc_accepted_ = m; }
+
+	int trial_counter_;
+
+	/// @brief Count the number of rejections each filter resulted in.
+	utility::vector1< core::Size > num_rejections_;
+
 private:
 	/// @brief max number of MC trials
 	Size maxtrials_;
-    
-    /// @brief max number of accepted MC trials
-    Size max_accepted_trials_;
+
+	/// @brief max number of accepted MC trials
+	Size max_accepted_trials_;
 
 	/// @brief number of designable positions
 	Size number_designable_;
@@ -468,7 +468,7 @@ private:
 	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_; /// dflt NULL; this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, <saved_accept_file_name>.mover_tag. To work, mover_tag_ must be exposed to the movers being called.
 	std::string user_defined_mover_name_; // dflt ""; the mover being called by GenericMC. Used to add values to the poses DataCache.
 	bool reset_baselines_; ///dflt true; reset the filters' baseline at trial=1?
-    bool keep_filters_; /// dflt false; avoid clearing filters if a score function is given. Used in the EvolutionDynamicsMover which inherits from genericMCmover.
+	bool keep_filters_; /// dflt false; avoid clearing filters if a score function is given. Used in the EvolutionDynamicsMover which inherits from genericMCmover.
 	std::string progress_file_; // dflt ""; a file name where data on each step is saved.
 };
 

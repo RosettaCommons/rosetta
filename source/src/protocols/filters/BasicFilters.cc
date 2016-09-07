@@ -286,7 +286,7 @@ CompoundFilter::clear_reset_filters()
 void
 CompoundFilter::set_resid( core::Size const resid )
 {
-	for (auto & it : compound_statement_) {
+	for ( auto & it : compound_statement_ ) {
 		protocols::moves::modify_ResId_based_object( it.first, resid );
 	}
 }

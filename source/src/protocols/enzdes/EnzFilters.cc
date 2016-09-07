@@ -803,7 +803,7 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 	if ( found_evaluators.size() != evaluators.size() ) {
 		std::cerr << "Not all parameters from requirement file " << reqfile_name_ << " were found in EnzdesScorefileFilter values, filering likely not working correctly." << std::endl;
 		std::cerr << "Missing parameters: ";
-		for (const auto & evaluator : evaluators) {
+		 for ( auto const & evaluator : evaluators ) {
 			if ( found_evaluators.find( evaluator.first ) == found_evaluators.end() ) std::cerr << evaluator.first << ", ";
 		}
 		std::cerr << std::endl;
@@ -854,7 +854,7 @@ EnzdesScorefileFilter::examine_pose(
 	setup_pose_metric_calculators( pose, separate_out_constraints );
 
 	//first write out the relevant score terms for the pose total
-	for (const auto & relevant_scoreterm : relevant_scoreterms_) {
+	 for ( auto const & relevant_scoreterm : relevant_scoreterms_ ) {
 		std::string sco_name = relevant_scoreterm;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
 
@@ -875,7 +875,7 @@ EnzdesScorefileFilter::examine_pose(
 	if ( totcalc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
-		for (const auto & tot_calculator : tot_calculators) {
+		 for ( auto const & tot_calculator : tot_calculators ) {
 
 			std::string calc_name = "tot_" + tot_calculator.first;
 			if ( tot_calculator.first == "charges_pm" ) calc_name = "tot_" + tot_calculator.second;
@@ -1012,7 +1012,7 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 
 	using namespace core::io::silent;
 
-	for (const auto & relevant_scoreterm : relevant_scoreterms_) {
+	 for ( auto const & relevant_scoreterm : relevant_scoreterms_ ) {
 
 		std::string sco_name = sub_name + "_" +  relevant_scoreterm ;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
@@ -1043,7 +1043,7 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 	if ( res_calc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > calculators_this_res = res_calc_it->second;
-		for (auto & calculators_this_re : calculators_this_res) {
+		for ( auto & calculators_this_re : calculators_this_res ) {
 
 			std::string res_calc_name = sub_name + "_" + calculators_this_re.first;
 			int width = std::max( 10, (int) res_calc_name.length() + 3 );
@@ -1203,8 +1203,8 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 		if ( pose.residue_type( *vecit ).is_ligand() ) {
 			Size lig_chain = pose.chain( *vecit );
 			std::string lig_ch_string = utility::to_string( lig_chain );
-			for (unsigned long prot_chain : protein_chains) {
-					std::string prot_ch_string = utility::to_string( prot_chain );
+			for ( unsigned long prot_chain : protein_chains ) {
+				std::string prot_ch_string = utility::to_string( prot_chain );
 				if ( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
 
 				std::string lig_interface_neighbor_calc_name = "neighbor_def_" + prot_ch_string + "_" + lig_ch_string;

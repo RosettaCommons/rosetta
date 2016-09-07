@@ -421,11 +421,11 @@ public:
 	PyMolObserver &
 	operator= (PyMolObserver const &rval);
 
-	
+
 	core::pose::datacache::CacheableObserverOP
 	clone() override;
 
-	
+
 	core::pose::datacache::CacheableObserverOP
 	create() override;
 

@@ -34,21 +34,21 @@ namespace mmcif {
 ///  Return success or failure.
 bool
 dump_cif( core::pose::Pose const & pose,
-	      std::string const & file_name,
-		  StructFileRepOptionsCOP options =  StructFileRepOptionsCOP( new StructFileRepOptions ) );
+	std::string const & file_name,
+	StructFileRepOptionsCOP options =  StructFileRepOptionsCOP( new StructFileRepOptions ) );
 
 ///@brief Dump cif to an outstream, optionally passing options and returning a StructFileRep for further processing
 StructFileRepOP
 dump_cif( core::pose::Pose const & pose,
-		  std::ostream & out,
-	      StructFileRepOptionsCOP options =  StructFileRepOptionsCOP( new StructFileRepOptions )
+	std::ostream & out,
+	StructFileRepOptionsCOP options =  StructFileRepOptionsCOP( new StructFileRepOptions )
 );
 
 ///@brief Return an mmCIF-format string from a pose with defaults.
 std::string
 dump_cif( core::pose::Pose const & pose );
 
-	
+
 /// @brief Dump an mmCIF from a pose, optionally extracting extra info.
 /// NOTE: DEPRECATED.  LEGACY JD2 function to use JOB data, which we no longer use in JD3
 ///
@@ -69,8 +69,8 @@ std::string
 dump_cif(
 	StructFileRepOP sfr,
 	StructFileRepOptions const & options );
-	
-	
+
+
 /// @brief Main dump_cif function.
 ///  Create the sfr from pose using the PoseToStructFileRepConverter class.
 ///  Return success or failure.

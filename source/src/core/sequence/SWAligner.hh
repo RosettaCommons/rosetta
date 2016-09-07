@@ -31,7 +31,7 @@ public:
 	/// @brief dtor
 	~SWAligner() override = default;
 
-	
+
 	SequenceAlignment align(
 		SequenceOP seq_y,
 		SequenceOP seq_x,

@@ -377,7 +377,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 			emap.clear();
 			scfxn_->eval_ci_1b(rsd, pose, emap);
-			for (auto st : ci_1b) {
+			for ( auto st : ci_1b ) {
 				if ( !emap[st] ) continue;
 
 				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
@@ -394,7 +394,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 			emap.clear();
 			scfxn_->eval_cd_1b(rsd, pose, emap);
-			for (auto st : cd_1b) {
+			for ( auto st : cd_1b ) {
 
 				if ( !emap[st] ) continue;
 
@@ -476,7 +476,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 				emap.clear();
 				scfxn_->eval_ci_2b(rsd, otherRsd, pose, emap);
-				for (auto st : ci_2b) {
+				for ( auto st : ci_2b ) {
 					if ( !emap[st] ) continue;
 
 					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
@@ -494,7 +494,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 				EnergyMap emap;
 				scfxn_->eval_cd_2b(rsd, otherRsd, pose, emap);
-				for (auto st : cd_2b) {
+				for ( auto st : cd_2b ) {
 					if ( !emap[st] ) continue;
 
 					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
@@ -576,7 +576,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
 					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
-					for (auto st : ci_lr_2b) {
+					for ( auto st : ci_lr_2b ) {
 						if ( !emap[st] ) continue;
 
 						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );

@@ -321,7 +321,7 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::s
 	colors.push_back( "hotpink" );
 	colors.push_back( "olive" );
 	Size layer = 0;
-	for (const auto & it : layer_specification) {
+	 for ( auto const & it : layer_specification ) {
 		utility::vector1< Size > pos;
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 			if ( it.second[ i ] ) {
@@ -358,7 +358,7 @@ LayerDesignOperation::init_nc_layerdefinitions( std::string const & layer_name )
 	if ( ( layer_name == "Nterm" ) || ( layer_name == "Cterm" ) ) {
 		def[ "all" ];
 	} else {
-		for (const auto & ss : SS_TYPES) {
+		 for ( auto const & ss : SS_TYPES ) {
 			def[ ss ];
 		}
 	}
@@ -1199,7 +1199,7 @@ utility::vector1< std::string > unique_strs(
 	utility::vector1< std::string > const & orig2 )
 {
 	std::set< std::string > strset( orig.begin(), orig.end() );
-	for (const auto & s : orig2) {
+	 for ( auto const & s : orig2 ) {
 		strset.insert( s );
 	}
 	return utility::vector1< std::string >( strset.begin(), strset.end() );
@@ -1255,7 +1255,7 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 		if ( secstruct == "all" ) {
 			TR << "Appending residues " << aas << " to layer " << layer_name << std::endl;
 			auto lrs =  layer_residues_.find( layer_name );
-			for (auto & ld : lrs->second) {
+			for ( auto & ld : lrs->second ) {
 				std::string const & cur_aas = ld.second;
 				// prevent appending to all twice
 				if ( ld.first != "all" ) {
@@ -1272,7 +1272,7 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 		defs[ secstruct ] = unique_strs( aas_vec, defs[ secstruct ] );
 
 		TR << "Appending noncanonical residues " << aas << " to layer " << layer_name << std::endl;
-		for (auto & def : defs) {
+		for ( auto & def : defs ) {
 			def.second = unique_strs( aas_vec, def.second );
 		}
 	}
@@ -1313,7 +1313,7 @@ LayerDesignOperation::parse_layer_secstruct_tag(
 		utility::vector1< std::string > res_to_exclude;
 		parse_ncaa_list( aas, res_to_exclude );
 		exclude_ncaas( res_to_exclude, defs[ secstruct ] );
-		for (auto & def : defs) {
+		for ( auto & def : defs ) {
 			exclude_ncaas( res_to_exclude, def.second );
 		}
 	}

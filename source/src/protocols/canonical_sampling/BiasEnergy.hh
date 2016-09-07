@@ -99,7 +99,7 @@ public:
 	virtual core::Real evaluate( core::pose::Pose const& ) const;
 
 	//for trajectory output...
-	
+
 	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::Job & ) const override;
 
 #ifdef USEMPI
@@ -120,7 +120,7 @@ public:
 
 	void set_temperature( core::Real setting );
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -130,7 +130,7 @@ public:
 		core::pose::Pose const & pose
 	) override;
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose &,
@@ -138,20 +138,20 @@ public:
 		core::Size //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	observe_after_metropolis(
 		MetropolisHastingsMover const &
 	) override {};
 
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose &,
 		MetropolisHastingsMover const &
 	) override;
 
-	
+
 	bool
 	restart_simulation(
 		core::pose::Pose &,

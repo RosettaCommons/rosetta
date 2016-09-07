@@ -36,7 +36,7 @@ public:
 
 	~DatabaseSessionOptions() override;
 
-	
+
 	void
 	parse_my_tag(utility::tag::TagCOP) override;
 

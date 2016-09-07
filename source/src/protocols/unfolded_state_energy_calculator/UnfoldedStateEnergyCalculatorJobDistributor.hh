@@ -52,7 +52,7 @@ public:
 	~UnfoldedStateEnergyCalculatorJobDistributor() override;
 
 	/// @brief
-	
+
 	void
 	go( protocols::moves::MoverOP mover ) override;
 

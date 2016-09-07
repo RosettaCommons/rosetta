@@ -794,8 +794,8 @@ void JobDistributor::write_output_from_job(
 	PROF_START( basic::JD2_OUTPUT);
 	// check cases: SUCCESS, FAIL_RETRY, FAIL_DO_NOT_RETRY, FAIL_BAD_INPUT
 	switch ( status ) {
-	case protocols::moves::MS_SUCCESS:
-	{ // Scoping for variable initialization
+	case protocols::moves::MS_SUCCESS :
+		{ // Scoping for variable initialization
 		last_completed_job_ = current_job_id_;
 		// tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
 
@@ -842,19 +842,19 @@ void JobDistributor::write_output_from_job(
 			job_failed(pose, true /* will retry */);
 		}
 		break;
-	case protocols::moves::FAIL_DO_NOT_RETRY:
+	case protocols::moves::FAIL_DO_NOT_RETRY :
 		tr.Warning << job_outputter_->output_name(current_job_)
 			<< " reported failure and will NOT retry" << std::endl;
 		job_failed(pose, false /* will not retry */);
 		break;
-	case protocols::moves::FAIL_BAD_INPUT:
+	case protocols::moves::FAIL_BAD_INPUT :
 		tr.Warning << job_outputter_->output_name(current_job_)
 			<< " reported that its input was bad and will not retry"
 			<< std::endl;
 		remove_bad_inputs_from_job_list();
 		job_failed(pose, false /*will not retry */);
 		break;
-	default:
+	default :
 		tr.Error <<  job_outputter_->output_name(current_job_)
 			<< " reported unknown status code " << status
 			<< ". Rosetta is exiting." << std::endl;

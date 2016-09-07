@@ -163,7 +163,7 @@ public:
 #endif // SERIALIZATION
 	};
 	std::list < Cxyz > points_;
-    bool filterExemplars_;
+	bool filterExemplars_;
 
 private:
 	int count_;
@@ -279,9 +279,9 @@ protected:
 	bool markpsp_;
 	bool marksps_;
 	bool exemplarRestriction_;
-    bool dumpExemplars_;
-    bool filterExemplars_;
-    bool limitExemplars_;
+	bool dumpExemplars_;
+	bool filterExemplars_;
+	bool limitExemplars_;
 	bool search13_;
 	core::Real minPockSize_;
 	core::Real maxPockSize_;

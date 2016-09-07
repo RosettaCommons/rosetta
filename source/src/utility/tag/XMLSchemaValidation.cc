@@ -221,7 +221,7 @@ void XMLValidationOutput::warnings( std::list< std::string > const & warning_lis
 
 std::string concat_stringlist( std::list< std::string > const & strings ) {
 	std::ostringstream oss;
-	for (const auto & iter : strings) {
+	 for ( auto const & iter : strings ) {
 		oss << iter;
 	}
 	return oss.str();

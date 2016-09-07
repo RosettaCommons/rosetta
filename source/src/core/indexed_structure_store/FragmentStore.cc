@@ -47,7 +47,7 @@ void FragmentStore::resize(numeric::Size num_fragments)
 
 void FragmentStore::add_threshold_distance_allFrag(numeric::Real distance)
 {
-	for (double & fragment_threshold_distance : fragment_threshold_distances) {
+	for ( double & fragment_threshold_distance : fragment_threshold_distances ) {
 		fragment_threshold_distance=distance;
 	}
 }

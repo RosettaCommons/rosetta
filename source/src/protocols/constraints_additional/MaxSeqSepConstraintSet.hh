@@ -72,23 +72,23 @@ protected:
 
 public:
 
-	
+
 	ConstraintSet &
 	operator = ( ConstraintSet const & rhs ) override;
 
-	
+
 	ConstraintSetOP
 	clone() const override;
 
-	
+
 	void
 	detached_copy( ConstraintSet const & src ) override;
 
-	
+
 	ConstraintSetOP
 	detached_clone() const override;
 
-	
+
 	bool
 	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const override;
 
@@ -136,7 +136,7 @@ public:
 	/// respair to the respair_data_cache.  This is the only opportunity
 	/// the MaxSeqSepConstraint set has to influence how constraints
 	/// are evaluated during minimization.
-	
+
 	void
 	setup_for_minimizing_for_residue_pair(
 		core::conformation::Residue const & rsd1,

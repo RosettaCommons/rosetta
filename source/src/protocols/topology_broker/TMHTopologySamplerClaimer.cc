@@ -409,7 +409,7 @@ TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofC
 	core::kinematics::MoveMapOP init_map( new core::kinematics::MoveMap );
 	init_map->set_jump( false );
 
-	for (const auto & init_dof : init_dofs) {
+	 for ( auto const & init_dof : init_dofs ) {
 		if ( init_dof->owner().lock().get() == this && init_dof->str_type() == "JUMP" ) {
 			if ( tr.Trace.visible() ) {
 				init_dof->show(tr.Trace);
@@ -603,7 +603,7 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 					break;
 				}
 		bool gp_exists(false);
-		for (auto & used_grid_point : used_grid_points) {
+		for ( auto & used_grid_point : used_grid_points ) {
 			if ( used_grid_point == origin+add_vector ) {
 				if ( tr.Trace.visible() ) {
 					tr.Trace << "*used_gp_it:  " << used_grid_point.x() << " " << used_grid_point.y() << " " << used_grid_point.z() << std::endl;

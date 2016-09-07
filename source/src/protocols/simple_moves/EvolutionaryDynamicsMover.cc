@@ -93,10 +93,10 @@ EvolutionaryDynamicsMoverCreator::mover_name()
 /// @brief default constructor
 EvolutionaryDynamicsMover::EvolutionaryDynamicsMover():
 	Super(),
-    population_size_( 1000000 ),
-    disable_fitness_evaluation_( false )
+	population_size_( 1000000 ),
+	disable_fitness_evaluation_( false )
 {
-    Super::initialize();
+	Super::initialize();
 }
 
 
@@ -120,9 +120,9 @@ EvolutionaryDynamicsMover::fresh_instance() const
 bool
 EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums )
 {
-    ++trial_counter_;
+	++trial_counter_;
 	TR.Debug <<"filters.size() "<<filters().size()<<std::endl;
-    
+
 	core::Real filter_val(0.0);
 
 	runtime_assert( filters().size() == temperatures().size() );
@@ -131,7 +131,7 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 	runtime_assert( filters().size() == random_nums.size() );
 	bool accepted( false );
 	utility::vector1< Real > provisional_scores;
-    provisional_scores.clear();
+	provisional_scores.clear();
 	for ( core::Size index( 1 ); index <= filters().size(); ++index ) {
 		runtime_assert( random_nums[ index ] >= 0.0 );
 		runtime_assert( random_nums[ index ] <= 1.0 );
@@ -144,88 +144,87 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 
 		provisional_scores.push_back( flip * filter_val );
 
-        Real const boltz_factor = ( last_accepted_scores()[ index ] - provisional_scores[ index ] ) / temp;
+		Real const boltz_factor = ( last_accepted_scores()[ index ] - provisional_scores[ index ] ) / temp;
 
-        TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores()[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
+		TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores()[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
 		TR.Debug <<"Current, best, boltz "<<provisional_scores[ index ]<<" "<<last_accepted_scores()[ index ]<<" "<<boltz_factor<<std::endl;
 
 
-        bool reject_filter;
-        
-        // Here I'm using Crow and Kimuras fixation probability for diploid organisms: f = [1-exp(-2s)] / [1 - exp(-4Ns)],
-        // where s is the selection coefficient and N is the population size.
-        // The equation requires some thought to compute correctly for small selection coefficients due to
-        // underflow problems. All problems can be avoided in the relevant range by using expm1 to avoid underflow.
-        // If the selection coefficient is 0 f is undefined. As it I'll never be truely 0, I set it to
-        // f = 1/(2N) for s=0.
+		bool reject_filter;
 
-        #if __cplusplus>=201103L
-        Real const selection_coefficient = ( provisional_scores[ index ] -  last_accepted_scores()[ index ]) / last_accepted_scores()[ index ];
-        Real const x1 = -2 * selection_coefficient ;
-        Real const numerator = -expm1(x1);
-        Real const x2 = -4 * selection_coefficient * population_size_;
-        Real const denominator = -expm1(x2);
-        Real const fixation_probability = ( selection_coefficient == 0.0 ) ? 1 / ( 2 * population_size_ ) : numerator / denominator;
+		// Here I'm using Crow and Kimuras fixation probability for diploid organisms: f = [1-exp(-2s)] / [1 - exp(-4Ns)],
+		// where s is the selection coefficient and N is the population size.
+		// The equation requires some thought to compute correctly for small selection coefficients due to
+		// underflow problems. All problems can be avoided in the relevant range by using expm1 to avoid underflow.
+		// If the selection coefficient is 0 f is undefined. As it I'll never be truely 0, I set it to
+		// f = 1/(2N) for s=0.
+
+#if __cplusplus>=201103L
+		Real const selection_coefficient = ( provisional_scores[ index ] -  last_accepted_scores()[ index ]) / last_accepted_scores()[ index ];
+		Real const x1 = -2 * selection_coefficient ;
+		Real const numerator = -expm1(x1);
+		Real const x2 = -4 * selection_coefficient * population_size_;
+		Real const denominator = -expm1(x2);
+		Real const fixation_probability = ( selection_coefficient == 0.0 ) ? 1 / ( 2 * population_size_ ) : numerator / denominator;
 
 
-        Real const max_selection_coefficient = ( 1 - last_accepted_scores()[ index ]) / last_accepted_scores()[ index ];
-        Real const max_x1 = -2 * max_selection_coefficient;
-        Real const max_numerator = -expm1( max_x1 );
-        Real const max_x2 = -4 * max_selection_coefficient * population_size_;
-        Real const max_denominator = -expm1( max_x2 );
-        Real const fix_p_max = max_numerator / max_denominator;
+		Real const max_selection_coefficient = ( 1 - last_accepted_scores()[ index ]) / last_accepted_scores()[ index ];
+		Real const max_x1 = -2 * max_selection_coefficient;
+		Real const max_numerator = -expm1( max_x1 );
+		Real const max_x2 = -4 * max_selection_coefficient * population_size_;
+		Real const max_denominator = -expm1( max_x2 );
+		Real const fix_p_max = max_numerator / max_denominator;
 
-        Real const fix_p_normalizer = 1/fix_p_max;
-        #else
+		Real const fix_p_normalizer = 1/fix_p_max;
+#else
         utility_exit_with_message( "this code relies on expm1, which is not implemented in C98 currently (Aug 2016) used for building PyRosetta in windows");
-        
-        
+
+
         Real const fix_p_normalizer = 0.0;
         Real const fixation_probability = 0.0;
         Real const max_selection_coefficient = 0.0;
-        
-        
-        
-        #endif
 
-        if ( max_selection_coefficient == 0.0 ) {
-            utility_exit_with_message( "The current sequence is perfectly fit! Some weird stuff might be going on. Check if the implementation is fit to handle this situation!" );
-        }
 
-        std::ostringstream curr_score;
-        curr_score.precision(16);
-        curr_score << last_accepted_scores()[ index ];
-        pose::add_comment(pose, "curr_score", curr_score.str());
 
-        std::ostringstream proposed_score;
-        proposed_score.precision(16);
-        proposed_score << provisional_scores[ index ];
-        pose::add_comment(pose, "proposed_score", proposed_score.str());
+#endif
 
-        std::ostringstream fixp;
-        fixp.precision(16);
-        fixp << fixation_probability;
-        pose::add_comment(pose, "fixation_probability", fixp.str());
+		if ( max_selection_coefficient == 0.0 ) {
+			utility_exit_with_message( "The current sequence is perfectly fit! Some weird stuff might be going on. Check if the implementation is fit to handle this situation!" );
+		}
 
-        std::ostringstream fix_p_norm;
-        fix_p_norm.precision(16);
-        fix_p_norm << fix_p_normalizer;
-        pose::add_comment(pose, "fix_p_norm", fix_p_norm.str());
+		std::ostringstream curr_score;
+		curr_score.precision(16);
+		curr_score << last_accepted_scores()[ index ];
+		pose::add_comment(pose, "curr_score", curr_score.str());
 
-        if ( fixation_probability * fix_p_normalizer > 1.0 ) {
-            utility_exit_with_message( "Fixation probability greater than 1. This should never happen. There is a capping problem" );
-        }
-        
-        reject_filter = ( random_nums[ index ] >= fixation_probability * fix_p_normalizer ); // we need to normalize here, as the accept rate otherwise will be too low (mutations will very rarely be accepted).
-        
-        if (disable_fitness_evaluation_ || !reject_filter){
-            accepted = true;
-        }
-        else{
-            accepted = false;
-            ++num_rejections_[index];
-            break;
-        }
+		std::ostringstream proposed_score;
+		proposed_score.precision(16);
+		proposed_score << provisional_scores[ index ];
+		pose::add_comment(pose, "proposed_score", proposed_score.str());
+
+		std::ostringstream fixp;
+		fixp.precision(16);
+		fixp << fixation_probability;
+		pose::add_comment(pose, "fixation_probability", fixp.str());
+
+		std::ostringstream fix_p_norm;
+		fix_p_norm.precision(16);
+		fix_p_norm << fix_p_normalizer;
+		pose::add_comment(pose, "fix_p_norm", fix_p_norm.str());
+
+		if ( fixation_probability * fix_p_normalizer > 1.0 ) {
+			utility_exit_with_message( "Fixation probability greater than 1. This should never happen. There is a capping problem" );
+		}
+
+		reject_filter = ( random_nums[ index ] >= fixation_probability * fix_p_normalizer ); // we need to normalize here, as the accept rate otherwise will be too low (mutations will very rarely be accepted).
+
+		if ( disable_fitness_evaluation_ || !reject_filter ) {
+			accepted = true;
+		} else {
+			accepted = false;
+			++num_rejections_[index];
+			break;
+		}
 
 	}//for index
 
@@ -247,15 +246,15 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 		using namespace std;
 		string stringed_comments("");
 		map< string, string > const comments = core::pose::get_all_comments(pose);
-		for (const auto & comment : comments) {
+		 for ( auto const & comment : comments ) {
 			stringed_comments += comment.first + ":" + comment.second + " ";
 		}
-        
-        core::Real energy = scoring(pose);
-        data.precision(12);
-        data << trial_counter() << " " << accepted << " " << filter_val << " " << energy << " " << stringed_comments << " " <<pose_sequence<<'\n';
 
-        data.flush();
+		core::Real energy = scoring(pose);
+		data.precision(12);
+		data << trial_counter() << " " << accepted << " " << filter_val << " " << energy << " " << stringed_comments << " " <<pose_sequence<<'\n';
+
+		data.flush();
 	}
 
 	if ( accepted ) {
@@ -275,7 +274,7 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 void
 EvolutionaryDynamicsMover::apply( Pose & pose )
 {
-    Super::apply( pose );
+	Super::apply( pose );
 }// apply
 
 
@@ -283,17 +282,17 @@ std::string
 EvolutionaryDynamicsMover::get_name() const {
 	return EvolutionaryDynamicsMoverCreator::mover_name();
 }
-    
+
 /// @brief parse xml file
 void
 EvolutionaryDynamicsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & pose )
 {
-    set_keep_filters( true );
-    Super::parse_my_tag( tag, data, filters, movers, pose );
-    population_size( tag->getOption< core::Size >( "population_size", 1000000 ) );
-    disable_fitness_evaluation( tag->getOption< bool >( "disable_fitness_evaluation", false ) );
-    
-    
+	set_keep_filters( true );
+	Super::parse_my_tag( tag, data, filters, movers, pose );
+	population_size( tag->getOption< core::Size >( "population_size", 1000000 ) );
+	disable_fitness_evaluation( tag->getOption< bool >( "disable_fitness_evaluation", false ) );
+
+
 }
 
 

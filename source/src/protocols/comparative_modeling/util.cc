@@ -194,8 +194,8 @@ void bounded_loops_from_alignment(
 
 	// Ensure the aligned regions meet size constraints.
 	unaligned_residues.clear();
-	for (const auto & loop : *unaligned_ok) {
-			for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
+	 for ( auto const & loop : *unaligned_ok ) {
+		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
 			unaligned_residues.push_back(j);
 		}
 	}
@@ -594,7 +594,7 @@ poses_from_cmd_line(
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
-	for (const auto & it : fn_list) {
+	 for ( auto const & it : fn_list ) {
 		if ( file_exists(it) ) {
 			Pose pose;
 			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);

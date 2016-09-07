@@ -61,14 +61,14 @@ public:
 	TemperingBase( TemperingBase const& );
 
 	/// @brief No-op implemented only to satisfy the Mover interface.
-	
+
 	void apply( core::pose::Pose& ) override {};
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -85,7 +85,7 @@ public:
 		core::Size cycle   //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -95,13 +95,13 @@ public:
 		core::Size cycle
 	) override;
 
-	
+
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
 
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,

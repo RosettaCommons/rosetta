@@ -44,7 +44,7 @@ MotifLibrary::MotifLibrary(
 	FileNames & motif_filenames
 )
 {
-	for (const auto & motif_filename : motif_filenames) {
+	 for ( auto const & motif_filename : motif_filenames ) {
 		if ( !utility::file::file_exists( motif_filename ) ) {
 			continue;
 		}
@@ -113,7 +113,7 @@ MotifLibrary::add_from_file( std::string const & motif_filename )
 	MotifLibrary new_library( motif_file );
 
 	// Add to this library
-	for (const auto & pmot : new_library) {
+	 for ( auto const & pmot : new_library ) {
 		add_to_library( *pmot );
 	}
 }
@@ -122,7 +122,7 @@ std::ostream & operator <<(
 	std::ostream & os, MotifLibrary const & mlib
 )
 {
-	for (const auto & pmot : mlib) {
+	 for ( auto const & pmot : mlib ) {
 		os << pmot->print();
 	}
 	return os;
@@ -143,7 +143,7 @@ MotifLibrary::add_ligand_from_file( std::string const & motif_filename )
 	MotifLibrary new_library( motif_file, ligand_marker );
 
 	// Add to this library
-	for (const auto & pmot : new_library) {
+	 for ( auto const & pmot : new_library ) {
 		add_to_library( *pmot );
 	}
 }

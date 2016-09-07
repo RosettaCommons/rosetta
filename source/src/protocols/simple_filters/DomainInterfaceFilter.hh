@@ -87,7 +87,7 @@ public:
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 	bool apply( core::pose::Pose const & pose ) const override;
 
-	
+
 	std::string name() const override { return "DomainInterfaceFilter"; };
 
 private:

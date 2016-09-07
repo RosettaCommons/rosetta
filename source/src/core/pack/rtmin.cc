@@ -129,7 +129,7 @@ RTMin::rtmin(
 	/// can be used within rtmin, unless it is a whole-structure energy, in which
 	/// case, RTMin will not complain, BUT the energy will not be minimized.
 	bool bad( false );
-	for (const auto & iter : scfxn.all_methods()) {
+	 for ( auto const & iter : scfxn.all_methods() ) {
 		/// Allow whole-structure energy methods to be present.  They will not be minized!
 		/// When would this be good?  If RG or chainbreak were on.
 		if ( iter->method_type() != ws  && iter->minimize_in_whole_structure_context( pose ) ) {

@@ -43,14 +43,14 @@ public:
 
 class WatsonCrickResidueMatcher : public ResidueMatcher {
 public:
-	
+
 	bool
 	operator()( Residue const & rsd1, Residue const & rsd2 ) const override;
 };
 
 class ExactResidueMatcher : public ResidueMatcher {
 public:
-	
+
 	bool
 	operator()( Residue const & rsd1, Residue const & rsd2 ) const override;
 };

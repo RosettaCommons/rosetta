@@ -41,7 +41,7 @@ public:
 	/// @brief Returns an owning pointer to a import_pose_options object
 	/// which is constructed from the given input stream (istream) which in tern
 	/// originates from a particular data source (given by the name input_tag)
-	
+
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
@@ -49,7 +49,7 @@ public:
 		std::istream & istream
 	) const override;
 
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const override;
 

@@ -200,7 +200,7 @@ protected:
 		pair<X,bool> max( maximum(), false);
 		pair<X,bool> step( step_, false);
 
-		for (const auto & param : params) {
+		 for ( auto const & param : params ) {
 			string key( param.first);
 			string value(param.second);
 			//to lowercase

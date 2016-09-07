@@ -114,7 +114,7 @@ UDPSocketClient::UDPSocketClient(std::string const & address, int port) : sentCo
 
 	//#ifndef WIN_PYROSETTA
 	// generating random uuid by hands
-	for (unsigned short & i : uuid_.shorts_) i = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
+	for ( unsigned short & i : uuid_.shorts_ ) i = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
 
 	memset(&socket_addr_, '\0', sizeof(sockaddr_in));
 
@@ -203,13 +203,13 @@ UDPSocketClient::show(std::ostream & output) const
 	output << "socket handel: " << socket_h_ << std::endl;
 
 	output << "uuid short: ";
-	for (unsigned short i : uuid_.shorts_) {
+	for ( unsigned short i : uuid_.shorts_ ) {
 		output << i << " ";
 	}
 	output << std::endl;
 
 	output << "uuid byte: ";
-	for (char byte : uuid_.bytes_) {
+	for ( char byte : uuid_.bytes_ ) {
 		output << static_cast<int>(byte) << " ";
 	}
 	output << std::endl;
@@ -265,7 +265,7 @@ std::string PyMolMover::get_PyMol_model_name(Pose const & pose) const
 		core::pose::PDBInfoCOP info = pose.pdb_info();
 		if ( info && info->name().size() ) {
 			std::string n = info->name();
-			for (char & i : n) if ( i == '/' ) i = '_';
+			for ( char & i : n ) if ( i == '/' ) i = '_';
 			return n;
 		} else {
 			return "pose";
@@ -529,7 +529,7 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 #ifndef  __native_client__
 	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
 
-	for (const auto & color : colors) {
+	 for ( auto const & color : colors ) {
 		PyAssert( color.first >=1 && color.first <= static_cast<int>(pose.total_residue()),
 			"PyMolMover::send_colors residue index is out of range!");
 		PyAssert( color.second >= XC_first_color && color.second <= XC_last_color,

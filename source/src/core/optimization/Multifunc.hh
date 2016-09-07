@@ -56,7 +56,7 @@ public: // Creation
 
 
 	/// @brief Destructor
-	
+
 	~Multifunc() override
 	= default;
 

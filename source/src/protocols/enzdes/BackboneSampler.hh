@@ -45,7 +45,7 @@ public:
 	void
 	apply( Pose & pose ) override;
 
-	
+
 	std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;

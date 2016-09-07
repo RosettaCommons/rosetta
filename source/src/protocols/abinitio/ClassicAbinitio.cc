@@ -789,7 +789,7 @@ void ClassicAbinitio::set_default_options() {
 	short_insert_region_ = false;  // apply small fragments in phase 2!
 
 	if ( option[ OptionKeys::abinitio::recover_low_in_stages ].user() ) {
-		for (int it : option[ OptionKeys::abinitio::recover_low_in_stages ]()) {
+		for ( int it : option[ OptionKeys::abinitio::recover_low_in_stages ]() ) {
 			if ( it == 1 ) recover_low_stages_.push_back( STAGE_1 );
 			else if ( it == 2 ) recover_low_stages_.push_back( STAGE_2 );
 			else if ( it == 3 ) {

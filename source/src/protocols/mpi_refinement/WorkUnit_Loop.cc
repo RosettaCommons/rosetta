@@ -209,7 +209,7 @@ WorkUnit_LoopHash::run()
 	}
 
 	// Run minpack before storing
-	for (auto & i_str : decoys_tmp) {
+	for ( auto & i_str : decoys_tmp ) {
 		core::pose::Pose pose_tmp;
 		i_str->fill_pose( pose_tmp );
 

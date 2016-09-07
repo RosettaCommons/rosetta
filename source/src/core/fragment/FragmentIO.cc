@@ -164,7 +164,7 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 		if ( current_fragment->size() == length ) {
 			current_fragment->set_valid();
 			tr.Trace << "read FragData" << std::endl << *current_fragment << std::endl;
-			for (auto & new_frame : new_frames) {
+			for ( auto & new_frame : new_frames ) {
 
 				//jump out if top_ fragments have been read
 				if ( !new_frame->add_fragment( current_fragment ) ) {
@@ -205,7 +205,7 @@ void FragmentIO::read_data( std::istream& data, FrameList& all_frames ) {
 		read_frag_data( data, next_line, new_frames );
 		if ( data.fail() ) break;
 
-		for (auto & new_frame : new_frames) {
+		for ( auto & new_frame : new_frames ) {
 			if ( new_frame->nr_frags() ) {
 				all_frames.push_back( new_frame );
 			}

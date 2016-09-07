@@ -419,7 +419,7 @@ public:
 	ZnCoordinationConstraint( ZnCoordinationScorerCOP zn_score );
 	~ZnCoordinationConstraint() override;
 
-	
+
 	core::scoring::constraints::ConstraintOP
 	clone() const override;
 
@@ -427,16 +427,16 @@ public:
 	bool same_type_as_me( Constraint const & other ) const override;
 
 	/// @brief Returns the number of atoms involved in defining this constraint.
-	
+
 	core::Size
 	natoms() const override;
 
 	/// @brief Returns the AtomID referred to by index.
-	
+
 	core::id::AtomID const &
 	atom( Size const index ) const override;
 
-	
+
 	void
 	score(
 		core::scoring::func::XYZ_Func const & xyz_func,
@@ -447,7 +447,7 @@ public:
 	/// derivative this constraint during minimization. (someone please reference
 	/// Bill Wedermeyer's paper here, as I'm in an airport and can't fill it in
 	/// myself!)
-	
+
 	void
 	fill_f1_f2(
 		core::id::AtomID const & atom,

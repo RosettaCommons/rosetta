@@ -195,14 +195,14 @@ RotamerSets::build_rotamers(
 	if ( task_->rotamer_links_exist() ) {
 		//check all the linked positions
 		TR << "RotamerLinks detected!" << std::endl;
-				
+
 		bool quasiflag = false;
 		//this quasisymmetry flag turns on a lot of bypasses below
 		if ( basic::options::option[ basic::options::OptionKeys::packing::quasisymmetry]() == true ) {
 			quasiflag = true;
 			TR << "NOTICE: QUASISYMMETRIC PACKING IS TURNED ON in RotamerSets. (quasiflag = " << quasiflag  << ")" << std::endl;
 		}
-		
+
 		if ( quasiflag == false ) {
 			//adding code to define a template residue in link-residues that is processed after layer-design etc. does pruning. This works independent to where linkres is placed in the task-operator list
 			for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
@@ -215,18 +215,18 @@ RotamerSets::build_rotamers(
 						conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
 						copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
 						rotset->add_rotamer(*cloneRes);
-	
+
 					}
 					set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
 				}
 			}
 		} //if quasiflag == false
-		
-		if (quasiflag == false ) {
+
+		if ( quasiflag == false ) {
 			//adding code to define a template residue in link-residues that is processed after layer-design etc. does pruning. This works independent to where linkres is placed in the task-operator list
 			for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
 				Size resid = moltenres_2_resid(ii);
-				if(task_->rotamer_links()->get_template(resid) != resid){
+				if ( task_->rotamer_links()->get_template(resid) != resid ) {
 					RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
 					RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
 					rotset->set_resid( resid );
@@ -234,16 +234,16 @@ RotamerSets::build_rotamers(
 						conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
 						copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
 						rotset->add_rotamer(*cloneRes);
-	
+
 					}
 					set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
 				}
-			}	//end addition template residue code
-		}	
-		
+			} //end addition template residue code
+		}
+
 		utility::vector1<bool> visited(asym_length,false);
 		int expected_rot_count = 0;
-		
+
 		for ( uint ii = 1; ii <= nmoltenres_; ++ii ) { //loop through each residue
 			TR.Debug << "visiting residue " << moltenres_2_resid_[ii] << std::endl;
 			utility::vector1<int> copies = task_->rotamer_links()->get_equiv(moltenres_2_resid_[ii]);
@@ -252,7 +252,7 @@ RotamerSets::build_rotamers(
 				TR.Debug << "residue " << moltenres_2_resid_[ii] << " already visited, skipping" << std::endl;
 				continue;
 			}
-			
+
 			int smallest_res = 0;
 			int num_rot = 1000000;
 
@@ -264,9 +264,9 @@ RotamerSets::build_rotamers(
 				TR << "WARNING: residue " << moltenres_2_resid_[ii] << " has no equivalent residues set!" << std::endl;
 				smallest_res = moltenres_2_resid_[ii];
 			}
-			
+
 			//turn on quasisymmetry stuff, don't take smallest rotamer set
-			if ( quasiflag == true ) { 
+			if ( quasiflag == true ) {
 				num_rot = 0; //start num_rot at 0
 				for ( uint jj = 1; jj <= copies.size(); ++jj ) { //loop through each copy
 					visited[ copies[jj] ] = true; //marks this copy-group as visited, so a future round will not re-analyze
@@ -337,13 +337,13 @@ RotamerSets::build_rotamers(
 					}
 
 					//debug connectivity
-					TR.Debug << "rotamer #: " << *itr << " "; 
+					TR.Debug << "rotamer #: " << *itr << " ";
 					TR.Debug << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
 					TR.Debug << cloneRes->residue_connection_conn_id(1);
 					TR.Debug << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
 					TR.Debug << cloneRes->residue_connection_conn_id(2);
 					TR.Debug << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
-			
+
 					using namespace core::chemical;
 
 					//if pose is cyclic, it'll have cutpoint variants; in those cases,

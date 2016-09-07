@@ -43,14 +43,14 @@ public:
 
 	/// @brief Read the configuration of the LoopsFile %resource from the tag generated from the resource definition
 	/// file.
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
 	) override;
 
 	/// @brief Return the name of this class (LoopsFileOptions).
-	
+
 	std::string
 	type() const override;
 

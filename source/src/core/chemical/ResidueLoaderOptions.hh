@@ -33,13 +33,13 @@ public:
 	ResidueLoaderOptions();
 	~ResidueLoaderOptions() override= default;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
 	) override;
 
-	
+
 	std::string
 	type() const override;
 

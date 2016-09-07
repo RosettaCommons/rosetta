@@ -61,7 +61,7 @@ public:
 		return "TemplateJumpSetup";
 	}
 
-	
+
 	jumping::JumpSample create_jump_sample() const override;
 
 	jumping::JumpSample clean_jumps( jumping::JumpSample const& ) const override;
@@ -70,7 +70,7 @@ public:
 	// create_jump_sample( std::string ModelID ) const;
 	/// @brief returns an ordered FragSet that is compatible with the JumpSample
 	/// default: generate jumps from ss-library according to JumpSample
-	
+
 	core::fragment::FragSetOP generate_jump_frags( jumping::JumpSample const&, core::kinematics::MoveMap const& ) const override;
 
 	bool is_helix_jump( core::scoring::dssp::Pairing const& p ) const;
@@ -92,7 +92,7 @@ public:
 
 	FixTemplateJumpSetup( TemplateJumpSetup const& templ, jumping::BaseJumpSetupOP jump_def );
 
-	
+
 	jumping::JumpSample create_jump_sample() const override;
 
 private:

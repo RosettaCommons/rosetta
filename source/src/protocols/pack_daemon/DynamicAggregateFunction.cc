@@ -156,7 +156,7 @@ void IterativeVectorExpression::initialize(
 	input_vector_expressions_.resize( s );
 	local_variables_.resize( s );
 	Size count = 0;
-	for (const auto & vector_varname : vector_varnames) {
+	 for ( auto const & vector_varname : vector_varnames ) {
 		++count;
 		VariableExpressionOP varex( new VariableExpression( vector_varname.first, 0.0 ) );
 		input_vector_expressions_[ count ] = vector_varname.second;
@@ -1830,7 +1830,7 @@ DynamicAggregateFunction::create_state_variable_expressions(
 
 		if ( npd_properties_for_state_variables_.find( iter->first ) != npd_properties_for_state_variables_.end() ) {
 			std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
-			for (const auto & npditer : npdlist) {
+			 for ( auto const & npditer : npdlist ) {
 				++count_npd_index;
 				++count_variable_index;
 				SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( npditer.second, 0.0 ) );
@@ -1890,7 +1890,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 			/// Create vector expressions for this state and store them in the variable_expressions_for_npd_properties_ array
 			if ( has_npd_properties ) {
 				std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
-				for (const auto & npditer : npdlist) {
+				 for ( auto const & npditer : npdlist ) {
 					++count_npd_index;
 					++count_variable_index;
 					npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer.first ) );
@@ -1907,7 +1907,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] = protocols::pack_daemon::VariableVectorExpressionOP( new VariableVectorExpression( iter->first, variables ) );
 		if ( has_npd_properties ) {
 			std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
-			for (const auto & npditer : npdlist) {
+			 for ( auto const & npditer : npdlist ) {
 				//std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
 				//npd_property_variables[ npditer->first ].push_back( new VariableExpressin( ii_npd_varname, 0.0 ) );
 				vector_expression_map_[ npditer.second ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( npditer.second, npd_property_variables[ npditer.first ] ) ) );
@@ -1929,7 +1929,7 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 	Size & count_variable_index
 )
 {
-	for (const auto & scalar_expression_ast : scalar_expression_asts) {
+	 for ( auto const & scalar_expression_ast : scalar_expression_asts ) {
 		++count_variable_index;
 		SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( scalar_expression_ast.first, 0.0 ) );
 		variable_expressions_[ count_variable_index ] = surrogate;
@@ -1938,7 +1938,7 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 		scalar_expression_map_[ scalar_expression_ast.first ] = variable_expressions_[ count_variable_index ];
 	}
 
-	for (const auto & vector_variable : vector_variables) {
+	 for ( auto const & vector_variable : vector_variables ) {
 		utility::vector1< VariableExpressionCOP > variables;
 		variables.reserve( vector_variable.second.size() );
 		for ( auto
@@ -2009,7 +2009,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			/// Create a mapping between the local-variable names and the vector-expression COPs
 			/// that the local variables are intended to refer to.
 			std::map< std::string, VectorExpressionCOP > vector_varnames;
-			for (const auto & vec_iter : itvecexp_data.first) {
+			 for ( auto const & vec_iter : itvecexp_data.first ) {
 				//std::cout << "VectorExpression map: " << vec_iter->first << " " << vec_iter->second  << std::endl;
 				if ( vector_expression_map_.find( vec_iter.second ) == vector_expression_map_.end() ) {
 					throw utility::excn::EXCN_Msg_Exception( "Variable " + vec_iter.second + " absent from the IterativeVectorExpression name map" );
@@ -2181,13 +2181,13 @@ DynamicAggregateFunction::count_num_npd_properties() const
 {
 	Size count( 0 );
 	/// 1. count the npd properties for states declared with the STATE command
-	for (const auto & named_state_data_file_name : named_state_data_file_names_) {
+	 for ( auto const & named_state_data_file_name : named_state_data_file_names_ ) {
 		if ( npd_properties_for_state_variables_.find( named_state_data_file_name.first ) != npd_properties_for_state_variables_.end() ) {
 			count += npd_properties_for_state_variables_.find( named_state_data_file_name.first )->second.size();
 		}
 	}
 	/// 2. count the npd properties for the states decalred with the STATE_VECTOR command
-	for (const auto & state_vector_data_file_name : state_vector_data_file_names_) {
+	 for ( auto const & state_vector_data_file_name : state_vector_data_file_names_ ) {
 		if ( npd_properties_for_state_variables_.find( state_vector_data_file_name.first ) != npd_properties_for_state_variables_.end() ) {
 			count += npd_properties_for_state_variables_.find( state_vector_data_file_name.first )->second.size() * state_vector_data_file_name.second.size();
 		}
@@ -2320,8 +2320,8 @@ DynamicAggregateFunctionDriver::assign_jobs_to_local_daemon_set(
 	DaemonSetOP daemon_set
 )
 {
-	for (int state_id : job_indices) {
-			StructureFileNames const & sfn = file_inputs_for_job( state_id );
+	for ( int state_id : job_indices ) {
+		StructureFileNames const & sfn = file_inputs_for_job( state_id );
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdbstring( pose, get_file_contents( sfn.pdb_name_ ));
 		std::istringstream corr_stream( get_file_contents( sfn.correspondence_file_name_ ) );
@@ -2354,8 +2354,8 @@ DynamicAggregateFunctionDriver::assign_jobs_to_remote_daemon_sets(
 
 	int ndaemons = job_indices.size();
 	utility::send_integer_to_node( proc_id, ndaemons );
-	for (int state_id : job_indices) {
-			StructureFileNames const & sfn = file_inputs_for_job( state_id );
+	for ( int state_id : job_indices ) {
+		StructureFileNames const & sfn = file_inputs_for_job( state_id );
 		utility::send_integer_to_node( proc_id, state_id );
 		utility::send_string_to_node( proc_id, sfn.pdb_name_ );
 		utility::send_string_to_node( proc_id, get_file_contents( sfn.pdb_name_ ));

@@ -458,7 +458,7 @@ check_residue_proximity_to_dna(
 
 	Real shortest_arg_dis2(10000), dis2;
 
-	for (unsigned long dna_design_position : dna_design_positions) {
+	for ( unsigned long dna_design_position : dna_design_positions ) {
 		Residue const & dres( pose.residue(dna_design_position) );
 		close = close || close_to_dna( res, dres, close_threshold2, true );
 		if ( close ) {

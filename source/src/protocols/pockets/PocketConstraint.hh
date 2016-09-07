@@ -63,10 +63,10 @@ public:
 	void show_def( std::ostream& out, core::pose::Pose const & pose ) const override;
 	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory ) override;
 
-	
+
 	void score( core::scoring::func::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const override;
 
-	
+
 	void
 	fill_f1_f2(
 		core::id::AtomID const & ,
@@ -76,7 +76,7 @@ public:
 		core::scoring::EnergyMap const & weights
 	) const override;
 
-	
+
 	core::scoring::constraints::ConstraintOP clone() const override;
 
 	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;

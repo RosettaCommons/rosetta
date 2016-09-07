@@ -57,7 +57,7 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP clone() const override;
 
-	
+
 	void
 	parse_my_tag(
 		TagCOP /*tag*/,

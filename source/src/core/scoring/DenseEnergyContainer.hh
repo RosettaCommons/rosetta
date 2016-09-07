@@ -149,23 +149,23 @@ class DenseEnergyContainer : public LREnergyContainer
 public:
 	~DenseEnergyContainer() override;
 
-	
+
 	LREnergyContainerOP clone() const override;
 
 	DenseEnergyContainer( Size const size_in, ScoreType const score_type_in );
 
-	
+
 	bool empty() const override;
 
-	
+
 	void
 	set_num_nodes( Size size_in ) override;
 
-	
+
 	bool
 	any_neighbors_for_residue( int ) const override;
 
-	
+
 	bool
 	any_upper_neighbors_for_residue( int resid ) const override;
 
@@ -173,36 +173,36 @@ public:
 	size() const;
 
 	//////////////////// const versions
-	
+
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const override;
 
-	
+
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_end( int resid ) const override;
 
-	
+
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_begin( int resid ) const override;
 
-	
+
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_end( int resid ) const override;
 
 	//////////////////// non-const versions
-	
+
 	ResidueNeighborIteratorOP
 	neighbor_iterator_begin( int resid ) override;
 
-	
+
 	ResidueNeighborIteratorOP
 	neighbor_iterator_end( int resid ) override;
 
-	
+
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_begin( int resid ) override;
 
-	
+
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_end( int resid ) override;
 

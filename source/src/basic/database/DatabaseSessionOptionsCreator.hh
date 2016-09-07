@@ -27,11 +27,11 @@ public:
 	DatabaseSessionOptionsCreator();
 	~DatabaseSessionOptionsCreator() override;
 
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	create_options() const override;
 
-	
+
 	std::string options_type() const override;
 
 };

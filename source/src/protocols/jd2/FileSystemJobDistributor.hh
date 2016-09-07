@@ -50,23 +50,23 @@ public:
 
 	void restart() override;
 
-	
+
 	core::Size
 	get_new_job_id() override;
 
-	
+
 	void
 	mark_current_job_id_for_repetition() override;
 
-	
+
 	void
 	remove_bad_inputs_from_job_list() override;
 
-	
+
 	void
 	current_job_finished() override;
 
-	
+
 	void
 	go( protocols::moves::MoverOP mover ) override;
 
@@ -75,12 +75,12 @@ protected:
 
 	/// @brief This function is called upon a successful job completion; it has been virtualized so BOINC and MPI can delay/protect output
 	///base implementation is just a call to the job outputter
-	
+
 	void
 	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag ) override;
 
 	/// @brief This function is called when we five up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
-	
+
 	void
 	job_failed( core::pose::Pose & pose, bool will_retry ) override;
 

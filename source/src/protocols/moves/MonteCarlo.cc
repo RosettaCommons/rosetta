@@ -614,7 +614,7 @@ MonteCarlo::autotemp_accept()
 void
 MonteCarlo::evaluate_convergence_checks( core::pose::Pose const& pose, bool reject, bool /*final*/ ) {
 	if ( !reject || numeric::mod( last_check_++, check_frequency_ ) == 0 ) {
-		for (auto & convergence_check : convergence_checks_) {
+		for ( auto & convergence_check : convergence_checks_ ) {
 			(*convergence_check)( pose, *this, reject );
 		}
 	}

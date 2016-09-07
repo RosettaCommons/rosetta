@@ -78,7 +78,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~IntegerVectorOption() override
 	= default;
 
@@ -143,7 +143,7 @@ protected: // Methods
 
 		//convert to utility vector1. This is a workaround to prevent ObjexxFCL from knowing about vector1.
 		Values vector1_ints;
-		for (int & std_vector_int : std_vector_ints) vector1_ints.push_back(  std_vector_int );
+		for ( int & std_vector_int : std_vector_ints ) vector1_ints.push_back(  std_vector_int );
 		return vector1_ints;
 	}
 

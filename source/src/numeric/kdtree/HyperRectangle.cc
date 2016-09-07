@@ -34,7 +34,7 @@ HyperRectangle::HyperRectangle(
 	lower_( pts.front() )
 {
 	using utility::vector1;
-	for (const auto & pt : pts) {
+	 for ( auto const & pt : pts ) {
 		extend( pt );
 	}
 }
@@ -91,11 +91,11 @@ void HyperRectangle::extend(
 
 void HyperRectangle::show( std::ostream & out ) const {
 	out << "HyperRectangle Lower";
-	for (double it : lower_) {
+	for ( double it : lower_ ) {
 		out << " " << it;
 	}
 	out << " Upper ";
-	for (double it : upper_) {
+	for ( double it : upper_ ) {
 		out << " " << it;
 	}
 }

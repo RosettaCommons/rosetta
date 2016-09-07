@@ -49,21 +49,21 @@ public:
 
 	SimulatedTempering( SimulatedTempering const& );
 
-	
+
 	void apply( core::pose::Pose& ) override {};
 
-	
+
 	std::string
 	get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -87,7 +87,7 @@ public:
 	) override;
 
 	/// @brief callback executed after all Monte Carlo trials
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
@@ -101,7 +101,7 @@ protected:
 	void set_defaults();
 
 	/// @brief Assigns user specified values to primitive members using command line options
-	
+
 	void init_from_options() override;
 
 	/// @brief update weights based on current counts
@@ -111,10 +111,10 @@ protected:
 	void reset_raw_counter();
 
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
-	
+
 	bool initialize_from_file( std::string const& filename ) override;
 
-	
+
 	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts ) override;
 
 	/// ------------------ register cmdline options ---------------------------

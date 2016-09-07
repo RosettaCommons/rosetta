@@ -377,7 +377,7 @@ void MPI_WorkUnitManager::print_stats_auto(){
 }
 
 void MPI_WorkUnitManager::reset_timing_stats(){
-	for (double & i : timing_total_) i = 0;
+	for ( double & i : timing_total_ ) i = 0;
 }
 
 

@@ -90,7 +90,7 @@ ResidueChainVectorOption::values_of( std::string const & value_str ) const
 	//convert to utility vector1. This is a workaround to prevent ObjexxFCL from knowing about vector1.
 	Values vector1_ints;
 	std::vector< int > const & resnum = resnum_and_chain_info.first;
-	for (int n : resnum) {
+	for ( int n : resnum ) {
 		vector1_ints.push_back( n );
 	}
 	return vector1_ints;

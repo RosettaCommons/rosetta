@@ -84,7 +84,7 @@ public:
 		Multivec &prv_eqxyz,
 		CartesianMinimizerMap const &min_map ) const;
 
-	
+
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,

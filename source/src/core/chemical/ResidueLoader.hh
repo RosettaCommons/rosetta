@@ -35,7 +35,7 @@ public:
 	~ResidueLoader() override = default;
 
 	/// @brief returns a pointer to a ResidueType object originated from the data_source specified to the ResourceManager
-	
+
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
@@ -43,7 +43,7 @@ public:
 		std::istream & istream
 	) const override;
 
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const override;
 

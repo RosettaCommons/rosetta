@@ -193,7 +193,7 @@ void SequenceAlignment::remove_gapped_positions() {
 	while ( pos <= length() ) {
 		// delete this new position if the entire column is gapped.
 		bool delete_column( true );
-		for (auto & sequence : sequences_) {
+		for ( auto & sequence : sequences_ ) {
 			if ( !sequence->is_gap(pos) ) {
 				// std::cout << "not deleting column because sequence " << *it
 				// << " has no gap at position " << pos << std::endl;
@@ -202,7 +202,7 @@ void SequenceAlignment::remove_gapped_positions() {
 		} // for sequences
 
 		if ( delete_column ) {
-			for (auto & sequence : sequences_) {
+			for ( auto & sequence : sequences_ ) {
 				// std::cout << "deleting column " << pos << " from " << *it << std::endl;
 				sequence->delete_position( pos );
 			}
@@ -345,7 +345,7 @@ utility::vector1< core::Size > SequenceAlignment::sequence_indices(
 
 	utility::vector1< core::Size > indices;
 
-	for (const auto & sequence : sequences_) {
+	 for ( auto const & sequence : sequences_ ) {
 		indices.push_back( sequence->resnum(column) );
 	}
 
@@ -363,7 +363,7 @@ utility::vector1< std::string > SequenceAlignment::comments() const {
 
 Real SequenceAlignment::max_gap_percentage() const {
 	Real max_gp(0.0);
-	for (const auto & sequence : sequences_) {
+	 for ( auto const & sequence : sequences_ ) {
 		Real gap_percentage = static_cast< Real >
 			( sequence->length() - sequence->ungapped_length() );
 		gap_percentage = gap_percentage / static_cast< Real > ( length() );
@@ -485,7 +485,7 @@ void SequenceAlignment::printGrishinFormat (
 	using utility::vector1;
 
 	vector1< string > keys;
-	for (const auto & score : scores_) {
+	 for ( auto const & score : scores_ ) {
 		keys.push_back( score.first );
 	}
 	std::sort( keys.begin(), keys.end() );

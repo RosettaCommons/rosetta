@@ -862,7 +862,7 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 			if ( it->second == "atom_pair_constraint" ) {
 				core::Real var_sum( 0 ); core::Size ct_cst( 0 );
 				WeightMap const& variations( score_variations() );
-				for (const auto & variation : variations) {
+				 for ( auto const & variation : variations ) {
 					if ( variation.first.find( "filter_cst" ) != std::string::npos ) {
 						var_sum += variation.second;
 						++ct_cst;
@@ -1416,7 +1416,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 
 	//count total decoys
 	Size total( 0 );
-	for (const auto & it : manager().batches()) {
+	 for ( auto const & it : manager().batches() ) {
 		if ( it.id() >= first_fullatom_batch_ ) break;
 		if ( !it.has_silent_in() ) continue;
 		total += it.decoys_returned();
@@ -1424,7 +1424,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 	}
 	basic::show_time( tr,  "generate safety_hatch: counted total decoys" );
 
-	for (const auto & it : manager().batches()) {
+	 for ( auto const & it : manager().batches() ) {
 		Real percentage_per_batch( 1.0*batch.nstruct() / (1.0*total) );
 		if ( it.id() >= first_fullatom_batch_ ) break;
 		if ( !it.has_silent_in() ) continue; //usually only the resampling decoys are interesting...

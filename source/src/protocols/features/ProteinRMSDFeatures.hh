@@ -81,7 +81,7 @@ public:
 	core::pose::PoseCOP reference_pose() const;
 	void reference_pose(core::pose::PoseCOP);
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,

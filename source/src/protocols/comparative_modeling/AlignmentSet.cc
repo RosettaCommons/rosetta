@@ -32,8 +32,8 @@ AlignmentSet::alignments() const {
 	utility::vector1< core::sequence::SequenceAlignment > alignments_;
 	using std::set;
 	using core::sequence::SequenceAlignment;
-	for (auto copy : align_set_) {
-			alignments_.push_back( copy );
+	for ( auto copy : align_set_ ) {
+		alignments_.push_back( copy );
 	}
 	return alignments_;
 }

@@ -43,21 +43,21 @@ public:
 
 	/// @brief this function takes a string and writes it to disk (separately from Tracer output).
 	///use some sort of extention option system - default .dat?  .data?
-	
+
 	void file( JobCOP, std::string const & ) override  {};
 
 	/// @brief this function outputs the final result of a job.
-	
+
 	void final_pose( JobOP, core::pose::Pose const &, std::string const & ) override {};
 
 	/// @brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
-	
+
 	void other_pose( JobOP, core::pose::Pose const & , std::string const &, int /*copy_count = -1*/, bool /*score_only = false*/  ) override {};
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 
 	/// @brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.
-	
+
 	bool job_has_completed( JobCOP ) override { return false; };
 
 	std::string output_name( JobCOP job ) override {

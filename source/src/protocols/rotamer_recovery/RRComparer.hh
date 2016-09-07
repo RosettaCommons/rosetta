@@ -88,20 +88,20 @@ public: // constructors destructors
 
 public: // public interface
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	std::string
 	get_parameters() const override;
 
-	
+
 	void
 	set_recovery_threshold(
 		core::Real const recovery_threshold) override;
 
-	
+
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -135,16 +135,16 @@ public: // public interface
 	void
 	set_max_chi_considered( core::Size const max_chi );
 
-	
+
 	std::string
 	get_name() const override;
 
 
-	
+
 	std::string
 	get_parameters() const override;
 
-	
+
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,

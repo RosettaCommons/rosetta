@@ -56,7 +56,7 @@ public:
 
 	BiasedMonteCarlo( BiasedMonteCarlo const& );
 
-	
+
 	protocols::moves::MonteCarloOP clone() override {
 		return protocols::moves::MonteCarloOP( new BiasedMonteCarlo( *this ) );
 	}
@@ -82,11 +82,11 @@ public:
 		core::Real const inner_score_delta_over_temperature = 0
 	) override;
 
-	
+
 	void
 	reset( Pose const & pose ) override;
 
-	
+
 	void
 	score_function( ScoreFunction const & scorefxn ) override; // ScoreFunctionCOP scorefxn )
 

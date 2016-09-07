@@ -101,8 +101,8 @@ public:
 		for ( auto it = rings_.begin(); it != rings_.end(); ++it ) {
 			utility::vector1<VD> vertices;
 			std::vector<size_t> list_ring = *it;
-			for (unsigned long number : list_ring) {
-					VD lwrg_vd = index_to_vd_.find(number)->second;
+			for ( unsigned long number : list_ring ) {
+				VD lwrg_vd = index_to_vd_.find(number)->second;
 				vertices.push_back( lwrg_vd );
 			}
 			rings.push_back(vertices);
@@ -164,7 +164,7 @@ private:
 			}
 
 
-			for (unsigned long & source_vertex_number_neighbor : source_vertex_number_neighbors) {
+			for ( unsigned long & source_vertex_number_neighbor : source_vertex_number_neighbors ) {
 				if ( shortest_cycles[ source_vertex_number_neighbor ] > graph_size ) { // the edge target vertex is not part of any cycle
 					continue;
 				}
@@ -297,7 +297,7 @@ private:
 	) const {
 		// check all internal elements in path_a for occurrence in path_b
 		for
-			(unsigned long itr_path : path_b) {
+			( unsigned long itr_path : path_b ) {
 			if ( vertex_is_in_path_a[ itr_path] ) {
 				return true;
 			}
@@ -433,8 +433,8 @@ private:
 					target_row.push_back(vd_to_index_[target]);
 				}
 
-				for (unsigned long new_vertex : target_row) {
-						if ( !can_visit_ref[ new_vertex] ) {
+				for ( unsigned long new_vertex : target_row ) {
+					if ( !can_visit_ref[ new_vertex] ) {
 						// do nothing; can't visit the associated vertex
 					} else if ( distances[ new_vertex] == unseen_flag ) { // found a vertex in the target list of vertex seen_vertices_queue(vertex_queue_position)
 						seen_vertices_queue.push_back(new_vertex);

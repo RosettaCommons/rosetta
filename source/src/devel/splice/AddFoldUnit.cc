@@ -83,7 +83,7 @@ FoldUnitUtils::entry_subset() const{
 	}
 
 	if ( !n_term_entry() && !c_term_entry() ) {
-		for (const auto & it : entry_pairs_quick_access_N_C_) {
+		 for ( auto const & it : entry_pairs_quick_access_N_C_ ) {
 			bb_dof_entries.push_back( it.first );
 		}
 		sort( bb_dof_entries.begin(), bb_dof_entries.end() );
@@ -482,7 +482,7 @@ PoseFragmentInfo::set_fragment_info_in_pose( core::pose::Pose & pose )const{
 	}
 
 	Size count( 1 );
-	for (const auto & frag : fragment_map_) {
+	 for ( auto const & frag : fragment_map_ ) {
 		core::pose::add_comment( pose, "fragment_definition" + utility::to_string(count), utility::to_string( frag.second ) ); // fragment_definition# 1_14
 		++count;
 	}

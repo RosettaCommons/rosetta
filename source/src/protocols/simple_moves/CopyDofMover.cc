@@ -100,7 +100,7 @@ CopyDofMover::pose_string(
 ) const
 {
 	utility::vector1< Size > res_list;
-	for (const auto & it : res_map_) {
+	 for ( auto const & it : res_map_ ) {
 		res_list.push_back( it.first );
 	}
 	return pose_string( pose, res_list );

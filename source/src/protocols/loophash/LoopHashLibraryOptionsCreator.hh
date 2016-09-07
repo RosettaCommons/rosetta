@@ -38,12 +38,12 @@ public:
 	~LoopHashLibraryOptionsCreator() override;
 
 	/// @brief Return the string identifier for the associated ResourceOptions (LoopHashLibraryOptions).
-	
+
 	std::string
 	options_type() const override;
 
 	/// @brief Return a up-casted owning pointer (ResourceOptionsOP) to the resource options.
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	create_options() const override;
 

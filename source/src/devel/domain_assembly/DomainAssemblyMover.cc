@@ -260,7 +260,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 		// step 2: find all residues requested to be buried
 		// step 3: add a filter with that potential interface
 		// step 4: or-combine the filters, at least one of the domains should bury any
-		for (unsigned long buried_it : want_buried) {
+		for ( unsigned long buried_it : want_buried ) {
 			std::set< core::Size > residues_in_other_domains;
 			for ( std::vector< std::string >::const_iterator domain_it = domain_definitions.begin();
 					domain_it != domain_definitions.end();

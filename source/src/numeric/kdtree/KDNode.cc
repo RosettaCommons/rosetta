@@ -115,7 +115,7 @@ std::ostream & operator<< (
 ) {
 	using numeric::Real;
 	using utility::vector1;
-	for (double point : points) {
+	for ( double point : points ) {
 		out << ' ' << point;
 	}
 	return out;

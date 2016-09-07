@@ -132,7 +132,7 @@ GatherPosesMover::GatherPosesMover() : Mover()
 		template_scores = read_template_scores( option[ OptionKeys::cluster::template_scores]() );
 
 		tr.Info << "Read template scores: " << std::endl;
-		for (auto & template_score : template_scores) {
+		for ( auto & template_score : template_scores ) {
 			tr.Info << template_score.first << ": " << template_score.second << std::endl;
 		}
 	}
@@ -1106,7 +1106,7 @@ void EnsembleConstraints_Simple::createConstraints( std::ostream &out) {
 
 			Real lowdist=1000000.0;
 			Real highdist=-100000.0;
-			for (auto & i : poselist) {
+			for ( auto & i : poselist ) {
 				Vector ir_CA = i.residue(ir).xyz( "CA" );
 				Vector jr_CA = i.residue(jr).xyz( "CA" );
 				Real dist = ir_CA.distance( jr_CA );

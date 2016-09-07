@@ -129,7 +129,7 @@ GenericSimulatedAnnealer::scale_temperatures( core::Real const temp_factor )
 void
 GenericSimulatedAnnealer::recompute_rank_scores()
 {
-	for (auto & accepted_score : accepted_scores_) {
+	for ( auto & accepted_score : accepted_scores_ ) {
 		accepted_score.set_rank_score( calc_boltz_score( accepted_score ) );
 	}
 }
@@ -308,7 +308,7 @@ std::string
 GenericSimulatedAnnealer::create_tag( std::string const & suffix ) const
 {
 	std::string cp = checkpoint_file_ + '_' + suffix;
-	for (char & c : cp) {
+	for ( char & c : cp ) {
 		if ( ( c == '/' )  ||  ( c == ' ' ) || ( c == '\t' ) ) {
 			c = '_';
 		}
@@ -338,7 +338,7 @@ std::ostream &
 operator<<( std::ostream & os, AcceptedScores const & scores )
 {
 	os << scores.iteration() << " " << scores.rank_score() << " ";
-	for (double score : scores) {
+	for ( double score : scores ) {
 		os << score << " ";
 	}
 	return os;
@@ -432,7 +432,7 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 	// save total # of accepted scores
 	saved_file << " " << boost::lexical_cast< std::string >( accepted_scores_.size() ) << std::endl;
 	// save accepted score list
-	for (const auto & accepted_score : accepted_scores_) {
+	 for ( auto const & accepted_score : accepted_scores_ ) {
 		saved_file << accepted_score << std::endl;
 	}
 	// save best scores

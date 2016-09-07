@@ -237,7 +237,7 @@ void JobsForSequence::finalize_state_energies_and_npd_properties()
 {
 	for ( core::Size ii = 1; ii <= jobs_.size(); ++ii ) {
 		state_energies_[ ii ] = jobs_[ ii ].energy();
-		for (const auto & iter : jobs_[ ii ].npd_props()) {
+		 for ( auto const & iter : jobs_[ ii ].npd_props() ) {
 			npd_properties_[ iter.first ] = npd_properties_[ iter.second ];
 		}
 	}
@@ -616,7 +616,7 @@ MMTDriver::evaluate_entity_fitnesses()
 			instruct_receivers_to_keep_job_data_for_entity( ii );
 		}
 
-		for (auto & iter : dropped) {
+		for ( auto & iter : dropped ) {
 			instruct_receivers_to_drop_old_job_data_for_entity( iter );
 		}
 

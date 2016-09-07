@@ -293,7 +293,7 @@ Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relev
 {
 	if ( use_relevant_residues_as_loop_length_ ) {
 		Size number_of_residues = 0;
-		for ( auto it : relevant_residue) {
+		for ( auto it : relevant_residue ) {
 			if ( it ) ++number_of_residues;
 		}
 		return number_of_residues;

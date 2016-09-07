@@ -52,21 +52,21 @@ public:
 	~CartesianMinimizerMap() override;
 
 
-	
+
 	kinematics::DomainMap const &
 	domain_map() const override
 	{
 		return domain_map_;
 	}
 
-	
+
 	void
 	add_torsion(
 		DOF_ID const & new_torsion,
 		DOF_ID const & parent
 	) override;
 
-	
+
 	void
 	add_atom(
 		AtomID const & AtomID,

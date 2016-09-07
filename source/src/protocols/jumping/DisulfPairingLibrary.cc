@@ -351,7 +351,7 @@ void DisulfPairingLibrary::create_jump_fragments(
 	const int iStart( 1 ); // in templates start residue is number 1
 	const int iStop ( 2 ); // in templates stop residue is number 2
 	frags.reserve( ntemplates );
-	for (const auto & it : templates) {
+	 for ( auto const & it : templates ) {
 		frags.push_back( core::fragment::FragDataOP( new FragData ) );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );

@@ -67,7 +67,7 @@ public: // construct/destruct
 	{}
 
 	/// @brief default destructor
-	
+
 	~SecondaryStructureWeights() override;
 
 

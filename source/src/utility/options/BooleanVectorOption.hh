@@ -74,7 +74,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~BooleanVectorOption() override
 	= default;
 

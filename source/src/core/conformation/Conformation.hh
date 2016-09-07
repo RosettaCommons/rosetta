@@ -122,7 +122,7 @@ public:  // standard class methods
 	Conformation();
 
 	/// @brief default destructor
-	
+
 	~Conformation() override;
 
 	/// @brief copy constructor

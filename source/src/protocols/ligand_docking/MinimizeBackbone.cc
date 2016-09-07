@@ -201,7 +201,7 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 
 	int new_jump = f->num_jump();
 
-	for (const auto & edge_itr : *f) {
+	 for ( auto const & edge_itr : *f ) {
 
 		if ( !edge_itr.is_polymer() ) {
 			f_new->add_edge(edge_itr);
@@ -297,7 +297,7 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 		new_fold_tree = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
 	} else {
 
-		for (const auto & e : f_const) {
+		 for ( auto const & e : f_const ) {
 			std::map<core::Size, core::Size>::const_iterator const jump_attach = jump_to_attach.find(e.label());
 			if ( jump_attach != jump_to_attach.end() ) {
 				core::Size const jump_id = jump_attach->first;

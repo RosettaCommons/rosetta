@@ -37,7 +37,7 @@ public:
 	// ------------------------------------------ //
 	/// @brief test if CDR detection match knownw results from our DB
 	void test_cdr_regex_parsing() {
-		#ifdef __ANTIBODY_GRAFTING__
+#ifdef __ANTIBODY_GRAFTING__
 			protocols::antibody::grafting::RegExManager * rem( protocols::antibody::grafting::RegExManager::get_instance() );
 
 			// Ensure we get a chunk of memory
@@ -54,6 +54,6 @@ public:
 
 			// Test the L3 pattern
 			TS_ASSERT_EQUALS( rem->L3_pattern(), "C[A-Z]{1,15}(L|F|V|S)G[A-Z](G|Y)" );
-		#endif // __ANTIBODY_GRAFTING__
+#endif // __ANTIBODY_GRAFTING__
 	}
 };

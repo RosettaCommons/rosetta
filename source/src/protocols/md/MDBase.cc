@@ -124,7 +124,7 @@ MDBase::parse_schfile( std::string const schfile ) {
 	mdsch_.resize( 0 );
 
 	// Put in by reading line by line
-	for (auto & fileline : filelines) {
+	for ( auto & fileline : filelines ) {
 		line = fileline;
 		TR.Debug << line << std::endl;
 		utility::vector1< std::string > tokens ( utility::split( line ) );

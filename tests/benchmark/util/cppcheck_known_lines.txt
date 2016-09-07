@@ -1,3 +1,4 @@
+[core/kinematics/FoldTree.cc:237]: (performance) Use const reference for 'old_jump_edge' to avoid unnecessary data copying.
 [core/kinematics/Edge.hh:46]: (warning) Redundant code: Found a statement that begins with numeric constant.
 [core/kinematics/Edge.hh:47]: (warning) Redundant code: Found a statement that begins with numeric constant.
 [core/fragment/FragID_Iterator.cc:88]: (warning) Member variable 'FragID_Iterator::my_frag_id_' is not assigned a value in 'FragID_Iterator::operator='.

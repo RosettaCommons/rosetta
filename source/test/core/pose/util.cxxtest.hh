@@ -136,7 +136,7 @@ public: // tests
 		TS_ASSERT( pose.pdb_info()->number( 6 ) == 6  ) ;
 		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
 		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
-		
+
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( ii == 5 ) {
 				pose.pdb_info()->number( ii, 0 );
@@ -159,7 +159,7 @@ public: // tests
 		TS_ASSERT( pose.pdb_info()->number( 6 ) == 5  ) ;
 		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
 		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
-		
+
 		/*Pose pose = *two_chain_pose();
 		add_empty_pdb_info( pose );
 		renumber_pdbinfo_based_on_conf_chains( pose, true, true, false, false );
@@ -167,7 +167,7 @@ public: // tests
 		ResidueCOP res = rts->name_map( "ALA" );
 		Pose test_one_pose = pose;
 		pose.conformation().append_polymer_residue_after_seqpos( *rsd, 5, true );
-		
+
 		TS_ASSERT( test_one_pose.pdb_info()->number( 6 ) == 0  ) ;
 		TS_ASSERT( test_one_pose.pdb_info()->chain( 6 )  == ' ' );
 		TS_ASSERT( test_one_pose.pdb_info()->icode( 6 )  == ' ' );

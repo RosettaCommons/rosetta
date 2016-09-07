@@ -53,7 +53,7 @@ void MultiStateEntity::show( std::ostream & os ) const
 
 	os << "MultiStateEntity with traits:";
 	genetic_algorithm::EntityElements const & seq( this->traits() );
-	for (const auto & it : seq) {
+	 for ( auto const & it : seq ) {
 		os << " " << it->to_string();
 	}
 	os << " and fitness " << F(6,3,this->fitness());

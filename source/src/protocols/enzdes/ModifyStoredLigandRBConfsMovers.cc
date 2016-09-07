@@ -122,7 +122,7 @@ ModifyStoredRBConfs::get_rigid_body_confs( core::pose::Pose const & pose ) const
 	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ); //toolbox::match_enzdes_util::get_enzdes_observer with const pose can return NULL
 	if ( !enz_obs ) return to_return;
 	std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > > const & rb_confs( enz_obs->lig_rigid_body_confs() );
-	for (const auto & rb_conf : rb_confs) {
+	 for ( auto const & rb_conf : rb_confs ) {
 		if ( pose.residue( rb_conf.first ).type().is_ligand() ) to_return.push_back( rb_conf.second );
 	}
 	return to_return;

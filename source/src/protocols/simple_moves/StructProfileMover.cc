@@ -188,7 +188,7 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 			return top_hits_aa;
 		}
 		vector1<LookupResultPlus>lookupResultsPlusV;
-		for (auto & lookupResult : lookupResults) {
+		for ( auto & lookupResult : lookupResults ) {
 			std::vector<Real> cenListFrag = selected_fragStoreOP->realVector_groups["cen"][lookupResult.match_index];
 			Real cen_deviation = get_cen_deviation(cenListFrag,cenList);
 			struct LookupResultPlus result_tmp(lookupResult,cen_deviation);
@@ -352,8 +352,8 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 	std::string profile_name( "profile" );
 	utility::io::ozstream profile_out(profile_name);
 	profile_out << "aa     ";
-	for (char currentChar : aa_order_) {
-			profile_out << currentChar << "       ";
+	for ( char currentChar : aa_order_ ) {
+		profile_out << currentChar << "       ";
 	}
 	profile_out << std::endl;
 	for ( Size ii=1; ii<=profile_score.size(); ++ii ) {

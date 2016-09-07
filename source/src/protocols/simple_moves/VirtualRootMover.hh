@@ -34,7 +34,7 @@ public:
 	void apply( Pose & pose ) override;
 	std::string get_name() const override;
 
-	
+
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,

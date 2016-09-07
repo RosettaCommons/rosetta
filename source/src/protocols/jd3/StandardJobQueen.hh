@@ -96,7 +96,7 @@ public:
 
 	bool has_job_completed( protocols::jd3::LarvalJobCOP job ) override;
 
-	
+
 	protocols::jd3::JobOP
 	mature_larval_job( protocols::jd3::LarvalJobCOP job ) override;
 

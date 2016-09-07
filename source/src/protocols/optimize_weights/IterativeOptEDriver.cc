@@ -168,13 +168,13 @@ public:
 
 	~ScaleAnnealerTemperatureOperation() override = default;
 
-	
+
 	core::pack::task::operation::TaskOperationOP
 	clone() const override {
 		return core::pack::task::operation::TaskOperationOP( new ScaleAnnealerTemperatureOperation( *this ) );
 	}
 
-	
+
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const override {
 		task.low_temp(    0.3 * scale_factor_ );
@@ -262,13 +262,13 @@ IterativeOptEDriver::IterativeOptEDriver() :
 
 	// set the using unfolded boolean, by iterating over the score types in both the fixed and free lists and
 	// checking for "unfolded". checking if the emaps have non-zero weights associated with "unfolded" would also work.
-	for (auto & score_type_iter : free_score_list_) {
+	for ( auto & score_type_iter : free_score_list_ ) {
 		if ( name_from_score_type( score_type_iter ) == "unfolded" ) {
 			TR << "IterativeOptEDriver(): setting 'using_unfolded_energy_term_' to true." << std::endl;
 			using_unfolded_energy_term_ = true;
 		}
 	}
-	for (auto & score_type_iter : fixed_score_list_) {
+	for ( auto & score_type_iter : fixed_score_list_ ) {
 		if ( name_from_score_type( score_type_iter ) == "unfolded" ) {
 			TR << "IterativeOptEDriver(): setting 'using_unfolded_energy_term_' to true." << std::endl;
 			using_unfolded_energy_term_ = true;
@@ -297,7 +297,7 @@ IterativeOptEDriver::read_tagfile_to_taskfactory(std::string tagfile_name,
 	TaskOperationFactory::TaskOperationOPs tops;
 	basic::datacache::DataMap datamap;
 	TaskOperationFactory::get_instance()->newTaskOperations( tops, datamap, tagfile_name );
-	for (auto & top : tops) {
+	for ( auto & top : tops ) {
 		task_factory->push_back( top );
 	}
 }
@@ -2905,7 +2905,7 @@ IterativeOptEDriver::free_terms_energy_map_from_dofs(
 
 	// This covers the variable weights
 	Size dof_index( 1 );
-	for (auto itr : free_score_list_) {
+	for ( auto itr : free_score_list_ ) {
 		return_map[ itr ] = dofs[ dof_index++ ];
 	}
 
@@ -3674,12 +3674,12 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			utility::vector1< Real > fixed_energy_info;
 
 			// put all the energies for the free energy terms into the 'energy_info' vector
-			for (auto & score_type_iter : score_list) {
+			for ( auto & score_type_iter : score_list ) {
 				energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
 			// put all the energies for the fixed energy terms into the 'fixed_energy_info' vector
-			for (auto & score_type_iter : fixed_score_vec) {
+			for ( auto & score_type_iter : fixed_score_vec ) {
 				fixed_energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
@@ -3834,11 +3834,11 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 			utility::vector1< Real > free_energy_info;
 			utility::vector1< Real > fixed_energy_info;
 
-			for (auto & score_type_iter : score_list) {
+			for ( auto & score_type_iter : score_list ) {
 				free_energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
-			for (auto & score_type_iter : fixed_score_vec) {
+			for ( auto & score_type_iter : fixed_score_vec ) {
 				fixed_energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 

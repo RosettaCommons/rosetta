@@ -37,7 +37,7 @@ class ResourceManagerCreator : public utility::pointer::ReferenceCount {
 public:
 	friend class ResourceManagerFactory;
 
-	
+
 	~ResourceManagerCreator() override;
 
 private:

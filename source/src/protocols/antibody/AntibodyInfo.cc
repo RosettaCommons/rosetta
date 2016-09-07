@@ -1521,7 +1521,7 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 	// Make sure rb jumps do not reside in the loop region
 	// NOTE: This check is insufficient.  Perhaps the jump adjustment should be done in a while loop.
-	for (const auto & it : *get_AllCDRs_in_loopsop()) {
+	 for ( auto const & it : *get_AllCDRs_in_loopsop() ) {
 		if ( light_chain_COM >= (it.start() - 1) && light_chain_COM <= (it.stop() + 1) ) {
 			light_chain_COM = it.stop() + 2;
 		} else if ( heavy_chain_COM >= (it.start() - 1) && heavy_chain_COM <= (it.stop() + 1) ) {

@@ -227,7 +227,7 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 	int const nres( pose.total_residue() );
 
 	std::vector< int > free_res; // stores residue numbers in real loops
-	for (const auto & it : Loops_in_) {
+	 for ( auto const & it : Loops_in_ ) {
 		TR.Debug << "Loop res " <<  it.start() << " " <<  it.stop() << std::endl;
 		for ( int k = (int)it.start(); k <= (int)it.stop(); ++k ) {
 			free_res.push_back(k);
@@ -1321,8 +1321,8 @@ void LoopRefine::apply(
 
 	protocols::loops::LoopsOP LoopsToRefine( new protocols::loops::Loops() );
 
-	for (auto refine_loop : Loops_in_) {
-			refine_loop.choose_cutpoint( pose );
+	for ( auto refine_loop : Loops_in_ ) {
+		refine_loop.choose_cutpoint( pose );
 		LoopsToRefine->add_loop( refine_loop );
 	}
 

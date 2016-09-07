@@ -77,7 +77,7 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 	core::Size skipped_dots = 0;
 	core::Size selected_dots = 0;
 
-	for (auto & surface_dot : surface_dots) {
+	for ( auto & surface_dot : surface_dots ) {
 		if ( surface_dot.outnml.length() == 0 ) {
 			zeronormal_dots++;
 			continue;

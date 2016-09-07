@@ -33,7 +33,7 @@ public:
 	~InterfaceBuilderLoader() override;
 
 	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
-	
+
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
@@ -52,7 +52,7 @@ public:
 	~MoveMapBuilderLoader() override;
 
 	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
-	
+
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
@@ -68,7 +68,7 @@ public:
 	~LigandAreaLoader() override;
 
 	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
-	
+
 	void load_data(
 		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,

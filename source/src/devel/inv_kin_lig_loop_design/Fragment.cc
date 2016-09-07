@@ -122,9 +122,9 @@ istream& operator>>(istream& in, File& f) {
 } // operator>>
 
 ostream& operator<<(ostream& out, const File& f) {
-	for (const auto & j : f.getEntries()) {
+	 for ( auto const & j : f.getEntries() ) {
 		const vector<Entry>& vEntries = j.second;
-		for (const auto & vEntrie : vEntries) {
+		 for ( auto const & vEntrie : vEntries ) {
 			out << vEntrie;
 		} // i
 	} // j
@@ -248,9 +248,9 @@ void File::convertEntries(const int from, const int to) {
 	// don't need to clear vEntries_to
 
 	//FORVC(k,Entry,vEntries_from) {
-	for (const auto & entry_from : vEntries_from) {
+	 for ( auto const & entry_from : vEntries_from ) {
 
-			assert( static_cast<int>(entry_from.vResEntries.size()) == from );
+		assert( static_cast<int>(entry_from.vResEntries.size()) == from );
 
 		for ( int i = 0; i < (from - to); i += to ) {
 			Entry entry_to;

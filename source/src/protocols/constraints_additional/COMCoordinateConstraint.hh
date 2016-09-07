@@ -100,7 +100,7 @@ public:
 	void setup_for_derivatives(  core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const override;
 
 	// atom deriv
-	
+
 	void
 	fill_f1_f2(
 		AtomID const & atom,
@@ -116,7 +116,7 @@ public:
 	Size
 	natoms() const override;
 
-	
+
 	core::scoring::constraints::ConstraintOP
 	remap_resid( core::id::SequenceMapping const & ) const override { return nullptr; }
 

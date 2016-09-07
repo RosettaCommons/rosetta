@@ -242,7 +242,7 @@ Templates::get_cst_list( TemplateList& cst_list, TemplateList& cull_list ) const
 	}
 
 	// first get list of Templates with constraints
-	for (const auto & it : templates_) {
+	 for ( auto const & it : templates_ ) {
 		// if template has constraints
 		TemplateCOP aTemplate( it.second );
 		if ( aTemplate->has_constraints() ) {
@@ -268,7 +268,7 @@ Templates::scored_fragpick_list( TemplateList& frag_list ) const {
 		wExtern = option[ templates::fragsteal::wExtern ];
 	}
 
-	for (const auto & it : templates_) {
+	 for ( auto const & it : templates_ ) {
 		frag_list.push_back( it.second );
 	}
 	_get_scored_list( frag_list, option[ templates::fragsteal::topN ], wTopol, wExtern );
@@ -286,7 +286,7 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 	bool bScoreFilter = true;
 
 	// first get list of Templates with constraints
-	for (const auto & it : templates_) {
+	 for ( auto const & it : templates_ ) {
 		TemplateCOP aTemplate( it.second );
 		if ( bScoreFilter ) {
 			sum_extern += aTemplate->external_score();
@@ -333,7 +333,7 @@ Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type,
 		frames.push_back( frame );
 	}
 
-	for (const auto & it : fragpick_list_) {
+	 for ( auto const & it : fragpick_list_ ) {
 		tr.Info << "pick from template " << it->name() << std::endl;
 		Size nr_frags = it->steal_frags( frames, frag_set, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;
@@ -398,7 +398,7 @@ Size Templates::pick_large_frags(
 	core::Size ncopies /*default = 1*/
 ) const {
 	Size total( 0 );
-	for (const auto & it : fragpick_list_) {
+	 for ( auto const & it : fragpick_list_ ) {
 		tr.Info << "pick large frag from template " << it->name() << std::endl;
 		Size nr_frags = it->pick_large_frags( frag_set, frag_type, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;

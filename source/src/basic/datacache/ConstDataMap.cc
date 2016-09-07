@@ -200,7 +200,7 @@ ConstDataMap::operator []( std::string const & type ) {
 platform::Size
 ConstDataMap::size() const {
 	platform::Size count = 0;
-	for (const auto & iter : data_map_) {
+	 for ( auto const & iter : data_map_ ) {
 		count += iter.second.size();
 	}
 	return count;

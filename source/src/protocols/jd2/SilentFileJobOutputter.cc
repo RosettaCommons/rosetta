@@ -76,13 +76,13 @@ void SilentFileJobOutputter::write_all_structs() {
 	// the user's expectation.
 	if ( !bWriteNoStructures_ ) {
 		tr.Debug << "writing " << saved_structs_.size() << " structs." << std::endl;
-		for (auto & saved_struct : saved_structs_) {
+		for ( auto & saved_struct : saved_structs_ ) {
 			//tr.Debug << "writing struct " << ss->decoy_tag() << std::endl;
 			//tr.Debug << "writing struct " << (*it->first)->decoy_tag() << std::endl;
 			//SilentStructOP ss = it->first;
 			sfds[ saved_struct.second ].add_structure( (*saved_struct.first) );
 		}
-		for (auto & sfd : sfds) {
+		for ( auto & sfd : sfds ) {
 			sfd.second.write_all( sfd.first );
 		}
 	}

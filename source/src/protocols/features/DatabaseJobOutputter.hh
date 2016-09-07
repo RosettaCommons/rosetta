@@ -76,13 +76,13 @@ public:
 	void flush() override;
 
 	/// @brief this function outputs the final result of a job.
-	
+
 	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag ) override;
 
 	/// @brief this function is intended for saving mid-protocol poses;
 	/// for example the final centroid structure in a combined
 	/// centroid/fullatom protocol.
-	
+
 	void other_pose(
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & pose,
@@ -96,14 +96,14 @@ public:
 	/// normally writes to.  This class checks wherever output goes to
 	/// see if the job's expected output already exists (on disk or
 	/// whatever).  This is the most basic form of checkpointing.
-	
+
 	bool job_has_completed( protocols::jd2::JobCOP job ) override;
 
 public: // accessors
 
 	/// @brief this is the master function for determining the
 	/// unique output identifier for a job
-	
+
 	std::string output_name( protocols::jd2::JobCOP job ) override;
 
 private: // members

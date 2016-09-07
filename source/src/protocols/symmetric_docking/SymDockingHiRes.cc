@@ -399,7 +399,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 	//fpd -- repack any interface formed by a movable jump
 	utility::vector1<int> movable_jumps;
-	for (auto & dof : dofs) {
+	for ( auto & dof : dofs ) {
 		movable_jumps.push_back( dof.first );
 	}
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( movable_jumps ) ) );

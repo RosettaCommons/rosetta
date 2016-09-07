@@ -263,7 +263,7 @@ symmetric_rotamer_trials(
 			SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 			//fpd replace_residue is symmetric now ... still need to update scorefxn though
-			for (unsigned long clone : symm_info->bb_clones( resid )) {
+			for ( unsigned long clone : symm_info->bb_clones( resid ) ) {
 				//    conformation::ResidueOP sym_rsd = newresidue->clone();
 				//     sym_rsd->orient_onto_residue(pose.residue( *clone) );
 				//    pose.replace_residue ( *clone, *sym_rsd, false );

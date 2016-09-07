@@ -48,7 +48,7 @@ public:
 	std::string get_name() const override { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const override { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
 
-	
+
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,

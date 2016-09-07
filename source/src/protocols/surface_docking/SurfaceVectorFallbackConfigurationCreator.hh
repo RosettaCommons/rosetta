@@ -29,11 +29,11 @@ namespace surface_docking {
 class SurfaceVectorFallbackConfigurationCreator : public basic::resource_manager::FallbackConfigurationCreator
 {
 public:
-	
+
 	basic::resource_manager::FallbackConfigurationOP
 	create_fallback_configuration() const override;
 
-	
+
 	std::string resource_description() const override;
 
 };

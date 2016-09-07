@@ -56,7 +56,7 @@ FragID FrameList::fragID ( Size flat_nr ) {
 
 Size FrameList::flat_size() const {
 	Size frags( 0 );
-	for (const auto & it : *this) {
+	 for ( auto const & it : *this ) {
 		frags += it->nr_frags();
 	}
 	return frags;
@@ -68,7 +68,7 @@ utility::vector1<FrameOP> FrameList::frame_vector()
 }
 
 std::ostream& operator<< ( std::ostream& out, FrameList const& frags) {
-	for (const auto & frag : frags) {
+	 for ( auto const & frag : frags ) {
 		frag->show( out );
 	}
 	return out;

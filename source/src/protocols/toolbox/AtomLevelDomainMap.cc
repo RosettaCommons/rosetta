@@ -217,7 +217,7 @@ AtomLevelDomainMap::set_domain( core::id::NamedAtomID const & named_atom_id, pos
 void
 AtomLevelDomainMap::set_domain( Size const & setting  )
 {
-	for (auto & it : domain_map_) {
+	for ( auto & it : domain_map_ ) {
 		it.second = setting;
 	}
 }

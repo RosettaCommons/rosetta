@@ -141,7 +141,7 @@ FunGroupTK::FunGroupTK(
 	res_types.push_back("HIS");
 	for ( vector1<string>::const_iterator it = res_types.begin(); it != res_types.end(); ++it ) {
 		rsd_[*it].resize(pose_->n_residue());
-		for (unsigned long po : pos_) {
+		for ( unsigned long po : pos_ ) {
 			ResidueOP rsd = core::conformation::ResidueFactory::create_residue(frs->name_map(*it),pose_->residue(po),pose_->conformation());
 			stb_[*it].push_back(Stub(rsd->xyz(5),rsd->xyz(2),rsd->xyz(1)));
 			rsd_[*it][po] = rsd;

@@ -72,7 +72,7 @@ public:
 	/// the script contained in that file. If new_input is true, run the APPLY_TO_POSE
 	/// block on the input mover.  If both new_input and guarantee_new_mover are false,
 	/// then the input mover is considered up-to-date and the file is not re-read.
-	
+
 	bool
 	generate_mover_from_pose(
 		protocols::jd2::JobCOP job,

@@ -57,14 +57,14 @@ public: // Creation
 
 
 	/// @brief Clone this
-	
+
 	VectorOption *
 	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	
+
 	~VectorOption() override
 	= default;
 
@@ -85,31 +85,31 @@ public: // Methods
 
 
 	/// @brief Activate
-	
+
 	VectorOption &
 	activate() override = 0;
 
 
 	/// @brief Deactivate
-	
+
 	VectorOption &
 	deactivate() override = 0;
 
 
 	/// @brief Set to default value, if any
-	
+
 	VectorOption &
 	to_default() override = 0;
 
 
 	/// @brief Clear
-	
+
 	VectorOption &
 	clear() override = 0;
 
 
 	/// @brief Value assignment from a command line string
-	
+
 	VectorOption &
 	cl_value( std::string const & value_str ) override = 0;
 
@@ -117,7 +117,7 @@ public: // Methods
 	/// a VectorOption & return type. This will separate arguments into
 	/// blocks grouped by quotes, and then separate the non-quote-delimited
 	/// arguments by whitespace
-	
+
 	void
 	set_cl_value( std::string const & value_str ) override {
 		cl_value( value_str );

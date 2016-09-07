@@ -69,7 +69,7 @@
 namespace core {
 namespace io {
 namespace pose_to_sfr {
-	using utility::to_string;
+using utility::to_string;
 
 static THREAD_LOCAL basic::Tracer TR( "core.io.pose_to_sfr.PoseToStructFileRepConverter" );
 
@@ -721,12 +721,12 @@ PoseToStructFileRepConverter::grab_additional_pose_data( core::pose::Pose const 
 	grab_pdb_comments( pose, options_.pdb_comments() );
 	grab_torsion_records( pose, options_.output_torsions() );
 	grab_pdbinfo_labels( pose );
-	
+
 	//Here due to packstat.
-	if (options_.output_pose_energies_table()){
+	if ( options_.output_pose_energies_table() ) {
 		grab_pose_energies_table( pose);
 	}
-	if (options_.output_pose_cache()){
+	if ( options_.output_pose_cache() ) {
 		grab_pose_cache_data( pose);
 	}
 }
@@ -1006,25 +1006,25 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 	utility::vector1< std::string > labels;
 	utility::vector1< core::Real >  weights;
 	utility::vector1< std::vector< std::string > > table;
-	
+
 	core::scoring::EnergyMap emap_weights = pose.energies().weights();
-	
+
 	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
 	ScoreTypeVec score_types;
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
 		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
 		if ( emap_weights[ii] != 0 ) score_types.push_back(ii);
 	}
-	
+
 	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
 		labels.push_back( name_from_score_type(score_type) );
 	}
 	labels.push_back( "total" );
-	
+
 	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
 		weights.push_back( emap_weights[score_type] );
 	}
-	
+
 	using utility::to_string;
 	core::Real pose_total = 0.0;
 	if ( pose.energies().energies_updated() ) {
@@ -1037,14 +1037,14 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 		}
 		line.push_back( restrict_prec(pose_total)); //end first for overall pose energy;
 		table.push_back(line);
-		
+
 		for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
 			line.clear();
 			core::Real rsd_total = 0.0;
 			line.push_back( pose.residue(j).name() + "_" + to_string( j ) );
 			BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
 				core::Real score = (emap_weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
-				
+
 				line.push_back( restrict_prec(score));
 				rsd_total += score;
 			}
@@ -1052,8 +1052,8 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 			table.push_back( line );
 		}
 	}
-	
-	
+
+
 	sfr_->score_table_labels() =   labels;
 	sfr_->score_table_weights() =  weights;
 	sfr_->score_table_lines() =    table;
@@ -1061,10 +1061,10 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 
 void
 PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose){
-	
+
 	std::map< std::string, std::string > string_data;
 	std::map< std::string, float >  float_data;
-	
+
 	// ARBITRARY_STRING_DATA
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		basic::datacache::CacheableStringMapCOP data
@@ -1094,7 +1094,7 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 			float_data [ it->first ] = it->second;
 		}
 	}
-	
+
 	sfr_->pose_cache_string_data() = string_data;
 	sfr_->pose_cache_float_data() =  float_data;
 
@@ -1185,14 +1185,14 @@ PoseToStructFileRepConverter::get_residue_information(
 /* OLDer - DELETE - left for reference
 core::Real restrict_prec( core::Real inval )
 {
-	if ( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
-		return inval;
-	}
-	core::Real outval;
-	std::stringstream temp;
-	temp << std::fixed << std::setprecision(5) << inval;
-	temp >> outval;
-	return outval;
+if ( inval >= 1 || inval <= -1 ) { // Don't alter value, as the default precision of 6 works fine, and we avoid rounding artifacts
+return inval;
+}
+core::Real outval;
+std::stringstream temp;
+temp << std::fixed << std::setprecision(5) << inval;
+temp >> outval;
+return outval;
 }
 */
 
@@ -1208,7 +1208,7 @@ std::string restrict_prec( core::Real inval )
 	temp << std::fixed << std::setprecision(5) << inval;
 	temp >> outval;
 	return utility::to_string(outval);
-	
+
 }
 
 

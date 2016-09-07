@@ -50,10 +50,10 @@ public:
 	CoMTrackerCM( std::string name, // move-constructed
 		core::select::residue_selector::ResidueSelectorCOP mobile_selector );
 
-	
+
 	~CoMTrackerCM() override = default;
 
-	
+
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;
 
@@ -74,10 +74,10 @@ public:
 
 	void name( std::string const& name ) { name_ = name; }
 
-	
+
 	moves::MoverOP fresh_instance() const override;
 
-	
+
 	moves::MoverOP clone() const override;
 
 protected:

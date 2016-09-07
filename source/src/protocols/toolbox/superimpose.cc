@@ -466,7 +466,7 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
 	}
 
 	/* clear matrix U */
-	for (auto & i : u) {
+	for ( auto & i : u ) {
 		for ( int j=0; j<DIM; j++ ) i[j]=0;
 	}
 

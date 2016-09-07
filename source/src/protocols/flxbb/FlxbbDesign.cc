@@ -559,10 +559,10 @@ void FlxbbDesign::apply( pose::Pose & pose )
 
 	// run
 	Size num_task( 0 );
-	for (auto design_task : design_taskset_) {
+	for ( auto design_task : design_taskset_ ) {
 
 		num_task ++;
-			for ( Size i=1 ; i<=design_task->ncycle() ; i++ ) {
+		for ( Size i=1 ; i<=design_task->ncycle() ; i++ ) {
 
 			TR << "current_cycle/total_cycle: " << i << "/" << design_task->ncycle() << " in DesignTask: " << num_task << std::endl;
 

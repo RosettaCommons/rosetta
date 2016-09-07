@@ -121,7 +121,7 @@ parse_constraint_generators( utility::tag::TagCOP tag, basic::datacache::DataMap
 	ConstraintGeneratorCOPs cgs;
 	std::string const generators_str = tag->getOption< std::string >( "constraint_generators", "" );
 	utility::vector1< std::string > const generator_strs = utility::string_split( generators_str, ',' );
-	for (const auto & generator_str : generator_strs) {
+	 for ( auto const & generator_str : generator_strs ) {
 		ConstraintGeneratorCOP new_cg = data.get_ptr< ConstraintGenerator const >( "ConstraintGenerators", generator_str );
 		if ( !new_cg ) {
 			std::stringstream msg;

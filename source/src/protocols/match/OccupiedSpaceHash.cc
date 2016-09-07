@@ -173,7 +173,7 @@ OccupiedSpaceHash::prepare_to_note_hits_for_completed_round()
 	/// Rounds that use secondary matching on upstream residues will not
 	++revision_id_;
 
-	for (auto & iter : hash_) {
+	for ( auto & iter : hash_ ) {
 		iter.second = 0;
 	}
 

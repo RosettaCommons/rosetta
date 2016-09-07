@@ -61,7 +61,7 @@ UnfoldedStateEnergyCalculatorJobDistributor::go( protocols::moves::MoverOP mover
 	go_main( mover );
 
 	// calc average unweighted energies for all amino acids in the map
-	for (auto & i : unweighted_energies_map_) {
+	for ( auto & i : unweighted_energies_map_ ) {
 		TR << "Calculating averages for " << i.first << std::endl;
 		calc_all_averages( i.second, energy_terms_ );
 	}

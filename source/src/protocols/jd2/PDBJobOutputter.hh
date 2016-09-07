@@ -78,7 +78,7 @@ public:
 protected:
 	//Exists in parent wwPDBJO
 	/// @brief this private function provides the extended name, not just the output name.  e.g output_name returns 1UBQ_0001, this returns 1UBQ_0001.pdb.  In this case the extension is .pdb
-	
+
 	//virtual
 	//std::string extended_name( JobCOP job, std::string const & suffix = "" );
 
@@ -101,7 +101,7 @@ protected:
 protected:
 	//////////////////////////////////////protected PDB output/////////////////////////////////////
 	/// @brief This is the function actually different between mmCIF and PDB output, and unshared by the wwPDB parent class.  Here it causes a pdb file to be written.  Pure virtual in the base class.  filename is an optional label for the score data table, not an actual control.
-	
+
 	void dump_pose( JobCOP job, core::pose::Pose const & pose, utility::io::ozstream & out, std::string const &filename="" ) override;
 
 	////////////////////////////////////////data////////////////////////////////////////

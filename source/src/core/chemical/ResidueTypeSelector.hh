@@ -166,7 +166,7 @@ public:
 	// select by PROPERTY
 	bool
 	operator[]( ResidueType const & rsd ) const override {
-		for (const auto & propertie : properties_) {
+		 for ( auto const & propertie : properties_ ) {
 			if ( rsd.has_property( propertie ) ) return desired_result();
 		}
 		return !desired_result();
@@ -192,7 +192,7 @@ public:
 	// select by VARIANT_TYPE
 	bool
 	operator[]( ResidueType const & rsd ) const override {
-		for (const auto & variant : variants_) {
+		 for ( auto const & variant : variants_ ) {
 			if ( rsd.has_variant_type( variant ) ) return desired_result();
 		}
 		return !desired_result();
@@ -255,7 +255,7 @@ public:
 	// select by VARIANT_TYPE
 	bool
 	operator[]( ResidueType const & rsd ) const override {
-		for (const auto & variant : variants_) {
+		 for ( auto const & variant : variants_ ) {
 			if ( !rsd.has_variant_type( variant ) ) return !desired_result(); // rsd is missing one of our variants
 		}
 		if ( rsd.properties().get_list_of_variants().size() == variants_.size() ) return desired_result();

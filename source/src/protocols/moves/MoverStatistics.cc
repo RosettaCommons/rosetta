@@ -61,7 +61,7 @@ void MoverStatistics::print( MonteCarloOP mc, std::string const & type )
 	if ( TR.Trace.visible() ) { //change from Debug --> Trace since it produces output every step!
 		std::ostringstream outstring;
 
-		for (double & ii : score_) {
+		for ( double & ii : score_ ) {
 			outstring << F( 9, 3, ii ) << " ";
 		}
 		outstring << F( 9, 3, mc->last_accepted_score() ) << "  " << F( 9, 3, mc->lowest_score() ) << "  " << type << "   ";

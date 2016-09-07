@@ -129,7 +129,7 @@ DomainInfo::process_domain( )
 	if ( linker_sequence.length() > 0 ) {
 		core::pose::remove_upper_terminus_type_from_pose_residue( temp_pose, temp_pose.total_residue());
 	}
-	for (char aa : linker_sequence) {
+	for ( char aa : linker_sequence ) {
 		// string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
 		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa )) );

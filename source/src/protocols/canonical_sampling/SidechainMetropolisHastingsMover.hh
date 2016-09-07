@@ -65,26 +65,26 @@ public:
 	);
 
 	/// @brief Default destructor
-	
+
 	~SidechainMetropolisHastingsMover() override;
 
 	/// @brief Run the sidechain-only simulation.
-	
+
 	void
 	apply( core::pose::Pose & pose ) override;
 
-	
+
 	std::string
 	get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,

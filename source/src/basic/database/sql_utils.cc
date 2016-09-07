@@ -527,7 +527,7 @@ check_statement_sanity(
 	}
 
 	int semicolon_count=0;
-	for (char i : sql) {
+	for ( char i : sql ) {
 		if ( i == ';' ) {
 			semicolon_count++;
 		}

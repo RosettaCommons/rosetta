@@ -586,7 +586,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 		nres ) );
 
 	// make sure rb jumps do not reside in the loop region
-	for (const auto & it : loops_in) {
+	 for ( auto const & it : loops_in ) {
 		if ( jump_pos1 >= ( it.start() - 1 ) &&
 				jump_pos1 <= ( it.stop() + 1) ) {
 			jump_pos1 = it.stop() + 2;
@@ -604,7 +604,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 	// delete some old edge accordingly
 	FoldTree f( pose_in.fold_tree() );
 
-	for (const auto & it : loops_in) {
+	 for ( auto const & it : loops_in ) {
 		Size const loop_start ( it.start() );
 		Size const loop_stop ( it.stop() );
 		Size const loop_cutpoint ( it.cut() );
@@ -612,7 +612,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 		//bool edge_found = false;
 		const FoldTree & f_const = f;
 		Size const num_jump = f_const.num_jump();
-		for (const auto & it2 : f_const) {
+		 for ( auto const & it2 : f_const ) {
 			edge_start = std::min( it2.start(), it2.stop() );
 			edge_stop = std::max( it2.start(), it2.stop() );
 			if ( ! it2.is_jump() && loop_start > edge_start
@@ -708,7 +708,7 @@ AntibodyModeler::repulsive_ramp(
 	loops::remove_cutpoint_variants( pose_in, true );
 
 	using namespace core::chemical;
-	for (const auto & it : loops_in) {
+	 for ( auto const & it : loops_in ) {
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it.cut() );
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it.cut()+1);
 	}
@@ -829,7 +829,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	loops::remove_cutpoint_variants( pose_in, true );
 
 	using namespace core::chemical;
-	for (const auto & it : loops_in) {
+	 for ( auto const & it : loops_in ) {
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_LOWER, it.cut() );
 		core::pose::add_variant_type_to_pose_residue( pose_in, CUTPOINT_UPPER,it.cut()+1);
 	}

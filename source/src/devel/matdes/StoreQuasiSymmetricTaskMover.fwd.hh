@@ -26,7 +26,7 @@ class StoreQuasiSymmetricTaskMover;
 typedef utility::pointer::shared_ptr< StoreQuasiSymmetricTaskMover > StoreQuasiSymmetricTaskMoverOP;
 typedef utility::pointer::shared_ptr< StoreQuasiSymmetricTaskMover const > StoreQuasiSymmetricTaskMoverCOP;
 
-} // matdes 
+} // matdes
 } // devel
 
-#endif 
+#endif

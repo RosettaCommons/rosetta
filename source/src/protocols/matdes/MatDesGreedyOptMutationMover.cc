@@ -1003,7 +1003,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
 		}
-		for (const auto & filter : filters) {
+		 for ( auto const & filter : filters ) {
 			if ( filter.second->get_type() == "CompoundStatement" ) {
 				compound_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter.second ));
 			}

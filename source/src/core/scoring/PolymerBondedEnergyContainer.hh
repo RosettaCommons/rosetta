@@ -138,10 +138,10 @@ private:
 
 class PolymerBondedEnergyContainer : public LREnergyContainer {
 public:
-	
+
 	~PolymerBondedEnergyContainer() override;
 
-	
+
 	LREnergyContainerOP clone() const override;
 
 	/// @brief Pose constructor.
@@ -150,50 +150,50 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	PolymerBondedEnergyContainer( core::pose::Pose const & pose, utility::vector1< ScoreType > const & score_type_in );
 
-	
+
 	bool empty() const override;
 
-	
+
 	bool
 	any_neighbors_for_residue( int /*resid*/ ) const override;
 
-	
+
 	bool
 	any_upper_neighbors_for_residue( int /*resid*/ ) const override;
 
 	Size
 	size() const;
 
-	
+
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const override;
 
-	
+
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_end( int resid ) const override;
 
-	
+
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_begin( int resid ) const override;
 
-	
+
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_end( int resid ) const override;
 
 	//////////////////// non-const versions
-	
+
 	ResidueNeighborIteratorOP
 	neighbor_iterator_begin( int resid ) override;
 
-	
+
 	ResidueNeighborIteratorOP
 	neighbor_iterator_end( int resid ) override;
 
-	
+
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_begin( int resid ) override;
 
-	
+
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_end( int resid ) override;
 

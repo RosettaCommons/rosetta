@@ -79,7 +79,7 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	coordinates_file.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
 	coordinates_file.open(coordinates_path.c_str(),std::ios::in|std::ios::binary);
 
-	for (auto & fragment_coordinate : fragment_store->fragment_coordinates) {
+	for ( auto & fragment_coordinate : fragment_store->fragment_coordinates ) {
 		// Stored precision may not be double
 		double read_coordinate[3];
 		coordinates_file.read((char*)&read_coordinate[0], sizeof(double) * 3);
@@ -95,7 +95,7 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	threshold_distance_file.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
 	threshold_distance_file.open(threshold_distance_path.c_str(),std::ios::in|std::ios::binary);
 
-	for (double & fragment_threshold_distance : fragment_store->fragment_threshold_distances) {
+	for ( double & fragment_threshold_distance : fragment_store->fragment_threshold_distances ) {
 		// Stored precision may not be double
 		double read_coordinate;
 		threshold_distance_file.read((char*)&read_coordinate, sizeof(double));

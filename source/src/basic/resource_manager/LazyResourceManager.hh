@@ -139,7 +139,7 @@ public:
 
 	/// @brief wipe out all data; useful for unit testing, but hard to fathom how it would be useful
 	/// otherwise.
-	
+
 	void
 	clear() override;
 
@@ -198,13 +198,13 @@ public: // helper functions relating to resource configuration and creation
 		ResourceOptionsTag const & resource_options_tag) const;
 
 	/// @brief Does a resource with a given name exist?
-	
+
 	bool
 	has_resource(
 		ResourceTag const & resource_tag) const override;
 
 	/// @brief Get a resource with a given name.
-	
+
 	ResourceOP
 	find_resource(
 		ResourceTag const & resource_tag) override;
@@ -229,7 +229,7 @@ public: // Interface to for creating and accessing resources
 	//ResourceOP
 	//get_resource( ResourceDescription const & );
 
-	
+
 	void
 	show( std::ostream & out ) const override;
 

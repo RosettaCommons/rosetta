@@ -190,7 +190,7 @@ public:
 		Real const HH_cutoff
 	);
 
-	
+
 	~NeighborList() override;
 
 	// Clone method used in copy ctors of classes that contain NeighborListOP's

@@ -1108,7 +1108,7 @@ DockingProtocol::show( std::ostream & out ) const {
 	int spaces_so_far = 23;
 
 	bool first = true;
-	for (int movable_jump : movable_jumps_) {
+	for ( int movable_jump : movable_jumps_ ) {
 		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;

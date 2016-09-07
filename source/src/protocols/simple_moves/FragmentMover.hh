@@ -302,7 +302,7 @@ public:
 
 	std::string get_name() const override;
 
-	
+
 	bool
 	apply_fragment(
 		core::fragment::Frame const& frame,

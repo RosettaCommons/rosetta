@@ -42,11 +42,11 @@ public: // constructors destructors
 
 public: // public interface
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	std::string
 	get_parameters() const override;
 

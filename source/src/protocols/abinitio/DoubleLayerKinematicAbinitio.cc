@@ -79,7 +79,7 @@ void DoubleLayerKinematicAbinitio::select_core_loops(
 	loops_out.clear();
 	int ntries = 0;
 	while ( loops_out.size() == 0 && ntries++ < 50 ) {
-		for (const auto & rigid_loop : rigid_loops_) {
+		 for ( auto const & rigid_loop : rigid_loops_ ) {
 			if ( numeric::random::rg().uniform() >= rigid_loop.skip_rate() )  {
 				loops_out.push_back( rigid_loop );
 			}

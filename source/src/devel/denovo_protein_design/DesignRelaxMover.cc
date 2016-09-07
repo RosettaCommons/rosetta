@@ -229,7 +229,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
 		kin_moverOP->set_vary_bondangles( true );
 		kin_moverOP->set_temperature( 2.0 );
-		for (const auto & it : *loops) {
+		 for ( auto const & it : *loops ) {
 			protocols::loops::loop_closure::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, it , 1000);
 			kinwrapper.apply(pose);
 		}

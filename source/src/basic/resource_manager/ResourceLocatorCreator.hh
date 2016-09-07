@@ -37,7 +37,7 @@ namespace resource_manager {
 class ResourceLocatorCreator : public utility::pointer::ReferenceCount
 {
 public:
-	
+
 	~ResourceLocatorCreator() override;
 
 	virtual

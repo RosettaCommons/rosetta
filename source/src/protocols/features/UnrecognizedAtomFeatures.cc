@@ -272,7 +272,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 
 	map< Size, UnrecognizedAtomRecord const * > ur_found;
 
-	for (const auto & ua : pdb_info->get_unrecognized_atoms()) {
+	 for ( auto const & ua : pdb_info->get_unrecognized_atoms() ) {
 		map< Size, UnrecognizedAtomRecord const * >::const_iterator
 			i(ur_found.find(ua.res_num()));
 		if ( i == ur_found.end() ) {

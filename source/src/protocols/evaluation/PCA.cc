@@ -270,7 +270,7 @@ void PCA::fill_coordinates(
 {
 	int natoms = 1;
 	x.redimension( 3, ind.size() );
-	for (const auto & it : ind) {
+	 for ( auto const & it : ind ) {
 		PointPosition vec( pose.xyz( it ) );
 		for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
 			x(k+1,natoms) = vec[k];
@@ -316,7 +316,7 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 	}
 
 	/* clear matrix U */
-	for (auto & i : u) {
+	for ( auto & i : u ) {
 		for ( int j=0; j<DIM; j++ ) i[j]=0;
 	}
 	/*calculate the matrix U*/

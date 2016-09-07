@@ -35,12 +35,12 @@ class LoopsFileLoaderCreator : public basic::resource_manager::ResourceLoaderCre
 public:
 
 	/// @brief Return a up-casted owning pointer (ResourceLoaderOP) to the resource loader.
-	
+
 	basic::resource_manager::ResourceLoaderOP
 	create_resource_loader() const override;
 
 	/// @brief Return the string identifier for the associated ResourceLoader (LoopsFile).
-	
+
 	std::string loader_type() const override;
 
 };

@@ -211,8 +211,8 @@ AtomPairConstraintGenerator::add_constraints(
 	MappedAtoms const & iatoms,
 	MappedAtoms const & jatoms ) const
 {
-	for (auto iatom : iatoms) {
-		for (auto jatom : jatoms) {
+	for ( auto iatom : iatoms ) {
+		for ( auto jatom : jatoms ) {
 			core::Real const dist = ref_ires.xyz( iatom.ref_atom ).distance( ref_jres.xyz( jatom.ref_atom ) );
 			if ( dist > max_distance_ ) continue;
 

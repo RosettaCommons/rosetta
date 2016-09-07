@@ -150,7 +150,7 @@ TemplateJumpSetup::create_jump_sample() const {
 	// 1.) don't want to have two pairings with same register in close vicinity...
 	// 2.) don't want to apply very local pairings very often ... use only 20% of time
 	core::scoring::dssp::PairingList final_selection;
-	for (auto & target_pairing : target_pairings) {
+	for ( auto & target_pairing : target_pairings ) {
 
 		bool ignore( false );
 
@@ -214,7 +214,7 @@ TemplateJumpSetup::clean_jumps( JumpSample const& target_jumps ) const {
 	target_jumps.generate_jump_frames( jump_frames,mm );
 
 	// treat each jump individually ---> want to select frags only from templates that have compatible pairings
-	for (auto & jump_frame : jump_frames) {
+	for ( auto & jump_frame : jump_frames ) {
 		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( jump_frame->start(), jump_frame->stop() ) );
 		bool found( false );
 		for ( PairingStatistics::const_iterator it = strand_stats_->begin(); !found && it != strand_stats_->end(); ++it ) {
@@ -249,13 +249,13 @@ TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinemati
 	target_jumps.generate_jump_frames( jump_frames,mm );
 
 	// treat each jump individually ---> want to select frags only from templates that have compatible pairings
-	for (auto & jump_frame : jump_frames) {
+	for ( auto & jump_frame : jump_frames ) {
 		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( jump_frame->start(), jump_frame->stop() ) );
 		Size nr_frags( 0 );
 		tr.Debug << "get frags for pairing " << target_pairing << std::endl;
 		if ( templates_ ) {
 			if ( !is_helix_jump( target_pairing ) ) {
-				for (const auto & it : *templates_) {
+				 for ( auto const & it : *templates_ ) {
 
 					//check if template has pairing .. we know all its pairings already aligned in targe-sequence...
 					// its in the strand_stats_
@@ -269,7 +269,7 @@ TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinemati
 			} else { //get here if pairing is helix jump
 				tr.Debug << "has been found in helix-list blindly collect all jump-geometries from models with an H" << std::endl;
 				FrameList aFrame; aFrame.push_back( jump_frame );
-				for (const auto & it : templates_->helixjump_picks()) {
+				 for ( auto const & it : templates_->helixjump_picks() ) {
 					nr_frags++;
 					it->steal_frags( aFrame, *jump_frags );
 				}

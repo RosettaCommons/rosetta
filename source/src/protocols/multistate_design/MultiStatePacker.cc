@@ -157,7 +157,7 @@ PosTypeCreator::new_entity( std::string const & word )
 void
 MultiStatePacker::single_state_design( bool restrict_to_canonical /* = true */ )
 {
-	for (auto & ss : states()) {
+	for ( auto & ss : states() ) {
 		PackingStateOP state = utility::pointer::dynamic_pointer_cast< PackingState >( ss );
 		runtime_assert( state != nullptr );
 		utility::vector0< int > rot_to_pack;
@@ -198,7 +198,7 @@ MultiStatePacker::evaluate(
 				protocols::multistate_design::MultiStateEntity & multi_state_entity =
 					static_cast< protocols::multistate_design::MultiStateEntity & >( entity );
 				multi_state_entity.single_state_entity_data()[single_state_num].fitness(E);
-				for (const auto & iter : metric_value_getters()) {
+				 for ( auto const & iter : metric_value_getters() ) {
 					multi_state_entity.single_state_entity_data()[single_state_num].metric_value(
 						iter.first,
 						iter.second.get(state->pose())
@@ -229,7 +229,7 @@ limit_rotamer_set(
 		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type().get_self_ptr() );
 
 		core::chemical::AA seq_type( core::chemical::aa_unk );
-		for (const auto & it : seq) {
+		 for ( auto const & it : seq ) {
 			if ( ! it.get() ) {
 				utility_exit_with_message( "Null pointer in EntityElement array" );
 			}

@@ -81,10 +81,10 @@ public:
 
 	}
 
-	
+
 	~LigandDockMain() override= default;
 
-	
+
 	void
 	apply( core::pose::Pose & pose ) override {
 
@@ -126,23 +126,23 @@ public:
 
 	}
 
-	
+
 	std::string
 	get_name() const override {
 		return "LigandDockMain";
 	}
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override {
 		return protocols::moves::MoverOP( new LigandDockMain );
 	}
 
-	
+
 	bool
 	reinitialize_for_each_job() const override { return false; }
 
-	
+
 	bool
 	reinitialize_for_new_input() const override { return false; }
 

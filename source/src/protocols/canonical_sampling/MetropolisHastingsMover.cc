@@ -485,8 +485,8 @@ MetropolisHastingsMover::parse_my_tag(
 
 	//add movers and observers
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
-	for (auto subtag : subtags) {
-			protocols::moves::MoverOP mover;
+	for ( auto subtag : subtags ) {
+		protocols::moves::MoverOP mover;
 		if ( subtag->getName() == "Add" ) { //add existing mover
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
 			auto mover_iter( movers.find( mover_name ) );

@@ -74,7 +74,7 @@ create_entity_resfile_contents(
 			entity_resfile_contents->commands_for_residue( ii )
 			: entity_resfile_contents->default_commands() );
 
-		for (const auto & iter : ii_command_list) {
+		 for ( auto const & iter : ii_command_list ) {
 			iter->residue_action( *entity_task, ii );
 		}
 	}
@@ -107,7 +107,7 @@ initialize_task_from_entity_resfile_and_secondary_resfile(
 			secondary_resfile_contents.commands_for_residue( ii ) :
 			secondary_resfile_contents.default_commands() ));
 
-		for (const auto & iter : ii_command_list) {
+		 for ( auto const & iter : ii_command_list ) {
 			iter->residue_action( *task, ii );
 		}
 	}

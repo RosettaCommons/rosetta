@@ -192,13 +192,13 @@ JobOP JobsContainer::back() {
 ///
 void JobsContainer::shuffle() {
 	utility::vector1<core::Size> keys;
-	for (auto & it : joblist_) {
+	for ( auto & it : joblist_ ) {
 		keys.push_back( it.first );
 	}
 	numeric::random::random_permutation( keys, numeric::random::rg() );
 	std::map<core::Size, JobOP> newjoblist_;
 	core::Size j=1;
-	for (auto & it : joblist_) {
+	for ( auto & it : joblist_ ) {
 		newjoblist_.insert( std::pair<core::Size, JobOP>( keys[j], it.second ) );
 		++j;
 	}
@@ -232,7 +232,7 @@ bool JobsContainer::can_be_deleted ( core::Size const index ) const {
 void JobsContainer::get_loaded_job_indices( utility::vector1 < core::Size > &output) const {
 	output.clear();
 	output.reserve( joblist_.size() );
-	for (const auto & it : joblist_) {
+	 for ( auto const & it : joblist_ ) {
 		output.push_back( it.first );
 	}
 	return;

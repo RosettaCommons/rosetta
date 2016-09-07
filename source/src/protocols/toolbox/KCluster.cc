@@ -184,7 +184,7 @@ KClusterData::KClusterData()
 	natom_ = loops.loop_size();
 	if ( natom_>0 ) {
 		//specified loop region
-		for (const auto & loop : loops) {
+		 for ( auto const & loop : loops ) {
 			for ( core::Size i=loop.start(), end=loop.stop(); i<=end; i++ ) {
 				rmsd_ca_list_.push_back(i);
 			}

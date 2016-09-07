@@ -212,7 +212,7 @@ PoseConformationFeatures::report_features_implementation(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for (const auto & it : fold_tree) {
+	 for ( auto const & it : fold_tree ) {
 
 		int start_res(it.start()), stop_res(it.stop()), label(it.label());
 		string start_atom(it.start_atom()), stop_atom(it.stop_atom());

@@ -87,7 +87,7 @@ void Ints::fromString(const string& s) {
 
 	pair<string,string> p;
 
-	for (char k : s) {
+	for ( char k : s ) {
 
 		switch( state ) {
 		case STATE_0 :

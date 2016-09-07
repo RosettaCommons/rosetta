@@ -391,7 +391,7 @@ public:
 		out << " " << sformat_idx;
 		// psformat64 is a pointer to a memory location and is never modified
 		// it should NOT be serialized or restored
-		for (auto & i : sformat) {
+		for ( auto & i : sformat ) {
 			out << " " << i.u[0] << " " << i.u[1];
 		}
 	}
@@ -403,7 +403,7 @@ public:
 		in >> sformat_idx;
 		// psformat64 is a pointer to a memory location and is never modified
 		// it should NOT be serialized or restored
-		for (auto & i : sformat) {
+		for ( auto & i : sformat ) {
 			in >> i.u[0] >> i.u[1];
 		}
 	}

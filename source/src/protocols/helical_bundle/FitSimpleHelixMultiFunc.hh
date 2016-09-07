@@ -60,19 +60,19 @@ public: // Methods
 
 	/// @brief Calculate function value (rms squared)
 	///
-	
+
 	Real
 	operator ()( Multivec const & vars ) const override;
 
 	/// @brief Calculate function value derivatives
 	///
-	
+
 	void
 	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
 
 	/// @brief Error state reached -- derivative does not match gradient
 	///
-	
+
 	void
 	dump( Multivec const & vars, Multivec const & vars2 ) const override;
 

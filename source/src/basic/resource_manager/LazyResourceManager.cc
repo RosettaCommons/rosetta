@@ -441,7 +441,7 @@ LazyResourceManager::show(
 		<< std::setiosflags(std::ios::left) << setw(16) << "ResourceDescription"
 		<< std::setiosflags(std::ios::left) << setw(16) << "JobTag ->"
 		<< "ResourceTag" << endl;
-	for (const auto & resource_tag : resource_tags_) {
+	 for ( auto const & resource_tag : resource_tags_ ) {
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << resource_tag.first.first << setw(16) << resource_tag.first.second
 			<< resource_tag.second << endl;
@@ -450,7 +450,7 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.job_options:" << endl;
-	for (const auto & job_option : job_options_) {
+	 for ( auto const & job_option : job_options_ ) {
 		out
 			<< "ResourceTag: " << job_option.first << endl
 			<< *(job_option.second) << endl;
@@ -459,7 +459,7 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.resource_configurations:" << endl;
-	for (const auto & resource_configuration : resource_configurations_) {
+	 for ( auto const & resource_configuration : resource_configurations_ ) {
 		out
 			<< "ResourceTag: " << resource_configuration.first << endl
 			<< resource_configuration.second << endl;
@@ -468,7 +468,7 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.resource_locators:" << endl;
-	for (const auto & resource_locator : resource_locators_) {
+	 for ( auto const & resource_locator : resource_locators_ ) {
 		out
 			<< "LocatorTag: " << resource_locator.first << endl;
 		resource_locator.second->show(out);
@@ -478,7 +478,7 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.resource_options:" << endl;
-	for (const auto & resource_option : resource_options_) {
+	 for ( auto const & resource_option : resource_options_ ) {
 		out
 			<< "LocatorOptionsTag: " << resource_option.first << endl
 			<< *(resource_option.second) << endl;

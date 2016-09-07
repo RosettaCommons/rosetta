@@ -156,7 +156,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	loops::remove_cutpoint_variants( pose, true );
 
 	using namespace core::chemical;
-	for (const auto & it : *all_loops_) {
+	 for ( auto const & it : *all_loops_ ) {
 		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it.cut() );
 		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it.cut()+1);
 	}

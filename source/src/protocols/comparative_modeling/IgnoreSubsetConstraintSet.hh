@@ -53,23 +53,23 @@ public:
 		ConstraintSet const & other
 	);
 
-	
+
 	ConstraintSet &
 	operator = ( ConstraintSet const & rhs ) override;
 
-	
+
 	ConstraintSetOP
 	clone() const override;
 
-	
+
 	void
 	detached_copy( ConstraintSet const & src ) override;
 
-	
+
 	ConstraintSetOP
 	detached_clone() const override;
 
-	
+
 	bool
 	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const override;
 
@@ -84,7 +84,7 @@ public:
 
 	/// @brief Allow the parent class implementation to add the residue constraints
 	/// for this residue to the res_data_cache if this residue is not being ignored.
-	
+
 	void
 	setup_for_minimizing_for_residue(
 		core::conformation::Residue const & rsd,
@@ -97,7 +97,7 @@ public:
 
 	/// @brief Allow the parent class implenetation to add the residue-pair constraints
 	/// for this residue pair to the respair_data_cache if neither residues are being ignored.
-	
+
 	void
 	setup_for_minimizing_for_residue_pair(
 		core::conformation::Residue const & rsd1,

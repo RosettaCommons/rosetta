@@ -384,7 +384,7 @@ MultistateFitnessFunction::update_entity_history( Entity const & ent )
 
 	if ( added_entity ) instruct_daemons_to_keep_last_entity();
 
-	for (auto & iter : discarded) {
+	for ( auto & iter : discarded ) {
 		instruct_daemons_to_drop_entity( *iter );
 	}
 

@@ -41,7 +41,7 @@ public:
 
 	/// @brief Returns a SurfaceParametersOP which is constructed from the given input
 	/// stream (istream).
-	
+
 	utility::pointer::ReferenceCountOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
@@ -50,7 +50,7 @@ public:
 	) const override;
 
 	/// @brief Returns the default options for SurfaceParameters
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const override;
 

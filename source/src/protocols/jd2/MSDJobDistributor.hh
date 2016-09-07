@@ -32,7 +32,7 @@ class MSDJobDistributor : public JobDistributor {
 
 public:
 
-	
+
 	~MSDJobDistributor() override;
 
 	core::Size

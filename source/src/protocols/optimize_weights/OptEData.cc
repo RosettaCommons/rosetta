@@ -544,13 +544,13 @@ PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 		Strings
 			fixed_vals( string_split( sections[3], ' ' ) ),
 			free_vals( string_split( sections[4], ' ' ) );
-		for (auto & fixed_val : fixed_vals) {
+		for ( auto & fixed_val : fixed_vals ) {
 			Real val;
 			std::istringstream ss( fixed_val );
 			ss >> val;
 			fixed_energies.push_back( val );
 		}
-		for (auto & free_val : free_vals) {
+		for ( auto & free_val : free_vals ) {
 			Real val;
 			std::istringstream ss( free_val );
 			ss >> val;
@@ -576,7 +576,7 @@ PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 
 	Size const nrotamers( data().size() );
 	outfile.write( (char*) &nrotamers, sizeof(Size) );
-	for (const auto & rot : data()) {
+	 for ( auto const & rot : data() ) {
 		chemical::AA this_aa( rot->this_aa() );
 		Size rot_number( rot->rot_number() );
 		outfile.write( (char*) &this_aa, sizeof(chemical::AA) );
@@ -3922,7 +3922,7 @@ core::Size
 OptEData::num_rotamers() const
 {
 	core::Size num_rots(0);
-	for (const auto & pos : data_) {
+	 for ( auto const & pos : data_ ) {
 		num_rots += pos->size();
 	}
 	return num_rots;
@@ -3993,13 +3993,13 @@ OptEData::write_to_file( std::string filename ) const
 		<< "\n";
 
 	outfile << "fixed terms:";
-	for (auto fixed_energy_term : fixed_energy_terms_) {
+	for ( auto fixed_energy_term : fixed_energy_terms_ ) {
 		outfile << " " << name_from_score_type( fixed_energy_term );
 	}
 	outfile << "\n";
 
 	outfile << "free terms:";
-	for (auto energy_term : energy_terms_) {
+	for ( auto energy_term : energy_terms_ ) {
 		outfile << " " << name_from_score_type( energy_term );
 	}
 	outfile << "\n";
@@ -4024,7 +4024,7 @@ OptEData::write_to_binary_file( std::string filename ) const
 	std::ofstream outfile( filename.c_str(), std::ios::out | std::ios::binary );
 	Size const npositions( data_.size() );
 	outfile.write( (char*) &npositions, sizeof(Size) );
-	for (const auto & pos : data_) {
+	 for ( auto const & pos : data_ ) {
 		OptEPositionDataType pos_data_type = pos->type();
 		outfile.write( (char*) & pos_data_type, sizeof(OptEPositionDataType) );
 		pos->write_to_binary_file( outfile );

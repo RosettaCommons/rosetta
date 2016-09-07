@@ -348,7 +348,7 @@ std::ostream & operator<<(std::ostream& out, const DockMCMCycle & dp )
 
 	core::Size spaces_so_far = 23;
 	bool first = true;
-	for (int movable_jump : dp.movable_jumps_) {
+	for ( int movable_jump : dp.movable_jumps_ ) {
 		if ( !first ) {
 			out << ", ";
 			spaces_so_far += 2;

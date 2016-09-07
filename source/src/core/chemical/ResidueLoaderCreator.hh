@@ -24,11 +24,11 @@ namespace chemical {
 class ResidueLoaderCreator : public basic::resource_manager::ResourceLoaderCreator
 {
 public:
-	
+
 	basic::resource_manager::ResourceLoaderOP
 	create_resource_loader() const override;
 
-	
+
 	std::string loader_type() const override;
 
 };

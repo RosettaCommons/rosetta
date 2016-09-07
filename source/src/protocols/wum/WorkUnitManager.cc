@@ -132,7 +132,7 @@ void WorkUnitManager::read_queue( WorkUnitQueue &the_queue, std::istream &fin ){
 
 
 void WorkUnitManager::write_queue( const WorkUnitQueue &the_queue, std::ostream &out ) const {
-	for (const auto & it : the_queue) {
+	 for ( auto const & it : the_queue ) {
 		write_work_unit( it, out );
 	}
 }
@@ -244,14 +244,14 @@ WorkUnitQueue::mem_stats(
 	structs_memory=0;
 	WU_memory=0;
 
-	for (const auto & it : *this) {
+	 for ( auto const & it : *this ) {
 		WU_memory += it->mem_footprint();
 		WorkUnitBaseOP wu_op = it;
 		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( wu_op );
 		if ( structure_wu.get() == nullptr ) continue;
 		SilentStructStore &decoys = structure_wu->decoys();
 		n_structs += structure_wu->decoys().size();
-		for (auto & decoy : decoys) {
+		for ( auto & decoy : decoys ) {
 			structs_memory += decoy->mem_footprint();
 		}
 	}

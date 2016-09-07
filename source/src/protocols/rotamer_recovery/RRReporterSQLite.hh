@@ -126,11 +126,11 @@ public:
 	set_predicted_report_to_db(
 		features::ReportToDBOP report_to_db);
 
-	
+
 	void
 	reset_recovery() override;
 
-	
+
 	void
 	report_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -171,15 +171,15 @@ public:
 		core::conformation::Residue const & predicted_res
 	);
 
-	
+
 	core::Real
 	recovery_rate() const override;
 
-	
+
 	void
 	show(std::ostream & out ) const override;
 
-	
+
 	void
 	show() const override;
 

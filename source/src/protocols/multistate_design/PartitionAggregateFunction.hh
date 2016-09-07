@@ -50,7 +50,7 @@ public:
 	virtual core::Real anchor_offset() const;
 	virtual void set_anchor_offset( core::Real offset );
 
-	
+
 	core::Real
 	evaluate(
 		utility::vector1<core::Real> const & single_state_fitnesses,

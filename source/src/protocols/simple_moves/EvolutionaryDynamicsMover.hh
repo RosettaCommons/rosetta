@@ -60,7 +60,7 @@ typedef boost::function<bool(core::Size,
 	core::scoring::ScoreFunctionOP)> EvolutionaryDynamicsMoverTrigger;
 
 
-    class EvolutionaryDynamicsMover : public protocols::simple_moves::GenericMonteCarloMover {
+class EvolutionaryDynamicsMover : public protocols::simple_moves::GenericMonteCarloMover {
 	typedef protocols::simple_moves::GenericMonteCarloMover Super;
 public:
 	typedef std::string String;
@@ -95,13 +95,13 @@ public:
 	/// @brief create this type of objectt
 	MoverOP fresh_instance() const override;
 
-    /// @brief apply GenericMonteCarloMover (Mover)
-    void apply( Pose & pose ) override;
-        
+	/// @brief apply GenericMonteCarloMover (Mover)
+	void apply( Pose & pose ) override;
+
 	String get_name() const override;
-        
-    /// @brief core of MC -- evaulates a pose based on the scores/filters + temperatures. random_num is a vector of random numbers between 0 and 1 with size equal to the number of MC criteria
-    bool boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums ) override;
+
+	/// @brief core of MC -- evaulates a pose based on the scores/filters + temperatures. random_num is a vector of random numbers between 0 and 1 with size equal to the number of MC criteria
+	bool boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums ) override;
 
 
 
@@ -113,16 +113,16 @@ public: // mutators
 		Movers_map const & movers,
 		Pose const &
 	) override;
-    
-    void population_size( core::Real const s ){ population_size_ = s; };
-    core::Real population_size() const{ return population_size_; }
-        
-    void disable_fitness_evaluation( bool const d ){ disable_fitness_evaluation_ = d; };
-    bool disable_fitness_evaluation() const{ return disable_fitness_evaluation_; }
-    
+
+	void population_size( core::Real const s ){ population_size_ = s; };
+	core::Real population_size() const{ return population_size_; }
+
+	void disable_fitness_evaluation( bool const d ){ disable_fitness_evaluation_ = d; };
+	bool disable_fitness_evaluation() const{ return disable_fitness_evaluation_; }
+
 private:
-    core::Real population_size_; // dlft 10^6
-    bool disable_fitness_evaluation_; // dlft false, this is used for benchmarks only
+	core::Real population_size_; // dlft 10^6
+	bool disable_fitness_evaluation_; // dlft false, this is used for benchmarks only
 };
 
 } // namespace simple_moves

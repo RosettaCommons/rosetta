@@ -413,7 +413,7 @@ void PackDaemon::assign_last_rotamers_to_pose( Pose & pose ) const
 void PackDaemon::print_entity_history() const
 {
 	TR << "Entity History:\n";
-	for (const auto & hashiter : prev_state_hash_) {
+	 for ( auto const & hashiter : prev_state_hash_ ) {
 		TR << "Stored state:";
 		for ( Size ii = 1; ii <= hashiter.first.size(); ++ii ) {
 			TR << " " << hashiter.first[ ii ]->to_string();
@@ -796,7 +796,7 @@ DaemonSet::ConstDaemonList
 DaemonSet::daemons() const
 {
 	ConstDaemonList return_daemons;
-	for (const auto & daemon : daemons_) {
+	 for ( auto const & daemon : daemons_ ) {
 		std::pair< core::Size, PackDaemonCOP > new_element;
 		new_element.first = daemon.first;
 		new_element.second = daemon.second;
@@ -827,9 +827,9 @@ DaemonSet::retrieve_relevant_poses_for_entity(
 ) const
 {
 	std::list< std::pair< Size, PoseOP > > return_list;
-	for (const auto & daemon : daemons_) {
+	 for ( auto const & daemon : daemons_ ) {
 		bool generate_pose_for_daemon( false );
-		for (unsigned long daemon_indice : daemon_indices) {
+		for ( unsigned long daemon_indice : daemon_indices ) {
 			if ( daemon.first == daemon_indice ) {
 				generate_pose_for_daemon = true;
 			}

@@ -542,7 +542,7 @@ BondedAtom::raw_stub_atom3() const
 		debug_assert( parent_ptr->stub_defined() ); // weird behavior otherwise
 		Atom const * p_stub2( parent_ptr->raw_stub_atom2() );
 		AtomID const & p_stub2_id( p_stub2->id() );
-		if ( id() == p_stub2_id || is_collinear( *this, *(raw_parent()), *p_stub2 )) {
+		if ( id() == p_stub2_id || is_collinear( *this, *(raw_parent()), *p_stub2 ) ) {
 			// very special case!!
 			return parent_ptr->raw_stub_atom3();
 		} else {

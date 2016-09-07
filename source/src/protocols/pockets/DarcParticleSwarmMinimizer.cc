@@ -223,7 +223,7 @@ DarcParticleSwarmMinimizer::DarcPSO_fp_compare_(
 	core::Size num_rays = 0;
 	core::Real underpack_dist = 0, steric_dist = 0, rays_missing_ligand = 0, rays_missing_pocket = 0;
 
-	for (const auto & ni : nfp_.triplet_fingerprint_data()) {
+	 for ( auto const & ni : nfp_.triplet_fingerprint_data() ) {
 
 		core::Real curr_phi = ni.phi;
 		core::Real curr_psi = ni.psi;

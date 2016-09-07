@@ -1058,7 +1058,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 	Size n_geometric_constraints( enz_input_data_->mcfi_lists_size() );
 
 	// Loop over all the remarks in pdb file
-	for (const auto & pose_remark : pose_remarks) {
+	 for ( auto const & pose_remark : pose_remarks ) {
 
 		std::string resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);

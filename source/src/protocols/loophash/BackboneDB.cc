@@ -158,9 +158,9 @@ BackboneSegment::read_from_pose( core::pose::Pose const &pose, core::Size ir, co
 }
 
 void BackboneSegment::print() const {
-	for (double it : phi_) TR << it << "  " ;
-	for (double it : psi_) TR << it << "  " ;
-	for (double it : omega_) TR << it << "  " ;
+	for ( double it : phi_ ) TR << it << "  " ;
+	for ( double it : psi_ ) TR << it << "  " ;
+	for ( double it : omega_ ) TR << it << "  " ;
 	TR << std::endl;
 }
 
@@ -309,7 +309,7 @@ void BackboneDB::write_db( std::string filename )
 		return;
 	}
 	if ( ! extra_ ) throw EXCN_No_Extra_Data_To_Write();
-	for (auto & i : data_) {
+	for ( auto & i : data_ ) {
 		file << "pdb " << extra_data_[ i.extra_key ].pdb_id << std::endl;
 		file << "seq " << extra_data_[ i.extra_key ].sequence << std::endl;
 		file << "rot ";

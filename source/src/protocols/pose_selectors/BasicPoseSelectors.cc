@@ -225,8 +225,8 @@ utility::vector1<bool> TopNByProperty::select_poses(
 
 	// Debug
 	TR.Debug << "Sorted poses:" << std::endl;
-	for (auto & p : pose_properties) {
-			TR.Debug << p.first << " = " << p.second << std::endl;
+	for ( auto & p : pose_properties ) {
+		TR.Debug << p.first << " = " << p.second << std::endl;
 	}
 
 	// Create selected poses vector

@@ -232,7 +232,7 @@ public:
 	init_on_new_input(const core::pose::Pose & pose);
 
 	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
-	
+
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,

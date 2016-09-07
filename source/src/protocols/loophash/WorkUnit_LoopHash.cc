@@ -141,7 +141,7 @@ WorkUnit_LoopHash::run()
 
 	const core::io::silent::SilentStruct *ss2 = &( *start_struct );
 
-	for (auto & it : decoys()) {
+	for ( auto & it : decoys() ) {
 
 		core::io::silent::SilentStruct *ss = &(*it);
 		// preserve the centroid score!

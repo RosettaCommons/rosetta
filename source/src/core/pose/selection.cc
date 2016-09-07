@@ -230,8 +230,8 @@ get_resnum_list(
 			}
 		}
 		utility::vector1<core::Size> const nums( parse_selection_block( res, pose ) );
-		for (unsigned long num : nums) {
-				runtime_assert_string_msg( num, "Error in core::pose::selection::get_resnum_list(): A residue index could not be parsed." );
+		for ( unsigned long num : nums ) {
+			runtime_assert_string_msg( num, "Error in core::pose::selection::get_resnum_list(): A residue index could not be parsed." );
 			resid.insert( num );
 		}
 	}//foreach
@@ -269,8 +269,8 @@ get_resnum_list_ordered(
 			}
 		}
 		utility::vector1<core::Size> const nums( parse_selection_block( res, pose ) );
-		for (unsigned long num : nums) {
-				runtime_assert( num );
+		for ( unsigned long num : nums ) {
+			runtime_assert( num );
 			resid.push_back( num );
 		}
 	}//foreach
@@ -320,7 +320,7 @@ bool is_referencepose_number(
 	//Parse the number in the reference pose:
 	std::string const refpose_resnumber_string_out( str.substr(commaposition+1, endbracketposition-commaposition-1) );
 	//TR << "refpose_resnumber_string_out=" << refpose_resnumber_string_out << std::endl;
-	for (char i : refpose_resnumber_string_out) {
+	for ( char i : refpose_resnumber_string_out ) {
 		if ( i<'0' || i>'9' ) return false; //Fail if there isn't a number between the comma and the close of the parentheses
 	}
 	core::Size refpose_resnumber_out(0);

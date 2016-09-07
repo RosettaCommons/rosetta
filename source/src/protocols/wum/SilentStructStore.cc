@@ -236,7 +236,7 @@ void SilentStructStore::serialize( std::ostream & out ) const {
 	} else {
 		(*store_.begin())->print_header( out );
 		SilentFileData sfd;
-		for (const auto & it : store_) {
+		 for ( auto const & it : store_ ) {
 			runtime_assert( it != nullptr );
 			sfd.write_silent_struct( (*it), out );
 		}
@@ -264,7 +264,7 @@ void SilentStructStore::print( std::ostream & out ) const {
 	SilentFileData sfd;
 	core::Size count=0;
 	out << "----------------------------------------------" << std::endl;
-	for (const auto & it : store_) {
+	 for ( auto const & it : store_ ) {
 		out << count << " ";
 		runtime_assert( it != nullptr );
 		it->print_scores( out );
@@ -276,7 +276,7 @@ void SilentStructStore::print( std::ostream & out ) const {
 core::Size
 SilentStructStore::mem_footprint() const {
 	core::Size total = 0;
-	for (const auto & it : store_) {
+	 for ( auto const & it : store_ ) {
 		total += it->mem_footprint();
 	}
 	return total;
@@ -295,7 +295,7 @@ SilentStructStore::sort_by( std::string field )
 void
 SilentStructStore::all_add_energy( std::string scorename, core::Real value, core::Real weight )
 {
-	for (auto & it : store_) {
+	for ( auto & it : store_ ) {
 		it->add_energy( scorename, value, weight );
 	}
 }
@@ -303,7 +303,7 @@ SilentStructStore::all_add_energy( std::string scorename, core::Real value, core
 void
 SilentStructStore::all_sort_silent_scores()
 {
-	for (auto & it : store_) {
+	for ( auto & it : store_ ) {
 		it->sort_silent_scores( );
 	}
 }

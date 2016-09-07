@@ -526,7 +526,7 @@ BackboneGridSampler::parse_my_tag(
 
 		/*** Parse Sub-Tags ***/
 		utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-		for (const auto & branch_tag : branch_tags) { //Loop through all sub-tags
+		 for ( auto const & branch_tag : branch_tags ) { //Loop through all sub-tags
 			if ( branch_tag->getName() == "MainchainTorsion" ) { //A mainchain torsion index has been specified.  Parse its options:
 				if ( !branch_tag->hasOption("index") ) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a mainchain torsion index with an \"index\" option.\n" );

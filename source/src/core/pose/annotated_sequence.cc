@@ -846,7 +846,7 @@ std::string annotated_to_oneletter_sequence(
 ) {
 	bool add( true );
 	std::string oneletter_seq;
-	for (char i : annotated_seq) {
+	for ( char i : annotated_seq ) {
 		if ( i == '/' ) continue;
 		if ( i == '[' ) add = false;
 		if ( add ) oneletter_seq += i;

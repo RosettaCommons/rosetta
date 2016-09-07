@@ -96,7 +96,7 @@ void NonContinuousFrame::read( std::istream &in ) {
 }
 
 void NonContinuousFrame::show_pos( std::ostream &out ) const {
-	for (unsigned long po : pos_) {
+	for ( unsigned long po : pos_ ) {
 		out << RJ( 3, po ) << " ";
 	}
 }
@@ -109,7 +109,7 @@ void NonContinuousFrame::shift_to( core::Size setting ) {
 
 void NonContinuousFrame::shift_by( int offset ) {
 	Parent::shift_by( offset );
-	for (unsigned long & po : pos_) {
+	for ( unsigned long & po : pos_ ) {
 		int new_pos = po + offset;
 		if ( new_pos < 1 ) {
 			std::ostringstream msg;

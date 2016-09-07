@@ -94,7 +94,7 @@ read_all_poses(
 	using utility::vector1;
 	debug_assert(poses);
 
-	for (const auto & filename : filenames) {
+	 for ( auto const & filename : filenames ) {
 		Pose pose;
 		pose_from_file(pose, filename, core::import_pose::PDB_file);
 		poses->push_back(pose);
@@ -414,7 +414,7 @@ poses_from_files(
 	ImportPoseOptions options;
 
 	vector1< Pose > poses;
-	for (const auto & filename : filenames) {
+	 for ( auto const & filename : filenames ) {
 		Pose pose;
 		core::import_pose::pose_from_file( pose, residue_set, filename, options, read_fold_tree, type);
 		poses.push_back( pose );
@@ -439,7 +439,7 @@ poseOPs_from_files(
 	using core::pose::Pose;
 
 	vector1< pose::PoseOP > poses;
-	for (const auto & filename : filenames) {
+	 for ( auto const & filename : filenames ) {
 		pose::PoseOP pose( new pose::Pose );
 		core::import_pose::pose_from_file( *pose, residue_set, filename, options, read_fold_tree, type);
 		poses.push_back( pose );

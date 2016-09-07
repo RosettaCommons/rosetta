@@ -593,7 +593,7 @@ allow_in_resfile_line( std::string const & cmd_orig, char const aa )
 			TR << "NOTAA line = " << cmds[i] << std::endl;
 			++i;
 			std::string newstr;
-			for (char j : cmds[i]) {
+			for ( char j : cmds[i] ) {
 				if ( j != aa ) {
 					newstr += j;
 				}

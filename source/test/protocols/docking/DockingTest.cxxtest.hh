@@ -208,7 +208,7 @@ public:
 		UT.abs_tolerance(0.003);
 		UT << std::endl;
 		fullatom_pose.dump_pdb(UT);
-		
+
 	}
 
 	void test_DockingSlideIntoContact() {

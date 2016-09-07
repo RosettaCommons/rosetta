@@ -56,8 +56,8 @@ private:
 	void compute_insert_pos( core::fragment::InsertMap const& insert_map,
 		core::kinematics::MoveMap const& mm
 	) {
-		for (unsigned long pos : insert_map) {
-				if ( pos > insert_pos_.size() ) break;
+		for ( unsigned long pos : insert_map ) {
+			if ( pos > insert_pos_.size() ) break;
 			if ( mm.get_bb( pos ) ) {
 				insert_pos_[ pos ] = true;
 			}

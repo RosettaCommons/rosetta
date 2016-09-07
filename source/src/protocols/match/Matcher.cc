@@ -1218,7 +1218,7 @@ Matcher::process_matches( output::MatchProcessor & processor ) const
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		representative_downstream_algorithm_[ ii ]->prepare_for_match_enumeration( *this );
 	}
-	for (const auto & all_downstream_builder : all_downstream_builders_) {
+	 for ( auto const & all_downstream_builder : all_downstream_builders_ ) {
 		if ( all_downstream_builder->hits_potentially_incompatible() ) {
 			check_potential_dsbuilder_incompatibility_ = true;
 			break;
@@ -1282,7 +1282,7 @@ std::list< downstream::DownstreamAlgorithmCOP >
 Matcher::downstream_algorithms( Size cst_id ) const
 {
 	std::list< downstream::DownstreamAlgorithmCOP > dsalgs;
-	for (const auto & iter : downstream_algorithms_[ cst_id ]) {
+	 for ( auto const & iter : downstream_algorithms_[ cst_id ] ) {
 		dsalgs.push_back( iter );
 	}
 	return dsalgs;
@@ -1869,7 +1869,7 @@ Matcher::select_hit_representatives(
 			for ( std::map< upstream_hit, std::set< Size> >::const_iterator map_it( us_hit_map.begin() ), map_end( us_hit_map.end() );
 					map_it != map_end; ++map_it ) {
 				Size counter(0);
-				for (unsigned long set_it : map_it->second) {
+				for ( unsigned long set_it : map_it->second ) {
 					++counter;
 					++n_hits_per_geomcst[ ii ];
 					reps[ii].push_back( set_it );
@@ -2339,7 +2339,7 @@ Matcher::subsample_hits(
 			// first -- check if there are multiple upstream build points.
 			Size build_point = 0;
 			bool all_same( true );
-			for (auto hit_iter : matches[ ii ]) {
+			for ( auto hit_iter : matches[ ii ] ) {
 				if ( build_point == 0 ) {
 					build_point = hit_iter->first()[ 1 ];
 				} else if ( build_point != hit_iter->first()[ 1 ] ) {
@@ -2362,7 +2362,7 @@ Matcher::subsample_hits(
 			} else {
 				/// insert the hits into an STL map based on the build position; then grab one hit at random from each
 				std::map< Size, std::list< Hit const * > > buildpos_hitmap;
-				for (auto hit_iter : matches[ ii ]) {
+				for ( auto hit_iter : matches[ ii ] ) {
 					buildpos_hitmap[ hit_iter->first()[ 1 ] ].push_back( hit_iter );
 				}
 				for ( std::map< Size, std::list< Hit const * > >::const_iterator

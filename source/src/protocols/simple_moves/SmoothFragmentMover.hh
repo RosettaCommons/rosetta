@@ -93,7 +93,7 @@ protected:
 		std::string move_type );
 
 	// frame and fragment of choice, returns false if no good fragment is found
-	
+
 	bool
 	choose_fragment(
 		core::fragment::FrameList const&,

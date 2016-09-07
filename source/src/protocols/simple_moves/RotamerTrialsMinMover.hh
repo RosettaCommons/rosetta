@@ -160,13 +160,13 @@ public:
 		core::Real energycut_in
 	);
 
-	
+
 	~EnergyCutRotamerTrialsMinMover() override;
 
 public:
 
 	/// @brief apply this mover to a pose
-	
+
 	void
 	apply( core::pose::Pose & pose ) override;
 

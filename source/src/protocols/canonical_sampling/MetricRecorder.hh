@@ -60,22 +60,22 @@ public: // Creation
 public: // Methods
 
 	/// @brief Return a copy of this mover.
-	
+
 	protocols::moves::MoverOP
 	clone() const override;
 
 	/// @brief Return a newly instantiated mover.
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
 	/// @brief Return the name of this mover.
-	
+
 	std::string
 	get_name() const override;
 
 	/// @brief Use a RosettaScripts tag to configure this mover.
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -86,7 +86,7 @@ public: // Methods
 	) override;
 
 	/// @brief Return true.  This mover needs to be reinitialized for each job.
-	
+
 	bool
 	reinitialize_for_each_job() const override { return true; };
 
@@ -180,13 +180,13 @@ public: // Methods
 	);
 
 	/// @brief Just invoke update_after_boltzmann() with a const pose.
-	
+
 	void
 	apply(
 		core::pose::Pose & pose
 	) override;
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -194,13 +194,13 @@ public: // Methods
 		core::Size cycle   //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
 
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,

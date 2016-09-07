@@ -102,7 +102,7 @@ std::ostream& operator<< ( std::ostream& out, DisulfPairing const& p) {
 }
 
 std::ostream& operator<< ( std::ostream& out, DisulfPairingsList const& p) {
-	for (const auto & it : p) {
+	 for ( auto const & it : p ) {
 		out << it << "\n";
 	}
 	return out;

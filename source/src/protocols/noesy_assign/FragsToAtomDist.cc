@@ -183,7 +183,7 @@ void initialize_group_list(
 		//  std::string name( utility::trim( pose.residue_type( pos ).atom_name( iatom1 ) ) );
 		MethylNames const& methyls( methyl_lib[ rsd.aa() ] );
 		AtomGrps new_grps;
-		for (const auto & methyl : methyls) {
+		 for ( auto const & methyl : methyls ) {
 			SizeList indices;
 			tr.Info << "pos " << pos << " " << methyl.first << " ";
 			for ( auto ait = methyl.second.begin(); ait != methyl.second.end(); ++ait ) {
@@ -227,7 +227,7 @@ FragsToAtomDist::DistanceRecord const& FragsToAtomDist::distance_record( core::i
 
 void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 	Size count =1;
-	for (char i : sequence_) {
+	for ( char i : sequence_ ) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
 		}
@@ -265,7 +265,7 @@ void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 
 void FragsToAtomDist::write_hist_to_stream(std::ostream& output) const {
 	Size count =1;
-	for (char i : sequence_) {
+	for ( char i : sequence_ ) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
 		}
@@ -326,7 +326,7 @@ void FragsToAtomDist::read_from_stream(std::istream& input) {
 		if ( line.substr(0,4)=="DATA" ) {
 			if ( line.substr(0,13)=="DATA SEQUENCE" ) {
 				line.erase(0,14);
-				for (char & i : line) {
+				for ( char & i : line ) {
 					if ( i !=' ' ) {
 						sequence_+=i;
 					}
@@ -429,7 +429,7 @@ void store_distance_snapshot(
 					Real cumdist( 0 );
 					for ( auto atom1 = group1[igrp1].second.begin(); atom1 != group1[igrp1].second.end(); ++atom1 ) {
 						PointPosition const & xyz_1 = short_pose.xyz( id::AtomID( *atom1, rsd1  ) );
-						for (unsigned long atom2 : group2[igrp2].second) {
+						for ( unsigned long atom2 : group2[igrp2].second ) {
 							PointPosition const & xyz_2 = short_pose.xyz( id::AtomID( atom2, rsd2 ) );
 							Real const inv_dist2( 1.0/xyz_1.distance_squared( xyz_2 ) );
 							Real const inv_dist6( inv_dist2 * inv_dist2 * inv_dist2 );

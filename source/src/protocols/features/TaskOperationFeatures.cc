@@ -202,7 +202,7 @@ TaskOperationFeatures::parse_my_tag(
 	Size taskop_id(0);
 	std::string taskop_list = tag->getOption< std::string >("task_operations");
 	utility::vector0< std::string > const taskop_keys( utility::string_split( taskop_list, ',' ) );
-	for (const auto & taskop_key : taskop_keys) {
+	 for ( auto const & taskop_key : taskop_keys ) {
 		taskop_id++;
 		if ( data.has( "task_operations", taskop_key ) ) {
 			TaskFactoryOP new_task_factory( new TaskFactory );
@@ -264,7 +264,7 @@ TaskOperationFeatures::report_features(
 	for ( Size resNum = 1; resNum <= pose.n_residue(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
-		for (auto & task : tasks) {
+		for ( auto & task : tasks ) {
 			bool const pack = (task.second)->pack_residue(resNum);
 			bool const design = (task.second)->design_residue(resNum);
 			Size taskop_id = task.first;

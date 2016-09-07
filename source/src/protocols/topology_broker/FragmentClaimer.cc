@@ -254,7 +254,7 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims
 	init_map->set_bb( false );
 	init_map->set_jump( false );
 
-	for (const auto & init_dof : init_dofs) {
+	 for ( auto const & init_dof : init_dofs ) {
 		if ( init_dof->owner().lock().get() == this ) {
 			init_dof->toggle( *init_map, true );
 			//don't really know how this looks for jumps

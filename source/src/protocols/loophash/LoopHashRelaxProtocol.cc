@@ -197,7 +197,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
 	core::Real bestcenscore = MAXIMAL_FLOAT;
 	//core::Size bestcenindex = 0;
-	for (auto & select_lib_struct : select_lib_structs) {
+	for ( auto & select_lib_struct : select_lib_structs ) {
 		core::pose::Pose rpose;
 		select_lib_struct->fill_pose( rpose );
 

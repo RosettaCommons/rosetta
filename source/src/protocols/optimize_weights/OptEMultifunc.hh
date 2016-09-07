@@ -80,7 +80,7 @@ public: // Creation
 	);
 
 	/// @brief Destructor
-	
+
 	~OptEMultifunc() override
 	= default;
 
@@ -89,12 +89,12 @@ public: // Methods
 
 
 	// @brief OptE func
-	
+
 	Real
 	operator ()(  Multivec const & vars ) const override;
 
 	/// @brief OptE dfunc
-	
+
 	void
 	dfunc(
 		Multivec const & vars,
@@ -310,12 +310,12 @@ public:
 	inline WrapperOptEMultifuncAP get_self_weak_ptr() { return WrapperOptEMultifuncAP( shared_from_this() ); }
 
 	// @brief OptE func
-	
+
 	Real
 	operator ()( Multivec const & vars ) const override;
 
 	/// @brief OptE dfunc
-	
+
 	void
 	dfunc(
 		Multivec const & vars,
@@ -406,11 +406,11 @@ public:
 	WrappedOptEExpressionCreator( WrapperOptEMultifuncAP multifunc );
 	~WrappedOptEExpressionCreator() override;
 
-	
+
 	numeric::expression_parser::ExpressionCOP
 	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) override;
 
-	
+
 	numeric::expression_parser::ExpressionCOP
 	handle_function_expression(
 		numeric::expression_parser::FunctionTokenCOP function,

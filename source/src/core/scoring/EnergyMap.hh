@@ -113,7 +113,7 @@ public:
 	void
 	zero( ScoreTypes const & l )
 	{
-		for (auto iter : l) {
+		for ( auto iter : l ) {
 			operator[]( iter ) = 0.0;
 		}
 	}
@@ -147,7 +147,7 @@ public:
 	void
 	clear()
 	{
-		for (double & ii : map_) {
+		for ( double & ii : map_ ) {
 			ii = 0;
 		}
 		//memset( map_, 0.0, n_score_types );
@@ -182,7 +182,7 @@ public:
 	dot( EMapVector const & src,  ScoreTypes const & l ) const
 	{
 		Real total(0.0);
-		for (auto iter : l) {
+		for ( auto iter : l ) {
 			total += operator[]( iter ) * src[ iter ];
 		}
 		return total;
@@ -211,7 +211,7 @@ public:
 	void
 	operator *= ( Real scalar )
 	{
-		for (double & ii : map_) {
+		for ( double & ii : map_ ) {
 			ii *= scalar;
 		}
 	}
@@ -276,7 +276,7 @@ public:
 	void
 	accumulate( EMapVector const & src, ScoreTypes const & l )
 	{
-		for (auto iter : l) {
+		for ( auto iter : l ) {
 			operator[]( iter ) += src[ iter ];
 		}
 	}
@@ -286,7 +286,7 @@ public:
 	void
 	accumulate( EMapVector const & src, ScoreTypes const & l, Real const wt )
 	{
-		for (auto iter : l) {
+		for ( auto iter : l ) {
 			operator[]( iter ) += wt * src[ iter ];
 		}
 	}
@@ -305,7 +305,7 @@ public:
 	sum()
 	{
 		Real total( 0.0 );
-		for (double ii : map_) {
+		for ( double ii : map_ ) {
 			total += ii;
 		}
 		return total;
@@ -316,7 +316,7 @@ public:
 	norm_squared( ScoreTypes const & l )
 	{
 		Real total( 0.0 );
-		for (auto iter : l) {
+		for ( auto iter : l ) {
 			// could use numeric::square
 			Real const val( operator[]( iter ) );
 			total += val * val;

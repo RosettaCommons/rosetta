@@ -48,7 +48,7 @@ public:
 	ModifyStoredRBConfs( std::string const & name );
 	~ModifyStoredRBConfs() override;
 
-	
+
 	void
 	apply( core::pose::Pose & pose ) override = 0;
 

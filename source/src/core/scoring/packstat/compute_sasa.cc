@@ -224,21 +224,21 @@ PosePackData
 pose_to_pack_data( Pose const & pose, int include_water ) {
 
 	//JAB - fixing this up to make dump_pdb not fail.  Very suprised SimplePDB requires a full written PDB...
-	
+
 	using namespace std;
 	using namespace core::io::pdb;
 	ostringstream oss;
-	
+
 	//bool tmp = basic::options::option[basic::options::OptionKeys::out::file::output_virtual]();
 	//basic::options::option[basic::options::OptionKeys::out::file::output_virtual].value(true);
-	
+
 	core::io::StructFileRepOptionsOP options = core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
 	options->set_output_virtual(true);
 	options->set_output_pose_energies_table(false); //Cannot access weights while scoring a PDB.  So, lets not bother to output the energies table
 	options->set_output_pose_cache_data(false); //SimplePDB - not needed, so at least not output it!
-	
+
 	dump_pdb(pose,oss, options);
-	
+
 	istringstream iss( oss.str() );
 	AtomRadiusMap arm( include_water );
 	SimplePDB pdb;

@@ -27,23 +27,23 @@ public:
 public:
 	SurfaceVectorFallbackConfiguration();
 
-	
+
 	bool
 	fallback_specified( ResourceDescription const & desc ) const override;
 
-	
+
 	basic::resource_manager::LoaderType
 	get_resource_loader( ResourceDescription const & desc ) const override;
 
-	
+
 	basic::resource_manager::LocatorID
 	get_locator_id( ResourceDescription const & desc ) const override;
 
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	get_resource_options( ResourceDescription const & desc ) const override;
 
-	
+
 	std::string
 	could_not_create_resource_error_message( ResourceDescription const & desc ) const override;
 

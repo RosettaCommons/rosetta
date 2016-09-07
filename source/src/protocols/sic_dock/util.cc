@@ -447,8 +447,8 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
 
 Real brute_mindis(vector1<Vec> const & pa, vector1<Vec> const & pb, Vec const & ofst=Vec(0,0,0)) {
 	Real mindis = 9e9;
-	for (const auto & i : pa) {
-		for (const auto & j : pb) {
+	 for ( auto const & i : pa ) {
+		 for ( auto const & j : pb ) {
 			mindis = min( mindis, i.distance_squared(j+ofst) );
 		}
 	}

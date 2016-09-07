@@ -304,7 +304,7 @@ void read_RBSegment_file(
 
 	// place remaining simple structs in vector
 	// ids no longer matter
-	for (auto & simple_segment : simple_segments) {
+	for ( auto & simple_segment : simple_segments ) {
 		rbsegs.push_back( simple_segment.second );
 	}
 

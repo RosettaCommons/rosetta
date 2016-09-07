@@ -71,7 +71,7 @@ public:
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
 
-	
+
 	bool
 	restart_simulation(
 		core::pose::Pose & pose,

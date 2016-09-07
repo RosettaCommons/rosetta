@@ -54,22 +54,22 @@ public:
 		BackrubSidechainMover const & mover
 	);
 
-	
+
 	~BackrubSidechainMover() override;
 
-	
+
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -84,7 +84,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -92,20 +92,20 @@ public:
 		core::Size cycle   //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	apply(
 		core::pose::Pose & pose
 	) override;
 
 	/// @brief callback after the Metropolis criterion is evaluated
-	
+
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
 
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
@@ -157,12 +157,12 @@ public:
 	);
 
 	/// @brief get whether detailed balance is preserved
-	
+
 	bool
 	preserve_detailed_balance() const override;
 
 	/// @brief set whether detailed balance is preserved
-	
+
 	void
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
@@ -179,7 +179,7 @@ public:
 	);
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose

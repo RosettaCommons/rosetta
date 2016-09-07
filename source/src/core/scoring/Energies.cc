@@ -1239,7 +1239,7 @@ Energies::fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP 
 
 void Energies::copy_nblists( Energies const & other )
 {
-	for (const auto & other_nblist_iter : other.nblist_) {
+	 for ( auto const & other_nblist_iter : other.nblist_ ) {
 		nblist_[ other_nblist_iter.first ] = other_nblist_iter.second->clone();
 	}
 }

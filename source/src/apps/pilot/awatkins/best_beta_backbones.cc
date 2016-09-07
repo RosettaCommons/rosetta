@@ -123,8 +123,9 @@ bool atoms_within_angle(
 ) {
 	AtomIndices neighbors = pose.residue_type( resi ).bonded_neighbor( ai );
 	for ( Size ii = 1; ii <= neighbors.size(); ++ii ) {
-		if ( pose.residue_type( resi ).atoms_are_bonded( neighbors[ii], aj ) )
+		if ( pose.residue_type( resi ).atoms_are_bonded( neighbors[ii], aj ) ) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -133,24 +134,24 @@ bool
 bump_check( Pose const & pose, Real const prop_vdw ) {
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		for ( Size ai = 1; ai <= pose.residue( ii ).natoms(); ++ai ) {
-			
+
 			Real ai_r = pose.residue_type( ii ).atom_type( ai ).lj_radius();
-			
+
 			for ( Size jj = ii; jj <= pose.total_residue(); ++jj ) {
 				for ( Size aj = 1; aj <= pose.residue( jj ).natoms(); ++aj ) {
 					if ( jj == ii && ai == aj ) continue;
 					if ( jj == ii && pose.residue_type( ii ).atoms_are_bonded( ai, aj ) ) continue;
 					if ( jj == ii && atoms_within_angle( pose, ii, ai, aj ) ) continue;
-					
+
 					Real aj_r = pose.residue_type( jj ).atom_type( aj ).lj_radius();
-					
+
 					// skip bonded -- explicit for now!
 					// Just make it so res 2's C can't clash with residue 3
 					if ( ii == 3 && pose.residue( jj ).atom_name( aj ) == " C  " ) continue;
 					if ( ii == 1 && pose.residue( jj ).atom_name( aj ) == " N  " ) continue;
 					if ( jj == 3 && pose.residue( ii ).atom_name( ai ) == " C  " ) continue;
 					if ( jj == 1 && pose.residue( ii ).atom_name( ai ) == " N  " ) continue;
-					
+
 					// Also handle 2 bond inter cases: 3-H 2-C, 3-N 2-O
 					if ( ii == 1 && pose.residue_type( ii ).atom_name( ai ) == " C  " && jj == 2 ) {
 						AtomIndices neigh = pose.residue_type( jj ).bonded_neighbor( pose.residue_type( jj ).atom_index( " N  " ) );
@@ -184,12 +185,12 @@ bump_check( Pose const & pose, Real const prop_vdw ) {
 						}
 						if ( is_within_angle ) continue;
 					}
-					
+
 					Real const dsq = pose.residue( ii ).xyz( ai ).distance_squared(
 						pose.residue( jj ).xyz( aj ) );
 					if ( dsq < pow( ai_r + aj_r, 2 ) * prop_vdw * prop_vdw ) {
 						//TR << "Bump found: " << ii << " - " << pose.residue_type( ii ).atom_name( ai ) << " and "
-						//	<< jj << " - " << pose.residue_type( jj ).atom_name( aj ) << std::endl;
+						// << jj << " - " << pose.residue_type( jj ).atom_name( aj ) << std::endl;
 						//TR << "distance sq " << dsq << " radii " << ai_r << " " << aj_r << std::endl;
 						return true; // bump found
 					}
@@ -207,31 +208,31 @@ report_proportion_accessible(
 ) {
 	TR << "Examining " << rtname << "..." << std::endl;
 	scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
-	
+
 	Pose pose;
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	
+
 	ResidueTypeCOP ace = ResidueTypeFinder( *restype_set).name3( "ACE" ).get_representative_type();
-	ResidueTypeCOP rt = ResidueTypeFinder( *restype_set).name3( rtname ).get_representative_type();	ResidueTypeCOP nme = ResidueTypeFinder( *restype_set).name3( "NME" ).get_representative_type();
+	ResidueTypeCOP rt = ResidueTypeFinder( *restype_set).name3( rtname ).get_representative_type(); ResidueTypeCOP nme = ResidueTypeFinder( *restype_set).name3( "NME" ).get_representative_type();
 	ResidueOP aceres( new Residue( ace, true ) );
 	ResidueOP res( new Residue( rt, true ) );
 	ResidueOP nmeres( new Residue( nme, true ) );
-	
+
 	pose.append_residue_by_jump( *aceres, true );
 	pose.append_residue_by_bond( *res, true );
 	pose.append_residue_by_bond( *nmeres, true );
-	
+
 	// There are going to be 72^3 measurements.
 	Size const denominator = 72 * 72 * 72;
 	Size numerator = 0;
-	
+
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( 2, true );
 	for ( Size ii = 1; ii <= pose.residue_type( 2 ).nchi(); ++ii ) {
 		pose.set_torsion( id::TorsionID( 2, id::CHI, ii ), 180 );
 	}
 	protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );
-	
+
 	for ( Real phi = -175; phi <= 180; phi += 5 ) {
 		for ( Real tht = -175; tht <= 180; tht += 5 ) {
 			for ( Real psi = -175; psi <= 180; psi += 5 ) {
@@ -256,30 +257,30 @@ report_proportion_accessible_alpha(
 	Real const bump_frac
 ) {
 	TR << "Examining " << rtname << "..." << std::endl;
-	
+
 	scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
-	
+
 	Pose pose;
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	
+
 	ResidueTypeCOP ace = ResidueTypeFinder( *restype_set).name3( "ACE" ).get_representative_type();
-	ResidueTypeCOP rt = ResidueTypeFinder( *restype_set).name3( rtname ).get_representative_type();	ResidueTypeCOP nme = ResidueTypeFinder( *restype_set).name3( "NME" ).get_representative_type();
+	ResidueTypeCOP rt = ResidueTypeFinder( *restype_set).name3( rtname ).get_representative_type(); ResidueTypeCOP nme = ResidueTypeFinder( *restype_set).name3( "NME" ).get_representative_type();
 	ResidueOP aceres( new Residue( ace, true ) );
 	ResidueOP res( new Residue( rt, true ) );
 	ResidueOP nmeres( new Residue( nme, true ) );
-	
+
 	pose.append_residue_by_jump( *aceres, true );
 	pose.append_residue_by_bond( *res, true );
 	pose.append_residue_by_bond( *nmeres, true );
-	
+
 	// There are going to be 72^3 measurements.
 	Size const denominator = 72 * 72;
 	Size numerator = 0;
-	
+
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( 2, true );
 	protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );
-	
+
 	for ( Real phi = -175; phi <= 180; phi += 5 ) {
 		for ( Real psi = -175; psi <= 180; psi += 5 ) {
 			pose.set_torsion( id::TorsionID( 2, id::BB, 1 ), phi );
@@ -296,7 +297,7 @@ report_proportion_accessible_alpha(
 }
 
 void report_proportions_accessible( Real const bump_frac ) {
-	
+
 	utility::vector1< std::string > rts;
 	utility::vector1< std::string > alpha_rts;
 
@@ -320,11 +321,11 @@ void report_proportions_accessible( Real const bump_frac ) {
 	rts.push_back( "B3V" );
 	rts.push_back( "B3W" );
 	rts.push_back( "B3Y" );
-	
+
 	for ( Size ii = 1; ii <= rts.size(); ++ii ) {
 		report_proportion_accessible( rts[ii], bump_frac );
 	}
-	
+
 	alpha_rts.push_back( "ALA" );
 	alpha_rts.push_back( "CYS" );
 	alpha_rts.push_back( "ASP" );
@@ -345,7 +346,7 @@ void report_proportions_accessible( Real const bump_frac ) {
 	alpha_rts.push_back( "VAL" );
 	alpha_rts.push_back( "TRP" );
 	alpha_rts.push_back( "TYR" );
-	
+
 	for ( Size ii = 1; ii <= alpha_rts.size(); ++ii ) {
 		report_proportion_accessible_alpha( alpha_rts[ii], bump_frac );
 	}
@@ -361,7 +362,7 @@ main( int argc, char* argv[] )
 
 		devel::init(argc, argv);
 		report_proportions_accessible( option[ bump_frac ].value() );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;

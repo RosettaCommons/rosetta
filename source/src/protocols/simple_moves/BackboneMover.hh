@@ -151,7 +151,7 @@ public:
 	/// @details Clones the input.
 	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -172,7 +172,7 @@ public:
 	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(core::pose::Pose & pose) override = 0;
 
@@ -259,14 +259,14 @@ public:
 	void test_move( core::pose::Pose & ) override;
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
 	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose
@@ -322,14 +322,14 @@ public:
 	void test_move( core::pose::Pose & ) override;
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
 	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose

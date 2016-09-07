@@ -47,7 +47,7 @@ class RampingFunc : public utility::pointer::ReferenceCount
 public:
 	typedef core::Real Real;
 public:
-	
+
 	~RampingFunc() override;
 
 	/// @brief Func must be defined (and finite) over the range from 0 and 1.
@@ -62,7 +62,7 @@ class LinearFunc : public RampingFunc
 public:
 	~LinearFunc() override;
 
-	
+
 	Real
 	func( Real x ) const override
 	{
@@ -79,7 +79,7 @@ public:
 	);
 
 	~FastLinearFunc() override;
-	
+
 	Real
 	func( Real x ) const override;
 
@@ -101,7 +101,7 @@ public:
 
 	~GeometricFunc() override;
 
-	
+
 	Real
 	func( Real x ) const override;
 
@@ -121,7 +121,7 @@ public:
 
 	~InvGeometricFunc() override;
 
-	
+
 	Real
 	func( Real x ) const override;
 

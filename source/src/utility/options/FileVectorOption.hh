@@ -86,7 +86,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~FileVectorOption() override
 	= default;
 

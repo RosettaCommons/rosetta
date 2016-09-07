@@ -76,7 +76,7 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	// points_.reserve((pose_->n_residue()-ignore.size())*5);
 	// resno_ .reserve((pose_->n_residue()-ignore.size())*5);
 	// atomno_.reserve((pose_->n_residue()-ignore.size())*5);
-	for (const auto & pose : poses) {
+	 for ( auto const & pose : poses ) {
 		for ( Size i = 0; i < pose.n_residue(); ++i ) {
 			if ( std::find(ignore.begin(),ignore.end(),i+1) != ignore.end() ) continue;
 			//Size const natom = min(5ul,pi->residue(i+1).nheavyatoms());
@@ -130,7 +130,7 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp ) const {
 			for ( Size iz = max( icz, Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
 				Size cube_index = cubes_.index( ix, iy, iz );
 				if ( cubes_[ cube_index ].size() != 0 ) { // Cube exists
-					for (unsigned int ia : cubes_[ cube_index ]) {
+					for ( unsigned int ia : cubes_[ cube_index ] ) {
 						Vec const j( points_[ia] );
 						Real const d_sq( pp.distance_squared( j ) );
 						if ( d_sq <= neighbor_cutoff_sq_ ) {
@@ -155,7 +155,7 @@ platform::uint ImplicitFastClashCheck::clash_count(Vec const & pp ) const {
 			for ( Size iz = max( icz, Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
 				Size cube_index = cubes_.index( ix, iy, iz );
 				if ( cubes_[ cube_index ].size() != 0 ) { // Cube exists
-					for (unsigned int ia : cubes_[ cube_index ]) {
+					for ( unsigned int ia : cubes_[ cube_index ] ) {
 						Vec const j( points_[ia] );
 						Real const d_sq( pp.distance_squared( j ) );
 						if ( d_sq <= neighbor_cutoff_sq_ ) {
@@ -178,7 +178,7 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp, Size resno ) const {
 			for ( Size iz = max( icz, Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
 				Size cube_index = cubes_.index( ix, iy, iz );
 				if ( cubes_[ cube_index ].size() != 0 ) { // Cube exists
-					for (unsigned int ia : cubes_[ cube_index ]) {
+					for ( unsigned int ia : cubes_[ cube_index ] ) {
 						Vec const j( points_[ia] );
 						// TR << "resno " << resno << " resno_[*ia] " << resno_[*ia] << std::endl;
 						// if(resno_[*ia]==27 && atomno_[*ia]==1) {
@@ -233,7 +233,7 @@ bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, Size refrsd) 
 	Vec axs = stubl.local2global(stub1.global2local(Vec(0,0,1)));
 	axs = axs - cen;
 	Mat rot = numeric::rotation_matrix_degrees(axs,120.0);
-	for (const auto & point : points_) {
+	 for ( auto const & point : points_ ) {
 		if ( ! clash_check( rot*(point-cen)+cen ) ) return false;
 	}
 	return true;

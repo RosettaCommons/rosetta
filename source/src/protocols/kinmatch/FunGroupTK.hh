@@ -118,7 +118,7 @@ public:
 		utility::vector1<Size> pos=utility::vector1<Size>()
 	);
 
-	
+
 	void
 	place_c(
 		KRSQuery const & q,
@@ -126,7 +126,7 @@ public:
 		utility::vector1<core::conformation::ResidueOP> & hits
 	) const override;
 
-	
+
 	void
 	place_h(
 		KRSQuery const & q,
@@ -134,7 +134,7 @@ public:
 		utility::vector1<core::conformation::ResidueOP> & hits
 	) const override;
 
-	
+
 	void
 	place_d(
 		KRSQuery const & q,
@@ -152,7 +152,7 @@ public:
 	);
 
 
-	
+
 	void
 	place_c(
 		KRSQuery const & q,
@@ -160,7 +160,7 @@ public:
 		utility::vector1<core::conformation::ResidueOP> & hits_out
 	) const override;
 
-	
+
 	void
 	place_h(
 		KRSQuery const & q,
@@ -168,7 +168,7 @@ public:
 		utility::vector1<core::conformation::ResidueOP> & hits
 	) const override;
 
-	
+
 	void
 	place_d(
 		KRSQuery const & q,

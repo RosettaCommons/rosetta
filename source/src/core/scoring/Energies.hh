@@ -131,7 +131,7 @@ public:
 	same_type_as_me( Energies const & other, bool recurse = true ) const;
 
 	/// dtor
-	
+
 	~Energies() override;
 
 	virtual

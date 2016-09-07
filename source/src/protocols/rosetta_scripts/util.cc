@@ -86,7 +86,7 @@ parse_task_operations( std::string const & task_list, basic::datacache::DataMap 
 	typedef utility::vector1< std::string > StringVec;
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 	TR<<"Adding the following task operations\n";
-	for (const auto & t_o_key : t_o_keys) {
+	 for ( auto const & t_o_key : t_o_keys ) {
 		if ( data.has( "task_operations", t_o_key ) ) {
 			new_task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			TR<<t_o_key<<' ';
@@ -127,7 +127,7 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 	TR<<"Adding the following task operations to mover "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
 
-	for (const auto & t_o_key : t_o_keys) {
+	 for ( auto const & t_o_key : t_o_keys ) {
 
 		if ( data.has( "task_operations", t_o_key ) ) {
 			task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
@@ -151,7 +151,7 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 	String const t_o_val( tag->getOption<String>("task_operations", "" ) );
 	if ( t_o_val != "" ) {
 		utility::vector1< String > const t_o_keys( utility::string_split( t_o_val, ',' ) );
-		for (const auto & t_o_key : t_o_keys) {
+		 for ( auto const & t_o_key : t_o_keys ) {
 			if ( data.has( "task_operations", t_o_key ) ) {
 				task_operations.push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			} else {

@@ -137,7 +137,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	// Now do a quick sanity check for the equation parsing.
 	calc_ = numeric::CalculatorOP( new numeric::Calculator( equation ) );
 	std::map< std::string, core::Real > vars(values_);
-	for (auto & filter : filters_) {
+	for ( auto & filter : filters_ ) {
 		vars[ filter.first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
 	}
 	numeric::Real dummy;

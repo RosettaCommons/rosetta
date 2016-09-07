@@ -712,7 +712,7 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	Real & theta0
 ) {
 	Ktheta = k_angle_;
-	
+
 	// Create mini-conformation for idealized residue
 	conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
 
@@ -1283,8 +1283,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 	}
 
 	typedef boost::unordered_multimap< atm_name_quad, CartBondedParametersOP >::const_iterator tors_iterator;
-	for( tors_iterator it = torsions_indep_.begin(); it != torsions_indep_.end(); 
-			 it = torsions_indep_.equal_range(it->first).second ){
+	for ( tors_iterator it = torsions_indep_.begin(); it != torsions_indep_.end();
+			it = torsions_indep_.equal_range(it->first).second ) {
 
 		atm_name_quad const &tuple( it-> first );
 
@@ -1292,12 +1292,12 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		// Also skip if any atom does not exist
 		if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
-				 !rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
+				!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
 
-		std::pair< tors_iterator, tors_iterator >	range	= torsions_indep_.equal_range( tuple );
+		std::pair< tors_iterator, tors_iterator > range = torsions_indep_.equal_range( tuple );
 		tors_iterator it2;
 
-		for( it2 = range.first; it2 != range.second; ++it2 ){
+		for ( it2 = range.first; it2 != range.second; ++it2 ) {
 			CartBondedParametersCOP tor_params = it2->second;
 
 			ResidueCartBondedParameters::Size4 ids;

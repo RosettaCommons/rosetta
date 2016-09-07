@@ -59,8 +59,8 @@ IRCollection::IRCollection( core::pose::Pose & pose, MotifLibrary & motifs, util
 		core::Size target_pos( build_sites[ target_index ] );
 
 		// Loop over motifs in libray, look for those that apply
-		for (auto motif_itr : motifs) {
-				// Check for applicability
+		for ( auto motif_itr : motifs ) {
+			// Check for applicability
 			if ( !motif_itr->apply_check( pose, target_pos ) ) continue;
 
 			// irt << "Found a motif that applies!" << std::endl;

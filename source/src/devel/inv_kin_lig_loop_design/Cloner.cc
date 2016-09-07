@@ -216,7 +216,7 @@ core::kinematics::FoldTree Cloner::getFoldTree() {
 
 	int n_jump = 1;
 
-	for (auto & segment : segments) {
+	for ( auto & segment : segments ) {
 
 		Residue* lo_res = segment.lo_res; // apl -- this has got to go
 		Residue* hi_res = segment.hi_res; // apl -- this has got to go
@@ -340,7 +340,7 @@ utility::vector1< core::chemical::ResidueTypeCOP > get_seq_from_aas( vector< cor
 		( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
 	utility::vector1< core::chemical::ResidueTypeCOP > rval;
-	for (auto aa : aas) {
+	for ( auto aa : aas ) {
 		core::chemical::ResidueTypeCOP res_type = residue_set->get_representative_type_aa( aa );
 		assert( res_type != nullptr );
 		rval.push_back( res_type );
@@ -427,7 +427,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 	while ( ii <= pose0->total_residue() ) {
 		///while( iter != pose0->res_end() ) {
 
-		for (const auto & k : indels) {
+		 for ( auto const & k : indels ) {
 
 			if ( r == k.lo_res ) {
 
@@ -506,7 +506,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 
 	utility::vector1< core::chemical::ResidueTypeCOP > seq;
 
-	for (auto & segment : segments) {
+	for ( auto & segment : segments ) {
 		//int size = segments[k].hi_res->seqpos() - segments[k].lo_res->seqpos() + 1;
 		//cout << segments[k].lo_res->seqpos() << ":" << segments[k].hi_res->seqpos() << " " << size << endl;
 
@@ -712,7 +712,7 @@ void Cloner::setInitialConfig() {
 	//cout << "indels.size() = " << indels.size() << endl;
 	//cout << "segments.size() = " << segments.size() << endl;
 
-	for (auto & segment : segments) {
+	for ( auto & segment : segments ) {
 
 		if ( segment.type == Segment::LOOP ) {
 			int lo = find_or_throw( clones, segment.lo_res  )->seqpos();
@@ -786,7 +786,7 @@ void Cloner::setInitialConfig() {
 
 vector< Loop > Cloner::getLoops() {
 	vector< Loop > rval;
-	for (auto & segment : segments) {
+	for ( auto & segment : segments ) {
 		if ( segment.type == Segment::LOOP ||
 				segment.type == Segment::ANCHORED_LOOP ) {
 			rval.emplace_back( segment, clones );

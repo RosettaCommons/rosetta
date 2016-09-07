@@ -79,7 +79,7 @@ void BasicJumpClaimer::generate_claims( claims::DofClaims& claims ){
 void BasicJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& claims, claims::DofClaims&)
 {
 	claims::JumpClaimOP our_claim;
-	for (const auto & claim : claims) {
+	 for ( auto const & claim : claims ) {
 		if ( claim.get()->owner().lock().get() == this ) {
 			our_claim = utility::pointer::dynamic_pointer_cast< claims::JumpClaim >( claim );
 			runtime_assert( our_claim != nullptr );

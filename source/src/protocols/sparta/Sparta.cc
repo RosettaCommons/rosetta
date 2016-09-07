@@ -265,11 +265,11 @@ void Sparta::SpartaLib::init() {
 	string B62_fname = TAB_DIR + slash_char+ "BLOSUM62.tab";
 	tr.Info << "Reading BLOSUM62 Table from " << B62_fname << endl;
 	B62.loadGDB( B62_fname );
-	for (auto & Entrie : B62.Entries) {
+	for ( auto & Entrie : B62.Entries ) {
 		string aa = (Entrie.second)["RESNAME"];
 		BLOSUM_62[aa]=BlosumMatrix::mapped_type( AAlist.size(), 0 );
 	}
-	for (auto & Entrie : B62.Entries) {
+	for ( auto & Entrie : B62.Entries ) {
 		//int index=it->first;
 		string aa = (Entrie.second)["RESNAME"];
 		for ( GDB::GDB_Entry::iterator itS = (Entrie.second).begin(), endS = (Entrie.second).end(); itS != endS; ++itS ) {
@@ -281,7 +281,7 @@ void Sparta::SpartaLib::init() {
 	} // end of assigning sequence homology vector (using blosum62 matrix)
 
 	tr.Info << "Load ANN parameters ... ";
-	for (auto & itN : aN) {
+	for ( auto & itN : aN ) {
 		string atomName = itN.second;
 		if ( atomName == "H" ) atomName="HN";
 		SPARTA_ANN[atomName].init(113,30,1,9,6,3,TAB_DIR,atomName);
@@ -408,7 +408,7 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		inTab.Entries[index]["SOURCE"] = inName.substr(pos0,pos1-pos0);
 
 		//Ring current shifts
-		for (auto & itN_unordered : aN) {
+		for ( auto & itN_unordered : aN ) {
 			string name = itN_unordered.second;
 			if ( name == "H" ) {
 				name = "HN";
@@ -705,7 +705,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	//start = clock();
 	tr.Info << "ANN prediction ..." << endl;
-	for (auto & itN : aN) {
+	for ( auto & itN : aN ) {
 		string atomName = itN.second;
 		if ( atomName == "H" ) atomName="HN";
 
@@ -727,7 +727,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	float RC, RCadj, pred_2nd_shift, pred_shift/*, HB*/;
 	for ( int i = r1+1; i <= rN-1; i++ ) { //olange: we have not loaded the ANN with stuff for residue 1 or rN as it would be the 0,1,2 triplett.. ignore here TOO!
-		for (auto & itN : aN) {
+		for ( auto & itN : aN ) {
 			string atomName = itN.second;
 			if ( atomName == "H" ) atomName="HN";
 			int index = PRED_SUM.Entries.size()+1;
@@ -903,7 +903,7 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 {
 	int step = 5;
 
-	for (auto & itN : aN) {
+	for ( auto & itN : aN ) {
 		string atomName = itN.second;
 		if ( atomName == "H" ) atomName="HN";
 
@@ -917,7 +917,7 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 			string surfName = TAB_DIR + slash_char + "errorSurface" + slash_char + atomName + slash_char + AA + "..A450.S5.RMS.tab";
 			GDB surf(surfName);
 
-			for (auto & Entrie : surf.Entries) {
+			for ( auto & Entrie : surf.Entries ) {
 				int phi = atoi( Entrie.second["PHI"].c_str() );
 				for ( int y=-180; y<180; y+=step ) {
 					string psi=itoa(y,buf);

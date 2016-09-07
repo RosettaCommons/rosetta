@@ -72,11 +72,11 @@ public:
 	LiteralToken();
 	LiteralToken( numeric::Real value );
 
-	
+
 	TokenType
 	type() const override;
 
-	
+
 	std::string
 	to_string() const override;
 
@@ -96,11 +96,11 @@ public:
 	VariableToken();
 	VariableToken( std::string const & name );
 
-	
+
 	TokenType
 	type() const override;
 
-	
+
 	std::string
 	to_string() const override;
 
@@ -116,11 +116,11 @@ public:
 	FunctionToken();
 	FunctionToken( std::string const & name, numeric::Size nargs );
 
-	
+
 	TokenType
 	type() const override;
 
-	
+
 	std::string
 	to_string() const override;
 
@@ -140,11 +140,11 @@ public:
 	SimpleToken();
 	SimpleToken( TokenType type );
 
-	
+
 	TokenType
 	type() const override;
 
-	
+
 	std::string
 	to_string() const override;
 
@@ -242,7 +242,7 @@ public:
 class ArithmeticASTExpression : public ArithmeticASTNode
 {
 public:
-	
+
 	void
 	visit( ASTVisitor & visitor ) const override;
 
@@ -266,7 +266,7 @@ class ArithmeticASTFunction : public ArithmeticASTNode
 public:
 	~ArithmeticASTFunction() override;
 
-	
+
 	void
 	visit( ASTVisitor & visitor ) const override;
 
@@ -292,7 +292,7 @@ private:
 class ArithmeticASTTerm : public ArithmeticASTNode
 {
 public:
-	
+
 	void
 	visit( ASTVisitor & visitor ) const override;
 
@@ -316,7 +316,7 @@ class ArithmeticASTFactor : public ArithmeticASTNode
 public:
 	~ArithmeticASTFactor() override;
 
-	
+
 	void
 	visit( ASTVisitor & visitor ) const override;
 
@@ -338,7 +338,7 @@ public:
 	ArithmeticASTValue();
 	~ArithmeticASTValue() override;
 
-	
+
 	void
 	visit( ASTVisitor & visitor ) const override;
 
@@ -362,7 +362,7 @@ class ArithmeticASTRestTerm : public ArithmeticASTNode
 public:
 	ArithmeticASTRestTerm();
 
-	
+
 	void
 	visit( ASTVisitor & visitor ) const override;
 
@@ -390,7 +390,7 @@ class ArithmeticASTRestExpression : public ArithmeticASTNode
 public:
 	ArithmeticASTRestExpression();
 
-	
+
 	void
 	visit( ASTVisitor & visitor ) const override;
 
@@ -461,36 +461,36 @@ class ASTPrinter : public ASTVisitor
 public:
 	ASTPrinter();
 
-	
+
 	void
 	visit( ArithmeticASTExpression const & ) override;
 
 
-	
+
 	void
 	visit( ArithmeticASTFunction const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTTerm const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTFactor const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTValue const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTRestTerm const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTRestExpression const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTNode const & ) override;
 
@@ -527,35 +527,35 @@ public:
 	ExpressionCreator();
 	~ExpressionCreator() override;
 
-	
+
 	void
 	visit( ArithmeticASTExpression const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTFunction const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTTerm const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTFactor const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTValue const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTRestTerm const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTRestExpression const & ) override;
 
-	
+
 	void
 	visit( ArithmeticASTNode const & ) override;
 
@@ -596,7 +596,7 @@ public:
 	void
 	add_variable( std::string const & varname );
 
-	
+
 	ExpressionCOP
 	handle_variable_expression( ArithmeticASTValue const & ) override;
 
@@ -620,7 +620,7 @@ public:
 	BooleanExpressionCreator();
 	BooleanExpressionCreator( std::list< std::string > const & varnames );
 
-	
+
 	ExpressionCOP
 	handle_function_expression(
 		FunctionTokenCOP function,
@@ -667,16 +667,16 @@ public:
 
 	void set_value( numeric::Real value );
 
-	
+
 	numeric::Real
 	operator() () const override;
 
 	/// @brief Returns null, since the derivative for a literal is always zero
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -691,7 +691,7 @@ public:
 	VariableExpression( std::string const & name );
 	VariableExpression( std::string const & name, numeric::Real value );
 
-	
+
 	numeric::Real
 	operator() () const override;
 
@@ -700,11 +700,11 @@ public:
 	std::string name() const;
 
 	/// @brief Returns the literal expression 1 if name_ == varname_ and null otherwise
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -723,7 +723,7 @@ public:
 
 	void set_expression( ExpressionCOP ex );
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -745,7 +745,7 @@ public:
 	void set_first_expression( ExpressionCOP e1 );
 	void set_second_expression( ExpressionCOP e2 );
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -780,11 +780,11 @@ public:
 	SquarerootExpression();
 	SquarerootExpression( ExpressionCOP ex );
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -796,11 +796,11 @@ public:
 	AbsoluteValueExpression();
 	AbsoluteValueExpression( ExpressionCOP ex );
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -813,11 +813,11 @@ public:
 	AddExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the sum of expression 1 and expression 2.
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -830,11 +830,11 @@ public:
 	SubtractExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the difference between expression 1 and expression 2.
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -848,11 +848,11 @@ public:
 	MultiplyExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the product of expression 1 and expression 2
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -865,11 +865,11 @@ public:
 	DivideExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the quotient of expression 1 and expression 2
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -882,15 +882,15 @@ public:
 	MaxExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the max of e1 and e2.
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -903,15 +903,15 @@ public:
 	MinExpression( ExpressionCOP e1, ExpressionCOP e2 );
 
 	/// @brief Returns the min of e1 and e2
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -925,15 +925,15 @@ public:
 	//MetaMaxExpression();
 	MetaMaxExpression( ExpressionCOP e1, ExpressionCOP e2, ExpressionCOP ee1, ExpressionCOP ee2 );
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -950,15 +950,15 @@ public:
 	//MetaMinExpression();
 	MetaMinExpression( ExpressionCOP e1, ExpressionCOP e2, ExpressionCOP ee1, ExpressionCOP ee2 );
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -978,11 +978,11 @@ public:
 	EqualsExpression( ExpressionCOP e1, ExpressionCOP e2 );
 	~EqualsExpression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -996,11 +996,11 @@ public:
 	GT_Expression( ExpressionCOP e1, ExpressionCOP e2 );
 	~GT_Expression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1014,11 +1014,11 @@ public:
 	GTE_Expression( ExpressionCOP e1, ExpressionCOP e2 );
 	~GTE_Expression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1032,11 +1032,11 @@ public:
 	LT_Expression( ExpressionCOP e1, ExpressionCOP e2 );
 	~LT_Expression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1050,11 +1050,11 @@ public:
 	LTE_Expression( ExpressionCOP e1, ExpressionCOP e2 );
 	~LTE_Expression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1069,11 +1069,11 @@ public:
 	AndExpression( ExpressionCOP e1, ExpressionCOP e2 );
 	~AndExpression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1086,11 +1086,11 @@ public:
 	OrExpression( ExpressionCOP e1, ExpressionCOP e2 );
 	~OrExpression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1103,11 +1103,11 @@ public:
 	NotExpression( ExpressionCOP e );
 	~NotExpression() override;
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1123,11 +1123,11 @@ public:
 		ExpressionCOP else_clause
 	);
 
-	
+
 	numeric::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -1140,7 +1140,7 @@ public:
 	ExpressionCOP
 	else_expression() const;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 

@@ -43,7 +43,7 @@ public:
 	TrialCounterObserver();
 
 	/// @brief Default destructor.
-	
+
 	~TrialCounterObserver() override;
 
 	std::string get_name() const override;
@@ -59,7 +59,7 @@ public:
 		core::pose::Pose const & pose
 	) override;
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -67,13 +67,13 @@ public:
 		core::Size cycle   //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	observe_after_metropolis(
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
 
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
@@ -81,7 +81,7 @@ public:
 	) override;
 
 	/// @brief Return false, as a valid pose is not required for counting trials.
-	
+
 	bool
 	requires_pose() override { return false; }
 

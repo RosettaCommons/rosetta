@@ -585,7 +585,7 @@ int main( int argc, char ** argv )
 
 					//core::io::pdb::dump_pdb( *(iter->second), "", true, false, outfile, output_name );
 
-					//JAB - that second false used to denote not to output the pose data cache. 
+					//JAB - that second false used to denote not to output the pose data cache.
 					// In order to preserve behavior, I am doing the same in the new code, through
 					// the StructFileRepOptions
 

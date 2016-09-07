@@ -104,7 +104,7 @@ bool PairingStatEntry::compatible( core::scoring::dssp::StrandPairing const& str
 }
 
 bool PairingStatEntry::has_model( std::string const& model ) const {
-	for (const auto & it : models_) {
+	 for ( auto const & it : models_ ) {
 		if ( model == it ) return true;
 	}
 	return false;
@@ -148,7 +148,7 @@ void PairingStatistics::add_entry(core::scoring::dssp::StrandPairing const& ps, 
 
 void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet const& topology, Model const& id ) {
 	// if (! topology.size() ) return; //also add empty sets  -- otherwise the modelname floats around and can't be found in this list
-	for (const auto & it : topology) {
+	 for ( auto const & it : topology ) {
 		//bool merged ( false );
 		tr.Trace << "adding stand pairing to hash.. " << it << std::endl;
 		add_entry( it, id );
@@ -159,7 +159,7 @@ void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet cons
 
 void PairingStatistics::compute( Templates const& templates ) {
 	ModelFreq model_freq;  //count of the underlying structures ( letters 1-4 of model-name )
-	for (const auto & it : templates) {
+	 for ( auto const & it : templates ) {
 		Template const& model( *it.second );
 		core::scoring::dssp::PairingList template_pairings, target_pairings;
 		model.strand_pairings().get_beta_pairs( template_pairings );
@@ -196,7 +196,7 @@ core::Real PairingStatistics::strand_weight( core::scoring::dssp::StrandPairing 
 
 
 core::Real PairingStatistics::weight( Model id ) const {
-	for (const auto & top : model_weight_) {
+	 for ( auto const & top : model_weight_ ) {
 		if ( top.second==id ) return top.first;
 	}
 	utility_exit_with_message("Model name not known: " + id );
@@ -211,7 +211,7 @@ void PairingStatistics::compute_model_weights(  ModelFreq& model_freq ) {
 		Real score( 0 );
 		Real const norm( sqrt( (Real)  model_freq[ top->first.substr(0,4) ]  ) );
 		// loop over pairings and find them in entries_
-		for (const auto & pairing : top->second) {
+		 for ( auto const & pairing : top->second ) {
 			// find pairing in entries
 			StatEntries::iterator itentry = entries_.find( pairing );
 			if ( itentry != entries_.end() ) {
@@ -316,7 +316,7 @@ void PairingStatEntry::show( std::ostream& out ) const {
 		return;
 	}
 	out << "PAIRSTAT_ENTRY: " << F(5,2,weight() ) << " " << frequency() << " " <<strand_pairing_ << " ";
-	for (const auto & model : models_) {
+	 for ( auto const & model : models_ ) {
 		out << model << " ";
 	}
 }
@@ -339,7 +339,7 @@ std::istream& operator>> ( std::istream& is, PairingStatEntry& ps ) {
 }
 
 std::ostream& operator<< (std::ostream& out, StatEntries const& ps ) {
-	for (const auto & p : ps) {
+	 for ( auto const & p : ps ) {
 		out << p.second << "\n";
 	}
 	return out;

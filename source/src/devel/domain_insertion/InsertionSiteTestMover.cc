@@ -201,9 +201,9 @@ InsertionSiteTestMover::parse_my_tag(
 	}
 
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
-	for (auto subtag : subtags) {
+	for ( auto subtag : subtags ) {
 
-			if ( subtag->getName() == "span" ) {
+		if ( subtag->getName() == "span" ) {
 			core::Size const begin( core::pose::get_resnum( subtag, pose, "begin_" ) );
 			core::Size const end( core::pose::get_resnum( subtag, pose, "end_" ) );
 			runtime_assert( end > begin );

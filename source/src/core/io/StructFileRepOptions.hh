@@ -93,10 +93,10 @@ public:
 	bool pdb_comments() const;
 	bool show_all_fixes() const;
 	bool constraints_from_link_records() const;
-	
+
 	bool output_pose_energies_table() const;
 	bool output_pose_cache() const;
-	
+
 	// mutators
 	void set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini );
 	void set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini );

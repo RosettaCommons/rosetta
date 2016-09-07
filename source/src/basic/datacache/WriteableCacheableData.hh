@@ -46,7 +46,7 @@ namespace datacache {
 class WriteableCacheableData : public CacheableData {
 
 public:
-	
+
 	~WriteableCacheableData() override = default;
 
 	virtual

@@ -115,7 +115,7 @@ public: // constructors
 
 
 	/// @brief destructor
-	
+
 	~DataCache() override = default;
 
 

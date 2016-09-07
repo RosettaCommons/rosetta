@@ -189,7 +189,7 @@ StandardJobQueen::job_definition_xsd() const
 		XMLSchemaSimpleSubelementList option_subelements;
 
 		std::set< utility::keys::VariantKey< utility::options::OptionKey > > already_output_options;
-		for (const auto & iter : options_) {
+		 for ( auto const & iter : options_ ) {
 			AttributeList attributes;
 			utility::options::OptionKey const & opt_key( iter() );
 
@@ -440,7 +440,7 @@ StandardJobQueen::create_job( LarvalJobCOP ) const
 void StandardJobQueen::add_options( utility::options::OptionKeyList const & opts )
 {
 	using namespace utility::options;
-	for (const auto & opt : opts) {
+	 for ( auto const & opt : opts ) {
 		options_.push_back( opt );
 	}
 }
@@ -539,7 +539,7 @@ StandardJobQueen::options_from_tag( utility::tag::TagCOP job_options_tag ) const
 		common_options_tag = common_block_tags_->getTag( "Options" );
 	}
 
-	for (const auto & option : options_) {
+	 for ( auto const & option : options_ ) {
 		utility::options::OptionKey const & opt( option() );
 		OptionTypes opt_type = option_type_from_key( opt );
 
@@ -590,8 +590,8 @@ StandardJobQueen::determine_job_list_from_xml_file(
 	// with all of the options that are within the <Option> subtag, if present -- and reading any options
 	// not present in the tag from the (global) options system.
 	Tag::tags_t const & subtags = job_def_tag->getTags();
-	for (auto subtag : subtags) {
-			if ( subtag->getName() != "Job" ) {
+	for ( auto subtag : subtags ) {
+		if ( subtag->getName() != "Job" ) {
 			debug_assert( subtag->getName() == "Common" );
 			common_block_tags_ = subtag;
 			continue;
@@ -684,7 +684,7 @@ StandardJobQueen::expand_preliminary_larval_job(
 	// for this preliminary job
 	InnerLarvalJobs one_input_pose_inner_jobs = refine_preliminary_job( prelim_job );
 
-	for (auto & one_input_pose_inner_job : one_input_pose_inner_jobs) {
+	for ( auto & one_input_pose_inner_job : one_input_pose_inner_jobs ) {
 		// now ask the job outputter to devise the job_tag for each inner job
 		outputter->determine_job_tag( output_tag, *job_options, *one_input_pose_inner_job );
 		// and then expand the list of inner-larval jobs into a list of larval jobs, one for each nstruct

@@ -579,7 +579,7 @@ void PairingLibrary::create_jump_fragments(
 	const int iStart( 1 ); // in templates start residue is number 1
 	const int iStop ( 2 ); // in templates stop residue is number 2
 	frags.reserve( ntemplates );
-	for (const auto & it : templates) {
+	 for ( auto const & it : templates ) {
 		frags.push_back( core::fragment::FragDataOP( new FragData ) );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
@@ -620,7 +620,7 @@ PairingLibrary::generate_jump_frags(
 	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );
-	for (const auto & pairing : pairings) {
+	 for ( auto const & pairing : pairings ) {
 		Size o_key ( pairing.Orientation() ); // < 0 ? 1 : 2 );
 		Size p_key ( pairing.Pleating() ); // < 0 ? 1 : 2 );
 		jump_kind[ std::make_pair( o_key, p_key ) ].push_back( jump_nr++ );
@@ -634,8 +634,8 @@ PairingLibrary::generate_jump_frags(
 		Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
 		fragment::FragDataOPs frag_data;
 		create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
-		for (int jump_nr : it->second) {
-				int const startpos( pairings[ jump_nr ].Pos1() );
+		for ( int jump_nr : it->second ) {
+			int const startpos( pairings[ jump_nr ].Pos1() );
 			int const endpos( pairings[ jump_nr ].Pos2() );
 
 			if ( mm.get_bb( startpos ) && mm.get_bb( endpos ) ) {

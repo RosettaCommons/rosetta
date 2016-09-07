@@ -69,7 +69,7 @@ DesignTask::DesignTask(
 	String const & resfile
 ):
 	ncycle_( ncycle ),
-	scorefxn_( sfxn ), 
+	scorefxn_( sfxn ),
 	mover_( mover ),
 	filter_structs_( filter_structs ),
 	task_( taskf ),
@@ -186,7 +186,7 @@ DesignTask::dump_packertask( std::ostream & os )
 void
 DesignTask::add_task_operations( utility::vector1< TaskOperationOP > const & tops )
 {
-	for (const auto & top : tops) {
+	 for ( auto const & top : tops ) {
 		add_task_operation( top );
 	}
 }

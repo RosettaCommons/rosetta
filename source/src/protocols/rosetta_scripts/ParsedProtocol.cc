@@ -231,7 +231,7 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 
 void
 ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
-	for (const auto & mover : movers_) {
+	 for ( auto const & mover : movers_ ) {
 		if ( mover.report_filter_at_end_ ) {
 			core::Real const filter_value( mover.second->report_sm( pose ) );
 			if ( filter_value > -9999 ) {
@@ -311,7 +311,7 @@ ParsedProtocol::add_mover_filter_pair(
 /// @details sets resid for the constituent filters and movers
 void
 ParsedProtocol::set_resid( core::Size const resid ){
-	for (auto & mover : movers_) {
+	for ( auto & mover : movers_ ) {
 		using namespace protocols::moves;
 		modify_ResId_based_object( mover.first.first, resid );
 		modify_ResId_based_object( mover.second, resid );

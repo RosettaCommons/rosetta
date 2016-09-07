@@ -376,7 +376,7 @@ SequenceProfile::occurrence_data() const {
 /// @brief Multiply all profile weights by factor
 void SequenceProfile::rescale(core::Real factor) {
 	for ( Size ii = 1; ii <= profile().size(); ++ii ) {
-		for (double & it : profile_[ii]) {
+		for ( double & it : profile_[ii] ) {
 			it *= factor;
 		}
 	}
@@ -518,7 +518,7 @@ void SequenceProfile::scores_to_probs_(
 	// calculate partition (aka Z), with this definition:
 	// Z = sum( exp( score / kT ) )
 	core::Real partition( 0.0 );
-	for (double & score : scores) {
+	for ( double & score : scores ) {
 		if ( negative_better ) {
 			score = exp( -1 * score / kT );
 		} else {
@@ -529,7 +529,7 @@ void SequenceProfile::scores_to_probs_(
 
 	// transform scores using the partition calculated above:
 	// P(s) = exp( -1  * score / kT ) ) / Z
-	for (double & score : scores) {
+	for ( double & score : scores ) {
 		score = score / partition;
 	}
 } // scores_to_probs_

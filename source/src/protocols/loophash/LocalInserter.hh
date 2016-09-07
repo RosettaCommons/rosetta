@@ -109,7 +109,7 @@ public:
 		core::scoring::ScoreFunction const & scorefxn
 	);
 
-	
+
 	core::Real
 	make_local_bb_change(
 		core::pose::Pose &start_pose,
@@ -118,7 +118,7 @@ public:
 		core::Size res_pos
 	) override;
 
-	
+
 	core::Real
 	make_local_bb_change_close_gaps(
 		core::pose::Pose &start_pose,
@@ -127,7 +127,7 @@ public:
 		core::Size res_pos
 	) override;
 
-	
+
 	core::Real
 	make_local_bb_change_include_cut(
 		core::pose::Pose &start_pose,

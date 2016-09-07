@@ -41,10 +41,10 @@ class ScriptCM : public environment::ClientMover {
 public:
 	ScriptCM();
 
-	
+
 	~ScriptCM() override = default;
 
-	
+
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;
 
@@ -65,10 +65,10 @@ public:
 
 	void name( std::string const& name ) { name_ = name; }
 
-	
+
 	moves::MoverOP fresh_instance() const override;
 
-	
+
 	moves::MoverOP clone() const override;
 
 protected:

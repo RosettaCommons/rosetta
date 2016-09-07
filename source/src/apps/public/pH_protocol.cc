@@ -359,7 +359,7 @@ public:
 	}
 
 
-	
+
 	void
 	apply( core::pose::Pose & pose ) override{
 
@@ -443,17 +443,17 @@ public:
 
 	std::string get_name() const override { return "PhProtocol"; }
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override {
 		return protocols::moves::MoverOP( new PhProtocol );
 	}
 
-	
+
 	bool
 	reinitialize_for_each_job() const override { return false; }
 
-	
+
 	bool
 	reinitialize_for_new_input() const override { return false; }
 

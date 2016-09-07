@@ -56,7 +56,7 @@ public:
 	) const;
 
 	// inherited from OptEPositionData
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -72,7 +72,7 @@ public:
 	) const override
 	{ return do_score(std::cout, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list, false /* don't print */); }
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -95,7 +95,7 @@ public:
 	size() const;
 	*/
 
-	
+
 	OptEPositionDataType
 	type() const override;
 

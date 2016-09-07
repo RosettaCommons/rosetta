@@ -155,10 +155,10 @@ core::Real ExternalEvaluator::apply( core::pose::Pose& pose ) const {
 	string const result_file_name( work_dir_+string("/__RESULT") );
 	std::ofstream pose_stream(pose_file_name.c_str() ); //make sure not the MPI FileBuf is used !
 	if ( !pose_stream ) tr.Error << "can't write pose to file " << pose_file_name << std::endl;
-	
+
 	//pose.dump_pdb( pose_stream, pose_file_name ); JAB file name never used in pose string output.
 	pose.dump_pdb( pose_stream );
-	
+
 	pose_stream.close();
 	tr.Info << "write pose : " << pose_file_name << endl;
 	tr.Info << "execute command: "<< command_buf << endl;

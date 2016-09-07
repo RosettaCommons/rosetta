@@ -110,7 +110,7 @@ SelectRDC_Evaluator::init_rdcs() {
 	ResidualDipolarCoupling::RDC_lines const& rdcs = orig_rdcs.get_RDC_data();
 	if ( selection_.size() ) {
 		ResidualDipolarCoupling::RDC_lines filtered;
-		for (const auto & rdc : rdcs) {
+		 for ( auto const & rdc : rdcs ) {
 			core::scoring::ResidueSelection::const_iterator iter1 = find( selection_.begin(), selection_.end(), rdc.res1() );
 			core::scoring::ResidueSelection::const_iterator iter2 = find( selection_.begin(), selection_.end(), rdc.res2() );
 			if ( iter1 != selection_.end() && iter2 != selection_.end() ) {

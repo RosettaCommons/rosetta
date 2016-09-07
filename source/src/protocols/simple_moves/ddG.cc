@@ -237,7 +237,7 @@ void ddG::parse_my_tag(
 
 	if ( tag->hasOption("chain_name") ) {
 		utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
-		for (auto & chain_name : chain_names) {
+		for ( auto & chain_name : chain_names ) {
 			chain_ids_.push_back(core::pose::get_chain_id_from_chain(chain_name,pose));
 		}
 	}
@@ -326,7 +326,7 @@ void ddG::apply(Pose & pose)
 	}
 
 	average_ddg /= repeats_;
-	for (auto & average_per_residue_ddg : average_per_residue_ddgs) {
+	for ( auto & average_per_residue_ddg : average_per_residue_ddgs ) {
 		average_per_residue_ddg.second /= repeats_;
 	}
 
@@ -386,7 +386,7 @@ ddG::report_ddG( std::ostream & out ) const
 	out << " Scores                       Wghtd.Score\n";
 	out << "-----------------------------------------\n";
 	auto unbound_it=unbound_energies_.begin();
-	for (const auto & bound_energie : bound_energies_) {
+	 for ( auto const & bound_energie : bound_energies_ ) {
 		if ( unbound_it != unbound_energies_.end() ) {
 			if ( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_energie.second ) > 0.001 ) {
 				out << ' ' << LJ( 24, bound_energie.first ) << ' ' << F( 9,3, bound_energie.second - unbound_it->second )<<'\n';
@@ -409,7 +409,7 @@ ddG::sum_ddG() const
 	Real sum_energy(0.0);
 
 	auto unbound_it=unbound_energies_.begin();
-	for (const auto & bound_energie : bound_energies_) {
+	 for ( auto const & bound_energie : bound_energies_ ) {
 		if ( unbound_it != unbound_energies_.end() ) {
 			sum_energy += bound_energie.second - unbound_it->second;
 			++unbound_it;
@@ -560,8 +560,8 @@ ddG::unbind( pose::Pose & pose ) const
 	} else if ( chain_ids_.size() > 0 ) {
 		//We want to translate each chain the same direction, though it doesnt matter much which one
 		Vector translation_axis(1,0,0);
-		for (unsigned long current_chain_id : chain_ids_) {
-				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
+		for ( unsigned long current_chain_id : chain_ids_ ) {
+			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 			translate->step_size( translate_by_ );

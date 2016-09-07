@@ -56,7 +56,7 @@ public:
 
 	SymmetricFragmentMoverOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<SymmetricFragmentMover>( ClassicFragmentMover::shared_from_this() ); }
 
-	
+
 	bool
 	apply_fragment(
 		core::fragment::Frame const& frame,
@@ -118,7 +118,7 @@ protected:
 		SmoothFragmentMover( fragset, movemap, cost, type )
 	{}
 
-	
+
 	bool
 	choose_fragment(
 		core::fragment::FrameList const& fl,

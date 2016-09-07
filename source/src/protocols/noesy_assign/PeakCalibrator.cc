@@ -67,32 +67,32 @@ PeakCalibratorMap::PeakCalibratorMap( CrossPeakList& list, PeakCalibratorOP cali
 		}
 		(last_insert.first->second)->add_peak( *it );
 	}
-	for (auto & calibrator : calibrators_) {
+	for ( auto & calibrator : calibrators_ ) {
 		calibrator.second->init_calibrator();
 	}
 }
 
 void PeakCalibratorMap::set_new_upper_bounds() {
-	for (auto & calibrator : calibrators_) {
+	for ( auto & calibrator : calibrators_ ) {
 		calibrator.second->set_new_upper_bounds();
 	}
 }
 
 void PeakCalibratorMap::do_calibration() {
-	for (auto & calibrator : calibrators_) {
+	for ( auto & calibrator : calibrators_ ) {
 		tr.Info << "Calibrate " << calibrator.first << "..." << std::endl;
 		calibrator.second->do_calibration();
 	}
 }
 
 void PeakCalibratorMap::set_target_and_tolerance( core::Real target, core::Real tolerance ) {
-	for (auto & calibrator : calibrators_) {
+	for ( auto & calibrator : calibrators_ ) {
 		calibrator.second->set_target_and_tolerance( target, tolerance );
 	}
 }
 
 void PeakCalibratorMap::eliminate_violated_constraints() {
-	for (auto & calibrator : calibrators_) {
+	for ( auto & calibrator : calibrators_ ) {
 		calibrator.second->eliminate_violated_constraints();
 	}
 }

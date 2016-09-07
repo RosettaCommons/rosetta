@@ -58,7 +58,7 @@ public:
 		max_tries_( max_tries )
 	{}
 
-	
+
 	void
 	apply( core::pose::Pose & pose ) override;
 

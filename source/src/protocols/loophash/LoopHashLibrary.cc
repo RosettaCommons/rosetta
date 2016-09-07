@@ -291,7 +291,7 @@ LoopHashLibrary::merge(
 					}
 				}
 				// Now do an RMS check against every bs in the master lib bucket
-				for (auto & j : bs_vec_) {
+				for ( auto & j : bs_vec_ ) {
 					core::Real BBrms = get_rmsd( j, bs_ );
 					if ( BBrms < rms_cutoff ) {
 						// If any bs is within rms_cutoff RMS, then we don't add it
@@ -726,8 +726,8 @@ LoopHashLibrary::get_all(
 	start_res = std::min( start_res, (core::Size)2 ); // dont start before 2 - WHY ?
 
 	for ( ir = 2; ir < nres; ir ++ ) {
-		for (unsigned long loop_size : hash_sizes_) {
-				jr = ir + loop_size;
+		for ( unsigned long loop_size : hash_sizes_ ) {
+			jr = ir + loop_size;
 			if ( ir > nres ) continue;
 			if ( jr > nres ) continue;
 

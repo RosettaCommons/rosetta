@@ -84,32 +84,32 @@ public:
 
 
 	/// @brief dummy for master/slave version
-	
+
 	void
 	go( protocols::moves::MoverOP mover ) override;
 
 
 	/// @brief dummy for master/slave version
-	
+
 	core::Size
 	get_new_job_id() override;
 
 	/// @brief dummy for master/slave version
-	
+
 	void
 	mark_current_job_id_for_repetition() override;
 
 	/// @brief dummy for master/slave version
-	
+
 	void
 	remove_bad_inputs_from_job_list() override;
 
 	/// @brief dummy for master/slave version
-	
+
 	void
 	job_succeeded(core::pose::Pose & pose, core::Real runtime, std::string const & tag) override;
 
-	
+
 	void
 	job_failed( core::pose::Pose & pose, bool will_retry ) override;
 

@@ -192,7 +192,7 @@ Serial_Refine::apply( core::pose::Pose &pose,
 		for ( core::Size irun = 1; irun <= params.nrun; ++irun ) {
 			core::Size rerelax_type = params.rerelax_type;
 
-			for (auto & it : library_ref_) {
+			for ( auto & it : library_ref_ ) {
 				TR << "Create on structure: " << it->decoy_tag() << std::endl;
 
 				// perturb
@@ -307,7 +307,7 @@ Serial_Refine::dump_structures( protocols::wum::SilentStructStore const &new_str
 	std::string filename = prefix + ".out";
 
 	core::Size istr( 0 );
-	for (const auto & new_struct : new_structs) {
+	 for ( auto const & new_struct : new_structs ) {
 		istr++;
 		sfd.write_silent_struct( *new_struct, filename, score_only );
 	}

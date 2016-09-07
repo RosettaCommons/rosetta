@@ -529,7 +529,7 @@ DnaInterfacePacker::make_dna_sequence_combinations()
 	// print_sequences_pdb_nums( dna_sequences_, pose, TR );
 	// TR << std::endl;
 
-	for (auto & dna_sequence : dna_sequences_) {
+	for ( auto & dna_sequence : dna_sequences_ ) {
 		add_complementary_sequence( dna_sequence );
 	}
 }
@@ -543,7 +543,7 @@ DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 	runtime_assert( dna_chains_ != nullptr );
 	// fill a temporary ResTypeSequence, in order to avoid iterator-related issues with std::map
 	ResTypeSequence complement;
-	for (auto & postype : sequence) {
+	for ( auto & postype : sequence ) {
 		Size const index( postype.first );
 		DnaPosition const & dnatop( (*dna_chains_)[ index ] );
 		runtime_assert( dnatop.top() == index );
@@ -556,7 +556,7 @@ DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 		complement[ comppos ] = comptype;
 	}
 	// append this temporary bottom-stranded sequence to the original top-stranded sequence
-	for (auto & postype : complement) {
+	for ( auto & postype : complement ) {
 		sequence.insert( postype );
 	}
 }
@@ -613,7 +613,7 @@ std::pair< Real, Real > DnaInterfacePacker::measure_specificity( Pose & pose )
 	// add competitor DNA sequences
 	make_single_mutants( current_sequence, task(), specificity_sequences );
 	// add complementary DNA positions to the these top-stranded sequences
-	for (auto & specificity_sequence : specificity_sequences) {
+	for ( auto & specificity_sequence : specificity_sequences ) {
 		add_complementary_sequence( specificity_sequence );
 	}
 
@@ -682,7 +682,7 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 			single_bp_variants.push_back( single_bp_mutant );
 		}
 		// add complements (top-stranded sequences -> double-stranded)
-		for (auto & single_bp_variant : single_bp_variants) {
+		for ( auto & single_bp_variant : single_bp_variants ) {
 			add_complementary_sequence( single_bp_variant ); // uses dna_chains_ information
 		}
 		// model/score states, calculate specificities
@@ -762,7 +762,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 
 	SequenceScores sequence_scores, sequence_binding_scores;
 
-	for (const auto & dna_sequence : dna_sequences) {
+	 for ( auto const & dna_sequence : dna_sequences ) {
 		Real best_trial_E(0), best_trial_binding_E(0);
 		// restrict packer to current protein sequence and this DNA sequence
 		utility::vector0< int > rot_to_pack;
@@ -834,7 +834,7 @@ DnaInterfacePacker::calculate_specificity(
 
 	Real const inv_temp( 1.0 / temp );
 	Real num(0), denom(0);
-	for (const auto & sequence_score : sequence_scores) {
+	 for ( auto const & sequence_score : sequence_scores ) {
 		ResTypeSequence const & sequence( sequence_score.first );
 		Real score( sequence_score.second );
 		TR_spec << "\t";
@@ -919,7 +919,7 @@ DnaInterfacePacker::reversion_scan(
 	Size round(0);
 	while ( true ) {
 		// assess changes in energy and specificity for each single revertant in parallel
-		for (auto & reversion : reversions) {
+		for ( auto & reversion : reversions ) {
 			Size const index( reversion.index );
 			ResidueTypeCOP starting_type( fixed_residue_types[ index ] ),
 				reference_type( reference_residue_types_[ index ] ); // 'reference' == 'native'
@@ -1037,7 +1037,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	// parse allowed_types string into residue types
 	ResidueTypeCOPs allowed_type_caps;
 	ResidueTypeSetCOP rts( pose.residue(1).residue_type_set() );
-	for (char typechar : typestring) {
+	for ( char typechar : typestring ) {
 		ResidueTypeCOP aa_type( rts->get_representative_type_aa( aa_from_oneletter_code( typechar ) ) );
 		if ( ! aa_type ) {
 			TR(t_warning) << "no ResidueType found in ResidueTypeSet for " << typechar << std::endl;
@@ -1244,7 +1244,7 @@ DnaInterfacePacker::dna_seq_tag( Pose const & pose, ResTypeSequence const & sequ
 {
 	std::ostringstream ss;
 	bool sep(false);
-	for (const auto & pos : sequence) {
+	 for ( auto const & pos : sequence ) {
 		Size const seqpos( pos.first );
 		if ( !dna_chains_->is_top( seqpos ) ) continue;
 		if ( sep ) ss << "_";

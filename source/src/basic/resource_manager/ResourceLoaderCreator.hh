@@ -37,7 +37,7 @@ namespace resource_manager {
 class ResourceLoaderCreator : public utility::pointer::ReferenceCount
 {
 public:
-	
+
 	~ResourceLoaderCreator() override;
 
 	/// @brief Instantiate a ResourceLoader

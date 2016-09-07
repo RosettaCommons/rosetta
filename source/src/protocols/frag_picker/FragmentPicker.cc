@@ -919,7 +919,7 @@ FragmentPicker::output_pair_counts(
 	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts
 ) {
 	using namespace ObjexxFCL;
-	for (auto contact_type : contact_types_) {
+	for ( auto contact_type : contact_types_ ) {
 		if ( contact_type == CEN ) {
 			std::string scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 			replace( scale_factor.begin(), scale_factor.end(), '.', '_' );

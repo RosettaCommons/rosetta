@@ -528,7 +528,7 @@ void LoopHashMap::radial_lookup( core::Size radius,  numeric::geometry::hashing:
 	//TR.Info << "center:  " << center[4] << " " << center[5] << std::endl;
 	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
 
-	for ( auto & i : bin_index_vec) {
+	for ( auto & i : bin_index_vec ) {
 		//TR.Info << "bin_index_vec[i]:  " << bin_index_vec[i] << std::endl;
 		// now get an iterator over that map entry
 		std::pair< BackboneIndexMap::iterator,BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( i );
@@ -545,7 +545,7 @@ Size LoopHashMap::radial_count( core::Size radius, numeric::geometry::hashing::R
 	center[5] = numeric::nonnegative_principal_angle_degrees(center[5] );
 	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
 	Size count = 0;
-	for (auto & i : bin_index_vec) {
+	for ( auto & i : bin_index_vec ) {
 		count += backbone_index_map_.count( i );
 	}
 	return count;
@@ -622,7 +622,7 @@ void LoopHashMap::read_legacydb(std::string filename )
 void LoopHashMap::write_db( std::string filename ){
 	std::ofstream file( filename.c_str() );
 	if ( !file ) throw EXCN_DB_IO_Failed( filename, "write" );
-	for (auto & i : loopdb_) {
+	for ( auto & i : loopdb_ ) {
 		file << i.index << " " << i.offset << " " << i.key << std::endl;
 	}
 	file.close();

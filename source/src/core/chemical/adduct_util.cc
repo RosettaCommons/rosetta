@@ -87,12 +87,12 @@ error_check_requested_adducts( std::map< std::string, int > const & add_map,
 			this_add != add_map.end() ; ++this_add ) {
 		bool not_found( true );
 
-		for (const auto & rsd_type : rsd_types) {
+		 for ( auto const & rsd_type : rsd_types ) {
 			// shortcircuit if we've already found an instance of the adduct
 			ResidueType const & rsd( *rsd_type );
 			if ( not_found == false ) break;
 
-			for (const auto & rsd_add : rsd.defined_adducts()) {
+			 for ( auto const & rsd_add : rsd.defined_adducts() ) {
 				std::string check_name( rsd_add.adduct_name() );
 				// compare case-insensitively for convenience
 				if ( ObjexxFCL::equali( this_add->first, check_name ) ) {
@@ -208,7 +208,7 @@ place_adducts( ResidueTypeSet & rsd_type_set )
 	// Set up a starting point map where the int value is the number
 	// of adducts of a given type placed
 	AdductMap blank_map( add_map );
-	for (auto & add_iter : blank_map) {
+	for ( auto & add_iter : blank_map ) {
 		add_iter.second = 0;
 	}
 

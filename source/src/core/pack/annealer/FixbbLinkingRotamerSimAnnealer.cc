@@ -186,18 +186,18 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	bool flag1 = false; bool flag2 = false;
 	for ( core::Size i = 1; i <= nmoltenres; ++i ) {
 
-		utility::vector1<Size> these_links = rotamer_links_->get_equiv(i);
-		if ( flag1 && flag2 ) break;
-		if ( these_links.size() == 1 && these_links[1] == i ) {
-			flag1 = true;
-			TR.Debug << "quasisymmetric annealer flag 1: ON" << std::endl;
-		}
-		if ( these_links.size() > 1 ) {
-			flag2 = true;
-			TR.Debug << "quasisymmetric annealer flag 2: ON" << std::endl;
-		}
+	utility::vector1<Size> these_links = rotamer_links_->get_equiv(i);
+	if ( flag1 && flag2 ) break;
+	if ( these_links.size() == 1 && these_links[1] == i ) {
+	flag1 = true;
+	TR.Debug << "quasisymmetric annealer flag 1: ON" << std::endl;
+	}
+	if ( these_links.size() > 1 ) {
+	flag2 = true;
+	TR.Debug << "quasisymmetric annealer flag 2: ON" << std::endl;
+	}
 	}*/
-	
+
 	bool quasiflag = false;
 	//this quasisymmetry flag turns on a lot of bypasses below
 	if ( basic::options::option[ basic::options::OptionKeys::packing::quasisymmetry]() == true ) {
@@ -324,9 +324,9 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					RotamerSetCOP other_rotamer_set( rotamer_sets()->rotamer_set_for_moltenresidue( *itr ) );
 					//ResidueCOP other_rotamer( other_prevrotamer_state == 0 ? ResidueCOP(0) : other_rotamer_set->rotamer( other_prevrotamer_state ) );
 					ResidueCOP other_rotamer( ResidueCOP(0) );
-					
+
 					utility::vector1<int> passed_states;
-					
+
 					int const other_nrotamers( other_rotamer_set->num_rotamers() );
 					int tries = other_nrotamers;
 					found_rotamer = false;
@@ -367,14 +367,14 @@ void FixbbLinkingRotamerSimAnnealer::run()
 							}
 						}
 					} //tries
-					
+
 					if ( quasiflag ) { //if quasisymmetric case, RNG pick a rotamer from the newly compiled list of similar AAs
 						TR.Debug << "QUASIBYPASS: number of states with similar AA: " << passed_states.size() << std::endl;
 						int ranrotamer2 = static_cast<int>( numeric::random::rg().random_range(1, passed_states.size() ));
 						found_rotamer = true; //flags this rotamer to be "same" for the sake of code downstream
 						resid_states[*itr] = passed_states[ ranrotamer2 ]; //record state of "other rotamer"
 					}
-					
+
 					if ( !found_rotamer ) { // any of the linked position without the same rotamer should be passed
 						TR.Debug << "same rotamer not found for " << moltenres_id << " and " <<  *itr << std::endl;
 						break;

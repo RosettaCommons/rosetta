@@ -111,7 +111,7 @@ SequenceFactory::get_seq_names() const {
 	using utility::vector1;
 
 	vector1< string > seq_names;
-	for (const auto & seq_type : seq_types_) {
+	 for ( auto const & seq_type : seq_types_ ) {
 		seq_names.push_back( seq_type.first );
 	}
 

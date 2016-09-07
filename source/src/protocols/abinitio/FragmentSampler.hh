@@ -134,7 +134,7 @@ public:
 	FragmentSampler( topology_broker::TopologyBrokerOP broker );
 
 	//@brief FragmentSampler has virtual functions... use this to obtain a new instance
-	
+
 	moves::MoverOP clone() const override;
 
 	//@brief run protocol on pose

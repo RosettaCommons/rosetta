@@ -51,7 +51,7 @@ public:
 	}
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
-	
+
 	bool apply( core::pose::Pose const & pose ) const override;
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

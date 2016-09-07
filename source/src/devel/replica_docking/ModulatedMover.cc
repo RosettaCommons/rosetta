@@ -114,8 +114,8 @@ ModulatedMover::parse_my_tag(
 	utility::vector1< std::string > keys;
 
 
-	for (auto subtag : subtags) {
-			Interpolators interpolators;
+	for ( auto subtag : subtags ) {
+		Interpolators interpolators;
 		tr.Debug << "subtag->getName() " << subtag->getName() << std::endl;
 		if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) { //// weight is interpreted in TempWeightedMetropolisHastingsMover
 			core::Size dim = subtag->getOption< core::Size >( "dim", 1);
@@ -132,7 +132,7 @@ ModulatedMover::parse_my_tag(
 		}
 	}
 	/// for debug
-	for (auto & key : keys) {
+	for ( auto & key : keys ) {
 		tr.Debug << "check if key " << key << " is provided" << std::endl;
 
 		if ( interps_1_.find( key ) == interps_1_.end() ) {
@@ -180,7 +180,7 @@ ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& pr
 	if ( grid_coord.size()==1 ) grid_coord.push_back(1);
 
 	tag->setOption< std::string >("name",prefix+"_"+ ObjexxFCL::string_of(temp_level));
-	for (const auto & it : interps_1_) {
+	 for ( auto const & it : interps_1_ ) {
 		// string key=it->first
 		//      InterpolatorOP interpolator_ptr=it->second
 		std::string key( it.first );

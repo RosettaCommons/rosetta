@@ -33,7 +33,7 @@ class DatabaseSessionLoader : public basic::resource_manager::ResourceLoader
 public:
 	~DatabaseSessionLoader() override = default;
 
-	
+
 	basic::resource_manager::ResourceOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const &,
@@ -41,7 +41,7 @@ public:
 		std::istream & istream
 	) const override;
 
-	
+
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const override { return basic::resource_manager::ResourceOptionsOP( new DatabaseSessionOptions() );}
 };

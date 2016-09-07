@@ -422,7 +422,7 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
 
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
-	for (const auto & it : fn_list) {
+	 for ( auto const & it : fn_list ) {
 		if ( file_exists(it) ) {
 			Pose pose;
 			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);

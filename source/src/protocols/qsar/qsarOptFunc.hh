@@ -54,17 +54,17 @@ public:
 	void set_initial_values(core::optimization::Multivec const & initial_values);
 
 	// func
-	
+
 	core::Real
 	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	// dfunc
-	
+
 	void
 	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
 	/// @brief Error state reached -- derivative does not match gradient
-	
+
 	void
 	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const & vars2 ) const override;
 

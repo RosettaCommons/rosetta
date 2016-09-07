@@ -140,7 +140,7 @@ close_chainbreaks(
 		cuts.sort();
 
 		if ( tr.Debug.visible() ) {
-			for (auto & cut : cuts) {
+			for ( auto & cut : cuts ) {
 				tr.Debug << "cut " << cut.second << " max_loop_size " << cut.first << std::endl;
 			}
 		}

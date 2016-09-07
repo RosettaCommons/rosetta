@@ -163,7 +163,7 @@ void steal_frag_set_from_pose (
 	FrameOP frame;
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
-	for (unsigned long selected_residue : selected_residues) {
+	for ( unsigned long selected_residue : selected_residues ) {
 		frame = FrameOP( new Frame( selected_residue, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );
@@ -323,7 +323,7 @@ void dump_frames_as_pdb(
 	outfile << "REMARK  666  Fragment set for outtag pose \n";
 
 	//now let's go through every fragment of every frame and dump to pdb
-	for (const auto & frame : frames) {
+	 for ( auto const & frame : frames ) {
 
 		for ( Size frag = start_frag; frag <= frame->nr_frags(); ++frag ) {
 

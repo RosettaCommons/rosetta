@@ -175,7 +175,7 @@ void FragmentJumpClaimer::init_jumps() {
 
 		current_jumps_.generate_jump_frames( jump_frames,mm );
 
-		for (auto & jump_frame : jump_frames) {
+		for ( auto & jump_frame : jump_frames ) {
 			jump_frame->steal( input_pose_ );
 		}
 
@@ -239,7 +239,7 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 		kinematics::MoveMap jump_mm;
 		jump_mm.set_jump( up, down, true );
 		bool found_frame( false );
-		for (auto & frame : frames) {
+		for ( auto & frame : frames ) {
 			if ( 2 == frame->nr_res_affected( jump_mm ) ) {
 				//that is our jump-fragment
 				found_frame = true;

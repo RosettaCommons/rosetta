@@ -1322,7 +1322,7 @@ void FastRelax::batch_apply(
 				pose.dump_pdb( "dump_" + right_string_of( index, 4, '0' ) + "_" + right_string_of( (int) cmd.param1, 4, '0' ) );
 			}
 		} else if ( cmd.command == "repack" ) {
-			for (auto & relax_decoy : relax_decoys) {
+			for ( auto & relax_decoy : relax_decoys ) {
 				if ( !relax_decoy.active ) continue;
 				relax_decoy.current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
@@ -1335,7 +1335,7 @@ void FastRelax::batch_apply(
 		} else if ( cmd.command == "min" ) {
 			if ( cmd.nparams < 1 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 
-			for (auto & relax_decoy : relax_decoys) {
+			for ( auto & relax_decoy : relax_decoys ) {
 				if ( !relax_decoy.active ) continue;
 				relax_decoy.current_struct->fill_pose( pose );
 				if ( input_csts ) pose.constraint_set( input_csts );
@@ -1374,7 +1374,7 @@ void FastRelax::batch_apply(
 			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * cmd.param1 );
 
 
-			for (auto & relax_decoy : relax_decoys) {
+			for ( auto & relax_decoy : relax_decoys ) {
 				try {
 					clock_t starttime = clock();
 					if ( !relax_decoy.active ) continue;
@@ -1414,7 +1414,7 @@ void FastRelax::batch_apply(
 			TR.Debug << "SHAVE FACTOR: " << reduce_factor << std::endl;
 
 			std::vector < core::Real > energies;
-			for (auto & relax_decoy : relax_decoys) {
+			for ( auto & relax_decoy : relax_decoys ) {
 				if ( !relax_decoy.active ) continue;
 				TR.Debug << "SHAVE: " << relax_decoy.current_score << std::endl;
 				energies.push_back( relax_decoy.current_score );
@@ -1505,7 +1505,7 @@ void FastRelax::batch_apply(
 			}
 			std::sort( energies.begin(), energies.end() );
 			core::Real cutoff_energy = energies[ core::Size( floor(core::Real(energies.size()) * (decay_rate)) )];
-			for (auto & relax_decoy : relax_decoys) {
+			for ( auto & relax_decoy : relax_decoys ) {
 				if ( !relax_decoy.active ) continue;
 				if ( relax_decoy.best_score > cutoff_energy ) relax_decoy.active = false;
 			}
@@ -1525,7 +1525,7 @@ void FastRelax::batch_apply(
 
 	input_structs.clear();
 	// Finally return all the scores;
-	for (auto & relax_decoy : relax_decoys) {
+	for ( auto & relax_decoy : relax_decoys ) {
 		relax_decoy.best_struct->fill_pose( pose );
 		if ( input_csts ) pose.constraint_set( input_csts );
 		setPoseExtraScore( pose, "giveup", relax_decoy.accept_count  );

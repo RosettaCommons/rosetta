@@ -81,7 +81,7 @@ Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read
 		} else if ( filter->get_type() == "CompoundStatement" ) { ///all RosettaScripts user-defined filters with confidence!=1 are compoundstatements
 			CompoundFilterOP comp_filt_op( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter ) );
 			runtime_assert( comp_filt_op != nullptr );
-			for (auto & cs_it : *comp_filt_op) {
+			for ( auto & cs_it : *comp_filt_op ) {
 				protocols::filters::FilterOP f( cs_it.first );
 				if ( f->get_type() == "Sigmoid" ) {
 					SigmoidOP sigmoid_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Sigmoid > ( f ) );

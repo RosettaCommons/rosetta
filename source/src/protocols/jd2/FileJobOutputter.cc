@@ -138,7 +138,7 @@ void FileJobOutputter::scorefile(
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 		assert( data.get() != nullptr );
 
-		for (const auto & it : data->map()) {
+		 for ( auto const & it : data->map() ) {
 			score_map[it.first] = it.second;
 		}
 	}
@@ -150,7 +150,7 @@ void FileJobOutputter::scorefile(
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
 		assert( data.get() != nullptr );
 
-		for (const auto & it : data->map()) {
+		 for ( auto const & it : data->map() ) {
 			string_map[it.first] = it.second;
 		}
 	}

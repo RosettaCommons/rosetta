@@ -70,7 +70,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	
+
 	~BasicDataCache() override;
 
 

@@ -165,13 +165,13 @@ AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
 	std::map< AtomID, AtomID > atom_id_map;
 
 	std::map< core::Size, core::Size > in_source_res; //basically reverse of res_map.
-	for (const auto & it : res_map) {
+	 for ( auto const & it : res_map ) {
 		Size const & target_pos = it.first;
 		Size const & source_pos = it.second;
 		in_source_res[ source_pos ] = target_pos;
 	}
 
-	for (const auto & it : res_map) {
+	 for ( auto const & it : res_map ) {
 
 		Size const & target_pos = it.first;
 		Size const & source_pos = it.second;

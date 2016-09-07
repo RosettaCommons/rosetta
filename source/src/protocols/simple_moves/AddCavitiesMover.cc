@@ -98,7 +98,7 @@ AddCavitiesMover::get_cavities( Pose const & pose, Real nbdis, int nbcount, Real
 	CavBalls cbpr  = prune_cavity_balls( spheres, cbph, opts );
 	compute_cav_ball_neighbor_count( spheres, cbpr, nbdis );
 	CavBalls cbbur;
-	for (auto & i : cbpr) if ( i.anb > nbcount ) cbbur.push_back( i );
+	for ( auto & i : cbpr ) if ( i.anb > nbcount ) cbbur.push_back( i );
 	CavBalls selcb = select_cav_balls(cbbur,minsep);
 
 	CavBalls cb;

@@ -281,7 +281,7 @@ int main(int argc, char* argv[])
 
 		// Output final PDB
 		const std::string output_final = (prefix+"_final.pdb");
-		
+
 		//pose.dump_pdb(output_final,pdb);
 		pose.dump_pdb(output_final);
 

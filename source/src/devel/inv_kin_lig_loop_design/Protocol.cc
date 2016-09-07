@@ -62,7 +62,7 @@ namespace inv_kin_lig_loop_design {
 namespace {
 
 bool contains(vector<Loop> const& loops, int seqpos ) {
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		if ( loop.lo <= seqpos && seqpos <= loop.hi ) {
 			return true;
 		}
@@ -71,7 +71,7 @@ bool contains(vector<Loop> const& loops, int seqpos ) {
 }
 
 bool is_anchor(vector<Loop> const& loops, int seqpos ) {
-	for (const auto & loop : loops) {
+	 for ( auto const & loop : loops ) {
 		if ( loop.to == seqpos ) {
 			return true;
 		}
@@ -160,8 +160,8 @@ void Protocol::phase_lores() {
 			//g.setUseNb(false);
 
 			// start with a completely random configuration
-			for (auto & loop : loops_shuffled) { // !!! first generate a completely random
-					mover.randomFragments( loop.lo, loop.hi, 1 );
+			for ( auto & loop : loops_shuffled ) { // !!! first generate a completely random
+				mover.randomFragments( loop.lo, loop.hi, 1 );
 				mover.randomFragments( loop.lo, loop.hi, 3 );
 
 				if ( loop.to != 0 ) {
@@ -181,9 +181,9 @@ void Protocol::phase_lores() {
 			min_start_3mer_inner.boltzmann( *pose );
 			min_start_3mer_inner.recover_low( *pose );
 
-			for (auto & loop : loops_shuffled) {
+			for ( auto & loop : loops_shuffled ) {
 
-					int const a = loop.lo;
+				int const a = loop.lo;
 				int const b = loop.hi;
 
 				if ( loop.to != 0 ) {
@@ -408,7 +408,7 @@ void Protocol::phase_hires() {
 	core::pack::task::PackerTaskOP design_task( core::pack::task::TaskFactory::create_packer_task( *pose ) );
 	//design_task->initialize_from_command_line(); // .read_resfile().or_include_current( true );
 
-	for (auto & loop : loops) {
+	for ( auto & loop : loops ) {
 		for ( int i = loop.lo; i <= loop.hi ; ++i ) {
 			if ( i != loop.to ) {
 				residues_allowed_to_be_packed[i] = true;

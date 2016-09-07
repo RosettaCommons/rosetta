@@ -50,21 +50,21 @@ public:
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
 	/// @brief this function outputs the final result of a job.  This implementation will write a wwPDB-format file (plus scores).  It calls a pure virtual so that child classes can write PDB or mmCIF format.
-	
+
 	void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag ) override;
 
 	/// @brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.  This implementation will write a wwPDB-format file (plus scores).  It calls a pure virtual so that child classes can write PDB or mmCIF format.
-	
+
 	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) override;
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 
 	/// @brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.  The base implementation looks for a pdb/cif with the job's name already in existence.
-	
+
 	bool job_has_completed( JobCOP job ) override;
 
 	/// @brief this is the master function for determining the unique output identifier for a job
-	
+
 	std::string output_name( JobCOP job ) override;
 
 protected:

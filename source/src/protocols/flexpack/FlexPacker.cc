@@ -211,7 +211,7 @@ FlexPacker::set_frames(
 )
 {
 
-	for (const auto & frame : frames) {
+	 for ( auto const & frame : frames ) {
 
 		frames_.push_back( frame );
 	}

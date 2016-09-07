@@ -89,45 +89,43 @@ void pose_energies_from_sfr(
 
 	utility::vector1< std::string > const & score_names = sfr.score_table_labels();
 	utility::vector1< std::vector< std::string > > const & score_lines = sfr.score_table_lines();
-	
-	if (score_names.size() == 0 || score_lines.size() == 0) return; //Was not extracted!
-	
+
+	if ( score_names.size() == 0 || score_lines.size() == 0 ) return; //Was not extracted!
+
 	out << "# All scores below are weighted scores, not raw scores.\n";
-	
-	if (! sfr.score_table_filename().empty()){
+
+	if ( ! sfr.score_table_filename().empty() ) {
 		out << "#BEGIN_POSE_ENERGIES_TABLE " << sfr.score_table_filename() << std::endl;
-	}
-	else {
+	} else {
 		out << "#BEGIN_POSE_ENERGIES_TABLE " << std::endl;
 	}
-	
+
 	out << "label";
-	
+
 	BOOST_FOREACH ( std::string score_name, score_names ) {
 		out << " " << score_name;
 	}
 	out << "\n";
 	out << "weights";
 	utility::vector1< core::Real > const & score_weights = sfr.score_table_weights();
-	
+
 	BOOST_FOREACH ( core::Real weight, score_weights ) {
 		out << " " << weight;
 	}
 	out << " NA\n";
-	
-	
-	BOOST_FOREACH( std::vector<std::string> score_line, score_lines){
+
+
+	BOOST_FOREACH ( std::vector<std::string> score_line, score_lines ) {
 		std::string line = "";
-		BOOST_FOREACH( std::string column, score_line){
+		BOOST_FOREACH ( std::string column, score_line ) {
 			line = line+" "+column;
 		}
 		line = utility::strip(line);
 		out << line << "\n";
 	}
-	if (! sfr.score_table_filename().empty()){
+	if ( ! sfr.score_table_filename().empty() ) {
 		out << "#END_POSE_ENERGIES_TABLE " << sfr.score_table_filename() << std::endl;
-	}
-	else {
+	} else {
 		out << "#END_POSE_ENERGIES_TABLE " << std::endl;
 	}
 }
@@ -153,15 +151,15 @@ void pose_data_cache_from_sfr(
 	//If either of these are empty, will not do anything.
 	std::map< std::string, std::string > const & string_data = sfr.pose_cache_string_data();
 	std::map< std::string,     float   > const & float_data =  sfr.pose_cache_float_data();
-	
+
 	// ARBITRARY_STRING_DATA
-	for (const auto & it : string_data){
+	 for ( auto const & it : string_data ) {
 		//TR << it->first << " " << it->second << std::endl;
 		out << it.first << " " << it.second << std::endl;
 	}
 
 	// ARBITRARY_FLOAT_DATA
-	for (const auto & it : float_data) {
+	 for ( auto const & it : float_data ) {
 		//TR << it->first << " " << it->second << std::endl;
 		out << it.first << " " << it.second << std::endl;
 	}

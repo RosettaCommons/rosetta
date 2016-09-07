@@ -337,11 +337,11 @@ ShapeComplementarityFilter::setup_from_selectors( Pose const & pose, ShapeComple
 		tr.Info << std::endl;
 	}
 
-	for (unsigned long r : residues1) {
+	for ( unsigned long r : residues1 ) {
 		scc.AddResidue( 0, pose.residue( r ) );
 	}
 
-	for (unsigned long r : residues2) {
+	for ( unsigned long r : residues2 ) {
 		scc.AddResidue( 1, pose.residue( r ) );
 	}
 }

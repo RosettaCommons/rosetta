@@ -136,7 +136,7 @@ void FragSet::add( FragID const& frag_id ) {
 	FrameList present_frames;
 	Size nr_present = frames( start, present_frames );
 	if ( nr_present ) {
-		for (auto & present_frame : present_frames) {
+		for ( auto & present_frame : present_frames ) {
 			if ( present_frame->is_mergeable( aFrame ) ) {
 				Size const new_id( present_frame->add_fragment( utility::pointer::const_pointer_cast< FragData >( frag_id.fragment_ptr() ) ) );
 				present_frame->clone_cache_data( aFrame, frag_id.id(), new_id );
@@ -229,7 +229,7 @@ FragSet::add( FrameCOP aFrame ) {
 	if ( !nr_present ) {
 		add_( aFrame->clone_with_frags() );
 	} else {
-		for (auto & present_frame : present_frames) {
+		for ( auto & present_frame : present_frames ) {
 			if ( present_frame->is_mergeable( *aFrame ) ) {
 				present_frame->merge( *aFrame );
 				return; //finished early
@@ -242,7 +242,7 @@ FragSet::add( FrameCOP aFrame ) {
 
 void
 FragSet::add( FrameList const& frames ) {
-	for (const auto & frame : frames) {
+	 for ( auto const & frame : frames ) {
 		add( frame );
 	}
 }

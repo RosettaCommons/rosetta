@@ -103,7 +103,7 @@ AmbiguousMultiConstraint::score(
 	//low_EMap_.zero( cst_score_types_ );
 
 	// first, we score every constraint and save the result in a list
-	for (const auto & member_it : member_constraints()) {
+	 for ( auto const & member_it : member_constraints() ) {
 		EnergyMap cur_emap;
 		member_it->score(xyz_func, weights, cur_emap);
 		core::Real cur_score = calculate_total_cst_score( weights, cur_emap);
@@ -143,7 +143,7 @@ AmbiguousMultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 	using namespace core::scoring::constraints;
 
 	ConstraintCOPs new_csts;
-	for (const auto & cst_it : member_constraints()) {
+	 for ( auto const & cst_it : member_constraints() ) {
 		ConstraintOP new_cst = cst_it->remap_resid( seqmap );
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
@@ -179,7 +179,7 @@ AmbiguousMultiConstraint::show( std::ostream& out) const
 {
 	using namespace core::scoring::constraints;
 	out << "AmbiguousMultiConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for (const auto & cst_it : member_constraints()) {
+	 for ( auto const & cst_it : member_constraints() ) {
 		cst_it->show(out);
 	}
 

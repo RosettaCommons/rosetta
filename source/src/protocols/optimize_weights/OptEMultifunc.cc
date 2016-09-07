@@ -296,7 +296,7 @@ OptEMultifunc::get_dofs_from_energy_map( EnergyMap const & start_vals ) const
 	Multivec dofs( fix_reference_energies_ ? num_energy_dofs_ : num_total_dofs_, 0.0 );
 
 	Size dof_index( 1 );
-	for (auto itr : score_list_) {
+	for ( auto itr : score_list_ ) {
 		dofs[ dof_index++ ] = start_vals[ itr ];
 	}
 	if ( ! fix_reference_energies_ ) {
@@ -319,13 +319,13 @@ OptEMultifunc::get_energy_map_from_dofs( Multivec const & dofs) const
 
 	// This covers the variable weights
 	Size dof_index( 1 );
-	for (auto itr : score_list_) {
+	for ( auto itr : score_list_ ) {
 		return_map[ itr ] = dofs[ dof_index++ ];
 	}
 
 	// Now the fixed weights - but I think we should have them from the
 	// copy constructor above, so this is probably a total waste....
-	for (auto itr : fixed_score_list_) {
+	for ( auto itr : fixed_score_list_ ) {
 		return_map[ itr ] = fixed_terms_[ itr ];
 	}
 
@@ -668,7 +668,7 @@ void WrapperOptEMultifunc::init(
 
 	n_real_dofs_ = dof_variables_.size();
 	Size count_real_dofs( 1 );
-	for (auto & dof_variable : dof_variables_) {
+	for ( auto & dof_variable : dof_variables_ ) {
 		dof_variable.second->set_id( count_real_dofs );
 		++count_real_dofs;
 	}
@@ -753,7 +753,7 @@ WrapperOptEMultifunc::derived_dofs( Multivec const & vars ) const
 {
 	//std::cout << "WrapperOptEMultifunc::derived_dofs()\n";
 	utility::vector1< Real > optEvars( optE_dof_expressions_.size() );
-	for (const auto & dof_variable : dof_variables_) {
+	 for ( auto const & dof_variable : dof_variables_ ) {
 		dof_variable.second->update_value_from_list( vars );
 		//std::cout << "variable: " << iter->first << " " << (*iter->second)() << "\n";
 	}
@@ -774,7 +774,7 @@ WrapperOptEMultifunc::print_dofs(
 ) const
 {
 	ostr << "WrapperOptEMultifunc dofs:\n";
-	for (const auto & dof_variable : dof_variables_) {
+	 for ( auto const & dof_variable : dof_variables_ ) {
 		dof_variable.second->update_value_from_list( vars );
 		ostr << dof_variable.first << " : " << (*(dof_variable.second))() << "\n";
 	}
@@ -812,15 +812,15 @@ WrapperOptEMultifunc::register_variable_expression( std::string varname )
 		} else {
 			std::cerr << "Error: variable expression with name '" << varname << "' is not a valid variable name." << std::endl;
 			std::cerr << "Free variables:" << std::endl;
-			for (const auto & free_score_name : free_score_names_) {
+			 for ( auto const & free_score_name : free_score_names_ ) {
 				std::cerr << free_score_name << std::endl;
 			}
 			std::cerr << "Fixed variables:" << std::endl;
-			for (const auto & fixed_score_name : fixed_score_names_) {
+			 for ( auto const & fixed_score_name : fixed_score_names_ ) {
 				std::cerr << fixed_score_name << std::endl;
 			}
 			std::cerr << "New variables:" << std::endl;
-			for (const auto & new_dof_name : new_dof_names_) {
+			 for ( auto const & new_dof_name : new_dof_names_ ) {
 				std::cerr << new_dof_name << std::endl;
 			}
 		}

@@ -399,7 +399,7 @@ void FragmentSampler::set_default_options() {
 
 	skip_stages_.clear();
 	if ( option[ OptionKeys::abinitio::skip_stages ].user() ) {
-		for (int it : option[ OptionKeys::abinitio::skip_stages ]()) {
+		for ( int it : option[ OptionKeys::abinitio::skip_stages ]() ) {
 			if ( it == 1 ) skip_stages_.push_back( STAGE_1 );
 			else if ( it == 2 ) skip_stages_.push_back( STAGE_2 );
 			else if ( it == 3 ) skip_stages_.push_back( STAGE_3 );
@@ -408,7 +408,7 @@ void FragmentSampler::set_default_options() {
 	}
 
 	if ( option[ OptionKeys::abinitio::recover_low_in_stages ].user() ) {
-		for (int it : option[ OptionKeys::abinitio::recover_low_in_stages ]()) {
+		for ( int it : option[ OptionKeys::abinitio::recover_low_in_stages ]() ) {
 			if ( it == 1 ) recover_low_stages_.push_back( STAGE_1 );
 			else if ( it == 2 ) recover_low_stages_.push_back( STAGE_2 );
 			else if ( it == 3 ) {
@@ -714,7 +714,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 
 	//To maintain conformational sampling, implement tunable fuzzy filter.  If not all loop sizes have loophash DB hits (radial counts), want to use fuzzy filter
 	bool use_fuzzy_filter(false);
-	for (auto & loop_size_hit : loop_size_hits) {
+	for ( auto & loop_size_hit : loop_size_hits ) {
 		tr.Info << "loop_size:  " << loop_size_hit.first << "  radial_counts:  " << loop_size_hit.second << std::endl;
 		//as long as, for this loop radial counts >= 0 (found hits in loophash DB), don't need the fuzzy filter
 		if ( loop_size_hit.second > 0 ) {

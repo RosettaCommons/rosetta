@@ -693,7 +693,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	} else if ( rb_jumps_.size()<1 ) {
 		trans_movers.push_back( rigid::RigidBodyTransMover( pose,rb_jump_ ));
 	} else {
-		for (unsigned long & rb_jump : rb_jumps_) {
+		for ( unsigned long & rb_jump : rb_jumps_ ) {
 			trans_movers.push_back( rigid::RigidBodyTransMover(pose, rb_jump ));
 		}
 	}

@@ -394,7 +394,7 @@ PerturbBundle::parse_my_tag(
 
 	//Parse options for specific helices:
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for (const auto & branch_tag : branch_tags) {
+	 for ( auto const & branch_tag : branch_tags ) {
 		if ( branch_tag->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
 			runtime_assert_string_msg( branch_tag->hasOption("helix_index"), "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was added, but no helix index has been indicated." );
 			core::Size helix_index( branch_tag->getOption<core::Size>("helix_index", 0) );

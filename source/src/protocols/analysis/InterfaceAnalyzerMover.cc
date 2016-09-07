@@ -1036,7 +1036,7 @@ void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pos
 		TR << "No interface detected.  Skipping per residue data calculation." << std::endl;
 		return;
 	}
-	for (unsigned long it : interface_set_) {
+	for ( unsigned long it : interface_set_ ) {
 		complexed_residue_score = complexed_pose.energies().residue_total_energies( it )[ ScoreType( total_score ) ];
 		separated_residue_score = separated_pose.energies().residue_total_energies( it )[ ScoreType( total_score ) ];
 
@@ -1120,7 +1120,7 @@ void InterfaceAnalyzerMover::compute_interface_packstat( core::pose::Pose & pose
 		return;
 	}
 
-	for (unsigned long it : interface_set_) {
+	for ( unsigned long it : interface_set_ ) {
 		interface_pack_score_sum += interface_pack_scores[ it ];
 		++interface_num_res;
 	}
@@ -1155,7 +1155,7 @@ void InterfaceAnalyzerMover::compute_interface_delta_hbond_unsat( core::pose::Po
 	//loop over the interface set and figure out what's burried/unsat
 	core::Size delta_unsat_hbond_counter( 0 );
 	utility::vector1< core::id::AtomID > delta_unsat_hbond_atid_vector;
-	for (unsigned long it : interface_set_) {
+	for ( unsigned long it : interface_set_ ) {
 		//TR << "UnsatHbond res " << *it << std::endl;
 		//iterate over all its atoms, check if they're in the map of missing, and print their string name
 		core::chemical::ResidueType const & res( complexed_pose.residue_type( it ) );
@@ -1344,13 +1344,13 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
 	//now calculate and print results
 	TR << "Computing Shape Complementarity Score..." << std::endl;
 	TR << "Upstream chain(s) numbers: ";
-	for (unsigned long upstream_chain : upstream_chains_) {
+	for ( unsigned long upstream_chain : upstream_chains_ ) {
 		TR << upstream_chain << ", ";
 	}
 	TR << std::endl;
 
 	TR << "Downstream chain(s) numbers: ";
-	for (unsigned long downstream_chain : downstream_chains_) {
+	for ( unsigned long downstream_chain : downstream_chains_ ) {
 		TR << downstream_chain << ", ";
 	}
 	TR << std::endl;
@@ -1385,7 +1385,7 @@ void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::po
 	utility::vector1< bool > allowed_aa( chemical::num_canonical_aas, false ); //no allowed residues
 	allowed_aa[ core::chemical::aa_from_oneletter_code( 'G' ) ] = true; //allow gly only
 	//allow all interface residues to be mutated to Gly
-	for (unsigned long it : interface_set_) {
+	for ( unsigned long it : interface_set_ ) {
 		task->nonconst_residue_task( it ).restrict_absent_canonical_aas( allowed_aa );
 		packable[ it ] = true;
 	}
@@ -1586,7 +1586,7 @@ void InterfaceAnalyzerMover::report_data(){
 
 	} else {
 		//or report to job
-		for (auto & it : score_data_) {
+		for ( auto & it : score_data_ ) {
 			current_job->add_string_real_pair(it.first, it.second);
 		}
 	}
@@ -1630,7 +1630,7 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::
 	bool first_sel_complete( false );
 	core::Size resnum;
 	char /*chain_char, */chain_char_last( 'z' );
-	for (unsigned long it : interface_set) {
+	for ( unsigned long it : interface_set ) {
 		//sets the current values
 		resnum = pose.pdb_info()->number( it );
 		char chain_char = pose.pdb_info()->chain( it );
@@ -1692,7 +1692,7 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 		atomname = pose.residue(id.rsd()).atom_name(id.atomno());
 		//get rid of whitespace in the atomname
 		std::string temp;
-		for (char j : atomname) {
+		for ( char j : atomname ) {
 			if ( j != ' ' ) { temp += j; }
 		}
 		atomname = temp;

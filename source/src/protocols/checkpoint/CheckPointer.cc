@@ -158,7 +158,7 @@ void CheckPointer::debug( const std::string &tag, const std::string &label, core
 
 void CheckPointer::flush_checkpoints()
 {
-	for (auto & i : file_buffer) {
+	for ( auto & i : file_buffer ) {
 		i.dump();
 	}
 	file_buffer.clear();
@@ -167,7 +167,7 @@ void CheckPointer::flush_checkpoints()
 core::Size CheckPointer::file_buffer_size()
 {
 	core::Size total_size = 0;
-	for (auto & i : file_buffer) {
+	for ( auto & i : file_buffer ) {
 		total_size += i.size();
 	}
 	return total_size;
@@ -380,7 +380,7 @@ bool CheckPointer::recover_checkpoint(
 		core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions() );
 		sfr_opts->set_fold_tree_io( foldtree );
 		core::io::pdb::dump_pdb( pose, checkpoint_id + ".debug.pdb", sfr_opts );
-		
+
 	}
 
 #ifdef BOINC_GRAPHICS
@@ -401,7 +401,7 @@ bool CheckPointer::recover_checkpoint(
 		pose::Pose recovered_mc_low =  mc->lowest_score_pose();
 		pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, recovered_mc_low, fullatom );
 		mc->set_lowest_score_pose( recovered_mc_low );
-		if ( debug ){
+		if ( debug ) {
 			core::io::StructFileRepOptionsOP sfr_opts( new core::io::StructFileRepOptions() );
 			sfr_opts->set_fold_tree_io( foldtree );
 			core::io::pdb::dump_pdb( mc->lowest_score_pose(), checkpoint_id + ".mc_low.debug.pdb" );
@@ -425,7 +425,7 @@ void CheckPointer::clear_checkpoints() {
 	if ( disabled_ ) return;
 	using namespace basic::options;
 	if ( delete_checkpoints_ ) {
-		for (auto & checkpoint_id : checkpoint_ids_) {
+		for ( auto & checkpoint_id : checkpoint_ids_ ) {
 			//std::cerr << "deleting checkpoint files with id: " << checkpoint_ids_[i] << std::endl;
 			utility::file::file_delete( checkpoint_id + ".mc_last.out" );
 			utility::file::file_delete( checkpoint_id + ".mc_low.out" );

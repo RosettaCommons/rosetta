@@ -44,7 +44,7 @@ HyperRectangleOP get_percentile_bounds(
 		lower( points.front().begin(), points.front().end() ),
 		upper( points.front().begin(), points.front().end() );
 
-	for (auto & point : points) {
+	for ( auto & point : points ) {
 		for ( auto p_it = point.begin(), p_end = point.end(),
 				l_it = lower.begin(), l_end = lower.end(),
 				u_it = upper.begin(), u_end = upper.end();
@@ -95,7 +95,7 @@ void transform_percentile(
 		upper( bounds->upper() );
 
 	// transform values
-	for (auto & point : points) {
+	for ( auto & point : points ) {
 		for ( auto p_it = point.begin(), p_end = point.end(),
 				l_it = lower.begin(), l_end = lower.end(),
 				u_it = upper.begin(), u_end = upper.end();
@@ -123,7 +123,7 @@ utility::vector1< KDPointOP > make_points(
 	using utility::vector1;
 
 	vector1< KDPointOP > new_data;
-	for (const auto & point : points) {
+	 for ( auto const & point : points ) {
 		KDPointOP pt( new KDPoint( point ) );
 		new_data.push_back( pt );
 	}
@@ -161,7 +161,7 @@ void print_points(
 ) {
 	using numeric::Real;
 	using utility::vector1;
-	for (const auto & point : points) {
+	 for ( auto const & point : points ) {
 		//for ( vector1< Real >::const_iterator val = pt->begin(),
 		//  val_end = pt->end(); val != val_end; ++val
 		//) {
@@ -178,7 +178,7 @@ void print_point(
 ) {
 	using numeric::Real;
 	using utility::vector1;
-	for (double val : point) {
+	for ( double val : point ) {
 		out << ' ' << val;
 	}
 }

@@ -375,7 +375,7 @@ MotifSearch::incorporate_motifs(
 			if ( allowedtypes.empty() ) {
 				allowed = true;
 			}
-			for (const auto & allowedtype : allowedtypes) {
+			 for ( auto const & allowedtype : allowedtypes ) {
 				if ( allowedtype == motifcop->restype_name1() ) {
 					allowed = true;
 				}
@@ -426,7 +426,7 @@ MotifSearch::incorporate_motifs(
 				for ( Sizes::const_iterator bpos( target_positions.begin() ), end( target_positions.end() );
 						bpos != end; ++bpos ) {
 					std::set< std::string > allowed_types( target_positions_[*bpos] );
-					for (const auto & allowed_type : allowed_types) {
+					 for ( auto const & allowed_type : allowed_types ) {
 						if ( basetype == allowed_type ) {
 							// Should have a test to ensure that it has the atom types I'll be using?
 							Real dtest1( atm.xyz().distance_squared( posecopy.residue( *bpos ).xyz( "C1'" ) ) );
@@ -582,7 +582,7 @@ MotifSearch::incorporate_motifs(
 			for ( std::map< std::string, std::map< Real, MotifHitOP > >::const_iterator bh( best_mhits_all.begin() ),
 					end( best_mhits_all.end() ); bh != end; ++bh ) {
 				Size hits = 0;
-				for (const auto & bh2 : (bh->second)) {
+				 for ( auto const & bh2 : (bh->second) ) {
 					MotifHitOP motifhitop( bh2.second );
 					if ( ! minimize_ ) {
 						(*ir)->keep_rotamer( *(motifhitop->build_rotamer()) );
@@ -721,7 +721,7 @@ MotifSearch::bp_rotamers(
 			}
 			Size rs( ((*ir)->best_rotamers()).size() );
 			for ( Size r(1) ; r <= rs; ++r ) {
-				for (const auto & allowedtype : allowedtypes) {
+				 for ( auto const & allowedtype : allowedtypes ) {
 					if ( allowedtype == ((*ir)->best_rotamers()[r])->name3() ) {
 						best_rotamers.push_back( (*ir)->best_rotamers()[r] );
 					}
@@ -1001,8 +1001,8 @@ MotifSearch::set_motif_library(
 	MotifLibrary & motiflibrary
 )
 {
-	for (auto motifcop : motiflibrary) {
-			motif_library_.push_back( motifcop );
+	for ( auto motifcop : motiflibrary ) {
+		motif_library_.push_back( motifcop );
 	}
 }
 

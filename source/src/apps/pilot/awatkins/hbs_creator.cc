@@ -228,10 +228,10 @@ HbsCreatorMover::apply(
 				pose.delete_polymer_residue(i);
 			}
 		}
-		
+
 		if ( pdb_res_num == final_res ) patch_ros_num = i;
 	}
-	
+
 	hbs::HbsPatcherOP hbs_patcher( new hbs::HbsPatcher( patch_ros_num ) );
 	hbs_patcher->apply( pose );
 

@@ -633,7 +633,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		// join continuous peptide edges starting from a rooted jump point
 		utility::vector1< core::Size > jump_points;
 		core::kinematics::FoldTree const const_tree( tree );
-		for (const auto & it : const_tree) {
+		 for ( auto const & it : const_tree ) {
 			if ( it.start() == (int)jump_root ) jump_points.push_back(it.stop());
 		}
 		for ( core::Size i=1; i<=jump_points.size(); ++i ) {
@@ -660,7 +660,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			}
 			core::kinematics::FoldTree const const_tmp_tree( tmp_tree );
 			core::kinematics::FoldTree new_tree;
-			for (const auto & it : const_tmp_tree) {
+			 for ( auto const & it : const_tmp_tree ) {
 				if ( !remove.count(std::pair< core::Size, core::Size >( it.start(), it.stop() )) ) {
 					new_tree.add_edge( it.start(), it.stop(), it.label() );
 				} else {

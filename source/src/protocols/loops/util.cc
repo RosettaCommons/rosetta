@@ -102,7 +102,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 		weights.resize( pose.total_residue() );
 	}
 
-	for (const auto & it : rigid) {
+	 for ( auto const & it : rigid ) {
 		for ( Size pos = it.start(); pos <= it.stop(); ++pos ) {
 			Size const seq_dist( std::min( (int) pos - it.start(), (int) it.stop() - pos ) + 1);
 			Real coord_sdev;
@@ -173,7 +173,7 @@ void select_loop_frags(
 		Size const size ( insert_size[ pos ] );
 		FrameList copy_frames;
 		source.frames( pos, copy_frames );
-		for (auto & copy_frame : copy_frames) {
+		for ( auto & copy_frame : copy_frames ) {
 			TR.Trace << "add frame at pos " << pos << " " << copy_frame->length() << " insert_size " << size << std::endl;
 			if ( copy_frame->length() == size ) loop_frags.add( copy_frame );
 			else if ( shorten && size > shorten ) loop_frags.add( copy_frame->generate_sub_frame( size ) );
@@ -205,8 +205,8 @@ void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loo
 	TR.Debug << "extend structure for " << loops << std::endl;
 
 	Conformation& conf = pose.conformation();
-	for (const auto & loop : loops) {
-			for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
+	 for ( auto const & loop : loops ) {
+		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
 			core::conformation::idealize_position(j, conf);
 			pose.set_phi(j, EXT_PHI);
 			pose.set_psi(j, EXT_PSI);
@@ -463,7 +463,7 @@ void define_scorable_core_from_secondary_structure(
 
 	//elongate loops if they are terminated by a short helix
 	loops::Loops removed_short_helices( unscored_loops );
-	for (const auto & unscored_loop : unscored_loops) {
+	 for ( auto const & unscored_loop : unscored_loops ) {
 		Size npos( unscored_loop.stop() + 1 );
 		while ( short_helix[ npos ] ) {
 			removed_short_helices.add_loop( npos-1, npos );
@@ -667,8 +667,8 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
 
-	for (char ss : extracted_ss_types) {
-			Loops secondary_structure_chunks_this_ss;
+	for ( char ss : extracted_ss_types ) {
+		Loops secondary_structure_chunks_this_ss;
 
 		// this order might be the best to deal with chain breaks in the middle of secondary structure chunk
 		secondary_structure_chunks_this_ss = extract_secondary_structure_chunks(pose, ss);

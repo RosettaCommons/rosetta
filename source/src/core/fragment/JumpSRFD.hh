@@ -54,7 +54,7 @@ public:
 	};
 
 	/// @brief create a new instance of this object
-	
+
 	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new UpJumpSRFD() );
 	}
@@ -81,7 +81,7 @@ public:
 		return true;
 	}
 
-	
+
 	std::string type() const override {
 		return _static_type_name();
 	}
@@ -148,7 +148,7 @@ public:
 	};
 
 	/// @brief create a new instance of this object
-	
+
 	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new DownJumpSRFD() );
 	}
@@ -215,7 +215,7 @@ public:
 	//   id::StubID &down_stub
 	//  ) const;
 
-	
+
 	std::string type() const override {
 		return _static_type_name();
 	}
@@ -224,7 +224,7 @@ public:
 		return "DownJump";
 	}
 
-	
+
 	void show( std::ostream &out ) const override;
 
 	virtual

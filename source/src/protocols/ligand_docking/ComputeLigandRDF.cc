@@ -330,7 +330,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 			core::Real shell_radius = bin_index*step_size;
 			core::Real rdf_bin_value = exp(-smoothing_factor_*(pow((shell_radius-atom_data.atom_atom_distance),2)));
 
-			for (auto & total_result : total_results) {
+			for ( auto & total_result : total_results ) {
 				std::string term_name(total_result.first);
 				core::Real term_value(total_result.second);
 				rdf_map[term_name][bin_index] += term_value*rdf_bin_value;

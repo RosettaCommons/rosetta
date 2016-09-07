@@ -79,7 +79,7 @@ public:
 class LREnergyContainer : public utility::pointer::ReferenceCount
 {
 public:
-	
+
 	~LREnergyContainer() override;
 
 	virtual

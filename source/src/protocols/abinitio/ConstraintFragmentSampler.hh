@@ -107,7 +107,7 @@ public:
 	ConstraintFragmentSampler( topology_broker::TopologyBrokerOP broker );
 
 	//@brief ConstraintFragmentSampler has virtual functions... use this to obtain a new instance
-	
+
 	moves::MoverOP clone() const override;
 
 	//@brief run protocol on pose

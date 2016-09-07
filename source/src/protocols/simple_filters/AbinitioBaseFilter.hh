@@ -55,7 +55,7 @@ public:
 
 	std::string get_protein_sstype( core::pose::Pose const & pose ) const;
 
-	
+
 	std::string name() const override { return "AbinitioBaseFilter"; };
 
 protected:

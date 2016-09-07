@@ -37,10 +37,10 @@ public:
 	typedef core::pose::Pose Pose;
 public:
 	NucleotideMutation();
-    //std::string codon2aa( std::string const codon ) const;
-    //std::string aa2randomCodon( char const aa ) const;
-    //std::vector<std::string> aa_2_nt( std::string const aa ) const;
-    void add_nt_seq_to_pose( core::pose::Pose & pose ); // get the segment names for those segments that are constant in this splice function
+	//std::string codon2aa( std::string const codon ) const;
+	//std::string aa2randomCodon( char const aa ) const;
+	//std::vector<std::string> aa_2_nt( std::string const aa ) const;
+	void add_nt_seq_to_pose( core::pose::Pose & pose ); // get the segment names for those segments that are constant in this splice function
 	void apply( Pose & pose );
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
@@ -51,24 +51,24 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP sfxn );
-    
-    std::string init_sequence() const{ return init_sequence_; }
-    void init_sequence( std::string const & s ){ init_sequence_ = s; };
-    
-    bool continue_if_silent() const{ return continue_if_silent_; }
-    void continue_if_silent( bool const c ){ continue_if_silent_ = c; };
-    
-    //core::pose::PoseOP reference_pose() const{ return reference_pose_; }
-    //void reference_pose( core::pose::PoseOP const p ){ reference_pose_ = p; };
-    
-    bool cache_task() const;
+
+	std::string init_sequence() const{ return init_sequence_; }
+	void init_sequence( std::string const & s ){ init_sequence_ = s; };
+
+	bool continue_if_silent() const{ return continue_if_silent_; }
+	void continue_if_silent( bool const c ){ continue_if_silent_ = c; };
+
+	//core::pose::PoseOP reference_pose() const{ return reference_pose_; }
+	//void reference_pose( core::pose::PoseOP const p ){ reference_pose_ = p; };
+
+	bool cache_task() const;
 	void cache_task( bool cache );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-    std::string init_sequence_;
-    bool continue_if_silent_;
-    core::pose::PoseOP reference_pose_;
+	std::string init_sequence_;
+	bool continue_if_silent_;
+	core::pose::PoseOP reference_pose_;
 	bool cache_task_;
 	core::pack::task::PackerTaskCOP task_;
 };

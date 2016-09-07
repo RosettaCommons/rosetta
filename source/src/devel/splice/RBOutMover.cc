@@ -108,8 +108,8 @@ RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose
 	relevant_disulfs.clear();
 	core::Real const max_allowed_distance( 5.0 );
 
-	for (const auto & disulf_templ_it : disulfs_in_template) {
-		for (const auto & disulf_pose_it : disulfs_in_pose) {
+	 for ( auto const & disulf_templ_it : disulfs_in_template ) {
+		 for ( auto const & disulf_pose_it : disulfs_in_pose ) {
 			core::Real const dist1( template_pose.residue( disulf_templ_it.first ).xyz( "CA" ).distance( pose.residue( disulf_pose_it.first ).xyz( "CA" ) ) );
 			core::Real const dist2( template_pose.residue( disulf_templ_it.second ).xyz( "CA" ).distance( pose.residue( disulf_pose_it.second ).xyz( "CA" ) ) );
 			TR<<"Template disulf: "<<disulf_templ_it.first<<"/"<<disulf_templ_it.second<<" pose disulf: "<<disulf_pose_it.first<<"/"<<disulf_pose_it.second<<" distances: "<<dist1<<"/"<<dist2<<std::endl;

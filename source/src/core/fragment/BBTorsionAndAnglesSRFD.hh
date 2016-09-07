@@ -64,7 +64,7 @@ public:
 	};
 
 	/// @brief create a new instance of this object
-	
+
 	SingleResidueFragDataOP create() const override {
 		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD() );
 	}
@@ -87,13 +87,13 @@ public:
 	bool is_compatible( SingleResidueFragData const& ) const override;
 	bool is_applicable( kinematics::MoveMap const&, Size seq_pos ) const override;
 
-	
+
 	void show( std::ostream &out ) const override;
 
 	virtual
 	void read( std::istream &in );
 
-	
+
 	std::string type() const override {
 		//  return "BBTorsion";
 		return _static_type_name();

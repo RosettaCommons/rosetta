@@ -165,7 +165,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		std::vector< core::Size > diffs;
 		diffs.clear();
 		TR<<"differences at positions: ";
-		for (const auto & aln : alignment_) {
+		 for ( auto const & aln : alignment_ ) {
 			char const res1_name(pose()->conformation().residue( aln.first ).name1());
 			char const res2_name(p.conformation().residue( aln.second ).name1());
 			if ( res1_name != res2_name ) {

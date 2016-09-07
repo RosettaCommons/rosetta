@@ -79,7 +79,7 @@ public:
 
 	ModelFeatures();
 
-	
+
 	std::string
 	type_name() const override  {
 		return "ModelFeatures";
@@ -92,7 +92,7 @@ public:
 	features_reporter_dependencies() const override;
 
 	/// @brief generate the table schemas and write them to the database
-	
+
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session
@@ -113,7 +113,7 @@ public:
 	) const;
 
 	/// @brief collect all the feature data for the pose
-	
+
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
@@ -130,7 +130,7 @@ public:
 	) const;
 
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,

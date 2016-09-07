@@ -61,7 +61,7 @@ public:
 	/// is stored as a member variable of the MCAligner class, and accessor methods
 	/// are provided above.
 
-	
+
 	SequenceAlignment align(
 		SequenceOP seq_y,
 		SequenceOP seq_x,

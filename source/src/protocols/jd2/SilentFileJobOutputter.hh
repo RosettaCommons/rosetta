@@ -54,14 +54,14 @@ public:
 
 	//////////////////////////////creating output functions/////////////////////////////////////////
 	/// @brief this function outputs the final result of a job.
-	
+
 	void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag ) override;
 
 	/// @brief this function is intended for saving
 	/// mid-protocol poses; for example the final centroid
 	/// structure in a combined centroid/fullatom protocol.
 	/// --->these go to file silent_filename+tag
-	
+
 	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) override;
 
 	/////////////////////////////////state of output functions/////////////////////////////////
@@ -72,17 +72,17 @@ public:
 	/// checks wherever output goes to see if the job's
 	/// expected output already exists (on disk or whatever).
 	/// This is the most basic form of checkpointing.
-	
+
 	bool job_has_completed( JobCOP job ) override;
 
 public: // accessors
 
 	/// @brief this is the master function for determining the
 	/// unique output identifier for a job
-	
+
 	std::string output_name( JobCOP job ) override;
 
-	
+
 	std::string filename( JobCOP ) const override {
 		return silent_file_;
 	}

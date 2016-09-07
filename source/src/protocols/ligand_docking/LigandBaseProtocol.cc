@@ -836,7 +836,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		FoldTree f_new;
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
-		for (const auto & e : f_const) {
+		 for ( auto const & e : f_const ) {
 			bool contains_attach_pt = (( e.start() < int(attach_pt) && int(attach_pt) < e.stop() )
 				|| ( e.stop() < int(attach_pt) && int(attach_pt) < e.start() ));
 			if ( e.label() == (int) jump_id ) {
@@ -864,7 +864,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		int new_jump = f.num_jump();
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
-		for (const auto & edge_itr : f_const) {
+		 for ( auto const & edge_itr : f_const ) {
 			Size const e_start = edge_itr.start();
 			Size const e_stop = edge_itr.stop();
 			if ( e_stop < e_start ) utility_exit_with_message("Not prepared to deal with backwards fold tree edges!");
@@ -998,7 +998,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	core::conformation::ResidueOP best_rot;
 	core::Real bestE(1000000.0);
 
-	for (auto & suggested_rotamer : suggested_rotamers) {
+	for ( auto & suggested_rotamer : suggested_rotamers ) {
 
 		scoring::EnergyMap emap;
 		for ( graph::Graph::EdgeListConstIter
@@ -1028,7 +1028,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	//we half-sort the output array such that the lowest energy rotamer is the first one in the output array
 	if ( temp_accepted_rotamers.size() > 0 ) {
 		accepted_rotamers.push_back( best_rot );
-		for (auto & temp_accepted_rotamer : temp_accepted_rotamers) {
+		for ( auto & temp_accepted_rotamer : temp_accepted_rotamers ) {
 
 			if ( temp_accepted_rotamer != best_rot ) accepted_rotamers.push_back( temp_accepted_rotamer );
 		}

@@ -42,10 +42,10 @@ public:
 
 	~CombinePoseMover() override;
 
-	
+
 	void apply( pose::Pose &pose2 ) override;
 
-	
+
 	std::string get_name() const override { return "CombinePoseMover"; }
 
 	void set_default();

@@ -168,7 +168,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 			totaltime_loophash() += structure_wu->get_run_time();
 			TR << "LoopHash return: " << decoys.size() << " structs in " << structure_wu->get_run_time() << "s " << " frm " << structure_wu->last_received_from() << std::endl;
 			// Add the node that returned to the blacklist of all WUs with the same ssid and start_ir
-			for (auto & iter : outbound()) {
+			for ( auto & iter : outbound() ) {
 				if ( iter->get_wu_type() == "loophasher" ) {
 					/*   // Upcast to a StructureModifier WU
 					// Why use dynamic cast when we're sure of type? (copied from above)
@@ -230,7 +230,7 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 		// pick a random structure from the library
 
 		core::Size finished_structures=0;
-		for (auto & it : library_central()) {
+		for ( auto & it : library_central() ) {
 			if ( max_loophash_per_structure_ > it->get_energy("lhcount") ) {
 				TRDEBUG << "Adding: " << it << "  " << it->get_energy("lhcount") << std::endl;
 				it->add_energy( "lhcount",  it->get_energy("lhcount") + 1.0 );

@@ -65,7 +65,7 @@ public:
 protected:
 
 	/// @brief
-	
+
 	void
 	master_go( protocols::moves::MoverOP mover ) override;
 

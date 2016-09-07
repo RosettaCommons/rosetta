@@ -51,7 +51,7 @@ public:
 		core::pose::Pose & pose
 	);
 
-	
+
 	void
 	apply(
 		core::pose::Pose & pose

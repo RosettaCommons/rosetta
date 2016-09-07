@@ -99,12 +99,12 @@ input_pdb_files_from_command_line()
 	if ( option[ in::file::list ].active() ) {
 		vector1< FileName > better_list_file_names;
 		better_list_file_names = option[in::file::list ]().vector(); // make a copy (-list)
-		for (auto & better_list_file_name : better_list_file_names) {
+		for ( auto & better_list_file_name : better_list_file_names ) {
 			list_file_names.push_back(better_list_file_name); // make a copy (-l)
 		}
 	}
 
-	for (auto & list_file_name : list_file_names) {
+	for ( auto & list_file_name : list_file_names ) {
 		std::string filename( list_file_name.name() );
 		utility::io::izstream data( filename.c_str() );
 		if ( !data.good() ) {

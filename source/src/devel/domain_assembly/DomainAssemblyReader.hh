@@ -63,7 +63,7 @@ class PDB : public DomainAssemblyCommand
 {
 public:
 
-	
+
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
@@ -79,7 +79,7 @@ class NTermLinker : public DomainAssemblyCommand
 {
 public:
 
-	
+
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
@@ -95,7 +95,7 @@ class CTermLinker : public DomainAssemblyCommand
 {
 public:
 
-	
+
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
@@ -111,7 +111,7 @@ class NTrim : public DomainAssemblyCommand
 {
 public:
 
-	
+
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,
@@ -127,7 +127,7 @@ class CTrim : public DomainAssemblyCommand
 {
 public:
 
-	
+
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
 		Size & which_token,

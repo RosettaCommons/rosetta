@@ -627,8 +627,8 @@ apply_transformation(
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
 
-	for (unsigned long ires : residue_list) {
-			for ( Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+	for ( unsigned long ires : residue_list ) {
+		for ( Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 			ids.push_back(core::id::AtomID(iatom,ires));
 			positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));
 		}

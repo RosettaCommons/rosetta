@@ -112,7 +112,7 @@ bool DomainInterfaceFilter::apply( core::pose::Pose const & pose ) const {
 	utility::vector1< bool > rs_subset( false, pose.total_residue() );
 	rs_subset = core::select::util::calc_interacting_vector( pose, target_local, query_local, cb_dist_cut_, nearby_atom_cut_, vector_angle_cut_, vector_dist_cut_ );
 
-	for (unsigned long it : query_local) {
+	for ( unsigned long it : query_local ) {
 		if ( it <= rs_subset.size() && !rs_subset[ it ] ) return false;
 	}
 	return true;

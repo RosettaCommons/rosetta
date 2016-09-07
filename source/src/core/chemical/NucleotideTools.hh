@@ -17,9 +17,9 @@ namespace core {
 namespace chemical {
 namespace NucleotideTools {
 
-    std::string codon2aa( std::string const & codon );
-    std::string aa2randomCodon( char const & aa );
-    //void add_nt_seq_to_pose( core::pose::Pose & pose ); // get the segment names for those segments that are constant in this splice function
+std::string codon2aa( std::string const & codon );
+std::string aa2randomCodon( char const & aa );
+//void add_nt_seq_to_pose( core::pose::Pose & pose ); // get the segment names for those segments that are constant in this splice function
 
 } // NucleotideTools
 } // chemical

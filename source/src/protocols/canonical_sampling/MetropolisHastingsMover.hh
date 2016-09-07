@@ -68,16 +68,16 @@ public:
 	);
 
 	/// @brief Destructor.
-	
+
 	~MetropolisHastingsMover() override;
 
 	/// @brief Run the Metropolis-Hastings simulation.
-	
+
 	void
 	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Return the name of this mover.
-	
+
 	std::string
 	get_name() const override;
 
@@ -86,24 +86,24 @@ public:
 	clone() const override;
 
 	/// @brief Return a newly instantiated mover.
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
 	/// @brief Return false.  This mover does not need to be reinitialized for
 	/// each job.
-	
+
 	bool
 	reinitialize_for_each_job() const override;
 
 	/// @brief Return false.  This mover does not need to be reinitialized for
 	/// new input.
-	
+
 	bool
 	reinitialize_for_new_input() const override;
 
 	/// @brief Use a RosettaScripts tag to configure this mover.
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,

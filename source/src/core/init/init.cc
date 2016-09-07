@@ -831,11 +831,11 @@ void check_deprecated_flags(){
 	if ( option[LoopModel::input_pdb].user() ) {
 		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
 	}
-	
-	if ( option[basic::options::OptionKeys::out::file::no_scores_in_pdb].user() ){
+
+	if ( option[basic::options::OptionKeys::out::file::no_scores_in_pdb].user() ) {
 		error_messages.push_back("-no_scores_in_pdb is no longer used.  Please use -output_pose_energies_table false");
 	}
-	
+
 	if ( error_messages.size() > 0 ) {
 		utility::vector1<std::string>::const_iterator error_it;
 		for ( error_it = error_messages.begin(); error_it != error_messages.end(); ++error_it ) {

@@ -599,7 +599,7 @@ EnzdesRemodelMover::refine_pose(
 
 	//pose.dump_pdb("pose_bef_fa_refine.pdb");
 	core::pose::Pose save_pose = pose;
-	for (auto & rcg : rcgs_) {
+	for ( auto & rcg : rcgs_ ) {
 
 		rcg->add_remodel_constraints_to_pose( pose );
 
@@ -626,7 +626,7 @@ EnzdesRemodelMover::refine_pose(
 	//std::cerr << " done creating fa remcsts." << std::endl;
 	tr << "backbone_stub constraint score after refine is " << pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
 
-	for (auto & rcg : rcgs_) {
+	for ( auto & rcg : rcgs_ ) {
 		rcg->remove_remodel_constraints_from_pose( pose );
 	}
 
@@ -917,11 +917,11 @@ EnzdesRemodelMover::translate_atomnames_to_restype_set_atomids(
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_cap );
 	atom_ids.clear();
 
-	for (auto cur_at_name : atom_names) {
+	for ( auto cur_at_name : atom_names ) {
 
 		//lil tricky: the pose will be in centroid when the constraints are being generated,
 		//so we have to make sure to put in the right atom ids
-			std::string cur_res_name = pose.residue_type( seqpos ).name();
+		std::string cur_res_name = pose.residue_type( seqpos ).name();
 
 		//core::Size centroid_id = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )->name_map( cur_res_name ).atom_index( cur_at_name );
 
@@ -1030,7 +1030,7 @@ EnzdesRemodelMover::remove_cached_observers(
 	//by vlb stuff if we have several chains
 	core::kinematics::FoldTree const & old_fold_tree( this->get_native_pose()->fold_tree() );
 	core::kinematics::FoldTree new_fold_tree;
-	for (const auto & e : old_fold_tree) {
+	 for ( auto const & e : old_fold_tree ) {
 		core::Size estart = (*start_to_current_smap_)[e.start() ];
 		core::Size estop = (*start_to_current_smap_)[e.stop() ];
 		new_fold_tree.add_edge( estart, estop, e.label() );
@@ -1054,11 +1054,11 @@ EnzdesRemodelMover::process_length_change(
 	core::id::combine_sequence_mappings( *start_to_current_smap_, *smap );
 	protocols::enzdes::enzutil::create_remark_headers_from_cstcache( pose );
 
-	for (auto & rcg : rcgs_) {
+	for ( auto & rcg : rcgs_ ) {
 		rcg->set_seqmap( smap );
 	}
 
-	for (unsigned long & non_remodel_match_po : non_remodel_match_pos_) {
+	for ( unsigned long & non_remodel_match_po : non_remodel_match_pos_ ) {
 		non_remodel_match_po = (*smap)[non_remodel_match_po];
 	}
 }
@@ -1168,7 +1168,7 @@ EnzdesRemodelMover::setup_rcgs(
 	utility::vector1< protocols::forge::remodel::ResidueVicinityInfoOP > fa_rv_infos;
 
 	//loop over all the cst targets in this loop info, i.e. all cst target records in the loop file
-	for (const auto & cst_targ : loopinf->cst_interactions()) {
+	 for ( auto const & cst_targ : loopinf->cst_interactions() ) {
 
 		protocols::toolbox::match_enzdes_util::EnzCstTemplateResCOP targ_template;
 		protocols::toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP targ_template_cache;
@@ -1200,7 +1200,7 @@ EnzdesRemodelMover::setup_rcgs(
 
 
 	//now loop over all the other desired interactions
-	for (const auto & res_int : loopinf->res_interactions()) {
+	 for ( auto const & res_int : loopinf->res_interactions() ) {
 
 		//target residue of this rcgs: we have to correct for eventual length changes that have happened already
 		core::Size targ_res = (*start_to_current_smap_)[ res_int.targ_res() ];

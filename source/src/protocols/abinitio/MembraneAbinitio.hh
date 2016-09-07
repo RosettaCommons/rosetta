@@ -139,11 +139,11 @@ public:
 	//@brief setup moves, mc-object, scores
 	//@details can't call this from constructor; virtual functions don't operate
 	//until construction has completed.
-	
+
 	void init( core::pose::Pose const& pose ) override;
 
 	//@brief MembraneAbinitio has virtual functions... use this to obtain a new instance
-	
+
 	moves::MoverOP clone() const override;
 	// MembraneAbinitioOP clone() const;
 

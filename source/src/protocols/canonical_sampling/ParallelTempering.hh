@@ -66,21 +66,21 @@ public:
 	/// @brief Assignment operator.
 	ParallelTempering& operator=( ParallelTempering const& );
 
-	
+
 	void apply( core::pose::Pose& ) override {};
 
-	
+
 	std::string
 	get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -100,7 +100,7 @@ public:
 		core::Size cycle  //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,

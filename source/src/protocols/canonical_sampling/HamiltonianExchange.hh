@@ -49,21 +49,21 @@ public:
 
 	HamiltonianExchange& operator=( HamiltonianExchange const& );
 
-	
+
 	void apply( core::pose::Pose& ) override {};
 
-	
+
 	std::string
 	get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -92,7 +92,7 @@ public:
 		core::Size cycle   //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -138,7 +138,7 @@ protected:
 	/// @brief initialize exchange schedule from file, return false if IO error occurrs
 	virtual bool initialize_exchange_schedule_from_file( std::string const& filename );
 
-	
+
 	core::Size next_exchange_level() const override;
 
 private:

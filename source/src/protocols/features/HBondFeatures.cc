@@ -714,7 +714,7 @@ HBondFeatures::report_features(
 
 		}
 		// acceptor sites
-		for (unsigned long atmNum : res.accpt_pos()) {
+		for ( unsigned long atmNum : res.accpt_pos() ) {
 			site_id++;
 			insert_site_row(pose, struct_id, site_id, resNum, atmNum, false /*is not donor*/, db_session);
 			site_ids(resNum,atmNum) = site_id;

@@ -80,7 +80,7 @@ MultiStateFitnessFunction::evaluate( protocols::genetic_algorithm::Entity & enti
 		best_fitness_ = fitness;
 		// real-time pose tracking of best traits vs. positive state pose(s) (graphics)
 		auto pose( best_entity_positive_states_.begin() );
-		for (auto & state : states_) {
+		for ( auto & state : states_ ) {
 			if ( state->is_positive_state() ) {
 				**pose = state->pose();
 				++pose;
@@ -95,7 +95,7 @@ core::Real
 MultiStateFitnessFunction::evaluate_positive_states( protocols::genetic_algorithm::Entity & entity )
 {
 	core::Real fitness(0.);
-	for (auto & state : states_) {
+	for ( auto & state : states_ ) {
 		if ( !state->is_positive_state() ) continue;
 		fitness += evaluate( entity, state ? 1 : 0 ); // FIXME: is this correct? OP -> core::Size
 	}
@@ -125,7 +125,7 @@ SingleStateCOPs
 MultiStateFitnessFunction::const_states( bool positive_only /* = false */ ) const
 {
 	SingleStateCOPs const_states;
-	for (const auto & state : states_) {
+	 for ( auto const & state : states_ ) {
 		if ( positive_only && !state->is_positive_state() ) continue;
 		const_states.push_back( state );
 	}
@@ -139,7 +139,7 @@ core::Size
 MultiStateFitnessFunction::num_states( bool pos_neg ) const
 {
 	core::Size n(0);
-	for (const auto & state : states_) {
+	 for ( auto const & state : states_ ) {
 		if ( state->is_positive_state() != pos_neg ) continue;
 		++n;
 	}

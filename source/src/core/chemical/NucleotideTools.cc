@@ -22,47 +22,47 @@
 namespace core {
 namespace chemical {
 namespace NucleotideTools {
-    
-    using namespace std;
 
-	string
-	codon2aa( string const & codon ) {
-	    std::string codons[64] = {"TTT","TTC","TTA","TTG","TCT","TCC","TCA","TCG","TAT","TAC","TAA","TAG","TGT","TGC","TGA","TGG", "CTT","CTC","CTA","CTG","CCT","CCC","CCA","CCG","CAT","CAC","CAA","CAG","CGT","CGC","CGA","CGG","ATT","ATC","ATA","ATG","ACT","ACC","ACA","ACG","AAT","AAC","AAA","AAG","AGT","AGC","AGA","AGG",
-	        "GTT","GTC","GTA","GTG","GCT","GCC","GCA","GCG","GAT","GAC","GAA","GAG","GGT","GGC","GGA","GGG"};
-	    string aminoAcids[64]={"F","F","L","L", "S","S","S","S","Y","Y", "Stop","Stop", "C","C","Stop", "W",
-	        "L","L","L","L","P","P","P","P","H","H","Q","Q","R","R","R","R",
-	        "I","I","I","M","T","T","T","T","N","N","K","K","S","S","R","R",
-	        "V","V","V","V","A","A","A","A","D","D","E","E","G","G","G","G"};
-        map< string, string> nt_2_aa;
-	    for (int i=0; i<64; i++) {
-	        nt_2_aa[codons[i]] = aminoAcids[i];
-	    }
-	    return nt_2_aa[codon];
+using namespace std;
+
+string
+codon2aa( string const & codon ) {
+	std::string codons[64] = {"TTT","TTC","TTA","TTG","TCT","TCC","TCA","TCG","TAT","TAC","TAA","TAG","TGT","TGC","TGA","TGG", "CTT","CTC","CTA","CTG","CCT","CCC","CCA","CCG","CAT","CAC","CAA","CAG","CGT","CGC","CGA","CGG","ATT","ATC","ATA","ATG","ACT","ACC","ACA","ACG","AAT","AAC","AAA","AAG","AGT","AGC","AGA","AGG",
+		"GTT","GTC","GTA","GTG","GCT","GCC","GCA","GCG","GAT","GAC","GAA","GAG","GGT","GGC","GGA","GGG"};
+	string aminoAcids[64]={"F","F","L","L", "S","S","S","S","Y","Y", "Stop","Stop", "C","C","Stop", "W",
+		"L","L","L","L","P","P","P","P","H","H","Q","Q","R","R","R","R",
+		"I","I","I","M","T","T","T","T","N","N","K","K","S","S","R","R",
+		"V","V","V","V","A","A","A","A","D","D","E","E","G","G","G","G"};
+	map< string, string> nt_2_aa;
+	for ( int i=0; i<64; i++ ) {
+		nt_2_aa[codons[i]] = aminoAcids[i];
+	}
+	return nt_2_aa[codon];
+}
+
+string
+aa2randomCodon( char const & aa ) {
+	string codons[61] = {"TTT","TTC","TTA","TTG","TCT","TCC","TCA","TCG","TAT","TAC","TGT","TGC","TGG",
+		"CTT","CTC","CTA","CTG","CCT","CCC","CCA","CCG","CAT","CAC","CAA","CAG","CGT",
+		"CGC","CGA","CGG","ATT","ATC","ATA","ATG","ACT","ACC","ACA","ACG","AAT","AAC",
+		"AAA","AAG","AGT","AGC","AGA","AGG","GTT","GTC","GTA","GTG","GCT","GCC","GCA",
+		"GCG","GAT","GAC","GAA","GAG","GGT","GGC","GGA","GGG"};
+	char aminoAcids[61] = {'F','F','L','L','S','S','S','S','Y','Y','C','C','W','L','L','L','L','P','P','P',
+		'P','H','H','Q','Q','R','R','R','R','I','I','I','M','T','T','T','T','N','N','K',
+		'K','S','S','R','R','V','V','V','V','A','A','A','A','D','D','E','E','G','G','G',
+		'G'};
+
+	// Setup aa to codon table map
+	map< char, vector<string> > aa_2_nt;
+	for ( int i=0; i<61; i++ ) {
+		aa_2_nt[ aminoAcids[i] ].push_back( codons[i] );
 	}
 
-	string
-	aa2randomCodon( char const & aa ) {
-	    string codons[61] = {"TTT","TTC","TTA","TTG","TCT","TCC","TCA","TCG","TAT","TAC","TGT","TGC","TGG",
-	                              "CTT","CTC","CTA","CTG","CCT","CCC","CCA","CCG","CAT","CAC","CAA","CAG","CGT",
-	                              "CGC","CGA","CGG","ATT","ATC","ATA","ATG","ACT","ACC","ACA","ACG","AAT","AAC",
-	                              "AAA","AAG","AGT","AGC","AGA","AGG","GTT","GTC","GTA","GTG","GCT","GCC","GCA",
-	                              "GCG","GAT","GAC","GAA","GAG","GGT","GGC","GGA","GGG"};
-	    char aminoAcids[61] = {'F','F','L','L','S','S','S','S','Y','Y','C','C','W','L','L','L','L','P','P','P',
-	                           'P','H','H','Q','Q','R','R','R','R','I','I','I','M','T','T','T','T','N','N','K',
-	                           'K','S','S','R','R','V','V','V','V','A','A','A','A','D','D','E','E','G','G','G',
-	                           'G'};
+	vector<string> nts = aa_2_nt[ aa ];
 
-	    // Setup aa to codon table map
-	    map< char, vector<string> > aa_2_nt;
-	    for (int i=0; i<61; i++) {
-	        aa_2_nt[ aminoAcids[i] ].push_back( codons[i] );
-	    }
-
-	    vector<string> nts = aa_2_nt[ aa ];
-
-	    numeric::random::random_permutation(nts, numeric::random::rg());
-	    return nts[0];
-	}
+	numeric::random::random_permutation(nts, numeric::random::rg());
+	return nts[0];
+}
 
 
 } // NucleotideTools

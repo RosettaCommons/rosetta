@@ -69,7 +69,7 @@ public:
 	/// sc <= cutoff
 	/// Where cutoff is the cutoff set for this filter, and sc is the value of the
 	/// ScoreType from the Pose Energies object.
-	
+
 	bool apply( core::pose::Pose const & pose ) const override;
 
 	void set_cutoff( core::Real cutoff_in ){

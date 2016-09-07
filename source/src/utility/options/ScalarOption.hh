@@ -57,14 +57,14 @@ public: // Creation
 
 
 	/// @brief Clone this
-	
+
 	ScalarOption *
 	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	
+
 	~ScalarOption() override
 	= default;
 
@@ -85,37 +85,37 @@ public: // Methods
 
 
 	/// @brief Activate
-	
+
 	ScalarOption &
 	activate() override = 0;
 
 
 	/// @brief Deactivate
-	
+
 	ScalarOption &
 	deactivate() override = 0;
 
 
 	/// @brief Set to default value, if any
-	
+
 	ScalarOption &
 	to_default() override = 0;
 
 
 	/// @brief Clear
-	
+
 	ScalarOption &
 	clear() override = 0;
 
 
 	/// @brief Value assignment from a command line string
-	
+
 	ScalarOption &
 	cl_value( std::string const & value_str ) override = 0;
 
 	/// @brief Value assignemt from a command line string but without
 	/// a ScalarOption & return type.
-	
+
 	void
 	set_cl_value( std::string const & value_str ) override {
 		cl_value( value_str );

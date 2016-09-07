@@ -61,7 +61,7 @@ public:
 	) const;
 
 	// inherited from OptEPositionData
-	
+
 	Real
 	get_score(
 		Multivec const & component_weights,
@@ -77,7 +77,7 @@ public:
 	) const override
 	{ return do_score(std::cout, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list, false /* don't print */); }
 
-	
+
 	void
 	print_score(
 		std::ostream & ostr,
@@ -94,7 +94,7 @@ public:
 	) const override
 	{ do_score(ostr, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list, true /* do print */); }
 
-	
+
 	void
 	range(
 		ScoreTypes const & free_score_list,
@@ -103,37 +103,37 @@ public:
 		EnergyMap & upper_bound
 	) const override;
 
-	
+
 	Size
 	size() const override
 	{ return 2; }
 
-	
+
 	OptEPositionDataType
 	type() const override
 	{ return dG_binding_correlation; }
 
-	
+
 	void
 	write_to_file( std::ofstream & /*outfile*/ ) const override
 	{}
 
-	
+
 	void
 	read_from_file( std::ifstream & /*infile*/ ) override
 	{}
 
-	
+
 	void
 	write_to_binary_file( std::ofstream & /*outfile*/ ) const override
 	{}
 
-	
+
 	void
 	read_from_binary_file( std::ifstream & /*infile*/ ) override
 	{}
 
-	
+
 	Size
 	memory_use() const override;
 

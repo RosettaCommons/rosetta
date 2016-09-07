@@ -194,9 +194,9 @@ create_pdb_contents_from_sfr(
 	core::io::StructFileRepOptionsCOP options
 ) {
 	std::string pdb_contents;
-	
+
 	utility::vector1< Record > records( create_records_from_sfr( sfr , options ) );
-	
+
 	pdb_contents.reserve( 81 * records.size() );
 	for ( Size i = 1, imax=records.size(); i <= imax; ++i ) {
 		pdb_contents += create_pdb_line_from_record( records[ i ] ) + "\n";
@@ -241,7 +241,7 @@ create_records_from_sfr(
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	std::vector<Record> VR;
 
 	sfr.header()->fill_records( VR );
@@ -451,19 +451,19 @@ create_records_from_sfr(
 
 		VR.push_back(R);
 	}
-	
+
 	// Pose Energies Table (option system call preserves previous behavior)
-	if (sfr.score_table_labels().size() > 0 && sfr.score_table_lines().size() >0 && options->output_pose_energies_table() ){
+	if ( sfr.score_table_labels().size() > 0 && sfr.score_table_lines().size() >0 && options->output_pose_energies_table() ) {
 		R["info"].value = core::io::pose_energies_from_sfr(sfr);
 		VR.push_back(R);
 	}
-	
+
 	// Pose Arbitrary String and Float Data.
-	if (( sfr.pose_cache_float_data().size() > 0 || sfr.pose_cache_string_data().size() > 0 ) && options->output_pose_cache()){
+	if ( ( sfr.pose_cache_float_data().size() > 0 || sfr.pose_cache_string_data().size() > 0 ) && options->output_pose_cache() ) {
 		R["info"].value = core::io::pose_data_cache_from_sfr(sfr);
 		VR.push_back(R);
 	}
-	
+
 	return VR;
 }
 
@@ -546,13 +546,13 @@ dump_pdb(
 	std::string const &filename
 ) {
 	core::io::StructFileRepOptionsOP options=core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
-	
+
 	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );
 	pose_to_sfr.init_from_pose( pose );
 	pose_to_sfr.sfr()->score_table_filename() = filename;
-	
+
 	if ( !jd2_job_data.empty() ) pose_to_sfr.sfr()->append_to_additional_string_output( jd2_job_data );
-	
+
 	out = create_pdb_contents_from_sfr( *( pose_to_sfr.sfr() ), options );
 }
 

@@ -341,7 +341,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			core::fragment::FrameList jump_frames;
 			target_jumps.generate_jump_frames( jump_frames, kinematics().movemap() );
 			core::scoring::dssp::PairingsList library_pairings;
-			for (auto & jump_frame : jump_frames) {
+			for ( auto & jump_frame : jump_frames ) {
 				core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( jump_frame->start(), jump_frame->stop() ) );
 				library_pairings.push_back( target_pairing );
 			}

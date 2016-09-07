@@ -141,7 +141,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		std::map <Size,Size>::iterator type_ct_iter;
 		std::vector<Size> fragsGroupIds = fullStore->int64_groups[group_field];
 		Size fragment_length = fullStore->fragment_specification.fragment_length;
-		for (unsigned long & fragsGroupId : fragsGroupIds) {
+		for ( unsigned long & fragsGroupId : fragsGroupIds ) {
 			//second time id seen increment counter 1st time increment to 1
 			type_ct_iter = type_ct.find(fragsGroupId);
 			if ( type_ct_iter != type_ct.end() ) {

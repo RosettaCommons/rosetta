@@ -134,7 +134,7 @@ MPI_Refine_Master::init(){
 	// be aware of it when using multiple inputs (which haven't been tried anyway)
 
 	// Assign loop info
-	for (auto & it : library_ref()) {
+	for ( auto & it : library_ref() ) {
 		assign_loop_info( it );
 	}
 

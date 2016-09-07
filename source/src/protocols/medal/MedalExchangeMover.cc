@@ -79,11 +79,11 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.medal.MedalExchangeMover" );
 protocols::loops::LoopsCOP combine_loops(LoopsCOP aligned, LoopsCOP unaligned) {
 	LoopsOP combined( new Loops() );
 
-	for (const auto & i : *aligned) {
+	 for ( auto const & i : *aligned ) {
 		combined->add_loop(i);
 	}
 
-	for (const auto & i : *unaligned) {
+	 for ( auto const & i : *unaligned ) {
 		combined->add_loop(i);
 	}
 
@@ -176,7 +176,7 @@ void setup_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP const
 void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<double>* probs) const {
 	probs->resize(num_residues, 0);
 
-	for (const auto & i : *aligned) {
+	 for ( auto const & i : *aligned ) {
 		for ( Size j = i.start(); j <= i.stop(); ++j ) {
 			(*probs)[j] = 1;
 		}

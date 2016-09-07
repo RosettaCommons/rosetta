@@ -204,7 +204,7 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 	combined_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( weight_set );
 	combined_scorefxn->merge( *scorefxn_ );
 
-	for (auto & struc : decoys()) {
+	for ( auto & struc : decoys() ) {
 		core::pose::Pose pose;
 		struc->fill_pose( pose );
 

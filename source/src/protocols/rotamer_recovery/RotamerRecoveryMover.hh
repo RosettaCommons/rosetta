@@ -60,11 +60,11 @@ public: // functional interface
 	void
 	register_options() const ;
 
-	
+
 	void
 	apply( core::pose::Pose & pose ) override;
 
-	
+
 	std::string
 	get_name() const override;
 
@@ -74,7 +74,7 @@ public: // functional interface
 	/// @brief make a copy but use default constructor
 	moves::MoverOP fresh_instance() const override;
 
-	
+
 	void
 	parse_my_tag(
 		TagCOP /*tag*/,
@@ -86,7 +86,7 @@ public: // functional interface
 	/// @brief this function informs the job distributor (august 08
 	///vintage) whether this object needs to be freshly regenerated on
 	///each use.
-	
+
 	bool
 	reinitialize_for_each_job() const override;
 
@@ -96,7 +96,7 @@ public: // functional interface
 	///input pose is about to change (for example, if the mover has
 	///special code on the first apply() that is only valid for that
 	///one input pose).
-	
+
 	bool
 	reinitialize_for_new_input() const override;
 
@@ -111,7 +111,7 @@ public: // functional interface
 	void
 	show() const;
 
-	
+
 	void
 	show(
 		std::ostream & out

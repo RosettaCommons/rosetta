@@ -145,11 +145,11 @@ public:
 	TenANeighborGraph( TenANeighborGraph const & source );
 	TenANeighborGraph & operator = ( TenANeighborGraph const & source );
 
-	
+
 	Distance
 	neighbor_cutoff() const override;
 
-	
+
 	void
 	conditionally_add_edge(
 		Size lower_node_id,
@@ -157,11 +157,11 @@ public:
 		DistanceSquared dsq
 	) override;
 
-	
+
 	ContextGraphOP
 	clone() const override;
 
-	
+
 	void update_from_pose(
 		pose::Pose const & pose
 	) override;

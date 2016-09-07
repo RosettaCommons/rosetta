@@ -295,7 +295,7 @@ void HitNeighborFinder::add_hits( std::list< Hit > const & hitlist )
 	assert( initialized_ );
 
 	Size count_hits = 0;
-	for (const auto & iter : hitlist) {
+	 for ( auto const & iter : hitlist ) {
 		++count_hits;
 		all_hits_.push_back( std::make_pair( count_hits, & iter ));
 	}
@@ -352,14 +352,14 @@ HitNeighborFinder::connected_components() const
 		//boost::uint64_t bin_index = binner_->bin_index( query_bin );
 
 		/// 1. Mark all the hits in this bin as members of the same CC.
-		for (const auto & hitlist_iter : hitlist) {
+		 for ( auto const & hitlist_iter : hitlist ) {
 			if ( ds.ds_find( first_hit_index ) == ds.ds_find( hitlist_iter.first ) ) continue;
 			ds.ds_union( first_hit_index, hitlist_iter.first );
 		}
 
 		/// 2. Iterate across all hits, and for each halfbin, take one hit and look for all
 		/// halfbin-neighbors of that hit.
-		for (const auto & hitlist_iter : hitlist) {
+		 for ( auto const & hitlist_iter : hitlist ) {
 			Size query_id = hitlist_iter.first;
 			Hit const * query_hit = hitlist_iter.second;
 			Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
@@ -390,7 +390,7 @@ HitNeighborFinder::connected_components() const
 
 				if ( nbr_hits != hash_.end() ) {
 					// we have hits in the neighbor bin
-					for (const auto & nbr_hits_iter : nbr_hits->second) {
+					 for ( auto const & nbr_hits_iter : nbr_hits->second ) {
 						Size nbr_id = nbr_hits_iter.first;
 						if ( ds.ds_find( query_id ) == ds.ds_find( nbr_id ) ) continue; // already neighbors
 						Bin6D nb_halfbin = binner_->halfbin6( nbr_hits_iter.second->second() );
@@ -465,7 +465,7 @@ HitNeighborFinder::connected_components() const
 	}
 
 	utility::vector1< HitPtrList > hit_ccs( nccs );
-	for (const auto & all_hit : all_hits_) {
+	 for ( auto const & all_hit : all_hits_ ) {
 		Size iterrep = ds.ds_find( all_hit.first );
 		Size setid = ds_representatives_to_setnos[ iterrep ];
 		assert( setid != 0 );
@@ -488,9 +488,9 @@ HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 	Bin6D twos( 2 ); // numer of halfbin neighbors for each dimension
 	utility::FixedSizeLexicographicalIterator< 6 > halfbin_lex( twos );
 
-	for (auto query_hit : queryhits) {
+	for ( auto query_hit : queryhits ) {
 		//Size query_id = iter->first;
-			// Bin6D query_bin = binner_->bin6( query_hit->second() ); // Unused variable causes a warning.
+		// Bin6D query_bin = binner_->bin6( query_hit->second() ); // Unused variable causes a warning.
 		Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
 		Real6 halfsteps( binner_->halfbin_widths() );
 		for ( Size ii = 1; ii <= 6; ++ii ) {
@@ -515,7 +515,7 @@ HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 			if ( nbr_hits != hash_.end() ) {
 				// we have hits in the neighbor bin
 				bool all_inserted = true;
-				for (const auto & nbr_hits_iter : nbr_hits->second) {
+				 for ( auto const & nbr_hits_iter : nbr_hits->second ) {
 					Size nbr_id = nbr_hits_iter.first;
 					if ( neighbor_set.find( nbr_id ) != neighbor_set.end() ) {
 						// already found this neighbor; note does not invalidate the "all_inserted" boolean
@@ -687,7 +687,7 @@ void MatchCounter::add_hits( Size geomcst_id, std::list< Hit > const & hitlist )
 {
 	assert( initialized_ );
 
-	for (const auto & iter : hitlist) {
+	 for ( auto const & iter : hitlist ) {
 		boost::uint64_t bin_index = binner_->bin_index( iter.second() );
 		HitHash::iterator hash_iter = hash_.find( bin_index );
 		if ( hash_iter == hash_.end() ) {
@@ -705,7 +705,7 @@ void MatchCounter::add_hits( Size geomcst_id, std::list< Hit const * > const & h
 {
 	assert( initialized_ );
 
-	for (auto iter : hitlist) {
+	for ( auto iter : hitlist ) {
 		boost::uint64_t bin_index = binner_->bin_index( iter->second() );
 		HitHash::iterator hash_iter = hash_.find( bin_index );
 		if ( hash_iter == hash_.end() ) {

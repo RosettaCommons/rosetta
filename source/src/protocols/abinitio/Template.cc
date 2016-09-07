@@ -275,7 +275,7 @@ Template::steal_frags( FrameList const& frames, FragSet &accumulator, Size ncopi
 	FrameList template_frames;
 	map2template( frames, template_frames );
 	Size total( 0 );
-	for (auto & template_frame : template_frames) {
+	for ( auto & template_frame : template_frames ) {
 		tr.Trace << name() << " pick frags at " << template_frame->start() << " " << template_frame->end() << " " << pose_->total_residue() << std::endl;
 		for ( Size ct = 1; ct <= ncopies; ct ++ ) {
 			if ( template_frame->steal( *pose_ ) ) total++;
@@ -299,7 +299,7 @@ Template::map_pairing( core::scoring::dssp::Pairing const& in, core::scoring::ds
 
 void
 Template::map_pairings2template( core::scoring::dssp::PairingsList const& in, core::scoring::dssp::PairingsList &out ) const {
-	for (const auto & it : in) {
+	 for ( auto const & it : in ) {
 		core::scoring::dssp::Pairing pairing;
 		if ( map_pairing( it, pairing, mapping_ ) ) out.push_back( pairing );
 	}
@@ -307,7 +307,7 @@ Template::map_pairings2template( core::scoring::dssp::PairingsList const& in, co
 
 void
 Template::map_pairings2target( core::scoring::dssp::PairingsList const& in, core::scoring::dssp::PairingsList &out ) const {
-	for (const auto & it : in) {
+	 for ( auto const & it : in ) {
 		core::scoring::dssp::Pairing pairing;
 		if ( map_pairing( it, pairing, reverse_mapping_ ) ) out.push_back( pairing );
 		tr.Trace << "template: "<<it<< "     target: " << pairing;
@@ -316,7 +316,7 @@ Template::map_pairings2target( core::scoring::dssp::PairingsList const& in, core
 
 void
 Template::map2target( FrameList const& frames, FrameList& target_frames ) const {
-	for (const auto & it : frames) {
+	 for ( auto const & it : frames ) {
 		FrameOP frame = it->clone_with_frags();
 		if ( frame->align( reverse_mapping_ ) ) {
 			target_frames.push_back( frame );
@@ -351,7 +351,7 @@ Template::map2template( FrameList &frames ) const {
 
 void
 Template::map2template( FrameList const& target_frames, FrameList& template_frames ) const {
-	for (const auto & target_frame : target_frames) {
+	 for ( auto const & target_frame : target_frames ) {
 		FrameOP frame = target_frame->clone();
 		*frame = *target_frame; //copy fragments
 		if ( frame->align( mapping_ ) ) {
@@ -391,7 +391,7 @@ Template::map2target(
 	using namespace core::id;
 
 	target_list.clear();
-	for (const auto & it : template_list) {
+	 for ( auto const & it : template_list ) {
 		Obsolet_NamedAtomPairConstraintOP new_cst = it->mapto( reverse_mapping_ );
 		if ( new_cst ) {
 			target_list.push_back( new_cst );
@@ -408,7 +408,7 @@ Template::map2template(
 {
 	using namespace core::id;
 	template_list.clear();
-	for (const auto & it : target_list) {
+	 for ( auto const & it : target_list ) {
 		Obsolet_NamedAtomPairConstraintOP new_cst = it->mapto( mapping_ );
 		if ( new_cst ) {
 			template_list.push_back( new_cst );
@@ -424,7 +424,7 @@ Template::cull_violators(
 	NamedAtomPairConstraintList& culled_list ) const
 {
 	using namespace core::scoring::constraints;
-	for (const auto & it : target_list) {
+	 for ( auto const & it : target_list ) {
 		AtomPairConstraintOP cst = it->mapto( mapping_, *pose_ );
 		if ( cst ) {
 			tr.Trace << "test: (target)" << cst->atom(1) << " " << cst->atom(2) <<  std::endl;

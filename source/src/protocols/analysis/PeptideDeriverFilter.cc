@@ -1193,7 +1193,7 @@ PeptideDeriverFilter::calculate_per_residue_interface_score(
 	(*scorefxn_deriver_)(unbound_pair);
 
 	//go over each interface residue and calculate its energetical contribution to binding
-	for (unsigned long interface_residue : interface_residues) {
+	for ( unsigned long interface_residue : interface_residues ) {
 		// delta between total energy in the bound and unbound states is in fact the interface score
 		core::Real res_isc = chain_pair_pose.energies().residue_total_energy(interface_residue) - unbound_pair.energies().residue_total_energy(interface_residue);
 		report_out << "residue " << interface_residue << " in chain " << chain_pair_pose.residue(interface_residue).chain() << " has interface score " << res_isc << std::endl;

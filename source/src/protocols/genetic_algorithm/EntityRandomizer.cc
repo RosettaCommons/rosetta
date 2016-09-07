@@ -111,7 +111,7 @@ DiscreteRandomizer::mutate( Entity & entity )
 {
 	EntityElements traits( entity.traits() );
 	core::Size const size_choices( choices_.size() );
-	for (auto & trait : traits) {
+	for ( auto & trait : traits ) {
 		if ( this->mutation_rate() < numeric::random::uniform() ) continue;
 		trait = choices_[ static_cast< core::Size >( numeric::random::uniform() * size_choices ) + 1 ];
 	}

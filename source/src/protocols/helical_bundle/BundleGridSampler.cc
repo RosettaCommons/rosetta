@@ -889,7 +889,7 @@ BundleGridSampler::parse_my_tag(
 
 	//Parse options for each helix (sub-tags):
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for (const auto & branch_tag : branch_tags) { //Loop through all sub-tags
+	 for ( auto const & branch_tag : branch_tags ) { //Loop through all sub-tags
 		if ( branch_tag->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
 			at_least_one_helix = true;
 			add_helix(); //This updates this mover and the MakeBundle mover

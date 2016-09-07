@@ -760,7 +760,7 @@ dump_comment_pdb(
 	out << "##Begin comments##" << std::endl;
 	using namespace std;
 	map< string, string > const comments = core::pose::get_all_comments(pose);
-	for (const auto & comment : comments) {
+	 for ( auto const & comment : comments ) {
 		out << comment.first<<" "<<comment.second << std::endl;
 	}
 	out << "##End comments##" << std::endl;
@@ -1254,7 +1254,7 @@ utility::vector1< int > get_chains( core::pose::Pose const & pose ) {
 	utility::vector1< int > keys;
 
 	// go through map and push back into vector
-	for (auto & it : chain_map) {
+	for ( auto & it : chain_map ) {
 		keys.push_back( it.first );
 	}
 	return keys;
@@ -1394,19 +1394,19 @@ void fix_pdbinfo_damaged_by_insertion(
 	core::pose::Pose & pose
 ) {
 	if ( !pose.pdb_info() ) return;
-	
+
 	PDBInfo & pdbinfo = *pose.pdb_info();
-	
+
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pdbinfo.number( ii ) != 0 || ( pdbinfo.chain( ii ) != ' ' && pdbinfo.chain( ii ) != '^' ) ) {
 			// This residue is fine.
 			continue;
 		}
-			
+
 		if ( ii == 1 ) {
 			utility_exit_with_message( "Error: somehow, an insertion is present at the first residue!" );
 		}
-			
+
 		int const num_prev = pdbinfo.number( ii - 1 );
 		char const chn_prev = pdbinfo.chain( ii - 1 );
 		if ( ii == pose.total_residue() ) {
@@ -1414,17 +1414,17 @@ void fix_pdbinfo_damaged_by_insertion(
 			pdbinfo.chain( ii, chn_prev );
 			continue;
 		}
-		
+
 		Size next_sensible_seqpos = ii + 1;
 		while ( pdbinfo.number( next_sensible_seqpos ) == 0 && ( pdbinfo.chain( next_sensible_seqpos ) == ' ' || pdbinfo.chain( next_sensible_seqpos ) == '^' ) ) ++next_sensible_seqpos;
-		
+
 		// If this is the last residue of a chain, also easy.
 		if ( pdbinfo.chain( next_sensible_seqpos ) != chn_prev ) {
 			pdbinfo.number( ii, chn_prev + 1 );
 			pdbinfo.chain( ii, chn_prev );
 			continue;
 		}
-		
+
 		int const num_next = pdbinfo.number( next_sensible_seqpos );
 		if ( num_next - num_prev >= 2 ) {
 			// Squeeze in in the middle
@@ -1465,7 +1465,7 @@ void fix_pdbinfo_damaged_by_insertion(
 		}
 	}
 }
-	
+
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] fix_chains If true, the procedure will attempt to fix any empty record
@@ -1522,7 +1522,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 			// First either remove or rotate any existing chains to the end of
 			// the list.
 			std::string letters( utility::UPPERCASE_LETTERS );
-			for (auto & i : conf2pdb) {
+			for ( auto & i : conf2pdb ) {
 				if ( i.second == PDBInfo::empty_record() )  continue;
 
 				std::string::size_type const j = letters.find( i.second );
@@ -1537,7 +1537,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 			// Now fill in empty records.
 			Size lidx = 0;
-			for (auto & i : conf2pdb) {
+			for ( auto & i : conf2pdb ) {
 				if ( i.second != PDBInfo::empty_record() )  continue;
 
 				if ( rotate_chain_ids ) { // rotating
@@ -1767,16 +1767,16 @@ named_atom_id_to_atom_id(
 				return AtomID( rt.atom_index( named_atom_id.atom() ), named_atom_id.rsd() );
 			} else {
 				// tr.Error << "Error: can't find atom " << named_atom_id.atom() << " in residue "
-				//	  << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
-				//	 tr.Error << "atom names are: " << std::endl;
+				//   << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
+				//  tr.Error << "atom names are: " << std::endl;
 				//rt.show_all_atom_names( tr.Error );
 				if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
 				return id::BOGUS_ATOM_ID;
 			}
 		} else {
-			//	tr.Error << "Error: can't find residue " << named_atom_id.rsd()
-			//	 << " in pose (pose.total_residue() = ) "
-			//	 << pose.total_residue() << std::endl;
+			// tr.Error << "Error: can't find residue " << named_atom_id.rsd()
+			//  << " in pose (pose.total_residue() = ) "
+			//  << pose.total_residue() << std::endl;
 			if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
 			return id::BOGUS_ATOM_ID;
 		}
@@ -2659,7 +2659,7 @@ initialize_disulfide_bonds(
 			utility::vector1< Size > disulf_two;
 
 			// Prepare a list of pose-numbered disulfides!
-			for (const auto & ssbond : sfr.ssbond_map()) {
+			 for ( auto const & ssbond : sfr.ssbond_map() ) {
 
 				// For now we really hope the vector1 is just a single element!
 				if ( ssbond.second.size() != 1 ) {
@@ -2854,8 +2854,8 @@ generate_vector_from_bounds(
 ///
 /// @brief calculates the center of mass of a pose
 /// @details
-///	the start and stop positions (or residues) within the pose are used to
-///	find the starting and finishing locations
+/// the start and stop positions (or residues) within the pose are used to
+/// find the starting and finishing locations
 ///
 /// @author Monica Berrondo June 14 2007
 ///
@@ -2944,8 +2944,8 @@ return_nearest_residue(
 /// @brief finds the residue nearest some position passed in (normally a
 ///  center of mass)
 /// @details
-///	    the start and stop positions (or residues) within the pose are used to
-///	    find the starting and finishing locations
+///     the start and stop positions (or residues) within the pose are used to
+///     find the starting and finishing locations
 ///
 /// @author Monica Berrondo June 14 2007
 ///
@@ -2967,7 +2967,7 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 	core::pose::Pose const & pose ){
 	id::AtomID_Map< id::AtomID > atom_ID_map;
 	initialize_atomid_map( atom_ID_map, pose, id::BOGUS_ATOM_ID );
-	for (const auto & it : atom_map) {
+	 for ( auto const & it : atom_map ) {
 		atom_ID_map.set( it.first, it.second );
 	}
 	return atom_ID_map;
@@ -3063,7 +3063,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 	CircularHarmonicFuncOP ang90_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_2(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 
-	for (const auto & it : sfr.link_map()) {
+	 for ( auto const & it : sfr.link_map() ) {
 		for ( Size ii = 1; ii <= it.second.size(); ++ii ) {
 			TR << "|"<<it.second[ii].chainID1 << "| |" << it.second[ii].resSeq1 << "|" << std::endl;
 			TR << "|"<<it.second[ii].chainID2 << "| |" << it.second[ii].resSeq2 << "|" << std::endl;

@@ -46,15 +46,15 @@ public: // constructors destructors
 
 public: // public interface
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	std::string
 	get_parameters() const override;
 
-	
+
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -74,7 +74,7 @@ public: // public interface
 	bool
 	get_include_backbone_atoms() const;
 
-	
+
 	void
 	set_recovery_threshold(
 		core::Real const recovery_threshold

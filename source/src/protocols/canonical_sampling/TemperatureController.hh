@@ -77,27 +77,27 @@ public:
 	TemperatureController( TemperatureController const& );
 
 	/// @brief No-op implemented only to satisfy the Mover interface.
-	
+
 	void apply( core::pose::Pose& ) override {};
 
 	/// @brief Return the name of this class.
-	
+
 	std::string
 	get_name() const override;
 
 	/// @brief Return false.  This class does not need to be reinitialized for
 	/// each job.
-	
+
 	bool
 	reinitialize_for_each_job() const override { return false; };
 
 	/// @brief Return false.  This class does not need to be reinitialized for
 	/// new input.
-	
+
 	bool
 	reinitialize_for_new_input() const override { return false; };
 
-	
+
 	void
 	observe_after_metropolis(
 		MetropolisHastingsMover const & metropolis_hastings_mover
@@ -159,7 +159,7 @@ public:
 		core::Size cycle
 	);
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose &,
@@ -211,7 +211,7 @@ public:
 	protocols::moves::MoverOP
 	clone() const override { return protocols::moves::MoverOP( new protocols::canonical_sampling::FixedTemperatureController( temperature_ ) ); };
 
-	
+
 	std::string
 	get_name() const override { return "FixedTemperatureContoller"; }
 

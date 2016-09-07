@@ -79,7 +79,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	
+
 	~IndependentBBTorsionSRFD() override;
 
 
@@ -94,12 +94,12 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	
+
 	SingleResidueFragDataOP clone() const override;
 
 
 	/// @brief create a new instance of this object
-	
+
 	SingleResidueFragDataOP create() const override;
 
 
@@ -113,7 +113,7 @@ public: // methods
 	/// @param[in] seqpos Insert at this sequence position.
 	/// @return True if at least one torsion inserted and second level superclass
 	///  <tt>SecstructSRFD::apply()</tt> succeeded, otherwise false.
-	
+
 	bool apply(
 		MoveMap const & movemap,
 		Pose & pose,
@@ -126,7 +126,7 @@ public: // methods
 	/// @param[in] seqpos Check at this sequence position.
 	/// @return True if at least one torsion moveable and second level superclass
 	///  <tt>SecstructSRFD::is_applicable()</tt>, otherwise False.
-	
+
 	bool is_applicable(
 		MoveMap const & movemap,
 		Size seqpos

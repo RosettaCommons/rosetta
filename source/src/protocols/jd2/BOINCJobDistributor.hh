@@ -41,15 +41,15 @@ protected:
 	/// @brief ctor is protected; singleton pattern
 	BOINCJobDistributor();
 
-	
+
 	void
 	job_failed( core::pose::Pose & pose, bool will_retry ) override;
 
-	
+
 	void
 	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag ) override;
 
-	
+
 	void
 	mark_current_job_id_for_repetition() override;
 
@@ -71,11 +71,11 @@ public:
 
 	friend class JobDistributorFactory; //ctor access
 
-	
+
 	void
 	go( protocols::moves::MoverOP mover ) override;
 
-	
+
 	core::Size
 	get_new_job_id() override;
 };

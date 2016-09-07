@@ -65,7 +65,7 @@ ResetBaselineMover::apply( Pose & pose )
 	} else if ( filter_type == "CompoundStatement" ) {
 		CompoundFilterOP comp_filt_op( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter() ) );
 		runtime_assert( comp_filt_op != nullptr );
-		for (auto & cs_it : *comp_filt_op) {
+		for ( auto & cs_it : *comp_filt_op ) {
 			FilterOP filt( cs_it.first );
 			if ( filt->get_type() == "Operator" ) {
 				TR<<"Resetting Operator filter's baseline"<<std::endl;

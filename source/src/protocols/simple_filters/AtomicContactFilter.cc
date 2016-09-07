@@ -76,8 +76,8 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 	}
 	core::Real nearest_distance( 10000 );
 	Residue const res2( pose.residue( get_resid() ) );
-	for (unsigned long residue1 : range1_) {
-			Residue const res1( pose.residue( residue1 ) );
+	for ( unsigned long residue1 : range1_ ) {
+		Residue const res1( pose.residue( residue1 ) );
 
 		auto atom1_begin( res1.atom_begin() ), atom1_end( res1.atom_end() ), atom2_begin( res2.atom_begin() ), atom2_end( res2.atom_end() );
 		if ( sidechain_ && !backbone_ ) {

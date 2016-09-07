@@ -240,7 +240,7 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 	//non_residue_pair_constraints_.conformation_energy( pose.conformation(), sfxn.weights(), emap );
 	core::scoring::func::ConformationXYZ const xyz_func( pose.conformation() );
 	core::scoring::constraints::ConstraintCOPs const& csts( non_residue_pair_constraints().constraints() );
-	for (const auto & it : csts) {
+	 for ( auto const & it : csts ) {
 		core::scoring::constraints::Constraint const & cst( *it );
 		if ( cst.effective_sequence_separation( shortest_path() ) < max_seq_sep() ) cst.score( xyz_func, sfxn.weights(), emap );
 	}

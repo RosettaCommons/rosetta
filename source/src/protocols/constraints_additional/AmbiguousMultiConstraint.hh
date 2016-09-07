@@ -59,7 +59,7 @@ public:
 		core::scoring::constraints::ConstraintCOPs & cst_in ) ;
 
 
-	
+
 	core::scoring::constraints::ConstraintOP clone() const override {
 		return core::scoring::constraints::ConstraintOP( new AmbiguousMultiConstraint(*this) );
 	}
@@ -85,7 +85,7 @@ public:
 		core::scoring::EnergyMap & emap ) const override;
 
 
-	
+
 	core::scoring::constraints::ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 

@@ -289,7 +289,7 @@ void HamiltonianExchange::setup_exchange_schedule() {
 			}
 
 			//sort witin groups
-			for (auto & group : groups) {
+			for ( auto & group : groups ) {
 				group.second.sort();
 			}
 
@@ -691,9 +691,9 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 
 	os << line_marker << repeat( 74, '=' ) << line_marker << std::endl;
 	os << line_marker << A( 40, "Exchange Schedules " ) << std::endl;
-	for (const auto & ex : exchange_schedules_) {
-			os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
-		for (const auto & it : ex) {
+	 for ( auto const & ex : exchange_schedules_ ) {
+		os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
+		 for ( auto const & it : ex ) {
 			GridCoord const& coord1( exchange_grid_[ it.first ] );
 			GridCoord const& coord2( exchange_grid_[ it.second ] );
 			Size const n_dim( exchange_grid_dimension_ );

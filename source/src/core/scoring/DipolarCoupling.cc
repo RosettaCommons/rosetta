@@ -100,7 +100,7 @@ extern DipolarCouplingOP retrieve_DC_from_pose(core::pose::Pose& pose) {
 
 void DipolarCoupling::show(std::ostream& out) const {
 	Size ct=0;
-	for (const auto & All_DC_line : All_DC_lines_) {
+	 for ( auto const & All_DC_line : All_DC_lines_ ) {
 		out << "DC " << ++ct << "     ";
 		out << All_DC_line << std::endl;
 	}
@@ -226,7 +226,7 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 	}
 	tr.Trace << "memnorm.x(): " << memnorm.x() << " memnorm.y() " << memnorm.y() << " memnorm.z() " << memnorm.z() << std::endl;
 
-	for (auto & All_DC_line : All_DC_lines_) {
+	for ( auto & All_DC_line : All_DC_lines_ ) {
 		//        tr.Trace << "it->res1(): " << it->res1() << " it->atom1() " << it->atom1() << std::endl;
 		//        tr.Trace << "it->res2(): " << it->res2() << " it->atom2() " << it->atom2() << std::endl;
 		numeric::xyzVector<Real> v1( pose.residue(All_DC_line.res2()).atom(All_DC_line.atom2()).xyz() - pose.residue(All_DC_line.res1()).atom(All_DC_line.atom1()).xyz());

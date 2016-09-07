@@ -95,17 +95,17 @@ void protocols::jd2::PDBJobOutputter::dump_pose(
 /////////////////////////////////state of output functions/////////////////////////////////
 /*
 bool protocols::jd2::PDBJobOutputter::job_has_completed( JobCOP job ){
-	bool complete = utility::file::file_exists( path_ + extended_name(job) );
-	if ( TR.Debug.visible() && complete ) {
-		TR.Debug << "Skipping job " << output_name(job) << " because the output file already exists on disk." << std::endl;
-	}
-	return complete;
+bool complete = utility::file::file_exists( path_ + extended_name(job) );
+if ( TR.Debug.visible() && complete ) {
+TR.Debug << "Skipping job " << output_name(job) << " because the output file already exists on disk." << std::endl;
+}
+return complete;
 }
 
 std::string
 protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const & suffix )
 {
-	return output_name(job) + std::string(suffix.empty() ? "" : "_") + suffix + extension_;
+return output_name(job) + std::string(suffix.empty() ? "" : "_") + suffix + extension_;
 }
 
 ////////////////////////////////////////score-related functions///////////////////////////////////
@@ -117,34 +117,34 @@ protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const & 
 /// @return A string in which the data will be stored, that can later be passed to whatever container wants it.
 std::string
 protocols::jd2::PDBJobOutputter::extract_data_from_Job(
-	JobCOP job
+JobCOP job
 ) {
-	//TR << "protocols::jd2::PDBJobOutputter::extract_data_from_Job" << std::endl;
+//TR << "protocols::jd2::PDBJobOutputter::extract_data_from_Job" << std::endl;
 
-	std::stringstream out;
+std::stringstream out;
 
-	for ( Job::Strings::const_iterator it(job->output_strings_begin()), end(job->output_strings_end());
-			it != end;
-			++it ) {
-		out << *it << std::endl;
-		//TR << *it << std::endl;
-	}
+for ( Job::Strings::const_iterator it(job->output_strings_begin()), end(job->output_strings_end());
+it != end;
+++it ) {
+out << *it << std::endl;
+//TR << *it << std::endl;
+}
 
-	for ( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
-			it != end;
-			++it ) {
-		out << it->first << " " << it->second << std::endl;
-		//TR << it->first << " " << it->second << std::endl;
-	}
+for ( Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin()), end(job->output_string_string_pairs_end());
+it != end;
+++it ) {
+out << it->first << " " << it->second << std::endl;
+//TR << it->first << " " << it->second << std::endl;
+}
 
-	for ( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
-			it != end;
-			++it ) {
-		out << it->first << " " << it->second << std::endl;
-		//TR << it->first << " " << it->second << std::endl;
-	}
+for ( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
+it != end;
+++it ) {
+out << it->first << " " << it->second << std::endl;
+//TR << it->first << " " << it->second << std::endl;
+}
 
-	return out.str();
+return out.str();
 }
 */
 

@@ -79,7 +79,7 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 
 	numeric::RocCurve roc_curve;
 
-	for (const auto & data_it : data_map_) {
+	 for ( auto const & data_it : data_map_ ) {
 
 		core::Real total_score = 0.0;
 
@@ -125,7 +125,7 @@ qsarOptData qsarOptFunc::get_struct_data(core::Size const & struct_id )
 	score_selection_.bind(2,struct_id);
 	std::map<std::string,core::Real> score_map;
 
-	for (auto & grid_indice : grid_indices_) {
+	for ( auto & grid_indice : grid_indices_ ) {
 		score_selection_.bind(1,grid_indice.first+"_score_X");
 		cppdb::result score_result(basic::database::safely_read_from_database(score_selection_));
 		if ( score_result.next() ) {

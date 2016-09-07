@@ -133,7 +133,7 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		for ( Size exp=0; exp < n_of_exps; ++exp ) {
 			ndata = 0;
 			score_temp = 0;
-			for (const auto & rdc_segment : rdc_segments_) {
+			 for ( auto const & rdc_segment : rdc_segments_ ) {
 				Real trace(0);
 				ndata_segment = 0;
 				//loop over RDCs in segment and find number of data points for this experiment
@@ -165,7 +165,7 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		for ( Size exp=0; exp < n_of_exps; ++exp ) {
 			ndata = 0;
 			score_temp = 0;
-			for (const auto & rdc_segment : rdc_segments_) {
+			 for ( auto const & rdc_segment : rdc_segments_ ) {
 				Real maxz(0);
 				ndata_segment = 0;
 				//loop over RDCs in segment and find number of data points for this experiment
@@ -193,7 +193,7 @@ Real ResidualDipolarCouplingRigidSegments::compute_total_score(core::pose::Pose 
 	Real score(0);
 	Real n_rdcs(0);
 	Real total_lines(0);
-	for (const auto & rdc_segment : rdc_segments_) {
+	 for ( auto const & rdc_segment : rdc_segments_ ) {
 		n_rdcs = rdc_segment->get_RDC_data().size();
 		total_lines += n_rdcs;
 		score += ( rdc_segment->compute_dipscore(pos) ) * n_rdcs;
@@ -243,7 +243,7 @@ void ResidualDipolarCouplingRigidSegments::sort_into_segments(RDC_lines all_rdcs
 
 	//process all lines and assign into segments
 
-	for (auto & all_rdc : all_rdcs) {
+	for ( auto & all_rdc : all_rdcs ) {
 		// std::cout << line_it->res1() <<std::endl;
 		Size segid( find_segid_from_RDC_line( all_rdc ) );
 		if ( segid >0 ) {
@@ -253,14 +253,14 @@ void ResidualDipolarCouplingRigidSegments::sort_into_segments(RDC_lines all_rdcs
 
 
 	//create new RDC objects for all Segments
-	for (auto & it : rdc_segm_data) {
+	for ( auto & it : rdc_segm_data ) {
 		rdc_segments_.push_back( core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling( it ) ) );
 	}
 }
 
 void ResidualDipolarCouplingRigidSegments::show(std::ostream& out) const {
 	Size ct (0);
-	for (const auto & rdc_segment : rdc_segments_) {
+	 for ( auto const & rdc_segment : rdc_segments_ ) {
 		out <<"SEGMENT " << ++ct <<std::endl;
 		rdc_segment->show(out);
 		out << std::endl;

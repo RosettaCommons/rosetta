@@ -68,7 +68,7 @@ public:
 		return "SheetBuilder";
 	}
 
-	
+
 	JumpSample
 	create_jump_sample() const override;
 

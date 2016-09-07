@@ -100,7 +100,7 @@ int main ( int argc, char* argv[] )
 
 		//ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mm_std_fa_elec_dslf_fa13_split_unfolded" );
 		ScoreFunctionOP scorefxn = get_score_function();
-		
+
 		scorefxn->set_weight( dihedral_constraint, 1.0 );
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 		//Get the residue set we are drawing from.
@@ -160,7 +160,7 @@ int main ( int argc, char* argv[] )
 
 		// Constrain h bonds
 		for ( Size ii = 1; ii <= pose.total_residue()-4; ++ii ) {
-			
+
 			std::string ca = "CA";
 			if ( pose.residue_type( ii ).is_beta_aa() ) {
 				ca = "CM";
@@ -171,18 +171,18 @@ int main ( int argc, char* argv[] )
 				*new AtomID( pose.residue(  ii+1  ).atom_index( "N" ), ii+1 ),
 				*new AtomID( pose.residue(  ii+1  ).atom_index( "CA" ), ii+1 ),
 				CircularHarmonicFuncOP( new CircularHarmonicFunc( 3.14159, 0.01 ) )
-			) ) );
-			
-			
+				) ) );
+
+
 			pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
 				*new AtomID( pose.residue(  ii  ).atom_index( "O" ), ii ),
 				*new AtomID( pose.residue( ii+4 ).atom_index( "H" ), ii ),
 				HarmonicFuncOP( new HarmonicFunc( 1.8, 0.2 ) ) ) ) );
 		}
-		
+
 		movemap->set_bb( true );
 		minmover.apply( pose );
-		
+
 		std::cout << "Pose with torsions:" << std::endl;
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			for ( Size jj = 1; jj <= pose.residue( ii ).mainchain_torsions().size(); ++jj ) {
@@ -192,11 +192,11 @@ int main ( int argc, char* argv[] )
 		}
 		std::cout << "has energy " << curr_energy << std::endl;
 		pose.dump_pdb ( "B3A_bbminned.pdb");
-		
+
 		// Replace first and third residue.
 		ResidueType const & pre_type = rts->get_residue_type_with_variant_added( pose.residue_type( 1 ), chemical::HBS_PRE );
 		ResidueType const & post_type = rts->get_residue_type_with_variant_added( pose.residue_type( 3 ), chemical::HBS_POST );
-		
+
 		// It's losing the chis of the original residue. Stupid stupid stupid.
 		utility::vector1< Real > old_chis;
 		for ( Size ii = 1; ii <= pose.residue_type( ii ).nchi(); ++ii ) {
@@ -209,25 +209,25 @@ int main ( int argc, char* argv[] )
 		pose.replace_residue( 3, Residue( post_type, 1 ), true );
 		core::pose::ncbb::initialize_ncbbs( pose );
 		pose.conformation().declare_chemical_bond( 1, "CYH", 3, "CZH" );
-		
+
 		pose.set_torsion( id::TorsionID( 1, id::BB, 5 ), -60 );
 
-		
+
 		pose.dump_pdb ( "B3A_hbsed.pdb");
 
 		movemap->set_bb( false );
 		movemap->set_chi( false );
-		
+
 		movemap->set_bb( 1, true );
 		movemap->set_bb( 2, true );
 		movemap->set_bb( 3, true );
 		minmover.apply( pose );
 
 		std::cout << pose.residue_type( 1 );
-		
+
 		std::cout << pose.residue( 1 );
 		pose.dump_pdb ( "B3A_final.pdb");
-		
+
 
 		// New way.
 		// Cribbed from the SecStructFinder, but I don't wanna loop.

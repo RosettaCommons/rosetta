@@ -207,8 +207,8 @@ LinkerScore::score(
 	BOOST_FOREACH ( Xform const & x1,x1s ) {
 		BOOST_FOREACH ( Xform const & x2,x2s ) {
 
-			for (const auto & c1 : lowers1_) {
-				for (const auto & n2 : uppers2_) {
+			 for ( auto const & c1 : lowers1_ ) {
+				 for ( auto const & n2 : uppers2_ ) {
 					Xform const lower = vec3_to_stub(x1,c1.second);
 					Xform const upper = vec3_to_stub(x2,n2.second);
 					Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
@@ -216,8 +216,8 @@ LinkerScore::score(
 					lkscore += s;
 				}
 			}
-			for (const auto & c2 : lowers2_) {
-				for (const auto & n1 : uppers1_) {
+			 for ( auto const & c2 : lowers2_ ) {
+				 for ( auto const & n1 : uppers1_ ) {
 					Xform const lower = vec3_to_stub(x2,c2.second);
 					Xform const upper = vec3_to_stub(x1,n1.second);
 					Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
@@ -265,15 +265,15 @@ LinkerScore::dump_linkers(
 ) const {
 	// TR << "LinkerScore test " << lkscore << std::endl;
 	Size ndumped = 0;
-	for (const auto & c1 : lowers1_) {
-		for (const auto & n2 : uppers2_) {
+	 for ( auto const & c1 : lowers1_ ) {
+		 for ( auto const & n2 : uppers2_ ) {
 			Xform const lower = vec3_to_stub(x1,c1.second);
 			Xform const upper = vec3_to_stub(x2,n2.second);
 			ndumped += dump_loophash_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_, out_perfix );
 		}
 	}
-	for (const auto & c2 : lowers2_) {
-		for (const auto & n1 : uppers1_) {
+	 for ( auto const & c2 : lowers2_ ) {
+		 for ( auto const & n1 : uppers1_ ) {
 			Xform const lower = vec3_to_stub(x2,c2.second);
 			Xform const upper = vec3_to_stub(x1,n1.second);
 			ndumped += dump_loophash_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_, out_perfix );
@@ -318,7 +318,7 @@ public:
 		}
 	}
 
-	
+
 	Residue const &
 	residue( Size ) const override {
 		utility_exit_with_message("no Residue for NoPoseXYX_Func");
@@ -342,7 +342,7 @@ ConstraintSetScore::ConstraintSetScore(
 	csts_(cstset.get_all_constraints())
 {
 	using namespace core::scoring::constraints;
-	for (const auto & i : csts_) {
+	 for ( auto const & i : csts_ ) {
 		Constraint const & cst(*i);
 		for ( Size j = 1; j <= cst.natoms(); ++j ) {
 			AtomID aid = cst.atom(j);
@@ -357,7 +357,7 @@ core::Real ConstraintSetScore::score( Xforms const & x1s, Xforms const & x2s ) c
 	BOOST_FOREACH ( Xform const & x1,x1s ) {
 		BOOST_FOREACH ( Xform const & x2,x2s ) {
 			NoPoseXYX_Func tmp_xyz_func(start_coords_,x1,x2);
-			for (const auto & i : csts_) {
+			 for ( auto const & i : csts_ ) {
 				Constraint const & cst(*i);
 				// cout << cst.atom(1) << " " << cst.atom(2) << " " << cst.dist(tmp_xyz_func) << " " << tmp_xyz_func(cst.atom(1)) << " " << tmp_xyz_func(cst.atom(2)) << endl;
 				s += cst.get_func().func(cst.dist(tmp_xyz_func));
@@ -428,13 +428,13 @@ JointScore::score(
 
 
 void JointScore::show(std::ostream & out, int width) const {
-	for (const auto & score : scores_) {
+	 for ( auto const & score : scores_ ) {
 		score->show(out,width);
 		out << " ";
 	}
 }
 void JointScore::show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width) const {
-	for (const auto & score : scores_) {
+	 for ( auto const & score : scores_ ) {
 		score->show(out,x1,x2,width);
 		out << " ";
 	}

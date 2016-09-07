@@ -37,7 +37,7 @@ public:
 	/// @brief dtor
 	~NWAligner() override = default;
 
-	
+
 	SequenceAlignment align(
 		SequenceOP seq_y,
 		SequenceOP seq_x,

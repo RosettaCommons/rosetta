@@ -72,7 +72,7 @@ public:
 
 	~SecondaryStructureMPM() override;
 
-	
+
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
@@ -104,7 +104,7 @@ public:
 
 	~NumNeighborsMPM() override;
 
-	
+
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
@@ -142,7 +142,7 @@ public:
 
 	~BfactorMPM() override;
 
-	
+
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
@@ -170,7 +170,7 @@ public:
 
 	~AddAllPositionsMPM() override;
 
-	
+
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
@@ -193,7 +193,7 @@ public:
 
 	~RemoveNorCTermMPM() override;
 
-	
+
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,
@@ -222,7 +222,7 @@ public:
 
 	~TaskOperationMPM() override;
 
-	
+
 	utility::vector1< core::Size >
 	modified_match_positions(
 		utility::vector1< core::Size > const & original_positions,

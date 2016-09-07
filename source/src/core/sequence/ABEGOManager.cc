@@ -475,7 +475,7 @@ ABEGOManager::get_abego_string( utility::vector1< std::string > abego )
 		if ( length > 1 ) {
 			std::ostringstream multi;
 			multi << "[";
-			for (char jj : abego[ ii ]) {
+			for ( char jj : abego[ ii ] ) {
 				multi << jj;
 			}
 			multi << "]";

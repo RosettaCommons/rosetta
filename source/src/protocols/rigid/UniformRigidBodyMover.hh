@@ -44,7 +44,7 @@ public:
 		core::Real rotation_mag_ = 3.0,
 		core::Real translation_mag_ = 8.0 );
 
-	
+
 	~UniformRigidBodyMover() override = default;
 
 	std::string get_name() const override;
@@ -57,25 +57,25 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
-	
+
 	moves::MoverOP fresh_instance() const override;
 
-	
+
 	moves::MoverOP clone() const override;
 
 	void jump_number( JumpNumber );
 
 	JumpNumber jump_number() const;
 
-	
+
 	void
 	set_preserve_detailed_balance( bool ) override {};
 
-	
+
 	bool
 	preserve_detailed_balance() const override { return true; }
 
-	
+
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges( core::pose::Pose & pose ) override;
 

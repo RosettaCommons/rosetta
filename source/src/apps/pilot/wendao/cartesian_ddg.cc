@@ -232,7 +232,7 @@ main( int argc, char * argv [] )
 		// read the pose
 		Pose pose;
 		core::import_pose::pose_from_file( pose, basic::options::start_file(),
-																			 core::import_pose::PDB_file );
+			core::import_pose::PDB_file );
 
 		core::scoring::ScoreFunctionOP score_fxn;
 		score_fxn = core::scoring::get_score_function();

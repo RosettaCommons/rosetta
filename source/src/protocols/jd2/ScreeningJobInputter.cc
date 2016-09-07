@@ -125,7 +125,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 //parse params files and insert them into the chemical manager
 	if ( param_group_data.size() > 0 ) {
-		for (auto & i : param_group_data) {
+		for ( auto & i : param_group_data ) {
 			std::string param_name = i.get_str();
 			core::chemical::ChemicalManager::get_instance()->
 				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_custom_residue_type(param_name);
@@ -141,7 +141,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 {
 		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'jobs' section");
 	}
-	for (auto & i : job_group_data) {
+	for ( auto & i : job_group_data ) {
 		utility::json_spirit::mObject group_map(i.get_obj());
 
 		std::string group_name;
@@ -188,10 +188,10 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 			native_present = true;
 		}
 		//Make a job for each combination of a protein and a ligand defined in the group
-		for (auto & protein_path_index : protein_path_data) {
+		for ( auto & protein_path_index : protein_path_data ) {
 			std::string protein_path(protein_path_index.get_str());
 
-			for (auto & ligand_path_index : ligand_path_data) {
+			for ( auto & ligand_path_index : ligand_path_data ) {
 				std::string ligand_path(ligand_path_index.get_str());
 				//multiple pdb paths combined with a space get concatenated into a single pose
 				std::string input_tag(protein_path + " " + ligand_path);

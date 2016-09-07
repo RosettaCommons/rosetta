@@ -185,7 +185,7 @@ SecondaryMatchProtocol::do_matching(
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP missing_template = (*param_it)->get_missing_template_res( start_pose );
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP present_template = (*param_it)->get_missing_template_other_res( start_pose );
 
-		for (auto & poses_to_proces : poses_to_process) {
+		for ( auto & poses_to_proces : poses_to_process ) {
 
 			add_enz_cst_interaction_to_pose( *poses_to_proces, *param_it, missing_template, present_template, cstio);
 
@@ -427,7 +427,7 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 		) ) );
 
 
-	for (auto & found_resi : found_resis_) {
+	for ( auto & found_resi : found_resis_ ) {
 
 		//utility::vector1< core::pose::PoseCOP > temp_poses;
 		utility::vector1< PoseFoundResiduesCombinationOP > temp_combos;
@@ -435,7 +435,7 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 		for ( auto res_it = found_resi.begin();
 				res_it != found_resi.end(); ++res_it ) {
 
-			for (auto & process_combo : process_combos) {
+			for ( auto & process_combo : process_combos ) {
 				//core::pose::PoseOP success_pose = new core::pose::Pose(**pp_it);
 				//success_pose->replace_residue( (*res_it)->seqpos(), **res_it, true);
 				PoseFoundResiduesCombinationOP success_combo( new PoseFoundResiduesCombination( *process_combo ) );
@@ -456,7 +456,7 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	bool successful = false;
 
-	for (auto & process_combo : process_combos) {
+	for ( auto & process_combo : process_combos ) {
 		if ( process_combo->construct_and_dump_outpose( match_params_ ) ) successful = true;
 	}
 

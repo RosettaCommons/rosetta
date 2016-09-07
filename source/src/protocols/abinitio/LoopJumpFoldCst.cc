@@ -87,7 +87,7 @@ void LoopJumpFoldCst::select_loops(
 	loops_out.clear();
 	int ntries = 0;
 	while ( loops_out.size() == 0 && ntries++ < 50 ) {
-		for (const auto & loop : loops_) {
+		 for ( auto const & loop : loops_ ) {
 			if ( numeric::random::rg().uniform() >= loop.skip_rate() )  {
 				loops_out.push_back( loop );
 			}
@@ -286,7 +286,7 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 		visited[ root_reg ] = 1;
 	}
 
-	for (auto & rigid_jump : rigid_jumps) {
+	for ( auto & rigid_jump : rigid_jumps ) {
 		tr.Debug << "Fix_jumps: " << rigid_jump.start_<< " " << rigid_jump.end_ << std::endl;
 	}
 	tr.Debug << "now add more fix-jumps " << std::endl;
@@ -309,7 +309,7 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 
 
 	ObjexxFCL::FArray1D_float new_cut_prob( cut_probability );
-	for (const auto & it : rigid) {
+	 for ( auto const & it : rigid ) {
 		for ( Size pos = it.start(); pos <= it.stop(); pos++ ) {
 			new_cut_prob( pos ) = 0;
 		}
@@ -349,7 +349,7 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 		kinematics::MoveMapOP  mm( new kinematics::MoveMap( current_kinematics->movemap() ) );
 		mm->set_jump( false );
 		//find flexible jump-nr in fold tree and update movemap accordingly
-		for (auto & flex_jump : flex_jumps) {
+		for ( auto & flex_jump : flex_jumps ) {
 			mm->set_jump( flex_jump.start_, flex_jump.end_, true );
 		}
 		current_kinematics->set_movemap( mm );

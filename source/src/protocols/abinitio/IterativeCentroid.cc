@@ -88,7 +88,7 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 
 	tr.Info << "resample_stage2 \n";
 
-	for (auto & stage2_decoy : stage2_decoys_) {
+	for ( auto & stage2_decoy : stage2_decoys_ ) {
 		std::string batch_prefix( stage2_decoy->decoy_tag() );
 		batch_prefix='f'+batch_prefix.substr(9,3);
 		core::io::silent::SilentStructOP new_decoy=stage2_decoy->clone();

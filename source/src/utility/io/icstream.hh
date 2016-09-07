@@ -48,7 +48,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~icstream() override
 	= default;
 

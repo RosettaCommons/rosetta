@@ -198,7 +198,7 @@ protected:
 	//// @brief Broadcast the entity and the set of states that correspond to
 	/// a set of poses that are important.  The entity had better still live
 	/// on the distant nodes.
-	
+
 	std::list< std::pair< Size, PoseOP > >
 	recover_poses_from_states(
 		Entity const &,

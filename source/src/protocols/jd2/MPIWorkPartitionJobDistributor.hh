@@ -86,19 +86,19 @@ public:
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 	~MPIWorkPartitionJobDistributor() override;
 
-	
+
 	void
 	go( protocols::moves::MoverOP mover ) override;
 
-	
+
 	core::Size
 	get_new_job_id() override;
 
-	
+
 	void
 	mark_current_job_id_for_repetition() override;
 
-	
+
 	void
 	remove_bad_inputs_from_job_list() override;
 

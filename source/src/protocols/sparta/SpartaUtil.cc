@@ -78,7 +78,7 @@ calc_per_residue_scores(
 	//std::cout << "begin_scoring: scores.size() = " << per_residue_scores.size() << std::endl;
 
 	utility::vector0< float > OBS_V, PRED_V, DIFF_V, OBS_V_CORRECTED;
-	for (auto & atom_name : atom_names) {
+	for ( auto & atom_name : atom_names ) {
 		string aName = atom_name.second;
 		if ( aName == "H" ) aName="HN";
 		bool floating_sign( REF_CS_Tab.isVarFloat("SHIFT2") );

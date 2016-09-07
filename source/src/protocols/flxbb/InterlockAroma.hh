@@ -70,12 +70,12 @@ public: // virtual constructors
 
 
 	/// @brief clone this object
-	
+
 	MoverOP clone() const override;
 
 
 	/// @brief create this type of object
-	
+
 	MoverOP fresh_instance() const override;
 
 

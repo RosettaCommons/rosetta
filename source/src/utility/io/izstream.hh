@@ -97,7 +97,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~izstream() override
 	{
 		delete zip_stream_p_;

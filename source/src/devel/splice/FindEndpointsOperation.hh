@@ -43,7 +43,7 @@ public:
 
 	TaskOperationOP clone() const override;
 
-	
+
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
 

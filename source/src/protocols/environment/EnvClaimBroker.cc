@@ -684,7 +684,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 	WriteableCacheableMapOP new_cached_data( new WriteableCacheableMap() );
 
 	//Claiming
-	for (const auto & movers_and_passe : movers_and_passes) {
+	 for ( auto const & movers_and_passe : movers_and_passes ) {
 
 		// a modifiable sandbox_map must be passed in separately, as pose is a const &.
 		WriteableCacheableMapOP sandbox_map( new WriteableCacheableMap( *orig_map ) );
@@ -706,7 +706,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 
 		// Copy any new data from the sandbox map into the "new" map.
 		for ( auto subset_it = sandbox_map->begin(); subset_it != sandbox_map->end(); ++subset_it ) {
-			for (const auto & data_it : subset_it->second) {
+			 for ( auto const & data_it : subset_it->second ) {
 				if ( !orig_map->has( data_it ) ) {
 					new_cached_data->insert( data_it );
 				}
@@ -717,7 +717,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 	//Write the items from the new_cache into the old cache.
 	for ( auto newmap_it = new_cached_data->begin();
 			newmap_it != new_cached_data->end(); ++newmap_it ) {
-		for (const auto & data_it : newmap_it->second) {
+		 for ( auto const & data_it : newmap_it->second ) {
 			orig_map->insert( data_it );
 		}
 	}
@@ -733,7 +733,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 
 void EnvClaimBroker::process_elements( ResElemVect const & elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
 
-	for (const auto & elem : elems) {
+	 for ( auto const & elem : elems ) {
 		ResidueElement const & element = elem.first;
 		ClientMoverCOP owner = elem.second;
 
@@ -752,7 +752,7 @@ void EnvClaimBroker::process_elements( ResElemVect const & elems, FoldTreeSketch
 		}
 	}
 
-	for (const auto & elem : elems) {
+	 for ( auto const & elem : elems ) {
 		ResidueElement const & element = elem.first;
 		ClientMoverCOP owner = elem.second;
 

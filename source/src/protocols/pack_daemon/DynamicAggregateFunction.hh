@@ -56,13 +56,13 @@ public:
 
 	/// @brief DO NOT CALL THIS FUNCTION.  Vector expressions return
 	/// vectors of values instead of a singular value.
-	
+
 	core::Real
 	operator() () const override;
 
 	/// @brief DO NOT CALL THIS FUNCTION.  Vector expressions cannot
 	/// be differentiated.
-	
+
 	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -97,20 +97,20 @@ public:
 	VariableVectorExpression( std::string const & name, VariableExpressions const & vars );
 	~VariableVectorExpression() override;
 
-	
+
 	values
 	vector_values() const override;
 
 	/// @brief Returns the number of variable expressions this VectorExpression points at
-	
+
 	core::Size
 	size() const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
-	
+
 	utility::vector1< std::list< std::string > >
 	active_variables_vector() const override;
 
@@ -137,22 +137,22 @@ public:
 		VectorExpressionCreator & expression_creator // holds a reference to my owning DynamicAggregateFunction
 	);
 
-	
+
 	values
 	vector_values() const override;
 
-	
+
 	core::Size
 	size() const override;
 
 	numeric::expression_parser::VariableExpressionCOP
 	local_variable( std::string const & varname ) const;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
-	
+
 	utility::vector1< std::list< std::string > >
 	active_variables_vector() const override;
 
@@ -214,15 +214,15 @@ public:
 	Mean( VectorExpressionCOP ex );
 	~Mean() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -239,15 +239,15 @@ public:
 	VMax( VectorExpressionCOP ex );
 	~VMax() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -263,15 +263,15 @@ public:
 
 	~VMin() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -289,15 +289,15 @@ public:
 	VMaxBy( VectorExpressionCOP ex1, VectorExpressionCOP ex2 );
 	~VMaxBy() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -315,15 +315,15 @@ public:
 
 	~VMinBy() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
@@ -339,11 +339,11 @@ public:
 	PowExpression( ExpressionCOP base, ExpressionCOP exponent );
 	~PowExpression() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -359,11 +359,11 @@ public:
 	ExpExpression( ExpressionCOP ex );
 	~ExpExpression() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -379,11 +379,11 @@ public:
 	LnExpression( ExpressionCOP ex );
 	~LnExpression() override;
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -404,11 +404,11 @@ public:
 
 	void value_set( utility::vector1< core::Real > const & values );
 
-	
+
 	core::Real
 	operator() () const override;
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -429,14 +429,14 @@ public:
 	SurrogateVariableExpression( std::string const & );
 	SurrogateVariableExpression( std::string const & , core::Real value );
 
-	
+
 	std::list< std::string >
 	active_variables() const override;
 
 	void
 	root_expression( ExpressionCOP setting );
 
-	
+
 	ExpressionCOP
 	differentiate( std::string const & varname ) const override;
 
@@ -462,11 +462,11 @@ public:
 	//void
 	//visit( numeric::expression_parser::ArithmeticASTFunction const & );
 
-	
+
 	ExpressionCOP
 	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) override;
 
-	
+
 	ExpressionCOP
 	handle_function_expression(
 		numeric::expression_parser::FunctionTokenCOP function,
@@ -818,11 +818,11 @@ public:
 	EntityFuncExpressionCreator( EntityFunc const & owner );
 	~EntityFuncExpressionCreator() override;
 
-	
+
 	ExpressionCOP
 	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) override;
 
-	
+
 	ExpressionCOP
 	handle_function_expression(
 		numeric::expression_parser::FunctionTokenCOP function,

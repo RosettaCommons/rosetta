@@ -58,7 +58,7 @@ public:
 	~SingleResidueMultifunc() override;
 
 	// func
-	
+
 	Real
 	operator ()( Multivec const & vars ) const override;
 

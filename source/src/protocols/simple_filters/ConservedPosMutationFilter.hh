@@ -64,7 +64,7 @@ public:
 	/// mutations at conserved position. the decision whether a given position
 	/// counts as conserved is made by the RestrictConservedLowDdgOperation
 	/// task operation to prevent duplication of code
-	
+
 	bool apply( core::pose::Pose const & pose ) const override;
 
 	void set_max_allowed_conserved_pos_mutations( core::Size value ){

@@ -238,7 +238,7 @@ ModelFeatures::report_features(
 		core::pose::metrics::CalculatorFactory::Instance().remove_calculator(nb_calc);
 
 		std::set<Segment> ss_group;
-		for (unsigned long neighbor : neighbors) {
+		for ( unsigned long neighbor : neighbors ) {
 			if ( residue_segments.find(neighbor) != residue_segments.end() ) {
 				ss_group.insert(residue_segments.find(neighbor)->second);
 			}
@@ -250,8 +250,8 @@ ModelFeatures::report_features(
 
 	TR << "Found " << ss_groups.size() << " unique secondary structure groups of at least 3 segments." << std::endl;
 	core::pose::Pose score_pose(pose);
-	for (auto current_group : ss_groups) {
-			core::scoring::ScoreFunctionOP scorefxn ( new core::scoring::ScoreFunction );
+	for ( auto current_group : ss_groups ) {
+		core::scoring::ScoreFunctionOP scorefxn ( new core::scoring::ScoreFunction );
 		scorefxn->set_weight(core::scoring::fa_atr, 1.0);
 		scorefxn->score(score_pose);
 
@@ -330,7 +330,7 @@ ModelFeatures::report_features(
 	bron_kerbosch_all_cliques(graph, vis);
 	TR << "Found " << cliques->size() << " cliques" << std::endl;
 	core::Size clique_counter = 0;
-	for (const auto & clique : *cliques) {
+	 for ( auto const & clique : *cliques ) {
 		if ( clique.size() < min_ss_cluster_size_ || clique.size() > max_ss_cluster_size_ ) {
 			continue;
 		}
@@ -375,7 +375,7 @@ ModelFeatures::write_clique_to_db(
 	std::string model_segment_insert =
 		"INSERT INTO model_segments (model_id, segment_id)  VALUES (?,?);";
 	statement model_segment_insert_stmt(basic::database::safely_prepare_statement(model_segment_insert,db_session));
-	for (unsigned long it : clique) {
+	for ( unsigned long it : clique ) {
 		model_segment_insert_stmt.bind(1, model_id);
 		model_segment_insert_stmt.bind(2, it);
 		basic::database::safely_write_to_database( model_segment_insert_stmt );

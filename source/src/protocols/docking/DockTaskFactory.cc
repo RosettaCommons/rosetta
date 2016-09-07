@@ -216,7 +216,7 @@ DockTaskFactory::create_and_attach_task_factory(
 	}
 
 	// Add user specified task operations
-	for (const auto & additional_task_operation : additional_task_operations_) {
+	 for ( auto const & additional_task_operation : additional_task_operations_ ) {
 		tf->push_back( additional_task_operation );
 	}
 

@@ -379,7 +379,7 @@ TorsionFragmentLibrary::derive_from_src_lib(
 void
 FragLib::delete_residue( Size const seqpos )
 {
-	for (auto & it : frag_map_) {
+	for ( auto & it : frag_map_ ) {
 		it.second->delete_residue( seqpos );
 	}
 }
@@ -388,7 +388,7 @@ void
 FragLib::copy_fragments( FragLib const & src )
 {
 	Sizes const fragsizes( src.frag_sizes() );
-	for (unsigned long fragsize : fragsizes) {
+	for ( unsigned long fragsize : fragsizes ) {
 		library( fragsize ).copy_fragments( src.library( fragsize ) );
 	}
 }
@@ -396,7 +396,7 @@ FragLib::copy_fragments( FragLib const & src )
 void
 FragLib::shift( int const current2desired_offset )
 {
-	for (auto & it : frag_map_) {
+	for ( auto & it : frag_map_ ) {
 		it.second->shift( current2desired_offset );
 	}
 }
@@ -424,7 +424,7 @@ utility::vector1< Size >
 FragLib::frag_sizes() const
 {
 	utility::vector1< Size > sizes;
-	for (const auto & it : frag_map_) {
+	 for ( auto const & it : frag_map_ ) {
 		sizes.push_back( it.first );
 	}
 	return sizes;
@@ -561,8 +561,8 @@ add_vall_fragments(
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
 
-	for (unsigned long frag_size : frag_sizes) {
-			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for ( unsigned long frag_size : frag_sizes ) {
+		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
@@ -609,8 +609,8 @@ add_vall_fragments(
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
 
-	for (unsigned long frag_size : frag_sizes) {
-			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for ( unsigned long frag_size : frag_sizes ) {
+		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
@@ -677,8 +677,8 @@ add_vall_cheating_fragments(
 	Size const nres( pose.total_residue() );
 	string const seq( pose.sequence() );
 
-	for (unsigned long frag_size : frag_sizes) {
-			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for ( unsigned long frag_size : frag_sizes ) {
+		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
@@ -765,8 +765,8 @@ fill_in_gaps(
 	}
 
 	Sizes const frag_sizes( frag_lib.frag_sizes() );
-	for (unsigned long frag_size : frag_sizes) {
-			TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
+	for ( unsigned long frag_size : frag_sizes ) {
+		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		for ( Size i = 1; i<= lib.size(); ++i ) {
 			if ( lib[i].size() > 0 ) continue; // skip windows with at least one fragment
 			bool allowed( true );
@@ -972,7 +972,7 @@ operator << ( std::ostream & out, FragLib const & lib )
 {
 	Sizes const fragsizes( lib.frag_sizes() );
 	out << "FragLib " << fragsizes.size() << '\n';
-	for (unsigned long fragsize : fragsizes) {
+	for ( unsigned long fragsize : fragsizes ) {
 		out << "frag_size " << fragsize << ' ' << lib.library( fragsize );
 	}
 	return out;

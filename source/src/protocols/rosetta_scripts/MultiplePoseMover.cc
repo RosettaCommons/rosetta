@@ -233,7 +233,7 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < 
 
 	// Make a new vector of PoseOP's for selected poses for easier handling
 	core::Size i = 1;
-	for (auto & pose : poses) {
+	for ( auto & pose : poses ) {
 		if ( selected_poses_by_selectors[i] ) {
 			selected_poses_for_processing.push_back(pose);
 		}

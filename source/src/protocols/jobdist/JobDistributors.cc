@@ -750,18 +750,18 @@ void PlainPdbJobDistributor::dump_scores(
 	out << "# All scores below are weighted scores, not raw scores.\n";
 	out << "#BEGIN_POSE_ENERGIES_TABLE " << tag << "\n";
 	out << "label";
-	for (auto & score_type : score_types) {
+	for ( auto & score_type : score_types ) {
 		out << " " << name_from_score_type(score_type);
 	}
 	out << " total\n";
 	out << "weights";
-	for (auto & score_type : score_types) {
+	for ( auto & score_type : score_types ) {
 		out << " " << weights[score_type];
 	}
 	out << " NA\n";
 	out << "pose";
 	core::Real pose_total = 0.0;
-	for (auto & score_type : score_types) {
+	for ( auto & score_type : score_types ) {
 		core::Real score = (weights[score_type] * pose.energies().total_energies()[ score_type ]);
 		out << " " << score;
 		pose_total += score;
@@ -770,7 +770,7 @@ void PlainPdbJobDistributor::dump_scores(
 	for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
 		core::Real rsd_total = 0.0;
 		out << pose.residue(j).name() << "_" << j;
-		for (auto & score_type : score_types) {
+		for ( auto & score_type : score_types ) {
 			core::Real score = (weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
 			out << " " << score;
 			rsd_total += score;

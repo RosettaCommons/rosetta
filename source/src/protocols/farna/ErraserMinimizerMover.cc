@@ -199,7 +199,7 @@ ErraserMinimizerMover::check_in_bonded_list(
 	core::id::AtomID const & atom_id1,
 	core::id::AtomID const & atom_id2
 ) {
-	for (auto & bond : bonded_atom_list_) {
+	for ( auto & bond : bonded_atom_list_ ) {
 		if ( atom_id1 == bond.first && atom_id2 == bond.second ) return true;
 		if ( atom_id2 == bond.first && atom_id1 == bond.second ) return true;
 	}
@@ -213,7 +213,7 @@ ErraserMinimizerMover::check_in_bond_angle_list(
 	core::id::AtomID const & side_one,
 	core::id::AtomID const & side_two
 ) {
-	for (auto & angle : bond_angle_list_) {
+	for ( auto & angle : bond_angle_list_ ) {
 		if ( central_atom != angle.first ) continue;
 
 		if ( side_one == angle.second.first && side_two == angle.second.second ) return true;
@@ -432,7 +432,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 			utility::vector1< AtomID > nbrs( pose.conformation().bonded_neighbor_all_res( j_atomid ) );
 
 			// Constrain all mobile bond lengths.
-			for (auto & nbr : nbrs) {
+			for ( auto & nbr : nbrs ) {
 				if ( nbr.rsd() > nres || nbr.rsd() < 1 ) continue;
 				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
 				Size const & k( nbr.atomno() );
@@ -454,7 +454,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 				Size const & k( nbr->atomno() ) ;
 
-				for (auto & ang_nbr : nbrs) {
+				for ( auto & ang_nbr : nbrs ) {
 					if ( ang_nbr.rsd() > nres || ang_nbr.rsd() < 1 ) continue;
 					chemical::ResidueType const & residue_type3( pose.residue_type( ang_nbr.rsd() ) );
 
@@ -471,7 +471,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 				utility::vector1< AtomID > nbrs2( pose.conformation().bonded_neighbor_all_res( *nbr ) );
 
-				for (auto & nbr2 : nbrs2) {
+				for ( auto & nbr2 : nbrs2 ) {
 					if ( nbr2.rsd() > nres || nbr2.rsd() < 1 ) break;
 					chemical::ResidueType const & residue_type3( pose.residue_type( nbr2.rsd() ) );
 

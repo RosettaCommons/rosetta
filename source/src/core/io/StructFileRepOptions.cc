@@ -383,10 +383,10 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_write_all_connect_info( options[inout::write_all_connect_info]() );
 	set_show_all_fixes( options[ in::show_all_fixes ]() );
 	set_constraints_from_link_records( options[ in::constraints_from_link_records ]() );
-	
+
 	set_output_pose_energies_table(options[ OptionKeys::out::file::output_pose_energies_table ]()); //JD2 only?
- 	set_output_pose_cache_data(options[ OptionKeys::out::file::output_pose_cache_data ]()); //JD2 only?
- 	set_fold_tree_io( options[ OptionKeys::out::file::output_pose_fold_tree]());
+	set_output_pose_cache_data(options[ OptionKeys::out::file::output_pose_cache_data ]()); //JD2 only?
+	set_fold_tree_io( options[ OptionKeys::out::file::output_pose_fold_tree]());
 }
 
 

@@ -70,7 +70,7 @@ public:
 	AsyncMPITemperingBase& operator=( AsyncMPITemperingBase const& );
 	~AsyncMPITemperingBase() override;
 
-	
+
 	void apply( core::pose::Pose& ) override {};
 
 	/// @brief callback executed before any Monte Carlo trials
@@ -81,7 +81,7 @@ public:
 		core::Size cycle   //non-zero if trajectory is restarted
 	) override;
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -92,14 +92,14 @@ public:
 	) override;
 
 	/// @brief callback executed after all Monte Carlo trials
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
 
-	
+
 	bool finished_simulation( core::Size trials, core::Size ntrials) override;
 
 protected:
@@ -112,7 +112,7 @@ protected:
 
 #endif
 
-	
+
 	bool time_for_temp_move() override;
 
 	int rank() {

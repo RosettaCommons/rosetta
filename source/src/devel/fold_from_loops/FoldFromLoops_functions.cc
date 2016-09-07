@@ -130,8 +130,8 @@ std::vector<Size> define_cut_points (
 
 	// defining cut points both out of the loop ranges
 	std::vector<Size> cut_points;
-	for (int cutpoint : loop_dividers) {
-			char ss = nat_pose.secstruct( cutpoint );
+	for ( int cutpoint : loop_dividers ) {
+		char ss = nat_pose.secstruct( cutpoint );
 
 		if ( ss == 'L' ) {
 			cut_points.push_back(cutpoint);
@@ -217,7 +217,7 @@ void fold_tree_cutpoints_generator(
 bool is_cut( std::vector<Size> & cut_points,
 	Size & residue){
 	bool res_cut = false;
-	for (unsigned long & cut_point : cut_points) {
+	for ( unsigned long & cut_point : cut_points ) {
 		if ( cut_point == residue ) { res_cut = true; }
 
 	}
@@ -1043,7 +1043,7 @@ void new_pose_generator(
 void refresh_cutpoints( core::pose::Pose & pose,
 	std::vector<Size> & cut_points){
 
-	for (unsigned long & cut_point : cut_points) {
+	for ( unsigned long & cut_point : cut_points ) {
 
 		TR << "Refresh cut_point "<< cut_point <<std::endl;
 		Size residue = cut_point;

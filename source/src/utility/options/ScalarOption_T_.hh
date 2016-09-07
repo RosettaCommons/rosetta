@@ -118,14 +118,14 @@ public: // Creation
 
 
 	/// @brief Clone this
-	
+
 	ScalarOption_T_ *
 	clone() const override = 0;
 
 
 	/// @brief Destructor
 	inline
-	
+
 	~ScalarOption_T_() override
 	= default;
 
@@ -158,7 +158,7 @@ protected: // Assignment
 public: // copying
 
 	/// @brief Copy operation
-	
+
 	void copy_from( Option const & other ) override {
 		debug_assert( (dynamic_cast< ScalarOption_T_< K, T > const * > ( &other )) );
 
@@ -734,7 +734,7 @@ public: // Properties
 	inline bool has_any_of_characters(std::string const & str_, std::string const & s ) const
 	{
 		size_type const s_len( s.length() );
-		for (char i : str_) {
+		for ( char i : str_ ) {
 			for ( size_type j = 0; j < s_len; ++j ) {
 				if ( i == s[ j ] ) return true;
 			}

@@ -188,7 +188,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	movemap->set_bb( true );
 	movemap->set_jump( true );
 
-	for (const auto & init_dof : init_dofs) {
+	 for ( auto const & init_dof : init_dofs ) {
 		if ( init_dof->owner().lock().get() == this ) {
 			init_dof->toggle( *movemap, true );
 		}

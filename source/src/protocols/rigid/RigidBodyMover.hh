@@ -90,19 +90,19 @@ public:
 	std::string get_name() const override;
 	void show(std::ostream & output=std::cout) const override;
 
-	
+
 	bool
 	preserve_detailed_balance() const override { return true; }
 
 	/// @brief set whether detailed balance is preserved (i.e. no branch angle optimization during moves)
-	
+
 	void
 	set_preserve_detailed_balance(
 		bool
 	) override {};
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	
+
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges( core::pose::Pose & pose ) override;
 

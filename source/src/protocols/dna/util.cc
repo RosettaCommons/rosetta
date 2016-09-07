@@ -487,7 +487,7 @@ std::ostream & operator << ( std::ostream & os, ResTypeSequence const & seq )
 
 std::string seq_to_str( ResTypeSequence const & seq ) {
 	std::string str;
-	for (const auto & pos : seq) {
+	 for ( auto const & pos : seq ) {
 		str += pos.second->name1();
 	}
 	return str;
@@ -495,7 +495,7 @@ std::string seq_to_str( ResTypeSequence const & seq ) {
 
 std::ostream & operator << ( std::ostream & os, ResTypeSequences const & seqs )
 {
-	for (const auto & seq : seqs) {
+	 for ( auto const & seq : seqs ) {
 		os << seq << '\n';
 	}
 	return os;
@@ -539,7 +539,7 @@ void print_sequences_pdb_nums(
 	std::ostream & os
 )
 {
-	for (const auto & seq : seqs) {
+	 for ( auto const & seq : seqs ) {
 		print_sequence_pdb_nums( seq, pose, os );
 	}
 }
@@ -717,7 +717,7 @@ load_dna_design_defs_from_strings(
 	Strings const & str_defs
 )
 {
-	for (const auto & str_def : str_defs) {
+	 for ( auto const & str_def : str_defs ) {
 		defs.push_back( DnaDesignDefOP( new DnaDesignDef( str_def ) ) );
 	}
 }

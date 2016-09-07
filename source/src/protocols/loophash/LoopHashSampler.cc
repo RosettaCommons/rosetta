@@ -448,7 +448,7 @@ LoopHashSampler::build_structures(
 
 		<< std::endl;
 
-	for (auto & lib_struct : lib_structs) {
+	for ( auto & lib_struct : lib_structs ) {
 		TR.Debug << "Samples: " << lib_struct->get_energy("censcore") << std::endl;
 	}
 

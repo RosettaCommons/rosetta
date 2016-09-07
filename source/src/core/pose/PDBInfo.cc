@@ -374,11 +374,11 @@ PDBInfo::resize_atom_records(
 )
 {
 	if ( zero ) {
-		for (auto & i : residue_rec_) {
+		for ( auto & i : residue_rec_ ) {
 			i.atomRec = AtomRecords( n );
 		}
 	} else {
-		for (auto & i : residue_rec_) {
+		for ( auto & i : residue_rec_ ) {
 			i.atomRec.resize( n );
 		}
 	}
@@ -417,7 +417,7 @@ PDBInfo::tighten_memory()
 	}
 
 	// tighten each of the atom vectors
-	for (auto & i : residue_rec_) {
+	for ( auto & i : residue_rec_ ) {
 		if ( i.atomRec.capacity() > i.atomRec.size() ) {
 			AtomRecords( i.atomRec ).swap( i.atomRec );
 		}

@@ -251,7 +251,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 
 
 	//Add 5 claimers for each FragmentContainer in <input_fragments>
-	for (auto & input_fragment : input_fragments) {
+	for ( auto & input_fragment : input_fragments ) {
 
 		if ( input_fragment.label() == "" ) {
 			input_fragment.set_label( "DEFAULT" );

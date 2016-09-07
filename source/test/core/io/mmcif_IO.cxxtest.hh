@@ -145,7 +145,7 @@ public:
 
 		//TR << cif_out << std::endl;
 		TR.flush();
-		
+
 		// Check pose dump cif. Cif writer throws exceptions during run I beleive.
 		pdb_pose->dump_cif( "pose_dump_cif.cif" );
 		pdb_pose->dump_file( "pose_dump_file.cif" );

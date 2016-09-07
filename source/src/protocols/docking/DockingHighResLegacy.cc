@@ -628,13 +628,13 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	// set up protocol
 	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for (auto & it : trans_away_vec) {
+	for ( auto & it : trans_away_vec ) {
 		docking_highres_protocol_mover_->add_mover( it );
 	}
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );
 	if ( rt_min() ) docking_highres_protocol_mover_->add_mover( rtmin_mover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for (auto & it : trans_back_vec) {
+	for ( auto & it : trans_back_vec ) {
 		docking_highres_protocol_mover_->add_mover( it );
 	}
 }

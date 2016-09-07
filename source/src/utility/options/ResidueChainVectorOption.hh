@@ -79,14 +79,14 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~ResidueChainVectorOption() override
 	= default;
 
 
 public: // copying
 
-	
+
 	void copy_from( Option const & other ) override;
 
 public: // Properties

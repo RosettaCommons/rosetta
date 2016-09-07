@@ -122,14 +122,14 @@ ScoreCutoffFilter::get_score( core::pose::Pose const & pose ) const {
 
 	if ( positions_.size() == 0 ) { //means we're interested in pose totals
 
-		for (auto score_type : score_types_) {
+		for ( auto score_type : score_types_ ) {
 
 			emap[ score_type ] = pose.energies().total_energies()[ score_type ];
 		}
 	} else {
-		for (unsigned long position : positions_) {
+		for ( unsigned long position : positions_ ) {
 
-			for (auto score_type : score_types_) {
+			for ( auto score_type : score_types_ ) {
 				emap[ score_type ] += pose.energies().residue_total_energies( position )[ score_type ];
 			}
 		}
@@ -162,7 +162,7 @@ ScoreCutoffFilter::report( std::ostream & ostr, core::pose::Pose const & pose ) 
 	if ( report_residue_pair_energies_ ) output_residue_pair_energies( ostr, pose );
 	else {
 		using namespace core::scoring;
-		for (auto score_type : score_types_) {
+		for ( auto score_type : score_types_ ) {
 			EnergyMap emap;
 			emap[ score_type ] = pose.energies().total_energies()[ score_type ];
 			ostr << " Scoretype: " << score_type << " score: " << emap.sum() << ", cutoff: " << cutoff_ << std::endl;

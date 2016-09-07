@@ -90,7 +90,7 @@ protected:
 protected:
 	//////////////////////////////////////protected mmCIF output/////////////////////////////////////
 	/// @brief This is the function actually different between mmCIF and PDB output, and unshared by the wwPDB parent class.  Here it causes a cif file to be written.  Pure virtual in the base class.  filename is an optional label for the score data table, not an actual control.
-	
+
 	void dump_pose(
 		JobCOP job,
 		core::pose::Pose const & pose,

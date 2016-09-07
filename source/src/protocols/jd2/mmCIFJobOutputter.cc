@@ -88,15 +88,15 @@ void protocols::jd2::mmCIFJobOutputter::dump_pose(
 
 	//cif_extra_data_separate_file says, DO print the data, but NOT in the mmCIF
 	bool const cif_extra_data_separate_file( basic::options::option[ basic::options::OptionKeys::out::file::cif_extra_data_separate_file ] );
-	
+
 	core::io::StructFileRepOptionsOP options =  core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
-	
+
 	//Turn off extra output if we put it in a separate file.
-	if (cif_extra_data_separate_file){
+	if ( cif_extra_data_separate_file ) {
 		options->set_output_pose_energies_table( false );
 		options->set_output_pose_cache_data( false );
 	}
-		
+
 	//This actually writes the cif, of course
 	core::io::StructFileRepOP sfr = core::io::mmcif::dump_cif(
 		pose,

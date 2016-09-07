@@ -53,10 +53,10 @@ public:
 		core::Real rotation_magnitude = 3.0,
 		core::Real translation_magnitude = 8.0 );
 
-	
+
 	~UniformRigidBodyCM() override = default;
 
-	
+
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;
 
@@ -77,10 +77,10 @@ public:
 
 	void name( std::string const& name ) { name_ = name; }
 
-	
+
 	moves::MoverOP fresh_instance() const override;
 
-	
+
 	moves::MoverOP clone() const override;
 
 protected:

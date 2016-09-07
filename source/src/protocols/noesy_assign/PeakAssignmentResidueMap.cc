@@ -94,7 +94,7 @@ void PeakAssignmentResidueMap::add( PeakAssignmentOP const& assignment ) {
 }
 
 void PeakAssignmentResidueMap::add_all_atoms( ResonanceList const& rslist ) {
-	for (const auto & it : rslist) {
+	 for ( auto const & it : rslist ) {
 		Size res1( it.second->resid() );
 		while ( atoms_.size() < res1 ) {
 			atoms_.push_back( AtomList() );
@@ -163,7 +163,7 @@ bool PeakAssignmentResidueMap::has( core::Size res1, core::Size res2 ) {
 
 void PeakAssignmentResidueMap::add( CrossPeakList const& cpl ) {
 #ifndef WIN32
-	for (const auto & it : cpl.peaks()) {
+	 for ( auto const & it : cpl.peaks() ) {
 		for ( auto ait = it->assignments().begin(); ait != it->assignments().end(); ++ait ) {
 			add( *ait );
 		}
@@ -209,9 +209,9 @@ tr.Debug << "remove "
 */
 void PeakAssignmentResidueMap::check_for_symmetric_peaks( CrossPeakList& cpl, bool accumulate_symmetry ) {
 #ifndef WIN32
-	for (const auto & it : cpl.peaks()) {
+	 for ( auto const & it : cpl.peaks() ) {
 		CrossPeak::PeakAssignments const& assignments( it->assignments() );
-		for (const auto & assignment : assignments) {
+		 for ( auto const & assignment : assignments ) {
 			PeakAssignment& current( *assignment );
 			// tr.Debug << "sym-check: current " << current << " "
 			//        << current.crosspeak().peak_id() << " " << current.crosspeak().filename() << std::endl;
@@ -221,7 +221,7 @@ void PeakAssignmentResidueMap::check_for_symmetric_peaks( CrossPeakList& cpl, bo
 			Real found( 0 );
 			PeakAssignments symmetric_candidates_inv( _assignments( res1, res2 ) );
 			if ( symmetric_candidates_inv.size() ) { //BOGUS_ASSIGNMENTS would be empty
-				for (auto & sym_it : symmetric_candidates_inv) {
+				for ( auto & sym_it : symmetric_candidates_inv ) {
 					//  tr.Debug << "sym-check: other " << **sym_it;
 					if ( sym_it->is_symmetric_partner_of( current ) ) {
 						//       tr.Debug << " MATCH 1 " << (*sym_it)->crosspeak().peak_id() << " " << (*sym_it)->crosspeak().filename() << std::endl;
@@ -237,7 +237,7 @@ void PeakAssignmentResidueMap::check_for_symmetric_peaks( CrossPeakList& cpl, bo
 			}
 			PeakAssignments symmetric_candidates( _assignments( res2, res1 ) );
 			if ( symmetric_candidates.size() ) { //BOGUS_ASSIGNMENTS would be empty
-				for (auto & symmetric_candidate : symmetric_candidates) {
+				for ( auto & symmetric_candidate : symmetric_candidates ) {
 					//      tr.Debug << "sym-check: other " << **sym_it;
 					if ( symmetric_candidate->is_symmetric_partner_of( current ) ) {
 						//       tr.Debug << " MATCH 2 " << (*sym_it)->crosspeak().peak_id() << " " << (*sym_it)->crosspeak().filename() << std::endl;
@@ -261,7 +261,7 @@ typedef PeakAssignmentResidueMap::PeakAssignments PeakAssignments;
 void retrieve_assignment( PeakAssignments const& list, Size resonance_id1, Size resonance_id2, PeakAssignments& intra_res_NOEs ) {
 #ifndef WIN32
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_NETWORK_RETRIEVE_ASSIGN );
-	for (const auto & it : list) {
+	 for ( auto const & it : list ) {
 		if ( ( it->resonance_id( 1 ) == resonance_id1 && it->resonance_id( 2 ) == resonance_id2 )
 				&& ( it->resonance_id( 1 ) == resonance_id2 && it->resonance_id( 2 ) == resonance_id1 ) ) {
 			intra_res_NOEs.push_back( it );
@@ -273,7 +273,7 @@ void retrieve_assignment( PeakAssignments const& list, Size resonance_id1, Size 
 Real sum_IntraNOE( PeakAssignments const& list, id::NamedAtomID const& atom1, id::NamedAtomID const& atom2 ) {
 	Real intra_sumV( 0.0 );
 #ifndef WIN32
-	for (const auto & it : list) {
+	 for ( auto const & it : list ) {
 		if ( ( it->atom( 1 ) == atom1 && it->atom( 2 ) == atom2 )
 				&& ( it->atom( 1 ) == atom2 && it->atom( 2 ) == atom1 ) ) {
 			intra_sumV+=it->normalized_peak_volume();
@@ -304,7 +304,7 @@ void PeakAssignmentResidueMap::fill_covalent_gammas( Size alpha_resid, std::map<
 	for ( Size resid = (alpha_resid > 1 ? alpha_resid - 1 : alpha_resid);
 			resid <= ( alpha_resid < atoms_.size() ? alpha_resid + 1 : atoms_.size() ); ++resid ) {
 		//  tr.Trace << "fill_covalent_gammas: probe residue: " << resid << std::endl;
-		for (const auto & it : atoms_[ resid ]) {
+		 for ( auto const & it : atoms_[ resid ] ) {
 			//   tr.Trace << "fill_covalent_gammas: check atom: " << *it << std::endl;
 			//to get integration test back: take only resonance ides within -30+30 of alpha
 			//   Size new_reso_id( resonances[ *it ].label() );
@@ -385,7 +385,7 @@ Real PeakAssignmentResidueMap::compute_Nk(
 
 Real sum_peak_volumes( PeakAssignments const& list, core::Size i, core::Size j ) {
 	Real intra_sumV( 0.0 );
-	for (const auto & it : list) {
+	 for ( auto const & it : list ) {
 		if ( it->resonance_id( 1 ) == i && it->resonance_id( 2 ) == j ) {
 			intra_sumV+=it->normalized_peak_volume();
 		}
@@ -406,7 +406,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 	//   anchor_weights
 	//}
 	for ( ResidueList::const_iterator it = residues_.begin(); it != residues_.end(); ++it ) {
-		for (const auto & mit : *it) {
+		 for ( auto const & mit : *it ) {
 			//list of assignments between a residue i (given by it) and another residue (given by mit)
 			PeakAssignments const& assignments_ij( mit.second );
 
@@ -450,7 +450,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 
 	//now reap the benefits...
 	for ( ResidueList::const_iterator it = residues_.begin(); it != residues_.end(); ++it ) {
-		for (const auto & mit : *it) {
+		 for ( auto const & mit : *it ) {
 			//list of assignments between a residue i (given by it) and another residue (given by mit)
 			PeakAssignments const& assignments_ij( mit.second );
 
@@ -471,7 +471,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 			for ( Size i = ( resj > 1 ? resj -1 : resj ); i<= ( resj < atoms_.size() ? resj + 1 : resj ); ++i ) {
 				neighbor_residues.insert( i );
 			}
-			for (unsigned long neighbor_residue : neighbor_residues) {
+			for ( unsigned long neighbor_residue : neighbor_residues ) {
 				try {
 					ResonanceList::Resonances const& retrieved( first_assignment.resonances().resonances_at_residue( neighbor_residue ) );
 					//     tr.Debug << resi << " " << resj << " resonance k @ " << *sit << std::endl;
@@ -485,7 +485,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 
 			core::Real sumNK_resij( 0.0 );
 			//now compute network anchoring for each assignment between residue-i and residue-j
-			for (const auto & ait : assignments_ij) {
+			 for ( auto const & ait : assignments_ij ) {
 				core::Size const i( ait->resonance_id( 1 ) );
 				core::Size const j( ait->resonance_id( 2 ) );
 
@@ -542,13 +542,13 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 		} //resj
 	} //resi
 	for ( ResidueList::const_iterator it = residues_.begin(); it != residues_.end(); ++it ) {
-		for (const auto & mit : *it) {
+		 for ( auto const & mit : *it ) {
 			PeakAssignments const& assignments_ij( mit.second );
 			//now cycle through all assignments between resi and resj
 			PeakAssignment const& first_assignment( **assignments_ij.begin() );
 			Size const resi( first_assignment.resid(  1 ) );
 			Size const resj( first_assignment.resid(  2 ) );
-			for (const auto & ait : assignments_ij) {
+			 for ( auto const & ait : assignments_ij ) {
 				ait->set_network_anchoring_per_residue( residue_sum( resi, resj ) );
 			}
 		}
@@ -574,7 +574,7 @@ void PeakAssignmentResidueMap::network_analysis( Size nr_assignments ) {
 	// this is more convenient because we need to retrieve i-i, i-j, and j-j information and can share this between
 	// all assignments that have the same pair i-j
 	for ( ResidueList::const_iterator it = residues_.begin(); it != residues_.end(); ++it ) {
-		for (const auto & mit : *it) {
+		 for ( auto const & mit : *it ) {
 			PeakAssignments const& assignments_ij( mit.second );
 			runtime_assert( assignments_ij.size() > 0 ); // should not be in list if empty
 
@@ -642,7 +642,7 @@ void PeakAssignmentResidueMap::network_analysis( Size nr_assignments ) {
 			assignments( resj+1, resj, close_to_j_assignments );
 
 			//now cycle through all assignments between resi and resj
-			for (const auto & ait : assignments_ij) {
+			 for ( auto const & ait : assignments_ij ) {
 				//ait - is now the alpha, beta assignment whose Nk we want to get --- referring to guntert paper.
 
 				//    PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
@@ -864,11 +864,11 @@ void PeakAssignmentResidueMap::network_analysis( Size nr_assignments ) {
 	ct_buf = 1;
 	ct_respair_buf = 1;
 	for ( ResidueList::const_iterator it = residues_.begin(); it != residues_.end(); ++it ) {
-		for (const auto & mit : *it) {
+		 for ( auto const & mit : *it ) {
 			PeakAssignments const& assignments_ij( mit.second );
 
 			//now cycle through all assignments between resi and resj
-			for (const auto & ait : assignments_ij) {
+			 for ( auto const & ait : assignments_ij ) {
 				ait->set_network_anchoring( Nk_buf[ ct_buf++ ] );
 				ait->set_network_anchoring_per_residue( reswise_Nk_buf[ ct_respair_buf ] );
 			}

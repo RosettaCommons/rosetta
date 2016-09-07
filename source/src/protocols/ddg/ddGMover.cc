@@ -221,7 +221,7 @@ double
 ddGMover::sum(ddGs &scores_to_sum)
 {
 	double sum=0;
-	for (double i : scores_to_sum) {
+	for ( double i : scores_to_sum ) {
 		sum+=i;
 	}
 	return sum;
@@ -263,7 +263,7 @@ ddGMover::store_energies(
 	int num_score_components = 0;
 	using core::scoring::EnergyMap;
 	using core::scoring::ScoreType;
-	for (double it : s.weights()) {
+	for ( double it : s.weights() ) {
 		if ( it != 0.0 ) {
 			num_score_components++;
 		}

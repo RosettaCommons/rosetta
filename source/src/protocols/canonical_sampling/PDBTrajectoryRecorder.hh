@@ -49,19 +49,19 @@ private:
 	operator=( PDBTrajectoryRecorder const & );
 
 public:
-	
+
 	protocols::moves::MoverOP
 	clone() const override;
 
-	
+
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	
+
 	std::string
 	get_name() const override;
 
-	
+
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -76,7 +76,7 @@ public:
 		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = nullptr
 	) override;
 
-	
+
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,

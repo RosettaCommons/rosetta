@@ -103,7 +103,7 @@ RotamerizeMover::apply( Pose & pose )
 	// Now loop through positions and find the best geometric fit, taking into account
 	// silly symmetries due to goofy renaming of atoms
 
-	for (const auto & itr : *rotamer_sets_) {
+	 for ( auto const & itr : *rotamer_sets_ ) {
 
 		Size this_resid( itr->resid() );
 

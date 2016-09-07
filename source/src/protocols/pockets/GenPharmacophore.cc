@@ -168,9 +168,9 @@ core::Real SmallMol::calRMSD(SmallMol &mol1, SmallMol &mol2) {
 	vector< vector<core::Real> > coord2 = mol2.coordinates;
 	core::Real sumRMSD = 0.0;
 
-	for (auto & i : coord1) {
+	for ( auto & i : coord1 ) {
 		core::Real minDist = 999999999.0;
-		for (auto & j : coord2) {
+		for ( auto & j : coord2 ) {
 			core::Real currentDist = calDist(i, j);
 			if ( currentDist < minDist ) {
 				minDist = currentDist;
@@ -184,8 +184,8 @@ core::Real SmallMol::calRMSD(SmallMol &mol1, SmallMol &mol2) {
 
 void SmallMol::printCoordinates() const {
 	cout << molName << endl;
-	for (auto currentAtom : coordinates) {
-			for (double k : currentAtom) {
+	for ( auto currentAtom : coordinates ) {
+		for ( double k : currentAtom ) {
 			cout << k << "\t";
 		}
 		cout << endl;
@@ -217,8 +217,8 @@ core::Real SmallMol::cal_min_dist(SmallMol *other) {
 	vector< vector<core::Real> > const &coord2 = other->get_coordinates();
 	core::Real min_dist = 9999999999.9;
 
-	for (const auto & i : coord1) {
-		for (const auto & j : coord2) {
+	 for ( auto const & i : coord1 ) {
+		 for ( auto const & j : coord2 ) {
 			core::Real currentDist = calDist(i, j);
 			if ( currentDist < min_dist ) {
 				min_dist = currentDist;
@@ -408,7 +408,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open("NPHR.pdb", std::ios::out);
 
-	for (auto & aa : acp_coord_list) {
+	for ( auto & aa : acp_coord_list ) {
 		outPDB_stream
 			<<std::setw(6)<<"ATOM  "
 			<<std::setw(5)<<" 1  "
@@ -421,7 +421,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 			<<"    "
 			<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.z()<<std::endl;
 	}
-	for (auto & bb : dnr_coord_list) {
+	for ( auto & bb : dnr_coord_list ) {
 		outPDB_stream
 			<<std::setw(6)<<"ATOM  "
 			<<std::setw(5)<<" 1  "

@@ -55,7 +55,7 @@ public:
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
 
-	
+
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,

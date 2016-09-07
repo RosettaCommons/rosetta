@@ -91,7 +91,7 @@ protected:
 
 public:
 
-	
+
 	void
 	clear() override;
 
@@ -163,122 +163,122 @@ private:
 
 public: // options access
 
-	
+
 	bool
 	get_option(
 		utility::options::BooleanOptionKey key ) const override;
 
-	
+
 	utility::vector1< bool > const &
 	get_option(
 		utility::options::BooleanVectorOptionKey key ) const override;
 
-	
+
 	utility::file::FileName const &
 	get_option(
 		utility::options::FileOptionKey key ) const override;
 
-	
+
 	utility::vector1< utility::file::FileName > const &
 	get_option(
 		utility::options::FileVectorOptionKey key ) const override;
 
-	
+
 	int
 	get_option(
 		utility::options::IntegerOptionKey key ) const override;
 
-	
+
 	utility::vector1< int > const &
 	get_option(
 		utility::options::IntegerVectorOptionKey key ) const override;
 
-	
+
 	utility::file::PathName const &
 	get_option(
 		utility::options::PathOptionKey key ) const override;
 
-	
+
 	utility::vector1< utility::file::PathName > const &
 	get_option(
 		utility::options::PathVectorOptionKey key ) const override;
 
-	
+
 	platform::Real
 	get_option(
 		utility::options::RealOptionKey key ) const override;
 
-	
+
 	utility::vector1< platform::Real > const &
 	get_option(
 		utility::options::RealVectorOptionKey key ) const override;
 
-	
+
 	std::string const &
 	get_option(
 		utility::options::StringOptionKey key ) const override;
 
-	
+
 	utility::vector1< std::string > const &
 	get_option(
 		utility::options::StringVectorOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::BooleanOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::BooleanVectorOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::FileOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::FileVectorOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::IntegerOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::IntegerVectorOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::PathOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::PathVectorOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::RealOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::RealVectorOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::StringOptionKey key ) const override;
 
-	
+
 	bool
 	has_option(
 		utility::options::StringVectorOptionKey key ) const override;

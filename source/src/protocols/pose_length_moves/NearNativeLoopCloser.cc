@@ -400,7 +400,7 @@ void PossibleLoop::output_fragment_debug(std::vector< numeric::xyzVector<numeric
 	using namespace ObjexxFCL::format;
 	utility::io::ozstream out(filename, std::ios_base::app);
 	Size resid = 1;
-	for (auto & coordinate : coordinates) {
+	for ( auto & coordinate : coordinates ) {
 		out << "ATOM  " << I(5,resid) << "  CA  " <<
 			"GLY" << ' ' << 'A' << I(4,resid ) << "    " <<
 			F(8,3,coordinate.x()) <<
@@ -507,7 +507,7 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size base5Abego_index, Size
 
 		//5. Generate removed_com_vectors using the cooridinates_stub_com called coordinates_removed_stub_com
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates_removed_stub_com;
-		for (auto & coordinate : coordinates) {
+		for ( auto & coordinate : coordinates ) {
 			numeric::xyzVector<numeric::Real> tmp_coord;
 			tmp_coord.x()=coordinate.x()-coordinates_stub_com[0];
 			tmp_coord.y()=coordinate.y()-coordinates_stub_com[1];
@@ -518,7 +518,7 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size base5Abego_index, Size
 			//coordinates_removed_stub_com[ii].z()=coordinates[ii].z()-coordinates_stub_com[2];
 		}
 		std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_removed_stub_com;
-		for (auto & fragCoordinate : fragCoordinates) {
+		for ( auto & fragCoordinate : fragCoordinates ) {
 			numeric::xyzVector<numeric::Real> tmp_coord;
 			tmp_coord.x() = fragCoordinate.x()-fragCoordinates_stub_com[0];
 			tmp_coord.y() = fragCoordinate.y()-fragCoordinates_stub_com[1];

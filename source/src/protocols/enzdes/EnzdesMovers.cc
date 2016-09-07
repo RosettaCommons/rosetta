@@ -101,7 +101,7 @@ EnzdesConstraintReporter::find_constraints_to_ligand(
 		ConstraintsOP constraints;
 		constraints=rpc_start->second;
 
-		for (const auto & iter : *constraints) {
+		 for ( auto const & iter : *constraints ) {
 			mv_tr.Info <<iter->type() << std::endl;
 			if ( iter->type() == "MultiConstraint" || iter->type() == "AmbiguousConstraint" ) {
 				add_constrained_atoms_from_multiconstraint( utility::pointer::dynamic_pointer_cast <MultiConstraint const > (iter) );
@@ -271,7 +271,7 @@ PredesignPerturbMover::find_geometric_center_for_constrained_lig_atoms(
 	assert( constraint_reporter_.constrained_lig_atoms().size() != 0 );
 
 	core::Vector geometric_center( 0.0 );
-	for (unsigned long it : constraint_reporter_.constrained_lig_atoms()) {
+	for ( unsigned long it : constraint_reporter_.constrained_lig_atoms() ) {
 		geometric_center+=pose.residue( constraint_reporter_.ligand_resno() ).xyz(it);
 	}
 

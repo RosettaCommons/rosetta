@@ -78,7 +78,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	
+
 	~RealVectorOption() override
 	= default;
 
@@ -131,7 +131,7 @@ protected: // Methods
 
 
 	/// @brief Setup stream state for the Option value type
-	
+
 	void
 	stream_setup( std::ostream & stream ) const override
 	{

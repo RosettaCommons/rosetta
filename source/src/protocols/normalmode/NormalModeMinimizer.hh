@@ -58,7 +58,7 @@ public:
 
 	~NormalModeMinimizer() override;
 
-	
+
 	void
 	apply( pose::Pose & pose ) override;
 
@@ -71,7 +71,7 @@ public:
 		modes_using_ = modes_using_in;
 	}
 
-	
+
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
