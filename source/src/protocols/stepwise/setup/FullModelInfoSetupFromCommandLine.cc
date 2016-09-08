@@ -257,7 +257,7 @@ get_cutpoints_from_numbering( vector1< core::sequence::SequenceCOP > const & fas
 	Size ntot( 0 );
 	// explicit chain boundaries
 	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-		std::string sequence = fasta_sequences[ n ]->sequence();
+		std::string const sequence = core::pose::rna::remove_bracketed( fasta_sequences[ n ]->sequence() );
 		vector1< Size > const & spacer_pos = fasta_sequences[ n ]->spacer_positions();
 		for ( Size q = 1; q <= spacer_pos.size(); q++ ) cutpoints.push_back( ntot + spacer_pos[ q ] );
 		ntot += sequence.size();
@@ -341,17 +341,18 @@ get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > co
 		}
 		if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
 
-		if ( !found_info || resnum.size() != fasta_sequences[n]->sequence().size() /*happens with stray numbers*/ ) {
+		Size const clean_len = core::pose::rna::remove_bracketed( fasta_sequences[n]->sequence() ).size();
+		if ( !found_info || resnum.size() != clean_len ) { //fasta_sequences[n]->sequence().size() /*happens with stray numbers*/ ) {
 			resnum.clear();
-			for ( Size q = 1; q <= fasta_sequences[n]->sequence().size(); q++ ) {
+			for ( Size q = 1; q <= clean_len; ++q ) { //fasta_sequences[n]->sequence().size(); q++ ) {
 				resnum.push_back( ++count );
 				chains.push_back( ' ' ); // unknown chain
 			}
 		}
 		std::string const sequence = fasta_sequences[n]->sequence();
-		runtime_assert( sequence.size() == resnum.size() );
-		for ( Size q = 1; q <= sequence.size(); q++ ) conventional_chains.push_back( chains[ q ] );
-		for ( Size q = 1; q <= sequence.size(); q++ ) conventional_numbering.push_back( resnum[q] );
+		runtime_assert( clean_len == resnum.size() ); //sequence.size() == resnum.size() );
+		for ( Size q = 1; q <= clean_len /*sequence.size()*/; q++ ) conventional_chains.push_back( chains[ q ] );
+		for ( Size q = 1; q <= clean_len /*sequence.size()*/; q++ ) conventional_numbering.push_back( resnum[q] );
 
 		found_info_in_previous_sequence  = found_info;
 	}
@@ -463,7 +464,6 @@ get_sequence_information( std::string const & fasta_file,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
-
 	std::map< Size, std::string > non_standard_residue_map  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
 	if ( option[ magnesium::hydrate ]() ) setup_water_bank_for_magnesiums( non_standard_residue_map, fasta_sequences );
 	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
@@ -532,7 +532,9 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
 	// Figure out res_list and input_domain_map.
 	vector1< vector1< Size > > pose_res_lists;
-	vector1< Size > input_domain_map( desired_sequence.size(), 0 );
+	std::string const clean_desired_seq = core::pose::rna::remove_bracketed( desired_sequence ); 
+	Size const desired_nres = clean_desired_seq.size();
+	vector1< Size > input_domain_map( desired_nres, 0 );
 	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 		Pose & pose = *pose_pointers[n];
 		vector1< Size > res_list = full_model_parameters->conventional_to_full( make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
@@ -558,7 +560,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		*full_model_parameters, pose_res_lists );
 
 	vector1< Size > const dock_domain_map = figure_out_dock_domain_map( cutpoint_open_in_full_model /* can be updated */,
-		pose_res_lists, working_res, sample_res, desired_sequence.size() );
+		pose_res_lists, working_res, sample_res, desired_nres );
 
 	// some checks
 	check_working_res( working_res, input_domain_map, sample_res );
@@ -598,8 +600,8 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	if ( option[ basic::options::OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ] > 0.0 ) {
 		// placeholder -- testing if loops can be 'evaporated'.
 		vector1< Size > full_model_res_no_loops;
-		for ( Size n = 1; n <= desired_sequence.size(); n++ ) {
-			if ( desired_sequence[ n-1 ] != 'n' || input_domain_map[ n ] ) full_model_res_no_loops.push_back( n );
+		for ( Size n = 1; n <= desired_nres; ++n ) {
+			if ( clean_desired_seq[ n-1 ] != 'n' || input_domain_map[ n ] ) full_model_res_no_loops.push_back( n );
 		}
 		full_model_parameters = full_model_parameters->slice( full_model_res_no_loops );
 		for ( Size n = 1; n <= pose_res_lists.size(); n++ ) {
@@ -623,8 +625,6 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file (residue numbering), constraints, disulfides
 		modeler::fix_up_residue_type_variants( pose ); // for sample sugars...
 	}
-
-
 }
 
 

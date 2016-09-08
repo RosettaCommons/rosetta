@@ -87,7 +87,7 @@ StepWiseWorkingParametersSetup::StepWiseWorkingParametersSetup( utility::vector1
 	moving_res_( moving_res_list[1] ),
 	moving_res_list_( moving_res_list ),
 	cutpoint_open_( cutpoint_open ),
-	is_cutpoint_( full_sequence.size(), false ),
+	is_cutpoint_( core::pose::rna::remove_bracketed( full_sequence ).size(), false ),
 	working_parameters_( stepwise::modeler::working_parameters::StepWiseWorkingParametersOP( new stepwise::modeler::working_parameters::StepWiseWorkingParameters ) ),
 	filter_user_alignment_res_( true ), //Generally want to keep this true!
 	allow_chain_boundary_jump_partner_right_at_fixed_BP_( false ), //hacky, just to get the Square RNA working..Nov 6, 2010
@@ -351,7 +351,7 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 	// There are up to two input poses. Need to merge their input residues and figure out chain boundaries.
 	std::string const & full_sequence = working_parameters_->full_sequence();
 
-	Size const nres( full_sequence.size() );
+	Size const nres( core::pose::rna::remove_bracketed( full_sequence ).size() );
 	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -374,7 +374,7 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 
 	full_to_sub.clear();
 	Size count( 0 );
-	for ( Size i = 1; i <= full_sequence.size(); i++ ) {
+	for ( Size i = 1; i <= nres; ++i ) { 
 		if ( is_working_res[ i ] ) {
 			count++;
 			full_to_sub[ i ] = count;
@@ -410,7 +410,7 @@ StepWiseWorkingParametersSetup::figure_out_is_residue_prepend( Size const seq_nu
 	using namespace ObjexxFCL;
 
 	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
-	Size const total_residues( working_parameters_->full_sequence().size() );
+	Size const total_residues( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
 	core::kinematics::FoldTree const & fold_tree = working_parameters_->fold_tree();
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< core::Size > working_fixed_res( working_parameters_->working_fixed_res() );
@@ -618,7 +618,7 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 	stepwise::modeler::rna::output_title_text( "Enter StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed", TR.Debug );
 	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
 	utility::vector1< Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
-	Size const nres( working_parameters_->full_sequence().size() );
+	Size const nres( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
 
 	utility::vector1< Size > new_cutpoint_closed_list = cutpoint_closed_list;
 	utility::vector1< core::Size > non_fixed_res;
@@ -770,7 +770,7 @@ StepWiseWorkingParametersSetup::figure_out_chain_boundaries(){
 
 	stepwise::modeler::rna::output_title_text( "Enter StepWiseWorkingParametersSetup::figure_out_chain_boundaries", TR.Debug );
 
-	Size const nres( working_parameters_->full_sequence().size() );
+	Size const nres( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
 
 	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
 	utility::vector1< std::pair < core::Size, core::Size > > chain_boundaries;
@@ -1065,7 +1065,7 @@ StepWiseWorkingParametersSetup::figure_out_partition_definition(){
 	// there's already a fold_tree function to do this, but it partitions based on a JUMP.
 	//  So put in a fake jump between the moving_residue and the neighbor it is connected to.
 
-	Size const nres( working_parameters_->working_sequence().size() );
+	Size const nres( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() );
 
 	ObjexxFCL::FArray1D_bool partition_definition( nres, false );
 
@@ -1447,7 +1447,7 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 	Size const working_moving_res( working_parameters_->working_moving_res() ); //hard copy, since this is set later in the function
 	utility::vector1< core::Size > const working_moving_res_list( working_parameters_->working_moving_res_list() ); //hard copy, since this is set later in the function
 	core::kinematics::FoldTree const & fold_tree = working_parameters_->fold_tree();
-	Size const nres = working_parameters_->working_sequence().size();
+	Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
 	Size const fake_working_moving_suite = internal_params.fake_working_moving_suite;
 
 	bool is_prepend( true ), is_internal( false );
@@ -1612,7 +1612,7 @@ StepWiseWorkingParametersSetup::set_fixed_res( utility::vector1 < core::Size > c
 	working_parameters_->set_fixed_res( fixed_res_ );
 
 	utility::vector1< Size >  working_fixed_res = apply_full_to_sub_mapping( fixed_res_,  working_parameters_ );
-	if ( working_parameters_->add_virt_res_as_root() ) working_fixed_res.push_back( working_parameters_->sequence().size() + 1 );
+	if ( working_parameters_->add_virt_res_as_root() ) working_fixed_res.push_back( core::pose::rna::remove_bracketed( working_parameters_->sequence() ).size() + 1 );
 	working_parameters_->set_working_fixed_res( working_fixed_res );
 
 	stepwise::modeler::rna::output_title_text( "", TR.Debug );

@@ -869,7 +869,6 @@ StepWiseRNA_PoseSetup::update_fold_tree_at_virtual_sugars( pose::Pose & pose ){
 		setup_chain_break_jump_point( pose, virtual_sugar_res, reference_res );
 	}
 	TR.Debug << "AFTER VIRTUAL SUGAR UPDATE " << pose.fold_tree() << std::endl;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -988,15 +987,15 @@ StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 	utility::vector1< core::Size > const & cutpoint_open_list( working_parameters_->cutpoint_open_list() );
 	utility::vector1< core::Size > const & fixed_res( working_parameters_->fixed_res() );
 	std::string full_sequence = working_parameters_->full_sequence();
-
+	Size const clean_length = core::pose::rna::remove_bracketed( full_sequence ).size();
 	utility::vector1< Size > working_res;
-	for ( Size i = 1; i <= full_sequence.size(); i++ ) {
+	for ( Size i = 1; i <= clean_length; ++i ) {
 		if ( is_working_res[ i ] ) {
 			working_res.push_back( i );
 		}
 	}
 	if ( working_parameters_->add_virt_res_as_root() ) {
-		working_res.push_back( full_sequence.size() + 1  );
+		working_res.push_back( clean_length + 1  );
 		full_sequence += 'X';
 	}
 

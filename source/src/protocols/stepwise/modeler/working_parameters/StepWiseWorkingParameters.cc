@@ -15,6 +15,7 @@
 
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -177,7 +178,9 @@ utility::vector1< bool > const
 StepWiseWorkingParameters::is_pre_proline() const {
 	utility::vector1< bool > is_pre_proline;
 	utility::vector1< Size > const working_res( working_res_list() );
-	std::string const sequence( full_sequence() );
+	// AMW: strip out noncanonicals; don't need the info anywhere
+	// In theory one might want to for proline-like NCAAs?
+	std::string const sequence( core::pose::rna::remove_bracketed( full_sequence() ) );
 	for ( Size i = 1; i <= working_res.size(); i++ ) {
 		Size const & full_seq_pos = working_res[ i ];
 		if ( full_seq_pos == sequence.size() ) {

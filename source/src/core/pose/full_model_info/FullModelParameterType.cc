@@ -34,7 +34,8 @@ initialize_parameters( FullModelParameters & full_model_parameters ){
 		full_model_parameters.set_parameter_as_res_list( type,           utility::vector1< Size >() );
 	}
 	utility::vector1< Size > working_res;
-	for ( Size n = 1; n <= full_model_parameters.full_sequence().size(); n++ ) working_res.push_back( n );
+	Size const nres = core::pose::rna::remove_bracketed( full_model_parameters.full_sequence() ).size();
+	for ( Size n = 1; n <= nres; n++ ) working_res.push_back( n );
 	full_model_parameters.set_parameter_as_res_list( WORKING,            working_res );
 }
 

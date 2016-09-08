@@ -465,6 +465,10 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 	using namespace id;
 	LinkInformation link;
 	Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
+	if ( jj == 0 ) {
+		link.name1 = "ABORT";
+		return link;
+	}
 	Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
 
 	link.name1 = pose.residue_type( ii ).atom_name( pose.residue_type( ii ).residue_connect_atom_index( conn ) );
@@ -552,24 +556,26 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & ii_res = pose.residue( ii );
+		
 		if ( ii_res.has_lower_connect() ) {
 			Size lower = ii_res.lower_connect().index();
 
 			// if bonded to not ii - 1 or bonded to not ii - 1's upper
-			if ( ii_res.connected_residue_at_resconn( lower ) != ii - 1 ||
+			if ( ii == 1 || ii_res.connected_residue_at_resconn( lower ) != ii - 1 ||
 					ii_res.residue_connection_conn_id( lower ) != static_cast<Size>(pose.residue( ii - 1 ).upper_connect().index()) ) {
 
-				vector1<LinkInformation> links;
 				LinkInformation link = get_link_record( pose, ii, lower );
+				if ( link.name1 != "ABORT" ) {
+					vector1<LinkInformation> links;
+					// If key is found in the links map, add this new linkage information to the links already keyed to
+					// this residue.
+					if ( sfr_->link_map().count(link.resID1) ) {
+						links = sfr_->link_map()[link.resID1];
+					}
+					links.push_back(link);
 
-				// If key is found in the links map, add this new linkage information to the links already keyed to
-				// this residue.
-				if ( sfr_->link_map().count(link.resID1) ) {
-					links = sfr_->link_map()[link.resID1];
+					sfr_->link_map()[link.resID1] = links;
 				}
-				links.push_back(link);
-
-				sfr_->link_map()[link.resID1] = links;
 			}
 		}
 
@@ -577,7 +583,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 			Size upper = ii_res.upper_connect().index();
 
 			// if bonded to not ii + 1 or bonded to not ii + 1's lower
-			if ( ii_res.connected_residue_at_resconn( upper ) != ii + 1 ||
+			if ( ii == pose.total_residue() || ii_res.connected_residue_at_resconn( upper ) != ii + 1 ||
 					ii_res.residue_connection_conn_id( upper ) != static_cast<Size>( pose.residue( ii + 1 ).lower_connect().index()) ) {
 
 				// Escape if it's bonded to residue 1's lower--we don't want to double-count cyclization here.
@@ -585,16 +591,18 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 				if ( ii_res.connected_residue_at_resconn( upper ) < ii ) continue;
 
 				LinkInformation link = get_link_record( pose, ii, upper );
-				vector1<LinkInformation> links;
+				if ( link.name1 != "ABORT" ) {
+					vector1<LinkInformation> links;
 
-				// If key is found in the links map, add this new linkage information to the links already keyed to
-				// this residue.
-				if ( sfr_->link_map().count(link.resID1) ) {
-					links = sfr_->link_map()[link.resID1];
+					// If key is found in the links map, add this new linkage information to the links already keyed to
+					// this residue.
+					if ( sfr_->link_map().count(link.resID1) ) {
+						links = sfr_->link_map()[link.resID1];
+					}
+					links.push_back(link);
+				
+					sfr_->link_map()[link.resID1] = links;
 				}
-				links.push_back(link);
-
-				sfr_->link_map()[link.resID1] = links;
 			}
 		}
 
@@ -636,41 +644,42 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 			} else {
 
 				LinkInformation link = get_link_record( pose, ii, conn );
-				vector1<LinkInformation> links;
-
-				// If key is found in the links map, add this new linkage information to the links already keyed to
-				// this residue.
-				if ( sfr_->link_map().count(link.resID1) ) {
-					links = sfr_->link_map()[link.resID1];
-				}
-				// If this link is found under the OTHER record...
-				bool skip = false;
-				if ( sfr_->link_map().count( link.resID2 ) ) {
-					for ( Size i = 1; i <= sfr_->link_map()[link.resID2].size(); ++i ) {
-						if ( link.resID1 == sfr_->link_map()[link.resID2][i].resID2 ) {
-							skip = true;
-							break;
+				if ( link.name1 != "ABORT" ) {
+					vector1<LinkInformation> links;
+					// If key is found in the links map, add this new linkage information to the links already keyed to
+					// this residue.
+					if ( sfr_->link_map().count(link.resID1) ) {
+						links = sfr_->link_map()[link.resID1];
+					}
+					// If this link is found under the OTHER record...
+					bool skip = false;
+					if ( sfr_->link_map().count( link.resID2 ) ) {
+						for ( Size i = 1; i <= sfr_->link_map()[link.resID2].size(); ++i ) {
+							if ( link.resID1 == sfr_->link_map()[link.resID2][i].resID2 ) {
+								skip = true;
+								break;
+							}
 						}
 					}
-				}
-				if ( skip )  continue;
-				// Make sure it isn't a dupe--for example, make sure that
-				// we didn't already push this back as a lower to upper thing.
-				// Right now, we assume you can't have two noncanonical connections to the same residue.
-				// This is not strictly necessarily true, but until we implement
-				// LinkInformation ==, it's good enough.
-				bool push_it = true;
-				for ( Size i = 1; i <= links.size(); ++i ) {
-					if ( ( link.resID1 == links[i].resID1 && link.resID2 == links[i].resID2 )
-							|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
-						push_it = false;
+					if ( skip )  continue;
+					// Make sure it isn't a dupe--for example, make sure that
+					// we didn't already push this back as a lower to upper thing.
+					// Right now, we assume you can't have two noncanonical connections to the same residue.
+					// This is not strictly necessarily true, but until we implement
+					// LinkInformation ==, it's good enough.
+					bool push_it = true;
+					for ( Size i = 1; i <= links.size(); ++i ) {
+						if ( ( link.resID1 == links[i].resID1 && link.resID2 == links[i].resID2 )
+								|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
+							push_it = false;
+						}
 					}
+					if ( push_it ) {
+						links.push_back(link);
+					}
+				
+					sfr_->link_map()[link.resID1] = links;
 				}
-				if ( push_it ) {
-					links.push_back(link);
-				}
-
-				sfr_->link_map()[link.resID1] = links;
 			}
 		}
 	}

@@ -510,7 +510,7 @@ setup_simple_full_length_rna_working_parameters(){
 
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	std::string const full_sequence = core::sequence::read_fasta_file_and_concatenate( fasta_file );
-	core::Size const nres = full_sequence.length();
+	core::Size const nres = core::pose::rna::remove_bracketed( full_sequence ).length();
 
 	/////////////////////////////////////////////////////
 
@@ -554,7 +554,7 @@ setup_simple_full_length_rna_working_parameters(){
 	utility::vector1< Size > input_res;
 	utility::vector1< Size > input_res2;
 
-	for ( Size seq_num = 1; seq_num <= full_sequence.size(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 		input_res.push_back( seq_num );
 		full_to_sub[ seq_num ] = seq_num;
 		is_prepend_map[seq_num] = false; //all append..arbitrary choice
@@ -571,7 +571,7 @@ setup_simple_full_length_rna_working_parameters(){
 
 	/////////////////////////////////////////////////////
 	utility::vector1< Size > working_moving_res_list;
-	working_moving_res_list.push_back( full_sequence.size() ); //arbitrary choice, choose residue of pose
+	working_moving_res_list.push_back( nres ); //full_sequence.size() ); //arbitrary choice, choose residue of pose
 
 	working_parameters->set_working_moving_res_list( working_moving_res_list ); //This sets actually_moving_res()
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -725,7 +725,7 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 	if ( !option[ in::file::fasta ].user() ) utility_exit_with_message( "Must supply in::file::fasta!" );
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	std::string const full_sequence = core::sequence::read_fasta_file_and_concatenate( fasta_file );
-	core::Size const nres = full_sequence.length();
+	core::Size const nres = core::pose::rna::remove_bracketed( full_sequence ).length();
 
 	if ( !option[ OptionKeys::full_model::sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
 

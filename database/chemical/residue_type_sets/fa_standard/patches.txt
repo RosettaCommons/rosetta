@@ -68,6 +68,7 @@ patches/VirtualNterm.txt
 
 ## terminal connection patches
 patches/CtermConnect.txt
+#patches/CtermConnectBP.txt
 patches/NtermConnect.txt
 
 ##fpd

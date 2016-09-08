@@ -75,7 +75,7 @@ FullModelParameters::FullModelParameters( std::string const & full_sequence ):
 	full_sequence_( full_sequence )
 {
 	initialize_parameters( *this );
-	for ( Size n = 1; n <= full_sequence.size(); n++ ) {
+	for ( Size n = 1; n <= core::pose::rna::remove_bracketed( full_sequence ).size(); n++ ) {
 		conventional_numbering_.push_back( n );
 		conventional_chains_.push_back( ' ' );
 	}
@@ -90,7 +90,7 @@ FullModelParameters::FullModelParameters( std::string const & full_sequence,
 	initialize_parameters( *this );
 	set_parameter( CUTPOINT_OPEN, convert_to_parameter_values_at_res( cutpoint_open_in_full_model ) );
 	utility::vector1< Size > fixed_domain_map;
-	for ( Size n = 1; n <= full_sequence.size(); n++ ) {
+	for ( Size n = 1; n <= core::pose::rna::remove_bracketed( full_sequence ).size(); n++ ) {
 		if ( res_numbers_in_pose.has( n ) ) {
 			fixed_domain_map.push_back( 1 );
 		} else {
