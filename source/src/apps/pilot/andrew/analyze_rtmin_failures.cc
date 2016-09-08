@@ -105,7 +105,7 @@ int main( int argc, char * argv [] )
 		PackerTaskOP task = TaskFactory::create_packer_task( pose );
 		task->initialize_from_command_line();
 		task->set_bump_check( false );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii != residue_of_interest ) {
 				task->nonconst_residue_task( ii ).prevent_repacking();
 			} else {

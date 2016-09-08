@@ -173,7 +173,7 @@ TR << "Information about relevant chains not found for " << pose_name( pose ) <<
 mm->set_bb( true );
 mm->set_chi( true );
 } else if ( !relevant_chains_.empty() ) {
-for ( Size jj=1; jj <= pose.total_residue(); ++jj ) {
+for ( Size jj=1; jj <= pose.size(); ++jj ) {
 if ( relevant_chains_.find( pose.pdb_info()->chain( jj ), 0 ) != std::string::npos ) {
 mm->set_bb( jj, true );
 mm->set_chi( jj, true );

@@ -82,7 +82,7 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.lig_low_sasa.main" );
 ///
 Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 
-	for ( Size j = 1; j <= ps.total_residue(); ++j ) {
+	for ( Size j = 1; j <= ps.size(); ++j ) {
 		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {
 			return j;
 		}
@@ -118,7 +118,7 @@ int main( int argc, char * argv [] )
 		(*scorefxn)(ps);
 
 		// compute SASA for all atoms in the pose
-		utility::vector1<Real> rsd_sasa( ps.n_residue(), 0.0 );
+		utility::vector1<Real> rsd_sasa( ps.size(), 0.0 );
 
 		core::id::AtomID_Map<Real> atom_sasa;
 		core::pose::initialize_atomid_map( atom_sasa, ps, 0.0 );

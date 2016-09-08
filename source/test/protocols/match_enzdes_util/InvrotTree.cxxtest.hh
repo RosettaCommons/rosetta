@@ -126,7 +126,7 @@ public:
 
 		//we have to add the ligand to the pose for constraint generation to work...
 		core::conformation::ResidueCOP ligres( *(tim_invrots[1]->invrots()[0].begin()) );
-		tim_pose.append_residue_by_jump( *ligres, tim_pose.total_residue() );
+		tim_pose.append_residue_by_jump( *ligres, tim_pose.size() );
 
 		tim_invrot_tree->generate_inverse_rotamer_constraints( tim_pose, tim_actpos );
 		TS_ASSERT( tim_invrot_tree->num_target_states() == 1 );

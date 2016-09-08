@@ -67,7 +67,7 @@ ConservedPosMutationFilter::apply( core::pose::Pose const & pose ) const {
 	bool verbose( conserved_pos_taskop_->verbose() );
 	std::string mutstring;
 
-	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
+	for ( core::Size i(1); i <= pose.size(); ++i ) {
 		if ( !pose.residue_type(i).is_protein() ) continue;
 
 		core::chemical::AA wt_aa( conserved_pos_taskop_->seqprof_wt_aa(i) );

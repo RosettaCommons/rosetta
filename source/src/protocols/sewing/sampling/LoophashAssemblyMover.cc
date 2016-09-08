@@ -421,7 +421,7 @@ LoophashAssemblyMover::add_single_loop(
 
 				protocols::loops::Loop loop = protocols::loops::Loop(loop_anchor+1, loop_anchor+loop_size);
 
-				core::kinematics::FoldTree simple_ft = core::kinematics::FoldTree((int)loop_pose.total_residue());
+				core::kinematics::FoldTree simple_ft = core::kinematics::FoldTree((int)loop_pose.size());
 				loop_pose.fold_tree(simple_ft);
 
 				if(TR.Debug.visible()) {
@@ -659,7 +659,7 @@ LoophashAssemblyMover::build_loop_pose(
 //	core::kinematics::FoldTree break_ft;
 //	break_ft.add_edge(1, (int)complete_loop_end, core::kinematics::Edge::PEPTIDE);
 //	break_ft.add_edge(1, (int)complete_loop_end+1, 1);
-//	break_ft.add_edge((int)complete_loop_end+1, (int)combined_pose.total_residue(), core::kinematics::Edge::PEPTIDE);
+//	break_ft.add_edge((int)complete_loop_end+1, (int)combined_pose.size(), core::kinematics::Edge::PEPTIDE);
 //	combined_pose.fold_tree(break_ft);
 //
 //	//Add an extra residue such that torsions can be properly applied
@@ -696,7 +696,7 @@ LoophashAssemblyMover::build_loop_pose(
 //	combined_pose.conformation().delete_residue_slow(extra_resnum);
 //
 //	core::kinematics::FoldTree saved_ft = combined_pose.fold_tree();
-//	core::kinematics::FoldTree simple_ft = core::kinematics::FoldTree((int)combined_pose.total_residue());
+//	core::kinematics::FoldTree simple_ft = core::kinematics::FoldTree((int)combined_pose.size());
 //	combined_pose.fold_tree(simple_ft);
 //
 //	//setup coordinate constraints
@@ -719,7 +719,7 @@ LoophashAssemblyMover::build_loop_pose(
 //			move_map->set( core::id::DOF_ID( core::id::AtomID( bb_indices[j], i ), core::id::PHI ), true );
 //		}
 //
-//		if(i<pose.total_residue()-1){
+//		if(i<pose.size()-1){
 //			TR.Debug << i << " bonded to " << i+1 << ": " << pose.residue(i).is_bonded(pose.residue(i+1)) << std::endl;
 //		}
 //	}
@@ -742,9 +742,9 @@ LoophashAssemblyMover::build_loop_pose(
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
 			if(1==i) tmp.append_residue_by_jump( *new_rsd, 1 );
 			else     tmp.append_residue_by_bond( *new_rsd, true );
-			tmp.set_phi  ( tmp.n_residue(), 180.0 );
-			tmp.set_psi  ( tmp.n_residue(), 180.0 );
-			tmp.set_omega( tmp.n_residue(), 180.0 );
+			tmp.set_phi  ( tmp.size(), 180.0 );
+			tmp.set_psi  ( tmp.size(), 180.0 );
+			tmp.set_omega( tmp.size(), 180.0 );
 		}
 
 		for ( Size i = 0; i < fragment_size; i++) {

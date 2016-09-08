@@ -77,7 +77,7 @@ core::Size lig_res_num;
 
 void define_interface( core::pose::Pose & ref_pose ) {
 	lig_res_num =0;
-	for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
 		if ( !ref_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;
@@ -172,10 +172,10 @@ calpha_pdb_superimpose_pose(
 {
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-	for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;
 		if ( ! mod_pose.residue(ii).is_protein() ) continue;
-		for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 			if ( ! ref_pose.residue(jj).has("CA") ) continue;
 			if ( ! ref_pose.residue(jj).is_protein() ) continue;
 			if ( mod_pose.pdb_info()->chain(ii) != ref_pose.pdb_info()->chain(jj) ) continue;
@@ -201,10 +201,10 @@ interface_rmsd(
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
-	for ( Size ii = 1; ii <= ref_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= ref_pose.size(); ++ii ) {
 		if ( ! ref_pose.residue(ii).has("CA") ) continue;
 		if ( ! ref_pose.residue(ii).is_protein() ) continue;
-		for ( Size jj = 1; jj <= mod_pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= mod_pose.size(); ++jj ) {
 			if ( ! ref_pose.residue(ii).has("CA") ) continue;
 			if ( ! ref_pose.residue(ii).is_protein() ) continue;
 			if ( mod_pose.pdb_info()->chain(jj) != ref_pose.pdb_info()->chain(ii) ) continue;

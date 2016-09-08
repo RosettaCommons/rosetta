@@ -234,7 +234,7 @@ public: // Properties
 	Size
 	n_residue() const
 	{
-		return dof_map_[ 1 ].n_residue();
+		return dof_map_[ 1 ].size();
 	}
 
 

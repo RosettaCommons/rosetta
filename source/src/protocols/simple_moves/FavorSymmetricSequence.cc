@@ -61,7 +61,7 @@ protocols::moves::MoverOP FavorSymmetricSequence::clone() const
 void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 {
 	//Probably a faster way of doing this but it doesn't really matter I don't think
-	core::Size residue_count = pose.n_residue();
+	core::Size residue_count = pose.size();
 	for ( core::Size rsd1_index = 1; rsd1_index <= residue_count; ++rsd1_index ) {
 		for ( core::Size rsd2_index = rsd1_index; rsd2_index <= residue_count; ++rsd2_index ) {
 			if ( rsd1_index % (residue_count/symmetric_units_) == rsd2_index % (residue_count/symmetric_units_) && rsd1_index != rsd2_index ) {

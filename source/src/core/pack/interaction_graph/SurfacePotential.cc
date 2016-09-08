@@ -317,7 +317,7 @@ void SurfacePotential::compute_residue_surface_energy( conformation::Residue con
 	// in (being considered) rotamer, not of the wild type sequence rotamer.  In a small percent of the cases, using the wild type
 	// nbr_atom will give a different count than when using the new rotamer nbr_atom position.
 	Real distanceBetweenAtoms = 0.0;
-	for ( Size res2_position = 1; res2_position < pose.total_residue(); ++res2_position ) {
+	for ( Size res2_position = 1; res2_position < pose.size(); ++res2_position ) {
 
 		if ( resid == res2_position ) { continue; }
 		conformation::Residue const & rsd2 = pose.residue( res2_position );
@@ -383,12 +383,12 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 
 	// resize the per-residue surface energy vector
 	residue_surface_energy_.clear();
-	residue_surface_energy_.resize( pose.n_residue(), 0.0 );
+	residue_surface_energy_.resize( pose.size(), 0.0 );
 
-	utility::vector1< Size > num_neighbors_( pose.n_residue(), 0 );
+	utility::vector1< Size > num_neighbors_( pose.size(), 0 );
 
 	// first, we need to init the num neighbors array (either using the tenA nb graph or by counting manually)
-	for ( core::Size res1_position = 1; res1_position <= pose.n_residue(); ++res1_position ) {
+	for ( core::Size res1_position = 1; res1_position <= pose.size(); ++res1_position ) {
 		core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
 		// set the number of neighbors vector for later output
@@ -404,7 +404,7 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 	// now, we have to loop over all residues and find exposed residues (we can use the num neighbors array to determine
 	// which ones are surface exposed)
 
-	for ( core::Size res1_position = 1; res1_position <= pose.n_residue(); ++res1_position ) {
+	for ( core::Size res1_position = 1; res1_position <= pose.size(); ++res1_position ) {
 
 		if ( pose.residue( res1_position ).aa() > core::chemical::num_canonical_aas ) continue;
 		if ( symm_info && !symm_info->bb_is_independent(res1_position) ) continue;
@@ -443,7 +443,7 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 		conformation::Residue const & rsd1 = pose.residue( res1_position );
 		Real distanceBetweenAtoms = 0.0;
 
-		for ( Size res2_position = 1; res2_position < pose.total_residue(); ++res2_position ) {
+		for ( Size res2_position = 1; res2_position < pose.size(); ++res2_position ) {
 			if ( pose.residue( res2_position ).aa() > core::chemical::num_canonical_aas ) continue;
 			if ( symm_info && !symm_info->bb_is_independent(res2_position) ) continue;
 
@@ -543,10 +543,10 @@ void SurfacePotential::compute_pose_hpatch_score(
 	core::id::AtomID_Map< core::Real > atom_sasa;
 	core::pose::initialize_atomid_map( atom_sasa, pose, (core::Real)0.0 ); // initialize to 0.0 for "not computed"
 
-	utility::vector1< RotamerDotsOP > rdots( pose.total_residue() );
-	utility::vector1< InvRotamerDotsOP > invdots( pose.total_residue() );
+	utility::vector1< RotamerDotsOP > rdots( pose.size() );
+	utility::vector1< InvRotamerDotsOP > invdots( pose.size() );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		rdots[ii] = RotamerDotsOP( new RotamerDots( pose.residue(ii).clone(), true /* exclude H's */, true /* use expanded polar atom radii */) );
 		invdots[ii] = InvRotamerDotsOP( new InvRotamerDots() );
 	}
@@ -562,7 +562,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, max_pair_radius + max_pair_radius + max_ep_radius /* Angstrom cutoff */ ); //create edges
 
 	// increment the self and residue-residue overlap for each residue
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ ii ) {
 		rdots[ ii ]->increment_self_overlap();
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( ii ).upper_edge_list_begin(),
 				edge_end_iter = pg->get_vertex(ii ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
@@ -574,7 +574,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 	// we need to know how many heavy atoms are in the pose before we can construct the disjoint sets object
 	Size heavyatom_count = 0;
 
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & rsd = pose.residue( ii );
 		heavyatom_count += rsd.nheavyatoms();
 	}
@@ -584,10 +584,10 @@ void SurfacePotential::compute_pose_hpatch_score(
 
 	// create an AtomID map that will convert an atom in some residue into a DisjointSets index
 	id::AtomID_Map< Size > atom_2_ds_index;
-	atom_2_ds_index.resize( pose.total_residue() );
+	atom_2_ds_index.resize( pose.size() );
 	Size ds_index = 1;
 
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & rsd = pose.residue( ii );
 		atom_2_ds_index.resize( ii, rsd.nheavyatoms(), 0 );
 		for ( Size jj=1; jj <= rsd.nheavyatoms(); ++jj ) {
@@ -599,7 +599,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 	}
 
 	// now iterate over all residues of the pose and find all intra- and inter-residue atom-atom overlaps
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		invdots[ ii ]->setup_from_rotamer_dots( *rdots[ ii ] );
 	}
 
@@ -608,7 +608,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 #endif
 
 	std::string carbon_atom = "C", sulfur_atom = "S";
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		// don't try to find overlaps with non-protein residues; this can cause problems.
 		if ( ! pose.residue( ii ).is_protein() ) continue;

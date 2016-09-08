@@ -100,7 +100,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 	designable.clear();
 	for ( core::Size count = 1; count <= source_pose_.size(); ++count ) {
 		core::Size const nearest_to_from = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ], chain() );
-		core::Size const nearest_to_to = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ), chain() );
+		core::Size const nearest_to_to = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->size() ), chain() );
 
 		TR<<"On Segment "<<segment_names_[count]<<" finding nearest residue to residue pair "<<start_res_[ count ]<<','<<stop_res_[ count ]<<" in source pose: "<<source_pose_[ count ]->pdb_info()->name() <<std::endl;
 		if ( nearest_to_from == 0 || nearest_to_to == 0 ) {

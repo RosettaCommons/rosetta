@@ -124,13 +124,13 @@ SelectByDeltaScoreOperation::apply( core::pose::Pose const & pose, core::pack::t
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(refp);
 		ref_nres_asymmetric_unit = symm_info->num_independent_residues();
 	} else {
-		ref_nres_asymmetric_unit = refp.n_residue();
+		ref_nres_asymmetric_unit = refp.size();
 	}
 	if ( core::conformation::symmetry::is_symmetric( pose.conformation() ) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		nres_asymmetric_unit = symm_info->num_independent_residues();
 	} else {
-		nres_asymmetric_unit = pose.n_residue();
+		nres_asymmetric_unit = pose.size();
 	}
 
 	if ( nres_asymmetric_unit != ref_nres_asymmetric_unit ) {

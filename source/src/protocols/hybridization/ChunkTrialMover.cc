@@ -97,7 +97,7 @@ ChunkTrialMover::ChunkTrialMover(
 	// template coverage
 	highest_tmpl_resnum_ = 0;
 	for ( core::Size i_template=1; i_template<=template_poses_.size(); ++i_template ) {
-		for ( core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires ) {
+		for ( core::Size ires=1; ires<=template_poses_[i_template]->size(); ++ires ) {
 			if ( template_poses_[i_template]->pdb_info()->number(ires) > static_cast<int>(highest_tmpl_resnum_) ) {
 				highest_tmpl_resnum_ = template_poses_[i_template]->pdb_info()->number(ires);
 			}
@@ -105,7 +105,7 @@ ChunkTrialMover::ChunkTrialMover(
 	}
 	residue_covered_by_template_.resize(highest_tmpl_resnum_, 0);
 	for ( core::Size i_template=1; i_template<=template_poses_.size(); ++i_template ) {
-		for ( core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires ) {
+		for ( core::Size ires=1; ires<=template_poses_[i_template]->size(); ++ires ) {
 			core::Size ires_template = template_poses_[i_template]->pdb_info()->number(ires);
 			residue_covered_by_template_[ires_template] += 1;
 		}
@@ -122,7 +122,7 @@ ChunkTrialMover::get_alignment_from_template(
 	std::map <core::Size, core::Size> & seqpos_alignment
 ) {
 	// specific to this case, alignment comes from residue number
-	for ( core::Size ires=1; ires<=template_pose->total_residue(); ++ires ) {
+	for ( core::Size ires=1; ires<=template_pose->size(); ++ires ) {
 		TR.Debug << "Sequence aln: " << template_pose->pdb_info()->number(ires) << " " << ires << std::endl;
 		seqpos_alignment[template_pose->pdb_info()->number(ires)] = ires;
 	}

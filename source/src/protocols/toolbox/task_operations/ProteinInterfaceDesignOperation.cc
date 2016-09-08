@@ -103,7 +103,7 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 	}
 	DesignAroundOperation dao1, dao2;
 	dao1.design_shell( interface_distance_cutoff_ ); dao2.design_shell( interface_distance_cutoff_ );
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		if ( resi <= pose.conformation().chain_end( jump() ) ) {
 			dao1.include_residue( resi );
 		} else {
@@ -149,7 +149,7 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 		allowed_aas[ aa_gly ] = false;
 		allowed_aas[ aa_pro ] = false;
 	}
-	for ( core::Size i = 1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i<=pose.size(); ++i ) {
 		utility::vector1< bool > specific_allowed_aas( allowed_aas );
 		if ( pose.residue( i ).aa() == aa_cys ) specific_allowed_aas[ aa_cys ] = true; // allow a native cystein in packer task
 		RestrictAbsentCanonicalAAS racaas( i, specific_allowed_aas );

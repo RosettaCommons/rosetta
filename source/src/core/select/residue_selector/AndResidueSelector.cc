@@ -77,7 +77,7 @@ AndResidueSelector::apply( core::pose::Pose const & pose ) const
 	debug_assert( num_selectors() > 0 );
 
 	// make subset neutral for AND operations
-	ResidueSubset subset( pose.total_residue(), true );
+	ResidueSubset subset( pose.size(), true );
 	for ( std::list< ResidueSelectorCOP >::const_iterator
 			rs = selectors_.begin();
 			rs != selectors_.end();

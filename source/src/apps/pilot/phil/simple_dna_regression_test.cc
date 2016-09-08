@@ -228,7 +228,7 @@ setup_atom_number(
 	core::pose::initialize_atomid_map( atom_number, pose );
 
 	int number(0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		for ( Size j=1; j<= Size(pose.residue(i).natoms()); ++j ) {
 			atom_number[ id::AtomID( j, i ) ] = ++number;
 		}
@@ -347,7 +347,7 @@ show_clashes(
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( energies.energy_graph() );
 
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & resl( pose.residue( i ) );
 		for ( graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
@@ -414,7 +414,7 @@ dump_clash_pdb(
 
 	id::initialize( clash_score, pose, 0.0 );
 
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & rsd1( pose.residue( i ) );
 		for ( graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
@@ -857,7 +857,7 @@ find_dna_rotamers(
 		set_base_partner( pose ); // fills base partner info
 		// BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
-		for ( Size i=1; i<= pose.total_residue()-1; ++i ) {
+		for ( Size i=1; i<= pose.size()-1; ++i ) {
 
 			Residue const & rsd     ( pose.residue(i) );
 
@@ -1051,7 +1051,7 @@ rescore_test()
 			scorefxn->show( total_total_out, pose );
 
 
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				conformation::Residue const & res( pose.residue( i ) );
 
 				EnergyMap const & emap( energies.residue_total_energies(i) );
@@ -1066,7 +1066,7 @@ rescore_test()
 				}
 				total_out << std::endl;
 
-				for ( Size i2=i+1; i2<=pose.total_residue(); ++i2 ) {
+				for ( Size i2=i+1; i2<=pose.size(); ++i2 ) {
 
 					conformation::Residue const & res2( pose.residue( i2 ) );
 
@@ -1172,7 +1172,7 @@ intra_dna_stats()
 
 		io::pdb::dump_pdb( pose, tag );
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
 			if ( !rsd.is_DNA() ) continue;
 
@@ -1302,7 +1302,7 @@ kono_sarai_stats()
 
 // 		io::pdb::dump_pdb( pose, tag );
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 
 			Residue const & rsd( pose.residue(i) );
 			if ( !rsd.is_DNA() ) continue;
@@ -1325,7 +1325,7 @@ kono_sarai_stats()
 				y = ( z.cross( x ) );
 			}
 
-			for ( Size j=1; j<= pose.total_residue(); ++j ) {
+			for ( Size j=1; j<= pose.size(); ++j ) {
 
 				Residue const & rsd2( pose.residue(j) );
 				if ( !rsd2.is_protein() ) continue;
@@ -1393,7 +1393,7 @@ kono_sarai_zscore()
 // 		io::pdb::dump_pdb( pose, tag );
 
 		utility::vector1< int > motif_pos;
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
 			if ( rsd.is_DNA() && partner[i]>i ) {
 				motif_pos.push_back(i);
@@ -1423,7 +1423,7 @@ kono_sarai_zscore()
 			//pose.dump_pdb( "test" + str + ".pdb" );
 			//std::cout << k << std::endl;
 
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 
 				Residue const & rsd( pose.residue(i) );
 				if ( !rsd.is_DNA() ) continue;
@@ -1446,7 +1446,7 @@ kono_sarai_zscore()
 					y = ( z.cross( x ) );
 				}
 
-				for ( Size j=1; j<= pose.total_residue(); ++j ) {
+				for ( Size j=1; j<= pose.size(); ++j ) {
 
 					Residue const & rsd2( pose.residue(j) );
 					if ( !rsd2.is_protein() ) continue;
@@ -1502,7 +1502,7 @@ phosphate_stats()
 		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 
-		for ( Size i=2; i<= pose.total_residue(); ++i ) {
+		for ( Size i=2; i<= pose.size(); ++i ) {
 
 			Residue const & rsd( pose.residue(i) );
 			Residue const & prev_rsd( pose.residue(i-1) );
@@ -1521,7 +1521,7 @@ phosphate_stats()
 				out << atom_line( " O5'", rsd.name3(), stub.global2local( rsd.xyz("O5'") ), counter );
 			}
 
-			for ( Size j=1; j<= pose.total_residue(); ++j ) {
+			for ( Size j=1; j<= pose.size(); ++j ) {
 
 				Residue const & rsd2( pose.residue(j) );
 				if ( !rsd2.is_protein() ) continue;
@@ -1558,7 +1558,7 @@ spec_test(
 	using namespace optimization;
 
 	Size const nloop( 20 );
-	Size const nres( start_pose.total_residue() );
+	Size const nres( start_pose.size() );
 
 
 	///////////////////////////////////////////////////////////////////////
@@ -1799,7 +1799,7 @@ idealize_tf_pose( pose::Pose & pose )
 	Real const coord_sdev( 0.1 );
 	Size const window(2); // 5rsds
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	Size const dna_anchor( 91 );
 	{ // setup fold_tree
@@ -1984,7 +1984,7 @@ zif268_test()
 	io::pdb::dump_pdb( pose, "test_zif.pdb" );
 
 	// Output protein interface positions
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	utility::vector1< int > pos_list;
 	utility::vector1< bool > interface;
 	for ( Size i=1; i<= nres; ++i ) {
@@ -2002,7 +2002,7 @@ zif268_test()
 	std::cout << std::endl;
 
 
-	//assert( pose.total_residue() == 32 );
+	//assert( pose.size() == 32 );
 
 	scoring::dna::set_base_partner( pose );
 
@@ -2054,7 +2054,7 @@ bzip_test()
 	Pose pose;
 	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
-	assert( pose.total_residue() == 32 );
+	assert( pose.size() == 32 );
 
 	scoring::dna::set_base_partner( pose );
 
@@ -2105,7 +2105,7 @@ endo_test()
 	Pose pose;
 	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
-	assert( pose.total_residue() == 133 );
+	assert( pose.size() == 133 );
 
 	io::pdb::dump_pdb( pose, "test.pdb" );
 
@@ -2226,7 +2226,7 @@ tf_specificity_test(
 		pose::Pose pdb_pose;
 		core::import_pose::pose_from_file( pdb_pose, pdb_file , core::import_pose::PDB_file);
 
-		if ( pdb_pose.total_residue() < 1 ) {
+		if ( pdb_pose.size() < 1 ) {
 			std::cout << "pdb io failed: " << pdb_file << std::endl;
 			return;
 		}
@@ -2251,7 +2251,7 @@ tf_specificity_test(
 
 			// check for protein contacts
 			Residue const & i_rsd( pdb_pose.residue(i) );
-			for ( Size j=1; j<= pdb_pose.total_residue(); ++j ) {
+			for ( Size j=1; j<= pdb_pose.size(); ++j ) {
 				Residue const & j_rsd( pdb_pose.residue(j) );
 				if ( !j_rsd.is_protein() ) continue;
 				bool contact( false );
@@ -2272,7 +2272,7 @@ tf_specificity_test(
 			Size const chain_begin( pdb_pose.conformation().chain_begin(c) );
 
 			if ( c == dna_chain ) {
-				int motif_offset( pose.total_residue() );
+				int motif_offset( pose.size() );
 				for ( Size k=1; k<= motif_positions.size(); ++k ) {
 					new_motif_positions.push_back( motif_positions[k] + motif_offset );
 				}
@@ -2281,7 +2281,7 @@ tf_specificity_test(
 			for ( Size i= chain_begin, i_end= pdb_pose.conformation().chain_end(c); i<= i_end; ++i ) {
 				if ( i == chain_begin && !pose.empty() ) {
 					pose.append_residue_by_jump( pdb_pose.residue(i), 1 );
-					pose.conformation().insert_chain_ending( pose.total_residue()-1 );
+					pose.conformation().insert_chain_ending( pose.size()-1 );
 				} else {
 					pose.append_residue_by_bond( pdb_pose.residue(i) );
 				}
@@ -2399,7 +2399,7 @@ dna_specificity_test(
 	pose::Pose pose;
 	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
-	if ( pose.total_residue() < 1 ) {
+	if ( pose.size() < 1 ) {
 		std::cout << "pdb io failed: " << filename << std::endl;
 		return;
 	}
@@ -2533,11 +2533,11 @@ dna_nbr_radii_test()
 		Pose pose;
 		core::import_pose::pose_from_file( pose, filenames[n] , core::import_pose::PDB_file);
 
-		std::cout << "READ FILE " << filenames[n] << ' ' << pose.total_residue() << std::endl;
+		std::cout << "READ FILE " << filenames[n] << ' ' << pose.size() << std::endl;
 
 		for ( int na=first_DNA_aa; na <= last_DNA_aa; ++na ) {
 			Real max_d( na_max_d[ na ] );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				Residue const & rsd( pose.residue(i) );
 				if ( rsd.aa() != AA(na) ) continue;
 
@@ -2592,7 +2592,7 @@ loop_modeling_test()
 		for ( int na=first_DNA_aa; na <= last_DNA_aa; ++na ) {
 			Real max_d( 0.0 );
 
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				Residue const & rsd( pose.residue(i) );
 				if ( rsd.aa() != AA(na) ) continue;
 
@@ -2675,7 +2675,7 @@ loop_modeling_test()
 
 	std::cout << pose.sequence() << std::endl << target_seq << std::endl;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		std::cout << "M1: " << I(4,i) << ' ' << pose.residue(i).name() << I(4,mapping[i]);
 		if ( mapping[i] ) {
 			std::cout << ' ' << target_seq[ mapping[i]-1 ];
@@ -2696,7 +2696,7 @@ loop_modeling_test()
 		m.reverse();
 
 		// debug:
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			std::cout << "M2: " << I(4,i) << ' ' << pose.residue(i).name() << I(4,m[i]) << std::endl;
 		}
 
@@ -2785,7 +2785,7 @@ loop_modeling_test()
 
 		core::util::switch_to_residue_type_set( pose, FA_STANDARD );
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			Residue const &     rsd(     pose.residue(i) );
 			Residue const & src_rsd( cen_pose.residue(i) );
 			if ( rsd.is_DNA() ) {
@@ -2951,7 +2951,7 @@ luxr_setup()
 
 	assert( start_pose.sequence() == target_seq );
 
-	Size const nres( start_pose.total_residue() ); //a
+	Size const nres( start_pose.size() ); //a
 
 	// now retrieve the DNA chi angles from pdb pose
 	// take coordinates exactly if there's a sequence match -- actually that's already done
@@ -2959,13 +2959,13 @@ luxr_setup()
 
 	{
 		id::SequenceMapping m( mapping );
-		Size const nres( start_pose.total_residue() );
+		Size const nres( start_pose.size() );
 
 		assert( nres == m.size2() );
 		m.reverse();
 		assert( nres == m.size1() );
 
-		for ( Size i=1; i<= start_pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= start_pose.size(); ++i ) {
 			if ( m[i] && start_pose.residue(i).is_DNA() ) start_pose.set_chi( 1, i, pdb_pose.chi( 1, m[i] ) );
 		}
 	}
@@ -3019,7 +3019,7 @@ luxr_setup()
 
 	Size dna_jump(0);
 	{
-		kinematics::FoldTree f( start_pose.total_residue() );
+		kinematics::FoldTree f( start_pose.size() );
 		f.new_jump( n1, n2, n3 );
 		f.new_jump( n2, n4, n5 );
 		f.reorder( n2 );
@@ -3155,7 +3155,7 @@ atom_vdw_test()
 
 		core::import_pose::centroid_pose_from_pdb( pose, pdb_files[n] , core::import_pose::PDB_file);
 
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 
 		// look at protein-dna closest-approach distances
 		for ( Size i=1; i<= nres; ++i ) {
@@ -3368,7 +3368,7 @@ water_test()
 			hydrate_atoms[ na_cyt ].push_back( "H42" );
 			hydrate_atoms[ na_thy ].push_back( "O4" );
 
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				Residue const & rsd( pose.residue(i) );
 				if ( rsd.is_DNA() ) {
 					vector1< string > const & atoms( hydrate_atoms[ rsd.aa() ] );
@@ -3376,7 +3376,7 @@ water_test()
 						std::string const & anchor_atom( atoms[j] );
 						tp3->set_xyz( "O", rsd.xyz( anchor_atom ) ); // for nbr calculation
 						pose.append_residue_by_jump( *tp3, i );
-						Size const pos1( pose.total_residue() );
+						Size const pos1( pose.size() );
 						mm.set_jump( pose.num_jump(), true );
 						(*water_info)[ pos1 ].anchor_residue( i );
 						(*water_info)[ pos1 ].anchor_atom   ( anchor_atom );
@@ -3390,11 +3390,11 @@ water_test()
 // 			ResidueOP tp3( ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("TP3") ) );
 // 			tp3->set_xyz( "O", pose.residue( anchor1 ).xyz( anchor1_atom ) ); // for nbr calculation
 // 			pose.append_residue_by_jump( *tp3, anchor1 );
-// 			Size const pos1( pose.total_residue() );
+// 			Size const pos1( pose.size() );
 // 			mm.set_jump( pose.num_jump(), true );
 // 			tp3->set_xyz( "O", pose.residue( anchor2 ).xyz( anchor2_atom ) ); // for nbr calculation
 // 			pose.append_residue_by_jump( *tp3, anchor2 );
-// 			Size const pos2( pose.total_residue() );
+// 			Size const pos2( pose.size() );
 // 			mm.set_jump( pose.num_jump(), true );
 
 // 			(*water_info)[ pos1 ].anchor_residue( anchor1 );
@@ -3412,7 +3412,7 @@ water_test()
 		//kinematics::MoveMap mm;
 		task->initialize_from_command_line();
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue(ii).name() == "TP3" ) {
 				//task->nonconst_residue_task( ii ).restrict_to_repacking();
 				task->nonconst_residue_task( ii ).allow_noncanonical_aa( "VRT1" );
@@ -3496,7 +3496,7 @@ water_test_fixed_O()
 		Pose const pose( pdb_pose );
 		//pose = pdb_pose;
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
 
 			if ( rsd.is_polymer() ) {
@@ -3512,7 +3512,7 @@ water_test_fixed_O()
 				bool protein_nbr( false ), dna_nbr( false );
 				Vector const & xyz( rsd.nbr_atom_xyz() );
 
-				for ( Size j=1; j<= pose.total_residue(); ++j ) {
+				for ( Size j=1; j<= pose.size(); ++j ) {
 					Residue const & rsd2( pose.residue(j) );
 
 					if ( rsd2.is_polymer() ) {
@@ -3546,7 +3546,7 @@ water_test_fixed_O()
 		//kinematics::MoveMap mm;
 		task->initialize_from_command_line();
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue(ii).name() == "TP3" ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
 				assert( task->pack_residue( ii ) );
@@ -3615,7 +3615,7 @@ interface_repack_test()
 
 		Pose const start_pose( pose );
 
-		std::cout << "READ FILE " << filenames[n] << ' ' << pose.total_residue() << std::endl;
+		std::cout << "READ FILE " << filenames[n] << ' ' << pose.size() << std::endl;
 
 		vector1< bool > interface;
 		devel::dna::detect_interface_by_nbrs( pose, interface );
@@ -3624,7 +3624,7 @@ interface_repack_test()
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( start_pose ));
 		task->initialize_from_command_line();
 
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 		for ( Size i = 1; i <= nres; ++i ) {
 			if ( interface[i] ) {
 				task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -3729,7 +3729,7 @@ not1_test()
 
 		Pose min_pose( pose );
 		MoveMap mm;
-		for ( Size i=1; i<= pose.total_residue(); ++i ) mm.set_chi( i, pose.residue(i).is_protein() );
+		for ( Size i=1; i<= pose.size(); ++i ) mm.set_chi( i, pose.residue(i).is_protein() );
 		AtomTreeMinimizer().run( min_pose, mm, *scorefxn, MinimizerOptions("lbfgs_armijo_nonmonotone",0.00001,true) );
 		scorefxn->show( std::cout, min_pose );
 		min_pose.dump_pdb( "minimized.pdb" );
@@ -3939,7 +3939,7 @@ compare_dna_energies()
 
 	scorefxn->show( std::cout );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		Residue const & rsd1( pose.residue(i) );
@@ -3993,7 +3993,7 @@ compare_energies()
 
 	scorefxn->show( std::cout );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		//Residue const & rsd1( pose.residue(i) );
@@ -4187,7 +4187,7 @@ hbond_stats()
 		tt << "success: " << file << std::endl;
 		std::cout << "success-sc: " << file << std::endl;
 
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 
 		for ( Size i=1; i<= nres; ++i ) {
 			Residue const & rsd1( pose.residue(i) );
@@ -4248,7 +4248,7 @@ find_dna_chainbreaks( pose::Pose const & pose )
 	Real const threshold( 2.5 ); // ideal is ~1.6
 
 	vector1< Size > breaks;
-	for ( Size i=1; i<= pose.total_residue()-1; ++i ) {
+	for ( Size i=1; i<= pose.size()-1; ++i ) {
 		conformation::Residue const & rsd1( pose.residue(i  ) );
 		conformation::Residue const & rsd2( pose.residue(i+1) );
 		if ( rsd1.is_DNA() && rsd2.is_DNA() ) {
@@ -4274,7 +4274,7 @@ cleanup_dna_chains( pose::Pose & pose )
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	vector1< Size > const breaks( find_dna_chainbreaks( pose ) );
 
 	// split chains that self-partner
@@ -4365,7 +4365,7 @@ dna_chain_check()
 		cleanup_dna_chains( pose );
 
 		BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 
 		vector1< bool > is_DNA( nres, false );
 		for ( Size i=1; i<= nres; ++i ) {

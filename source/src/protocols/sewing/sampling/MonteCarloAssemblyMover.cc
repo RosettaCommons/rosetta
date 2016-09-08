@@ -445,7 +445,7 @@ MonteCarloAssemblyMover::boltzman(
 			if ( remove_non_contiguous_assembly_ ) { // remove incomplete (cut-off) assembly (mostly comes from inherent error in pdb file), in the future, removing incomplete model at model extration step will be pursued
 				core::pose::Pose to_be_checked_pose = get_fullatom_pose(working_assembly);
 
-				for ( Size ii=1; ii < to_be_checked_pose.total_residue(); ii++ ) {
+				for ( Size ii=1; ii < to_be_checked_pose.size(); ii++ ) {
 					core::Real distance = to_be_checked_pose.residue(ii).atom("CA").xyz().distance(to_be_checked_pose.residue(ii+1).atom("CA").xyz());
 					if ( distance > 5.0 ) {
 						this_pose_is_complete = false;

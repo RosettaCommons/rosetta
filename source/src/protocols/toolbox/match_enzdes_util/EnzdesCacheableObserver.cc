@@ -286,7 +286,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 		}
 
 		favor_native_constraints_.clear();
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 			if ( task->design_residue(i) ) {
 
@@ -321,7 +321,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 
 		tr << *profile << std::endl;
 
-		for ( Size seqpos(1), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+		for ( Size seqpos(1), end( pose.size() ); seqpos <= end; ++seqpos ) {
 			// add individual profile constraint for each residue position
 			// because of the underlying constraint implementation, this enures that the constraint is
 			// a context-independent 1-body energy, or (intra)residue constraint

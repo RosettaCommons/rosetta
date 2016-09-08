@@ -114,7 +114,7 @@ ProteinBackboneTorsionAngleFeatures::report_features(
 ){
 	std::string statement_string ="INSERT INTO protein_backbone_torsion_angles (struct_id, resNum, phi, psi, omega) VALUES (?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues( relevant_residues, i ) ) continue;
 
 		Residue const & resi = pose.residue(i);

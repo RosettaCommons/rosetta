@@ -155,7 +155,7 @@ ProQPotential::score(pose::Pose & pose,
 	ObjexxFCL::FArray1D< Real > & score,
 	bool ProQ2
 ) const {
-	Size nres=pose.total_residue();
+	Size nres=pose.size();
 	Size n=1; //if position in sequence.
 	if ( !ProQ2 ) {
 		for ( Size l=1; l<=nres; ++l ) {

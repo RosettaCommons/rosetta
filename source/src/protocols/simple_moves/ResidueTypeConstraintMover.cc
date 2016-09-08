@@ -77,7 +77,7 @@ ResidueTypeConstraintMover::apply( Pose & pose )
 {
 	int AA_name3_length_1 = std::count(AA_name3_.begin(), AA_name3_.end(), ',');
 	std::string delimiter = ",";
-	for ( Size resnum=1; resnum<=pose.total_residue(); ++resnum ) {
+	for ( Size resnum=1; resnum<=pose.size(); ++resnum ) {
 		int substr_index = 0;
 		for ( int i =0; i<=(AA_name3_length_1); i++ ) {
 			size_t pos = AA_name3_.find(delimiter);

@@ -43,7 +43,7 @@ int main (int argc, char *argv[])
 	core::pose::initialize_atomid_map(atom_map,mod_pose,BOGUS_ATOM_ID);
 	for(core::Size ir = 1; ir <= 6; ++ir) {
 		for(core::Size ia = 1; ia <= 4; ia++) {
-			core::Size ref_rsd = ref_pose.n_residue() - 6 + ir;
+			core::Size ref_rsd = ref_pose.size() - 6 + ir;
 			atom_map[ AtomID(ia,ir) ] = AtomID(ia,ref_rsd);
 		}
 	}

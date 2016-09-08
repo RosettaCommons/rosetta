@@ -95,7 +95,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		pose::Pose pose;
 		import_pose::pose_from_pdbstring( pose, flavins );
 
-		TS_ASSERT_EQUALS( pose.n_residue(), 2 );
+		TS_ASSERT_EQUALS( pose.size(), 2 );
 		TS_ASSERT_EQUALS( pose.residue( 1 ).name(), "flavin" );
 		TS_ASSERT_EQUALS( pose.residue( 2 ).name(), "flavin_dihydride" );
 		TS_ASSERT( pose.residue( 1 ).natoms() != pose.residue( 2 ).natoms() );
@@ -218,7 +218,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT( resB3.is_branch_lower_terminus() );
 		TS_ASSERT( resB3.is_upper_terminus() );
 
-		TS_ASSERT_EQUALS( poseA.n_residue(), poseB.n_residue() );
+		TS_ASSERT_EQUALS( poseA.size(), poseB.size() );
 		TS_ASSERT_EQUALS( poseA.fold_tree().to_string(), poseB.fold_tree().to_string() );
 	}
 };  // class ThreeLetterCodeAmbiguityTests

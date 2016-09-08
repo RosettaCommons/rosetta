@@ -134,7 +134,7 @@ std::set< Size > XMLprinterMover::fill_designable_set( core::pose::Pose & pose, 
   //#endif
 
     // iterate over all residues
-  for ( Size ii = 1; ii<= design_task->total_residue(); ++ii ) {
+  for ( Size ii = 1; ii<= design_task->size(); ++ii ) {
     if( design_task->being_designed( ii ) )
       designable_set.insert( ii );
   }
@@ -154,7 +154,7 @@ std::set< Size > XMLprinterMover::fill_packable_set( core::pose::Pose & pose, co
   //#endif
 
     // iterate over all residues
-  for ( Size ii = 1; ii<= packable_task->total_residue(); ++ii ) {
+  for ( Size ii = 1; ii<= packable_task->size(); ++ii ) {
     if( packable_task->being_packed( ii ) )
       packable_set.insert( ii );
   }

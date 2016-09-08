@@ -164,11 +164,11 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 		// residues and find exposed hydrophobics
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		assert ( pose.n_residue() > 4 );
+		assert ( pose.size() > 4 );
 
 		countSEHydrophobicPerStructure = 0;
 
-		for ( core::Size res1_position = 4; res1_position <= pose.n_residue() - 3; ++res1_position ) {
+		for ( core::Size res1_position = 4; res1_position <= pose.size() - 3; ++res1_position ) {
 
 			// reset the counters, before EVERY iteration
 			patchSize = 0;
@@ -300,14 +300,14 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 		// residues and find exposed hydrophobics
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		assert ( pose.n_residue() > 4 );
+		assert ( pose.size() > 4 );
 
 		int thresholdRadius;
 		for ( thresholdRadius = 6; thresholdRadius <= 10; thresholdRadius++ ) {
 
 			countSEHydrophobicPerStructure = 0;
 
-			for ( core::Size res1_position = 4; res1_position <= pose.n_residue() - 3; ++res1_position ) {
+			for ( core::Size res1_position = 4; res1_position <= pose.size() - 3; ++res1_position ) {
 
 				// reset the counters, before EVERY iteration
 				patchSize = 0;
@@ -344,7 +344,7 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 
 
 				// now find all other surface-exposed hydrophobic residues.
-				for ( core::Size res2_position = 4; res2_position <= pose.n_residue() - 3; ++res2_position ) {
+				for ( core::Size res2_position = 4; res2_position <= pose.size() - 3; ++res2_position ) {
 					// see note above for starting/terminating conditions
 
 					if ( res1_position == res2_position )
@@ -438,8 +438,8 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 		// residues and find exposed hydrophobics
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		assert ( pose.n_residue() > 4 );
-		for ( core::Size res1_position = 4; res1_position <= pose.n_residue() - 3; ++res1_position ) {
+		assert ( pose.size() > 4 );
+		for ( core::Size res1_position = 4; res1_position <= pose.size() - 3; ++res1_position ) {
 
 			// these variables are per res1 values, reset every new exposed res1
 			int countNeighbors = 0;
@@ -607,8 +607,8 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 		// residues and find exposed hydrophobics
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		assert ( pose.n_residue() > 4 );
-		for ( core::Size res1_position = 4; res1_position <= pose.n_residue() - 3; ++res1_position ) {
+		assert ( pose.size() > 4 );
+		for ( core::Size res1_position = 4; res1_position <= pose.size() - 3; ++res1_position ) {
 
 			// these variables are per res1 values, reset every new exposed res1
 			int countNeighbors = 0;
@@ -796,12 +796,12 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 		// First, we have to figure out which residues are surface-exposed
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() ) continue;
 
@@ -985,7 +985,7 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 		// First, don't include the 3-residue chain termini. That could skew the distributions.  People add purification
 		// tags and extra residues on proteins all the time.
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
@@ -996,7 +996,7 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 		std::map< std::string, Real > res_to_calculated_hASA;
 		read_NACCESS_asa_file( naccess_asa_filename.str(), res_to_calculated_hASA );
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() ) { continue; }
 
@@ -1209,12 +1209,12 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 
 		// First, don't include the 3-residue chain termini. That could skew the distributions.  People add purification
 		// tags and extra residues on proteins all the time.
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() ) { continue; }
 
@@ -1234,7 +1234,7 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 			pose::Pose pose2(pose);
 			//rj iterate over all positions to find neighbors
 			//for ( conformation::ResidueOPs::iterator iter = pose2.res_begin(); iter != pose2.res_end() ; ++iter) {
-			for ( Size ii_res = 1; ii_res <= pose2.n_residue(); ++ii_res ) {
+			for ( Size ii_res = 1; ii_res <= pose2.size(); ++ii_res ) {
 
 				// get the residue to compare to the current residue rsd
 				//conformation::Residue compRes(**iter);
@@ -1466,7 +1466,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 		// First, we have to figure out which residues are surface-exposed
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
@@ -1478,7 +1478,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 		// neighbor count) and all neighboring surface-exposed residues hpASA's to the total.  Save that final sum in the
 		// hASA_within_10A vector.
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() ) {
 				continue;
@@ -1664,7 +1664,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 		// First, we have to figure out which residues are surface-exposed
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
@@ -1676,7 +1676,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 		// neighbor count) and all neighboring surface-exposed residues hpASA's to the total.  Save that final sum in the
 		// hASA_within_10A vector.
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() ) {
 				continue;
@@ -1845,7 +1845,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
@@ -1863,7 +1863,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 		// neighbor count) and all neighboring surface-exposed residues hASA's to the total.  Save that final sum in the
 		// hASA_within_10A vector.
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() )
 				continue;
@@ -2000,15 +2000,15 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
 
 		scorefxn->score( pose );
 
-		utility::vector1< core::Real > residue_sasa( pose.total_residue(), 0.0 );
-		utility::vector1< core::Real > residue_hsasa( pose.total_residue(), 0.0 ); // hydrophobic SASA only
+		utility::vector1< core::Real > residue_sasa( pose.size(), 0.0 );
+		utility::vector1< core::Real > residue_hsasa( pose.size(), 0.0 ); // hydrophobic SASA only
 		core::Real total_hydrophobic_sasa = core::scoring::calc_per_res_hydrophobic_sasa( pose, residue_sasa, residue_hsasa, 1.4 /* probe radius */ );
 		#ifdef FILE_DEBUG
 			TR << "total_hydrophobic_sasa: " << total_hydrophobic_sasa << std::endl;
@@ -2022,7 +2022,7 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 		// neighbor count) and all neighboring surface-exposed residues hASA's to the total.  Save that final sum in the
 		// hASA_within_10A vector.
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() )
 				continue;
@@ -2170,7 +2170,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 		// First, we have to figure out which residues are surface-exposed
 		// Except, don't include the 3-residue chain termini.  Lots of protein expression systems use
 		// MET on the ends which end up on the termini in the crystal structures
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
@@ -2182,7 +2182,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 		// neighbor count) and all neighboring surface-exposed residues hpASA's to the total.  Save that final sum in the
 		// hASA_within_10A vector.
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() ) {
 				continue;
@@ -2306,15 +2306,15 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
 
 		scorefxn->score( pose );
 
-		utility::vector1< core::Real > residue_sasa( pose.total_residue(), 0.0 );
-		utility::vector1< core::Real > residue_hsasa( pose.total_residue(), 0.0 ); // hydrophobic SASA only
+		utility::vector1< core::Real > residue_sasa( pose.size(), 0.0 );
+		utility::vector1< core::Real > residue_hsasa( pose.size(), 0.0 ); // hydrophobic SASA only
 		core::Real total_hydrophobic_sasa = core::scoring::calc_per_res_hydrophobic_sasa( pose, residue_sasa, residue_hsasa, 1.4 /* probe radius */, true /* use naccess sasa radii */ );
 		#ifdef FILE_DEBUG
 			TR << "total_hydrophobic_sasa: " << total_hydrophobic_sasa << std::endl;
@@ -2322,7 +2322,7 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 
 		// Now iterate over all residues (well, exclude 3 from each end) and figure out which residues are surface-exposed
 		float hASA = 0.0;
-		for ( Size ii = 4; ii <= pose.n_residue() - 3; ++ii ) {
+		for ( Size ii = 4; ii <= pose.size() - 3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() ) continue;
 
@@ -2490,7 +2490,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
-		if ( pose.n_residue() <= 4 ) {
+		if ( pose.size() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
 		}
@@ -2505,7 +2505,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 		// Do we want to include only the surface-exposed neighbors or should I include all neighbors since the average
 		// hydrophobic ASA values include a neighbor dependence to them.
 
-		for ( Size ii=4; ii <= pose.n_residue()-3; ++ii ) {
+		for ( Size ii=4; ii <= pose.size()-3; ++ii ) {
 
 			if ( ! pose.residue( ii ).is_protein() )
 				continue;

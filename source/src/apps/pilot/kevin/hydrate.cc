@@ -106,7 +106,7 @@ void place_water_acceptor(
         tp5_res->set_xyz( ii, stub.local2global( numeric::product(tp5_about_acceptor_rot_mat, HT_stub_to_wat * numeric::product(tp5_about_hbond_rot_mat, tp5_res->type().atom( ii ).ideal_xyz() ) ) ) );
     }
     
-    core::Size cutpoint ( pose.total_residue() );
+    core::Size cutpoint ( pose.size() );
     pose.append_residue_by_jump( *tp5_res, cutpoint );
 }
 
@@ -162,7 +162,7 @@ void place_water_donor(
         tp5_res->set_xyz( ii, stub.local2global( numeric::product(tp5_about_don_rot_mat, tp5_stub.global2local( tp5_res->xyz(ii) ) + wat_O_xyz ) ) );
     }
     
-    core::Size cutpoint ( pose.total_residue() );
+    core::Size cutpoint ( pose.size() );
     pose.append_residue_by_jump( *tp5_res, cutpoint );
 }
 

@@ -196,7 +196,7 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 		}
 		to_full_atom.apply( antibody_in_.Fv );
 
-		utility::vector1<bool> allow_chi_copy( antibody_in_.Fv.total_residue(),
+		utility::vector1<bool> allow_chi_copy( antibody_in_.Fv.size(),
 			true );
 		for ( Size ii = antibody_in_.cdrh_[3][1];
 				ii <= ( antibody_in_.cdrh_[3][2] + 1 ); ii++ ) {
@@ -379,7 +379,7 @@ void simple_one_loop_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 	Size jumppoint1 = loop.start() - 1;
 	Size jumppoint2 = loop.stop() + 1;
 
@@ -413,7 +413,7 @@ void simple_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 
 	if ( jumppoint1 < 1 )   jumppoint1 = 1;
 	if ( jumppoint2 > nres ) jumppoint2 = nres;
@@ -1107,7 +1107,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	cdrh3_map->clear();
 	cdrh3_map->set_chi( false );
 	cdrh3_map->set_bb( false );
-	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
 	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
@@ -1165,7 +1165,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 		simple_fold_tree( pose_in, loop_begin - h3_flank_ - 1, cutpoint,
 			loop_end + h3_flank_ + 1 );
 		with_flank_fold_tree = ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose_in.fold_tree() ) );
-		for ( Size i = 1; i <= pose_in.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose_in.size(); i++ ) {
 			if ( (i >= (loop_begin - h3_flank_)) && (i <= (loop_end + h3_flank_)) ) {
 				flank_allow_bb_move[i] = true;
 			}
@@ -1191,7 +1191,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	}
 
 
-	utility::vector1< bool> allow_repack( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_repack( pose_in.size(), false );
 	select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
 		allow_repack);
 	cdrh3_map->set_chi( allow_repack );
@@ -1436,7 +1436,7 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
-	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
 	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}

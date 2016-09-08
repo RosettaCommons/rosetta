@@ -99,7 +99,7 @@ void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 
 	this->fill_with_value(0.0);
 
-	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
+	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
 		core::conformation::Residue const residue = pose.residue(residue_index);
 		if ( !residue.is_protein() ) {
 			continue;

@@ -86,16 +86,16 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 		return;
 	}
 	tr << "setting up fold_tree with " << njumps << " jump(s)\n";
-	Size nres=pose.total_residue();
+	Size nres=pose.size();
 	core::kinematics::FoldTree f(nres);
 	Size tries(0);
 	core::scoring::MembraneTopology const & topology(*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
-	FArray1D_int tmh(pose.total_residue());
-	FArray1D_int tmh2(pose.total_residue(),0);
+	FArray1D_int tmh(pose.size());
+	FArray1D_int tmh2(pose.size(),0);
 	Size total_tmhelix(topology.tmhelix());
 	FArray1D_bool tmh_involved_in_jump(total_tmhelix,false);
 
-	for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+	for ( Size j = 1; j <= pose.size(); ++j ) {
 		//bw change definition of membrane region to include jumps to non-tmh.
 		if ( j<=topology.span_end(1) ) { //membrane_helix(1,2))
 			tmh(j)=1;
@@ -109,7 +109,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 			}
 		}
 	}
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		for ( Size j = 1; j <= total_tmhelix; ++j ) {
 			if ( i>topology.span_begin(j) && i < topology.span_end(j) ) {
 				tmh2(i)=j;
@@ -151,7 +151,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 		jumps(2,i)=selected_pairings_[i].Pos2();
 	}
 	FArray1D_float cut_bias(nres,0.0);
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( tmh2(i)==0 ) {
 			cut_bias(i)=1;
 		}

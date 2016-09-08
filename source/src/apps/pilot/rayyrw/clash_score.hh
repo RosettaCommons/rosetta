@@ -26,9 +26,9 @@ std_clash_check(
 ){
 	//core::Real score(0.0);
 	core::Size clash_natoms( 0 );
-	core::Size pose2_nrsds = pose2.n_residue();
+	core::Size pose2_nrsds = pose2.size();
 
-	for ( core::Size irsd=1; irsd <= pose1.n_residue(); ++irsd ) {
+	for ( core::Size irsd=1; irsd <= pose1.size(); ++irsd ) {
 		numeric::xyzVector<core::Real> atm_i = pose1.residue( irsd ).atom( 2 ).xyz();
 
 		for ( core::Size jrsd=1; jrsd <= pose2_nrsds; ++jrsd ) {
@@ -69,8 +69,8 @@ soften_clash_check(
 
 	// here are the differences
 	// - skip checking the last residue of the further fragment and the first residue of the latter one
-	for ( core::Size irsd=1; irsd <= pose_lower.n_residue()-1; ++irsd ) {
-		for ( core::Size jrsd=2; jrsd <= pose_upper.n_residue(); ++jrsd ) {
+	for ( core::Size irsd=1; irsd <= pose_lower.size()-1; ++irsd ) {
+		for ( core::Size jrsd=2; jrsd <= pose_upper.size(); ++jrsd ) {
 
 			core::Real dist = cal_distance( pose_lower, irsd, pose_upper, jrsd );
 			// tr_clash_score << "irsd: " << irsd << " jrsd: " << jrsd << " dist: " << dist << std::endl;
@@ -112,7 +112,7 @@ clash_score(
 	core::Size pos_lower = std::min( pos1, pos2 );
 	core::Size pos_upper = std::max( pos1, pos2 );
 
-	int gap_size = pos_upper - ( pos_lower + pose_lower.n_residue() - 1 );
+	int gap_size = pos_upper - ( pos_lower + pose_lower.size() - 1 );
 
 	if ( gap_size <= 0 ) { // from one overlap to...
 		return 0;

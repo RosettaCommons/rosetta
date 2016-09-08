@@ -49,7 +49,7 @@ core::Size count_backbone_atoms(
 	core::pose::Pose const & pose
 ) {
 	core::Size count(0);
-	for ( core::Size ii = 1, end = pose.total_residue(); ii <= end; ++ii ) {
+	for ( core::Size ii = 1, end = pose.size(); ii <= end; ++ii ) {
 		core::conformation::Residue const & res(pose.residue(ii));
 		for ( int jj = 1; jj <= res.natoms(); ++jj ) {
 			if ( res.atom_is_backbone(jj) ) ++count;
@@ -115,8 +115,8 @@ main( int argc, char * argv [] ) {
 		//	runtime_assert( n_backbone == all_coords.front().size() );
 		//}
 
-		vector1< vector1< PointPosition > > pose_coords( pose.total_residue() );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		vector1< vector1< PointPosition > > pose_coords( pose.size() );
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			core::conformation::Residue const & res(pose.residue(ii));
 			vector1< PointPosition > res_coords;
 			for ( int jj = 1; jj <= res.natoms(); ++jj ) {
@@ -152,7 +152,7 @@ main( int argc, char * argv [] ) {
 
 	pose.dump_pdb( "debug.pdb" );
 
-	for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+	for ( Size jj = 1; jj <= pose.size(); ++jj ) {
 		core::conformation::Residue const & res(pose.residue(jj));
 		for ( Size kk = 1; kk <= res.natoms(); ++kk ) {
 			using core::id::AtomID;

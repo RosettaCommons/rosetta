@@ -370,7 +370,7 @@ InterfaceFeatures::report_interface_residue_features(
 
 	protocols::analysis::PerResidueInterfaceData interface_data = interface_analyzer_->get_all_per_residue_data();
 	protocols::analysis::InterfaceData all_data = interface_analyzer_->get_all_data();
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( check_relevant_residues(relevant_residues, i) && interface_data.interface_residues[i] ) {
 			protocols::analysis::InterfaceRegion side;
 			//Check the side.  Can only be either side1 or side2
@@ -507,8 +507,8 @@ InterfaceFeatures::report_interface_features(
 	stmt.bind(i+=1,data.sc_value);
 	stmt.bind(i+=1,data.packstat);
 	stmt.bind(i+=1,data.interface_nres[total]);
-	stmt.bind(i+=1,pose.total_residue());
-	stmt.bind(i+=1,data.complex_total_energy[total]/pose.total_residue());
+	stmt.bind(i+=1,pose.size());
+	stmt.bind(i+=1,data.complex_total_energy[total]/pose.size());
 	basic::database::safely_write_to_database(stmt);
 }
 

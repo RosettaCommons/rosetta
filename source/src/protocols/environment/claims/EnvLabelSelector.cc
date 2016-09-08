@@ -97,7 +97,7 @@ EnvLabelSelector::apply(
 {
 	using core::environment::LocalPositionOP;
 
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 
 	ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< protocols::environment::ProtectedConformation const > ( pose.conformation_ptr() );
 	core::environment::SequenceAnnotationCOP ann = conf->annotations();

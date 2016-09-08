@@ -11,7 +11,7 @@ void set_pose_to_ideal(core::pose::Pose & p) {
   Real ang_n = /*3.1415926535897932384626433832795-*/(acos(COS_CA_C_N)+asin(SIN_CA_C_N))/2.0; // numeric::constants::d::pi - 2.02807304; // 
   Real angca = /*3.1415926535897932384626433832795-*/(acos(COS_C_N_CA)+asin(SIN_C_N_CA))/2.0; // numeric::constants::d::pi - 2.12406619; // 
   Real ang_c = /*3.1415926535897932384626433832795-*/(acos(COS_N_CA_C)+asin(SIN_N_CA_C))/2.0; // numeric::constants::d::pi - 1.94080619; //  
-  for(Size i = 1; i <= p.n_residue(); ++i) {
+  for(Size i = 1; i <= p.size(); ++i) {
     ;        p.set_dof(DOF_ID(AtomID(1,i),core::id::THETA),ang_n);
     if(i!=1) p.set_dof(DOF_ID(AtomID(2,i),core::id::THETA),angca);
     ;        p.set_dof(DOF_ID(AtomID(3,i),core::id::THETA),ang_c);

@@ -108,9 +108,8 @@ void loops_around_residues(
 	core::conformation::Conformation const & conf( pose.conformation() );
 	Size seg_begin( residue_indices.front() ), seg_end( residue_indices.front() );
 	int last_chain( pose.chain( residue_indices.front() ) );
-	Size const nres( pose.total_residue() );
-	for ( auto index( residue_indices.begin() );
-			index != residue_indices.end(); ++index ) {
+	Size const nres( pose.size() );
+	for ( auto index( residue_indices.begin() ); index != residue_indices.end(); ++index ) {
 		runtime_assert( *index > 0 );
 		runtime_assert( *index <= nres );
 		int const chain( pose.chain(*index) );

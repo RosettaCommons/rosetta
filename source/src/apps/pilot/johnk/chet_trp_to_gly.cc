@@ -74,7 +74,7 @@ void do_minimization(
 		// setting degrees of freedom which can move during minimization
 	kinematics::MoveMap mm;
 	mm.set_jump( false );
-	for ( core::Size j = 1; j <= pose.total_residue(); ++j ) {
+	for ( core::Size j = 1; j <= pose.size(); ++j ) {
 		mm.set_chi( j, allow_moving.at(j) );
 		mm.set_bb( j, allow_moving.at(j) );
 	}
@@ -132,11 +132,11 @@ void do_KIC(
 
 	// figure out loop regions from allow_moving, build a KIC mover for each
 	protocols::moves::RandomMoverOP loop_move_set( new protocols::moves::RandomMover() );
-	for ( core::Size j = 2; j <= pose.total_residue(); ++j ) {
+	for ( core::Size j = 2; j <= pose.size(); ++j ) {
 		if ( allow_moving.at(j) ) {
 			core::Size loop_begin = j;
 			core::Size loop_end = j;
-			for ( core::Size k = j; k <= pose.total_residue(); ++k ) {
+			for ( core::Size k = j; k <= pose.size(); ++k ) {
 				if ( ! allow_moving.at(k) ) {
 					break;
 				}
@@ -215,12 +215,12 @@ void do_backrub(
 	backrubmover.set_input_pose( tmp_poseOP );
 
 	// generate segments from allow_moving
-	for ( core::Size j = 2; j <= pose.total_residue(); ++j ) {
+	for ( core::Size j = 2; j <= pose.size(); ++j ) {
 		if ( allow_moving.at(j) ) {
 			core::Size start_res = j-1;
 			core::Size end_res = j;
 			// find contiguous segments of allow_moving
-			for ( core::Size k = j; k <= pose.total_residue(); ++k ) {
+			for ( core::Size k = j; k <= pose.size(); ++k ) {
 				if ( ! allow_moving.at(k) ) {
 					break;
 				}
@@ -324,7 +324,7 @@ main( int argc, char * argv [] )
 
 	// set mut_rosetta_resnum to Rosetta internal resid for the residue to be mutated
 	core::Size mut_rosetta_resnum = 0;
-	for ( core::Size j = 1; j <= wt_pose_init.total_residue(); ++j ) {
+	for ( core::Size j = 1; j <= wt_pose_init.size(); ++j ) {
 		if ( ( wt_pose_init.pdb_info()->chain(j) == mut_pdb_chain ) &&
 				 ( wt_pose_init.pdb_info()->number(j) == mut_pdb_number ) ) {
 					 mut_rosetta_resnum = j;
@@ -351,7 +351,7 @@ main( int argc, char * argv [] )
 	// restrict packer task to single sequence position of interest
 	int const aa_ala = 1;
 	int const aa_gly = 6;
-	utility::vector1<bool> allow_redesign( wt_pose_init.total_residue(), false );
+	utility::vector1<bool> allow_redesign( wt_pose_init.size(), false );
 	allow_redesign.at(mut_rosetta_resnum) = true;
 	utility::vector1< bool > mut_site( core::chemical::num_canonical_aas, false );
 	if ( option[ mut_to_ala ] ) {
@@ -375,7 +375,7 @@ main( int argc, char * argv [] )
 	task_repack_wt->or_include_current( true );
 	task_repack_mut->or_include_current( true );
 	// restrict repacking to the neighbors of the mutation site
-	utility::vector1 <bool>	allow_moving( wt_pose_init.total_residue(), false );
+	utility::vector1 <bool>	allow_moving( wt_pose_init.size(), false );
 	allow_moving.at( mut_rosetta_resnum ) = true;
 	core::scoring::TwelveANeighborGraph const & graph = wt_pose_init.energies().twelveA_neighbor_graph();
 	for ( core::graph::Graph::EdgeListConstIter
@@ -385,7 +385,7 @@ main( int argc, char * argv [] )
 		Size const neighbor_id( (*iter)->get_other_ind( mut_rosetta_resnum ) );
 		allow_moving.at(neighbor_id) = true;
 	}
-	for (core::Size ii = 1; ii < wt_pose_init.total_residue(); ++ii ) {
+	for (core::Size ii = 1; ii < wt_pose_init.size(); ++ii ) {
 		task_repack_wt->nonconst_residue_task( ii ).restrict_to_repacking();
 		task_repack_mut->nonconst_residue_task( ii ).restrict_to_repacking();
 	}

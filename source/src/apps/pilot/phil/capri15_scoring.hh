@@ -560,7 +560,7 @@ CapriTotalEnergy::setup_rna_atoms_for_pose(
 
 	Size sam_pos( 0 );
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose.residue(i).name3() == "SAM" ) {
 			sam_pos = i;
 			break;
@@ -595,7 +595,7 @@ CapriTotalEnergy::finalize_total_energy(
 	/// figure out where SAM and rna root position are
 	Size sam_pos( 0 ), rna_root_pos( 0 ), nres_rna( 0 );
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose.residue(i).name3() == "SAM" ) {
 			sam_pos = i;
 		} else if ( pose.residue(i).is_RNA() ) {
@@ -611,7 +611,7 @@ CapriTotalEnergy::finalize_total_energy(
 
 	if ( !sam_pos || !rna_root_pos ) utility_exit_with_message("no sam in pose!" );
 	assert( nres_rna == ( 74 /*rna length*/ - 8 /* rsds missing in bound rna strx*/ ) );
-	assert( sam_pos && sam_pos == pose.total_residue() - nres_rna );
+	assert( sam_pos && sam_pos == pose.size() - nres_rna );
 
 
 	// now the conservation bonus stuff
@@ -701,7 +701,7 @@ CapriTotalEnergy::score_experimental_constraints(
 			Real mindev ( 999.9 );
 			// the smallest dis2 between the constrained rna atom and the nbr atom of a protein residue
 			Real mindis2( 999.9 );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				Residue const & rsd( pose.residue( i ) );
 				if ( rsd.is_protein() ) {
 					Real const nbr_dis2( rna_atom_xyz.distance_squared( rsd.nbr_atom_xyz() ) );
@@ -761,7 +761,7 @@ setup_capri_data( pose::Pose & pose, std::string const & pssm_file, id::Sequence
 
 	// now fill in the conservation data, read a PSI-blast pssm file
 	capri_data->conserved_residues.clear();
-	utility::vector1< Real > pose_IC( pose.total_residue(), 0.0 );
+	utility::vector1< Real > pose_IC( pose.size(), 0.0 );
 	utility::vector1< Real > all_ics;
 	{ // read IC values for pose residues from the file, using the fasta2pose mapping
 		std::ifstream data( pssm_file.c_str() );
@@ -792,7 +792,7 @@ setup_capri_data( pose::Pose & pose, std::string const & pssm_file, id::Sequence
 	Size const n_conserved( all_ics.size() / 10 );
 	Real const ic_threshold( all_ics[ n_conserved ] + 1e-3 );
 	//std::cout << "IC-threshold: " << n_conserved << ' ' << ic_threshold << std::endl;
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose_IC[ i ] >= ic_threshold ) {
 			//std::cout << "Conserved residue: " << i << ' ' << pose.residue(i).name() << ' ' << pose_IC[i] << std::endl;
 			capri_data->conserved_residues.push_back( std::make_pair( i, pose.residue(i).name1() ) );
@@ -809,7 +809,7 @@ setup_capri_data( pose::Pose & pose, std::string const & pssm_file, id::Sequence
 // 	/// first fill in the cyan constraint data
 // 	{
 // 		Size sam_pos( 0 );
-// 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+// 		for ( Size i=1; i<= pose.size(); ++i ) {
 // 			if ( pose.residue(i).name3() == "SAM" ) {
 // 				sam_pos = i;
 // 				break;

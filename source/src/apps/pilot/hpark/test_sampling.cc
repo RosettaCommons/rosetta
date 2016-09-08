@@ -384,7 +384,7 @@ test_loophash( pose::Pose const pose,
 	LHsampler->set_nonideal( true ); // always because starting is not usually idealized
 
   std::vector< io::silent::SilentStructOP > decoys;
-  Size const nres( pose.total_residue() - 10 );
+  Size const nres( pose.size() - 10 );
 
   // Iter for random windows
   for( Size istr = 1; istr <= nstruct; ++istr ){

@@ -97,7 +97,7 @@ ResidueTypesFeatures::report_features(
 	// Get a set of the unique residue types that are used in this pose
 	// THIS CODE IS THE SOURCE OF INTEGRATION TEST INSTABILITIES
 	set< ResidueType const * > res_types;
-	for ( Size i=1; i <= pose.n_residue(); ++i ) {
+	for ( Size i=1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 		res_types.insert(&pose.residue_type(i));
 	}

@@ -57,7 +57,7 @@ constraint_set_slice( core::scoring::constraints::ConstraintSetOP & cst_set,
 
 	//  std::map< Size, Size > slice_map;
 	//  for (Size i = 1; i <= slice_res.size(); i++) slice_map[ slice_res[ i ] ] = i;
-	utility::vector1< Size > mapping( full_pose.total_residue(), 0);
+	utility::vector1< Size > mapping( full_pose.size(), 0);
 	for ( Size i = 1; i <= slice_res.size(); i++ ) mapping[ slice_res[ i ] ] = i;
 	SequenceMappingOP smap( new SequenceMapping( mapping ) );
 

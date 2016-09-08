@@ -587,7 +587,7 @@ bool FullatomDisulfideEnergyContainer::energy_computed( Size disulfide_index ) c
 void
 FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 {
-	Size nres = pose.total_residue(), indep_res = pose.total_residue();
+	Size nres = pose.size(), indep_res = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		indep_res = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		nres = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
@@ -646,7 +646,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 bool
 FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 {
-	Size nres = pose.total_residue(), indep_res = pose.total_residue();
+	Size nres = pose.size(), indep_res = pose.size();
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		indep_res = core::pose::symmetry::symmetry_info( pose )->num_independent_residues();
 		nres = core::pose::symmetry::symmetry_info( pose )->num_total_residues_without_pseudo();

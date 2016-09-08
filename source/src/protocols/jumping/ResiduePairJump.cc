@@ -408,14 +408,14 @@ ResiduePairJump::build_sidechain_rotamers()
 {
 	using namespace core::scoring;
 
-	runtime_assert( miniPose_->total_residue() == 2 );
+	runtime_assert( miniPose_->size() == 2 );
 
 	// set up a scorefxn and packer_neighbor_graph for build_rotamers function
 	ScoreFunctionOP scorefxn( get_score_function() );
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( *miniPose_ );
 	task->initialize_from_command_line().restrict_to_repacking();
 	(*scorefxn)(*miniPose_);
-	utility::vector1< bool > task_mask( miniPose_->total_residue(), true );
+	utility::vector1< bool > task_mask( miniPose_->size(), true );
 	for ( core::Size which = 1; which <= residues_.size(); ++which ) {
 		ResiduePairJumpSingleOP rsd = residues_[which];
 

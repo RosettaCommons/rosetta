@@ -697,8 +697,8 @@ ScoreFunction::operator()( pose::Pose & pose ) const
 #endif
 
 	// completely unnecessary temporary hack to force refold if nec. for profiling
-	if ( pose.total_residue() > 0 ) {
-		pose.residue( pose.total_residue() );
+	if ( pose.size() > 0 ) {
+		pose.residue( pose.size() );
 	}
 
 	//fpd fail if this is called on a symmetric pose
@@ -820,7 +820,7 @@ ScoreFunction::get_sub_score(
 	pose::Pose const & pose,
 	utility::vector1< bool > const & residue_mask
 ) const {
-	debug_assert(residue_mask.size() == pose.total_residue());
+	debug_assert(residue_mask.size() == pose.size());
 
 	// retrieve cached energies object
 	Energies const & energies( pose.energies() );
@@ -830,7 +830,7 @@ ScoreFunction::get_sub_score(
 
 	// should be zeroed at the beginning of scoring
 	Real total( 0.0 ); //( energies.totals() );
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		if ( !residue_mask[i] ) continue;
 
 		for ( graph::Graph::EdgeListConstIter
@@ -848,7 +848,7 @@ ScoreFunction::get_sub_score(
 	///////////////////////////////////////////////////////////////
 	// context independent onebody energies
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !residue_mask[i] ) continue;
 		EnergyMap const & emap( energies.onebody_energies( i ) );
 
@@ -888,7 +888,7 @@ ScoreFunction::get_sub_score(
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ! residue_mask[ii] ) continue;
 			if ( ! lrec->any_upper_neighbors_for_residue( ii ) ) continue;
 			for ( ResidueNeighborConstIteratorOP
@@ -910,7 +910,7 @@ ScoreFunction::get_sub_score(
 		LREnergyContainerCOP lrec =
 			pose.energies().long_range_container( cd_lr_2b_method->long_range_type() );
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( !residue_mask[ii] ) continue;
 			for ( ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
@@ -947,7 +947,7 @@ ScoreFunction::get_sub_score(
 	utility::vector1< bool > const & residue_mask,
 	EnergyMap & emap
 ) const {
-	debug_assert(residue_mask.size() == pose.total_residue());
+	debug_assert(residue_mask.size() == pose.size());
 
 	// retrieve cached energies object
 	Energies const & energies( pose.energies() );
@@ -957,7 +957,7 @@ ScoreFunction::get_sub_score(
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	// should be zeroed at the beginning of scoring
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		if ( !residue_mask[i] ) continue;
 
 		for ( graph::Graph::EdgeListConstIter
@@ -978,7 +978,7 @@ ScoreFunction::get_sub_score(
 	///////////////////////////////////////////////////////////////
 	// context independent onebody energies
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !residue_mask[i] ) continue;
 		EnergyMap onebody_emap(energies.onebody_energies(i));
 		onebody_emap *= weights_;
@@ -1018,7 +1018,7 @@ ScoreFunction::get_sub_score(
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( !residue_mask[ii] ) continue;
 
 			for ( ResidueNeighborConstIteratorOP
@@ -1040,7 +1040,7 @@ ScoreFunction::get_sub_score(
 			LREnergyContainerCOP lrec =
 				pose.energies().long_range_container(cd_lr_2b_method->long_range_type());
 			// Potentially O(N^2) operation...
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				if ( !residue_mask[ii] ) continue;
 				for ( ResidueNeighborConstIteratorOP
 						rni = lrec->const_upper_neighbor_iterator_begin( ii ),
@@ -1077,9 +1077,9 @@ ScoreFunction::get_sub_score_exclude_res(
 	utility::vector1< Size > const & exclude_res
 ) const {
 
-	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for ( unsigned long exclude_re : exclude_res ) {
-		residue_mask[exclude_re] = false;
+	utility::vector1< bool > residue_mask(pose.size(), true);
+	for ( unsigned long seqpos : exclude_res ) {
+		residue_mask[ seqpos ] = false;
 	}
 	return get_sub_score(pose, residue_mask);
 }
@@ -1094,9 +1094,9 @@ ScoreFunction::get_sub_score_exclude_res(
 	//If the energies are not up-to-date score the pose
 	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
-	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for ( unsigned long exclude_re : exclude_res ) {
-		residue_mask[exclude_re] = false;
+	utility::vector1< bool > residue_mask(pose.size(), true);
+	for ( unsigned long seqpos : exclude_res ) {
+		residue_mask[ seqpos ] = false;
 	}
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask);
 }
@@ -1109,9 +1109,9 @@ ScoreFunction::get_sub_score_exclude_res(
 	utility::vector1< core::Size > const & exclude_res,
 	EnergyMap & emap
 ) const {
-	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for ( unsigned long exclude_re : exclude_res ) {
-		residue_mask[exclude_re] = false;
+	utility::vector1< bool > residue_mask(pose.size(), true);
+	for ( unsigned long seqpos : exclude_res ) {
+		residue_mask[ seqpos ] = false;
 	}
 	get_sub_score(pose, residue_mask, emap);
 }
@@ -1127,9 +1127,9 @@ ScoreFunction::get_sub_score_exclude_res(
 	//If the energies are not up-to-date score the pose
 	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
-	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for ( unsigned long exclude_re : exclude_res ) {
-		residue_mask[exclude_re] = false;
+	utility::vector1< bool > residue_mask(pose.size(), true);
+	for ( unsigned long seqpos : exclude_res ) {
+		residue_mask[ seqpos ] = false;
 	}
 	get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask, emap);
 }
@@ -1160,7 +1160,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 	if ( minimizing ) {
 		/// When minimizing, do not touch the EnergyGraph -- leave it fixed
 		MinimizationGraphCOP g = energies.minimization_graph();
-		for ( Size ii = 1; ii < pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii < pose.size(); ++ii ) {
 			conformation::Residue const & ii_rsd( pose.residue( ii ) );
 			for ( core::graph::Graph::EdgeListConstIter
 					edge_iter = g->get_node( ii )->const_upper_edge_list_begin(),
@@ -1177,7 +1177,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 	} else {
 		EnergyMap tbemap;
 
-		for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+		for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 			conformation::Residue const & resl( pose.residue( i ) );
 			for ( graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
@@ -1244,7 +1244,7 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			for ( ResidueNeighborIteratorOP
 					rni = lrec->upper_neighbor_iterator_begin( ii ),
 					rniend = lrec->upper_neighbor_iterator_end( ii );
@@ -1279,7 +1279,7 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 			= pose.energies().nonconst_long_range_container( cd_lr_2b_method->long_range_type() );
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			for ( ResidueNeighborIteratorOP
 					rni = lrec->upper_neighbor_iterator_begin( ii ),
 					rniend = lrec->upper_neighbor_iterator_end( ii );
@@ -1314,7 +1314,7 @@ ScoreFunction::eval_onebody_energies( pose::Pose & pose ) const
 	if ( minimizing ) {
 		MinimizationGraphCOP mingraph = energies.minimization_graph();
 		debug_assert( mingraph );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			conformation::Residue const & rsd = pose.residue( ii );
 
 			MinimizationNode const & iiminnode =  * mingraph->get_minimization_node( ii );
@@ -1323,7 +1323,7 @@ ScoreFunction::eval_onebody_energies( pose::Pose & pose ) const
 		}
 
 	} else {
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			EnergyMap & emap( energies.onebody_energies( i ) );
 
 			// 1body intxns ///////////////////////////
@@ -1942,7 +1942,7 @@ ScoreFunction::setup_for_scoring(
 		MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 
 		/// 1. setup_for_scoring for residue singles
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			mingraph->get_minimization_node( ii )->setup_for_scoring( pose.residue( ii ), pose, *this );
 		}
 
@@ -2012,7 +2012,7 @@ ScoreFunction::setup_for_derivatives(
 	MinimizationGraphOP mingraph = pose.energies().minimization_graph();
 
 	/// 1. setup_for_derivatives for residue singles
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		MinimizationNode & iiminnode( * mingraph->get_minimization_node( ii ));
 		iiminnode.setup_for_derivatives( pose.residue(ii), pose, *this );
 	}
@@ -2070,7 +2070,7 @@ ScoreFunction::setup_for_minimizing(
 	/// 5. Setup whole-structure energies and energy methods that opt-out
 	/// of the minimization-graph control over derivative evaluation.
 
-	MinimizationGraphOP g( new MinimizationGraph( pose.total_residue() ) );
+	MinimizationGraphOP g( new MinimizationGraph( pose.size() ) );
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
 	 for ( auto const & all_method : all_methods_ ) {
 		if ( all_method->defines_high_order_terms( pose ) || all_method->minimize_in_whole_structure_context( pose ) ) {
@@ -2081,7 +2081,7 @@ ScoreFunction::setup_for_minimizing(
 	EnergyMap fixed_energies; // portions of the score function that will not change over the course of minimization.
 
 	kinematics::DomainMap const & domain_map = min_map.domain_map();
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		setup_for_minimizing_for_node( * g->get_minimization_node( ii ), pose.residue( ii ),
 			min_map, pose, true, fixed_energies );
 	}
@@ -2130,7 +2130,7 @@ ScoreFunction::setup_for_minimizing(
 		if ( !lrec || lrec->empty() ) continue;
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			for ( ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
 					rniend = lrec->const_upper_neighbor_iterator_end( ii );

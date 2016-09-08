@@ -296,7 +296,7 @@ public:
 		TS_ASSERT( pose.data().has( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) );
 		CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) )));
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			TS_ASSERT_DELTA( cenlist.fcen6( ii ),  fcen_gold[ ii -1 ][ 0 ], 1E-4 );
 			TS_ASSERT_DELTA( cenlist.fcen10( ii ), fcen_gold[ ii -1 ][ 1 ], 1E-4 );
 			TS_ASSERT_DELTA( cenlist.fcen12( ii ), fcen_gold[ ii -1 ][ 2 ], 1E-4 );
@@ -344,7 +344,7 @@ public:
 		envp.compute_centroid_environment( pose );
 		TS_ASSERT( pose.data().has( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) );
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			Real env_e( 0.0 ), cb_score6( 0.0 ), cb_score12( 0.0 );
 			envp.evaluate_env_and_cbeta_scores( pose, pose.residue( ii ),
 				env_e, cb_score6, cb_score12 );

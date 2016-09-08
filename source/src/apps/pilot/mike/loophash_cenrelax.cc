@@ -163,8 +163,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 		LoopHashSampler  lsampler( library_, simple_inserter );
 
-		core::Size random_start = 1 + rand() % (pose.total_residue() - 10 );
-		core::Size random_end = random_start = std::min( int(random_start + 4), int(pose.total_residue() - 5) );
+		core::Size random_start = 1 + rand() % (pose.size() - 10 );
+		core::Size random_end = random_start = std::min( int(random_start + 4), int(pose.size() - 5) );
 		lsampler.set_start_res( random_start );
 		lsampler.set_stop_res ( random_end );
 		lsampler.set_max_nstruct( 20 );
@@ -309,7 +309,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
       }
     }
     casecount++;
-    //test_loop_sample( pose, pose.total_residue() );
+    //test_loop_sample( pose, pose.size() );
 
     core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
     TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;

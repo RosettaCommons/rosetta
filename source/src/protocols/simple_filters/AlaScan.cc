@@ -163,7 +163,7 @@ AlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 
 	PackerTaskOP task = TaskFactory::create_packer_task( pose );
 	task->initialize_from_command_line().or_include_current( true );
-	for ( core::Size resj=1; resj<=pose.total_residue(); ++resj ) {
+	for ( core::Size resj=1; resj<=pose.size(); ++resj ) {
 		if ( resi == resj ) {
 			task->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
 		} else {
@@ -200,7 +200,7 @@ AlaScan::report( std::ostream & out, core::pose::Pose const & const_pose ) const
 	downstream_jump_res = fold_tree.downstream_jump_residue( jump_ );
 
 	core::Size const chain_begin( chain1_ ? 1 : downstream_jump_res );
-	core::Size const chain_end  ( chain2_ ? pose.total_residue() : upstream_jump_res );
+	core::Size const chain_end  ( chain2_ ? pose.size() : upstream_jump_res );
 
 	protocols::scoring::Interface interface_obj;
 	interface_obj.jump( rb_jump == 0 ? 1 : rb_jump ); // 0 plays badly with interface obj.
@@ -258,7 +258,7 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 	utility::vector1< bool > allowed_aas;
 	allowed_aas.assign( core::chemical::num_canonical_aas, false );
 	allowed_aas[ core::chemical::aa_ala ] = true;
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		if ( !symm_conf.Symmetry_Info()->bb_is_independent(resi) ) continue;
 		if ( !pose.residue( resi ).is_protein() ) continue;
 		if ( interface_obj.is_interface( resi ) ) {
@@ -266,7 +266,7 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 
 			PackerTaskOP task = TaskFactory::create_packer_task( pose );
 			task->initialize_from_command_line().or_include_current( true );
-			for ( core::Size resj=1; resj<=pose.total_residue(); ++resj ) {
+			for ( core::Size resj=1; resj<=pose.size(); ++resj ) {
 				if ( !pose.residue( resi ).is_protein() ) continue;
 				if ( resi == resj ) {
 					task->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );

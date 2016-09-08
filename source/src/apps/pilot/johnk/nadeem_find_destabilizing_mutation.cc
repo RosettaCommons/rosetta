@@ -88,7 +88,7 @@ main( int argc, char * argv [] )
 	repack_task->set_bump_check( false );
 	repack_task->initialize_from_command_line();
 	repack_task->or_include_current( true );
-	for ( int resnum=1, totres = wt_pose.total_residue(); resnum <= totres; ++resnum) {
+	for ( int resnum=1, totres = wt_pose.size(); resnum <= totres; ++resnum) {
 		repack_task->nonconst_residue_task( resnum ).restrict_to_repacking();
 	}
 
@@ -127,7 +127,7 @@ main( int argc, char * argv [] )
 	core::Real ala_polyA_farep = -999.;
 
 	// loop over all residues on the desired chain, all amino acids except C, G, P
- 	for ( int resnum = 1,totres =  wt_pose.total_residue(); resnum <= totres; ++resnum ) {
+ 	for ( int resnum = 1,totres =  wt_pose.size(); resnum <= totres; ++resnum ) {
 		if ( wt_pose.pdb_info()->chain(resnum) != chain_to_analyze ) continue;
 		for ( int aa = 1; aa <= core::chemical::num_canonical_aas; ++aa ) {
 

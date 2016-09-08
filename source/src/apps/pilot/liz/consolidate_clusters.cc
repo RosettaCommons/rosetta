@@ -159,7 +159,7 @@ void read_occupancy_data( SetOfClusters & set, std::string & occupancy_data, std
       core::io::silent::SilentStructOP ss = sfd[ silent_string ];
 
       ss->fill_pose( pose );
-      FArray2D<double> coords(3, pose.total_residue(), 0.0 );
+      FArray2D<double> coords(3, pose.size(), 0.0 );
       protocols::toolbox::fill_CA_coords( pose, coords );
       std::string decoy_tag = ss->decoy_tag();
       core::Real threshold = (core::Real)(transition_threshold);

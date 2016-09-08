@@ -129,7 +129,7 @@ IntegerOptionKey const max_closure_cycles( "macrocycles::max_closure_cycles" );
 bool
 bump_check( Pose const & pose, Real const multiplier  ) {
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		//TR << "Checking residue " << ii << std::endl;
 		for ( Size ai = 1; ai <= pose.residue( ii ).natoms(); ++ai ) {
 			//TR << "Checking atom " << pose.residue(ii).atom_name(ai) << std::endl;
@@ -153,7 +153,7 @@ bump_check( Pose const & pose, Real const multiplier  ) {
 			}
 
 			// inter
-			for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+			for ( Size jj = 1; jj <= pose.size(); ++jj ) {
 				//TR << "vs residue " << jj << std::endl;
 
 				if ( ii == jj ) continue;
@@ -263,7 +263,7 @@ MacrocycleMover::apply(
 
 	if ( option[ macrocycles::macrocycle_sequence ].user() ) {
 		// make_pose_from_sequence( pose, option[ macrocycles::macrocycle_sequence ].value(), *residue_set_cap, false );
-		// nres = pose.total_residue();
+		// nres = pose.size();
 
 		// Avoid bad behavior from make_pose_from_sequence for now...
 
@@ -429,7 +429,7 @@ MacrocycleMover::apply(
 
 	bool is_all_beta = true;
 	bool is_all_alpha = true;
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).type().is_alpha_aa() ) {
 			is_all_beta = false;
 			pert_pep_smallshear_mm->set_bb( i );

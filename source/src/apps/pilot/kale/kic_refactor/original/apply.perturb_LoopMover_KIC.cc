@@ -61,7 +61,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	// Setup move map for input loop {{{1
 	kinematics::MoveMap mm_one_loop;
-	utility::vector1<bool> allow_sc_move_one_loop( pose.total_residue(), false );
+	utility::vector1<bool> allow_sc_move_one_loop( pose.size(), false );
 	loops_set_move_map( one_loop_loops, allow_sc_move_one_loop, mm_one_loop);
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
 		core::pose::symmetry::make_symmetric_movemap( pose, mm_one_loop );

@@ -388,7 +388,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 	Real const radians2degrees = 1.0 / radians( 1.0 );
 
 	Size const current_seqpos( id.rsd() );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// Look for torsions in current, previous, and next residues that might match up with this atom_id.
 	// This isn't totally efficient, but the extra checks should not be rate limiting...

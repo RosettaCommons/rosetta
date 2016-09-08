@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 		int last = -100;
 		core::chemical::ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( last == -100 ) {
 				last = pose.pdb_info()->number(i);
 				std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
@@ -158,13 +158,13 @@ main( int argc, char * argv [] )
 			last = pose.pdb_info()->number(i);
 		}
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			std::cout<<pose.pdb_info()->number(i)<<"\n";
 		}
 		for ( int i = 1; i <pose.pdb_info()->number(1); ++i ) {
 			std::cout<<" ";
 		}
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			std::cout<<pose.residue(i).name1();
 		}
 		std::cout<<"\n"<<seq<<"\n";

@@ -305,7 +305,7 @@ void Bridge::modify_impl( Pose & pose ) {
 
 	// check conditions
 	runtime_assert( interval_.left > 0 );
-	runtime_assert( interval_.right <= pose.n_residue() );
+	runtime_assert( interval_.right <= pose.size() );
 	runtime_assert( interval_.left == interval_.right - 1 );
 	runtime_assert( pose.fold_tree().is_cutpoint( interval_.left ) );
 

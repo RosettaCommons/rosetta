@@ -158,7 +158,7 @@ main(int argc, char* argv[]){
 	}*/
 
 	//loop through all residues
-	for (Size i = 1; i <= input_pose.total_residue(); ++i){
+	for (Size i = 1; i <= input_pose.size(); ++i){
 
 		//find tryptophans, and put their indices (NOT the actual sequence position) into a vector
 		if (name_from_aa(input_pose.aa(i)) == "TRP") {

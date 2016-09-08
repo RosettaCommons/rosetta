@@ -92,7 +92,7 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 	num_neighbors_ = 0;
 
 	//Might be a good idea to error-check that all group residues are within the pose? - can assert < nres later?
-	core::Size const nres(pose.total_residue());
+	core::Size const nres(pose.size());
 
 	//this is the expensive part!
 	core::conformation::PointGraphOP pg( new core::conformation::PointGraph ); //create graph

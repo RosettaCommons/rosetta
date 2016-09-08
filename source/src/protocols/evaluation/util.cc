@@ -111,12 +111,12 @@ void invert_include_residues( Size nres, core::scoring::ResidueSelectionVector c
 		if ( !include_residue ) {
 			exclude_list.push_back( ir );
 		}
-	} // for ( Size ir = 1; ir <= native_pose.total_residue(); ++ir )
+	} // for ( Size ir = 1; ir <= native_pose.size(); ++ir )
 }
 
 //@detail find residues that don't have missing density
 void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::scoring::ResidueSelection& selection ) {
-	for ( Size pos = 1; pos <= pose->total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose->size(); pos++ ) {
 		if ( pose->residue_type( pos ).is_protein() && pose->residue_type( pos ).has("CA") ) {
 			numeric::xyzVector< core::Real> ca_pos = pose->residue( pos ).atom("CA").xyz();
 			bool good ( true );

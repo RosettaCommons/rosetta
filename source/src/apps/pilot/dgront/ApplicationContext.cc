@@ -151,7 +151,7 @@ namespace protocols {
               chemical::CENTROID)));
 
       // make extended chain
-      for (Size pos = 1; pos <= extended_pose.total_residue(); pos++) {
+      for (Size pos = 1; pos <= extended_pose.size(); pos++) {
         if (!extended_pose.residue(pos).is_protein())
           continue;
         extended_pose.set_phi(pos, -150);
@@ -163,8 +163,8 @@ namespace protocols {
     void ApplicationContext::copyStructure(core::pose::Pose &source,
         core::pose::Pose &destination) {
 
-      Size seg_len = std::min(destination.total_residue(),
-          source.total_residue());
+      Size seg_len = std::min(destination.size(),
+          source.size());
       Size protein_len = 0;
       for (Size i = 1; i <= seg_len; ++i) {
         if (destination.residue(i).is_protein()

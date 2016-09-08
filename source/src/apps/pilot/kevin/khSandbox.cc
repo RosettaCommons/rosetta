@@ -83,7 +83,7 @@ public:
 		core::kinematics::tree::AtomCOP rt = at.root();
 
 		bool firstResidue = true;
-		for (core::Size i = 1; i < pose.total_residue(); i++) {
+		for (core::Size i = 1; i < pose.size(); i++) {
 			core::conformation::Residue const & rsd = pose.residue(i);
 			if (!firstResidue) TR << std::endl;
 			firstResidue = false;

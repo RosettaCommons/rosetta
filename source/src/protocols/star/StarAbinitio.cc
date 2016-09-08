@@ -197,7 +197,7 @@ void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned
 	assert(aligned.num_loop() >= 2);
 	assert(interior_cuts.size() == (aligned.num_loop() - 1));
 
-	const Size num_residues = pose.total_residue();
+	const Size num_residues = pose.size();
 	const Size vres = num_residues + 1;
 
 	xyzVector<double> center;
@@ -250,7 +250,7 @@ void StarAbinitio::apply(Pose& pose) {
 	to_centroid(pose);
 	emit_intermediate(pose, "star_initial.out");
 
-	Extender extender(job->alignment().clone(), pose.total_residue());
+	Extender extender(job->alignment().clone(), pose.size());
 	extender.set_secondary_structure(pred_ss_);
 	extender.extend_unaligned(&pose);
 	emit_intermediate(pose, "star_extended.out");
@@ -259,7 +259,7 @@ void StarAbinitio::apply(Pose& pose) {
 	//const Loops& unaligned = *(extender.unaligned());
 	TR << "Aligned: " << aligned << std::endl;
 
-	const Size num_residues = pose.total_residue();
+	const Size num_residues = pose.size();
 	setup_kinematics(aligned, extender.cutpoints(), pose);
 	setup_constraints(aligned, &pose);
 
@@ -323,7 +323,7 @@ void StarAbinitio::apply(Pose& pose) {
 }
 
 void StarAbinitio::tear_down_kinematics(Pose & pose) const {
-	pose.conformation().delete_residue_slow(pose.total_residue());
+	pose.conformation().delete_residue_slow(pose.size());
 	core::util::remove_cutpoint_variants(pose);
 	simple_fold_tree(pose);
 }

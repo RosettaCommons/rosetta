@@ -60,8 +60,8 @@ public:
 		PoseFromSFRBuilder pb( residue_set, options );
 		pb.build_pose( sfr, pose );
 
-		TS_ASSERT( pose.total_residue() == 20 );
-		if ( pose.total_residue() != 20 ) return;
+		TS_ASSERT( pose.size() == 20 );
+		if ( pose.size() != 20 ) return;
 
 		TS_ASSERT( pose.residue_type(  1 ).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ));
 		for ( Size ii = 2; ii <= 19; ++ii ) {
@@ -83,7 +83,7 @@ public:
 		pose::Pose pose;
 		builder.build_pose( sfr, pose );
 
-		TS_ASSERT_EQUALS( pose.total_residue(), 4 );
+		TS_ASSERT_EQUALS( pose.size(), 4 );
 		TS_ASSERT_EQUALS( pose.residue(1).aa(), chemical::aa_ala );
 		TS_ASSERT_EQUALS( pose.residue(2).aa(), chemical::aa_ala );
 		TS_ASSERT_EQUALS( pose.residue(3).aa(), chemical::aa_pro );
@@ -113,7 +113,7 @@ public:
 		pose::Pose pose;
 		builder.build_pose( sfr, pose );
 
-		TS_ASSERT_EQUALS( pose.total_residue(), 1 );
+		TS_ASSERT_EQUALS( pose.size(), 1 );
 		TS_ASSERT_EQUALS( pose.residue(1).aa(), chemical::aa_ala );
 		TS_ASSERT( pose.residue_type(1).has_property( "ACETYLATED_NTERMINUS" ));
 		TS_ASSERT( pose.residue_type(1).has_property( "METHYLATED_CTERMINUS" ));

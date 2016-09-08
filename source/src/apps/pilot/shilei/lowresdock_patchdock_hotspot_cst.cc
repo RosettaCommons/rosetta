@@ -173,7 +173,7 @@ class run_score_patchdock_hotspot : public protocols::moves::Mover {
 	// Assign a fixed residue (for the constraints)
 	//core::Size fixed_res(1);  // unused ~Labonte
 	core::Size const chain_to_redesign = 2;
-	//if ( chain_to_redesign == 1 ) fixed_res = pose.total_residue();  // unused ~Labonte
+	//if ( chain_to_redesign == 1 ) fixed_res = pose.size();  // unused ~Labonte
 	//core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	core::Real const worst_allowed_stub_bonus(-1.);
 	bool const apply_self_energies(false);

@@ -151,7 +151,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	std::vector< SilentStructOP > lib_structs;
 	Size starttime = time( nullptr );
 	std::string sample_weight( "" );
-	for ( Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
 		sample_weight += utility::to_string( sample_weight_const_ ) + " ";
 	}
 	core::pose::add_comment( pose, "sample_weight", sample_weight );
@@ -175,7 +175,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 			// xyz copy
 			utility::vector1< core::id::AtomID > atm_ids;
 			utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
-			for ( Size i=1; i<=pose_asu.total_residue(); ++i ) {
+			for ( Size i=1; i<=pose_asu.size(); ++i ) {
 				if ( pose_asu.residue_type(i).aa() == core::chemical::aa_vrt ) continue;
 				for ( Size j=1; j<=pose_asu.residue_type(i).natoms(); ++j ) {
 					core::id::AtomID atm_ij(j,i);

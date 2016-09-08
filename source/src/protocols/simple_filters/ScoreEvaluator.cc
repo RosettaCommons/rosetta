@@ -151,8 +151,8 @@ Real TruncatedScoreEvaluator::apply( core::pose::Pose& pose ) const {
 		}
 	}
 
-	if ( pose.total_residue() != nres_ ) {
-		nres_ = pose.total_residue();
+	if ( pose.size() != nres_ ) {
+		nres_ = pose.size();
 		evaluation::invert_include_residues( nres_, selection_, exclude_list_ );
 	}
 

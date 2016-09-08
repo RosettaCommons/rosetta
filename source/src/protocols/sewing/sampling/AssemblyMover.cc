@@ -355,20 +355,20 @@ AssemblyMover::output_stats(
 		/************** Full-Atom Statistics ****************/
 
 		//Write a residue-normalized score to the score file
-		job_me->add_string_real_pair( "nres", pose.total_residue());
-		job_me->add_string_real_pair( "norm_tot_score", fa_scorefxn_->score(pose)/pose.total_residue());
+		job_me->add_string_real_pair( "nres", pose.size());
+		job_me->add_string_real_pair( "norm_tot_score", fa_scorefxn_->score(pose)/pose.size());
 		job_me->add_string_real_pair( "percent_native", assembly->percent_native(pose));
 
 		//Write RMS data to the score file by generating pose from the Assembly, and comparing it to the refined pose
 		core::pose::Pose unrefined_pose = get_fullatom_pose(assembly);
-		if ( unrefined_pose.total_residue() == pose.total_residue() ) {
+		if ( unrefined_pose.size() == pose.size() ) {
 			core::Real rms = core::scoring::bb_rmsd_including_O(unrefined_pose, pose);
 			job_me->add_string_real_pair( "bb_rmsd",  rms );
 		} else {
 			TR << "NOT THE SAME NUMBER OF RESIDUES" << std::endl;
-			TR << "pose: " << pose.total_residue() << std::endl;
-			TR << "unrefined pose: " << unrefined_pose.total_residue() << std::endl;
-			core::Real rms = pose.total_residue() - unrefined_pose.total_residue();
+			TR << "pose: " << pose.size() << std::endl;
+			TR << "unrefined pose: " << unrefined_pose.size() << std::endl;
+			core::Real rms = pose.size() - unrefined_pose.size();
 			job_me->add_string_real_pair( "bb_rmsd",  rms );
 		}
 
@@ -396,21 +396,21 @@ AssemblyMover::output_stats(
 		//  /************** Full-Atom Statistics ****************/
 
 		//Write a residue-normalized score to the score file
-		core::Real nres = pose.total_residue();
-		//  core::Real norm_tot_score = fa_scorefxn_->score(pose)/pose.total_residue();
+		core::Real nres = pose.size();
+		//  core::Real norm_tot_score = fa_scorefxn_->score(pose)/pose.size();
 		//  core::Real percent_native = assembly->percent_native(pose);
 		//
 		//  //Write RMS data to the score file by generating pose from the Assembly, and comparing it to the refined pose
 		////  core::pose::Pose unrefined_pose = get_fullatom_pose(assembly);
-		////  if(unrefined_pose.total_residue() == pose.total_residue()) {
+		////  if(unrefined_pose.size() == pose.size()) {
 		////   core::Real rms = core::scoring::bb_rmsd_including_O(unrefined_pose, pose);
 		////   core::Real bb_rmsd = rms;
 		//  }
 		//  else {
 		//   TR << "NOT THE SAME NUMBER OF RESIDUES" << std::endl;
-		//   TR << "pose: " << pose.total_residue() << std::endl;
-		//   TR << "unrefined pose: " << unrefined_pose.total_residue() << std::endl;
-		//   core::Real rms = pose.total_residue() - unrefined_pose.total_residue();
+		//   TR << "pose: " << pose.size() << std::endl;
+		//   TR << "unrefined pose: " << unrefined_pose.size() << std::endl;
+		//   core::Real rms = pose.size() - unrefined_pose.size();
 		//   core::Real bb_rmsd = rms;
 		//  }
 

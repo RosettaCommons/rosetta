@@ -37,10 +37,10 @@ detect_base_contacts( core::pose::Pose const & pose ) {
 	static Distance const NBR_DIST_CUTOFF( 12.0 );
 	static Size const MIN_ATOM_CONTACTS( 5 );
 
-	utility::vector1< bool > base_makes_contact( pose.total_residue(), false );
+	utility::vector1< bool > base_makes_contact( pose.size(), false );
 
 	// could be dramatically accelerated by using nbr list, etc.
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 
 		bool found_contact( false );
@@ -50,7 +50,7 @@ detect_base_contacts( core::pose::Pose const & pose ) {
 			if ( pose.residue_type( i ).is_virtual( ii ) ) continue;
 
 			bool found_atom_contact( false );
-			for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+			for ( Size j = 1; j <= pose.size(); j++ ) {
 				if ( i == j ) continue;
 				if ( ( pose.residue( i ).nbr_atom_xyz() - pose.residue( j ).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
 

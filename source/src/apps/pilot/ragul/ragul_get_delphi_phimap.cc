@@ -141,7 +141,7 @@ int main( int argc, char * argv [] ) {
 
 	numeric::xyzVector<core::Real> protein_com(0.);
 	core::Size total_atoms(0);
-  for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+  for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
     if ( curr_rsd.is_protein() ) {
       for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
@@ -156,7 +156,7 @@ int main( int argc, char * argv [] ) {
 	std::cout<<"protein_CoM : "<<protein_com.x()<<" "<<protein_com.y()<<" "<<protein_com.z()<<std::endl;
 
 	core::Real minx(999.), miny(999.), minz(999.), maxx(-999.), maxy(-999.), maxz(-999.);
-  for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+  for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
     if ( curr_rsd.is_protein() ) {
 			for(Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i) {

@@ -111,7 +111,7 @@ public:
 
       conformation::Residue const & res1 = curr_pose.residue( res_no );
     
-      for ( Size ii = 1; ii <= curr_pose.total_residue() ; ++ii) {
+      for ( Size ii = 1; ii <= curr_pose.size() ; ++ii) {
 
         conformation::Residue const & res2 = pose.residue( ii );
 
@@ -159,7 +159,7 @@ public:
 
       conformation::Residue const & res1 = curr_pose.residue( res_no );
 
-      for ( Size ii = 1; ii <= curr_pose.total_residue() ; ++ii) {
+      for ( Size ii = 1; ii <= curr_pose.size() ; ++ii) {
 
         conformation::Residue const & res2 = pose.residue( ii );
 
@@ -180,7 +180,7 @@ public:
       }
 
 /*
-      for ( Size ii = 1; ii <= curr_pose.total_residue() ; ++ii) {
+      for ( Size ii = 1; ii <= curr_pose.size() ; ++ii) {
 
         if ( nbr_atom.distance( curr_pose.residue(ii).nbr_atom_xyz() ) < 5.0 || ii == res_no ) {
           task->nonconst_residue_task( ii ).restrict_to_repacking();

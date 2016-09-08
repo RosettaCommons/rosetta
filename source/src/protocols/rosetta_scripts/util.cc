@@ -660,7 +660,7 @@ core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
 	//TR<<"looking for neiboughrs of: "<<source.pdb_info()->name()<< " and residue "<<res<<std::endl;
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-	for ( core::Size i = 1; i <= source.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= source.size(); ++i ) {
 		if ( source.residue( i ).is_ligand() ) continue;
 		if ( chain && source.residue( i ).chain() != chain ) continue;
 		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
@@ -677,7 +677,7 @@ void
 find_nearest_res(  core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & target_dist, core::Size const chain/*=0*/ ){
 	target_res = 0; target_dist = 0.0;
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-	for ( core::Size i = 1; i <= source.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= source.size(); ++i ) {
 		if ( source.residue( i ).is_ligand() ) continue;
 		if ( chain && source.residue( i ).chain() != chain ) continue;
 		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
@@ -698,7 +698,7 @@ residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFact
 	utility::vector1< core::Size > designable_vec, packable_vec, both;
 	designable_vec.clear(); packable_vec.clear(); both.clear();
 	core::pack::task::PackerTaskOP packer_task( tf->create_task_and_apply_taskoperations( pose ) );
-	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 		if ( packer_task->being_designed( resi ) ) {
 			designable_vec.push_back( resi );
 		} else if ( packer_task->being_packed( resi ) ) {
@@ -720,7 +720,7 @@ core::Size
 find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
 {
 	core::Size disulfideN=0,disulfideC=0;
-	for ( core::Size i = res; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = res; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
 			disulfideC=i;
 			break;

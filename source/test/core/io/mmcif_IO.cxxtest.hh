@@ -98,16 +98,16 @@ public:
 		core::pose::PoseOP cif_pose = core::import_pose::pose_from_file( "core/io/1QYS.cif", false , core::import_pose::CIF_file);;
 
 		TR << "Total residue: ";
-		TR << "pdb " << pdb_pose->total_residue() << "; ";
-		TR << "cif " << cif_pose->total_residue() << std::endl;
+		TR << "pdb " << pdb_pose->size() << "; ";
+		TR << "cif " << cif_pose->size() << std::endl;
 
 		pdb_pose->dump_pdb( "from_pdb.pdb" );
 		cif_pose->dump_pdb( "from_cif.pdb" );
 
-		TS_ASSERT_EQUALS( pdb_pose->total_residue(), cif_pose->total_residue() );
+		TS_ASSERT_EQUALS( pdb_pose->size(), cif_pose->size() );
 
 		// Proxy for RT equality
-		for ( Size i = 1; i <= pdb_pose->total_residue(); ++i ) {
+		for ( Size i = 1; i <= pdb_pose->size(); ++i ) {
 			TS_ASSERT_EQUALS( pdb_pose->residue( i ).name(), cif_pose->residue( i ).name() );
 		}
 
@@ -162,7 +162,7 @@ public:
 	void test_multimodel_cif() {
 		core::pose::PoseOP pdb_pose = core::import_pose::pose_from_file( "core/io/1L8C.cif", false , core::import_pose::CIF_file);;
 		TR << "Reading 1L8C from cif. " << std::endl;
-		TS_ASSERT_EQUALS( pdb_pose->total_residue(), 149 );
+		TS_ASSERT_EQUALS( pdb_pose->size(), 149 );
 	}
 
 };

@@ -164,7 +164,7 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 
 	//if the jump constructor then itterate through jumps, make union
 	if ( jump_active_ ) {
-		utility::vector1_bool repack_full(pose.total_residue(), false);
+		utility::vector1_bool repack_full(pose.size(), false);
 		for ( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ) {
 			//std::cout << "Calculating interface for jump: " <<*jj << std::endl;
 			//run detection based on jump
@@ -190,7 +190,7 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 		task.restrict_to_residues(repack_full);
 	} else { //end if jump active // if using only the two chain case
 		//vector for filling packertask
-		utility::vector1_bool repack_full(pose.total_residue(),false);
+		utility::vector1_bool repack_full(pose.size(),false);
 
 		for ( utility::vector1<core::Size>::const_iterator lower_chain_it = lower_chains_.begin();
 				lower_chain_it != lower_chains_.end(); ++lower_chain_it ) {

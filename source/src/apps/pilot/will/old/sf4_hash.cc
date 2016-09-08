@@ -291,11 +291,11 @@ void run_sf4h() {
 		Pose pose;
 		core::import_pose::pose_from_file(pose,*fa_residue_set,infiles[ifile], core::import_pose::PDB_file);
 		Size gap = 0;
-		for(Size ir = 1; ir <= pose.n_residue()-2; ++ir) {
+		for(Size ir = 1; ir <= pose.size()-2; ++ir) {
 			if(pose.residue(ir).name3()=="GLY" || pose.residue(ir).name3()=="PRO") continue;
 			Stub stub1(pose.residue(ir).xyz(SAN1),pose.residue(ir).xyz(SAN2),pose.residue(ir).xyz(SAN3));
 			for(Size jr = ir+2; jr <= ir+15; ++jr) {
-				if(jr > pose.n_residue()) break;
+				if(jr > pose.size()) break;
 				if(pose.residue(jr).name3()=="GLY" || pose.residue(jr).name3()=="PRO") continue;
 				if( pose.residue(jr-1).xyz("C").distance_squared(pose.residue(jr).xyz("N")) > 4.0 ) {
 					gap = jr-1;
@@ -329,7 +329,7 @@ void run_sf4h() {
 						sub.replace_residue(1,*cys,true);
 						cys->set_chi(1,CHI[jch][1]);
 						cys->set_chi(2,CHI[jch][2]);
-						sub.replace_residue(sub.n_residue(),*cys,true);
+						sub.replace_residue(sub.size(),*cys,true);
 
 						cys->set_chi(1,CHI[ich][1]);
 						cys->set_chi(2,CHI[ich][2]);

@@ -331,7 +331,7 @@ AntibodySeqDesignTFCreator::get_framework_conservative_op(const core::pose::Pose
 
 	utility::vector1<core::Size> conservative_positions;
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ab_info_->get_region_of_residue(pose, i, false /* DE as framework */) ==  framework_region ) {
 			conservative_positions.push_back( i );
 		}
@@ -376,7 +376,7 @@ AntibodySeqDesignTFCreator::disable_proline_design(core::pack::task::TaskFactory
 
 	//One restrict op per CDR.  That way we can pop them off the TF  individually if we need to.
 	core::pack::task::operation::RestrictResidueToRepackingOP restrict( new core::pack::task::operation::RestrictResidueToRepacking() );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).aa() == core::chemical::aa_pro ) {
 			restrict->include_residue( i );
 		}

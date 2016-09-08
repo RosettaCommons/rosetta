@@ -142,7 +142,7 @@ void output_interface_graphviz(core::pose::Pose const & pose, core::graph::Graph
 	os << "DOT:\tnode[style=filled,color=lightgray];\n";
 	os << "DOT:\tgraph[size=8,8];\n";
 	// formatting for nodes
-	for( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for( core::Size i=1; i<=pose.size(); ++i ) {
 		if( !interface.is_interface(i) ) continue;
 		if( ! g.get_node(i) ) continue;
 		char const name1 = pose.residue( i ).name1();
@@ -194,8 +194,8 @@ main( int argc, char * argv [] )
 		interface.calculate( pose );
 
 		utility::vector1< utility::vector1< Real > > interface_hbond_set;
-		for( Size i=1; i<=pose.total_residue(); ++i ) {
-			utility::vector1<Size> zero_vector( pose.total_residue(), 0 );
+		for( Size i=1; i<=pose.size(); ++i ) {
+			utility::vector1<Size> zero_vector( pose.size(), 0 );
 			interface_hbond_set.push_back( zero_vector );
 		}
 
@@ -209,7 +209,7 @@ main( int argc, char * argv [] )
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 		mm->clear();
 		mm->set_chi( true );
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i) {
+		for ( core::Size i = 1; i <= pose.size(); ++i) {
 			if ( !pose.residue(i).is_protein() ) {
 				mm->set_chi( i, false );
 				continue;
@@ -228,10 +228,10 @@ main( int argc, char * argv [] )
 	//	hbond_set2.show(pose);
 
 
-		core::graph::Graph g( pose.total_residue() );
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		core::graph::Graph g( pose.size() );
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			if( interface.is_interface( i ) ) {
-				//utility::vector1< Size > i_hbonds( pose.total_residue(), 0 );
+				//utility::vector1< Size > i_hbonds( pose.size(), 0 );
 
 			/*	std::string calcname("iface_nbrcalc"+utility::to_string(i));
 				std::cout << calcname << ": ";
@@ -244,7 +244,7 @@ main( int argc, char * argv [] )
 			*/
 				count_residue_hbonds( hbond_set, i, interface_hbond_set[i] );
 				//TR << i << " " << interface_hbond_set[i] << std::endl;
-				for( core::Size j=1; j<=pose.total_residue(); ++j ) {
+				for( core::Size j=1; j<=pose.size(); ++j ) {
 					if( i == j ) continue;
 					if( interface_hbond_set[i][j] > 0 ) {
 						if( !g.get_edge_exists(i, j) ) g.add_edge( i, j );
@@ -263,7 +263,7 @@ main( int argc, char * argv [] )
 		link_vector = traverse_for_hbonds( interface_hbond_set );
 
 		//std::cout << "chain name resi resn nhb" << std::endl;
-		for( Size i=1; i<=pose.total_residue(); ++i ) {
+		for( Size i=1; i<=pose.size(); ++i ) {
 			//if( link_vector[i] < 0 ) {
 				std::cout << "HBOND_B: " <<  pose.pdb_info()->name() << " " << pose.pdb_info()->chain( i ) << " " << pose.pdb_info()->number( i ) << " " << pose.residue( i ).name3() << " " << link_vector[ i ] << std::endl;
 			//}

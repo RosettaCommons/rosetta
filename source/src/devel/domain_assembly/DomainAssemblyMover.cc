@@ -389,7 +389,7 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	for ( Size i = 1; i <= 20; ++i ) {
 		stage1_inner_loop -> apply( pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
-		//utility::vector1<bool> repack_residues( pose.total_residue(), false );
+		//utility::vector1<bool> repack_residues( pose.size(), false );
 		//da_residues_to_repack( movemap_, nearest_movable_residues, pose, repack_residues );
 		core::pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		rsOperation->apply( pose, *this_packer_task );
@@ -410,7 +410,7 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	for ( Size i = 1; i <= 20; ++i ) {
 		stage2_inner_loop -> apply( pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
-		// utility::vector1<bool> repack_residues( pose.total_residue(), false );
+		// utility::vector1<bool> repack_residues( pose.size(), false );
 		// da_residues_to_repack( movemap_, nearest_movable_residues, pose, repack_residues );
 		core::pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		rsOperation->apply( pose, *this_packer_task );
@@ -525,7 +525,7 @@ void DomainAssemblyMover::get_domain_definition( core::pose::Pose const & pose, 
 	core::Size last_domain_start = 1;
 	domains.clear();
 	bool in_linker = movemap_->get_bb( 1 );
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( movemap_->get_bb( ii ) && !in_linker ) { // first residue of a linker
 			in_linker = true;
 			std::stringstream current_domain;
@@ -538,7 +538,7 @@ void DomainAssemblyMover::get_domain_definition( core::pose::Pose const & pose, 
 	}
 	if ( !in_linker ) {
 		std::stringstream current_domain;
-		current_domain << last_domain_start << "-" << pose.total_residue();
+		current_domain << last_domain_start << "-" << pose.size();
 		domains.push_back( current_domain.str() );
 	}
 }
@@ -547,7 +547,7 @@ std::string DomainAssemblyMover::get_linker_definition( core::pose::Pose const &
 	std::stringstream linker_str;
 	core::Size last_linker_start = 1;
 	bool in_linker = movemap_->get_bb( 1 );
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( movemap_->get_bb( ii ) && !in_linker ) {
 			in_linker = true;
 			last_linker_start = ii;
@@ -557,7 +557,7 @@ std::string DomainAssemblyMover::get_linker_definition( core::pose::Pose const &
 		}
 	}
 	if ( in_linker ) {
-		linker_str << last_linker_start << "-" << pose.total_residue();
+		linker_str << last_linker_start << "-" << pose.size();
 	}
 
 	return linker_str.str();
@@ -568,9 +568,9 @@ core::Real DomainAssemblyMover::target_rmsd( core::pose::Pose const & pose ) con
 		// define corresponding residues to be compared
 		// this is only useful for LOV-RAC and I should get rid of this asap.
 		std::map< core::Size, core::Size > correspondence;
-		int offset = pose.total_residue() - target_pose_.total_residue() - 1; // !!!!! -1 is a 2wkp vs 1mh1 specific hack because 2wkp is shorter by 1
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			if ( (int)ii > offset && (ii - offset) <= target_pose_.total_residue() ) {
+		int offset = pose.size() - target_pose_.size() - 1; // !!!!! -1 is a 2wkp vs 1mh1 specific hack because 2wkp is shorter by 1
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+			if ( (int)ii > offset && (ii - offset) <= target_pose_.size() ) {
 				if ( pose.residue( ii ).name3() == target_pose_.residue( ii - offset ).name3() ) {
 					correspondence.insert( std::make_pair( ii, ii-offset ) );
 				}
@@ -589,9 +589,9 @@ core::Real DomainAssemblyMover::target_rmsd_no_align( core::pose::Pose const & p
 	if ( target_pose_map_.empty() ) {
 		// define corresponding residues to be compared
 		// get rid of this asap
-		int offset = pose.total_residue() - target_pose_.total_residue()  - 1; // !!!!! -1 is a 2wkp vs 1mh1 specific hack because 2wkp is shorter by 1
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			if ( (int)ii > offset && (ii - offset) <= target_pose_.total_residue() ) {
+		int offset = pose.size() - target_pose_.size()  - 1; // !!!!! -1 is a 2wkp vs 1mh1 specific hack because 2wkp is shorter by 1
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+			if ( (int)ii > offset && (ii - offset) <= target_pose_.size() ) {
 				if ( pose.residue( ii ).name3() == target_pose_.residue( ii - offset ).name3() ) {
 					sum_sq += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( ii-offset  ).xyz( "CA" ) );
 					num_match++;
@@ -601,9 +601,9 @@ core::Real DomainAssemblyMover::target_rmsd_no_align( core::pose::Pose const & p
 	} else {
 		core::Size num_match = 0;
 		core::Real sum_sq = 0;
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			auto map_pair = target_pose_map_.find( ii );
-			if ( map_pair != target_pose_map_.end() && map_pair->second <= target_pose_.total_residue() ) {
+			if ( map_pair != target_pose_map_.end() && map_pair->second <= target_pose_.size() ) {
 				sum_sq += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( map_pair->second ).xyz( "CA" ) );
 				num_match++;
 			}

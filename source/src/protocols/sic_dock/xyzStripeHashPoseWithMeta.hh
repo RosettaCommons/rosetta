@@ -64,8 +64,8 @@ public:
 	){
 		using core::id::AtomID;
 		int natom = 0;
-		if ( amap.n_residue() != p.n_residue() ) utility_exit_with_message("BAD ATOMID_MAP");
-		for ( int ir = 1; ir <= (int)p.n_residue(); ++ir ) {
+		if ( amap.size() != p.size() ) utility_exit_with_message("BAD ATOMID_MAP");
+		for ( int ir = 1; ir <= (int)p.size(); ++ir ) {
 			// core::conformation::Residue const & r(p.residue(ir));
 			for ( int ia = 1; ia <= (int)amap.n_atom(ir); ia++ ) {
 				if ( amap[AtomID(ia,ir)] > 0 )  natom++;
@@ -74,7 +74,7 @@ public:
 		utility::vector1<numeric::xyzVector<float> > atoms(natom);
 		utility::vector1<float>                      meta (natom);
 		platform::uint count = 0;
-		for ( int ir = 1; ir <= (int)p.n_residue(); ++ir ) {
+		for ( int ir = 1; ir <= (int)p.size(); ++ir ) {
 			// core::conformation::Residue const & r(p.residue(ir));
 			for ( int ia = 1; ia <= (int)amap.n_atom(ir); ia++ ) {
 				if ( amap[AtomID(ia,ir)] > 0 ) {
@@ -93,7 +93,7 @@ public:
 		PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	){
 		int natom = 0;
-		for ( int ir = 1; ir <= (int)p.n_residue(); ++ir ) {
+		for ( int ir = 1; ir <= (int)p.size(); ++ir ) {
 			core::conformation::Residue const & r(p.residue(ir));
 			if ( core::pose::PoseCoordPickMode_NBR==m ) natom++;
 			if ( core::pose::PoseCoordPickMode_CB==m ) if ( r.has("CB") ) natom++;
@@ -104,7 +104,7 @@ public:
 		utility::vector1<numeric::xyzVector<float> > atoms(natom);
 		utility::vector1<float>                      meta (natom);
 		platform::uint count = 0;
-		for ( int ir = 1; ir <= (int)p.n_residue(); ++ir ) {
+		for ( int ir = 1; ir <= (int)p.size(); ++ir ) {
 			core::conformation::Residue const & r(p.residue(ir));
 			if ( core::pose::PoseCoordPickMode_NBR==m ) {
 				int ia = r.nbr_atom();

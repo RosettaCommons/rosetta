@@ -610,7 +610,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 				std::string const & pose_name( remapped_atom_names_[ ii ].left.find( rinfo_name )->second );
 				ii_rsd->atom( pose_name ).xyz( iter->second + offset );
 				// +1 here as we haven't added the residue to the pose yet.
-				id::NamedAtomID atom_id( pose_name, pose.total_residue()+1 );
+				id::NamedAtomID atom_id( pose_name, pose.size()+1 );
 				coordinates_assigned_.set( atom_id, true);
 			}
 			//else runtime_assert( iter->first == " H  " && ii_rsd_type.is_terminus() ); // special casee
@@ -618,7 +618,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 		check_and_correct_sister_atoms( ii_rsd );
 
-		Size const old_nres( pose.total_residue() );
+		Size const old_nres( pose.size() );
 
 		TR.Trace << "...new residue is a polymer: " << ii_rsd->type().is_polymer() << std::endl;
 		if ( old_nres >= 1 ) {
@@ -648,7 +648,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 				root_index = find_atom_tree_root_for_metal_ion( pose, ii_rsd );
 			}
 			if ( root_index>1 ) { TR << ii_rsd_type.name() << " " << ii << " was added by a jump, with base residue " << root_index << std::endl;}
-			pose.append_residue_by_jump( *ii_rsd, root_index /*pose.total_residue()*/ );
+			pose.append_residue_by_jump( *ii_rsd, root_index /*pose.size()*/ );
 
 		} else { // Append residue to current chain dependent on bond length.
 			if ( ! options_.missing_dens_as_jump() ) {
@@ -718,8 +718,8 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 		// Update the pose-internal chain label if necessary.
 		if ( ( is_lower_terminus_[ ii ] || ! determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() ) ||
-				is_branch_lower_terminus_[ ii ] ) && pose.total_residue() > 1 ) {
-			pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
+				is_branch_lower_terminus_[ ii ] ) && pose.size() > 1 ) {
+			pose.conformation().insert_chain_ending( pose.size() - 1 );
 		}
 	}
 }
@@ -755,15 +755,15 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 
 	// Poses with zero residues must exit here after establishing a zero
 	// residue, all-atom-unrecognized PDBInfo.
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		// PDBInfo setup
-		core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.total_residue() ) );
+		core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.size() ) );
 		pdb_info->add_unrecognized_atoms( unrecognized_atoms_ );
 		pose.pdb_info( pdb_info );
 		return;
 	}
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Residue const & ii_rsd( pose.residue( ii ) );
 		for ( Size jj = 1; jj <= ii_rsd.natoms(); ++jj ) {
 			id::AtomID atom_id( jj, ii );
@@ -784,7 +784,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	// Most DNA structures lack 5' phosphate groups. 5' phosphates must be built
 	// to serve as part of the backbone for atom/fold tree purposes, but they
 	// must be made virtual so as not to affect physical calculations.
-	for ( Size ii = 1, nres = pose.total_residue(); ii <= nres; ++ii ) {
+	for ( Size ii = 1, nres = pose.size(); ii <= nres; ++ii ) {
 		Residue const & rsd = pose.residue( ii );
 		if ( ! rsd.type().is_DNA() ) continue;
 
@@ -814,7 +814,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	core::pose::ncbb::initialize_ncbbs( pose );
 
 	// 1 residue fragments for ligand design.
-	if ( pose.n_residue() > 1 ) {
+	if ( pose.size() > 1 ) {
 		pose.conformation().detect_pseudobonds();
 	}
 
@@ -854,7 +854,7 @@ PoseFromSFRBuilder::build_pdb_info_1_everything_but_temps( pose::Pose & pose ) {
 	using namespace conformation;
 
 	// Step 3. PDBInfo assembly
-	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.total_residue() ) );
+	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose.size() ) );
 
 	// Step 3a. Add PDB-wide information
 	pdb_info->name( sfr_.filename() );
@@ -870,7 +870,7 @@ PoseFromSFRBuilder::build_pdb_info_1_everything_but_temps( pose::Pose & pose ) {
 	utility::vector1< int > pdb_numbering;
 	utility::vector1< char > pdb_chains, insertion_codes;
 	utility::vector1< std::string > segment_ids;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		ResidueInformation const & rinfo = rinfos_[ pose_to_rinfo_[ ii ] ];
 		pdb_numbering.push_back( rinfo.resSeq() );
 		pdb_chains.push_back( rinfo.chainID() );
@@ -915,7 +915,7 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 	PDBInfoOP pdb_info = pose.pdb_info();
 
 	// Add temperatures.
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ii++ ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ii++ ) {
 		ResidueTemps const & res_temps( rinfos_[ pose_to_rinfo_[ ii ] ].temps() );
 		NameBimap const & namemap( remapped_atom_names_[ pose_to_rinfo_[ ii ] ] );
 		for ( ResidueTemps::const_iterator iter = res_temps.begin(); iter != res_temps.end(); ++iter ) {
@@ -1349,7 +1349,7 @@ PoseFromSFRBuilder::find_atom_tree_root_for_metal_ion(
 	core::Size closest_residue=0;
 	core::Size closest_dist_sq = 0;
 
-	for ( core::Size ii=1, nres=pose.n_residue(); ii<=nres; ++ii ) { //Loop through all residues already added, looking for possible residues to root the metal onto.
+	for ( core::Size ii=1, nres=pose.size(); ii<=nres; ++ii ) { //Loop through all residues already added, looking for possible residues to root the metal onto.
 		if ( !pose.residue(ii).is_protein() ) continue; //I'm not interested in tethering metals to non-protein residues.
 		if ( !pose.residue(ii).has("CA") ) continue; //I'll be basing this on metal-alpha carbon distance, so anything without an alpha carbon won't get to be the root.
 

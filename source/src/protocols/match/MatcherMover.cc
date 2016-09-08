@@ -140,7 +140,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 
 	//we might have to remove the downstream pose from the input
 	if ( incorporate_matches_into_pose_ ) {
-		for ( core::Size i = pose.total_residue(); i >  0; --i ) {
+		for ( core::Size i = pose.size(); i >  0; --i ) {
 			if ( pose.residue_type( i ).name3() == ligres_->type().name3() ) pose.conformation().delete_residue_slow( i );
 		}
 	}
@@ -351,7 +351,7 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 	using namespace core::pack::dunbrack;
 	using namespace core::pack::rotamers;
 
-	runtime_assert( ligpose.total_residue() == 1 ); // we're expecting a one-residue pose.
+	runtime_assert( ligpose.size() == 1 ); // we're expecting a one-residue pose.
 
 	core::Size const lig_rotamer_index =
 		basic::options::option[ basic::options::OptionKeys::match::ligand_rotamer_index ];

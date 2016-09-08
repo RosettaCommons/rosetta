@@ -171,7 +171,7 @@ vsasa_bunsats(
 
 	id::AtomID_Map<Real> atom_sasa = vsasa_calc.calculate(pose);
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	// find hbonds and intersect residues
 	scoring::hbonds::HBondSet hbond_set;

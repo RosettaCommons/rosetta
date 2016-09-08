@@ -71,7 +71,7 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 
 	core::Real nearest_distance( 999999 );
 
-	assert(residue1_ <= pose.n_residue() && residue2_ <= pose.n_residue());
+	assert(residue1_ <= pose.size() && residue2_ <= pose.size());
 	Residue const& res1( pose.residue( residue1_ ) );
 	Residue const& res2( pose.residue( residue2_ ) );
 

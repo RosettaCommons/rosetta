@@ -343,8 +343,8 @@ setup_bonded_protein_rna_pose(
 															)
 {
 
-	Size const sam_pos( pose.total_residue() ); // SAM comes last
-	assert( rna_pose.total_residue() == 74 - 8 );
+	Size const sam_pos( pose.size() ); // SAM comes last
+	assert( rna_pose.size() == 74 - 8 );
 	Size const rna_root_pos( 54 - 6 );
 
 	assert( rna_pose.residue( rna_root_pos ).aa() == na_rgu );
@@ -372,11 +372,11 @@ setup_bonded_protein_rna_pose(
 
 	// now add the other rna residues
 	for ( Size i=rna_root_pos-1; i>= 1; --i ) {
-		pose.prepend_polymer_residue_before_seqpos( rna_pose.residue(i), pose.total_residue() - ( rna_root_pos-i )+1,
+		pose.prepend_polymer_residue_before_seqpos( rna_pose.residue(i), pose.size() - ( rna_root_pos-i )+1,
 																								false );
 	}
-	for ( Size i=rna_root_pos+1; i<= rna_pose.total_residue(); ++i ) {
-		pose.append_polymer_residue_after_seqpos( rna_pose.residue(i), pose.total_residue(), false );
+	for ( Size i=rna_root_pos+1; i<= rna_pose.size(); ++i ) {
+		pose.append_polymer_residue_after_seqpos( rna_pose.residue(i), pose.size(), false );
 	}
 }
 
@@ -386,7 +386,7 @@ get_bonded_rna_dof_ids( pose::Pose const & pose )
 {
 	/// find the sequence positions of the SAM and the rna root residue
 	Size sam_pos( 0 ), rna_root_pos( 0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose.residue(i).name3() == "SAM" ) sam_pos = i;
 		else if ( pose.residue(i).is_RNA() ) {
 			assert( sam_pos );
@@ -433,7 +433,7 @@ make_bonded_rna_move(
 
 	/// find the sequence positions of the SAM and the rna root residue
 	Size sam_pos( 0 ), rna_root_pos( 0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose.residue(i).name3() == "SAM" ) sam_pos = i;
 		else if ( pose.residue(i).is_RNA() ) {
 			assert( sam_pos );
@@ -985,21 +985,21 @@ trim_dock_rebuild_relax_test()
 
 
 			{ // trim back mapping to allow loop closure after docking
-				std::string const protein_seq( protein_pose.sequence().substr(0,protein_pose.total_residue()-1 ) );
+				std::string const protein_seq( protein_pose.sequence().substr(0,protein_pose.size()-1 ) );
 				assert( protein_seq.size() == mapping_to_t033.size1() );
 				for ( Size i=1; i<= protein_seq.size(); ++i ) assert(pose.residue(i).name1() == t033_seq[mapping_to_t033[i]-1]);
 				protocols::loops::trim_back_sequence_mapping( mapping_to_t033, protein_seq, t033_seq, 5 ); // seqs are const
 			}
 
 			{ // now delete residues from the pose that aren't aligned in this trimmed mapping
-				assert( pose.total_residue() == protein_pose.total_residue() );
-				for ( Size i=pose.total_residue()-1; i>0; --i ) {
+				assert( pose.size() == protein_pose.size() );
+				for ( Size i=pose.size()-1; i>0; --i ) {
 					if ( mapping_to_t033[i] == 0 ) {
 						pose.conformation().delete_residue_slow( i );
 						mapping_to_t033.delete_source_residue( i );
 					}
 				}
-				for ( Size i=1; i<= pose.total_residue()-1; ++i ) {
+				for ( Size i=1; i<= pose.size()-1; ++i ) {
 					assert( pose.residue(i).name1() == t033_seq[ mapping_to_t033[i]-1 ]);
 				}
 			}
@@ -1024,7 +1024,7 @@ trim_dock_rebuild_relax_test()
 Size
 pose_pos_from_pdb_pos( int const pdb_pos, char const pdb_chain, pose::Pose const & pose )
 {
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose.pdb_info()->number(i) == pdb_pos && pose.pdb_info()->chain(i) == pdb_chain ) return i;
 	}
 	TR.Fatal << "no such pdb pos+chain " << pdb_pos << ' ' << pdb_chain << std::endl;
@@ -1050,7 +1050,7 @@ setup_sam_constraints(
 	Size const pos156( mapping_from_1p91A_to_pose[ pose_pos_from_pdb_pos( 156, P91_chain, p91A_pose ) ]);
 	Size const pos158( mapping_from_1p91A_to_pose[ pose_pos_from_pdb_pos( 158, P91_chain, p91A_pose ) ]);
 	Size sam_pos(0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) if ( pose.residue(i).name3() == "SAM" ) sam_pos= i;
+	for ( Size i=1; i<= pose.size(); ++i ) if ( pose.residue(i).name3() == "SAM" ) sam_pos= i;
 	assert( sam_pos );
 
 	assert( pose.residue( pos93  ).aa() == aa_gly ); // hbond from O to SAM N
@@ -1117,7 +1117,7 @@ juke_sam_pos(
 
 	/// get some important positions -- use the mapping to get sequence numbers
 	setup_sam_constraints( pose, mapping_from_1p91A_to_pose, p91A_pose );
-	Size const sam_pos( pose.total_residue() );
+	Size const sam_pos( pose.size() );
 
 	/// soft rep packer wts plus constraints
 	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( SOFT_REP_WTS ) );
@@ -1257,7 +1257,7 @@ capri15_relax(
 	pack::task::PackerTaskOP pack_task( pack::task::TaskFactory::create_packer_task( pose ));
 	pack_task->initialize_from_command_line();
 	pack_task->or_include_current( true );
-	Size const nres( pose.total_residue() );	for ( Size i = 1; i <= nres; ++i ) {
+	Size const nres( pose.size() );	for ( Size i = 1; i <= nres; ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			pack_task->nonconst_residue_task( i ).restrict_to_repacking();
 		} else {
@@ -1443,7 +1443,7 @@ relax_test()
 
 
 	// identify root and anchor positions
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size sam_pos(0);
 	for ( Size i=1; i<= nres; ++i ) if ( pose.residue(i).name3() == "SAM" ) sam_pos = i;
 	Size const rna_root_pos( sam_pos + 54 - 6 );
@@ -1460,7 +1460,7 @@ relax_test()
 	{
 		// jump from pose to sam
 		// chemical edge from sam to rna
-		kinematics::FoldTree f( pose.total_residue() );
+		kinematics::FoldTree f( pose.size() );
 		//
 		f.new_jump( sam_anchor_pos, sam_pos, sam_pos-1 );
 		f.new_chemical_bond( sam_pos, rna_root_pos, "CE", "N1", sam_pos );
@@ -1537,7 +1537,7 @@ centroid_rescore_test()
 		core::import_pose::pose_from_file( pose, start_files()[n] , core::import_pose::PDB_file);
 
 		// identify root and anchor positions
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 		Size sam_pos(0);
 		for ( Size i=1; i<= nres; ++i ) if ( pose.residue(i).name3() == "SAM" ) sam_pos = i;
 		Size const rna_root_pos( sam_pos + 54 - 6 );
@@ -1554,7 +1554,7 @@ centroid_rescore_test()
 		{
 			// jump from pose to sam
 			// chemical edge from sam to rna
-			kinematics::FoldTree f( pose.total_residue() );
+			kinematics::FoldTree f( pose.size() );
 			//
 			f.new_jump( sam_anchor_pos, sam_pos, sam_pos-1 );
 			f.new_chemical_bond( sam_pos, rna_root_pos, "CE", "N1", sam_pos );
@@ -1575,7 +1575,7 @@ centroid_rescore_test()
 		Size n_protein_rna_nbrs( 0 );
 		{
 			EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-			for ( Size seqpos=1; seqpos<= pose.total_residue(); ++seqpos ) {
+			for ( Size seqpos=1; seqpos<= pose.size(); ++seqpos ) {
 				if ( !pose.residue(seqpos).is_protein() ) continue;
 				for ( graph::Graph::EdgeListConstIter
 								iru  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
@@ -1674,13 +1674,13 @@ diversify_sam_loop_test()
 		pose = start_pose;
 
 		//// convert to centroid mode
-		Size const sam_pos( pose.total_residue() );
+		Size const sam_pos( pose.size() );
 		assert( pose.residue( sam_pos ).name3() == "SAM" );
 		// delete sam
 		Pose sam_pose;
 		sam_pose.append_residue_by_bond( pose.residue( sam_pos ) );
 		pose.conformation().delete_residue_slow( sam_pos );
-		for ( Size i=1; i<= pose.total_residue(); ++i ) assert( pose.residue(i).is_protein() );
+		for ( Size i=1; i<= pose.size(); ++i ) assert( pose.residue(i).is_protein() );
 
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
@@ -1776,7 +1776,7 @@ capri_t033_trim_dock_test()
 	Size const pos139( mapping[ pose_pos_from_pdb_pos( 139, P91_chain, pose ) ]);
 	Size const pos156( mapping[ pose_pos_from_pdb_pos( 156, P91_chain, pose ) ]);
 	Size const pos158( mapping[ pose_pos_from_pdb_pos( 158, P91_chain, pose ) ]);
-	Size const sam_pos( pose.total_residue() );
+	Size const sam_pos( pose.size() );
 
 	assert( pose.residue( pos93  ).aa() == aa_gly ); // hbond from O to SAM N
 	assert( pose.residue( pos116 ).aa() == aa_asp ); // 2 hbonds from carboxyl Os to SAM ribose O2' O3'
@@ -1896,11 +1896,11 @@ capri_t033_trim_dock_test()
 
 		// now add the other rna residues
 		for ( Size i=rna_root_pos-1; i>= 1; --i ) {
-			pose.prepend_polymer_residue_before_seqpos( rna_pose.residue(i), pose.total_residue() - ( rna_root_pos-i )+1,
+			pose.prepend_polymer_residue_before_seqpos( rna_pose.residue(i), pose.size() - ( rna_root_pos-i )+1,
 																									false );
 		}
-		for ( Size i=rna_root_pos+1; i<= rna_pose.total_residue(); ++i ) {
-			pose.append_polymer_residue_after_seqpos( rna_pose.residue(i), pose.total_residue(), false );
+		for ( Size i=rna_root_pos+1; i<= rna_pose.size(); ++i ) {
+			pose.append_polymer_residue_after_seqpos( rna_pose.residue(i), pose.size(), false );
 		}
 
 
@@ -1911,7 +1911,7 @@ capri_t033_trim_dock_test()
 		// the CE-N1-1stchild angle to be ~120??
 		// searching over the SD-CE-N1-1st child bond torsion PHI
 		//
-		Size const new_rna_root_pos( pose.total_residue() - ( rna_pose.total_residue() - rna_root_pos ) );
+		Size const new_rna_root_pos( pose.size() - ( rna_pose.size() - rna_root_pos ) );
 		assert( pose.residue( new_rna_root_pos ).aa() == na_rgu );
 		assert( pose.residue( new_rna_root_pos ).type().has_variant_type( "RGU_H1_DELETION" ) );
 		using numeric::conversions::radians;
@@ -2020,7 +2020,7 @@ capri_t033_loop_test()
 		{ // hacky short-term thing
 			Size sam_pos(0);
 
-			for ( Size i=pose.total_residue(); i>= 1; --i ) {
+			for ( Size i=pose.size(); i>= 1; --i ) {
 				if ( !pose.residue(i).is_protein() ) {
 					assert( !sam_pos );
 					sam_pos = i;
@@ -2030,7 +2030,7 @@ capri_t033_loop_test()
 					mapping.delete_target_residue( i );
 				}
 			}
-			assert( sam_pose.total_residue() == 1 );
+			assert( sam_pose.size() == 1 );
 		}
 
 
@@ -2047,7 +2047,7 @@ capri_t033_loop_test()
 		{ // now do the centroid modeling
 
 			// delete non-protein positions
-			for ( Size i=pose.total_residue(); i>= 1; --i ) {
+			for ( Size i=pose.size(); i>= 1; --i ) {
 				if ( !pose.residue(i).is_protein() ) pose.conformation().delete_residue_slow( i );
 			}
 

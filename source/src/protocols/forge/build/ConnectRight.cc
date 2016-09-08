@@ -68,7 +68,7 @@ ConnectRight::ConnectRight(
 	right_position_( right_position ),
 	pose_right_( pose_right ),
 	use_rt_( false ),
-	interval_( 1, pose_right.n_residue() )
+	interval_( 1, pose_right.size() )
 {
 	init();
 }
@@ -202,8 +202,8 @@ void ConnectRight::extract_rt(
 	using core::id::StubID;
 
 	assert( jump_start_residue != jump_stop_residue );
-	assert( jump_start_residue <= pose.n_residue() );
-	assert( jump_stop_residue <= pose.n_residue() );
+	assert( jump_start_residue <= pose.size() );
+	assert( jump_stop_residue <= pose.size() );
 
 	StubID  left_stub_id( core::pose::named_stub_id_to_stub_id(  left_named_stub_id( jump_start_residue ), pose ) );
 	StubID right_stub_id( core::pose::named_stub_id_to_stub_id( right_named_stub_id( jump_stop_residue  ), pose ) );
@@ -316,7 +316,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	using protocols::forge::methods::merge;
 
 	// cache data
-	Size const original_left_nres = pose_left.n_residue();
+	Size const original_left_nres = pose_left.size();
 
 	// construct fold tree
 	FoldTree new_ft = merge( pose_left.fold_tree(), left_position_, pose_right_.fold_tree(), right_position_ );
@@ -340,15 +340,15 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	// expensive.  However, it's probably the safest way since we might be
 	// dealing with Poses that might be "non-standard/weird" vs regular
 	// polymeric (protein/dna/rna) Poses.
-	for ( Size i = 1, ie = pose_right_.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = pose_right_.size(); i <= ie; ++i ) {
 		if ( pose_right_.residue( i ).chain() != current_chain ) {
 			current_chain = pose_right_.residue( i ).chain();
-			pose_left.append_residue_by_jump( pose_right_.residue( i ), pose_left.n_residue(), "", "", true );
+			pose_left.append_residue_by_jump( pose_right_.residue( i ), pose_left.size(), "", "", true );
 		} else if ( i > 1 && pose_right_.residue( i ).is_polymer_bonded( i-1 ) ) {
 			//If it's bonded in the source pose we probably want it bonded in the destination pose
 			pose_left.append_residue_by_bond( pose_right_.residue( i ) );
 		} else {
-			pose_left.append_residue_by_jump( pose_right_.residue( i ), pose_left.n_residue(), "", "", false );
+			pose_left.append_residue_by_jump( pose_right_.residue( i ), pose_left.size(), "", "", false );
 		}
 	}
 
@@ -359,7 +359,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	// is modified
 
 	// transfer sec.struct
-	for ( Size i = 1, ie = pose_right_.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = pose_right_.size(); i <= ie; ++i ) {
 		pose_left.set_secstruct( i + original_left_nres, pose_right_.secstruct( i ) );
 	}
 
@@ -377,15 +377,15 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 		pose_left.pdb_info()->obsolete( true );
 
 		// copy all residue information
-		pose_left.pdb_info()->copy( *pose_right_.pdb_info(), 1, pose_right_.n_residue(), original_left_nres + 1 );
+		pose_left.pdb_info()->copy( *pose_right_.pdb_info(), 1, pose_right_.size(), original_left_nres + 1 );
 	}
 
-	assert( pose_left.n_residue() == original_left_nres + pose_right_.n_residue() );
+	assert( pose_left.size() == original_left_nres + pose_right_.size() );
 
 	// END POSE MODIFY: after this point pose_left is static
 
 	// store correct interval_
-	interval_ = Interval( 1 + original_left_nres, pose_right_.n_residue() + original_left_nres );
+	interval_ = Interval( 1 + original_left_nres, pose_right_.size() + original_left_nres );
 
 	// set the jump only if requested
 	if ( use_rt_ ) {
@@ -402,7 +402,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 void ConnectRight::reset_accounting_impl() {
 	left_position_ = original_interval().left;
 	// right_position_ is never modified, so no reset necessary
-	interval_ = Interval( 1, pose_right_.n_residue() );
+	interval_ = Interval( 1, pose_right_.size() );
 }
 
 

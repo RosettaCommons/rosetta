@@ -103,10 +103,10 @@ public:
 
 		using namespace ObjexxFCL;
 
-		FArray1D_int bestrotamer_at_seqpos( trpcage->total_residue() );
+		FArray1D_int bestrotamer_at_seqpos( trpcage->size() );
 		core::PackerEnergy bestenergy( 0.0 );
 		bool start_with_current = false;
-		FArray1D_int current_rot_index( trpcage->total_residue(), 0 );
+		FArray1D_int current_rot_index( trpcage->size(), 0 );
 		bool calc_rot_freq = false;
 		FArray1D< core::PackerEnergy > rot_freq( faster_ig->get_num_total_states(), 0.0 );
 

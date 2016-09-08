@@ -36,7 +36,7 @@ namespace constel {
 ///  the ith residue whose bit must be set to true (i=1,...,N).
 ///
 ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
-	mask(ps.total_residue(), false) {
+	mask(ps.size(), false) {
 
 	std::ifstream ifs(fname.c_str());
 	if ( !ifs ) {

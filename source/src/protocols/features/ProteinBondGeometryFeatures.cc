@@ -372,7 +372,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 
 	Real energy_angle = 0;
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
@@ -453,11 +453,11 @@ ProteinBondGeometryFeatures::report_interres_angles(
 	std::string statement_string ="INSERT INTO bond_interres_angles (struct_id, cenresNum, connResNum, cenAtmNum, outAtmCenNum, outAtmConnNum, cenAtmName, outAtmCenName, outAtmConnName, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		Residue const & rsd1 = pose.residue(i);
 		if ( !rsd1.is_protein() ) continue;
 
-		for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
+		for ( Size j = i+1; j <= pose.size(); ++j ) {
 			if ( !check_relevant_residues(relevant_residues, i, j) ) continue;
 			Residue const & rsd2 = pose.residue(j);
 			if ( !rsd2.is_protein() ) continue;
@@ -587,7 +587,7 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 	std::string statement_string ="INSERT INTO bond_intrares_lengths (struct_id, resNum, atm1Num, atm2Num, atm1Name, atm2Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
@@ -655,11 +655,11 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		Residue const & rsd1 = pose.residue(i);
 		if ( !rsd1.is_protein() ) continue;
 
-		for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
+		for ( Size j = i+1; j <= pose.size(); ++j ) {
 			if ( !check_relevant_residues(relevant_residues, i, j) ) continue;
 			Residue const & rsd2 = pose.residue(j);
 			if ( !rsd2.is_protein() ) continue;
@@ -729,7 +729,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 	std::string statement_string ="INSERT INTO bond_intrares_torsions (struct_id, resNum, atm1Num, atm2Num, atm3Num, atm4Num, atm1Name, atm2Name, atm3Name, atm4Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);

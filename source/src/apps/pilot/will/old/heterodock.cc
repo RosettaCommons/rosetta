@@ -137,15 +137,15 @@ make_olig(
 ){
 	olig = pose1;
 	olig.append_residue_by_jump(pose2.residue(1),1,"","",true);
-	for(Size i = 2; i <= pose2.n_residue(); ++i){
+	for(Size i = 2; i <= pose2.size(); ++i){
 		if(olig.residue(i).is_lower_terminus()||olig.residue(i).is_ligand()){
 			olig.append_residue_by_jump(pose2.residue(i),1);
 		} else {
 			olig.append_residue_by_bond(pose2.residue(i));
 		}
 	}
-	xform_pose(olig,x1,1,pose1.n_residue());
-	xform_pose(olig,x2,pose1.n_residue()+1,pose1.n_residue()+pose2.n_residue());
+	xform_pose(olig,x1,1,pose1.size());
+	xform_pose(olig,x2,pose1.size()+1,pose1.size()+pose2.size());
 }
 
 
@@ -379,7 +379,7 @@ Pose get_centered_pose(string fname, Vec & cen){
 	core::import_pose::pose_from_file(todock,fname, core::import_pose::PDB_file);
 	core::scoring::dssp::Dssp dssp(todock);
 	dssp.insert_ss_into_pose(todock);
-	cen = center_of_geom(todock,1,todock.n_residue());
+	cen = center_of_geom(todock,1,todock.size());
 	trans_pose(todock,-cen);
 	return todock;
 }
@@ -415,8 +415,8 @@ int main(int argc, char *argv[]) {
 		// olig.dump_pdb("native.pdb");
 		// utility_exit_with_message("arst");
 
-		if( todock1.n_residue() > (Size)option[heterodock::max_res]() ) continue;
-		if( todock2.n_residue() > (Size)option[heterodock::max_res]() ) continue;
+		if( todock1.size() > (Size)option[heterodock::max_res]() ) continue;
+		if( todock2.size() > (Size)option[heterodock::max_res]() ) continue;
 
 		dock(todock1,todock2,tag,normals,xnative);
 	}

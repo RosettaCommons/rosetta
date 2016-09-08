@@ -485,7 +485,7 @@ prepare_start_model( pose::Pose const & template_pose,
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 
 		utility::vector1< bool > repack_aalist( chemical::num_canonical_aas, false );
 		repack_aalist[  pose_with_desired_sequence.residue(i).aa() ] = true;
@@ -535,7 +535,7 @@ prepare_start_model( pose::Pose const & template_pose,
 
 	//Copy chi's from native... best case scenario
 	if ( option[ copy_native_chi ]() ){
-		for (Size i = 1; i <= pose.total_residue(); i++) {
+		for (Size i = 1; i <= pose.size(); i++) {
 			for ( Size n = 1; n <= pose.residue(i).nchi(); n++ ){
 				pose.set_chi( n, i, pose_with_desired_sequence.chi( n, i ) ) ;
 			}
@@ -571,7 +571,7 @@ prepare_start_model( pose::Pose const & template_pose,
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 		utility::vector1< bool > repack_aalist( chemical::num_canonical_aas, false );
 		repack_aalist[  core::chemical::aa_from_oneletter_code( desired_sequence[i-1] ) ] = true;
 	 	task->nonconst_residue_task(i).restrict_absent_canonical_aas( repack_aalist );
@@ -594,7 +594,7 @@ repack(	 pose::Pose & pose, scoring::ScoreFunction const & scorefxn )
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 	task->disallow_quench( true );
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 	 	task->nonconst_residue_task(i).restrict_to_repacking();
 	}
 
@@ -640,7 +640,7 @@ output_backbone_stats( pose::Pose & native_pose, pose::Pose & pose )
 {
 
 	utility::io::ozstream out( "backbone_stats.txt"  );
-	Size const nres( native_pose.total_residue() );
+	Size const nres( native_pose.size() );
 	for (Size i = 1; i < nres; i++ ){
 		out << "BB_STATS " <<
 			" " << native_pose.phi(i) << " " << pose.phi(i) <<
@@ -659,7 +659,7 @@ output_chi_stats( pose::Pose & native_pose, pose::Pose & pose,
 {
 	Size const pair_score_cb_thresh( 16 );
 
-	Size const nres( native_pose.total_residue() );
+	Size const nres( native_pose.size() );
 
 	Size n_chi1(0), n_chi1_buried(0), n_chi1_exposed(0);
 	Size n_chi1_correct(0), n_chi1_correct_buried(0), n_chi1_correct_exposed(0);
@@ -765,7 +765,7 @@ setup_secstruct( pose::Pose & template_pose, std::string const & template_secstr
 	utility::io::izstream data_stream( template_secstruct_file );
 	std::string line;
 	getline(data_stream, line);
-	for (Size i = 1; i <= template_pose.total_residue(); i++ ) {
+	for (Size i = 1; i <= template_pose.size(); i++ ) {
 		template_pose.set_secstruct(i,  line[i-1] );
 	}
 }
@@ -775,9 +775,9 @@ void
 setup_secstruct_dssp( pose::Pose & pose )
 {
 	core::scoring::dssp::Dssp dssp( pose );
-	FArray1D_char dssp_secstruct( pose.total_residue() );
+	FArray1D_char dssp_secstruct( pose.size() );
 	dssp.dssp_reduced( dssp_secstruct );
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for (Size i = 1; i <= pose.size(); i++ ) {
 		pose.set_secstruct(i,  dssp_secstruct(i) );
 	}
 
@@ -797,7 +797,7 @@ void
 setup_rhiju_fold_tree( pose::Pose & pose )
 {
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	//Quick check
 	std::cout <<  "SECSTRUCT: " ;
@@ -1017,8 +1017,8 @@ setup_rhiju_fold_tree( pose::Pose & pose )
 		pose.append_residue_by_jump( *rsd, 1 );
 	}
 
-	kinematics::FoldTree f( pose.total_residue() );
-	f.tree_from_jumps_and_cuts( pose.total_residue(), num_cutpoints,
+	kinematics::FoldTree f( pose.size() );
+	f.tree_from_jumps_and_cuts( pose.size(), num_cutpoints,
 															jump_points, cuts, 1, false /*verbose*/ );
 	pose.fold_tree( f );
 
@@ -1070,7 +1070,7 @@ setup_CA_constraints( pose::Pose & pose, pose::Pose const & src_pose ) {
 
 	static Real const CA_cutoff( 9.0 );
 
-	Size const nres( src_pose.total_residue() );
+	Size const nres( src_pose.size() );
 
 	//Don't constrain residues within 2 residues of a gap/cutpoint...
 	// similar to loop-rebuild protocol
@@ -1149,7 +1149,7 @@ void vary_geometry_sidechains( pose::Pose & pose, kinematics::MoveMap & mm )
 	ConstraintSetOP cst_set( 	pose.constraint_set()->clone() ) ;
 
 	//Change this to also include D DOF's for sidechains.
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for (Size i = 1; i <= pose.size(); i++ ) {
 		for (Size n = 1; n <= pose.residue(i).nchi(); n++ ) {
 			TorsionID tor_id( i, CHI, n );
 			AtomID id1,id2,id3,id4, my_ID;
@@ -1210,7 +1210,7 @@ void vary_geometry_backbone( pose::Pose & pose, kinematics::MoveMap & mm )
 	ConstraintSetOP cst_set( 	pose.constraint_set()->clone() ) ;
 
 	//Change this to also include D DOF's for sidechains.
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for (Size i = 1; i <= pose.size(); i++ ) {
 		for (Size n = 1; n <= 3; n++ ) {
 			TorsionID tor_id( i, BB, n );
 			AtomID id1,id2,id3,id4, my_ID;
@@ -1316,7 +1316,7 @@ output_constraints( pose::Pose const & pose, std::string const & filename, std::
 void
 output_constraints( pose::Pose const & pose, std::string const & filename ) {
 	std::map< Size, Size > alignment2full;
-	for (Size i=1; i <= pose.total_residue(); i++ ) alignment2full[ i ] = i;
+	for (Size i=1; i <= pose.size(); i++ ) alignment2full[ i ] = i;
 	output_constraints( pose, filename, alignment2full );
 }
 
@@ -1355,7 +1355,7 @@ backrub_protocol( pose::Pose const & native_pose, pose::PoseOP & pose, scoring::
 	//Wait a minute. SideChainMover is acting crazy. Need to set its task?
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *pose ));
 	task->initialize_from_command_line();
-	for (Size i = 1; i <= pose->total_residue(); i++) {
+	for (Size i = 1; i <= pose->size(); i++) {
 	 	task->nonconst_residue_task(i).restrict_to_repacking();
 	}
 
@@ -1378,7 +1378,7 @@ backrub_protocol( pose::Pose const & native_pose, pose::PoseOP & pose, scoring::
 		}
 	} else {
 		// otherwise use all residues
-		for (core::Size i = 1; i <= pose->total_residue(); ++i) resnums.push_back(i);
+		for (core::Size i = 1; i <= pose->size(); ++i) resnums.push_back(i);
 	}
 
 	// add segments to the backrub mover
@@ -1630,7 +1630,7 @@ easy_target_test(){
 
 
 	//	Pose pose_with_desired_sequence = native_pose; //For now.
-	//	Size const nres_model = pose_with_desired_sequence.total_residue();
+	//	Size const nres_model = pose_with_desired_sequence.size();
 
 	std::string desired_sequence = "";
 	for (Size n = 1; n <= sequences[1].length(); n++ ) {
@@ -1868,14 +1868,14 @@ initialize_sequence_mask( pose::Pose & pose, FArray1D_bool & sequence_mask ) {
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
 
-	sequence_mask.dimension( pose.total_residue() );
+	sequence_mask.dimension( pose.size() );
 	sequence_mask = true;
 
 	if ( option[ sequence_mask_file ].user() ) {
 		utility::io::izstream data_stream( option[ sequence_mask_file ] );
 		std::string line;
 		getline(data_stream, line);
-		for (Size n = 1; n <= pose.total_residue(); n++ ) {
+		for (Size n = 1; n <= pose.size(); n++ ) {
 			sequence_mask( n ) = line[n-1];
 		}
 	}

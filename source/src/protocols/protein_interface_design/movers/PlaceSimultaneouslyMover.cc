@@ -139,7 +139,7 @@ PlaceSimultaneouslyMover::minimize_no_bb( core::pose::Pose & pose ) const {
 		return false;
 	}
 	//for minimization (rb and sc of previous placed stubs)
-	utility::vector1< bool > const no_min( pose.total_residue(), false );
+	utility::vector1< bool > const no_min( pose.size(), false );
 	utility::vector1< core::Size > no_targets;
 	MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, no_min/*sc_min*/, min_rb()/*rb*/, optimize_foldtree(), no_targets, true/*simultaneous optimization*/);
 	return( true );
@@ -157,7 +157,7 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 	core::Size const num_csts_before_min( csts_before_min.size() );
 
 	//core::Size fixed_res(1);
-	//if( host_chain_ == 1 ) fixed_res = pose.total_residue();  // set but never used ~Labonte
+	//if( host_chain_ == 1 ) fixed_res = pose.size();  // set but never used ~Labonte
 	// core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res ); // Unused variable causes a warning.
 
 	core::scoring::ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
@@ -185,8 +185,8 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 				minimize_mover_scorefxn_minimize->set_weight( backbone_stub_constraint, bb_cst_weight );
 			}
 			curr_mover->apply( pose );
-			utility::vector1< bool > sc_min( pose.total_residue(), false );
-			utility::vector1< bool > const no_min( pose.total_residue(), false );
+			utility::vector1< bool > sc_min( pose.size(), false );
+			utility::vector1< bool > const no_min( pose.size(), false );
 			utility::vector1< core::Size > targets;
 			BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, stub_sets_ ) {
 				core::Size const pos( stubset_pos_pair.second.second );
@@ -201,7 +201,7 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 			scorefxn_mod->set_weight( backbone_stub_constraint, 10.0 ); //This will not have any effect if the bbcsts are off
 			scorefxn_mod->set_weight( coordinate_constraint, 1.0 );//similarly
 			MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, optimize_foldtree(), targets, true/*simultaneous optimization*/ );
-			utility::vector1< bool > min_host( pose.total_residue(), false );
+			utility::vector1< bool > min_host( pose.size(), false );
 			core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 			core::Size const host_chain_end  ( pose.conformation().chain_end( host_chain_ ) );
 			for ( core::Size i( host_chain_begin ); i<=host_chain_end; ++i ) min_host[ i ] = true;
@@ -338,8 +338,8 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		return( false );
 	}
 	stub_sets_ = auction_->stub_sets();//copying the pairings information
-	utility::vector1< bool > sc_min( pose.total_residue(), false );
-	utility::vector1< bool > const no_min( pose.total_residue(), false );
+	utility::vector1< bool > sc_min( pose.size(), false );
+	utility::vector1< bool > const no_min( pose.size(), false );
 	utility::vector1< core::Size > targets;
 	BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, auction_->stub_sets() ) {
 		core::Size const pos( stubset_pos_pair.second.second );
@@ -363,7 +363,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		using namespace core::pack::task;
 		PackerTaskOP task = create_task_for_hotspot_packing( pose );
 		//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( !pose.residue(i).is_protein() ) continue;
 			if ( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
 				task->nonconst_residue_task(i).prevent_repacking();
@@ -403,7 +403,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 			pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 			core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
 
-			for ( core::Size i=1; i<=saved_pose.total_residue(); ++i ) {
+			for ( core::Size i=1; i<=saved_pose.size(); ++i ) {
 				if ( !saved_pose.residue(i).is_protein() ) continue;
 				if ( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
 					//prevents everything else from repacking
@@ -498,7 +498,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 
 		//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
 
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( !pose.residue(i).is_protein() ) continue;
 			if ( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
 				//prevents everything else from repacking
@@ -866,7 +866,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain_ ) );
 				core::Size const chain_end( ala_pose->conformation().chain_end( host_chain_ ) );
 
-				for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+				for ( core::Size i = 1; i <= pose.size(); i++ ) {
 					if ( !pose.residue(i).is_protein() ) continue;
 					if ( i >= chain_begin && i <=chain_end ) {
 						core::Size const restype( ala_pose->residue(i).aa() );

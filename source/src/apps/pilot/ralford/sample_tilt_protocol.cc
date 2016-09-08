@@ -90,7 +90,7 @@ public:
 		TR << "Adding a membrane residue to the pose at the residue COM" << std::endl;
 		// Initialize the membrane framework via AddMembraneMover
 		// Anchor the membrane jump to the residue center of mass
-		core::Size rsd_com( residue_center_of_mass( pose, 1, pose.total_residue()-1 ) );
+		core::Size rsd_com( residue_center_of_mass( pose, 1, pose.size()-1 ) );
 		AddMembraneMoverOP add_memb( new AddMembraneMover( rsd_com, 0 ) );
 		add_memb->apply( pose );
 

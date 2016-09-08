@@ -298,7 +298,7 @@ main( int argc, char* argv [] ) {
 				vector1< xyzVector< Real > > native_coords, template_coords;
 
 				int natoms(0);
-				for ( Size ii = 1; ii <= native_pose.total_residue(); ++ii ) {
+				for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
 					Size const templ_ii( mapping[ii] );
 					if ( templ_ii != 0 ) ++natoms;
 				}
@@ -306,7 +306,7 @@ main( int argc, char* argv [] ) {
 				ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
 				ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
 				Size n_gap(0);
-				for ( Size ii = 1; ii <= native_pose.total_residue(); ++ii ) {
+				for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
 					Size const templ_ii( mapping[ii] );
 					if ( templ_ii == 0 ) {
 						n_gap++;
@@ -328,7 +328,7 @@ main( int argc, char* argv [] ) {
 				Real const rmsd_ali ( rms_wrapper( natoms, p1a, p2a ) );
 				Real const gdtmm_ali( xyz_gdtmm( p1a, p2a ) );
 				Real const coverage(
-					(Real) ungapped_query.length() / (Real) native_pose.total_residue()
+					(Real) ungapped_query.length() / (Real) native_pose.size()
 				);
 
 				//Real const gdtmm_ali( 1.0 );

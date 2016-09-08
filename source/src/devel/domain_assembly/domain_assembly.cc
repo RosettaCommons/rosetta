@@ -157,7 +157,7 @@ set_moveable_rna(
 	using namespace protocols::toolbox;
 	//FArray1D used to maintain RNA_FragmentMover compatability with other RNA protocols
 	AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( full_pose ) );
-	for ( Size i = 1; i <= full_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= full_pose.size(); ++i ) {
 		atom_level_domain_map->set( i, false );
 		if ( full_pose.residue_type(i).is_RNA() ) {
 			//If the residue is RNA and a linker range, set it as moveable, otherwise it will remain immobile
@@ -283,7 +283,7 @@ da_residues_to_repack(
 	pose.update_residue_neighbors();
 	core::scoring::TenANeighborGraph const & nb_graph( pose.energies().tenA_neighbor_graph() );
 
-	for ( Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( Size i=1; i <= pose.size(); ++i ) {
 
 		core::graph::Node const * current_node( nb_graph.get_node(i) );  // neighbor graph node for residue i
 		if ( mm->get_bb(i) ) {
@@ -317,7 +317,7 @@ find_nearest_movable_residues(
 	utility::vector1< std::pair < Size, Size > > & nearest_movable_residues
 )
 {
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		// search for nearest movable residue towards the N-terminus
 		Size low_residue = 0;
 		for ( Size j = i-1; j > 0; --j ) {
@@ -327,8 +327,8 @@ find_nearest_movable_residues(
 			}
 		}
 		// search for the nearest movable residue towards the C-terminus
-		Size high_residue = pose.total_residue() + 1;
-		for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
+		Size high_residue = pose.size() + 1;
+		for ( Size j = i+1; j <= pose.size(); ++j ) {
 			if ( mm->get_bb( j ) ) {
 				high_residue = j;
 				break;
@@ -396,7 +396,7 @@ optimize_linkers_fullatom_mode(
 	for ( Size i = 1; i <= 10; ++i ) {
 		stage1_inner_loop -> apply( full_pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
-		utility::vector1<bool> repack_residues( full_pose.total_residue(), false );
+		utility::vector1<bool> repack_residues( full_pose.size(), false );
 		da_residues_to_repack( mm, nearest_movable_residues, full_pose, repack_residues );
 		pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		this_packer_task -> restrict_to_residues( repack_residues );
@@ -417,7 +417,7 @@ optimize_linkers_fullatom_mode(
 	for ( Size i = 1; i <= 10; ++i ) {
 		stage2_inner_loop -> apply( full_pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
-		utility::vector1<bool> repack_residues( full_pose.total_residue(), false );
+		utility::vector1<bool> repack_residues( full_pose.size(), false );
 		da_residues_to_repack( mm, nearest_movable_residues, full_pose, repack_residues );
 		pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		this_packer_task -> restrict_to_residues( repack_residues );
@@ -522,7 +522,7 @@ optimize_linkers_rna_fullatom_mode(
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {
 		stage1_inner_loop -> apply( full_pose );
-		utility::vector1<bool> repack_residues( full_pose.total_residue(), false );
+		utility::vector1<bool> repack_residues( full_pose.size(), false );
 		da_residues_to_repack( mm, nearest_movable_residues, full_pose, repack_residues );
 		pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		this_packer_task -> restrict_to_residues( repack_residues );
@@ -545,7 +545,7 @@ optimize_linkers_rna_fullatom_mode(
 
 	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {
 		stage2_inner_loop -> apply( full_pose );
-		utility::vector1<bool> repack_residues( full_pose.total_residue(), false );
+		utility::vector1<bool> repack_residues( full_pose.size(), false );
 		da_residues_to_repack( mm, nearest_movable_residues, full_pose, repack_residues );
 		pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		this_packer_task -> restrict_to_residues( repack_residues );
@@ -575,7 +575,7 @@ optimize_linkers_rna_fullatom_mode(
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {
 		stage3_inner_loop -> apply( full_pose );
-		utility::vector1<bool> repack_residues( full_pose.total_residue(), false );
+		utility::vector1<bool> repack_residues( full_pose.size(), false );
 		da_residues_to_repack( mm, nearest_movable_residues, full_pose, repack_residues );
 		pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		this_packer_task -> restrict_to_residues( repack_residues );
@@ -600,7 +600,7 @@ optimize_linkers_rna_fullatom_mode(
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {
 		stage4_inner_loop -> apply( full_pose );
-		utility::vector1<bool> repack_residues( full_pose.total_residue(), false );
+		utility::vector1<bool> repack_residues( full_pose.size(), false );
 		da_residues_to_repack( mm, nearest_movable_residues, full_pose, repack_residues );
 		pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
 		this_packer_task -> restrict_to_residues( repack_residues );

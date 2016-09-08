@@ -340,7 +340,7 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 	int aln_len = cartfrag_overlap_;
 	runtime_assert( cartfrag_overlap_>=1 && cartfrag_overlap_<=len/2);
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -529,7 +529,7 @@ CartesianHybridize::apply( Pose & pose ) {
 
 	Pose pose_in = pose;
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -541,7 +541,7 @@ CartesianHybridize::apply( Pose & pose ) {
 
 	core::Size n_prot_res = nres;
 	while ( !pose.residue(n_prot_res).is_protein() ) n_prot_res--;
-	TR << " total_res=" << pose.total_residue() << "   prot_res=" << n_prot_res << std::endl;
+	TR << " total_res=" << pose.size() << "   prot_res=" << n_prot_res << std::endl;
 
 	bool no_ns_moves = no_global_frame_;
 

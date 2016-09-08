@@ -69,7 +69,7 @@ public:
   void
   apply( core::pose::Pose & match ){
 
-    assert(match.total_residue() == 3); // Two ligands plus zinc
+    assert(match.size() == 3); // Two ligands plus zinc
 
     core::pose::Pose scaffold;
     core::import_pose::pose_from_file( scaffold, basic::options::option[scaffold_pdb].value() , core::import_pose::PDB_file);
@@ -95,9 +95,9 @@ public:
     core::Size match_res2 = match.pdb_info()->number(2);
     metalsite_seqpos[1] = match_res1;
     metalsite_seqpos[2] = match_res2;
-    metalsite_seqpos[3] = scaffold.total_residue() + 1/*zinc is chain B*/ + match_res1;
-    metalsite_seqpos[4] = scaffold.total_residue() + 1/*zinc is chain B*/ + match_res2;
-    metalsite_seqpos[5] = scaffold.total_residue() + 1/*zinc is chain B*/;
+    metalsite_seqpos[3] = scaffold.size() + 1/*zinc is chain B*/ + match_res1;
+    metalsite_seqpos[4] = scaffold.size() + 1/*zinc is chain B*/ + match_res2;
+    metalsite_seqpos[5] = scaffold.size() + 1/*zinc is chain B*/;
 
     metalsite_atom_xyz[5] = homodimer_with_matches.residue( metalsite_seqpos[5] ).atom(1).xyz();
 

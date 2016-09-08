@@ -311,9 +311,9 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	// Report score and rmsd
 
 	LoopsCOP loops = get_loops();
-	ObjexxFCL::FArray1D_bool loop_residues (pose.total_residue(), false);
+	ObjexxFCL::FArray1D_bool loop_residues (pose.size(), false);
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( loops->is_loop_residue(i) ) { loop_residues[i-1] = true; }
 	}
 

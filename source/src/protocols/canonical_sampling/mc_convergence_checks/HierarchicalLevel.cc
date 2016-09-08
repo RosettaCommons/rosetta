@@ -344,7 +344,7 @@ HierarchicalLevel::add_new( core::pose::Pose const& pose,
 	utility::vector1< core::Size > & address,
 	bool write_to_file,
 	core::Size new_level) {
-	ObjexxFCL::FArray2D_double coord( 3, pose.total_residue(), 0.0 );
+	ObjexxFCL::FArray2D_double coord( 3, pose.size(), 0.0 );
 	protocols::toolbox::fill_CA_coords( pose, coord );
 	utility::vector1< core::Size > tmp_address = address;
 	if ( new_level == 0 ) {
@@ -449,7 +449,7 @@ HierarchicalLevel::evaluate(
 	utility::vector1< core::Real > & best_rmsd,
 	utility::vector1< core::Size > & best_address
 ) {
-	ObjexxFCL::FArray2D_double coord( 3, pose.total_residue(), 0.0 );
+	ObjexxFCL::FArray2D_double coord( 3, pose.size(), 0.0 );
 	protocols::toolbox::fill_CA_coords( pose, coord );
 	core::Size last_level_address = evaluate( coord, best_decoy, best_rmsd, best_address );
 	return last_level_address;

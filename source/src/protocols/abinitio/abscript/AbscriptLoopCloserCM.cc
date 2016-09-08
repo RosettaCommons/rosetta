@@ -197,7 +197,7 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 	Size warn = 0;
 
 	try {
-		for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= in_pose.size(); ++i ) {
 			tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
 				<< ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
 				<< ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;
@@ -302,14 +302,14 @@ void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
 	idealizer->fast( false );
 
 	utility::vector1< core::Size > pos_list;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( movemap_->get_bb( i ) ) {
 			pos_list.push_back( i );
 		}
 	}
 
 	if ( tr.Trace.visible() ) {
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			tr.Trace << ( movemap_->get_bb(i) ? "T" : "F" );
 		}
 		tr.Trace << std::endl;

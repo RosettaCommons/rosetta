@@ -116,7 +116,7 @@ return_region(Pose & pose, Size const start, Size const end){
 	core::pose::create_subpose(pose, positions, new_foldtree, piece);
 
 	//Create subpose results in a NULL PDB_Info.  We now need a new one.
-	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo(piece.total_residue()) );
+	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo(piece.size()) );
 	piece.pdb_info(pdb_info);
 
 	piece.pdb_info()->copy(*(pose.pdb_info()), start, end, 1); //Should be an option directly within subpose
@@ -189,7 +189,7 @@ insert_pose_into_pose(
 	core::conformation::disulfide_bonds(insert.conformation(), disulfide_pair_list);
 
 	core::kinematics::FoldTree original_scaffold_tree = scaffold.fold_tree();
-	core::Size const insert_length = insert.total_residue();
+	core::Size const insert_length = insert.size();
 	//strip termini variants from insert if necessary
 	using core::pose::remove_variant_type_from_pose_residue;
 	core::pose::remove_variant_type_from_pose_residue(insert, core::chemical::LOWER_TERMINUS_VARIANT, 1);
@@ -211,10 +211,10 @@ insert_pose_into_pose(
 	//Fold tree allows insertion into scaffold (all via jump)
 	using core::kinematics::Edge;
 	core::pose::Pose combined(scaffold);
-	core::kinematics::FoldTree inserting_tree(combined.total_residue());
+	core::kinematics::FoldTree inserting_tree(combined.size());
 	inserting_tree.clear();
 	inserting_tree.add_edge(Edge(1, insert_point, Edge::PEPTIDE));
-	inserting_tree.add_edge(Edge(insert_point_end, combined.total_residue(), Edge::PEPTIDE));
+	inserting_tree.add_edge(Edge(insert_point_end, combined.size(), Edge::PEPTIDE));
 	inserting_tree.add_edge(Edge(insert_point, insert_point_end, 1));
 	inserting_tree.reorder(1);
 	TR << inserting_tree << std::endl;
@@ -235,7 +235,7 @@ insert_pose_into_pose(
 	if ( copy_pdbinfo && insert_pose.pdb_info() && scaffold_pose.pdb_info() ) {
 		//TR << "Start PDBInfo size: " << combined.pdb_info()->nres() << std::endl;
 		//TR << "Insert PDBInfo Size: " << insert_pose.pdb_info()->nres() << std::endl;
-		combined.pdb_info()->copy(*(insert_pose.pdb_info()), 1, insert_pose.total_residue(), insert_point+1);
+		combined.pdb_info()->copy(*(insert_pose.pdb_info()), 1, insert_pose.size(), insert_point+1);
 		combined.pdb_info()->obsolete(false);
 		//TR << "Final PDBInfo Size: " << combined.pdb_info()->nres() << std::endl;
 	}
@@ -357,7 +357,7 @@ superimpose_overhangs_heavy(Pose const & pose, Pose & piece, bool ca_only, Size 
 	initialize_atomid_map( atoms_to_superimpose, piece, core::id::BOGUS_ATOM_ID );
 	//Remove termini
 	remove_lower_terminus_type_from_pose_residue(piece, 1);
-	remove_upper_terminus_type_from_pose_residue(piece, piece.total_residue());
+	remove_upper_terminus_type_from_pose_residue(piece, piece.size());
 
 	//Nter residues/atoms
 	for ( core::Size piece_res_num=1; piece_res_num<=Nter_overhang; ++piece_res_num ) {
@@ -377,7 +377,7 @@ superimpose_overhangs_heavy(Pose const & pose, Pose & piece, bool ca_only, Size 
 
 	//Cter residues/atoms
 	core::Size i = 0;
-	for ( core::Size piece_res_num=(piece.total_residue() - Cter_overhang + 1); piece_res_num<=piece.total_residue(); ++piece_res_num ) {
+	for ( core::Size piece_res_num=(piece.size() - Cter_overhang + 1); piece_res_num<=piece.size(); ++piece_res_num ) {
 		core::Size pose_res_num = end + i;
 		if ( ca_only ) {
 			AtomID const atom_piece(piece.residue(piece_res_num).atom_index("CA"), piece_res_num);
@@ -408,7 +408,7 @@ delete_overhang_residues(Pose & piece, Size Nter_overhang, Size Cter_overhang){
 	}
 
 	//Cter
-	core::Size res_num_start = (piece.total_residue() - Cter_overhang + 1);
+	core::Size res_num_start = (piece.size() - Cter_overhang + 1);
 	for ( core::Size i=1; i<=Cter_overhang; ++i ) {
 		//piece_.conformation().delete_polymer_residue(piece_res_num);
 		piece.conformation().delete_residue_slow(res_num_start);
@@ -593,12 +593,12 @@ setup_single_loop_single_arm_remodeling_foldtree(Pose & pose, Size const Nter_lo
 	TR.Debug << "cutpoint_upper " << cutpoint_upper << std::endl;
 	TR.Debug << "loop_end_foldtree_anchor " << loop_end_foldtree_anchor << std::endl;
 
-	core::kinematics::FoldTree remodeling_tree(pose.total_residue());
+	core::kinematics::FoldTree remodeling_tree(pose.size());
 	remodeling_tree.clear();
 	remodeling_tree.add_edge(Edge(1, loop_start_foldtree_anchor, Edge::PEPTIDE));
 	remodeling_tree.add_edge(Edge(loop_start_foldtree_anchor, cutpoint_lower, Edge::PEPTIDE));
 	remodeling_tree.add_edge(Edge(cutpoint_upper, loop_end_foldtree_anchor, Edge::PEPTIDE));
-	remodeling_tree.add_edge(Edge(loop_end_foldtree_anchor, pose.total_residue(), Edge::PEPTIDE));
+	remodeling_tree.add_edge(Edge(loop_end_foldtree_anchor, pose.size(), Edge::PEPTIDE));
 	remodeling_tree.add_edge(Edge(loop_start_foldtree_anchor, loop_end_foldtree_anchor, 1));
 	remodeling_tree.reorder(1);
 	TR << remodeling_tree << std::endl;
@@ -631,12 +631,12 @@ setup_single_loop_double_arm_remodeling_foldtree(Pose & pose, Size const Nter_lo
 	TR.Debug << "cutpoint_upper " << cutpoint_upper << std::endl;
 	TR.Debug << "loop_end_foldtree_anchor " << loop_end_foldtree_anchor << std::endl;
 
-	core::kinematics::FoldTree remodeling_tree(pose.total_residue());
+	core::kinematics::FoldTree remodeling_tree(pose.size());
 	remodeling_tree.clear();
 	remodeling_tree.add_edge(Edge(1, loop_start_foldtree_anchor, Edge::PEPTIDE));
 	remodeling_tree.add_edge(Edge(loop_start_foldtree_anchor, cutpoint_lower, Edge::PEPTIDE));
 	remodeling_tree.add_edge(Edge(cutpoint_upper, loop_end_foldtree_anchor, Edge::PEPTIDE));
-	remodeling_tree.add_edge(Edge(loop_end_foldtree_anchor, pose.total_residue(), Edge::PEPTIDE));
+	remodeling_tree.add_edge(Edge(loop_end_foldtree_anchor, pose.size(), Edge::PEPTIDE));
 	remodeling_tree.add_edge(Edge(loop_start_foldtree_anchor, loop_end_foldtree_anchor, 1));
 	remodeling_tree.reorder(1);
 	TR << remodeling_tree << std::endl;

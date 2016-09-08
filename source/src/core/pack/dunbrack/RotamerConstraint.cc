@@ -85,12 +85,12 @@ void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_
 	if ( unboundrot_poses.empty() ) return; // guaranteed at least one pose now
 
 	using namespace std;
-	for ( Size rsd_num = 1; rsd_num <= pose.total_residue(); ++rsd_num ) {
+	for ( Size rsd_num = 1; rsd_num <= pose.size(); ++rsd_num ) {
 		// Each constraint can contain only one ResidueType, so we have to sort them out here.
 		// We should get any scoring overlap since ResidueTypes are mutually exclusive.
 		map< string, RotamerConstraintOP > by_res_type;
 		for ( Size pose_num = 1; pose_num <= unboundrot_poses.size(); ++pose_num ) {
-			if ( rsd_num > unboundrot_poses[pose_num]->total_residue() ) continue;
+			if ( rsd_num > unboundrot_poses[pose_num]->size() ) continue;
 			conformation::Residue const & rsd = unboundrot_poses[pose_num]->residue(rsd_num);
 			if ( !rsd.is_protein() ) {
 				// Can't determine rotamer number for anything but protein.

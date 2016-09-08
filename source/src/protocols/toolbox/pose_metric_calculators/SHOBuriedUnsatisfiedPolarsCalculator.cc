@@ -171,7 +171,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 	core::pose::Pose const& ps) {
 
 	// compute SHO energy for each polar atom
-	core::Size N = ps.total_residue();
+	core::Size N = ps.size();
 	for ( Size i=1; i<=N; ++i ) {
 
 		core::conformation::Residue const& rsd = ps.residue(i);
@@ -218,7 +218,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 void SHOBuriedUnsatisfiedPolarsCalculator::print_sho_energies(
 	core::pose::Pose const& ps) {
 
-	Size const N = ps.total_residue();
+	Size const N = ps.size();
 	for ( Size i=1; i<=N; ++i ) {
 		core::conformation::Residue const& rsd = ps.residue(i);
 		Size const M = rsd.natoms();
@@ -298,7 +298,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::residue_partition(
 void SHOBuriedUnsatisfiedPolarsCalculator::partition(
 	core::pose::Pose const& ps) {
 
-	Size const N = ps.total_residue();
+	Size const N = ps.size();
 
 	switch(search_typ_) {
 

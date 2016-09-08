@@ -397,14 +397,14 @@ core::kinematics::FoldTree double_unlinked_fold_tree(
 	core::Size r2
 ) {
 	core::Size chain_end_1 = pose.conformation().chain_endings()[1];
-	core::Size chain_end_2 = pose.total_residue() - 1;
+	core::Size chain_end_2 = pose.size() - 1;
 	core::kinematics::FoldTree f = pose.fold_tree();
 	f.clear();
 
 	f.add_edge( 1, r1, -1 );
 	f.add_edge( r1, chain_end_1, -1 );
-	f.add_edge( r1, pose.total_residue(), 1 );
-	f.add_edge( pose.total_residue(), r2, 2 );
+	f.add_edge( r1, pose.size(), 1 );
+	f.add_edge( pose.size(), r2, 2 );
 	f.add_edge( r2, chain_end_1 + 1, -1 );
 	f.add_edge( r2, chain_end_2, -1 );
 
@@ -419,14 +419,14 @@ core::kinematics::FoldTree double_linked_fold_tree(
 	core::Size r2
 ) {
 	core::Size chain_end_1 = pose.conformation().chain_endings()[1];
-	core::Size chain_end_2 = pose.total_residue() - 1;
+	core::Size chain_end_2 = pose.size() - 1;
 	core::kinematics::FoldTree f = pose.fold_tree();
 	f.clear();
 
 	f.add_edge( 1, r1, -1 );
 	f.add_edge( r1, chain_end_1, -1 );
-	f.add_edge( r1, pose.total_residue(), "NZ", "CT1" );
-	f.add_edge( pose.total_residue(), r2, "CT2", "NZ" );
+	f.add_edge( r1, pose.size(), "NZ", "CT1" );
+	f.add_edge( pose.size(), r2, "CT2", "NZ" );
 	f.add_edge( r2, chain_end_1 + 1, -1 );
 	f.add_edge( r2, chain_end_2, -1 );
 
@@ -474,12 +474,12 @@ MikeLinkerMover::apply(
 	pose.append_residue_by_jump( *res2, 1 );
 
 
-	pose.conformation().declare_chemical_bond( lys1, "NZ", pose.total_residue(), "CT1" );
-	pose.conformation().declare_chemical_bond( lys1, "NI", pose.total_residue(), "CI1" );
-	pose.conformation().declare_chemical_bond( lys2, "NZ", pose.total_residue(), "CT2" );
-	pose.conformation().declare_chemical_bond( lys2, "NI", pose.total_residue(), "CI2" );
+	pose.conformation().declare_chemical_bond( lys1, "NZ", pose.size(), "CT1" );
+	pose.conformation().declare_chemical_bond( lys1, "NI", pose.size(), "CI1" );
+	pose.conformation().declare_chemical_bond( lys2, "NZ", pose.size(), "CT2" );
+	pose.conformation().declare_chemical_bond( lys2, "NI", pose.size(), "CI2" );
 
-	core::Size final = pose.total_residue();
+	core::Size final = pose.size();
 	//protocols::rigid::RigidBodyTransMover trans_mover( pose, 1 );
 	//trans_mover.step_size( 1 );
 	//trans_mover.apply( pose );
@@ -527,7 +527,7 @@ MikeLinkerMover::apply(
 	}
 	movemap->set_branches( lys1, true );
 	movemap->set_branches( lys2, true );
-	movemap->set_branches( pose.total_residue(), true );
+	movemap->set_branches( pose.size(), true );
 
 
 

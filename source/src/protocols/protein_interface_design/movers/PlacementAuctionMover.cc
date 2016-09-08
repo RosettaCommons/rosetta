@@ -171,7 +171,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	}
 
 	core::Size fixed_res(1);
-	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	if ( host_chain_ == 1 ) fixed_res = pose.size();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	/// ResidueAuction is keyed by energy => we select the residue,stub,stubset combination with the best energy for each stubset,stub combination
 	typedef std::pair< HotspotStubSetOP, HotspotStubOP > StubsetStubPair;

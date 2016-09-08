@@ -163,7 +163,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
 	if ( selector() ) {
 		selection = selector()->apply( pose );
 	} else {
-		selection = utility::vector1< bool >( pose.total_residue(), true );
+		selection = utility::vector1< bool >( pose.size(), true );
 	}
 
 	if ( map->find( "JumpSampleData") != map->end() ) {

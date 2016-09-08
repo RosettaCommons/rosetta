@@ -206,7 +206,7 @@ CloseFold::find_loops(   pose::Pose & pose,
 		utility::vector1< Size > cutpoints =  ft->cutpoints();
 		utility::vector1< Size > chain_ends = pose.conformation().chain_endings();
 		//adding last chains' end too, since it isnt included in chain_endings( and to avoid seg fault beloew)
-		chain_ends.push_back( pose.total_residue() );
+		chain_ends.push_back( pose.size() );
 
 		//debug
 		for ( Size i = 1; i <= chain_ends.size(); ++i ) {
@@ -379,7 +379,7 @@ CloseFold::apply( core::pose::Pose & pose ){
 	Size residues = 0;
 	//ensure that the residues specified are covered by the secondary structure input
 	for ( Size it = 1; it <= chains_.size(); ++it ) {
-		residues += pose.split_by_chain( chains_[it] )->total_residue();
+		residues += pose.split_by_chain( chains_[it] )->size();
 		TR <<"residues to compare: "<<residues <<std::endl;
 	}
 	TR << pose.fold_tree() <<std::endl;
@@ -482,11 +482,11 @@ CloseFold::parse_my_tag(
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
-		TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
+		TR<<"read in a template pdb with " <<template_pdb_->size() <<"residues"<<std::endl;
 		//template_presence_ = true;
 		core::scoring::dssp::Dssp dssp( *template_pdb_ );
 		dssp.insert_ss_into_pose( *template_pdb_ );
-		for ( core::Size res = 1 ;  res <= template_pdb_->total_residue(); ++res ) secstructure_ += template_pdb_->secstruct( res );
+		for ( core::Size res = 1 ;  res <= template_pdb_->size(); ++res ) secstructure_ += template_pdb_->secstruct( res );
 		secstructure_ = template_pdb_->secstruct();
 		TR << secstructure_ << std::endl;
 	}

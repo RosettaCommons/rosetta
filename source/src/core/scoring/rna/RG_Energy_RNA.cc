@@ -87,7 +87,7 @@ RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 	rna_centroid_info.update( pose );
 
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// calculate center of mass -- mutable.
 
@@ -173,7 +173,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	//Apply force at base sidechain atom?
 	//

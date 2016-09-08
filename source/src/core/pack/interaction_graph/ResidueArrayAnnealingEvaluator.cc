@@ -110,8 +110,8 @@ void ResidueArrayAnnealingEvaluator::initialize(
 	graph::GraphCOP )
 {
 	runtime_assert_string_msg(
-		rotamer_sets.total_residue() == pose.total_residue(),
-		"rotamer_sets.total_residue() != pose.total_residue()" );
+		rotamer_sets.total_residue() == pose.size(),
+		"rotamer_sets.total_residue() != pose.size()" );
 
 	// Get energy method
 	foreach_ ( core::scoring::methods::WholeStructureEnergyOP energy_method, std::make_pair(score_function.ws_methods_begin(), score_function.ws_methods_end()) ) {
@@ -150,7 +150,7 @@ void ResidueArrayAnnealingEvaluator::initialize(
 
 	// Setup residue arrays for current and considered steps
 	source_pose_residues_.resize( rotamer_sets.total_residue() );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		source_pose_residues_[i] = pose.residue(i).get_self_ptr();
 	}
 

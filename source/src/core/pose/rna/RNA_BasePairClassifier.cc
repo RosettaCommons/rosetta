@@ -384,7 +384,7 @@ residue_is_bulge( pose::Pose const & pose, Size const i )
 	static Real const DIST_CUTOFF( 4.0 );
 
 	for ( Size k = rsd_i.first_sidechain_atom()+1; k <= rsd_i.nheavyatoms(); k++ ) {
-		for ( Size j = 1 ; j <= pose.total_residue(); j++ ) {
+		for ( Size j = 1 ; j <= pose.size(); j++ ) {
 			if ( i == j ) continue;
 			for ( Size m = 1; m <= pose.residue( j ).nheavyatoms(); m++ ) {
 				if ( ( rsd_i.xyz( k ) - pose.residue( j ).xyz( m ) ).length() < DIST_CUTOFF ) {
@@ -580,7 +580,7 @@ classify_base_pairs(
 	pose::Pose pose = pose_input;
 
 	//////////////////////////////////////////////////////////////
-	ObjexxFCL::FArray1D < bool > is_base_paired( pose.total_residue(), false );
+	ObjexxFCL::FArray1D < bool > is_base_paired( pose.size(), false );
 
 	// Get hydrogen bond list.
 	//ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS ) );
@@ -596,9 +596,9 @@ classify_base_pairs(
 
 
 	//////////////////////////////////////////////////////////////
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( ! pose.residue(i).is_RNA()  ) continue;
-		for ( Size j = i+1; j <= pose.total_residue(); j++ ) {
+		for ( Size j = i+1; j <= pose.size(); j++ ) {
 			if ( ! pose.residue(j).is_RNA()  ) continue;
 
 			if ( ( pose.residue(i).nbr_atom_xyz() - pose.residue(j).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
@@ -633,7 +633,7 @@ classify_base_pairs(
 
 	//////////////////////////////////////////////////////////////
 	is_bulged.clear();
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		bool const check_bulge = residue_is_bulge( pose, i );
 		is_bulged.push_back( check_bulge );
 		if ( check_bulge && false ) {

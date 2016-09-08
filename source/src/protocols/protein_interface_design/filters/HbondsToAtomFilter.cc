@@ -148,7 +148,7 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 	if ( resnum_ >= chain2begin ) {
 		partner_begin = 1; partner_end = chain2begin-1;
 	} else {
-		partner_begin = chain2begin; partner_end = temp_pose.total_residue();
+		partner_begin = chain2begin; partner_end = temp_pose.size();
 	}
 	std::set<Size> binders;
 	for ( Size i=partner_begin; i<=partner_end; ++i ) binders.insert( i );

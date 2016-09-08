@@ -277,7 +277,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 	nucleoside1_torsion_set.push_back(A_form_torsion_set[6]);
 	nucleoside1_torsion_set.push_back(A_form_torsion_set[7]);
 
-	for (Size i = 1; i <= pose.n_residue() - 1; ++i) {
+	for (Size i = 1; i <= pose.size() - 1; ++i) {
 		apply_suite_torsion( A_form_torsion_set, pose, i );
 	}
 	apply_nucleoside_torsion( nucleoside1_torsion_set, pose, 1 );
@@ -294,7 +294,7 @@ initialize_o2prime_pack( pose::Pose const & pose,
 	using namespace scoring;
 	using namespace chemical::rna;
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		o2prime_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		o2prime_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
 		o2prime_pack_task->nonconst_residue_task(i).or_include_current( true );
@@ -427,7 +427,7 @@ score2bin(Real const score, Real const min_score, Real const max_score, Real con
 Real rmsd_compute(core::pose::Pose const & pose, core::pose::Pose const & ref_pose) {
 	Size n_atom = 0;
 	Real sd = 0;
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		for (Size j = 1; j <= pose.residue(i).nheavyatoms(); ++j) {
 			++n_atom;
 			sd += ( pose.residue(i).xyz(j) - ref_pose.residue(i).xyz(j) ).length_squared();
@@ -459,7 +459,7 @@ one_chain_MC_sampling(){
 
 	pose.dump_pdb("ideal.pdb");
 	pose_full.dump_pdb("ideal_full.pdb");
-	Size const n_residue = pose.n_residue();
+	Size const n_residue = pose.size();
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	//Setup scoring function
@@ -686,7 +686,7 @@ one_chain_ST_MC () {
 
 	pose.dump_pdb("ideal.pdb");
 	pose_full.dump_pdb("ideal_full.pdb");
-	Size const n_residue = pose.n_residue();
+	Size const n_residue = pose.size();
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	//Setup scoring function
@@ -926,7 +926,7 @@ one_chain_SWA_cluster(){
 
 	pose.dump_pdb("ideal.pdb");
 	pose_full.dump_pdb("ideal_full.pdb");
-	Size const n_residue = pose.n_residue();
+	Size const n_residue = pose.size();
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	//Setup scoring function
@@ -1325,7 +1325,7 @@ one_chain_torsion_cluster(){
 
 	pose.dump_pdb("ideal.pdb");
 	pose_full.dump_pdb("ideal_full.pdb");
-	Size const n_residue = pose.n_residue();
+	Size const n_residue = pose.size();
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	//Setup scoring function

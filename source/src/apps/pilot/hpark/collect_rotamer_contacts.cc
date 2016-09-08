@@ -201,7 +201,7 @@ scan_contact( pose::Pose const &pose,
   Size data_index;
   Size rot_index;
 
-  for( Size ires = 1+winsize; ires <= pose.total_residue()-winsize; ++ires ){
+  for( Size ires = 1+winsize; ires <= pose.size()-winsize; ++ires ){
     std::string resname( pose.residue( ires ).name() );
     if( resname.compare("GLY") == 0 || resname.compare("ALA") == 0) continue;
 
@@ -243,7 +243,7 @@ collect_silent( pose::Pose &pose,
   core::pose::make_pose_from_sequence( pose5, sequence,
 	*( chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ))  );
 
-  for( Size ires = 1+winsize; ires <= pose.total_residue()-winsize; ++ires ){
+  for( Size ires = 1+winsize; ires <= pose.size()-winsize; ++ires ){
     std::string resname( pose.residue( ires ).name() );
     if( resname.compare("GLY") == 0 || resname.compare("ALA") == 0) continue;
 

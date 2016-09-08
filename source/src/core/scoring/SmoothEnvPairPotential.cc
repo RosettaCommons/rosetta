@@ -298,7 +298,7 @@ SmoothEnvPairPotential::compute_centroid_environment(
 	/// calculate the cenlist info only if it has not been calculated since the last score evaluation
 	if ( cenlist.calculated() ) return;
 
-	cenlist.initialize( pose.total_residue(), 1 );  // every res has 1 neighbor (itself)
+	cenlist.initialize( pose.size(), 1 );  // every res has 1 neighbor (itself)
 
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
@@ -360,7 +360,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 
 	if ( dcenlist.calculated() ) return;
 
-	dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
+	dcenlist.initialize( pose.size(), numeric::xyzVector< Real >(0,0,0) );
 
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );

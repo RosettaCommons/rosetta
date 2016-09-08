@@ -337,7 +337,7 @@ void checked_steal_fragment( Frame& frame, pose::Pose const& pose ) {
 //     );
 //     // steal torsions
 //     // determine length of segment to copy from native
-//     Size seg_len = pose.total_residue();
+//     Size seg_len = pose.size();
 //     fragment::Frame long_frame(1, seg_len);
 //     fragment::FragData frag( new fragment::BBTorsionSRFD, seg_len);
 

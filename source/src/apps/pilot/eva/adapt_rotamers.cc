@@ -96,7 +96,7 @@ main( int argc, char * argv [] )
 
 	typedef conformation::Residue Residue;
 
-	for( core::Size res=1; res<=pose_adpt.total_residue(); ++res ) {
+	for( core::Size res=1; res<=pose_adpt.size(); ++res ) {
 
 		//	TR<<"this is res "<<res <<" this is pose_adpt.residue (res)" <<pose_adpt.residue(res) << "\n";
 
@@ -128,7 +128,7 @@ main( int argc, char * argv [] )
 		}
 
 	}
-	TR<<"total residue number adpt "<< pose_adpt.total_residue() <<" and ori : " << pose_ori.total_residue()<<std::endl;
+	TR<<"total residue number adpt "<< pose_adpt.size() <<" and ori : " << pose_ori.size()<<std::endl;
 
 	pose_adpt.dump_pdb( "adapted.pdb");
 	pose_ori.dump_pdb( "ori.pdb");

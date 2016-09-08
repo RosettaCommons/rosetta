@@ -267,7 +267,7 @@ OopCreatorMover::apply(
 	//kdrew: since we probably added new connection types (i.e. oop CYP and CZP atoms) above, need to reset connections
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
 
@@ -306,7 +306,7 @@ OopCreatorMover::apply(
 
 		utility::vector1< Size > oop_pre_positions;
 		//kdrew: load all oop_pre positions into vector and make all non-oop_pre positions movable by small mover
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			TR << "resid: " << i << " is OOP_PRE: " << pose.residue(i).has_variant_type(chemical::OOP_PRE) << std::endl;
 
 			if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 ) {
@@ -370,7 +370,7 @@ OopCreatorMover::apply(
 
 		utility::vector1< Size > oop_pre_positions;
 		//kdrew: load all oop_pre positions into vector and make all non-oop_pre positions movable by small mover
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 ) {
 				pert_pep_mm->set_bb( i );
 			} else {

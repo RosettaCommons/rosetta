@@ -133,7 +133,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
   core::id::AtomID_Map< bool > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, false );
-  for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+  for ( Size ir = 1; ir <= pose.size(); ++ir ) {
     atom_map.set(AtomID(2,ir) , true );
     atom_map.set(AtomID(3,ir) , true );
     atom_map.set(AtomID(5,ir) , true );
@@ -208,7 +208,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
       task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
     }
   }
-  for(Size i = nres+1; i <= pose.n_residue(); ++i) {
+  for(Size i = nres+1; i <= pose.size(); ++i) {
     task->nonconst_residue_task(i).prevent_repacking();
   }
   TR << *task << std::endl;
@@ -329,12 +329,12 @@ void run() {
     // bpy.dump_pdb("test2.pdb");
     // utility_exit_with_message("testing");
 
-    Size nres = init.n_residue();
+    Size nres = init.size();
     // ScoreFunctionOP sf = core::scoring::get_score_function();
     ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
     vector1<numeric::xyzTriple<Real> > chis;
-    for(Size i = 2; i <= init.n_residue()-1; ++i) {
+    for(Size i = 2; i <= init.size()-1; ++i) {
       for(Real chi1 = -180.0; chi1 < 180.0; chi1+=option[willmatch::chi1_increment]()) {
         for(Real chi2 = -180.0; chi2 < 180.0; chi2+=option[willmatch::chi2_increment]()) {
           chis.push_back(numeric::xyzTriple<Real>(i,chi1,chi2));
@@ -372,7 +372,7 @@ void run() {
         core::scoring::superimpose_pose( pose, bpy, atom_map );
         pose.append_residue_by_jump( *core::conformation::ResidueFactory::create_residue(rs->name_map("VRT")),irsd,"NN1","ORIG");
         core::kinematics::FoldTree ft = pose.fold_tree();
-        ft.reorder(pose.n_residue());
+        ft.reorder(pose.size());
         pose.fold_tree(ft);
       }
       pose.set_chi(1,irsd,chi1);

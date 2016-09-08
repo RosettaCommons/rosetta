@@ -49,7 +49,7 @@ RNA_BasePairHandler::RNA_BasePairHandler( core::pose::Pose const & pose ) {
 		}
 	}
 
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( f.is_cutpoint( i ) ) {
 			if ( pose.residue_type( i ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 				runtime_assert( pose.residue_type( i+1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) );

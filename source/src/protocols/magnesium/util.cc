@@ -307,7 +307,7 @@ get_mg_ligands( pose::Pose const & pose, utility::vector1< Size > const mg_res,
 		Vector const xyz_mg =  pose.xyz( NamedAtomID( "MG  ", i ) );
 
 		// would be much faster to only look over neighbors
-		for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+		for ( Size j = 1; j <= pose.size(); j++ ) {
 			if ( i == j ) continue;
 
 			Residue const & rsd_j = pose.residue( j );
@@ -385,7 +385,7 @@ utility::vector1< core::Size >
 find_bound_waters_that_are_daughters_in_fold_tree( pose::Pose const & pose, Size const mg_res )
 {
 	vector1< Size > water_res;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.residue_type( i ).aa() != core::chemical::aa_h2o ) continue;
 		if ( pose.fold_tree().get_parent_residue( i ) != int( mg_res ) ) continue;
 		if ( ( pose.residue( mg_res ).xyz( "MG  " ) - pose.residue( i ).xyz(" O  " ) ).length() > MG_LIGAND_DISTANCE_CUTOFF ) continue;
@@ -476,8 +476,8 @@ append_mg_bound_water(  core::pose::Pose & pose,
 	core::Size const mg_res )
 {
 	pose.append_residue_by_jump( rsd, mg_res );
-	update_jump_atoms_for_mg_bound_water( pose, pose.total_residue() );
-	return ( pose.total_residue() );
+	update_jump_atoms_for_mg_bound_water( pose, pose.size() );
+	return ( pose.size() );
 }
 
 
@@ -494,14 +494,14 @@ get_mg_rsd() {
 void
 add_single_magnesium( pose::Pose & pose )
 {
-	pose.append_residue_by_jump ( *get_mg_rsd(), pose.total_residue() );
+	pose.append_residue_by_jump ( *get_mg_rsd(), pose.size() );
 }
 
 ////////////////////////////////////////////////////
 void
 strip_out_magnesiums( pose::Pose & pose ){
 	utility::vector1< Size > slice_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue(n).name3() == " MG" ) continue;
 		slice_res.push_back( n );
 	}
@@ -513,7 +513,7 @@ strip_out_magnesiums( pose::Pose & pose ){
 utility::vector1< Size >
 get_res_with_name( pose::Pose const & pose, std::string const & name ) {
 	utility::vector1< Size > mg_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue( n ).name3() == name ) mg_res.push_back( n );
 	}
 	return mg_res;
@@ -536,7 +536,7 @@ void
 remove_waters_except_mg_bound( pose::Pose & pose,
 	utility::vector1< std::pair< Size, Size > > const & mg_water_pairs ) {
 	utility::vector1< Size > slice_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue( n ).name3() == "HOH" ) continue;
 		slice_res.push_back( n );
 	}
@@ -564,7 +564,7 @@ remove_mg_bound_waters( pose::Pose & pose, utility::vector1< Size > const & mg_r
 	}
 
 	utility::vector1< Size > slice_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue( n ).name3() == "HOH" ) {
 			if ( !leave_other_waters ) continue; // no waters in final pose!
 			if ( mg_bound_waters.has_value( n ) ) continue;
@@ -579,7 +579,7 @@ remove_mg_bound_waters( pose::Pose & pose, utility::vector1< Size > const & mg_r
 		// water res to remove is everything that was not in slice_res, defined above.
 		vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 		vector1< Size > remove_water_res_in_full_model_numbering;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( !slice_res.has_value( n ) ) remove_water_res_in_full_model_numbering.push_back( res_list[ n ] );
 		}
 
@@ -602,7 +602,7 @@ set_water_numbers_to_zero( pose::Pose & pose ) {
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	vector1< Size > numbering;
 	vector1< char > chains;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue( n ).name3() == "HOH" ) {
 			numbering.push_back( 0 );
 		} else {
@@ -626,7 +626,7 @@ update_numbers_in_pdb_info( pose::Pose & pose, bool const reset_waters /* = fals
 	int max_number( 0 );
 	vector1< Size > numbering;
 	vector1< char > chains;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pdb_info->number( n ) > max_number ) max_number = pdb_info->number( n );
 		if ( pdb_info->number( n ) == 0 ) {
 			max_number++;
@@ -648,7 +648,7 @@ update_numbers_in_pdb_info( pose::Pose & pose, bool const reset_waters /* = fals
 utility::vector1< core::Size >
 pdbslice( core::pose::Pose & pose, core::Size const center_res, core::Distance distance_cutoff /* = 12.0 */ ) {
 	vector1< Size > slice_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( ( pose.residue( n ).nbr_atom_xyz() - pose.residue( center_res ).nbr_atom_xyz() ).length() < distance_cutoff ) {
 			slice_res.push_back( n );
 		}

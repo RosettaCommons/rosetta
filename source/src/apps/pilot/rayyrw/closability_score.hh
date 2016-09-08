@@ -169,7 +169,7 @@ get_rt_over_leap(
 	core::pose::Pose pose = orig_pose;
 
 	//fpd vrt/ligand trim
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	while ( !pose.residue_type(nres).is_polymer() ) nres--;
 
 	// get current cutpoints; don't try to connect these
@@ -236,15 +236,15 @@ get_rt_over_leap(
 			if ( last_cut!=0 ) f.add_edge( 1, last_cut+1, jump_num++);
 		}
 	}
-	for ( core::Size i=nres+1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=nres+1; i<=pose.size(); ++i ) {
 		f.add_edge( 1, i, jump_num++ );  // additional jumps
 	}
 
 	core::Size theroot = 1;
-	if ( ir == 1 ) theroot = pose.total_residue();
+	if ( ir == 1 ) theroot = pose.size();
 	if ( orig_pose.residue_type( orig_pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) theroot = orig_pose.fold_tree().root();  //fpd
 	if ( f.reorder(theroot) == false ) {
-		tr.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.total_residue() << "   IR: " << ir << "  JR: " << jr << std::endl;
+		tr.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
 		return false; // continuing leads to a segfault - instead ignore this loop !
 	}
 
@@ -384,9 +384,9 @@ miniPose_creator(
 	// create A mini pose out of two poses - poseA numbering must be further than poseB
 	// pose1 --------upper  lower--------pose2
 	// pose1
-	core::pose::remove_upper_terminus_type_from_pose_residue( pose1, pose1.n_residue() );
-	core::pose::add_lower_terminus_type_to_pose_residue( pose1, pose1.n_residue() );
-	core::conformation::ResidueCOP rsd1 = pose1.residue( pose1.n_residue() ).clone(); // copy residue from poseA
+	core::pose::remove_upper_terminus_type_from_pose_residue( pose1, pose1.size() );
+	core::pose::add_lower_terminus_type_to_pose_residue( pose1, pose1.size() );
+	core::conformation::ResidueCOP rsd1 = pose1.residue( pose1.size() ).clone(); // copy residue from poseA
 
 	// pose2
 	core::pose::remove_lower_terminus_type_from_pose_residue( pose2, pos2_start );
@@ -397,7 +397,7 @@ miniPose_creator(
 	miniPose.append_residue_by_jump( *rsd2, 1, "", "", false ); // 1=jump_anchor residue -> should be rsd1
 	//miniPose.append_residue_by_bond( *rsd2 );
 	//miniPose.dump_pdb( "miniPose.pdb" );
-	tr << "miniPose has" << miniPose.n_residue() << " residues" << std::endl;
+	tr << "miniPose has" << miniPose.size() << " residues" << std::endl;
 }
 
 
@@ -473,8 +473,8 @@ closability_score(
 
 	// gap_size
 	// therefore pos2 is always larger than pos1
-	gap_size = pos_upper - ( pos_lower + pose_lower.n_residue() - 1 );
-	tr << "gap_size: " << gap_size << " = " << pos2 << " -  (" << pos1 << " + " << pose1.n_residue() << " - 1 ) " << std::endl;
+	gap_size = pos_upper - ( pos_lower + pose_lower.size() - 1 );
+	tr << "gap_size: " << gap_size << " = " << pos2 << " -  (" << pos1 << " + " << pose1.size() << " - 1 ) " << std::endl;
 
 	// db_to_use starts with 3, which means gap_size starts with 2
 	core::Size db_to_use = gap_size+1;
@@ -560,8 +560,8 @@ closability_score(
 	core::Size pos_upper = std::max( pos1, pos2 );
 
 	// gap_size
-	gap_size = pos_upper - ( pos_lower + pose_lower.n_residue() - 1 );
-	//tr << "gap_size: " << gap_size << " = " << pos_upper << " -  (" << pos_lower << " + " << pose_lower.n_residue() << " - 1 ) " << std::endl;
+	gap_size = pos_upper - ( pos_lower + pose_lower.size() - 1 );
+	//tr << "gap_size: " << gap_size << " = " << pos_upper << " -  (" << pos_lower << " + " << pose_lower.size() << " - 1 ) " << std::endl;
 
 	if ( gap_size <= 0 ) { // should return a proper value later on
 		//tr << "There is no gap for pos1: " << pos1 << " and pos2: " << pos2 << std::endl;

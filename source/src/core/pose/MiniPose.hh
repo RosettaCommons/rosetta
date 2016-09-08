@@ -57,8 +57,6 @@ public:
 
 	Size size() const;
 
-	Size total_residue() const;
-
 	std::string const & sequence() const;
 
 	PointPosition const & xyz( core::id::AtomID atom_id ) const;

@@ -99,7 +99,7 @@ public:
 
 
 void bb_sample(Pose & pose, ScoreFunctionOP sf, Size niter) {
-  protocols::moves::MoverOP bbmove = new BBMover(1,pose.n_residue(),10.0);
+  protocols::moves::MoverOP bbmove = new BBMover(1,pose.size(),10.0);
   protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sf, 2.0 );
   mc->set_autotemp( true, 2.0 );
   mc->set_temperature( 2.0 );
@@ -118,16 +118,16 @@ void minimize(Pose & pose, ScoreFunctionOP sf) {
 Pose cyclic_perm(Pose const & orig, Size start) {
   Pose pose;
   pose.append_residue_by_jump(orig.residue(start),1);
-  for(Size i = 1; i <= orig.n_residue()-1; ++i) {
-    // std::cout << "appending res " << (i+start-1)%orig.n_residue()+1 << std::endl;
-    pose.append_residue_by_bond(orig.residue((start+i-1)%orig.n_residue()+1));
+  for(Size i = 1; i <= orig.size()-1; ++i) {
+    // std::cout << "appending res " << (i+start-1)%orig.size()+1 << std::endl;
+    pose.append_residue_by_bond(orig.residue((start+i-1)%orig.size()+1));
   }
   return pose;
 }
 
 Real cyclic_all_atom_rms(Pose const & pose, Pose const & other) {
   Real mr = 9e9;
-  for(Size i = 1; i <= pose.n_residue(); ++i) {
+  for(Size i = 1; i <= pose.size(); ++i) {
     Real r = core::scoring::all_atom_rmsd( cyclic_perm(pose,i), other );
     if( r < mr ) mr = r;
   }
@@ -137,7 +137,7 @@ Real cyclic_all_atom_rms(Pose const & pose, Pose const & other) {
 void cyclic_superimpose(Pose & move, Pose const & ref) {
   Real mr = 9e9;
   Size am = 0;
-  for(Size i = 1; i <= move.n_residue(); ++i) {
+  for(Size i = 1; i <= move.size(); ++i) {
     Real r = core::scoring::CA_rmsd( cyclic_perm(move,i), ref );
     if( r < mr ) {
       mr = r;
@@ -186,27 +186,27 @@ int main( int argc, char * argv [] ) {
       Pose pose;
       core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
 			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_GLY",1);
-			Size N = pose.n_residue();
+			Size N = pose.size();
 			pose.add_constraint(new AtomPairConstraint(            AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(1.3       ,0.001)));
 			pose.add_constraint(new AngleConstraint   (AtomID(5,1),AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(2.08      ,0.0001)));
 			pose.add_constraint(new AngleConstraint   (            AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(2.1467    ,0.0001)));
 			pose.add_constraint(new DihedralConstraint(AtomID(5,1),AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(PI   ,0.0001)));
 
       // gen structure
-      for(Size i = 1; i <= pose.n_residue(); ++i) pose.set_omega(i,180.0);
+      for(Size i = 1; i <= pose.size(); ++i) pose.set_omega(i,180.0);
       bb_sample(pose,sf,100);
       bb_sample(pose,sfc,1000);
       protocols::toolbox::switch_to_residue_type_set(pose,"fa_standard");
       minimize(pose,sffa);
 
-      if( (*sffastd)(pose)/(pose.n_residue()) > -1.0 ) {
+      if( (*sffastd)(pose)/(pose.size()) > -1.0 ) {
 				std::cout << "retry!" << (*sffastd)(pose) << std::endl;
 				continue;
       }
 
-      //pose.delete_polymer_residue(pose.n_residue());
-      //pose.delete_polymer_residue(pose.n_residue());
-      pose.dump_pdb("cyc_gly_"+ObjexxFCL::string_of(pose.n_residue())+"_"+ObjexxFCL::string_of(ITER)+".pdb");
+      //pose.delete_polymer_residue(pose.size());
+      //pose.delete_polymer_residue(pose.size());
+      pose.dump_pdb("cyc_gly_"+ObjexxFCL::string_of(pose.size())+"_"+ObjexxFCL::string_of(ITER)+".pdb");
 
       std::cout << "finish " << ITER << std::endl;
       break;

@@ -130,7 +130,7 @@ MPLipoEnergy::finalize_total_energy(
 	Real cen10Exposed_norm( 0 );
 
 	// Loop through the pose and compute energies
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		// Make Exceptions for specific types of residues
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;

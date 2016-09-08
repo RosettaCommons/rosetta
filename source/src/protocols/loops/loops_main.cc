@@ -224,7 +224,7 @@ fold_tree_from_loops(
 	// nres points to last protein residue;
 	Size totres = f_in.nres();
 	Size nres = totres;
-	if ( nres != pose.total_residue() ) nres--;   // only true if pose is symm. ...  asymm foldtree is then rooted on VRT
+	if ( nres != pose.size() ) nres--;   // only true if pose is symm. ...  asymm foldtree is then rooted on VRT
 
 	// following residues (e.g. ligands) will be attached by jumps
 	while ( ! ( pose.residue( nres ).is_protein() || pose.residue( nres ).is_carbohydrate() ) ) {
@@ -326,7 +326,7 @@ fold_tree_from_loops(
 
 	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		// special case for fold trees rooted on a VRT (i.e. symmetry)
-		if ( f_in.nres() != pose.total_residue() ) {
+		if ( f_in.nres() != pose.size() ) {
 			f.reorder( f_in.nres() );
 		} else {
 			f.reorder( pose.fold_tree().root() );
@@ -409,7 +409,7 @@ void remove_cutpoint_variants(
 	bool pose_changed( false );
 	pose::Pose init_pose = pose;
 	if ( force ) {
-		for ( core::Size ir=1; ir<=pose.total_residue() ; ++ir ) {
+		for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
 			if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
 				pose_changed = true;
 				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
@@ -442,12 +442,12 @@ void remove_cutpoint_variants(
 			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, 2 );
 			pose_changed = true;
 		}
-		if ( pose.residue(pose.total_residue()-1).has_variant_type(CUTPOINT_LOWER) ) {
+		if ( pose.residue(pose.size()-1).has_variant_type(CUTPOINT_LOWER) ) {
 			pose_changed = true;
-			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, pose.total_residue()-1 );
+			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, pose.size()-1 );
 		}
-		if ( pose.residue(pose.total_residue()).has_variant_type(CUTPOINT_UPPER) ) {
-			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, pose.total_residue() );
+		if ( pose.residue(pose.size()).has_variant_type(CUTPOINT_UPPER) ) {
+			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, pose.size() );
 			pose_changed = true;
 		}
 	}
@@ -554,7 +554,7 @@ loops_set_move_map(
 	using namespace core::id;
 	pose.update_residue_neighbors();
 
-	utility::vector1<bool> allow_sc_move( pose.total_residue(), false);
+	utility::vector1<bool> allow_sc_move( pose.size(), false);
 	select_loop_residues( pose, loops, !fix_template_sc, allow_sc_move, neighbor_dist);
 	loops_set_move_map( loops, allow_sc_move,mm, allow_omega_move, allow_takeoff_torsion_move);
 
@@ -823,7 +823,7 @@ utility::vector1<bool> select_loop_residues(
 	Real neighbor_dist
 )
 {
-	utility::vector1<bool> map(pose.total_residue(), false);
+	utility::vector1<bool> map(pose.size(), false);
 	select_loop_residues(pose, loops, include_neighbors, map, neighbor_dist);
 	return map;
 }
@@ -853,7 +853,7 @@ utility::vector1<bool> select_loop_residues(
 	Real neighbor_dist
 )
 {
-	utility::vector1<bool> map(pose.total_residue(), false);
+	utility::vector1<bool> map(pose.size(), false);
 	select_loop_residues(pose, loop, include_neighbors, map, neighbor_dist);
 	return map;
 }
@@ -872,7 +872,7 @@ void filter_loop_neighbors_by_distance(
 )
 {
 
-	utility::vector1< bool > loop_selection(pose.total_residue(), false);
+	utility::vector1< bool > loop_selection(pose.size(), false);
 
 	 for ( auto const & loop : loops ) {
 		for ( Size j=loop.start(); j<=loop.stop(); ++j ) {
@@ -973,14 +973,14 @@ apply_sequence_mapping(
 	using namespace chemical;
 
 	id::SequenceMapping mapping( start_mapping );
-	runtime_assert( mapping.size1() == pose.total_residue() && mapping.size2() == target_seq.size() );
+	runtime_assert( mapping.size1() == pose.size() && mapping.size2() == target_seq.size() );
 
 	tt << "apply_sequence_mapping: start fold tree: " << pose.fold_tree() << std::endl;
 
 	// try skipping this hacky rebuild of a new tree
 	if ( false && pose.num_jump() ) { // check the current fold_tree
 		Size const num_jump( pose.num_jump() );
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 
 		Size segment(1);
 		utility::vector1< int > seg_anchor( num_jump+1, 0 ), seg_end;
@@ -1048,9 +1048,9 @@ apply_sequence_mapping(
 
 	// Add jumps+cuts at the loop positions
 	{
-		runtime_assert( pose.total_residue() == mapping.size1() );
+		runtime_assert( pose.size() == mapping.size1() );
 		kinematics::FoldTree f( pose.fold_tree() );
-		for ( Size i=1; i< pose.total_residue(); ++i ) {
+		for ( Size i=1; i< pose.size(); ++i ) {
 			runtime_assert( mapping[i] );
 			if ( mapping[i+1] != mapping[i]+1 && !f.is_cutpoint(i) ) {
 				f.new_jump( i, i+1, i );
@@ -1323,7 +1323,7 @@ set_secstruct_from_dssp(
 		}
 	}
 
-	runtime_assert( secstructs.size() == pose.total_residue() );
+	runtime_assert( secstructs.size() == pose.size() );
 	tt.Trace << "set_secstruct for pose: ";
 	for ( Size i = 1, iend=secstructs.size(); i <= iend; ++i ) {
 		pose.set_secstruct( i, secstructs[i] );
@@ -1370,7 +1370,7 @@ void set_extended_torsions(
 	idealize_loop(pose, loop );
 
 	Size start_extended = std::max((Size)1,loop.start());
-	Size end_extended   = std::min(pose.total_residue(),loop.stop());
+	Size end_extended   = std::min(pose.size(),loop.stop());
 	for ( Size i = start_extended; i <= end_extended; ++i ) {
 		if ( i != start_extended ) pose.set_phi( i, init_phi );
 		if ( i != end_extended ) pose.set_psi( i, init_psi );
@@ -1415,7 +1415,7 @@ core::Real native_loop_core_CA_rmsd(
 
 	std::list< core::Size > residue_selection;
 
-	for ( core::Size ir = 1; ir <= pose.total_residue(); ir ++ ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ir ++ ) {
 		if ( !pose.residue_type(ir).is_protein() ) continue;
 		bool exclude = false;
 		for ( unsigned long p : residue_exclusion ) {
@@ -1471,7 +1471,7 @@ loop_rmsd_with_superimpose_core(
 	pose::Pose ncpose1 = pose1;
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, ncpose1, core::id::BOGUS_ATOM_ID );
-	for ( core::Size ir=1; ir <= ncpose1.total_residue(); ++ir ) {
+	for ( core::Size ir=1; ir <= ncpose1.size(); ++ir ) {
 		if ( ncpose1.residue(ir).aa() == core::chemical::aa_vrt || pose2.residue(ir).aa() == core::chemical::aa_vrt ) continue;
 		if ( !loops.is_loop_residue( ir ) && ( core.size()==0 || core.is_loop_residue( ir ) ) ) {
 			id::AtomID const id1( ncpose1.residue(ir).atom_index("CA"), ir );
@@ -1501,15 +1501,15 @@ loop_rmsd(
 )
 
 {
-	if ( pose1.total_residue() != pose2.total_residue() ) {
+	if ( pose1.size() != pose2.size() ) {
 		// strip VRTs from the end, then compare lengths
-		int nnonvrt_1 = pose1.total_residue();
+		int nnonvrt_1 = pose1.size();
 		while ( pose1.residue( nnonvrt_1 ).aa() == core::chemical::aa_vrt ) nnonvrt_1--;
 
-		int nnonvrt_2 = pose2.total_residue();
+		int nnonvrt_2 = pose2.size();
 		while ( pose2.residue( nnonvrt_2 ).aa() == core::chemical::aa_vrt ) nnonvrt_2--;
 		if ( nnonvrt_1 != nnonvrt_2 ) {
-			utility_exit_with_message( "Error in loop_rmsd: pose1.total_residue() != pose2.total_residue() ( "
+			utility_exit_with_message( "Error in loop_rmsd: pose1.size() != pose2.size() ( "
 				+ string_of( nnonvrt_1 ) + "!=" + string_of( nnonvrt_2 )+")" );
 		}
 	}
@@ -1518,12 +1518,12 @@ loop_rmsd(
 	int atom_count(0);
 	 for ( auto const & loop : loops ) {
 		for ( Size i = loop.start(); i<=loop.stop(); ++i ) {
-			if ( i > pose1.total_residue() ) {
+			if ( i > pose1.size() ) {
 				tt.Warning <<  "[Warning]: Pose1: Loop residue " << i << "exceeds pose1 size " << pose1.total_residue() << std::endl;
 				continue;
 			}
-			if ( i > pose2.total_residue() ) {
-				tt.Warning <<  "[Warning]: Pose1: Loop residue " << i << "exceeds pose2 size " << pose2.total_residue() << std::endl;
+			if ( i > pose2.size() ) {
+				tt.Warning <<  "[Warning]: Pose1: Loop residue " << i << "exceeds pose2 size " << pose2.size() << std::endl;
 				continue;
 			}
 			Size start = 1;
@@ -1562,7 +1562,7 @@ loop_local_rmsd(
 	Loops const & loops
 )
 {
-	runtime_assert(pose1.total_residue() == pose2.total_residue() );
+	runtime_assert(pose1.size() == pose2.size() );
 
 	Real rms = 0.0;
 	if ( loops.num_loop() == 0 ) {

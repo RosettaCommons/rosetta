@@ -94,7 +94,7 @@ initialize_task_from_entity_resfile_and_secondary_resfile(
 	using namespace core::pack::task;
 
 
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		core::Size ii_entity = ec->entity_for_residue( ii );
 		std::list< ResfileCommandCOP > const & ii_command_list(
 			ii_entity != 0 ? (

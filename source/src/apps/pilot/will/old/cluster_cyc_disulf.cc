@@ -44,8 +44,8 @@ use_in_rmsd(
 	core::Size resno,
 	core::Size atomno
 ) {
-	if(resno==pose1.n_residue() && atomno==pose1.residue(resno).atom_index( "O")) return false;
-	if(resno==pose1.n_residue() && atomno==pose1.residue(resno).atom_index("SG")) return true;
+	if(resno==pose1.size() && atomno==pose1.residue(resno).atom_index( "O")) return false;
+	if(resno==pose1.size() && atomno==pose1.residue(resno).atom_index("SG")) return true;
 	if(resno==1                 && atomno==pose1.residue(resno).atom_index("SG")) return true;
 	if(pose1.residue(resno).has( "N") && pose2.residue(resno).has( "N") && pose1.residue(resno).atom_index( "N")==atomno) return true;
 	if(pose1.residue(resno).has("CA") && pose2.residue(resno).has("CA") && pose1.residue(resno).atom_index("CA")==atomno) return true;
@@ -85,7 +85,7 @@ public:
 				Pose & pose = poselist[ clusterlist[i][j] ];
 				core::id::AtomID_Map< core::id::AtomID > amap;
 				core::pose::initialize_atomid_map(amap,pose,core::id::BOGUS_ATOM_ID);
-				for(int ir = 1; ir <= (int)pose.n_residue(); ++ir) {
+				for(int ir = 1; ir <= (int)pose.size(); ++ir) {
 					for(int ia = 1; ia <= (int)pose.residue(ir).nheavyatoms(); ++ia) {
 						if(use_in_rmsd(posecen,pose,ir,ia)) {
 							using core::id::AtomID;

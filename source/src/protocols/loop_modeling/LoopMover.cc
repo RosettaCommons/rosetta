@@ -180,7 +180,7 @@ void LoopMover::setup_fold_tree( // {{{1
 		protocols::loops::fold_tree_from_loops(pose, *loops, tree, true);
 		pose.fold_tree(tree);
 	} else if ( request & FTR_SIMPLE_TREE ) {
-		core::kinematics::FoldTree tree(pose.total_residue());
+		core::kinematics::FoldTree tree(pose.size());
 		pose.fold_tree(tree);
 	} else {
 		utility_exit_with_message("Could not setup the requested fold tree.");

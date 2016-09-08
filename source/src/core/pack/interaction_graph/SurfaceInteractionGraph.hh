@@ -1447,7 +1447,7 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 	// now do all of this over again for the background nodes!  the total number of background nodes is just the total number
 	// of residue - number of moltenresidues.  need to add a method which allows access to the bgenumeration_2_resid array
 	// kept in the SIG.
-	int nbackground = poseRef.total_residue() - get_surface_owner()->rotamer_sets().nmoltenres();
+	int nbackground = poseRef.size() - get_surface_owner()->rotamer_sets().nmoltenres();
 	for ( int id = 1; id <= nbackground; ++id ) {
 
 		conformation::Residue const & rsd2 = poseRef.residue( get_surface_owner()->bg_node_2_resid( id ) );
@@ -1555,7 +1555,7 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 			// now do all of this over again for the background nodes!  the total number of background nodes is just the total number
 			// of residue - number of moltenresidues.  need to add a method which allows access to the bgenumeration_2_resid array
 			// kept in the SIG.
-			int nbackground = poseRef.total_residue() - get_surface_owner()->rotamer_sets().nmoltenres();
+			int nbackground = poseRef.size() - get_surface_owner()->rotamer_sets().nmoltenres();
 			for ( int id = 1; id <= nbackground; ++id ) {
 
 				conformation::Residue const & rsd2 = poseRef.residue( get_surface_owner()->bg_node_2_resid( id ) );
@@ -3030,23 +3030,23 @@ void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBas
 	}
 
 	// initializes some local variables that translate between the ig enumeration and resid
-	set_num_residues_in_protein( pose().total_residue() );
+	set_num_residues_in_protein( pose().size() );
 
 	// unfortunately can't just use nmolten res here because moltenres includes residues which are being just repacked
 	// and those shouldn't be considered first class nodes (would be very inefficient to do so!)
 	//int num_designed = 0;
-	//for (Size ii = 1; ii <= pose().total_residue(); ++ii) {
+	//for (Size ii = 1; ii <= pose().size(); ++ii) {
 	// if ( packer_task().being_designed(ii) ) {
 	//  num_designed++;
 	// }
 	//}
-	//int nbackground = pose().total_residue() - num_designed;
+	//int nbackground = pose().size() - num_designed;
 
 	// 7/15/08 can just use nmolten res because that includes NATAA (packable) residues
-	int nbackground = pose().total_residue() - rot_sets.nmoltenres();
+	int nbackground = pose().size() - rot_sets.nmoltenres();
 	set_num_background_residues( nbackground );
 
-	for ( Size ii = 1; ii <= pose().total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose().size(); ++ii ) {
 
 		// IS THE NEIGHBOR GRAPH even going to be populated at this point?  Hopefully, yes.  It seems that at the
 		// start of pack_rotamers, the scorefunction is evaulated on the pose which should populate the graphs.
@@ -3126,7 +3126,7 @@ void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBas
 /// The graph has to switch back and forth between enumeration schemes and
 /// must know how many residues there are total to do that efficiently.
 ///
-/// How does this method handle cofactors, ligands that get included in pose().total_residue()?
+/// How does this method handle cofactors, ligands that get included in pose().size()?
 /// It definitely allocates space in the array for them, and those residues will apparently be made into first-class nodes.
 /// But when it comes time to do the packing, they don't matter because they're not hydrophobic - they're not
 /// even amino acids - so they don't get updated.

@@ -161,7 +161,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 	// load constraints
 	core::scoring::constraints::add_constraints_from_cmdline( pose, *scorefxn_ );
 
-	core::Size nres =  pose.total_residue()-1;
+	core::Size nres =  pose.size()-1;
 	bool loops_closed = false;
 	grow_flexible( loop_melt_, nres, 1 );
 
@@ -323,7 +323,7 @@ AutoRBMover::grow_flexible( core::Size maxlen , core::Size nres , core::Size min
 //// set up foldtree, variants, movemap, etc.
 void
 AutoRBMover::setup_topology( core::pose::Pose & pose ) {
-	//core::Size nres = pose.total_residue()-1; // terminal VRT
+	//core::Size nres = pose.size()-1; // terminal VRT
 
 	rigid_segs_.clear();
 	rb_chunks_.clear();

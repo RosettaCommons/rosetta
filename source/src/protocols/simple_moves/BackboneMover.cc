@@ -370,7 +370,7 @@ BackboneMover::compute_selected_residues( core::pose::Pose const & pose ) const
 	if ( selector_ ) {
 		return selector_->apply( pose );
 	} else {
-		return core::select::residue_selector::ResidueSubset( pose.total_residue(), true );
+		return core::select::residue_selector::ResidueSubset( pose.size(), true );
 	}
 }
 
@@ -434,7 +434,7 @@ void SmallMover::setup_list( core::pose::Pose & pose )
 	core::select::residue_selector::ResidueSubset const subset = compute_selected_residues( pose );
 
 	using namespace id;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( !subset[i] ) continue; //Skip residues masked by the ResidueSelector.
 		conformation::Residue const & rsd( pose.residue( i ) );
 
@@ -625,7 +625,7 @@ void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
 
 	using namespace id;
 	// Compare code below to that for SmallMover above.
-	for ( core::Size i=2; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=2; i<=pose.size(); ++i ) {
 		// both residue i and residue i-1 must be selected
 		if ( !subset[i] ) continue;
 		if ( !subset[i-1] ) continue;

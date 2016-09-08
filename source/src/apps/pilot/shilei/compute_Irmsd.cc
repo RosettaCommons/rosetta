@@ -157,8 +157,8 @@ public:
 		protocols::scoring::Interface interface( 1 );
 		interface.distance( 8.0 );
 		interface.calculate( *native_pose );
-		ObjexxFCL::FArray1D_bool is_interface ( (*native_pose).total_residue(), false );
-		for ( Size i=1; i<= (*native_pose).total_residue(); ++i ) {
+		ObjexxFCL::FArray1D_bool is_interface ( (*native_pose).size(), false );
+		for ( Size i=1; i<= (*native_pose).size(); ++i ) {
 			if ( interface.is_interface(i) ) {
 				is_interface(i) = true;
 			}

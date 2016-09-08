@@ -196,7 +196,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 	core::pose::Pose const saved_pose( pose );
 
 	using ObjexxFCL::FArray1D_bool;
-	FArray1D_bool partner1( pose.total_residue() );
+	FArray1D_bool partner1( pose.size() );
 	pose.fold_tree().partition_by_jump( rb_jump, partner1 ); // partner1 is true for all residues in partner1; false o/w
 
 	protocols::scoring::Interface interface_obj(rb_jump);
@@ -207,7 +207,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 	setup_packer_and_movemap( pose );
 	// potential hbond partners will later on be reverted if they do not form hbonds
 	std::set< core::Size > potential_hbond_partners;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		core::Size const restype( pose.residue(i).aa() );
 		if ( (interface_obj.is_interface( i ) && // in interface
@@ -241,7 +241,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 		}
 
 		pack::task::PackerTaskOP to_Ala_task( pack::task::TaskFactory::create_packer_task( pose ));
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			if ( potential_hbond_partners.find( i ) == potential_hbond_partners.end() ) {
 				to_Ala_task->nonconst_residue_task(i).prevent_repacking();
 				continue;

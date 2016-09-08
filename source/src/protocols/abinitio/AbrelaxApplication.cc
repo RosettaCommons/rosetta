@@ -862,7 +862,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 		if ( loops_in_.size() ) {
 			utility::vector1< core::Real > vecs;
-			loops::Loops rigid( loops_in_.invert( pose.total_residue() ) );
+			loops::Loops rigid( loops_in_.invert( pose.size() ) );
 			loops::fix_with_coord_cst( rigid, pose, option[ loopfcst::coord_cst_all_atom ], vecs );
 		}
 
@@ -960,7 +960,7 @@ void AbrelaxApplication::copy_structure( core::pose::Pose & extended_pose, core:
 	// requires that the sequences match at the beginning (1..nmatch_res) -- > use sequence alignment later
 	tr.Info << " *** use native structure as starting template -- NEEDS TO BE IDEALIZED !!! *** \n";
 	// determine length of segment to copy from native
-	Size seg_len = std::min(extended_pose.total_residue(), desired_pose.total_residue() );
+	Size seg_len = std::min(extended_pose.size(), desired_pose.size() );
 	// chu workaround when folding with ligand/metal
 	Size protein_len = 0;
 	for ( Size i = 1; i <= seg_len; ++i ) {
@@ -1000,7 +1000,7 @@ void AbrelaxApplication::generate_extended_pose( core::pose::Pose &extended_pose
 	}
 
 	// make extended chain
-	for ( Size pos = 1; pos <= extended_pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= extended_pose.size(); pos++ ) {
 		if ( ! extended_pose.residue(pos).is_protein() ) continue;
 		extended_pose.set_phi( pos, -150 );
 		extended_pose.set_psi( pos, 150);
@@ -1181,7 +1181,7 @@ void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 	}
 
 	if ( option[ jumps::fix_jumps ].user() ) {
-		JumpSetupOP ptr( new JumpSetup( extended_pose.total_residue() ) );
+		JumpSetupOP ptr( new JumpSetup( extended_pose.size() ) );
 		ptr->read_file( option[ jumps::fix_jumps ]() );
 		// initialize jumping
 		jumping::JumpSample current_jumps( ptr->create_jump_sample() );
@@ -1253,7 +1253,7 @@ void AbrelaxApplication::setup_jumps( pose::Pose const& extended_pose ) {
 
 	if ( option[ jumps::residue_pair_jump_file ].user() ) {
 		bDoubleDef = jump_def_ != nullptr;
-		ResiduePairJumpSetupOP ptr( new ResiduePairJumpSetup( extended_pose.total_residue() ) );
+		ResiduePairJumpSetupOP ptr( new ResiduePairJumpSetup( extended_pose.size() ) );
 		ptr->read_file( option[ jumps::residue_pair_jump_file ]() );
 		jump_def_ = ptr;
 	}
@@ -1466,7 +1466,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			stage1_sampler->bSkipStage3_ = true;
 			stage1_sampler->bSkipStage4_ = true;
 			stage1_sampler->closure_protocol( nullptr );
-			loops::Loops rigid_core( loops_in_.invert( extended_pose.total_residue() ) );
+			loops::Loops rigid_core( loops_in_.invert( extended_pose.size() ) );
 			controller = LoopJumpFoldCstOP( new DoubleLayerKinematicAbinitio(
 				jump_def_,
 				extended_loops_in,
@@ -1735,7 +1735,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		// perturb phi/psi randomly -- should be different each run
 		if ( option[ OptionKeys::abinitio::perturb ].user() ) {
 			Real sig = option[ OptionKeys::abinitio::perturb ];
-			for ( Size pos = 1; pos <= fold_pose.total_residue(); pos++ ) {
+			for ( Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 				fold_pose.set_phi( pos, fold_pose.phi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_psi( pos, fold_pose.psi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_omega( pos, fold_pose.omega( pos ) );
@@ -1812,7 +1812,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 					Size cutpoint = fold_pose.fold_tree().cutpoint( ncut );
 					protocols::loops::Loop newloop (
 						std::max( (int) 1, int(cutpoint - 5) ),
-						std::min( (int) fold_pose.total_residue(), int(cutpoint + 5) ),
+						std::min( (int) fold_pose.size(), int(cutpoint + 5) ),
 						0
 					);
 
@@ -1827,7 +1827,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 				// forget about foldtree & cuts
 				core::kinematics::FoldTree f_new;
-				f_new.simple_tree( fold_pose.total_residue() );
+				f_new.simple_tree( fold_pose.size() );
 				fold_pose.fold_tree( f_new );
 
 				//idealize
@@ -1845,7 +1845,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 					refine_kic.apply( fold_pose );
 
 					// Return fold tree to norml state
-					f_new.simple_tree( fold_pose.total_residue() );
+					f_new.simple_tree( fold_pose.size() );
 					fold_pose.fold_tree( f_new );
 				}
 			}

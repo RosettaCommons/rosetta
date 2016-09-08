@@ -92,7 +92,7 @@ RotamerSets::dump_pdb( pose::Pose const & pose, std::string const & filename ) c
 	Size model(0), atom_counter(0);
 
 	out << "MODEL" << I(9,model) << '\n';
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( task_->pack_residue(i) ) continue;
 		io::pdb::dump_pdb_residue( pose.residue(i), atom_counter, out );
 	}
@@ -181,7 +181,7 @@ RotamerSets::build_rotamers(
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		asym_length = symm_info->num_independent_residues();
 	} else {
-		asym_length = pose.total_residue();
+		asym_length = pose.size();
 	}
 
 

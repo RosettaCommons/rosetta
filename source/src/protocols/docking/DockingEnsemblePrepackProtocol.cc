@@ -166,7 +166,7 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 
 	TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 	start_res = cutpoint + 1;
-	end_res = pose.total_residue();
+	end_res = pose.size();
 
 	ensemble2_ = DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", scorefxn_low, scorefxn() ) );
 }

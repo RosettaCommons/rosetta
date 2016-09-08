@@ -186,7 +186,7 @@ GenerateStoredRBConfs::apply(
 	}
 
 	//2.
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue_type(i).is_ligand() && !( !include_metals_ && (pose.residue_type(i).natoms() <= 3) ) ) {
 			if ( present_confs_seqpos.find( i ) != present_confs_seqpos.end() ) continue;
 
@@ -275,7 +275,7 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 	//I guess we need a task...
 	core::pack::task::PackerTaskOP rtmin_task = core::pack::task::TaskFactory::create_packer_task( mod_pose );
 	rtmin_task->initialize_from_command_line();
-	for ( Size i = 1; i<= mod_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i<= mod_pose.size(); ++i ) {
 		if ( i == seqpos ) rtmin_task->nonconst_residue_task( i ).restrict_to_repacking();
 		else rtmin_task->nonconst_residue_task( i ).prevent_repacking();
 	}

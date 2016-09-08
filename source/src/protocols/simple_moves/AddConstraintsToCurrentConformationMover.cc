@@ -121,7 +121,7 @@ AddConstraintsToCurrentConformationMover::generate_constraints( core::pose::Pose
 core::Size
 AddConstraintsToCurrentConformationMover::find_best_anchor( core::pose::Pose const & pose ) const
 {
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	// find anchor residue
 	numeric::xyzVector< core::Real > sum_xyz(0.0);
@@ -169,7 +169,7 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 	Size const best_anchor_atom = pose.residue_type( best_anchor_resid ).atom_index("CA");
 	core::id::AtomID const best_anchor_id( best_anchor_atom, best_anchor_resid );
 
-	for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<=pose.size(); ++ires ) {
 		if ( !subset[ ires ] ) continue;
 
 		// find atom start, stop indices
@@ -217,7 +217,7 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 			iatoms[2] = pose.residue_type(ires).nbr_atom();
 		}
 
-		for ( Size jres=ires+min_seq_sep_; jres<=pose.total_residue(); ++jres ) {
+		for ( Size jres=ires+min_seq_sep_; jres<=pose.size(); ++jres ) {
 			if ( !subset[ jres ] ) continue;
 			if ( pose.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 			if ( !inter_chain_ && pose.chain(ires)!=pose.chain(jres) ) continue;

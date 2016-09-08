@@ -66,7 +66,7 @@ void StubGenerator::placeResidueAtTransform( core::pose::Pose & pose, core::conf
 
 	// Places residue at last jump & residue number
 	placeResidueOnPose(pose, new_residue);
-	residueindex = pose.total_residue();
+	residueindex = pose.size();
 	residuejumpindex = pose.num_jump();
 
 	tr.Debug << "Placed residue at anchor location: " << pose.residue(residueindex).xyz("CA") << std::endl;
@@ -76,7 +76,7 @@ void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformati
 {
 	pose.append_residue_by_jump(
 		*residue,
-		pose.total_residue(),
+		pose.size(),
 		"",
 		residue->atom_name(residue->nbr_atom()),
 		true );
@@ -94,9 +94,9 @@ void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformati
 			residue->xyz(atom_b));
 
 		core::kinematics::Stub current_stub(
-			pose.residue(pose.total_residue()).xyz(atom_center),
-			pose.residue(pose.total_residue()).xyz(atom_a),
-			pose.residue(pose.total_residue()).xyz(atom_b));
+			pose.residue(pose.size()).xyz(atom_center),
+			pose.residue(pose.size()).xyz(atom_a),
+			pose.residue(pose.size()).xyz(atom_b));
 
 		core::kinematics::RT transform(source_stub, current_stub);
 
@@ -113,7 +113,7 @@ void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformati
 	}
 
 
-	tr.Debug << "Appended residue on pose. Residue: " << pose.total_residue() << " Jump: " << pose.num_jump() << " Anchor atom: " << residue->atom_name(residue->nbr_atom()) << std::endl;
+	tr.Debug << "Appended residue on pose. Residue: " << pose.size() << " Jump: " << pose.num_jump() << " Anchor atom: " << residue->atom_name(residue->nbr_atom()) << std::endl;
 }
 
 void StubGenerator::moveIntoStubFrame( core::conformation::ResidueOP residue, core::kinematics::Stub transform )

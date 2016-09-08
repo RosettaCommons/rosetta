@@ -471,7 +471,7 @@ void ThisApplication::fold() {
 	);
 
 	// make extended chain
-	for ( Size pos = 1; pos <= extended_pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= extended_pose.size(); pos++ ) {
 		extended_pose.set_phi( pos, -45 );
 		extended_pose.set_psi( pos, -45 );
 		extended_pose.set_omega( pos, 180 );
@@ -481,7 +481,7 @@ void ThisApplication::fold() {
 	if ( ! option [ start_extended ] ) {
 		tr.Info << " *** use native structure as starting template *** \n";
 		// determine length of segment to copy from native
-		Size seg_len = std::min(extended_pose.total_residue(), native_pose_->total_residue() );
+		Size seg_len = std::min(extended_pose.size(), native_pose_->size() );
 		fragment::Frame long_frame(1, seg_len);
 
 		//create apropriate length FragData object
@@ -568,7 +568,7 @@ void ThisApplication::fold() {
 		// perturb phi/psi randomly
 		if ( option[ perturb ].user() ) {
 			Real sig = option[ perturb ];
-			for ( Size pos = 1; pos <= fold_pose.total_residue(); pos++ ) {
+			for ( Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 				fold_pose.set_phi( pos, fold_pose.phi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_psi( pos, fold_pose.psi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_omega( pos, fold_pose.omega( pos ) );

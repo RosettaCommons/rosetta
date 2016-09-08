@@ -57,9 +57,9 @@ copy_dofs_match_atom_names(
 {
 
 	// Assumes the poses have the same number of residues
-	runtime_assert( pose.total_residue() == scratch_pose.total_residue() );
+	runtime_assert( pose.size() == scratch_pose.size() );
 	std::map< Size, Size > res_map;
-	for ( Size n = 1; n <= pose.total_residue(); ++n ) res_map[n] = n;
+	for ( Size n = 1; n <= pose.size(); ++n ) res_map[n] = n;
 	copy_dofs_match_atom_names( pose, scratch_pose, res_map );
 
 }
@@ -85,9 +85,9 @@ copy_dofs(
 	Pose const & scratch_pose )
 {
 	// Assumes the poses have the same number of residues
-	runtime_assert( pose.total_residue() == scratch_pose.total_residue() );
+	runtime_assert( pose.size() == scratch_pose.size() );
 	std::map< Size, Size > res_map;
-	for ( Size n = 1; n <= pose.total_residue(); ++n ) res_map[n] = n;
+	for ( Size n = 1; n <= pose.size(); ++n ) res_map[n] = n;
 	copy_dofs( pose, scratch_pose, res_map );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,7 +301,7 @@ apply_dofs( pose::Pose & pose,
 std::map< id::AtomID, Size >
 blank_atom_id_domain_map( pose::Pose const & pose ) {
 	std::map< id::AtomID, Size > atom_id_domain_map;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 			atom_id_domain_map[ id::AtomID( j, i ) ] = 0;
 		}

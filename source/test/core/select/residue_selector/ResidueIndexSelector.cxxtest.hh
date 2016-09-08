@@ -64,7 +64,7 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = index_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		// test
 		std::set < core::Size > acceptTrue;
@@ -94,7 +94,7 @@ public:
 			core::pose::Pose trpcage = create_trpcage_ideal_pose();
 			ResidueSubset subset = index_rs->apply( trpcage );
 
-			TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+			TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 			std::set< core::Size > acceptTrue;
 			acceptTrue.insert(2);
 			acceptTrue.insert( trpcage.pdb_info()->pdb2pose('A', 3) );
@@ -129,7 +129,7 @@ public:
 				core::pose::Pose trpcage = create_trpcage_ideal_pose();
 			std::stringstream bad_index;
 
-			bad_index << "2,4," << trpcage.total_residue() + 1;
+			bad_index << "2,4," << trpcage.size() + 1;
 
 			ResidueSelectorOP index_rs( new ResidueIndexSelector( bad_index.str() ) );
 

@@ -117,7 +117,7 @@ core::Size lig_res_num;
 
 void define_interface( core::pose::Pose & ref_pose ) {
 	lig_res_num =0;
-	for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
 		if ( !ref_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;
@@ -183,10 +183,10 @@ calpha_pdb_superimpose_pose(
 {
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-	for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;
 		if ( ! mod_pose.residue(ii).is_protein() ) continue;
-		for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 			if ( ! ref_pose.residue(jj).has("CA") ) continue;
 			if ( ! ref_pose.residue(jj).is_protein() ) continue;
 			if ( mod_pose.pdb_info()->chain(ii) != ref_pose.pdb_info()->chain(jj) ) continue;
@@ -209,10 +209,10 @@ interface_rmsd(
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
-	for ( Size ii = 1; ii <= ref_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= ref_pose.size(); ++ii ) {
 		if ( ! ref_pose.residue(ii).has("CA") ) continue;
 		if ( ! ref_pose.residue(ii).is_protein() ) continue;
-		for ( Size jj = 1; jj <= mod_pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= mod_pose.size(); ++jj ) {
 			if ( ! ref_pose.residue(ii).has("CA") ) continue;
 			if ( ! ref_pose.residue(ii).is_protein() ) continue;
 			if ( mod_pose.pdb_info()->chain(jj) != ref_pose.pdb_info()->chain(ii) ) continue;
@@ -251,7 +251,7 @@ interface_rmsd(
 Real ligand_rmsd (pose::Pose const & pose1, pose::Pose const & pose2) {
 
 	core::Size ref_res_num = 0;
-	for ( int j = 1, resnum = pose1.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = pose1.size(); j <= resnum; ++j ) {
 		if ( !pose1.residue(j).is_protein() ) {
 			ref_res_num = j;
 			break;
@@ -264,7 +264,7 @@ Real ligand_rmsd (pose::Pose const & pose1, pose::Pose const & pose2) {
 	core::conformation::Residue const & pose1_rsd = pose1.conformation().residue(ref_res_num);
 
 	core::Size inp_res_num = 0;
-	for ( int j = 1, resnum = pose2.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = pose2.size(); j <= resnum; ++j ) {
 		if ( !pose2.residue(j).is_protein() ) {
 			inp_res_num = j;
 			break;
@@ -370,7 +370,7 @@ int main( int argc, char * argv [] ){
 			std::string mini_pdb = "mini_" + tag + ".pdb";
 			std::string unbo_pdb = "unbo_" + tag + ".pdb";
 
-			int nres = bound_pose.total_residue();
+			int nres = bound_pose.size();
 			Real coord_sdev( option[ OptionKeys::cst_force_constant ] );
 			//take reciprocal and sqrt to pass as force constant
 			coord_sdev = sqrt(1/coord_sdev);
@@ -432,7 +432,7 @@ int main( int argc, char * argv [] ){
 				base_packer_task->set_bump_check( false );
 				base_packer_task->initialize_from_command_line();
 				base_packer_task->or_include_current( true );
-				for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
+				for ( Size ii = 1; ii <= bound_pose.size(); ++ii ) {
 				base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
 				}
 				// First repack
@@ -463,8 +463,8 @@ int main( int argc, char * argv [] ){
 				if ( option[ print_complex ] ) {
 					//align minimized pose to the original docked pose and dump pdb complex and ligand
 					protocols::simple_moves::SuperimposeMoverOP sp_mover(new protocols::simple_moves::SuperimposeMover());
-					sp_mover->set_reference_pose( pre_min_darc_pose, 1, (pre_min_darc_pose.total_residue()-1) );
-					sp_mover->set_target_range( 1, (bound_pose.total_residue()-1) );
+					sp_mover->set_reference_pose( pre_min_darc_pose, 1, (pre_min_darc_pose.size()-1) );
+					sp_mover->set_target_range( 1, (bound_pose.size()-1) );
 					sp_mover->apply( bound_pose );
 					bound_pose.dump_scored_pdb( mini_pdb, *scorefxn );
 				}

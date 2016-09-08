@@ -134,7 +134,7 @@ MoveMapBuilder::build(core::pose::Pose const & pose) const{
 	if ( bb_interface_builder_ ) set_all_bb(pose, movemap);
 
 	if ( minimize_water_ ) {
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( ! pose.residue(i).has_property("WATER") ) continue;
 			core::kinematics::Edge const & e = pose.fold_tree().get_residue_edge(i);
 			if ( ! e.is_jump() ) continue;

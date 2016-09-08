@@ -229,14 +229,14 @@ MPFastRelaxMover::setup_relax_foldtree( core::pose::Pose & pose ) {
 
 	// Setup a new simple foldtree
 	FoldTree ft;
-	ft.simple_tree( pose.total_residue() ); // Don't create a simple tree that includes the membrane residue!!!
+	ft.simple_tree( pose.size() ); // Don't create a simple tree that includes the membrane residue!!!
 
 	// Count the number of jumps added
 	core::Size njumps( 1 );
 
 	// Add a jump between the protein COM and the membrane residue
 	core::Size membrane_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
-	core::Size rsd_com( residue_center_of_mass( pose, 1, pose.total_residue()-1 ) ); // Get the center of mass and don't include the membrane residue!
+	core::Size rsd_com( residue_center_of_mass( pose, 1, pose.size()-1 ) ); // Get the center of mass and don't include the membrane residue!
 	ft.new_jump( rsd_com, membrane_rsd, rsd_com );
 
 	// Set the membrane jump in memInfo

@@ -142,7 +142,7 @@ ResidueSecondaryStructureFeatures::report_features(
 	std::string sec_structure_statement_string = "INSERT INTO residue_secondary_structure (struct_id, resNum, dssp) VALUES (?,?,?);";
 
 	core::Size adjusted_resnum=0;
-	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 

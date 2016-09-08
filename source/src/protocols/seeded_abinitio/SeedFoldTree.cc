@@ -223,7 +223,7 @@ get_closest_residue_pair(
 	if ( target_seed_pose->conformation().num_chains() != 2 ) {
 		utility_exit_with_message("only two chains as input supported" );
 	}
-	Size target_length = target_seed_pose->split_by_chain( 1 )->total_residue();
+	Size target_length = target_seed_pose->split_by_chain( 1 )->size();
 
 	TR<<"iterating through each seed residue to find the closest target residue" <<std::endl;
 
@@ -264,7 +264,7 @@ find_nearest_residue( Size anchor , pose::PoseOP & target_seed_pose ){
 	if ( target_seed_pose->conformation().num_chains() != 2 ) {
 		utility_exit_with_message("only two chains as input are currently supported" );
 	}
-	Size target_length = target_seed_pose->split_by_chain( 1 )->total_residue();
+	Size target_length = target_seed_pose->split_by_chain( 1 )->size();
 
 	std::string anchor_atom = "CB";
 	Residue res_anchor( target_seed_pose->residue( anchor ));
@@ -299,8 +299,8 @@ find_nearest_residue( Size anchor , pose::PoseOP & target_seed_pose ){
 
 core::Size
 SeedFoldTree::best_by_ala_scan( Size start, Size end, pose::PoseOP & ts_pose ){
-	//runtime_assert( end <= ts_pose->total_residue() );
-	TR << "tspose: " << ts_pose->total_residue() <<std::endl;
+	//runtime_assert( end <= ts_pose->size() );
+	TR << "tspose: " << ts_pose->size() <<std::endl;
 	TR <<"----------alanine scanning to identify the best jump atom in seed  ------------"<<std::endl;
 	protocols::simple_filters::AlaScan ala_scan;
 	ala_scan.repack( 0 );
@@ -351,11 +351,11 @@ SeedFoldTree::set_foldtree(
 		TR<<"two chains were were submitted for the seed pdb, reading target info"<< std::endl;
 
 		target_chain_ = target_seed_pose->split_by_chain( 1 );
-		TR<<"input pdb: "<< secstr.length() <<" target chain: " <<target_chain_->total_residue() << std::endl;
+		TR<<"input pdb: "<< secstr.length() <<" target chain: " <<target_chain_->size() << std::endl;
 		seeds_only_ = target_seed_pose->split_by_chain( 2 );
 
 		Size rb_jump =1;
-		Size target_length = target_chain_->total_residue();
+		Size target_length = target_chain_->size();
 		/// this one needs better assertions....
 		Size total_size_complex = secstr.length() + target_length;
 		Size start_new_protein = target_length + 1 ;
@@ -465,7 +465,7 @@ SeedFoldTree::set_foldtree(
 				seed_stop = loops[seed_it].stop() + target_length;
 				TR<<"--------- SEED: " << seed_start <<" " << seed_stop << std::endl;
 				//reset the total size of the complex:
-				//total_size_complex = template_pose.total_residue();
+				//total_size_complex = template_pose.size();
 				TR<<"total size complex: " << total_size_complex << std::endl;
 				//pose::PoseOP templ = new pose::Pose( template_pose );
 
@@ -575,7 +575,7 @@ SeedFoldTree::set_foldtree(
 				Size cut = define_cut_point_stochasticly( starting, ending, target_seed_pose->secstruct(), start_protein /*or 0? start fold pose */ );
 				TR<<"adding cut: " << cut <<std::endl;
 				cut_points_.push_back( cut );
-				fold_tree_->add_edge( 1, target_seed_pose->total_residue(), Edge::PEPTIDE );
+				fold_tree_->add_edge( 1, target_seed_pose->size(), Edge::PEPTIDE );
 			}
 
 			for ( Size i=1;  i < loops.size() ; ++i ) {
@@ -597,7 +597,7 @@ SeedFoldTree::set_foldtree(
 		}//end more than 1 seed
 	} else { //end without target section
 		TR<<"no special foldtree needed. There is no target chain addition and less then 2 or no seed defined"<<std::endl;
-		fold_tree_->add_edge( 1, target_seed_pose->total_residue(), Edge::PEPTIDE );
+		fold_tree_->add_edge( 1, target_seed_pose->size(), Edge::PEPTIDE );
 		TR << "Pose fold tree " << fold_tree_ << std::endl;
 	}
 
@@ -678,7 +678,7 @@ SeedFoldTree::apply( core::pose::Pose & pose )
 	Size chain_num = pose.conformation().num_chains();
 
 	//if last chain and template pose have the same length, then the protein is at its full length
-	if ( pose.split_by_chain( chain_num )->total_residue() ==  template_pdb_->total_residue() ) {
+	if ( pose.split_by_chain( chain_num )->size() ==  template_pdb_->size() ) {
 		protein_not_folded = false;
 		TR<<"assuming pose has full size" << std::endl;
 	}

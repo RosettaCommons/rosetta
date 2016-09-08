@@ -123,8 +123,8 @@ string & replace_string(string & s, string const & f, string const & r) {
 
 core::pose::Pose append_jumpless_pose(core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
 	core::pose::Pose pose(pose1);
-	pose.append_residue_by_jump(pose2.residue(1),pose.n_residue());
-	for(Size i = 2; i <= pose2.n_residue(); ++i ) {
+	pose.append_residue_by_jump(pose2.residue(1),pose.size());
+	for(Size i = 2; i <= pose2.size(); ++i ) {
 		pose.append_residue_by_bond(pose2.residue(i));
 	}
 	return pose;
@@ -205,7 +205,7 @@ add_agc(
 
 void change_floating_sc_geometry(Pose & pose, Size rsd_in, Size nres) {
 	Pose before = pose;
-	for(Size rsd = rsd_in; rsd <= pose.n_residue(); rsd+=nres) {
+	for(Size rsd = rsd_in; rsd <= pose.size(); rsd+=nres) {
 		Vec metal;
 		for(Size j = 1; j <= pose.fold_tree().num_jump(); ++j) {
 			if(pose.fold_tree().downstream_jump_residue(j) == (int)rsd) {
@@ -501,7 +501,7 @@ struct PoseWrap : public ReferenceCount {
 
 			// Size ins_frag_segment_edge = 3;
 			bool marked_subsub_fixed = false;
-			for(Size j=1;j<=tmp.n_residue();++j) {
+			for(Size j=1;j<=tmp.size();++j) {
 				// if( frag_res_in[i].size() ) {
 					if(std::find(frag_res_in[i].begin(),frag_res_in[i].end(),j)!=frag_res_in[i].end()) {
 						ss_ += tmp.secstruct(j);
@@ -526,7 +526,7 @@ struct PoseWrap : public ReferenceCount {
 			TR << "subunit " << i << " ss: " << ss_ << std::endl;
 			// create tmp pose with pref and suff
 			if(tmp.residue(              1).is_protein()) remove_lower_terminus_type_from_pose_residue(tmp,1);
-			if(tmp.residue(tmp.n_residue()).is_protein()) remove_upper_terminus_type_from_pose_residue(tmp,tmp.n_residue());
+			if(tmp.residue(tmp.size()).is_protein()) remove_upper_terminus_type_from_pose_residue(tmp,tmp.size());
 			for( Size j = 1; j <= ss_pref[i].size(); ++j ) {
 				char c = 'L'; if(res_pref[i].size()==ss_pref[i].size()) c = res_pref[i][ss_pref.size()-i];
 				string name3 = name_from_aa(aa_from_oneletter_code(c));
@@ -537,45 +537,45 @@ struct PoseWrap : public ReferenceCount {
 				char c = 'L'; if(res_suff[i].size()==ss_suff[i].size()) c = res_suff[i][ss_suff.size()-i];
 				string name3 = name_from_aa(aa_from_oneletter_code(c));
 				tmp.append_residue_by_bond(*ResidueFactory::create_residue(fa_residue_set_->name_map(name3)),true);
-				// tmp.set_phi  (tmp.n_residue(),-60); tmp.set_psi  (tmp.n_residue(),-45); tmp.set_omega(tmp.n_residue(),180);
+				// tmp.set_phi  (tmp.size(),-60); tmp.set_psi  (tmp.size(),-45); tmp.set_omega(tmp.size(),180);
 			}
 			// append to main pose
-			attach_rsd_.push_back(pose.n_residue()+ss_pref[i].size()+rel_attach[i]);
-			pose.append_residue_by_jump(tmp.residue(1),pose.n_residue());
-			for(Size j = 2; j <= tmp.n_residue(); ++j ) {
+			attach_rsd_.push_back(pose.size()+ss_pref[i].size()+rel_attach[i]);
+			pose.append_residue_by_jump(tmp.residue(1),pose.size());
+			for(Size j = 2; j <= tmp.size(); ++j ) {
 				if(! tmp.residue(j).is_lower_terminus() ) {
 					pose.append_residue_by_bond(tmp.residue(j));
 				} else {
-					pose.append_residue_by_jump(tmp.residue(j),pose.n_residue());
+					pose.append_residue_by_jump(tmp.residue(j),pose.size());
 				}
 			}
 
 			for(Size j = 1; j <= rep_edge_res_in[i].size(); ++j) {
-				rep_edge_res_.push_back( rep_edge_res_in[i][j] + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
+				rep_edge_res_.push_back( rep_edge_res_in[i][j] + pose.size() - tmp.size() + ss_pref[i].size() );
 			}
 
-			if(i != 1 ) cuts_.push_back( pose.n_residue() - tmp.n_residue() );
+			if(i != 1 ) cuts_.push_back( pose.size() - tmp.size() );
 			if(i != 1 ) jmpu_.push_back(attach_rsd_[i-1]);
 			if(i != 1 ) jmpd_.push_back(attach_rsd_[i  ]);
 			if( jumpcut[i].size() > 0 ) {
 				for( Size j = 1; j <= jumpcut[i].size(); ++j ) {
-					jmpu_     .push_back( jumpcut[i][j].x() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
-					jmpd_     .push_back( jumpcut[i][j].y() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
-					cuts_     .push_back( jumpcut[i][j].z() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
-					user_cuts_.push_back( jumpcut[i][j].z() + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
+					jmpu_     .push_back( jumpcut[i][j].x() + pose.size() - tmp.size() + ss_pref[i].size() );
+					jmpd_     .push_back( jumpcut[i][j].y() + pose.size() - tmp.size() + ss_pref[i].size() );
+					cuts_     .push_back( jumpcut[i][j].z() + pose.size() - tmp.size() + ss_pref[i].size() );
+					user_cuts_.push_back( jumpcut[i][j].z() + pose.size() - tmp.size() + ss_pref[i].size() );
 					TR << "adding jmps/cuts from user input " << jmpu_[jmpu_.size()] << " " << jmpd_[jmpd_.size()] << " " << cuts_[cuts_.size()] << std::endl;
 				}
 			} else {
 				FoldTree ft = poses_[i].fold_tree();
 				for( Size j = 1; j <= ft.num_jump(); ++j ) {
-					jmpu_     .push_back( ft.  upstream_jump_residue(j) + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
-					jmpd_     .push_back( ft.downstream_jump_residue(j) + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
-					cuts_     .push_back( ft.cutpoint_by_jump       (j) + pose.n_residue() - tmp.n_residue() + ss_pref[i].size() );
+					jmpu_     .push_back( ft.  upstream_jump_residue(j) + pose.size() - tmp.size() + ss_pref[i].size() );
+					jmpd_     .push_back( ft.downstream_jump_residue(j) + pose.size() - tmp.size() + ss_pref[i].size() );
+					cuts_     .push_back( ft.cutpoint_by_jump       (j) + pose.size() - tmp.size() + ss_pref[i].size() );
 					TR << "adding jmps/cuts from orig subsub pose " << jmpu_[jmpu_.size()] << " " << jmpd_[jmpd_.size()] << " " << cuts_[cuts_.size()] << std::endl;
 				}
 			}
-			for(Size j = 1; j <= ss_pref[i].size(); ++j) linker_res_.push_back(pose.n_residue()-tmp.n_residue()+j);
-			for(Size j = ss_suff[i].size(); j >= 1; --j) linker_res_.push_back(pose.n_residue()-j+1);
+			for(Size j = 1; j <= ss_pref[i].size(); ++j) linker_res_.push_back(pose.size()-tmp.size()+j);
+			for(Size j = ss_suff[i].size(); j >= 1; --j) linker_res_.push_back(pose.size()-j+1);
 
 			attach_as_sc_.push_back(attach_as_sc_in[i]);
 			if(attach_as_sc_in[i] > 0) {
@@ -586,19 +586,19 @@ struct PoseWrap : public ReferenceCount {
 			}
 			// pose.dump_pdb("PoseWrap_"+string_of(i)+".pdb");
 			chainbreaks_  .push_back(chainbreaks_in[i]);
-			subsub_ends_  .push_back(pose.n_residue());
-			subsub_starts_.push_back(pose.n_residue()-tmp.n_residue()+1);
+			subsub_ends_  .push_back(pose.size());
+			subsub_starts_.push_back(pose.size()-tmp.size()+1);
 		}
-		nres = pose.n_residue();
-		// Size lt = 1, ut = pose.n_residue();
-		// while( lt <= attach_as_sc_in.size() && attach_as_sc_in[lt] ) lt += poses[lt].n_residue(); // TODO: make more general
-		// if( attach_as_sc_in[poses.size()] ) ut -=  poses[poses.size()].n_residue(); // TODO: make more general
+		nres = pose.size();
+		// Size lt = 1, ut = pose.size();
+		// while( lt <= attach_as_sc_in.size() && attach_as_sc_in[lt] ) lt += poses[lt].size(); // TODO: make more general
+		// if( attach_as_sc_in[poses.size()] ) ut -=  poses[poses.size()].size(); // TODO: make more general
 		// add_lower_terminus_type_to_pose_residue(pose,lt);
 		// add_upper_terminus_type_to_pose_residue(pose,ut);
 
 
-		// TR << ss_.size() << " " << pose.n_residue() << std::endl;
-		assert( ss_.size() == pose.n_residue() );
+		// TR << ss_.size() << " " << pose.size() << std::endl;
+		assert( ss_.size() == pose.size() );
 
 		if(debug) dump_pdb("init0.pdb");
 
@@ -634,11 +634,11 @@ struct PoseWrap : public ReferenceCount {
 			}
 		}
 		if( chainbreaks_[chainbreaks_.size()] ) {
-			if(pose.residue(pose.n_residue()).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, pose.n_residue() );
+			if(pose.residue(pose.size()).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, pose.size() );
 			if(pose.residue(1               ).is_protein()) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, 1    );
 		} else {
 			if(pose.residue(1               ).is_protein()) pose::add_lower_terminus_type_to_pose_residue(pose,1);
-			if(pose.residue(pose.n_residue()).is_protein()) pose::add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+			if(pose.residue(pose.size()).is_protein()) pose::add_upper_terminus_type_to_pose_residue(pose,pose.size());
 		}
 		for( Size i = 1; i <= floating_scs_.size(); ++i ) {
 			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_BBCB",floating_scs_[i]);
@@ -667,7 +667,7 @@ struct PoseWrap : public ReferenceCount {
 			jumps(2,i) = jmpd_[i];//attach_rsd_[i+1];
 		}
 		kinematics::FoldTree ft = pose.fold_tree();
-		ft.tree_from_jumps_and_cuts(pose.n_residue(),cuts_.size(),jumps,cuts,attach_rsd_[1]);
+		ft.tree_from_jumps_and_cuts(pose.size(),cuts_.size(),jumps,cuts,attach_rsd_[1]);
 		TR << "tree_from_jumps_and_cuts:" << std::endl;
 		TR << ft << std::endl;
 		ft.reorder(attach_rsd_[primary_subsub]);
@@ -702,7 +702,7 @@ struct PoseWrap : public ReferenceCount {
 		utility::options::StringVectorOption & symm_file_tag = option[ basic::options::OptionKeys::smhybrid::symm_file_tag ];
 		if( primary_subsub > poses.size() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
 		if( attach_rsd_[primary_subsub] < 1                ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
-		if( attach_rsd_[primary_subsub] > pose.n_residue() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
+		if( attach_rsd_[primary_subsub] > pose.size() ) utility_exit_with_message("invalid primary subsub: " + string_of(primary_subsub) + " atch: " + string_of(attach_rsd_[primary_subsub]));
 		string pstr = symm_file_tag[primary_subsub];
 		Size n_eq_primary = 0;
 		for(Size i = 1; i <= symm_file_tag.size(); ++i) {
@@ -717,11 +717,11 @@ struct PoseWrap : public ReferenceCount {
 		}
 		TR << "making symm data" << std::endl;
 
-		symm_data = new core::conformation::symmetry::SymmData(pose.n_residue(),pose.fold_tree().num_jump());
+		symm_data = new core::conformation::symmetry::SymmData(pose.size(),pose.fold_tree().num_jump());
 		std::istringstream iss(symm_def_template_reduced);
 		symm_data->read_symmetry_data_from_stream(iss);
 
-		symm_data_full = new core::conformation::symmetry::SymmData(pose.n_residue(),pose.fold_tree().num_jump());
+		symm_data_full = new core::conformation::symmetry::SymmData(pose.size(),pose.fold_tree().num_jump());
 		std::istringstream iss2(symm_def_template);
 		symm_data_full->read_symmetry_data_from_stream(iss2);
 
@@ -883,7 +883,7 @@ struct PoseWrap : public ReferenceCount {
 		// pose.add_constraint(new AtomPairConstraint(AtomID(1,attach_rsd_[6]),AtomID(1,attach_rsd_[6]+nres),new AbsFunc(0,1) ));
 
 		if( basic::options::option[basic::options::OptionKeys::smhybrid::pseudosym]() ) {
-			if( pose.n_residue() < 2*nres ) {
+			if( pose.size() < 2*nres ) {
 				utility_exit_with_message("pseudosym requires at least 2 subunits!!!");
 			}
 			using namespace core::scoring::constraints;
@@ -1028,7 +1028,7 @@ struct PoseWrap : public ReferenceCount {
 			TR << i << " Adding floating scs constraints " << floating_scs_[i] << " " << floating_scs_subsub_[i] << " " << scattach_res_user[floating_scs_subsub_[i]].size() << " " << floating_scs_sub_[i] << std::endl;
 			vector1<Size> scattach_res = scattach_res_user[floating_scs_subsub_[i]];
 			// if(!last_subsub) last_subsub = floating_scs_subsub_[i];
-			// if( floating_scs_subsub_[i] != last_subsub && pose.n_residue() > 2*nres ) { // TODO FIX THIS HACK.. asusmes inter-subunit
+			// if( floating_scs_subsub_[i] != last_subsub && pose.size() > 2*nres ) { // TODO FIX THIS HACK.. asusmes inter-subunit
 			// 	TR << "shifting scattach res to next subunit" << std::endl;
 			// 	for(Size j = 1; j <= scattach_res.size(); ++j ) {
 			// 		scattach_res[j] = scattach_res[j] + nres;
@@ -1163,11 +1163,11 @@ struct PoseWrap : public ReferenceCount {
 
 		core::pose::Pose out_pose;
 		if( fullsymm ) {
-		// 	// TR << "init pose nres " << pose.n_residue() << std::endl;
+		// 	// TR << "init pose nres " << pose.size() << std::endl;
 		// 	out_pose = make_mono_pose(pose);
-		// 	// TR << "mono pose nres " << out_pose.n_residue() << std::endl;
+		// 	// TR << "mono pose nres " << out_pose.size() << std::endl;
 		// 	make_full_pose(out_pose);
-		// 	// TR << "full pose nres " << out_pose.n_residue() << std::endl;
+		// 	// TR << "full pose nres " << out_pose.size() << std::endl;
 		//
 			out_pose = pose;
 		} else  {
@@ -1216,7 +1216,7 @@ struct PoseWrap : public ReferenceCount {
 			shift = added[1];
 		} else {
 			Real N = 0;
-			for(Size i = 1; i <= pose.n_residue(); ++i) {
+			for(Size i = 1; i <= pose.size(); ++i) {
 				for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
 					N += 1.0;
 					shift += out_pose.xyz(AtomID(j,i));
@@ -1225,7 +1225,7 @@ struct PoseWrap : public ReferenceCount {
 			shift /= N;
 		}
 
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
 				out_pose.set_xyz( AtomID(j,i), out_pose.xyz(AtomID(j,i)) - shift );
 			}
@@ -1501,12 +1501,12 @@ struct PoseWrap : public ReferenceCount {
 		//
 		// Vec floater( pose.residue(float_rsd).xyz("CA"));
 		//
-		// // vector1<bool> nearcut(pose.n_residue(),false);
+		// // vector1<bool> nearcut(pose.size(),false);
 		// // for(Size i = 1; i <= 4; ++i) nearcut[i] = true;
 		// // for(Size i = 1; i <= (Size)pose.fold_tree().num_cutpoint(); ++i) {
 		// // 	Size cp( pose.fold_tree().cutpoint(i) );
 		// // 	if( !symm_info->bb_is_independent(cp) ) continue;
-		// // 	for(Size j = numeric::max(((Size)1),cp-4); j <= numeric::min(cp+4,pose.n_residue()); ++j) nearcut[j] = true;
+		// // 	for(Size j = numeric::max(((Size)1),cp-4); j <= numeric::min(cp+4,pose.size()); ++j) nearcut[j] = true;
 		// // }
 		//
 		// Size best = 9e9;
@@ -2782,7 +2782,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	task->or_include_current(true);
 	// task->nonconst_residue_task(pw.attach).prevent_repacking();
-	// for(Size i = 1; i <= task->total_residue(); ++i) {
+	// for(Size i = 1; i <= task->size(); ++i) {
 	// 	task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 	// }
 
@@ -3603,7 +3603,7 @@ interface_energy_ratio( core::pose::Pose const & pose, ScoreFunctionOP sf ) {
 
 	vector1<Real> ife(symm_info->num_interfaces()+1,0.0);
 	Real tot = 0.0;
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		// conformation::Residue const & resl( pose.residue( i ) );
 		for ( graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
@@ -3640,7 +3640,7 @@ symm_self_rep( PoseWrap & pw, ScoreFunctionOP sf, Size rsd ) {
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	Real tot = 0.0;
-	for ( Size i=1, i_end = pw.pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pw.pose.size(); i<= i_end; ++i ) {
 		if( (i-1)%pw.nres+1 != rsd ) continue;
 		// conformation::Residue const & resl( pose.residue( i ) );
 		for ( graph::Graph::EdgeListConstIter
@@ -3698,7 +3698,7 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	using namespace core;
 	using namespace ObjexxFCL::format;
 	core::pose::Pose & pose(pw.pose);
-	Size nres_mono = pw.nres;//(pose.n_residue()-4)/4;
+	Size nres_mono = pw.nres;//(pose.size()-4)/4;
 	string tag = string_of(uniform());
 	vector1<core::Real> ife;
 	std::map< std::pair<Size,Size>, Real > clashes;
@@ -3717,7 +3717,7 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	// sf4->show(pose);
 
 	// for( Size i = 0; i < 4; ++i ) {
-	// 	Size nres_mono = (pose.n_residue()-4)/4;
+	// 	Size nres_mono = (pose.size()-4)/4;
 	// 	ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
 	//    	ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
 	// }
@@ -3740,7 +3740,7 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	Size nheavy = 0;
-	for(Size i = 1; i <= pose.n_residue(); ++i) nheavy += pose.residue(i).nheavyatoms();
+	for(Size i = 1; i <= pose.size(); ++i) nheavy += pose.residue(i).nheavyatoms();
 
 	Real sym_lig      = pose.energies().total_energies()[ scoring::sym_lig      ];
 	Real floating_sc  = pose.energies().total_energies()[ scoring::atom_pair_constraint  ] / symm_info->score_multiply(1,1) / 6.0 / pw.floating_scs_.size();
@@ -3973,7 +3973,7 @@ void* doit_refine(void* /*x = NULL*/) {
 
 			Pose ref;
 			pose_from_file(ref,fname, core::import_pose::PDB_file);
-			for(Size ir = 1; ir <= pw.pose.n_residue(); ++ir) {
+			for(Size ir = 1; ir <= pw.pose.size(); ++ir) {
 				pw.pose.replace_residue(ir,ref.residue(ir),false);
 				for(Size ia = 1; ia <= ref.residue(ir).natoms(); ++ia) {
 					pw.pose.set_xyz(AtomID(ia,ir),ref.xyz(AtomID(ia,ir)));

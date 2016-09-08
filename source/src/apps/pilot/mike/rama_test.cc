@@ -111,7 +111,7 @@ RamaTestMover::apply( Pose & pose ) {
 	const core::Real limit=4.0;
 
 	TR << protocols::jd2::JobDistributor::get_instance()->current_output_name();
-	for( core::Size ir=1; ir <= pose.total_residue(); ++ ir ){
+	for( core::Size ir=1; ir <= pose.size(); ++ ir ){
 		EnergyMap emap = pose.energies().onebody_energies(ir);
 
 		if( emap[ rama ] > limit )	TR << " " << ir << "(" << emap[ rama ] << ")";

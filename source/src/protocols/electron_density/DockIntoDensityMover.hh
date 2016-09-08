@@ -79,7 +79,7 @@ public:
 
 	// code like this belongs in a .cc file, not a header file.
 	numeric::xyzVector< core::Real > center() {
-		core::Size centerres = (pose_->total_residue()+1)/2;
+		core::Size centerres = (pose_->size()+1)/2;
 		return (pose_->residue(centerres).xyz(2));
 	}
 

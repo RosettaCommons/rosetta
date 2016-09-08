@@ -104,7 +104,7 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 	Real const coord_sdev( 0.1 );
 
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size total_atompairs( 0 );
 
 	//fpd symmetry
@@ -193,15 +193,15 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	}
 	// add virtual residue at the end
 	//Size const old_root( pose.fold_tree().root() );
-	if ( pose.residue( pose.total_residue() ).aa() != core::chemical::aa_vrt ) {
+	if ( pose.residue( pose.size() ).aa() != core::chemical::aa_vrt ) {
 		/// bugfix for single-residue pose: don't append residue by jump from residue 0
-		Size const midpoint( pose.total_residue() == 1 ? 1 : pose.total_residue() / 2 );
+		Size const midpoint( pose.size() == 1 ? 1 : pose.size() / 2 );
 		pose.append_residue_by_jump(
 			*conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
 			midpoint
 		);
 
-		Size const nres( pose.total_residue() ); // includes pseudo-rsd
+		Size const nres( pose.size() ); // includes pseudo-rsd
 
 		kinematics::FoldTree f( pose.fold_tree() );
 		f.reorder( nres );
@@ -250,7 +250,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	// by default idealize everything
 	//fpd  ... unless symmetric, then only idealize master
 	if ( pos_list_.size() == 0 ) {
-		for ( Size i = 1; i <= pose.total_residue()-1; ++i ) {
+		for ( Size i = 1; i <= pose.size()-1; ++i ) {
 			if ( symm_info &&
 					(!symm_info->bb_is_independent( i ) || pose.residue(i).aa() == core::chemical::aa_vrt ) ) {
 				continue;
@@ -269,13 +269,13 @@ IdealizeMover::apply( pose::Pose & pose ) {
 
 	if ( symm_info ) {
 		// special case for symmetry .. replace VRTs first
-		for ( Size ii = unmodified_pose.total_residue(); ii>=1; --ii ) {
+		for ( Size ii = unmodified_pose.size(); ii>=1; --ii ) {
 			if ( symm_info->bb_is_independent(ii) ) {
 				final_pose.replace_residue( ii, pose.residue( ii ), false );
 			}
 		}
 	} else {
-		for ( Size ii = 1; ii <= unmodified_pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 			final_pose.replace_residue( ii, pose.residue( ii ), false );
 		}
 	}

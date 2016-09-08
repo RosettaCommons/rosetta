@@ -76,7 +76,7 @@ detect_interface_residues(
 	utility::vector1< bool > & interface
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	interface.resize( nres, false );
 
@@ -105,7 +105,7 @@ detect_interface_by_nbrs(
 	utility::vector1< bool > & interface
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	interface.clear();
 	interface.resize( nres, false );
@@ -137,7 +137,7 @@ detect_allatom_interface_residues(
 	utility::vector1< bool > & interface
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	interface.resize( nres, false );
 
@@ -174,7 +174,7 @@ calc_protein_DNA_rmsd(
 	Real & interface_allatom_rmsd
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	utility::vector1< int > pos_list;
 	utility::vector1< bool > interface;
@@ -219,7 +219,7 @@ calc_DNA_bb_rmsd(
 	Real & dna_bb_rmsd
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	dna_bb_rmsd = 0.0;
 
@@ -334,7 +334,7 @@ analyze_interface_sasa(
 	buried_unsatisfied_donors.clear();
 	buried_unsatisfied_acceptors.clear();
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 
 		// donors

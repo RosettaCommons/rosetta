@@ -237,7 +237,7 @@ generate_nodes( core::pose::Pose const & pose )
 	std::list<NodeOP> nodes;
 
 	// populate lists of nodes and edges
-	for ( core::Size i=1; i<=pose.total_residue(); i++ ) {
+	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
 		nodes.push_back( NodeOP( new Node( resname, i ) ) );
@@ -289,7 +289,7 @@ ResidueCentralityCalculator::recompute( core::pose::Pose const & pose )
 
 	// generate lists of nodes/edges
 	std::list< NodeOP > const & nodes( generate_nodes( pose ) );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		// if this residue is ala or gly, flag it by scoring it as -1
 		if ( pose.residue( i ).name3() == "GLY" || pose.residue( i ).name3() == "ALA" ) {
 			centralities_.push_back( -1 );

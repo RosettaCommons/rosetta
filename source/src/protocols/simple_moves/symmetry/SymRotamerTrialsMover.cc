@@ -111,8 +111,8 @@ SymRotamerTrialsMover::make_symmetric_task(
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+	utility::vector1<bool> allow_repacked( pose.size(), false );
+	for ( Size res=1; res <= pose.size(); ++res ) {
 		if ( symm_info->fa_is_independent(res) ) allow_repacked.at(res) = true;
 	}
 	task->restrict_to_residues( allow_repacked );
@@ -190,7 +190,7 @@ SymEnergyCutRotamerTrialsMover::setup_energycut_task(
 
 	task_in.restrict_to_repacking();
 
-	for ( int i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( int i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		core::Real const resE ( pose.energies().residue_total_energy(i) );
 		core::Real const lowest_resE( mc.lowest_score_pose().energies().residue_total_energy(i) );
 		core::Real const deltaE ( resE - lowest_resE );
@@ -222,8 +222,8 @@ SymEnergyCutRotamerTrialsMover::make_symmetric_task(
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+	utility::vector1<bool> allow_repacked( pose.size(), false );
+	for ( Size res=1; res <= pose.size(); ++res ) {
 		if ( symm_info->fa_is_independent(res) ) allow_repacked.at(res) = true;
 	}
 	task->restrict_to_residues( allow_repacked );

@@ -312,7 +312,7 @@ public:
 		core::import_pose::ImportPoseOptions import_opts;
 		core::import_pose::pose_from_pdbstring( A_pose, pdb_string, import_opts, "test_MMTReceiver_end_to_end_A.pdb" );
 
-		TS_ASSERT_EQUALS( A_pose.total_residue(), 2 );
+		TS_ASSERT_EQUALS( A_pose.size(), 2 );
 		TS_ASSERT_EQUALS( A_pose.residue(1).aa(), core::chemical::aa_ala );
 		TS_ASSERT_EQUALS( A_pose.residue(2).aa(), core::chemical::aa_gln );
 

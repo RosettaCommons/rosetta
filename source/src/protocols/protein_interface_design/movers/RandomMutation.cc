@@ -85,7 +85,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 
 	PackerTaskCOP task;
 	if ( cache_task_ && task_ ) {
-		if ( pose.total_residue() == task_->total_residue() ) {
+		if ( pose.size() == task_->total_residue() ) {
 			task = task_;
 		} else {
 			task_.reset(); // Invalidate cached task.
@@ -101,7 +101,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 	utility::vector1< core::Size > being_designed;
 	being_designed.clear();
 
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
 			being_designed.push_back( resi );
 		}
@@ -129,7 +129,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 	//PackerTaskOP mutate_residue = task_factory()->create_task_and_apply_taskoperations( pose );
 	PackerTaskOP mutate_residue( task->clone() );
 	mutate_residue->initialize_from_command_line().or_include_current( true );
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		if ( resi != random_entry ) {
 			mutate_residue->nonconst_residue_task( resi ).restrict_to_repacking();
 		} else {

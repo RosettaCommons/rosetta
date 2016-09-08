@@ -102,7 +102,7 @@ Dssp::~Dssp() {}
 //////////////////////////////////////////////////////////////////////////////
 void
 fill_hbond_bb_pair_score_dssp( pose::Pose const& pose, ObjexxFCL::FArray2D_float &hbond_bb_pair_score ) {
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 
 	//initialize FArray
 	hbond_bb_pair_score.dimension(total_residue, total_residue);
@@ -301,7 +301,7 @@ Dssp::compute( pose::Pose const& pose ) {
 
 	float dssp_hbond_threshold = -0.5;
 
-	core::Size total_residue( pose.total_residue() );
+	core::Size total_residue( pose.size() );
 	ObjexxFCL::FArray1D_bool invalid; //Should we omit this residue when doing DSSP?
 	dssp_secstruct_.dimension(total_residue);
 	invalid.dimension(total_residue);

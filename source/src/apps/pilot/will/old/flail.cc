@@ -89,12 +89,12 @@
 			P.reserve(N);
 			Pose p;
 			make_pose_from_sequence(p,seq,core::chemical::CENTROID);
-			for(core::Size ir = 1; ir <= p.n_residue(); ++ir){
+			for(core::Size ir = 1; ir <= p.size(); ++ir){
 				p.set_phi(ir,-90.0);
 				p.set_psi(ir, 90.0);
 				p.set_omega(ir,180.0);
 			}
-			for(core::Size ir = 1; ir <= p.n_residue(); ++ir){
+			for(core::Size ir = 1; ir <= p.size(); ++ir){
 				P.push_back( p.residue(ir).xyz( "N") );
 				P.push_back( p.residue(ir).xyz("CA") );
 				P.push_back( p.residue(ir).xyz( "C") );

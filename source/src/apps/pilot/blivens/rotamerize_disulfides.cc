@@ -174,7 +174,7 @@ int main( int argc, char * argv [] )
 //	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 //	task->initialize_from_command_line();
 //	task->restrict_to_repacking();
-//	vector1<bool> repackable(pose.total_residue() );
+//	vector1<bool> repackable(pose.size() );
 //	fill(repackable.begin(),repackable.end(), false);
 //	repackable[target] = true;
 //	task->restrict_to_residues(repackable);

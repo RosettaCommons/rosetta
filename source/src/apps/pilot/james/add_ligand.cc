@@ -114,7 +114,7 @@ main( int argc, char* argv[] ) {
 	);
 	new_fold_tree.add_edge(
 		ligand_pose_anchor,
-		ligand_pose.total_residue() - 3,
+		ligand_pose.size() - 3,
 		core::kinematics::Edge::PEPTIDE
 	);
 	tr.Error << "adding ligand residues to fold-tree" << std::endl;

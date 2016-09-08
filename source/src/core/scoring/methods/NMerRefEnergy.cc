@@ -202,7 +202,7 @@ NMerRefEnergy::residue_energy(
 	if ( nmer_ref_energies_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
 	//skip if not a NMer center
-	if ( seqpos < 1 || seqpos > pose.total_residue() - nmer_cterm_ ) return;
+	if ( seqpos < 1 || seqpos > pose.size() - nmer_cterm_ ) return;
 	//get the NMer centered on seqpos
 	std::string sequence;
 	for ( Size iseq = seqpos; iseq <= seqpos + nmer_cterm_; ++iseq ) {

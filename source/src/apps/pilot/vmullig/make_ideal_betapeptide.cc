@@ -138,7 +138,7 @@ void perturb_bb (
 	core::pose::Pose& pose,
 	numeric::random::RandomGenerator &RG
 ) {
-	for (core::Size ir=1; ir<=pose.n_residue(); ir++) {//loop through all residues
+	for (core::Size ir=1; ir<=pose.size(); ir++) {//loop through all residues
 		if(pose.residue(ir).has("CM")) { //If this is a beta-amino acid, perturb phi, psi, and theta.
 			betapeptide_setphi(pose, ir, randangle(RG));
 			betapeptide_settheta(pose, ir, randangle(RG));
@@ -176,7 +176,7 @@ void jitter_and_minimize (
 		for (int istep=1; istep<=MCsteps_per_round; istep++) {
 			trialpose = lastacceptpose;
 			//Loop through all residues and wiggle all backbone dihedral angles except omega:
-			for(core::Size ir=1; ir<=trialpose.n_residue(); ir++) {
+			for(core::Size ir=1; ir<=trialpose.size(); ir++) {
 				if(trialpose.residue(ir).has("CM")) { //If this is a beta-amino acid, perturb phi, psi, and theta.
 					betapeptide_setphi(trialpose, ir, trialpose.torsion(TorsionID(ir, id::BB, 1))+(double)RG.gaussian()*anglepertsize );
 					betapeptide_settheta(trialpose, ir, trialpose.torsion(TorsionID(ir, id::BB, 2))+(double)RG.gaussian()*anglepertsize);
@@ -268,7 +268,7 @@ int main( int argc, char * argv [] ) {
 		}
 	}
 
-	core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.n_residue());
+	core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.size());
 
 	double philist[] = {	-122.6,	-71.2,	58.9,	-53.6,	50.4,	64.8,	-175.1,	-110.4,	-67.2,	59.5,	83.5,	-171.8,	-161.9,	63.7,	59.6,	-135.5 };
 	double thetalist[] = {	-58.4,	134.0,	-121.4,	-47.7,	51.7,	63.3,	52.9,	60.5,	170.4,	166.2,	-53.0,	-70.6,	76.3,	76.7,	57.7,	55.6 };
@@ -279,11 +279,11 @@ int main( int argc, char * argv [] ) {
 	{
 		core::pose::Pose temppose=mypose;
 		temppose.set_omega(1,180);
-		for(core::Size ir=2; ir<temppose.n_residue(); ir++) {
+		for(core::Size ir=2; ir<temppose.size(); ir++) {
 			betapeptide_setphi(temppose, ir, philist[iconf]);
 			betapeptide_settheta(temppose, ir, thetalist[iconf]);
 			betapeptide_setpsi(temppose, ir, psilist[iconf]);
-			if (ir<temppose.n_residue()) betapeptide_setomega(temppose, ir, 180);
+			if (ir<temppose.size()) betapeptide_setomega(temppose, ir, 180);
 		}
 		temppose.update_residue_neighbors();
 		//repack_sc.apply(temppose); //Repack side-chains.

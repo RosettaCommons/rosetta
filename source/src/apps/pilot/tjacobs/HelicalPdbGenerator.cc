@@ -61,13 +61,13 @@ void HelicalPdbGeneratorMover::apply(core::pose::Pose & pose){
   //set up dssp info - necessary in order to find helices based on secondary structure
 	//....duh
 
-  if(pose.total_residue() > 0){
+  if(pose.size() > 0){
 
     core::scoring::dssp::Dssp dssp( pose );
     dssp.insert_ss_into_pose( pose );
 
     utility::vector1< std::pair< Size,Size > > helix_endpts;
-    for(Size i=1; i<=pose.total_residue(); i++){
+    for(Size i=1; i<=pose.size(); i++){
 
           //find all the strands in the structure
           Size helix_start(0);
@@ -75,7 +75,7 @@ void HelicalPdbGeneratorMover::apply(core::pose::Pose & pose){
           if(pose.secstruct(i) == 'H'){
 
               helix_start=i;
-              while(i<=pose.total_residue() && pose.secstruct(i)=='H'){
+              while(i<=pose.size() && pose.secstruct(i)=='H'){
                   i++;
               }
               helix_end=i;
@@ -86,7 +86,7 @@ void HelicalPdbGeneratorMover::apply(core::pose::Pose & pose){
 
     Pose outputPose;
     for(Size i=1; i<=helix_endpts.size(); ++i){
-        outputPose.append_residue_by_jump(pose.residue(helix_endpts[i].first), outputPose.total_residue(), "", "", false);
+        outputPose.append_residue_by_jump(pose.residue(helix_endpts[i].first), outputPose.size(), "", "", false);
         for(Size j=helix_endpts[i].first; j<=helix_endpts[i].second; ++j){
             outputPose.append_residue_by_bond(pose.residue(j));
         }

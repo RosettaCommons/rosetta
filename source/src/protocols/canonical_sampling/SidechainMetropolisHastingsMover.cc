@@ -145,13 +145,13 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	// utility::vector1< pack::dunbrack::RotVector > rot_vectors;
 
 
-	current.resize(pose.total_residue());
-	// previous.resize(pose.total_residue());
+	current.resize(pose.size());
+	// previous.resize(pose.size());
 
-	// rot_vectors.resize( pose.total_residue() );
-	// chi_vectors.resize( pose.total_residue() );
+	// rot_vectors.resize( pose.size() );
+	// chi_vectors.resize( pose.size() );
 
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		current[ i ] = core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( i ) ) );
 	}
 

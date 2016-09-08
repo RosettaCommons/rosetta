@@ -65,9 +65,9 @@ ResiduePDBInfoHasLabelSelector::apply( core::pose::Pose const & pose ) const
 {
 	debug_assert( ! label_.empty() );
 
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 	// quit here if there are no residues in the pose
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		return subset;
 	}
 
@@ -76,7 +76,7 @@ ResiduePDBInfoHasLabelSelector::apply( core::pose::Pose const & pose ) const
 		return subset;
 	}
 
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		subset[ i ] = pose.pdb_info()->res_haslabel( i, label_ );
 	}
 

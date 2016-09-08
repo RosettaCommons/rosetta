@@ -53,7 +53,7 @@ public:
 	) :
 		Mover("Super"),
 		native_pose_( native_pose ),
-		deviations_( native_pose.total_residue(), vector1< Real >() )
+		deviations_( native_pose.size(), vector1< Real >() )
 	{}
 
 	virtual std::string get_name() const {
@@ -68,7 +68,7 @@ public:
 		core::scoring::calpha_superimpose_pose( pose, native_pose_ );
 
 		static string atom_name( "CA" );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			Real distance = native_pose_.residue(ii).xyz( atom_name ).distance(
 				pose.residue(ii).xyz( atom_name )
 			);

@@ -2210,11 +2210,11 @@ SandwichFeatures::report_features(
 
 		// development
 		// <begin> assign SS to blueprint file
-		ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
+		ObjexxFCL::FArray1D_char dsspSS( pose.size() );
 		dssp.dssp_reduced(dsspSS);
 
 		//TR << "input PDB dssp assignment: (based on start structure)" << std::endl;
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			///TR << dsspSS(i);
 		}
 		//TR << std::endl;

@@ -130,7 +130,7 @@ main( int argc, char * argv [] )
 	utility::vector1< core::Real > res_energies;
 	utility::vector1< core::Real > distances;
 	utility::vector1< core::Real > scores;
-	ObjexxFCL::FArray2D< core::Real > matrix( pose.total_residue(), pose.total_residue(), 0.0f );
+	ObjexxFCL::FArray2D< core::Real > matrix( pose.size(), pose.size(), 0.0f );
 	// core::Real max_dist = 10;
 
 	int output_width = 10;
@@ -139,9 +139,9 @@ main( int argc, char * argv [] )
 		<< A( output_width, "dist_min" ) << A( output_width, "score_min" )
 		<< std::endl;
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		core::Real residue_energy_total = 0;
-		for ( core::Size j = i+1; j <= pose.total_residue(); ++j ) {
+		for ( core::Size j = i+1; j <= pose.size(); ++j ) {
 			core::Real local_score = 0;
 			cstset->residue_pair_energy( pose.residue(i), pose.residue(j), pose, *scorefxn, emap );
 			local_score = emap[ core::scoring::atom_pair_constraint ];
@@ -193,8 +193,8 @@ main( int argc, char * argv [] )
 	//core::Real sd_score   = sd  ( scores );
 	//core::Real mean_dist  = mean( distances );
 	//core::Real sd_dist    = sd  ( distances );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-		for ( core::Size j = 1; j <= pose.total_residue(); ++j ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size j = 1; j <= pose.size(); ++j ) {
 			core::Real normalized_score = matrix( i, j );
 			//if ( i < j ) {
 			//	normalized_score = ( normalized_score - mean_score ) / sd_score;

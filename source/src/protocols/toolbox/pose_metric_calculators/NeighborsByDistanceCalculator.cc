@@ -131,7 +131,7 @@ NeighborsByDistanceCalculator::recompute( core::pose::Pose const & pose )
 	num_neighbors_ = 0;
 
 	//if the central residue was never set, or was set outside the pose, this will cause problems!
-	if ( (central_residue_ < 1) || (central_residue_ > pose.total_residue()) ) {
+	if ( (central_residue_ < 1) || (central_residue_ > pose.size()) ) {
 		TR.Error << "central residue " << central_residue_ << " outside of pose; NBDC reporting empty set!" << std::endl;
 		return;
 	}

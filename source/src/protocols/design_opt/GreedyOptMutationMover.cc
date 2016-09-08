@@ -390,7 +390,7 @@ GreedyOptMutationMover::pose_coords_are_same(
 	//first check for all restype match, also checks same number res
 	if ( !pose1.conformation().sequence_matches( pose2.conformation() ) ) return false;
 	//then check for all coords identical
-	for ( Size i = 1; i <= pose1.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose1.size(); ++i ) {
 		core::conformation::Residue const & rsd1( pose1.residue( i ) );
 		core::conformation::Residue const & rsd2( pose2.residue( i ) );
 		//check same n atoms

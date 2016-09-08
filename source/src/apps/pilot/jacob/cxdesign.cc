@@ -325,7 +325,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   vector1<double> asamp; for(Real i = 0; i < 180; ++i) asamp.push_back(i);
 
   vector1<Vecf> bb0tmp,cb0tmp;
-  for(int ir = 1; ir <= init.n_residue(); ++ir) {
+  for(int ir = 1; ir <= init.size(); ++ir) {
     if(!init.residue(ir).is_protein()) continue;
     for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) {
       bb0tmp.push_back(init.xyz(AtomID(ia,ir)));
@@ -376,11 +376,11 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
 		return;
 	}
 
-  for(int ir = 1; ir <= 1*init.n_residue(); ++ir) {
+  for(int ir = 1; ir <= 1*init.size(); ++ir) {
     if(!p.residue(ir).is_protein()) continue;
     for(int ia = 1; ia <= ((p.residue(ir).has("CB"))?5:4); ++ia) {
       Vec const pi = p.xyz(AtomID(ia,ir));
-      for(int jr = init.n_residue()+1; jr <= 2*init.n_residue(); ++jr) {
+      for(int jr = init.size()+1; jr <= 2*init.size(); ++jr) {
         if(!p.residue(jr).is_protein()) continue;
         for(int ja = 1; ja <= ((p.residue(jr).has("CB"))?5:4); ++ja) {
           if( pi.distance_squared(p.xyz(AtomID(ja,jr))) < 9.0 ) {
@@ -391,12 +391,12 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
     }
   }
 
-  vector1<Size> iface = design(p,init.n_residue(),ic);
+  vector1<Size> iface = design(p,init.size(),ic);
 
   // Calculate the surface area and surface complementarity for the interface
   Real int_area = 0; Real sc = 0;
-  new_sc(p,init.n_residue(),int_area,sc);
-  Real avg_deg = average_degree(p,init.n_residue(),iface);
+  new_sc(p,init.size(),int_area,sc);
+  Real avg_deg = average_degree(p,init.size(),iface);
 
   Real avg_nchi = 0.0;
   for(Size i = 1; i <= iface.size(); ++i) avg_nchi += p.residue(iface[i]).nchi();
@@ -414,7 +414,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   ss_out->add_energy("sc",sc);
   ss_out->add_energy("avg_nchi",avg_nchi);
 
-  Real ddg = get_ddg(p,init.n_residue(),iface);
+  Real ddg = get_ddg(p,init.size(),iface);
 
   ss_out->add_energy("ddg",ddg);
 
@@ -458,11 +458,11 @@ int main(int argc, char *argv[]) {
     if(NSS != nss) utility_exit_with_message("wrong ssamp!!!");
     Pose pnat;
 		pose_from_file(pnat,fn, core::import_pose::PDB_file);
-    trans_pose(pnat,-center_of_geom(pnat,1,pnat.n_residue()));
+    trans_pose(pnat,-center_of_geom(pnat,1,pnat.size()));
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);
     Size nhelix=0;
-    for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
+    for(Size ir = 2; ir <= pnat.size()-1; ++ir) {
       if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
       if(pnat.residue(ir).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
     } goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:

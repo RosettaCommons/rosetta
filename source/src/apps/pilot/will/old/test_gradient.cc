@@ -173,9 +173,9 @@ test_deriv_pose( pose::Pose & pose ) {
 	Real score0 = get_holes_score(pose,pb,params);
 	get_holes_deriv(pose,pb,params,derivs);
 
-	std::cout << "score: " << score0 << " " << score0 / (pose.total_residue()-2) << std::endl;
+	std::cout << "score: " << score0 << " " << score0 / (pose.size()-2) << std::endl;
 
-	for( int r = 2; r <= (int)pose.total_residue()-1; r++ ) {
+	for( int r = 2; r <= (int)pose.size()-1; r++ ) {
 		for( int i = 1; i <= 4; i++ ) {
 			id::AtomID aid(i,r);
 			xyzVector<Real> nderiv = get_numeric_deriv( aid, pose, pb, params, score0 );
@@ -234,7 +234,7 @@ test_gradient() {
 	PoseBalls bbad0(bad);
 	PoseBalls bgood0(good);
 
-	std::cerr << "rms " << balls_rms(bbad,bgood) << " nres " << good.total_residue() << " " << bad.total_residue() << std::endl;
+	std::cerr << "rms " << balls_rms(bbad,bgood) << " nres " << good.size() << " " << bad.size() << std::endl;
 
 	AtomID_Map<xyzVector<Real> > dbad,dgood;
 	initialize_heavy_only(dbad ,bad ,xyzVector<Real>(0,0,0));

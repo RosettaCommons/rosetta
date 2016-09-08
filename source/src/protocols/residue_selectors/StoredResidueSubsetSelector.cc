@@ -112,10 +112,10 @@ StoredResidueSubsetSelector::apply( core::pose::Pose const & pose ) const
 		utility_exit_with_message( "Stored residue subset with name " + subset_name_ + " is NULL" );
 	}
 
-	if ( pose.total_residue() != subset->size() ) {
+	if ( pose.size() != subset->size() ) {
 		std::stringstream msg;
 		msg << "StoredResidueSubsetSelector: Size of stored residue subset \"" << subset_name_ << "\" (" << subset->size()
-			<< ") does not match pose size (" << pose.total_residue() << ")" << std::endl;
+			<< ") does not match pose size (" << pose.size() << ")" << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 

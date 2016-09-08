@@ -138,13 +138,13 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	//and try to setup the fold tree the right way
 	//2a
 	std::list<core::conformation::ResidueCOP>::const_iterator target_it( all_invrots_[ picked_collector ]->invrots()[0].begin() );
-	Size first_target_seqpos( pose.total_residue() );
+	Size first_target_seqpos( pose.size() );
 	if ( add_target_to_pose_ ) {
 		first_target_seqpos++;
 		//have to add something to switch target res to centroid here
 		core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set()->name()) );
 
-		pose.append_residue_by_jump( *ligres, pose.total_residue() );
+		pose.append_residue_by_jump( *ligres, pose.size() );
 		++target_it;
 		//Size jump_num = pose.num_jump();
 
@@ -222,7 +222,7 @@ AlignPoseToInvrotTreeMover::setup_foldtree_around_anchor_invrot(
 	FoldTree new_fold_tree;
 	new_fold_tree.add_edge( anchor_seqpos, 1, Edge::PEPTIDE );
 	new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos - 1, Edge::PEPTIDE );
-	Size num_jumps_to_add( pose.total_residue() - first_target_seqpos + 1 );
+	Size num_jumps_to_add( pose.size() - first_target_seqpos + 1 );
 	for ( Size i =0; i < num_jumps_to_add; ++i ) {
 		//TR << "URZ adding jump between res " << anchor_seqpos << " of restype " << pose.residue_type( anchor_seqpos ).name() << " and " << first_target_seqpos + i << ", which is of restype " << pose.residue_type(  first_target_seqpos + i ).name() << std::endl;
 		new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos +i, i + 1 );

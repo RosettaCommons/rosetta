@@ -178,7 +178,7 @@ void reorder_with_first_non_mobile_as_root(
 	ligand_options::Interface const & interface,
 	core::pose::Pose & pose
 ) {
-	for ( core::Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).is_polymer() && interface[i].type == ligand_options::InterfaceInfo::non_interface ) {
 			f->reorder(i);
 			return;
@@ -436,7 +436,7 @@ core::Size find_attach_pt(
 	const core::Size residue_id = pose.fold_tree().downstream_jump_residue(jump_id);
 	const core::conformation::Residue & residue = pose.residue(residue_id);
 	const core::Vector lig_nbr_vector = residue.nbr_atom_xyz();
-	//for(core::Size i = 1; i <= pose.n_residue(); ++i) { // only look at upstream residues, else multi-residue ligand will attach to itself
+	//for(core::Size i = 1; i <= pose.size(); ++i) { // only look at upstream residues, else multi-residue ligand will attach to itself
 	for ( core::Size i = 1; i < residue_id; ++i ) {
 		if ( !pose.residue(i).is_protein() && interface[i].type != ligand_options::InterfaceInfo::non_interface ) {
 			core::Vector res_coords;

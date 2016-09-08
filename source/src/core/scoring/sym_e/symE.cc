@@ -70,12 +70,12 @@ void symEnergy::setup_for_scoring(pose::Pose &pose, const ScoreFunction &) const
 {
 	using namespace methods;
 	if ( pose.energies().long_range_container(sym_bonus_lr) == 0 ) {
-		DenseEnergyContainerOP lr_container( new DenseEnergyContainer(pose.total_residue(), symE_bonus) );
+		DenseEnergyContainerOP lr_container( new DenseEnergyContainer(pose.size(), symE_bonus) );
 		pose.energies().set_long_range_container(sym_bonus_lr, lr_container);
 	} else {
 		DenseEnergyContainerOP lr_container_copied = DenseEnergyContainerOP(utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( pose.energies().nonconst_long_range_container(sym_bonus_lr) ));
-		if ( lr_container_copied->size() !=pose.total_residue() ) {
-			DenseEnergyContainerOP lr_container( new DenseEnergyContainer(pose.total_residue(), symE_bonus) );
+		if ( lr_container_copied->size() !=pose.size() ) {
+			DenseEnergyContainerOP lr_container( new DenseEnergyContainer(pose.size(), symE_bonus) );
 			pose.energies().set_long_range_container(sym_bonus_lr, lr_container);
 		}
 	}
@@ -117,7 +117,7 @@ void symEnergy::residue_pair_energy(
 ) const {
 	Size rsd1Pos = rsd1.seqpos();
 	Size rsd2Pos = rsd2.seqpos();
-	Size totalLength = pose.total_residue();
+	Size totalLength = pose.size();
 
 	int symUnits = basic::options::option[ basic::options::OptionKeys::score::symE_units ]();
 	core::Real symBonus = basic::options::option[ basic::options::OptionKeys::score::symE_bonus ]();

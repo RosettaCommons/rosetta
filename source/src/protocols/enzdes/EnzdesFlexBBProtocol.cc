@@ -216,7 +216,7 @@ EnzdesFlexBBProtocol::apply(
 		//make a polyalanine copy of the pose
 		utility::vector1< core::Size >positions_to_replace;
 		utility::vector1< core::Size >all_pack_positions;
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( design_pack_task_template->pack_residue(i) && !pose.residue( i ).is_ligand() ) {
 				all_pack_positions.push_back( i );
 				if ( ! is_catalytic_position( pose, i ) ) positions_to_replace.push_back( i );
@@ -371,7 +371,7 @@ EnzdesFlexBBProtocol::get_tenA_neighbor_residues(
 {
 	//make a local copy first because we will change content in residue_positions
 	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
-	for ( Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( Size i=1; i <= pose.size(); ++i ) {
 		if ( !is_remodelable(i) && !is_flexible(i) ) continue;
 		core::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
 		for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
@@ -398,10 +398,10 @@ EnzdesFlexBBProtocol::modified_task(
 	PackerTaskOP mod_task = TaskFactory::create_packer_task( pose );
 	mod_task->initialize_from_command_line();
 
-	utility::vector1 < bool > remodel_loop_interface( pose.total_residue(), false );
+	utility::vector1 < bool > remodel_loop_interface( pose.size(), false );
 	get_tenA_neighbor_residues(pose, remodel_loop_interface);
 
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 
 		//first, we need to copy the rotamer and rotamerset operations
 		for ( auto rot_it = orig_task.residue_task(i).rotamer_operations().begin(); rot_it != orig_task.residue_task(i).rotamer_operations().end(); ++rot_it ) {
@@ -613,9 +613,9 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 		//if not, determine the flex regions automatically
 
 		core::Size const min_flex_length = 6;
-		utility::vector1< bool > flex_res( pose.total_residue(), false );
+		utility::vector1< bool > flex_res( pose.size(), false );
 
-		for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i<= pose.size(); ++i ) {
 			if ( ( task->design_residue( i ) || is_catalytic_position( pose, i ) ) && pose.residue(i).is_polymer() ) flex_res[i] = true;
 		}
 
@@ -623,23 +623,23 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 
 		//make sure that the first residue isn't flexible and that no ligand was set to flexible
 		flex_res[1] = false;
-		for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i<= pose.size(); ++i ) {
 			if ( flex_res[i] && !pose.residue(i).is_polymer() ) {
 
 				core::Size lower( std::max( core::Size (1), i-1) );
-				core::Size upper( std::min( i+1, pose.total_residue() ) );
+				core::Size upper( std::min( i+1, pose.size() ) );
 				if ( (flex_res[lower] && (lower != i ) ) && (flex_res[upper] && (upper != i ) ) ) utility_exit_with_message("Somehow a non polymer residue got into the middle of a flexible region.");
 
 				flex_res[i] = false;
 			}
 		}
 
-		for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i<= pose.size(); ++i ) {
 			if ( flex_res[i] ) {
 				core::Size j = i;
 
 
-				while ( (j <= pose.total_residue()) && flex_res[j] ) j++;
+				while ( (j <= pose.size()) && flex_res[j] ) j++;
 
 				no_flex_regions++;
 				flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose,
@@ -701,7 +701,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 	core::kinematics::FoldTree ft_old = pose.fold_tree();
 	core::kinematics::FoldTree ft_temp = pose.fold_tree();
 
-	if ( rend <= pose.total_residue() - 3 && pose.chain( rbegin ) == pose.chain( rend + 2 ) ) {
+	if ( rend <= pose.size() - 3 && pose.chain( rbegin ) == pose.chain( rend + 2 ) ) {
 		using namespace core::kinematics;
 		//std::cout << "orig fold tree " << ft << std::endl;
 		//ft_temp.new_jump( rbegin, rend+2, rend+1 );
@@ -807,7 +807,7 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 	(*reduced_scorefxn())( local_pose );
 
 	//if rend is near the end of the pose, then it won't help to add a jump, so don't bother
-	//if ( rend <= pose.total_residue() - 2 && pose.chain( rbegin ) == pose.chain( rend + 2 ) ) {
+	//if ( rend <= pose.size() - 2 && pose.chain( rbegin ) == pose.chain( rend + 2 ) ) {
 	// using namespace core::kinematics;
 	// FoldTree ft = pose.fold_tree();
 	//std::cout << "orig fold tree " << ft << std::endl;
@@ -1017,7 +1017,7 @@ EnzdesFlexBBProtocol::generate_backrub_ensemble_for_region(
 	core::Size region
 )
 {
-	//ObjexxFCL::FArray1D_bool flex_res( pose.total_residue(), false);
+	//ObjexxFCL::FArray1D_bool flex_res( pose.size(), false);
 	//for( core::Size i = flex_regions_[region]->start() - 1; i <= flex_regions_[region]->end(); ++i) flex_res(i) = true;
 	brub_mover_->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
 	brub_mover_->set_input_pose( brub_mover_->get_native_pose() );
@@ -1510,7 +1510,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 	PackerTaskOP looptask_template = task->clone();
 	EnzdesFlexBBProtocolCOP enzdes_protocol( enzdes_protocol_ );
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		if ( looptask_template->design_residue( i )
 				&& !this->contains_seqpos( i )
@@ -1650,7 +1650,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 	rotsets->compute_one_body_energies( pose, *scorefxn, packer_neighbor_graph, ig );
 
 	//now delete the unnecessary edges from the graph
-	utility::vector1< core::Size > residue_groups( pose.total_residue(), 0 );
+	utility::vector1< core::Size > residue_groups( pose.size(), 0 );
 	for ( unsigned long design_target : design_targets_ ) {
 		if ( (design_target >= *(positions_.begin() ) ) && (design_target <= *(positions_.rbegin() ) ) ) {
 			residue_groups[ design_target ] = 2;
@@ -1817,7 +1817,7 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 	//Size const sought_loop_id = 5;
 
 	runtime_assert( compare_poses.size() > 0 );
-	runtime_assert( template_pose.total_residue() == this->length() + 1);
+	runtime_assert( template_pose.size() == this->length() + 1);
 
 	core::fragment::FragDataOP newfrag = this->fragment_ptr( 1 )->clone();
 	if ( !newfrag->steal( pose, *this ) ) utility_exit_with_message("unknown error when trying to steal fragment from pose for examination.");
@@ -1826,20 +1826,20 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 
 	newfrag->apply( template_pose, 2, this->length() );
 	/// FIX C and O on the last residue
-	template_pose.set_phi( template_pose.total_residue(), pose.phi( positions_[ positions_.size() ] ) );
-	template_pose.set_psi( template_pose.total_residue(), pose.psi( positions_[ positions_.size() ] ) );
-	template_pose.set_omega( template_pose.total_residue(), pose.omega( positions_[ positions_.size() ] ) );
+	template_pose.set_phi( template_pose.size(), pose.phi( positions_[ positions_.size() ] ) );
+	template_pose.set_psi( template_pose.size(), pose.psi( positions_[ positions_.size() ] ) );
+	template_pose.set_omega( template_pose.size(), pose.omega( positions_[ positions_.size() ] ) );
 
-	//std::cout << "template: O " << template_pose.residue( template_pose.total_residue() ).xyz( "O" ).x();
-	//std::cout << " " << template_pose.residue( template_pose.total_residue() ).xyz( "O" ).y();
-	//std::cout << " " << template_pose.residue( template_pose.total_residue() ).xyz( "O" ).z() << std::endl;
+	//std::cout << "template: O " << template_pose.residue( template_pose.size() ).xyz( "O" ).x();
+	//std::cout << " " << template_pose.residue( template_pose.size() ).xyz( "O" ).y();
+	//std::cout << " " << template_pose.residue( template_pose.size() ).xyz( "O" ).z() << std::endl;
 
 	//std::cout << "regular: O " << pose.residue( positions_[ positions_.size() ] ).xyz( "O" ).x();
 	//std::cout << " " << pose.residue( positions_[ positions_.size() ] ).xyz( "O" ).y();
 	//std::cout << " " << pose.residue( positions_[ positions_.size() ] ).xyz( "O" ).z() << std::endl;
 
 	template_pose.set_xyz(
-		core::id::AtomID( template_pose.residue( template_pose.total_residue() ).atom_index( "O" ), template_pose.total_residue() ),
+		core::id::AtomID( template_pose.residue( template_pose.size() ).atom_index( "O" ), template_pose.size() ),
 		pose.residue( positions_[ positions_.size() ] ).xyz( "O" ) );
 
 

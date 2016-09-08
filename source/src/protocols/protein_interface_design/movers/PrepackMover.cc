@@ -141,7 +141,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	core::kinematics::MoveMapOP mm_general;
 	if ( min_bb() && mm() ) {
 		mm_general = mm()->clone();
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( !pose.residue(i).is_protein() ) {
 				mm_general->set_chi( i, false );
 				continue;

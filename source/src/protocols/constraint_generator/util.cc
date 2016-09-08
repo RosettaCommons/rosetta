@@ -83,11 +83,11 @@ generate_seqmap_from_poses(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & pose2 )
 {
-	bool const same_length = ( pose1.total_residue() == pose2.total_residue() );
+	bool const same_length = ( pose1.size() == pose2.size() );
 	bool const same_sequence = ( pose1.sequence() == pose2.sequence() );
 
 	if ( same_length && same_sequence ) {
-		return core::id::SequenceMapping::identity( pose1.total_residue() );
+		return core::id::SequenceMapping::identity( pose1.size() );
 	} else { // !same_sequence || !same_length
 		TR << "Input structure and native differ in ";
 		if ( !same_length ) TR << "length and sequence ";
@@ -109,7 +109,7 @@ compute_nres_in_asymmetric_unit( core::pose::Pose const & pose )
 		symm_info = SymmConf.Symmetry_Info();
 		return symm_info->num_independent_residues();
 	} else {
-		return pose.total_residue();
+		return pose.size();
 	}
 }
 

@@ -372,7 +372,7 @@ add_motif_sc_constraints(
 
 	// This section is necessary in case pose.residue(1) is not a protein residue, because a DNA residue would not have a CA atom
 	core::Size first_protein_resi(1);
-	core::Size nres( pose.total_residue() );
+	core::Size nres( pose.size() );
 	for ( core::Size i(1); i <= nres; ++i ) {
 		if ( pose.residue_type(i).is_protein() ) {
 			first_protein_resi = i;
@@ -415,7 +415,7 @@ void mutate_position_vector_for_search(
 	utility::vector1< bool > allow_vector( core::chemical::num_canonical_aas, false );
 	allow_vector[ core::chemical::aa_ala ] = true;
 
-	for ( core::Size ires = 1, end_i = pose.total_residue() ; ires <= end_i ; ++ires ) {
+	for ( core::Size ires = 1, end_i = pose.size() ; ires <= end_i ; ++ires ) {
 
 		if ( find( trim_positions.begin(), trim_positions.end(), ires ) != trim_positions.end() ) {
 			if ( pose.residue( ires ).aa() != core::chemical::aa_pro &&
@@ -451,7 +451,7 @@ void mutate_loops_for_search(
 	utility::vector1< bool > allow_vector( core::chemical::num_canonical_aas, false );
 	allow_vector[ core::chemical::aa_ala ] = true;
 
-	for ( core::Size ires = 1, end_res = pose.total_residue() ; ires <= end_res ; ++ires ) {
+	for ( core::Size ires = 1, end_res = pose.size() ; ires <= end_res ; ++ires ) {
 		if ( flex_regions.is_loop_residue( ires ) ) {
 			if ( pose.residue( ires ).aa() != core::chemical::aa_pro &&
 					pose.residue( ires ).aa() != core::chemical::aa_gly ) {
@@ -548,10 +548,10 @@ get_targetconformers_user()
 			}
 			core::pose::PoseOP pose( new core::pose::Pose );
 			core::import_pose::pose_from_file( *pose, *filename , core::import_pose::PDB_file);
-			if ( pose->total_residue() > 1 ) {
+			if ( pose->size() > 1 ) {
 				std::cerr << "WARNING!!! Conformer PDB contains more than one residue, loading all residues in PDB as conformers." << std::endl;
 			}
-			for ( core::Size i(1); i <= pose->total_residue(); ++i ) {
+			for ( core::Size i(1); i <= pose->size(); ++i ) {
 				conformerOPs.push_back( pose->residue(i).clone() );
 			}
 		}

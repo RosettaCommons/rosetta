@@ -191,7 +191,7 @@ dump_efactor_pdb(
 	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
 	out << "MODEL     " << tag << "\n";
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -459,7 +459,7 @@ pep_energies_analysis(
 	EMapVector emap_total( pose.energies().total_energies() );
 	emap_total_avg += emap_total;
 
-	for( Size i_seq = 1; i_seq <= pose.total_residue(); ++i_seq ){
+	for( Size i_seq = 1; i_seq <= pose.size(); ++i_seq ){
 		emap_res_avg[ i_seq ] += pose.energies().residue_total_energies( i_seq );
 		char pep_aa( pose.residue( i_seq ).name1() );
 		std::cout << filename << "\t" << pep_aa << "\t" << string_of( i_seq ) << "\ttotal_res\t" << pose.energies().residue_total_energies( i_seq ).weighted_string_of( full_scorefxn->weights() ) <<"\ttotal_score:\t"<< pose.energies().residue_total_energies( i_seq ).dot( full_scorefxn->weights() ) << "\n";
@@ -482,8 +482,8 @@ pep_scan_analysis(
 	( *full_scorefxn )( pose );
 	Pose start_pose( pose );
 
-	vector1< bool > is_pep( pose.total_residue(), false );
-	for( Size i = 1; i <= pose.total_residue(); ++i ){
+	vector1< bool > is_pep( pose.size(), false );
+	for( Size i = 1; i <= pose.size(); ++i ){
 		if( i >= pep_begin && i <= pep_end ) is_pep[ i ] = true;
 	}
 
@@ -498,9 +498,9 @@ pep_scan_analysis(
 		char pep_aa( pose.residue( pep_seqpos ).name1() );
 
 		float cutoff( option[ pep_spec::interface_cutoff ] );
-		vector1< bool > is_mut_nbr( pose.total_residue(), false );
+		vector1< bool > is_mut_nbr( pose.size(), false );
 		Residue const & rsd1( pose.residue( pep_seqpos ) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			Residue const & rsd2( pose.residue(j) );
 			for ( Size ii=1; ii<= rsd1.natoms(); ++ii ) {
 				for ( Size jj=1; jj<= rsd2.natoms(); ++jj ) {
@@ -524,7 +524,7 @@ pep_scan_analysis(
 			pack::task::PreventRepackingOperationOP prevent_repack_taskop( new pack::task::PreventRepackingOperation() );
 			pack::task::PackerTaskOP rp_task( pack::task::TaskFactory::create_packer_task( pose ));
 			rp_task->initialize_from_command_line().or_include_current( true );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				if ( is_mut_nbr[i] || i == pep_seqpos ) {
 					restrict_to_repack_taskop->include_residue( i );
 					rp_task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -593,7 +593,7 @@ pep_scan_analysis(
 			pack::task::PreventRepackingOperationOP prevent_repack_taskop( new pack::task::PreventRepackingOperation() );
 			pack::task::PackerTaskOP rp_task( pack::task::TaskFactory::create_packer_task( pose ));
 			rp_task->initialize_from_command_line().or_include_current( true );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				if ( is_mut_nbr[i] ) {
 					restrict_to_repack_taskop->include_residue( i );
 					rp_task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -737,10 +737,10 @@ RunPepSpec()
 	core::scoring::ScoreFunctionOP soft_scorefxn(  ScoreFunctionFactory::create_score_function( option[ pep_spec::soft_wts ] ) );
 
 	EMapVector emap_total_avg;
-	vector1< EMapVector > emap_res_avg( pose.total_residue() );
-	vector1< EMapVector > emap_res_sd( pose.total_residue() );
+	vector1< EMapVector > emap_res_avg( pose.size() );
+	vector1< EMapVector > emap_res_sd( pose.size() );
 
-	vector1< EMapVector > emap_res_scan( pose.total_residue() );
+	vector1< EMapVector > emap_res_scan( pose.size() );
 
 	std::ifstream pdb_list_data( pdb_list_filename.c_str() );
 	std::string pdb_list_line;
@@ -756,13 +756,13 @@ RunPepSpec()
 /*
 		if( option[ pep_spec::rescore_analysis ] ){
 			( *full_scorefxn )( pose );
-			vector1< bool > is_pep( pose.total_residue(), false );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) is_pep[i] = ( i >= pep_begin && i <= pep_end );
-			vector1< bool > is_pep_nbr( pose.total_residue(), false );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			vector1< bool > is_pep( pose.size(), false );
+			for ( Size i=1; i<= pose.size(); ++i ) is_pep[i] = ( i >= pep_begin && i <= pep_end );
+			vector1< bool > is_pep_nbr( pose.size(), false );
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				Residue const & rsd1( pose.residue(i) );
 				if ( is_pep[i] ) continue;
-				for ( Size j=1; j<= pose.total_residue(); ++j ) {
+				for ( Size j=1; j<= pose.size(); ++j ) {
 					Residue const & rsd2( pose.residue(j) );
 					if ( !is_pep[j] ) continue;
 					if( is_pep_nbr[i] ) break;
@@ -816,7 +816,7 @@ RunPepSpec()
 
 	//energies avg over all poses
 	if( option[ pep_spec::energies_analysis ] && n_structs > 1 ){
-		for( Size i_seq = 1; i_seq <= pose.total_residue(); ++i_seq ){
+		for( Size i_seq = 1; i_seq <= pose.size(); ++i_seq ){
 			for( EMapVector::iterator itr = emap_res_avg[ i_seq ].begin(); itr != emap_res_avg[ i_seq ].end(); ++itr ){
 				*itr *= ( 1.0 / n_structs );
 			}

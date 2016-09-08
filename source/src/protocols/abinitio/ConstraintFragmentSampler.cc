@@ -191,14 +191,14 @@ void ConstraintFragmentSampler::replace_scorefxn(core::pose::Pose& pose,
 		sep_fact = seq_sep_stage3_ + ( seq_sep_stage4_ - seq_sep_stage3_ ) * 1.0*intra_stage_progress;
 	}
 	tr.Debug << "replace_scorefxn... sep_fact: " << sep_fact << " STAGE " << stage << std::endl;
-	tr.Debug << "total number of residues: " << pose.total_residue() << " max. separation in fold-tree " << total_res(pose) << std::endl;
+	tr.Debug << "total number of residues: " << pose.size() << " max. separation in fold-tree " << total_res(pose) << std::endl;
 	set_max_seq_sep( pose, seq_sep_stage( total_res( pose ), sep_fact ) );
 }
 
 //otherwise stage2 cycles remain as in the classic protocol
 Size ConstraintFragmentSampler::total_res( core::pose::Pose const& pose ) const {
 	return static_cast< Size >(
-		std::min( 1.0*pose.total_residue(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ )
+		std::min( 1.0*pose.size(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ )
 	);
 }
 
@@ -370,7 +370,7 @@ void ConstraintFragmentSampler::apply(core::pose::Pose& pose) {
 
 	// initialize a MaxSeqSepConstraintSet with the current set of constraints
 	constraints_ = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet(*orig_constraints, pose.fold_tree()) );
-	constraints_->set_max_seq_sep(pose.total_residue()); // so it is prepared for stage4.
+	constraints_->set_max_seq_sep(pose.size()); // so it is prepared for stage4.
 
 	// replace <pose>'s ConstraintSet with our newly initialized MaxSeqSepConstraintSet
 	pose.constraint_set(constraints_);

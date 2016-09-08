@@ -83,7 +83,7 @@ main( int argc, char * argv [] )
 
 
 		core::Size lig_res_num = 0;
-		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			if ( !input_pose.residue(j).is_protein() ) {
 				lig_res_num = j;
 				break;
@@ -158,7 +158,7 @@ main( int argc, char * argv [] )
 
 		// This is the residue we'll use for PocketConstraint
 		central_relax_res = 0;
-		for ( int j = 1, resnum = curr_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = curr_pose.size(); j <= resnum; ++j ) {
 		if ( curr_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 		central_relax_res = j;
 		}

@@ -105,12 +105,12 @@ SICFast::init(
 	core::id::AtomID_Map<platform::Real> clashmap1,clashmap2;
 	core::pose::initialize_atomid_map(  clashmap1,pose1,-1.0);
 	core::pose::initialize_atomid_map(  clashmap2,pose2,-1.0);
-	for ( Size i = 1; i <= pose1.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose1.size(); ++i ) {
 		for ( int j = 1; j <= ((pose1.residue(i).name3()=="GLY")?4:5); ++j ) {
 			clashmap1[AtomID(j,i)] = pose1.residue(i).atom_type(j).lj_radius();
 		}
 	}
-	for ( Size i = 1; i <= pose2.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose2.size(); ++i ) {
 		for ( int j = 1; j <= ((pose2.residue(i).name3()=="GLY")?4:5); ++j ) {
 			clashmap2[AtomID(j,i)] = pose2.residue(i).atom_type(j).lj_radius();
 		}

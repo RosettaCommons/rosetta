@@ -182,7 +182,7 @@ void Application::copy_native_structure( core::pose::Pose &extended_pose ) {
   // requires that the sequences match at the beginning (1..nmatch_res) -- > use sequence alignment later
   tr.Info << " *** use native structure as starting template -- NEEDS TO BE IDEALIZED !!! *** \n";
   // determine length of segment to copy from native
-  Size seg_len = std::min(extended_pose.total_residue(), native_pose_->total_residue() );
+  Size seg_len = std::min(extended_pose.size(), native_pose_->size() );
   fragment::Frame long_frame(1, seg_len);
 
 	//create apropriate length FragData object
@@ -222,7 +222,7 @@ void Application::run() {
   score.show( std::cout, pose );
   pose.dump_pdb("pose1.pdb");
 
-  Size seg_len = native_pose_->total_residue();
+  Size seg_len = native_pose_->size();
   fragment::Frame long_frame(1, seg_len);
 
   //create apropriate length FragData object
@@ -239,7 +239,7 @@ void Application::run() {
   pose2.fold_tree( f );
 
  // make  chain
-  for ( Size pos = 1; pos <= pose2.total_residue(); pos++ ) {
+  for ( Size pos = 1; pos <= pose2.size(); pos++ ) {
     pose2.set_phi( pos, -150 );
     pose2.set_psi( pos, 150);
     pose2.set_omega( pos, 180 );

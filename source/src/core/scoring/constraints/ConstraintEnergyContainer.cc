@@ -326,10 +326,10 @@ CstEnergyContainer::empty() const {
 CstEnergyContainer::CstEnergyContainer( pose::Pose const & pose )
 {
 	cst_graph_ = ConstraintGraphOP( new ConstraintGraph() );
-	cst_graph_->set_num_nodes( pose.total_residue() );
+	cst_graph_->set_num_nodes( pose.size() );
 
 	constraint_set_ = pose.constraint_set();
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( ConstraintSet::ResiduePairConstraintsIterator
 				rpc_iter = constraint_set_->residue_pair_constraints_begin( ii ),
 				rpc_end = constraint_set_->residue_pair_constraints_end( ii );

@@ -137,9 +137,9 @@ ProteinSilentStruct_Template<T>::fill_struct(
 	fullatom( pose.is_fullatom() );
 
 	// conformation information
-	resize( pose.total_residue() );
+	resize( pose.size() );
 	static const std::string important_atom = "CA";
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const & resi = pose.residue(i);
 
 		// skip VRT atoms
@@ -170,8 +170,8 @@ ProteinSilentStruct_Template<T>::fill_struct(
 					}
 				}
 			} // if ( fullatom )
-		} // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
-	} // for ( Size i = 1; i <= pose.total_residue; ++i )
+		} // for ( unsigned int i = 1; i <= pose.size(); ++i )
+	} // for ( Size i = 1; i <= pose.size; ++i )
 	fold_tree( pose.fold_tree() );
 
 	jumps_.clear();
@@ -591,14 +591,14 @@ Real ProteinSilentStruct_Template<T>::get_debug_rmsd() {
 	// build temp_pose from coordinates
 	fill_pose( temp_pose );
 
-	for ( Size i = 1; i <= temp_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= temp_pose.size(); ++i ) {
 		for ( Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
 			rebuilt_coords (k,i) = temp_pose.residue(i).xyz( atom_name )[k-1];
 			original_coords(k,i) = coords_[i][k-1];
 		}
 	}
 
-	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.total_residue(), rebuilt_coords, original_coords );
+	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.size(), rebuilt_coords, original_coords );
 	return rmsd;
 }
 

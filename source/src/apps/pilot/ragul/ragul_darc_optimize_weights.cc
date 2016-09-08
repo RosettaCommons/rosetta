@@ -188,7 +188,7 @@ int main( int argc, char * argv [] ) {
     central_relax_residue_number = ObjexxFCL::int_of( resid );
   }
   int seqpos = 0;
-  for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+  for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
     if ( protein_pose.pdb_info()->number(j) == central_relax_residue_number ) {
       //seqpos_ = j;
       if (chain != ' '){
@@ -269,7 +269,7 @@ int main( int argc, char * argv [] ) {
 		pose::Pose known_ligand_pose;
 		core::import_pose::pose_from_file( known_ligand_pose, known_ligand , core::import_pose::PDB_file);
 		core::Size lig_res_num = 0;
-		for ( int j = 1, resnum = known_ligand_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = known_ligand_pose.size(); j <= resnum; ++j ) {
 			if (!known_ligand_pose.residue(j).is_protein()){
 				lig_res_num = j;
 				break;
@@ -304,7 +304,7 @@ int main( int argc, char * argv [] ) {
 	//CHEAT! Calculate CoM of Ligand, move Pocket COM to COM of input_ligand
 	if (option[ cheat ]()){
 		core::Size lig_res_num = 0;
-		for ( int j = 1, resnum = small_mol_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = small_mol_pose.size(); j <= resnum; ++j ) {
 			if (!small_mol_pose.residue(j).is_protein()){
 				lig_res_num = j;
 				break;
@@ -459,10 +459,10 @@ int main( int argc, char * argv [] ) {
   if ( bound_pose.residue( bound_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 		bound_pose.append_residue_by_jump
       ( *ResidueFactory::create_residue( bound_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-        bound_pose.total_residue()/2 );
+        bound_pose.size()/2 );
   }
 
-  Size nres = bound_pose.total_residue();
+  Size nres = bound_pose.size();
   Real const coord_sdev( option[ OptionKeys::cst_force_constant ] );
   // default is 0.5 (from idealize) -- maybe too small
   for ( Size i = 1; i<= nres; ++i ) {
@@ -499,7 +499,7 @@ int main( int argc, char * argv [] ) {
   base_packer_task->initialize_from_command_line();
   base_packer_task->or_include_current( true );
 
-  for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= bound_pose.size(); ++ii ) {
     base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
   }
 

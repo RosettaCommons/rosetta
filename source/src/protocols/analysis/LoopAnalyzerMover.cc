@@ -322,7 +322,7 @@ void LoopAnalyzerMover::find_positions( core::pose::Pose const & pose ){
 		core::Size start(it.start());
 		core::Size end(it.stop());
 		if ( !pose.residue(start).is_terminus() && start != 1 ) --start;
-		if ( !pose.residue(end).is_terminus() && end != pose.total_residue() ) ++end;
+		if ( !pose.residue(end).is_terminus() && end != pose.size() ) ++end;
 		for ( core::Size i(start); i <= end; ++i ) positions_.push_back(i);
 	}//for all loops
 	scores_.clear();
@@ -352,10 +352,10 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 		core::pose::add_variant_type_to_pose_residue(pose, CUTPOINT_UPPER, pos+1);
 
 		//create cut in fold tree
-		core::kinematics::FoldTree ft(pose.total_residue());
+		core::kinematics::FoldTree ft(pose.size());
 		ft.clear(); //remove initial edge
 		ft.add_edge(Edge(1, pos, Edge::PEPTIDE));
-		ft.add_edge(Edge(pos+1, pose.total_residue(), Edge::PEPTIDE));
+		ft.add_edge(Edge(pos+1, pose.size(), Edge::PEPTIDE));
 		ft.add_edge(Edge(pos, pos+1, 1)); //a jump and therefore a cut
 		ft.reorder(1);
 		pose.fold_tree(ft);
@@ -369,7 +369,7 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 	}
 
 	//revert to innocuous fold tree
-	pose.fold_tree(core::kinematics::FoldTree(pose.total_residue()));
+	pose.fold_tree(core::kinematics::FoldTree(pose.size()));
 
 	return;
 }//calculate_all_chainbreaks

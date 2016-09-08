@@ -114,7 +114,7 @@ ExtendedPoseBuilder::create_template_pose( StructureData const & sd, SegmentName
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Newpose: " << std::endl;
-		for ( core::Size r=1; r<=newpose->total_residue(); ++r ) {
+		for ( core::Size r=1; r<=newpose->size(); ++r ) {
 			TR.Debug << newpose->residue(r).name() << " " << r << std::endl;
 		}
 	}
@@ -127,7 +127,7 @@ add_terminus_variants( core::pose::Pose & pose, ExtendedPoseBuilder::Resids cons
 	core::pose::add_lower_terminus_type_to_pose_residue( pose, 1 );
 	for ( ExtendedPoseBuilder::Resids::const_iterator r=endings.begin(); r!=endings.end(); ++r ) {
 		core::pose::add_upper_terminus_type_to_pose_residue( pose, *r );
-		if ( *r + 1 <= pose.total_residue() ) {
+		if ( *r + 1 <= pose.size() ) {
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, *r+1 );
 		}
 	}
@@ -197,15 +197,15 @@ ExtendedPoseBuilder::extend_pose(
 		if ( prev_template != template_segments.end() ) {
 			append_new_residues( pose,
 				extend_size,
-				pose.total_residue(),
-				pose.total_residue()-sd.segment( *prev_template ).elem_length()+1,
+				pose.size(),
+				pose.size()-sd.segment( *prev_template ).elem_length()+1,
 				"VAL",
 				sd.segment( *prev_template ).upper_dihedrals() );
 		} else {
 			append_new_residues( pose,
 				extend_size,
-				pose.total_residue(),
-				pose.total_residue() - 1,
+				pose.size(),
+				pose.size() - 1,
 				"VAL",
 				ResidueDihedrals() );
 		}
@@ -232,7 +232,7 @@ ExtendedPoseBuilder::calc_chain_endings( StructureData const & sd ) const
 core::conformation::ResidueOP
 rsd_op( core::pose::Pose const & pose, std::string const & res_type )
 {
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		return core::conformation::ResidueFactory::create_residue(
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" )->name_map( res_type )
 		);
@@ -249,13 +249,13 @@ append_new_chain_from_template_segment(
 	debug_assert( segment.template_pose() );
 	core::conformation::ResidueOP dflt_rsd = rsd_op( pose, "VAL" );
 
-	core::Size const chain_start = pose.total_residue() + 1;
+	core::Size const chain_start = pose.size() + 1;
 
-	TR.Debug << "Appending " << segment.template_pose()->total_residue() << " template residues as new chain" << std::endl;
-	if ( pose.total_residue() == 0 ) {
+	TR.Debug << "Appending " << segment.template_pose()->size() << " template residues as new chain" << std::endl;
+	if ( pose.size() == 0 ) {
 		pose = *segment.template_pose();
 	} else {
-		pose.conformation().insert_conformation_by_jump( segment.template_pose()->conformation(), pose.total_residue()+1, pose.num_jump()+1, 1 );
+		pose.conformation().insert_conformation_by_jump( segment.template_pose()->conformation(), pose.size()+1, pose.num_jump()+1, 1 );
 	}
 
 	// add padding residues
@@ -270,20 +270,20 @@ append_new_chain_from_template_segment(
 	}
 
 	for ( core::Size resid=1; resid<=segment.upper_padding(); ++resid ) {
-		TR.Debug << "Appending residue after " << pose.total_residue() << std::endl;
+		TR.Debug << "Appending residue after " << pose.size() << std::endl;
 		if ( segment.has_upper_residue() ) {
-			pose.append_polymer_residue_after_seqpos( segment.upper_residue(), pose.total_residue(), false );
+			pose.append_polymer_residue_after_seqpos( segment.upper_residue(), pose.size(), false );
 		} else {
-			pose.append_polymer_residue_after_seqpos( *dflt_rsd, pose.total_residue(), true );
+			pose.append_polymer_residue_after_seqpos( *dflt_rsd, pose.size(), true );
 		}
-		segment.upper_dihedrals().set_in_pose( pose, pose.total_residue() - 1 );
+		segment.upper_dihedrals().set_in_pose( pose, pose.size() - 1 );
 	}
 
 	core::pose::add_lower_terminus_type_to_pose_residue( pose, chain_start );
-	core::pose::add_upper_terminus_type_to_pose_residue( pose, pose.total_residue() );
+	core::pose::add_upper_terminus_type_to_pose_residue( pose, pose.size() );
 	if ( segment.upper_padding() ) {
-		TR.Debug << "Setting upper_psi " << pose.total_residue() << " to " << segment.upper_dihedrals().upper_psi() << std::endl;
-		pose.set_psi( pose.total_residue(), segment.upper_dihedrals().upper_psi() );
+		TR.Debug << "Setting upper_psi " << pose.size() << " to " << segment.upper_dihedrals().upper_psi() << std::endl;
+		pose.set_psi( pose.size(), segment.upper_dihedrals().upper_psi() );
 	}
 }
 
@@ -294,11 +294,11 @@ append_residues_from_template_segment(
 	Segment const & segment )
 {
 	debug_assert( segment.template_pose() );
-	TR.Debug << "Appending " << segment.template_pose()->total_residue() << " template residues into current chain" << std::endl;;
-	core::Size const insert_pos = pose.total_residue();
+	TR.Debug << "Appending " << segment.template_pose()->size() << " template residues into current chain" << std::endl;;
+	core::Size const insert_pos = pose.size();
 	core::conformation::ResidueOP dflt_rsd = rsd_op( pose, "VAL" );
 
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		pose = *segment.template_pose();
 	} else {
 		if ( segment.lower_segment().empty() ) {
@@ -314,7 +314,7 @@ append_residues_from_template_segment(
 		}
 
 		core::Size pose_resid = insert_pos;
-		for ( core::Size template_resid=1; template_resid<=segment.template_pose()->total_residue(); ++template_resid ) {
+		for ( core::Size template_resid=1; template_resid<=segment.template_pose()->size(); ++template_resid ) {
 			pose.append_polymer_residue_after_seqpos( segment.template_pose()->residue( template_resid ), pose_resid, false );
 			++pose_resid;
 		}
@@ -383,7 +383,7 @@ prepend_new_residues(
 	core::conformation::ResidueOP rsd = rsd_op( pose, type );
 
 	// account for case of empty pose
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		pose.append_residue_by_jump( *rsd, 1 );
 		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
 		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, 1 );
@@ -436,7 +436,7 @@ append_new_residues(
 	core::conformation::ResidueOP rsd = rsd_op( pose, type );
 
 	// account for case of empty pose
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		pose.append_residue_by_jump( *rsd, 1 );
 		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
 		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, 1 );

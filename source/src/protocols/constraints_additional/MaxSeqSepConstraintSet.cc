@@ -225,7 +225,7 @@ MaxSeqSepConstraintSet::too_far( int const pos1, int const pos2 ) const {
 Size
 MaxSeqSepConstraintSet::largest_possible_sequence_sep( core::pose::Pose const& pose ) const {
 	if ( shortest_path_ ) return shortest_path_->max_dist();
-	return pose.total_residue();
+	return pose.size();
 }
 
 /// Does *NOT* zero the emap values, just adds the additional contribution to the

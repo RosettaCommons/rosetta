@@ -99,8 +99,8 @@ public:
 		Mover("SpartaSuperDev"),
 		dump_pdbs_    ( true ),
 		native_pose_  ( native_pose ),
-		deviations_   ( native_pose.total_residue(), vector1< Real >() ),
-		sparta_scores_( native_pose.total_residue(), vector1< Real >() ),
+		deviations_   ( native_pose.size(), vector1< Real >() ),
+		sparta_scores_( native_pose.size(), vector1< Real >() ),
 		sparta_       ( cs_file )
 	{}
 
@@ -139,7 +139,7 @@ public:
 			core::id::AtomID_Map< Real > bfactors;
 			core::pose::initialize_atomid_map( bfactors, pose, 0.0 );
 
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				Real distance = native_pose_.residue(ii).xyz(atom_name).distance(
 					pose.residue(ii).xyz( atom_name )
 				);
@@ -160,7 +160,7 @@ public:
 			vector1< float > scores( sparta_.score_pose_per_residue(pose) );
 			core::pose::initialize_atomid_map( bfactors, pose, 0.0 );
 
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				float const score( scores[ii] );
 				sparta_scores_[ii].push_back(score);
 				for ( Size jj = 1, natoms = pose.residue_type(ii).natoms(); jj <= natoms; ++jj ) {
@@ -197,7 +197,7 @@ public:
 		utility::io::ozstream data_output( tag + ".stats.txt" );
 		//data_output << "resi deviation tag" << std::endl;
 		data_output << "tag";
-		for ( Size jj = 1; jj <= native_pose_.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= native_pose_.size(); ++jj ) {
 			std::string const col_name( "res_" + string_of(jj) );
 			data_output << " " << col_name;
 		}
@@ -239,7 +239,7 @@ public:
 			vector1< float > scores( sparta_.score_pose_per_residue(native_pose_) );
 			core::pose::initialize_atomid_map( bfactors, native_pose_, 0.0 );
 
-			for ( Size ii = 1; ii <= native_pose_.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= native_pose_.size(); ++ii ) {
 				float const score( scores[ii] );
 				sparta_scores_[ii].push_back(score);
 				for ( Size jj = 1, natoms = native_pose_.residue_type(ii).natoms(); jj <= natoms; ++jj ) {

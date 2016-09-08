@@ -160,7 +160,7 @@ HolesEnergy::eval_atom_derivative(
 	CacheableAtomID_MapVectorCOP cachemap = utility::pointer::dynamic_pointer_cast<CacheableAtomID_MapVector const>( dat );
 	AtomID_Map<xyzVector<Real> > const & derivs(cachemap->map());
 
-	if ( aid.rsd() > derivs.n_residue() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {
+	if ( aid.rsd() > derivs.size() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {
 		return;
 	}
 

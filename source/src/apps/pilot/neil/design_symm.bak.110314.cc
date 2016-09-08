@@ -163,7 +163,7 @@ design(core::pose::Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> desig
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 	// Set which residues can be designed
-	for (Size i=1; i<=pose.n_residue(); i++) {
+	for (Size i=1; i<=pose.size(); i++) {
 		if (!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if (pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
@@ -214,19 +214,19 @@ minimize(core::pose::Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> des
 
 utility::vector1<Real> sidechain_sasa(core::pose::Pose const & pose, Real probe_radius) {
 	using core::id::AtomID;
-	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
+	utility::vector1<Real> rsd_sasa(pose.size(),0.0);
 	core::id::AtomID_Map<Real> atom_sasa;
 	core::id::AtomID_Map<bool> atom_mask;
 	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
 	core::pose::initialize_atomid_map(atom_mask,pose,false);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
+	for(Size i = 1; i <= pose.size(); i++) {
 		for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
 			atom_mask[AtomID(j,i)] = true;
 		}
 	}
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
-	utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
+	utility::vector1<Real> sc_sasa(pose.size(),0.0);
+	for(Size i = 1; i <= pose.size(); i++) {
 		// Use CA as the side chain for Glys
 		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
 		for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
@@ -329,7 +329,7 @@ void
 		utility::vector1<Real> sc_sasa = sidechain_sasa(mono,2.5);
 		core::id::AtomID_Map<Real> bfac;
 		core::pose::initialize_atomid_map(bfac,mono);
-		for(Size i = 1; i <= mono.n_residue(); i++) {
+		for(Size i = 1; i <= mono.size(); i++) {
 			for(Size j = 1; j <= bfac.n_atom(i); j++) {
 				bfac[AtomID(j,i)] = sc_sasa[i];
 			}

@@ -86,7 +86,7 @@ public:
 		(*scorefxn)( pose );
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 		task->initialize_from_command_line();

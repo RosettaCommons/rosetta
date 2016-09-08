@@ -114,7 +114,7 @@ get_gap_size(
 	core::Size pos_lower = std::min( pos1, pos2 );
 	core::Size pos_upper = std::max( pos1, pos2 );
 
-	return pos_upper - ( pos_lower + pose_lower.n_residue() - 1 ); // gap_size
+	return pos_upper - ( pos_lower + pose_lower.size() - 1 ); // gap_size
 }
 
 

@@ -113,7 +113,7 @@ GridSearchIteratorCA::set_vec(utility::vector1<core::Real> & x_vec,
 GridSearchIteratorCA::GridSearchIteratorCA(core::pose::Pose const & pose)
 {
 	core::Size i;
-	core::Size n_res(pose.total_residue());
+	core::Size n_res(pose.size());
 
 	res_num_cur_ = 1;
 

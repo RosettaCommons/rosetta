@@ -232,9 +232,9 @@ std::string RotamerDumpMover::get_annealer_pick_table(core::pack::interaction_gr
 	std::string data = "";
 	core::Size elements = 0;
 
-	ObjexxFCL::FArray1D_int current_rot_index(pose.total_residue(),0);
+	ObjexxFCL::FArray1D_int current_rot_index(pose.size(),0);
 	ObjexxFCL::FArray1D<float> rot_freq(ig->get_num_total_states(),0.0);
-	ObjexxFCL::FArray1D_int bestrotamer_at_seqpos(pose.total_residue());
+	ObjexxFCL::FArray1D_int bestrotamer_at_seqpos(pose.size());
 	utility::vector0<int> rot_to_pack;
 	float bestenergy = 0;
 

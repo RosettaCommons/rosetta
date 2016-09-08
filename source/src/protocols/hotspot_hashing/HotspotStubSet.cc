@@ -392,7 +392,7 @@ HotspotStubSetOP HotspotStubSet::subset( std::string const & residue_name3, core
 		Size i = 1;
 		for ( Hotspots::const_iterator stub_iter = all_stubs.begin(); stub_iter != all_stubs.end() ; ++stub_iter ) {
 			if ( i <= n_return ) {
-				//core::pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", pose.total_residue() );
+				//core::pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", pose.size() );
 				new_set->add_stub_( stub_iter->second );
 				++i;
 			} else break;
@@ -595,7 +595,7 @@ void HotspotStubSet::read_data( std::string const & filename ) {
 		//{
 		// make a stub from the last residue on the pose (which should only have one residue) and add it to the set
 		//using namespace core::chemical;
-		core::conformation::ResidueCOP residue( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( pose.total_residue() ) ) ) );
+		core::conformation::ResidueCOP residue( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( pose.size() ) ) ) );
 		HotspotStubCOP stub( HotspotStubOP( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
 		add_stub_( stub );
 		//}
@@ -659,7 +659,7 @@ void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::Sco
 
 void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const target, core::Real const distance, Size const n_stubs )
 {
-	if ( ( target <= pose.total_residue() ) &&  ( distance > 0 ) ) {
+	if ( ( target <= pose.size() ) &&  ( distance > 0 ) ) {
 		target_resnum_ = target;
 		target_distance_ = distance;
 
@@ -675,7 +675,7 @@ void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::Sco
 // convenience fillers
 void HotspotStubSet::fill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const & residue_name3, Size const n_stubs )
 {
-	if ( ( target <= pose.total_residue() ) &&  ( distance > 0 ) ) {
+	if ( ( target <= pose.size() ) &&  ( distance > 0 ) ) {
 		target_resnum_ = target;
 		target_distance_ = distance;
 
@@ -731,7 +731,7 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 			TR.Debug << "Hotspot fold tree: " << pose.fold_tree() << std::endl;
 
 			// placed_seqpos = position of the hotspot residue of peptide
-			Size const placed_seqpos = pose.total_residue() - stub_offset(); //(hotspot_length()/2.0 == 0.0) ? pose.total_residue() - (hotspot_length()/2) + 1 : pose.total_residue() - (hotspot_length()/2);
+			Size const placed_seqpos = pose.size() - stub_offset(); //(hotspot_length()/2.0 == 0.0) ? pose.size() - (hotspot_length()/2) + 1 : pose.size() - (hotspot_length()/2);
 			Size const jump_number = pose.num_jump();
 			core::kinematics::FoldTree old_tree = pose.fold_tree(); // need the old tree to reset after docking
 			core::pose::PoseOP nonconstpose( new core::pose::Pose( pose ) ); // dummy for making stubs and as a pseudo-native for docking
@@ -849,12 +849,12 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 			conformation::ResidueCOP residue = stub_it.second->residue();
 
 			// append the residue
-			working_pose.append_residue_by_jump( *residue, working_pose.total_residue(), "", "", true );
-			Size const placed_seqpos = working_pose.total_residue();
+			working_pose.append_residue_by_jump( *residue, working_pose.size(), "", "", true );
+			Size const placed_seqpos = working_pose.size();
 
 			// option to use make backbone invisible
 			if ( new_set->sc_only() ) {
-				core::pose::add_variant_type_to_pose_residue( working_pose, core::chemical::SHOVE_BB, pose.total_residue() );
+				core::pose::add_variant_type_to_pose_residue( working_pose, core::chemical::SHOVE_BB, pose.size() );
 			}
 			core::Real const score = get_residue_score_( working_pose, scorefxn, placed_seqpos );
 			TR << stub_it.first << " " << score << "\n";
@@ -1035,15 +1035,15 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 		// add multimer and set extended chain parameters, eg - ala-Hotspot-ala-ala
 		// place hotspot in middle of peptide
 		if ( i == 1 ) {
-			if ( hotspot_length() == 1 ) pose.append_residue_by_jump( *residue, pose.total_residue(), "", "", true );
-			else pose.append_residue_by_jump( *ala, pose.total_residue(), "", "", true );
+			if ( hotspot_length() == 1 ) pose.append_residue_by_jump( *residue, pose.size(), "", "", true );
+			else pose.append_residue_by_jump( *ala, pose.size(), "", "", true );
 		} else if ( i == (hotspot_length()/2) + 1 ) { // middle of the peptide
 			pose.append_residue_by_bond( *residue, true /*ideal geometry*/ );
 		} else {
 			pose.append_residue_by_bond( *ala, true );
 		}
 	}
-	for ( core::Size i = pose.total_residue() - hotspot_length() + 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = pose.size() - hotspot_length() + 1; i <= pose.size(); ++i ) {
 		TR.Debug << "i phi/psi/omega " << i << " " << pose.phi(i) << " " << pose.psi(i) << " " << pose.omega(i) << std::endl;
 		pose.set_phi( i, -64.0 ); // phi/psi for helix
 		pose.set_psi( i, -41.0 );
@@ -1052,7 +1052,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 	}
 	// option to use make backbone invisible (defaults true), overridden by threemer
 	if ( sc_only_ ) {
-		for ( core::Size i = pose.total_residue() - hotspot_length() + 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = pose.size() - hotspot_length() + 1; i <= pose.size(); ++i ) {
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SHOVE_BB, i );
 		}
 	}
@@ -1066,14 +1066,14 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 
 	//(*scorefxn)(pose);
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( pose );
-	for ( Size ii=1; ii <= pose.total_residue() - hotspot_length(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size() - hotspot_length(); ++ii ) {
 		packer_task->nonconst_residue_task( ii ).prevent_repacking();
 	}
 	//make sure our appended aa has the correct identity and has realistic coordinates
 	utility::vector1<bool> restrict_to_aa(20,false);
 	restrict_to_aa[ core::chemical::aa_from_name(resname) ] = true;
 
-	for ( core::Size i = pose.total_residue()-hotspot_length()+1 ; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = pose.size()-hotspot_length()+1 ; i <= pose.size(); ++i ) {
 		packer_task->nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
 	}
 
@@ -1086,7 +1086,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 /// @brief set up foldtree for residue docking. If target_res is defined, takes that as connection point.
 /// Assumes hotspot to dock is last res in the pose! Assumes monomeric fold_tree!
 void HotspotStubSet::setup_hotspot_foldtree_( core::pose::Pose & pose ) {
-	core::Size cutpoint = pose.total_residue()-hotspot_length();
+	core::Size cutpoint = pose.size()-hotspot_length();
 	runtime_assert( cutpoint );
 
 	core::Size jump_pos1(0);
@@ -1099,7 +1099,7 @@ void HotspotStubSet::setup_hotspot_foldtree_( core::pose::Pose & pose ) {
 	} else jump_pos1 = core::pose::residue_center_of_mass( pose, 1, cutpoint );
 	TR.Debug << "jump1: " << jump_pos1 << std::endl;
 	// hotspot created stub_offset from the end of the pose
-	jump_pos2 = pose.total_residue() - stub_offset();
+	jump_pos2 = pose.size() - stub_offset();
 	TR.Debug << "jump2: " << jump_pos2 << std::endl;
 
 	runtime_assert( jump_pos1 );
@@ -1138,11 +1138,11 @@ core::Real HotspotStubSet::get_residue_score_ ( core::pose::Pose const & pose, c
 	core::pose::Pose copy_pose( pose );
 
 	// extract hotspot res from peptide, remove peptide from pose, re-append hotspot res, then score
-	core::Size const hotspot_start = (hotspot_length() == 1) ? pose.total_residue() : pose.total_residue() - hotspot_length() + 1;
-	core::Size const hotspot_stop = pose.total_residue();
+	core::Size const hotspot_start = (hotspot_length() == 1) ? pose.size() : pose.size() - hotspot_length() + 1;
+	core::Size const hotspot_stop = pose.size();
 	core::conformation::ResidueOP hotspot( new core::conformation::Residue( copy_pose.residue( seqpos ) ) );
 	copy_pose.conformation().delete_residue_range_slow( hotspot_start, hotspot_stop );
-	copy_pose.append_residue_by_jump( *hotspot, copy_pose.total_residue(), "","", true );
+	copy_pose.append_residue_by_jump( *hotspot, copy_pose.size(), "","", true );
 	(*scorefxn)(copy_pose); // necessary ro get neighbors for the Interface class, which is needed by DdgFilter
 	core::Real const score = ddg.compute( copy_pose );
 
@@ -1164,7 +1164,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 
 	// Assign a fixed residue (for the stub constraints)
 	core::Size fixed_res(1);
-	if ( partner == 1 ) fixed_res = pose.total_residue();
+	if ( partner == 1 ) fixed_res = pose.size();
 	core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 
 	core::pack::task::PackerTaskOP packer_task = prepare_hashing_packer_task_( pose, partner );
@@ -1197,7 +1197,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 
 	// Assign a fixed residue (for the stub constraints)
 	core::Size fixed_res(1);
-	if ( partner == 1 ) fixed_res = pose.total_residue();
+	if ( partner == 1 ) fixed_res = pose.size();
 	core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 
 	core::pack::task::PackerTaskOP packer_task = prepare_hashing_packer_task_( pose, partner );
@@ -1273,7 +1273,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 	allowed_aas[ core::chemical::aa_ala ] = true;
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().or_include_current( true );
-	for ( core::Size i=1; i<=ala_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=ala_pose.size(); ++i ) {
 		if ( packer_task->pack_residue(i) ) {
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
 		} else {
@@ -1292,7 +1292,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 	// *****hotspot_stub_set->pair_with_scaffold( pose, partner );
 
 	protocols::filters::FilterCOP true_filter( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) );
-	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
+	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 		if ( packer_task->pack_residue(resnum) ) {
 			hotspot_stub_set->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
 			break;
@@ -1300,9 +1300,9 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 	}
 
 	TR << "Making hotspot constraints..." << std::endl;
-	//TR << pose.total_residue() << " residues" << std::endl;
+	//TR << pose.size() << " residues" << std::endl;
 	//Size scaffold_seqpos(0);  // unused ~Labonte
-	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
+	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
 		if ( ! packer_task->pack_residue(resnum) ) continue;
@@ -1446,7 +1446,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	allowed_aas[ core::chemical::aa_ala ] = true;
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().or_include_current( true );
-	for ( core::Size i=1; i<=ala_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=ala_pose.size(); ++i ) {
 		if ( packer_task->pack_residue(i) ) {
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
 		} else {
@@ -1465,7 +1465,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	// *****hotspot_stub_set->pair_with_scaffold( pose, partner );
 
 	protocols::filters::FilterCOP true_filter( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) );
-	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
+	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 		if ( packer_task->pack_residue(resnum) ) {
 			hotspot_stub_set->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
 			break;
@@ -1473,10 +1473,10 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	}
 
 	TR << "Making hotspot constraints..." << std::endl;
-	//TR<< pose.total_residue() << " residues" << std::endl;
+	//TR<< pose.size() << " residues" << std::endl;
 	utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
 	//Size scaffold_seqpos(0);
-	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
+	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
 		if ( ! packer_task->pack_residue(resnum) ) continue;
@@ -1670,7 +1670,7 @@ HotspotStubSet::prepare_hashing_packer_task_(
 	core::scoring::calc_per_atom_sasa( unbound_pose, atom_sasa, residue_sasa, probe_radius);
 
 	// Specify which chain is the designed one
-	utility::vector1<bool> allow_stub_constraint( pose.total_residue(), false );
+	utility::vector1<bool> allow_stub_constraint( pose.size(), false );
 	for ( int ii = pose.conformation().chain_begin( chain_to_redesign ),
 			lastres = pose.conformation().chain_end( chain_to_redesign ); ii <= lastres; ++ii ) {
 		// don't allow residues that are currently Gly or Pro to land on stubs
@@ -1735,10 +1735,10 @@ residue_sc_rmsd_no_super( core::conformation::ResidueCOP res1, core::conformatio
 /// algorithm: get vector between CA and target center of mass, then CA-CB vector. Check alignment between the two.
 /// doesn't take into account hotspots at the end of the pose so might be a little off in CoM. But probably pretty OK
 core::Real stub_tgt_angle( core::pose::Pose const & pose, core::conformation::ResidueCOP stub, core::Size const target_res ) {
-	runtime_assert( target_res <= pose.total_residue() );
+	runtime_assert( target_res <= pose.size() );
 	core::Size angle_res = target_res;
 	if ( angle_res == 0 ) {
-		angle_res = core::pose::residue_center_of_mass( pose, 1, int(pose.total_residue() ) );
+		angle_res = core::pose::residue_center_of_mass( pose, 1, int(pose.size() ) );
 	}
 
 	core::Size const CA_stub_index = stub->atom_index("CA");
@@ -1757,7 +1757,7 @@ core::Real stub_tgt_angle( core::pose::Pose const & pose, core::conformation::Re
 
 /*
 core::scoring::constraints::AngleConstraintOP make_angle_cst( core::pose::Pose const & pose, core::conformation::ResidueCOP stub ) {
-core::Size const CoM = core::pose::residue_center_of_mass( pose, 1, int(pose.total_residue()) );
+core::Size const CoM = core::pose::residue_center_of_mass( pose, 1, int(pose.size()) );
 core::Size const CA_stub_index = stub->atom_index("CA");
 core::Size const CB_stub_index = stub->atom_index("CB");
 core::Size const CA_CoM_index = pose.residue( CoM ).atom_index("CA");

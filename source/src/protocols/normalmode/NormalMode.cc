@@ -196,7 +196,7 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 
 	// Default - assign full residue list when the list is not specified
 	if ( !torsions_using_assigned_ ) {
-		for ( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+		for ( Size ires = 1; ires <= pose.size(); ++ires ) {
 			torsions_using_.push_back( ires );
 		}
 	}
@@ -312,7 +312,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 	dssp.insert_ss_into_pose( pose_tmp );
 
 	// Store consecutive secondary structure number
-	utility::vector1< Size > SSno( pose.total_residue(), 0 );
+	utility::vector1< Size > SSno( pose.size(), 0 );
 	std::map< Size, Size > Hbond_map;
 	Real const Hbond_d2( 3.5*3.5 );
 
@@ -320,7 +320,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 
 		Size i_ss( 0 );
 		char prvSS = 'X';
-		for ( Size ires = 1; ires <= pose_tmp.total_residue(); ++ires ) {
+		for ( Size ires = 1; ires <= pose_tmp.size(); ++ires ) {
 			if ( !pose_tmp.residue( ires ).is_protein() || !pose_tmp.residue( ires ).has( " CA " ) ) continue;
 
 			char const &SS_i = pose_tmp.secstruct( ires );
@@ -339,7 +339,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 			// For Hbond pair
 			Hbond_map[ires] = 0; // placeholder
 			Real mind2( 100.0 );
-			for ( Size jres = 1; jres <= pose_tmp.total_residue(); ++jres ) {
+			for ( Size jres = 1; jres <= pose_tmp.size(); ++jres ) {
 				char const &SS_j = pose_tmp.secstruct( jres );
 
 				if ( std::abs(int(ires - jres)) < 3. || SS_j == 'L' ) continue;

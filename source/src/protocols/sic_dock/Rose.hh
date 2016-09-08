@@ -88,9 +88,9 @@ public:
 
 	inline XC res_anchor(Size const & ir) const { return x*X( p->xyz(AID(1,ir)), p->xyz(AID(2,ir)), p->xyz(AID(3,ir)) ); }
 	inline XC   n_anchor() const { return res_anchor(      1       ); }
-	inline XC   c_anchor() const { return res_anchor(p->n_residue()); }
+	inline XC   c_anchor() const { return res_anchor(p->size()); }
 	inline void align_n(XCR a){ x = a * ~X( p->xyz(AID(1,       1      )), p->xyz(AID(2,       1      )), p->xyz(AID(3,       1      )) ); }
-	inline void align_c(XCR a){ x = a * ~X( p->xyz(AID(1,p->n_residue())), p->xyz(AID(2,p->n_residue())), p->xyz(AID(3,p->n_residue())) ); }
+	inline void align_c(XCR a){ x = a * ~X( p->xyz(AID(1,p->size())), p->xyz(AID(2,p->size())), p->xyz(AID(3,p->size())) ); }
 
 	void dump_pdb(std::ostream      & out  ) const;
 	void dump_pdb(std::string const & fname) const;

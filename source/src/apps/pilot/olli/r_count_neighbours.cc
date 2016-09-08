@@ -199,7 +199,7 @@ void EnvToolMover::apply( core::pose::Pose &pose ) {
   scfxn( pose );
 
   pose.update_residue_neighbors();
-  Size const nres( pose.total_residue() );
+  Size const nres( pose.size() );
   utility::vector1< Real > residue_N;
 
   // iterate over all the residues in the protein and count their neighbours

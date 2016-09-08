@@ -131,7 +131,7 @@ public:
 
 		UT << "Testing for fully connected atoms..." << std::endl;
 
-		for ( Size i = 1; i <= the_pose->total_residue(); ++i ) {
+		for ( Size i = 1; i <= the_pose->size(); ++i ) {
 			for ( Size j = 1; j <= the_pose->residue(i).natoms(); ++j ) {
 				TS_ASSERT(!the_pose->residue(i).has_incomplete_connection(j));
 				Size const neighbor_count(the_pose->residue(i).n_bonded_neighbor_all_res(j));
@@ -217,7 +217,7 @@ public:
 		// check that the atoms did not move by more than 0.01 angstroms
 		// This seems to fail for planar atoms at the end of residues
 		/*
-		for (Size i = 1; i <= pose_ideal->total_residue(); ++i) {
+		for (Size i = 1; i <= pose_ideal->size(); ++i) {
 		for (Size j = 1; j <= pose_ideal->residue(i).natoms(); ++j) {
 		Real atom_distance(pose_ideal->xyz(id::AtomID(j, i)).distance(pose_ideal_optimized->xyz(id::AtomID(j, i))));
 		std::cout << i << "\t" << j << "\t" << pose_ideal->residue(i).name() << "\t" << pose_ideal->residue(i).atom_name(j) << "\t" << atom_distance << std::endl;

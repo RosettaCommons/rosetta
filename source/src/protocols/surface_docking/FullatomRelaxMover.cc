@@ -122,8 +122,8 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 	Size const first_protein_residue = pose.num_jump() + 1;
 
 	move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
-	move_map_->set_bb_true_range(first_protein_residue , pose.total_residue());
-	move_map_->set_chi_true_range( first_protein_residue , pose.total_residue() );
+	move_map_->set_bb_true_range(first_protein_residue , pose.size());
+	move_map_->set_chi_true_range( first_protein_residue , pose.size() );
 	move_map_->set_jump(pose.num_jump(),false);
 
 	Real tolerance=0.001;
@@ -357,7 +357,7 @@ void FullatomRelaxMover::calc_secondary_struct(core::pose::Pose & pose){
 	singlechain_poses = pose_tmp.split_by_chain();
 	core::scoring::dssp::Dssp dssp( *singlechain_poses[2] );
 	Size const last_surface_residue( pose.num_jump());
-	for ( Size ii = 1; ii <= singlechain_poses[2]->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= singlechain_poses[2]->size(); ++ii ) {
 		if ( dssp.get_dssp_secstruct(ii) == ' ' ) {
 			pose.set_secstruct(last_surface_residue + ii, 'L');
 

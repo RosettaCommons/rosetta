@@ -101,11 +101,11 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
-	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+	utility::vector1< bool> sc_is_flexible( pose.size(), false );
 	select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), true/*include_neighbors*/, sc_is_flexible);
 
-	ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	ObjexxFCL::FArray1D_bool loop_residues( pose.size(), false );
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		loop_residues(i) = sc_is_flexible[i];
 	} // check mapping
 
@@ -137,7 +137,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	loops::add_cutpoint_variants( pose ); // add back, based on the cutpoints defined by fold_tree
 
 	/*
-	for (Size i=1; i<=pose.total_residue();i++) {
+	for (Size i=1; i<=pose.size();i++) {
 	if (pose.residue(i).type().variant_types().size()>0){
 	TR<<"residue "<<i<<"    "<< pose.residue(i).type().variant_types()[1]<<std::endl;
 	}

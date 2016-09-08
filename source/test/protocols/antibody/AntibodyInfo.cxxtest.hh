@@ -215,7 +215,7 @@ void test_info_functions(){
 	}
 	//Test correct identification of framework regions
 	assert(ab_info_north_aho->antigen_present() == false);
-	for ( core::Size i = 1; i <= ab_pose_aho.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= ab_pose_aho.size(); ++i ) {
 		if ( ab_info_north_aho->get_region_of_residue( ab_pose_aho, i ) != cdr_region ) {
 			TS_ASSERT_EQUALS( framework_region, ab_info_north_aho->get_region_of_residue( ab_pose_aho, i ) );
 		}

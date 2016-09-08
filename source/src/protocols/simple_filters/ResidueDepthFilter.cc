@@ -109,7 +109,7 @@ ResidueDepthCalculator::initialize( core::pose::Pose const &pose )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	nres_ = pose.total_residue();
+	nres_ = pose.size();
 	niter_ = 25; // # independent runs
 	//niter_ = 1; // # independent runs
 	sc_depth_avrg_.resize( nres_, 0.0 );
@@ -147,7 +147,7 @@ ResidueDepthCalculator::read_unit_waterbox( Vector &boxwidth ) const
 
 	boxwidth[0] = 18.621; boxwidth[1] = 18.621; boxwidth[2] = 18.621;
 
-	for ( core::Size iwat = 1; iwat <= unit_waterbox_pose.total_residue(); ++iwat ) {
+	for ( core::Size iwat = 1; iwat <= unit_waterbox_pose.size(); ++iwat ) {
 		if ( unit_waterbox_pose.residue(iwat).is_virtual_residue() ||
 				unit_waterbox_pose.residue(iwat).aa() != core::chemical::aa_h2o ) continue;
 		unit_waterbox_crd.push_back( unit_waterbox_pose.residue(iwat).xyz(" O  ") );
@@ -863,10 +863,10 @@ ResidueDepthFilter::get_SDE_score( core::pose::Pose const &pose )
 utility::vector1< core::Size >
 ResidueDepthFilter::get_n8( core::pose::Pose const &pose ) const
 {
-	utility::vector1< core::Size > n_neigh( pose.total_residue(), 0 );
+	utility::vector1< core::Size > n_neigh( pose.size(), 0 );
 
 	// use centroid
-	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( pose.residue(ires).is_virtual_residue() ) continue;
 
 		utility::vector1< ResidueDepthDataCOP > context_rdds = make_context( pose, ires );
@@ -1181,7 +1181,7 @@ ResidueDepthFilter::make_context( core::pose::Pose const &pose,
 	Vector const iCENcrd = pose.residue(ires).xyz( " CEN" );
 
 	// use CEN to be consistent with other data
-	for ( core::Size jres = 1; jres <= pose.total_residue(); ++jres ) {
+	for ( core::Size jres = 1; jres <= pose.size(); ++jres ) {
 		if ( ires == jres ) continue;
 		if ( pose.residue( jres ).is_virtual_residue() ) continue;
 
@@ -1245,7 +1245,7 @@ ResidueDepthFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 
 
-	evalres_ = utility::vector1< bool >( pose.total_residue(), false );
+	evalres_ = utility::vector1< bool >( pose.size(), false );
 
 	if ( tag->hasOption("evalres") ) {
 		utility::vector1< std::string> evalres_str

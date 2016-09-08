@@ -113,7 +113,7 @@ RDAT::fill_header_information( pose::Pose & pose ) {
 	int prev_resnum( 0 );
 	bool found_rna( false );
 	sequence_ = "";
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		core::conformation::Residue const & rsd = pose.residue( i );
 		if ( !rsd.is_RNA() ) continue;
 		int resnum = pose.pdb_info()->number(i);

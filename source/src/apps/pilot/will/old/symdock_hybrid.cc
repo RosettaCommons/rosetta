@@ -63,16 +63,16 @@ bool strip_termini(core::pose::Pose & pose) {
   core::scoring::dssp::Dssp dssp(pose);
   dssp.insert_ss_into_pose(pose);
   int ROOT;
-  for(ROOT=1; ROOT <= (int)pose.n_residue(); ++ROOT) if(pose.secstruct(ROOT)!='L') break;
-  if(ROOT>=(int)pose.n_residue() || pose.n_residue() < 20) return false;
+  for(ROOT=1; ROOT <= (int)pose.size(); ++ROOT) if(pose.secstruct(ROOT)!='L') break;
+  if(ROOT>=(int)pose.size() || pose.size() < 20) return false;
   core::kinematics::FoldTree ft;
   ObjexxFCL::FArray2D<int> jp(2,1); jp(1,1) = ROOT; jp(2,1) = ROOT+1;
   ObjexxFCL::FArray1D<int> cp(1,ROOT);
-  ft.tree_from_jumps_and_cuts( (int)pose.n_residue(), (int)1, jp, cp, ROOT );
+  ft.tree_from_jumps_and_cuts( (int)pose.size(), (int)1, jp, cp, ROOT );
   pose.fold_tree(ft);
   while(pose.secstruct(       1        )=='L') pose.delete_polymer_residue(       1        );
-  while(pose.secstruct(pose.n_residue())=='L') pose.delete_polymer_residue(pose.n_residue());
-  for(Size i = 1; i <= pose.n_residue(); ++i) {
+  while(pose.secstruct(pose.size())=='L') pose.delete_polymer_residue(pose.size());
+  for(Size i = 1; i <= pose.size(); ++i) {
     if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
     if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
   }
@@ -103,7 +103,7 @@ main (int argc, char *argv[]){
     pose::Pose pose;
     import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
     if(!strip_termini(pose)) continue;
-    if(pose.n_residue() < 40) continue;
+    if(pose.size() < 40) continue;
 
     Vec trax = Vec(0,0,1);
 
@@ -117,9 +117,9 @@ main (int argc, char *argv[]){
           // get sup atom map
           Size h1, h2, p1/*, p2*/;  // p2 is unused ~Labonte
           if(nc) {
-            p1=1+of; /*p2=7+of;*/ h1=   h.n_residue()-8; h2=h.n_residue();
+            p1=1+of; /*p2=7+of;*/ h1=   h.size()-8; h2=h.size();
           } else {
-            h1=1; h2=7; p1=pose.n_residue()-8-of; /*p2=pose.n_residue()-of;*/
+            h1=1; h2=7; p1=pose.size()-8-of; /*p2=pose.size()-of;*/
           }
           for(Size i = h1; i <= h2; ++i) {
             Size pr = p1+(i-h1);

@@ -416,7 +416,7 @@ StepWiseMinimizer::figure_out_working_minimize_res( core::pose::Pose const & pos
 	FullModelInfo const & full_model_info( const_full_model_info( pose ) );
 	utility::vector1< core::Size > const working_extra_minimize_res( full_model_info.full_to_sub( full_model_info.extra_minimize_res() ) );
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).name3() == "HOH" ) continue; // allowing waters to vary in different poses (Mg hydration)
 		if ( !working_fixed_res_.has_value( n ) ||
 				working_extra_minimize_res.has_value( n ) ) {

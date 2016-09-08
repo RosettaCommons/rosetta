@@ -394,8 +394,8 @@ rmsd_with_super(
 	T* predicate
 )
 {
-	ASSERT_ONLY(core::Size const nres1 = pose1.total_residue();)
-		ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
+	ASSERT_ONLY(core::Size const nres1 = pose1.size();)
+		ASSERT_ONLY(core::Size const nres2 = pose2.size();)
 		debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;
@@ -455,7 +455,7 @@ rmsd_with_super(
 )
 {
 	std::list< core::Size > all_residues;
-	for ( core::Size n = 1; n <= pose1.total_residue(); n++ ) {
+	for ( core::Size n = 1; n <= pose1.size(); n++ ) {
 		all_residues.push_back( n );
 	}
 	return rmsd_with_super( pose1, pose2, all_residues, predicate );
@@ -484,8 +484,8 @@ rmsd_with_super_subset(
 	T* predicate
 )
 {
-	core::Size const nres1 = pose1.total_residue();
-	//core::Size const nres2 = pose2.total_residue();
+	core::Size const nres1 = pose1.size();
+	//core::Size const nres2 = pose2.size();
 	//debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;
@@ -545,8 +545,8 @@ rmsd_no_super(
 	T* predicate
 )
 {
-	core::Size const nres1 = pose1.total_residue();
-	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
+	core::Size const nres1 = pose1.size();
+	ASSERT_ONLY(core::Size const nres2 = pose2.size();)
 		debug_assert( nres1 == nres2 );
 
 	core::Real sum2( 0.0 );
@@ -629,8 +629,8 @@ rmsd_no_super_subset(
 	T* predicate
 )
 {
-	core::Size const nres1 = pose1.total_residue();
-	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
+	core::Size const nres1 = pose1.size();
+	ASSERT_ONLY(core::Size const nres2 = pose2.size();)
 		debug_assert( nres1 == nres2 );
 
 	core::Real sum2( 0.0 );
@@ -672,7 +672,7 @@ rmsd_no_super_subset(
 	T* predicate
 )
 {
-	core::Size const nres1 = pose1.total_residue();
+	core::Size const nres1 = pose1.size();
 	core::Real sum2( 0.0 );
 	core::Size natoms( 0 );
 
@@ -710,8 +710,8 @@ biggest_residue_deviation_no_super(
 	T* predicate
 ){
 
-	core::Size const nres1 = pose1.total_residue();
-	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
+	core::Size const nres1 = pose1.size();
+	ASSERT_ONLY(core::Size const nres2 = pose2.size();)
 		debug_assert( nres1 == nres2 );
 
 	core::Real biggest_dev2( 0.0 );
@@ -752,8 +752,8 @@ biggest_residue_deviation_no_super_subset(
 	T* predicate
 ){
 
-	core::Size const nres1 = pose1.total_residue();
-	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue());
+	core::Size const nres1 = pose1.size();
+	ASSERT_ONLY(core::Size const nres2 = pose2.size());
 	debug_assert( nres1 == nres2 );
 
 	core::Real biggest_dev2( 0.0 );
@@ -794,8 +794,8 @@ fill_rmsd_coordinates(
 	T* predicate
 )
 {
-	core::Size const nres1 = pose1.total_residue();
-	core::Size const nres2 = pose2.total_residue();
+	core::Size const nres1 = pose1.size();
+	core::Size const nres2 = pose2.size();
 	//debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;
@@ -836,8 +836,8 @@ sym_rmsd_with_super_subset(
 	T* predicate
 )
 {
-	core::Size const nres1 = native_pose.total_residue();
-	//core::Size const nres2 = pose2.total_residue();
+	core::Size const nres1 = native_pose.size();
+	//core::Size const nres2 = pose2.size();
 	//debug_assert( nres1 == nres2 );
 
 	std::vector< core::Vector > p1_coords;

@@ -108,7 +108,7 @@ numeric::xyzVector< core::Real > recenter_with_missing( core::pose::Pose &pose) 
 	numeric::xyzVector< core::Real > cog(0,0,0), x_i;
 
 	core::Size count=0;
-	for ( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ir++ ) {
 		if ( !pose.residue(ir).is_protein() ) continue;
 		x_i = pose.xyz( core::id::AtomID( 2, ir ) );
 		if ( x_i.length() < 800 ) { // was this randomized??
@@ -121,7 +121,7 @@ numeric::xyzVector< core::Real > recenter_with_missing( core::pose::Pose &pose) 
 		cog /= (core::Real) count;
 	}
 
-	for ( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ir++ ) {
 		for ( core::Size at = 1; at <= pose.residue( ir ).natoms(); at++ ) {
 			pose.set_xyz(  core::id::AtomID( at, ir ),  pose.xyz( core::id::AtomID( at, ir )) - cog  );
 		}
@@ -188,7 +188,7 @@ void CaToAllAtom::apply( core::pose::Pose & pose ){
 	for ( int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
 		cutpts.push_back( pose.fold_tree().cutpoint(i) );
 	}
-	int last_peptide_res = pose.total_residue();
+	int last_peptide_res = pose.size();
 	while ( !pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
 
 	std::string rbfilename( basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_file ]().name() );
@@ -261,7 +261,7 @@ ca_to_allatom_main( void * )
 
 	//   for (int i=1; i<=start_pose.fold_tree().num_cutpoint() ; ++i)
 	//    cutpts.push_back( start_pose.fold_tree().cutpoint(i) );
-	//   int last_peptide_res = start_pose.total_residue();
+	//   int last_peptide_res = start_pose.size();
 	//   while ( !start_pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
 	//
 	//   std::string rbfilename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );

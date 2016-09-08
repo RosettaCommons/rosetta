@@ -160,19 +160,19 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
-		if ( dec->size() != pose.total_residue() || dec->fixed() != virt_res_idx ) {
+		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		TR.Debug << "Creating new LRE container (" << pose.total_residue() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.total_residue(),  elec_dens_whole_structure_allatom ) );
+		TR.Debug << "Creating new LRE container (" << pose.size() << ")" << std::endl;
+		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.size(),  elec_dens_whole_structure_allatom ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
 	// allocate space for per-AA stats
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	core::scoring::electron_density::getDensityMap().set_nres( nres );
 
 	// grab symminfo (if defined) from the pose
@@ -187,7 +187,7 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 
 	// # of scored residues
 	nreses = 0;
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		if ( pose.residue(i).aa() != core::chemical::aa_vrt ) {
 			nreses++;
 		}

@@ -68,8 +68,8 @@ init(
 ){
 	fragProbs_assigned_ = false;
 	// get nres_, accounting for symmetry/vrt/ligands
-	nres_ = pose.total_residue();
-	fragbias_tr.Trace << "init(): pose.total_residue(): " << nres_ << std::endl;
+	nres_ = pose.size();
+	fragbias_tr.Trace << "init(): pose.size(): " << nres_ << std::endl;
 
 	// symmetry
 	symminfo_=nullptr;
@@ -115,7 +115,7 @@ compute_frag_bias(
 	//   - handle mapping from frame->seqpos
 	//   - don't allow any insertions that cross cuts
 	for ( Size i_frag_set = 1; i_frag_set<=fragment_sets.size(); ++i_frag_set ) {
-		utility::vector1< core::Real > frame_weights( pose.total_residue(), 0.0 );
+		utility::vector1< core::Real > frame_weights( pose.size(), 0.0 );
 
 		for ( Size i_frame = 1; i_frame <= fragment_sets[i_frag_set]->nr_frames(); ++i_frame ) {
 			core::fragment::ConstFrameIterator frame_it = fragment_sets[i_frag_set]->begin(); // first frame of the fragment library
@@ -444,12 +444,12 @@ density_nbr(
 	(*myscore)(pose);
 
 	///////////////////////////////////////////////////////
-	// get density correlation score from pose.total_residue(), rather than nres_
+	// get density correlation score from pose.size(), rather than nres_
 	// get zscore for real-space density correlation scores
 	perrsd_dens_.resize(nres_, 0.0);
 	core::Real rscc_sum=0, sq_rscc_sum=0;
 
-	for ( Size r=1; r<=pose.total_residue(); ++r ) { // loop over the entire pose
+	for ( Size r=1; r<=pose.size(); ++r ) { // loop over the entire pose
 		if ( pose.residue(r).aa() == core::chemical::aa_vrt ) continue;
 		if ( symminfo_ && !symminfo_->bb_is_independent( r ) ) continue; // only the main chain gets selected
 
@@ -472,7 +472,7 @@ density_nbr(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	perrsd_nbrdens_.resize(nres_, 0.0);
 
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue; // prevent virtual
 		if ( symminfo_ && !symminfo_->bb_is_independent( i ) ) continue; // only the main chain gets selected
 
@@ -572,7 +572,7 @@ density_nbr(
 		} // i_nbr_zscore
 
 		fragbias_tr.Trace << "fragmentProbs_: " << asymm_num_i << " rsd: " << i << " prob: " << fragmentProbs_[asymm_num_i] << std::endl;
-	} // for i in range(pose.total_residue())
+	} // for i in range(pose.size())
 }
 
 

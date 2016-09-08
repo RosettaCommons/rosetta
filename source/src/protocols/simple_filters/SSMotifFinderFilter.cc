@@ -207,12 +207,12 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 
 	vector1< pair< Size/*stem1*/, Size/*stem2*/ > > stems;
 	stems.clear();
-	for ( Size stem1 = 2; stem1 <= pose.total_residue() - from_res() - 1 ; ++stem1 ) { //changed this line from for(Size stem1 = 1; stem1 <= pose.total_residue() - from_res() ; ++stem1 )
+	for ( Size stem1 = 2; stem1 <= pose.size() - from_res() - 1 ; ++stem1 ) { //changed this line from for(Size stem1 = 1; stem1 <= pose.size() - from_res() ; ++stem1 )
 		if ( sec_struct[ stem1 - 1 ] != template_sec_struct[ template_stem1() - 1 ] ||
 				!pose.conformation().residue( stem1 ).is_protein() ) {
 			continue;
 		}
-		for ( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.total_residue() - 1; ++stem2 ) { //changed this line from for( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.total_residue() ; ++stem2 )
+		for ( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.size() - 1; ++stem2 ) { //changed this line from for( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.size() ; ++stem2 )
 			if ( sec_struct[ stem2 - 1 ] != template_sec_struct[ template_stem2() - 1 ] ||
 					!pose.conformation().residue( stem2 ).is_protein() ) {
 				continue;
@@ -256,7 +256,7 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 		template_res_for_rmsd.push_back( template_stem2() + 1 );
 
 		Real const motif_rmsd = res_rmsd( pose_res_for_rmsd, template_res_for_rmsd, copy_pose, *template_pose_ );
-		//Real const motif_rmsd = two_res_rmsd( res_stem2, copy_pose.conformation().residue( copy_pose.total_residue() ) );
+		//Real const motif_rmsd = two_res_rmsd( res_stem2, copy_pose.conformation().residue( copy_pose.size() ) );
 
 		TR<<"rmsd="<<motif_rmsd<<std::endl;
 		if ( motif_rmsd <= rmsd() ) {
@@ -291,12 +291,12 @@ SSMotifFinder::compute_jump( core::pose::Pose const & pose, core::Size const sta
 
 	/* core::kinematics::FoldTree ft;
 	ft.clear();
-	runtime_assert( end <= pose.total_residue() );
+	runtime_assert( end <= pose.size() );
 	runtime_assert( end > start );
 	ft.add_edge( 1, start, -1 );
 	ft.add_edge( start, end, 1 );
 	ft.add_edge( end, start + 1, -1 );
-	ft.add_edge( end, pose.total_residue(), -1 );
+	ft.add_edge( end, pose.size(), -1 );
 
 	core::pose::Pose copy_pose( pose );
 	copy_pose.fold_tree( ft );*/

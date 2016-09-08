@@ -63,7 +63,7 @@ void add_scores (core::pose::Pose & pose,
 	core::Real min = 99999;
 	core::Real max = -9999;
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 
 
 	for ( Size i = 1; i <= nres; ++i ) {
@@ -152,7 +152,7 @@ main( int argc, char * argv [] )
 	core::Real const avg_kT = 0.59;
 	core::Real const high_kT = 1000;
 
-	core::Size const res_num = native_pose.total_residue();
+	core::Size const res_num = native_pose.size();
 
 	// create and open a file for output of scores
 	//utility::io::ozstream score_outstream;
@@ -217,7 +217,7 @@ main( int argc, char * argv [] )
 
 		// vector for residues in the interface
 		utility::vector1 <bool> interface;
-		interface.resize( curr_pose.total_residue(), false );
+		interface.resize( curr_pose.size(), false );
 
 		// define interface
 		core::Real interface_dist = 8.0;
@@ -226,12 +226,12 @@ main( int argc, char * argv [] )
 		pack::task::TaskFactory tf;
 		tf.push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump, interface_dist ) );
 		pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( curr_pose );
-		for ( core::Size i=1; i <= curr_pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i <= curr_pose.size(); ++i ) {
 			if ( task->pack_residue(i) && curr_pose.pdb_info()->chain(i) == epitope_chain ) interface.at(i)=true;
 		}
 
 		// add scores at interface residues
-		for ( Size i=1; i <= curr_pose.total_residue(); ++i ) {
+		for ( Size i=1; i <= curr_pose.size(); ++i ) {
 
 			if ( interface.at(i) ) {
 

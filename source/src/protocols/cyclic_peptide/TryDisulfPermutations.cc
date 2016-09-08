@@ -120,7 +120,7 @@ protocols::moves::MoverOP TryDisulfPermutations::fresh_instance() const {
 void TryDisulfPermutations::apply (
 	core::pose::Pose & pose
 ) {
-	core::Size const nres( pose.n_residue() ); //Number of residues in the pose
+	core::Size const nres( pose.size() ); //Number of residues in the pose
 	utility::vector1 < core::Size > disulf_res; //List of disulfide-forming residues
 
 	core::select::residue_selector::ResidueSubset mask; //Used only if there's a ResidueSelector
@@ -408,7 +408,7 @@ core::Real TryDisulfPermutations::repack_minimize_disulfides(
 	core::pack::task::TaskFactoryOP taskfact( new core::pack::task::TaskFactory() );
 	taskfact->push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() )); //Prevent design
 	core::pack::task::operation::PreventRepackingOP turn_off_packing( new core::pack::task::operation::PreventRepacking() );
-	for ( core::Size i = 1; i <= pose->n_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose->size(); ++i ) {
 		if ( !is_in_list(i, disulf_res) ) {
 			turn_off_packing->include_residue(i); //Prevent residues that aren't disulfide-bondable from repacking.
 		}
@@ -424,7 +424,7 @@ core::Real TryDisulfPermutations::repack_minimize_disulfides(
 	movemap->set_bb(false);
 	movemap->set_chi(true);
 	movemap->set_jump(false);
-	for ( core::Size i=1, imax=pose->n_residue(); i<=imax; ++i ) {
+	for ( core::Size i=1, imax=pose->size(); i<=imax; ++i ) {
 		movemap->set_chi(i, is_in_list(i, disulf_res) ); //Set disulfide-forming residues as minimizable, all else as not.
 	}
 	protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, sfxn, mintype(), mintolerance(), true ) );

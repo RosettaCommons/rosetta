@@ -131,7 +131,7 @@ void SidechainMinMover::update_movemap( core::pose::Pose & pose)
 	movemap_->set_chi( true );
 	if ( task_factory() ) task_ = task_factory()->create_task_and_apply_taskoperations( pose );
 	if ( task_ ) {
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			if ( !task_->nonconst_residue_task(i).being_packed() ) movemap_->set_chi(i, false);
 		}
 	}
@@ -202,7 +202,7 @@ InterfaceSidechainMinMover::apply( core::pose::Pose & pose )
 	}
 
 	if ( !( tf2() )->get_norepack2() ) {
-		for ( core::Size i = cutpoint+1; i <= pose.total_residue(); i++ ) {
+		for ( core::Size i = cutpoint+1; i <= pose.size(); i++ ) {
 			if ( interface_->is_interface(i) ) movemap_->set_chi(i, true);
 		}
 	}

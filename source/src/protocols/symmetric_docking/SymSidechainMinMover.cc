@@ -116,7 +116,7 @@ void SymSidechainMinMover::update_movemap( core::pose::Pose & pose)
 	movemap_->set_chi( true );
 	if ( tf_ ) task_ = tf_->create_task_and_apply_taskoperations( pose );
 	if ( task_ ) {
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			if ( !task_->nonconst_residue_task(i).being_packed() ) movemap_->set_chi(i, false);
 		}
 	}

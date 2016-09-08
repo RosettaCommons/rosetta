@@ -113,7 +113,7 @@ RG_Energy_Fast::finalize_total_energy(
 core::Real
 RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size nres_counted=0;
 
 	///////////////////////////////////////
@@ -159,7 +159,7 @@ RG_Energy_Fast::calculate_rg_score(
 	utility::vector1< bool > const & relevant_residues) const
 {
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size nres_counted=0;
 
 	///////////////////////////////////////
@@ -209,7 +209,7 @@ RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 	RG_MinData &mindata = nonconst_mindata_from_pose( pose );
 
 	// calculate center of mass
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	mindata.nres_scored = 0;
 	mindata.com = Vector( 0, 0, 0 );
 	for ( Size i = 1; i <= nres; ++i ) {

@@ -77,7 +77,7 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 		TR.Debug << "No packer task specified, using default task." << std::endl;
 	}
 
-	for ( core::Size resi = 1; resi <= pose.n_residue(); resi++ ) {
+	for ( core::Size resi = 1; resi <= pose.size(); resi++ ) {
 		if ( task->pack_residue(resi) ) {
 			core::chemical::ResidueTypeSetCOP rsd_set(pose.residue(resi).residue_type_set());
 			core::chemical::ResidueTypeCOP new_rsd_type = pose.residue(resi).type().get_self_ptr();

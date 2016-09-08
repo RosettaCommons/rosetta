@@ -395,7 +395,7 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 
 	//then option 3
 	utility::vector1< core::Size > found_positions;
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		std::string cur_res_name3 = pose.residue( i ).name3();
 		utility::vector1< std::string >::iterator resfind = find( allowed_res_types_.begin(), allowed_res_types_.end(), cur_res_name3);
 

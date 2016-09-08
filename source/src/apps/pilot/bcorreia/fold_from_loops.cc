@@ -304,7 +304,7 @@ void fold_tree_generator(
 		core::pose::Pose & pose,
 		kinematics::FoldTree & f
 ){
-	f.add_edge( 1, pose.total_residue(), Edge::PEPTIDE );
+	f.add_edge( 1, pose.size(), Edge::PEPTIDE );
 
 	for (Size i=1;  i < loops.size() ; ++i){
 		TR<<"LOOP "<<  i <<std::endl;
@@ -334,7 +334,7 @@ void define_movemap_extending_chain(
 	movemap->set_bb(false);
 
 	Size loop_offset(0);
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		bool res_is_loop = is_loop_neighbor( loops, pos, loop_offset);
 		if ( res_is_loop ) {
 			movemap->set_chi(pos, false);
@@ -420,7 +420,7 @@ void extending_chain(
 
 	movemap->set_bb(true);
 
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		pose.set_phi( pos, -150 );
 		pose.set_psi( pos, 150);
 		pose.set_omega( pos, 180 );
@@ -436,7 +436,7 @@ void copying_side_chains(
 
 ){
 
-	for ( Size pos = 1; pos <= fold_pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 			bool res_is_loop = is_loop(loops, pos);
 			if ( res_is_loop ) {
 				fold_pose.replace_residue(pos,nat_pose.residue( pos ), true);
@@ -453,7 +453,7 @@ void exclude_loop_residues( core::pose::Pose & pose,
 							protocols::loops::Loops & loops
 ){
 
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++){
+	for ( Size pos = 1; pos <= pose.size(); pos++){
 		bool res_is_loop = is_loop( loops, pos);
 		if (!res_is_loop){
 			residues_to_mutate[pos] = true;
@@ -508,8 +508,8 @@ using namespace basic::options::OptionKeys;
 
 	TR << "Constrains Standard Deviation - "<< sd <<std::endl;
 
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-				for (Size pos_2 = 1; pos_2 <=pose.total_residue(); ++pos_2   ){
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+				for (Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ){
 
 					bool res_is_loop = is_loop(loops, pos);
 					bool res2_is_loop = is_loop(loops,pos_2);
@@ -572,8 +572,8 @@ using namespace basic::options::OptionKeys;
 	TR << "Constrains Standard Deviation - "<< sd <<std::endl;
 
 
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-				for (Size pos_2 = 1; pos_2 <=pose.total_residue(); ++pos_2   ){
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+				for (Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ){
 
 					bool res_is_loop = is_loop(loops, pos);
 					bool res2_is_loop = is_loop(loops,pos_2);
@@ -639,7 +639,7 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 
 
 		Size nsegment = loops[1].start()-1;
-		Size csegment = nat_prot.total_residue() - loops[1].stop();
+		Size csegment = nat_prot.size() - loops[1].stop();
 
 		TR << "NSEGMENT "<< nsegment <<std::endl;
 		TR << "CSEGMENT "<< csegment <<std::endl;
@@ -695,10 +695,10 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 	}
 
 
-	TR << "Last Residue    " << target_loops.total_residue() <<std::endl;
+	TR << "Last Residue    " << target_loops.size() <<std::endl;
 
 	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::LOWER_TERMINUS, 1 );
-	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::UPPER_TERMINUS, target_loops.total_residue());
+	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::UPPER_TERMINUS, target_loops.size());
 
 }
 
@@ -716,13 +716,13 @@ void copying_side_chains_swap_loop (
 
 	// Cleanin up the pose - > this step has to be performed before
 	core::pose::remove_lower_terminus_type_from_pose_residue(swap_loops, 1 );
-	core::pose::remove_upper_terminus_type_from_pose_residue(swap_loops, swap_loops.total_residue());
+	core::pose::remove_upper_terminus_type_from_pose_residue(swap_loops, swap_loops.size());
 
 
 	movemap->set_chi(true);
 
 
-	for ( Size pos = 1; pos <= fold_pose.total_residue(); ++pos ) {
+	for ( Size pos = 1; pos <= fold_pose.size(); ++pos ) {
 				bool res_is_loop = is_loop(loops, pos);
 
 				if ( res_is_loop ) {
@@ -826,7 +826,7 @@ main( int argc, char* argv [] )
 
 
 		TR<< "Only one loop defined no cutpoints necessary "<<std::endl;
-		f.add_edge( 1, extended_pose.total_residue(), Edge::PEPTIDE );
+		f.add_edge( 1, extended_pose.size(), Edge::PEPTIDE );
 		TR << "Pose fold tree " << f << std::endl;
 
 		if (option [OptionKeys::fold_from_loops::native_ca_cst ].user() ){
@@ -1128,7 +1128,7 @@ main( int argc, char* argv [] )
 
 			utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, true );
 
-			utility::vector1< bool > residues_to_mutate( fold_pose.total_residue(), false );
+			utility::vector1< bool > residues_to_mutate( fold_pose.size(), false );
 
 			core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( fold_pose ));
 

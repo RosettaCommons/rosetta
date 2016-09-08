@@ -58,7 +58,7 @@ MissingDensityToJumpMover::apply( core::pose::Pose & pose ) {
 	using namespace core;
 	using namespace core::conformation;
 	using namespace core::chemical;
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	for ( Size i=1; i< nres; ++i ) {//don't have to go to last residue thus < rather than <=
 		if ( pose.residue_type(i).is_polymer() && !pose.residue_type(i).is_lower_terminus() && !pose.fold_tree().is_cutpoint(i) ) {
 			Residue const &current_rsd(pose.residue(i));

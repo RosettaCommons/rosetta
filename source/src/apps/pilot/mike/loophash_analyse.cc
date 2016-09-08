@@ -157,7 +157,7 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
 	core::pose::Pose native;
 	core::import_pose::pose_from_file( native, option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	core::Size start_res = 1 ;
 	core::Size stop_res = nres;

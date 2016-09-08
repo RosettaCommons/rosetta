@@ -43,12 +43,12 @@ get_dm(
 	using utility::vector1;
 
 	double const dist_threshold_sq( dist_threshold * dist_threshold );
-	unsigned int const N( pose.total_residue() );
+	unsigned int const N( pose.size() );
 
 	vector1< unsigned int > distances( (unsigned int)(N*N-N)/2, 0 );
 	unsigned int feat_idx(1);
-	for ( unsigned int ii = 1; ii <= pose.total_residue(); ++ii ) {
-		for ( unsigned int jj = ii+1; jj <= pose.total_residue(); ++jj ) {
+	for ( unsigned int ii = 1; ii <= pose.size(); ++ii ) {
+		for ( unsigned int jj = ii+1; jj <= pose.size(); ++jj ) {
 			double const dist_sq(
 				pose.residue(ii).xyz(atom_name).distance_squared(pose.residue(jj).xyz(atom_name))
 			);

@@ -141,8 +141,8 @@ main( int argc, char * argv [] )
 
 		using core::Size;
 		using core::Real;
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			for ( Size j = i + 1; j <= pose.total_residue(); ++j ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
+			for ( Size j = i + 1; j <= pose.size(); ++j ) {
 				Real local_score( 0.0 );
 				cstset->residue_pair_energy(
 					pose.residue(i), pose.residue(j), pose, *scorefxn, emap

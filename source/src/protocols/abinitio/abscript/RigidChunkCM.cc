@@ -303,12 +303,12 @@ void RigidChunkCM::configure(
 	{ // Debug output and error checking
 		if ( tr.Debug.visible() ) {
 			tr.Debug << "template selection for " << this->get_name() << ": ";
-			for ( Size i = 1; i <= templ().total_residue(); ++i ) {
+			for ( Size i = 1; i <= templ().size(); ++i ) {
 				tr.Debug << ( templ_selection[i] ? "T" : "F" );
 			}
 			tr.Debug << std::endl;
 			tr.Debug << "simulation selection for " << this->get_name() << ": ";
-			for ( Size i = 1; i <= in_p.total_residue(); ++i ) {
+			for ( Size i = 1; i <= in_p.size(); ++i ) {
 				tr.Debug << ( sim_selection[i] ? "T" : "F" );
 			}
 			tr.Debug << std::endl;
@@ -331,8 +331,8 @@ void RigidChunkCM::configure(
 	core::Size sim_pos = 1;
 	std::map< core::Size, core::Size > templ_target;
 	std::map< core::Size, core::Size > sim_origin;
-	while ( templ_pos <= templ().total_residue() &&
-			sim_pos <= in_p.total_residue() ) {
+	while ( templ_pos <= templ().size() &&
+			sim_pos <= in_p.size() ) {
 		if ( sim_selection[ sim_pos ] && templ_selection[ templ_pos ] ) {
 			// this position is selected in both, it's a correspondence.
 			templ_target[ templ_pos ] = sim_pos;
@@ -377,7 +377,7 @@ void RigidChunkCM::configure(
 			}
 		}
 
-		for ( core::Size i = 1; i <= templ().total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= templ().size(); ++i ) {
 			if ( templ_selection[i] &&
 					templ().residue( i ).aa() == core::chemical::aa_cys ) {
 				Size cys_partner = find_disulfide_partner( templ(), i );
@@ -393,7 +393,7 @@ void RigidChunkCM::configure(
 			}
 		}
 
-		for ( core::Size i = 1; i <= in_p.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= in_p.size(); ++i ) {
 			if ( sim_selection[i] &&
 					in_p.residue( i ).aa() == core::chemical::aa_cys ) {
 				Size cys_partner = find_disulfide_partner( in_p, i );
@@ -416,13 +416,13 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 	using namespace claims;
 	EnvClaims claims;
 
-	utility::vector1< bool > selection( in_p.total_residue(), false );
+	utility::vector1< bool > selection( in_p.size(), false );
 	try {
 		selection = sim_selector()->apply( in_p );
 	} catch( utility::excn::EXCN_Msg_Exception& e ){
 		std::ostringstream ss;
 		ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".  ";
-		ss << "Pose was length " << in_p.total_residue() << ": " << in_p.sequence();
+		ss << "Pose was length " << in_p.size() << ": " << in_p.sequence();
 		e.add_msg(ss.str());
 		throw;
 	}
@@ -448,7 +448,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 
 		// For initialization, we need to some of FDP's fixing, which requires some control outside the region
 		std::pair< core::Size, core::Size > const supp_region = std::make_pair( std::max( Size( 1 ), excl_region.first-1 ),
-			std::min( in_p.total_residue(), excl_region.second+1 ) );
+			std::min( in_p.size(), excl_region.second+1 ) );
 		XYZClaimOP support_claim( new XYZClaim( this_ptr, "BASE", supp_region ) );
 		// These would be MUST_CONTROL, but sometimes the edges of the rigid chunk are cuts, and in this
 		// case, we want to allow a directly abutting EXCLUSIVE claim. If it's a problem, we'll fail later.
@@ -508,7 +508,7 @@ void fix_internal_coords_of_siblings( core::pose::Pose& pose,
 	core::id::AtomID ref_atom ) {
 	using namespace core::id;
 
-	runtime_assert( atom.rsd() >= 1 && atom.rsd() <= pose.total_residue() );
+	runtime_assert( atom.rsd() >= 1 && atom.rsd() <= pose.size() );
 	runtime_assert( pose.conformation().atom_tree().has( atom ) );
 	runtime_assert( ref_pose.conformation().atom_tree().has( ref_atom ) );
 
@@ -659,7 +659,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 
 	core::pose::Pose reference( pose );
 
-	for ( Size sim_pos = 1; sim_pos <= pose.total_residue(); ++sim_pos ) {
+	for ( Size sim_pos = 1; sim_pos <= pose.size(); ++sim_pos ) {
 
 		if ( sim_origin().find( sim_pos ) != sim_origin().end() ) {
 			Size const templ_pos = sim_origin().at( sim_pos );
@@ -686,10 +686,10 @@ void RigidChunkCM::initialize( Pose& pose ){
 					ss << "The problem is probably that the sequence shift is off. Surrounding sequences: " << std::endl
 						<< "template:   ";
 
-					for ( Size k = std::max( Size( 1 ), sim_origin().at( sim_pos ) - 5 ); k <= std::min( templ().total_residue(), sim_origin().at( sim_pos ) + 5 ); ++k ) { ss << templ().residue( k ).name1(); }
+					for ( Size k = std::max( Size( 1 ), sim_origin().at( sim_pos ) - 5 ); k <= std::min( templ().size(), sim_origin().at( sim_pos ) + 5 ); ++k ) { ss << templ().residue( k ).name1(); }
 					ss << std::endl
 						<< "simulation: ";
-					for ( Size k = std::max( Size( 1 ), sim_pos - 5 ); k <= std::min( pose.total_residue(), sim_pos + 5 ); ++k ) { ss << pose.residue( k ).name1(); }
+					for ( Size k = std::max( Size( 1 ), sim_pos - 5 ); k <= std::min( pose.size(), sim_pos + 5 ); ++k ) { ss << pose.residue( k ).name1(); }
 					ss << std::endl;
 				} else if ( ( pose.is_centroid() && !templ().is_centroid() ) ||
 						( pose.is_fullatom() && !templ().is_fullatom() ) ) {
@@ -716,7 +716,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 
 	// correct mainchain connections
 
-	for ( Size sim_pos = 1; sim_pos <= pose.total_residue(); ++sim_pos ) {
+	for ( Size sim_pos = 1; sim_pos <= pose.size(); ++sim_pos ) {
 
 		// If the residue before this is not in the region
 		if ( sim_origin().find( sim_pos - 1 ) == sim_origin().end() &&
@@ -758,13 +758,13 @@ void RigidChunkCM::initialize( Pose& pose ){
 				sim_origin().find( sim_pos ) != sim_origin().end() ) {
 			core::Size const templ_pos = sim_origin().at( sim_pos );
 
-			bool upper_connect = ( sim_pos < pose.total_residue() &&
+			bool upper_connect = ( sim_pos < pose.size() &&
 				!pose.residue( sim_pos ).is_upper_terminus() &&
 				!pose.fold_tree().is_cutpoint( sim_pos ) );
 
 			try {
 				if ( upper_connect &&
-						( templ_pos + 1 > templ().total_residue() ||
+						( templ_pos + 1 > templ().size() ||
 						templ().residue( templ_pos+1 ).is_upper_terminus() ||
 						templ().fold_tree().is_cutpoint( templ_pos ) ) ) {
 					// Here, the template doesn't have valid coordinates to connect to, so we have to do it

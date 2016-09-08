@@ -52,11 +52,11 @@ utility::vector1< int > calculate_burial(
 	core::pose::Pose & mypose,
 	core::Real const dist_cutoff) {
 	utility::vector1< int > burial;
-	burial.resize( mypose.total_residue() );
+	burial.resize( mypose.size() );
 
 	using core::Size;
-	for ( Size i = 1; i <= mypose.total_residue(); ++i ) {
-		for ( Size j = i + 1; j <= mypose.total_residue(); ++j ) {
+	for ( Size i = 1; i <= mypose.size(); ++i ) {
+		for ( Size j = i + 1; j <= mypose.size(); ++j ) {
 			core::conformation::Residue resi = mypose.residue(i);
 			core::conformation::Residue resj = mypose.residue(j);
 
@@ -123,8 +123,8 @@ int main( int argc, char* argv [] ) {
 			input.fill_pose( pose, *rsd_set );
 			string const pose_tag( file_basename( core::pose::tag_from_pose( pose ) ) );
 			utility::vector1< int > burial = calculate_burial( pose, 8 );
-			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-				for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
+				for ( Size j = i+1; j <= pose.size(); ++j ) {
 					const core::conformation::Residue& resi = pose.residue(i);
 					const core::conformation::Residue& resj = pose.residue(j);
 

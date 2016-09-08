@@ -118,7 +118,7 @@ void VIP_Mover::minimize_conformation(){
 
 void VIP_Mover::compute_number_cavities(){
 	core::Size numsuck = 0;
-	for ( core::Size a = 1 ; a < (cavity_pose.total_residue()+1) ; a++ ) {
+	for ( core::Size a = 1 ; a < (cavity_pose.size()+1) ; a++ ) {
 		if ( cavity_pose.residue(a).name() == "SUCK" ) {
 			numsuck = numsuck + 1;
 		}
@@ -137,7 +137,7 @@ void VIP_Mover::apply_holes(){
 
 void VIP_Mover::get_cavity_positions(){
 	utility::vector1<core::Size> cav_positions;
-	for ( core::Size i = 1; i <= cavity_pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= cavity_pose.size(); i++ ) {
 		if ( cavity_pose.residue(i).name() == "SUCK" ) {
 			cav_positions.push_back(i);
 		}
@@ -155,7 +155,7 @@ core::Real
 VIP_Mover::get_cav_approx( core::Size a ){
 	numeric::xyzVector< core::Real > cppos = cavity_pose.residue( cavity_balls[a] ).xyz(1);
 	core::Real min = 99999.9;
-	for ( core::Size i = 1; i <= initial_pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= initial_pose.size(); i++ ) {
 		for ( core::Size j = 1; j <= initial_pose.residue(i).nheavyatoms(); j++ ) {
 			if ( initial_pose.residue(i).xyz(j).distance( cppos ) < min ) {
 				min = initial_pose.residue(i).xyz(j).distance( cppos );
@@ -179,7 +179,7 @@ void VIP_Mover::get_neighbors(){
 	for ( core::Size i = 1; i <= cavity_balls.size(); i++ ) {
 		numeric::xyzVector<core::Real> cav_center = cavity_pose.residue( cavity_balls[i]).xyz(1);
 		core::Real min = get_cav_approx( i );
-		for ( core::Size a = 1; a <= initial_pose.total_residue(); a++ ) {
+		for ( core::Size a = 1; a <= initial_pose.size(); a++ ) {
 			for ( core::Size b = 1; b <= initial_pose.residue(a).nheavyatoms(); b++ ) {
 				numeric::xyzVector<core::Real> test_position = initial_pose.residue(a).xyz(b);
 				if ( test_position.distance(cav_center) <= (option[cp::cutoff]+min) ) {
@@ -243,7 +243,7 @@ void VIP_Mover::try_point_mutants(){
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pack_pose ));
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
 		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-		for ( core::Size j = 1; j <= pack_pose.total_residue(); j++ ) {
+		for ( core::Size j = 1; j <= pack_pose.size(); j++ ) {
 			if ( j != void_mutatables[aa] ) {
 				task->nonconst_residue_task(j).prevent_repacking();
 			} else {
@@ -482,7 +482,7 @@ VIP_Mover::set_excluded_positions() {
 	}
 
 	// Exclude any non-amino acid residues from mutation
-	for ( core::Size i(1), ei( initial_pose.total_residue() ) ; i <= ei ; ++i ) {
+	for ( core::Size i(1), ei( initial_pose.size() ) ; i <= ei ; ++i ) {
 		if ( !initial_pose.residue( i ).is_protein() &&
 				( std::find(excluded_positions.begin(), excluded_positions.end(), i ) ==
 				excluded_positions.end() ) ) {
@@ -500,7 +500,7 @@ VIP_Mover::set_excluded_positions() {
 
 bool
 are_seqs_different( core::pose::Pose & p1, core::pose::Pose & p2 ) {
-	for ( core::Size j = 1; j <= p1.total_residue(); j++ ) {
+	for ( core::Size j = 1; j <= p1.size(); j++ ) {
 		if ( p1.residue(j).name() != p2.residue(j).name() ) {
 			return true;
 		}

@@ -42,7 +42,7 @@ void PostDockAssemblyScorer::apply( core::pose::Pose & pose ) {
 	using std::string;
 
 	char const first_chain( pose.pdb_info()->chain(1) );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		char const chain_ii( pose.pdb_info()->chain(ii) );
 		if ( first_chain != chain_ii ) {
 			Real const rebuild_dist(

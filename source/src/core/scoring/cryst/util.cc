@@ -33,7 +33,7 @@ static THREAD_LOCAL basic::Tracer TS( "core.scoring.cryst.util" );
 ///////
 /////// fix hydrogen b factors to be 1.2 times that of the attached heavyatom
 void fix_bfactorsH( core::pose::Pose & pose ) {
-	for ( Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+	for ( Size resid = 1; resid <= pose.size(); ++resid ) {
 		core::conformation::Residue const &rsd_i = pose.residue(resid);
 		Size nheavyatoms = rsd_i.nheavyatoms();
 		for ( Size atmid = 1; atmid <= nheavyatoms; ++atmid ) {
@@ -51,7 +51,7 @@ void fix_bfactorsH( core::pose::Pose & pose ) {
 /////// fix b factors from missing sidechains
 ///////    if a sidechain b factor is == 0 and the CA one is not, set it to 1.5 times the CA b factor
 void fix_bfactorsMissing( core::pose::Pose & pose ) {
-	for ( Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+	for ( Size resid = 1; resid <= pose.size(); ++resid ) {
 		if ( !pose.residue_type(resid).is_protein() ) continue;
 		core::conformation::Residue const &rsd_i = pose.residue(resid);
 		Real bCA = 1.5 * pose.pdb_info()->temperature( resid, 2 );

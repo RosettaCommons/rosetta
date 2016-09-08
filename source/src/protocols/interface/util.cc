@@ -69,7 +69,7 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 
 	std::set<Size> side1_residues, side2_residues;
 
-	for ( Size ii = 1; ii<= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii<= pose.size(); ++ii ) {
 
 		if ( side1_chains.count( pose.chain( ii ) ) ) {
 			side1_residues.insert( ii );
@@ -102,7 +102,7 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	calc.compute(pose);
 	std::set<Size> interface_residues = calc.neighbors();
 
-	vector1<bool> residues(pose.total_residue(), false);
+	vector1<bool> residues(pose.size(), false);
 	std::set<Size>::const_iterator it, end ;
 	for ( it = interface_residues.begin(), end = interface_residues.end(); it != end; ++it ) {
 		residues[*it] = true;

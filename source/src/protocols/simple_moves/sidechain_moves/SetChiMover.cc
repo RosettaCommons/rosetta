@@ -71,7 +71,7 @@ SetChiMover::SetChiMover() :
 
 void SetChiMover::apply( Pose & pose ) {
 	runtime_assert( resnum() > 0 );
-	runtime_assert( resnum() <= pose.total_residue() );
+	runtime_assert( resnum() <= pose.size() );
 
 	if ( chinum() <= pose.residue(resnum()).nchi() ) {
 		pose.set_chi(chinum(), resnum(), angle());

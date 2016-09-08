@@ -370,10 +370,10 @@ LoopInfoVec
 ConsensusLoopDesignOperation::get_loop_info( core::pose::Pose const & pose ) const
 {
 	std::string const ss = get_secstruct( pose );
-	if ( ss.size() != pose.total_residue() ) {
+	if ( ss.size() != pose.size() ) {
 		std::stringstream msg;
 		msg << class_name() << "::get_loop_info(): Number of residues in secondary structure ("
-			<< ss.size() << ") does not match pose size (" << pose.total_residue()
+			<< ss.size() << ") does not match pose size (" << pose.size()
 			<< ")" << std::endl;
 		utility_exit_with_message( msg.str() );
 	}

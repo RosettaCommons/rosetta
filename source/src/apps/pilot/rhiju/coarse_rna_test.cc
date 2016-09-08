@@ -205,7 +205,7 @@ coarse_frag_test(){
 
 	// start doing some copy_dofs at an arbitrary position
 	Size insert_res( 4 );
-	for( Size n = 1; n <= frag_source_pose.total_residue()-2 ; n++ ){
+	for( Size n = 1; n <= frag_source_pose.size()-2 ; n++ ){
 
 		std::map< AtomID, AtomID > atom_id_map;
 		std::map< Size, Size > res_map;
@@ -251,16 +251,16 @@ pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::model
 	Real torsion_S_P_S_P( 0.0 ), torsion_P_S_P_S( 0.0 );
 	PuckerState prev_pucker( NORTH ), current_pucker( NORTH ), next_pucker( NORTH );
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 
 		if ( n > 1 ) prev_pucker = pucker_states[ n-1];
 		current_pucker = pucker_states[ n ];
-		if ( n < pose.total_residue() ) next_pucker = pucker_states[ n+1 ];
+		if ( n < pose.size() ) next_pucker = pucker_states[ n+1 ];
 
 		dist_P_S = ( pose.xyz( NamedAtomID( " P  ", n ) ) - pose.xyz( NamedAtomID( " S  ", n ) ) ).length();
 		dist_S_CEN = ( pose.xyz( NamedAtomID( " S  ", n ) ) - pose.xyz( NamedAtomID( " CEN", n ) ) ).length();
 
-		if ( n < pose.total_residue() ) {
+		if ( n < pose.size() ) {
 			dist_S_P = ( pose.xyz( NamedAtomID( " S  ", n ) ) - pose.xyz( NamedAtomID( " P  ", n+1 ) ) ).length();
 			dist_P_P = ( pose.xyz( NamedAtomID( " P  ", n ) ) - pose.xyz( NamedAtomID( " P  ", n+1 ) ) ).length();
 			dist_S_S = ( pose.xyz( NamedAtomID( " S  ", n ) ) - pose.xyz( NamedAtomID( " S  ", n+1 ) ) ).length();
@@ -269,7 +269,7 @@ pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::model
 		angle_P_S_CEN = degrees(angle_radians( pose.xyz( NamedAtomID( " P  ", n) ),
 																					 pose.xyz( NamedAtomID( " S  ", n) ),
 																					 pose.xyz( NamedAtomID( " CEN", n) ) ) );
-		if ( n < pose.total_residue() ) {
+		if ( n < pose.size() ) {
 			angle_S_P_S = degrees(angle_radians( pose.xyz( NamedAtomID( " S  ", n) ),
 																					 pose.xyz( NamedAtomID( " P  ", n+1) ),
 																					 pose.xyz( NamedAtomID( " S  ", n+1) ) ) );
@@ -282,13 +282,13 @@ pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::model
 		}
 
 
-		if ( n < pose.total_residue() ) {
+		if ( n < pose.size() ) {
 			torsion_P_S_P_S = dihedral_degrees( pose.xyz( NamedAtomID( " P  ", n) ),
 																					pose.xyz( NamedAtomID( " S  ", n) ),
 																					pose.xyz( NamedAtomID( " P  ", n+1) ),
 																					pose.xyz( NamedAtomID( " S  ", n+1) ) );
 		}
-		if ( n < pose.total_residue()-1 ) {
+		if ( n < pose.size()-1 ) {
 			torsion_S_P_S_P = dihedral_degrees(
 																					pose.xyz( NamedAtomID( " S  ", n) ),
 																					pose.xyz( NamedAtomID( " P  ", n+1) ),
@@ -303,7 +303,7 @@ pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::model
 		out1 << ' ' << torsion_P_S_P_S << ' ' << torsion_S_P_S_P;
 		out1 << std::endl;
 
-		if ( n > 1 && n < pose.total_residue()) {
+		if ( n > 1 && n < pose.size()) {
 			Stub stub1(	pose.xyz( NamedAtomID( " S  ", n) ),
 									pose.xyz( NamedAtomID( " S  ", n) ),
 									pose.xyz( NamedAtomID( " P  ", n) ),
@@ -343,10 +343,10 @@ vdw_stats( pose::Pose const & pose ) {
 	Real const CUTOFF( 12.0 );
 
 	Size const NATOMS( 3 ); //P, S, CEN
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		Residue const & rsd1 = pose.residue( i );
 
-		for ( Size j = i+2; j <= pose.total_residue(); j++ ) {
+		for ( Size j = i+2; j <= pose.size(); j++ ) {
 			Residue const & rsd2 = pose.residue( j );
 
 			utility::vector1< Real > dists;
@@ -456,7 +456,7 @@ output_minipose_coords_test(){
 
 	utility::io::ozstream out1( "coarse_coords.txt" );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		out1 << pose.sequence()[i-1] << " " << secstruct[ i-1 ];
 		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
 			Vector coord = pose.residue(i).xyz(j);
@@ -492,7 +492,7 @@ pdbstats_test(){
 	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	utility::vector1< PuckerState > pucker_states;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) pucker_states.push_back( Get_residue_pucker_state( pose, n ) );
+	for ( Size n = 1; n <= pose.size(); n++ ) pucker_states.push_back( Get_residue_pucker_state( pose, n ) );
 
 	protocols::farna::make_coarse_pose( pose, coarse_pose );
 	coarse_pose.dump_pdb( "coarse.pdb" );
@@ -727,7 +727,7 @@ output_angles( core::pose::Pose const & pose ){
 	core::Real theta_angle;
 	std::cout << "THETA ";
 
-	for ( core::Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i < pose.size(); i++ ) {
 		theta_angle = degrees( angle_radians( pose.xyz( NamedAtomID( " P  ", i) ),
 																		pose.xyz( NamedAtomID( " S  ", i) ),
 																		pose.xyz( NamedAtomID( " P  ", i+1) ) ) );
@@ -774,7 +774,7 @@ get_angle_sets(  pose::Pose const & pose,
 
 	using namespace core::id;
 
-	for ( Size i = 1; i < pose.total_residue(); i++ ){
+	for ( Size i = 1; i < pose.size(); i++ ){
 
 		utility::vector1< AtomID > ids;
 		// P-S-P
@@ -901,13 +901,13 @@ pdb_little_motif_test(){
 
 
 	utility::io::ozstream out( "all_STATS.txt" );
-	for ( Size i = 1; i <= pose.total_residue()-1; i++ ) {
+	for ( Size i = 1; i <= pose.size()-1; i++ ) {
 		output_torsions( coarse_pose, i, out );
 	}
 
 	// Two-helix junction, 1x1.
 	utility::io::ozstream out1( "two_way_1_1_STATS.txt" );
-	for ( Size i = 1; i <= pose.total_residue()-2; i++ ) {
+	for ( Size i = 1; i <= pose.size()-2; i++ ) {
 		if ( partner.find(i  ) == partner.end() ) continue;
 		std::cout << i << " " <<  partner[ i ] << std::endl;
 		if ( partner.find(i+2) == partner.end() ) continue;
@@ -921,7 +921,7 @@ pdb_little_motif_test(){
 
 	// Two-helix junction, 1x1.
 	utility::io::ozstream out2( "two_way_0_2_STATS.txt" );
-	for ( Size i = 1; i <= pose.total_residue()-2; i++ ) {
+	for ( Size i = 1; i <= pose.size()-2; i++ ) {
 
 		if ( partner.find(i  ) == partner.end() ) continue;
 		if ( partner.find(i+1) == partner.end() ) continue;
@@ -934,7 +934,7 @@ pdb_little_motif_test(){
 
 	// Triloop.
 	utility::io::ozstream out3( "triloop_STATS.txt" );
-	for ( Size i = 1; i <= pose.total_residue()-4; i++ ) {
+	for ( Size i = 1; i <= pose.size()-4; i++ ) {
 		if ( partner.find(i  ) == partner.end() ) continue;
 		if ( partner[ i ] != i+4 ) continue;
 
@@ -945,7 +945,7 @@ pdb_little_motif_test(){
 
 	// Three-way junction
 	utility::io::ozstream out4( "three_way_STATS.txt" );
-	for ( Size i = 1; i <= pose.total_residue()-1; i++ ) {
+	for ( Size i = 1; i <= pose.size()-1; i++ ) {
 		if ( partner.find( i    ) == partner.end() ) continue;
 		if ( partner.find( i+1  ) == partner.end() ) continue;
 		if ( partner.find( partner[i+1] + 2  ) == partner.end() ) continue;
@@ -958,7 +958,7 @@ pdb_little_motif_test(){
 
 	// Four-way junction
 	utility::io::ozstream out5( "four_way_STATS.txt" );
-	for ( Size i = 1; i <= pose.total_residue()-2; i++ ) {
+	for ( Size i = 1; i <= pose.size()-2; i++ ) {
 		if ( partner.find( i    ) == partner.end() ) continue;
 		if ( partner.find( i+1  ) == partner.end() ) continue;
 		if ( partner.find( partner[i+1] +1 ) == partner.end() ) continue;
@@ -1020,7 +1020,7 @@ reorient_to_base_pair_coordinate_system( pose::Pose & pose, Size const res1, Siz
 	Matrix M;
 	get_base_pair_coordinate_system( pose, res1, res2, centroid, M );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ){
 		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ){
 			pose.set_xyz(  AtomID( j,i ),
 										 M.transposed() * (pose.xyz( AtomID( j, i ) ) - centroid) );
@@ -1110,12 +1110,12 @@ tar_motif_test(){
 
 		std::map< Size, Size > partner;
 
-		if ( pose.total_residue() < 3 ) continue;
+		if ( pose.size() < 3 ) continue;
 
 		figure_out_base_pair_partner( pose, partner );
 
 		// look for three residue bulges.
-		for ( Size i = 1; i <= pose.total_residue()-1; i++ ) {
+		for ( Size i = 1; i <= pose.size()-1; i++ ) {
 
 			utility::vector1< Size > motif_res;
 
@@ -1193,12 +1193,12 @@ mismatch_test(){
 
 		std::map< Size, Size > partner;
 
-		if ( pose.total_residue() < 6 ) continue;
+		if ( pose.size() < 6 ) continue;
 
 		figure_out_base_pair_partner( pose, partner, false /*strict*/ );
 
 		// look for mismatches
-		for ( Size i = 1; i <= pose.total_residue()-1; i++ ) {
+		for ( Size i = 1; i <= pose.size()-1; i++ ) {
 
 			utility::vector1< Size > motif_res;
 
@@ -1278,7 +1278,7 @@ modeler_map_test(){
 	utility::vector1< TorsionID > moving_torsions;
 	utility::vector1< bool > is_moving_res;
 
-	for ( Size i = 2; i <= pose.total_residue(); i++ ){
+	for ( Size i = 2; i <= pose.size(); i++ ){
 
 		is_moving_res.push_back( false );
 
@@ -1296,7 +1296,7 @@ modeler_map_test(){
 		}
 
 	}
-	if ( sample_res > pose.total_residue() ) utility_exit_with_message( "Could not find sample_res" );
+	if ( sample_res > pose.size() ) utility_exit_with_message( "Could not find sample_res" );
 	TorsionID const & torsion1( moving_torsions[ 1 ] );
 	TorsionID const & torsion2( moving_torsions[ 2 ] );
 
@@ -1306,7 +1306,7 @@ modeler_map_test(){
 	get_angle_sets( pose, atom_level_domain_map_, angle_sets, angle_ids, sample_angles_ );
 
 	// virtualize base for internal residues.
-	for ( Size i = 1; i < pose.total_residue(); i++ ){
+	for ( Size i = 1; i < pose.size(); i++ ){
 		if ( is_moving_res[ i ] && is_moving_res[ i+1 ] ){
 			add_variant_type_to_pose_residue( pose,  "VIRTUAL_BASE", i );
 		}
@@ -1427,7 +1427,7 @@ coarse_close_loop_test( ){
 	Pose pose;
 	import_pose::pose_from_file( pose, *rsd_set_coarse, "ggaauucc_coarse_RNA.pdb" , core::import_pose::PDB_file);
 
-	FoldTree f( pose.total_residue() );
+	FoldTree f( pose.size() );
 
 	f.new_jump( 4, 5, 4 );
 	//	f.new_jump( 3, 6, 4 );
@@ -1502,7 +1502,7 @@ coarse_to_full_test( ){
 
 	Pose pose = pose_scratch;
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ){
 		// A couple coordinate systems to allow easy superposition.
 		Vector const origin1 =  pose_coarse.xyz( NamedAtomID( " P  ", i ) );
 		Vector const x1 =  pose_coarse.xyz( NamedAtomID( " P  ", i ) );

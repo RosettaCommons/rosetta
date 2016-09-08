@@ -220,7 +220,7 @@ ga_main( void * )
 
 	// figure out design positions/choices from PackerTask
 	vector1< Size > design_positions;
-	for ( Size i(1), end( ptask->total_residue() ); i <= end; ++i ) {
+	for ( Size i(1), end( ptask->size() ); i <= end; ++i ) {
 		// ignore DNA positions
 		if ( !pose->residue_type(i).is_protein() ) continue;
 		ResidueLevelTask const & rtask( ptask->residue_task(i) );

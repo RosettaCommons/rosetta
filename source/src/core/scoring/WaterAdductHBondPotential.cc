@@ -180,7 +180,7 @@ WaterAdductHBondPotential::fill_h2o_hbond_set(
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
 	// loop over all nbr-pairs
-	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+	for ( Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		int const nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self();
 		conformation::Residue const & rsd1( pose.residue( res1 ) );
 

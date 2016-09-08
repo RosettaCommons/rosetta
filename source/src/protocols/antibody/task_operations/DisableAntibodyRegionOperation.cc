@@ -150,7 +150,7 @@ DisableAntibodyRegionOperation::apply(const core::pose::Pose& pose, core::pack::
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( local_ab_info->get_region_of_residue(pose, i) == region_ ) {
 			turn_off_packing.include_residue(i);
 			turn_off_design.include_residue(i);

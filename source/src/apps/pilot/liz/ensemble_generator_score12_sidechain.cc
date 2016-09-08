@@ -230,7 +230,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 	//create constraints for all residues
 	//type: HARMONIC
 	//static float const CA_cutoff(9.0);
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	for(int i = 1; i <= nres; i++){
 		Vector const CA_i( pose.residue(i).xyz(" CA "));
 		for(int j = 1; j <=nres; j++){
@@ -274,7 +274,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 	using namespace moves;
 	using namespace core::scoring::constraints;
 
-	core::Size nmoves = (core::Size)p.total_residue()/4; //number of moves for each move type
+	core::Size nmoves = (core::Size)p.size()/4; //number of moves for each move type
 	//	std::cout << "nmoves " << nmoves << " will be performed for each move type at each monte carlo step" << std::endl;
 	core::Size nrounds = 1000;
 

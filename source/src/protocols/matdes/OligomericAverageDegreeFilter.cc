@@ -164,7 +164,7 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 	core::Size count_neighbors( 0 );
 
 	for ( Size i = 1; i <= nsubposes; i++ ) {
-		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool is_upstream ( pose.size(), false );
 		if ( multicomp_ ) {
 			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
 			int sym_aware_jump_id;
@@ -175,7 +175,7 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 		}
 
 		// Count neighbors in the sub_pose
-		for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+		for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 			if ( pose.residue_type(resi).aa() == core::chemical::aa_vrt ) continue;
 			if ( packer_task->being_packed( resi ) ) {
 				bool which_side = is_upstream(resi);  //fpd  designable residues may be upstream ... that's ok as long as we're separated
@@ -184,7 +184,7 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 				TR.Debug << "resi: " << resi << std::endl;
 				core::Size resi_neighbors( 0 );
 				core::conformation::Residue const res_target( pose.conformation().residue( resi ) );
-				for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
+				for ( core::Size j=1; j<=pose.size(); ++j ) {
 					if ( is_upstream(j) == which_side ) {
 						core::conformation::Residue const resj( pose.residue( j ) );
 						if ( resj.aa() == core::chemical::aa_vrt ) continue;

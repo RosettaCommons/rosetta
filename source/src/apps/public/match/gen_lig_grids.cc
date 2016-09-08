@@ -185,7 +185,7 @@ int main( int argc, char * argv [] )
 		utility::vector1< core::Size > active_res_ndx;
 		core::Real threshold = option[grid_active_res_cutoff];
 		//for each residue
-		for ( core::Size j=1; j<=scaffold.n_residue(); j++ ) {
+		for ( core::Size j=1; j<=scaffold.size(); j++ ) {
 			core::conformation::ResidueCOP res( scaffold.residue(j).get_self_ptr() );
 			bool flag=true;
 

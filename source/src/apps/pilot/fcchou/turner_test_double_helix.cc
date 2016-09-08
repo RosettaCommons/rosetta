@@ -231,7 +231,7 @@ initialize_o2prime_pack( pose::Pose const & pose,
 	using namespace scoring;
 	using namespace chemical::rna;
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		o2prime_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		o2prime_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
 		o2prime_pack_task->nonconst_residue_task(i).or_include_current( true );
@@ -429,7 +429,7 @@ setup_double_helix_pose ( pose::Pose & pose){
 	}
 
 	pose::make_pose_from_sequence( pose, sequence, *rsd_set );
-	Size n_res = pose.n_residue();
+	Size n_res = pose.size();
 	Size chain_len = n_res/2;
 
 	FoldTree f( n_res );
@@ -462,7 +462,7 @@ setup_double_helix_pose ( pose::Pose & pose){
 	// For now assume delta, chi are at ideal values.
 	//Set the pucker and base-plane angle (delta and chi) to be ideal
 	utility::vector1< Real > strand1_torsion_set = get_suite_ideal_A_form_torsions();
-	for ( Size i = 1; i <= pose.total_residue() - 1; i++ ){
+	for ( Size i = 1; i <= pose.size() - 1; i++ ){
 		apply_suite_torsions( strand1_torsion_set, pose, i );
 	}
 	apply_suite_torsions( strand1_torsion_set, pose, 1, false );
@@ -546,7 +546,7 @@ Real
 rmsd_compute (core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
 	Real sum_rmsd = 0;
 	Size n_atom = 0;
-	for (Size i = 1; i <= pose1.total_residue(); ++i) {
+	for (Size i = 1; i <= pose1.size(); ++i) {
 		conformation::Residue const & rsd1 = pose1.residue(i);
 		conformation::Residue const & rsd2 = pose2.residue(i);
 		for (Size j = 1; j <= rsd1.nheavyatoms(); ++j) {
@@ -559,7 +559,7 @@ rmsd_compute (core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
 ///////////////////////////////////
 bool
 is_atom_clash (core::pose::Pose const & pose, Real const dist_cutoff = 1.2) {
-	Size const n_res = pose.total_residue();
+	Size const n_res = pose.size();
 	Real const dist_cutoff_sq = dist_cutoff * dist_cutoff;
 	Real dist_sq, dist_x, dist_y, dist_z;
 	for (Size i = 1; i <= n_res; ++i) {
@@ -637,7 +637,7 @@ double_helix_test(){
 	Real const kT_sys = option[ kT ] ();
 	bool const is_check_clash = option[ check_clash ] ();
 	std::string const sequence = option[ seq ]();
-	Size const n_res = pose.n_residue();
+	Size const n_res = pose.size();
 
 	// initialize for o2prime rotamer trials.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
@@ -860,7 +860,7 @@ helix_ST(){
 	utility::vector1< Real > const weight_list = option[ ST_weight_list ] ();
 	bool const is_check_clash = option[ check_clash ] ();
 	std::string const sequence = option[ seq ]();
-	Size const n_res = pose.n_residue();
+	Size const n_res = pose.size();
 
 	if ( kT_sys_list.size() != weight_list.size() ) {
 		utility_exit_with_message("kT_list and weight_list have different sizes!!!!!");

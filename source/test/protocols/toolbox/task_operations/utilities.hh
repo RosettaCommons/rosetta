@@ -36,12 +36,12 @@ test_task_operation(
 	core::pack::task::PackerTaskOP task =
 		task_factory.create_task_and_apply_taskoperations(pose);
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 		bool expecting_to_pack = (packable_mask[i-1] == '1');
 		TS_ASSERT_EQUALS(expecting_to_pack, task->being_packed(i));
 	}
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 		bool expecting_to_design = (designable_mask[i-1] == '1');
 		TS_ASSERT_EQUALS(expecting_to_design, task->being_designed(i));
 	}

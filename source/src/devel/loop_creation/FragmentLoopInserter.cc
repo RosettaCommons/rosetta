@@ -136,7 +136,7 @@ FragmentLoopInserter::apply(
 	using namespace core;
 
 	//Sanity checks
-	if ( loop_anchor()<=0 || loop_anchor()>pose.total_residue()-1 ) {
+	if ( loop_anchor()<=0 || loop_anchor()>pose.size()-1 ) {
 		std::stringstream err;
 		err << "Loop anchor " << loop_anchor() << " is invalid" << std::endl;
 		utility_exit_with_message(err.str());
@@ -319,7 +319,7 @@ FragmentLoopInserter::build_fragment_loop(
 	ft.add_edge(fragment_end, loop_anchor()+n_term_append_size+1, kinematics::Edge::PEPTIDE);
 
 	ft.add_edge(1, fragment_end+1, 3);
-	ft.add_edge(fragment_end+1, pose.total_residue(), kinematics::Edge::PEPTIDE);
+	ft.add_edge(fragment_end+1, pose.size(), kinematics::Edge::PEPTIDE);
 
 	if ( !ft.check_fold_tree() ) {
 		utility_exit_with_message("LoophashLoopInserter made a bad fold tree. File a bug!");
@@ -344,7 +344,7 @@ FragmentLoopInserter::build_fragment_loop(
 	//  core::pack::task::operation::PreventRepackingOP no_repack_res_task =
 	//   new core::pack::task::operation::PreventRepacking();
 	//
-	//  for(core::Size i=1; i<=pose.total_residue(); ++i)
+	//  for(core::Size i=1; i<=pose.size(); ++i)
 	//  {
 	//   if(i >= fragment_begin && i<= fragment_end)
 	//   {

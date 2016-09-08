@@ -155,7 +155,7 @@ StepWisePacker::setup_pack_task( pose::Pose const & pose ) {
 	pack_task_ = pack::task::TaskFactory::create_packer_task( pose ); // create form scratch?
 	pack_task_->restrict_to_repacking();
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		if ( !working_pack_res_.has_value( i ) )  {
 			pack_task_->nonconst_residue_task(i).prevent_repacking();

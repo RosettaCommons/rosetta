@@ -114,7 +114,7 @@ apply(
 	TR << "apply to: " << tag_from_pose(pose) << std::endl;
 
 	Size MAX_RES = 5000;
-	if( pose.total_residue() > MAX_RES ) {
+	if( pose.size() > MAX_RES ) {
 		TR << "nres > " << MAX_RES << ", skipping pose " << tag_from_pose(pose) << std::endl;
 		return;
 	}

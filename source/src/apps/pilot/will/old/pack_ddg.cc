@@ -128,7 +128,7 @@ refine_pose( Pose & pose, int seqpos = 0 ){
 	pack::task::PackerTaskOP taskstd = pack::task::TaskFactory::create_packer_task( pose );
 	taskstd->restrict_to_repacking();
 	taskstd->or_include_current(true);
-	for( int i = 1; i <= (int)pose.total_residue(); ++i ) {
+	for( int i = 1; i <= (int)pose.size(); ++i ) {
 		taskstd->nonconst_residue_task(i).or_ex1(true);
 		taskstd->nonconst_residue_task(i).or_ex2(true);
 	}
@@ -223,7 +223,7 @@ read_ddg_file( std::string pdb, std::string fname ) {
 			std::cerr << "can only handle one mutation: " << pdb << " " << buf << std::endl;
 			continue; // can only handle one mutation
 		}
-		if( seqpos < 1 || seqpos > (int)orig.total_residue() ) {
+		if( seqpos < 1 || seqpos > (int)orig.size() ) {
 			std::cerr << "seqpos out of range: " << pdb << " " << buf << std::endl;
 			continue;
 		}

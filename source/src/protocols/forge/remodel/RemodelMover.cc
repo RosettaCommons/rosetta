@@ -455,11 +455,11 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 ///
 
 bool RemodelMover::SamePose( Pose const & pose1, Pose const & pose2) {
-	if ( pose1.total_residue() != pose2.total_residue() ) {
+	if ( pose1.size() != pose2.size() ) {
 		return false;
 	}
 
-	for ( core::Size i = 1; i <= pose1.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose1.size(); ++i ) {
 		if ( std::abs(pose1.phi(i) - pose2.phi(i)) > 0.0001 ) {
 			return false;
 		}
@@ -499,19 +499,19 @@ void RemodelMover::apply( Pose & pose ) {
 		last_input_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 
 
-		TR << "apply(): entered RemodelMover apply(). pose.total_residue(): " << pose.total_residue() << std::endl;
+		TR << "apply(): entered RemodelMover apply(). pose.size(): " << pose.size() << std::endl;
 
 		// store the starting pose for KIC confirmation RMSD calculation
 		native_pose_ = pose;
 		// assign secondary structure
 		scoring::dssp::Dssp dssp( pose );
 
-		TR << pose.total_residue() << std::endl;
-		ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
+		TR << pose.size() << std::endl;
+		ObjexxFCL::FArray1D_char dsspSS( pose.size() );
 		dssp.dssp_reduced(dsspSS);
 
 		TR << "apply(): input PDB dssp assignment: (based on start structure)" << std::endl;
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			TR << dsspSS(i);
 		}
 		TR << std::endl;
@@ -535,7 +535,7 @@ void RemodelMover::apply( Pose & pose ) {
 				TR << "Generating ad hoc blueprint" << std::endl;
 				std::stringstream ad_hoc_blueprint;
 				//ad_hoc_blueprint = "";
-				for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+				for ( Size i = 1; i <= pose.size(); ++i ) {
 					//number
 					ad_hoc_blueprint << i;
 					//residue
@@ -596,8 +596,8 @@ void RemodelMover::apply( Pose & pose ) {
 			//this is pre modify, so simply extend to 2x blueprint length,
 			//with extensions, the pose will go beyond the correct length.  need to fix
 			//that after modify. Residues beyond first copy+ jxn doesn't really matter
-			if ( pose.total_residue() < 2*remodel_data.sequence.length() ) { //just making sure it's shorter before grow, input pose can be longer
-				Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+			if ( pose.size() < 2*remodel_data.sequence.length() ) { //just making sure it's shorter before grow, input pose can be longer
+				Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
 				// append a tail of the same length
 				String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
 				if ( build_aa_type.size() == 1 ) {
@@ -607,9 +607,9 @@ void RemodelMover::apply( Pose & pose ) {
 				for ( Size i = 1; i<= len_diff; ++i ) {
 					core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
 					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
-					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-					pose.set_omega(pose.total_residue()-1,180);
+					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.size(), true);
+					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.size()-1);
+					pose.set_omega(pose.size()-1,180);
 				}
 			}
 		}
@@ -620,7 +620,7 @@ void RemodelMover::apply( Pose & pose ) {
 			if ( !option[OptionKeys::remodel::bypass_fragments] && !rosetta_scripts_bypass_fragments_ && !rosetta_scripts_fast_disulfide_ ) {
 				working_model.manager.modify(pose);
 			} else {
-				working_model.manager.dummy_modify(pose.total_residue());
+				working_model.manager.dummy_modify(pose.size());
 
 			}
 			scoring::dssp::Dssp dssp( pose );
@@ -641,20 +641,20 @@ void RemodelMover::apply( Pose & pose ) {
 		//finally recheck length to ensure blueprint compliance
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			Size max_pdb_index = remodel_data_.blueprint.size()*2;
-			while ( pose.total_residue() > max_pdb_index ) {
-				pose.conformation().delete_residue_slow(pose.total_residue());
+			while ( pose.size() > max_pdb_index ) {
+				pose.conformation().delete_residue_slow(pose.size());
 				pose.pdb_info()->obsolete(true); //note the previous line was having issues with the pymol observer. You may also want to add -show_simulation_in_pymol 0 to your flags.
 			}
-			if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
-				Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+			if ( pose.size() < (remodel_data_.sequence.length()*2) ) {
+				Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
 				// append a tail of the same length
 				for ( Size i = 1; i<= len_diff; ++i ) {
 					core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
 					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("ALA") ) );
-					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.size(), true);
 					pose.pdb_info()->obsolete(true);
-					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-					pose.set_omega(pose.total_residue()-1,180);
+					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.size()-1);
+					pose.set_omega(pose.size()-1,180);
 				}
 			}
 
@@ -672,7 +672,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 		*/
 
-		//manager_.dummy_modify(testArc.n_residue());
+		//manager_.dummy_modify(testArc.size());
 		//core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
 		//core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, true);
 		//protocols::forge::methods::restore_residues(manager_.original2modified(), testArc, pose);
@@ -770,7 +770,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 		//rerooting tree
-		if ( option[OptionKeys::remodel::repeat_structure].user() && pose.total_residue() == remodel_data.blueprint.size()*repeat_number ) {
+		if ( option[OptionKeys::remodel::repeat_structure].user() && pose.size() == remodel_data.blueprint.size()*repeat_number ) {
 			core::kinematics::FoldTree f = pose.fold_tree();
 			f.reorder(working_model.safe_root_);
 			pose.fold_tree(f);
@@ -813,7 +813,7 @@ void RemodelMover::apply( Pose & pose ) {
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 				add_lower_terminus_type_to_pose_residue(pose,1);
-				for ( Size res = 1; res <= cached_modified_pose.n_residue(); res++ ) {
+				for ( Size res = 1; res <= cached_modified_pose.size(); res++ ) {
 					cached_modified_pose.set_phi( res, pose.phi(res) );
 					cached_modified_pose.set_psi( res, pose.psi(res) );
 					cached_modified_pose.set_omega( res, pose.omega(res) );
@@ -968,7 +968,7 @@ void RemodelMover::apply( Pose & pose ) {
 					cmmop->import( remodel_data_.natro_movemap_ );
 					cmmop->import( manager_.movemap() );
 
-					for ( Size i = 1; i<= pose.total_residue(); ++i ) {
+					for ( Size i = 1; i<= pose.size(); ++i ) {
 						std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
 					}
 
@@ -976,7 +976,7 @@ void RemodelMover::apply( Pose & pose ) {
 					// cmmop->set(core::id::THETA, true);
 					// cmmop->set(core::id::D, true);
 
-					for ( Size i = 1; i <= pose.n_residue(); i++ ) {
+					for ( Size i = 1; i <= pose.size(); i++ ) {
 						for ( Size j = 1; j <= pose.residue(i).nheavyatoms(); j++ ) {
 							if ( cmmop->get_bb(i) == 1 ) {
 								cmmop->set(core::id::DOF_ID(core::id::AtomID(j,i),core::id::THETA),true);
@@ -1000,7 +1000,7 @@ void RemodelMover::apply( Pose & pose ) {
 						//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
 						Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-						Size segment_length = (pose.n_residue())/repeat_number;
+						Size segment_length = (pose.size())/repeat_number;
 
 
 						for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
@@ -1456,7 +1456,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
-	for ( Size i = 1, ie = modified_archive_pose.n_residue(); mod_ap_is_full_atom && i != ie; ++i ) {
+	for ( Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
 		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->name() == core::chemical::FA_STANDARD );
 	}
 
@@ -1467,7 +1467,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	// flip to poly-ala-gly-pro-disulf pose, only in the rebuilt segment
 	utility::vector1< Size > protein_residues;
 	for (std::set<Size>::iterator it=rebuild.begin(), end=rebuild.end(); it != end; it++){
-	//for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+	//for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 	if ( pose.residue( *it ).is_protein() ) {
 	protein_residues.push_back( *it );
 	TR<< "turning these to ala: " << *it << std::endl;
@@ -1537,7 +1537,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 			//cases where the monomer pose is extended, so to restore the sidechain,
 			//the source of the sidechains has to be extended too in de novo cases.
 			//but with refining an existing repeat pose, no need to extend
-			// if (modified_archive_pose.total_residue() == pose.total_residue()){ //dangerous, assuming no further length change
+			// if (modified_archive_pose.size() == pose.size()){ //dangerous, assuming no further length change
 			//do nothing.
 			// } else { // if there's mismatch, assuming restoration source need extension... dangerous.
 			// because of code-change for always using 2x modified
@@ -1653,7 +1653,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		asym_length = symm_info->num_independent_residues();
 	} else {
-		asym_length = pose.total_residue();
+		asym_length = pose.size();
 	}
 
 
@@ -1793,8 +1793,8 @@ bool RemodelMover::design_refine_cart_relax(
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		asym_length = symm_info->num_independent_residues();
 	} else {
-		minFT.simple_tree(pose.total_residue());
-		asym_length = pose.total_residue();
+		minFT.simple_tree(pose.size());
+		asym_length = pose.size();
 	}
 
 	pose.fold_tree(minFT);
@@ -2025,7 +2025,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 			kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
 
 			////// fix dna
-			for ( Size i=1; i<=pose.total_residue() ; ++i ) {
+			for ( Size i=1; i<=pose.size() ; ++i ) {
 				if ( pose.residue(i).is_DNA() ) {
 					TR << "NATRO movemap setup: turning off DNA bb and chi move for refinement stage" << std::endl;
 					remodel_data_.natro_movemap_.set_bb( i, false );
@@ -2037,12 +2037,12 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 			combined_mm->import( remodel_data_.natro_movemap_ );
 			combined_mm->import( manager_.movemap() );
 
-			//remodel_data_.natro_movemap_.show(pose.total_residue());
-			//manager_.movemap().show(pose.total_residue());
-			//combined_mm->show(pose.total_residue());
+			//remodel_data_.natro_movemap_.show(pose.size());
+			//manager_.movemap().show(pose.size());
+			//combined_mm->show(pose.size());
 			//modify task to accept NATRO definition
 			utility::vector1<core::Size> natroPositions;
-			for ( Size i = 1; i<= pose.total_residue(); i++ ) {
+			for ( Size i = 1; i<= pose.size(); i++ ) {
 				if ( remodel_data_.natro_movemap_.get_chi(i) == 0 ) {
 					natroPositions.push_back(i);
 				}
@@ -2120,7 +2120,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	//pose.dump_pdb("pre_KICpose.pdb");
 
 	// collect loops
-	loops::LoopsOP confirmation_loops( new loops::Loops( intervals_to_confirmation_loops( loop_intervals.begin(), loop_intervals.end(), pose.total_residue() ) ) );
+	loops::LoopsOP confirmation_loops( new loops::Loops( intervals_to_confirmation_loops( loop_intervals.begin(), loop_intervals.end(), pose.size() ) ) );
 
 	// refine Mover used doesn't setup a fold tree, so do it here
 	kinematics::FoldTree loop_ft;
@@ -2155,7 +2155,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 		kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
 
 		////// fix dna
-		for ( Size i=1; i<=pose.total_residue() ; ++i ) {
+		for ( Size i=1; i<=pose.size() ; ++i ) {
 			if ( pose.residue( i ).is_DNA() ) {
 				TR << "NATRO movemap setup: turning off DNA bb and chi move for refinement stage" << std::endl;
 				remodel_data_.natro_movemap_.set_bb( i, false );

@@ -98,7 +98,7 @@ void DumpStatsSS::apply( core::pose::Pose & pose ) {
 		wanted_ss = dssp.get_dssp_secstruct();
 	}
 	std::string sequence;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue( i ).is_protein() ) sequence += pose.residue( i ).name1();
 	}
 	core::Real svm_prob = compute_svm_prob(sequence,wanted_ss);

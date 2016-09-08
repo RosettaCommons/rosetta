@@ -72,7 +72,7 @@ RMSByResStatistics::apply( core::pose::Pose & pose )
 	protocols::jd2::JobOP cur_job
 		( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	core::pose::Pose native = *this->get_native_pose();
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	ObjexxFCL::FArray1D_bool res_subset( nres, false );
 	ObjexxFCL::FArray1D_bool pep_subset( nres, false );
 	ObjexxFCL::FArray1D_bool pep_intrf_subset( nres, false );

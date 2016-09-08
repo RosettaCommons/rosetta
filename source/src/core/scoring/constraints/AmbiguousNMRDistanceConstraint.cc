@@ -310,7 +310,7 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 	using namespace core::chemical;
 	using core::id::NamedAtomID;
 	using core::pose::named_atom_id_to_atom_id;
-	runtime_assert( res >= 1 || res <= pose.total_residue() );
+	runtime_assert( res >= 1 || res <= pose.size() );
 	AA const aa( pose.residue_type( res ).aa() );
 
 	if ( ( name.substr(0,2) == "HD" ) && aa == aa_his ) {
@@ -345,7 +345,7 @@ void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceC
 	using namespace core::chemical;
 	using core::id::NamedAtomID;
 	using core::pose::named_atom_id_to_atom_id;
-	runtime_assert( res >= 1 || res <= pose.total_residue() );
+	runtime_assert( res >= 1 || res <= pose.size() );
 	AA const aa( pose.residue_type( res ).aa() );
 	//tr.Debug << "[ERROR]: name is " << name << " res " << res << " and name " << pose.residue( res ).name3() << std::endl;
 	//use named_atom_id_to_atom_id because it can throw an exception if atoms are missing instead of hard-exit...
@@ -779,8 +779,8 @@ AmbiguousNMRDistanceConstraint::read_def(
 	ConstraintIO::parse_residue( pose, tempres2, res2 );
 
 	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
-	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning  << "ignored constraint (residue number to high for pose: " << pose.total_residue() << " !)"
+	if ( res1 > pose.size() || res2 > pose.size() ) {
+		tr.Warning  << "ignored constraint (residue number to high for pose: " << pose.size() << " !)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;

@@ -140,7 +140,7 @@ append_rsd_by_jump_near_atom(
   Residue rsd( pose.residue( seqpos ) );
   //append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
   pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
-  Size new_seqpos( pose.total_residue() );
+  Size new_seqpos( pose.size() );
   Size jump_number( pose.fold_tree().num_jump() );
   Jump jump( pose.jump( jump_number ) );
 
@@ -256,7 +256,7 @@ void ExplicitWaterUnsatisfiedPolarsCalculator::recompute( core::pose::Pose const
   ResidueTypeSet const & rsd_set( pose_in.residue( 1 ).residue_type_set() );
 
 	//for each residue
-	for( core::Size seqpos = 1; seqpos <= pose_in.total_residue(); ++seqpos ){
+	for( core::Size seqpos = 1; seqpos <= pose_in.size(); ++seqpos ){
 			//check each residue seperately
 			Pose pose( pose_in );
 			Residue rsd( pose.residue( seqpos ) ); 

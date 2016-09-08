@@ -76,7 +76,7 @@ void SheetTranslate::apply(core::pose::Pose& pose) {
 
 	// Configure new kinematics
 	Loops chunks;
-	decompose_structure(pose.total_residue(), &chunks);
+	decompose_structure(pose.size(), &chunks);
 
 	StarTreeBuilder builder;
 	builder.set_up(chunks, &pose);

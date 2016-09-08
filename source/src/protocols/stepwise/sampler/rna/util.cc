@@ -194,7 +194,7 @@ bool
 modeler_sugar_at_three_prime( pose::Pose const & pose,
 	Size const moving_suite ) {
 	using namespace core::pose::full_model_info;
-	if ( (moving_suite + 1) == pose.total_residue() ||
+	if ( (moving_suite + 1) == pose.size() ||
 			( pose.fold_tree().is_cutpoint( moving_suite + 1 ) &&
 			!pose.residue_type( moving_suite + 1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ) ) {
 		if ( full_model_info_defined( pose ) ) {

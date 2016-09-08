@@ -200,7 +200,7 @@ nucleobase_probe_score_test()
 		}
 	}
 
-	pose.append_residue_by_jump ( *new_res ,  pose.total_residue() );
+	pose.append_residue_by_jump ( *new_res ,  pose.size() );
 
 
 	//////////////////////////////////////////////////
@@ -402,7 +402,7 @@ quick_score_test(){
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.residue(i).is_RNA() ) {
 			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, i );
 			pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RIBOSE, i );

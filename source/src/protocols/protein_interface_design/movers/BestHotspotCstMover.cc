@@ -101,14 +101,14 @@ BestHotspotCstMover::apply( pose::Pose & pose )
 
 	// make a packer task containing only the best residues
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( pose );
-	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		if ( ( find( best_cst_residues.begin(), best_cst_residues.end(), i ) != best_cst_residues.end() ) )  continue;
 		else packer_task->nonconst_residue_task( i ).prevent_repacking();
 	}
 
 	// Assign a fixed residue (for the stub constraints)
 	core::Size fixed_res(1);
-	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	if ( host_chain_ == 1 ) fixed_res = pose.size();
 	core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 
 	// reapply cst's, but use the packer task to only count the best residues

@@ -118,7 +118,7 @@ perturb_and_rescore( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sfx
 
 		pose::Pose copy_pose = pose;
 
-		for ( Size i = 1; i <= pose.n_residue()-2; ++i ) {
+		for ( Size i = 1; i <= pose.size()-2; ++i ) {
 			Real phi_like = pose.conformation().torsion_angle(
 				// replacing w/ equiv that is in atom tree
 				AtomID( pose.residue( i+1 ).atom_index( /*"CT2"*/"NT2" ), i+1 ),
@@ -133,7 +133,7 @@ perturb_and_rescore( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sfx
 				AtomID( pose.residue( i+1 ).atom_index( /*"CT1"*/"C" ), i+1 ),
 				phi_like + numeric::random::rg().gaussian() * 2.0 );
 		}
-		/*Size i = pose.n_residue()-1;
+		/*Size i = pose.size()-1;
 		Real phi_like = pose.conformation().torsion_angle(
 		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
 		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
@@ -148,7 +148,7 @@ perturb_and_rescore( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sfx
 		phi_like + numeric::random::rg().gaussian() * 20.0 );
 		*/
 
-		for ( Size i = 2; i <= pose.n_residue()-1; ++i ) {
+		for ( Size i = 2; i <= pose.size()-1; ++i ) {
 
 			Real psi_like = pose.conformation().torsion_angle(
 				AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
@@ -299,7 +299,7 @@ TriazoleCreator::apply(
 	//HarmonicFuncOP hf( new HarmonicFunc( 1.347, 0.1 ) );
 	//HarmonicFuncOP zf( new HarmonicFunc( 0.000, 0.01 ) );
 	//CircularHarmonicFuncOP chf( new CircularHarmonicFunc( 0, 0.01 ) );
-	for ( Size i = 1; i <= pose.total_residue() - 1; ++i ) {
+	for ( Size i = 1; i <= pose.size() - 1; ++i ) {
 
 		pose.conformation().declare_chemical_bond( i, "CT1", i+1, "NT3" );
 		core::pose::ncbb::add_triazole_constraint( pose, i );
@@ -309,10 +309,10 @@ TriazoleCreator::apply(
 	kinematics::MoveMapOP pert_mm( new kinematics::MoveMap() );
 	pert_mm->set_bb( 1, true );
 	pert_mm->set_chi( 1, true );
-	pert_mm->set_bb( pose.n_residue(), true );
-	pert_mm->set_chi( pose.n_residue(), true );
+	pert_mm->set_bb( pose.size(), true );
+	pert_mm->set_chi( pose.size(), true );
 
-	for ( Size i = 1+1; i <= pose.n_residue()-1; ++i ) {
+	for ( Size i = 1+1; i <= pose.size()-1; ++i ) {
 
 		pert_mm->set_bb( i, true );
 
@@ -323,7 +323,7 @@ TriazoleCreator::apply(
 
 	pose.conformation().detect_bonds();
 	//pose.conformation().detect_pseudobonds();
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
 

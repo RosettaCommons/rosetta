@@ -72,7 +72,7 @@ PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) cons
 	runtime_assert( selector_ );
 	ResidueRanges const ranges( selector_->apply( pose ) );
 
-	core::select::residue_selector::ResidueSubset retval( pose.total_residue(), false );
+	core::select::residue_selector::ResidueSubset retval( pose.size(), false );
 	TR << "Intervals: [";
 	for ( ResidueRanges::const_iterator range=ranges.begin(); range!=ranges.end(); ++range ) {
 		TR << " " << range->start() << "->" << range->stop() << ",";

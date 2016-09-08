@@ -199,7 +199,7 @@ void MRMover::apply( Pose &pose ) {
 	// set up initial loop build
 	LoopsOP my_loops;
 	if ( threaded ) {
-		core::Size nres = pose.total_residue();
+		core::Size nres = pose.size();
 		while ( !pose.residue(nres).is_polymer() ) nres--;
 		my_loops = LoopsOP( new Loops( job->loops( nres ) ) );
 
@@ -217,28 +217,28 @@ void MRMover::apply( Pose &pose ) {
 		utility::vector1< char > pdb_chains;
 		core::pose::PoseOP template_pose( new core::pose::Pose );
 		bool add_by_jump = true;
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			if ( !threaded || !my_loops->is_loop_residue(i) ) {
 				if ( add_by_jump ) {
-					if ( template_pose->total_residue() > 0
-							&& !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
-							&& template_pose->residue(template_pose->total_residue()).is_polymer() ) {
-						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+					if ( template_pose->size() > 0
+							&& !template_pose->residue(template_pose->size()).is_upper_terminus()
+							&& template_pose->residue(template_pose->size()).is_polymer() ) {
+						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->size() );
 					}
 
-					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
+					template_pose->append_residue_by_jump( pose.residue(i), template_pose->size(), "", "", true );
 					add_by_jump = (!pose.residue(i).is_polymer() || pose.residue(i).is_upper_terminus());
-					if ( template_pose->residue(template_pose->total_residue()).is_polymer()
-							&& !template_pose->residue(template_pose->total_residue()).is_lower_terminus() ) {
-						core::pose::add_lower_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+					if ( template_pose->residue(template_pose->size()).is_polymer()
+							&& !template_pose->residue(template_pose->size()).is_lower_terminus() ) {
+						core::pose::add_lower_terminus_type_to_pose_residue( *template_pose, template_pose->size() );
 					}
 				} else if ( !pose.residue(i).is_polymer() ) {
-					if ( template_pose->total_residue() > 0
-							&& !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
-							&& template_pose->residue(template_pose->total_residue()).is_polymer() ) {
-						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+					if ( template_pose->size() > 0
+							&& !template_pose->residue(template_pose->size()).is_upper_terminus()
+							&& template_pose->residue(template_pose->size()).is_polymer() ) {
+						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->size() );
 					}
-					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
+					template_pose->append_residue_by_jump( pose.residue(i), template_pose->size(), "", "", true );
 					add_by_jump = true;
 				} else {
 					template_pose->append_residue_by_bond( pose.residue(i), false );
@@ -251,10 +251,10 @@ void MRMover::apply( Pose &pose ) {
 				add_by_jump = true;
 			}
 		}
-		if ( template_pose->total_residue() > 0
-				&& !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
-				&& template_pose->residue(template_pose->total_residue()).is_polymer() ) {
-			core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+		if ( template_pose->size() > 0
+				&& !template_pose->residue(template_pose->size()).is_upper_terminus()
+				&& template_pose->residue(template_pose->size()).is_polymer() ) {
+			core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->size() );
 		}
 		core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo( *template_pose ) );
 
@@ -266,7 +266,7 @@ void MRMover::apply( Pose &pose ) {
 
 		// pose must be ideal going into hybrid
 		//  only the foldtree+sequence is used from input pose
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
 
@@ -321,9 +321,9 @@ void MRMover::apply( Pose &pose ) {
 
 // repack any missing sidechains after threading (threading does not do this)
 void MRMover::pack_missing_sidechains( Pose & pose ) {
-	utility::vector1< bool > needToRepack( pose.total_residue() , false );
+	utility::vector1< bool > needToRepack( pose.size() , false );
 	bool needToRepackAny = false;  // unused ~Labonte
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		// if there is missing density in the sidechain, then we need to repack
 		// check:
 		//    (a) CA-CB distance > 3A
@@ -375,7 +375,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	utility::vector1< bool > to_trim(query_pose.total_residue(), false) ;
+	utility::vector1< bool > to_trim(query_pose.size(), false) ;
 	protocols::loops::Loops new_loops;
 
 
@@ -386,7 +386,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 			}
 			//fpd check bb connectivity
 			bool trim_start, trim_stop;
-			trim_stop  = loops[i].stop() == query_pose.total_residue() || query_pose.fold_tree().is_cutpoint(loops[i].stop());
+			trim_stop  = loops[i].stop() == query_pose.size() || query_pose.fold_tree().is_cutpoint(loops[i].stop());
 			trim_start = loops[i].start() == 1 || query_pose.fold_tree().is_cutpoint(loops[i].start()-1);
 			if ( !trim_start ) {
 				numeric::xyzVector< core::Real > x0 = query_pose.residue( loops[i].start() ).atom( "N" ).xyz();
@@ -411,11 +411,11 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 	// # residues in new pose
 	Size new_nres = 0;
-	for ( Size i = 1; i <= query_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= query_pose.size(); ++i ) {
 		if ( !to_trim[i] ) new_nres++;
 	}
 
-	if ( new_nres == query_pose.total_residue() ) return;  // nothing to do
+	if ( new_nres == query_pose.size() ) return;  // nothing to do
 	if ( new_nres < 2 ) {
 		std::cerr << "Error: not enough aligned residues! trying to continue" << std::endl;
 		return;
@@ -427,30 +427,30 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 	Size out_ctr=1;
 	bool add_by_jump = true;
-	core::id::SequenceMapping new_mapping(new_nres, query_pose.total_residue());
-	core::id::SequenceMapping new_invmapping(query_pose.total_residue() , new_nres);
+	core::id::SequenceMapping new_mapping(new_nres, query_pose.size());
+	core::id::SequenceMapping new_invmapping(query_pose.size() , new_nres);
 
-	for ( Size i = 1; i <= query_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= query_pose.size(); ++i ) {
 		if ( !to_trim[i] ) {
 			if ( add_by_jump ) {
-				if ( new_query_pose.total_residue() > 0
-						&& new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
-					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+				if ( new_query_pose.size() > 0
+						&& new_query_pose.residue(new_query_pose.size()).is_polymer() ) {
+					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.size() );
 				}
 
-				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.total_residue(), "", "", true );
+				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.size(), "", "", true );
 				add_by_jump = !query_pose.residue(i).is_polymer();
 
-				if ( new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
-					core::pose::add_lower_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+				if ( new_query_pose.residue(new_query_pose.size()).is_polymer() ) {
+					core::pose::add_lower_terminus_type_to_pose_residue( new_query_pose, new_query_pose.size() );
 				}
 
 			} else if ( !query_pose.residue(i).is_polymer() ) {
-				if ( new_query_pose.total_residue() > 0
-						&& new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
-					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+				if ( new_query_pose.size() > 0
+						&& new_query_pose.residue(new_query_pose.size()).is_polymer() ) {
+					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.size() );
 				}
-				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.total_residue(), "", "", true );
+				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.size(), "", "", true );
 				add_by_jump = true;
 			} else {
 				new_query_pose.append_residue_by_bond( query_pose.residue(i), false );
@@ -463,9 +463,9 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 			add_by_jump = true;
 		}
 	}
-	if ( new_query_pose.total_residue() > 0
-			&& new_query_pose.residue(new_query_pose.total_residue()).is_polymer() ) {
-		core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
+	if ( new_query_pose.size() > 0
+			&& new_query_pose.residue(new_query_pose.size()).is_polymer() ) {
+		core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.size() );
 	}
 
 	core::kinematics::FoldTree f = new_query_pose.fold_tree();
@@ -479,7 +479,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	utility::vector1< int > pdb_numbering;
 	utility::vector1< char > pdb_chains;
 
-	for ( Size i(1); i <= query_pose.total_residue(); ++i ) {
+	for ( Size i(1); i <= query_pose.size(); ++i ) {
 		if ( new_invmapping[i] != 0 ) {
 			pdb_numbering.push_back( i );
 			pdb_chains.push_back( 'A' );
@@ -496,7 +496,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	if ( new_query_pose.residue( f.root() ).aa() == core::chemical::aa_vrt ) {
 		// find residue closest to center-of-mass
 		numeric::xyzVector< core::Real > massSum(0.0,0.0,0.0);
-		int nAtms=0, nres=new_query_pose.total_residue();
+		int nAtms=0, nres=new_query_pose.size();
 		for ( int i=1; i<= nres; ++i ) {
 			core::conformation::Residue const & rsd( new_query_pose.residue(i) );
 			if ( rsd.aa() == core::chemical::aa_vrt ) continue;

@@ -326,7 +326,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 			MetricValue< id::AtomID_Map< core::Real > > atom_sasa;
 			pose.metric( "sasa_interface", "delta_atom_sasa", atom_sasa );
 			core::Real polar_sasa( 0.0 ), hydrophobic_sasa( 0.0 );
-			for ( core::Size pos(1); pos<=pose.total_residue(); ++pos ) {
+			for ( core::Size pos(1); pos<=pose.size(); ++pos ) {
 				for ( core::Size atomi( 1 ); atomi <= atom_sasa.value().n_atom( pos ); ++atomi ) {
 					core::Real const atomi_delta_sasa( atom_sasa.value()( pos, atomi ) );
 					core::conformation::Residue const pos_rsd( pose.residue( pos ) );

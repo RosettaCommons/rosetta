@@ -111,7 +111,7 @@ main( int argc, char * argv [] )
 
 
 	// rpeack unbound native
-	for (int ii = 1, nres = unbound_pose_native.total_residue(); ii < nres; ++ii ) {
+	for (int ii = 1, nres = unbound_pose_native.size(); ii < nres; ++ii ) {
 
 		chemical::AA const native_aa ( unbound_pose_native.residue(ii).aa() );
 		utility::vector1 <bool> repack_native( core::chemical::num_canonical_aas, false );
@@ -164,7 +164,7 @@ main( int argc, char * argv [] )
 
 	// Loop over all positions in native, sequentially mutate each residue to all possible
 	// residues and calculate ddg in both the bound and the unbound
-	for ( int j = 1, resnum = bound_pose_native.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = bound_pose_native.size(); j <= resnum; ++j ) {
 
 		// if the residue is not on desired chain, don't mutate
 		if ( bound_pose_native.pdb_info()->chain(j) != chain_to_mutate ) continue;

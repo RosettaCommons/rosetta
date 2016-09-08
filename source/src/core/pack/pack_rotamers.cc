@@ -158,7 +158,7 @@ pack_rotamers_loop(
 		Real const final_score( scfxn( pose ) );
 		// show the resulting sequence
 		std::string final_seq;
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			if ( task->design_residue(i) ) final_seq+= pose.residue(i).name1();
 		}
 		if ( final_seq.size() == 0 ) final_seq = "-";
@@ -243,7 +243,7 @@ pack_rotamers_run(
 {
 	using namespace ObjexxFCL::format;
 
-	FArray1D_int bestrotamer_at_seqpos( pose.total_residue() );
+	FArray1D_int bestrotamer_at_seqpos( pose.size() );
 	core::PackerEnergy bestenergy( 0.0 );
 
 	pack_rotamers_run( pose, task, rotsets, ig, rot_to_pack, bestrotamer_at_seqpos, bestenergy );
@@ -276,7 +276,7 @@ pack_rotamers_run(
 	using namespace annealer;
 
 	bool start_with_current = false;
-	FArray1D_int current_rot_index( pose.total_residue(), 0 );
+	FArray1D_int current_rot_index( pose.size(), 0 );
 	bool calc_rot_freq = false;
 	FArray1D< core::PackerEnergy > rot_freq( ig->get_num_total_states(), 0.0 );
 

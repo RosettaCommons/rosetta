@@ -69,7 +69,7 @@ public:
 
 		core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, -65 );
 			pose.set_psi( i, -41 );
 		}
@@ -94,7 +94,7 @@ public:
 		core::pose::Pose ppose;
 		TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
 
-		for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 			TS_ASSERT_DIFFERS( ppose.phi( i ), pose.phi( i ) );
 			TS_ASSERT_DIFFERS( ppose.psi( i ), pose.psi( i ) );
 			TS_ASSERT_DIFFERS( ppose.omega( i ) , pose.omega( i ) );
@@ -103,11 +103,11 @@ public:
 		core::pose::Pose end_pose;
 		TS_ASSERT_THROWS_NOTHING( end_pose = env.end( ppose ) );
 
-		for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 			if ( i != 1 ) {
 				TS_ASSERT_DELTA( ppose.phi( i ), end_pose.phi( i ), 1e-10 );
 			}
-			if ( i != ppose.total_residue() ) {
+			if ( i != ppose.size() ) {
 				TS_ASSERT_DELTA( ppose.psi( i ), end_pose.psi( i ), 1e-10 );
 				TS_ASSERT_DELTA( ppose.omega( i ) , end_pose.omega( i ), 1e-10 );
 			}
@@ -134,7 +134,7 @@ public:
 		utility::vector1< bool > selection = selector->apply( pose );
 		core::Size const ch2_begin = selection.index( true );
 		TS_ASSERT( std::find( selection.begin(), selection.end(), true ) != selection.end() );
-		core::Size const ch2_end = pose.total_residue();
+		core::Size const ch2_end = pose.size();
 		TS_ASSERT( selection[ ch2_end ] );
 
 		core::pose::Pose ppose;
@@ -165,11 +165,11 @@ public:
 		TS_ASSERT_THROWS_NOTHING( end_pose = env.end( ppose ) );
 
 		// Verify no change
-		for ( core::Size i = 1; i <= end_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= end_pose.size(); ++i ) {
 			if ( i != 1 && i != ch2_begin ) {
 				TS_ASSERT_DELTA( ppose.phi( i ), end_pose.phi( i ), 1e-10 );
 			}
-			if ( i != ppose.total_residue() && i != ch2_begin-1 ) {
+			if ( i != ppose.size() && i != ch2_begin-1 ) {
 				TS_ASSERT_DELTA( ppose.psi( i ), end_pose.psi( i ), 1e-10 );
 				TS_ASSERT_DELTA( ppose.omega( i ) , end_pose.omega( i ), 1e-10 );
 			}
@@ -203,11 +203,11 @@ public:
 			TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
 
 			// Verify no initialization
-			for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+			for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 				if ( i != 1 ) {
 					TS_ASSERT_DELTA( ppose.phi( i ), pose.phi( i ), 1e-10 );
 				}
-				if ( i != ppose.total_residue() ) {
+				if ( i != ppose.size() ) {
 					TS_ASSERT_DELTA( ppose.psi( i ), pose.psi( i ), 1e-10 );
 					TS_ASSERT_DELTA( ppose.omega( i ) , pose.omega( i ), 1e-10 );
 				}
@@ -258,7 +258,7 @@ public:
 		core::pose::Pose ppose;
 		TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
 
-		for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 			TS_ASSERT_DIFFERS( ppose.phi( i ), pose.phi( i ) );
 			TS_ASSERT_DIFFERS( ppose.psi( i ), pose.psi( i ) );
 			TS_ASSERT_DIFFERS( ppose.omega( i ) , pose.omega( i ) );

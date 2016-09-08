@@ -226,7 +226,7 @@ public:
 
 		// look for proper termini
 		core::Size c_count = 0, n_count = 0;
-		for ( core::Size i=1; i<=input_pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=input_pose.size(); ++i ) {
 			if ( input_pose.residue(i).is_lower_terminus() ) {
 				n_count += 1;
 			}
@@ -265,7 +265,7 @@ public:
 		StructureData sd_conn = StructureDataFactory::get_instance()->get_from_pose( input_pose );
 		sd_conn.check_pose_consistency( input_pose );
 
-		for ( core::Size resid=1; resid<=input_pose.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=input_pose.size(); ++resid ) {
 			TR.Debug << "After bridging: " << input_pose.residue(resid).name() << resid << std::endl;
 		}
 		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), 4 );
@@ -280,7 +280,7 @@ public:
 
 		c_count = 0;
 		n_count = 0;
-		for ( core::Size resid=1; resid<=input_pose.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=input_pose.size(); ++resid ) {
 			if ( input_pose.residue(resid).is_lower_terminus() ) {
 				n_count += 1;
 				TS_ASSERT_DIFFERS( expected_lower_termini.find( resid ), expected_lower_termini.end() );
@@ -304,7 +304,7 @@ public:
 		core::Size const me = orig.upper_anchor("rot_comp.rot_comp2.catalytic.2");
 		core::Vector xyz1 = orig_pose.residue(2).xyz("CA");
 		core::Vector xyz2 = input_pose.residue( denovo_design::components::new_resnum( 2, ss, se, ms, me, 4 ) ).xyz("CA");
-		for ( core::Size i=1; i<=orig_pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=orig_pose.size(); ++i ) {
 			core::Size const new_res( denovo_design::components::new_resnum( i, ss, se, ms, me, 4 ) );
 			TR.Debug << "i=" << i << " new=" << new_res << std::endl;
 			if ( ! new_res ) {

@@ -116,7 +116,7 @@ public:
 		TR << "apply to: " << tag_from_pose(pose) << std::endl;
 
 		Size MAX_RES = 5000;
-		if ( pose.total_residue() > MAX_RES ) {
+		if ( pose.size() > MAX_RES ) {
 			TR << "nres > " << MAX_RES << ", skipping pose " << tag_from_pose(pose) << std::endl;
 			return;
 		}
@@ -148,7 +148,7 @@ public:
 		if ( residue_scores_ ) {
 			// HolesResult dec15result = compute_dec15_score(pose);
 			HolesResult dec15result = compute_holes_score(pose,hp_dec15_);
-			for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				Real rscore = 0.0;
 				for ( Size j = 5; j <= pose.residue(i).nheavyatoms(); ++j ) {
 					rscore += dec15result.atom_scores[AtomID(j,i)];

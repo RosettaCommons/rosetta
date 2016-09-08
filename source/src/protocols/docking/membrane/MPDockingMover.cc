@@ -346,8 +346,8 @@ void MPDockingMover::apply( Pose & pose ) {
 	TR << "adding MEM" << std::endl;
 	add_membrane_mover_->apply( pose );
 
-	TR << "docking pose nres: " << pose.total_residue() << std::endl;
-	TR << "native pose nres: " << docking_protocol_->get_native_pose()->total_residue() << std::endl;
+	TR << "docking pose nres: " << pose.size() << std::endl;
+	TR << "native pose nres: " << docking_protocol_->get_native_pose()->size() << std::endl;
 
 	// starting foldtree
 	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;

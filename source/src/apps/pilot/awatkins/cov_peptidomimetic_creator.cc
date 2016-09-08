@@ -214,21 +214,21 @@ CovalentPeptidomimeticCreator::apply(
 		peptide_res = option[ cov_creator::peptide_res ].value();
 
 		pose.append_residue_by_jump( peptide.residue( 1 ), 1 );
-		for ( Size i = 2; i <= peptide.total_residue(); ++i ) {
+		for ( Size i = 2; i <= peptide.size(); ++i ) {
 			pose.append_residue_by_bond( peptide.residue( i ), false );
 			if ( i == peptide_res ) {
-				if ( pose.residue( pose.total_residue() ).type().name3() == "CYS" ) {
-					resi_cys = pose.total_residue();
+				if ( pose.residue( pose.size() ).type().name3() == "CYS" ) {
+					resi_cys = pose.size();
 					replace_pose_residue_copying_existing_coordinates(
-						pose, pose.total_residue(), cys );
+						pose, pose.size(), cys );
 				} else {
-					resi_vdp = pose.total_residue();
+					resi_vdp = pose.size();
 					replace_pose_residue_copying_existing_coordinates(
-						pose, pose.total_residue(), vdp );
+						pose, pose.size(), vdp );
 				}
 			}
 		}
-		peptide_res = protein.total_residue() + peptide_res;
+		peptide_res = protein.size() + peptide_res;
 
 	} else {
 		// Single complex provided via -s
@@ -244,7 +244,7 @@ CovalentPeptidomimeticCreator::apply(
 	}
 
 	kinematics::MoveMapOP pert_mm( new kinematics::MoveMap() );
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( i == protein_res || i == peptide_res ) {
 			if ( pose.residue( i ).type().name3() == "CYS" ) {
 				resi_cys = i;
@@ -306,7 +306,7 @@ CovalentPeptidomimeticCreator::apply(
 	pert_tf->push_back( operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 	operation::OperateOnCertainResiduesOP pert_res( new operation::OperateOnCertainResidues() );
 	utility::vector1< Size > indices;
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).type().name3() == "CYS" ||pose.residue( i ).type().name3() == "VDP" ) {
 			indices.push_back( i );
 		}
@@ -361,13 +361,13 @@ CovalentPeptidomimeticCreator::apply(
 	// Now we have to append and prepend the rest of the peptide.
 	// Append residue by bond doesn't put the CONN3 partner near in seq but at end
 	// so use that res number
-	Size resi = pose.total_residue();//protein_res + 1;
+	Size resi = pose.size();//protein_res + 1;
 	for ( Size i = peptide_res-1; i >= 1; --i) {
 	pose.prepend_polymer_residue_before_seqpos( peptide.residue(i), resi, false );
 	}
 
-	resi = pose.total_residue();//protein_res + 1;
-	for ( Size i = peptide_res+1; i <= peptide.total_residue(); ++i, ++resi ) {
+	resi = pose.size();//protein_res + 1;
+	for ( Size i = peptide_res+1; i <= peptide.size(); ++i, ++resi ) {
 	pose.append_polymer_residue_after_seqpos( peptide.residue(i), resi, false );
 	}
 
@@ -401,7 +401,7 @@ CovalentPeptidomimeticCreator::update_hydrogens(
 	using namespace id;
 
 	// Look at any residues with the property ELECTROPHILE
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ! pose.residue( ii ).type().has_property( "ELECTROPHILE" ) ) {
 			continue;
 		}

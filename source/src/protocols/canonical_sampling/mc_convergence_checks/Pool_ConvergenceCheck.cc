@@ -136,9 +136,9 @@ void Pool_RMSD::add( core::io::silent::SilentStruct const& pss, std::string new_
 
 void Pool_RMSD::add( core::pose::Pose const& pose, std::string new_tag ) {
 	FArray2D_double coords( 3, pool_.n_atoms(), 0.0 );
-	runtime_assert( pool_.n_atoms() == pose.total_residue() );
+	runtime_assert( pool_.n_atoms() == pose.size() );
 	toolbox::fill_CA_coords( pose, pool_.n_atoms(), coords );
-	add( coords, pose.total_residue(), new_tag );
+	add( coords, pose.size(), new_tag );
 }
 
 void Pool_RMSD::add( ObjexxFCL::FArray2D_double const& xyz, core::Size nres, std::string new_tag ) {
@@ -173,7 +173,7 @@ void Pool_RMSD::set_reserve_size( int max_size ){ //ek
 core::Size Pool_RMSD::evaluate_and_add(pose::Pose const& pose, std::string& cluster_center, core::Real& rms_to_cluster, core::Real transition_threshold) {
 	tr.Debug << "using Pool_RMSD::evaluate_and_add " << std::endl;
 	ObjexxFCL::FArray2D_double coords;
-	coords.redimension( 3, pose.total_residue() );
+	coords.redimension( 3, pose.size() );
 	toolbox::fill_CA_coords( pose, pool_.n_atoms(), coords );
 	return evaluate_and_add( coords, cluster_center, rms_to_cluster, transition_threshold );
 }
@@ -209,7 +209,7 @@ core::Size Pool_RMSD::evaluate( core::pose::Pose const& fit_pose, std::string& b
 		return 0;
 	}
 	FArray2D_double coords( 3, pool_.n_atoms(), 0.0 );
-	runtime_assert( pool_.n_atoms() <= fit_pose.total_residue() );
+	runtime_assert( pool_.n_atoms() <= fit_pose.size() );
 	toolbox::fill_CA_coords( fit_pose, pool_.n_atoms(), coords );
 	return evaluate( coords, best_decoy, best_rmsd );
 }

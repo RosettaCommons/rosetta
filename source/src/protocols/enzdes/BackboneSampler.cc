@@ -120,11 +120,11 @@ BackboneSampler::apply( Pose & pose )
 	DetectProteinLigandInterface::add_observer_cache_segments_to_set( pose, segments );
 
 	//makes protein segements movable
-	utility::vector1< bool > mobile_bb( pose.n_residue(), false );
+	utility::vector1< bool > mobile_bb( pose.size(), false );
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	//movemap -> clear();
 	if ( segments.empty() ) {
-		for ( core::Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue(ii).is_protein() ) {
 				movemap -> set_bb( ii, true );
 				mobile_bb[ii] = true;
@@ -135,7 +135,7 @@ BackboneSampler::apply( Pose & pose )
 			}
 		}
 	} else {
-		for ( core::Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue(ii).is_protein() && ( segments.find(ii) != segments.end() ) ) {
 				movemap -> set_bb( ii, true );
 				mobile_bb[ii] = true;

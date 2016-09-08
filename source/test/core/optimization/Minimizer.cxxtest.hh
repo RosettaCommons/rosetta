@@ -341,7 +341,7 @@ public:
 				pose = start_pose;
 
 				{ // setup a foldtree
-					kinematics::FoldTree f( pose.total_residue() );
+					kinematics::FoldTree f( pose.size() );
 					f.new_jump( 8, 26, 18 );
 					f.reorder( 8 );
 					pose.fold_tree( f );

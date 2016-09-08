@@ -199,7 +199,7 @@ public:
 		Real const TOLERANCE( 1e-5 );
 		std::string const atom_name("CA");
 		core::id::SequenceMapping map( align.sequence_mapping(1,2) );
-		for ( Size ii = 1; ii <= query_pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= query_pose.size(); ++ii ) {
 			if ( map[ii] != 0 ) {
 				//Size const tmpl_ii( map[ii] );
 				core::Vector tgt_x = query_pose.residue(ii).xyz(atom_name);

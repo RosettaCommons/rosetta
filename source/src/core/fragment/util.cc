@@ -101,7 +101,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose_in, Const
 	FrameOP frame;
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
-	for ( Size pos = 1; pos <= pose.total_residue() - len + 1; ++pos ) {
+	for ( Size pos = 1; pos <= pose.size() - len + 1; ++pos ) {
 
 		//don't want to use fragments that go across a cutpoint... certainly non-ideal geometry there
 		// check for cutpoints
@@ -130,7 +130,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, FragSet& fragset, cor
 	FrameOP frame;
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
-	for ( Size pos = 1; pos <= pose.total_residue() - len + 1; ++pos ) {
+	for ( Size pos = 1; pos <= pose.size() - len + 1; ++pos ) {
 		frame = FrameOP( new Frame( pos, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );
@@ -374,13 +374,13 @@ bool fill_template_frames_from_pdb(
 
 		//first we need to figure out which residues we are dealing with
 		Size pdb_start_res( pose_it->pdb_info()->number( 1 ) );
-		Size pdb_stop_res( pose_it->pdb_info()->number( pose_it->total_residue() ) );
+		Size pdb_stop_res( pose_it->pdb_info()->number( pose_it->size() ) );
 		char pdb_res_chain( pose_it->pdb_info()->chain( 1 ) );
 		char pdb_start_res_icode( pose_it->pdb_info()->icode( 1 ) );
-		char pdb_stop_res_icode( pose_it->pdb_info()->icode( pose_it->total_residue() ) );
+		char pdb_stop_res_icode( pose_it->pdb_info()->icode( pose_it->size() ) );
 
 		//safety check
-		if ( pose_it->pdb_info()->chain( pose_it->total_residue() ) != pdb_res_chain ) {
+		if ( pose_it->pdb_info()->chain( pose_it->size() ) != pdb_res_chain ) {
 			utility_exit_with_message("PDB file containing fragments is corrupted, one model contains multiple chains");
 		}
 
@@ -388,7 +388,7 @@ bool fill_template_frames_from_pdb(
 		Size frame_stop = pose.pdb_info()->pdb2pose( pdb_res_chain, pdb_stop_res, pdb_stop_res_icode );
 
 
-		while ( pose_it->total_residue() != template_frames[ frame_counter ]->length()
+		while ( pose_it->size() != template_frames[ frame_counter ]->length()
 				&& frame_start != template_frames[ frame_counter ]->start()
 				&& frame_stop != template_frames[ frame_counter]->stop() )
 				{
@@ -616,7 +616,7 @@ void xform_pose(core::pose::Pose& pose,
 	core::Size sres,
 	core::Size eres ) {
 	using core::id::AtomID;
-	if ( eres==0 ) eres = pose.n_residue();
+	if ( eres==0 ) eres = pose.size();
 	for ( core::Size ir = sres; ir <= eres; ++ir ) {
 		for ( core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			AtomID aid(AtomID(ia,ir));
@@ -632,16 +632,16 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	// generate pose
 	core::pose::make_pose_from_sequence(pose, sequence, core::chemical::CENTROID );
 	// idealize and extend pose
-	for ( Size pos = 1; pos<=pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos<=pose.size(); pos++ ) {
 		core::conformation::idealize_position( pos, pose.conformation() );
 	}
 	Real const init_phi  ( -150.0 );
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
-	for ( Size pos = 1; pos<=pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos<=pose.size(); pos++ ) {
 		if ( pos != 1 ) pose.set_phi( pos,  init_phi );
-		if ( pos != pose.total_residue() ) pose.set_psi( pos,  init_psi );
-		if ( ( pos != 1 ) && ( pos != pose.total_residue() ) ) pose.set_omega( pos,  init_omega );
+		if ( pos != pose.size() ) pose.set_psi( pos,  init_psi );
+		if ( ( pos != 1 ) && ( pos != pose.size() ) ) pose.set_omega( pos,  init_omega );
 	}
 	// insert the torsions from the fragments
 	Size insert_pos = 1;

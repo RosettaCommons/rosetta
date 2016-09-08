@@ -71,7 +71,7 @@ main( int argc, char * argv [] )
 	std::string const input_pdb_name ( basic::options::start_file() );
 	core::import_pose::pose_from_file( pose, input_pdb_name , core::import_pose::PDB_file);
 
-	if ( sequence_to_build.length() != pose.total_residue() ) {
+	if ( sequence_to_build.length() != pose.size() ) {
 		TR << "Error!! Desired sequence does not have the same number of residues as input PDB" << std::endl;
 		exit(1);
 	}
@@ -85,7 +85,7 @@ main( int argc, char * argv [] )
 	int num_preserved(0);
 	int num_mut(0);
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		chemical::AA const current_aa( pose.residue(ii).aa());
 		char desired_aa = sequence_to_build[ii-1];
 		if ( oneletter_code_from_aa(current_aa) == desired_aa ) {

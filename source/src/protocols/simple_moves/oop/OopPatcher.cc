@@ -61,7 +61,7 @@ void OopPatcher::apply( core::pose::Pose & pose )
 	TR<< "patching residues" <<std::endl;
 
 	//kdrew: an oop pre position cannot be last position
-	runtime_assert_msg ( oop_pre_pos_ != pose.total_residue(), "beginning of oop cannot be last residue" );
+	runtime_assert_msg ( oop_pre_pos_ != pose.size(), "beginning of oop cannot be last residue" );
 	//kdrew: an oop post position cannot be first position
 	runtime_assert ( oop_post_pos_ != 1 );
 

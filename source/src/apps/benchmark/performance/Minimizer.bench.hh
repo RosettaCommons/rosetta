@@ -49,7 +49,7 @@ public:
 		scorefxn = core::scoring::get_score_function();
 
 		//kinematics::MoveMap mm;
-		for ( core::Size i=1; i<= start_pose->total_residue(); ++i ) {
+		for ( core::Size i=1; i<= start_pose->size(); ++i ) {
 			mm.set_bb ( i, true );
 			mm.set_chi( i, true );
 		}

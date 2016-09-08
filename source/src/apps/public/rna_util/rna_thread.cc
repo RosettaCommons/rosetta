@@ -247,7 +247,7 @@ prepare_threaded_model(
 		if ( i == 1 ||  ( sequence_mask( i-1 ) && pdb_number > 1 && !template_pose.fold_tree().is_cutpoint( pdb_number-1 ) )  ) {
 			pose.append_residue_by_bond( template_pose.residue( pdb_number ) );
 		} else {
-			pose.append_residue_by_jump( template_pose.residue( pdb_number ), pose.total_residue() );
+			pose.append_residue_by_jump( template_pose.residue( pdb_number ), pose.size() );
 		}
 
 		//std::cout << "creating alignment ==>  template:" << pdb_number << "  target: " << target_alignment2sequence[i] << std::endl;

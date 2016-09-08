@@ -146,10 +146,10 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	core::Size frag1_start = atoi(tag[2].c_str());
 	core::Size frag2_start = atoi(tag[3].c_str());
 	// fragment size should be pose total residue / 2
-	if ( pose.total_residue() % 2 != 0 ) {
+	if ( pose.size() % 2 != 0 ) {
 		utility_exit_with_message( "Pose " + input_tag + " total_residue() % 2 != 0" );
 	}
-	Size frag_size = pose.total_residue() / 2;
+	Size frag_size = pose.size() / 2;
 
 	TR.Debug << "scoring: " << input_tag << std::endl;
 
@@ -164,7 +164,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	pose.conformation().detect_disulfides();
 	pose.conformation().detect_bonds();
 
-	utility::vector1< bool > needToRepack( pose.total_residue(), true );
+	utility::vector1< bool > needToRepack( pose.size(), true );
 	core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( pose );
 	taskstd->restrict_to_repacking();
 	taskstd->or_include_current(true);
@@ -246,10 +246,10 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 		std::vector< core::Vector > orig_pose_coords;
 		std::vector< core::Vector > relaxed_pose_coords;
 		std::vector< core::Vector > native_pose_coords;
-		for ( Size i=1; i<=orig_pose.total_residue(); i++ ) {
+		for ( Size i=1; i<=orig_pose.size(); i++ ) {
 			orig_pose_coords.push_back( orig_pose.residue(i).xyz("CA") );
 		}
-		for ( Size i=1; i<=relaxed_pose.total_residue(); i++ ) {
+		for ( Size i=1; i<=relaxed_pose.size(); i++ ) {
 			relaxed_pose_coords.push_back( relaxed_pose.residue(i).xyz("CA") );
 		}
 		for ( Size i=0; i<frag_size; i++ ) {

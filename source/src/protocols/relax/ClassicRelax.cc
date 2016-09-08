@@ -441,7 +441,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 
 				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
-				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 					if ( ! movemap.get_chi(pos) ) {
 						turn_off_packing->include_residue(pos);
 					}
@@ -500,7 +500,7 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 
 				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
-				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 					if ( ! movemap.get_chi(pos) ) {
 						turn_off_packing->include_residue(pos);
 					}
@@ -642,13 +642,13 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		// need to copy virtuals first
-		for ( Size ii = prerefine_pose.total_residue(); ii>=1; --ii ) {
+		for ( Size ii = prerefine_pose.size(); ii>=1; --ii ) {
 			if ( symm_info->fa_is_independent(ii) ) {
 				prerefine_pose.replace_residue( ii, pose.residue( ii ), false);
 			}
 		}
 	} else {
-		for ( Size ii = 1; ii <= prerefine_pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= prerefine_pose.size(); ++ii ) {
 			prerefine_pose.replace_residue( ii, pose.residue( ii ), false);
 		}
 	}
@@ -664,7 +664,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	/// Stage 2 is mysterious, just like the comment above.
 	/// Stage 2 is <useless> ! Use fastrelax instead.
 	if ( stage2_cycles < 0 ) {
-		stage2_cycles = pose.total_residue() * 4;
+		stage2_cycles = pose.size() * 4;
 	}
 
 
@@ -756,7 +756,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	// output_debug_structure( pose, "rl_stage2" );
 
 	if ( stage3_cycles < 0 ) {
-		stage3_cycles = pose.total_residue();
+		stage3_cycles = pose.size();
 	}
 	if ( stage3_cycles > 0 ) {
 		if ( !checkpoints_.recover_checkpoint( pose, "stage_3", get_current_tag(), true, true ) ) {

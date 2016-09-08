@@ -138,7 +138,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		nres_asymmetric_unit = symm_info->num_independent_residues();
 	} else {
-		nres_asymmetric_unit = pose.n_residue();
+		nres_asymmetric_unit = pose.size();
 	}
 
 	core::pose::Pose refp;
@@ -148,7 +148,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 			core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(refp);
 			ref_nres_asymmetric_unit = symm_info->num_independent_residues();
 		} else {
-			ref_nres_asymmetric_unit = refp.n_residue();
+			ref_nres_asymmetric_unit = refp.size();
 		}
 		if ( nres_asymmetric_unit != ref_nres_asymmetric_unit ) {
 			utility_exit_with_message( "Reference pose and current pose have a different number of residues" );

@@ -171,7 +171,7 @@ main( int argc, char * argv [] )
 			// pept.dump_pdb("pept.pdb");
 
 			Pose init_pept = init;
-			for(Size i = 2; i <= pept.n_residue(); ++i) {
+			for(Size i = 2; i <= pept.size(); ++i) {
 				init_pept.append_polymer_residue_after_seqpos( pept.residue(i), i-1, false );
 			}
 			init_pept.set_xyz( AtomID(4,1), pept.residue(1).xyz("O") );

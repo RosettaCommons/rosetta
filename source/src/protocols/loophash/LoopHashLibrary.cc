@@ -542,7 +542,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 			}
 		}
 		casecount++;
-		//test_loop_sample( pose, pose.total_residue() );
+		//test_loop_sample( pose, pose.size() );
 
 		core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
 		TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;
@@ -586,7 +586,7 @@ LoopHashLibrary::apply_random(
 
 	core::pose::Pose original_pose = pose;
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	Size ir, jr;
 	//Size newpep_index = 0;
 
@@ -711,7 +711,7 @@ LoopHashLibrary::get_all(
 	//     if ( newpose->residue(ii).aa() == chemical::aa_pro ) final_mm.set( TorsionID( phi_torsion, BB, ii ), false );
 	//    }
 
-	Size nres = start_pose.total_residue();
+	Size nres = start_pose.size();
 	Size ir, jr;
 	//Size newpep_index = 0;
 
@@ -865,7 +865,7 @@ LoopHashLibrary::get_all(
 
 void
 LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose ){
-	extract_data_from_pose( pose, pose.total_residue() );
+	extract_data_from_pose( pose, pose.size() );
 }
 
 void
@@ -925,7 +925,7 @@ LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose, core::Size nres
 
 	// reset the fold tree
 	FoldTree f;
-	f.add_edge( 1, pose.total_residue() , Edge::PEPTIDE );
+	f.add_edge( 1, pose.size() , Edge::PEPTIDE );
 	if ( f.reorder(1) == false ) {
 		TR.Error << "ERROR During resetting reordering of fold tree - am ignoring this LOOP ! Cannot continue " << std::endl;
 		return; // continuing leads to a segfault - instead ignore this loop !
@@ -957,7 +957,7 @@ bool LoopHashLibrary::test_saving_library( core::pose::Pose pose, core::Size ir,
 	pose_bs.read_from_pose( pose, ir, loop_size );
 
 	if ( deposit ) {
-		bbdb_.add_pose( pose, pose.total_residue(), index, nullptr );
+		bbdb_.add_pose( pose, pose.size(), index, nullptr );
 
 		TR << "ADD: "
 			<< ir << " " << jr << " "
@@ -1113,7 +1113,7 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 
 	// reset the fold tree
 	FoldTree f;
-	f.add_edge( 1, pose.total_residue() , Edge::PEPTIDE );
+	f.add_edge( 1, pose.size() , Edge::PEPTIDE );
 	if ( f.reorder(1) == false ) {
 		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! I am done. " << std::endl;
 		return; // continuing leads to a segfault - instead ignore this loop !

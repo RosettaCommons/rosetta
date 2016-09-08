@@ -151,9 +151,9 @@ public:
 		scoring::EnergyMap emap;
 
 		utility::vector1< Size > nbs;
-		nbs.resize( pose.n_residue(), 0 );
+		nbs.resize( pose.size(), 0 );
 		scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
-		for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		for ( Size ii=1; ii <= pose.size(); ++ii ) {
 			nbs[ ii ] = tenA_neighbor_graph.get_node( ii )->num_neighbors_counting_self();
 		}
 
@@ -175,14 +175,14 @@ public:
 		chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( pose, "DFGLKANM", *rsd_set );
 
-		for ( Size ii=1; ii <= pose.n_residue(); ii+=3 ) {
+		for ( Size ii=1; ii <= pose.size(); ii+=3 ) {
 			pose.set_phi( ii, -150.0 );
 			pose.set_psi( ii, 150.0 );
 			pose.set_omega( ii, 180.0 );
 		}
 
 		Real total_surfaceE = -1.0;
-		utility::vector1< Real > residue_surfaceE( pose.n_residue(), 0.0 );
+		utility::vector1< Real > residue_surfaceE( pose.size(), 0.0 );
 
 		sp->compute_pose_surface_energy( pose, total_surfaceE, residue_surfaceE );
 		TS_ASSERT_DELTA( total_surfaceE, 0.0000, TOLERATED_ERROR );  // tests unscored poses; return 0.0 for all residues
@@ -204,7 +204,7 @@ public:
 		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		Real total_surfaceE = -1.0;
-		utility::vector1< Real > residue_surfaceE( pose.n_residue(), 0.0 );
+		utility::vector1< Real > residue_surfaceE( pose.size(), 0.0 );
 
 		sp->compute_pose_surface_energy( pose, total_surfaceE, residue_surfaceE );
 		TS_ASSERT_DELTA( total_surfaceE, 0.0000, TOLERATED_ERROR );  // tests unscored poses; return 0.0 for all residues

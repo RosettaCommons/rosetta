@@ -227,7 +227,7 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 	loops::Loops rigid( rigid_ );
 
 	//if no regions defined ---> replace it with 1..nres
-	if ( !rigid.size() ) rigid.add_loop( 1, cst_pose.total_residue(), 0 );
+	if ( !rigid.size() ) rigid.add_loop( 1, cst_pose.size(), 0 );
 
 	//go thru regions and generate constraints
 	 for ( auto const & it : rigid ) {

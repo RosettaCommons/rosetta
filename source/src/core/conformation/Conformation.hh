@@ -66,6 +66,8 @@
 #include <utility/signals/PausableSignalHub.hh>
 #include <utility/vector1.hh>
 
+#include <boost/iterator/indirect_iterator.hpp>
+
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -76,6 +78,7 @@
 namespace core {
 namespace conformation {
 
+	
 /// @brief A container of Residues and the kinematics to manage them
 class Conformation : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Conformation >
 {
@@ -114,7 +117,41 @@ public:  // typedefs
 	typedef std::map< id::AtomID, Vector > FragXYZ;
 	typedef std::map< id::StubID, kinematics::RT > FragRT;
 
+	// STL-type API
+	//typedef const ResidueCOP value_type;
+	//typedef const ResidueCOP *pointer;
+	//typedef const ResidueCOP &reference;
+	typedef Size          size_type;
+	typedef ptrdiff_t     difference_type;
+	typedef boost::indirect_iterator< ResidueOPs::const_iterator, Residue const > const_iterator;
+	typedef boost::indirect_iterator< ResidueOPs::iterator, Residue const > iterator;
 
+public:
+	
+	// STL-type methods
+	
+	/*template< typename T >
+	class Conformation_const_iterator {
+	public:
+		Conformation_const_iterator( T * r, size_type pos ):
+			r_( r ), pos_( pos ) {}
+			
+	private:
+		T * r_;
+		Size pos_;
+	};
+	
+	typedef Conformation_const_iterator< value_type > const_iterator;
+	*/
+	iterator       begin() noexcept { return residues_.begin(); }
+	const_iterator begin()   const noexcept { return residues_.begin(); }
+	iterator       end() noexcept { return residues_.end(); };
+	const_iterator end()     const noexcept { return residues_.end(); };
+	
+	//iterator begin() const { return residues_.begin(); } //  { return const_iterator( *residues_[ 1 ], 1 ); }
+	//iterator end() const { return residues_.end(); } //{ return const_iterator( *residues_[ 1 ], size()+1 ); }
+	
+	
 public:  // standard class methods
 
 	/// @brief constructor
@@ -384,7 +421,7 @@ public:  // Residues
 	/// M[MET:N-Terminus-Variant]CDH[HIS_D]LLR[ARG:C-Terminus-Variant]
 	std::string
 	annotated_sequence( bool show_all_variants ) const;
-
+	
 	/// @brief access one of the residues
 	/// @note this access is inlined, since otherwise it
 	/// shows up in the profiler.  This will call non-inlined refold methods if necessary.

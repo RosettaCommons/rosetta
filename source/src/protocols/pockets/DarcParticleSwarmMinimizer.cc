@@ -188,7 +188,7 @@ void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, cor
 void DarcParticleSwarmMinimizer::fill_atom_arrays_for_electrostatics_( core::Size particle_inx, core::pose::Pose ligand_pose_for_elec_calc, std::vector<basic::gpu::float4> & eatoms ) {
 
 	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = ligand_pose_for_elec_calc.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = ligand_pose_for_elec_calc.size(); j <= resnum; ++j ) {
 		if ( !ligand_pose_for_elec_calc.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;

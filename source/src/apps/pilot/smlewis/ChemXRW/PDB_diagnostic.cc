@@ -218,7 +218,7 @@ public:
 		using protocols::jd2::JobDistributor;
 		protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
 		std::string this_pdb_name(JobDistributor::get_instance()->job_outputter()->output_name( job_me ) );
-		core::Size const nres(pose.total_residue());
+		core::Size const nres(pose.size());
 		TR << this_pdb_name << " nres " << nres << std::endl;
 
 		//step 2: accumulate residue type stats

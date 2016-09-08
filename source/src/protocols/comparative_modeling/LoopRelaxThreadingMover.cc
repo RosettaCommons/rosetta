@@ -84,7 +84,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 		utility_exit_with_message("ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover - did you forget the -in:file:template_pdb option?");
 	}
 
-	LoopsOP my_loops( new Loops( job->loops( pose.total_residue() ) ) );
+	LoopsOP my_loops( new Loops( job->loops( pose.size() ) ) );
 	my_loops->choose_cutpoints( pose );
 	tr.Info << "loops to be rebuilt are: " << std::endl;
 	tr.Info << my_loops << std::endl;
@@ -161,9 +161,9 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 
 		SequenceAlignment aln = alignment_from_pose(pose);
 		SequenceMapping map   = aln.sequence_mapping(1,2);
-		utility::vector1< bool > residues_to_repack( pose.total_residue(), true );
+		utility::vector1< bool > residues_to_repack( pose.size(), true );
 
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			//if ( map[ii] == 0 ) residues_to_repack[ii] = true;
 			residues_to_repack[ii] = true;
 		}

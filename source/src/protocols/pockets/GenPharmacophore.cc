@@ -305,7 +305,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 
 	std::list< numeric::xyzVector<core::Real> > dnr_coord_list;
 	std::list< numeric::xyzVector<core::Real> > acp_coord_list;
-	for ( Size j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+	for ( Size j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & rsd( protein_pose.conformation().residue(j) );
 
 		//int target=0;
@@ -383,7 +383,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 		}
 	}
 	numeric::xyzVector<core::Real> protein_atom_coord(0.);
-	for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
 		for ( Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
 			protein_atom_coord.x() = curr_rsd.atom(i).xyz()(1);
@@ -450,16 +450,16 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 	core::pose::Pose old_pose = protein_pose;
 	core::pose::Pose new_pose;
 	new_pose.clear();
-	for ( int ir = 1, ir_end = protein_pose.total_residue(); ir <= ir_end; ir++ ) {
+	for ( int ir = 1, ir_end = protein_pose.size(); ir <= ir_end; ir++ ) {
 		core::conformation::Residue const & curr_rsd = protein_pose.residue(ir);
 		if ( !curr_rsd.is_protein() ) continue;
-		new_pose.append_residue_by_jump(protein_pose.residue(ir), new_pose.total_residue(),"", "",  false);
+		new_pose.append_residue_by_jump(protein_pose.residue(ir), new_pose.size(),"", "",  false);
 	}
 
 	using namespace basic::options;
 	int const sasa_cutoff = option[ OptionKeys::gen_pharmacophore::ring_sasa_cutoff ];
 
-	for ( int ir = 1, ir_end = rna_pose.total_residue(); ir <= ir_end; ir++ ) {
+	for ( int ir = 1, ir_end = rna_pose.size(); ir <= ir_end; ir++ ) {
 
 		core::conformation::Residue const & curr_rna_rsd = rna_pose.residue(ir);
 		Size seq_pos = curr_rna_rsd.seqpos();
@@ -467,10 +467,10 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 
 		if ( !curr_rna_rsd.is_RNA() ) continue;
 		core::pose::Pose temp_protein_rnabase_pose = new_pose;
-		temp_protein_rnabase_pose.append_residue_by_jump(rna_pose.residue(ir), new_pose.total_residue(),"", "",  true);
+		temp_protein_rnabase_pose.append_residue_by_jump(rna_pose.residue(ir), new_pose.size(),"", "",  true);
 
 		//Set-up atomID for SASA calculations by atom
-		utility::vector1< core::Real > complex_rsd_sasa( temp_protein_rnabase_pose.total_residue(), 0.0 );
+		utility::vector1< core::Real > complex_rsd_sasa( temp_protein_rnabase_pose.size(), 0.0 );
 		core::id::AtomID_Map<core::Real> complex_atom_sasa;
 		core::id::AtomID_Map<bool> complex_atom_subset;
 		core::pose::initialize_atomid_map( complex_atom_sasa, temp_protein_rnabase_pose, 0.0 );
@@ -480,7 +480,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 		core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];
 		core::scoring::calc_per_atom_sasa( temp_protein_rnabase_pose, complex_atom_sasa, complex_rsd_sasa, probe_radius, false, complex_atom_subset );
 
-		for ( int ic = 1, ic_end = temp_protein_rnabase_pose.total_residue(); ic<=ic_end; ++ic ) {
+		for ( int ic = 1, ic_end = temp_protein_rnabase_pose.size(); ic<=ic_end; ++ic ) {
 			core::conformation::Residue const & curr_rsd = temp_protein_rnabase_pose.residue(ic);
 			if ( !curr_rsd.is_RNA() ) continue;
 			core::chemical::rna::RNA_ResidueType const & curr_rsd_type = curr_rsd.RNA_type();
@@ -550,11 +550,11 @@ std::string GenPharmacophore::extract_Hbond_atoms_from_protein_rna_complex(core:
 
 	//combine protein and rna pose
 	pose::Pose prot_rna_complex_pose = protein_pose;
-	for ( int ir = 1, ir_end = rna_pose.total_residue(); ir <= ir_end; ir++ ) {
+	for ( int ir = 1, ir_end = rna_pose.size(); ir <= ir_end; ir++ ) {
 		core::conformation::Residue const & curr_rna_rsd = rna_pose.residue(ir);
 		if ( !curr_rna_rsd.is_RNA() ) continue;
 		//int seqpos = curr_rna_rsd.seqpos();
-		prot_rna_complex_pose.append_residue_by_jump(rna_pose.residue(ir), prot_rna_complex_pose.total_residue(),"", "",  true);
+		prot_rna_complex_pose.append_residue_by_jump(rna_pose.residue(ir), prot_rna_complex_pose.size(),"", "",  true);
 	}
 
 	//find Hbond interactions and include it to the pharmacophore list
@@ -569,7 +569,7 @@ std::string GenPharmacophore::extract_Hbond_atoms_from_protein_rna_complex(core:
 
 	rna_hb_set.clear();
 
-	for ( Size ic = 1, ic_end = prot_rna_complex_pose.total_residue(); ic<=ic_end; ic++ ) {
+	for ( Size ic = 1, ic_end = prot_rna_complex_pose.size(); ic<=ic_end; ic++ ) {
 		core::conformation::Residue const & curr_rsd = prot_rna_complex_pose.residue(ic);
 		if ( !curr_rsd.is_RNA() ) continue;
 

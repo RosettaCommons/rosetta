@@ -199,7 +199,7 @@ A3BPeptideBuilder::apply(
 	kinematics::MoveMapOP pert_alpha_mm( new kinematics::MoveMap() );
 	kinematics::MoveMapOP pert_beta_mm( new kinematics::MoveMap() );
 
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 
 		if ( pose.residue(i).type().is_beta_aa() ) { //( i == 4 || i == 8 || i == 12 ) {
 
@@ -228,15 +228,15 @@ A3BPeptideBuilder::apply(
 		}
 	}
 
-	/*if ( pose.residue(pose.n_residue()).type().is_beta_aa() ) { //( i == 4 || i == 8 || i == 12 ) {
+	/*if ( pose.residue(pose.size()).type().is_beta_aa() ) { //( i == 4 || i == 8 || i == 12 ) {
 
-	id::TorsionID bb1( pose.n_residue(), id::BB, 1 ); //phi
-	id::TorsionID bb2( pose.n_residue(), id::BB, 2 ); //theta
-	id::TorsionID bb3( pose.n_residue(), id::BB, 3 ); //psi
-	id::TorsionID bb4( pose.n_residue(), id::BB, 4 ); //omg
+	id::TorsionID bb1( pose.size(), id::BB, 1 ); //phi
+	id::TorsionID bb2( pose.size(), id::BB, 2 ); //theta
+	id::TorsionID bb3( pose.size(), id::BB, 3 ); //psi
+	id::TorsionID bb4( pose.size(), id::BB, 4 ); //omg
 
-	pert_beta_mm->set_bb( pose.n_residue(), true );
-	pert_alpha_mm->set_bb( pose.n_residue(), false );
+	pert_beta_mm->set_bb( pose.size(), true );
+	pert_alpha_mm->set_bb( pose.size(), false );
 
 	pert_beta_mm->set( bb4, false );
 
@@ -246,11 +246,11 @@ A3BPeptideBuilder::apply(
 	pose.set_torsion( bb4, 180 );
 	} else {
 
-	pert_alpha_mm->set_bb( pose.n_residue(), true );
-	pert_beta_mm->set_bb( pose.n_residue(), false );
-	id::TorsionID bb1( pose.n_residue(), id::BB, 1 ); //phi
-	id::TorsionID bb2( pose.n_residue(), id::BB, 2 ); //psi
-	id::TorsionID bb3( pose.n_residue(), id::BB, 3 ); //omg
+	pert_alpha_mm->set_bb( pose.size(), true );
+	pert_beta_mm->set_bb( pose.size(), false );
+	id::TorsionID bb1( pose.size(), id::BB, 1 ); //phi
+	id::TorsionID bb2( pose.size(), id::BB, 2 ); //psi
+	id::TorsionID bb3( pose.size(), id::BB, 3 ); //omg
 
 	pose.set_torsion( bb1, -60 );
 	pose.set_torsion( bb2, -40 );
@@ -267,15 +267,15 @@ A3BPeptideBuilder::apply(
 	//SumFuncOP hbond_func;
 	//hbond_func->add_func( hbond_func1 );
 	//hbond_func->add_func( hbond_func2 );
-	for ( Size i = 1; i <= pose.n_residue() - 4; ++i ) {
+	for ( Size i = 1; i <= pose.size() - 4; ++i ) {
 		AtomID aidO( pose.residue( i ).atom_index( "O" ), i );
 		AtomID aidH( pose.residue( i+4 ).atom_index( "H" ), i+4 );
 
 		ConstraintCOP hbond( new AtomPairConstraint( aidO, aidH, hbond_func ) );
 		pose.add_constraint( hbond );
 	}
-	AtomID aidO( pose.residue( pose.n_residue() - 3 ).atom_index( "O" ), pose.n_residue() - 3 );
-	AtomID aidH( pose.residue( pose.n_residue() ).atom_index( "HM" ), pose.n_residue() );
+	AtomID aidO( pose.residue( pose.size() - 3 ).atom_index( "O" ), pose.size() - 3 );
+	AtomID aidH( pose.residue( pose.size() ).atom_index( "HM" ), pose.size() );
 
 	ConstraintCOP hbond( new AtomPairConstraint( aidO, aidH, hbond_func ) );
 	pose.add_constraint( hbond );
@@ -285,13 +285,13 @@ A3BPeptideBuilder::apply(
 
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
 
 	kinematics::MoveMapOP desn_mm( new kinematics::MoveMap );
 	desn_mm->set_bb( true );
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		id::TorsionID bb3( i, id::BB, pose.residue(i).type().is_beta_aa() ? 4 : 3 ); //omg
 		desn_mm->set( bb3, false ); // needed for mm_std, which has no omega tether
 	}
@@ -348,7 +348,7 @@ A3BPeptideBuilder::apply(
 		mc->recover_low( pose );
 
 		PackerTaskOP task( TaskFactory::create_packer_task( pose ) );
-		for ( Size i = 1; i <= pose.n_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).initialize_from_command_line();
 		}

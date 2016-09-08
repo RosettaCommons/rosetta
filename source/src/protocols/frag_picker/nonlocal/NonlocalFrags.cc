@@ -313,7 +313,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		}
 		// remove virtual residue
 		pose::Pose temp_pose = unmodified_pose;
-		for ( Size ii = 1; ii <= unmodified_pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 			temp_pose.replace_residue( ii, pose.residue( ii ), false );
 		}
 		pose = temp_pose;
@@ -332,7 +332,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 
 	// iterate each frag size
 	// note: shall this be random for BOINC?
-	Size total_residue = pose.total_residue();
+	Size total_residue = pose.size();
 
 	// Size frag_len = numeric::random::random_element( frag_sizes_ );  //  = frag_sizes_[ i ]; // frag size
 	for ( Size i=1; i <= frag_sizes_.size(); ++i ) {   // frag_sizes_ loop
@@ -561,7 +561,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		}
 		// remove virtual residue
 		pose::Pose temp_pose = pose;
-		for ( Size ii = 1; ii <= unmodified_pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 			temp_pose.replace_residue( ii, idealize_pose.residue( ii ), false );
 		}
 		pose = temp_pose;
@@ -581,7 +581,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		// output name and uses the out::prefix option
 		std::string origprefix = option[ out::prefix ].value();
 		option[ out::prefix ].value("relaxed_");
-		if ( !jd->job_outputter()->job_has_completed( jd->current_job() ) && relaxed_pose.total_residue() ) {
+		if ( !jd->job_outputter()->job_has_completed( jd->current_job() ) && relaxed_pose.size() ) {
 			(*scorefxn)(relaxed_pose);
 			jd->job_outputter()->final_pose( jd->current_job(), relaxed_pose );
 		}

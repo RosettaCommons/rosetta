@@ -55,7 +55,7 @@ core::id::AtomID
 AddCavitiesMover::get_closest_heavy_atom( Pose & pose, numeric::xyzVector<Real> xyz ) {
 	id::AtomID closest;
 	Real closest_dist = 9e9;
-	for ( size_t ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( size_t ir = 1; ir <= pose.size(); ++ir ) {
 		for ( size_t ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 			id::AtomID id( ia, ir );
 			if ( 22 <= pose.residue(id.rsd()).atom(id.atomno()).type() ) continue;
@@ -118,7 +118,7 @@ AddCavitiesMover::clear_suckers( Pose & pose ) {
 	core::pose::PoseOP cache_pose = utility::pointer::dynamic_pointer_cast< CacheablePoseRawPtr >(cd)->pose();
 	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, nullptr );
 	Pose orig_pose = *cache_pose;
-	orig_pose.copy_segment( orig_pose.total_residue(), pose, 1, 1 );
+	orig_pose.copy_segment( orig_pose.size(), pose, 1, 1 );
 	pose = orig_pose;
 }
 
@@ -144,8 +144,8 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 	// add VRT res for coord constraints
 	pose.append_residue_by_jump
 		( *conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
-		pose.total_residue()/2 );
-	int virt_resno = pose.total_residue();
+		pose.size()/2 );
+	int virt_resno = pose.size();
 	core::scoring::func::FuncOP func( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 
 	// std::cerr << "add sucker atoms" << std::endl;
@@ -161,7 +161,7 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 		AtomID closest = get_closest_heavy_atom( pose, cbs[i].xyz() );
 		// std::cerr << "closest " << closest << " score before " << (*sf)(pose) << std::endl;
 		pose.append_residue_by_jump( *sucker, closest.rsd() );
-		int suck_resno = pose.total_residue();
+		int suck_resno = pose.size();
 
 		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(1,suck_resno),
 			AtomID(1,virt_resno),

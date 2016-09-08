@@ -246,7 +246,7 @@ MgWaterHydrogenPacker::find_water_neighbor_vecs( pose::Pose const & pose,
 	Vector xyz_mg = pose.residue( mg_res ).xyz( "MG" );
 	acc_vecs.clear();
 	rep_vecs.clear();
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 		Residue const & rsd_j = pose.residue( j );
 		if ( j == water_res ) continue;
 		for ( Size jj = 1; jj <= rsd_j.natoms(); jj++ ) {

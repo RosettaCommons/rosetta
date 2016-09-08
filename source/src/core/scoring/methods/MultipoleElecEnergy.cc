@@ -303,13 +303,13 @@ MultipoleElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< DenseEnergyContainer > ( lrc ) );
-		if ( dec->size() != pose.total_residue() ) {
+		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.total_residue(), multipole_elec ) );
+		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), multipole_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -332,13 +332,13 @@ MultipoleElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction con
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< DenseEnergyContainer > ( lrc ) );
-		if ( dec->size() != pose.total_residue() ) {
+		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.total_residue(), multipole_elec ) );
+		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), multipole_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 

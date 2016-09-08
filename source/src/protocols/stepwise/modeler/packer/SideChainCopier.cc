@@ -37,7 +37,7 @@ SideChainCopier::SideChainCopier( core::pose::Pose const & reference_pose,
 	reference_pose_( reference_pose ),
 	copy_o2prime_hydrogens_( copy_o2prime_hydrogens )
 {
-	for ( Size n = 1; n <= reference_pose_.total_residue(); n++ ) copy_res_.push_back( n );
+	for ( Size n = 1; n <= reference_pose_.size(); n++ ) copy_res_.push_back( n );
 }
 
 //Constructor
@@ -60,7 +60,7 @@ SideChainCopier::apply( core::pose::Pose & viewer_pose ) {
 
 	Pose pose = viewer_pose; // to prevent crashes in graphics.
 
-	runtime_assert( pose.total_residue() == reference_pose_.total_residue() );
+	runtime_assert( pose.size() == reference_pose_.size() );
 	Real const ho2prime_tolerance( 1.0e-3 );
 	Real const orient_backbone_tolerance( 1.0e-3 );
 

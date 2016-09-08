@@ -60,7 +60,7 @@ make_pose_from_sequence_(
 		ResidueType const & rsd_type( * residue_set.get_representative_type_aa( my_aa ) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 	} // for seqpos
-	// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );   probably not necessary
+	// pose.conformation().insert_chain_ending( pose.size() - 1 );   probably not necessary
 } // make_pose_match_sequence_
 
 FragData::FragData( SingleResidueFragDataOP SRFD, Size n) : valid_( false ), score_( 0.0 ) {
@@ -96,7 +96,7 @@ Size FragData::apply( MoveMap const& mm, pose::Pose& pose, Size start, Size end 
 	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++pos ) {
 		//success = success && data_[ pos-start+1 ]->apply( pose, pos );
 		if ( pos > end ) break;
-		if ( pos > pose.total_residue() ) break;
+		if ( pos > pose.size() ) break;
 		if ( !(*it)->is_applicable( mm, pos ) ) continue; //don't apply for this residue
 		if ( !(*it)->apply( mm, pose, pos ) ) continue; //don't apply for this residue
 		ct++;
@@ -125,7 +125,7 @@ Size FragData::apply( MoveMap const& mm, pose::Pose& pose, Frame const& frame ) 
 	Size ct ( 0 );
 	Size ipos( 1 );
 	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
-		if ( frame.seqpos( ipos ) > pose.total_residue() ) continue;
+		if ( frame.seqpos( ipos ) > pose.size() ) continue;
 		if ( !(*it)->is_applicable( mm, ipos, frame ) ) continue;
 		if ( !(*it)->apply( mm, pose, ipos, frame ) ) continue;
 		++ct;
@@ -139,7 +139,7 @@ Size FragData::apply( pose::Pose& pose, Frame const& frame ) const {
 	Size ipos( 1 );
 	Size ct ( 0 );
 	for ( auto it= data_.begin(), eit=data_.end(); it!=eit; ++it, ++ipos ) {
-		if ( frame.seqpos( ipos ) > pose.total_residue() ) continue;
+		if ( frame.seqpos( ipos ) > pose.size() ) continue;
 		if ( !(*it)->apply( pose, ipos, frame ) ) continue;
 		++ct;
 	}
@@ -187,7 +187,7 @@ bool FragData::steal( pose::Pose const& pose, Size start, Size end ) {
 	bool success( true );
 	for ( Size pos=start; pos<=end; pos++ ) {
 		runtime_assert( start > 0 );
-		if ( pos > pose.total_residue() ) return false;
+		if ( pos > pose.size() ) return false;
 		success = success && data_[ pos-start+1 ]->steal( pose, pos );
 	}
 	if ( success ) set_valid();
@@ -203,7 +203,7 @@ bool FragData::steal( pose::Pose const& pose, Frame const& frame ) {
 	bool success( true );
 	for ( Size j=1; j<=size(); j++ ) {
 		runtime_assert( frame.seqpos( j ) > 0 );
-		if ( frame.seqpos( j ) > pose.total_residue() ) return false;
+		if ( frame.seqpos( j ) > pose.size() ) return false;
 		success = success && data_[ j ]->steal( pose, j, frame );
 	}
 	if ( success ) set_valid();

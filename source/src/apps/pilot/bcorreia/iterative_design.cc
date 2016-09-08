@@ -280,7 +280,7 @@ main( int argc, char * argv [] )
 			std::vector<Size> loops_nbr;
 
 
-			for (core::Size i=1; i<=init_pose.total_residue(); ++i ) {
+			for (core::Size i=1; i<=init_pose.size(); ++i ) {
 
 				for ( int j = 1; j <= (int)loops.size(); ++j ) {
 					if ( i >= core::Size( loops[j].start() ) && i <= core::Size( loops[j].stop() ) ) {
@@ -296,7 +296,7 @@ main( int argc, char * argv [] )
 
 				Vector const  & nbr_atom( init_pose.residue(loop_residues[iter_res]).nbr_atom_xyz() );
 
-				for ( Size i=1 ; i <= init_pose.total_residue() ; ++i){
+				for ( Size i=1 ; i <= init_pose.size() ; ++i){
 
 					//bool isloop = false;
 
@@ -408,7 +408,7 @@ main( int argc, char * argv [] )
 
 				utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, true );
 
-				utility::vector1< bool > residues_to_mutate( init_pose.total_residue(), false );
+				utility::vector1< bool > residues_to_mutate( init_pose.size(), false );
 
 
 				core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( init_pose ));

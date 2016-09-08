@@ -208,7 +208,7 @@ core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 	core::scoring::EnergyGraph const & energy_graph( pose->energies().energy_graph() );
 	core::scoring::EnergyMap ligand_two_body_energies;
 
-	for ( core::Size i = 1; i <= pose->total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose->size(); i++ ) {
 		for ( core::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
@@ -281,7 +281,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	TR << std::endl;
 
 	// ASSUMPTION: the ligand is the last residue in the given PDB
-	core::Size ligand_resnum = pose_copy->total_residue();
+	core::Size ligand_resnum = pose_copy->size();
 	core::Real ligand_weight = option[coupled_moves::ligand_weight];
 	protocols::simple_moves::CoupledMoverOP coupled_mover;
 

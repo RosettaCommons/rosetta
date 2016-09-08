@@ -2147,11 +2147,11 @@ void draw_pose(
 	const core::pose::Pose & pose,
 	GraphicsState & gs
 ) {
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	utility::vector1< char > ss(nres);
 	utility::vector1< conformation::ResidueCOP > residues(nres);
 
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		ss[i] = pose.secstruct(i);
 		residues[i] = pose.residue(i).get_self_ptr();
 	}

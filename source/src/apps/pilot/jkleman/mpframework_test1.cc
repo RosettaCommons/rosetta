@@ -180,7 +180,7 @@ public:
 		AddMembraneMoverOP addmem( new AddMembraneMover() );
 		addmem->apply( pose );
 
-		AddMPLigandMoverOP add_ligand( new AddMPLigandMover( 118, pose.total_residue()-1 ) );
+		AddMPLigandMoverOP add_ligand( new AddMPLigandMover( 118, pose.size()-1 ) );
 		add_ligand->apply( pose );
 
 		pose.fold_tree().show( TR );

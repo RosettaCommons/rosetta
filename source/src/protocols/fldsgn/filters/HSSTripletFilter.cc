@@ -185,7 +185,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 		Dssp dssp( pose );
 		secstruct_ = dssp.get_dssp_secstruct();
 	}
-	runtime_assert( secstruct_.length() == pose.total_residue() );
+	runtime_assert( secstruct_.length() == pose.size() );
 
 	// set SS_Info
 	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct_ ) );

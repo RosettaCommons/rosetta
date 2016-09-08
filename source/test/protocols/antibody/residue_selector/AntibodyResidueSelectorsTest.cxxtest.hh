@@ -139,7 +139,7 @@ public:
 
 	utility::vector1<bool> get_cdr_residues(utility::vector1< bool > const & cdrs){
 
-		utility::vector1<bool> residues(pose_.total_residue(), false);
+		utility::vector1<bool> residues(pose_.size(), false);
 		for ( core::Size i = 1; i <= 8; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			if ( cdrs[ i ] ) {
@@ -158,8 +158,8 @@ public:
 
 	utility::vector1<bool> get_region_residues(AntibodyRegionEnum region){
 
-		utility::vector1< bool > region_residues(pose_.total_residue(), false);
-		for ( core::Size i = 1; i <= pose_.total_residue(); ++i ) {
+		utility::vector1< bool > region_residues(pose_.size(), false);
+		for ( core::Size i = 1; i <= pose_.size(); ++i ) {
 			if ( region == ab_info_->get_region_of_residue(pose_, i) ) {
 				region_residues[ i ] = true;
 			}

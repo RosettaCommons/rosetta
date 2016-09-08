@@ -74,7 +74,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'H' );
 		}
 
@@ -88,7 +88,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 10.0 * i );
 			pose.set_psi( i, 5.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -109,7 +109,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -120,7 +120,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 5.0 * i );
 			pose.set_psi( i, 10.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -158,7 +158,7 @@ public: // tests
 		TS_ASSERT_EQUALS( connect.interval().left, 21 );
 		TS_ASSERT_EQUALS( connect.interval().right, 40 );
 		TS_ASSERT( !connect.original_interval_valid() );
-		TS_ASSERT_EQUALS( cut.n_residue(), 40 );
+		TS_ASSERT_EQUALS( cut.size(), 40 );
 		TS_ASSERT_EQUALS( cut.fold_tree().num_cutpoint(), 4 );
 		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]A[ALA:NtermProteinFull]WWWFGHIKLMNPQRSTVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( cut.secstruct(), "HHHHHHHHHHHHHHHHHHHHLLLLLLLLLLLLLLLLLLLL" );

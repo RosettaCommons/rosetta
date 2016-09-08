@@ -86,7 +86,7 @@ BB_Pos::take_coordinates_from_pose( Pose const & pose )
 		update_indices( pose );
 	}
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_protein() ) {
 			assert( N_index_[ i ]  );
@@ -117,9 +117,9 @@ BB_Pos::take_coordinates_from_pose( Pose const & pose )
 bool
 BB_Pos::bbindices_up_to_date( Pose const & pose ) const
 {
-	if ( N_.size() != pose.total_residue() ) return false;
+	if ( N_.size() != pose.size() ) return false;
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( residue_types_[ ii ].get() != & ( pose.residue_type( ii ) ) ) return false;
 	}
 	return true;
@@ -128,7 +128,7 @@ BB_Pos::bbindices_up_to_date( Pose const & pose ) const
 void
 BB_Pos::update_indices( Pose const & pose )
 {
-	resize( pose.total_residue() );
+	resize( pose.size() );
 
 	static std::string const bbN("N");
 	static std::string const bbCA("CA");
@@ -136,7 +136,7 @@ BB_Pos::update_indices( Pose const & pose )
 	static std::string const bbO("O");
 	static std::string const scCB("CB");
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		residue_types_[ i ] = rsd.type().get_self_ptr();
 		if ( rsd.is_protein() ) {

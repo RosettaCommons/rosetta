@@ -162,7 +162,7 @@ FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
 	core::Real tolerance= 0.02;
 	bool use_nb_list=true;
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);
-	movemap->show(FinalMinimizer_tracer, pose.n_residue());
+	movemap->show(FinalMinimizer_tracer, pose.size());
 	FinalMinimizer_tracer<< std::endl;
 	return protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list) );
 }

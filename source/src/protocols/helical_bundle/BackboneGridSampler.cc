@@ -199,17 +199,17 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 	if ( cap_ends() ) {
 		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, 1 );
 		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, 1 );
-		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, newpose->n_residue() );
-		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, newpose->n_residue() );
+		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, newpose->size() );
+		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, newpose->size() );
 		core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::ACETYLATED_NTERMINUS_VARIANT, 1);
-		core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::METHYLATED_CTERMINUS_VARIANT, newpose->n_residue());
+		core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::METHYLATED_CTERMINUS_VARIANT, newpose->size());
 	} else {
 		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, 1 );
 		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, 1 );
-		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, newpose->n_residue() );
-		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, newpose->n_residue() );
+		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, newpose->size() );
+		core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, newpose->size() );
 		core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::LOWER_TERMINUS_VARIANT, 1);
-		core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::UPPER_TERMINUS_VARIANT, newpose->n_residue());
+		core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::UPPER_TERMINUS_VARIANT, newpose->size());
 	}
 
 	//Do initial checks:
@@ -234,7 +234,7 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 		//Set fixed torsions:
 		core::Size rescounter = 0;
 		for ( core::Size it=1, itmax=torsions_to_fix_[ires].size(); it<=itmax; ++it ) {
-			for ( core::Size ir=1, irmax=newpose->n_residue(); ir<=irmax; ++ir ) {
+			for ( core::Size ir=1, irmax=newpose->size(); ir<=irmax; ++ir ) {
 				++rescounter;
 				if ( rescounter > iresmax ) rescounter=1;
 				if ( rescounter!=ires ) continue; //Do nothing if the current residue is not the residue in the repeating unit that we're setting.
@@ -295,7 +295,7 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 		//Set the variable mainchain torsions of this temporary pose:
 		for ( core::Size it=1, itmax=helper->n_torsions_total(); it<=itmax; ++it ) {
 			core::Size repeat_index(0);
-			for ( core::Size ir=1, irmax=temppose->n_residue(); ir<=irmax; ++ir ) {
+			for ( core::Size ir=1, irmax=temppose->size(); ir<=irmax; ++ir ) {
 				++repeat_index;
 				if ( repeat_index > residues_per_repeat() ) repeat_index=1;
 				if ( repeat_index != helper->residue_index(it) ) continue; //Only set the torsion if the current residue is the residue in the repeating unit whose torsion we want to set.

@@ -286,10 +286,10 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 	core::Size ssid = (core::Size)ss->get_energy("ssid");
 
 	core::Size count_wus = 0;
-	for ( ; start_ir< start_pose.total_residue(); start_ir+=loophash_split_size_ ) {
-		end_ir =  std::min( start_ir + loophash_split_size_ - 1, start_pose.total_residue());
+	for ( ; start_ir< start_pose.size(); start_ir+=loophash_split_size_ ) {
+		end_ir =  std::min( start_ir + loophash_split_size_ - 1, start_pose.size());
 		if ( end_ir < start_ir ) end_ir = start_ir;
-		if ( start_pose.total_residue() - end_ir < loophash_split_size_ ) end_ir = start_pose.total_residue();
+		if ( start_pose.size() - end_ir < loophash_split_size_ ) end_ir = start_pose.size();
 		TRDEBUG << "Adding a new loophash WU: " << start_ir << " - " << end_ir << ", ssid = " << ssid << std::endl;
 
 		count_wus++;
@@ -299,7 +299,7 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 		new_wu->decoys().add( ss);
 		new_wu->clear_serial_data();
 		outbound().add( new_wu );
-		if ( start_pose.total_residue() - end_ir < loophash_split_size_ ) start_ir = start_pose.total_residue();
+		if ( start_pose.size() - end_ir < loophash_split_size_ ) start_ir = start_pose.size();
 	}
 	TR << "Added " << count_wus << " loophash WUs to queue. ssid=" << ssid << std::endl;
 

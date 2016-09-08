@@ -74,7 +74,7 @@ core::Size
 find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
 	core::Size i;
-	for ( i = 1; i < target.total_residue(); ++i ) {
+	for ( i = 1; i < target.size(); ++i ) {
 		if ( target.residue( i ).is_ligand() ) continue;
 		if ( chain && target.residue( i ).chain() != chain ) continue;
 		core::Real const dist( source.residue( res ).xyz( "CA" ).distance( target.residue( i ).xyz( "CA" ) ) );
@@ -139,7 +139,7 @@ main( int argc, char * argv [] )
 				core::pose::Pose new_pose;
 				input.fill_pose( Temp_pose);
 				std::string name(Temp_pose.pdb_info()->name());
-				TR<<name<<", total number of residues: "<<Temp_pose.total_residue()<<std::endl;
+				TR<<name<<", total number of residues: "<<Temp_pose.size()<<std::endl;
 				/*if (pdb.empty()){
 				continue;
 				}*/
@@ -152,7 +152,7 @@ main( int argc, char * argv [] )
 				//TR<<to<<std::endl;
 				TR<<"First resdiue in the target pose "<<name<<" : "<<Temp_pose.residue(from).name1()<<from<<std::endl;
 				TR<<"End resdiue in the target pose "<<name<<" : "<<Temp_pose.residue(to).name1()<<to<<std::endl;
-				Temp_pose.conformation().delete_residue_range_slow( to+1,Temp_pose.total_residue() );
+				Temp_pose.conformation().delete_residue_range_slow( to+1,Temp_pose.size() );
 				Temp_pose.conformation().delete_residue_range_slow( 1,from-1 );
 
 				TR<<"First resdiue in the target pose "<<name<<" : "<<to<<std::endl;

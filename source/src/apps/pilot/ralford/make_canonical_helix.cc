@@ -68,7 +68,7 @@ public:
 
 		TR << "Trasforming current pose coordinates into an ideal alpha helix" << std::endl;
 
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, phi_ );
 			pose.set_psi( i, psi_ );
 			pose.set_omega( i, omega_ );

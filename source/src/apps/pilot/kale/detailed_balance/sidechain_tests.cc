@@ -103,7 +103,7 @@ class SamplingManager { // {{{1
 			TaskFactoryOP task_factory = new TaskFactory;
 			PreventRepackingOP prevent_repacking = new PreventRepacking();
 
-			for (Size i = 1; i <= pose.total_residue(); i++) {
+			for (Size i = 1; i <= pose.size(); i++) {
 				if (i < first_residue or i > last_residue) {
 					prevent_repacking->include_residue(i);
 				}

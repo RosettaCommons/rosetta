@@ -249,7 +249,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 			//std::cout << "MOVABLE JUMP " << movemap_->get_jump(1);
 			//std::cout << "\n";
 			/*
-			for(Size i=1;i<=pose.total_residue();++i) {
+			for(Size i=1;i<=pose.size();++i) {
 			pose.set_phi(i,-60);
 			pose.set_psi(i,-40);
 			if(movemap_->get_bb(i)){
@@ -672,7 +672,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 	Size const num_jumps(pose.num_jump());
 	core::scoring::MembraneTopology & topology( nonconst_MembraneTopology_from_pose(pose) );
 	Size const total_tmhelix=topology.tmhelix();
-	Size const total_residue=pose.total_residue();
+	Size const total_residue=pose.size();
 
 
 	tr.Info << "Adding region tmh:" << total_tmhelix << " tmh_inserted: " << topology.tmh_inserted() << " nres: " << total_residue << " num_jumps: " << num_jumps << std::endl;
@@ -689,12 +689,12 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 	FArray1D_bool inserted_regions(total_residue,false);
 
 	//Assigns a vector with the helices numbered.
-	FArray1D<Size> res_TMH_mapping(pose.total_residue()); //should perhaps be global..
+	FArray1D<Size> res_TMH_mapping(pose.size()); //should perhaps be global..
 	FArray2D_bool nb_tmh_list(total_tmhelix,total_tmhelix,false);
 
 	//check all helices that are connect by a jump.
 	FArray2D_bool tmh_jump(total_tmhelix,total_tmhelix,false);
-	for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+	for ( Size j = 1; j <= pose.size(); ++j ) {
 		new_region(j) = false;
 		inserted_regions(j) = false;
 
@@ -854,7 +854,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 					start=topology.span_end(i-1); //membrane_helix( i-1, 2 ); //from old code
 				}
 				if ( i==total_tmhelix ) {
-					end=pose.total_residue();
+					end=pose.size();
 				} else {
 					end=topology.span_begin(i+1); //membrane_helix( i+1, 1 ); //from old code
 				}
@@ -924,7 +924,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 
 	mres_start=1;
 	mres_end=1;
-	for ( int j = 1; j <= pose.total_residue(); ++j ) {
+	for ( int j = 1; j <= pose.size(); ++j ) {
 	if(inserted_regions(j))
 	{
 	mres_end=j;
@@ -969,7 +969,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 void MembraneAbinitio::move_all_inserted( core::pose::Pose & pose) {
 	core::scoring::MembraneTopology & topology( nonconst_MembraneTopology_from_pose( pose ));
 	kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( topology.allow_scoring(i) ) {
 			new_mm->set_bb(i,true);
 		} else {
@@ -986,8 +986,8 @@ void MembraneAbinitio::print_debug(core::pose::Pose & pose)
 	//   return;
 	core::scoring::MembraneTopology const & topology( MembraneTopology_from_pose( pose ));
 	Size total_tmhelix=topology.tmhelix();
-	FArray1D_int res_TMH_mapping(pose.total_residue()); //should perhaps be global..
-	for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+	FArray1D_int res_TMH_mapping(pose.size()); //should perhaps be global..
+	for ( Size j = 1; j <= pose.size(); ++j ) {
 		Size tmh=0;
 		for ( Size reg = 1; reg <= total_tmhelix; ++reg ) {
 			if ( j>=topology.span_begin(reg) && j<=topology.span_end(reg) ) { //membrane_helix( reg-1, 2 ) && j<=membrane_helix(reg,2))
@@ -1004,12 +1004,12 @@ void MembraneAbinitio::print_debug(core::pose::Pose & pose)
 	std::cout << "TMH     : ";
 
 
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		std::cout << res_TMH_mapping(i);
 	}
 	std::cout <<"\n";
 	std::cout << "SCORING : ";
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( topology.allow_scoring(i) ) {
 			std::cout << 1;
 		} else {
@@ -1018,7 +1018,7 @@ void MembraneAbinitio::print_debug(core::pose::Pose & pose)
 	}
 	std::cout <<"\n";
 	std::cout << "MOVEMAP : ";
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( movemap_->get_bb(i) ) {
 			std::cout << 1;
 		} else {
@@ -1039,7 +1039,7 @@ void MembraneAbinitio::print_debug(core::pose::Pose & pose)
 class AllResiduesChanged : public moves::PoseCondition {
 public:
 	AllResiduesChanged( core::pose::Pose const & pose, core::fragment::InsertMap const& insert_map ) :
-		insert_pos_( pose.total_residue(), false )
+		insert_pos_( pose.size(), false )
 	{
 		set_initial_pose( pose );
 		compute_insert_pos( insert_map );
@@ -1054,7 +1054,7 @@ private:
 	}
 
 	void set_initial_pose( const core::pose::Pose & pose ) {
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			initial_phis.push_back( pose.phi(i) );
 			initial_psis.push_back( pose.psi(i) );
 		}
@@ -1065,7 +1065,7 @@ private:
 public:
 	bool operator() ( const core::pose::Pose & pose ) override {
 		assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			if ( initial_phis[i] == pose.phi(i) && insert_pos_[ i ] ) {
 				return false;
 			}

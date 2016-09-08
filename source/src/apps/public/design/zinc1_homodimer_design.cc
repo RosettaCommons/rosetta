@@ -201,7 +201,7 @@ public:
 
     //Favor native residue
     using namespace core::scoring::constraints;
-    Size const nres( pose.total_residue() );
+    Size const nres( pose.size() );
     Real const favor_native_res_bonus( basic::options::option[fav_nat_bonus].value() );
     for ( Size i=1; i<= nres;  ++i ) {
       pose.add_constraint( new ResidueTypeConstraint( pose, i,  favor_native_res_bonus) );

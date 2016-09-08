@@ -134,7 +134,7 @@ void scan_energy( pose::Pose &pose,
     max_nbin = (int) ((360.0/15.0)*(360.0/15.0)*(360.0/15.0)*(360.0/15.0));
   }
   
-  utility::vector1< bool > is_scoringres( pose.total_residue(), false );
+  utility::vector1< bool > is_scoringres( pose.size(), false );
   is_scoringres[ resno ] = true;
 
   // Production
@@ -193,7 +193,7 @@ scan_rotamer( pose::Pose const &pose,
   utility::vector1< pack::dunbrack::DunbrackRotamerSampleData > sample_data 
     = dun_rotlib->get_all_rotamer_samples( pose.phi( ir ), pose.psi( ir ) );
 
-  utility::vector1< bool > is_scoringres( pose.total_residue(), false );
+  utility::vector1< bool > is_scoringres( pose.size(), false );
   is_scoringres[ ir ] = true;
 
   for( Size j = 1; j <= sample_data.size(); j++ ){
@@ -290,7 +290,7 @@ int main( int argc, char * argv [] )
   return 0;
 
   // for residue-wise scanning
-  for (int resno = 2; resno < pose.total_residue(); ++resno ){
+  for (int resno = 2; resno < pose.size(); ++resno ){
     Size nchi( pose.residue(resno).nchi() );
     if (nchi == 0) continue;
 

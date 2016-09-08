@@ -443,7 +443,7 @@ std::string ABEGOManager::base5index2symbolString( Size base5index,Size length){
 utility::vector1< std::string >
 ABEGOManager::get_symbols( Pose const & pose, Size const begin, Size const end, Size const level )
 {
-	runtime_assert( begin >= 1 && end <= pose.total_residue() );
+	runtime_assert( begin >= 1 && end <= pose.size() );
 
 	utility::vector1< String > symbols;
 	for ( Size i=begin; i<=end; i++ ) {
@@ -461,7 +461,7 @@ ABEGOManager::get_symbols( Pose const & pose, Size const begin, Size const end, 
 utility::vector1< std::string >
 ABEGOManager::get_symbols( Pose const & pose, Size const level )
 {
-	return get_symbols( pose, 1, pose.total_residue(), level );
+	return get_symbols( pose, 1, pose.size(), level );
 }
 
 

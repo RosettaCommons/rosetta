@@ -233,7 +233,7 @@ SasaCalc::init(const pose::Pose& pose) {
 	} else {
 		core::pose::initialize_atomid_map(atom_sasa_, pose, 0.0);
 		core::pose::initialize_atomid_map(atom_subset_, pose, false);
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			for ( core::Size x = 1; x <= pose.residue(i).nheavyatoms(); ++x ) {
 				core::id::AtomID atom_id(x, i);
 				atom_subset_[atom_id] = true;
@@ -241,13 +241,13 @@ SasaCalc::init(const pose::Pose& pose) {
 		}
 	}
 
-	rsd_sasa_.resize(pose.total_residue(), 0.0);
-	rsd_sasa_sc_.resize(pose.total_residue(), 0.0);
+	rsd_sasa_.resize(pose.size(), 0.0);
+	rsd_sasa_sc_.resize(pose.size(), 0.0);
 
-	rsd_hsasa_.resize(pose.total_residue(), 0.0);
-	rsd_hsasa_sc_.resize(pose.total_residue(), 0.0);
+	rsd_hsasa_.resize(pose.size(), 0.0);
+	rsd_hsasa_sc_.resize(pose.size(), 0.0);
 
-	rel_hydrophobic_sasa_by_charge_.resize(pose.total_residue(), 0.0);
+	rel_hydrophobic_sasa_by_charge_.resize(pose.size(), 0.0);
 
 	total_sasa_ = 0;
 	total_sasa_sc_ = 0;
@@ -261,7 +261,7 @@ SasaCalc::init(const pose::Pose& pose) {
 void
 SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( rsd_sasa_[i] == 0.0 ) continue;
 
 		core::conformation::Residue const & res = pose.residue(i);

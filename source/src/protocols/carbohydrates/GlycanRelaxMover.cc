@@ -287,7 +287,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	TR << "initializing objects " << std::endl;
 	total_glycan_residues_ = 0;
 
-	utility::vector1< bool > glycan_positions( pose.total_residue(), false);
+	utility::vector1< bool > glycan_positions( pose.size(), false);
 
 
 	//Create Scorefunction if needed.
@@ -305,7 +305,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	if ( ! full_movemap_ ) {
 		MoveMapOP mm = MoveMapOP( new MoveMap);
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			mm->set_bb( i, true);
 			mm->set_chi( i, true);
 		}
@@ -313,7 +313,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	}
 
 	///////////  Setup Glycan Movemap ////////////////
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		//TR << i << std::endl;
 		core::Size resnum = i;
 		if ( ref_pose_name_ != "" ) {
@@ -379,7 +379,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 
 	core::Size max_glycan_dihedrals = 2;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		//Turn off if not carbohydrates or if N terminal carbohydrate not attached to anything.
 		if ( ! glycan_movemap_->get_bb( i )  || find_seqpos_of_saccharides_parent_residue( pose.residue( i ) ) == 0 ) {

@@ -235,7 +235,7 @@ main( int argc, char * argv [] )
 		if ( option[ in::file::native ].user() ) {
 			core::pose::PoseOP native_pose_( new core::pose::Pose );
 			core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
-			if ( native_pose_->total_residue() <= protocols::boinc::MAX_NATIVE_POSE_RESIDUES ) {
+			if ( native_pose_->size() <= protocols::boinc::MAX_NATIVE_POSE_RESIDUES ) {
 				core::pose::set_ss_from_phipsi( *native_pose_ );
 				protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );
 			}

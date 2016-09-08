@@ -168,7 +168,7 @@ void print_energies( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 
 
 	// n_score_types comes in with ScoreType.hh
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		// print the string res:
 		std::cout << I(2,ii) << "  ";
@@ -215,8 +215,8 @@ void print_energies( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 void fill_num_neighbors( pose::Pose & pose, utility::vector1< int > & num_nbs ) {
 
 	// now that it's scored, we can get the number of neighbors each residue has (in the wt structure anyway)
-	num_nbs.resize( pose.n_residue(), 0 );
-	for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+	num_nbs.resize( pose.size(), 0 );
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 		num_nbs[ ii ] = tenA_neighbor_graph.get_node( ii )->num_neighbors_counting_self();
 	}
@@ -231,8 +231,8 @@ void print_surface_score_by_res( pose::Pose & pose, utility::vector1< int > & nu
 
 	if ( surface_score_weight == 0.0 ) { std::cout << "Surface energy term not in use." << std::endl; return; }
 
-	Size div2 = pose.n_residue() / 2;
-	if ( pose.n_residue() % 2 ) { div2++; }
+	Size div2 = pose.size() / 2;
+	if ( pose.size() % 2 ) { div2++; }
 
 	for ( Size jj=1; jj < div2; ++jj ) {
 		std::cout << "res: " << I(2, jj) << X(3) << "nbs: " << I( 2, num_nbs[jj]) << X(3) << "aa: " << pose.residue(jj).name1() << X(3);
@@ -241,7 +241,7 @@ void print_surface_score_by_res( pose::Pose & pose, utility::vector1< int > & nu
 		} else {
 			std::cout << F( 12,3, surface_score_weight * pose_residue_surface.value()[jj] );
 		}
-		if ( jj == div2 && pose.n_residue() % 2 == 1 ) { break; }
+		if ( jj == div2 && pose.size() % 2 == 1 ) { break; }
 		else {
 			std::cout << X(5) << "res: " << I(2, jj+div2) << X(3) << "nbs: " << I( 2, num_nbs[jj+div2]) << X(3) << "aa: " << pose.residue(jj+div2).name1() << X(3);
 			if ( fabs( pose_residue_surface.value()[jj+div2] - 0.0 ) < 0.001 ) {
@@ -564,7 +564,7 @@ main( int argc, char* argv[] ) {
 			std::cout << A( "scorefxn energy" ) << X(3) << A( "scorefxn ddG" ) << X(3) << A( "surface ddG" ) << X(3) << A( "mutation" ) << std::endl;
 
 
-			for ( Size resid = 1; resid <= pose.n_residue(); ++resid ) {
+			for ( Size resid = 1; resid <= pose.size(); ++resid ) {
 				for ( Size aa_enum_index = 1; aa_enum_index < chemical::num_canonical_aas; ++aa_enum_index ) {
 
 					if ( pose.residue( resid ).aa() == chemical::AA( aa_enum_index ) ) { continue; }
@@ -592,7 +592,7 @@ main( int argc, char* argv[] ) {
 					tf->push_back( ic_op );
 					tf->push_back( nb_op );
 
-					for ( Size ii = 1; ii <= pose_copy.n_residue(); ++ii ) {
+					for ( Size ii = 1; ii <= pose_copy.size(); ++ii ) {
 						if ( ii == resid ) {
 							// do design on this position
 							utility::vector1< bool > keep_canonical_aas( chemical::num_canonical_aas, false );

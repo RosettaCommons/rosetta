@@ -551,7 +551,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 				reporter.load_pose( db_session_, struct_id, *pose );
 				pose->conformation().detect_disulfides();
 
-				if ( pose->total_residue() != ab_info_->get_cluster_length(clusters[ k ])+ overhang*2 ) {
+				if ( pose->size() != ab_info_->get_cluster_length(clusters[ k ])+ overhang*2 ) {
 					TR << "Leaving out bad structure:  "<< tags[k] << " num residues in pose do not match cluster cdr length with overhang. " <<std::endl;
 					continue;
 				}

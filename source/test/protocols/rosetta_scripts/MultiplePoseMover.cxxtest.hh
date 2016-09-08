@@ -74,7 +74,7 @@ public:
 		if ( npose_ >= max_poses_ ) {
 			return NULL;
 		}
-		if ( base_pose_.total_residue() < 1 ) {
+		if ( base_pose_.size() < 1 ) {
 			base_pose_ = create_trpcage_ideal_pose();
 		}
 		core::pose::PoseOP p( new core::pose::Pose(base_pose_) );

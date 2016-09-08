@@ -107,7 +107,7 @@ enable_sampling_of_loop_takeoff( sampler::StepWiseSamplerSizedOP & sampler,
 
 	utility::vector1< Size > fixed_res_for_backbone_sampler = takeoff_res;
 	if ( pre_loop_res  > 1                    ) fixed_res_for_backbone_sampler.push_back( pre_loop_res  - 1 );
-	if ( post_loop_res < pose.total_residue() ) fixed_res_for_backbone_sampler.push_back( post_loop_res + 1 );
+	if ( post_loop_res < pose.size() ) fixed_res_for_backbone_sampler.push_back( post_loop_res + 1 );
 	backbone_sampler.set_fixed_residues( fixed_res_for_backbone_sampler );
 	backbone_sampler.apply( pose );
 

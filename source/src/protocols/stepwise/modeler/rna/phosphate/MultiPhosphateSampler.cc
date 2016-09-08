@@ -133,7 +133,7 @@ MultiPhosphateSampler::initialize_phosphate_move_list( pose::Pose & pose ){
 
 		Size const nres_full_model = full_model_info.size();
 
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( !pose.residue( n ).is_RNA() ) continue;
 			Size const seqpos_in_full_model = res_list[ n ];
 			if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
@@ -151,7 +151,7 @@ MultiPhosphateSampler::initialize_phosphate_move_list( pose::Pose & pose ){
 				}
 				phosphate_move_list.push_back( PhosphateMove( n, FIVE_PRIME_PHOSPHATE ) );
 			}
-			if ( ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) &&
+			if ( ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) ) &&
 					seqpos_in_full_model < nres_full_model &&
 					!cutpoint_open_in_full_model.has_value( seqpos_in_full_model ) &&
 					!pose.residue_type( n ).has_variant_type( "CUTPOINT_LOWER" ) ) {
@@ -181,7 +181,7 @@ MultiPhosphateSampler::check_moved( utility::vector1< PhosphateMove > phosphate_
 	if ( moving_partition_res_.size() == 0 ) return phosphate_move_list;
 
 	utility::vector1< Size > partition_res1, partition_res2;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.residue( n ).is_RNA() ) continue;
 		if ( moving_partition_res_.has_value( n ) ) {
 			partition_res1.push_back( n );

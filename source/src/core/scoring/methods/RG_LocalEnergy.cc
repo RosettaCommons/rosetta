@@ -115,7 +115,7 @@ core::Real
 RG_LocalEnergy::calculate_rg_score( core::pose::Pose const & pose ) const
 {
 	utility::vector1< bool > relevant_residues;
-	for ( uint ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( uint ii = 1; ii <= pose.size(); ++ii ) {
 		if ( (ii >= firstRes_) && (ii <= lastRes_) ) {
 			relevant_residues.push_back(false);
 		} else {
@@ -131,7 +131,7 @@ RG_LocalEnergy::calculate_rg_score(
 	utility::vector1< bool > const & relevant_residues) const
 {
 	utility::vector1< bool > updated_relevant_residues;
-	for ( uint ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( uint ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ((ii >= firstRes_) && (ii <= lastRes_)) || (relevant_residues [ii] == false) ) {
 			updated_relevant_residues.push_back(false);
 		} else {

@@ -161,7 +161,7 @@ PairedSheetResidueSelector::apply( core::pose::Pose const & pose ) const
 	StrandPairings const pairs( spairs.strand_pairings() );
 
 	// determine paired residues
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 	for ( StrandPairings::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
 		for ( core::Size s1_resid=(*pair)->begin1(); s1_resid<=(*pair)->end1(); ++s1_resid ) {
 			if ( !(*pair)->has_paired_residue( s1_resid ) ) continue;

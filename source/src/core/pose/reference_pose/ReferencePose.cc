@@ -97,8 +97,8 @@ void ReferencePose::initialize_residue_map_from_pose( core::pose::Pose const &po
 	residue_map_.clear();
 	stores_residue_map_=true;
 
-	if ( pose.n_residue() > 0 ) {
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+	if ( pose.size() > 0 ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 			residue_map_[ir] = ir;
 		}
 	}

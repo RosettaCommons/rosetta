@@ -97,7 +97,7 @@ void get_helices(core::pose::Pose& pose, protocols::loops::Loops* helices){
 	Size endHelix = 0;
 	if(pose.secstruct(1) == 'H')
 		startHelix = 1;
-	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
 		if(pose.secstruct(ii) == 'H' && lastSecStruct != 'H')
 			startHelix = ii;
 		if(pose.secstruct(ii) != 'H' && lastSecStruct == 'H'){
@@ -117,7 +117,7 @@ void get_sheets(core::pose::Pose& pose, protocols::loops::Loops* sheets){
 	Size endSheet = 0;
 	if(pose.secstruct(1) == 'E')
 		startSheet = 1;
-	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
 		if(pose.secstruct(ii) == 'E' && lastSecStruct != 'E')
 			startSheet = ii;
 		if(pose.secstruct(ii) != 'E' && lastSecStruct == 'E'){

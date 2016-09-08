@@ -127,7 +127,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		atom_map.set(AtomID(2,ir) , true );
 		atom_map.set(AtomID(3,ir) , true );
 		atom_map.set(AtomID(5,ir) , true );
@@ -202,7 +202,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
 		}
 	}
-	for(Size i = nres+1; i <= pose.n_residue(); ++i) {
+	for(Size i = nres+1; i <= pose.size(); ++i) {
 		task->nonconst_residue_task(i).prevent_repacking();
 	}
 	TR << *task << std::endl;
@@ -315,12 +315,12 @@ vector1<Vec> get_zn_axes(core::pose::Pose const & pose) {
 }
 
 void fixH(core::pose::Pose & pose) {
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if(!pose.residue(i).has("H")) continue;
 		numeric::xyzVector<Real> n  = pose.residue(i).xyz("N");
 		numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
 		Size in = i-1;
-		if(in == 0) in = pose.n_residue();
+		if(in == 0) in = pose.size();
 		numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
 		numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
 		pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
@@ -363,14 +363,14 @@ void run() {
 			Size ihis = lig.pdb_info()->number(1);
 			Size jhis = lig.pdb_info()->number(2);
 			// clash check
-			for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+			for(Size ir = 1; ir <= base.size(); ++ir) {
 				for(Size ia = 1; ia <= base.residue(ir).nheavyatoms(); ia++) {
 					Vec xi = Rzn*(base.xyz(AtomID(ia,ir))-c2f1)+c2f1;
 					for(Size ja = 6; ja <= lig.residue(1).nheavyatoms(); ja++) {
 						if( xi.distance_squared(lig.xyz(AtomID(ja,1))) < 9.0 ) goto clash1;
 						if( xi.distance_squared(lig.xyz(AtomID(ja,2))) < 9.0 ) goto clash1;
 					}
-					for(Size jr = 1; jr <= base.n_residue(); ++jr) {
+					for(Size jr = 1; jr <= base.size(); ++jr) {
 						for(Size ja = 1; ja <= base.residue(jr).nheavyatoms(); ja++) {
 							if( base.xyz(AtomID(ja,jr)).distance_squared( xi ) < 9.0 ) goto clash1;
 						}
@@ -386,7 +386,7 @@ void run() {
 			// rot_pose(base,Rzn,c2f1);
 			// base.dump_pdb("test2.pdb");
 
-			for(Size ibpy = 1; ibpy <= base.n_residue(); ++ibpy) {
+			for(Size ibpy = 1; ibpy <= base.size(); ++ibpy) {
 				if(ibpy == ihis || ibpy == jhis ) continue;
 				base = nat;
 				base.replace_residue(ihis,lig.residue(1),true);
@@ -395,7 +395,7 @@ void run() {
 				Real chi1_incr = option[willmatch::chi1_increment]();
 				for(Real bch1 = 0.0; bch1 <= 360; bch1 += chi1_incr) {
 					base.set_chi(1,ibpy,bch1);
-					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+					for(Size ir = 1; ir <= base.size(); ++ir) {
 						Size natom = (ir==ibpy) ? 5 : base.residue(ir).nheavyatoms();
 						for(Size ia = 1; ia <= natom; ia++) {
 							if( base.xyz(AtomID(ia,ir)).distance_squared(base.residue(ibpy).xyz("CZ")) < 9.0 ) goto clash2;
@@ -421,7 +421,7 @@ void run() {
 						Vec v = CG + projection_matrix(CB-CG)*(FE-CG);
 						ang = dihedral_degrees( c3f1,v,CG,FE );
 						base.set_chi(2,ibpy, base.chi(2,ibpy) + ang );
-						for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+						for(Size ir = 1; ir <= base.size(); ++ir) {
 							if(ir==ibpy) continue;
 							for(Size ia = 1; ia <= base.residue(ir).nheavyatoms(); ia++) {
 								for(Size ja = 7; ja <= base.residue(ibpy).nheavyatoms(); ja++) {
@@ -433,7 +433,7 @@ void run() {
 
 						Mat R1 = rotation_matrix_degrees(a3f1,120.0);
 						Mat R2 = rotation_matrix_degrees(a3f1,240.0);
-						for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+						for(Size ir = 1; ir <= base.size(); ++ir) {
 							for(Size ia = 1; ia <= base.residue(ir).nheavyatoms(); ia++) {
 								if(ir==ihis || ir==jhis) {
 									if(base.residue(ir).atom_name(ia)=="NE2" || base.residue(ir).atom_name(ia)=="ND1") continue;
@@ -442,7 +442,7 @@ void run() {
 								}
 								Vec x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 								Vec x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
-								for(Size jr = 1; jr <= base.n_residue(); ++jr) {
+								for(Size jr = 1; jr <= base.size(); ++jr) {
 									for(Size ja = 1; ja <= 5; ja++) {
 										if( x1.distance_squared(base.xyz(AtomID(ja,jr))) < 9.0 ) goto clash4;
 										if( x1.distance_squared( Rzn*(base.xyz(AtomID(ja,jr))-c2f1)+c2f1 ) < 9.0 ) goto clash4;
@@ -463,9 +463,9 @@ void run() {
 						Pose symm = base;
 						Pose symm_bare = symm;
 						symm.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue(rs->name_map("FE")),ibpy);
-						symm.set_xyz(AtomID(1,symm.n_residue()),c3f1);
+						symm.set_xyz(AtomID(1,symm.size()),c3f1);
 						symm.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue(rs->name_map("ZN")),ihis);
-						symm.set_xyz(AtomID(1,symm.n_residue()),c2f1);
+						symm.set_xyz(AtomID(1,symm.size()),c2f1);
 
 						trans_pose(symm,-isct);
 						rot_pose(symm,Rsymm);

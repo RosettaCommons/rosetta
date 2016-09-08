@@ -250,7 +250,7 @@ get_euler_axes( Matrix const moment_of_inertia,
 // 	Real dev2( 0.0 );
 // 	Size natoms( 0 );
 
-// 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+// 	for ( Size i = 1; i <= pose.size(); i++ ) {
 // 		for ( Size j = 1; j <= pose.residue_type( i ).first_sidechain_atom(); j++ ) {
 // 			dev2 += ( pose.xyz( AtomID(j,i) ) - ref_pose.xyz( AtomID(j,i) ) ).length_squared();
 // 			natoms++;
@@ -563,7 +563,7 @@ pack_it( pose::Pose & pose ){
 	PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
 
 	pack_task_->restrict_to_repacking();
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		pack_task_->nonconst_residue_task(i).or_ex1( true );
@@ -709,7 +709,7 @@ spinner_test(){
 	Size const moving_res_start = moving_res[ 1 ];
 	Size const moving_res_end = moving_res[ moving_res.size() ];
 
-	kinematics::FoldTree f( pose.total_residue() );
+	kinematics::FoldTree f( pose.size() );
 	utility::vector1< Size > partner_res;
 
 	if ( prepend_ ){
@@ -722,14 +722,14 @@ spinner_test(){
 		do_steric_check = true;
 
 		f.new_jump( moving_res_end, moving_res_end+1, moving_res_end );
-		f.reorder( pose.total_residue() );
+		f.reorder( pose.size() );
 		pose.fold_tree( f );
 
-		for ( Size n = moving_res_end+1; n <= pose.total_residue(); n++ ) partner_res.push_back( n );
+		for ( Size n = moving_res_end+1; n <= pose.size(); n++ ) partner_res.push_back( n );
 
 	} else if ( append_ ) {
 
-		if ( moving_res_end != pose.total_residue() ) utility_exit_with_message( "If prepend, end moving_res must be end of pose" );
+		if ( moving_res_end != pose.size() ) utility_exit_with_message( "If prepend, end moving_res must be end of pose" );
 
 		tether_atom_id = AtomID( NamedAtomID( " N  ", moving_res_start ), pose );
 		tether_xyz = pose.xyz( NamedAtomID( " C  ", moving_res_start - 1 ) );
@@ -743,7 +743,7 @@ spinner_test(){
 
 	} else { /*superimpose*/
 
-		tether_atom_id = AtomID( NamedAtomID( " C  ", pose.total_residue() ), pose );
+		tether_atom_id = AtomID( NamedAtomID( " C  ", pose.size() ), pose );
 		tether_xyz = native_pose->xyz( tether_atom_id );
 		tether_radius = 4.0;
 		do_steric_check = false;

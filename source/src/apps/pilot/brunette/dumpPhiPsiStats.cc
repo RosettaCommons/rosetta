@@ -82,7 +82,7 @@ int main( int argc, char * argv [] ) {
         output << "pos abego  dssp    phi     psi     omega" << std::endl;
         utility::vector1< std::string >  abego_vector = core::sequence::get_abego(*input_poseOP,1);
          protocols::jumping::assign_ss_dssp( *input_poseOP );
-        for(int ii=1; ii<=(int)input_poseOP->total_residue(); ++ii){
+        for(int ii=1; ii<=(int)input_poseOP->size(); ++ii){
             output << I(4,ii)<<"  " <<abego_vector[ii] << "    " << input_poseOP->secstruct(ii) << "   " << F(8,1,input_poseOP->phi(ii)) << F(8,1,input_poseOP->psi(ii)) << F(8,1,input_poseOP->omega(ii)) << std::endl;
         }
     }

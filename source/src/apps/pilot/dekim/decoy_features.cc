@@ -104,14 +104,14 @@ public:
 		core::scoring::dssp::Dssp dssp_obj( pose );
 		dssp_obj.insert_ss_into_pose( pose );
 		if ( input_pose_length_ <= 0 ) {
-			input_pose_length_ = pose.total_residue();
+			input_pose_length_ = pose.size();
 			input_pose_sequence_ = pose.sequence();
-		} else if ( input_pose_length_ != pose.total_residue() ) {
+		} else if ( input_pose_length_ != pose.size() ) {
 			utility_exit_with_message("input pose lengths are not equal");
 		}
 		input_pose_count_++;
 
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			if ( pose.secstruct(i) == 'E' ) {
 				ss_E_counts_[i]++;
 			} else if ( pose.secstruct(i) == 'H' ) {
@@ -131,7 +131,7 @@ public:
 			} else if ( bbin == "O" ) {
 				bbin_O_counts_[i]++;
 			}
-			for ( unsigned int j = 1; j <= pose.total_residue(); ++j ) {
+			for ( unsigned int j = 1; j <= pose.size(); ++j ) {
 
 				if ( std::abs((int)(i-j)) < 3 ) continue; // sequence sep of 3
 
@@ -152,8 +152,8 @@ public:
 				std::pair<Size,Size> contact(i,j);
 				contact_counts_[contact]++;
 
-			} //  for ( unsigned int j = 1; j <= pose.total_residue(); ++j )
-		}   // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
+			} //  for ( unsigned int j = 1; j <= pose.size(); ++j )
+		}   // for ( unsigned int i = 1; i <= pose.size(); ++i )
 	}
 
 
@@ -252,18 +252,18 @@ main( int argc, char * argv [] )
 			dssp_obj.insert_ss_into_pose( *nativePose );
 			// native ss
 			std::cout << "NS " << nativePose->secstruct() << std::endl;
-			if ( nativePose->total_residue() != jd_mover->get_input_pose_length() ) {
+			if ( nativePose->size() != jd_mover->get_input_pose_length() ) {
 				utility_exit_with_message("native length must equal input models");
 			}
 			// native bbin
 			std::cout << "NBB ";
-			for ( unsigned int i = 1; i <= nativePose->total_residue(); ++i ) {
+			for ( unsigned int i = 1; i <= nativePose->size(); ++i ) {
 				std::cout << jd_mover->ABGEO( nativePose->phi(i), nativePose->psi(i), nativePose->omega(i) );
 			}
 			std::cout << std::endl;
 			// native contacts
-			for ( unsigned int i = 1; i <= nativePose->total_residue(); ++i ) {
-				for ( unsigned int j = 1; j <= nativePose->total_residue(); ++j ) {
+			for ( unsigned int i = 1; i <= nativePose->size(); ++i ) {
+				for ( unsigned int j = 1; j <= nativePose->size(); ++j ) {
 
 					if ( std::abs((int)(i-j)) < 3 ) continue; // sequence sep of 3
 
@@ -281,8 +281,8 @@ main( int argc, char * argv [] )
 					}
 					if ( distance > option[contactMap::distance_cutoff] ) continue;
 					std::cout << "NC " << i << " " << j << std::endl;
-				} //  for ( unsigned int j = 1; j <= pose.total_residue(); ++j )
-			}   // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
+				} //  for ( unsigned int j = 1; j <= pose.size(); ++j )
+			}   // for ( unsigned int i = 1; i <= pose.size(); ++i )
 
 		}
 

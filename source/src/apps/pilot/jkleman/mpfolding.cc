@@ -255,7 +255,7 @@ MPFoldingMover::apply( Pose & pose ) {
 
 	// create pose from sequence
 	make_pose_from_sequence( pose, "MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIMLGFPINFLTLYVTVQHKKLRTPLNYILLNLAVADLFMVFGGFTTTLYTSLHGYFVFGPTGCNLEGFFATLGGEIALWSLVVLAIERYVVVCKPMSNFRFGENHAIMGVAFTWVMALACAAPPLVGWSRYIPEGMQCSCGIDYYTPHEETNNESFVIYMFVVHFIIPLIVIFFCYGQLVFTVKEAAAQQQESATTQKAEKEVTRMVIIMVIAFLICWLPYAGVAFYIFTHQGSDFGPIFMTIPAFFAKTSAVYNPVIYIMMNKQFRNCMVTTLCCGKNPLGDDEASTTVSKTETSQVAPA", core::chemical::CENTROID );
-	TR << "pose:total_residue: " << pose.total_residue() << std::endl;
+	TR << "pose:total_residue: " << pose.size() << std::endl;
 
 	// need to set the PDBInfo object in the pose, because make_pose_from_sequence
 	// doesn't take care of that!
@@ -282,11 +282,11 @@ MPFoldingMover::apply( Pose & pose ) {
 		loops->add_span( prev_end, topo->span(i)->start() - 1 );
 		prev_end = topo->span(i)->end() + 1;
 	}
-	loops->add_span( prev_end, pose.total_residue() );
+	loops->add_span( prev_end, pose.size() );
 	TR << "2" << std::endl;
 
 	// create ideal helices from SSEs
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( topo->in_span( i ) ) {
 			pose.set_phi(   i, -62 );
 			pose.set_psi(   i, -41 );

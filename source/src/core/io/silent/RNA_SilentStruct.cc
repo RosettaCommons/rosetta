@@ -101,9 +101,9 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 
 	// conformation information
 	sequence( pose.sequence() );
-	resize( pose.total_residue() );
+	resize( pose.size() );
 	static const std::string important_atom = "C4'";
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue resi = pose.residue(i);
 
 		secstruct_[i] = pose.secstruct(i);
@@ -128,7 +128,7 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 			non_main_chain_sugar_coords_[i] = vecs;
 		}
 
-	} // for ( Size i = 1; i <= pose.total_residue(); ++i )
+	} // for ( Size i = 1; i <= pose.size(); ++i )
 
 	fold_tree_ = pose.fold_tree();
 	jumps_.clear();
@@ -514,14 +514,14 @@ Real RNA_SilentStruct::get_debug_rmsd() {
 	// build temp_pose from coordinates
 	fill_pose( temp_pose );
 
-	for ( Size i = 1; i <= temp_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= temp_pose.size(); ++i ) {
 		for ( Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
 			rebuilt_coords (k,i) = temp_pose.residue(i).xyz( atom_name )[k-1];
 			original_coords(k,i) = coords_[i][k-1];
 		}
 	}
 
-	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.total_residue(), rebuilt_coords, original_coords );
+	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.size(), rebuilt_coords, original_coords );
 	return rmsd;
 }
 

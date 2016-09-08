@@ -211,16 +211,16 @@ Real alignhelix(Pose & helix, Pose const & pose, int ir, int jr, int & cen){
 	using namespace core::id;
 	AtomID_Map<AtomID> alignmap;
 	core::pose::initialize_atomid_map(alignmap,helix,core::id::BOGUS_ATOM_ID);
-	int helixoffset = ((int)helix.n_residue()-(jr-ir))/2 + 1 - ir;
-	int helixcenres = (1+helix.n_residue())/2.0;
+	int helixoffset = ((int)helix.size()-(jr-ir))/2 + 1 - ir;
+	int helixcenres = (1+helix.size())/2.0;
 	cen = helixcenres-helixoffset;
 	for(int k = ir; k <= jr; ++k){
-		// TR<<ir <<" "<< jr <<" "<< k <<" "<< helixoffset+k <<" "<< helix.n_residue()<<endl;
-		// TR<<helixoffset-ir+k <<" "<< helix.n_residue()<<"    "<<ir+k<< " "<<pose.n_residue()<<endl;
+		// TR<<ir <<" "<< jr <<" "<< k <<" "<< helixoffset+k <<" "<< helix.size()<<endl;
+		// TR<<helixoffset-ir+k <<" "<< helix.size()<<"    "<<ir+k<< " "<<pose.size()<<endl;
 		if(pose.secstruct(k)!='H'){ return 9e9; }
 		int natoms = pose.residue(k).aa()==core::chemical::aa_gly ? 4 : 5;
 		// assert(lower <= k && k <= upper);
-		assert(1 <= helixoffset+k && helixoffset+k <= (int)helix.n_residue());
+		assert(1 <= helixoffset+k && helixoffset+k <= (int)helix.size());
 		for(int ia = 1; ia <= natoms; ++ia ){
 			alignmap[AtomID(ia,helixoffset+k)] = AtomID(ia,k);
 		}
@@ -376,19 +376,19 @@ int main(int argc, char *argv[]) {
 	{
 		string seq = ""; for(int i=-14; i<MAX_HELIX_LEN; ++i) seq+="A";
 		core::pose::make_pose_from_sequence( helix, seq, core::chemical::FA_STANDARD, false );
-		for(int i = 1; i <= (int)helix.n_residue(); ++i){
+		for(int i = 1; i <= (int)helix.size(); ++i){
 			helix.set_phi  (i,-57);
 			helix.set_psi  (i,-47);
 			helix.set_omega(i,180);
 			helix.set_secstruct(i,'H');
 		}
-		Vec com =  center_of_geom(helix,                  2,helix.n_residue()-1);
+		Vec com =  center_of_geom(helix,                  2,helix.size()-1);
 		Vec comN = center_of_geom(helix,                  2,                  8);
-		Vec comC = center_of_geom(helix,helix.n_residue()-7,helix.n_residue()-1);
+		Vec comC = center_of_geom(helix,helix.size()-7,helix.size()-1);
 		idealcen = com;
-		// TR<<helix.n_residue()-7 <<" "<< helix.n_residue()-1<<endl;
+		// TR<<helix.size()-7 <<" "<< helix.size()-1<<endl;
 		idealaxs = (comC-comN).normalized();
-		idealres = (1+helix.n_residue())/2.0;
+		idealres = (1+helix.size())/2.0;
 		idealcen = idealcen+proj(idealaxs,helix.xyz(AtomID(2,idealres))-idealcen);
 		idealori = projperp(idealaxs,helix.xyz(AtomID(2,idealres))-idealcen).normalized();
 		helix.set_xyz(AtomID(6,1),idealcen    ); // com
@@ -433,8 +433,8 @@ int main(int argc, char *argv[]) {
 		if(DEBUG) cerr<<"main: GET CHAINS"<<endl;
 		vector1<int> chainlower,chainupper;
 		// vector1<char> pdbchain;
-		get_pose_chains(pose,pose.n_residue(),chainlower,chainupper/*,pdbchain*/,DEBUG);
-		if((int)pose.n_residue()/(int)chainlower.size() > option[ha::max_res_chain_avg]()) { cout<<"SKIP max_res_chain_avg "<<pdb<<endl; continue; }
+		get_pose_chains(pose,pose.size(),chainlower,chainupper/*,pdbchain*/,DEBUG);
+		if((int)pose.size()/(int)chainlower.size() > option[ha::max_res_chain_avg]()) { cout<<"SKIP max_res_chain_avg "<<pdb<<endl; continue; }
 		if((int)chainlower.size()>option[ha::max_num_chains]()){ cout<<"SKIP max_num_chains "<<pdb<<endl; continue; }
 		vector1<bool> hit_on_chain(chainupper.size(),false);
 		Size nhits=0;
@@ -463,7 +463,7 @@ int main(int argc, char *argv[]) {
 							for(int tmp=lower; tmp<ir;++tmp){
 								if(pose.secstruct(tmp)!='E') continue;
 								bool sheet = false;
-								for(int tmp2=1; tmp2 <= (int)pose.n_residue(); ++tmp2)
+								for(int tmp2=1; tmp2 <= (int)pose.size(); ++tmp2)
 									if(pose.secstruct(tmp2)=='E' && dssp.bb_pair_score(tmp,tmp2)) sheet=true;
 								if(sheet) ++nsheettail;
 							}
@@ -486,7 +486,7 @@ int main(int argc, char *argv[]) {
 							for(int tmp=jr+1; tmp<=upper;++tmp){
 								if(pose.secstruct(tmp)!='E') continue;
 								bool sheet = false;
-								for(int tmp2=1; tmp2 <= (int)pose.n_residue(); ++tmp2)
+								for(int tmp2=1; tmp2 <= (int)pose.size(); ++tmp2)
 									if(	pose.secstruct(tmp)!='E' && dssp.bb_pair_score(tmp,tmp2)) sheet=true;
 								if(sheet) ++nsheettail;
 							}
@@ -522,7 +522,7 @@ int main(int argc, char *argv[]) {
 						bestcen,
 						bestjr,
 						upper-lower+1,
-						pose.n_residue(),
+						pose.size(),
 						chainlower.size(),
 						pdbres[bestcen],
 						pdbchain[pose.chain(bestcen)]
@@ -554,7 +554,7 @@ int main(int argc, char *argv[]) {
 					//     <<ubcen<<"     "
 					//     <<ubori<<" "
 					//     <<endl;
-					// 	int helixoffset = ((int)helix.n_residue()-(bestjr-bestir)+1)/2 - bestir;
+					// 	int helixoffset = ((int)helix.size()-(bestjr-bestir)+1)/2 - bestir;
 					// 	// cout<<endl<<endl<<endl;
 					// 	pymol_commands<<"color orange , test0 and resi "<<            bestir<<"-"<<            bestjr<< endl;
 					// 	pymol_commands<<"color yellow, "<<"test1_"+string_of(pose.chain(lower))+(Nterm_or_Cterm?"_Nterm":"_Cterm") <<" and resi "<<helixoffset+bestir<<"-"<<helixoffset+bestjr<< endl;
@@ -805,17 +805,17 @@ int main(int argc, char *argv[]) {
 
 // crap
 
-		// for(    int ir =           1; ir <= (int)pose.n_residue()-refsize-1; ++ir){
-		// 	for(int jr =ir+refsize  ; jr <= (int)pose.n_residue()          ; ++jr){
-		// 		if( jr-ir > (int)helix.n_residue()-4 ) continue;
+		// for(    int ir =           1; ir <= (int)pose.size()-refsize-1; ++ir){
+		// 	for(int jr =ir+refsize  ; jr <= (int)pose.size()          ; ++jr){
+		// 		if( jr-ir > (int)helix.size()-4 ) continue;
 		// 		if( jr-ir > 30 ) continue;
-		// 		int helixoffset = ((int)helix.n_residue()-ir+jr)/2;
+		// 		int helixoffset = ((int)helix.size()-ir+jr)/2;
 		// 		AtomID_Map<AtomID> alignmap;
 		// 		core::pose::initialize_atomid_map(alignmap,helix,core::id::BOGUS_ATOM_ID);
 		// 		Real rms = 0.0;
 		// 		for(int k = ir; k <= jr; ++k){
 		// 			// TR<<helixoffset-ir+k <<" "<< ir+k<<" ";
-		// 			// TR<<helixoffset-ir+k <<" "<< helix.n_residue()<<"    "<<ir+k<< " "<<pose.n_residue()<<endl;
+		// 			// TR<<helixoffset-ir+k <<" "<< helix.size()<<"    "<<ir+k<< " "<<pose.size()<<endl;
 		// 			alignmap[        AtomID(1,helixoffset-ir+k)] =                         AtomID(1,k);
 		// 			alignmap[        AtomID(2,helixoffset-ir+k)] =                         AtomID(2,k);
 		// 			alignmap[        AtomID(3,helixoffset-ir+k)] =                         AtomID(3,k);

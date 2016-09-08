@@ -714,7 +714,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
-	Size const total_residue = pose.total_residue();
+	Size const total_residue = pose.size();
 
 	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
 
@@ -2149,7 +2149,7 @@ RNA_LowResolutionPotential::check_atom_numbers_for_backbone_oxygens( chemical::R
 //  ObjexxFCL::FArray2D< Size > &
 //   atom_numbers_for_backbone_score_calculations( rna_scoring_info.atom_numbers_for_backbone_score_calculations() );
 
-//  Size const total_residue( pose.total_residue() );
+//  Size const total_residue( pose.size() );
 
 //  atom_numbers_for_backbone_score_calculations.dimension( total_residue, num_RNA_backbone_oxygen_atoms_ );
 //  atom_numbers_for_backbone_score_calculations = 0;
@@ -2200,7 +2200,7 @@ RNA_LowResolutionPotential::check_clear_for_stacking(
 
 	// Real const Z_CUTOFF( 2.5 );
 
-	// Size const total_residue = pose.total_residue();
+	// Size const total_residue = pose.size();
 	conformation::Residue const & res_i( pose.residue( i ) );
 
 	if ( !res_i.is_RNA() ) return true;
@@ -2213,7 +2213,7 @@ RNA_LowResolutionPotential::check_clear_for_stacking(
 	Vector const & y_i = M_i.col_y();
 	Vector const & z_i = M_i.col_z();
 
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 		conformation::Residue const & res_j( pose.residue( j ) );
 
 		if ( i == j ) continue;
@@ -2264,7 +2264,7 @@ RNA_LowResolutionPotential::check_forming_base_pair(
 
 	// Real const Z_CUTOFF( 2.5 );
 
-	// Size const total_residue = pose.total_residue();
+	// Size const total_residue = pose.size();
 	conformation::Residue const & res_i( pose.residue( i ) );
 	conformation::Residue const & res_j( pose.residue( j ) );
 

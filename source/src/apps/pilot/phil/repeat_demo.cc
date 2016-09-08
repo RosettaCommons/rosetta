@@ -119,7 +119,7 @@ setup_repeat_pose(
 )
 {
 	runtime_assert( !pose::symmetry::is_symmetric( pose ) ); // not to begin with...
-	runtime_assert( nrepeat * repeatlen == pose.total_residue() );
+	runtime_assert( nrepeat * repeatlen == pose.size() );
 
 	runtime_assert( base_repeat > 1 ); // why? well, the base repeat should get the right context info from nbring repeats
 	// but note that with base_repeat>1 we probably can't use linmem_ig and there are other places in the code that
@@ -127,14 +127,14 @@ setup_repeat_pose(
 	// trouble.
 
 	Size const nres_protein( nrepeat * repeatlen );
-	remove_upper_terminus_type_from_pose_residue( pose, pose.total_residue() );
+	remove_upper_terminus_type_from_pose_residue( pose, pose.size() );
 	ResidueOP vrtrsd
 		( conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRTBB" ) ) );
 	pose.append_residue_by_bond( *vrtrsd, true ); // since is polymer...
 	pose.conformation().insert_chain_ending( nres_protein );
 
-	kinematics::FoldTree f( pose.total_residue() );
-	f.reorder( pose.total_residue() );
+	kinematics::FoldTree f( pose.size() );
+	f.reorder( pose.size() );
 	pose.fold_tree( f );
 
 
@@ -181,8 +181,8 @@ rebuild_test()
 	Size const base_repeat( 3 );
 	runtime_assert( base_repeat < nrepeat );
 
-	runtime_assert( pose.total_residue()%nrepeat == 0 );
-	Size const repeatlen( pose.total_residue() / nrepeat );
+	runtime_assert( pose.size()%nrepeat == 0 );
+	Size const repeatlen( pose.size() / nrepeat );
 
 	// this is the first helper function:
 	setup_repeat_pose( repeatlen, nrepeat, base_repeat, pose );
@@ -221,8 +221,8 @@ rebuild_test()
 		kinematics::MoveMapOP movemap = kinematics::MoveMapOP( new kinematics::MoveMap );
 		movemap->set_bb ( true );
 		movemap->set_chi( true );
-		movemap->set_bb ( pose.total_residue(), false );
-		movemap->set_chi( pose.total_residue(), false );
+		movemap->set_bb ( pose.size(), false );
+		movemap->set_chi( pose.size(), false );
 
 		bool const use_nblist( true ), deriv_check( true ), deriv_check_verbose( false );
 		protocols::simple_moves::symmetry::SymMinMoverOP min_mover
@@ -244,8 +244,8 @@ rebuild_test()
 		kinematics::MoveMapOP movemap = kinematics::MoveMapOP( new kinematics::MoveMap );
 		movemap->set_bb ( true );
 		movemap->set_chi( true );
-		movemap->set_bb ( pose.total_residue(), false );
-		movemap->set_chi( pose.total_residue(), false );
+		movemap->set_bb ( pose.size(), false );
+		movemap->set_chi( pose.size(), false );
 		fastrelax.set_movemap( movemap );
 		TR.Trace << "start relaxing" << endl;
 		fastrelax.apply( pose );

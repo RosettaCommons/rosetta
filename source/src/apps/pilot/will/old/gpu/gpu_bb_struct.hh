@@ -10,8 +10,8 @@ struct BB {
   uint nres;
 #ifdef __cplusplus
   BB(core::pose::Pose const & pose) {
-    xyz = new float16[pose.n_residue()];
-    for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+    xyz = new float16[pose.size()];
+    for(Size ir = 1; ir <= pose.size(); ++ir) {
       uint meta = 0u;
       if(pose.residue(ir).has("N")) {
         xyz[ir-1].s0 = pose.residue(ir).xyz( "N").x();

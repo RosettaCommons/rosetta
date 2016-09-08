@@ -70,7 +70,7 @@ public:
 
 		/*Size before_precision = std::cout.precision();
 		std::cout.precision( 16 );
-		for ( Size ii = 2; ii <= trpcage.total_residue(); ++ii ) {
+		for ( Size ii = 2; ii <= trpcage.size(); ++ii ) {
 
 		EnergyMap emap;
 		std::cout << "{\n"

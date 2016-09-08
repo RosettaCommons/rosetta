@@ -188,7 +188,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		total_residue = symm_info->num_independent_residues();
 	} else {
-		total_residue = pose.total_residue();
+		total_residue = pose.size();
 	}
 	std::string interface_pos("interface positions considered: ");
 	core::Real tie=0;

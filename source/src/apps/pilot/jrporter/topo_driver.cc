@@ -58,7 +58,7 @@ void test_chunk( core::pose::Pose const pose );
 void test_chunk( core::pose::Pose const pose ) {
   
   utility::vector1< core::Real > init_phis;
-  for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+  for( core::Size i = 1; i <= pose.size(); ++i ){
     init_phis.push_back( pose.phi( i ) );
   }
 
@@ -86,7 +86,7 @@ void test_chunk( core::pose::Pose const pose ) {
   {
     core::pose::Pose protected_pose = env.start( pose );
     // Verify conformation got copied into protected_pose pose.
-    TS_ASSERT_EQUALS( protected_pose.total_residue(), pose.total_residue() );
+    TS_ASSERT_EQUALS( protected_pose.size(), pose.size() );
 
     // Verify no_claim_mover can't change anything -- it shouldn't have a passport for this environment (NullPointer excn)
     TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
@@ -116,7 +116,7 @@ void test_chunk( core::pose::Pose const pose ) {
     TS_ASSERT_DELTA( protected_pose.phi( UNCLAIMED_RESID ), init_phis[ UNCLAIMED_RESID ], 1e-12 );
 
     //Verify angles 1-9 are untouched in protected_pose
-    for( core::Size i = 1; i <= pose.total_residue()-1; ++i ){
+    for( core::Size i = 1; i <= pose.size()-1; ++i ){
       TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
     }
 
@@ -125,7 +125,7 @@ void test_chunk( core::pose::Pose const pose ) {
 
   // Verify angles 1-9 are untouched in pose and final_pose;
   // Phi 1 is not well-defined, so skip that one.
-  for( core::Size i = 2; i <= pose.total_residue(); ++i ){
+  for( core::Size i = 2; i <= pose.size(); ++i ){
     if( i != CLAIMED_RESID ){
       TS_ASSERT_DELTA( pose.phi( i ), final_pose.phi( i ), 1e-12 );
       TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
@@ -150,7 +150,7 @@ int main( int argc, char** argv ){
   core::pose::Pose pose;
   core::pose::make_pose_from_sequence(pose, "FRMQIFVYFRIENDS", core::chemical::FA_STANDARD);
 
-  for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+  for( core::Size i = 1; i <= pose.size(); ++i ){
     pose.set_phi( i, -65 );
     pose.set_psi( i, -41 );
     pose.set_omega( i, 180 );

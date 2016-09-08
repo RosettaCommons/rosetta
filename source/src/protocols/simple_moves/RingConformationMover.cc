@@ -294,7 +294,7 @@ RingConformationMover::setup_residue_list( core::pose::Pose & pose )
 
 	residue_list_.clear();
 
-	Size const last_res_num( pose.total_residue() );
+	Size const last_res_num( pose.size() );
 	for ( core::uint res_num( 1 ); res_num <= last_res_num; ++res_num ) {
 		Residue const & residue( pose.residue( res_num ) );
 		if ( residue.type().is_cyclic() ) {

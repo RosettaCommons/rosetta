@@ -264,16 +264,16 @@ RNA_HelixAssembler::build_init_pose( std::string const & seq1, std::string const
 	PoseOP pose( new Pose() );
 	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 	make_pose_from_sequence( *pose, seq1 + seq2, *rsd_set );
-	for ( Size i = 1; i <= pose->n_residue(); ++i ) set_Aform_torsions( *pose, i );
+	for ( Size i = 1; i <= pose->size(); ++i ) set_Aform_torsions( *pose, i );
 	if ( seq1 == "" || seq2 == "" ) return pose;
 	Size const len1( get_sequence_len( seq1 ) );
 
-	FoldTree f( pose->n_residue() );
-	f.new_jump( 1, pose->n_residue(), len1 );
+	FoldTree f( pose->size() );
+	f.new_jump( 1, pose->size(), len1 );
 	f.set_jump_atoms(
 		1,
 		chi1_torsion_atom( pose->residue_type( 1 ) ),
-		chi1_torsion_atom( pose->residue_type( pose->n_residue() ) )
+		chi1_torsion_atom( pose->residue_type( pose->size() ) )
 	);
 	pose->fold_tree( f );
 
@@ -409,7 +409,7 @@ RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) {
 	using namespace core::kinematics;
 
 	//Need to fix up fold_tree
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	FoldTree f( nres );
 	f.new_jump( nres/2-1, nres/2+2, nres/2);  // put jump across second-to-last base pair
 	f.set_jump_atoms( 1,
@@ -426,9 +426,9 @@ RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) {
 
 	// get rid of first base pair
 	pose.delete_polymer_residue( 1 );
-	pose.delete_polymer_residue( pose.total_residue() );
+	pose.delete_polymer_residue( pose.size() );
 
-	runtime_assert( get_cutpoint( pose ) == pose.total_residue()/2 );
+	runtime_assert( get_cutpoint( pose ) == pose.size()/2 );
 
 	std::string sequence_helix1( full_sequence_.substr( 0,      nres/2 ) );
 	std::string sequence_helix2( full_sequence_.substr( nres/2, nres ) );
@@ -595,7 +595,7 @@ RNA_HelixAssembler::build_dangle_seq1_3prime( pose::Pose & pose, std::string con
 void
 RNA_HelixAssembler::build_dangle_seq2_3prime( pose::Pose & pose, std::string const & dangle_seq ) const {
 	if ( dangle_seq.size() == 0 ) return;
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	append_Aform_residue( pose, nres, dangle_seq );
 	minimize_append_res( pose, nres+1 );
 }
@@ -605,7 +605,7 @@ Size
 RNA_HelixAssembler::get_cutpoint( pose::Pose const & pose ) const {
 
 	Size n( 1 );
-	for ( n = 1; n < pose.total_residue(); n++ ) if ( pose.fold_tree().is_cutpoint(n) ) break;
+	for ( n = 1; n < pose.size(); n++ ) if ( pose.fold_tree().is_cutpoint(n) ) break;
 	runtime_assert( pose.fold_tree().is_cutpoint( n ) ) ;
 
 	return n;
@@ -627,7 +627,7 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, std
 	using namespace core::chemical;
 	using namespace core::id;
 
-	runtime_assert( pose.fold_tree().is_cutpoint(n) || n == pose.total_residue() );
+	runtime_assert( pose.fold_tree().is_cutpoint(n) || n == pose.size() );
 
 	/////////////////////////////////////
 	ResidueOP rsd1 = get_residue( nt );
@@ -738,7 +738,7 @@ RNA_HelixAssembler::minimize_prepend_res( pose::Pose & pose, Size const n ) cons
 
 	kinematics::MoveMap mm;
 
-	runtime_assert( n < pose.total_residue() );
+	runtime_assert( n < pose.size() );
 	if ( minimize_all_  ) {
 		mm.set_bb( true );
 		mm.set_chi( true );
@@ -771,7 +771,7 @@ RNA_HelixAssembler::fill_chain_info( pose::Pose & pose ){
 	using namespace core::pose::full_model_info;
 
 	utility::vector1< char > chains;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) chains.push_back( ' ' );
+	for ( Size i = 1; i <= pose.size(); i++ ) chains.push_back( ' ' );
 	PDBInfoOP pdb_info( new PDBInfo( pose ) );
 	pdb_info->set_chains( chains );
 	pdb_info->obsolete( false ); // this is silly.

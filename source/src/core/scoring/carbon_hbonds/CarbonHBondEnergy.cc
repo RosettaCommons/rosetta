@@ -764,7 +764,7 @@ Size const i( atom_id.rsd() );
 conformation::Residue const & current_rsd( pose.residue( i ) );
 Size const current_atm( atom_id.atomno() );
 
-//  Size const nres = pose.total_residue();
+//  Size const nres = pose.size();
 //  static bool const update_deriv( true );
 
 Vector f1( 0.0 ),f2( 0.0 ); // Accumulates!

@@ -62,7 +62,7 @@ get_rna_secstruct_legacy( core::pose::Pose & pose )
 	//using core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO;
 
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) {
-		set_rna_secstruct_legacy( pose, std::string( pose.total_residue(), 'X' ) );
+		set_rna_secstruct_legacy( pose, std::string( pose.size(), 'X' ) );
 	}
 
 	return ( utility::pointer::static_pointer_cast< RNA_SecStructLegacyInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->get_secstruct();

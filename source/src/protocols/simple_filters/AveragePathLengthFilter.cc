@@ -139,15 +139,15 @@ AveragePathLengthFilter::apply(
 	//must also be below the path tightness.
 	//calculate number of disulfides
 	int n_disulfides = 0;
-	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
-		for ( core::Size j=i + 2; j < pose.total_residue() + 1; ++j ) {
+	for ( core::Size i=1; i != pose.size(); ++i ) {
+		for ( core::Size j=i + 2; j < pose.size() + 1; ++j ) {
 			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
 				n_disulfides++;
 			}
 		}
 	}
 
-	core::Real expected_path_length = ((0.1429 * pose.total_residue()) + 0.8635);
+	core::Real expected_path_length = ((0.1429 * pose.size()) + 0.8635);
 	if ( path_length > (expected_path_length + path_tightness_) ) {
 		TR << "Failed average path length filter (current: " << path_length << " | expected base ";
 		TR << expected_path_length << " + tightness " << path_tightness_ << ")" << std::endl;

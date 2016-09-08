@@ -118,12 +118,12 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 	singlechain_poses = pose.split_by_chain();
 
 	// calculate all interface residues over all jumps
-	utility::vector1< Size > interface( pose.total_residue(), false );
+	utility::vector1< Size > interface( pose.size(), false );
 	for ( Size i=1; i<=pose.num_jump(); ++i ) {
 		protocols::scoring::Interface iface( i );
 		iface.distance( 10 );
 		iface.calculate( pose );
-		for ( Size n=1; n<=pose.total_residue(); ++n ) {
+		for ( Size n=1; n<=pose.size(); ++n ) {
 			if ( iface.is_interface( n ) ) {
 				interface[n] = true;
 			}
@@ -140,7 +140,7 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 		//for ( conformation::ResidueOPs::iterator res_it = pose.res_begin();
 		//res_it != pose.res_end();
 		// ++res_it ) {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 			// make a convenience residue to avoid constant double-dereferencing iterator of OP
 			conformation::Residue const & residue =  pose.residue( ii );
@@ -163,14 +163,14 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 			}
 
 			// append the new residue and set its backbone virtual (emulate de novo hashing)
-			(*target_chain_it)->append_residue_by_jump( residue, (*target_chain_it)->total_residue(), "", "", true );
+			(*target_chain_it)->append_residue_by_jump( residue, (*target_chain_it)->size(), "", "", true );
 			if ( option[hotspot::sc_only]() ) {
 				core::pose::add_variant_type_to_pose_residue( **target_chain_it,
-					core::chemical::SHOVE_BB, (*target_chain_it)->total_residue() );
+					core::chemical::SHOVE_BB, (*target_chain_it)->size() );
 			}
 
 			//Size const pdb_seqpos = residue->seqpos() + pose.conformation().chain_begin( chain2 ) - 1;
-			Size const placed_seqpos = (*target_chain_it)->total_residue();
+			Size const placed_seqpos = (*target_chain_it)->size();
 			Size const pdb_seqpos = residue.seqpos();
 
 			// build up scores

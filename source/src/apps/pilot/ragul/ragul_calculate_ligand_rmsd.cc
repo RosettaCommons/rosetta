@@ -84,7 +84,7 @@ int main( int argc, char * argv [] ) {
 		std::string const ref_ligand = option[ reference_ligand ];
 		core::import_pose::pose_from_file( ref_pose, ref_ligand , core::import_pose::PDB_file);
 		core::Size ref_res_num = 0;
-		for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
 			if ( !ref_pose.residue(j).is_protein() ) {
 				ref_res_num = j;
 				break;
@@ -101,7 +101,7 @@ int main( int argc, char * argv [] ) {
 		std::string const inp_ligand = option[ input_ligand ];
 		core::import_pose::pose_from_file( inp_pose, inp_ligand , core::import_pose::PDB_file);
 		core::Size inp_res_num = 0;
-		for ( int j = 1, resnum = inp_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = inp_pose.size(); j <= resnum; ++j ) {
 			if ( !inp_pose.residue(j).is_protein() ) {
 				inp_res_num = j;
 				break;

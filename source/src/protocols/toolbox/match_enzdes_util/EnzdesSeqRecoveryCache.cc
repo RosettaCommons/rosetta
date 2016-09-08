@@ -68,7 +68,7 @@ void
 EnzdesSeqRecoveryCache::set_sequence(
 	core::pose::Pose & native_pose
 ) {
-	for ( core::Size jj=1; jj <= native_pose.total_residue(); ++jj ) {
+	for ( core::Size jj=1; jj <= native_pose.size(); ++jj ) {
 		sequence_[jj] = native_pose.residue( jj ).name1();
 	}
 }

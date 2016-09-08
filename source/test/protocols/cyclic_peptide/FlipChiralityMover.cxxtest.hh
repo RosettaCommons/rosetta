@@ -73,7 +73,7 @@ public:
 
 	void test_size_range () {
 
-		TS_ASSERT_EQUALS((*test_pose_).n_residue(),3);
+		TS_ASSERT_EQUALS((*test_pose_).size(),3);
 	}
 
 	void test_name_change (){
@@ -89,7 +89,7 @@ public:
 		core::Size z_value=0;
 
 
-		for ( core::Size i=1; i<= init_pose_->n_residue(); ++i ) {
+		for ( core::Size i=1; i<= init_pose_->size(); ++i ) {
 
 			core::conformation::Residue const & rsd_init((*init_pose_).residue(i) );
 			core::conformation::Residue const & rsd_test((*test_pose_).residue(i) );

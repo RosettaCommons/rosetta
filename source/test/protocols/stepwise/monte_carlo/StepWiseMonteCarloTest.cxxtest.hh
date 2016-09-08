@@ -77,7 +77,7 @@ public:
 		stepwise_monte_carlo->apply( *pose );
 		// better be a no op, since we set skip_preminimize and no cycles of monte carlo
 		TS_ASSERT_EQUALS( pose->annotated_sequence(), pose_save->annotated_sequence() );
-		for ( Size i = 1; i <= pose->total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose->size(); ++i ) {
 			for ( Size j = 1; j<= pose->residue_type( i ).natoms(); ++j ) {
 				TS_ASSERT_LESS_THAN( ( pose->residue( i ).xyz( j ) - pose_save->residue( i ).xyz( j ) ).length(), 1.0e-6 );
 			}

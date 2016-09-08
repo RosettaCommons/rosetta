@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) {
 	core::scoring::dssp::Dssp dssp(pnat);
 	dssp.insert_ss_into_pose(pnat);
 
-	Vec cen = center_of_geom(pnat,1,pnat.n_residue());
+	Vec cen = center_of_geom(pnat,1,pnat.size());
 	trans_pose(pnat,-cen);
 
 	dock(pnat,fn,ssamp);

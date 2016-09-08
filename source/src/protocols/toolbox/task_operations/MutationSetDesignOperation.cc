@@ -173,9 +173,9 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 
 	//Setup what we have now for each residue
 	vector1< vector1< bool > > pose_allowed_aminos;
-	vector1< bool > sampled_resnums(pose.total_residue(), false);
+	vector1< bool > sampled_resnums(pose.size(), false);
 
-	for ( core::Size i = 1;  i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1;  i <= pose.size(); ++i ) {
 		vector1<bool> allowed_aminos(20, false);
 		if ( include_native_aa_ ) {
 			allowed_aminos[ task.residue_task(i).get_original_residue() ] = true;
@@ -222,7 +222,7 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 	} //For picking rounds
 
 	//Add to already allowed aminos
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! sampled_resnums[ i ] ) { continue;}
 
 		if ( add_to_allowed_aas_ ) {

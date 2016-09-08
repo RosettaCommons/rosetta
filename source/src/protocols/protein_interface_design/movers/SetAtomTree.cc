@@ -185,7 +185,7 @@ SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const h
 	fold_tree->add_edge( 1, jump_pos1, kinematics::Edge::PEPTIDE );
 	fold_tree->add_edge( jump_pos1, pose.conformation().chain_end( 1 ), kinematics::Edge::PEPTIDE );
 	fold_tree->add_edge( pose.conformation().chain_begin( 2 ), jump_pos2, kinematics::Edge::PEPTIDE );
-	fold_tree->add_edge( jump_pos2, pose.total_residue(), kinematics::Edge::PEPTIDE );
+	fold_tree->add_edge( jump_pos2, pose.size(), kinematics::Edge::PEPTIDE );
 	TR.Debug<<"CONNECT_FROM: "<<connect_from<<" and  CONNECT TO: " <<connect_to<<std::endl;
 
 	fold_tree->set_jump_atoms( rb_jump, connect_from , connect_to );

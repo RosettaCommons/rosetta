@@ -208,7 +208,7 @@ InsertionSiteTestMover::parse_my_tag(
 			core::Size const end( core::pose::get_resnum( subtag, pose, "end_" ) );
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
-			//runtime_assert( end<=reference_pose_->total_residue() );
+			//runtime_assert( end<=reference_pose_->size() );
 			for ( core::Size i=begin; i<=end; ++i ) insert_test_pos_.push_back( i );
 		}
 	}
@@ -227,7 +227,7 @@ InsertionSiteTestMover::make_insert_task(
 {
 	core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_( pose ) );
 
-	utility::vector1< bool > repack_pos( pose.total_residue(), false );
+	utility::vector1< bool > repack_pos( pose.size(), false );
 	repack_pos[ insert_pos ] = true;
 	for ( Size i = 1; i < flex_window_; ++i ) {
 		repack_pos[ insert_pos - i ] = true;
@@ -237,7 +237,7 @@ InsertionSiteTestMover::make_insert_task(
 
 	enz_flexbb_prot_->get_tenA_neighbor_residues( pose, repack_pos );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( repack_pos[ i ] ) task->nonconst_residue_task( i ).restrict_to_repacking();
 		else  task->nonconst_residue_task( i ).prevent_repacking();
 	}
@@ -324,7 +324,7 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	mm->set_bb( false );
 	mm->set_jump( false );
 
-	utility::vector1<bool> flex_res(pose.total_residue(), false );
+	utility::vector1<bool> flex_res(pose.size(), false );
 	enz_flexbb_prot_->get_tenA_neighbor_residues( pose, flex_res );
 	//std::set< core::Size > flex_res = enz_flexbb_prot_->enz_flexible_region(1)->get_10A_neighbors( pose );
 	for ( Size i = enz_flexbb_prot_->enz_flexible_region(1)->start(); i != enz_flexbb_prot_->enz_flexible_region(1)->stop(); ++i ) {
@@ -332,7 +332,7 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	}
 
 	utility::vector1< Size > prevent_repack;
-	for ( Size i= 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i= 1; i <= pose.size(); ++i ) {
 
 		if ( flex_res[i] == true ) {
 			mm->set_chi( i, true );
@@ -359,7 +359,7 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 		if ( pose.residue_type(i).is_protein() ) rms_atom_map.set(  core::id::AtomID( pose.residue( i ).atom_index("CA"), i ), core::id::AtomID( raw_pose.residue( i ).atom_index("CA"), i ) );
 	}
 
-	for ( Size i = enz_flexbb_prot_->enz_flexible_region(1)->stop()+1; i <= pose.total_residue() ; ++i ) {
+	for ( Size i = enz_flexbb_prot_->enz_flexible_region(1)->stop()+1; i <= pose.size() ; ++i ) {
 		if ( pose.residue_type(i).is_protein() ) rms_atom_map.set(  core::id::AtomID( pose.residue( i ).atom_index("CA"), i ), core::id::AtomID( raw_pose.residue( i ).atom_index("CA"), i ) );
 	}
 	core::scoring::superimpose_pose( pose, raw_pose, rms_atom_map );
@@ -415,10 +415,10 @@ InsertionSiteTestMover::evaluate_insert_pose(
 
 	//rms stuff begin
 	//first we need to know the neighbors
-	utility::vector1<bool> flex_res(relax_pose.total_residue(), false );
+	utility::vector1<bool> flex_res(relax_pose.size(), false );
 	enz_flexbb_prot_->get_tenA_neighbor_residues( relax_pose, flex_res );
 	//but rmsd code wants an FArraz
-	ObjexxFCL::FArray1D_bool flex_res_farray( relax_pose.total_residue(), false );
+	ObjexxFCL::FArray1D_bool flex_res_farray( relax_pose.size(), false );
 	tr << "Debug: when evaluating insert, the following are neighbor residues: ";
 	for ( Size i = 1; i <= flex_res.size(); ++ i ) {
 		if ( flex_res[i] && !enz_flexbb_prot_->is_flexible(i) ) {
@@ -433,7 +433,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	//tr << std::endl;
 	core::Real rms_neighbors( core::scoring::rmsd_no_super_subset( rawinsert_pose, relax_pose, flex_res_farray, core::scoring::is_protein_backbone ) );
 
-	for ( Size i =1; i <= relax_pose.total_residue(); ++ i ) flex_res_farray(i) = false; //reset
+	for ( Size i =1; i <= relax_pose.size(); ++ i ) flex_res_farray(i) = false; //reset
 	//for( Size i = insert_pos; i > (insert_pos -  flex_window_ ); --i) flex_res_farray(i) = true;
 	//for( Size i = (*insert_seqmap_)[ insert_pos + 1 ]; i <= (*insert_seqmap_)[ insert_pos + flex_window_ ]; ++i ) flex_res_farray(i) = true;
 	tr << "anchor residues are ";
@@ -468,7 +468,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	utility::vector1< core::Real > subpose_residue_sasa;
 	core::scoring::calc_per_atom_sasa( subpose, atom_sasa_dummy, subpose_residue_sasa, probe_radius);
 	core::Real insert_subpose_sasa = 0.0;
-	for ( Size i = 1; i <= subpose.total_residue(); ++i ) insert_subpose_sasa += subpose_residue_sasa[i];
+	for ( Size i = 1; i <= subpose.size(); ++i ) insert_subpose_sasa += subpose_residue_sasa[i];
 	core::Real buried_degree( 1 - (insert_sasa / insert_subpose_sasa) );
 
 	//finally we calculate the sasa of the original two residues

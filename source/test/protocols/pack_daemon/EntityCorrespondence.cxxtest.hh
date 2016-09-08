@@ -307,7 +307,7 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception & excn ) {
 			//std::cout << excn.msg() << std::endl;
 			//TS_ASSERT( excn.msg() == "Residue ID read on line 1 of the EntityCorrespondence file exceeds the number of residues: 21 vs 20" );
-			TS_ASSERT( excn.msg() == "Residue ID read on line 1 of the EntityCorrespondence file is not present in the pose: 21 ch: A vs pose.total_residue()= 20");
+			TS_ASSERT( excn.msg() == "Residue ID read on line 1 of the EntityCorrespondence file is not present in the pose: 21 ch: A vs pose.size()= 20");
 		}
 	}
 

@@ -214,7 +214,7 @@ dock(
 
 	core::id::AtomID_Map<Real> clashmap;
 	core::pose::initialize_atomid_map(clashmap,init_pose,-1.0);
-	for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= init_pose.size(); ++ir){
 		if(!init_pose.residue(ir).is_protein()) continue;
 		clashmap[AtomID(1,ir)] = init_pose.residue(ir).atom_type(1).lj_radius();
 		clashmap[AtomID(2,ir)] = init_pose.residue(ir).atom_type(2).lj_radius();
@@ -242,7 +242,7 @@ dock(
 	}
 
 	utility::vector1<Vec> init_ca;
-	for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= init_pose.size(); ++ir){
 		if(init_pose.residue(ir).has("CA")){
 			init_ca.push_back(init_pose.residue(ir).xyz("CA"));
 		}
@@ -510,7 +510,7 @@ align_native_state(
 	if(nfold<2) return utility::vector1<Vec>();
 	Vec cen(0,0,0);
 	Real ncen = 0.0;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= pose.size(); ++ir){
 		if(pose.residue(ir).has("CA")){
 			cen += pose.residue(ir).xyz("CA");
 			ncen += 1.0;
@@ -520,7 +520,7 @@ align_native_state(
 	protocols::sic_dock::rot_pose( pose, Vec(0,0,1), -dihedral_degrees(Vec(1,0,0),Vec(0,0,0),Vec(0,0,1),cen) );
 	protocols::sic_dock::rot_pose( pose, Vec(1,0,1), 180.0 ); // symZ to symX
 	utility::vector1<Vec> CAs;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= pose.size(); ++ir){
 		if(pose.residue(ir).has("CA")){
 			CAs.push_back(pose.residue(ir).xyz("CA"));
 		}
@@ -576,11 +576,11 @@ int main(int argc, char *argv[]) {
 
 		Pose pnat;
 		core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
-		if(pnat.n_residue()>300){ cout << fn << " is too big" << endl; continue; }
+		if(pnat.size()>300){ cout << fn << " is too big" << endl; continue; }
 		core::scoring::dssp::Dssp dssp(pnat);
 		dssp.insert_ss_into_pose(pnat);
 
-		Vec const cen = protocols::sic_dock::center_of_geom(pnat,1,pnat.n_residue());
+		Vec const cen = protocols::sic_dock::center_of_geom(pnat,1,pnat.size());
 		if(!option[sicdock::no_recenter]()) protocols::sic_dock::trans_pose(pnat,Vec(0,0,-cen.z()));
 
 		Pose olig(pnat); make_Cx(olig,nfold);
@@ -588,7 +588,7 @@ int main(int argc, char *argv[]) {
 		// vector1<Vec> native_ca = align_native_state(pnat,nfold); // align CA com
 
 		if(!option[sicdock::no_recenter]()) protocols::sic_dock::trans_pose(pnat,-Vec(cen.x(),cen.y(),0));
-		if( pnat.n_residue() > (Size)option[sicdock::max_res]() ) continue;
+		if( pnat.size() > (Size)option[sicdock::max_res]() ) continue;
 
 		dock(pnat,fn,qgrid,olig,nfold,cen);
 	}

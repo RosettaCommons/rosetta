@@ -171,7 +171,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
   core::id::AtomID_Map< bool > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, false );
-  for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+  for ( Size ir = 1; ir <= pose.size(); ++ir ) {
     atom_map.set(AtomID(2,ir) , true );
     atom_map.set(AtomID(3,ir) , true );
     atom_map.set(AtomID(5,ir) , true );
@@ -246,7 +246,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
       task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
     }
   }
-  for(Size i = nres+1; i <= pose.n_residue(); ++i) {
+  for(Size i = nres+1; i <= pose.size(); ++i) {
     task->nonconst_residue_task(i).prevent_repacking();
   }
   TR << *task << std::endl;
@@ -284,7 +284,7 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
   // aas[core::chemical::aa_trp] = false;
   if(ex) task->initialize_extra_rotamer_flags_from_command_line();
 
-  for(Size i = 1; i <= pose.n_residue(); ++i) {
+  for(Size i = 1; i <= pose.size(); ++i) {
     if( pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="CYS" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="CYD" ) {
       task->nonconst_residue_task(i).prevent_repacking();
       continue;
@@ -424,10 +424,10 @@ std::pair<vector1<Size>,vector1<Size> > makesplitwork( utility::vector1<Size> re
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
   add_lower_terminus_type_to_pose_residue(pose,1);
-  add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+  add_upper_terminus_type_to_pose_residue(pose,pose.size());
   core::pack::optimizeH(pose,*sf);
   remove_lower_terminus_type_from_pose_residue(pose,1);
-  remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
+  remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 }
 
 
@@ -447,14 +447,14 @@ void run_3bpy() {
   pose_from_file(init_fa,   *fa_residue_set,option[in::file::s]()[1], core::import_pose::PDB_file);
   Pose orig = init_fa;
   // pose_from_file(init_pose,*cen_residue_set,option[in::file::s]()[1], core::import_pose::PDB_file);
-  Size nres = init_fa.n_residue();
+  Size nres = init_fa.size();
   core::chemical::ResidueType const & ala( init_fa.residue(1).residue_type_set().name_map("ALA") );
   for(Size i = 1; i <= nres; ++i) {
     core::pose::replace_pose_residue_copying_existing_coordinates(init_fa,i,ala);
   }
   vector1<Size> iface_candidates;
   vector1<Size> tmp = read_res_list(basic::options::option[basic::options::OptionKeys::willmatch::exclude_res1]());
-  for(Size i = 1; i <= init_fa.n_residue(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates.push_back(i);
+  for(Size i = 1; i <= init_fa.size(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates.push_back(i);
 
   ImplicitFastClashCheck clashcheck(init_fa,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
@@ -500,7 +500,7 @@ void run_3bpy() {
         utility_exit_with_message("set_root_atomno not implemented!");
         // ft.set_root_atomno( bpy.residue(1).atom_index("NE1") );
         ft.add_edge(irsd,1,-1);
-        ft.add_edge(irsd,pose.n_residue(),-1);
+        ft.add_edge(irsd,pose.size(),-1);
         ft.reorder(irsd);
         pose.fold_tree(ft);
         core::pose::symmetry::make_symmetric_pose( pose );
@@ -524,7 +524,7 @@ void run_3bpy() {
 
       core::id::AtomID_Map< bool > atom_map;
       core::pose::initialize_atomid_map( atom_map, dpose, false );
-      for ( Size ir = 1; ir <= dpose.total_residue(); ++ir ) {
+      for ( Size ir = 1; ir <= dpose.size(); ++ir ) {
         for(Size ia = 1; ia <= dpose.residue(ir).nheavyatoms(); ++ia) {
           Size t = dpose.residue(ir).atom_type_index(ia);
           if( t==3 || t==4 || t==5 || t==6 || t==19 || t==20 ) atom_map.set(AtomID(ia,ir) , true );
@@ -588,7 +588,7 @@ void run_zn2his() {
   Pose in_cen,in_fa;
   pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
   pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
-  Size nres = in_cen.n_residue();
+  Size nres = in_cen.size();
   core::chemical::ResidueType const & ala( in_cen.residue(1).residue_type_set().name_map("ALA") );
   core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
   // core::chemical::ResidueType const & hise( in_fa.residue(1).residue_type_set().name_map("HIS") );
@@ -652,7 +652,7 @@ void run_zn2his() {
   fa_pose.dump_pdb(out);
   out << "ENDMDL" << endl;
 
-  std::pair<vector1<Size>,vector1<Size> > splitwork = makesplitwork(init_pose.n_residue(),init_pose.n_residue());
+  std::pair<vector1<Size>,vector1<Size> > splitwork = makesplitwork(init_pose.size(),init_pose.size());
   vector1<Size> IRES = splitwork.first;
   vector1<Size> JRES = splitwork.second;
   assert(IRES.size()==JRES.size());
@@ -665,12 +665,12 @@ void run_zn2his() {
     Size jrsd = JRES[iwork];
     // TR << "HIS HIS genmatch " << irsd << " " << jrsd << std::endl;
     // continue;
-    // for(Size irsd = 1; irsd <= init_pose.n_residue(); ++irsd) {
+    // for(Size irsd = 1; irsd <= init_pose.size(); ++irsd) {
     if( std::find(residues.begin(),residues.end(),irsd) == residues.end() ) continue; // should just loop?
     if( std::find(residues.begin(),residues.end(),jrsd) == residues.end() ) continue; // should just loop?
     Stub s1(init_pose.xyz(AtomID(5,irsd)),init_pose.xyz(AtomID(2,irsd)),init_pose.xyz(AtomID(1,irsd)));
     Stub s2(init_pose.xyz(AtomID(5,jrsd)),init_pose.xyz(AtomID(2,jrsd)),init_pose.xyz(AtomID(1,jrsd)));
-    // for(Size jrsd = irsd+1; jrsd <= init_pose.n_residue(); ++jrsd) {
+    // for(Size jrsd = irsd+1; jrsd <= init_pose.size(); ++jrsd) {
     vector1<Vec> foundcen;
     vector1<Vec> foundori;
     if(init_pose.xyz(AtomID(5,irsd)).distance(init_pose.xyz(AtomID(5,jrsd))) > 11.1) continue;
@@ -844,7 +844,7 @@ void run_tyr_his() {
   pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
   Pose native = in_fa;
   pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
-  Size nres = in_cen.n_residue();
+  Size nres = in_cen.size();
   core::chemical::ResidueType const & ala  ( in_cen.residue(1).residue_type_set().name_map("ALA") );
   core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
   // core::chemical::ResidueType const & hise ( in_fa.residue(1).residue_type_set().name_map("HIS") );
@@ -865,7 +865,7 @@ void run_tyr_his() {
   utility::vector1<Size> forbid_res = option[willmatch::forbid_residues]();
   core::id::AtomID_Map<Real> bb_sasa = compute_bb_sasa(in_fa,BPR);
   utility::vector1<Size> allowed_res;
-  for(Size i = 1; i <= init_pose.n_residue(); ++i) {
+  for(Size i = 1; i <= init_pose.size(); ++i) {
     if( native.residue(i).name3() == "GLY" ) continue;
     if( native.residue(i).name3() == "CYD" ) continue;
     if( native.residue(i).name3() == "CYS" ) continue;
@@ -883,7 +883,7 @@ void run_tyr_his() {
     if( metal_cen.distance(cbxyz) <  5.0 ) continue;
     if( metal_cen.distance(cbxyz) > 22.0 ) continue;
     bool place_for_re = false;
-    for(Size j = (Size)numeric::max(1,(int)allowed_res[i]-7); j <= (Size)numeric::min((int)init_pose.n_residue(),(int)allowed_res[i]+7); ++j) {
+    for(Size j = (Size)numeric::max(1,(int)allowed_res[i]-7); j <= (Size)numeric::min((int)init_pose.size(),(int)allowed_res[i]+7); ++j) {
       if(allowed_res[i] == j) continue;
       if( native.residue(j).name3() == "GLY" ) continue;
       if( native.residue(j).name3() == "CYD" ) continue;
@@ -977,12 +977,12 @@ void run_tyr_his() {
     if(irsd==jrsd) continue;
     // TR << "HIS HIS genmatch " << irsd << " " << jrsd << std::endl;
     // continue;
-    // for(Size irsd = 1; irsd <= init_pose.n_residue(); ++irsd) {
+    // for(Size irsd = 1; irsd <= init_pose.size(); ++irsd) {
     if( std::find(residues.begin(),residues.end(),irsd) == residues.end() ) continue; // should just loop?
     if( std::find(residues.begin(),residues.end(),jrsd) == residues.end() ) continue; // should just loop?
     Stub s1(init_pose.xyz(AtomID(5,irsd)),init_pose.xyz(AtomID(2,irsd)),init_pose.xyz(AtomID(1,irsd)));
     Stub s2(init_pose.xyz(AtomID(5,jrsd)),init_pose.xyz(AtomID(2,jrsd)),init_pose.xyz(AtomID(1,jrsd)));
-    // for(Size jrsd = irsd+1; jrsd <= init_pose.n_residue(); ++jrsd) {
+    // for(Size jrsd = irsd+1; jrsd <= init_pose.size(); ++jrsd) {
     vector1<Vec> foundcen;
     vector1<Vec> foundori;
     if(init_pose.xyz(AtomID(2,irsd)).distance(init_pose.xyz(AtomID(2,jrsd))) > 20.0) continue;
@@ -1101,12 +1101,12 @@ void run_tyr_his() {
               tmppose.replace_residue(jrsd,ty.residue(1),true);
               tmppose.set_chi(1,jrsd,CHI1[jch1]);
               tmppose.set_chi(2,jrsd,CHI2[jch2]);
-              utility::vector1<Real> rsd_sasa(tmppose.n_residue(),0.0);
+              utility::vector1<Real> rsd_sasa(tmppose.size(),0.0);
               core::id::AtomID_Map<Real> atom_sasa;
               core::id::AtomID_Map<bool> atom_mask;
               core::pose::initialize_atomid_map(atom_sasa,tmppose,0.0);
               core::pose::initialize_atomid_map(atom_mask,tmppose,false);
-              for(Size i = 1; i <= tmppose.n_residue(); i++) {
+              for(Size i = 1; i <= tmppose.size(); i++) {
                 for(Size j = 1; j <= tmppose.residue(i).nheavyatoms(); j++) atom_mask[AtomID(j,i)] = true;
               }
               core::scoring::calc_per_atom_sasa( tmppose, atom_sasa, rsd_sasa, 1.8, true, atom_mask );
@@ -1176,7 +1176,7 @@ void run_tyr_his() {
                 // // check burial
                 // core::id::AtomID_Mask mask;
                 // core::pose::initialize_atomid_map(mask,dpose,false);
-                // for(Size i = 1; i <= dpose.n_residue(); ++i) for(Size j = 1; j <= dpose.residue(i).nheavyatoms(); ++j ) mask[AtomID(j,i)] = true;
+                // for(Size i = 1; i <= dpose.size(); ++i) for(Size j = 1; j <= dpose.residue(i).nheavyatoms(); ++j ) mask[AtomID(j,i)] = true;
                 // core::id::AtomID_Map<Real> atom_sasa; utility::vector1<Real> sasa;
                 // TR << "computing sasa...." << std::endl;
                 // core::scoring::calc_per_atom_sasa( dpose, atom_sasa, sasa, 1.8, false, mask);
@@ -1335,7 +1335,7 @@ void run_diiron_glu() {
   Pose in_cen,in_fa;
   pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
   pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
-  Size nres = in_cen.n_residue();
+  Size nres = in_cen.size();
   core::chemical::ResidueType const & ala( in_cen.residue(1).residue_type_set().name_map("ALA") );
   core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
   // core::chemical::ResidueType const & hise( in_fa.residue(1).residue_type_set().name_map("HIS") );
@@ -1395,7 +1395,7 @@ void run_diiron_glu() {
   fa_pose.dump_pdb(out);
   out << "ENDMDL" << endl;
 
-  std::pair<vector1<Size>,vector1<Size> > splitwork = makesplitwork(init_pose.n_residue(),init_pose.n_residue());
+  std::pair<vector1<Size>,vector1<Size> > splitwork = makesplitwork(init_pose.size(),init_pose.size());
   vector1<Size> IRES = splitwork.first;
   vector1<Size> JRES = splitwork.second;
   assert(IRES.size()==JRES.size());
@@ -1414,12 +1414,12 @@ void run_diiron_glu() {
     vector1<Vec> foundori_coarse;
     // TR << "HIS HIS genmatch " << irsd << " " << jrsd << std::endl;
     // continue;
-    // for(Size irsd = 1; irsd <= init_pose.n_residue(); ++irsd) {
+    // for(Size irsd = 1; irsd <= init_pose.size(); ++irsd) {
     if( std::find(residues.begin(),residues.end(),irsd) == residues.end() ) continue; // should just loop?
     if( std::find(residues.begin(),residues.end(),jrsd) == residues.end() ) continue; // should just loop?
     Stub s1(init_pose.xyz(AtomID(5,irsd)),init_pose.xyz(AtomID(2,irsd)),init_pose.xyz(AtomID(1,irsd)));
     Stub s2(init_pose.xyz(AtomID(5,jrsd)),init_pose.xyz(AtomID(2,jrsd)),init_pose.xyz(AtomID(1,jrsd)));
-    // for(Size jrsd = irsd+1; jrsd <= init_pose.n_residue(); ++jrsd) {
+    // for(Size jrsd = irsd+1; jrsd <= init_pose.size(); ++jrsd) {
     if(init_pose.xyz(AtomID(5,irsd)).distance_squared(init_pose.xyz(AtomID(5,jrsd))) > 100.0) continue;
     TR << irsd << " " << jrsd << " found " << count << std::endl;
     for(Size ich1 = 1; ich1 <= CHI1.size(); ++ich1) {
@@ -1557,7 +1557,7 @@ void run_diiron_glu() {
             vector1<Vec> foundcen;
             vector1<Vec> foundori;
             vector1<Vec> foundori2;
-            for(Size krsd = 1; krsd <= init_pose.n_residue(); ++krsd) {
+            for(Size krsd = 1; krsd <= init_pose.size(); ++krsd) {
               if(init_pose.xyz(AtomID(5,irsd)).distance_squared(init_pose.xyz(AtomID(5,krsd))) > 144.0) continue;
               if(init_pose.xyz(AtomID(5,jrsd)).distance_squared(init_pose.xyz(AtomID(5,krsd))) > 144.0) continue;
               Stub s3(init_pose.xyz(AtomID(5,krsd)),init_pose.xyz(AtomID(2,krsd)),init_pose.xyz(AtomID(1,krsd)));

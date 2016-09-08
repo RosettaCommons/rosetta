@@ -431,10 +431,10 @@ void MPInterfaceStatistics::init_from_cmd() {
 utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose ) {
 
 	// set residue vector to false, i.e. not unique
-	utility::vector1< bool > tmp ( pose.total_residue(), false );
+	utility::vector1< bool > tmp ( pose.size(), false );
 
 	// go through pose residues
-	for ( core::Size r = 1; r <= pose.total_residue(); ++r ) {
+	for ( core::Size r = 1; r <= pose.size(); ++r ) {
 
 		// get chain
 		core::Size res_chain = pose.residue( r ).chain();
@@ -1380,7 +1380,7 @@ void MPInterfaceStatistics::calculate_interfaces( Pose & pose ) {
 	partners_ = utility::string_split( partner_, '_' );
 
 	// initialize intf_ vector with false for each residue
-	utility::vector1< bool > tmp( pose.total_residue(), false );
+	utility::vector1< bool > tmp( pose.size(), false );
 	intf_ = tmp;
 
 	// go through jumps and compute interfaces

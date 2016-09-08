@@ -175,7 +175,7 @@ void add_side_chains_partialthread(Pose pose){
   core::pack::pack_missing_sidechains( pose, missing );
   tr2.Debug << "setting up ideal hydrogen geometry on all residues."
 	   << std::endl;
-  for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+  for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
     core::conformation::ResidueOP iires = pose.residue( ii ).clone();
     core::conformation::idealize_hydrogens( *iires, pose.conformation() );
     pose.replace_residue( ii, *iires, false );
@@ -258,7 +258,7 @@ vector1<bool> calculate_surface_exposure(Pose pose){
   exposed_rsd_sasa[ 18]  = 200; // 18 V
   exposed_rsd_sasa[ 19]  = 300; // 19 W
   exposed_rsd_sasa[ 20]  = 290; // 20 Y
-  for(int ii=1; ii<= pose.total_residue(); ++ii){
+  for(int ii=1; ii<= pose.size(); ++ii){
     normalized_rsd_sasa.push_back(residue_sasa[ii]/exposed_rsd_sasa[pose.residue(ii).type().aa()]);
     if(normalized_rsd_sasa[ii]>.1)
       surface_exposed.push_back(true);
@@ -268,7 +268,7 @@ vector1<bool> calculate_surface_exposure(Pose pose){
   //to output bfactors uncomment
   /*core::id::AtomID_Map< Real > bfactors;
   core::pose::initialize_atomid_map( bfactors, pose, 0.0 );
-  for(int ii=1; ii<= pose.total_residue(); ++ii){
+  for(int ii=1; ii<= pose.size(); ++ii){
     for ( Size jj = 1, natoms = pose.residue_type(ii).natoms(); jj <= natoms; ++jj ){
       bfactors[core::id::AtomID(jj,ii)] = normalized_rsd_sasa[ii];
     }
@@ -296,7 +296,7 @@ void superimpose_pose_using_aln(Pose & mod_pose, Pose const & ref_pose, Sequence
   SequenceMapping map = aln.sequence_mapping(firstAln,secondAln);
   core::id::AtomID_Map< core::id::AtomID > atom_map;
   core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::BOGUS_ATOM_ID ); // maps every atomid to bogus atom
-  for ( Size ii=1; ii<=mod_pose.total_residue(); ++ii ) {
+  for ( Size ii=1; ii<=mod_pose.size(); ++ii ) {
     if(map[ii] != 0){
       core::id::AtomID const id1( mod_pose.residue(ii).atom_index("CA"), ii );
       core::id::AtomID const id2( ref_pose.residue(map[ii]).atom_index("CA"), map[ii] );

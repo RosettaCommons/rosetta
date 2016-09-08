@@ -165,12 +165,12 @@ int main( int argc, char * argv [] ){
 		utility::io::ozstream outPDB_stream;
 		outPDB_stream.open("PHR.pdb", std::ios::out);
 
-		for ( int ir = 1, ir_end = rna_pose.total_residue(); ir <= ir_end; ir++ ) {
+		for ( int ir = 1, ir_end = rna_pose.size(); ir <= ir_end; ir++ ) {
 			core::conformation::Residue const & curr_rna_rsd = rna_pose.residue(ir);
 			if ( !curr_rna_rsd.is_RNA() ) continue;
 			int seqpos = curr_rna_rsd.seqpos();
 			pose::Pose temp_protein_rnabase_pose = protein_pose;
-			temp_protein_rnabase_pose.append_residue_by_jump(rna_pose.residue(ir), protein_pose.total_residue(),"", "",  true);
+			temp_protein_rnabase_pose.append_residue_by_jump(rna_pose.residue(ir), protein_pose.size(),"", "",  true);
 			/*print pdb pose
 			std::stringstream ss;
 			ss << ir;
@@ -180,7 +180,7 @@ int main( int argc, char * argv [] ){
 			*/
 
 			//Set-up atomID for SASA calculations by atom
-			utility::vector1< core::Real > complex_rsd_sasa( temp_protein_rnabase_pose.total_residue(), 0.0 );
+			utility::vector1< core::Real > complex_rsd_sasa( temp_protein_rnabase_pose.size(), 0.0 );
 			core::id::AtomID_Map<core::Real> complex_atom_sasa;
 			core::id::AtomID_Map<bool> complex_atom_subset;
 			core::pose::initialize_atomid_map( complex_atom_sasa, temp_protein_rnabase_pose, 0.0 );
@@ -190,7 +190,7 @@ int main( int argc, char * argv [] ){
 			core::scoring::calc_per_atom_sasa( temp_protein_rnabase_pose, complex_atom_sasa, complex_rsd_sasa, probe_radius, false, complex_atom_subset );
 			//core::Real complex_rna_ring_sasa =  get_RNAring_sasa(curr_rna_rsd, ir, complex_atom_sasa);
 
-			for ( int ic = 1, ic_end = temp_protein_rnabase_pose.total_residue(); ic<=ic_end; ++ic ) {
+			for ( int ic = 1, ic_end = temp_protein_rnabase_pose.size(); ic<=ic_end; ++ic ) {
 				core::conformation::Residue const & curr_rsd = temp_protein_rnabase_pose.residue(ic);
 				if ( !curr_rsd.is_RNA() ) continue;
 				core::chemical::rna::RNA_ResidueType const & curr_rsd_type = curr_rsd.RNA_type();
@@ -235,7 +235,7 @@ int main( int argc, char * argv [] ){
 
 			rna_hb_set.clear();
 
-			for ( Size ic = 1, ic_end = temp_protein_rnabase_pose.total_residue(); ic<=ic_end; ic++ ) {
+			for ( Size ic = 1, ic_end = temp_protein_rnabase_pose.size(); ic<=ic_end; ic++ ) {
 				core::conformation::Residue const & curr_rsd = temp_protein_rnabase_pose.residue(ic);
 				if ( !curr_rsd.is_RNA() ) continue;
 

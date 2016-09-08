@@ -63,7 +63,7 @@ InterfaceHolesFilter::compute( core::pose::Pose const & pose ) const
 	//Brings this in line with scores reported by Will's holes app.
 	// 8-19-09: this now appears to be done internally by the scoretype. No need to do it myself
 	//core::Size nheavyatoms=0;
-	//for( core::Size i=1; i<= copy_pose.total_residue(); ++i ) {
+	//for( core::Size i=1; i<= copy_pose.size(); ++i ) {
 	// nheavyatoms += copy_pose.residue(i).nheavyatoms();
 	// }
 	//delta_holes /= nheavyatoms;

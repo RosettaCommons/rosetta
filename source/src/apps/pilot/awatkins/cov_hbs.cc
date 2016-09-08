@@ -190,9 +190,9 @@ CovalentPeptidomimeticDockDesign::apply(
 	// Simple minimization first
 	kinematics::MoveMapOP mm( new kinematics::MoveMap() );
 	PackerTaskOP limited_task( TaskFactory::create_packer_task( pose ) );
-	utility::vector1_bool packable( pose.total_residue(), false );
+	utility::vector1_bool packable( pose.size(), false );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		if ( pose.residue( ii ).type().has_property( "ELECTROPHILE" ) ) {
 			vdp_resi = ii;
@@ -316,7 +316,7 @@ CovalentPeptidomimeticDockDesign::update_hydrogens(
 	using namespace id;
 
 	// Look at any residues with the property ELECTROPHILE
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ! pose.residue( ii ).type().has_property( "ELECTROPHILE" ) ) {
 			continue;
 		}

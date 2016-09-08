@@ -36,7 +36,7 @@ get_touched_res( pose::Pose const pose,
     Size const ires( loopres[i] );
     Vector const Cb_crd_i = pose.residue( ires ).nbr_atom_xyz();
     
-    for( Size jres = 1; jres <= pose.total_residue(); ++jres ){
+    for( Size jres = 1; jres <= pose.size(); ++jres ){
       if( touched_res.contains( jres ) ) continue;
 
       Vector const Cb_crd_j = pose.residue( jres ).nbr_atom_xyz();
@@ -100,7 +100,7 @@ setup_packer( pose::Pose const &pose,
   local_tf->push_back( new RestrictToRepacking() );
   PreventRepackingOP turn_off_packing = new PreventRepacking();
 
-  for( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+  for( Size ires = 1; ires <= pose.size(); ++ires ) {
     if (!mm.get_chi(ires) ){
       turn_off_packing->include_residue(ires);
     }
@@ -164,10 +164,10 @@ get_resmap( pose::Pose const &pose,
 {
   std::map< Size, Size > resmap;
 
-  for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= pose.size(); ++ii ) {
     Size ii_pdb( pose.pdb_info()->number( ii ) );
     
-    for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+    for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
       Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
       
       if( ii_pdb == jj_pdb ){

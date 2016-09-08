@@ -71,7 +71,7 @@ DOFHistogramRecorder::insert_dofs_by_residue(
 )
 {
 	utility::vector1<std::set<core::id::DOF_ID_Range> > residue_dof_ranges;
-	residue_dof_ranges.resize(pose.total_residue());
+	residue_dof_ranges.resize(pose.size());
 
 	for ( core::Size i = 1; i <= dof_ranges.size(); ++i ) {
 

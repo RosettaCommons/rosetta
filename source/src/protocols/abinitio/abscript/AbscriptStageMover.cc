@@ -116,7 +116,7 @@ void AbscriptStageMover::update_max_seq_sep( core::pose::Pose& pose, core::Real 
 		1.0 );
 
 	core::Size max_ft_dist = constraints_->largest_possible_sequence_sep( pose );
-	assert( max_ft_dist <= pose.total_residue() );
+	assert( max_ft_dist <= pose.size() );
 
 	tr.Debug << "using factor " << new_seq_sep_factor << " with max ft dist " << max_ft_dist << std::endl;
 	core::Size seqsep = new_seq_sep_factor * max_ft_dist;

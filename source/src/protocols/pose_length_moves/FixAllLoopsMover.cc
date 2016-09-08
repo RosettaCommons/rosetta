@@ -80,13 +80,13 @@ protocols::loops::Loops FixAllLoopsMover::get_loops(core::pose::Pose const & pos
 	if ( dssp_string.substr(0,1) == "L" ) {
 		startLoop = 1;
 	}
-	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
 		if ( dssp_string.substr(ii-1,1) == "L" && lastSecStruct != "L" ) {
 			startLoop = ii;
 		}
 		if ( dssp_string.substr(ii-1,1) != "L" && lastSecStruct == "L" ) {
 			endLoop = ii-1;
-			if ( (startLoop != 1) && (endLoop!=pose.total_residue()) ) {
+			if ( (startLoop != 1) && (endLoop!=pose.size()) ) {
 				pose_loops.add_loop(startLoop,endLoop);
 			}
 		}
@@ -98,7 +98,7 @@ protocols::loops::Loops FixAllLoopsMover::get_loops(core::pose::Pose const & pos
 void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 	protocols::loops::Loops pose_loops = get_loops(pose);
 	bool failure = false;
-	if ( firstResidue_==1 && lastResidue_>pose.total_residue() ) {
+	if ( firstResidue_==1 && lastResidue_>pose.size() ) {
 		TR << "working on all residues" << std::endl;
 	} else {
 		TR << "working on residues" << firstResidue_ << " to " << lastResidue_ << std::endl;
@@ -106,8 +106,8 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 	TR << "loop RMSD before optimization" << std::endl;
 	for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
 		Size lookback_resid = pose_loops[ii].start()-2;
-		if ( lookback_resid>=pose.total_residue()-9+1 ) {
-			lookback_resid = pose.total_residue()-9+1; //loop is in the final 9 residues
+		if ( lookback_resid>=pose.size()-9+1 ) {
+			lookback_resid = pose.size()-9+1; //loop is in the final 9 residues
 		}
 		Real loop_rmsd = ABEGOHashedFragmentStore_->lookback(pose,lookback_resid);
 		TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
@@ -139,8 +139,8 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 		TR << "loop RMSD after optimization (note:Residue numbers may have changed)" << std::endl;
 		for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
 			Size lookback_resid = pose_loops[ii].start()-2;
-			if ( lookback_resid>=pose.total_residue()-9+1 ) {
-				lookback_resid = pose.total_residue()-9+1; //loop is in the final 9 residues
+			if ( lookback_resid>=pose.size()-9+1 ) {
+				lookback_resid = pose.size()-9+1; //loop is in the final 9 residues
 			}
 			Real loop_rmsd = ABEGOHashedFragmentStore_->lookback(pose,lookback_resid);
 			TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;

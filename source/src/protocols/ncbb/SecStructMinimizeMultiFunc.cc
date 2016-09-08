@@ -142,10 +142,10 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 	scoring::ScoreFunction const & sfxn,
 	MinimizerMap const & min_map
 ) const {
-	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.total_residue() ) );
+	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.size() ) );
 
 	scoring::EnergyMap dummy;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		sfxn.setup_for_minimizing_for_node( * mingraph->get_minimization_node( ii ),
 			pose.residue( ii ), min_map, pose, false, dummy );
 	}
@@ -165,7 +165,7 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 	}
 
 	/// Now initialize the long-range edges
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( auto
 				iter = sfxn.long_range_energies_begin(),
 				iter_end = sfxn.long_range_energies_end();

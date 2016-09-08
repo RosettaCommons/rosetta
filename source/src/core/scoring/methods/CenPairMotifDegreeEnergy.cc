@@ -84,7 +84,7 @@ void CenPairMotifDegreeEnergy::finalize_total_energy( pose::Pose & pose, ScoreFu
 	using core::kinematics::FoldTree;
 	Size GAP_THRESH = 5; //only count residues that are 5 residues apart
 	double score = 0.0;
-	Size nres1 = pose.n_residue(), nres2=nres1;
+	Size nres1 = pose.size(), nres2=nres1;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		nres2 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
@@ -92,7 +92,7 @@ void CenPairMotifDegreeEnergy::finalize_total_energy( pose::Pose & pose, ScoreFu
 			nres2= core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		}
 	}
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		totals[cen_pair_motif_degree] = 0;
 	} else {
 		const FoldTree& tree = pose.fold_tree();
@@ -101,8 +101,8 @@ void CenPairMotifDegreeEnergy::finalize_total_energy( pose::Pose & pose, ScoreFu
 		if ( aalist_.size()>0 ) {
 			for ( size_t ii = 1; ii <= aalist_.size(); ++ii ) {
 				Size ir = aalist_[ii];
-				if ( ir >  pose.total_residue() ) {
-					TR << "Warning" << ir << "is above total residue" << pose.total_residue() << std::endl;
+				if ( ir >  pose.size() ) {
+					TR << "Warning" << ir << "is above total residue" << pose.size() << std::endl;
 				} else {
 					Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
 					char ss1 = dssp.get_dssp_secstruct( ir );
@@ -184,7 +184,7 @@ void CenPairMotifDegreeEnergy::finalize_total_energy( pose::Pose & pose, ScoreFu
 					}
 				}
 			}
-			totals[cen_pair_motif_degree ] =(-1*score)/pose.n_residue();
+			totals[cen_pair_motif_degree ] =(-1*score)/pose.size();
 		}
 	}
 }

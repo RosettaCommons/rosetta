@@ -188,7 +188,7 @@ void CheckPointer::checkpoint(
 	if ( disabled_ ) return;
 	if ( !Timer::is_on() ) return;
 
-	if ( pose.total_residue() <= 0 ) return;
+	if ( pose.size() <= 0 ) return;
 
 	/////////////
 	// set global bailout structure - this is used by the watchdog to abort when the watchdog time

@@ -511,11 +511,11 @@ get_resmap( pose::Pose const &pose,
 				std::map< Size, Size > &resmap
 		)
 {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				Size ii_pdb( pose.pdb_info()->number( ii ) );
 				//pose_resmap[ii_pdb] = ii;
 
-				for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+				for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 						Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
 
 						if( ii_pdb == jj_pdb ){
@@ -706,7 +706,7 @@ my_main( void* )
 	if ( option[mc::xyzcst] ) {
 		// virtual atom
 		core::pose::addVirtualResAsRoot(p);
-		core::Size nmonomerres = p.total_residue()-1;
+		core::Size nmonomerres = p.size()-1;
 
 		// add cst to pose
 		for ( Size i = 1; i<=nmonomerres; ++i ) {
@@ -824,8 +824,8 @@ my_main( void* )
 	}
 
 	//nresidue
-	core::Size n_res = p.n_residue();
-	core::Size mres = static_cast<core::Size>(p.n_residue()*0.5);
+	core::Size n_res = p.size();
+	core::Size mres = static_cast<core::Size>(p.size()*0.5);
 	core::Size nsegment = static_cast<core::Size>(option[mc::bb_dih_statistic]);
 	core::Size l_offset=mres+1, r_offset=mres;
 	for (core::Size ndx=1; ndx<=nsegment; ndx++) {
@@ -842,7 +842,7 @@ my_main( void* )
 	//std::cout << "mres=" << mres << " half_seg=" << half_segment << std::endl;
 	//rmsd region
 	core::Size rmsd_start=1;
-	core::Size rmsd_stop=p.n_residue();
+	core::Size rmsd_stop=p.size();
 	if (option[mc::xyzcst]) rmsd_stop--; //skip virt
 	if (option[mc::rmsd_region_start].user()) rmsd_start=option[mc::rmsd_region_start];
 	if (option[mc::rmsd_region_stop].user()) rmsd_stop=option[mc::rmsd_region_stop];
@@ -1034,9 +1034,9 @@ my_main( void* )
 				TR << "found the structure!" << std::endl;
 				//runtime_assert(p);
 				ss->fill_pose(p);
-				TR << "total residue: " << p.total_residue() << std::endl;
+				TR << "total residue: " << p.size() << std::endl;
 				TR << "finished filling pose " << std::endl;
-				TR << "temperature of structure with tag: " << tags[ii] << " corresponds to this node's temperature: " << kT << " filled pdb has " << p.total_residue() << std::endl;
+				TR << "temperature of structure with tag: " << tags[ii] << " corresponds to this node's temperature: " << kT << " filled pdb has " << p.size() << std::endl;
 				decoy_found = true;
 				break;
 			}

@@ -195,8 +195,8 @@ bool initial_min_rot = get_minimize_rot_flag();
 score_set_minimize_rot( rt_min );
 score_set_try_rotamers( rotamer_trials );
 // initial allowed chi movement
-FArray1D_bool old_chi_move( pose_in.total_residue(), false );
-for( int i = 1; i <= pose_in.total_residue(); i++ ) {
+FArray1D_bool old_chi_move( pose_in.size(), false );
+for( int i = 1; i <= pose_in.size(); i++ ) {
 // storing old
 old_chi_move(i) = pose_in.get_allow_chi_move(i);
 // setting new
@@ -269,7 +269,7 @@ Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
 
 
 Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop ) {
-	if ( pose_in.total_residue() != native_pose.total_residue() ) {
+	if ( pose_in.size() != native_pose.size() ) {
 		throw utility::excn::EXCN_BadInput("The pose sequence length does not match that of native_pose");
 	}
 
@@ -279,7 +279,7 @@ Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pos
 	Size loop_end = (*current_loop)[1].stop();
 
 	using ObjexxFCL::FArray1D_bool;
-	FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+	FArray1D_bool superpos_partner ( pose_in.size(), false );
 
 	for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
 
@@ -342,7 +342,7 @@ void align_to_native( core::pose::Pose & pose,
 
 vector1<bool>
 select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance) {
-	vector1<bool> epitope(pose.total_residue(), false);
+	vector1<bool> epitope(pose.size(), false);
 	if ( ! ab_info->antigen_present() ) return epitope;
 
 	std::string interface = ab_info->get_antibody_chain_string()+"_"+ab_info->get_antigen_chain_string();
@@ -352,7 +352,7 @@ select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, 
 	vector1<bool> interface_residues = protocols::interface::select_interface_residues(pose, interface, interface_distance);
 
 	//Turn off L or H residues at the interface
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		char chain = core::pose::get_chain_from_chain_id(pose.chain(i), pose);
 		if ( chain == 'L' || chain == 'H' ) {
 			interface_residues[i] = false;
@@ -440,7 +440,7 @@ void simple_one_loop_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 	Size jumppoint1 = loop.start() - 1;
 	Size jumppoint2 = loop.stop() + 1;
 
@@ -473,7 +473,7 @@ void simple_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 
 	if ( jumppoint1 < 1 )   jumppoint1 = 1;
 	if ( jumppoint2 > nres ) jumppoint2 = nres;

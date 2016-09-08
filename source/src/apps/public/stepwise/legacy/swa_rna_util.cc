@@ -363,7 +363,7 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 			both_pose_res_is_virtual = true;
 		}
 
-		if ( ( seq_num_one + 1 ) <= pose_one.total_residue() ) {
+		if ( ( seq_num_one + 1 ) <= pose_one.size() ) {
 			if ( pose_one.residue( seq_num_one ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 				if ( ! pose_one.residue( seq_num_one + 1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) { //consistency_check
 					utility_exit_with_message( "pose_one's seq_num_one = " + string_of( seq_num_one ) +
@@ -392,13 +392,13 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 		suite_square_deviation( pose_one, pose_two, is_prepend, seq_num_one, seq_num_two, atom_count, sum_sd, false, ignore_virtual_atom );
 
 
-		if ( ( ( seq_num_one + 1 ) <= pose_one.total_residue() ) != ( ( seq_num_two + 1 ) <= pose_two.total_residue() ) ) {
-			std::cout << "seq_num_one = " << seq_num_one << " pose_one.total_residue() = " <<  pose_one.total_residue() << std::endl;
-			std::cout << "seq_num_two = " << seq_num_two << " pose_two.total_residue() = " <<  pose_two.total_residue() << std::endl;
-			utility_exit_with_message( "( ( seq_num_one + 1 ) <= pose_one.total_residue() ) != ( ( seq_num_two + 1 ) <= pose_two.total_residue() )" );
+		if ( ( ( seq_num_one + 1 ) <= pose_one.size() ) != ( ( seq_num_two + 1 ) <= pose_two.size() ) ) {
+			std::cout << "seq_num_one = " << seq_num_one << " pose_one.size() = " <<  pose_one.size() << std::endl;
+			std::cout << "seq_num_two = " << seq_num_two << " pose_two.size() = " <<  pose_two.size() << std::endl;
+			utility_exit_with_message( "( ( seq_num_one + 1 ) <= pose_one.size() ) != ( ( seq_num_two + 1 ) <= pose_two.size() )" );
 		}
 
-		if ( ( seq_num_one + 1 ) <= pose_one.total_residue() ) {
+		if ( ( seq_num_one + 1 ) <= pose_one.size() ) {
 
 			if ( ( sequence_one[( seq_num_one + 1 ) - 1] ) != ( sequence_two[( seq_num_two + 1 ) - 1] ) ) {
 				std::cout << "( seq_num_one + 1 ) - 1 = " << seq_num_one << " sequence_one = " << sequence_one << " sequence[( seq_num_one + 1 ) - 1] = " << sequence_one[( seq_num_one + 1 ) - 1] << std::endl;
@@ -753,7 +753,7 @@ o2prime_packer(){
 		import_pose::pose_from_file( pose, *rsd_set, pose_name , core::import_pose::PDB_file);
 
 		if ( option[reset_o2prime_torsion]() ) {
-			for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+			for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 				pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), 0.0 );
 			}
 			dump_pdb( pose, "RESETTED_BEFORE_o2prime_pack_" + pose_name );
@@ -766,7 +766,7 @@ o2prime_packer(){
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ) );
 		task->initialize_from_command_line();
 
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue( i ).is_RNA() ) continue;
 		task->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
 		//  task->nonconst_residue_task(i).or_ex4( true );
@@ -906,7 +906,7 @@ slice_ellipsoid_envelope(){
 
 	for ( Size ii = 1; ii <= additional_slice_res_list.size(); ii++ ) {
 		if ( additional_slice_res_list[ii] < 1 )  utility_exit_with_message( "additional_slice_res_list[" + string_of( ii ) + "] < 1" );
-		if ( additional_slice_res_list[ii] > pose.total_residue() ) utility_exit_with_message( "additional_slice_res_list[" + string_of( ii ) + "] > pose.total_residue()" );
+		if ( additional_slice_res_list[ii] > pose.size() ) utility_exit_with_message( "additional_slice_res_list[" + string_of( ii ) + "] > pose.size()" );
 	}
 
 
@@ -972,7 +972,7 @@ slice_ellipsoid_envelope(){
 
 	numeric::xyzMatrix< core::Real > rotation_matrix = inverse( coordinate_matrix );
 
-	for ( Size i = 1; i <= rotated_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= rotated_pose.size(); ++i ) {
 		for ( Size j = 1; j <= rotated_pose.residue_type( i ).natoms(); ++j ) { // use residue_type to prevent internal coord update
 
 			id::AtomID const id( j, i );
@@ -987,7 +987,7 @@ slice_ellipsoid_envelope(){
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( sample_res_list.has_value( seq_num ) ) {
 			std::cout << "res " << seq_num << " is a sample_res" << std::endl;
@@ -1057,7 +1057,7 @@ slice_ellipsoid_envelope(){
 
 	pose::Pose output_pose = pose;
 
-	for ( Size seq_num = pose.total_residue(); seq_num >= 1; seq_num-- ) {
+	for ( Size seq_num = pose.size(); seq_num >= 1; seq_num-- ) {
 
 		if ( keep_res_list.has_value( seq_num ) == false ) {
 
@@ -1099,7 +1099,7 @@ slice_ellipsoid_envelope(){
 
 
 	//Reset o2prime torsion....Dec 7, 2010///////////////////////////////////
-	for ( Size seq_num = 1; seq_num <= no_loop_output_pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= no_loop_output_pose.size(); seq_num++ ) {
 		no_loop_output_pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), 0.0 );
 	}
 	dump_pdb( no_loop_output_pose, "RESETTED_o2prime_no_loop_ellipsoid_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
@@ -1109,7 +1109,7 @@ slice_ellipsoid_envelope(){
 	o2prime_trials( no_loop_output_pose, scorefxn );
 	dump_pdb( no_loop_output_pose, "no_loop_ellipsoid_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
 
-	std::cout << "Sliced out " << output_pose.total_residue() << " out of " << pose.total_residue()  << " nucleotides" << std::endl;
+	std::cout << "Sliced out " << output_pose.size() << " out of " << pose.size()  << " nucleotides" << std::endl;
 
 	std::cout << "Total time in slice_ellipsoid_envelope: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
@@ -1177,13 +1177,13 @@ slice_sample_res_and_surrounding(){
 
 	for ( Size ii = 1; ii <= additional_slice_res_list.size(); ii++ ) {
 		if ( additional_slice_res_list[ii] < 1 )  utility_exit_with_message( "additional_slice_res_list[" + string_of( ii ) + "] < 1" );
-		if ( additional_slice_res_list[ii] > pose.total_residue() ) utility_exit_with_message( "additional_slice_res_list[" + string_of( ii ) + "] > pose.total_residue()" );
+		if ( additional_slice_res_list[ii] > pose.size() ) utility_exit_with_message( "additional_slice_res_list[" + string_of( ii ) + "] > pose.size()" );
 	}
 
 
 	pose::Pose output_pose = pose;
 
-	for ( Size seq_num = pose.total_residue(); seq_num >= 1; seq_num-- ) {
+	for ( Size seq_num = pose.size(); seq_num >= 1; seq_num-- ) {
 
 		if ( sample_res_list.has_value( seq_num ) ) {
 			std::cout << "res " << seq_num << " is a sample_res" << std::endl;
@@ -1285,7 +1285,7 @@ slice_sample_res_and_surrounding(){
 
 
 	//Reset o2prime torsion....Dec 7, 2010///////////////////////////////////
-	for ( Size seq_num = 1; seq_num <= no_loop_output_pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= no_loop_output_pose.size(); seq_num++ ) {
 		no_loop_output_pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), 0.0 );
 	}
 	dump_pdb( no_loop_output_pose, "RESETTED_o2prime_no_loop_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );

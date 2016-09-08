@@ -215,7 +215,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	if ( ! movemap_ ) {
 		TR << "No Movemap Set.  Attempting to use all carbohydrate residues." << std::endl;
 		movemap_ = core::kinematics::MoveMapOP( new MoveMap);
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue_type(i).is_carbohydrate() ) {
 				movemap_->set_bb( i, true);
 			} else {
@@ -227,7 +227,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	phi_sampler_mover_->set_movemap(movemap_);
 	psi_sampler_mover_->set_movemap(movemap_);
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue_type( i ).is_carbohydrate() && movemap_->get_bb(i) ) {
 			movemap_residues_.push_back( i );
 		}

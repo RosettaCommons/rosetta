@@ -155,7 +155,7 @@ void PDBOutput::reference_pose( Pose const & pose )
 {
 	// make hard copy to guarantee that the reference pose remains unchanged
 	reference_pose_ = PoseCOP( PoseOP( new Pose( pose ) ) );
-	designed_residues_.assign( reference_pose_->total_residue(), false );
+	designed_residues_.assign( reference_pose_->size(), false );
 }
 pose::PoseCOP PDBOutput::reference_pose() const { return reference_pose_; }
 
@@ -272,12 +272,12 @@ PDBOutput::get_residue_indices_to_output()
 {
 	res_indices_to_output_.clear();
 	if ( !reference_pose_ || !option[ OptionKeys::dna::design::sparse_pdb_output ]() ) {
-		for ( Size i(1), end( pose_copy_->total_residue() ); i <= end; ++i ) {
+		for ( Size i(1), end( pose_copy_->size() ); i <= end; ++i ) {
 			res_indices_to_output_.push_back(i);
 		}
 	} else {
-		for ( Size i(1), endpose( pose_copy_->total_residue() ),
-				endref( reference_pose_->total_residue() ); i <= endpose; ++i ) {
+		for ( Size i(1), endpose( pose_copy_->size() ),
+				endref( reference_pose_->size() ); i <= endpose; ++i ) {
 			if ( i <= endref &&
 					!residues_are_different( pose_copy_->residue(i), reference_pose_->residue(i) ) ) continue;
 			res_indices_to_output_.push_back(i);
@@ -307,7 +307,7 @@ PDBOutput::output_design_tags( ozstream & pdbout ) const
 
 	std::list< std::string > moved, moved_DNA, mutated, mutated_DNA;
 
-	for ( Size index(1), nres( pose_copy_->total_residue() ); index <= nres; ++index ) {
+	for ( Size index(1), nres( pose_copy_->size() ); index <= nres; ++index ) {
 		std::ostringstream os;
 		if ( pose_copy_->pdb_info() ) {
 			os << pose_copy_->pdb_info()->number( index ) << " "
@@ -428,7 +428,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 	interface.determine_protein_interface( *pose_copy_ );
 
 	// expand list of residues to consider into nres bool vector for simple lookup
-	vector1< bool > relevant_residue( pose_copy_->total_residue(), false );
+	vector1< bool > relevant_residue( pose_copy_->size(), false );
 	for ( vector1< Size >::const_iterator index( res_indices_to_output_.begin() ),
 			end( res_indices_to_output_.end() ); index != end; ++index ) {
 		relevant_residue[ *index ] = true;

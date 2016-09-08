@@ -263,12 +263,12 @@ DDomainParse::ddomain_pot(
 
 utility::vector1< loops::Loops >
 DDomainParse::split( core::pose::Pose const &templ ) {
-	//runtime_assert( nres >= templ.total_residue() );
+	//runtime_assert( nres >= templ.size() );
 
 	utility::vector1< loops::Loops > retval;
 
 	//std::string fname;
-	mseq_ = templ.total_residue();
+	mseq_ = templ.size();
 	while ( mseq_>0 && !templ.residue(mseq_).is_protein() ) mseq_--;
 	nseq_ = mseq_;
 

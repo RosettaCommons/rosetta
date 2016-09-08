@@ -97,7 +97,7 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	utility::vector1<bool> residues_to_check;
 	if ( select_resnums_ ) {
 		utility::vector1< core::Size > const res_set_vec (core::pose::get_resnum_list_ordered( string_resnums_, pose ));
-		residues_to_check.resize(pose.total_residue(),false);
+		residues_to_check.resize(pose.size(),false);
 		TR << "filter residues contain: ";
 		for ( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ) {
 			residues_to_check[res_set_vec[ i_res_vec ]]=true;
@@ -105,7 +105,7 @@ HelixKinkFilter::apply( Pose const & pose ) const
 		}
 		TR << std::endl;
 	} else {
-		residues_to_check.resize(pose.total_residue(),true);
+		residues_to_check.resize(pose.size(),true);
 	}
 
 

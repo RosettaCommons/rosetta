@@ -112,8 +112,8 @@ main( int argc, char* argv [] )
 			(*scorefxn)(pose);
 			// calculate burial
 			utility::vector1< int > burial = calculate_burial( pose );
-			for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
-				for ( unsigned int j = 1; j <= pose.total_residue(); ++j ) {
+			for ( unsigned int i = 1; i <= pose.size(); ++i ) {
+				for ( unsigned int j = 1; j <= pose.size(); ++j ) {
 					core::conformation::Residue resi = pose.residue(i);
 					core::conformation::Residue resj = pose.residue(j);
 
@@ -162,8 +162,8 @@ main( int argc, char* argv [] )
 								<< std::endl;
 						}  // for ( unsigned int n = 1; n <= resj.natoms(); ++n )
 					} //  for ( unsigned int m = 1; m <= resi.natoms(); ++m )
-				} //  for ( unsigned int j = i + 1; j <= pose.total_residue(); ++j )
-			}  // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
+				} //  for ( unsigned int j = i + 1; j <= pose.size(); ++j )
+			}  // for ( unsigned int i = 1; i <= pose.size(); ++i )
 			//output.close();
 		} //  for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 

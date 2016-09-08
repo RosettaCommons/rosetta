@@ -182,7 +182,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
 	} else {
 		movemap->set_bb( true );
 	}
-	loops::Loops rigid_core( loops.invert( pose.total_residue() ) );
+	loops::Loops rigid_core( loops.invert( pose.size() ) );
 
 	bool success( true );
 	current_kinematics->set_final_fold_tree( pose.fold_tree() );
@@ -209,7 +209,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
 bool
 LoopJumpFoldCst::add_coord_cst( loops::Loops const& rigid_core, core::pose::Pose& pose ) {
 	if ( coordinate_constraint_weight_ != 0.0 ) {
-		bool bWeightsIn = ( coordinate_constraint_weights_.size() >= pose.total_residue() );
+		bool bWeightsIn = ( coordinate_constraint_weights_.size() >= pose.size() );
 		loops::fix_with_coord_cst( rigid_core, pose, bCstAllAtom_, coordinate_constraint_weights_ );
 		if ( dump_weights_file_ != "NO_DUMP" ) {
 			utility::io::write_vector( dump_weights_file_, coordinate_constraint_weights_ );

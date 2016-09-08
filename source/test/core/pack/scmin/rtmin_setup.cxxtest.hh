@@ -164,7 +164,7 @@ public:
 
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			//if ( ii % 2 == 0 || ii == 1 ) { task->nonconst_residue_task( ii ).prevent_repacking(); }
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
@@ -178,19 +178,19 @@ public:
 
 		TS_ASSERT( score_end < score_begin );
 
-		/*utility::vector1< Size > inactive_neighbors; inactive_neighbors.reserve( pose.total_residue() );
-		utility::vector1< bool > residue_is_inactive_neighbor( pose.total_residue(), false );
-		utility::vector1< bool > active_residue_has_been_visited( pose.total_residue(), false );
+		/*utility::vector1< Size > inactive_neighbors; inactive_neighbors.reserve( pose.size() );
+		utility::vector1< bool > residue_is_inactive_neighbor( pose.size(), false );
+		utility::vector1< bool > active_residue_has_been_visited( pose.size(), false );
 
 		utility::vector1< Size > active_residues = pack::repackable_residues( *task );
 		numeric::random::random_permutation( active_residues, numeric::random::rg() );
 
-		utility::vector1< conformation::ResidueCOP > bgres( pose.total_residue() );
+		utility::vector1< conformation::ResidueCOP > bgres( pose.size() );
 		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
-		scoring::MinimizationGraph mingraph( pose.total_residue() );
+		scoring::MinimizationGraph mingraph( pose.size() );
 
 		SCMinMinimizerMap scminmap;
-		scminmap.set_total_residue( pose.total_residue() );
+		scminmap.set_total_residue( pose.size() );
 
 		EnergyMap emap_dummy;
 
@@ -678,7 +678,7 @@ public:
 				rtmin_run( copy_pose, sfxn );
 			}
 			//clock_t stop_time = clock();
-			//std::cout << "RTMIN TIMING: " << pdbs[ii] << " nres " << orig_pose.total_residue() << " avg time: " << ((double) stop_time - start_time ) / ( niterations * CLOCKS_PER_SEC ) << std::endl;
+			//std::cout << "RTMIN TIMING: " << pdbs[ii] << " nres " << orig_pose.size() << " avg time: " << ((double) stop_time - start_time ) / ( niterations * CLOCKS_PER_SEC ) << std::endl;
 		}
 
 	}

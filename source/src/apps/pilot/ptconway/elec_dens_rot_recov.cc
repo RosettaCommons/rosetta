@@ -241,7 +241,7 @@ public:
 		mm->set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
 		mm->set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
 
-		int nres = pose.total_residue();	//only consider the residues in the original pose, not symmetric copies
+		int nres = pose.size();	//only consider the residues in the original pose, not symmetric copies
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );

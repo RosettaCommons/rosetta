@@ -114,7 +114,7 @@ SurfaceCalculator::recompute( pose::Pose const & this_pose ) {
 
 	} else {
 		bool has_nonprot_res(false);
-		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 			if ( ! this_pose.residue_type(i).is_protein() ) {
 				has_nonprot_res = true;
 				break;

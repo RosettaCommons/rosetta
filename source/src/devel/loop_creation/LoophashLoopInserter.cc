@@ -143,7 +143,7 @@ LoophashLoopInserter::init(
 	}
 
 	//Sanity checks
-	if ( loop_anchor()<=0 || loop_anchor()>pose.total_residue()-1 ) {
+	if ( loop_anchor()<=0 || loop_anchor()>pose.size()-1 ) {
 		std::stringstream err;
 		err << "Loop anchor " << loop_anchor() << " is invalid" << std::endl;
 		utility_exit_with_message(err.str());

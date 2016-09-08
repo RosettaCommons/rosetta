@@ -77,13 +77,13 @@ FrozenSidechainsMover::clone() const {
 void
 FrozenSidechainsMover::apply(pose::Pose& pose){
 
-  //  allow_copy_chi_( pose.total_residue(), false );
+  //  allow_copy_chi_( pose.size(), false );
   compute_interface( pose );  // calculate interface
   protocols::scoring::InterfaceInfo const & interfaceinfo( interface_from_pose( pose ) ); // get the interface information
   protocols::scoring::InterfaceCOP interface = interfaceinfo.interface( 1 );   // only work for 1 jump
 
   // if a residue does not locate in the interface, then move its sidechains back to Crystal state
-//   for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+//   for ( core::Size i = 1; i <= pose.size(); i++ ) {
 //     allow_copy_chi_[ i ] = !interface.is_interface( pose.residue( i ) );
 //     if ( allow_copy_chi_[i] ) {
 //       tr.Debug << i << std::endl;
@@ -100,12 +100,12 @@ FrozenSidechainsMover::apply(pose::Pose& pose){
   if ( first ) {
     // recover_sidechains_pose_ = pose;
     //    recover_sidechains_pose_.dump_pdb(ObjexxFCL::lead_zero_string_of( jd2::current_replica(), 6 ) +"_used_for_freezing.pdb");
-    for ( core::Size pos = 1; pos<=pose.total_residue(); pos++ ) {
+    for ( core::Size pos = 1; pos<=pose.size(); pos++ ) {
       frozen.push_back( false );
     }
     first = false;
   }
-  for ( core::Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+  for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
     if ( !interface->is_interface( pos ) ){
       //      tr.Debug << "residue " << pos << " is not interface residue, now move it back to crystal state..." << std::endl;
       if ( dump ) {
@@ -133,7 +133,7 @@ FrozenSidechainsMover::apply(pose::Pose& pose){
     std::ofstream dump_pos;
     std::string name("frozen_"+numbers+".txt");
     dump_pos.open( name.c_str() );
-    for ( core::Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+    for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
       if ( ! frozen[pos] ) {
 	dump_pos << pos << " ";
       }
@@ -143,7 +143,7 @@ FrozenSidechainsMover::apply(pose::Pose& pose){
     std::string name2("dump_chis_"+numbers+".txt");
     std::ofstream dumpchi;
     dumpchi.open( name2.c_str() );
-    for ( core::Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+    for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
       dumpchi << format::I( 3, pos) << " " << ( frozen[pos] ? "FROZEN " : "ALLOWED" );
       for ( core::Size chino = 1; chino <= 4; chino++ ) {
 	dumpchi << " " << format::RJ( 10, chino <=pose.residue_type(pos).nchi() ? pose.chi( chino, pos ) : 0.0 );

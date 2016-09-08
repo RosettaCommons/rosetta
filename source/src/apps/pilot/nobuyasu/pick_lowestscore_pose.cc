@@ -104,7 +104,7 @@ main( int argc, char * argv [] )
 	utility::vector1< Size > positions;
 	if( option[ in::file::native ].user() ){
 		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
-		for( Size i=1; i<=native_pose.total_residue(); i++ ){
+		for( Size i=1; i<=native_pose.size(); i++ ){
 			positions.push_back( i );
 		}
 	}

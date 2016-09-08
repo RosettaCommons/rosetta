@@ -109,14 +109,14 @@ main( int argc, char* argv [] )
 			burial.push_back( this_burial );
 		}
 
-		for ( unsigned int ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( unsigned int ii = 1; ii <= pose.size(); ++ii ) {
 			core::conformation::Residue resi = pose.residue(ii);
 			output << I( 10, ii ) << A(  6, resi.name1() );
 			for ( Size jj = 1; jj <= cutoffs.size(); ++jj ) {
 				output << I( 10, burial[jj][ii] );
 			}
 			output << std::endl;
-		}	// for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
+		}	// for ( unsigned int i = 1; i <= pose.size(); ++i )
 	} // 	for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

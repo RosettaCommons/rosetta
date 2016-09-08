@@ -90,7 +90,7 @@ VirtualRootMover::apply( core::pose::Pose & pose ) {
 			core::pose::addVirtualResAsRoot( pose );
 			if ( removable_ ) {
 				core::Size virtroot = pose.fold_tree().root();
-				assert( virtroot == pose.n_residue() && pose.residue(virtroot).aa() == core::chemical::aa_vrt );
+				assert( virtroot == pose.size() && pose.residue(virtroot).aa() == core::chemical::aa_vrt );
 				core::pose::setPoseExtraScore( pose, "VirtualRootMover_root", virtroot );
 			}
 		} else {

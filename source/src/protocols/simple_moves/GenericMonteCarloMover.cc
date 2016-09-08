@@ -466,7 +466,7 @@ GenericMonteCarloMover::reset( Pose & pose )
 	last_accepted_scores_.clear();
 	lowest_scores_.clear();
 	if ( filters_.size() == 0 ) {
-		if ( pose.total_residue() > 0 ) {
+		if ( pose.size() > 0 ) {
 			lowest_score_ = scoring( pose );
 		} else {
 			lowest_score_ = 999999999.99;
@@ -478,7 +478,7 @@ GenericMonteCarloMover::reset( Pose & pose )
 		for ( Size index = 1; index <= filters_.size(); ++index ) {
 			Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
 			Real score = flip * 99999999.99;
-			if ( pose.total_residue() > 0 ) {
+			if ( pose.size() > 0 ) {
 				protocols::filters::FilterCOP filter( filters_[ index ] );
 				score = flip * filter->report_sm( pose );
 			}
@@ -526,7 +526,7 @@ GenericMonteCarloMover::num_designable( Pose & pose, PackerTaskOP & task )
 {
 	Size number_designable = 0;
 	TR << "Designable Residues: ";
-	for ( Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( task->design_residue(i) ) {
 			++number_designable;
 			TR << i << ", ";

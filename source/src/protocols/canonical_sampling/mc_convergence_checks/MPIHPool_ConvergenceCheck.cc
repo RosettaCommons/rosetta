@@ -163,10 +163,10 @@ namespace mc_convergence_checks {
       tr.Debug << "now in evaluate and add, number of structures in top-level pool: " << hlevel_.top_level_pool_size() << " pool-rank: " << pool_rank_ << " pool-size: " << pool_npes_ << std::endl;
     }
 
-    if( nresidues_ != pose.total_residue() ) {
+    if( nresidues_ != pose.size() ) {
       //~buf_(); //call destructor?
       //if sizes are in-consistent, setup new arrays
-      nresidues_ = pose.total_residue();
+      nresidues_ = pose.size();
       runtime_assert( pool_npes_ > 0 );
       buf_.setup( pool_npes_, nresidues_, nlevels_ );
     }

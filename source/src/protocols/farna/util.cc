@@ -243,7 +243,7 @@ figure_out_secstruct( pose::Pose & pose ){
 	std::string secstruct = "";
 	FArray1D < bool > edge_is_base_pairing( 3, false );
 	char secstruct1( 'X' );
-	for ( Size i=1; i <= pose.total_residue() ; ++i ) {
+	for ( Size i=1; i <= pose.size() ; ++i ) {
 		get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
 		secstruct += secstruct1;
 	}
@@ -267,7 +267,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 	using namespace core::pose::rna;
 	using namespace protocols::farna;
 
-	Size const total_residue = pose.total_residue();
+	Size const total_residue = pose.size();
 
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
@@ -381,9 +381,9 @@ create_rna_vall_torsions( pose::Pose & pose,
 void
 assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
 
-	runtime_assert( pose.total_residue() > 1 );
+	runtime_assert( pose.size() > 1 );
 
-	for ( Size res_num=1; res_num<=pose.total_residue(); res_num++ ) {
+	for ( Size res_num=1; res_num<=pose.size(); res_num++ ) {
 
 		Real sign1 = core::pose::rna::get_op2_op1_sign( pose,  res_num);
 
@@ -411,7 +411,7 @@ assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
 void
 ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 {
-	runtime_assert( pose.total_residue() > 1 );
+	runtime_assert( pose.size() > 1 );
 	Real sign1 = core::pose::rna::get_op2_op1_sign( pose );
 
 	pose::Pose mini_pose;
@@ -424,7 +424,7 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 	TR << " Warning ... flipping OP2 <--> OP1 to match mini convention  " << std::endl;
 	TR << "*************************************************************" << std::endl;
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_RNA() ) continue;
@@ -488,7 +488,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	FArray1D_bool forms_noncanonical_base_pair( nres, false );
 	FArray1D_bool forms_canonical_base_pair( nres, false );
 	FArray1D_int  WC_base_pair_partner( nres, 0 );
@@ -815,7 +815,7 @@ make_extended_coarse_pose( pose::Pose & coarse_pose, std::string const & full_se
 
 	make_pose_from_sequence( coarse_pose, full_sequence, *rsd_set_coarse );
 
-	for ( Size n = 1; n <= coarse_pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= coarse_pose.size(); n++ ) {
 		coarse_pose.set_torsion( TorsionID( n, BB, 1 ), -150.0 );
 		coarse_pose.set_torsion( TorsionID( n, BB, 2 ),  180.0 );
 	}
@@ -837,7 +837,7 @@ make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
 	rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
 	make_extended_coarse_pose( coarse_pose, pose.sequence() );
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		coarse_pose.set_xyz(  NamedAtomID( " P  ", n ),  pose.xyz( NamedAtomID( " P  ", n )) );
 
 		//coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  pose.xyz( NamedAtomID( " C4'", n )) );
@@ -893,7 +893,7 @@ remove_cutpoint_closed( pose::Pose & pose, Size const i ){
 		cuts( count ) = cutpoints[ n ];
 	}
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// Just brute-force iterate through to find a jump we can remove.
 	Size jump_to_remove( 0 );
@@ -935,7 +935,7 @@ remove_cutpoint_closed( pose::Pose & pose, Size const i ){
 void
 remove_cutpoints_closed( pose::Pose & pose ){
 	// Make a list of each cutpoint_closed.
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( pose.fold_tree().is_cutpoint( i ) &&
 				pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
 				pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
@@ -952,7 +952,7 @@ print_internal_coords( core::pose::Pose const & pose ) {
 	using namespace core::id;
 	using numeric::conversions::degrees;
 
-	for ( Size i = 2;  i <= pose.total_residue(); i++ ) {
+	for ( Size i = 2;  i <= pose.size(); i++ ) {
 
 		chemical::ResidueType const & rsd( pose.residue_type( i ) ) ;
 
@@ -1039,14 +1039,14 @@ get_rigid_body_jumps( core::pose::Pose const & pose ) {
 
 	utility::vector1< Size > rigid_body_jumps;
 
-	TR.Debug << "Initialize RigidBodyMover: Is last residue virtual? " <<  pose.residue_type( pose.total_residue() ).name3()  << std::endl;
+	TR.Debug << "Initialize RigidBodyMover: Is last residue virtual? " <<  pose.residue_type( pose.size() ).name3()  << std::endl;
 
-	if ( pose.residue_type( pose.total_residue() ).name3() != "XXX" ) return rigid_body_jumps; // must have a virtual anchor residue.
+	if ( pose.residue_type( pose.size() ).name3() != "XXX" ) return rigid_body_jumps; // must have a virtual anchor residue.
 
 	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
 		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
-		if ( pose.fold_tree().upstream_jump_residue( n ) == (int)pose.total_residue()  ||
-				pose.fold_tree().downstream_jump_residue( n ) == (int)pose.total_residue()  ) {
+		if ( pose.fold_tree().upstream_jump_residue( n ) == (int)pose.size()  ||
+				pose.fold_tree().downstream_jump_residue( n ) == (int)pose.size()  ) {
 			TR.Debug << "found jump to virtual anchor at: " << n << std::endl;
 
 			rigid_body_jumps.push_back( n );
@@ -1083,7 +1083,7 @@ translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
 	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
 	if ( rigid_body_jumps.size() == 0 ) return;
 
-	Size const nres = pose.total_residue(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
+	Size const nres = pose.size(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
 
 	Size anchor_rsd = pose.fold_tree().downstream_jump_residue( rigid_body_jumps[1] );
 	if ( anchor_rsd == nres ) anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
@@ -1119,7 +1119,7 @@ set_output_res_and_chain( pose::Pose & extended_pose,
 	utility::vector1< int > const & output_res_num = output_resnum_and_chain.first;
 	utility::vector1< char > const & output_chain = output_resnum_and_chain.second;
 	if ( output_res_num.size() == 0 ) return;
-	runtime_assert( output_res_num.size() == extended_pose.total_residue() );
+	runtime_assert( output_res_num.size() == extended_pose.size() );
 
 	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
 	pdb_info->set_numbering( output_res_num );
@@ -1346,11 +1346,11 @@ get_default_allowed_bulge_res(
 		TR << "Getting default_allowed_bulge_res!" << std::endl;
 	}
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		//exclude edge residues:
 		if ( seq_num == 1 ) continue;
-		if ( seq_num == pose.total_residue() ) continue;
+		if ( seq_num == pose.size() ) continue;
 
 		//bool is_cutpoint_closed=false;
 
@@ -1388,7 +1388,7 @@ virtualize_bulges( core::pose::Pose & input_pose,
 	using namespace ObjexxFCL;
 
 
-	Size const total_res = input_pose.total_residue();
+	Size const total_res = input_pose.size();
 
 	Real const rna_bulge_bonus = ( scorefxn->get_weight( rna_bulge ) )*10;
 
@@ -1529,7 +1529,7 @@ get_moving_res( core::pose::Pose const & pose,
 
 	utility::vector1< Size > moving_res;
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( atom_level_domain_map->get( n ) ) {
 			moving_res.push_back( n );
 		}

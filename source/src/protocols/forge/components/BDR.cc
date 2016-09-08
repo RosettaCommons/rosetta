@@ -284,7 +284,7 @@ bool BDR::centroid_build(
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
-	for ( Size i = 1, ie = modified_archive_pose.n_residue(); mod_ap_is_full_atom && i != ie; ++i ) {
+	for ( Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
 		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->name() == core::chemical::FA_STANDARD );
 	}
 
@@ -294,7 +294,7 @@ bool BDR::centroid_build(
 
 	// flip to poly-ala-gly-pro-disulf pose
 	utility::vector1< Size > protein_residues;
-	for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
 		}
@@ -402,7 +402,7 @@ bool BDR::design_refine(
 		RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
 
 		Positions new_positions = manager_.new_positions();
-		for ( Size i = 1, ie = pose.n_residue(); i != ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i != ie; ++i ) {
 			if ( new_positions.find( i ) == new_positions.end() ) {
 				repack_op->include_residue( i );
 			}

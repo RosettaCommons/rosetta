@@ -184,7 +184,7 @@ update_constraint_set_from_full_model_info( pose::Pose & pose ){
 
 		utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 		id::SequenceMappingOP sequence_map( new SequenceMapping );
-		for ( Size n = 1; n <= full_model_pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= full_model_pose.size(); n++ ) {
 			if ( res_list.has_value( n ) ) {
 				sequence_map->push_back( res_list.index( n ) );
 			} else {
@@ -273,10 +273,10 @@ figure_out_conventional_chains_from_full_model_info( pose::Pose const & pose ) {
 	utility::vector1< char > const & conventional_chains = const_full_model_info( pose ).conventional_chains();
 	if ( conventional_chains.size() > 0 ) {
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( conventional_chains[ res_list[n] ] );
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( conventional_chains[ res_list[n] ] );
 	} else {
 		utility::vector1< Size > chain_numbers = figure_out_chain_numbers_from_full_model_info_const( pose );
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( core::chemical::chr_chains[ chain_numbers[n]-1 ] );
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( core::chemical::chr_chains[ chain_numbers[n]-1 ] );
 	}
 	return chains;
 }
@@ -343,8 +343,8 @@ figure_out_chain_numbers_from_full_model_info_const( pose::Pose const & pose ) {
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 
 	// now figure out chains in working model
-	utility::vector1< Size > chains( pose.total_residue(), 1 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	utility::vector1< Size > chains( pose.size(), 1 );
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( n > res_list.size() ) continue;
 		runtime_assert( res_list[ n ] <= chains_full.size() );
 		chains[ n ]  = chains_full[ res_list[ n ] ];
@@ -366,7 +366,7 @@ figure_out_dock_domain_map_from_full_model_info_const( pose::Pose const & pose )
 
 	// now figure out chains in working model
 	utility::vector1< Size > dock_domain_map_for_pose;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) dock_domain_map_for_pose.push_back( dock_domain_map[ res_list[ n ] ] );
+	for ( Size n = 1; n <= pose.size(); n++ ) dock_domain_map_for_pose.push_back( dock_domain_map[ res_list[ n ] ] );
 
 	return dock_domain_map_for_pose;
 }
@@ -394,10 +394,10 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	std::string const clean_seq = core::pose::rna::remove_bracketed( sequence );
 
 	// very special case -- blank pose. could generalize to any pose with a virtual residue at end
-	if ( res_list.size() == 0 && pose.total_residue() == 1 && pose.residue_type( 1 ).name3() == "XXX" ) return true;
+	if ( res_list.size() == 0 && pose.size() == 1 && pose.residue_type( 1 ).name3() == "XXX" ) return true;
 
-	if ( res_list.size() != pose.total_residue() ) {
-		TR << "res_list size != pose.total_residue() " << res_list.size() << " " << pose.total_residue() << std::endl;
+	if ( res_list.size() != pose.size() ) {
+		TR << "res_list size != pose.size() " << res_list.size() << " " << pose.size() << std::endl;
 		return false;
 	}
 
@@ -407,8 +407,8 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	}
 
 
-	if ( clean_seq.size() < pose.total_residue() ) {
-		TR << "sequence.size() << pose.total_residue()" << std::endl;
+	if ( clean_seq.size() < pose.size() ) {
+		TR << "sequence.size() << pose.size()" << std::endl;
 		return false;
 	}
 
@@ -454,7 +454,7 @@ utility::vector1< Size >
 get_res_list_const( pose::Pose const & pose ) {
 	if ( full_model_info_defined( pose ) ) return get_res_list_from_full_model_info_const( pose );
 	utility::vector1< Size > res_list;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
+	for ( Size n = 1; n <= pose.size(); n++ ) res_list.push_back( n );
 	return res_list;
 }
 
@@ -669,9 +669,9 @@ get_res_num_from_pdb_info( pose::Pose const & pose ) {
 	PDBInfoCOP pdb_info = pose.pdb_info();
 
 	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
+		for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( pdb_info->number( n ) );
 	} else {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
+		for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( n );
 	}
 	return resnum;
 }
@@ -685,9 +685,9 @@ get_chains_from_pdb_info( pose::Pose const & pose ) {
 	PDBInfoCOP pdb_info = pose.pdb_info();
 
 	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( pdb_info->chain( n ) );
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( pdb_info->chain( n ) );
 	} else {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( ' ' );
+		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( ' ' );
 	}
 	return chains;
 }

@@ -187,7 +187,7 @@ void CountContact::apply ( pose::Pose & pose ){
 	SS_Info2 ssinfo( pose.secstruct() );
 
 	// intialize
-	Size max_ssele = ssinfo.ss_element_id( pose.total_residue() );
+	Size max_ssele = ssinfo.ss_element_id( pose.size() );
 	utility::vector1< utility::vector1< Size > > ncon_sselements( max_ssele, utility::vector1<core::Size>(max_ssele, 0) );
 	for ( Size i=1 ;i<=max_ssele; ++i ) {
 		for ( Size j=1 ;j<=max_ssele; ++j ) {
@@ -202,10 +202,10 @@ void CountContact::apply ( pose::Pose & pose ){
 
 	// calc number of contacts
 	MyAtom myatom;
-	for ( Size iaa=1 ;iaa<= pose.total_residue()-isep_residue_; ++iaa ) {
+	for ( Size iaa=1 ;iaa<= pose.size()-isep_residue_; ++iaa ) {
 		Size iaa_ssele( ssinfo.ss_element_id( iaa ) );
 
-		for ( Size jaa=iaa+isep_residue_ ;jaa<=pose.total_residue(); ++jaa ) {
+		for ( Size jaa=iaa+isep_residue_ ;jaa<=pose.size(); ++jaa ) {
 			Size jaa_ssele( ssinfo.ss_element_id( jaa ) );
 
 			Residue const & ires( pose.residue( iaa ) );
@@ -274,11 +274,11 @@ void CountContact::apply ( pose::Pose & pose ){
 	}
 
 
-	float ncatm   ( Real(ncontact_allatm_)/Real(pose.total_residue()));
-	float nchpatm ( Real(ncontact_hpatm_)/Real(pose.total_residue())) ;
-  float nchpres ( Real(ncontact_atm_hpres_)/Real(pose.total_residue()));
+	float ncatm   ( Real(ncontact_allatm_)/Real(pose.size()));
+	float nchpatm ( Real(ncontact_hpatm_)/Real(pose.size())) ;
+  float nchpres ( Real(ncontact_atm_hpres_)/Real(pose.size()));
 
-	setPoseExtraScore( pose, "nres", float(pose.total_residue()) );
+	setPoseExtraScore( pose, "nres", float(pose.size()) );
 	setPoseExtraScore( pose, "ncon_atm", ncatm  );
 	setPoseExtraScore( pose, "ncon_hpatm", nchpatm );
 	setPoseExtraScore( pose, "ncon_atm_hpres", nchpres );

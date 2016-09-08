@@ -115,19 +115,19 @@ rb_test ()
 	// somehow create a pose from the two pdbs that were read in
 	//fd_one.build_pose(pose, residue_set);
 	core::import_pose::pose_from_file( pose, "dock_protein1.pdb", core::import_pose::PDB_file);
-	std::cout << "total_residue = " << pose.total_residue() << "\n";
+	std::cout << "total_residue = " << pose.size() << "\n";
 	std::cout << "###########################################" << std::endl;
 
 	core::pose::Pose tmp_pose;
 	//fd_two.build_pose(tmp_pose, residue_set);
 	core::import_pose::pose_from_file( tmp_pose, "dock_protein2.pdb", core::import_pose::PDB_file);
 
-	std::cout << "total_residue = " << pose.total_residue() << "\n";
-	int cutpoint ( pose.total_residue() );
+	std::cout << "total_residue = " << pose.size() << "\n";
+	int cutpoint ( pose.size() );
 	pose.dump_pdb( "pose1.pdb" );
-//	pose.copy_segment( tmp_pose.total_residue(), tmp_pose, 1, pose.total_residue()+1 );
+//	pose.copy_segment( tmp_pose.size(), tmp_pose, 1, pose.size()+1 );
 //	TO DO fix me!!
-	for ( Size i=1; i<=tmp_pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=tmp_pose.size(); ++i ) {
 		conformation::ResidueCOP new_rsd = tmp_pose.residue(i).clone();
 		if ( i == 1 ) {
 			// since the first residue is a terminus variant, it doesn't know how to connect to a preceding residue
@@ -138,10 +138,10 @@ rb_test ()
 		}
 	}
 
-	std::cout << "total_residue2 = " << pose.total_residue() << "\n";
+	std::cout << "total_residue2 = " << pose.size() << "\n";
 	pose.dump_pdb( "pose2.pdb" );
 
-	int const nres( pose.total_residue() );
+	int const nres( pose.size() );
 	int dock_jump ( 0 );
 	assert( nres > 40 );
 	// this actually needs to be a one_jump_tree
@@ -151,7 +151,7 @@ rb_test ()
 	{ // set up the foldtree
 		FoldTree f( nres );
 		int const jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
-		int const jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
+		int const jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.size() ) );
 		dock_jump = f.new_jump( jump_pos1, jump_pos2, cutpoint );
 		// set this jump as the docking jump
 		f.reorder( jump_pos1 );

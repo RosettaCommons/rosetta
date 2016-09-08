@@ -81,7 +81,7 @@ public:
 	///
 	void flip_residues( core::pose::Pose &pose ) {
 		// Create the new residue and replace it
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 			core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( get_mirror_type( pose.residue(ir).type() ), pose.residue( ir ), pose.conformation());
 			core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( ir ), *new_res, pose.conformation(), true );
 			pose.replace_residue( ir, *new_res, false );
@@ -92,7 +92,7 @@ public:
 	///
 	void mirror_pose( core::pose::Pose const &master, core::pose::Pose &mirror) {
 
-		for ( core::Size ir=1, irmax=mirror.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=mirror.size(); ir<=irmax; ++ir ) {
 			for ( core::Size ia=1, iamax=mirror.residue(ir).type().natoms(); ia<=iamax; ++ia ) {
 				core::id::AtomID const curatom(ia, ir);
 				numeric::xyzVector<core::Real> xyztemp( master.xyz( curatom ) );
@@ -152,7 +152,7 @@ public:
 		(*sfxn)(pose2);
 
 		TS_ASSERT_DELTA(pose.energies().total_energy(), pose2.energies().total_energy(), std::abs( std::max(pose.energies().total_energy(), pose2.energies().total_energy())/100.0 ) );
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 			TR << ir << "\tphiL=" << pose.phi(ir)   << "\tphiD=" << pose2.phi(ir)   << std::endl;
 			TR << ir << "\tpsiL=" << pose.psi(ir)   << "\tpsiD=" << pose2.psi(ir)   << std::endl;
 			TR << ir << "\tomgL=" << pose.omega(ir) << "\tomgD=" << pose2.omega(ir) << std::endl;
@@ -200,7 +200,7 @@ public:
 		(*sfxn)(pose2);
 
 		TS_ASSERT_DELTA(pose.energies().total_energy(), pose2.energies().total_energy(), std::abs( std::max(pose.energies().total_energy(), pose2.energies().total_energy())/100.0 ) );
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 			TR << ir << "\tphiL=" << pose.phi(ir)   << "\tphiD=" << pose2.phi(ir)   << std::endl;
 			TR << ir << "\tpsiL=" << pose.psi(ir)   << "\tpsiD=" << pose2.psi(ir)   << std::endl;
 			TR << ir << "\tomgL=" << pose.omega(ir) << "\tomgD=" << pose2.omega(ir) << std::endl;

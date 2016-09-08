@@ -227,9 +227,9 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 	all_bur_unsat_polars_ = 0;
 	special_region_bur_unsat_polars_ = 0;
 
-	if ( pose.total_residue() != residue_bur_unsat_polars_.size() ) {
-		residue_bur_unsat_polars_.resize( pose.total_residue() );
-		atom_bur_unsat_.resize( pose.total_residue() );
+	if ( pose.size() != residue_bur_unsat_polars_.size() ) {
+		residue_bur_unsat_polars_.resize( pose.size() );
+		atom_bur_unsat_.resize( pose.size() );
 	}
 
 	if ( generous_hbonds_ ) {
@@ -266,7 +266,7 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 	//
 	//    id::AtomID_Map<Real> atom_sasa = vsasa_calc.calculate(pose);
 	//
-	//    Size nres = pose.total_residue();
+	//    Size nres = pose.size();
 	//
 	//    scoring::hbonds::HBondSet hbond_set;
 	//
@@ -347,7 +347,7 @@ BuriedUnsatisfiedPolarsCalculator2::bunsats_thorough_check(
 	id::AtomID_Map< bool > & bunsat_thorough_atomid_map
 )
 {
-	for ( Size res = 1; res <= bunsat_thorough_atomid_map.n_residue(); ++res ) {
+	for ( Size res = 1; res <= bunsat_thorough_atomid_map.size(); ++res ) {
 
 		residue_bur_unsat_polars_[res] = 0;
 

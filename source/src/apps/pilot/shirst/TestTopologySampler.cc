@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 		core::Size const nspan = topology->tmhelix();
 		core::Size const njumps = nspan-1;
 		core::Size const num_cut_loops = nspan-1;
-		core::Size const nres = pose.total_residue();
+		core::Size const nres = pose.size();
 
 		// this function will setup a fold tree to be used given a spanfile.  It basically splits up the pose into TMHs as defined
 		{

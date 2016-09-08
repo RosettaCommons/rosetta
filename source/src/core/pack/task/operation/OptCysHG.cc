@@ -65,7 +65,7 @@ void OptCysHG::apply( Pose const & pose, PackerTask & task ) const {
 	OptH optH;
 
 	// restrict to only non-disulfide bonded CYS
-	for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 		if ( ! pose.residue( i ).type().is_sidechain_thiol() || pose.residue( i ).has_variant_type( DISULFIDE ) ) { //check both names to be double sure; used in fake Cys catalytic residues
 			optH.disallow_resid( i );
 		}

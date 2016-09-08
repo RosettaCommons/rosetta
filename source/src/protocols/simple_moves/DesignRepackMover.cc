@@ -115,21 +115,21 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 
 	core::pose::Pose pose( in_pose ); // to maintain constness of input pose
 	curr_min_bb_.clear(); curr_min_sc_.clear(); curr_min_rb_.clear();
-	curr_min_bb_.resize( pose.total_residue(), false );
-	curr_min_sc_.resize( pose.total_residue(), false );
+	curr_min_bb_.resize( pose.size(), false );
+	curr_min_sc_.resize( pose.size(), false );
 	curr_min_rb_.resize( pose.num_jump(), true );
 	if ( min_sc_set() ) {
-		runtime_assert( min_sc_.size() == pose.total_residue() );
+		runtime_assert( min_sc_.size() == pose.size() );
 		curr_min_sc_ = min_sc_;
 	}
 	if ( min_bb_set() ) {
-		runtime_assert( min_bb_.size() == pose.total_residue() );
+		runtime_assert( min_bb_.size() == pose.size() );
 		curr_min_bb_ = min_bb_;
 	}
 	if ( min_rb_set() ) curr_min_rb_ = min_rb_;
 
 	using ObjexxFCL::FArray1D_bool;
-	FArray1D_bool partner1( pose.total_residue() );
+	FArray1D_bool partner1( pose.size() );
 	if ( !symmetry_ ) {
 		pose.fold_tree().partition_by_jump( rb_jump, partner1 ); // partner1 is true for all residues in partner1; false o/w
 	}
@@ -161,13 +161,13 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 	pido.apply( pose, *task_ );
 
 	// Restrict to allowable amino acids
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		core::pack::task::operation::RestrictAbsentCanonicalAAS racaas( i, allowed_aas_ );
 		racaas.apply( pose, *task_ );
 	}
 
 	// Packertask defaults to designing all residues, so this paragraph only has to restrict
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		if ( interface_obj.is_interface( i ) ) { // in interface
 			if ( (partner1( i ) && repack_partner1_ ) || (!partner1( i ) && repack_partner2_) ) { //redesign/repack interface
@@ -243,7 +243,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 		// minimize also +-1 amino-acid residues around target residues, unless they are CYD
 		if ( !min_sc_set() ) {
 			curr_min_sc_[ *target_it ] = true;
-			if ( *target_it < pose.total_residue() ) {
+			if ( *target_it < pose.size() ) {
 				if ( !(pose.residue(*target_it + 1).type().is_disulfide_bonded() ) ) curr_min_sc_[ *target_it + 1 ] = true;
 			}
 			if ( *target_it > 1 ) {
@@ -252,7 +252,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 		}
 		if ( !min_bb_set() ) {
 			curr_min_bb_[ *target_it ] = true;
-			if ( *target_it < pose.total_residue() ) {
+			if ( *target_it < pose.size() ) {
 				curr_min_bb_[ *target_it + 1 ] = true;
 			}
 			if ( *target_it > 1 ) {
@@ -311,12 +311,12 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	}
 
 	if ( tag->hasOption( "minimize_bb" ) ) {
-		utility::vector1< bool > minbb( pose.total_residue(), tag->getOption<bool>( "minimize_bb", 1 ) );
+		utility::vector1< bool > minbb( pose.size(), tag->getOption<bool>( "minimize_bb", 1 ) );
 		min_bb( minbb );
 	}
 
 	if ( tag->hasOption( "minimize_bb_ch1" ) ||  ( tag->hasOption( "minimize_bb_ch2" ) ) ) {
-		utility::vector1< bool > minbb( pose.total_residue(), true );
+		utility::vector1< bool > minbb( pose.size(), true );
 		if ( tag->hasOption( "minimize_bb_ch1" ) ) {
 			for ( core::Size res_it=pose.conformation().chain_begin( 1 ); res_it<=pose.conformation().chain_end( 1 ); ++res_it ) {
 				minbb[ res_it ]=tag->getOption<bool>( "minimize_bb_ch1", 1 );
@@ -331,7 +331,7 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	}//end specificatino of bb mininization
 
 	if ( tag->hasOption( "minimize_sc" ) ) {
-		utility::vector1< bool > minsc( pose.total_residue(), tag->getOption< bool >( "minimize_sc", 1 ));
+		utility::vector1< bool > minsc( pose.size(), tag->getOption< bool >( "minimize_sc", 1 ));
 		min_sc( minsc );
 	}
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );

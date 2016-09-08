@@ -232,7 +232,7 @@ void dock(Pose const init, std::string const & fn, vector1<xyzVector<double> > c
 
   // cache initial BB and CB coords (if no CB, use CA)
   vector1<Vec> bb0,cb0;
-  for(int ir = 1; ir <= init.n_residue(); ++ir) {
+  for(int ir = 1; ir <= init.size(); ++ir) {
     if(!init.residue(ir).is_protein()) continue;
     for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) bb0.push_back(init.xyz(AtomID(ia,ir)));
     // only count helix CBs!!!!!!!!!!
@@ -322,12 +322,12 @@ int main(int argc, char *argv[]) {
     Pose pnat;
     TR << "searching " << fn << std::endl;
     core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
-    trans_pose(pnat,-center_of_geom(pnat,1,pnat.n_residue()));
+    trans_pose(pnat,-center_of_geom(pnat,1,pnat.size()));
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);
-    if( pnat.n_residue() > 200 ) continue;
+    if( pnat.size() > 200 ) continue;
     Size cyscnt=0, nhelix=0;
-    for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
+    for(Size ir = 2; ir <= pnat.size()-1; ++ir) {
       if(pnat.secstruct(ir) == 'H') nhelix++;
       //if(!pnat.residue(ir).is_protein()) goto cont1;
       if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;

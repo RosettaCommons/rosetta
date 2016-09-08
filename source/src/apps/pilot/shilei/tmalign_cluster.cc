@@ -78,12 +78,12 @@ static THREAD_LOCAL basic::Tracer TR( "tmalign_cluster" );
 
 void do_tmscore( core::pose::Pose const &pose1, core::pose::Pose const &pose2, core::Real &tmscore) {
 	protocols::hybridization::TMalign tm_align;
-	if ( pose1.total_residue()==0 && pose2.total_residue()==0 ) {
+	if ( pose1.size()==0 && pose2.size()==0 ) {
 		tmscore=0;
 	} else {
 		int reval = tm_align.apply(pose1,pose2);
 		if ( reval == 0 ) {
-			tmscore=tm_align.TMscore(std::min(pose1.total_residue(),pose2.total_residue()));
+			tmscore=tm_align.TMscore(std::min(pose1.size(),pose2.size()));
 		} else {
 			tmscore=0;
 		}
@@ -101,11 +101,11 @@ void do_tmalign(core::pose::Pose & aligned_pose,core::pose::Pose const & ref_pos
 
 	std::list <core::Size> residue_list;
 	std::list <core::Size> ref_residue_list;
-	for ( Size ires=1; ires<= aligned_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= aligned_pose.size(); ++ires ) {
 		if ( !aligned_pose.residue(ires).is_protein() ) continue;
 		residue_list.push_back(ires);
 	}
-	for ( Size ires=1; ires<= ref_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= ref_pose.size(); ++ires ) {
 		if ( !ref_pose.residue(ires).is_protein() ) continue;
 		ref_residue_list.push_back(ires);
 	}
@@ -115,7 +115,7 @@ void do_tmalign(core::pose::Pose & aligned_pose,core::pose::Pose const & ref_pos
 	tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 
 	std::list <Size> full_residue_list;
-	for ( Size ires=1; ires<=aligned_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<=aligned_pose.size(); ++ires ) {
 		full_residue_list.push_back(ires);
 	}
 

@@ -453,13 +453,13 @@ GreenPacker::split_pose_into_groups(
 	core::pose::Pose & pose
 )
 {
-	group_ids_.resize( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	group_ids_.resize( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		group_ids_[ ii ] = group_discriminator_->group_id( pose, ii );
 	}
 	Size max_group_id = utility::max( group_ids_ );
 	group_members_.resize( max_group_id + 1 );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		group_members_[ group_ids_[ ii ] ].push_back( ii );
 	}
 }
@@ -503,10 +503,10 @@ GreenPacker::create_reference_rotamers(
 
 
 	/// Now create images of the internal geometry for each of the rotamers created.
-	original_rotamers_.resize( pose.total_residue() );
+	original_rotamers_.resize( pose.size() );
 
 	reference_moltenres_2_resid_.resize( reference_rotamer_sets_->nmoltenres() );
-	reference_resid_2_moltenres_.resize( pose.total_residue() );
+	reference_resid_2_moltenres_.resize( pose.size() );
 	std::fill( reference_resid_2_moltenres_.begin(), reference_resid_2_moltenres_.end(), 0 );
 
 	for ( Size ii = 1; ii <= reference_rotamer_sets_->nmoltenres(); ++ii ) {
@@ -595,7 +595,7 @@ GreenPacker::drop_inter_group_edges(
 	core::graph::GraphOP packer_neighbor_graph
 ) const
 {
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size const ii_grp = group_ids_[ ii ];
 		for ( Graph::EdgeListIter
 				iru  = packer_neighbor_graph->get_node(ii)->upper_edge_list_begin(),
@@ -619,7 +619,7 @@ GreenPacker::drop_intra_group_edges(
 	core::graph::GraphOP packer_neighbor_graph
 ) const
 {
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size const ii_grp = group_ids_[ ii ];
 		for ( Graph::EdgeListIter
 				iru  = packer_neighbor_graph->get_node(ii)->upper_edge_list_begin(),
@@ -649,7 +649,7 @@ GreenPacker::create_fresh_rotamers(
 	current_rotamer_sets_->prepare_sets_for_packing( pose, *full_sfxn_ );
 
 	/// Now create images of the internal geometry for each of the rotamers created.
-	current_rotamers_.resize( pose.total_residue() );
+	current_rotamers_.resize( pose.size() );
 
 	for ( Size ii = 1; ii <= current_rotamer_sets_->nmoltenres(); ++ii ) {
 		Size const ii_resid = current_rotamer_sets_->moltenres_2_resid( ii );
@@ -677,7 +677,7 @@ GreenPacker::find_reference_and_current_rotamer_correspondence(
 	/// then i+1 will not match any rotamer in the current rotamer set.
 	/// O(N) algorithm.  Optimal for O(NlgN) with a sort.
 	Size correspondences_found( 0 );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size const ii_moltenresid = current_rotamer_sets_->resid_2_moltenres( ii );
 		//TR << "find correspondences for residue " << ii << " " << ii_moltenresid << std::endl;
 		if ( ii_moltenresid == 0 ) continue;
@@ -760,14 +760,14 @@ GreenPacker::initialize_internal_correspondence_data(
 	core::pose::Pose & pose
 )
 {
-	orig_rot_2_curr_rot_.clear(); orig_rot_2_curr_rot_.resize( pose.total_residue() );
-	curr_rot_2_orig_rot_.clear(); curr_rot_2_orig_rot_.resize( pose.total_residue() );
+	orig_rot_2_curr_rot_.clear(); orig_rot_2_curr_rot_.resize( pose.size() );
+	curr_rot_2_orig_rot_.clear(); curr_rot_2_orig_rot_.resize( pose.size() );
 	curr_rotamers_with_correspondence_.clear();
 	curr_rotamers_without_correspondence_.clear();
-	curr_rotamers_with_correspondence_.resize( pose.total_residue() );
-	curr_rotamers_without_correspondence_.resize( pose.total_residue() );
+	curr_rotamers_with_correspondence_.resize( pose.size() );
+	curr_rotamers_without_correspondence_.resize( pose.size() );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size const ii_moltenresid = current_rotamer_sets_->resid_2_moltenres( ii );
 		if ( ii_moltenresid != 0 ) {
 			orig_rot_2_curr_rot_[ ii ].resize( original_rotamers_[ ii ].size() );
@@ -840,7 +840,7 @@ GreenPacker::add_precomputed_energies(
 {
 	using namespace core::pack;
 	using namespace core::pack::interaction_graph;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
 		Size const ii_moltenres_orig = reference_resid_2_moltenres_[ ii ];
 
@@ -911,7 +911,7 @@ GreenPacker::compute_absent_energies(
 	using namespace core::scoring;
 
 	/// 1.  Absent short ranged context independent two body energies
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
 		if ( ii_moltenres_curr == 0 ) continue;
 
@@ -947,7 +947,7 @@ GreenPacker::compute_absent_energies(
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 		// Potentially O(N^2) operation...
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ ii ) {
 			Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
 			if ( ii_moltenres_curr == 0 ) continue;
 			Size const ii_nnew_rots = curr_rotamers_without_correspondence_[ ii ].size();
@@ -1130,9 +1130,9 @@ GreenPacker::cleanup()
 
 void GreenPacker::store_reference_pose_geometry( Pose & pose )
 {
-	orig_bb_tors_.resize( pose.total_residue() );
-	original_bb_rep_coords_.resize( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	orig_bb_tors_.resize( pose.size() );
+	original_bb_rep_coords_.resize( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		orig_bb_tors_[ ii ] = pose.residue( ii ).mainchain_torsions();
 		original_bb_rep_coords_[ ii ] = pose.residue( ii ).xyz( 1 );
 	}
@@ -1140,7 +1140,7 @@ void GreenPacker::store_reference_pose_geometry( Pose & pose )
 
 void GreenPacker::compare_input_pose_geometry_to_reference( Pose & pose )
 {
-	assert( pose.total_residue() == orig_bb_tors_.size());
+	assert( pose.size() == orig_bb_tors_.size());
 	for ( Size ii = 1; ii <= orig_bb_tors_.size(); ++ii ) {
 		for ( Size jj = 1; jj <= orig_bb_tors_[ ii ].size(); ++jj ) {
 			if ( std::abs( basic::periodic_range(

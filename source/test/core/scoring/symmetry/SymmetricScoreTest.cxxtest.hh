@@ -276,7 +276,7 @@ public:
 
 		D.push_back( score );
 
-		for ( Size r=1; r<=pose.total_residue(); r++ ) {
+		for ( Size r=1; r<=pose.size(); r++ ) {
 			EnergyMap em = pose.energies().residue_total_energies(r);
 
 			D.push_back( em[st] );
@@ -319,7 +319,7 @@ public:
 		test::UTracer UT(utracer_file_name);
 		UT << (int)st << " Energy=" << score << "\n";
 
-		for ( Size r=1; r<=pose.total_residue(); r++ ) {
+		for ( Size r=1; r<=pose.size(); r++ ) {
 			EnergyMap em = pose.energies().residue_total_energies(r);
 
 			UT << " residue: " << r << " Energy=" << em[st] << "\n";

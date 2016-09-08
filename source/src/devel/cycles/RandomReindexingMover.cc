@@ -26,7 +26,7 @@ using namespace core;
 /// failures.
 
 void RandomReindexingMover::apply(pose::Pose &pose) {
-	Size cycle_length = pose.total_residue() - 1;
+	Size cycle_length = pose.size() - 1;
 	Size offset = numeric::random::random_range(0, cycle_length);
 	ReindexingMover reindexer(offset);
 	reindexer.apply(pose);

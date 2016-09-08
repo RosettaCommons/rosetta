@@ -99,7 +99,7 @@ main( int argc, char * argv [] )
 
 	// This is the residue we'll backrub around!!
 	core::Size central_relax_res = 0;
-	for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( ( input_pose.pdb_info()->chain(j) == central_relax_pdb_chain ) &&
 				 ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) ) {
 					 central_relax_res = j;
@@ -114,7 +114,7 @@ main( int argc, char * argv [] )
 	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 	(*scorefxn)(input_pose);
 
-	utility::vector1 <bool>	allow_moving( input_pose.total_residue(), false );
+	utility::vector1 <bool>	allow_moving( input_pose.size(), false );
 	allow_moving.at(central_relax_res) = true;
 
 	// find the neighbors for the central residue
@@ -145,7 +145,7 @@ main( int argc, char * argv [] )
 	base_packer_task_unbound->set_bump_check( false );
 	base_packer_task_unbound->initialize_from_command_line();
 	base_packer_task_unbound->or_include_current( true );
-	for (int ii = 1, nres = unbound_input_pose.total_residue(); ii < nres; ++ii ) {
+	for (int ii = 1, nres = unbound_input_pose.size(); ii < nres; ++ii ) {
 		base_packer_task_unbound->nonconst_residue_task( ii ).restrict_to_repacking();
 	}
 	base_packer_task_unbound->restrict_to_residues( allow_moving );
@@ -205,7 +205,7 @@ main( int argc, char * argv [] )
 
 		// setting degrees of freedom which can move during minimization (backbone and sidechains, not jump)
 		//		min_mm.set_jump( false );
-		//		for ( int j = 2, resnum = input_pose.total_residue(); j < resnum; ++j ) {
+		//		for ( int j = 2, resnum = input_pose.size(); j < resnum; ++j ) {
 		//			if ( ! allow_moving.at(j) ) continue;
 		//			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j + 1 ) ) continue;
 		//			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j - 1 ) ) continue;
@@ -228,10 +228,10 @@ main( int argc, char * argv [] )
 		(*scorefxn)(*relax_poseOP);
 
 		// setup segments to move
-		for ( int j = 2, resnum = input_pose.total_residue(); j < resnum; ++j ) {
+		for ( int j = 2, resnum = input_pose.size(); j < resnum; ++j ) {
 			if ( ! allow_moving.at(j) ) continue;
 				//			if ( j == 1 ) continue;
-				//			if ( j == input_pose.total_residue() ) continue;
+				//			if ( j == input_pose.size() ) continue;
 			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j + 1 ) ) continue;
 			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j - 1 ) ) continue;
 			// add current 3 residue segment to the backbone mover unless it is on another chain or isn't there
@@ -273,7 +273,7 @@ main( int argc, char * argv [] )
 		final_repack_task->set_bump_check( false );
 		final_repack_task->initialize_from_command_line();
 		final_repack_task->or_include_current( true );
-		for (int ii = 1, nres = input_pose.total_residue(); ii < nres; ++ii ) {
+		for (int ii = 1, nres = input_pose.size(); ii < nres; ++ii ) {
 			final_repack_task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 		final_repack_task->restrict_to_residues( allow_moving );

@@ -141,7 +141,7 @@ main( int argc, char * argv [] )
 		start_data_string_stream << std::setw(15) << constraint_pocket_score;
 		ddg_outstream << start_data_string_stream.str() << std::endl;
 
-		utility::vector1 <bool> allow_moving( input_pose.total_residue(), false );
+		utility::vector1 <bool> allow_moving( input_pose.size(), false );
 		allow_moving.at(pcons->target_res()) = true;
 
 		// find the neighbors for the central residue
@@ -180,10 +180,10 @@ main( int argc, char * argv [] )
 			(*scorefxn)(*relax_poseOP);
 
 			// setup segments to move
-			for ( int j = 2, resnum = input_pose.total_residue(); j < resnum; ++j ) {
+			for ( int j = 2, resnum = input_pose.size(); j < resnum; ++j ) {
 				if ( ! allow_moving.at(j) ) continue;
 				//   if ( j == 1 ) continue;
-				//   if ( j == input_pose.total_residue() ) continue;
+				//   if ( j == input_pose.size() ) continue;
 				if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j + 1 ) ) continue;
 				if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j - 1 ) ) continue;
 				// add current 3 residue segment to the backbone mover unless it is on another chain or isn't there
@@ -217,7 +217,7 @@ main( int argc, char * argv [] )
 			repack_task->set_bump_check( false );
 			repack_task->initialize_from_command_line();
 			repack_task->or_include_current( true );
-			for ( int ii = 1, nres = input_pose.total_residue(); ii < nres; ++ii ) {
+			for ( int ii = 1, nres = input_pose.size(); ii < nres; ++ii ) {
 				repack_task->nonconst_residue_task( ii ).restrict_to_repacking();
 			}
 			repack_task->restrict_to_residues( allow_moving );

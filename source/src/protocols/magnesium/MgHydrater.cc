@@ -75,7 +75,7 @@ MgHydrater::apply( pose::Pose & pose ) {
 	if ( use_virtual_waters_as_placeholders_ ) setup_virtual_waters_around_magnesiums( pose );
 
 	// find all the magnesiums in here.
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		core::conformation::Residue const & rsd_i = pose.residue( i );
 		if ( rsd_i.name3() != " MG" ) continue;
 		if ( mg_res_list_.size() > 0 &&
@@ -97,11 +97,11 @@ MgHydrater::hydrate_magnesium( pose::Pose & pose, Size const i ) {
 		vector1< Size > slice_res = pdbslice( pose, mg_res_in_full );
 		Size const mg_res_in_mini    = slice_res.index( mg_res_in_full );
 		fix_fold_tree_in_excised_pose_for_mg_bound_waters( pose, mg_res_in_mini, pose_full, slice_res );
-		Size const nres_original( pose.total_residue() );
+		Size const nres_original( pose.size() );
 		hydrate_magnesium_in_pose( pose, mg_res_in_mini );
 
 		if ( use_virtual_waters_as_placeholders_ ) { // swap out mg & waters into full pose
-			for ( Size ii = 1; ii <= pose.total_residue(); ii++ ) {
+			for ( Size ii = 1; ii <= pose.size(); ii++ ) {
 				if ( ii == mg_res_in_mini || pose.residue_type( ii ).aa() == core::chemical::aa_h2o ) {
 					pose_full.replace_residue( slice_res[ ii ], *pose.residue( ii ).clone(), false );
 				}
@@ -110,7 +110,7 @@ MgHydrater::hydrate_magnesium( pose::Pose & pose, Size const i ) {
 			for ( Size ii = 1; ii <= pose_full.residue( mg_res_in_full ).natoms(); ii++ ) {
 				pose_full.set_xyz( AtomID( ii, mg_res_in_full ), pose.xyz( AtomID( ii, mg_res_in_mini ) ) );
 			}
-			for ( Size n = nres_original + 1; n <= pose.total_residue(); n++ ) {
+			for ( Size n = nres_original + 1; n <= pose.size(); n++ ) {
 				append_mg_bound_water( pose_full, pose.residue( n ), i );
 			}
 			update_numbers_in_pdb_info( pose_full );
@@ -148,7 +148,7 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 
 	vector1< AtomID > nbr_atom_ids;
 	Distance NBR_CUTOFF( 6.0 ); // 2.1 Mg-HOH, 4.0 HOH-other atom.
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 		if ( i == j ) continue; // no need to count Mg as a nbr.
 		Residue const & rsd_j = pose.residue( j );
 		if ( rsd_j.aa() == aa_h2o ) continue; // don't count waters (we're going to move them around)
@@ -230,7 +230,7 @@ MgHydrater::hydrate_magnesium_in_pose( pose::Pose & pose, Size const i,
 				best_pose = pose;
 				init = true;
 			}
-			if ( nbr_atom_ids.size() == 0 /*pose_orig.total_residue() == 1*/ ) break; // lone Mg(2+) -- special case.
+			if ( nbr_atom_ids.size() == 0 /*pose_orig.size() == 1*/ ) break; // lone Mg(2+) -- special case.
 		}
 		if ( init ) break; // found a full_shell
 	}
@@ -248,11 +248,11 @@ MgHydrater::update_full_model_info_with_new_waters( pose::Pose & pose,
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > res_list = full_model_info.res_list(); // will be updated
-	runtime_assert( pose.total_residue() >= res_list.size() );
-	Size const num_new_waters( pose.total_residue() - res_list.size() );
+	runtime_assert( pose.size() >= res_list.size() );
+	Size const num_new_waters( pose.size() - res_list.size() );
 	if ( expect_no_new_waters ) runtime_assert( num_new_waters == 0 );
 	if ( num_new_waters == 0 ) return;
-	for ( Size n = pose.total_residue() - num_new_waters + 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = pose.size() - num_new_waters + 1; n <= pose.size(); n++ ) {
 		runtime_assert( pose.residue( n ).name3() == "HOH" ); // check any new residues are indeed waters.
 	}
 
@@ -315,7 +315,7 @@ MgHydrater::hydrate_magnesium_with_orbital_frame( pose::Pose & pose,
 		pose.set_xyz( NamedAtomID( "V"+I(1,n), i ), v_atom_xyz );
 	}
 
-	Size const nres_orig = pose.total_residue();
+	Size const nres_orig = pose.size();
 	bool full_shell( true );
 	for ( Size n = 1; n <= 6; n++ ) {
 		// place water if no clash.
@@ -416,7 +416,7 @@ MgHydrater::fix_fold_tree_in_excised_pose_for_mg_bound_waters(
 		Size const water_res_in_full = slice_res[ water_res_in_mini ];
 		if ( bound_waters_in_full_pose.has_value( water_res_in_full ) ) continue;
 		if ( other_res == 0 ) { // need to attach water to some other residue
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			for ( Size n = 1; n <= pose.size(); n++ ) {
 				if ( n != mg_res && !bound_waters_in_mini_pose.has_value( n ) ) {
 					other_res = n; break;
 				}

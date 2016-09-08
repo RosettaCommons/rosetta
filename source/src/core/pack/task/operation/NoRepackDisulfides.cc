@@ -73,7 +73,7 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 	using core::chemical::DISULFIDE;
 	using core::conformation::Residue;
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}

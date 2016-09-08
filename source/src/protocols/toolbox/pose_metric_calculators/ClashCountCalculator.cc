@@ -104,8 +104,8 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 	core::scoring::AtomVDW const& atom_vdw( core::scoring::ScoringManager::get_instance()->get_AtomVDW( atom_type_set_name ));
 	total_clashes_ = 0;
 	bb_clashes_ = 0;
-	for ( Size ipos = 1; ipos <= pose.total_residue(); ipos++ ) {
-		for ( Size jpos = ipos+2; jpos <= pose.total_residue(); jpos++ ) {
+	for ( Size ipos = 1; ipos <= pose.size(); ipos++ ) {
+		for ( Size jpos = ipos+2; jpos <= pose.size(); jpos++ ) {
 			conformation::Residue const & rsd1( pose.residue( ipos ) );
 			conformation::Residue const & rsd2( pose.residue( jpos ) );
 			if ( !( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) ) {

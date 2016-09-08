@@ -105,7 +105,7 @@ public:
 		keep_aas[ core::chemical::aa_ala ] = true;
 		keep_aas[ core::chemical::aa_gly ] = true;
 
-		for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			task->nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas );
 		}
 
@@ -114,7 +114,7 @@ public:
 		graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
 		rotsets->build_rotamers( pose, scorefxn, packer_neighbor_graph );
 
-		TS_ASSERT_EQUALS( rotsets->nrotamers(), pose.total_residue() * 2);
+		TS_ASSERT_EQUALS( rotsets->nrotamers(), pose.size() * 2);
 
 		core::pack::interaction_graph::ResidueArrayAnnealingEvaluator ev;
 		ev.initialize( scorefxn, pose, *rotsets, packer_neighbor_graph);

@@ -267,7 +267,7 @@ atom_tree_get_atompairE_deriv(
 	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph = pose.energies().minimization_graph();
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		MinimizationNode const & minnode =  * mingraph->get_minimization_node( ii );
 		/// 1. eval intra-residue derivatives
 		eval_atom_derivatives_for_minnode( minnode, pose.residue( ii ), pose, scorefxn.weights(), min_map.atom_derivatives( ii ) );

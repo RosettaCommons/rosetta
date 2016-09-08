@@ -141,15 +141,15 @@ main( int argc, char* argv[] )
 		using namespace core::scoring::func;
 		using namespace core::id;
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 
-			if ( i  < pose.total_residue() - 3 ) {
+			if ( i  < pose.size() - 3 ) {
 				pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( AtomID( pose.residue( i ).atom_index( "O" ), i ),
 					AtomID( pose.residue( i+4 ).atom_index( "H" ), i+4 ),
 					HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
 			}
 			// constrain non pre-peptoid omega
-			if ( i < pose.total_residue() && !pose.residue(i+1).type().is_peptoid() ) {
+			if ( i < pose.size() && !pose.residue(i+1).type().is_peptoid() ) {
 				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i ).atom_index( "CA" ), i ),
 					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
 					AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
@@ -159,7 +159,7 @@ main( int argc, char* argv[] )
 
 
 			// super loose dihedral constraints non pre-peptoid omega
-			if ( i > 1 && i < pose.total_residue() ) {
+			if ( i > 1 && i < pose.size() ) {
 				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i ).atom_index( "N" ), i ),
 					AtomID( pose.residue( i ).atom_index( "CA"  ), i ),
 					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
@@ -179,14 +179,14 @@ main( int argc, char* argv[] )
 			pose.set_psi( i, -45 );
 			pose.set_omega( i, 180 );
 		}
-		pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( AtomID( pose.residue( pose.total_residue() - 3 ).atom_index( "O" ), pose.total_residue() - 3 ),
-			AtomID( pose.residue( pose.total_residue() ).atom_index( "HM" ), pose.total_residue() ),
+		pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( AtomID( pose.residue( pose.size() - 3 ).atom_index( "O" ), pose.size() - 3 ),
+			AtomID( pose.residue( pose.size() ).atom_index( "HM" ), pose.size() ),
 			HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
 
-		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( pose.total_residue() ).atom_index( "N" ), pose.total_residue() ),
-			AtomID( pose.residue( pose.total_residue() ).atom_index( "CA"  ), pose.total_residue() ),
-			AtomID( pose.residue( pose.total_residue() ).atom_index( "C"  ), pose.total_residue() ),
-			AtomID( pose.residue( pose.total_residue() ).atom_index( "NM"  ), pose.total_residue() ),
+		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( pose.size() ).atom_index( "N" ), pose.size() ),
+			AtomID( pose.residue( pose.size() ).atom_index( "CA"  ), pose.size() ),
+			AtomID( pose.residue( pose.size() ).atom_index( "C"  ), pose.size() ),
+			AtomID( pose.residue( pose.size() ).atom_index( "NM"  ), pose.size() ),
 			CircularHarmonicFuncOP( new CircularHarmonicFunc( -45.0*3.14159/180, 0.2 ) ) ) ) );
 
 		pose.dump_pdb( "first.pdb");
@@ -194,7 +194,7 @@ main( int argc, char* argv[] )
 		// create move map for minimization
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
 		mm->set_chi( true );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			mm->set_bb( i, true);
 		}
 

@@ -97,7 +97,7 @@ main( int argc, char * argv [] )
 	core::Size central_relax_res1 = 0;
 	core::Size central_relax_res2 = 0;
 	core::Size central_relax_res3 = 0;
-	for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number1 ) {
 			central_relax_res1 = j;
 		}
@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 	(*scorefxn)(input_pose);
 
-	utility::vector1 <bool>	allow_moving( input_pose.total_residue(), false );
+	utility::vector1 <bool>	allow_moving( input_pose.size(), false );
 
 	if ( central_relax_res1 > 0 ) {
 		allow_moving.at(central_relax_res1) = true;
@@ -205,7 +205,7 @@ main( int argc, char * argv [] )
 
 		// setting degrees of freedom which can move during minimization (backbone and sidechains, not jump)
 		//		min_mm.set_jump( false );
-		//		for ( int j = 2, resnum = input_pose.total_residue(); j < resnum; ++j ) {
+		//		for ( int j = 2, resnum = input_pose.size(); j < resnum; ++j ) {
 		//			if ( ! allow_moving.at(j) ) continue;
 		//			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j + 1 ) ) continue;
 		//			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j - 1 ) ) continue;
@@ -228,10 +228,10 @@ main( int argc, char * argv [] )
 		(*scorefxn)(*relax_poseOP);
 
 		// setup segments to move
-		for ( int j = 2, resnum = input_pose.total_residue(); j < resnum; ++j ) {
+		for ( int j = 2, resnum = input_pose.size(); j < resnum; ++j ) {
 			if ( ! allow_moving.at(j) ) continue;
 				//			if ( j == 1 ) continue;
-				//			if ( j == input_pose.total_residue() ) continue;
+				//			if ( j == input_pose.size() ) continue;
 			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j + 1 ) ) continue;
 			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j - 1 ) ) continue;
 			// add current 3 residue segment to the backbone mover unless it is on another chain or isn't there
@@ -273,7 +273,7 @@ main( int argc, char * argv [] )
 		final_repack_task->set_bump_check( false );
 		final_repack_task->initialize_from_command_line();
 		final_repack_task->or_include_current( true );
-		for (int ii = 1, nres = input_pose.total_residue(); ii < nres; ++ii ) {
+		for (int ii = 1, nres = input_pose.size(); ii < nres; ++ii ) {
 			final_repack_task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 		final_repack_task->restrict_to_residues( allow_moving );

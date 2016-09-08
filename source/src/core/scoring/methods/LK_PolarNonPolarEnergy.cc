@@ -883,7 +883,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	Vector const & heavy_atom_m( rsd1.xyz( m ) );
 	bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
 
-	// Size const nres = pose.total_residue();
+	// Size const nres = pose.size();
 	NeighborList const & nblist
 		( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
 	//TR << "checkpoint..." << std::endl;

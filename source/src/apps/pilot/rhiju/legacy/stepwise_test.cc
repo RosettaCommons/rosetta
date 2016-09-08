@@ -300,7 +300,7 @@ sample_rama_test()
 	(*scorefxn)( pose );
 	std::cout << "RAMA CHECK!" << std::endl;
 	Ramachandran ramachandran;
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for (Size i = 1; i <= pose.size(); i++ ) {
 		std::cout << I(3,i) << F(8,2,pose.phi(i)) << " " << F(8,2,pose.psi(i)) << " " <<
 			F(8,2,pose.omega(i)) << " " <<
 			F(8,3,pose.energies().onebody_energies( i )[ rama ]) << " " <<
@@ -320,7 +320,7 @@ sample_rama_test()
 	// Can we recreate the pose from scratch?
 	if ( option[ make_ideal_helix ]() ) {
 		make_pose_from_sequence( pose, pose.sequence(), *rsd_set );
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			pose.set_phi( i, -70.0 );
 			pose.set_psi( i, -40.0 );
 			pose.set_omega( i, 180.0 );
@@ -404,7 +404,7 @@ minimizer_test()
 		std::string pdb_file  = option[ in::file::s ][1];
 		io::pdb::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
-		if ( option[ trans_omega ]() ) for ( Size n = 1; n <= pose.total_residue(); n++ ) pose.set_omega( n, 180.0 );
+		if ( option[ trans_omega ]() ) for ( Size n = 1; n <= pose.size(); n++ ) pose.set_omega( n, 180.0 );
 
 		(*scorefxn)( pose );
 		scorefxn->show( std::cout, pose );
@@ -535,7 +535,7 @@ sample_trp_test()
 
 	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator);
 	utility::vector1< Size > group_ids;
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for (Size i = 1; i <= pose.size(); i++ ) {
 		if ( i == n ) {
 			group_ids.push_back( 0 );
 		} else {
@@ -653,7 +653,7 @@ sample_trp_tyr_test()
 	Size n_trp( 0 ), n_tyr(  0 );
 	std::map< Size, Size > res_map;
 
-	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+	for (Size n = 1; n <= pose_input.size(); n++ ){
 		res_map[ n ] = n;
 		if ( input_sequence[n-1] == 'W' ) {
 			n_trp = n;
@@ -665,21 +665,21 @@ sample_trp_tyr_test()
 		new_sequence_trp_tyr += input_sequence[ n-1 ];
 	}
 
-	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+	for (Size n = 1; n <= pose_input.size(); n++ ){
 		if ( n == n_tyr )
 			new_sequence_trp += 'A';
 		else
 			new_sequence_trp += new_sequence_trp_tyr[ n-1 ];
 	}
 
-	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+	for (Size n = 1; n <= pose_input.size(); n++ ){
 		if ( n == n_trp )
 			new_sequence_tyr += 'A';
 		else
 			new_sequence_tyr += new_sequence_trp_tyr[ n-1 ];
 	}
 
-	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+	for (Size n = 1; n <= pose_input.size(); n++ ){
 		if ( n == n_trp || n == n_tyr )
 			new_sequence_null += 'A';
 		else
@@ -1160,7 +1160,7 @@ peptide_plane_test_OLD(){
 		Pose termini_pose = pose;
 
 		chemical::add_lower_terminus_type_to_pose_residue( termini_pose, 1   );
-		chemical::add_upper_terminus_type_to_pose_residue( termini_pose, termini_pose.total_residue()   );
+		chemical::add_upper_terminus_type_to_pose_residue( termini_pose, termini_pose.size()   );
 
 		std::cout << " ADDED TERMINI" << std::endl;
 		(*scorefxn)( termini_pose );
@@ -1366,7 +1366,7 @@ score12_plot_test()
 
 		//		pose.append_residue_by_jump( *rsd, 1 );
 
-		//		kinematics::FoldTree f( pose.total_residue() );
+		//		kinematics::FoldTree f( pose.size() );
 		//		f.new_jump( 1, 2, 1);
 		//		pose.fold_tree( f );
 
@@ -1487,7 +1487,7 @@ get_lj_atom_score( core::id::AtomID const atom_id, core::pose::Pose const & pose
 
 	Real score = 0.0;
 
-	for ( Size j = 1; j < pose.total_residue(); j ++ ) {
+	for ( Size j = 1; j < pose.size(); j ++ ) {
 
 		if ( i == j ) continue;
 
@@ -1578,7 +1578,7 @@ color_by_lj_test()
 		scorefxn->show( std::cout, pose );
 
 		if ( sample_residues.size() == 0 ) {
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) sample_residues.push_back( n );
+			for ( Size n = 1; n <= pose.size(); n++ ) sample_residues.push_back( n );
 		}
 
 		for ( Size n = 1; n <= sample_residues.size(); n++ ) {

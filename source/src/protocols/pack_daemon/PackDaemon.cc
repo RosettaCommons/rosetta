@@ -112,7 +112,7 @@ void PackDaemon::set_entity_correspondence( EntityCorrespondence const &  ec )
 	if ( ! pose_ ) {
 		utility_exit_with_message( "PackDaemon::set_entity_correspondence may only be called after the set_pose_and_task" );
 	}
-	if ( ec.num_residues() != pose_->total_residue() ) {
+	if ( ec.num_residues() != pose_->size() ) {
 		utility_exit_with_message( "Num residue disgreement between input EntityCorrespondence and existing pose_" );
 	}
 	if ( ! correspondence_ ) {
@@ -436,7 +436,7 @@ void PackDaemon::calculate_background_energies()
 	background_energies_ = 0;
 	Energies const & energies( pose_->energies() );
 	EnergyGraph const & energy_graph( energies.energy_graph() );
-	for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose_->size(); ++ii ) {
 		if ( task_->being_packed( ii ) ) continue;
 		background_energies_ += energies.onebody_energies( ii ).dot( score_function_->weights() );
 		for ( Graph::EdgeListConstIter
@@ -601,7 +601,7 @@ DaemonSet::add_pack_daemon(
 	/// entity packer task.  If there is a discrepancy, then the program should
 	/// be halted now.
 	std::string error_message;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size ii_entity_id = ec->entity_for_residue( ii );
 		if ( ii_entity_id == 0 ) {
 			continue;
@@ -1136,7 +1136,7 @@ BasicSimAnnealerRepacker::~BasicSimAnnealerRepacker() = default;
 BasicSimAnnealerRepacker::RotamerAssignmentAndEnergy
 BasicSimAnnealerRepacker::repack( utility::vector0< int > const & rot_to_pack )
 {
-	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->total_residue() );
+	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->size() );
 	core::PackerEnergy   rotamer_energy;
 
 	core::pack::pack_rotamers_run(
@@ -1215,7 +1215,7 @@ DenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 		create_dense_pdig_from_rot_to_pack( local_rot_to_pack, rsubset );
 
 	//core::Size nmoltenres = rot_sets()->nmoltenres();
-	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->total_residue() );
+	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->size() );
 	core::PackerEnergy   rotamer_energy;
 	utility::vector0< int > all_rots( local_rot_to_pack.size() );
 	for ( Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
@@ -1365,7 +1365,7 @@ DoubleDenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 		create_dense_pdig_from_rot_to_pack( local_rot_to_pack, rsubset );
 
 	//core::Size nmoltenres = rot_sets()->nmoltenres();
-	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->total_residue() );
+	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->size() );
 	core::PackerEnergy   rotamer_energy;
 	utility::vector0< int > all_rots( local_rot_to_pack.size() );
 	for ( Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
@@ -1475,7 +1475,7 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 		create_faster_ig_from_rot_to_pack( local_rot_to_pack, rsubset );
 
 	//core::Size nmoltenres = rot_sets()->nmoltenres();
-	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->total_residue() );
+	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->size() );
 	core::PackerEnergy   rotamer_energy;
 	utility::vector0< int > all_rots( local_rot_to_pack.size() );
 	for ( Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
@@ -1486,7 +1486,7 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 		using namespace core::pack::annealer;
 
 		bool start_with_current = false;
-		FArray1D_int current_rot_index( pose()->total_residue(), 0 );
+		FArray1D_int current_rot_index( pose()->size(), 0 );
 		bool calc_rot_freq = false;
 		FArray1D< core::PackerEnergy > rot_freq( faster_ig->get_num_total_states(), 0.0 );
 

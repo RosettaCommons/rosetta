@@ -70,7 +70,7 @@ public:
 		pose::Pose pose = start_pose;
 
 		// test different symmetry data input files
-		core::conformation::symmetry::SymmData symmdata1(  pose.n_residue(),  pose.num_jump() );
+		core::conformation::symmetry::SymmData symmdata1(  pose.size(),  pose.num_jump() );
 		std::string symm_def1 = "core/conformation/symmetry/symm_def1.dat";
 		symmdata1.read_symmetry_data_from_file(symm_def1);
 		core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );
@@ -81,7 +81,7 @@ public:
 		TS_ASSERT( rms_to_restored < rms_threshold );
 
 		import_pose::pose_from_file( pose, "core/conformation/symmetry/symm_test_in2.pdb" , core::import_pose::PDB_file);;
-		core::conformation::symmetry::SymmData symmdata2(  pose.n_residue(),  pose.num_jump() );
+		core::conformation::symmetry::SymmData symmdata2(  pose.size(),  pose.num_jump() );
 		std::string symm_def2 = "core/conformation/symmetry/symm_def2.dat";
 		symmdata2.read_symmetry_data_from_file(symm_def2);
 		core::pose::symmetry::make_symmetric_pose( pose, symmdata2 );

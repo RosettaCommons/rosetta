@@ -1020,7 +1020,7 @@ std::vector< core::conformation::ResidueCOP > PocketGrid::getRelaxResidues( core
 		} else {
 			central_relax_pdb_number = ObjexxFCL::int_of( resid );
 		}
-		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 				if ( chain != ' ' ) {
 					if ( input_pose.pdb_info()->chain(j) == chain ) {
@@ -3456,7 +3456,7 @@ void  PocketGrid::alter_espGrid_with_bound_ligand( std::string const & espGrid_f
 				grid_coord.z() = newz * newG.espGrid_spacing_ + ( newG.espGrid_mid_.z() - ((static_cast<core::Real>(newG.espGrid_dim_.z()-1)/2) * newG.espGrid_spacing_) );
 
 				bool found_protein = false;
-				for ( Size j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+				for ( Size j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 					core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
 					if ( !curr_rsd.is_protein() ) continue;
 					for ( Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
@@ -3830,7 +3830,7 @@ bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::Res
 
 	using namespace core::chemical;
 	bool too_small=true;
-	Size total_residues = inPose.total_residue();
+	Size total_residues = inPose.size();
 	while ( too_small ) {
 		if ( center_target ) {
 			recenter( central_rsds );
@@ -4826,7 +4826,7 @@ void ElectrostaticpotentialGrid::fill_espGrid_values_with_type( std::string cons
 void ElectrostaticpotentialGrid::mark_protein_espGrid_points( core::pose::Pose const & protein_pose ) {
 
 	//Assign ESP=0 for grid points inside protein
-	for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & rsd(protein_pose.conformation().residue(j) );
 		core::Size total_atoms(0);
 		using namespace basic::options;
@@ -4940,7 +4940,7 @@ void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points_by_nn( std:
 void  ElectrostaticpotentialGrid::assign_esp_for_protein_grid_points( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
 
 	//Assign ESP for grid points inside protein
-	for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & rsd(protein_pose.conformation().residue(j) );
 		core::Size total_atoms(0);
 		using namespace basic::options;
@@ -5460,7 +5460,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& grd, core::pose::Pose const & liga
 	}
 
 	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = ligand_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = ligand_pose.size(); j <= resnum; ++j ) {
 		if ( !ligand_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;

@@ -323,7 +323,7 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	// use virtual residues to be compatible with the two-body scoring
 	// framework, include virtual residues with the relevant residues so
 	// these scores get computed.
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).aa() == aa_vrt ) {
 			relevant_and_virtual_residues[i] = true;
 		}
@@ -366,7 +366,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 	EnergyMap emap;
 
-	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 		Residue const & rsd( pose.residue(resNum) );
 
@@ -443,7 +443,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
-	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		Residue const & rsd( pose.residue(resNum) );
 
 		// Two Body Energies
@@ -551,7 +551,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 			// Potentially O(N^2) operation...
-			for ( Size resNum = 1; resNum <= pose.total_residue(); ++resNum ) {
+			for ( Size resNum = 1; resNum <= pose.size(); ++resNum ) {
 
 				for ( ResidueNeighborConstIteratorOP
 						rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
@@ -606,7 +606,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 			// Potentially O(N^2) operation...
-			for ( Size resNum = 1; resNum <= pose.total_residue(); ++resNum ) {
+			for ( Size resNum = 1; resNum <= pose.size(); ++resNum ) {
 				if ( !relevant_residues[resNum] ) continue;
 
 				for ( ResidueNeighborConstIteratorOP

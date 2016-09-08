@@ -82,7 +82,7 @@ PsiPredInterface::PsiPredInterface( PsiPredInterface const & rval )
 PsiPredInterface::extract_sequence( core::pose::Pose const & pose ) const
 {
 std::string seq;
-for ( core::Size i=1; i<=pose.total_residue(); i++ ){
+for ( core::Size i=1; i<=pose.size(); i++ ){
 if ( pose.residue( i ).is_protein() ){
 seq += pose.residue( i ).name1();
 } //if is protein

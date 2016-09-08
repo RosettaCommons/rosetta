@@ -190,7 +190,7 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 	(*scrfxn)( pose ); // if you don'r score the pose before getting the png you get an assertion failure
 	graph::GraphOP packer_neighbor_graph( new graph::Graph( pose.energies().energy_graph() ) );
 
-	for( Size i(1); i <= pose.total_residue(); ++i ) {
+	for( Size i(1); i <= pose.size(); ++i ) {
 
 		if ( pose.residue( i ).type().name3() == option[ tlc ].value() ) {
 

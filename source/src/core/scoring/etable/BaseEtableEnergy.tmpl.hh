@@ -766,12 +766,12 @@ BaseEtableEnergy< Derived >::finalize_total_energy(
 
 		/// Trick to avoid calls to Conformation::residue()
 		utility::vector1< conformation::Residue const * > resvect;
-		resvect.reserve( pose.total_residue() );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		resvect.reserve( pose.size() );
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			resvect.push_back( & pose.residue( ii ) );
 		}
 		Real dsq(0.0);
-		for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+		for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 			conformation::Residue const & ires( *resvect[i] );
 			for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
 				/// 1. Iterate across intra-residue atom neighbors if there are any;
@@ -931,8 +931,8 @@ BaseEtableEnergy< Derived >::setup_for_packing(
 {
 
 	TrieCollectionOP tries( new TrieCollection );
-	tries->total_residue( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	tries->total_residue( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		// Do not compute energy for virtual residues.
 		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 		//iwd  Temporary hack: also skip ligand residues

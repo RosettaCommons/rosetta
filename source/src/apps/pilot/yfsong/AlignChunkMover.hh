@@ -54,7 +54,7 @@ bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
 
-	if (seqpos == pose.total_residue()) return true;
+	if (seqpos == pose.size()) return true;
 	if (!pose.residue_type(seqpos).is_polymer()) return true;
 	if (!pose.residue_type(seqpos+1).is_polymer()) return true;
 	if ( pose.residue_type(seqpos).is_protein() && pose.residue_type(seqpos+1).is_protein()) {
@@ -109,7 +109,7 @@ get_superposition_transformation(
 {
 	// count number of atoms for the array
 	Size total_mapped_atoms(0);
-	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
@@ -129,7 +129,7 @@ get_superposition_transformation(
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, total_mapped_atoms );
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
 	Size atomno(0);
-	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
@@ -565,8 +565,8 @@ apply(core::pose::Pose & pose)
 	ss_chunks_pose_.sequential_order();
 	TR.Debug << "Target secondary chunks:" << std::endl;
 	TR.Debug << ss_chunks_pose_ << std::endl;
-	loops_pose_ = ss_chunks_pose_.invert(pose.total_residue());
-	TR.Debug << "Target loops: " << pose.total_residue() << std::endl;
+	loops_pose_ = ss_chunks_pose_.invert(pose.size());
+	TR.Debug << "Target loops: " << pose.size() << std::endl;
 	TR.Debug << loops_pose_ << std::endl;
 	TR.flush();
 
@@ -588,14 +588,14 @@ apply(core::pose::Pose & pose)
 		}
 
 		if (i==chunks.num_loop()) {
-			chunks[i].set_stop(pose.total_residue());
+			chunks[i].set_stop(pose.size());
 		}
 		else {
 			Size new_stop = (ss_chunks_pose_[i].stop() + ss_chunks_pose_[i+1].start() - 1) / 2;
 			chunks[i].set_stop( new_stop );
 		}
 	}
-	TR.Debug << "Chunks: " << pose.total_residue() << std::endl;
+	TR.Debug << "Chunks: " << pose.size() << std::endl;
 	TR.Debug << chunks << std::endl;
 
 	StarTreeBuilder builder;
@@ -683,7 +683,7 @@ public:
 
 	numeric::xyzVector<core::Real>
 	get_helix_center(core::pose::Pose const & pose, Size const ires) {
-		assert(ires > 1 && ires < pose.total_residue());
+		assert(ires > 1 && ires < pose.size());
 		for (Size i = ires-1; i<=ires+1; ++i) {
 			assert(pose.residue_type(i).is_protein());
 		}
@@ -701,8 +701,8 @@ public:
 	get_helix_centers(core::pose::Pose const & pose, Size const seqpos_start, Size const seqpos_stop,
 					  utility::vector1< numeric::xyzVector<core::Real> > & helix_centers)
 	{
-		assert(helix_centers.size() == pose.total_residue());
-		utility::vector1< bool > updated(pose.total_residue(), false);
+		assert(helix_centers.size() == pose.size());
+		utility::vector1< bool > updated(pose.size(), false);
 		Size counts(0);
 		for (Size ires=seqpos_start+1; ires<seqpos_stop; ++ires) {
 			if (discontinued_upper(pose, ires) || discontinued_lower(pose, ires)) continue;
@@ -723,7 +723,7 @@ public:
 			updating = false;
 			for (Size ires=seqpos_start; ires<=seqpos_stop; ++ires) {
 				if (updated[ires]) continue;
-				if (ires-1>=1 && ires+1 <= pose.total_residue()) {
+				if (ires-1>=1 && ires+1 <= pose.size()) {
 					if (!discontinued_upper(pose, ires) && !discontinued_lower(pose, ires)) { // check if there is chain breaks
 						if (updated[ires-1] && updated[ires+1]) {
 							helix_centers[ires] = (helix_centers[ires-1] + helix_centers[ires+1]) / 2.;
@@ -743,7 +743,7 @@ public:
 						}
 					}
 				}
-				if (ires+2 <= pose.total_residue()) {
+				if (ires+2 <= pose.size()) {
 					if (updated[ires+2] && updated[ires+1]) {
 						if (!discontinued_lower(pose, ires) && !discontinued_lower(pose, ires+1)) {
 							helix_centers[ires] = 2. * helix_centers[ires+1] - helix_centers[ires+2];
@@ -762,7 +762,7 @@ bool
 get_helix_vectors(core::pose::Pose const & pose,
 				  Size const seqpos_start, Size const seqpos_stop,
 				  utility::vector1< numeric::xyzVector<core::Real> > & helix_vectors) {
-	utility::vector1< numeric::xyzVector<core::Real> > helix_centers(pose.total_residue());
+	utility::vector1< numeric::xyzVector<core::Real> > helix_centers(pose.size());
 	bool success = get_helix_centers(pose,seqpos_start,seqpos_stop,helix_centers);
 	if (!success) return false;
 
@@ -793,7 +793,7 @@ get_helix_vectors(core::pose::Pose const & pose,
 	void
 	slide_non_ideal_helix(core::pose::Pose & pose, Size const seqpos_start, Size const seqpos_stop, core::Real const distance)
 	{
-		utility::vector1< numeric::xyzVector<core::Real> > helix_vectors(pose.total_residue());
+		utility::vector1< numeric::xyzVector<core::Real> > helix_vectors(pose.size());
 		bool success = get_helix_vectors(pose, seqpos_start, seqpos_stop, helix_vectors);
 		if (!success) return;
 

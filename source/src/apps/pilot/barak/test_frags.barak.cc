@@ -97,7 +97,7 @@ main( int argc, char * argv [] )
     std::string const sequence( pose.sequence() );
 
     TorsionFragmentLibrary lib;
-    Size const nres( pose.total_residue() );
+    Size const nres( pose.size() );
     Size const frag_size(3);
     lib.resize( nres - frag_size + 1 );
     for ( Size i=1; i<= nres-frag_size+1; ++i )

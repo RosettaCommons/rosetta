@@ -279,7 +279,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 
 void RemodelDesignMover::run_calculator( core::pose::Pose const & pose, std::string const & calculator, std::string const & calculation, utility::vector1_bool & residues ) {
 
-	runtime_assert( residues.size() == pose.total_residue() );
+	runtime_assert( residues.size() == pose.size() );
 
 	// find the set of residues
 	typedef std::set< core::Size > SizeSet;
@@ -310,10 +310,10 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 	// need to collect all positions before reduction
 	CalculatorFactory::Instance().remove_calculator( "reducetask_calc" );
-	utility::vector1_bool boollist(pose.total_residue());
+	utility::vector1_bool boollist(pose.size());
 	run_calculator(pose, "neighborhood_calc", "neighbors", boollist);
 	std::set<Size> positionList;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( boollist[i] && !option[OptionKeys::remodel::design::design_all]() ) {
 			positionList.insert(i);
 		} else { // in case of design all flag, take all positions
@@ -330,8 +330,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	utility::vector1< core::Real > sasa_list;
 	sasa_list = protocols::forge::methods::calc_rsd_sasa( pose );
 
-	utility::vector1_bool resclass(pose.total_residue(),false);
-	utility::vector1_bool neighbor_count(pose.total_residue(),false);
+	utility::vector1_bool resclass(pose.size(),false);
+	utility::vector1_bool neighbor_count(pose.size(),false);
 	utility::vector1<Size> corePos;
 	utility::vector1<Size> boundaryPos;
 	utility::vector1<Size> surfPos;
@@ -363,7 +363,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 
-		utility::vector1<bool> visited(pose.total_residue(),false);
+		utility::vector1<bool> visited(pose.size(),false);
 
 		for ( Size i = 1; i<= resclass.size(); i++ ) { //check everyposition in the packertask
 
@@ -612,7 +612,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 	// initialize default
 	Size landingRangeStart = 1;
-	Size landingRangeStop = pose.total_residue();
+	Size landingRangeStop = pose.size();
 
 	// alternatively via blueprint
 	if ( remodel_data_.disulfLandingRange.size() != 0 ) {
@@ -629,8 +629,8 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 
 	TR << "FINDING DISULF" << std::endl;
-	utility::vector1< bool > modeled_clusters( pose.total_residue(), false );
-	utility::vector1< bool > residue_clusters( pose.total_residue(), false );
+	utility::vector1< bool > modeled_clusters( pose.size(), false );
+	utility::vector1< bool > residue_clusters( pose.size(), false );
 	run_calculator( pose, "neighborhood_calc", "neighbors", residue_clusters );
 	run_calculator( pose, "neighborhood_calc", "central_residues", modeled_clusters );
 
@@ -701,7 +701,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	TR << std::endl;
 
 	core::pose::Pose pose_copy = pose;
-	for ( core::Size i = 1; i <= pose_copy.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose_copy.size(); ++i ) {
 		if ( pose_copy.residue(i).name3() != "GLY" ) {
 			protocols::simple_moves::MutateResidue make_ala(i,"ALA");
 			make_ala.apply(pose_copy);
@@ -867,7 +867,7 @@ void RemodelDesignMover::mode1_packertask(Pose & pose){ // auto loop only
 	*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
-	utility::vector1_bool additional_sites(pose.total_residue(), false);
+	utility::vector1_bool additional_sites(pose.size(), false);
 
 	run_calculator(pose, "neighborhood_calc", "central_residues", additional_sites);
 
@@ -899,7 +899,7 @@ void RemodelDesignMover::mode1_1_packertask(Pose & pose){ // auto loop only
 	*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
-	utility::vector1_bool additional_sites(pose.total_residue(), true);
+	utility::vector1_bool additional_sites(pose.size(), true);
 
 	working_model_.task->restrict_to_residues( additional_sites );
 
@@ -931,7 +931,7 @@ void RemodelDesignMover::mode2_packertask(Pose & pose){ // auto loop with design
 	*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
-	utility::vector1_bool additional_sites(pose.total_residue(), false);
+	utility::vector1_bool additional_sites(pose.size(), false);
 
 	run_calculator(pose, "neighborhood_calc", "neighbors", additional_sites);
 
@@ -962,8 +962,8 @@ void RemodelDesignMover::mode3_packertask(Pose & pose){ // auto loop with repack
 	*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
-	utility::vector1_bool additional_sites(pose.total_residue(), false);
-	utility::vector1_bool core_sites(pose.total_residue(), false);
+	utility::vector1_bool additional_sites(pose.size(), false);
+	utility::vector1_bool core_sites(pose.size(), false);
 
 	run_calculator(pose, "neighborhood_calc", "neighbors", additional_sites);
 	run_calculator(pose, "neighborhood_calc", "central_residues", core_sites);
@@ -1002,7 +1002,7 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 	using namespace core::scoring::constraints;
 
 	bool is_sym(false);
-	Size asym_length=pose.total_residue();
+	Size asym_length=pose.size();
 
 	//extract asymmetric unit
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -1010,7 +1010,7 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 		Pose junk_for_copy;
 		// core::scoring::constraints::ConstraintSetOP pose_cst_set = new core::scoring::constraints::ConstraintSet( *pose.constraint_set() );
 		core::pose::symmetry::extract_asymmetric_unit( pose, junk_for_copy, false);
-		asym_length=junk_for_copy.total_residue();
+		asym_length=junk_for_copy.size();
 		//  pose = junk_for_copy;
 		//  pose.constraint_set(pose_cst_set);
 		//  pose.pdb_info()->obsolete(true);
@@ -1028,7 +1028,7 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 	// process the information in blueprint and save the positions touched.
 	non_default_positions_ = protocols::forge::methods::parse_resfile_string_with_no_lockdown(pose, *working_model_.task, remodel_data_.parsed_string_for_resfile );
 
-	utility::vector1_bool additional_sites(pose.total_residue(), false);
+	utility::vector1_bool additional_sites(pose.size(), false);
 
 	//need to convert the vector to a set for calculator use
 	std::set<Size> manual_positions;

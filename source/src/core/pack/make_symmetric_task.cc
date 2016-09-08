@@ -56,7 +56,7 @@ make_symmetric_PackerTask_by_truncation(
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !symm_info->chi_is_independent(i) ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
 		}
@@ -101,7 +101,7 @@ make_new_symmetric_PackerTask_by_union(
 		}
 	}
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !symm_info->chi_is_independent(i) ) {
 			n.nonconst_residue_task( i ).prevent_repacking();
 		}
@@ -136,7 +136,7 @@ make_new_symmetric_PackerTask_by_intersection(
 		}
 	}
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !symm_info->chi_is_independent(i) ) {
 			n.nonconst_residue_task( i ).prevent_repacking();
 		}

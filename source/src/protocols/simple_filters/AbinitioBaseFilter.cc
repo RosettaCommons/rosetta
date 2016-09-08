@@ -84,7 +84,7 @@ AbinitioBaseFilter::get_protein_sstype( core::pose::Pose const & pose ) const {
 	int helix_length = 0;
 	max_helix_length_ = 0;
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! pose.residue(i).is_protein() ) continue;
 		if ( secstructs[i] == 'H' ) {
 			++alpha;
@@ -99,7 +99,7 @@ AbinitioBaseFilter::get_protein_sstype( core::pose::Pose const & pose ) const {
 			helix_length = 0;
 		}
 	}
-	max_helix_fraction_ = static_cast< core::Real >( max_helix_length_ ) / pose.total_residue();
+	max_helix_fraction_ = static_cast< core::Real >( max_helix_length_ ) / pose.size();
 
 	//car protein_ss_type
 	std::string protein_sstype;

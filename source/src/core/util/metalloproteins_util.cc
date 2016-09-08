@@ -195,7 +195,7 @@ find_metalbinding_atoms (
 	// Metal residues have a single atom
 	numeric::xyzVector< core::Real > const & metal_xyz = pose.residue( metal_position ).xyz( 1 );
 
-	Size const nres = pose.n_residue();
+	Size const nres = pose.size();
 
 	if ( ( metal_position < 1 ) || ( metal_position > nres ) ) {
 		utility_exit_with_message( "Error!  Asked to find metal-binding atoms coordinating a residue that's not in the pose (metal_position < 1 or > n_residue." );
@@ -282,7 +282,7 @@ auto_setup_all_metal_bonds(
 
 	TR << "Automatically setting covalent bonds between metal ions and metal-binding residues." << std::endl ;
 
-	core::Size nres = pose.n_residue(); //Residue count
+	core::Size nres = pose.size(); //Residue count
 	if ( nres > 0 ) {
 		for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues.
 			if ( pose.residue(ir).is_metal() ) {
@@ -322,7 +322,7 @@ auto_setup_all_metal_constraints(
 
 	TR << "Automatically setting up constraints between metal ions and metal-binding residues." << std::endl ;
 
-	Size const nres = pose.n_residue();
+	Size const nres = pose.size();
 
 	for ( Size ir = 1; ir <= nres; ++ir ) {
 		conformation::Residue const & ir_res = pose.residue( ir );

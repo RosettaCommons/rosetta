@@ -656,7 +656,7 @@ core::Real SymmetrySlider::rg( core::pose::Pose const & pose )
 	numeric::xyzVector <core::Real> sum_ca(0,0,0);
 	core::Real rg = 0.0;
 
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		core::conformation::Residue const& rsd_i = pose.residue(i);
 		if ( !rsd_i.is_protein() ) continue;
 		cas.push_back( rsd_i.atom( pose.residue_type( i ).atom_index(" CA ") ).xyz() );

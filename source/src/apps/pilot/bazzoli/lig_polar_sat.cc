@@ -257,7 +257,7 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 ///
 void print_hb_counts(std::map<AtomID, Size>& counts, Pose const& ps) {
 
-	for ( Size i=1; i<=ps.total_residue(); ++i ) {
+	for ( Size i=1; i<=ps.size(); ++i ) {
 
 		Residue const& r = ps.residue(i);
 
@@ -321,7 +321,7 @@ int main( int argc, char * argv [] )
 		std::map<AtomID, Size> dcounts;
 		std::map<AtomID, Size> acounts;
 
-		store_hb_counts(ps.total_residue(), ps, hb_db, hb_set, dcounts, acounts);
+		store_hb_counts(ps.size(), ps, hb_db, hb_set, dcounts, acounts);
 
 		TR << "hbond counts: " << std::endl;
 		print_hb_counts(dcounts, ps);

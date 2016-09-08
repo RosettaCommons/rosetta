@@ -64,7 +64,7 @@ LeeRichards::LeeRichards(
 	numeric::xyzVector<core::Real> plane
 ) {
 	Spheres spheres;
-	for ( int ir = 1; ir <= (int)pose.total_residue(); ++ir ) {
+	for ( int ir = 1; ir <= (int)pose.size(); ++ir ) {
 		for ( int ia = 1; ia <= (int)pose.residue(ir).nheavyatoms(); ++ia ) {
 			core::id::AtomID aid(ia,ir);
 			spheres.push_back(
@@ -183,7 +183,7 @@ MultiProbePoseAccumulator::MultiProbePoseAccumulator(
 void
 MultiProbePoseAccumulator::show( std::ostream & out ) {
 	Reals tot(N_PROBES,0.0),btot(N_PROBES,0.0);
-	for ( Size ir = 1; ir <= pose_.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose_.size(); ++ir ) {
 		out << "RES_DAT " << pose_.residue(ir).name3() << " " << tag_ << " " << ir << " ";
 		for ( Size ia = 1; ia <= pose_.residue(ir).nheavyatoms(); ++ia ) {
 			core::id::AtomID aid(ia,ir);
@@ -197,7 +197,7 @@ MultiProbePoseAccumulator::show( std::ostream & out ) {
 		}
 		out << std::endl;
 	}
-	out << "TOT_DAT " << tag_ << " " << pose_.total_residue() << " ";
+	out << "TOT_DAT " << tag_ << " " << pose_.size() << " ";
 	for ( Size i = 1; i <= N_PROBES; ++i ) {
 		out << tot[i] << " " << btot[i] << " ";
 	}

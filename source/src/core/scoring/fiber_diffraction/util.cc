@@ -94,14 +94,14 @@ void setup_cylindrical_coords(
 
 	natoms = 0;
 	Size total_atoms(0);
-	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+	for ( Size res=1; res <= pose.size(); ++res ) {
 		conformation::Residue const &rsd_i (pose.residue(res));
 		for ( Size j=1 ; j<=rsd_i.natoms(); ++j ) {
 			total_atoms++;
 		}
 	}
 
-	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+	for ( Size res=1; res <= pose.size(); ++res ) {
 		if ( ! symminfo->bb_is_independent( res ) ) continue;
 		conformation::Residue const &rsd_i (pose.residue(res));
 		for ( Size j=1 ; j<=rsd_i.natoms(); ++j ) {
@@ -162,7 +162,7 @@ void find_pitch(
 		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
 	}
 	Size master_res(1);
-	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+	for ( Size res=1; res <= pose.size(); ++res ) {
 		if ( symminfo->bb_is_independent( res ) ) {
 			master_res = res;
 			break;
@@ -213,7 +213,7 @@ find_min_xyz(
 	minY = 1e5;
 	minZ = 1e5;
 
-	int nres = pose.total_residue();
+	int nres = pose.size();
 
 	for ( int i=1 ; i<=nres; ++i ) {
 
@@ -263,7 +263,7 @@ find_max_r(
 
 	maxR = 0;
 	core::Real maxR2 = 1e-5;
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	for ( int i=1 ; i<=nres; ++i ) {
 		if ( ! symminfo->bb_is_independent( i ) ) continue;
 		conformation::Residue const &rsd_i (pose.residue(i));
@@ -295,7 +295,7 @@ find_num_scattering_atoms(
 			pose.conformation()).Symmetry_Info().get();
 	}
 
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	for ( int i=1 ; i<=nres; ++i ) {
 		if ( ! symminfo->bb_is_independent( i ) ) continue;
 		conformation::Residue const &rsd_i (pose.residue(i));

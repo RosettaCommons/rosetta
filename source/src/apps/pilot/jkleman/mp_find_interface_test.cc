@@ -166,7 +166,7 @@ public:
 
 			// get residue range for superposition: get start
 			Size start(0);
-			for ( Size i = 1; i <= pose.total_residue(); ++i ){
+			for ( Size i = 1; i <= pose.size(); ++i ){
 				if ( start == 0 &&
 					partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ){
 					start = i;
@@ -175,7 +175,7 @@ public:
 
 			// get end
 			Size end(0);
-			for ( Size j = pose.total_residue(); j >= 1; --j ){
+			for ( Size j = pose.size(); j >= 1; --j ){
 				if ( end == 0 &&
 					partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ){
 					end = j;

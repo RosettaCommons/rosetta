@@ -140,7 +140,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 	assert( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	lines.push_back( "Begin Fingerprint for " + protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() + "\n" );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( Size jj = 1; jj <= scoring::n_score_types; ++jj ) {
 			if ( sfxn_->has_nonzero_weight( ScoreType(jj) ) && pose.energies().onebody_energies( ii )[ ScoreType(jj) ] != 0.0 ) {
 				std::string newline = "1b " + utility::to_string( ii ) +
@@ -151,7 +151,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 		}
 	}
 	EnergyGraph const &  eg = pose.energies().energy_graph();
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( Node::EdgeListConstIter
 				iter = eg.get_node(ii)->const_upper_edge_list_begin(),
 				iter_end = eg.get_node(ii)->const_upper_edge_list_end();

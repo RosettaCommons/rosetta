@@ -559,7 +559,7 @@ CenRotEnvPairPotential::compute_centroid_environment(
 	/// calculate the cenlist info only if it has not been calculated since the last score evaluation
 	if ( cenlist.calculated() ) return;
 
-	cenlist.initialize( pose.total_residue(), 0 );  //different from smoothenvpairpotential, starts from 0
+	cenlist.initialize( pose.size(), 0 );  //different from smoothenvpairpotential, starts from 0
 
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
@@ -602,7 +602,7 @@ CenRotEnvPairPotential::compute_dcentroid_environment(
 
 	if ( dcenlist.calculated() ) return;
 
-	dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
+	dcenlist.initialize( pose.size(), numeric::xyzVector< Real >(0,0,0) );
 
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );

@@ -354,7 +354,7 @@ create_bp_jump_database_test( ){
 	//How about 2' and Phosphate jumps?
 	// Look at each base.
 	core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		// Neighboring residues making base-phosphate or base-2'OH contacts?
 		for ( graph::Graph::EdgeListConstIter
@@ -501,7 +501,7 @@ output_canonical_base_pair_steps( pose::Pose & pose,
 		Size const i = it->first;
 		Size const j = it->second;
 
-		if ( i < pose.total_residue() &&
+		if ( i < pose.size() &&
 				partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
 				!pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ) {
 
@@ -541,12 +541,12 @@ output_general_base_pair_steps( pose::Pose const & pose,
 		partnered[ std::make_pair( j, i ) ] = true;
 	}
 
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
-		for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
+		for ( Size j = 1; j <= pose.size(); j++ ) {
 
 			if ( partnered[ std::make_pair( i,   j )   ] ) {
 
-				vector1< bool > outputted_bps( pose.total_residue(), false );
+				vector1< bool > outputted_bps( pose.size(), false );
 
 				// Looking for i+1 to also base pair to something.
 				// base-pair-step, and then bulges: single, double, triple
@@ -573,7 +573,7 @@ output_general_base_pair_steps( pose::Pose const & pose,
 
 
 				// scan for adjacent base pair that has one partner distant in sequence; may even involve totally different chain!
-				for ( Size k = 1; k <= pose.total_residue(); k++ ) {
+				for ( Size k = 1; k <= pose.size(); k++ ) {
 					if ( outputted_bps[ k ] ) continue;
 					if ( partnered[ std::make_pair( i+1, k ) ] ) {
 						write_base_pair_step_to_silent_struct( pose, utility::tools::make_vector1( i, i+1, k, j), intag, true /*create subdir*/ );

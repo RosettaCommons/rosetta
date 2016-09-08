@@ -42,11 +42,11 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.neighbor" );
 ///  such that i is a member of set, ngb_mask[i] equals false.
 ///
 Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
-	NGB_FUN_PTR ngb_fun) : is_ngb(ngb_fun), ngb_mask(ps.total_residue(), false) {
+	NGB_FUN_PTR ngb_fun) : is_ngb(ngb_fun), ngb_mask(ps.size(), false) {
 
 	/// build neighbor mask
 	Size NSET = set.size();
-	Size NPS = ps.total_residue();
+	Size NPS = ps.size();
 	for ( Size i=1; i<=NSET; ++i ) {
 		Residue const& res = ps.residue(set[i]);
 		for ( Size j=1; j<=NPS; ++j ) {

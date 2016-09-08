@@ -103,14 +103,14 @@ centroids_by_jump(
 	utility::vector1< bool > ok_for_centroid_calculation
 )
 {
-	FArray1D_bool is_upstream ( pose.total_residue(), false );
+	FArray1D_bool is_upstream ( pose.size(), false );
 	pose.fold_tree().partition_by_jump( jump_id, is_upstream );
 
 	upstream_ctrd = 0;
 	downstream_ctrd = 0;
 	int upstream_atoms = 0, downstream_atoms = 0;
 
-	for ( int ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii ) {
+	for ( int ii = 1, ii_end = pose.size(); ii <= ii_end; ++ii ) {
 		// Use a reference so we have to evaluate is_upstream only once per residue
 		// but still increment the correct variable.
 		int & natoms = ( is_upstream(ii) ? upstream_atoms : downstream_atoms );
@@ -179,7 +179,7 @@ centroids_by_jump_int(
 	core::Vector & downstream_ctrd //< output
 )
 {
-	FArray1D_bool is_upstream ( pose.total_residue(), false );
+	FArray1D_bool is_upstream ( pose.size(), false );
 	TR.Debug << "fold-tree: " << pose.fold_tree() << std::endl;
 	TR.Debug << "partition by jump " << jump_id << std::endl;
 	pose.fold_tree().partition_by_jump( jump_id, is_upstream );
@@ -201,7 +201,7 @@ centroids_by_jump_int(
 			interface.calculate( pose );
 
 			//count interface residues
-			for ( Size kk = 1; kk <= pose.total_residue(); kk++ ) {
+			for ( Size kk = 1; kk <= pose.size(); kk++ ) {
 				if ( interface.is_interface( kk ) ) int_res_num++;
 			}
 
@@ -210,7 +210,7 @@ centroids_by_jump_int(
 		}
 	}
 
-	for ( Size ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii ) {
+	for ( Size ii = 1, ii_end = pose.size(); ii <= ii_end; ++ii ) {
 		Size & natoms = ( is_upstream(ii) ? upstream_atoms : downstream_atoms );
 		core::Vector & ctrd = ( is_upstream(ii) ? upstream_ctrd : downstream_ctrd );
 		core::conformation::Residue const & rsd = pose.residue(ii);

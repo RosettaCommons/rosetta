@@ -73,7 +73,7 @@ TerminiConstraintGenerator::parse_tag( utility::tag::TagCOP , basic::datacache::
 core::Size
 last_protein_residue( core::pose::Pose const & pose )
 {
-	for ( core::Size resid=pose.total_residue(); resid>=1; --resid ) {
+	for ( core::Size resid=pose.size(); resid>=1; --resid ) {
 		if ( pose.residue( resid ).is_protein() ) return resid;
 	}
 	return 0;
@@ -82,7 +82,7 @@ last_protein_residue( core::pose::Pose const & pose )
 core::Size
 first_protein_residue( core::pose::Pose const & pose )
 {
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( pose.residue( resid ).is_protein() ) return resid;
 	}
 	return 0;

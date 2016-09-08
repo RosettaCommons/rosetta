@@ -413,7 +413,7 @@ main( int argc, char * argv [] )
 
 			pack::task::PackerTaskOP repack_native(pack::task::TaskFactory::create_packer_task(pose));
 			repack_native->restrict_to_repacking();
-			for ( Size j =1; j<=pose.total_residue(); j++ ) {
+			for ( Size j =1; j<=pose.size(); j++ ) {
 				//by default use ex1 and ex2
 				repack_native->nonconst_residue_task(j).or_ex1(true);
 				repack_native->nonconst_residue_task(j).or_ex2(true);
@@ -493,13 +493,13 @@ main( int argc, char * argv [] )
 		}
 		//somehow create individual packertasks for each mutation.
 		//residues to store information on which residues to mutate, and which amino acid to mutate to
-		utility::vector1<bool> residues_to_mutate(pose.total_residue(),false);
-		utility::vector1<bool> residues_to_repack(pose.total_residue(),true);
+		utility::vector1<bool> residues_to_mutate(pose.size(),false);
+		utility::vector1<bool> residues_to_repack(pose.size(),true);
 		utility::vector1<bool> aminoacids_to_mutate(20,false);
 
 		//for each new point_mutant_task, create a new packertask object, copy the relevent information over
 		//then create the mutant, score, and spit out.
-		for ( Size i =1; i<=pose.total_residue(); i++ ) {
+		for ( Size i =1; i<=pose.size(); i++ ) {
 
 			if ( storage_task->design_residue(i) ) {
 				for ( ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
@@ -564,7 +564,7 @@ main( int argc, char * argv [] )
 						}//debug
 
 						//restrict to repacking for everything but the mutant
-						for ( Size j=1; j <=temporary_pose.total_residue(); j++ ) {
+						for ( Size j=1; j <=temporary_pose.size(); j++ ) {
 							if ( j!=i ) {
 								point_mutant_packer_task->nonconst_residue_task(j).restrict_to_repacking();
 								//always increase levels of rotamer sampling to ex1 ex2

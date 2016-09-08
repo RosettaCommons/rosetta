@@ -82,7 +82,7 @@ optimize_suite(
 	Real const coordinate_constraint_weight( 1.0 );
 	Real const        dof_constraint_weight( 0.1 );
 
-	assert( pose.total_residue() == 4 );
+	assert( pose.size() == 4 );
 
 	RT const & rt( frag.rt(1) );
 

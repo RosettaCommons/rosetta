@@ -314,7 +314,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 		utility::vector1< Vector > ref_vectors;
 		Size const ref_atom ( 1 );
 
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			ref_vectors.push_back ( pose.xyz ( id::AtomID ( ref_atom, i ) ) );
 		}
 
@@ -322,7 +322,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 			fill_solution ( pose, n );
 			Real deviation2 ( 0.0 );
 
-			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= pose.size(); i++ ) {
 				deviation2 += ( pose.xyz ( id::AtomID ( ref_atom, i ) ) - ref_vectors[i] ).length_squared();
 			}
 

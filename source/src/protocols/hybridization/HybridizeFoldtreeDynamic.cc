@@ -235,9 +235,9 @@ void HybridizeFoldtreeDynamic::initialize(
 	using protocols::loops::Loops;
 	using utility::vector1;
 
-	num_nonvirt_residues_ = pose.total_residue();
-	num_protein_residues_ = pose.total_residue();
-	saved_n_residue_ = pose.total_residue();
+	num_nonvirt_residues_ = pose.size();
+	num_protein_residues_ = pose.size();
+	saved_n_residue_ = pose.size();
 	saved_ft_ = pose.conformation().fold_tree();
 
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -301,7 +301,7 @@ void HybridizeFoldtreeDynamic::initialize(
 		core::pose::addVirtualResAsRoot(pose);
 	}
 
-	virtual_res_ = pose.total_residue();
+	virtual_res_ = pose.size();
 
 	// do the actual foldtree updates
 	update(pose);
@@ -345,8 +345,8 @@ void HybridizeFoldtreeDynamic::get_core_chunk_index_from_position( core::Size co
 
 
 void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
-	if ( pose.total_residue() > saved_n_residue_ ) {
-		pose.conformation().delete_residue_range_slow(saved_n_residue_+1, pose.total_residue());
+	if ( pose.size() > saved_n_residue_ ) {
+		pose.conformation().delete_residue_range_slow(saved_n_residue_+1, pose.size());
 	}
 	pose.conformation().fold_tree( saved_ft_ );
 
@@ -354,7 +354,7 @@ void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 	core::pose::Pose init_pose = pose;
 	bool pose_changed = false;
 	using namespace core::chemical;
-	for ( core::Size ir=1; ir< pose.total_residue() ; ++ir ) {
+	for ( core::Size ir=1; ir< pose.size() ; ++ir ) {
 		if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
 
 			bool is_cut = false;

@@ -163,7 +163,7 @@ main( int argc, char * argv [] )
 	    //create and set up packertask
 	    pack::task::PackerTaskOP task(pack::task::TaskFactory::create_packer_task(pose));
 	    task->restrict_to_repacking();
-	    utility::vector1<bool> residues_to_refine(pose.total_residue(),false);
+	    utility::vector1<bool> residues_to_refine(pose.size(),false);
 
 	    //set up movemap
 	    kinematics::MoveMap movemap;
@@ -178,7 +178,7 @@ main( int argc, char * argv [] )
 					movemap.set_chi(current_residue,true); // if sidechain minimization is wanted, set residue i to sidechain minimize
 	      }
 
-	      for ( Size j=1; j<= pose.total_residue(); ++j ) {
+	      for ( Size j=1; j<= pose.size(); ++j ) {
 					if ( nbr_atom.distance( pose.residue(j).nbr_atom_xyz() ) < optimization_radius ) {
 
 						residues_to_refine[j] = true;
@@ -198,7 +198,7 @@ main( int argc, char * argv [] )
 					int current_residue = resnums_to_refine[j];
 					residues_to_refine[current_residue]=true;
 					Vector const & nbr_atom( pose.residue(current_residue).nbr_atom_xyz() ); //neighbors of current residue
-					for ( Size k=1; k<= pose.total_residue(); ++k ) {
+					for ( Size k=1; k<= pose.size(); ++k ) {
 						if ( nbr_atom.distance( pose.residue(k).nbr_atom_xyz() ) < optimization_radius ) {
 							residues_to_refine[k]=true;
 						}

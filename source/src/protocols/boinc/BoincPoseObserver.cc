@@ -79,9 +79,9 @@ BoincCurrentPoseObserver::on_conf_change(
 	if ( !shmem_ ) return;
 	if ( !Boinc::trywait_semaphore() ) {
 		boinc_begin_critical_section();
-		if ( event.pose->total_residue() > 0 ) {
+		if ( event.pose->size() > 0 ) {
 			core::io::serialization::BUFFER b((char*)( is_ghost_ ? &shmem_->current_pose_ghost_buf : &shmem_->current_pose_buf ),POSE_BUFSIZE);
-			if ( core::pose::symmetry::is_symmetric( *event.pose ) && event.pose->total_residue() > MAX_SYMM_POSE_RESIDUES ) {
+			if ( core::pose::symmetry::is_symmetric( *event.pose ) && event.pose->size() > MAX_SYMM_POSE_RESIDUES ) {
 				core::pose::Pose pose;
 				core::pose::symmetry::extract_asymmetric_unit(*event.pose, pose);
 				write_binary(pose,b);

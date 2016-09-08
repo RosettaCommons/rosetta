@@ -73,9 +73,9 @@ ResidueSubset
 JumpUpstreamSelector::apply( core::pose::Pose const & pose ) const
 {
 	debug_assert( jump_ > 0 );
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 
-	ObjexxFCL::FArray1D_bool upstream( pose.total_residue() );
+	ObjexxFCL::FArray1D_bool upstream( pose.size() );
 	pose.fold_tree().partition_by_jump( jump_, upstream );
 
 	for ( core::Size ii = 1; ii < upstream.size(); ++ii ) {

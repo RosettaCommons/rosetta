@@ -180,7 +180,7 @@ main( int argc, char * argv [] )
 		 core::import_pose::pose_from_file(pose, it->id() + ".pdb.super.pdb" , core::import_pose::PDB_file);
 
 		 structures.push_back( pose );
-		 std::cout << "Adding " <<  it->id() << "  " << structures.size() << " Size" << pose.total_residue() << std::endl;
+		 std::cout << "Adding " <<  it->id() << "  " << structures.size() << " Size" << pose.size() << std::endl;
 	}
 
 

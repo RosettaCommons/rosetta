@@ -206,9 +206,9 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 	all_bur_unsat_polars_ = 0;
 	special_region_bur_unsat_polars_ = 0;
 
-	if ( this_pose.total_residue() != residue_bur_unsat_polars_.size() ) {
-		residue_bur_unsat_polars_.resize( this_pose.total_residue() );
-		atom_bur_unsat_.resize( this_pose.total_residue() );
+	if ( this_pose.size() != residue_bur_unsat_polars_.size() ) {
+		residue_bur_unsat_polars_.resize( this_pose.size() );
+		atom_bur_unsat_.resize( this_pose.size() );
 	}
 
 	basic::MetricValue< id::AtomID_Map< Real > > atom_sasa;
@@ -218,7 +218,7 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 	this_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds );
 	this_pose.metric( name_of_sasa_calc_, "atom_sasa", atom_sasa);
 
-	for ( Size i = 1; i <= this_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= this_pose.size(); ++i ) {
 
 		residue_bur_unsat_polars_[i] = 0;
 

@@ -103,7 +103,7 @@ NonSequentialNeighborsFilter::compute(
 		TR.Debug<<"Unbound complex"<<std::endl;
 	}
 	if ( resnum() == 0 ) { // working on entire protein
-		for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+		for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 			core::Size const count_neighbors( residue_neighbors( copy_pose, resi ) );
 			TR.Debug<<"neighbors of residue "<<resi<<": "<<count_neighbors<<std::endl;
 		}// for resi

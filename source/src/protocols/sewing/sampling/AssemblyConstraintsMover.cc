@@ -170,8 +170,8 @@ ReadRepeatNativeRotamersFile::apply(
 
 	//Setup rotamer links
 	core::pack::rotamer_set::RotamerLinksOP links ( new core::pack::rotamer_set::RotamerLinks );
-	links->resize(pose.total_residue());
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	links->resize(pose.size());
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		core::Size repeat_num = 1;
 		int equiv_position = i-(int)(repeat_num*repeat_size);
 		while ( equiv_position > 0 ) {
@@ -183,7 +183,7 @@ ReadRepeatNativeRotamersFile::apply(
 
 		repeat_num = 0;
 		equiv_position = i+(repeat_num*repeat_size);
-		while ( equiv_position <= (int)pose.total_residue() ) {
+		while ( equiv_position <= (int)pose.size() ) {
 			TR << "Setting " << i << " equivalent to " << equiv_position << std::endl;
 			links->set_equiv(i, equiv_position);
 			++repeat_num;
@@ -309,7 +309,7 @@ AssemblyConstraintsMover::apply( core::pose::Pose & pose ) {
 	for ( ; map_it != map_it_end; ++map_it ) {
 
 		core::Size seqpos = map_it->first;
-		if ( seqpos > pose.total_residue() ) {
+		if ( seqpos > pose.size() ) {
 			break;
 		}
 		utility::vector1<std::pair<bool, core::conformation::ResidueOP> > residues = map_it->second;
@@ -353,9 +353,9 @@ AssemblyConstraintsMover::apply_repeat(
 	std::string first10 = pose.sequence().substr(0, 9);
 	TR << "First10: " << first10 << std::endl;
 	core::Size repeat_size = pose.sequence().find(first10, 10);
-	if ( pose.total_residue() % repeat_size != 0 ) {
+	if ( pose.size() % repeat_size != 0 ) {
 		TR.Warning << "Pose does not contain an exact number of repeats! Repeat size: "
-			<< repeat_size << ". Pose size: " << pose.total_residue() << std::endl;
+			<< repeat_size << ". Pose size: " << pose.size() << std::endl;
 	}
 	TR << "Applying NCS Constraints to a repeating unit of size " << repeat_size << std::endl;
 
@@ -378,8 +378,8 @@ AssemblyConstraintsMover::apply_repeat(
 		core::Size target_end = repeat_size*(repeat_num+1)-1;
 
 		//If this is the last repeat, we don't have a connecting loop
-		if ( target_end > pose.total_residue() ) {
-			core::Size difference = target_end - pose.total_residue();
+		if ( target_end > pose.size() ) {
+			core::Size difference = target_end - pose.size();
 			target_end = target_end - difference;
 			source_end = source_end - difference;
 			std::stringstream source_temp;

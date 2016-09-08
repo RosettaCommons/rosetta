@@ -734,7 +734,7 @@ void FitBfactorsMover::parse_my_tag(
 }
 
 void FitBfactorsMover::randomize_bs( core::pose::Pose & pose ) {
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( pose.residue(resid).aa() == core::chemical::aa_vrt ) continue;
 		core::conformation::Residue const &rsd_i = pose.residue(resid);
 		for ( core::Size atmid=1; atmid<=rsd_i.natoms(); ++atmid ) {
@@ -793,18 +793,18 @@ void get_corresponding_CAs(
 	core::id::SequenceMapping mapping( aln.sequence_mapping(1,2) );
 
 	core::Size natoms = 0;
-	for ( core::Size ii = 1; ii <= model.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= model.size(); ++ii ) {
 		Size const native_ii( mapping[ii] );
-		if ( native_ii != 0 && native_ii <= native.total_residue() && model.residue(ii).is_protein() ) {
+		if ( native_ii != 0 && native_ii <= native.size() && model.residue(ii).is_protein() ) {
 			natoms++;
 		}
 	}
 	p1a.dimension(3,natoms); p2a.dimension(3,natoms);
 
 	Size n_gap(0);
-	for ( core::Size ii = 1; ii <= model.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= model.size(); ++ii ) {
 		Size const native_ii(mapping[ii]);
-		if ( native_ii != 0 && native_ii <= native.total_residue() && model.residue(ii).is_protein() ) {
+		if ( native_ii != 0 && native_ii <= native.size() && model.residue(ii).is_protein() ) {
 			numeric::xyzVector< core::Real > model_xyz ( model.residue(ii).xyz("CA") );
 			numeric::xyzVector< core::Real > native_xyz( native.residue(native_ii).xyz("CA") );
 			for ( core::Size jj = 1; jj <= 3; ++jj ) {

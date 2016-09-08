@@ -79,7 +79,7 @@ main( int argc, char * argv [] )
 	);
 
 	// make extended chain
-	for ( core::Size pos = 1; pos <= extended_pose.total_residue(); pos++ ) {
+	for ( core::Size pos = 1; pos <= extended_pose.size(); pos++ ) {
 		extended_pose.set_phi( pos, -45 );
 		extended_pose.set_psi( pos, -45 );
 		extended_pose.set_omega( pos, 180 );

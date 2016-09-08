@@ -57,14 +57,14 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_interface_recompute_scor
 utility::vector1 <bool> interface;
 
 void define_interface( core::pose::Pose const & pose ) {
-	interface.resize( pose.total_residue(), false );
+	interface.resize( pose.size(), false );
 	core::Real interface_dist = 8.0;
 	core::Size rb_jump = 1;
 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	pack::task::TaskFactory tf;
 	tf.push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump, interface_dist ) );
 	pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
-	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		if ( task->pack_residue(i) ) interface.at(i)=true;
 	}
 }
@@ -120,8 +120,8 @@ main( int argc, char * argv [] )
 
 	define_interface( ref_pose );
 
-	FArray1D_bool superpos_partner ( ref_pose.total_residue(), false );
-	for ( Size i=1; i<= ref_pose.total_residue(); ++i ) {
+	FArray1D_bool superpos_partner ( ref_pose.size(), false );
+	for ( Size i=1; i<= ref_pose.size(); ++i ) {
 		if ( ref_pose.pdb_info()->chain(i) == 'R' ) superpos_partner(i)=true;
 	}
 

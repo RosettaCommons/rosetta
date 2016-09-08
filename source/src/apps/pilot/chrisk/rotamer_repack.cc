@@ -149,7 +149,7 @@ set_pose_occ_and_bfac(
 	Pose const native_pose
 )
 {
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
 		Residue rsd( pose.residue( seqpos ) );
 		for( Size ii = 1; ii <= rsd.natoms(); ++ii ){
@@ -769,7 +769,7 @@ minimize_all_sidechains(
 
 	( *scorefxn )( pose );
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
-	for( Size i = 1; i <= pose.total_residue(); ++i ){
+	for( Size i = 1; i <= pose.size(); ++i ){
 		if( pose.residue( i ).is_protein() ) mm->set_chi( i, true );
 		//min dna?
 		else if( min_dna && pose.residue( i ).is_DNA() ){
@@ -819,7 +819,7 @@ single_res_task(
 	packer_task->initialize_from_command_line();
 	if( !no_incl_curr ) packer_task->or_include_current( true );
 	if( !design ) packer_task->restrict_to_repacking();
-	vector1< bool > repack_this( pose.total_residue(), false );
+	vector1< bool > repack_this( pose.size(), false );
 	repack_this[ seqpos ]  = true;
 	packer_task->restrict_to_residues( repack_this );
 	return packer_task;
@@ -990,7 +990,7 @@ RotamerAnalysis()
 	else task_factory->push_back( new core::pack::task::operation::RestrictToRepacking() );
 	core::pack::task::PackerTaskOP packer_task( task_factory->create_task_and_apply_taskoperations( pose ) );
 	//each residue
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !pose.residue( seqpos ).is_protein() ) continue;
 		if( packer_task->being_packed( seqpos ) ){
 			pose = start_pose;

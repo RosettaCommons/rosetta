@@ -99,7 +99,7 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 		TR<<"(I'm leaving all other residues as they are, not changing their packing status): ";
 	}
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).chain() != chain() && modify_unselected_residues() ) {
 			prevent_repacking_residues.push_back( i );
 			continue;

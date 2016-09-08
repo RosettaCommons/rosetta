@@ -75,11 +75,11 @@ utility::vector1< int > calculate_burial(
 	core::Real const dist_cutoff
 ) {
 	utility::vector1< int > burial;
-	burial.resize( mypose.total_residue(), 0 );
+	burial.resize( mypose.size(), 0 );
 
 	using core::Size;
-	for ( Size i = 1; i <= mypose.total_residue(); ++i ) {
-		for ( Size j = i + 1; j <= mypose.total_residue(); ++j ) {
+	for ( Size i = 1; i <= mypose.size(); ++i ) {
+		for ( Size j = i + 1; j <= mypose.size(); ++j ) {
 			core::conformation::Residue const & resi = mypose.residue(i);
 			core::conformation::Residue const & resj = mypose.residue(j);
 
@@ -99,8 +99,8 @@ utility::vector1< char > get_ss( core::pose::Pose & pose ) {
 	using core::Size;
 	protocols::jumping::assign_ss_dssp( pose );
 
-	utility::vector1< char > ss( pose.total_residue(), 'L' );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	utility::vector1< char > ss( pose.size(), 'L' );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		ss[ii] = pose.secstruct(ii);
 	}
 
@@ -153,7 +153,7 @@ int main( int argc, char* argv [] ) {
 			vector1< int >  burial10( calculate_burial(pose,10) );
 			vector1< char > pose_ss( get_ss( pose ) );
 
-			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				core::conformation::Residue resi = pose.residue(i);
 				core::Real phi   = resi.mainchain_torsion(1);
 				core::Real psi   = resi.mainchain_torsion(2);
@@ -174,7 +174,7 @@ int main( int argc, char* argv [] ) {
 					<< I( 10, burial10[i]  )
 					<< A( pose_tag_width, pose_tag )
 					<< std::endl;
-			} // for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
+			} // for ( unsigned int i = 1; i <= mypose->size(); ++i )
 		} // while input.has_another_pose()
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

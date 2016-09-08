@@ -116,7 +116,7 @@ core::Size AARepeatEnergy::version() const
 void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
 {
 	//Number of residues:
-	core::Size const nres( pose.n_residue() );
+	core::Size const nres( pose.size() );
 
 	//Vector of residue owning pointers:
 	utility::vector1< core::conformation::ResidueCOP > resvector;

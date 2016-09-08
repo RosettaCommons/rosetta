@@ -192,16 +192,16 @@ FragQualCalculator::recompute( Pose const & pose )
 
 	// initialization
 	if ( begin_ == 0 ) begin_ = 1;
-	if ( end_ == 0 ) end_ = pose.total_residue();
+	if ( end_ == 0 ) end_ = pose.size();
 	total_goodfrags_ = 0;
 	coverage_ = 0;
 
-	goodfrags_.resize( pose.total_residue() );
-	for ( Size i=1; i<=pose.total_residue(); i++ ) {
+	goodfrags_.resize( pose.size() );
+	for ( Size i=1; i<=pose.size(); i++ ) {
 		goodfrags_[ i ] = 0;
 	}
-	utility::vector1< bool > frag_region( pose.total_residue(), false );
-	utility::vector1< bool > is_covered( pose.total_residue(), false );
+	utility::vector1< bool > frag_region( pose.size(), false );
+	utility::vector1< bool > is_covered( pose.size(), false );
 
 	Pose input_pose( pose ), test_pose( pose );
 	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
@@ -210,7 +210,7 @@ FragQualCalculator::recompute( Pose const & pose )
 	for ( ConstFrameIterator frame = frag_->begin(); frame != frag_->end(); ++frame ) {
 
 		Size const start ( frame->start() );
-		runtime_assert( start <= pose.total_residue() );
+		runtime_assert( start <= pose.size() );
 
 		if ( begin_ > start || end_ < start ) continue;
 		frag_region[ start ] = true;
@@ -235,7 +235,7 @@ FragQualCalculator::recompute( Pose const & pose )
 
 	// calc coverage
 	Size count( 0 );
-	for ( Size i=1; i<=pose.total_residue(); i++ ) {
+	for ( Size i=1; i<=pose.size(); i++ ) {
 
 		if ( frag_region[ i ] ) {
 			count ++;
@@ -264,7 +264,7 @@ FragQualCalculator::parse_my_tag(
 	ratio_cutoff_goodfrag_ = tag->getOption<Real>( "ratio_cutoff", 0.3 );
 
 	begin_ = tag->getOption<Size>( "begin", 1 );
-	end_ = tag->getOption<Size>( "end", pose.total_residue() );
+	end_ = tag->getOption<Size>( "end", pose.size() );
 
 	String const fset_string ( tag->getOption<String>( "frag", "" ) );
 	runtime_assert( ! fset_string.empty() );

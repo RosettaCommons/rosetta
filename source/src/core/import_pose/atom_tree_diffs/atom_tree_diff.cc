@@ -252,7 +252,7 @@ void dump_reference_pose(
 
 	// Some variants introduce extra DOFs but do not change the three-letter name.
 	// Useless MUTATE entries will be ignored when reading in.
-	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
+	for ( Size rsd = 1, rsd_end = pose.size(); rsd <= rsd_end; ++rsd ) {
 		out << "MUTATE " << rsd << " " << pose.residue_type(rsd).name() << "\n";
 	}
 
@@ -306,7 +306,7 @@ void dump_atom_tree_diff(
 	// Also diff sequence, by transforming copy of ref_pose
 	// to match seq. of pose, then computing atom_tree diffs.
 	core::pose::Pose ref_pose(ref_pose_in);
-	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
+	for ( Size rsd = 1, rsd_end = pose.size(); rsd <= rsd_end; ++rsd ) {
 		if ( pose.residue_type(rsd).name() == ref_pose.residue_type(rsd).name() ) continue;
 		using namespace core::conformation;
 		ResidueOP newres = ResidueFactory::create_residue(pose.residue_type(rsd), ref_pose.residue(rsd), ref_pose.conformation());
@@ -326,7 +326,7 @@ void dump_atom_tree_diff(
 	out.setf( std::ios_base::fixed );
 
 	// DOFs for bonded atoms
-	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
+	for ( Size rsd = 1, rsd_end = pose.size(); rsd <= rsd_end; ++rsd ) {
 		bool const is_jump_residue = foldtree.is_jump_point(rsd);
 		for ( Size atom = 1, atom_end = pose.residue(rsd).natoms(); atom <= atom_end; ++atom ) {
 			AtomID aid(atom, rsd);
@@ -506,7 +506,7 @@ bool pose_from_atom_tree_diff(
 				resname = chemical::fixup_patches( resname );
 				if ( is.fail() ) {
 					TR << "error reading sequence mutation data" << std::endl;
-				} else if ( resnum < 1 || resnum > pose.total_residue() ) {
+				} else if ( resnum < 1 || resnum > pose.size() ) {
 					TR << "d'oh, pose doesn't have a residue " << resnum << std::endl;
 				} else if ( !pose.residue(resnum).residue_type_set()->has_name(resname) ) {
 					TR << "unrecognized residue type name '" << resname << "'" << std::endl;
@@ -528,7 +528,7 @@ bool pose_from_atom_tree_diff(
 				is.clear();
 				is.seekg(0, std::ios::beg);
 				is >> foldtree;
-				if ( !is.fail() && Size(foldtree.nres()) == pose.total_residue() ) {
+				if ( !is.fail() && Size(foldtree.nres()) == pose.size() ) {
 					pose.fold_tree(foldtree);
 				} else {
 					TR << "danger danger, error reading fold tree" << std::endl;
@@ -562,7 +562,7 @@ bool pose_from_atom_tree_diff(
 				core::import_pose::build_pose( sfr.clone(), pose, *(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) ) );
 			}
 		} else { // it's an atom line...
-			if ( rsd_no < 1 || rsd_no > pose.total_residue() ) {
+			if ( rsd_no < 1 || rsd_no > pose.size() ) {
 				TR << "uh-oh, pose doesn't have a residue " << rsd_no << std::endl;
 			} else if ( atom_no < 1 || atom_no > pose.residue_type(rsd_no).natoms() ) {
 				TR << "uh-oh, residue " << rsd_no << " doesn't have an atom " << atom_no << std::endl;
@@ -661,7 +661,7 @@ void rms_error_with_noise(
 	core::kinematics::AtomTree const & atom_tree = pose.atom_tree();
 	core::kinematics::FoldTree const & foldtree = pose.fold_tree();
 
-	for ( Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd ) {
+	for ( Size rsd = 1, rsd_end = pose.size(); rsd <= rsd_end; ++rsd ) {
 		bool const is_jump_residue = foldtree.is_jump_point(rsd);
 		for ( Size atom = 1, atom_end = pose.residue(rsd).natoms(); atom <= atom_end; ++atom ) {
 			AtomID aid(atom, rsd);

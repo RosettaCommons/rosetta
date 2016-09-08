@@ -95,7 +95,7 @@ std::string RepeatPropagationMoverCreator::mover_name(){
 RepeatPropagationMover::RepeatPropagationMover():moves::Mover("RepeatPropagation"){}
 
 void RepeatPropagationMover::apply(core::pose::Pose & pose) {
-	if ( pose.total_residue()== last_res_ ) {
+	if ( pose.size()== last_res_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("can not handle situation where last_res is being repeated (yet...)");
 	}
 	if ( repeat_without_replacing_pose_ ) {
@@ -121,7 +121,7 @@ void RepeatPropagationMover::add_caps(core::pose::Pose & pose, core::pose::Pose 
 	if ( cTerm_cap_size_>0 ) {
 		core::pose::Pose cCap_pose;
 		vector1<Size> cTerm_pose_positions;
-		for ( Size res=pose.total_residue()-cTerm_cap_size_-repeat_size; res<=pose.total_residue(); ++res ) {
+		for ( Size res=pose.size()-cTerm_cap_size_-repeat_size; res<=pose.size(); ++res ) {
 			cTerm_pose_positions.push_back(res);
 		}
 		core::kinematics::FoldTree mod_ft(cTerm_pose_positions.size());
@@ -155,8 +155,8 @@ void RepeatPropagationMover::duplicate_residues_by_type( core::pose::Pose & pose
 	if ( first_res_ == 1 ) {
 		remove_lower_terminus_type_from_pose_residue(pose, 1);
 	}
-	if ( last_res_ == pose.total_residue() ) {
-		remove_upper_terminus_type_from_pose_residue(pose,pose.total_residue());
+	if ( last_res_ == pose.size() ) {
+		remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 	}
 	Size tmp_numb_repeats = numb_repeats_;
 	for ( Size rep=1; rep<=tmp_numb_repeats; ++rep ) {
@@ -168,12 +168,12 @@ void RepeatPropagationMover::duplicate_residues_by_type( core::pose::Pose & pose
 	if ( first_res_==1 ) {
 		add_lower_terminus_type_to_pose_residue(pose,1);
 	}
-	if ( last_res_ == pose.total_residue() ) {
-		add_upper_terminus_type_to_pose_residue(pose,pose.total_residue());
+	if ( last_res_ == pose.size() ) {
+		add_upper_terminus_type_to_pose_residue(pose,pose.size());
 	}
 	//teminal residues
 	add_lower_terminus_type_to_pose_residue(repeat_pose,1);
-	add_upper_terminus_type_to_pose_residue(repeat_pose,repeat_pose.total_residue());
+	add_upper_terminus_type_to_pose_residue(repeat_pose,repeat_pose.size());
 }
 
 void RepeatPropagationMover::copy_phi_psi_omega(core::pose::Pose & pose, core::pose::Pose & repeat_pose){
@@ -211,8 +211,8 @@ void RepeatPropagationMover::determine_overlap(Pose const pose, Pose & parent_po
 	if ( overlap_location_pose== "c_term" ) {
 		Size initial_start_res_parent=1;
 		Size end_res_parent=overlap_max_length;
-		Size initial_start_res_pose=pose.total_residue()-overlap_max_length+1;
-		Size end_res_pose=pose.total_residue();
+		Size initial_start_res_pose=pose.size()-overlap_max_length+1;
+		Size end_res_pose=pose.size();
 		Real best_rmsd = 9999;
 		for ( Size ii=0; ii<overlap_range; ++ii ) {
 			utility::vector1<Size> parent_posepositions;
@@ -240,8 +240,8 @@ void RepeatPropagationMover::determine_overlap(Pose const pose, Pose & parent_po
 		}
 	}
 	if ( overlap_location_pose== "n_term" ) {
-		Size start_res_parent=parent_pose.total_residue()-overlap_max_length+1;
-		Size initial_end_res_parent=parent_pose.total_residue();
+		Size start_res_parent=parent_pose.size()-overlap_max_length+1;
+		Size initial_end_res_parent=parent_pose.size();
 		Size start_res_pose=1;
 		Size initial_end_res_pose=overlap_max_length;
 		Real best_rmsd = 9999;
@@ -288,7 +288,7 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 	utility::vector1<Size> pose_positions;
 	utility::vector1<Size> parent_posepositions;
 	if ( overlap_location_pose== "n_term" ) {
-		for ( Size ii=end_overlap_pose+1; ii<=pose.total_residue(); ++ii ) {
+		for ( Size ii=end_overlap_pose+1; ii<=pose.size(); ++ii ) {
 			pose_positions.push_back(ii);
 		}
 		for ( Size ii=1; ii<=end_overlap_parent; ++ii ) {
@@ -299,7 +299,7 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 		for ( Size ii=1; ii<start_overlap_pose; ++ii ) {
 			pose_positions.push_back(ii);
 		}
-		for ( Size ii=start_overlap_parent; ii<=parent_pose.total_residue(); ++ii ) {
+		for ( Size ii=start_overlap_parent; ii<=parent_pose.size(); ++ii ) {
 			parent_posepositions.push_back(ii);
 		}
 	}
@@ -309,13 +309,13 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 	pdbslice(ref_pose_slice,pose,pose_positions);
 	pdbslice(parent_poseslice,parent_pose,parent_posepositions);
 	if ( overlap_location_pose== "n_term" ) {
-		remove_upper_terminus_type_from_pose_residue(parent_poseslice,parent_poseslice.total_residue());
+		remove_upper_terminus_type_from_pose_residue(parent_poseslice,parent_poseslice.size());
 		remove_lower_terminus_type_from_pose_residue(ref_pose_slice,1);
 		append_pose_to_pose(parent_poseslice,ref_pose_slice,false);
 		pose = parent_poseslice;
 	}
 	if ( overlap_location_pose== "c_term" ) {
-		remove_upper_terminus_type_from_pose_residue(ref_pose_slice,ref_pose_slice.total_residue());
+		remove_upper_terminus_type_from_pose_residue(ref_pose_slice,ref_pose_slice.size());
 		remove_lower_terminus_type_from_pose_residue(parent_poseslice,1);
 		append_pose_to_pose(ref_pose_slice,parent_poseslice,false);
 		pose = ref_pose_slice;

@@ -51,7 +51,7 @@ ReduceFragLengthMoverCreator::create_mover() const {
 ReduceFragLengthMover::ReduceFragLengthMover():moves::Mover("ReduceFragLengthMover"){}
 
 void ReduceFragLengthMover::apply(core::pose::Pose & pose) {
-	TR << pose.total_residue() << std::endl;
+	TR << pose.size() << std::endl;
 }
 
 std::string ReduceFragLengthMover::get_name() const {

@@ -58,13 +58,13 @@ public:
 		core::import_pose::pose_from_file(scaffold_pose, "protocols/antibody/2j88.pdb", core::import_pose::PDB_file);
 		core::import_pose::pose_from_file(piece, "protocols/grafting/2aabL_L1.pdb", core::import_pose::PDB_file);
 
-		starting_residues = scaffold_pose.total_residue();
+		starting_residues = scaffold_pose.size();
 		nter_overhang=3;
 		cter_overhang=3;
 		flex=2;
 		start = scaffold_pose.pdb_info()->pdb2pose('L', 24) - 1;
 		end = scaffold_pose.pdb_info()->pdb2pose('L', 42) + 1;
-		insert_size = piece.total_residue()-nter_overhang-cter_overhang;
+		insert_size = piece.size()-nter_overhang-cter_overhang;
 		L1_2j88_size = 11;
 
 		TR <<"Setup"<<std::endl;
@@ -80,47 +80,47 @@ public:
 		using namespace protocols::grafting::simple_movers;
 		TR<<"Return region"<<std::endl;
 		core::pose::Pose new_region = protocols::grafting::return_region(scaffold_pose, scaffold_pose.pdb_info()->pdb2pose('L', 24), scaffold_pose.pdb_info()->pdb2pose('L', 42));
-		TS_ASSERT_EQUALS(L1_2j88_size, new_region.total_residue());
+		TS_ASSERT_EQUALS(L1_2j88_size, new_region.size());
 
 		TR<<"Replace Region"<<std::endl;
 		TR << new_region << std::endl;
-		core::pose::Pose replaced_pose = protocols::grafting::replace_region(new_region, scaffold_pose, 1, 24, new_region.total_residue(), true);
-		TS_ASSERT_EQUALS(starting_residues, replaced_pose.total_residue());
+		core::pose::Pose replaced_pose = protocols::grafting::replace_region(new_region, scaffold_pose, 1, 24, new_region.size(), true);
+		TS_ASSERT_EQUALS(starting_residues, replaced_pose.size());
 
 		TR <<"Replace Region Mover" << std::endl;
 		TR << new_region << std::endl;
 		core::pose::Pose scaffold_copy = core::pose::Pose(scaffold_pose);
-		ReplaceRegionMover replacer = ReplaceRegionMover(new_region, 1, 24, new_region.total_residue());
+		ReplaceRegionMover replacer = ReplaceRegionMover(new_region, 1, 24, new_region.size());
 		replacer.apply(scaffold_copy);
-		TS_ASSERT_EQUALS(starting_residues, scaffold_pose.total_residue());
+		TS_ASSERT_EQUALS(starting_residues, scaffold_pose.size());
 
 		TR<<"Delete Region"<<std::endl;
 		scaffold_copy = core::pose::Pose(scaffold_pose);
 		protocols::grafting::delete_region(scaffold_copy, start+1, end-1);
-		core::Size deleted_residues  = starting_residues-scaffold_copy.total_residue();
+		core::Size deleted_residues  = starting_residues-scaffold_copy.size();
 		TS_ASSERT_EQUALS(deleted_residues, L1_2j88_size);
 
 		TR<<"Insert Region"<<std::endl;
 		core::pose::Pose new_pose = protocols::grafting::insert_pose_into_pose(scaffold_copy, new_region, start, start+1, true);
-		TS_ASSERT_EQUALS(new_pose.total_residue(), starting_residues);
+		TS_ASSERT_EQUALS(new_pose.size(), starting_residues);
 
 		TR<<"Delete Region Mover" << std::endl;
 		scaffold_copy = core::pose::Pose(scaffold_pose);
 		DeleteRegionMover deleter = DeleteRegionMover(start+1, end-1);
 		deleter.apply(scaffold_copy);
-		deleted_residues  = starting_residues-scaffold_copy.total_residue();
+		deleted_residues  = starting_residues-scaffold_copy.size();
 		TS_ASSERT_EQUALS(deleted_residues, L1_2j88_size);
 
 		TR<<"Insert Region Mover" << std::endl;
 		InsertPoseIntoPoseMover inserter = InsertPoseIntoPoseMover(new_region, start, start+1);
 		inserter.apply(scaffold_copy);
-		TS_ASSERT_EQUALS(new_pose.total_residue(), starting_residues);
+		TS_ASSERT_EQUALS(new_pose.size(), starting_residues);
 
 		TR << "Keep Region Mover" << std::endl;
 		scaffold_copy = core::pose::Pose(scaffold_pose);
 		KeepRegionMover keeper = KeepRegionMover(start+1, end-1);
 		keeper.apply(scaffold_copy);
-		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), L1_2j88_size);
+		TS_ASSERT_EQUALS(scaffold_copy.size(), L1_2j88_size);
 
 		TR << "Combine MoveMaps" << std::endl;
 
@@ -134,11 +134,11 @@ public:
 
 		insert_mm->set_bb(nter_overhang+1, true);
 		insert_mm->set_bb(nter_overhang+2, true);
-		insert_mm->set_bb(piece.total_residue()-cter_overhang, true);
-		insert_mm->set_bb(piece.total_residue()-cter_overhang - 1, true);
+		insert_mm->set_bb(piece.size()-cter_overhang, true);
+		insert_mm->set_bb(piece.size()-cter_overhang - 1, true);
 
 		MoveMapOP combined_mm = protocols::grafting::combine_movemaps_post_insertion(
-			scaffold_mm, insert_mm, start, end, piece.total_residue() - nter_overhang - cter_overhang, cter_overhang);
+			scaffold_mm, insert_mm, start, end, piece.size() - nter_overhang - cter_overhang, cter_overhang);
 
 		for ( core::Size i = 1; i <= 21; ++i ) {
 			TS_ASSERT(combined_mm->get_bb(i) == false);
@@ -184,7 +184,7 @@ public:
 		cdr_grafter->set_cycles(5);
 		cdr_grafter->apply(scaffold_copy);
 
-		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), starting_residues - L1_2j88_size + insert_size);
+		TS_ASSERT_EQUALS(scaffold_copy.size(), starting_residues - L1_2j88_size + insert_size);
 		TS_ASSERT_EQUALS(cdr_grafter->start(), start);
 		TS_ASSERT_EQUALS(cdr_grafter->original_end(), end);
 		TS_ASSERT_EQUALS(cdr_grafter->end(), 39);
@@ -205,7 +205,7 @@ public:
 		anchored_grafter->copy_pdbinfo(true);
 		anchored_grafter->apply(scaffold_copy);
 
-		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), starting_residues - L1_2j88_size + insert_size);
+		TS_ASSERT_EQUALS(scaffold_copy.size(), starting_residues - L1_2j88_size + insert_size);
 		TS_ASSERT_EQUALS(anchored_grafter->start(), start);
 		TS_ASSERT_EQUALS(anchored_grafter->original_end(), end);
 		TS_ASSERT_EQUALS(anchored_grafter->end(), 39); //Same length

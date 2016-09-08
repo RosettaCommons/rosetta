@@ -101,7 +101,7 @@ MSA_design(
 		utility::file::FileName filename( option[ OptionKeys::in::file::pssm ]().front() );
 		profile->read_from_checkpoint( filename );
 
-		for ( Size seqpos(1), end( pose->total_residue() ); seqpos <= end; ++seqpos ) {
+		for ( Size seqpos(1), end( pose->size() ); seqpos <= end; ++seqpos ) {
 			// add individual profile constraint for each residue position
 			// because of the underlying constraint implementation, this enures that the constraint is a context-independent 1-body energy, or (intra)residue constraint
 			pose->add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( *pose, seqpos, profile ) ) ) );

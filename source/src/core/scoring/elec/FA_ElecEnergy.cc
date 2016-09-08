@@ -313,8 +313,8 @@ FA_ElecEnergy::setup_for_packing(
 	set_nres_mono(pose);
 
 	TrieCollectionOP tries( new TrieCollection );
-	tries->total_residue( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	tries->total_residue( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		// Do not compute energy for virtual residues.
 		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 
@@ -1125,14 +1125,14 @@ FA_ElecEnergy::finalize_total_energy(
 
 	nblist.check_domain_map( pose.energies().domain_map() );
 	utility::vector1< conformation::Residue const * > resvect;
-	resvect.reserve( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	resvect.reserve( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		resvect.push_back( & pose.residue( ii ) );
 	}
 
 	Real bb_sc_scores[ 3 ] = {0.0, 0.0, 0.0};
 	Real total_score( 0.0 );
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & ires( *resvect[i] );
 		for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
 			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
@@ -1602,7 +1602,7 @@ void
 FA_ElecEnergy::set_nres_mono(
 	core::pose::Pose const & pose
 ) const {
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).is_upper_terminus() ) {
 			nres_monomer_ = i;
 			//std::cerr << "nres_monomer_ " << i << std::endl;

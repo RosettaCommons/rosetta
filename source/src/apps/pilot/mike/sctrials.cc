@@ -114,7 +114,7 @@ ScTrials::apply( Pose & pose ) {
 //	RotamerLibraryScratchSpaceOP = new core::pack::dunbrack::RotamerLibraryScratchSpace();
 
 	TR << protocols::jd2::JobDistributor::get_instance()->current_output_name();
-	for( core::Size ir=1; ir <= pose.total_residue(); ++ ir ){
+	for( core::Size ir=1; ir <= pose.size(); ++ ir ){
 		EnergyMap emap = pose.energies().onebody_energies(ir);
 
 		core::pack::dunbrack::RotamerLibrary const & rotamer_library_ = * core::pack::dunbrack::RotamerLibrary::get_instance();

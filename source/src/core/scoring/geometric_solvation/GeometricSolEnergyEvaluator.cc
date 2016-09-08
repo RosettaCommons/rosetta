@@ -1309,7 +1309,7 @@ GeometricSolEnergyEvaluator::precalculate_bb_bb_energy_for_design(
 	pose::Pose const & pose
 ) const {
 	Real precalculated_bb_bb_energy( 0.0 );
-	Size const total_residue = pose.total_residue();
+	Size const total_residue = pose.size();
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 

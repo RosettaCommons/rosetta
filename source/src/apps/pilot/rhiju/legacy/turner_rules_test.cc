@@ -253,7 +253,7 @@ apply_ideal_A_form_torsions( pose::Pose & pose ){
 	base_sugar_rotamer->get_next_rotamer();
 	base_sugar_rotamer->get_next_rotamer();
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ){
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -1367,7 +1367,7 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ){
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -2266,7 +2266,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ){
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -2913,7 +2913,7 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ){
 		pose.set_torsion( TorsionID( i, id::BB, DELTA ), base_sugar_rotamer->delta() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu2() );
 		pose.set_torsion( TorsionID( i, id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), base_sugar_rotamer->nu1() );
@@ -3020,7 +3020,7 @@ dinucleotide_test(){
 
 	// initialize for o2prime rotamer trials. Probably should stuff this into an initialization function.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 		o2prime_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		o2prime_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
 		o2prime_pack_task->nonconst_residue_task(i).or_include_current( true );

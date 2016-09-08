@@ -80,7 +80,7 @@ static THREAD_LOCAL basic::Tracer tr( "evalFullLength" );
 
 Size ala_ct(const core::pose::Pose& pose){
   Size score = 0;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if(pose.residue(ii).name3() == "ALA")
             score++;
 	}
@@ -90,7 +90,7 @@ Size ala_ct(const core::pose::Pose& pose){
 
 Size glu_ct(const core::pose::Pose& pose){
   Size score = 0;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if(pose.residue(ii).name3() == "GLU")
             score++;
 	}
@@ -100,7 +100,7 @@ Size glu_ct(const core::pose::Pose& pose){
 
 Size tyr_ct(const core::pose::Pose& pose){
   Size score = 0;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if(pose.residue(ii).name3() == "TYR")
             score++;
 	}

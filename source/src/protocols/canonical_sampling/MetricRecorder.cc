@@ -157,7 +157,7 @@ MetricRecorder::parse_my_tag(
 			add_torsion(pose, rsd, type, torsion, name);
 
 		} else if ( subtag->getName() == "AllChi" ) {
-			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				for ( Size j = 1; j <= pose.residue_type(i).nchi(); ++j ) {
 					std::ostringstream name_stream;
 					name_stream << pose.residue_type(i).name3() << "_" << i << "_Chi" << j ;
@@ -168,7 +168,7 @@ MetricRecorder::parse_my_tag(
 			}
 
 		} else if ( subtag->getName() == "AllBB" ) {
-			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				std::ostringstream res_id_str;
 				res_id_str << i;
 				add_torsion(pose, res_id_str.str(), "BB", 1, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_phi");

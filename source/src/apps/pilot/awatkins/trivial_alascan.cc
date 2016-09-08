@@ -175,7 +175,7 @@ TrivialAlascanMover::apply(
 	TR << "Wildtype scores " << wt_score << std::endl;
 
 	// Don't even bother to calculate the interface yet
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 
 		Pose pose_copy( pose );
 		mutate_residue_to_ala( pose_copy, i );

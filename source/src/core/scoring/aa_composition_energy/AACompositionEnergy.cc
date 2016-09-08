@@ -134,7 +134,7 @@ core::Size AACompositionEnergy::version() const
 void AACompositionEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
 {
 	//Number of residues:
-	core::Size const nres( pose.n_residue() );
+	core::Size const nres( pose.size() );
 
 	//Vector of residue owning pointers:
 	utility::vector1< core::conformation::ResidueCOP > resvector;
@@ -306,7 +306,7 @@ AACompositionEnergy::get_helpers_from_pose(
 	masks.clear();
 	if ( setup_helpers_.size() > 0 ) {
 		setup_helpers = setup_helpers_; //Copy the setup_helpers_ list.
-		masks.resize( setup_helpers_.size(), core::select::residue_selector::ResidueSubset( pose.n_residue(), true ) ); //All of the helpers in the setup_helpers_ list should be applied globally.
+		masks.resize( setup_helpers_.size(), core::select::residue_selector::ResidueSubset( pose.size(), true ) ); //All of the helpers in the setup_helpers_ list should be applied globally.
 	}
 
 	core::Size const n_sequence_constraints( pose.constraint_set()->n_sequence_constraints() );
@@ -319,7 +319,7 @@ AACompositionEnergy::get_helpers_from_pose(
 			if ( selector ) { //If we have a ResidueSelector, generate a mask from the pose and store it in the masks list.
 				masks.push_back( selector->apply( pose ) );
 			} else { //If not, add an all-true mask
-				masks.push_back( core::select::residue_selector::ResidueSubset( pose.n_residue(), true ) );
+				masks.push_back( core::select::residue_selector::ResidueSubset( pose.size(), true ) );
 			}
 		}
 	}

@@ -508,7 +508,7 @@ SheetDB::add_sheets_from_pose( core::pose::Pose & pose )
 		return 0;
 	}
 	utility::vector1< core::Size > positions;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		positions.push_back(i);
 	}
 	core::chemical::ResidueTypeSetCOP restype_set =
@@ -590,7 +590,7 @@ add_to_pose(
 		start = start - 1;
 	}
 	core::Size stop = s_stop;
-	if ( ( stop < pose.total_residue() ) && // not off end of pose
+	if ( ( stop < pose.size() ) && // not off end of pose
 			( pose.chain(stop) == pose.chain(stop+1) ) // same chain
 			) {
 		stop = stop + 1;
@@ -603,7 +603,7 @@ add_to_pose(
 	}
 	assert( tmppose.fold_tree().num_jump() == 0 );
 	core::kinematics::FoldTree ft = tmppose.fold_tree();
-	ft.reorder( tmppose.total_residue() );
+	ft.reorder( tmppose.size() );
 	tmppose.fold_tree( ft );
 	core::Size local_res = 1;
 	// add terminal residues if necessary
@@ -635,14 +635,14 @@ add_to_pose(
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("ALA");
 		core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue( restype );
 		assert( new_rsd );
-		if ( tmppose.residue(tmppose.total_residue()).is_upper_terminus() ) {
-			core::pose::remove_upper_terminus_type_from_pose_residue( tmppose, tmppose.total_residue() );
+		if ( tmppose.residue(tmppose.size()).is_upper_terminus() ) {
+			core::pose::remove_upper_terminus_type_from_pose_residue( tmppose, tmppose.size() );
 		}
-		tmppose.append_polymer_residue_after_seqpos( *new_rsd, tmppose.total_residue(), true );
-		core::pose::add_upper_terminus_type_to_pose_residue( tmppose, tmppose.total_residue() );
+		tmppose.append_polymer_residue_after_seqpos( *new_rsd, tmppose.size(), true );
+		core::pose::add_upper_terminus_type_to_pose_residue( tmppose, tmppose.size() );
 		stop = stop + 1;
 	}
-	local_res = tmppose.total_residue();
+	local_res = tmppose.size();
 	for ( core::Size r=stop; r>s_stop; --r ) {
 		tmppose.set_phi( local_res, 180.0 );
 		tmppose.set_psi( local_res, 180.0 );
@@ -650,10 +650,10 @@ add_to_pose(
 	}
 
 	TR.Debug << "Copied residues " << start << " to " << stop << " s_start=" << s_start << " s_stop=" << s_stop << " len=" << len << std::endl;
-	if ( newpose->total_residue() > 0 ) {
+	if ( newpose->size() > 0 ) {
 		newpose->conformation().insert_conformation_by_jump(
 			tmppose.conformation(),
-			newpose->total_residue()+1,
+			newpose->size()+1,
 			newpose->num_jump(),
 			1 );
 	} else {
@@ -671,9 +671,9 @@ extract_sheets_from_strandlist(
 	for ( core::Size stop_strand = nstrands; stop_strand <= strands.size(); ++stop_strand ) {
 		core::pose::PoseOP pose = core::pose::PoseOP( new core::pose::Pose() );
 		for ( core::Size i=nstrands; i>=1; --i ) {
-			if ( pose->total_residue() ) {
+			if ( pose->size() ) {
 				pose->conformation().insert_conformation_by_jump( strands[stop_strand-i+1]->conformation(),
-					pose->total_residue()+1,
+					pose->size()+1,
 					pose->num_jump()+2,
 					1,
 					pose->num_jump()+1 );
@@ -750,12 +750,12 @@ reorder_chains( core::pose::Pose & pose )
 		} else {
 			newpose->conformation().insert_conformation_by_jump(
 				strands[neworder[i]]->conformation(),
-				newpose->total_residue()+1,
+				newpose->size()+1,
 				newpose->fold_tree().num_jump(),
 				1 );
 		}
 	}
-	assert( newpose->total_residue() == pose.total_residue() );
+	assert( newpose->size() == pose.size() );
 	assert( newpose->conformation().num_chains() == pose.conformation().num_chains() );
 	return newpose;
 }
@@ -824,7 +824,7 @@ utility::vector1< bool >
 calc_paired_residues( core::pose::Pose & pose, protocols::fldsgn::topology::StrandPairingSet const & spairs )
 {
 	TR.Debug << "new set= " << spairs << std::endl;
-	utility::vector1< bool > paired( pose.total_residue(), false );
+	utility::vector1< bool > paired( pose.size(), false );
 	for ( core::Size c=1; c<=pose.conformation().num_chains(); ++c ) {
 		core::Size s1 = c;
 		core::Size s2 = c+1;
@@ -834,7 +834,7 @@ calc_paired_residues( core::pose::Pose & pose, protocols::fldsgn::topology::Stra
 		// if shift comes back as 99, there probably aren't valid pairings
 		// these sheets are currently thrown out until I can learn more about shift=99
 		if ( spairs.strand_pairing( s1, s2 )->rgstr_shift() == 99 ) {
-			return utility::vector1< bool >( pose.total_residue(), false );
+			return utility::vector1< bool >( pose.size(), false );
 		}
 		// move from beginning to end looking for paired residues
 		for ( core::Size i=pose.conformation().chain_begin(c); i<=pose.conformation().chain_end(c); ++i ) {
@@ -1337,12 +1337,12 @@ reverse_chains( core::pose::Pose const & pose )
 		} else {
 			newpose->conformation().insert_conformation_by_jump(
 				chains[i]->conformation(),
-				newpose->total_residue()+1,
+				newpose->size()+1,
 				newpose->num_jump(),
 				1 );
 		}
 	}
-	assert( newpose->total_residue() == pose.total_residue() );
+	assert( newpose->size() == pose.size() );
 	assert( newpose->conformation().num_chains() == pose.conformation().num_chains() );
 	return newpose;
 }

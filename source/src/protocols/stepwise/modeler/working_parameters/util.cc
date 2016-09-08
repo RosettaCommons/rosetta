@@ -119,8 +119,8 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	}
 
 	utility::vector1< Size > const working_moving_partition_res = figure_out_moving_partition_res( pose, moving_res_list );
-	ObjexxFCL::FArray1D< bool > partition_definition( pose.total_residue(), false );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) partition_definition( n ) = working_moving_partition_res.has_value( n );
+	ObjexxFCL::FArray1D< bool > partition_definition( pose.size(), false );
+	for ( Size n = 1; n <= pose.size(); n++ ) partition_definition( n ) = working_moving_partition_res.has_value( n );
 
 	pose::PoseOP working_native_pose;
 	if ( native_pose != 0 ) {
@@ -204,7 +204,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 
 	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
 	//Size cutpoint_closed_distal( 0 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !partition_definition[ n ] ) input_res1.push_back( n );
 		else input_res2.push_back( n );
 	}
@@ -213,7 +213,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	figure_out_moving_chain_breaks( pose, moving_partition_res,
 		cutpoint_closed,
 		five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) && !five_prime_chain_breaks.has_value( n ) ) {
 			cutpoint_open.push_back( n );
 		}
@@ -331,7 +331,7 @@ figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res )
 			is_cutpoint_closed( pose, rebuild_res - 1 ) ) &&
 			!f.is_cutpoint( rebuild_res ) &&
 			f.jump_nr( rebuild_res - 1, rebuild_res + 1) > 0 ) return true;
-	if ( rebuild_res < pose.total_residue() &&
+	if ( rebuild_res < pose.size() &&
 			pose.residue( rebuild_res + 1 ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) &&
 			( !f.is_cutpoint( rebuild_res ) ||
 			is_cutpoint_closed( pose, rebuild_res ) ) &&

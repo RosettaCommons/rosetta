@@ -96,7 +96,7 @@ void
 StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	initialize();
 
-	if ( pose.total_residue() > 0 && move_.move_type() == NO_MOVE ) show_scores( pose, "Initial score:" );
+	if ( pose.size() > 0 && move_.move_type() == NO_MOVE ) show_scores( pose, "Initial score:" );
 	if ( master_mover_->do_test_move( move_, pose ) ) {
 		show_scores( pose, "After-move score:" );
 		return;

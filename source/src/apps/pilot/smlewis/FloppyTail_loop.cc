@@ -122,7 +122,7 @@ void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionC
 
 	//create and score E3_RING portion
 	core::pose::Pose E3_RING(pose);
-	E3_RING.conformation().delete_residue_range_slow(E2_start, E3_RING.total_residue());
+	E3_RING.conformation().delete_residue_range_slow(E2_start, E3_RING.size());
 	core::Real const E3_RING_score((*score_fxn)(E3_RING));
 
 	//create and score E2 portion
@@ -210,7 +210,7 @@ public:
 			if(option[flexible_stop_resnum].user())
 				stop_ = pose.pdb_info()->pdb2pose().find(chain, option[flexible_stop_resnum].value());
 			else
-				stop_ = pose.total_residue();
+				stop_ = pose.size();
 			TR << "Tail is from " << start_ << " to " << stop_ << std::endl;
 
 			//setup MoveMap
@@ -221,7 +221,7 @@ public:
 			}
 
 			movemap_lesstail_ = new core::kinematics::MoveMap(*movemap_);
-			if (stop_ == pose.total_residue()){
+			if (stop_ == pose.size()){
 				core::Size const taillength = stop_ - start_;
 				core::Size const substop = (start_ + core::Size(core::Real(taillength) * (1.0 - option[ short_tail_fraction ] ) ) );
 				for(core::Size i(start_); i <= substop; ++i) {
@@ -243,7 +243,7 @@ public:
 			movemap_lesstail_ = new core::kinematics::MoveMap(*movemap_);
 
 			//calculate effective start_ and stop_.  This may be less efficient than the MoveMap's iterators, but it is vastly simpler, less likely to be buggy, and not a performace concern.
-			core::Size const nres(pose.total_residue());
+			core::Size const nres(pose.size());
 			for( core::Size i(1); i<=nres; ++i ){
 				if( movemap_->get_bb(i) ){
 					start_ = i;
@@ -269,13 +269,13 @@ public:
 
 		//We want to linearize the fold_tree so that internal linkers with noncovalent attachments on both sides will work properly; it will have no effect on terminal tails
 		foldtree_ = new core::kinematics::FoldTree(pose.fold_tree()); //store original fold tree; if we enter neither option below it stays valid
-		if( !((stop_ == pose.total_residue()) || (start_ == 1)) ){
+		if( !((stop_ == pose.size()) || (start_ == 1)) ){
 			TR << "non-terminal or N-terminal (C-rooted) floppy section, using a linear fold tree to try to ensure downstream residues follow \nOld tree: " << pose.fold_tree();
 			foldtree_ = new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_));
 			TR << "new tree: " << *foldtree_ << std::endl;
 		}
 		if( basic::options::option[ basic::options::OptionKeys::C_root].value() ) {
-			foldtree_->reorder(pose.total_residue());
+			foldtree_->reorder(pose.size());
 			TR << "C-rooted tree: " << *foldtree_ << std::endl;
 		}
 
@@ -315,7 +315,7 @@ public:
 		regions.push_back(empty);
 
 		//iterate through all residues in the pose/movemap
-		core::Size const nres(pose.total_residue());
+		core::Size const nres(pose.size());
 		for(core::Size i(1); i<=nres; ++i) {
 			bool const this_state(movemap_->get_bb(i));
 			if(this_state != previous_state) { //if we are changing regions
@@ -412,7 +412,7 @@ public:
 		pose.fold_tree(*foldtree_);
 		TR << "foldtree, movemap: " << std::endl;
 		core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, TR);
-		if( stop_ == pose.total_residue() ){
+		if( stop_ == pose.size() ){
 			TR << "foldtree, movemap for first part of refine: " << std::endl;
 			core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_lesstail_, TR);
 		}

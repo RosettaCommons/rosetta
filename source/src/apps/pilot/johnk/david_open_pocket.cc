@@ -88,7 +88,7 @@ main( int argc, char * argv [] )
 	// This is the residue we'll backrub around!!
 	int const central_relax_pdb_number = option[ central_relax_pdb_num ];
 	core::Size central_relax_res = 0;
-	for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			central_relax_res = j;
 		}
@@ -139,7 +139,7 @@ main( int argc, char * argv [] )
 	start_data_string_stream << std::setw(15) << constraint_pocket_score;
 	ddg_outstream << start_data_string_stream.str() << std::endl;
 
-	utility::vector1 <bool>	allow_moving( input_pose.total_residue(), false );
+	utility::vector1 <bool>	allow_moving( input_pose.size(), false );
 	allow_moving.at(central_relax_res) = true;
 
 	// find the neighbors for the central residue
@@ -177,10 +177,10 @@ main( int argc, char * argv [] )
 		(*scorefxn)(*relax_poseOP);
 
 		// setup segments to move
-		for ( int j = 2, resnum = input_pose.total_residue(); j < resnum; ++j ) {
+		for ( int j = 2, resnum = input_pose.size(); j < resnum; ++j ) {
 			if ( ! allow_moving.at(j) ) continue;
 				//			if ( j == 1 ) continue;
-				//			if ( j == input_pose.total_residue() ) continue;
+				//			if ( j == input_pose.size() ) continue;
 			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j + 1 ) ) continue;
 			if ( input_pose.pdb_info()->chain( j ) != input_pose.pdb_info()->chain( j - 1 ) ) continue;
 			// add current 3 residue segment to the backbone mover unless it is on another chain or isn't there

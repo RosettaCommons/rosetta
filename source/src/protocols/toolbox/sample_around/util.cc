@@ -101,7 +101,7 @@ namespace sample_around {
 //FCC: Adding Virtual res
 void
 add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root /*= true */ ) {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 
 	// if already rooted on virtual residue , return
 	if ( pose.residue ( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
@@ -126,13 +126,13 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root /*= true */ ) {
 
 void
 add_another_virtual_res ( core::pose::Pose & pose ) {
-	// int nres = pose.total_residue();
+	// int nres = pose.size();
 	// attach virt res there
 	// bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSetCOP residue_set = pose.residue_type ( 1 ).residue_type_set();
 	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3( "VRT" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
-	pose.append_residue_by_jump ( *new_res , pose.total_residue() );
+	pose.append_residue_by_jump ( *new_res , pose.size() );
 }
 
 
@@ -154,7 +154,7 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
 	kinematics::Stub stub( M, centroid );
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		for ( Size i = 1; i <= pose.residue(n).natoms(); i++ ) {
 			Vector xyz_new = stub.global2local( pose.residue(n).xyz( i ) ); // it is either this or M-inverse.
 			pose.set_xyz( AtomID( i, n ), xyz_new );

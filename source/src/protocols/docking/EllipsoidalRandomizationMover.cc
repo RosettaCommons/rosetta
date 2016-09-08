@@ -354,7 +354,7 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 				first_chain_second_partner = partners_[i];
 			}
 		}
-		for ( Size i=2; i<= pose_in.total_residue(); ++i ) {
+		for ( Size i=2; i<= pose_in.size(); ++i ) {
 			if ( pdb_info->chain( i ) == first_chain_second_partner ) {
 				first_residue_second_partner = i;
 				last_residue_first_partner = i-1;
@@ -368,7 +368,7 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 		start_stop.push_back( last_residue_first_partner );
 	} else {
 		start_stop.push_back( first_residue_second_partner );
-		start_stop.push_back( pose_in.total_residue() );
+		start_stop.push_back( pose_in.size() );
 	}
 
 	return start_stop;
@@ -582,7 +582,7 @@ EllipsoidalRandomizationMover::get_interface_residues( core::pose::Pose & pose_i
 
 	set_foldtree( pose_in );
 
-	FArray1D_bool partner1_( pose_in.total_residue(), false );
+	FArray1D_bool partner1_( pose_in.size(), false );
 	pose_in.fold_tree().partition_by_jump( rb_jump_, partner1_);
 	protocols::scoring::Interface interface_obj( rb_jump_ );
 	pose_in.update_residue_neighbors();
@@ -591,7 +591,7 @@ EllipsoidalRandomizationMover::get_interface_residues( core::pose::Pose & pose_i
 
 	utility::vector1< bool > interface_residues;
 
-	for ( core::Size i = 1; i <= pose_in.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose_in.size(); ++i ) {
 		if ( interface_obj.is_interface( i ) ) {
 			interface_residues.push_back( true );
 		} else {

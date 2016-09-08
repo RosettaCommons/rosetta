@@ -132,7 +132,7 @@ frag_extract_test(){
 			input->fill_pose( pose, *rsd_set );
 			if ( n == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
-			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= pose.size(); i++ ) {
 				out << ' ' << F( 8, 3, pose.phi( i ) );
 				out << ' ' << F( 8, 3, pose.psi( i ) );
 				out << ' ' << F( 8, 3, pose.omega( i ) );

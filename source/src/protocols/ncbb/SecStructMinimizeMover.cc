@@ -65,7 +65,7 @@ SecStructMinimizeMover::apply( core::pose::Pose & pose )
 	dihedrals_.resize( number_dihedrals );
 
 	// Initialize dihedrals from pose.
-	for ( Size i = 1, d = 1, m = 1; i <= pose.total_residue() && d <= number_dihedrals; ++d, ++m ) {
+	for ( Size i = 1, d = 1, m = 1; i <= pose.size() && d <= number_dihedrals; ++d, ++m ) {
 		TR.Trace << "Taking res " << i << " mc torsion " << m << " for dihedral " << d << "/" << number_dihedrals << std::endl;
 		dihedrals_[ d ] = pose.residue( i ).mainchain_torsions()[ m ];
 
@@ -130,7 +130,7 @@ SecStructMinimizeMover::add_dihedral_constraints_to_pose(
 	using namespace core::scoring::func;
 	using namespace numeric::conversions;
 
-	for ( Size resi = 1; resi <= pose.n_residue(); ++resi ) {
+	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
 
 		Size vec_index = 1;
 		for ( Size i = 2; i <= number_dihedral_sets; ++i ) {
@@ -154,9 +154,9 @@ SecStructMinimizeMover::add_dihedral_constraints_to_pose(
 			AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
 			AtomID aidCM( pose.residue( resi ).atom_index( "CM" ), resi );
 			AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
-			AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "NM" )
+			AtomID aidN2( ( resi == pose.size() ) ? pose.residue( resi ).atom_index( "NM" )
 				: pose.residue(resi+1).atom_index( "N" ),
-				( resi == pose.n_residue() ) ? resi : resi + 1 );
+				( resi == pose.size() ) ? resi : resi + 1 );
 
 
 			ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidCM, dih_func_phi ) );
@@ -180,9 +180,9 @@ SecStructMinimizeMover::add_dihedral_constraints_to_pose(
 			AtomID aidN1( pose.residue( resi ).atom_index( "N" ), resi );
 			AtomID aidCA( pose.residue( resi ).atom_index( "CA" ), resi );
 			AtomID aidC2( pose.residue( resi ).atom_index( "C" ), resi );
-			AtomID aidN2( ( resi == pose.n_residue() ) ? pose.residue( resi ).atom_index( "NM" )
+			AtomID aidN2( ( resi == pose.size() ) ? pose.residue( resi ).atom_index( "NM" )
 				: pose.residue(resi+1).atom_index( "N" ),
-				( resi == pose.n_residue() ) ? resi : resi + 1 );
+				( resi == pose.size() ) ? resi : resi + 1 );
 
 			ConstraintCOP phiconstraint( new DihedralConstraint( aidC1, aidN1, aidCA, aidC2, dih_func_phi ) );
 			ConstraintCOP psiconstraint( new DihedralConstraint( aidN1, aidCA, aidC2, aidN2, dih_func_psi ) );

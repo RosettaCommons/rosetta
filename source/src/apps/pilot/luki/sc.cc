@@ -162,7 +162,7 @@ int process_pose(
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 
 	// Split PDB into two surfaces
-	for ( core::Size i = 1; i <= pose.n_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		char chain = pdb_info->chain(i);
 		if ( molecule_1.find(chain) != string::npos ) {
 			sc.AddResidue(0, pose.residue(i));

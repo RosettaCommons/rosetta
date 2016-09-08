@@ -90,7 +90,7 @@ main( int argc, char * argv [] )
 	core::import_pose::pose_from_file( pose1, *rsd_set_full, pdb1_filename , core::import_pose::PDB_file);
 	core::import_pose::pose_from_file( pose2, *rsd_set_full, pdb2_filename , core::import_pose::PDB_file);
 
-	runtime_assert( pose1.total_residue() == pose2.total_residue() );
+	runtime_assert( pose1.size() == pose2.size() );
 
 	ScoreFunctionOP score_function_( get_score_function() );
 
@@ -111,7 +111,7 @@ main( int argc, char * argv [] )
 
 	EnergyMap total;
 	core::Real total_energy2 = 0.0;
-	for( core::Size ir=1; ir <= pose1.total_residue(); ++ ir ){
+	for( core::Size ir=1; ir <= pose1.size(); ++ ir ){
 		EnergyMap emap1 = pose1.energies().residue_total_energies(ir);
 		EnergyMap emap2 = pose2.energies().residue_total_energies(ir);
 

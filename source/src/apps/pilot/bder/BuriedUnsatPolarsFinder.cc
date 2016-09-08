@@ -91,7 +91,7 @@ public:
 
 		utility::vector1< core::id::AtomID > buried_unsat_atom_ids;
 
-		for( Size i = 1; i <= pose.total_residue(); ++i){
+		for( Size i = 1; i <= pose.size(); ++i){
 			conformation::Residue const & rsd = pose.residue( i );
 			for( Size at = 1; at <= rsd.nheavyatoms(); ++at){
 				core::id::AtomID atid( at, i );

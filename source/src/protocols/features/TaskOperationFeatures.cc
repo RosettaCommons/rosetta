@@ -261,7 +261,7 @@ TaskOperationFeatures::report_features(
 
 	TR << "Inserting task_operation_residue_effects rows" << std::endl;
 	// task_operation_residue_effects rows
-	for ( Size resNum = 1; resNum <= pose.n_residue(); ++resNum ) {
+	for ( Size resNum = 1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		for ( auto & task : tasks ) {

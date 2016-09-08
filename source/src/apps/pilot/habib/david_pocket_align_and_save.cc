@@ -164,10 +164,10 @@ iface_pdb_superimpose_pose(
 {
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-	for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;
 		if ( ! mod_pose.residue(ii).is_protein() ) continue;
-		for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 			if ( ! ref_pose.residue(jj).has("CA") ) continue;
 			if ( ! ref_pose.residue(jj).is_protein() ) continue;
 			if ( mod_pose.pdb_info()->chain(ii) != ref_pose.pdb_info()->chain(jj) ) continue;
@@ -193,10 +193,10 @@ iface_pdb_superimpose_diff_prot(
 {
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-	for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;
 		if ( ! mod_pose.residue(ii).is_protein() ) continue;
-		for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 			if ( ! ref_pose.residue(jj).has("CA") ) continue;
 			if ( ! ref_pose.residue(jj).is_protein() ) continue;
 			if ( is_interface_heavyatom_pair ( mod_pose, ref_pose, ii, jj, 2) ) {
@@ -237,7 +237,7 @@ int main( int argc, char * argv [] ) {
 		std::string const comparison_pdb_name ( basic::options::start_file() );
 		pose::Pose comparison_pose;
 		core::import_pose::pose_from_file( comparison_pose, comparison_pdb_name , core::import_pose::PDB_file);
-		TR << "set comparison pdb"<< "    Number of residues: " << comparison_pose.total_residue() << std::endl;
+		TR << "set comparison pdb"<< "    Number of residues: " << comparison_pose.size() << std::endl;
 
 		std::string tag = "";
 		if ( !option[ OptionKeys::out::output_tag ]().empty() ) {
@@ -253,7 +253,7 @@ int main( int argc, char * argv [] ) {
 			//sets pdb as a Rosetta pose
 			pose::Pose template_pose;
 			core::import_pose::pose_from_file( template_pose, template_fname , core::import_pose::PDB_file);
-			TR << "set template pdb" << "    Number of residues: " << template_pose.total_residue() << std::endl;
+			TR << "set template pdb" << "    Number of residues: " << template_pose.size() << std::endl;
 
 
 			std::string const cfilename = option[ source_contact_list ];
@@ -299,8 +299,8 @@ int main( int argc, char * argv [] ) {
 				// align comparison pose to template pose
 				// protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover( template_pose );
 				protocols::simple_moves::SuperimposeMoverOP sp_mover( new protocols::simple_moves::SuperimposeMover() );
-				sp_mover->set_reference_pose( template_pose, 1, template_pose.total_residue() );
-				sp_mover->set_target_range( 1, template_pose.total_residue() );
+				sp_mover->set_reference_pose( template_pose, 1, template_pose.size() );
+				sp_mover->set_target_range( 1, template_pose.size() );
 				sp_mover->apply( comparison_pose );
 			}
 		}

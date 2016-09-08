@@ -186,28 +186,28 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 	core::pose::Pose asym_ref_pose;
 	if ( core::pose::symmetry::is_symmetric( *reference_pose() ) ) {
 		core::pose::symmetry::extract_asymmetric_unit( *reference_pose(), asym_ref_pose);
-		for ( core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= asym_ref_pose.size(); ++i ) {
 			if ( asym_ref_pose.residue_type(i).name() == "VRT" ) {
-				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.total_residue());
+				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.size());
 			}
 		}
-		total_residue_ref = asym_ref_pose.total_residue();
+		total_residue_ref = asym_ref_pose.size();
 	} else {
-		total_residue_ref = reference_pose()->total_residue();
+		total_residue_ref = reference_pose()->size();
 		asym_ref_pose = *reference_pose();
 	}
 	core::Size total_residue;
 	core::pose::Pose asym_pose;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, asym_pose);
-		for ( core::Size i = 1; i <= asym_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= asym_pose.size(); ++i ) {
 			if ( asym_pose.residue_type(i).name() == "VRT" ) {
-				asym_pose.conformation().delete_residue_slow(asym_pose.total_residue());
+				asym_pose.conformation().delete_residue_slow(asym_pose.size());
 			}
 		}
-		total_residue = asym_pose.total_residue();
+		total_residue = asym_pose.size();
 	} else {
-		total_residue = pose.total_residue();
+		total_residue = pose.size();
 		asym_pose = pose;
 	}
 	if ( total_residue_ref != total_residue ) {

@@ -192,7 +192,7 @@ void test_membrane_conformation( core::pose::Pose & pose ) {
 
     // COmpute total res
     for ( core::Size i = 1; i <= topologies.size(); ++i ) {
-        core::Size nres = topologies[i].total_residue_in_span_file();
+        core::Size nres = topologies[i].size_in_span_file();
         total_resnum_in_spanfiles = total_resnum_in_spanfiles + nres;
     }
 

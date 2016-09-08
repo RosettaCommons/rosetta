@@ -117,7 +117,7 @@ SetCatalyticResPackBehavior::apply(
 		resf_command = command_map[ behavior_non_catalytic_ ]->clone();
 	}
 
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 
 		if ( cst_cache->contains_position( i ) ) {
 			catinfo = catinfo + utility::to_string( i ) + ", ";
@@ -349,7 +349,7 @@ void DetectProteinLigandInterface::apply(
 		core::pack::task::operation::ReadResfileAndObeyLengthEvents resfile_read( resfilename_ );
 		resfile_read.apply( pose, task );
 		if ( !design_ ) {
-			for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+			for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 				if ( task.design_residue(i) ) task.nonconst_residue_task(i).restrict_to_repacking();
 			}
 		}
@@ -357,9 +357,9 @@ void DetectProteinLigandInterface::apply(
 
 	// detect design interface, only at positions marked "AUTO" in resfile if there is a resfile
 	if ( detect_design_interface_ ) {
-		utility::vector1< bool > repack_res( pose.total_residue(), false );
-		utility::vector1< bool > design_res( pose.total_residue(), false );
-		utility::vector1< bool > detect_res( pose.total_residue() );
+		utility::vector1< bool > repack_res( pose.size(), false );
+		utility::vector1< bool > design_res( pose.size(), false );
+		utility::vector1< bool > detect_res( pose.size() );
 		core::Real cut1(cut1_), cut2(cut2_), cut3(cut3_), cut4(cut4_);
 
 		if ( cut1 < 0.0 || cut2 < cut1 || cut3 < cut2 || cut4 < cut3 ) {
@@ -386,7 +386,7 @@ void DetectProteinLigandInterface::apply(
 		}
 
 		if ( ( interface_target_res.empty() /*size() == 0 */ ) && (catalytic_res_part_of_interface_ || catres_only_) ) {
-			for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+			for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 				if ( enzutil::is_catalytic_seqpos( pose, i ) ) {
 					if ( pose.residue_type( i ).is_ligand() && !catres_only_ ) interface_target_res.insert( i );
 					if ( !pose.residue_type( i ).is_ligand() ) interface_target_res.insert( i );
@@ -410,7 +410,7 @@ void DetectProteinLigandInterface::apply(
 		tr.Info <<  std::endl;
 
 		// initialize detect_res vector, specifies whether the designability of a residue should be decided by find_design_interface
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( ! resfilename_.empty() ) {
 				if ( task.residue_task( i ).has_behavior("AUTO") ) {
 					detect_res[i] = true;
@@ -434,7 +434,7 @@ void DetectProteinLigandInterface::apply(
 
 		//setup the task accordingly
 		//default behavior for design will be everything except cys, and of course we want to leave disulfide bonds untouched
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			// only do auto-detection if the residue was set to AUTO above in detect_res initialization
 			if ( detect_res[i] == true ) {
 				if ( design_res[i] == true ) {
@@ -459,12 +459,12 @@ void DetectProteinLigandInterface::apply(
 
 	//in case we are only interested in scoring
 	if ( score_only_ ) {
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			task.nonconst_residue_task(i).prevent_repacking();
 		}
 	} else if ( repack_only_ ) {
 		//in case we are only interested in repacking
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( task.design_residue(i) ) {
 				task.nonconst_residue_task(i).restrict_to_repacking();
 			}
@@ -473,13 +473,13 @@ void DetectProteinLigandInterface::apply(
 
 	// As a final check print out everything designed
 	tr.Info << "Final Design Shell Residues: ";
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( task.design_residue(i) ) {
 			tr.Info << i << ", ";
 		}
 	}
 	tr.Info << std::endl  << "Final Repack Shell Residues: ";
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( task.pack_residue(i) ) {
 			tr.Info << i << ", ";
 		}
@@ -521,7 +521,7 @@ DetectProteinLigandInterface::find_design_interface(
 			targ_res_atom_start = targ_rsd.first_sidechain_atom();
 		}
 
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( design_res[i] ) continue; //in case this is already set to design, we don't have to loop over it again
 			if ( interface_target_res.find( i ) != interface_target_res.end() ) continue;
 			core::conformation::Residue const & prot_rsd = pose.residue(i);
@@ -582,7 +582,7 @@ DetectProteinLigandInterface::find_design_interface(
 
 	std::string repackres_string(""), designres_string;
 	core::Size num_repack(0), num_design(0);
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( repack_res[i] ) {
 			num_repack++;
 			repackres_string = repackres_string + utility::to_string( i ) + "+";
@@ -631,7 +631,7 @@ DetectProteinLigandInterface::find_design_interface_arg_sweep(
 		}
 
 		//  tr.Info << "Design residues by arg_sweep are: ";
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( design_res[i] ) continue;  //in case this is already set to design, we don't have to loop over it again
 			if ( interface_target_res.find( i ) != interface_target_res.end() ) continue;
 			core::conformation::Residue const & prot_rsd = pose.residue(i);
@@ -707,7 +707,7 @@ DetectProteinLigandInterface::find_design_interface_arg_sweep(
 
 	std::string repackres_string(""), designres_string;
 	core::Size num_repack(0), num_design(0);
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( repack_res[i] ) {
 			num_repack++;
 			repackres_string = repackres_string + utility::to_string( i ) + "+";
@@ -821,7 +821,7 @@ void ProteinLigandInterfaceUpweighter::apply(
 	if ( catres_packer_weight_ !=1.0 ) {
 		utility::vector1< core::Size > catres;
 		utility::vector1< core::Size > design_residues;
-		for ( core::Size ii= 1; ii<=pose.total_residue(); ++ii ) {
+		for ( core::Size ii= 1; ii<=pose.size(); ++ii ) {
 			if ( enzutil::is_catalytic_seqpos( pose, ii) && pose.residue( ii ).is_protein() ) catres.push_back( ii );
 			else if ( task.design_residue( ii ) ) design_residues.push_back( ii );
 		}

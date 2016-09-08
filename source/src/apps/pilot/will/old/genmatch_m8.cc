@@ -171,7 +171,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		atom_map.set(AtomID(2,ir) , true );
 		atom_map.set(AtomID(3,ir) , true );
 		atom_map.set(AtomID(5,ir) , true );
@@ -246,7 +246,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 			task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
 		}
 	}
-	for(Size i = nres+1; i <= pose.n_residue(); ++i) {
+	for(Size i = nres+1; i <= pose.size(); ++i) {
 		task->nonconst_residue_task(i).prevent_repacking();
 	}
 	TR << *task << std::endl;
@@ -284,7 +284,7 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
 	// aas[core::chemical::aa_trp] = false;
 	if(ex) task->initialize_extra_rotamer_flags_from_command_line();
 
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if( pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="CYS" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="CYD" ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 			continue;
@@ -424,10 +424,10 @@ std::pair<vector1<Size>,vector1<Size> > makesplitwork( utility::vector1<Size> re
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
-	add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+	add_upper_terminus_type_to_pose_residue(pose,pose.size());
 	core::pack::optimizeH(pose,*sf);
 	remove_lower_terminus_type_from_pose_residue(pose,1);
-	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
+	remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 }
 
 void align_carboxyl_m8(core::pose::Pose & pose, Size irsd, Size jrsd, Vec cen) {
@@ -463,7 +463,7 @@ void run_m8() {
 	Pose in_cen,in_fa;
 	pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
 	pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
-	Size nres = in_cen.n_residue();
+	Size nres = in_cen.size();
 	core::chemical::ResidueType const & ala( in_cen.residue(1).residue_type_set().name_map("ALA") );
 	core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
 	// core::chemical::ResidueType const & hise( in_fa.residue(1).residue_type_set().name_map("HIS") );
@@ -523,7 +523,7 @@ void run_m8() {
 	fa_pose.dump_pdb(out);
 	out << "ENDMDL" << endl;
 
-	std::pair<vector1<Size>,vector1<Size> > splitwork = makesplitwork(init_pose.n_residue(),init_pose.n_residue());
+	std::pair<vector1<Size>,vector1<Size> > splitwork = makesplitwork(init_pose.size(),init_pose.size());
 	vector1<Size> IRES = splitwork.first;
 	vector1<Size> JRES = splitwork.second;
 	assert(IRES.size()==JRES.size());
@@ -542,12 +542,12 @@ void run_m8() {
 		vector1<Vec> foundori;
 		// TR << "HIS HIS genmatch " << irsd << " " << jrsd << std::endl;
 		// continue;
-	// for(Size irsd = 1; irsd <= init_pose.n_residue(); ++irsd) {
+	// for(Size irsd = 1; irsd <= init_pose.size(); ++irsd) {
 		if( std::find(residues.begin(),residues.end(),irsd) == residues.end() ) continue; // should just loop?
 		if( std::find(residues.begin(),residues.end(),jrsd) == residues.end() ) continue; // should just loop?
 		Stub s1(init_pose.xyz(AtomID(5,irsd)),init_pose.xyz(AtomID(2,irsd)),init_pose.xyz(AtomID(1,irsd)));
 		Stub s2(init_pose.xyz(AtomID(5,jrsd)),init_pose.xyz(AtomID(2,jrsd)),init_pose.xyz(AtomID(1,jrsd)));
-		// for(Size jrsd = irsd+1; jrsd <= init_pose.n_residue(); ++jrsd) {
+		// for(Size jrsd = irsd+1; jrsd <= init_pose.size(); ++jrsd) {
 		if(init_pose.xyz(AtomID(5,irsd)).distance_squared(init_pose.xyz(AtomID(5,jrsd))) > 100.0) continue;
 		TR << irsd << " " << jrsd << " found " << count << std::endl;
 		for(Size ich1 = 1; ich1 <= CHI1.size(); ++ich1) {
@@ -684,9 +684,9 @@ void run_m8() {
 							Pose pose2 = pose;
 							rot_pose(pose2,axis2,180,cen);
 
-							for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+							for(Size ir = 1; ir <= pose.size(); ++ir) {
 								for(Size ia = 1; ia <= pose.residue(ir).nheavyatoms()-2; ++ia) {
-									for(Size jr = 1; jr <= pose.n_residue(); ++jr) {
+									for(Size jr = 1; jr <= pose.size(); ++jr) {
 										for(Size ja = 1; ja <= pose.residue(jr).nheavyatoms()-2; ++ja) {
 											if(pose.residue(ir).xyz(ia).distance_squared(pose2.residue(jr).xyz(ja)) < 9.0 ) clash=true;
 										}
@@ -697,7 +697,7 @@ void run_m8() {
 
 							utility::io::ozstream out(tag+"_homodimer_"+string_of(ii)+".pdb");
 							pose.dump_pdb(out);
-							for(Size jj = 1; jj <= pose2.n_residue(); ++jj) {
+							for(Size jj = 1; jj <= pose2.size(); ++jj) {
 								core::conformation::Residue r(pose2.residue(jj));
 								r.chain(2);
 								pose2.replace_residue(jj,r,false);

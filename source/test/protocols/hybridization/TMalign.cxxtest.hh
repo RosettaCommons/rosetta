@@ -57,7 +57,7 @@ public:
 
 		TR << "Perturbing the query pose" << std::endl;
 
-		for ( core::Size i=1; i <= query_pose_.total_residue(); ++i ) {
+		for ( core::Size i=1; i <= query_pose_.size(); ++i ) {
 			for ( core::Size j=1; j <=query_pose_.residue(i).natoms(); ++j ) {
 				query_pose_.set_xyz(core::id::AtomID(j,i), query_pose_.residue(i).atom(j).xyz()+core::Vector(1,1,1));
 			}
@@ -72,12 +72,12 @@ public:
 
 
 		std::list <core::Size> pose_residue_list; // all residue numbers in ipose, used for transformation after alignment
-		for ( core::Size ires = 1; ires <= query_pose_.total_residue(); ++ires ) {
+		for ( core::Size ires = 1; ires <= query_pose_.size(); ++ires ) {
 			pose_residue_list.push_back(ires);
 		}
 
 		std::list <core::Size> ref_pose_residue_list; // all residue numbers in ipose, used for transformation after alignment
-		for ( core::Size ires = 1; ires <= ref_pose.total_residue(); ++ires ) {
+		for ( core::Size ires = 1; ires <= ref_pose.size(); ++ires ) {
 			ref_pose_residue_list.push_back(ires);
 		}
 
@@ -88,7 +88,7 @@ public:
 		core::Size n_mapped_residues=0;
 
 		tm_align.alignment2AtomMap(query_pose_, ref_pose, pose_residue_list,ref_pose_residue_list, n_mapped_residues, atom_map);
-		core::Size normalize_length = query_pose_.total_residue() < ref_pose.total_residue() ? query_pose_.total_residue() : ref_pose.total_residue();
+		core::Size normalize_length = query_pose_.size() < ref_pose.size() ? query_pose_.size() : ref_pose.size();
 		core::Real TMscore = tm_align.TMscore(normalize_length);
 		utility::vector1< core::Real > aln_cutoffs;
 		aln_cutoffs.push_back(2);

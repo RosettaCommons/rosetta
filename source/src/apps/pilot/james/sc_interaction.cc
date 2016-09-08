@@ -122,8 +122,8 @@ public:
 		mm.set_chi( true );
 		std::string const min_type("lbfgs_armijo_nonmonotone");
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		for ( Size jj = ii+1; jj <= pose.total_residue(); ++jj ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( Size jj = ii+1; jj <= pose.size(); ++jj ) {
 			std::cout << ii << "," << jj << std::endl;
 			core::pose::Pose pose_copy = pose;
 			ResidueType const & res_type_ii( pose_copy.residue_type(ii) );

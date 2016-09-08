@@ -224,7 +224,7 @@ utility::vector1<core::Real> & PDDFEnergy::compute_pddf_without_ff(const core::p
 		pose_pddf_[i] = 0.0;
 	}
 	/*********** Rehashing atoms, preparig data structure ************/
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue resi = pose.residue(i);
 		for ( core::Size m = 1; m <= resi.natoms(); ++m ) {
 			//             trPDDFEnergy.Trace << "rehash: trying "<<resi.atom_type(m).name();
@@ -264,7 +264,7 @@ utility::vector1<core::Real> & PDDFEnergy::compute_pddf(const core::pose::Pose &
 	a_ids_.clear();
 	r_ids_.clear();
 	if ( factors_.size() == 0 ) {
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			core::conformation::Residue resi = pose.residue(i);
 			for ( core::Size m = 1; m <= resi.natoms(); ++m ) {
 				trPDDFEnergy.Trace << "rehash: trying "<<resi.atom_type(m).name();

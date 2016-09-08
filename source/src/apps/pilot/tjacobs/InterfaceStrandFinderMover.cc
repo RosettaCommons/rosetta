@@ -166,7 +166,7 @@ InterfaceStrandFinderMover::InterfaceStrandFinderMover() {
 }
 
 Size InterfaceStrandFinderMover::find_known_strand_start(Pose known_complex, Pose knownStrand){
-  for(Size i=1; i<=known_complex.total_residue(); i++){
+  for(Size i=1; i<=known_complex.size(); i++){
       if(known_complex.pdb_info()->chain(i) == knownStrand.pdb_info()->chain(1) &&
           known_complex.pdb_info()->number(i) == knownStrand.pdb_info()->number(1)){
           return i;
@@ -191,7 +191,7 @@ core::Real InterfaceStrandFinderMover::bb_score(pose::Pose & pose, core::Size al
   utility::vector1<core::conformation::Atom> chain2_bb_atoms;
   utility::vector1<core::conformation::Atom> all_bb_atoms;
 
-  for( Size j = 1; j <= pose.total_residue(); ++j ) {
+  for( Size j = 1; j <= pose.size(); ++j ) {
       core::conformation::Residue const & res( pose.residue(j) );
       core::chemical::AtomIndices bb_ai( res.mainchain_atoms() );
       //assert( bb_ai.size() == 4 );
@@ -271,7 +271,7 @@ bool InterfaceStrandFinderMover::is_strand_exposed(core::pose::Pose pose, Size s
       bool residueExposed(true);
 
       //check to see if any atoms are within distance of this exposure point
-      for(Size j=1; j<=pose.total_residue(); j++){
+      for(Size j=1; j<=pose.size(); j++){
           if(pose.residue(j).atom("C").xyz().distance_squared(exposure_vector)<=radius_squared ||
               pose.residue(j).atom("N").xyz().distance_squared(exposure_vector)<=radius_squared ||
               pose.residue(j).atom("CA").xyz().distance_squared(exposure_vector)<=radius_squared ||
@@ -324,9 +324,9 @@ std::pair<Pose, Size> InterfaceStrandFinderMover::dock_strands(Pose known_comple
   Size removal_chain_end = known_complex.conformation().chain_end(removal_chain);
   known_complex.conformation().delete_residue_range_slow(removal_chain_start, removal_chain_end);
 
-  known_complex.append_residue_by_jump(pose.residue(1), known_complex.total_residue(), "", "", true /*start new chain*/);
-  Size new_strand(known_complex.chain(known_complex.total_residue()));
-  for(Size i=2; i<=pose.total_residue(); i++){
+  known_complex.append_residue_by_jump(pose.residue(1), known_complex.size(), "", "", true /*start new chain*/);
+  Size new_strand(known_complex.chain(known_complex.size()));
+  for(Size i=2; i<=pose.size(); i++){
       known_complex.append_residue_by_bond(pose.residue(i));
   }
 
@@ -428,7 +428,7 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
   dssp.insert_ss_into_pose( pose );
 
   vector1< std::pair< core::Size,core::Size > > strand_endpts;
-  for(core::Size i=1; i<=pose.total_residue(); i++){
+  for(core::Size i=1; i<=pose.size(); i++){
 
       //find all the strands in the structure
       core::Size strand_start(0);
@@ -436,7 +436,7 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
       if(pose.secstruct(i) == 'E'){
 
           strand_start=i;
-          while(i<=pose.total_residue() && pose.secstruct(i)=='E'){
+          while(i<=pose.size() && pose.secstruct(i)=='E'){
               i++;
           }
           strand_end=i;
@@ -475,7 +475,7 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
               }
               //We iterate by two here so that the starting residue is always a residue with an interface-facing carboxyl group. This
               //is only true because each of the known_strands must start with an interface-facing carboxyl residue
-              for(core::Size l=known_strands[j].second; l<=(known_strands[j].first.total_residue()+1)-beta_length_; l+=2){
+              for(core::Size l=known_strands[j].second; l<=(known_strands[j].first.size()+1)-beta_length_; l+=2){
                   knownFragment.clear();
                   for (core::Size resInc = 0 ; resInc < beta_length_; resInc++){
                       knownFragment.append_residue_by_bond(known_strands[j].first.residue(l + resInc));

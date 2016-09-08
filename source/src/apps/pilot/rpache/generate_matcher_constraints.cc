@@ -119,7 +119,7 @@ int main( int argc, char * argv [] )
 
 		if ( option[ upstream_res ] <= 0 ) {
 			utility_exit_with_message( "Negative upstream resid is illegal: read " + utility::to_string( option[ upstream_res ]() ) + " for measure::upstream_res"  );
-		} else if ( ( unsigned int ) option[ upstream_res ] > pose.total_residue() ) {
+		} else if ( ( unsigned int ) option[ upstream_res ] > pose.size() ) {
 			utility_exit_with_message( "Upstream resid exceeds the number of residues in the input pose: read " + utility::to_string( option[ upstream_res ]() ) + " for measure::upstream_res" );
 		} else {
 			upres = option[ upstream_res ];
@@ -127,7 +127,7 @@ int main( int argc, char * argv [] )
 
 		if ( option[ downstream_res ] <= 0 ) {
 			utility_exit_with_message( "Negative downstream resid is illegal: read " + utility::to_string( option[ downstream_res ]() ) + " for measure::downstream_res"  );
-		} else if ( ( unsigned int ) option[ downstream_res ] > pose.total_residue() ) {
+		} else if ( ( unsigned int ) option[ downstream_res ] > pose.size() ) {
 			utility_exit_with_message( "Upstream resid exceeds the number of residues in the input pose: read " + utility::to_string( option[ downstream_res ]() ) + " for measure::downstream_res" );
 		} else {
 			downres = option[ downstream_res ];

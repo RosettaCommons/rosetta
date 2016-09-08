@@ -84,7 +84,7 @@ AverageDegreeFilter::compute( core::pose::Pose const & pose ) const{
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size count_residues( 0 );
 	core::Size count_neighbors( 0 );
-	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 		if ( packer_task->being_packed( resi ) ) {
 			core::Size resi_neighbors( 0 );
 			++count_residues;

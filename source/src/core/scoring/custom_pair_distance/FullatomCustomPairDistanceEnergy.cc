@@ -329,9 +329,9 @@ for (PairFuncMap::const_iterator respairiter = pair_and_func_map_.begin(),
 respairiter_end = pair_and_func_map_.end();
 respairiter != respairiter_end; ++respairiter) {
 ResTypePair respair = (*respairiter).first.data();
-for ( Size i=1; i<=pose.total_residue(); ++i ) {
+for ( Size i=1; i<=pose.size(); ++i ) {
 if ( & (pose.residue_type(i)) == respair[1] ) {
-for ( Size j=1; j<=pose.total_residue(); ++j ) {
+for ( Size j=1; j<=pose.size(); ++j ) {
 if ( & (pose.residue_type(j)) == respair[2] ) {
 for ( std::list<atoms_and_func_struct>::const_iterator iter_a = (*respairiter).second.begin(),
 iter_end_a = (*respairiter).second.end(); iter_a != iter_end_a; ++iter_a) {

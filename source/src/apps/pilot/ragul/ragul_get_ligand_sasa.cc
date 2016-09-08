@@ -158,10 +158,10 @@ int main( int argc, char * argv [] ){
 
 		//hydrophobic and polar SASA
 
-		utility::vector1< core::Real > complex_rsd_sasa( bound_protein_pose.total_residue(), 0.0 );
-		utility::vector1< core::Real > separated_rsd_sasa( unbound_protein_pose.total_residue(), 0.0 );
-		utility::vector1< core::Real > complex_rsd_hsasa( bound_protein_pose.total_residue(), 0.0 ); // hydrophobic SASA only
-		utility::vector1< core::Real > separated_rsd_hsasa( unbound_protein_pose.total_residue(), 0.0 ); // hydrophobic SASA only
+		utility::vector1< core::Real > complex_rsd_sasa( bound_protein_pose.size(), 0.0 );
+		utility::vector1< core::Real > separated_rsd_sasa( unbound_protein_pose.size(), 0.0 );
+		utility::vector1< core::Real > complex_rsd_hsasa( bound_protein_pose.size(), 0.0 ); // hydrophobic SASA only
+		utility::vector1< core::Real > separated_rsd_hsasa( unbound_protein_pose.size(), 0.0 ); // hydrophobic SASA only
 
 		core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];
 
@@ -169,7 +169,7 @@ int main( int argc, char * argv [] ){
 		core::scoring::calc_per_res_hydrophobic_sasa( unbound_protein_pose, separated_rsd_sasa, separated_rsd_hsasa, probe_radius, false );
 
 		core::Size lig_res_num = 0;
-		for ( int j = 1, resnum = bound_protein_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = bound_protein_pose.size(); j <= resnum; ++j ) {
 			if ( !bound_protein_pose.residue(j).is_protein() ) {
 				lig_res_num = j;
 				break;
@@ -187,7 +187,7 @@ int main( int argc, char * argv [] ){
 		core::Real separated_polar_sasa = 0.0;
 		core::Real separated_hydrophobic_sasa = 0.0;
 
-		for ( core::uint j = 1, resnum = bound_protein_pose.total_residue(); j <= resnum; ++j ) {
+		for ( core::uint j = 1, resnum = bound_protein_pose.size(); j <= resnum; ++j ) {
 			if ( j == lig_res_num ) continue;
 			complex_sasa += complex_rsd_sasa[j];
 			complex_hydrophobic_sasa += complex_rsd_hsasa[j];

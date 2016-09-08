@@ -187,7 +187,7 @@ LocalCoordinateConstraint::read_def(
 
 	tr.Debug << "read: " << name1 << " " << res1 << " " << name2 << " " << name3
 		<< " " << name4 << " " << res2 << " func: " << func_type << std::endl;
-	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
+	if ( res1 > pose.size() || res2 > pose.size() ) {
 		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );

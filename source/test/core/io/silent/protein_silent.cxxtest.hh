@@ -129,8 +129,8 @@ public:
 		TS_ASSERT( iter->decoy_tag() == "tag" );
 		iter->fill_pose( restored_pose, *rsd_set );
 
-		TS_ASSERT( start_pose->total_residue() == restored_pose.total_residue() );
-		for ( Size seqpos = 1; seqpos <= restored_pose.total_residue(); ++seqpos ) {
+		TS_ASSERT( start_pose->size() == restored_pose.size() );
+		for ( Size seqpos = 1; seqpos <= restored_pose.size(); ++seqpos ) {
 			TS_ASSERT_DELTA(
 				start_pose->phi( seqpos ), restored_pose.phi( seqpos ),
 				BB_ERROR
@@ -375,8 +375,8 @@ public:
 		iter->fill_pose( restored_pose );
 
 		TS_ASSERT( !restored_pose.is_fullatom() )
-			TS_ASSERT( centroid_pose_->total_residue() == restored_pose.total_residue() );
-		for ( Size seqpos = 1; seqpos <= restored_pose.total_residue(); ++seqpos ) {
+			TS_ASSERT( centroid_pose_->size() == restored_pose.size() );
+		for ( Size seqpos = 1; seqpos <= restored_pose.size(); ++seqpos ) {
 			TS_ASSERT_DELTA(
 				centroid_pose_->phi( seqpos ), restored_pose.phi( seqpos ),
 				BB_ERROR

@@ -114,7 +114,7 @@ void test( std::string fname ) {
 	core::Size const NM( 1000 );
 	FArray1D<Real> sflm( NM );
     // N is the number of residues of the protein
-	core::Size const N( pose.total_residue() );
+	core::Size const N( pose.size() );
 	FArray2D<Real> lm_phi( N, NM );
 	FArray2D<Real> lm_psi( N, NM );
 	FArray2D<Real> lm_chi( N, NM );

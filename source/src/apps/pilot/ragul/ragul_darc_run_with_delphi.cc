@@ -216,7 +216,7 @@ int main( int argc, char * argv [] ) {
 	for (core::Size lig_num = 1; lig_num <= ligand_poses.size(); ++lig_num) {
 
 		core::pose::Pose small_mol_pose = ligand_poses[lig_num];
-		Size const nconformers = small_mol_pose.total_residue();
+		Size const nconformers = small_mol_pose.size();
 
 		//create 'tag' for output filenames
 		int pfounddir = input_protein.find_last_of("/\\");
@@ -255,8 +255,8 @@ int main( int argc, char * argv [] ) {
 		p_max[7] = nconformers - 0.00001;		// note: conformer is indexed starting at 0
 
 		if(option[ darc_score_only ]()){
-			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.total_residue());
-			for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
+			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.size());
+			for (Size ii = 1; ii <= small_mol_pose.size(); ++ii){
 				rot_poses[ii] = new core::pose::Pose(small_mol_pose, ii, ii);
 				protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 				std::cout << "DARC SCORE (unaligned) :" <<  conf_pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
@@ -296,8 +296,8 @@ int main( int argc, char * argv [] ) {
 		} else {
 			// run DARC for each conformer separately, then take the best score at the end
 			p_max[7] = 0.00001;
-			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.total_residue());
-			for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
+			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.size());
+			for (Size ii = 1; ii <= small_mol_pose.size(); ++ii){
 				rot_poses[ii] = new core::pose::Pose(small_mol_pose, ii, ii);
 				protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 			std::cout << "DARC SCORE (unaligned) :" <<  conf_pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
@@ -321,7 +321,7 @@ int main( int argc, char * argv [] ) {
 		}
 
 		//Append the best ligand conformer pose to protein pose and print(optional) the complex PDB file
-		bound_pose.append_residue_by_jump(oriented_pose.residue( 1 ), protein_pose.total_residue(),"", "",  true);
+		bound_pose.append_residue_by_jump(oriented_pose.residue( 1 ), protein_pose.size(),"", "",  true);
 		pose::Pose pre_min_darc_pose = bound_pose;
 		if (option[ print_output_complex ]()){
 		  bound_pose.dump_pdb(darc_complex_filename);
@@ -357,7 +357,7 @@ int main( int argc, char * argv [] ) {
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
 
 			// add constraint
-			Size nres = bound_pose.total_residue();
+			Size nres = bound_pose.size();
 			Real const coord_sdev( option[ OptionKeys::cst_force_constant ] );
 			// default is 0.5 (from idealize) -- maybe too small
 			for ( Size i = 1; i< nres; ++i ) {
@@ -398,7 +398,7 @@ int main( int argc, char * argv [] ) {
 		base_packer_task->set_bump_check( false );
 		base_packer_task->initialize_from_command_line();
 		base_packer_task->or_include_current( true );
-		for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= bound_pose.size(); ++ii ) {
 			base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
 		}
 
@@ -428,8 +428,8 @@ int main( int argc, char * argv [] ) {
 		if (option[ print_output_complex ]){
 		  //align minimized pose to the original docked pose and dump pdb complex and ligand
 		  protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover();
-		  sp_mover->set_reference_pose( pre_min_darc_pose, 1, (pre_min_darc_pose.total_residue()-1) );
-		  sp_mover->set_target_range( 1, (bound_pose.total_residue()-1) );
+		  sp_mover->set_reference_pose( pre_min_darc_pose, 1, (pre_min_darc_pose.size()-1) );
+		  sp_mover->set_target_range( 1, (bound_pose.size()-1) );
 		  sp_mover->apply( bound_pose );
 		  //spilt into chains and print minimized ligand pose
 		  utility::vector1< core::pose::PoseOP > chains = bound_pose.split_by_chain();

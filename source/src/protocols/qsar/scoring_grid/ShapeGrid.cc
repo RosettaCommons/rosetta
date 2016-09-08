@@ -96,7 +96,7 @@ void ShapeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 
 	utility::vector1<utility::vector1<core::Real> > coord_list;
 	utility::vector1<utility::pointer::ReferenceCountOP> data_list;
-	for ( core::Size residue_index = 1; residue_index <= pose.n_residue(); ++residue_index ) {
+	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
 		core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(residue_index)) );
 		if ( residue->chain() == chain_id ) {
 			continue;

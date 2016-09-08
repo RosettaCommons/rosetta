@@ -244,7 +244,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				if ( design() ) {
 					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						Loop loop( *it );
-						for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+						for ( core::Size i = 1; i <= pose.size(); ++i ) {
 							if ( i >= loop.start() && i <= loop.stop() ) continue; // design
 							else task->nonconst_residue_task( i ).restrict_to_repacking(); // repack only
 						}
@@ -474,7 +474,7 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 		runtime_assert( loop_end_ > loop_start_ );
 		runtime_assert( (loop_end_ - loop_start_) >= 3 );
 		runtime_assert( loop_start_ > 1 );
-		runtime_assert( loop_end_ < pose.total_residue() );
+		runtime_assert( loop_end_ < pose.size() );
 	}
 	TR << "LoopRemodel mover: auto_loops="<<auto_loops_<<" loop_start="<<loop_start_<<" loop_end="<<loop_end_<<" design="<<design()<<
 		" perturb="<<perturb_<<" refine="<<refine_<<" hurry=" <<hurry_<< " cycles=" << cycles_ <<" hires_score="<< rosetta_scripts::get_score_function_name(tag, "refine_score") << std::endl;

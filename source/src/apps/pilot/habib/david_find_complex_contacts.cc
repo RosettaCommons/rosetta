@@ -94,7 +94,7 @@ main( int argc, char * argv [] )
 
 		EnergyGraph & energy_graph(input_pose.energies().energy_graph());
 
-		for ( int i = 1, resnum = input_pose.total_residue(); i <= resnum; ++i ) {
+		for ( int i = 1, resnum = input_pose.size(); i <= resnum; ++i ) {
 			std::ostringstream tmp;
 			tmp<< input_pose.pdb_info()->chain(i);
 			std::string rch = tmp.str();

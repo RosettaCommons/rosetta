@@ -58,7 +58,7 @@ void ExtendedPoseInputStream::fill_pose(
 		residue_set
 	);
 
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		pose.set_phi  ( pos, -150 );
 		pose.set_psi  ( pos,  150 );
 		pose.set_omega( pos,  180 );

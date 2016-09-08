@@ -160,7 +160,7 @@ ResidueBurialFeatures::report_features(
 	std::string statement_string = "INSERT INTO residue_burial (struct_id, resNum, ten_a_neighbors, twelve_a_neighbors, neigh_vect_raw, sasa_r100, sasa_r140, sasa_r200) VALUES (?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 		Residue const & res = pose.residue(resNum);
 

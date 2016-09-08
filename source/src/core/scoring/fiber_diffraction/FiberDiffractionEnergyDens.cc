@@ -370,7 +370,7 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 		}
 	}
 
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	numeric::xyzVector< core::Real > atmi_xyz_(0.0,0.0,0.0);
 	int zr(0);
 

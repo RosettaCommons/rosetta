@@ -179,7 +179,7 @@ void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,  
 
   string sequence;
   string secstruct;
-  for (unsigned int j = 1; j <=_pose.n_residue();j++){
+  for (unsigned int j = 1; j <=_pose.size();j++){
 
     if (_polyAminoAcidSequence == ""){
       sequence += oneletter_code_from_aa(_pose.aa(j));

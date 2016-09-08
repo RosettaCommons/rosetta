@@ -83,7 +83,7 @@ vector1<Size> get_scanres(Pose const & pose) {
     TR << "input scanres!!!!!!" << std::endl;
     scanres = basic::options::option[basic::options::OptionKeys::willmatch::residues]();
   } else {
-    for(Size i = 1; i <= pose.n_residue(); ++i) {
+    for(Size i = 1; i <= pose.size(); ++i) {
       if(!pose.residue(i).has("N" )) { continue; }
       if(!pose.residue(i).has("CA")) { continue; }
       if(!pose.residue(i).has("C" )) { continue; }
@@ -108,14 +108,14 @@ void run() {
   remove_upper_terminus_type_from_pose_residue(cys,1);
 	add_variant_type_to_pose_residue(cys,"DISULF_PARTNER",1);
 
-	for(Size ir = 1; ir <= init.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= init.size(); ++ir) {
 		init.replace_residue(ir,cys.residue(1),true);
 		replace_pose_residue_copying_existing_coordinates(init,ir,init.residue(ir).residue_type_set().name_map("ALA"));
 	}
 
 	protocols::scoring::ImplicitFastClashCheck ifc(init,3.0);
 
-  // Size nres = init.n_residue();
+  // Size nres = init.size();
   // ScoreFunctionOP sf = core::scoring::get_score_function();
   ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
@@ -151,7 +151,7 @@ void run() {
 					alignaxis(tmp,(PSG-PCB1).normalized(),(tmp.residue(jrsd).xyz("SG")-tmp.residue(jrsd).xyz("CB")).normalized());
 					trans_pose(tmp, PSG - tmp.residue(jrsd).xyz("SG") );
 
-					for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+					for(Size ir = 1; ir <= pose.size(); ++ir) {
 						for(Size ia = 1; ia <= 5; ++ia) {
 							if(!ifc.clash_check( tmp.xyz(AtomID(ia,ir)) )) goto cont1;
 						}

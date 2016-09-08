@@ -336,7 +336,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 
 	if ( !fragments_big_.size() ) {
 		// number of residues
-		core::Size nres_tgt = pose.total_residue();
+		core::Size nres_tgt = pose.size();
 		core::conformation::symmetry::SymmetryInfoCOP symm_info;
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -365,7 +365,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		} else {
 			// templates vote on secstruct
 			for ( core::Size i=1; i<=templates_.size(); ++i ) {
-				for ( core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
+				for ( core::Size j=1; j<=templates_[i]->size(); ++j ) {
 					if ( !templates_[i]->residue(j).is_protein() ) continue;
 					core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
 
@@ -525,7 +525,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	using namespace basic::options::OptionKeys;
 
 	// xyz copy starting model
-	for ( Size i=1; i<=chosen_templ->total_residue(); ++i ) {
+	for ( Size i=1; i<=chosen_templ->size(); ++i ) {
 		for ( Size j=1; j<=chosen_templ->residue(i).natoms(); ++j ) {
 			core::id::AtomID src(j,i), tgt(j, chosen_templ->pdb_info()->number(i));
 			pose.set_xyz( tgt, chosen_templ->xyz( src ) );
@@ -535,7 +535,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	// make loops as inverse of template_contigs
 	TR << "CONTIGS" << std::endl << template_contigs << std::endl;
 	//core::Size ncontigs = template_contigs.size();
-	core::Size nres_tgt = pose.total_residue();
+	core::Size nres_tgt = pose.size();
 
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -551,7 +551,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops );
 	utility::vector1< bool > templ_coverage(nres_tgt, false);
 
-	for ( Size i=1; i<=chosen_templ->total_residue(); ++i ) {
+	for ( Size i=1; i<=chosen_templ->size(); ++i ) {
 		core::Size cres = chosen_templ->pdb_info()->number(i);
 		templ_coverage[cres] = true;
 	}
@@ -787,7 +787,7 @@ void HybridizeProtocol::validate_template(
 	core::pose::PoseOP template_pose,
 	bool & align_pdb_info)
 {
-	core::Size nres_fasta = fasta.length(), nres_templ = template_pose->total_residue();
+	core::Size nres_fasta = fasta.length(), nres_templ = template_pose->size();
 	core::Size next_ligand = nres_fasta+1; // ligands must be sequentially numbered
 
 	bool requires_alignment = false;
@@ -845,7 +845,7 @@ void HybridizeProtocol::validate_template(
 		sequencemap.reverse();
 		core::Size ndel = 0;
 		core::Size currres = 1;
-		core::Size nres = template_pose->total_residue();
+		core::Size nres = template_pose->size();
 		for ( Size i=1; i<=nres; i++ ) {
 			Size pdbnumber = template_pose->pdb_info()->number(i);
 			if ( sequencemap[i] == 0 ) { // extra residues in template
@@ -886,7 +886,7 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 
 	domains_all_templ_.resize( templates_.size() );
 	for ( Size i_template=1; i_template<=templates_.size(); ++i_template ) {
-		if ( templates_[i_template]->total_residue() < 3 ) {
+		if ( templates_[i_template]->size() < 3 ) {
 			continue;  // ???
 		}
 
@@ -950,8 +950,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	using namespace ObjexxFCL::format;
 
 	// number of residues in asu without VRTs
-	core::Size nres_tgt = pose.total_residue();
-	core::Size nres_protein_tgt = pose.total_residue();
+	core::Size nres_tgt = pose.size();
+	core::Size nres_protein_tgt = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -1082,7 +1082,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				TR << "Randomize >" << randomize_chains_[initial_template_index][q] << "<" << std::endl;
 			}
 
-			for ( core::Size i=1; i<=templates_[initial_template_index]->total_residue(); ++i ) {
+			for ( core::Size i=1; i<=templates_[initial_template_index]->size(); ++i ) {
 				char chain = templates_[initial_template_index]->pdb_info()->chain(i);
 				if ( std::find(
 						randomize_chains_[initial_template_index].begin(),
@@ -1122,7 +1122,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				utility::vector1< id::AtomID > atm_ids;
 				utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
-				for ( core::Size i=1; i<=templates_[initial_template_index]->total_residue(); ++i ) {
+				for ( core::Size i=1; i<=templates_[initial_template_index]->size(); ++i ) {
 					core::conformation::Residue const & rsd_i = template_orig.residue(i);
 					char chain = templates_[initial_template_index]->pdb_info()->chain(i);
 					if ( std::find(
@@ -1158,17 +1158,17 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// (1) steal hetatms from template
 		utility::vector1< std::pair< core::Size,core::Size > > hetatms;
 		if ( add_hetatm_ ) {
-			for ( Size ires=1; ires <= templates_[initial_template_index]->total_residue(); ++ires ) {
+			for ( Size ires=1; ires <= templates_[initial_template_index]->size(); ++ires ) {
 				if ( templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt ) {
 					TR.Debug << "Insert hetero residue: " << templates_[initial_template_index]->residue(ires).name3() << std::endl;
 					if ( templates_[initial_template_index]->residue(ires).is_polymer()
 							&& !templates_[initial_template_index]->residue(ires).is_lower_terminus()
-							&& !pose.residue(pose.total_residue()).is_upper_terminus() ) {
+							&& !pose.residue(pose.size()).is_upper_terminus() ) {
 						pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires));
 					} else {
 						pose.append_residue_by_jump(templates_[initial_template_index]->residue(ires), 1);
 					}
-					hetatms.push_back( std::make_pair( ires, pose.total_residue() ) );
+					hetatms.push_back( std::make_pair( ires, pose.size() ) );
 				}
 			}
 		}
@@ -1227,7 +1227,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// (6) allowed movement
 		utility::vector1<bool> allowed_to_move;
-		allowed_to_move.resize(pose.total_residue(),true);
+		allowed_to_move.resize(pose.size(),true);
 		for ( int i=1; i<=(int)residue_sample_template_.size(); ++i ) allowed_to_move[i] = allowed_to_move[i] && residue_sample_template_[i];
 		for ( int i=1; i<=(int)residue_sample_abinitio_.size(); ++i ) allowed_to_move[i] = allowed_to_move[i] && residue_sample_abinitio_[i];
 
@@ -1325,7 +1325,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		//write gdtmm to output
-		if ( native_ && native_->total_residue() ) {
+		if ( native_ && native_->size() ) {
 			gdtmm = get_gdtmm(*native_, pose, aln_);
 			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1", gdtmm);
 			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
@@ -1397,7 +1397,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		//write gdtmm to output
-		if ( native_ && native_->total_residue() ) {
+		if ( native_ && native_->size() ) {
 			gdtmm = get_gdtmm(*native_, pose, aln_);
 			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage2", gdtmm);
 			TR << "GDTMM_after_stage2" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1447,7 +1447,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			// set disulfides before going to FA
 			if ( disulf_file_.length() > 0 ) {
 				// delete current disulfides
-				for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+				for ( int i=1; i<=(int)pose.size(); ++i ) {
 					if ( !pose.residue(i).is_protein() ) continue;
 					if ( pose.residue(i).type().is_disulfide_bonded() ) {
 						core::conformation::change_cys_state( i, "CYS", pose.conformation() );
@@ -1545,7 +1545,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			(*stage2_scorefxn_)(pose);
 		}
 	}
-	if ( native_ && native_->total_residue() ) {
+	if ( native_ && native_->size() ) {
 		gdtmm = get_gdtmm(*native_, pose, aln_);
 		core::pose::setPoseExtraScore( pose, "GDTMM_final", gdtmm);
 		TR << "GDTMM_final" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1600,13 +1600,13 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 	core::Real min_coverage = 0.2;
 
 	// find corresepondance of ligands to nearest residues (in moving pose)
-	core::Size last_protein_residue=pose.total_residue();
+	core::Size last_protein_residue=pose.size();
 	while ( last_protein_residue>0 && !pose.residue_type(last_protein_residue).is_protein() ) last_protein_residue--;
 
 	if ( last_protein_residue == 0 ) return;
 
 	std::map< core::Size, core::Size > ligres_map;
-	for ( core::Size i=last_protein_residue+1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=last_protein_residue+1; i<=pose.size(); ++i ) {
 		core::Real mindist = 999.0;
 		core::Size minj = 1;
 		for ( core::Size j=1; j<=last_protein_residue; ++j ) {
@@ -1627,7 +1627,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		// find all residues in moving pose corresponding to this domain
 		std::list <Size> residue_list;
 		core::Size n_mapped_residues=0;
-		for ( core::Size ires=1; ires<=pose.total_residue(); ++ires ) {
+		for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 			if ( !pose.residue_type(ires).is_protein() ) continue;
 			int pose_res = (pose.pdb_info()) ? pose.pdb_info()->number(ires) : ires;
 			for ( core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop ) {
@@ -1638,7 +1638,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 
 		// find all residues in reference pose corresponding to this domain
 		std::list <Size> ref_residue_list;
-		for ( core::Size jres=1; jres<=ref_pose.total_residue(); ++jres ) {
+		for ( core::Size jres=1; jres<=ref_pose.size(); ++jres ) {
 			if ( !ref_pose.residue_type(jres).is_protein() ) continue;
 			int ref_pose_res = (ref_pose.pdb_info()) ? ref_pose.pdb_info()->number(jres) : jres;
 			for ( core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop ) {
@@ -1666,7 +1666,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		if ( n_mapped_residues < 6 ) continue;  // TO DO: remove this domain
 
 		// add in ligand residues
-		for ( core::Size i=last_protein_residue+1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=last_protein_residue+1; i<=pose.size(); ++i ) {
 			core::Size res_controlling_i = ligres_map[i];
 			for ( core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop ) {
 				if ( res_controlling_i < domains[i_domain][iloop].start() || res_controlling_i > domains[i_domain][iloop].stop() ) continue;

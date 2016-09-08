@@ -93,7 +93,7 @@ DeltaFilter::baseline() const{
 		//This should probably be replaced by some pose observer magic instead
 		if ( (ref_baseline_ == 1234567890.0) || (changing_baseline_) ) { // unlikely "uninitialized" sentinel value
 			core::pose::Pose p( *reference_pose_ );
-			if ( p.total_residue() == 0 ) { // If reference pose wasn't properly initialized, fast fail with interpretable error message
+			if ( p.size() == 0 ) { // If reference pose wasn't properly initialized, fast fail with interpretable error message
 				utility_exit_with_message("Reference pose used with DeltaFilter wasn't initialized properly!");
 			}
 			relax_mover()->apply( p );

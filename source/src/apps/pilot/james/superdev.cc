@@ -95,7 +95,7 @@ public:
 		Mover("SuperDev"),
 		superimpose_(superimpose),
 		native_pose_( native_pose ),
-		deviations_( native_pose.total_residue(), vector1< Real >() )
+		deviations_( native_pose.size(), vector1< Real >() )
 	{}
 
 
@@ -125,7 +125,7 @@ public:
 			core::id::AtomID_Map< Real > bfactors;
 			core::pose::initialize_atomid_map( bfactors, pose, 0.0 );
 
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				Real distance = native_pose_.residue(ii).xyz(atom_name).distance(
 					pose.residue(ii).xyz( atom_name )
 				);
@@ -162,7 +162,7 @@ public:
 		utility::io::ozstream data_output( tag + ".stats.txt" );
 		//data_output << "resi deviation tag" << std::endl;
 		data_output << "tag";
-		for ( Size jj = 1; jj <= native_pose_.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= native_pose_.size(); ++jj ) {
 			std::string const col_name( "res_" + string_of(jj) );
 			data_output << " " << col_name;
 		}

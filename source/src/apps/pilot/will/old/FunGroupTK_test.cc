@@ -132,15 +132,15 @@ void run_hh(std::string fname) {
 
   Pose pose;
   pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
-		for(Size i=1; i<=pose.n_residue(); ++i) {
+		for(Size i=1; i<=pose.size(); ++i) {
 				core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
 		}
   FunGroupTK & krs(*(new   KinFunGroupTK(pose)));
   FunGroupTK & brs(*(new BruteFunGroupTK(pose)));
   TR << "start" << std::endl;
 
-		vector1<core::pack::rotamer_set::RotamerSetOP> rots(pose.n_residue());
-		for(Size i=1; i<=pose.n_residue(); ++i) {
+		vector1<core::pack::rotamer_set::RotamerSetOP> rots(pose.size());
+		for(Size i=1; i<=pose.size(); ++i) {
 				core::conformation::Residue rtmp(pose.residue(i));
 				pose.replace_residue(i,his.residue(1),true);
 				rots[i] = get_rotset(pose,i);
@@ -154,7 +154,7 @@ void run_hh(std::string fname) {
     nkh=0;
     nbh=0;
     // his / cys
-    for(Size ir=1;ir<=pose.n_residue();++ir) {
+    for(Size ir=1;ir<=pose.size();++ir) {
       core::conformation::Residue rtmp(pose.residue(ir));
       pose.replace_residue(ir,his.residue(1),true);
       for(Size irot = 1; irot <= rots[ir]->num_rotamers(); ++irot) {
@@ -238,15 +238,15 @@ void run_hd(std::string fname) {
 
   Pose pose;
   pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
-		for(Size i=1; i<=pose.n_residue(); ++i) {
+		for(Size i=1; i<=pose.size(); ++i) {
 				core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
 		}
   FunGroupTK & krs(*(new   KinFunGroupTK(pose)));
   FunGroupTK & brs(*(new BruteFunGroupTK(pose)));
   TR << "start" << std::endl;
 
-		vector1<core::pack::rotamer_set::RotamerSetOP> rots(pose.n_residue());
-		for(Size i=1; i<=pose.n_residue(); ++i) {
+		vector1<core::pack::rotamer_set::RotamerSetOP> rots(pose.size());
+		for(Size i=1; i<=pose.size(); ++i) {
 				core::conformation::Residue rtmp(pose.residue(i));
 				pose.replace_residue(i,his.residue(1),true);
 				rots[i] = get_rotset(pose,i);
@@ -260,7 +260,7 @@ void run_hd(std::string fname) {
     nkh=0;
     nbh=0;
     // his / cys
-    for(Size ir=1;ir<=pose.n_residue();++ir) {
+    for(Size ir=1;ir<=pose.size();++ir) {
       core::conformation::Residue rtmp(pose.residue(ir));
       pose.replace_residue(ir,his.residue(1),true);
       for(Size irot = 1; irot <= rots[ir]->num_rotamers(); ++irot) {

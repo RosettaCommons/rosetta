@@ -201,7 +201,7 @@ SymmAbRelaxTest()
     std::string sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
     core::pose::make_pose_from_sequence( extended_pose, sequence,
 			    *( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))  );
-    for ( Size pos = 1; pos <= extended_pose.total_residue(); pos++ ) {
+    for ( Size pos = 1; pos <= extended_pose.size(); pos++ ) {
       extended_pose.set_phi( pos, -150 );
       extended_pose.set_psi( pos, 150 );
       extended_pose.set_omega( pos, 180 );

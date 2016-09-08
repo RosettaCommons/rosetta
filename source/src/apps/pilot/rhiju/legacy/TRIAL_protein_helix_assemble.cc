@@ -258,7 +258,7 @@ rebuild_test()
     // rotamer trials
     PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
     pack_task_->restrict_to_repacking();
-    for (Size i = 1; i <= pose.total_residue(); i++) {
+    for (Size i = 1; i <= pose.size(); i++) {
       if ( !pose.residue(i).is_protein() ) continue;
       pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
       pack_task_->nonconst_residue_task(i).or_ex1( true );

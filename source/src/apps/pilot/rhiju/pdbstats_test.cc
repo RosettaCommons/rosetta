@@ -126,7 +126,7 @@ ch_o_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size co
 
 	static Real const DIST_CUTOFF2 ( 4.5 * 4.5 );
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size res_count( 0 );
 
@@ -270,7 +270,7 @@ fa_cenpack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, S
 
 	static Real const DIST_CUTOFF ( 12.0 );
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size res_count( 0 );
 
@@ -447,7 +447,7 @@ aro_pack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Siz
 
 	static Real const DIST_CUTOFF ( 8.0 );
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size res_count( 0 );
 
@@ -507,7 +507,7 @@ proline_rama_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose,
 
 	static Real const DIST_CUTOFF ( 8.0 );
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size res_count( 0 );
 
@@ -687,7 +687,7 @@ rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 	using namespace protocols::farna;
 	using namespace chemical::rna;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size res_count( 0 );
 

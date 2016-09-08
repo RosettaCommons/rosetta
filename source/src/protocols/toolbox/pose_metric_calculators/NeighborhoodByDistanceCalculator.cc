@@ -158,7 +158,7 @@ NeighborhoodByDistanceCalculator::recompute( core::pose::Pose const & pose )
 	num_neighbors_map_.clear();
 	num_neighbors_ = 0;
 
-	core::Size const nres(pose.total_residue());
+	core::Size const nres(pose.size());
 
 	//this is the expensive part!
 	core::conformation::PointGraphOP pg( new core::conformation::PointGraph ); //create graph

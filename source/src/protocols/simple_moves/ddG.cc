@@ -312,7 +312,7 @@ void ddG::apply(Pose & pose)
 		average_ddg += sum_ddG();
 		report_ddG(TR);
 		if ( per_residue_ddg_ ) {
-			for ( core::Size i = 1; i <= pose.n_residue(); ++i ) {
+			for ( core::Size i = 1; i <= pose.size(); ++i ) {
 				core::Real bound_energy = bound_per_residue_energies_[i];
 				core::Real unbound_energy = unbound_per_residue_energies_[i];
 				core::Real residue_ddg = bound_energy - unbound_energy;
@@ -333,7 +333,7 @@ void ddG::apply(Pose & pose)
 	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
 	setPoseExtraScore(pose, "ddg",average_ddg);
 	if ( per_residue_ddg_ ) {
-		for ( core::Size i = 1; i <= pose.n_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			std::string residue_string(utility::to_string<core::Size>(i));
 			setPoseExtraScore(pose,"residue_ddg_"+residue_string,average_per_residue_ddgs[i]);
 		}
@@ -364,7 +364,7 @@ void ddG::fill_per_residue_energy_vector(pose::Pose const & pose, std::map<Size,
 		utility_exit_with_message("Cannot calculate per-residue ddG's with a specified filter.");
 	}
 	energy_map.clear();
-	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
 		core::Real energy = 0.0;
 		for ( int st = 1; st <= n_score_types; ++st ) {
 			if ( (*scorefxn_)[ScoreType(st)] != 0.0 && ScoreType(st) != pro_close ) {

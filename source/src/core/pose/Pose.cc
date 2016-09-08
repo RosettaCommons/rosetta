@@ -72,7 +72,6 @@
 #include <fstream>
 #include <boost/unordered_map.hpp>
 
-
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -86,6 +85,15 @@ namespace pose {
 
 using namespace core::conformation;
 
+typedef boost::indirect_iterator< const conformation::ResidueOPs::const_iterator, Residue const >const_iterator;
+typedef boost::indirect_iterator< conformation::ResidueOPs::iterator, Residue const > iterator;
+
+iterator       Pose::begin() noexcept { return conformation().begin(); }
+const_iterator Pose::begin()   const noexcept { return conformation().begin(); }
+iterator       Pose::end() noexcept { return conformation().end(); }
+const_iterator Pose::end()     const noexcept { return conformation().end(); }
+	
+	
 /// @details default init function
 void Pose::init(void)
 {
@@ -323,7 +331,7 @@ Pose::atom_tree() const
 int
 Pose::chain( Size const seqpos ) const
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::chain( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::chain( Size const seqpos ): variable seqpos is out of range!" );
 	return residue( seqpos ).chain();
 }
 
@@ -404,9 +412,9 @@ Pose::split_by_chain(Size const chain_id) const
 	// if this is the first chain, delete chain_end to the end of the pose
 	else if ( chain_begin == 1 ) {
 		delete_begin = chain_end + 1;
-		delete_end = chain_pose->total_residue();
+		delete_end = chain_pose->size();
 		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-	} else if ( chain_end == chain_pose->total_residue() ) {
+	} else if ( chain_end == chain_pose->size() ) {
 		// if this is the last chain, delete the start of the pose to chain_begin
 		delete_begin = 1;
 		delete_end = chain_begin - 1;
@@ -418,7 +426,7 @@ Pose::split_by_chain(Size const chain_id) const
 		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
 		// just deleted residues --> renumbering pose, so need to reset deletion mask
 		delete_begin = chain_end - chain_begin + 2;
-		delete_end = chain_pose->total_residue();
+		delete_end = chain_pose->size();
 		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
 	}
 
@@ -503,7 +511,7 @@ Pose::append_residue_by_jump(
 	bool const start_new_chain //= false
 )
 {
-	//PyAssert( (jump_anchor_residue>0) && (jump_anchor_residue<total_residue()), "Pose::append_residue_by_jump( ...Size const jump_anchor_residue... ): variable jump_anchor_residue is out of range!" );    // check later: may be fixed in conformation
+	//PyAssert( (jump_anchor_residue>0) && (jump_anchor_residue<size()), "Pose::append_residue_by_jump( ...Size const jump_anchor_residue... ): variable jump_anchor_residue is out of range!" );    // check later: may be fixed in conformation
 	energies_->clear(); // TEMPORARY
 	conformation_->append_residue_by_jump( new_rsd, jump_anchor_residue, jump_anchor_atom, jump_root_atom, start_new_chain );
 	//Since this is appending a new index at the end of the pose, there should be no change to residue index mappings in ReferencePose objects.
@@ -520,7 +528,7 @@ Pose::append_residue_by_bond(
 	bool const lookup_bond_length // = false
 )
 {
-	//PyAssert( (anchor_residue>0) && (anchor_residue<=total_residue()), "Pose::append_residue_by_bond( ...Size const anchor_residue... ): variable anchor_residue is out of range!" );    // check later: may be fixed in conformation
+	//PyAssert( (anchor_residue>0) && (anchor_residue<=size()), "Pose::append_residue_by_bond( ...Size const anchor_residue... ): variable anchor_residue is out of range!" );    // check later: may be fixed in conformation
 	energies_->clear(); // TEMPORARY
 	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_residue, anchor_connection, start_new_chain, lookup_bond_length);
 	//Since the new residue's index is at the end of the pose, there should be no change to residue mappings in ReferencePose objects.
@@ -586,7 +594,7 @@ Pose::insert_residue_by_jump(
 	std::string const& root_atomno // = ""
 )
 {
-	PyAssert( (anchor_pos<=total_residue()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
+	PyAssert( (anchor_pos<=size()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->insert_residue_by_jump( new_rsd_in, seqpos, anchor_pos, anchor_atomno, root_atomno );
 	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
@@ -604,7 +612,7 @@ Pose::insert_residue_by_bond(
 	bool const lookup_bond_length // default false
 )
 {
-	PyAssert( (anchor_pos<=total_residue()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
+	PyAssert( (anchor_pos<=size()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->insert_residue_by_bond( new_rsd_in, seqpos, anchor_pos, build_ideal_geometry, anchor_atom, root_atom, new_chain, lookup_bond_length );
 	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
@@ -617,7 +625,7 @@ Pose::replace_residue(
 	bool const orient_backbone
 )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::replace_residue( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later: may become unecessary
+	PyAssert( (seqpos<=size()), "Pose::replace_residue( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later: may become unecessary
 	conformation_->replace_residue( seqpos, new_rsd_in, orient_backbone );
 	//No change to residue mappings in any ReferencePoses that might exist, since we assume that the replaced residue corresponds to whatever existed previously.
 }
@@ -629,7 +637,7 @@ Pose::replace_residue(
 	utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
 )
 {
-	PyAssert( (seqpos<=static_cast<int>(total_residue())), "Pose::replace_residue( ...Size const seqpos... ): "
+	PyAssert( (seqpos<=static_cast<int>(size())), "Pose::replace_residue( ...Size const seqpos... ): "
 		"variable seqpos is out of range!" );    // check later: may become unnecessary
 	conformation_->replace_residue( seqpos, new_rsd_in, atom_pairs );
 	//No change to residue mappings in any ReferencePoses that might exist, since we assume that the replaced residue corresponds to whatever existed previously.
@@ -642,7 +650,7 @@ Pose::append_polymer_residue_after_seqpos(
 	bool const build_ideal_geometry
 )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::append_polymer_residue_after_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later: may become unecessary
+	PyAssert( (seqpos<=size()), "Pose::append_polymer_residue_after_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later: may become unecessary
 	energies_->clear(); // TEMPORARY
 	conformation_->append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
 	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
@@ -655,7 +663,7 @@ Pose::prepend_polymer_residue_before_seqpos(
 	bool const build_ideal_geometry
 )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::prepend_polymer_residue_before_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later:
+	PyAssert( (seqpos<=size()), "Pose::prepend_polymer_residue_before_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
 	increment_reference_pose_mapping_after_seqpos( seqpos-1 ); //All mappings in the new pose after seqpos-1 must be incremented by 1 in all ReferencePose objects.
@@ -668,11 +676,11 @@ Pose::append_pose_by_jump(
 	std::string const & jump_anchor_atom,
 	std::string const & jump_root_atom)
 {
-	core::Size old_n_residue = n_residue();
+	core::Size old_size = size();
 
 	conformation().insert_conformation_by_jump(
 		src.conformation(),
-		n_residue() + 1,
+		size() + 1,
 		num_jump() + 1,
 		jump_anchor_residue,
 		0, // Set default anchor jump number
@@ -684,7 +692,7 @@ Pose::append_pose_by_jump(
 			*src.pdb_info(),
 			1,
 			src.pdb_info()->nres(),
-			old_n_residue + 1);
+			old_size + 1);
 	}
 
 	//No change to residue mappings in ReferencePose objects.
@@ -695,7 +703,7 @@ Pose::append_pose_by_jump(
 void
 Pose::delete_polymer_residue( Size const seqpos )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::delete_polymer_residue( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::delete_polymer_residue( Size const seqpos ): variable seqpos is out of range!" );
 	energies_->clear(); // TEMPORARY
 	conformation_->delete_polymer_residue( seqpos );
 	zero_reference_pose_mapping_at_seqpos( seqpos ); //All mappings in the new pose pointing to seqpose must now point to 0 in all ReferencePose objects.
@@ -711,7 +719,7 @@ Pose::delete_polymer_residue( Size const seqpos )
 void
 Pose::delete_residue_slow( Size const seqpos )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::delete_residue_slow( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::delete_residue_slow( Size const seqpos ): variable seqpos is out of range!" );
 	energies_->clear(); // TEMPORARY
 	conformation_->delete_residue_slow( seqpos );
 	zero_reference_pose_mapping_at_seqpos( seqpos ); //All mappings in the new pose pointing to seqpose must now point to 0 in all ReferencePose objects.
@@ -751,13 +759,7 @@ Pose::const_data_cache() const
 }
 
 Size
-Pose::total_residue() const
-{
-	return conformation_->size();
-}
-
-Size
-Pose::n_residue() const
+Pose::size() const
 {
 	return conformation_->size();
 }
@@ -768,7 +770,7 @@ Pose::n_residue() const
 Size
 Pose::total_atoms() const{
 	core::Size atomno(0);
-	for ( core::Size res = 1; res <= total_residue(); res++ ) {
+	for ( core::Size res = 1; res <= size(); res++ ) {
 		for ( core::Size atms = 1; atms <= residue(res).natoms(); atms++ ) {
 			atomno++;
 		}
@@ -805,21 +807,21 @@ Pose::num_jump() const
 chemical::AA
 Pose::aa( Size const seqpos ) const
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::aa( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::aa( Size const seqpos ): variable seqpos is out of range!" );
 	return conformation_->aa( seqpos );
 }
 
 char
 Pose::secstruct( Size const seqpos ) const
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::secstruct( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::secstruct( Size const seqpos ): variable seqpos is out of range!" );
 	return conformation_->secstruct(seqpos);
 }
 
 std::string
 Pose::secstruct() const {
 	std::string ss="";
-	for ( Size i = 1; i <= total_residue(); i++ ) {
+	for ( Size i = 1; i <= size(); i++ ) {
 		ss += secstruct( i );
 	}
 	return ss;
@@ -828,7 +830,7 @@ Pose::secstruct() const {
 void
 Pose::set_secstruct( Size const seqpos, char const setting )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::set_secstruct( Size const seqpos , char const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_secstruct( Size const seqpos , char const setting ): variable seqpos is out of range!" );
 	// check variable "setting" to ensure it is logical?
 	conformation_->set_secstruct( seqpos, setting );
 }
@@ -848,7 +850,7 @@ Pose::sequence() const
 std::string
 Pose::sequence(core::Size resnum_start, core::Size resnum_end) const
 {
-	PyAssert((resnum_end <= total_residue()), "Pose:sequence(core::Size resnum_start, core::Size resnum_end): resnum_end must be greater less than or equal to total residues!")
+	PyAssert((resnum_end <= size()), "Pose:sequence(core::Size resnum_start, core::Size resnum_end): resnum_end must be greater less than or equal to total residues!")
 
 		PyAssert((resnum_end >= resnum_start), "Pose:sequence(core::Size resnum_start, core::Size resnum_end): resnum_end must be greater than or equal to resnum_start!");
 
@@ -901,7 +903,7 @@ Pose::residue(
 	Size const seqpos
 ) const
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::residue( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::residue( Size const seqpos ): variable seqpos is out of range!" );
 	return conformation_->residue( seqpos );
 }
 
@@ -910,7 +912,7 @@ Pose::residue_type(
 	Size const seqpos
 ) const
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::residue_type( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::residue_type( Size const seqpos ): variable seqpos is out of range!" );
 	return conformation_->residue_type( seqpos );
 }
 
@@ -933,7 +935,7 @@ Pose::phi( Size const seqpos ) const
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()), "Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
 		"Pose::phi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
@@ -963,7 +965,7 @@ Pose::set_phi( Size const seqpos, Real const setting )
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
 		"Pose::set_phi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
@@ -989,7 +991,7 @@ Pose::psi( Size const seqpos ) const
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()), "Pose::psi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::psi( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
 		"Pose::psi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
@@ -1016,7 +1018,7 @@ Pose::set_psi( Size const seqpos, Real const setting )
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
 		"Pose::set_psi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
@@ -1043,7 +1045,7 @@ Real Pose::omega( Size const seqpos ) const
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()), "Pose::omega( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::omega( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
 		"Pose::omega( Size const seqpos ): residue seqpos is not part of a protein,peptoid, or carbohydrate!" );
 
@@ -1071,7 +1073,7 @@ Pose::set_omega( Size const seqpos, Real const setting )
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_omega( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_omega( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
 		"Pose::set_omega( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
@@ -1094,7 +1096,7 @@ Pose::theta( Size const seqpos ) const
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_beta_aa() );
-	PyAssert( (seqpos<=total_residue()), "Pose::theta( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::theta( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( residue_type(seqpos).is_beta_aa(), "Pose::theta( Size const seqpos ): residue seqpos is not a beta-amino acid!" );
 	if ( residue_type(seqpos).is_beta_aa() ) {
 		return residue(seqpos).mainchain_torsion(theta_torsion_beta_aa);
@@ -1112,7 +1114,7 @@ Pose::set_theta( Size const seqpos, Real const setting)
 	using namespace id;
 
 	debug_assert( residue_type(seqpos).is_beta_aa() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_theta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_theta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( residue_type(seqpos).is_beta_aa(), "Pose::set_theta( Size const seqpos, Real const setting ): residue seqpos is not a beta-amino acid!" );
 	if ( residue_type(seqpos).is_beta_aa() /*Should be true -- assertion above for debug mode.*/ ) conformation_->set_torsion( TorsionID( seqpos, BB, theta_torsion_beta_aa ), setting );
 }
@@ -1122,7 +1124,7 @@ Pose::set_theta( Size const seqpos, Real const setting)
 Real
 Pose::alpha( Size const seqpos ) const{
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::alpha( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::alpha( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::alpha( Size const seqpos ): residue seqpos is not part of a Nucleic Acid!" );
 	return torsion( id::TorsionID( seqpos, id::BB, 1 ) );
 }
@@ -1131,7 +1133,7 @@ void
 Pose::set_alpha( Size const seqpos, Real const setting )
 {
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_alpha( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_alpha( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::set_alpha( Size const seqpos , Real const setting ): residue seqpos is not part of a Nucleic Acid!" );
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 1 ), setting );
 }
@@ -1139,7 +1141,7 @@ Pose::set_alpha( Size const seqpos, Real const setting )
 Real
 Pose::beta( Size const seqpos ) const{
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::beta( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::beta( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::beta( Size const seqpos ): residue seqpos is not part of a Nucleic Acid!" );
 	return torsion( id::TorsionID( seqpos, id::BB, 2 ) );
 }
@@ -1148,7 +1150,7 @@ void
 Pose::set_beta( Size const seqpos, Real const setting )
 {
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_beta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_beta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::set_beta( Size const seqpos , Real const setting ): residue seqpos is not part of a Nucleic Acid!" );
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 2 ), setting );
 }
@@ -1156,7 +1158,7 @@ Pose::set_beta( Size const seqpos, Real const setting )
 Real
 Pose::gamma( Size const seqpos ) const{
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::gamma( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::gamma( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::gamma( Size const seqpos ): residue seqpos is not part of a Nucleic Acid!" );
 	return torsion( id::TorsionID( seqpos, id::BB, 3 ) );
 }
@@ -1165,7 +1167,7 @@ void
 Pose::set_gamma( Size const seqpos, Real const setting )
 {
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_gamma( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_gamma( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::set_gamma( Size const seqpos , Real const setting ): residue seqpos is not part of a Nucleic Acid!" );
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 3 ), setting );
 }
@@ -1173,7 +1175,7 @@ Pose::set_gamma( Size const seqpos, Real const setting )
 Real
 Pose::delta( Size const seqpos ) const{
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::delta( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::delta( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::delta( Size const seqpos ): residue seqpos is not part of a Nucleic Acid!" );
 	return torsion( id::TorsionID( seqpos, id::BB, 4 ) );
 }
@@ -1182,7 +1184,7 @@ void
 Pose::set_delta( Size const seqpos, Real const setting )
 {
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_delta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_delta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::set_delta( Size const seqpos , Real const setting ): residue seqpos is not part of a Nucleic Acid!" );
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 4 ), setting );
 }
@@ -1190,7 +1192,7 @@ Pose::set_delta( Size const seqpos, Real const setting )
 Real
 Pose::epsilon( Size const seqpos ) const{
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::epsilon( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::epsilon( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::epsilon( Size const seqpos ): residue seqpos is not part of a Nucleic Acid!" );
 	return torsion( id::TorsionID( seqpos, id::BB, 5 ) );
 }
@@ -1199,7 +1201,7 @@ void
 Pose::set_epsilon( Size const seqpos, Real const setting )
 {
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_epsilon( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_epsilon( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::set_epsilon( Size const seqpos , Real const setting ): residue seqpos is not part of a Nucleic Acid!" );
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 5 ), setting );
 }
@@ -1207,7 +1209,7 @@ Pose::set_epsilon( Size const seqpos, Real const setting )
 Real
 Pose::zeta( Size const seqpos ) const{
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::zeta( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::zeta( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::zeta( Size const seqpos ): residue seqpos is not part of a Nucleic Acid!" );
 	return torsion( id::TorsionID( seqpos, id::BB, 6 ) );
 }
@@ -1216,7 +1218,7 @@ void
 Pose::set_zeta( Size const seqpos, Real const setting )
 {
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_zeta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_zeta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::set_zeta( Size const seqpos , Real const setting ): residue seqpos is not part of a Nucleic Acid!" );
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 6 ), setting );
 }
@@ -1230,7 +1232,7 @@ Pose::chi(
 	Size const seqpos
 ) const
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
 		"Pose::chi( int const chino , Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
@@ -1246,7 +1248,7 @@ Pose::set_chi(
 	Real const setting
 )
 {
-	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein()  || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_ligand() ),
 		"Pose::set_chi( int const chino , Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, ligand or carbohydrate!" );
 	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
@@ -1260,7 +1262,7 @@ Pose::set_chi(
 Real
 Pose::chi( Size const seqpos ) const{
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::chi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::chi( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::chi( Size const seqpos ): residue seqpos is not part of a Nucleic Acid!" );
 	return torsion( id::TorsionID( seqpos, id::CHI, 1 ) );
 }
@@ -1269,7 +1271,7 @@ void
 Pose::set_chi( Size const seqpos, Real const setting )
 {
 	debug_assert( residue_type( seqpos ).is_NA() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (seqpos<=size()), "Pose::set_chi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_NA()), "Pose::set_chi( Size const seqpos , Real const setting ): residue seqpos is not part of a Nucleic Acid!" );
 	conformation_->set_torsion( TorsionID( seqpos, id::CHI, 1 ), setting );
 }
@@ -1290,7 +1292,7 @@ Pose::set_ring_conformation(
 	Residue const & res( residue( seqpos ) );
 
 	debug_assert( res.type().is_cyclic() );
-	PyAssert( ( seqpos <= total_residue() ),
+	PyAssert( ( seqpos <= size() ),
 		"Pose::set_ring_conformation(uint const seqpos, uint const ring_num, "
 		"core::chemical::rings::RingConformer const & conformer): variable seqpos is out of range!" );
 	PyAssert( ( ring_num <= res.type().n_rings() ),
@@ -1408,7 +1410,7 @@ Pose::has_dof(
 	DOF_ID const & did
 ) const
 {
-	if ( Size(did.rsd()) > total_residue() || did.rsd() < 1 ) return false;
+	if ( Size(did.rsd()) > size() || did.rsd() < 1 ) return false;
 	if ( Size(did.atomno()) > residue(did.rsd()).natoms() || did.atomno() < 1 ) return false;
 	if ( id::PHI == did.type() || id::THETA == did.type() || id::D == did.type() ) {
 		if ( conformation_->atom_tree().atom(did.atom_id()).is_jump() ) return false;
@@ -1479,7 +1481,7 @@ Pose::center()
 	PointPosition cog(0,0,0);
 
 	Size count=0;
-	for ( Size ir = 1; ir <= total_residue(); ir++ ) {
+	for ( Size ir = 1; ir <= size(); ir++ ) {
 		for ( Size at = 1; at <= residue( ir ).natoms(); at++ ) {
 			cog += xyz( AtomID( at, ir ) );
 			count++;
@@ -1491,7 +1493,7 @@ Pose::center()
 
 	//std::cout << cog.x() << std::endl;
 
-	for ( Size ir = 1; ir <= total_residue(); ir++ ) {
+	for ( Size ir = 1; ir <= size(); ir++ ) {
 		for ( Size at = 1; at <= residue( ir ).natoms(); at++ ) {
 			set_xyz(  AtomID( at, ir ),  xyz( AtomID( at, ir )) - cog  );
 		}
@@ -1504,19 +1506,19 @@ Pose::center()
 void
 Pose::update_residue_neighbors()
 {
-	if ( total_residue() > 0 ) {
-		residue( total_residue() ); // completely unnecessary temporary hack to force refold if nec.
+	if ( size() > 0 ) {
+		residue( size() ); // completely unnecessary temporary hack to force refold if nec.
 	}
 
 	if ( conformation_->structure_moved() ) {
-		energies_->structure_has_moved( total_residue() );
+		energies_->structure_has_moved( size() );
 		conformation_->reset_structure_moved();
 	} else if ( energies_->residue_neighbors_updated() ) {
 		return;
 	}
 
 	// figure out what's changed since the residue neighbor update
-	kinematics::DomainMap domain_map( total_residue() );
+	kinematics::DomainMap domain_map( size() );
 	conformation_->update_domain_map( domain_map );
 
 	energies_->update_residue_neighbors( domain_map, *this );
@@ -1535,7 +1537,7 @@ Pose::scoring_begin(
 	// notify of any structure changes
 	if ( conformation_->structure_moved() ) {
 		conformation_->reset_structure_moved();
-		energies_->structure_has_moved( total_residue() );
+		energies_->structure_has_moved( size() );
 	}
 
 	energies_->scoring_begin( sfxn, *this );
@@ -1634,14 +1636,14 @@ Pose::dump_scored_pdb(
 	// verbose output
 	out << "END\n";
 	std::string secstruct;
-	for ( Size i=1; i<= total_residue(); ++i ) secstruct += conformation_->secstruct(i);
+	for ( Size i=1; i<= size(); ++i ) secstruct += conformation_->secstruct(i);
 	out << "SS: " << secstruct << '\n';
 	out << "SCORE_INFO:\n";
 	out << "TOTAL_SCORE: " << total_score << '\n';
 	scoring::EnergyMap const & wts( scorefxn.weights() );
 	out << "WTS: " << wts.show_nonzero() << '\n';
 	out << "TOTAL_WTD: " << this->energies().total_energies().weighted_string_of( wts ) << '\n';
-	for ( Size i=1; i<= total_residue(); ++i ) {
+	for ( Size i=1; i<= size(); ++i ) {
 		out << "RSD_WTD: " << i << ' ' << this->energies().residue_total_energies( i ).weighted_string_of( wts ) << '\n';
 	}
 	scorefxn.show( out );
@@ -1847,7 +1849,7 @@ bool Pose::has_reference_pose() const
 PDBInfoCOP
 Pose::pdb_info() const
 {
-	debug_assert( pdb_info_ ? pdb_info_->nres() == total_residue() : true );
+	debug_assert( pdb_info_ ? pdb_info_->nres() == size() : true );
 	return pdb_info_;
 }
 
@@ -1856,7 +1858,7 @@ Pose::pdb_info() const
 PDBInfoOP
 Pose::pdb_info()
 {
-	debug_assert( pdb_info_ ? pdb_info_->nres() == total_residue() : true );
+	debug_assert( pdb_info_ ? pdb_info_->nres() == size() : true );
 	return pdb_info_;
 }
 
@@ -1880,9 +1882,9 @@ Pose::pdb_info( PDBInfoOP new_info )
 		pdb_info_.reset(); // set to NULL
 	}
 
-	PyAssert( pdb_info_ ? pdb_info_->nres() == total_residue() : true, "Invalid PDBInfo, pdb_info_->nres() != total_residue()" );
+	PyAssert( pdb_info_ ? pdb_info_->nres() == size() : true, "Invalid PDBInfo, pdb_info_->nres() != size()" );
 
-	debug_assert( pdb_info_ ? pdb_info_->nres() == total_residue() : true );
+	debug_assert( pdb_info_ ? pdb_info_->nres() == size() : true );
 
 	return prior_pdb_info;
 }
@@ -1967,7 +1969,7 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 	if ( p ) {
 		os << "PDB file name: "<< p->name() << std::endl;
 	}
-	os << "Total residues:" << pose.total_residue() << std::endl;
+	os << "Total residues:" << pose.size() << std::endl;
 	os << "Sequence: " << pose.sequence() << std::endl;
 	os << "Fold tree:" << std::endl << pose.fold_tree();
 

@@ -185,7 +185,7 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 		}
 		MappedAtoms const iatoms = atoms_to_constrain( pose.residue( ires ), ref_pose.residue( ref_ires ) );
 
-		for ( Size jres=ires+min_seq_sep_; jres<=pose.total_residue(); ++jres ) {
+		for ( Size jres=ires+min_seq_sep_; jres<=pose.size(); ++jres ) {
 			if ( !subset[ jres ] ) continue;
 			if ( pose.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 			core::Size const ref_jres = seqmap[ jres ];
@@ -231,11 +231,11 @@ AtomPairConstraintGenerator::add_constraints(
 core::id::SequenceMapping
 AtomPairConstraintGenerator::create_sequence_mapping( core::pose::Pose const & pose, core::pose::Pose const & ref_pose ) const
 {
-	bool const same_length = ( pose.total_residue() == ref_pose.total_residue() );
+	bool const same_length = ( pose.size() == ref_pose.size() );
 	bool const same_sequence = ( pose.sequence() == ref_pose.sequence() );
 
 	if ( same_length && same_sequence ) {
-		return core::id::SequenceMapping::identity( pose.total_residue() );
+		return core::id::SequenceMapping::identity( pose.size() );
 	} else { // !same_sequence || !same_length
 		TR << "Input structure and native differ in ";
 		if ( !same_length ) TR << "length and sequence ";

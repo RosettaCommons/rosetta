@@ -104,12 +104,12 @@ public:
 		if( ! initialize_ ){
 
 			output_ << "# tag score rmsd  ";
-			Size ntrial( pose.total_residue()/skip_ );
+			Size ntrial( pose.size()/skip_ );
 			for( Size i=1; i<=ntrial; i++ ){
 
 				Size begin = ( i - 1 )*skip_ + 1;
 				Size end = begin + window_ - 1;
-				if( end > pose.total_residue() ){
+				if( end > pose.size() ){
 					break;
 				}
 				output_ << begin << '-' << end;
@@ -134,14 +134,14 @@ public:
 		Real overall_rmsd ( CA_rmsd( pose, native_pose ) );
 
 
-		Size ntrial( pose.total_residue()/skip_ );
+		Size ntrial( pose.size()/skip_ );
 		utility::vector1< Real > local_rmsd;
 
 		for( Size i=1; i<=ntrial; i++ ){
 
 			Size begin = ( i - 1 )*skip_ + 1;
 			Size end = begin + window_ - 1;
-			if( end > pose.total_residue() ){
+			if( end > pose.size() ){
 				break;
 			}
 			Real rmsd = CA_rmsd( pose, native_pose, begin, end );

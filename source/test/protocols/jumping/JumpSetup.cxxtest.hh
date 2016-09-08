@@ -203,7 +203,7 @@ JumpingTest::test_rt_library()
 	using namespace jumping;
 
 
-	Size nres = pose_.total_residue();
+	Size nres = pose_.size();
 
 	JumpSetup jump1_def( nres );
 	jump1_def.add_jump( Interval( 4, 15), Interval( 8, 9) );
@@ -226,7 +226,7 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 	//pose::Pose native_pose( create_test_in_pdb_pose() ); // jumping/test_in.pdb is different from all the other test_in.pdbs
 	core::import_pose::pose_from_file( native_pose, "protocols/jumping/test_in.pdb" , core::import_pose::PDB_file); //has to be idealized or a decoy
 
-	JumpSetup jump_def( native_pose.total_residue() );
+	JumpSetup jump_def( native_pose.size() );
 	jump_def.read_file( "protocols/jumping/jumps.def" );
 	JumpSample jumps ( jump_def );
 	jumps.set_fold_tree_in_pose( native_pose );
@@ -377,7 +377,7 @@ void JumpingTest::test_jump_geometry() {
 	//pose::Pose native_pose( create_test_in_pdb_pose() ); // jumping/test_in.pdb is different from all the other test_in.pdbs
 	core::import_pose::pose_from_file( native_pose, "protocols/jumping/test_in.pdb" , core::import_pose::PDB_file); //has to be idealized or a decoy
 
-	JumpSetup jump_def( native_pose.total_residue() );
+	JumpSetup jump_def( native_pose.size() );
 	jump_def.read_file( "protocols/jumping/jumps.def" );
 	JumpSample jumps ( jump_def );
 	jumps.set_fold_tree_in_pose( native_pose );
@@ -428,7 +428,7 @@ void JumpingTest::test_jump_geometry() {
 	}
 
 	//big whack on structure
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		///    if ( pos == 21 || pos == 20 || pos == 22 ) continue;
 		pose.set_phi( 128, -45 );
 		pose.set_psi( pos, -45 );

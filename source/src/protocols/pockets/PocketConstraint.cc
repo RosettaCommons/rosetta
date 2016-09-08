@@ -76,7 +76,7 @@ void PocketConstraint::init(core::pose::Pose const & pose){
 	seqpos_ = 0;
 	weight_ = option[ OptionKeys::constraints::pocket_constraint_weight ]();
 	dumppdb_=option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]();
-	totalres_=pose.total_residue();
+	totalres_=pose.size();
 	if ( option[ OptionKeys::pocket_grid::pocket_num_angles ] <1 ) {
 		std::cout<<"PocketConstraint: invalid number of angles specified.  Exiting."<<std::endl;
 		exit(999);
@@ -140,7 +140,7 @@ PocketConstraint::PocketConstraint(
 		central_relax_pdb_number = ObjexxFCL::int_of( resid );
 	}
 
-	for ( int j = 1, resnum = pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = pose.size(); j <= resnum; ++j ) {
 		if ( pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			//seqpos_ = j;
 			if ( chain != ' ' ) {
@@ -181,7 +181,7 @@ PocketConstraint::~PocketConstraint() = default;
 
 
 void PocketConstraint::set_target_res( core::pose::Pose const & pose, Size new_seqpos ){
-	if ( new_seqpos>pose.total_residue() ) {
+	if ( new_seqpos>pose.size() ) {
 		std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 		exit(1);
 	}
@@ -210,7 +210,7 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 	}
 
 	seqpos_ = 0;
-	for ( int j = 1, resnum = pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = pose.size(); j <= resnum; ++j ) {
 		if ( pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			//seqpos_ = j;
 			if ( chain != ' ' ) {

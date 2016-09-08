@@ -97,7 +97,7 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
 
-	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
+	TR<<"Before addchain, total residues: "<<pose.size()<<std::endl;
 	core::import_pose::pose_from_file( new_pose, curr_fname , core::import_pose::PDB_file);
 	new_pose.conformation().detect_disulfides();
 	(*scorefxn()) ( new_pose );
@@ -108,7 +108,7 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	pose.update_pose_chains_from_pdb_chains();
 	(*scorefxn())( pose );
 	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
-	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
+	TR<<"After addchain, total residues: "<<pose.size()<<std::endl;
 
 	core::pose::add_comment(pose,"AddedChainName ",curr_fname);
 }
@@ -131,7 +131,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
 
-	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
+	TR<<"Before addchain, total residues: "<<pose.size()<<std::endl;
 	core::import_pose::pose_from_file( new_chain, curr_fname , core::import_pose::PDB_file);
 	new_chain.conformation().detect_disulfides();
 	(*scorefxn()) ( new_chain );
@@ -144,12 +144,12 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 
 	// Now I should align new_chain to template_pose
 	utility::vector1< core::Size > template_positions;
-	for ( core::Size i = 1; i <= template_pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= template_pose.size(); ++i ) {
 		template_positions.push_back(i);
 	}
 
 	utility::vector1< core::Size > new_chain_positions;
-	for ( core::Size i = 1; i <= new_chain.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= new_chain.size(); ++i ) {
 		new_chain_positions.push_back(i);
 	}
 
@@ -189,7 +189,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
 	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
-	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
+	TR<<"After addchain, total residues: "<<pose.size()<<std::endl;
 }
 
 void

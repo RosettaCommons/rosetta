@@ -176,13 +176,13 @@ insert_cdr_into_antibody(AntibodyInfoCOP ab_info, CDRNameEnum const cdr, core::p
 	core::Size cdr_end = ab_info->get_CDR_end(cdr, pose);
 
 	protocols::grafting::delete_region(cdr_piece, 1, overhang);
-	protocols::grafting::delete_region(cdr_piece, cdr_piece.total_residue() - overhang + 1, cdr_piece.total_residue());
+	protocols::grafting::delete_region(cdr_piece, cdr_piece.size() - overhang + 1, cdr_piece.size());
 
-	//core::Size insert_length = cdr_piece.total_residue();
+	//core::Size insert_length = cdr_piece.size();
 	protocols::grafting::delete_region(pose, cdr_start+1, cdr_end - 1);
 	pose = protocols::grafting::insert_pose_into_pose(pose, cdr_piece, cdr_start, cdr_start+1);
 
-	pose.pdb_info()->copy(*(cdr_piece.pdb_info()), 1, cdr_piece.total_residue(), cdr_start+1);
+	pose.pdb_info()->copy(*(cdr_piece.pdb_info()), 1, cdr_piece.size(), cdr_start+1);
 	pose.pdb_info()->obsolete(false);
 
 }
@@ -406,7 +406,7 @@ get_pdb_numbering_from_strings(vector1<std::string> const & pdb_residues) {
 
 vector1<bool>
 get_resnums_from_strings_with_ranges(core::pose::Pose const & pose, vector1<std::string> const & pdb_residues) {
-	vector1<bool> numbers(pose.total_residue(), false);
+	vector1<bool> numbers(pose.size(), false);
 
 
 	for ( core::Size i = 1; i <= pdb_residues.size(); ++i ) {
@@ -441,7 +441,7 @@ get_resnums_from_strings_with_ranges(core::pose::Pose const & pose, vector1<std:
 vector1<bool>
 get_resnum_from_pdb_numbering(core::pose::Pose const & pose, vector1<PDBNumbering> const & pdb_residues){
 
-	vector1<bool> residues(pose.total_residue(), false);
+	vector1<bool> residues(pose.size(), false);
 	for ( core::Size i = 1; i <= pdb_residues.size(); ++i ) {
 		PDBNumbering numbering = pdb_residues[i];
 		core::Size resnum = pose.pdb_info()->pdb2pose(numbering.chain, numbering.resnum, numbering.icode);
@@ -489,7 +489,7 @@ add_loops_from_bool_vector(loops::Loops & loops, utility::vector1< bool > residu
 
 std::pair<bool, core::Size>
 check_cb(core::pose::Pose const & pose, utility::vector1<bool> const & residues){
-	assert(residues.size() == pose.total_residue());
+	assert(residues.size() == pose.size());
 
 	std::pair<bool, core::Size> cb = std::make_pair(false, 0);
 	for ( core::Size i = 1; i <= residues.size(); ++i ) {
@@ -523,7 +523,7 @@ disable_design_region(
 	bool cdr4_as_framework /* true */)
 {
 	RestrictResidueToRepackingOP restrict( new RestrictResidueToRepacking() );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region ) {
 			restrict->include_residue(i);
 		}

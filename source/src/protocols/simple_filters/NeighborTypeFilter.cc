@@ -90,7 +90,7 @@ NeighborTypeFilter::compute( core::pose::Pose const & pose ) const
 	std::vector< core::Size > neighbors;
 
 	core::Size const chain2begin( pose.conformation().chain_begin( 2 ) );
-	core::Size const residue_num( pose.total_residue() );
+	core::Size const residue_num( pose.size() );
 
 	core::Size const start( target_residue_ < chain2begin ? chain2begin : 1 );
 	core::Size const end( target_residue_ < chain2begin ? residue_num : chain2begin-1 );

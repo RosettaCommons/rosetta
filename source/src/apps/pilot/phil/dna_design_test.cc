@@ -216,7 +216,7 @@ design_test()
 		// read structure
 		Pose pose;
 		core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 
 		tt << "read file: " << filename << ' ' << nres << std::endl;
 

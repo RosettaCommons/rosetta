@@ -302,7 +302,7 @@ HighResDocker::make_packer_task_from_vector(
 	unboundrot_->initialize_from_command_line();
 	pack_task->append_rotamerset_operation( unboundrot_ );
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		/// If several params files have the same name, allow switching among them
 		/// This was previously only enabled with mutate_same_name3.  Now default.
 		if ( ! pose.residue(i).is_ligand() ) continue;
@@ -317,7 +317,7 @@ HighResDocker::make_packer_task_from_vector(
 			core::pack::task::parse_resfile(pose, *pack_task);
 		} else {
 			high_res_docker_tracer<< "restricting to repack"<< std::endl;
-			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( core::Size i = 1; i <= pose.size(); ++i ) {
 				if ( ! pose.residue(i).is_ligand() ) {
 					pack_task->nonconst_residue_task( i ).restrict_to_repacking();
 				}
@@ -329,7 +329,7 @@ HighResDocker::make_packer_task_from_vector(
 	}
 
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( allow_repack[i].type == ligand_options::InterfaceInfo::non_interface  ) {
 			pack_task->nonconst_residue_task( i ).prevent_repacking();
 		}
@@ -352,7 +352,7 @@ HighResDocker::make_packer_task(
 	bool all_residues
 ) const{
 	if ( all_residues ) {
-		ligand_options::Interface interface(pose.n_residue(), ligand_options::InterfaceInfo(ligand_options::InterfaceInfo::is_interface)); // 0 is false, #
+		ligand_options::Interface interface(pose.size(), ligand_options::InterfaceInfo(ligand_options::InterfaceInfo::is_interface)); // 0 is false, #
 		return make_packer_task_from_vector(pose, interface);
 	} else { // the packer task interface should match the movemap interface
 		InterfaceBuilderOP sc_interface_builder= movemap_builder_->get_sc_interface_builder();

@@ -124,7 +124,7 @@ void devel_main(int argc, char** argv) { // {{{1
 
 	cout << "Pose XYZs" << endl; 
 	cout << "---------" << endl;
-	for (int j = 1; j <= pose.total_residue(); j++) {
+	for (int j = 1; j <= pose.size(); j++) {
 		id::NamedAtomID n_id("N", j);
 		id::NamedAtomID ca_id("CA", j);
 		id::NamedAtomID c_id("C", j);
@@ -168,7 +168,7 @@ void devel_main(int argc, char** argv) { // {{{1
 
 	cout << "Pose XYZs" << endl; 
 	cout << "---------" << endl;
-	for (int j = 1; j <= problem.pose.total_residue(); j++) {
+	for (int j = 1; j <= problem.pose.size(); j++) {
 		id::NamedAtomID n_id("N", j);
 		id::NamedAtomID ca_id("CA", j);
 		id::NamedAtomID c_id("C", j);
@@ -215,7 +215,7 @@ void devel_main(int argc, char** argv) { // {{{1
 
 		cout << "Pose XYZs" << endl; 
 		cout << "---------" << endl;
-		for (int j = 1; j <= solutions[i].pose.total_residue(); j++) {
+		for (int j = 1; j <= solutions[i].pose.size(); j++) {
 			id::NamedAtomID n_id("N", j);
 			id::NamedAtomID ca_id("CA", j);
 			id::NamedAtomID c_id("C", j);
@@ -253,7 +253,7 @@ void devel_main(int argc, char** argv) { // {{{1
 
 		cout << "Applied Torsions" << endl; 
 		cout << "================" << endl;
-		for (int j = 1; j <= solutions[i].pose.total_residue(); j++) {
+		for (int j = 1; j <= solutions[i].pose.size(); j++) {
 			Real phi = solutions[i].pose.phi(j);
 			Real psi = solutions[i].pose.psi(j);
 			Real omega = solutions[i].pose.omega(j);
@@ -336,7 +336,7 @@ void protocols_main(int argc, char** argv) { // {{{1
 
 	cout << "Applied Torsions" << endl; 
 	cout << "================" << endl;
-	for (int j = 1; j <= pose.total_residue(); j++) {
+	for (int j = 1; j <= pose.size(); j++) {
 		Real phi = pose.phi(j);
 		Real psi = pose.psi(j);
 		Real omega = pose.omega(j);

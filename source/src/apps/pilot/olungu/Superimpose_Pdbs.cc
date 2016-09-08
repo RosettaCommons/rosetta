@@ -198,7 +198,7 @@ main( int argc, char* argv[] )
 	//find chain to cut out of master_pose later
 	char pep_chain ('A');
 	utility::vector1< core::Size >  res_to_lose;
-	for(core::Size i=1; i<= master_pose.total_residue(); ++i){
+	for(core::Size i=1; i<= master_pose.size(); ++i){
 		if( master_pose.pdb_info()->chain(i) == pep_chain )
 			res_to_lose.push_back(i);
 	}
@@ -271,8 +271,8 @@ main( int argc, char* argv[] )
 		std::cout << "deleting residues"<< " of " << pdbname << std::endl;
 
 		//append edit_master_pose residues into full_pose
-		full_pose.append_residue_by_jump(edit_master_pose.residue( 1 ), full_pose.total_residue(), "" , "",  true /*start new chain*/);
-		for (core::Size n = 2; n<= edit_master_pose.total_residue(); ++n){
+		full_pose.append_residue_by_jump(edit_master_pose.residue( 1 ), full_pose.size(), "" , "",  true /*start new chain*/);
+		for (core::Size n = 2; n<= edit_master_pose.size(); ++n){
 			full_pose.append_residue_by_bond(edit_master_pose.residue ( n ));
 		}
 

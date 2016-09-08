@@ -93,7 +93,7 @@ OPT_KEY( Real, gamma_increment )
 //FCC: Adding Virtual res
 void
 add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root = true ) {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 
 	// if already rooted on virtual residue , return
 	if ( pose.residue ( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
@@ -133,7 +133,7 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
 	kinematics::Stub stub( M, centroid );
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		Residue const & res = pose.residue(i);
 		for (Size j = 1; j <= res.natoms(); j++ ){
 			Vector xyz_new = stub.global2local( res.xyz( j ) ); // it is either this or M-inverse.

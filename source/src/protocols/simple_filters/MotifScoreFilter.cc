@@ -82,11 +82,11 @@ core::Real MotifScoreFilter::compute( core::pose::Pose const & pose ) const {
 	double score = 0.0;
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
-	for ( size_t ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( size_t ir = 1; ir <= pose.size(); ++ir ) {
 		Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
 		char ss1 = dssp.get_dssp_secstruct( ir );
 		char aa1 = pose.residue(ir).name1();
-		for ( size_t jr = ir+1; jr <= pose.n_residue(); ++jr ) {
+		for ( size_t jr = ir+1; jr <= pose.size(); ++jr ) {
 			Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));
 			if ( dist < 12 ) {
 				char ss2 = dssp.get_dssp_secstruct( jr );

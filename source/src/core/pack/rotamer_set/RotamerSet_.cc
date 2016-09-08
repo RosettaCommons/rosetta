@@ -807,9 +807,9 @@ RotamerSet_::compute_one_body_energy_maps(
 	Real last_computed_surfaceE = 0.0;
 
 	utility::vector1<Size> num_neighbors_;
-	num_neighbors_.resize( pose.n_residue(), 0 );
+	num_neighbors_.resize( pose.size(), 0 );
 	scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
-	for ( Size id = 1; id <= pose.n_residue(); ++id ) {
+	for ( Size id = 1; id <= pose.size(); ++id ) {
 		num_neighbors_[ id ] = tenA_neighbor_graph.get_node( id )->num_neighbors_counting_self();
 	}
 

@@ -484,7 +484,7 @@ TorsionFragmentMover::apply( pose::Pose & pose )
 	// figure out where we can insert
 	utility::vector1< Size > windows;
 
-	for ( Size i=1; i<= pose.total_residue() - frag_size_ + 1; ++i ) {
+	for ( Size i=1; i<= pose.size() - frag_size_ + 1; ++i ) {
 		bool allowed( true );
 		for ( Size j=0; j< frag_size_; ++j ) {
 			// not sure if this movemap call should be allowed
@@ -556,7 +556,7 @@ add_vall_fragments(
 )
 {
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	string seq( inputseq );
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
@@ -604,7 +604,7 @@ add_vall_fragments(
 )
 {
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	string seq( inputseq );
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
@@ -674,7 +674,7 @@ add_vall_cheating_fragments(
 {
 	//FragLibOP frag_lib( new FragLib() );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	string const seq( pose.sequence() );
 
 	for ( unsigned long frag_size : frag_sizes ) {
@@ -771,7 +771,7 @@ fill_in_gaps(
 			if ( lib[i].size() > 0 ) continue; // skip windows with at least one fragment
 			bool allowed( true );
 			for ( Size j=i; j<i+frag_size; ++j ) {
-				if ( j > pose.total_residue() || !pose.residue(j).is_protein() ) {
+				if ( j > pose.size() || !pose.residue(j).is_protein() ) {
 					allowed = false;
 					break;
 				}
@@ -833,7 +833,7 @@ insert_fragment(
 	}
 	if ( !frag_size ) utility_exit_with_message("no insertable windows in region!");
 	// number of total residue in pose
-	int const pose_nres = pose.total_residue();
+	int const pose_nres = pose.size();
 	// ensure fragment library and pose matches each other
 	if ( paranoid && pose_nres != (frag_nres + frag_size - 1) ) {
 		std::cerr << pose_nres << "  " << frag_nres << "  " << frag_size << std::endl;
@@ -1035,7 +1035,7 @@ insert_random_fragments_in_flexible_protein_regions(
 	pose::Pose & pose
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	vector1< Size > frag_sizes( frag_lib.frag_sizes() );
 	Size min_seg, max_seg;
 	get_min_and_max_contigs( flex_protein, min_seg, max_seg );

@@ -77,11 +77,11 @@ bool copy_side_chains(
 	core::pose::Pose const& fa_input_pose
 ) {
 	// copy sidechain torsions from input pose
-	if ( pose.total_residue() != fa_input_pose.total_residue() ) {
+	if ( pose.size() != fa_input_pose.size() ) {
 		utility_exit_with_message("Mismatch of pose lenght in copy_side_chains(..): " );
 	}
 	tr.Debug << "copy side chains for residues with * / missing density residues with - ";
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		// if there is missing density in the sidechain, then we need to repack
 		// check this my making sure that no SC atom is more than 20A (?) away from CA
 		//needToRepack[i] = true;
@@ -102,7 +102,7 @@ bool copy_side_chains(
 			if ( lower_cut ) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, i );
 			if ( upper_cut ) core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, i );
 		}
-	} //for 1..total_residue
+	} //for 1..size
 	tr.Debug << " that have not moved from template" << std::endl;
 	return true;
 } //copy_side_chains
@@ -143,7 +143,7 @@ core::pose::Pose ResolutionSwitcher::start_pose() const {
 void ResolutionSwitcher::apply( pose::Pose &pose ) {
 	tr.Debug << "resolution_switch" << std::endl;
 	bool const bCopySideChains( start_centroid_ || apply_to_centroid_ ); //we assume that start and apply pose are fullatom that side-chains are fine!
-	utility::vector1< bool > needToRepack( pose.total_residue() , false );
+	utility::vector1< bool > needToRepack( pose.size() , false );
 	if ( apply_to_centroid_ ) {
 		//puts full-atom sidechains on loop regions
 		tr.Debug <<" change to full-atom pose " << std::endl;
@@ -152,11 +152,11 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
 	}
 
 	if ( init_fa_ ) { //find residues that have moved --- test for missing density is in copy_side_chains!
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			if ( std::abs(init_pose_.phi( i ) - pose.phi( i ) ) > 10
 					|| std::abs(init_pose_.psi( i ) - pose.psi( i ) ) > 10 ) {
 				tr.Trace << "residue " << i << " has moved " << std::endl;
-				for ( Size j = std::max( 1, (int)i-(int) repack_buffer_); j <= pose.total_residue() && j <= i + repack_buffer_; j++ ) {
+				for ( Size j = std::max( 1, (int)i-(int) repack_buffer_); j <= pose.size() && j <= i + repack_buffer_; j++ ) {
 					needToRepack[ j ] = true;
 				} //saftey buffer for repacking: 1 residues on each side of moved stuff
 			}

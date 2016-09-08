@@ -280,8 +280,8 @@ WriteToDB_ending_loop (
 
 	bool there_is_an_ending_loop = false;
 
-	for ( Size ii = static_cast<Size>(ending_res_of_any_strand+1) ; ii <= dssp_pose.total_residue() && ii <= static_cast<Size>((static_cast<Size>(ending_res_of_any_strand) + static_cast<Size>(max_starting_loop_size_))); ii++ ) {
-		//for( Size ii = (ending_res_of_any_strand+1) ; ii <= dssp_pose.total_residue() && ii <= (ending_res_of_any_strand + max_starting_loop_size_); ii++ )
+	for ( Size ii = static_cast<Size>(ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= static_cast<Size>((static_cast<Size>(ending_res_of_any_strand) + static_cast<Size>(max_starting_loop_size_))); ii++ ) {
+		//for( Size ii = (ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= (ending_res_of_any_strand + max_starting_loop_size_); ii++ )
 		char res_ss( dssp_pose.secstruct( ii ) ) ;
 
 		if ( res_ss == 'L' ) {
@@ -517,7 +517,7 @@ WriteToDB_dssp_ratio_in_sw (
 	Size E_num = 0;
 	Size L_num = 0;
 
-	for ( Size ii=1; ii<=dssp_pose.total_residue(); ii++ ) {
+	for ( Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 		char res_ss( dssp_pose.secstruct( ii ) ) ;
 		if ( res_ss == 'H' )  {   H_num += 1;  }
 		if ( res_ss == 'E' )  {   E_num += 1;  }
@@ -535,13 +535,13 @@ WriteToDB_dssp_ratio_in_sw (
 
 	statement update_statement(basic::database::safely_prepare_statement(update, db_session));
 
-	Real rounded = round_to_Real(H_num*100/dssp_pose.total_residue());
+	Real rounded = round_to_Real(H_num*100/dssp_pose.size());
 	update_statement.bind(1, rounded);
 
-	rounded = round_to_Real(E_num*100/dssp_pose.total_residue());
+	rounded = round_to_Real(E_num*100/dssp_pose.size());
 	update_statement.bind(2, rounded);
 
-	rounded = round_to_Real(L_num*100/dssp_pose.total_residue());
+	rounded = round_to_Real(L_num*100/dssp_pose.size());
 	update_statement.bind(3, rounded);
 
 	update_statement.bind(4, struct_id);
@@ -1263,7 +1263,7 @@ WriteToDB_ratio_of_core_heading_FWY_in_sw (
 		res >> number_of_core_heading_FWY_in_sw;
 	}
 
-	Real ratio_of_core_heading_FWY_in_sw = round_to_Real((static_cast<Real>(number_of_core_heading_FWY_in_sw)*100)/static_cast<Real>(pose.total_residue()));
+	Real ratio_of_core_heading_FWY_in_sw = round_to_Real((static_cast<Real>(number_of_core_heading_FWY_in_sw)*100)/static_cast<Real>(pose.size()));
 
 	string update =
 		"UPDATE sandwich set ratio_of_core_heading_FWY_in_sw = ?\t"

@@ -103,8 +103,8 @@ void SimpleCstMover::apply( pose::Pose & pose )
 	std::cout << "Stealing .. " << std::endl;
 	static int count=0;
 
-	for( Size i = 1;  i < pose.total_residue(); i ++ ){
-		for( Size j = i+3;  j < pose.total_residue(); j ++ ){
+	for( Size i = 1;  i < pose.size(); i ++ ){
+		for( Size j = i+3;  j < pose.size(); j ++ ){
 			Real dist;
  			dist = pose.xyz(  core::id::AtomID( 3, i ) ).distance( pose.xyz(  core::id::AtomID( 3, j  ) ) );
 			if ( dist < get_distmin( i, j ) ) set_distmin( i, j, dist );
@@ -119,8 +119,8 @@ void SimpleCstMover::apply( pose::Pose & pose )
 void SimpleCstMover::write( const std::string &filename )
 {
   Real dist_limit = 12;
-	for( Size i = 1;  i < pose.total_residue(); i ++ ){
-		for( Size j = i+3;  j < pose.total_residue(); j ++ ){
+	for( Size i = 1;  i < pose.size(); i ++ ){
+		for( Size j = i+3;  j < pose.size(); j ++ ){
 
 			if( get_distmax( i, j ) < 12 ){
 				if( get_distmax( i, j ) > get_distmin( i, j ) ) { std::cerr "ASSERTION"; }

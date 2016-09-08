@@ -233,7 +233,7 @@ fast_clash_check(
 	Real const clash_dist2_cut( clash_dist_cut * clash_dist_cut );
 	for ( Size iatid = 1; iatid <= check_atids.size(); ++iatid ) {
 		Vector const at1_xyz( pose.xyz( check_atids[ iatid ] ) );
-		for ( Size res2 = 1; res2 <= pose.total_residue(); ++res2 ) {
+		for ( Size res2 = 1; res2 <= pose.size(); ++res2 ) {
 			for ( Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ) {
 				//skip virtual atoms!
 				if ( pose.residue( res2 ).atom_type( at2 ).lj_wdepth() == 0.0 ) continue;
@@ -284,7 +284,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	//append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
 
-	Size new_seqpos( pose.total_residue() );
+	Size new_seqpos( pose.size() );
 	Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 	//store water atom ids for clash check
@@ -324,7 +324,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	//add vrt res so final torsion exists
 	chemical::ResidueTypeSetCOP rsd_set( rsd.residue_type_set() );
 	conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
-	pose.append_residue_by_jump( *vrt_rsd, pose.total_residue() );
+	pose.append_residue_by_jump( *vrt_rsd, pose.size() );
 	FoldTree f_jump( pose.fold_tree() );
 	//just min the new jump
 	//MoveMapOP mm = new MoveMap;
@@ -332,9 +332,9 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	//protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true );
 
 	//new naive fold tree
-	FoldTree f_rot( pose.total_residue() );
+	FoldTree f_rot( pose.size() );
 	//switch to chem bond so can use bond angle defs directly
-	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.total_residue() - 2 );
+	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.size() - 2 );
 	pose.fold_tree( f_rot );
 
 	Size water_hb_states_tot( 0 );
@@ -488,15 +488,15 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 	scorefxn->set_weight( scoring::fa_sol, 0.0 );
 
 
-	if ( in_pose.total_residue() != residue_unsat_polars_.size() ) {
-		residue_unsat_polars_.resize( in_pose.total_residue() );
-		atom_unsat_.resize( in_pose.total_residue() );
+	if ( in_pose.size() != residue_unsat_polars_.size() ) {
+		residue_unsat_polars_.resize( in_pose.size() );
+		atom_unsat_.resize( in_pose.size() );
 	}
 
 	basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds_dry;
 	in_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds_dry );
 
-	for ( Size i = 1; i <= in_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= in_pose.size(); ++i ) {
 
 		residue_unsat_polars_[i] = 0;
 		conformation::Residue const & rsd = in_pose.residue( i );

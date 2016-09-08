@@ -89,7 +89,7 @@ RotamerDNAHBondFilter::operator() (
 	if ( !filter ) return true;
 	++nfiltered_;
 
-	for ( Size pos(1); pos <= pose.total_residue(); ++pos ) {
+	for ( Size pos(1); pos <= pose.size(); ++pos ) {
 		Residue const & dnares( pose.residue( pos ) );
 		if ( !dnares.is_DNA() ) continue;
 		if ( !close_to_dna( *rotamer, dnares, 10*10, base_only_ ) ) continue;

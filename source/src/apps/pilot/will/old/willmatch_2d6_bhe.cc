@@ -81,10 +81,10 @@ static THREAD_LOCAL basic::Tracer TR( "willmatch_d6_bpy" );
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
-	add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+	add_upper_terminus_type_to_pose_residue(pose,pose.size());
 	core::pack::optimizeH(pose,*sf);
 	remove_lower_terminus_type_from_pose_residue(pose,1);
-	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
+	remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 }
 
 
@@ -117,12 +117,12 @@ void run() {
 		string infile = infiles[ifile];
 		Pose in_fa;
 		pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
-		for(Size ir = 1; ir <= in_fa.n_residue(); ++ir) {
+		for(Size ir = 1; ir <= in_fa.size(); ++ir) {
 			if(in_fa.residue(ir).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(in_fa,ir);
 			if(in_fa.residue(ir).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(in_fa,ir);
 		}
 		Pose native = in_fa;
-		Size nres = in_fa.n_residue();
+		Size nres = in_fa.size();
 		core::chemical::ResidueType const & rtala( in_fa.residue(1).residue_type_set().name_map("ALA") );
 		//core::chemical::ResidueType const & rthis( in_fa.residue(1).residue_type_set().name_map("HIS") );
 		//core::chemical::ResidueType const & rtglu( in_fa.residue(1).residue_type_set().name_map("GLU") );
@@ -213,7 +213,7 @@ void run() {
 			TR << "input scanres!!!!!!" << std::endl;
 			scanres = option[willmatch::residues]();
 		} else {
-			for(Size i = 1; i <= in_fa.n_residue(); ++i) {
+			for(Size i = 1; i <= in_fa.size(); ++i) {
 				if(!in_fa.residue(i).has("N" )) { continue; }
 				if(!in_fa.residue(i).has("CA")) { continue; }
 				if(!in_fa.residue(i).has("C" )) { continue; }
@@ -230,9 +230,9 @@ void run() {
 			 core::scoring::calc_per_atom_sasa( native, atom_sasa, natsasa, 2.3, false );
 		}
 		// precompute acceptable chis
-		ObjexxFCL::FArray1D<Real> ballow0(                        in_fa.n_residue(),9e9),eallow0(                        in_fa.n_residue(),9e9),hallow0(                        in_fa.n_residue(),9e9);
-		ObjexxFCL::FArray2D<Real> ballow1(            CHI1.size(),in_fa.n_residue(),9e9),eallow1(            CHI1.size(),in_fa.n_residue(),9e9),hallow1(            CHI1.size(),in_fa.n_residue(),9e9);
-		ObjexxFCL::FArray3D<Real> ballow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9),eallow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9),hallow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9);
+		ObjexxFCL::FArray1D<Real> ballow0(                        in_fa.size(),9e9),eallow0(                        in_fa.size(),9e9),hallow0(                        in_fa.size(),9e9);
+		ObjexxFCL::FArray2D<Real> ballow1(            CHI1.size(),in_fa.size(),9e9),eallow1(            CHI1.size(),in_fa.size(),9e9),hallow1(            CHI1.size(),in_fa.size(),9e9);
+		ObjexxFCL::FArray3D<Real> ballow2(CHI2.size(),CHI1.size(),in_fa.size(),9e9),eallow2(CHI2.size(),CHI1.size(),in_fa.size(),9e9),hallow2(CHI2.size(),CHI1.size(),in_fa.size(),9e9);
 		core::pack::rotamers::SingleResidueRotamerLibraryCAP plib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rtphe );
 		core::pack::rotamers::SingleResidueRotamerLibraryCAP hlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( hsd.residue(1).type() );
 		core::pack::rotamers::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
@@ -248,9 +248,9 @@ void run() {
 			  Size const ir(*iri);
 			  if( natsasa[ir] < 1.0 ) { ballow0(ir) = 9e9; continue; }
 				core::pose::replace_pose_residue_copying_existing_coordinates(pose,ir,rtphe); // clash w/BPY
-				pose3.replace_residue(1,pose.residue(((ir-1+pose.n_residue()-1)%(pose.n_residue()))+1),false);
-				pose3.replace_residue(2,pose.residue(((ir+0+pose.n_residue()-1)%(pose.n_residue()))+1),false);
-				pose3.replace_residue(3,pose.residue(((ir+1+pose.n_residue()-1)%(pose.n_residue()))+1),false);
+				pose3.replace_residue(1,pose.residue(((ir-1+pose.size()-1)%(pose.size()))+1),false);
+				pose3.replace_residue(2,pose.residue(((ir+0+pose.size()-1)%(pose.size()))+1),false);
+				pose3.replace_residue(3,pose.residue(((ir+1+pose.size()-1)%(pose.size()))+1),false);
 				for(Size i1 = 1; i1 <= CHI1.size(); ++i1) {
 					pose3.set_chi(1,2,CHI1[i1]);
 					for(Size i2 = 1; i2 <= CHI2.size(); ++i2) {
@@ -365,11 +365,11 @@ void run() {
 		}
 		TR << std::endl;
 
-		vector1<Vec> Ns(in_fa.n_residue()),CAs(in_fa.n_residue()),Cs(in_fa.n_residue()),CBs(in_fa.n_residue());
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) Ns [i] = in_fa.residue(i).xyz("N" );
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) CAs[i] = in_fa.residue(i).xyz("CA");
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) Cs [i] = in_fa.residue(i).xyz("C" );
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) CBs[i] = in_fa.residue(i).xyz("CB");
+		vector1<Vec> Ns(in_fa.size()),CAs(in_fa.size()),Cs(in_fa.size()),CBs(in_fa.size());
+		for(Size i = 1; i <= in_fa.size(); ++i) Ns [i] = in_fa.residue(i).xyz("N" );
+		for(Size i = 1; i <= in_fa.size(); ++i) CAs[i] = in_fa.residue(i).xyz("CA");
+		for(Size i = 1; i <= in_fa.size(); ++i) Cs [i] = in_fa.residue(i).xyz("C" );
+		for(Size i = 1; i <= in_fa.size(); ++i) CBs[i] = in_fa.residue(i).xyz("CB");
 
 		Pose pose = fa_pose;
 		//		Size lastb=0,lasti=0,lastj=0,laste=0;

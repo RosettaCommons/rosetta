@@ -85,11 +85,11 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 	runtime_assert( maxfrac_crossover_ <= 1.0 );
 	runtime_assert( minfrac_crossover_ <= maxfrac_crossover_ );
 	runtime_assert( minfrac_crossover_ >= 0.0 );
-	runtime_assert( pose_ref_.total_residue() == pose2.total_residue() );
+	runtime_assert( pose_ref_.size() == pose2.size() );
 
 	sampled_structures_.resize( 0 );
 
-	Size const nres( pose_ref().total_residue() );
+	Size const nres( pose_ref().size() );
 	Size models_failed( 0 );
 	Size models_built( 0 );
 

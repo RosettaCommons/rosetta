@@ -298,9 +298,9 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 
 	input_->reset(); //reset the silentfile stream to the beginning..
 
-	Size const total_res_before_slicing = first_pose_before_slicing.total_residue();
+	Size const total_res_before_slicing = first_pose_before_slicing.size();
 
-	Size const total_res = first_pose.total_residue();
+	Size const total_res = first_pose.size();
 
 	//OK, one example of crash due to insufficient memory:
 	//Building region 11_4 of J5/J5a hinge 2r8s
@@ -659,8 +659,8 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 
 			///Jan 12, 2012:Consistency check://///
 			if ( working_parameters_exist_ ) {
-				if ( (*pose_op).total_residue() != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
-					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size() less the number of [ times 5" );
+				if ( (*pose_op).size() != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
+					utility_exit_with_message( "(*pose_op).size() = ( " + string_of( (*pose_op).size() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size() less the number of [ times 5" );
 				}
 			}
 			////////////////////////////////////////
@@ -862,12 +862,12 @@ StepWiseRNA_Clusterer::do_some_clustering() {
 		///Jan 12, 2012:Consistency check://///
 		if ( working_parameters_exist_ ) {
 			if ( working_parameters_ -> add_virt_res_as_root() ) {
-				if ( (*pose_op).total_residue() - 1 != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
-					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size()" );
+				if ( (*pose_op).size() - 1 != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
+					utility_exit_with_message( "(*pose_op).size() = ( " + string_of( (*pose_op).size() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size()" );
 				}
 			} else {
-				if ( (*pose_op).total_residue() != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
-					utility_exit_with_message( "(*pose_op).total_residue() = ( " + string_of( (*pose_op).total_residue() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size()" );
+				if ( (*pose_op).size() != core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) {
+					utility_exit_with_message( "(*pose_op).size() = ( " + string_of( (*pose_op).size() ) + " ) != ( " + string_of( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() ) + " ) = working_parameters_working_sequence().size()" );
 				}
 			}
 		}
@@ -1331,7 +1331,7 @@ StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file( std::string cons
 		if ( is_valid_first_struct ) {
 			//best_score = score;
 			stepwise_rna_pose_setup->setup_native_pose( pose ); //Setup native_pose;
-			is_full_length_pose = ( pose.total_residue() == full_sequence.size() ) ? true : false;
+			is_full_length_pose = ( pose.size() == full_sequence.size() ) ? true : false;
 			output_boolean( "is_full_length_pose = ", is_full_length_pose, TR ); TR << std::endl;
 
 			is_valid_first_struct = false;
@@ -1452,7 +1452,7 @@ StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file( s
 		if ( protocols::stepwise::modeler::rna::check_for_messed_up_structure( current_pose, tag ) == true ) continue;
 
 		if ( is_valid_first_struct ) {
-			is_full_length_pose = ( current_pose.total_residue() == full_sequence.size() ) ? true : false;
+			is_full_length_pose = ( current_pose.size() == full_sequence.size() ) ? true : false;
 			output_boolean( "is_full_length_pose = ", is_full_length_pose, TR ); TR << std::endl;
 
 			is_valid_first_struct = false;
@@ -1845,8 +1845,8 @@ SlicedPoseWorkingParameters::create_sliced_pose( core::pose::Pose const & workin
 
 	core::pose::Pose sliced_pose = working_pose;
 
-	if ( is_sliced_res_.size() != working_pose.total_residue() ) {
-		utility_exit_with_message( "is_sliced_res.size() ( " + string_of( is_sliced_res_.size() ) + " ) != working_pose.total_residue() ( " + string_of( working_pose.total_residue() ) + " )" );
+	if ( is_sliced_res_.size() != working_pose.size() ) {
+		utility_exit_with_message( "is_sliced_res.size() ( " + string_of( is_sliced_res_.size() ) + " ) != working_pose.size() ( " + string_of( working_pose.size() ) + " )" );
 	}
 
 	//  for(Size seq_num=is_sliced_res_.size(); seq_num>=1; seq_num--){
@@ -1860,8 +1860,8 @@ SlicedPoseWorkingParameters::create_sliced_pose( core::pose::Pose const & workin
 		sliced_pose.conformation().delete_residue_range_slow( delete_res_range_list_[n].first, delete_res_range_list_[n].second );
 	}
 
-	if ( sliced_pose.total_residue() != sliced_to_working_res_map_.size() ) {
-		utility_exit_with_message( "working_pose.total_res() ( " + string_of( working_pose.total_residue() ) + " ) != sliced_to_working.size() ( " + string_of( sliced_to_working_res_map_.size() ) + " )" );
+	if ( sliced_pose.size() != sliced_to_working_res_map_.size() ) {
+		utility_exit_with_message( "working_pose.total_res() ( " + string_of( working_pose.size() ) + " ) != sliced_to_working.size() ( " + string_of( sliced_to_working_res_map_.size() ) + " )" );
 	}
 
 

@@ -95,8 +95,8 @@ ResidueDecompositionByChainCalculator::recompute(
 			residue_decomposition_.resize(this_pose.conformation().num_chains());
 		}
 
-		residue_set_numbers_.assign(this_pose.total_residue(), 0);
-		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+		residue_set_numbers_.assign(this_pose.size(), 0);
+		for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 			std::map<core::Size, core::Size>::iterator iter(chain_map.find(this_pose.chain(i)));
 			if ( iter != chain_map.end() ) {
 				residue_decomposition_[iter->second].insert(i);
@@ -123,7 +123,7 @@ ResidueDecompositionByChainCalculator::recompute(
 		} else {
 			// create separate sets for each chain
 			set_names_.clear();
-			for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+			for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 				if ( chain_map.find(this_pose.pdb_info()->chain(i)) == chain_map.end() ) {
 					core::Size const chain_map_size(chain_map.size());
 					chain_map[this_pose.pdb_info()->chain(i)] = chain_map_size+1;
@@ -133,8 +133,8 @@ ResidueDecompositionByChainCalculator::recompute(
 			residue_decomposition_.resize(chain_map.size());
 		}
 
-		residue_set_numbers_.assign(this_pose.total_residue(), 0);
-		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+		residue_set_numbers_.assign(this_pose.size(), 0);
+		for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 			std::map<char, core::Size>::iterator iter(chain_map.find(this_pose.pdb_info()->chain(i)));
 			if ( iter != chain_map.end() ) {
 				residue_decomposition_[iter->second].insert(i);

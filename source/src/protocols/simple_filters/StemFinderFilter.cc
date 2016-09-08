@@ -60,7 +60,7 @@ void
 StemFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	from_res( tag->getOption< core::Size >( "from_res", 1 ) );
-	to_res( tag->getOption< core::Size >( "to_res", pose.total_residue() ) );
+	to_res( tag->getOption< core::Size >( "to_res", pose.size() ) );
 	rmsd( tag->getOption< core::Real >( "rmsd", 0.7 ) );
 	stems_on_sse( tag->getOption< bool >( "stems_on_sse", false ) );
 	stems_are_neighbors( tag->getOption< bool >( "stems_are_neighbors", true ) );
@@ -149,7 +149,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 
 	core::conformation::Conformation const & conf( pose.conformation() );
 	std::string const template_dssp( dssp( pose ) );
-	// for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+	// for( core::Size i = 1; i <= pose.size(); ++i ){
 	//  TR<<pose.conformation().residue( i ).name1()<<i<<' '<<template_dssp[ i - 1 ]<<'\n';
 	// }
 
@@ -160,8 +160,8 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			poses_dssp.push_back( dssp( *p ) );
 		}
 	}
-	vector1< Real > distances( pose.total_residue(), 0.0 );
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+	vector1< Real > distances( pose.size(), 0.0 );
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 		if ( pos <= from_res() || pos >= to_res() || template_dssp[ pos - 1 ] == 'L' ) { // position is not in secondary structure element
 			distances[ pos ] = 99999999999.9;
 			continue;

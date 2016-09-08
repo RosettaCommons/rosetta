@@ -31,8 +31,8 @@ using core::fragment::FragSetCOP;
 using core::pose::PoseCOP;
 
 void check_lengths(FragSetCOP fragments, PoseCOP pose) {
-	if ( fragments->max_pos() != pose->total_residue() ) {
-		std::cerr << "Residues in pose: " << pose->total_residue() << std::endl;
+	if ( fragments->max_pos() != pose->size() ) {
+		std::cerr << "Residues in pose: " << pose->size() << std::endl;
 		std::cerr << "Residues in fragments: " << fragments->max_pos() << std::endl;
 		std::cerr << "Error: different number of residues in pose and fragments" << std::endl;
 		exit(1);

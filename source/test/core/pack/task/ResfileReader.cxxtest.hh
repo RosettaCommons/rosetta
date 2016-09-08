@@ -370,7 +370,7 @@ public:
 			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
 			stringstream resfile; resfile << "NATRO\nSTART\n* _ ALLAA";
 			parse_resfile_string(pose, *ptask, "dummy_filename", resfile.str() );
-			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				TS_ASSERT(ptask->pack_residue(i));
 			}
 		}
@@ -381,7 +381,7 @@ public:
 			TS_ASSERT(ptask->pack_residue(1));
 			TS_ASSERT(ptask->pack_residue(2));
 			TS_ASSERT(ptask->pack_residue(3));
-			for ( Size i = 4; i <= pose.total_residue(); ++i ) {
+			for ( Size i = 4; i <= pose.size(); ++i ) {
 				TS_ASSERT(!ptask->pack_residue(i));
 			}
 		}
@@ -392,7 +392,7 @@ public:
 			TS_ASSERT(ptask->pack_residue(1));
 			TS_ASSERT(ptask->pack_residue(2));
 			TS_ASSERT(ptask->pack_residue(3));
-			for ( Size i = 4; i <= pose.total_residue(); ++i ) {
+			for ( Size i = 4; i <= pose.size(); ++i ) {
 				TS_ASSERT(!ptask->pack_residue(i));
 			}
 		}

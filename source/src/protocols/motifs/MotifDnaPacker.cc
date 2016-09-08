@@ -204,7 +204,7 @@ MotifDnaPacker::apply( Pose & pose )
 
 	utility::vector1< core::Size > protein_positions, dna_positions, dna_design_positions, preventrepack;
 	utility::vector1< utility::vector1< core::Size > > base_partners;
-	core::Size nres( pose.total_residue() );
+	core::Size nres( pose.size() );
 	for ( Size p_index(1); p_index<=nres; ++p_index ) {
 		if ( pose.residue_type( p_index ).is_DNA() ) {
 			dna_positions.push_back( p_index );
@@ -396,7 +396,7 @@ MotifDnaPacker::minimize_dna( Pose & pose )
 
 using namespace devel::blab::motif;
 
-core::Size const nres( pose.total_residue() );
+core::Size const nres( pose.size() );
 MotifData & md( get_nonconst_motif_data( pose ) );
 utility::vector1< core::Size > flexandcut = protocols::motifs::defs2vector( pose, targeted_dna_ );
 sort( flexandcut.begin(), flexandcut.end() );
@@ -421,7 +421,7 @@ flex_dna.push_back(flexandcut[i]);
 cutpoint_dna.push_back(flexandcut[i]);
 }
 }
-if( ! (fac2>pose.total_residue() ) ) {
+if( ! (fac2>pose.size() ) ) {
 if ( (! pose.residue( fac2 ).is_terminus()) && pose.residue( fac2 ).is_DNA() ) {
 flex_dna.push_back( fac2 );
 cutpoint_dna.push_back( fac2 );

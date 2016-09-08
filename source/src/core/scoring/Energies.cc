@@ -868,8 +868,8 @@ Energies::update_residue_neighbors(
 ) {
 	if ( graph_state_ == GOOD ) return;
 
-	if ( size_ != pose.total_residue() ) {
-		set_size( pose.total_residue() );
+	if ( size_ != pose.size() ) {
+		set_size( pose.size() );
 		graph_state_ = BAD;
 	}
 
@@ -885,7 +885,7 @@ Energies::update_residue_neighbors(
 	// no updates to the neighbors during minimization
 	// the neighbors should have been calculated inside set_use_nblist
 	if ( use_nblist_ ) {
-		debug_assert( size_ == pose.total_residue() && graph_state_ != BAD );
+		debug_assert( size_ == pose.size() && graph_state_ != BAD );
 		graph_state_ = GOOD;  // pretend
 		return;
 	}
@@ -1185,7 +1185,7 @@ Energies::update_neighbor_links(
 		if ( context_graphs_[ ii ] ) context_graphs_present.push_back( context_graphs_[ ii ] );
 	}
 
-	for ( uint ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii ) {
+	for ( uint ii = 1, ii_end = pose.size(); ii <= ii_end; ++ii ) {
 
 		int const ii_map( domain_map_(ii) );
 		bool const ii_moved( ii_map == 0 || all_moved );
@@ -1352,10 +1352,10 @@ Energies::scoring_begin(
 	}
 
 	// check size
-	if ( size_ != pose.total_residue() ) {
+	if ( size_ != pose.size() ) {
 		energy_state_ = BAD;
 		graph_state_ = BAD;
-		set_size( pose.total_residue() );
+		set_size( pose.size() );
 	}
 
 	// set our internal domain_map if the size has changed

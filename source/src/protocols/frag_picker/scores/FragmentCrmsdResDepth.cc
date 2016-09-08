@@ -61,10 +61,10 @@ FragmentCrmsdResDepth::FragmentCrmsdResDepth(Size priority, Real lowest_acceptab
 	bool use_lowest, core::pose::PoseOP reference_pose, utility::vector1<core::Real> & query_residue_depth) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentCrmsdResDepth") {
 	reference_pose_ = reference_pose;
-	n_atoms_ = reference_pose_->total_residue();
+	n_atoms_ = reference_pose_->size();
 	reference_coordinates_.redimension(3, n_atoms_, 0.0);
 	fill_CA_coords(*reference_pose_, reference_coordinates_, n_atoms_);
-	weights_.redimension(reference_pose_->total_residue(), 1.0);
+	weights_.redimension(reference_pose_->size(), 1.0);
 	query_residue_depth_ = query_residue_depth;
 }
 
@@ -217,7 +217,7 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
 		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 
-		if ( nativePose->total_residue() != picker->get_query_residue_depth().size() ) {
+		if ( nativePose->size() != picker->get_query_residue_depth().size() ) {
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");
 		}
 
@@ -231,7 +231,7 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
 		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 
-		if ( nativePose->total_residue() != picker->get_query_residue_depth().size() ) {
+		if ( nativePose->size() != picker->get_query_residue_depth().size() ) {
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");
 		}
 

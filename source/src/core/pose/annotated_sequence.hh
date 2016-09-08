@@ -71,7 +71,7 @@ chemical::ResidueTypeCOPs residue_types_from_saccharide_sequence( std::string co
 
 
 /// @brief  Append an empty or current Pose with saccharide residues, building branches as necessary.
-void append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs residue_types );
+void append_pose_with_glycasizes( pose::Pose & pose, chemical::ResidueTypeCOPs residue_types );
 
 
 /// @brief Creates a Pose from the annotated protein sequence  <sequence>

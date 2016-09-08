@@ -104,7 +104,7 @@ SelectByDensityFitOperation::apply( core::pose::Pose const & const_pose, core::p
 	using namespace basic::options::OptionKeys;
 
 	core::pose::Pose pose = const_pose;
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 	dockindens->apply( pose );

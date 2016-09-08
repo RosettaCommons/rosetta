@@ -183,7 +183,7 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 
 	int aln_len = cartfrag_overlap_;
 	runtime_assert( cartfrag_overlap_>=1 &&  cartfrag_overlap_<= len/2 + 1);//cartfrag_overlap_<=len/2);
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	if ( pose.residue(nres).aa() == core::chemical::aa_vrt ) nres--;
 	bool nterm = (start == 1);
@@ -317,7 +317,7 @@ void
 SegmentHybridizer::hybridize( core::pose::Pose & pose , core::Size insert_pos_start, core::Size insert_pos_stop){
 
 	Pose pose_in = pose;
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	if ( pose.residue(nres).aa() == core::chemical::aa_vrt ) nres--;
 
 	// pick an insert position based on gap
@@ -451,7 +451,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 			if ( chain_num > 1 ) {
 				chain_start = pose.conformation().chain_begin( chain_num );
 			}
-			for ( core::Size i = chain_start; i <= pose.total_residue(); i++ ) {
+			for ( core::Size i = chain_start; i <= pose.size(); i++ ) {
 				extended_mm_->set_bb(i, true);
 				extended_mm_->set_chi(i,true);
 			}
@@ -471,7 +471,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 						//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
 					}
 				}
-				for ( Size it = insert_pos_stop + 1  ; it <= pose.total_residue() ; it++ ) { // 1 off because ss is typically misassigned
+				for ( Size it = insert_pos_stop + 1  ; it <= pose.size() ; it++ ) { // 1 off because ss is typically misassigned
 					//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
 					if ( tgt_ss[it-1] == 'L' ) break;
 					else {
@@ -481,7 +481,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 				}
 			}
 
-			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( core::Size i = 1; i <= pose.size(); ++i ) {
 				if ( i >= nterm_mm  && i <= cterm_mm ) {
 					extended_mm_->set_bb( i, true );
 					extended_mm_->set_chi( i, true );

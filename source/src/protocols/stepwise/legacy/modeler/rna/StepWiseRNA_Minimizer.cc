@@ -167,7 +167,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	}
 
 	pose::Pose dummy_pose = ( *pose_list_[1] );
-	Size const nres =  dummy_pose.total_residue();
+	Size const nres =  dummy_pose.size();
 	bool o2prime_pack_verbose( options_->verbose() );
 	utility::vector1< Size > const working_moving_res = get_working_moving_res( nres ); // will be used for o2prime packing.
 
@@ -200,7 +200,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		pose = ( *pose_list_[pose_ID] ); //This actually creates a hard copy.....need this to get the graphic working..
 
 		if ( options_->rm_virt_phosphate() ){ //Fang's electron density code
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				pose::remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, ii );
 			}
 		}
@@ -436,7 +436,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 		//setup native score screening
 		pose::Pose native_pose = *( working_parameters_->working_native_pose() ); //Hard copy!
 
-		for ( Size i = 1; i <= native_pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= native_pose.size(); ++i ) {
 			pose::remove_variant_type_from_pose_residue( native_pose, chemical::VIRTUAL_PHOSPHATE, i );
 		}
 		/////////////////////////////////////////////////////////
@@ -485,7 +485,7 @@ StepWiseRNA_Minimizer::native_edensity_score_checker( pose::Pose & pose, pose::P
 	eden_scorefxn -> set_weight( elec_dens_atomwise, 1.0 );
 	core::Real pose_score = ( ( *eden_scorefxn )( pose ) );
 	core::Real native_score = ( ( *eden_scorefxn )( native_pose ) );
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	core::Real native_score_cutoff = native_score / ( static_cast < double > ( nres ) ) *
 	( 1 - options_->native_edensity_score_cutoff() );
 	TR.Debug << "pose_score = " << pose_score << std::endl;

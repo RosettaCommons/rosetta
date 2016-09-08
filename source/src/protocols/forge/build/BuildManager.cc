@@ -221,7 +221,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	//works with non-N,C term extension.  Try placing in SegRebuld
 	if ( basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree].user() ) {
 		Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
-		Size nres( pose.total_residue());
+		Size nres( pose.size());
 
 		//FoldTree f(pose.fold_tree());
 		FoldTree f;
@@ -240,10 +240,10 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 
 		protocols::loops::Loops chain_def_loops;
 		chain_def_loops.add_loop(protocols::loops::Loop(second_start-1,second_start, second_start-1));
-		//chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.total_residue()));
+		//chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.size()));
 
 		//add virtual residue, as star foldtree requires it
-		if ( pose.residue( pose.total_residue()).aa() != core::chemical::aa_vrt ) {
+		if ( pose.residue( pose.size()).aa() != core::chemical::aa_vrt ) {
 			pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map("VRT")), second_start);
 		}
 
@@ -252,7 +252,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 		TR << "before star" << f << std::endl;
 
 		//update nres to include the new residue
-		nres =  pose.total_residue();
+		nres =  pose.size();
 
 		f.reorder(nres);
 		pose.fold_tree(f);
@@ -266,10 +266,10 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	reset_accounting();
 
 	// store old nres for constructing SequenceMapping
-	Size const old_nres = pose.n_residue();
+	Size const old_nres = pose.size();
 
 	// gather residues of original Pose for mapping purposes
-	Positions old_r = closed_range( Size( 1 ), pose.n_residue() ); // old residues
+	Positions old_r = closed_range( Size( 1 ), pose.size() ); // old residues
 
 	// attach all instructions as length observers and set flag
 	// so detach does not occur after modify
@@ -329,7 +329,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	}
 
 	// gather residues of newly modified Pose for mapping purposes
-	Positions new_r = closed_range( Size( 1 ), pose.n_residue() ); // new residues
+	Positions new_r = closed_range( Size( 1 ), pose.size() ); // new residues
 
 	// remove original deleted positions from original residues
 	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
@@ -405,11 +405,11 @@ BuildManager::Size BuildManager::dummy_modify( Size const nres ) {
 		( **instructions_.begin() ).residue_type_set()
 	);
 
-	for ( core::Size i = 1, ie = dummy_pose.n_residue(); i <= ie; ++i ) {
+	for ( core::Size i = 1, ie = dummy_pose.size(); i <= ie; ++i ) {
 		dummy_pose.set_secstruct( i, 'H' );
 	}
 
-	for ( Size i = 1, ie = dummy_pose.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = dummy_pose.size(); i <= ie; ++i ) {
 		dummy_pose.set_phi( i, -60.0 );
 		dummy_pose.set_psi( i, -45.0 );
 		dummy_pose.set_omega( i, 180.0 );
@@ -417,7 +417,7 @@ BuildManager::Size BuildManager::dummy_modify( Size const nres ) {
 
 	modify( dummy_pose );
 
-	return dummy_pose.n_residue();
+	return dummy_pose.size();
 }
 
 

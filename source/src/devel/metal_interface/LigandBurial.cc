@@ -75,7 +75,7 @@ LigandBurial::find_ligand() {
 
 	//make this safe for ZN
 
-	for ( Size i(1); i <= pose_.total_residue(); ++i ) {
+	for ( Size i(1); i <= pose_.size(); ++i ) {
 		//if ( pose_.residue(i).name3() == ligand_3_letter_code_ || pose_.residue(i).name3() == " ZN" ) {
 		if ( pose_.residue(i).name3() == ligand_3_letter_code_ ) {
 			ligand_resnum_ = i;
@@ -149,12 +149,12 @@ LigandBurial::calculate_ligand_sasa() {
 	Pose chain_ligand_only = pose_.split_by_chain(2);
 
 	using core::id::AtomID;
-	utility::vector1<Real> rsd_sasa(pose_.n_residue(),0.0);
+	utility::vector1<Real> rsd_sasa(pose_.size(),0.0);
 	core::id::AtomID_Map<Real> atom_sasa;
 	core::id::AtomID_Map<bool> atom_mask;
 	core::pose::initialize_atomid_map(atom_sasa,pose_,0.0);
 	core::pose::initialize_atomid_map(atom_mask,pose_,false);
-	for(Size i = 1; i <= pose_.n_residue(); i++) {
+	for(Size i = 1; i <= pose_.size(); i++) {
 		for(Size j = 1; j <= pose_.residue(i).nheavyatoms(); j++) {
 			atom_mask[AtomID(j,i)] = true;
 		}

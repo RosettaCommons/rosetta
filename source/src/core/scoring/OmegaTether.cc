@@ -69,7 +69,7 @@ OmegaTether::eval_omega_score_all(
 {
 	if ( scorefxn.has_zero_weight( omega ) ) return; // unnecessary, righ?
 
-	int const total_residue = pose.total_residue();
+	int const total_residue = pose.size();
 
 	Energies & pose_energies( pose.energies() );
 

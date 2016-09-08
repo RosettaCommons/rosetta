@@ -172,7 +172,7 @@ main( int argc, char * argv [] )
 				//iface.calculate( tgt_pose );
 				bool const fxnal_group( option[hotspot::fxnal_group]() );
 				if ( option[ hotspot::rms_target ].user() ) { // compare each interface res to stubs of that type
-					for ( core::Size resnum = 1; resnum <= tgt_pose.total_residue(); ++resnum ) {
+					for ( core::Size resnum = 1; resnum <= tgt_pose.size(); ++resnum ) {
 						utility::vector1< Real > residue_rms;
 						//if( iface.is_interface( resnum ) ) {
 						ResidueCOP tgt_res( tgt_pose.residue( resnum ).get_self_ptr() );
@@ -192,7 +192,7 @@ main( int argc, char * argv [] )
 					for ( HotspotStubSet::const_iterator i = stubset.begin(); i != stubset.end(); ++i ) {
 						utility::vector1< Real > stub_rms;
 						ResidueCOP stub = i->second.second->residue(); // HSS iterator = pair<string, pair<real, stubOP> >
-						for ( core::Size resnum = 1; resnum <= tgt_pose.total_residue(); ++resnum ) {
+						for ( core::Size resnum = 1; resnum <= tgt_pose.size(); ++resnum ) {
 							if ( option[ hotspot::rms_hotspot_res ].user() ) {
 								if ( resnum != (core::Size)option[hotspot::rms_hotspot_res]() ) continue;
 							}
@@ -234,8 +234,8 @@ main( int argc, char * argv [] )
 				amino_acids.push_back( "TYR" );
 				amino_acids.push_back( "VAL" );
 
-				utility::vector1< core::Size > neighbors( tgt_pose.total_residue(), 0 );
-				utility::vector1< core::Real > weighted_neighbors( tgt_pose.total_residue(), 0 );
+				utility::vector1< core::Size > neighbors( tgt_pose.size(), 0 );
+				utility::vector1< core::Real > weighted_neighbors( tgt_pose.size(), 0 );
 
 				std::string density_fname, weighted_density_fname = "";
 				if ( option[ hotspot::density].user() ) density_fname = option[ hotspot::density]();
@@ -244,7 +244,7 @@ main( int argc, char * argv [] )
 				utility::io::ozstream ostream, weighted_ostream;
 				if ( density_fname != "" ) ostream.open(density_fname, std::ios::out);
 				if ( weighted_density_fname != "" ) weighted_ostream.open(weighted_density_fname, std::ios::out);
-				for ( core::Size i=1; i <= tgt_pose.total_residue(); ++i ) {
+				for ( core::Size i=1; i <= tgt_pose.size(); ++i ) {
 					for ( utility::vector1< std::string >::const_iterator aa_it=amino_acids.begin(); aa_it != amino_acids.end(); ++aa_it ) {
 
 						std::multimap< core::Real, protocols::hotspot_hashing::HotspotStubOP > const stubs = stubset.retrieve( *aa_it );

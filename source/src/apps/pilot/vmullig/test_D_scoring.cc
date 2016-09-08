@@ -146,9 +146,9 @@ int main(int argc, char *argv[]) {
 
 	//Set backbone dihedrals:
 	printf("Setting backbone dihedrals for L-peptide.\n");
-	for(core::Size ir=1; ir<=Lpose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=Lpose.size(); ir++) {
 		if(ir>1) Lpose.set_phi(ir, -60.0);
-		if(ir<Lpose.n_residue()) {
+		if(ir<Lpose.size()) {
 			Lpose.set_psi(ir, -45.0);
 			Lpose.set_omega(ir, 175.0);
 		}
@@ -199,16 +199,16 @@ int main(int argc, char *argv[]) {
 	Dpose.clear();
 	core::pose::make_pose_from_sequence(Dpose, sequence2, *standard_residues, false);
 	core::pose::add_lower_terminus_type_to_pose_residue(Dpose, 1);
-	core::pose::add_upper_terminus_type_to_pose_residue(Dpose, Dpose.n_residue());
+	core::pose::add_upper_terminus_type_to_pose_residue(Dpose, Dpose.size());
 	//Replace DHis8 with DHIS_D:
 	protocols::simple_moves::MutateResidue mutres2(8, "DHIS_D");
    mutres2.apply(Dpose);
 
 /*	//Set backbone dihedrals:
 	printf("Setting backbone dihedrals for D-peptide.\n");
-	for(core::Size ir=1; ir<=Dpose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=Dpose.size(); ir++) {
 		if(ir>1) Dpose.set_phi(ir, 64.0);
-		if(ir<Dpose.n_residue()) {
+		if(ir<Dpose.size()) {
 			Dpose.set_psi(ir, 41.0);
 			Dpose.set_omega(ir, 180.0);
 		}
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
 
 	//Set side-chains:
 	printf("Settting side-chain dihedrals for D-peptide.\n");
-	for(core::Size ir=1; ir<=Lpose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=Lpose.size(); ir++) {
 		printf("Res %c%i:", Lpose.residue(ir).name1(), (int)ir);
 		fflush(stdout);
 		if (Lpose.residue(ir).nchi() < 1) {printf("\n"); continue;}
@@ -230,19 +230,19 @@ int main(int argc, char *argv[]) {
 
 	//Set backbone dihedrals:
 	/*printf("Setting backbone dihedrals for D-peptide.\n");
-	for(core::Size ir=1; ir<=Dpose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=Dpose.size(); ir++) {
 		if(ir>1) Dpose.set_phi(ir, 64.0);
-		if(ir<Dpose.n_residue()) {
+		if(ir<Dpose.size()) {
 			Dpose.set_psi(ir, 41.0);
 			Dpose.set_omega(ir, 180.0);
 		}
 	}
 
 	//Copy and mirror coordinates of C-terminal glycine:
-	for(core::Size ia=1; ia<=Dpose.residue(Dpose.n_residue()).natoms(); ia++) {
-		numeric::xyzVector <core::Real> xyzcoord = Lpose_unrelaxed.xyz(id::AtomID(ia, Lpose_unrelaxed.n_residue()));
+	for(core::Size ia=1; ia<=Dpose.residue(Dpose.size()).natoms(); ia++) {
+		numeric::xyzVector <core::Real> xyzcoord = Lpose_unrelaxed.xyz(id::AtomID(ia, Lpose_unrelaxed.size()));
 		xyzcoord[2] *= -1.0;
-		Dpose.conformation().set_xyz(id::AtomID(ia, Dpose.n_residue()), xyzcoord);
+		Dpose.conformation().set_xyz(id::AtomID(ia, Dpose.size()), xyzcoord);
 	}
 
 	Dpose.update_residue_neighbors();
@@ -251,7 +251,7 @@ int main(int argc, char *argv[]) {
 	repack_sc.apply(Dpose);*/
 
 	printf("Mirroring pose\n");
-	for(core::Size ir=1; ir<=Lpose_unrelaxed.n_residue(); ir++){
+	for(core::Size ir=1; ir<=Lpose_unrelaxed.size(); ir++){
 		for(core::Size ia=1; ia<=Lpose_unrelaxed.residue(ir).natoms(); ia++) {
 			numeric::xyzVector<core::Real> xyzvect = Lpose_unrelaxed.residue(ir).xyz(ia);
 			xyzvect[0]*=-1.0;
@@ -289,7 +289,7 @@ int main(int argc, char *argv[]) {
 	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
 
 	printf("\nSequence\nL-peptide\tD-peptide\n");
-	for(core::Size ir=1, nres=Dpose.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1, nres=Dpose.size(); ir<=nres; ir++) {
 		printf("%s\t%s\n", Lpose.residue(ir).name().c_str(), Dpose.residue(ir).name().c_str());
 	}
 	printf("\n");

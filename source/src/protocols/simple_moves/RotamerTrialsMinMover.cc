@@ -277,7 +277,7 @@ EnergyCutRotamerTrialsMinMover::setup_energycut_task(
 
 	task_in.restrict_to_repacking();
 
-	for ( int i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( int i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		core::Real const resE ( pose.energies().residue_total_energies(i)[ total_score ] );
 		core::Real const lowest_resE( mc.lowest_score_pose().energies().residue_total_energies(i)[ total_score ] );
 		core::Real const deltaE ( resE - lowest_resE );

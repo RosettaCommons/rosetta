@@ -279,7 +279,7 @@ public:
 		core::Size const E2_E3_JUMP(1);
 
 		using namespace core::kinematics;
-		FoldTree foldtree(pose.total_residue());
+		FoldTree foldtree(pose.size());
 		foldtree.clear();
  		foldtree.add_edge( Edge(e3chain_start_, e3chain_end_, Edge::PEPTIDE));
 		foldtree.add_edge( Edge(e2chain_start_, e2_catalytic_res_, Edge::PEPTIDE));

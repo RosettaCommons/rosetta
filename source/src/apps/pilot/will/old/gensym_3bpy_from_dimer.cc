@@ -209,12 +209,12 @@ vector1<std::pair<Vec,Vec> > intersecting_bpy_axes(Vec CB, Vec CG, Vec FE, Vec s
 	return sol;
 }
 // void fixH(core::pose::Pose & pose) {
-// 	for(Size i = 1; i <= pose.n_residue(); ++i) {
+// 	for(Size i = 1; i <= pose.size(); ++i) {
 // 		if(!pose.residue(i).has("H")) continue;
 // 		numeric::xyzVector<Real> n	= pose.residue(i).xyz("N");
 // 		numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
 // 		Size in = i-1;
-// 		if(in == 0) in = pose.n_residue();
+// 		if(in == 0) in = pose.size();
 // 		numeric::xyzVector<Real> c	= pose.residue(in).xyz("C");
 // 		numeric::xyzVector<Real> h	= n + (n-(ca+c)/2.0).normalized()*1.01;
 // 		pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
@@ -223,7 +223,7 @@ vector1<std::pair<Vec,Vec> > intersecting_bpy_axes(Vec CB, Vec CG, Vec FE, Vec s
 bool is_near_C2Z_iface(Pose const & p, Size rsd) {
 	Mat Rc2 = rotation_matrix_degrees(Vec(0,0,1),180.0);
 	Vec CA = p.xyz(AtomID(2,rsd));
-	for (Size ir=1; ir < p.n_residue(); ++ir) {
+	for (Size ir=1; ir < p.size(); ++ir) {
 		if(p.residue(ir).is_protein())
 			if( CA.distance_squared( Rc2*p.xyz(AtomID(2,ir))) < 100.0 )
 				return true;
@@ -287,7 +287,7 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 		}
 	}
 
-	for( Size i=1; i<=pose.n_residue(); i++) {
+	for( Size i=1; i<=pose.size(); i++) {
 		if (!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY" || i==ibpy) {
@@ -362,10 +362,10 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 		PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 		vector1<Size> design_pos;
-		for( Size i=1; i<=pose.n_residue(); i++) {
+		for( Size i=1; i<=pose.size(); i++) {
 			if(i==ibpy) continue;
 			if(!sym_info->bb_is_independent(i)) continue;
-			for( Size j=1; j<=pose.n_residue(); j++) {
+			for( Size j=1; j<=pose.size(); j++) {
 				if(sym_info->bb_is_independent(j)) continue;
 				if(sym_info->subunit_index(j) == dsub ) continue;
 				if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
@@ -376,7 +376,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 		}
 
 		// Set which residues can be designed
-		for( Size i=1; i<=pose.n_residue(); i++) {
+		for( Size i=1; i<=pose.size(); i++) {
 			if (!sym_info->bb_is_independent(i)) {
 				task->nonconst_residue_task(i).prevent_repacking();
 			} else if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
@@ -528,10 +528,10 @@ void repack(Pose & pose, Size ibpy, Size dsub) {
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 	vector1<Size> design_pos;
-	for( Size i=1; i<=pose.n_residue(); i++) {
+	for( Size i=1; i<=pose.size(); i++) {
 		if(i==ibpy) continue;
 		if(!sym_info->bb_is_independent(i)) continue;
-		for( Size j=1; j<=pose.n_residue(); j++) {
+		for( Size j=1; j<=pose.size(); j++) {
 			if(sym_info->bb_is_independent(j)) continue;
 			if(sym_info->subunit_index(j) == dsub ) continue;
 			if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
@@ -542,7 +542,7 @@ void repack(Pose & pose, Size ibpy, Size dsub) {
 	}
 
 	// Set which residues can be designed
-	for( Size i=1; i<=pose.n_residue(); i++) {
+	for( Size i=1; i<=pose.size(); i++) {
 		if (!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
@@ -618,8 +618,8 @@ Size num_trimer_contacts(Pose const & psym, Size nres) {
 // }
 Real dimer_rms(Pose const & psym, Pose const & pdimer) {
 	Pose dimer2;
-	for(Size i = 1; i <= pdimer.n_residue()*2; ++i) {
-		if(pdimer.n_residue()/2 < i && i <= pdimer.n_residue()*3/2 ) continue;
+	for(Size i = 1; i <= pdimer.size()*2; ++i) {
+		if(pdimer.size()/2 < i && i <= pdimer.size()*3/2 ) continue;
 		if(psym.residue(i).is_lower_terminus()) dimer2.append_residue_by_jump(psym.residue(i),1);
 		else                                    dimer2.append_residue_by_bond(psym.residue(i));
 	}
@@ -631,7 +631,7 @@ int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 	core::conformation::Residue const resi( pose.residue( ires ) );
 	if(!resi.has("CB")) return 0;
 	Size resi_neighbors( 0 );
-	for(Size jres = 1; jres <= pose.n_residue(); ++jres) {
+	for(Size jres = 1; jres <= pose.size(); ++jres) {
 		core::conformation::Residue const resj( pose.residue( jres ) );
 		if(!resj.has("CB")) continue;
 		double const distance = resi.xyz("CB").distance(resj.xyz("CB"));
@@ -697,16 +697,16 @@ void run() {
 		Pose nat; core::import_pose::pose_from_file(nat,*rs,fname, core::import_pose::PDB_file);
 		core::scoring::dssp::Dssp dssp(nat);
 		dssp.insert_ss_into_pose(nat);
-		if( nat.n_residue() > option[bpytoi::max_nres]() ) { /*SIZE*/ continue; };
+		if( nat.size() > option[bpytoi::max_nres]() ) { /*SIZE*/ continue; };
 		Pose base(nat), pdimer(nat);
 		make_dimer(pdimer);
 		Size cyscnt = 0; {
-			for(Size ir = 1; ir <= base.n_residue(); ++ir) if(base.residue(ir).name3()=="CYS") cyscnt++;
+			for(Size ir = 1; ir <= base.size(); ++ir) if(base.residue(ir).name3()=="CYS") cyscnt++;
 			if(cyscnt > option[bpytoi::max_cys]()) { /*CYS*/ continue; };
 		}
 
-		//TR << "gensym_3bpy_from_dimer " << ifile << " " << fnames[ifile] << " " << base.n_residue() << " residues" << " " << cyscnt << std::endl;
-		for(Size ibpy = 1; ibpy <= base.n_residue(); ++ibpy) {
+		//TR << "gensym_3bpy_from_dimer " << ifile << " " << fnames[ifile] << " " << base.size() << " residues" << " " << cyscnt << std::endl;
+		for(Size ibpy = 1; ibpy <= base.size(); ++ibpy) {
 			if(!base.residue(ibpy).is_protein()) continue;
 			// if(is_near_C2Z_iface(base,ibpy)) continue;
 			if(base.residue(ibpy).is_lower_terminus()) continue;
@@ -721,7 +721,7 @@ void run() {
 			for(Real bch1 = 0.0; bch1 < 360.0; bch1 += chi1_incr) {
 				base.set_chi(1,ibpy,bch1);
 				// clash check atoms along chi2 vector
-				for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+				for(Size ir = 1; ir <= base.size(); ++ir) {
 					if(ir==ibpy) continue;
 					for(Size ia = 1; ia <= (base.residue(ir).name3()=="GLY"?4:5); ia++) {
 						if( base.xyz(AtomID(ia,ir)).distance_squared(base.residue(ibpy).xyz(iCZ)) < 6.0 ) goto clash2;
@@ -762,7 +762,7 @@ void run() {
 					// clash check BPY vs trimer BB
 					int bpy_mono_bb_atom_nbrs = 0;
 					int bpy_tri_bb_atom_nbrs = 0;
-					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+					for(Size ir = 1; ir <= base.size(); ++ir) {
 						if(ir==ibpy) continue;
 						for(Size ia = 1; ia <= min(5ul,base.residue(ir).nheavyatoms()); ia++) {
 					// foreach bb atoms besides bpy:
@@ -787,13 +787,13 @@ void run() {
 					// if( bpy_tri_bb_atom_nbrs  < option[min_bpy_cb_tri_nbr_count]()  ) continue;
 
 					// clash check trimer BB
-					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+					for(Size ir = 1; ir <= base.size(); ++ir) {
 						for(Size ia = 1; ia <= min(5ul,base.residue(ir).nheavyatoms()); ia++) {
 							if(ir==ibpy) if(ia==iNE||ia==iNN) continue;
 					// foreach BB
 							Vec const x1 = R1*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
 							Vec const x2 = R2*(base.xyz(AtomID(ia,ir))-c3f1)+c3f1;
-							for(Size jr = 1; jr <= base.n_residue(); ++jr) {
+							for(Size jr = 1; jr <= base.size(); ++jr) {
 								for(Size ja = 1; ja <= min(5ul,base.residue(jr).nheavyatoms()); ja++) {
 							// foreach BB
 									if( x1.distance_squared(      base.xyz(AtomID(ja,jr)))             < bpy_clash_d2 ) goto clash4;
@@ -860,11 +860,11 @@ void run() {
 					//psym.dump_pdb("test.pdb");
 					//utility_exit_with_message("arisetnario");
 
-					Real bpymdis = psym.residue(ibpy).xyz("ZN").distance(psym.residue(ibpy+base.n_residue()).xyz("ZN"));
+					Real bpymdis = psym.residue(ibpy).xyz("ZN").distance(psym.residue(ibpy+base.size()).xyz("ZN"));
 					if( bpymdis > option[bpytoi::max_sym_error]() ) { /*BPYGEOM*/ continue; };
 
 					bool clash = false;
-					for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
+					for(Size ir = 4; ir <= base.size()-3; ++ir) {
 						Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
 						if( psym.residue(ir).name3()=="GLY" ) natom = 4;
 						if( psym.residue(ir).name3()=="PRO" ) natom = 7;
@@ -872,7 +872,7 @@ void run() {
 							Vec ip = psym.xyz(AtomID(ia,ir));
 							for(Size is = 2; is <= 12; ++is) {
 								if(is==4) continue;
-								for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+								for(Size jr = 4 + (is-1)*base.size(); jr <= is*base.size()-3; ++jr) {
 									for(Size ja = 1; ja <= 4; ja++) {
 										if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
 									}
@@ -880,14 +880,14 @@ void run() {
 							}
 						}
 					}
-					for(Size ir = 3*base.n_residue()+4; ir <= 4*base.n_residue()-3; ++ir) {
+					for(Size ir = 3*base.size()+4; ir <= 4*base.size()-3; ++ir) {
 						Size natom =	(psym.residue(ir).name3()=="BPY") ? 17 : 5;
 						if( psym.residue(ir).name3()=="GLY" ) natom = 4;
 						for(Size ia = 1; ia <= natom; ++ia) {
 							Vec ip = psym.xyz(AtomID(ia,ir));
 							for(Size is = 2; is <= 12; ++is) {
 								if(is==4) continue;
-								for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+								for(Size jr = 4 + (is-1)*base.size(); jr <= is*base.size()-3; ++jr) {
 									for(Size ja = 1; ja <= 4; ja++) {
 										if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < bpy_clash_d2 ) clash = true;
 									}
@@ -898,7 +898,7 @@ void run() {
 					//TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
 					if(clash) { /*CLASH5*/ continue; };
 
-					Size ncontact = num_trimer_contacts(psym,base.n_residue());
+					Size ncontact = num_trimer_contacts(psym,base.size());
 					Real drms = dimer_rms(psym,pdimer);
 					if( drms > option[bpytoi::max_sym_error]() ) { /*DIMER_RMS*/ continue; };
 
@@ -906,8 +906,8 @@ void run() {
 
 					// Real batr = psym.energies().residue_total_energies(ibpy)[core::scoring::fa_atr];
 					fixbb_design(psym,ibpy,dimersub);
-					int nmut = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=                psym.residue(i).name3()) nmut++;
-					int nala = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
+					int nmut = 0; for(Size i = 1; i <= base.size(); ++i) if(base.residue(i).name3()!=                psym.residue(i).name3()) nmut++;
+					int nala = 0; for(Size i = 1; i <= base.size(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala++;
 					std::cout << "dump des" << endl;
 					psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_des.pdb");
 
@@ -930,8 +930,8 @@ void run() {
 					// utility_exit_with_message("aoristn");
 					using namespace core::scoring::constraints;
 					using core::id::AtomID;
-					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+1*base.n_residue()),new HarmonicFunc(0,0.01)));
-					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.n_residue()),new HarmonicFunc(0,0.01)));
+					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+1*base.size()),new HarmonicFunc(0,0.01)));
+					psym.add_constraint(new AtomPairConstraint(AtomID(iZN,ibpy),AtomID(iZN,ibpy+2*base.size()),new HarmonicFunc(0,0.01)));
 					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 					movemap->set_jump(true); movemap->set_bb(false); movemap->set_chi(true);
 					protocols::moves::MoverOP relax_mover = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
@@ -962,7 +962,7 @@ void run() {
 					Mat Rz0 = rotation_matrix_degrees(Vec(0,0,1),  0.0);
 					Mat Rz1 = rotation_matrix_degrees(Vec(0,0,1),120.0);
 					Mat Rz2 = rotation_matrix_degrees(Vec(0,0,1),240.0);
-					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+					for(Size ir = 1; ir <= base.size(); ++ir) {
 						if(ir==ibpy) continue;
 						if(!psym.residue(ir).is_protein()) continue;
 						for(Size ia = 1; ia <= psym.residue(ir).nheavyatoms(); ia++) {
@@ -985,7 +985,7 @@ void run() {
 					// repack(psym,ibpy,dimersub);
 					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_RPK.pdb");
 					// Real s0 = sfsym->score(psym);
-					// for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+					// for(Size ir = 1; ir <= base.size(); ++ir) {
 					// for(Size ia = 1; ia <= psym.residue_type(ir).natoms(); ++ia) {
 					// 	core::id::AtomID const aid(core::id::AtomID(ia,ir));
 					// 	if("ICS"==symtag) psym.set_xyz( aid, psym.xyz(aid) + 20*Vec(-0.178411, 0.309017, 0.934172 ) );
@@ -1002,15 +1002,15 @@ void run() {
 					// core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 					// ss_out->fill_struct(psym_bare,outfname);
 					// ss_out->add_energy("rms",rms);
-					// ss_out->add_energy("nres",base.n_residue());
+					// ss_out->add_energy("nres",base.size());
 					// ss_out->add_energy("batr",batr);
 					// ss_out->add_energy("ddg",s0-s1);
 					// ss_out->add_energy("sc",sc);
 					// ss_out->add_energy("int_area",int_area);
 					// sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]()+"/"+option[basic::options::OptionKeys::out::file::silent ]() );
 
-					int nmut2 = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut2++;
-					int nala2 = 0; for(Size i = 1; i <= base.n_residue(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala2++;
+					int nmut2 = 0; for(Size i = 1; i <= base.size(); ++i) if(base.residue(i).name3()!=psym.residue(i).name3()) nmut2++;
+					int nala2 = 0; for(Size i = 1; i <= base.size(); ++i) if(base.residue(i).name3()!="ALA" && "ALA"==psym.residue(i).name3()) nala2++;
 					sfsym->score(psym);
 					new_sc(psym,intra_subs,int_area,sc);
 

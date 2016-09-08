@@ -76,11 +76,11 @@ public:
 
 
 	void test_packer_task_default_behavior_design_all_positions() {
-		TS_ASSERT( pose->total_residue() == task->total_residue() );
-		if ( pose->total_residue() != task->total_residue() ) return;
+		TS_ASSERT( pose->size() == task->total_residue() );
+		if ( pose->size() != task->total_residue() ) return;
 		TS_ASSERT( task->num_to_be_packed() == task->total_residue() );
 		TS_ASSERT( task->design_any() );
-		for ( core::Size ii = 1; ii <= pose->total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose->size(); ++ii ) {
 			TS_ASSERT( task->pack_residue( ii ) );
 			TS_ASSERT( task->being_packed( ii ) );
 			TS_ASSERT( task->design_residue( ii ) );
@@ -94,11 +94,11 @@ public:
 	void test_packer_task_restrict_to_repacking() {
 		task->restrict_to_repacking();
 
-		TS_ASSERT( pose->total_residue() == task->total_residue() );
-		if ( pose->total_residue() != task->total_residue() ) return;
+		TS_ASSERT( pose->size() == task->total_residue() );
+		if ( pose->size() != task->total_residue() ) return;
 		TS_ASSERT( task->num_to_be_packed() == task->total_residue() );
 		TS_ASSERT( ! task->design_any() );
-		for ( core::Size ii = 1; ii <= pose->total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose->size(); ++ii ) {
 			TS_ASSERT( task->pack_residue( ii ) );
 			TS_ASSERT( task->being_packed( ii ) );
 			TS_ASSERT( ! task->design_residue( ii ) );
@@ -115,10 +115,10 @@ public:
 
 		task->restrict_to_repacking();
 
-		TS_ASSERT( pose->total_residue() == task->total_residue() );
-		if ( pose->total_residue() != task->total_residue() ) return;
+		TS_ASSERT( pose->size() == task->total_residue() );
+		if ( pose->size() != task->total_residue() ) return;
 
-		for ( core::Size ii = 1; ii <= pose->total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose->size(); ++ii ) {
 			/// the list of residue types should not be empty
 			TS_ASSERT( task->residue_task( ii ).allowed_residue_types_begin() != task->residue_task( ii ).allowed_residue_types_end() );
 			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
@@ -245,11 +245,11 @@ public:
 		task2->restrict_to_repacking();
 		task->update_commutative( *task2 );
 
-		TS_ASSERT( pose->total_residue() == task->total_residue() );
-		if ( pose->total_residue() != task->total_residue() ) return;
+		TS_ASSERT( pose->size() == task->total_residue() );
+		if ( pose->size() != task->total_residue() ) return;
 		TS_ASSERT( task->num_to_be_packed() == task->total_residue() );
 		TS_ASSERT( ! task->design_any() );
-		for ( core::Size ii = 1; ii <= pose->total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose->size(); ++ii ) {
 			TS_ASSERT( task->pack_residue( ii ) );
 			TS_ASSERT( task->being_packed( ii ) );
 			TS_ASSERT( ! task->design_residue( ii ) );
@@ -262,11 +262,11 @@ public:
 		task->restrict_to_repacking();
 		task->update_commutative( *task2 );
 
-		TS_ASSERT( pose->total_residue() == task->total_residue() );
-		if ( pose->total_residue() != task->total_residue() ) return;
+		TS_ASSERT( pose->size() == task->total_residue() );
+		if ( pose->size() != task->total_residue() ) return;
 		TS_ASSERT( task->num_to_be_packed() == task->total_residue() );
 		TS_ASSERT( ! task->design_any() );
-		for ( core::Size ii = 1; ii <= pose->total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose->size(); ++ii ) {
 			TS_ASSERT( task->pack_residue( ii ) );
 			TS_ASSERT( task->being_packed( ii ) );
 			TS_ASSERT( ! task->design_residue( ii ) );

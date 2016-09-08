@@ -145,7 +145,7 @@ ExposedHydrophobicsFilter::compute( core::pose::Pose const & pose ) const
 	// need to brainstorm the best way of calculating this. There is a cutoff where we don't care. We want to weight bad ones highly. Therefore, maybe a temperature-weighted boltzmann sum is appropriate.
 	core::Size residue_count( 0 );
 	core::Real sum( 0.0 );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		//check to see if this residue is a protein residue, and if it's found in the hydrophobic residue list
 		if ( pose.residue( i ).is_protein() &&
 				hydrophobic_residues_.find( pose.residue( i ).name1() ) != std::string::npos ) {

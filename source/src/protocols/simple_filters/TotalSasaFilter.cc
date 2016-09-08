@@ -140,8 +140,8 @@ TotalSasaFilter::report( std::ostream & out, core::pose::Pose const & pose ) con
 		basic::MetricValue< utility::vector1< core::Real > > residue_sasa;
 		pose.metric( "sasa", "residue_sasa", residue_sasa ); //this does not represent a new calculation since pose metric calculators are smart enough to figure it out
 
-		runtime_assert( pose.total_residue() == (residue_sasa.value()).size() );
-		for ( core::Size i = 1; i<=pose.total_residue(); ++i ) {
+		runtime_assert( pose.size() == (residue_sasa.value()).size() );
+		for ( core::Size i = 1; i<=pose.size(); ++i ) {
 			char res_chain = pose.pdb_info()->chain(i);
 			int res_pdbnum = pose.pdb_info()->number(i);
 			core::Real this_sasa = residue_sasa.value()[i];
@@ -189,7 +189,7 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 		core::pack::task::PackerTaskOP task( taskfactory_->create_task_and_apply_taskoperations(pose) );
 		MetricValue< utility::vector1< core::Real > > residue_sasa;
 		pose.metric( "sasa", "residue_sasa", residue_sasa );
-		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii(1); ii <= pose.size(); ++ii ) {
 			if ( task->being_packed(ii) ) {
 				sasa += residue_sasa.value()[ii];
 			}
@@ -204,7 +204,7 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 		MetricValue< id::AtomID_Map< core::Real > > atom_sasa;
 		pose.metric( "sasa", "atom_sasa", atom_sasa );
 		core::Real polar_sasa( 0.0 ), hydrophobic_sasa( 0.0 );
-		for ( core::Size pos(1); pos<=pose.total_residue(); ++pos ) {
+		for ( core::Size pos(1); pos<=pose.size(); ++pos ) {
 			core::Real pos_polar_sasa( 0.0 ), pos_hydrophobic_sasa( 0.0 );
 
 			if ( task && ! task->being_packed(pos) ) { continue; }

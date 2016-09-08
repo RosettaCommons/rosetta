@@ -72,7 +72,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -96,7 +96,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -123,7 +123,7 @@ public: // tests
 		TS_ASSERT_EQUALS( bridge.original_interval().left, 5 );
 		TS_ASSERT_EQUALS( bridge.original_interval().right, 6 );
 		TS_ASSERT( bridge.original_interval_valid() );
-		TS_ASSERT_EQUALS( pose.n_residue(), 20 );
+		TS_ASSERT_EQUALS( pose.size(), 20 );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 5 ) );
 		TS_ASSERT( pose.fold_tree().is_cutpoint( 14 ) );
@@ -148,7 +148,7 @@ public: // tests
 		TS_ASSERT_EQUALS( bridge.original_interval().left, 14 );
 		TS_ASSERT_EQUALS( bridge.original_interval().right, 15 );
 		TS_ASSERT( bridge.original_interval_valid() );
-		TS_ASSERT_EQUALS( pose.n_residue(), 23 );
+		TS_ASSERT_EQUALS( pose.size(), 23 );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT( pose.fold_tree().is_cutpoint( 5 ) );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 14 ) );
@@ -175,7 +175,7 @@ public: // tests
 		TS_ASSERT_EQUALS( bridge.original_interval().left, 9 );
 		TS_ASSERT_EQUALS( bridge.original_interval().right, 10 );
 		TS_ASSERT( bridge.original_interval_valid() );
-		TS_ASSERT_EQUALS( pose.n_residue(), 25 );
+		TS_ASSERT_EQUALS( pose.size(), 25 );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 0 );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 9 ) );
 		TS_ASSERT( !pose.fold_tree().is_cutpoint( 14 ) ); // if cutpoint was kept, it would be shifted up 5

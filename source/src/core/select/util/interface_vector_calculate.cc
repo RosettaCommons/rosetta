@@ -118,7 +118,7 @@ calc_interface_vector(
 	core::Real const vector_angle_cutoff, core::Real const vector_dist_cutoff
 ){
 	//set all residues in pose to false
-	utility::vector1_bool at_interface(pose.total_residue(), false);
+	utility::vector1_bool at_interface(pose.size(), false);
 	//do stuff
 	//first find all the neighbors within some Cbeta cutoff distance from eachother
 	InterfacePair CB_pairs_list;
@@ -144,7 +144,7 @@ calc_interface_vector(
 	core::Real const vector_dist_cutoff
 ){
 	//set all residues in pose to false
-	utility::vector1_bool at_interface(pose.total_residue(), false);
+	utility::vector1_bool at_interface(pose.size(), false);
 	//do stuff
 	//first find all the neighbors within some Cbeta cutoff distance from eachother
 	InterfacePair CB_pairs_list;
@@ -183,7 +183,7 @@ utility::vector1_bool calc_interacting_vector(
 	core::Real const vector_dist_cutoff )
 {
 	//set all residues in pose to false
-	utility::vector1_bool at_interface(pose.total_residue(), false);
+	utility::vector1_bool at_interface(pose.size(), false);
 	//first find all the neighbors within some Cbeta cutoff distance from eachother
 	InterfacePair CB_pairs_list;
 
@@ -386,12 +386,12 @@ find_jump_partners_within_CB_cutoff( core::pose::Pose const & pose, core::Real b
 	/// and is_interface array to false
 	/// make foldtree copy
 	core::kinematics::FoldTree foldtree_copy( pose.fold_tree() );
-	ObjexxFCL::FArray1D_bool partners_array ( pose.total_residue(), false );
+	ObjexxFCL::FArray1D_bool partners_array ( pose.size(), false );
 	//set one side of jump to true
 	foldtree_copy.partition_by_jump( jump_num, partners_array );
 
 	//itterate through all residues
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		//check edges to that residue
 		for ( conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( ii ).upper_edge_list_begin(),
 				edge_end_iter = pg->get_vertex( ii ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {

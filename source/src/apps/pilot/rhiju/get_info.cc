@@ -67,7 +67,7 @@ save_ss_info( FArray2D< Real > & ds, pose::Pose & pose ){
 	protocols::jumping::Dssp dssp_obj( pose );
 	dssp_obj.insert_ss_into_pose( pose );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.secstruct( i ) == 'H' ){
 			ds( i,1 ) += 1.0;
 		} else if ( pose.secstruct( i ) == 'E' ){
@@ -90,10 +90,10 @@ save_contact_info( FArray2D< Real > & ds, pose::Pose & pose ){
 	using namespace core::scoring;
 	using namespace core::scoring::hbonds;
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		Vector const & vec_i = pose.xyz( NamedAtomID( " CA ", i ) );
 
-		for ( Size j = i; j <= pose.total_residue(); j++ ) {
+		for ( Size j = i; j <= pose.size(); j++ ) {
 			Vector const & vec_j = pose.xyz( NamedAtomID( " CA ", j ) );
 
 			if ( ( vec_i - vec_j ).length() < DIST_CUTOFF ){
@@ -109,7 +109,7 @@ save_contact_info( FArray2D< Real > & ds, pose::Pose & pose ){
 	static ScoreFunctionOP scorefxn = get_score_function();
 	(*scorefxn)( pose );
 
-	FArray2D< bool > hb( pose.total_residue(), pose.total_residue(), false );
+	FArray2D< bool > hb( pose.size(), pose.size(), false );
 
 	HBondOptionsOP hbond_options( new HBondOptions() );
 	hbond_options->use_hb_env_dep( false );
@@ -136,7 +136,7 @@ save_contact_info( FArray2D< Real > & ds, pose::Pose & pose ){
 	}
 
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		for ( Size j = 1; j < i; j++ ) {
 			if ( hb(i,j) || hb(j,i) ) {
 				ds( i, j ) += 1.0;
@@ -178,7 +178,7 @@ output_native_ss_info( pose::Pose & pose, 	utility::io::ozstream & out){
 	protocols::jumping::Dssp dssp_obj( pose );
 	dssp_obj.insert_ss_into_pose( pose );
 	out << "NS ";
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		out << pose.secstruct( i );
 	}
 	out << std::endl;
@@ -270,12 +270,12 @@ get_info_test(){
 		input->fill_pose( pose, *rsd_set );
 
 		if ( count == 0 ){
-			nres = pose.total_residue();
+			nres = pose.size();
 			ds.dimension( nres, 3, 0.0 );
 			dc.dimension( nres, nres, 0.0 );
 			protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 200, 200 );
 		}
-		if ( pose.total_residue() != nres ) continue;
+		if ( pose.size() != nres ) continue;
 
 		save_ss_info( ds, pose );
 		save_contact_info( dc, pose );

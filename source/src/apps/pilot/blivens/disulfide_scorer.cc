@@ -307,9 +307,9 @@ int main( int argc, char * argv [] )
 
 
 		//for each residue pair
-		for(Size i(1); i<= pose.total_residue()-1; ++i) {
+		for(Size i(1); i<= pose.size()-1; ++i) {
 			char i_name = pose.residue_type(i).name1();
-			for(Size j(i+1); j<= pose.total_residue(); ++j) {
+			for(Size j(i+1); j<= pose.size(); ++j) {
 				bool isDS = actual_disulfide(pose,i,j);
 				char j_name = pose.residue_type(j).name1();
 

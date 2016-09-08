@@ -179,7 +179,7 @@ public:  // Standard Rosetta methods
 
 		show( cout );
 
-		Size const n_residues( pose.total_residue() );
+		Size const n_residues( pose.size() );
 
 		// Prepare the FoldTree.
 		determine_docking_partners( pose );

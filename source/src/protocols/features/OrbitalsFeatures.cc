@@ -345,7 +345,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 	statement orbital_Haro_statement(basic::database::safely_prepare_statement(orbita_Haro_string,db_session));
 
 
-	for ( Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1 ) {
+	for ( Size resNum1 = 1; resNum1 <= pose.size(); ++resNum1 ) {
 		Residue  res1 = pose.residue(resNum1);
 		Size resNum2(0);
 		string orbName1;
@@ -379,7 +379,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		bool orb_orb=false;
 		bool orb_haro=false;
 		bool orb_hpol=false;
-		for ( Size res_num2 = 1; res_num2 <= pose.n_residue(); ++res_num2 ) {
+		for ( Size res_num2 = 1; res_num2 <= pose.size(); ++res_num2 ) {
 			Residue res2 = pose.residue(res_num2);
 			if ( resNum1 != res_num2 ) {
 				BOOST_FOREACH ( Size const Aindex, res1.atoms_with_orb_index() ) {
@@ -541,7 +541,7 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 	statement orbital_H_statement(basic::database::safely_prepare_statement(orbita_H_string,db_session));
 
 
-	for(Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1){
+	for(Size resNum1 = 1; resNum1 <= pose.size(); ++resNum1){
 	Residue res1 = pose.residue(resNum1);
 	Size resNum2(0);
 	string orbName1;
@@ -560,7 +560,7 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 	Real chiBAHD(0);
 	Real cosAHD(0);
 	Real OrbHdist(10.1); // min distance used to derive statistics. Should be the shortest distance between an orbital and hydrogen
-	for(Size res_num2 = 1; res_num2 <= pose.n_residue(); ++res_num2){
+	for(Size res_num2 = 1; res_num2 <= pose.size(); ++res_num2){
 	Residue  res2 = pose.residue(res_num2);
 	BOOST_FOREACH(Size const Aindex, res1.atoms_with_orb_index()){
 	BOOST_FOREACH(Size const Orbindex, res1.bonded_orbitals(Aindex)){

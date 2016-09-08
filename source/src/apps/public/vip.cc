@@ -113,9 +113,9 @@ main( int argc, char * argv [] )
 
 			protocols::vip::VIP_Mover();
 			protocols::vip::VIP_Mover vip_mover;
-			if ( ( it > 1 ) && use_unrelaxed_mutants && ( stored_unrelaxed_pose.total_residue() > 0 ) ) {
+			if ( ( it > 1 ) && use_unrelaxed_mutants && ( stored_unrelaxed_pose.size() > 0 ) ) {
 				vip_mover.set_initial_pose( stored_unrelaxed_pose );
-				//TR << "Recovering stored pose with total residues = " << stored_unrelaxed_pose.total_residue() << std::endl;
+				//TR << "Recovering stored pose with total residues = " << stored_unrelaxed_pose.size() << std::endl;
 			} else {
 				vip_mover.set_initial_pose( in_pose );
 			}
@@ -128,7 +128,7 @@ main( int argc, char * argv [] )
 			bool improved( new_energy < old_energy ? true : false );
 
 			// Check for bogus final_pose
-			if ( out_pose.total_residue() == 0 ) {
+			if ( out_pose.size() == 0 ) {
 				improved = false;
 			} else {
 				if ( use_unrelaxed_mutants ) {
@@ -140,7 +140,7 @@ main( int argc, char * argv [] )
 			if ( improved ) {
 				// Print out the accepted mutation
 
-				for ( core::Size j = 1 ; j <= in_pose.total_residue() ; ++j ) {
+				for ( core::Size j = 1 ; j <= in_pose.size() ; ++j ) {
 					if ( out_pose.residue( j ).name() != in_pose.residue( j ).name() ) {
 						core::Size pdb_position( out_pose.pdb_info()->number( j ) );
 						char pdb_chain( out_pose.pdb_info()->chain( j ) );

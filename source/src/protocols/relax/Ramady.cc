@@ -58,8 +58,8 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 	using namespace kinematics;
 	using namespace moves;
 
-	core::Size nnonvrt_cst_target = constraint_target_pose.total_residue();
-	core::Size nnonvrt_pose = pose.total_residue();
+	core::Size nnonvrt_cst_target = constraint_target_pose.size();
+	core::Size nnonvrt_pose = pose.size();
 
 	while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
 	while ( constraint_target_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
@@ -77,11 +77,11 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 		pose.append_residue_by_jump
 			( *ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
-			pose.total_residue()/2 );
+			pose.size()/2 );
 	}
 
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	Real const coord_sdev( 0.5 );
 	for ( Size i = 1; i<= (Size)nres; ++i ) {
 		if ( i==(Size)pose.fold_tree().root() ) continue;
@@ -152,7 +152,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 	std::vector < std::pair < core::Size, core::Real > > rama_list;
 
-	for ( Size j=1; j<= pose.total_residue(); ++j ) {
+	for ( Size j=1; j<= pose.size(); ++j ) {
 		EnergyMap & emap( energies.onebody_energies( j ) );
 		if (  emap[ rama ] > limit_rama_min ) {
 			rama_list.push_back( std::make_pair( j, emap[ rama ] ) );
@@ -180,7 +180,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 		TR << "RAMALIST: " << rama_list[g].first << "  " << rama_list[g].second << " RAMA: " << rama_e << " RES: " << i << std::endl;
 		// save the angles
-		for ( core::Size ir = 1; ir < pose.total_residue(); ir ++ ) {
+		for ( core::Size ir = 1; ir < pose.size(); ir ++ ) {
 			temp_pose.set_phi(   ir, pose.phi(   ir ) );
 			temp_pose.set_psi(   ir, pose.psi(   ir ) );
 			temp_pose.set_omega( ir, pose.omega( ir ) );
@@ -228,7 +228,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 				int res = i + ii;
 
 				if ( res < 1 ) continue;
-				if ( res > (int)pose.total_residue() ) continue;
+				if ( res > (int)pose.size() ) continue;
 				local_mm.set_bb( res, true );
 				local_mm.set( TorsionID( omega_torsion, BB, res), false );
 				// disallow proline PHI
@@ -254,7 +254,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 			}
 
 			// otherwise restore and continue
-			for ( core::Size ir = 1; ir < pose.total_residue(); ir ++ ) {
+			for ( core::Size ir = 1; ir < pose.size(); ir ++ ) {
 				pose.set_phi(   ir, temp_pose.phi(   ir ) );
 				pose.set_psi(   ir, temp_pose.psi(   ir ) );
 				pose.set_omega( ir, temp_pose.omega( ir ) );
@@ -271,7 +271,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 	// Final RamaCheck
 	rama_scorefxn(pose); //apply score
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		EnergyMap & emap( energies.onebody_energies( i ) );
 		TR << "CHECK: " << i << "  "
@@ -281,7 +281,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 	}
 
 	// save the angles
-	for ( core::Size ir = 1; ir < original_pose.total_residue(); ir ++ ) {
+	for ( core::Size ir = 1; ir < original_pose.size(); ir ++ ) {
 		if ( !pose.residue_type(ir).is_protein() ) continue;
 		original_pose.set_phi(   ir, pose.phi(   ir ) );
 		original_pose.set_psi(   ir, pose.psi(   ir ) );

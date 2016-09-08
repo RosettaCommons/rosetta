@@ -86,7 +86,7 @@ main (int argc, char *argv[]){
 
     core::scoring::dssp::Dssp dssp(pose);
     Size nstart=0,nstop=0,cstart=0,cstop=0;
-    for(Size i = 1; i <= pose.n_residue(); ++i) {
+    for(Size i = 1; i <= pose.size(); ++i) {
       if( !nstart && dssp.get_dssp_secstruct(i) == 'H' ) {
         nstart = i;
       } else if(  nstart && dssp.get_dssp_secstruct(i) != 'H' ) {
@@ -94,7 +94,7 @@ main (int argc, char *argv[]){
         break;
       }
     }
-    for(Size i = pose.n_residue(); i >= 1; --i) {
+    for(Size i = pose.size(); i >= 1; --i) {
       if( !cstart && dssp.get_dssp_secstruct(i) == 'H' ) {
         cstart = i;
       } else if(  cstart && dssp.get_dssp_secstruct(i) != 'H' ) {
@@ -102,7 +102,7 @@ main (int argc, char *argv[]){
         break;
       }
     }
-    //TR << fname << " " << nstart << " " << nstop << " " << pose.n_residue()-cstart << " " << pose.n_residue()-cstop << std::endl;
+    //TR << fname << " " << nstart << " " << nstop << " " << pose.size()-cstart << " " << pose.size()-cstop << std::endl;
 
     Vec trax = Vec(0,0,1);
 
@@ -117,7 +117,7 @@ main (int argc, char *argv[]){
           Size naln = min(nstop-nstart+1,(Size)9);
           for(Size i = 1; i <= naln; ++i) {
             Size pr = nstart+i-1;
-            Size hr = h.n_residue()-naln+i;
+            Size hr = h.size()-naln+i;
             for(Size j = 1; j <= min((Size)5,min(pose.residue(pr).nheavyatoms(),h.residue(hr).nheavyatoms())); ++j) amap[ AtomID(j,hr) ] = AtomID(j,pr);
           }
         } else if( !nc && cstart < 10 && cstart-cstop > 6 ) {

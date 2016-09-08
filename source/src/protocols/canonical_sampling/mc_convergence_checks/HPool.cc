@@ -187,7 +187,7 @@ void HPool_RMSD::add(core::pose::Pose& pose, std::string &tag)
 {
 //fill pose to coords
 ObjexxFCL::FArray2D_double coord( 3, natom(), 0.0 );
-runtime_assert( natom() == pose.total_residue() );
+runtime_assert( natom() == pose.size() );
 protocols::toolbox::fill_CA_coords( pose, coord );
 add(coord, tag);
 }
@@ -248,7 +248,7 @@ core::Size HPool_RMSD::evaluate(
 		return 0;
 	}
 	ObjexxFCL::FArray2D_double coord( 3, natom(), 0.0 );
-	runtime_assert( natom() == pose.total_residue() );
+	runtime_assert( natom() == pose.size() );
 	protocols::toolbox::fill_CA_coords( pose, coord );
 
 	/*

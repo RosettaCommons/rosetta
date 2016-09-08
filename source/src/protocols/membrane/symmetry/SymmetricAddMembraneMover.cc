@@ -289,7 +289,7 @@ SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 		utility_exit_with_message( "Cannot create a symmetric membrane pose from an asymmetric pose. Please run SetupForSymetryMover (in protocols/simple_moves) first!" );
 	}
 
-	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
+	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.size() << std::endl;
 
 	// Get the current residue typeset of the pose and use it to determine the
 	// typeset of the new membrane residue
@@ -309,7 +309,7 @@ SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 	// Grab the number of subunits and number of residues in the monomeric unit
 	core::Size nsubunits( symm_conf.Symmetry_Info()->subunits() );
 	core::Size nres_monomer( symm_conf.Symmetry_Info()->get_nres_subunit() );
-	core::Size total_res(  pose.total_residue() ); // wants total res of the whole compelex
+	core::Size total_res(  pose.size() ); // wants total res of the whole compelex
 	core::Size num_virtuals( symm_conf.Symmetry_Info()->num_virtuals() );
 
 	// Compute the target sequence position and anchoring position for the residue
@@ -337,7 +337,7 @@ SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 	// These are very rigorous checks, leaving them here until this is better tested
 	assert( core::pose::symmetry::is_symmetric( pose ) );
 
-	return pose.total_residue();
+	return pose.size();
 }
 
 /// @brief Helper Method - Check for Membrane residue already in the PDB

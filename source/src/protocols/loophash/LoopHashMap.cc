@@ -87,7 +87,7 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	core::pose::Pose pose = orig_pose;
 
 	//fpd vrt/ligand trim
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	while ( !pose.residue_type(nres).is_polymer() ) nres--;
 
 	// get current cutpoints; don't try to connect these
@@ -151,15 +151,15 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 			if ( last_cut!=0 ) f.add_edge( 1, last_cut+1, jump_num++);
 		}
 	}
-	for ( core::Size i=nres+1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=nres+1; i<=pose.size(); ++i ) {
 		f.add_edge( 1, i, jump_num++ );  // additional jumps
 	}
 
 	core::Size theroot = 1;
-	if ( ir == 1 ) theroot = pose.total_residue();
+	if ( ir == 1 ) theroot = pose.size();
 	if ( orig_pose.residue_type( orig_pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) theroot = orig_pose.fold_tree().root();  //fpd
 	if ( f.reorder(theroot) == false ) {
-		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.total_residue() << "   IR: " << ir << "  JR: " << jr << std::endl;
+		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
 		return false; // continuing leads to a segfault - instead ignore this loop !
 	}
 
@@ -203,7 +203,7 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) newroot = pose.fold_tree().root();
 
 	//fpd vrt/ligand trim
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	while ( !pose.residue_type(nres).is_polymer() ) nres--;
 
 	// get current cutpoints; don't try to connect these
@@ -267,15 +267,15 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 			if ( last_cut!=0 ) f.add_edge( 1, last_cut+1, jump_num++);
 		}
 	}
-	for ( core::Size i=nres+1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=nres+1; i<=pose.size(); ++i ) {
 		f.add_edge( 1, i, jump_num++ );  // additional jumps
 	}
 
 	core::Size theroot = 1;
-	if ( ir == 1 ) theroot = pose.total_residue();
+	if ( ir == 1 ) theroot = pose.size();
 	if ( newroot>0 ) theroot = newroot;  //fpd
 	if ( f.reorder(theroot) == false ) {
-		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.total_residue() << "   IR: " << ir << "  JR: " << jr << std::endl;
+		TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
 		return false; // continuing leads to a segfault - instead ignore this loop !
 	}
 

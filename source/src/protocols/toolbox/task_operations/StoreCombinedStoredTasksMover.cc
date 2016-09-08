@@ -77,7 +77,7 @@ StoreCombinedStoredTasksMover::apply( core::pose::Pose & pose )
 				core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 				total_residue = symm_info->num_independent_residues();
 			} else {
-				total_residue = pose.total_residue();
+				total_residue = pose.size();
 			}
 		}
 		// Loop throught the residues and determine the state of each residue for each retrieved task.

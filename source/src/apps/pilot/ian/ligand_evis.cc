@@ -187,10 +187,10 @@ void dump_energy_kinemage(
 )
 {
 	using namespace core::scoring;
-	core::Size const ligid = pose.total_residue();
+	core::Size const ligid = pose.size();
 	utility::vector1< core::Real > scores;
 	core::Real sum_scores = 0;
-	for( core::Size i = 1, end_i = pose.total_residue(); i <= end_i; ++i ) {
+	for( core::Size i = 1, end_i = pose.size(); i <= end_i; ++i ) {
 		EnergyEdge const * e = pose.energies().energy_graph().find_energy_edge(ligid, i);
 		scores.push_back(0);
 		if( !e ) continue;
@@ -201,7 +201,7 @@ void dump_energy_kinemage(
 		sum_scores += scores[i];
 	}
 	core::Real const smin = utility::min(scores), smax = utility::max(scores), absmax = std::max(std::abs(smin), std::abs(smax));
-	for( core::Size i = 1, end_i = pose.total_residue(); i <= end_i; ++i ) {
+	for( core::Size i = 1, end_i = pose.size(); i <= end_i; ++i ) {
 		if( i == ligid ) {
 			out << "@colorset {" << tag << i << "} green\n";
 			continue;
@@ -212,13 +212,13 @@ void dump_energy_kinemage(
 	out << "@group {" << tag << "} dominant";
 	if(animate) out << " animate";
 	out << "\n";
-	for(core::Size i = 1; i <= pose.total_residue(); ++i) {
+	for(core::Size i = 1; i <= pose.size(); ++i) {
 		std::ostringstream s;
 		s << tag << i << ' ';
 		dump_residue_kinemage(out, pose.residue(i), pose.conformation(), s.str());
 	}
 	out << "@labellist {} color= magenta master= {labels}\n";
-	for(core::Size i = 1; i <= pose.total_residue(); ++i) {
+	for(core::Size i = 1; i <= pose.size(); ++i) {
 		if( std::abs(scores[i]) < 0.01 ) continue;
 		out << "{  ";
 		std::streamsize p = out.precision();  out.precision(2);  out << scores[i]; out.precision(p);
@@ -350,7 +350,7 @@ main( int argc, char * argv [] )
 		/// Now handled automatically.  sfxn->accumulate_residue_total_energies( *the_pose );
 		out << "@kinemage {" << curr_job->input_tag() << "}\n";
 		out << "@title {" << curr_job->input_tag() << "}\n";
-		core::Size const ligid = the_pose->total_residue();
+		core::Size const ligid = the_pose->size();
 		core::Vector const & ctr = the_pose->residue(ligid).nbr_atom_xyz();
 		out << "@1center " << ctr.x() << " " << ctr.y() << " " << ctr.z() << "\n";
 		out << "@1span 25\n";

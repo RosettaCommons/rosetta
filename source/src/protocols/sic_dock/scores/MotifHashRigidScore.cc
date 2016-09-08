@@ -93,25 +93,25 @@ MotifHashRigidScore::MotifHashRigidScore(
 	xsee_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_ee_from_cli();
 	xspp_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_sspair_from_cli();
 	mh_   = NULL;//core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
-	for ( Size ir = 1; ir <= pose1_.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose1_.size(); ++ir ) {
 		// if( pose1_.secstruct(ir)=='L' ) continue;
 		Vec  N = pose1_.residue(ir).xyz(1);
 		Vec CA = pose1_.residue(ir).xyz(2);
 		Vec  C = pose1_.residue(ir).xyz(3);
 		bbx1_.push_back(Xform(CA,N,CA,C));
 	}
-	for ( Size ir = 1; ir <= pose2_.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose2_.size(); ++ir ) {
 		// if( pose2_.secstruct(ir)=='L' ) continue;
 		Vec  N = pose2_.residue(ir).xyz(1);
 		Vec CA = pose2_.residue(ir).xyz(2);
 		Vec  C = pose2_.residue(ir).xyz(3);
 		bbx2_.push_back(Xform(CA,N,CA,C));
 	}
-	hash_pose1_ = pose1_.n_residue() >= pose2_.n_residue();
+	hash_pose1_ = pose1_.size() >= pose2_.size();
 	Pose const & hashpose(hash_pose1_?pose1_:pose2_);
 	Pose const & listpose(hash_pose1_?pose2_:pose1_);
 	reshash_ = new core::pose::xyzStripeHashPose(hashpose,core::pose::PoseCoordPickMode_CBorCA,sqrt(MAX_MOTIF_D2));
-	for ( int ir = 1; ir <= (int)listpose.n_residue(); ++ir ) {
+	for ( int ir = 1; ir <= (int)listpose.size(); ++ir ) {
 		if     ( listpose.residue(ir).has("CB") ) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CB"),ir));
 		else if ( listpose.residue(ir).has("CA") ) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CA"),ir));
 	}

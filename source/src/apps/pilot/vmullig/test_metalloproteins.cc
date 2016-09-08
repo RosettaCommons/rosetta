@@ -95,7 +95,7 @@ void register_options() {
 /*void detect_covalent_bonds_to_metals(
 	core::pose::Pose & pose
 ) {
-	core::Size const nres = pose.n_residue(); //Number of residues in the pose.
+	core::Size const nres = pose.size(); //Number of residues in the pose.
  
 	for(core::Size ir=1; ir<=nres; ir++) { //Loop through all residues, looking for metals
 		if(pose.residue(ir).is_metal()) {
@@ -119,7 +119,7 @@ void register_options() {
 	using namespace core::scoring::constraints;
 	using namespace core::id;
 
-	core::Size const nres = pose.n_residue(); //Number of residues in the pose.
+	core::Size const nres = pose.size(); //Number of residues in the pose.
 	core::Real weightmultiplier = 1.0; //Constraint weight multiplier, for cases in which the atom_pair_constraint has already been turned on but is not equal to 1.0.
 	if(sfxn->get_weight(atom_pair_constraint) < 1.0e-10) { //If this score term is turned off, turn it on.
 		sfxn->set_weight(atom_pair_constraint, 1.0);
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
 
 	core::pose::Pose mypose;
 	core::import_pose::pose_from_file (mypose, option[in::file::s]()[1]);
-	//const core::Size nres = mypose.n_residue();
+	//const core::Size nres = mypose.size();
 	printf("Import complete.\n"); fflush(stdout);
 
 	mypose.dump_scored_pdb("1_initial.pdb", (*sfxn)); printf("Wrote 1_initial.pdb.\n"); fflush(stdout);

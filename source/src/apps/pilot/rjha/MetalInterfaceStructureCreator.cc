@@ -123,7 +123,7 @@ main( int argc, char* argv[] )
 	//read in our starting structures
 	core::pose::Pose match;
 	core::import_pose::pose_from_file( match, basic::options::option[devel::MetalInterface::match].value() , core::import_pose::PDB_file);
-	core::Size const matchlength = match.total_residue();
+	core::Size const matchlength = match.size();
 	assert(matchlength == /*MatchPosition*/metal); //5
 	//basic::options::option[ basic::options::OptionKeys::run::skip_set_reasonable_fold_tree ].value(false);
 
@@ -132,21 +132,21 @@ main( int argc, char* argv[] )
 
 	core::pose::Pose partner2;
 	core::import_pose::pose_from_file( partner2, basic::options::option[devel::MetalInterface::partner2].value() , core::import_pose::PDB_file);
-	core::Size const partner2length = partner2.total_residue();
+	core::Size const partner2length = partner2.size();
 
 	core::pose::Pose partner1;
 	core::import_pose::pose_from_file( partner1, basic::options::option[devel::MetalInterface::partner1].value() , core::import_pose::PDB_file);
-	core::Size const partner2length = partner2.total_residue();
+	core::Size const partner2length = partner2.size();
 
 	core::pose::Pose partner1;
 	core::io::pdb::pose_from_file( partner1, basic::options::option[devel::MetalInterface::partner1].value() , core::import_pose::PDB_file);
-	core::Size const partner1length = partner1.total_residue();
+	core::Size const partner1length = partner1.size();
 
 	//combined partner1 and partner2 into RMS_target pose (their coordinates are generated from another program and are in some sense "correct")
 	bool const RMS_mode(basic::options::option[devel::MetalInterface::RMS_mode].value());
 	if(RMS_mode){
 		core::pose::Pose RMS_target(partner1);
-		RMS_target.append_residue_by_jump(match.residue(/*MatchPosition*/metal), RMS_target.total_residue());
+		RMS_target.append_residue_by_jump(match.residue(/*MatchPosition*/metal), RMS_target.size());
 		RMS_target.append_residue_by_jump(partner2.residue(1), 1);
 
 		for (core::Size i=2; i<=partner2length; ++i){
@@ -209,7 +209,7 @@ main( int argc, char* argv[] )
 	//set up partner2 fold tree to allow residue replacement to align partner2 onto match
 	//this tree isolates partner2_residue by jumps and makes it root
 	//this means moving that residue will move the whole pose (our intention)
-	core::kinematics::FoldTree tree(partner2.total_residue());
+	core::kinematics::FoldTree tree(partner2.size());
 	int const p2_res(basic::options::option[devel::MetalInterface::partner2_residue].value());
 	//For ubc12 as initially designed, where partner2_residue = 62, we want:
 	//FOLD_TREE  EDGE 62 61 1  EDGE 62 63 2  EDGE 66 160 -1  EDGE 64 1 -1
@@ -254,7 +254,7 @@ main( int argc, char* argv[] )
 	//////////////////////////////////////////////////////////////////////////////
 	//build the combined pose
 	core::pose::Pose combined(partner1);
-	combined.append_residue_by_jump(match.residue(/*MatchPosition*/metal), combined.total_residue());
+	combined.append_residue_by_jump(match.residue(/*MatchPosition*/metal), combined.size());
 	combined.append_residue_by_jump(partner2.residue(1), 1);
 
 	for (core::Size i=2; i<=partner2length; ++i){
@@ -262,7 +262,7 @@ main( int argc, char* argv[] )
 	}
 
 	//calculate where special residues are
-	//core::Size const combinedlength(combined.total_residue());
+	//core::Size const combinedlength(combined.size());
 	core::Size const metal_res(partner1length + 1);
 	core::Size const p2_res_comb(partner1length + 1 + p2_res);
 

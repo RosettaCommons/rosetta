@@ -186,7 +186,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 	utility::vector1<std::set<core::Size> > const & residue_decomposition(residue_decomposition_value.value());
 	utility::vector1<core::Size> const & residue_set_numbers(residue_set_numbers_value.value());
 	set_names_ = set_names_value.value();
-	runtime_assert(residue_set_numbers.size() == this_pose.total_residue());
+	runtime_assert(residue_set_numbers.size() == this_pose.size());
 
 	core::Size num_sets_from_decomposition = residue_decomposition.size();
 	// if num_sets is 0, set num_sets to be the size of the decomposition
@@ -198,7 +198,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 	clear_energies();
 
 	// add one body energies to the correct one body location
-	for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 		core::Size const set_num(residue_set_numbers[i]);
 		if ( set_num ) onebody_energies_[set_num].energy_map() += this_pose.energies().onebody_energies(i);
 	}
@@ -231,7 +231,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 		if ( lrec->empty() ) continue;
 
 		// iterate over all residues
-		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 			core::Size const first_set_num(residue_set_numbers[i]);
 			if ( !first_set_num ) continue;
 			// iterate over all neighbors of the residue

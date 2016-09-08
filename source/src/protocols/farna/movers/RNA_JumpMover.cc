@@ -269,7 +269,7 @@ RNA_JumpMover::sample_alternative_chain_connection( pose::Pose & pose, Size cons
 		Size jump_pos2 = numeric::random::rg().random_element( res_list2 );
 		jump_points( 1, which_jump_in_list ) = std::min( jump_pos1, jump_pos2 );
 		jump_points( 2, which_jump_in_list ) = std::max( jump_pos1, jump_pos2 );
-		success = fold_tree.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps,
+		success = fold_tree.tree_from_jumps_and_cuts( pose.size(), num_jumps,
 			jump_points, cuts, 1, false /*verbose*/ );
 	}
 

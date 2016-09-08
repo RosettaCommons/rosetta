@@ -109,7 +109,7 @@ void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & )
 
 void OrbitalsScore::setup_for_derivatives(pose::Pose & pose , ScoreFunction const &) const
 {
-	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
+	for ( core::Size resid=1; resid <= pose.size(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 
@@ -135,7 +135,7 @@ OrbitalsScore::setup_for_minimizing_for_residue_pair(
 
 void
 OrbitalsScore::finalize_after_derivatives( pose::Pose & pose, ScoreFunction const &  ) const{
-	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
+	for ( core::Size resid=1; resid <= pose.size(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 }
@@ -147,7 +147,7 @@ OrbitalsScore::finalize_total_energy(
 	ScoreFunction const &,
 	EnergyMap &
 ) const{
-	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
+	for ( core::Size resid=1; resid <= pose.size(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 }
@@ -159,7 +159,7 @@ OrbitalsScore::setup_for_minimizing(
 	ScoreFunction const & ,
 	kinematics::MinimizerMapBase const &
 ) const{
-	for ( core::Size resid=1; resid <= pose.n_residue(); ++resid ) {
+	for ( core::Size resid=1; resid <= pose.size(); ++resid ) {
 		pose.update_orbital_coords(resid);
 	}
 }

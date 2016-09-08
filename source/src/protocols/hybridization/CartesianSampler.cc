@@ -251,7 +251,7 @@ CartesianSampler::get_transform(
 	numeric::xyzMatrix< core::Real > &R
 ){
 	int aln_len = overlap_;
-	int len = frag.total_residue();
+	int len = frag.size();
 	if ( frag.residue(len).aa() == core::chemical::aa_vrt ) len--;
 	ObjexxFCL::FArray1D< core::Real > ww( 2*4*aln_len, 1.0 );
 	ObjexxFCL::FArray2D< core::Real > uu( 3, 3, 0.0 ), init_coords( 3, 2*4*aln_len ), final_coords( 3, 2*4*aln_len );
@@ -323,7 +323,7 @@ CartesianSampler::apply_fragcsts(
 	using namespace core::scoring::constraints;
 
 	working_frag.remove_constraints();
-	int len = working_frag.total_residue();
+	int len = working_frag.size();
 	if ( working_frag.residue(len).aa() == core::chemical::aa_vrt ) len--;
 
 	bool nterm = ! freeze_endpoints_ && ( (startpos == 1) || pose.fold_tree().is_cutpoint(startpos-1) );
@@ -336,7 +336,7 @@ CartesianSampler::apply_fragcsts(
 				working_frag.add_constraint(
 					scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
 					core::id::AtomID(i,j+1),
-					core::id::AtomID(2,working_frag.total_residue()),
+					core::id::AtomID(2,working_frag.size()),
 					pose.residue(startpos+j).atom(i).xyz(),
 					fx
 					) ) )
@@ -351,7 +351,7 @@ CartesianSampler::apply_fragcsts(
 				working_frag.add_constraint(
 					scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
 					core::id::AtomID(i,j+1),
-					core::id::AtomID(2,working_frag.total_residue()),
+					core::id::AtomID(2,working_frag.size()),
 					pose.residue(startpos+j).atom(i).xyz(),
 					fx
 					) ) )
@@ -372,7 +372,7 @@ CartesianSampler::apply_transform(
 ){
 	// apply rotation to ALL atoms
 	// x_i' <- = R*x_i + com1;
-	for ( Size i = 1; i <= frag.total_residue(); ++i ) {
+	for ( Size i = 1; i <= frag.size(); ++i ) {
 		for ( Size j = 1; j <= frag.residue_type(i).natoms(); ++j ) {
 			core::id::AtomID id( j, i );
 			frag.set_xyz( id, R * ( frag.xyz(id) - preT) + postT );
@@ -636,13 +636,13 @@ CartesianSampler::apply_constraints(
 	utility::vector1< utility::vector1< core::Real > > tgt_dists(nres_tgt);
 	utility::vector1< utility::vector1< core::Real > > tgt_weights(nres_tgt);
 
-	for ( core::Size j=1; j < ref_model_.total_residue(); ++j ) {
+	for ( core::Size j=1; j < ref_model_.size(); ++j ) {
 		if ( !ref_model_.residue_type(j).is_protein() ) continue;
 
 		if ( user_rebuild && user_pos_.find(j) != user_pos_.end() ) continue;
 		if ( user_rebuild && loops_ && loops_->is_loop_residue(j) ) continue;
 
-		for ( core::Size k=j+1; k < ref_model_.total_residue(); ++k ) {
+		for ( core::Size k=j+1; k < ref_model_.size(); ++k ) {
 			if ( !ref_model_.residue_type(k).is_protein() ) continue;
 			if ( ref_model_.pdb_info()->number(k) - ref_model_.pdb_info()->number(j) < (int)MINSEQSEP ) continue;
 
@@ -804,7 +804,7 @@ apply(
 	//add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 
 	// number of protein residues in ASU
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (

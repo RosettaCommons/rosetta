@@ -198,7 +198,7 @@ HbsDesignMover::apply(
 	**********************************************************/
 
 	// get hbs start and end positions
-	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
+	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.size() );
 	TR << "hbs_start: " << pep_start << " hbs_end: " << pep_end << std::endl;
 
 	// create movemap for hbs
@@ -207,7 +207,7 @@ HbsDesignMover::apply(
 
 	//kdrew: automatically find hbs positions
 	utility::vector1< core::Size > hbs_seq_positions;
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			hbs_seq_positions.push_back( i );
 			//kdrew: set up constraints

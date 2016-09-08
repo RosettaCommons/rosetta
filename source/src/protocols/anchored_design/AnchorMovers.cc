@@ -141,7 +141,7 @@ void debug_dump_pose(
 /// @brief a local helper function for debugging, not in the header
 void dump_cutpoint_info( core::pose::Pose const & pose)
 {
-	core::Size nres(pose.total_residue());
+	core::Size nres(pose.size());
 	T_shared << "pose says 'is_cutpoint(#)': ";
 	for ( core::Size i(1); i <= nres; ++i ) {
 		if ( pose.fold_tree().is_cutpoint( i ) ) T_shared << i << " ";
@@ -393,7 +393,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("ch2_CA_sup_RMSD", ch2_sup_rmsd);
 
 		//also need no-superimpose RMSDs for chain1/2 to get lever arm effect
-		ObjexxFCL::FArray1D_bool ch1(pose.total_residue(), false), ch2(pose.total_residue(), false);
+		ObjexxFCL::FArray1D_bool ch1(pose.size(), false), ch2(pose.size(), false);
 
 		for ( core::Size i(pose.conformation().chain_begin(1)), end(pose.conformation().chain_end(1)); i<=end; ++i ) ch1(i)=true;
 		//chain 1 RMSD
@@ -421,7 +421,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 
 			//convert this set into the type needed by rmsd_with_super_subset
 			T_design << "interface for rmsd";
-			ObjexxFCL::FArray1D_bool is_interface( pose.total_residue(), false );
+			ObjexxFCL::FArray1D_bool is_interface( pose.size(), false );
 			for ( unsigned long it : sizeset ) {
 				is_interface(it) = true;
 				T_design << " " << it;
@@ -449,7 +449,7 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 
 	//there isn't much we can do to use the old task due to accumulation of status; also (and more importantly) using a task to pack is ruined by uneven numbers of rotamers (arginine would be favored over glycine).
 
-	core::Size const nres(pose.total_residue());
+	core::Size const nres(pose.size());
 	for ( core::Size i(1); i<=nres; ++i ) { //for all positions
 		//if this position is designable, do something
 		using core::pack::task::ResidueLevelTask;
@@ -549,7 +549,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 	tf->push_back(prop);
 
 	//operations to allow ex flags to saturation
-	for ( core::Size i(1), end(pose.total_residue()); i<=end; ++i ) {
+	for ( core::Size i(1), end(pose.size()); i<=end; ++i ) {
 		tf->push_back(operation::RotamerExplosionOP( new core::pack::task::operation::RotamerExplosion(i, core::pack::task::EX_ONE_STDDEV, 4) ));
 		tf->push_back(operation::ExtraChiCutoffOP( new core::pack::task::operation::ExtraChiCutoff(i, 0) ));
 		//tf->push_back(operation::IncludeCurrentOP( new core::pack::task::operation::IncludeCurrent())); //this is exactly what we do not want - useful for testing that it worked right...
@@ -682,7 +682,7 @@ void AnchoredDesignMover::filter( core::pose::Pose & pose ){
 /// @details uses fold_tree::tree_from_jumps_and_cuts to make the necessary fold tree and apply it to the pose
 void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 {
-	core::Size const nres = pose.total_residue();
+	core::Size const nres = pose.size();
 
 	//we'll need to know where the chainbreak is (we are assuming there is only one)
 	core::Size const chain1end(pose.conformation().chain_end(1));

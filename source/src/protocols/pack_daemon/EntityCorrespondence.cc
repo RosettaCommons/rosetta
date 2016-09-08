@@ -79,8 +79,8 @@ void EntityCorrespondence::set_pose( core::pose::PoseCOP pose )
 {
 	using namespace core::pose;
 
-	if ( pose_ == nullptr || pose_->total_residue() != pose->total_residue() ) {
-		resid_2_entity_id_.resize( pose->total_residue() );
+	if ( pose_ == nullptr || pose_->size() != pose->size() ) {
+		resid_2_entity_id_.resize( pose->size() );
 		std::fill( resid_2_entity_id_.begin(), resid_2_entity_id_.end(), 0 );
 	}
 	pose_ = pose;
@@ -178,7 +178,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 			throw utility::excn::EXCN_Msg_Exception(
 				"Residue ID read on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file is not present in the pose: " +
-				PDBnum_string + " ch: " + chain + " vs pose.total_residue()= " + utility::to_string( num_residues() ) );
+				PDBnum_string + " ch: " + chain + " vs pose.size()= " + utility::to_string( num_residues() ) );
 		}
 		add_resid_to_entity_list( entity_id, residue_index );
 	}
@@ -216,7 +216,7 @@ EntityCorrespondence::num_entities() const
 EntityCorrespondence::Size
 EntityCorrespondence::num_residues() const
 {
-	return pose_->total_residue();
+	return pose_->size();
 }
 
 EntityCorrespondence::Size

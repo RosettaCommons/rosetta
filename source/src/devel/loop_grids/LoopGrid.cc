@@ -131,7 +131,7 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
 					bool not_far(false);//not very far away
 					bool not_bump(true);//not in bump region
 
-					for ( Size n=1,nr=pose_.n_residue(); n<=nr && not_bump; n++ ) {
+					for ( Size n=1,nr=pose_.size(); n<=nr && not_bump; n++ ) {
 						if ( n==loop_.start() ) n+=loop_.size();
 						Vector center = pose_.residue(n).atom("CA").xyz();
 						//the reside is too far away from this bin
@@ -262,7 +262,7 @@ bool LoopGrid::occupied( Bin3D const & bin ) const
 bool LoopGrid::occupied( Pose const &pose ) const
 {
 	//makesure the same backbone
-	assert( pose.n_residue() == pose_.n_residue() );
+	assert( pose.size() == pose_.size() );
 	bool in_grid(true);
 	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
 		Size nr = loop_.start() + i;
@@ -280,7 +280,7 @@ bool LoopGrid::occupied( Pose const &pose, Size start ) const
 	//the pose is only a part of the whole protein (loop)
 	//start in the first residue's number in the old one
 	assert( start <= loop_.start()+1 );
-	assert( pose.n_residue() >= loop_.stop()-start );
+	assert( pose.size() >= loop_.stop()-start );
 
 	bool in_grid(true);
 	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
@@ -299,7 +299,7 @@ bool LoopGrid::occupied( Pose const &pose, Size start, Size stop ) const
 	//start and stop is the old res number
 	assert( start >= loop_.start()+1 );
 	assert( stop <= loop_.stop()-1 );
-	assert( pose.n_residue() == stop-start+1 );
+	assert( pose.size() == stop-start+1 );
 
 	bool in_grid(true);
 	for ( Size n=start; n<=stop; n++ ) {

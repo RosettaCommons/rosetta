@@ -88,7 +88,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	core::scoring::func::FuncOP bb_angle_func( new BoundFunc(1.22,1.92, sqrt(1.0/42.0), "angle_bb") );
 
 	// set constraints to csts
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	//flo sep '12 in case we have ligands in the pose, don't count them
 	for ( core::Size i = nres; i != 0; i-- ) {
 		if ( pose.residue_type(i).is_ligand() ) nres--;
@@ -163,7 +163,7 @@ constraints_NtoC( Pose const & pose, Real const coef, Real const condist )
 	String tag( "constraint_between_N_&_C_terminal_Calpha" );
 	ScalarWeightedFuncOP cstfunc( new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) ) );
 
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	core::id::AtomID atom1( pose.residue_type( 1 ).atom_index( "CA" ), 1 );
 	core::id::AtomID atom2( pose.residue_type( nres ).atom_index( "CA" ), nres );
 	csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
@@ -199,7 +199,7 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 	Dssp dssp( pose );
 
 	// set strands
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	bool flag( false );
 	Size istrand ( 0 );
 	Strands strands( nres );
@@ -257,7 +257,7 @@ find_ligands( Pose const & pose )
 {
 	utility::vector1<Size> retval;
 	// look at each amino acid to see if it is of unknown type
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( ! pose.residue( i ).is_protein() ) {
 			TR << "Residue " << i << " (type=" << pose.residue(i).name3() << ") is probably a ligand" << std::endl;
 			retval.push_back( i );

@@ -813,17 +813,17 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	TR << "VarSolDistSasaCalculator::recompute" << std::endl;
 	core::pose::initialize_atomid_map( atom_sasa_, this_pose, 0.0 );
 
-	rotamer_dots_vec_.resize( this_pose.total_residue() );
-	residue_sasa_.resize( this_pose.total_residue() );
+	rotamer_dots_vec_.resize( this_pose.size() );
+	residue_sasa_.resize( this_pose.size() );
 	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
-	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
 		rotamer_dots_vec_[ ii ] = VarSolDRotamerDotsOP( new VarSolDRotamerDots(
 			core::conformation::ResidueOP( new core::conformation::Residue( this_pose.residue( ii ) ) ),
 			get_self_ptr() ) );
 		rotamer_dots_vec_[ ii ]->increment_self_overlap();
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
-	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
 		for ( core::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(ii)->const_upper_edge_list_end();
@@ -832,7 +832,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 		}
 	}
 	total_sasa_ = 0.0;
-	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
 		residue_sasa_[ ii ] = 0.0;
 		for ( Size jj = 1; jj <= this_pose.residue(ii).natoms(); ++jj ) {
 			core::id::AtomID at( jj, ii );

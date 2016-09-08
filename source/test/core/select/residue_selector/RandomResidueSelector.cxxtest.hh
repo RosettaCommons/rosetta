@@ -61,7 +61,7 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = name_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		// test
 		ResidueVector residues( subset );

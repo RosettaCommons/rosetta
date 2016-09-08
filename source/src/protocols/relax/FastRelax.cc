@@ -557,7 +557,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	using namespace basic::options;
 
 	TR.Debug   << "================== FastRelax: " << script_.size() << " ===============================" << std::endl;
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		TR.Warning << "WARNING: Pose has no residues. Doing a FastRelax would be pointless. Skipping." << std::endl;
 		return;
 	}
@@ -636,7 +636,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 			local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 			PreventRepackingOP turn_off_packing( new PreventRepacking() );
-			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+			for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 				if ( ! local_movemap->get_chi(pos) ) {
 					turn_off_packing->include_residue(pos);
 				}
@@ -1259,10 +1259,10 @@ void FastRelax::batch_apply(
 				task_ = TaskFactory::create_packer_task( pose );
 
 				bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
-				utility::vector1<bool> allow_repack( pose.total_residue(), repack);
+				utility::vector1<bool> allow_repack( pose.size(), repack);
 
 				if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
-					for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+					for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 						allow_repack[ pos ] = local_movemap->get_chi( pos );
 					}
 				}

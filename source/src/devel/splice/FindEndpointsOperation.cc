@@ -123,7 +123,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
 	utility::vector1< core::Size > strand_positions;
 	strand_positions.clear();
 	TR<<"DSSP: ";
-	for ( core::Size i = 1; i <= pose.total_residue() - 2; ++i ) {
+	for ( core::Size i = 1; i <= pose.size() - 2; ++i ) {
 		if ( dssp.get_dssp_secstruct( i ) == 'E' && dssp.get_dssp_secstruct( i + 1) == 'E' && dssp.get_dssp_secstruct( i + 2 ) == 'E' ) {
 			strand_positions.push_back( i );
 		}

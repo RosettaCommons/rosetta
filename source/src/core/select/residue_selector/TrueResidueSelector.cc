@@ -64,7 +64,7 @@ ResidueSelectorOP TrueResidueSelector::clone() const { return ResidueSelectorOP(
 ResidueSubset
 TrueResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	return ResidueSubset( pose.total_residue(), true );
+	return ResidueSubset( pose.size(), true );
 }
 
 void TrueResidueSelector::parse_my_tag(

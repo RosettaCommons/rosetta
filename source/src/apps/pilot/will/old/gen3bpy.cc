@@ -130,11 +130,11 @@ void run() {
     string infile = utility::file_basename(option[in::file::s]()[ifile]);
     Pose init;
     core::import_pose::pose_from_file(init,*rs,option[in::file::s]()[ifile], core::import_pose::PDB_file);
-    Size nres = init.n_residue();
+    Size nres = init.size();
 
     vector1<int> fres = option[willmatch::forbid_residues].user() ? option[willmatch::forbid_residues] : vector1<int>();
     vector1<numeric::xyzTriple<Real> > chis;
-    for(Size i = 1; i <= init.n_residue(); ++i) {
+    for(Size i = 1; i <= init.size(); ++i) {
 			if(init.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(init,i);
 			if(init.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(init,i);
       if( std::find(fres.begin(),fres.end(),i) != fres.end() ) continue;
@@ -150,8 +150,8 @@ void run() {
       Pose & bpy( ibpy==1 ? bpy1 : bpy2 );
 
       Pose pose = init;
-      vector1<Stub> bpystub(pose.n_residue());
-      for(Size ir = 1; ir <= init.n_residue(); ++ir) {
+      vector1<Stub> bpystub(pose.size());
+      for(Size ir = 1; ir <= init.size(); ++ir) {
 				core::conformation::ResidueOP rsd = pose.residue(ir).clone();
         pose.replace_residue(ir,bpy.residue(1),true);
         bpystub[ir] = Stub(pose.xyz(AtomID(2,ir)),pose.xyz(AtomID(1,ir)),pose.xyz(AtomID(3,ir)));

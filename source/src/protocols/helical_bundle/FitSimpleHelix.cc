@@ -117,7 +117,7 @@ protocols::moves::MoverOP FitSimpleHelix::fresh_instance() const {
 /// call to get_crick_parameters().
 void FitSimpleHelix::apply (core::pose::Pose & pose)
 {
-	runtime_assert_string_msg( start_index_ > 1 && start_index_ < pose.n_residue() && end_index_ > 1 && end_index_ < pose.n_residue(), "In FitSimpleHelix::apply(): The start and end residues must be within the pose's residue range, and cannot be the end residues." );
+	runtime_assert_string_msg( start_index_ > 1 && start_index_ < pose.size() && end_index_ > 1 && end_index_ < pose.size(), "In FitSimpleHelix::apply(): The start and end residues must be within the pose's residue range, and cannot be the end residues." );
 	runtime_assert_string_msg( (end_index_ - start_index_ + 1) % residues_per_repeat() == 0, "In FitSimpleHelix::apply(): The range of residues must represent an integer number of repeats." );
 	runtime_assert_string_msg( (end_index_ - start_index_ + 1) / residues_per_repeat() > 2, "In FitSimpleHelix::apply(): At least three repeats must be fitted." );
 
@@ -126,7 +126,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 	offsetvect.x() = 5;
 	offsetvect.y() = 6;
 	offsetvect.z() = 7;
-	for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+	for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 		for ( core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia ) {
 			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) + offsetvect );
 		}
@@ -259,7 +259,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 	}
 
 	//Subtract the arbitrary offset from the pose to shift it back:
-	for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+	for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 		for ( core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia ) {
 			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) - offsetvect );
 		}

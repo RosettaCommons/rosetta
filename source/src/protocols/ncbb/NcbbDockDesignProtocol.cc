@@ -251,7 +251,7 @@ NcbbDockDesignProtocol::apply(
 	/*********************************************************
 	Peptide Setup
 	**********************************************************/
-	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
+	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.size() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
 
 	// create movemap for peptide

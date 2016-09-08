@@ -165,7 +165,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	}
 
 	for ( Size i = 1; i <= nsubposes; i++ ) {
-		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool is_upstream ( pose.size(), false );
 		if ( multicomp_ ) {
 			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
 			int sym_aware_jump_id;
@@ -238,7 +238,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 				//if (is_upstream(ir)) continue;
 				for ( core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++ ) {
 					bool contact = false;
-					for ( core::Size jr=1; jr<=pose.total_residue(); jr++ ) {
+					for ( core::Size jr=1; jr<=pose.size(); jr++ ) {
 						if ( is_upstream(jr) ) continue;
 						for ( core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++ ) {
 							if ( pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2 )  {

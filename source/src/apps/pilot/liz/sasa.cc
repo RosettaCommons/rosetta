@@ -229,8 +229,8 @@ main( int argc, char* argv [] )
 		core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
 		core::Real total_num_nbrs = 0;
-		nbrs.resize( pose.total_residue() );
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		nbrs.resize( pose.size() );
+		for ( Size i=1; i<= pose.size(); ++i ) {
 
 			{
 				nbrs[i] = 1;
@@ -254,7 +254,7 @@ main( int argc, char* argv [] )
 		utility::vector1< core::Real > fa_atr;
 		utility::vector1< core::Real > fa_sol;
 		//get fa-sol and fa-atr
-		for( Size i = 1; i <= pose.total_residue(); i++ ){
+		for( Size i = 1; i <= pose.size(); i++ ){
 			core::Real res_fa_atr = (pose.energies().residue_total_energies(i))[core::scoring::score_type_from_name("fa_atr")];
 			core::Real res_fa_sol = (pose.energies().residue_total_energies(i))[core::scoring::score_type_from_name("fa_sol")];
 			fa_atr.push_back(res_fa_atr);

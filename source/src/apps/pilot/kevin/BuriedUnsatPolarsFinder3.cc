@@ -167,7 +167,7 @@ public:
 
 		/*
 		bool nobunsat = true;
-		for( Size i = 1; i <= pose.total_residue(); ++i){ //convert atomid-map to vector of atom ids
+		for( Size i = 1; i <= pose.size(); ++i){ //convert atomid-map to vector of atom ids
 			conformation::Residue const & rsd = pose.residue( i );
 			for( Size at = 1; at <= rsd.nheavyatoms(); ++at){
 				core::id::AtomID atid( at, i );

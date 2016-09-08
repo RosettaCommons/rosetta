@@ -142,7 +142,7 @@ StepWiseProteinBackboneSampler::define_moving_res( pose::Pose const & pose ) {
 
 	is_fixed_res_ = is_fixed_res_input_;
 	moving_residues_ = moving_residues_input_;
-	runtime_assert( is_fixed_res_.size() == pose.total_residue() );
+	runtime_assert( is_fixed_res_.size() == pose.size() );
 
 	if ( !expand_loop_takeoff_ ) return;
 
@@ -162,7 +162,7 @@ StepWiseProteinBackboneSampler::define_moving_res( pose::Pose const & pose ) {
 	}
 	std::sort( moving_residues_.begin(), moving_residues_.end() );
 
-	runtime_assert( is_fixed_res_.size() == pose.total_residue() );
+	runtime_assert( is_fixed_res_.size() == pose.size() );
 
 }
 
@@ -250,7 +250,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 		// basically slave the phi to the psi.
 		get_main_chain_torsion_set_list_n_terminus( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
 
-	} else if ( n == pose.total_residue()
+	} else if ( n == pose.size()
 			&& !pose.residue( n ).has_variant_type( core::chemical::C_METHYLAMIDATION )
 			&& !pose.residue( n ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) /*new!*/
 			) {
@@ -259,7 +259,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 		get_main_chain_torsion_set_list_c_terminus( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
 
 	} else if ( is_fixed_res_[ n ] &&
-			(n == pose.total_residue() || is_fixed_res_[ n+1 ]) &&
+			(n == pose.size() || is_fixed_res_[ n+1 ]) &&
 			(n > 1 && ( !is_fixed_res_[ n-1] ||
 			( fixed_domain_map[n-1] != fixed_domain_map[n] ) ) ) ) {
 
@@ -268,7 +268,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 
 	} else if ( is_fixed_res_[ n ] &&
 			(n == 1 || is_fixed_res_[ n-1 ]) &&
-			(n < pose.total_residue() && ( !is_fixed_res_[n+1] ||
+			(n < pose.size() && ( !is_fixed_res_[n+1] ||
 			( fixed_domain_map[n] != fixed_domain_map[n+1] ) ) ) ) {
 
 		get_main_chain_torsion_set_list_sample_psi_only( n, pose, best_energy_cutoff, main_chain_torsion_set_list );
@@ -300,7 +300,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 		filter_based_on_desired_secstruct( pose.secstruct( n ), main_chain_torsion_set_list );
 	}
 
-	if ( is_pre_proline_[ n ] && ( n == pose.total_residue() || !is_fixed_res_[ n+1 ] ) ) {
+	if ( is_pre_proline_[ n ] && ( n == pose.size() || !is_fixed_res_[ n+1 ] ) ) {
 		TR.Debug << "-----  SAMPLING CIS OMEGA --------" << std::endl;
 		sample_cis_omega( main_chain_torsion_set_list );
 	}
@@ -507,7 +507,7 @@ StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
 	pose::Pose const & native_pose( *get_native_pose() );
 
 	if ( n == 1 ) return;
-	if ( n == native_pose.total_residue() ) return;
+	if ( n == native_pose.size() ) return;
 
 	Size const big_bin =  get_big_bin( native_pose.phi(n), native_pose.psi(n) );
 	if ( big_bin == 3 ) return; // If loop, no constraints.
@@ -885,8 +885,8 @@ StepWiseProteinBackboneSampler::convert_to_centroid( core::pose::Pose & pose ) {
 	core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION, 1 );
 	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
 
-	core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, pose.total_residue() );
-	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.total_residue() );
+	core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, pose.size() );
+	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.size() );
 
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 

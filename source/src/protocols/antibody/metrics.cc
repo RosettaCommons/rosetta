@@ -304,7 +304,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 core::SSize
 pose_charge( core::pose::Pose const & pose ) {  // not really an antibody fn
 	SSize pose_net_charge(0);
-	for ( Size i(1); i<=pose.total_residue(); ++i ) {
+	for ( Size i(1); i<=pose.size(); ++i ) {
 		std::string name3 = pose.residue(i).name3();
 		if ( name3 == "ARG" || name3 == "LYS" ) {
 			//TR << name3 << std::endl;

@@ -169,7 +169,7 @@ public:
 		std::cout << "AtomDerivList adl;" << std::endl;
 
 		if ( res_for_derivs_list_.empty() ) {
-			for ( core::Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
+			for ( core::Size ii = 1; ii <= pose_->size(); ++ii ) {
 				res_for_derivs_list_.push_back( ii );
 			}
 		}
@@ -253,7 +253,7 @@ public:
 		MinimizationGraphCOP dmingraph = symm_energies.derivative_graph();
 
 
-		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose_->size(); ++ii ) {
 			MinimizationNode const & minnode =  * mingraph->get_minimization_node( ii );
 			/// 1. eval intra-residue derivatives
 			eval_atom_derivatives_for_minnode( minnode, pose_->residue( ii ), *pose_, sfxn_->weights(), sym_min_map.atom_derivatives( ii ) );

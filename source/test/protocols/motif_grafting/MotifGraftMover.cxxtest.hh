@@ -139,10 +139,10 @@ public:
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:
-		TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
+		TS_ASSERT( testPose.size() == challengePose.size() );
 
 		/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-		for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= testPose.size(); ++i ) {
 			//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
 			//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
 			for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {
@@ -235,10 +235,10 @@ public:
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:
-		TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
+		TS_ASSERT( testPose.size() == challengePose.size() );
 
 		/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-		for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= testPose.size(); ++i ) {
 			//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
 			//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
 			for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {
@@ -328,10 +328,10 @@ public:
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:
-		TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
+		TS_ASSERT( testPose.size() == challengePose.size() );
 
 		/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-		for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= testPose.size(); ++i ) {
 			//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
 			//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
 			for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {
@@ -422,10 +422,10 @@ public:
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:
-		TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
+		TS_ASSERT( testPose.size() == challengePose.size() );
 
 		/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-		for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= testPose.size(); ++i ) {
 			//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
 			//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
 			for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {

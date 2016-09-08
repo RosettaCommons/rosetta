@@ -85,7 +85,7 @@ StructAvrgMover::apply( pose::Pose &pose )
 	pose::Pose ref_pose( pose );
 
 	utility::vector1< utility::vector1< Real > > deviation;
-	deviation.resize( ref_pose.total_residue() );
+	deviation.resize( ref_pose.size() );
 	for ( Size i_pose = 1; i_pose <= poses_.size(); ++i_pose ) {
 		add_deviations( ref_pose, poses_[i_pose], deviation );
 	}
@@ -208,7 +208,7 @@ StructAvrgMover::report_dev( core::pose::Pose const & ref_pose ) const
 		Size endres = ref_pose.pdb_info()->number( var_region[ireg].second );
 		Size dres = var_region[ireg].second - var_region[ireg].first;
 		// prevent from weird Cterms...
-		if ( var_region[ireg].second == ref_pose.total_residue() && endres == 1 ) {
+		if ( var_region[ireg].second == ref_pose.size() && endres == 1 ) {
 			endres = ref_pose.pdb_info()->number( var_region[ireg].second - 1 );
 		}
 
@@ -227,7 +227,7 @@ StructAvrgMover::report_dev( core::pose::Pose const & ref_pose ) const
 	for ( Size ires = 1; ires <= CAvar_.size(); ++ires ) {
 		Size resno = ref_pose.pdb_info()->number( ires );
 		// sometimes weird thing can happend at Cterm...
-		if ( ires == ref_pose.total_residue() && resno == 1 ) continue;
+		if ( ires == ref_pose.size() && resno == 1 ) continue;
 		std::string is_reg; is_region[ires] ? is_reg = "1" : is_reg = "0";
 		TR << "RMSF:" << I(4,ires) << " ";
 		TR << I(4,resno) << "   " << is_reg;
@@ -296,7 +296,7 @@ StructAvrgMover::add_deviations( pose::Pose ref_pose,
 	// First superimpose
 	scoring::calpha_superimpose_pose( pose, ref_pose );
 
-	for ( Size ires = 1; ires <= ref_pose.total_residue(); ++ ires ) {
+	for ( Size ires = 1; ires <= ref_pose.size(); ++ ires ) {
 		if ( !ref_pose.residue( ires ).has(" CA ") ) continue;
 
 		Vector const &xyz1 = ref_pose.residue(ires).xyz( "CA" );
@@ -333,7 +333,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 
 	//First get atomIDs available
 	utility::vector1< id::AtomID > ids;
-	for ( Size ires = 1; ires <= pose_ref.total_residue(); ++ires ) {
+	for ( Size ires = 1; ires <= pose_ref.size(); ++ires ) {
 		conformation::Residue const &rsd = pose_avrg.residue(ires);
 		for ( Size iatm = 1; iatm <= atoms_copy.size(); ++iatm ) {
 			if ( rsd.has( atoms_copy[iatm] ) ) {
@@ -428,7 +428,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 	pose::Pose &pose_close = poses[closest];
 
 	// Copy
-	for ( Size ires = 1; ires <= pose_avrg.total_residue(); ++ires ) {
+	for ( Size ires = 1; ires <= pose_avrg.size(); ++ires ) {
 		Size start = pose_avrg.residue(ires).type().first_sidechain_atom();
 		for ( Size iatm = start; iatm <= pose_avrg.residue(ires).natoms(); ++iatm ) {
 			id::AtomID id( iatm, ires );

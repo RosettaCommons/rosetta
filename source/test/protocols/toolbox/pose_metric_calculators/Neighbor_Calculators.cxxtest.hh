@@ -184,7 +184,7 @@ public:
 
 		//OK, so dock_in.pdb is not a great example protein for this calculator - it's intended for doing domain-domain interfaces or interfaces between chemically linked proteins (like ubiquitin).  We're going to pretend the two chains in this protein are domains and set it up that way.
 		std::set< core::Size > domain1, domain2;
-		core::Size const ch1end(pose.conformation().chain_end(1)), nres(pose.total_residue());
+		core::Size const ch1end(pose.conformation().chain_end(1)), nres(pose.size());
 		for ( core::Size i(1); i<=ch1end; ++i ) domain1.insert(i);
 		for ( core::Size i(ch1end+1); i<=nres; ++i ) domain2.insert(i);
 

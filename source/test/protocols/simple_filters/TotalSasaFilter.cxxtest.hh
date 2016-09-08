@@ -69,7 +69,7 @@ public:
 
 		core::import_pose::pose_from_file( pose, "core/scoring/nonideal_glycine.pdb" , core::import_pose::PDB_file);
 
-		for ( Size ii=1; ii <= pose.n_residue(); ii+=3 ) {
+		for ( Size ii=1; ii <= pose.size(); ii+=3 ) {
 			pose.set_phi( ii, -150.0 );
 			pose.set_psi( ii, 150.0 );
 			pose.set_omega( ii, 180.0 );
@@ -97,7 +97,7 @@ public:
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );
-		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii(1); ii <= pose.size(); ++ii ) {
 			if ( ii != 1 && ii != 11 && ii != 33 ) {
 				prt->include_residue(ii);
 			}
@@ -117,7 +117,7 @@ public:
 
 		pose = create_1ten_pdb_pose();
 		pose.dump_pdb( "1ten_from_total_sasa_filter.pdb" );
-		//std::cout << "Nresidues: " << pose.total_residue() << std::endl;
+		//std::cout << "Nresidues: " << pose.size() << std::endl;
 
 		protocols::simple_filters::TotalSasaFilter test(0, /*hydrophobic=*/ true, /*polar=*/ false );
 
@@ -127,7 +127,7 @@ public:
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );
-		for ( core::Size ii(1); ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii(1); ii <= pose.size(); ++ii ) {
 			if ( ii != 1 && ii != 11 && ii != 33 ) {
 				prt->include_residue(ii);
 			}

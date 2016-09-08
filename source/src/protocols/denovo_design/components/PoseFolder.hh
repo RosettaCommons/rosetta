@@ -73,7 +73,7 @@ public:
 	///                  should be adjusted, and no residues should be added or removed.
 	/// @param movable - Subset of residues for which new backbone conformations will be sampled. Residues
 	///                  specified as 'True' in movable must also be present in one or more Loops in order
-	///                  to be folded. Movable's size must match pose.total_residue()
+	///                  to be folded. Movable's size must match pose.size()
 	/// @param loops   - Loops to be folded.  Cutpoints specified here must be match the cutpoints found in
 	///                  the pose. Residues not within any loop should not be folded. Residues contained
 	///                  in a loop but not in the movable set should not be folded.

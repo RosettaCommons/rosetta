@@ -574,7 +574,7 @@ public:
 		sfd.read_file( "core/pack/interaction_graph/fibril.silent" );
 		std::string tag = sfd.begin()->decoy_tag();
 		Pose pose; sfd.get_structure( tag ).fill_pose( pose );
-		//std::cout << "sym linmem ig, asu in center; " << pose.total_residue() << std::endl;
+		//std::cout << "sym linmem ig, asu in center; " << pose.size() << std::endl;
 
 		PackerTaskOP task = TaskFactory::create_packer_task( pose );
 
@@ -582,7 +582,7 @@ public:
 		SymmetryInfoCOP symm_info = symm_conf.Symmetry_Info();
 		// Size const nres_asu = symm_info->num_independent_residues();
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			//if ( symm_info->bb_follows( ii ) != 0 ) continue;
 			//if ( pose.residue(ii).is_virtual_residue() || ii != (79*3+50) ) {
 			if ( ii < 79*3  + 1 || ii > 79*3+10  ) {
@@ -609,9 +609,9 @@ public:
 		sfxn->setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );
 
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( symm_info->bb_follows( ii ) != 0 ) continue;
-			for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+			for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 				if ( symm_info->score_multiply( ii, jj ) == 0 ) continue;
 				if ( ii == jj ) continue;
 				Real dis( pose.residue( ii ).xyz( pose.residue( ii ).nbr_atom() ).distance( pose.residue( jj ).xyz( pose.residue( jj ).nbr_atom() ) ));

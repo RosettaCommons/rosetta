@@ -238,8 +238,8 @@ multimap <Size,Size> calc_contacts(core::pose::Pose pose,SequenceAlignment aln, 
 	using namespace core::id;
   multimap<Size,Size> contact_map;
 	SequenceMapping mapping( aln.sequence_mapping(2,1) );
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		for ( Size j = i+1; j <= pose.total_residue(); ++j ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( Size j = i+1; j <= pose.size(); ++j ) {
 			Size const i_native(mapping[i]);
 			Size const j_native(mapping[j]);
 			if(j_native-i_native >= aa_separation){
@@ -359,8 +359,8 @@ main( int argc, char * argv [] ) {
 								<< aln_id << std::endl;
 			PartialThreadingMover mover( rankedAlignments[ii], template_pose );
 			mover.apply( query_pose );
-			max_pose_len = std::max( max_pose_len, query_pose.total_residue() );
-			if(query_pose.total_residue() >= MIN_POSE_SIZE){
+			max_pose_len = std::max( max_pose_len, query_pose.size() );
+			if(query_pose.size() >= MIN_POSE_SIZE){
 				tmpContact_map.clear();
 				if ( option[ run::debug ]() ) {
 					query_pose.dump_pdb( aln_id + ".pdb" );

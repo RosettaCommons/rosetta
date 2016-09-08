@@ -72,7 +72,7 @@ public:
 
 		// should be # csts equal to residues in the pose * 4 atoms per residue, plus one atom for OXT
 		// total: 81 csts
-		TS_ASSERT_EQUALS( csts.size(), 4*trpcage.total_residue() + 1 );
+		TS_ASSERT_EQUALS( csts.size(), 4*trpcage.size() + 1 );
 
 		for ( core::scoring::constraints::ConstraintCOPs::const_iterator c=csts.begin(); c!=csts.end(); ++c ) {
 			// no constraint ptrs should be null
@@ -85,7 +85,7 @@ public:
 		coord_cst.set_sidechain( true );
 		core::scoring::constraints::ConstraintCOPs const csts2 = coord_cst.apply( trpcage );
 		core::Size atom_count = 0;
-		for ( core::Size resid=1; resid<=trpcage.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=trpcage.size(); ++resid ) {
 			atom_count += trpcage.residue( resid ).nheavyatoms();
 		}
 		TS_ASSERT_EQUALS( csts2.size(), atom_count );
@@ -93,7 +93,7 @@ public:
 		// with CA-only, should be #csts equal to # residues
 		coord_cst.set_ca_only( true );
 		core::scoring::constraints::ConstraintCOPs const csts3 = coord_cst.apply( trpcage );
-		TS_ASSERT_EQUALS( csts3.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( csts3.size(), trpcage.size() );
 
 		// if we add the constraints, energy should be zero
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
@@ -133,7 +133,7 @@ public:
 
 		core::Size const root_resid = trpcage.fold_tree().root();
 
-		utility::vector1< core::Size > cst_counts( trpcage.total_residue(), 0 );
+		utility::vector1< core::Size > cst_counts( trpcage.size(), 0 );
 		for ( core::scoring::constraints::ConstraintCOPs::const_iterator c=csts.begin(); c!=csts.end(); ++c ) {
 			// no constraint ptrs should be null
 			TS_ASSERT( *c );
@@ -152,7 +152,7 @@ public:
 
 		// should be 4 constraints per residue (for each BB atom)
 		// all csts should contain the root residue
-		for ( core::Size resid=1; resid<=trpcage.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=trpcage.size(); ++resid ) {
 			if ( resid == root_resid ) {
 				TS_ASSERT_EQUALS( cst_counts[ resid ], 48 );
 			} else if ( subset[ resid ] ) {

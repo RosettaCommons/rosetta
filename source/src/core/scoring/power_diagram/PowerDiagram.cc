@@ -68,7 +68,7 @@ PowerDiagram::construct_from_pose(
 	// Make sure all old info is wiped clean
 	clear();
 
-	Size total_res( pose.total_residue() );
+	Size total_res( pose.size() );
 
 	// Resize lookup info based on pose info
 	sphere_lookup_.resize( total_res );

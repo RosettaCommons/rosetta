@@ -116,12 +116,12 @@ main( int argc, char * argv [] )
 		utility::vector1< std::string > abego = core::sequence::get_abego( pose, level );
 
 		if ( level <= am.alllevel() ) {
-			for ( Size i=1; i<= pose.total_residue(); i++ ) {
+			for ( Size i=1; i<= pose.size(); i++ ) {
 				// Size abego = am.torsion2index( pose.phi( i ), pose.psi( i ), pose.omega( i ), level );
 				output << i << " " << oneletter_code_from_aa( pose.aa( i ) ) << " " << pose.secstruct( i ) << abego[ i ] << " ." << std::endl;
 			}
 		} else {
-			for ( Size i=1; i<= pose.total_residue(); i++ ) {
+			for ( Size i=1; i<= pose.size(); i++ ) {
 				output << i << " " << oneletter_code_from_aa( pose.aa( i ) ) << " " << pose.secstruct( i ) << " ." << std::endl;
 			}
 		}
@@ -129,7 +129,7 @@ main( int argc, char * argv [] )
 		using namespace ObjexxFCL::format;
 		if ( option[ torsion ]() ) {
 			output << "## TORSION ANGLES" << std::endl;
-			for ( Size ii=1; ii<=pose.total_residue(); ii++ ) {
+			for ( Size ii=1; ii<=pose.size(); ii++ ) {
 				output << "# " << ii << " " << pose.secstruct( ii ) << " " << abego[ ii ] << " "
 					<< F( 8, 3, pose.phi( ii ) ) << F( 8, 3, pose.psi( ii ) ) << F( 8, 3, pose.omega( ii ) )
 					<< std::endl;

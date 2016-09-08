@@ -161,7 +161,7 @@ void LoopMover_Refine_Backrub::apply(
 	backrubmover.set_input_pose( input_poseOP );
 
 	// set backrub segments
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
 	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
 		for ( core::Size seg_start = it->start(); seg_start <= it->stop(); ++seg_start ) {

@@ -183,7 +183,7 @@ PoseConformationFeatures::report_features(
 		if ( relevant_residues[i] ) residue_indices.push_back(i);
 	}
 
-	if ( residue_indices.size() == pose_orig.n_residue() ) {
+	if ( residue_indices.size() == pose_orig.size() ) {
 		return report_features_implementation(pose_orig, struct_id, db_session);
 	}
 	// else...
@@ -297,7 +297,7 @@ PoseConformationFeatures::report_features_implementation(
 	pose_conformation_insert.add_column("ideal");
 
 	RowDataBaseOP annotated_sequence_data( new RowData<string>("annotated_sequence",annotated_sequence) );
-	RowDataBaseOP total_residue_data( new RowData<Size>("total_residue",pose.total_residue()) );
+	RowDataBaseOP total_residue_data( new RowData<Size>("total_residue",pose.size()) );
 	RowDataBaseOP fullatom_data( new RowData<bool>("fullatom",pose.is_fullatom()) );
 
 	// KAB -
@@ -312,7 +312,7 @@ PoseConformationFeatures::report_features_implementation(
 	bool ideal = true;
 	if ( !basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]() ) {
 		core::conformation::Conformation const & conformation(pose.conformation());
-		for ( core::Size resn=1; resn <= pose.n_residue(); ++resn ) {
+		for ( core::Size resn=1; resn <= pose.size(); ++resn ) {
 			bool residue_status = core::conformation::is_ideal_position(resn,conformation);
 			if ( !residue_status ) {
 				ideal = false;
@@ -432,7 +432,7 @@ PoseConformationFeatures::load_sequence(
 	} else {
 
 		make_pose_from_sequence(pose, annotated_sequence, *residue_set);
-		runtime_assert(pose.total_residue() == total_residue );
+		runtime_assert(pose.size() == total_residue );
 	}
 
 	return ideal;

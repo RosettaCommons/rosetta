@@ -84,7 +84,7 @@ my_main( void* )
 	}
 	pose::Pose pose;
 	import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
-	int const nres( pose.total_residue() );
+	int const nres( pose.size() );
 
 	//define score function
 	scoring::ScoreFunctionOP scorefxn=core::scoring::get_score_function();
@@ -107,7 +107,7 @@ my_main( void* )
 	kinematics::MoveMap mm_all_sc;
 	mm_all_sc.set_bb( false );
 	mm_all_sc.set_chi( false );
-	for ( Size i=1; i<= pose.total_residue(); i++ ) {
+	for ( Size i=1; i<= pose.size(); i++ ) {
 		if ( pose.residue(i).type().is_disulfide_bonded() || pose.residue(i).has_variant_type( chemical::SIDECHAIN_CONJUGATION ) ) {
 			allow_repacked[i] = false;
 			TR << "Disabling side-chain optimization of disulfide bonded residue " << i << std::endl;

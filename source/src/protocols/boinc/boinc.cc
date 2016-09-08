@@ -520,9 +520,9 @@ void Boinc::update_graphics_current( core::pose::Pose & pose ) {
 	if (!shmem_) return;
 	if (!trywait_semaphore()) {
 		boinc_begin_critical_section();
-		if (pose.total_residue() > 0) {
+		if (pose.size() > 0) {
 			core::io::serialization::BUFFER b((char*)(&shmem_->current_pose_buf ),POSE_BUFSIZE);
-			if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+			if (core::pose::symmetry::is_symmetric( pose ) && pose.size() > MAX_SYMM_POSE_RESIDUES) {
 				core::pose::Pose asy_pose;
 				core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
 				core::io::serialization::write_binary(asy_pose,b);
@@ -549,9 +549,9 @@ void Boinc::update_graphics_current_ghost( core::pose::Pose & pose ) {
 	if (!shmem_) return;
 	if (!trywait_semaphore()) {
 		boinc_begin_critical_section();
-		if (pose.total_residue() > 0) {
+		if (pose.size() > 0) {
 			core::io::serialization::BUFFER b((char*)(&shmem_->current_pose_ghost_buf ),POSE_BUFSIZE);
-			if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+			if (core::pose::symmetry::is_symmetric( pose ) && pose.size() > MAX_SYMM_POSE_RESIDUES) {
 				core::pose::Pose asy_pose;
 				core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
 				core::io::serialization::write_binary(asy_pose,b);
@@ -588,7 +588,7 @@ void Boinc::update_graphics_low_energy( core::pose::Pose & pose, core::Real low_
 		boinc_begin_critical_section();
 		shmem_->low_energy = low_energy;
 		core::io::serialization::BUFFER b((char*)(&shmem_->low_energy_pose_buf ),POSE_BUFSIZE);
-		if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+		if (core::pose::symmetry::is_symmetric( pose ) && pose.size() > MAX_SYMM_POSE_RESIDUES) {
 			core::pose::Pose asy_pose;
 			core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
 			core::io::serialization::write_binary(asy_pose,b);
@@ -618,7 +618,7 @@ void Boinc::update_graphics_last_accepted( core::pose::Pose & pose, core::Real l
 		boinc_begin_critical_section();
 		shmem_->last_accepted_energy = last_accepted_energy;
 		core::io::serialization::BUFFER b((char*)(&shmem_->last_accepted_pose_buf ),POSE_BUFSIZE);
-		if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+		if (core::pose::symmetry::is_symmetric( pose ) && pose.size() > MAX_SYMM_POSE_RESIDUES) {
 			core::pose::Pose asy_pose;
 			core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
 			core::io::serialization::write_binary(asy_pose,b);

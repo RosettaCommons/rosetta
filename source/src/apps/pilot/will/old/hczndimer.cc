@@ -143,7 +143,7 @@ makerots(Pose const & p, Size ir, Pose const & rsd) {
 }
 
 bool clashcheck(Pose const & p, Vec v) {
-  for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= p.size(); ++ir) {
     if(p.xyz(AtomID(1,ir)).distance_squared(v) < 9.0) return false;
     if(p.xyz(AtomID(2,ir)).distance_squared(v) < 9.0) return false;
     if(p.xyz(AtomID(3,ir)).distance_squared(v) < 9.0) return false;
@@ -154,7 +154,7 @@ bool clashcheck(Pose const & p, Vec v) {
   return true;
 }
 bool clashcheckhalf(Pose const & p, Vec v) {
-  for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= p.size(); ++ir) {
     if(p.xyz(AtomID(1,ir)).distance_squared(v) < 4.0) return false;
     if(p.xyz(AtomID(2,ir)).distance_squared(v) < 4.0) return false;
     if(p.xyz(AtomID(3,ir)).distance_squared(v) < 4.0) return false;
@@ -316,9 +316,9 @@ void dock(Pose init, std::string const & fn) {
   movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
   protocols::simple_moves::MinMover( movemap, sfnosym, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ).apply(init);
   /*///////////////////////////////////////////////////////////////////////////////////*/ tr << "make mbcount" << endl; /*//////////////////////*/
-  vector1<Size> nbcount(init.n_residue(),0);
-  for(Size ir = 1; ir <= init.n_residue(); ++ir)
-    for(Size jr = 1; jr <= init.n_residue(); ++jr)
+  vector1<Size> nbcount(init.size(),0);
+  for(Size ir = 1; ir <= init.size(); ++ir)
+    for(Size jr = 1; jr <= init.size(); ++jr)
       if(init.xyz(AtomID(2,ir)).distance_squared(init.xyz(AtomID(2,jr))) < 100.0) nbcount[ir]++;
   /*////////////////////////////////////////////////////////////////////////////////////*/ tr << "make poses" << endl; /*//////////////////////*/
   Pose ala = make_single_res_pose("A");
@@ -341,14 +341,14 @@ void dock(Pose init, std::string const & fn) {
   /*////////////////////////////////////////////////////////////////////////////////*/ tr << "make rotamers" << endl; /*//////////////////////*/
   vector1<vector1<vector1<pair<Real,Real> > > > allrots(NRTYPES);
   Pose p(init);
-  //for(Size ir = 1; ir <= p.n_residue(); ++ir) p.replace_residue(ir,ala.residue(1),true);
+  //for(Size ir = 1; ir <= p.size(); ++ir) p.replace_residue(ir,ala.residue(1),true);
   // search pairs
   vector1<Hit> hits;
 
   if(false) { /////////////////////////////////////////////////////////////////////////////////////////
 
 
-  for(Size ir = 1; ir <= init.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= init.size(); ++ir) {
     allrots[CYS ].push_back(makerots(init,ir,res[CYS ]));
     allrots[HIS1].push_back(makerots(init,ir,res[HIS1]));
     allrots[HIS2] = allrots[HIS1];
@@ -357,12 +357,12 @@ void dock(Pose init, std::string const & fn) {
     allrots[ASP3] = allrots[ASP1];
   }
   /*////////////////////////////////////////////////////////////////////////////////*/ tr << "find pairs" << endl; /*//////////////////////*/
-  for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= p.size(); ++ir) {
     if(nbcount[ir] < MIN_NBR_COUNT) continue;
     if(p.residue(ir).name3()=="GLY"||p.residue(ir).name3()=="PRO") continue;
     core::conformation::Residue itmp(p.residue(ir)); // remember replaced res
     tr << ir << " " << hits.size() << endl;
-    for(Size jr = ir+1; jr <= p.n_residue(); ++jr) {
+    for(Size jr = ir+1; jr <= p.size(); ++jr) {
       if(nbcount[jr] < MIN_NBR_COUNT) continue;
       if( p.xyz(AtomID(5,ir)).distance_squared(p.xyz(AtomID(5,jr))) > 141.0 ) continue;
       if(p.residue(jr).name3()=="GLY"||p.residue(jr).name3()=="PRO") continue;
@@ -461,7 +461,7 @@ void dock(Pose init, std::string const & fn) {
         // oris must be 90° rotated
         if(fabs(hi.ori.dot(c2rot*hj.ori)) > 0.17364817766693041) continue; //cos(80°)
         bool clash = false;
-        for(Size ir = 1; ir <= p.n_residue();++ir) {
+        for(Size ir = 1; ir <= p.size();++ir) {
           for(Size ia = 2; ia <= 2; ++ia) {
             if(!clashcheck(p2,c2rot*(p2.xyz(AtomID(ia,ir))-c2cen)+c2cen)) clash=true;
           } if(clash) break;
@@ -489,25 +489,25 @@ void dock(Pose init, std::string const & fn) {
         using namespace core::scoring::constraints;
         q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir)              , AtomID(matom[hi.jtype],hi.jr)              , new HarmonicFunc(0.0,0.1) ) );
         q.add_constraint( new AtomPairConstraint( AtomID(matom[hj.itype],hj.ir)              , AtomID(matom[hj.jtype],hj.jr)              , new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir              ), AtomID(matom[hj.itype],hj.ir+p.n_residue()), new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir+p.n_residue()), AtomID(matom[hj.itype],hj.ir              ), new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr              ), AtomID(matom[hj.itype],hj.ir+p.n_residue()), new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr+p.n_residue()), AtomID(matom[hj.itype],hj.ir              ), new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir              ), AtomID(matom[hj.jtype],hj.jr+p.n_residue()), new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir+p.n_residue()), AtomID(matom[hj.jtype],hj.jr              ), new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr              ), AtomID(matom[hj.jtype],hj.jr+p.n_residue()), new HarmonicFunc(0.0,0.1) ) );
-        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr+p.n_residue()), AtomID(matom[hj.jtype],hj.jr              ), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir              ), AtomID(matom[hj.itype],hj.ir+p.size()), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir+p.size()), AtomID(matom[hj.itype],hj.ir              ), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr              ), AtomID(matom[hj.itype],hj.ir+p.size()), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr+p.size()), AtomID(matom[hj.itype],hj.ir              ), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir              ), AtomID(matom[hj.jtype],hj.jr+p.size()), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.itype],hi.ir+p.size()), AtomID(matom[hj.jtype],hj.jr              ), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr              ), AtomID(matom[hj.jtype],hj.jr+p.size()), new HarmonicFunc(0.0,0.1) ) );
+        q.add_constraint( new AtomPairConstraint( AtomID(matom[hi.jtype],hi.jr+p.size()), AtomID(matom[hj.jtype],hj.jr              ), new HarmonicFunc(0.0,0.1) ) );
 
         q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir              ), AtomID(matom[hi.itype],hi.ir              ), AtomID(batom[hi.jtype],hi.jr              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
         q.add_constraint( new AngleConstraint( AtomID(batom[hj.itype],hj.ir              ), AtomID(matom[hj.itype],hj.ir              ), AtomID(batom[hj.jtype],hj.jr              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir              ), AtomID(matom[hi.itype],hi.ir              ), AtomID(batom[hj.itype],hj.ir+p.n_residue()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir+p.n_residue()), AtomID(matom[hi.itype],hi.ir+p.n_residue()), AtomID(batom[hj.itype],hj.ir              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr              ), AtomID(matom[hi.jtype],hi.jr              ), AtomID(batom[hj.itype],hj.ir+p.n_residue()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr+p.n_residue()), AtomID(matom[hi.jtype],hi.jr+p.n_residue()), AtomID(batom[hj.itype],hj.ir              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir              ), AtomID(matom[hi.itype],hi.ir              ), AtomID(batom[hj.jtype],hj.jr+p.n_residue()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir+p.n_residue()), AtomID(matom[hi.itype],hi.ir+p.n_residue()), AtomID(batom[hj.jtype],hj.jr              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr              ), AtomID(matom[hi.jtype],hi.jr              ), AtomID(batom[hj.jtype],hj.jr+p.n_residue()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
-        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr+p.n_residue()), AtomID(matom[hi.jtype],hi.jr+p.n_residue()), AtomID(batom[hj.jtype],hj.jr              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir              ), AtomID(matom[hi.itype],hi.ir              ), AtomID(batom[hj.itype],hj.ir+p.size()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir+p.size()), AtomID(matom[hi.itype],hi.ir+p.size()), AtomID(batom[hj.itype],hj.ir              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr              ), AtomID(matom[hi.jtype],hi.jr              ), AtomID(batom[hj.itype],hj.ir+p.size()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr+p.size()), AtomID(matom[hi.jtype],hi.jr+p.size()), AtomID(batom[hj.itype],hj.ir              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir              ), AtomID(matom[hi.itype],hi.ir              ), AtomID(batom[hj.jtype],hj.jr+p.size()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.itype],hi.ir+p.size()), AtomID(matom[hi.itype],hi.ir+p.size()), AtomID(batom[hj.jtype],hj.jr              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr              ), AtomID(matom[hi.jtype],hi.jr              ), AtomID(batom[hj.jtype],hj.jr+p.size()), new CircularHarmonicFunc(1.91063485009,0.2) ) );
+        q.add_constraint( new AngleConstraint( AtomID(batom[hi.jtype],hi.jr+p.size()), AtomID(matom[hi.jtype],hi.jr+p.size()), AtomID(batom[hj.jtype],hj.jr              ), new CircularHarmonicFunc(1.91063485009,0.2) ) );
 
         //sf->show(q);
         //q.dump_pdb("test0.pdb");
@@ -537,13 +537,13 @@ int main(int argc, char *argv[]) {
     Pose pnat;
     tr << "checking " << fn << std::endl;
     core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
-    if(pnat.n_residue() < 20) continue;
-    if(pnat.n_residue() > 250) continue;
+    if(pnat.size() < 20) continue;
+    if(pnat.size() > 250) continue;
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);
     Size cyscnt=0, nhelix=0;
-    if( pnat.n_residue() > MAX_NRES ) goto cont1;
-    for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
+    if( pnat.size() > MAX_NRES ) goto cont1;
+    for(Size ir = 2; ir <= pnat.size()-1; ++ir) {
       if(pnat.secstruct(ir) == 'H') nhelix++;
       //if(!pnat.residue(ir).is_protein()) goto cont1;
       if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;

@@ -106,7 +106,7 @@ MembraneLipo::finalize_total_energy(
 		Real cen10Buried_norm(0);
 		Real cen10Exposed_norm(0);
 		CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) )));
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			Size rsdSeq(i);
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				using namespace core::conformation::symmetry;

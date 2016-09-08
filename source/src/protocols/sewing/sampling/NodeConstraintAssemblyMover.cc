@@ -217,7 +217,7 @@ NodeConstraintAssemblyMover::apply(
 	char seg_dssp = 'N'; //invalid starting value
 	utility::vector1< std::pair < std::pair<core::Size, core::Size>, char > > segments;
 	std::pair<core::Size, core::Size> cur_segment;
-	for(core::Size i=1; i<= template_pose->total_residue(); ++i) {
+	for(core::Size i=1; i<= template_pose->size(); ++i) {
 		if(template_pose->residue(i).is_protein()) {
 			if(seg_dssp == 'N' || dssp.get_dssp_secstruct(i) != seg_dssp) {
 				if(seg_dssp != 'N') {
@@ -229,7 +229,7 @@ NodeConstraintAssemblyMover::apply(
 			}
 		}
 	}
-	cur_segment.second = template_pose->total_residue();
+	cur_segment.second = template_pose->size();
 	segments.push_back(std::make_pair(cur_segment, seg_dssp));
 
 	if(segments.size() < 2) {

@@ -140,7 +140,7 @@ ResidueDecompositionCalculator::residue_decomposition_to_set_numbers(
 )
 {
 	// reset residue_set_numbers_ to zeros
-	residue_set_numbers_.assign(this_pose.total_residue(), 0);
+	residue_set_numbers_.assign(this_pose.size(), 0);
 
 	for ( core::Size i = 1; i <= residue_decomposition_.size(); ++i ) {
 		for ( std::set<core::Size>::iterator iter = residue_decomposition_[i].begin(); iter != residue_decomposition_[i].end(); ++iter ) {

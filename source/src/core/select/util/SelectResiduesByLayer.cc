@@ -261,7 +261,7 @@ SelectResiduesByLayer::calc_rsd_sasa( Pose const & pose ) const {
 	// define atom_map for main-chain and CB
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size j = 1; j<=5; ++j ) {
 			core::id::AtomID atom( j, ir );
 			atom_map.set( atom, true );
@@ -282,7 +282,7 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 
 	utility::vector1< Real > rsd_sc_neighbors;
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		Real my_neighbors(0.0);
 
 		numeric::xyzVector< Real > my_sc_coordinates;
@@ -304,7 +304,7 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 
 		numeric::xyzVector< Real > my_sc_vector = (my_sc_coordinates - my_bb_coordinates).normalize() ;
 
-		for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+		for ( Size j = 1; j <= pose.size(); ++j ) {
 
 			if ( i != j ) {
 
@@ -348,7 +348,7 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 	// define secstruct if it is empty
 	if ( secstruct2 == "" ) {
 		if ( skip_dssp ) {
-			for ( core::Size i=1, imax=pose.n_residue(); i<=imax; ++i ) {
+			for ( core::Size i=1, imax=pose.size(); i<=imax; ++i ) {
 				secstruct2 = secstruct2 + "L";
 			}
 		}
@@ -357,7 +357,7 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 		dssp.dssp_reduced();
 		secstruct2 = dssp.get_dssp_secstruct();
 	}
-	runtime_assert( pose.total_residue() == secstruct2.length() );
+	runtime_assert( pose.size() == secstruct2.length() );
 
 	// clear
 	rsd_sasa_.clear();
@@ -383,10 +383,10 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 		rsd_sasa_ = calc_rsd_sasa( pose );
 	}
 
-	rsd_layer_.resize( pose.total_residue() );
+	rsd_layer_.resize( pose.size() );
 
 	utility::vector1< Size > selected_residues;
-	for ( Size iaa=1; iaa<=pose.total_residue(); iaa++ ) {
+	for ( Size iaa=1; iaa<=pose.size(); iaa++ ) {
 
 		char ss = secstruct2.at( iaa-1 );
 		runtime_assert( ss == 'L' || ss =='E' || ss=='H' );

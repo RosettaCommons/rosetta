@@ -156,12 +156,12 @@ public:
 
 		//Add a residue to ref_pose_2 ONLY (and leave ref_pose alone!)
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd->name_map( "ALA" ) ) );
-		core::Size nres = ref_pose_2.n_residue();
+		core::Size nres = ref_pose_2.size();
 		if ( ref_pose_2.residue(nres).has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
 			core::pose::remove_variant_type_from_pose_residue( ref_pose_2, core::chemical::UPPER_TERMINUS_VARIANT, nres );
 		}
 		ref_pose_2.append_residue_by_bond(*new_rsd, true, 0, nres, 0, false);
-		core::pose::add_variant_type_to_pose_residue( ref_pose_2, core::chemical::UPPER_TERMINUS_VARIANT, ref_pose_2.n_residue() );
+		core::pose::add_variant_type_to_pose_residue( ref_pose_2, core::chemical::UPPER_TERMINUS_VARIANT, ref_pose_2.size() );
 
 		std::string const silent_outfile( "core/io/bin_silentfile_multipose_test.out" );
 		utility::file::file_delete( silent_outfile );

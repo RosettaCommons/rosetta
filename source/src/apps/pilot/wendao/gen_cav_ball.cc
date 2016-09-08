@@ -308,7 +308,7 @@ int main( int argc, char * argv [] )
 		core::Real score = 0.0;
 		core::Real factor = T_FACTOR;
 		//go through all residues
-		for( core::Size j=1, m=pose.n_residue(); j<=m; j++)
+		for( core::Size j=1, m=pose.size(); j<=m; j++)
 		{
 			core::conformation::ResidueCOP res( pose.residue(j).get_self_ptr() );
 			//go through all atoms
@@ -470,7 +470,7 @@ int main( int argc, char * argv [] )
 		utility::vector1< core::Size > active_res_id;
 
 		//for each residue
-		for( core::Size j=1; j<=pose.n_residue(); j++)
+		for( core::Size j=1; j<=pose.size(); j++)
 		{
 			core::conformation::ResidueCOP res( &pose.residue(j) );
 			bool flag=true;
@@ -506,7 +506,7 @@ int main( int argc, char * argv [] )
 			if( clusters[i].cavballs[j].radius() > 0.7 )
 			{
 				fpball << clusters[i].cavballs[j].hetero_atom_line( \
-				pose.total_residue()+i, i, clusters[i].cavballs[j].radius() )
+				pose.size()+i, i, clusters[i].cavballs[j].radius() )
 					//	energy
 					//<< F(6, 2, score)
 					<< F(6, 2, clusters[i].cavballs[j].radius())

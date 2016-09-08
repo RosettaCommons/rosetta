@@ -119,7 +119,7 @@ AddChainBreak::apply( core::pose::Pose & pose )
 	utility::vector1< core::Size > cuts;
 	cuts.clear();
 	if ( find_automatically() ) {
-		for ( core::Size i = 1; i < pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i < pose.size(); ++i ) {
 			core::Real const distance( pose.residue( i ).xyz( "C" ).distance( pose.residue( i + 1 ).xyz( "N" ) ) );
 			if ( distance >= automatic_distance_cutoff() ) {
 				cuts.push_back( i );

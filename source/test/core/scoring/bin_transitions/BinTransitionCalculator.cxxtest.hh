@@ -155,7 +155,7 @@ public:
 
 		//A->A
 		core::pose::PoseOP temppose = pose_->clone();
-		for ( core::Size i=1, imax=temppose->n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=temppose->size(); i<=imax; ++i ) {
 			if ( i>1 ) temppose->set_phi( i, -64.8 );
 			if ( i<imax ) {
 				temppose->set_psi( i, -41.0 );
@@ -178,7 +178,7 @@ public:
 		calc3_success = bt->p_i_given_iplus1( temppose->residue(9), temppose->residue(10), prob3 ); //gly->pro, A->A
 
 		//B->Aprime
-		for ( core::Size i=1, imax=temppose->n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=temppose->size(); i<=imax; ++i ) {
 			if ( i>1 ) temppose->set_phi( i, -135 );
 			if ( i<imax ) {
 				temppose->set_psi( i, 135.0 );

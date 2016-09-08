@@ -108,7 +108,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	///////////////////////// remove interface sidechains //////////////////////////////
 	////////////////////////////////////////////////////////////////////////////
 
-	for ( core::Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		if ( pose.residue(ir).is_protein() ) {
 			core::pose::replace_pose_residue_copying_existing_coordinates( pose, ir, pose.residue(ir).residue_type_set()->name_map("ALA") );
 		}

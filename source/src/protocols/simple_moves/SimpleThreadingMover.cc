@@ -183,7 +183,7 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 
 
-	utility::vector1< bool > mutant_resnums( pose.total_residue(), false);
+	utility::vector1< bool > mutant_resnums( pose.size(), false);
 	std::map< core::Size, core::chemical::AA > mutations;
 	std::map< core::Size, core::chemical::AA >::iterator it;
 
@@ -216,7 +216,7 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 
 	//Select Set the packer to turn off design everywhere but our residues.
-	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
+	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 		if ( ! mutant_resnums[ resnum ] ) {
 			turn_off_design.include_residue( resnum ); //Turn all design off except residues we are forcing.
 			if ( ! pack_neighbors_ ) {
@@ -232,7 +232,7 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 		utility::vector1< bool > mutant_resnums_and_neighbors = mutant_resnums;
 
 		core::select::fill_neighbor_residues(pose, mutant_resnums_and_neighbors, neighbor_dis_);
-		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 			if ( ! mutant_resnums_and_neighbors[ resnum ] ) {
 				turn_off_packing.include_residue( resnum );
 			}

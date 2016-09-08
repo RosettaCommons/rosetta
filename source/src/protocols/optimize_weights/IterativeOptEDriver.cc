@@ -1019,9 +1019,9 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 				context_pose = native_pose;
 			}
 
-			utility::vector1<bool> include_rsd( context_pose.total_residue(), true );
+			utility::vector1<bool> include_rsd( context_pose.size(), true );
 
-			for ( Size j(1); j <= context_pose.total_residue(); ++j ) {
+			for ( Size j(1); j <= context_pose.size(); ++j ) {
 				include_rsd[j] = pose.residue_type(j).is_protein();
 			}
 
@@ -1303,12 +1303,12 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 				}
 
 				if ( jj == 1 ) {
-					structure_data->set_total_residue( pose.total_residue() );
-					first_total_residue = pose.total_residue();
-				} else if ( first_total_residue != pose.total_residue() ) {
+					structure_data->set_total_residue( pose.size() );
+					first_total_residue = pose.size();
+				} else if ( first_total_residue != pose.size() ) {
 					std::cerr << "Warning: total_residue for " << native_pdb_names[ jj ];
 					std::cerr << "not equal to native #1 total_residue: " << first_total_residue << " vs ";
-					std::cerr << pose.total_residue() << std::endl;
+					std::cerr << pose.size() << std::endl;
 					std::cerr << "Excluding structure!" << std::endl;
 					continue;
 				}
@@ -1337,10 +1337,10 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 				//std::cout << " PROC #" << MPI_rank_ << " reading pdb: #" << jj << " " << decoy_pdb_names[ jj ] << std::endl;
 				load_pose( pose, decoy_pdb_names[ jj ], false );
 
-				if ( first_total_residue != pose.total_residue() ) {
+				if ( first_total_residue != pose.size() ) {
 					std::cerr << "Warning: total_residue for " << decoy_pdb_names[ jj ];
 					std::cerr << "not equal to native #1 total_residue: " << first_total_residue << " vs ";
-					std::cerr << pose.total_residue() << std::endl;
+					std::cerr << pose.size() << std::endl;
 					std::cerr << "Excluding structure!" << std::endl;
 					continue;
 				}
@@ -1575,17 +1575,17 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 		//}
 
 		// Only include protein residues within 6A of touching the ligand
-		utility::vector1<bool> include_rsd( context_pose.total_residue(), false );
+		utility::vector1<bool> include_rsd( context_pose.size(), false );
 		int const jump_id = context_pose.num_jump(); // assume ligand is last jump
-		ObjexxFCL::FArray1D_bool is_upstream ( context_pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool is_upstream ( context_pose.size(), false );
 		context_pose.fold_tree().partition_by_jump( jump_id, is_upstream );
-		for ( core::Size i = 1, i_end = context_pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = context_pose.size(); i <= i_end; ++i ) {
 			// Nothing on ligand side can move
 			if ( ! is_upstream(i) ) continue;
 			// on protein side, have to do distance check
 			core::conformation::Residue const & prot_rsd = context_pose.residue(i);
 			if ( ! prot_rsd.is_protein() ) continue;
-			for ( core::Size j = 1, j_end = context_pose.total_residue(); j <= j_end; ++j ) {
+			for ( core::Size j = 1, j_end = context_pose.size(); j <= j_end; ++j ) {
 				if ( is_upstream(j) ) continue; // compare against only ligand residues
 				core::conformation::Residue const & lig_rsd = context_pose.residue(j);
 				for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
@@ -1686,12 +1686,12 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				//}
 
 				if ( jj == 1 ) {
-					structure_data->set_total_residue( pose.total_residue() );
-					first_total_residue = pose.total_residue();
-				} else if ( first_total_residue != pose.total_residue() ) {
+					structure_data->set_total_residue( pose.size() );
+					first_total_residue = pose.size();
+				} else if ( first_total_residue != pose.size() ) {
 					std::cerr << "Warning [node " << MPI_rank_ << "]: total_residue for " << native_pdb_names[ jj ];
 					std::cerr << " not equal to native #1 total_residue: " << first_total_residue << " vs ";
-					std::cerr << pose.total_residue() << std::endl;
+					std::cerr << pose.size() << std::endl;
 					continue;
 				}
 
@@ -1721,10 +1721,10 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				core::import_pose::pose_from_file( pose, decoy_pdb_names[ jj ] , core::import_pose::PDB_file);
 				//}
 
-				if ( first_total_residue != pose.total_residue() ) {
+				if ( first_total_residue != pose.size() ) {
 					std::cerr << "Warning [node " << MPI_rank_ << "]: total_residue for " << decoy_pdb_names[ jj ];
 					std::cerr << " not equal to native #1 total_residue: " << first_total_residue << " vs ";
-					std::cerr << pose.total_residue() << std::endl;
+					std::cerr << pose.size() << std::endl;
 					continue;
 				}
 
@@ -3582,10 +3582,10 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 	}
 
 	// used to restrict design to one position at a time
-	utility::vector1< bool > task_mask( pose.total_residue(), false );
+	utility::vector1< bool > task_mask( pose.size(), false );
 	Size num_diffs_between_native_and_input( 0 );
 
-	for ( Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
 
 		if ( ! pose.residue(resi).is_protein() ) continue;
 		// do not consider residues that are not designable
@@ -3747,8 +3747,8 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 	scorefxn.setup_for_packing( pose, packing_task->repacking_residues(), packing_task->designing_residues() );
 
-	utility::vector1< bool > task_mask( pose.total_residue(), false );
-	for ( Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	utility::vector1< bool > task_mask( pose.size(), false );
+	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
 		// only consider residues that the master task considers packable (via task_factory_)
 		if ( ! packing_task->residue_task( resi ).being_packed() ) continue;
 
@@ -4809,7 +4809,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 		// << "score1: " << score1 << " score2: " << score2 << std::endl;
 		//}
 
-		Size const nresidues_pose( pose.total_residue() );
+		Size const nresidues_pose( pose.size() );
 
 		/// record original sequence (for all residues in pose)
 		utility::vector1< chemical::AA > full_input_sequence( nresidues_pose );
@@ -4909,7 +4909,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 		core::pose::Pose pose, start_pose;
 		pose = native_poses_[ poseindex ];
 		start_pose = native_poses_[ poseindex ];
-		Size const nresidues_pose( pose.total_residue() );
+		Size const nresidues_pose( pose.size() );
 
 		//Real score2 = (*sfxn2)( pose );
 		//Real score1 = (*sfxn)( pose );

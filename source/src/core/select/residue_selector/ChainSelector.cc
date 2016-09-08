@@ -71,7 +71,7 @@ ChainSelector::apply(
 	core::pose::Pose const & pose
 ) const
 {
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 	for ( core::Size ii = 1; ii <= chain_strings_.size(); ++ii ) {
 		std::string const & iichain_string = chain_strings_[ ii ];
 		core::Size ii_num = 0;
@@ -171,7 +171,7 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 		throw utility::excn::EXCN_NullPointer( err.str() );
 	}
 
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( pose.pdb_info()->chain( ii ) == ch ) subset[ ii ] = true;
 	}
 }

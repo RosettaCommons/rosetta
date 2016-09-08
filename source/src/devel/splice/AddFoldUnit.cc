@@ -291,7 +291,7 @@ FoldUnitUtils::pose_from_fragment_info( core::pose::Pose & pose, PoseFragmentInf
 	}
 	// impose the dihedral angles
 	using namespace core::chemical;
-	ResidueTypeSetCOP residue_set( pose.total_residue() ? pose.residue( 1 ).residue_type_set() : ChemicalManager::get_instance()->residue_type_set( CENTROID ) ); // residuetypeset is noncopyable
+	ResidueTypeSetCOP residue_set( pose.size() ? pose.residue( 1 ).residue_type_set() : ChemicalManager::get_instance()->residue_type_set( CENTROID ) ); // residuetypeset is noncopyable
 	core::pose::make_pose_from_sequence( pose, seq, *residue_set );
 	/// set bb dofs
 	Size start( 1 );
@@ -348,7 +348,7 @@ void
 AddFoldUnitMover::apply( Pose & pose ){
 	PoseFragmentInfo pfi;
 	pfi.load_fragment_info_from_pose( pose );
-	TR<<"Pose size: "<<pose.total_residue()<<std::endl;
+	TR<<"Pose size: "<<pose.size()<<std::endl;
 	Size last_segment_entry( 0 ), first_segment_entry( 0 );
 	if ( !replace_fragment() && pfi.size() >= max_segments() ) {
 		TR<<"Added maximum number of segments. Not adding any more."<<std::endl;

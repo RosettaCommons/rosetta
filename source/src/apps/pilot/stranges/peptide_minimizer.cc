@@ -175,7 +175,7 @@ void PepMinMover::apply (pose::Pose& pose ) {
   movemap->set_jump(true);
   Size chainAend = pose.conformation().chain_end(1);
 	TR << "chain A end: " << chainAend << endl;
-  Size nres= pose.total_residue();
+  Size nres= pose.size();
   //set bb to moveable for peptide
   for (Size i = chainAend + 1; i <= nres; ++i){
     movemap->set_bb(i, true);

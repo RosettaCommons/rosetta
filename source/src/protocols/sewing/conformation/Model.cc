@@ -423,7 +423,7 @@ create_model_from_pose(
 	int model_id
 ){
 	utility::vector1< std::pair<core::Size,core::Size> > segments;
-	segments.push_back( std::make_pair(1, pose.total_residue()) );
+	segments.push_back( std::make_pair(1, pose.size()) );
 	return create_model_from_pose(pose, segments, model_id);
 }
 
@@ -484,7 +484,7 @@ Model::trim_db_pose(
 	}
 
 	core::Size num_removed_residues=0;
-	core::Size total_res = pose.total_residue();
+	core::Size total_res = pose.size();
 	for ( core::Size i=1; i<=total_res; ++i ) {
 		if ( resnums.find(i) == resnums.end() ) {
 			pose.conformation().delete_residue_slow(i-num_removed_residues);
@@ -1120,7 +1120,7 @@ add_num_neighbors(
 
 
 
-	//  for(core::Size i=model_assembly.segments_.size(); i<=pose.total_residue(); ++i) {
+	//  for(core::Size i=model_assembly.segments_.size(); i<=pose.size(); ++i) {
 	//
 	//  }
 

@@ -77,7 +77,7 @@ public:
 		// make sure we don't move omega
 		MoveMapOP mm( new MoveMap );
 		mm->set_bb( true );
-		for ( core::uint i = 1; i < pose.total_residue(); ++i ) {
+		for ( core::uint i = 1; i < pose.size(); ++i ) {
 			mm->set( TorsionID( i, BB, 3 ), false );
 		}
 
@@ -238,7 +238,7 @@ public:
 		// make sure we don't move omega
 		MoveMapOP mm( new MoveMap );
 		mm->set_bb( true );
-		for ( core::uint i = 1; i < pose.total_residue(); ++i ) {
+		for ( core::uint i = 1; i < pose.size(); ++i ) {
 			mm->set( TorsionID( i, BB, 3 ), false );
 		}
 

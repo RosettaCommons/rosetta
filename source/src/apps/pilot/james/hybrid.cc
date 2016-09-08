@@ -102,7 +102,7 @@ void superimpose_via_alignment(
   core::pose::initialize_atomid_map( atom_map, pose1, core::id::BOGUS_ATOM_ID );
 
 	vector1< Size > residues;
-	for ( Size ii = 1; ii <= pose1.total_residue(); ++ii )
+	for ( Size ii = 1; ii <= pose1.size(); ++ii )
 		residues.push_back(ii);
 
 	core::id::SequenceMapping mapping( aln.sequence_mapping(1,2) );
@@ -245,7 +245,7 @@ main( int argc, char* argv [] ) {
 
 				core::id::SequenceMapping mapping( aln.sequence_mapping(2,1) );
 				distances[aln_id] = vector1< Real >();
-				for ( Size native_res = 1; native_res <= native_pose.total_residue(); ++native_res ) {
+				for ( Size native_res = 1; native_res <= native_pose.size(); ++native_res ) {
 					Size const query_res( mapping[native_res] );
 					Real distance( upper_dist_limit );
 					if ( mapping[native_res] ) {
@@ -267,7 +267,7 @@ main( int argc, char* argv [] ) {
 		aln_ids.push_back(aln_id);
 	}
 
-	for ( Size ii = 1; ii <= native_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
 		SilentStructOP ss_out( new ScoreFileSilentStruct );
 		ss_out->scoreline_prefix( "" );
 		ss_out->decoy_tag( string_of(ii) );

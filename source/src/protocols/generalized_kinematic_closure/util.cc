@@ -115,7 +115,7 @@ void set_loop_pose (
 	pose.update_residue_neighbors();
 
 	//Rebuild the H and O atoms on peptide bonds and other atoms that are dependent on the connection to another atom.
-	for ( core::Size ir=2, irmax=pose.n_residue()-1; ir<=irmax; ++ir ) {
+	for ( core::Size ir=2, irmax=pose.size()-1; ir<=irmax; ++ir ) {
 		core::Size const nresconn = pose.residue(ir).n_possible_residue_connections();
 		if ( nresconn>0 ) {
 			for ( core::Size ic=1; ic<=nresconn; ++ic ) {

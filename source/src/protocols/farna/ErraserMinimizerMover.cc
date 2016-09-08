@@ -228,10 +228,10 @@ ErraserMinimizerMover::apply_ideal_coordinates( pose::Pose const & pose ) {
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 	bool const use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
-	utility::vector1< PuckerState > pucker_conformation( pose_reference_.total_residue(), NO_PUCKER );
+	utility::vector1< PuckerState > pucker_conformation( pose_reference_.size(), NO_PUCKER );
 
 	RNA_IdealCoord ideal_coord;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).is_virtual_residue() ) continue;
 
 		Real const delta = pose.residue( n ).mainchain_torsion( DELTA );
@@ -365,7 +365,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 ) {
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	TR << "Enter vary_bond_geometry....." << std::endl;
 
 	// First, set appropriate DOFs to move in the movemap, mm
@@ -496,7 +496,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 //FCC: Adding Virtual res
 int
 ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 
 	// if already rooted on virtual residue , return
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
@@ -537,7 +537,7 @@ ErraserMinimizerMover::does_atom_exist_in_reference(
 ///////////////////////////////////////////////////////////
 void
 ErraserMinimizerMover::setup_fold_tree( pose::Pose & pose ) {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size const num_jumps( cutpoint_list_.size() );
 	ObjexxFCL::FArray2D< int > jump_points( 2, num_jumps );
 	ObjexxFCL::FArray1D< int > cuts( num_jumps );
@@ -557,7 +557,7 @@ ErraserMinimizerMover::setup_fold_tree( pose::Pose & pose ) {
 void
 ErraserMinimizerMover::pyrimidine_flip_trial( pose::Pose & pose )
 {
-	Size const total_res = pose.total_residue();
+	Size const total_res = pose.size();
 	Pose screen_pose = pose;
 	Real orig_score, new_score;
 	orig_score = ( *scorefxn_ )( pose );
@@ -657,7 +657,7 @@ ErraserMinimizerMover::apply( Pose & pose ) {
 	// Add a virtual residue for density scoring
 	Size const virtual_res_pos = add_virtual_res( pose );
 	pose::Pose const pose_full = pose;
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size const nres_moving( nres - fixed_res_list_.size() );
 
 	// Output the sequence
@@ -679,7 +679,7 @@ ErraserMinimizerMover::apply( Pose & pose ) {
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( pose.residue_type( ii ).aa() == core::chemical::aa_vrt ) continue;
 
 		allow_insert( ii ) = true;

@@ -291,10 +291,10 @@ StepWiseMasterMover::setup_unified_stepwise_modeler(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMasterMover::initialize_pose_if_empty( pose::Pose & pose ){
-	if ( pose.total_residue() > 0 ) return;
+	if ( pose.size() > 0 ) return;
 	runtime_assert( options_->from_scratch_frequency() > 0.0 );
 	add_or_delete_mover_->apply( pose );
-	runtime_assert( pose.total_residue() > 0 );
+	runtime_assert( pose.size() > 0 );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

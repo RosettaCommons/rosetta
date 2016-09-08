@@ -143,7 +143,7 @@ argrot_dna_dis2(
 	}
 	ScoreFunctionOP scrfxn( ScoreFunctionFactory::create_score_function( weights_tag ) );
 	// unnecessary here, yet also required
-	graph::GraphOP dummygraph( new graph::Graph( pose.total_residue() ) );
+	graph::GraphOP dummygraph( new graph::Graph( pose.size() ) );
 
 	RotamerSetFactory rsf;
 	RotamerSetOP rotset( rsf.create_rotamer_set( pres ) );
@@ -285,7 +285,7 @@ find_basepairs(
 	TR << "\nFinding basepairs:\n";
 
 	Real const max_d( 4.0 );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	dna_chains.clear();
 	runtime_assert( dna_chains.empty() );
@@ -464,7 +464,7 @@ design_residues_list(
 	task::PackerTask const & ptask
 )
 {
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	for ( Size index(1); index <= nres; ++index ) {
 		if ( pose.residue_type(index).is_DNA() ) {
 			if ( !ptask.residue_task(index).has_behavior("TARGET") &&
@@ -509,7 +509,7 @@ std::string seq_pdb_str(
 	std::ostringstream os;
 	for ( auto pos( seq.begin() ); pos != seq.end(); ++pos ) {
 		Size const index( pos->first );
-		if ( index < 1 || index > pose.total_residue() ) {
+		if ( index < 1 || index > pose.size() ) {
 			assert(false);
 			continue;
 		}
@@ -794,7 +794,7 @@ kinematics::FoldTree
 make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 {
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
 
@@ -1073,7 +1073,7 @@ set_base_segment_chainbreak_constraints(
 
 	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
 
-	// Size const nres( pose.total_residue() );
+	// Size const nres( pose.size() );
 
 	// From Phil
 	Real const O3_P_distance( 1.608 );

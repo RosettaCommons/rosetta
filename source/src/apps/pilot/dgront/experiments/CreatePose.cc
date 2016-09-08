@@ -75,7 +75,7 @@ int main(int argc, char * argv[]) {
 		core::pose::make_pose_from_sequence(extended_pose, sequence, rsd_set);
 
 		// make extended chain
-		for (Size pos = 1; pos <= extended_pose.total_residue(); pos++) {
+		for (Size pos = 1; pos <= extended_pose.size(); pos++) {
 			if (!extended_pose.residue(pos).is_protein())
 				continue;
 			extended_pose.set_phi(pos, -150);
@@ -130,7 +130,7 @@ int main(int argc, char * argv[]) {
 	    core::pose::make_pose_from_sequence(extended_pose, seq,*rsd_set);
 
 	    // make a chain
-	    for (Size pos = 1; pos <= extended_pose.total_residue(); pos++) {
+	    for (Size pos = 1; pos <= extended_pose.size(); pos++) {
 		extended_pose.set_phi(pos, all_phi[pos]);
 		extended_pose.set_psi(pos, all_psi[pos]);
 		extended_pose.set_omega(pos, all_omega[pos]);
@@ -150,7 +150,7 @@ int main(int argc, char * argv[]) {
 		core::pose::make_pose_from_sequence(extended_pose, sequence,
 				*(chemical::ChemicalManager::get_instance()->residue_type_set(
 						"fa_standard")));
-		for (Size pos = 1; pos <= extended_pose.total_residue(); pos++) {
+		for (Size pos = 1; pos <= extended_pose.size(); pos++) {
 			if (!extended_pose.residue(pos).is_protein())
 				continue;
 			extended_pose.set_phi(pos, -150);

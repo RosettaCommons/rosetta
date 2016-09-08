@@ -88,8 +88,8 @@ int main( int argc, char * argv [] )
 
 
     //for each residue pair
-    for(Size i(1); i<= pose.total_residue()-1; ++i)
-        for(Size j(i+1); j<= pose.total_residue(); ++j) {
+    for(Size i(1); i<= pose.size()-1; ++i)
+        for(Size j(i+1); j<= pose.size(); ++j) {
 
         }//end residue pair
 

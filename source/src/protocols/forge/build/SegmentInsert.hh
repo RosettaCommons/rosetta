@@ -249,7 +249,7 @@ public: // accessors
 
 
 	/// @brief a torsion (bb/chi) specific override movemap indexed wrt the insert Pose
-	///  (residue indices may only be within the range [1, insert_pose.n_residue()]
+	///  (residue indices may only be within the range [1, insert_pose.size()]
 	/// @remarks When generating the movemap(), this torsion movemap will be enforced.
 	///  Only *explicit* settings of TorsionType, MoveMapTorsionID, and TorsionID will
 	///  be honored.  Implicit false settings are ignored.
@@ -321,7 +321,7 @@ public: // mutators
 
 
 	/// @brief set a torsion (bb/chi) specific override movemap indexed wrt the insert
-	///  Pose (residue indices may only be within the range [1, insert_pose.n_residue()]
+	///  Pose (residue indices may only be within the range [1, insert_pose.size()]
 	/// @remarks When generating the movemap(), this torsion movemap will be enforced.
 	///  Only *explicit* settings of TorsionType, MoveMapTorsionID, and TorsionID will
 	///  be honored.  Implicit false settings are ignored.
@@ -474,7 +474,7 @@ private: // data
 
 
 	/// @brief a torsion (bb/chi) specific override movemap indexed wrt the insert Pose
-	///  (residue indices may only be within the range [1, insert_pose.n_residue()]
+	///  (residue indices may only be within the range [1, insert_pose.size()]
 	/// @remarks When generating the movemap(), this torsion movemap will be enforced.
 	///  Only *explicit* settings of TorsionType, MoveMapTorsionID, and TorsionID will
 	///  be honored.  Implicit false settings are ignored.

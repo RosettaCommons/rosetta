@@ -158,7 +158,7 @@ static core::io::silent::SilentFileData sfd;
 // 			p.set_omega(ir-1,180.0);
 // 			p.set_omega(ir  ,180.0);
 // 		}
-// 		core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
+// 		core::pose::add_upper_terminus_type_to_pose_residue(p,p.size());
 // 		//sfsym->show(p);
 
 // 		make_symmetric_pose(p);
@@ -255,7 +255,7 @@ static core::io::silent::SilentFileData sfd;
 // };
 
 Vec center_ca(Pose const & p, Size st = 1, Size nres = 0) {
-	if(0==nres) nres = p.n_residue();
+	if(0==nres) nres = p.size();
 	Vec com(0,0,0);
 	Size n = 0;
 	for(Size i = st; i <= nres; ++i) {
@@ -268,7 +268,7 @@ Vec center_ca(Pose const & p, Size st = 1, Size nres = 0) {
 }
 
 Vec center_heavy(Pose const & p, Size st = 1, Size nres = 0) {
-	if(0==nres) nres = p.n_residue();
+	if(0==nres) nres = p.size();
 	Vec com(0,0,0);
 	Size n = 0;
 	for(Size i = st; i <= nres; ++i) {
@@ -281,8 +281,8 @@ Vec center_heavy(Pose const & p, Size st = 1, Size nres = 0) {
 }
 
 void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natcom, Vec const & natcomca, Real & carmsd, Real & aarmsd) {
-	if(native.n_residue() == 0) return;
-	if(native.n_residue()+1 != nres) {
+	if(native.size() == 0) return;
+	if(native.size()+1 != nres) {
 		cout << p.sequence() << endl;
 		cout << " " << native.sequence() << endl;
 		utility_exit_with_message("native should be 1 chain w/o hub");
@@ -417,7 +417,7 @@ int main(int argc, char *argv[]) {
 		p.set_omega(ir-1,180.0);
 		p.set_omega(ir  ,180.0);
 	}
-	core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
+	core::pose::add_upper_terminus_type_to_pose_residue(p,p.size());
 	//sfsym->show(p);
 
 	make_symmetric_pose(p);

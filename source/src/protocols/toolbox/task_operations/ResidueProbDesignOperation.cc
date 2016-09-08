@@ -234,7 +234,7 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 		sampler.weights(aa_weights);
 	}
 
-	for ( core::Size i = 1; i <=pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <=pose.size(); ++i ) {
 
 		//If Residue is not designable or ResidueProb not set + there is no overall probability set to use, keep going.
 		if ( ( ! design_positions[i] ) || ( ! resnum_exists_in_set(i) && overall_prob_set.empty() ) ) {

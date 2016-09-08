@@ -110,7 +110,7 @@ main( int argc, char * argv [] )
 		if ( option[report_LK] ) {
 			// get LK solvation scores as a fxn of residue number
 			utility::vector1 <core::Real> LK_energies;
-			for ( Size i = 1; i <= curr_pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= curr_pose.size(); i++ ) {
 				LK_energies.push_back( curr_pose.energies().residue_total_energies(i)[ fa_sol ] );
 			}
 			dump_data( curr_decoy_fname+".LK.out", LK_energies );
@@ -120,7 +120,7 @@ main( int argc, char * argv [] )
 			// get pairwise geometric solvation scores as a fxn of residue number
 			(*occ_pw_scorefxn)(curr_pose);
 			utility::vector1 <core::Real> occ_pw_energies;
-			for ( Size i = 1; i <= curr_pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= curr_pose.size(); i++ ) {
 				occ_pw_energies.push_back( curr_pose.energies().residue_total_energies(i)[ occ_sol_fitted ] );
 			}
 			dump_data( curr_decoy_fname+".fitted.out", occ_pw_energies );
@@ -130,7 +130,7 @@ main( int argc, char * argv [] )
 			// get solvation scores as a fxn of residue number
 			(*orig_geosol_scorefxn)(curr_pose);
 			utility::vector1 <core::Real> orig_geosol_energies;
-			for ( Size i = 1; i <= curr_pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= curr_pose.size(); i++ ) {
 				orig_geosol_energies.push_back( curr_pose.energies().residue_total_energies(i)[ geom_sol ] );
 			}
 			dump_data( curr_decoy_fname+".orig_geosol.out", orig_geosol_energies );
@@ -140,7 +140,7 @@ main( int argc, char * argv [] )
 			// get exact ODO scores as a fxn of residue number
 			(*occ_exact_scorefxn)(curr_pose);
 			utility::vector1 <core::Real> occ_exact_energies;
-			for ( Size i = 1; i <= curr_pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= curr_pose.size(); i++ ) {
 				occ_exact_energies.push_back( curr_pose.energies().residue_total_energies(i)[ occ_sol_exact ] );
 			}
 			dump_data( curr_decoy_fname+"."+format_for_exact+".out", occ_exact_energies );

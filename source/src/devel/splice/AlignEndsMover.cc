@@ -91,7 +91,7 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	utility::vector1< core::Size > strand_positions;
 	strand_positions.clear();
 	bool odd_strand( true ); // if antiparallel we need to intermittently connect odd and even strands...
-	core::Size const resi_end( chain() == 0 ? pose.total_residue() : pose.conformation().chain_end( chain() ) );
+	core::Size const resi_end( chain() == 0 ? pose.size() : pose.conformation().chain_end( chain() ) );
 	core::Size const resi_start( chain() == 0 ? 1 : pose.conformation().chain_begin( chain() ) );
 	TR<<"Chain start: "<<resi_start<<" resi_end: "<<resi_end<<std::endl;
 	// note the fast-forwarding of resi in the inner-loop below! should be fine, but if there are bugs, this is a good place to dig

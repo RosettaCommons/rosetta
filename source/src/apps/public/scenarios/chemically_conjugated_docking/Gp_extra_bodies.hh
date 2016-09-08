@@ -72,7 +72,7 @@ utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic:
 				true);
 
 			//attach remaining residues chemically - must be safe for 1-residue poses
-			for ( core::Size i(2); i <= it->total_residue(); ++i ) pose.conformation().append_polymer_residue_after_seqpos(it->residue(i), pose.total_residue(), false);
+			for ( core::Size i(2); i <= it->size(); ++i ) pose.conformation().append_polymer_residue_after_seqpos(it->residue(i), pose.size(), false);
 
 			extra_bodies_chains.push_back(pose.conformation().num_chains()); //add the chain numbers
 		}

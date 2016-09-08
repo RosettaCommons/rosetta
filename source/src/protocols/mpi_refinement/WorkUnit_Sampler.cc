@@ -232,7 +232,7 @@ WorkUnit_Sampler::superimpose_to_ref( core::pose::Pose const &pose_ref,
 
 	std::map< core::id::AtomID, core::id::AtomID > atom_map;
 
-	for ( core::Size ires = 1; ires <= pose_ref.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose_ref.size(); ++ires ) {
 		if ( !pose_ref.residue(ires).has( " CA " ) || exclude_res.contains( ires ) ) continue;
 		core::Size iatm = pose_ref.residue(ires).atom_index(" CA ");
 		core::id::AtomID atomid1( iatm, ires );

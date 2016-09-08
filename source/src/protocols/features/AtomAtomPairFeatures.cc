@@ -230,7 +230,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 		!pose.conformation().structure_moved() &&
 		pose.energies().residue_neighbors_updated());
 
-	if ( pose.total_residue() ==0 ) {
+	if ( pose.size() ==0 ) {
 		return;
 	}
 
@@ -256,7 +256,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 	FArray3D< Size > counts;
 	counts.dimension(dim1, dim2, dim3, initial_value);
 
-	for ( Size res_num1=1; res_num1 <= pose.total_residue(); ++res_num1 ) {
+	for ( Size res_num1=1; res_num1 <= pose.size(); ++res_num1 ) {
 		Residue res1(pose.residue(res_num1));
 
 		for ( Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1 ) {
@@ -269,7 +269,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 				continue;
 			}
 
-			for ( Size res_num2=1; res_num2 <= pose.total_residue(); ++res_num2 ) {
+			for ( Size res_num2=1; res_num2 <= pose.size(); ++res_num2 ) {
 				if ( !check_relevant_residues(
 						relevant_residues, res_num1, res_num2) ) continue;
 				Residue res2( pose.residue(res_num2) );

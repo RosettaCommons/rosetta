@@ -324,7 +324,7 @@ ResidueVicinityRCG::generate_remodel_constraints_for_respair(
 			//lil stupid: we only need the pose in this function for the debug info
 			//but i don't feel like changing headers for debug at the moment,
 			//so let's do some call to a pose function to prevent the compiler warning
-			pose.total_residue();
+			pose.size();
 
 		} //loop over loopres residue atoms
 

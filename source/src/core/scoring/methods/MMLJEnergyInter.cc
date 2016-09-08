@@ -158,8 +158,8 @@ MMLJEnergyInter::setup_for_packing(
 	using namespace trie;
 
 	TrieCollectionOP tries( new TrieCollection );
-	tries->total_residue( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	tries->total_residue( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		// Do not compute energy for virtual residues.
 		if ( pose.residue_type(ii).aa() == core::chemical::aa_vrt ) continue;
 

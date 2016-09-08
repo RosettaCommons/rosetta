@@ -126,7 +126,7 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 	num_insertable_residues_ = 0;
 	insert_map_.clear();
 
-	for ( Size i = 1; i <= pose.total_residue() - frag_size_ + 1; i++ ) {
+	for ( Size i = 1; i <= pose.size() - frag_size_ + 1; i++ ) {
 
 		// Look to see if frame has *any* insertable residues.
 		// This is different from the past. Now we have a atom-resolution

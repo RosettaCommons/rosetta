@@ -152,7 +152,7 @@ rebuild_disulfide( core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP minimizer_score )
 {
 	// Quick lookup of whether a residue is a disulfide or not
-	vector1<bool> is_disulf(pose.total_residue(), false);
+	vector1<bool> is_disulf(pose.size(), false);
 
 	for ( vector1<pair<Size, Size> >::const_iterator
 			disulf(disulfides.begin()), end_disulf(disulfides.end());
@@ -175,7 +175,7 @@ rebuild_disulfide( core::pose::Pose & pose,
 		packer_task->restrict_to_repacking();
 
 		// Restrict repacking to the targets
-		for ( Size i(1); i <= pose.total_residue(); ++i ) {
+		for ( Size i(1); i <= pose.size(); ++i ) {
 			if ( !is_disulf[i] ) {
 				packer_task->nonconst_residue_task(i).prevent_repacking();
 			}

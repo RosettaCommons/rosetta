@@ -323,7 +323,7 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::s
 	Size layer = 0;
 	 for ( auto const & it : layer_specification ) {
 		utility::vector1< Size > pos;
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			if ( it.second[ i ] ) {
 				pos.push_back( i );
 			}
@@ -768,9 +768,9 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 
 	// find the position of residues of helix capping and intial residue of helix
 	bool flag( false );
-	utility::vector1< bool > helix_capping( pose.total_residue(), false );
-	utility::vector1< bool > initial_helix( pose.total_residue(), false );
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	utility::vector1< bool > helix_capping( pose.size(), false );
+	utility::vector1< bool > initial_helix( pose.size(), false );
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		// if this residue is not a protein residue, we shouldn't process it further
 		if ( ! pose.residue( i ).is_protein() ) continue;
 		char ss( secstruct[i-1] );
@@ -787,10 +787,10 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	// terminal residues set to be all aa
 	//utility::vector1<bool> restrict_to_aa( 20, true );
 	//task.nonconst_residue_task( 1 ).restrict_absent_canonical_aas( restrict_to_aa );
-	//task.nonconst_residue_task( pose.total_residue() ).restrict_absent_canonical_aas( restrict_to_aa );
+	//task.nonconst_residue_task( pose.size() ).restrict_absent_canonical_aas( restrict_to_aa );
 
 	TR << "---------------------------------------" << std::endl;
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		// if the residue is not a protein, we should continue on to the next one, but make the non-protein residue repackable only
 		// Removed by VKM -- the user can decide whether to apply design to non-protein residues or not.
 		if ( ! pose.residue( i ).is_protein() ) { /*task.nonconst_residue_task( i ).restrict_to_repacking();*/ continue; }

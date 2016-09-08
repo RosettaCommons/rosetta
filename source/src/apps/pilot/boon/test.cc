@@ -81,14 +81,14 @@ int main(int argc, char *argv[])
 
 		//std::cout << "Hello, Rosetta World!" << std::endl;
 		//std::cout << "I just imported my first pose into Rosetta." << std::endl;
-		//std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
+		//std::cout << "It has " << test_pose.size() << " total residues." << std::endl;
 		/*chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		pose_from_file(test_pose, *rsd_set, "/home/boon/data/test_rna.pdb", core::import_pose::PDB_file);
 		protocols::farna::make_phosphate_nomenclature_matches_mini( test_pose );
 		// setup a packer task
 		pack::task::PackerTaskOP task ( core::pack::task::TaskFactory::create_packer_task( test_pose ) );
 		task->initialize_from_command_line().or_include_current( true );
-		for (Size ii = 1; ii <= test_pose.total_residue(); ++ii ) {
+		for (Size ii = 1; ii <= test_pose.size(); ++ii ) {
 		task->nonconst_residue_task(ii).allow_aa( na_rad );
 		task->nonconst_residue_task(ii).allow_aa( na_ura );
 		task->nonconst_residue_task(ii).allow_aa( na_rgu );

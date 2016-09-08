@@ -57,7 +57,7 @@ public:
 
 		ResidueSubset subset = selector->apply( trpcage );
 
-		for ( core::Size i=1, imax=trpcage.n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=trpcage.size(); i<=imax; ++i ) {
 			TR << trpcage.residue(i).name3() << i << "\texpect:";
 			if ( ( i < 2 || i > 9 ) && (i!=12 && i!=13 && i!=14) ) {
 				TR << "false\t";

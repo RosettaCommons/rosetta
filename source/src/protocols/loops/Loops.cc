@@ -580,7 +580,7 @@ void Loops::choose_cutpoints( core::pose::Pose const & pose ) {
 // @Check loops are compatible with pose.
 void Loops::verify_against( core::pose::Pose const & pose ) const {
 	using core::Size;
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 
 	 for ( auto const & it : *this ) {
 		if ( it.start() <= 0 ) {
@@ -637,7 +637,7 @@ void Loops::grow_loop(
 		}
 	}
 
-	grow_loop( pose.total_residue(), loop, magL, magR );
+	grow_loop( pose.size(), loop, magL, magR );
 }
 
 void Loops::grow_loop_away_from_sheets(
@@ -674,7 +674,7 @@ void Loops::grow_loop_away_from_sheets(
 			}
 		}
 	}
-	grow_loop( pose.total_residue(), loop, magL, magR );
+	grow_loop( pose.size(), loop, magL, magR );
 }
 
 

@@ -97,8 +97,8 @@ create_scmin_minimizer_map(
 		scminmap = scmin::SCMinMinimizerMapOP( new scmin::AtomTreeSCMinMinimizerMap() );
 	}
 
-	scminmap->set_total_residue( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	scminmap->set_total_residue( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( task->being_packed( ii ) ) {
 			scminmap->activate_residue_dofs( ii );
 		} else {
@@ -118,7 +118,7 @@ create_minimization_graph(
 	scmin::SCMinMinimizerMap const & sc_min_map
 )
 {
-	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.total_residue() ) );
+	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.size() ) );
 
 	/// copy all edges that are incident upon the molten residues; background edges may be ignored.
 	for ( graph::Graph::EdgeListConstIter
@@ -136,7 +136,7 @@ create_minimization_graph(
 	/// edge in the minimization graph)
 
 	scoring::EnergyMap dummy;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( task.being_packed( ii ) || mingraph->get_node( ii )->num_edges() != 0 ) {
 			sfxn.setup_for_minimizing_for_node(
 				* mingraph->get_minimization_node( ii ), pose.residue( ii ),
@@ -158,7 +158,7 @@ create_minimization_graph(
 	}
 
 	/// Now initialize the long-range edges
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ! task.being_packed( ii ) ) continue;
 		for ( auto
 				iter = sfxn.long_range_energies_begin(),
@@ -200,8 +200,8 @@ setup_bgres_cops(
 	task::PackerTask const & task
 )
 {
-	utility::vector1< conformation::ResidueCOP > bgres( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	utility::vector1< conformation::ResidueCOP > bgres( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ! task.being_packed( ii ) ) bgres[ ii ] = pose.residue( ii ).clone();
 	}
 	return bgres;
@@ -293,7 +293,7 @@ get_residue_current_energy(
 #ifdef APL_FULL_DEBUG
 
 	/// the background residue should already contain the correct coordinates
-	for ( Size ii = 1; ii <= debug_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= debug_pose.size(); ++ii ) {
 		if ( bgres[ ii ]->natoms() != debug_pose.residue( ii ).natoms() ) {
 			std::cout << "Residue " << ii << " natoms discrepancy" << std::endl;
 		}
@@ -380,7 +380,7 @@ get_residue_current_energy(
 			std::cout << "Coordinate discrepancy between debug pose and RATC for residue " << resid << " at atom " << ii << std::endl;
 		}
 	}
-	for ( Size ii = 1; ii <= debug_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= debug_pose.size(); ++ii ) {
 		if ( bgres[ ii ]->natoms() != debug_pose.residue( ii ).natoms() ) {
 			std::cout << "Residue " << ii << " natoms discrepancy" << std::endl;
 		}
@@ -700,7 +700,7 @@ assign_random_rotamers(
 		std::cout << "Initial energy assignment disagrees with actual initial energy " << totalE << " " << debug_pose_start_score << std::endl;
 		debug_pose.energies().total_energies().show_weighted( std::cout, sfxn.weights() );
 		std::cout << std::endl;
-		for ( Size kk = 1; kk <= debug_pose.total_residue(); ++kk ) {
+		for ( Size kk = 1; kk <= debug_pose.size(); ++kk ) {
 			compare_mingraph_and_energy_graph( kk, debug_pose, sfxn, *mingraph );
 		}
 	}
@@ -920,7 +920,7 @@ min_pack_optimize(
 #ifdef APL_FULL_DEBUG
 						if ( std::abs( debug_after - totalE ) > 1e-3 ) {
 							std::cout << "Initial energy assignment disagrees with actual initial energy" << std::endl;
-							for ( Size kk = 1; kk <= debug_pose.total_residue(); ++kk ) {
+							for ( Size kk = 1; kk <= debug_pose.size(); ++kk ) {
 								compare_mingraph_and_energy_graph( kk, debug_pose, sfxn, *mingraph );
 							}
 						}
@@ -1164,7 +1164,7 @@ off_rotamer_pack_setup(
 	ig->set_scorefunction( sfxn );
 	ig->set_pose_no_initialize( pose );
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
-	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	//for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 	// ig.get_simple_node( ii )->set_current( pose.residue( ii ).clone() );
 	//}
 	ig->copy_connectivity( *packer_neighbor_graph );

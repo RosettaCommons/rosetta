@@ -45,13 +45,13 @@ DownstreamRMSEvaluator::set_downstream_pose( core::pose::PoseCOP dspose )
 	/// TEMP!
 	/// Compare all heavy atoms on all residues
 	Size count_atoms = 0;
-	for ( Size ii = 1; ii <= dspose_->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= dspose_->size(); ++ii ) {
 		count_atoms += dspose_->residue(ii).nheavyatoms();
 	}
 
 	atoms_to_compare_.resize( count_atoms );
 	count_atoms = 1;
-	for ( Size ii = 1; ii <= dspose_->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= dspose_->size(); ++ii ) {
 		for ( Size jj = 1; jj <= dspose_->residue(ii).nheavyatoms(); ++jj ) {
 			atoms_to_compare_[ count_atoms ] = core::id::AtomID( jj, ii );
 			++count_atoms;

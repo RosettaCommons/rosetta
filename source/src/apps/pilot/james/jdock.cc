@@ -91,7 +91,7 @@ public:
 		ft_cuts(2)    = stop;
 
 		bool status = ft.tree_from_jumps_and_cuts(
-			pose.total_residue(), // nres_in
+			pose.size(), // nres_in
 			2,                    // num_jump_in
 			ft_jumps,             // jump_point
 			ft_cuts,              // cuts
@@ -105,7 +105,7 @@ public:
 
 		// add cutpoint variants to 17,18 and 41,42
 		const core::kinematics::FoldTree& tree(pose.fold_tree());
-		for ( Size ii = 1; ii <= pose.total_residue() - 1; ++ii ) {
+		for ( Size ii = 1; ii <= pose.size() - 1; ++ii ) {
 			using core::pose::add_variant_type_to_pose_residue;
 			//std::cout << "considering " << ii << std::endl;
 			if ( tree.is_cutpoint(ii) ) {

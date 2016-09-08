@@ -35,8 +35,8 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.SheetTopologyFil
 
 void set_secstruct( core::pose::Pose & pose, std::string const & ss )
 {
-	debug_assert( ss.size() == pose.total_residue() );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	debug_assert( ss.size() == pose.size() );
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		pose.set_secstruct( i, ss[i-1] );
 	}
 }

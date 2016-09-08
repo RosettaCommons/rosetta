@@ -58,7 +58,7 @@ public:
 		//pose.dump_pdb("initialpdb.pdb");
 
 		//I checked; these work on the first try
-		start=7; end=11; middle=9; nres=pose.total_residue();
+		start=7; end=11; middle=9; nres=pose.size();
 		torsions.reserve(nres*3);
 
 		//extract original torsions

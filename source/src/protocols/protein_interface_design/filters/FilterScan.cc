@@ -230,7 +230,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 	mut_res->push_back( dao );
 	PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
 	mutate_residue->initialize_from_command_line().or_include_current( true );
-	for ( core::Size resj = 1; resj <= pose.total_residue(); ++resj ) {
+	for ( core::Size resj = 1; resj <= pose.size(); ++resj ) {
 		if ( resi != resj ) {
 			mutate_residue->nonconst_residue_task( resj ).restrict_to_repacking();
 		} else {
@@ -278,7 +278,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	utility::vector1< core::Size > being_designed;
 	being_designed.clear();
 
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
 			being_designed.push_back( resi );
 		}

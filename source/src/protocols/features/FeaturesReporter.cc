@@ -104,7 +104,7 @@ FeaturesReporter::report_features(
 	StructureID parent_id,
 	sessionOP db_session
 ){
-	vector1<bool> relevant_residues(pose.total_residue(), true);
+	vector1<bool> relevant_residues(pose.size(), true);
 	return report_features(pose, relevant_residues, parent_id, db_session);
 }
 

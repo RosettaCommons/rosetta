@@ -213,7 +213,7 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	const core::Real FLUFF = 10.0; // add a bounding box
 	for ( core::Size n=1; n<=nposes; ++n ) {
 		core::pose::Pose &pose = *(poses[n]);
-		int nres = pose.total_residue();
+		int nres = pose.size();
 
 		for ( int i=1 ; i<=nres; ++i ) {
 			conformation::Residue const &rsd_i (pose.residue(i));
@@ -288,7 +288,7 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 
 		// pose->poseCoords
 		poseCoords litePose;
-		for ( core::Size i = 1; i <= poses[n]->total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= poses[n]->size(); ++i ) {
 			core::conformation::Residue const & rsd_i ( poses[n]->residue(i) );
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
@@ -430,7 +430,7 @@ core::Real ElectronDensity::matchCentroidPose(
 		inv_rho_mask[i]=1.0;
 	}
 
-	int nres = pose.total_residue(); //reses.size();
+	int nres = pose.size(); //reses.size();
 	numeric::xyzVector< core::Real > cartX, fracX;
 	numeric::xyzVector< core::Real > atm_i, atm_j, del_ij;
 
@@ -642,7 +642,7 @@ core::Real ElectronDensity::matchPose(
 		inv_rho_mask[i]=1.0;
 	}
 
-	int nres = pose.total_residue(); //reses.size();
+	int nres = pose.size(); //reses.size();
 	numeric::xyzVector< core::Real > cartX, fracX;
 	numeric::xyzVector< core::Real > atm_i, atm_j, del_ij;
 
@@ -1403,7 +1403,7 @@ ElectronDensity::calcRhoC(
 void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose) {
 	// atom count
 	core::Size natms=0,nres=0;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) { continue; } nres++;
 		core::conformation::Residue const& rsd_i = pose.residue(i);
 		natms += rsd_i.nheavyatoms();
@@ -1593,7 +1593,7 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
-	for ( uint i = 1; i <= pose.total_residue(); ++i ) {
+	for ( uint i = 1; i <= pose.size(); ++i ) {
 		if ( !remap_symm_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
@@ -1729,7 +1729,7 @@ void ElectronDensity::compute_symm_rotations(
 	//    Rs must still be percolated up the tree.
 	// because of that, we'll just recompute the mapping each time;
 	//    however, correcting this could save some running time.
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	int vrtStart = nres_per*nsubunits;
 	int nvrts = nres - vrtStart;
 	utility::vector1<bool> vrts_mapped( nvrts, false );
@@ -1817,7 +1817,7 @@ void ElectronDensity::compute_symm_rotations(
 
 //FPD >>this should really live in pose datacache
 void ElectronDensity::clear_dCCdx_res_cache( core::pose::Pose const &pose ) {
-	for ( int i=1, iend=pose.total_residue(); i<=iend; ++i ) {
+	for ( int i=1, iend=pose.size(); i<=iend; ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		core::Size nAtms = pose.residue(i).nheavyatoms();
 		dCCdxs_res[i].resize( nAtms );
@@ -1853,7 +1853,7 @@ core::Real ElectronDensity::matchRes(
 	//// grab atoms to be included in scoring
 	////     context atoms - within the window; mask/derivatives computed
 	////     neighbor atoms - atoms whose density _may_ fall within the mask; no mask/derivs computed
-	int nres = (int)pose.total_residue();
+	int nres = (int)pose.size();
 	utility::vector1< conformation::Atom > neighborAtoms, contextAtoms;
 	utility::vector1< std::pair<core::Size,core::Size> > neighborAtomIds, contextAtomIds;
 	utility::vector1< OneGaussianScattering > neighborAtomAs, contextAtomAs;
@@ -2453,7 +2453,7 @@ ElectronDensity::dCCdBs(
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
-	for ( uint i = 1; i <= pose.total_residue(); ++i ) {
+	for ( uint i = 1; i <= pose.size(); ++i ) {
 		if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;

@@ -192,7 +192,7 @@ public:
 		ExtraThreadingMover mover( align, template_pose, residues_to_steal );
 		mover.apply(query_pose);
 
-		for ( Size ii = 1; ii <= query_pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= query_pose.size(); ++ii ) {
 			TS_ASSERT_EQUALS( query_pose.residue(ii).natoms(), template_pose.residue(ii).natoms() );
 			TS_ASSERT_EQUALS( query_pose.residue(ii).nheavyatoms(), template_pose.residue(ii).nheavyatoms() );
 			TS_ASSERT_EQUALS( query_pose.residue_type(ii).name(), template_pose.residue_type(ii).name() );

@@ -115,7 +115,7 @@ main( int argc, char* argv[] )
 			native_pose.constraint_set( cstset );
 		}
 
-		subset.reserve( native_pose.total_residue() );
+		subset.reserve( native_pose.size() );
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 		// score and output native score.
 		core::Real score = (*scorefxn)(native_pose);
@@ -129,14 +129,14 @@ main( int argc, char* argv[] )
 
 		output << "tag alignment score cst_score rmsd maxsub gdtmm" << "\n";
 		output 	<< "native native " << score << ' ' << cst_score << ' ' << 0.0 << ' '
-						<< native_pose.total_residue() << ' ' << 1.0 << "\n";
+						<< native_pose.size() << ' ' << 1.0 << "\n";
 
 		//output << "tag score cst_score rmsd maxsub gdtmm" << "\n";
 		//output 	<< "native " << score << ' ' << cst_score << ' ' << 0.0 << ' '
-		//				<< native_pose.total_residue() << ' ' << 1.0 << "\n";
+		//				<< native_pose.size() << ' ' << 1.0 << "\n";
 		//std::cerr << "tag alignment score cst_score rmsd maxsub gdtmm" << "\n";
 		//std::cerr << "native native " << score << ' ' << cst_score << ' ' << 0.0 << ' '
-		//				<< native_pose.total_residue() << ' ' << 1.0 << "\n";
+		//				<< native_pose.size() << ' ' << 1.0 << "\n";
 		std::cerr << "native cst_score = " << cst_score << std::endl;
 	}
 	core::io::silent::SilentFileData sfd_out;

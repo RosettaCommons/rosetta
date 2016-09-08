@@ -40,7 +40,7 @@ void StealSideChainsMover::apply( core::pose::Pose & pose ) {
 	for ( Size ii = 1; ii <= map_.size1(); ++ii ) {
 		Size const source_ii( map_[ii] );
 		if ( source_ii == 0 ) continue;
-		if ( source_ii > source_.total_residue() ) continue;
+		if ( source_ii > source_.size() ) continue;
 
 		string const name3( pose.residue_type(ii).name3() );
 		string const name3_src( source_.residue_type(map_[ii]).name3());

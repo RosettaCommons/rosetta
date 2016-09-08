@@ -568,7 +568,7 @@ void TopologyBroker::initialize_sequence( claims::DofClaims & claims, core::pose
 	);
 
 	// make extended chain
-	for ( Size pos = 1; pos <= new_pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= new_pose.size(); pos++ ) {
 		if ( ! new_pose.residue(pos).is_protein() ) continue;
 		new_pose.set_phi( pos, -150 );
 		new_pose.set_psi( pos, 150);
@@ -599,7 +599,7 @@ return resolve_sequence_label( chain_label ).offset() + pos - 1;
 }*/
 
 void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Pose & pose ) {
-	claims::DofClaims bb_claims( pose.total_residue(), nullptr ); //one claim per position
+	claims::DofClaims bb_claims( pose.size(), nullptr ); //one claim per position
 	claims::DofClaims jumps( pose.num_jump(), nullptr );
 	for ( auto & claim : claims ) {
 
@@ -618,10 +618,10 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 				throw EXCN_BadInput( msg.str() );
 			}
 
-			if ( global_position > pose.total_residue() ) {
+			if ( global_position > pose.size() ) {
 				std::ostringstream msg;
 				msg << "BBClaim makes claim to (" << pos.first << ", " << pos.second << " == " << global_position
-					<< " global) in pose of " << pose.total_residue() << " residues. This can result when fragments are inconsistent "
+					<< " global) in pose of " << pose.size() << " residues. This can result when fragments are inconsistent "
 					<< "with FASTA, or label are incorrect." << std::endl;
 				throw EXCN_BadInput( msg.str() );
 			}
@@ -851,7 +851,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 	} else {
 		//if(tr.Debug.visible()){tr.Debug << "build default Broker FoldTree..." << std::endl;}
 		tr.Debug << "build fold-tree..." << std::endl;
-		build_fold_tree( pre_accepted, pose.total_residue() );
+		build_fold_tree( pre_accepted, pose.size() );
 	}
 	accept_claims( pre_accepted);
 	tr.Debug << *fold_tree_ << std::endl;
@@ -977,7 +977,7 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose & pose ) {
 
 	tr.Debug << "switched to fullatom... " << std::endl;
 
-	utility::vector1< bool > needToRepack( pose.total_residue(), true );
+	utility::vector1< bool > needToRepack( pose.size(), true );
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
 		(*top)->switch_to_fullatom( pose, needToRepack );

@@ -97,9 +97,9 @@ main( int argc, char * argv [] )
 			core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose_des ) );
 			task->initialize_from_command_line().or_include_current( true );
 			task->restrict_to_repacking();
-			utility::vector1< bool > packable(pose_des.n_residue(),0);
+			utility::vector1< bool > packable(pose_des.size(),0);
 			//Only repack positions which changed identity
-			for ( core::Size ii(1); ii <= pose_des.n_residue(); ++ii ) {
+			for ( core::Size ii(1); ii <= pose_des.size(); ++ii ) {
 				if ( pose_des.aa(ii) != pose_ref.aa(ii) ) { packable[ii] = 1; }
 			}
 			task->restrict_to_residues(packable);

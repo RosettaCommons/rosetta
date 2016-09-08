@@ -128,7 +128,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 	Size path_dist;
 	typedef utility::vector1< Size > const & vect;
 
-	for ( Size m = 1; m <= pose.total_residue(); m++ ) {
+	for ( Size m = 1; m <= pose.size(); m++ ) {
 
 		Residue const & res1 = pose.residue( m );
 
@@ -152,7 +152,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 
 			emap.zero();
 
-			for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			for ( Size n = 1; n <= pose.size(); n++ ) {
 
 				if ( m == n ) continue; // later could be smart about holding info in fa_intra terms of emap
 				Residue const & res2 = pose.residue( n );
@@ -320,9 +320,9 @@ rna_score_test()
 				core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 				if ( pdb_info ) {
 					//std::cout << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;
-					for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
+					for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( pdb_info->number( n ) );
 				} else {
-					for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
+					for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( n );
 				}
 				my_model->set_res_list( resnum );
 				my_model->set_other_pose_list( other_poses );

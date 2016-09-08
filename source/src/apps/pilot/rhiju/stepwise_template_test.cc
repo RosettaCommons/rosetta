@@ -300,7 +300,7 @@ parse_pathway_test(){
 	std::string const input_pdb_file = option[ in::file::s]()[1];
 	io::pdb::pose_from_file( start_pose, *rsd_set, input_pdb_file , core::import_pose::PDB_file);
 
-	Size const nres( start_pose.total_residue() );
+	Size const nres( start_pose.size() );
 
 	ScoreFunctionOP minimize_scorefxn = get_score_function();
 
@@ -345,10 +345,10 @@ parse_pathway_test(){
 
 
 			if ( j < nres && add_peptide_plane_ ) {
-				//				remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", pose.total_residue()  );
-				add_variant_type_to_pose_residue( pose, "C_METHYLAMIDATION", pose.total_residue() );
-				pose.set_psi( pose.total_residue(), start_pose.psi( j ) ) ;
-				pose.set_omega( pose.total_residue(), start_pose.omega( j ) ) ;
+				//				remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", pose.size()  );
+				add_variant_type_to_pose_residue( pose, "C_METHYLAMIDATION", pose.size() );
+				pose.set_psi( pose.size(), start_pose.psi( j ) ) ;
+				pose.set_omega( pose.size(), start_pose.omega( j ) ) ;
 			}
 
 			std::cout << i << " " << j << std::endl;
@@ -464,7 +464,7 @@ stepwise_template_test(){
 	if ( align_pose )  pdbslice( *align_pose,  working_res );
 
 	// make extended chain
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		if ( ! pose.residue(pos).is_protein() ) continue;
 		pose.set_phi( pos, -150 );
 		pose.set_psi( pos, 150);
@@ -531,7 +531,7 @@ stepwise_template_test(){
 		stream1->fill_pose( input_pose1, *rsd_set );
 		//		pose.dump_pdb( "start0.pdb" );
 
-		if ( input_pose1.total_residue() > 0 ) {
+		if ( input_pose1.size() > 0 ) {
 			if ( slice_res1_.size() > 0 ) pdbslice( input_pose1, slice_res1_ );
 			//input_pose1.dump_pdb( "input_pose1.pdb" );
 			std::cout << pose.annotated_sequence( true ) << std::endl;
@@ -545,7 +545,7 @@ stepwise_template_test(){
 		while ( stream2->has_another_pose() ) {
 
 			stream2->fill_pose( input_pose2, *rsd_set );
-			if ( input_pose2.total_residue() > 0 ) {
+			if ( input_pose2.size() > 0 ) {
 				if ( slice_res2_.size() > 0 ) 	 pdbslice( input_pose2, slice_res2_ );
 				copy_dofs( pose, input_pose2, res_map2 );
 			}

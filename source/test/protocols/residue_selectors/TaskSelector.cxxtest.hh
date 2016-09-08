@@ -76,7 +76,7 @@ public:
 		core::select::residue_selector::ResidueSubset subset = rs->apply( trpcage );
 		trpcage.dump_pdb( "trpcage.pdb" );
 		std::set< core::Size > const residues = boost::assign::list_of (1)(2)(3)(4)(5)(6)(19);
-		for ( core::Size resid=1; resid<=trpcage.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=trpcage.size(); ++resid ) {
 			bool const found = ( residues.find( resid ) != residues.end() );
 			TS_ASSERT( found == subset[resid] );
 			TR << resid << " " << subset[resid] << std::endl;
@@ -87,7 +87,7 @@ public:
 		rs->set_select_packable( false );
 		rs->set_select_fixed( true );
 		subset = rs->apply( trpcage );
-		for ( core::Size resid=1; resid<=trpcage.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=trpcage.size(); ++resid ) {
 			bool const not_found = ( residues.find( resid ) == residues.end() );
 			TS_ASSERT( not_found == subset[resid] );
 			TR << resid << " " << subset[resid] << std::endl;

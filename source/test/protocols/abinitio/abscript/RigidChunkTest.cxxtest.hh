@@ -62,7 +62,7 @@ public:
 
 		core::pose::make_pose_from_sequence(pose, str, "fa_standard");
 
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, -65 );
 			pose.set_psi( i, -41 );
 			pose.set_omega( i, 180 );
@@ -123,14 +123,14 @@ public:
 		core::pose::Pose ppose;
 		TS_ASSERT_THROWS_NOTHING( ppose = env->start( pose ) );
 
-		for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 			if ( i >= BEGIN_CHUNK && i <= END_CHUNK ) {
 				core::Size const seqpos = i - BEGIN_CHUNK + 1;
 				if ( seqpos != 1 ) {
 					ANGLE_DELTA( ppose.phi( i ), rigid_chunk->templ().phi( seqpos ), TOLERANCE );
 				}
-				if ( seqpos != rigid_chunk->templ().total_residue() &&
-						seqpos != ppose.total_residue() ) {
+				if ( seqpos != rigid_chunk->templ().size() &&
+						seqpos != ppose.size() ) {
 					ANGLE_DELTA( ppose.psi( i ), rigid_chunk->templ().psi( seqpos ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ) , rigid_chunk->templ().omega( seqpos ), TOLERANCE );
 				}
@@ -139,7 +139,7 @@ public:
 				// inconsistent contributions.
 			} else {
 				if ( i != 1 ) ANGLE_DELTA( ppose.phi( i ), pose.phi( i ), TOLERANCE );
-				if ( i != pose.total_residue() ) {
+				if ( i != pose.size() ) {
 					ANGLE_DELTA( ppose.psi( i ), pose.psi( i ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ), pose.omega( i ), TOLERANCE );
 				}
@@ -202,13 +202,13 @@ public:
 		core::pose::Pose ppose;
 		TS_ASSERT_THROWS_NOTHING( ppose = env->start( pose ) );
 
-		for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 			if ( i >= BEGIN_CHUNK_1 && i <= END_CHUNK_1 ) {
 				core::Size const seqpos = i - BEGIN_CHUNK_1 + 1;
 				if ( seqpos != 1 ) {
 					ANGLE_DELTA( ppose.phi( i ), rigid_chunk_1->templ().phi( seqpos ), TOLERANCE );
 				}
-				if ( seqpos != rigid_chunk_1->templ().total_residue() ) {
+				if ( seqpos != rigid_chunk_1->templ().size() ) {
 					ANGLE_DELTA( ppose.psi( i ), rigid_chunk_1->templ().psi( seqpos ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ) , rigid_chunk_1->templ().omega( seqpos ), TOLERANCE );
 				}
@@ -222,13 +222,13 @@ public:
 				if ( seqpos != 1 ) {
 					ANGLE_DELTA( ppose.phi( i ), rigid_chunk_1->templ().phi( seqpos ), TOLERANCE );
 				}
-				if ( seqpos != rigid_chunk_1->templ().total_residue() ) {
+				if ( seqpos != rigid_chunk_1->templ().size() ) {
 					ANGLE_DELTA( ppose.psi( i ), rigid_chunk_1->templ().psi( seqpos ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ) , rigid_chunk_1->templ().omega( seqpos ), TOLERANCE );
 				}
 			} else {
 				if ( i != 1 ) ANGLE_DELTA( ppose.phi( i ), pose.phi( i ), TOLERANCE );
-				if ( i != pose.total_residue() ) {
+				if ( i != pose.size() ) {
 					ANGLE_DELTA( ppose.psi( i ), pose.psi( i ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ), pose.omega( i ), TOLERANCE );
 				}
@@ -283,13 +283,13 @@ public:
 		simple_moves::SwitchResidueTypeSetMover( "centroid" ).apply( pose );
 		TS_ASSERT_THROWS_NOTHING( ppose = env->start( pose ) );
 
-		for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 			if ( i >= BEGIN_CHUNK && i <= END_CHUNK ) {
 				core::Size const seqpos = i - BEGIN_CHUNK + 1;
 				if ( seqpos != 1 ) {
 					ANGLE_DELTA( ppose.phi( i ), rigid_chunk->templ().phi( seqpos ), TOLERANCE );
 				}
-				if ( seqpos != rigid_chunk->templ().total_residue() ) {
+				if ( seqpos != rigid_chunk->templ().size() ) {
 					ANGLE_DELTA( ppose.psi( i ), rigid_chunk->templ().psi( seqpos ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ) , rigid_chunk->templ().omega( seqpos ), TOLERANCE );
 				}
@@ -298,7 +298,7 @@ public:
 				// inconsistent contributions.
 			} else {
 				if ( i != 1 ) ANGLE_DELTA( ppose.phi( i ), pose.phi( i ), TOLERANCE );
-				if ( i != pose.total_residue() ) {
+				if ( i != pose.size() ) {
 					ANGLE_DELTA( ppose.psi( i ), pose.psi( i ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ), pose.omega( i ), TOLERANCE );
 				}
@@ -351,14 +351,14 @@ public:
 
 		TS_ASSERT_EQUALS( ppose.fold_tree().num_cutpoint(), 1 );
 
-		for ( core::Size i = 1; i <= ppose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= ppose.size(); ++i ) {
 			if ( ( i >= BEGIN_CHUNK_1 && i <= END_CHUNK_1 ) ||
 					( i >= BEGIN_CHUNK_2 && i <= END_CHUNK_2 ) ) {
 				core::Size const seqpos = rigid_chunk->sim_origin().at( i );
 				if ( seqpos != 1 && !ppose.fold_tree().is_cutpoint( i - 1 ) ) {
 					ANGLE_DELTA( ppose.phi( i ), rigid_chunk->templ().phi( seqpos ), TOLERANCE );
 				}
-				if ( seqpos != rigid_chunk->templ().total_residue() ) {
+				if ( seqpos != rigid_chunk->templ().size() ) {
 					ANGLE_DELTA( ppose.psi( i ), rigid_chunk->templ().psi( seqpos ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ) , rigid_chunk->templ().omega( seqpos ), TOLERANCE );
 				}
@@ -369,7 +369,7 @@ public:
 				// inconsistent contributions.
 			} else {
 				if ( i != 1 ) ANGLE_DELTA( ppose.phi( i ), pose.phi( i ), TOLERANCE );
-				if ( i != pose.total_residue() ) {
+				if ( i != pose.size() ) {
 					ANGLE_DELTA( ppose.psi( i ), pose.psi( i ), TOLERANCE );
 					ANGLE_DELTA( ppose.omega( i ), pose.omega( i ), TOLERANCE );
 				}

@@ -46,13 +46,13 @@ void all_pair_energies(
 	core::scoring::ScoreFunctionOP scorefxn,
 	utility::vector1< utility::vector1< core::Real > > & pairwise_energies
 ) {
-	runtime_assert( pairwise_energies.size() == pose.total_residue() );
-	runtime_assert( pairwise_energies.front().size() == pose.total_residue() );
+	runtime_assert( pairwise_energies.size() == pose.size() );
+	runtime_assert( pairwise_energies.front().size() == pose.size() );
 
 	scorefxn->score(pose);
-	utility::vector1< bool > exclude_mask( pose.total_residue(), true );
-	for ( unsigned ii = 1; ii <= pose.total_residue(); ++ii ) {
-		for ( unsigned jj = ii+1; jj <= pose.total_residue(); ++jj ) {
+	utility::vector1< bool > exclude_mask( pose.size(), true );
+	for ( unsigned ii = 1; ii <= pose.size(); ++ii ) {
+		for ( unsigned jj = ii+1; jj <= pose.size(); ++jj ) {
 			if ( scorefxn->are_they_neighbors( pose, ii, jj ) ) {
 				utility::vector1< bool > mask = exclude_mask;
 				//std::cout << "calculating pairwise energy for " << ii << "," << jj << std::endl;
@@ -114,13 +114,13 @@ main( int argc, char* argv [] ) {
 
 			if ( option[ james::debug ]() ) {
 				using utility::vector1;
-				vector1< vector1< core::Real > > pair_energies( current_pose.total_residue(),
-					vector1< Real > (current_pose.total_residue(), 0.0
+				vector1< vector1< core::Real > > pair_energies( current_pose.size(),
+					vector1< Real > (current_pose.size(), 0.0
 					) );
 				all_pair_energies(current_pose,scorefxn,pair_energies);
 
-				for ( unsigned ii = 1; ii <= current_pose.total_residue(); ++ii ) {
-					for ( unsigned jj = ii+1; jj <= current_pose.total_residue(); ++jj ) {
+				for ( unsigned ii = 1; ii <= current_pose.size(); ++ii ) {
+					for ( unsigned jj = ii+1; jj <= current_pose.size(); ++jj ) {
 						if ( pair_energies[ii][jj] > 0 ) {
 							SilentStructOP ss( new ScoreFileSilentStruct );
 							ss->decoy_tag( "residue_" + string_of(ii) + "_" + string_of(jj) );
@@ -131,7 +131,7 @@ main( int argc, char* argv [] ) {
 					}
 				}
 			} else {
-				for ( Size jj = 1; jj <= current_pose.total_residue(); ++jj ) {
+				for ( Size jj = 1; jj <= current_pose.size(); ++jj ) {
 					EnergyMap rsd_energies(
 						weights * current_pose.energies().residue_total_energies(jj)
 					);
@@ -151,7 +151,7 @@ main( int argc, char* argv [] ) {
 					} // for n_score_types
 					ss->add_energy( "score", total );
 					sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
-				} // for current_pose.total_residue()
+				} // for current_pose.size()
 			}
 		} // while ( input.has_another_pose() )
 

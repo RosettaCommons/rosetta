@@ -175,11 +175,11 @@ public:
 		//read poses
 		core::pose::Pose E2;
 		core::import_pose::pose_from_file( E2, basic::options::option[E2pdb].value() , core::import_pose::PDB_file);
-		core::Size const E2length = E2.total_residue();
+		core::Size const E2length = E2.size();
 
 		core::pose::Pose UBQ;
 		core::import_pose::pose_from_file( UBQ, basic::options::option[UBQpdb].value() , core::import_pose::PDB_file);
-		core::Size const UBQlength = UBQ.total_residue();
+		core::Size const UBQlength = UBQ.size();
 		core::pose::Pose UBQ_second(UBQ);
 
 		//determine cysteine target
@@ -237,7 +237,7 @@ public:
 		//not that this does anything
 		complex.conformation().insert_ideal_geometry_at_residue_connection( E2_cys, cyx_connid );
 
-		core::Size const ubq_pos( complex.total_residue() );
+		core::Size const ubq_pos( complex.size() );
 		core::id::AtomID const atom0( cyx_rsd_type.atom_index( "C" ), E2_cys );
 		core::id::AtomID const atom1( cyx_rsd_type.atom_index( "CA" ), E2_cys );
 		core::id::AtomID const atom2( cyx_rsd_type.atom_index( "CB" ), E2_cys );
@@ -259,7 +259,7 @@ public:
 			complex.prepend_polymer_residue_before_seqpos( UBQ.residue(i), E2length+1, false );
 		}
 
-		core::Size const complexlength( complex.total_residue());
+		core::Size const complexlength( complex.size());
 		complex.conformation().insert_ideal_geometry_at_polymer_bond( complexlength-1 );
 		complex.conformation().insert_chain_ending(E2length);
 		//complex.dump_pdb("initcomplex.pdb");
@@ -267,7 +267,7 @@ public:
 
 		//now add in the second ubiquitin - link to thioester C=O from lys48
 		complex.conformation().append_residue_by_jump(UBQ_second.residue(48), complexlength, "C", "NZ", true);
-		for( core::Size i(49); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second.residue(i), complex.total_residue(), false);
+		for( core::Size i(49); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second.residue(i), complex.size(), false);
 		for( core::Size i(47); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second.residue(i), complexlength+1, false);
 
 		//check it!
@@ -481,7 +481,7 @@ public:
 		/////////////////////////////sidechainmover for second ubiquitin/////////////////////////////
 		core::Size Kres(pose.fold_tree().jump_edge(1).stop());
 		core::pack::task::PackerTaskOP task(core::pack::task::TaskFactory::create_packer_task((pose)));
-		utility::vector1_bool packable(pose.total_residue(), false); //false = nobody is packable
+		utility::vector1_bool packable(pose.size(), false); //false = nobody is packable
 		packable[Kres] = true;
 		task->restrict_to_residues(packable); //now only one position is mobile
 		task->restrict_to_repacking();
@@ -598,10 +598,10 @@ public:
 		//hack the pose up for analysis purposes
 		core::Size const cbreak(copy.conformation().chain_end(1));
 		using core::kinematics::Edge;
-		core::kinematics::FoldTree main_tree(copy.total_residue());
+		core::kinematics::FoldTree main_tree(copy.size());
 		main_tree.clear();
 		main_tree.add_edge(Edge(1, cbreak, Edge::PEPTIDE));
-		main_tree.add_edge(Edge(cbreak+1, copy.total_residue(), Edge::PEPTIDE));
+		main_tree.add_edge(Edge(cbreak+1, copy.size(), Edge::PEPTIDE));
 		main_tree.add_edge(Edge(cbreak, cbreak+1, 1));
 		main_tree.reorder(1);
 		//TR << main_tree << std::endl;

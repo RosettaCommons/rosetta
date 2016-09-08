@@ -108,7 +108,7 @@ void IRCollection::find_closest_backbone(
 
 			this_nir++;
 
-			for ( core::Size test_pos = 1, end_pos = pose.total_residue() ; test_pos <= end_pos ; ++test_pos ) {
+			for ( core::Size test_pos = 1, end_pos = pose.size() ; test_pos <= end_pos ; ++test_pos ) {
 
 				if ( !flexible_regions->is_loop_residue( test_pos ) ) {
 					continue;

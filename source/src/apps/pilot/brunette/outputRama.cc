@@ -63,7 +63,7 @@ vector1< Real> calc_rama(Pose & pose){
     scorefxn->set_weight( core::scoring::rama, 1.0 );
     (*scorefxn)( pose );
     vector1<Real> rama_v;
-    for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+    for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 	    Real rama( pose.energies().residue_total_energies( ii )[ core::scoring::rama ] );
         rama_v.push_back(rama);
     }
@@ -76,7 +76,7 @@ vector1< Real> calc_rama2b(Pose & pose){
     scorefxn->set_weight( core::scoring::rama2b, 1.0 );
     (*scorefxn)( pose );
     vector1<Real> rama2b_v;
-    for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+    for ( Size ii = 1; ii <= pose.size(); ++ii ) {
         Real rama2b( pose.energies().residue_total_energies( ii )[ core::scoring::rama2b ] );
         rama2b_v.push_back(rama2b);
     }

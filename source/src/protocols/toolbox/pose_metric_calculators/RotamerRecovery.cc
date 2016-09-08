@@ -94,8 +94,8 @@ utility::vector1< char > RotamerRecovery::get_ss( core::pose::Pose & pose ) {
 	core::scoring::dssp::Dssp dssp(pose);
 	dssp.insert_ss_into_pose(pose);
 
-	utility::vector1< char > ss( pose.total_residue(), 'L' );
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	utility::vector1< char > ss( pose.size(), 'L' );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		ss[ii] = pose.secstruct(ii);
 	}
 
@@ -118,7 +118,7 @@ utility::vector1< char > RotamerRecovery::bb_bins_from_pose(
 	core::pose::Pose const & pose
 ) {
 	utility::vector1< char > bb_bins;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		bb_bins.push_back(
 			torsion2big_bin(
 			pose.residue(ii).mainchain_torsion(1),
@@ -137,7 +137,7 @@ RotamerRecovery::rots_from_pose(
 
 
 	utility::vector1< core::pack::dunbrack::RotVector > rots;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		core::pack::dunbrack::RotVector rot;
 		core::pack::dunbrack::rotamer_from_chi( pose.residue(ii), rot );
 		rots.push_back( rot );
@@ -152,7 +152,7 @@ RotamerRecovery::chis_from_pose(
 
 
 	utility::vector1<utility:: vector1< core::Real > > chis;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		utility::vector1< core::Real > chi_vec;
 		for ( core::Size jj = 1; jj <= pose.residue(ii).nchi(); ++jj ) {
 			chi_vec.push_back( pose.chi(jj,ii) );
@@ -175,14 +175,14 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 	utility::vector1< char > nat_bb_bins( bb_bins_from_pose(native) );
 	utility::vector1< core::pack::dunbrack::RotVector > nat_rots( rots_from_pose(native) );
 
-	utility::vector1< core::Size > bb_bins_correct( native.total_residue(), 0 );
+	utility::vector1< core::Size > bb_bins_correct( native.size(), 0 );
 	utility::vector1< utility::vector1< core::Size > > rots_correct(
-		native.total_residue(), utility::vector1< core::Size >( native.total_residue(), 0 )
+		native.size(), utility::vector1< core::Size >( native.size(), 0 )
 	);
 
 
 	utility::vector1< utility::vector1< core::Size > > chis_correct(
-		native.total_residue(), utility::vector1< core::Size >( native.total_residue(), 0 )
+		native.size(), utility::vector1< core::Size >( native.size(), 0 )
 	);
 
 
@@ -197,7 +197,7 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 
 		runtime_assert( pose_bb_bins.size() == nat_bb_bins.size() );
 		runtime_assert( pose_rots.size() == pose_rots.size() );
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose_bb_bins[ii] == nat_bb_bins[ii] ) {
 				bb_bins_correct[ii]++;
 			}
@@ -233,7 +233,7 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 		<< ObjexxFCL::format::A( width, "pct_rot4" )
 		<< std::endl;
 
-	for ( core::Size ii = 1; ii <= native.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= native.size(); ++ii ) {
 		core::Real pct_bb(0.0);
 		if ( bb_bins_correct[ii] > 0 ) {
 			pct_bb = (
@@ -318,14 +318,14 @@ native, option[ in::file::native ]()
 vector1< char > nat_bb_bins( bb_bins_from_pose(native) );
 vector1< RotVector > nat_rots( rots_from_pose(native) );
 
-vector1< Size > bb_bins_correct( native.total_residue(), 0 );
+vector1< Size > bb_bins_correct( native.size(), 0 );
 vector1< vector1< Size > > rots_correct(
-native.total_residue(), vector1< Size >( native.total_residue(), 0 )
+native.size(), vector1< Size >( native.size(), 0 )
 );
 
 
 vector1< vector1< Size > > chis_correct(
-native.total_residue(), vector1< Size >( native.total_residue(), 0 )
+native.size(), vector1< Size >( native.size(), 0 )
 );
 
 
@@ -340,7 +340,7 @@ vector1< vector1< Real > > pose_chis( chis_from_pose(pose) );
 
 runtime_assert( pose_bb_bins.size() == nat_bb_bins.size() );
 runtime_assert( pose_rots.size() == pose_rots.size() );
-for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 if ( pose_bb_bins[ii] == nat_bb_bins[ii] ) {
 bb_bins_correct[ii]++;
 }
@@ -379,7 +379,7 @@ output
 << A( width, "pct_rot4" )
 << std::endl;
 
-for ( Size ii = 1; ii <= native.total_residue(); ++ii ) {
+for ( Size ii = 1; ii <= native.size(); ++ii ) {
 Real pct_bb(0.0);
 if ( bb_bins_correct[ii] > 0 ) {
 pct_bb = (

@@ -72,9 +72,9 @@ int main (int argc, char *argv[]) {
 
   for(Size ip = 1; ip <= poses.size(); ++ip) {
     Pose const & pose(poses[ip]);
-    for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+    for(Size ir = 1; ir <= pose.size(); ++ir) {
 			std::cout << "GLUCHI " << pose.chi(1,ir) << " " << pose.chi(2,ir) << " " << pose.chi(3,ir) << std::endl;
-      // for(Size jr = ir+1; jr <= pose.n_residue(); ++jr) {
+      // for(Size jr = ir+1; jr <= pose.size(); ++jr) {
 			// 	Real dgg2 = pose.residue(ir).xyz("SG").distance_squared(pose.residue(jr).xyz("SG"));
 			// 	if( dgg2 > 9.0) continue;
 			// 	Vec ca1 = pose.residue(ir).xyz("CA");

@@ -173,7 +173,7 @@ bool ClosureSolution::check_overlap(
 		Vector const & vector_i = residue_i.xyz(residue_i.nbr_atom());
 
 		// Iterate over all other residues in the protein.
-		for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+		for ( Size j = 1; j <= pose.size(); j++ ) {
 
 			// Don't do adjacent residues.
 			if ( (j == i) || (j == i+1) || (j == i-1) ) continue;

@@ -222,7 +222,7 @@ RotamerBoltzmannWeight::first_pass_ala_scan( core::pose::Pose const & pose ) con
 		TR<<"\nOriginal complex ddG "<<orig_ddG<<std::endl;
 	}
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
-	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 		if ( packer_task->being_packed( resi ) && pose.residue( resi ).is_protein() ) {
 			if ( skip_ala_scan() ) {
 				TR<<"Adding residue "<<resi<<" to hotspot list\n";
@@ -352,7 +352,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	}
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
 	restask.restrict_to_repacking();
-	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.total_residue() ) );
+	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.size() ) );
 	ptask->set_bump_check( true );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 	// TR << "num rotamers for resi " << resi << " is: " << rotset->num_rotamers() << std::endl;
@@ -378,7 +378,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	} else { // minimize rb if bound
 		mm->set_jump( rb_jump(), true ); // Need to modify for multicomponent symmetries (JBB)
 	}
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( task->being_designed( i ) ) {
 			task->nonconst_residue_task( i ).restrict_to_repacking(); // mark all des around to repacking only
 			mm->set_chi( i, true );

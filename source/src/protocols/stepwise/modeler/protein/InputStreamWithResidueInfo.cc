@@ -346,7 +346,7 @@ InputStreamWithResidueInfo::cleanup_pose( pose::Pose & import_pose ) const {
 	remove_variants.push_back( core::chemical::CUTPOINT_UPPER );
 	// Also remove VIRTUAL_RESIDUE_VARIANT variant?
 
-	for ( Size n = 1; n <= import_pose.total_residue(); n++  ) {
+	for ( Size n = 1; n <= import_pose.size(); n++  ) {
 		for ( Size i = 1; i <= remove_variants.size(); i++ ) {
 			if ( import_pose.residue_type( n ).has_variant_type( remove_variants[ i ] ) ) {
 				pose::remove_variant_type_from_pose_residue( import_pose, remove_variants[ i ] , n );
@@ -364,16 +364,16 @@ InputStreamWithResidueInfo::check_sequence( pose::Pose const & pose, pose::Pose 
 
 	bool match( true );
 	for ( Size n = 1; n <= slice_res_.size(); n++ ) {
-		if ( ( slice_res_[ n ] > import_pose.total_residue() ) ||
-				( full_to_sub_[ input_res_[ n ] ] > pose.total_residue() ) ||
+		if ( ( slice_res_[ n ] > import_pose.size() ) ||
+				( full_to_sub_[ input_res_[ n ] ] > pose.size() ) ||
 				(  import_pose.sequence()[ slice_res_[n] - 1 ]  !=
 				pose.sequence()[ full_to_sub_[ input_res_[n] ] - 1 ] ) ) {
 			std::cout << " N         " << n << std::endl;
 			std::cout << " SLICE_RES " << slice_res_[ n ] << std::endl;
 			std::cout << " INPUT_RES " << input_res_[ n ] << std::endl;
 			std::cout << " FULLTOSUB " << full_to_sub_[ input_res_[ n ] ] << std::endl;
-			std::cout << " IMPORT  TOTRES "<< import_pose.total_residue()  << std::endl;
-			std::cout << " DESIRED TOTRES "<< pose.total_residue()  << std::endl;
+			std::cout << " IMPORT  TOTRES "<< import_pose.size()  << std::endl;
+			std::cout << " DESIRED TOTRES "<< pose.size()  << std::endl;
 			match = false;
 			break;
 		}

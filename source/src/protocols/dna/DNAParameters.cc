@@ -219,7 +219,7 @@ DNAParameters::calculate( core::pose::Pose const & pose )
 	scoring::dna::find_basepairs( pose, partners_ );
 
 	// Fill in the single base torsions
-	for ( core::Size resid( 1 ), endid( pose.total_residue() ) ; resid <= endid ; ++resid ) {
+	for ( core::Size resid( 1 ), endid( pose.size() ) ; resid <= endid ; ++resid ) {
 		if ( pose.residue( resid ).is_DNA() ) {
 			dna_base_positions_.push_back( resid );
 			bases_[ resid ] =  DNABase( pose.residue( resid ) ) ;
@@ -227,7 +227,7 @@ DNAParameters::calculate( core::pose::Pose const & pose )
 	}
 
 	// Now get the base pairs
-	for ( core::Size resid( 1 ), endid( pose.total_residue() ) ; resid <= endid ; ++resid ) {
+	for ( core::Size resid( 1 ), endid( pose.size() ) ; resid <= endid ; ++resid ) {
 		core::Size partner_check( partners_[ resid ] );
 		if ( partner_check > resid ) {
 			basepairs_[ resid ] =  DNABasepair( pose.residue( resid ), pose.residue( partner_check ) ) ;
@@ -238,7 +238,7 @@ DNAParameters::calculate( core::pose::Pose const & pose )
 
 	// And the base steps - note the range of the loop is foreshortened, since a base step
 	// can't start on the last residue
-	for ( core::Size resid( 1 ), endid( pose.total_residue() - 1 ) ; resid <= endid ; ++resid ) {
+	for ( core::Size resid( 1 ), endid( pose.size() - 1 ) ; resid <= endid ; ++resid ) {
 
 		core::Size partner_check( partners_[ resid ] );
 		core::Size next_residue( resid + 1 );

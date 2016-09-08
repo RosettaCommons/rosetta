@@ -262,7 +262,7 @@ Antibody::populate_all_cdrs() {
 
 void
 Antibody::update_sequence() {
-	for ( core::Size i = 1; i <= Fv.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= Fv.size(); ++i ) {
 		Fv_sequence_.push_back( Fv.residue(i).name1() );
 	}
 }
@@ -436,7 +436,7 @@ Antibody::all_cdr_fold_tree() {
 		f.add_edge( it->start()-1, it->cut(),  Edge::PEPTIDE );
 		f.add_edge( it->cut()+1, it->stop()+1, Edge::PEPTIDE );
 		if ( it == (it_end-1) ) {
-			f.add_edge( it->stop()+1, Fv.total_residue(), Edge::PEPTIDE);
+			f.add_edge( it->stop()+1, Fv.size(), Edge::PEPTIDE);
 		} else {
 			f.add_edge( it->stop()+1, it_next->start()-1, Edge::PEPTIDE );
 		}

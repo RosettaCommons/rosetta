@@ -68,7 +68,7 @@ ResidueSubset
 PhiSelector::apply(
 	core::pose::Pose const & pose
 ) const {
-	core::Size const nres( pose.n_residue() ); //The number of residues in the pose.
+	core::Size const nres( pose.size() ); //The number of residues in the pose.
 
 	ResidueSubset selected( nres, false ); //Output, initialized to a vector of "false".
 

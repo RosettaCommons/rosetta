@@ -277,7 +277,7 @@ add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const
 	ConstraintCOPs cst;
 
 	core::Size const fixed_res( find_nearest_residue_to_coord( pose, source.xyz( nearest_atom_for_constraint( source ) ) ,host_chain == 2 ? 1 : 2 ));
-	// core::Size const fixed_res( host_chain == 1 ? pose.total_residue() : 1 );
+	// core::Size const fixed_res( host_chain == 1 ? pose.size() : 1 );
 	TR<<"Anchor residue for the coordinate constraint is "<<fixed_res<<std::endl;
 	std::string atom_id( "CB" );
 	if ( pose.residue( fixed_res ).aa() == core::chemical::aa_gly ) {
@@ -377,7 +377,7 @@ parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::
 		core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain ) );
 		core::Size const chain_end( ala_pose->conformation().chain_end( host_chain ) );
 
-		for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			if ( !pose.residue(i).is_protein() ) continue;
 			if ( i >= chain_begin && i <=chain_end ) {
 				core::Size const restype( ala_pose->residue(i).aa() );

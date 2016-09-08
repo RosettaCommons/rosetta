@@ -122,7 +122,7 @@ FlexbbRotamerSets::set_frames(
 	// or in a different one? for now, the following segment of code is a duplication of
 	// the code in core::pack::rotamer_set::RotamerSets::set_task
 	nmoltenres_ = task_->num_to_be_packed();
-	total_residue_ = pose.total_residue();
+	total_residue_ = pose.size();
 
 	resid_2_moltenres_.resize( total_residue_ );
 	moltenres_2_resid_.resize( nmoltenres_ );
@@ -308,7 +308,7 @@ FlexbbRotamerSets::dump_pdbs( core::pose::Pose const & pose, std::string const &
 	Size model(0), atom_counter(0);
 
 	base_out << "MODEL" << I(9,model) << '\n';
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( task_->pack_residue(i) ) continue;
 		core::io::pdb::dump_pdb_residue( pose.residue(i), atom_counter, base_out );
 	}

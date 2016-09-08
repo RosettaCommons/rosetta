@@ -88,7 +88,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'H' );
 		}
 
@@ -102,7 +102,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 10.0 * i );
 			pose.set_psi( i, 5.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -123,7 +123,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -134,7 +134,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 5.0 * i );
 			pose.set_psi( i, 10.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -164,7 +164,7 @@ public: // tests
 		}
 
 		Pose right_cut;
-		for ( Size i = 10, ie = cut.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 10, ie = cut.size(); i <= ie; ++i ) {
 			right_cut.append_residue_by_bond( cut.residue( i ) );
 		}
 

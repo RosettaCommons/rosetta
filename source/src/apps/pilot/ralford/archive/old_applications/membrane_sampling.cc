@@ -98,7 +98,7 @@ public:
 		// Make 5 random phi/psi moves
 	/*	for ( Size i = 1; i <= 20; ++i ) {
 
-			core::Size randres = numeric::random::random_range( 1, pose.total_residue() );
+			core::Size randres = numeric::random::random_range( 1, pose.size() );
 
    		 	core::Real phi = pose.phi( randres ) + numeric::random::gaussian() * 4;
     	 	core::Real psi = pose.psi( randres ) + numeric::random::gaussian() * 4;

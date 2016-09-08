@@ -208,7 +208,7 @@ OopDesignMover::apply(
 	**********************************************************/
 
 	// get oop start and end positions
-	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
+	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.size() );
 	TR << "oop_start: " << pep_start << " oop_end: " << pep_end << std::endl;
 
 	// create movemap for oop

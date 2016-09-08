@@ -68,8 +68,8 @@ RRT_node::~RRT_node()
                                                     //(i.e. "=" is invoked only once, inliding internally
                                                     // by get_pose()
       pose_ns::Pose* pose2 = node2->produce_pose();
-      n_res = pose1->total_residue();
-      assert(n_res == pose2->total_residue());
+      n_res = pose1->size();
+      assert(n_res == pose2->size());
       const FArray3D_float & Epos1( pose1->Eposition() ); // set of backbone coordinates
       const FArray3D_float & Epos2( pose2->Eposition() );
       // compute sum-square of all coordinates of all residues
@@ -114,7 +114,7 @@ double Dofs_vector_L2_norm_functor::operator()(RRT_node const* node1, RRT_node c
 Node_rmsd_info::Node_rmsd_info(pose_ns::Pose const& input_pose)
 {
   int const CA = 2;//atom code for C-Alpha // TODO: use libRosetta keys
-  int const n_res = input_pose.total_residue();
+  int const n_res = input_pose.size();
   FArray3D_float const& Epos( input_pose.Eposition() ); // set of backbone coordinates
   for(int res_id=1; res_id <= n_res; res_id++)
     {

@@ -125,7 +125,7 @@ fill_hbond_set(
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
 	// loop over all nbr-pairs
-	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+	for ( Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		int const nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self_static();
 		conformation::Residue const & rsd1( pose.residue( res1 ) );
 
@@ -211,7 +211,7 @@ fill_intra_res_hbond_set(
 	HBondDatabase const & database( * HBondDatabase::get_database(hbond_set.hbond_options().params_database_tag()));
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
-	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+	for ( Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		conformation::Residue const & rsd1( pose.residue( res1 ) );
 		if ( !calculate_intra_res_hbonds( rsd1, hbond_set.hbond_options() ) ) continue;
 		Size const rsd_nb = tenA_neighbor_graph.get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
@@ -240,7 +240,7 @@ get_ssdep_weight(
 	Real ss_len_scalefactor = 1.0;
 
 	while ( hstart >= 1 && pose.secstruct(hstart) == 'H' ) hstart--;
-	while ( hend <= pose.total_residue() && pose.secstruct(hend) == 'H' ) hend++;
+	while ( hend <= pose.size() && pose.secstruct(hend) == 'H' ) hend++;
 
 	Size hlen = hend-hstart-1;
 	if ( pose.secstruct(hstart) == 'H' ) hlen++;
@@ -280,7 +280,7 @@ fill_hbond_set_by_AHdist_threshold(
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
 	// loop over all nbr-pairs
-	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+	for ( Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		core::conformation::Residue const & rsd1( pose.residue( res1 ) );
 		int const nb1 = tenA_neighbor_graph.get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
 

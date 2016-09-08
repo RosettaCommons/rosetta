@@ -65,12 +65,12 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		core::scoring::dssp::Dssp dssp( trpcage );
 		std::string const secstruct = dssp.get_dssp_secstruct();
-		for ( core::Size i=1, endi=trpcage.total_residue(); i<=endi; ++i ) {
+		for ( core::Size i=1, endi=trpcage.size(); i<=endi; ++i ) {
 			trpcage.set_secstruct( i, secstruct[ i - 1 ] );
 		}
 
 		ResidueSubset subset = rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		// test
 		std::set < core::Size > acceptTrue;
@@ -91,7 +91,7 @@ public:
 		// now include terminal "loop"
 		rs->set_include_terminal_loops( true );
 		subset = rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		acceptTrue.insert( 1 );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
@@ -118,12 +118,12 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		core::scoring::dssp::Dssp dssp( trpcage );
 		std::string const secstruct = dssp.get_dssp_secstruct();
-		for ( core::Size i=1, endi=trpcage.total_residue(); i<=endi; ++i ) {
+		for ( core::Size i=1, endi=trpcage.size(); i<=endi; ++i ) {
 			trpcage.set_secstruct( i, secstruct[ i - 1 ] );
 		}
 
 		ResidueSubset subset = rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		// test
 		std::set < core::Size > acceptTrue;

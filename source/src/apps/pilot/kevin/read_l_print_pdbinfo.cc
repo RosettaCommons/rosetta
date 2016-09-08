@@ -142,7 +142,7 @@ public:
 		conformation::find_neighbors<core::conformation::PointGraphVertexData,
 			core::conformation::PointGraphEdgeData>( pg, neighbor_cutoff );
 
-		Size nres = pose.total_residue();
+		Size nres = pose.size();
 
 		utility::vector1< VarSolDRotamerDotsOP > rotamer_dots(nres);
 		for (Size resNum = 1; resNum <= nres; ++resNum ) {

@@ -136,9 +136,9 @@ public:
         interface.distance( 8 );
         interface.calculate( pose );
 
-        ObjexxFCL::FArray1D_bool is_interface ( (pose).total_residue(), false );
+        ObjexxFCL::FArray1D_bool is_interface ( (pose).size(), false );
         std::string strseq2=(*global_align.sequence(2)).sequence();
-        for ( Size i=1; i<= (pose).total_residue(); ++i ) {
+        for ( Size i=1; i<= (pose).size(); ++i ) {
                 if (interface.is_interface(i))  {
                         is_interface(i) = true;
                 }
@@ -146,18 +146,18 @@ public:
 
         //print out interface
         std::cout << "interface" << std::endl;  
-        for ( Size i=1; i<= (pose).total_residue(); ++i ) {
+        for ( Size i=1; i<= (pose).size(); ++i ) {
                 std::cout << is_interface(i);
         }        
 	std::cout<< std::endl;
 
 
         //identify secondary structures
-        ObjexxFCL::FArray1D_char ssPose ( (pose).total_residue() );
+        ObjexxFCL::FArray1D_char ssPose ( (pose).size() );
         core::scoring::dssp::Dssp dssp_obj( pose );
         dssp_obj.dssp_reduced(ssPose);
         std::cout << "ss structure" << std::endl;
-        for ( Size i=1; i<= (pose).total_residue(); ++i ) {                
+        for ( Size i=1; i<= (pose).size(); ++i ) {                
 		std::cout << ssPose(i);
         }
         std::cout<< std::endl;

@@ -102,31 +102,31 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	assert(fixed_res < ligand_res);
 	TR << "fixed_res: " << fixed_res << "  ligand_res: " << ligand_res << std::endl;
 	using core::kinematics::Edge;
-	core::kinematics::FoldTree main_tree(pose.total_residue());
+	core::kinematics::FoldTree main_tree(pose.size());
 	main_tree.add_edge(Edge(1, fixed_res, Edge::PEPTIDE)); //peptide edge for fixed, lower partner
 	main_tree.add_edge(Edge(fixed_res, metal_res-1, Edge::PEPTIDE)); //peptide edge for fixed, lower partner
 	main_tree.add_edge(Edge(metal_res+1, ligand_res, Edge::PEPTIDE)); //peptide edge for upper partner
-	main_tree.add_edge(Edge(ligand_res, pose.total_residue(), Edge::PEPTIDE)); //peptide edge for upper partner
+	main_tree.add_edge(Edge(ligand_res, pose.size(), Edge::PEPTIDE)); //peptide edge for upper partner
 	main_tree.add_edge(fixed_to_metal_);
 	main_tree.add_edge(metal_to_mobile_);
-	main_tree.delete_unordered_edge(1, pose.total_residue(), Edge::PEPTIDE);
+	main_tree.delete_unordered_edge(1, pose.size(), Edge::PEPTIDE);
 	main_tree.reorder(1);
 	TR << main_tree << std::endl;
 	pose.fold_tree(main_tree);
 
 	//////////////////////////make fold_tree for centroid pose//////////////////////////////////////////
-	core::kinematics::FoldTree centroid_tree(pose.total_residue());
+	core::kinematics::FoldTree centroid_tree(pose.size());
 	centroid_tree.add_edge(Edge(1, metal_res-1, Edge::PEPTIDE)); //peptide edge for fixed, lower partner
-	centroid_tree.add_edge(Edge(metal_res+1, pose.total_residue(), Edge::PEPTIDE));//edge for upper
+	centroid_tree.add_edge(Edge(metal_res+1, pose.size(), Edge::PEPTIDE));//edge for upper
 	centroid_tree.add_edge(Edge(//interchain jump
 		metal_res+1, //from Cterm of chain 1
 		metal_res-1, //to Nterm of chain 3
 		1));           //jump number 1
 	centroid_tree.add_edge(Edge(//interchain jump
 		metal_res,
-		pose.total_residue(), //to Cterm of chain 3
+		pose.size(), //to Cterm of chain 3
 		2));           //jump number 2
-	centroid_tree.delete_unordered_edge(1, pose.total_residue(), Edge::PEPTIDE);
+	centroid_tree.delete_unordered_edge(1, pose.size(), Edge::PEPTIDE);
 	centroid_tree.reorder(1);
 	TR << centroid_tree << std::endl;
 
@@ -139,7 +139,7 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	//the metal ligand is histidine, because of the two tautomer isoforms (hydrogen on ND1 vs NE2); the PackerTask allows
 	//swapping between those residue types even when only repacking, not designing.
 	core::pack::task::PackerTaskOP task(core::pack::task::TaskFactory::create_packer_task((pose)));
-	utility::vector1_bool packable(pose.total_residue(), false); //false = nobody is packable
+	utility::vector1_bool packable(pose.size(), false); //false = nobody is packable
 	packable[ligand_res] = true;
 	task->restrict_to_residues(packable); //now only one position is mobile
 	task->restrict_to_repacking();

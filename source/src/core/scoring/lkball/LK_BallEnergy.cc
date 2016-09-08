@@ -313,7 +313,7 @@ compute_and_store_pose_waters(
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 	// using namespace core::pack::rotamer_set; // WaterPackingInfo
 	LKB_PoseInfoOP info( new LKB_PoseInfo() );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose.residue(i) ) ) );
 	}
 	pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
@@ -425,8 +425,8 @@ LK_BallEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > co
 	using namespace trie;
 	using namespace lkbtrie;
 	TrieCollectionOP tries( new TrieCollection );
-	tries->total_residue( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	tries->total_residue( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		// Do not compute energy for virtual residues.
 		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 
@@ -1620,12 +1620,12 @@ LK_BallEnergy::finalize_total_energy(
 
 	/// Trick to avoid calls to Conformation::residue()
 	utility::vector1< conformation::Residue const * > resvect;
-	resvect.reserve( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	resvect.reserve( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		resvect.push_back( & pose.residue( ii ) );
 	}
 
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & rsd1( *resvect[i] );
 		LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
 		utility::vector1< Vectors > const & rsd1_waters( rsd1_info.waters() );

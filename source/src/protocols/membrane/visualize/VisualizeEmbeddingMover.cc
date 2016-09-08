@@ -207,10 +207,10 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 		// Append Residues to the pose
 		for ( Size i = 1; i <= embedding_residues.size(); ++i ) {
 			if ( is_first ) {
-				pose.append_residue_by_jump( *embedding_residues[i], pose.total_residue(), "", "", true );
+				pose.append_residue_by_jump( *embedding_residues[i], pose.size(), "", "", true );
 				is_first = false;
 			} else {
-				pose.append_residue_by_jump( *embedding_residues[i], pose.total_residue(), "", "", false );
+				pose.append_residue_by_jump( *embedding_residues[i], pose.size(), "", "", false );
 			}
 		}
 	}

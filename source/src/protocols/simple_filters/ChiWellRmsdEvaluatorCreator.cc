@@ -179,7 +179,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 			}
 			if ( invert ) {
 				utility::vector1< Size > inverted_selection;
-				for ( Size i = 1; i<=target_pose->total_residue(); ++i ) {
+				for ( Size i = 1; i<=target_pose->size(); ++i ) {
 					bool found( false );
 					for ( Size j = 1; j<=selection.size() && !found; ++j ) {
 						if ( selection[ j ]==i ) {

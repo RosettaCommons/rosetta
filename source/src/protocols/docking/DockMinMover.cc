@@ -130,7 +130,7 @@ void DockMinMover::set_default() {
 
 void DockMinMover::apply( core::pose::Pose & pose ) {
 	( *scorefxn() )( pose );
-	if ( mc_->last_accepted_pose().total_residue() == 0 ) {
+	if ( mc_->last_accepted_pose().size() == 0 ) {
 		// If the mc_ object hasn't yet been initialized (the last accepted pose is the empty pose) we need to initialize it.
 		// Otherwise, if the first move is rejected, the pose will be set to the empty pose.
 		mc_->reset( pose );

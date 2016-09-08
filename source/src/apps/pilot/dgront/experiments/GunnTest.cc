@@ -60,7 +60,7 @@ public:
 	native = new core::pose::Pose;
 	core::import_pose::pose_from_file(*native, option[ in::file::native ](), core::import_pose::PDB_file);
 
-	for(Size i=1;i<=native->total_residue()-frag_size_+1;i++) {
+	for(Size i=1;i<=native->size()-frag_size_+1;i++) {
 	    data_p.push_back( new protocols::abinitio::GunnTuple );
 	    data_n.push_back( new protocols::abinitio::GunnTuple );
 	}
@@ -86,7 +86,7 @@ public:
 
     void computeGunnTuples(core::pose::Pose & pose,Size frag_size,utility::vector1<protocols::abinitio::GunnTupleOP> result) {
 
-	for(Size i=1;i<=pose.total_residue()-frag_size + 1;i++) {
+	for(Size i=1;i<=pose.size()-frag_size + 1;i++) {
 	    protocols::abinitio::GunnTuple & t = *result[i];
 	    gun.compute_gunn( pose, i, i+frag_size_-1, t);
 	}

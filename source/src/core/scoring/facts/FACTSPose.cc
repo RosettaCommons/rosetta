@@ -97,7 +97,7 @@ FACTSPoseInfo::FACTSPoseInfo( FACTSPoseInfo const & src ) : CacheableData()
 
 void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtypemap )
 {
-	Size const nres( pose.total_residue() ); // maybe faster for symm if it is made symm-aware
+	Size const nres( pose.size() ); // maybe faster for symm if it is made symm-aware
 
 	residue_info_.resize( nres, 0 );
 	placeholder_residue_.resize( nres, 0 );
@@ -143,7 +143,7 @@ void FACTSPoseInfo::set_repack_list( utility::vector1< bool > const & repacking_
 }
 
 bool FACTSPoseInfo::is_changed( pose::Pose const &pose ){
-	for ( Size ires = 1; ires <= pose.total_residue(); ++ ires ) {
+	for ( Size ires = 1; ires <= pose.size(); ++ ires ) {
 		Size const natom( pose.residue(ires).natoms() );
 		utility::vector1<Vector> const facts_xyz = residue_info( ires ).xyz();
 
@@ -180,7 +180,7 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 
 	// Then iter over neighbors to expand shell where its structure change can
 	// affect context difference
-	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+	for ( Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		FACTSResidueInfo & facts1( residue_info( res1 ) );
 
 		// Propagate change info into its first neighbor shell

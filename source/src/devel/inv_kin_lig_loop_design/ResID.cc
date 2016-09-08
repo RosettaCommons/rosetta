@@ -93,7 +93,7 @@ resids_type ResID::get_resids( core::pose::Pose& pose ) {
 
 	resids_type rval;
 
-	size_t n = pose.n_residue();
+	size_t n = pose.size();
 	assert( n == pose.pdb_info()->nres() );
 
 	for ( size_t i = 1; i <= n; ++i ) {

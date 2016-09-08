@@ -145,7 +145,7 @@ using std::string;
 
 /// stochastic -- choose cutpoints, may update pose foldtree
 /// @note  mapping goes from the source pdb to the target sequence, and has already been extended and applied, ie
-/// the sequence of pose is the target sequence and pose.total_residue() == mapping.size2()
+/// the sequence of pose is the target sequence and pose.size() == mapping.size2()
 /// @note  CURRENTLY SKIPS TERMINAL LOOPS FOR HISTORICAL REASONS!!!
 void
 setup_loops_from_mapping(
@@ -155,8 +155,8 @@ setup_loops_from_mapping(
 	bool const start_extended
 )
 {
-	//assert( mapping.size2() == pose.total_residue() ); // TOO STRONG
-	assert( mapping.size2() <= pose.total_residue() ); // in case pose has extra stuff at the end
+	//assert( mapping.size2() == pose.size() ); // TOO STRONG
+	assert( mapping.size2() <= pose.size() ); // in case pose has extra stuff at the end
 
 	id::SequenceMapping m( mapping );
 	m.reverse();
@@ -180,7 +180,7 @@ setup_loops_from_mapping(
 				if ( !pose.residue( loop_begin ).is_protein() || !pose.residue( loop_end ).is_protein() ) {
 					// a non-protein "loop
 					utility_exit_with_message( "nonprotein loop?" );
-				} else if ( loop_begin == 1 || loop_end == pose.total_residue() ||
+				} else if ( loop_begin == 1 || loop_end == pose.size() ||
 						 !pose.residue( loop_begin-1 ).is_protein() ||
 						 !pose.residue( loop_end+1   ).is_protein() ||
 						 pose.chain( loop_begin-1 ) != pose.chain( loop_end+1 ) ) {
@@ -330,7 +330,7 @@ full_protein_repack( pose::Pose & pose, ScoreFunction const & scorefxn )
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().or_include_current( true );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( pose.residue(ii).is_protein() ) {
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 		} else {

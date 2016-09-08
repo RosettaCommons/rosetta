@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
   utility::vector1<PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
 
   map<core::Size, core::Size> all_residues;
-  for (core::Size i = 1; i <= ref->total_residue(); ++i) {
+  for (core::Size i = 1; i <= ref->size(); ++i) {
     all_residues[i] = i;
   }
 

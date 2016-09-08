@@ -125,7 +125,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 	//type: HARMONIC
 	//static float const CA_cutoff(9.0);
 	if ( !basic::options::option[OptionKeys::ddg::sc_min_only]() ) {
-		int nres = pose.total_residue();
+		int nres = pose.size();
 		if ( basic::options::option[basic::options::OptionKeys::constraints::cst_file].user() ) {
 			core::scoring::constraints::ConstraintSetOP cstset( new core::scoring::constraints::ConstraintSet() );
 			cstset = core::scoring::constraints::ConstraintIO::read_constraints(option[basic::options::OptionKeys::constraints::cst_file][1],cstset,pose);
@@ -222,7 +222,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 			ScoreFunctionOP spack = ScoreFunctionFactory::create_score_function("soft_rep_design.wts");
 			pack::task::PackerTaskOP repack(pack::task::TaskFactory::create_packer_task(p));
 			repack->restrict_to_repacking();
-			for ( unsigned int i = 1; i <= p.total_residue(); i++ ) {
+			for ( unsigned int i = 1; i <= p.size(); i++ ) {
 				repack->nonconst_residue_task(i).or_include_current(true);
 				repack->nonconst_residue_task(i).or_ex1(true);
 				repack->nonconst_residue_task(i).or_ex2(true);

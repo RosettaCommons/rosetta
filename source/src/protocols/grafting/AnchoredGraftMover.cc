@@ -426,7 +426,7 @@ AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
 	}
 
 	//C terminal end
-	for ( Size i=pose.total_residue(); i>=Nter_loop_start_; --i ) {
+	for ( Size i=pose.size(); i>=Nter_loop_start_; --i ) {
 		if ( movemap_->get_bb(i) ) {
 			TR <<i<<std::endl;
 			Cter_loop_end_=i;

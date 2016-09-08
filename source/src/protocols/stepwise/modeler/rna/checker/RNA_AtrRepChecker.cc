@@ -251,9 +251,9 @@ RNA_AtrRepChecker::output_rep( pose::Pose const & pose, std::string const tag ){
 	core::scoring::methods::EnergyMethodOptions options(atr_rep_screening_scorefxn_->energy_method_options());
 	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ));
 	core::scoring::etable::AnalyticEtableEvaluator eval(*etable);
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		for ( Size ii = 1; ii <= pose.residue( i ).natoms(); ii++ ) {
-			for ( Size j = i+1; j <= pose.total_residue(); j++ ) {
+			for ( Size j = i+1; j <= pose.size(); j++ ) {
 				for ( Size jj = 1; jj <= pose.residue( j ).natoms(); jj++ ) {
 					Real atrE, repE, solE, d2;
 					eval.atom_pair_energy_v( pose.residue( i ).atom( ii ),

@@ -74,31 +74,31 @@ PoseBalls::PoseBalls(
 ) {
 	using namespace numeric;
 
-	// std::cerr << "PoseBalls.cc:67 (" << pose.total_residue() << ")" << std::endl;
-	ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.n_residue());
+	// std::cerr << "PoseBalls.cc:67 (" << pose.size() << ")" << std::endl;
+	ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.size());
 	core::scoring::dssp::Dssp(pose).dssp_reduced(dssp_reduced_secstruct);
 
 	// initialize index and vars
 	core::Size index = 0;
 	Size num_unrec = 0;
 	if ( pose.pdb_info() ) num_unrec = pose.pdb_info()->get_num_unrecognized_atoms();
-	balls_      .reserve( pose.total_residue()*5 + num_unrec );
-	index_to_id_.reserve( pose.total_residue()*5 + num_unrec );
-	atom_name_  .reserve( pose.total_residue()*5 + num_unrec );
-	atom_type_  .reserve( pose.total_residue()*5 + num_unrec );
-	atom_parent_.reserve( pose.total_residue()*5 + num_unrec );
-	secstruct_  .reserve( pose.total_residue()*5 + num_unrec );
-	res_name_   .reserve( pose.total_residue()*5 + num_unrec );
-	is_heavy_   .reserve( pose.total_residue()*5 + num_unrec );
-	bfac_       .reserve( pose.total_residue()*5 + num_unrec );
+	balls_      .reserve( pose.size()*5 + num_unrec );
+	index_to_id_.reserve( pose.size()*5 + num_unrec );
+	atom_name_  .reserve( pose.size()*5 + num_unrec );
+	atom_type_  .reserve( pose.size()*5 + num_unrec );
+	atom_parent_.reserve( pose.size()*5 + num_unrec );
+	secstruct_  .reserve( pose.size()*5 + num_unrec );
+	res_name_   .reserve( pose.size()*5 + num_unrec );
+	is_heavy_   .reserve( pose.size()*5 + num_unrec );
+	bfac_       .reserve( pose.size()*5 + num_unrec );
 	core::pose::initialize_atomid_map( id_to_index_, pose );
-	id_to_index_.resize( pose.total_residue() + num_unrec );
+	id_to_index_.resize( pose.size() + num_unrec );
 
 	// std::cerr << "PoseBalls.cc:85 (" << ")" << std::endl;
 
 	// add atoms in pose
 	core::Size skippedH = 0;
-	for ( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( core::Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 			// std::cerr << "PoseBalls.cc:91 (" << ")" << std::endl;
 			if ( pose.residue(ir).is_virtual(ia) ) continue;
@@ -165,7 +165,7 @@ PoseBalls::PoseBalls(
 			}
 		}
 		if ( resnum.find(a.res_num()) == resnum.end() ) {
-			resnum[a.res_num()] = ++rescount + pose.total_residue();
+			resnum[a.res_num()] = ++rescount + pose.size();
 			atomcount[a.res_num()] = 0;
 		}
 		id_to_index_.resize( resnum[a.res_num()], pose.pdb_info()->get_unrecognized_res_size(a.res_num()) );
@@ -195,30 +195,30 @@ PoseBalls::PoseBalls(
 ){
 	using namespace numeric;
 
-	// std::cerr << "PoseBalls.cc:67 (" << pose.total_residue() << ")" << std::endl;
-	ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.n_residue());
+	// std::cerr << "PoseBalls.cc:67 (" << pose.size() << ")" << std::endl;
+	ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.size());
 	core::scoring::dssp::Dssp(pose).dssp_reduced(dssp_reduced_secstruct);
 
 	// initialize index and vars
 	core::Size index = 0;
 	Size num_unrec = 0;
 	if ( pose.pdb_info() ) num_unrec = pose.pdb_info()->get_num_unrecognized_atoms();
-	balls_      .reserve( pose.total_residue()*5 + num_unrec );
-	index_to_id_.reserve( pose.total_residue()*5 + num_unrec );
-	atom_name_  .reserve( pose.total_residue()*5 + num_unrec );
-	atom_type_  .reserve( pose.total_residue()*5 + num_unrec );
-	atom_parent_.reserve( pose.total_residue()*5 + num_unrec );
-	secstruct_  .reserve( pose.total_residue()*5 + num_unrec );
-	res_name_   .reserve( pose.total_residue()*5 + num_unrec );
-	is_heavy_   .reserve( pose.total_residue()*5 + num_unrec );
-	bfac_       .reserve( pose.total_residue()*5 + num_unrec );
+	balls_      .reserve( pose.size()*5 + num_unrec );
+	index_to_id_.reserve( pose.size()*5 + num_unrec );
+	atom_name_  .reserve( pose.size()*5 + num_unrec );
+	atom_type_  .reserve( pose.size()*5 + num_unrec );
+	atom_parent_.reserve( pose.size()*5 + num_unrec );
+	secstruct_  .reserve( pose.size()*5 + num_unrec );
+	res_name_   .reserve( pose.size()*5 + num_unrec );
+	is_heavy_   .reserve( pose.size()*5 + num_unrec );
+	bfac_       .reserve( pose.size()*5 + num_unrec );
 	core::pose::initialize_atomid_map( id_to_index_, pose );
-	id_to_index_.resize( pose.total_residue() + num_unrec );
+	id_to_index_.resize( pose.size() + num_unrec );
 
 	// std::cerr << "PoseBalls.cc:85 (" << ")" << std::endl;
 
 	// add atoms in pose
-	for ( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( core::Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 			core::id::AtomID aid(ia,ir);
 			if ( ! whichatoms[aid] ) continue;
@@ -259,7 +259,7 @@ PoseBalls::PoseBalls(
 			continue;
 		}
 		if ( resnum.find(a.res_num()) == resnum.end() ) {
-			resnum[a.res_num()] = ++rescount + pose.total_residue();
+			resnum[a.res_num()] = ++rescount + pose.size();
 			atomcount[a.res_num()] = 0;
 		}
 		id_to_index_.resize( resnum[a.res_num()], pose.pdb_info()->get_unrecognized_res_size(a.res_num()) );

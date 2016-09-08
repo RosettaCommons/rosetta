@@ -57,11 +57,11 @@ public:
 			"CA", //atom CA on residue 1
 			"CA", //atom CA on residue 3
 			false); //IDK
-		core::kinematics::FoldTree fold_tree(pose.total_residue());
+		core::kinematics::FoldTree fold_tree(pose.size());
 		fold_tree.clear();
 		fold_tree.add_edge(Edge(1, 2, Edge::PEPTIDE));
 		fold_tree.add_edge(jump_edge);
-		fold_tree.add_edge(Edge(3, pose.total_residue(), Edge::PEPTIDE));
+		fold_tree.add_edge(Edge(3, pose.size(), Edge::PEPTIDE));
 		fold_tree.reorder(1);
 		pose.fold_tree(fold_tree);
 		//std::cout << "set_up() fold tree: " << pose.fold_tree() << std::endl;
@@ -146,7 +146,7 @@ public:
 		//notice this should still produce the same structure as the 10 degree test above!
 
 		//tweak the FoldTree
-		core::kinematics::FoldTree tree(pose.total_residue());
+		core::kinematics::FoldTree tree(pose.size());
 		tree.new_jump(1,3,2); //Jump from 1 to 3, cutpoint between 2 and 3.  From a residue level this is the same as the fold tree we already had.
 		pose.fold_tree(tree);
 

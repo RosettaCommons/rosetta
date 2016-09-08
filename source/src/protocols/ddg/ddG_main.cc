@@ -116,7 +116,7 @@ read_in_mutations(utility::vector1<mutations> & res_to_mut, std::string filename
 
 		inputstream >> total; //keep for cross-checking
 		while ( !inputstream.eof() ) {
-			mutations current_mutation(pose.total_residue(),core::chemical::aa_unk);
+			mutations current_mutation(pose.size(),core::chemical::aa_unk);
 			int num_mutations;
 			inputstream >> num_mutations;
 			while ( num_mutations > 0 ) {
@@ -226,7 +226,7 @@ ddG_main()
 
 	ObjexxFCL::FArray2D<double> wt_scores(20,num_iterations);
 
-	utility::vector1<core::chemical::AA> all_unk(pose.total_residue(),core::chemical::aa_unk);
+	utility::vector1<core::chemical::AA> all_unk(pose.size(),core::chemical::aa_unk);
 
 	utility::vector1<double> wt_averaged_score_components;
 	utility::vector1<ddgs> delta_energy_components;
@@ -318,12 +318,12 @@ ddG_main()
 		pack::task::parse_resfile(pose, *storage_task);
 		storage_task->or_include_current(true);
 
-		for ( Size i =1; i<=pose.total_residue(); i++ ) {
+		for ( Size i =1; i<=pose.size(); i++ ) {
 			if ( storage_task->design_residue(i) ) {
 				for ( auto aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
 						aa_end(storage_task->residue_task(i).allowed_residue_types_end());
 						aa_iter != aa_end; ++aa_iter ) {
-					utility::vector1<core::chemical::AA> residues_to_mutate(pose.total_residue(),core::chemical::aa_unk);
+					utility::vector1<core::chemical::AA> residues_to_mutate(pose.size(),core::chemical::aa_unk);
 					residues_to_mutate[i]=((*aa_iter)->aa());
 					if ( residues_to_mutate[i] != core::chemical::aa_unk ) {
 						ddg::ddGMover point_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);
@@ -381,14 +381,14 @@ ddG_main()
 		protein_interface.print(pose);
 
 		//debug statement
-		for ( Size i =1; i<=pose.total_residue(); i++ ) {
+		for ( Size i =1; i<=pose.size(); i++ ) {
 			if ( protein_interface.is_interface(i) ) {
 				TR << "[DEBUG]:" << i << " is in the interface " << std::endl;
 			}
 		}
 		//debug statement end
 
-		for ( Size i =1; i<=pose.total_residue(); i++ ) {
+		for ( Size i =1; i<=pose.size(); i++ ) {
 			if ( protein_interface.is_interface(i) ) { //is interface residue
 				for ( Size j =1; j <= 20 ; j++ ) { //iterate through all amino acids
 					residues_to_mutate = all_unk; //mutate each interface residue one at a time

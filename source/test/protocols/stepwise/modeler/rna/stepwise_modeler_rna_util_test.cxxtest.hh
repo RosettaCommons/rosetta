@@ -78,7 +78,7 @@ public:
 
 		// now just strip out RNA.
 		utility::vector1< Size > rna_res;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( pose.residue_type( n ).is_RNA() ) rna_res.push_back( n );
 		}
 		pdbslice( pose, rna_res );

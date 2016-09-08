@@ -209,7 +209,7 @@ SidechainMover::init_task(
 )
 {
 	// check to see if a valid task already exists
-	if ( !task_ || task_->total_residue() != pose.total_residue() ) {
+	if ( !task_ || task_->total_residue() != pose.size() ) {
 		// if not, create one using the task factory
 		if ( task_factory_ ) {
 			set_task(task_factory_->create_task_and_apply_taskoperations( pose ));

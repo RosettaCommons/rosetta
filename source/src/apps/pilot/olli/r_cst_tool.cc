@@ -155,7 +155,7 @@ private:
 void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 	if ( option[ OptionKeys::show_atom_numbers ]() ) {
 		tr.Info << pose.annotated_sequence() << std::endl;
-		for ( Size i =1; i<=pose.total_residue(); ++i ) {
+		for ( Size i =1; i<=pose.size(); ++i ) {
 			tr.Info << " residue " << i << std::endl;
 			pose.residue_type( i ).show_all_atom_names( tr.Info );
 		}
@@ -170,10 +170,10 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 		// std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
 		// loops::Loops rigid_core;
 		// rigid_core.read_loop_file( file, false /*no strict looprlx checking*/, "RIGID" );
-		// exclude_res.resize( pose.total_residue(), false );
+		// exclude_res.resize( pose.size(), false );
 		// rigid_core.transfer_to_residue_vector( exclude_res, true );
 		//}
-		if ( option[ OptionKeys::skip_redundant ]() ) skip_redundant_constraints( added_constraints, pose.total_residue(), option[ OptionKeys::skip_redundant_width ]() );
+		if ( option[ OptionKeys::skip_redundant ]() ) skip_redundant_constraints( added_constraints, pose.size(), option[ OptionKeys::skip_redundant_width ]() );
 
 		core::kinematics::ShortestPathInFoldTree sp( pose.fold_tree() );
 		combine_constraints( added_constraints, option[ OptionKeys::constraints::combine ](), exclude_res, sp ); // if combine_ratio_ > 1 this will randomly combine constraints into multipletts w

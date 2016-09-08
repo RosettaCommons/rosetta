@@ -70,7 +70,7 @@ public:
 
     virtual void apply( core::pose::Pose & pose ) {
 
-        Size len = pose.n_residue();
+        Size len = pose.size();
 	XYZOP c = new XYZ(3,len,0.0);
 	copy_coordinates(pose,c);
 	xyz_.push_back(c);
@@ -80,7 +80,7 @@ private:
     utility::vector1<XYZOP> & xyz_;
     void copy_coordinates(pose::Pose& in_pose,XYZOP dst) {
 
-        Size len = in_pose.n_residue();
+        Size len = in_pose.size();
 	for (core::Size i = 1; i <= len; i++) {
 	    id::NamedAtomID idCA("CA", i);
     	    PointPosition const& xyz = in_pose.xyz(idCA);

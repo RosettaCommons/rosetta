@@ -86,7 +86,7 @@ linear_chainbreak(
 		return 0;
 	}
 	assert( pos > 0 );
-	assert( pos < pose.n_residue() );
+	assert( pos < pose.size() );
 
 	EnergyMap emap;
 	ScoreFunction fx; // dummy, needed for function call
@@ -140,12 +140,12 @@ if ( pose.fold_tree().num_cutpoint() == 0 ) {
 return core::Real( 0.0 );
 }
 debug_assert( pos > 0 );
-debug_assert( pos < pose.n_residue() );
+debug_assert( pos < pose.size() );
 
 Pose scratch = pose;
 
 FoldTree ft;
-ft.add_edge( 1, scratch.n_residue(), core::kinematics::Edge::PEPTIDE );
+ft.add_edge( 1, scratch.size(), core::kinematics::Edge::PEPTIDE );
 ft.new_jump( pos, pos + 1, pos );
 
 add_cutpoint_variants( scratch, pos );
@@ -206,7 +206,7 @@ overlap_chainbreak(
 	using core::scoring::methods::LinearChainbreakEnergy;
 
 	assert( pos > 0 );
-	assert( pos < pose.n_residue() );
+	assert( pos < pose.size() );
 
 	EnergyMap emap;
 	ScoreFunction fx; // dummy, needed for function call
@@ -285,7 +285,7 @@ quadratic_chainbreak(
 	using core::scoring::methods::ChainbreakEnergy;
 
 	assert( pos > 0 );
-	assert( pos < pose.n_residue() );
+	assert( pos < pose.size() );
 
 	EnergyMap emap;
 	ScoreFunction fx; // dummy, needed for function call

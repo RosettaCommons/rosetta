@@ -66,7 +66,7 @@ public:
 	///
 	void flip_residues( core::pose::Pose &pose ) {
 		// Create the new residue and replace it
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 			core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( get_mirror_type( pose.residue(ir).type() ), pose.residue( ir ), pose.conformation());
 			core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( ir ), *new_res, pose.conformation(), true );
 			pose.replace_residue( ir, *new_res, false );
@@ -80,7 +80,7 @@ public:
 		core::pose::PoseOP output_pose( master->clone() );
 		flip_residues(*output_pose);
 
-		for ( core::Size ir=1, irmax=output_pose->n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=output_pose->size(); ir<=irmax; ++ir ) {
 			for ( core::Size ia=1, iamax=output_pose->residue(ir).type().natoms(); ia<=iamax; ++ia ) {
 				core::id::AtomID const curatom(ia, ir);
 				numeric::xyzVector<core::Real> xyztemp( master->xyz( curatom ) );
@@ -98,7 +98,7 @@ public:
 	) {
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 
-		for ( core::Size i=2, imax=input_pose->n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=2, imax=input_pose->size(); i<=imax; ++i ) {
 			core::conformation::ResidueOP new_rsd( input_pose->residue(i).clone() );
 			if ( i == 2 ) {
 				new_pose->append_residue_by_jump(*new_rsd, 1);

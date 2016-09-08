@@ -76,7 +76,7 @@ void adesign(core::pose::Pose & pose, ScoreFunctionOP sf, core::chemical::Residu
 	using namespace core::pack::task;
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	utility::vector1< bool > aas(20,false);
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if( adtypemap.find(pose.residue(i).name()) != adtypemap.end() ) {
 			for(Size j = 1; j <= adtypemap.size(); ++j) {
 				task->nonconst_residue_task(i).allow_noncanonical_aa(adtypemap[pose.residue(i).name()][j],rs);

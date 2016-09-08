@@ -133,8 +133,8 @@ apply_protonated_H1_adenosine_variant_type( core::pose::Pose & pose, core::Size 
 		//utility_exit_with_message("pose already have PROTONATED_N1_ADENOSINE variant_type at seq_num= " + ObjexxFCL::string_of(seq_num));
 	}
 
-	if ( pose.total_residue() < seq_num ) {
-		utility_exit_with_message(  "Cannot apply PROTONATED_N1_ADENOSINE variant_type to seq_num: " + ObjexxFCL::string_of( seq_num ) + ". pose.total_residue() < seq_num"  );
+	if ( pose.size() < seq_num ) {
+		utility_exit_with_message(  "Cannot apply PROTONATED_N1_ADENOSINE variant_type to seq_num: " + ObjexxFCL::string_of( seq_num ) + ". pose.size() < seq_num"  );
 	}
 
 	if ( pose.residue( seq_num ).aa() != core::chemical::na_rad ) {
@@ -149,7 +149,7 @@ apply_protonated_H1_adenosine_variant_type( core::pose::Pose & pose, core::Size 
 void
 remove_all_variant_types( pose::Pose & pose ){
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 		utility::vector1< std::string > target_variants( pose.residue( seq_num ).type().properties().get_list_of_variants() );
@@ -440,7 +440,7 @@ create_alignment_id_map_legacy( pose::Pose & mod_pose, pose::Pose const & ref_po
 		utility_exit_with_message( "ref_pose.sequence() != mod_pose.sequence()" );
 	}
 
-	for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
+	for ( Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
 		if ( mod_pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
 		if ( !rmsd_residue_list.has_value( seq_num ) ) continue;
 		setup_suite_atom_id_map( mod_pose, ref_pose, seq_num, atom_ID_map, base_only );
@@ -611,7 +611,7 @@ output_rotamer( utility::vector1 < Real > & rotamer ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 check_instantiated_O2Prime_hydrogen( core::pose::Pose const & pose ){
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		runtime_assert( !pose.residue_type( i ).has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 	}
@@ -621,7 +621,7 @@ check_instantiated_O2Prime_hydrogen( core::pose::Pose const & pose ){
 bool
 remove_virtual_O2Prime_hydrogen( pose::Pose & pose ){
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue( i ).is_RNA() ) continue;
 		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) {
 			pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
@@ -1071,7 +1071,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 	using namespace ObjexxFCL;
 
 	//Consistency_check
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 
@@ -1089,7 +1089,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 
 	utility::vector1< bool > is_O2prime_hydrogen_virtual_list;
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( !pose.residue_type( seq_num ).is_RNA() ) {
 			if ( verbose ) TR << "res " << seq_num << " is not RNA " << std::endl;
@@ -1109,7 +1109,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 	}
 
 	//March 17, 2012 extra precaution.
-	runtime_assert ( is_O2prime_hydrogen_virtual_list.size() == pose.total_residue() );
+	runtime_assert ( is_O2prime_hydrogen_virtual_list.size() == pose.size() );
 
 	utility::vector1< core::Size > surrounding_O2prime_hydrogen;
 	Size num_o2prime_moving_res = 0;
@@ -1125,7 +1125,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 
 
 	//1st layer, interaction between surrounding O2prime and moving_res
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 		if ( surrounding_O2prime_hydrogen.has_value( seq_num ) ) continue;
@@ -1172,7 +1172,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 	while ( true ) {
 		bool add_new_O2prime_hydrogen = false;
 
-		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+		for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 			if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 			if ( surrounding_O2prime_hydrogen.has_value( seq_num ) ) continue;
@@ -1230,7 +1230,7 @@ o2prime_trials( pose::Pose & pose, core::scoring::ScoreFunctionCOP const & packe
 
 	utility::vector1< core::Size > O2prime_pack_seq_num;
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 		if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 		O2prime_pack_seq_num.push_back( seq_num );
 	}
@@ -1259,7 +1259,7 @@ create_standard_o2prime_pack_task( pose::Pose const & pose, utility::vector1< co
 
 	pack::task::PackerTaskOP o2prime_pack_task = pack::task::TaskFactory::create_packer_task( pose );
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( O2prime_pack_seq_num.has_value( seq_num ) &&
 				pose.residue( seq_num ).is_RNA() &&
@@ -1322,7 +1322,7 @@ check_for_messed_up_structure( core::pose::Pose const & pose, std::string const 
 	using namespace core::scoring;
 	using namespace core::chemical::rna;
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( !pose.residue( seq_num ).is_RNA() ) continue;
 
@@ -1531,9 +1531,9 @@ get_modeler_scorefxn( scoring::ScoreFunctionCOP scorefxn ){
 void
 copy_all_o2prime_torsions( core::pose::Pose & mod_pose, core::pose::Pose const & template_pose ){
 	using namespace core::id;
-	runtime_assert ( template_pose.total_residue() == mod_pose.total_residue() );
+	runtime_assert ( template_pose.size() == mod_pose.size() );
 
-	for ( Size seq_num = 1; seq_num <= template_pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= template_pose.size(); seq_num++ ) {
 
 		if ( !template_pose.residue( seq_num ).is_RNA() ) continue;
 
@@ -1822,7 +1822,7 @@ get_possible_O3prime_C5prime_distance_range( Size const gap_size_, Distance & mi
 // used in ERRASER.
 void
 remove_all_virtual_phosphates( core::pose::Pose & pose ){
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
 	}
 }
@@ -1883,7 +1883,7 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 	utility::vector1< bool > sugar_makes_contact     = rna::sugar::detect_sugar_contacts( pose );
 	utility::vector1< bool > phosphate_makes_contact = rna::phosphate::detect_phosphate_contacts( pose );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		if ( base_makes_contact[ i ] ) continue;
 
@@ -1904,7 +1904,7 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 		}
 
 		// phosphate 3' to base
-		if ( i < pose.total_residue() && !phosphate_makes_contact[ i+1 ] &&
+		if ( i < pose.size() && !phosphate_makes_contact[ i+1 ] &&
 				pose.residue_type( i+1 ).is_RNA() &&
 				!pose.fold_tree().is_cutpoint( i ) ) {
 			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i+1 );
@@ -1914,7 +1914,7 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 
 	// check if all virtual
 	bool all_virtual( true );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue( i ).is_virtual_residue() && !pose.residue( i ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) all_virtual = false;
 	}
 	if ( all_virtual ) utility_exit_with_message( "Turned native into an all virtual pose. May want to fix native or rerun with -virtualize_free_moieties_in_native false." );

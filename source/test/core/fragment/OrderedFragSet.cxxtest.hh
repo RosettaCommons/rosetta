@@ -143,7 +143,7 @@ void OrderedFragSetTest::test_frag_iterator() {
 			it!=eit; ++it ) {
 		//    tr.Info << " ct: " << ct << " " << (*it)->start() << "\n";
 		TS_ASSERT( (*it)->start() == ct );
-		if ( ct <= pose_.total_residue() - 8 ) ++it;
+		if ( ct <= pose_.size() - 8 ) ++it;
 		TS_ASSERT( (*it)->start() == ct );
 		ct++;
 	}

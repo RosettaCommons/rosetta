@@ -144,8 +144,8 @@ DistancePairConstraint::read_def(
 	TR.Debug  << "read: " << name1 << " " << name2 << " "
 		<< res1 << " " << res2 << " func: " << func_type
 		<< std::endl;
-	if (    res1 > pose.total_residue() || res2 > pose.total_residue()
-			|| res3 > pose.total_residue() || res4 > pose.total_residue()  ) {
+	if (    res1 > pose.size() || res2 > pose.size()
+			|| res3 > pose.size() || res4 > pose.size()  ) {
 		TR.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " "
 			<< res1 << " " << res2 << " func: " << func_type

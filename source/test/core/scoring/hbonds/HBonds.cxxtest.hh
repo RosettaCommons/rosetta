@@ -224,14 +224,14 @@ public:
 		ScoreFunctionOP score_function( get_score_function() );
 		score_function->score( pose );
 
-		HBondSet hbond_set( pose.n_residue() );
+		HBondSet hbond_set( pose.size() );
 
 		fill_hbond_set(pose,
 			true, /* calculate derivative */
 			hbond_set);
 
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( hbond_set.nhbonds(i, false) > 0 ) {
 				utility::vector1< HBondCOP > const residue_hbonds = hbond_set.residue_hbonds(i, false /* include all*/);
 				TS_ASSERT(residue_hbonds.size() >= 1);

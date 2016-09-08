@@ -293,7 +293,7 @@ public:
 		rigid_builder->initialize_upstream_residue( cys_restype ); /// do not initialize bonded data.
 
 		BumpGridOP bb_grid = bump_grid_to_enclose_pose( trpcage );
-		for ( Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			BumpGridOP resbgop = bump_grid_to_enclose_residue_backbone( trpcage.residue( ii ), *bb_grid );
 			fill_grid_with_backbone_heavyatom_spheres( trpcage.residue( ii ), *resbgop );
 			bb_grid->or_with( *resbgop );
@@ -398,7 +398,7 @@ public:
 		rigid_builder->initialize_upstream_residue( cys_restype ); /// do not initialize bonded data.
 
 		BumpGridOP bb_grid = bump_grid_to_enclose_pose( trpcage );
-		for ( Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			BumpGridOP resbgop = bump_grid_to_enclose_residue_backbone( trpcage.residue( ii ), *bb_grid );
 			fill_grid_with_backbone_heavyatom_spheres( trpcage.residue( ii ), *resbgop );
 			bb_grid->or_with( *resbgop );

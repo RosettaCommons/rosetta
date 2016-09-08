@@ -146,8 +146,8 @@ ReplaceRegionMover::apply(core::pose::Pose& pose) {
 
 	PyAssert(src_pose_start_ != 0, "Cannot copy from a region starting with 0 - make sure region is set for ReplaceRegionMover");
 	PyAssert(target_pose_start_ != 0, "Cannot copy to a region starting with 0 - make sure region is set for ReplaceRegionMover");
-	PyAssert(span_ <= src_pose_->total_residue(), "Cannot delete region ending with 0 - make sure region is set for ReplaceRegionMover");
-	PyAssert(src_pose_start_ + span_ <= pose.total_residue(), "Not enough residues in pose to copy all of the span of the source pose");
+	PyAssert(span_ <= src_pose_->size(), "Cannot delete region ending with 0 - make sure region is set for ReplaceRegionMover");
+	PyAssert(src_pose_start_ + span_ <= pose.size(), "Not enough residues in pose to copy all of the span of the source pose");
 
 
 	pose = protocols::grafting::replace_region (*src_pose_, pose, src_pose_start_, target_pose_start_, span_);

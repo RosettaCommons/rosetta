@@ -77,9 +77,9 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 {
 	debug_assert( !res_name3_str_.empty() || !res_name_str_.empty() );
 
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 	// quit here if there are no residues in the pose
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		return subset;
 	}
 
@@ -113,7 +113,7 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 		res_name3_set.insert( *n );
 	}
 
-	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+	for ( core::Size i=1, endi=pose.size(); i<=endi; ++i ) {
 		if ( res_set.find( pose.residue(i).name() ) != res_set.end() ) {
 			subset[i] = true;
 			continue;

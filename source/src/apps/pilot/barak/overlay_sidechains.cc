@@ -54,10 +54,10 @@ static THREAD_LOCAL basic::Tracer TR( "pilot_app.barak.overlay_sidechains" );
 
 bool verify_identical(Pose& pose1, Pose& pose2)
 {
-  if(pose1.total_residue() != pose2.total_residue()) {
+  if(pose1.size() != pose2.size()) {
     return false;
   }
-  for(core::Size resi=1; resi < pose1.total_residue(); resi++) {
+  for(core::Size resi=1; resi < pose1.size(); resi++) {
     bool p1_protein = pose1.residue(resi).is_protein();
     bool p2_protein = pose2.residue(resi).is_protein();
     if(p1_protein != p2_protein) {
@@ -111,7 +111,7 @@ main( int argc, char * argv [] )
 
   // overlay chi values
   TR << "Impose native chi angles of [" << native_fname << "] to start structure:" << endl;
-  for(core::Size resi=1; resi < pose.total_residue(); resi++)
+  for(core::Size resi=1; resi < pose.size(); resi++)
     {
       if(!pose.residue(resi).is_protein()){
 	continue;

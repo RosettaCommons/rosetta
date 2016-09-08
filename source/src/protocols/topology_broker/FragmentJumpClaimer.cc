@@ -122,7 +122,7 @@ void FragmentJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofCl
 
 void FragmentJumpClaimer::init_jumps() {
 	discard_jumps_ = false;
-	if ( bKeepJumpsFromInputPose_ && input_pose_.total_residue() > 0 ) {
+	if ( bKeepJumpsFromInputPose_ && input_pose_.size() > 0 ) {
 		tr.Info << type()
 			<< ": get jumps from input pose. use flag NO_USE_INPUT_POSE if you want to create new jumps "
 			<< std::endl;
@@ -167,7 +167,7 @@ void FragmentJumpClaimer::init_jumps() {
 	}
 	tr.Debug << "current_jumps " << current_jumps_ << std::endl;
 
-	if ( input_pose_.total_residue() > 0 ) {
+	if ( input_pose_.size() > 0 ) {
 		core::fragment::FrameList jump_frames;
 		kinematics::MoveMap mm;
 		mm.set_bb( true );

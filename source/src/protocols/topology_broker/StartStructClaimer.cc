@@ -89,7 +89,7 @@ void StartStructClaimer::new_decoy( core::pose::Pose const& pose ) {
 void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 	std::set< Size > start_region;
 	get_sequence_region( start_region );
-	//for ( Size i = 1; i<= pose.total_residue(); ++i ) {
+	//for ( Size i = 1; i<= pose.size(); ++i ) {
 	//   start_region.insert( i );
 	//  }
 	if ( tr.Trace.visible() ) {
@@ -123,7 +123,7 @@ void StartStructClaimer::initialize_dofs(
 	claims::DofClaims& failed_to_init
 ) {
 	//now the sequence is known, and we have access to the pose:
-	if ( start_pose_.total_residue() > 0 ) {
+	if ( start_pose_.size() > 0 ) {
 		generate_init_frags( start_pose_ ); //requires sequence definition and access to the pose --- had to wait until now.
 	}
 	//start_pose_.clear(); // save the space..

@@ -314,7 +314,7 @@ StepWiseRNA_CombineLongLoopFilterer::align_all_pose( utility::vector1< PoseOP > 
 		pose::initialize_atomid_map( atom_ID_map, side_ONE_pose, id::BOGUS_ATOM_ID );
 
 		setup_suite_atom_id_map( side_ONE_pose.residue( 1 ), alignment_pose.residue( 1 ), atom_ID_map );
-		setup_suite_atom_id_map( side_ONE_pose.residue( side_ONE_pose.total_residue() ), alignment_pose.residue( alignment_pose.total_residue() ),  atom_ID_map );
+		setup_suite_atom_id_map( side_ONE_pose.residue( side_ONE_pose.size() ), alignment_pose.residue( alignment_pose.size() ),  atom_ID_map );
 
 		core::scoring::superimpose_pose( side_ONE_pose, alignment_pose, atom_ID_map );
 	}
@@ -326,7 +326,7 @@ StepWiseRNA_CombineLongLoopFilterer::align_all_pose( utility::vector1< PoseOP > 
 		pose::initialize_atomid_map( atom_ID_map, side_TWO_pose, id::BOGUS_ATOM_ID );
 
 		setup_suite_atom_id_map( side_TWO_pose.residue( 1 ), alignment_pose.residue( 1 ), atom_ID_map );
-		setup_suite_atom_id_map( side_TWO_pose.residue( side_TWO_pose.total_residue() ), alignment_pose.residue( alignment_pose.total_residue() ), atom_ID_map );
+		setup_suite_atom_id_map( side_TWO_pose.residue( side_TWO_pose.size() ), alignment_pose.residue( alignment_pose.size() ), atom_ID_map );
 
 		core::scoring::superimpose_pose( side_TWO_pose, alignment_pose, atom_ID_map );
 	}

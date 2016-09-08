@@ -209,7 +209,7 @@ StepWiseProteinCCD_Closer::figure_out_loop( core::pose::Pose const & pose ){
 	while ( loop_start > 1 && working_bridge_res_.has_value( loop_start ) ) loop_start--;
 
 	Size loop_stop( cutpoint + 1 );
-	while ( loop_stop < pose.total_residue() && working_bridge_res_.has_value( loop_stop ) ) loop_stop++;
+	while ( loop_stop < pose.size() && working_bridge_res_.has_value( loop_stop ) ) loop_stop++;
 
 	runtime_assert( ( int(loop_stop) - int(loop_start) - 1) < 4 ); // sanity check: can't have more than 3 bridge residues.
 	loop_ = Loop( loop_start, loop_stop, cutpoint );
@@ -322,7 +322,7 @@ StepWiseProteinCCD_Closer::fix_jump_atoms_at_loop_boundaries( pose::Pose & pose 
 Size
 StepWiseProteinCCD_Closer::check_for_unique_cutpoint_flanked_by_bridge_res( pose::Pose const & pose ){
 	Size cutpoint( 0 );
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
 		if  ( is_cutpoint_closed( pose, n ) ) {
 			if ( ( n > 1    && working_bridge_res_.has_value( n-1 ) ) ||
@@ -339,7 +339,7 @@ StepWiseProteinCCD_Closer::check_for_unique_cutpoint_flanked_by_bridge_res( pose
 Size
 StepWiseProteinCCD_Closer::check_for_unique_cutpoint( pose::Pose const & pose ){
 	Size cutpoint( 0 );
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
 		if  ( is_cutpoint_closed( pose, n ) ) {
 			runtime_assert( cutpoint == 0 ); // uniqueness check.

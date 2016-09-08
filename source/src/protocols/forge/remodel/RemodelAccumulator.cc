@@ -278,7 +278,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 				Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 				Size count=0;
 				Real bonus = 10;
-				Size segment_length = (dummyPose.n_residue())/repeat_number;
+				Size segment_length = (dummyPose.size())/repeat_number;
 				for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
 					for ( Size res = 1; res <= segment_length; res++ ) {
 						dummyPose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new ResidueTypeLinkingConstraint(dummyPose, res, res+(segment_length*rep), bonus) ) ) );

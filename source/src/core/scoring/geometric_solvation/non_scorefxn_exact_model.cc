@@ -277,7 +277,7 @@ core::Real compute_exact_geosol(
 	TR << "jk geometric solvation exact scoring" << std::endl;
 
 	residue_energies.clear();
-	residue_energies.resize( input_pose.total_residue(), 0.);
+	residue_energies.resize( input_pose.size(), 0.);
 
 	// Get a copy of the Etable (to lookup atomic radii)
 	core::scoring::etable::EtableOP etable_ptr( new core::scoring::etable::Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ), core::scoring::etable::EtableOptions() ) );
@@ -295,7 +295,7 @@ core::Real compute_exact_geosol(
 
 	// get exact geometric solvation scores as a fxn of residue number
 	TR << "jk computing exact solvation scores" << std::endl;
-	for ( Size polar_resnum = 1; polar_resnum <= input_pose.total_residue(); polar_resnum++ ) {
+	for ( Size polar_resnum = 1; polar_resnum <= input_pose.size(); polar_resnum++ ) {
 
 		conformation::Residue const polar_rsd = input_pose.residue(polar_resnum);
 
@@ -362,7 +362,7 @@ core::Real compute_exact_geosol(
 	TR << "jk finished computing exact geometric solvation scores" << std::endl;
 
 	core::Real total_solvation_energy(0.);
-	for ( Size i = 1; i <= input_pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= input_pose.size(); i++ ) {
 		residue_energies[i] *= LK_MATCHING_WEIGHT_OLD_EXACT;
 		total_solvation_energy += residue_energies[i];
 	}

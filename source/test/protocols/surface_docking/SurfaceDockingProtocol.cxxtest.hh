@@ -78,8 +78,8 @@ public:
 		//spptr->generate_surface_parameters(SurfaceCG, ProteinCG);
 		//TR<<"AB surf vec: "<<spptr->vecAB()<<std::endl;
 		core::scoring::solid_surface::SurfaceEnergiesOP surfEs( new core::scoring::solid_surface::SurfaceEnergies );
-		surfEs->set_total_residue( pose.total_residue() );
-		surfEs->set_residue_range_not_surface( pose.num_jump()+1, pose.total_residue() );
+		surfEs->set_total_residue( pose.size() );
+		surfEs->set_residue_range_not_surface( pose.num_jump()+1, pose.size() );
 		pose.set_new_energies_object( surfEs );
 		
 		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
@@ -88,7 +88,7 @@ public:
 		
 		TR<<"score_before: "<<score_before<<std::endl;
 		
-		core::Vector coords_before = pose.residue(pose.total_residue()).xyz("Ca2p");
+		core::Vector coords_before = pose.residue(pose.size()).xyz("Ca2p");
 	
 		
 		core::Vector const slide_axis = spptr->slide_axis();
@@ -140,7 +140,7 @@ public:
 		surf_orient->set_surface_parameters(spptr);
 		surf_orient->apply(pose);
 		
-		core::Vector coords_after = pose.residue(pose.total_residue()).xyz("Ca2p");
+		core::Vector coords_after = pose.residue(pose.size()).xyz("Ca2p");
 		
 		//TR<<"coords_after-coords_before: "<<coords_after-coords_before<<std::endl;
 		TR<<"magnitude: "<<(coords_after-coords_before).magnitude()<<std::endl;

@@ -97,10 +97,10 @@ main( int argc, char * argv [] )
 	//	if ( input_pose.residue( input_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 	//		input_pose.append_residue_by_jump
 	//			( *conformation::ResidueFactory::create_residue( input_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-	//				input_pose.total_residue()/2 );
+	//				input_pose.size()/2 );
 	//	}
 
-	Size const totres = input_pose.total_residue();
+	Size const totres = input_pose.size();
 	pose::Pose pose = input_pose;
 
 	// Setup for scoring/repacking
@@ -244,7 +244,7 @@ main( int argc, char * argv [] )
 			// apply constraint to pose - P and N atoms only (for now)
 			id::AtomID P_atom_id = id::AtomID( min_pose.residue(pR_resnum).atom_index("P") , pR_resnum );
 			id::AtomID fixed_atom_id = id::AtomID( min_pose.residue(1).atom_index("CA") , 1 );
-			//			id::AtomID fixed_atom_id = id::AtomID( 1 , min_pose.total_residue() );
+			//			id::AtomID fixed_atom_id = id::AtomID( 1 , min_pose.size() );
 
 			core::scoring::constraints::FuncOP func( new scoring::constraints::HarmonicFunc( 0., 1./force_constant ) );
 			min_pose.add_constraint( new core::scoring::constraints::CoordinateConstraint( P_atom_id, fixed_atom_id, pTyr_P_xyz, func ) );

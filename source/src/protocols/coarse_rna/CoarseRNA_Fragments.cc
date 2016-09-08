@@ -156,8 +156,8 @@ CoarseRNA_Fragments::insert_fragment(
 		Size const insert_offset = insert_res + offset;
 		Size const source_offset = source_res + offset;
 
-		if ( (insert_offset) > pose.total_residue() ) continue;
-		if ( (source_offset) > frag_source_pose_->total_residue() ) continue;
+		if ( (insert_offset) > pose.size() ) continue;
+		if ( (source_offset) > frag_source_pose_->size() ) continue;
 
 		res_map[ insert_offset ] = source_offset;
 

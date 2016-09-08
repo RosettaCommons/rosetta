@@ -58,7 +58,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 	char const first_chain( pose.pdb_info()->chain(1) );
 	// rename second chain
 	Size breakpoint(0);
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		char const chain_ii( pose.pdb_info()->chain(ii) );
 		if ( !breakpoint && chain_ii != first_chain ) {
 			breakpoint = ii;
@@ -71,7 +71,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 
 	// new fold tree
 	using core::kinematics::FoldTree;
-	FoldTree new_fold_tree(pose.total_residue());
+	FoldTree new_fold_tree(pose.size());
 	pose.fold_tree(new_fold_tree);
 
 	// remodel loops

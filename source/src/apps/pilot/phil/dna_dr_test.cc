@@ -184,7 +184,7 @@ kono_sarai_stats()
 
 // 		io::pdb::dump_pdb( pose, tag );
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 
 			Residue const & rsd( pose.residue(i) );
 			if ( !rsd.is_DNA() ) continue;
@@ -207,7 +207,7 @@ kono_sarai_stats()
 				y = ( z.cross( x ) );
 			}
 
-			for ( Size j=1; j<= pose.total_residue(); ++j ) {
+			for ( Size j=1; j<= pose.size(); ++j ) {
 
 				Residue const & rsd2( pose.residue(j) );
 				if ( !rsd2.is_protein() ) continue;
@@ -275,7 +275,7 @@ kono_sarai_zscore()
 // 		io::pdb::dump_pdb( pose, tag );
 
 		utility::vector1< int > motif_pos;
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
 			if ( rsd.is_DNA() && partner[i]>i ) {
 				motif_pos.push_back(i);
@@ -305,7 +305,7 @@ kono_sarai_zscore()
 			//pose.dump_pdb( "test" + str + ".pdb" );
 			//std::cout << k << std::endl;
 
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 
 				Residue const & rsd( pose.residue(i) );
 				if ( !rsd.is_DNA() ) continue;
@@ -328,7 +328,7 @@ kono_sarai_zscore()
 					y = ( z.cross( x ) );
 				}
 
-				for ( Size j=1; j<= pose.total_residue(); ++j ) {
+				for ( Size j=1; j<= pose.size(); ++j ) {
 
 					Residue const & rsd2( pose.residue(j) );
 					if ( !rsd2.is_protein() ) continue;
@@ -388,7 +388,7 @@ loop_modeling_test()
 		for ( int na=first_DNA_aa; na <= last_DNA_aa; ++na ) {
 			Real max_d( 0.0 );
 
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				Residue const & rsd( pose.residue(i) );
 				if ( rsd.aa() != AA(na) ) continue;
 
@@ -471,7 +471,7 @@ loop_modeling_test()
 
 	std::cout << pose.sequence() << '\n' << target_seq << '\n';
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		std::cout << "M1: " << I(4,i) << ' ' << pose.residue(i).name() << I(4,mapping[i]);
 		if ( mapping[i] ) {
 			std::cout << ' ' << target_seq[ mapping[i]-1 ];
@@ -492,7 +492,7 @@ loop_modeling_test()
 		m.reverse();
 
 		// debug:
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			std::cout << "M2: " << I(4,i) << ' ' << pose.residue(i).name() << I(4,m[i]) << std::endl;
 		}
 
@@ -581,7 +581,7 @@ loop_modeling_test()
 
 		core::util::switch_to_residue_type_set( pose, FA_STANDARD );
 
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			Residue const &     rsd(     pose.residue(i) );
 			Residue const & src_rsd( cen_pose.residue(i) );
 			if ( rsd.is_DNA() ) {
@@ -772,7 +772,7 @@ dna_dr_loop_test()
 			Size const loop_end  ( it->stop () );
 			Size const cutpoint  ( it->cut  () );
 
-			if ( loop_begin > 1 && loop_end < pose.total_residue() &&
+			if ( loop_begin > 1 && loop_end < pose.size() &&
 					 !pose.residue( loop_begin ).is_terminus() &&
 					 !pose.residue( loop_end   ).is_terminus() ) {
 
@@ -781,8 +781,8 @@ dna_dr_loop_test()
 		}
 
 		Size dna_pos(1);
-		for ( ; dna_pos <= pose.total_residue(); ++dna_pos ) if ( f.is_jump_point( dna_pos ) && pose.residue(dna_pos).is_DNA() ) break;
-		assert( dna_pos <= pose.total_residue() );
+		for ( ; dna_pos <= pose.size(); ++dna_pos ) if ( f.is_jump_point( dna_pos ) && pose.residue(dna_pos).is_DNA() ) break;
+		assert( dna_pos <= pose.size() );
 
 		// this will tend to keep the DNA fixed in absolute orientation
 		f.reorder( dna_pos );

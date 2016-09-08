@@ -86,10 +86,10 @@ public:
 		using core::Real;
 		using utility::vector1;
 		distances_.resize(
-			pose.total_residue(), vector1< Real >( pose.total_residue(), 0.0 ));
+			pose.size(), vector1< Real >( pose.size(), 0.0 ));
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			for ( Size jj = ii + 1; jj <= pose.total_residue(); ++jj ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+			for ( Size jj = ii + 1; jj <= pose.size(); ++jj ) {
 				core::id::NamedAtomID atom_ii( atom_name(), ii );
 				core::id::NamedAtomID atom_jj( atom_name(), jj );
 
@@ -127,9 +127,9 @@ public:
 	void calculate_torsions( core::pose::Pose const & pose ) {
 		using core::Real;
 		using utility::vector1;
-		torsions_.resize( pose.total_residue() );
+		torsions_.resize( pose.size() );
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			torsions_[ii] = pose.residue(ii).mainchain_torsions();
 		}
 	} // calculate_torsions
@@ -157,9 +157,9 @@ utility::vector1< utility::vector1< core::Real > > get_ca_distances(
 	using utility::vector1;
 
 	vector1< vector1< Real > > distances(
-		pose.total_residue(), vector1< Real >( pose.total_residue(), 0.0 ));
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		for ( Size j = i + 1; j <= pose.total_residue(); ++j ) {
+		pose.size(), vector1< Real >( pose.size(), 0.0 ));
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( Size j = i + 1; j <= pose.size(); ++j ) {
 			core::conformation::Residue resi = pose.residue(i);
 			core::conformation::Residue resj = pose.residue(j);
 
@@ -176,11 +176,11 @@ utility::vector1< int > calculate_burial(
 	core::pose::Pose & mypose,
 	core::Real const dist_cutoff) {
 	utility::vector1< int > burial;
-	burial.resize( mypose.total_residue() );
+	burial.resize( mypose.size() );
 
 	using core::Size;
-	for ( Size i = 1; i <= mypose.total_residue(); ++i ) {
-		for ( Size j = i + 1; j <= mypose.total_residue(); ++j ) {
+	for ( Size i = 1; i <= mypose.size(); ++i ) {
+		for ( Size j = i + 1; j <= mypose.size(); ++j ) {
 			core::conformation::Residue resi = mypose.residue(i);
 			core::conformation::Residue resj = mypose.residue(j);
 
@@ -232,8 +232,8 @@ utility::vector1< char > get_ss( core::pose::Pose & pose ) {
 	using core::Size;
 	protocols::jumping::assign_ss_dssp( pose );
 
-	utility::vector1< char > ss( pose.total_residue(), 'L' );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	utility::vector1< char > ss( pose.size(), 'L' );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		ss[ii] = pose.secstruct(ii);
 	}
 

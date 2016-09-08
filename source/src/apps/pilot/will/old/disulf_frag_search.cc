@@ -84,10 +84,10 @@ int main(int argc, char *argv[]) {
 		cout << "BEGIN " << fn << endl;
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file(pose,fnames[ifile], core::import_pose::PDB_file);
-		for(int ir=1; ir <= (int)pose.n_residue(); ++ir) {
+		for(int ir=1; ir <= (int)pose.size(); ++ir) {
 			if(pose.residue(ir).aa() != core::chemical::aa_cys) continue;
 			for(int jr=ir+3; jr < ir+option[cdsf_max_res](); ++jr) {
-				if(jr > (int)pose.n_residue()) break;
+				if(jr > (int)pose.size()) break;
 				if(pose.residue(jr).aa() != core::chemical::aa_cys) continue;
 				if(!core::conformation::is_disulfide_bond( pose.conformation(),ir,jr)) continue;
 				bool terminus = false;

@@ -114,7 +114,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 	tr() << "***** DOING CCD MOVES *****" << std::endl;
 
-	core::Size const nres =  pose.total_residue();
+	core::Size const nres =  pose.size();
 
 	// store starting fold tree and cut pose
 	kinematics::FoldTree f_orig=pose.fold_tree();

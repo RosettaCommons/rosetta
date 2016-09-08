@@ -515,11 +515,11 @@ void RemodelData::collectInsertionPose(){
 	using namespace core;
 
 	import_pose::pose_from_file( insertPose,option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb] , core::import_pose::PDB_file);
-	insertionSize = (int)insertPose.total_residue();
+	insertionSize = (int)insertPose.size();
 	TR_REMODEL << "insertionSize: " << insertionSize << std::endl;
 
 	scoring::dssp::Dssp dssp( insertPose );
-	ObjexxFCL::FArray1D_char dsspSS( (int)insertPose.total_residue() );
+	ObjexxFCL::FArray1D_char dsspSS( (int)insertPose.size() );
 	dssp.dssp_reduced( dsspSS );
 	TR_REMODEL << "dsspSS.size(): " << dsspSS.size() << std::endl;
 	for ( int i = 1; i <= (int)dsspSS.size(); i++ ) {
@@ -529,11 +529,11 @@ void RemodelData::collectInsertionPose(){
 	//hack for jack
 	/*
 	import_pose::pose_from_pdb( insertPose2,option[OptionKeys::remodel::domainFusion::insert_segment2_from_pdb] );
-	insertion2Size = (int)insertPose2.total_residue();
+	insertion2Size = (int)insertPose2.size();
 	TR_REMODEL << "insertionSize: " << insertion2Size << std::endl;
 
 	scoring::dssp::Dssp dssp2( insertPose2 );
-	ObjexxFCL::FArray1D_char dssp2SS( (int)insertPose2.total_residue() );
+	ObjexxFCL::FArray1D_char dssp2SS( (int)insertPose2.size() );
 	dssp2.dssp_reduced( dssp2SS );
 	TR_REMODEL << "dsspSS.size(): " << dssp2SS.size() << std::endl;
 	for ( int i = 1; i <= (int)dssp2SS.size(); i++ ) {

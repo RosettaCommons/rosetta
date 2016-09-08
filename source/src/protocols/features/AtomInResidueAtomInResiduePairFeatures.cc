@@ -175,7 +175,7 @@ AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 	TenANeighborGraph const & tenA( pose.energies().tenA_neighbor_graph() );
 
 
-	for ( Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1 ) {
+	for ( Size resNum1=1; resNum1 <= pose.size(); ++resNum1 ) {
 		Residue res1( pose.residue(resNum1) );
 
 		for ( Graph::EdgeListConstIter

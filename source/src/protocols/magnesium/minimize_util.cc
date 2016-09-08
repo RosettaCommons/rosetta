@@ -89,7 +89,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 	// get cuts
 	vector1< Size > jump_partners1, jump_partners2, cuts, water_res, mg_res;
 	vector1< std::string > jump_atoms1, jump_atoms2;
-	vector1< std::pair< Size, std::string > > is_connected( pose.total_residue(), std::make_pair(0,"") );
+	vector1< std::pair< Size, std::string > > is_connected( pose.size(), std::make_pair(0,"") );
 	for ( Size n = 1; n <= f.num_jump(); n++ ) {
 		Size const i = f.upstream_jump_residue( n );
 		Size const j = f.downstream_jump_residue( n );
@@ -125,14 +125,14 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 		jump_atoms1.push_back( f.upstream_atom( n ) );
 		jump_atoms2.push_back( f.downstream_atom( n ) );
 	}
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-		if ( f.is_cutpoint( n ) && n < pose.total_residue() ) cuts.push_back( n );
+	for ( Size n = 1; n <= pose.size(); n++ ) {
+		if ( f.is_cutpoint( n ) && n < pose.size() ) cuts.push_back( n );
 		if ( pose.residue_type( n ).name3() == "HOH" ) water_res.push_back( n );
 		if ( pose.residue_type( n ).name3() == " MG" ) mg_res.push_back( n );
 	}
 
 	// setup jumps for all mg(2+), and for all hoh near mg(2+)
-	vector1< bool > assigned_jump_to_water( pose.total_residue(), false );
+	vector1< bool > assigned_jump_to_water( pose.size(), false );
 	for ( Size n = 1; n <= mg_res.size(); n++ ) {
 		Size const i = mg_res[ n ];
 		vector1< AtomID > mg_ligands = get_mg_ligands( pose, i );
@@ -176,7 +176,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 
 	// choose fold tree and put into pose.
 	runtime_assert( cuts.size() == jump_partners1.size() );
-	FoldTree f_new = protocols::stepwise::setup::get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
+	FoldTree f_new = protocols::stepwise::setup::get_tree( pose.size(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 	pose.fold_tree( f_new );
 }
 
@@ -189,7 +189,7 @@ get_closest_non_hoh_contact( pose::Pose const & pose, Size const i, std::string 
 	Vector const & i_xyz( pose.residue( i ).xyz( 1 ) );
 	AtomID best_partner;
 	Distance best_d = ( pose.residue( 1 ).xyz( 1 ) - i_xyz ).length(); // arbitrary init
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 		Residue const & rsd = pose.residue( j );
 		if ( rsd.name3() == "HOH" ) continue;
 		if ( rsd.name3() == exclude_rsd ) continue;

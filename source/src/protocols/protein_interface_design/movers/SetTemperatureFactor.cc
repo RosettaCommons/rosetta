@@ -75,7 +75,7 @@ SetTemperatureFactor::apply( core::pose::Pose & pose )
 	ResId * resid = dynamic_cast< ResId *>( filter_.get() );
 	runtime_assert( resid );
 
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		resid->set_resid( resi );
 		core::Real const filter_value( filter_->report_sm( pose ) );
 		for ( core::Size j = 1; j <= pose.residue( resi ).natoms(); ++j ) {

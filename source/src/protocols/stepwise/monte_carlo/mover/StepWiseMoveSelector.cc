@@ -447,7 +447,7 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 
 	using namespace core::pose::full_model_info;
 
-	Size const & nres( pose.total_residue() );
+	Size const & nres( pose.size() );
 	kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
@@ -532,7 +532,7 @@ StepWiseMoveSelector::get_intramolecular_delete_move_elements( pose::Pose const 
 	get_intramolecular_split_move_elements( pose, swa_moves_delete, DELETE );
 
 	// don't delete the only pose left.
-	if ( const_full_model_info( pose ).other_pose_list().size() == 0 && pose.total_residue() == 2 ) return;
+	if ( const_full_model_info( pose ).other_pose_list().size() == 0 && pose.size() == 2 ) return;
 
 	for ( Size n = 1; n <= swa_moves_delete.size(); n++ ) swa_moves.push_back( swa_moves_delete[ n ] );
 
@@ -554,7 +554,7 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 	utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
 
 	// first look at suites
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( !pose.fold_tree().is_cutpoint( i ) &&
 				( domain_map[ i ] != domain_map[ i+1 ] ||
 				domain_map[ i ] == 0 || domain_map [ i+1 ] == 0 ) ) {
@@ -629,7 +629,7 @@ bool
 StepWiseMoveSelector::check_from_scratch(  pose::Pose const & pose,
 	utility::vector1< bool > const & partition_definition) const {
 	if ( options_->from_scratch_frequency() > 0.0 &&
-			pose.total_residue() == 2 &&
+			pose.size() == 2 &&
 			!pose.fold_tree().is_cutpoint( 1 ) &&
 			partition_definition[ 1 ] != partition_definition[ 2 ] ) {
 		return true;
@@ -841,7 +841,7 @@ StepWiseMoveSelector::get_from_scratch_delete_move_elements( pose::Pose const & 
 	figure_out_from_scratch_delete_move_elements( pose, swa_moves_delete );
 
 	// don't delete the only pose left.
-	if ( const_full_model_info( pose ).other_pose_list().size() == 0 && pose.total_residue() == 2 ) return;
+	if ( const_full_model_info( pose ).other_pose_list().size() == 0 && pose.size() == 2 ) return;
 
 	for ( Size n = 1; n <= swa_moves_delete.size(); n++ ) swa_moves.push_back( swa_moves_delete[n] );
 }
@@ -903,7 +903,7 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 
 	using namespace core::pose::full_model_info;
 
-	Size const & nres( pose.total_residue() );
+	Size const & nres( pose.size() );
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	utility::vector1< Size > const dock_domain_map = const_full_model_info( pose ).dock_domain_map();
@@ -1320,7 +1320,7 @@ StepWiseMoveSelector::get_attachments( pose::Pose const & pose, MoveElement cons
 
 	using namespace core::pose::full_model_info;
 
-	Size const & nres( pose.total_residue() );
+	Size const & nres( pose.size() );
 	kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 
@@ -1368,7 +1368,7 @@ StepWiseMoveSelector::already_instantiated_in_pose( pose::Pose const & pose, Siz
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	if ( res_list.size() == 0 ) return false;
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( res_list[ n ] == resnum_in_full_model_numbering ) return true;
 	}
 
@@ -1462,7 +1462,7 @@ StepWiseMoveSelector::get_actual_moving_res( StepWiseMove const & swa_move, pose
 	// first break into partitions.
 	utility::vector1< Size >  moving_partition_res = full_model_info.full_to_sub( swa_move.move_element() );
 	utility::vector1< Size >  root_partition_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !moving_partition_res.has_value( n ) ) root_partition_res.push_back( n );
 	}
 
@@ -1504,13 +1504,13 @@ StepWiseMoveSelector::reverse_delete_move( StepWiseMove const & swa_move, pose::
 		return StepWiseMove( res2, figure_out_attachment( res2, res1, old_pose ), ADD );
 	} else {
 		runtime_assert( pose_domain1 == 0 && pose_domain2 == 0 );
-		if ( old_pose.total_residue() != 2 || !old_pose.fold_tree().is_cutpoint( 1 ) ) {
+		if ( old_pose.size() != 2 || !old_pose.fold_tree().is_cutpoint( 1 ) ) {
 			TR << "Was expecting old_pose to be a result of from_scratch, with two residues and no cutpoints" << std::endl;
 			TR << "old_pose res_list: " << const_full_model_info( old_pose ).res_list() << "  and fold_tree " << old_pose.fold_tree() << std::endl;
 			TR << "old_pose submotif_info_list: ";
 			const_full_model_info( old_pose ).show_submotif_info_list();
 		}
-		runtime_assert( old_pose.total_residue() == 2 && !old_pose.fold_tree().is_cutpoint( 1 ) );
+		runtime_assert( old_pose.size() == 2 && !old_pose.fold_tree().is_cutpoint( 1 ) );
 		runtime_assert( std::abs( int( res1 ) - int( res2 ) ) == 1 );
 		return StepWiseMove( utility::tools::make_vector1( std::min(res1,res2), std::max(res1,res2) ), Attachments(), FROM_SCRATCH );
 	}

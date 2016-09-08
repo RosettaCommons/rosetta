@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 		std::string pdb=pdbs[0];
 		core::pose::Pose pose; // starts NULL, coords *never* modified!
 		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
-		core::Size nres = pose.total_residue();
+		core::Size nres = pose.size();
 
 		//membrane stuff to figure out loop start and stop
 		//At this point, assert if don't have a spanfile

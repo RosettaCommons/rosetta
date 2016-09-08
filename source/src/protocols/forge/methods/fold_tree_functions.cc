@@ -526,7 +526,7 @@ fold_tree_from_pose(
 	// of workarounds below.
 
 	// use union-find to track connected components
-	DisjointSets uf( pose.n_residue() );
+	DisjointSets uf( pose.size() );
 
 	// first connect sequential polymer vertices and do connections
 	// between chemical vertices
@@ -1129,7 +1129,7 @@ void make_star_foldtree(
 	using namespace core::chemical;
 	using namespace core::kinematics;
 
-	core::Size nres = pose.total_residue()-1;
+	core::Size nres = pose.size()-1;
 	core::kinematics::FoldTree newF;
 
 	core::Size prev_cut = 0, this_cut, out_midpt;

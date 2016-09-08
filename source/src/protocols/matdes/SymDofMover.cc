@@ -271,16 +271,16 @@ SymDofMover::add_components_to_pose_if_necessary(Pose & pose){
 		runtime_assert_msg(option[OptionKeys::in::file::t]().size() == 1,
 			"SymDofMover must have one or no inputs in -t");
 		core::pose::PoseCOP b = core::import_pose::pose_from_file( option[OptionKeys::in::file::t]().front() , core::import_pose::PDB_file);
-		Size nres1 = pose.n_residue();
+		Size nres1 = pose.size();
 		core::pose::append_pose_to_pose( pose, *b, true );
 		for ( core::uint ir =         1; ir <= nres1           ; ++ir ) {
 			pose.pdb_info()->chain(static_cast<long int>(ir), 'A');
 		}
-		for ( core::uint ir = nres1 + 1; ir <= pose.n_residue(); ++ir ) {
+		for ( core::uint ir = nres1 + 1; ir <= pose.size(); ++ir ) {
 			pose.pdb_info()->chain(static_cast<long int>(ir), 'B');
 		}
 		pose.update_pose_chains_from_pdb_chains();
-		// for(int ir = 1; ir <= pose.n_residue(); ++ir) std::cout << ir << " " << pose.chain(ir) << std::endl;
+		// for(int ir = 1; ir <= pose.size(); ++ir) std::cout << ir << " " << pose.chain(ir) << std::endl;
 		// pose.dump_pdb("combined.pdb");
 		TR << "added to pose: " << option[OptionKeys::in::file::t]().front() << " num chains: " << pose.conformation().num_chains() << std::endl;
 	}
@@ -367,7 +367,7 @@ SymDofMover::apply(Pose & pose) {
 
 		// Read in symmetry info from symmetry definition file //
 
-		core::conformation::symmetry::SymmData symmdata( pose.n_residue(), pose.num_jump() );
+		core::conformation::symmetry::SymmData symmdata( pose.size(), pose.num_jump() );
 		symmdata.read_symmetry_data_from_file(symm_file);
 		std::map< std::string, core::conformation::symmetry::VirtualCoordinate > coords = symmdata.get_virtual_coordinates();
 		std::map< std::string, std::pair< std::string, std::string > > virt_connects = symmdata.get_virtual_connects();

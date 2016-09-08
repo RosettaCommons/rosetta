@@ -28,7 +28,7 @@ core::id::AtomID_Map<platform::Real> make_atom_map( core::pose::Pose const & p, 
 	using namespace core::id;
 	AtomID_Map<platform::Real> amap;
 	core::pose::initialize_atomid_map(amap,p,0.0);
-	for ( int ir = 1; ir <= (int)p.n_residue(); ++ir ) {
+	for ( int ir = 1; ir <= (int)p.size(); ++ir ) {
 		core::conformation::Residue const & r(p.residue(ir));
 		using namespace basic::options;
 		// if( option[OptionKeys::sicdock::rose::ignore_residues_far_from_origin]()+10.0 < r.nbr_atom_xyz().length() ) continue;
@@ -125,7 +125,7 @@ xyzStripeHashPose::xyzStripeHashPose(
 {
 	id::AtomID_Map<platform::Real> amap = make_atom_map(p,m);
 	using core::id::AtomID;
-	for ( int ir = 1; ir <= (int)p.n_residue(); ++ir ) {
+	for ( int ir = 1; ir <= (int)p.size(); ++ir ) {
 		if ( resmap[ir] == 0 ) continue;
 		for ( int ia = 1; ia <= (int)amap.n_atom(ir); ia++ ) {
 			if ( amap[AtomID(ia,ir)] > 0 ) {
@@ -190,7 +190,7 @@ xyzStripeHashPose::extract_pose_balls(
 ){
 	using core::id::AtomID;
 
-	for ( int ir = 1; ir <= (int)p.n_residue(); ++ir ) {
+	for ( int ir = 1; ir <= (int)p.size(); ++ir ) {
 		for ( int ia = 1; ia <= (int)amap.n_atom(ir); ia++ ) {
 			if ( amap[AtomID(ia,ir)] > 0 ) {
 				balls.resize(balls.size()+1);

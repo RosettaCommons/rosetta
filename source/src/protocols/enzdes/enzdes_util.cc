@@ -99,7 +99,7 @@ catalytic_res( core::pose::Pose const & pose)
 	}
 
 	if ( to_return.size() == 0 ) {
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( pose.residue_type( i ).is_ligand() ) to_return.push_back( i );
 		}
 	}
@@ -154,10 +154,10 @@ read_pose_from_file(
 	//in multimodel pdbs
 	if ( input_poses.size() > 1 ) {
 		tr << "PDB " << filename << " is a multimodel pdb containing " << input_poses.size() << " models." << std::endl;
-		utility::vector1< utility::vector1< core::conformation::ResidueOP > > add_residue_confs( pose.total_residue() );
+		utility::vector1< utility::vector1< core::conformation::ResidueOP > > add_residue_confs( pose.size() );
 
 		for ( core::Size i = 2; i <= input_poses.size(); ++i ) {
-			for ( core::Size j = 1; j <= input_poses[i].total_residue(); ++j ) {
+			for ( core::Size j = 1; j <= input_poses[i].size(); ++j ) {
 				core::Size pdbres( input_poses[i].pdb_info()->number( j ) );
 				char pdbchain( input_poses[i].pdb_info()->chain( j ) );
 				char pdbicode( input_poses[i].pdb_info()->icode( j ) );
@@ -170,7 +170,7 @@ read_pose_from_file(
 				}
 			}
 		}
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( add_residue_confs[i].size() > 0 ) {
 				if ( pose.residue(i).is_ligand() ) {
 					enz_obs->set_rigid_body_confs_for_lig( i, add_residue_confs[i] );
@@ -317,12 +317,12 @@ recreate_task(
 
 	using namespace core::pack::task;
 
-	if ( orig_task.total_residue() != pose.total_residue() ) utility_exit_with_message("old task and pose don't have same number of residues.");
+	if ( orig_task.total_residue() != pose.size() ) utility_exit_with_message("old task and pose don't have same number of residues.");
 
 	PackerTaskOP mod_task = TaskFactory::create_packer_task( pose );
 	mod_task->initialize_from_command_line();
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		//first, we need to copy the rotamer and rotamerset operations
 		for ( auto rot_it = orig_task.residue_task(i).rotamer_operations().begin(); rot_it != orig_task.residue_task(i).rotamer_operations().end(); ++rot_it ) {
@@ -655,7 +655,7 @@ get_resnum_from_cstid_list( std::string const& cstidlist, core::pose::Pose const
 	BOOST_FOREACH ( std::string const cstid, cstids ) {
 		if ( cstid=="" ) continue;
 		core::Size const resnum (get_resnum_from_cstid( cstid, pose) );
-		runtime_assert( resnum>0 && resnum <=pose.total_residue() );
+		runtime_assert( resnum>0 && resnum <=pose.size() );
 		resnums.push_back( resnum );
 	}
 	auto last = std::unique(resnums.begin(), resnums.end());
@@ -682,7 +682,7 @@ get_resnum_from_cstid( std::string const& cstid, core::pose::Pose const &pose)
 	runtime_assert( cst_cache != nullptr );
 	runtime_assert( cstnum <= cst_cache->ncsts());
 	bool found (false);
-	for ( core::Size seqpos =1; seqpos <=pose.total_residue(); ++seqpos ) {
+	for ( core::Size seqpos =1; seqpos <=pose.size(); ++seqpos ) {
 		if ( cst_cache->param_cache(cstnum)->template_res_cache( template_num )->contains_position( seqpos ) ) {
 			//   tr <<"Cstid "<<cstid<<" corresponds to "<< seqpos <<std::endl;
 			found = true;

@@ -214,7 +214,7 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 		}
 
 
-		if ( ref_pose_.total_residue() > 0 ) {
+		if ( ref_pose_.size() > 0 ) {
 			protocols::simple_moves::SuperimposeMover sm;
 			sm.set_reference_pose( ref_pose_ );
 			sm.apply( pose );

@@ -94,7 +94,7 @@ CoarseRNA_LoopCloser::apply( core::pose::Pose & pose, Size const & seqpos_moved 
 	if ( a_little_verbose_ || verbose_ ) TR << "Checking move at " << seqpos_moved << std::endl;
 
 	// which cutpoint was affected?
-	partition_definition_.dimension( pose.total_residue(), false );
+	partition_definition_.dimension( pose.size(), false );
 	pose.fold_tree().partition_by_residue( seqpos_moved, partition_definition_ );
 
 	figure_out_which_cutpoints_were_affected( pose );
@@ -115,7 +115,7 @@ CoarseRNA_LoopCloser::apply_after_jump_change( core::pose::Pose & pose, Size con
 	if ( a_little_verbose_ || verbose_ ) TR << "Checking move at jump " << jumpno << std::endl;
 
 	// which cutpoint was affected?
-	partition_definition_.dimension( pose.total_residue(), false );
+	partition_definition_.dimension( pose.size(), false );
 	pose.fold_tree().partition_by_jump( jumpno, partition_definition_ );
 
 	figure_out_which_cutpoints_were_affected( pose );
@@ -169,12 +169,12 @@ CoarseRNA_LoopCloser::figure_out_which_cutpoints_were_affected( core::pose::Pose
 	cutpos_list_.clear();
 
 	if ( verbose_ ) {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) std::cout << partition_definition_( n );
+		for ( Size n = 1; n <= pose.size(); n++ ) std::cout << partition_definition_( n );
 		std::cout << std::endl;
 	}
 
 	cutpos_ = 0;
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) &&
 				partition_definition_( n ) != partition_definition_( n+1 ) &&
 				pose.residue_type( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
@@ -264,7 +264,7 @@ CoarseRNA_LoopCloser::figure_out_forward_backward_res_by_backtracking( pose::Pos
 
 	is_backward_res_.clear();
 	is_forward_res_.clear();
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		is_backward_res_.push_back( false );
 		is_forward_res_.push_back( false );
 	}
@@ -388,7 +388,7 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	//  [I think there may be a simpler way to write this ]
 	is_scratch_res_.clear();
 	is_pivot_res_.clear();
-	for ( Size i = 1; i <= is_backward_res_.size() /*pose.total_residue()*/ ; i++ ) {
+	for ( Size i = 1; i <= is_backward_res_.size() /*pose.size()*/ ; i++ ) {
 		is_scratch_res_.push_back( false );
 		is_pivot_res_.push_back( false );
 	}
@@ -750,14 +750,14 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 		// could save time by just looking over a subset of residues. But I don't think this is rate limiting
 		utility::vector1< Vector > ref_vectors;
 		Size const ref_atom( 1 );
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			ref_vectors.push_back( pose.xyz( id::AtomID(ref_atom,i) ) );
 		}
 
 		for ( Size n = 1; n <= Size( nsol_ ); n++ ) {
 			fill_solution( pose, n );
 			Real deviation2( 0.0 );
-			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= pose.size(); i++ ) {
 				deviation2 += ( pose.xyz( id::AtomID(ref_atom,i) ) - ref_vectors[i] ).length_squared();
 			}
 			if ( n==1 || deviation2 < best_deviation2 ) {

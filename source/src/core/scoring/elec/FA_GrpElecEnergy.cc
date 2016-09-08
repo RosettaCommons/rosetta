@@ -211,7 +211,7 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 	//TR.Debug << "setup_for_scoring" << std::endl;
 
 	// turn off for now
-	//Eres_.resize( pose.total_residue(), 0.0 ); // temporary array
+	//Eres_.resize( pose.size(), 0.0 ); // temporary array
 
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
@@ -740,14 +740,14 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 
 	//if( data->) TR.Debug << "?" << data->get_n( 1 ) << std::endl;
 
-	data->initialize( pose.total_residue() );
+	data->initialize( pose.size() );
 	//TR.Debug << "??" << data->get_n( 1 ) << std::endl;
 
 	// First get boundary neighs feeling context-dependent derivatives
-	utility::vector1< Vector > dn_dr( pose.total_residue() );
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) dn_dr[i] = Vector( 0.0 );
+	utility::vector1< Vector > dn_dr( pose.size() );
+	for ( Size i = 1; i <= pose.size(); ++i ) dn_dr[i] = Vector( 0.0 );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
 
@@ -786,7 +786,7 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 		}
 	}
 
-	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+	for ( Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		Real dw_dn( 0.0 );
 		if ( context_dependent_ ) dw_dn = burial_deriv( data->get_n( res1 ) );
 		data->dw_dr( res1 ) = dw_dn*dn_dr[ res1 ];
@@ -878,7 +878,7 @@ void
 FA_GrpElecEnergy::set_nres_mono(
 	core::pose::Pose const & pose
 ) const {
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).is_upper_terminus() ) {
 			nres_monomer_ = i;
 			//std::cerr << "nres_monomer_ " << i << std::endl;

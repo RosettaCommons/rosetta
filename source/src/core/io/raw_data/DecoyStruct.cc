@@ -49,9 +49,9 @@ DecoyStruct::DecoyStruct(
 
 	// conformation information
 	sequence_ = pose.sequence();
-	resize( pose.total_residue() );
+	resize( pose.size() );
 	static const std::string important_atom = "CA";
-	for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+	for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue resi = pose.residue(i);
 		phi_  [i]     = resi.mainchain_torsion( 1 );
 		psi_  [i]     = resi.mainchain_torsion( 2 );
@@ -61,7 +61,7 @@ DecoyStruct::DecoyStruct(
 		if ( fullatom() ) {
 			chi_[i] = resi.chi();
 		} // if ( fullatom )
-	} // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
+	} // for ( unsigned int i = 1; i <= pose.size(); ++i )
 } // DecoyStruct
 
 
@@ -102,7 +102,7 @@ void DecoyStruct::fill_pose(
 	// make_pose_match_sequence_( pose, sequence_, residue_set );
 	core::pose::make_pose_from_sequence( pose, sequence_, residue_set );
 
-	for ( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 		pose.set_phi   ( seqpos, phi_   [seqpos] );
 		pose.set_psi   ( seqpos, psi_   [seqpos] );
 		pose.set_omega ( seqpos, omega_ [seqpos] );
@@ -154,14 +154,14 @@ Real DecoyStruct::get_debug_rmsd() {
 	// build temp_pose from coordinates
 	fill_pose( temp_pose );
 
-	for ( Size i = 1; i <= temp_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= temp_pose.size(); ++i ) {
 		for ( Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
 			rebuilt_coords (k,i) = temp_pose.residue(i).xyz( atom_name )[k-1];
 			original_coords(k,i) = coords_[i][k-1];
 		}
 	}
 
-	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.total_residue(), rebuilt_coords, original_coords );
+	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.size(), rebuilt_coords, original_coords );
 	return rmsd;
 }
 

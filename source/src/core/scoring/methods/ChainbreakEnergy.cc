@@ -61,7 +61,7 @@ ChainbreakEnergy::ChainbreakEnergy() : parent( methods::EnergyMethodCreatorOP( n
 void
 ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
 {
-	Size max_res = pose.n_residue();
+	Size max_res = pose.size();
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf(

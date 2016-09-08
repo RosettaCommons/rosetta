@@ -79,7 +79,7 @@ public: // test functions
 
 		// Add Ligand mover
 		/// 118 = closest residue (by inspection in PyMOL), pose.total_rsd() = RET position
-		AddMPLigandMoverOP add_ligand( new AddMPLigandMover( 118, pose_with_ligand_->total_residue()-1 ) );
+		AddMPLigandMoverOP add_ligand( new AddMPLigandMover( 118, pose_with_ligand_->size()-1 ) );
 		add_ligand->apply( *pose_with_ligand_ );
 
 	}

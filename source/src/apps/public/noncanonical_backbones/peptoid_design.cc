@@ -210,7 +210,7 @@ PeptoidDesignMover::apply(
 	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover( 1, 0.1, 0.1 ) );
 
 	// get peptoid start and end positions
-	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
+	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.size() );
 	TR << "peptoid_start: " << pep_start << " peptoid_end: " << pep_end << std::endl;
 
 	// create movemap for peptoid

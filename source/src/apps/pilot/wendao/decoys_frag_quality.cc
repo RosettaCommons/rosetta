@@ -64,7 +64,7 @@ int main( int argc, char** argv ) {
 		Size N_frag( option[ decoys_frag_len ]().size() );
 		for (Size n=1; n<=N_frag; n++) {
 				//for each frag length
-				Size len_pose(native.total_residue());
+				Size len_pose(native.size());
 				Size len_frag = option[ decoys_frag_len ]()[n];
 				std::stringstream fn;
 				utility::file::FileName pdbfn(option[ in::file::native ]());

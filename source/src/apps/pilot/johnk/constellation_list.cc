@@ -264,7 +264,7 @@ main( int argc, char * argv [] )
 
 	// set target_rosetta_resnum to Rosetta internal resid for the residue to be mutated
 	core::Size target_rosetta_resnum = 0;
-	for ( core::Size j = 1; j <= pose_init.total_residue(); ++j ) {
+	for ( core::Size j = 1; j <= pose_init.size(); ++j ) {
 		if ( ( pose_init.pdb_info()->chain(j) == target_pdb_chain ) &&
 				 ( pose_init.pdb_info()->number(j) == target_pdb_number ) ) {
 					 target_rosetta_resnum = j;
@@ -284,12 +284,12 @@ main( int argc, char * argv [] )
 
 	// make a list of residues with vdw atr contacts (to the sidechain only, if possible?)
 	// note that the structure is already scored (above)
-	utility::vector1<bool> interacting_residue( pose_init.total_residue(), false );
+	utility::vector1<bool> interacting_residue( pose_init.size(), false );
 
 	core::scoring::EnergyMap unweighted_emap;
 	core::conformation::Residue target_residue = pose_init.residue( target_rosetta_resnum );
 	core::Real const interaction_score_threshold = -0.3;
-	for ( Size i = 1; i <= pose_init.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose_init.size(); ++i ) {
 		if ( i == target_rosetta_resnum ) continue;
 		unweighted_emap.clear();
 		Vector const tgt_centroid = core::scoring::compute_sc_centroid(target_residue);
@@ -305,7 +305,7 @@ main( int argc, char * argv [] )
 	core::Size constellation_number = 0;
 
 	// for each two-residue combination, loop over all allowed mutations at each position
-	for ( Size j = 1; j <= pose_init.total_residue(); ++j ) {
+	for ( Size j = 1; j <= pose_init.size(); ++j ) {
 		if ( interacting_residue.at(j) ) {
 			TR << "Building constellations with target and rosetta resnum:  " << j << std::endl;
 
@@ -353,7 +353,7 @@ main( int argc, char * argv [] )
 					mut_task->initialize_from_command_line();
 					mut_task->or_include_current( true );
 					// restrict packer task to sequence positions of interest
-					utility::vector1<bool> allow_redesign( mut_pose_init.total_residue(), false );
+					utility::vector1<bool> allow_redesign( mut_pose_init.size(), false );
 					allow_redesign.at(target_rosetta_resnum) = true;
 					allow_redesign.at(j) = true;
 					mut_task->restrict_to_residues( allow_redesign );

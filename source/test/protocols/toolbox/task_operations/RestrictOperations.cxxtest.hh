@@ -232,7 +232,7 @@ public:
 		PackerTaskOP task = tf.create_task_and_apply_taskoperations(pose);
 		task->show(TR);
 
-		vector1<bool> repacking_residues(pose.total_residue(), false);
+		vector1<bool> repacking_residues(pose.size(), false);
 		for ( core::Size i = 1; i <=10; ++i ) {
 			repacking_residues[i] = true;
 		}

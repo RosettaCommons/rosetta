@@ -218,8 +218,8 @@ AntibodyFeatures::report_features(
 	}
 
 
-	utility::vector1<bool> cdr_residues(pose.total_residue(), false);
-	utility::vector1<bool> antigen_residues(pose.total_residue(), false);
+	utility::vector1<bool> cdr_residues(pose.size(), false);
+	utility::vector1<bool> antigen_residues(pose.size(), false);
 
 	//Setup CDR residues:
 	for ( core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i ) {
@@ -234,7 +234,7 @@ AntibodyFeatures::report_features(
 
 	//Setup antigen residues:
 	vector1<core::Size> ag_chains = ab_info_->get_antigen_chain_ids(pose);
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( std::find(ag_chains.begin(), ag_chains.end(), pose.residue(i).chain()) != ag_chains.end() ) {
 			antigen_residues[i] = true;
 		}
@@ -765,14 +765,14 @@ AntibodyFeatures::calculate_residue_atomic_contacts(const core::pose::Pose& pose
 	core::Size contact_cutoff = 5;
 
 	ag_ab_atomic_contacts_.clear();
-	ag_ab_atomic_contacts_.resize(pose.total_residue(), 0);
+	ag_ab_atomic_contacts_.resize(pose.size(), 0);
 
 
 	//semi Slow N2 workaround till graph can be debugged:
 
 	//CDR Residues:
 	TR << "Calculating antigen contacts" << std::endl;
-	for ( core::Size ci = 1; ci <= pose.total_residue(); ++ci ) {
+	for ( core::Size ci = 1; ci <= pose.size(); ++ci ) {
 		if ( ! residues_to_match[ci] ) continue;
 
 
@@ -781,7 +781,7 @@ AntibodyFeatures::calculate_residue_atomic_contacts(const core::pose::Pose& pose
 			core::Size contacts = 0;
 
 			//Antigen Residues:
-			for ( core::Size ai = 1; ai <= pose.total_residue(); ++ai ) {
+			for ( core::Size ai = 1; ai <= pose.size(); ++ai ) {
 				if ( ! antigen_residues[ai] ) continue;
 
 				//Antigen Residue Atoms:
@@ -805,7 +805,7 @@ AntibodyFeatures::calculate_residue_atomic_contacts(const core::pose::Pose& pose
 	std::map<core::Size, core::id::AtomID> vertex_map;
 	core::Size v = 1;
 
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
+	for (core::Size i = 1; i <= pose.size(); ++i){
 	//Skip residues not needed at all.
 	if (residues_to_match[i] || antigen_residues[i]){
 	for (core::Size x = 1; x <= pose.residue(i).natoms(); ++x){

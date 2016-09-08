@@ -151,7 +151,7 @@ repack_test( pose::Pose & pose )
 		( pack::task::TaskFactory::create_packer_task( pose ));
 	task->set_bump_check( true );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	task->initialize_from_command_line();
 	for ( Size ii = 1; ii <= nres; ++ii ) {

@@ -108,7 +108,7 @@ void InitializeByBins::apply( core::pose::Pose & pose ) {
 	}
 
 	//Number of residues in the pose
-	core::Size const nres( pose.n_residue() );
+	core::Size const nres( pose.size() );
 	if ( nres<1 ) utility_exit_with_message( "In protocols::simple_moves::bin_transitions::InitializeByBins::apply(): The pose has no residues!" );
 
 	core::Size const startres( start_res_==0 ? 1 : start_res_ );

@@ -132,7 +132,7 @@ void
 FastGapMover::find_next_gap( Pose & pose, Size & idx, Real & gap_distance ) {
 	// squared distance at which bond is considered discontinuous
 	Real const chain_break_cutoff = { 4.0 };
-	Size const nres ( pose.total_residue() );
+	Size const nres ( pose.size() );
 
 	// find chain breaks to add to gaplist
 	kinematics::FoldTree f( pose.fold_tree() );

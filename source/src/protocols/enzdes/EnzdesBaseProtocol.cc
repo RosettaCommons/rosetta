@@ -222,7 +222,7 @@ EnzdesBaseProtocol::catalytic_res( core::pose::Pose const & pose ) const
 	}
 
 	if ( to_return.size() == 0 ) {
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( pose.residue_type( i ).is_ligand() ) to_return.push_back( i );
 		}
 	}
@@ -234,12 +234,12 @@ EnzdesBaseProtocol::design_targets( core::pose::Pose const & pose ) const
 {
 	design_targets_.clear();
 
-	for ( core::Size i = 1; i <=  pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <=  pose.size(); ++i ) {
 		if ( enzutil::is_catalytic_seqpos( pose, i ) ) design_targets_.insert( i ); //Changed to is_catalytic_seqpos to avoid problems with running parser with no constraints -mdsmith
 	}
 	//if no positions are constrained, we'll put the ligands into the array
 	if ( design_targets_.size() == 0 ) {
-		for ( core::Size i = 1; i <=  pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <=  pose.size(); ++i ) {
 			if ( pose.residue_type(i).is_ligand() ) design_targets_.insert( i );
 		}
 	}
@@ -346,7 +346,7 @@ EnzdesBaseProtocol::setup_sequence_recovery_cache(
 
 	//keep track of what residues we are designing
 	std::set < core::Size > designing_residues;
-	for ( core::Size jj=1; jj<=pose.total_residue(); ++jj ) {
+	for ( core::Size jj=1; jj<=pose.size(); ++jj ) {
 		if ( pose.residue(jj).is_protein() && task.being_designed(jj) ) {
 			designing_residues.insert( jj );
 		}
@@ -369,9 +369,9 @@ EnzdesBaseProtocol::create_enzdes_movemap(
 	movemap->set_chi( false );
 	movemap->set_bb( false );
 	core::Size jump_id (pose.num_jump()); //default jump-id last
-	utility::vector1< bool > allow_move_bb(pose.total_residue(), false );
+	utility::vector1< bool > allow_move_bb(pose.size(), false );
 
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( task->pack_residue(i) && pose.residue(i).is_polymer() ) {
 			if ( chi_min_ ) movemap->set_chi(i, true);
 			if ( bb_min_ ) {
@@ -409,7 +409,7 @@ EnzdesBaseProtocol::create_enzdes_movemap(
 
 		enzutil::make_continuous_true_regions_in_bool_vector( allow_move_bb, window );
 		tr.Info << "Doing a pose minimization... the backbone is allowed to move at positions: ";
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( allow_move_bb[i] && pose.residue(i).is_polymer() ) {
 				movemap->set_bb(i, true);
 				tr.Info << i <<", ";
@@ -459,9 +459,9 @@ EnzdesBaseProtocol::setup_bbmin_ft_and_csts(
 	} else reorder_foldtree_around_mobile_regions( pose, jump_id, allow_move_bb, lig_id );
 
 	core::scoring::dssp::Dssp ss_pose(pose);
-	utility::vector1< bool > allow_move_bb_loop(pose.total_residue(), false );
-	utility::vector1< bool > allow_move_bb_ss(pose.total_residue(), false );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	utility::vector1< bool > allow_move_bb_loop(pose.size(), false );
+	utility::vector1< bool > allow_move_bb_ss(pose.size(), false );
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		if ( ss_pose.get_dssp_secstruct(i) == ' ' && allow_move_bb[i] ) {
 			allow_move_bb_loop[i]=true;
@@ -541,7 +541,7 @@ EnzdesBaseProtocol::setup_enzdes_constraints(
 	cstmover.apply( pose );
 
 	tr.Info << "Catalytic residues (pose numbering) are: ";
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( is_catalytic_position( pose, i ) ) tr.Info << i << " ";
 	}
 	tr.Info << std::endl;
@@ -592,7 +592,7 @@ EnzdesBaseProtocol::cst_minimize(
 
 		utility::vector1< core::Size >positions_to_replace;
 
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 
 			if ( task->pack_residue(i) && ( ! is_catalytic_position( pose, i ) ) ) positions_to_replace.push_back( i );
 		}
@@ -639,7 +639,7 @@ EnzdesBaseProtocol::cst_minimize(
 	//now we have to reinstate the orginial pose, so the task is still valid
 	if ( cst_opt ) {
 
-		for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 
 			if ( task->pack_residue(i) && ( !is_catalytic_position( pose, i ) )  ) {
 				pose.replace_residue( i, old_Pose.residue(i), true );
@@ -653,7 +653,7 @@ EnzdesBaseProtocol::cst_minimize(
 		pose.fold_tree( old_Pose.fold_tree() );
 		if ( bb_min_ ) {
 			//put back the right variants
-			for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+			for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 
 				if ( ! variants_match( pose.residue_type( i ), old_Pose.residue_type( i ) ) ) {
 
@@ -729,7 +729,7 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 	if ( !lig_superposition_file_read_ ) read_ligand_superposition_file(basic::options::option[basic::options::OptionKeys::enzdes::change_lig].value() );
 
 	utility::vector1< core::Size > ligs_to_exchange;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).name3() == res_to_superimpose_.first ) ligs_to_exchange.push_back( i );
 	}
 
@@ -856,7 +856,7 @@ EnzdesBaseProtocol::generate_explicit_ligand_rotamer_poses(
 
 	//std::cerr << "staring generate explictligrot function, looking for residues of type " << basic::options::option[ basic::options::OptionKeys::enzdes::process_ligrot_separately ].value() << std::endl;
 
-	for ( core::Size i = 1; i <= orig_pose.total_residue(); ++ i ) {
+	for ( core::Size i = 1; i <= orig_pose.size(); ++ i ) {
 
 		if ( orig_pose.residue( i ).name3() != basic::options::option[ basic::options::OptionKeys::enzdes::process_ligrot_separately ].value() ) continue;
 

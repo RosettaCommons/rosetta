@@ -75,7 +75,7 @@ public:
 		db_session_OP = basic::database::get_db_session(database_filename_);
 
 		pose_3B83_OP = core::import_pose::pose_from_file("protocols/features/3B83_nochain.pdb", core::import_pose::PDB_file);
-		relevant_residues_3B83_ = utility::vector1< bool >(pose_3B83_OP->total_residue(), true);
+		relevant_residues_3B83_ = utility::vector1< bool >(pose_3B83_OP->size(), true);
 		batch_id_ = 0;
 
 		structure_reporter_ = protocols::features::StructureFeaturesOP( new StructureFeatures() );

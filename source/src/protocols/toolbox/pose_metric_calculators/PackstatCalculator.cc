@@ -138,7 +138,7 @@ PackstatCalculator::recompute( Pose const & this_pose )
 
 		bool has_nonprot_res(false);
 
-		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 			if ( ! this_pose.residue_type(i).is_protein() ) {
 				has_nonprot_res = true;
 				break;
@@ -153,16 +153,16 @@ PackstatCalculator::recompute( Pose const & this_pose )
 
 			total_packstat_ = compute_packing_score( *pureprotpose, oversample_ );
 			residue_packstat_ = compute_residue_packing_scores( *pureprotpose, oversample_ );
-			runtime_assert( pureprotpose->total_residue() == residue_packstat_.size() );
+			runtime_assert( pureprotpose->size() == residue_packstat_.size() );
 		} else {
 			total_packstat_ = compute_packing_score( this_pose, oversample_ );
 			residue_packstat_ = compute_residue_packing_scores( this_pose, oversample_ );
-			runtime_assert( this_pose.total_residue() == residue_packstat_.size() );
+			runtime_assert( this_pose.size() == residue_packstat_.size() );
 		}
 	} else {
 		total_packstat_ = compute_packing_score( this_pose, oversample_ );
 		residue_packstat_ = compute_residue_packing_scores( this_pose, oversample_ );
-		runtime_assert( this_pose.total_residue() == residue_packstat_.size() );
+		runtime_assert( this_pose.size() == residue_packstat_.size() );
 	}
 
 

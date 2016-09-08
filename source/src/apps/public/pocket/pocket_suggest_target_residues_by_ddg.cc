@@ -164,7 +164,7 @@ main( int argc, char * argv [] )
 		(*scorefxn)(input_pose);
 		EnergyGraph & energy_graph(input_pose.energies().energy_graph());
 
-		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			if ( chains.count(input_pose.pdb_info()->chain(j)) ==0 ) {
 				for ( graph::Graph::EdgeListIter
 						iru  = energy_graph.get_node( j )->lower_edge_list_begin(),
@@ -190,7 +190,7 @@ main( int argc, char * argv [] )
 			}
 		}
 
-		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			bool iface_ala = false;
 			if ( input_pose.residue(j).name1() == 'A' ) {
 				std::ostringstream residuestream;
@@ -226,7 +226,7 @@ main( int argc, char * argv [] )
 				ty1/=count1;
 				tz1/=count1;
 
-				for ( int k = j+1, resnum = input_pose.total_residue(); k <= resnum; ++k ) {
+				for ( int k = j+1, resnum = input_pose.size(); k <= resnum; ++k ) {
 					iface_ala = false;
 					if ( input_pose.residue(k).name1() == 'A' ) {
 						std::ostringstream residuestream;
@@ -323,7 +323,7 @@ main( int argc, char * argv [] )
 
 						int gridResCount=0;
 						core::Real gridDDG = 0.;
-						for ( int i = 1, resnum = input_pose.total_residue(); i <= resnum; ++i ) {
+						for ( int i = 1, resnum = input_pose.size(); i <= resnum; ++i ) {
 							ddg=interface_residue_ddg(input_pose, i);
 							core::Real minX=10000.;
 							core::Real maxX=-10000.;

@@ -363,11 +363,11 @@ DnaInterfacePacker::init_standard( Pose & pose )
 
 	reference_residue_types_.clear();
 	if ( reference_pose_ ) {
-		for ( Size index(1), end( reference_pose_->total_residue() ); index <= end; ++index ) {
+		for ( Size index(1), end( reference_pose_->size() ); index <= end; ++index ) {
 			reference_residue_types_.push_back( reference_pose_->residue_type(index).get_self_ptr() );
 		}
 	} else {
-		for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
+		for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
 			reference_residue_types_.push_back( pose.residue_type(index).get_self_ptr() );
 		}
 	}
@@ -767,7 +767,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 		// restrict packer to current protein sequence and this DNA sequence
 		utility::vector0< int > rot_to_pack;
 		vector1< ResidueTypeCOP > single_sequence;
-		for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
+		for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
 			single_sequence.push_back( pose.residue_type(index).get_self_ptr() );
 		}
 		// alter dna types according to this dna sequence
@@ -897,7 +897,7 @@ DnaInterfacePacker::reversion_scan(
 
 	vector1< ResidueTypeCOP > fixed_residue_types;
 
-	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
+	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
 		fixed_residue_types.push_back( pose.residue_type(index).get_self_ptr() );
 	}
 
@@ -1097,7 +1097,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	Pose const input_pose( pose );
 
 	vector1< ResidueTypeCOP > pose_residue_types;
-	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
+	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
 		pose_residue_types.push_back( pose.residue_type(index).get_self_ptr() );
 	}
 

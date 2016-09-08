@@ -78,7 +78,7 @@ using core::scoring::ScoreFunctionOP;
 
 Vec helix_axis(core::pose::Pose const & pose) {
 	Vec axis(0,0,0);
-	for(Size i = 1; i <= pose.n_residue()-4; ++i) {
+	for(Size i = 1; i <= pose.size()-4; ++i) {
 		axis += ( pose.residue_type(i+4).xyz(1) - pose.residue(i).xyz(3) );
 	}
 	axis.normalize();
@@ -86,10 +86,10 @@ Vec helix_axis(core::pose::Pose const & pose) {
 }
 
 inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
-	if( 0 == nres ) nres = pose.n_residue();
+	if( 0 == nres ) nres = pose.size();
 	Vec com(0,0,0);
 	Size count = 0;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			com += pose.xyz(core::id::AtomID(ia,ir));
 			count++;
@@ -99,7 +99,7 @@ inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
 }
 
 inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + trans );
@@ -108,7 +108,7 @@ inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
 }
 
 inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
@@ -235,8 +235,8 @@ core::pose::Pose make_helix(std::string seq) {
 	tmpphi[97] = -48.6064; tmppsi[97] = -50.5125; tmpomg[97] = -179.32;
 	tmpphi[98] = -44.7473; tmppsi[98] = -53.924 ; tmpomg[98] = 170.504;
 
-	Size pos = (Size)floor(numeric::random::uniform() * (tmpphi.size()-pose.n_residue()+0.99999999));
-	for ( core::Size i = 1; i <= pose.n_residue(); i++ ) {
+	Size pos = (Size)floor(numeric::random::uniform() * (tmpphi.size()-pose.size()+0.99999999));
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		pose.set_phi  ( i,tmpphi[i+pos] );
 		pose.set_psi  ( i,tmppsi[i+pos] );
 		pose.set_omega( i,tmpomg[i+pos] );
@@ -259,7 +259,7 @@ make_symm_data(
 	core::Size n
 ) {
 	using namespace ObjexxFCL;
-	Size anchor = pose.n_residue() / 2;
+	Size anchor = pose.size() / 2;
 	std::string s = "";
 	s += "symmetry_name c12345\nsubunits "+string_of(n)+"\nnumber_of_interfaces "+string_of(n-1)+"\n";
 	s += "E = 1.0*VRT1";
@@ -276,7 +276,7 @@ make_symm_data(
 	// TR << s << std::endl;
 	// TR << "================= symm dat ==================" << std::endl;
 	std::istringstream iss(s);
-	core::conformation::symmetry::SymmData symdat( pose.n_residue(), pose.num_jump() );
+	core::conformation::symmetry::SymmData symdat( pose.size(), pose.num_jump() );
 //	symdat.read_symmetry_data_from_stream(iss);
 	return symdat;
 }
@@ -342,7 +342,7 @@ core::pose::Pose make_coiled_coil(CCParam & p) {
 	trans_pose(helix,Vec(p.x,0,0));
 
 	Real mnz=99999,mxz=-99999;
-	for(Size ir = 1; ir <= helix.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= helix.size(); ++ir) {
 		for(Size ia = 1; ia <= helix.residue_type(ir).natoms(); ++ia) {
 			Real z = helix.xyz(core::id::AtomID(ia,ir)).z();
 			if(z<mnz) mnz = z;
@@ -402,7 +402,7 @@ core::kinematics::MoveMapOP make_move_map( core::pose::Pose & pose ) {
 Real rg2d(core::pose::Pose & pose) {
 	Real rg = 0;
 	Size count = 0;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= numeric::min(pose.residue_type(ir).natoms(),(Size)5); ++ia) {
 			Vec v = pose.xyz(core::id::AtomID(ia,ir));
 			rg += sqrt(sqrt(sqrt(v.x()*v.x()+v.y()*v.y())));
@@ -466,7 +466,7 @@ void repack(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	PackerTaskOP task = TaskFactory::create_packer_task(cc);
 	task->restrict_to_repacking();
 	task->or_include_current(true);
-	// for(Size i = 1; i <= task->total_residue(); ++i) {
+	// for(Size i = 1; i <= task->size(); ++i) {
 	// 	// if(cc.residue(i).name3().substr(0,2)=="CY") {
 	// 		// task->nonconst_residue_task(i).or_ex1(true);
 	// 		// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
@@ -486,7 +486,7 @@ void design_target(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	}
 	utility::vector1< bool > cys(20,false);
 	cys[core::chemical::aa_cys] = true;
-	for(Size i = 1; i <= task->total_residue(); ++i) {
+	for(Size i = 1; i <= task->size(); ++i) {
 		if(cc.residue(i).name3().substr(0,2)=="CY") {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
@@ -504,7 +504,7 @@ void design_all(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	using namespace core::pack::task;
 	PackerTaskOP task = TaskFactory::create_packer_task(cc);
 	task->or_include_current(true);
-	for(Size i = 1; i <= task->total_residue(); ++i) {
+	for(Size i = 1; i <= task->size(); ++i) {
 		if(cc.residue(i).name3().substr(0,2)=="CY") {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
@@ -523,7 +523,7 @@ void design_FILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_ile] = true;
 	aas[core::chemical::aa_leu] = true;
 	aas[core::chemical::aa_val] = true;
-	for(Size i = 1; i <= task->total_residue(); ++i) {
+	for(Size i = 1; i <= task->size(); ++i) {
 		if(cc.residue(i).name3().substr(0,2)=="CY") {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
@@ -546,7 +546,7 @@ void design_AFILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_ile] = true;
 	aas[core::chemical::aa_leu] = true;
 	aas[core::chemical::aa_val] = true;
-	for(Size i = 1; i <= task->total_residue(); ++i) {
+	for(Size i = 1; i <= task->size(); ++i) {
 		if(cc.residue(i).name3().substr(0,2)=="CY") {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
@@ -566,7 +566,7 @@ void design_AL(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	utility::vector1< bool > aas(20,false);
 	aas[core::chemical::aa_ala] = true;
 	aas[core::chemical::aa_leu] = true;
-	for(Size i = 1; i <= task->total_residue(); ++i) {
+	for(Size i = 1; i <= task->size(); ++i) {
 		if(cc.residue(i).name3().substr(0,2)=="CY") {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
@@ -590,7 +590,7 @@ void design_FILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_val] = true;
 	aas[core::chemical::aa_lys] = true;
 	aas[core::chemical::aa_glu] = true;
-	for(Size i = 1; i <= task->total_residue(); ++i) {
+	for(Size i = 1; i <= task->size(); ++i) {
 		if(cc.residue(i).name3().substr(0,2)=="CY") {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
@@ -615,7 +615,7 @@ void design_AFILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	aas[core::chemical::aa_val] = true;
 	aas[core::chemical::aa_lys] = true;
 	aas[core::chemical::aa_glu] = true;
-	for(Size i = 1; i <= task->total_residue(); ++i) {
+	for(Size i = 1; i <= task->size(); ++i) {
 		if(cc.residue(i).name3().substr(0,2)=="CY") {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			// task->nonconst_residue_task(i).or_ex1(true);
@@ -693,7 +693,7 @@ void add_lig_cst( core::pose::Pose & pose, Size r1, Size r2, Size r3, Size r4, S
 void add_fa_cst(core::pose::Pose & cc, CCParam & p) {
 	using core::id::AtomID;
 	cc.remove_constraints();
-	for(Size j = 1; j <= p.nres; ++j) addcc(cc,AtomID(2,j),AtomID(1,cc.n_residue()+1-p.nsub),2.0);
+	for(Size j = 1; j <= p.nres; ++j) addcc(cc,AtomID(2,j),AtomID(1,cc.size()+1-p.nsub),2.0);
 
 	//std::cerr << p.vcb_pos.size() << std::endl;
 	Size c1 = p.vcb_pos[1]; assert("CY"==cc.residue(c1).name3().substr(0,2));

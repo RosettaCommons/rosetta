@@ -124,7 +124,7 @@ public: // test functions
 
 		TR <<  "Check that conformation returns a reasonable normal and center"  << std::endl;
 
-		TR <<  pose_->total_residue()  << std::endl;
+		TR <<  pose_->size()  << std::endl;
 
 		Vector center = pose_->conformation().membrane_info()->membrane_center( pose_->conformation() );
 		Vector expected_center( 0, 0, 0 );
@@ -174,7 +174,7 @@ public: // test functions
 
 		// Make new simple tree
 		FoldTreeOP ft( new FoldTree() );
-		ft->simple_tree( pose_->total_residue() );
+		ft->simple_tree( pose_->size() );
 		TS_ASSERT(! pose_->conformation().membrane_info()->check_membrane_fold_tree( *ft ) );
 
 	}

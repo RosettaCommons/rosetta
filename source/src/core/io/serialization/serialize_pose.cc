@@ -303,8 +303,8 @@ write_binary(const core::pose::Pose & pose, BUFFER & buf)
 	write_binary(WRITE_VERSION, buf);
 
 	// residues
-	write_binary((unsigned int)pose.total_residue(), buf);
-	for ( size_t j = 1; j <= pose.total_residue(); ++ j ) {
+	write_binary((unsigned int)pose.size(), buf);
+	for ( size_t j = 1; j <= pose.size(); ++ j ) {
 		const core::conformation::Residue & residue = pose.residue(j);
 		// if (is_pseudoresidue(residue)) continue;
 		// residue name
@@ -339,8 +339,8 @@ write_binary(const core::pose::Pose & pose, BUFFER & buf)
 
 	// SS
 	write_binary_chars("SSTR", buf);
-	write_binary((unsigned int)pose.total_residue(), buf);
-	for ( size_t j = 1; j <= pose.total_residue(); ++ j ) {
+	write_binary((unsigned int)pose.size(), buf);
+	for ( size_t j = 1; j <= pose.size(); ++ j ) {
 		write_binary(pose.secstruct(j), buf);
 	}
 }
@@ -392,8 +392,8 @@ read_binary(core::pose::Pose & pose, BUFFER & buf)
 			}
 			prevchain = chainid;
 			// update the pose-internal chain label if necessary
-			if ( is_lower_terminus && pose.total_residue() > 1 ) {
-				pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
+			if ( is_lower_terminus && pose.size() > 1 ) {
+				pose.conformation().insert_chain_ending( pose.size() - 1 );
 			}
 			// atoms xyz
 			unsigned int natoms(0);
@@ -434,8 +434,8 @@ read_binary(core::pose::Pose & pose, BUFFER & buf)
 
 		// SS
 		check_binary_chars("SSTR", buf);
-		check_binary_unsigned_int(pose.total_residue(), buf);
-		for ( size_t j = 1; j <= pose.total_residue(); ++ j ) {
+		check_binary_unsigned_int(pose.size(), buf);
+		for ( size_t j = 1; j <= pose.size(); ++ j ) {
 			char sstr(0);
 			read_binary(sstr, buf);
 			pose.set_secstruct(j, sstr);

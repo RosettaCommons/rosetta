@@ -105,7 +105,7 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 
 
 	// setup movemap to only loop residues
-	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
 	for ( Size i=loop_start_; i<= loop_end_; ++i ) {
 		allow_bb_move[ i ] = true;
 	}

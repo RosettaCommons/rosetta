@@ -92,7 +92,7 @@ WatsonCrickRotamerCouplings::apply(
 	// find DNA chains
 	DnaChains dna_chains;
 	find_basepairs( pose, dna_chains );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	// setup residue couplings
 	RotamerCouplingsOP couplings( new RotamerCouplings );
 	couplings->resize( nres );

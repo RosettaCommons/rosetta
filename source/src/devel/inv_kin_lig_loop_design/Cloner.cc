@@ -368,12 +368,12 @@ void make_pose_from_sequence(core::pose::Pose & pose, utility::vector1< core::ch
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_type ) );
 
 		if ( is_lower_terminus || !new_rsd->is_polymer() ) {
-			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
+			pose.append_residue_by_jump( *new_rsd, 1 /*pose.size()*/ );
 		} else {
 			pose.append_residue_by_bond( *new_rsd, true );
 		}
 	} // for seqpos
-	// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
+	// pose.conformation().insert_chain_ending( pose.size() - 1 );
 } // make_pose_from_sequence
 
 }
@@ -388,7 +388,7 @@ Segment get_segment_from_indel( Segment const& indel ) {
 	make_pose_from_sequence( *rval.pose, get_seq_from_aas(indel.aas) );
 
 	rval.lo_res = const_cast< core::conformation::Residue * > ( & rval.pose->residue( 1 ) ); /// apl -- note -- you should never do this; I'm only doing it to keep legacy code compiling.
-	rval.hi_res = const_cast< core::conformation::Residue * > ( & rval.pose->residue( rval.pose->total_residue() ) ); /// apl -- note -- you should never do this; I'm only doing it to keep legacy code compiling.
+	rval.hi_res = const_cast< core::conformation::Residue * > ( & rval.pose->residue( rval.pose->size() ) ); /// apl -- note -- you should never do this; I'm only doing it to keep legacy code compiling.
 	//for( core::conformation::ResidueOPs::iterator iter = rval.pose->res_begin(); iter != rval.pose->res_end(); ++iter ) {
 	//  rval.hi_res = iter->get(); // rbegin()
 	//}
@@ -424,7 +424,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 	segment.type  = Segment::ORIGINAL;
 
 	Size ii( 1 );
-	while ( ii <= pose0->total_residue() ) {
+	while ( ii <= pose0->size() ) {
 		///while( iter != pose0->res_end() ) {
 
 		 for ( auto const & k : indels ) {
@@ -439,7 +439,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 					//++iter;
 					//assert( iter != pose0->res_end() );
 					++ii;
-					assert( ii <= pose0->total_residue() );
+					assert( ii <= pose0->size() );
 
 					r_prev = r;
 					r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
@@ -485,7 +485,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 		++ii;
 		r_prev = r;
 		//if( iter != pose0->res_end() ) {
-		if ( ii <= pose0->total_residue() ) {
+		if ( ii <= pose0->size() ) {
 			r = const_cast< core::conformation::Residue * > ( & pose0->residue( ii ) );//iter->get();
 		}
 
@@ -545,7 +545,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 		if ( segments[k].type == Segment::ANCHORED_LOOP ) {
 			int lo = begin;
 			int hi = begin + size - 1;
-			assert( lo != 1 && hi != static_cast<int>(rval->n_residue()) );
+			assert( lo != 1 && hi != static_cast<int>(rval->size()) );
 
 			//cout << "set_cutpoints: Adding cutpoints between " << lo-1 << "," << lo << " and " << hi << "," << hi+1 << endl;
 
@@ -772,7 +772,7 @@ void Cloner::setInitialConfig() {
 	}
 
 	cout << "InvKinLigLoopDesign::Cloner::secstruct= " << endl;
-	for ( int i = 1; i <= static_cast<int>(pose1->n_residue()); ++i ) {
+	for ( int i = 1; i <= static_cast<int>(pose1->size()); ++i ) {
 		//cout << i << " " << pose1->secstruct(i);
 		cout << pose1->secstruct(i);
 	}

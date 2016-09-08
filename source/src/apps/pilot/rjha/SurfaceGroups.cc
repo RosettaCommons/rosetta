@@ -75,7 +75,7 @@ main( int argc, char* argv[] )
 		TR << "we are on PDB: " << pdb << std::endl;
 		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 
-		for(core::Size res(1); res <= pose.total_residue(); ++res){
+		for(core::Size res(1); res <= pose.size(); ++res){
 			if(biggest_calc < res){ //create calculator
 				calcname << calc_stem << res;
 				core::pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(res) );
@@ -91,7 +91,7 @@ main( int argc, char* argv[] )
 
 		//find surface residues
 		TR << pdb << std::endl;
-		for(core::Size i(1); i<=pose.total_residue(); ++i){
+		for(core::Size i(1); i<=pose.size(); ++i){
 			calcname << calc_stem << i;
 			pose.metric( calcname.str(), "num_neighbors", num_n);
 			calcname.str("");

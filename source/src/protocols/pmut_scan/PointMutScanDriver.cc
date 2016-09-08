@@ -302,7 +302,7 @@ void PointMutScanDriver::fill_mutations_list() {
 	calculate_neighbor_table( input_poses_[1], neighbors );
 
 	pose::Pose & pose = input_poses_[1];
-	Size n_residue = pose.n_residue();
+	Size n_residue = pose.size();
 
 	for ( Size resid1 = 1; resid1 <= n_residue; ++resid1 ) {
 
@@ -483,7 +483,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::vector1< utility::vector1< bool > > & neighbors ) {
 
 	// size the neighbors 2D table
-	neighbors.resize( pose.n_residue(), utility::vector1< bool >( pose.n_residue(), false ) );
+	neighbors.resize( pose.size(), utility::vector1< bool >( pose.size(), false ) );
 
 	// PointGraph is a one-way graph, which makes it somewhat annoying for iterating over neighbors of a certain
 	// position. Only edges to higher-indexed nodes exist. So instead, make a graph which has all the edges at every
@@ -493,15 +493,15 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 	core::conformation::find_neighbors( pg, 10.0 /* Angstrom cutoff */ ); // create edges
 
 	// actually create the neighbor graph from the point graph
-	core::graph::Graph neighbor_graph( pose.n_residue() );
-	for ( Size r=1; r <= pose.total_residue(); ++r ) {
+	core::graph::Graph neighbor_graph( pose.size() );
+	for ( Size r=1; r <= pose.size(); ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
 				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 			neighbor_graph.add_edge(r, edge_iter->upper_vertex());
 		}
 	}
 
-	for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 
 		conformation::Residue const & ii_rsd( pose.residue( ii ) );
 		for ( core::graph::EdgeListConstIterator eli = neighbor_graph.get_node( ii )->const_edge_list_begin(),
@@ -888,7 +888,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	RestrictResidueToRepackingOP mutant_repack_op( new RestrictResidueToRepacking() );
 	RestrictResidueToRepackingOP wt_repack_op( new RestrictResidueToRepacking() ); // will include one extra residue to repack
-	for ( Size ii = 1; ii <= mutant_pose.n_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= mutant_pose.size(); ++ii ) {
 		// resid is the position on the original pose. ii is the position on the copy.
 		if ( ii == resid ) {
 			// do design on this position
@@ -915,7 +915,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 		//movemap_->set_bb(i, true); // don't do any backbone minimization
 		movemap->set_chi( *iter, true ); // but do minimize the side chains
 	}
-	//movemap->show( std::cout, mutant_pose.n_residue() );
+	//movemap->show( std::cout, mutant_pose.size() );
 
 	//TR << "Movemap created... Beginning repacking/minimization of mutant pose." << std::endl;
 

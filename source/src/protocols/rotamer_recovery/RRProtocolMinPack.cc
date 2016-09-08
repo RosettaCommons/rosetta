@@ -77,7 +77,7 @@ RRProtocolMinPack::run(
 	Pose working_pose = pose; // deep copy
 	min_pack(working_pose, score_function, packer_task.get_self_ptr());
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,

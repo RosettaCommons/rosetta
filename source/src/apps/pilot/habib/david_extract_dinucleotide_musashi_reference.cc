@@ -189,7 +189,7 @@ main( int argc, char * argv [] )
 
 		int res1=-1,res2=-1,res3=-1;
 		pos=1;
-		for ( int i=1; i <= (int)pose.total_residue(); i++ ) {
+		for ( int i=1; i <= (int)pose.size(); i++ ) {
 			if ( pose.residue(i).is_protein() ) {
 				if ( pos==pos1 && res1==-1 ) {
 					res1=i;
@@ -215,7 +215,7 @@ main( int argc, char * argv [] )
 		Real score1=1, score2=1;
 
 		EnergyGraph & energy_graph(pose.energies().energy_graph());
-		for ( int i=1; i <= (int)pose.total_residue(); i++ ) {
+		for ( int i=1; i <= (int)pose.size(); i++ ) {
 
 			if ( pose.residue(i).is_RNA()||pose.residue(i).is_DNA() ) {
 
@@ -257,7 +257,7 @@ main( int argc, char * argv [] )
 			}
 		}
 
-		for ( int i=1; i <= (int)pose.total_residue(); i++ ) {
+		for ( int i=1; i <= (int)pose.size(); i++ ) {
 			Size cpos=0;
 			Real cscore=1;
 			//std::cout<<i<<" "<<res1<<" "<<res2<<" "<<res3<<std::endl;
@@ -308,8 +308,8 @@ main( int argc, char * argv [] )
 				if ( rpos2>rpos1+1 ) {
 					pose.conformation().delete_residue_range_slow(2, rpos2-rpos1);
 				}
-				if ( pose.total_residue()>2 ) {
-					pose.conformation().delete_residue_range_slow(3, pose.total_residue());
+				if ( pose.size()>2 ) {
+					pose.conformation().delete_residue_range_slow(3, pose.size());
 				}
 			} else {
 				if ( rpos2>1 ) {
@@ -318,14 +318,14 @@ main( int argc, char * argv [] )
 				if ( rpos1>rpos2+1 ) {
 					pose.conformation().delete_residue_range_slow(2, rpos1-rpos2);
 				}
-				if ( pose.total_residue()>2 ) {
-					pose.conformation().delete_residue_range_slow(3, pose.total_residue());
+				if ( pose.size()>2 ) {
+					pose.conformation().delete_residue_range_slow(3, pose.size());
 				}
 
 			}
-			if ( pose.total_residue()>0 ) {
+			if ( pose.size()>0 ) {
 				std::stringstream dnpfilename;
-				if ( pose.total_residue()>1 ) {
+				if ( pose.size()>1 ) {
 					dnpfilename<<"dinucleotide_pair.pdb";
 				} else {
 					dnpfilename<<"single_nucleotide.pdb";
@@ -336,7 +336,7 @@ main( int argc, char * argv [] )
 				//pose.dump_pdb("test.pdb");
 
 				Size acount=1;
-				for ( Size i=1; i<= pose.total_residue(); ++i ) {
+				for ( Size i=1; i<= pose.size(); ++i ) {
 					core::conformation::Residue const & rsd( pose.conformation().residue(i) );
 					for ( Size j=1; j<= rsd.natoms(); ++j ) {
 						if ( rsd.atom_name(j).compare(" P  ")&&rsd.atom_name(j).compare(" OP2")&&rsd.atom_name(j).compare(" OP1")&&rsd.atom_name(j).compare(" O5'")&&rsd.atom_name(j).compare(" C5'")&&rsd.atom_name(j).compare(" C4'")&&rsd.atom_name(j).compare(" O4'")&&rsd.atom_name(j).compare(" C3'")&&rsd.atom_name(j).compare(" O3'")&&rsd.atom_name(j).compare(" C2'")&&rsd.atom_name(j).compare(" H5'")&&rsd.atom_name(j).compare("H5''")&&rsd.atom_name(j).compare(" H4'")&&rsd.atom_name(j).compare(" H3'")&&rsd.atom_name(j).compare("H2''")&&rsd.atom_name(j).compare(" H2'")&&rsd.atom_name(j).compare("HO2'")&&rsd.atom_name(j).compare(" H1'")&&rsd.atom_name(j).compare(" O2'") ) {

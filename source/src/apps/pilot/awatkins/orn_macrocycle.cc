@@ -227,7 +227,7 @@ main( int argc, char* argv[] )
 		pose.conformation().replace_residue(  6, *new_ala2, false );
 		pose.conformation().declare_chemical_bond(  6, "C", 7, "NE" );
 
-		Size nres = pose.total_residue();
+		Size nres = pose.size();
 
 		add_orn_cst( pose, nres, 1 );
 		add_orn_cst( pose, 6, 7 );
@@ -255,7 +255,7 @@ main( int argc, char* argv[] )
 
 		kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			pert_pep_mm->set_bb( i );
 		}
 

@@ -260,7 +260,7 @@ FullModelParameters::get_sequence_with_gaps_filled_with_n( pose::Pose const & po
 
 	utility::vector1< int > const pdb_res_list = get_res_num_from_pdb_info( pose );
 	Size count( 0 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		int const prev_res_num    = ( n > 1 && pose.chain( n-1 ) == pose.chain( n ) ) ? pdb_res_list[ n-1 ] : pdb_res_list[ n ];
 		int const current_res_num = pdb_res_list[ n ];
 		for ( int i = prev_res_num+1; i < current_res_num; i++ ) {
@@ -291,7 +291,7 @@ FullModelParameters::get_cutpoint_open_from_pdb_info( pose::Pose const & pose, u
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	utility::vector1< Size > cutpoint_open;
 
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 
 		if ( ( pdb_info &&  (pdb_info->chain( n ) != pdb_info->chain( n+1 ) ) ) ||
 				( pose.residue_type( n ).is_protein() != pose.residue_type( n+1 ).is_protein() ) ||

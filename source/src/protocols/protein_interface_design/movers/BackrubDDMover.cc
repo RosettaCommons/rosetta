@@ -260,7 +260,7 @@ BackrubDDMover::apply( Pose & pose )
 	if ( pose.conformation().num_chains() == 2 ) {
 		Size const rb_jump( 1 );
 
-		FArray1D_bool partner1( pose.total_residue() );
+		FArray1D_bool partner1( pose.size() );
 		pose.fold_tree().partition_by_jump( rb_jump, partner1 ); // partner1 is true for all residues in partner1; false o/w
 		Size const begin2( pose.conformation().chain_begin( 2 ) ); // the starting residue of partner2
 
@@ -270,7 +270,7 @@ BackrubDDMover::apply( Pose & pose )
 		// list of residues to backrub
 		if ( !residues_.size() ) {
 			bool first( true ); bool last( false ); // mark all interface residues + 1 spanning residue on each side for backrub
-			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			for ( Size i = 1; i <= pose.size(); i++ ) {
 				if ( !pose.residue( i ).is_protein() ) continue;
 				if ( (( partner1( i ) && backrub_partner1_ ) || ( !partner1(i) && backrub_partner2_ )) &&
 						interface.is_interface( i ) && (!( i==begin2-1 || i==begin2) || (backrub_partner1_ && backrub_partner2_)) ) {
@@ -286,7 +286,7 @@ BackrubDDMover::apply( Pose & pose )
 			}
 		} else resnums = residues_;
 	} else if ( !residues_.size() ) { // pose does not have 2 chains, backrub all (protein)
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( !pose.residue( i ).is_protein() ) continue;
 			resnums.push_back( i );
 		}
@@ -439,7 +439,7 @@ void BackrubDDMover::parse_my_tag(
 			core::Size const end( core::pose::parse_resnum( end_str, pose ) );
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
-			runtime_assert( end<=pose.total_residue() );
+			runtime_assert( end<=pose.size() );
 			for ( core::Size i=begin; i<=end; ++i ) residues_.push_back( i );
 		}
 	}

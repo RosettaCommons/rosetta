@@ -46,7 +46,7 @@ void ChainTerm::print(basic::Tracer& t) const {
 ///
 void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &chains) {
 
-	Size const TOTRES = ps.total_residue();
+	Size const TOTRES = ps.size();
 
 	Size nps = 1;
 	int npdb = ps.pdb_info()->number(nps);

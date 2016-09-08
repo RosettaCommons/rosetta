@@ -356,7 +356,7 @@ calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_s
 	core::pose::initialize_atomid_map( atom_subset, pose, true);
 	Real total_sasa=calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset,true /*use_naccess_sasa_radii*/ );
 
-	for ( Size i=1; i<=atom_sasa.n_residue(); ++i ) {
+	for ( Size i=1; i<=atom_sasa.size(); ++i ) {
 		rsd_sasa[i]=0;
 		conformation::Residue const & rsd( pose.residue(i) );
 		for ( Size ii=1; ii<=atom_sasa.n_atom(i); ++ii ) {
@@ -483,7 +483,7 @@ calc_per_atom_sasa(
 	using core::conformation::Atom;
 	using core::id::AtomID;
 
-	if ( pose.total_residue() < 1 ) {
+	if ( pose.size() < 1 ) {
 		return 0.0; // nothing to do
 	}
 
@@ -542,7 +542,7 @@ calc_per_atom_sasa(
 	// identify the maxium radius we have for all atoms in the pose.  this will be used to set a cutoff distance for use
 	// in skipping residue pairs if their nbr atoms are too far apart.
 	core::Real max_radius = 0.0;
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		Residue const & rsd( pose.residue( ii ) );
 		// iterate over all the atoms in residue ii and
 		for ( Size jj=1; jj <= rsd.natoms(); ++jj ) {
@@ -556,11 +556,11 @@ calc_per_atom_sasa(
 	core::Real cutoff_distance = 2 * ( max_radius + probe_radius );
 
 	//j now do calculations: get the atom_masks by looping over all_atoms x all_atoms
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		Residue const & irsd( pose.residue( ii ) );
 
 		//ronj for the other 'j' residue, only iterate over residues which have indexes > residue 'i'
-		for ( Size jj=ii; jj <= pose.total_residue(); ++jj ) {
+		for ( Size jj=ii; jj <= pose.size(); ++jj ) {
 			Residue const & jrsd( pose.residue( jj ) );
 			calc_atom_masks(
 				irsd, jrsd,
@@ -575,7 +575,7 @@ calc_per_atom_sasa(
 	Real total_sasa( 0.0 );
 
 	rsd_sasa.clear();
-	rsd_sasa.resize( pose.total_residue(), 0.0 );
+	rsd_sasa.resize( pose.size(), 0.0 );
 
 	atom_sasa.clear();
 	core::pose::initialize_atomid_map( atom_sasa, pose, (Real) -1.0 ); // jk initialize to -1 for "not computed"
@@ -583,7 +583,7 @@ calc_per_atom_sasa(
 	Real const four_pi = 4.0f * Real( numeric::constants::d::pi );
 
 	int num_ones = 0;
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		Residue const & rsd( pose.residue(ii) );
 		rsd_sasa[ ii ] = 0.0;
 
@@ -640,7 +640,7 @@ calc_per_atom_sasa(
 
 #ifdef FILE_DEBUG
 	/*std::cout << std::endl;
-	for ( core::Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & rsd = pose.residue( ii );
 		TR << "residue " << rsd.name3() << pose.pdb_info()->number(ii) << " atom_sasas: [ ";
 		for ( Size at=1; at <= rsd.natoms(); ++at ) {
@@ -861,7 +861,7 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 
 	// clear and init the passed in vector of residue sasa
 	rsd_sasa.clear();
-	rsd_sasa.resize( pose.total_residue(), 0.0 );
+	rsd_sasa.resize( pose.size(), 0.0 );
 
 	// create an atom_subset mask such that only the heavy atoms will have their sasa computed (ignore H's to make it faster)
 	id::AtomID_Map< bool > atom_subset;
@@ -876,8 +876,8 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	//ronj debug a vector1 problem; therefore, I'm init'ing the values of the atom_subset atomid_map myself.
 	//id::initialize_heavy_only( atom_subset, pose, true ); // this call leads to uninit'd values in the map, causing random results
 	atom_subset.clear();
-	atom_subset.resize( pose.n_residue() );
-	for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+	atom_subset.resize( pose.size() );
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		atom_subset.resize( ii, pose.residue_type(ii).natoms(), false );
 		for ( Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
 			atom_subset[ ii ][ jj ] = true;
@@ -894,9 +894,9 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	core::Real res_hsasa = 0.0;
 
 	rsd_hydrophobic_sasa.clear();
-	rsd_hydrophobic_sasa.resize( pose.total_residue(), 0.0 );
+	rsd_hydrophobic_sasa.resize( pose.size(), 0.0 );
 
-	for ( core::Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & rsd = pose.residue( ii );
 		res_hsasa = 0.0;
 
@@ -917,7 +917,7 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	}
 
 #ifdef FILE_DEBUG
-	for ( core::Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & rsd = pose.residue( ii );
 		TR << "residue " << rsd.name3() << ii << " atom_sasas: [ ";
 		for ( Size at=1; at <= rsd.natoms(); ++at ) {

@@ -116,10 +116,10 @@ static THREAD_LOCAL basic::Tracer TR( "genmatch_d6_bpy" );
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
-	add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+	add_upper_terminus_type_to_pose_residue(pose,pose.size());
 	core::pack::optimizeH(pose,*sf);
 	remove_lower_terminus_type_from_pose_residue(pose,1);
-	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
+	remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 }
 
 
@@ -152,7 +152,7 @@ void run() {
 		pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
 		Pose native = in_fa;
 		pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
-		Size nres = in_cen.n_residue();
+		Size nres = in_cen.size();
 		core::chemical::ResidueType const & ala( in_cen.residue(1).residue_type_set().name_map("ALA") );
 		core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
 		// core::chemical::ResidueType const & hise( in_fa.residue(1).residue_type_set().name_map("HIS") );
@@ -263,7 +263,7 @@ void run() {
 			TR << "input scanres!!!!!!" << std::endl;
 			scanres = option[willmatch::residues]();
 		} else {
-			for(Size i = 2; i <= pose.n_residue()-1; ++i) {
+			for(Size i = 2; i <= pose.size()-1; ++i) {
 				if(!pose.residue(i).has("N" )) { continue; }
 				if(!pose.residue(i).has("CA")) { continue; }
 				if(!pose.residue(i).has("C" )) { continue; }

@@ -110,11 +110,11 @@ class LoopsUtilTest : public CxxTest::TestSuite {
 
 private:
 	bool equal_torsions(const Pose& p1, const Pose& p2) {
-		if ( p1.total_residue() != p2.total_residue() ) {
+		if ( p1.size() != p2.size() ) {
 			return false;
 		}
 
-		for ( Size i = 1; i <= p1.total_residue(); ++i ) {
+		for ( Size i = 1; i <= p1.size(); ++i ) {
 			if ( p1.phi(i) != p2.phi(i) ) {
 				return false;
 			} else if ( p1.psi(i) != p2.psi(i) ) {

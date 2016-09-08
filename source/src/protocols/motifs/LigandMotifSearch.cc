@@ -207,7 +207,7 @@ LigandMotifSearch::run(
 
 	utility::vector1< core::Size > target_positions;
 
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue(i).is_protein() && task.being_designed(i) ) {
 			target_positions.push_back(i);
 		}
@@ -246,7 +246,7 @@ LigandMotifSearch::run(
 		std::set< core::Size > src_pos;
 
 
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pose.residue(i).is_protein() && task.being_designed(i) ) {
 
 				std::set< std::string > name3set;
@@ -373,7 +373,7 @@ LigandMotifSearch::incorporate_motifs(
 	//motif_indices_list[all triplets][atom i/j/k][1 is atom number, 2 is AtomType integer]
 	utility::vector1< utility::vector1< utility::vector1< Size > > > all_motif_indices;
 
-	int nres( pose.total_residue() );
+	int nres( pose.size() );
 	for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
 		ResidueType const & lig_type( pose.residue_type( lig_pos ) );
 
@@ -1144,7 +1144,7 @@ LigandMotifSearch::position_vector_setup(
 	Pose const & pose
 )
 {
-	for ( Size i(1), end( pose.total_residue() ); i <= end; ++i ) {
+	for ( Size i(1), end( pose.size() ); i <= end; ++i ) {
 		if ( pose.residue_type(i).is_protein() ) {
 			protein_positions_.push_back(i);
 		}
@@ -1181,7 +1181,7 @@ LigandMotifSearch::get_sphere_aa(
 	using namespace chemical;
 	using namespace scoring;
 	using namespace optimization;
-	int nres( pose.total_residue() );
+	int nres( pose.size() );
 	// std::cout << "In get_sphere_aa, about to find ligand " << std::endl;
 	std::set< core::Size > interface_target_res;
 	for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
@@ -1214,7 +1214,7 @@ LigandMotifSearch::get_sphere_aa(
 				targ_res_atom_start = targ_rsd.first_sidechain_atom();
 			}
 
-			for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+			for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 				core::conformation::Residue const & prot_rsd = pose.residue(i);
 				for ( core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k ) {
 					core::Vector prot_cb, prot_ca;

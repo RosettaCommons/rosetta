@@ -121,7 +121,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	/* //The following code only makes sense if we do 'blind' prediction stuff. In all cases where we have a starting structure,
 	//it's probably a good idea to start near that.
 	for(i = 1; i <= flexible_regions_.size(); i++ ){
-	ir = std::max(0, std::min( (int)pose_full_centroid.total_residue() ,  (int) flexible_regions_[i] ) );
+	ir = std::max(0, std::min( (int)pose_full_centroid.size() ,  (int) flexible_regions_[i] ) );
 
 	std::cout << "Linker: " << ir << std::endl;
 
@@ -157,7 +157,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	task->initialize_from_command_line().or_include_current( true );
 	task->restrict_to_repacking();
 
-	for ( core::Size i = linker_end_+1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = linker_end_+1; i <= pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		if ( pose.residue(i).type().is_disulfide_bonded() ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
@@ -183,13 +183,13 @@ DomainAssembly::apply( core::pose::Pose & pose )
 
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Size j;
-		for ( j = linker_start_; j<=pose.total_residue(); ++j ) {
+		for ( j = linker_start_; j<=pose.size(); ++j ) {
 			core::conformation::Residue const resj( pose.residue( j ) );
 
 			core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 			if ( distance <= 8.0 ) break;
 		}
-		if ( j>pose.total_residue() ) task->nonconst_residue_task( i ).prevent_repacking();
+		if ( j>pose.size() ) task->nonconst_residue_task( i ).prevent_repacking();
 	}
 	//in case there is a resfile, information in this resfile overrides the computed task
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
@@ -213,7 +213,7 @@ DomainAssembly::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, pro
 	linker_end_   = core::pose::get_resnum( tag, pose, "linker_end_" );
 	runtime_assert( linker_end_ > linker_start_ );
 	runtime_assert( linker_start_ > 0 );
-	runtime_assert( linker_end_ < pose.total_residue() );
+	runtime_assert( linker_end_ < pose.size() );
 
 	std::string const frag_large_fname( tag->getOption< std::string >( "frag9", "frag9" ) );
 	std::string const frag_small_fname( tag->getOption< std::string >( "frag3", "frag3" ) );

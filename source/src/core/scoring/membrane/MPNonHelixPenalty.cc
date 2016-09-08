@@ -118,7 +118,7 @@ MPNonHelixPenalty::residue_energy(
 	SpanningTopologyOP topology = pose.conformation().membrane_info()->spanning_topology();
 
 	// Skip Membrane Residues
-	core::Size nres = pose.total_residue()-1;
+	core::Size nres = pose.size()-1;
 	if ( rsd.seqpos() > nres ) return;
 
 	// Skip Cases

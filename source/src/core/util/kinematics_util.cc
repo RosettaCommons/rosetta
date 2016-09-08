@@ -27,8 +27,8 @@ namespace util {
 
 void remove_cutpoint_variants(core::pose::Pose & pose) {
 	const core::kinematics::FoldTree& tree(pose.fold_tree());
-	for ( unsigned i = 1; i <= pose.total_residue(); ++i ) {
-		if ( !tree.is_cutpoint(i) || i >= (pose.total_residue() - 1) ) {
+	for ( unsigned i = 1; i <= pose.size(); ++i ) {
+		if ( !tree.is_cutpoint(i) || i >= (pose.size() - 1) ) {
 			continue;
 		}
 

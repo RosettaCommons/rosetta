@@ -187,11 +187,11 @@ get_n_pep_nbrs(
 )
 {
 	Size n_pep_nbrs( 0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_pep[i] ) continue;
 		bool cg_res_has_nbr( false );
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			if( cg_res_has_nbr ) break;
 			if ( is_pep[j] ) continue;
 			Residue const & rsd2( pose.residue(j) );
@@ -218,7 +218,7 @@ dump_efactor_pdb(
 	std::string const & tag
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 //	id::AtomID_Mask const & mask;
 //	id::initialize( mask, pose );
 
@@ -233,7 +233,7 @@ dump_efactor_pdb(
 	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
 	out << "MODEL     " << tag << "\n";
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -269,13 +269,13 @@ gen_fold_tree_for_nbr_segments(
 	vector1< bool > & is_nbr
 )
 {
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	//define neighbors, all protein residues within cutoff from ligand, excluding is_skipped
 	set_ss_from_phipsi( pose );
-	for( Size i=1; i<= pose.total_residue(); ++i ) {
+	for( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_ligand[ i ] ) continue;
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			Residue const & rsd2( pose.residue(j) );
 			if( is_ligand[ j ] || is_skipped[ j ] || !rsd2.is_protein() || !( pose.secstruct( j ) == 'L' ) ) continue;
 			for ( Size ii=1; ii<= rsd1.natoms(); ++ii ) {
@@ -290,7 +290,7 @@ gen_fold_tree_for_nbr_segments(
 		}
 	}
 
-	for( Size i = 2, j = 1; i <= pose.total_residue(); ++i, ++j ){
+	for( Size i = 2, j = 1; i <= pose.size(); ++i, ++j ){
 		if( is_nbr[ i ] && !is_nbr[ i-1 ] ) j = 1;
 		if( is_nbr[ i ] && !is_nbr[ i+1 ] ){
 			ftree.new_jump( i - j, i - static_cast< int >( j / 2 ), i - j );
@@ -314,7 +314,7 @@ has_clash(
 	using namespace ObjexxFCL::format; // I and F
 
 	bool is_clash( false );
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !is_checked[ seqpos ] ) continue;
 
 		( *scorefxn )( pose );
@@ -454,7 +454,7 @@ pep_phipsi_analysis(
 )
 {
 
-	for( Size pep_seqpos = 2; pep_seqpos <= pose.total_residue() - 1; ++pep_seqpos ){
+	for( Size pep_seqpos = 2; pep_seqpos <= pose.size() - 1; ++pep_seqpos ){
 		//delta phi, psi, omega
 		Real phi( pose.phi( pep_seqpos ) );
 		Real psi( pose.psi( pep_seqpos ) );

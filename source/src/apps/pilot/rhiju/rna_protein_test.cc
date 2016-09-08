@@ -148,7 +148,7 @@ rna_protein_repack_test()
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		task->nonconst_residue_task( i ).restrict_to_repacking();
 	}
 
@@ -196,7 +196,7 @@ rna_protein_prepack_test()
 
 	//First push the protein and the RNA far apart.
 	utility::vector1<Size> rna_residues, protein_residues;
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		if (pose.residue(i).is_RNA() ) rna_residues.push_back( i );
 		if (pose.residue(i).is_protein() ) protein_residues.push_back( i );
 	}
@@ -211,7 +211,7 @@ rna_protein_prepack_test()
 	if (protein_residues[1] > rna_residues[1] )  cutpoint = protein_residues[1]-1;
 
 	kinematics::FoldTree f_original = pose.fold_tree();
-	kinematics::FoldTree f_separate_protein_rna( pose.total_residue() );
+	kinematics::FoldTree f_separate_protein_rna( pose.size() );
 	f_separate_protein_rna.new_jump( upstream_residue, downstream_residue, cutpoint );
 	pose.fold_tree( f_separate_protein_rna );
 	kinematics::Jump j( pose.jump( 1 ) );
@@ -226,7 +226,7 @@ rna_protein_prepack_test()
 	////////////////////////////////////////////////////////////
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		task->nonconst_residue_task( i ).restrict_to_repacking();
 	}
 	(*scorefxn)( pose );
@@ -247,7 +247,7 @@ pack_interface( pose::Pose & pose, scoring::ScoreFunction & scorefxn, ObjexxFCL:
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	//Switch to a simple fold_tree.
 	kinematics::FoldTree f_save = pose.fold_tree();
@@ -314,7 +314,7 @@ bool
 check_protein_rna_clash( pose::Pose const & pose, ObjexxFCL::FArray1D< bool > & interface_residue ){
 
 	static Real const dist_cutoff2 = 2.5 * 2.5;
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	interface_residue.dimension( nres );
 	interface_residue  = false;
@@ -326,7 +326,7 @@ check_protein_rna_clash( pose::Pose const & pose, ObjexxFCL::FArray1D< bool > & 
 		//Quick check.
 		Vector const & nbr_i( rsd1.xyz( rsd1.nbr_atom() ) );
 
-		for (Size j=1; j <= pose.total_residue(); j++ ) {
+		for (Size j=1; j <= pose.size(); j++ ) {
 			conformation::Residue const & rsd2 = pose.residue(j);
 			if (rsd2.is_RNA()) continue;
 
@@ -381,7 +381,7 @@ rna_protein_rb_test(){
 	std::string pdb_file  = option[ in::file::s ][1];
 	io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	/////////////////////////////////////////////////////
 	//Yea, this should *not* be hard-wired!
@@ -661,7 +661,7 @@ rna_protein_pdbstats_test(){
 	std::string pdb_file  = option[ in::file::s ][1];
 	io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	if (nres < 1000 ) dump_pdb( pose, "start.pdb" );
 
@@ -712,7 +712,7 @@ rna_protein_pdbstats_test(){
 		//Quick check.
 		Vector const & nbr_i( rsd1.xyz( rsd1.nbr_atom() ) );
 
-		for (Size j=1; j <= pose.total_residue(); j++ ) {
+		for (Size j=1; j <= pose.size(); j++ ) {
 			conformation::Residue const & rsd2 = pose.residue(j);
 			if (!rsd2.is_protein()) continue;
 
@@ -781,7 +781,7 @@ juke_sam_test(){
 		std::string const pdb_file = pdb_files[n];
 		io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
-		Size const nres = pose.total_residue();
+		Size const nres = pose.size();
 
 		Size const sam = nres;
 		std::cout <<"************************************************" << std::endl;
@@ -876,7 +876,7 @@ juke_sam_test(){
 
 		// soft repack
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 		pack::pack_rotamers( pose, *scorefxn_soft, task);

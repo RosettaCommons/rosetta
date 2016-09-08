@@ -109,10 +109,10 @@ iface_pdb_superimpose_pose(
 {
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-	for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;
 		if ( ! mod_pose.residue(ii).is_protein() ) continue;
-		for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 			if ( ! ref_pose.residue(jj).has("CA") ) continue;
 			if ( ! ref_pose.residue(jj).is_protein() ) continue;
 			if ( mod_pose.pdb_info()->chain(ii) != ref_pose.pdb_info()->chain(jj) ) continue;
@@ -183,8 +183,8 @@ main( int argc, char * argv [] )
 			// align comparison pose to template pose
 			//      protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover( template_pose );
 			protocols::simple_moves::SuperimposeMoverOP sp_mover( new protocols::simple_moves::SuperimposeMover() );
-			sp_mover->set_reference_pose( template_pose, 1, template_pose.total_residue() );
-			sp_mover->set_target_range( 1, template_pose.total_residue() );
+			sp_mover->set_reference_pose( template_pose, 1, template_pose.size() );
+			sp_mover->set_target_range( 1, template_pose.size() );
 			sp_mover->apply( input_pose );
 		}
 

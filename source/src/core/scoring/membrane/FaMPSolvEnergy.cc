@@ -439,7 +439,7 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 	core::Real steepness = pose.conformation().membrane_info()->membrane_steepness();
 
 	// For convenience - grab nres
-	Real nres = pose.total_residue();
+	Real nres = pose.size();
 
 	for ( Size i = 1; i <= nres; ++i ) {
 		for ( Size j = 1, j_end = pose.residue( i ).nheavyatoms(); j <= j_end; ++j ) {
@@ -477,7 +477,7 @@ FaMPSolvEnergy::compute_fa_proj(
 void
 FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 
-	core::Real nres = pose.total_residue();
+	core::Real nres = pose.size();
 
 	fa_z_position_.resize( (core::Size)nres );
 	fa_proj_.resize( (core::Size)nres );

@@ -107,7 +107,7 @@ main( int argc, char * argv [] )
 			if( native_pose() == NULL ) atdiff.read_pose(tag, a_pose);
 			else atdiff.read_pose(tag, a_pose, *native_pose);
 			// Keep a copy of the last residue in the pose and discard the rest to conserve memory
-			lig_residues.push_back( a_pose.residue(a_pose.total_residue()).clone() );
+			lig_residues.push_back( a_pose.residue(a_pose.size()).clone() );
 			// Have to use std::cout because Tracers produce too much junk here:
 			if( j % 10 == 0 ) std::cout << "." << std::flush;
 		}

@@ -352,7 +352,7 @@ main( int argc, char * argv [] ) {
 
 	TorsionList native_torsions( native_pose );
 	DistanceMatrix native_dist( native_pose, atom_name );
-	Size const nres( native_pose.total_residue() );
+	Size const nres( native_pose.size() );
 	core::import_pose::pose_stream::MetaPoseInputStream input
 		= core::import_pose::pose_stream::streams_from_cmd_line();
 	Size const n_torsions( native_torsions.n_torsions() );

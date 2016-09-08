@@ -596,13 +596,13 @@ CentroidDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 	disulfide_partners_.clear();
 	disulfide_atom_indices_.clear();
 	disulfide_info_.clear();
-	resid_2_disulfide_index_.resize( pose.total_residue() );
-	disulfide_residue_types_.resize( pose.total_residue() );
+	resid_2_disulfide_index_.resize( pose.size() );
+	disulfide_residue_types_.resize( pose.size() );
 	std::fill( resid_2_disulfide_index_.begin(), resid_2_disulfide_index_.end(), NO_DISULFIDE );
 	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCOP(0) );
 
 	Size count_disulfides( 0 );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		conformation::Residue res = pose.residue( ii );
 		if ( res.type().is_disulfide_bonded() &&
 				//res.aa() == chemical::aa_cys &&
@@ -651,7 +651,7 @@ CentroidDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 bool
 CentroidDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 {
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 	if ( resid_2_disulfide_index_.size() != total_residue ) return true;
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {

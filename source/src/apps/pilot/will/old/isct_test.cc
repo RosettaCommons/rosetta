@@ -87,8 +87,8 @@ Vec randvec() {
 
 int pose_cbcount(Pose const & a, Pose const & b) {
   int count = 0;
-  for(Size i = 1; i <= a.n_residue(); ++i) {
-    for(Size j = 1; j <= b.n_residue(); ++j) {
+  for(Size i = 1; i <= a.size(); ++i) {
+    for(Size j = 1; j <= b.size(); ++j) {
       if(a.residue(i).xyz(2).distance_squared(b.residue(j).xyz(2)) < 100.0) {
         count++;
       }
@@ -102,7 +102,7 @@ int pose_cbcount(Pose const & a, Pose const & b) {
 struct IsctFast {
   IsctFast(core::pose::Pose const & pose, Real clash_dis){
 
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			Size const natom = (pose.residue(i).name3()=="GLY") ? 4 : 5;
 			for(Size j = 1; j <= natom; ++j) pnt.push_back(Vec(pose.residue(i).xyz(j)));
 		}
@@ -270,7 +270,7 @@ bool grd_clash(Pose const & pose, core::kinematics::Stub const & stub, IsctFast 
 }
 
 bool ifc_clash(Pose const & pose, core::kinematics::Stub const & stub, protocols::scoring::ImplicitFastClashCheck const & ifc) {
-  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= pose.size(); ++ir) {
     for(Size ia = 1; ia <= 5; ++ia) {
       Vec A = stub.local2global(pose.xyz(AtomID(ia,ir)));
       if(!ifc.clash_check( A ) ) return true;
@@ -280,9 +280,9 @@ bool ifc_clash(Pose const & pose, core::kinematics::Stub const & stub, protocols
 }
 
 bool brt_clash(Pose const & pose, core::kinematics::Stub const & stub, Real clash_dis2 = 16.0) {
-  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= pose.size(); ++ir) {
     Vec const CA1 = stub.local2global(pose.xyz(AtomID(2,ir)));
-    for(Size jr = 1; jr <= pose.n_residue(); ++jr) {
+    for(Size jr = 1; jr <= pose.size(); ++jr) {
       Vec const CA2 = pose.xyz(AtomID(2,jr));
       if(CA1.distance_squared(CA2) > 81.0) continue;
       for(Size ia = 1; ia <= 5; ++ia) {
@@ -310,7 +310,7 @@ int main (int argc, char *argv[]) {
   std::string fn = basic::options::option[in::file::s]()[1];
   Pose pose;
   core::import_pose::pose_from_file(pose,fn, core::import_pose::PDB_file);
-  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= pose.size(); ++ir) {
     core::pose::replace_pose_residue_copying_existing_coordinates(pose,ir,pose.residue(ir).residue_type_set().name_map("ALA"));
   }
 

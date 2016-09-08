@@ -428,7 +428,7 @@ BluePrint::set_movemap( MoveMapOP & movemap )
 void
 BluePrint::insert_ss_into_pose( Pose & pose )
 {
-	for ( Size i=1; i<= pose.total_residue(); i++ ) {
+	for ( Size i=1; i<= pose.size(); i++ ) {
 		Size resi = resnum_map( i );
 		if ( resi == 0 ) continue;
 		char ss = secstruct( resi );

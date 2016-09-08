@@ -767,7 +767,7 @@ void PlainPdbJobDistributor::dump_scores(
 		pose_total += score;
 	}
 	out << " " << pose_total << "\n";
-	for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
+	for ( core::Size j = 1, end_j = pose.size(); j <= end_j; ++j ) {
 		core::Real rsd_total = 0.0;
 		out << pose.residue(j).name() << "_" << j;
 		for ( auto & score_type : score_types ) {
@@ -801,7 +801,7 @@ void PlainPdbJobDistributor::dump_scores(
 	// yaml->write(scorefxn.get_weight(*ii) * pose.energies().total_energies()[ *ii ]);
 	//yaml->end_list();
 	//yaml->start_map("per_res_weighted");
-	//for(core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j) {
+	//for(core::Size j = 1, end_j = pose.size(); j <= end_j; ++j) {
 	// std::ostringstream resname; resname << pose.residue(j).name() << " " << j;
 	// yaml->start_list(resname.str(), false);
 	// for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii)

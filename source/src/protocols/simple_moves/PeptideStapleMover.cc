@@ -84,7 +84,7 @@ void PeptideStapleMover::apply( core::pose::Pose & pose )
 
 	// BUNCH OF SANITY CHECKS
 	// test whether we're running off the pose
-	if ( (seqpos_ + staple_gap_) > pose.total_residue()  ) {
+	if ( (seqpos_ + staple_gap_) > pose.size()  ) {
 		TR << "A staple gap of " << staple_gap_ << " runs off the end of the pose. Aborting staple insertion at residue " << seqpos_ << std::endl;
 		return;
 	}

@@ -185,7 +185,7 @@ main( int argc, char * argv [] )
 
         //original protein pose
       	io::pdb::pose_from_file( pose, options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
-				Size origPoseLen = pose.total_residue();
+				Size origPoseLen = pose.size();
 
         //read peptides fasta file
         std::string pepSeq = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
@@ -193,14 +193,14 @@ main( int argc, char * argv [] )
 
         remove_upper_terminus_type_from_pose_residue(pose,origPoseLen);
         append_sequence_to_pose(pose, pepSeq, *ChemicalManager::get_instance()->residue_type_set( "fa_standard" ), false);
-        add_upper_terminus_type_to_pose_residue(pose,pose.total_residue());
+        add_upper_terminus_type_to_pose_residue(pose,pose.size());
 
-				TR << "old, new, seqLen length: " << origPoseLen << ", " << pose.total_residue() << ", " << seqLen << std::endl;
+				TR << "old, new, seqLen length: " << origPoseLen << ", " << pose.size() << ", " << seqLen << std::endl;
 				//        add_lower_terminus_type_to_pose_residue(pose,1);
-				runtime_assert(seqLen + origPoseLen == pose.total_residue());
+				runtime_assert(seqLen + origPoseLen == pose.size());
 
         //make peptide linear
-        for (Size i=origPoseLen + 1; i <= pose.total_residue(); i++) {
+        for (Size i=origPoseLen + 1; i <= pose.size(); i++) {
             pose.set_phi(i,-135.0);
             pose.set_psi(i,135.0);
             pose.set_omega(i,180.0);

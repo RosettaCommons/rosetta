@@ -740,7 +740,7 @@ AreConnectablePredicate::check_distance(
 	TR.Debug << "abego=" << abegostr.str() << std::endl;
 
 	// get residue and atom from segment 1
-	core::Size const res1 = template1->total_residue();
+	core::Size const res1 = template1->size();
 	core::chemical::ResidueType const & rtype = template1->residue( res1 ).residue_type_set()->name_map( template1->residue(res1).name3() );
 	std::string const & aname = rtype.atom_name( rtype.upper_connect_atom() );
 	core::Vector const xyz1 = template1->residue(res1).xyz( aname );

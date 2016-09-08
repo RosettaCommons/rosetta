@@ -154,8 +154,8 @@ GatherPosesMover::get_distance_measure(
 	}
 
 	if ( option[ OptionKeys::cluster::hotspot_hash ]() ) {
-		Size const resnum1 = pose1.total_residue();
-		Size const resnum2 = pose2.total_residue();
+		Size const resnum1 = pose1.size();
+		Size const resnum2 = pose2.size();
 		conformation::ResidueCOP res1( pose1.residue(resnum1).get_self_ptr() );
 		conformation::ResidueCOP res2( pose2.residue(resnum2).get_self_ptr() );
 		//return protocols::hotspot_hashing::residue_sc_rmsd_no_super( res1, res2 );
@@ -166,7 +166,7 @@ GatherPosesMover::get_distance_measure(
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() ) utility_exit_with_message( "No symmetric gdtmm available!!!!\n" ) ;
 
 		core::scoring::ResidueSelection residues;
-		core::scoring::invert_exclude_residues( pose1.total_residue(), option[ OptionKeys::cluster::exclude_res ](), residues );
+		core::scoring::invert_exclude_residues( pose1.size(), option[ OptionKeys::cluster::exclude_res ](), residues );
 		// Make a new measure that is like an inverse gdtmm running from 10 (=gdtm of 0) to
 		// 0 (= gdtmm of 1)
 		return 10 -10.0 * scoring::CA_gdtmm( pose1, pose2, residues );
@@ -174,7 +174,7 @@ GatherPosesMover::get_distance_measure(
 
 	if ( option[ OptionKeys::cluster::exclude_res ].user() ) {
 		core::scoring::ResidueSelection residues;
-		core::scoring::invert_exclude_residues( pose1.total_residue(), option[ OptionKeys::cluster::exclude_res ](), residues );
+		core::scoring::invert_exclude_residues( pose1.size(), option[ OptionKeys::cluster::exclude_res ](), residues );
 		if ( pose1.residue(1).is_RNA() ) utility_exit_with_message( "Hey put in all atom rmsd code for residue subset!\n" ) ;
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&
 				core::pose::symmetry::is_symmetric( pose1 ) ) {
@@ -1094,7 +1094,7 @@ EnsembleConstraints_Simple::get_name() const {
 }
 
 void EnsembleConstraints_Simple::createConstraints( std::ostream &out) {
-	int nres = poselist[0].total_residue();
+	int nres = poselist[0].size();
 	int residuesep = 5;
 	Real strength = 1.0;
 

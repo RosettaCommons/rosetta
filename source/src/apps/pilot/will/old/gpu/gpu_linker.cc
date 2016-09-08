@@ -87,7 +87,7 @@ void dump_points_pdb(float const *p, int n, string fn) {
 
 void dump_points_pdb(Pose const & p, string fn) {
 	std::ofstream o(fn.c_str());
-	for(Size i = 0; i < p.n_residue(); ++i) {
+	for(Size i = 0; i < p.size(); ++i) {
 		o<<"ATOM  "<<I(5,3*i+1)<<' '<<"  N "<<' '<<"GLY"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,p.xyz(AtomID(1,i+1)).x())<<F(8,3,p.xyz(AtomID(1,i+1)).y())<<F(8,3,p.xyz(AtomID(1,i+1)).z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 		o<<"ATOM  "<<I(5,3*i+2)<<' '<<" CA "<<' '<<"GLY"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,p.xyz(AtomID(2,i+1)).x())<<F(8,3,p.xyz(AtomID(2,i+1)).y())<<F(8,3,p.xyz(AtomID(2,i+1)).z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 		o<<"ATOM  "<<I(5,3*i+3)<<' '<<"  C "<<' '<<"GLY"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,p.xyz(AtomID(3,i+1)).x())<<F(8,3,p.xyz(AtomID(3,i+1)).y())<<F(8,3,p.xyz(AtomID(3,i+1)).z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';				
@@ -124,12 +124,12 @@ void random_torsions(int N, float *tor) {
 }
 
 void refold_ros(core::pose::Pose & p, float const *tor, float *crd) {
-	for(int i = 0; i < p.n_residue(); ++i) {
+	for(int i = 0; i < p.size(); ++i) {
 		p.set_phi  (i+1, numeric::conversions::degrees(tor[3*i+0]) );
 		p.set_psi  (i+1, numeric::conversions::degrees(tor[3*i+1]) );
 		p.set_omega(i+1, numeric::conversions::degrees(tor[3*i+2]) );
 	}
-	for(int i = 0; i < p.n_residue(); ++i) {
+	for(int i = 0; i < p.size(); ++i) {
 		crd[9*i+0] = p.xyz(AtomID(1,i+1)).x();
 		crd[9*i+1] = p.xyz(AtomID(1,i+1)).y();
 		crd[9*i+2] = p.xyz(AtomID(1,i+1)).z();

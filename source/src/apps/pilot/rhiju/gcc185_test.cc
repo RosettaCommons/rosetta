@@ -155,7 +155,7 @@ rhiju_pack( pose::Pose & pose, scoring::ScoreFunctionOP & scorefxn )
 	using namespace scoring;
 	using namespace  pose;
 
-	int const nres = pose.total_residue();
+	int const nres = pose.size();
 
 	utility::vector1< bool > residues_to_repack( nres, true );
 
@@ -222,7 +222,7 @@ hard_minimize( pose::Pose & pose ){
 	using namespace kinematics;
 	using namespace id;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	// Use constraints to disallow big movements.
 	ConstraintSetOP cst_set( new ConstraintSet() );
@@ -319,7 +319,7 @@ get_subpose( pose::Pose & pose, pose::Pose & subpose,
 		subpose.append_residue_by_jump( rsd, 1 );
 	}
 
-	int const nres = subpose.total_residue();
+	int const nres = subpose.size();
 	subpose.conformation().insert_chain_ending( nres-1 );
 
 	std::cout << "SUBPOSE TOTAL RES " << nres << std::endl;
@@ -403,7 +403,7 @@ get_useful_fold_trees_for_gcc185( pose::Pose & pose,
 	coiledcoil2_end   = 378;
 	}
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	//////////////////////////////////////////////////////////////
 	// This connects GTPase1 <--> coil1 <--> coil2 <--> GTPase2
@@ -516,7 +516,7 @@ repack_minimize_test( ){
 
 	io::pdb::pose_from_file( pose, pdb+".pdb" , core::import_pose::PDB_file);
 
-	int const nres = pose.total_residue();
+	int const nres = pose.size();
 	std::cout << "NRES: " << nres << std::endl;
 	dump_pdb( pose, pdb+"_start.pdb" );
 

@@ -108,7 +108,7 @@ RRProtocolReferenceStructure::run(
 	}
 
 
-	if ( pose.total_residue() != reference_pose_->total_residue() ) {
+	if ( pose.size() != reference_pose_->size() ) {
 		stringstream err_msg;
 		err_msg
 			<< "Attempting to run the Rotamer Recovery against Reference Structure protocol, "
@@ -116,7 +116,7 @@ RRProtocolReferenceStructure::run(
 		utility_exit_with_message(err_msg.str());
 	}
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,

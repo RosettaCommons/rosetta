@@ -61,7 +61,7 @@ main( int argc, char* argv[] )
 	//pose containing res
 	core::pose::Pose master;
 	core::import_pose::pose_from_file(master, basic::options::option[local::master].value(), core::import_pose::PDB_file);
-	core::Size const mastersize(master.total_residue());
+	core::Size const mastersize(master.size());
 
 	//containers for other poses
 	core::pose::Pose pose; //fill it later...
@@ -79,14 +79,14 @@ main( int argc, char* argv[] )
 
 		combined = master;
 		combined.append_residue_by_jump(pose.residue(1), 1);
-		for(core::Size i=2; i<=pose.total_residue(); ++i){
+		for(core::Size i=2; i<=pose.size(); ++i){
 			combined.append_residue_by_bond(pose.residue(i));
 		}
 		//patching in disulfide compatibility
 		combined.conformation().detect_disulfides();
 		combined.conformation().detect_bonds();
 		combined.conformation().detect_pseudobonds();
-		for(core::Size i=1; i<=combined.total_residue(); ++i){
+		for(core::Size i=1; i<=combined.size(); ++i){
 			combined.conformation().update_polymeric_connection(i);
 		}
 

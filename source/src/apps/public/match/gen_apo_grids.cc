@@ -322,7 +322,7 @@ int main( int argc, char * argv [] )
 			core::Real score = 0.0;
 			core::Real factor = T_FACTOR;
 			//go through all residues
-			for ( core::Size j=1, m=pose.n_residue(); j<=m; j++ ) {
+			for ( core::Size j=1, m=pose.size(); j<=m; j++ ) {
 				core::conformation::ResidueCOP res( pose.residue(j).get_self_ptr() );
 				//go through all atoms
 				for ( core::Size k=1, n=res->atoms().size(); k<=n; k++ ) {
@@ -434,7 +434,7 @@ int main( int argc, char * argv [] )
 			utility::vector1< core::Size > active_res_ndx;
 
 			//for each residue
-			for ( core::Size j=1; j<=pose.n_residue(); j++ ) {
+			for ( core::Size j=1; j<=pose.size(); j++ ) {
 				core::conformation::ResidueCOP res( pose.residue(j).get_self_ptr() );
 				bool flag=true;
 

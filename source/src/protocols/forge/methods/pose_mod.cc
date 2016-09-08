@@ -70,7 +70,7 @@ add_cutpoint_variants(
 
 	bool op_performed = false;
 
-	if ( !pose.fold_tree().is_cutpoint( pos ) || pos == 0 || pos >= pose.n_residue() ) {
+	if ( !pose.fold_tree().is_cutpoint( pos ) || pos == 0 || pos >= pose.size() ) {
 		return op_performed;
 	}
 
@@ -105,7 +105,7 @@ remove_cutpoint_variants(
 	using core::chemical::CUTPOINT_LOWER;
 	using core::chemical::CUTPOINT_UPPER;
 
-	if ( !pose.fold_tree().is_cutpoint( pos ) || pos == 0 || pos >= pose.n_residue() ) {
+	if ( !pose.fold_tree().is_cutpoint( pos ) || pos == 0 || pos >= pose.size() ) {
 		return false;
 	}
 
@@ -151,7 +151,7 @@ restore_residues(
 
 	for ( Old2New::const_iterator i = old2new.begin(), ie = old2new.end(); i != ie; ++i ) {
 
-		if ( i->second > pose.total_residue() || i->first > archive_pose.total_residue() ) {
+		if ( i->second > pose.size() || i->first > archive_pose.size() ) {
 			//TR << "mappign beyond pose length.  only possible in repeat generation!!" << std::endl;
 			continue;
 		}
@@ -214,10 +214,10 @@ restore_residues(
 {
 	using core::Size;
 
-	assert( archive_pose.n_residue() == pose.n_residue() );
+	assert( archive_pose.size() == pose.size() );
 
 	std::map< Size, Size > old2new;
-	for ( Size i = 1, ie = archive_pose.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = archive_pose.size(); i <= ie; ++i ) {
 		old2new[ i ] = i;
 	}
 

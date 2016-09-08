@@ -420,7 +420,7 @@ compute_holes_deriv(
 		// test that score from alpha20 and alpha20_deriv match
 		// HolesResult result2 = compute_holes_score(pb,pose,params);
 		// TR << "result1: " << result.score << " result2: " << result2.score << std::endl;
-		// for( Size i = 1; i <= pose.total_residue(); ++i ) {
+		// for( Size i = 1; i <= pose.size(); ++i ) {
 		//    TR << i << " " << result2.atom_scores[core::id::AtomID(1,i)] << " " << result.atom_scores[core::id::AtomID(1,i)] << std::endl;
 		// }
 

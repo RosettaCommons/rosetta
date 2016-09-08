@@ -77,7 +77,7 @@ ChunkSet::setup_atom_id_mask_and_mapper( core::pose::Pose const & pose ) {
 void
 ChunkSet::setup_atom_id_mask( core::pose::Pose const & pose )
 {
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		core::conformation::Residue rsd = pose.residue( i );
 		for ( Size j = 1; j <= rsd.natoms(); j++ ) {
@@ -135,7 +135,7 @@ ChunkSet::filter_poses_have_same_sequence_and_variants()
 		MiniPose const & mini_pose1 = *mini_pose_list_[ 1 ];
 		MiniPose const & mini_pose2 = *mini_pose_list_[ n ];
 		runtime_assert( mini_pose1.sequence() == mini_pose2.sequence() );
-		for ( Size m = 1; m <= mini_pose1.total_residue(); m++ ) {
+		for ( Size m = 1; m <= mini_pose1.size(); m++ ) {
 			utility::vector1< std::string > const & types1 = remove_terminus_variant_types_for_rna( mini_pose1.variant_types( m ), one_letter_sequence[m-1] );
 			utility::vector1< std::string > const & types2 = remove_terminus_variant_types_for_rna( mini_pose2.variant_types( m ), one_letter_sequence[m-1] );
 			if ( types1 != types2 ) {
@@ -253,7 +253,7 @@ ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 				}
 
 				TR << "mini pose has sequence: " << mini_pose_list_[1]->sequence() << std::endl;
-				for ( Size m = 1; m <= mini_pose_list_[1]->total_residue(); m++ ) {
+				for ( Size m = 1; m <= mini_pose_list_[1]->size(); m++ ) {
 					TR << "In chunk mini-pose, residue " << m << " has variants: ";
 					TR << mini_pose_list_[1]->variant_types( m ) << std::endl;
 				}
@@ -283,7 +283,7 @@ ChunkSet::check_fold_tree_OK( pose::Pose const & pose ) const
 	// Check where the chunk is mapped to in the big pose.
 	// There should be at least the same number of jumps in the big pose
 	//  as there are chains in the scratch_pose.
-	utility::vector1< bool > is_chunk_res( pose.total_residue(), false );
+	utility::vector1< bool > is_chunk_res( pose.size(), false );
 	for ( ResMap::const_iterator
 			it=res_map_.begin(), it_end = res_map_.end(); it != it_end; ++it ) {
 		Size const i = it->first; //Index in big pose.

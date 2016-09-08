@@ -99,7 +99,7 @@ public: // tests
 		protocols::simple_moves::VirtualRootMover().apply( start_pose );
 
 		// add symmetry data input file
-		core::conformation::symmetry::SymmData symmdata1( pose.n_residue(), pose.num_jump() );
+		core::conformation::symmetry::SymmData symmdata1( pose.size(), pose.num_jump() );
 		std::string const symm_def1 = "core/conformation/symmetry/symm_def1.dat";
 		symmdata1.read_symmetry_data_from_file(symm_def1);
 		core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );

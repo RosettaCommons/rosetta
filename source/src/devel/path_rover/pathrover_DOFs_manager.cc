@@ -389,7 +389,7 @@ void DOFs_manager::build_pdbres_to_pose_mapping()
 {
   core::pose::PDBInfoCOP pdb_info = _template_pose->pdb_info();
   Pdbres_id pdbres;
-  for(core::Size i=1; i < _template_pose->total_residue(); i++)
+  for(core::Size i=1; i < _template_pose->size(); i++)
     {
       pdbres.chain = pdb_info->chain(i);
       pdbres.res_id = pdb_info->number(i);

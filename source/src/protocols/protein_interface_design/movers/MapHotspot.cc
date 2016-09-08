@@ -107,9 +107,9 @@ MapHotspot::MinimizeHotspots( core::pose::Pose & pose ){
 	core::kinematics::FoldTree const hotspot_ft( make_hotspot_foldtree( pose ) );
 	TR<<"imposing hotspot foldtree "<<hotspot_ft;
 	pose.fold_tree( hotspot_ft );
-	vector1< bool > const nomin( pose.total_residue(), false );
-	vector1< bool > minsc( pose.total_residue(), false );
-	minsc[ pose.total_residue() ] = true;
+	vector1< bool > const nomin( pose.size(), false );
+	vector1< bool > minsc( pose.size(), false );
+	minsc[ pose.size() ] = true;
 	vector1< core::Size > const empty;
 	vector1< bool > minrb_last( num_jump, false );
 	minrb_last[ num_jump ] = true;
@@ -156,8 +156,8 @@ copy_hotspot_to_pose( core::pose::Pose const & src, core::pose::Pose & dest, cor
 
 	ResidueOP new_res = ResidueFactory::create_residue( restype );
 
-	dest.append_residue_by_jump( *new_res, dest.total_residue(),"","",true/*new chain*/ );
-	core::pose::add_variant_type_to_pose_residue( dest, core::chemical::SHOVE_BB, dest.total_residue() );
+	dest.append_residue_by_jump( *new_res, dest.size(),"","",true/*new chain*/ );
+	core::pose::add_variant_type_to_pose_residue( dest, core::chemical::SHOVE_BB, dest.size() );
 	dest.fold_tree( new_ft );
 	using namespace core::chemical;
 	core::pose::add_upper_terminus_type_to_pose_residue( dest, src_resi );
@@ -190,7 +190,7 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	RotamerSetFactory rsf;
 	RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( hotspot_resnum ) );
 	rotset->set_resid( hotspot_resnum );
-	graph::GraphOP packer_graph( new graph::Graph( pose.total_residue() ) );
+	graph::GraphOP packer_graph( new graph::Graph( pose.size() ) );
 	rotset->build_rotamers( pose, *scorefxn, *ptask, packer_graph, false );
 	TR<<"Created rotamer set for residue "<<hotspot_resnum<<"with explosion="<<explosion<<std::endl;
 	return( rotset );

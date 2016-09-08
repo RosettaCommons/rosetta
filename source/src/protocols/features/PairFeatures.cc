@@ -169,14 +169,14 @@ PairFeatures::report_residue_pairs(
 	std::string statement_string = "INSERT INTO residue_pairs (struct_id, resNum1, resNum2, res1_10A_neighbors, res2_10A_neighbors, actcoord_dist, polymeric_sequence_dist) VALUES (?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1 ) {
+	for ( Size resNum1=1; resNum1 <= pose.size(); ++resNum1 ) {
 		Residue const & res1( pose.residue(resNum1) );
 
 		Size res1_10A_neighbors(
 			tenA.get_node(resNum1)->num_neighbors_counting_self_static());
 
 		// TODO: just iterate over the neighbors of res1
-		for ( Size resNum2=resNum1+1; resNum2 <= pose.total_residue(); ++resNum2 ) {
+		for ( Size resNum2=resNum1+1; resNum2 <= pose.size(); ++resNum2 ) {
 			if ( !check_relevant_residues( relevant_residues, resNum1, resNum2 ) ) continue;
 			Residue const & res2( pose.residue(resNum2) );
 

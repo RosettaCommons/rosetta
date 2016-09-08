@@ -258,8 +258,8 @@ generate_beta_database_test(){
 			}
 		}
 
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-			for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
+			for ( Size j = 1; j <= pose.size(); j++ ) {
 				if ( donor_to_acceptor_bb_hb[ std::make_pair( i, j ) ] &&
 						donor_to_acceptor_bb_hb[ std::make_pair( j, i ) ] ) {
 					//Create a coordinate system at residue i,

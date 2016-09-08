@@ -114,7 +114,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 #endif
 
 	// iterate over all residues
-	for ( Size ii = 1; ii<= design_task->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii<= design_task->size(); ++ii ) {
 		if( design_task->being_designed( ii ) )
 			designable_set.insert( ii );
 	}
@@ -153,7 +153,7 @@ void measure_sequence_recovery( core::pose::Pose & pose ) {
 	// record native sequence
 	// native_sequence vector is sized for the WHOLE pose not just those being designed
 	// it doesn't matter because we only iterate over the number of designed positions
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	utility::vector1< chemical::AA > sequence( nres );
 
 	Size bad_tyrs = 0;

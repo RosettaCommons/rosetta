@@ -223,7 +223,7 @@ ModelFeatures::report_features(
 
 	//iterate through every residue to find unique sets of secondary structure clusters
 	std::set< std::set< Segment > > ss_groups;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		std::set<core::Size> central_residues;
 		central_residues.insert(i);
 
@@ -389,7 +389,7 @@ ModelFeatures::trim_pose(
 	std::set<core::Size> resnums
 ) const {
 	core::Size num_removed_residues=0;
-	core::Size total_res = pose.total_residue();
+	core::Size total_res = pose.size();
 	for ( core::Size i=1; i<=total_res; ++i ) {
 		if ( resnums.find(i) == resnums.end() ) {
 			pose.conformation().delete_residue_slow(i-num_removed_residues);

@@ -93,7 +93,7 @@ count_int_CBs_clashes (pose::Pose const &pose, Size i, Size j, Real contact_dist
     utility_exit_with_message("There are not that many subunits!");
   }
 
-  for (Size ir=1; ir<=pose.n_residue(); ir++) { // Iterate over all residues in the subunit i
+  for (Size ir=1; ir<=pose.size(); ir++) { // Iterate over all residues in the subunit i
     Size isub = sym_info->subunit_index(ir);
     if (isub != i) continue;
     if (chemical::name_from_aa(pose.aa(ir)) == "GLY") { // Use CAs instead of CBs for GLYs
@@ -101,7 +101,7 @@ count_int_CBs_clashes (pose::Pose const &pose, Size i, Size j, Real contact_dist
     } else {
       itype = 5;
     }
-    for (Size jr=1; jr<=pose.n_residue(); jr++) { // Then iterate over all residues in subunit j
+    for (Size jr=1; jr<=pose.size(); jr++) { // Then iterate over all residues in subunit j
       Size jsub = sym_info->subunit_index(jr);
       if (jsub != j) continue;
       if (chemical::name_from_aa(pose.aa(jr)) == "GLY") {
@@ -183,7 +183,7 @@ main (int argc, char *argv[])
 
   // If you are docking, change all non-glycine residues to ala to cut down on the size of the pose.
   if (!options::option[in::olig_search::dump_pdb]()) {
-    for (Size i=1; i<=pose.n_residue(); i++) {
+    for (Size i=1; i<=pose.size(); i++) {
       if (chemical::name_from_aa(pose.aa(i)) == "GLY") {
         core::pose::replace_pose_residue_copying_existing_coordinates(pose, i, resi_set->name_map("GLY"));
       } else {

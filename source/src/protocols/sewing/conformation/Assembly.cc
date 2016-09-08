@@ -138,7 +138,7 @@ Assembly::update_coords_from_pose(
 
 	ModelIterator<SewSegment> it = assembly_begin();
 	ModelIterator<SewSegment> it_end = assembly_end();
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 
 		it.residue()->chi_angles_ = pose.residue(i).chi();
 		for ( Size ii=1; ii <= 4; ++ii ) {
@@ -893,7 +893,7 @@ Assembly::to_pose(
 			if ( counter != 1 && base_type.is_lower_terminus() ) {
 				core::chemical::ResidueType const & res_type = res_type_set->get_residue_type_with_variant_removed(base_type, core::chemical::LOWER_TERMINUS_VARIANT);
 				new_residue = core::conformation::ResidueFactory::create_residue(res_type);
-			} else if ( counter != model_pose.total_residue() && base_type.is_upper_terminus() ) {
+			} else if ( counter != model_pose.size() && base_type.is_upper_terminus() ) {
 				core::chemical::ResidueType const & res_type = res_type_set->get_residue_type_with_variant_removed(base_type, core::chemical::UPPER_TERMINUS_VARIANT);
 				new_residue = core::conformation::ResidueFactory::create_residue(res_type);
 			} else {
@@ -917,7 +917,7 @@ Assembly::to_pose(
 	}
 
 	//Fixup the hydrogens
-	for ( core::Size i=1; i<=model_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=model_pose.size(); ++i ) {
 		core::conformation::ResidueOP ires = model_pose.residue( i ).clone();
 		core::conformation::idealize_hydrogens( *ires, model_pose.conformation() );
 		model_pose.replace_residue( i, *ires, false );
@@ -940,7 +940,7 @@ Assembly::to_pose(
 		model_pose.fold_tree(ft);
 	}
 
-	runtime_assert(model_pose.total_residue() == nres);
+	runtime_assert(model_pose.size() == nres);
 
 	//finally, add the partner
 	if ( partner_pose_ ) {
@@ -1021,7 +1021,7 @@ Assembly::to_multichain_pose(
 	chain_endings.pop_back();
 	model_pose.conformation().chain_endings(chain_endings);
 
-	for ( core::Size i=1; i<=model_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=model_pose.size(); ++i ) {
 		core::conformation::ResidueOP ires = model_pose.residue( i ).clone();
 		core::conformation::idealize_hydrogens( *ires, model_pose.conformation() );
 		model_pose.replace_residue( i, *ires, false );
@@ -1242,7 +1242,7 @@ core::Real
 Assembly::percent_native(
 	core::pose::Pose const & pose
 ) const {
-	return native_positions(pose).size() / (core::Real)pose.total_residue();
+	return native_positions(pose).size() / (core::Real)pose.size();
 }
 
 

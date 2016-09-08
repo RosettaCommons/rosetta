@@ -709,8 +709,8 @@ ReportToDB::initialize_pose(
 	pose.update_residue_neighbors(); // As some of the sub-features may need neighbor information
 	if ( remove_xray_virt_ ) {
 		TR << "Removing virtual residue left behind by xray refinement" << endl;
-		while ( pose.residue( pose.total_residue() ).aa() == core::chemical::aa_vrt )
-				pose.conformation().delete_residue_slow( pose.total_residue() );
+		while ( pose.residue( pose.size() ).aa() == core::chemical::aa_vrt )
+				pose.conformation().delete_residue_slow( pose.size() );
 	}
 }
 
@@ -724,14 +724,14 @@ ReportToDB::initialize_relevant_residues(
 			<< " using the relevant residues." << std::endl;
 	}
 	if ( relevant_residues_.size() ) {
-		if ( relevant_residues_.size() != pose.total_residue() ) {
+		if ( relevant_residues_.size() != pose.size() ) {
 			TR.Warning
 				<< "The size of relevant_residues is: " << relevant_residues_.size()
-				<< " while the pose has '" << pose.total_residue() << "' residues,"
+				<< " while the pose has '" << pose.size() << "' residues,"
 				<< " verify that this mismatch intended."
 				<< " Resetting the relevant_residues to be all residues in the pose."
 				<< std::endl;
-			return vector1< bool >(pose.total_residue(), true);
+			return vector1< bool >(pose.size(), true);
 		} else {
 			return relevant_residues_;
 		}
@@ -750,7 +750,7 @@ ReportToDB::apply( Pose& pose ){
 	TR
 		<< "Reporting features for "
 		<< accumulate(relevant_residues.begin(), relevant_residues.end(), 0)
-		<< " of the " << pose.total_residue()
+		<< " of the " << pose.size()
 		<< " total residues in the pose "
 		<< JobDistributor::get_instance()->current_output_name()
 		<< " for batch '" << batch_name_ << "'." << endl;

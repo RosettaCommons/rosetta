@@ -126,7 +126,7 @@ bool BBConRotMover::make_move(Pose &pose)
 	}
 	assert(resnum_-left == n_pert_res_-1);
 
-	Size nres(pose.n_residue());
+	Size nres(pose.size());
 	xyzVector oldv(pose.residue(nres).atom("CA").xyz());
 
 	//using whole pose

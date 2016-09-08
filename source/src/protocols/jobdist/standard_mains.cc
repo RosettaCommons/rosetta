@@ -553,7 +553,7 @@ int universal_main(
 				}
 			}
 
-			if ( input_pose->total_residue() == 0 ) {
+			if ( input_pose->size() == 0 ) {
 				utility_exit_with_message( "Unable to read PDB file: " + curr_job->input_tag() + '\n' );
 			}
 

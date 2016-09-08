@@ -521,7 +521,7 @@ rebuild_centroid_test()
 	make_pose_from_sequence( pose, desired_sequence, *rsd_set, false /*auto_termini*/);
 
 	// make extended chain
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		if ( ! pose.residue(pos).is_protein() ) continue;
 		pose.set_phi( pos, -150 );
 		pose.set_psi( pos, 150);
@@ -565,7 +565,7 @@ rebuild_centroid_test()
 	if ( num_inputs == 0 ){
 		///////////////////////
 		// start from scratch
-		assert(  pose.total_residue() == fragset->max_frag_length() );
+		assert(  pose.size() == fragset->max_frag_length() );
 
 		insert_pos = 1;
 		parent_tag = "START_FROM_SCRATCH";

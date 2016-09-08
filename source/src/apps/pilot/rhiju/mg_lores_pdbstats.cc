@@ -126,7 +126,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 	static Real const VDW_DIST_CUTOFF ( 4.5 );
 	static Real const LIGAND_DIST_CUTOFF ( 3.0 );
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size res_count( 0 );
 

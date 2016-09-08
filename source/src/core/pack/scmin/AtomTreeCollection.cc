@@ -353,7 +353,7 @@ AtomTreeCollection::AtomTreeCollection(
 	rotamer_set::RotamerSets const & rsets
 ) :
 	//rotsets_( rotsets ),
-	resid_2_moltenresid_( pose.total_residue(), 0 ),
+	resid_2_moltenresid_( pose.size(), 0 ),
 	moltenresid_2_resid_( rsets.nmoltenres() ),
 	res_collections_( rsets.nmoltenres() )
 {
@@ -373,12 +373,12 @@ AtomTreeCollection::AtomTreeCollection(
 	task::PackerTask const & task
 ) :
 	//rotsets_( rotsets ),
-	resid_2_moltenresid_( pose.total_residue(), 0 ),
+	resid_2_moltenresid_( pose.size(), 0 ),
 	moltenresid_2_resid_( task.num_to_be_packed() ),
 	res_collections_( task.num_to_be_packed() )
 {
 	Size count_moltenres( 0 );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ! task.being_packed( ii ) ) continue;
 		++count_moltenres;
 		resid_2_moltenresid_[ ii ] = count_moltenres;

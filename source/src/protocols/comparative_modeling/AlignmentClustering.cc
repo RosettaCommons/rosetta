@@ -246,13 +246,13 @@ AlignmentClustering::AlignmentClustering(){
 				<< aln_id << std::endl;
 			PartialThreadingMover mover( rankedAlignments[ii], template_pose );
 			mover.apply( query_pose );
-			max_pose_len = std::max( max_pose_len, query_pose.total_residue() );
-			if ( query_pose.total_residue() >= MIN_POSE_SIZE ) {
+			max_pose_len = std::max( max_pose_len, query_pose.size() );
+			if ( query_pose.size() >= MIN_POSE_SIZE ) {
 				poses.push_back( query_pose );
 				aln_ids.push_back( aln_id );
 				rankedAlignments_valid.push_back(rankedAlignments[ii]);
 			} else {
-				tr << aln_id << "has only "<<query_pose.total_residue() << "which is below size threshold of " << MIN_POSE_SIZE << std::endl;
+				tr << aln_id << "has only "<<query_pose.size() << "which is below size threshold of " << MIN_POSE_SIZE << std::endl;
 			}
 			if ( option[ run::debug ]() ) {
 				query_pose.dump_pdb( aln_id + ".pdb" );

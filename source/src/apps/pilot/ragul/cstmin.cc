@@ -77,7 +77,7 @@ int main( int argc, char * argv [] )
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
 		// impose coordinate constraint
-		Size const NRES = ps.total_residue();
+		Size const NRES = ps.size();
 		Real const COORD_SDV = option[cst_coord_sdv];
 		Size const ANCHOR = option[cst_anchor];
 		for ( Size i=1; i<=NRES; ++i ) {

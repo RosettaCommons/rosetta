@@ -169,7 +169,7 @@ public:
 
 		protocols::pmut_scan::PointMutScanDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
 
-		//core::graph::Graph neighbor_graph( input_poses[1].total_residue() );
+		//core::graph::Graph neighbor_graph( input_poses[1].size() );
 		utility::vector1< utility::vector1< bool > > neighbors;
 		driver.calculate_neighbor_table( input_poses[1], neighbors );
 

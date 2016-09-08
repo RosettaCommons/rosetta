@@ -36,7 +36,7 @@ anglestats_local( void* ) {
 
 	pose::Pose pose;
 	core::import_pose::pose_from_file( pose, option[ OptionKeys::in::file::s ]().vector().front() , core::import_pose::PDB_file);
-	for (Size i=2; i<= pose.total_residue()-1; i++) {
+	for (Size i=2; i<= pose.size()-1; i++) {
 		if (std::abs(pose.omega(i)) < 150) {
 			TR << "cis ";
 		}

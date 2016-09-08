@@ -103,7 +103,7 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 
 	core::pose::Pose pose = pose_to_visualize; // make a local copy -- otherwise crashing graphics builds
 
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 
 	for  ( core::Size i = 1; i <= nres; i++ )  {
 
@@ -260,7 +260,7 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 	Vector const moving_xyz = pose.residue( moving_res ).xyz( atomno );
 
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( i == moving_res ) continue;
 
 		// this is silly, trying to prevent i, i+1 backbone H-bonds in RNA.

@@ -618,8 +618,8 @@ StrandBundleFeatures::check_sw_by_dis(
 				j_resnum_3 = j_resnum-3;
 
 				if ( j_resnum_3 <= 0
-						|| i_resnum_3 > pose.total_residue()
-						|| j_resnum_3 > pose.total_residue() ) { // sometimes, j_resnum_3 becomes 18446744073709551615 where it should be -1
+						|| i_resnum_3 > pose.size()
+						|| j_resnum_3 > pose.size() ) { // sometimes, j_resnum_3 becomes 18446744073709551615 where it should be -1
 					continue;
 				}
 			} else { // paralell
@@ -632,7 +632,7 @@ StrandBundleFeatures::check_sw_by_dis(
 				i_resnum_3 = i_resnum+3;
 				j_resnum_3 = j_resnum+3;
 
-				if ( i_resnum_3 > pose.total_residue() || j_resnum_3 > pose.total_residue() ) {
+				if ( i_resnum_3 > pose.size() || j_resnum_3 > pose.size() ) {
 					continue;
 				}
 			}

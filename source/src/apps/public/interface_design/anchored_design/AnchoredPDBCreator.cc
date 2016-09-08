@@ -151,15 +151,15 @@ public:
 
 		//superimpose combined onto anchor
 		utility::vector1< core::Size > positions;
-		core::Size const anchorlength = anchor.total_residue();
+		core::Size const anchorlength = anchor.size();
 		for ( core::Size i( 1 ); i <= anchorlength; ++i ) positions.push_back( i );
 		using protocols::toolbox::pose_manipulation::superimpose_pose_on_subset_CA;
 		superimpose_pose_on_subset_CA( combined, anchor, positions, insert_point );
 
 		core::pose::Pose total(target);
 		//add combined to target
-		total.append_residue_by_jump( combined.residue( 1 ), total.total_residue(), "CA", "CA", true );
-		for ( core::Size i = 2; i <= combined.total_residue(); ++i ) {
+		total.append_residue_by_jump( combined.residue( 1 ), total.size(), "CA", "CA", true );
+		for ( core::Size i = 2; i <= combined.size(); ++i ) {
 			total.append_residue_by_bond( combined.residue( i ) );
 		}
 

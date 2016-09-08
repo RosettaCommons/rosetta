@@ -109,7 +109,7 @@ public:
 		//using protocols::loops::Loops;
 
 		//Loops loops = protocols::comparative_modeling::loops_from_alignment(
-		//	query_pose.total_residue(), alignment(), min_loop_size()
+		//	query_pose.size(), alignment(), min_loop_size()
 		//);
 
 		//// foreach loop
@@ -129,9 +129,9 @@ public:
 		using core::conformation::ResidueFactory;
 		query_pose.append_residue_by_jump(
 			*ResidueFactory::create_residue( query_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-			static_cast< Size > (query_pose.total_residue() / 2)
+			static_cast< Size > (query_pose.size() / 2)
 		);
-		Size nres = query_pose.total_residue();
+		Size nres = query_pose.size();
 
 		core::id::SequenceMapping map = alignment().sequence_mapping(1,2);
 

@@ -133,7 +133,7 @@ VdWTinkerPoseInfo::VdWTinkerPoseInfo( VdWTinkerPoseInfo const & src ):
 void
 VdWTinkerPoseInfo::initialize( pose::Pose const & pose )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	residue_info_.resize( nres, nullptr );
 	placeholder_residue_.resize( nres, nullptr );
@@ -327,7 +327,7 @@ VdWTinkerPotential::assign_all_amoeba_types(
 ) const {
 	//TR << "Assigning amoeba vdw types!" << std::endl;
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// Look up the Amoeba vdw type information
 	VdWTinkerPoseInfoOP vdw_info;

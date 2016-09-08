@@ -56,7 +56,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		core_init_with_additional_options( "-obey_ENDMDL -constraints_from_link_records -cst_weight 1 -extra_res_fa core/io/pdb/test.params");
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/io/pdb/extra_res_pose.pdb" , core::import_pose::PDB_file);
-		TS_ASSERT_EQUALS( pose.n_residue(), 181 );
+		TS_ASSERT_EQUALS( pose.size(), 181 );
 	}
 
 

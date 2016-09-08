@@ -164,7 +164,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
 
 	int seg_len = 0;
 	if ( use_all_pivot_res_ ) {
-		for ( int n=1,end=static_cast< int >(pose.n_residue()); n<=end; n++ ) {
+		for ( int n=1,end=static_cast< int >(pose.size()); n<=end; n++ ) {
 			conformation::Residue const & rsd( pose.residue( n ) );
 			if ( rsd.is_protein() && movemap_->get_bb(n) && n<end
 					&& (!option[bbg::ignore_improper_res] || pose.residue(n).name1()!='P')  ) {
@@ -188,7 +188,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
 			}
 		}
 	} else {
-		for ( int n=1,end=static_cast< int >(pose.n_residue()); n<=end; n++ ) {
+		for ( int n=1,end=static_cast< int >(pose.size()); n<=end; n++ ) {
 			conformation::Residue const & rsd( pose.residue( n ) );
 			if ( rsd.is_protein() && movemap_->get_bb(n) && n<end
 					&& (!option[bbg::ignore_improper_res] || pose.residue(n).name1()!='P')  ) {

@@ -115,7 +115,7 @@ TerminusDistanceFilter::compute( core::pose::Pose const & pose ) const {
 	iface.calculate( copy_pose );
 	core::Real min_dist(1000);
 
-	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		core::Real dist(1000);
 		if ( !iface.is_interface( i ) ) continue; // keep going if we're not at the interface
 

@@ -224,7 +224,7 @@ void ThreadingMover::apply(
 
 	core::id::AtomID_Mask missing( true );
 	core::pose::initialize_atomid_map( missing, query_pose ); // used for repacking atoms
-	for ( Size resi = 1; resi <= query_pose.total_residue(); resi++ ) {
+	for ( Size resi = 1; resi <= query_pose.size(); resi++ ) {
 		Size const t_resi = query_to_pdbseq[ resi ];
 
 		// skip this residue if we're not aligned
@@ -232,12 +232,12 @@ void ThreadingMover::apply(
 			continue;
 		}
 
-		if ( t_resi > template_pose_.total_residue() ) {
+		if ( t_resi > template_pose_.size() ) {
 			tr.Error << "Error: don't have residue " << t_resi
 				<< " in template_pose!" << std::endl;
 
-			tr.Error << "template_pose.total_residue() == "
-				<< template_pose_.total_residue() << std::endl;
+			tr.Error << "template_pose.size() == "
+				<< template_pose_.size() << std::endl;
 			continue;
 		}
 
@@ -299,11 +299,11 @@ void ThreadingMover::apply(
 	tr.Debug << "Built threading model for sequence "
 		<< query_pose.sequence() << std::endl;
 	tr.Debug << "Copied " << n_copied << " / "
-		<< query_pose.total_residue() << " from "
+		<< query_pose.size() << " from "
 		<< align_.sequence(template_index_)->id() << std::endl;
 
 	if ( randomize_loop_coords() ) {
-		for ( core::Size ii = 1; ii <= query_pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= query_pose.size(); ++ii ) {
 			core::conformation::ResidueOP iires = query_pose.residue( ii ).clone();
 			core::conformation::idealize_hydrogens( *iires, query_pose.conformation() );
 			query_pose.replace_residue( ii, *iires, false );
@@ -317,7 +317,7 @@ void ThreadingMover::apply(
 		using protocols::loops::Loops;
 		tr.Debug << "building query loops." << std::endl;
 		loops::LoopsOP query_loops = loops_from_alignment(
-			query_pose.total_residue(), align_, min_loop_size()
+			query_pose.size(), align_, min_loop_size()
 		);
 		query_loops->choose_cutpoints( query_pose );
 		tr.Debug << query_loops << std::endl;
@@ -372,7 +372,7 @@ void ThreadingMover::apply(
 
 		tr.Debug << "setting up ideal hydrogen geometry on all residues."
 			<< std::endl;
-		for ( core::Size ii = 1; ii <= query_pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= query_pose.size(); ++ii ) {
 			core::conformation::ResidueOP iires = query_pose.residue( ii ).clone();
 			core::conformation::idealize_hydrogens( *iires, query_pose.conformation() );
 			query_pose.replace_residue( ii, *iires, false );

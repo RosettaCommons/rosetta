@@ -298,7 +298,7 @@ HbsDockDesignMinimizeMover::apply(
 	**********************************************************/
 
 	// get peptide start and end positions
-	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
+	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.size() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
 
 	// create movemap for peptide
@@ -331,7 +331,7 @@ HbsDockDesignMinimizeMover::apply(
 	//utility::vector1< core::Size > hbs_seq_positions;
 	core::Size hbs_seq_position = 0;
 	core::Size hbs_length = 0;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			//hbs_seq_positions.push_back( i );
 			//hbs_seq_positions.push_back( i+1 );
@@ -561,7 +561,7 @@ HbsDockDesignMinimizeMover::apply(
 		PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
 		// add extra chi and extra chi cut off to pt
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			final_desn_pt->nonconst_residue_task( i ).or_ex1( true );
 			final_desn_pt->nonconst_residue_task( i ).or_ex2( true );
 			final_desn_pt->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );

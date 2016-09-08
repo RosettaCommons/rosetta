@@ -139,7 +139,7 @@ ResidueFeatures::insert_residue_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Residue res = pose.residue(resNum);
 

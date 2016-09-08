@@ -52,7 +52,7 @@ public:
 
     virtual void apply( core::pose::Pose & pose ) {
 
-	for(Size i=1;i<=pose.n_residue();i++) {
+	for(Size i=1;i<=pose.size();i++) {
 	    char tmp = torsion2big_bin(pose.phi(i),
 		pose.psi(i),pose.omega(i));
 	    std::cout<<tmp;

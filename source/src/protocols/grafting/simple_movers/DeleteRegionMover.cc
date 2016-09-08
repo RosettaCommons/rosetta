@@ -142,10 +142,10 @@ DeleteRegionMover::apply( core::pose::Pose& pose )
 		PyAssert( range->start() != 0, "Cannot delete region starting with 0 - make sure region is set for DeleteRegionMover" );
 		PyAssert( range->stop() != 0, "Cannot delete region ending with 0 - make sure region is set for DeleteRegionMover" );
 		PyAssert( range->stop() >= range->start(), "Cannot delete region where end > start" );
-		PyAssert( range->stop() <= pose.total_residue(), "Cannot delete region where end is > pose total_residues" );
+		PyAssert( range->stop() <= pose.size(), "Cannot delete region where end is > pose total_residues" );
 
 		core::Size const del_start = nter_overhang_ >= range->start() ? 1 : range->start() - nter_overhang_;
-		core::Size const del_stop = range->stop() + cter_overhang_ > pose.total_residue() ? pose.total_residue() : range->stop() + cter_overhang_;
+		core::Size const del_stop = range->stop() + cter_overhang_ > pose.size() ? pose.size() : range->stop() + cter_overhang_;
 
 		protocols::grafting::delete_region( pose, del_start, del_stop );
 
@@ -169,7 +169,7 @@ DeleteRegionMover::add_terminus_variants( core::pose::Pose & pose, core::Size co
 	if ( ( resid > 0 ) && ( resid - 1 > 0 ) ) {
 		core::pose::add_upper_terminus_type_to_pose_residue( pose, resid - 1 );
 	}
-	if ( resid <= pose.total_residue() ) {
+	if ( resid <= pose.size() ) {
 		core::pose::add_lower_terminus_type_to_pose_residue( pose, resid );
 	}
 }

@@ -185,7 +185,7 @@ SubMotifLibrary::get_submotif_sequence_set( pose::Pose const & pose, bool sort_s
 
 	utility::vector1< std::string > submotif_sequence_set;
 	std::string chain_sequence( "" );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		chain_sequence += pose.sequence()[ n - 1 ];
 		if ( pose.fold_tree().is_cutpoint( n ) ) {
 			submotif_sequence_set.push_back( chain_sequence );
@@ -260,7 +260,7 @@ SubMotifLibrary::get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet 
 
 	std::string pose_full_sequence = pose.sequence();
 	utility::vector1< Size > pose_cutpoints;
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) ) pose_cutpoints.push_back( n );
 	}
 	utility::vector1< Size > pose_domain_map( pose_full_sequence.size(), 0 );

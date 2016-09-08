@@ -214,7 +214,7 @@ dna_stats()
 		// setup the atompair and angle constraints to penalize chainbreaks
 		setup_dna_chainbreak_constraints( pose );
 
-		std::cout << "dna_jump_pose for " << input_file << " nres= " << pose.total_residue() << std::endl;
+		std::cout << "dna_jump_pose for " << input_file << " nres= " << pose.size() << std::endl;
 
 		Pose const start_pose( pose );
 

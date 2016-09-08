@@ -116,10 +116,10 @@ protocols::moves::MoverOP FlipChiralityMover::fresh_instance() const {
 /// @brief Actually apply the mover to the pose.
 void FlipChiralityMover::apply( core::pose::Pose & pose )
 {
-	if ( pose.total_residue()==0 ) {
+	if ( pose.size()==0 ) {
 		return;
 	} else {
-		core::select::residue_selector::ResidueSubset subset( pose.total_residue(), true );
+		core::select::residue_selector::ResidueSubset subset( pose.size(), true );
 		if ( selector_ ) {
 			subset = selector_->apply( pose );
 		}
@@ -127,7 +127,7 @@ void FlipChiralityMover::apply( core::pose::Pose & pose )
 		get_normal();
 		get_center(subset, pose);
 
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 
 			if ( subset[ir] ) {
 
@@ -273,7 +273,7 @@ numeric::xyzVector <core::Real> const & FlipChiralityMover::get_center(core::sel
 numeric::xyzVector< core::Real >
 FlipChiralityMover::center_mass(core::select::residue_selector::ResidueSubset subset, core::pose::Pose const & pose ){
 	numeric::xyzVector< core::Real > massSum( 0.0 );
-	Size const & nres = pose.total_residue();
+	Size const & nres = pose.size();
 	Size nAtms=0;
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( subset[i] ) {

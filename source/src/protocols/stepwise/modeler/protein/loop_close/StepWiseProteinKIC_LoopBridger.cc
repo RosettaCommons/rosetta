@@ -197,7 +197,7 @@ StepWiseProteinKIC_LoopBridger::figure_out_loop( core::pose::Pose const & pose )
 	Size cutpoint_ = 0;
 	for ( int offset = -2; offset < 1; offset++ ) {
 		Size const test_res = static_cast<int>( middle_bridge_res ) + offset;
-		if ( test_res >= 1 && test_res <= pose.total_residue() ) {
+		if ( test_res >= 1 && test_res <= pose.size() ) {
 			if ( pose.fold_tree().is_cutpoint( test_res ) ) {
 				cutpoint_ = test_res;
 				if ( !pose.residue_type( cutpoint_ ).has_variant_type( CUTPOINT_LOWER ) ||
@@ -221,11 +221,11 @@ StepWiseProteinKIC_LoopBridger::setup_torsions( pose::Pose const & pose ){
 	// Need to fill torsions for moving and bridge residues.
 	using namespace core::id;
 	which_torsions_.clear();
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !is_fixed_res_[ n ] ) {
 			// loop residues.
 			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
-		} else if ( n < pose.total_residue() && !is_fixed_res_[ n+1 ] ) {
+		} else if ( n < pose.size() && !is_fixed_res_[ n+1 ] ) {
 			// psi,omega of 'takeoff' residues
 			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
 		} else if ( n > 1 && !is_fixed_res_[ n-1 ] ) {

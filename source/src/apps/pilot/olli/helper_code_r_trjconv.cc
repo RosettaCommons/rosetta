@@ -22,7 +22,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose, Constant
   Size nbb ( 3 ); // three backbone torsions for Protein
   Size len = fragset.max_frag_length();
   kinematics::MoveMap dummy_movemap; //is ignored right now
-  for ( Size pos = 1; pos <= pose.total_residue() - len + 1; ++pos ) {
+  for ( Size pos = 1; pos <= pose.size() - len + 1; ++pos ) {
     FragDataOP frag_raw = new FragData;
     for ( Size i = 1; i<= len; i++ ) {
       frag_raw->add_residue( new BBTorsionSRFD( nbb, pose.secstruct(pos+i-1), oneletter_code_from_aa( pose.residue( pos+i-1 ).aa() ) ) );
@@ -69,7 +69,7 @@ core::pose::make_pose_from_sequence_(
 			pose.append_residue_by_bond( *new_rsd, true );
 		}
 	} // for seqpos
-	// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );		// probably not necessary
+	// pose.conformation().insert_chain_ending( pose.size() - 1 );		// probably not necessary
 } // make_pose_match_sequence_
 #endif
 
@@ -91,7 +91,7 @@ core::util::switch_to_residue_type_set(
 	// retrieve proper residue_type_set
 	ResidueTypeSetCAP target_residue_type_set( ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
 	// loop each position and find new type that matches from the new type set
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		// in future we may have a conformation using mixed type set, so check this by residue
 		std::string const & current_type_set_name ( rsd.type().residue_type_set().database_directory() );

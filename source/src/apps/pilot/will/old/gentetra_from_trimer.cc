@@ -123,7 +123,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
   core::id::AtomID_Map< bool > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, false );
-  for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+  for ( Size ir = 1; ir <= pose.size(); ++ir ) {
     atom_map.set(AtomID(2,ir) , true );
     atom_map.set(AtomID(3,ir) , true );
     atom_map.set(AtomID(5,ir) , true );
@@ -198,7 +198,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
       task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
     }
   }
-  for(Size i = nres+1; i <= pose.n_residue(); ++i) {
+  for(Size i = nres+1; i <= pose.size(); ++i) {
     task->nonconst_residue_task(i).prevent_repacking();
   }
   TR << *task << std::endl;
@@ -303,7 +303,7 @@ void run() {
     Pose init;
     core::import_pose::pose_from_file(init,*rs,fn, core::import_pose::PDB_file);
 
-    Size nres = init.n_residue();
+    Size nres = init.size();
     // ScoreFunctionOP sf = core::scoring::get_score_function();
     ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::get_score_function());
 
@@ -313,7 +313,7 @@ void run() {
     Mat R2 = rotation_matrix_degrees(Vec(0,0,1),-120.0);
 
     Size irsd = 0;
-    for(Size i = 1; i <= pose.n_residue(); ++i) {
+    for(Size i = 1; i <= pose.size(); ++i) {
       if(pose.residue(i).name3()=="BPY") irsd = i;
     }
 
@@ -322,7 +322,7 @@ void run() {
       TR << "input scanres!!!!!!" << std::endl;
       scanres = option[willmatch::residues]();
     } else {
-      for(Size i = 1; i <= pose.n_residue(); ++i) {
+      for(Size i = 1; i <= pose.size(); ++i) {
         if(!pose.residue(i).has("N" )) { continue; }
         if(!pose.residue(i).has("CA")) { continue; }
         if(!pose.residue(i).has("C" )) { continue; }

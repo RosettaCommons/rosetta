@@ -97,9 +97,9 @@ static const double EXT_OMG =  180;
 
 void
 fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom, utility::vector1< core::Real > &weights ) {
-	bool const bReadWeights = ( weights.size() >= pose.total_residue() );
+	bool const bReadWeights = ( weights.size() >= pose.size() );
 	if ( !bReadWeights ) {
-		weights.resize( pose.total_residue() );
+		weights.resize( pose.size() );
 	}
 
 	 for ( auto const & it : rigid ) {
@@ -199,7 +199,7 @@ void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loo
 	// if no loops, we want to have extended structure everywhere.
 	// it is a by-value parameter -- as intenden the change is kept local
 	if ( loops.empty() ) {
-		loops.add_loop(1, pose.total_residue(), 0);
+		loops.add_loop(1, pose.size(), 0);
 	}
 
 	TR.Debug << "extend structure for " << loops << std::endl;
@@ -225,7 +225,7 @@ void addScoresForLoopParts(
 
 	using namespace core;
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	utility::vector1< core::Size > all_loop_list;
 	for ( Size i = 1; i < nres; i ++ ) {
 		if ( loops.is_loop_residue(i) ) all_loop_list.push_back( i );
@@ -264,9 +264,9 @@ void addScoresForLoopParts(
 	core::pose::Pose native_pose_super = native_pose;
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, native_pose_super, core::id::BOGUS_ATOM_ID );
-	for ( core::Size ir=1; ir <= native_pose.total_residue(); ++ir ) {
-		runtime_assert( ir <=  pose.total_residue() );
-		runtime_assert( ir <=  native_pose_super.total_residue() );
+	for ( core::Size ir=1; ir <= native_pose.size(); ++ir ) {
+		runtime_assert( ir <=  pose.size() );
+		runtime_assert( ir <=  native_pose_super.size() );
 		if ( ( !loops.is_loop_residue( ir ) ) && pose.residue(ir).is_protein() ) {
 			id::AtomID const id1( native_pose_super.residue(ir).atom_index("CA"), ir );
 			id::AtomID const id2( pose.residue(ir).atom_index("CA"), ir );
@@ -343,8 +343,8 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 	using namespace id;
 	using namespace scoring::constraints;
 
-	core::Size nnonvrt_cst_target = constraint_target_pose.total_residue();
-	core::Size nnonvrt_pose = pose.total_residue();
+	core::Size nnonvrt_cst_target = constraint_target_pose.size();
+	core::Size nnonvrt_pose = pose.size();
 
 	while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
 	while ( constraint_target_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
@@ -362,11 +362,11 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 		pose.append_residue_by_jump
 			( *ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
-			pose.total_residue()/2 );
+			pose.size()/2 );
 	}
 
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	Real const coord_sdev( 0.5 );
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
 
@@ -409,7 +409,7 @@ loops_from_string( std::string const & loop_str, core::pose::Pose const & pose )
 		}
 		runtime_assert( loop_start <= loop_stop );
 		runtime_assert( loop_start >= 1 );
-		runtime_assert( loop_stop <= pose.total_residue() );
+		runtime_assert( loop_stop <= pose.size() );
 		loops_from_tag->add_loop( loop_start, loop_stop, loop_cut );
 	}
 	return( loops_from_tag );
@@ -485,7 +485,7 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	Size chunk_start_seqpos(0);
 	Size chunk_end_seqpos(0);
 
-	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( !ss_chunk_started ) {
 			if ( pose.secstruct(ires) == extracted_ss_type ) {
 				ss_chunk_started = true;
@@ -506,7 +506,7 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 
 	// if the input sequence ends with the last ss chunk
 	if ( ss_chunk_started ) {
-		chunk_end_seqpos = pose.total_residue();
+		chunk_end_seqpos = pose.size();
 		secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
 	}
 	return secondary_structure_chunks;
@@ -518,7 +518,7 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose) {
 	Loops chunks;
 
 	//fpd don't include ligand
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	while ( nres>1 && !pose.residue(nres).is_protein() ) nres--;
 
 	Loop new_loop;
@@ -535,7 +535,7 @@ protocols::loops::Loops find_non_protein_chunks(core::pose::Pose const & pose) {
 	Loop new_loop;
 	bool chunk_started = false;
 
-	for ( core::Size ires = 1; ires < pose.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires < pose.size(); ++ires ) {
 		if ( pose.residue_type(ires).is_protein() ) continue;
 		if ( !chunk_started ) {
 			new_loop.set_start(ires);

@@ -101,7 +101,7 @@ void get_helices(core::pose::Pose& pose, protocols::loops::Loops* helices){
 	Size endHelix = 0;
 	if(pose.secstruct(1) == 'H')
 		startHelix = 1;
-	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
 		if(pose.secstruct(ii) == 'H' && lastSecStruct != 'H')
 			startHelix = ii;
 		if(pose.secstruct(ii) != 'H' && lastSecStruct == 'H'){
@@ -190,7 +190,7 @@ void get_angles(const core::pose::Pose& pose, const protocols::loops::Loop helix
 
 Real res_type_score(const core::pose::Pose& pose){
   Real score = 0;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if((pose.residue(ii).name3() == "VAL") || (pose.residue(ii).name3() == "ILE") || (pose.residue(ii).name3() == "LEU"))
 			score++;
 		else
@@ -203,7 +203,7 @@ Real res_type_score(const core::pose::Pose& pose){
 
 Real ala_ct(const core::pose::Pose& pose){
   Real score = 0;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if(pose.residue(ii).name3() == "ALA")
             score++;
 	}

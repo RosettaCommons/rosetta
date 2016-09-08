@@ -104,7 +104,7 @@ public:
 
         // loop over energy graph
         EnergyGraph const &energy_graph( pose.energies().energy_graph() );
-        for (Size i = 1; i <= pose.total_residue(); ++i)
+        for (Size i = 1; i <= pose.size(); ++i)
         {
             core::conformation::Residue const &rsd_i( pose.residue(i) );
 

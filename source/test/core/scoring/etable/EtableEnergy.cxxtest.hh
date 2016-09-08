@@ -267,9 +267,9 @@ public:
 	movemap.set_chi( true );
 	minmap.setup( pose, movemap );
 
-	MinimizationGraph g( pose.total_residue() );
+	MinimizationGraph g( pose.size() );
 	g.copy_connectivity( pose.energies().energy_graph() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 	etab_energy.setup_for_minimizing_for_residue(
 	pose.residue( ii ), pose, sfxn, minmap, g.get_minimization_node( ii )->res_min_data() );
 	}
@@ -286,7 +286,7 @@ public:
 	g.get_minimization_node( node2 )->res_min_data(),
 	minedge->res_pair_min_data() );
 	}
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 	MinimizationNode * iinode = g.get_minimization_node( ii );
 	etab_energy.setup_for_minimizing_for_residue( pose.residue( ii ), pose, sfxn, minmap, iinode->res_min_data() );
 	}
@@ -1086,7 +1086,7 @@ public:
 
 		PackerTaskOP task = TaskFactory::create_packer_task( pose );
 		for ( Size ii = 1; ii <= 7; ++ii ) task->nonconst_residue_task(ii).prevent_repacking();
-		for ( Size ii = 12; ii <= pose.total_residue(); ++ii ) task->nonconst_residue_task(ii).prevent_repacking();
+		for ( Size ii = 12; ii <= pose.size(); ++ii ) task->nonconst_residue_task(ii).prevent_repacking();
 		for ( Size ii = 8; ii <= 11; ++ii ) task->nonconst_residue_task( ii ).or_ex1( true );
 		for ( Size ii = 8; ii <= 11; ++ii ) task->nonconst_residue_task( ii ).or_ex2( true );
 
@@ -1163,7 +1163,7 @@ public:
 		sfxn( pose );
 
 		PackerTaskOP task = TaskFactory::create_packer_task( pose );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == 8 ) continue;
 			task->nonconst_residue_task(ii).prevent_repacking();
 		}

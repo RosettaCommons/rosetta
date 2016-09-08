@@ -520,7 +520,7 @@ BuildDeNovoBackboneMover::postfold_movers(
 
 	// 4. Replace sidechains
 	protocols::moves::MoverOP restore_sc_mover(
-		new simple_moves::ReturnSidechainMover( pose, 1, pose.total_residue() ) );
+		new simple_moves::ReturnSidechainMover( pose, 1, pose.size() ) );
 	//protocols::moves::MoverOP sars(
 	// new simple_moves::SaveAndRetrieveSidechains(
 	// pose,
@@ -706,7 +706,7 @@ BuildDeNovoBackboneMover::select_movable_residues(
 	}
 	for ( ResidueVector::const_iterator r=overlap_residues.begin(); r!=overlap_residues.end(); ++r ) {
 		debug_assert( *r > 0 );
-		debug_assert( *r <= pose.total_residue() );
+		debug_assert( *r <= pose.size() );
 		subset[ *r ] = true;
 	}
 	return subset;
@@ -882,11 +882,11 @@ SetPoseSecstructFromStructureDataMover::apply( core::pose::Pose & pose )
 		target_ss = sd.ss();
 	}
 
-	if ( target_ss.size() != pose.total_residue() ) {
+	if ( target_ss.size() != pose.size() ) {
 		std::stringstream msg;
 		msg << class_name() << "::apply(): StructureData ss size ("
 			<< target_ss.size() << ") does not match pose size ("
-			<< pose.total_residue() << ") " << std::endl;
+			<< pose.size() << ") " << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 

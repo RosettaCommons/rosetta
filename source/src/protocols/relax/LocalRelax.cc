@@ -240,7 +240,7 @@ LocalRelax::get_neighbor_graph(
 	core::Real K=K_;
 	core::Real b=0.28;
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	neighbor.clear();
 	neighbor.resize( nres );
@@ -344,7 +344,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
 	}
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	core::Size nres_asu = nres;
 
 	// set up symm

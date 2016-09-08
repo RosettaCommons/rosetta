@@ -164,7 +164,7 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 
 	// useful to keep track of what's a working residue and what's not.
 	utility::vector1< bool > is_working_res;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) is_working_res.push_back( false );
+	for ( Size i = 1; i <= pose.size(); i++ ) is_working_res.push_back( false );
 	for ( Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
 
 	std::string const tag = "S_"+lead_zero_string_of(count,6);
@@ -199,7 +199,7 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 		}
 
 		// also add in atoms in next suite, if relevant (and won't be covered later in rmsd calc.)
-		if ( i >= pose.total_residue() || is_working_res[ i+1 ] || pose.fold_tree().is_cutpoint(i) ) continue;
+		if ( i >= pose.size() || is_working_res[ i+1 ] || pose.fold_tree().is_cutpoint(i) ) continue;
 
 		Size const i_next      = i+1;
 		Size const i_next_full = res_list[ i+1 ];

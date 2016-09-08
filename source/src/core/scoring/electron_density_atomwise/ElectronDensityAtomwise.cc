@@ -901,7 +901,7 @@ ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 	Real atom_gaussian_sigma = 0.30 + 0.18 * map_reso;
 	generate_gaussian_1d( atom_gaussian_sigma );
 	//Calculate the weight and the fractional coordinates of the atoms
-	Size n_res = pose.total_residue();
+	Size n_res = pose.size();
 	Size sum_weight = 0;
 
 	numeric::xyzVector< core::Real > grid_half( grid[0] * 0.5, grid[1] * 0.5, grid[2] * 0.5 );

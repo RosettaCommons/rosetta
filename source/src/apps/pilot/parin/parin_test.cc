@@ -489,16 +489,16 @@ copy_virtual_variant_type(pose::Pose & full_pose, pose::Pose const & start_pose_
 
 	using namespace core::chemical;
 
-	for( Size n = 1; n <= start_pose_with_variant.total_residue(); n++  ) {
+	for( Size n = 1; n <= start_pose_with_variant.size(); n++  ) {
 		if(input_res_map[n]==0){
 			continue;
 		}
 
 		if(start_pose_with_variant.residue(n).has_variant_type("VIRTUAL_RNA_RESIDUE")){
 
-			if( (n+1)>start_pose_with_variant.total_residue()){ //Check in range
+			if( (n+1)>start_pose_with_variant.size()){ //Check in range
 				std::cout << "(n+1)= " << (n+1)  << std::endl;
-				utility_exit_with_message( "(n+1)>start_pose_with_variant.total_residue()!" );
+				utility_exit_with_message( "(n+1)>start_pose_with_variant.size()!" );
 			}
 
 			if(start_pose_with_variant.residue(n+1).has_variant_type("VIRTUAL_PHOSPHATE")==false){
@@ -523,7 +523,7 @@ remove_all_variant_types(pose::Pose & pose){
 	using namespace core::pose;
 
 
-	for ( Size n = 1; n <= pose.total_residue(); n++  ) {
+	for ( Size n = 1; n <= pose.size(); n++  ) {
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", n );
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", n );
 		remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", n );
@@ -990,7 +990,7 @@ hermann_phase_two_minimize(){
 
 			full_pose=import_pose; //This ensures that everything in full_pose is initialized from scratch
 
-			for ( Size n = 1; n <= full_pose.total_residue(); n++  ) {
+			for ( Size n = 1; n <= full_pose.size(); n++  ) {
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_PHOSPHATE", n );
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_O2PRIME_HYDROGEN", n );
 				remove_variant_type_from_pose_residue( full_pose, "CUTPOINT_LOWER", n );
@@ -1006,18 +1006,18 @@ hermann_phase_two_minimize(){
 
 		protocols::farna::assert_phosphate_nomenclature_matches_mini(full_pose);
 
-		if(full_pose.total_residue()!=total_res){
-			utility_exit_with_message( "full_pose.total_residue()(" + string_of(full_pose.total_residue())+")!=total_res("+string_of(total_res)+")" );
+		if(full_pose.size()!=total_res){
+			utility_exit_with_message( "full_pose.size()(" + string_of(full_pose.size())+")!=total_res("+string_of(total_res)+")" );
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		if(lower_pose.total_residue()!=lower_to_full_map.size()){
-			utility_exit_with_message( "lower_pose.total_residue()(" + string_of(lower_pose.total_residue())+")!=lower_to_full_map.size()("+string_of(lower_to_full_map.size())+")" );
+		if(lower_pose.size()!=lower_to_full_map.size()){
+			utility_exit_with_message( "lower_pose.size()(" + string_of(lower_pose.size())+")!=lower_to_full_map.size()("+string_of(lower_to_full_map.size())+")" );
 		}
 
-		if(upper_pose.total_residue()!=upper_to_full_map.size()){
-			utility_exit_with_message( "upper_pose.total_residue()(" + string_of(upper_pose.total_residue())+")!=upper_to_full_map.size()("+string_of(upper_to_full_map.size())+")" );
+		if(upper_pose.size()!=upper_to_full_map.size()){
+			utility_exit_with_message( "upper_pose.size()(" + string_of(upper_pose.size())+")!=upper_to_full_map.size()("+string_of(upper_to_full_map.size())+")" );
 		}
 
 
@@ -1064,7 +1064,7 @@ hermann_phase_two_minimize(){
 
 		ConstraintSetOP cst_set = full_pose.constraint_set()->clone();
 
-		for ( Size i=1; i<= full_pose.total_residue();  i++ ) {
+		for ( Size i=1; i<= full_pose.size();  i++ ) {
 
 			if(Contain_seq_num(i, minimize_res_list)) continue;
 
@@ -1163,13 +1163,13 @@ hermann_phase_two_minimize(){
 				//std::map< core::Size, core::Size > full_to_sub;
 				//full_to_sub.clear();
 
-				if(full_pose.total_residue()!=native_pose.total_residue()){
-					std::cout << "full_pose.total_residue()= " << full_pose.total_residue() << std::endl;
-					std::cout << "native_pose.total_residue()= " << native_pose.total_residue() << std::endl;
-					utility_exit_with_message( "full_pose.total_residue()!=native_pose.total_residue()" );
+				if(full_pose.size()!=native_pose.size()){
+					std::cout << "full_pose.size()= " << full_pose.size() << std::endl;
+					std::cout << "native_pose.size()= " << native_pose.size() << std::endl;
+					utility_exit_with_message( "full_pose.size()!=native_pose.size()" );
 				}
 
-				//for(Size n=1; n<=full_pose.total_residue(); n++){
+				//for(Size n=1; n<=full_pose.size(); n++){
 				//	full_to_sub[n]=n;
 				//}
 
@@ -1745,7 +1745,7 @@ extract_clash_list(){
 
 	for(Size seq_num_1=1; seq_num_1<=sample_res_list.size(); seq_num_1++){
 
-	for(Size seq_num_2=1; seq_num_2<=pose.total_residue(); seq_num_2++){
+	for(Size seq_num_2=1; seq_num_2<=pose.size(); seq_num_2++){
 
 
 		conformation::Residue const & sample_rsd= pose.residue(sample_res_ID);
@@ -1885,8 +1885,8 @@ extract_hydrogen_bonds_statistic(){
 			utility_exit_with_message("min_res=" + string_of(min_res) + "<=1!");
 		}
 
-		if(max_res>=pose.total_residue()){
-			utility_exit_with_message("max_res=" + string_of( max_res ) + "<=" + string_of( pose.total_residue() ) + "=pose.total_residue()!");
+		if(max_res>=pose.size()){
+			utility_exit_with_message("max_res=" + string_of( max_res ) + "<=" + string_of( pose.size() ) + "=pose.size()!");
 		}
 
 		sample_res_list.push_back(min_res-1);
@@ -1918,7 +1918,7 @@ extract_hydrogen_bonds_statistic(){
 
 		core::conformation::Residue const & sample_rsd = pose.residue(sample_res);
 
-		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+		for(Size seq_num=1; seq_num<=pose.size(); seq_num++){
 
 			core::conformation::Residue const & surrounding_rsd=pose.residue(seq_num);
 
@@ -2162,7 +2162,7 @@ silent_struct_slice(){
 	pose::Pose pose;
 	import_pose_from_silent_file(pose, silent_files_in_[ silent_file_num ], input_tags_[silent_file_num] );
 
-	for( Size seq_num = pose.total_residue(); seq_num >= 1 ; seq_num--){
+	for( Size seq_num = pose.size(); seq_num >= 1 ; seq_num--){
  		if(Contain_seq_num(seq_num, delete_res_list)){
 			pose.conformation().delete_residue_slow(seq_num );
 		}
@@ -2293,7 +2293,7 @@ minimize_pdb(){
 			output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;
 			utility_exit_with_message("Error: imported_pose does not have a simple fold_tree");
 		}
-		Size const nres=pose.total_residue();
+		Size const nres=pose.size();
 
 		core::kinematics::FoldTree fold_tree( nres );
 
@@ -3400,9 +3400,9 @@ rna_idealize_test() {
 		//		refold_sequence.erase( refold_sequence.size()-1 );
 		//		std::cout << "ABOUT TO MAKE POSE FROM SEQUENCE " << refold_sequence << std::endl;
 		//		core::chemical::make_pose_from_sequence( refold_pose, refold_sequence,	*rsd_set );
-		//		std::cout << "HEY! " << pose.total_residue() << " " << refold_pose.total_residue() << std::endl;
+		//		std::cout << "HEY! " << pose.size() << " " << refold_pose.size() << std::endl;
 		//		refold_pose.dump_pdb( "extended.pdb" );
-		//		for (Size i = 1; i <= refold_pose.total_residue(); i++ ) copy_rna_torsions( i, i, refold_pose, pose );
+		//		for (Size i = 1; i <= refold_pose.size(); i++ ) copy_rna_torsions( i, i, refold_pose, pose );
 		//		refold_pose.dump_pdb( "refold.pdb" );
 
 		pose.dump_pdb( "idealize_"+pdb_file );

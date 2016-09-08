@@ -74,7 +74,7 @@ void SequenceFitnessMover::apply( core::pose::Pose & pose ){
 
 	// set phi, psi, omega of pose to test pose
 
-	for ( core::Size seqpos = 1; seqpos <= testpose.n_residue(); ++seqpos ) {
+	for ( core::Size seqpos = 1; seqpos <= testpose.size(); ++seqpos ) {
 		testpose.set_phi   ( seqpos, pose.phi(seqpos) );
 		testpose.set_psi   ( seqpos, pose.psi(seqpos) );
 		testpose.set_omega ( seqpos, pose.omega(seqpos) );

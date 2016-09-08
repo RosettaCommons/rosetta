@@ -96,7 +96,7 @@ void run() {
 		m.apply(pose);
 
 		sf->score(pose);
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			vector1<Real> c(4,0.0);
 			for(Size j = 1; j <= pose.residue(i).nchi(); ++j) c[j] = pose.chi(j,i);
 			TR << utility::file_basename(infile) << " " << pose.residue(i).name3() << " " << pose.energies().residue_total_energies(i)[core::scoring::fa_dun] << " " << c[1] << " " << c[2] << " " << c[3] << " " << c[4] << std::endl;

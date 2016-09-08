@@ -115,7 +115,7 @@ BetaTurnDetectionFeatures::report_features(
 	statement beta_turns_stmt(
 		safely_prepare_statement( beta_turns_stmt_string, db_session ) );
 
-	for ( SSize begin = 1; begin <= SSize( pose.total_residue() - btd_->beta_turn_length() ); ++begin ) {
+	for ( SSize begin = 1; begin <= SSize( pose.size() - btd_->beta_turn_length() ); ++begin ) {
 		Size end = begin + btd_->beta_turn_length();
 
 		if ( ! check_relevant_residues_range( relevant_residues, begin, end ) ||

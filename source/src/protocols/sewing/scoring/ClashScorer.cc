@@ -216,7 +216,7 @@ ClashScorer::score(
 			Size const i_type( assembly_it.atom()->atomno_ );
 			utility::vector1< core::Real > const & i_atom_vdw( atom_vdw( i_type ) );
 
-			for ( core::Size i=1; i<=partner_pose->total_residue(); ++i ) {
+			for ( core::Size i=1; i<=partner_pose->size(); ++i ) {
 				core::conformation::Residue const & partner_res( partner_pose->residue( i ) );
 				core::chemical::AtomIndices const & bb_atoms = partner_pose->residue(i).all_bb_atoms();
 

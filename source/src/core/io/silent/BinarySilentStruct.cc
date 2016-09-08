@@ -133,7 +133,7 @@ BinarySilentStruct::fill_struct(
 	fullatom( pose.is_fullatom() );
 
 	if ( !core::pose::symmetry::is_symmetric(pose) ) {
-		resize( pose.total_residue() );
+		resize( pose.size() );
 	} else {    // core::pose::symmetry::is_symmetric(pose)
 		//fpd previous implementation stored all atom coords and only wrote asymm unit coords
 		//fpd however, if this struct is doubling as temporary storage for poses (as in batch relax)
@@ -145,7 +145,7 @@ BinarySilentStruct::fill_struct(
 	}
 
 	tr.Trace << "read coords..." << std::endl;
-	for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+	for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const& resi = pose.residue(i);
 		//int natoms = pose.residue(i).natoms();
 		if ( is_symmetric() && !symmetry_info()->bb_is_independent( i ) ) continue;
@@ -156,10 +156,10 @@ BinarySilentStruct::fill_struct(
 			atm_coords_[i_asymm][j] = resi.atom(j).xyz();
 		}
 		secstruct_[i_asymm] = pose.secstruct(i);
-	} // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )
+	} // for ( unsigned int i = 1; i <= pose.size(); ++i )
 
 	noncanonical_residue_connections_.clear();
-	for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<=pose.size(); ++ires ) {
 		for ( int icon=1; icon<=(int)pose.residue_type(ires).n_possible_residue_connections(); ++icon ) {
 			Size atom_num = pose.residue(ires).residue_connection( icon ).atomno();
 			core::id::NamedAtomID atom1(pose.residue_type(ires).atom_name(atom_num), ires);
@@ -804,14 +804,14 @@ Real BinarySilentStruct::get_debug_rmsd() {
 	// build temp_pose from coordinates
 	fill_pose( temp_pose );
 
-	for ( Size i = 1; i <= temp_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= temp_pose.size(); ++i ) {
 		for ( Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
 			rebuilt_coords (k,i) = temp_pose.residue(i).xyz( "CA" )[k-1];
 			original_coords(k,i) = atm_coords_[i][2][k-1];
 		}
 	}
 
-	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.total_residue(), rebuilt_coords, original_coords );
+	Real rmsd = numeric::model_quality::rms_wrapper( temp_pose.size(), rebuilt_coords, original_coords );
 	return rmsd;
 }
 

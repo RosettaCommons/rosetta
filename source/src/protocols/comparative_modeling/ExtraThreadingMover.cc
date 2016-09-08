@@ -117,7 +117,7 @@ void ExtraThreadingMover::apply(
 	AtomID_Map< AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, query_pose, core::id::BOGUS_ATOM_ID );
 
-	for ( Size ii = 1; ii <= query_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= query_pose.size(); ++ii ) {
 		Size const templ_ii( mapping[ii] );
 		if ( templ_ii == 0 ) continue;
 		if ( !query_pose.residue(ii).has("CA") || !template_pose_.residue(templ_ii).has("CA") ) continue;
@@ -135,7 +135,7 @@ void ExtraThreadingMover::apply(
 	using core::conformation::Residue;
 	typedef vector1< Size >::const_iterator iter;
 	std::map< Size, Size > template_to_query_res; // keeps track of residues that we've added to query_pose.
-	Size const query_jump_anchor( query_pose.total_residue() ); // maybe do this with a VRT residue later.
+	Size const query_jump_anchor( query_pose.size() ); // maybe do this with a VRT residue later.
 	//Size current_chain( query_pose.residue(query_jump_anchor).chain() );
 
 	for ( iter it = residue_selection_.begin(), end = residue_selection_.end(); it != end; ++it ) {
@@ -160,7 +160,7 @@ void ExtraThreadingMover::apply(
 		}
 
 		// keep track of what extra residues have been added to query_pose.
-		template_to_query_res[*it] = query_pose.total_residue();
+		template_to_query_res[*it] = query_pose.size();
 	}
 
 	tr.flush();

@@ -1180,7 +1180,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdbstring( pose, pdb_string, pdb_name );
 
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
 			+ pdb_name + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
 			" input file on line " + utility::to_string( line_number ) + "\n" + line );
@@ -1267,7 +1267,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdbstring( pose, pdb_string, *iter );
 
-		if ( pose.total_residue() == 0 ) {
+		if ( pose.size() == 0 ) {
 			throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
 				+ *iter + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
 				" input file on line " + utility::to_string( line_number ) + "\n" + line );

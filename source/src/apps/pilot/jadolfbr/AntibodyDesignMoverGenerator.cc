@@ -360,7 +360,7 @@ AntibodyDesignMoverGenerator::setup_general_min_foldtree(core::pose::Pose const 
 	}
 	else {
 		TR << "Setting Loop FoldTree" << std::endl;
-		core::kinematics::FoldTree ft = core::kinematics::FoldTree(pose.total_residue());
+		core::kinematics::FoldTree ft = core::kinematics::FoldTree(pose.size());
 		protocols::loops::LoopsOP loops = protocols::antibody::get_cdr_loops(ab_info_, pose, model_cdrs_, overhang_);
 		//TR << *loops << std::endl;
 		protocols::loops::fold_tree_from_loops(pose, *loops, ft);
@@ -646,9 +646,9 @@ AntibodyDesignMoverGenerator::get_cdrs_movemap_with_overhang(Pose  & pose, bool 
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = ab_info_->get_CDR_loop(cdr, pose, overhang_);
 
-			vector1<bool> all_included_res(pose.total_residue(), false);
+			vector1<bool> all_included_res(pose.size(), false);
 			select_loop_residues( pose, cdr_loop, (include_neighbor_sc || include_neighbor_bb) ,all_included_res , neighbor_dis_);
-			for (core::Size x = 1; x <= pose.total_residue(); ++x){
+			for (core::Size x = 1; x <= pose.size(); ++x){
 				if (x >= cdr_loop.start() && x <= cdr_loop.stop()){
 					if (min_bb) mm->set_bb(x, true);
 					if (min_sc) mm->set_chi(x, true);
@@ -669,7 +669,7 @@ AntibodyDesignMoverGenerator::get_cdrs_movemap_with_overhang(Pose  & pose, bool 
 MoveMapOP
 AntibodyDesignMoverGenerator::get_movemap_from_task(core::pose::Pose const & pose, core::pack::task::PackerTaskCOP task) const {
 	MoveMapOP mm( new MoveMap() );
-	for (core::Size i = 1; i<=pose.total_residue(); i++){
+	for (core::Size i = 1; i<=pose.size(); i++){
 		if (task->pack_residue(i)){
 			mm->set_chi(i, true);
 		}

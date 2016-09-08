@@ -162,7 +162,7 @@ VirtualSugarSampler::apply( utility::vector1< PoseOP > & pose_list,
 	pose::Pose const viewer_pose_save = viewer_pose;
 
 	tag_into_pose( viewer_pose, tag_ );
-	sugar_modeling_.check_compatibility( viewer_pose.total_residue() );
+	sugar_modeling_.check_compatibility( viewer_pose.size() );
 	original_constraint_set_ = viewer_pose.constraint_set()->clone();
 
 	//Virtualize any residues that move 'with' the moving residue -- their locations have not been sampled yet.

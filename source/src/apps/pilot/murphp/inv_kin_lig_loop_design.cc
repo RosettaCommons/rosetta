@@ -125,8 +125,8 @@ int main( int argc, char ** argv ) {
 			cout << "inv_kin_lig_loop_design::instantiating cloner" << endl;
 			devel::inv_kin_lig_loop_design::Cloner cloner(tag,pose0);
 
-			//size_t n = pose0->n_residue();  // unused ~Labonte
-			assert( pose0->n_residue() == pose0->pdb_info()->nres() );
+			//size_t n = pose0->size();  // unused ~Labonte
+			assert( pose0->size() == pose0->pdb_info()->nres() );
 
 			cout << "inv_kin_lig_loop_design::cloning pose0" << endl;
 			core::pose::PoseOP pose1 = cloner.clone();

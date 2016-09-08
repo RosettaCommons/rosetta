@@ -46,7 +46,7 @@ TorsionFeature::values_from_pose( core::pose::Pose & pose ) const {
 	using utility::vector1;
 	vector1< TorsionFeatureOP > features;
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		vector1< Real > const & torsions( pose.residue(ii).mainchain_torsions() );
 		Real phi   = torsions[1];
 		Real psi   = torsions[2];

@@ -215,11 +215,11 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 	int loop_len = 0;
 	size_t iChar=0;
 	char cur_char = loop_insert_instruction[iChar];
-	for ( size_t i=1; i<= pose.total_residue(); ++i ) {
+	for ( size_t i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( chains[rsd.chain()] == cur_char ) {
 			if ( ( loop_insert_instruction.length() > iChar + 1 && loop_insert_instruction[iChar + 1] < 'A' )
-					&& ( i+1 < pose.total_residue() && chains[ pose.residue(i+1).chain() ] != cur_char  ) ) {
+					&& ( i+1 < pose.size() && chains[ pose.residue(i+1).chain() ] != cur_char  ) ) {
 				bp << i << " A L " << std::endl;
 			} else {
 				bp << i << " A . " << std::endl;
@@ -261,7 +261,7 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 	}
 	std::ofstream bp( bpname.c_str() );
 	runtime_assert( bp.good() );
-	for ( size_t i=1; i<= pose.total_residue(); ++i ) {
+	for ( size_t i=1; i<= pose.size(); ++i ) {
 		if ( lookup_by_r1.find(i) == lookup_by_r1.end() ) {
 			bp << i << " A ." << std::endl;
 			continue;

@@ -150,7 +150,7 @@ private:
 		pose.append_residue_by_jump( *rsd, 1, "", "", true );
 
 		// Make the anchoring residue the root of the fold tree
-		core::Size const nres = pose.total_residue();
+		core::Size const nres = pose.size();
 		FoldTree newF( pose.fold_tree() );
 		newF.reorder( nres );
 		pose.fold_tree( newF );

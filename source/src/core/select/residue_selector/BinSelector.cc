@@ -88,7 +88,7 @@ BinSelector::apply(
 ) const {
 	runtime_assert_string_msg( initialized() && bin_transition_calculator_->bin_params_loaded(),
 		"Error in core::select::residue_selector::BinSelector::apply(): The parameters for the BinTransitionCalculator have not been loaded." );
-	core::Size const nres( pose.n_residue() ); //Number of residues in the pose
+	core::Size const nres( pose.size() ); //Number of residues in the pose
 	ResidueSubset outvect( nres, false ); //Output vector, initialized to a vector of "false".
 	for ( core::Size i=1; i<=nres; ++i ) {
 		if ( !pose.residue(i).type().is_polymer() ) continue; //Ignore ligands.

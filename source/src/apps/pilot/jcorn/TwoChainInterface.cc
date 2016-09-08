@@ -80,7 +80,7 @@ private:
 	Size chain_letter_to_number ( pose::Pose const & pose, char const chain_id )	// helper method to convert a single chain letter to a single chain number. returns 0 if chain letter not found
 	{
 		char temp_letter_ = chain_id;
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.pdb_chains()[i] == temp_letter_ ) {
 				return pose.chain( i );
 			}

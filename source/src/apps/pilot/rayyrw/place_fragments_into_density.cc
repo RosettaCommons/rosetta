@@ -189,7 +189,7 @@ get_radius(
 
 	utility::vector1< numeric::xyzVector< core::Real > > atmList;
 	numeric::xyzVector< core::Real > massSum(0.0,0.0,0.0);
-	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		// use every atom ...
@@ -379,7 +379,7 @@ move_it(
 	utility::vector1< numeric::xyzVector< core::Real > > positions;
 	numeric::xyzVector< core::Real > xyz_rot;
 
-	for ( core::Size irsd = 1; irsd <= pose.n_residue(); ++irsd ) {
+	for ( core::Size irsd = 1; irsd <= pose.size(); ++irsd ) {
 		for ( core::Size iatom = 1; iatom <= pose.residue_type( irsd ).natoms(); ++iatom ) {
 			numeric::xyzVector< core::Real > atom_xyz = pose.xyz( core::id::AtomID( iatom, irsd ) );
 			ids.push_back( core::id::AtomID( iatom, irsd ) );

@@ -129,7 +129,7 @@ public:
 		//pose_from_file( pose, "core/conformation/test_in.pdb" , core::import_pose::PDB_file);
 		pose::Pose pose( create_test_in_pdb_pose());
 
-		kinematics::FoldTree f( pose.total_residue() );
+		kinematics::FoldTree f( pose.size() );
 		f.new_jump( 8, 26, 18 );
 		f.reorder( 8 );
 		pose.fold_tree( f );

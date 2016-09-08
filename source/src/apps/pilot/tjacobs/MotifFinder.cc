@@ -94,9 +94,9 @@ main( int argc, char * argv [] ) {
 		for(core::Size i=1; i<=pdb_library.size(); ++i) {
 			core::pose::Pose pose;
 			core::import_pose::pose_from_file(pose, pdb_library[i], core::import_pose::PDB_file);
-			if(pose.total_residue() <= 1){ continue; }
+			if(pose.size() <= 1){ continue; }
 			utility::vector1< std::pair<core::Size,core::Size> > segments;
-			segments.push_back(std::make_pair(1, pose.total_residue()));
+			segments.push_back(std::make_pair(1, pose.size()));
 			Model pdb_model = create_model_from_pose(pose, segments, (int)i);
 			models.insert(std::make_pair(i, pdb_model));
 		}
@@ -112,7 +112,7 @@ main( int argc, char * argv [] ) {
 	core::pose::Pose query_pose;
 	core::import_pose::pose_from_file(query_pose, query_pdb, core::import_pose::PDB_file);
 	utility::vector1< std::pair<core::Size,core::Size> > segments;
-	segments.push_back(std::make_pair(1, query_pose.total_residue()));
+	segments.push_back(std::make_pair(1, query_pose.size()));
 	query_model = create_model_from_pose(query_pose, segments, -1);
 
 	std::map< int, Model >::const_iterator it = models.begin();
@@ -150,8 +150,8 @@ main( int argc, char * argv [] ) {
 		core::import_pose::pose_from_file(hit_pose, pdb_library[hit_model_id], core::import_pose::PDB_file);
 		core::conformation::remove_upper_terminus_type_from_conformation_residue(hit_pose.conformation(), 1);
 		core::conformation::remove_lower_terminus_type_from_conformation_residue(hit_pose.conformation(), 1);
-		core::conformation::remove_upper_terminus_type_from_conformation_residue(hit_pose.conformation(), hit_pose.total_residue());
-		core::conformation::remove_lower_terminus_type_from_conformation_residue(hit_pose.conformation(), hit_pose.total_residue());
+		core::conformation::remove_upper_terminus_type_from_conformation_residue(hit_pose.conformation(), hit_pose.size());
+		core::conformation::remove_lower_terminus_type_from_conformation_residue(hit_pose.conformation(), hit_pose.size());
 
 		runtime_assert(score_it->second.segment_matches.size() == 1);
 
@@ -199,7 +199,7 @@ main( int argc, char * argv [] ) {
 		//Thread the sequence on using the packer and dump along with a coordinate constraints file
 		core::pack::task::TaskFactoryOP task_factory = new core::pack::task::TaskFactory();
 		core::pack::task::operation::RestrictResidueToRepackingOP res_repack = new core::pack::task::operation::RestrictResidueToRepacking();
-		for(core::Size i=1; i<=query_pose.total_residue(); ++i) {
+		for(core::Size i=1; i<=query_pose.size(); ++i) {
 			//If this isn't a mapped residue, don't mutate it, otherwise do
 			if(residue_map.find(i) == residue_map.end()) {
 				res_repack->include_residue(i);
@@ -222,7 +222,7 @@ main( int argc, char * argv [] ) {
 		//Setup coordinate constraints
 		utility::io::ozstream constraint_file;
 		constraint_file.open("constraint_"+utility::to_string(counter)+"_"+utility::to_string(hit_model_id)+"_"+utility::to_string(atom_mapping.size())+".cst");
-		core::id::AtomID virt_root(1,query_pose.total_residue());
+		core::id::AtomID virt_root(1,query_pose.size());
 		rsd_it = residue_map.begin();
 		for(; rsd_it != rsd_it_end; ++rsd_it) {
 			for(core::Size i = 1; i<=query_pose.residue(rsd_it->first).atoms().size(); ++i) {
@@ -231,8 +231,8 @@ main( int argc, char * argv [] ) {
 
 				constraint_file << query_pose.residue(rsd_it->first).type().atom_name(i) << " ";
 				constraint_file << rsd_it->first << " ";
-				constraint_file << query_pose.residue(query_pose.total_residue()).type().atom_name(1) << " ";
-				constraint_file << query_pose.total_residue() << " ";
+				constraint_file << query_pose.residue(query_pose.size()).type().atom_name(1) << " ";
+				constraint_file << query_pose.size() << " ";
 
 				numeric::xyzVector<core::Real> xyz = hit_pose.residue(rsd_it->second).atom(i).xyz();
 				constraint_file << xyz.x() << " ";

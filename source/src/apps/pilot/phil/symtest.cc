@@ -188,7 +188,7 @@ setup_symmetric_dimer(
 											Pose & pose // a dimer, structurally symmetric, but not a "symmetric pose" yet
 											)
 {
-	Size const nres_protein( pose.total_residue() ), nres_monomer( nres_protein/2 );
+	Size const nres_protein( pose.size() ), nres_monomer( nres_protein/2 );
 	runtime_assert( nres_protein == nres_monomer * 2 );
 	runtime_assert( !pose::symmetry::is_symmetric( pose ) ); // not yet
 	runtime_assert( fabs( 1.0 - axis.length() ) < 1e-3 ); // should be a unit vector
@@ -219,7 +219,7 @@ setup_symmetric_dimer(
 
 	// set up a better foldtree
 	{
-		FoldTree f( pose.total_residue() );
+		FoldTree f( pose.size() );
 		// jump from vrt1 to monomer1
 		f.new_jump( monomer_root_residue, vrt1, nres_monomer );
 		// jump from vrt2 to monomer2
@@ -259,7 +259,7 @@ setup_symmetric_dimer(
 
 	symminfo.num_virtuals( 2 );
 	symminfo.set_use_symmetry( true );
-	symminfo.set_flat_score_multiply( pose.total_residue(), 1 );
+	symminfo.set_flat_score_multiply( pose.size(), 1 );
 
 	for ( Size i=1; i<= nres_protein; ++i ) {
 		if ( i < nres_monomer ) symminfo.set_score_multiply( i, 2 );
@@ -293,7 +293,7 @@ bk_test()
 
 	monomer.apply_transform_Rx_plus_v( R, v );
 
-	for ( Size i=1; i<= monomer.total_residue(); ++i ) {
+	for ( Size i=1; i<= monomer.size(); ++i ) {
 		if ( i==1 ) dimer.append_residue_by_jump( monomer.residue(i), 1 );
 		else dimer.append_residue_by_bond( monomer.residue(i) );
 	}

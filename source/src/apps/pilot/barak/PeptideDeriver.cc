@@ -101,7 +101,7 @@ main( int argc, char * argv [] )
 		ConstraintSetOP cst_set( new ConstraintSet() );
 		HarmonicFuncOP spring = new HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/);
 		conformation::Conformation const & conformation( pose.conformation() );
-		for (Size i=1; i <= pose.total_residue(); ++i) {
+		for (Size i=1; i <= pose.size(); ++i) {
 				Residue const  & reside = pose.residue( i );
 				id::AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
 				cst_set->add_constraint
@@ -274,13 +274,13 @@ core::pose::PoseOP get_subPose(
 		}
 
 		pose->append_residue_by_jump(other->residue(pep_start), 1, "", "", true);
-		add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS, pose->total_residue() );
+		add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS, pose->size() );
 
 		for (core::Size i=pep_start+1; i<=pep_end; ++i){
 
 				pose->append_residue_by_bond(other->residue(i),false,0,0,0,false);
 		}
-		add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS, pose->total_residue() );
+		add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS, pose->size() );
 		pose->conformation().detect_disulfides();
 
 		return pose;

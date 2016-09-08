@@ -59,7 +59,7 @@ SequenceProfileMover::apply( core::pose::Pose & pose )
 
 	SequenceProfileOP profile( new SequenceProfile );
 	profile->read_from_checkpoint( cst_file_name_ );
-	for ( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+	for ( core::Size seqpos( 1 ), end( pose.size() ); seqpos <= end; ++seqpos ) {
 		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
 	}
 

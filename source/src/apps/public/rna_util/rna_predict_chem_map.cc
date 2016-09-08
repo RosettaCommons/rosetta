@@ -192,7 +192,7 @@ get_logL_DMS( pose::Pose & pose,
 	// }
 	DMS_values = rna_dms_potential.DMS_values();
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		probed_res.push_back( i );
 		logL_values.push_back( rna_dms_potential.get_logL_values( pose, i /*, DMS_values*/ ) );

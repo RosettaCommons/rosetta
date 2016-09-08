@@ -134,7 +134,7 @@ pose::Pose reorder_foldtree(core::pose::Pose & pose, utility::vector1<std::strin
 	std::set<Size> mobile_chains;
 	for(Size j = 1; j <= mobile_chains_string.size(); ++j){
 		char this_chain (mobile_chains_string[ j ][0]);
-	 	for (Size i = 1; i<=pose.total_residue(); ++i){
+	 	for (Size i = 1; i<=pose.size(); ++i){
 			if (pose.pdb_info()->chain( i ) == this_chain){
 				mobile_chains.insert( pose.chain(i) );
 				break;
@@ -451,7 +451,7 @@ main( int argc, char* argv[] ) {
 
 	// prevent packing on all residues not in neighbor set
 	// restrict to repacking on all in neighbor set
-	for( Size ii = 1; ii<= mut_pose.n_residue(); ++ii) {
+	for( Size ii = 1; ii<= mut_pose.size(); ++ii) {
 		if( neighbor_set.count( ii ) )
 			wt_repack_op->include_residue( ii );
 		else
@@ -476,7 +476,7 @@ main( int argc, char* argv[] ) {
 	//doesn't move any other residues, just changes the designated one
 	//stolen from Steven
 	core::pack::task::PackerTaskOP muttask(core::pack::task::TaskFactory::create_packer_task((mut_pose)));
-	utility::vector1_bool packable(mut_pose.total_residue(), false); //false = nobody is packable
+	utility::vector1_bool packable(mut_pose.size(), false); //false = nobody is packable
 
 	for( Size jj = 1; jj<= pose_resid.size(); ++jj){
 		//pose_resid and mut_residues have have refs to residue and aa of mutation

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/toolbox/PoseMetricCalculators/NcontactsCalculator.cc
-/// @brief calculate #atom contacts divided by pose.total_residue() in a given pose
+/// @brief calculate #atom contacts divided by pose.size() in a given pose
 /// @details If two atom, each of which belongs to different residues, are within a
 /// given distance, condist_( default 6.0A ), the two atoms are defined as contact pair.
 /// The residues the atoms belong to are close ( isep_residue_ = 4 ) with each other along sequence,
@@ -177,7 +177,7 @@ NcontactsCalculator::recompute( Pose const & pose )
 	using protocols::fldsgn::topology::StrandPairingSetOP;
 
 	// intialize
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	Real condist2( numeric::square(condist_) );
 	Size nc_allatm( 0 );
 	Size nc_hpatm( 0 );

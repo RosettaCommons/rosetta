@@ -184,7 +184,7 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 
 
 	std::map< Size, chemical::AA > aa_for_design_position;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size ii_entity = ec->entity_for_residue( ii );
 		if ( ii_entity  == 0 ) continue;
 		if ( aa_for_design_position.find( ii_entity ) != aa_for_design_position.end() ) {
@@ -250,8 +250,8 @@ public:
 		chains_ = pose.split_by_chain();
 		task_ = task.clone();
 		Size last_chain( 1 ), first_residue_for_chain( 1 );
-		resid_2_chain_and_resid_.resize( pose.total_residue() );
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		resid_2_chain_and_resid_.resize( pose.size() );
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue( ii ).chain() != last_chain ) {
 				last_chain = pose.residue( ii ).chain();
 				first_residue_for_chain = ii;
@@ -265,7 +265,7 @@ public:
 	calculate( core::pose::Pose const & p ) {
 		// MJO COMMENTING OUT BECAUSE IT IS UNUSED:
 		// Size chain_offset = 0;
-		for ( core::Size ii = 1; ii <= p.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= p.size(); ++ii ) {
 			if ( ! task_->being_packed( ii ) ) continue;
 			chains_[ resid_2_chain_and_resid_[ ii ].first ]->replace_residue(
 				resid_2_chain_and_resid_[ ii ].second, p.residue( ii ), false );
@@ -339,7 +339,7 @@ public:
 	virtual
 	core::Real
 	calculate( core::pose::Pose const & p ) {
-		for ( core::Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose_->size(); ++ii ) {
 			if ( ! task_->being_packed( ii ) ) continue;
 			pose_->replace_residue( ii, p.residue( ii ), false );
 		}

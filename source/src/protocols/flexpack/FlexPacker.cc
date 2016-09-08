@@ -111,9 +111,9 @@ FlexPacker::apply(
 	flex_ig->initialize( *flex_rotsets );
 	flex_rotsets->precompute_energies( pose, *scorefxn_, flex_neighbor_graph, *flex_ig );
 
-	FArray1D_int bestrotamer_at_seqpos( pose.total_residue(), 0 );
+	FArray1D_int bestrotamer_at_seqpos( pose.size(), 0 );
 	FArray1D< PackerEnergy > rot_freq( flex_rotsets->nrotamers() );
-	FArray1D_int current_rot_index( pose.total_residue(), 1 );
+	FArray1D_int current_rot_index( pose.size(), 1 );
 	//for ( Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
 	// current_rot_index( flex_rotsets->moltenres_2_resid( ii ) ) = 1 + flex_rotsets->nrotamer_offset_for_moltenres( ii );
 	//}

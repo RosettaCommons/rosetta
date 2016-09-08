@@ -180,11 +180,11 @@ get_n_pep_nbrs(
 )
 {
 	Size n_pep_nbrs( 0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_pep[i] ) continue;
 		bool cg_res_has_nbr( false );
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			if( cg_res_has_nbr ) break;
 			if ( is_pep[j] ) continue;
 			Residue const & rsd2( pose.residue(j) );
@@ -211,7 +211,7 @@ dump_efactor_pdb(
 	std::string const & tag
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 //	id::AtomID_Mask const & mask;
 //	id::initialize( mask, pose );
 
@@ -264,7 +264,7 @@ GetRmsd(
 	Real rmsd( 0 );
 	Size natoms( 0 );
 	if( !ca_only ){
-		for( Size seqpos = 1; seqpos <= new_pose.total_residue(); ++seqpos ){
+		for( Size seqpos = 1; seqpos <= new_pose.size(); ++seqpos ){
 			if( !score_seqpos[ seqpos ] ) continue;
 			for( Size atomno = 1; atomno <= ref_pose.residue( seqpos ).natoms(); ++atomno ){
 				rmsd += ref_pose.residue( seqpos ).xyz( atomno ).distance_squared(
@@ -274,7 +274,7 @@ GetRmsd(
 		}
 	}
 	else{
-		for( Size seqpos = 1; seqpos <= new_pose.total_residue(); ++seqpos ){
+		for( Size seqpos = 1; seqpos <= new_pose.size(); ++seqpos ){
 			if( !( score_seqpos[ seqpos ] && new_pose.residue( seqpos ).is_protein() ) ) continue;
 			rmsd += ref_pose.residue( seqpos ).xyz( "CA" ).distance_squared(
 					new_pose.residue( seqpos ).xyz( "CA" ) );
@@ -296,7 +296,7 @@ gen_fold_tree_for_nbr_segments(
 	vector1< bool > & is_nbr
 )
 {
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	//define neighbors, all protein residues within cutoff from ligand, excluding is_skipped
 	set_ss_from_phipsi( pose );
 	for( Size i=1; i<= nres; ++i ) {
@@ -341,7 +341,7 @@ has_clash(
 	using namespace ObjexxFCL::format; // I and F
 
 	bool is_clash( false );
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !is_checked[ seqpos ] ) continue;
 
 		( *scorefxn )( pose );
@@ -464,7 +464,7 @@ RunPepSpec()
 	}
 
 	//convert user input to internal values//
-        Size const nres( pose.total_residue() );
+        Size const nres( pose.size() );
 	Size const prot_anchor_in( option[ pep_spec::prot_anchor ] );
        	Size const prot_begin_in ( option[ pep_spec::prot_begin ] );
        	Size const prot_end_in ( option[ pep_spec::prot_end ] );
@@ -506,7 +506,7 @@ RunPepSpec()
 	}
 
 	//gen fold tree//
-	FoldTree f( pose.total_residue() );
+	FoldTree f( pose.size() );
 
 	vector1< bool > is_flex_prot( nres, false );
 	if( option[ pep_spec::flex_prot_bb ] ){
@@ -521,13 +521,13 @@ RunPepSpec()
 	if( pose.chain( prot_anchor ) < pose.chain( pep_anchor ) || ( pose.chain( prot_anchor ) == pose.chain( pep_anchor ) && prot_end < pep_begin ) ){
 		Size pep_jump( f.new_jump( prot_anchor, pep_anchor, pep_begin - 1 ) );
 		f.set_jump_atoms( pep_jump, "CA", "CB" );
-		if( pep_end != pose.total_residue() ) f.new_jump( prot_anchor, pep_end + 1, pep_end );
+		if( pep_end != pose.size() ) f.new_jump( prot_anchor, pep_end + 1, pep_end );
 		if( prot_end + 1 != pep_begin ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 	}
 	else{
 		Size pep_jump( f.new_jump( pep_anchor, prot_anchor, prot_begin - 1 ) );
 		f.set_jump_atoms( pep_jump, "CB", "CA" );
-		if( prot_end != pose.total_residue() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
+		if( prot_end != pose.size() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 		if( pep_end + 1 != prot_begin ) f.new_jump( pep_anchor, pep_end + 1, pep_end );
 	}
 
@@ -573,7 +573,7 @@ RunPepSpec()
 		if( option[ pep_spec::score_binding_repack ] ){
 			pack::task::PackerTaskOP prot_eval_task( pack::task::TaskFactory::create_packer_task( prot_eval_pose ));
 			prot_eval_task->initialize_from_command_line();
-			for( Size seqpos = 1; seqpos <= prot_eval_pose.total_residue(); ++seqpos ){
+			for( Size seqpos = 1; seqpos <= prot_eval_pose.size(); ++seqpos ){
 				if( seqpos >= eval_prot_begin && seqpos <= eval_prot_end ) prot_eval_task->nonconst_residue_task( seqpos ).restrict_to_repacking();
 				else prot_eval_task->nonconst_residue_task( seqpos ).prevent_repacking();
 			}
@@ -1005,12 +1005,12 @@ RunPepSpec()
 				//remove prot//
 				if( pep_begin != 1 ){
 					pep_eval_pose.conformation().delete_residue_range_slow( 1, pep_begin - 1 );
-					if( pep_eval_pose.conformation().chain_end( 1 ) != pep_eval_pose.total_residue() ){
-						pep_eval_pose.conformation().delete_residue_range_slow( pep_eval_pose.conformation().chain_end( 1 ) + 1, pep_eval_pose.total_residue() );
+					if( pep_eval_pose.conformation().chain_end( 1 ) != pep_eval_pose.size() ){
+						pep_eval_pose.conformation().delete_residue_range_slow( pep_eval_pose.conformation().chain_end( 1 ) + 1, pep_eval_pose.size() );
 					}
 				}
-				else if( pep_end != pep_eval_pose.total_residue() ){
-					pep_eval_pose.conformation().delete_residue_range_slow( pep_end + 1, pep_eval_pose.total_residue() );
+				else if( pep_end != pep_eval_pose.size() ){
+					pep_eval_pose.conformation().delete_residue_range_slow( pep_end + 1, pep_eval_pose.size() );
 				}
 				//calc unbound score//
 				Real best_pep_score( 0.0 );

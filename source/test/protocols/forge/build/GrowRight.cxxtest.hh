@@ -62,7 +62,7 @@ public: // setup
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose_.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose_.size(); i <= ie; ++i ) {
 			pose_.set_secstruct( i, 'L' );
 		}
 	}
@@ -78,18 +78,18 @@ public: // tests
 
 	/// @brief test C-terminal extension
 	void test_c_term_extension() {
-		core::Size ori_n_residue = pose_.n_residue();
+		core::Size ori_n_residue = pose_.size();
 
-		GrowRight grow( pose_.n_residue(), String( 7, 'H' ), "AAAAAAG" ); // 7-mer, full-atom
+		GrowRight grow( pose_.size(), String( 7, 'H' ), "AAAAAAG" ); // 7-mer, full-atom
 		grow.modify( pose_ );
 
 		TS_ASSERT_EQUALS( grow.pos(), ori_n_residue );
 		TS_ASSERT_EQUALS( grow.original_interval().left, ori_n_residue );
 		TS_ASSERT_EQUALS( grow.original_interval().right, ori_n_residue );
 		TS_ASSERT( !grow.original_interval_valid() );
-		TS_ASSERT_EQUALS( pose_.n_residue(), 27 );
+		TS_ASSERT_EQUALS( pose_.size(), 27 );
 		TS_ASSERT_EQUALS( pose_.fold_tree().num_cutpoint(), 0 );
-		TS_ASSERT( pose_.residue( pose_.n_residue() ).is_upper_terminus() );
+		TS_ASSERT( pose_.residue( pose_.size() ).is_upper_terminus() );
 		TS_ASSERT_EQUALS( pose_.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKLMNPQRSTVWYAAAAAAG[GLY:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose_.secstruct(), "LLLLLLLLLLLLLLLLLLLLHHHHHHH" );
 	}
@@ -104,7 +104,7 @@ public: // tests
 		TS_ASSERT_EQUALS( grow.original_interval().left, 9 );
 		TS_ASSERT_EQUALS( grow.original_interval().right, 9 );
 		TS_ASSERT( !grow.original_interval_valid() );
-		TS_ASSERT_EQUALS( pose_.n_residue(), 27 );
+		TS_ASSERT_EQUALS( pose_.size(), 27 );
 		TS_ASSERT_EQUALS( pose_.fold_tree().num_cutpoint(), 0 );
 		TS_ASSERT_EQUALS( pose_.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHIKAAAAAAGLMNPQRSTVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose_.secstruct(), "LLLLLLLLLHHHHHHHLLLLLLLLLLL" );

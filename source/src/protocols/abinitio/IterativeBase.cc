@@ -1950,7 +1950,7 @@ void IterativeBase::compute_cores() {
 	//  pose::Pose pose;
 	//  (*iss)->fill_pose( pose );
 	//  eval.push_back( pose );
-	//  nres = pose.total_residue();
+	//  nres = pose.size();
 	// }
 	typedef toolbox::OP_const_iterator<SilentStructs::const_iterator, core::io::silent::SilentStructOP > decoy_iterator;
 	eval.push_back_CA_xyz_from_silent_file( nstruct, decoy_iterator( decoys().begin() ), decoy_iterator( decoys().end() ), false );

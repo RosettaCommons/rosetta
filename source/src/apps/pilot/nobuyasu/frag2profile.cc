@@ -147,8 +147,8 @@ main( int argc, char * argv [] )
 	core::util::switch_to_residue_type_set( test_pose, core::chemical::CENTROID );
 
 	// intialize //////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< utility::vector1<Size> > freq( pose.total_residue(), utility::vector1<Size>( 20, 0 ) );
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
+	utility::vector1< utility::vector1<Size> > freq( pose.size(), utility::vector1<Size>( 20, 0 ) );
+	for( Size i=1; i<=pose.size(); i++ ) {
 		for( Size j=1; j<=20; j++ ) {
 			freq[ i ][ j ] = 0;
 		}
@@ -166,8 +166,8 @@ main( int argc, char * argv [] )
 	for ( ConstFrameIterator frame = fragset->begin(); frame != fragset->end(); ++frame ) {
 
 		Size const start ( frame->start() );
-		if( ( start + ( frame->length() - 1 ) ) > pose.total_residue() ) continue;
-		runtime_assert( start <= pose.total_residue() );
+		if( ( start + ( frame->length() - 1 ) ) > pose.size() ) continue;
+		runtime_assert( start <= pose.size() );
 
 		for ( Size i=1; i<=frame->nr_frags(); i++ ) {
 			// insert fragment
@@ -196,8 +196,8 @@ main( int argc, char * argv [] )
 
 	/// output //////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > total;
-	total.resize( pose.total_residue() );
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
+	total.resize( pose.size() );
+	for( Size i=1; i<=pose.size(); i++ ) {
 		total[ i ] = 0;
 		for( Size j=1; j<=20; j++ ) {
 			total[ i ] += freq[ i ][ j ];
@@ -214,7 +214,7 @@ main( int argc, char * argv [] )
 	}
 	output_ << std::endl;
 
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
+	for( Size i=1; i<=pose.size(); i++ ) {
 		output_ << I( 4, i ) << " ";
 		for( Size j=1; j<=20; j++ ) {
 			output_ << I( 4, freq[ i ][ j ] ) << " ";
@@ -229,7 +229,7 @@ main( int argc, char * argv [] )
 	}
 	output_ << std::endl;
 
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
+	for( Size i=1; i<=pose.size(); i++ ) {
 		output_ << I( 4, i ) << " ";
 		for( Size j=1; j<=20; j++ ) {
 			if( total[ i ] == 0 ) {
@@ -246,7 +246,7 @@ main( int argc, char * argv [] )
 	Size l( 0 );
 	fasta_ << ">ideal.L" << std::endl;
 	resfile_ << " start" << std::endl;
-	for( Size i=1; i<=pose.total_residue(); i++ ) {
+	for( Size i=1; i<=pose.size(); i++ ) {
 
 		std::map< Size, Size > mfreq;
 		for( Size j=1; j<=20; j++ ) {

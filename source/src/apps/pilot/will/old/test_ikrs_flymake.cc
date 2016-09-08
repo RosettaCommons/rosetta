@@ -672,7 +672,7 @@ int main (int argc, char *argv[]) {
 
   Pose pose,arg,asp,glu,lys;
   core::import_pose::pose_from_file(pose,"input/2vdf_nohet_1.pdb", core::import_pose::PDB_file);
-  for(Size i = 1; i <= pose.n_residue(); ++i) {
+  for(Size i = 1; i <= pose.size(); ++i) {
     if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
     if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
   }
@@ -688,11 +688,11 @@ int main (int argc, char *argv[]) {
   core::pose::make_pose_from_sequence(lys,"K",*frs,false); repack(lys);
 
   vector1<HitOP> hits;
-  for(Size ir = 3; ir <= pose.n_residue()-2; ++ir) {
+  for(Size ir = 3; ir <= pose.size()-2; ++ir) {
     if(sasa[ir] > 0) continue;
     pose.replace_residue(ir,arg.residue(1),true);
     TR << ir << " " << hits.size() << std::endl;
-    for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
+    for(Size jr = 3; jr <= pose.size()-2; ++jr) {
       if(ir==jr) continue;
       if(sasa[jr] > 0) continue;
       pose.replace_residue(jr,asp.residue(1),true);

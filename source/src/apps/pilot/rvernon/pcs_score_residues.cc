@@ -124,7 +124,7 @@ void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_li
 		if ( !exclude_residue ) {
 			residue_selection.push_back( ir );
 		}
-	} // for ( Size ir = 1; ir <= native_pose.total_residue(); ++ir )
+	} // for ( Size ir = 1; ir <= native_pose.size(); ++ir )
 }
 
 
@@ -239,7 +239,7 @@ main( int argc, char* argv [] )
 
 		iter->fill_pose( pose, *rsd_set );
 
-		for (Size i = 1; i <= pose.total_residue() - window_size; ++i) {
+		for (Size i = 1; i <= pose.size() - window_size; ++i) {
 
 			Size r_start(i), r_end(i+window_size);
 			utility::vector1< Size > vec_exclude;
@@ -248,7 +248,7 @@ main( int argc, char* argv [] )
 				vec_exclude.push_back(o);
 			}
 
-			for (Size o = (r_end + 1); o <= pose.total_residue(); ++o) {
+			for (Size o = (r_end + 1); o <= pose.size(); ++o) {
 				vec_exclude.push_back(o);
 			}
 
@@ -262,7 +262,7 @@ main( int argc, char* argv [] )
 
 			if ( option[ in::file::native ].user() ) {
 				protocols::simple_filters::ResidueSelection residues;
-				invert_exclude_residues( native_pose.total_residue(), vec_exclude, residues );
+				invert_exclude_residues( native_pose.size(), vec_exclude, residues );
 				core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
 				core::Real gdtmm = core::scoring::CA_gdtmm( pose, native_pose, residues );
 

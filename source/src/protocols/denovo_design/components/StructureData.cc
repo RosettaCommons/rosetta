@@ -1583,11 +1583,11 @@ void
 StructureData::check_pose( core::pose::Pose const & pose ) const
 {
 	TR.Debug << "Checking pose properties..." << std::endl;
-	if ( ! pose.total_residue() ) return;
+	if ( ! pose.size() ) return;
 
 	// subtract only those virtual residues added to the end of the pose
-	core::Size total_residue = pose.total_residue();
-	for ( core::Size resid=pose.total_residue(); resid>=1; --resid ) {
+	core::Size total_residue = pose.size();
+	for ( core::Size resid=pose.size(); resid>=1; --resid ) {
 		if ( pose.residue( resid ).aa() == core::chemical::aa_vrt ) --total_residue;
 		else break;
 	}
@@ -2097,10 +2097,10 @@ utility::vector1< core::Size >
 compute_cutpoints( core::pose::Pose const & pose )
 {
 	utility::vector1< core::Size > cutpoints;
-	for ( core::Size resid=1; resid!=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid!=pose.size(); ++resid ) {
 		if ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 			cutpoints.push_back( resid );
-			if ( ( resid < pose.total_residue() ) && !pose.residue( resid + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
+			if ( ( resid < pose.size() ) && !pose.residue( resid + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
 				std::stringstream msg;
 				msg << "StructureData.cc:compute_cutpoints(): Residue " << resid << " has a lower cutpoint variant, but residue "
 					<< resid + 1 << " does not have an upper cutpoint variant." << std::endl;
@@ -2144,8 +2144,8 @@ StructureData::check_chains( core::pose::Pose const & pose ) const
 	utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
 	utility::vector1< core::Size > cutpoints = compute_cutpoints( pose );
 
-	if ( pose.total_residue() ) {
-		chain_endings.push_back( pose.total_residue() );
+	if ( pose.size() ) {
+		chain_endings.push_back( pose.size() );
 	}
 
 	TR.Trace << "Beginnings: " << chain_beginnings << std::endl;

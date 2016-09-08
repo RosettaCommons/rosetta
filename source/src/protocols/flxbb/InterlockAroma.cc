@@ -127,7 +127,7 @@ InterlockAroma::apply( Pose & pose )
 	String ss("");
 	if ( ! input_ss_.empty() ) {
 		ss = input_ss_;
-		runtime_assert( input_ss_.length() == pose.total_residue() );
+		runtime_assert( input_ss_.length() == pose.size() );
 	} else {
 		Dssp dssp( pose );
 		ss = dssp.get_dssp_secstruct();
@@ -159,7 +159,7 @@ InterlockAroma::apply( Pose & pose )
 
 	// set search residue types to packer task
 	InterlockingAromaFilter ilfilter;
-	for ( Size ii=1; ii<=polyala_pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii<=polyala_pose.size(); ++ii ) {
 
 		// skip residues of strands
 		if ( ss.at( ii-1 ) != 'L' && ss.at( ii-1 ) != 'H' ) continue;
@@ -174,7 +174,7 @@ InterlockAroma::apply( Pose & pose )
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( polyala_pose.residue( ii ) );
 		rotset->set_resid( ii );
-		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( core::graph::GraphOP( new core::graph::Graph( polyala_pose.total_residue() ) ) ), false );
+		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( core::graph::GraphOP( new core::graph::Graph( polyala_pose.size() ) ) ), false );
 
 		Size rotnum( 0 );
 		 for ( auto const & rotamer : *rotset ) {

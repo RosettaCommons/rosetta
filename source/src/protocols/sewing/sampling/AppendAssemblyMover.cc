@@ -149,7 +149,7 @@ AppendAssemblyMover::apply(
 			segment_ends = option[OptionKeys::sewing::pose_segment_ends].value();
 		} else {
 			TR.Warning << "No specified segment ends for input pose, creating a single segment ending at the final residue" << std::endl;
-			segment_ends.push_back((int)pose.total_residue());
+			segment_ends.push_back((int)pose.size());
 		}
 
 		if ( segment_starts.size() != segment_ends.size() ) {
@@ -158,7 +158,7 @@ AppendAssemblyMover::apply(
 
 		utility::vector1< std::pair<core::Size, core::Size> > segments;
 		for ( core::Size i=1; i<=segment_starts.size(); ++i ) {
-			if ( segment_ends[i] > (int)pose.total_residue() ) {
+			if ( segment_ends[i] > (int)pose.size() ) {
 				utility_exit_with_message("Specified segment end lies outside PDB.");
 			}
 			segments.push_back(std::make_pair(segment_starts[i], segment_ends[i]));
@@ -183,7 +183,7 @@ AppendAssemblyMover::apply(
 			sampling::requirements::ResidueRetentionRequirementOP res_retention (
 				new sampling::requirements::ResidueRetentionRequirement(append_pdb_model_id) );
 			for ( core::Size i = 1; i <= pdb_residues_to_repack.size(); ++i ) {
-				if ( pdb_residues_to_repack[i] > (int)pose.total_residue() ) {
+				if ( pdb_residues_to_repack[i] > (int)pose.size() ) {
 					utility_exit_with_message("Residue not present in starting node!");
 				}
 				res_retention->add_resnum(pdb_residues_to_repack[i]);

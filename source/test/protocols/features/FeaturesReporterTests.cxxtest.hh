@@ -107,7 +107,7 @@ public:
 		//basic::options::option[ basic::options::OptionKeys::in::add_orbitals](true); // apl disabling as this screws up the singleton FA_STANDARD residue type set
 		//pose_1ten_ = fullatom_poseop_from_string( pdb_string_1ten() );
 		pose_1ten_ = core::import_pose::pose_from_file("protocols/features/2J88.pdb", core::import_pose::PDB_file);
-		relevant_residues_ = utility::vector1< bool >(pose_1ten_->total_residue(), true);
+		relevant_residues_ = utility::vector1< bool >(pose_1ten_->size(), true);
 		batch_id_ = 0;
 
 		score_function_ = get_score_function();

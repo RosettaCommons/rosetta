@@ -168,7 +168,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 			ideal_pose.set_omega( resid, 180.0 );
 		}
 		core::pose::addVirtualResAsRoot( ideal_pose );
-		core::Size vrt_index = ideal_pose.total_residue();
+		core::Size vrt_index = ideal_pose.size();
 
 		// superimpose
 		ObjexxFCL::FArray1D< numeric::Real > ww( len_i, 1.0 );

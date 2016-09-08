@@ -135,7 +135,7 @@ void rescore_pose(
 // 		ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
 
 // 		//loop for each residue
-// 		for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+// 		for ( core::Size i=1; i<= pose.size(); ++i ) {
 // 			//get the residue
 // 			Residue const & rsd( pose.residue(i) );
 // 			//check current restype
@@ -569,7 +569,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 	}
 
 	if (option[output_cenrot_intcoord]) {
-		for ( core::Size i=1; i<= p.total_residue(); ++i )
+		for ( core::Size i=1; i<= p.size(); ++i )
 		{
 			Residue const & rsd( p.residue(i) );
 			/// for each residue, find out the dof-id of CEN
@@ -626,7 +626,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 				mm.set_bb  ( false );
 				mm.set_chi ( false );
 
-				Size const n_res( p.n_residue() );
+				Size const n_res( p.size() );
 				for (Size i=1; i<=n_res; i++) {
 					core::conformation::Residue const &res_i = p.residue(i);
 					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), i ), core::id::RB1 ), true );
@@ -644,7 +644,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 				rescore_pose( score_fxn, native_pose, p, "packed_"+tag);
 			}
 
-			for ( core::Size i=1; i<= ref.n_residue(); ++i ) {
+			for ( core::Size i=1; i<= ref.size(); ++i ) {
 				if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) > option[repack_bfactor_cutoff]) continue;
 				if (ref.energies().tenA_neighbor_graph().get_node(i)->num_edges() < Size(option[repack_buried_cutoff])) continue;
 
@@ -685,7 +685,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 			// }
 			// else {
 			// 	//save err
-			// 	for ( core::Size i=1; i<=p.n_residue(); ++i ) {
+			// 	for ( core::Size i=1; i<=p.size(); ++i ) {
 			// 		//cutoff Bfactor
 			// 		if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) < option[repack_bfactor_cutoff]) {
 			// 			if ( p.pdb_info()->temperature(i, p.residue(i).nbr_atom())>0 &&
@@ -756,7 +756,7 @@ void fit_centroid_to_the_best_rot( core::pose::Pose & p, utility::vector1<Size> 
 	//get rotamerlib
 	RotamerLibrary const & rlcap = * RotamerLibrary::get_instance();
 
-	for ( core::Size i=1; i<= p.total_residue(); ++i ) {
+	for ( core::Size i=1; i<= p.size(); ++i ) {
 		//fit to the closest rotamer
 		SingleResidueRotamerLibraryCAP residue_rotamer_library(
 			rlcap.get_rsd_library(p.residue(i).type()));

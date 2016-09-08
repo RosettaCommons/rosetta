@@ -261,7 +261,7 @@ void FilterStructs_TotalCharge::apply( Pose const & pose )
 
 	count_ntrial();
 	Real total_charge( 0.0 );
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 
 		chemical::AA aa = pose.aa( i  );
 

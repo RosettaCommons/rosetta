@@ -103,7 +103,7 @@ core::pose::PoseOP build_toy_pose() {
     // will add the rest later
 
     TR << "Printing information about my newly constructed pose!" << std::endl;
-    TR << "Number of residues: " << pose->total_residue() << std::endl;
+    TR << "Number of residues: " << pose->size() << std::endl;
     TR << "Number of chains: " << pose->conformation().num_chains() << std::endl;
     TR << "Printing the resulting foldtree" << std::endl;
     pose->fold_tree().show(std::cout);

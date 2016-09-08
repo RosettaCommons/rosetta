@@ -323,7 +323,7 @@ main( int argc, char* argv [] ) {
 
 						Real const rmsd_ali  = rms_wrapper( natoms, p1a, p2a );
 						Real const gdtmm_ali = xyz_gdtmm( p1a, p2a );
-						Real const coverage  = (Real) natoms / (Real) native_pose.total_residue();
+						Real const coverage  = (Real) natoms / (Real) native_pose.size();
 						Real const gdtmm_overall( gdtmm_ali * coverage );
 
 						ss_out->add_energy( "coverage", coverage );
@@ -331,7 +331,7 @@ main( int argc, char* argv [] ) {
 						ss_out->add_energy( "gdtmm_ali", gdtmm_ali );
 						ss_out->add_energy( "gdtmm_overall", gdtmm_overall );
 						ss_out->add_energy( "n_ali_query", natoms );
-						ss_out->add_energy( "nres_query", native_pose.total_residue() );
+						ss_out->add_energy( "nres_query", native_pose.size() );
 					} // template pdb check
 				} // have native
 				ss_out->scoreline_prefix( "" );

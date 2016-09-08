@@ -78,7 +78,7 @@
 //	loop_relax_mover.remodel("perturb_kic");
 //	loop_relax_mover.refine("refine_kic");
 //	loop_relax_mover.copy_sidechains(false);
-//	Size pepsize = pose.n_residue();
+//	Size pepsize = pose.size();
 //
 //}
 //

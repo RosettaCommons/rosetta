@@ -125,7 +125,7 @@ fast_clash_check(
   Real const clash_dist2_cut( clash_dist_cut * clash_dist_cut );
   for( Size iatid = 1; iatid <= check_atids.size(); ++iatid ){
     Vector const at1_xyz( pose.xyz( check_atids[ iatid ] ) );
-    for( Size res2 = 1; res2 <= pose.total_residue(); ++res2 ){
+    for( Size res2 = 1; res2 <= pose.size(); ++res2 ){
       for( Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ){
         //skip virtual atoms!
         if( pose.residue( res2 ).atom_type( at2 ).lj_wdepth() == 0.0 ) continue;
@@ -176,7 +176,7 @@ public:
 
 	Residue rsd( pose.residue( seqpos ) );
 	Pose ref_pose( pose );
-	//TR << pose.total_residue() << std::endl;
+	//TR << pose.size() << std::endl;
 
 	//Use ALA because of Cb
 	Residue new_rsd( *ResidueFactory::create_residue( rsd.residue_type_set().name_map( "ALA" ) ) );
@@ -185,7 +185,7 @@ public:
 
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
 
-	Size new_seqpos( pose.total_residue() );
+	Size new_seqpos( pose.size() );
 	Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 	//TR << new_seqpos << "," << jump_number << std::endl;
@@ -238,12 +238,12 @@ public:
       //add vrt res so final torsion exists
       //chemical::ResidueTypeSet const & rsd_set( rsd.residue_type_set() );
       //conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
-      //pose.append_residue_by_jump( *vrt_rsd, pose.total_residue() );
+      //pose.append_residue_by_jump( *vrt_rsd, pose.size() );
       FoldTree f_jump( pose.fold_tree() );
       //new naive fold tree
-      FoldTree f_rot( pose.total_residue() );
+      FoldTree f_rot( pose.size() );
       //switch to chem bond so can use bond angle defs directly
-      f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.total_residue() - 2 );
+      f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.size() - 2 );
       pose.fold_tree( f_rot );
 
       Size water_hb_states_tot( 0 );
@@ -324,7 +324,7 @@ public:
                   //  + " total_score: " + to_string( pose.energies().total_energies()[ total_score ] );
                   //pose.dump_pdb( "hbond." + to_string( seqpos ) + "." + to_string( atomno ) + "." + to_string(hb_energy) +"."+to_string(wat_score)+ "."+to_string(AHdist)+"." + to_string( Size( numeric::conversions::degrees( AHDang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHDchi ) ) ) + "." + to_string( Size( numeric::conversions::degrees( B2BAHchi ) ) ) + ".pdb" );
 		  ref_pose=pose;
-		  ref_pose.conformation().delete_residue_range_slow(1,ref_pose.total_residue()-1);
+		  ref_pose.conformation().delete_residue_range_slow(1,ref_pose.size()-1);
                   ref_pose.dump_pdb( atomname + "_" + to_string( seqpos ) + "_" + to_string( atomno ) + "_" + to_string(hb_energy) +"_"+to_string(wat_score)+ ".pdb");
                 }
               }

@@ -128,7 +128,7 @@ main( int argc, char *argv[] )
 		pose::ncbb::initialize_ncbbs( pose );
 		kinematics::MoveMapOP pert_mm( new kinematics::MoveMap() );
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			pert_mm->set_bb( i, true );
 
 			for ( Size j = 1; j <= pose.residue(i).mainchain_torsions().size(); ++j ) {
@@ -155,7 +155,7 @@ main( int argc, char *argv[] )
 		Size ns = option[ out::nstruct ].value();
 		for ( Size i = 1; i <= ns; ++i ) {
 			Pose copy_pose = pose;
-			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( Size i = 1; i <= pose.size(); ++i ) {
 				for ( Size j = 1; j <= pose.residue(i).mainchain_torsions().size()-1; ++j ) {
 					copy_pose.conformation().set_torsion( id::TorsionID( i, id::BB, j ), numeric::random::rg().uniform() * 360 );
 				}
@@ -176,7 +176,7 @@ main( int argc, char *argv[] )
 		Pose ref_pose = poses[ arg_min( scores ) ];
 		utility::vector1< Real > rmsds;
 		for ( Size i = 1; i <= poses.size(); ++i ) {
-			rmsds.push_back( CA_rmsd( poses[i], ref_pose, 1, ref_pose.total_residue() ) );
+			rmsds.push_back( CA_rmsd( poses[i], ref_pose, 1, ref_pose.size() ) );
 		}
 		for ( Size i = 1; i <= poses.size(); ++i ) {
 			std::cout << rmsds[i] << " " << scores[i] << std::endl;

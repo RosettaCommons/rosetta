@@ -50,8 +50,8 @@ CartesianMinimizerMap::reset( pose::Pose const & pose ) {
 	moving_dofids_.clear();
 	moving_torsionids_.clear();
 
-	atom_derivatives_.resize( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	atom_derivatives_.resize( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		atom_derivatives_[ ii ].resize( pose.residue( ii ).natoms() );
 	}
 }
@@ -181,7 +181,7 @@ CartesianMinimizerMap::setup(
 	// because the movemap is designed with torsion-space refinement in mind,
 	//   interpret the meaning as best as possible
 	// implicit DOFs and jumps don't make a lot of sense so ignore them
-	Size const n_res( pose.n_residue() );
+	Size const n_res( pose.size() );
 	core::pose::initialize_atomid_map( atom_indices_, pose );
 
 	for ( Size i = 1; i <= n_res; ++i ) {
@@ -250,7 +250,7 @@ CartesianMinimizerMap::setup(
 		moving_xyz[ moving_atoms_[i] ] = true;
 	}
 
-	domain_map_.dimension( pose.total_residue() );
+	domain_map_.dimension( pose.size() );
 	pose.conformation().atom_tree().update_domain_map( domain_map_, moving_dof, moving_xyz );
 }
 

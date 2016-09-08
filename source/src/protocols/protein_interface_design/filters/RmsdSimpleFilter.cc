@@ -102,9 +102,9 @@ RmsdSimpleFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose this_target_pose = pose;
 	core::pose::Pose this_refe_pose = *reference_pose_;
 
-	if ( TR.visible() ) TR << boost::format("apply to poses, Target=%s vs residues> ") % (this_target_pose.n_residue(), this_refe_pose.n_residue() )<< std::endl;
+	if ( TR.visible() ) TR << boost::format("apply to poses, Target=%s vs residues> ") % (this_target_pose.size(), this_refe_pose.size() )<< std::endl;
 	//Apply to a particular chain
-	if ( this_target_pose.n_residue() != this_refe_pose.n_residue() ) {
+	if ( this_target_pose.size() != this_refe_pose.size() ) {
 		utility_exit_with_message("Error, reference pose and current pose have different size ");
 	}
 	if ( b_target_chain_ ) {
@@ -114,14 +114,14 @@ RmsdSimpleFilter::compute( core::pose::Pose const & pose ) const
 		}
 		this_target_pose = *this_target_pose.split_by_chain(target_chain_);
 		this_refe_pose = *this_refe_pose.split_by_chain(target_chain_);
-		if ( TR.visible() ) TR << boost::format("apply to poses, Target=%s vs residues> ") % (this_target_pose.n_residue(), this_refe_pose.n_residue() )<< std::endl;
-		if ( this_target_pose.n_residue() != this_refe_pose.n_residue() ) {
+		if ( TR.visible() ) TR << boost::format("apply to poses, Target=%s vs residues> ") % (this_target_pose.size(), this_refe_pose.size() )<< std::endl;
+		if ( this_target_pose.size() != this_refe_pose.size() ) {
 			utility_exit_with_message("Error, reference pose and current pose have different size " );
 		}
 	}
 	utility::vector1< core::Size > positions_to_alignA;
 	utility::vector1< core::Size > positions_to_alignB;
-	for ( core::Size i=1; i <= this_target_pose.n_residue(); ++i ) {
+	for ( core::Size i=1; i <= this_target_pose.size(); ++i ) {
 		positions_to_alignA.push_back(i);
 		positions_to_alignB.push_back(i);
 	}

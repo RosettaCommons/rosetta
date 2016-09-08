@@ -269,7 +269,7 @@ void dump_points_pdb(utility::vector1<Vecf> const & p, Vec t, std::string fn) {
 // }
 
 void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
-  if(eres==0) eres = pose.n_residue();
+  if(eres==0) eres = pose.size();
   for(Size ir = sres; ir <= eres; ++ir) {
     for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
       core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -278,7 +278,7 @@ void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size
   }
 }
 void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s ) {
-  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+  for(Size ir = 1; ir <= pose.size(); ++ir) {
     for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
       core::id::AtomID const aid(core::id::AtomID(ia,ir));
       pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
@@ -288,7 +288,7 @@ void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s )
 
 
 void trans_pose( Pose & pose, Vecf const & trans, Size start=1, Size end=0 ) {
-	if(0==end) end = pose.n_residue();
+	if(0==end) end = pose.size();
 	for(Size ir = start; ir <= end; ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -297,7 +297,7 @@ void trans_pose( Pose & pose, Vecf const & trans, Size start=1, Size end=0 ) {
 	}
 }
 void rot_pose( Pose & pose, Mat const & rot, Size start=1, Size end=0 ) {
-	if(0==end) end = pose.n_residue();
+	if(0==end) end = pose.size();
 	for(Size ir = start; ir <= end; ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -351,7 +351,7 @@ void prune_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb, vector1<Real> & wa
 int neighbor_count(Pose const &pose, int ires, Real distance_threshold=10.0) {
 	core::conformation::Residue const resi( pose.residue( ires ) );
 	Size resi_neighbors( 0 );
-	for(Size jres = 1; jres <= pose.n_residue(); ++jres) {
+	for(Size jres = 1; jres <= pose.size(); ++jres) {
 		core::conformation::Residue const resj( pose.residue( jres ) );
 		Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 		if( distance <= distance_threshold ){
@@ -430,7 +430,7 @@ struct TCDock {
 		// core::import_pose::pose_from_file(cmp2in_,*crs,cmp2pdb, core::import_pose::PDB_file);
 
 		cmp1diapos_=0.0,cmp1dianeg_=0.0,cmp2diapos_=0.0,cmp2dianeg_=0.0;
-		for(Size i = 1; i <= cmp1in_.n_residue(); ++i) {
+		for(Size i = 1; i <= cmp1in_.size(); ++i) {
 			int const natom = (cmp1in_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp1in_.residue(i).xyz(j) );
@@ -438,7 +438,7 @@ struct TCDock {
 				cmp1dianeg_ = max(cmp1dianeg_,-v.z());
 			}
 		}
-		for(Size i = 1; i <= cmp2in_.n_residue(); ++i) {
+		for(Size i = 1; i <= cmp2in_.size(); ++i) {
 			int const natom = (cmp2in_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp2in_.residue(i).xyz(j) );
@@ -461,8 +461,8 @@ struct TCDock {
 		if(option[tcdock::debug]()) cmp1in_.dump_pdb("cmp1in.pdb");
 		if(option[tcdock::debug]()) cmp2in_.dump_pdb("cmp2in.pdb");
 
-		// for(int i = 1; i <= cmp1in_.n_residue(); ++i) cout << cmp1in_.secstruct(i); cout << endl;
-		// for(int i = 1; i <= cmp2in_.n_residue(); ++i) cout << cmp2in_.secstruct(i); cout << endl;
+		// for(int i = 1; i <= cmp1in_.size(); ++i) cout << cmp1in_.secstruct(i); cout << endl;
+		// for(int i = 1; i <= cmp2in_.size(); ++i) cout << cmp2in_.secstruct(i); cout << endl;
 
 		bool nt1good=1,nt2good=1,ct1good=1,ct2good=1;
 		// protocols::sic_dock::termini_exposed(cmp1in_,nt1good,ct1good);
@@ -534,7 +534,7 @@ struct TCDock {
 		core::pose::initialize_atomid_map(clashmap2_,cmp2in_,-1.0);
 		for(Size i12 = 0; i12 < 2; ++i12){
 			Pose const & ptmp( i12?cmp1in_:cmp2in_ );
-			for(Size i = 1; i <= ptmp.n_residue(); ++i) {
+			for(Size i = 1; i <= ptmp.size(); ++i) {
 				if(ptmp.residue(i).has("CB")) {
 					Real wt = 1.0;
 					if( option[tcdock::cb_weight_average_degree]()                          ) wt *= min(1.0,(Real)neighbor_count(ptmp,i)/20.0);
@@ -735,7 +735,7 @@ struct TCDock {
 		// cerr << "make_dimer" << endl;
 		core::pose::Pose t2(pose);
 		rot_pose(t2,Vecf(0,0,1),180.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t2.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
 		// pose.dump_pdb("dimer.pdb");
 	}
 	void make_trimer(core::pose::Pose & pose) {
@@ -743,8 +743,8 @@ struct TCDock {
 		core::pose::Pose t2(pose),t3(pose);
 		rot_pose(t2,Vecf(0,0,1),120.0);
 		rot_pose(t3,Vecf(0,0,1),240.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
-		for(Size i = 1; i <= t3.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+		for(Size i = 1; i <= t2.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t3.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
 		// pose.dump_pdb("trimer.pdb");
 	}
 	void make_tetramer(core::pose::Pose & pose) {
@@ -753,9 +753,9 @@ struct TCDock {
 		rot_pose(t2,Vecf(0,0,1), 90.0);
 		rot_pose(t3,Vecf(0,0,1),180.0);
 		rot_pose(t4,Vecf(0,0,1),270.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
-		for(Size i = 1; i <= t3.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
-		for(Size i = 1; i <= t4.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
+		for(Size i = 1; i <= t2.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t3.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+		for(Size i = 1; i <= t4.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
 	}
 	void make_pentamer(core::pose::Pose & pose) {
 		// cerr << "make_pentamer" << endl;
@@ -764,10 +764,10 @@ struct TCDock {
 		rot_pose(t3,Vecf(0,0,1),144.0);
 		rot_pose(t4,Vecf(0,0,1),216.0);
 		rot_pose(t5,Vecf(0,0,1),288.0);
-		for(Size i = 1; i <= t2.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
-		for(Size i = 1; i <= t3.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
-		for(Size i = 1; i <= t4.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
-		for(Size i = 1; i <= t5.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t5.residue(i),1); else pose.append_residue_by_bond(t5.residue(i));
+		for(Size i = 1; i <= t2.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
+		for(Size i = 1; i <= t3.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
+		for(Size i = 1; i <= t4.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t4.residue(i),1); else pose.append_residue_by_bond(t4.residue(i));
+		for(Size i = 1; i <= t5.size(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t5.residue(i),1); else pose.append_residue_by_bond(t5.residue(i));
 	}
 	// TODO refactor this to NOT use poses
 	void
@@ -789,8 +789,8 @@ struct TCDock {
 				// std::cerr << p1.residue(1).xyz("CB") << endl << x1.local2global(cmp1cbs_[1]) << endl;
 				// std::cerr << p2.residue(1).xyz("CB") << endl << x2.local2global(cmp2cbs_[1]) << endl << endl;
 
-		// cerr << cmp1cbs_.size() << " " << p1.n_residue() << std::endl;
-		// cerr << cmp2cbs_.size() << " " << p2.n_residue() << std::endl;
+		// cerr << cmp1cbs_.size() << " " << p1.size() << std::endl;
+		// cerr << cmp2cbs_.size() << " " << p2.size() << std::endl;
 
 		int best1=0,best2=0,bestcount=0;
 		for(int ir1 = 0; ir1 < cmp1nsub_; ++ir1){
@@ -833,21 +833,21 @@ struct TCDock {
 		#endif
 		{
 			p1.append_residue_by_jump(cmp1in_.residue(1),1,"","",false);
-			for(Size i = 2; i <= cmp1in_.n_residue()/cmp1nsub_; ++i) {
+			for(Size i = 2; i <= cmp1in_.size()/cmp1nsub_; ++i) {
 				if(p1.residue(i-1).is_terminus()||p1.residue(i-1).is_ligand())
 				     p1.append_residue_by_jump(cmp1in_.residue(i),1);
 				else p1.append_residue_by_bond(cmp1in_.residue(i));
 			}
 			if(termini && !p1.residue(       1      ).is_lower_terminus()) add_lower_terminus_type_to_pose_residue(p1,      1       );
-			if(termini && !p1.residue(p1.n_residue()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p1,p1.n_residue());
+			if(termini && !p1.residue(p1.size()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p1,p1.size());
 			p2.append_residue_by_jump(cmp2in_.residue(1),1,"","", true ); // other chain iff not dumping sym complex (too many chains)
-			for(Size i = 2; i <= cmp2in_.n_residue()/cmp2nsub_; ++i) {
-				if(p2.residue(p2.n_residue()).is_terminus()||p2.residue(p2.n_residue()).is_ligand())
+			for(Size i = 2; i <= cmp2in_.size()/cmp2nsub_; ++i) {
+				if(p2.residue(p2.size()).is_terminus()||p2.residue(p2.size()).is_ligand())
 				     p2.append_residue_by_jump(cmp2in_.residue(i),1);
 				else p2.append_residue_by_bond(cmp2in_.residue(i));
 			}
 			if(termini && !p2.residue(       1      ).is_lower_terminus()) add_lower_terminus_type_to_pose_residue(p2,      1       );
-			if(termini && !p2.residue(p2.n_residue()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p2,p2.n_residue());
+			if(termini && !p2.residue(p2.size()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p2,p2.size());
 		}
 
 		core::kinematics::Stub x1(rotation_matrix_degrees(cmp1axs_,(Real)icmp1),dcmp1*cmp1axs_);
@@ -858,13 +858,13 @@ struct TCDock {
 		// make joint structure
 		{
 			symm.append_residue_by_jump(p1.residue(1),1,"","",false);
-			for(Size i = 2; i <= p1.n_residue(); ++i) {
+			for(Size i = 2; i <= p1.size(); ++i) {
 				if(symm.residue(i-1).is_terminus()||symm.residue(i-1).is_ligand()) symm.append_residue_by_jump(p1.residue(i),1);
 				else                                symm.append_residue_by_bond(p1.residue(i));
 			}
 			symm.append_residue_by_jump(p2.residue(1),1,"","", sepcomp ); // other chain iff not dumping sym complex (too many chains)
-			for(Size i = 2; i <= p2.n_residue(); ++i) {
-				if(symm.residue(symm.n_residue()).is_terminus()||symm.residue(symm.n_residue()).is_ligand()) symm.append_residue_by_jump(p2.residue(i),1);
+			for(Size i = 2; i <= p2.size(); ++i) {
+				if(symm.residue(symm.size()).is_terminus()||symm.residue(symm.size()).is_ligand()) symm.append_residue_by_jump(p2.residue(i),1);
 				else                                             symm.append_residue_by_bond(p2.residue(i));
 			}
 		}
@@ -891,13 +891,13 @@ struct TCDock {
 			#endif
 			{
 				asym.append_residue_by_jump(p1.residue(1),1);
-				for(Size i = 2; i <= p1.n_residue(); ++i) {
+				for(Size i = 2; i <= p1.size(); ++i) {
 				  if(asym.residue(i-1).is_terminus()||asym.residue(i-1).is_ligand()) asym.append_residue_by_jump(p1.residue(i),1);
 					else                                asym.append_residue_by_bond(p1.residue(i));
 				}
 				asym.append_residue_by_jump(p2.residue(1),1);
-				for(Size i = 2; i <= p2.n_residue(); ++i) {
-				  if(asym.residue(asym.n_residue()).is_terminus()||asym.residue(asym.n_residue()).is_ligand()) asym.append_residue_by_jump(p2.residue(i),1);
+				for(Size i = 2; i <= p2.size(); ++i) {
+				  if(asym.residue(asym.size()).is_terminus()||asym.residue(asym.size()).is_ligand()) asym.append_residue_by_jump(p2.residue(i),1);
 					else                                             asym.append_residue_by_bond(p2.residue(i));
 				}
 			}
@@ -910,23 +910,23 @@ struct TCDock {
 			Real const da2 = numeric::conversions::degrees(asin(option[tcdock::grid_delta_rot]()*1.2/pr1));
 			Real const dr1 = -option[tcdock::grid_delta_disp]()*dcmp1/d;
 			Real const dr2 = -option[tcdock::grid_delta_disp]()*dcmp2/d;
-			rot_pose(asym,cmp1axs_,-(na+1)*da1,               1, p1.n_residue());
-			rot_pose(asym,cmp2axs_, (na  )*da2,p1.n_residue()+1,asym.n_residue());
+			rot_pose(asym,cmp1axs_,-(na+1)*da1,               1, p1.size());
+			rot_pose(asym,cmp2axs_, (na  )*da2,p1.size()+1,asym.size());
 			for(int ia1 = 0; ia1 < 2*na+1; ++ia1) {
-				rot_pose(asym,cmp1axs_,da1,1, p1.n_residue());
-				rot_pose(asym,cmp2axs_,-(2*na+1)*da2,p1.n_residue()+1,asym.n_residue());
+				rot_pose(asym,cmp1axs_,da1,1, p1.size());
+				rot_pose(asym,cmp2axs_,-(2*na+1)*da2,p1.size()+1,asym.size());
 				for(int ia2 = 0; ia2 < 2*na+1; ++ia2) {
-					rot_pose(asym,cmp2axs_,da2,p1.n_residue()+1,asym.n_residue());
+					rot_pose(asym,cmp2axs_,da2,p1.size()+1,asym.size());
 					for(int ir = 0; ir < nr; ++ir) {
 						#ifdef USE_OPENMP
 						#pragma omp critical
 						#endif
 						core::io::pdb::dump_pdb(asym,option[out::file::o]()+"/"+fname+"_"+string_of(ia1)+"_"+string_of(ia2)+"_"+string_of(ir)+".pdb"+(option[tcdock::dump_gz]()?".gz":""));
-						trans_pose(asym,cmp1axs_*dr1,1, p1.n_residue());
-						trans_pose(asym,cmp2axs_*dr2,p1.n_residue()+1,asym.n_residue());
+						trans_pose(asym,cmp1axs_*dr1,1, p1.size());
+						trans_pose(asym,cmp2axs_*dr2,p1.size()+1,asym.size());
 					}
-					trans_pose(asym,cmp1axs_*-nr*dr1,1, p1.n_residue());
-					trans_pose(asym,cmp2axs_*-nr*dr2,p1.n_residue()+1,asym.n_residue());
+					trans_pose(asym,cmp1axs_*-nr*dr1,1, p1.size());
+					trans_pose(asym,cmp2axs_*-nr*dr2,p1.size()+1,asym.size());
 				}
 			}
 		}
@@ -1039,9 +1039,9 @@ struct TCDock {
 			for(int t2 = 0; t2 <= option[tcdock::termini_trim](); ++t2) {
 				Vecf n2_0 = cmp2in_.xyz(core::id::AtomID(1,1+t2));
 				for(int t3 = 0; t3 <= option[tcdock::termini_trim](); ++t3) {
-					Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.n_residue()-t3));
+					Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.size()-t3));
 					for(int t4 = 0; t4 <= option[tcdock::termini_trim](); ++t4) {
-						Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.n_residue()-t4));
+						Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.size()-t4));
 						for(int i1 = 0; i1 < cmp1nsub_; ++i1){
 							Vecf n1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(Real)cmp1nsub_*(Real)i1) * n1_0;
 							Vecf c1 = d1*cmp1axs_ + rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(Real)cmp1nsub_*(Real)i1) * c1_0;
@@ -1070,9 +1070,9 @@ struct TCDock {
 		int t2=1;
 		Vecf n2_0 = cmp2in_.xyz(core::id::AtomID(1,1+t2));
 		int t3=0;
-		Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.n_residue()-t3));
+		Vecf c1_0 = cmp1in_.xyz(core::id::AtomID(3,cmp1in_.size()-t3));
 		int t4=0;
-		Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.n_residue()-t4));
+		Vecf c2_0 = cmp2in_.xyz(core::id::AtomID(3,cmp2in_.size()-t4));
 		for(int i1 = 0; i1 < cmp1nsub_; ++i1){
 			Vecf n1 = rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(Real)cmp1nsub_*(Real)i1) * n1_0;
 			Vecf c1 = rotation_matrix_degrees(cmp1axs_,a1 + 360.0/(Real)cmp1nsub_*(Real)i1) * c1_0;
@@ -1176,10 +1176,10 @@ struct TCDock {
              << F(7,3,icbc) << " "
 		     << F(6,2,cmp1cbc) << " "
 		     << F(6,2,cmp2cbc) << " "
-		     << I(4,cmp1in_.n_residue()) << " "
+		     << I(4,cmp1in_.size()) << " "
 		     << I(3,h.icmp1+(int)da1) << " "
 		     << F(8,3,dcmp1) << " "
-		     << I(4,cmp2in_.n_residue()) << " "
+		     << I(4,cmp2in_.size()) << " "
 		     << I(3,h.icmp2+(int)da2) << " "
 		     << F(8,3,dcmp2) << " "
 			 << I(3,h.iori);
@@ -1503,10 +1503,10 @@ struct TCDock {
                  << F(7,3,icbc) << " "
 			     << F(6,2,cmp1cbc) << " "
 			     << F(6,2,cmp2cbc) << " "
-			     << I(4,cmp1in_.n_residue()) << " "
+			     << I(4,cmp1in_.size()) << " "
 			     << I(3,h.icmp1+(int)da1) << " "
 			     << F(8,3,dcmp1) << " "
-			     << I(4,cmp2in_.n_residue()) << " "
+			     << I(4,cmp2in_.size()) << " "
 			     << I(3,h.icmp2+(int)da2) << " "
 			     << F(8,3,dcmp2) << " "
 				 << I(3,h.iori);
@@ -1564,7 +1564,7 @@ int main (int argc, char *argv[]) {
 // 		Pose pose1;
 // 		std::cout << option[tcdock::I5]()[i];
 // 		core::import_pose::pose_from_file(pose1,option[tcdock::I5]()[i], core::import_pose::PDB_file);
-// 		std::cout << " " << pose1.n_residue() << " DONE" << std::endl;
+// 		std::cout << " " << pose1.size() << " DONE" << std::endl;
 // 		continue;
 // 	}
 // 	return 0;
@@ -1590,8 +1590,8 @@ int main (int argc, char *argv[]) {
 			TR << "triming tails on " << compfiles[1][i] << std::endl;
 			protocols::sic_dock::auto_trim_floppy_termini(pose1,ttrim_cut,compnfold[1]);
 		}
-		if( pose1.n_residue() > (Size)option[tcdock::max_res]() ){
-			TR << "skip " << compfiles[1][i] << " " << pose1.n_residue() << std::endl;
+		if( pose1.size() > (Size)option[tcdock::max_res]() ){
+			TR << "skip " << compfiles[1][i] << " " << pose1.size() << std::endl;
 			continue;
 		}
 		for(Size j = 1; j <= compfiles[2].size(); ++j) {
@@ -1601,8 +1601,8 @@ int main (int argc, char *argv[]) {
 				TR << "triming tails on " << compfiles[2][j] << std::endl;
 				protocols::sic_dock::auto_trim_floppy_termini(pose2,ttrim_cut,compnfold[2]);
 			}
-			if( pose2.n_residue() > (Size)option[tcdock::max_res]() ){
-				TR << "skip " << compfiles[2][j] << " " << pose2.n_residue() << std::endl;
+			if( pose2.size() > (Size)option[tcdock::max_res]() ){
+				TR << "skip " << compfiles[2][j] << " " << pose2.size() << std::endl;
 				continue;
 			}
 			TCDock tcd(pose1,pose2,compfiles[1][i],compfiles[2][j],compkind[1],compkind[2]);

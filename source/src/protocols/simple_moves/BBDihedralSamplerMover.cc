@@ -156,12 +156,12 @@ BBDihedralSamplerMover::setup_all_bb_residues( core::pose::Pose const & pose) {
 	}
 
 	MoveMapOP mm = MoveMapOP( new MoveMap );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		mm->set_bb(i, true);
 	}
 
 	movemap_ = mm;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		bb_residues_.push_back( i );
 	}
 }
@@ -201,7 +201,7 @@ BBDihedralSamplerMover::setup_sampler_movemap_union( core::pose::Pose const & po
 void
 BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 	if ( movemap_ && bb_residues_.size() == 0 ) {
-		bb_residues_ = get_residues_from_movemap_bb_any_torsion( *movemap_, pose.total_residue() ); //This is done here so we dont have to do this at each apply and waste time.
+		bb_residues_ = get_residues_from_movemap_bb_any_torsion( *movemap_, pose.size() ); //This is done here so we dont have to do this at each apply and waste time.
 	}
 
 	if ( samplers_.size() == 0 ) {

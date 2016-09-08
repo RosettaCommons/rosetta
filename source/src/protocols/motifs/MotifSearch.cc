@@ -786,7 +786,7 @@ MotifSearch::position_vector_setup(
 	Pose const & pose
 )
 {
-	for ( Size i(1), end( pose.total_residue() ); i <= end; ++i ) {
+	for ( Size i(1), end( pose.size() ); i <= end; ++i ) {
 		if ( pose.residue_type(i).is_protein() ) {
 			protein_positions_.push_back(i);
 		}

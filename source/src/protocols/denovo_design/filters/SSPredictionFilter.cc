@@ -157,7 +157,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 
 	// strip ligands from the ss string -- dssp now includes a character for ligand
 	std::string pruned_ss( "" );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			pruned_ss += wanted_ss[i-1];
 		}
@@ -167,7 +167,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 	if ( use_svm_ ) {
 		runtime_assert( ss_predictor_ != 0 );
 		std::string sequence;
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pose.residue( i ).is_protein() ) sequence += pose.residue( i ).name1();
 		}
 		runtime_assert( sequence.size() == wanted_ss.size() );

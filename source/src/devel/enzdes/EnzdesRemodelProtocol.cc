@@ -665,7 +665,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 
 	//reduce the pose to poly ala
 	utility::vector1< core::Size > ala_pos;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		if ( !pose.residue(i).is_protein() ) continue;
 
@@ -700,7 +700,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	start_to_current_smap_ = core::id::SequenceMappingOP( new core::id::SequenceMapping() );
 	start_to_current_smap_->clear();
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) start_to_current_smap_->push_back( i );
+	for ( core::Size i = 1; i <= pose.size(); ++i ) start_to_current_smap_->push_back( i );
 
 } //examine initial conformation
 
@@ -1037,8 +1037,8 @@ EnzdesRemodelMover::remove_cached_observers(
 	}
 	// Debugging information, as this foldtree reset has had issues in the past
 	tr.Debug << "Resetting pose FoldTree." << std::endl;
-	tr.Debug << "* Current Pose of size " << pose.total_residue() << ": " << pose.annotated_sequence() << std::endl;
-	tr.Debug << "Native Pose of size " << this->get_native_pose()->total_residue() << ": " << this->get_native_pose()->annotated_sequence() << std::endl;
+	tr.Debug << "* Current Pose of size " << pose.size() << ": " << pose.annotated_sequence() << std::endl;
+	tr.Debug << "Native Pose of size " << this->get_native_pose()->size() << ": " << this->get_native_pose()->annotated_sequence() << std::endl;
 	tr.Debug << "Current FoldTree, size " << pose.fold_tree().nres() << ": " << pose.fold_tree() << std::endl;
 	tr.Debug << "Starting (native) FoldTree, size " << old_fold_tree.nres() << ": " << old_fold_tree << std::endl;
 	tr.Debug << "* Remodeled (new) FoldTree, size " << new_fold_tree.nres() << ": " << new_fold_tree << std::endl;
@@ -1069,7 +1069,7 @@ EnzdesRemodelMover::setup_postdesign_filters(
 	core::pose::Pose const & pose
 ){
 
-	if ( pose.total_residue() > 1 ) {} //hack to prevent compiler warning for now
+	if ( pose.size() > 1 ) {} //hack to prevent compiler warning for now
 
 	postdesign_filters_->clear();
 

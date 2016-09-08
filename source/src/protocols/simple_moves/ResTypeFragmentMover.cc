@@ -89,7 +89,7 @@ bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::Frame
 	// tr.Trace << "now do the ss-check!"<< std::endl;
 	// get actual ss from pose
 	std::string proposed_ss;
-	proposed_ss.reserve( pose.total_residue() );
+	proposed_ss.reserve( pose.size() );
 	proposed_ss = pose.secstruct();
 
 	std::string old_ss = proposed_ss;

@@ -275,7 +275,7 @@ append_rsd_by_kinematic_hbond_jump_near_atom(
 	Residue rsd( pose.residue( seqpos ) );
 	//append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
-	Size new_seqpos( pose.total_residue() );
+	Size new_seqpos( pose.size() );
 	Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 
@@ -449,7 +449,7 @@ append_rsd_by_hbond_jump_near_atom(
 	Residue rsd( pose.residue( seqpos ) );
 	//append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
-	Size new_seqpos( pose.total_residue() );
+	Size new_seqpos( pose.size() );
 	Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 
@@ -489,11 +489,11 @@ append_rsd_by_hbond_jump_near_atom(
 	pose.set_jump( jump_number, jump );
 pose.dump_pdb( "ah.pdb" );
 //	FoldTree f_jump( pose.fold_tree() );
-	FoldTree f_jump( pose.total_residue() );
-	FoldTree f_rot( pose.total_residue() );
+	FoldTree f_jump( pose.size() );
+	FoldTree f_rot( pose.size() );
 
 	//mrrow?
-	f_jump.new_jump( seqpos, new_seqpos, pose.total_residue() - 1 );
+	f_jump.new_jump( seqpos, new_seqpos, pose.size() - 1 );
 	f_jump.reorder( seqpos );
 	f_jump.set_jump_atoms( jump_number, seqpos, rsd.atom_name( atomno ), new_seqpos, new_rsd.atom_name( new_atomno ) );
 	pose.fold_tree( f_jump );
@@ -506,7 +506,7 @@ pose.dump_pdb( "ah.pdb" );
 //		new_cutpoint = 2;
 //	}
 
-	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.total_residue() - 1 );
+	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.size() - 1 );
 //	f_rot.reorder( seqpos );
 	pose.fold_tree( f_rot );
 	//to set rotation
@@ -548,7 +548,7 @@ fast_clash_check(
 	Real const clash_dist2_cut( clash_dist_cut * clash_dist_cut );
 	for( Size iatid = 1; iatid <= check_atids.size(); ++iatid ){
 		Vector const at1_xyz( pose.xyz( check_atids[ iatid ] ) );
-		for( Size res2 = 1; res2 <= pose.total_residue(); ++res2 ){
+		for( Size res2 = 1; res2 <= pose.size(); ++res2 ){
 			for( Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ){
 				//skip virtual atoms!
 				if( pose.residue( res2 ).atom_type( at2 ).lj_wdepth() == 0.0 ) continue;
@@ -591,7 +591,7 @@ append_water_by_hbond_jump_near_atom(
 	//append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
 
-	Size new_seqpos( pose.total_residue() );
+	Size new_seqpos( pose.size() );
 	Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 	//store water atom ids for clash check
@@ -634,7 +634,7 @@ append_water_by_hbond_jump_near_atom(
 	//try adding vrts on the end?
 	ResidueTypeSet const & rsd_set( rsd.residue_type_set() );
 	conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
-	pose.append_residue_by_jump( *vrt_rsd, pose.total_residue() );
+	pose.append_residue_by_jump( *vrt_rsd, pose.size() );
 	FoldTree f_jump( pose.fold_tree() );
 	//just min the new jump
 	MoveMapOP mm = new MoveMap;
@@ -642,10 +642,10 @@ append_water_by_hbond_jump_near_atom(
 	protocols::moves::MinMoverOP min_mover = new protocols::moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true );
 
 	//now go to chemical bond
-	FoldTree f_rot( pose.total_residue() );
+	FoldTree f_rot( pose.size() );
 
 	//run through oxygen regardless
-	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.total_residue() - 2 );
+	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.size() - 2 );
 	pose.fold_tree( f_rot );
 
 	//must import from hbonds/constants.hh
@@ -760,7 +760,7 @@ append_rsd_by_jump_near_atom(
 	Residue rsd( pose.residue( seqpos ) );
 	//append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
-	Size new_seqpos( pose.total_residue() );
+	Size new_seqpos( pose.size() );
 	Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 
@@ -931,7 +931,7 @@ set_pose_occ_and_bfac(
 	vector1< Size > const native_seqpos_map
 )
 {
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( seqpos > native_seqpos_map.size() ) continue;
 		Size native_seqpos( native_seqpos_map[ seqpos ] );
 //		if( pose.residue( seqpos ).name3().compare( native_pose.residue( native_seqpos_map[ seqpos ] ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
@@ -955,7 +955,7 @@ remove_pose_water(
 	pose::Pose pose
 )
 {
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	//delete from end to being so dont mess up seqpos numbering
 	for( Size seqpos = nres; seqpos >= 1; --seqpos ){
 		if( pose.residue( seqpos ).name1() == 'w' ){
@@ -1787,7 +1787,7 @@ byres_analysis(
 	Pose native_pose( pose );
 	//init native_seqpos_map to point to self
 	vector1< Size > native_seqpos_map;
-	for( Size iseq = 1; iseq <= pose.total_residue(); ++iseq ){ native_seqpos_map.push_back( iseq ); }
+	for( Size iseq = 1; iseq <= pose.size(); ++iseq ){ native_seqpos_map.push_back( iseq ); }
 	//actually have a diff native pose?
 	if( option[ in::file::native ].user() ){
 		native_pdbname = option[ in::file::native ]();
@@ -1841,7 +1841,7 @@ byres_analysis(
 	else task_factory->push_back( new core::pack::task::operation::RestrictToRepacking() );
 	core::pack::task::PackerTaskOP packer_task( task_factory->create_task_and_apply_taskoperations( pose ) );
 
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 
 	//solvate all polar groups?
 /*

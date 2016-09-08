@@ -159,7 +159,7 @@ set_chain_end_fold_tree(
 												)
 {
 	Conformation const & conf( pose.conformation() );
-	kinematics::FoldTree f( pose.total_residue() );
+	kinematics::FoldTree f( pose.size() );
 	Size const root( conf.chain_end( 1 ) );
 	for ( Size i=2; i<= conf.num_chains(); ++i ) {
 		Size const anchor  ( conf.chain_end  ( i ) );
@@ -299,7 +299,7 @@ torsion2big_bin_string(
 												 )
 {
 	runtime_assert( pos1 <= pos2 );
-	runtime_assert( pos2 <= pose.total_residue() );
+	runtime_assert( pos2 <= pose.size() );
 	string bb;
 	for ( Size i=pos1; i<= pos2; ++i ) {
 		if ( !pose.residue(i).is_protein() ) {
@@ -432,7 +432,7 @@ init_torsions_still_present(
 	using basic::subtract_degree_angles;
 
 	bool done( true );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( is_flexible[i] && pose.residue(i).is_protein() ) {
 			Residue const & rsd( pose.residue(i) );
 			if ( ( std::abs( subtract_degree_angles( pose.phi  (i), init_phi   ) ) < 1e-3 || rsd.is_lower_terminus() ) &&

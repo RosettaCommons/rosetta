@@ -67,7 +67,7 @@ public:
 		fold_tree.add_edge( 1, jump_pos1, core::kinematics::Edge::PEPTIDE );
 		fold_tree.add_edge( jump_pos1, cutpoint, core::kinematics::Edge::PEPTIDE );
 		fold_tree.add_edge( jump_pos2, cutpoint+1, core::kinematics::Edge::PEPTIDE );
-		fold_tree.add_edge( jump_pos2, pose.total_residue(), core::kinematics::Edge::PEPTIDE );
+		fold_tree.add_edge( jump_pos2, pose.size(), core::kinematics::Edge::PEPTIDE );
 		fold_tree.reorder( 1 );
 
 		pose.fold_tree(fold_tree);

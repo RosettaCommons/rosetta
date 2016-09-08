@@ -76,21 +76,21 @@ NumNeighborsSelector::NumNeighborsSelector( Size threshold, Real distance_cutoff
 ResidueSubset
 NumNeighborsSelector::apply( core::pose::Pose const & pose ) const
 {
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 
 	conformation::PointGraphOP pg( new conformation::PointGraph );
 	conformation::residue_point_graph_from_conformation( pose.conformation(), *pg );
 	conformation::find_neighbors( pg, distance_cutoff_ );
 
 	if ( count_water_ ) {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pg->get_vertex( ii ).num_neighbors() >= threshold_ ) {
 				subset[ ii ] = true;
 			}
 		}
 	} else {
-		utility::vector1< Size > non_water_neighbor_count( pose.total_residue(), 0 );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		utility::vector1< Size > non_water_neighbor_count( pose.size(), 0 );
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue(ii).aa() == chemical::aa_h2o ) continue;
 			for ( conformation::PointGraph::VertexClass::UpperEdgeListIter
 					iter = pg->get_vertex(ii).upper_edge_list_begin(),

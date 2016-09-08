@@ -129,8 +129,8 @@ public:
 		// test pose copy generation -- should no longer be symmetric
 		core::pose::PoseOP posecopy = folder.Tgenerate_pose( input_pose );
 		TS_ASSERT( !core::pose::symmetry::is_symmetric(*posecopy) );
-		TS_ASSERT_EQUALS( posecopy->total_residue(), 371 );
-		for ( core::Size i=1, endi=posecopy->total_residue(); i<=endi; ++i ) {
+		TS_ASSERT_EQUALS( posecopy->size(), 371 );
+		for ( core::Size i=1, endi=posecopy->size(); i<=endi; ++i ) {
 			TS_ASSERT( posecopy->residue_type(i).name() != "VRT" );
 			TR << i << " : " << posecopy->residue(i).name() << std::endl;
 		}
@@ -148,16 +148,16 @@ public:
 		std::string ss = "";
 		utility::vector1< std::string > abego;
 		folder.Tget_aa_ss_abego( aa, ss, abego, start, end, *posecopy );
-		TS_ASSERT_EQUALS( aa.size(), posecopy->total_residue()-1 );
-		TS_ASSERT_EQUALS( ss.size(), posecopy->total_residue()-1 );
-		TS_ASSERT_EQUALS( abego.size(), posecopy->total_residue()-1 );
+		TS_ASSERT_EQUALS( aa.size(), posecopy->size()-1 );
+		TS_ASSERT_EQUALS( ss.size(), posecopy->size()-1 );
+		TS_ASSERT_EQUALS( abego.size(), posecopy->size()-1 );
 		TR << "AA=" << aa << std::endl;
 		TR << "SS=" << ss << std::endl;
 
 		// test deleting the segment in question
 		folder.Tprepare_pose( *posecopy, start, end );
 		// should be smaller by 1 for the end+1 residue that should be cut
-		TS_ASSERT_EQUALS( posecopy->total_residue(), 370 );
+		TS_ASSERT_EQUALS( posecopy->size(), 370 );
 		// should be one jump
 		TS_ASSERT_EQUALS( posecopy->fold_tree().num_jump(), 1 );
 		// that jump should start at residue start-1

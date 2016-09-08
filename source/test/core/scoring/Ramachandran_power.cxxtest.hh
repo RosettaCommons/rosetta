@@ -63,7 +63,7 @@ public:
 		Real expected[] = { -0.2578, -0.9390, 1.1552, 34.6217 };
 
 		TR << "Res\tExpected\tObserved" << std::endl;
-		for ( Size i = 1; i <= pose_->total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose_->size(); i++ ) {
 			Real observed = rama.eval_rama_score_residue(pose_->residue(i));
 			TR << i << "\t" << expected[i-1] << "\t" << observed << std::endl;
 			TS_ASSERT_DELTA(observed, expected[i-1], 1e-4);

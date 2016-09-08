@@ -83,7 +83,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 	}
 
 	if ( b_sharpen_ == 0 ) {
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd_i ( pose.residue(i) );
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;

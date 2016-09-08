@@ -84,7 +84,7 @@ public:
 		}
 
 		core::scoring::dssp::Dssp dssp( pose );
-		TR << dssp.get_dssp_secstruct() << " " << pose.total_residue() << std::endl;
+		TR << dssp.get_dssp_secstruct() << " " << pose.size() << std::endl;
 
 		SecondaryStructureFilter filt;
 		filt.set_use_dssp( true );
@@ -110,7 +110,7 @@ public:
 		// changing wanted secondary structure should cause failure
 		filt.set_use_dssp( false );
 		std::string::const_iterator ss = bad_ss.begin();
-		for ( core::Size resid=1; resid<=pose.total_residue(); ++resid, ++ss ) {
+		for ( core::Size resid=1; resid<=pose.size(); ++resid, ++ss ) {
 			pose.set_secstruct( resid, *ss );
 		}
 		TS_ASSERT_EQUALS( filt.report_sm(pose),  core::Real(31)/core::Real(33) );

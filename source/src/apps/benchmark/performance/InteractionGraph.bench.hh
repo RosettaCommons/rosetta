@@ -113,8 +113,8 @@ public:
 
 		PackerEnergy bestenergy;
 		FixbbRotamerSetsCOP rsets = utility::pointer::static_pointer_cast< core::pack::rotamer_set::FixbbRotamerSets const > ( rotsets_ );
-		ObjexxFCL::FArray1D_int bestrotamer_at_seqpos( pose_->total_residue(), 0 );
-		ObjexxFCL::FArray1D_int current_rot_index( pose_->total_residue(), 0 );
+		ObjexxFCL::FArray1D_int bestrotamer_at_seqpos( pose_->size(), 0 );
+		ObjexxFCL::FArray1D_int current_rot_index( pose_->size(), 0 );
 		ObjexxFCL::FArray1D_float rot_freq( rotsets_->nrotamers(), 0.0f );
 
 		/// SETUP RUN CODE
@@ -320,7 +320,7 @@ public:
 		using namespace core;
 		using namespace core::pack::task;
 		PackerTaskOP task = TaskFactory::create_packer_task( *pose_ );
-		for ( Size ii = 21; ii <= pose_->total_residue(); ++ii ) {
+		for ( Size ii = 21; ii <= pose_->size(); ++ii ) {
 			task->nonconst_residue_task( ii ).prevent_repacking();
 		}
 		for ( Size ii = 1; ii <= 20; ++ii ) {

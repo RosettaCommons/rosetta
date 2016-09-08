@@ -470,7 +470,7 @@ void TestQuickRelaxMover::apply( Pose & pose ) {
 		// start 5 residues lower and repack for 10 residues
 		core::SSize halfrange = 4;
 		core::SSize range = 2 * halfrange;
-		core::SSize nres = static_cast< core::SSize >( pose.total_residue() );
+		core::SSize nres = static_cast< core::SSize >( pose.size() );
 
 		// create packer task - will be re-used
 		PackerTaskOP repack = TaskFactory::create_packer_task( pose );
@@ -623,7 +623,7 @@ void TestQuickRelaxMover::apply( Pose & pose ) {
 	core::Real duration = ((double) stop - start )/CLOCKS_PER_SEC;
 
 	// // setting mover status to fail-retry if something is going wrong
-	// if ( duration > pose.total_residue() ) {
+	// if ( duration > pose.size() ) {
 	//  TR << "Rosetta is thinking for too long, setting Mover status to FAIL_RETRY." << std::endl;
 	//  TR << "Try running this app in release mode." << std::endl;
 	//  set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
@@ -755,7 +755,7 @@ void TestQuickRelaxMover::init_from_cmd() {
 /// @brief Initialize from commandline
 utility::vector1< bool > TestQuickRelaxMover::get_repack_residues( Pose & pose, core::SSize center1, core::SSize center2, core::SSize halfrange ){
 
-	core::SSize nres = static_cast< core::SSize >( pose.total_residue() );
+	core::SSize nres = static_cast< core::SSize >( pose.size() );
 	core::SSize m, n;
 
 	// initialize vector with false

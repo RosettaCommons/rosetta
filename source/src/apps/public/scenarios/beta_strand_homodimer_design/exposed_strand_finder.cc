@@ -289,11 +289,11 @@ ExposedStrandMover::move_superimpose(core::pose::Pose & pose1 /*input*/, core::p
 	scoring::superimpose_pose(pose1, pose2, atom_map);
 
 	//now add these two poses together
-	pose2.append_residue_by_jump(pose1.residue( 1 ), pose2.total_residue(), "" , "",  true /*start new chain*/);
-	for ( core::Size n = 2; n<= pose1.total_residue(); ++n ) {
+	pose2.append_residue_by_jump(pose1.residue( 1 ), pose2.size(), "" , "",  true /*start new chain*/);
+	for ( core::Size n = 2; n<= pose1.size(); ++n ) {
 		//add into a new chain if need be
 		if ( pose1.residue(n).chain() != pose1.residue(n-1).chain() ) {
-			pose2.append_residue_by_jump(pose1.residue( n ), pose2.total_residue(), "" , "",  true /*start new chain*/);
+			pose2.append_residue_by_jump(pose1.residue( n ), pose2.size(), "" , "",  true /*start new chain*/);
 		} else { /*if (( pose1.residue(n-1).is_polymer() && !pose1.residue(n-1).is_upper_terminus() ) &&
 			(    pose1.residue(n).is_polymer() &&    !pose1.residue(n).is_lower_terminus() ) )*/
 			pose2.append_residue_by_bond( pose1.residue ( n ) );
@@ -320,7 +320,7 @@ core::Real ExposedStrandMover::bb_score(pose::Pose & pose, core::Size aligned_ch
 	utility::vector1<core::conformation::Atom> chain2_bb_atoms;
 	utility::vector1<core::conformation::Atom> all_bb_atoms;
 
-	for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+	for ( Size j = 1; j <= pose.size(); ++j ) {
 		core::conformation::Residue const & res( pose.residue(j) );
 		core::chemical::AtomIndices bb_ai( res.mainchain_atoms() );
 		//assert( bb_ai.size() == 4 );
@@ -465,7 +465,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 	// #ifndef NDEBUG
 	//  //core::scoring::dssp::Dssp new_dssp( pose );
 	//  //output to see if dssp info matches pose info
-	//  for(Size ii = 1; ii<=pose.total_residue(); ++ii ){
+	//  for(Size ii = 1; ii<=pose.size(); ++ii ){
 	//   int num_neighbors_debug( tang.get_node(ii)->num_neighbors_counting_self() );
 	//   TR << posename.base() <<"  residue: " << ii << "  PoseSS: " << pose.secstruct(ii) << "  num_neighbors: "
 	//     << num_neighbors_debug << std::endl;
@@ -477,7 +477,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 	//where we left off last time through
 	core::Size last_res_seen(0);
 	//itterate through entire pose
-	for (  core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for (  core::Size ii=1; ii<=pose.size(); ++ii ) {
 		//skip ahead if we've already been through here
 		if ( ii <= last_res_seen ) {
 			continue;
@@ -556,7 +556,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 
 		//find chain to cut out of master_pose later
 		//utility::vector1< core::Size >  res_to_loose;
-		for ( core::Size ii =1; ii <= native_pose_.total_residue(); ++ii ) {
+		for ( core::Size ii =1; ii <= native_pose_.size(); ++ii ) {
 			if ( native_pose_.pdb_info()->chain(ii) == chain_char_ ) {
 				res_to_loose_.push_back(ii);
 			}
@@ -613,7 +613,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 
 					//now remove the peptide before scoring
 					combined_pose.conformation().delete_residue_range_slow( min(res_to_loose_), max(res_to_loose_));
-					TR << "Master pose size after peptide removal: " << combined_pose.total_residue() << std::endl;
+					TR << "Master pose size after peptide removal: " << combined_pose.size() << std::endl;
 
 					//score what's left
 					Size new_sheet_start( pose_current + combined_pose.conformation().chain_end(1) ) ;

@@ -81,7 +81,7 @@ public:
 		core::kinematics::AtomTree const & at = pose.atom_tree();
 		core::kinematics::tree::AtomCOP rt = at.root();
 
-		for (core::Size i = 1; i < pose.total_residue(); i++) {
+		for (core::Size i = 1; i < pose.size(); i++) {
 			core::conformation::Residue const & rsd = pose.residue(i);
 			TR << "Residue " << i << ": " << rsd.name3() << std::endl;
 			for (core::Size j = 1; j < rsd.natoms(); j++) {

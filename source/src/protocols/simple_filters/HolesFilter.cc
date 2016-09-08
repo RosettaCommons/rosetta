@@ -80,7 +80,7 @@ HolesFilter::compute( Pose const & pose ) const
 	using core::scoring::packing::compute_holes_score;
 
 	Size MAX_RES = 5000;
-	runtime_assert( pose.total_residue() <= MAX_RES );
+	runtime_assert( pose.size() <= MAX_RES );
 
 	HolesResult result = compute_holes_score( pose, cmd_ );
 	return result.dec15_score;

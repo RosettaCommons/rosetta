@@ -495,7 +495,7 @@ FusePosesNtoCMover::fuse_poses(
 
 		for ( Size rescounter( fuse_pose.conformation().chain_begin( i ) + 1), chain_end( fuse_pose.conformation().chain_end( i ) ); rescounter <= chain_end; ++rescounter ) {
 			//no idea if this shit is going to work
-			pose.append_polymer_residue_after_seqpos( fuse_pose.residue( rescounter ), pose.total_residue() /* hope this is correct */, false );
+			pose.append_polymer_residue_after_seqpos( fuse_pose.residue( rescounter ), pose.size() /* hope this is correct */, false );
 		}
 	}
 	if ( debugmode_ ) {
@@ -878,7 +878,7 @@ convert_AtomID_Map_to_std_map(
 
 	std::map< core::id::AtomID, core::id::AtomID > to_return;
 
-	for ( core::Size rescounter(1); rescounter <= atom_map.n_residue(); ++rescounter ) {
+	for ( core::Size rescounter(1); rescounter <= atom_map.size(); ++rescounter ) {
 		core::Size atoms_this_res( atom_map.n_atom( rescounter ) );
 		for ( core::Size atcounter(1); atcounter <= atoms_this_res; ++atcounter ) {
 

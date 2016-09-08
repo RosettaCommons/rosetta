@@ -154,7 +154,7 @@ SpecificResiduesNearInterfaceFilter::compute(
 
 	bool all_at_interface(true);
 	for ( Size residue_number=1;
-			residue_number <= pose.total_residue(); ++residue_number ) {
+			residue_number <= pose.size(); ++residue_number ) {
 		if ( !relevant_residues[residue_number] ) continue;
 
 		if ( !interface.is_interface(residue_number) ) {

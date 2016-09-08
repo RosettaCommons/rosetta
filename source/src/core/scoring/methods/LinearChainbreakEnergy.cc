@@ -186,7 +186,7 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 
 	//fpd early stopping #2.  if allowable_sequence_sep_ > total_residue()
 	//fpd there is no need to check shortest path
-	bool shortest_path_check_req = (allowable_sequence_sep_ < pose.total_residue());
+	bool shortest_path_check_req = (allowable_sequence_sep_ < pose.size());
 
 	// Cached ShortestPathInFoldTree instance is invalid and must be recomputed
 	if ( shortest_path_check_req ) {

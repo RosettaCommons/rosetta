@@ -193,14 +193,14 @@ void ThreadingJobInputter::pose_from_job(
 	);
 
 	Real const alignment_coverage( tjob->alignment().length() - tjob->alignment().gapped_positions() );
-	Real const alignment_identities( (core::Real)tjob->alignment().identities() / pose.total_residue() );
-	Real const alignment_perc ( alignment_coverage / pose.total_residue() );
+	Real const alignment_identities( (core::Real)tjob->alignment().identities() / pose.size() );
+	Real const alignment_perc ( alignment_coverage / pose.size() );
 
 	// Add the alignment length, perc coverage and total length
 	job->add_string_real_pair( "aln_len", alignment_coverage  );
 	job->add_string_real_pair( "aln_perc", alignment_perc );
 	job->add_string_real_pair( "aln_ident", alignment_identities );
-	job->add_string_real_pair( "nres", pose.total_residue() );
+	job->add_string_real_pair( "nres", pose.size() );
 
 	// thread to get starting model
 	comparative_modeling::ThreadingMover mover( tjob->alignment(), *(tjob->get_pose()) );

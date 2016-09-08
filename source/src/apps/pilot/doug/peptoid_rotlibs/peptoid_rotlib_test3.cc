@@ -168,7 +168,7 @@ main( int argc, char * argv [] )
 
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 
-	for( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for( Size i = 1; i <= pose.size(); ++i ) {
 		movemap->set_bb( i, true );
 		movemap->set_chi( i, true );
 	}

@@ -88,7 +88,7 @@ dihedral_distance(
 
 	Size nchi_dihedrals(0), nbb_dihedrals(0);
 
-	for ( Size pos = 1; pos <= pose1.total_residue(); ++pos ) {
+	for ( Size pos = 1; pos <= pose1.size(); ++pos ) {
 		if ( ! use_pos[ pos ] ) continue;
 
 		conformation::Residue const & rsd1( pose1.residue( pos ) );
@@ -147,7 +147,7 @@ basic_idealize(
 
 
 	pose::Pose const start_pose( pose );
-	Size const nres ( pose.total_residue() );
+	Size const nres ( pose.size() );
 
 	// keep chainbreaks if they exist
 	if ( chainbreaks ) {

@@ -120,7 +120,7 @@ void parse_spans(
 		core::Size const end   = core::pose::parse_resnum( span_vector[iter].second, pose );
 		//runtime_assert( end > begin );
 		//runtime_assert( begin>=1);
-		//runtime_assert( end<=pose.total_residue() );
+		//runtime_assert( end<=pose.size() );
 
 		for ( Size resi = begin; resi <= end ; resi ++ ) {
 			resi_collection.insert( resi );

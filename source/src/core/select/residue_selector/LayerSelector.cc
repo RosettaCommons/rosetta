@@ -66,7 +66,7 @@ ResidueSelectorOP LayerSelector::clone() const { return ResidueSelectorOP( new L
 ResidueSubset
 LayerSelector::apply( core::pose::Pose const & pose ) const
 {
-	core::Size const nres( pose.n_residue() );
+	core::Size const nres( pose.size() );
 
 	// Return the cached value if requested by the user
 	if ( cache_selection_ && srbl_->is_selection_initialized() ) {

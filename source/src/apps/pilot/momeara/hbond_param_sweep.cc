@@ -677,7 +677,7 @@ public:
 						pose_name << acc_rsd->type().name() << "_" << aatm << "_";
 						pose_name << AHdist << "-" << cosBAH << "-" << chi << "-" << cosAHD;
 						PDBInfoOP pdb_info( new PDBInfo( *pose ) );
-						assert( pdb_info->nres() == pose->total_residue() );
+						assert( pdb_info->nres() == pose->size() );
 						pdb_info->name( pose_name.str());
 					  pose->pdb_info( pdb_info );
 						// features.push_back(pose);

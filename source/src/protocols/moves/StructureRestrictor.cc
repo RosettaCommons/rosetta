@@ -155,7 +155,7 @@ StructureRestrictor::apply( Pose& pose ){
 	string chains = i->second;
 	TR_SR << "Restricting structure " << name << " to chains " << chains << "." << endl;
 	Size res_begin_delete = 1;
-	for ( Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( Size i=1; i <= pose.size(); ++i ) {
 		//INVARIANT: if we're in a stretch to delete then res_begin_delete
 		//indicates the first residue in this stretch to delete
 		if ( chains.find( pose.pdb_info()->chain(i), 0) != string::npos ) {
@@ -167,8 +167,8 @@ StructureRestrictor::apply( Pose& pose ){
 		}
 	}
 	// don't for get the last section to delete
-	if ( res_begin_delete <= pose.total_residue() ) {
-		pose.conformation().delete_residue_range_slow(res_begin_delete, pose.total_residue());
+	if ( res_begin_delete <= pose.size() ) {
+		pose.conformation().delete_residue_range_slow(res_begin_delete, pose.size());
 	}
 }
 

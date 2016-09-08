@@ -44,7 +44,7 @@ namespace phosphate {
 void
 remove_terminal_phosphates( pose::Pose & pose ){
 	utility::vector1< Size > res_list;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
+	for ( Size n = 1; n <= pose.size(); n++ ) res_list.push_back( n );
 	remove_terminal_phosphates( pose, res_list );
 }
 
@@ -110,7 +110,7 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 
 	Pose pose = pose_input; // to prevent some problems with graphics thread
 
-	runtime_assert( pose.total_residue() == reference_pose.total_residue() );
+	runtime_assert( pose.size() == reference_pose.size() );
 
 	for ( Size i = 1; i <= phosphate_move_list.size(); i++ ) {
 		PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
@@ -141,7 +141,7 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 			}
 		} else {
 			runtime_assert( terminus == THREE_PRIME_PHOSPHATE );
-			if ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) {
+			if ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) ) {
 				make_variants_match( pose, reference_pose, n, core::chemical::UPPER_TERMINUS_VARIANT );
 				make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_RIBOSE );
 				make_variants_match( pose, reference_pose, n, core::chemical::THREE_PRIME_PHOSPHATE );
@@ -267,7 +267,7 @@ get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
 		pose.residue( n ).xyz( " C5'" ) :
 		pose.residue( n ).xyz( " O3'" );
 
-	for ( Size m = 1; m <= pose.total_residue(); m++ ) {
+	for ( Size m = 1; m <= pose.size(); m++ ) {
 
 		if ( ( pose.residue( m ).nbr_atom_xyz()  - phosphate_takeoff_xyz ).length_squared() > phosphate_nbr_distance_cutoff2 ) continue;
 		neighbor_copy_dofs.push_back( m );
@@ -290,8 +290,8 @@ get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////
 utility::vector1< bool >
 detect_phosphate_contacts( pose::Pose const & pose ){
-	utility::vector1< bool > phosphate_makes_contact( pose.total_residue(), false );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	utility::vector1< bool > phosphate_makes_contact( pose.size(), false );
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		phosphate_makes_contact[ i ] = check_phosphate_contacts_donor( pose, i );
 	}
@@ -303,7 +303,7 @@ detect_phosphate_contacts( pose::Pose const & pose ){
 void
 setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, Size const n ) {
 	add_variant_type_to_pose_residue( pose, chemical::THREE_PRIME_PHOSPHATE, n );
-	runtime_assert( n < pose.total_residue() );
+	runtime_assert( n < pose.size() );
 	runtime_assert( pose.residue_type( n+1 ).is_RNA() );
 	runtime_assert( pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ||
 		pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) );

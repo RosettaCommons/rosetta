@@ -78,7 +78,7 @@ numeric::xyzVector< Real > RBSegmentMover::getCoM( core::pose::Pose const & pose
 	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end(),  pose.total_residue());
+		Size i_end   = std::min(segment_[i].end(),  pose.size());
 
 		for ( Size j = i_start; j <= i_end; ++j ) {
 			CoM += pose.residue(j).xyz("CA");
@@ -107,7 +107,7 @@ void  RBSegmentMover::applyRotation( core::pose::Pose & pose, numeric::xyzMatrix
 	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end() , pose.total_residue());
+		Size i_end   = std::min(segment_[i].end() , pose.size());
 
 		for ( Size j = i_start; j <= i_end; ++j ) {
 			for ( Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
@@ -140,7 +140,7 @@ void  RBSegmentMover::applyTranslation( core::pose::Pose & pose, numeric::xyzVec
 	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end(), pose.total_residue());
+		Size i_end   = std::min(segment_[i].end(), pose.size());
 
 		for ( Size j = i_start; j <= i_end; ++j ) {
 			for ( Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
@@ -172,7 +172,7 @@ void  RBSegmentMover::applyTransformation( core::pose::Pose & pose, numeric::xyz
 	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
 		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end(), pose.total_residue());
+		Size i_end   = std::min(segment_[i].end(), pose.size());
 
 		for ( Size j = i_start; j <= i_end; ++j ) {
 			for ( Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
@@ -327,7 +327,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 			int r_i = (dir == 1) ? i_end - i : i_start + i;
 			int r_j = r_i + dir * mag + offsets_[r_i];
 
-			bool crosses_cut = (ref_pose_.total_residue() == 0);
+			bool crosses_cut = (ref_pose_.size() == 0);
 			if ( !crosses_cut ) {
 				if ( r_j > r_i ) {
 					for ( int k = r_i; k < r_j && !crosses_cut; ++k ) {
@@ -472,7 +472,7 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 loops::LoopsOP
 SequenceShiftMover::get_residues_to_rebuild() {
 	loops::LoopsOP retval( new loops::Loops );
-	if ( ref_pose_.total_residue() == 0 ) {
+	if ( ref_pose_.size() == 0 ) {
 		return retval;
 	}
 

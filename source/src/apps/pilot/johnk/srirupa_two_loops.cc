@@ -96,7 +96,7 @@ main( int argc, char * argv [] )
 	core::Size end_relax1_res = 0;
 	int const relax1_start_pdb_number = option[ relax1_start_resnum ];
 	int const relax1_final_pdb_number = option[ relax1_final_resnum ];
-	for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( input_pose.pdb_info()->number(j) == relax1_start_pdb_number ) {
 			start_relax1_res = j;
 		}
@@ -118,7 +118,7 @@ main( int argc, char * argv [] )
 	core::Size end_relax2_res = 0;
 	int const relax2_start_pdb_number = option[ relax2_start_resnum ];
 	int const relax2_final_pdb_number = option[ relax2_final_resnum ];
-	for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( input_pose.pdb_info()->number(j) == relax2_start_pdb_number ) {
 			start_relax2_res = j;
 		}

@@ -63,7 +63,7 @@ VoxelSpacingMultifunc::VoxelSpacingMultifunc( core::pose::Pose const &pose)
 
 	// convert to poseCoords
 	poseCoords litePose;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 		core::Size natoms = rsd_i.nheavyatoms();

@@ -260,7 +260,7 @@ std::string BundleReporterFilter::generate_full_tracer_report(
 	if ( report_sequence() ) {
 		ss << "Sequence:\t";
 		if ( use_threeletter() ) {
-			for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+			for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 				ss << pose.residue(ir).name3();
 				if ( ir<irmax ) ss << " ";
 				else ss << std::endl;

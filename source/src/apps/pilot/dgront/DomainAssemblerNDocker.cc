@@ -190,8 +190,8 @@ private:
 
 	core::pose::make_pose_from_sequence(cen_pose_, sequence_,
 			*rsd_set_cen);
-	TR.Debug << "Creating an empty pose with "<<cen_pose_.total_residue()<<" residues"<<std::endl;
-	for (Size pos = 1; pos <= cen_pose_.total_residue(); pos++) {
+	TR.Debug << "Creating an empty pose with "<<cen_pose_.size()<<" residues"<<std::endl;
+	for (Size pos = 1; pos <= cen_pose_.size(); pos++) {
 	    if (!cen_pose_.residue(pos).is_protein())
 		continue;
 	    cen_pose_.set_phi(pos, -150);
@@ -213,7 +213,7 @@ private:
 	    core::pose::Pose tmp_pose;
 	    core::import_pose::pose_from_file( tmp_pose, *rsd_set_fa,  fname, core::import_pose::PDB_file);
 
-	    for(Size ir = 1; ir <= tmp_pose.total_residue(); ir++ ) {
+	    for(Size ir = 1; ir <= tmp_pose.size(); ir++ ) {
 		cen_pose_.set_phi( ir + resi, tmp_pose.phi( ir ) );
 		cen_pose_.set_psi( ir + resi, tmp_pose.psi( ir ) );
 		cen_pose_.set_omega( ir + resi, tmp_pose.omega( ir ) );

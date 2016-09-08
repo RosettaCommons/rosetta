@@ -93,7 +93,7 @@ void set_rb_constraints(
 				core::scoring::constraints::ConstraintCOPs CSTs_i;
 
 
-				for ( int cst_ij = std::max(1,cst_i-(int)cst_seqwidth), cst_ij_end=std::min(cst_pose.total_residue(),cst_i+cst_seqwidth);
+				for ( int cst_ij = std::max(1,cst_i-(int)cst_seqwidth), cst_ij_end=std::min(cst_pose.size(),cst_i+cst_seqwidth);
 						cst_ij<=cst_ij_end; ++cst_ij ) {
 					// only constrain protein residues
 					if ( !cst_pose.residue(cst_ij).is_protein() ) continue;
@@ -101,7 +101,7 @@ void set_rb_constraints(
 					core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz") );
 					core::scoring::constraints::ConstraintOP newcst_ij( new core::scoring::constraints::CoordinateConstraint(
 						core::id::AtomID( pose.residue(resmap[cst_i]).atom_index("CA"), resmap[cst_i]),
-						core::id::AtomID( pose.residue(pose.total_residue()).atom_index("ORIG"), pose.total_residue()),
+						core::id::AtomID( pose.residue(pose.size()).atom_index("ORIG"), pose.size()),
 						cst_pose.residue(cst_ij).xyz( "CA" ),
 						fx ) );
 
@@ -140,11 +140,11 @@ void set_constraints(
 	using core::scoring::constraints::ConstraintOP;
 	using core::scoring::constraints::ConstraintCOP;
 
-	if ( pose.total_residue() != cst_pose.total_residue() ) {
-		TR.Warning << "set_constraints() error: #res in cst_pose (" << cst_pose.total_residue()
-			<< ") != #res in pose (" << pose.total_residue() << ").  Continuing..." << std::endl;
+	if ( pose.size() != cst_pose.size() ) {
+		TR.Warning << "set_constraints() error: #res in cst_pose (" << cst_pose.size()
+			<< ") != #res in pose (" << pose.size() << ").  Continuing..." << std::endl;
 	}
-	int nres = (int)std::min( pose.total_residue() , cst_pose.total_residue() );
+	int nres = (int)std::min( pose.size() , cst_pose.size() );
 
 	core::scoring::constraints::ConstraintSetOP new_csts( new core::scoring::constraints::ConstraintSet );
 	for ( int cst_i =  1; cst_i < nres; ++cst_i ) {
@@ -159,7 +159,7 @@ void set_constraints(
 			core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz") );
 			core::scoring::constraints::ConstraintOP newcst_ij( new core::scoring::constraints::CoordinateConstraint(
 				core::id::AtomID( pose.residue(cst_i               ).atom_index("CA"  ), cst_i),
-				core::id::AtomID( pose.residue(pose.total_residue()).atom_index("ORIG"), pose.total_residue()),
+				core::id::AtomID( pose.residue(pose.size()).atom_index("ORIG"), pose.size()),
 				cst_pose.residue(cst_ij).xyz( "CA" ),
 				fx
 				) );
@@ -414,7 +414,7 @@ void setup_pose_from_rbsegs(
 	bool fix_ligand  ) {
 	using namespace core::kinematics;
 
-	core::Size nres( pose_in.total_residue() );
+	core::Size nres( pose_in.size() );
 	core::Size nres_rb = 0;
 
 	// each ligand is its own rb-segment (for the purposes of fold-tree generation)
@@ -452,17 +452,17 @@ void setup_pose_from_rbsegs(
 
 			if ( nsegment_reses > 0 ) {
 				core::conformation::Residue new_res_0 = pose_in.residue( rb_start );
-				pose_out.append_residue_by_jump( new_res_0 , pose_out.total_residue(), "" , "" , true );
-				resmap[rb_start] = pose_out.total_residue();
+				pose_out.append_residue_by_jump( new_res_0 , pose_out.size(), "" , "" , true );
+				resmap[rb_start] = pose_out.size();
 
 				for ( int k=1; k<nsegment_reses; ++k ) {
 					core::conformation::Residue new_res_k = pose_in.residue( rb_start+k );
 					pose_out.append_residue_by_bond( new_res_k );
-					resmap[rb_start + k] = pose_out.total_residue();
+					resmap[rb_start + k] = pose_out.size();
 
 					// set secstruct
 					if ( (secstruct == 'H' || secstruct == 'E') && k!=nsegment_reses-1 ) {
-						pose_out.set_secstruct( pose_out.total_residue(), secstruct );
+						pose_out.set_secstruct( pose_out.size(), secstruct );
 					}
 				}
 			}
@@ -563,7 +563,7 @@ void restore_pose_from_rbsegs(
 
 	// make the virt atom the root
 	core::kinematics::FoldTree newF(pose_out.fold_tree());
-	newF.reorder( pose_out.total_residue() );
+	newF.reorder( pose_out.size() );
 	pose_out.fold_tree( newF );
 
 	TR << "New fold tree: " << newF << std::endl;
@@ -577,7 +577,7 @@ void guess_rbsegs_from_pose(
 	utility::vector1< RBSegment > & rb_chunks,
 	protocols::loops::Loops & loops
 ) {
-	core::Size nres = pose.total_residue()-1; // terminal VRT
+	core::Size nres = pose.size()-1; // terminal VRT
 
 	rigid_segs.clear();
 	rb_chunks.clear();

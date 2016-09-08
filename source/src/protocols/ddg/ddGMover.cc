@@ -185,7 +185,7 @@ ddGMover::find_nbrs(
 		} else {
 			i_pos = p.residue(mutation_position[i]).xyz(" CB ");
 		}
-		for ( core::Size j = 1; j <= p.total_residue(); j++ ) {
+		for ( core::Size j = 1; j <= p.size(); j++ ) {
 			numeric::xyzVector<double> j_pos;
 			if ( p.residue(j).is_protein() ) {
 				if ( p.residue(j).name1() == 'G' ) {
@@ -438,7 +438,7 @@ ddGMover::setup_constraints(
 			pose);
 		pose.constraint_set(cstset);
 	} else { //otherwise, define your own constraints
-		int nres = pose.total_residue();
+		int nres = pose.size();
 		for ( int i = 1; i <= nres; i++ ) {
 			if ( pose.residue(i).is_protein() ) {
 				Vector const CA_i( pose.residue(i).xyz(" CA "));
@@ -854,7 +854,7 @@ std::string
 ddGMover::mutation_label( pose::Pose const & pose ) const
 {
 	std::string mutation_label="";
-	if ( residues_to_mutate_.size() != pose.total_residue() ) {
+	if ( residues_to_mutate_.size() != pose.size() ) {
 		return mutation_label; //residues_to_mutate_ hasn't been initialized
 	} else {
 		for ( unsigned int i=1; i <= residues_to_mutate_.size(); i++ ) {
@@ -941,7 +941,7 @@ ddGMover::is_properly_initialized(
 	bool is_initialized=true;
 	//check scorefxn
 	//check residues_to_mutate_
-	if ( residues_to_mutate_.size() != pose.total_residue() ) {
+	if ( residues_to_mutate_.size() != pose.size() ) {
 		is_initialized=false;
 	}
 	//check num_iterations_
@@ -992,10 +992,10 @@ ddGMover::relax_wildtype_structure(
 		TR.Debug << "weights being used: " <<
 			scorefxn_->weights() << "\n";
 	}
-	min_cst_wt_types_.resize(pose.total_residue(),'X');
-	min_cst_mut_types_.resize(pose.total_residue(),'X');
-	repack_wt_types_.resize(pose.total_residue(),'X');
-	repack_mut_types_.resize(pose.total_residue(),'X');
+	min_cst_wt_types_.resize(pose.size(),'X');
+	min_cst_mut_types_.resize(pose.size(),'X');
+	repack_wt_types_.resize(pose.size(),'X');
+	repack_mut_types_.resize(pose.size(),'X');
 
 	//store constraints for later usage
 	if ( basic::options::option[OptionKeys::ddg::use_rotamer_constraints_to_native]() ) {
@@ -1092,7 +1092,7 @@ ddGMover::relax_wildtype_structure(
 
 			utility::vector1< bool > neighborhood = neighborhood_of_mutations( pose, mutations );
 			// Now: report which residues will be repacked
-			for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 				if ( neighborhood[ ii ] ) {
 					TR << "residue " << ii << " is within range of a mutating residue and will be repacked" << std::endl;
 					repack_native->nonconst_residue_task(ii).restrict_to_repacking();
@@ -1106,7 +1106,7 @@ ddGMover::relax_wildtype_structure(
 			repack_native->restrict_to_repacking();
 		}
 
-		for ( unsigned int j =1; j <= pose.total_residue(); j++ ) {
+		for ( unsigned int j =1; j <= pose.size(); j++ ) {
 			initialize_rotamer_behavior_for_residue_level_task( repack_native->nonconst_residue_task(j) );
 			if ( interface_ddg_ ) {
 				if ( ! protein_interface.is_interface( j ) ) {
@@ -1155,7 +1155,7 @@ ddGMover::relax_wildtype_structure(
 				store_energies(wt_components_, (*scorefxn_), resulting_pose,i,num_iterations_);
 				//end store components
 			} else if ( interface_ddg_ ) {
-				assert(resulting_pose.chain(resulting_pose.total_residue())-pose.chain(1) !=0);
+				assert(resulting_pose.chain(resulting_pose.size())-pose.chain(1) !=0);
 				//dGinterface = Gbound-Gunbound
 				//double debug_bound_score = (*scorefxn_)(temporary_pose);
 				store_energies(wt_components_, (*scorefxn_), resulting_pose,i,num_iterations_);
@@ -1205,7 +1205,7 @@ ddGMover::setup_packer_task_for_mutations(
 	utility::vector1< bool > neighborhood;
 	if ( restrict_to_nbrhood_ ) neighborhood = neighborhood_of_mutations( pose, mutations );
 
-	for ( unsigned int i = 1; i<=pose.total_residue(); i++ ) {
+	for ( unsigned int i = 1; i<=pose.size(); i++ ) {
 		if ( residues_to_mutate_[i] != core::chemical::aa_unk ) {
 			//contains_mutation=true;
 			//add option here to restrict to local neighborhood
@@ -1232,7 +1232,7 @@ ddGMover::setup_packer_task_for_mutations(
 
 
 	if ( interface_ddg_ ) { // further restrict non-interface aa's if we're in interface_ddg mode
-		for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i<= pose.size(); ++i ) {
 			if ( ! protein_interface.is_interface( i ) ) {
 				packer_task->nonconst_residue_task(i).prevent_repacking();
 			}
@@ -1326,7 +1326,7 @@ ddGMover::neighborhood_of_mutations(
 	utility::vector1< int > const & mutations
 ) const
 {
-	utility::vector1< bool > neighbors( pose.total_residue(), false );
+	utility::vector1< bool > neighbors( pose.size(), false );
 	Real rad2 = nbr_cutoff_ * nbr_cutoff_;
 
 	for ( core::Size  ii = 1; ii <= mutations.size(); ++ii ) {
@@ -1337,7 +1337,7 @@ ddGMover::neighborhood_of_mutations(
 		} else {
 			ii_pos = pose.residue(iiresid).xyz(" CB ");
 		}
-		for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+		for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 			if ( neighbors[ jj ] ) continue;
 			core::Vector jj_pos;
 			/// Gee -- this will crash if we're dealing with something other than a protein
@@ -1492,7 +1492,7 @@ ddGMover::apply(core::pose::Pose & pose)
 			if ( !interface_ddg_ && !min_cst_ ) {
 				store_energies(mutant_components_, (*scorefxn_),resulting_pose, i,num_iterations_);
 			} else if ( interface_ddg_ ) {
-				assert(pose.chain(pose.total_residue())-pose.chain(1) !=0);
+				assert(pose.chain(pose.size())-pose.chain(1) !=0);
 				//dGinterface = Gbound-Gunbound
 				//double debug_bound = (*scorefxn_)(resulting_pose);
 				store_energies(mutant_components_, (*scorefxn_), resulting_pose,i,num_iterations_);

@@ -92,7 +92,7 @@ int main( int argc, char * argv [] ) {
 		pose::Pose bound_ligand_pose;
 		core::import_pose::pose_from_file( bound_ligand_pose, bound_ligand_file , core::import_pose::PDB_file);
 		core::Size lig_res_num = 0;
-		for ( int j = 1, resnum = bound_ligand_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = bound_ligand_pose.size(); j <= resnum; ++j ) {
 			if ( !bound_ligand_pose.residue(j).is_protein() ) {
 				lig_res_num = j;
 				break;

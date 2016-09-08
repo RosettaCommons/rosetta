@@ -249,7 +249,7 @@ void invert_exclude_residues(
 		if ( !exclude_residue ) {
 			residue_selection.push_back( ir );
 		}
-	} // for ( Size ir = 1; ir <= native_pose.total_residue(); ++ir )
+	} // for ( Size ir = 1; ir <= native_pose.size(); ++ir )
 }
 
 ResidueSelection invert_exclude_residues( core::Size nres, utility::vector1<int> const& exclude_list ) {
@@ -264,7 +264,7 @@ Real native_CA_rmsd( const core::pose::Pose & native_pose, const core::pose::Pos
 
 	if ( option[ in::file::native_exclude_res ].user() ) {
 		ResidueSelection residues;
-		invert_exclude_residues( native_pose.total_residue(), option[ in::file::native_exclude_res ](), residues );
+		invert_exclude_residues( native_pose.size(), option[ in::file::native_exclude_res ](), residues );
 		return core::scoring::CA_rmsd( native_pose, pose, residues );
 	} else {
 		// no residues excluded from the native.
@@ -278,7 +278,7 @@ Real native_CA_gdtmm( const core::pose::Pose & native_pose, const core::pose::Po
 
 	if ( option[ in::file::native_exclude_res ].user() ) {
 		ResidueSelection residues;
-		invert_exclude_residues( native_pose.total_residue(), option[ in::file::native_exclude_res ](), residues );
+		invert_exclude_residues( native_pose.size(), option[ in::file::native_exclude_res ](), residues );
 		return core::scoring::CA_gdtmm( native_pose, pose, residues );
 	} else {
 		// no residues excluded from the native.
@@ -572,7 +572,7 @@ CA_rmsd(
 	using namespace core;
 	core::Size calc_end(end);
 	if ( end == 0 ) {
-		calc_end = std::min( pose1.total_residue(), pose2.total_residue() );
+		calc_end = std::min( pose1.size(), pose2.size() );
 	}
 	// copy coords into Real arrays
 	int natoms;
@@ -679,8 +679,8 @@ CA_rmsd(
 	using namespace core;
 	// copy coords into Real arrays
 	int natoms;
-	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a;//( 3, pose1.size() );
+	FArray2D< core::Real > p2a;//( 3, pose2.size() );
 	PredicateOP pred( new ResRangePredicate( start, end, PredicateCOP( new ExcludedResPredicate( exclude, PredicateCOP( new IsProteinCAPredicate ) ) ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
@@ -722,8 +722,8 @@ CA_rmsd(
 	using namespace core;
 	// copy coords into Real arrays
 	int natoms;
-	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a;//( 3, pose1.size() );
+	FArray2D< core::Real > p2a;//( 3, pose2.size() );
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
@@ -801,7 +801,7 @@ CA_maxsub(
 	Real  rms
 )
 {
-	const int nres1( pose1.total_residue() );
+	const int nres1( pose1.size() );
 
 	int natoms(0);
 	FArray2D< double > p1a( 3, nres1 );
@@ -825,8 +825,8 @@ CA_maxsub(
 	using namespace core;
 	// copy coords into Real arrays
 	int natoms;
-	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a;//( 3, pose1.size() );
+	FArray2D< core::Real > p2a;//( 3, pose2.size() );
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
@@ -859,7 +859,7 @@ CA_maxsub_by_subset(
 	utility::vector1< bool > //subset
 )
 {
-	const int nres1( pose1.total_residue() );
+	const int nres1( pose1.size() );
 
 	int natoms(0);
 	FArray2D< double > p1a( 3, nres1 );
@@ -884,8 +884,8 @@ CA_gdtmm(
 	core::Real& m_7_4
 ) {
 	int natoms;
-	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a( 3, pose1.size() );
+	FArray2D< core::Real > p2a( 3, pose2.size() );
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
@@ -908,8 +908,8 @@ CA_gdtmm(
 	core::Real& m_7_4
 ) {
 	int natoms;
-	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a( 3, pose1.size() );
+	FArray2D< core::Real > p2a( 3, pose2.size() );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
 
 	core::Real gdtmm = xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
@@ -1004,8 +1004,8 @@ CA_gdttm(
 	std::list< Size > residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
 ) {
 	int natoms;
-	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a( 3, pose1.size() );
+	FArray2D< core::Real > p2a( 3, pose2.size() );
 	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
@@ -1057,8 +1057,8 @@ CA_gdttm(
 	core::Real &gdtha_score
 ) {
 	int natoms;
-	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a( 3, pose1.size() );
+	FArray2D< core::Real > p2a( 3, pose2.size() );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
 
 	TMscore tm( p1a );
@@ -1138,7 +1138,7 @@ superimpose_pose(
 
 	/// how many atoms in mod_pose?
 	Size natoms(0);
-	for ( Size i=1; i<= mod_pose.total_residue(); ++i ) natoms += mod_pose.residue(i).natoms();
+	for ( Size i=1; i<= mod_pose.size(); ++i ) natoms += mod_pose.residue(i).natoms();
 
 	// pack coords into local arrays for passing into the rms fitting routine
 	FArray2D_double xx1(3,natoms);
@@ -1150,7 +1150,7 @@ superimpose_pose(
 	{ // pack coordinates into the local arrays
 		Size atomno(0);
 		Vector const zero_vector(0.0);
-		for ( Size i=1; i<= mod_pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= mod_pose.size(); ++i ) {
 			for ( Size j=1; j<= mod_pose.residue(i).natoms(); ++j ) {
 				++atomno;
 				AtomID const & aid( atom_map[ id::AtomID( j,i) ] );
@@ -1186,7 +1186,7 @@ superimpose_pose(
 	{ // translate xx2 by COM and fill in the new mod_pose coordinates
 		Size atomno(0);
 		Vector x2;
-		for ( Size i=1; i<= mod_pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= mod_pose.size(); ++i ) {
 			for ( Size j=1; j<= mod_pose.residue_type(i).natoms(); ++j ) { // use residue_type to prevent internal coord update
 				++atomno;
 				for ( Size k=1; k<= 3; ++k ) x2(k) = xx2(k,atomno) + COM(k);
@@ -1207,11 +1207,11 @@ calpha_superimpose_pose(
 	pose::Pose const & ref_pose
 )
 {
-	runtime_assert( mod_pose.total_residue() == ref_pose.total_residue() );
+	runtime_assert( mod_pose.size() == ref_pose.size() );
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-	for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
-		if ( ii > ref_pose.total_residue() ) break;
+	for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
+		if ( ii > ref_pose.size() ) break;
 		if ( ! mod_pose.residue(ii).has("CA") ) continue;
 		if ( ! ref_pose.residue(ii).has("CA") ) continue;
 
@@ -1248,8 +1248,8 @@ CA_rmsd_symmetric(
 
 	// copy coords into Real arrays
 	int natoms;
-	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a;//( 3, pose1.size() );
+	FArray2D< core::Real > p2a;//( 3, pose2.size() );
 	fill_rmsd_coordinates( natoms, p1a, p2a, native_pose, pose, is_protein_CA );
 	if ( natoms%nres_monomer != 0 ) {
 		tr.Warning << "CA atoms in fill_rmsd " << natoms << "is not a multiple of number of residues per subunit " << nres_monomer << std::endl;
@@ -1315,7 +1315,7 @@ rms_at_corresponding_atoms(
 )
 {
 	utility::vector1< Size > calc_rms_res;
-	for ( Size n = 1; n <= mod_pose.total_residue(); n++ ) calc_rms_res.push_back( n );
+	for ( Size n = 1; n <= mod_pose.size(); n++ ) calc_rms_res.push_back( n );
 
 	return rms_at_corresponding_atoms( mod_pose, ref_pose, atom_id_map, calc_rms_res );
 }
@@ -1330,7 +1330,7 @@ rms_at_corresponding_atoms(
 	utility::vector1< Size > const & calc_rms_res
 )
 {
-	utility::vector1< bool > is_calc_rms( mod_pose.total_residue(), false );
+	utility::vector1< bool > is_calc_rms( mod_pose.size(), false );
 	for ( Size n = 1; n <= calc_rms_res.size(); n++ ) is_calc_rms[ calc_rms_res[ n ] ] = true;
 
 	utility::vector1< Vector > p1_coords, p2_coords;
@@ -1394,7 +1394,7 @@ rms_at_corresponding_atoms_no_super(
 	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map ){
 
 	utility::vector1< Size > calc_rms_res;
-	for ( Size n = 1; n <= mod_pose.total_residue(); n++ ) calc_rms_res.push_back( n );
+	for ( Size n = 1; n <= mod_pose.size(); n++ ) calc_rms_res.push_back( n );
 
 	return rms_at_corresponding_atoms_no_super( mod_pose, ref_pose, atom_id_map, calc_rms_res );
 }
@@ -1407,7 +1407,7 @@ rms_at_corresponding_atoms_no_super(
 	utility::vector1< Size > const & calc_rms_res
 )
 {
-	utility::vector1< bool > is_calc_rms( mod_pose.total_residue(), false );
+	utility::vector1< bool > is_calc_rms( mod_pose.size(), false );
 	for ( Size n = 1; n <= calc_rms_res.size(); n++ ) is_calc_rms[ calc_rms_res[ n ] ] = true;
 
 	Size natoms( 0 );
@@ -1458,7 +1458,7 @@ setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose con
 	atom_id_map.clear();
 	runtime_assert( pose1.sequence() == pose2.sequence() );
 
-	for ( Size i = 1; i <= pose1.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose1.size(); i++ ) {
 		Residue const & rsd1 = pose1.residue( i );
 		Residue const & rsd2 = pose2.residue( i );
 
@@ -1614,7 +1614,7 @@ setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pos
 
 	atom_id_map.clear();
 
-	for ( Size i = 1; i <= pose1.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose1.size(); i++ ) {
 		Residue const & rsd1 = pose1.residue( i );
 		Residue const & rsd2 = pose2.residue( i );
 		ResidueType const & rsd_type1 = pose1.residue_type( i );
@@ -1659,7 +1659,7 @@ void compute_jump_rmsd(const core::pose::Pose& reference,
 		}
 
 		// Edge cases at pose start/stop
-		if ( (i - 1) < 1 || (i + 1) > model.total_residue() ) {
+		if ( (i - 1) < 1 || (i + 1) > model.size() ) {
 			continue;
 		}
 

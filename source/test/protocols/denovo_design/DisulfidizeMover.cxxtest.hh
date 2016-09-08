@@ -109,7 +109,7 @@ public:
 		std::set< core::Size > num_disulf;
 		BOOST_FOREACH ( core::pose::PoseOP p, poses ) {
 			core::Size cyd_count = 0;
-			for ( core::Size i=1; i<=p->total_residue(); ++i ) {
+			for ( core::Size i=1; i<=p->size(); ++i ) {
 				TS_ASSERT( p );
 				if ( p->residue(i).type().is_disulfide_bonded() ) {
 					++cyd_count;
@@ -121,7 +121,7 @@ public:
 			// should be DISULFIDIZE pdb residue info in the pose
 			TS_ASSERT_DIFFERS( p->pdb_info(), core::pose::PDBInfoOP() );
 			utility::vector1< core::Size > tagged;
-			for ( core::Size resid=1; resid<=p->total_residue(); ++resid ) {
+			for ( core::Size resid=1; resid<=p->size(); ++resid ) {
 				if ( p->pdb_info()->res_haslabel( resid, "DISULFIDIZE" ) ) {
 					tagged.push_back( resid );
 				}
@@ -148,13 +148,13 @@ public:
 
 		// test util.cc: convert_to_poly_ala
 		core::pose::PoseOP posecopy = input_pose.clone();
-		core::select::residue_selector::ResidueSubset subset( posecopy->total_residue(), true );
+		core::select::residue_selector::ResidueSubset subset( posecopy->size(), true );
 		construct_poly_ala_pose( *posecopy, true, subset, subset );
-		TS_ASSERT_EQUALS( posecopy->total_residue(), input_pose.total_residue() );
+		TS_ASSERT_EQUALS( posecopy->size(), input_pose.size() );
 
 		DisulfidizeMover disulf;
 		// check conversion to poly-ala and residue type check function
-		for ( core::Size i=1, endi=posecopy->total_residue(); i<=endi; ++i ) {
+		for ( core::Size i=1, endi=posecopy->size(); i<=endi; ++i ) {
 			TR << "Res " << i << " name " << posecopy->residue(i).name() << std::endl;
 			if ( posecopy->residue(i).name3() != "GLY" ) {
 				if ( ! posecopy->residue(i).type().is_disulfide_bonded() ) {
@@ -167,8 +167,8 @@ public:
 		}
 
 		// test seqpos check
-		for ( core::Size i=1, endi=input_pose.total_residue(); i<=endi; ++i ) {
-			for ( core::Size j=i, endj=input_pose.total_residue(); j<=endj; ++j ) {
+		for ( core::Size i=1, endi=input_pose.size(); i<=endi; ++i ) {
+			for ( core::Size j=i, endj=input_pose.size(); j<=endj; ++j ) {
 				if ( j - i + 1  < 8 ) {
 					TS_ASSERT( !disulf.check_disulfide_seqpos( i, j ) );
 					TS_ASSERT( !disulf.check_disulfide_seqpos( j, i ) );
@@ -180,8 +180,8 @@ public:
 		}
 
 		// test distance check
-		for ( core::Size i=1, endi=input_pose.total_residue(); i<=endi; ++i ) {
-			for ( core::Size j=i, endj=input_pose.total_residue(); j<=endj; ++j ) {
+		for ( core::Size i=1, endi=input_pose.size(); i<=endi; ++i ) {
+			for ( core::Size j=i, endj=input_pose.size(); j<=endj; ++j ) {
 				core::Real const dist = input_pose.residue(j).nbr_atom_xyz().distance(
 					input_pose.residue(i).nbr_atom_xyz() );
 				if ( dist > 5 ) {
@@ -228,8 +228,8 @@ public:
 		m2.apply( *posecopy );
 		TS_ASSERT( disulf.check_disulfide_match_rt( *posecopy, 47, 30, disulfPot, false ) );
 
-		core::select::residue_selector::ResidueSubset residueset1( input_pose.total_residue(), true );
-		core::select::residue_selector::ResidueSubset residueset2( input_pose.total_residue(), true );
+		core::select::residue_selector::ResidueSubset residueset1( input_pose.size(), true );
+		core::select::residue_selector::ResidueSubset residueset2( input_pose.size(), true );
 		TS_ASSERT( residueset1[1] );
 		TR << residueset2[1] << std::endl;
 		DisulfidizeMover::DisulfideList disulfs =

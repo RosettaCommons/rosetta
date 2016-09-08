@@ -49,7 +49,7 @@ MiniPose::MiniPose( core::pose::Pose const & pose )
 	atom_names_list_.clear();
 	variant_types_list_.clear();
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		utility::vector1< PointPosition > xyz;
 		utility::vector1< std::string > atom_name;
 		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
@@ -102,11 +102,6 @@ MiniPose::variant_types_list() const{
 
 Size
 MiniPose::size() const {
-	return coords_.size();
-}
-
-Size
-MiniPose::total_residue() const {
 	return coords_.size();
 }
 

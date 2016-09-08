@@ -75,7 +75,7 @@ int main( int argc, char * argv [] )
 		}
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
-		core::Size const nres( pose.total_residue() );
+		core::Size const nres( pose.size() );
 
 		//define score function
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();

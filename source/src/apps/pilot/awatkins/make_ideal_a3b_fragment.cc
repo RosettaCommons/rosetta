@@ -121,7 +121,7 @@ int main ( int argc, char* argv[] )
 		pose.append_residue_by_bond( Residue( rts->name_map( "LEU" ), 1 ), true );
 		pose.append_residue_by_bond( Residue( rts->name_map( "SER:MethylatedCtermProteinFull" ), 1 ), true );
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue_type( ii ).is_beta_aa() ) {
 				id::TorsionID bb1( ii, id::BB, 1 ); //phi
 				id::TorsionID bb2( ii, id::BB, 2 ); //theta
@@ -159,7 +159,7 @@ int main ( int argc, char* argv[] )
 		pose.dump_pdb ( "B3A_chiminned.pdb");
 
 		// Constrain h bonds
-		for ( Size ii = 1; ii <= pose.total_residue()-4; ++ii ) {
+		for ( Size ii = 1; ii <= pose.size()-4; ++ii ) {
 
 			std::string ca = "CA";
 			if ( pose.residue_type( ii ).is_beta_aa() ) {
@@ -184,7 +184,7 @@ int main ( int argc, char* argv[] )
 		minmover.apply( pose );
 
 		std::cout << "Pose with torsions:" << std::endl;
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			for ( Size jj = 1; jj <= pose.residue( ii ).mainchain_torsions().size(); ++jj ) {
 				std::cout << pose.residue( ii ).mainchain_torsions()[ jj ] << ", ";
 			}

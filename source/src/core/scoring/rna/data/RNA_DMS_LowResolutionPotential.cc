@@ -244,10 +244,10 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 	using namespace core::scoring;
 
 	//initialize
-	wc_edge_paired        = vector1< bool >( pose.total_residue(), false );
-	hoogsteen_edge_paired = vector1< bool >( pose.total_residue(), false );
-	sugar_edge_paired     = vector1< bool >( pose.total_residue(), false );
-	is_bulged             = vector1< bool >( pose.total_residue(), false );
+	wc_edge_paired        = vector1< bool >( pose.size(), false );
+	hoogsteen_edge_paired = vector1< bool >( pose.size(), false );
+	sugar_edge_paired     = vector1< bool >( pose.size(), false );
+	is_bulged             = vector1< bool >( pose.size(), false );
 
 	if ( careful_base_pair_classifier_ ) {
 		ScoreFunctionOP scorefxn( new ScoreFunction );
@@ -286,14 +286,14 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 		}
 
 		pose::rna::EnergyBaseStackList const & scored_base_stack_list = rna_filtered_base_base_info.scored_base_stack_list();
-		vector1< bool > is_stacked( pose.total_residue(), false );
+		vector1< bool > is_stacked( pose.size(), false );
 		for ( pose::rna::EnergyBaseStackList::const_iterator it = scored_base_stack_list.begin(), end = scored_base_stack_list.end(); it != end; ++it ) {
 			pose::rna::BaseStack const base_stack = it->second;
 			is_stacked[ base_stack.res1() ] = true;
 			is_stacked[ base_stack.res2() ] = true;
 		}
 
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			if ( wc_edge_paired[ i ] )        continue;
 			if ( hoogsteen_edge_paired[ i ] ) continue;
 			if ( sugar_edge_paired[ i ] )     continue;
@@ -321,7 +321,7 @@ RNA_DMS_LowResolutionPotential::get_wc_near_o2prime( core::pose::Pose const & po
 	Vector const & x_i = M_i.col_x();
 	Vector const & y_i = M_i.col_y();
 	Vector const & z_i = M_i.col_z();
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 		if ( !pose.residue_type( j ).is_RNA() ) continue;
 		if ( i == j ) continue;
 		Vector const & o2prime_xyz = pose.residue( j ).xyz( " O2'" );

@@ -171,7 +171,7 @@ SidechainMoverBase::init_from_options() {
 void
 SidechainMoverBase::init_task( pose::Pose const &pose ) {
 	// does a valid task exist ?
-	if ( !task_ || task_->total_residue() != pose.total_residue() ) {
+	if ( !task_ || task_->total_residue() != pose.size() ) {
 		if ( task_factory_ ) { //no - create a new one
 			set_task(task_factory_->create_task_and_apply_taskoperations( pose ));
 		} else {

@@ -150,14 +150,14 @@ KeepRegionMover::apply(core::pose::Pose& pose) {
 		end_ = core::pose::get_resnum(tag_, pose, "end_");
 	}
 
-	if ( start_ == 1 && end_ == pose.total_residue() ) {
+	if ( start_ == 1 && end_ == pose.size() ) {
 		return;
 	}
 
 	PyAssert(start_ != 0, "Cannot keep region starting with 0 - make sure region is set for KeepRegionMover");
 	PyAssert(end_ !=0, "Cannot keep region ending with 0 - make sure region is set for KeepRegionMover");
 	PyAssert(end_ > start_, "Cannot keep region where end > start");
-	PyAssert(end_ < pose.total_residue(), "Cannot keep region where end is > pose total_residues");
+	PyAssert(end_ < pose.size(), "Cannot keep region where end is > pose size");
 
 
 

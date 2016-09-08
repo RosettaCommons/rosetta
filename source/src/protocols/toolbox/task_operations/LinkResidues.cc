@@ -75,7 +75,7 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 	using namespace utility;
 	using namespace core;
 	core::pack::rotamer_set::RotamerLinksOP links( new core::pack::rotamer_set::RotamerLinks );
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	links->resize(nres);
 	utility::vector1< utility::vector1< Size > > equiv_pos;
 	//all positions are equivalent to themselves

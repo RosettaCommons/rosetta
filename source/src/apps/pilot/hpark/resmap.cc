@@ -7,11 +7,11 @@ get_resmap( pose::Pose const &pose,
 	    std::map< Size, Size > &pose_resmap
 	    )
 {
-  for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= pose.size(); ++ii ) {
     Size ii_pdb( pose.pdb_info()->number( ii ) );
     pose_resmap[ii_pdb] = ii;
     
-    for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+    for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
       Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
       
       if( ii_pdb == jj_pdb ){

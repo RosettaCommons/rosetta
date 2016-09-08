@@ -153,7 +153,7 @@ SurfEnergy::eval_atom_derivative(
 	CacheableAtomID_MapVectorCOP cachemap2 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat2 );
 	AtomID_Map<xyzVector<Real> > const & sev_derivs(cachemap2->map());
 
-	if ( aid.rsd() > sasa_derivs.n_residue() || aid.atomno() > sasa_derivs.n_atom(aid.rsd()) ) {
+	if ( aid.rsd() > sasa_derivs.size() || aid.atomno() > sasa_derivs.n_atom(aid.rsd()) ) {
 		return;
 	}
 	// std::cerr << "eval_atom_derivative " << aid << " " << derivs[aid].x() << " " << derivs[aid].y() << " " << derivs[aid].z() << std::endl;

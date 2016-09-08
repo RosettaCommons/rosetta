@@ -352,7 +352,7 @@ PolymerBondedEnergyContainer::is_valid(
 	core::pose::Pose const &pose
 ) const {
 	//First, check that the number of residues is correct:
-	core::Size nres( pose.n_residue() );
+	core::Size nres( pose.size() );
 	//fd This does not work if the scoring subunit is not the first ....
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
 	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
@@ -393,7 +393,7 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
 	// size_ = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	//} else {
-	size_ = pose.total_residue();
+	size_ = pose.size();
 	//}
 
 	peptide_bonded_pair_indices_.clear();

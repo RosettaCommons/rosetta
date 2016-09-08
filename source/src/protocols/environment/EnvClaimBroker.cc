@@ -102,7 +102,7 @@ void update_pdb_info(
 		utility_exit_with_message( "Environment does not expect a PDBInfo object to be created during broking. Something has gone wrong!" );
 	} else if ( input_pdb_info ) {
 		//ASSUMPTION: all new residues are virtual
-		core::Size const new_vrts = pose.total_residue() - input_pdb_info->nres();
+		core::Size const new_vrts = pose.size() - input_pdb_info->nres();
 
 		core::pose::PDBInfoOP new_info( new core::pose::PDBInfo( *input_pdb_info ) );
 
@@ -111,7 +111,7 @@ void update_pdb_info(
 		}
 
 		tr.Debug << "  Updating PDBInfo object to account for " << new_vrts << " (temporary) virtual residues in new pose of size "
-			<< pose.total_residue() << ". Old Size: " << input_pdb_info->nres() << "; New Size: "
+			<< pose.size() << ". Old Size: " << input_pdb_info->nres() << "; New Size: "
 			<< new_info->nres() << std::endl;
 
 

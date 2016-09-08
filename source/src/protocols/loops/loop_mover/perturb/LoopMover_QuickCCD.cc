@@ -162,7 +162,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	tr().Info << "***** CCD CLOSURE *****" << std::endl;
 	bool debug = option[ basic::options::OptionKeys::loops::debug ]();
 
-	core::Size const nres =  pose.total_residue();
+	core::Size const nres =  pose.size();
 
 	// store starting fold tree and cut pose
 	kinematics::FoldTree f_orig=pose.fold_tree();

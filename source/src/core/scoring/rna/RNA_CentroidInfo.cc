@@ -95,7 +95,7 @@ RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
 	base_centroids_.clear();
 	base_stubs_.clear();
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		conformation::Residue const & res_i  ( pose.residue( i ) );
 
 		Vector centroid_i( 0.0  );

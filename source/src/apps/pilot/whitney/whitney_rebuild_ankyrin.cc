@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
 	utility::io::ozstream seq_outstream;
 	seq_outstream.open( "sequence.out", std::ios::out );
 
-	for( core::Size i = 1, nres = native_pose.total_residue(); i <= nres; i++ ) {
+	for( core::Size i = 1, nres = native_pose.size(); i <= nres; i++ ) {
 
 		std::ostringstream data_stream;
 		chemical::AA const wt_aa( native_pose.residue(i).aa() );

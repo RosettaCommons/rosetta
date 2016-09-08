@@ -297,14 +297,14 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 
 	// Swap the entire swap_in_ Pose by jump.
 	Size append_pos = interval_.left + 1;
-	for ( Size i = 1, ie = swap_in_.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = swap_in_.size(); i <= ie; ++i ) {
 		// temporarily add via jump from interval_.left
 		pose.insert_residue_by_jump( swap_in_.residue( i ), append_pos, interval_.left, "", "" );
 		++append_pos;
 	}
 
 	assert( append_pos == interval_.right );
-	assert( append_pos == interval_.left + swap_in_.n_residue() + 1 );
+	assert( append_pos == interval_.left + swap_in_.size() + 1 );
 
 	// correct interval_;
 	++interval_.left;
@@ -313,7 +313,7 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 	// END INTERVAL SHIFT: after this point, interval_ has stabilized and stores
 	// the new endpoints of the rebuilt segment
 
-	assert( ( interval_.right - interval_.left + 1 ) == swap_in_.n_residue() );
+	assert( ( interval_.right - interval_.left + 1 ) == swap_in_.size() );
 
 	// construct fold tree
 	FoldTree new_ft = replace( old_ft, original_interval().left, original_interval().right,
@@ -339,7 +339,7 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 		pose.pdb_info()->obsolete( true );
 
 		// copy
-		pose.pdb_info()->copy( *swap_in_.pdb_info(), 1, swap_in_.n_residue(), interval_.left );
+		pose.pdb_info()->copy( *swap_in_.pdb_info(), 1, swap_in_.size(), interval_.left );
 	}
 }
 
@@ -356,13 +356,13 @@ void SegmentSwap::init() {
 	using core::conformation::remove_upper_terminus_type_from_conformation_residue;
 
 	// remove lower/upper terminus only at 1, nres
-	if ( swap_in_.n_residue() > 0 ) {
+	if ( swap_in_.size() > 0 ) {
 		if ( swap_in_.residue( 1 ).is_lower_terminus() ) {
 			core::conformation::remove_lower_terminus_type_from_conformation_residue( swap_in_.conformation(), 1 );
 		}
 
-		if ( swap_in_.residue( swap_in_.n_residue() ).is_upper_terminus() ) {
-			core::conformation::remove_upper_terminus_type_from_conformation_residue( swap_in_.conformation(), swap_in_.n_residue() );
+		if ( swap_in_.residue( swap_in_.size() ).is_upper_terminus() ) {
+			core::conformation::remove_upper_terminus_type_from_conformation_residue( swap_in_.conformation(), swap_in_.size() );
 		}
 	}
 }

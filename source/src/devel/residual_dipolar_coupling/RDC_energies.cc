@@ -68,7 +68,7 @@ void eval_dipolar(
 	core::Real Azz, eta;
 	bool reject = false;
 
-	std::cout << "Do nothing eval_dipolar !" << pose.total_residue() << " " << number_of_rows << std::endl;
+	std::cout << "Do nothing eval_dipolar !" << pose.size() << " " << number_of_rows << std::endl;
 
 	assemble_datamatrix( pose, All_RDC_lines, A, b);
 	for ( core::Size i = 1; i <= number_of_rows; ++i ) {

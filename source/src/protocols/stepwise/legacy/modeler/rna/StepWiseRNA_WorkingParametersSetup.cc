@@ -571,7 +571,7 @@ StepWiseWorkingParametersSetup::get_previously_closed_cutpoint_from_imported_sil
 
 		utility::vector1< Size > const & input_to_full_res_map = input_res_vectors[silent_file_num]; //input_res is map from input_seq_num to full_pose_seq_num
 
-		for ( Size seq_num = 1; seq_num <= import_pose.total_residue(); seq_num++ ) {
+		for ( Size seq_num = 1; seq_num <= import_pose.size(); seq_num++ ) {
 			if ( import_pose.residue( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 				if ( import_pose.residue( seq_num + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ) {
 					utility_exit_with_message( "seq_num " + string_of( seq_num ) + " is a CUTPOINT_LOWER but seq_num " + string_of( seq_num + 1 ) + " is not a cutpoint CUTPOINT_UPPER??" );

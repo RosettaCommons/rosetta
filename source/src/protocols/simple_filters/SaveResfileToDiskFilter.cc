@@ -120,7 +120,7 @@ utility::vector1< core::Size > SaveResfileToDiskFilter::select_residues( Pose co
 	core::pack::task::PackerTaskCOP task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// Find out which residues are packable or designable
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		if ( designable_only_ ) {
 			if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
 				selected_residues.push_back( resi );

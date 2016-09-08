@@ -184,7 +184,7 @@ void fold_tree_cutpoints_generator(
 
 		cutpoints = define_cut_points( loops, pose );
 
-		f.add_edge( 1, pose.total_residue(), Edge::PEPTIDE );
+		f.add_edge( 1, pose.size(), Edge::PEPTIDE );
 
 
 		for ( Size i=1;  i < loops.size() ; ++i ) {
@@ -205,7 +205,7 @@ void fold_tree_cutpoints_generator(
 	} else {
 
 		TR<< "Only one loop defined no cutpoints necessary "<<std::endl;
-		f.add_edge( 1, pose.total_residue(), Edge::PEPTIDE );
+		f.add_edge( 1, pose.size(), Edge::PEPTIDE );
 		TR << "Pose fold tree " << f << std::endl;
 
 	}
@@ -252,8 +252,8 @@ void CA_cst_generator(core::pose::Pose & pose,
 	}
 
 
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-		for ( Size pos_2 = 1; pos_2 <=pose.total_residue(); ++pos_2   ) {
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+		for ( Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ) {
 
 			bool res_is_loop = loops.is_loop_residue( pos );
 			bool res2_is_loop = loops.is_loop_residue( pos_2 );
@@ -343,8 +343,8 @@ void CA_cst_generator(core::pose::Pose & pose,
 	}
 
 
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
-		for ( Size pos_2 = 1; pos_2 <=pose.total_residue(); ++pos_2   ) {
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+		for ( Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ) {
 
 			bool res_is_loop = loops.is_loop_residue( pos );
 			bool res2_is_loop = loops.is_loop_residue( pos_2 );
@@ -438,7 +438,7 @@ void define_movemap_extending_chain(
 	movemap->set_bb(false);
 
 
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		if ( loops.is_loop_residue( pos ) ) {
 			movemap->set_chi(pos, false);
 			continue;
@@ -504,7 +504,7 @@ void define_movemap(
 	movemap->set_bb(false);
 
 
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 
 
 		if ( loops.is_loop_residue( pos ) ) {
@@ -566,7 +566,7 @@ void extending_chain(
 
 	movemap->set_bb(true);
 
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		pose.set_phi( pos, -150 );
 		pose.set_psi( pos, 150);
 		pose.set_omega( pos, 180 );
@@ -622,7 +622,7 @@ void new_pose_generator(
 
 
 		Size nsegment = loops[1].start()-1;
-		Size csegment = nat_prot.total_residue() - loops[1].stop();
+		Size csegment = nat_prot.size() - loops[1].stop();
 
 		TR << "NSEGMENT "<< nsegment <<std::endl;
 		TR << "CSEGMENT "<< csegment <<std::endl;
@@ -690,9 +690,9 @@ void new_pose_generator(
 
 		FoldTree loop_f;
 
-		loop_f.add_edge( 1, target_loops.total_residue(), Edge::PEPTIDE );
+		loop_f.add_edge( 1, target_loops.size(), Edge::PEPTIDE );
 
-		loop_f.new_jump( 1,target_loops.total_residue()-1, 1+(loops[1].stop()-loops[1].start()) );
+		loop_f.new_jump( 1,target_loops.size()-1, 1+(loops[1].stop()-loops[1].start()) );
 
 
 		target_loops.fold_tree( loop_f );
@@ -703,7 +703,7 @@ void new_pose_generator(
 
 
 		Size n2segment = loops[2].start()-cut_points[0];
-		Size c2segment = nat_prot.total_residue() - loops[2].stop();
+		Size c2segment = nat_prot.size() - loops[2].stop();
 
 
 		TR << "NSEGMENT1 "<< n1segment <<std::endl;
@@ -767,9 +767,9 @@ void new_pose_generator(
 		}
 
 
-		Size current_tot_res = target_loops.total_residue();
+		Size current_tot_res = target_loops.size();
 
-		TR << " Target Loops total residues before the second loop inserts  " << target_loops.total_residue() << std::endl;
+		TR << " Target Loops total residues before the second loop inserts  " << target_loops.size() << std::endl;
 
 
 		for ( Size l = 1; l < n2segment ; ++l  ) {
@@ -826,11 +826,11 @@ void new_pose_generator(
 
 		FoldTree loop_f;
 
-		loop_f.add_edge( 1, target_loops.total_residue(), Edge::PEPTIDE );
+		loop_f.add_edge( 1, target_loops.size(), Edge::PEPTIDE );
 
-		//loop_f.new_jump( 1,target_loops.total_residue()-1, 1+(loops[3].stop()-loops[3].start()) );
+		//loop_f.new_jump( 1,target_loops.size()-1, 1+(loops[3].stop()-loops[3].start()) );
 
-		loop_f.new_jump(1, target_loops.total_residue()-1,  target_loops.total_residue()-loops[3].size());
+		loop_f.new_jump(1, target_loops.size()-1,  target_loops.size()-loops[3].size());
 
 		TR <<"inside loop_3 build "<< std::endl;
 
@@ -854,7 +854,7 @@ void new_pose_generator(
 
 
 		Size n3segment = loops[3].start()-cut_points[1];
-		Size c3segment = nat_prot.total_residue() - loops[3].stop();
+		Size c3segment = nat_prot.size() - loops[3].stop();
 
 
 		TR << "NSEGMENT1 "<< n1segment <<std::endl;
@@ -922,9 +922,9 @@ void new_pose_generator(
 
 		//target_loops.dump_pdb("c1.pdb");
 
-		Size current_tot_res = target_loops.total_residue();
+		Size current_tot_res = target_loops.size();
 
-		TR << " Target Loops total residues before the second loop inserts  " << target_loops.total_residue() << std::endl;
+		TR << " Target Loops total residues before the second loop inserts  " << target_loops.size() << std::endl;
 
 
 		for ( Size l = 1; l < n2segment ; ++l  ) {
@@ -975,9 +975,9 @@ void new_pose_generator(
 		}
 
 		//target_loops.dump_pdb("c2.pdb");
-		current_tot_res = target_loops.total_residue();
+		current_tot_res = target_loops.size();
 
-		TR << " Target Loops total residues before the third loop inserts  " << target_loops.total_residue() << std::endl;
+		TR << " Target Loops total residues before the third loop inserts  " << target_loops.size() << std::endl;
 
 
 		for ( Size n = 1; n < n3segment ; ++n  ) {
@@ -1032,10 +1032,10 @@ void new_pose_generator(
 	}
 
 
-	TR << "Last Residue    " << target_loops.total_residue() <<std::endl;
+	TR << "Last Residue    " << target_loops.size() <<std::endl;
 
 	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::LOWER_TERMINUS_VARIANT, 1 );
-	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::UPPER_TERMINUS_VARIANT, target_loops.total_residue());
+	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::UPPER_TERMINUS_VARIANT, target_loops.size());
 
 }
 
@@ -1069,13 +1069,13 @@ void copying_side_chains_swap_loop (
 
 	// Cleaning up the pose - > this step has to be performed before
 	core::pose::remove_lower_terminus_type_from_pose_residue(swap_loops, 1 );
-	core::pose::remove_upper_terminus_type_from_pose_residue(swap_loops, swap_loops.total_residue());
+	core::pose::remove_upper_terminus_type_from_pose_residue(swap_loops, swap_loops.size());
 
 
 	movemap->set_chi(true);
 
 
-	for ( Size pos = 1; pos <= fold_pose.total_residue(); ++pos ) {
+	for ( Size pos = 1; pos <= fold_pose.size(); ++pos ) {
 
 
 		if ( loops.is_loop_residue( pos ) ) {
@@ -1103,7 +1103,7 @@ void exclude_loop_residues( core::pose::Pose & pose,
 	protocols::loops::Loops & loops
 ){
 
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 		if ( !loops.is_loop_residue( pos ) ) {
 			residues_to_mutate[pos] = true;
 			task->nonconst_residue_task(pos).restrict_absent_canonical_aas( allowed_aas );
@@ -1143,7 +1143,7 @@ void design_excluding_swap_loops (
 
 		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, true );
 
-		utility::vector1< bool > residues_to_mutate( fold_pose.total_residue(), false );
+		utility::vector1< bool > residues_to_mutate( fold_pose.size(), false );
 
 
 		exclude_loop_residues(fold_pose, residues_to_mutate, allowed_aas, task, loops_in );
@@ -1182,7 +1182,7 @@ void copying_side_chains(
 
 ){
 
-	for ( Size pos = 1; pos <= fold_pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 
 		if ( loops.is_loop_residue( pos ) ) {
 			fold_pose.replace_residue(pos,nat_pose.residue( pos ), true);

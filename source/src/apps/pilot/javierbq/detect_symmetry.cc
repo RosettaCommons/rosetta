@@ -100,7 +100,7 @@ public:
 
 		// Translate the center of the mass of the pose to the origin
 	  xyzMatrix id_rot_mat = numeric::xyzMatrix< core::Real >::identity();
-	  xyzVector cm_pose = core::pose::center_of_mass(pose, 1, pose.total_residue());
+	  xyzVector cm_pose = core::pose::center_of_mass(pose, 1, pose.size());
 		pose.apply_transform_Rx_plus_v(id_rot_mat, -1*cm_pose);
 		// align the center of mass of chain A in the Y axis
 		// rotate around x to align the center of mass of chain a to the xy plane

@@ -76,7 +76,7 @@ OPT_KEY ( String, force_field_file )
 //FCC: Adding Virtual res
 void
 add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root ) {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 
 	// if already rooted on virtual residue , return
 	if ( pose.residue ( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {

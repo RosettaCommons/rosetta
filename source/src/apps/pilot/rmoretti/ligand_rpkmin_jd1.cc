@@ -95,7 +95,7 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	pack_task->or_include_current(true); // may already be in lowest E conf
 	pack_task->append_rotamerset_operation( unboundrot_ );
 	// Disable packing completely for ligands b/c we want them to stay put
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( !pose.residue(i).is_polymer() ) {
 			pack_task->nonconst_residue_task( i ).prevent_repacking();
 		}
@@ -114,7 +114,7 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	// Set up move map for minimizing.
 	// Only want to minimize protein sc;  keep ligand the same as reference point
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
-	for ( int i = 1, end_i = pose.total_residue(); i <= end_i; ++i ) {
+	for ( int i = 1, end_i = pose.size(); i <= end_i; ++i ) {
 		if ( pose.residue(i).is_polymer() ) {
 			movemap->set_chi(i, true);
 		}

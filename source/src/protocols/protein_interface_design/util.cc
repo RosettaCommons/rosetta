@@ -280,10 +280,10 @@ best_cutpoint( core::pose::Pose & pose, core::Size const prev_u, core::Size cons
 {
 	// if the pose is all loops (mini default), then run dssp
 	// this logic may cause a problem for miniproteins that are indeed all loop. But for now it's certainly OK
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		char const ss = pose.secstruct( i );
 		if ( ss == 'H' || ss == 'S' ) break;
-		if ( i == pose.total_residue() ) {
+		if ( i == pose.size() ) {
 			core::scoring::dssp::Dssp dssp( pose );
 			dssp.insert_ss_into_pose( pose );
 		}

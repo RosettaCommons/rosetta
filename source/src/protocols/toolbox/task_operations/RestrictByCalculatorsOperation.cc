@@ -85,7 +85,7 @@ void
 RestrictByCalculatorsOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 	//vector for filling packertask
-	utility::vector1_bool repack(pose.total_residue(), false);
+	utility::vector1_bool repack(pose.size(), false);
 
 	for ( core::Size i(1); i <= calcs_and_calcns_.size(); ++i ) {
 		run_calculator(pose, calcs_and_calcns_[i].first, calcs_and_calcns_[i].second, repack);

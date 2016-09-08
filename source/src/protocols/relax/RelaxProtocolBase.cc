@@ -131,7 +131,7 @@ void RelaxProtocolBase::initialize_movemap(
 	using namespace core::id;
 
 	if ( fix_omega_ ) {
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			movemap.set( TorsionID(i, BB, 3),false );
 		}
 	}
@@ -145,7 +145,7 @@ void RelaxProtocolBase::initialize_movemap(
 		if ( minimize_bondlength_subset_ == 0 ) {
 			movemap.set( core::id::D, true );
 		} else if ( minimize_bondlength_subset_ == 1 ) {
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
 				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
 					//if ( jj == 1 ) {
@@ -158,7 +158,7 @@ void RelaxProtocolBase::initialize_movemap(
 				}
 			}
 		} else if ( minimize_bondlength_subset_ == 2 ) {
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
 					if ( res_i.atom_is_backbone(jj) ) continue;
@@ -166,7 +166,7 @@ void RelaxProtocolBase::initialize_movemap(
 				}
 			}
 		} else if ( minimize_bondlength_subset_ == 3 ) {
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				if ( res_i.type().has( " C  ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::D ), true );
@@ -192,7 +192,7 @@ void RelaxProtocolBase::initialize_movemap(
 		if ( minimize_bondangle_subset_ == 0 ) {
 			movemap.set( core::id::THETA, true );
 		} else if ( minimize_bondangle_subset_ == 1 ) {
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
 				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
 					//if ( jj == 1 || jj == 2 ) {  //fpd  add jj==2
@@ -205,7 +205,7 @@ void RelaxProtocolBase::initialize_movemap(
 				}
 			}
 		} else if ( minimize_bondangle_subset_ == 2 ) {
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
 					if ( res_i.atom_is_backbone(jj) ) continue;
@@ -213,14 +213,14 @@ void RelaxProtocolBase::initialize_movemap(
 				}
 			}
 		} else if ( minimize_bondangle_subset_ == 3 ) {
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				if ( res_i.type().has( " C  ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::THETA ), true );
 				}
 			}
 		} else if ( minimize_bondangle_subset_ == 4 ) {
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				if ( res_i.type().has( " CB ") ) {
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::THETA ), true );
@@ -352,15 +352,15 @@ void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
 		core::pack::task::PackerTaskOP task;
 		task = pack::task::TaskFactory::create_packer_task( pose );
 
-		utility::vector1<bool> allow_repack(pose.total_residue(), false);
+		utility::vector1<bool> allow_repack(pose.size(), false);
 
-		for ( Size i = 1; i<= pose.total_residue() ; ++i ) {
+		for ( Size i = 1; i<= pose.size() ; ++i ) {
 			allow_repack[i] = movemap_->get_chi(i);
 		}
 
 		if ( basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
 			bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
-			allow_repack.assign( pose.total_residue(), repack);
+			allow_repack.assign( pose.size(), repack);
 		}
 
 		task->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);

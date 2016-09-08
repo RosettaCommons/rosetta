@@ -60,15 +60,15 @@ void coordinate_constrain_selection(
 	using core::id::AtomID;
 	using core::conformation::ResidueFactory;
 	using namespace core::scoring::constraints;
-	if ( pose.residue(pose.total_residue()).name() != "VRT" ) {
+	if ( pose.residue(pose.size()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue(
 			pose.residue(1).residue_type_set()->name_map( "VRT" )
 			),
-			static_cast< Size > (pose.total_residue() / 2)
+			static_cast< Size > (pose.size() / 2)
 		);
 	}
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 
 	core::id::SequenceMapping map = aln.sequence_mapping(1,2);
 
@@ -112,7 +112,7 @@ generate_bb_coordinate_constraints(
 	using namespace core::scoring::constraints;
 
 	ConstraintSetOP cst_set( new ConstraintSet );
-	for ( Size idx = 1; idx <= pose.total_residue(); ++idx ) {
+	for ( Size idx = 1; idx <= pose.size(); ++idx ) {
 		if ( coord_sdevs.size() >= idx ) {
 			Residue const & rsd( pose.residue(idx) );
 			core::Real const coord_sdev( coord_sdevs[idx] );
@@ -121,7 +121,7 @@ generate_bb_coordinate_constraints(
 					core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0,coord_sdev) );
 					cst_set->add_constraint(
 						ConstraintCOP( ConstraintOP( new CoordinateConstraint(
-						AtomID(ii,idx), AtomID(1,pose.total_residue()), rsd.xyz(ii),
+						AtomID(ii,idx), AtomID(1,pose.size()), rsd.xyz(ii),
 						fx
 						) ) )
 					);
@@ -138,7 +138,7 @@ void delete_virtual_residues(
 ) {
 	using core::Size;
 	// remove virtual residues
-	for ( Size idx = 1; idx <= pose.total_residue(); ++idx ) {
+	for ( Size idx = 1; idx <= pose.size(); ++idx ) {
 		if ( pose.residue_type(idx).name() == "VRT" ) {
 			pose.conformation().delete_residue_slow(idx);
 		}
@@ -155,7 +155,7 @@ get_per_residue_scores(
 	using utility::vector1;
 	using namespace core::scoring;
 	vector1< Real > scores;
-	for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+	for ( Size jj = 1; jj <= pose.size(); ++jj ) {
 		EnergyMap rsd_energies( pose.energies().residue_total_energies(jj) );
 		Real const per_residue_score( rsd_energies[ scoretype ] );
 		scores.push_back( per_residue_score );
@@ -168,12 +168,12 @@ void add_virtual_residue_to_cterm(
 ) {
 	using core::Size;
 	using core::conformation::ResidueFactory;
-	if ( pose.residue(pose.total_residue()).name() != "VRT" ) {
+	if ( pose.residue(pose.size()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue(
 			pose.residue(1).residue_type_set()->name_map( "VRT" )
 			),
-			static_cast< Size > (pose.total_residue() / 2)
+			static_cast< Size > (pose.size() / 2)
 		);
 	}
 }
@@ -190,8 +190,8 @@ void derive_sc_sc_restraints(
 	Real const cst_sdev ( 2.0 );
 	//Real const cst_width( 2.0 );
 
-	for ( Size ii = 1, end_ii = pose.total_residue(); ii <= end_ii; ++ii ) {
-		for ( Size jj = ii+1, end_jj = pose.total_residue(); jj <= end_jj; ++jj ) {
+	for ( Size ii = 1, end_ii = pose.size(); ii <= end_ii; ++ii ) {
+		for ( Size jj = ii+1, end_jj = pose.size(); jj <= end_jj; ++jj ) {
 			const core::conformation::Residue& resi = pose.residue(ii);
 			const core::conformation::Residue& resj = pose.residue(jj);
 

@@ -169,7 +169,7 @@ public:
   core::pose::Pose* produce_pose() const
     {
       utility::vector1< conformation::ResidueOP > residues;
-      for ( Size i=1; i<= pose.total_residue(); ++i ) {
+      for ( Size i=1; i<= pose.size(); ++i ) {
 	residues.push_back( pose.residue(i).clone() );
       }
       pose.

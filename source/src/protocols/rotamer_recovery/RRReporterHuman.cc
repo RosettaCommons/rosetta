@@ -146,7 +146,7 @@ PerNativeRRReporterHuman::set_native(
 		utility_exit();
 	}
 
-	for ( Size ii = 1; ii <= native_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
 		Residue const & res( native_pose.residue(ii) );
 		nat_bb_bins_.push_back(
 			torsion2big_bin(
@@ -170,8 +170,8 @@ PerNativeRRReporterHuman::set_native(
 
 	}
 
-	res_scores_.resize( native_pose.total_residue() );
-	res_recovered_.resize( native_pose.total_residue() );
+	res_scores_.resize( native_pose.size() );
+	res_recovered_.resize( native_pose.size() );
 
 	initialized_ = true;
 }
@@ -205,7 +205,7 @@ PerNativeRRReporterHuman::show(
 ) const {
 	out << "#Structure: " << tag_from_pose( *native_pose_ ) << endl;
 
-	for ( Size ii=1; ii <= native_pose_->total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= native_pose_->size(); ++ii ) {
 		if ( res_scores_[ii].size() == 0 ) continue;
 
 		Real mean_score = mean(

@@ -339,11 +339,11 @@ get_n_pep_nbrs(
 )
 {
 	Size n_pep_nbrs( 0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_pep[i] ) continue;
 		bool cg_res_has_nbr( false );
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			if( cg_res_has_nbr ) break;
 			if ( is_pep[j] ) continue;
 			Residue const & rsd2( pose.residue(j) );
@@ -371,7 +371,7 @@ dump_efactor_pdb(
 	std::string const & tag
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 //	id::AtomID_Mask const & mask;
 //	id::initialize( mask, pose );
 
@@ -387,7 +387,7 @@ dump_efactor_pdb(
 	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
 	out << "MODEL     " << tag << "\n";
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -412,7 +412,7 @@ dump_efactor_pdb(
 	}
 	out << "ENDMDL\n\n\n";
 	out << "###residue_total_energies###\n";
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		out << string_of( i ) << " " << pose.residue( i ).name1() << " " << pose.energies().residue_total_energies( i ).weighted_string_of( scorefxn->weights() ) << "\t" << residue_total_energy << "\n";
 	}
@@ -435,13 +435,13 @@ gen_fold_tree_for_nbr_segments(
 	vector1< bool > & is_nbr
 )
 {
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	//define neighbors, all protein residues within cutoff from ligand, excluding is_skipped
 	set_ss_from_phipsi( pose );
-	for( Size i=1; i<= pose.total_residue(); ++i ) {
+	for( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_ligand[ i ] ) continue;
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			Residue const & rsd2( pose.residue(j) );
 			if( is_ligand[ j ] || is_skipped[ j ] || !rsd2.is_protein() || !( pose.secstruct( j ) == 'L' ) ) continue;
 			for ( Size ii=1; ii<= rsd1.natoms(); ++ii ) {
@@ -456,7 +456,7 @@ gen_fold_tree_for_nbr_segments(
 		}
 	}
 
-	for( Size i = 2, j = 1; i <= pose.total_residue(); ++i, ++j ){
+	for( Size i = 2, j = 1; i <= pose.size(); ++i, ++j ){
 		if( is_nbr[ i ] && !is_nbr[ i-1 ] ) j = 1;
 		if( is_nbr[ i ] && !is_nbr[ i+1 ] ){
 			ftree.new_jump( i - j, i - static_cast< int >( j / 2 ), i - j );
@@ -465,7 +465,7 @@ gen_fold_tree_for_nbr_segments(
 	}
 
 	TR << "sel flex_prot, ";
-	for( Size i = 1; i <= pose.total_residue(); ++i ){
+	for( Size i = 1; i <= pose.size(); ++i ){
 		if( is_nbr[ i ] ) TR << "resi " << string_of( i ) << " or ";
 	}
 	TR << std::endl;
@@ -516,7 +516,7 @@ has_clash(
 	using namespace chemical;
 
 	bool is_clash( false );
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !is_checked[ seqpos ] ) continue;
 
 		( *scorefxn )( pose );
@@ -581,7 +581,7 @@ get_clash_pairs(
 	using namespace chemical;
 	vector1< std::pair< Size, Size > > clash_pairs;
 
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !is_checked[ seqpos ] ) continue;
 		( *scorefxn )( pose );
 		// cached energies object
@@ -1102,8 +1102,8 @@ gen_pep_bb_sequential(
 
 		//setup pep vectors
 		Size nres_pep( pep_end - pep_begin + 1 );
-		vector1< bool > is_pep( pose.total_residue(), false );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) is_pep[ i ] = ( i >= pep_begin && i <= pep_end );
+		vector1< bool > is_pep( pose.size(), false );
+		for ( Size i = 1; i <= pose.size(); ++i ) is_pep[ i ] = ( i >= pep_begin && i <= pep_end );
 //		vector1< bool > is_insert( nres_pep, false );
 		kinematics::MoveMapOP mm_frag ( new kinematics::MoveMap );
 		for( Size ii = 1; ii <= this_prepend + 1; ++ii ){
@@ -1183,9 +1183,9 @@ gen_pep_bb_sequential(
 			//else replace rotamers and repack if necessary
 			else if( option[ pepspec::no_cen_rottrials ] ){
 				//ignore preexisting clashes
-				vector1< bool > ignore_clash( pose.total_residue(), false );
-				for( Size i = 1; i <= pose.total_residue() - 1; ++i ){
-					vector1< bool > this_clash( pose.total_residue(), false );
+				vector1< bool > ignore_clash( pose.size(), false );
+				for( Size i = 1; i <= pose.size() - 1; ++i ){
+					vector1< bool > this_clash( pose.size(), false );
 					this_clash[ i ] = true;
 					if( has_clash( pose, this_clash, cen_scorefxn, clash_cutoff ) ){
 						ignore_clash[ i ] = true;
@@ -1197,7 +1197,7 @@ gen_pep_bb_sequential(
 				}
 				//find clashes and repack
 				if( has_clash( pose, is_pep, cen_scorefxn, clash_cutoff ) ){
-					vector1< bool > repack_this( pose.total_residue(), false );
+					vector1< bool > repack_this( pose.size(), false );
 					vector1< std::pair< Size, Size > > clash_pairs( get_clash_pairs( pose, is_pep, cen_scorefxn, clash_cutoff ) );
 					//get all prot clash res and their nbrs
 					for( Size i = 1; i <= clash_pairs.size(); ++i ){
@@ -1216,7 +1216,7 @@ gen_pep_bb_sequential(
 					pack::task::TaskFactoryOP rp_task_factory( new pack::task::TaskFactory );
 					pack::task::operation::RestrictResidueToRepackingOP restrict_to_repack_taskop( new pack::task::operation::RestrictResidueToRepacking() );
 					pack::task::operation::PreventRepackingOP prevent_repack_taskop( new pack::task::operation::PreventRepacking() );
-					for ( Size i=1; i<= pose.total_residue(); ++i ) {
+					for ( Size i=1; i<= pose.size(); ++i ) {
 						if ( repack_this[ i ] ) restrict_to_repack_taskop->include_residue( i );
 						else prevent_repack_taskop->include_residue( i );
 					}
@@ -1226,8 +1226,8 @@ gen_pep_bb_sequential(
 					protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( cen_scorefxn, rp_task_factory ) );
 					dz_rottrial->apply( pose );
 					//check clashes one last time
-					vector1< bool > check_clash( pose.total_residue(), false );
-					for( Size i = 1; i <= pose.total_residue() - 1; ++i ) if( is_pep[ i ] || ( repack_this[ i ] && !ignore_clash[ i ] ) ) check_clash[ i ] = true;
+					vector1< bool > check_clash( pose.size(), false );
+					for( Size i = 1; i <= pose.size() - 1; ++i ) if( is_pep[ i ] || ( repack_this[ i ] && !ignore_clash[ i ] ) ) check_clash[ i ] = true;
 
 					this_has_clash = has_clash( pose, check_clash, cen_scorefxn, clash_cutoff );
 				}
@@ -1301,7 +1301,7 @@ mutate_random_residue(
 )
 {
 	//pick rand seqpos
-	assert( is_mutable.size() == pose.total_residue() );
+	assert( is_mutable.size() == pose.size() );
 	bool mutate( false );
 	Size seqpos( 0 );
 	while( !mutate ){
@@ -1317,7 +1317,7 @@ mutate_random_residue(
 	{
 		pack::task::operation::RestrictResidueToRepackingOP restrict_to_repack_taskop( new pack::task::operation::RestrictResidueToRepacking() );
 		pack::task::operation::PreventRepackingOP prevent_repack_taskop( new pack::task::operation::PreventRepacking() );
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			if ( i == seqpos ) restrict_to_repack_taskop->include_residue( i );
 			else prevent_repack_taskop->include_residue( i );
 		}
@@ -1329,7 +1329,7 @@ mutate_random_residue(
 	mut_rottrial->apply( pose );
 
 	//get seqpos nbrs from energy map
-	vector1< bool > is_nbr( pose.total_residue(), false );
+	vector1< bool > is_nbr( pose.size(), false );
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	for ( graph::Graph::EdgeListConstIter
 					ir  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
@@ -1344,7 +1344,7 @@ mutate_random_residue(
 	{
 		pack::task::operation::RestrictResidueToRepackingOP restrict_to_repack_taskop( new pack::task::operation::RestrictResidueToRepacking() );
 		pack::task::operation::PreventRepackingOP prevent_repack_taskop( new pack::task::operation::PreventRepacking() );
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			if ( ( i == seqpos || is_nbr[ i ] ) && i != pep_anchor ) restrict_to_repack_taskop->include_residue( i );
 			else prevent_repack_taskop->include_residue( i );
 		}
@@ -1664,7 +1664,7 @@ RunPepSpec()
 		std::string output_seq;
 
 		//gen fold tree//
-		FoldTree f( pose.total_residue() );
+		FoldTree f( pose.size() );
 
 		std::string pep_anchor_root( "CB" );
 		if( pose.residue( pep_anchor ).name1() == 'G' ) pep_anchor_root = "CA";
@@ -1672,13 +1672,13 @@ RunPepSpec()
 		if( prot_chain < pep_chain ){
 			pep_jump = f.new_jump( prot_anchor, pep_anchor, pep_begin - 1 );
 			f.set_jump_atoms( pep_jump, "CA", pep_anchor_root );
-			if( pep_end != pose.total_residue() ) f.new_jump( prot_anchor, pep_end + 1, pep_end );
+			if( pep_end != pose.size() ) f.new_jump( prot_anchor, pep_end + 1, pep_end );
 			if( prot_end + 1 != pep_begin ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 		}
 		else{
 			pep_jump = f.new_jump( pep_anchor, prot_anchor, prot_begin - 1 );
 			f.set_jump_atoms( pep_jump, pep_anchor_root, "CA" );
-			if( prot_end != pose.total_residue() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
+			if( prot_end != pose.size() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 			if( pep_end + 1 != prot_begin ) f.new_jump( pep_anchor, pep_end + 1, pep_end );
 		}
 		f.reorder( prot_anchor );
@@ -1729,9 +1729,9 @@ RunPepSpec()
 		}
 
 		//define prot, pep, and anchor residues//
-		vector1< bool > is_pep( pose.total_residue(), false ), is_mutable( pose.total_residue(), false ), is_prot( pose.total_residue(), false ), is_anchor( pose.total_residue(), false );
+		vector1< bool > is_pep( pose.size(), false ), is_mutable( pose.size(), false ), is_prot( pose.size(), false ), is_anchor( pose.size(), false );
 		vector1< Size > pep_res_vec;
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			is_pep[i] = ( i >= pep_begin && i <= pep_end );
 			if( is_pep[ i ] ) pep_res_vec.push_back( i );
 			is_prot[i] = ( i >= prot_begin && i <= prot_end );
@@ -1815,12 +1815,12 @@ RunPepSpec()
 
 
 			//define neighbors
-			vector1< bool > is_pep_nbr( pose.total_residue(), false );
+			vector1< bool > is_pep_nbr( pose.size(), false );
 			vector1< Size > nbr_res_vec;
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				Residue const & rsd1( pose.residue(i) );
 				if ( is_pep[i] ) continue;
-				for ( Size j=1; j<= pose.total_residue(); ++j ) {
+				for ( Size j=1; j<= pose.size(); ++j ) {
 					Residue const & rsd2( pose.residue(j) );
 					if ( !is_pep[j] ) continue;
 					if( is_pep_nbr[i] ) break;
@@ -1851,7 +1851,7 @@ RunPepSpec()
 			{
 				pack::task::operation::RestrictResidueToRepackingOP restrict_to_repack_taskop( new pack::task::operation::RestrictResidueToRepacking() );
 				pack::task::operation::PreventRepackingOP prevent_repack_taskop( new pack::task::operation::PreventRepacking() );
-				for ( Size i=1; i<= pose.total_residue(); ++i ) {
+				for ( Size i=1; i<= pose.size(); ++i ) {
 					if ( is_pep[ i ] && i != pep_anchor ) {
 						if( option[ pepspec::no_design ] || ( option[ pepspec::input_seq ].user() && input_seq[ i - pep_begin ] != 'X' ) ){
 							restrict_to_repack_taskop->include_residue( i );

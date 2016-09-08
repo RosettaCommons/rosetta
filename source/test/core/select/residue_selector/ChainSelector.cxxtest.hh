@@ -54,8 +54,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = chain_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
@@ -68,12 +68,12 @@ public:
 		chain_rs->set_chain_strings( chain_strings );
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		for ( core::Size ii = 11; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 11; ii <= trpcage.size(); ++ii ) {
 			trpcage.pdb_info()->chain( ii, 'B' );
 		}
 		ResidueSubset subset = chain_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == ( ii <= 10 ) );
 		}
 	}
@@ -89,12 +89,12 @@ public:
 		chain_rs->set_chain_strings( chain_strings );
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		for ( core::Size ii = 11; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 11; ii <= trpcage.size(); ++ii ) {
 			trpcage.pdb_info()->chain( ii, 'B' );
 		}
 		ResidueSubset subset = chain_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
@@ -107,8 +107,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = chain_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
@@ -123,7 +123,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		core::pose::Pose trpcage2 = trpcage;
 
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			core::conformation::ResidueOP iiclone = trpcage.residue( ii ).clone();
 			iiclone->chain( 'B' );
 			if ( ii == 1 ) {
@@ -133,8 +133,8 @@ public:
 			}
 		}
 		ResidueSubset subset = chain_rs->apply( trpcage2 );
-		for ( core::Size ii = 1; ii <= trpcage2.total_residue(); ++ii ) {
-			TS_ASSERT( subset[ ii ] == ( ii <= trpcage.total_residue() ) );
+		for ( core::Size ii = 1; ii <= trpcage2.size(); ++ii ) {
+			TS_ASSERT( subset[ ii ] == ( ii <= trpcage.size() ) );
 		}
 	}
 
@@ -151,7 +151,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		core::pose::Pose trpcage2 = trpcage;
 
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			core::conformation::ResidueOP iiclone = trpcage.residue( ii ).clone();
 			iiclone->chain( 'B' );
 			if ( ii == 1 ) {
@@ -162,7 +162,7 @@ public:
 		}
 
 		ResidueSubset subset = chain_rs->apply( trpcage2 );
-		for ( core::Size ii = 1; ii <= trpcage2.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage2.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
@@ -186,7 +186,7 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = chain_rs->apply( trpcage );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == true );
 		}
 	}
@@ -211,7 +211,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		core::pose::Pose trpcage2 = trpcage;
 
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			core::conformation::ResidueOP iiclone = trpcage.residue( ii ).clone();
 			iiclone->chain( 'B' );
 			if ( ii == 1 ) {
@@ -222,7 +222,7 @@ public:
 		}
 
 		ResidueSubset subset = chain_rs->apply( trpcage2 );
-		for ( core::Size ii = 1; ii <= trpcage2.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage2.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == true );
 		}
 	}

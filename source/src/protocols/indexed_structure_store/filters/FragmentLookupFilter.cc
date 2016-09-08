@@ -98,7 +98,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 	std::vector<core::Size> lookup_residue;
 
 	core::pose::Pose target_pose = pose;
-	if ( TR.visible() ) TR << boost::format("apply( pose=<%s residues> )") % target_pose.n_residue() << std::endl;
+	if ( TR.visible() ) TR << boost::format("apply( pose=<%s residues> )") % target_pose.size() << std::endl;
 	//Apply to a particular chain
 
 	if ( b_target_chain_ ) {
@@ -107,7 +107,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 			utility_exit_with_message(" FragmentLookupFilter invalid chain" );
 		}
 		target_pose = *pose.split_by_chain(target_chain_);
-		if ( TR.visible() ) TR << boost::format("apply mod by chain! (Now pose=<%s residues> )") % target_pose.n_residue() << std::endl;
+		if ( TR.visible() ) TR << boost::format("apply mod by chain! (Now pose=<%s residues> )") % target_pose.size() << std::endl;
 	}
 
 	if ( lookup_mode_ == First ) {
@@ -179,7 +179,7 @@ void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & )
 
 core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) const {
 	//Get pose size just to avoid warning regarding pose
-	pose.n_residue();
+	pose.size();
 	using namespace core::indexed_structure_store;
 	typedef std::map<core::Size, FragmentLookupResult> result_t;
 	using utility::json_spirit::Value;

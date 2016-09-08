@@ -109,7 +109,7 @@ IndelOptimizationMover::apply(
 
 	// Loop model the remaining segment; range size before and
 	Size loop_start = ( start_res_ < 2 + loop_length_ ) ? 2 : start_res_ - loop_length_;
-	Size loop_end   = ( end_res_ + loop_length_ > pose.total_residue() ) ? pose.total_residue() : end_res_ + loop_length_;
+	Size loop_end   = ( end_res_ + loop_length_ > pose.size() ) ? pose.size() : end_res_ + loop_length_;
 
 	TR << "loop is from " << loop_start << " to " << loop_end << std::endl;
 
@@ -124,7 +124,7 @@ IndelOptimizationMover::apply(
 		/*.append( "_" );
 		std::set< char > other_chains;
 		//utility::vector1< Size > chain_endings = pose.conformation().chain_endings();
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 
 		TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
 		if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( loop_start ) ) {

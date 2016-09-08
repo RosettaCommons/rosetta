@@ -34,9 +34,9 @@ int main(int argc, char **argv) {
 	pose::remove_variant_type_from_pose_residue(
 			source_pose, "LOWER_TERMINUS", 1);
 	pose::remove_variant_type_from_pose_residue(
-			source_pose, "UPPER_TERMINUS", source_pose.total_residue());
+			source_pose, "UPPER_TERMINUS", source_pose.size());
 
-	residues = source_pose.total_residue();
+	residues = source_pose.size();
 
 	for (Size i = 0; i < residues; i++) {
 		source_index = 1 + (i - offset) % residues;

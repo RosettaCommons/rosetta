@@ -48,7 +48,7 @@ int find_chain(Pose const &pose, char pdb_chain_letter, string const &template_n
 {
 	int chain = -1;
 	// Finding right chain in SCS template and delete eveything else
-	for(uint i=1; i<=pose.total_residue(); ++i) {
+	for(uint i=1; i<=pose.size(); ++i) {
 		if( pose.pdb_info()->chain(i) == pdb_chain_letter ) { chain=pose.chain(i);  break; }
 	}
 
@@ -120,7 +120,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 
 		TR << "Sequence before: " << j.color << j.pose->sequence() << TR.Reset << std::endl;
 
-		for(uint i=j.pose->total_residue()-1; i>=1; --i) {
+		for(uint i=j.pose->size()-1; i>=1; --i) {
 			string pdb_res_n = std::to_string(j.pose->pdb_info()->number(i)) + ( j.pose->pdb_info()->icode(i) == ' ' ?  "" : string(1, j.pose->pdb_info()->icode(i) ) );
 			auto np = std::find(numbering.begin(), numbering.end(), pdb_res_n);
 
@@ -147,9 +147,9 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 
 		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover( *O,
 																																										  1 /*ref_start*/,
-																																										  std::min( O->n_residue(), j.pose->n_residue() ) /*ref_end*/,
+																																										  std::min( O->size(), j.pose->size() ) /*ref_end*/,
 																																										  1 /*target_start*/,
-																																										  std::min(O->n_residue(), j.pose->n_residue() ) /*target_end*/,
+																																										  std::min(O->size(), j.pose->size() ) /*target_end*/,
 																																										  true /*CA_only*/) );
 		imposer->apply(*j.pose);
 	}
@@ -159,7 +159,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 
 	frh->dump_pdb(prefix + "frh_frl_oriented" + suffix + ".pdb");
 
-	// for(uint i=1; i<=frh->total_residue(); ++i) {
+	// for(uint i=1; i<=frh->size(); ++i) {
 	// 	TR << "New pose pdb info for res " << i << ":" << frh->pdb_info()->pose2pdb(i) << " i:" << frh->pdb_info()->icode(i) << std::endl;
 	// }
 
@@ -212,11 +212,11 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		pose_n_cdr_first -= overlap;
 		pose_n_cdr_last += overlap;
 
-		if( pose_n_cdr_first < 1  or  pose_n_cdr_last > cdr->n_residue() ) throw _AE_grafting_failed_( string("There is not enough overlap residue at:")+ g.pdb + " in template:" + g.pdb + " region:" + g.name);
+		if( pose_n_cdr_first < 1  or  pose_n_cdr_last > cdr->size() ) throw _AE_grafting_failed_( string("There is not enough overlap residue at:")+ g.pdb + " in template:" + g.pdb + " region:" + g.name);
 
-		//TR << "Deleting residues: " << pose_n_cdr_last+1 << ":" << cdr->n_residue() << " from cdr template... [template size: " << cdr->n_residue() << "]" << std::endl;
-		if( cdr->n_residue() > pose_n_cdr_last ) cdr->delete_residue_range_slow(pose_n_cdr_last+1, cdr->n_residue());
-		//TR << "Deleting residues: " << "1:" << pose_n_cdr_first-1 << " from cdr template... [template size: " << cdr->n_residue() << "]" << std::endl;
+		//TR << "Deleting residues: " << pose_n_cdr_last+1 << ":" << cdr->size() << " from cdr template... [template size: " << cdr->size() << "]" << std::endl;
+		if( cdr->size() > pose_n_cdr_last ) cdr->delete_residue_range_slow(pose_n_cdr_last+1, cdr->size());
+		//TR << "Deleting residues: " << "1:" << pose_n_cdr_first-1 << " from cdr template... [template size: " << cdr->size() << "]" << std::endl;
 		if( pose_n_cdr_first > 1 ) cdr->delete_residue_range_slow(1, pose_n_cdr_first-1);
 
 		Size result_pose_cdr_first = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
@@ -228,7 +228,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		result_pose_cdr_first -= overlap;
 		result_pose_cdr_last += overlap;
 
-		if( result_pose_cdr_first < 1  or result_pose_cdr_last > result->n_residue() ) throw _AE_grafting_failed_( string("There is not enough overlap residue in superimposed template! region:") + g.name);
+		if( result_pose_cdr_first < 1  or result_pose_cdr_last > result->size() ) throw _AE_grafting_failed_( string("There is not enough overlap residue in superimposed template! region:") + g.name);
 
 		TR << "Grafting..." << std::endl;
 

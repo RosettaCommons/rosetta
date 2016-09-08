@@ -239,7 +239,7 @@ void InterfaceSasaDefinitionCalculator::recompute( Pose const & this_pose ) {
 	chain1_interface_residues_.clear();
 	chain2_interface_residues_.clear();
 	residue_delta_sasa_.clear();
-	residue_delta_sasa_.assign( this_pose.total_residue(), 0. );
+	residue_delta_sasa_.assign( this_pose.size(), 0. );
 
 	core::Real delta_sasa_atomch1(0.0), delta_sasa_atomch2(0.0);
 

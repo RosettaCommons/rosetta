@@ -403,8 +403,8 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
       src = _owner->get_src_pose();
       trg = _owner->get_trg_partial_data_pose();
 
-      FArray1D_bool allow_repack1(src.total_residue(), true);
-	  FArray1D_bool allow_repack2(trg.total_residue(), true);
+      FArray1D_bool allow_repack1(src.size(), true);
+	  FArray1D_bool allow_repack2(trg.size(), true);
 	  trg.repack( allow_repack2, true/*include_current*/ );
       src.repack( allow_repack1, true/*include_current*/ );
 
@@ -583,7 +583,7 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
     std::cout<<"Extract:\n";
    }
 	for (unsigned int i = 0; i < index_list.size(); i++ )
-	{   assert( index_list[i] < p.total_residue() );
+	{   assert( index_list[i] < p.size() );
 	    static int const atom_index_protein ( 2 ); // CA
 		   pa.push_back(Vec3d(Epos(1,atom_index_protein,index_list[i]),
 			              Epos(2,atom_index_protein,index_list[i]),
@@ -605,7 +605,7 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
 
 	  for (unsigned int i = 0; i < index_list.size(); i++ )
 	  {
-		  assert( index_list[i] < p.total_residue() );
+		  assert( index_list[i] < p.size() );
 	      for (int k = 1; k <= 3; k++) {
 		     static int const atom_index_protein ( 2 ); // CA
 		     pa(k,i+1) = Epos( k, atom_index_protein, index_list[i]);
@@ -714,7 +714,7 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
     using namespace pdb;
     Pdb_info const & pdb_info = _template_pose.pdb_info();
     Pdbres_id pdbres;
-    for(int i=1; i < _template_pose.total_residue(); i++)
+    for(int i=1; i < _template_pose.size(); i++)
       {
 	pdbres.chain = pdb_info.res_chain(i);
 	pdbres.res_id = pdb_info.pdb_res_num(i);

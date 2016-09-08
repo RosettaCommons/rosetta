@@ -158,7 +158,7 @@ calc_delta_sasa(
 	// define atom_map for main-chain and CB
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size j = 1; j<=5; ++j ) {
 			core::id::AtomID atom( j, ir );
 			atom_map.set( atom, true );
@@ -179,7 +179,7 @@ calc_delta_sasa(
 	core::pose::initialize_atomid_map( atom_map_A, pose, false );
 	core::pose::initialize_atomid_map( atom_map_B, pose, false );
 
-	utility::vector1< bool > position_A( pose.total_residue(), true );
+	utility::vector1< bool > position_A( pose.size(), true );
 	for ( Size ii=1; ii<=intervals.size(); ii++ ) {
 		for ( Size jj=intervals[ ii ].left; jj<=intervals[ ii ].right; ++jj ) {
 			position_A[ jj ] = false;
@@ -199,7 +199,7 @@ calc_delta_sasa(
 		}
 	}
 
-	for ( Size jj=1; jj<=pose.total_residue(); jj++ ) {
+	for ( Size jj=1; jj<=pose.size(); jj++ ) {
 		if ( position_A[ jj ] ) {
 			for ( Size j=1; j<=5; ++j ) {
 				core::id::AtomID atom( j, jj );
@@ -217,7 +217,7 @@ calc_delta_sasa(
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa_B, pore_radius, false, atom_map_B );
 
 	Real tot_all( 0.0 ), tot_A( 0.0 ), tot_B( 0.0 );
-	for ( Size ii=2; ii<=pose.total_residue()-1; ii++ ) {
+	for ( Size ii=2; ii<=pose.size()-1; ii++ ) {
 		tot_all += rsd_sasa[ ii ];
 		if ( position_A[ ii ] ) {
 			tot_A += rsd_sasa_A[ ii ];
@@ -226,7 +226,7 @@ calc_delta_sasa(
 		}
 	}
 
-	//   for( Size ii=1; ii<=pose.total_residue(); ii++ ) {
+	//   for( Size ii=1; ii<=pose.size(); ii++ ) {
 	//  if( position_A[ ii ] ) {
 	//   std::cout << ii << " " << rsd_sasa[ ii ] << " " << rsd_sasa_A[ ii ] << " " << rsd_sasa_B[ ii ] << "*" <<std::endl;
 	//  } else {

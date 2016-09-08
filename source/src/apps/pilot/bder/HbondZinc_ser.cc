@@ -120,7 +120,7 @@ public:
 		TR << "Scaffold: " << scaffold.pdb_info()->name() << std::endl;
 		
 		utility::vector1< Size > match_residues;
-		for( Size i(1); i <= pose.total_residue() - 1; ++i ) {
+		for( Size i(1); i <= pose.size() - 1; ++i ) {
 			match_residues.push_back( pose.pdb_info()->number(i) );
 		}
 		
@@ -234,7 +234,7 @@ public:
 				restrict_absent->include_residue(0);
 				restrict_absent->keep_aas("S");
 				
-				for(Size res(1); res <= pose.total_residue(); ++res) {
+				for(Size res(1); res <= pose.size(); ++res) {
 					if(res != this_res) {
 						prevent_repack->include_residue( res );
 					}

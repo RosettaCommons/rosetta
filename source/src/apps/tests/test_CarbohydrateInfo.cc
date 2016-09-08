@@ -68,7 +68,7 @@ test_sugar( Pose const & sugar )
 	sugar.dump_pdb( filename.ext( "pdb" ) );
 
 	cout << endl << "Residue Info:" << endl;
-	Size const n_res( sugar.total_residue() );
+	Size const n_res( sugar.size() );
 	for ( core::uint i = 1; i <= n_res; ++i ) {
 		Residue const & res( sugar.residue( i ) );
 		cout << "PDB ID: " << sugar.pdb_info()->pose2pdb( i ) << ": ";

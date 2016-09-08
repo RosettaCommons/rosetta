@@ -178,8 +178,8 @@ public: // virtual accessors
 
 
 	/// @brief a copy of the working range of residues specifying the modified region
-	/// @details before modify() holds [1, pose_right.n_residue()]; after
-	///  modify() holds [1 + pose_left.n_residue(), pose_right.n_residue + pose_left.n_residue()]
+	/// @details before modify() holds [1, pose_right.size()]; after
+	///  modify() holds [1 + pose_left.size(), pose_right.n_residue + pose_left.size()]
 	/// @remarks This can change if listening to Conformation LengthEvents
 	inline
 	virtual
@@ -493,8 +493,8 @@ private: // data
 
 
 	/// @brief tracks the numbering of the new region specifying the connected Pose
-	/// @details before modify_impl() holds [1, pose_right.n_residue()]; after
-	///  modify holds [1 + pose_left.n_residue(), pose_right.n_residue + pose_left.n_residue()]
+	/// @details before modify_impl() holds [1, pose_right.size()]; after
+	///  modify holds [1 + pose_left.size(), pose_right.n_residue + pose_left.size()]
 	Interval interval_;
 
 

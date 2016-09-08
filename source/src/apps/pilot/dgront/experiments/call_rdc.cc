@@ -94,7 +94,7 @@ main( int argc, char * argv [] ) {
     core::pose::make_pose_from_sequence(frag_pose, seq,*rsd_set);
     core::scoring::store_RDC_in_pose( &rdc_on_Nmer, frag_pose );
 
-    for(core::Size ires=1;ires< native_pose.total_residue() - Nmer_size - 1;ires++) {
+    for(core::Size ires=1;ires< native_pose.size() - Nmer_size - 1;ires++) {
 	for(core::Size j=0;j<Nmer_size;j++) {
     	    frag_pose.set_phi( j+1, native_pose.phi(ires+j) );
     	    frag_pose.set_psi( j+1, native_pose.psi(ires+j) );

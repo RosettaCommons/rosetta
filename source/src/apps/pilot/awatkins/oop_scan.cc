@@ -147,7 +147,7 @@ main( int argc, char *argv[] )
 
 		while ( !anything_okay_for_orientation ) {
 
-			for ( Size ii = 1; ii <= pose.total_residue()-1; ++ii ) {
+			for ( Size ii = 1; ii <= pose.size()-1; ++ii ) {
 				if ( pose.residue( ii   ).type().name3() == "PRO" ) continue;
 				if ( pose.residue( ii+1 ).type().name3() == "PRO" ) continue;
 				if ( pose.residue( ii   ).type().has_variant_type( OOP_POST ) ) continue;

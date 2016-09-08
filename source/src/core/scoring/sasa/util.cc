@@ -152,7 +152,7 @@ get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) 
 	Real sc_sasa = 0.0;
 	Real bb_sasa = 0.0;
 
-	for ( Size i = 1; i <= atom_sasa.n_residue(); ++i ) {
+	for ( Size i = 1; i <= atom_sasa.size(); ++i ) {
 		utility::vector1< Size> bb_atoms = pose.residue_type(i).all_bb_atoms();
 		utility::vector1< Size> sc_atoms = pose.residue_type(i).all_sc_atoms();
 
@@ -179,10 +179,10 @@ get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) 
 std::pair<utility::vector1<Real>, utility::vector1<Real> >
 get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) {
 
-	utility::vector1< Real > sc_sasa(pose.total_residue(), 0.0);
-	utility::vector1< Real > bb_sasa(pose.total_residue(), 0.0);
+	utility::vector1< Real > sc_sasa(pose.size(), 0.0);
+	utility::vector1< Real > bb_sasa(pose.size(), 0.0);
 
-	for ( Size i = 1; i <= atom_sasa.n_residue(); ++i ) {
+	for ( Size i = 1; i <= atom_sasa.size(); ++i ) {
 		utility::vector1< Size> bb_atoms = pose.residue_type(i).all_bb_atoms();
 		utility::vector1< Size> sc_atoms = pose.residue_type(i).all_sc_atoms();
 

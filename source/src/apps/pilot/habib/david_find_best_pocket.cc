@@ -119,7 +119,7 @@ main( int argc, char * argv [] )
 		std::ostream os2(&fb2);
 
 		//Loop over all residues and get score
-		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			if ( chain == '\0' ) {
 				chain = input_pose.pdb_info()->chain(j);
 			}

@@ -164,7 +164,7 @@ D2H_SA_Energy::finalize_total_energy(
 
 
 	Size len(data_.size());
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	const Real probe_radius(1.4); //default water probe
 	//std::cout << "Length " << len << "\n";
 	Size chain_for_rsa(1);

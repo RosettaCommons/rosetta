@@ -156,7 +156,7 @@ public:
 		char chain = pose.pdb_info()->chain(1);
 		if ( chain == ' ' ) {
 			TR << "chain is whitespace, setting chain ID to 'A' " << std::endl;
-			for ( Size i=1; i<=pose.total_residue(); ++i ) {
+			for ( Size i=1; i<=pose.size(); ++i ) {
 				pose.pdb_info()->chain(i, 'A');
 			}
 		}
@@ -235,7 +235,7 @@ public:
 	void
 	AvNAPSA_values( Pose const & pose ) {  //average number of neighboring atoms per sidechain atom
 
-		for ( Size i=1; i <= pose.n_residue(); ++i ) {
+		for ( Size i=1; i <= pose.size(); ++i ) {
 			Real avnapsa_value( 9999 ); //high value will mean don't mutate, don't mutate by default
 
 			std::string name3 = pose.residue(i).name3();
@@ -264,7 +264,7 @@ public:
 					conformation::Atom const & ii_atom( i_rsd.atom( ii ) );
 					Vector const & ii_atom_xyz = ii_atom.xyz();
 
-					for ( Size j=1; j <= pose.n_residue(); ++j ) {
+					for ( Size j=1; j <= pose.size(); ++j ) {
 
 						conformation::Residue const & j_rsd( pose.residue( j ) );
 
@@ -294,7 +294,7 @@ public:
 			AvNAPSA_values_.push_back( avnapsa_value ); //index must equal the residue number
 		}
 
-		TR << "there are " << pose.total_residue() << " residues and " << AvNAPSA_values_.size() << " AvNAPSA values" << std::endl;
+		TR << "there are " << pose.size() << " residues and " << AvNAPSA_values_.size() << " AvNAPSA values" << std::endl;
 
 		return;
 	}
@@ -541,7 +541,7 @@ public:
 			Size biggest_calc(0);
 			std::string const calc_stem("nbr_dist_calc_");
 			std::ostringstream calcname;
-			for ( Size res(1); res <= pose.total_residue(); ++res ) {
+			for ( Size res(1); res <= pose.size(); ++res ) {
 				if ( biggest_calc < res ) { //create calculator
 					calcname << calc_stem << res;
 					if ( pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calcname.str() ) ) {
@@ -559,7 +559,7 @@ public:
 
 			basic::MetricValue< Size > num_n; // number of neighbors
 			TR << pose.pdb_info()->name() << std::endl;
-			for ( Size i(1); i<=pose.total_residue(); ++i ) {
+			for ( Size i(1); i<=pose.size(); ++i ) {
 				calcname << calc_stem << i;
 				pose.metric( calcname.str(), "num_neighbors", num_n);
 				calcname.str("");
@@ -574,7 +574,7 @@ public:
 		} else {
 			//define surface by atom neighbors
 
-			for ( Size i=1; i <= pose.n_residue(); ++i ) {
+			for ( Size i=1; i <= pose.size(); ++i ) {
 				Real avnapsa_value( 9999 ); //high value will mean don't mutate, don't mutate by default
 
 				std::string name3 = pose.residue(i).name3();
@@ -591,7 +591,7 @@ public:
 					conformation::Atom const & ii_atom( i_rsd.atom( ii ) );
 					Vector const & ii_atom_xyz = ii_atom.xyz();
 
-					for ( Size j=1; j <= pose.n_residue(); ++j ) {
+					for ( Size j=1; j <= pose.size(); ++j ) {
 
 						conformation::Residue const & j_rsd( pose.residue( j ) );
 
@@ -991,7 +991,7 @@ public:
 		Size num_asp = 0;
 		Size num_glu = 0;
 
-		for ( Size i=1; i<=pose.total_residue(); i++ ) {
+		for ( Size i=1; i<=pose.size(); i++ ) {
 			if ( pose.residue(i).name3() == "ARG" )      { num_arg++; }
 			else if ( pose.residue(i).name3() == "LYS" ) { num_lys++; }
 			else if ( pose.residue(i).name3() == "ASP" ) { num_asp++; }
@@ -1005,7 +1005,7 @@ public:
 		Size num_mutations = 0;
 		std::string pymol_sel_mutations = "select ";
 		TR << outputname_ << "  Mutations: ";
-		for ( Size i=1; i<=pose.total_residue(); i++ ) {
+		for ( Size i=1; i<=pose.size(); i++ ) {
 			//TR << "name1: " << starting_pose.residue(i).name1() << "  " << pose.residue(i).name1() << std::endl;
 			if ( pose.residue(i).name1() != starting_pose.residue(i).name1() ) {
 				num_mutations++;
@@ -1025,7 +1025,7 @@ public:
 	int
 	get_net_charge( Pose const & pose ) {
 		int net_charge(0);
-		for ( Size i(1); i<=pose.total_residue(); ++i ) {
+		for ( Size i(1); i<=pose.size(); ++i ) {
 			std::string name3 = pose.residue(i).name3();
 			if ( name3 == "ARG" || name3 == "LYS" ) {
 				net_charge++;
@@ -1041,7 +1041,7 @@ public:
 	energy_comparison( Pose & native, Pose & pose ) {
 
 		TR << "Comparing energies of native and designed" << std::endl;
-		assert(native.total_residue() == pose.total_residue());
+		assert(native.size() == pose.size());
 
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
@@ -1150,7 +1150,7 @@ public:
 
 		TR << "Initialized vectors" << std::endl;
 		TR << "Adding native energies" << std::endl;
-		for ( Size i(1); i <= native.total_residue(); ++i ) {
+		for ( Size i(1); i <= native.size(); ++i ) {
 
 			total_native.push_back(        native.energies().residue_total_energy(i) );
 			fa_atr_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_atr] );
@@ -1172,7 +1172,7 @@ public:
 		}
 
 		TR << "Adding designed energies" << std::endl;
-		for ( Size i(1); i <= pose.total_residue(); ++i ) {
+		for ( Size i(1); i <= pose.size(); ++i ) {
 
 			total.push_back(        pose.energies().residue_total_energy(i) );
 			fa_atr.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_atr] );

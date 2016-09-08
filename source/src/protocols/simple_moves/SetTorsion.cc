@@ -133,20 +133,20 @@ SetTorsion::angle(
 utility::vector1<core::Size> SetTorsion::residue_list(core::Size iset, core::pose::Pose const & pose) {
 	utility::vector1<core::Size> residue_numbers;
 	if ( residues_[iset] == "ALL" ) {
-		for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
+		for ( Size ires=1; ires<=pose.size(); ++ires ) {
 			residue_numbers.push_back(ires);
 		}
 	} else if ( residues_[iset] == "pick_atoms" ) {
 		// shouldn't get here, do nothing
 	} else if ( residues_[iset] == "random" ) {
-		Size res_num = numeric::random::rg().random_range(1, pose.total_residue());
+		Size res_num = numeric::random::rg().random_range(1, pose.size());
 		residue_numbers.push_back(res_num);
 		if ( extending_[iset] != 0 ) {
 			for ( int ishift = 1; ishift <= (int)extending_[iset]; ++ishift ) {
 				if ( res_num - ishift >= 1 ) {
 					residue_numbers.push_back(res_num - ishift);
 				}
-				if ( res_num + ishift <= pose.total_residue() ) {
+				if ( res_num + ishift <= pose.size() ) {
 					residue_numbers.push_back(res_num + ishift);
 				}
 			}
@@ -167,7 +167,7 @@ void SetTorsion::apply( Pose & pose ) {
 	core::kinematics::FoldTree saved_ft( pose.fold_tree() );
 
 	//Reroot the FoldTree:
-	if ( fold_tree_root_ > 0 && fold_tree_root_ <=pose.n_residue() ) {
+	if ( fold_tree_root_ > 0 && fold_tree_root_ <=pose.size() ) {
 		TR << "Old FoldTree:" << std::endl;
 		pose.fold_tree().show(TR);
 		core::kinematics::FoldTree ft_copy;

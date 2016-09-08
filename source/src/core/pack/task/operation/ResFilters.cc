@@ -230,7 +230,7 @@ ResFilterOP ResidueTypeFilter::clone() const { return ResFilterOP( new ResidueTy
 
 bool ResidueTypeFilter::operator() ( Pose const & pose, Size index ) const
 {
-	runtime_assert( index > 0 && index <= pose.total_residue() );
+	runtime_assert( index > 0 && index <= pose.size() );
 	core::conformation::Residue const & residue = pose.residue(index);
 
 	return  (polar_ && residue.is_polar()) ||
@@ -288,7 +288,7 @@ ResidueHasProperty::ResidueHasProperty( std::string const & str )
 
 bool ResidueHasProperty::operator() ( Pose const & pose, Size index ) const
 {
-	runtime_assert( index > 0 && index <= pose.total_residue() );
+	runtime_assert( index > 0 && index <= pose.size() );
 	return pose.residue_type(index).has_property( property_ );
 }
 
@@ -373,7 +373,7 @@ ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel( std::string const & str )
 
 bool ResiduePDBInfoHasLabel::operator() ( Pose const & pose, Size index ) const
 {
-	runtime_assert( index > 0 && index <= pose.total_residue() );
+	runtime_assert( index > 0 && index <= pose.size() );
 	return pose.pdb_info()->res_haslabel( index, property_ );
 }
 
@@ -468,7 +468,7 @@ ResidueName3Is::ResidueName3Is( std::set<std::string> const & strs )
 
 bool ResidueName3Is::operator() ( Pose const & pose, Size index ) const
 {
-	runtime_assert( index > 0 && index <= pose.total_residue() );
+	runtime_assert( index > 0 && index <= pose.size() );
 	return name3_set.count(pose.residue_type(index).name3()) != 0;
 }
 ResFilterOP ResidueName3Is::clone() const { return ResFilterOP( new ResidueName3Is( *this ) ); }
@@ -567,7 +567,7 @@ ResidueIndexIs::indices() const { return indices_; }
 
 bool ResidueIndexIs::operator() ( Pose const & pose, Size index ) const
 {
-	runtime_assert( index > 0 && index <= pose.total_residue() );
+	runtime_assert( index > 0 && index <= pose.size() );
 	return std::find( indices_.begin(), indices_.end(), index ) != indices_.end();
 }
 
@@ -687,7 +687,7 @@ ResiduePDBIndexIs::indices() const { return indices_; }
 
 bool ResiduePDBIndexIs::operator() ( Pose const & pose, Size index ) const
 {
-	runtime_assert( index > 0 && index <= pose.total_residue() );
+	runtime_assert( index > 0 && index <= pose.size() );
 	if ( ! pose.pdb_info() ) {
 		utility_exit_with_message("can't apply ResiduePDBIndexIs filter on pose without pdb info");
 	}
@@ -813,7 +813,7 @@ ChainIs::ChainIs( char const & chain )
 
 bool ChainIs::operator() ( Pose const & pose, Size index ) const
 {
-	runtime_assert( index > 0 && index <= pose.total_residue() );
+	runtime_assert( index > 0 && index <= pose.size() );
 	if ( ! pose.pdb_info() ) {
 		utility_exit_with_message("Can't apply ChainIs filter on pose without pdb info");
 	}

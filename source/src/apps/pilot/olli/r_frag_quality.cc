@@ -165,8 +165,8 @@ Real check_jump( pose::Pose const& pose, pose::Pose const& native, JumpSample co
 
 
 Real compare_cartesian_rmsd( Pose const &orig_frag, Pose const &pred_frag ) {
-	Size const nres( orig_frag.total_residue() );
-	assert( nres == pred_frag.total_residue() );
+	Size const nres( orig_frag.size() );
+	assert( nres == pred_frag.size() );
 	Size const cmp ( 9 ); //compare 9mers
 	Size const ncmp ( nres - cmp + 1 );
 	Real total ( 0 );
@@ -184,7 +184,7 @@ inline Real sqr ( Real x ) {
 
 Real compare_torsion_rmsd( Pose const &orig_frag, Pose const &pred_frag ) {
 	Real err ( 0.0 );
-	for ( Size pos = 1; pos <= orig_frag.total_residue(); ++pos ) {
+	for ( Size pos = 1; pos <= orig_frag.size(); ++pos ) {
 		for ( Size dof = 1; dof <= 2; ++dof ) { //check phi and psi
 			Real orig = orig_frag.torsion( id::TorsionID( pos, id::BB, dof ) );
 			Real pred = pred_frag.torsion( id::TorsionID( pos, id::BB, dof ) );
@@ -193,7 +193,7 @@ Real compare_torsion_rmsd( Pose const &orig_frag, Pose const &pred_frag ) {
 			err += sqr( numeric::nearest_angle_degrees(orig-pred,0.0) );
 		}
 	}
-	return sqrt( err / 2*orig_frag.total_residue() );
+	return sqrt( err / 2*orig_frag.size() );
 }
 
 Real compare_frags_pose( Pose const &native, Pose const &test_pose, Frame const& frame, utility::vector1< Size > const& excl ) {
@@ -728,7 +728,7 @@ int main( int argc, char** argv ) {
 				Pose pose;
 				//read it
 				core::import_pose::pose_from_file( pose, option[ in::file::s ]()[ ct ] , core::import_pose::PDB_file);
-				for ( Size pos=1; pos <= pose.total_residue(); pos++ ) {
+				for ( Size pos=1; pos <= pose.size(); pos++ ) {
 					out_phi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.phi( pos ) ) << std::endl;
 					out_psi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.psi( pos ) ) << std::endl;
 				}
@@ -814,7 +814,7 @@ int main( int argc, char** argv ) {
 				out_phi.open( option[out::file::torsions ]()[1] );
 				out_psi.open( option[out::file::torsions ]()[2] );
 				if ( option[ in::file::native ].user() ) {
-					for ( Size pos=1; pos <= native.total_residue(); pos++ ) {
+					for ( Size pos=1; pos <= native.size(); pos++ ) {
 						out_phi << RJ( 6, pos ) <<  RJ(6, 0) << F(10,4, native.phi( pos ) ) << std::endl;
 						out_psi << RJ( 6, pos ) <<  RJ(6, 0) << F(10,4, native.psi( pos ) ) << std::endl;
 					}
@@ -911,7 +911,7 @@ int main( int argc, char** argv ) {
 			//    }
 			//   }
 		} else { //bJumps
-			JumpSetup jump_def( native.total_residue() );
+			JumpSetup jump_def( native.size() );
 			JumpSample jump_setup;
 			if ( option[ jumpss ].user() ) {
 				jump_def.read_file( option[ jumpss ] );
@@ -971,7 +971,7 @@ int main( int argc, char** argv ) {
 				//    }
 
 
-				//    for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+				//    for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 				//         if ( pos == 21 || pos == 20 || pos == 22 ) continue;
 				//     pose.set_phi( 128, -45 );
 				//     pose.set_psi( pos, -45 );

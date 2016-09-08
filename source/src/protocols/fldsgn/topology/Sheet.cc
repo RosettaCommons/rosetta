@@ -144,7 +144,7 @@ Sheet::calc_sasa_bothsides( Pose const & pose, SS_Info2_COP const ssinfo, Real p
 		Size end( strands[ st ]->end() );
 
 		if ( begin == 1 ) begin = 2;
-		if ( end == pose.total_residue() ) end = pose.total_residue() - 1;
+		if ( end == pose.size() ) end = pose.size() - 1;
 
 		for ( Size ir=begin-1; ir<=end+1; ir++ ) {
 			for ( Size j = 1; j<=5; ++j ) {
@@ -159,7 +159,7 @@ Sheet::calc_sasa_bothsides( Pose const & pose, SS_Info2_COP const ssinfo, Real p
 	utility::vector1< Real > rsd_sasa;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, pore_radius, false, atom_map );
 
-	for ( Size iaa=2; iaa<=pose.total_residue()-1; iaa++ ) {
+	for ( Size iaa=2; iaa<=pose.size()-1; iaa++ ) {
 
 		if ( ca_cb_orient( iaa ) == 1 ) {
 			surfaces[ 1 ] += rsd_sasa[ iaa ];

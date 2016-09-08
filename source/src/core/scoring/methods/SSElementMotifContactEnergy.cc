@@ -93,7 +93,7 @@ vector1<std::pair<Size,Size> > SSElementMotifContactEnergy::get_ss_elements(cons
 	if ( dssp.get_dssp_secstruct(1)=='H' || dssp.get_dssp_secstruct(1)=='E' ) {
 		startSS=  1;
 	}
-	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
 		if ( (dssp.get_dssp_secstruct(ii) == 'H' || dssp.get_dssp_secstruct(ii)) && lastSecStruct == 'L' ) {
 			startSS = ii;
 		}
@@ -126,7 +126,7 @@ Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1
 		Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
 		char ss1 = dssp.get_dssp_secstruct( ir );
 		char aa1 = pose.residue(ir).name1();
-		for ( size_t jr = 1; jr <= pose.n_residue(); ++jr ) {
+		for ( size_t jr = 1; jr <= pose.size(); ++jr ) {
 			if ( !tree.is_jump_point(ir) && !tree.is_jump_point(jr) ) {
 				Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));
 				if ( dist < 12 ) {

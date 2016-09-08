@@ -98,7 +98,7 @@ public:
 		Real sc_exc1(scfxn.get_sub_score_exclude_res(pose, exclude_list));
 		TS_ASSERT_DELTA(sc_exc1, sc, .0000001);
 
-		utility::vector1< bool > residue_mask(pose.total_residue(), true);
+		utility::vector1< bool > residue_mask(pose.size(), true);
 		Real sc_exc2(scfxn.get_sub_score(pose, residue_mask));
 		TS_ASSERT_DELTA(sc_exc2, sc, .0000001);
 	}
@@ -120,7 +120,7 @@ public:
 		Real sc_exc1(scfxn.get_sub_score_exclude_res(pose, exclude_list));
 		TS_ASSERT_DELTA(sc_exc1, sc, .0000001);
 
-		utility::vector1< bool > residue_mask(pose.total_residue(), true);
+		utility::vector1< bool > residue_mask(pose.size(), true);
 		Real sc_exc2(scfxn.get_sub_score(pose, residue_mask));
 		TS_ASSERT_DELTA(sc_exc2, sc, .0000001);
 	}

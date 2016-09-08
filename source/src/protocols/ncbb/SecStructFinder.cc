@@ -397,7 +397,7 @@ SecStructFinder::apply( Pose & pose )
 				TR << dihedrals[ii] << ", ";
 			} TR << std::endl;
 
-			for ( Size resi = 1; resi <= pose.n_residue(); ++resi ) {
+			for ( Size resi = 1; resi <= pose.size(); ++resi ) {
 				Size take_from_here = 1;
 				for ( Size i = 1; i <= number_dihedral_sets; ++i ) {
 					if ( dihedral_pattern_[ resi-1 ] == uniqs[ i ] ) { // -1 to sync indexing
@@ -456,7 +456,7 @@ SecStructFinder::apply( Pose & pose )
 						TR << " ( " << minpose.torsion( TorsionID( 1, BB, 1 ) ) << ", " << minpose.psi( 1 ) << " ), ";
 					}
 
-					for ( Size resi = 2; resi < pose.n_residue(); ++resi ) {
+					for ( Size resi = 2; resi < pose.size(); ++resi ) {
 						if ( minpose.residue_type( resi ).is_beta_aa() ) {
 							TR << " ( " << minpose.torsion( TorsionID( resi, BB, 1 ) ) << ", "<< minpose.torsion( TorsionID( resi, BB, 2 ) ) << ", " << minpose.torsion( TorsionID( resi, BB, 3 ) ) << " ), ";
 						} else {
@@ -464,11 +464,11 @@ SecStructFinder::apply( Pose & pose )
 						}
 					}
 
-					if ( minpose.residue_type( pose.n_residue() ).is_beta_aa() ) {
-						TR << " ( " << minpose.torsion( TorsionID(pose.n_residue(), BB, 1 ) ) << ", "<< minpose.torsion( TorsionID( pose.n_residue(), BB, 2 ) ) << ", "
-							<< minpose.torsion( TorsionID( pose.n_residue(), BB, 3 ) ) << " ), ";
+					if ( minpose.residue_type( pose.size() ).is_beta_aa() ) {
+						TR << " ( " << minpose.torsion( TorsionID(pose.size(), BB, 1 ) ) << ", "<< minpose.torsion( TorsionID( pose.size(), BB, 2 ) ) << ", "
+							<< minpose.torsion( TorsionID( pose.size(), BB, 3 ) ) << " ), ";
 					} else {
-						TR << " ( " << minpose.phi( pose.n_residue() ) << ", " << minpose.torsion( TorsionID( pose.n_residue(), BB, 2 ) ) << " ), " << std::endl;
+						TR << " ( " << minpose.phi( pose.size() ) << ", " << minpose.torsion( TorsionID( pose.size(), BB, 2 ) ) << " ), " << std::endl;
 					}
 				}
 			} else {
@@ -515,7 +515,7 @@ SecStructFinder::apply( Pose & pose )
 		score_fxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
 		Real score = ( ( *score_fxn_ ) ( minpose ) );
 		TR << "for stored pose with dihedrals ";
-		for ( Size resi = 1, n = poses_to_min[ii].n_residue(); resi <= n; ++resi ) {
+		for ( Size resi = 1, n = poses_to_min[ii].size(); resi <= n; ++resi ) {
 			if ( alpha_beta_pattern_[ resi-1 ] == 'A' || alpha_beta_pattern_[ resi-1 ] == 'P' ) {
 				TR << "( " << poses_to_min[ii].phi( resi ) << ", " << poses_to_min[ii].psi( resi ) << " ), ";
 			} else {
@@ -526,7 +526,7 @@ SecStructFinder::apply( Pose & pose )
 			}
 		}
 		TR << std::endl << " now ";
-		for ( Size resi = 1, n = minpose.n_residue(); resi <= n; ++resi ) {
+		for ( Size resi = 1, n = minpose.size(); resi <= n; ++resi ) {
 			if ( alpha_beta_pattern_[ resi-1 ] == 'A' || alpha_beta_pattern_[ resi-1 ] == 'P' ) {
 				TR << "( " << minpose.phi( resi ) << ", " << minpose.psi( resi ) << " ), ";
 			} else {

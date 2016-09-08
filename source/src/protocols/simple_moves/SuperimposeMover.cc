@@ -106,8 +106,8 @@ void
 SuperimposeMover::set_reference_pose( Pose const & pose,Size start, Size end ) {
 	ref_pose_ = core::pose::PoseOP( new Pose(pose) );
 	ref_start_ = start;
-	ref_end_ = (end == 0) ? pose.total_residue() : end;
-	runtime_assert(ref_start_ > 0 && ref_start_ < ref_end_ && ref_end_ <= pose.total_residue());
+	ref_end_ = (end == 0) ? pose.size() : end;
+	runtime_assert(ref_start_ > 0 && ref_start_ < ref_end_ && ref_end_ <= pose.size());
 }
 
 void
@@ -209,12 +209,12 @@ SuperimposeMover::apply( Pose & pose ) {
 
 	const Size ref_start = ref_start_;
 	const Size target_start = target_start_;
-	const Size ref_end = (ref_end_ == 0) ? ref_pose_->total_residue() : ref_end_;
-	const Size target_end = (target_end_ == 0) ? pose.total_residue() : target_end_;
+	const Size ref_end = (ref_end_ == 0) ? ref_pose_->size() : ref_end_;
+	const Size target_end = (target_end_ == 0) ? pose.size() : target_end_;
 
 	TR << "ref_start: "<< ref_start << " ref_end " << ref_end <<std::endl;
 	TR << "target_start: "<< target_start << " target_end " << target_end <<std::endl;
-	runtime_assert(ref_start > 0 && ref_start < ref_end && ref_end <= pose.total_residue());
+	runtime_assert(ref_start > 0 && ref_start < ref_end && ref_end <= pose.size());
 	runtime_assert_msg(ref_end - ref_start == target_end - target_start, "segments to superimpose have different lengths!");
 
 	if ( CA_only_ ) {

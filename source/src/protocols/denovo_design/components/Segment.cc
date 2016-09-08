@@ -557,7 +557,7 @@ Segment::delete_lower_padding()
 
 	//if ( template_pose_ ) {
 	// core::kinematics::FoldTree ft;
-	// ft.add_edge( template_pose_->total_residue(), 1, -1 );
+	// ft.add_edge( template_pose_->size(), 1, -1 );
 	// template_pose_->fold_tree( ft );
 	// template_pose_->delete_polymer_residue( 1 );
 	//}
@@ -579,9 +579,9 @@ Segment::delete_upper_padding()
 
 	//if ( template_pose_ ) {
 	// core::kinematics::FoldTree ft;
-	// ft.add_edge( 1, template_pose_->total_residue(), -1 );
+	// ft.add_edge( 1, template_pose_->size(), -1 );
 	// template_pose_->fold_tree( ft );
-	// template_pose_->delete_polymer_residue( template_pose_->total_residue() );
+	// template_pose_->delete_polymer_residue( template_pose_->size() );
 	//}
 	cterm_included_ = true;
 }
@@ -720,22 +720,22 @@ Segment::set_template_pose(
 	}
 
 	if ( !full_template_pose.residue( stop_resid ).is_upper_terminus() ) {
-		core::pose::remove_upper_terminus_type_from_pose_residue( *subpose, subpose->total_residue() );
-		if ( subpose->residue( subpose->total_residue() ).has( "O" ) ) {
-			core::id::AtomID const id( subpose->residue(subpose->total_residue()).type().atom_index( "O" ), subpose->total_residue() );
+		core::pose::remove_upper_terminus_type_from_pose_residue( *subpose, subpose->size() );
+		if ( subpose->residue( subpose->size() ).has( "O" ) ) {
+			core::id::AtomID const id( subpose->residue(subpose->size()).type().atom_index( "O" ), subpose->size() );
 			subpose->set_xyz( id, full_template_pose.residue( stop_resid ).xyz( "O" ) );
 			TR << "Set position of O from " << stop_resid << std::endl;
 		}
 	}
 
 	template_pose_ = subpose;
-	if ( template_pose_->total_residue() != elem_length() ) {
+	if ( template_pose_->size() != elem_length() ) {
 		std::stringstream msg;
-		msg << "Segment::set_template_pose(): Template pose's length (" << template_pose_->total_residue()
+		msg << "Segment::set_template_pose(): Template pose's length (" << template_pose_->size()
 			<< ") does not match the segment length (" << elem_length() << "). Quitting." << std::endl;
 		msg << " Segment definition: " << *this << std::endl;
 		msg << "start=" << start_resid << " stop=" << stop_resid << " template_len=" <<
-			full_template_pose.total_residue() << " subpose_len=" << subpose->total_residue() << std::endl;
+			full_template_pose.size() << " subpose_len=" << subpose->size() << std::endl;
 		std::string const template_dump = "template_pose.pdb";
 		std::string const subpose_dump = "template_subpose.pdb";
 		msg << "Full template pose dumped to " << template_dump << ", extracted subpose dumped to"
@@ -752,7 +752,7 @@ Segment::set_template_pose(
 		lower_dihedrals_ = ResidueDihedrals();
 	}
 	// TODO: The is-protein() requirement here is to work around a bug in carboyhydrate code.  It should be eventually removed
-	if ( ( stop_resid + 1 <= full_template_pose.total_residue() ) && ( full_template_pose.residue( stop_resid + 1 ).is_protein() ) ) {
+	if ( ( stop_resid + 1 <= full_template_pose.size() ) && ( full_template_pose.residue( stop_resid + 1 ).is_protein() ) ) {
 		upper_dihedrals_ = ResidueDihedrals( full_template_pose, stop_resid );
 		upper_residue_ = full_template_pose.residue( stop_resid + 1 ).clone();
 	} else {

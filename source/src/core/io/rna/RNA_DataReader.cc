@@ -264,7 +264,7 @@ RNA_DataReader::fill_backbone_array( utility::vector1< Size > const & backbone_r
 
 	using namespace core::pose::full_model_info;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	ObjexxFCL::FArray1D< bool > backbone_array( nres, false );
 
 	FullModelParametersCOP full_model_parameters;

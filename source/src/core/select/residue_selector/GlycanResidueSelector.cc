@@ -163,9 +163,9 @@ GlycanResidueSelector::apply(
 
 	utility::vector1< bool > root_residues = root_residues_;
 
-	utility::vector1< bool > subset (pose.total_residue(), false);
+	utility::vector1< bool > subset (pose.size(), false);
 	if ( parsed_positions_.size() > 0 ) {
-		root_residues.resize(pose.total_residue(), false);
+		root_residues.resize(pose.size(), false);
 		for ( core::Size i = 1; i <= parsed_positions_.size(); ++ i ) {
 			core::Size resnum = core::pose::parse_resnum( parsed_positions_[ i ], pose);
 			root_residues[ resnum ] = true;
@@ -196,7 +196,7 @@ GlycanResidueSelector::apply(
 			}
 		}
 	} else {
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue( i ).is_carbohydrate() ) {
 				subset[ i ] = true;
 			}

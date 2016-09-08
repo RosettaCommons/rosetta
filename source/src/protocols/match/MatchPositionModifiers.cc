@@ -135,7 +135,7 @@ SecondaryStructureMPM::modified_match_positions(
 						}
 					}
 				} else { //if seqpos is in helix
-					for ( core::Size j = seqpos; (j <= seqpos + 3) && ( j <= match_pose.total_residue() ); ++j ) {
+					for ( core::Size j = seqpos; (j <= seqpos + 3) && ( j <= match_pose.size() ); ++j ) {
 						if ( pose_ss.get_dssp_secstruct( j ) == 'H' ) {
 							position_passes = true;
 							break;
@@ -200,8 +200,8 @@ NumNeighborsMPM::modified_match_positions(
 	//if we need to calculate com
 	core::Vector center_of_mass(0,0,0);
 	if ( com_vector_criterion_ ) {
-		for ( Size i = 1; i <= match_pose.total_residue(); ++i ) center_of_mass += match_pose.residue(i).nbr_atom_xyz();
-		center_of_mass /= match_pose.total_residue();
+		for ( Size i = 1; i <= match_pose.size(); ++i ) center_of_mass += match_pose.residue(i).nbr_atom_xyz();
+		center_of_mass /= match_pose.size();
 		//tr << "Center of mass is " << center_of_mass.x() << " " << center_of_mass.y() << " " << center_of_mass.z() << std::endl;
 	}
 
@@ -305,7 +305,7 @@ BfactorMPM::get_ca_bfactors( core::pose::Pose const & pose ) const
 
 	if ( use_relative_bfactors_ ) {
 		core::Real max_bfactor(0.0);
-		for ( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+		for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 			if ( ! pose.residue_type( seqpos ).is_protein() ) bfactors.push_back( pdb_info.temperature( seqpos, 1 ) );
 			else bfactors.push_back( pdb_info.temperature( seqpos, pose.residue( seqpos ).atom_index( "CA" ) ) );
 			if ( bfactors[ seqpos ] > max_bfactor ) max_bfactor = bfactors[ seqpos ];
@@ -316,9 +316,9 @@ BfactorMPM::get_ca_bfactors( core::pose::Pose const & pose ) const
 			return bfactors;
 		}
 
-		for ( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) bfactors[ seqpos ] /= max_bfactor;
+		for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) bfactors[ seqpos ] /= max_bfactor;
 	} else {
-		for ( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+		for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 			if ( ! pose.residue( seqpos ).is_protein() ) bfactors.push_back( pdb_info.temperature( seqpos, 1 ) );
 			else bfactors.push_back( pdb_info.temperature( seqpos, pose.residue( seqpos ).atom_index( "CA" ) ) );
 
@@ -342,7 +342,7 @@ AddAllPositionsMPM::modified_match_positions(
 ) const
 {
 	utility::vector1< core::Size > to_return;
-	for ( core::Size i = 1; i <= match_pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= match_pose.size(); ++i ) {
 		if ( match_pose.residue_type( i ).is_protein() ) to_return.push_back( i );
 	}
 	return to_return;
@@ -372,10 +372,10 @@ RemoveNorCTermMPM::modified_match_positions(
 ) const
 {
 	utility::vector1< core::Size > to_return;
-	core::Size cterm = match_pose.total_residue();
+	core::Size cterm = match_pose.size();
 
 	if ( cterm_length_ != 0 ) { //we have to determine the cterminus of the protein
-		for ( core::Size i = match_pose.total_residue(); i > 0; --i ) {
+		for ( core::Size i = match_pose.size(); i > 0; --i ) {
 			if ( match_pose.residue_type( i ).is_protein() ) {
 				cterm = i;
 				break;

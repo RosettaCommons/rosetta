@@ -179,7 +179,7 @@ NatbiasSecondaryStructureEnergy::finalize_total_energy(
 
 	// this runtime_assert causes rosetta to abort if there is a ligand in the pose
 	// However, a ligand-aware version of it occurs in SS_Info2, so it is not necessary to do it here
-	//runtime_assert( pose.total_residue() == native_secstruct_.size() );
+	//runtime_assert( pose.size() == native_secstruct_.size() );
 
 	Real ss_score( 0.0 ), hh_score( 0.0 ), hs_score( 0.0 );
 

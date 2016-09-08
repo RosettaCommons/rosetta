@@ -52,7 +52,7 @@ public:
 	}
 
 	void test_SingleLoopFoldTree() {
-		FoldTree ft(pose_->total_residue());
+		FoldTree ft(pose_->size());
 
 		Loops loops;
 		loops.add_loop(Loop(5, 12, 8));
@@ -78,14 +78,14 @@ public:
 		TS_ASSERT(ft.edge_label(13, 9) == Edge::PEPTIDE);
 
 		// 4) Edge from 13 -> N
-		TS_ASSERT(ft.edge_label(13, pose_->total_residue()) == Edge::PEPTIDE);
+		TS_ASSERT(ft.edge_label(13, pose_->size()) == Edge::PEPTIDE);
 
 		// 5) Jump from  4 -> 13
 		TS_ASSERT(ft.edge_label(4, 13) == 1);
 	}
 
 	void test_MultiLoopFoldTree() {
-		FoldTree ft(pose_->total_residue());
+		FoldTree ft(pose_->size());
 
 		Loops loops;
 		loops.add_loop(Loop(5, 12, 8));
@@ -125,14 +125,14 @@ public:
 		TS_ASSERT(ft.edge_label(29, 25) == Edge::PEPTIDE);
 
 		// 3) Edge from 29 -> N
-		TS_ASSERT(ft.edge_label(29, pose_->total_residue()) == Edge::PEPTIDE);
+		TS_ASSERT(ft.edge_label(29, pose_->size()) == Edge::PEPTIDE);
 
 		// 4) Jump from 19 -> 29
 		TS_ASSERT(ft.edge_label(19, 29) == 2);
 	}
 
 	void test_NTerminalLoopFoldTree() {
-		FoldTree ft(pose_->total_residue());
+		FoldTree ft(pose_->size());
 
 		Loops loops;
 		loops.add_loop(Loop(1, 12, 8));
@@ -150,12 +150,12 @@ public:
 		TS_ASSERT(ft.edge_label(13, 1) == Edge::PEPTIDE);
 
 		// 2) Edge from  13 -> N
-		TS_ASSERT(ft.edge_label(13, pose_->total_residue()) == Edge::PEPTIDE);
+		TS_ASSERT(ft.edge_label(13, pose_->size()) == Edge::PEPTIDE);
 
 	}
 
 	void test_NTerminalLoopFoldTreeWithStupidCutpoint() {
-		FoldTree ft(pose_->total_residue());
+		FoldTree ft(pose_->size());
 
 		Loops loops;
 		loops.add_loop(Loop(1, 12, 8));
@@ -178,17 +178,17 @@ public:
 		TS_ASSERT(ft.edge_label(13, 9) == Edge::PEPTIDE);
 
 		// 3) Edge from  13 -> N
-		TS_ASSERT(ft.edge_label(13, pose_->total_residue()) == Edge::PEPTIDE);
+		TS_ASSERT(ft.edge_label(13, pose_->size()) == Edge::PEPTIDE);
 
 		// 4) Jump from 1 -> 13
 		TS_ASSERT(ft.edge_label(1, 13) == 1);
 	}
 
 	void test_CTerminalLoopFoldTree() {
-		FoldTree ft(pose_->total_residue());
+		FoldTree ft(pose_->size());
 
 		Loops loops;
-		loops.add_loop(Loop(30, pose_->total_residue(), 35));
+		loops.add_loop(Loop(30, pose_->size(), 35));
 
 		// generate a FoldTree from the Loops instance
 		fold_tree_from_loops(*pose_, loops, ft);
@@ -203,14 +203,14 @@ public:
 		TS_ASSERT(ft.edge_label(1, 29) == Edge::PEPTIDE);
 
 		// 2) Edge from  29 -> N
-		TS_ASSERT(ft.edge_label(29, pose_->total_residue()) == Edge::PEPTIDE);
+		TS_ASSERT(ft.edge_label(29, pose_->size()) == Edge::PEPTIDE);
 	}
 
 	void test_CTerminalLoopFoldTreeWithStupidCutpoint() {
-		FoldTree ft(pose_->total_residue());
+		FoldTree ft(pose_->size());
 
 		Loops loops;
-		loops.add_loop(Loop(30, pose_->total_residue(), 35));
+		loops.add_loop(Loop(30, pose_->size(), 35));
 
 		// generate a FoldTree from the Loops instance
 		fold_tree_from_loops(*pose_, loops, ft, true);
@@ -230,14 +230,14 @@ public:
 		TS_ASSERT(ft.edge_label(29, 35) == Edge::PEPTIDE);
 
 		// 3) Edge from  N -> 36
-		TS_ASSERT(ft.edge_label(pose_->total_residue(), 36) == Edge::PEPTIDE);
+		TS_ASSERT(ft.edge_label(pose_->size(), 36) == Edge::PEPTIDE);
 
 		// 4) Jump from 29 -> N
-		TS_ASSERT(ft.edge_label(29, pose_->total_residue()) == 1);
+		TS_ASSERT(ft.edge_label(29, pose_->size()) == 1);
 	}
 
 	void test_Multichain_CtermLoop() {
-		FoldTree ft(pose_multichain_->total_residue());
+		FoldTree ft(pose_multichain_->size());
 
 		// pose_multichain_ has two 31-residue chains
 
@@ -262,7 +262,7 @@ public:
 	}
 
 	void test_Multichain_NtermLoop() {
-		FoldTree ft(pose_multichain_->total_residue());
+		FoldTree ft(pose_multichain_->size());
 
 		// pose_multichain_ has two 31-residue chains
 		Loops loops;
@@ -281,7 +281,7 @@ public:
 	}
 
 	void test_Multichain_NandCtermLoop() {
-		FoldTree ft(pose_multichain_->total_residue());
+		FoldTree ft(pose_multichain_->size());
 
 		// pose_multichain_ has two 31-residue chains
 		Loops loops;

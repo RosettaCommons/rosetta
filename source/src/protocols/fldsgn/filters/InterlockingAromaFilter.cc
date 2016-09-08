@@ -161,7 +161,7 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 		}
 
 
-		//  if( stres+2 > pose.total_residue() ) continue;
+		//  if( stres+2 > pose.size() ) continue;
 		//  if( ssinfo->strand_id( stres ) == 0 && ssinfo->strand_id( stres+2 ) == 0 ) continue;
 		// Vector cb1( ssinfo->bb_pos().CB( stres ) );
 		// Real const dsq1( distance_squared( cb1, centroid ));
@@ -209,7 +209,7 @@ InterlockingAromaFilter::compute( Pose const & pose ) const
 	String ss("");
 	if ( ! input_ss_.empty() ) {
 		ss = input_ss_;
-		runtime_assert( input_ss_.length() == pose.total_residue() );
+		runtime_assert( input_ss_.length() == pose.size() );
 	} else {
 		Dssp dssp( pose );
 		ss = dssp.get_dssp_secstruct();
@@ -218,7 +218,7 @@ InterlockingAromaFilter::compute( Pose const & pose ) const
 
 	// calc number of interlocking aromatic residues
 	Size num_interlocked( 0 );
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii<=pose.size(); ++ii ) {
 		if ( ss.at( ii-1 ) == 'E' ) continue;
 		if ( pose.aa( ii ) == core::chemical::aa_phe ||
 				pose.aa( ii ) == core::chemical::aa_tyr ||

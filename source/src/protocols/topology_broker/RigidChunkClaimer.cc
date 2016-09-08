@@ -71,11 +71,11 @@ protocols::loops::Loops generate_rigid_from_alignment( pose::Pose query_pose, co
 	using core::Size;
 	using namespace basic::options;
 
-	loops::LoopsOP loops = comparative_modeling::loops_from_alignment( query_pose.total_residue(), align, min_loop_size );
+	loops::LoopsOP loops = comparative_modeling::loops_from_alignment( query_pose.size(), align, min_loop_size );
 
 	// this is now done in select_parts()
 	// randomly grow loops by N residues (4 is a good amount)
-	return loops->invert( query_pose.total_residue() );
+	return loops->invert( query_pose.size() );
 }
 
 // having AdjacentJumps causes problems in fix_internal_coords_of_siblings.
@@ -95,7 +95,7 @@ RigidChunkClaimer::RigidChunkClaimer( pose::Pose const& input_pose, loops::Loops
 	bUseInputPose_( true ),
 	bRigidInRelax_( false )
 {
-	if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) {
+	if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) {
 		core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
 	}
 }
@@ -155,8 +155,8 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 		}
 		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( infile, file, false /*no strict checking */ );
 		protocols::loops::Loops loop_defs = loops::Loops( loops ); // <==
-		loop_defs = loop_defs.invert( input_pose_.total_residue() );
-		tr << "Rigid core: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;
+		loop_defs = loop_defs.invert( input_pose_.size() );
+		tr << "Rigid core: " << input_pose_.size() << std::endl << loop_defs << std::endl;
 		rigid_core_ = loop_defs;
 	} else if ( tag == "NO_USE_INPUT_POSE" ) {
 		bUseInputPose_ = false;
@@ -182,7 +182,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 void RigidChunkClaimer::init_after_reading() {
 	tr.Debug << type() << " initialized with input_pdb: " << input_pose_.sequence() << " and regions " << rigid_core_ << std::endl;
 	centroid_input_pose_=input_pose_;
-	if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
+	if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
 }
 
 void RigidChunkClaimer::select_parts() {
@@ -241,7 +241,7 @@ void RigidChunkClaimer::new_decoy( core::pose::Pose const& pose ) {
 	if ( bUseInputPose_ ) {
 		input_pose_ = pose;
 		centroid_input_pose_=input_pose_;
-		if ( centroid_input_pose_.total_residue() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
+		if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
 
 		// use loops from ThreadingJob ???
 		if ( bUseThreadingJobLoops_ ) {
@@ -323,7 +323,7 @@ void RigidChunkClaimer::finalize_claims( claims::DofClaims& new_claims ) {
 }
 
 void fix_internal_coords_of_siblings( pose::Pose& pose, pose::Pose const& ref_pose, id::AtomID atom, id::AtomID ref_atom ) {
-	runtime_assert( atom.rsd() >= 1 && atom.rsd() <= pose.total_residue() );
+	runtime_assert( atom.rsd() >= 1 && atom.rsd() <= pose.size() );
 	runtime_assert( pose.conformation().atom_tree().has( atom ) );
 	runtime_assert( ref_pose.conformation().atom_tree().has( ref_atom ) );
 
@@ -447,7 +447,7 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 		bool lower_connect = ( loop_start > 1
 			&& !pose.residue(loop_start).is_lower_terminus()
 			&& !pose.fold_tree().is_cutpoint( loop_start-1 ) );
-		bool upper_connect = ( loop_stop < pose.total_residue()
+		bool upper_connect = ( loop_stop < pose.size()
 			&& !pose.residue(loop_stop).is_upper_terminus()
 			&& !pose.fold_tree().is_cutpoint( loop_stop ) );
 
@@ -493,7 +493,7 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 	//need to have same number of residues for fold-tree transfer...
 	// would be nice to drop this restriction but for now, fill up with missing density...
 
-	//fpd runtime_assert( pose.total_residue() == centroid_input_pose_.total_residue() );
+	//fpd runtime_assert( pose.size() == centroid_input_pose_.size() );
 	//fpd   really, we just have to make sure that #residues in the input pose > index of last rigid chunk
 	//fpd   (strictly greater-than since we have to have a flanking res on each side of each region)
 	//fpd   we still need missing dens in the gaps (but not at c term now!)
@@ -501,7 +501,7 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 	 for ( auto const & it : current_rigid_core_ ) {
 		lastChunk = std::max( lastChunk , it.stop() );
 	}
-	runtime_assert ( lastChunk <= centroid_input_pose_.total_residue() );
+	runtime_assert ( lastChunk <= centroid_input_pose_.size() );
 
 	bool missing_density( false );
 	//sanity check: no missing density in backbon in any of the rigid_core residues?

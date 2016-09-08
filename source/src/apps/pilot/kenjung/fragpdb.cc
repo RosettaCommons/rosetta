@@ -141,7 +141,7 @@ void output_pdb( std::vector < BackboneSegment> & bs_vec_, core::Size loopsize, 
 					core::pose::make_pose_from_sequence( frame, sequence,
 						*( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))  );
 					for ( core::Size i = 0; i < bs_vec_.size(); i++) {
-									for ( core::Size pos = 1; pos <= frame.total_residue(); pos++ ) {
+									for ( core::Size pos = 1; pos <= frame.size(); pos++ ) {
 										frame.set_phi( pos, -150 );
 										frame.set_psi( pos, 150 );
 										frame.set_omega( pos, 180 );

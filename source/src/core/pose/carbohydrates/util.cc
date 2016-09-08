@@ -811,9 +811,9 @@ idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added )
 	using namespace conformation;
 
 	// Work backward through the list of glycans and fix their glycosidic bonds to be ideal, if such data is known.
-	Size const n_residues( pose.total_residue() );
-	uint const glycosylation_site( n_residues - n_glycans_added );  // 0, if a free oligo-/polysaccharide was built.
-	for ( uint i( n_residues ); i > glycosylation_site; --i ) {
+	Size const sizes( pose.size() );
+	uint const glycosylation_site( sizes - n_glycans_added );  // 0, if a free oligo-/polysaccharide was built.
+	for ( uint i( sizes ); i > glycosylation_site; --i ) {
 		Residue const & non_red_end_res( pose.residue( i ) );
 		if ( ! non_red_end_res.is_carbohydrate() ) {
 			TR.Warning << "Cannot idealize a non-saccharide residue!" << endl;
@@ -921,7 +921,7 @@ glycosylate_pose(
 
 	//JAB - reverting this till we can fix it
 	/*
-	Size const initial_n_residues( pose.total_residue() );
+	Size const initial_sizes( pose.size() );
 	PDBInfoOP info( new PDBInfo( *pose.pdb_info() ) );//Copy because as we add residues it will change PDB Info - and not the way we want.
 	if ( ! info ) {
 	info = PDBInfoOP( new PDBInfo( pose ) );
@@ -929,7 +929,7 @@ glycosylate_pose(
 	//pose.pdb_info( info ); //This copies PDBInfo into the pose, not the actuall OP.  Can't set it here.
 	}
 
-	char const last_chain_id( info->chain( initial_n_residues ) );  // Get the chain ID of the last residue.
+	char const last_chain_id( info->chain( initial_sizes ) );  // Get the chain ID of the last residue.
 	char new_chain_id;
 	uint last_chain_index( utility::ALPHANUMERICS.find( last_chain_id ) );
 	if ( ( last_chain_index == string::npos ) ||  // not a standard chain ID
@@ -949,7 +949,7 @@ glycosylate_pose(
 	pose.append_residue_by_atoms( *first_sugar, true, upper_atom, sequence_position, atom_name, true );
 
 	// Build any other sugars.
-	append_pose_with_glycan_residues( pose, ResidueTypeCOPs( residue_types.begin() + 1, residue_types.end() ) );
+	append_pose_with_glycasizes( pose, ResidueTypeCOPs( residue_types.begin() + 1, residue_types.end() ) );
 
 	// Let the Conformation know that it (now) contains sugars.
 	pose.conformation().contains_carbohydrate_residues( true );
@@ -961,9 +961,9 @@ glycosylate_pose(
 
 	/*
 	// Reverting PDBInfo changes as they don't quite work.
-	Size const n_residues( pose.total_residue() );
+	Size const sizes( pose.size() );
 	uint new_seqpos( 0 );
-	for ( uint i( initial_n_residues + 1 ); i <= n_residues; ++i ) {
+	for ( uint i( initial_sizes + 1 ); i <= sizes; ++i ) {
 	++new_seqpos;
 	info->append_res( i - 1, pose.residue( i ).natoms() );
 	info->chain( i, new_chain_id );
@@ -985,7 +985,7 @@ glycosylate_pose(
 	pose.pdb_info( info );
 
 
-	//TR << "InitialNRES: " << initial_n_residues << " NRES: "<< pose.total_residue() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
+	//TR << "InitialNRES: " << initial_sizes << " NRES: "<< pose.size() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
 	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
 		pose.residue( sequence_position ).name3() << sequence_position << endl;
 }
@@ -1368,7 +1368,7 @@ delete_carbohydrate_branch(
 
 	// Update contents of Pose - does it have any carbohydrates left?
 	bool found_carbohydrate = false;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).is_carbohydrate() ) {
 			found_carbohydrate = true;
 			break;
@@ -1394,7 +1394,7 @@ get_carbohydrate_residues_upstream(
 
 	utility::vector1< Size > tips;
 	utility::vector1< Size > list_of_residues;
-	utility::vector1< Size > children_residues;
+	utility::vector1< Size > childresizes;
 
 	if ( ! pose.residue( starting_position ).is_carbohydrate() && ! pose.residue( starting_position ).is_branch_point() ) {
 		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
@@ -1409,10 +1409,10 @@ get_carbohydrate_residues_upstream(
 		parent_residue = starting_position - 1;
 	}
 
-	fill_upstream_children_res_and_tips( pose, starting_position, parent_residue, children_residues, list_of_residues, tips );
+	fill_upstream_children_res_and_tips( pose, starting_position, parent_residue, childresizes, list_of_residues, tips );
 
-	//TR << "Children: " << utility::to_string( children_residues) << std::endl;
-	get_branching_residues( pose, starting_position, children_residues, list_of_residues, tips );
+	//TR << "Children: " << utility::to_string( childresizes) << std::endl;
+	get_branching_residues( pose, starting_position, childresizes, list_of_residues, tips );
 
 	return std::make_pair( list_of_residues, tips );
 
@@ -1432,14 +1432,14 @@ get_carbohydrate_residues_upstream(
 void
 get_branching_residues( Pose const & pose,
 	Size parent_residue,
-	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & childresizes,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips )
 
 {
 
-	for ( core::Size i =1; i <= children_residues.size(); ++i ) {
-		Size res = children_residues[ i ];
+	for ( core::Size i =1; i <= childresizes.size(); ++i ) {
+		Size res = childresizes[ i ];
 		utility::vector1< Size > children;
 		fill_upstream_children_res_and_tips( pose, res, parent_residue, children, list_of_residues, tips );
 
@@ -1463,7 +1463,7 @@ void
 fill_upstream_children_res_and_tips( Pose const & pose,
 	Size res,
 	Size parent_residue,
-	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & childresizes,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips )
 
@@ -1479,7 +1479,7 @@ fill_upstream_children_res_and_tips( Pose const & pose,
 			if ( pose.residue( connecting_res ).n_current_residue_connections() == 1 ) {
 				tips.push_back( connecting_res );
 			} else {
-				children_residues.push_back( connecting_res );
+				childresizes.push_back( connecting_res );
 			}
 		}
 	}

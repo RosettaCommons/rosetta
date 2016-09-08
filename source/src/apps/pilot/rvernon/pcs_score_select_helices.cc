@@ -124,7 +124,7 @@ void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_li
 		if ( !exclude_residue ) {
 			residue_selection.push_back( ir );
 		}
-	} // for ( Size ir = 1; ir <= native_pose.total_residue(); ++ir )
+	} // for ( Size ir = 1; ir <= native_pose.size(); ++ir )
 }
 
 
@@ -233,7 +233,7 @@ main( int argc, char* argv [] )
 	core::Size H2_end = 178;
 
 	utility::vector1< Size > vec_exclude;
-	for ( Size i = 1; i <= native_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= native_pose.size(); ++i ) {
 		if ( ((( i >= H1_start) && ( i <= H1_end)) || (( i >= H2_start) && ( i <= H2_end))) == false ) {
 			vec_exclude.push_back(i);
 		}
@@ -246,7 +246,7 @@ main( int argc, char* argv [] )
 	core::Real N1_h1t(0), N1_h2t(0), N2_h1t(0), N2_h2t(0), N1_mt(0), N2_mt(0);
 	numeric::xyzVector< core::Real > N1_h1(0), N1_h2(0), N2_h1(0), N2_h2(0), N1_m(0), N2_m(0);
 
-	for ( Size i = 1; i <= native_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= native_pose.size(); ++i ) {
 
 		if ( ( i >= H1_start) && ( i <= (H1_start+((H1_end-H1_start)/2))) ) {
 			N1_h1t += 1.0;
@@ -317,7 +317,7 @@ main( int argc, char* argv [] )
 		core::Real H1_h1t(0), H1_h2t(0), H2_h1t(0), H2_h2t(0), H1_mt(0), H2_mt(0);
 		numeric::xyzVector< core::Real > H1_h1(0), H1_h2(0), H2_h1(0), H2_h2(0), H1_m(0), H2_m(0);
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 
 			if ( ( i >= H1_start) && ( i <= (H1_start+((H1_end-H1_start)/2))) ) {
 				H1_h1t += 1.0;
@@ -390,7 +390,7 @@ main( int argc, char* argv [] )
 
 		if ( option[ in::file::native ].user() ) {
 			protocols::simple_filters::ResidueSelection residues;
-			invert_exclude_residues( native_pose.total_residue(), vec_exclude, residues );
+			invert_exclude_residues( native_pose.size(), vec_exclude, residues );
 			core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
 			core::Real gdtmm = core::scoring::CA_gdtmm( pose, native_pose, residues );
 

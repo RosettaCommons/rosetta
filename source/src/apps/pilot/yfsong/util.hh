@@ -94,7 +94,7 @@ set_loops_to_virt_ala(core::pose::Pose & pose, Loops loops)
 			continue;
 		}
 		else {
-			Size nres(pose.total_residue());
+			Size nres(pose.size());
 			while (pose.residue_type(nres).is_virtual_residue()) {
 				--nres;
 			}
@@ -134,7 +134,7 @@ revert_loops_to_original(core::pose::Pose & pose, Loops loops)
 			continue;
 		}
 		else {
-			Size nres(pose.total_residue());
+			Size nres(pose.size());
 			while (pose.residue_type(nres).is_virtual_residue()) {
 				--nres;
 			}
@@ -180,7 +180,7 @@ void add_gap_constraints_to_pose(core::pose::Pose & pose, Size seq_distance_to_g
 		int gap_start = chunks[i].stop() - seq_distance_to_gap;
 		int gap_end   = chunks[i+1].start() + seq_distance_to_gap;
 
-		if ( gap_start >= 1 && gap_end <= pose.total_residue() ) {
+		if ( gap_start >= 1 && gap_end <= pose.size() ) {
 			if (!pose.residue_type(gap_start).is_protein()) continue;
 			if (!pose.residue_type(gap_end).is_protein()) continue;
 			Size iatom = pose.residue_type(gap_start).atom_index("CA");
@@ -220,8 +220,8 @@ setup_startree(core::pose::Pose & pose) {
 	ss_chunks_pose_.sequential_order();
 	TR.Debug << "Target secondary chunks:" << std::endl;
 	TR.Debug << ss_chunks_pose_ << std::endl;
-	loops_pose_ = ss_chunks_pose_.invert(pose.total_residue());
-	TR.Debug << "Target loops: " << pose.total_residue() << std::endl;
+	loops_pose_ = ss_chunks_pose_.invert(pose.size());
+	TR.Debug << "Target loops: " << pose.size() << std::endl;
 	TR.Debug << loops_pose_ << std::endl;
 	TR.flush();
 
@@ -244,7 +244,7 @@ setup_startree(core::pose::Pose & pose) {
 			}
 
 			if (i==chunks.num_loop()) {
-				chunks[i].set_stop(pose.total_residue());
+				chunks[i].set_stop(pose.size());
 			}
 			else {
 				Size new_stop = (ss_chunks_pose_[i].stop() + ss_chunks_pose_[i+1].start() - 1) / 2;
@@ -261,13 +261,13 @@ setup_startree(core::pose::Pose & pose) {
 			}
 
 			if (i==chunks.num_loop()) {
-				chunks[i].set_stop(pose.total_residue());
+				chunks[i].set_stop(pose.size());
 			}
 		}
 	}
 	//add_gap_constraints_to_pose(pose, 4, chunks);
 
-	TR.Debug << "Chunks: " << pose.total_residue() << std::endl;
+	TR.Debug << "Chunks: " << pose.size() << std::endl;
 	TR.Debug << chunks << std::endl;
 
 	StarTreeBuilder builder;
@@ -281,7 +281,7 @@ setup_startree(core::pose::Pose & pose) {
 
 numeric::xyzVector<Real>
 center_of_mass(core::pose::Pose const & pose) {
-	int  nres( pose.total_residue() ), nAtms = 0;
+	int  nres( pose.size() ), nAtms = 0;
 	numeric::xyzVector<core::Real> massSum(0.,0.,0.), CoM;
 	for ( int i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
@@ -301,7 +301,7 @@ void
 translate_virt_to_CoM(core::pose::Pose & pose) {
 	numeric::xyzVector<Real> CoM;
 	CoM = center_of_mass(pose);
-	numeric::xyzVector<Real> curr_pos = pose.residue(pose.total_residue()).xyz(1);
+	numeric::xyzVector<Real> curr_pos = pose.residue(pose.size()).xyz(1);
 	numeric::xyzVector<Real> translation = CoM - curr_pos;
 
 	basic::Tracer TR( "pilot.yfsong.util" );
@@ -311,9 +311,9 @@ translate_virt_to_CoM(core::pose::Pose & pose) {
 	// apply transformation
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
-	for (Size iatom = 1; iatom <= pose.residue_type(pose.total_residue()).natoms(); ++iatom) {
-		numeric::xyzVector<core::Real> atom_xyz = pose.xyz( core::id::AtomID(iatom,pose.total_residue()) );
-		ids.push_back(core::id::AtomID(iatom,pose.total_residue()));
+	for (Size iatom = 1; iatom <= pose.residue_type(pose.size()).natoms(); ++iatom) {
+		numeric::xyzVector<core::Real> atom_xyz = pose.xyz( core::id::AtomID(iatom,pose.size()) );
+		ids.push_back(core::id::AtomID(iatom,pose.size()));
 		positions.push_back(atom_xyz + translation);
 	}
 	pose.batch_set_xyz(ids,positions);
@@ -363,7 +363,7 @@ apply(core::pose::Pose & pose) {
 	}
 
 	basic::Tracer TR( "pilot.yfsong.util" );
-	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
+	for (Size ires=1; ires<=pose.size(); ++ires) {
 		using namespace ObjexxFCL::format;
 		TR.Debug << "Trial counter:" << I(4,ires) << I(8, random_align_mover->trial_counter(ires)) << std::endl;
 	}

@@ -263,7 +263,7 @@ test_loophash( pose::Pose const pose,
   LHsampler->set_max_struct( 10 ); // try 10 per each window
 
   std::vector< io::silent::SilentStructOP > decoys;
-  Size const nres( pose.total_residue() - 10 );
+  Size const nres( pose.size() - 10 );
 
   // Iter for random windows
   for( Size istr = 1; istr <= nstruct; ++istr ){

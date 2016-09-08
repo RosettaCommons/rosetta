@@ -114,7 +114,7 @@ PrecomputedLibraryMover::has_precomputed_move( core::pose::Pose const & pose ) c
 	for ( Size i = 1; i <= res_list.size(); i++ ) {
 		if ( !sample_res.has_value( res_list[ i ] ) ) return false;
 	}
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) ) return false;
 	}
 	return ( library_map_.find( pose.sequence() ) != library_map_.end() );
@@ -138,7 +138,7 @@ PrecomputedLibraryMover::apply( core::pose::Pose & pose ) const {
 	pose.conformation() = pose_scratch.conformation();
 
 	//simple fold_tree --> generalized in SubMotifLibrary.
-	for ( Size n = 1; n < pose.total_residue(); n++ ) runtime_assert( !pose.fold_tree().is_cutpoint( n ) );
+	for ( Size n = 1; n < pose.size(); n++ ) runtime_assert( !pose.fold_tree().is_cutpoint( n ) );
 }
 
 

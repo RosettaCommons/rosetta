@@ -68,7 +68,7 @@ typedef numeric::xyzMatrix<Real> Mat;
 typedef vector1<Size> Sizes;
 
 void strip_termini(core::pose::Pose & pose) {
-  for(Size i = 1; i <= pose.n_residue(); ++i) {
+  for(Size i = 1; i <= pose.size(); ++i) {
     if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
     if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
   }
@@ -135,7 +135,7 @@ main (int argc, char *argv[]){
 		// Get the starting and ending positions of the first and last helices
     core::scoring::dssp::Dssp dssp(pose);
     Size nstart=0,nstop=0,cstart=0,cstop=0;
-    for(Size i = 1; i <= pose.n_residue(); ++i) {
+    for(Size i = 1; i <= pose.size(); ++i) {
       if( !nstart && dssp.get_dssp_secstruct(i) == 'H' ) {
         nstart = i;
       } else if(  nstart && dssp.get_dssp_secstruct(i) != 'H' ) {
@@ -143,7 +143,7 @@ main (int argc, char *argv[]){
         break;
       }
     }
-    for(Size i = pose.n_residue(); i >= 1; --i) {
+    for(Size i = pose.size(); i >= 1; --i) {
       if( !cstop && dssp.get_dssp_secstruct(i) == 'H' ) {
         cstop = i;
       } else if(  cstop && dssp.get_dssp_secstruct(i) != 'H' ) {
@@ -151,7 +151,7 @@ main (int argc, char *argv[]){
         break;
       }
     }
-    //TR << fname << " " << nstart << " " << nstop << " " << pose.n_residue()-cstart << " " << pose.n_residue()-cstop << std::endl;
+    //TR << fname << " " << nstart << " " << nstop << " " << pose.size()-cstart << " " << pose.size()-cstop << std::endl;
 
 		Vec z = Vec(0,0,1);
 		for(Size nc = 0; nc <= 1; nc++) {
@@ -160,7 +160,7 @@ main (int argc, char *argv[]){
 			if ( !nc && nstart < 7 && nstop-nstart > 6 ) {
 				h_axis = get_helix_axis(pose, nstart, nstop);
 				h_cent = get_helix_center(pose, nstart, nstop);
-			} else if ( nc && pose.n_residue()-cstop < 7 && cstop-cstart > 6) {
+			} else if ( nc && pose.size()-cstop < 7 && cstop-cstart > 6) {
         h_axis = get_helix_axis(pose, cstart, cstop);
         h_cent = get_helix_center(pose, cstart, cstop);
 			} else {

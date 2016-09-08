@@ -122,7 +122,7 @@ RNA_O2PrimeMover::sample_near_o2prime_torsion( pose::Pose & pose, Size const mov
 Size
 RNA_O2PrimeMover::get_random_o2prime_residue( pose::Pose & pose ){
 	// pick at random from whole pose -- a quick initial stab.
-	Size const o2prime_num = int( pose.total_residue() * numeric::random::rg().uniform() ) + 1;
+	Size const o2prime_num = int( pose.size() * numeric::random::rg().uniform() ) + 1;
 	return o2prime_num;
 }
 
@@ -135,7 +135,7 @@ RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & p
 
 	// Following requires that pose is already scored once before entering the mover.
 	//  Is there a way to avoid this? just ensure energy_graph is filled?
-	utility::vector1< bool > residues_allowed_to_be_packed( pose.total_residue(), false );
+	utility::vector1< bool > residues_allowed_to_be_packed( pose.size(), false );
 	scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 	Distance DIST_CUTOFF( 4.0 );
@@ -173,7 +173,7 @@ RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & p
 	}
 
 	utility::vector1< Size > res_list;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( residues_allowed_to_be_packed[ n ] ) {
 			res_list.push_back( n );
 		}

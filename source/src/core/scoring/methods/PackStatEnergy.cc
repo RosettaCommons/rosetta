@@ -77,7 +77,7 @@ PackStatEnergy::finalize_total_energy(
 
 	core::Real packing_score = compute_packing_score(pose);
 	// std::cerr << "ps " << packing_score << " " << std::endl;
-	totals[ pack_stat ] = - packing_score * pose.total_residue();
+	totals[ pack_stat ] = - packing_score * pose.size();
 }
 
 core::Size

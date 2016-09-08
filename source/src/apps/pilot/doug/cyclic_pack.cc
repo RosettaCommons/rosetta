@@ -89,7 +89,7 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 	using namespace conformation;
 	using namespace chemical;
 
-	for( Size i(1); i <= pose.total_residue(); ++i ) {
+	for( Size i(1); i <= pose.size(); ++i ) {
 		// print name
 		TR << "aa: " << pose.residue( i ).type().name3() << ", ";
 
@@ -97,12 +97,12 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 		// first residue
 		if ( i == 1 ) {
 			if ( cyclic_ ) {
-				TR << "omg: " << pose.omega( pose.total_residue() ) << ", phi: " << pose.phi( i ) << ", psi: " << pose.psi( i ) << ", ";
+				TR << "omg: " << pose.omega( pose.size() ) << ", phi: " << pose.phi( i ) << ", psi: " << pose.psi( i ) << ", ";
 			} else {
 				TR << "omg: " << 0.0 << ", phi: " << pose.phi( i ) << ", psi: " << pose.psi( i ) << ", ";
 			}
 		// last residue
-		} else if ( i == pose.total_residue() ) {
+		} else if ( i == pose.size() ) {
 			TR << "omg: " << pose.omega( i - 1 ) << ", phi: " << pose.phi( i - 1 ) << ", psi: " << pose.psi( i - 1 ) << ", ";
 		// everything else
 		} else {

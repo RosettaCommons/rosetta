@@ -133,11 +133,11 @@ SequenceCouplingConstraint::read_def(
 	is >> residue_index1 >> residue_index2 >> coupling_filename;
 
 	TR(t_debug) << "reading: " << residue_index1 << " " << residue_index2 << " " << coupling_filename << std::endl;
-	if ( residue_index1 < 1 || residue_index1 > pose.total_residue() ) {
+	if ( residue_index1 < 1 || residue_index1 > pose.size() ) {
 		std::cerr << "no such residue index " << residue_index1 << " in pose!)" << std::endl;
 		utility_exit();
 	}
-	if ( residue_index2 < 1 || residue_index2 > pose.total_residue() ) {
+	if ( residue_index2 < 1 || residue_index2 > pose.size() ) {
 		std::cerr << "no such residue index " << residue_index2 << " in pose!)" << std::endl;
 		utility_exit();
 	}

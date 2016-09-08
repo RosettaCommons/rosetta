@@ -109,7 +109,7 @@ RandomOmegaFlipMover::setup_torsion_list( core::pose::Pose & pose )
 	torsion_id_list_.clear();
 
 	// make list
-	for ( Size i( 1 ); i <= pose.total_residue(); ++i ) {
+	for ( Size i( 1 ); i <= pose.size(); ++i ) {
 
 		// check to see if peptoid or protein
 		if ( pose.residue( i ).type().is_protein() || pose.residue( i ).type().is_peptoid() ) {
@@ -174,7 +174,7 @@ protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
 /*
 
 TR << "DEBUG" << std::endl;
-move_map_->show( pose.total_residue() );
+move_map_->show( pose.size() );
 
 TR << "DEBUG TORSION TYPE" << std::endl;
 for( MoveMap::TorsionTypeMap::const_iterator i( move_map_->torsion_type_begin() ), i_end( move_map_->torsion_type_end() ); i != i_end; ++i ) {

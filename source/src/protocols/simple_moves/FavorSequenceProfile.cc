@@ -136,18 +136,18 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 	}
 	//using varibles for start/stop in case a sequence for only one chain was specified
 	core::Size start_seq = 1;
-	core::Size stop_seq = pose.total_residue();
+	core::Size stop_seq = pose.size();
 	core::id::SequenceMappingOP smap( new core::id::SequenceMapping() );
 	if ( chain_ > 1 ) {
-		*smap = core::id::SequenceMapping::identity( pose.total_residue() );
+		*smap = core::id::SequenceMapping::identity( pose.size() );
 		smap->set_offset(pose.conformation().chain_begin( chain_ )-1);
 		smap->show();
 	} else { //set smap to identity
-		*smap = core::id::SequenceMapping::identity( pose.total_residue() );
+		*smap = core::id::SequenceMapping::identity( pose.size() );
 	}
 
 	utility::vector1<bool> use_all_residues;
-	use_all_residues.resize(pose.total_residue(),true);
+	use_all_residues.resize(pose.size(),true);
 
 	if ( string_exclude_resnums_.length()!=0 ) {
 		set< core::Size > const res_vec( core::pose::get_resnum_list( string_exclude_resnums_, pose ) );

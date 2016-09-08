@@ -198,7 +198,7 @@ setup_pose_with_loop( pose::Pose & pose,
 	using namespace core::chemical;
 	using namespace protocols::loops;
 
-	Size min_loop_res = pose.total_residue();
+	Size min_loop_res = pose.size();
 	Size max_loop_res = 1;
 	for ( Size i = 1; i <= loop_residues.size(); i++ ) {
 		if ( loop_residues[i] < min_loop_res ) min_loop_res = loop_residues[ i ];
@@ -225,9 +225,9 @@ setup_pose_with_loop( pose::Pose & pose,
 	//void
 	//copy_dofs_outside_loop(){
 // 	std::map< Size, Size > res_map;
-// 	FArray1D<bool> is_loop( pose.total_residue(), false );
+// 	FArray1D<bool> is_loop( pose.size(), false );
 // 	for ( Size i = 1; i <= loop_residues.size(); i++ ) is_loop( loop_residues[ i ] ) = true;
-// 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+// 	for ( Size n = 1; n <= pose.size(); n++ ) {
 // 		if (!is_loop( n ) ) {
 // 			res_map[ n ] = n;
 // 			std::cout << "will copy dofs " << n << std::endl;

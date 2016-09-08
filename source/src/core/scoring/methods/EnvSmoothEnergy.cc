@@ -144,7 +144,7 @@ EnvSmoothEnergy::setup_for_derivatives(
 ) const
 {
 	pose.update_residue_neighbors();
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {

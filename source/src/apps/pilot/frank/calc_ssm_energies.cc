@@ -139,7 +139,7 @@ get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &inter
 
 	core::Real b=0.28;
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	// make pose polyA
 	core::pose::Pose pose_working = pose;
@@ -152,7 +152,7 @@ get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &inter
 	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, false );
 
 	interface.clear();
-	interface.resize( pose.total_residue(), false );
+	interface.resize( pose.size(), false );
 
 	// initialize energy graph
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
@@ -210,7 +210,7 @@ get_neighbor_residues(
 
 	core::Real b=0.28;
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	// make pose polyA
 	core::pose::Pose pose_working = pose;
@@ -274,7 +274,7 @@ public:
 	void
 	apply(core::pose::Pose &pose) {
 		// load packer task from command line
-		core::Size nres = pose.total_residue();
+		core::Size nres = pose.size();
 
 		// read resfile
 		core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );
@@ -410,7 +410,7 @@ public:
 		dssp.insert_ss_into_pose( pose );
 
 		// load packer task from command line
-		core::Size nres = pose.total_residue();
+		core::Size nres = pose.size();
 
 		// read resfile
 		core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );

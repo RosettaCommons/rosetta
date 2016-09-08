@@ -59,7 +59,7 @@ loops::Loops LoopManager::LoopsToPerturb()
 
 	loops tmpLoops;
 
-	std::cout << "LoopManager " << pose_.total_residue() << std::endl;
+	std::cout << "LoopManager " << pose_.size() << std::endl;
 
 	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end(); it != it_end; ++it; )
 		{
@@ -89,7 +89,7 @@ bool LoopManager::IsCtermLoop(
 )
 {
 
-	if( ThisLoop.loop_end() == pose_.total_residue() ) return true;
+	if( ThisLoop.loop_end() == pose_.size() ) return true;
 	return false;
 
 }
@@ -202,7 +202,7 @@ Loop LoopManager::VaryStems(
 		stem_vary_window_n = std::min( window_size, int( ThisLoop.loop_begin() -
 				PreviousLoop( ThisLoop ).loop_end() ) );
 		if( !IsCtermLoop( ThisLoop ) ) {
-			stem_vary_window_c = std::min( window_size, int( pose_.total_residue()  -
+			stem_vary_window_c = std::min( window_size, int( pose_.size()  -
 					ThisLoop.loop_end() ) );
 		} else {
 			stem_vary_window_c = 0;
@@ -219,7 +219,7 @@ Loop LoopManager::VaryStems(
 	} else if ( IsFirstLoop( ThisLoop)  && IsLastLoop( ThisLoop ) ) {
 
 		stem_vary_window_n = std::min( window_size, int( ThisLoop.loop_begin() ) );
-		stem_vary_window_c = std::min( window_size, int( pose_.total_residue() -
+		stem_vary_window_c = std::min( window_size, int( pose_.size() -
 				ThisLoop.loop_end() ) );
 	}
 
@@ -252,7 +252,7 @@ Loop LoopManager::VaryCutpoint(
 
 
 	Size cutpoint( 0 );
-	if( ThisLoop.loop_begin() > 1 && ThisLoop.loop_end() < pose_.total_residue() ) {
+	if( ThisLoop.loop_begin() > 1 && ThisLoop.loop_end() < pose_.size() ) {
 
 		Size nfail( 0 );
 		do {
@@ -274,8 +274,8 @@ Loop LoopManager::VaryCutpoint(
 		}
 	} else if ( ThisLoop.loop_begin() == 1 ) {
 		cutpoint = 1;
-	} else if ( ThisLoop.loop_end() == pose_.total_residue() ) {
-		cutpoint = pose_.total_residue();
+	} else if ( ThisLoop.loop_end() == pose_.size() ) {
+		cutpoint = pose_.size();
 	}
 
 

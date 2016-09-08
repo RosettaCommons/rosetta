@@ -198,7 +198,7 @@ void NativeEnsemble::apply(Pose & pose) { // {{{1
 	canonical_mc->set_tempering(
 			new FixedTemperatureController(temperature_));
 
-	if (loop_.start() <= 1) loop_ = Loop(2, pose.total_residue() - 1);
+	if (loop_.start() <= 1) loop_ = Loop(2, pose.size() - 1);
 	pose.update_residue_neighbors();
 
 	// Setup the standard backbone and sidechain moves.
@@ -212,7 +212,7 @@ void NativeEnsemble::apply(Pose & pose) { // {{{1
 	utility::vector1<bool> is_near_loop = 
 		protocols::loops::select_loop_residues(pose, loop_, true, 10.0);
 
-	for (Size i = 1; i <= pose.total_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 		if (not is_near_loop[i]) prevent_repacking->include_residue(i);
 	}
 

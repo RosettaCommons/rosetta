@@ -150,7 +150,7 @@ ParametricSheet::from_pose( core::pose::Pose const & pose )
 		std::string const name( boost::lexical_cast< std::string >( chain_name + i ) );
 		strand_name_to_index_[ name ] = i;
 		strand_data_.push_back( StrandData( name,
-			strands[i]->total_residue(),
+			strands[i]->size(),
 			0,
 			"P" ) );
 	}
@@ -158,7 +158,7 @@ ParametricSheet::from_pose( core::pose::Pose const & pose )
 	// initialize ca_coords from the pose
 	init_ca_coords();
 	for ( core::Size i=2; i<=strands.size()+1; ++i ) {
-		for ( core::Size j=3; j<=strands[i-1]->total_residue()+2; ++j ) {
+		for ( core::Size j=3; j<=strands[i-1]->size()+2; ++j ) {
 			ca_coords_[i][j] = strands[i-1]->residue(j-2).xyz( "CA" );
 		}
 		if ( i - 2 >= 1 ) {

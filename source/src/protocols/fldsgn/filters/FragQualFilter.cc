@@ -136,7 +136,7 @@ FragQualFilter::parse_my_tag(
 	CalculatorFactory::Instance().register_calculator( "FragQual", calculator.clone() );
 
 	//calculator.begin( tag->getOption<Size>( "begin", 1 ) );
-	//calculator.end( tag->getOption<Size>( "end", pose.total_residue() ) );
+	//calculator.end( tag->getOption<Size>( "end", pose.size() ) );
 	//
 	//rmsd_cutoff_ = tag->getOption<Real>( "rmsd_cutoff", 1.0 );
 	//calculator.rmsd_cutoff( rmsd_cutoff_ );

@@ -269,7 +269,7 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 	using namespace core::conformation;
 
 	// connected doesn't do anything anymore...
-	FArray1D< bool > connected( pose.total_residue(), false );
+	FArray1D< bool > connected( pose.size(), false );
 	covered_by_chunk_ = false;
 
 	Size i_prev( 0 );
@@ -395,7 +395,7 @@ RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_p
 		// useful for tracking homology modeling: perhaps we can align to first chunk as well -- 3D alignment of Rosetta poses are
 		// arbitrarily set to origin (except in special cases with virtual residues...)
 		if ( n == 1 && chunk_set.user_input()
-				/*&&  pose.residue( pose.total_residue() ).name3() != "VRT"*/ ) {
+				/*&&  pose.residue( pose.size() ).name3() != "VRT"*/ ) {
 			align_to_chunk( pose, chunk_set, chunk_index  );
 		}
 		if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );

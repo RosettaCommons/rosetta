@@ -93,7 +93,7 @@ nonconst_rna_scoring_info_from_pose( pose::Pose & pose )
 	RNA_ScoringInfoOP rna_scoring_info( new RNA_ScoringInfo() );
 
 	// This should get initialized and dimensioned later -- when it is filled!
-	rna_scoring_info->rna_raw_base_base_info().resize( pose.total_residue() );
+	rna_scoring_info->rna_raw_base_base_info().resize( pose.size() );
 
 	pose.data().set( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO, rna_scoring_info );
 	return *rna_scoring_info;

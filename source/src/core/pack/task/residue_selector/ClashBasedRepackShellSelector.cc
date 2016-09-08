@@ -148,7 +148,7 @@ utility::vector1<core::Size> ClashBasedRepackShellSelector::get_clashing_positio
 {
 	utility::vector1<core::Size> clash_positions;
 	// iterate over all neighbor residues
-	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		if ( i == resnum ) continue;
 		core::conformation::Residue const & rsd2 = pose.conformation().residue(i);
 		// check for backbone clash first (where repacking wouldn't help)
@@ -159,7 +159,7 @@ utility::vector1<core::Size> ClashBasedRepackShellSelector::get_clashing_positio
 			//std::cout << "sidechain clashes with " << i << std::endl;
 			found_sc_only_clash=true;
 			//check if this side-chain clash also involves backbone clashes with other residues in the neighborhood
-			for ( core::Size j=1; j <= pose.total_residue(); ++j ) {
+			for ( core::Size j=1; j <= pose.size(); ++j ) {
 				if ( j == resnum ) continue;
 				core::conformation::Residue const & rsd3 = pose.conformation().residue(j);
 				if ( is_sc_bb_clash(rsd1,rsd3) ) {
@@ -178,12 +178,12 @@ utility::vector1<core::Size> ClashBasedRepackShellSelector::get_clashing_positio
 core::select::residue_selector::ResidueSubset
 ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 {
-	core::select::residue_selector::ResidueSubset subset( pose.total_residue(), false );
+	core::select::residue_selector::ResidueSubset subset( pose.size(), false );
 	core::pose::PoseOP mypose( new core::pose::Pose(pose) );
 
 	// determine design positions based on the packer task
 	std::set<core::Size> design_shell;
-	for ( core::Size i = 1; i <= mypose->total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= mypose->size(); ++i ) {
 		if ( packer_task_->design_residue(i) ) {
 			design_shell.insert(i);
 		}
@@ -227,7 +227,7 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 		}
 	}
 
-	for ( core::Size i = 1; i <= mypose->total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= mypose->size(); i++ ) {
 		if ( repack_shell.find(i) != repack_shell.end() ) {
 			subset[ i ] = true;
 		}

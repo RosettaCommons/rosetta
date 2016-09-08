@@ -1599,7 +1599,7 @@ CartesianBondedEnergy::setup_for_scoring(
 	}
 
 	if ( create_new_lre_container ) {
-		Size nres = pose.total_residue();
+		Size nres = pose.size();
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 		}
@@ -1622,7 +1622,7 @@ CartesianBondedEnergy::idealize_proline_nvs(
 
 	// Idealize the NV atom of the prolines in the pose. This allows
 	// for safe switching between cartesian and non-cartesian poses
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.is_fullatom() && (pose.residue(i).aa() == core::chemical::aa_pro || pose.residue(i).aa() == core::chemical::aa_dpr) ) {
 			core::Size nv_index = pose.residue(i).atom_index(pro_nv_);
 			core::id::AtomID nv_id(nv_index, i);
@@ -1787,7 +1787,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 
 	//fpd now handled by intrares
 	// cterm special case
-	//Size nres = pose.total_residue();
+	//Size nres = pose.size();
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
 	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 	//}
@@ -1841,7 +1841,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 
 	core::Size resid = rsd.seqpos();
 	//i+1 residue is either D-proline or L-proline
-	bool preproline = resid+1 < pose.total_residue() && pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
+	bool preproline = resid+1 < pose.size() && pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
 		(pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr);
 
 	// phi/psi
@@ -2026,7 +2026,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	//fpd this logic is now handled in eval_intrares_energy
 	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the last residue
-	//Size nres = pose.total_residue();
+	//Size nres = pose.size();
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
 	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 	//}

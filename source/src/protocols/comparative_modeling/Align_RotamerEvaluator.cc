@@ -55,7 +55,7 @@ rots_from_pose(
 	using utility::vector1;
 
 	vector1< RotVector > rots;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		RotVector rot;
 		rotamer_from_chi( pose.residue(ii), rot );
 		rots.push_back( rot );
@@ -72,7 +72,7 @@ chis_from_pose(
 	using utility::vector1;
 
 	vector1< vector1< Real > > chis;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		vector1< Real > chi_vec;
 		core::Size const n_chi( pose.residue_type(ii).nchi() );
 		for ( Size jj = 1; jj <= n_chi; ++jj ) {
@@ -104,11 +104,11 @@ Align_RotamerEvaluator::apply(
 
 	Size n_ali(0);
 	Real const max_dev( chi_dev() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Size const native_ii( mapping[ii] );
 		bool skip(
 			native_ii == 0 ||
-			native_ii > native_pose()->total_residue()
+			native_ii > native_pose()->size()
 		);
 		if ( !skip ) {
 			++n_ali;
@@ -137,9 +137,9 @@ Align_RotamerEvaluator::apply(
 	} // for residues
 
 	Real const coverage(
-		(Real) (n_ali) / (Real) (native_pose()->total_residue())
+		(Real) (n_ali) / (Real) (native_pose()->size())
 	);
-	Size const native_nres( native_pose()->total_residue() );
+	Size const native_nres( native_pose()->size() );
 	for ( Size ii = 1; ii <= n_chis_equiv.size(); ++ii ) {
 		using std::string;
 		using ObjexxFCL::string_of;

@@ -116,7 +116,7 @@ main( int argc, char * argv [] )
 			core::pose::PoseOP a_pose = new core::pose::Pose();
 			if( native_pose() == NULL ) atdiff.read_pose(tag, *a_pose);
 			else atdiff.read_pose(tag, *a_pose, *native_pose);
-			core::Size const last_rsd = a_pose->total_residue();
+			core::Size const last_rsd = a_pose->size();
 			// Compute rms to all existing cluster centers
 			core::Real rms = 1e99;
 			utility::vector1 < core::Real > rms_list;
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
 		core::Real max_rms = 0;
 		for(core::Size i = 1; i <= lowclust_poses.size(); ++i) {
 			for(core::Size j = i+1; j <= lowclust_poses.size(); ++j) {
-				core::Size const last_rsd = lowclust_poses[j]->total_residue();
+				core::Size const last_rsd = lowclust_poses[j]->size();
 				core::Real const this_rms = core::scoring::automorphic_rmsd(lowclust_poses[j]->residue(last_rsd), lowclust_poses[i]->residue(last_rsd), false /*don't superimpose*/);
 				max_rms = std::max(max_rms, this_rms);
 			}

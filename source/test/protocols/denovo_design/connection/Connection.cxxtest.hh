@@ -169,7 +169,7 @@ public:
 		check_unwanted_movement( *orig, *sd );
 		orig = sd->attach_pose( sd->pose() );
 		TS_ASSERT_EQUALS( sd->pose().conformation().num_chains(), 3 );
-		TS_ASSERT_EQUALS( sd->pose().total_residue(), 44 );
+		TS_ASSERT_EQUALS( sd->pose().size(), 44 );
 		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).nterm_included(), false );
 		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).cterm_included(), true );
 		TS_ASSERT_EQUALS( sd->segment( "bridge" ).nterm_included(), true );
@@ -196,7 +196,7 @@ public:
 		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		check_unwanted_movement( *orig, *sd );
 		TS_ASSERT_EQUALS( sd->pose().conformation().num_chains(), 2 );
-		TS_ASSERT_EQUALS( sd->pose().total_residue(), 42 );
+		TS_ASSERT_EQUALS( sd->pose().size(), 42 );
 		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).nterm_included(), false );
 		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).cterm_included(), true );
 		TS_ASSERT_EQUALS( sd->segment( "bridge" ).nterm_included(), true );
@@ -234,7 +234,7 @@ public:
 		TS_ASSERT_EQUALS( sd->segment( "bridge" ).elem_length(), 10 );
 		TS_ASSERT_EQUALS( sd->segment( "bridge" ).length(), 10 );
 		TS_ASSERT_EQUALS( sd->pose().conformation().num_chains(), 1 );
-		TS_ASSERT_EQUALS( sd->pose().total_residue(), 40 );
+		TS_ASSERT_EQUALS( sd->pose().size(), 40 );
 		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).nterm_included(), false );
 		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).cterm_included(), true );
 		TS_ASSERT_EQUALS( sd->segment( "bridge" ).nterm_included(), true );
@@ -376,7 +376,7 @@ public:
 		TS_ASSERT_EQUALS( conn.build_right( *sd2 ), sd2->segment( "bridge_1" ).cterm_resi() );
 
 		// make sure residue were added: 10 residue loop
-		TS_ASSERT_EQUALS( sd2->pose().total_residue(), sd->pose().total_residue() + conn.build_len( *sd2 ) );
+		TS_ASSERT_EQUALS( sd2->pose().size(), sd->pose().size() + conn.build_len( *sd2 ) );
 
 		// make sure the right amount of residues are added on either side of the loop
 		TS_ASSERT_EQUALS( sd2->segment( conn.loop_lower( *sd2 ) ).stop() - sd2->segment( conn.loop_lower( *sd2 ) ).start() + 1, conn.cut_resi( *sd2 ) );

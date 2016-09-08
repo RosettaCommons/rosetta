@@ -204,7 +204,7 @@ WorkUnit_LoopHash::run()
 	loopres.resize( 0 );
 	core::Size const looplen = library_->hash_sizes()[0];
 	for ( core::Size ires = get_start();
-			ires <= std::min( pose.total_residue(), get_end()+looplen ); ++ires ) {
+			ires <= std::min( pose.size(), get_end()+looplen ); ++ires ) {
 		loopres.push_back(ires);
 	}
 
@@ -374,7 +374,7 @@ WorkUnit_FragInsert::run()
 			tofa->apply( pose_work );
 
 			// reconstruct non-loop region
-			for ( core::Size ires = 1; ires <= pose_work.total_residue(); ++ires ) {
+			for ( core::Size ires = 1; ires <= pose_work.size(); ++ires ) {
 				if ( ires >= get_res1() && ires <= get_res2() ) continue;
 
 				for ( core::Size j=1; j<=pose.residue_type(ires).natoms(); ++j ) {
@@ -465,7 +465,7 @@ WorkUnit_KicCloser::run()
 	// extended loopres
 	utility::vector1< core::Size > loopresext( loopres );
 	if ( get_res1() > 1 ) loopresext.push_back( get_res1() - 1 );
-	if ( get_res2() < pose.total_residue() ) loopresext.push_back( get_res2() + 1 );
+	if ( get_res2() < pose.size() ) loopresext.push_back( get_res2() + 1 );
 
 	// Starts here
 	// 1. Score function setup
@@ -507,7 +507,7 @@ WorkUnit_KicCloser::run()
 		if ( pose_work.is_centroid() ) {
 			tofa->apply( pose_work );
 			// reconstruct non-loop region
-			for ( core::Size ires = 1; ires <= pose_work.total_residue(); ++ires ) {
+			for ( core::Size ires = 1; ires <= pose_work.size(); ++ires ) {
 				if ( ires >= get_res1() && ires <= get_res2() ) continue;
 
 				for ( core::Size j=1; j<=pose.residue_type(ires).natoms(); ++j ) {
@@ -665,8 +665,8 @@ WorkUnit_PartialAbinitio::run()
 	//  - reduced repeats 2000->1000, considering small space to search
 
 	// 1. loop region / foldtree setup
-	utility::vector1< core::Real > residue_weights_3mer( pose0.total_residue(), 0.0 );
-	utility::vector1< core::Real > residue_weights_9mer( pose0.total_residue(), 0.0 );
+	utility::vector1< core::Real > residue_weights_3mer( pose0.size(), 0.0 );
+	utility::vector1< core::Real > residue_weights_9mer( pose0.size(), 0.0 );
 
 	bool contains_loop( false );
 
@@ -693,8 +693,8 @@ WorkUnit_PartialAbinitio::run()
 
 		// why is this happening - virtual residue at the Cterm??
 		// -1 : to avoid weird thing on virtual res at the Cterm...
-		if ( iloop == loopregions.size() && res2 < pose_work.total_residue()-1 ) {
-			chunk.add_loop( res2 + 1, pose_work.total_residue()-1 );
+		if ( iloop == loopregions.size() && res2 < pose_work.size()-1 ) {
+			chunk.add_loop( res2 + 1, pose_work.size()-1 );
 		}
 
 		res2_prv = res2;
@@ -706,7 +706,7 @@ WorkUnit_PartialAbinitio::run()
 	protocols::hybridization::HybridizeFoldtreeDynamic foldtree_mover;
 	foldtree_mover.initialize( pose_work, chunk, pairs, std_pos );
 
-	for ( core::Size ires = 1; ires <= pose_work.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose_work.size(); ++ires ) {
 		if ( !loopres.contains( ires ) ) {
 			constrain_residue( pose_work, ires,
 				loopres //"coordinate"
@@ -916,7 +916,7 @@ WorkUnit_PartialAbinitio::run()
 	// one more round on cart bonded
 	core::scoring::EnergyMap emap = pose_work.energies().total_energies();
 	core::Real cartbond = emap[ core::scoring::cart_bonded ];
-	if ( cartbond > pose_work.total_residue() ) {
+	if ( cartbond > pose_work.size() ) {
 		ramp_minpack_loop2( pose_work, loopres, sfxn_famin, true, false, false, 6.0 );
 	}
 

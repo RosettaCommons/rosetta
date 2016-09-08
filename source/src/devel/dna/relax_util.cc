@@ -77,7 +77,7 @@ setup_dna_chainbreak_constraints(
 	core::scoring::func::FuncOP const O3_angle_func( new core::scoring::func::HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees ) ) );
 	core::scoring::func::FuncOP const  P_angle_func( new core::scoring::func::HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
 
-	for ( Size i=1; i< pose.total_residue(); ++i ) {
+	for ( Size i=1; i< pose.size(); ++i ) {
 		Residue const & rsd1( pose.residue( i   ) );
 		Residue const & rsd2( pose.residue( i+1 ) );
 		if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {
@@ -111,7 +111,7 @@ choose_random_base_pair( pose::Pose const & pose )
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 	vector1< Size > bps;
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( partner[i] > i ) bps.push_back( i );
 	}
 	assert( bps.size() );
@@ -125,7 +125,7 @@ Size
 choose_random_base_step_jump( pose::Pose const & pose )
 {
 	vector1< Size > bs;
-	for ( Size i=1; i<= pose.total_residue()-1; ++i ) {
+	for ( Size i=1; i<= pose.size()-1; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_DNA() && !rsd.is_upper_terminus() && pose.fold_tree().jump_exists( i, i+1 ) ) {
 			bs.push_back( i );
@@ -154,7 +154,7 @@ add_dna_base_jumps_to_fold_tree(
 	using namespace id;
 	using namespace kinematics;
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	assert( f.nres() == nres );
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
@@ -250,7 +250,7 @@ set_dna_jump_atoms( pose::Pose & pose )
 	// I'm not actually sure that this is so important anymore
 	// I mean, it seems likely that this will in fact be the stub... but can't remember the details...
 	//
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_DNA() ) {
 			pose.conformation().set_jump_atom_stub_id( StubID ( AtomID( rsd.chi_atoms(1)[4], i ),
@@ -275,7 +275,7 @@ setup_dna_only_fold_tree( pose::Pose & jump_pose, bool const flip)
 
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( jump_pose ) );
-	Size const nres( jump_pose.total_residue() );
+	Size const nres( jump_pose.size() );
 	if ( nres%2 != 0 ) utility_exit_with_message( "bad-dna-only-pose!" );
 	Size const npairs( nres/ 2 );
 	FoldTree f( nres );
@@ -340,7 +340,7 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 
 	jump_pose.clear();
 
-	Size const nres( start_pose.total_residue() );
+	Size const nres( start_pose.size() );
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( start_pose ) );
 
@@ -370,12 +370,12 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 		}
 	}
 
-	Size const npairs( jump_pose.total_residue() / 2 );
+	Size const npairs( jump_pose.size() / 2 );
 	jump_pose.conformation().insert_chain_ending( npairs );
 	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS_VARIANT, npairs+1 );
 	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::UPPER_TERMINUS_VARIANT, npairs );
-	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::UPPER_TERMINUS_VARIANT, jump_pose.total_residue() );
+	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::UPPER_TERMINUS_VARIANT, jump_pose.size() );
 
 	td << "jump_pose foldtree: " << jump_pose.fold_tree() << std::endl;
 	set_base_partner( jump_pose );
@@ -392,7 +392,7 @@ delete_unpaired_bases( pose::Pose & pose )
 {
 	using namespace kinematics;
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	vector1< bool > delete_me( nres, false );
 	{
 		scoring::dna::BasePartner const & partner( scoring::dna::retrieve_base_partner_from_pose( pose ) );
@@ -461,12 +461,12 @@ delete_unpaired_bases( pose::Pose & pose )
 		}
 	}
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( i>1 && rsd.is_DNA() && pose.chain(i-1) != pose.chain(i) && !rsd.is_lower_terminus() ) {
 			tt << "adding lower terminus variant: " << i << std::endl;
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
-		} else if ( i< pose.total_residue() && rsd.is_DNA() && pose.chain(i) != pose.chain(i+1) && !rsd.is_upper_terminus() ) {
+		} else if ( i< pose.size() && rsd.is_DNA() && pose.chain(i) != pose.chain(i+1) && !rsd.is_upper_terminus() ) {
 			tt << "adding upper terminus variant: " << i << std::endl;
 			core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
 		}

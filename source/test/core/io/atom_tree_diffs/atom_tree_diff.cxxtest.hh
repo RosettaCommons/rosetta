@@ -68,7 +68,7 @@ public:
 		using numeric::random::rg;
 		modified_pose = start_pose; // make a copy
 		for ( int i = 0; i < 20; ++i ) {
-			Size rsd_no = rg().random_range( 1, modified_pose.total_residue() );
+			Size rsd_no = rg().random_range( 1, modified_pose.size() );
 			modified_pose.set_phi( rsd_no, 10*rg().gaussian() + modified_pose.phi(rsd_no) );
 			modified_pose.set_psi( rsd_no, 10*rg().gaussian() + modified_pose.psi(rsd_no) );
 			Size num_chi = modified_pose.residue(rsd_no).nchi();
@@ -85,7 +85,7 @@ public:
 		// Now mutate it a little for good measure (can't do RMS to orig after this)
 		for ( int i = 0; i < 10; ++i ) {
 			// Don't mutate the ends because they're variant residue types
-			Size rsd_no = rg().random_range( 2, modified_pose.total_residue()-1 );
+			Size rsd_no = rg().random_range( 2, modified_pose.size()-1 );
 			using namespace core::conformation;
 			ResidueOP newres = ResidueFactory::create_residue(
 				modified_pose.residue(rsd_no).residue_type_set()->name_map("LYS"),

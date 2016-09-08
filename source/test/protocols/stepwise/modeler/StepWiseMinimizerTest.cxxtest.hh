@@ -113,7 +113,7 @@ public:
 
 			TS_ASSERT( stepwise_minimizer.working_pack_res().has_value( Size(86) ) );  // 2'-OH for nearby residues
 			TS_ASSERT( stepwise_minimizer.working_pack_res().has_value( Size(58) ) );  // protein side-chain for nearby residues
-			TS_ASSERT_LESS_THAN( stepwise_minimizer.working_pack_res().size(), pose.total_residue() );  // but do not pack all residues.
+			TS_ASSERT_LESS_THAN( stepwise_minimizer.working_pack_res().size(), pose.size() );  // but do not pack all residues.
 		}
 
 		{

@@ -126,7 +126,7 @@ main( int argc, char* argv[] )
 		pose.append_residue_by_bond( *new Residue( rts->name_map("C00"), true ), true );
 		pose.append_residue_by_bond( *new Residue( rts->name_map("C12"), true ), true );
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, -150 );
 			pose.set_psi( i,  150 );
 			pose.set_omega( i,  180 );

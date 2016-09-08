@@ -361,7 +361,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 
 		// fix ligands
 		if ( fix_ligands_ ) {
-			for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+			for ( int i=1; i<=(int)pose.size(); ++i ) {
 				if ( pose.residue(i).is_ligand() ) {
 					mm.set_bb( false );
 					mm.set_chi( false );

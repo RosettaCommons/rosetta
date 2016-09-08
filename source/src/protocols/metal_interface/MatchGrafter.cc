@@ -96,7 +96,7 @@ MatchGrafter::graft( Pose & match,
 	}
 	Pose partner(partner_ungrafted);
 
-	partner.append_residue_by_jump(match.residue(match.pdb_info()->nres()/*metal*/), partner.total_residue());
+	partner.append_residue_by_jump(match.residue(match.pdb_info()->nres()/*metal*/), partner.size());
 	// partner.dump_pdb("3UBQ_graft.pdb");
 
 	return partner;
@@ -109,16 +109,16 @@ MatchGrafter::build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & par
 	// keep in mind that zinc as been appended to both partners, thus adding a residue
 	// zinc of partner 1 will be retained in combined pose
 	// zinc of partner 2 (p2_zinc) is only needed to overlay the two zinc atoms
-	core::Size metal_res_num = partner1.total_residue();
-	//core::Size partner1length = partner1.total_residue() - 1;
-	core::Size partner2length = partner2.total_residue() - 1;
+	core::Size metal_res_num = partner1.size();
+	//core::Size partner1length = partner1.size() - 1;
+	core::Size partner2length = partner2.size() - 1;
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//set up partner1 fold tree to allow zinc atoms to superimpose
 	//moving the zinc will move the whole pose (our intention)
-	core::kinematics::FoldTree tree(partner2.total_residue());
+	core::kinematics::FoldTree tree(partner2.size());
 	tree.clear();
-	int const p2_zinc( partner2.total_residue() ); // zinc is last residue of partner2, after it's been grafted
+	int const p2_zinc( partner2.size() ); // zinc is last residue of partner2, after it's been grafted
 	// note that 'partner2length' excludes the added zinc
 
 	using core::kinematics::Edge;

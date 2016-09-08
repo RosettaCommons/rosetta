@@ -73,7 +73,7 @@ static THREAD_LOCAL basic::Tracer TR( "rblinker2_overlay_bound" );
 
 
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
-// 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+// 	for(Size ir = 1; ir <= pose.size(); ++ir) {
 // 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 // 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 // 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
@@ -147,7 +147,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {
+	for(int i = 0; i < min( 16, (int)pose.size() ); ++i) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -163,7 +163,7 @@ unsigned long pose2bin(core::pose::Pose const & pose) {
 
 Size get_aln_resi(core::pose::Pose const & pose, core::Size const aln_chain, char const aln_termi) {
 	Size resi = 0, nnt = 0, nct = 0;
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if(pose.residue(i).is_lower_terminus()) {
 			nnt++;
 			if(aln_termi=='N' && nnt==aln_chain) {
@@ -187,7 +187,7 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	Pose lnk;
 	string ggs = "GGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGS";
 	make_pose_from_sequence( lnk , "A"+ggs.substr(0,len)+"A" , *resset , true);
-	for(Size i = 1; i <= lnk.n_residue(); ++i) {
+	for(Size i = 1; i <= lnk.size(); ++i) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
@@ -196,27 +196,27 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	if(ft.num_jump() != 0) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
-	cuts(1) = lnk.n_residue()/2;
+	cuts(1) = lnk.size()/2;
 	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);
 	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_UPPER",cuts(1)+1);
 	jump_point(1,1) = 1;
-	jump_point(2,1) = lnk.n_residue();
-	ft.tree_from_jumps_and_cuts( lnk.n_residue(), 1, jump_point, cuts );
+	jump_point(2,1) = lnk.size();
+	ft.tree_from_jumps_and_cuts( lnk.size(), 1, jump_point, cuts );
 	ft.set_jump_atoms(1,"N","C");
 	lnk.fold_tree(ft);
 
 	xform_pose(lnk, getxform(lnk.residue(     1         ),alnpose.residue(1)) );
-	xform_pose(lnk, getxform(lnk.residue(lnk.n_residue()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
+	xform_pose(lnk, getxform(lnk.residue(lnk.size()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
 
-	if( oldlnk.n_residue() != 0 && oldlnk.n_residue()+1 == lnk.n_residue()) {
+	if( oldlnk.size() != 0 && oldlnk.size()+1 == lnk.size()) {
 		Size c = oldlnk.fold_tree().cutpoint(1);
 		for(Size i = 1; i <= c; ++i) {
 			lnk.set_phi(i, oldlnk.phi(i) );
 			lnk.set_psi(i, oldlnk.psi(i) );
 		}
-		for(Size i = 0; i < oldlnk.n_residue()-c; ++i) {
-			lnk.set_phi(lnk.n_residue()-i, oldlnk.phi(oldlnk.n_residue()-i) );
-			lnk.set_psi(lnk.n_residue()-i, oldlnk.psi(oldlnk.n_residue()-i) );
+		for(Size i = 0; i < oldlnk.size()-c; ++i) {
+			lnk.set_phi(lnk.size()-i, oldlnk.phi(oldlnk.size()-i) );
+			lnk.set_psi(lnk.size()-i, oldlnk.psi(oldlnk.size()-i) );
 		}
 		// lnk.dump_pdb("lnk.pdb");
 		// oldlnk.dump_pdb("oldlnk.pdb");
@@ -280,7 +280,7 @@ bool bound_petf_clash(
 	core::kinematics::Stub xhyd = getxform(hyd.residue(hydalnhyd),lnk.residue(hydalnlnk));
 
 	// check lnk against both petf
-	for(Size ir = 1; ir <= lnk.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= lnk.size(); ++ir) {
 		for(Size ia = 1; ia <= lnk.residue(ir).nheavyatoms(); ++ia) {
 			if( !psi_ifc.clash_check( xpsi.global2local( lnk.residue(ir).xyz(ia) ) ) ) {
 				psipetflnkclash = true;
@@ -292,7 +292,7 @@ bool bound_petf_clash(
 	}
 
 	// check hyd (lnk aln) against petf (bound to psi),
-	for(Size ir = 1; ir <= hyd.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= hyd.size(); ++ir) {
 		for(Size ia = 1; ia <= 5; ++ia) {
 			if( !psi_ifc.clash_check( xpsi.global2local( xhyd.local2global( hyd.residue(ir).xyz(ia) ) ) ) ) {
 				psipetfhydclash = true;
@@ -301,7 +301,7 @@ bool bound_petf_clash(
 	}
 
 	// check psi (lnk aln) against petf (bound to hyd),
-	for(Size ir = 1; ir <= psi.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= psi.size(); ++ir) {
 		for(Size ia = 1; ia <= 5; ++ia) {
 			if( !hyd_ifc.clash_check( xhyd.global2local( xpsi.local2global( psi.residue(ir).xyz(ia) ) ) ) ) {
 				hydpetfpsiclash = true;
@@ -342,7 +342,7 @@ void* doit(void*) {
 	TR << "linker2 size " << linklen2 << " seq2: " << seq2 << std::endl;
 
 	make_pose_from_sequence(lnk,seq1,*cenresset,true);
-	for(Size i = 1; i <= lnk.n_residue(); ++i) {
+	for(Size i = 1; i <= lnk.size(); ++i) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
@@ -386,13 +386,13 @@ void* doit(void*) {
 
 	protocols::moves::MoverOP bbmove;
 	string const bb_samp_method = option[ rblinker::bb_samp_method ]();
-	/**/ if( "simplegaussian1"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(), 1.0); TR << "bb_samp_method bbg1"    << std::endl; }
-	else if( "simplegaussian5"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(), 5.0); TR << "bb_samp_method bbg5"    << std::endl; }
-	else if( "simplegaussian10" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(),10.0); TR << "bb_samp_method bbg10"   << std::endl; }
-	else if( "simplegaussian20" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(),20.0); TR << "bb_samp_method bbg20"   << std::endl; }
-	else if( "simplegaussian30" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(),30.0); TR << "bb_samp_method bbg30"   << std::endl; }
-	else if( "simplegaussian60" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(),60.0); TR << "bb_samp_method bbg60"   << std::endl; }
-	else if( "uniform"          == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(), 9e6); TR << "bb_samp_method uniform" << std::endl; }
+	/**/ if( "simplegaussian1"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 1.0); TR << "bb_samp_method bbg1"    << std::endl; }
+	else if( "simplegaussian5"  == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 5.0); TR << "bb_samp_method bbg5"    << std::endl; }
+	else if( "simplegaussian10" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),10.0); TR << "bb_samp_method bbg10"   << std::endl; }
+	else if( "simplegaussian20" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),20.0); TR << "bb_samp_method bbg20"   << std::endl; }
+	else if( "simplegaussian30" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),30.0); TR << "bb_samp_method bbg30"   << std::endl; }
+	else if( "simplegaussian60" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(),60.0); TR << "bb_samp_method bbg60"   << std::endl; }
+	else if( "uniform"          == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.size(), 9e6); TR << "bb_samp_method uniform" << std::endl; }
 	else if( "bbg8t3a"          == bb_samp_method ) { bbmove = new protocols::simple_moves::BBG8T3AMover();      TR << "bb_samp_method bbg8t3a" << std::endl; }
 	else if( "jump"             == bb_samp_method ) {
 		TR << "bb_samp_method jump" << std::endl;
@@ -402,8 +402,8 @@ void* doit(void*) {
 			ObjexxFCL::FArray1D_int cuts(1);
 			cuts(1) = 1;
 			jump_point(1,1) = 1;
-			jump_point(2,1) = lnk.n_residue();
-			ft.tree_from_jumps_and_cuts( lnk.n_residue(), 1, jump_point, cuts );
+			jump_point(2,1) = lnk.size();
+			ft.tree_from_jumps_and_cuts( lnk.size(), 1, jump_point, cuts );
 			lnk.fold_tree(ft);
 		}
 		bbmove = new rigid::RigidBodyPerturbMover(1, 10.0, 1.0);
@@ -411,7 +411,7 @@ void* doit(void*) {
 	else utility_exit_with_message("unknown option value for -rblinker:bb_samp_methd");
 
 	TR << "try to find starting config without clash...." << std::endl;
-	MoverOP bigbbmove = new SimpleBBMover(1,lnk.n_residue(),9e6);
+	MoverOP bigbbmove = new SimpleBBMover(1,lnk.size(),9e6);
 	if( "jump" == bb_samp_method ) bigbbmove = bbmove;
 	for(int precount = 1; precount < option[rblinker::nclashtrials](); precount++ ) {
 		bigbbmove->apply(lnk);

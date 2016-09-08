@@ -210,7 +210,6 @@ Pose.__iter__ = _Pose_residue_iterator
 #     '''
 #     Pose.get = lambda x: x
 
-
 # Vector compatibility: Adding 'extend' to all utility.vector* functions
 def _vector_extend_func(vec, othervec):
     for i in othervec: vec.append(i)
@@ -326,7 +325,6 @@ def standard_packer_task(pose):
 # for backward-compatibility
 #def pose_from_pdb(filename):
 #    return pose_from_file(filename)
-
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     """

@@ -167,7 +167,7 @@ public:
 		// show have same # of chains that we started with
 		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), pose.conformation().num_chains() );
 		// should have 8 more residues
-		TS_ASSERT_EQUALS( input_pose.total_residue() + 8, pose.total_residue() );
+		TS_ASSERT_EQUALS( input_pose.size() + 8, pose.size() );
 		// should not have any linear chainbreak
 		TS_ASSERT_DELTA( linear_chainbreak( pose, sd.segment( "sheet1.s2" ).upper() ), 0.0, 1e-1 );
 	}
@@ -213,7 +213,7 @@ public:
 		// show have same # of chains that we started with
 		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), pose.conformation().num_chains() );
 		// should have 8 more residues
-		TS_ASSERT_EQUALS( input_pose.total_residue() + 8, pose.total_residue() );
+		TS_ASSERT_EQUALS( input_pose.size() + 8, pose.size() );
 		// should not have any linear chainbreak
 		TS_ASSERT_DELTA( linear_chainbreak( pose, sd.segment( e_id ).upper() ), 0.0, 1e-1 );
 	}

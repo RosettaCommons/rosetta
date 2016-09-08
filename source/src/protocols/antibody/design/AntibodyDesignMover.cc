@@ -591,7 +591,7 @@ AntibodyDesignMover::setup_epitope_residues(const Pose & pose){
 	//This is so we setup epitope at the very beginning of the protocol.
 	if ( epitope_residues_.size() == 0 ) {
 		vector1<bool> epitope = select_epitope_residues(ab_info_, pose, interface_dis_);
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( ! epitope[i] ) continue;
 
 			PDBNumbering numbering;
@@ -882,13 +882,13 @@ AntibodyDesignMover::run_graft(core::pose::Pose& pose, CDRNameEnum const cdr, CD
 	core::Size nter_flex = grafter->get_nterm_insert_flexibility();
 	core::Size cter_flex = grafter->get_cterm_insert_flexibility();
 	grafter->set_piece(*cdr_pose.pose, overhang_, overhang_);
-	if ( cdr_pose.pose->total_residue() - overhang_ - overhang_ <= 4 ) {
+	if ( cdr_pose.pose->size() - overhang_ - overhang_ <= 4 ) {
 		grafter->set_insert_flexibility(1, 1);
 	}
 	grafter->apply(pose);
 	grafter->set_insert_flexibility(nter_flex, cter_flex);
 
-	//pose.pdb_info()->copy(*(cdr_pose.pose->pdb_info()), 1 + overhang_, cdr_pose.pose->total_residue()-overhang_, grafter->start()+1);
+	//pose.pdb_info()->copy(*(cdr_pose.pose->pdb_info()), 1 + overhang_, cdr_pose.pose->size()-overhang_, grafter->start()+1);
 	//pose.pdb_info()->obsolete(false);
 
 	//Debugging cartesian+relax bug.  First, force removal of all cutpoint variants in the pose. Any cuts should be termini here.

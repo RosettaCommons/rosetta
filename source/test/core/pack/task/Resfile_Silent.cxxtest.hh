@@ -84,7 +84,7 @@ public:
 	bool compare_packertasks( PackerTask const & tA, PackerTask const & tB )
 	{
 		TR << tA << std::endl;
-		TS_ASSERT_EQUALS( tA.total_residue(), tA.total_residue() );
+		TS_ASSERT_EQUALS( tA.total_residue(), tB.total_residue() );
 		for ( int i=1, it_end = tA.total_residue(); i <= it_end; ++i ) {
 			TS_ASSERT_EQUALS( tA.pack_residue( i ), tB.pack_residue( i ) );
 			TS_ASSERT_EQUALS( tA.design_residue( i ), tB.design_residue( i ) );

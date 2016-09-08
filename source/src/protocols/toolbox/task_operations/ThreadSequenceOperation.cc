@@ -82,10 +82,10 @@ ThreadSequenceOperation::apply( core::pose::Pose const & pose, core::pack::task:
 	using core::pack::task::operation::RestrictAbsentCanonicalAAS;
 	using namespace core::chemical;
 
-	runtime_assert( target_sequence().length() + start_res() -1 <= pose.total_residue() );
+	runtime_assert( target_sequence().length() + start_res() -1 <= pose.size() );
 	core::pack::task::operation::RestrictResidueToRepacking rtr;
 	bool activated_rtr( false );
-	for ( core::Size resi( 1 ); resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi( 1 ); resi <= pose.size(); ++resi ) {
 		if ( resi >= start_res() && resi <= start_res() + target_sequence_.length() - 1 ) {
 			if ( target_sequence_[ resi - start_res() ] == 'x' ) continue; // allows for 'wildcard' residues that can be allowed to design to anything within the threaded sequence
 			if ( target_sequence_[ resi - start_res() ] == ' ' || target_sequence_[ resi - start_res() ] == '_' ) { /// only repack this residue

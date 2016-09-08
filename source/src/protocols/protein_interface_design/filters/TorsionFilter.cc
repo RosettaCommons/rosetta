@@ -59,7 +59,7 @@ Torsion::apply(core::pose::Pose const & pose ) const
 		return true;
 	} else if ( resnum() == 0 ) { // just print all torsions
 		std::stringstream s("");
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( i % 5 == 0 ) s << pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
 			TR<<"Residue "<<pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
 			if ( torsion() == "phi" || torsion() == "" ) {

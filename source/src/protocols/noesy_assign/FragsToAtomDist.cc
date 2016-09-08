@@ -178,7 +178,7 @@ void initialize_group_list(
 )
 {
 	MethylNameLibrary const & methyl_lib( *MethylNameLibrary::get_instance() );
-	for ( core::Size pos =1; pos<=pose.total_residue(); pos++ ) {
+	for ( core::Size pos =1; pos<=pose.size(); pos++ ) {
 		core::chemical::ResidueType const& rsd(pose.residue_type( pos ));
 		//  std::string name( utility::trim( pose.residue_type( pos ).atom_name( iatom1 ) ) );
 		MethylNames const& methyls( methyl_lib[ rsd.aa() ] );
@@ -458,7 +458,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 	core::pose::Pose pose;
 	core::pose::make_pose_from_sequence( pose, sequence_, core::chemical::FA_STANDARD, true );
 
-	//SizeList natoms( pose.total_residue(), 0);
+	//SizeList natoms( pose.size(), 0);
 	// initialize_natoms( natoms, pose );
 
 	GroupList proton_groups;

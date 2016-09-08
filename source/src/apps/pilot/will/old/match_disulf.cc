@@ -187,7 +187,7 @@ int main(int argc, char *argv[]) {
 	jumps(1,2) =  1  ; jumps(2,2) = 271;
 	jumps(1,3) =  141; jumps(2,3) = 272;
 	core::kinematics::FoldTree ft = pose.fold_tree();
-	ft.tree_from_jumps_and_cuts( pose.n_residue(), 3, jumps, cuts, 271 );
+	ft.tree_from_jumps_and_cuts( pose.size(), 3, jumps, cuts, 271 );
 	ft.reorder(271);
 	pose.fold_tree(ft);
 	std::cerr << "FT " << pose.fold_tree() << std::endl;
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
 
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->init_from_file( basic::options::option[basic::options::OptionKeys::in::file::movemap]() );
-	for( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for( Size i = 1; i <= pose.size(); ++i ) {
 		core::id::AtomID anchor(1,271);
 		if(i > 140) anchor.rsd() = 272;
 		if( ! mm->get_bb(i) ) addcc(pose,core::id::AtomID(2,i),anchor,100.0);

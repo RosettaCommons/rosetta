@@ -165,9 +165,9 @@ SidechainMCMover::apply(
 	score_pre_apply_ = current_energy;
 	init_task(pose);
 
-	current_.resize(pose.total_residue());
-	previous_.resize(pose.total_residue());
-	best_.resize(pose.total_residue());
+	current_.resize(pose.size());
+	previous_.resize(pose.size());
+	best_.resize(pose.size());
 	runtime_assert(temperature_ != 0);
 	runtime_assert(ntrials_ != 0);
 	runtime_assert(packed_residues().size() > 0);
@@ -184,7 +184,7 @@ SidechainMCMover::apply(
 	pose::Pose dummy(pose);
 
 
-	for ( core::Size itr = 1; itr <= pose.total_residue(); itr++ ) {
+	for ( core::Size itr = 1; itr <= pose.size(); itr++ ) {
 		current_[ itr ] = core::conformation::ResidueOP( new core::conformation::Residue(pose.residue( itr )) );
 	}
 

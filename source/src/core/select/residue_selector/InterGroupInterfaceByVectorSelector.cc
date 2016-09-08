@@ -296,7 +296,7 @@ InterGroupInterfaceByVectorSelector::set_from_residue_selector(
 {
 	subset.clear();
 	ResidueSubset ressubset = selector.apply( pose );
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ressubset[ ii ] ) {
 			subset.insert( ii );
 		}

@@ -328,9 +328,9 @@ append_radius_of_gyration(
 	core::Real lig_rg = 0;
 	int lig_rg_natoms = 0;
 	core::Vector const before_vector= protocols::geometry::downstream_centroid_by_jump(before, jump_id);
-	FArray1D_bool is_upstream ( before.total_residue(), false );
+	FArray1D_bool is_upstream ( before.size(), false );
 	before.fold_tree().partition_by_jump( jump_id, is_upstream );
-	for ( core::Size i = 1, i_end = before.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = before.size(); i <= i_end; ++i ) {
 		if ( is_upstream(i) ) continue; // only downstream residues
 		core::conformation::Residue const & rsd = before.residue(i);
 		for ( core::Size j = 1, j_end = rsd.nheavyatoms(); j <= j_end; ++j ) {

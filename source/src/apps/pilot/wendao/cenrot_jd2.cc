@@ -249,7 +249,7 @@ public:
 
 	void apply( Pose & p )
 	{
-		for ( core::Size i=1; i<= p.total_residue(); ++i ) {
+		for ( core::Size i=1; i<= p.size(); ++i ) {
 			Residue const & rsd( p.residue(i) );
 			/// for each residue, find out the dof-id of CEN
 			id::DOF_ID id_dis(id::AtomID(p.residue(i).atom_index("CEN"), i), id::D);
@@ -360,7 +360,7 @@ public:
 	void apply( Pose &pose )
 	{
 		//radomly select a residue
-		Size const nres( pose.n_residue() );
+		Size const nres( pose.size() );
 		Size mobile_index;
 
 		//pick random res other than GLY/ALA
@@ -879,7 +879,7 @@ public:
 
 		if ( option[min::cartesian] ) {
 			//setup movemap for cartmin: only alows CEN move
-			Size const n_res( p.n_residue() );
+			Size const n_res( p.size() );
 			for ( Size i=1; i<=n_res; i++ ) {
 				core::conformation::Residue const &res_i = p.residue(i);
 				//it's a hack, for telling minimizer move only CEN, rather than the whole sidechain
@@ -892,7 +892,7 @@ public:
 		} else {
 			//setup movemap for atomtree: D,THETA,CHI of CEN
 			mm.set_chi(true);
-			for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= p.size(); ++ii ) {
 				core::conformation::Residue const &res_i = p.residue(ii);
 				if ( res_i.aa()!=chemical::aa_gly
 						&& res_i.aa()!=chemical::aa_ala
@@ -948,7 +948,7 @@ public:
 			core::optimization::AtomTreeMinimizer minimizer;
 
 			//setup movemap for sidechain
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				if ( res_i.aa()!=chemical::aa_gly
 						&& res_i.aa()!=chemical::aa_ala
@@ -1055,7 +1055,7 @@ public:
 			core::optimization::AtomTreeMinimizer minimizer;
 
 			//setup movemap for sidechain
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
 				if ( res_i.aa()!=chemical::aa_gly
 						&& res_i.aa()!=chemical::aa_ala

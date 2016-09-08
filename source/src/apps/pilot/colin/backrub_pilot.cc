@@ -165,11 +165,11 @@ read_fold_tree_from_file(
 	core::kinematics::FoldTree foldtree;
 
 	if ( read_fold_tree_from_file(foldtree, filepath) ) {
-		if ( foldtree.nres() == pose.total_residue() ) {
+		if ( foldtree.nres() == pose.size() ) {
 			pose.fold_tree(foldtree);
 			return true;
 		} else {
-			TR << "Different number of residues in Pose (" << pose.total_residue() << ") and FoldTree (" << foldtree.nres()
+			TR << "Different number of residues in Pose (" << pose.size() << ") and FoldTree (" << foldtree.nres()
 				<< ")" << std::endl;
 		}
 	}
@@ -200,10 +200,10 @@ positions_incompatible_with_task(
 {
 	utility::vector1<core::Size> incompatible_positions;
 
-	assert(pose.total_residue() == packertask.total_residue());
+	assert(pose.size() == packertask.total_residue());
 
 	// iterate over all residues to see if they're compatible
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		// only check packable residues for compatibility
 		if ( packertask.pack_residue(i) ) {

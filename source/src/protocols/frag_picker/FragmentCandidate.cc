@@ -274,7 +274,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, st
 		relax_pose.conformation().detect_disulfides();
 		relax_pose.conformation().detect_bonds();
 
-		utility::vector1< bool > needToRepack( relax_pose.total_residue(), true );
+		utility::vector1< bool > needToRepack( relax_pose.size(), true );
 		core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( relax_pose );
 		taskstd->restrict_to_repacking();
 		taskstd->or_include_current(true);

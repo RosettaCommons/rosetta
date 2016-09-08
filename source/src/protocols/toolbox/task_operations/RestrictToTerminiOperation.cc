@@ -113,7 +113,7 @@ RestrictToTerminiOperation::apply(
 			"The pose does not contain the chain you have specified.");
 	}
 
-	vector1<bool> repack_residues(pose.total_residue(), false);
+	vector1<bool> repack_residues(pose.size(), false);
 
 	// N-terminus
 	if ( repack_n_terminus_ ) {

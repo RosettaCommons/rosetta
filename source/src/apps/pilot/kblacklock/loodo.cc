@@ -397,24 +397,24 @@ perturb( std::string round,
 		if ( pair == "ctf" ) {
 			std::map< core::id::AtomID, core::id::AtomID > res_map_ctf;
 
-			//res_map_ctf[2] = stationary_pose.total_residue(); //[cap] = frag
+			//res_map_ctf[2] = stationary_pose.size(); //[cap] = frag
 			core::id::AtomID c1_bb1( 1 , 2 );
-			core::id::AtomID f1_bb1( 1 , stationary_pose.total_residue() );
+			core::id::AtomID f1_bb1( 1 , stationary_pose.size() );
 			core::id::AtomID c1_bb2( 2 , 2 );
-			core::id::AtomID f1_bb2( 2 , stationary_pose.total_residue() );
+			core::id::AtomID f1_bb2( 2 , stationary_pose.size() );
 			core::id::AtomID c1_bb3( 3 , 2 );
-			core::id::AtomID f1_bb3( 3 , stationary_pose.total_residue() );
+			core::id::AtomID f1_bb3( 3 , stationary_pose.size() );
 			res_map_ctf[ c1_bb1 ] = f1_bb1;
 			res_map_ctf[ c1_bb2 ] = f1_bb2;
 			res_map_ctf[ c1_bb3 ] = f1_bb3;
 
-			//res_map_ctf[1] = stationary_pose.total_residue()-1;
+			//res_map_ctf[1] = stationary_pose.size()-1;
 			core::id::AtomID c2_bb1( 1 , 1 );
-			core::id::AtomID f2_bb1( 1 , stationary_pose.total_residue()-1 );
+			core::id::AtomID f2_bb1( 1 , stationary_pose.size()-1 );
 			core::id::AtomID c2_bb2( 2 , 1 );
-			core::id::AtomID f2_bb2( 2 , stationary_pose.total_residue()-1 );
+			core::id::AtomID f2_bb2( 2 , stationary_pose.size()-1 );
 			core::id::AtomID c2_bb3( 3 , 1 );
-			core::id::AtomID f2_bb3( 3 , stationary_pose.total_residue()-1 );
+			core::id::AtomID f2_bb3( 3 , stationary_pose.size()-1 );
 			res_map_ctf[ c2_bb1 ] = f2_bb1;
 			res_map_ctf[ c2_bb2 ] = f2_bb2;
 			res_map_ctf[ c2_bb3 ] = f2_bb3;
@@ -427,23 +427,23 @@ perturb( std::string round,
 		if ( pair == "ftb" ) {
 			std::map< core::id::AtomID, core::id::AtomID > res_map_ftb;
 
-			//res_map_ftb[moving_pose.total_residue()] = ins_end+1; //[frag] = bot
-			core::id::AtomID f1_bb1( 1 , moving_pose.total_residue() );
+			//res_map_ftb[moving_pose.size()] = ins_end+1; //[frag] = bot
+			core::id::AtomID f1_bb1( 1 , moving_pose.size() );
 			core::id::AtomID b1_bb1( 1 , ins_end+1 );
-			core::id::AtomID f1_bb2( 2 , moving_pose.total_residue() );
+			core::id::AtomID f1_bb2( 2 , moving_pose.size() );
 			core::id::AtomID b1_bb2( 2 , ins_end+1 );
-			core::id::AtomID f1_bb3( 3 , moving_pose.total_residue() );
+			core::id::AtomID f1_bb3( 3 , moving_pose.size() );
 			core::id::AtomID b1_bb3( 3 , ins_end+1 );
 			res_map_ftb[ f1_bb1 ] = b1_bb1;
 			res_map_ftb[ f1_bb2 ] = b1_bb2;
 			res_map_ftb[ f1_bb3 ] = b1_bb3;
 
-			//res_map_ftb[moving_pose.total_residue()-1] = ins_end;
-			core::id::AtomID f2_bb1( 1 , moving_pose.total_residue()-1 );
+			//res_map_ftb[moving_pose.size()-1] = ins_end;
+			core::id::AtomID f2_bb1( 1 , moving_pose.size()-1 );
 			core::id::AtomID b2_bb1( 1 , ins_end );
-			core::id::AtomID f2_bb2( 2 , moving_pose.total_residue()-1 );
+			core::id::AtomID f2_bb2( 2 , moving_pose.size()-1 );
 			core::id::AtomID b2_bb2( 3 , ins_end );
-			core::id::AtomID f2_bb3( 3 , moving_pose.total_residue()-1 );
+			core::id::AtomID f2_bb3( 3 , moving_pose.size()-1 );
 			core::id::AtomID b2_bb3( 3 , ins_end );
 			res_map_ftb[ f2_bb1 ] = b2_bb1;
 			res_map_ftb[ f2_bb2 ] = b2_bb2;
@@ -455,23 +455,23 @@ perturb( std::string round,
 		if ( pair == "ctf" ) {
 			std::map< core::id::AtomID, core::id::AtomID > res_map_ctf;
 
-			//res_map_ctf[moving_pose.total_residue()] = 2; //[cap] = frag
-			core::id::AtomID c1_bb1( 1 , moving_pose.total_residue() );
+			//res_map_ctf[moving_pose.size()] = 2; //[cap] = frag
+			core::id::AtomID c1_bb1( 1 , moving_pose.size() );
 			core::id::AtomID f1_bb1( 1 , 2 );
-			core::id::AtomID c1_bb2( 2 , moving_pose.total_residue() );
+			core::id::AtomID c1_bb2( 2 , moving_pose.size() );
 			core::id::AtomID f1_bb2( 2 , 2 );
-			core::id::AtomID c1_bb3( 3 , moving_pose.total_residue() );
+			core::id::AtomID c1_bb3( 3 , moving_pose.size() );
 			core::id::AtomID f1_bb3( 3 , 2 );
 			res_map_ctf[ c1_bb1 ] = f1_bb1;
 			res_map_ctf[ c1_bb2 ] = f1_bb2;
 			res_map_ctf[ c1_bb3 ] = f1_bb3;
 
-			//res_map_ctf[moving_pose.total_residue()-1] = 1;
-			core::id::AtomID c2_bb1( 1 , moving_pose.total_residue()-1 );
+			//res_map_ctf[moving_pose.size()-1] = 1;
+			core::id::AtomID c2_bb1( 1 , moving_pose.size()-1 );
 			core::id::AtomID f2_bb1( 1 , 1 );
-			core::id::AtomID c2_bb2( 2 , moving_pose.total_residue()-1 );
+			core::id::AtomID c2_bb2( 2 , moving_pose.size()-1 );
 			core::id::AtomID f2_bb2( 2 , 1 );
-			core::id::AtomID c2_bb3( 3 , moving_pose.total_residue()-1 );
+			core::id::AtomID c2_bb3( 3 , moving_pose.size()-1 );
 			core::id::AtomID f2_bb3( 3 , 1 );
 			res_map_ctf[ c2_bb1 ] = f2_bb1;
 			res_map_ctf[ c2_bb2 ] = f2_bb2;
@@ -490,9 +490,9 @@ make_bb_grid( core::pose::Pose & bot_pose)
 {
 	protocols::match::BumpGrid bb_grid = *protocols::match::bump_grid_to_enclose_pose( bot_pose );
 	utility::vector1< protocols::match::BumpGrid > original_scaffold_residue_bump_grids;
-	original_scaffold_residue_bump_grids.resize( bot_pose.total_residue() );
+	original_scaffold_residue_bump_grids.resize( bot_pose.size() );
 
-	for ( core::Size ii = 1; ii <= bot_pose.total_residue(); ii++ ) {
+	for ( core::Size ii = 1; ii <= bot_pose.size(); ii++ ) {
 		protocols::match::BumpGrid resbg = *bump_grid_to_enclose_residue_backbone( bot_pose.residue( ii ), bb_grid );
 		fill_grid_with_backbone_heavyatom_spheres( bot_pose.residue( ii ), resbg ); //Changed All Radii to H_ARO (1.0)
 		//fill_grid_with_residue_spheres( bot_pose.residue( ii ), resbg); //Takes Liggy Into Account
@@ -522,7 +522,7 @@ find_centerest_residue( core::pose::Pose & cap_pose )
 	// find pose1 COM
 	core::Real cap_pose_atom_count = 0; // for division later
 	numeric::xyzVector<core::Real> cap_pose_COM(0,0,0);
-	for ( core::Size ii = 1; ii <= cap_pose.total_residue(); ii++ ) {
+	for ( core::Size ii = 1; ii <= cap_pose.size(); ii++ ) {
 		for ( core::Size jj = 1; jj <= cap_pose.residue_type(ii).natoms(); jj++ ) {
 			cap_pose_COM += cap_pose.residue(ii).atom(jj).xyz();
 			cap_pose_atom_count++;
@@ -541,7 +541,7 @@ find_centerest_residue( core::pose::Pose & cap_pose )
 	core::Real min_dist = 10.0;
 	core::Real new_dist = 100.0;
 	core::Size res_i = 1;
-	for ( core::Size ii = 1; ii <= cap_pose.total_residue(); ii++ ) {
+	for ( core::Size ii = 1; ii <= cap_pose.size(); ii++ ) {
 		if ( cap_pose.residue(ii).is_protein() ) {
 			new_dist = cap_pose_COM.distance( cap_pose.residue(ii).atom("CA").xyz() );
 			if ( new_dist < min_dist ) {
@@ -566,7 +566,7 @@ containment_and_clash_checks( protocols::match::BumpGrid &  bb_grid,
 {
 	// Bump check
 	protocols::match::ProbeRadius radius_type = protocols::match::probe_radius_for_atom_type(1);
-	for ( core::Size ii = 1; ii <= cap_pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= cap_pose.size(); ++ii ) {
 		if ( bb_grid.occupied( radius_type, cap_pose.residue(ii).atom("CA").xyz() ) ) {
 			++clash_fail;
 			return false;
@@ -584,14 +584,14 @@ containment_and_clash_checks( protocols::match::BumpGrid &  bb_grid,
 
 	///// Quantify ratio of CA atoms lying in placement grid.
 	core::Size count = 0;
-	for ( core::Size cur_res = 1; cur_res <= cap_pose.total_residue(); ++cur_res ) {
+	for ( core::Size cur_res = 1; cur_res <= cap_pose.size(); ++cur_res ) {
 		if ( active_site_grid.occupied( cap_pose.residue( cur_res ).atom("CA").xyz() ) ) {
 			count++;
 		}
 	}
 
 	///// If ratio is less than threshold, this linker does not pass.
-	core::Size ratio = count/cap_pose.total_residue();
+	core::Size ratio = count/cap_pose.size();
 	core::Real user_ratio = basic::options::option[ basic::options::OptionKeys::loodo::ca_ratio ]();
 	if ( ratio >= user_ratio ) {
 		return true;
@@ -735,7 +735,7 @@ int main(int argc, char *argv[])
 
 		// User Sanity Check
 		TR << "Cap PDB: " << cap << std::endl;
-		TR << "Number of residues: " << cap_pose.total_residue() << std::endl;
+		TR << "Number of residues: " << cap_pose.size() << std::endl;
 		TR << "Amino Acid sequence: " << cap_pose.sequence() << std::endl;
 		TR << "Secondary structure sequence: " << cap_pose.secstruct() << std::endl;
 		TR << "Center of Mass residue: " << capCOM << std::endl;
@@ -745,7 +745,7 @@ int main(int argc, char *argv[])
 		TR << "Ratio of CA atoms required to lie in active site grid: " << basic::options::option[ basic::options::OptionKeys::loodo::ca_ratio ]() << std::endl;
 
 		TR << "Bottom PDB: " << bot << std::endl;
-		TR << "Number of residues: " << bot_pose.total_residue() << std::endl;
+		TR << "Number of residues: " << bot_pose.size() << std::endl;
 		TR << "Amino Acid sequence: " << bot_pose.sequence() << std::endl;
 		TR << "Secondary structure sequence: " << bot_pose.secstruct() << std::endl;
 		TR << "Center of Mass residue: " << botCOM << std::endl;
@@ -840,7 +840,7 @@ int main(int argc, char *argv[])
 		// Store the native cap CA coordinates for residues involved in STUB calculation
 		numeric::xyzVector<core::Real> cap1_ca = cap_pose.residue(capCOM).atom("CA").xyz();
 		numeric::xyzVector<core::Real> cap2_ca = cap_pose.residue(1).atom("CA").xyz();
-		numeric::xyzVector<core::Real> cap3_ca = cap_pose.residue(cap_pose.n_residue()).atom("CA").xyz();
+		numeric::xyzVector<core::Real> cap3_ca = cap_pose.residue(cap_pose.size()).atom("CA").xyz();
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// end setup
@@ -930,7 +930,7 @@ int main(int argc, char *argv[])
 								bot_pose.residue(ins_end).atom("CA").xyz(),
 								trans_cap_pose.residue(capCOM).atom("CA").xyz(),
 								trans_cap_pose.residue(1).atom("CA").xyz(),
-								trans_cap_pose.residue(trans_cap_pose.n_residue()).atom("CA").xyz() );
+								trans_cap_pose.residue(trans_cap_pose.size()).atom("CA").xyz() );
 
 							if ( option[ OptionKeys::loodo::debug ]() ) {
 								DebugRTs << "CapHitA_fl"+H+"_"+I+" || "
@@ -1025,7 +1025,7 @@ int main(int argc, char *argv[])
 								bot_pose.residue(ins_end).atom("CA").xyz(),
 								trans_cap_poseB.residue(capCOM).atom("CA").xyz(),
 								trans_cap_poseB.residue(1).atom("CA").xyz(),
-								trans_cap_poseB.residue(trans_cap_poseB.n_residue()).atom("CA").xyz() );
+								trans_cap_poseB.residue(trans_cap_poseB.size()).atom("CA").xyz() );
 
 							if ( option[ OptionKeys::loodo::debug ]() ) {
 								DebugRTs << "CapHitB_fl" + linkerB_position + "_" + linkerB_fragnum + " || "

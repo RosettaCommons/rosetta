@@ -240,7 +240,7 @@ final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pac
 	PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
 	// add extra chi and extra chi cut off to pt
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		final_desn_pt->nonconst_residue_task( i ).or_ex1( true );
 		final_desn_pt->nonconst_residue_task( i ).or_ex2( true );
 		final_desn_pt->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );

@@ -363,7 +363,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 	map< Size, pair< Size, Real > > closest_contact;
 
 
-	for ( Size resNum=1; resNum <= pose.total_residue(); ++resNum ) {
+	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Residue const & res(pose.residue(resNum));
 

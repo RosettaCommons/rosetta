@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	pose::Pose pose;
 	import_pose::pose_from_file(pose, "structures/marked_loop.8.pdb", core::import_pose::PDB_file);
 
-	for (Size i = 1; i <= pose.n_residue(); i++) {
+	for (Size i = 1; i <= pose.size(); i++) {
 		conformation::Residue residue = pose.residue(i);
 
 		for (Size j = 1; j <= residue.natoms(); j++) {

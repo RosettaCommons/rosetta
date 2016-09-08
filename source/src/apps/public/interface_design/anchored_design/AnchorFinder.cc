@@ -93,7 +93,7 @@ public:
 		core::pose::remove_nonprotein_residues( pose );
 		core::pose::remove_ligand_canonical_residues( pose );
 
-		core::Size const nres( pose.total_residue() );
+		core::Size const nres( pose.size() );
 		bool quit( false );
 		utility::file::FileName const pdbname( protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() );
 		core::Size const num_chains( pose.conformation().num_chains() );

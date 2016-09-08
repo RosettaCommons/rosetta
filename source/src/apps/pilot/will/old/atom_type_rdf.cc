@@ -116,7 +116,7 @@ public:
 			}
 		}
 
-		for( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+		for( Size ir = 1; ir <= pose.size(); ++ir ) {
 			for( Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 				numeric::xyzVector<Real> const xyz1( pose.residue(ir).xyz(ia) );
 				Size atype1 = pose.residue(ir).atom(ia).type();
@@ -124,7 +124,7 @@ public:
 				string ss1 = "";
 				if( sep_ss_[atype1] ) ss1 = pose.secstruct(ir);
 				assert(""==ss1|"E"==ss1||"H"==ss1||"L"==ss1);
-				for( Size jr = ir; jr <= pose.n_residue(); ++jr ) {
+				for( Size jr = ir; jr <= pose.size(); ++jr ) {
 					CountPairFunctionOP cp = CountPairFactory::create_count_pair_function( pose.residue(ir), pose.residue(jr), CP_CROSSOVER_4 );
 					for( Size ja = 1; ja <= pose.residue(jr).natoms(); ++ja ) {
 						if( ir==jr && ia >= ja ) continue; // no dups & upper tri

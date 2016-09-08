@@ -121,12 +121,12 @@ actual_disulfide( pose::Pose const& pose, Size residueA_pos, Size residueB_pos)
 void find_disulfides( pose::Pose const & pose, vector1< pair<Size,Size> > /*out*/ & disulfides )
 {
 	utility::vector1< bool > is_disulfide;
-	is_disulfide.resize( pose.total_residue() );
+	is_disulfide.resize( pose.size() );
 	std::fill( is_disulfide.begin(), is_disulfide.end(), false );
 
 	disulfides.clear();
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		conformation::Residue A = pose.residue( ii );
 		if ( A.aa() == chemical::aa_cys &&
 				A.has_variant_type( chemical::DISULFIDE ) &&

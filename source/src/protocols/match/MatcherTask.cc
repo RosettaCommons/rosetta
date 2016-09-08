@@ -961,7 +961,7 @@ MatcherTask::initialize_occupied_space_bounding_box_from_command_line()
 		Real lowz(upstream_pose_->residue(1).xyz(1).z());
 		Real highx(lowx), highy(lowy), highz(lowz);
 
-		for ( Size i =1; i <= upstream_pose_->total_residue(); ++i ) {
+		for ( Size i =1; i <= upstream_pose_->size(); ++i ) {
 			core::conformation::Residue const & cur_res( upstream_pose_->residue( i ) );
 
 			if ( !cur_res.is_protein() ) continue;
@@ -1015,7 +1015,7 @@ MatcherTask::initialize_scaffold_active_site_residue_list_from_command_line()
 		share_build_points_for_geomcsts_ = true;
 		generic_pose_build_resids_.clear();
 		for ( core::Size i = 1; i <= scaf_seqpos.seqpos_for_geomcst( 1 ).size(); ++i ) {
-			if ( scaf_seqpos.seqpos_for_geomcst( 1 )[i] <= upstream_pose_->total_residue() ) {
+			if ( scaf_seqpos.seqpos_for_geomcst( 1 )[i] <= upstream_pose_->size() ) {
 				if ( upstream_pose_->residue_type(  scaf_seqpos.seqpos_for_geomcst( 1 )[i] ).is_protein() ) generic_pose_build_resids_.push_back( scaf_seqpos.seqpos_for_geomcst( 1 )[i] );
 			} else std::cerr << "Warning: seqpos number " << scaf_seqpos.seqpos_for_geomcst( 1 )[i] << " is larger than size of pose, ignoring. Check if you're using the right match posfile.";
 
@@ -1032,7 +1032,7 @@ MatcherTask::initialize_scaffold_active_site_residue_list_from_command_line()
 
 		for ( core::Size i =1; i <= scaf_seqpos.num_seqpos_lists(); ++i ) {
 			for ( core::Size j = 1; j <= scaf_seqpos.seqpos_for_geomcst( i ).size(); ++j ) {
-				if ( scaf_seqpos.seqpos_for_geomcst( i )[j] <= upstream_pose_->total_residue() ) {
+				if ( scaf_seqpos.seqpos_for_geomcst( i )[j] <= upstream_pose_->size() ) {
 					if ( upstream_pose_->residue_type(  scaf_seqpos.seqpos_for_geomcst( i )[j] ).is_protein() ) per_cst_pose_build_resids_[i].push_back( scaf_seqpos.seqpos_for_geomcst( i )[j] );
 				} else std::cerr <<  "Warning: seqpos number " << scaf_seqpos.seqpos_for_geomcst( i )[j] << " is larger than size of pose, ignoring. Check if you're using the right match posfile.";
 			}
@@ -1102,7 +1102,7 @@ void
 MatcherTask::remove_downstream_object_from_upstream_pose()
 {
 	//right now this function only works for ligand downstream objects
-	if ( (downstream_pose_->total_residue() != 1 ) ) utility_exit_with_message("Can't remove a downstream pose containing more than one residue from the upstream pose.");
+	if ( (downstream_pose_->size() != 1 ) ) utility_exit_with_message("Can't remove a downstream pose containing more than one residue from the upstream pose.");
 
 	utility::vector1< Size > seqpos_to_remove;
 	for ( core::Size i = 1; i<= upstream_pose_->conformation().num_chains(); ++i ) {
@@ -1225,7 +1225,7 @@ MatcherTask::initialize_orientation_atoms_from_command_line()
 				utility_exit_with_message( "Invalid use of the flag -match::orientation_atoms" );
 			}
 
-			if ( downstream_pose_->total_residue() != 1 ) {
+			if ( downstream_pose_->size() != 1 ) {
 				std::cerr << "ERROR: Cannot use the flag -match::orientation_atoms if the downstream pose has multiple residues" << std::endl;
 				utility_exit_with_message( "Invalide use of the flag -match::orientation_atoms" );
 			}
@@ -1326,7 +1326,7 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 	using namespace basic::options::OptionKeys::match;
 
 	if ( option[ required_active_site_atom_names ].user() ) {
-		if ( downstream_pose_->total_residue() != 1 ) {
+		if ( downstream_pose_->size() != 1 ) {
 			utility_exit_with_message( "Flag match::required_active_site_atom_names may only be used when the downstream pose is a single residue" );
 		}
 		if (
@@ -1365,7 +1365,7 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 		while ( istr ) {
 			Size resid; Real radius;
 			istr >> resid;
-			if ( resid > upstream_pose_->total_residue() ) {
+			if ( resid > upstream_pose_->size() ) {
 				std::cerr << "ERROR reading active_site_definition: residue " << resid << " exceeds the number of residues in the scaffold pose." << std::endl;
 				utility_exit_with_message( "Problem reading active_site_definition " + filename );
 			}

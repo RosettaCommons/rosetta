@@ -84,8 +84,8 @@ compute_holes_score_res(
 		std::string res_name = pb.res_name(i);
 		core::Size atom_num = pb.atom_num(i);
 		bool skip = false;
-		if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
-		if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
+		if( res_num <= pose.size() && pose.residue(res_num).is_upper_terminus() )	skip = true;
+		if( res_num <= pose.size() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 		if( !params.have_params(res_name) ) skip = true;
 		if( skip ) {
 			proc << "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" << std::endl;
@@ -112,8 +112,8 @@ compute_holes_score_res(
 			core::Size atom_num = pb.atom_num(i);
 			std::string res_name = pb.res_name(i);
 			bool skip = false;
-			if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
-			if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
+			if( res_num <= pose.size() && pose.residue(res_num).is_upper_terminus() )	skip = true;
+			if( res_num <= pose.size() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 			if( !params.have_params(res_name) ) skip = true;
 			if( skip ) continue;
 
@@ -132,8 +132,8 @@ compute_holes_score_res(
 		Size res_num  = pb.res_num(i);
 		Size atom_num = pb.atom_num(i);
 		bool skip = false;
-		if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
-		if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
+		if( res_num <= pose.size() && pose.residue(res_num).is_upper_terminus() )	skip = true;
+		if( res_num <= pose.size() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 		if( !params.have_params(res_name) ) skip = true;
 		if( skip ) continue;
 
@@ -194,8 +194,8 @@ compute_holes_deriv_res(
 		std::string res_name = pb.res_name(i);
 		core::Size atom_num = pb.atom_num(i);
 		bool skip = false;
-		if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
-		if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
+		if( res_num <= pose.size() && pose.residue(res_num).is_upper_terminus() )	skip = true;
+		if( res_num <= pose.size() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 		if( !params.have_params(res_name) ) skip = true;
 		if( skip ) {
 			proc << "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" << std::endl;
@@ -216,8 +216,8 @@ compute_holes_deriv_res(
 			core::Size atom_num = pb.atom_num(i);
 			std::string res_name = pb.res_name(i);
 			bool skip = false;
-			if( res_num <= pose.total_residue() && pose.residue(res_num).is_upper_terminus() )	skip = true;
-			if( res_num <= pose.total_residue() && pose.residue(res_num).is_lower_terminus() )	skip = true;
+			if( res_num <= pose.size() && pose.residue(res_num).is_upper_terminus() )	skip = true;
+			if( res_num <= pose.size() && pose.residue(res_num).is_lower_terminus() )	skip = true;
 			if( !params.have_params(res_name) ) skip = true;
 			if( skip ) continue;
 

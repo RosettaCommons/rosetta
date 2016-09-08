@@ -213,9 +213,9 @@ std::priority_queue<MotifMatch> MotifGraftMover::generate_scaffold_matches(
 	core::pose::PoseOP & target_motif_,
 	core::pose::PoseOP & target_contextStructure_)
 {
-	TR.Info << "Target scaffold size: " << target_scaffold.total_residue() << std::endl;
-	TR.Info << "Motif size: " << target_motif_->total_residue() << std::endl;
-	TR.Info << "contextStructure size: " << target_contextStructure_->total_residue() << std::endl;
+	TR.Info << "Target scaffold size: " << target_scaffold.size() << std::endl;
+	TR.Info << "Motif size: " << target_motif_->size() << std::endl;
+	TR.Info << "contextStructure size: " << target_contextStructure_->size() << std::endl;
 	TR.Info << "Target scaffold numChains: " << target_scaffold.conformation().num_chains() << std::endl;
 	TR.Info << "Motif numChains: " << target_motif_->conformation().num_chains() << std::endl;
 	TR.Info << "contextStructure numChains: " << target_contextStructure_->conformation().num_chains() << std::endl;
@@ -230,14 +230,14 @@ std::priority_queue<MotifMatch> MotifGraftMover::generate_scaffold_matches(
 		return pq_epigraft;
 	}
 	//Add PDBinfo labels to the Context
-	for ( core::Size i=1; i <= target_contextStructure_->total_residue(); ++i ) {
+	for ( core::Size i=1; i <= target_contextStructure_->size(); ++i ) {
 		target_contextStructure_->pdb_info()->add_reslabel(i,"CONTEXT");
 	}
 	//Add PDBinfo labels to the Scaffold
-	for ( core::Size i=1; i <= target_scaffold.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= target_scaffold.size(); ++i ) {
 		target_scaffold.pdb_info()->add_reslabel(i,"SCAFFOLD");
 	}
-	for ( core::Size i=1; i <= target_motif_->total_residue(); ++i ) {
+	for ( core::Size i=1; i <= target_motif_->size(); ++i ) {
 		target_motif_->pdb_info()->add_reslabel(i,"MOTIF");
 	}
 	//Add PDBinfo labels to the Motifs
@@ -249,7 +249,7 @@ std::priority_queue<MotifMatch> MotifGraftMover::generate_scaffold_matches(
 	}
 
 	//Loop to remove LOWER and UPPER terminus from motif (should we do this before coming to this point/function?)
-	for ( core::Size i=1; i <= target_motif_->total_residue(); ++i ) {
+	for ( core::Size i=1; i <= target_motif_->size(); ++i ) {
 		//Remove lower terminus type of the residues in the motif_copy (Needed/obligated to stitch the pieces)
 		//ToDo: should we like to move this to a helper function?
 		if ( target_motif_->residue( i ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) {
@@ -576,7 +576,7 @@ core::Size MotifGraftMover::count_clashes_between_two_poses(
 	numeric::xyzVector< core::Real > xyzv_maxCoor = p_contextStructure_.residue(1).atom(1).xyz();
 	numeric::xyzVector< core::Real > xyzv_tmpCoor;
 	//Get the Min and Max offsets
-	for ( core::Size i = 1; i <= p_contextStructure_.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= p_contextStructure_.size(); ++i ) {
 	for ( core::Size j = 1; j <= p_contextStructure_.residue_type(i).natoms(); ++j ) {
 	xyzv_tmpCoor = p_contextStructure_.residue(i).atom(j).xyz();
 	for (core::Size dim = 1; dim <= 3; dim++){
@@ -600,7 +600,7 @@ core::Size MotifGraftMover::count_clashes_between_two_poses(
 
 	//Fill The Array with the centers
 	core::Size my_bin_center;
-	for ( core::Size i = 1; i <= p_contextStructure_.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= p_contextStructure_.size(); ++i ) {
 	for ( core::Size j = 1; j <= p_contextStructure_.residue_type(i).natoms(); ++j ) {
 	if(p_contextStructure_.residue_type(i).atom(j).element() != "H"){
 	my_bin_center = (core::Size) ((p_contextStructure_.residue(i).atom(j).xyz() - xyzv_minCoor ) / bin_size ) + interaction_cut_off_in_bins;
@@ -616,12 +616,12 @@ core::Size MotifGraftMover::count_clashes_between_two_poses(
 	core::Size clash_counter = 0;
 	std::string elementA;
 	std::string elementB;
-	for ( core::Size ia = 1; ia <= p_A.total_residue(); ++ia ) {
+	for ( core::Size ia = 1; ia <= p_A.size(); ++ia ) {
 		for ( core::Size ja = 1; ja <= p_A.residue_type(ia).natoms(); ++ja ) {
 			elementA = p_A.residue_type(ia).atom_type(ja).element();
 			if ( elementA != "H" ) {
 				xyzv_tmpCoorA = p_A.residue(ia).atom(ja).xyz();
-				for ( core::Size ib = 1; ib <= p_B.total_residue(); ++ib ) {
+				for ( core::Size ib = 1; ib <= p_B.size(); ++ib ) {
 					for ( core::Size jb = 1; jb <= p_B.residue_type(ib).natoms(); ++jb ) {
 						elementB = p_B.residue_type(ib).atom_type(jb).element();
 						if ( (elementA == "C") && (elementB == "C") ) {
@@ -681,13 +681,13 @@ core::pose::Pose MotifGraftMover::join_two_poses_by_jump(
 	core::pose::Pose p_result=p_A;
 	//ToDo: Change for append_pose_by_jump, that will keep the PDBinfo
 	p_result.conformation().insert_conformation_by_jump(p_B.conformation(),
-		p_result.total_residue() + 1,
+		p_result.size() + 1,
 		p_result.fold_tree().num_jump()+1,
-		p_result.total_residue());
+		p_result.size());
 
-	core::Size index_offset=p_A.total_residue();
+	core::Size index_offset=p_A.size();
 	utility::vector1 < std::string > tmp_v_reslabels;
-	for ( core::Size i = 1; i <= p_B.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= p_B.size(); ++i ) {
 		tmp_v_reslabels =  p_B.pdb_info()->get_reslabels(i);
 		for ( core::Size lndx=1; lndx <= tmp_v_reslabels.size(); ++lndx ) {
 			p_result.pdb_info()->add_reslabel(index_offset+i, tmp_v_reslabels[lndx]);
@@ -718,7 +718,7 @@ core::pose::Pose MotifGraftMover::get_rotated_and_translated_pose(
 	//Apply rotation to ALL atoms (analog to Alex Ford code protocols/toolbox/PlaceFragments.cc; thought he denies the code)
 	// x_i' <- = R*x_i + com1;
 	core::pose::Pose p_result = p_input;
-	for ( core::Size i = 1; i <= p_input.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= p_input.size(); ++i ) {
 		for ( core::Size j = 1; j <= p_input.residue_type(i).natoms(); ++j ) {
 			core::id::AtomID id( j, i );
 			p_result.set_xyz( id, ( RotM * ( p_input.xyz(id) + TvecB) ) - TvecA );
@@ -758,10 +758,10 @@ core::pose::Pose MotifGraftMover::stich_motif_in_scaffold_by_indexes_rotation_an
 	core::conformation::Residue tmpResi = p_scaffold_rotated.residue(currScaffoldIndex);
 	p_result.append_residue_by_jump( tmpResi, currScaffoldIndex );
 	//Copy reslabels (slower, but much more practical)
-	///p_result.pdb_info()->add_reslabel(p_result.total_residue(),"SCAFFOLD");
+	///p_result.pdb_info()->add_reslabel(p_result.size(),"SCAFFOLD");
 	utility::vector1 < std::string > tmp_v_reslabels =  p_scaffold.pdb_info()->get_reslabels(currScaffoldIndex);
 	for ( core::Size lndx=1; lndx <= tmp_v_reslabels.size(); ++lndx ) {
-		p_result.pdb_info()->add_reslabel(p_result.total_residue(), tmp_v_reslabels[lndx]);
+		p_result.pdb_info()->add_reslabel(p_result.size(), tmp_v_reslabels[lndx]);
 	}
 	++currScaffoldIndex;
 
@@ -775,10 +775,10 @@ core::pose::Pose MotifGraftMover::stich_motif_in_scaffold_by_indexes_rotation_an
 			core::conformation::Residue tmpResi = p_scaffold_rotated.residue(j);
 			p_result.append_residue_by_bond( tmpResi, false );
 			//Copy reslabels (slower, but much more practical)
-			///p_result.pdb_info()->add_reslabel(p_result.total_residue(),"SCAFFOLD");
+			///p_result.pdb_info()->add_reslabel(p_result.size(),"SCAFFOLD");
 			tmp_v_reslabels =  p_scaffold.pdb_info()->get_reslabels(j);
 			for ( core::Size lndx=1; lndx <= tmp_v_reslabels.size(); ++lndx ) {
-				p_result.pdb_info()->add_reslabel(p_result.total_residue(), tmp_v_reslabels[lndx]);
+				p_result.pdb_info()->add_reslabel(p_result.size(), tmp_v_reslabels[lndx]);
 			}
 		}
 		currScaffoldIndex=m2s_dat.v_indexes[i].scaffoldLow;
@@ -834,7 +834,7 @@ core::pose::Pose MotifGraftMover::stich_motif_in_scaffold_by_indexes_rotation_an
 				p_result.append_residue_by_bond( tmpResi, false );
 				tmp_v_reslabels =  p_motif.pdb_info()->get_reslabels(j);
 				for ( core::Size lndx=1; lndx <= tmp_v_reslabels.size(); ++lndx ) {
-					p_result.pdb_info()->add_reslabel(p_result.total_residue(), tmp_v_reslabels[lndx]);
+					p_result.pdb_info()->add_reslabel(p_result.size(), tmp_v_reslabels[lndx]);
 				}
 			}
 		} else if ( m2s_dat.b_graft_only_hotspots_by_sidechain_replacement ) {  //Abnormal graft. Only copy sidechains (Sidechain Grafting)
@@ -853,7 +853,7 @@ core::pose::Pose MotifGraftMover::stich_motif_in_scaffold_by_indexes_rotation_an
 				//Copy reslabels (slower, but much more practical)
 				tmp_v_reslabels =  p_motif.pdb_info()->get_reslabels(j);
 				for ( core::Size lndx=1; lndx <= tmp_v_reslabels.size(); ++lndx ) {
-					p_result.pdb_info()->add_reslabel(p_result.total_residue(), tmp_v_reslabels[lndx]);
+					p_result.pdb_info()->add_reslabel(p_result.size(), tmp_v_reslabels[lndx]);
 				}
 				currScaffoldIndex++;
 			}
@@ -862,13 +862,13 @@ core::pose::Pose MotifGraftMover::stich_motif_in_scaffold_by_indexes_rotation_an
 		currScaffoldIndex=m2s_dat.v_indexes[i].scaffoldHigh+1;
 	}
 	//copy the last part of the scaffold (NOTE: that the loop condition here is <= not <)
-	for ( core::Size i=currScaffoldIndex; i <= p_scaffold_rotated.total_residue(); ++i ) {
+	for ( core::Size i=currScaffoldIndex; i <= p_scaffold_rotated.size(); ++i ) {
 		core::conformation::Residue tmpResi = p_scaffold_rotated.residue(i);
 		p_result.append_residue_by_bond( tmpResi, false );
 		//Copy reslabels (slower, but much more practical)
 		tmp_v_reslabels =  p_scaffold.pdb_info()->get_reslabels(i);
 		for ( core::Size lndx=1; lndx <= tmp_v_reslabels.size(); ++lndx ) {
-			p_result.pdb_info()->add_reslabel(p_result.total_residue(), tmp_v_reslabels[lndx]);
+			p_result.pdb_info()->add_reslabel(p_result.size(), tmp_v_reslabels[lndx]);
 		}
 	}
 	return p_result;
@@ -975,7 +975,7 @@ core::pose::Pose MotifGraftMover::get_mono_aa_pose_copy(
 
 	utility::vector1< core::Size > positions_to_replace;
 
-	for ( core::Size i = 1; i <= p_mono_aa.total_residue() ; ++i ) {
+	for ( core::Size i = 1; i <= p_mono_aa.size() ; ++i ) {
 		//Don't mutate if it is a hotspot
 		if ( (!(p_input.pdb_info()->res_haslabel(i,"HOTSPOT"))) ) {
 			positions_to_replace.push_back( i );
@@ -1161,7 +1161,7 @@ bool MotifGraftMover::get_fragments_by_CA_distances_and_NCpoints_restrains(
 		//To temporarily store the resulting fragment
 		utility::vector1 < std::pair< core::Size, core::Size > > tmp_fragmentWithinCutoff;
 		//...to calculate all the distance pairs of CA, then return only those within the +/-tol (Do not consider the first and last residue!)
-		for ( core::Size i = 2; i<= p_scaffold.total_residue()-1; ++i ) {
+		for ( core::Size i = 2; i<= p_scaffold.size()-1; ++i ) {
 			//If only considering same aminoacid identity in the motif and scaffold
 			if ( b_only_allow_if_N_point_match_aa_identity ) {
 				//If the aminoacids are different skip to the next aa
@@ -1173,7 +1173,7 @@ bool MotifGraftMover::get_fragments_by_CA_distances_and_NCpoints_restrains(
 					continue;
 				}
 			}
-			for ( core::Size j = i+tmpMinDesiredSize; j<= p_scaffold.total_residue()-1; ++j ) {
+			for ( core::Size j = i+tmpMinDesiredSize; j<= p_scaffold.size()-1; ++j ) {
 				//If only considering same aminoacid identity in the motif and scaffold
 				if ( b_only_allow_if_C_point_match_aa_identity ) {
 					//If the aminoacids are different skip to the next aa
@@ -1469,7 +1469,7 @@ void MotifGraftMover::generate_match_pose(
 	if ( b_revert_graft_to_native_sequence && motif_match.b_is_full_motif_bb_alignment() ) {
 		TR.Info << "Reverting motif to the native sequence of the scaffold (except HOTSPOTS)"<< std::endl;
 		//Reverting sequence to native (except for hotspots)
-		for ( core::Size i=1; i <= p_frankenstein.total_residue(); ++i ) {
+		for ( core::Size i=1; i <= p_frankenstein.size(); ++i ) {
 			if ( p_frankenstein.aa(i) != target_pose.aa(i) ) {
 				if ( !p_frankenstein.pdb_info()->res_haslabel(i,"HOTSPOT") ) {
 					p_frankenstein.replace_residue( i, target_pose.residue(i), true );
@@ -1487,7 +1487,7 @@ void MotifGraftMover::generate_match_pose(
 
 	//Label the residues belonging to the connection between the motif and the scaffold
 	utility::vector1<core::Real> tmp_V_positionsToLabel;
-	for ( core::Size i=1; i <= target_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= target_pose.size(); ++i ) {
 		if ( target_pose.pdb_info()->res_haslabel(i,"MOTIF") ) {
 			if ( target_pose.pdb_info()->res_haslabel(i-1,"SCAFFOLD") ) {
 				target_pose.pdb_info()->add_reslabel(i,"CONNECTION");
@@ -1501,7 +1501,7 @@ void MotifGraftMover::generate_match_pose(
 	}
 
 	///Debug Info: Print PDB Labels
-	for ( core::Size i=1; i <= target_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i <= target_pose.size(); ++i ) {
 		utility::vector1 < std::string > v_reslabels =  target_pose.pdb_info()->get_reslabels(i);
 		TR.Debug << "Res: " << i << ": ";
 		for ( core::Size j=1; j <= v_reslabels.size(); ++j ) {
@@ -1517,7 +1517,7 @@ void MotifGraftMover::generate_match_pose(
 	setPoseExtraScore(target_pose, "graft_clashScore", motif_match.get_clash_score());
 	setPoseExtraScore(target_pose, "graft_in_motif_ranges", motif_match.get_motif_ranges(0));
 	setPoseExtraScore(target_pose, "graft_in_scaffold_ranges", motif_match.get_scaffold_ranges(0));
-	setPoseExtraScore(target_pose, "graft_out_scaffold_ranges", motif_match.get_scaffold_ranges(contextStructure.total_residue()));
+	setPoseExtraScore(target_pose, "graft_out_scaffold_ranges", motif_match.get_scaffold_ranges(contextStructure.size()));
 	setPoseExtraScore(target_pose, "graft_scaffold_size_change", motif_match.get_scaffold2motif_size_change());
 	setPoseExtraScore(target_pose, "graft_full_bb_mode", motif_match.get_full_motif_bb_alignment_mode());
 	return;

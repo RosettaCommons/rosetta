@@ -110,7 +110,7 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 	// define atom_map for main-chain and CB
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size j = 1; j<=5; ++j ) {
 			core::id::AtomID atom( j, ir );
 			atom_map.set( atom, true );
@@ -133,7 +133,7 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 	Size num_frustrated_residue( 0 );
 	Size rnum_core( 0 );
 	// take dunbrack score
-	for ( Size i=1; i<=pose.total_residue(); i++ ) {
+	for ( Size i=1; i<=pose.size(); i++ ) {
 		if ( rsd_sasa[ i ] < asa_core ) {
 			if ( name_from_aa( pose.aa( i ) ) == "TRP" ||
 					name_from_aa( pose.aa( i ) ) == "TYR" ||
@@ -205,7 +205,7 @@ CoreDunbrackFilter::parse_my_tag(
 	type_ = tag->getOption<String>( "type", "average" );
 
 	// set threshold
-	filter_value_ = tag->getOption<Real>( "threshold", Real( pose.total_residue() ) );
+	filter_value_ = tag->getOption<Real>( "threshold", Real( pose.size() ) );
 	if ( type_ == "average" ) {}
 	else if ( type_ == "num_frustrated_residue" ) {}
 	else if ( type_ == "total" ) {}

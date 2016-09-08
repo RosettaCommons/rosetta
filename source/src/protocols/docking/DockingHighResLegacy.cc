@@ -264,7 +264,7 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP
 	pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
 
 	// extend one residue beyond borders of repackable regions, don't allow 1-residue loops
-	core::Size const nres = pose.total_residue();
+	core::Size const nres = pose.size();
 	utility::vector1<bool> flexible_region( nres, false );
 	for ( Size i=2; i < nres; ++i ) {
 		int num_flexible(0);
@@ -488,7 +488,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 				TR << "Setting up for backrub loop modeling" << std::endl;
 				// jk backrub can't use segments that span a jump residue, so use a simple fold tree here
 				// note: this assumes that the termini are not allowed to move (and in define_loops they aren't)
-				loop_fold_tree.simple_tree( pose.total_residue() );
+				loop_fold_tree.simple_tree( pose.size() );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
 				loop_refine = loops::loop_mover::LoopMoverOP( new loops::loop_mover::refine::LoopMover_Refine_Backrub( loop_set, scorefxn_pack()->clone() ) );
 			}

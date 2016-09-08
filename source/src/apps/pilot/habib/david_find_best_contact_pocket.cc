@@ -76,7 +76,7 @@ std::set <std::string> interface;
 
 void define_interface( core::pose::Pose & input_pose ) {
 	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( !input_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;
@@ -188,7 +188,7 @@ main( int argc, char * argv [] )
 		std::ostream os2(&fb2);
 
 		//Loop over all residues and get score
-		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			if ( is_interface_residue(input_pose, j) ) {
 				core::Real constraint_pocket_score = 0;
 				core::Real largest_pocket_score = 0;

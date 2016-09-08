@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 	//need to find out which residues are in the disulfide
 	core::scoring::disulfides::FullatomDisulfideEnergyContainerCOP dec = new core::scoring::disulfides::FullatomDisulfideEnergyContainer( pose1 );
 	core::Size dslf_i=0,dslf_j=0;
-	for (core::Size i=1; i<=pose1.total_residue(); i++) {
+	for (core::Size i=1; i<=pose1.size(); i++) {
 		if (pose1.residue(i).aa() != core::chemical::aa_cys) continue;
 		if (dec->residue_forms_disulfide(i)) {
 			dslf_i=i;
@@ -125,10 +125,10 @@ int main(int argc, char *argv[]) {
 		cout << "BEGIN " << fn << endl;
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file(pose,fnames[ifile], core::import_pose::PDB_file); //Import the current PDB file
-		for(int ir=1; ir <= (int)pose.n_residue(); ++ir) { //Loop through all residues
+		for(int ir=1; ir <= (int)pose.size(); ++ir) { //Loop through all residues
 			if(pose.residue(ir).aa() != core::chemical::aa_cys) continue; //If the current residue isn't a cys, go on to the next.
 			for(int jr=ir+3; jr < ir+option[cdsf_max_res](); ++jr) {
-				if(jr > (int)pose.n_residue()) break;
+				if(jr > (int)pose.size()) break;
 				if(pose.residue(jr).aa() != core::chemical::aa_cys) continue;
 				if(!core::conformation::is_disulfide_bond( pose.conformation(),ir,jr)) continue;
 				bool terminus = false;
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
 				core::id::AtomID_Map<double> atom_sasa_alone;
 				utility::vector1<double> rsd_sasa_alone;
 				core::scoring::calc_per_atom_sasa(tmp, atom_sasa_alone, rsd_sasa_alone, 2.0, true);
-				for (int vi = 2; vi < (int)tmp.n_residue(); ++vi) //Loop through all residues BETWEEN the cysteines.
+				for (int vi = 2; vi < (int)tmp.size(); ++vi) //Loop through all residues BETWEEN the cysteines.
 				{
 					loop_sasa_alone[loop_sasa_alone.size()]+=rsd_sasa_alone[vi];
 					printf("Residue %i in isolation:\t%f\n", vi, rsd_sasa_alone[vi]); //DELETE ME

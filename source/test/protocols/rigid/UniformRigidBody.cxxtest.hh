@@ -51,7 +51,7 @@ public:
 
 		core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, -65 );
 			pose.set_psi( i, -41 );
 		}
@@ -77,10 +77,10 @@ public:
 		//using namespace abinitio::abscript;
 		using namespace protocols::rigid;
 
-		TS_ASSERT_DIFFERS( pose.total_residue(), 0 );
+		TS_ASSERT_DIFFERS( pose.size(), 0 );
 
-		UniformRigidBodyCMOP rigpert( new UniformRigidBodyCM( "perturb", LocalPosition( "BASE", 1 ), LocalPosition( "BASE", pose.total_residue() ) ) );
-		UniformRigidBodyCMOP rigpert_dup( new UniformRigidBodyCM( "perturb2", LocalPosition( "BASE", 1 ), LocalPosition( "BASE", pose.total_residue() ) ) );
+		UniformRigidBodyCMOP rigpert( new UniformRigidBodyCM( "perturb", LocalPosition( "BASE", 1 ), LocalPosition( "BASE", pose.size() ) ) );
+		UniformRigidBodyCMOP rigpert_dup( new UniformRigidBodyCM( "perturb2", LocalPosition( "BASE", 1 ), LocalPosition( "BASE", pose.size() ) ) );
 
 		EnvironmentOP env_op( new Environment( "env" ) );
 		Environment & env = *env_op;
@@ -93,7 +93,7 @@ public:
 		TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
 		TS_ASSERT_EQUALS( ppose.num_jump(), 1 );
 		TS_ASSERT( ppose.fold_tree().is_jump_point( 1 ) );
-		TS_ASSERT( ppose.fold_tree().is_jump_point( ppose.total_residue() ) );
+		TS_ASSERT( ppose.fold_tree().is_jump_point( ppose.size() ) );
 
 		//Verify initialization perturbation
 		core::kinematics::Jump j;

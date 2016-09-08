@@ -195,7 +195,7 @@ place_waters_and_minimize( Pose & pose )
 	kinematics::MoveMap mm;
   mm.set_bb( false );
   mm.set_chi( false );
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		if ( pose.residue(i).is_protein() ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 			// only allowing protein minimization because I saw strange DNA changes when I allowed everything to minimize
@@ -292,7 +292,7 @@ process_for_motifs(
 	protocols::motifs::MotifLibrary & motifs
 )
 {
-	int nres( pose.total_residue() );
+	int nres( pose.size() );
 
 	// Place waters and minimize
 	//place_waters_and_minimize( pose );

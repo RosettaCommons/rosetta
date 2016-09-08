@@ -156,7 +156,7 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
 
 	Conformation const & conf = pose.conformation();
 
-	for ( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 		if ( !subset[seqpos] ) {
 			// If this residue isn't selected by the selector, we're not supposed to do anything.
 			// Continue on to the next residue.

@@ -140,7 +140,7 @@ core::Real
 PreProlineFilter::compute( core::pose::Pose const & pose ) const
 {
 	// find selected residues
-	utility::vector1< bool > selection( pose.total_residue(), true );
+	utility::vector1< bool > selection( pose.size(), true );
 	if ( selector_ ) {
 		selection = selector_->apply( pose );
 	}
@@ -159,7 +159,7 @@ PreProlineFilter::compute_spline(
 {
 	core::Size pro_count = 0;
 	core::Real potential_sum = 0.0;
-	for ( core::Size i = 1; i < pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i < pose.size(); ++i ) {
 		if ( ! selection[ i + 1 ] ) {
 			continue;
 		}

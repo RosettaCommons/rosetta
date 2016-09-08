@@ -242,7 +242,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 	// Create lookup of setA and setB residues
 	utility::vector1<core::Size> setA, setB;
-	for ( core::Size resi = 1; resi <= pose.n_residue(); resi++ ) {
+	for ( core::Size resi = 1; resi <= pose.size(); resi++ ) {
 		if ( taskA->pack_residue(resi) ) {
 			setA.push_back(resi);
 		}
@@ -270,13 +270,13 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	if ( filter_mode_ == ALL ) {
 		TR.Debug << "Partitioning by residue number." << std::endl;
 		// Each residue is a separate partition
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			residue_partition.push_back(i);
 		}
 	} else if ( filter_mode_ == CROSS_CHAIN_DETECTED || filter_mode_ == CROSS_CHAIN_ALL ) {
 		TR.Debug << "Partitioning by residue chain." << std::endl;
 
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			residue_partition.push_back(pose.chain(i));
 		}
 	} else if ( filter_mode_ == CROSS_JUMP ) {
@@ -297,7 +297,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		}
 
 		// Partition pose by jump
-		ObjexxFCL::FArray1D<bool> jump_partition ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D<bool> jump_partition ( pose.size(), false );
 		if ( !symmetric ) {
 			pose.fold_tree().partition_by_jump( target_jumps[1], jump_partition );
 		} else {
@@ -305,7 +305,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 				core::pose::symmetry::symmetry_info(pose), jump_partition );
 		}
 
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			residue_partition.push_back(jump_partition(i));
 		}
 	}

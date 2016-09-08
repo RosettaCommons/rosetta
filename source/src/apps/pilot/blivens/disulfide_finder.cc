@@ -106,12 +106,12 @@ main( int argc, char * argv [] )
 		int missedDS=0; // actual but not possible - nature must be wrong!
 		int trueNeg=0; //for completeness, neither possible nor actual
 		//for each pair of cysteines i,j
-		for(Size i(1); i<= pose.total_residue()-1;i++) {
+		for(Size i(1); i<= pose.size()-1;i++) {
 			//only consider cysteines
 			if( pose.residue_type(i).name1() != 'C' )
 				continue;
 
-			for(Size j(i+1); j<= pose.total_residue();j++) {
+			for(Size j(i+1); j<= pose.size();j++) {
 				if( pose.residue_type(j).name1() != 'C' )
 					continue;
 

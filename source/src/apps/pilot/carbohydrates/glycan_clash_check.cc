@@ -185,7 +185,7 @@ public:  // Standard Rosetta methods
 		}
 
 		//Setup Residues
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue( i ).is_carbohydrate() ) {
 				glycan_resnums_.push_back( i );
 			} else if ( chain_nums_.has_value( pose.residue( i ).chain() ) ) {
@@ -205,10 +205,10 @@ public:  // Standard Rosetta methods
 			glycan_glycan_res_soft_atomic_clashes_[ branch_start ].clear();
 			glycan_chain_res_soft_atomic_clashes_[  branch_start ].clear();
 
-			glycan_glycan_res_atomic_clashes_[     branch_start ].resize( pose.total_residue(), 0 );
-			glycan_chain_res_atomic_clashes_[      branch_start ].resize( pose.total_residue(), 0 );
-			glycan_glycan_res_soft_atomic_clashes_[ branch_start ].resize( pose.total_residue(), 0 );
-			glycan_chain_res_soft_atomic_clashes_[  branch_start ].resize( pose.total_residue(), 0 );
+			glycan_glycan_res_atomic_clashes_[     branch_start ].resize( pose.size(), 0 );
+			glycan_chain_res_atomic_clashes_[      branch_start ].resize( pose.size(), 0 );
+			glycan_glycan_res_soft_atomic_clashes_[ branch_start ].resize( pose.size(), 0 );
+			glycan_chain_res_soft_atomic_clashes_[  branch_start ].resize( pose.size(), 0 );
 
 			for ( core::Size index = 1; index <= it->second.size(); ++index ) {
 
@@ -236,10 +236,10 @@ public:  // Standard Rosetta methods
 		for ( core::Size index = 1; index <= branches_.size(); ++index ) {
 			std::string branch = branches_[ index ];
 
-			summed_norm[ branch ].resize( pose.total_residue(), 0);
-			summed_soft[ branch ].resize( pose.total_residue(), 0);
+			summed_norm[ branch ].resize( pose.size(), 0);
+			summed_soft[ branch ].resize( pose.size(), 0);
 			std::cout << "Summing " << branch << std::endl;
-			for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+			for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 
 				summed_norm[branch][resnum] = glycan_glycan_res_atomic_clashes_[branch][resnum] +
 					glycan_chain_res_atomic_clashes_[branch][resnum];

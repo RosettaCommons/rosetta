@@ -87,7 +87,7 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 	Size fragment_length = ABEGOHashedFragmentStore_->get_fragment_length();
 	Real worstRmsd = 0;
 	Size startRes = 1;
-	Size endRes = pose.total_residue()-fragment_length+1;
+	Size endRes = pose.size()-fragment_length+1;
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();

@@ -142,7 +142,7 @@ public:
 		//convert atomid-map to vector of atom ids
 		vector1< id::AtomID > bunsat_atom_ids;
 		
-		for (Size res = 1; res <= (bunsat_atomid_map.value()).n_residue(); ++res) {
+		for (Size res = 1; res <= (bunsat_atomid_map.value()).size(); ++res) {
 			for (Size atm = 1; atm <= (bunsat_atomid_map.value()).n_atom(res); ++atm) {
 				if ((bunsat_atomid_map.value())(res, atm)) {
 					core::id::AtomID atm_id(atm, res);
@@ -240,7 +240,7 @@ public:
 	  	//for(Size i(1); i <= bunsat_atomid_map.size(); ++i) {
 			
 			
-		for (Size res = 1; res <= bunsat_thorough_atomid_map.n_residue(); ++res) {
+		for (Size res = 1; res <= bunsat_thorough_atomid_map.size(); ++res) {
 			for (Size atm = 1; atm <= bunsat_thorough_atomid_map.n_atom(res); ++atm) {
 				if (bunsat_thorough_atomid_map(res, atm))
 				{

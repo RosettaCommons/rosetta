@@ -127,7 +127,7 @@ Real region_density_score(Pose & pose,Pose const templatePose, SequenceAlignment
 			new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
 	);
 	for(Size ii = start_res; ii <= end_res; ++ii){
-	  Size jj = pose.total_residue();
+	  Size jj = pose.size();
 		emopts->residue_pair_energy(pose.residue(ii), pose.residue(jj), pose, *scorefxn, emap);
 		total_score += emap[ core::scoring::elec_dens_fast ];
 	}
@@ -143,7 +143,7 @@ Real region_constraint_score(Pose & pose, Size start_res, Size end_res,Constrain
 	emap.zero();
 	Real total_score = 0;
 	for(Size ii = start_res; ii <= end_res; ++ii){
-		for(Size jj=1; jj <= pose.total_residue(); ++jj){
+		for(Size jj=1; jj <= pose.size(); ++jj){
 			cstSet_->residue_pair_energy(pose.residue(ii), pose.residue(jj), pose, *scorefxn, emap);
 			total_score += emap[ core::scoring::atom_pair_constraint ];
 		}
@@ -156,7 +156,7 @@ Real region_score(Pose & pose, Size start_res, Size end_res){
 	using namespace core::scoring;
 	core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	Real all_res_score = scorefxn->score(pose);
-	utility::vector1< bool > mask( pose.total_residue(), true );
+	utility::vector1< bool > mask( pose.size(), true );
 	for(Size ii= start_res; ii<=end_res; ++ii)
 		mask[ii] = false;
 	Real excluded_region_score = scorefxn->get_sub_score( pose, mask );

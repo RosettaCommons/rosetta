@@ -605,8 +605,8 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	import_pose_from_silent_file( rebuild_pose, rebuild_silent_file, rebuild_tag_name );
 
 	///I think that should able to extract the old_score line directly from the pose!
-	runtime_assert( start_pose.total_residue() == total_res );
-	runtime_assert( rebuild_pose.total_residue() == total_res );
+	runtime_assert( start_pose.size() == total_res );
+	runtime_assert( rebuild_pose.size() == total_res );
 
 	if ( OUTPUT_PDB ) dump_pdb( start_pose, "start_pose_" + start_tag_name + ".pdb" );
 	if ( OUTPUT_PDB ) dump_pdb( rebuild_pose, "rebuild_pose_" + rebuild_tag_name + ".pdb" );
@@ -657,15 +657,15 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	core::pose::MiniPose const mini_rebuild_pose = *( core::pose::MiniPoseOP( new core::pose::MiniPose( rebuild_pose ) ) );
-	if ( mini_rebuild_pose.total_residue() != total_res ) {
-		std::cout << "mini_rebuild_pose.total_residue() = " << mini_rebuild_pose.total_residue() << std::endl;
+	if ( mini_rebuild_pose.size() != total_res ) {
+		std::cout << "mini_rebuild_pose.size() = " << mini_rebuild_pose.size() << std::endl;
 		std::cout << "total_res = " << total_res << std::endl;
-		utility_exit_with_message( "mini_rebuild_pose.total_residue() != total_res" );
+		utility_exit_with_message( "mini_rebuild_pose.size() != total_res" );
 	}
 	utility::vector1< utility::vector1< std::string > > const & chunk_atom_names_list = mini_rebuild_pose.atom_names_list();
 
 	std::map< core::Size, core::Size > res_map;
-	for ( Size n = 1; n <= start_pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= start_pose.size(); n++ ) {
 		res_map[ n ] = n;
 		std::cout << "chunk_seq_num = " << n << "| chunk_atom_names_list[chunk_seq_num].size() = " << chunk_atom_names_list[n].size() << std::endl;
 	}
@@ -685,7 +685,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	//FullModelInfoOP copy_full_model_info = nonconst_full_model_info( start_pose ).clone_info();
 	//set_full_model_info( output_pose, copy_full_model_info );
 
-	if ( output_pose.total_residue() != total_res ) utility_exit_with_message( "output_pose.total_residue() != total_res" );
+	if ( output_pose.size() != total_res ) utility_exit_with_message( "output_pose.size() != total_res" );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//NEW_copy_dofs( output_pose, mini_rebuild_pose, res_map );
@@ -696,7 +696,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	utility::vector1< Size > virtual_res_list;
 
 	////////////////////////////////////////////////////////////////////////////////////
-	for ( Size seq_num = 1; seq_num <= output_pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= output_pose.size(); seq_num++ ) {
 		///Oct 24, 2011 Should remove the virtual_variant type before minimizing to prevent artificial clashes!
 		///Also currently have plan to not score torsional_potential if OVU1, OVL1 and OVL2 if corresponding atoms (O3', O5' and P1) are virtual (not implemented yet!)
 		if ( has_virtual_rna_residue_variant_type( output_pose, seq_num ) ) {
@@ -707,11 +707,11 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 	output_seq_num_list( "virtual_res_list = ", virtual_res_list, TR, 30 );
 	////////////////////////////////////////////////////////////////////////////////////
-	for ( Size seq_num = 1; seq_num <= output_pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= output_pose.size(); seq_num++ ) {
 
 		if ( output_pose.residue( seq_num ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 
-			if ( seq_num == output_pose.total_residue() ) utility_exit_with_message( "seq_num == output_pose.total_residue() has CUTPOINT_LOWER variant_type!" );
+			if ( seq_num == output_pose.size() ) utility_exit_with_message( "seq_num == output_pose.size() has CUTPOINT_LOWER variant_type!" );
 			if ( !output_pose.fold_tree().is_cutpoint( seq_num ) ) utility_exit_with_message( "seq_num ( " + string_of( seq_num ) + " ) is not a cutpoint!" );
 			runtime_assert ( output_pose.residue( seq_num + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) );
 
@@ -764,7 +764,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	for ( Size seq_num = 1; seq_num <= output_pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= output_pose.size(); seq_num++ ) {
 		if ( virtual_res_list.has_value( seq_num ) ) {
 			apply_virtual_rna_residue_variant_type( output_pose, seq_num, true /*apply_check*/ );
 		}

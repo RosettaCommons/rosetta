@@ -171,14 +171,14 @@ bool cmprmsd(Hit i,Hit j) { return i.rmsd   < j.rmsd; }
 // 	core::pose::Pose const & pose2
 // ){
 // 	float tot_score = 0.0;
-// 	for(core::Size ir = 1; ir <= pose1.n_residue(); ++ir){
+// 	for(core::Size ir = 1; ir <= pose1.size(); ++ir){
 // 		if(!pose1.residue(ir).is_protein()) continue;
 // 		if(!pose1.residue(ir).has("CB")) continue;
 // 		Vec CBi = pose1.residue(ir).xyz("CB");
 // 		Vec CAi = pose1.residue(ir).xyz("CA");
 // 		Vec  Ni = pose1.residue(ir).xyz( "N");
 // 		Xform sir(CBi,CAi,Ni);
-// 		for(core::Size jr = 1; jr <= pose2.n_residue(); ++jr){
+// 		for(core::Size jr = 1; jr <= pose2.size(); ++jr){
 // 			if(!pose2.residue(jr).is_protein()) continue;
 // 			if(!pose2.residue(jr).has("CB")) continue;
 // 			Vec CBj = pose2.residue(jr).xyz("CB");
@@ -203,7 +203,7 @@ make_native_olig(
 	Pose tmp(pose);
 	for(int i = 2; i <= nfold; ++i){
 		rot_pose(tmp,Vec(0,0,1),360.0/nfold);
-		for(Size i = 1; i <= tmp.n_residue(); ++i){
+		for(Size i = 1; i <= tmp.size(); ++i){
 			if(olig.residue(i).is_lower_terminus()||olig.residue(i).is_ligand()){
 				olig.append_residue_by_jump(tmp.residue(i),1);
 			} else {
@@ -388,7 +388,7 @@ dock(
 	//rigidsfxn->add_score(lnscore_,1.0);
 
 	utility::vector1<Vec> init_ca;
-	for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= init_pose.size(); ++ir){
 		if(init_pose.residue(ir).has("CA")){
 			init_ca.push_back(init_pose.residue(ir).xyz("CA"));
 		}
@@ -409,7 +409,7 @@ dock(
 
 	// utility::vector1<Xform> stubs;
 	// utility::vector1<char> ss;
-	// for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
+	// for(Size ir = 1; ir <= init_pose.size(); ++ir){
 	// 	if( !init_pose.residue(ir).is_protein() ) continue;
 	// 	if( !init_pose.residue(ir).has("CB") ) continue;
 	// 	if( init_pose.secstruct(ir) == 'L' ) continue;
@@ -649,7 +649,7 @@ align_native_state(
 	if(nfold<2) return utility::vector1<Vec>();
 	Vec cen(0,0,0);
 	Real ncen = 0.0;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= pose.size(); ++ir){
 		if(pose.residue(ir).has("CA")){
 			cen += pose.residue(ir).xyz("CA");
 			ncen += 1.0;
@@ -659,7 +659,7 @@ align_native_state(
 	rot_pose( pose, Vec(0,0,1), -dihedral_degrees(Vec(1,0,0),Vec(0,0,0),Vec(0,0,1),cen) );
 	rot_pose( pose, Vec(1,0,1), 180.0 ); // symZ to symX
 	utility::vector1<Vec> CAs;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= pose.size(); ++ir){
 		if(pose.residue(ir).has("CA")){
 			CAs.push_back(pose.residue(ir).xyz("CA"));
 		}
@@ -763,7 +763,7 @@ int main(int argc, char *argv[]) {
 		dssp.insert_ss_into_pose(pnat);
 
 		// center on z
-		trans_pose(pnat,Vec(0,0,-center_of_geom(pnat,1,pnat.n_residue()).z()));
+		trans_pose(pnat,Vec(0,0,-center_of_geom(pnat,1,pnat.size()).z()));
 
 		Pose olig; make_native_olig(pnat,olig,nfold);
 
@@ -772,13 +772,13 @@ int main(int argc, char *argv[]) {
 		vector1<Vec> native_ca = align_native_state(pnat,nfold); // align CA com
 		// pnat.dump_pdb("native_align.pdb");
 
-		Vec cen = center_of_geom(pnat,1,pnat.n_residue());
+		Vec cen = center_of_geom(pnat,1,pnat.size());
 		trans_pose(pnat,-Vec(0,cen.y(),cen.z()));
 
 		// inpuc checks
-		if( pnat.n_residue() > (Size)option[cxdock::max_res]() ) continue;
+		if( pnat.size() > (Size)option[cxdock::max_res]() ) continue;
 		// Size cyscnt=0, nhelix=0;
-		// for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
+		// for(Size ir = 2; ir <= pnat.size()-1; ++ir) {
 		// 	if(pnat.secstruct(ir) == 'H') nhelix++;
 		// 	//if(!pnat.residue(ir).is_protein()) goto cont1;
 		// 	if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;

@@ -72,7 +72,7 @@ WaterAdductHBondEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction 
 {
 	using EnergiesCacheableDataType::H2O_HBOND_SET;
 	pose.update_residue_neighbors();
-	hbonds::HBondSetOP h2o_hbond_set( new hbonds::HBondSet( pose.total_residue() ) );
+	hbonds::HBondSetOP h2o_hbond_set( new hbonds::HBondSet( pose.size() ) );
 	potential_.fill_h2o_hbond_set( pose, *h2o_hbond_set );
 	pose.energies().data().set( H2O_HBOND_SET, h2o_hbond_set );
 }

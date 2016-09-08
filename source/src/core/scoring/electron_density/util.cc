@@ -61,7 +61,7 @@ bool pose_has_nonzero_Bs( core::pose::Pose const & pose ) {
 	if ( !pose.pdb_info() ) return false;
 
 	// to save time check only the first atom of each residue
-	for ( uint i = 1; i <= pose.total_residue(); ++i ) {
+	for ( uint i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 		Real B = pose.pdb_info()->temperature( i, 1 );

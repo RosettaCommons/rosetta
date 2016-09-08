@@ -58,7 +58,7 @@ PhiPsiSquareWell::PhiPsiSquareWell(Size priority, Real lowest_acceptable_value, 
 	core::pose::PoseOP reference_pose) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PhiPsiSquareWell") {
 
-	Size n_atoms_ = reference_pose->total_residue();
+	Size n_atoms_ = reference_pose->size();
 	query_phi_.redimension(n_atoms_);
 	query_psi_.redimension(n_atoms_);
 	query_d_phi_.redimension(n_atoms_);

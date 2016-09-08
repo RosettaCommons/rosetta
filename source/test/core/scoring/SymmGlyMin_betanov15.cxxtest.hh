@@ -105,7 +105,7 @@ public:
 				do_minimization(pose2, sfxn);
 				TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ) );
 				TR << "E1\t" << pose->energies().total_energy() << "\tE2\t" << pose2->energies().total_energy() << std::endl;
-				for ( core::Size ir=1, irmax=pose->n_residue(); ir<=irmax; ++ir ) {
+				for ( core::Size ir=1, irmax=pose->size(); ir<=irmax; ++ir ) {
 					TR << "phi1\t" << pose->phi(ir) << "\tphi2\t" << pose2->phi(ir) << std::endl;
 					TR << "psi1\t" << pose->psi(ir) << "\tpsi2\t" << pose2->psi(ir) << std::endl;
 					TR << "omega1\t" << pose->omega(ir) << "\tomega2\t" << pose2->omega(ir) << std::endl;

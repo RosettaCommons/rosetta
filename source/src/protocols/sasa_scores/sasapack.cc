@@ -338,8 +338,8 @@ compute_avge_scores(
 	}
 
 
-	residue_avge.clear(); residue_avge.resize( pose_in.total_residue(), 0.0 );
-	residue_normsasa.clear(); residue_normsasa.resize( pose_in.total_residue(), 0.0 );
+	residue_avge.clear(); residue_avge.resize( pose_in.size(), 0.0 );
+	residue_normsasa.clear(); residue_normsasa.resize( pose_in.size(), 0.0 );
 
 	static vector1< PPoly > polys;
 	static Reals avg_sasa14s;
@@ -363,7 +363,7 @@ compute_avge_scores(
 	average_avge = average_normsasa = 0.0;
 
 	Size count(0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 		if ( rsd.is_lower_terminus() || rsd.is_upper_terminus() ) continue;
@@ -417,13 +417,13 @@ compute_sasapack_scores(
 	compute_residue_sasas_for_sasa_scores(   big_probe_radius, pose, rsd_sasa_big_probe );
 	compute_residue_sasas_for_sasa_scores( small_probe_radius, pose, rsd_sasa_small_probe );
 
-	residue_sasapack.clear(); residue_sasapack.resize( pose.total_residue(), 0. );
-	residue_normsasa.clear(); residue_normsasa.resize( pose.total_residue(), 0. );
+	residue_sasapack.clear(); residue_sasapack.resize( pose.size(), 0. );
+	residue_normsasa.clear(); residue_normsasa.resize( pose.size(), 0. );
 
 	average_sasapack = average_normsasa = 0.0;
 
 	Size count(0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 		if ( rsd.is_lower_terminus() || rsd.is_upper_terminus() ) continue;

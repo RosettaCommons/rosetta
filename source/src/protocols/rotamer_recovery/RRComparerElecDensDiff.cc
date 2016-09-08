@@ -101,7 +101,7 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 
 	core::pose::Pose pose1 = const_pose1;
 	core::pose::Pose pose2 = const_pose2;
-	core::Size nres = pose1.total_residue();
+	core::Size nres = pose1.size();
 
 	protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 	dockindens->apply( pose1 );

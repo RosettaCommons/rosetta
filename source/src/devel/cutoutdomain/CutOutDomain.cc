@@ -92,7 +92,7 @@ CutOutDomain::apply( core::pose::Pose & pose )
 	TR<<"Start resdiue on the target pose "<<pose.pdb_info()->name()<<" : "<<pose.residue(from).name1()<<from<<std::endl;
 	TR<<"End resdiue on the source pose "<<source_pdb_name_<<" : "<<Temp_pose.residue(end_res_).name1()<<end_res_<<std::endl;
 	TR<<"End resdiue on the target pose "<<pose.pdb_info()->name()<<" : "<<pose.residue(to).name1()<<to<<std::endl;
-	pose.conformation().delete_residue_range_slow( to+delta_c_ter_+1,pose.total_residue() );
+	pose.conformation().delete_residue_range_slow( to+delta_c_ter_+1,pose.size() );
 	pose.conformation().delete_residue_range_slow( 1,from+1-delta_n_ter_ );
 	//hack so Rosetta doesn't call scoring function at the end
 	pose.dump_pdb(suffix_);
@@ -120,7 +120,7 @@ core::Size
 CutOutDomain::find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
 	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
 	core::Size i;
-	for ( i = 1; i < target.total_residue(); ++i ) {
+	for ( i = 1; i < target.size(); ++i ) {
 		if ( target.residue( i ).is_ligand() ) continue;
 		if ( chain && target.residue( i ).chain() != chain ) continue;
 		// TR<<"the residue examnied is:"<<i<<target.residue(i).name1()<<std::endl;

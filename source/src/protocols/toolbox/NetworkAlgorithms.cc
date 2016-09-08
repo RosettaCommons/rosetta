@@ -133,7 +133,7 @@ ResidueNetwork::create_from_pose( core::pose::Pose const & pose )
 	nodes_.clear();
 
 	// populate lists of nodes and edges
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
 		nodes_.push_back( NodeOP( new Node( resname, i ) ) );
@@ -264,10 +264,10 @@ CovalentResidueNetwork::generate_edges( core::pose::Pose const & pose )
 
 	//identify covalent bonds between residues
 	auto res_it_1 = nodes().begin();
-	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i != pose.size(); ++i ) {
 		auto res_it_2 = nodes().begin();
 		std::advance(res_it_2,i);
-		for ( core::Size j=i + 1; j != pose.total_residue() + 1; ++j ) {
+		for ( core::Size j=i + 1; j != pose.size() + 1; ++j ) {
 			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
 				//TR << "bond found " << i << " " << j << std::endl;
 				if ( j > i + 1 ) {

@@ -128,7 +128,7 @@ ChargeCalculator::recompute( Pose const & this_pose )
 	SR_total_charge_ = 0.0; SR_total_pos_charges_ = 0; SR_total_neg_charges_ = 0;
 
 
-	for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 		if ( !this_pose.residue_type(i).is_protein() ) continue;
 		AA i_aa( this_pose.residue_type(i).aa() );
 

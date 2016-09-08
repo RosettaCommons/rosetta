@@ -106,8 +106,8 @@ MultipleDomainMover::apply_at_domain( core::pose::Pose & pose, Size const & n )
 ////////////////////////////////////////////////////////////////
 void
 MultipleDomainMover::initialize( pose::Pose const & pose,toolbox::AtomLevelDomainMapOP atom_level_domain_map ){
-	// std::cout << "HELLO! " << pose.residue_type( pose.total_residue() ).name3() << std::endl;
-	if ( pose.residue_type( pose.total_residue() ).name3() != "XXX" /*virtual residue*/ ) return;
+	// std::cout << "HELLO! " << pose.residue_type( pose.size() ).name3() << std::endl;
+	if ( pose.residue_type( pose.size() ).name3() != "XXX" /*virtual residue*/ ) return;
 	setup_jump_numbers_and_partner( pose );
 	setup_ok_for_centroid_calculation( atom_level_domain_map );
 	initialize_rigid_body_movers();
@@ -129,7 +129,7 @@ MultipleDomainMover::get_centroid( pose::Pose const & pose ){
 	Vector cen( 0.0, 0.0, 0.0 );
 	Size nres( 0 );
 	// Look at all residues except anchor (last residue).
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( ok_for_centroid_calculation_[ i ] ) {
 			cen += pose.xyz( core::id::AtomID( 1, i ) );
 			nres += 1;
@@ -171,7 +171,7 @@ void MultipleDomainMover::setup_jump_numbers_and_partner( pose::Pose const & pos
 	using namespace protocols::moves;
 
 	// create rigid body mover for segment 1
-	Size const virt_res = pose.total_residue();
+	Size const virt_res = pose.size();
 
 	jump_numbers_.clear();
 	partner_.clear();
@@ -232,7 +232,7 @@ void MultipleDomainMover::try_to_slide_into_contact( pose::Pose & pose ) {
 
 	using namespace core::kinematics;
 
-	utility::vector1< bool > slid_into_contact( pose.total_residue(), false );
+	utility::vector1< bool > slid_into_contact( pose.size(), false );
 
 	for ( Size n = 2; n <= num_domains_; n++ ) { // no need to move domain 1.
 

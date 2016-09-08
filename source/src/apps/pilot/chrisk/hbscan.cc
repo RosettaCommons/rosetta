@@ -184,7 +184,7 @@ fast_clash_check(
 	Real const clash_dist2_cut( clash_dist_cut * clash_dist_cut );
 	for ( Size iatid = 1; iatid <= check_atids.size(); ++iatid ) {
 		Vector const at1_xyz( pose.xyz( check_atids[ iatid ] ) );
-		for ( Size res2 = 1; res2 <= pose.total_residue(); ++res2 ) {
+		for ( Size res2 = 1; res2 <= pose.size(); ++res2 ) {
 			for ( Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ) {
 				//skip virtual atoms!
 				if ( pose.residue( res2 ).atom_type( at2 ).lj_wdepth() == 0.0 ) continue;
@@ -409,7 +409,7 @@ scan_hbond_jumps(
 	//append by jump from seqpos atomno to new_rsd atom 1
 	//  pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
 	pose.append_residue_by_jump( new_rsd, seqpos );
-	Size new_seqpos( pose.total_residue() );
+	Size new_seqpos( pose.size() );
 	Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 
@@ -422,7 +422,7 @@ scan_hbond_jumps(
 		pack::task::operation::RestrictResidueToRepackingOP restrict_to_repack_taskop( new pack::task::operation::RestrictResidueToRepacking() );
 		pack::task::operation::PreventRepackingOP prevent_repack_taskop( new pack::task::operation::PreventRepacking() );
 		//prevent repacking all original seqpos and repack new rsd
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( i == new_seqpos ) {
 				restrict_to_repack_taskop->include_residue( i );
 			} else {
@@ -472,7 +472,7 @@ scan_hbond_jumps(
 	if ( new_rsd.natoms() < 4 ) {
 		chemical::ResidueTypeSetCOP rsd_set( rsd.residue_type_set() );
 		conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
-		pose.append_residue_by_jump( *vrt_rsd, pose.total_residue() );
+		pose.append_residue_by_jump( *vrt_rsd, pose.size() );
 		n_new_rsd += 1;
 	}
 
@@ -483,9 +483,9 @@ scan_hbond_jumps(
 	//protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
 
 	//new naive fold tree
-	FoldTree f_rot( pose.total_residue() );
+	FoldTree f_rot( pose.size() );
 	//switch to chem bond so can use bond angle defs directly
-	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.total_residue() - n_new_rsd );
+	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.size() - n_new_rsd );
 	pose.fold_tree( f_rot );
 
 	//now get their base atoms to get datm and batm
@@ -702,7 +702,7 @@ byres_analysis(
 	//use resfile to note residues to analyze...
 	Pose start_pose( pose );
 
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 
 	io::silent::SilentStructOP pose_ss( new io::silent::ScoreFileSilentStruct );
 	core::scoring::hbonds::HBondSet hbset;

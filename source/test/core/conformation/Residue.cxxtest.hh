@@ -162,7 +162,7 @@ public:
 
 		TS_ASSERT_EQUALS( trp6->connections_to_residue( 5 ), trp6_copy->connections_to_residue( 5 ) );
 		TS_ASSERT_EQUALS( trp6->connections_to_residue( 7 ), trp6_copy->connections_to_residue( 7 ) );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT_EQUALS( trp6_copy->is_bonded( ii ), ii == 5 || ii == 7 ); // the only inter-residue bonds are to 5 and 7
 			TS_ASSERT_EQUALS( trp6_copy->is_pseudo_bonded( ii ), ii == 8 ); // the only pseudobond is to residue 8
 		}

@@ -68,7 +68,7 @@ std::vector< std::pair< Size, Size > > FragmentLookup::get_fragment_residue_span
 		span_breaks_to_next_start[pose.conformation().chain_end(i) + 1] = pose.conformation().chain_end(i) + 1;
 	}
 
-	for ( Size i = 1; i <= pose.n_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue(i).is_protein() ) {
 			span_breaks_to_next_start[i] = i + 1;
 		}
@@ -76,7 +76,7 @@ std::vector< std::pair< Size, Size > > FragmentLookup::get_fragment_residue_span
 
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info( pose );
-		span_breaks_to_next_start[symm_info->last_independent_residue() + 1] = pose.n_residue() + 1;
+		span_breaks_to_next_start[symm_info->last_independent_residue() + 1] = pose.size() + 1;
 	}
 
 	std::vector< ResidueSpan > valid_residue_spans;

@@ -105,7 +105,7 @@ SwapSegment::copying_side_chains(
 	//counter for seeds
 	Size offsetres = 0;
 
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 		TR.Debug<<"iterating through pose: " <<pos << std::endl;
 		if ( seeds.is_loop_residue( pos ) ) {
 			TR.Debug<<"pos "<< pos <<std::endl;
@@ -130,9 +130,9 @@ SwapSegment::swap_segment(
 
 	// preparing the segments for swap
 	core::pose::remove_lower_terminus_type_from_pose_residue(*swap_segment, 1 );
-	core::pose::remove_upper_terminus_type_from_pose_residue(*swap_segment, swap_segment->total_residue());
+	core::pose::remove_upper_terminus_type_from_pose_residue(*swap_segment, swap_segment->size());
 
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 		TR.Debug<<"iterating through pose: " <<pos << std::endl;
 		if ( seeds.is_loop_residue( pos ) ) {
 			TR.Debug <<"pos "<< pos <<std::endl;
@@ -168,7 +168,7 @@ SwapSegment::apply( core::pose::Pose & pose )
 	core::pose::PoseOP target_c = seeds_pdb_->split_by_chain( swap_chain_ );
 	//assert sizes of target chain and input pose chain
 
-	TR.Debug<<"chains: "<< pose.conformation().num_chains() <<" total residues: " <<pose.total_residue() <<std::endl;
+	TR.Debug<<"chains: "<< pose.conformation().num_chains() <<" total residues: " <<pose.size() <<std::endl;
 	//need to put in some assertions for stupid things like number bigger than there are chains and
 	//something that automatically adjusts the residue number and hook in the to_chain option
 	//for now hardcoding for first chain
@@ -183,7 +183,7 @@ SwapSegment::apply( core::pose::Pose & pose )
 	// adjust_numbering = pose.conformation().chain_end( 1 );
 
 	//need to assert that the seed elements are the same residue numbers as in the input pdb!!
-	TR.Debug<<"all_seeds_.loop_size() " << all_seeds_.loop_size() <<" total residues in seeds pdb: " << segment->total_residue() <<std::endl;
+	TR.Debug<<"all_seeds_.loop_size() " << all_seeds_.loop_size() <<" total residues in seeds pdb: " << segment->size() <<std::endl;
 	TR<<"adjusting for chain numbering by: " <<adjust_numbering <<std::endl;
 
 	all_seeds_.make_sequence_shift( adjust_numbering );
@@ -194,7 +194,7 @@ SwapSegment::apply( core::pose::Pose & pose )
 		swap_chain( pose, target_c , swap_chain_ );
 	}
 
-	if ( all_seeds_.loop_size() != segment->total_residue() ) {
+	if ( all_seeds_.loop_size() != segment->size() ) {
 		utility_exit_with_message("residues specified under the seeds does not agree with the number of residues provided as segment");
 	}
 
@@ -251,7 +251,7 @@ SwapSegment::parse_my_tag(
 		std::string const template_pdb_fname( tag->getOption< std::string >( "seeds_pdb" ));
 		seeds_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_file( *seeds_pdb_, template_pdb_fname , core::import_pose::PDB_file);
-		TR<<"read in a template pdb with " <<seeds_pdb_->total_residue() <<"residues"<<std::endl;
+		TR<<"read in a template pdb with " <<seeds_pdb_->size() <<"residues"<<std::endl;
 		seeds_presence_ = true;
 	}
 

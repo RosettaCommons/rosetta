@@ -410,7 +410,7 @@ MMTReceiver::restrict_task_for_job(
 ) const
 {
 	//restrict task for the given sequence string
-	for ( core::Size ii = 1; ii <= pose->total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose->size(); ++ii ) {
 		core::Size ii_entity = ent_corr->entity_for_residue( ii );
 		if ( ii_entity == 0 ) continue;
 		utility::vector1< bool > aas_present( core::chemical::num_canonical_aas, false );

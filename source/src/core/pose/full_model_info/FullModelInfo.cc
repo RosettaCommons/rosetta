@@ -344,12 +344,12 @@ FullModelInfo::get_idx_for_other_pose_with_residue( Size const input_res ) const
 Size
 FullModelInfo::get_idx_for_other_pose( pose::Pose const & pose ) const {
 	Size idx( 0 );
-	if ( pose.total_residue() > 0 ) {
+	if ( pose.size() > 0 ) {
 		Size const resnum = get_res_list_from_full_model_info_const( pose )[ 1 ];
 		idx = get_idx_for_other_pose_with_residue( resnum );
 	} else {
 		for ( Size i = 1; i <= other_pose_list_.size(); i++ ) {
-			if ( other_pose_list_[i]->total_residue() == 0 ) {
+			if ( other_pose_list_[i]->size() == 0 ) {
 				runtime_assert( idx == 0 ); // only one blank pose allowed in other_pose_list.
 				idx = i;
 			}

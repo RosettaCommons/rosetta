@@ -421,13 +421,13 @@ AddMembraneMover::apply( Pose & pose ) {
 		if ( spanfile_ == "single_TM_mode" ) {
 			TR << "Single TM Mode: Defining a single TM helix from the length of the input pose" << std::endl;
 			// Define teh span as teh whole helix, excluding the membrane residue
-			SpanCOP single_TM_span = SpanCOP( new Span(  1, pose.total_residue()-1 ) );
+			SpanCOP single_TM_span = SpanCOP( new Span(  1, pose.size()-1 ) );
 			topology_->add_span( *single_TM_span );
 		} else if ( spanfile_ != "from_structure" ) {
 			// now supports PDB numbering also
 			std::map< std::string, core::Size > pdb2pose_map = core::pose::get_pdb2pose_numbering_as_stdmap( pose );
 			// fill topology from spanfile with pdb2pose map
-			topology_->fill_from_spanfile( spanfile_, pdb2pose_map, pose.total_residue() );
+			topology_->fill_from_spanfile( spanfile_, pdb2pose_map, pose.size() );
 		} else {
 			// get pose info to create topology from structure
 			std::pair< utility::vector1< core::Real >, utility::vector1< core::Size > > pose_info( get_chain_and_z( pose ) );
@@ -555,7 +555,7 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 
 	// Case 1: If user points directly to a membrane residue, use that residue
 	if ( membrane_pos != 0 &&
-			membrane_pos <= pose.total_residue() &&
+			membrane_pos <= pose.size() &&
 			pose.conformation().residue( membrane_pos ).has_property( "MEMBRANE" ) ) {
 		user_defined_ = true;
 
@@ -619,7 +619,7 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 core::Size
 AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
-	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
+	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.size() << std::endl;
 
 	using namespace protocols::membrane;
 	using namespace core::conformation;
@@ -641,18 +641,18 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
 	// Reorder to be the membrane root
 	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
-	ft->reorder( pose.total_residue() );
+	ft->reorder( pose.size() );
 	pose.fold_tree( *ft );
 	if ( TR.visible() ) pose.fold_tree().show( TR );
 
 	// Updating Chain Record in PDB Info
-	char curr_chain = pose.pdb_info()->chain( pose.total_residue()-1 );
+	char curr_chain = pose.pdb_info()->chain( pose.size()-1 );
 	char new_chain = (char)((int) curr_chain + 1);
-	pose.pdb_info()->number( pose.total_residue(), (int) pose.total_residue() );
-	pose.pdb_info()->chain( pose.total_residue(), new_chain );
+	pose.pdb_info()->number( pose.size(), (int) pose.size() );
+	pose.pdb_info()->chain( pose.size(), new_chain );
 	pose.pdb_info()->obsolete(false);
 
-	return pose.total_residue();
+	return pose.size();
 
 }
 
@@ -664,7 +664,7 @@ AddMembraneMover::check_pdb_for_mem( core::pose::Pose & pose ) {
 	utility::vector1< core::Size > mem_rsd;
 
 	// go through every residue in the pose to check for the membrane residue
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		// if residue is MEM, remember it
 		if ( pose.residue( i ).name3() == "MEM" &&

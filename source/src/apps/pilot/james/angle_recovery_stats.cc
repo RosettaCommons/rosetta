@@ -70,8 +70,8 @@ utility::vector1< char > get_ss( core::pose::Pose & pose ) {
 	using core::Size;
 	protocols::jumping::assign_ss_dssp( pose );
 
-	utility::vector1< char > ss( pose.total_residue(), 'L' );
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	utility::vector1< char > ss( pose.size(), 'L' );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		ss[ii] = pose.secstruct(ii);
 	}
 
@@ -94,7 +94,7 @@ utility::vector1< char > bb_bins_from_pose(
 	core::pose::Pose const & pose
 ) {
 	utility::vector1< char > bb_bins;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		bb_bins.push_back(
 			torsion2big_bin(
 			pose.residue(ii).mainchain_torsion(1),
@@ -114,7 +114,7 @@ rots_from_pose(
 	using utility::vector1;
 
 	vector1< RotVector > rots;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		RotVector rot;
 		rotamer_from_chi( pose.residue(ii), rot );
 		rots.push_back( rot );
@@ -131,7 +131,7 @@ chis_from_pose(
 	using utility::vector1;
 
 	vector1< vector1< Real > > chis;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		vector1< Real > chi_vec;
 		for ( Size jj = 1; jj <= pose.residue(ii).nchi(); ++jj ) {
 			chi_vec.push_back( pose.chi(jj,ii) );
@@ -191,13 +191,13 @@ main( int argc, char* argv [] ) {
 		vector1< char > nat_bb_bins( bb_bins_from_pose(native) );
 		vector1< RotVector > nat_rots( rots_from_pose(native) );
 
-		vector1< Size > bb_bins_correct( native.total_residue(), 0 );
+		vector1< Size > bb_bins_correct( native.size(), 0 );
 		vector1< vector1< Size > > rots_correct(
-			native.total_residue(), vector1< Size >( native.total_residue(), 0 )
+			native.size(), vector1< Size >( native.size(), 0 )
 		);
 
 		vector1< vector1< Size > > chis_correct(
-			native.total_residue(), vector1< Size >( native.total_residue(), 0 )
+			native.size(), vector1< Size >( native.size(), 0 )
 		);
 
 		Size total(0);
@@ -216,7 +216,7 @@ main( int argc, char* argv [] ) {
 			SequenceMapping mapping = aln.sequence_mapping(2,1);
 
 			std::cerr << "alignment: " << aln.to_string() << std::endl;
-			for ( Size ii = 1; ii <= native.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= native.size(); ++ii ) {
 				Size const query_res(mapping[ii]);
 				if ( query_res == 0 ) continue;
 				std::cerr << "examining residue " << ii << " => " << query_res << std::endl;
@@ -266,14 +266,14 @@ main( int argc, char* argv [] ) {
 			<< std::endl;
 
 		// calculate native per-residue sasa
-		utility::vector1< core::Real > rsd_sasa( native.total_residue(), 0.0 );
-		utility::vector1< core::Real > rsd_hydrophobic_sasa( native.total_residue(), 0.0 );
+		utility::vector1< core::Real > rsd_sasa( native.size(), 0.0 );
+		utility::vector1< core::Real > rsd_hydrophobic_sasa( native.size(), 0.0 );
 
 		core::scoring::calc_per_res_hydrophobic_sasa(
 			native, rsd_sasa, rsd_hydrophobic_sasa, 1.4, false
 		);
 
-		for ( Size ii = 1; ii <= native.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= native.size(); ++ii ) {
 			Real pct_bb(0.0);
 			if ( bb_bins_correct[ii] > 0 ) {
 				pct_bb = (

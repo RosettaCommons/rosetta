@@ -129,7 +129,7 @@ void detect_neighbors(
 	const core::Real radius,
 	std::map<core::Size, bool> & neighbor_map) {
 
-	for ( core::Size i = 1; i <= p.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= p.size(); i++ ) {
 		neighbor_map[i] = false;
 		if ( pos != i ) {
 			for ( core::Size a = 1; a <= p.residue(pos).natoms(); a++ ) {
@@ -167,7 +167,7 @@ void compare_residues_and_chi1_2_angles(
 		TR << repacked_p << std::endl;
 	}
 
-	runtime_assert( native_p.total_residue() == repacked_p.total_residue() );
+	runtime_assert( native_p.size() == repacked_p.size() );
 	protocols::rotamer_recovery::RRComparerChiDiff rrc_chi_diff;
 	rrc_chi_diff.set_max_chi_considered( 2 ); // only evaluate chi1 and chi2
 
@@ -250,7 +250,7 @@ core::kinematics::MoveMapOP derive_MoveMap_from_cluster_lst(
 	movemap->set_chi(false);
 	movemap->set_jump(false);
 
-	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		if ( is_flexible[i] ) {
 			movemap->set_chi( i, true );
 		}
@@ -381,8 +381,8 @@ void design_cluster(
 	initial_packer_task->or_include_current( false ); // the initial repack trial must not include the current (native!) side chains
 	core::pack::task::PackerTaskOP repack_packer_task( base_packer_task->clone() );
 	repack_packer_task->or_include_current( true ); // all later repacking steps may make use of previous results
-	utility::vector1<bool> allow_repacked( p.total_residue(), false );
-	utility::vector1<bool> allow_design( p.total_residue(), false );
+	utility::vector1<bool> allow_repacked( p.size(), false );
+	utility::vector1<bool> allow_design( p.size(), false );
 
 	utility::vector1<bool> ala_aalist( chemical::num_canonical_aas, false );
 	ala_aalist[ chemical::aa_ala ] = true;
@@ -482,14 +482,14 @@ void design_cluster(
 	std::map<core::Size, core::Size> all_neighbors; // make sure we don't append residues multiple times to a pose, that would probably be a mess
 	for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) {
 		cluster_name += utility::to_string(p.pdb_info()->number(*iter)) + "_";
-		starting_cluster.append_residue_by_jump(p.residue(*iter), starting_cluster.total_residue());
-		repacked_cluster.append_residue_by_jump(repacked.residue(*iter), repacked_cluster.total_residue());
+		starting_cluster.append_residue_by_jump(p.residue(*iter), starting_cluster.size());
+		repacked_cluster.append_residue_by_jump(repacked.residue(*iter), repacked_cluster.size());
 
 		// get all-atom RMSD for this particular residue
 		core::pose::Pose i_native; // empty pose, then just append the single residue - will this work?
 		core::pose::Pose i_repacked;
-		i_native.append_residue_by_jump(p.residue(*iter), i_native.total_residue());
-		i_repacked.append_residue_by_jump(repacked.residue(*iter), i_repacked.total_residue());
+		i_native.append_residue_by_jump(p.residue(*iter), i_native.size());
+		i_repacked.append_residue_by_jump(repacked.residue(*iter), i_repacked.size());
 		individual_pos_RMSDs.push_back(core::scoring::rmsd_with_super(i_native, i_repacked, core::scoring::is_heavyatom));
 
 
@@ -499,8 +499,8 @@ void design_cluster(
 		for ( std::map<core::Size, bool>::const_iterator m_iter = neighbor_map.begin(); m_iter != neighbor_map.end(); m_iter++ ) {
 			if ( m_iter->second ) {
 				if ( all_neighbors.find(m_iter->first) == all_neighbors.end() ) {
-					starting_cluster.append_residue_by_jump(p.residue(m_iter->first), starting_cluster.total_residue());
-					repacked_cluster.append_residue_by_jump(repacked.residue(m_iter->first), repacked_cluster.total_residue());
+					starting_cluster.append_residue_by_jump(p.residue(m_iter->first), starting_cluster.size());
+					repacked_cluster.append_residue_by_jump(repacked.residue(m_iter->first), repacked_cluster.size());
 					all_neighbors[m_iter->first]++;
 				}
 			}
@@ -726,8 +726,8 @@ int main( int argc, char * argv [] )
 			ext_cluster.insert(mapped_pos); // we have ensured above that there's an even number of entries, so this shouldn't produce segfaults -- the casting from strings to chars and ints is a terrible hack though
 			cluster_name += utility::to_string(p.pdb_info()->number(mapped_pos)) + "_";
 
-			native_cluster.append_residue_by_jump(native_p.residue(mapped_pos), native_cluster.total_residue());
-			repacked_cluster.append_residue_by_jump(p.residue(mapped_pos), repacked_cluster.total_residue());
+			native_cluster.append_residue_by_jump(native_p.residue(mapped_pos), native_cluster.size());
+			repacked_cluster.append_residue_by_jump(p.residue(mapped_pos), repacked_cluster.size());
 
 
 			if ( option[ design_tight_clusters::debug ]() ) {

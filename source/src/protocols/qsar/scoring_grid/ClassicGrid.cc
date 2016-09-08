@@ -79,7 +79,7 @@ void ClassicGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 {
 	//set attractive zones
-	for ( core::Size residue_index = 1; residue_index <=pose.total_residue(); ++residue_index ) {
+	for ( core::Size residue_index = 1; residue_index <=pose.size(); ++residue_index ) {
 		core::conformation::Residue const & residue(pose.residue(residue_index));
 		if ( !residue.is_protein() ) continue;
 		for ( core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index ) {
@@ -88,7 +88,7 @@ void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 	}
 
 	//set neutral zones
-	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
+	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
 		core::conformation::Residue const & residue(pose.residue(residue_index));
 		if ( !residue.is_protein() ) continue;
 		for ( core::Size atom_index = 1; atom_index <= residue.nheavyatoms(); ++atom_index ) {
@@ -97,7 +97,7 @@ void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 	}
 
 	//set repulsive zones
-	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
+	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
 		core::conformation::Residue const & residue = pose.residue(residue_index);
 		if ( !residue.is_protein() ) continue;
 		if ( residue.has("CB") ) set_sphere(residue.xyz("CB"), rep_radius_, 1);

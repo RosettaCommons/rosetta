@@ -551,7 +551,7 @@ void GeneralizedKIC::add_tail_residue( core::Size const residue_index )
 void GeneralizedKIC::check_loop_residues_sensible( core::pose::Pose const &pose)
 {
 	if ( loopresidues_.size()==0 ) return;
-	core::Size const nres = pose.n_residue();
+	core::Size const nres = pose.size();
 
 	for ( core::Size ir=1, irmax=loopresidues_.size(); ir<=irmax; ++ir ) {
 		runtime_assert_string_msg( loopresidues_[ir]>0 && loopresidues_[ir]<=nres, "One or more of the loop residue indices is not within the range of pose residue indices.  (This doesn't make sense -- check your input.)");
@@ -571,7 +571,7 @@ void GeneralizedKIC::check_loop_residues_sensible( core::pose::Pose const &pose)
 void GeneralizedKIC::check_tail_residues_sensible( core::pose::Pose const &pose )
 {
 	if ( tailresidues_.size()==0 ) return;
-	core::Size const nres = pose.n_residue();
+	core::Size const nres = pose.size();
 	core::Size const nloopresidues=loopresidues_.size();
 
 	for ( core::Size ir=1, irmax=tailresidues_.size(); ir<=irmax; ++ir ) {
@@ -1272,7 +1272,7 @@ core::Size GeneralizedKIC::get_connection(
 	core::Size const other_res,
 	core::pose::Pose const &pose
 ) {
-	core::Size nres = pose.n_residue();
+	core::Size nres = pose.size();
 	runtime_assert_string_msg(res_with_connection <= nres, "GeneralizedKIC::get_connection got a connection residue that's not in the pose.");
 	runtime_assert_string_msg(other_res <= nres, "GeneralizedKIC::get_connection got a residue that's not in the pose.");
 
@@ -1376,7 +1376,7 @@ void GeneralizedKIC::addloopgeometry(
 		utility_exit_with_message("Error!  GeneralizedKIC addloopgeometry() function called without setting a loop to be closed.  (This shouldn't actually be possible...)\n");
 	}
 
-	core::Size lastres = perturbedloop_pose.n_residue();
+	core::Size lastres = perturbedloop_pose.size();
 
 	for ( core::Size ir=1; ir<=loopsize; ++ir ) { //Loop through all of the loop residues to add.
 		core::conformation::ResidueOP rsd = pose.residue(loopresidues_[ir]).clone();
@@ -1414,8 +1414,8 @@ void GeneralizedKIC::addloopgeometry(
 		perturbedloop_pose.append_residue_by_bond((*rsd), build_ideal, con, anchorres, anchorcon, false, false);
 
 		//Keep track of which residue in the temporary pose corresponds to which residue in the real pose:
-		residue_map.push_back( std::pair< core::Size, core::Size >( perturbedloop_pose.n_residue(), loopresidues_[ir] ) );
-		lastres=perturbedloop_pose.n_residue();
+		residue_map.push_back( std::pair< core::Size, core::Size >( perturbedloop_pose.size(), loopresidues_[ir] ) );
+		lastres=perturbedloop_pose.size();
 
 	}
 
@@ -1451,7 +1451,7 @@ void GeneralizedKIC::addtailgeometry(
 			if ( tail_residue_added[ir] ) continue; //Skip ahead if we've already added this residue.
 
 			//If this is a residue that hasn't yet been added...
-			for ( core::Size jr=2, jrmax=perturbedloop_pose.n_residue(); jr<=jrmax; ++jr ) { //Loop through the residues already added, checking for a connection to this residue.  Start at 2 to skip the first anchor.
+			for ( core::Size jr=2, jrmax=perturbedloop_pose.size(); jr<=jrmax; ++jr ) { //Loop through the residues already added, checking for a connection to this residue.  Start at 2 to skip the first anchor.
 				if ( jr==loopsize ) continue; //Skip the second anchor.
 				else { //going through loop residues or tail residues
 					if ( pose.residue( tailresidues_[ir] ).is_bonded( get_original_pose_rsd(jr, ( (jr<loopsize)?residue_map:tail_residue_map )  ) ) ) {
@@ -1482,7 +1482,7 @@ void GeneralizedKIC::addtailgeometry(
 
 						perturbedloop_pose.append_residue_by_bond((*rsd), build_ideal, con, jr, anchorcon, false, false);
 
-						tail_residue_map.push_back( std::pair<core::Size,core::Size>( perturbedloop_pose.n_residue(), tailresidues_[ir] )  );
+						tail_residue_map.push_back( std::pair<core::Size,core::Size>( perturbedloop_pose.size(), tailresidues_[ir] )  );
 
 						added_a_residue_this_round=true;
 						breaknow=true;
@@ -1506,7 +1506,7 @@ void GeneralizedKIC::addupperanchor(
 	core::pose::Pose &perturbedloop_pose,
 	core::pose::Pose const &pose
 ) {
-	core::Size const lastres = perturbedloop_pose.n_residue();
+	core::Size const lastres = perturbedloop_pose.size();
 	if ( lastres==0 ) utility_exit_with_message("Error!  Empty pose passed to GeneralizedKIC::addupperanchor.  (This shouldn't be possible.)\n");
 
 	if ( upper_anchor_connID_ == 0 ) {
@@ -1715,7 +1715,7 @@ void GeneralizedKIC::generate_atomlist(
 
 	atomlist_.clear();
 
-	runtime_assert_string_msg((pose.n_residue() > 0 && residue_map.size() > 0), "Uninitialized data passed to GeneralizedKIC::generate_atomlist.");
+	runtime_assert_string_msg((pose.size() > 0 && residue_map.size() > 0), "Uninitialized data passed to GeneralizedKIC::generate_atomlist.");
 
 	{ //Scope 1: start with the AtomID of the lower anchor connection point and its 2 parents:
 		core::Size firstconindex = get_connection( 1, residue_map[1].first, pose );

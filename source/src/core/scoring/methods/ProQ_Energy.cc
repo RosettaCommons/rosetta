@@ -136,7 +136,7 @@ ProQ_Energy::finalize_total_energy(
 	EnergyMap & totals
 ) const {
 	using namespace conformation;
-	Size nres2=pose.total_residue();
+	Size nres2=pose.size();
 	Size nres=nres_;
 
 	TR.Debug << "NRES: " << nres_ <<  " " << nres2 << " " << entropy_.size() << std::endl;
@@ -557,7 +557,7 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 	ObjexxFCL::FArray2D< Real > & feature_vector) const{
 
 	//std::cout << "Calculating Feature vector for ProQM" << std::endl;
-	//const int nres=(int)pose.total_residue();
+	//const int nres=(int)pose.size();
 	const int nres=(int)nres_;
 	//Calculate secondary structure
 	ObjexxFCL::FArray2D< Real > feature_vector_orig(nres,260);
@@ -595,7 +595,7 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 	calculateZ(pose,Z);
 
 
-	// for(Size i=1;i<=pose.total_residue();++i) {
+	// for(Size i=1;i<=pose.size();++i) {
 	// std::cout << "DSSP " << i << " " << ss.get_dssp_secstruct(i) << std::endl;
 	//}
 
@@ -657,7 +657,7 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 
 
 void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & vec,Size index,int windowsize) const{
-	//const int nres=(int)pose.total_residue();
+	//const int nres=(int)pose.size();
 	const int nres=(int)nres_;
 
 	//const int windowsize=21;

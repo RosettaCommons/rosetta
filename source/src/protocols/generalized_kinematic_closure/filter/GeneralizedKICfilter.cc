@@ -390,7 +390,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 
 	core::Real const multiplier = 0.6; //TEMPORARY -- multiplier to reduce the stringency of the bump check.
 
-	core::Size const nres=original_pose.n_residue(); //Total number of residues in the original pose.
+	core::Size const nres=original_pose.size(); //Total number of residues in the original pose.
 
 	core::pose::Pose pose(loop_pose); //Make a copy of the loop pose
 	set_loop_pose (pose, atomlist, torsions, bondangles, bondlengths);
@@ -622,7 +622,7 @@ bool GeneralizedKICfilter::apply_backbone_bin(
 	utility::vector1 < core::Real > const &bondlengths
 ) const {
 	//Initial checks:
-	if ( resnum() < 1 || resnum() > original_pose.n_residue() ) {
+	if ( resnum() < 1 || resnum() > original_pose.size() ) {
 		utility_exit_with_message( "In GeneralizedKICfilter::apply_backbone_bin(): Could not apply filter.  The residue was not specified, or is out of range." );
 	}
 	if ( !original_pose_residue_is_in_residue_map(resnum(), residue_map) ) {
@@ -685,7 +685,7 @@ bool GeneralizedKICfilter::apply_alpha_aa_rama_check (
 	utility::vector1 < core::Real > const &bondlengths
 ) const {
 	//Initial checks:
-	if ( resnum() < 1 || resnum() > original_pose.n_residue() ) {
+	if ( resnum() < 1 || resnum() > original_pose.size() ) {
 		utility_exit_with_message( "In GeneralizedKICfilter::apply_alpha_aa_rama_check(): Could not apply filter.  The residue was not specified, or is out of range." );
 	}
 	if ( !original_pose_residue_is_in_residue_map(resnum(), residue_map) ) {

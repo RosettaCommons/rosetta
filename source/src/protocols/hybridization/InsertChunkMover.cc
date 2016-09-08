@@ -154,7 +154,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			}
 
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
-			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
+			if ( jres_template <= 0 || jres_template > template_pose_->size() ) continue;
 
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if ( copy_ss_torsion_only_ && template_pose_->secstruct(jres_template) == 'L' ) continue;
@@ -172,7 +172,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			if ( sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end() ) break;
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 
-			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
+			if ( jres_template <= 0 || jres_template > template_pose_->size() ) continue;
 
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if ( copy_ss_torsion_only_ && template_pose_->secstruct(jres_template) == 'L' ) continue;
@@ -193,7 +193,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			if ( !pose.residue_type(ires_pose).is_protein() ) continue;
 
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
-			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
+			if ( jres_template <= 0 || jres_template > template_pose_->size() ) continue;
 
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if ( copy_ss_torsion_only_ && template_pose_->secstruct(jres_template) == 'L' ) continue;
@@ -210,7 +210,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			if ( !pose.residue_type(ires_pose).is_protein() ) continue;
 
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
-			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
+			if ( jres_template <= 0 || jres_template > template_pose_->size() ) continue;
 
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if ( copy_ss_torsion_only_ ) {
@@ -325,7 +325,7 @@ void InsertChunkMover::check_overlap(core::pose::Pose & pose) {
 	bool overlapped = false;
 	for ( Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
 		if ( !pose.residue_type(ires).has("CA") ) continue;
-		for ( Size jres=1; jres<= pose.total_residue(); ++jres ) {
+		for ( Size jres=1; jres<= pose.size(); ++jres ) {
 			if ( jres >=seqpos_start_ && jres<= seqpos_stop_ ) continue;
 			if ( !pose.residue_type(jres).has("CA") ) continue;
 			numeric::xyzVector < core::Real > xyz_iatom (pose.residue(ires).xyz("CA"));

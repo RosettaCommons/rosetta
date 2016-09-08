@@ -221,12 +221,12 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 	using namespace core::scoring;
 	using ObjexxFCL::FArray1D_bool;
 
-	use_all_residues.resize(pose.total_residue(),false);
+	use_all_residues.resize(pose.size(),false);
 
 	if ( whole_interface_ ) {
 		energy_per_residue_filter_tracer << name << " reassign interface residues" << std::endl;
 		core::pose::Pose in_pose = pose;
-		FArray1D_bool partner1_( in_pose.total_residue(), false );
+		FArray1D_bool partner1_( in_pose.size(), false );
 		in_pose.fold_tree().partition_by_jump( rb_jump_, partner1_);
 		protocols::scoring::Interface interface_obj(rb_jump_);
 		in_pose.update_residue_neighbors();
@@ -234,7 +234,7 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 		interface_obj.calculate( in_pose );
 		(*scorefxn_)( in_pose );
 
-		for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+		for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
 			if ( interface_obj.is_interface( resid ) ) {
 				use_all_residues[resid]=true;
 			}
@@ -250,7 +250,7 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 			foreach ( core::Size const res, res_vec ) {
 				use_all_residues[ res ]=true;
 
-				for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+				for ( core::Size i = 1; i <= pose.size(); ++i ) {
 					if ( i == res ) continue; //dont need to check if is nbr of self
 					if ( use_all_residues[ i ] ) continue; //dont need to check one that is marked already
 					core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
@@ -296,7 +296,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 	bool pass;
 	core::Real energy=0;
 
-	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
 		if ( !pose.residue(resid).is_protein() ) continue;
 		if ( use_all_residues[resid] ) {
 			energy= compute( pose, resid ) ;
@@ -326,7 +326,7 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 	apply_helper( "report", pose, use_all_residues );
 
 	core::Real energy = 0;
-	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
 		if ( !pose.residue( resid ).is_protein() ) continue;
 		if ( use_all_residues[ resid ] ) {
 			energy = compute( pose, resid ) ;
@@ -349,7 +349,7 @@ EnergyPerResidueFilter::report_sm( core::pose::Pose const & pose ) const
 	core::Real energy = 999999;
 	core::Real ind_energy = 0;
 	core::Size num_res = 0;
-	for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid ) {
+	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
 		if ( !pose.residue( resid ).is_protein() ) continue;
 		if ( use_all_residues[ resid ] ) {
 			ind_energy += compute( pose, resid );

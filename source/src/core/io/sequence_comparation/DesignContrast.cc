@@ -92,7 +92,7 @@ DesignContrast::DesignContrast(DesignContrast const & dc) {
 void DesignContrast::setNeighbors(pose::Pose & pose) {
 	pose.update_residue_neighbors();
 	nneighbs_.clear();
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		nneighbs_.push_back(pose.energies().tenA_neighbor_graph().get_node(i)->num_neighbors_counting_self());
 	}
 }
@@ -112,7 +112,7 @@ void DesignContrast::setSecStruct(pose::Pose & pose){
 	secstructs_.clear();
 	set_ss_from_phipsi(pose); // This function is defined in pose/util.cc
 	std::string secstruct;
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		secstruct = pose.secstruct(i);
 		secstructs_.push_back(secstruct);
 	}
@@ -209,14 +209,14 @@ void DesignContrast::output_sqc_file (
 	//    pdb_res_num = decoy_pose.pdb_numbering();
 	//  TR << "after get pdb number "<< std::endl;
 
-	for ( Size i=1; i<=native_pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=native_pose.size(); ++i ) {
 		native_res_name.push_back(native_pose.residue(i).name3());
 	}
-	for ( Size j=1 ; j<=decoy_pose.total_residue(); ++j ) {
+	for ( Size j=1 ; j<=decoy_pose.size(); ++j ) {
 		decoy_res_name.push_back(decoy_pose.residue(j).name3());
 	}
-	TR << "total residues: " << decoy_pose.total_residue() << std::endl;
-	for ( Size n=1; n<=decoy_pose.total_residue(); ++n ) {
+	TR << "total residues: " << decoy_pose.size() << std::endl;
+	for ( Size n=1; n<=decoy_pose.size(); ++n ) {
 		sqc
 			<< single_code << "  "
 			<< decoy_pose.pdb_info()->chain(n) << " "

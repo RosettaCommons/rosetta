@@ -134,7 +134,7 @@ void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	// 'region1', 'region2' and 'ligand' options
 	// Initialize 'region1' with complete pose in case no option is specified
 	core::Size region1_begin = 1;
-	core::Size region1_end = pose.n_residue();
+	core::Size region1_end = pose.size();
 	// Parse 'region1' option if supplied
 	if ( tag->hasOption("region1") ) {
 		parse_region_string(tag->getOption<std::string> ("region1"),
@@ -200,7 +200,7 @@ void ContactMap::parse_region_string(std::string region_def,
 	}
 
 	// Check if region definition is within bounds of the pose
-	if ( region_begin < 1  || region_end > pose.n_residue() ) {
+	if ( region_begin < 1  || region_end > pose.size() ) {
 		utility_exit_with_message("Specified region '" + region_def +"' is out of bounds!");
 	}
 	//TR << "Region defined from " << *region_begin << " to " << *region_end <<"." << std::endl;

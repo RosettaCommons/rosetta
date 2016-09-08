@@ -938,9 +938,9 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
   //bool use_broadcasting = true;
   assert(transition_threshold == transition_threshold_);
   if( transfer_buf_.nresidues_ == 0 ){
-    transfer_buf_.nresidues_ = pose.total_residue();
+    transfer_buf_.nresidues_ = pose.size();
   }else{
-    assert( transfer_buf_.nresidues_ == pose.total_residue() );
+    assert( transfer_buf_.nresidues_ == pose.size() );
   }
   if( tracer_visible_ ){
     tr.Debug << "this node is rank " << rank_ << " pool-rank is " << pool_rank_ << " master node is rank " << master_node_ << " and total size is " << npes_ << " pool-size is " << pool_npes_ << std::endl;
@@ -955,7 +955,7 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
 
   std::string new_tag;
   if( best_rmsd > transition_threshold ){
-    //FArray2D_double coords( 3, pose.total_residue() , 0.0 );
+    //FArray2D_double coords( 3, pose.size() , 0.0 );
     PROF_START( basic::FARRAY_MANIPULATION );
     reformat( pose, new_tag );
     PROF_STOP( basic::FARRAY_MANIPULATION );
@@ -1037,7 +1037,7 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
   PROF_START( basic::MPI_POOL_SLAVE_THINKS );
 
   if( !i_am_a_winning_rank  && num_structures_to_add > 0 ){ //update rms info and nearest cluster info
-    FArray2D_double coords( 3, pose.total_residue(), 0.0 );
+    FArray2D_double coords( 3, pose.size(), 0.0 );
     toolbox::fill_CA_coords( pose, coords );
     tr.Debug << "checking coords" << std::endl;
 

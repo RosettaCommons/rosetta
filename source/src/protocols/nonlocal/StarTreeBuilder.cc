@@ -64,7 +64,7 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	assert(chunks.num_loop());
 
 	// Number of residues before addition of virtual residue
-	Size num_residues = pose->total_residue();
+	Size num_residues = pose->size();
 
 	// Add a virtual residue at the center of mass (updates the fold tree)
 	numeric::xyzVector<Real> center;
@@ -74,7 +74,7 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	// Initialize member variable <virtual_res_> with the index of the newly added
 	// virtual residue. Subsequently, <virtual_res_> can serve as a proxy for
 	// <num_residues>
-	virtual_res_ = pose->total_residue();
+	virtual_res_ = pose->size();
 
 	// Define jumps, cuts
 	vector1<int> cuts;

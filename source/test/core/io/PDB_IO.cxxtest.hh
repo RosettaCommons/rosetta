@@ -59,7 +59,7 @@ public:
 		import_pose::pose_from_file(pose, original_file_name, core::import_pose::PDB_file);
 
 		// see if number of residues is correct
-		TS_ASSERT_EQUALS( pose.total_residue(), 116u );
+		TS_ASSERT_EQUALS( pose.size(), 116u );
 
 		// write pose to a new file...
 		const std::string tmp_file_name("PDB_IO_cxxtest.pdb._tmp_");
@@ -72,12 +72,12 @@ public:
 		import_pose::pose_from_file(P2, tmp_file_name, core::import_pose::PDB_file);
 
 		// see if number of residues is correct
-		TS_ASSERT_EQUALS( P2.total_residue(), 116u );
+		TS_ASSERT_EQUALS( P2.size(), 116u );
 
 
 		// now test if residue information is the same
 		bool should_exit = false;
-		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( Size i=1; i<=pose.size(); ++i ) {
 			conformation::Residue const & R1( pose.residue(i) );
 			conformation::Residue const & R2( P2.residue(i) );
 
@@ -111,7 +111,7 @@ public:
 		pose::Pose pose;
 		// This file has a leading fragment of an Arg residue that needs to be ignored.
 		import_pose::pose_from_file(pose, "core/io/1ten.pdb", core::import_pose::PDB_file);
-		TS_ASSERT_EQUALS( pose.total_residue(), 89 );
+		TS_ASSERT_EQUALS( pose.size(), 89 );
 		TR << pose.annotated_sequence() << std::endl;
 		TS_ASSERT_EQUALS( pose.annotated_sequence(),
 			"L[LEU:NtermProteinFull]DAPSQIEVKDVTDTTALITWFKPLAEIDGIELTYGIKDVPGDRTTIDLTEDENQYSIGNLKPDTEYEVSLISRRGDMSSNPAKETFTT[THR:CtermProteinFull]" );

@@ -71,12 +71,12 @@ public:
 
 		neighbor_rs->parse_my_tag( tag, dm );
 		ResidueSubset subset = neighbor_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		// check the result
 		// 1. generate fake focus
-		utility::vector1< core::Size > testFocus(trpcage.total_residue(), false);
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ii += 2 ) {
+		utility::vector1< core::Size > testFocus(trpcage.size(), false);
+		for ( core::Size ii = 1; ii <= trpcage.size(); ii += 2 ) {
 			testFocus[ ii ] = true;
 		}
 		// test
@@ -96,7 +96,7 @@ public:
 
 		ResidueSubset subset = neighbor_rs->apply( trpcage );
 
-		utility::vector1< core::Size > testFocus(trpcage.total_residue(), false);
+		utility::vector1< core::Size > testFocus(trpcage.size(), false);
 		testFocus[2] = true;
 		testFocus[3] = true;
 		testFocus[5] = true;
@@ -127,17 +127,17 @@ public:
 	// determines which source of focus residues is used
 	void test_NeighborhoodResidueSelector_use_last_provided_source_of_focus() {
 
-		utility::vector1< core::Size > focus_set(trpcage.total_residue(), false);
+		utility::vector1< core::Size > focus_set(trpcage.size(), false);
 		focus_set[2] = true;
 		focus_set[3] = true;
 		NeighborhoodResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector(focus_set, 5.0) );
 		ResidueSelectorOP odd_rs( new OddResidueSelector );
 
-		ResidueSubset subset( trpcage.total_residue(), false );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		ResidueSubset subset( trpcage.size(), false );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
-		utility::vector1< core::Size > testFocus_odd(trpcage.total_residue(), false);
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ii += 2 ) {
+		utility::vector1< core::Size > testFocus_odd(trpcage.size(), false);
+		for ( core::Size ii = 1; ii <= trpcage.size(); ii += 2 ) {
 			testFocus_odd[ ii ] = true;
 		}
 
@@ -206,7 +206,7 @@ public:
 		TR<< "ctrl  " << utility::to_string(ctrl_subset) << std::endl;
 
 		//Compare subset to control subset. Return False if they do not match.
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( ctrl_subset[ i ]  != subset[ i ] ) {
 				TR << "Resnum "<< i <<" "<< ctrl_subset[ i ] << "!=" << subset[ i ] << std::endl;
 				return false;

@@ -243,13 +243,13 @@ HbondsToResidueFilter::compute( Pose const & pose, core::Size const resnum_roset
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
 
 	//Get the ResidueSubset that could form hydrogen bonds with this residue:
-	core::select::residue_selector::ResidueSubset selection( pose.n_residue(), true );
+	core::select::residue_selector::ResidueSubset selection( pose.size(), true );
 	if ( selector_ ) {
 		selection = selector_->apply( pose );
 	}
 
 	std::set<Size> binders;
-	for ( Size i=1, imax=pose.n_residue(); i<=imax; ++i ) {
+	for ( Size i=1, imax=pose.size(); i<=imax; ++i ) {
 		if ( i == resnum_rosetta ) continue; //Don't consider hbonds of this residue to itself.
 		if ( !selection[i] ) continue; //Don't consider hbonds to residues that aren't selected by the ResidueSelector (if used).  Note that the selection vector is all true if no ResidueSelector is provided.
 		if ( pose.chain(i) == pose.chain(resnum_rosetta) && !from_same_chain() ) continue; //Skip hbonds from same chain if the from_same_chain option is not set.

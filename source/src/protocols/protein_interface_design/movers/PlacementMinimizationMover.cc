@@ -109,7 +109,7 @@ PlacementMinimizationMover::refresh_bbstub_constraints( core::pose::Pose & pose 
 	pose.fold_tree( new_ft );
 	remove_hotspot_constraints_from_pose( pose );
 	core::Size fixed_res(1);
-	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	if ( host_chain_ == 1 ) fixed_res = pose.size();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	HotspotStubSetOP all_stubs( new HotspotStubSet );
 	BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, stub_sets_ ) {
@@ -181,7 +181,7 @@ PlacementMinimizationMover::apply( core::pose::Pose & pose )
 	setup_packer_and_movemap( pose ); // for min_sc below
 	core::scoring::ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
 	//for minimization (rb and sc of previous placed stubs)
-	utility::vector1< bool > const no_min( pose.total_residue(), false );
+	utility::vector1< bool > const no_min( pose.size(), false );
 
 	utility::vector1< core::Size > no_targets;
 	MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, curr_min_sc_, min_rb(), optimize_foldtree(), no_targets, true/*simultaneous optimization*/);

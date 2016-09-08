@@ -134,7 +134,7 @@ using namespace core::scoring::packstat;
 // 		id::AtomID_Map<Real> atom_sasa;
 // 		utility::vector1<Real> rsd_sasa;
 // 		scoring::calc_per_atom_sasa(pose,atom_sasa,rsd_sasa,3.0);
-// 		for( size_t i = 1; i <= pose.total_residue(); ++i ) {
+// 		for( size_t i = 1; i <= pose.size(); ++i ) {
 // 			for( size_t j = 1; j <= pose.residue(i).natoms(); ++j ) {
 // 				TRps << "3.0 " << i << " " << j << " " << atom_sasa[i][j] << std::endl;
 // 				conformation::Atom const & a( pose.residue(i).atom(j) );
@@ -147,7 +147,7 @@ using namespace core::scoring::packstat;
 // 		id::AtomID_Map<Real> atom_sasa;
 // 		utility::vector1<Real> rsd_sasa;
 // 		scoring::calc_per_atom_sasa(pose,atom_sasa,rsd_sasa,1.4);
-// 		for( size_t i = 1; i <= pose.total_residue(); ++i ) {
+// 		for( size_t i = 1; i <= pose.size(); ++i ) {
 // 			for( size_t j = 1; j <= pose.residue(i).natoms(); ++j ) {
 // 				TRps << "1.4 " << i << " " << j << " " << atom_sasa[i][j] << std::endl;
 // 			}

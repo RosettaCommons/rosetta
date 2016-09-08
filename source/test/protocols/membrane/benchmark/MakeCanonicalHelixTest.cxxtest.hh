@@ -75,7 +75,7 @@ public: // test functions
 	void test_default_dihedral_angles() {
 
 		TR <<  "Testing correct setup of ideal peptide from sequence with anticipated dihedral angles"  << std::endl;
-		for ( core::Size i = 1; i <= pose_->total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose_->size(); ++i ) {
 
 			TS_ASSERT_EQUALS( pose_->phi( i ), -57.0 );
 			TS_ASSERT_EQUALS( pose_->psi( i ), -47.0 );

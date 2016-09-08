@@ -95,7 +95,7 @@ public:
 		pdbname_ = pose.pdb_info()->name();
 		pose_filename_ = pdbname_; // not sure if this is correct
 
-		for(Size i(1); i <= pose.total_residue(); ++i) {
+		for(Size i(1); i <= pose.size(); ++i) {
 			std::string name3 = pose.residue(i).name3();
 			if ( name3 == "ZNX" || name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "HIZ") {
 

@@ -51,7 +51,7 @@ int main (int argc, char *argv[]) {
 	for(int ifile = 1; ifile <= (int)files.size(); ++ifile) {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file(pose,files[ifile], core::import_pose::PDB_file);
-		Size nres = pose.n_residue();
+		Size nres = pose.size();
 		Pose init(pose);
 		core::pose::symmetry::make_symmetric_pose(pose);
 

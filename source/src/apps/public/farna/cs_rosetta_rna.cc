@@ -180,7 +180,7 @@ setup_rna_minimizer(ScoreFunctionOP scorefxn,
 
 	if ( obl_rna_pairings.size() > 0 ) {
 		allow_minimize->set( false );
-		for ( Size res_num = 1; res_num <= pose.total_residue(); res_num++ ) {
+		for ( Size res_num = 1; res_num <= pose.size(); res_num++ ) {
 
 			bool is_obl_res = false;
 			for ( Size id = 1; id <= obl_rna_pairings.size(); id++ ) {
@@ -194,7 +194,7 @@ setup_rna_minimizer(ScoreFunctionOP scorefxn,
 
 			allow_minimize->set( res_num, true );
 			// new -- make sure loops are moveable (& closeable!) at the 3'-endpoint.
-			if ( res_num < pose.total_residue() ) {
+			if ( res_num < pose.size() ) {
 				allow_minimize->set_phosphate( res_num+1, pose, true );
 			}
 		}

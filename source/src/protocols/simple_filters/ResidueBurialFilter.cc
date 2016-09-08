@@ -145,7 +145,7 @@ ResidueBurialFilter::compute( core::pose::Pose const & pose ) const {
 	residue_burial_filter_tracer<<"chain span "<<chain_begin<< " "<<chain_end<<std::endl;
 	core::Size count_neighbors( 0 );
 	core::conformation::Residue const res_target( pose.conformation().residue( residue_num ) );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( i>=chain_begin && i<=chain_end ) continue;
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );

@@ -203,7 +203,7 @@ void LoopMover_Refine_KIC::apply(
 	}
 
 	// set cutpoint variants for correct chainbreak scoring
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
 
 	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end();
@@ -337,7 +337,7 @@ void LoopMover_Refine_KIC::apply(
 	// setting redes loop, but no resfile specified. all non-loop positions only repack. loop positions can design.
 	if ( redesign_loop_ && !option[ OptionKeys::packing::resfile ].user() ) {
 		tr() << "Auto-setting loop design for residues:";
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( !is_loop[i] ) repack_packer_task->nonconst_residue_task( i ).restrict_to_repacking();
 			else tr() << " " << i;
 		}
@@ -887,7 +887,7 @@ LoopMover_Refine_KIC::update_allow_sc_vectors(
 	for ( Size i = 1; i <= loops()->size(); i++ ) {
 		protocols::loops::Loops cur_loop;
 		cur_loop.add_loop( ( *loops() )[ i ] );
-		utility::vector1<bool> cur_allow_sc_move( pose.total_residue(), false );
+		utility::vector1<bool> cur_allow_sc_move( pose.size(), false );
 		select_loop_residues( pose, cur_loop, !fix_natsc_, cur_allow_sc_move, neighbor_dist_);
 		allow_sc_vectors[ i ] = cur_allow_sc_move;
 	}
@@ -908,7 +908,7 @@ LoopMover_Refine_KIC::set_rottrials_from_kic_segment(
 
 	// we'll exploit the loops classes and the select_loop_residues() function to setup the PackerTask
 	protocols::loops::Loop kic_seg( kic_start, kic_end, kic_start );
-	utility::vector1<bool> to_trials( pose.total_residue(), false );
+	utility::vector1<bool> to_trials( pose.size(), false );
 	select_loop_residues( pose, kic_seg, true, to_trials, neighbor_dist_ );
 	rottrials_packer_task->restrict_to_residues( to_trials );
 }

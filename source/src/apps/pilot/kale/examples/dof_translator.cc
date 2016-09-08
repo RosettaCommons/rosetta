@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 	pose.dump_pdb("messed_up.pdb");
 
 	/*
-	for (Size residue = 1; residue <= pose.total_residue(); residue++) {
+	for (Size residue = 1; residue <= pose.size(); residue++) {
 		string atoms[] = {"N", "CA", "C"};
 
 		for (Size atom = 0; atom < 3; atom++) {

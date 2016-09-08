@@ -94,7 +94,7 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 			// check full_shell
 			bool const full_shell = ( ligands.size() >= 6 );
 			Real add_probability = full_shell ? 0.0 : 0.8;
-			if ( numeric::random::rg().uniform() <= add_probability || pose.total_residue() == 1 ) {
+			if ( numeric::random::rg().uniform() <= add_probability || pose.size() == 1 ) {
 				// add
 				if ( add_at_random_in_shell ) {
 					Vector xyz_water;
@@ -126,7 +126,7 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 				// delete
 				Size const water_res = numeric::random::rg().random_element( get_water_res( pose ) );
 				vector1< Size > slice_res;
-				for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+				for ( Size n = 1; n <= pose.size(); n++ ) {
 					if ( n != water_res ) slice_res.push_back( n );
 				}
 				pdbslice( pose, slice_res );
@@ -157,9 +157,9 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 void
 MgMonteCarlo::setup_mg_water_fold_tree( pose::Pose & pose ) const {
 	using namespace core::kinematics;
-	FoldTree f( pose.total_residue() );
+	FoldTree f( pose.size() );
 	vector1< Size > mg_res = get_mg_res( pose );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue( n ).name3() == "HOH" ) {
 			f.new_jump( n, 1, n - 1 /* cutpoint */ );
 		}

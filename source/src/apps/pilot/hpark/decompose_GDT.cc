@@ -37,12 +37,12 @@ get_resmap( pose::Pose const &pose,
 	    )
 {
 
-  for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= pose.size(); ++ii ) {
     Size ii_pdb( pose.pdb_info()->number( ii ) );
     //Size i_ca1 = pose.residue(ii).atom_index(" CA ");
     //id::AtomID id1( i_ca1, ii );
 
-    for ( Size jj = 1; jj <= native.total_residue(); ++jj ) {
+    for ( Size jj = 1; jj <= native.size(); ++jj ) {
       Size jj_pdb( native.pdb_info()->number( jj ) );
       if( ii_pdb == jj_pdb ){
 	resmap[ii] = jj;
@@ -69,7 +69,7 @@ decompose( pose::Pose const &pose0,
   Real core_GDT( 0.0 );
   Real loop_GDT( 0.0 );
 
-  for( Size ires = 1; ires <= pose.total_residue(); ++ires ){
+  for( Size ires = 1; ires <= pose.size(); ++ires ){
 
     if( resmap.count( ires ) == 0 ) continue;
 

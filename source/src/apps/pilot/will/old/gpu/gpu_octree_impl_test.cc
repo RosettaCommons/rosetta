@@ -1,6 +1,6 @@
   cl_float4 *atoms = new cl_float4[natom];
   uint count = 0;
-  for(int ir = 1; ir <= p.n_residue(); ++ir) {
+  for(int ir = 1; ir <= p.size(); ++ir) {
     for(int ia = 1; ia <= p.residue(ir).nheavyatoms(); ++ia) {
       cl_float4 & xyz( atoms[count++] );
       xyz.x = p.residue(ir).atom(ia).xyz().x();

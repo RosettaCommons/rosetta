@@ -84,7 +84,7 @@ void A3BHbsRandomSmallMover::apply( core::pose::Pose & pose ){
 	//runtime_assert ( pose.residue(hbs_pre_pos).has_variant_type(chemical::HBS_PRE) == 1) ;
 	runtime_assert ( pose.residue(hbs_post_pos).has_variant_type(chemical::A3B_HBS_POST) == 1) ;
 	//kdrew: an hbs pre position cannot be last position
-	runtime_assert ( hbs_pre_pos != pose.total_residue() );
+	runtime_assert ( hbs_pre_pos != pose.size() );
 	//kdrew: an hbs post position cannot be first position
 	runtime_assert ( hbs_post_pos != 1 );
 

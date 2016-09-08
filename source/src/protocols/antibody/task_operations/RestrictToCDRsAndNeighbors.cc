@@ -244,10 +244,10 @@ RestrictToCDRsAndNeighbors::apply(const core::pose::Pose& pose, core::pack::task
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 
-	utility::vector1<bool> loops_and_neighbors( pose.total_residue(), false );
+	utility::vector1<bool> loops_and_neighbors( pose.size(), false );
 	select_loop_residues( pose, *cdr_loops_and_stems, true , loops_and_neighbors, neighbor_dis_ );
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! loops_and_neighbors[ i ] ) {
 			turn_off_packing.include_residue( i );
 		} else {

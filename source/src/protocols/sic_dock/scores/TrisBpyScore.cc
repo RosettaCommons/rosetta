@@ -142,7 +142,7 @@ TrisBpyScore::TrisBpyScore(
 	tolerance_(tolerance),
 	min_bpy_contacts_(min_bpy_contacts)
 {
-	for ( Size ir = 1; ir <= pose_.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose_.size(); ++ir ) {
 		Vec  N = pose_.residue(ir).xyz(1);
 		Vec CA = pose_.residue(ir).xyz(2);
 		Vec  C = pose_.residue(ir).xyz(3);

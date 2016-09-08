@@ -626,7 +626,7 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 		utility::vector1<core::id::AtomID> mainchain_atomids;
 		for ( core::Size i = contiguous_begin; i <= contiguous_end; ++i ) {
 			core::Size resnum(resnums[i]);
-			if ( resnum >= 1 && resnum <= input_pose->total_residue() ) {
+			if ( resnum >= 1 && resnum <= input_pose->size() ) {
 				for ( core::Size j = 1; j <= atomnames.size(); j++ ) {
 					// KAB - Added if statement to only add atom to vector if it actually exists in the residue
 					// This allows for HETATMS without C-alphas (or other pivot atoms)
@@ -656,7 +656,7 @@ protocols::backrub::BackrubMover::add_mainchain_segments()
 	utility::vector1<core::Size> resnums(pivot_residues_);
 	if ( resnums.size() == 0 ) {
 		// use all residues if none defined
-		for ( core::Size i = 1; i <= get_input_pose()->total_residue(); ++i ) resnums.push_back(i);
+		for ( core::Size i = 1; i <= get_input_pose()->size(); ++i ) resnums.push_back(i);
 	}
 
 	// add segments to the backrub mover

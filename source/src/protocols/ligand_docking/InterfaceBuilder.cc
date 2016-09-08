@@ -86,7 +86,7 @@ InterfaceBuilder::parse_my_tag(
 }
 
 ligand_options::Interface InterfaceBuilder::build(core::pose::Pose const & pose) const{
-	ligand_options::Interface interface( pose.total_residue(), ligand_options::InterfaceInfo() ); // init all positions to false
+	ligand_options::Interface interface( pose.size(), ligand_options::InterfaceInfo() ); // init all positions to false
 	find_interface_residues(interface, pose);
 	if ( extension_window_ > 0 ) enforce_minimum_length(interface, pose);
 	interface_builder_tracer.Debug<< "built interface: "<< interface<< std::endl;
@@ -121,7 +121,7 @@ void InterfaceBuilder::find_protein_residues(
 	core::Size ligand_residue_id,
 	core::pose::Pose const & pose
 )const{
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( pose.residue(i).is_protein() &&
 				interface[i].type != ligand_options::InterfaceInfo::is_interface ) {
 			set_interface_residue(interface, i, ligand_residue_id, pose);

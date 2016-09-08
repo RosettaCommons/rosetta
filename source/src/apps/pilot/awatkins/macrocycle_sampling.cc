@@ -95,7 +95,7 @@ load_bb_torsions_into_vector(
 	core::pose::Pose & pose
 ) {
 	utility::vector1< Real > bb_vec;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( core::Size jj = 1; jj <= pose.residue( ii ).mainchain_torsions().size(); ++jj ) {
 			bb_vec.push_back( pose.residue( ii ).mainchain_torsions()[ jj ] );
 		}
@@ -148,7 +148,7 @@ main( int argc, char *argv[] )
 		// Because of gripes from the AtomTree, let's avoid the question
 		// of the un-settable BB torsions on resi 1 and npos
 		//mm->set_bb( true );
-		/*for ( core::Size  ii = 2; ii <= pose.total_residue() - 1; ++ii ) {
+		/*for ( core::Size  ii = 2; ii <= pose.size() - 1; ++ii ) {
 		mm->set_bb( ii, true );
 		}
 		RandomTorsionMoverOP tor_mover( new RandomTorsionMover( mm, 90, 1 ) );
@@ -193,17 +193,17 @@ main( int argc, char *argv[] )
 
 		*/
 
-		core::Size cutpoint = static_cast<core::Size>( ( 2 + pose.total_residue()-1 ) / 2 );
+		core::Size cutpoint = static_cast<core::Size>( ( 2 + pose.size()-1 ) / 2 );
 		//protocols::loops::Loop loop( loop_start, loop_end, cutpoint );
 		//TR << "i.e. " << loop << std::endl;
 		loops::LoopsOP loops( new protocols::loops::Loops );
-		loops->push_back( 2, pose.total_residue()-1, cutpoint );//loop );
+		loops->push_back( 2, pose.size()-1, cutpoint );//loop );
 		std::cout << (*loops) << std::endl;
 
 		// Add constraints to native except loop
 
 		pose::PoseOP native_pose( new core::pose::Pose( pose ) );
-		native_pose->conformation().delete_residue_range_slow(2, pose.total_residue()-1);
+		native_pose->conformation().delete_residue_range_slow(2, pose.size()-1);
 		native_pose->conformation().detect_disulfides();
 
 		relax::AtomCoordinateCstMover coord_cst;

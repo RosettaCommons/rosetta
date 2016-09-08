@@ -372,7 +372,7 @@ LoopHashDiversifier::parse_my_tag(
 	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", false );
 
 	start_res_ = 2;
-	stop_res_ = pose.total_residue();
+	stop_res_ = pose.size();
 	if ( tag->hasOption( "start_res_num" ) || tag->hasOption( "start_pdb_num") ) {
 		start_res_ = core::pose::get_resnum( tag, pose, "start_" );
 	}

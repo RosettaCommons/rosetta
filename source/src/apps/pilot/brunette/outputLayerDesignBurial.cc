@@ -57,7 +57,7 @@ vector1< Real> calc_sasa(Pose const & pose, Real pore_radius){
 	// define atom_map for main-chain and CB
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size j = 1; j<=5; ++j ) {
 			core::id::AtomID atom( j, ir );
 			atom_map.set( atom, true );
@@ -74,7 +74,7 @@ std::string calc_burial(Pose const & pose, Real pore_radius, Real boundarySasaTh
     std::string burial = "";
     vector1<Real> sasa_score;
     sasa_score = calc_sasa(pose,pore_radius);
-    for(int ii=1; ii<=pose.total_residue(); ++ii){
+    for(int ii=1; ii<=pose.size(); ++ii){
         if(sasa_score[ii] < boundarySasaThreshold)
             burial+='C';
         else if(sasa_score[ii] < surfaceSasaThreshold)

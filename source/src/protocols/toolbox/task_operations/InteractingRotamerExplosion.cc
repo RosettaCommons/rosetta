@@ -84,7 +84,7 @@ InteractingRotamerExplosion::apply( core::pose::Pose const & pose, core::pack::t
 	}
 	report_string += " are: ";
 
-	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
+	for ( core::Size i(1); i <= pose.size(); ++i ) {
 
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		bool out_of_all_target_res_radius( true );

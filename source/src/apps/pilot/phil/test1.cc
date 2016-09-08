@@ -175,7 +175,7 @@ setup_atom_number(
 	core::pose::initialize_atomid_map( atom_number, pose );
 
 	int number(0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		for ( Size j=1; j<= Size(pose.residue(i).natoms()); ++j ) {
 			atom_number[ id::AtomID( j, i ) ] = ++number;
 		}
@@ -249,7 +249,7 @@ show_intrachain_energies(
 
 	scorefxn( pose );
 
-	//Size const nres( pose.total_residue() );
+	//Size const nres( pose.size() );
 	Size const nchain( pose.conformation().num_chains() );
 
 	FArray2D< EnergyMap > chain_energies( nchain, nchain );
@@ -260,7 +260,7 @@ show_intrachain_energies(
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( energies.energy_graph() );
 
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & resl( pose.residue( i ) );
 		for ( graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
@@ -314,7 +314,7 @@ test_dunbrack_io()
 
 	RotamerLibraryScratchSpace scratch;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		rot_lib.rotamer_energy( pose.residue(i), scratch );
 	}
 }
@@ -342,7 +342,7 @@ test_gb()
 	// show radii
 	GenBornPoseInfo const & gb_info( static_cast< GenBornPoseInfo & >( pose.data().get( CacheableDataType::GEN_BORN_POSE_INFO ) ) );
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		GenBornResidueInfo const & gb( gb_info.residue_info( i ) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -354,7 +354,7 @@ test_gb()
 	LREnergyContainerCOP lrec = pose.energies().long_range_container( methods::gen_born_lr );
 	assert ( !lrec->empty() );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		std::cout << "GBPAIR: " << ii << ' ' << ii  << ' ' <<
 			F(9,2,pose.energies().onebody_energies( ii )[ gb_elec ] ) << std::endl;
 
@@ -378,7 +378,7 @@ test_gb()
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 
 	task->initialize_from_command_line();
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ii%2 == 0 ) task->nonconst_residue_task( ii ).restrict_to_repacking();
 		else task->nonconst_residue_task( ii ).prevent_repacking();
 	}
@@ -448,7 +448,7 @@ simple_rotamer_test()
 
 	assert( pro_rsd->name() == "PRO" && ile_rsd->name() == "ILE" );
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_terminus() ) continue;
 
@@ -505,7 +505,7 @@ set_fullatom_flag_test()
 
 		// now convert to fullatom:
 		ResidueTypeSetCOP fullatom_residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
 			utility::vector1< std::string > const & variant_types( rsd.type().properties().get_list_of_variants() );
 			for ( Size j=1; j<=variant_types.size(); ++j ) {
@@ -534,7 +534,7 @@ set_fullatom_flag_test()
 
 		// now convert to fullatom:
 		// only tricky thing -- cutpoint residue types might not be preserved...
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			pose.replace_residue( i, fullatom_pose.residue(i), true /* orient_backbone */ );
 		}
 
@@ -552,7 +552,7 @@ delete_test()
 	Pose start_pose;
 	core::import_pose::pose_from_file( start_pose, "input/1aay.pdb" , core::import_pose::PDB_file);
 
-	Size const nres( start_pose.total_residue() );
+	Size const nres( start_pose.size() );
 
 	Pose pose( start_pose );
 
@@ -568,7 +568,7 @@ delete_test()
 	// from end
 	pose = start_pose;
 	for ( Size i=1; i< nres; ++i ) {
-		pose.conformation().delete_residue_slow( pose.total_residue() );
+		pose.conformation().delete_residue_slow( pose.size() );
 		std::cout << "score after delete: " << F(9,3,(*scorefxn)(pose)) << ' ' << pose.fold_tree() << std::endl;
 	}
 
@@ -652,9 +652,9 @@ simple_loop_modeling_test()
 
 	// setup fold_tree
 	{
-		assert( pose.total_residue() == mapping.size1() );
+		assert( pose.size() == mapping.size1() );
 		kinematics::FoldTree f( pose.fold_tree() );
-		for ( Size i=1; i< pose.total_residue(); ++i ) {
+		for ( Size i=1; i< pose.size(); ++i ) {
 			assert( mapping[i] );
 			if ( mapping[i+1] != mapping[i]+1 ) {
 				f.new_jump( i, i+1, i );
@@ -720,7 +720,7 @@ simple_loop_modeling_test()
 	dump_pdb( pose, "loops_start.pdb" );
 
 	// setup allow move
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	MoveMap mm;
 	start_mapping.reverse();
 	assert( start_mapping.size1() == nres );
@@ -877,7 +877,7 @@ dna_deriv_test_old()
 
 	Pose pdb_pose;
 	core::import_pose::pose_from_file( pdb_pose, start_file(), core::import_pose::PDB_file); // eg 1qn4
-	Size const nres( pdb_pose.total_residue() );
+	Size const nres( pdb_pose.size() );
 
 	set_base_partner( pdb_pose );
 	BasePartner const & partner( retrieve_base_partner_from_pose( pdb_pose ) );
@@ -1006,7 +1006,7 @@ dna_deriv_test()
 
 	Pose pdb_pose;
 	core::import_pose::pose_from_file( pdb_pose, "input/1aay.pdb" , core::import_pose::PDB_file); // use 1qn4 for massive dna bend
-	Size const nres( pdb_pose.total_residue() );
+	Size const nres( pdb_pose.size() );
 
 	set_base_partner( pdb_pose );
 	BasePartner const & partner( retrieve_base_partner_from_pose( pdb_pose ) );
@@ -1159,7 +1159,7 @@ old_simple_conformation_test()
 
 	dump_pdb( pose, "output/test3.pdb" );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	kinematics::FoldTree f( nres );
 	f.reorder( nres );
 
@@ -1194,7 +1194,7 @@ simple_centroid_test()
 	scorefxn( pose );
 
 	/// Now handled automatically.  scorefxn.accumulate_residue_total_energies( pose );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		//// THIS IS THE INCORRECT BEHAVIOR.  VDW IS NOT A ONE BODY ENERGY.
 		//// THIS COODE SHOULD INSTEAD READ FROM THE RESIDUE TOTAL ENERGIES ARRAY.
 		std::cout << "vdw: " << I(4,i) << F(9,2,pose.energies().onebody_energies(i)[ scoring::vdw ] ) << std::endl;
@@ -1237,7 +1237,7 @@ simple_frag_test()
 	std::string const sequence( pose.sequence() );
 
 	TorsionFragmentLibrary lib;
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size const frag_size(3);
 
 	lib.resize( nres - frag_size + 1 );
@@ -1286,7 +1286,7 @@ dna_design_test_old( pose::Pose & pose )
 
 	using namespace core::scoring::dna;
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// for bp,bs stats:
 	utility::vector1< Size > partner;
@@ -1338,7 +1338,7 @@ dna_coupled_rotamer_design_test()
 
 	Pose pose;
 	core::import_pose::pose_from_file( pose, "input/1aay.pdb" , core::import_pose::PDB_file);
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	set_base_partner( pose );
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
@@ -1370,7 +1370,7 @@ dna_coupled_rotamer_design_test()
 		// acids, and starts out repacking at all other residues -- the new interface requires the protocol
 		// make restrictions from here, providing commutativity of restrictions.
 		task->initialize_from_command_line();
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue(ii).is_protein() ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
 				//task->nonconst_residue_task( ii ).prevent_repacking();
@@ -1460,8 +1460,8 @@ dna_design_test()
 		pose::Pose pose;
 		std::cout << "Reading file: " << files[n] << std::endl;
 		core::import_pose::pose_from_file( pose, files[n] , core::import_pose::PDB_file);
-		std::cout << "file total_residue: " << pose.total_residue() << std::endl;
-		if ( pose.total_residue() ) {
+		std::cout << "file total_residue: " << pose.size() << std::endl;
+		if ( pose.size() ) {
 			dna_design_test_old( pose );
 		}
 	}
@@ -1507,7 +1507,7 @@ simple_dna_test()
 		// acids, and starts out repacking at all other residues -- the new interface requires the protocol
 		// make restrictions from here, providing commutativity of restrictions.
 		task->initialize_from_command_line();
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue(ii).is_protein() ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
 			} else {
@@ -1638,7 +1638,7 @@ atom_tree_torsion_test()
 
 	kinematics::AtomTree const & atom_tree( pose.atom_tree() );
 
-	for ( Size i=2; i<= pose.total_residue() - 1; ++i ) {
+	for ( Size i=2; i<= pose.size() - 1; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		assert( Size( rsd.seqpos() ) == i );
 		for ( Size chino=1; chino<= rsd.nchi(); ++chino ) {
@@ -1661,7 +1661,7 @@ atom_tree_torsion_test()
 	}
 
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 
 		for ( int r=1; r<= 2; ++r ) {
@@ -1748,7 +1748,7 @@ rotamer_trials_test()
 	Energy score_orig = scorefxn( pose );
 
 	scorefxn.show( std::cout, pose );
-	//for ( int jj = 1; jj <= pose.total_residue(); ++jj )
+	//for ( int jj = 1; jj <= pose.size(); ++jj )
 	//{
 	pack::task::PackerTaskOP task
 		( pack::task::TaskFactory::create_packer_task( pose ));
@@ -1831,7 +1831,7 @@ pack_rotamers_test()
 		pack::task::PackerTaskOP designtask( pack::task::TaskFactory::create_packer_task( pose ));
 		designtask->initialize_from_command_line().or_include_current( true );
 		designtask->set_bump_check( true );
-		utility::vector1< bool > residues_to_repack( pose.total_residue(), false );
+		utility::vector1< bool > residues_to_repack( pose.size(), false );
 		for ( Size ii = 1; ii <= 20; ++ii ) residues_to_repack[ ii ] = true;
 		designtask->restrict_to_residues( residues_to_repack );
 
@@ -1997,7 +1997,7 @@ rb_test()
 	pose::Pose pose;
 	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
-	int const nres( pose.total_residue() );
+	int const nres( pose.size() );
 	assert( nres > 40 );
 
 	{ // setup a foldtree
@@ -2115,7 +2115,7 @@ ccd_test()
 	Pose pose;
 	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
-	int const nres( pose.total_residue() );
+	int const nres( pose.size() );
 	assert( nres > 40 );
 
 	int const cutpoint( 18 );
@@ -2426,7 +2426,7 @@ backrub_min_test()
 	pose.append_residue_by_jump( *psd, 1 );
 	pose.append_residue_by_jump( *psd, 1 );
 
-	Size const first_new_pseudo_residue( pose.total_residue() - 2 );
+	Size const first_new_pseudo_residue( pose.size() - 2 );
 
 	utility_exit_with_message("need to refactor backrub atomtree stuff");
 	//pose.conformation().setup_backrub_segment( mainchain, downstream_id, edges, first_new_pseudo_residue );
@@ -2483,7 +2483,7 @@ backrub_min_test()
 
 	}
 
-	//  Size const first_new_pseudo_residue( pose.total_residue() + 1 );
+	//  Size const first_new_pseudo_residue( pose.size() + 1 );
 
 	//  kinematics::tree::Atom * root( pose.atom_tree().root()->clone(0) );
 	//  AtomPointers old_atom_pointer;
@@ -2511,7 +2511,7 @@ bk_test()
 	pose::Pose pose;
 	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	pose.dump_pdb("test1.pdb");
 	core::pose::remove_upper_terminus_type_from_pose_residue( pose, nres );
 	pose.dump_pdb("test2.pdb");
@@ -2552,8 +2552,8 @@ bk_test2()
 	core::import_pose::pose_from_file( pose2, start_files()[2] , core::import_pose::PDB_file);
 
 	ResidueTypeSet const & rsd_set( *pose1.residue(1).residue_type_set() );
-	Size const nres1( pose1.total_residue() );
-	Size const nres2( pose2.total_residue() );
+	Size const nres1( pose1.size() );
+	Size const nres2( pose2.size() );
 
 	Size cyx_pos(0);
 	Size lyx_pos(0);
@@ -2610,7 +2610,7 @@ bk_test2()
 	{ /// now attach pose2 to the cysteine:
 		pose1.append_residue_by_bond( pose2.residue( nres2 ), false, ubq_connid, cyx_pos, cyx_connid );
 
-		Size const prepend_seqpos( pose1.total_residue() );
+		Size const prepend_seqpos( pose1.size() );
 
 		tt << "after append_by_bond\n";
 		pose1.conformation().show_residue_connections();
@@ -2629,7 +2629,7 @@ bk_test2()
 		// set some torsions...
 		// ca - cb - sg --- c - ca - n
 		//
-		Size const ubq_pos( pose1.total_residue() );
+		Size const ubq_pos( pose1.size() );
 		AtomID const atom1( cyx_rsd_type.atom_index( "CA" ), cyx_pos );
 		AtomID const atom2( cyx_rsd_type.atom_index( "CB" ), cyx_pos );
 		AtomID const atom3( cyx_rsd_type.atom_index( "SG" ), cyx_pos );
@@ -2670,7 +2670,7 @@ bk_test2()
 		tt << "after append_by_bond\n";
 		pose1.conformation().show_residue_connections();
 
-		Size const prepend_seqpos( pose1.total_residue() );
+		Size const prepend_seqpos( pose1.size() );
 
 		for ( Size i=nres2-1; i>= 1; --i ) {
 			pose1.prepend_polymer_residue_before_seqpos( pose2.residue(i), prepend_seqpos, false );
@@ -2728,7 +2728,7 @@ proclose_test()
 	Pose pose;
 	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	(*scorefxn)(pose);
 	scorefxn->show( std::cout, pose );
@@ -2773,7 +2773,7 @@ set_stub_transform_test()
 	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	// set a new foldtree
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	kinematics::FoldTree f( nres );
 
 	Size const pos1( 5 ), pos2( 45 ), cutpoint( 35 );
@@ -2840,7 +2840,7 @@ lk_ball_wtd_deriv_test()
 	cout << "beforescore: " << F(9,3,scorebefore) << ' ' <<
 		pose.energies().total_energies().weighted_string_of( scorefxn->weights() ) << endl;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & irsd( pose.residue(i) );
 		//scoring::methods::EnvElecResidueInfo const & irsd_info( retrieve_residue_info( pose, i ) );
 
@@ -2859,7 +2859,7 @@ lk_ball_wtd_deriv_test()
 		task->initialize_from_command_line();
 		task->or_include_current( true );
 		task->restrict_to_repacking();
-		utility::vector1< bool > subset( pose.total_residue(), false );
+		utility::vector1< bool > subset( pose.size(), false );
 		subset[10] = subset[11] = subset[12] = subset[13] = subset[14] = true;
 		task->restrict_to_residues( subset );
 		pack::RTMin rtmin;

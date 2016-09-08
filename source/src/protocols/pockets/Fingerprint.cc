@@ -1402,7 +1402,7 @@ void NonPlaidFingerprint::trim_based_on_known_ligand(core::pose::Pose const & kn
 
 void NonPlaidFingerprint::include_eggshell_points_based_on_known_ligand( core::pose::Pose const & known_ligand_pose, core::Real const & trim_dist) {
 	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = known_ligand_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = known_ligand_pose.size(); j <= resnum; ++j ) {
 		if ( !known_ligand_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;
@@ -1627,7 +1627,7 @@ void NonPlaidFingerprint::set_origin_from_residue(core::pose::Pose const & prote
 
 core::Size NonPlaidFingerprint::get_pose_resnum(int const pdbnum, char const pdbchn, core::pose::Pose const & ps) {
 
-	for ( core::Size j = 1; j <= ps.total_residue(); ++j ) {
+	for ( core::Size j = 1; j <= ps.size(); ++j ) {
 		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {
 			return j;
 		}
@@ -1642,7 +1642,7 @@ numeric::xyzVector<core::Real> NonPlaidFingerprint::calculate_protein_CoM(core::
 
 	numeric::xyzVector<core::Real> protein_com(0.);
 	core::Size total_atoms(0);
-	for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
 		if ( curr_rsd.is_protein() ) {
 			for ( Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i ) {
@@ -1714,7 +1714,7 @@ void PlaidFingerprint::apply_rotation_offset_to_pose_( core::pose::Pose & pose, 
 
 core::Size PlaidFingerprint::compute_ligand_resnum( core::pose::Pose const & pose ) const {
 	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = pose.size(); j <= resnum; ++j ) {
 		if ( !pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;
@@ -1749,7 +1749,7 @@ core::Size PlaidFingerprint::compute_ligand_natoms_with_hydrogens( core::pose::P
 }
 
 core::Size PlaidFingerprint::compute_ligand_nconformers( core::pose::Pose const & pose ) const {
-	return pose.total_residue();
+	return pose.size();
 }
 
 core::conformation::ResidueCOP PlaidFingerprint::select_conf_and_move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, core::Size const & conformer ) {
@@ -2701,7 +2701,7 @@ core::Real NonPlaidFingerprint::get_electrostatics_energy(core::pose::Pose const
 	numeric::xyzVector<core::Real> ligand_atom(0.);
 
 	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = ligand_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = ligand_pose.size(); j <= resnum; ++j ) {
 		if ( !ligand_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;

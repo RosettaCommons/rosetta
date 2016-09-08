@@ -189,13 +189,13 @@ GoapEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )  const
 
 	// Initialize dipole vectors given pose
 	// These arrays are set as mutable to pass "const" declaration
-	xn_.resize( pose.total_residue() );
-	xd_.resize( pose.total_residue() );
-	eval_res_.resize( pose.total_residue(), true );
+	xn_.resize( pose.size() );
+	xd_.resize( pose.size() );
+	eval_res_.resize( pose.size(), true );
 	Vector const I( 0.0 );
 
 	// Assign dipole vectors for current pose
-	for ( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( Size ires = 1; ires <= pose.size(); ++ires ) {
 
 		conformation::Residue const &rsd = pose.residue( ires );
 		chemical::ResidueType const &rsdtype = pose.residue(ires).type();

@@ -241,10 +241,10 @@ public:
 
 
 		// initialize some other variables that are used in the SimAnnealers constructor
-		bestrotamer_at_seqpos.dimension( pose.total_residue() );
+		bestrotamer_at_seqpos.dimension( pose.size() );
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.size(), 0 );
 		ObjexxFCL::FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdsig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
@@ -504,7 +504,7 @@ public:
 		// --- InteractionGraph ---
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.size(), 0 );
 		ObjexxFCL::FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdsig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
@@ -576,7 +576,7 @@ public:
 		/// Parameters passed by reference in annealers constructor to which it writes at the completion of sim annealing.
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.size(), 0 );
 		ObjexxFCL::FArray1D< PackerEnergy > linmem_ig_test_rot_freq( lmsolig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 

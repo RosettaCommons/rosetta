@@ -354,7 +354,7 @@ perm.chains_from_termini();
 // do the work
 apply_connection( perm );
 
-for ( core::Size i=1; i<=perm.pose().total_residue(); ++i ) {
+for ( core::Size i=1; i<=perm.pose().size(); ++i ) {
 TR << i << " : " << perm.pose().residue( i ).name() << " " << perm.pose().chain( i ) << std::endl;
 }
 }

@@ -278,14 +278,14 @@ numeric::xyzVector<Real>
 center_pose_at_origin( Pose & pose ) {
 	numeric::xyzVector<Real> com(0,0,0);
 	int count=0;
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		com += pose.residue(i).atom(2).xyz();
 		count++;
 	}
 	com /= count;
 
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		for ( int j=1; j<=(int)pose.residue(i).natoms(); ++j ) {
 			pose.set_xyz(id::AtomID(j,i), pose.residue(i).atom(j).xyz()-com );
 		}
@@ -734,7 +734,7 @@ public:
 		}
 
 		interface.clear();
-		interface.resize( pose.total_residue(), false );
+		interface.resize( pose.size(), false );
 
 		// initialize energy graph
 		(*sf)(pose);
@@ -816,11 +816,11 @@ public:
 		}
 
 		neighbor.clear();
-		neighbor.resize( pose.total_residue(), false );
+		neighbor.resize( pose.size(), false );
 
 
 		conformation::Residue const & rsd1( pose.residue( res_i ) );
-		for ( Size j=1, j_end = pose.total_residue(); j<= j_end; ++j ) {
+		for ( Size j=1, j_end = pose.size(); j<= j_end; ++j ) {
 			conformation::Residue const & rsd2( pose.residue( j ) );
 
 			if ( res_i==j ) continue;
@@ -1090,10 +1090,10 @@ public:
 		// 1: mutate to native
 		if ( option[ in::file::native ].user() ) {
 			core::import_pose::pose_from_file( native_, option[in::file::native]() , core::import_pose::PDB_file);
-			runtime_assert( native_.total_residue() == pose.total_residue() );
+			runtime_assert( native_.size() == pose.size() );
 
 			if ( !revertonly_ ) {
-				for ( core::Size i=1; i<pose.total_residue(); ++i ) {
+				for ( core::Size i=1; i<pose.size(); ++i ) {
 					pose.replace_residue(i, native_.residue(i), true );
 				}
 			}
@@ -1390,7 +1390,7 @@ public:
 		ncontacts_perinterface.clear();
 		ncontacts_perinterface.resize(nsubunits,0.0);
 
-		for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+		for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 			conformation::Residue const & rsd1( pose.residue( i ) );
 			if ( !symm_info->bb_is_independent(rsd1.seqpos()) ) continue;  // not sure if this is necessary
 
@@ -1936,7 +1936,7 @@ CrystFFTDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &r
 
 	// find oversampled grid
 	oversamplegrid_ = numeric::xyzVector<int>(0,0,0);
-	for ( int i=1 ; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1 ; i<=(int)pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		for ( int j=1; j<=4; ++j ) {
 			numeric::xyzVector< core::Real> xyz_j = pose.residue(i).atom(j).xyz();
@@ -1952,7 +1952,7 @@ CrystFFTDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &r
 	rho_cb.dimension( oversamplegrid_[0], oversamplegrid_[1], oversamplegrid_[2] ); rho_cb = 1;
 
 	// loop over bb heavyatoms
-	for ( int i=1 ; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1 ; i<=(int)pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 
 		for ( int j=1; j<=4; ++j ) {
@@ -1993,7 +1993,7 @@ CrystFFTDock::setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &r
 	}
 
 	// loop over CBs
-	for ( int i=1 ; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1 ; i<=(int)pose.size(); ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_gly ) continue;
 		numeric::xyzVector< core::Real> CB = pose.residue(i).atom(5).xyz();
 		numeric::xyzVector< core::Real> atm_idx = c2i_*CB;
@@ -2161,7 +2161,7 @@ CrystFFTDock::resample_maps_and_get_self(
 Real
 CrystFFTDock::get_radius_of_pose( Pose & pose ) {
 	Real radius = pose.residue(1).atom(2).xyz().length();
-	for ( int i=2; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=2; i<=(int)pose.size(); ++i ) {
 		Real r=pose.residue(i).atom(2).xyz().length();
 		if ( radius < r ) radius=r;
 	}
@@ -2594,7 +2594,7 @@ CrystFFTDock::get_interfaces_allatom(
 	//// recenter
 	////
 	//////////////////////
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 
 	Vector com(0,0,0);
 	for ( Size i=1; i<= nres; ++i ) com += pose.residue(i).xyz(2);
@@ -2636,7 +2636,7 @@ CrystFFTDock::get_interfaces_allatom(
 	Real contact_dist=interfacedist_;
 	Real radius = 0;
 	utility::vector1<Vector> monomer_cbs;
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		Size atm=(pose.residue(i).aa() == core::chemical::aa_gly)?2:5;
 		Vector cb_i = pose.residue(i).xyz(atm);

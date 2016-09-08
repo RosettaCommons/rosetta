@@ -200,7 +200,7 @@ ResidueConformationFeatures::report_features(
 	bool ideal = true;
 	if ( !basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]() ) {
 		core::conformation::Conformation const & conformation(pose.conformation());
-		for ( core::Size resn=1; resn <= pose.n_residue(); ++resn ) {
+		for ( core::Size resn=1; resn <= pose.size(); ++resn ) {
 			if ( !check_relevant_residues(relevant_residues, resn) ) continue;
 			bool residue_status(core::conformation::is_ideal_position(resn,conformation));
 			if ( !residue_status ) {
@@ -243,7 +243,7 @@ ResidueConformationFeatures::report_features(
 	compact_residue_insert.add_column("coord_data");
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & resi = pose.residue(i);

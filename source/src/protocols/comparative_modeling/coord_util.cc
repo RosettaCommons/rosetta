@@ -41,11 +41,11 @@ void gather_coords(
 	SequenceMapping mapping( aln.sequence_mapping(1,2) );
 
 	natoms = 0;
-	for ( Size ii = 1; ii <= model.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= model.size(); ++ii ) {
 		Size const native_ii( mapping[ii] );
 		bool skip(
 			native_ii == 0 ||
-			native_ii > native.total_residue() ||
+			native_ii > native.size() ||
 			(!model.residue(ii).is_protein())
 		);
 		if ( !skip ) ++natoms;
@@ -54,11 +54,11 @@ void gather_coords(
 	p2a.dimension(3,natoms);
 
 	Size n_gap(0);
-	for ( Size ii = 1; ii <= model.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= model.size(); ++ii ) {
 		Size const native_ii(mapping[ii]);
 		bool skip(
 			native_ii == 0 ||
-			native_ii > native.total_residue() ||
+			native_ii > native.size() ||
 			(!model.residue(ii).is_protein())
 		);
 		if ( skip ) {

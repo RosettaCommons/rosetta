@@ -77,7 +77,7 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
 	//put all the atoms in a list so we don't have to deal with extracting them all more than once
 
 	std::list<core::conformation::Atom> atom_list;
-	for ( core::Size resnum = 1; resnum <=pose.total_residue(); ++resnum ) {
+	for ( core::Size resnum = 1; resnum <=pose.size(); ++resnum ) {
 		core::conformation::Residue current_residue = pose.residue(resnum);
 
 		for ( core::Size atomnum = 1; atomnum <= current_residue.natoms(); ++atomnum ) {

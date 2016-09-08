@@ -165,7 +165,7 @@ FastDensEnergy::setup_for_scoring(
 
 		if ( pose.pdb_info() != NULL ) {
 			TR.Debug << "Reset B factors to effective value: " << effB << std::endl;
-			for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			for ( core::Size i=1; i<=pose.size(); ++i ) {
 				for ( core::Size j=1; j<=pose.residue(i).natoms(); ++j ) {
 					pose.pdb_info()->temperature( i, j, effB );
 				}
@@ -183,14 +183,14 @@ FastDensEnergy::setup_for_scoring(
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
-		if ( dec->size() != pose.total_residue() || dec->fixed() != virt_res_idx ) {
+		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;  // size or root change; recompute
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		TR.Debug << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.total_residue(),  elec_dens_fast ) );
+		TR.Debug << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
+		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.size(),  elec_dens_fast ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 

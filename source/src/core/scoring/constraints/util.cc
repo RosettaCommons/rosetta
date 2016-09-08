@@ -372,7 +372,7 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	for ( Size i=1; i<= nres;  ++i ) {
 
 		Residue const & i_rsd( pose.residue(i) );
@@ -691,7 +691,7 @@ print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out /* = st
 	ConstraintSetCOP cst_set = pose.constraint_set();
 	typedef ResidueConstraints::const_iterator ResiduePairConstraintsIterator;
 	// should probably do intra-residue too. Oh well.
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		for ( ResiduePairConstraintsIterator
 				iter = cst_set->residue_pair_constraints_begin( n ),
 				iter_end = cst_set->residue_pair_constraints_end( n );
@@ -711,9 +711,9 @@ print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out /* = st
 void
 map_constraints_from_original_pose( pose::Pose const & original_pose, pose::Pose & pose ) {
 	if ( pose.annotated_sequence() == original_pose.annotated_sequence() ) return;
-	runtime_assert( original_pose.total_residue() == pose.total_residue() );
+	runtime_assert( original_pose.size() == pose.size() );
 	id::SequenceMappingOP sequence_map( new id::SequenceMapping );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) sequence_map->push_back( n );
+	for ( Size n = 1; n <= pose.size(); n++ ) sequence_map->push_back( n );
 	pose.constraint_set( original_pose.constraint_set()->remapped_clone( original_pose, pose, sequence_map ) );
 }
 

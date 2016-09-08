@@ -195,7 +195,7 @@ utility::vector1< float > Sparta::score_pose_per_residue(
 	lib().deallocate_arrays();
 
 	GDB COMP_TAB;
-	utility::vector1< float > scores( pose.total_residue(), 0.0 );
+	utility::vector1< float > scores( pose.size(), 0.0 );
 	calc_per_residue_scores( lib().aN, PRED_SUM, REF_CS_Tab, COMP_TAB, scores );
 	return scores;
 }

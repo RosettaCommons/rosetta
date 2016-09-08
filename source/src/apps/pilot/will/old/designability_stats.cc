@@ -250,8 +250,8 @@ void register_options() {
 // 			dssp.insert_ss_into_pose(pose);
 // 		}
 // 		float tot_score = 0.0;
-// 		for(Size ir = 1; ir <= pose.n_residue(); ++ir){
-// 			for(Size jr = ir+1; jr <= pose.n_residue(); ++jr){
+// 		for(Size ir = 1; ir <= pose.size(); ++ir){
+// 			for(Size jr = ir+1; jr <= pose.size(); ++jr){
 // 				float s1 = score(pose,ir,jr);
 // 				float s2 = score(pose,jr,ir);
 // 				// if( s1 < 0.0f ) std::cout << s1 << std::endl;
@@ -267,8 +267,8 @@ void register_options() {
 // 		core::pose::Pose const & pose
 // 	) const {
 // 		float tot_score = 0.0;
-// 		for(Size ir = 1; ir <= pose.n_residue(); ++ir){
-// 			for(Size jr = ir+1; jr <= pose.n_residue(); ++jr){
+// 		for(Size ir = 1; ir <= pose.size(); ++ir){
+// 			for(Size jr = ir+1; jr <= pose.size(); ++jr){
 // 				float s1 = score(pose,ir,jr);
 // 				float s2 = score(pose,jr,ir);
 // 				// if( s1 < 0.0f ) std::cout << s1 << std::endl;
@@ -291,21 +291,21 @@ collect_stats(
  	core::pose::make_pose_from_sequence(ala,"A",core::chemical::FA_STANDARD,false);
 	remove_lower_terminus_type_from_pose_residue(ala,1);
 	remove_upper_terminus_type_from_pose_residue(ala,1);
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= pose.size(); ++ir){
 		if(!pose.residue(ir).is_protein()) continue;
 		if(!pose.residue(ir).has("CB")) continue;
 		pose.replace_residue(ir,ala.residue(1),true);
 
 	}
 	// pose.dump_pdb("test.pdb");
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	for(Size ir = 1; ir <= pose.size(); ++ir){
 		if(!pose.residue(ir).is_protein()) continue;
 		if(!pose.residue(ir).has("CB")) continue;
 		Vec CBi = pose.residue(ir).xyz("CB");
 		Vec CAi = pose.residue(ir).xyz("CA");
 		Vec  Ni = pose.residue(ir).xyz( "N");
 		core::kinematics::Stub sir(CBi,CAi,Ni);
-		for(Size jr = ir + option[dstat::min_seq_sep](); jr <= pose.n_residue(); ++jr){
+		for(Size jr = ir + option[dstat::min_seq_sep](); jr <= pose.size(); ++jr){
 			if(!pose.residue(jr).is_protein()) continue;
 			if(!pose.residue(jr).has("CB")) continue;
 			Vec CBj = pose.residue(jr).xyz("CB");
@@ -346,10 +346,10 @@ int main(int argc, char *argv[]) {
 					for(Real rotz = 0; rotz < 360.0; rotz += 15.0 ){
 						using namespace numeric;
 						Mat R = x_rotation_matrix_degrees(rotx)*y_rotation_matrix_degrees(roty)*z_rotation_matrix_degrees(rotz);
-				 		for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+				 		for(Size ir = 1; ir <= pose.size(); ++ir){
 							if(!pose.residue(ir).is_protein()) continue;
 							if(pose.residue(ir).aa()==core::chemical::aa_gly) continue;
-		 					for(Size jr = ir+1; jr <= pose.n_residue(); ++jr){
+		 					for(Size jr = ir+1; jr <= pose.size(); ++jr){
 								if(!pose.residue(jr).is_protein()) continue;
 								if(pose.residue(jr).aa()==core::chemical::aa_gly) continue;
 								Vec CBi = pose.residue(ir).xyz(5);
@@ -474,9 +474,9 @@ int main(int argc, char *argv[]) {
 			core::import_pose::pose_from_file(p,fn, core::import_pose::PDB_file);
 			core::scoring::dssp::Dssp dssp(p);
 			dssp.insert_ss_into_pose(p);
-			if( p.n_residue() > MAX_NRES ) continue;
+			if( p.size() > MAX_NRES ) continue;
 			Size cyscnt=0;
-			for(Size ir = 2; ir <= p.n_residue()-1; ++ir) {
+			for(Size ir = 2; ir <= p.size()-1; ++ir) {
 				if(p.residue(ir).name3()=="CYS") { if(++cyscnt > MAX_CYS_RES) goto cont1; }
 			} goto done1; cont1: std::cerr << "skipping " << fn << std::endl; continue; done1:
 			std::cout << "searching " << fn << std::endl;

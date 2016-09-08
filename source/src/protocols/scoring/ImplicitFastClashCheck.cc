@@ -77,7 +77,7 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	// resno_ .reserve((pose_->n_residue()-ignore.size())*5);
 	// atomno_.reserve((pose_->n_residue()-ignore.size())*5);
 	 for ( auto const & pose : poses ) {
-		for ( Size i = 0; i < pose.n_residue(); ++i ) {
+		for ( Size i = 0; i < pose.size(); ++i ) {
 			if ( std::find(ignore.begin(),ignore.end(),i+1) != ignore.end() ) continue;
 			//Size const natom = min(5ul,pi->residue(i+1).nheavyatoms());
 			Size const natom = pose.residue(i+1).nheavyatoms();
@@ -210,7 +210,7 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp, Size resno ) const {
 //  Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
 //  Stub stub1(pose  .xyz(AtomID(2,1)),pose  .xyz(AtomID(2,2)),pose  .xyz(AtomID(2,3)));
 //  for(Size i = 9; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
-//   if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->n_residue())))) ) ) return false;
+//   if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->size())))) ) ) return false;
 //  }
 //  return true;
 // }
@@ -225,9 +225,9 @@ bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, Size refrsd) 
 	Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
 	Stub stub1(pose  .xyz(AtomID(2,1)),pose  .xyz(AtomID(2,2)),pose  .xyz(AtomID(2,3)));
 	for ( Size i = 1; i <= pose.residue(refrsd).nheavyatoms(); ++i ) {
-		if ( i > 9 ) if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->n_residue())))) ) ) return false;
-		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+1*pose_->n_residue())))) ) ) return false;
-		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+2*pose_->n_residue())))) ) ) return false;
+		if ( i > 9 ) if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->size())))) ) ) return false;
+		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+1*pose_->size())))) ) ) return false;
+		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+2*pose_->size())))) ) ) return false;
 	}
 	Vec cen = stubl.local2global(stub1.global2local(Vec(0,0,0)));
 	Vec axs = stubl.local2global(stub1.global2local(Vec(0,0,1)));

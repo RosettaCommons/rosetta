@@ -257,7 +257,7 @@ atom_tree_get_atompairE_deriv(
 	MinimizationGraphCOP mingraph  = symm_energies.minimization_graph();
 	MinimizationGraphCOP dmingraph = symm_energies.derivative_graph();
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		MinimizationNode const & minnode =  * mingraph->get_minimization_node( ii );
 		/// 1. eval intra-residue derivatives
 		if ( symm_min_map.new_sym_min() ) {

@@ -177,7 +177,7 @@ HelixPairingFilter::apply( Pose const & pose ) const
 
 	// get secondary structure information
 	std::string const pose_secstruct = secstruct( pose );
-	runtime_assert( pose_secstruct.length() == pose.total_residue() );
+	runtime_assert( pose_secstruct.length() == pose.size() );
 	SS_Info2_OP ss_info( new SS_Info2( pose, pose_secstruct ) );
 	Helices const helices( ss_info->helices() );
 
@@ -258,7 +258,7 @@ HelixPairingFilter::compute( Pose const & pose ) const
 
 	// get secondary structure information
 	std::string const pose_secstruct = secstruct( pose );
-	runtime_assert( pose_secstruct.length() == pose.total_residue() );
+	runtime_assert( pose_secstruct.length() == pose.size() );
 	SS_Info2_OP ss_info( new SS_Info2( pose, pose_secstruct ) );
 
 	// compute desired helix pairings

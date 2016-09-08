@@ -190,7 +190,7 @@ SuckerEnergy::eval_atom_derivative(
 		if ( id.atomno() > 1 ) return;
 		numeric::xyzVector<Real> suck_xyz( pose.xyz(id) );
 
-		for ( int ir = 1; ir <= (int)pose.total_residue(); ++ir ) {
+		for ( int ir = 1; ir <= (int)pose.size(); ++ir ) {
 			conformation::Residue const & res( pose.residue(ir) );
 			if ( "SUCK" == res.name() ) continue;
 
@@ -225,7 +225,7 @@ SuckerEnergy::eval_atom_derivative(
 
 		numeric::xyzVector<Real> atom_xyz( atom.xyz() );
 		// while( "SUCK" == pose.residue(i).name() ) {
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( "SUCK" != pose.residue(i).name() ) continue;
 
 			conformation::Residue const & sck( pose.residue(i) );

@@ -469,9 +469,9 @@ core::Size MPIPool_RMSD::evaluate_and_add(
     PROF_START( basic::MPICANONICALSAMPLING );
 
     send_update( master_node_, MPI_ADD_POSE_TO_POOL );
-    FArray2D_double coords( 3, pose.total_residue() , 0.0 );
+    FArray2D_double coords( 3, pose.size() , 0.0 );
     PROF_START( basic::FARRAY_MANIPULATION );
-    protocols::toolbox::fill_CA_coords( pose, pose.total_residue(), coords );
+    protocols::toolbox::fill_CA_coords( pose, pose.size(), coords );
     PROF_STOP( basic::FARRAY_MANIPULATION );
     //assign new tag based on olli's scheme
     std::string jobname = protocols::jd2::current_output_name();

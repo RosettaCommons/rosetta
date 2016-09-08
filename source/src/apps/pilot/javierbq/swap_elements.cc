@@ -205,8 +205,8 @@ public:
   }
 
 	bool clash_monomer(Pose const & pose) {
-		for(Size i = 1; i <= pose.total_residue(); i++)
-			for(Size j =  1; j <= pose.total_residue(); j++) {
+		for(Size i = 1; i <= pose.size(); i++)
+			for(Size j =  1; j <= pose.size(); j++) {
 				if( i == j) continue;
 				if( pose.residue( i ).xyz("CA") - pose.residue( j ).xyz("CA") < clash_distance_);
 					return true;
@@ -229,24 +229,24 @@ public:
 		Pose working_pose(pose);
 		Vector com_A = core::pose::center_of_mass(pose,1, junction_start_);
 		Size resi_nearest_to_com_A = protocols::geometry::core::pose::return_nearest_residue( pose, 1, junction_start_, com_A);
-		Vector com_B = core::pose::center_of_mass(pose,junction_end_ , pose.total_residue());
-		Size resi_nearest_to_com_B = protocols::geometry::core::pose::return_nearest_residue( pose, junction_end_, pose.total_residue(), com_B);
+		Vector com_B = core::pose::center_of_mass(pose,junction_end_ , pose.size());
+		Size resi_nearest_to_com_B = protocols::geometry::core::pose::return_nearest_residue( pose, junction_end_, pose.size(), com_B);
 
 		// create the new residue and locate it between the moving elements
 		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 		core::chemical::ResidueType vrt( rsd_set.name_map( "VRT" ) ) ;
 		core::conformation::ResidueOP anchor( core::conformation::ResidueFactory::create_residue( vrt ) ) ;
 		anchor->set_xyz( "X", (com_A + com_B) / 2 );
-		working_pose.append_residue_by_jump( *anchor, pose.total_residue() );
+		working_pose.append_residue_by_jump( *anchor, pose.size() );
 
-		working_pose.append_residue_by_jump( pose.residue(1), pose.total_residue(),"","",true );
-		for(Size i=2; i <= pose.total_residue(); i++)
+		working_pose.append_residue_by_jump( pose.residue(1), pose.size(),"","",true );
+		for(Size i=2; i <= pose.size(); i++)
 			working_pose.append_residue_by_bond( pose.residue(i) );
 		// fix the backbone of half of one copy and half of the other.
 		MoveMap movemap;
 		movemap.set_jump(1,false);
 		movemap.set_jump(2,false);
-		for(Size i = 1; i <= working_pose.total_residue(); i++) {
+		for(Size i = 1; i <= working_pose.size(); i++) {
 			movemap.set_bb(true);
 			movemap.set_chi(true);
 		}
@@ -260,7 +260,7 @@ public:
 		Size idx_a = working_pose.fold_tree().downstream_jump_residue( 3 );
 		core::conformation::ResidueOP vrt_b( core::conformation::ResidueFactory::create_residue( vrt ) );
 		vrt_b->set_xyz( "X", com_A );
-		working_pose.append_residue_by_jump( *vrt_b, pose.total_residue() +  resi_nearest_to_com_B );
+		working_pose.append_residue_by_jump( *vrt_b, pose.size() +  resi_nearest_to_com_B );
 		Size idx_b = working_pose.fold_tree().downstream_jump_residue( 4 );
 		// add a virtual atom in the center of mass of each rigid segment
 		// make the fragment insertion in both junctions.
@@ -423,8 +423,8 @@ public:
 
 	Size count_clashes(Pose const & pose) {
 		Size clashes = 0;
-		for(Size i = 1; i <= pose.total_residue(); i++) {
-			for(Size j =  1; j <= pose.total_residue(); j++) {
+		for(Size i = 1; i <= pose.size(); i++) {
+			for(Size j =  1; j <= pose.size(); j++) {
 				if( i == j) continue;
 				if( pose.residue( i ).xyz("CA") - pose.residue( j ).xyz("CA") < clash_distance_)
 					clashes++;
@@ -449,8 +449,8 @@ public:
 		Pose working_pose(pose);
 		Vector com_A = core::pose::center_of_mass(pose,1, junction_start_);
 		Size resi_nearest_to_com_A = protocols::geometry::core::pose::return_nearest_residue( pose, 1, junction_start_, com_A);
-		Vector com_B = core::pose::center_of_mass(pose,junction_end_ , pose.total_residue());
-		Size resi_nearest_to_com_B = protocols::geometry::core::pose::return_nearest_residue( pose, junction_end_, pose.total_residue(), com_B);
+		Vector com_B = core::pose::center_of_mass(pose,junction_end_ , pose.size());
+		Size resi_nearest_to_com_B = protocols::geometry::core::pose::return_nearest_residue( pose, junction_end_, pose.size(), com_B);
 
 		// create the new residue and locate it between the moving elements
 		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
@@ -555,16 +555,16 @@ public:
     //			core::pose::remove_virtual_residues( &pose_for_fragment_insertion );
     //			core::pose::remove_virtual_residues( &pose_for_rotation );
     			//core::pose::remove_upper_terminus_type_from_pose_residue( pose_for_rotation, 1);
-    			//core::pose::remove_lower_terminus_type_from_pose_residue( two_chains_pose, two_chains_pose.total_residue() );
-    			//two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.total_residue(), "", "", true);
+    			//core::pose::remove_lower_terminus_type_from_pose_residue( two_chains_pose, two_chains_pose.size() );
+    			//two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.size(), "", "", true);
 
     			Pose two_chains_pose;
-    			for(Size i = 1; i <= pose_for_fragment_insertion.total_residue(); i++) {
+    			for(Size i = 1; i <= pose_for_fragment_insertion.size(); i++) {
     				if( pose_for_fragment_insertion.residue( i ).name1() == 'X' ) continue;
     				two_chains_pose.append_residue_by_bond( pose_for_fragment_insertion.residue(i));
     			}
-    			two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.total_residue(), "", "", true);
-    			for(Size i = 2; i <= pose_for_rotation.total_residue(); i++) {
+    			two_chains_pose.append_residue_by_jump( pose_for_rotation.residue(1), two_chains_pose.size(), "", "", true);
+    			for(Size i = 2; i <= pose_for_rotation.size(); i++) {
     				if( pose_for_rotation.residue( i ).name1() == 'X' ) continue;
     				two_chains_pose.append_residue_by_bond( pose_for_rotation.residue(i));
     			}
@@ -585,7 +585,7 @@ public:
 			TR << "Performing a symmetric minimization of the swapped dimer" << std::endl;
 			// make a symmetric version of the pose
 			Pose symm_pose = best_pose_after_fragment_insertion.split_by_chain( 1 );
-			const Size mono_size = symm_pose.total_residue();
+			const Size mono_size = symm_pose.size();
 			// set up the movemap
 			core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *core::scoring::get_score_function() );
 			const Size junction_new_end = junction_end_ - (junction_aa_.size() - (junction_end_ - junction_start_ + 1) );

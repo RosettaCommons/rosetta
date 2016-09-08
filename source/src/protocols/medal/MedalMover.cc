@@ -176,7 +176,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
 	// Information about the current set of inputs
 	ThreadingJob const * const job = protocols::nonlocal::current_job();
-	const unsigned num_residues = pose.total_residue();
+	const unsigned num_residues = pose.size();
 
 	// Load the native structure (if available) to compute trajectory analytics
 	PoseOP native;
@@ -271,7 +271,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
 	closure.cmd_line_csts(option[constraints::cst_fa_file].user());
 
 	// Simple kinematics
-	FoldTree tree(pose->total_residue());
+	FoldTree tree(pose->size());
 	pose->fold_tree(tree);
 	closure.apply(*pose);
 }

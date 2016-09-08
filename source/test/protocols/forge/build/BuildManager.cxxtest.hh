@@ -76,7 +76,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -132,7 +132,7 @@ public: // tests
 		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 5, 9 ), String( 3, 'H' ) ) ) );
 		manager.add( BuildInstructionOP( new GrowLeft( 1, String( 2, 'H' ) ) ) );
 		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 12, 16 ), String( 7, 'H' ) ) ) );
-		manager.add( BuildInstructionOP( new GrowRight( pose.n_residue(), String( 4, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new GrowRight( pose.size(), String( 4, 'H' ) ) ) );
 
 		// test position mapping doesn't exist prior to modify()
 		TS_ASSERT( manager.original2modified().empty() );
@@ -140,7 +140,7 @@ public: // tests
 		TS_ASSERT( manager.positions().empty() );
 
 		manager.modify( pose );
-		TS_ASSERT_EQUALS( pose.n_residue(), 26 );
+		TS_ASSERT_EQUALS( pose.size(), 26 );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_cutpoint(), 2 );
 		TS_ASSERT_EQUALS( pose.annotated_sequence(), "A[ALA:NtermProteinFull]AACDEAAALMAAAAAAATVWYAAAA[ALA:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( pose.secstruct(), "HHLLLLHHHLLHHHHHHHLLLLHHHH" );

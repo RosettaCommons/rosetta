@@ -110,7 +110,7 @@ void RestrictNonSurfaceToRepackingOperation::apply( core::pose::Pose const & pos
 	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, 10.0 /* ten angstrom distance */ ); // create edges
 
 	core::Size num_neighbors_ = 0;
-	for ( core::Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 
 		// a PointGraph is a typedef of UpperEdgeGraph< PointGraphVertexData, PointGraphEdgeData >
 		// so any of the method in UpperEdgeGraph should be avail. here. The UpperEdgeGraph provides access to nodes

@@ -84,7 +84,7 @@ Pose read_pose() {
 	// read in pose
 	Pose pose;
 	core::import_pose::pose_from_file( pose, option[OptionKeys::in::file::s].value_string() , core::import_pose::PDB_file);
-	TR.Debug << "got pose of length " << pose.total_residue() << std::endl;
+	TR.Debug << "got pose of length " << pose.size() << std::endl;
 
 	return pose;
 
@@ -134,7 +134,7 @@ void spanfile_for_each_chain( Pose & pose, Real thickness, std::string spanfile)
 		utility::trim( split_spanfile, ".span" );
 
 		// output filename depends on number of chains
-		if ( pose.chain( pose.total_residue() ) > 1 ) {
+		if ( pose.chain( pose.size() ) > 1 ) {
 			split_spanfile = split_spanfile + chain + ".span";
 		} else {
 			split_spanfile = split_spanfile + ".span";
@@ -178,7 +178,7 @@ void spanfile_from_pdb(){
 	spanfile = spanfile + ".span";
 
 	// if more than one chain, write SpanningTopology for whole pose
-	if ( pose.chain( pose.total_residue() ) > 1 ) {
+	if ( pose.chain( pose.size() ) > 1 ) {
 		topo_whole_pose->write_spanfile( spanfile );
 	}
 

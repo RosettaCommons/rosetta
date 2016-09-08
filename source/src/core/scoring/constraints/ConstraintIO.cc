@@ -121,7 +121,7 @@ ConstraintIO::read_cst_atom_pairs(
 			<< res1 << " " << res2 << " func: " << func_type
 			<< std::endl;
 
-		if ( res1>pose.total_residue() || res2> pose.total_residue() ||
+		if ( res1>pose.size() || res2> pose.size() ||
 				( !pose.residue_type( res1 ).has( name1 ) ) ||
 				( !pose.residue_type( res2 ).has( name2 ) )
 				) {
@@ -167,7 +167,7 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	tr.Info  << "read: " << name1 << " " << name2 << " "
 		<< res1 << " " << res2 << " func: " << func_type
 		<< std::endl;
-	if ( res1>pose.total_residue() || res2> pose.total_residue() ) {
+	if ( res1>pose.size() || res2> pose.size() ) {
 		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		return NULL;
@@ -231,7 +231,7 @@ ConstraintIO::read_cst_coordinates(
 			<< res1 << " " << res2 << " func: " << func_type
 			<< std::endl;
 
-		if ( res1>pose.total_residue() || res2> pose.total_residue() ||
+		if ( res1>pose.size() || res2> pose.size() ||
 				( !pose.residue_type( res1 ).has( name1 ) ) ||
 				( !pose.residue_type( res2 ).has( name2 ) )
 				) {
@@ -280,7 +280,7 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 
 	tr.Debug  << "read: " << fixed_res_name << " " << other_res_name << " "
 		<< fixed_res << " " << other_res << " func: " << func_type << std::endl;
-	if ( fixed_res > pose.total_residue() || other_res > pose.total_residue() ) {
+	if ( fixed_res > pose.size() || other_res > pose.size() ) {
 		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< fixed_res_name << " " << other_res_name << " "
 			<< fixed_res << " " << other_res << std::endl;
@@ -346,7 +346,7 @@ ConstraintIO::read_cst_angles(
 			aFunc->show_definition( tr.Debug ); tr.Debug<<std::endl;
 		}
 
-		if ( res1 > pose.total_residue() || res2 > pose.total_residue() || res3 > pose.total_residue() ) {
+		if ( res1 > pose.size() || res2 > pose.size() || res3 > pose.size() ) {
 			tr.Warning << "ignored constraint" << name1 << " " << name2 << " "
 				<< res1 << " " << res2 << std::endl;
 			continue;

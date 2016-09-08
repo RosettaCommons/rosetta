@@ -60,11 +60,11 @@ get_resmap( pose::Pose const &pose,
 						std::map< Size, Size > &pose_resmap
 						)
 {
-  for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= pose.size(); ++ii ) {
  		Size ii_pdb( pose.pdb_info()->number( ii ) );
 		pose_resmap[ii_pdb] = ii;
 
-  	for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+  	for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 			Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
 
 			if( ii_pdb == jj_pdb ){
@@ -95,16 +95,16 @@ find_best_projection( pose::Pose const &pose, pose::Pose const &pose_ref,
 	// Both pose should be aligned to each other!
 	//utility::vector1< Vector > diffvec;
 	std::map< Size, Vector > diffvec;
-	proj_vec.resize( pose.total_residue() );
+	proj_vec.resize( pose.size() );
 
 	proj_scale.resize( vecs.size() );
 
-	for( Size ires = 1; ires <= pose.total_residue(); ++ires ){
+	for( Size ires = 1; ires <= pose.size(); ++ires ){
 		proj_vec[ires] = Vector( 0.0, 0.0, 0.0 );
 	}
 
 	Real diffsum( 0.0 );
-	//for( Size ires = 1; ires <= pose.total_residue(); ++ires ){
+	//for( Size ires = 1; ires <= pose.size(); ++ires ){
 
 	std::map< Size, Size >::const_iterator it;
 	std::map< Size, Vector >::iterator it2;
@@ -142,7 +142,7 @@ find_best_projection( pose::Pose const &pose, pose::Pose const &pose_ref,
 		std::cout << " " << std::setw(10) << dotsum/diffsum;
 		std::cout << std::endl;
 
-		for( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ){
+		for( Size i_res = 1; i_res <= pose.size(); ++i_res ){
 			proj_vec[i_res] += dotsum*vec[i_res];
 			/*
 			std::cout << "vecdiff: " << i_ca;
@@ -203,7 +203,7 @@ generate_proj_pose( pose::Pose const &pose_init,
 {
 	pose::Pose pose_proj( pose_init );
 	// This generates unreasonable structure but just do it simple
-	for( Size ires = 1; ires <= pose_init.total_residue(); ++ires ){
+	for( Size ires = 1; ires <= pose_init.size(); ++ires ){
 		Vector newvec = proj_vec[ires]+pose_init.residue(ires).xyz( " CA " );
 
 		id::AtomID CaID( pose_init.residue(ires).atom_index( " CA " ), ires );

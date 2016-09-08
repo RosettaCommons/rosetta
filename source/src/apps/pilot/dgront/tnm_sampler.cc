@@ -135,7 +135,7 @@ void TNM::write_modes(std::ostream& out) {
 
 void TNM::apply(core::Size which_mode, core::Real lambda, core::pose::Pose& pose) {
 
-    for(core::Size i=2;i<pose.total_residue();++i) {
+    for(core::Size i=2;i<pose.size();++i) {
 	pose.set_phi( i, pose.phi(i) + lambda * modes[which_mode].phi(i) );
 	pose.set_psi( i, pose.psi(i) + lambda * modes[which_mode].psi(i) );
     }
@@ -210,7 +210,7 @@ int main(int argc, char * argv[]) {
         core::pose::PoseOP tmp_pose(new core::pose::Pose);
         std::string fn = option[in::file::s](1);
         core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
-        std::cerr <<"Input structure with "<<tmp_pose->total_residue()<<" residues\n";
+        std::cerr <<"Input structure with "<<tmp_pose->size()<<" residues\n";
 
         core::pose::PoseOP reference_pose(new core::pose::Pose);
         std::string fnn = option[in::file::native];

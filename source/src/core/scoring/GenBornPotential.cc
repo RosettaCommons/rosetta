@@ -119,7 +119,7 @@ GenBornPoseInfo::GenBornPoseInfo( GenBornPoseInfo const & src ):
 void
 GenBornPoseInfo::initialize( pose::Pose const & pose )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	residue_info_.resize( nres, nullptr );
 	placeholder_residue_.resize( nres, nullptr );
@@ -253,7 +253,7 @@ GenBornPotential::get_all_born_radii(
 ) const {
 	PROF_START( basic::GB_GET_ALL_BORN_RADII );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// initialize gb info:
 	//  * zeros born radii for start of calculations
@@ -334,7 +334,7 @@ GenBornPotential::build_placeholders(
 	pose::Pose const & pose,
 	GenBornPoseInfo & gb_info
 ) const {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	chemical::ResidueTypeSetCOP residue_set( pose.residue(1).residue_type_set() );
 
@@ -386,7 +386,7 @@ GenBornPotential::get_template_born_radii(
 	GenBornPoseInfo & gb_info
 ) const
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	debug_assert( gb_info.size() == nres );
 
@@ -442,7 +442,7 @@ GenBornPotential::get_single_rotamer_born_radii(
 ) const {
 	debug_assert( rsd1.natoms()<1 || std::abs( gb1.born_radius(1) ) < 1e-3 ); // ensure radii have been initialized to 0
 
-	for ( Size res2=1; res2<= pose.total_residue(); ++res2 ) {
+	for ( Size res2=1; res2<= pose.size(); ++res2 ) {
 		if ( gb_info.being_packed( res2 ) ) {
 			// use placeholder
 			res_res_burial( rsd1, gb1, gb_info.placeholder_residue( res2 ), gb_info.placeholder_info( res2));
@@ -668,7 +668,7 @@ GenBornPotential::eval_atom_derivative(
 
 
 	// pose stuff
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	int const i_map( domain_map( i ) );
 	bool const i_fixed( i_map != 0 );
 

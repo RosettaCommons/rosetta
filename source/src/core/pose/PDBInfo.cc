@@ -111,7 +111,7 @@ PDBInfo::PDBInfo(
 	obsolete_( !init ),
 	name_( "" ),
 	modeltag_( "" ),
-	residue_rec_( pose.total_residue() ),
+	residue_rec_( pose.size() ),
 	conf_( /* NULL */ ),
 	num_unrecognized_res_(0),
 	num_unrecognized_atoms_(0)
@@ -122,7 +122,7 @@ PDBInfo::PDBInfo(
 	// in the Pose's Conformation
 	if ( init ) {
 		// do this manually to save on method calls
-		for ( Size i = 1, ie = pose.total_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			ResidueRecord & rr = residue_rec_[ i ];
 			// fpd: wrap around if > 62 chains.
 			// rhiju: note -- got rid of _ as first char of chr_chains.
@@ -394,9 +394,9 @@ PDBInfo::resize_atom_records( Pose const & pose )
 {
 	using core::conformation::Residue;
 
-	debug_assert( residue_rec_.size() == pose.n_residue() );
+	debug_assert( residue_rec_.size() == pose.size() );
 
-	for ( Size r = 1, re = pose.n_residue(); r <= re; ++r ) {
+	for ( Size r = 1, re = pose.size(); r <= re; ++r ) {
 		residue_rec_[ r ].atomRec.resize( pose.residue( r ).natoms() );
 	}
 }

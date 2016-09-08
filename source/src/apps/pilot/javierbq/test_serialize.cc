@@ -103,7 +103,7 @@ main ( int argc, char* argv[] ){
 		SerializablePose p(*pop);
 
 
-		TR << "size of pose to flatten " << p.total_residue() << std::endl;
+		TR << "size of pose to flatten " << p.size() << std::endl;
 
 		TR << "ss1:" << p.secstruct() << std::endl;
 		p.set_secstruct(2,'H');
@@ -111,7 +111,7 @@ main ( int argc, char* argv[] ){
 		std::string buffer = pose_to_string(p);
 
 		core::pose::Pose p2 = string_to_pose(buffer);
-		TR << "size of pose to unflatten " << p2.total_residue() << std::endl;
+		TR << "size of pose to unflatten " << p2.size() << std::endl;
 		TR << "ss:" << p2.secstruct() << std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

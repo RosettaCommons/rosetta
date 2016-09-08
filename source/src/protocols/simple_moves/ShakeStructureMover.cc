@@ -481,7 +481,7 @@ ShakeStructureMover::run_mc(
 
 	core::pose::Pose init(p); //for comparison at the end
 
-	core::Size nmoves = (core::Size)p.total_residue()/4; //number of moves for each move type
+	core::Size nmoves = (core::Size)p.size()/4; //number of moves for each move type
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 	mm->set_bb(true);

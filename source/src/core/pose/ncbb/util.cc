@@ -61,7 +61,7 @@ initialize_ncbbs (
 	utility::vector1< core::Size > ncbb_seq_positions;
 	core::Size hbs = 0;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		// now we return both PRE and POST locations...
 		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 ) {
 			ncbb_seq_positions.push_back( i );
@@ -102,7 +102,7 @@ initialize_hbs (
 	utility::vector1< core::Size > hbs_seq_positions;
 	core::Size hbs = 0;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			hbs_seq_positions.push_back( i );
 			hbs = 1;
@@ -304,7 +304,7 @@ initialize_oops(
 	Pose & pose
 ) {
 	utility::vector1< core::Size > oop_seq_positions;
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 ) {
 			oop_seq_positions.push_back( i );
 			core::pose::ncbb::add_oop_constraint(pose, i);

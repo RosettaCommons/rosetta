@@ -179,7 +179,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		core::pose::initialize_atomid_map( atom_sasa, sasa_pose, 0.0);
 		core::Size itype;
 
-		for ( core::Size i = 1; i <= sasa_pose.n_residue(); ++i ) {
+		for ( core::Size i = 1; i <= sasa_pose.size(); ++i ) {
 			if ( sasa_pose.residue(i).name3()=="GLY" ) { // Don't try CBs with GLYs
 				itype = 4;
 			} else {
@@ -199,8 +199,8 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		core::scoring::calc_per_atom_sasa( sasa_pose, atom_sasa, sasas, probe_radius_, false, atom_mask );
 
 		if ( mode_ == "sc" ) {
-			utility::vector1<core::Real> sc_sasas(sasa_pose.n_residue(),0.0);
-			for ( Size i = 1; i <= sasa_pose.n_residue(); i++ ) {
+			utility::vector1<core::Real> sc_sasas(sasa_pose.size(),0.0);
+			for ( Size i = 1; i <= sasa_pose.size(); i++ ) {
 				// Use CA as the side chain for Glys
 				if ( sasa_pose.residue(i).name3()=="GLY" ) sc_sasas[i] += atom_sasa[AtomID(2,i)];
 				for ( Size j = 5; j <= sasa_pose.residue(i).nheavyatoms(); j++ ) {
@@ -214,7 +214,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 
 		// Prevent repacking at resis that do match the user-specified parameters.
 		//bool prevent_repacking;
-		for ( Size iaa=1; iaa<=sasa_pose.n_residue(); iaa++ ) {
+		for ( Size iaa=1; iaa<=sasa_pose.size(); iaa++ ) {
 			if ( core::pose::symmetry::is_symmetric(sasa_pose) ) {
 				if ( !indy_resi[iaa] ) {
 					continue;

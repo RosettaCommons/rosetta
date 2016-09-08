@@ -186,14 +186,14 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// the list of residues that are allowed to pack
-	for ( Size ii=1; ii <=pose.total_residue(); ii++ ) {
+	for ( Size ii=1; ii <=pose.size(); ii++ ) {
 		allow_repack_.push_back(false);
 	}
 	select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
 
 
 	// the list of residues that are allowed to change backbone
-	utility::vector1< bool> allow_bb_move( pose.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose.size(), false );
 	for ( Size ii = loop_begin_; ii <= loop_end_; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
@@ -206,7 +206,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 	if ( flank_relax_ ) {
 		utility::vector1< bool> flank_allow_bb_move( allow_bb_move );
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			if (  (i >= (loop_begin_ - flank_size_)) && (i <= (loop_end_ + flank_size_))   ) {
 				flank_allow_bb_move[i] = true;
 			}

@@ -76,7 +76,7 @@ public:
 		selector.set_sheet_topology( "1-2.P.1" );
 
 		ResidueSubset subset = selector.apply( pose );
-		TS_ASSERT_EQUALS( subset.size(), pose.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), pose.size() );
 
 		// strand 1 is 2-6, but only 3-6 should be paired
 		// strand 2 is 32-38, but only 32-35 should be paired
@@ -86,7 +86,7 @@ public:
 		// changing the register shift should change the paired residues
 		selector.set_sheet_topology( "1-2.P.-1" );
 		subset = selector.apply( pose );
-		TS_ASSERT_EQUALS( subset.size(), pose.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), pose.size() );
 
 		// strand 1 is 2-6, and 2-6 should be paired
 		// strand 2 is 32-38, and 33-37 should be paired
@@ -97,7 +97,7 @@ public:
 		std::string secstruct = "LEEEEEEHHHHLLLLHHHHHHHHHHHHLLLLEEEEEEELLLHHHHHHHHHHHHHHHHHHLLLEEEEEEEL";
 		selector.set_secstruct( secstruct );
 		subset = selector.apply( pose );
-		TS_ASSERT_EQUALS( subset.size(), pose.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), pose.size() );
 
 		// strand 1 is 2-7, and 2-7 should be paired
 		// strand 2 is 32-38, and 33-38 should be paired
@@ -108,7 +108,7 @@ public:
 		selector.set_sheet_topology( "1-2.P.1;2-3.P.0" );
 		selector.set_secstruct( "" );
 		subset = selector.apply( pose );
-		TS_ASSERT_EQUALS( subset.size(), pose.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), pose.size() );
 
 		// strand 1 is 2-6, and 3-6 should be paired
 		// strand 2 is 32-38, and 32-38 should be paired

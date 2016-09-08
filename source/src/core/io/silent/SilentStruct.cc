@@ -1053,7 +1053,7 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 	utility::vector1< Size > residue_numbers;
 	utility::vector1< char > chains;
 	bool residue_numbering_is_interesting( false );
-	for ( core::uint i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::uint i = 1; i <= pose.size(); ++i ) {
 		residue_numbers.push_back( pdb_info->number( i ) );
 		chains.push_back( pdb_info->chain( i ) );
 		if ( pdb_info->number( i ) != static_cast<int>(i) ||
@@ -1065,7 +1065,7 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 
 	utility::vector1< std::string > seg_ids;
 	bool segment_IDs_are_interesting( false );
-	for ( core::uint i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::uint i = 1; i <= pose.size(); ++i ) {
 		seg_ids.push_back( pdb_info->segmentID( i ) );
 		if ( pdb_info->segmentID( i ) != "    " ) {
 			segment_IDs_are_interesting = true;
@@ -1115,8 +1115,8 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 
 	if ( residue_numbers_.size() == 0 ) return;
 
-	if ( pose.total_residue() != residue_numbers_.size() ) {
-		std::cout << "Number of residues in pose: " << pose.total_residue() << std::endl;
+	if ( pose.size() != residue_numbers_.size() ) {
+		std::cout << "Number of residues in pose: " << pose.size() << std::endl;
 		std::cout << "Number of residues in silent_struct residue_numbers: " << residue_numbers_.size() << std::endl;
 		utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
 	}
@@ -1129,8 +1129,8 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 
 	if ( segment_IDs_.size() == 0 ) return;
 
-	if ( pose.total_residue() != segment_IDs_.size() ) {
-		std::cout << "Number of residues in pose: " << pose.total_residue() << std::endl;
+	if ( pose.size() != segment_IDs_.size() ) {
+		std::cout << "Number of residues in pose: " << pose.size() << std::endl;
 		std::cout << "Number of residues in silent_struct segment_IDs: " << segment_IDs_.size() << std::endl;
 		utility_exit_with_message( "Problem with segment_IDs_ in silent_struct!" );
 	}
@@ -1149,7 +1149,7 @@ SilentStruct::full_model_info_into_pose( pose::Pose & pose ) const {
 		full_model_info->set_res_list( full_model_parameters_->conventional_to_full( std::make_pair( residue_numbers_, chains_ ) ) );
 	} else {
 		utility::vector1< Size > res_list;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
+		for ( Size n = 1; n <= pose.size(); n++ ) res_list.push_back( n );
 		full_model_info->set_res_list( res_list );
 	}
 

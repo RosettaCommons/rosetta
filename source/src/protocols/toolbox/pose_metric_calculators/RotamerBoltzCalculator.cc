@@ -130,10 +130,10 @@ RotamerBoltzCalculator::computeAllBoltz( core::pose::Pose const & pose )
 	if ( !selector_ ) utility_exit_with_message( "RotamerBoltzCalculator: residue selector not set!" );
 
 	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
-	debug_assert( subset.size() == pose.total_residue() );
+	debug_assert( subset.size() == pose.size() );
 
 	probabilities_.clear();
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( !subset[ resid ] ) continue;
 		TR << "Computing Boltz Weight for residue " << resid << std::endl;
 		core::pose::Pose work_pose = pose;
@@ -141,7 +141,7 @@ RotamerBoltzCalculator::computeAllBoltz( core::pose::Pose const & pose )
 	}
 
 	all_boltz_.clear();
-	all_boltz_.assign( pose.total_residue(), 0.0 );
+	all_boltz_.assign( pose.size(), 0.0 );
 	for ( RotamerProbabilities::const_iterator rp=probabilities_.begin(); rp!=probabilities_.end(); ++rp ) {
 		all_boltz_[ rp->first ] = rp->second;
 	}
@@ -195,7 +195,7 @@ RotamerBoltzCalculator::compute_boltz_weight_packrotamers(
 	core::pack::rotamer_set::RotamerSetCOP rotset = create_rotamer_set( pose, resi );
 
 	// for RMSD "subset"
-	ObjexxFCL::FArray1D< bool > subset( pose.total_residue(), false );
+	ObjexxFCL::FArray1D< bool > subset( pose.size(), false );
 	subset( resi ) = true;
 
 	ScoreRmsPoints scores( ScoreRmsPoint( stf.compute( pose ), 0.0 ) );
@@ -304,7 +304,7 @@ RotamerBoltzCalculator::init_task( core::pose::Pose const & pose, core::Size con
 	}
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
 	restask.restrict_to_repacking();///hmk: what is this doing?
-	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.total_residue() ) );
+	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.size() ) );
 	ptask->set_bump_check(false);
 	rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 
@@ -331,7 +331,7 @@ protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::
 	} else { // minimize rb if bound
 		mm->set_jump( (int)(rb_jump()), true );
 	}
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( task->being_designed( i ) ) {
 			task->nonconst_residue_task( i ).restrict_to_repacking(); // mark all des around to repacking only
 			mm->set_chi( i, true );
@@ -370,7 +370,7 @@ RotamerBoltzCalculator::create_rotamer_set( core::pose::Pose const & pose, core:
 	ptask->or_include_current( false );
 	ptask->nonconst_residue_task( resi ).restrict_to_repacking();
 	ptask->set_bump_check( false );
-	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.total_residue() ) );
+	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.size() ) );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 	return rotset;
 }

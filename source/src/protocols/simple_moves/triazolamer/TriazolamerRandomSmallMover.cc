@@ -71,7 +71,7 @@ void TriazolamerRandomSmallMover::apply( core::pose::Pose & pose ){
 		runtime_assert ( pose.residue(triazolamer_pre_pos).has_variant_type(chemical::TRIAZOLAMERC) == 1) ;
 		runtime_assert ( pose.residue(triazolamer_post_pos).has_variant_type(chemical::TRIAZOLAMERN) == 1) ;
 		//kdrew: an triazolamer pre position cannot be last position
-		runtime_assert ( triazolamer_pre_pos != pose.total_residue() );
+		runtime_assert ( triazolamer_pre_pos != pose.size() );
 		//kdrew: an triazolamer post position cannot be first position
 		runtime_assert ( triazolamer_post_pos != 1 );
 

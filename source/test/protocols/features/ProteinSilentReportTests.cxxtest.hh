@@ -101,14 +101,14 @@ public:
 		core::pose::Pose copy_1ten;
 		protein_silent_report_->load_pose(db_session_, struct_ids[1], copy_1ten);
 
-		TS_ASSERT(pose_1ten_.total_residue() == copy_1ten.total_residue());
+		TS_ASSERT(pose_1ten_.size() == copy_1ten.size());
 		TS_ASSERT(pose_1ten_.sequence() == copy_1ten.sequence());
 		TS_ASSERT(pose_1ten_.annotated_sequence() == copy_1ten.annotated_sequence());
 		TS_ASSERT(pose_1ten_.is_fullatom() == copy_1ten.is_fullatom());
 		TS_ASSERT(pose_1ten_.fold_tree() == copy_1ten.fold_tree());
 		TS_ASSERT(pose_1ten_.conformation().chain_endings() == copy_1ten.conformation().chain_endings());
 
-		for ( core::Size i = 1; i <= pose_1ten_.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose_1ten_.size(); ++i ) {
 			core::conformation::Residue const & orig = pose_1ten_.residue(i);
 			core::conformation::Residue const & copy = copy_1ten.residue(i);
 

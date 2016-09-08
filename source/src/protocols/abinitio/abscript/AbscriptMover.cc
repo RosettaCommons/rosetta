@@ -574,7 +574,7 @@ std::map< core::Size, core::Size > AbscriptMover::calculate_iterations( core::po
 
 	//Stage1 has FT-dependent seqsep ramping ---------------------------------------
 	core::kinematics::ShortestPathInFoldTree shortestpath( pose.fold_tree() );
-	assert( shortestpath.max_dist() <= pose.total_residue() );
+	assert( shortestpath.max_dist() <= pose.size() );
 
 	core::Size end_seqsep = (core::Size)(stage_movers_[ I ]->seq_sep_intercept() * shortestpath.max_dist());
 	core::Size begin_seqsep = std::min( end_seqsep, Size(3) );

@@ -272,7 +272,7 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 		//    TR << "Warning: when setting up favor native constraints, there might already be some previously generated favor_native constraints in the pose, trying to remove these first." << std::endl;
 		//   favor_native_constraints.clear();
 		//   }
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			ConstraintOP resconstraint( new ResidueTypeConstraint( pose, i, bonus ) );
 			favor_native_constraints.push_back( resconstraint );
 		}
@@ -320,7 +320,7 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 	//  movemap_->clear();
 	//  movemap_->set_jump(true);
 	//  //movemap_->set_bb(false); //this works while setting individual doesn't
-	//  for( Size ii=1; ii<= pose.total_residue(); ++ii){
+	//  for( Size ii=1; ii<= pose.size(); ++ii){
 	//   if( interface_set.count(ii) ){
 	//    movemap_->set_bb(ii, true);
 	//    movemap_->set_chi(ii, true);
@@ -435,7 +435,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 	protocols::jd2::JobOP const job_me( JobDistributor::get_instance()->current_job() );
 	//  std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job_me ) );
 
-	monomer_nres_ = pose.total_residue();
+	monomer_nres_ = pose.size();
 
 	//setup the symmetric pose and cloak it from option[ symmetry::perturb_rigid_body_dofs ]
 	//if need be.
@@ -482,7 +482,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		tf_nataa->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
 		//want to just repack the wt pose, NO design
 		RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
-		for ( Size ii = 1; ii<= pose.n_residue(); ++ii ) {
+		for ( Size ii = 1; ii<= pose.size(); ++ii ) {
 			repack_op->include_residue( ii );
 		}
 		//fill task factory with these restrictions

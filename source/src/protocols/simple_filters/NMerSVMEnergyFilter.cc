@@ -133,7 +133,7 @@ core::Size const seqpos,
 Real & rsd_energy,
 vector1< Real > & rsd_svm_energies
 ) const {
-assert( seqpos <= pose.total_residue() );
+assert( seqpos <= pose.size() );
 energy_method_.get_residue_energy_by_svm( pose, seqpos, rsd_energy, rsd_svm_energies );
 }
 */
@@ -170,7 +170,7 @@ NMerSVMEnergyFilter::compute(
 	core::Real score( 0. );
 	core::Size n_eps( 0 );
 	vector1< nmer_svm_res_data > nmer_svm_pose_data;
-	for ( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 		bool incl_rsd = true; //calc info for this sequence position?
 		//if user defined a set of sequence positions, then see if seqpos is in that set
 		if ( res_set_vec.size() > 0 ) {
@@ -191,7 +191,7 @@ NMerSVMEnergyFilter::compute(
 		if ( pose.pdb_info().get() != nullptr ) pdb_seqpos = pose.pdb_info()->pose2pdb( seqpos );
 		//get this nmer sequence, just ignore if we fall off the end
 		std::string nmer_seq( "" );
-		if ( seqpos <= pose.total_residue() - energy_method_.nmer_length() + 1 ) {
+		if ( seqpos <= pose.size() - energy_method_.nmer_length() + 1 ) {
 			nmer_seq = pose.sequence().substr( seqpos - 1, energy_method_.nmer_length() );
 		}
 		//store nmer_svm energy of this seqpos and each individual svms contribution in a struct

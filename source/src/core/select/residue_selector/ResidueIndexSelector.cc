@@ -73,7 +73,7 @@ ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 {
 	debug_assert( !index_str_.empty() );
 
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
 
 	for ( std::set< Size >::const_iterator it = res_set.begin();

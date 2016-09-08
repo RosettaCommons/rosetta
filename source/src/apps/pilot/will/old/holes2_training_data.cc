@@ -57,13 +57,13 @@ local_rms( core::pose::Pose p1, core::pose::Pose p2, core::Real dist, bool local
 	AtomID_Map<core::Real> ret;
 	core::pose::initialize_atomid_map_heavy_only(ret,p1,0.0);
 
-	for( Size ir = 1; ir <= p1.n_residue(); ++ir ) {
+	for( Size ir = 1; ir <= p1.size(); ++ir ) {
 		for( Size ia = 1; ia <= p1.residue(ir).nheavyatoms(); ++ia ) {
 			ret[AtomID(ia,ir)] = 0.0;
 			numeric::xyzVector<Real> const & xyz(p1.residue(ir).xyz(ia));
 			int natoms = 0;
 			ObjexxFCL::FArray2D< numeric::Real > p1a(3,999), p2a(3,999);
-			for( Size jr = 1; jr <= p1.n_residue(); ++jr ) {
+			for( Size jr = 1; jr <= p1.size(); ++jr ) {
 				for( Size ja = 1; ja <= p1.residue(jr).nheavyatoms(); ++ja ) {
 					numeric::xyzVector<Real> const & xyz2(p1.residue(jr).xyz(ja));
 					if( xyz.distance_squared(xyz2) <= dist*dist ) {
@@ -140,10 +140,10 @@ parse_ss_regions(
 	// using core::Size;
 	// core::scoring::dssp::Dssp dssp(pose);
 	// dssp.insert_ss_into_pose( pose );
-	// utility::vector1<core::Size> ssreg(pose.n_residue());
+	// utility::vector1<core::Size> ssreg(pose.size());
 	// Size regcount = 1;
 	// ssreg[1] = regcount;
-	// for( Size i = 2; i <= pose.n_residue()-1; ++i ) {
+	// for( Size i = 2; i <= pose.size()-1; ++i ) {
 	// 	if( pose.secstruct(i) != pose.secstruct(i-1) ) {
 	// 		if( pose.secstruct(i-1) != pose.secstruct(i+1) ) {
 	// 			regcount++;
@@ -151,26 +151,26 @@ parse_ss_regions(
 	// 	}
 	// 	ssreg[i] = regcount;
 	// }
-	// ssreg[pose.n_residue()] = ssreg[pose.n_residue()-1];
+	// ssreg[pose.size()] = ssreg[pose.size()-1];
 	//
-	// for( Size i = 1; i <= pose.n_residue(); i++ ) {
+	// for( Size i = 1; i <= pose.size(); i++ ) {
 	// 	std::cout << pose.secstruct(i);
 	// }
 	// std::cout << std::endl;
 	using core::Size;
 
 	utility::vector1<Size> ssreg;
-	Size i,ext = pose.n_residue() % 5 / 2;
+	Size i,ext = pose.size() % 5 / 2;
 	for( i = 1; i <= ext; i++ ) ssreg.push_back(1);
 	Size count = 0;
-	while( i+5 <= pose.n_residue() ) {
+	while( i+5 <= pose.size() ) {
 		count++;
 		for( int j=0;j<5;j++ ) {
 			ssreg.push_back(count);
 			i++;
 		}
 	}
-	for(i=i; i<= pose.n_residue(); i++) ssreg.push_back(count);
+	for(i=i; i<= pose.size(); i++) ssreg.push_back(count);
 
 	reg_begin_out.push_back(1);
 	for( Size i=2; i<=ssreg.size()-1;i++) {
@@ -253,7 +253,7 @@ apply(
 	string fname = tag_from_pose(pose);
 
 	Size MAX_RES = 5000;
-	if( pose.total_residue() > MAX_RES ) {
+	if( pose.size() > MAX_RES ) {
 		std::cout << "nres > " << MAX_RES << ", skipping file " << fname << std::endl;
 		return;
 	}
@@ -266,7 +266,7 @@ apply(
 
 	vector1<Size> reg_begin,reg_end;
 	vector1<Size> ssreg = parse_ss_regions(pose, reg_begin, reg_end);
-	assert(ssreg.size()==pose.n_residue());
+	assert(ssreg.size()==pose.size());
 
 	bool HAVE_NATIVE = false;
 	vector1<Real> reg_rms_abs, reg_rms_rel;
@@ -275,13 +275,13 @@ apply(
 	if( basic::options::option[OptionKeys::in::file::native].user() ) {
 		Pose native_pose;
 		core::import_pose::pose_from_file(native_pose,core::options::option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
-		assert(native_pose.n_residue()==pose.n_residue());
-		for( Size i = 1; i<= native_pose.n_residue(); ++i ) {
+		assert(native_pose.size()==pose.size());
+		for( Size i = 1; i<= native_pose.size(); ++i ) {
 			assert( native_pose.residue(i).name3()==pose.residue(i).name3() );
 			;
 		}
 		HAVE_NATIVE = true;
-		// std::cout << pose.n_residue() << " " << native_pose.n_residue() << std::endl;
+		// std::cout << pose.size() << " " << native_pose.size() << std::endl;
 		core::scoring::calpha_superimpose_pose( pose, native_pose );
 		gdt = core::scoring::CA_gdtmm( pose, native_pose );
 		// absrms5  = local_rms( pose, native_pose, 5.0, false );
@@ -300,7 +300,7 @@ apply(
 	}
 
 
-	// for( core::Size ir = 1; ir <= pose.total_residue(); ir++ ) {
+	// for( core::Size ir = 1; ir <= pose.size(); ir++ ) {
 	// 	for( core::Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ia++ ) {
 	// 		core::Size i = pb.id_to_index(id::AtomID(ia,ir));
 	// 		if( "VIRT" != pose.residue(ir).atom_type(ia).name() ) {
@@ -399,7 +399,7 @@ apply(
 		if( true ) {
 			EnergyMap e;
 			core::Real s = 0;
-			if( pb.res_num(i) <= pose.n_residue() ) {
+			if( pb.res_num(i) <= pose.size() ) {
 				e = pose.energies().residue_total_energies( pb.res_num(i) );
 				s = pose.energies().residue_total_energy  ( pb.res_num(i) );
 			}

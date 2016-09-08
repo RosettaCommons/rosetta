@@ -140,7 +140,7 @@ void DecoySetEvaluation::prepare_push_back( core::Size nres ) {
 void DecoySetEvaluation::push_back( core::pose::Pose& pose ) {
 	//count residues with CA
 	Size nres=0;
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_protein() ) break;
 		++nres;
 	}

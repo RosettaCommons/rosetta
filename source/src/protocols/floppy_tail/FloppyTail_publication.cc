@@ -42,7 +42,7 @@ void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionC
 
 	//create and score E3_RING portion
 	core::pose::Pose E3_RING(pose);
-	E3_RING.conformation().delete_residue_range_slow(E2_start, E3_RING.total_residue());
+	E3_RING.conformation().delete_residue_range_slow(E2_start, E3_RING.size());
 	core::Real const E3_RING_score((*score_fxn)(E3_RING));
 
 	//create and score E2 portion

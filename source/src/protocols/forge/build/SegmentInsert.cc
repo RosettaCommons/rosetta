@@ -237,7 +237,7 @@ SegmentInsert::Size SegmentInsert::insertion_start_residue() const {
 ///  modified interval (flanking positions are not part of the insertion!)
 /// @return the residue position, otherwise 0 if not found
 SegmentInsert::Size SegmentInsert::insertion_end_residue() const {
-	return interval().left + ss_.find( insertion_char() ) + insert_pose_.n_residue() - 1;
+	return interval().left + ss_.find( insertion_char() ) + insert_pose_.size() - 1;
 }
 
 
@@ -439,7 +439,7 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 
 
 /// @brief set a torsion (bb/chi) specific override movemap indexed wrt the insert
-///  Pose (residue indices may only be within the range [1, insert_pose.n_residue()]
+///  Pose (residue indices may only be within the range [1, insert_pose.size()]
 /// @remarks When generating the movemap(), this torsion movemap will be enforced.
 ///  Only *explicit* settings of TorsionType, MoveMapTorsionID, and TorsionID will
 ///  be honored.  Implicit false settings are ignored.
@@ -450,7 +450,7 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 	typedef MoveMap::TorsionID_Map TorsionID_Map;
 
 	// run through all explicit torsion settings and make sure they're within
-	// the range [1, insert_pose_.n_residue()] and only consist of BB & CHI
+	// the range [1, insert_pose_.size()] and only consist of BB & CHI
 	// settings
 
 	// TorsionTypeMap first
@@ -471,7 +471,7 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 			runtime_assert( false );
 		}
 
-		if ( i->first.first > insert_pose_.n_residue() ) {
+		if ( i->first.first > insert_pose_.size() ) {
 			TR.Error << "ERROR: insert_pose_torsion_override_movemap() passed a MoveMap with a MoveMapTorsionID"
 				<< " setting greater than the total number of residues in the insert pose at residue "
 				<< i->first.first << std::endl;
@@ -488,7 +488,7 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 			runtime_assert( false );
 		}
 
-		if ( i->first.rsd() > insert_pose_.n_residue() ) {
+		if ( i->first.rsd() > insert_pose_.size() ) {
 			TR.Error << "ERROR: insert_pose_torsion_override_movemap() passed a MoveMap with a MoveMapTorsionID"
 				<< " setting greater than the total number of residues in the insert pose at residue "
 				<< i->first.rsd() << std::endl;
@@ -626,7 +626,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	if ( performing_pure_insertion() ) {
 		performing_n_term_insertion = original_interval().right == 0;
-		performing_c_term_insertion = original_interval().right == pose.n_residue();
+		performing_c_term_insertion = original_interval().right == pose.size();
 	}
 	assert( !( performing_n_term_insertion && performing_c_term_insertion ) );
 
@@ -686,7 +686,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// save psi @ left-1 and phi @ right+1 to ensure they are set correctly
 	// and not junked after residue deletion, set to 999.0 if not applicable
 	Real const pre_psi = !( left_has_lower_terminus || left_has_upper_terminus ) && interval_.left > 1 ? pose.psi( interval_.left - 1 ) : 999.0;
-	Real const post_phi = !( right_has_lower_terminus || right_has_upper_terminus ) && interval_.right < pose.n_residue() ? pose.phi( interval_.right + 1 ) : 999.0;
+	Real const post_phi = !( right_has_lower_terminus || right_has_upper_terminus ) && interval_.right < pose.size() ? pose.phi( interval_.right + 1 ) : 999.0;
 
 	// Store omega at original_interval().left-1, phi at original_interval().left,
 	// and psi+omega at original_interval().right if user requests keeping them in
@@ -708,7 +708,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		}
 
 		// on the right
-		if ( !right_has_upper_terminus && interval_.right < pose.n_residue() ) {
+		if ( !right_has_upper_terminus && interval_.right < pose.size() ) {
 			right_endpoint_psi = pose.psi( interval_.right );
 			right_endpoint_omega = pose.omega( interval_.right );
 		}
@@ -822,8 +822,8 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 			interval_.left = 1;
 			interval_.right = 1;
 		} else if ( performing_c_term_insertion ) {
-			interval_.left = pose.n_residue();
-			interval_.right = pose.n_residue();
+			interval_.left = pose.size();
+			interval_.right = pose.size();
 		}
 
 	}
@@ -896,7 +896,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	// make a copy of the residues for safety
 	ResidueOPs insert_residues;
-	for ( Size i = 1, ie = insert_pose_.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = insert_pose_.size(); i <= ie; ++i ) {
 		insert_residues.push_back( insert_pose_.residue( i ).clone() );
 	}
 
@@ -937,7 +937,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		--interval_.right;
 	} else if ( performing_c_term_insertion ) {
 		++interval_.left;
-		interval_.right = pose.n_residue();
+		interval_.right = pose.size();
 	} else { // internal insertion {
 		++interval_.left;
 		--interval_.right;
@@ -945,7 +945,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	assert( interval_.left < interval_.right ); // check ordering
 	assert( interval_.length() > 0 );
-	assert( interval_.length() == flanking_left_nres() + insert_pose_.n_residue() + flanking_right_nres() );
+	assert( interval_.length() == flanking_left_nres() + insert_pose_.size() + flanking_right_nres() );
 
 	// END INTERVAL SHIFT: after this point, interval_ has stabilized and stores
 	// the new endpoints of the rebuilt segment
@@ -1048,7 +1048,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	// special case for Remodel
 	if ( basic::options::option[basic::options::OptionKeys::remodel::no_jumps] ) {
-		//ft.simple_tree(pose.total_residue());
+		//ft.simple_tree(pose.size());
 		//idealize across the loop, in case they are not -- a big problem when taking out jumps
 		//  protocols:loops::Loops loops_def_for_idealization;
 		// loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
@@ -1081,7 +1081,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 		// 4 make the foldtree
 		FoldTree nojump_ft;
-		nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
+		nojump_ft.tree_from_jumps_and_cuts( pose.size(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
 		//std::cout << nojump_ft << std::endl;
 
 		pose.fold_tree(nojump_ft);
@@ -1115,7 +1115,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	if ( flanking_right_nres() > 0 ) {
 		omega_right_start = interval_.right - flanking_right_nres();
 
-		if ( interval_.right == pose.n_residue() ) {
+		if ( interval_.right == pose.size() ) {
 			omega_right_end = interval_.right - 1;
 		} else {
 			omega_right_end = interval_.right;
@@ -1226,7 +1226,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	}
 
 	r = interval_.left + flanking_left_nres();
-	for ( Size i = 1, ie = insert_pose_.n_residue(); i <= ie; ++i, ++r ) {
+	for ( Size i = 1, ie = insert_pose_.size(); i <= ie; ++i, ++r ) {
 		pose.set_secstruct( r, insert_pose_.secstruct( i ) );
 	}
 
@@ -1250,13 +1250,13 @@ void SegmentInsert::init() {
 	using core::conformation::remove_upper_terminus_type_from_conformation_residue;
 
 	// remove lower/upper terminus only at 1, nres
-	if ( insert_pose_.n_residue() > 0 ) {
+	if ( insert_pose_.size() > 0 ) {
 		if ( insert_pose_.residue( 1 ).is_lower_terminus() ) {
 			core::conformation::remove_lower_terminus_type_from_conformation_residue( insert_pose_.conformation(), 1 );
 		}
 
-		if ( insert_pose_.residue( insert_pose_.n_residue() ).is_upper_terminus() ) {
-			core::conformation::remove_upper_terminus_type_from_conformation_residue( insert_pose_.conformation(), insert_pose_.n_residue() );
+		if ( insert_pose_.residue( insert_pose_.size() ).is_upper_terminus() ) {
+			core::conformation::remove_upper_terminus_type_from_conformation_residue( insert_pose_.conformation(), insert_pose_.size() );
 		}
 	}
 }

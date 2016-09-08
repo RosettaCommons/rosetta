@@ -51,7 +51,7 @@ static THREAD_LOCAL basic::Tracer tw( "devel.cartesian_frags.DNA_FragLib", basic
 core::pose::Pose &
 DNA_FragLib::suite_pose() const
 {
-	if ( suite_pose_.total_residue() == 0 ) {
+	if ( suite_pose_.size() == 0 ) {
 		setup_suite_pose( suite_pose_ );
 	}
 	return suite_pose_;
@@ -85,7 +85,7 @@ build_frag_libraries(
 
 		Conformation const & conf( pose.conformation() );
 
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 		for ( Size i=1; i<= nres; ++i ) {
 			Residue const & rsd( pose.residue(i) );
 
@@ -179,7 +179,7 @@ setup_suite_pose(
 //    scorefxn.set_weight( atom_pair_constraint, 1.0 );
 //    scorefxn.set_weight(     angle_constraint, 1.0 );
 //    Size nstep(0.0);
-//    for ( Size i=1; i< pose.total_residue(); ++i ) {
+//    for ( Size i=1; i< pose.size(); ++i ) {
 //     Residue const & rsd1( pose.residue( i   ) );
 //     Residue const & rsd2( pose.residue( i+1 ) );
 //     if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {

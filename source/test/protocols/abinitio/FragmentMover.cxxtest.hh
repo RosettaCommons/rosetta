@@ -242,7 +242,7 @@ void FragmentMoverTest::test_mover() {
 	movemap->set_bb( true );
 	// for (Size ii=1; ii<=6; ii++ ) {
 	// movemap->set_bb( ii, false );
-	// movemap->set_bb( pose_.total_residue()-ii, false );
+	// movemap->set_bb( pose_.size()-ii, false );
 	// TS_ASSERT( !movemap->get_bb( ii ) );
 	//}
 	// Pose pose = pose_;
@@ -284,7 +284,7 @@ void FragmentMoverTest::test_proposed_ss() {
 
 
 	std::string proposed_ss;
-	proposed_ss.reserve( pose_.total_residue() );
+	proposed_ss.reserve( pose_.size() );
 	proposed_ss = pose_.secstruct(); // full ss-string from pose
 	std::string old_ss = proposed_ss;
 	kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
@@ -370,11 +370,11 @@ void FragmentMoverTest::test_window_start() {
 
 	// disallow some residues to save sampling time ( and to make it more tricky )
 	// total_residue/2.0 must be sampled, since it is used for the normalization further down
-	Size center_pos = static_cast< int >( pose_.total_residue()/2.0 );
-	for ( Size i= center_pos + 10; i<=pose_.total_residue(); i++ ) {
+	Size center_pos = static_cast< int >( pose_.size()/2.0 );
+	for ( Size i= center_pos + 10; i<=pose_.size(); i++ ) {
 		movemap->set_bb( i, false );
 	}
-	for ( int i = 6; i<= static_cast< int > ( pose_.total_residue()/3.0 ); i++ ) {
+	for ( int i = 6; i<= static_cast< int > ( pose_.size()/3.0 ); i++ ) {
 		movemap->set_bb( i, false );
 	}
 

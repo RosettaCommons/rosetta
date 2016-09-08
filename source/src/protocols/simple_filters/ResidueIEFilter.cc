@@ -310,8 +310,8 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 
 		core::select::residue_selector::ResidueSubset subset = selector_->apply(pose);
 		//sanity check
-		debug_assert( subset.size() == pose.total_residue() );
-		for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+		debug_assert( subset.size() == pose.size() );
+		for ( core::Size i=1, endi=pose.size(); i<=endi; ++i ) {
 			if ( subset[i] ) {
 				resnums.insert( i );
 			}
@@ -333,7 +333,7 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 		tr << "Detecting target resnums from interface." << std::endl;
 		if ( pose.conformation().num_chains() < 2 ) {
 			std::stringstream msg;
-			msg << "ResidueIEFilter: pose must contain at least two chains! The given pose has " << pose.total_residue() << " and " << pose.conformation().num_chains() << " chains" << std::endl;
+			msg << "ResidueIEFilter: pose must contain at least two chains! The given pose has " << pose.size() << " and " << pose.conformation().num_chains() << " chains" << std::endl;
 			throw utility::excn::EXCN_BadInput( msg.str() );
 		}
 
@@ -346,7 +346,7 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 
 		interface_obj.distance( interface_distance_cutoff_ );
 		interface_obj.calculate( in_pose );
-		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 			if ( in_pose.residue(resnum).is_protein()  &&  interface_obj.is_interface( resnum ) && (in_pose.residue_type(resnum).name3() == restype_) ) {
 				resnums.insert( resnum );
 			}
@@ -355,7 +355,7 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 		tr << "Detecting target resnums from whole pose." << std::endl;
 
 		core::pose::Pose in_pose = pose;
-		for ( core::Size resnum = 1; resnum <= in_pose.total_residue(); ++resnum ) {
+		for ( core::Size resnum = 1; resnum <= in_pose.size(); ++resnum ) {
 			if ( in_pose.residue(resnum).is_protein()  && (in_pose.residue_type(resnum).name3() == restype_) ) resnums.insert( resnum );
 		}
 	}

@@ -81,7 +81,7 @@ int main( int argc, char * argv [] )
 		hbond_calc_name, hb_calc );
 
 	std::set<Size> lig;
-	lig.insert(ps.total_residue());
+	lig.insert(ps.size());
 
 	string burunsat_calc_name = "burunsat";
 	core::pose::metrics::PoseMetricCalculatorOP burunsat_calc =

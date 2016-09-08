@@ -167,7 +167,7 @@ public:
 		// optionally: sample flexibility at regions X
 
 
-		TR << pose.total_residue() << std::endl;
+		TR << pose.size() << std::endl;
 
 
 
@@ -188,7 +188,7 @@ void remove_membrane_residue( Pose & pose ) {
 	Pose pose_cp( pose );
 
 	// go through pose and find membrane residues
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).name3() == "MEM" ) {
 			mem_rsds.push_back( i );
 		}

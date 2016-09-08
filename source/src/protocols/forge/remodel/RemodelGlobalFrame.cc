@@ -161,7 +161,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	using namespace std;
 	using namespace basic::options;
 
-	//Size numRes = pose.total_residue();  // unused ~Labonte
+	//Size numRes = pose.size();  // unused ~Labonte
 
 	// dumping information into PDB header
 	core::pose::PDBInfoOP temp_pdbinfo( new core::pose::PDBInfo(pose,true) );
@@ -321,7 +321,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	}
 
 
-	//Size numRes = pose.total_residue();  // unused ~Labonte
+	//Size numRes = pose.size();  // unused ~Labonte
 
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {}
 	else {
@@ -338,7 +338,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	//Size seg_size = remodel_data_.blueprint.size();
 
 	TR.Debug << "align seg 2" << std::endl;
-	TR.Debug << "pose length" << pose.total_residue() << std::endl;
+	TR.Debug << "pose length" << pose.size() << std::endl;
 	TR.Debug << "seg_size" << seg_size << std::endl;
 
 	MatrixXf A(3,seg_size);
@@ -430,7 +430,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 	// make residue list, needed for rotational transformation
 	std::list <core::Size> residue_list;
-	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
 		residue_list.push_back(ires);
 	}
@@ -584,15 +584,15 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	std::list <core::Size> double_residue_list;
 	std::list <core::Size> fullpose_residue_list;
 
-	for ( Size ires=1; ires<= singleton_pose->total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= singleton_pose->size(); ++ires ) {
 		if ( !singleton_pose->residue(ires).is_protein() ) continue;
 		single_residue_list.push_back(ires);
 	}
-	for ( Size ires=1; ires<= double_pose->total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= double_pose->size(); ++ires ) {
 		if ( !double_pose->residue(ires).is_protein() ) continue;
 		double_residue_list.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
 		fullpose_residue_list.push_back(ires);
 	}
@@ -844,7 +844,7 @@ xyzVector< Real >  postT (c_COM_target(0), c_COM_target(1), c_COM_target(2));   
 
 // build residue list for transformation
 std::list <core::Size> fullpose_residue_list;
-for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+for ( Size ires=1; ires<= pose.size(); ++ires ) {
 if ( !pose.residue(ires).is_protein() ) continue;
 fullpose_residue_list.push_back(ires);
 }

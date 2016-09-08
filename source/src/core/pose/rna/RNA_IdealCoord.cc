@@ -57,7 +57,7 @@ bool RNA_IdealCoord::is_torsion_exists(
 ) const {
 	using namespace id;
 	Size res_index = torsion_id.rsd();
-	if ( res_index < 1 || res_index > pose.total_residue() ) return false;
+	if ( res_index < 1 || res_index > pose.size() ) return false;
 	if ( torsion_id.type() == id::BB &&
 			( torsion_id.torsion() > pose.residue(res_index).mainchain_atoms().size() ) ) return false;
 
@@ -262,8 +262,8 @@ void RNA_IdealCoord::apply(
 	utility::vector1 < PuckerState > const & puckers,
 	bool const keep_backbone_torsion
 ) const {
-	debug_assert ( pose.total_residue() == puckers.size() );
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	debug_assert ( pose.size() == puckers.size() );
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		apply( pose, i, puckers[i], keep_backbone_torsion );
 	}
 }
@@ -273,7 +273,7 @@ void RNA_IdealCoord::apply(
 	Pose & pose,
 	bool const keep_backbone_torsion
 ) const {
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		apply( pose, i, ANY_PUCKER, keep_backbone_torsion );
 	}
 }

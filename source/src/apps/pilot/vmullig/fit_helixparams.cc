@@ -233,7 +233,7 @@ void add_Cu_chains(
 	core::pose::Pose cupose;
 
 	//Count the number of mainchain atoms that we'll be placing coppers over:
-	core::Size nres(pose.n_residue() - 2);
+	core::Size nres(pose.size() - 2);
 	core::Size natoms(0);
 	for ( core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir ) {
 		natoms += pose.residue(ir).n_mainchain_atoms();
@@ -444,7 +444,7 @@ main( int argc, char * argv [] )
 		runtime_assert_string_msg( deltaz1_guesses.size()==0 || deltaz1_guesses.size()==atomcount, "Error in user input from command-line flags.  If specified, the number of delta_z1 guesses must equal the number of atoms." );
 
 		protocols::helical_bundle::FitSimpleHelix fitter;
-		fitter.set_range(2,  pose.n_residue() - 1);
+		fitter.set_range(2,  pose.size() - 1);
 		fitter.set_min_type( option[min_type]() );
 		fitter.set_min_tolerance( option[min_tolerance]());
 		fitter.set_rms_offset( option[rms_offset]() );

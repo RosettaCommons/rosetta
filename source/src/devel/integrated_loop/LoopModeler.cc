@@ -153,7 +153,7 @@ void LoopMover::set_one_loop_fold_tree(
 	using namespace kinematics;
 
 	FoldTree f;
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	Size loop_begin( ThisLoop.loop_begin() );
 	Size loop_end( ThisLoop.loop_end() );
 	Size cutpoint( ThisLoop.cutpoint() );
@@ -186,7 +186,7 @@ void LoopMover::set_loops_fold_tree(
 	using namespace kinematics;
 	TR << "Do nothing yet !" << "\n";
 	FoldTree f;
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 	Loops tmp_loops = LoopsToPerturb;
 	Size jump_num = 0;
 
@@ -242,7 +242,7 @@ void LoopMover::set_loops_fold_tree(
 void LoopModeler::apply( core::pose::Pose & pose )
 {
 
-	T("devel.LoopModeler") << pose.total_residue() << "\n";
+	T("devel.LoopModeler") << pose.size() << "\n";
 
 }
 
@@ -253,7 +253,7 @@ void LoopModeler::apply( core::pose::Pose & pose )
 void LoopModeler::apply_mod( core::pose::Pose & pose )
 {
 
-	T("devel.LoopModeler") << pose.total_residue() << "\n";
+	T("devel.LoopModeler") << pose.size() << "\n";
 
 }
 
@@ -315,7 +315,7 @@ void LoopRefiner::apply_mod( core::pose::Pose & pose )
 
 		pose.dump_pdb("before_recover_low.pdb");
 	}
-	T("devel.LoopRefiner") << pose.total_residue() << "\n";
+	T("devel.LoopRefiner") << pose.size() << "\n";
 
 }
 
@@ -358,7 +358,7 @@ void LoopRefiner::apply( core::pose::Pose & pose )
 		core::kinematics::MoveMapOP movemap_one_loop( new core::kinematics::MoveMap() );
 		set_movemap( *it, movemap_one_loop );
 
-		if ( it->cutpoint() == pose.total_residue()) {
+		if ( it->cutpoint() == pose.size()) {
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, it->cutpoint() - 1 );
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, it->cutpoint() );
 	} else {
@@ -379,7 +379,7 @@ void LoopRefiner::apply( core::pose::Pose & pose )
  	 	BBPerturbCycle->apply( pose );
 		//		BBPerturb->apply( pose );
 
-		if ( it->cutpoint() == pose.total_residue() ) {
+		if ( it->cutpoint() == pose.size() ) {
 			core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, it->cutpoint() - 1 );
 			core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, it->cutpoint() );
 	} else {

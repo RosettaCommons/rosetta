@@ -203,7 +203,7 @@ void
 ConservativeDesignOperation::apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const {
 
 	vector1< bool > design_positions = task.designing_residues();
-	for ( core::Size i = 1; i <=pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <=pose.size(); ++i ) {
 
 
 		//If its not a design position or the residue doesn't exist in set positions, keep going

@@ -120,7 +120,7 @@ public:
 
 		TR << "Now via DSSP" << std::endl;
 		TR << "select resi ";
-		for (Size res = 5; res <= pose.total_residue() - 5; res++) {
+		for (Size res = 5; res <= pose.size() - 5; res++) {
 
 
 			core::scoring::dssp::Dssp dssp( pose );
@@ -236,7 +236,7 @@ int main( int argc, char* argv[] )
 		// TR << "select resi ";
 
 
-		// for (Size res = 1; res <= pose.total_residue(); res++) {
+		// for (Size res = 1; res <= pose.size(); res++) {
 		// 	bool is_helix( false );
 
 		// 		for (Size i = 1; i<= hbond_set.nhbonds(); i++) {

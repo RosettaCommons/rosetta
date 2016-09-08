@@ -193,8 +193,8 @@ HighestEnergyRegionOperation::get_residues_to_design( core::pose::Pose const & p
 		runtime_assert( scorefxn_ != 0 );
 		(*scorefxn_)( posecopy );
 
-		for ( core::Size resi=1; resi<=posecopy.total_residue(); ++resi ) {
-			utility::vector1<bool> outside_of_region( posecopy.total_residue(), true );
+		for ( core::Size resi=1; resi<=posecopy.size(); ++resi ) {
+			utility::vector1<bool> outside_of_region( posecopy.size(), true );
 
 			protocols::toolbox::task_operations::DesignAroundOperation des_around;
 			des_around.design_shell( region_shell_ );
@@ -205,7 +205,7 @@ HighestEnergyRegionOperation::get_residues_to_design( core::pose::Pose const & p
 
 			// get residue numbers that are being designed
 			core::Size residues_in_region( 0 );
-			for ( core::Size resj=1; resj<=posecopy.total_residue(); ++resj ) {
+			for ( core::Size resj=1; resj<=posecopy.size(); ++resj ) {
 				if ( tmp_task->being_designed( resj ) ) {
 					outside_of_region[resj] = false;
 					++residues_in_region;
@@ -264,7 +264,7 @@ void
 HighestEnergyRegionOperation::initialize_aa_cache( core::pose::Pose const & pose )
 {
 	allowed_aas_.clear();
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		utility::vector1< bool > allowed_aas( core::chemical::num_canonical_aas, true );
 		allowed_aas_.push_back( allowed_aas );
 	}
@@ -459,7 +459,7 @@ DesignRandomRegionOperation::get_residues_to_design( core::pose::Pose const & po
 {
 	utility::vector1< core::Size > residues_to_design;
 	// initialize with residue numbers in order
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		residues_to_design.push_back( i );
 	}
 
@@ -611,7 +611,7 @@ DesignCatalyticResiduesOperation::get_residues_to_design( core::pose::Pose const
 	protocols::enzdes::SetCatalyticResPackBehavior cat_res_op;
 	cat_res_op.set_fix_catalytic_aa( true );
 	cat_res_op.apply( pose, *task );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( ( ! task->being_packed( i ) ) && ( ! task->being_designed( i ) ) ) {
 			if ( residues_to_design.size() < regions_to_design() ) {
 				residues_to_design.push_back( i );
@@ -683,7 +683,7 @@ DesignByCavityProximityOperation::get_residues_to_design( core::pose::Pose const
 	// secondary ranking: by how big the cavity is
 	utility::vector1< std::pair< core::Size, core::Real > > res_to_score;
 
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		// search for nearest cavity to this residue
 		core::Real best_score( -1 );
 		for ( core::Size ic=1; ic<=clusters.value().size(); ++ic ) {

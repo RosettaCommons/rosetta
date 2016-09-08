@@ -101,7 +101,7 @@ public:
 		//scorefxn = core::scoring::get_score_function();
 		//(*scorefxn)(pose);
 
-		//for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+		//for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		// std::cout << "resid: " << I(3,ii)
 		//   << ", nbs: " << pose.energies().tenA_neighbor_graph().get_node( ii )->num_neighbors_counting_self() << std::endl;
 		//}

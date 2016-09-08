@@ -145,7 +145,7 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 
 	// loop over residues
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 
 		// decide what to do with res i
 		bool design_this_res = false;

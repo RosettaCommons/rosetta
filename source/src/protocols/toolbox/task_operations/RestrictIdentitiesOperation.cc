@@ -113,7 +113,7 @@ RestrictIdentitiesOperation::apply( core::pose::Pose const & pose, core::pack::t
 	runtime_assert( identities_.size() != 0 );
 
 	for ( Size j=1; j<=identities_.size(); j++ ) {
-		for ( Size i=1; i<=pose.n_residue(); i++ ) {
+		for ( Size i=1; i<=pose.size(); i++ ) {
 			std::string aa_name = pose.residue(i).name3();
 			if ( aa_name == identities_[j] ) {
 				if ( prevent_repacking_ == 1 ) {

@@ -64,7 +64,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 
 	assert( sandbox_pose.conformation().fold_tree() == true_pose.conformation().fold_tree() );
 
-	for ( Size i = 1; i <= true_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= true_pose.size(); ++i ) {
 		try {
 			if ( true_pose.residue( i ).is_protein() ) {
 				if ( ang_delta( sandbox_pose.omega( i ), true_pose.omega( i ) ) ) {

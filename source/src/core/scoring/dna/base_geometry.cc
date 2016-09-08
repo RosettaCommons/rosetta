@@ -854,7 +854,7 @@ seqpos_is_base_step_anchor(
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 	conformation::Residue const & rsd( pose.residue( seqpos ) );
 
-	return ( seqpos < pose.total_residue() && ( rsd.is_DNA()  || rsd.is_RNA() )&& !rsd.is_lower_terminus() && partner[ seqpos ] &&
+	return ( seqpos < pose.size() && ( rsd.is_DNA()  || rsd.is_RNA() )&& !rsd.is_lower_terminus() && partner[ seqpos ] &&
 		partner[ seqpos+1 ] && partner[seqpos] == partner[seqpos+1]+1 && partner[seqpos] != seqpos+1 );
 }
 
@@ -930,7 +930,7 @@ show_base_step_params(
 )
 {
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( seqpos_is_base_step_anchor( i, pose ) ) {
 			show_base_step_params( i, pose, out );
 		}
@@ -947,7 +947,7 @@ show_base_pair_params(
 {
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( partner[i] > i ) {
 			show_base_pair_params( pose.residue(i), pose.residue(partner[i]), out );
 		}
@@ -980,7 +980,7 @@ show_dna_geometry(
 {
 
 	// dihedrals + a/g bin + typeI,II + pucker
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );

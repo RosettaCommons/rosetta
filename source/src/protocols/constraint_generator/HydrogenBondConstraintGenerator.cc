@@ -266,10 +266,10 @@ HydrogenBondConstraintGenerator::apply( core::pose::Pose const & pose ) const
 
 	core::scoring::constraints::ConstraintCOPs csts;
 
-	for ( core::Size resid1=1; resid1<=pose.total_residue(); ++resid1 ) {
+	for ( core::Size resid1=1; resid1<=pose.size(); ++resid1 ) {
 		if ( !subset1[ resid1 ] ) continue;
 
-		for ( core::Size resid2=1; resid2<=pose.total_residue(); ++resid2 ) {
+		for ( core::Size resid2=1; resid2<=pose.size(); ++resid2 ) {
 			if ( !subset2[ resid2 ] ) continue;
 			if ( resid1 == resid2 ) continue;
 

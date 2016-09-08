@@ -106,7 +106,7 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	using namespace core::pack::task::operation;
 	using protocols::simple_moves::ReturnSidechainMover;
 
-	if ( original_pose_.total_residue() == 0 && ! force_repack_ ) {
+	if ( original_pose_.size() == 0 && ! force_repack_ ) {
 		utility_exit_with_message("<PrepareForFullatom> cannot copy sidechains because no original pose was specified.");
 	}
 
@@ -131,9 +131,9 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	// the original pose is in centroid mode or if a full repack was requested.
 	// Otherwise only sidechains within the loop are repacked.
 
-	vector1<bool> residues_to_repack(pose.total_residue(), false);
+	vector1<bool> residues_to_repack(pose.size(), false);
 
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 		residues_to_repack[i] =
 			force_repack_ ||
 			original_pose_.is_centroid() ||
@@ -163,7 +163,7 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	move_map.set_bb(false);
 	move_map.set_chi(true);
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.residue(i).has_variant_type(DISULFIDE) ) {
 			move_map.set_chi(i, false);
 		}

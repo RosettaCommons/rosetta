@@ -71,7 +71,7 @@ public:
 
 		TR << "Checking ReferencePose inital state. We expect there to be an entry for each residue, mapping that residue index onto itself." << std::endl;
 		TR << "Residue\tMap value" << std::endl;
-		for ( core::Size ir=1, irmax=pose->n_residue(); ir<=irmax; ++ir ) { //Loop through all residues in the pose.
+		for ( core::Size ir=1, irmax=pose->size(); ir<=irmax; ++ir ) { //Loop through all residues in the pose.
 			core::Size const cor_ir( pose->corresponding_residue_in_current( ir, "refpose1" ) );
 			TR << ir << "\t" << cor_ir << std::endl;
 			TS_ASSERT( cor_ir==ir );
@@ -90,7 +90,7 @@ public:
 		core::pose::PoseOP pose(new core::pose::Pose);
 		core::import_pose::pose_from_file( *pose, "core/pose/reference_pose/1AFO_AB.pdb" , core::import_pose::PDB_file);
 
-		core::Size const nres_original( pose->n_residue() );
+		core::Size const nres_original( pose->size() );
 		TR << "There are " << nres_original << " residues in the original pose." << std::endl;
 
 		TR << "Setting up reference pose from imported pose." << std::endl;

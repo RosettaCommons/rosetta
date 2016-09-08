@@ -178,9 +178,9 @@ SegmentCounts::SegmentCounts():
 
 SegmentCounts::SegmentCounts( core::pose::Pose const & pose ):
 	counts_( NUM_SEGMENT_TYPES, 1 ),
-	ligand_subset_( pose.total_residue(), false )
+	ligand_subset_( pose.size(), false )
 {
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( pose.residue( resid ).is_ligand() ) {
 			ligand_subset_[ resid ] = true;
 		}
@@ -361,24 +361,24 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, SegmentNam
 	// the object we will add to
 	StructureData sd( "StructureDataFactory::infer_from_pose()" );
 
-	if ( !pose.total_residue() ) {
+	if ( !pose.size() ) {
 		return sd;
 	}
 
 	// collect secondary structure
 	core::scoring::dssp::Dssp dssp( pose );
 	std::string const pose_ss = dssp.get_dssp_secstruct();
-	debug_assert( pose_ss.size() == pose.total_residue() );
+	debug_assert( pose_ss.size() == pose.size() );
 
 	// collect ABEGOS
 	std::string const pose_abego = abego_str( core::sequence::ABEGOManager().get_symbols( pose, 1 ) );
-	debug_assert( pose_abego.size() == pose.total_residue() );
+	debug_assert( pose_abego.size() == pose.size() );
 
 	TR << "Pose ss = " << pose_ss << std::endl;
 	TR << "Pose abego= " << pose_abego << std::endl;
 
 	utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
-	chain_endings.push_back( pose.total_residue() );
+	chain_endings.push_back( pose.size() );
 	core::Size chain_start = 1;
 	core::Size cur_chain = 1;
 	SegmentCounts counts( pose );
@@ -405,7 +405,7 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, SegmentNam
 	}
 
 	// locate non-polymeric covalent bonds
-	for ( core::Size res=1; res<=pose.total_residue(); ++res ) {
+	for ( core::Size res=1; res<=pose.size(); ++res ) {
 		if ( pose.residue( res ).n_non_polymeric_residue_connections() ) {
 			for ( core::Size conn=1; conn<=pose.residue( res ).n_possible_residue_connections(); ++conn ) {
 				core::Size const other_res = pose.residue( res ).connected_residue_at_resconn( conn );

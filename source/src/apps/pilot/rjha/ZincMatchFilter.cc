@@ -109,7 +109,7 @@ public:
   apply( core::pose::Pose & match ){
 
     std::string match_name = match.pdb_info()->name();
-    Real number_of_ligands = match.total_residue() - 1;
+    Real number_of_ligands = match.size() - 1;
 
     //desired info
     Real distance_diffs = 0;
@@ -127,7 +127,7 @@ public:
     utility::vector1< Size > seqpos;
     utility::vector1< std::string > atom_name;
 
-    point zinc = match.residue( match.total_residue() ).atom(1).xyz();
+    point zinc = match.residue( match.size() ).atom(1).xyz();
 
     T(match_name) << "This match has " << number_of_ligands << " liganding residues." << std::endl;
 

@@ -74,10 +74,10 @@ FragmentChunkCrms::FragmentChunkCrms(Size priority, Real lowest_acceptable_value
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentChunkCrms") {
 	reference_pose_ = reference_pose;
 	fragment_pose_ = pose::PoseOP( new core::pose::Pose );
-	n_atoms_ = reference_pose_->total_residue();
+	n_atoms_ = reference_pose_->size();
 	reference_coordinates_.redimension(3, 4*n_atoms_, 0.0);
 	fill_bb_coords(*reference_pose_, reference_coordinates_, n_atoms_);
-	weights_.redimension(reference_pose_->total_residue()*4, 1.0);
+	weights_.redimension(reference_pose_->size()*4, 1.0);
 	seqmapping_=seqmapping;
 	core::pose::make_pose_from_sequence(*fragment_pose_, query_sequence, *(chemical::ChemicalManager::get_instance()->residue_type_set("centroid")));
 
@@ -127,7 +127,7 @@ void FragmentChunkCrms::fill_bb_coords(core::pose::Pose const& pose, FArray2_dou
 	trTmScore.Debug << "Copying coordinates from according to seqmapping " << std::endl;
 
 	core::Size n_at = 1;
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( seqmapping(i)==1 ) {
 			id::NamedAtomID idN("N", i);
 			PointPosition const& xyzN = pose.xyz(idN);

@@ -94,7 +94,7 @@ void fold_tree_generator(
 		core::pose::Pose & pose,
 		kinematics::FoldTree & f
 ){
-	f.add_edge( 1, pose.total_residue(), Edge::PEPTIDE );
+	f.add_edge( 1, pose.size(), Edge::PEPTIDE );
 
 	for (Size i=1;  i < loops.size() ; ++i){
 		TR<<"LOOP "<<  i <<std::endl;

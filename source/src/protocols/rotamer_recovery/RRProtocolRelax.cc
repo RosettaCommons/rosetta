@@ -123,7 +123,7 @@ RRProtocolRelax::run(
 		relax->cartesian(true);
 	}
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 
 		// set movemap to allow sidechain DOFs only for residue ii

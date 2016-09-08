@@ -56,7 +56,7 @@ core::Real get_current_model_score(core::pose::Pose const & pose, core::Size sco
 	core::scoring::EnergyMap emap;
 	core::scoring::ScoreFunctionOP score_function(core::scoring::get_score_function());
 	core::scoring::ScoreType score_type = static_cast<core::scoring::ScoreType>(score_type_id);
-	utility::vector1< bool > relevant_residues(pose.total_residue(), true);
+	utility::vector1< bool > relevant_residues(pose.size(), true);
 	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, score_function);
 	score_function->get_sub_score(pose,relevant_residues,emap);
 	return energies.weights()[score_type] * emap[score_type];

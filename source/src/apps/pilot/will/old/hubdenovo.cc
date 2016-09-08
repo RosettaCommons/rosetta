@@ -315,7 +315,7 @@ struct ConstraintConfig {
 		string ALPHA = "0ABCDEFGHIJKLMNOP";
 		vector1<ObjexxFCL::FArray2D<char> > grids;
 		for(Size i = 1; i <= templates_fname.size(); ++i) {
-			ObjexxFCL::FArray2D<char> grid(templates_fa[i]->n_residue(),ss.size(),'.');
+			ObjexxFCL::FArray2D<char> grid(templates_fa[i]->size(),ss.size(),'.');
 			int X=0,Y=0;
 			for(CSTs::const_iterator ic = cst_bb.begin(); ic != cst_bb.end(); ++ic) {
 				if(ic->tplt==(int)i) {
@@ -342,7 +342,7 @@ struct ConstraintConfig {
 				}
 			}
 			grids.push_back(grid);
-			X = min(X,(int)(templates_cen[i]->n_residue()));
+			X = min(X,(int)(templates_cen[i]->size()));
 			Y = min(Y,(int)(nsub*nres));
 
 			out << templates_fname[i] << endl << "        ";
@@ -924,8 +924,8 @@ struct HubDenovo {
 		core::chemical::ResidueTypeSetCOP rtsfa( core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 
 		std::map<string, vector1<core::fragment::FragDataCOP> > fds( get_frags_map() );
-		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss                 ,fds,hub_.n_residue()+1);
-		core::fragment::FragSetOP fragsl = make_frag_set(cfg.ssstr().substr(0,6),fds,hub_.n_residue()+1);
+		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss                 ,fds,hub_.size()+1);
+		core::fragment::FragSetOP fragsl = make_frag_set(cfg.ssstr().substr(0,6),fds,hub_.size()+1);
 
 		fragins3 = protocols::moves::MoverOP( new protocols::simple_moves::ClassicFragmentMover(frags3) );
 		fraginsL = protocols::moves::MoverOP( new protocols::simple_moves::ClassicFragmentMover(fragsl) );
@@ -955,12 +955,12 @@ struct HubDenovo {
 	}
 	Pose make_start_pose() {
 		Pose p(hub_);
-		if(p.n_residue()>0) core::pose::remove_upper_terminus_type_from_pose_residue(p,p.n_residue());
+		if(p.size()>0) core::pose::remove_upper_terminus_type_from_pose_residue(p,p.size());
 		if(option[OptionKeys::hub_position]() != 1 ) core::pose::remove_lower_terminus_type_from_pose_residue(p,1);
 		string tmpseq = cfg.pick_sequence();
 		// TR << "start sequence " << seq << endl;
 		for(Size ir = option[OptionKeys::hub_position]()-1; ir >= 1; --ir){
-			TR << "make_start_pose prepend" << ir << " " << p.n_residue() << endl;
+			TR << "make_start_pose prepend" << ir << " " << p.size() << endl;
 			char myaa = tmpseq[ir-1];
 			if     (cfg.template_seq_sc[ir-1]!='_') myaa = cfg.template_seq_sc[ir-1];
 			else if(cfg.template_seq_bb[ir-1]!='_') myaa = cfg.template_seq_bb[ir-1];
@@ -971,7 +971,7 @@ struct HubDenovo {
 			p.prepend_polymer_residue_before_seqpos(*tmp,1,true);
 		}
 
-		for(Size ir = hub_.n_residue()+option[OptionKeys::hub_position](); ir <= cfg.nres; ++ir) {
+		for(Size ir = hub_.size()+option[OptionKeys::hub_position](); ir <= cfg.nres; ++ir) {
 			char myaa = tmpseq[ir-1];
 			if     (cfg.template_seq_sc[ir-1]!='_') myaa = cfg.template_seq_sc[ir-1];
 			else if(cfg.template_seq_bb[ir-1]!='_') myaa = cfg.template_seq_bb[ir-1];
@@ -981,11 +981,11 @@ struct HubDenovo {
 			tmp->chain(1);
 			p.append_residue_by_bond( *tmp, true );
 		}
-		for(Size ir = 1; ir <= p.n_residue(); ++ir) p.set_omega(ir,180.0);
-		core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
+		for(Size ir = 1; ir <= p.size(); ++ir) p.set_omega(ir,180.0);
+		core::pose::add_upper_terminus_type_to_pose_residue(p,p.size());
 		//sfsym->show(p);
 
-		TR << "make_start_pose: " << p.sequence() << " " << p.n_residue() <<  std::endl;
+		TR << "make_start_pose: " << p.sequence() << " " << p.size() <<  std::endl;
 
 		make_symmetric_pose(p);
 		FoldTree ft = p.fold_tree();
@@ -1026,7 +1026,7 @@ struct HubDenovo {
 	}
 	void reset_hub(Pose & p){
 		Size hpos = option[OptionKeys::hub_position]();
-		for(Size irh = 1; irh <= hub_.n_residue(); ++irh){
+		for(Size irh = 1; irh <= hub_.size(); ++irh){
 			for(Size i = 1; i <= p.residue(irh+hpos-1).natoms(); ++i){
 				string const & name( p.residue(irh+hpos-1).atom_name(i) );
 				if(name==" O  " || name==" C  ") continue;

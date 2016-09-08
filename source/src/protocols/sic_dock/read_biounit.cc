@@ -109,25 +109,25 @@ read_biounit(
 	pdbchain.clear();
 	pdbres.clear();
 	try {
-		if ( pose.n_residue()!=0 ) utility_exit_with_message("must fill empty pose");
+		if ( pose.size()!=0 ) utility_exit_with_message("must fill empty pose");
 		core::chemical::ResidueTypeSetCOP fars = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		utility::vector1<Pose> poses;
 		pose_from_file( poses, *fars, fname, false , core::import_pose::PDB_file);
 		bool only_one_model = -12345==nresmodel1; nresmodel1 = 9999999;
 		for ( vector1<Pose>::const_iterator ip = poses.begin(); ip != poses.end(); ++ip ) {
-			if ( (int)ip->n_residue() > max_res ) { cout<<"SKIP max_res "<<max_res<<" "<<fname<<endl; return false; }
-			for ( core::Size i = 1; i <= ip->n_residue(); ++i ) {
+			if ( (int)ip->size() > max_res ) { cout<<"SKIP max_res "<<max_res<<" "<<fname<<endl; return false; }
+			for ( core::Size i = 1; i <= ip->size(); ++i ) {
 				if ( i==1 || ip->residue(i).is_lower_terminus() || ip->residue(i).is_ligand() ) {
 					if ( !ip->residue(i).is_protein() ) continue;
 					bool is_new_chain = ( 1 == i || ip->chain(i) != ip->chain(i-1) || ip->pdb_info()->chain(i) != ip->pdb_info()->chain(i-1) );
 					pose.append_residue_by_jump(ip->residue(i),1,"","",is_new_chain);
-					// if(is_new_chain) cout << "new chain " <<pose.n_residue() << " " << pose.chain(pose.n_residue()) << endl;
+					// if(is_new_chain) cout << "new chain " <<pose.size() << " " << pose.chain(pose.size()) << endl;
 				} else {
 					pose.append_residue_by_bond(ip->residue(i));
 				}
-				if ( (int)pose.n_residue() > max_res ) { cout<<"SKIP max_res "<<max_res<<" "<<fname<<endl; return false; }
+				if ( (int)pose.size() > max_res ) { cout<<"SKIP max_res "<<max_res<<" "<<fname<<endl; return false; }
 				pdbres.push_back(ip->pdb_info()->number(i));
-				pdbchain[pose.chain(pose.n_residue())] = ip->pdb_info()->chain(i);
+				pdbchain[pose.chain(pose.size())] = ip->pdb_info()->chain(i);
 				Real bfac=0.0, occ=0.0;
 				for ( core::Size ia = 1; ia <= ip->residue(i).nheavyatoms(); ++ia ) {
 					if ( ip->pdb_info()->temperature(i,ia)<0.1 ) bfac = 9e9;
@@ -140,7 +140,7 @@ read_biounit(
 				bfactors .push_back( sqrt(bfac/78.95684) );
 				occupancy.push_back(      occ            );
 			}
-			nresmodel1 = std::min((int)pose.n_residue(),nresmodel1);
+			nresmodel1 = std::min((int)pose.size(),nresmodel1);
 			if ( only_one_model ) break;
 		}
 		pose.conformation().detect_disulfides();

@@ -351,7 +351,7 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 	(*scrfxn)( pose ); // if you don'r score the pose before getting the png you get an assertion failure
 	graph::GraphOP packer_neighbor_graph( new graph::Graph( pose.energies().energy_graph() ) );
 
-	for( Size i(1); i <= pose.total_residue(); ++i ) {
+	for( Size i(1); i <= pose.size(); ++i ) {
 
 		// print out experimental rotamer data
 		//TR << "resnum: " << i << " " << pose.residue( i ).type().name()  << " " << pose.residue( i ).has_variant_type( chemical::ACETYLATED_NTERMINUS ) << std::endl;
@@ -369,7 +369,7 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 		// first residue
 		if ( i == 1 ) {
 			if ( cyclic_ ) {
-			  omg = numeric::principal_angle_degrees( pose.omega( pose.total_residue() ) );
+			  omg = numeric::principal_angle_degrees( pose.omega( pose.size() ) );
 			} else {
 				omg = numeric::principal_angle_degrees( 0.0 );
 			}

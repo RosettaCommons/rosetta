@@ -209,8 +209,8 @@ ResidualDipolarCouplingOP filter_rdcs_for_frame( Frame const& frame, ResidualDip
 
 Real compare_cartesian_rmsd( Pose const &orig_frag, Pose const &pred_frag, Frame const& frame ) {
   if ( !frame.is_continuous() ) utility_exit_with_message("can only determine rmsd for cont. frames");
-	Size const nres( orig_frag.total_residue() );
-	Size const nres2( pred_frag.total_residue() );
+	Size const nres( orig_frag.size() );
+	Size const nres2( pred_frag.size() );
 	assert( nres == nres2 );
 
 	return scoring::CA_rmsd( orig_frag, pred_frag, frame.start(), frame.end() );
@@ -304,7 +304,7 @@ int main( int argc, char** argv ) {
 		if ( !frame->is_continuous() ) {
 			kinematics::FoldTree fold_tree;
 			test_pose = clean_pose;
-			make_simple_fold_tree_from_jump_frame( **frame, test_pose.total_residue(), fold_tree );
+			make_simple_fold_tree_from_jump_frame( **frame, test_pose.size(), fold_tree );
 			fold_tree.put_jump_stubs_intra_residue();
 			test_pose.fold_tree( fold_tree );
 			for ( Size i = 1; i<=frame->length(); ++i ) {

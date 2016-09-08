@@ -102,7 +102,7 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 void
 AtomID_Mapper::initialize_from_pose( core::pose::Pose const & pose ) {
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		utility::vector1< AtomID > atom_ids;
 
@@ -224,7 +224,7 @@ AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
 	map_to_reference_.clear();
 	atom_ids_in_res_.clear();
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		utility::vector1< AtomID > atom_ids;
 

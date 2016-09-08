@@ -158,7 +158,7 @@ int main( int argc, char * argv[] ) {
       if (!basic::options::option[basic::options::OptionKeys::packing::resfile].user()){
 
 	// Find neighboring residues
-	for (core::Size r = 1;r <= pose.n_residue();r++){
+	for (core::Size r = 1;r <= pose.size();r++){
 	  if (r >= l.start() && r <= l.stop()) continue; //skip loop residues
 
 	  // Distance from this residue (r) to the current loop residue (j)
@@ -240,7 +240,7 @@ int main( int argc, char * argv[] ) {
 
     utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, true );
     design_taskop->keep_aas(allowed_aas);
-    for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+    for ( core::Size i=1; i <= pose.size(); ++i ) {
 
       // A loop-neighbor residue?
       if (neighboringResidues[i]){
@@ -285,7 +285,7 @@ int main( int argc, char * argv[] ) {
 
 
   int numTotalDesignablePositions = 0;
- for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+ for ( core::Size i=1; i <= pose.size(); ++i ) {
    if (ptask->being_designed( i ) ||
        ptask->being_packed( i )){
      designMoveMap->set_bb(i,true);

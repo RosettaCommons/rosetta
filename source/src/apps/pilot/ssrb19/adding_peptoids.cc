@@ -136,7 +136,7 @@ int main(int argc, char ** argv){
 	}
 	
 	// Starting out with an extended structure
-	for ( core::Size i=1; i<=(*peptoid_pose).n_residue() ; ++i){
+	for ( core::Size i=1; i<=(*peptoid_pose).size() ; ++i){
 		
 		( *peptoid_pose ).set_phi( i, 180 );
 		

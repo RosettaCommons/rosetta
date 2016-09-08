@@ -109,7 +109,7 @@ Tumble::parse_my_tag(
 ) {
 	if ( tag->hasOption( "chain_number" ) ) {
 		core::Size chain = tag->getOption< core::Size >( "chain_number" );
-		for ( core::Size ires=1; ires<=pose.total_residue(); ++ires ) {
+		for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 			if ( pose.residue(ires).chain() == chain ) {
 				TR.Debug << "Adding residue " << ires << std::endl;
 				residue_list_.push_back(ires);
@@ -117,7 +117,7 @@ Tumble::parse_my_tag(
 		}
 	} else {
 		core::Size start_res = 1;
-		core::Size stop_res = pose.total_residue();
+		core::Size stop_res = pose.size();
 
 		if ( tag->hasOption( "start_res" ) ) {
 			start_res = tag->getOption< core::Size >( "start_res" );

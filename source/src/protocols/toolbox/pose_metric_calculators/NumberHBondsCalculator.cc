@@ -147,10 +147,10 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 	using namespace core::scoring;
 
 	//first we have to figure out which of the hbonds to (re)calculate
-	utility::vector1< bool >res_to_recompute( this_pose.total_residue(), false );
-	hbonds::HBondSet hb_set( this_pose.total_residue() );
+	utility::vector1< bool >res_to_recompute( this_pose.size(), false );
+	hbonds::HBondSet hb_set( this_pose.size() );
 
-	//hbonds::HBondSet test_hb_set( this_pose.total_residue() );
+	//hbonds::HBondSet test_hb_set( this_pose.size() );
 	//hbonds::fill_hbond_set( this_pose, false, test_hb_set, false);
 
 	determine_res_to_recompute( this_pose, res_to_recompute );
@@ -244,12 +244,12 @@ NumberHBondsCalculator::determine_res_to_recompute(
 
 	//check1: does the internal reference array have the same size as the pose has residues?
 	//if not, means we have to recompute everything
-	if ( ref_residue_total_energies_.size() != pose.total_residue() ) {
+	if ( ref_residue_total_energies_.size() != pose.size() ) {
 		atom_Hbonds_.clear();
-		atom_Hbonds_.resize( pose.total_residue() );
-		residue_Hbonds_.resize( pose.total_residue() );
-		ref_residue_total_energies_.resize( pose.total_residue() );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		atom_Hbonds_.resize( pose.size() );
+		residue_Hbonds_.resize( pose.size() );
+		ref_residue_total_energies_.resize( pose.size() );
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			res_to_recompute[ i ] = true;
 			ref_residue_total_energies_[i] = pose.energies().residue_total_energies(i)[ total_score ];
 		}
@@ -259,7 +259,7 @@ NumberHBondsCalculator::determine_res_to_recompute(
 
 
 	//check2: for each residue, check whether calculator cached residue energies have changed
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 
 		if ( ref_residue_total_energies_[i] != pose.energies().residue_total_energies(i)[ total_score ] ) {
 

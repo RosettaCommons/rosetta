@@ -150,13 +150,13 @@ int main( int argc, char * argv [] ){
 
 		//Verify the number of RNA bases in complex and free RNA pose match
 		core::Size rsdcount = 0;
-		for ( int ic = 1, ic_end = complex_pose.total_residue(); ic <= ic_end; ic++ ) {
+		for ( int ic = 1, ic_end = complex_pose.size(); ic <= ic_end; ic++ ) {
 			core::conformation::Residue const & curr_rsd = complex_pose.residue(ic);
 			if ( !curr_rsd.is_RNA() ) continue;
 			rsdcount++;
 		}
 
-		if ( rsdcount != rna_pose.total_residue() ) {
+		if ( rsdcount != rna_pose.size() ) {
 			std::cout << "Complex pose does not have the same number of RNA bases as RNA pose." << std::endl;
 			exit(1);
 		}
@@ -167,13 +167,13 @@ int main( int argc, char * argv [] ){
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
 
 		//Set-up atomID for SASA calculations by atom
-		utility::vector1< core::Real > rna_rsd_sasa( rna_pose.total_residue(), 0.0 );
+		utility::vector1< core::Real > rna_rsd_sasa( rna_pose.size(), 0.0 );
 		core::id::AtomID_Map< core::Real > rna_atom_sasa;
 		core::id::AtomID_Map< bool > rna_atom_subset;
 		core::pose::initialize_atomid_map( rna_atom_sasa, rna_pose, 0.0 );
 		core::pose::initialize_atomid_map( rna_atom_subset, rna_pose, true );
 
-		utility::vector1< core::Real > complex_rsd_sasa( complex_pose.total_residue(), 0.0 );
+		utility::vector1< core::Real > complex_rsd_sasa( complex_pose.size(), 0.0 );
 		core::id::AtomID_Map< core::Real > complex_atom_sasa;
 		core::id::AtomID_Map< bool > complex_atom_subset;
 		core::pose::initialize_atomid_map( complex_atom_sasa, complex_pose, 0.0 );
@@ -195,7 +195,7 @@ int main( int argc, char * argv [] ){
 		utility::io::ozstream outPDB_stream;
 		outPDB_stream.open("PHR.pdb", std::ios::out);
 
-		for ( int ic = 1, ic_end = complex_pose.total_residue(); ic<=ic_end; ++ic ) {
+		for ( int ic = 1, ic_end = complex_pose.size(); ic<=ic_end; ++ic ) {
 			core::conformation::Residue const & curr_rsd = complex_pose.residue(ic);
 			if ( !curr_rsd.is_RNA() ) continue;
 			core::chemical::rna::RNA_ResidueType const & curr_rsd_type = curr_rsd.RNA_type();
@@ -247,7 +247,7 @@ int main( int argc, char * argv [] ){
 
 		rna_hb_set.clear();
 
-		for ( Size ic = 1, ic_end = complex_pose.total_residue(); ic<=ic_end; ic++ ) {
+		for ( Size ic = 1, ic_end = complex_pose.size(); ic<=ic_end; ic++ ) {
 			core::conformation::Residue const & curr_rsd = complex_pose.residue(ic);
 			if ( !curr_rsd.is_RNA() ) continue;
 

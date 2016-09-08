@@ -89,7 +89,7 @@ public:
 
 		utility::vector1<point> water_points;
 		water_points.clear();
-		//for(Size i(1); i<=wet_pose.total_residue(); ++i) {
+		//for(Size i(1); i<=wet_pose.size(); ++i) {
 		//	if(wet_pose.residue(i).name() == "TP3") {
 		//		water_points.push_back(wet_pose.residue(i).atom(1).xyz());
 		//	}
@@ -130,7 +130,7 @@ public:
 		water_H_dist_cutoff = 2.3;
 		TR << "water_H_dist_cutoff: " << water_H_dist_cutoff << std::endl;
 		//check NH
-		for(Size i=1; i<=pose.total_residue(); ++i) {
+		for(Size i=1; i<=pose.size(); ++i) {
 			if (!pose.residue(i).is_protein()) continue;
 			if (nter_resnums.has_value(i)) {
 				report_sasa_if_contacting_water(pose, i, "1H  ", atom_sasa,
@@ -151,7 +151,7 @@ public:
 		water_O_dist_cutoff = 3.1;
 		TR << "water_O_dist_cutoff: " << water_O_dist_cutoff << std::endl;
 		//check O
-		for(Size i=1; i<=pose.total_residue(); ++i) {
+		for(Size i=1; i<=pose.size(); ++i) {
 			if (!pose.residue(i).is_protein()) continue;
 			report_sasa_if_contacting_water(pose, i, " O  ", atom_sasa,
 					water_points, water_O_dist_cutoff);

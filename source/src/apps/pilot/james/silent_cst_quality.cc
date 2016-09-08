@@ -123,9 +123,9 @@ public:
 	void calc_stats(
 		core::pose::Pose & pose
 	) {
-		vector1< Real > dummy( pose.total_residue(), 0.0 );
-		//cst_scores.resize( pose.total_residue(), dummy );
-		//distances .resize( pose.total_residue(), dummy );
+		vector1< Real > dummy( pose.size(), 0.0 );
+		//cst_scores.resize( pose.size(), dummy );
+		//distances .resize( pose.size(), dummy );
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		core::scoring::EnergyMap emap;
 		emap.zero();
@@ -135,8 +135,8 @@ public:
 
 		static core::Real dist_threshold( 1.0 );
 
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-			for ( core::Size j = i + 1; j <= pose.total_residue(); ++j ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
+			for ( core::Size j = i + 1; j <= pose.size(); ++j ) {
 				//Real const cst_threshold_( native_cst_scores_[i][j] * 2 );
 				emap.zero();
 				core::conformation::Residue resi( pose.residue(i) );
@@ -175,21 +175,21 @@ public:
 	) {
 		using core::Real;
 		using utility::vector1;
-		vector1< Real > dummy( native_pose.total_residue(), 0.0 );
-		cst_mins_ .resize( native_pose.total_residue(), dummy );
-		dist_mins_.resize( native_pose.total_residue(), dummy );
-		native_cst_scores_.resize( native_pose.total_residue(), dummy );
-		native_distances_ .resize( native_pose.total_residue(), dummy );
-		decoy_satisfactions_.resize( native_pose.total_residue(), dummy );
-		decoy_violations_.resize( native_pose.total_residue(), dummy );
+		vector1< Real > dummy( native_pose.size(), 0.0 );
+		cst_mins_ .resize( native_pose.size(), dummy );
+		dist_mins_.resize( native_pose.size(), dummy );
+		native_cst_scores_.resize( native_pose.size(), dummy );
+		native_distances_ .resize( native_pose.size(), dummy );
+		decoy_satisfactions_.resize( native_pose.size(), dummy );
+		decoy_violations_.resize( native_pose.size(), dummy );
 
 		// intentionally empty score function
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		core::scoring::EnergyMap emap;
 		emap.zero();
 		static std::string atom_name( "CA" );
-		for ( core::Size i = 1; i <= native_pose.total_residue(); ++i ) {
-			for ( core::Size j = i + 1; j <= native_pose.total_residue(); ++j ) {
+		for ( core::Size i = 1; i <= native_pose.size(); ++i ) {
+			for ( core::Size j = i + 1; j <= native_pose.size(); ++j ) {
 				emap.zero();
 				core::conformation::Residue resi( native_pose.residue(i) );
 				core::conformation::Residue resj( native_pose.residue(j) );

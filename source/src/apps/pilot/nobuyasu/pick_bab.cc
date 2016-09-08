@@ -339,7 +339,7 @@ public: // apply
 
 				// make loop pose
 				// Pose loop1_pose( pose ), loop2_pose( pose );
-				// loop1_pose.conformation().delete_residue_range_slow( helix->begin() + 1 , pose.total_residue() );
+				// loop1_pose.conformation().delete_residue_range_slow( helix->begin() + 1 , pose.size() );
 				// loop1_pose.conformation().delete_residue_range_slow( 1, strand1->end() - 1 );
 				// make_poly_gly.apply( loop1_pose );
 				// (*scorefxn_fullatom_)( loop1_pose );
@@ -350,7 +350,7 @@ public: // apply
 					loop1E += gly_pose.energies().residue_total_energies( ii )[ core::scoring::fa_rep ];
 				}
 
-				// loop2_pose.conformation().delete_residue_range_slow( strand2->begin() + 1, pose.total_residue() );
+				// loop2_pose.conformation().delete_residue_range_slow( strand2->begin() + 1, pose.size() );
 				// loop2_pose.conformation().delete_residue_range_slow( 1, helix->end() - 1 );
 				// make_poly_gly.apply( loop2_pose );
 				// (*scorefxn_fullatom_)( loop2_pose );

@@ -102,7 +102,7 @@ main( int argc, char * argv [] ) {
 	cstmover.apply(template_pose);
 
 	//Saves old comparative model length
-  int old_comparative_model_length = comparative_modeling_pose.total_residue();
+  int old_comparative_model_length = comparative_modeling_pose.size();
 
 	//Steals Ligand: User designated or residues 357 through 360
 	vector1 < Size > residues_to_steal;
@@ -121,12 +121,12 @@ main( int argc, char * argv [] ) {
 	char ligand_chain = core::pose::chr_chains[comparative_modeling_pose.residue(old_comparative_model_length).chain() + 1];
 
 	//Increases pose length in the pdbinfo to accomodate ligand
-	comparative_modeling_pose.pdb_info() -> resize_residue_records( comparative_modeling_pose.total_residue() );
+	comparative_modeling_pose.pdb_info() -> resize_residue_records( comparative_modeling_pose.size() );
   //comparative_modeling_pose.pdb_info() -> resize_atom_records( comparative_modeling_pose );
 
 	//renumbers pdbinfo for the ligand. No longer changes numbers in PDB file...Don't know why
 	//Current Fix: Adds on ligand as next number in the chain. If protein ends at 360, then ligand start will be 361
-	for(Size i = old_comparative_model_length + 1; i <= comparative_modeling_pose.total_residue(); ++i) {
+	for(Size i = old_comparative_model_length + 1; i <= comparative_modeling_pose.size(); ++i) {
 		//comparative_modeling_pose.pdb_info() -> set_resinfo(i, ligand_chain, i - old_comparative_model_length, ' ');
 		comparative_modeling_pose.pdb_info() -> set_resinfo(i, ligand_chain, i, ' ');
 		//std::cout << comparative_modeling_pose.pdb_info() -> pose2pdb(i) << std::endl;
@@ -192,7 +192,7 @@ main( int argc, char * argv [] ) {
 //Attempt to renumber ligand to 1 B, 2 B, etc...
 /*
 	vector1< Size > renumber_vector;
-	for(Size i = 1; i <= comparative_modeling_pose.total_residue(); ++i) {
+	for(Size i = 1; i <= comparative_modeling_pose.size(); ++i) {
 		if( i <= old_comparative_model_length ) {
 			renumber_vector.push_back(i);
 		} else {
@@ -200,7 +200,7 @@ main( int argc, char * argv [] ) {
 		}
 	}
 
-	for(Size i=1; i<= comparative_modeling_pose.total_residue(); ++i ) {
+	for(Size i=1; i<= comparative_modeling_pose.size(); ++i ) {
 		std::cout<<"testing:"<<renumber_vector[i]<<std::endl;
 		((core::conformation::Residue)(comparative_modeling_pose.residue(i))).update_sequence_numbering(renumber_vector);
 		std::cout<<comparative_modeling_pose.residue(i)<<std::endl;
@@ -215,7 +215,7 @@ main( int argc, char * argv [] ) {
     residues = option[ in::target_residues ]();
   } else {
     // use all aligned residues
-    for ( Size ii = 1; ii <= template_pose.total_residue(); ++ii ) {
+    for ( Size ii = 1; ii <= template_pose.size(); ++ii ) {
       residues.push_back(ii);
     }
   }

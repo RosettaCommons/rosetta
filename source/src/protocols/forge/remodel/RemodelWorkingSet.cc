@@ -199,7 +199,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	TR.Trace << "Setting up translate_index." << std::endl;
 
 	// std::map<int,int> translate_index is now a class member variable
-	utility::vector1< bool > keep( input_pose.total_residue(), false ); // by default, don't keep anything? this vector isn't used anyway so whatever.
+	utility::vector1< bool > keep( input_pose.size(), false ); // by default, don't keep anything? this vector isn't used anyway so whatever.
 	for ( int ii = 0, ie = (int)temp_for_truncation.size(); ii < ie; ii++ ) { // loop to update keep vector according to what's found
 
 		keep[ temp_for_truncation[ ii ].original_index ] = true;
@@ -563,15 +563,15 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		} else if ( tail == 0 && segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) {
 			TR << "C-terminal extension found" << std::endl;
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
+			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.size()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
 		} else if ( head != 0 && headNew == 1 && segmentStorageVector[i].residues.front() == 1 ) { // N-term deletion
 			TR << "debug: N-term deletion" << std::endl;
 			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) ) );
-		} else if ( tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
+		} else if ( tail != static_cast<int>(input_pose.size()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
 				segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) { // C-term deletion
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
 			TR << "debug: C-term deletion" << std::endl;
-			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
+			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.size()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
 		} else {
 			TR << "normal rebuild" << std::endl;
 			// if the sequence contains ncaa, handle it properly

@@ -103,7 +103,7 @@ public:
 		core::pose::Pose const & pose
 	) const
 	{
-		core::select::residue_selector::ResidueSubset subset( pose.total_residue(), false );
+		core::select::residue_selector::ResidueSubset subset( pose.size(), false );
 		subset[ seqpos_ ] = true;
 
 		core::conformation::Residue const & focused_rsd( pose.residue( seqpos_ ) );
@@ -111,7 +111,7 @@ public:
 
 		core::Real proximity_cutoff = 4.5;
 		core::Real cut2 =  proximity_cutoff * proximity_cutoff;
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == seqpos_ ) continue;
 
 			core::conformation::Residue const & iirsd( pose.residue(ii) );
@@ -721,7 +721,7 @@ void InterfaceDDGMover::mutate_and_relax(
 {
 	assert( wt || mutaa <= core::chemical::num_canonical_aas );
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( subset[ ii ] || ii == seqpos ) {
 			if ( ii == seqpos && ! wt ) {
 				utility::vector1< bool > aa_vect( 20, false );

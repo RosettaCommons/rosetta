@@ -157,7 +157,7 @@ new_jump_and_cutpoint( core::pose::Pose & pose, core::Size const saferes1, core:
 
 	// remove terminal variants (if applicable)
 	core::pose::remove_upper_terminus_type_from_pose_residue( pose, cutres );
-	if ( cutres + 1 <= pose.total_residue() ) {
+	if ( cutres + 1 <= pose.size() ) {
 		core::pose::remove_lower_terminus_type_from_pose_residue( pose, cutres + 1 );
 	}
 
@@ -172,7 +172,7 @@ new_jump_and_cutpoint( core::pose::Pose & pose, core::Size const saferes1, core:
 	// they should ALWAYS be on the same chain at this point
 	TR.Debug << pose.fold_tree() << std::endl;
 	TR.Debug << "chain of " << saferes1 << " = " << pose.chain( saferes1 ) << " chain of " << saferes2 << " = " << pose.chain( saferes2 ) << std::endl;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		TR.Debug << i << " " << pose.residue(i).name() << std::endl;
 	}
 	debug_assert( pose.chain( saferes1 ) == pose.chain( saferes2 ) );
@@ -188,9 +188,9 @@ FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose
 	for ( protocols::loops::Loops::const_iterator l=loops_.begin(); l!=loops_.end(); ++l ) {
 		TR << "Loop: " << *l << std::endl;
 		debug_assert( l->is_terminal(pose) || ( l->cut() >= 1 ) );
-		debug_assert( l->is_terminal(pose) || ( l->cut() <= pose.total_residue() ) );
+		debug_assert( l->is_terminal(pose) || ( l->cut() <= pose.size() ) );
 		debug_assert( l->start() >= 1 );
-		debug_assert( l->stop() <= pose.total_residue() );
+		debug_assert( l->stop() <= pose.size() );
 
 		// no cutpoints for terminal loops
 		if ( l->is_terminal( pose ) ) {

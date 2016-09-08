@@ -68,7 +68,7 @@ void find_cutpoint_variants(
 	debug_assert(cutpoints);
 	unordered_set<int> unique_cutpoints;
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( is_lower_cutpoint(ii,pose) ) unique_cutpoints.insert(ii);
 	}
 

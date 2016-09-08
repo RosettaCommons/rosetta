@@ -127,7 +127,7 @@ main( int argc, char * argv [] )
 		}
 		char chain = chain_string.c_str()[0];
 		Size chain_count=0;
-		for ( Size i = 1; i <= chain_pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= chain_pose.size(); ++i ) {
 			if ( chain_pose.residue(i).is_protein() ) {
 				chain_count++;
 			}
@@ -142,8 +142,8 @@ main( int argc, char * argv [] )
 		}
 
 		bool found = false;
-		for ( Size i = 1; i <= whole_pose.total_residue(); ++i ) {
-			std::cout<<i<<":"<<whole_pose.total_residue()<<" ";
+		for ( Size i = 1; i <= whole_pose.size(); ++i ) {
+			std::cout<<i<<":"<<whole_pose.size()<<" ";
 			if ( !found && whole_pose.pdb_info()->chain(i) == chain ) {
 				found=true;
 				whole_pose_complex.conformation().delete_residue_range_slow(i+start-1, i+end-1);
@@ -169,7 +169,7 @@ main( int argc, char * argv [] )
 		whole_pose.dump_pdb(domfilename.str());
 
 		std::cout<<"deleting stuff\n";
-		if ( end - start+1 == chain_pose.total_residue() ) {
+		if ( end - start+1 == chain_pose.size() ) {
 			chain_pose.clear();
 		} else {
 			chain_pose.conformation().delete_residue_range_slow(start, end);
@@ -205,7 +205,7 @@ main( int argc, char * argv [] )
 		int last = -100;
 		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 
-		for( Size i = 1; i <= pose.total_residue(); ++i){
+		for( Size i = 1; i <= pose.size(); ++i){
 		if (last == -100){
 		last = pose.pdb_info()->number(i);
 		std::cout<<i<<" "<< pose.pdb_info()->number(i)<<" "<<pose.residue(i).name1()<<"\n" ;
@@ -238,13 +238,13 @@ main( int argc, char * argv [] )
 		last = pose.pdb_info()->number(i);
 		}
 
-		for( Size i = 1; i <= pose.total_residue(); ++i){
+		for( Size i = 1; i <= pose.size(); ++i){
 		std::cout<<pose.pdb_info()->number(i)<<"\n";
 		}
 		for( int i = 1; i <pose.pdb_info()->number(1); ++i){
 		std::cout<<" ";
 		}
-		for( Size i = 1; i <= pose.total_residue(); ++i){
+		for( Size i = 1; i <= pose.size(); ++i){
 		std::cout<<pose.residue(i).name1();
 		}
 		std::cout<<"\n"<<seq<<"\n";

@@ -131,8 +131,8 @@ FlexPepDockingPoseMetrics::calc_frac_atoms_kA_to_native(
 {
 	using namespace core::scoring;
 
-	core::Size const nres1 = pose1.total_residue();
-	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
+	core::Size const nres1 = pose1.size();
+	ASSERT_ONLY(core::Size const nres2 = pose2.size();)
 		assert( nres1 == nres2 );
 
 	ngood = 0;
@@ -177,11 +177,11 @@ FlexPepDockingPoseMetrics::best_Kmer_rms
 	core::Size k) const
 {
 	using namespace core;
-	assert(pose1.total_residue() == pose2.total_residue());
+	assert(pose1.size() == pose2.size());
 	// NOTE: purposely an inefficient but simpler construction...
 	// It would be more efficient to calc the RMS of each position separately
 	// and make the calculation incrementaly, but why bother (Barak)
-	Size nres = pose1.total_residue();
+	Size nres = pose1.size();
 	Size res1_first = flags_->peptide_first_res()  ;
 	Size res1_last = nres - k + 1;
 	Real best_rms = std::numeric_limits<Real>::infinity();
@@ -221,8 +221,8 @@ FlexPepDockingPoseMetrics::calc_phipsi_RMSD
 {
 	using namespace core;
 	using namespace basic;
-	assert(pose1.total_residue() == pose2.total_residue());
-	Size nres = pose1.total_residue();
+	assert(pose1.size() == pose2.size());
+	Size nres = pose1.size();
 	Real sumSqr = 0.0; // MSD = sum square deviation
 	Size n = 0;
 	for ( Size i = 1 ; i <= nres ; ++i ) {

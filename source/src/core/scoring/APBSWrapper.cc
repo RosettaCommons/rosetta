@@ -124,7 +124,7 @@ APBSWrapper::exec() {
 
 int APBSWrapper::count_atoms( core::pose::Pose const & pose ) const
 {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	int cntAtoms=0;
 	for ( int i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd = pose.residue(i);
@@ -140,7 +140,7 @@ PQR::PQR(core::pose::Pose const & pose, int natoms,
 	std::map<std::string, bool> const & charged_residues)
 : natoms_(natoms)
 {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	int cntAtoms = 0;
 
 	for ( int i=1; i<= nres; ++i ) {
@@ -313,7 +313,7 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 	double min_r[] = {9999,9999,9999};
 	double max_r[] = {-9999,-9999,-9999};
 	// Find the min & max coords within the moleculer system to define the grid.
-	for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<=pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom ) {
 			for ( int i=0; i<3; ++i ) {
 				min_r[i] = std::min(pose.residue(ires).xyz(iatom)[i], min_r[i]);

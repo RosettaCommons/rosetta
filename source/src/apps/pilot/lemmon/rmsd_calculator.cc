@@ -83,10 +83,10 @@ chain_rmsd(core::pose::Pose & after, core::pose::Pose & before, core::Size const
 
 void
 automorph_rmsd(core::pose::Pose & after, core::pose::Pose & before, core::Size res_id, bool superimpose){
-	assert(before.n_residue() == after.n_residue());
+	assert(before.size() == after.size());
 	core::Real rms = core::scoring::automorphic_rmsd(
-			before.residue(before.n_residue()),
-			after.residue(after.n_residue()),
+			before.residue(before.size()),
+			after.residue(after.size()),
 			superimpose
 	);
 	std::cout << "RMS: "<< rms<< std::endl;

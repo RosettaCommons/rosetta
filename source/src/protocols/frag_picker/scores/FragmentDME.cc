@@ -64,10 +64,10 @@ FragmentDME::FragmentDME(Size priority, Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentDME") {
 	reference_pose_ = reference_pose;
-	n_atoms_ = reference_pose_->total_residue();
+	n_atoms_ = reference_pose_->size();
 	reference_coordinates_.redimension(3, n_atoms_, 0.0);
 	fill_CA_coords(*reference_pose_, reference_coordinates_, n_atoms_);
-	weights_.redimension(reference_pose_->total_residue(), 1.0);
+	weights_.redimension(reference_pose_->size(), 1.0);
 }
 
 FragmentDME::FragmentDME(Size priority, Real lowest_acceptable_value, bool use_lowest,

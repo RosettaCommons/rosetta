@@ -142,7 +142,7 @@ void MultiThreadingMover::apply(
 		threader.randomize_loop_coords(false);
 		threader.apply(query_pose);
 		core::id::SequenceMapping map( aln.sequence_mapping(1,2) );
-		for ( Size resi = 1; resi <= query_pose.total_residue(); ++resi ) {
+		for ( Size resi = 1; resi <= query_pose.size(); ++resi ) {
 			if ( map[resi] != 0 ) {
 				for ( Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
 					missing[ core::id::AtomID( atomj, resi ) ] = false;

@@ -122,7 +122,7 @@ private:
 	ObjexxFCL::FArray1D_int& bestrotamer_at_seqpos_;
 	core::PackerEnergy & bestenergy_;
 	bool start_with_current_;
-	ObjexxFCL::FArray1_int & current_rot_index_; //assert current_rot_index.size() == pose.total_residue()
+	ObjexxFCL::FArray1_int & current_rot_index_; //assert current_rot_index.size() == pose.size()
 	bool calc_rot_freq_;
 	ObjexxFCL::FArray1D< core::PackerEnergy >& rot_freq_;
 

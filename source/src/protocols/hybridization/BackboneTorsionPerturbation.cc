@@ -93,7 +93,7 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
 	TR << "constrain " << rsd1 << " " << rsd2 << std::endl;
 	for ( Size ires=1; ires<rsd1-1; ++ires ) {
 		if ( !pose.residue_type(ires).is_protein() ) continue;
-		for ( Size jres=rsd2+2; jres<=pose.total_residue(); ++jres ) {
+		for ( Size jres=rsd2+2; jres<=pose.size(); ++jres ) {
 			if ( !pose.residue_type(jres).is_protein() ) continue;
 
 			core::Real COORDDEV = 1.0;
@@ -129,7 +129,7 @@ void optimize(core::pose::Pose & pose, Size rsd1, Size rsd2, core::scoring::Scor
 void pick_pivots(core::pose::Pose & pose, Size & rsd1, Size & torsion1, Size & rsd2, Size & torsion2, Size variance=5) {
 	// pick two torsion as pivots
 	Size n_torsion(0);
-	for ( Size ires=1; ires <= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires <= pose.size(); ++ires ) {
 		n_torsion += 2; // for now
 	}
 
@@ -213,9 +213,9 @@ void BackboneTorsionPerturbation::perturb(core::pose::Pose & pose,
 	bool repack,
 	bool minimize) {
 	if ( level == 1 ) {
-		perturbed_res_ = numeric::random::rg().random_range(1, pose.total_residue());
+		perturbed_res_ = numeric::random::rg().random_range(1, pose.size());
 	}
-	for ( core::Size ires=1; ires <= pose.total_residue() ; ++ires ) {
+	for ( core::Size ires=1; ires <= pose.size() ; ++ires ) {
 		if ( local != 0 ) {
 			if ( std::abs((int) ires - (int) perturbed_res_) > (int) ((local - 1) * level/2) ) continue;
 		}
@@ -273,7 +273,7 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
 	perturbed_res_ = 0;
 	mc = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
 	mc->set_autotemp( false, temperature_ );
-	ncycles = pose.total_residue() * increase_cycles_;
+	ncycles = pose.size() * increase_cycles_;
 
 	minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer() );
 	//minimizer_ = new core::optimization::CartesianMinimizer();
@@ -300,7 +300,7 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
 		perturb(pose, 60.);
 		core::Real score=(*scorefxn_)(pose);
 
-		if ( native_ && native_->total_residue() ) {
+		if ( native_ && native_->size() ) {
 			core::Real gdtmm(0.);
 			core::sequence::SequenceAlignmentOP native_aln;
 			gdtmm = get_gdtmm(*native_, pose, native_aln);
@@ -350,7 +350,7 @@ BackboneTorsionPerturbation::parse_my_tag(
 	Pose const & pose
 ) {
 	core::Size start_res = 1;
-	core::Size stop_res = pose.total_residue();
+	core::Size stop_res = pose.size();
 
 	if ( tag->hasOption( "start_res" ) ) start_res = tag->getOption< core::Size >( "start_res" );
 	if ( tag->hasOption( "stop_res" ) ) stop_res = tag->getOption< core::Size >( "stop_res" );

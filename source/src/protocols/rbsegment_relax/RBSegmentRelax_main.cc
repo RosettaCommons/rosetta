@@ -105,7 +105,7 @@ void RBSegmentRelaxImpl::apply( core::pose::Pose & pose ){
 	for ( int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
 		cutpts.push_back( pose.fold_tree().cutpoint(i) );
 	}
-	int last_peptide_res = pose.total_residue();
+	int last_peptide_res = pose.size();
 	while ( !pose.residue( last_peptide_res ).is_protein() )
 			last_peptide_res--;
 	read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );

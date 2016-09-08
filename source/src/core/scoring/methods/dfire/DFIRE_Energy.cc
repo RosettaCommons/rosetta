@@ -90,13 +90,13 @@ DFIRE_Energy::setup_for_scoring(
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
-		if ( dec->size() != pose.total_residue() ) {
+		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec( new DenseEnergyContainer( pose.total_residue(), gb_elec ) );
+		LREnergyContainerOP new_dec( new DenseEnergyContainer( pose.size(), gb_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }

@@ -89,7 +89,7 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const &  )
 	this->fill_with_value(cutoff_);
 
 
-	for ( core::Size residue_index = 1; residue_index <= pose.n_residue(); ++residue_index ) {
+	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
 		core::conformation::Residue residue = pose.residue(residue_index);
 		if ( residue.chain() == chain_id ) {
 			continue;

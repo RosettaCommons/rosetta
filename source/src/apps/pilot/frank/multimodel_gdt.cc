@@ -39,7 +39,7 @@ superimpose_tmalign( core::pose::Pose const & ref_pose, core::pose::Pose & pose)
 	//tm_align.alignment2AtomMap(pose, ref_pose, n_mapped_residues, atom_map);
 	//tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 
-	core::Size nres = ref_pose.total_residue();
+	core::Size nres = ref_pose.size();
 	for (int i=1; i<=nres; ++i) {
 		core::Size n = ref_pose.pdb_info()->number(i);
 		char chainID = pose.pdb_info()->chain(1);
@@ -69,7 +69,7 @@ superimpose_tmalign( core::pose::Pose const & ref_pose, core::pose::Pose & pose)
 void
 multimodel_gdt( core::pose::Pose const & ref_pose, utility::vector1<core::pose::Pose> const &models ) {
 	core::Size nmodels = models.size();
-	core::Size nres = ref_pose.total_residue();
+	core::Size nres = ref_pose.size();
 
 	utility::vector1<core::Real> best_align(nres, (core::Real)999.0);
 

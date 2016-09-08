@@ -126,7 +126,7 @@ ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const &
 	// rescore everything, cache derivatives
 	core::Real ccsum=0.0;
 	core::Size nressum=0;
-	for ( int r = 1; r<= (int)pose.total_residue(); ++r ) {
+	for ( int r = 1; r<= (int)pose.size(); ++r ) {
 		conformation::Residue const &rsd ( pose.residue(r) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 
@@ -183,14 +183,14 @@ ElecDensEnergy::setup_for_scoring(
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
-		if ( dec->size() != pose.total_residue() || dec->fixed() != virt_res_idx ) {
+		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		TR.Debug << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.total_residue(),  elec_dens_window ) );
+		TR.Debug << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
+		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.size(),  elec_dens_window ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -202,7 +202,7 @@ ElecDensEnergy::setup_for_scoring(
 	}
 
 	// allocate space for per-AA stats
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	core::scoring::electron_density::getDensityMap().set_nres( nres );
 	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
 }

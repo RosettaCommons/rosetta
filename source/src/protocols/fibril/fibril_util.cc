@@ -129,7 +129,7 @@ make_symmetric_fibril(
 	using namespace basic::options::OptionKeys;
 
 
-	SymmData symmdata( pose.n_residue(), pose.num_jump() );
+	SymmData symmdata( pose.size(), pose.num_jump() );
 	std::string symm_def = option[ OptionKeys::symmetry::symmetry_definition ];
 	symmdata.read_symmetry_data_from_file(symm_def);
 	if ( option[ in::file::native ].user() ) {
@@ -140,7 +140,7 @@ make_symmetric_fibril(
 		loop1 = protocols::loops::Loops( default_loop_file_is_present );
 		if (  !default_loop_file_is_present ) {
 			//make for monomer_pose
-			loop1.push_back( protocols::loops::Loop( 1, monomer_pose.total_residue(), 0,  0.0, false) );
+			loop1.push_back( protocols::loops::Loop( 1, monomer_pose.size(), 0,  0.0, false) );
 		}
 		if ( option[ OptionKeys::loops::extended_loop_file ].user() ) {
 			loop2 = protocols::loops::Loops( option[ OptionKeys::loops::extended_loop_file ]() );

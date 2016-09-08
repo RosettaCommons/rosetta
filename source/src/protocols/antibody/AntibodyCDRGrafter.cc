@@ -530,7 +530,7 @@ AntibodyCDRGrafter::apply_to_cdr(core::pose::Pose& pose, core::pose::Pose & cdr_
 	core::Size nter_flex = grafter->get_nterm_insert_flexibility();
 	core::Size cter_flex = grafter->get_cterm_insert_flexibility();
 	grafter->set_piece(cdr_region, nter_overhang_, cter_overhang_);
-	if ( cdr_region.total_residue() - nter_overhang_ - cter_overhang_ <= 4 ) {
+	if ( cdr_region.size() - nter_overhang_ - cter_overhang_ <= 4 ) {
 		grafter->set_insert_flexibility( 1, 1 );
 	}
 	grafter->apply(pose);

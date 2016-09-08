@@ -74,8 +74,8 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 
 	using namespace core::chemical;
 
-	if ( pose.total_residue() != 0 ) {
-		for ( core::Size ir=1; ir<=pose.total_residue() ; ++ir ) {
+	if ( pose.size() != 0 ) {
+		for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
 			if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
 				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
 			}
@@ -96,7 +96,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 		new_rsd = core::conformation::ResidueFactory::create_residue( standard_residues->name_map(stub_rsd_names_[istub]) );
 
 		// first stub always starts with a jump
-		if ( istub == 1 && pose.total_residue() == 0 ) {
+		if ( istub == 1 && pose.size() == 0 ) {
 			runtime_assert_string_msg(stub_mode_[istub] == append, "Can only use append for the first residue");
 			pose.append_residue_by_jump(*new_rsd, 1);
 			for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
@@ -104,7 +104,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 			}
 		} else {
 			Size anchor_rsd(stub_anchor_rsd_[istub]);
-			if ( anchor_rsd == 0 ) anchor_rsd = pose.total_residue();
+			if ( anchor_rsd == 0 ) anchor_rsd = pose.size();
 
 			if ( stub_rsd_jumping_[istub] ) {
 				runtime_assert_string_msg(stub_mode_[istub] == append, "Can only use append for jumps");
@@ -176,7 +176,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 	}
 
 	//protocols::loops::add_cutpoint_variants( pose );
-	for ( core::Size ir=1; ir<=pose.total_residue() ; ++ir ) {
+	for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
 		if ( pose.residue_type(ir).lower_connect_id() != 0 ) {
 			if ( pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).lower_connect_id()) == 0 ) {
 				if ( pose.residue(ir).is_protein() && !pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
@@ -198,7 +198,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 		TR << pose.annotated_sequence() << std::endl;
 		pose.fold_tree().show(TR.Debug);
 	}
-	for ( core::Size ires=1; ires<=pose.total_residue(); ++ires ) {
+	for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 		if ( pose.fold_tree().is_jump_point(ires) ) {
 			TR.Debug << "jump: Residue " << ires << std::endl;
 		}
@@ -330,7 +330,7 @@ void PeptideStubMover::rebuild_atoms(
 	core::pose::Pose &pose,
 	core::Size const residue_index
 ) const {
-	assert(residue_index <= pose.n_residue() && residue_index > 0);
+	assert(residue_index <= pose.size() && residue_index > 0);
 
 	core::Size const nresconn = pose.residue(residue_index).n_possible_residue_connections();
 	if ( nresconn>0 ) {
@@ -368,7 +368,7 @@ void PeptideStubMover::update_pdb_numbering (
 
 	core::pose::PDBInfoOP pdbinfo = pose.pdb_info();
 	if ( pdbinfo.get() != nullptr ) {
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 			pdbinfo->set_resinfo(ir, (pose.chain(ir) <=62 ? chainids[ pose.chain(ir) ] : '0'), static_cast<int>(ir));
 		}
 	}

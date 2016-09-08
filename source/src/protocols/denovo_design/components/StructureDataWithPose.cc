@@ -102,28 +102,28 @@ StructureDataWithPose::set_pose( core::pose::Pose const & new_pose )
 void
 StructureDataWithPose::set_pose( core::pose::PoseOP new_pose )
 {
-	if ( new_pose && new_pose->total_residue() ) {
-		TR.Debug << id() << ": new_pose len=" << new_pose->total_residue() << " pose residue =" << pose_length() << " perm len=" << length() << std::endl;
+	if ( new_pose && new_pose->size() ) {
+		TR.Debug << id() << ": new_pose len=" << new_pose->size() << " pose residue =" << pose_length() << " perm len=" << length() << std::endl;
 
 		check_pose_consistency( *new_pose );
 
 		// put terminal variants onto chain endings
 		utility::vector1< core::Size > const conformation_chainend = new_pose->conformation().chain_endings();
 		utility::vector1< core::Size > chain_endings = conformation_chainend;
-		chain_endings.push_back( new_pose->total_residue() );
+		chain_endings.push_back( new_pose->size() );
 		utility::vector1< core::Size > chain_starts;
-		if ( new_pose->total_residue() ) {
+		if ( new_pose->size() ) {
 			chain_starts.push_back( 1 );
 		}
 		for ( utility::vector1< core::Size >::const_iterator r = conformation_chainend.begin(); r != conformation_chainend.end(); ++r ) {
-			if ( *r == new_pose->total_residue() ) continue;
+			if ( *r == new_pose->size() ) continue;
 			chain_starts.push_back( *r + 1 );
 		}
 		TR.Debug << "Chain endings: " << chain_starts << chain_endings << std::endl;
 
 		for ( utility::vector1< core::Size >::const_iterator r = chain_starts.begin(); r != chain_starts.end(); ++r ) {
 			debug_assert( *r > 0 );
-			debug_assert( *r <= new_pose->total_residue() );
+			debug_assert( *r <= new_pose->size() );
 			if ( new_pose->residue( *r ).is_polymer() &&
 					( ! new_pose->residue( *r ).is_lower_terminus() ) &&
 					( ! new_pose->residue( *r ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) &&
@@ -136,7 +136,7 @@ StructureDataWithPose::set_pose( core::pose::PoseOP new_pose )
 		}
 		for ( utility::vector1< core::Size >::const_iterator r = chain_endings.begin(); r != chain_endings.end(); ++r ) {
 			debug_assert( *r > 0 );
-			debug_assert( *r <= new_pose->total_residue() );
+			debug_assert( *r <= new_pose->size() );
 			if ( new_pose->residue( *r ).is_polymer() &&
 					( ! new_pose->residue( *r ).is_upper_terminus() ) &&
 					( ! new_pose->residue( *r ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) &&
@@ -235,9 +235,9 @@ StructureDataWithPose::retrieve_remarks() const
 void
 StructureDataWithPose::apply_mover( protocols::moves::Mover & mover )
 {
-	core::Size const orig_len = pose().total_residue();
+	core::Size const orig_len = pose().size();
 	mover.apply( pose_nonconst() );
-	debug_assert( orig_len == pose().total_residue() );
+	debug_assert( orig_len == pose().size() );
 }
 
 /// @brief applies an arbitrary mover to the contained pose
@@ -352,7 +352,7 @@ StructureDataWithPose::new_jump_and_cutpoint( protocols::loops::Loop const & loo
 	// they should ALWAYS be on the same chain at this point
 	TR.Debug << pose_->fold_tree() << std::endl;
 	TR.Debug << "chain of " << saferes1 << " = " << pose_->chain( saferes1 ) << " chain of " << saferes2 << " = " << pose_->chain( saferes2 ) << std::endl;
-	for ( core::Size i=1, endi=pose_->total_residue(); i<=endi; ++i ) {
+	for ( core::Size i=1, endi=pose_->size(); i<=endi; ++i ) {
 		TR.Debug << i << " " << pose_->residue(i).name() << std::endl;
 	}
 	debug_assert( pose_->chain( saferes1 ) == pose_->chain( saferes2 ) );
@@ -438,7 +438,7 @@ StructureDataWithPose::add_cutpoint_variants( core::Size const cut_res )
 void
 StructureDataWithPose::remove_cutpoint_variants( core::Size const cut_res )
 {
-	debug_assert( cut_res + 1 <= pose().total_residue() );
+	debug_assert( cut_res + 1 <= pose().size() );
 	TR.Debug << "Removing cutpoints from " << cut_res << " and " << cut_res + 1 << std::endl;
 
 	if ( pose().residue( cut_res ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
@@ -622,7 +622,7 @@ StructureDataWithPose::set_bond_length(
 	debug_assert( resid <= res.length() );
 	core::Size const poseres = res.segment_to_pose(resid);
 	debug_assert( poseres );
-	debug_assert( poseres <= pose().total_residue() );
+	debug_assert( poseres <= pose().size() );
 	debug_assert( pose().residue(poseres).type().has( atom1 ) );
 	debug_assert( pose().residue(poseres).type().has( atom2 ) );
 	core::id::AtomID const atom1id( pose().residue(poseres).type().atom_index(atom1), poseres );
@@ -671,8 +671,8 @@ StructureDataWithPose::consolidate_movable_groups(
 	// make fold graph
 	FoldGraph fg( *this );
 	core::kinematics::FoldTree ft = fg.fold_tree( root_segments );
-	if ( ft.nres() != pose.total_residue() ) {
-		TR.Error << "FT nres " << ft.nres() << " != pose nres " << pose.total_residue() << " FT: " << ft << std::endl;
+	if ( ft.nres() != pose.size() ) {
+		TR.Error << "FT nres " << ft.nres() << " != pose nres " << pose.size() << " FT: " << ft << std::endl;
 		throw utility::excn::EXCN_Msg_Exception( "Bad nres" );
 	}
 	if ( pose.is_centroid() ) {
@@ -953,7 +953,7 @@ StructureDataWithPose::add_segment(
 {
 	StructureData::add_segment( id_val, resis, insert_pos );
 
-	core::Size insert_resid = pose().total_residue() + 1;
+	core::Size insert_resid = pose().size() + 1;
 	if ( insert_pos != segments_end_nonconst() ) {
 		insert_resid = segment( *insert_pos ).lower();
 	}
@@ -998,9 +998,9 @@ StructureDataWithPose::delete_segment( std::string const & seg_val )
 
 	// delete the segment from the pose
 	if ( start_del <= stop_del ) {
-		core::Size const resi_count = pose().total_residue();
+		core::Size const resi_count = pose().size();
 		delete_residues_in_pose( start_del, stop_del );
-		debug_assert( resi_count - (stop_del-start_del+1) == pose().total_residue() );
+		debug_assert( resi_count - (stop_del-start_del+1) == pose().size() );
 	}
 
 	if ( !segment1_c.empty() ) {
@@ -1070,7 +1070,7 @@ StructureDataWithPose::insert_after_residue_in_pose(
 			int upstream_res = pose().fold_tree().root();
 			TR.Debug << "Adding jump from " << upstream_res << " after " << segment1_end << " to residue copied from " << cseg_res << std::endl;
 			core::kinematics::FoldTree const & ft = pose().fold_tree();
-			for ( core::Size i=1; i<=pose().total_residue(); ++i ) {
+			for ( core::Size i=1; i<=pose().size(); ++i ) {
 				TR.Debug << "Res " << i << " : " << ft.is_cutpoint(i) << std::endl;
 			}
 			pose_nonconst().insert_residue_by_jump( pose().residue(cseg_res), segment1_end+1, upstream_res );
@@ -1138,7 +1138,7 @@ StructureDataWithPose::delete_residues_in_pose(
 	if ( start > end ) {
 		std::stringstream ss;
 		ss << id() << ": deleting residue from " << start << " to " << end
-			<< ", pose length = " << pose_->total_residue() << std::endl;
+			<< ", pose length = " << pose_->size() << std::endl;
 		ss << "Bad start and end given to delete_residues_in_pose()" << std::endl;
 		throw utility::excn::EXCN_BadInput( ss.str() );
 	}

@@ -141,7 +141,7 @@ create_and_score_fragments( std::string pdb_filename, scoring::ScoreFunctionOP s
 	// and other ligands as residues now. really, this should be a method in the Pose object.
 	int countProteinResidues = 0;
 	Size chain = pose.residue(1).chain();
-	for ( Size i=1; i < pose.n_residue(); ++i ) {
+	for ( Size i=1; i < pose.size(); ++i ) {
 		if ( pose.residue(i).type().is_protein() )
 			countProteinResidues++;
 		if ( chain != pose.residue(i).chain() )
@@ -305,7 +305,7 @@ score_folded_residues( std::string pdb_filename, scoring::ScoreFunctionOP scoref
 		// utility_exit_with_message("Bad energy calculation.");
 	}
 
-	for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		// check to make sure this residue is of type protein.
 		if ( !pose.residue(ii).type().is_protein() ) { continue; }
 

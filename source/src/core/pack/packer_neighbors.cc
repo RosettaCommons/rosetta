@@ -57,7 +57,7 @@ create_packer_graph(
 {
 	utility::vector1< Distance > residue_radii = find_residue_max_radii( pose, task );
 
-	return create_packer_graph( pose, scfxn, task, pose.total_residue(), residue_radii );
+	return create_packer_graph( pose, scfxn, task, pose.size(), residue_radii );
 }
 
 /// @brief Constructs a graph where edges represent the possibility of interactions between
@@ -73,7 +73,7 @@ create_packer_graph(
 {
 	using namespace graph;
 
-	//GraphOP g = new Graph( pose.total_residue() );
+	//GraphOP g = new Graph( pose.size() );
 	GraphOP g( new Graph( total_nodes ) );
 
 	if ( ! task->design_any() && ! pose.conformation().structure_moved() /* && ! core::pose::symmetry::is_symmetric( pose ) */ ) {
@@ -105,7 +105,7 @@ create_packer_graph(
 			core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( point_graph, atomic_itxn_dist + 2 * max_radius );
 		}
 
-		//if ( pose.total_residue() > 468 ) {
+		//if ( pose.size() > 468 ) {
 		// Vector v316 = point_graph->get_vertex( 316 ).data().xyz();
 		// Vector v468 = point_graph->get_vertex( 316 ).data().xyz();
 		// std::cout << "point graph data: " << v316.x() << ", " << v316.y() << ", " << v316.z() << " and "
@@ -113,7 +113,7 @@ create_packer_graph(
 		//}
 
 		// add edges
-		//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		//for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( Size ii = 1; ii <= total_nodes; ++ii ) {
 			Size ii_asu = ii;
 			if ( symm_info && symm_info->bb_follows( ii ) != 0 ) {
@@ -161,9 +161,9 @@ find_residue_max_radii(
 {
 	using namespace chemical;
 
-	utility::vector1< Distance > residue_max_radii( pose.total_residue(), 0.0 );
+	utility::vector1< Distance > residue_max_radii( pose.size(), 0.0 );
 
-	for ( Size ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii ) {
+	for ( Size ii = 1, ii_end = pose.size(); ii <= ii_end; ++ii ) {
 		Distance max_radius_for_res( 0.0 );
 		/*
 		if ( task->design_residue( ii ) ) {

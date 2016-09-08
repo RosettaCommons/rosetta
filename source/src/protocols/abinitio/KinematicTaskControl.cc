@@ -150,10 +150,10 @@ void KinematicTaskControl::set_extended_torsions_and_idealize_loops( core::pose:
 	// if no loops, we want to have extended structure everywhere.
 	// it is a by-value parameter -- as intenden the change is kept local
 
-	if ( loops.size() == 0 ) loops.add_loop( 1, pose.total_residue(), 0 );
+	if ( loops.size() == 0 ) loops.add_loop( 1, pose.size(), 0 );
 	tr.Debug << "extend structure for " << loops << std::endl;
 	 for ( auto const & loop : loops ) {
-		Size const end_extended ( std::min( (int) loop.stop(), (int) pose.total_residue() ) );
+		Size const end_extended ( std::min( (int) loop.stop(), (int) pose.size() ) );
 		for ( Size pos = std::max( 1, (int) loop.start()); pos<=end_extended; pos++ ) {
 			core::conformation::idealize_position( pos, pose.conformation() );
 		}

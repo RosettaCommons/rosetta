@@ -81,7 +81,7 @@ make_pose_from_sequence_(
 		}
 	} // for seqpos
 
-	// if ( pose.total_residue() > 1)  pose.conformation().insert_chain_ending( pose.total_residue() - 1 );  // probably not necessary
+	// if ( pose.size() > 1)  pose.conformation().insert_chain_ending( pose.size() - 1 );  // probably not necessary
 
 } // make_pose_match_sequence_
 

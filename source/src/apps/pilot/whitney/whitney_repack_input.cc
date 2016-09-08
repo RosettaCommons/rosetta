@@ -74,10 +74,10 @@ main( int argc, char * argv [] )
 	NT3_base_packer_task->initialize_from_command_line();
 	NT3_base_packer_task->or_include_current( true ); // allow crystallized position as possible rotamer
 
-	TR << "Residues in NGF: " << NGF_pose.total_residue() << std::endl;
-	TR << "Residues in NT3: " << NT3_pose.total_residue() << std::endl;
+	TR << "Residues in NGF: " << NGF_pose.size() << std::endl;
+	TR << "Residues in NT3: " << NT3_pose.size() << std::endl;
 
-	for (int ii = 1, resnum = NT3_pose.total_residue(); ii <= resnum; ++ii ) {
+	for (int ii = 1, resnum = NT3_pose.size(); ii <= resnum; ++ii ) {
 
 		// allow only the current position to be changed
 		pack::task::PackerTaskOP NT3_position_packer_task( NT3_base_packer_task->clone() );
@@ -99,7 +99,7 @@ main( int argc, char * argv [] )
 	outPDB_name << "NGF_seq_NT3.pdb";
 	NT3_pose.dump_scored_pdb( outPDB_name.str(), *scorefxn );
 
-	for ( int j = 1, numres = NT3_pose.total_residue(); j <= numres; ++j ) {
+	for ( int j = 1, numres = NT3_pose.size(); j <= numres; ++j ) {
 		chemical::AA const NGF_res( NGF_pose.residue(j).aa() );
 		std::ostringstream data_string;
 		data_string << oneletter_code_from_aa(NGF_res);
@@ -109,7 +109,7 @@ main( int argc, char * argv [] )
 	ddg_outstream.close();
 	ddg_outstream.clear();
 
-	for ( int i = 1, numres = NT3_pose.total_residue(); i <= numres; ++i ) {
+	for ( int i = 1, numres = NT3_pose.size(); i <= numres; ++i ) {
 		chemical::AA const NT3_res( NT3_pose.residue(i).aa() );
 		std::ostringstream data_string2;
 		data_string2 << oneletter_code_from_aa(NT3_res);
@@ -122,7 +122,7 @@ main( int argc, char * argv [] )
 
 
 	/*
-		for ( int ii = 1, resnum = NGF_pose.total_residue(); ii <= resnum; ++ii ) {
+		for ( int ii = 1, resnum = NGF_pose.size(); ii <= resnum; ++ii ) {
 
 
 			chemical::AA const NT3_aa( NT3_pose.residue(ii).aa() );

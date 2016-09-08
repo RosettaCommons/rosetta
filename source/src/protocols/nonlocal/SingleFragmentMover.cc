@@ -88,7 +88,7 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 	using core::kinematics::FoldTree;
 
 	// ensure that preconditions on the input have been met
-	assert(pose.total_residue() > 0);
+	assert(pose.size() > 0);
 	assert(pose.fold_tree().check_fold_tree());
 	assert(valid());
 

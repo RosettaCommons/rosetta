@@ -252,7 +252,7 @@ StructureScoresFeatures::compute_energies(
 	// use virtual residues to be compatible with the two-body scoring
 	// framework, include virtual residues with the relevant residues so
 	// these scores get computed.
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).aa() == aa_vrt ) {
 			relevant_and_virtual_residues[i] = true;
 		} else if ( relevant_and_virtual_residues[i] == false ) {

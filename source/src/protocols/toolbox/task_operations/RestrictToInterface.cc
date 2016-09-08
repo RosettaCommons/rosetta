@@ -164,7 +164,7 @@ DockingNoRepack2::apply(
 ) const
 {
 	Size cutpoint ( pose.fold_tree().cutpoint_by_jump( rb_jump_ ) );
-	for ( Size ii = cutpoint+1 ; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = cutpoint+1 ; ii <= pose.size(); ++ii ) {
 		task.nonconst_residue_task( ii ).prevent_repacking();
 	}
 }
@@ -210,7 +210,7 @@ RestrictToInterface::apply(
 ) const
 {
 	using core::Size;
-	utility::vector1<bool> is_interface( pose.total_residue(), false );
+	utility::vector1<bool> is_interface( pose.size(), false );
 
 	core::Size num_jump_ = movable_jumps().size();
 	for ( Size jj=1; jj<=num_jump_; jj++ ) {
@@ -218,7 +218,7 @@ RestrictToInterface::apply(
 		interface.distance( distance_ );
 		interface.calculate( pose );
 
-		for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+		for ( Size ii=1; ii<=pose.size(); ++ii ) {
 			if ( interface.is_interface(ii) ) {
 				is_interface[ii] = true;
 			}
@@ -226,14 +226,14 @@ RestrictToInterface::apply(
 	}
 
 	if ( loopy_interface_ ) {
-		for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+		for ( Size ii=1; ii<=pose.size(); ++ii ) {
 			if ( loop_residues_(ii) ) {
 				is_interface[ii] = true;
 			}
 		}
 	}
 
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii<=pose.size(); ++ii ) {
 		if ( !is_interface[ii] ) { //|| pose.residue(ii).is_ligand() )
 			task.nonconst_residue_task( ii ).prevent_repacking();
 		}
@@ -250,7 +250,7 @@ void RestrictToInterface::symmetric_task(
 	SymmetricConformation const & SymmConf (
 		dynamic_cast< SymmetricConformation const &> ( pose.conformation()) );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !SymmConf.Symmetry_Info()->chi_is_independent(i) ) {
 			task.nonconst_residue_task( i ).prevent_repacking();
 		}

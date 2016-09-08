@@ -152,7 +152,7 @@ ScoreMover::apply( Pose & pose ) {
 	// More decoy quality data (rms, maxsub, GDTM)
 	if ( get_native_pose() ) {
 		Pose npose = *get_native_pose();
-		if ( npose.total_residue() == pose.total_residue() ) {
+		if ( npose.size() == pose.size() ) {
 			setPoseExtraScore( pose, "rms", core::scoring::native_CA_rmsd( *get_native_pose(), pose ) );
 			setPoseExtraScore( pose, "allatom_rms", all_atom_rmsd( *get_native_pose(), pose ) );
 			setPoseExtraScore( pose, "maxsub", CA_maxsub( *get_native_pose(), pose ) );

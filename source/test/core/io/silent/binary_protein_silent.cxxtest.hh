@@ -166,12 +166,12 @@ public:
 		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
 
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd->name_map( "ALA" ) ) );
-		core::Size nres = ref_pose.n_residue();
+		core::Size nres = ref_pose.size();
 		if ( ref_pose.residue(nres).has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
 			core::pose::remove_variant_type_from_pose_residue( ref_pose, core::chemical::UPPER_TERMINUS_VARIANT, nres );
 		}
 		ref_pose.append_residue_by_bond(*new_rsd, true, 0, nres, 0, false);
-		core::pose::add_variant_type_to_pose_residue( ref_pose, core::chemical::UPPER_TERMINUS_VARIANT, ref_pose.n_residue() );
+		core::pose::add_variant_type_to_pose_residue( ref_pose, core::chemical::UPPER_TERMINUS_VARIANT, ref_pose.size() );
 
 		std::string const silent_outfile( "core/io/bin_silentfile_test_inserting_residues.out" );
 		utility::file::file_delete( silent_outfile );

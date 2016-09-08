@@ -323,7 +323,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 		// modify
 		if ( restart_mode_ ) { // assume Pose has already been modified by the manager somewhere
 
-			//manager_.dummy_modify( pose.n_residue() );
+			//manager_.dummy_modify( pose.size() );
 			//original2modified = manager_.original2modified();
 
 			//since archive_pose is actually a copy of the modified version of the
@@ -353,9 +353,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 		// pose is longer than blueprint, allow copying of phi-psi beyond the last
 		// residue. only for repeats with matching blueprint and pdb lengths.
 		//cache the phi psi angles
-		//if (len_start < pose.total_residue() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.total_residue() ){
-		if ( len_start < pose.total_residue() ) {
-			for ( Size i = len_start+1; i <= pose.total_residue(); i++ ) {
+		//if (len_start < pose.size() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.size() ){
+		if ( len_start < pose.size() ) {
+			for ( Size i = len_start+1; i <= pose.size(); i++ ) {
 				cached_phi.push_back( pose.phi( i ) );
 				cached_psi.push_back( pose.psi( i ) );
 				cached_omega.push_back( pose.omega( i ));
@@ -365,14 +365,14 @@ void VarLengthBuild::apply( Pose & pose ) {
 			Size max_pdb_index = remodel_data_.blueprint.size()*2;
 			//std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
 
-			while ( pose.total_residue() > max_pdb_index ) {
-				//std::cout << "pose total" << pose.total_residue() <<  std::endl;
-				pose.conformation().delete_residue_slow(pose.total_residue());
+			while ( pose.size() > max_pdb_index ) {
+				//std::cout << "pose total" << pose.size() <<  std::endl;
+				pose.conformation().delete_residue_slow(pose.size());
 			}
 
 			//similarly update archive pose in repeat cases
-			while ( archive_pose.total_residue() > max_pdb_index ) {
-				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
+			while ( archive_pose.size() > max_pdb_index ) {
+				archive_pose.conformation().delete_residue_slow(archive_pose.size());
 			}
 		}
 	}
@@ -381,54 +381,54 @@ void VarLengthBuild::apply( Pose & pose ) {
 	repeat_tail_length_ =0;
 	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 		// adding a tail to the starter monomer pose
-		if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
+		if ( pose.size() < (remodel_data_.sequence.length()*2) ) {
 
-			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+			Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
 			// append a tail of the same length
 			for ( Size i = 1; i<= len_diff; i++ ) {
 				//core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(2).residue_type_set());
 				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
-				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-				pose.set_omega(pose.total_residue()-1,180);
+				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.size(), true);
+				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.size()-1);
+				pose.set_omega(pose.size()-1,180);
 			}
-		} else if ( pose.total_residue() > (remodel_data_.sequence.length()*2) ) {
-			while ( pose.total_residue() != (2* remodel_data_.sequence.length()) ) {
-				pose.conformation().delete_residue_slow(pose.total_residue());
+		} else if ( pose.size() > (remodel_data_.sequence.length()*2) ) {
+			while ( pose.size() != (2* remodel_data_.sequence.length()) ) {
+				pose.conformation().delete_residue_slow(pose.size());
 			}
 		}
 
 		// similarly for archive_pose, process the same way for length
 		// adding a tail to the starter monomer pose
-		if ( archive_pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
+		if ( archive_pose.size() < (remodel_data_.sequence.length()*2) ) {
 
-			Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.total_residue();
+			Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.size();
 			// append a tail of the same length
 			for ( Size i = 1; i<= len_diff; i++ ) {
 				//core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(2).residue_type_set());
 				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
-				archive_pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,archive_pose.total_residue(), true);
-				archive_pose.conformation().insert_ideal_geometry_at_polymer_bond(archive_pose.total_residue()-1);
-				archive_pose.set_omega(archive_pose.total_residue()-1,180);
+				archive_pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,archive_pose.size(), true);
+				archive_pose.conformation().insert_ideal_geometry_at_polymer_bond(archive_pose.size()-1);
+				archive_pose.set_omega(archive_pose.size()-1,180);
 			}
-		} else if ( archive_pose.total_residue() > (remodel_data_.sequence.length()*2) ) {
-			while ( archive_pose.total_residue() != (2* remodel_data_.sequence.length()) ) {
-				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
+		} else if ( archive_pose.size() > (remodel_data_.sequence.length()*2) ) {
+			while ( archive_pose.size() != (2* remodel_data_.sequence.length()) ) {
+				archive_pose.conformation().delete_residue_slow(archive_pose.size());
 			}
 		}
 
 		// take care of terminal types
-		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.total_residue());
-		core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS_VARIANT, archive_pose.total_residue());
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.size());
+		core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS_VARIANT, archive_pose.size());
 
 
-		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
+		assert( pose.size() == (2* remodel_data_.sequence.length()));
 		repeat_tail_length_ = remodel_data_.sequence.length();
 
 		//update the new lengthened pose with pose angles.
-		for ( Size i = remodel_data_.sequence.length()+1, j=1; i<= pose.total_residue(); i++,j++ ) {
+		for ( Size i = remodel_data_.sequence.length()+1, j=1; i<= pose.size(); i++,j++ ) {
 			if ( cached_phi.size() != 0 ) {
 				pose.set_phi(i, cached_phi[j]);
 				pose.set_psi(i, cached_psi[j]);
@@ -451,10 +451,10 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	// fix the abego string to deal with ligands that might have been added to the pose
 	if ( abego_.size() > 0 ) {
-		TR << "Abego size=" << abego_.size() << " and pose size=" << pose.total_residue() << std::endl;
-		//runtime_assert( abego_.size() <= pose.total_residue() );
+		TR << "Abego size=" << abego_.size() << " and pose size=" << pose.size() << std::endl;
+		//runtime_assert( abego_.size() <= pose.size() );
 		// account for possible ligands in the pose
-		for ( core::Size i=abego_.size(); i<pose.total_residue(); ++i ) {
+		for ( core::Size i=abego_.size(); i<pose.size(); ++i ) {
 			abego_.push_back("X");
 		}
 	}
@@ -486,7 +486,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			// do nothing
 		} else {
 			//remove the added residue
-			//pose.conformation().delete_residue_slow(pose.total_residue());
+			//pose.conformation().delete_residue_slow(pose.size());
 			//need to extend the archive pose, otherwise the connectivity is wrong
 
 			for ( Size ii = 1; ii<=remodel_data_.sequence.length(); ++ii ) {
@@ -588,10 +588,10 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		/*
 		// first check to make sure length of the override string corresponds
 		// to the working pose
-		if ( new_secondary_structure_override_.length() != pose.n_residue() ) {
+		if ( new_secondary_structure_override_.length() != pose.size() ) {
 		// fail fast
 		TR.Error << "ERROR: new secondary structure override string not equal in length to newly modified Pose."
-		<< " Expected " << pose.n_residue() << " but found " << new_secondary_structure_override_.length()
+		<< " Expected " << pose.size() << " but found " << new_secondary_structure_override_.length()
 		<< ".  Programmer mistake!" << std::endl;
 		runtime_assert( false );
 		}
@@ -608,10 +608,10 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 
 		// first check to make sure length of the override string corresponds
 		// to the working pose
-		//  if ( new_sequence_override_.length() != pose.n_residue() ) {
+		//  if ( new_sequence_override_.length() != pose.size() ) {
 		//   // fail fast
 		//   TR.Error << "ERROR: new sequence override string not equal in length to newly modified Pose."
-		//    << " Expected " << pose.n_residue() << " but found " << new_sequence_override_.length()
+		//    << " Expected " << pose.size() << " but found " << new_sequence_override_.length()
 		//    << ".  Programmer mistake!" << std::endl;
 		//   runtime_assert( false );
 		//  }
@@ -620,7 +620,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 
 	} else if ( !original_sequence_.empty() ) { // auto-setup
 
-		aa.append( pose.n_residue(), '.' ); // do dummy fill w/ '.' first
+		aa.append( pose.size(), '.' ); // do dummy fill w/ '.' first
 
 		// get mapping of positions that exist in both original sequence and
 		// "new" modified pose and fill in the original sequence info
@@ -698,7 +698,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
 		if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
-			//if (interval.right == pose.total_residue()){
+			//if (interval.right == pose.size()){
 			if ( interval.right == remodel_data_.blueprint.size() ) {
 				//interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
 				interval.right = interval.right + 2; // pad interval to include the extra shadow residue in pose
@@ -710,7 +710,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		runtime_assert( n_cuts < 2 );
 
 		// setup regions
-		if ( interval.left != 1 && interval.right != pose.n_residue() ) { //internal loop
+		if ( interval.left != 1 && interval.right != pose.size() ) { //internal loop
 
 			Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
 

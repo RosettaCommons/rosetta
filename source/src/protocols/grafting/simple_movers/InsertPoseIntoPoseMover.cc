@@ -148,7 +148,7 @@ InsertPoseIntoPoseMover::apply(core::pose::Pose& pose) {
 	PyAssert(start_ != 0, "Cannot insert region starting with 0 - make sure region is set for InsertPoseIntoPoseMover");
 	PyAssert(end_ !=0, "Cannot insert region ending with 0 - make sure region is set for InsertPoseIntoPoseMover");
 	PyAssert(end_ > start_, "Cannot insert into a region where end > start");
-	PyAssert(end_ <= pose.total_residue(), "Cannot insert a region where end is > pose.total_residues of the scaffold");
+	PyAssert(end_ <= pose.size(), "Cannot insert a region where end is > pose.sizes of the scaffold");
 
 	pose = protocols::grafting::insert_pose_into_pose(pose, *src_pose_, start_, end_);
 

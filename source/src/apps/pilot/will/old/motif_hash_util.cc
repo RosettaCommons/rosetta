@@ -605,7 +605,7 @@ bool harvest_motifs_one(
 	using core::scoring::motif::RPM_Type;
 
 	Size const jr( edge.get_second_node_ind() );
-	// if( ir==1 || jr == pose.n_residue() ) return false;
+	// if( ir==1 || jr == pose.size() ) return false;
 	// Size const ichain = pose.chain(ir);
 	// Size const jchain = pose.chain(jr);
 
@@ -859,7 +859,7 @@ Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, s
 	using namespace protocols;
 	using namespace core;
 	using namespace core::scoring;
-	// for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	// for(Size ir = 1; ir <= pose.size(); ++ir){
 	// 	for(Size ia = 5; ia <= pose.residue(ir).nheavyatoms(); ++ia){
 	// 		cout << pose.residue(ir).atom_name(ia) << endl;
 	// 		cout << pose.dof(core::id::DOF_ID(AtomID(ia,ir),core::id::PHI  )) << " "
@@ -911,7 +911,7 @@ Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, s
 	Real allrms = core::scoring::all_atom_rmsd(pose,orig);
 	cout << "HARVEST_REFINE_RMS " << rms << " " << allrms << endl;
 
-	// for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+	// for(Size ir = 1; ir <= pose.size(); ++ir){
 	// 	for(Size ia = 5; ia <= pose.residue(ir).nheavyatoms(); ++ia){
 	// 		cout << pose.residue(ir).atom_name(ia) << endl;
 	// 		cout << pose.dof(core::id::DOF_ID(AtomID(ia,ir),core::id::PHI  )) << " "

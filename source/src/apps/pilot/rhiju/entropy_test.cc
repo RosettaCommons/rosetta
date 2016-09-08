@@ -198,7 +198,7 @@ sidechain_sample( pose::Pose & pose,
 	deltaG_diff_tot.clear();
 	for ( Size i = 1; i <= temperatures.size(); i++ ) deltaG_diff_tot.push_back( 0.0 );
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 
 		pose = pose_start;
 
@@ -493,8 +493,8 @@ setup_atom_id_map( std::map< id::AtomID, id::AtomID > & atom_id_map,
 	atom_names.push_back( " O  " );
 
 	Size parent_count = 0;
-	for ( Size i = 1; i <= pose_child.total_residue(); i++ ){
-		if ( build_direction == +1 && i == pose_child.total_residue() ) continue;
+	for ( Size i = 1; i <= pose_child.size(); i++ ){
+		if ( build_direction == +1 && i == pose_child.size() ) continue;
 		if ( build_direction == -1 && i == 1                          ) continue;
 		parent_count++;
 		if ( pose_child.sequence()[i-1] != pose_parent.sequence()[parent_count-1] ) utility_exit_with_message( "Mismatch between parent and child." );
@@ -651,11 +651,11 @@ get_xyz( pose::Pose const & pose, Size const i ){
 void
 output_distance_matrix( pose::Pose const & pose, std::ostream & out ){
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		Vector const v_i = get_xyz( pose, i );
 
-		for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+		for ( Size j = 1; j <= pose.size(); j++ ) {
 			Vector const v_j = get_xyz( pose, j );
 			out << ' ' << ( v_i - v_j ).length();
 		}

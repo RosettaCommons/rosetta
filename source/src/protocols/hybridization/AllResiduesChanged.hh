@@ -33,7 +33,7 @@ public:
 		utility::vector1< core::Real > const residue_weights,
 		utility::vector1< core::Size > const anchor_residues=utility::vector1< core::Size >(0)
 	) :
-		insert_pos_( pose.total_residue(), false )
+		insert_pos_( pose.size(), false )
 	{
 		set_initial_pose( pose );
 		for ( core::Size i_anchor = 1; i_anchor <= anchor_residues.size(); ++i_anchor ) {
@@ -43,7 +43,7 @@ public:
 	}
 
 	AllResiduesChanged( core::pose::Pose const & pose ) :
-		insert_pos_( pose.total_residue(), true )
+		insert_pos_( pose.size(), true )
 	{
 		set_initial_pose( pose );
 	}
@@ -62,9 +62,9 @@ private:
 	}
 
 	void set_initial_pose( const core::pose::Pose & pose ) {
-		initial_phis.resize(pose.total_residue());
-		initial_psis.resize(pose.total_residue());
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+		initial_phis.resize(pose.size());
+		initial_psis.resize(pose.size());
+		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			if ( ! pose.residue(i).is_protein() ) continue;
 			initial_phis[i] = pose.phi(i);
 			initial_psis[i] = pose.psi(i);
@@ -76,7 +76,7 @@ private:
 public:
 	void show_unmoved( const core::pose::Pose & pose, std::ostream& out ) {
 		runtime_assert( original_sequence_ == pose.sequence() );
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( ! pose.residue(i).is_protein() )  continue;
 			if ( initial_phis[i] == pose.phi(i) && insert_pos_[ i ] ) {
 				out << i << " ";
@@ -91,7 +91,7 @@ public:
 
 	bool operator() ( const core::pose::Pose & pose ) override {
 		runtime_assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			if ( ! pose.residue(i).is_protein() ) continue;
 			if ( initial_phis[i] == pose.phi(i) && insert_pos_[ i ] ) {
 				return false;

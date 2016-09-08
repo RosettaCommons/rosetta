@@ -56,7 +56,7 @@ void RestrictToCDRH3Loop::apply( Pose const & pose, PackerTask & task ) const
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 	core::pack::task::operation::RestrictResidueToRepacking turn_on_packing;
 
-	for ( Size residue_number = 1; residue_number <= pose.total_residue(); ++residue_number ) {
+	for ( Size residue_number = 1; residue_number <= pose.size(); ++residue_number ) {
 		if ( residue_is_in_h3_loop( pose, residue_number ) ) {
 			turn_on_packing.include_residue( residue_number );
 		} else {

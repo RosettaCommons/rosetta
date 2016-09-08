@@ -251,7 +251,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	}
 
 	if ( !pose.pdb_info() ) {
-		pose.pdb_info(PDBInfoOP( new PDBInfo(pose.total_residue()) ));
+		pose.pdb_info(PDBInfoOP( new PDBInfo(pose.size()) ));
 	}
 
 	pose.pdb_info()->set_numbering(pdb_numbers);
@@ -276,7 +276,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	Size res_num(pose.n_residue());
+	Size res_num(pose.size());
 	for ( Size index = 1; index <= res_num; ++index ) {
 		if ( !check_relevant_residues( relevant_residues, index ) ) continue;
 
@@ -305,7 +305,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 	if ( !table_exists(db_session, "residue_pdb_confidence") ) return;
 
 	if ( !pose.pdb_info() ) {
-		pose.pdb_info(PDBInfoOP( new PDBInfo(pose.total_residue()) ));
+		pose.pdb_info(PDBInfoOP( new PDBInfo(pose.size()) ));
 	}
 
 	std::string statement_string =
@@ -407,7 +407,7 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( Size ri=1; ri <= pose.n_residue(); ++ri ) {
+	for ( Size ri=1; ri <= pose.size(); ++ri ) {
 		if ( !check_relevant_residues(relevant_residues, ri) ) continue;
 
 		ResidueType const & r(pose.residue_type(ri));

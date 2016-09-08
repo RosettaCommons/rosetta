@@ -103,7 +103,7 @@ typedef std::map<AtomID, vector1<AtomID> > HB_Partners;
 ///
 Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 
-	for ( Size j = 1; j <= ps.total_residue(); ++j ) {
+	for ( Size j = 1; j <= ps.size(); ++j ) {
 		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {
 			return j;
 		}
@@ -704,7 +704,7 @@ int main( int argc, char * argv [] )
 
 		using core::chemical::aa_thr;
 		using core::chemical::aa_ser;
-		const Size LIGIDX = mut_ps.total_residue();
+		const Size LIGIDX = mut_ps.size();
 		Size lost_hbs = 0;
 		for ( HB_Partners::const_iterator i=env_hb_ptns.begin(), END=env_hb_ptns.end();
 				i!=END; ++i ) {

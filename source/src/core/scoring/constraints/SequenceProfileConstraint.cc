@@ -161,7 +161,7 @@ SequenceProfileConstraint::read_def(
 		is >> profile_filename;
 
 		TR(t_debug) << "reading: " << residue_index << " " << profile_filename << std::endl;
-		if ( residue_index < 1 || residue_index > pose.total_residue() ) {
+		if ( residue_index < 1 || residue_index > pose.size() ) {
 			std::cerr << "no such residue index " << residue_index << " in pose!)" << std::endl;
 			utility_exit();
 		}

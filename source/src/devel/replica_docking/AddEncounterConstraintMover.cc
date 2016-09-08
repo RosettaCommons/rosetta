@@ -127,13 +127,13 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 	runtime_assert( interface_info.num_jump() ==1 ); //currently only 1 interface supported... can be changed later...
 	interface_jump_ = interface_info.interface(1)->jump_id();
 	tr.Debug << "interface_jump id: " << interface_jump_ << std::endl;
-	ObjexxFCL::FArray1D_bool subunit_separation( pose.total_residue(), false );
+	ObjexxFCL::FArray1D_bool subunit_separation( pose.size(), false );
 	kinematics::FoldTree const& f(pose.fold_tree());
 	f.partition_by_jump( interface_jump_, subunit_separation );
 	// i is subunit 1 if domain_separation( i ) == true
 	// i is subunit 2 if domain_separation( j ) == false
 	Size pos1_end = 0;
-	for ( Size i =1, i_end = pose.total_residue() ; i <= i_end; i++ ) {
+	for ( Size i =1, i_end = pose.size() ; i <= i_end; i++ ) {
 		if ( subunit_separation(i) ) {
 			pos1_end = i;
 		}
@@ -142,7 +142,7 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 	tr.Debug << " cutpoint_by_jump: " << f.cutpoint_by_jump( interface_jump_ ) << std::endl;
 
 	Size center_pos1 (core::pose::residue_center_of_mass( pose, 1, pos1_end ) );  //mass center of partner 1
-	Size center_pos2 (core::pose::residue_center_of_mass( pose, pos1_end + 1, pose.total_residue() ) ); // mass center of partner 2
+	Size center_pos2 (core::pose::residue_center_of_mass( pose, pos1_end + 1, pose.size() ) ); // mass center of partner 2
 	tr.Debug << "center_pos1: " << center_pos1 << "; center_pos2: " << center_pos2 << std::endl;
 
 	Real dist_pos1 = 0.0;
@@ -157,7 +157,7 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 		if ( dist_pos1 < tmp ) { dist_pos1 = tmp; }
 	}
 
-	for ( Size i = pos1_end + 1; i<= pose.total_residue(); i++ ) {
+	for ( Size i = pos1_end + 1; i<= pose.size(); i++ ) {
 		tmp = coords_center_pos2.distance_squared( pose.xyz( id::AtomID( pose.residue_type( i ).atom_index( "CA" ), i) ) );
 		if ( dist_pos2 < tmp ) { dist_pos2 = tmp; }
 	}

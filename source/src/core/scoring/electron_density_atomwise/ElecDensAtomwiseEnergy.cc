@@ -120,15 +120,15 @@ ElecDensAtomwiseEnergy::setup_for_scoring (
 		OneToAllEnergyContainerOP dec ( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 
 		// make sure size or root did not change
-		if ( dec->size() != pose.total_residue() || dec->fixed() != virt_res_idx ) {
+		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		TR.Debug << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
+		TR.Debug << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
 		LREnergyContainerOP new_dec( new OneToAllEnergyContainer (
-			virt_res_idx, pose.total_residue(),  elec_dens_atomwise ) );
+			virt_res_idx, pose.size(),  elec_dens_atomwise ) );
 		energies.set_long_range_container ( lr_type, new_dec );
 	}
 

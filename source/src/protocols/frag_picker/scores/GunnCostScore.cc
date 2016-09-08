@@ -48,7 +48,7 @@ GunnCostScore::GunnCostScore(Size priority, Real lowest_acceptable_value,
 	utility::vector1<Size> frag_sizes,Size max_chunk_size) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "GunnCostScore") , gunn_cost_( -0.01 ) {
 	reference_pose_ = reference_pose;
-	n_atoms_ = reference_pose_->total_residue();
+	n_atoms_ = reference_pose_->size();
 	max_chunk_size_ = max_chunk_size;
 
 	for ( Size j=1; j<=frag_sizes.size(); j++ ) {
@@ -61,7 +61,7 @@ GunnCostScore::GunnCostScore(Size priority, Real lowest_acceptable_value,
 		trGunnScore << "Prepared "<<v.size()<<" Gunn tuples for the vall structure"<<std::endl;
 
 		utility::vector1<GunnTuple> vn;
-		vn.resize( reference_pose_->total_residue()-frag_sizes[j]+1 );
+		vn.resize( reference_pose_->size()-frag_sizes[j]+1 );
 		computeGunnTuples(*reference_pose_,frag_sizes[j],vn);
 		ref_gunn_data_.push_back( vn );
 		trGunnScore << "Prepared "<<vn.size()<<" Gunn tuples for the reference structure"<<std::endl;
@@ -102,8 +102,8 @@ void GunnCostScore::do_caching(VallChunkOP current_chunk) {
 void GunnCostScore::computeGunnTuples(core::pose::Pose & pose,Size frag_size,utility::vector1<GunnTuple> & result) {
 
 	trGunnScore.Debug << "Computing Gunn tuples for the vall structure of size: "
-		<<pose.total_residue()<<", results buffer size is: "<<result.size()<<std::endl;
-	for ( Size i=1; i<=pose.total_residue()-frag_size + 1; i++ ) {
+		<<pose.size()<<", results buffer size is: "<<result.size()<<std::endl;
+	for ( Size i=1; i<=pose.size()-frag_size + 1; i++ ) {
 		gunn_cost_.compute_gunn( pose, i, i+frag_size-1, result[i]);
 	}
 }

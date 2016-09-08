@@ -195,7 +195,7 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 
 	//want to just repack the wt pose, NO design
 	RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
-	for ( Size ii = 1; ii<= pose.n_residue(); ++ii ) {
+	for ( Size ii = 1; ii<= pose.size(); ++ii ) {
 		repack_op->include_residue( ii );
 	}
 	//fill task factory with these restrictions

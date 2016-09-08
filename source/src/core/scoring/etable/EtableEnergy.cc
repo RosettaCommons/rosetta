@@ -154,7 +154,7 @@ TableLookupEtableEnergy::clone() const {
 void
 TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
-	if ( ! pose.total_residue() )  return;
+	if ( ! pose.size() )  return;
 
 	// All we need is a matching atom type set.
 	if ( pose.residue(1).type().atom_type_set_ptr() == etable().atom_set().lock() )  return;
@@ -271,7 +271,7 @@ AnalyticEtableEnergy::clone() const {
 void
 AnalyticEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
-	if ( ! pose.total_residue() )  return;
+	if ( ! pose.size() )  return;
 
 	if ( pose.residue(1).type().atom_type_set_ptr() == etable().atom_set().lock() )  return;
 

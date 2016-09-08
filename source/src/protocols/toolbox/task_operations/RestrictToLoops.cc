@@ -149,7 +149,7 @@ void RestrictToLoops::apply_helper(
 
 	// Decide which residues should be packed.
 
-	utility::vector1<bool> is_packable( pose.total_residue(), false );
+	utility::vector1<bool> is_packable( pose.size(), false );
 	select_loop_residues( pose, *loops(), include_neighbors, is_packable, cutoff_distance );
 	core::pose::symmetry::make_residue_mask_symmetric( pose, is_packable );
 
@@ -158,14 +158,14 @@ void RestrictToLoops::apply_helper(
 	if ( design_neighbors ) {
 		is_designable = is_packable;
 	} else if ( restrict_only_design_ || design_loop() ) {
-		is_designable.resize( pose.total_residue(), false );
+		is_designable.resize( pose.size(), false );
 		loops()->transfer_to_residue_vector( is_designable, true );
 	} else {
-		is_designable.resize( pose.total_residue(), false );
+		is_designable.resize( pose.size(), false );
 	}
 
 	// Update the packer task.
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! is_designable[ i ] ) {
 			turn_off_design.include_residue( i );
 		}

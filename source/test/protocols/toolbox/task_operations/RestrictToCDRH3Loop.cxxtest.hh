@@ -91,7 +91,7 @@ public:
 		// the following call should work even if the pose hasn't been scored
 		core::pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
 
-		for ( core::Size residue_number = 1; residue_number <= pose.total_residue(); ++residue_number ) {
+		for ( core::Size residue_number = 1; residue_number <= pose.size(); ++residue_number ) {
 			perform_relevant_assertions( task, residue_number);
 		}
 

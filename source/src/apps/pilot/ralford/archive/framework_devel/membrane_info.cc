@@ -78,7 +78,7 @@ int main( int argc, char* argv[] )
         core::pose::PoseOP pose = load_pose();
 
 				// Printig pose total residue
-				TR << "The number of residues in my pose is " << pose->total_residue() << std::endl;
+				TR << "The number of residues in my pose is " << pose->size() << std::endl;
 
 		// Create embres and membrane data
 				utility::vector1< std::pair< int, int > >  embres_map;

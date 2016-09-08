@@ -64,11 +64,11 @@ namespace denovo_design {
 /// @brief Tells whether the two given poses are identical based on # resides and dihedrals
 bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
 {
-	if ( pose1.total_residue() != pose2.total_residue() ) {
+	if ( pose1.size() != pose2.size() ) {
 		return false;
 	}
 
-	for ( core::Size i = 1; i <= pose1.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose1.size(); ++i ) {
 		if ( pose1.residue(i).name() != pose2.residue(i).name() ) {
 			return false;
 		}
@@ -237,11 +237,11 @@ construct_dummy_pose( core::chemical::ResidueType const & restype, core::Size le
 	core::conformation::ResidueOP newres = core::conformation::ResidueFactory::create_residue( restype );
 	newp->append_residue_by_jump( *newres, 1 );
 	for ( core::Size i=1; i<=length-1; ++i ) {
-		newp->append_polymer_residue_after_seqpos( *newres, newp->total_residue(), true );
-		newp->set_omega( newp->total_residue()-1, 180.0 );
+		newp->append_polymer_residue_after_seqpos( *newres, newp->size(), true );
+		newp->set_omega( newp->size()-1, 180.0 );
 	}
 	core::pose::add_lower_terminus_type_to_pose_residue( *newp, 1 );
-	core::pose::add_upper_terminus_type_to_pose_residue( *newp, newp->total_residue() );
+	core::pose::add_upper_terminus_type_to_pose_residue( *newp, newp->size() );
 	return newp;
 }
 
@@ -348,7 +348,7 @@ loop_start_without_overlap( core::pose::Pose const & pose, core::Size startres, 
 	// calculate start component without overlap
 	for ( core::Size i = 1; i <= overlap; ++i ) {
 		// see if this loop is upper-terminal
-		if ( ( startres == pose.total_residue() ) || // loop end at last residue
+		if ( ( startres == pose.size() ) || // loop end at last residue
 				( !pose.residue( startres+1 ).is_protein() ) || // residue after end is not protein
 				( pose.chain( startres+1 ) != pose.chain( startres ) ) || // residues before start is other chain
 				( pose.residue( startres ).is_upper_terminus() ) ) { // explicit terminus variant @ end of loop
@@ -566,13 +566,13 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 	runtime_assert( to_add );
 	runtime_assert( combined );
 
-	if ( ! to_add->total_residue() ) return;
+	if ( ! to_add->size() ) return;
 
-	if ( combined->total_residue() ) {
+	if ( combined->size() ) {
 		// here we want an anchor equal to the root of the fold tree
 		core::Size const anchor_res = 1;
 		combined->conformation().buffer_signals();
-		combined->conformation().insert_conformation_by_jump( to_add->conformation(), combined->total_residue()+1, combined->num_jump()+2, anchor_res, combined->num_jump()+1 );
+		combined->conformation().insert_conformation_by_jump( to_add->conformation(), combined->size()+1, combined->num_jump()+2, anchor_res, combined->num_jump()+1 );
 		combined->conformation().unblock_signals();
 	} else {
 		*combined = *to_add;
@@ -588,7 +588,7 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 			combined->pdb_info()->remarks().push_back( r );
 		}
 	}
-	TR << "Added segment to pose of length " << to_add->total_residue() << std::endl;
+	TR << "Added segment to pose of length " << to_add->size() << std::endl;
 }
 
 /// @brief adds residues from template_pose to pose.  If new_chain == true, creates covalent bond
@@ -598,7 +598,7 @@ add_residues_to_pose(
 	core::pose::Pose const & template_pose,
 	bool const new_chain )
 {
-	if ( !template_pose.total_residue() ) return;
+	if ( !template_pose.size() ) return;
 
 	if ( pose.empty() ) {
 		pose = template_pose;
@@ -610,17 +610,17 @@ add_residues_to_pose(
 		core::Size const anchor_res = 1;
 		pose.conformation().insert_conformation_by_jump(
 			template_pose.conformation(),
-			pose.total_residue() + 1,
+			pose.size() + 1,
 			pose.num_jump() + 2,
 			anchor_res,
 			pose.num_jump() + 1 );
 	} else { // new_chain == false
-		for ( core::Size resid=1; resid<=template_pose.total_residue(); ++resid ) {
-			pose.append_polymer_residue_after_seqpos( template_pose.residue( resid ), pose.total_residue(), false );
+		for ( core::Size resid=1; resid<=template_pose.size(); ++resid ) {
+			pose.append_polymer_residue_after_seqpos( template_pose.residue( resid ), pose.size(), false );
 		}
 	}
 	pose.conformation().unblock_signals();
-	TR.Debug << "Added pose segment of length " << template_pose.total_residue() << std::endl;
+	TR.Debug << "Added pose segment of length " << template_pose.size() << std::endl;
 }
 
 core::Size
@@ -667,12 +667,12 @@ linear_chainbreak(
 		return core::Real( 0.0 );
 	}
 	debug_assert( pos > 0 );
-	debug_assert( pos < pose.n_residue() );
+	debug_assert( pos < pose.size() );
 
 	Pose scratch = pose;
 
 	FoldTree ft;
-	ft.add_edge( 1, scratch.n_residue(), core::kinematics::Edge::PEPTIDE );
+	ft.add_edge( 1, scratch.size(), core::kinematics::Edge::PEPTIDE );
 	ft.new_jump( pos, pos + 1, pos );
 
 	protocols::forge::methods::add_cutpoint_variants( scratch, pos );
@@ -770,15 +770,15 @@ symmetric_secstruct( core::pose::Pose const & pose, std::string const & asymm_se
 	}
 
 	// add secstruct for virtuals from the pose
-	for ( core::Size resid=num_nonvrt+1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=num_nonvrt+1; resid<=pose.size(); ++resid ) {
 		symm_secstruct << pose.secstruct( resid );
 	}
 
-	if ( symm_secstruct.str().size() != pose.total_residue() ) {
+	if ( symm_secstruct.str().size() != pose.size() ) {
 		std::stringstream msg;
 		msg << "protocols::denovo_design::symmetric_secstruct(): The generated secondary structure for the symmetric pose ("
 			<< symm_secstruct.str() << ") has length (" << symm_secstruct.str().size()
-			<< ") that differs from the length of the symmetric pose (" << pose.total_residue() << ")" << std::endl;
+			<< ") that differs from the length of the symmetric pose (" << pose.size() << ")" << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 
@@ -814,11 +814,11 @@ symmetric_fold_tree( core::pose::Pose const & pose, core::kinematics::FoldTree c
 		utility_exit_with_message( msg.str() );
 	}
 
-	if ( nsubunits != ( pose.total_residue() - num_nonvrt ) ) {
+	if ( nsubunits != ( pose.size() - num_nonvrt ) ) {
 		std::stringstream msg;
 		msg << "FoldTreeFromFoldGraphMover::symmetric_fold_tree(): number of subunits ("
 			<< nsubunits << ") does not match the number of virtuals ("
-			<< pose.total_residue() - num_nonvrt << ")!" << std::endl;
+			<< pose.size() - num_nonvrt << ")!" << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 
@@ -835,7 +835,7 @@ symmetric_fold_tree( core::pose::Pose const & pose, core::kinematics::FoldTree c
 	symm_ft.add_edge( cur_pose_resid, cur_pose_resid, core::kinematics::Edge::PEPTIDE );
 
 	// add subunit jumps from virtuals
-	for ( core::Size resid=num_nonvrt+1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=num_nonvrt+1; resid<=pose.size(); ++resid ) {
 		debug_assert( cur_pose_resid <= num_nonvrt );
 		TR.Debug << "inserting asymm fold tree, resid=" << cur_pose_resid
 			<< " jump=" << cur_jump << " cur_ft=" << symm_ft << std::endl;
@@ -858,14 +858,14 @@ symmetric_fold_tree( core::pose::Pose const & pose, core::kinematics::FoldTree c
 
 	utility::vector1< int >::const_iterator jump = added_jumps.begin();
 	// add root jumps from virtuals
-	for ( core::Size resid=root; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=root; resid<=pose.size(); ++resid ) {
 		debug_assert( pose.residue( resid ).aa() == core::chemical::aa_vrt );
 		if ( resid == root ) continue;
 		if ( jump == added_jumps.end() ) {
 			std::stringstream msg;
 			msg << "FoldTreeFromFoldGraphMover::symmetric_fold_tree(): list of jumps added ("
 				<< added_jumps << ") does not match virtual residues, which range from "
-				<< num_nonvrt + 1 << " to " << pose.total_residue() << std::endl;
+				<< num_nonvrt + 1 << " to " << pose.size() << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
 		symm_ft.jump_edge( *jump ).start() = resid;
@@ -907,7 +907,7 @@ symmetric_residue_subset( core::pose::Pose const & pose, core::select::residue_s
 		utility_exit_with_message( msg.str() );
 	}
 
-	core::select::residue_selector::ResidueSubset subset( pose.total_residue(), false );
+	core::select::residue_selector::ResidueSubset subset( pose.size(), false );
 	core::Size cur_resid = 1;
 	for ( core::Size subunit=1; subunit<=nsubunits; ++subunit ) {
 		for ( core::Size sub_resid=1; sub_resid<=nres_subunit; ++sub_resid, ++cur_resid ) {

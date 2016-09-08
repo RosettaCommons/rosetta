@@ -41,7 +41,7 @@ static THREAD_LOCAL basic::Tracer TZ( "protocols.hybridization.TemplateHistory" 
 
 TemplateHistory::TemplateHistory( core::pose::Pose &pose ) {
 	// initialize to identity mapping
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	history_.resize( nres , -1 );
 }
 

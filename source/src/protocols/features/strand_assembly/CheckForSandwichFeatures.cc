@@ -728,7 +728,7 @@ bool
 check_helix_existence(
 	Pose const & dssp_pose)
 {
-	for ( core::Size ii=1; ii<=dssp_pose.total_residue(); ii++ ) {
+	for ( core::Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 		char res_ss( dssp_pose.secstruct( ii ) ) ;
 		if ( res_ss == 'H' ) {
 			return true;
@@ -889,8 +889,8 @@ check_sw_by_dis(
 				j_resnum_3 = j_resnum-3;
 
 				if ( j_resnum_3 <= 0
-						|| i_resnum_3 > pose.total_residue()
-						|| j_resnum_3 > pose.total_residue() ) { // sometimes, j_resnum_3 becomes 18446744073709551615 where it should be -1
+						|| i_resnum_3 > pose.size()
+						|| j_resnum_3 > pose.size() ) { // sometimes, j_resnum_3 becomes 18446744073709551615 where it should be -1
 					continue;
 				}
 			} else { // paralell
@@ -903,7 +903,7 @@ check_sw_by_dis(
 				i_resnum_3 = i_resnum+3;
 				j_resnum_3 = j_resnum+3;
 
-				if ( i_resnum_3 > pose.total_residue() || j_resnum_3 > pose.total_residue() ) {
+				if ( i_resnum_3 > pose.size() || j_resnum_3 > pose.size() ) {
 					continue;
 				}
 			}

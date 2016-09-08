@@ -928,7 +928,7 @@ void get_shmem_structures() {
 			// get native
 			core::io::serialization::BUFFER bn((char*)(&shmem->native_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*nativeposeOP,bn);
-			native_pose_nres = (*nativeposeOP).total_residue();
+			native_pose_nres = (*nativeposeOP).size();
 			native_exists = true;
 		}
 
@@ -936,14 +936,14 @@ void get_shmem_structures() {
 		if ( shmem->current_pose_exists ) {
 			core::io::serialization::BUFFER bc((char*)(&shmem->current_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*currentposeOP,bc);
-			current_pose_nres =  (*currentposeOP).total_residue();
+			current_pose_nres =  (*currentposeOP).size();
 		}
 
 		// get current pose "ghost" (overlay structure)
 		if ( shmem->current_pose_ghost_exists ) {
 			core::io::serialization::BUFFER bc((char*)(&shmem->current_pose_ghost_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*currentposeghostOP,bc);
-			current_pose_ghost_nres =  (*currentposeghostOP).total_residue();
+			current_pose_ghost_nres =  (*currentposeghostOP).size();
 			ghost_exists = true;
 		}
 
@@ -951,7 +951,7 @@ void get_shmem_structures() {
 		if ( shmem->last_accepted_pose_exists ) {
 			core::io::serialization::BUFFER bla((char*)(&shmem->last_accepted_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*lastacceptedposeOP,bla);
-			if ( native_exists && (*lastacceptedposeOP).total_residue() > 0 ) {
+			if ( native_exists && (*lastacceptedposeOP).size() > 0 ) {
 				last_accepted_rmsd = core::scoring::native_CA_rmsd( *nativeposeOP, *lastacceptedposeOP);
 			}
 		}
@@ -961,7 +961,7 @@ void get_shmem_structures() {
 			core::io::serialization::BUFFER ble((char*)(&shmem->low_energy_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*lowenergyposeOP,ble);
 			last_low_energy_update_cnt = shmem->low_energy_update_cnt;
-			if ( native_exists && (*lowenergyposeOP).total_residue() > 0 ) {
+			if ( native_exists && (*lowenergyposeOP).size() > 0 ) {
 				low_energy_rmsd = core::scoring::native_CA_rmsd( *nativeposeOP, *lowenergyposeOP);
 			}
 		}

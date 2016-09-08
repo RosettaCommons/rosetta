@@ -98,7 +98,7 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 	pose::Pose pose( reference_pose );
 
 	// Get information on ss, ds, ts residues in native pose.
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	FArray1D_int struct_type( nres, -1 );
 	protocols::farna::check_base_pair( pose, struct_type );
 
@@ -189,7 +189,7 @@ rna_design_test()
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		pack::task::parse_resfile(pose, *task);
 	} else {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			task->nonconst_residue_task( ii ).allow_aa( na_rad );
 			task->nonconst_residue_task( ii ).allow_aa( na_ura );
 			task->nonconst_residue_task( ii ).allow_aa( na_rgu );
@@ -198,7 +198,7 @@ rna_design_test()
 		}
 	}
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		//Hmmm, extras.
 		task->nonconst_residue_task( ii ).and_extrachi_cutoff( 0 );

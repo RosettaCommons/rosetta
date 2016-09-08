@@ -215,7 +215,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 				TR << "Repacking only..." << std::endl;
 				PackerTaskOP repack = TaskFactory::create_packer_task( working_pose );
 				TR.Debug << "repacking vector size: " << repack_residues_[c].size() << std::endl;
-				TR.Debug << "pose length: " << working_pose.total_residue() << std::endl;
+				TR.Debug << "pose length: " << working_pose.size() << std::endl;
 				repack->restrict_to_residues( repack_residues_[c] );
 				repack->restrict_to_repacking();
 				core::pack::pack_rotamers( working_pose, *sfxn_, repack );
@@ -382,7 +382,7 @@ void MPMutateRelaxMover::get_repack_residues( Pose & pose ) {
 	for ( Size i = 1; i <= resn_.size(); ++i ) {
 
 		// initialize boolean vector with false
-		utility::vector1< bool > repack_res( pose.total_residue(), false );
+		utility::vector1< bool > repack_res( pose.size(), false );
 
 		// if repacking
 		if ( repack_mutation_only_ == true ) {

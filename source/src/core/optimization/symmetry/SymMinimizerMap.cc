@@ -65,10 +65,10 @@ SymMinimizerMap::SymMinimizerMap(
 ) :
 	pose_( pose ),
 	symm_info_( symm_info ),
-	res_interacts_with_asymmetric_unit_( pose.total_residue(), false ),
+	res_interacts_with_asymmetric_unit_( pose.size(), false ),
 	// n_dof_nodes_( 0 ),
 	n_independent_dof_nodes_( 0 ),
-	atom_derivatives_( pose.total_residue() ),
+	atom_derivatives_( pose.size() ),
 	new_sym_min_( new_sym_min )
 {
 
@@ -78,7 +78,7 @@ SymMinimizerMap::SymMinimizerMap(
 	DOF_NodeOP tmp(0);
 	pose::initialize_dof_id_map( dof_node_pointer_, pose, tmp );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		atom_derivatives_[ ii ].resize( pose.residue( ii ).natoms() );
 		if ( symm_info_->bb_follows( ii ) == 0 ) {
 			res_interacts_with_asymmetric_unit_[ ii ] = true; // residues in the asymmetric unit are always included
@@ -128,7 +128,7 @@ SymMinimizerMap::SymMinimizerMap(
 		moving_dof[ (**it).atom_id() ] = true;
 	}
 
-	domain_map_.dimension( pose.total_residue() );
+	domain_map_.dimension( pose.size() );
 	pose.conformation().atom_tree().update_domain_map
 		( domain_map_, moving_dof, moving_xyz );
 

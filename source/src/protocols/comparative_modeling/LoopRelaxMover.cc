@@ -324,12 +324,12 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		native_pose = start_pose;
 	}
 
-	if ( start_pose.total_residue() != native_pose.total_residue() ) {
+	if ( start_pose.size() != native_pose.size() ) {
 		// strip VRTs from the end, then compare lengths
-		int nnonvrt_start = start_pose.total_residue();
+		int nnonvrt_start = start_pose.size();
 		while ( nnonvrt_start>0 && start_pose.residue( nnonvrt_start ).aa() == core::chemical::aa_vrt ) nnonvrt_start--;
 
-		int nnonvrt_native = native_pose.total_residue();
+		int nnonvrt_native = native_pose.size();
 		while (  nnonvrt_native>0 && native_pose.residue( nnonvrt_native ).aa() == core::chemical::aa_vrt ) nnonvrt_native--;
 		if ( nnonvrt_native != nnonvrt_start ) {
 			TR << "Start pose and native pose don't match. replace native to starting." << std::endl;
@@ -376,7 +376,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	id::AtomID_Map< id::AtomID > atom_map;
 	if (  option[ OptionKeys::loops::superimpose_native ]()  ) {
 		core::pose::initialize_atomid_map( atom_map, native_pose_super, core::id::BOGUS_ATOM_ID );
-		for ( core::Size ir=1; ir <= native_pose.total_residue(); ++ir ) {
+		for ( core::Size ir=1; ir <= native_pose.size(); ++ir ) {
 			if ( !loops->is_loop_residue( ir ) ) {
 				id::AtomID const id1( native_pose_super.residue(ir).atom_index("CA"), ir );
 				id::AtomID const id2( pose.residue(ir).atom_index("CA"), ir );
@@ -687,7 +687,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					protocols::loops::Loops newloops;
 					for( core::Size i=1; i <= loops.size() ; i ++ ){
 					if( loops[i].start() <= 1 ) continue;
-					if( loops[i].stop() >= pose.total_residue() ) continue;
+					if( loops[i].stop() >= pose.size() ) continue;
 					newloops.add_loop( loops[i] );
 					}
 					loops = newloops;
@@ -809,14 +809,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 		pose.conformation().detect_bonds(); //apl fix this !
 
-		utility::vector1< bool > needToRepack( pose.total_residue() , !fullatom_input );
+		utility::vector1< bool > needToRepack( pose.size() , !fullatom_input );
 		bool needToRepackAtAll = !fullatom_input;
 
 		if ( debug ) pose.dump_pdb(curr_job_tag + "_after_fullatom.pdb");
 		// copy sidechain torsions from input pose
 		if ( fullatom_input && copy_sidechains() )  {
 
-			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( core::Size i = 1; i <= pose.size(); ++i ) {
 				// if remodelling was done, repack the loops - otherwise leave it.
 				if ( remodel() != "no" ) {
 					 for ( auto const & it : *loops ) {
@@ -854,7 +854,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				} else {
 					needToRepackAtAll = true;
 				}
-			} // for ( i in pose.total_residue() )
+			} // for ( i in pose.size() )
 		} // fa_input
 
 		// create score function and add constraints for fullatom part
@@ -877,7 +877,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			core::pose::Pose constraint_target_pose = pose;
 
 
-			coordconstraint_segments = loops->invert( pose.total_residue() );  // Invert the loops selection - i.e. the rigid areas are now defined
+			coordconstraint_segments = loops->invert( pose.size() );  // Invert the loops selection - i.e. the rigid areas are now defined
 			std::cout << "Restraining the following segments: " << std::endl << coordconstraint_segments << std::endl;
 
 			// ResidueTypeSet
@@ -887,14 +887,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			using namespace core::scoring::constraints;
 			using namespace id;
 
-			if ( pose.residue( pose.total_residue() ).aa() != core::chemical::aa_vrt ) {
+			if ( pose.residue( pose.size() ).aa() != core::chemical::aa_vrt ) {
 				pose.append_residue_by_jump(
-					*ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ), pose.total_residue()/2 );
+					*ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ), pose.size()/2 );
 			}
 
 			//fpd  nmonomerres is #residues in a single subunit (excluding virtuals)
 			core::Size rootres = pose.fold_tree().root();
-			core::Size nmonomerres = pose.total_residue()-1;
+			core::Size nmonomerres = pose.size()-1;
 			core::conformation::symmetry::SymmetryInfoCOP symm_info;
 			if ( core::pose::symmetry::is_symmetric(pose) ) {
 				core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -988,7 +988,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );  //fpd symmetrize this
 			mm->set_bb( false );
 			mm->set_chi( true );
-			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			for ( core::Size i = 1; i <= pose.size(); ++i ) {
 				if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
 					TR<<"disabling minimization on disulfide residue "<<i<<std::endl;
 					mm->set_chi( i, false );

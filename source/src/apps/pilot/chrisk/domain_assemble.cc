@@ -222,10 +222,10 @@ find_backbone_rts_in_pose(
 	vector1< std::pair< Size, Size > > & cutpairs )
 {
 	for( Size i = term_tol;
-			i <= pose.total_residue() - seqsep_tol; ++i ){
+			i <= pose.size() - seqsep_tol; ++i ){
 		if( loops_only && pose.secstruct( i ) != 'L' ) continue;
 		for( Size j = i+1; j <= i + seqsep_tol; ++j ){
-			if( j > pose.total_residue() - term_tol ) break;
+			if( j > pose.size() - term_tol ) break;
 			if( loops_only && pose.secstruct( j ) != 'L' ) continue;
 			//is rt from res i to j within rt_tol of given rt?
 			std::pair< Size, Size > cuts( i, j );
@@ -277,10 +277,10 @@ find_nonlocal_segment_alignments_in_pose(
 	vector1< vector1< Size > > & aln_nonlocal_segments )
 {
 	for( Size i = term_tol;
-			i <= pose.total_residue() - seqsep_tol; ++i ){
+			i <= pose.size() - seqsep_tol; ++i ){
 		if( loops_only && pose.secstruct( i ) != 'L' ) continue;
 		for( Size j = i + 1; j <= i + seqsep_tol; ++j ){
-			if( j > pose.total_residue() - term_tol ) break;
+			if( j > pose.size() - term_tol ) break;
 			if( loops_only && pose.secstruct( j ) != 'L' ) continue;
 			//is rmsd for these rsds within tol when aligned w/ rsds in src pair?
 			vector1< Size > aln_nonlocal_segment;
@@ -327,9 +327,9 @@ void
 setup_secstruct_dssp( pose::Pose & pose )
 {
   scoring::dssp::Dssp dssp( pose );
-  FArray1D_char dssp_secstruct( pose.total_residue() );
+  FArray1D_char dssp_secstruct( pose.size() );
   dssp.dssp_reduced( dssp_secstruct );
-  for (Size i = 1; i <= pose.total_residue(); i++ ) {
+  for (Size i = 1; i <= pose.size(); i++ ) {
     pose.set_secstruct(i,  dssp_secstruct(i) );
   }
 
@@ -359,7 +359,7 @@ get_rsdrsd_jump(
 	Size const seqpos1,
 	Size const seqpos2
 ){
-	assert( seqpos2 <= pose.total_residue() );
+	assert( seqpos2 <= pose.size() );
 	assert( seqpos1 <= seqpos2 );
 	kinematics::FoldTree ft( pose.fold_tree() );
 	ft.new_jump( seqpos1, seqpos2, seqpos2 - 1 );
@@ -378,9 +378,9 @@ trim_pose_termini(
 	Size const cterm
 ){
 	assert( nterm <+ cterm );
-	assert( cterm <= pose.total_residue() );
+	assert( cterm <= pose.size() );
 	//delete Cterminus
-	if( cterm < pose.total_residue() ){
+	if( cterm < pose.size() ){
 		Size const cterm_orig( pose.conformation().chain_end( pose.chain( cterm ) ) );
 		for( Size iseq = cterm_orig; iseq > cterm; --iseq ){
 			pose.delete_polymer_residue( iseq );
@@ -389,10 +389,10 @@ trim_pose_termini(
 	//and Nterm
 	if( nterm > 1 ){
 		//need to root the foldtree at new nterm to delete upstream atoms
-		kinematics::FoldTree ft_del( pose.total_residue() );
+		kinematics::FoldTree ft_del( pose.size() );
 		ft_del.clear();
 		ft_del.add_edge( Edge( nterm, 1, Edge::PEPTIDE ) );
-		ft_del.add_edge( Edge( nterm, pose.total_residue(), Edge::PEPTIDE ) );
+		ft_del.add_edge( Edge( nterm, pose.size(), Edge::PEPTIDE ) );
 		ft_del.reorder( nterm );
 		pose.fold_tree( ft_del );
 		//delete n terminal
@@ -401,7 +401,7 @@ trim_pose_termini(
 			pose.delete_polymer_residue( pose.conformation().chain_begin( pose.chain( nterm ) ) );
 		}
 		//is this necessary??
-		kinematics::FoldTree ft_reset( pose.total_residue() );
+		kinematics::FoldTree ft_reset( pose.size() );
 		pose.fold_tree( ft_reset );
 	}
 }
@@ -418,9 +418,9 @@ append_pose_by_jump(
 ){
 	//append first residue
 	src_pose.append_residue_by_jump( ap_pose.residue( ap_seqpos ), src_seqpos, "CA", "CA" );
-	Size new_jump_seqpos_downstr( src_pose.total_residue() );
+	Size new_jump_seqpos_downstr( src_pose.size() );
 	//append Cterminal by bond
-	for( Size iseq = ap_seqpos + 1; iseq <= ap_pose.total_residue(); ++iseq ){
+	for( Size iseq = ap_seqpos + 1; iseq <= ap_pose.size(); ++iseq ){
 		src_pose.append_polymer_residue_after_seqpos(
 				ap_pose.residue( iseq ), new_jump_seqpos_downstr + iseq - ap_seqpos - 1, false );
 	}
@@ -443,7 +443,7 @@ build_pose_by_jumps_from_domains(
 	trim_pose_termini( domain_poses[ 1 ],
 			domain_cutpairs[ 1 ].first, domain_cutpairs[ 1 ].second );
 	construct_pose = domain_poses[ 1 ];
-	Size domain_1_cterm( construct_pose.total_residue() );
+	Size domain_1_cterm( construct_pose.size() );
 	//then append the rest
 	for( Size ipose = 2; ipose <= domain_poses.size(); ++ipose ){
 		trim_pose_termini( domain_poses[ ipose ],
@@ -462,10 +462,10 @@ find_rsd_nbrs(
 	Real const nbr_radius,
 	vector1< bool > & is_nbr
 ){
-	for( Size seqpos1 = 1; seqpos1 <= pose.total_residue(); ++seqpos1 ){
+	for( Size seqpos1 = 1; seqpos1 <= pose.size(); ++seqpos1 ){
 		if( !is_incl[ seqpos1 ] ) continue; //only look at true positions
 		Residue const & rsd1( pose.residue( seqpos1 ) );
-		for( Size seqpos2 = 1; seqpos2 <= pose.total_residue(); ++seqpos2 ){
+		for( Size seqpos2 = 1; seqpos2 <= pose.size(); ++seqpos2 ){
 			if( seqpos2 == seqpos1 ){ //is its own nbr
 				is_nbr[ seqpos2 ] = true;
 				continue;
@@ -535,17 +535,17 @@ dump_insert_pdb_and_remodel_blueprint(
 
 	//need to go ahead and figure out secstruct, design requirements
 	//define linkers in boolean vectors
-	vector1< bool > is_link_cut( cutpose.total_residue(), false );
+	vector1< bool > is_link_cut( cutpose.size(), false );
 	is_link_cut[ cut_cutpair.first ] = true;
 	is_link_cut[ cut_cutpair.second ] = true;
-	vector1< bool > is_link_in( inpose.total_residue(), false );
+	vector1< bool > is_link_in( inpose.size(), false );
 	is_link_in[ 1 ] = true;
-	is_link_in[ inpose.total_residue() ] = true;
+	is_link_in[ inpose.size() ] = true;
 	//find nbrs of linkers
-	vector1< bool > is_design_nbr_cut( cutpose.total_residue(), false );
-	vector1< bool > is_design_nbr_in( inpose.total_residue(), false );
-	vector1< bool > is_repack_nbr_cut( cutpose.total_residue(), false );
-	vector1< bool > is_repack_nbr_in( inpose.total_residue(), false );
+	vector1< bool > is_design_nbr_cut( cutpose.size(), false );
+	vector1< bool > is_design_nbr_in( inpose.size(), false );
+	vector1< bool > is_repack_nbr_cut( cutpose.size(), false );
+	vector1< bool > is_repack_nbr_in( inpose.size(), false );
 	find_rsd_nbrs( cutpose, is_link_cut, design_link_nbr_radius, is_design_nbr_cut );
 	find_rsd_nbrs( cutpose, is_link_cut, repack_link_nbr_radius, is_repack_nbr_cut );
 	find_rsd_nbrs( inpose, is_link_in, design_link_nbr_radius, is_design_nbr_in );
@@ -606,7 +606,7 @@ dump_insert_pdb_and_remodel_blueprint(
 		}
 	}
 	//for 2nd half of cutpose
-	for( Size iseq = cut_cutpair.second; iseq <= cutpose.total_residue(); ++iseq ){
+	for( Size iseq = cut_cutpair.second; iseq <= cutpose.size(); ++iseq ){
 		char const aa( cutpose.residue( iseq ).name1() );
 		char ss( '.' ); //default for insertee
 		if( iseq - cut_cutpair.second < n_remodel_linker ){
@@ -749,8 +749,8 @@ go(
 	//define cutpair on inpose, where insertion has to satisfy
 	Size nterm_in_start( 1 ); //nterm cutpoint for inserter
 	Size nterm_in_end( Size( option[ chrisk::trim_tol ] ) + 1 ); //nterm cutpoint for inserter
-	Size cterm_in_start( inpose.total_residue() - Size( option[ chrisk::trim_tol ] ) ); //cterm cutpoint for inserter
-	Size cterm_in_end( inpose.total_residue() ); //cterm cutpoint for inserter
+	Size cterm_in_start( inpose.size() - Size( option[ chrisk::trim_tol ] ) ); //cterm cutpoint for inserter
+	Size cterm_in_end( inpose.size() ); //cterm cutpoint for inserter
 	//no looping if user-defined
 	if( option[ chrisk::nterm_in ].user() ) nterm_in_start = nterm_in_end = Size( option[ chrisk::nterm_in ] );
 	if( option[ chrisk::cterm_in ].user() ) cterm_in_start = cterm_in_end = Size( option[ chrisk::cterm_in ] );
@@ -806,7 +806,7 @@ go(
 				std::pair< Size, Size >( Size( 1 ), cutpose_cutpair.first ) );
 				domain_cutpair.push_back( inpose_cutpair );
 				domain_cutpair.push_back(
-				std::pair< Size, Size >( cutpose_cutpair.second, cutpose.total_residue() ) );
+				std::pair< Size, Size >( cutpose_cutpair.second, cutpose.size() ) );
 
 				//assemble new construct by insertion
 				//the new domain insertion construct

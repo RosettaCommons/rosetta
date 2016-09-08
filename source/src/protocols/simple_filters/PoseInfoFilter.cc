@@ -61,7 +61,7 @@ PoseInfoFilter::report_sm( core::pose::Pose const & pose ) const
 
 void PoseInfoFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	out << "Pose Information: " << pose.total_residue() << " residues " << std::endl;
+	out << "Pose Information: " << pose.size() << " residues " << std::endl;
 	pose.pdb_info()->show( out );
 
 	out << pose.fold_tree(); // Has implicit internal std::endl;

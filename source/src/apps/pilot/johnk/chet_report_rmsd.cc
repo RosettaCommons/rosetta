@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 	std::string const input_pdb_name ( basic::options::start_file() );
 	core::import_pose::pose_from_file( curr_pose, input_pdb_name , core::import_pose::PDB_file);
 
-	if ( curr_pose.total_residue() != native_pose.total_residue() ) {
+	if ( curr_pose.size() != native_pose.size() ) {
 		TR << "ERROR!! Native and comparison pose do not have the same number of residues!!" << std::endl;
 		exit(1);
 	}
@@ -103,7 +103,7 @@ main( int argc, char * argv [] )
 	// find rosetta resid for the residue of interest
 	int const monitor_rmsd_pdb_number = option[ rms_resnum ];
 	rosetta_resnum = 0;
-	for ( core::Size j = 1; j <= curr_pose.total_residue(); ++j ) {
+	for ( core::Size j = 1; j <= curr_pose.size(); ++j ) {
 		if ( ( curr_pose.pdb_info()->number(j) == monitor_rmsd_pdb_number ) ) {
 					 rosetta_resnum = j;
 		}

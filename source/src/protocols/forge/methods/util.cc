@@ -109,7 +109,7 @@ union_interval(
 /// @brief moving left to right, find the first true cutpoint within specified
 ///  extent
 /// @return the cutpoint position, otherwise 0 if not found
-/// @details 0, pose.n_residue(), and any cutpoint with lower/upper terminus
+/// @details 0, pose.size(), and any cutpoint with lower/upper terminus
 ///  are not counted as cutpoints
 core::Size
 find_cutpoint(
@@ -124,7 +124,7 @@ find_cutpoint(
 	FoldTree const & ft = pose.fold_tree();
 
 	for ( Size i = left; i <= right; ++i ) {
-		if ( ft.is_cutpoint( i ) && i < pose.n_residue() &&
+		if ( ft.is_cutpoint( i ) && i < pose.size() &&
 				!pose.residue( i ).is_lower_terminus() &&
 				!pose.residue( i ).is_upper_terminus()
 				) {
@@ -138,7 +138,7 @@ find_cutpoint(
 
 /// @brief moving left to right, count the number of true cutpoints within the
 ///  specified extent
-/// @details 0, pose.n_residue(), and any cutpoint with lower/upper terminus
+/// @details 0, pose.size(), and any cutpoint with lower/upper terminus
 ///  are not counted as cutpoints
 core::Size
 count_cutpoints(
@@ -154,7 +154,7 @@ count_cutpoints(
 	FoldTree const & ft = pose.fold_tree();
 
 	for ( Size i = left; i <= right; ++i ) {
-		if ( ft.is_cutpoint( i ) && i < pose.n_residue() &&
+		if ( ft.is_cutpoint( i ) && i < pose.size() &&
 				!pose.residue( i ).is_lower_terminus() &&
 				!pose.residue( i ).is_upper_terminus()
 				) {
@@ -229,7 +229,7 @@ fold_tree_from_loops(
 	} else { // need to pick a random non-moveable residue
 
 		utility::vector1< Size > fixed_bb;
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			if ( !mm.get_bb( i ) ) {
 				fixed_bb.push_back( i );
 			}
@@ -353,7 +353,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 			if ( pose.pdb_info() ) {
 				resid = pose.pdb_info()->pdb2pose().find( chain, PDBnum, icode );
 			} else {
-				if ( (1 <= PDBnum) && (PDBnum <= (int)pose.total_residue()) ) {
+				if ( (1 <= PDBnum) && (PDBnum <= (int)pose.size()) ) {
 					resid = PDBnum;
 				}
 			}
@@ -520,7 +520,7 @@ calc_rsd_sasa( core::pose::Pose const & pose ) {
 	// define atom_map for main-chain and CB
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( core::Size j = 1; j<=5; ++j ) {
 			core::id::AtomID atom( j, ir );
 			atom_map.set( atom, true );

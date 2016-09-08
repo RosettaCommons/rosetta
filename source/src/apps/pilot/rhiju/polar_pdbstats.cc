@@ -117,7 +117,7 @@ search_other_atoms( pose::Pose const & pose, Vector const & xyz_polarH, Vector c
 
 	static Distance const DIST_CUTOFF ( 8.0 );
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	Size const & i = rsd_i.seqpos();
 
 	for ( Size j = 1; j <= nres; j++ ){
@@ -160,7 +160,7 @@ polar_pdbstats_from_pose( utility::io::ozstream & out1,
 	using namespace core::scoring::hbonds;
 	using namespace core::chemical::rna;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	// start with polar hydrogens [H-bond donors]
 	std::cout << "about to start processing " << std::endl;

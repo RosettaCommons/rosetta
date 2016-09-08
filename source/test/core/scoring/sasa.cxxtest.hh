@@ -278,7 +278,7 @@ public:
 		//core::pose::make_pose_from_sequence( pose, "G", *rsd_set );
 		core::import_pose::pose_from_file( pose, "core/scoring/nonideal_glycine.pdb" , core::import_pose::PDB_file);
 
-		for ( Size ii=1; ii <= pose.n_residue(); ii+=3 ) {
+		for ( Size ii=1; ii <= pose.size(); ii+=3 ) {
 			pose.set_phi( ii, -150.0 );
 			pose.set_psi( ii, 150.0 );
 			pose.set_omega( ii, 180.0 );
@@ -294,8 +294,8 @@ public:
 		//ronj debug a vector1 problem; therefore, I'm init'ing the values of the atom_subset atomid_map myself.
 		//id::initialize_heavy_only( atom_subset, pose, true ); // this call leads to uninit'd values in the map, causing random results
 		atom_subset.clear();
-		atom_subset.resize( pose.n_residue() );
-		for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		atom_subset.resize( pose.size() );
+		for ( Size ii=1; ii <= pose.size(); ++ii ) {
 			atom_subset.resize( ii, pose.residue_type(ii).natoms(), false );
 			for ( Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
 				atom_subset[ ii ][ jj ] = true;
@@ -331,8 +331,8 @@ public:
 		pose = create_1ten_pdb_pose();
 
 		core::Real total_hydrophobic_sasa = 0.0;
-		utility::vector1< core::Real > residue_sasa( pose.total_residue(), 0.0 );
-		utility::vector1< core::Real > residue_hsasa( pose.total_residue(), 0.0 ); // hydrophobic SASA only
+		utility::vector1< core::Real > residue_sasa( pose.size(), 0.0 );
+		utility::vector1< core::Real > residue_hsasa( pose.size(), 0.0 ); // hydrophobic SASA only
 		total_hydrophobic_sasa = core::scoring::calc_per_res_hydrophobic_sasa( pose, residue_sasa, residue_hsasa, 1.4 /* probe radius */ );
 
 		TS_ASSERT_DELTA( total_hydrophobic_sasa, 2701.0680, TOLERATED_ERROR );

@@ -219,7 +219,7 @@ std::cout << "CENTROID mode" << std::endl;
 		char cur_ch = pdb_info.res_chain(1);
 		std::cout << "current chain: " <<  cur_ch << std::endl;
 		int cur_ch_start = 1;
-		for(int i = 2; i <= _src_pose.total_residue(); i++)
+		for(int i = 2; i <= _src_pose.size(); i++)
 		{
 			char prev_ch = cur_ch;
 			cur_ch = pdb_info.res_chain(i);
@@ -234,7 +234,7 @@ std::cout << "CENTROID mode" << std::endl;
 		}
 		// last chain
 		chain_boundaries_map.insert(
-				std::make_pair(cur_ch, Chain_boundaries(cur_ch_start, _src_pose.total_residue()))
+				std::make_pair(cur_ch, Chain_boundaries(cur_ch_start, _src_pose.size()))
 		);
 	}
 
@@ -502,21 +502,21 @@ path_rover::run(){
 	if(local_debug >= 2){
 		std::cout << "PHI/PSI sample - SOURCE structure : ";
 		int i;
-		for ( i=1; i <= _src_pose.total_residue(); i += 1 /*10 sample only...*/) {
+		for ( i=1; i <= _src_pose.size(); i += 1 /*10 sample only...*/) {
 			std::cout << "[res #" << i
 				  << " phi " << _src_pose.phi(i)
 				  << " psi = " << _src_pose.psi(i) << "] ";
 		}
 		std::cout << std::endl;
 		std::cout << "PHI/PSI sample - TARGET structure : ";
-		for ( i=1; i <= _trg_pose.total_residue(); i += 1 /*10 sample only...*/) {
+		for ( i=1; i <= _trg_pose.size(); i += 1 /*10 sample only...*/) {
 			std::cout << "[res #" << i
 				  << " phi " << _trg_pose.phi(i)
 				  << " psi = " << _trg_pose.psi(i) << "] ";
 		}
 		std::cout << std::endl;
 		std::cout << "PHI/PSI sample - Delta(SRC, TRG) : ";
-                for ( i=1; i <= _trg_pose.total_residue(); i += 1 /*10 sample only...*/) {
+                for ( i=1; i <= _trg_pose.size(); i += 1 /*10 sample only...*/) {
 		  std::cout << "[res #" << i
 			    << " phi " << _trg_pose.phi(i) - _src_pose.phi(i)
 			    << " psi = " << _trg_pose.psi(i) - _src_pose.psi(i) << "] "
@@ -543,20 +543,20 @@ path_rover::run(){
 	}
 
 // 	// idealize the bond angles & length of the peptide, to allow fragment insertion
-// 	_src_pose.insert_ideal_bonds( 1, _src_pose.total_residue() );
-// 	_trg_pose.insert_ideal_bonds( 1, _trg_pose.total_residue() );
+// 	_src_pose.insert_ideal_bonds( 1, _src_pose.size() );
+// 	_trg_pose.insert_ideal_bonds( 1, _trg_pose.size() );
 // 	_src_pose.dump_pdb("./output/run_start_SRC_ideal_bonds.pdb"); // DEBUG
 // 	_trg_pose.dump_pdb("./output/run_start_TRG_ideal_bonds.pdb"); // DEBUG
 
 // 	if(local_debug){
 // 		std::cout << "PHI/PSI sample - ideal SOURCE structure : ";
 // 		int i;
-// 		for ( i=1; i <= _src_pose.total_residue(); i += 10 /*sample only...*/) {
+// 		for ( i=1; i <= _src_pose.size(); i += 10 /*sample only...*/) {
 // 			std::cout << "[res #" << i << " phi " << _src_pose.phi(i) << " psi = " << _src_pose.psi(i) << "] ";
 // 		}
 // 		std::cout << std::endl;
 // 		std::cout << "PHI/PSI sample - ideal TARGET structure : ";
-// 		for ( i=1; i <= _trg_pose.total_residue(); i += 10 /*sample only...*/) {
+// 		for ( i=1; i <= _trg_pose.size(); i += 10 /*sample only...*/) {
 // 			std::cout << "[res #" << i << " phi " << _trg_pose.phi(i) << " psi = " << _trg_pose.psi(i) << "] ";
 // 		}
 // 		std::cout << std::endl;
@@ -586,8 +586,8 @@ path_rover::run(){
 	if(_params_h.full_atom)
 	{
 		// full repack of src & trg pose
-		FArray1D_bool allow_repack(_src_pose.total_residue(), false);
-		for( int i = 1; i <= _src_pose.total_residue(); ++i ) {
+		FArray1D_bool allow_repack(_src_pose.size(), false);
+		for( int i = 1; i <= _src_pose.size(); ++i ) {
 			allow_repack(i) = true;
 		}
 		_src_pose.repack( allow_repack, true/*include_current*/ );
@@ -596,8 +596,8 @@ path_rover::run(){
 		if(_params_h.algo_name == "BI_TREE")
 		{
 			// repack trg pose
-			FArray1D_bool allow_repack_t(_trg_pose.total_residue(), false);
-			for(int i = 1; i <= _trg_pose.total_residue(); ++i ) {
+			FArray1D_bool allow_repack_t(_trg_pose.size(), false);
+			for(int i = 1; i <= _trg_pose.size(); ++i ) {
 				allow_repack(i) = true;
 			}
 			_trg_pose.repack( allow_repack, true/*include_current*/ );

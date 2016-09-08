@@ -71,22 +71,22 @@ void test() {
 	ResidueOP new_res1(
 			core::conformation::ResidueFactory::create_residue(
 				rsd_set->name_map( "INO" ) ) );
-	pose.append_residue_by_jump( *new_res1, pose.total_residue() );
+	pose.append_residue_by_jump( *new_res1, pose.size() );
 
 	ResidueOP new_res2(
 			core::conformation::ResidueFactory::create_residue(
 				rsd_set->name_map( "IGU" ) ) );
-	pose.append_residue_by_jump( *new_res2, pose.total_residue() );
+	pose.append_residue_by_jump( *new_res2, pose.size() );
 
 	ResidueOP new_res3(
 			core::conformation::ResidueFactory::create_residue(
 				rsd_set->name_map( "ICY" ) ) );
-	pose.append_residue_by_jump( *new_res3, pose.total_residue() );
+	pose.append_residue_by_jump( *new_res3, pose.size() );
 
 	ResidueOP new_res4(
 			core::conformation::ResidueFactory::create_residue(
 				rsd_set->name_map( "1AP" ) ) );
-	pose.append_residue_by_jump( *new_res4, pose.total_residue() );
+	pose.append_residue_by_jump( *new_res4, pose.size() );
 
 	pose.dump_pdb( "all.pdb" );
 }

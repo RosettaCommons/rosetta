@@ -93,7 +93,7 @@ repack_base_pair_neighbors(
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 	Size const seqpos_partner( partner[ seqpos ] );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	utility::vector1< bool > is_base_pair_neighbor( nres, false );
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( scorefxn.are_they_neighbors( pose, i, seqpos ) ||
@@ -113,7 +113,7 @@ repack_base_pair_neighbors(
 	if ( include_current ) task->or_include_current( true );
 	else                   task->or_include_current( false );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			if ( is_base_pair_neighbor[i] ) {
 				task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -189,7 +189,7 @@ packing_specificity_test_fast(
 	tt << "packing_specificity_test::  nmotif_positions= " << motif_positions.size() <<
 		" min_type= " << min_type << " scorefxn: " << scorefxn << std::endl;
 
-	Size const nres( start_pose.total_residue() );
+	Size const nres( start_pose.size() );
 	BasePartner const & partner( retrieve_base_partner_from_pose( start_pose ) );
 
 	// setup the positions
@@ -395,7 +395,7 @@ packing_specificity_test(
 	tt << "packing_specificity_test::  motif_begin= " << motif_begin << " motif_size= " << motif_size <<
 		" min_type= " << min_type << " min_tol= " << min_tol << " scorefxn: " << scorefxn << std::endl;
 
-	Size const nres( start_pose.total_residue() );
+	Size const nres( start_pose.size() );
 	BasePartner const & partner( retrieve_base_partner_from_pose( start_pose ) );
 
 	// setup the positions

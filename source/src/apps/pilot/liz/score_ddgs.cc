@@ -264,8 +264,8 @@ calc_ddg(utility::vector1<pose::Pose> mut, utility::vector1<pose::Pose> wt,
 std::string
 mut_info(pose::Pose m,pose::Pose w){
 	std::string info = "";
-	assert(m.total_residue() == w.total_residue());
-	for(unsigned int ii = 1;ii <= m.total_residue(); ii++){
+	assert(m.size() == w.size());
+	for(unsigned int ii = 1;ii <= m.size(); ii++){
 		if(m.residue(ii).name1() != w.residue(ii).name1()){
 			std::ostringstream convert_to_string;
 			convert_to_string << ii;
@@ -374,16 +374,16 @@ print_verbose_ddgs(utility::vector1<pose::Pose> mut,
 	//output for each residue:
 	//mutation info + residue number + energies
 
-	utility::vector1<double> avg_res_total_E_diff(mut[1].total_residue(),0.0);
+	utility::vector1<double> avg_res_total_E_diff(mut[1].size(),0.0);
 
 	if(mean){
 		//compute mean residue difference across all poses and residues
-		FArray2D<double> avg_score_components(mut[1].total_residue(),nonzero_weights.size(),0.0);
+		FArray2D<double> avg_score_components(mut[1].size(),nonzero_weights.size(),0.0);
 
 		for(unsigned int ii = 1; ii <= mut.size(); ii++){ //iterate over mutant poses
 			//mut_i.accumulate_residue_total_energies();
 			(*sfxn)(mut[ii]); //in order to update energies
-			for(unsigned int resn = 1; resn <= mut[1].total_residue(); resn++){
+			for(unsigned int resn = 1; resn <= mut[1].size(); resn++){
 				EnergyMap mut_i_resn = mut[ii].energies().residue_total_energies(resn);
 				avg_res_total_E_diff[resn]+=mut[ii].energies().residue_total_energy(resn)*((double)1/(double)mut.size());
 				//		std::cout << "DEBUG: " << mut[ii].energies().residue_total_energy(resn)*((double)1/(double)mut.size()) << std::endl;
@@ -395,7 +395,7 @@ print_verbose_ddgs(utility::vector1<pose::Pose> mut,
 		for(unsigned int ii = 1; ii <= wt.size(); ii++){//iterate over wt poses
 			//wt_i.accumulate_residue_total_energies();
 			(*sfxn)(wt[ii]);
-			for(unsigned int resn = 1; resn <= wt[1].total_residue(); resn++){
+			for(unsigned int resn = 1; resn <= wt[1].size(); resn++){
 				EnergyMap wt_i_resn = wt[ii].energies().residue_total_energies(resn);
 				avg_res_total_E_diff[resn]-=(wt[ii].energies().residue_total_energy(resn))*((double)1/(double)wt.size());
 				for(unsigned int s = 1; s <= nonzero_weights.size(); s++){
@@ -434,7 +434,7 @@ print_verbose_ddgs(utility::vector1<pose::Pose> mut,
 		Energies we = wt[min_wt_ind].energies();
 
 		//total energy with hbond_lr_bb and hbond_sr_bb
-		for(unsigned int resn = 1; resn <= mut[1].total_residue(); resn++){
+		for(unsigned int resn = 1; resn <= mut[1].size(); resn++){
 			EnergyMap m(mut[min_mut_ind].energies().residue_total_energies(resn));
 			EnergyMap w(wt[min_wt_ind].energies().residue_total_energies(resn));
 			outfile <<curr_mut_info << ' ' << resn << ' ';
@@ -456,8 +456,8 @@ num_nbrs(pose::Pose p){
 	utility::vector1<int> nbrs;
 	core::scoring::TenANeighborGraph const tenA_neighbor_graph( p.energies().tenA_neighbor_graph() );
 
-	nbrs.resize( p.total_residue() );
-	for ( Size i=1; i<= p.total_residue(); ++i ) {
+	nbrs.resize( p.size() );
+	for ( Size i=1; i<= p.size(); ++i ) {
 		{
 			nbrs[i] = 1;
 			for ( graph::Graph::EdgeListConstIter

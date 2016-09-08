@@ -184,8 +184,8 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	cdr_dock_map_->clear();
 	cdr_dock_map_->set_chi( false );
 	cdr_dock_map_->set_bb( false );
-	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+	utility::vector1< bool> bb_is_flexible( pose.size(), false );
+	utility::vector1< bool> sc_is_flexible( pose.size(), false );
 
 	select_loop_residues( pose, all_loops_, false/*include_neighbors*/, bb_is_flexible);
 	cdr_dock_map_->set_bb( bb_is_flexible );
@@ -203,8 +203,8 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
-	ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	ObjexxFCL::FArray1D_bool loop_residues( pose.size(), false );
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		loop_residues(i) = sc_is_flexible[i];
 	} // check mapping
 

@@ -302,7 +302,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 			//task->initialize_from_command_line();
-			for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+			for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 				if ( ( i == *pos_try_it ) || ( i == target_residue ) ) {
 					task->nonconst_residue_task( i ).restrict_to_repacking();
 					task->nonconst_residue_task( i ).initialize_from_command_line();
@@ -380,8 +380,8 @@ SecondaryMatchProtocol::find_all_allowed_positions(
 
 	//still to be developed properly. for now we assume that we only allow attaching
 	//residues at the design or repack positions as specified by the one ligand in the pose
-	utility::vector1< bool > dummy( pose.total_residue() );
-	utility::vector1< bool > allowed_res( pose.total_residue() );
+	utility::vector1< bool > dummy( pose.size() );
+	utility::vector1< bool > allowed_res( pose.size() );
 	std::set< core::Size > interface_res;
 	interface_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
 	DetectProteinLigandInterfaceOP lig_prot_interface( new DetectProteinLigandInterface() );
@@ -389,7 +389,7 @@ SecondaryMatchProtocol::find_all_allowed_positions(
 
 	//utility::vector1< core::Size > cat_res = catalytic_res();
 
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 
 		if ( allowed_res[ i ] == true ) {
 

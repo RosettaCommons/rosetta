@@ -52,13 +52,13 @@ void
 loopfinder( core::pose::Pose & pose , loops::Loops & loops ){
 	// this function will not find terminal loops
 	// get dssp info
-	core::Size lastres = pose.total_residue();
+	core::Size lastres = pose.size();
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
 
 	utility::vector1< utility::vector1< core::Size > >all_loops;
 	utility::vector1< core::Size > ind_loops;
-	for ( core::Size ii = 1; ii < pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii < pose.size(); ++ii ) {
 		if ( pose.secstruct(ii) == 'L' && pose.secstruct(ii+1) == 'L' ) {
 			ind_loops.push_back(ii);
 		}

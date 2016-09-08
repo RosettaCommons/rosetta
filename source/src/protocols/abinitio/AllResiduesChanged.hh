@@ -39,14 +39,14 @@ public:
 		core::fragment::InsertMap const& insert_map,
 		core::kinematics::MoveMap const& mm
 	) :
-		insert_pos_( pose.total_residue(), false )
+		insert_pos_( pose.size(), false )
 	{
 		set_initial_pose( pose );
 		compute_insert_pos( insert_map, mm );
 	}
 
 	AllResiduesChanged( core::pose::Pose const & pose ) :
-		insert_pos_( pose.total_residue(), true )
+		insert_pos_( pose.size(), true )
 	{
 		set_initial_pose( pose );
 	}
@@ -65,7 +65,7 @@ private:
 	}
 
 	void set_initial_pose( const core::pose::Pose & pose ) {
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			if ( ! pose.residue(i).is_protein() ) continue;
 			initial_phis.push_back( pose.phi(i) );
 			initial_psis.push_back( pose.psi(i) );
@@ -77,7 +77,7 @@ private:
 public:
 	void show_unmoved( const core::pose::Pose & pose, std::ostream& out ) {
 		runtime_assert( original_sequence_ == pose.sequence() );
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( ! pose.residue(i).is_protein() )  continue;
 			if ( initial_phis[i] == pose.phi(i) && insert_pos_[ i ] ) {
 				out << i << " ";
@@ -92,7 +92,7 @@ public:
 
 	bool operator() ( const core::pose::Pose & pose ) override {
 		runtime_assert( original_sequence_ == pose.sequence() ); // imperfect attempt to check that Pose hasn't changed ...
-		for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
+		for ( unsigned int i = 1; i <= pose.size(); ++i ) {
 			if ( ! pose.residue(i).is_protein() ) continue;
 			if ( initial_phis[i] == pose.phi(i) && insert_pos_[ i ] ) {
 				return false;

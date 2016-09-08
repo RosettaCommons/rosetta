@@ -294,7 +294,7 @@ VirtualSugarJustInTimeInstantiator::instantiate_sugars_at_cutpoint_closed( pose:
 		Size const & sugar_res = sugar_modeling_sets_[n]->moving_res;
 		if ( pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_UPPER ) ||
 				pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-				( sugar_res < pose.total_residue() && !pose.fold_tree().is_cutpoint( sugar_res ) ) ||
+				( sugar_res < pose.size() && !pose.fold_tree().is_cutpoint( sugar_res ) ) ||
 				( sugar_res > 1 && !pose.fold_tree().is_cutpoint( sugar_res - 1 ) ) ) {
 			instantiate_sugar( pose, *sugar_modeling_sets_[ n ], 1 );
 		}

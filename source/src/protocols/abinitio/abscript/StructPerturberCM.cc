@@ -85,7 +85,7 @@ claims::EnvClaims StructPerturberCM::yield_claims( core::pose::Pose const& in_po
 
 	claims::TorsionClaimOP claim( new claims::TorsionClaim(
 		utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
-		label(), std::make_pair( 1, in_pose.total_residue() ) ) );
+		label(), std::make_pair( 1, in_pose.size() ) ) );
 	claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
 	claims.push_back( claim );
@@ -107,14 +107,14 @@ void StructPerturberCM::apply( core::pose::Pose& pose ){
 		DofUnlock unlock( pose.conformation(), passport() );
 		core::kinematics::MoveMapOP mm = passport()->render_movemap();
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			for ( DofPassport::const_iterator it = passport()->begin();
 					it != passport()->end(); ++it ) {
 				pose.set_dof( *it, pose.dof( *it) + ( numeric::random::rg().gaussian() * magnitude_ ) );
 			}
 		}
 	} else {
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, pose.phi( i ) + numeric::random::rg().gaussian() * magnitude_ );
 			pose.set_psi( i, pose.psi( i ) + numeric::random::rg().gaussian() * magnitude_ );
 		}

@@ -425,7 +425,7 @@ RNA_DMS_Potential::check_chbonded( pose::Pose const & pose,
 	Size const acc_atm( acc_rsd.atom_index( atom_name ) );
 	static Real const ENERGY_CUTOFF = -0.4;
 	bool found_chbond( false );
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 
 		if ( i == j ) continue;
 
@@ -476,7 +476,7 @@ RNA_DMS_Potential::get_occupancy_densities( utility::vector1< Real > & occupancy
 
 	utility::vector1< Size > num_atoms_in_shells( shells.size() - 1, 0 );
 	Real const max_distance = shells[ shells.size() ];
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 		if ( i == j ) continue;
 		core::conformation::Residue const & rsd = pose.residue( j );
 		for ( Size jj = 1; jj <= rsd.natoms(); jj++ ) {
@@ -541,7 +541,7 @@ RNA_DMS_Potential::update_virtual_base_if_necessary( pose::Pose & pose, Size con
 	// virtualize adenosine where probe would stick, or will get weird clashes. Note also that
 	// this should be constant contribution to all A's.
 	add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_BASE, i );
-	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+	for ( Size j = 1; j <= pose.size(); j++ ) {
 		if ( i == j ) continue;
 		remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_BASE, j );
 	}
@@ -550,7 +550,7 @@ RNA_DMS_Potential::update_virtual_base_if_necessary( pose::Pose & pose, Size con
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_DMS_Potential::add_probe_to_pose( pose::Pose & pose ){
-	Size const i = pose.total_residue();
+	Size const i = pose.size();
 	core::chemical::ResidueTypeSetCOP rsd_set = pose.residue( i ).residue_type_set();
 	core::chemical::ResidueTypeCOP rsd_type ( rsd_set->get_representative_type_name3 ( " CZ" ) ); // just a carbon atom.
 	core::conformation::ResidueOP probe_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
@@ -574,9 +574,9 @@ RNA_DMS_Potential::get_binding_energy( Size const i,
 
 	Real const score_start = ( scorefxn )( pose );
 
-	Size const probe_res = pose_with_probe.total_residue();
+	Size const probe_res = pose_with_probe.size();
 	runtime_assert( pose_with_probe.residue( probe_res ).name3() == " CZ" ); // probe.
-	core::conformation::Residue const & probe_rsd = pose_with_probe.residue( pose_with_probe.total_residue() );
+	core::conformation::Residue const & probe_rsd = pose_with_probe.residue( pose_with_probe.size() );
 	core::Vector const start_xyz = probe_rsd.xyz( " C1 " );
 	core::Vector const translation = probe_xyz - start_xyz;
 	for ( Size k = 1; k <= probe_rsd.natoms(); k++ ) pose_with_probe.set_xyz( id::AtomID( k, probe_res ), probe_rsd.xyz( k ) + translation );

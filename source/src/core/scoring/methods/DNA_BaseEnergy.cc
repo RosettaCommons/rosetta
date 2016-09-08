@@ -196,7 +196,7 @@ DNA_BaseEnergy::eval_atom_derivative(
 	// base step derivs
 	if ( weights[ dna_bs ] != 0.0 ) {
 		// to next residue:
-		if ( pos1 < pose.total_residue() ) {
+		if ( pos1 < pose.size() ) {
 			Size const pos2( pos1+1 );
 			conformation::Residue const & rsd2( pose.residue( pos2 ) );
 			if ( rsd2.is_DNA() && count_pair_bs( pos1, pos2, base_partner ) ) {

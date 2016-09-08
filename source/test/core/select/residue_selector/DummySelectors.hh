@@ -32,7 +32,7 @@ public:
 	ResidueSubset
 	apply( core::pose::Pose const & pose ) const
 	{
-		ResidueSubset subset( pose.total_residue(), false );
+		ResidueSubset subset( pose.size(), false );
 		for ( core::Size ii = 1; ii <= subset.size(); ii += 2 ) {
 			subset[ ii ] = true;
 		}
@@ -60,7 +60,7 @@ public:
 	virtual
 	ResidueSubset apply( core::pose::Pose const & pose ) const
 	{
-		ResidueSubset subset( pose.total_residue(), false );
+		ResidueSubset subset( pose.size(), false );
 		std::fill( subset.begin(), subset.end(), false );
 		for ( core::Size ii = x_; ii <= subset.size(); ii += y_ ) {
 			subset[ ii ] = true;

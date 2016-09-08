@@ -145,7 +145,7 @@ public:
 		core::pack::task::PackerTaskOP test_task;
 		test_task = core::pack::task::TaskFactory::create_packer_task( test_pose );
 
-		for ( core::Size i = 1; i <= test_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= test_pose.size(); ++i ) {
 			if ( (i==22) || (i==37) || (i==59) ) test_task->nonconst_residue_task(i).restrict_to_repacking();
 			else test_task->nonconst_residue_task(i).prevent_repacking();
 		}
@@ -166,7 +166,7 @@ public:
 		utility::vector1< core::Size > res2_hb = mval.value();
 
 		//after this repack step, all hbonds should still be intact
-		for ( core::Size i = 1; i <= test_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= test_pose.size(); ++i ) {
 			//   std::cerr << "res " << i <<", hbbef " << res_hb[i] <<", hbaft " << res2_hb[i] << std::endl;
 			TS_ASSERT_DELTA( res_hb[i],res2_hb[i],1e-3);
 		}
@@ -177,7 +177,7 @@ public:
 
 		TR << "residue 6 has " << res_bur_mval.value()[6] << " buried unsatisfied polars." << std::endl;
 
-		//for( core::Size i = 1; i <= test_pose.total_residue(); ++i){
+		//for( core::Size i = 1; i <= test_pose.size(); ++i){
 		// TR << "residue " << i << " has " <<  res_bur_mval.value()[i] << " bur unsat polars." << std::endl;
 		//}
 

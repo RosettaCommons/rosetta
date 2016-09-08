@@ -217,7 +217,7 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 			if ( ( first_token == "ALL" ) || (first_token == "all" ) ) {
 				if ( !pose ) utility_exit_with_message("AllowedSeqposForGeomCst requested to use all build pos for a certain constraint, but no pose passed into function, can't generate list.");
 				TR << "All pose positions requested, using ";
-				for ( core::Size seqpos = 1; seqpos <= pose->total_residue(); ++seqpos ) {
+				for ( core::Size seqpos = 1; seqpos <= pose->size(); ++seqpos ) {
 					if ( pose->residue(seqpos).is_protein() ) {
 						seqpos_for_geomcst_[geomcst_id ].push_back( seqpos );
 						TR << " " << seqpos;
@@ -228,7 +228,7 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 				Size first_resid(0);
 				std::istringstream firststr( first_token );
 				firststr >> first_resid;
-				if ( first_resid != 0 ) { //&& (first_resid <= upstream_pose_->total_residue() )){
+				if ( first_resid != 0 ) { //&& (first_resid <= upstream_pose_->size() )){
 					seqpos_for_geomcst_[geomcst_id].push_back( first_resid );
 					TR << " " << first_resid;
 				} else {
@@ -242,13 +242,13 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 						isstr >> resid;
 						if ( isstr.eof() && resid == 0 ) break;
 						if ( ! isstr.bad() ) {
-							//if ( resid > 0 && resid <= upstream_pose_->total_residue() ) {
+							//if ( resid > 0 && resid <= upstream_pose_->size() ) {
 							TR << " " << resid;
 							seqpos_for_geomcst_[ geomcst_id ].push_back( resid );
 							//}
-							//else if ( resid > upstream_pose_->total_residue() ){
+							//else if ( resid > upstream_pose_->size() ){
 							//std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
-							//utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Requested upstream build resid of " + utility::to_string(resid) + " exceeds the number of residues in the pose ( " + utility::to_string( upstream_pose_->total_residue() ) + ")"  );
+							//utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Requested upstream build resid of " + utility::to_string(resid) + " exceeds the number of residues in the pose ( " + utility::to_string( upstream_pose_->size() ) + ")"  );
 							//} else {
 							//std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
 							//utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Failed to read an integer."  );

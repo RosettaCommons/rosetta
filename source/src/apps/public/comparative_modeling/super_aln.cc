@@ -93,7 +93,7 @@ main( int argc, char * argv [] ) {
 			residues = option[ in::target_residues ]();
 		} else {
 			// use all aligned residues
-			for ( Size ii = 1; ii <= pose1.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose1.size(); ++ii ) {
 				residues.push_back(ii);
 			}
 		}

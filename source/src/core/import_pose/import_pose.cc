@@ -157,15 +157,15 @@ read_additional_pdb_data(
 			//Check that we have at least two elements left ([1]=index, [2-n]=PDBinfo-labels)
 			if ( remark_values.size() > 1 ) {
 				core::Size tmp_ndx=atoi(remark_values[1].c_str());
-				if ( tmp_ndx <= pose.total_residue() ) {
+				if ( tmp_ndx <= pose.size() ) {
 					for ( Size j=2; j<= remark_values.size(); ++j ) {
 						pose.pdb_info()->add_reslabel(tmp_ndx,remark_values[j]);
 					}
 				} else {
-					TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.total_residue()  << std::endl;
+					TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.size()  << std::endl;
 				}
 			} else {
-				TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.total_residue() << std::endl;
+				TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.size() << std::endl;
 			}
 		}
 	}
@@ -180,11 +180,11 @@ read_additional_pdb_data(
 			std::string tag;
 			kinematics::FoldTree f;
 			l >> tag >> f;
-			if ( !l.fail() && Size(f.nres()) == pose.total_residue() ) {
+			if ( !l.fail() && Size(f.nres()) == pose.size() ) {
 				TR << "setting foldtree from pdb file: " << f << std::endl;
 				pose.fold_tree( f );
 			} else {
-				TR.Fatal << "pose_io:: foldtree io failure: " << line << ' ' << pose.total_residue()
+				TR.Fatal << "pose_io:: foldtree io failure: " << line << ' ' << pose.size()
 					<< ' ' << f << std::endl;
 				utility_exit();
 			}
@@ -715,7 +715,7 @@ void build_pose_as_is2(
 
 	// If pose contains carbohydrate residues, assure that their virtual atoms have the correct coordinates.
 	if ( pose.conformation().contains_carbohydrate_residues() ) {
-		for ( uint i = 1, n_residues = pose.total_residue(); i <= n_residues; ++i ) {
+		for ( uint i = 1, n_residues = pose.size(); i <= n_residues; ++i ) {
 			ResidueType const & res_type = pose.residue_type(i);
 			if ( res_type.is_carbohydrate() ) {
 				pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue(pose, i);

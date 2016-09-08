@@ -110,7 +110,7 @@ main( int argc, char* argv [] ) {
 	std::string tag( core::pose::tag_from_pose(current_pose) );
 
 	//One body energies
-	for ( Size ii = 1; ii <= current_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= current_pose.size(); ++ii ) {
 		EnergyNode const * node(egraph.get_energy_node(ii));
 		runtime_assert( node != 0 );
 		EnergyMap unwt_residue1b;
@@ -134,8 +134,8 @@ main( int argc, char* argv [] ) {
 	}
 
 	// Two body energies
-	for ( Size ii = 1; ii <= current_pose.total_residue(); ++ii ) {
-		for ( Size jj = ii + 1; jj <= current_pose.total_residue(); ++jj ) {
+	for ( Size ii = 1; ii <= current_pose.size(); ++ii ) {
+		for ( Size jj = ii + 1; jj <= current_pose.size(); ++jj ) {
 			EnergyMap pair_energies;
 			bool output( false );
 
@@ -185,7 +185,7 @@ main( int argc, char* argv [] ) {
 				sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
 			}
 		} // for inner residue loop
-	} // for Two body current_pose.total_residue()
+	} // for Two body current_pose.size()
 
 	return 0;
 

@@ -157,7 +157,7 @@ SealFoldTreeMover::remove_cutpoints( core::pose::Pose & pose ) const
 		// remove cutpoint variants from this residue if they are present
 		if ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, resid );
-			if ( ( resid + 1 <= pose.total_residue() ) && ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) ) {
+			if ( ( resid + 1 <= pose.size() ) && ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) ) {
 				core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, resid + 1 );
 			}
 		}

@@ -745,7 +745,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 						// get pose CA coords
 						std::vector< core::Vector > pose_coords;
 						std::vector< core::Vector > native_pose_coords;
-						for ( Size i=1; i<=pose.total_residue(); i++ ) {
+						for ( Size i=1; i<=pose.size(); i++ ) {
 							pose_coords.push_back( pose.residue(i).xyz("CA") );
 						}
 						for ( Size i=0; i<fragment_size; i++ ) {

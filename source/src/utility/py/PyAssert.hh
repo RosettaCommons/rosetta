@@ -23,7 +23,7 @@
 ///        will throw boost::python exception that python interpreter will catch.
 ///        This macro works only when PYROSETTA macro was defined.
 ///
-/// Example of usage: PyAssert( (residue_num > 0) && (residue_num<=pose.n_residue()), "Residue not found in pose!"  )
+/// Example of usage: PyAssert( (residue_num > 0) && (residue_num<=pose.size()), "Residue not found in pose!"  )
 ///
 #if defined(PYROSETTA) || ! defined(NDEBUG)  // PyRosetta asserts, we also enable then in our DEBUG mode as well
 #define PyAssert(x, m) { if(!(x)) utility_exit_with_message(m); }

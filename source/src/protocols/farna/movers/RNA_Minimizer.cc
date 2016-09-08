@@ -222,7 +222,7 @@ RNA_Minimizer::o2prime_trials(
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	//task->initialize_from_command_line(); //Jan 20, 2012 Testing.
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue(i).is_RNA() ) continue;
 
 		task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
@@ -244,7 +244,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	using namespace core::id;
 	using namespace core::chemical::rna;
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	mm.set_bb( false );
 	mm.set_chi( false );
@@ -323,7 +323,7 @@ RNA_Minimizer::update_atom_level_domain_map_with_extra_minimize_res( pose::Pose 
 		}
 
 		if ( pose.fold_tree().is_cutpoint( i ) ) continue;
-		if ( i > pose.total_residue() ) continue;
+		if ( i > pose.size() ) continue;
 		if ( !pose.residue( i+1 ).is_RNA() ) continue;
 
 		// go ahead and minimize backbone torsions up to next pucker.

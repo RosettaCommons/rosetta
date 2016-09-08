@@ -123,7 +123,7 @@ DNATorsionPotential::setup_constraints(
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionPotential::add_sugar_ring_closure_constraints( pose::Pose & pose, constraints::ConstraintSet & cst_set ) const {
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		add_sugar_ring_closure_constraints( pose.residue( i ), cst_set );
 	}
 }
@@ -180,7 +180,7 @@ DNATorsionPotential::add_dna_base_distance_constraints(
 	constraints::ConstraintSet & cst_set ) const
 {
 	using namespace core::chemical;
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	for ( Size i = 1; i < nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
 		conformation::Residue const & next_rsd( pose.residue( i + 1 ) );
@@ -234,7 +234,7 @@ DNATorsionPotential::add_dna_torsion_tethers(
 {
 	using namespace numeric;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	for ( Size i = 1; i <=nres; i++ ) {
 

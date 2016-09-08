@@ -75,7 +75,7 @@ PartnerMotifScorer::interface_motif_score(
 			char ss1 = segments[i].dssp_;
 			char aa1 = res_type_set_->name_map(segments[i].residues_[res_i].residue_type_).name1();
 
-			for ( core::Size j=1; j<=partner->total_residue(); ++j ) {
+			for ( core::Size j=1; j<=partner->size(); ++j ) {
 
 				numeric::xyzTransform<core::Real> stub2 = core::pose::motif::get_backbone_reference_frame(*partner, j);
 				char ss2 = partner->secstruct(j);
@@ -85,7 +85,7 @@ PartnerMotifScorer::interface_motif_score(
 			}
 		}
 	}
-	return score / (partner->total_residue() + assembly->total_residue());
+	return score / (partner->size() + assembly->total_residue());
 }
 
 } //scoring namespace

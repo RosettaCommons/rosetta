@@ -130,7 +130,7 @@ benzene_pair_score_test()
 
 	//////////////////////////////////////////////////
 	// Set up fold tree -- "chain break" between two ligands, right?
-	kinematics::FoldTree f( pose.total_residue() );
+	kinematics::FoldTree f( pose.size() );
 	Size start( 1 ), end( 2 );
 	f.new_jump( start, end, start );
 	// Uh, why not?

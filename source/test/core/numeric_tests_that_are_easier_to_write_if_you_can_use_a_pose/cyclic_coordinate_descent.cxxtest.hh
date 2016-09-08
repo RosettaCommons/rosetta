@@ -55,7 +55,7 @@ public:
 
 		make_pose_from_sequence( pose_, "AAAAAAAAAAAAAAAAAAAAHHHH", "fa_standard" ); // spooky!
 
-		for ( core::uint i = 1; i <= pose_.total_residue(); ++i ) {
+		for ( core::uint i = 1; i <= pose_.size(); ++i ) {
 			pose_.set_omega( i, 180.0 );
 			pose_.set_phi( i, -64 );
 			pose_.set_psi( i, -41 );
@@ -67,7 +67,7 @@ public:
 		ft.add_edge( 3, 6, Edge::PEPTIDE );
 		ft.add_edge( 3, 10, 1 );
 		ft.add_edge( 10, 7, Edge::PEPTIDE );
-		ft.add_edge( 10, pose_.total_residue(), Edge::PEPTIDE );
+		ft.add_edge( 10, pose_.size(), Edge::PEPTIDE );
 
 		// Check for stupid mistakes and set the FoldTree to the pose
 		TS_ASSERT( ft.reorder( 1 ) );

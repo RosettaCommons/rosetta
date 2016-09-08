@@ -150,7 +150,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		core::pose::PoseOP testpose( new core::pose::Pose );
 		core::pose::make_pose_from_sequence( *testpose, "AAAAAA", "fa_standard");
 
-		for ( core::Size i=1, imax=testpose->n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=testpose->size(); i<=imax; ++i ) {
 			if ( i>1 ) testpose->set_phi(i, -61);
 			if ( i<imax ) {
 				testpose->set_psi(i, -41);

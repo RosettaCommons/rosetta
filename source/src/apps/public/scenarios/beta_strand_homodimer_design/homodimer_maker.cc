@@ -185,7 +185,7 @@ HDmakerMover::bb_score(pose::Pose & pose, core::Size aligned_chain_num, core::sc
 	utility::vector1<core::conformation::Atom> chain2_bb_atoms;
 	utility::vector1<core::conformation::Atom> all_bb_atoms;
 
-	for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+	for ( Size j = 1; j <= pose.size(); ++j ) {
 		core::conformation::Residue const & res( pose.residue(j) );
 		core::chemical::AtomIndices bb_ai( res.mainchain_atoms() );
 		//assert( bb_ai.size() == 4 );
@@ -292,12 +292,12 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 	Size sheet_end( pose.pdb_info()->pdb2pose(chain, sheet_stop_) );
 
 	//get some info about the pose
-	Size n_residues (pose.total_residue());
+	Size n_residues (pose.size());
 
 	//dirty pose dupication
 	pose::Pose copy_pose (pose);
-	pose.append_residue_by_jump(copy_pose.residue( 1 ), pose.total_residue(), "" , "",  true /*start new chain*/);
-	for ( Size n = 2; n <= copy_pose.total_residue(); ++n ) {
+	pose.append_residue_by_jump(copy_pose.residue( 1 ), pose.size(), "" , "",  true /*start new chain*/);
+	for ( Size n = 2; n <= copy_pose.size(); ++n ) {
 		pose.append_residue_by_bond( copy_pose.residue ( n ) );
 	}
 

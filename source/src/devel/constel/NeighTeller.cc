@@ -162,7 +162,7 @@ void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs,
 
 	core::conformation::Residue tgtres = ps.residue(tgtnum);
 
-	for ( Size i = 1; i <= ps.total_residue(); ++i ) {
+	for ( Size i = 1; i <= ps.size(); ++i ) {
 		if ( i != tgtnum ) {
 			if ( nt.isneigh(tgtres, ps.residue(i), ps) ) {
 				neighs.at(i)=true;

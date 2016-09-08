@@ -184,7 +184,7 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 bool FlexPepDockingFlags::is_ligand_present( core::pose::Pose const& pose ) const
 {
 	if ( valid_chain_bounds_ ) {
-		if ( pose.total_residue() > (Size)(peptide_nres_ + receptor_nres_) ) {
+		if ( pose.size() > (Size)(peptide_nres_ + receptor_nres_) ) {
 			return true;
 		} else {
 			return false;
@@ -303,7 +303,7 @@ FlexPepDockingFlags::updateChains
 		// make sure receptor is different from peptide
 		if ( valid_peptide_chain_ && (receptor_chain_.at(0) == peptide_chain_) ) {
 			do{ resi++; }
-			while(resi <= pose.total_residue() && pdbinfo->chain(resi) == peptide_chain_);
+			while(resi <= pose.size() && pdbinfo->chain(resi) == peptide_chain_);
 			receptor_chain_.at(0) = pdbinfo->chain(resi);
 		}
 		valid_receptor_chain_ = true;
@@ -314,7 +314,7 @@ FlexPepDockingFlags::updateChains
 			this->set_peptide_chain(pdbinfo->chain(resi));
 		} else { // docking mode
 			// skip receptor chain
-			while ( resi <= pose.total_residue() &&
+			while ( resi <= pose.size() &&
 					receptor_chain_.find(pdbinfo->chain(resi)) != std::string::npos ) {
 				resi++;
 			}
@@ -325,10 +325,10 @@ FlexPepDockingFlags::updateChains
 	// find receptor boundaries
 	resi = 1;
 	if ( ! pep_fold_only ) {
-		while ( resi <= pose.total_residue() && receptor_chain_.find(pdbinfo->chain(resi)) == std::string::npos ) resi++;
+		while ( resi <= pose.size() && receptor_chain_.find(pdbinfo->chain(resi)) == std::string::npos ) resi++;
 		receptor_first_res_ = resi;
 		do{ resi++; }
-		while(resi <= pose.total_residue() && receptor_chain_.find(pdbinfo->chain(resi)) != std::string::npos);
+		while(resi <= pose.size() && receptor_chain_.find(pdbinfo->chain(resi)) != std::string::npos);
 		receptor_nres_ = resi - receptor_first_res_;
 	} else {
 		receptor_first_res_ = 0;
@@ -337,10 +337,10 @@ FlexPepDockingFlags::updateChains
 
 	// find peptide boundaries
 	resi = 1;
-	while ( resi <= pose.total_residue() && pdbinfo->chain(resi) != peptide_chain_ ) resi++;
+	while ( resi <= pose.size() && pdbinfo->chain(resi) != peptide_chain_ ) resi++;
 	peptide_first_res_ = resi;
 	do{ resi++; }
-	while(resi <= pose.total_residue() && pdbinfo->chain(resi) == peptide_chain_);
+	while(resi <= pose.size() && pdbinfo->chain(resi) == peptide_chain_);
 	peptide_nres_ = resi - peptide_first_res_;
 	if ( peptide_nres_ > 30 ) {
 		TR.Warning << "peptide chain is longer than 30 residues" << std::endl;

@@ -227,7 +227,7 @@ set_secstruct_from_psipred_ss2(
 			secstructs.push_back( sec );
 		}
 	}
-	assert( secstructs.size() == pose.total_residue() );
+	assert( secstructs.size() == pose.size() );
 	for ( Size i = 1, iend=secstructs.size(); i <= iend; ++i ) {
 		pose.set_secstruct( i, secstructs[i] );
 	}
@@ -276,7 +276,7 @@ my_main( void* )
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_file( pose, option[ OptionKeys::loops::template_pdb ]().name() , core::import_pose::PDB_file);
- 	int const nres( pose.total_residue() );
+ 	int const nres( pose.size() );
 
  	// define loop regions
  	protocols::loops::Loops loops;

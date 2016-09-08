@@ -64,7 +64,7 @@ public:
 		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii != 11 ) {
 				task->nonconst_residue_task( ii ).prevent_repacking();
 			} else {
@@ -100,7 +100,7 @@ public:
 		// if any of the above three TS_ASSERT statement fails, we have a major problem
 		if ( ! job->has_pose() || ! job->has_sfxn() || ! job->has_task() ) return;
 
-		TS_ASSERT( job->get_pose().total_residue() == 20 );
+		TS_ASSERT( job->get_pose().size() == 20 );
 		TS_ASSERT( job->get_sfxn().weights() == dft_sfxn->weights() );
 		TS_ASSERT( job->get_task()->num_to_be_packed() == 1 );
 		TS_ASSERT( job->get_task()->design_any() );

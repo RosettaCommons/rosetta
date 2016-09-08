@@ -462,7 +462,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	}
 
 	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
-		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
+		if ( it->res1() > pose.size() || it->res2() > pose.size() ) {
 			tr.Warning << "non-existing residue, ignore RDC" << std::endl;
 			continue;
 		}
@@ -605,7 +605,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		//check for cutpoints!!!
 		kinematics::FoldTree const& ft(pose.fold_tree());
-		if ( All_RDC_line.res1() > pose.total_residue() || All_RDC_line.res2() > pose.total_residue() ) {
+		if ( All_RDC_line.res1() > pose.size() || All_RDC_line.res2() > pose.size() ) {
 			tr.Warning << "non-existing residue, ignore RDC" << All_RDC_line << std::endl;
 			continue;
 		}
@@ -873,7 +873,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	core::Real scale_to_NH = COMMON_DENOMINATOR;
 
 	for ( it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it ) {
-		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
+		if ( it->res1() > pose.size() || it->res2() > pose.size() ) {
 			if ( tr.Debug.visible() ) tr.Debug << "non-existing residue, ignore RDC" << std::endl;
 			continue;
 		}

@@ -152,11 +152,11 @@ public:
 		//read poses
 		core::pose::Pose GTPase;
 		core::import_pose::pose_from_file( GTPase, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::GTPasepdb].value() , core::import_pose::PDB_file);
-		core::Size const GTPaselength = GTPase.total_residue();
+		core::Size const GTPaselength = GTPase.size();
 
 		core::pose::Pose UBQ;
 		core::import_pose::pose_from_file( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() , core::import_pose::PDB_file);
-		core::Size const UBQlength = UBQ.total_residue();
+		core::Size const UBQlength = UBQ.size();
 
 		//determine cysteine target
 		runtime_assert(GTPase.conformation().num_chains() == 1);
@@ -210,9 +210,9 @@ public:
 
 		//not that this does anything
 		complex.conformation().insert_ideal_geometry_at_residue_connection( GTPase_cyd_, cyd_connid );
-		complex.conformation().insert_ideal_geometry_at_residue_connection( complex.total_residue(), ubq_connid );
+		complex.conformation().insert_ideal_geometry_at_residue_connection( complex.size(), ubq_connid );
 
-		core::Size const ubq_pos( complex.total_residue() );
+		core::Size const ubq_pos( complex.size() );
 		core::id::AtomID const atom0( cyd_rsd_type.atom_index( "C" ), GTPase_cyd_ );
 		core::id::AtomID const atom1( cyd_rsd_type.atom_index( "CA" ), GTPase_cyd_ );
 		core::id::AtomID const atom2( cyd_rsd_type.atom_index( "CB" ), GTPase_cyd_ );
@@ -242,7 +242,7 @@ public:
 			complex.prepend_polymer_residue_before_seqpos( UBQ.residue(i), GTPaselength+1, false );
 		}
 
-		core::Size const complexlength( complex.total_residue());
+		core::Size const complexlength( complex.size());
 		complex.conformation().insert_ideal_geometry_at_polymer_bond( complexlength-1 );
 		complex.conformation().insert_chain_ending(GTPaselength);
 		//complex.dump_pdb("initcomplex.pdb");
@@ -509,9 +509,9 @@ public:
 
 		//Also add a SidechainMover for CYD (I hope...)
 		//set up "pack only the moving conjugates" packer task
-		utility::vector1< bool > repack_residues(pose.total_residue(), false); //this could be member data
+		utility::vector1< bool > repack_residues(pose.size(), false); //this could be member data
 		repack_residues[GTPase_cyd_] = true;
-		repack_residues[pose.total_residue()] = true;
+		repack_residues[pose.size()] = true;
 		core::pack::task::PackerTaskOP SC_task(core::pack::task::TaskFactory::create_packer_task(pose) );
 		SC_task->restrict_to_residues(repack_residues);
 		SC_task->restrict_to_repacking(); //SCmover will design, oops
@@ -642,10 +642,10 @@ public:
 			//hack the pose up for analysis purposes
 			core::Size const cbreak(copy.conformation().chain_end(1));
 			using core::kinematics::Edge;
-			core::kinematics::FoldTree main_tree(copy.total_residue());
+			core::kinematics::FoldTree main_tree(copy.size());
 			main_tree.clear();
 			main_tree.add_edge(Edge(1, cbreak, Edge::PEPTIDE));
-			main_tree.add_edge(Edge(cbreak+1, copy.total_residue(), Edge::PEPTIDE));
+			main_tree.add_edge(Edge(cbreak+1, copy.size(), Edge::PEPTIDE));
 			main_tree.add_edge(Edge(cbreak, cbreak+1, 1));
 			main_tree.reorder(1);
 			//TR << main_tree << std::endl;

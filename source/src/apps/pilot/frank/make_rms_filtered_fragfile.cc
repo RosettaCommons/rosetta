@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
 		core::pose::Pose native_pose;
 		core::import_pose::centroid_pose_from_pdb( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 
-		core::Size nres = native_pose.total_residue();
+		core::Size nres = native_pose.size();
 		core::Size fraglength = option[ OptionKeys::fpd::fraglen ];
 		int nfrags = option[ OptionKeys::fpd::nfrags ];
 		std::string input_seq = native_pose.sequence();

@@ -85,7 +85,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 {
 	using namespace core::chemical;
 
-	for ( core::Size ir=1; ir<=pose.total_residue() ; ++ir ) {
+	for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
 		if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
 			core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
 		}
@@ -121,7 +121,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 
 		pose.clear();
 
-		for ( Size ires=1; ires<=pose_copy.total_residue(); ++ires ) {
+		for ( Size ires=1; ires<=pose_copy.size(); ++ires ) {
 			if ( ires==1 ) {
 				pose.append_residue_by_jump(pose_copy.residue(ires),1);
 			} else {
@@ -150,7 +150,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		}
 
 		// add back all the connections
-		for ( Size ires=1; ires<=pose_copy.total_residue(); ++ires ) {
+		for ( Size ires=1; ires<=pose_copy.size(); ++ires ) {
 			for ( core::Size icon=1; icon<=pose_copy.residue_type(ires).n_possible_residue_connections(); ++icon ) {
 				if ( pose_copy.residue(ires).connected_residue_at_resconn(icon) != 0 ) {
 					Size anchor_rsd = pose_copy.residue(ires).connected_residue_at_resconn(icon);
@@ -168,7 +168,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 	}
 
 	//protocols::loops::add_cutpoint_variants( pose );
-	for ( core::Size ir=1; ir<=pose.total_residue() ; ++ir ) {
+	for ( core::Size ir=1; ir<=pose.size() ; ++ir ) {
 		if ( pose.residue_type(ir).lower_connect_id() != 0 ) {
 			if ( pose.residue(ir).connected_residue_at_resconn(pose.residue_type(ir).lower_connect_id()) == 0 ) {
 				if ( !pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
@@ -204,7 +204,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 			kic_res1_ = 1;
 		}
 		if ( kic_res2_ == 0 ) {
-			kic_res2_ = pose.total_residue();
+			kic_res2_ = pose.size();
 		}
 
 		kinmover->set_temperature( 1.0 );

@@ -199,7 +199,7 @@ public:
 		sd.check_pose_consistency( built );
 		TS_ASSERT_EQUALS( align.get_last_move_status(), protocols::moves::MS_SUCCESS );
 
-		for ( core::Size r=1; r<=built.total_residue(); ++r ) {
+		for ( core::Size r=1; r<=built.size(); ++r ) {
 			TR << built.residue( r ).name() <<  " " << r << std::endl;
 		}
 

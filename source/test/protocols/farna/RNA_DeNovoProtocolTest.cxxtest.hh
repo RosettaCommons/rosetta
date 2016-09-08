@@ -69,11 +69,11 @@ public:
 		Pose pose;
 		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		make_pose_from_sequence( pose, "gggg", *rsd_set );
-		TS_ASSERT_EQUALS( pose.total_residue(), 4 );
+		TS_ASSERT_EQUALS( pose.size(), 4 );
 		TS_ASSERT( pose.fold_tree().is_simple_tree() );
 
 		rna_de_novo_protocol.apply( pose );
-		TS_ASSERT_EQUALS( pose.total_residue(), 4 );
+		TS_ASSERT_EQUALS( pose.size(), 4 );
 		TS_ASSERT( pose.fold_tree().is_simple_tree() );
 		TS_ASSERT( !rna_de_novo_protocol.rna_fragment_monte_carlo()->loop_modeling() );
 		TS_ASSERT( hasPoseExtraScore( pose, "time" ) );
@@ -120,12 +120,12 @@ public:
 		Pose pose;
 		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		core::pose::make_pose_from_sequence( pose, sequence, *rsd_set );
-		TS_ASSERT_EQUALS( pose.total_residue(), 19 );
+		TS_ASSERT_EQUALS( pose.size(), 19 );
 		TS_ASSERT_EQUALS( pose.sequence(), "ccuaguacgagaggaccgg" );
 		TS_ASSERT( pose.fold_tree().is_simple_tree() );
 
 		rna_de_novo_protocol.apply( pose );
-		TS_ASSERT_EQUALS( pose.total_residue(), 19 );
+		TS_ASSERT_EQUALS( pose.size(), 19 );
 		TS_ASSERT( !pose.fold_tree().is_simple_tree() );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 2 );
 		TS_ASSERT( rna_de_novo_protocol.rna_fragment_monte_carlo()->loop_modeling() );
@@ -158,10 +158,10 @@ public:
 		bool found_cutpoint_closed_in_fixed_domain ( false );
 		bool found_cutpoint_closed_in_moving_domain( false );
 		utility::vector1< Size > moving_cutpoints_closed;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) {
 				TS_ASSERT( pose.fold_tree().is_cutpoint( n ) );
-				TS_ASSERT( n < pose.total_residue() );
+				TS_ASSERT( n < pose.size() );
 				if ( atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 &&
 						atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 ) {
 					found_cutpoint_closed_in_fixed_domain = true;
@@ -221,12 +221,12 @@ public:
 		Pose pose;
 		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		core::pose::make_pose_from_sequence( pose, sequence, *rsd_set );
-		TS_ASSERT_EQUALS( pose.total_residue(), 19 );
+		TS_ASSERT_EQUALS( pose.size(), 19 );
 		TS_ASSERT_EQUALS( pose.sequence(), "ccuaguacgagaggaccgg" );
 		TS_ASSERT( pose.fold_tree().is_simple_tree() );
 
 		rna_de_novo_protocol.apply( pose );
-		TS_ASSERT_EQUALS( pose.total_residue(), 19 );
+		TS_ASSERT_EQUALS( pose.size(), 19 );
 		TS_ASSERT( !pose.fold_tree().is_simple_tree() );
 		TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 7 );
 		TS_ASSERT( !rna_de_novo_protocol.rna_fragment_monte_carlo()->loop_modeling() );
@@ -259,10 +259,10 @@ public:
 		bool found_cutpoint_closed_in_fixed_domain ( false );
 		bool found_cutpoint_closed_in_moving_domain( false );
 		utility::vector1< Size > moving_cutpoints_closed;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) {
 				TS_ASSERT( pose.fold_tree().is_cutpoint( n ) );
-				TS_ASSERT( n < pose.total_residue() );
+				TS_ASSERT( n < pose.size() );
 				if ( atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 &&
 						atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 ) {
 					found_cutpoint_closed_in_fixed_domain = true;

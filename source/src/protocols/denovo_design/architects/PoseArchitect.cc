@@ -74,7 +74,7 @@ PoseArchitect::design( core::pose::Pose const & pose, core::Real & ) const
 		if ( sd->pose_length() != secstruct_.size() ) {
 			std::stringstream msg;
 			msg << "PoseArchitect::design(): Length of user-provided secstruct (" << secstruct_.size()
-				<< ") does not match input pose length (" << pose.total_residue() << ")" << std::endl;
+				<< ") does not match input pose length (" << pose.size() << ")" << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
 		core::Size resid = 1;

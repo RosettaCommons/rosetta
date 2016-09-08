@@ -170,7 +170,7 @@ ProteinSilentReport::apply(
 		features_reporters_.push_back(structure_scores_features_);
 	}
 
-	vector1< bool > relevant_residues(pose.total_residue(), true);
+	vector1< bool > relevant_residues(pose.size(), true);
 
 	initialize(db_session);
 
@@ -220,7 +220,7 @@ ProteinSilentReport::load_pose(
 	//it needs to be but should result in the most sensible state of the fold/atom trees.
 	load_pose(db_session, struct_id, pose);
 
-	int total_res=pose.total_residue();
+	int total_res=pose.size();
 	int num_removed_residues=0;
 	for ( int i=1; i<=total_res; ++i ) {
 		//if the residue wasn't specified, delete it
@@ -265,7 +265,7 @@ ProteinSilentReport::write_full_report(
 	std::string const & tag
 ) {
 
-	vector1< bool > relevant_residues(pose.total_residue(), true);
+	vector1< bool > relevant_residues(pose.size(), true);
 
 	db_session->begin_transaction();
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());

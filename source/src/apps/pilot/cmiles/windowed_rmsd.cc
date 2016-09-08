@@ -38,10 +38,10 @@ using utility::vector1;
 
 /// @detail Ensure that the lengths of the models to evaluate match the reference
 void check_lengths(PoseCOP reference, const vector1<PoseCOP>& models) {
-  const Size n = reference->total_residue();
+  const Size n = reference->size();
 
   for (Size i = 1; i <= models.size(); ++i) {
-    const Size m = models[i]->total_residue();
+    const Size m = models[i]->size();
     if (m != n) {
       std::cerr << "Residues in reference: " << n << std::endl;
       std::cerr << "Residues in model[" << i << "]: " << m << std::endl;
@@ -53,7 +53,7 @@ void check_lengths(PoseCOP reference, const vector1<PoseCOP>& models) {
 void compute_windowed_rmsd(const Pose& reference, const Pose& model, Size window, vector1<Real>* rmsds) {
   assert(rmsds);
   const Size k = (window - 1) / 2;
-  const Size n = reference.total_residue();
+  const Size n = reference.size();
 
   rmsds->resize(n);
   for (Size residue = 1 + k; residue <= (n - k); ++residue) {

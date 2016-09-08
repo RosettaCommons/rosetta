@@ -248,7 +248,7 @@ int dump_pose_diff(core::pose::Pose const & pose,core::pose::Pose const & ref_po
 
         //add changes of torsion angles
 
-        for(Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd) {
+        for(Size rsd = 1, rsd_end = pose.size(); rsd <= rsd_end; ++rsd) {
                 bool const is_jump_residue = pose.fold_tree().is_jump_point(rsd);
                 int bb_precision = 6;
 
@@ -337,7 +337,7 @@ void run_parallel_docking() {
         }
 
         core::Size  total_atoms(0);
-        for(Size rsd = 1, rsd_end = pose.total_residue(); rsd <= rsd_end; ++rsd) {
+        for(Size rsd = 1, rsd_end = pose.size(); rsd <= rsd_end; ++rsd) {
                 for(Size atom = 1, atom_end = pose.residue(rsd).natoms(); atom <= atom_end; ++atom) {
                         ++total_atoms;
                 }
@@ -495,7 +495,7 @@ void run_parallel_docking() {
 		//std::cout << "start fold-tree afterdocking: "<< pose.fold_tree() << std::endl;
 		core::kinematics::FoldTree fold_tree_;
 		fold_tree_.clear();
-		core::Size nres = pose.total_residue();
+		core::Size nres = pose.size();
 		core::Size chain2start(pose.conformation().chain_begin( 2 ));
 		core::Size chain1end(pose.conformation().chain_end( 1 ));
 		//core::Size jumppoint=chain2start;

@@ -84,7 +84,7 @@ void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction
 	using core::kinematics::FoldTree;
 	double score = 0.0;
 	Real max_motif_per_res = option[OptionKeys::score::max_motif_per_res]();
-	Size nres1 = pose.n_residue(), nres2=nres1;
+	Size nres1 = pose.size(), nres2=nres1;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		nres2 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
@@ -92,7 +92,7 @@ void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction
 			nres2= core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		}
 	}
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		totals[cen_pair_motifs] = 0;
 	} else {
 		const FoldTree& tree = pose.fold_tree();
@@ -101,8 +101,8 @@ void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction
 		if ( aalist_.size()>0 ) {
 			for ( size_t ii = 1; ii <= aalist_.size(); ++ii ) {
 				Size ir = aalist_[ii];
-				if ( ir >  pose.total_residue() ) {
-					TR << "Warning" << ir << "is above total residue" << pose.total_residue() << std::endl;
+				if ( ir >  pose.size() ) {
+					TR << "Warning" << ir << "is above total residue" << pose.size() << std::endl;
 				} else {
 					Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
 					char ss1 = dssp.get_dssp_secstruct( ir );

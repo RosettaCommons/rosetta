@@ -104,7 +104,7 @@ SilentFileLoader::create_resource(
 	PoseOP pose( new Pose() );
 	ss->fill_pose(*pose);
 
-	if ( pose->total_residue() == 0 ) {
+	if ( pose->size() == 0 ) {
 		TR.Warning
 			<< "Loading Pose with SilentFileLoader for the "
 			<< "locator_id '" << locator_id << "', "

@@ -192,7 +192,7 @@ void TailsScoreMover::make_tail(utility::vector1< core::Size > & tail,int in_lta
 double TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
 {
 	TR<< "mode 1" << std::endl;
-	int sequence_length = pose.total_residue(); // Need to get protein sequence length
+	int sequence_length = pose.size(); // Need to get protein sequence length
 	utility::vector1< core::Size > tail;
 	Real min_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 	Real updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
@@ -241,7 +241,7 @@ double TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtai
 double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtail_length,std::ofstream & in_tail_output, pose::Pose & pose)
 {
 	TR<< "mode 2" << std::endl;
-	int sequence_length = pose.total_residue(); // Need to get protein sequence length
+	int sequence_length = pose.size(); // Need to get protein sequence length
 	//search for left tail first
 	int number_of_tail_steps = sequence_length/2;
 	utility::vector1< core::Size > tail;
@@ -312,7 +312,7 @@ double TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtai
 {
 	TR<< "mode 3" << std::endl;
 	int array_of_visits[200][200] = {{0}};
-	int sequence_length = pose.total_residue(); // Need to get protein sequence length
+	int sequence_length = pose.size(); // Need to get protein sequence length
 	utility::vector1< core::Size > tail;
 
 	int min_ltail_length = 0;

@@ -333,7 +333,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 	// combine:
 	// (a) contigs in the current template
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -472,7 +472,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 numeric::xyzVector<Real>
 FoldTreeHybridize::center_of_mass(core::pose::Pose const & pose) {
-	int  nres( pose.total_residue() ), nAtms = 0;
+	int  nres( pose.size() ), nAtms = 0;
 	numeric::xyzVector<core::Real> massSum(0.,0.,0.), CoM;
 	for ( int i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
@@ -492,7 +492,7 @@ void
 FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 	numeric::xyzVector<Real> CoM;
 	CoM = center_of_mass(pose);
-	numeric::xyzVector<Real> curr_pos = pose.residue(pose.total_residue()).xyz(1);
+	numeric::xyzVector<Real> curr_pos = pose.residue(pose.size()).xyz(1);
 	numeric::xyzVector<Real> translation = CoM - curr_pos;
 
 	using namespace ObjexxFCL::format;
@@ -501,9 +501,9 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 	// apply transformation
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
-	for ( Size iatom = 1; iatom <= pose.residue_type(pose.total_residue()).natoms(); ++iatom ) {
-		numeric::xyzVector<core::Real> atom_xyz = pose.xyz( core::id::AtomID(iatom,pose.total_residue()) );
-		ids.push_back(core::id::AtomID(iatom,pose.total_residue()));
+	for ( Size iatom = 1; iatom <= pose.residue_type(pose.size()).natoms(); ++iatom ) {
+		numeric::xyzVector<core::Real> atom_xyz = pose.xyz( core::id::AtomID(iatom,pose.size()) );
+		ids.push_back(core::id::AtomID(iatom,pose.size()));
 		positions.push_back(atom_xyz + translation);
 	}
 	pose.batch_set_xyz(ids,positions);
@@ -552,7 +552,7 @@ void FoldTreeHybridize::get_residue_weights(
 	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
 	wt9.resize(num_residues_nonvirt, 1.0);
 
-	for ( core::Size i=1; i<=template_poses_[initial_template_index_]->total_residue(); ++i ) {
+	for ( core::Size i=1; i<=template_poses_[initial_template_index_]->size(); ++i ) {
 		Size ires = template_poses_[initial_template_index_]->pdb_info()->number(i);
 		wt9[ires] = frag_weight_aligned_;  // covered by starting template
 	}
@@ -785,7 +785,7 @@ FoldTreeHybridize::add_strand_pairing(
 	utility::vector1< int > pdb_numbering;
 	pdb_numbering.push_back(pairing.Pos1());
 	pdb_numbering.push_back(pairing.Pos2());
-	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( trimmed_pairing_pose->total_residue() ) );
+	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( trimmed_pairing_pose->size() ) );
 	pdb_info->set_numbering( pdb_numbering );
 	pdb_info->set_chains( ' ' );
 	pdb_info->obsolete( false );
@@ -960,7 +960,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 
 core::Size FoldTreeHybridize::map_pdb_info_number( const core::pose::Pose & pose, core::Size pdb_res ) {
 	core::Size mapped = 0;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.pdb_info()->number(i) == (int)pdb_res ) {
 			mapped = i;
 			break;
@@ -1288,7 +1288,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// evaluation
 	core::sequence::SequenceAlignmentOP native_aln;
 	core::Real gdtmm = 0.0;
-	if ( native_ && native_->total_residue() ) {
+	if ( native_ && native_->size() ) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_1", gdtmm);
 		TR << "GDTMM_after_stage1_1" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1324,7 +1324,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	// evaluation
-	if ( native_ && native_->total_residue() ) {
+	if ( native_ && native_->size() ) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_2", gdtmm);
 		TR << "GDTMM_after_stage1_2" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1409,7 +1409,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	// evaluation
-	if ( native_ && native_->total_residue() ) {
+	if ( native_ && native_->size() ) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_3", gdtmm);
 		TR << "GDTMM_after_stage1_3" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1458,7 +1458,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	// evaluation
-	if ( native_ && native_->total_residue() ) {
+	if ( native_ && native_->size() ) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1_4", gdtmm);
 		TR << "GDTMM_after_stage1_4" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1491,7 +1491,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		}
 
 		// evaluation
-		if ( native_ && native_->total_residue() ) {
+		if ( native_ && native_->size() ) {
 			gdtmm = get_gdtmm(*native_, pose, native_aln);
 			core::pose::setPoseExtraScore( pose, "GDTMM_after_stage1min", gdtmm);
 			TR << "GDTMM_after_stage1min" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
@@ -1501,7 +1501,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	pose.remove_constraints();
 	restore_original_foldtree(pose);
 
-	for ( Size ires=1; ires<=pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<=pose.size(); ++ires ) {
 		using namespace ObjexxFCL::format;
 		TR.Debug << "Chunk trial counter:" << I(4,ires) << I(8, random_sample_chunk_mover->trial_counter(ires)) << std::endl;
 	}

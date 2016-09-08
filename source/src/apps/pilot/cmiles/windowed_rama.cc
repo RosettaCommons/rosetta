@@ -43,7 +43,7 @@ void compute_windowed_rama(PoseCOP pose, FragSetCOP fragments, Size window, vect
   assert(fragments);
 
   const Size k = (window - 1) / 2;
-  const Size n = pose->total_residue();
+  const Size n = pose->size();
   ramas->resize(n);
 
   Ramachandran scorer;

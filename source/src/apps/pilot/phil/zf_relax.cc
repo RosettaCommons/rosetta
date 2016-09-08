@@ -274,7 +274,7 @@ setup_zf_pose(
 
 	//pose.dump_pdb( "no_unpaired.pdb" );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	kinematics::FoldTree f( nres );
 
@@ -465,7 +465,7 @@ zf_relax_test()
 	ti << std::endl; // flush??
 
 	Pose const start_pose( pose );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	for ( Size n=1; n<= nstruct; ++n ) {
 		using namespace protocols;

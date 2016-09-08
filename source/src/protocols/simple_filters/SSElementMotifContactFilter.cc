@@ -112,7 +112,7 @@ protocols::loops::Loops SSElementMotifContactFilter::get_ss_elements(const Pose 
 	char lastSecStruct = dssp.get_dssp_secstruct( 1 );
 	Size startSS = 0;
 	Size endSS = 0;
-	Size nres1 = pose.n_residue();
+	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
 		if ( option[OptionKeys::score::motif_ignore_symmmetry]() ) {
@@ -172,7 +172,7 @@ Size SSElementMotifContactFilter::get_SSelements_in_contact(Size element,protoco
 	std::multiset<Size> ssElements_in_contact;
 	core::scoring::dssp::Dssp dssp( pose );
 	const FoldTree& tree = pose.fold_tree();
-	Size nres1 = pose.n_residue();
+	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
 		if ( option[OptionKeys::score::motif_ignore_symmmetry]() ) {

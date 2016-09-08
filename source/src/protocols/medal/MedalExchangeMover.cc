@@ -108,7 +108,7 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
 	// const Real sd = option[OptionKeys::cm::sanitize::bound_sd](); // Unused variable causes warning.
 
 	// Fixed reference position
-	const AtomID fixed_atom(1, pose.total_residue());
+	const AtomID fixed_atom(1, pose.size());
 	const PointPosition& fixed_coords = pose.xyz(fixed_atom);
 
 	for ( Size i = 1; i <= aligned->size(); ++i ) {
@@ -206,7 +206,7 @@ void MedalExchangeMover::apply(Pose& pose) {
 	ThreadingJob const * const job = protocols::nonlocal::current_job();
 	to_centroid(&pose);
 
-	Extender extender(job->alignment().clone(), pose.total_residue());
+	Extender extender(job->alignment().clone(), pose.size());
 	extender.set_secondary_structure(pred_ss_);
 	extender.extend_unaligned(&pose);
 	pose.dump_pdb("extended.pdb");
@@ -234,7 +234,7 @@ void MedalExchangeMover::apply(Pose& pose) {
 	score->set_weight(core::scoring::coordinate_constraint, option[OptionKeys::cm::sanitize::cst_weight_coord]());
 
 	vector1<double> probs;
-	setup_sampling_probs(pose.total_residue() - 1, pose.fold_tree(), aligned, &probs);
+	setup_sampling_probs(pose.size() - 1, pose.fold_tree(), aligned, &probs);
 
 	// Sampling parameters
 	const Real temp = option[OptionKeys::abinitio::temperature]();

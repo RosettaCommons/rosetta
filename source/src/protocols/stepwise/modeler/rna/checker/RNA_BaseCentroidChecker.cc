@@ -82,7 +82,7 @@ RNA_BaseCentroidChecker::~RNA_BaseCentroidChecker(){}
 void
 RNA_BaseCentroidChecker::Initialize_is_virtual_base( pose::Pose const & pose, bool const ){
 
-	Size const & nres = pose.total_residue();
+	Size const & nres = pose.size();
 	is_virtual_base_.dimension( nres, false );
 
 	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
@@ -120,7 +120,7 @@ RNA_BaseCentroidChecker::Initialize_base_stub_list( pose::Pose const & pose, boo
 	fixed_residues_.clear();
 	base_stub_list_.clear();
 
-	Size const & nres = pose.total_residue();
+	Size const & nres = pose.size();
 	is_moving_res_.dimension( nres, false );
 	is_fixed_res_.dimension( nres, false );
 
@@ -172,7 +172,7 @@ RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 
 	terminal_res_ = working_parameters_->working_terminal_res();
 
-	Size const & nres = pose.total_residue();
+	Size const & nres = pose.size();
 	is_terminal_res_.dimension( nres, false );
 	stacked_on_terminal_res_in_original_pose_.dimension( nres, nres, false );
 

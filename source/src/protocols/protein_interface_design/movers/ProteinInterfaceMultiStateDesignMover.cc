@@ -146,7 +146,7 @@ part_complex( core::pose::PoseOP pose, core::Size const rb_jump ){
 
 void
 unfold_complex( core::pose::PoseOP pose ){
-	for ( core::Size i( 1 ), end( pose->total_residue() ); i<=end; ++i ) {
+	for ( core::Size i( 1 ), end( pose->size() ); i<=end; ++i ) {
 		// unfold the unfolded protein
 		if ( !pose->residue_type(i).is_protein() ) continue;
 		std::string const restype( pose->residue(i).type().name() );
@@ -224,7 +224,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 		EnergyPerResidueFilter const eprf( pos, bump_scorefxn, fa_rep, 0 );
 		core::Real const ref_bump_energy( eprf.compute( *ala_pose ) );
 		PackerTaskOP template_substitution_task( ptask->clone() ); //prevent repacking at all but positions but pos
-		for ( Size i( 1 ); i<=pose.total_residue(); ++i ) {
+		for ( Size i( 1 ); i<=pose.size(); ++i ) {
 			if ( i!=pos ) {
 				template_substitution_task->nonconst_residue_task(i).prevent_repacking();
 			}
@@ -428,7 +428,7 @@ ProteinInterfaceMultiStateDesignMover::output_alternative_states( core::pose::Po
 		core::pose::Pose state_i( *saved_state_poses_[ count ] );
 		(*scorefxn_)(state_i); // to set up the energy graph or else interface task operation will work well. arggg!
 		PackerTaskCOP unmodifed_ptask( task_factory()->create_task_and_apply_taskoperations( state_i ));
-		for ( core::Size resi( 1 ); resi<=state_i.total_residue(); ++resi ) {//thread output-pose's sequence on alternative state
+		for ( core::Size resi( 1 ); resi<=state_i.size(); ++resi ) {//thread output-pose's sequence on alternative state
 			if ( !unmodifed_ptask->residue_task( resi ).being_designed() ) continue;
 			state_i.replace_residue( resi, output_pose.residue( resi ), true );
 		}

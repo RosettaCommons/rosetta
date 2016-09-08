@@ -161,7 +161,7 @@ inline Vec randvec() {
 
 // in will_util now
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
-//  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+//  for(Size ir = 1; ir <= pose.size(); ++ir) {
 //    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 //      core::id::AtomID const aid(core::id::AtomID(ia,ir));
 //      pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
@@ -169,7 +169,7 @@ inline Vec randvec() {
 //  }
 // }
 // inline void xform_pose_rev( core::pose::Pose & pose, Stub const & s ) {
-//  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+//  for(Size ir = 1; ir <= pose.size(); ++ir) {
 //    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 //      core::id::AtomID const aid(core::id::AtomID(ia,ir));
 //      pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
@@ -178,7 +178,7 @@ inline Vec randvec() {
 // }
 
 // inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
-//  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+//  for(Size ir = 1; ir <= pose.size(); ++ir) {
 //    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 //      core::id::AtomID const aid(core::id::AtomID(ia,ir));
 //      pose.set_xyz( aid, pose.xyz(aid) + trans );
@@ -187,7 +187,7 @@ inline Vec randvec() {
 // }
 //
 // inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-//  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+//  for(Size ir = 1; ir <= pose.size(); ++ir) {
 //    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 //      core::id::AtomID const aid(core::id::AtomID(ia,ir));
 //      pose.set_xyz( aid, rot * pose.xyz(aid) );
@@ -222,7 +222,7 @@ void minimize(Pose & pose, ScoreFunctionOP sf, vector1<Size> matchres) {
   if(core::pose::symmetry::is_symmetric(pose)) {
     core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
     for(Size i = 1; i <= pose.fold_tree().num_jump(); ++i) {
-      if((Size)pose.fold_tree().upstream_jump_residue(i)==pose.n_residue()-1 && (Size)pose.fold_tree().downstream_jump_residue(i) < pose.n_residue()/2) {
+      if((Size)pose.fold_tree().upstream_jump_residue(i)==pose.size()-1 && (Size)pose.fold_tree().downstream_jump_residue(i) < pose.size()/2) {
         TR << "set jump true " << i << std::endl;
         movemap->set_jump(i,true);
       }
@@ -248,7 +248,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
   using namespace core::pack::task;
   core::id::AtomID_Map< bool > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, false );
-  for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+  for ( Size ir = 1; ir <= pose.size(); ++ir ) {
     atom_map.set(AtomID(2,ir) , true );
     atom_map.set(AtomID(3,ir) , true );
     atom_map.set(AtomID(5,ir) , true );
@@ -262,7 +262,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
   if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 
-  Size nres = pose.n_residue();
+  Size nres = pose.size();
   PackerTaskOP task = TaskFactory::create_packer_task(pose);
   // task->initialize_extra_rotamer_flags_from_command_line();
   vector1< bool > aas(20,true);
@@ -349,7 +349,7 @@ void repack(Pose & pose, ScoreFunctionOP sf, Size /*end_of_prot_1*/, vector1<Siz
   using namespace core::pack::task;
   PackerTaskOP task = TaskFactory::create_packer_task(pose);
   task->initialize_extra_rotamer_flags_from_command_line();
-  if(end_of_prot_2 == 0) end_of_prot_2 = pose.n_residue();
+  if(end_of_prot_2 == 0) end_of_prot_2 = pose.size();
   for(Size i = 1; i <= end_of_prot_2; ++i) {
     if(std::find(matchres.begin(),matchres.end(),i)!=matchres.end()) {
       task->nonconst_residue_task(i).prevent_repacking();
@@ -373,7 +373,7 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
   if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 
-  Size nres = pose.n_residue();
+  Size nres = pose.size();
   PackerTaskOP task = TaskFactory::create_packer_task(pose);
   // task->initialize_extra_rotamer_flags_from_command_line();
   vector1< bool > aas(20,true);
@@ -560,7 +560,7 @@ void setup_favor_native(core::pose::Pose & pose, core::pose::Pose const & native
   TR.Info << "favor_native_res: adding a bonus of " << bonus << " for native residues to pose." << std::endl;
   // should remove exising residue type constraints???
   utility::vector1< core::scoring::constraints::ConstraintCOP > favor_native_constraints;
-  for( core::Size i = 1; i <= pose.total_residue(); ++i){
+  for( core::Size i = 1; i <= pose.size(); ++i){
     // if( task->design_residue(i) ){
     ConstraintOP resconstraint = new ResidueTypeConstraint( native, i, bonus );
     favor_native_constraints.push_back( resconstraint );
@@ -729,8 +729,8 @@ struct MatchBase : public utility::pointer::ReferenceCount {
     core::chemical::ResidueType const & ala( cen_residue_set->name_map("ALA") );
     vector1<Size> positions;
     Size start = 1,i;
-    while( start >= tpose.n_residue() && !tpose.residue(start).is_protein() ) start++;
-    for( i = start; i <= tpose.n_residue(); ++i) {
+    while( start >= tpose.size() && !tpose.residue(start).is_protein() ) start++;
+    for( i = start; i <= tpose.size(); ++i) {
       if(!tpose.residue(i).is_protein()) break;
       core::pose::replace_pose_residue_copying_existing_coordinates(tpose,i,ala);
       positions.push_back(i);
@@ -738,7 +738,7 @@ struct MatchBase : public utility::pointer::ReferenceCount {
     core::kinematics::FoldTree f(positions.size());
     core::pose::create_subpose(tpose,positions,f,pose);
     core::pose::add_lower_terminus_type_to_pose_residue(pose,1);
-    core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+    core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.size());
 
   }
 };
@@ -753,7 +753,7 @@ struct MatchLig : public utility::pointer::ReferenceCount {
   MatchLig(Pose & ipose, Size irsd1, Size irsd2, string iaa1, string iaa2, string itag, MatchAlignerOP mop)
     : rsd1(irsd1), rsd2(irsd2), aa1(iaa1), aa2(iaa2), tag(itag)
   {
-    if(ipose.n_residue()>3) {
+    if(ipose.size()>3) {
       assert(aa1[0]==ipose.residue(rsd1).name1());
       assert(aa2[0]==ipose.residue(rsd2).name1());
       core::conformation::Residue r1 = ipose.residue(rsd1);
@@ -762,7 +762,7 @@ struct MatchLig : public utility::pointer::ReferenceCount {
       pose.append_residue_by_jump(r2,1,"","",true);
 
       Size i = 1;
-      while(i <= ipose.n_residue() && ipose.residue(i).is_protein()) ++i;
+      while(i <= ipose.size() && ipose.residue(i).is_protein()) ++i;
       pose.append_residue_by_jump(ipose.residue(i),1,"","",true);
       // for(Size j = 1; j <= pose.residue(3).natoms(); ++j) {
       //  pose.set_xyz(AtomID(j,3),ipose.residue(i).xyz(j));
@@ -800,7 +800,7 @@ struct MatchSet {
     native = native_in;
     mop = imop;
     base.init(poses[1]);
-    // for(Size i = 1; i <= base.pose.n_residue(); ++i) {
+    // for(Size i = 1; i <= base.pose.size(); ++i) {
     //  if(base.pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(base.pose,i);
     //  if(base.pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(base.pose,i);
     // }
@@ -873,11 +873,11 @@ struct MatchSet {
         }
       }
       // why skip ends?
-      // if(    rsd1 == 1 || rsd2 == 1 || rsd1 == base.pose.n_residue() || rsd2 == base.pose.n_residue()) {
+      // if(    rsd1 == 1 || rsd2 == 1 || rsd1 == base.pose.size() || rsd2 == base.pose.size()) {
       //  TR << "skipping end " << rsd1 << " " << rsd2 << std::endl;
       //  continue;
       // }
-      // assert(rsd1  > 1 && rsd2  > 1 && rsd1 <= base.pose.n_residue() && rsd2 <= base.pose.n_residue());
+      // assert(rsd1  > 1 && rsd2  > 1 && rsd1 <= base.pose.size() && rsd2 <= base.pose.size());
 
       // TR << "make MatchLig: " << s << std::endl;
       MatchLig ml = MatchLig(poses[idx],rsd1,rsd2,aa1,aa2,utility::file_basename(poses[idx].pdb_info()->modeltag()),mop);
@@ -935,8 +935,8 @@ struct MatchSet {
     typedef  numeric::xyzTriple< platform::Size >  CubeKey; // Cube index-triple key
 
     neighbor_cutoff_sq_ = ( neighbor_cutoff*neighbor_cutoff);
-    points_.resize(base.pose.n_residue()*5);
-    for(Size i = 0; i < base.pose.n_residue(); ++i) {
+    points_.resize(base.pose.size()*5);
+    for(Size i = 0; i < base.pose.size(); ++i) {
       for(Size j = 1; j <= 5; ++j) points_[5*i+j] = base.pose.xyz(AtomID(j,i+1));
     }
 
@@ -1011,7 +1011,7 @@ struct MatchSet {
     return true;
   }
   inline bool clash_check(Pose const & pose) const {
-    for(Size i = 1; i <= pose.n_residue(); ++i) {
+    for(Size i = 1; i <= pose.size(); ++i) {
       for(Size j = 1; j <= 5; ++j) {
         if(!clash_check(pose.xyz(AtomID(j,i)))) return false;
       }
@@ -1019,7 +1019,7 @@ struct MatchSet {
     return true;
   }
   inline bool clash_check(Pose const & pose, Stub const & stub) const {
-    for(Size i = 1; i <= pose.n_residue(); ++i) {
+    for(Size i = 1; i <= pose.size(); ++i) {
       for(Size j = 1; j <= 5; ++j) {
         if(!clash_check(stub.local2global(pose.xyz(AtomID(j,i))))) return false;
       }
@@ -1027,19 +1027,19 @@ struct MatchSet {
     return true;
   }
   inline bool c2_clash_check(Stub const & hdstub, MatchSet const & ms2, Pose const & pose, Stub const & c2stub, vector1<Vec> const & extra = vector1<Vec>() ) const {
-    for(Size i = 1; i <= pose.n_residue(); ++i) for(Size j = 1; j <= 5; ++j) if(!clash_check(c2stub.M*pose.xyz(AtomID(j,i))+c2stub.v)) return false;
+    for(Size i = 1; i <= pose.size(); ++i) for(Size j = 1; j <= 5; ++j) if(!clash_check(c2stub.M*pose.xyz(AtomID(j,i))+c2stub.v)) return false;
     for(Size i = 1; i <= extra.size(); ++i) if(!clash_check(c2stub.M*extra[i]+c2stub.v)) return false;
     Mat const rot   = hdstub.M.transposed() * c2stub.M;
     Vec const trans = hdstub.M.transposed() * (c2stub.v-hdstub.v) ;
-    for(Size i = 1; i <= pose.n_residue(); ++i) for(Size j = 1; j <= 5; ++j) if(!ms2.clash_check(rot*pose.xyz(AtomID(j,i))+trans)) return false;
+    for(Size i = 1; i <= pose.size(); ++i) for(Size j = 1; j <= 5; ++j) if(!ms2.clash_check(rot*pose.xyz(AtomID(j,i))+trans)) return false;
     for(Size i = 1; i <= extra.size(); ++i) if(!clash_check(rot*extra[i]+trans)) return false;
     return true;
   }
   inline bool clash_check_naive(Pose & pose) const {
-    for(Size i = 1; i <= base.pose.n_residue(); ++i) {
+    for(Size i = 1; i <= base.pose.size(); ++i) {
       for(Size j = 1; j <= 5; ++j) {
         Vec const xyz1( base.pose.xyz(AtomID(j,i)) );
-        for(Size i2 = 1; i2 <= pose.n_residue(); ++i2) {
+        for(Size i2 = 1; i2 <= pose.size(); ++i2) {
           for(Size j2 = 1; j2 <= 5; ++j2) {
             Vec const xyz2( pose.xyz(AtomID(j2,i2)) );
             Real const d_sq( distance_squared( xyz1, xyz2 ) );
@@ -1083,10 +1083,10 @@ struct MatchSet {
     return num;
   }
   inline Size c2_linker_check_dist(Pose const & outpose, MatchSet const & b, core::kinematics::Stub const & s) {
-    Vec ct1 = outpose.residue(b.base.pose.n_residue()  ).xyz("C");
+    Vec ct1 = outpose.residue(b.base.pose.size()  ).xyz("C");
     Vec nt1 = outpose.residue(                        1).xyz("N");
-    Vec ct2 = outpose.residue(    outpose.n_residue()  ).xyz("C");
-    Vec nt2 = outpose.residue(b.base.pose.n_residue()+1).xyz("N");
+    Vec ct2 = outpose.residue(    outpose.size()  ).xyz("C");
+    Vec nt2 = outpose.residue(b.base.pose.size()+1).xyz("N");
     ct2 = s.M*ct2+s.v;
     nt2 = s.M*nt2+s.v;
     // if( ct1.distance_squared(nt2) < thresh*thresh || ct2.distance_squared(nt1) < thresh*thresh ) {
@@ -1097,8 +1097,8 @@ struct MatchSet {
   }
   inline Vec com(Pose const & pose) const {
     Vec com(0,0,0);
-    for(Size i = 1; i <= pose.n_residue(); ++i) com += pose.xyz(AtomID(2,i));
-    return com / pose.n_residue();
+    for(Size i = 1; i <= pose.size(); ++i) com += pose.xyz(AtomID(2,i));
+    return com / pose.size();
   }
   inline bool get_contacting_stub(Pose const & outpose, Vec & trans, Stub & s, Stub const & hdstub,
                                   MatchSet const & b,vector1<Vec> const & his_atoms, Real const & LINK_CST,
@@ -1136,7 +1136,7 @@ struct MatchSet {
     //
     // vector1<Size> include_res = b.iface_candidates;
     // for(vector1<Size>::const_iterator i=iface_candidates.begin(),ie=iface_candidates.end(); i != ie; ++i) {
-    //  include_res.push_back(*i+b.base.pose.n_residue());
+    //  include_res.push_back(*i+b.base.pose.size());
     // }
     // Real iface = iface_check(outpose,b.iface_candidates);
     // if(iface < (Real)basic::options::option[basic::options::OptionKeys::willmatch::interface_size]()) return;
@@ -1151,8 +1151,8 @@ struct MatchSet {
       Size r2 = ligs[idx1].rsd2;
       if( r1 == 1 ) return;
       if( r2 == 1 ) return;
-      if( r1 == base.pose.n_residue() ) return;
-      if( r2 == base.pose.n_residue() ) return;
+      if( r1 == base.pose.size() ) return;
+      if( r2 == base.pose.size() ) return;
       if( base.pose.chain(r1)!=base.pose.chain(r1-1) ) return;
       if( base.pose.chain(r1)!=base.pose.chain(r1+1) ) return;
       if( base.pose.chain(r2)!=base.pose.chain(r2-1) ) return;
@@ -1206,7 +1206,7 @@ struct MatchSet {
 
     TR << "found non-clashing homodimer match: " << ligs[idx1].tag+"___"+string_of(itrans) << std::endl;
 
-    Size end1 = base.pose.n_residue();
+    Size end1 = base.pose.size();
     Size end2 = 2*end1; // homodimer case
 
     vector1<Size> matchres;
@@ -1239,7 +1239,7 @@ struct MatchSet {
     rot_pose  (tmppose,rots[itrans].M);
     trans_pose(tmppose,rots[itrans].v);
     tmppose.append_residue_by_jump(base.pose.residue(1),1,"","",true);
-    for(Size l = 2; l <= base.pose.n_residue(); ++l) tmppose.append_residue_by_bond(base.pose.residue(l));
+    for(Size l = 2; l <= base.pose.size(); ++l) tmppose.append_residue_by_bond(base.pose.residue(l));
 
     core::conformation::symmetry::SymmDataOP sd = core::pose::symmetry::symm_data_from_asym_pose(tmppose,end1);
     Pose sympose = base.pose;
@@ -1255,7 +1255,7 @@ struct MatchSet {
       utility_exit_with_message("testing....");
     }
 
-    for(Size j = 1; j <= native.n_residue(); ++j) sympose.replace_residue(j,native.residue(j),true);
+    for(Size j = 1; j <= native.size(); ++j) sympose.replace_residue(j,native.residue(j),true);
     sympose.replace_residue(ligs[idx1].rsd1,fixd.residue(1),true);
     sympose.replace_residue(ligs[idx1].rsd2,fixd.residue(2),true);
     // sympose.dump_pdb("symtest.pdb");
@@ -1419,8 +1419,8 @@ struct MatchSet {
       Size r2 = ligs[idx1].rsd2;
       if( r1 == 1 ) return;
       if( r2 == 1 ) return;
-      if( r1 == base.pose.n_residue() ) return;
-      if( r2 == base.pose.n_residue() ) return;
+      if( r1 == base.pose.size() ) return;
+      if( r2 == base.pose.size() ) return;
       if( base.pose.chain(r1)!=base.pose.chain(r1-1) ) return;
       if( base.pose.chain(r1)!=base.pose.chain(r1+1) ) return;
       if( base.pose.chain(r2)!=base.pose.chain(r2-1) ) return;
@@ -1431,8 +1431,8 @@ struct MatchSet {
       Size r2 = b.ligs[idx2].rsd2;
       if( r1 == 1 ) return;
       if( r2 == 1 ) return;
-      if( r1 == b.base.pose.n_residue() ) return;
-      if( r2 == b.base.pose.n_residue() ) return;
+      if( r1 == b.base.pose.size() ) return;
+      if( r2 == b.base.pose.size() ) return;
       if( b.base.pose.chain(r1)!=b.base.pose.chain(r1-1) ) return;
       if( b.base.pose.chain(r1)!=b.base.pose.chain(r1+1) ) return;
       if( b.base.pose.chain(r2)!=b.base.pose.chain(r2-1) ) return;
@@ -1446,7 +1446,7 @@ struct MatchSet {
     vector1<Stub> rots = mop->align_rot(b.ligs[idx2].align_info,ligs[idx1].align_info);
     if(rots.size() < itrans) return;
 
-    // if( b.base.pose.n_residue()!=407 || base.pose.n_residue()!=1956 ) {
+    // if( b.base.pose.size()!=407 || base.pose.size()!=1956 ) {
     //  TR << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOT checking problem-specific props! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     // } else {
     // Vec hydsf4(0,0,0), psIsf4(0,0,0);
@@ -1525,7 +1525,7 @@ struct MatchSet {
 
     vector1<Size> include_res = b.iface_candidates;
     for(vector1<Size>::const_iterator i=iface_candidates.begin(),ie=iface_candidates.end(); i != ie; ++i) {
-      include_res.push_back(*i+b.base.pose.n_residue());
+      include_res.push_back(*i+b.base.pose.size());
     }
     Real iface = iface_check(outpose,b.iface_candidates);
     if(iface < (Real)basic::options::option[basic::options::OptionKeys::willmatch::interface_size]()) return;
@@ -1536,9 +1536,9 @@ struct MatchSet {
     Pose fixd     = ligs[idx1].pose;
     Pose fixdbase = base.pose;
     outpose.append_residue_by_jump(fixdbase.residue(1),1,"","",true);
-    for(Size l = 2; l <= fixdbase.n_residue(); ++l) outpose.append_residue_by_bond(fixdbase.residue(l));
+    for(Size l = 2; l <= fixdbase.size(); ++l) outpose.append_residue_by_bond(fixdbase.residue(l));
 
-    Size end1 = b.base.pose.n_residue();
+    Size end1 = b.base.pose.size();
     vector1<Size> matchres;
     matchres.push_back(b.ligs[idx2].rsd1);
     matchres.push_back(b.ligs[idx2].rsd2);
@@ -1619,11 +1619,11 @@ struct MatchSet {
       // rot_pose(partner,best_stub.M);
       // trans_pose(partner,best_stub.v);
       // primary.append_residue_by_jump(partner.residue(1),1,"","",true);
-      // for(Size l = 2; l <= b.base.pose.n_residue(); ++l) {
+      // for(Size l = 2; l <= b.base.pose.size(); ++l) {
       //  primary.append_residue_by_bond(partner.residue(l));
       // }
-      // primary.append_residue_by_jump(partner.residue(b.base.pose.n_residue()+1),1,"","",true);
-      // for(Size l = b.base.pose.n_residue()+2; l <= partner.n_residue(); ++l) {
+      // primary.append_residue_by_jump(partner.residue(b.base.pose.size()+1),1,"","",true);
+      // for(Size l = b.base.pose.size()+2; l <= partner.size(); ++l) {
       //  primary.append_residue_by_bond(partner.residue(l));
       // }
       // ozstream out("test.pdb");
@@ -1646,7 +1646,7 @@ struct MatchSet {
 
     ScoreFunctionOP sf = core::scoring::get_score_function();
 
-    Size end2 = base.pose.n_residue()+b.base.pose.n_residue();
+    Size end2 = base.pose.size()+b.base.pose.size();
 
     // fix crappy H placement ( needed for alignment)
     // fixd.dump_pdb("0_lig_fixd.pdb");
@@ -1684,8 +1684,8 @@ struct MatchSet {
     // return;
 
     TR << "placing HIS and optH" << std::endl;
-    for(Size j = 1; j <= b.native.n_residue(); ++j) outpose.replace_residue(j     ,b.native.residue(j),true);
-    for(Size j = 1; j <=   native.n_residue(); ++j) outpose.replace_residue(j+end1,  native.residue(j),true);
+    for(Size j = 1; j <= b.native.size(); ++j) outpose.replace_residue(j     ,b.native.residue(j),true);
+    for(Size j = 1; j <=   native.size(); ++j) outpose.replace_residue(j+end1,  native.residue(j),true);
     outpose.replace_residue(   b.ligs[idx2].rsd1,move.residue(1),true);
     outpose.replace_residue(   b.ligs[idx2].rsd2,move.residue(2),true);
     outpose.replace_residue(end1+ligs[idx1].rsd1,fixd.residue(1),true);
@@ -1764,7 +1764,7 @@ struct MatchSet {
       vector1<Size> reset_res;
       core::id::AtomID_Map< bool > atom_map;
       core::pose::initialize_atomid_map( atom_map, outpose, false );
-      for ( Size ir = 1; ir <= outpose.n_residue(); ++ir ) {
+      for ( Size ir = 1; ir <= outpose.size(); ++ir ) {
         for(Size ia = 1; ia <= outpose.residue(ir).nheavyatoms(); ++ia) {
           Size t = outpose.residue(ir).atom_type_index(ia);
           if( t==3 || t==4 || t==5 || t==6 || t==19 || t==20 ) atom_map.set(AtomID(ia,ir) , true );
@@ -1990,7 +1990,7 @@ int main (int argc, char *argv[])
         tmppose.replace_residue(rsd1,ms.ligs[ilig].pose.residue(1),true);
         tmppose.replace_residue(rsd2,ms.ligs[ilig].pose.residue(2),true);
         core::pose::remove_lower_terminus_type_from_pose_residue(tmppose,1);
-        core::pose::remove_upper_terminus_type_from_pose_residue(tmppose,tmppose.n_residue());
+        core::pose::remove_upper_terminus_type_from_pose_residue(tmppose,tmppose.size());
         // tmppose.set_xyz(AtomID(tmppose.residue(rsd1).atom_index("HE2"),rsd1),mai.cen);
         // tmppose.set_xyz(AtomID(tmppose.residue(rsd2).atom_index("HE2"),rsd2),mai.cen);
         Pose const pose(tmppose);
@@ -2032,7 +2032,7 @@ int main (int argc, char *argv[])
           Vec rot_cen  = mai.cen;
           Vec rot_axis = (h.xyz(AtomID(natm,1))-mai.cen).normalized();
           vector1<Vec> FXD1,FXD2,CA;
-          for(Size i = 1; i <= pose.n_residue(); ++i) {
+          for(Size i = 1; i <= pose.size(); ++i) {
             Vec fxd1 = (pose.residue(i).xyz("CB")-pose.residue(i).xyz("CA")).normalized();
             Vec fxd2 = (pose.residue(i).xyz( "N")-pose.residue(i).xyz("CA")).normalized();
             fxd2 = (fxd2-fxd1.dot(fxd2)*fxd1).normalized();
@@ -2052,7 +2052,7 @@ int main (int argc, char *argv[])
               Vec const mov10 = (h.residue(1).xyz("CB")-h.residue(1).xyz("CA")).normalized();
               Vec const tmp  = (h.residue(1).xyz( "N")-h.residue(1).xyz("CA")).normalized();
               Vec const mov20 = (tmp-mov10.dot(tmp)*mov10).normalized();
-              for(Size irsd = 1; irsd <= pose.n_residue(); ++irsd) {
+              for(Size irsd = 1; irsd <= pose.size(); ++irsd) {
                 if(irsd==rsd1 || irsd==rsd2) continue;
                 if(irsd != 59) continue;
                 Stub symm_stub1;
@@ -2203,7 +2203,7 @@ int main (int argc, char *argv[])
                       Vec const ca = h.residue(1).xyz(2);
                       Real const r2 = ca.y()*ca.y()+ca.z()*ca.z();
                       Vec hcacb = (h.xyz(AtomID(2,1))-h.xyz(AtomID(5,1))).normalized(); // 6 = CB?? removed termini... 5 should be ok
-                      for(Size jrsd = 1; jrsd <= self.n_residue(); ++jrsd) {
+                      for(Size jrsd = 1; jrsd <= self.size(); ++jrsd) {
                         if( jrsd==irsd || jrsd==rsd1 || jrsd==rsd2 ) continue;
                         Vec ca2 = self.residue(jrsd).xyz(2);
                         Real const r2j = ca2.y()*ca2.y()+ca2.z()*ca2.z();
@@ -2309,7 +2309,7 @@ int main (int argc, char *argv[])
 
     vector1<Size> iface_candidates1,iface_candidates2;
     vector1<Size> tmp = read_res_list(basic::options::option[basic::options::OptionKeys::willmatch::exclude_res1]());
-    for(Size i = 1; i <= native1.n_residue(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates1.push_back(i);
+    for(Size i = 1; i <= native1.size(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates1.push_back(i);
     MatchSet ms1(poses1,mop,native1,allowed_res1);
     ms1.iface_candidates = iface_candidates1;
     MatchSet ms2;
@@ -2322,7 +2322,7 @@ int main (int argc, char *argv[])
       core::import_pose::pose_from_file(native2,option[willmatch::native2](), core::import_pose::PDB_file);
       ms2.init(poses2,mop,native2,allowed_res2);
       tmp = read_res_list(basic::options::option[basic::options::OptionKeys::willmatch::exclude_res2]());
-      for(Size i = 1; i <= native2.n_residue(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates2.push_back(i);
+      for(Size i = 1; i <= native2.size(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates2.push_back(i);
       ms2.iface_candidates = iface_candidates2;
     }
     Filter *filter;

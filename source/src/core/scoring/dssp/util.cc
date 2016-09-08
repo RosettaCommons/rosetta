@@ -80,8 +80,8 @@ get_pairing_geometry(
 	Real& pleating2
 )
 {
-	runtime_assert( res1>1 && res1 < pose.total_residue() &&
-		res2 > res1 && res2 < pose.total_residue() );
+	runtime_assert( res1>1 && res1 < pose.size() &&
+		res2 > res1 && res2 < pose.size() );
 
 	chemical::ResidueType const& rt1 ( pose.residue_type ( res1 ) );
 	chemical::ResidueType const& rt2 ( pose.residue_type ( res2 ) );

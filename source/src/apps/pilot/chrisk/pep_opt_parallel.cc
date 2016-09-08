@@ -189,11 +189,11 @@ get_n_pep_nbrs(
 )
 {
 	Size n_pep_nbrs( 0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_pep[i] ) continue;
 		bool cg_res_has_nbr( false );
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			if( cg_res_has_nbr ) break;
 			if ( is_pep[j] ) continue;
 			Residue const & rsd2( pose.residue(j) );
@@ -220,7 +220,7 @@ dump_efactor_pdb(
 	std::string const & tag
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 //	id::AtomID_Mask const & mask;
 //	id::initialize( mask, pose );
 
@@ -235,7 +235,7 @@ dump_efactor_pdb(
 	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
 	out << "MODEL     " << tag << "\n";
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -275,7 +275,7 @@ has_clash(
 	using namespace ObjexxFCL::format; // I and F
 
 	bool is_clash( false );
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !is_checked[ seqpos ] ) continue;
 
 		( *scorefxn )( pose );
@@ -624,12 +624,12 @@ RunPepSpec()
 			}
 
 			Size pep_begin( 1 );
-			Size pep_end( pose.total_residue() );
+			Size pep_end( pose.size() );
 			//ignore termini
-			n_positions += ( pose.total_residue() - 2 );
+			n_positions += ( pose.size() - 2 );
 
 			//gen fold tree//
-			FoldTree f( pose.total_residue() );
+			FoldTree f( pose.size() );
 			pose.fold_tree( f );
 
 			//randomize pep sequence//

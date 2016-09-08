@@ -125,8 +125,8 @@ PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose )
 void
 PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, StructFileRepOptions const & options )
 {
-	id::AtomID_Mask mask = id::AtomID_Mask( pose.total_residue() );
-	for ( Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+	id::AtomID_Mask mask = id::AtomID_Mask( pose.size() );
+	for ( Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 		for ( Size atom_index = 1; atom_index <= pose.residue_type( resnum ).natoms(); ++atom_index ) {
 			id::AtomID atm = id::AtomID( atom_index, resnum );
 			mask.set( atm, true );
@@ -146,8 +146,8 @@ PoseToStructFileRepConverter::init_from_pose(
 {
 	using namespace core;
 
-	id::AtomID_Mask mask = id::AtomID_Mask( pose.total_residue() );
-	for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+	id::AtomID_Mask mask = id::AtomID_Mask( pose.size() );
+	for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 
 		for ( Size atom_index = 1; atom_index <= pose.residue_type( resnum ).natoms(); ++ atom_index ) {
 			id::AtomID atm = id::AtomID( atom_index, resnum );
@@ -223,11 +223,11 @@ PoseToStructFileRepConverter::init_from_pose(
 		renumber_chains = true;
 	}
 
-	//utility::vector1< bool > res_info_added( pose.total_residue(), false );
+	//utility::vector1< bool > res_info_added( pose.size(), false );
 
 	core::Size new_atom_num( 1 );
 	core::Size new_tercount( 0 );
-	for ( Size resnum = 1, resnum_max = pose.n_residue(); resnum <= resnum_max; ++resnum ) {
+	for ( Size resnum = 1, resnum_max = pose.size(); resnum <= resnum_max; ++resnum ) {
 		conformation::Residue const & rsd( pose.residue( resnum ) );
 		bool const use_pdb_info( use_pdb_info_for_num( pose, resnum ) );
 
@@ -550,7 +550,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 	// FoldTree doesn't go through those (except in exotic and generally
 	// temporary circumstances.
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & ii_res = pose.residue( ii );
 		if ( ii_res.has_lower_connect() ) {
 			Size lower = ii_res.lower_connect().index();
@@ -837,9 +837,9 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 ) const {
 
 	if ( options_.skip_connect_info() ) return;
-	if ( pose.n_residue() == 0 ) return; //Probably unnecesary, but why not?
+	if ( pose.size() == 0 ) return; //Probably unnecesary, but why not?
 
-	debug_assert( res_index <= pose.n_residue() );
+	debug_assert( res_index <= pose.size() );
 	debug_assert( atom_index_in_rsd <= pose.residue( res_index ).natoms() );
 
 	bool const write_virtuals( options_.output_virtual() );
@@ -945,14 +945,14 @@ PoseToStructFileRepConverter::grab_torsion_records(
 	if ( !core::pose::is_ideal_pose(pose) ) {
 		TR << "Ignoring out::file::output_torsions option because pose is non-ideal!" << std::endl;
 	} else {
-		ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.n_residue());
+		ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.size());
 		scoring::dssp::Dssp(pose).dssp_reduced(dssp_reduced_secstruct);
 		if ( pdb_info ) {
 			out << "REMARK torsions: res pdbres pdbchain seq dssp phi psi omega" << std::endl;
 		} else {
 			out << "REMARK torsions: res    res    chain seq dssp phi psi omega" << std::endl;
 		}
-		for ( core::Size i=1; i<=pose.n_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pdb_info ) {
 				out << "REMARK " << I( 4, i ) << " " << I( 4, pose.pdb_info()->number(i)) << " " << pose.pdb_info()->chain(i) << " " << pose.residue_type( i ).name1() << " " <<
 					dssp_reduced_secstruct(i) << " " << F( 9, 3, pose.phi(i)) << " " << F( 9, 3, pose.psi(i)) << " " << F( 9, 3, pose.omega(i)) << std::endl;
@@ -982,7 +982,7 @@ PoseToStructFileRepConverter::grab_pdbinfo_labels(
 	if ( pose.pdb_info() ) {
 		// Then output the labels
 		std::stringstream out;
-		for ( core::Size i=1; i<=pose.n_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			utility::vector1 < std::string > const tmp_v_reslabels( pose.pdb_info()->get_reslabels(i) ); //Ugh.  Passing a vector of strings by return value.
 			core::Size const numLables( tmp_v_reslabels.size() );
 			//Only write if the residue has any label (keep the file as small as possible)
@@ -1037,8 +1037,8 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 		}
 		line.push_back( restrict_prec(pose_total)); //end first for overall pose energy;
 		table.push_back(line);
-
-		for ( core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j ) {
+		
+		for ( core::Size j = 1, end_j = pose.size(); j <= end_j; ++j ) {
 			line.clear();
 			core::Real rsd_total = 0.0;
 			line.push_back( pose.residue(j).name() + "_" + to_string( j ) );

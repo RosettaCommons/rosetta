@@ -125,7 +125,7 @@ SecondaryStructurePotential::setup_for_scoring( pose::Pose & pose ) const
 	// note that this does NOT clear the results of the last calculation
 	// that must be done by the individual routines using the cached data
 	//
-	ss_info.resize( pose.total_residue() );
+	ss_info.resize( pose.size() );
 
 	// fill the backbone position array for fast access to coords during calculation
 	fill_bb_pos( pose, ss_info.bb_pos() );
@@ -1107,7 +1107,7 @@ SecondaryStructurePotential::identify_ss(
 	Strands & strands
 ) const {
 	conformation::Conformation const & conf( pose.conformation() ); // get secstruct info from this guy
-	int const total_residue( pose.total_residue() );
+	int const total_residue( pose.size() );
 
 	FArray1D_int dimer_type( total_residue ); // what type of dimer each position is
 	// 0-none, 1-SS 2-HH

@@ -114,7 +114,7 @@ UnfoldedStateEnergyCalculatorMover::create_random_fragments( Pose & pose, vector
 {
 	// get number of protein residues
 	Size num_protein_res( 0 );
-	for ( Size i = 1; i < pose.total_residue(); ++i ) {
+	for ( Size i = 1; i < pose.size(); ++i ) {
 		if ( pose.residue( i ).type().is_protein() ) {
 			num_protein_res++;
 		}
@@ -194,7 +194,7 @@ UnfoldedStateEnergyCalculatorMover::fragment_check( Pose & pose, Size frag_start
 {
 	// do not go past the begining or end of the pose
 	if ( frag_start <= 0 ) return false;
-	if ( frag_start + frag_length_ > pose.total_residue() ) return false;
+	if ( frag_start + frag_length_ > pose.size() ) return false;
 
 	// all residues should be on the same chain
 	for ( Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {

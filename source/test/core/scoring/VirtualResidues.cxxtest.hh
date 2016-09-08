@@ -79,12 +79,12 @@ public:
 
 		// center pose at origin
 		numeric::xyzVector< core::Real > com(0.0,0.0,0.0);
-		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+		for ( int i=1; i<=(int)pose.size(); ++i ) {
 			com +=pose.residue(i).atom(2).xyz();
 		}
-		com /= pose.total_residue();
+		com /= pose.size();
 
-		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+		for ( int i=1; i<=(int)pose.size(); ++i ) {
 			core::conformation::Residue const &rsd ( pose.residue(i) );
 			for ( int j=1; j<=(int)rsd.natoms(); j++ ) {
 				core::id::AtomID id( j, i );
@@ -101,11 +101,11 @@ public:
 		if ( pose.residue(1).residue_type_set()->has_name("VRT") ) {
 			pose.append_residue_by_jump
 				( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
-				pose.total_residue()/2 );
+				pose.size()/2 );
 
 			// make the virt atom the root
 			kinematics::FoldTree newF(pose.fold_tree());
-			newF.reorder( pose.total_residue() );
+			newF.reorder( pose.size() );
 			pose.fold_tree( newF );
 
 			// 2) rescore structure w/ virtual res
@@ -129,12 +129,12 @@ public:
 
 		// center pose at origin
 		numeric::xyzVector< core::Real > com(0.0,0.0,0.0);
-		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+		for ( int i=1; i<=(int)pose.size(); ++i ) {
 			com +=pose.residue(i).atom(2).xyz();
 		}
-		com /= pose.total_residue();
+		com /= pose.size();
 
-		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+		for ( int i=1; i<=(int)pose.size(); ++i ) {
 			core::conformation::Residue const &rsd ( pose.residue(i) );
 			for ( int j=1; j<=(int)rsd.natoms(); j++ ) {
 				core::id::AtomID id( j, i );
@@ -149,11 +149,11 @@ public:
 		// add jump to vrt res
 		pose.append_residue_by_jump
 			( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
-			pose.total_residue()/2 );
+			pose.size()/2 );
 
 		// make the virt atom the root
 		kinematics::FoldTree newF(pose.fold_tree());
-		newF.reorder( pose.total_residue() );
+		newF.reorder( pose.size() );
 		pose.fold_tree( newF );
 
 		// 2) rescore structure w/ virtual res

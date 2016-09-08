@@ -132,7 +132,7 @@ TryRotamers::setup_rotamer_set( pose::Pose & pose )
 	ptask->set_bump_check( clash_check_ );
 
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
-	graph::GraphOP packer_graph( new graph::Graph( pose.total_residue() ) );
+	graph::GraphOP packer_graph( new graph::Graph( pose.size() ) );
 	restask.or_ex1( true );
 	restask.or_ex2( true );
 	restask.or_ex3( true );
@@ -174,8 +174,8 @@ TryRotamers::apply ( pose::Pose & pose )
 	}
 
 	if ( solo_res_ ) {
-		core::pose::add_lower_terminus_type_to_pose_residue( pose, pose.total_residue() ); //prolly critical so that the dunbrack library uses neutral phi
-		core::pose::add_upper_terminus_type_to_pose_residue( pose, pose.total_residue() );
+		core::pose::add_lower_terminus_type_to_pose_residue( pose, pose.size() ); //prolly critical so that the dunbrack library uses neutral phi
+		core::pose::add_upper_terminus_type_to_pose_residue( pose, pose.size() );
 	}
 
 	pose.update_residue_neighbors();

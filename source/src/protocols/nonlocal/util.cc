@@ -74,7 +74,7 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 
 	vector1<Size> violated_residues;
 	violated_residues.push_back(1);
-	for ( Size i = 2; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 2; i <= pose.size(); ++i ) {
 		const xyzVector<double>& prev_xyz = pose.xyz(NamedAtomID("CA", i - 1));
 		const xyzVector<double>& curr_xyz = pose.xyz(NamedAtomID("CA", i));
 
@@ -84,7 +84,7 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 			violated_residues.push_back(i);
 		}
 	}
-	violated_residues.push_back(pose.total_residue() + 1);
+	violated_residues.push_back(pose.size() + 1);
 
 	// violated_residues = [ 1, ..., n ]
 	for ( Size i = 2; i <= violated_residues.size(); ++i ) {
@@ -234,7 +234,7 @@ core::Real get_per_residue_score(
 	core::pose::Pose const & pose
 ) {
 	using namespace core::scoring;
-	assert( rsd_idx <= pose.total_residue() );
+	assert( rsd_idx <= pose.size() );
 	EnergyMap const & rsd_energies(pose.energies().residue_total_energies(rsd_idx)); // unweighted scores
 	return rsd_energies[ scoretype ];
 }

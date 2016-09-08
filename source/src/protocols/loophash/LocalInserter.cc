@@ -168,7 +168,7 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 
 	// get final RMS
 	// since we're closing gaps, we only want to make sure the rmsd of the non loophash region is under some cutoff
-	core::Real final_rms = core::scoring::CA_rmsd( newpose, original_pose, 1, original_pose.total_residue(), excluded_res );
+	core::Real final_rms = core::scoring::CA_rmsd( newpose, original_pose, 1, original_pose.size(), excluded_res );
 	TR.Debug << "Premin RMS: " << premin_rms << "Min Score3 " << "Final RMS: " << final_rms << std::endl;
 
 

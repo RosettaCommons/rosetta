@@ -234,7 +234,7 @@ CDRResidueSelector::apply(
 	core::pose::Pose const & pose
 ) const {
 
-	utility::vector1< bool > subset(pose.total_residue(), false);
+	utility::vector1< bool > subset(pose.size(), false);
 
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;

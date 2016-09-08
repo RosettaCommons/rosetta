@@ -83,7 +83,7 @@ output_movemap( kinematics::MoveMap const & mm, core::pose::Pose const & pose, s
 	using namespace core::id;
 	using namespace core::kinematics;
 
-	Size const total_residue = pose.total_residue();
+	Size const total_residue = pose.size();
 
 	Size spacing = 10;
 

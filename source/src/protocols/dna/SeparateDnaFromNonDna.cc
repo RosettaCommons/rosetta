@@ -83,7 +83,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	TR << "old fold tree:\n" << pose.fold_tree() << std::endl;
 
 	// construct a new fold tree that links non-DNA chains together, then DNA chains together, then links non-DNA group to DNA group by a single jump
-	FoldTree fold_tree( pose.total_residue() );
+	FoldTree fold_tree( pose.size() );
 
 	// collect non-DNA and DNA chain indices
 	vector1< Size > non_DNA_chain_indices, DNA_chain_indices;

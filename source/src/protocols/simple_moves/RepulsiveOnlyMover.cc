@@ -57,7 +57,7 @@ RepulsiveOnlyMover::~RepulsiveOnlyMover() = default;
 void
 RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 	if ( basic::options::option[basic::options::OptionKeys::in::replonly_loops]() ) {
-		for ( core::Size i=1; i<=pose.n_residue(); i++ ) {
+		for ( core::Size i=1; i<=pose.size(); i++ ) {
 			if ( pose.secstruct(i)=='L' ) {
 				if ( ! pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ) {
 					core::pose::remove_lower_terminus_type_from_pose_residue( pose, i );

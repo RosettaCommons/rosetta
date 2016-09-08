@@ -632,7 +632,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	library->load_db();
 
 	// initialize some variables for figuring out where the loops of interest are
-	core::Size const nres = pose.total_residue();
+	core::Size const nres = pose.size();
 	core::Size const nspan = topology->tmhelix();
 	core::Size const num_cut_loops = nspan-1;
 	ObjexxFCL::FArray1D_int previous_span_begin((nspan-1),0);

@@ -1170,12 +1170,12 @@ int main (int argc, char *argv[]) {
 	Pose pose,arg,asp,glu,lys,ala;
 	string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
 	core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 		if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
 	}
 	Pose pala(pose);
-	for(Size ir = 1; ir <= pala.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pala.size(); ++ir) {
 		pala.replace_residue(ir,ala.residue(1),true);
 	}
 
@@ -1204,12 +1204,12 @@ int main (int argc, char *argv[]) {
 
 	TR << "scanning LYS-LG-OOC" << std::endl;
 	vector1<HitOP> khits; {
-		vector1<vector1<HitOP> > hitsvec(pose.n_residue());
+		vector1<vector1<HitOP> > hitsvec(pose.size());
 		Size nhit=0;
 		#ifdef USE_OPENMP
 		#pragma omp parallel for schedule(dynamic,1)
 		#endif
-		for(int ir = 3; ir <= (int)pose.n_residue()-2; ++ir) {
+		for(int ir = 3; ir <= (int)pose.size()-2; ++ir) {
 			if(sasa[ir] > 0.1) continue;
 			Pose wp,lg;
 			#ifdef USE_OPENMP
@@ -1217,7 +1217,7 @@ int main (int argc, char *argv[]) {
 			#endif
 			{ wp=pose; lg=ctp; }
 			wp.replace_residue(ir,lys.residue(1),true);
-			for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
+			for(Size jr = 3; jr <= pose.size()-2; ++jr) {
 				if(ir==jr) continue;
 				if(sasa[jr] > 0.1) continue;
 				//if( (ir*jr+jr+3*ir+999999999)%10!=0 ) continue;
@@ -1227,7 +1227,7 @@ int main (int argc, char *argv[]) {
 				ik_lys_ctp_glu(wp,ir,jr,ifc,hitsvec[ir],lg);
 			}
 			nhit += hitsvec[ir].size();
-			if(ir%3==0) TR << Real(ir-2)/Real(pose.n_residue()-4) * 100.0 << " percent done ik_lys_ctp " << nhit << " hits" << std::endl;
+			if(ir%3==0) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_lys_ctp " << nhit << " hits" << std::endl;
 		}
 		for(vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i) khits.insert(khits.end(),i->begin(),i->end());
 		hitsvec.clear(); // recover mem
@@ -1235,12 +1235,12 @@ int main (int argc, char *argv[]) {
 
 	TR << "scanning ARG-OOC" << std::endl;
 	vector1<HitOP> rhits; {
-		vector1<vector1<HitOP> > hitsvec(pose.n_residue());
+		vector1<vector1<HitOP> > hitsvec(pose.size());
 		Size nhit=0;
 		#ifdef USE_OPENMP
 		#pragma omp parallel for schedule(dynamic,1)
 		#endif
-		for(int ir = 3; ir <= (int)pose.n_residue()-2; ++ir) {
+		for(int ir = 3; ir <= (int)pose.size()-2; ++ir) {
 			if(sasa[ir] > 0.1) continue;
 			//TR << ir << std::endl;
 			Pose wp,lg;
@@ -1249,7 +1249,7 @@ int main (int argc, char *argv[]) {
 			#endif
 			{ wp=pose; lg=ctp; }
 			wp.replace_residue(ir,arg.residue(1),true);
-			for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
+			for(Size jr = 3; jr <= pose.size()-2; ++jr) {
 				if(ir==jr) continue;
 				if(sasa[jr] > 0.1) continue;
 				//if( (ir*jr+jr+3*ir+999999999)%5!=0 ) continue;
@@ -1261,7 +1261,7 @@ int main (int argc, char *argv[]) {
 				ik_arg_glu_side(wp,ir,jr,ifc,hitsvec[ir],lg);
 			}
 			nhit += hitsvec[ir].size();
-			if(ir%3==0) TR << Real(ir-2)/Real(pose.n_residue()-4) * 100.0 << " percent done ik_arg " << nhit << " hits" << std::endl;
+			if(ir%3==0) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_arg " << nhit << " hits" << std::endl;
 		}
 		for(vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i) rhits.insert(rhits.end(),i->begin(),i->end());
 		hitsvec.clear(); // recover mem
@@ -1948,15 +1948,15 @@ int main (int argc, char *argv[]) {
 	// for(Real x = 4.5; x <=360.0; x += 5.0) CHI1.push_back(x);
 	// for(Real x = 4.5; x <=360.0; x += 9.0) CHI2.push_back(x);
 	// // precompute acceptable chis
-	// ObjexxFCL::FArray1D<Real> eallow0(                        pose.n_residue(),9e9);
-	// ObjexxFCL::FArray2D<Real> eallow1(            CHI1.size(),pose.n_residue(),9e9);
-	// ObjexxFCL::FArray3D<Real> eallow2(CHI2.size(),CHI1.size(),pose.n_residue(),9e9);
+	// ObjexxFCL::FArray1D<Real> eallow0(                        pose.size(),9e9);
+	// ObjexxFCL::FArray2D<Real> eallow1(            CHI1.size(),pose.size(),9e9);
+	// ObjexxFCL::FArray3D<Real> eallow2(CHI2.size(),CHI1.size(),pose.size(),9e9);
 	// {
 	//   Pose wp(pose);
 	//   core::pack::rotamers::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( asp.residue(1).type() );
 	//   core::pack::rotamers::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
 	//   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
-	//   for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	//   for(Size ir = 1; ir <= pose.size(); ++ir) {
 	//     if(sasa[ir] > 0) continue;
 	//     wp.replace_residue(ir,asp.residue(1),true); asp.replace_residue(1,wp.residue(ir),false);
 	//     wp.replace_residue(ir,glu.residue(1),true); glu.replace_residue(1,wp.residue(ir),false);
@@ -1990,7 +1990,7 @@ int main (int argc, char *argv[]) {
 
 	// Vec const OH(tmp.residue(5).xyz("O1"));
 	//         Vec const C5(tmp.residue(5).xyz("C5"));
-	//         for(Size kr = 1; kr <= wp.n_residue(); ++kr) {
+	//         for(Size kr = 1; kr <= wp.size(); ++kr) {
 	//           if(sasa[kr] > 0) continue;
 	//           //if(eallow0(kr) > 10.0) continue;
 	//           if( wp.residue(kr).xyz(5).distance_squared(OH) > 36.0 ) continue;

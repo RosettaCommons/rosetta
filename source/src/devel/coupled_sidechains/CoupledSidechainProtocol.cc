@@ -267,17 +267,17 @@ CoupledSidechainProtocol::apply(
 	}
 
 
-	current_.resize(pose.total_residue());
-	previous_.resize(pose.total_residue());
-	best_.resize(pose.total_residue());
-	rot_vectors_.resize( pose.total_residue() );
-	chi_vectors_.resize( pose.total_residue() );
+	current_.resize(pose.size());
+	previous_.resize(pose.size());
+	best_.resize(pose.size());
+	rot_vectors_.resize( pose.size() );
+	chi_vectors_.resize( pose.size() );
 
 	runtime_assert(ntrials_ != 0);
 	runtime_assert(packed_residues().size() > 0);
 	runtime_assert( ig_ );
 
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( core::Size i = 1; i <= pose.size(); i++ ){
 		current_[ i ] = new core::conformation::Residue(pose.residue( i ));
 		update_rotamers( i );
 	}

@@ -64,7 +64,7 @@ static THREAD_LOCAL basic::Tracer TR( "rblinker" );
 
 
 inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
@@ -133,7 +133,7 @@ core::fragment::FragSetOP
 make_frag_set(Pose const & pose, string ss, std::map<string, vector1<core::fragment::FragDataOP> > fds) {
 	using namespace core::fragment;
 	FragSetOP frags = new ConstantLengthFragSet();
-	int const stop = pose.n_residue();
+	int const stop = pose.size();
 	if((int)1 >= stop) return NULL;
 	for( Size i = 1; i <= (Size)stop; ++i ) {
 		string ss3 = ss.substr(i-1,3);
@@ -183,8 +183,8 @@ struct ClashCheck {
 
 		neighbor_cutoff_ = neighbor_cutoff;
 		neighbor_cutoff_sq_ = ( neighbor_cutoff*neighbor_cutoff);
-		points_.resize(pose_.n_residue()*5);
-		for(Size i = 0; i < pose_.n_residue(); ++i) {
+		points_.resize(pose_.size()*5);
+		for(Size i = 0; i < pose_.size(); ++i) {
 			for(Size j = 1; j <= 5; ++j) points_[5*i+j] = pose_.xyz(AtomID(j,i+1));
 		}
 
@@ -250,9 +250,9 @@ struct ClashCheck {
 		Stub stubl(pose_.xyz(AtomID(2,1)),pose_.xyz(AtomID(2,2)),pose_.xyz(AtomID(2,3)));
 		Stub stub1(pose .xyz(AtomID(2,1)),pose .xyz(AtomID(2,2)),pose .xyz(AtomID(2,3)));
 		for(Size i = 1; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
-			if(i > 9) if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_.n_residue())))) ) ) return false;
-			if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+1*pose_.n_residue())))) ) ) return false;
-			if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+2*pose_.n_residue())))) ) ) return false;
+			if(i > 9) if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_.size())))) ) ) return false;
+			if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+1*pose_.size())))) ) ) return false;
+			if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+2*pose_.size())))) ) ) return false;
 		}
 		Vec cen = stubl.local2global(stub1.global2local(Vec(0,0,0)));
 		Vec axs = stubl.local2global(stub1.global2local(Vec(0,0,1)));
@@ -267,7 +267,7 @@ struct ClashCheck {
 		Stub stubl(pose_.xyz(AtomID(2,1)),pose_.xyz(AtomID(2,2)),pose_.xyz(AtomID(2,3)));
 		Stub stub1(pose .xyz(AtomID(2,1)),pose .xyz(AtomID(2,2)),pose .xyz(AtomID(2,3)));
 		for(Size i = 9; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
-			if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_.n_residue())))) ) ) return false;
+			if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_.size())))) ) ) return false;
 		}
 		return true;
 	}
@@ -276,10 +276,10 @@ struct ClashCheck {
 		return clash_check( stubl.local2global(stub.global2local(pos)) );
 	}
 	inline bool clash_check_naive(Pose & pose) {
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			for(Size j = 1; j <= 5; ++j) {
 				Vec const xyz1( pose.xyz(AtomID(j,i)) );
-				for(Size i2 = 1; i2 <= pose.n_residue(); ++i2) {
+				for(Size i2 = 1; i2 <= pose.size(); ++i2) {
 					for(Size j2 = 1; j2 <= 5; ++j2) {
 						Vec const xyz2( pose.xyz(AtomID(j2,i2)) );
 						Real const d_sq( distance_squared( xyz1, xyz2 ) );
@@ -369,8 +369,8 @@ void* doit(void*) {
 
 	Size noutput = 0;
 
-	if( psIroot1 > psI.n_residue() ) utility_exit_with_message("linker1_root outside of psI!");
-	if( psIroot2 > psI.n_residue() ) utility_exit_with_message("linker2_root outside of psI!");
+	if( psIroot1 > psI.size() ) utility_exit_with_message("linker1_root outside of psI!");
+	if( psIroot2 > psI.size() ) utility_exit_with_message("linker2_root outside of psI!");
 
 	TR << "linker1 size " << linklen1 << " psIroot1: " << psIroot1 << " seq1: " << seq1 << std::endl;
 	TR << "linker2 size " << linklen2 << " psIroot2: " << psIroot2 << " seq2: " << seq2 << std::endl;
@@ -383,32 +383,32 @@ void* doit(void*) {
 			remove_upper_terminus_type_from_pose_residue(lnk1,1);
 			for(Size i = 2; i <= seq1.size(); ++i) {
 				string name3 = name_from_aa(aa_from_oneletter_code(seq1[i-1]));
-				lnk1.append_polymer_residue_after_seqpos(*ResidueFactory::create_residue(cenresset->name_map(name3)),lnk1.n_residue(),true);
+				lnk1.append_polymer_residue_after_seqpos(*ResidueFactory::create_residue(cenresset->name_map(name3)),lnk1.size(),true);
 			}
 			lnk1.set_omega(1,180);
-			for(Size i = 2; i <= lnk1.n_residue(); ++i) {	lnk1.set_phi(i,-60); lnk1.set_psi(i,-45); lnk1.set_omega(i,180); }
-			//lnk1.set_phi  (lnk1.n_residue(),hyd.phi  (1));
-			//lnk1.set_psi  (lnk1.n_residue(),hyd.psi  (1));
-			//lnk1.set_omega(lnk1.n_residue(),hyd.omega(1));
+			for(Size i = 2; i <= lnk1.size(); ++i) {	lnk1.set_phi(i,-60); lnk1.set_psi(i,-45); lnk1.set_omega(i,180); }
+			//lnk1.set_phi  (lnk1.size(),hyd.phi  (1));
+			//lnk1.set_psi  (lnk1.size(),hyd.psi  (1));
+			//lnk1.set_omega(lnk1.size(),hyd.omega(1));
 			hydroot = 1;
 			linkstart1 = 1;
-			linkend1 = lnk1.n_residue();
+			linkend1 = lnk1.size();
 		} else if ( psI.residue(psIroot1).is_lower_terminus() ) {
 			make_pose_from_sequence(lnk1,"A",*cenresset,false);
-			lnk1.replace_residue(lnk1.n_residue(),psI.residue(psIroot1),false);
+			lnk1.replace_residue(lnk1.size(),psI.residue(psIroot1),false);
 			remove_lower_terminus_type_from_pose_residue(lnk1,1);
 			for(Size i = seq1.size()-1; i > 0; --i) {
 				string name3 = name_from_aa(aa_from_oneletter_code(seq1[i-1]));
 				lnk1.prepend_polymer_residue_before_seqpos(*ResidueFactory::create_residue(cenresset->name_map(name3)),1,true);
 			}
 
-			//lnk1.set_omega(lnk1.n_residue(),180); // should already be ok...
-			for(Size i = 1; i <= lnk1.n_residue()-1; ++i) {	lnk1.set_phi(i,-60); lnk1.set_psi(i,-45); lnk1.set_omega(i,180); }
-			//lnk1.set_phi  (lnk1.n_residue(),hyd.phi  (hyd.n_residue()));
-			//lnk1.set_psi  (lnk1.n_residue(),hyd.psi  (hyd.n_residue()));
-			//lnk1.set_omega(lnk1.n_residue(),hyd.omega(hyd.n_residue()));
-			hydroot = hyd.n_residue();
-			linkstart1 = lnk1.n_residue();
+			//lnk1.set_omega(lnk1.size(),180); // should already be ok...
+			for(Size i = 1; i <= lnk1.size()-1; ++i) {	lnk1.set_phi(i,-60); lnk1.set_psi(i,-45); lnk1.set_omega(i,180); }
+			//lnk1.set_phi  (lnk1.size(),hyd.phi  (hyd.size()));
+			//lnk1.set_psi  (lnk1.size(),hyd.psi  (hyd.size()));
+			//lnk1.set_omega(lnk1.size(),hyd.omega(hyd.size()));
+			hydroot = hyd.size();
+			linkstart1 = lnk1.size();
 			linkend1 = 1;
 		} else {
 			utility_exit_with_message("psIroot1 must be a terminus!");
@@ -423,42 +423,42 @@ void* doit(void*) {
 			remove_upper_terminus_type_from_pose_residue(lnk2,1);
 			for(Size i = 2; i <= seq2.size(); ++i) {
 				string name3 = name_from_aa(aa_from_oneletter_code(seq2[i-1]));
-				lnk2.append_polymer_residue_after_seqpos(*ResidueFactory::create_residue(cenresset->name_map(name3)),lnk2.n_residue(),true);
+				lnk2.append_polymer_residue_after_seqpos(*ResidueFactory::create_residue(cenresset->name_map(name3)),lnk2.size(),true);
 			}
 			lnk2.set_omega(1,180);
-			for(Size i = 2; i <= lnk2.n_residue(); ++i) {	lnk2.set_phi(i,-60); lnk2.set_psi(i,-45); lnk2.set_omega(i,180); }
-			//lnk2.set_phi  (lnk2.n_residue(),petf.phi  (1));
-			//lnk2.set_psi  (lnk2.n_residue(),petf.psi  (1));
-			//lnk2.set_omega(lnk2.n_residue(),petf.omega(1));
+			for(Size i = 2; i <= lnk2.size(); ++i) {	lnk2.set_phi(i,-60); lnk2.set_psi(i,-45); lnk2.set_omega(i,180); }
+			//lnk2.set_phi  (lnk2.size(),petf.phi  (1));
+			//lnk2.set_psi  (lnk2.size(),petf.psi  (1));
+			//lnk2.set_omega(lnk2.size(),petf.omega(1));
 			petfroot = 1;
 			linkstart2 = 1;
-			linkend2 = lnk2.n_residue();
+			linkend2 = lnk2.size();
 		} else if ( psI.residue(psIroot2).is_lower_terminus() ) {
 			make_pose_from_sequence(lnk2,"A",*cenresset,false);
-			lnk2.replace_residue(lnk2.n_residue(),psI.residue(psIroot2),false);
+			lnk2.replace_residue(lnk2.size(),psI.residue(psIroot2),false);
 			remove_lower_terminus_type_from_pose_residue(lnk2,1);
 			for(Size i = seq2.size()-1; i > 0; --i) {
 				string name3 = name_from_aa(aa_from_oneletter_code(seq2[i-1]));
 				lnk2.prepend_polymer_residue_before_seqpos(*ResidueFactory::create_residue(cenresset->name_map(name3)),1,true);
 			}
-			//lnk2.set_omega(lnk2.n_residue(),180); // should already be ok...
-			for(Size i = 1; i <= lnk2.n_residue()-1; ++i) {	lnk2.set_phi(i,-60); lnk2.set_psi(i,-45); lnk2.set_omega(i,180); }
-			//lnk2.set_phi  (lnk2.n_residue(),petf.phi  (petf.n_residue())); // should be ok because copied residue
-			//lnk2.set_psi  (lnk2.n_residue(),petf.psi  (petf.n_residue()));
-			//lnk2.set_omega(lnk2.n_residue(),petf.omega(petf.n_residue()));
-			petfroot = petf.n_residue();
-			linkstart2 = lnk2.n_residue();
+			//lnk2.set_omega(lnk2.size(),180); // should already be ok...
+			for(Size i = 1; i <= lnk2.size()-1; ++i) {	lnk2.set_phi(i,-60); lnk2.set_psi(i,-45); lnk2.set_omega(i,180); }
+			//lnk2.set_phi  (lnk2.size(),petf.phi  (petf.size())); // should be ok because copied residue
+			//lnk2.set_psi  (lnk2.size(),petf.psi  (petf.size()));
+			//lnk2.set_omega(lnk2.size(),petf.omega(petf.size()));
+			petfroot = petf.size();
+			linkstart2 = lnk2.size();
 			linkend2 = 1;
 		} else {
 			utility_exit_with_message("psIroot2 must be a terminus!");
 		}
 	}
 
-	// for(Size i = 1; i <= psI  .n_residue(); ++i ) psI  .residue(i).chain(1);
-	// for(Size i = 1; i <= lnk1 .n_residue(); ++i ) lnk1 .residue(i).chain(2);
-	// for(Size i = 1; i <= lnk2 .n_residue(); ++i ) lnk2 .residue(i).chain(3);
-	// for(Size i = 1; i <= hyda1.n_residue(); ++i ) hyda1.residue(i).chain(4);
-	// for(Size i = 1; i <= petf .n_residue(); ++i ) petf .residue(i).chain(5);
+	// for(Size i = 1; i <= psI  .size(); ++i ) psI  .residue(i).chain(1);
+	// for(Size i = 1; i <= lnk1 .size(); ++i ) lnk1 .residue(i).chain(2);
+	// for(Size i = 1; i <= lnk2 .size(); ++i ) lnk2 .residue(i).chain(3);
+	// for(Size i = 1; i <= hyda1.size(); ++i ) hyda1.residue(i).chain(4);
+	// for(Size i = 1; i <= petf .size(); ++i ) petf .residue(i).chain(5);
 
 	if (option[ basic::options::OptionKeys::parser::view ]()) {
 		protocols::viewer::add_conformation_viewer(lnk2.conformation(),"rblinker",1000,1000);
@@ -469,8 +469,8 @@ void* doit(void*) {
 	//protocols::moves::MoverOP fragins1 = new protocols::abinitio::ClassicFragmentMover(frags1);
 	//fragment::FragSetOP frags2 = make_frag_set(lnk2,ss2,fds);
 	//protocols::moves::MoverOP fragins2 = new protocols::abinitio::ClassicFragmentMover(frags2);
-  protocols::moves::MoverOP fragins1 = new BBMover(2,lnk1.n_residue()-1,60.0);
-  protocols::moves::MoverOP fragins2 = new BBMover(2,lnk2.n_residue()-1,60.0);
+  protocols::moves::MoverOP fragins1 = new BBMover(2,lnk1.size()-1,60.0);
+  protocols::moves::MoverOP fragins2 = new BBMover(2,lnk2.size()-1,60.0);
 
 	scoring::ScoreFunctionOP sf = scoring::ScoreFunctionFactory::create_score_function( "score3" );
 	sf->set_weight(core::scoring::rama,1.0);
@@ -509,15 +509,15 @@ void* doit(void*) {
 			// clash check hyd1a against linker
 			bool clash = false;
 			if( !nolinker && linklen1 > 0 ) {
-				for(Size i = 1; i <= lnk1.n_residue(); ++i) {
+				for(Size i = 1; i <= lnk1.size(); ++i) {
 					bool check_psI = true;
 					bool check_hyd = true;
 					if( linkstart1==1 ) {
 						if(i <=                  2) check_psI = false;
-						if(i >= lnk1.n_residue()-1) check_hyd = false;
+						if(i >= lnk1.size()-1) check_hyd = false;
 					} else {
 						if(i <=                  2) check_hyd = false;
-						if(i >= lnk1.n_residue()-1) check_psI = false;
+						if(i >= lnk1.size()-1) check_psI = false;
 					}
 					for(Size j = 1; j <= 4; ++j) {
 						if( check_psI ) {
@@ -542,7 +542,7 @@ void* doit(void*) {
 				if(clash) continue;
 			}
 			if( clashcheck_hyd ) {
-				for(Size i = 1; i <= hyd.n_residue(); ++i) {
+				for(Size i = 1; i <= hyd.size(); ++i) {
 					for(Size j = 1; j <= 4; ++j) {
 						if( !clashpsI.clash_check(shyd.local2global(hyd.xyz(AtomID(j,i)))) ) clash = true;
 						if(clash) break;
@@ -580,15 +580,15 @@ void* doit(void*) {
 
 			// clash check petf against linker
 			if( !nolinker && linklen2 > 0 ) {
-				for(Size i = 1; i <= lnk2.n_residue(); ++i) {
+				for(Size i = 1; i <= lnk2.size(); ++i) {
 					bool check_psI  = true;
 					bool check_petf = true;
 					if( linkstart2==1 ) {
 						if(i <=                  2) check_psI  = false;
-						if(i >= lnk2.n_residue()-1) check_petf = false;
+						if(i >= lnk2.size()-1) check_petf = false;
 					} else {
 						if(i <=                  2) check_petf = false;
-						if(i >= lnk2.n_residue()-1) check_psI  = false;
+						if(i >= lnk2.size()-1) check_psI  = false;
 					}
 					for(Size j = 1; j <= 4; ++j) {
 						if( check_psI ) {
@@ -616,9 +616,9 @@ void* doit(void*) {
 
 			// // clash check petf against linker
 			// if( !nolinker && linklen2 > 0 ) {
-			// 	for(Size i = 1; i <= lnk2.n_residue()-2; ++i) {
+			// 	for(Size i = 1; i <= lnk2.size()-2; ++i) {
 			// 		for(Size j = 1; j <= 4; ++j) {
-			// 			if(i+1 < lnk2.n_residue()) clash = clash || !clashpsI .clash_check(                   lnk2.xyz(AtomID(j,i)) );
+			// 			if(i+1 < lnk2.size()) clash = clash || !clashpsI .clash_check(                   lnk2.xyz(AtomID(j,i)) );
 			// 			if(i   > 2)                clash = clash || !clashpetf.clash_check(spetf.global2local(lnk2.xyz(AtomID(j,i))));
 			// 			if(clash) break;
 			// 		}
@@ -632,7 +632,7 @@ void* doit(void*) {
 
 			// clash check petf against PsI
 			if( clashcheck_petf ) {
-				for(Size i = 1; i <= petf.n_residue(); ++i) {
+				for(Size i = 1; i <= petf.size(); ++i) {
 					for(Size j = 1; j <= 4; ++j) {
 						if( !clashpsI.clash_check(spetf.local2global(petf.xyz(AtomID(j,i)))) ) clash = true;
 						if(clash) break;
@@ -646,7 +646,7 @@ void* doit(void*) {
 			}
 			// clash check petf against hyd1a
 			if( clashcheck_petf && clashcheck_hyd ) {
-				for(Size i = 1; i <= petf.n_residue(); ++i) {
+				for(Size i = 1; i <= petf.size(); ++i) {
 					for(Size j = 1; j <= 4; ++j) {
 						if( !clashhyd.clash_check(shyd.global2local(spetf.local2global(petf.xyz(AtomID(j,i))))) ) clash = true;
 						if(clash) break;
@@ -658,9 +658,9 @@ void* doit(void*) {
 
 			// clash check linkers against each other
 			if( clashcheck_petf && clashcheck_hyd ) {
-				for( Size ir = 1; ir <= lnk1.n_residue(); ++ir ) {
+				for( Size ir = 1; ir <= lnk1.size(); ++ir ) {
 				// std::cerr << lnk1.residue(ir).name() << " " << lnk1.residue(ir).nheavyatoms() << std::endl;
-				for( Size jr = 1; jr <= lnk2.n_residue(); ++jr ) {
+				for( Size jr = 1; jr <= lnk2.size(); ++jr ) {
 				for( Size ia = 1; ia <= lnk1.residue(ir).nheavyatoms()-1; ++ia ) {
 				for( Size ja = 1; ja <= lnk2.residue(jr).nheavyatoms()-1; ++ja ) {
 				if( lnk1.residue(ir).atom(ia).xyz().distance_squared( lnk2.residue(jr).atom(ja).xyz() ) < 10.0 ) {

@@ -8,7 +8,7 @@ inline void swap(T & a, T & b) {
 Size pca_align_BROKEN(core::pose::Pose & p){
   Vec u;
   Size natom = 0;
-  for(int ir = 1; ir <= p.n_residue(); ++ir) {
+  for(int ir = 1; ir <= p.size(); ++ir) {
     for(int ia = 1; ia <= p.residue(ir).nheavyatoms(); ++ia) {
       u += p.residue(ir).atom(ia).xyz();
       ++natom;
@@ -17,7 +17,7 @@ Size pca_align_BROKEN(core::pose::Pose & p){
   u /= natom;
   //trans_pose(p,-u);
   Mat cov(0.0);
-  for(int ir = 1; ir <= p.n_residue(); ++ir) {
+  for(int ir = 1; ir <= p.size(); ++ir) {
     for(int ia = 1; ia <= p.residue(ir).nheavyatoms(); ++ia) {
       cov += outer_product( p.xyz(AtomID(ia,ir)), p.xyz(AtomID(ia,ir)) );
     }

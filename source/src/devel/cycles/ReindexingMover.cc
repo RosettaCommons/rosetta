@@ -39,7 +39,7 @@ void ReindexingMover::apply(pose::Pose &source_pose) {
 	// type, which is unsigned.
 
 	pose::Pose target_pose;
-	int residues = source_pose.total_residue();
+	int residues = source_pose.size();
 
 	for (int i = 0; i < residues; i++) {
 

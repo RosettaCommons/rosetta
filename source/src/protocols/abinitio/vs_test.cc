@@ -103,7 +103,7 @@ int run_boinc_debug() {
 		using numeric::random::gaussian;
 		for ( core::Size i = 1; i <= iterations; ++i ) {
 			// wiggle all of the residues a bit.
-			for ( core::Size pos = 1; pos <= fold_pose.total_residue(); pos++ ) {
+			for ( core::Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 				fold_pose.set_phi  ( pos, fold_pose.phi( pos )   + gaussian() );
 				fold_pose.set_psi  ( pos, fold_pose.psi( pos )   + gaussian() );
 				fold_pose.set_omega( pos, fold_pose.omega( pos ) + gaussian() );

@@ -164,7 +164,7 @@ void AtrGrid::refresh(
 	utility::vector1<core::Size> ligand_chain_ids_to_exclude
 ){
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for ( Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r ) {
+	for ( Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
 		core::conformation::Residue const & rsd = pose.residue(r);
 		if ( rsd.is_protein() ) set_protein_rings(rsd);
 		else {

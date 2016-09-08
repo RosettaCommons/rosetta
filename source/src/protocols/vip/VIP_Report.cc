@@ -140,7 +140,7 @@ VIP_Report::get_GOE_packstat_report(
 	output << " GOE packstat report: " << std::endl;
 
 	for ( core::Size i = 1; i <= goe_relax.size(); i++ ) {
-		for ( core::Size j = 1; j <= goe_relax[i].total_residue(); j++ ) {
+		for ( core::Size j = 1; j <= goe_relax[i].size(); j++ ) {
 			if ( goe_relax[i].residue(j).name() != goe_native.residue(j).name() ) {
 				// filename = filename0 + ".designed" + utility::to_string<int>(i) + ".pdb";
 				//        goe_relax[i].dump_pdb( filename );

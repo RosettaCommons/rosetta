@@ -94,10 +94,10 @@ main( int argc, char * argv [] )
 		core::pose::PDBInfoOP pdb_info = pose.pdb_info();
 
 		core::Size zinc_count(0);
-		for ( core::Size j = 1; j <= pose.total_residue(); ++j ) {
+		for ( core::Size j = 1; j <= pose.size(); ++j ) {
 			if ( pose.residue(j).name() == "ZN" ) {
 				core::Vector const & zn_position( pose.residue(j).xyz("ZN") ); //coord of zinc
-				utility::vector1<bool> zn_nbr( pose.total_residue(), false );
+				utility::vector1<bool> zn_nbr( pose.size(), false );
 				zn_nbr[j] = true;
 				protocols::loops::get_tenA_neighbor_residues( pose, zn_nbr );
 				utility::vector1<core::Size> ligand_res;

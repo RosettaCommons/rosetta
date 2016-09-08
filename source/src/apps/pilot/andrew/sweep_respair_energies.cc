@@ -955,7 +955,7 @@ create_mingraph_for_focused_residue_pair(
 	minimizer_map = core::optimization::MinimizerMapOP( new optimization::MinimizerMap );
 	minimizer_map->setup( pose, mm );
 
-	mingraph = core::scoring::MinimizationGraphOP( new scoring::MinimizationGraph( pose.total_residue() ) );
+	mingraph = core::scoring::MinimizationGraphOP( new scoring::MinimizationGraph( pose.size() ) );
 
 	mingraph->add_edge( res1_index, res2_index );
 	scoring::EnergyMap dummy;

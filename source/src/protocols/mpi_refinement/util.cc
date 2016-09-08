@@ -248,7 +248,7 @@ constrain_residue( core::pose::Pose &pose,
 			new CoordinateConstraint( atomID, atomID, xyz, fx )))
 		);
 	} else { // ca-ca atompair
-		for ( core::Size jres = 1; jres <= pose.total_residue(); ++jres ) {
+		for ( core::Size jres = 1; jres <= pose.size(); ++jres ) {
 			if ( !pose.residue( jres ).has( " CA " ) ) continue;
 			if ( jres == resno || exclres.contains( jres ) ) continue;
 
@@ -323,7 +323,7 @@ get_touched_res( core::pose::Pose const pose,
 
 	for ( core::Size i = 1; i <= loopres.size(); ++i ) {
 		core::Size const ires( loopres[i] );
-		if ( ires < 1 || ires > pose.total_residue() ) continue;
+		if ( ires < 1 || ires > pose.size() ) continue;
 
 		// Get crds for search: mainchain + nbr
 		utility::vector1< core::Vector > loopcrds;
@@ -338,7 +338,7 @@ get_touched_res( core::pose::Pose const pose,
 		for ( core::Size i_crd = 1; i_crd <= loopcrds.size(); ++i_crd ) {
 			core::Vector &crd_i = loopcrds[i_crd];
 
-			for ( core::Size jres = 1; jres <= pose.total_residue(); ++jres ) {
+			for ( core::Size jres = 1; jres <= pose.size(); ++jres ) {
 				if ( touched_res.contains( jres ) ) continue;
 
 				core::Vector const Cb_crd_j = pose.residue( jres ).nbr_atom_xyz();
@@ -369,7 +369,7 @@ setup_packer( core::pose::Pose const &pose,
 	local_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
 	PreventRepackingOP turn_off_packing( new PreventRepacking() );
 
-	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( !mm.get_chi(ires) ) {
 			turn_off_packing->include_residue(ires);
 		}
@@ -482,7 +482,7 @@ void ramp_minpack_pose( core::pose::Pose &pose,
 )
 {
 	utility::vector1< core::Size > reslist;
-	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		reslist.push_back( ires );
 	}
 	ramp_minpack_loop( pose, reslist, sfxn, nonideal, ramp );
@@ -499,11 +499,11 @@ void add_poseinfo_to_ss( core::io::silent::SilentStruct &ss,
 	// 1. Get resmap: this might be duplication but lets just use
 	std::map< core::Size, core::Size > resmap;
 
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		core::Size ii_pdb( pose.pdb_info()->number( ii ) );
 		if ( !pose.residue( ii ).is_protein() ) continue;
 
-		for ( core::Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+		for ( core::Size jj = 1; jj <= ref_pose.size(); ++jj ) {
 			if ( !ref_pose.residue(jj).is_protein() ) continue;
 
 			core::Size jj_pdb( ref_pose.pdb_info()->number( jj ) );

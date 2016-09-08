@@ -382,7 +382,7 @@ LK_hack::setup_for_derivatives(
 void
 LK_hack::allocate_appropriate_memory( pose::Pose const & pose ) const
 {
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 
 	nneighbs_.resize( total_residue );
 	orientation_vectors_.resize( total_residue );
@@ -414,7 +414,7 @@ LK_hack::calculate_orientation_vectors_and_pseudo_base_atoms( pose::Pose const &
 {
 	using namespace conformation;
 
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		Size const ii_nheavy( pose.residue( ii ).nheavyatoms() );
@@ -461,7 +461,7 @@ LK_hack::calculate_derivatives_for_atoms_and_pseudo_base_atoms( pose::Pose const
 {
 	using namespace constraints;
 
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 
 	// cached energies object
 	Energies const & energies( pose.energies() );

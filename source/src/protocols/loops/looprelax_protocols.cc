@@ -224,7 +224,7 @@ core::Real LoopRebuild::get_chain_break_tolerance() {
 bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	int const nres( pose.total_residue() );
+	int const nres( pose.size() );
 
 	std::vector< int > free_res; // stores residue numbers in real loops
 	 for ( auto const & it : Loops_in_ ) {
@@ -427,7 +427,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	using namespace basic::options::OptionKeys;
 	using namespace numeric::random;
 
-	int const nres =  pose.total_residue();
+	int const nres =  pose.size();
 
 
 	kinematics::MoveMap mm_one_loop;
@@ -1144,7 +1144,7 @@ void LoopRebuild::extend_barcode_regions_if_chain_break(
 	core::Real const chain_break_tol( get_chain_break_tolerance() );
 	core::Real chain_break_score=0;
 
-	int const nres = pose.total_residue();
+	int const nres = pose.size();
 
 	(*scorefxn_)( pose );
 	if ( loop_begin != 1 && loop_end != nres ) {
@@ -1200,8 +1200,8 @@ bool LoopRebuild::acceptable_rmsd_change(
 	core::pose::Pose & pose1,
 	core::pose::Pose & pose2
 ) {
-	runtime_assert( pose1.total_residue() == pose2.total_residue() );
-	int natoms( pose1.total_residue() );
+	runtime_assert( pose1.size() == pose2.size() );
+	int natoms( pose1.size() );
 	using ObjexxFCL::FArray2D;
 	FArray2D< core::Real > p1a( 3, natoms );
 	FArray2D< core::Real > p2a( 3, natoms );
@@ -1210,7 +1210,7 @@ bool LoopRebuild::acceptable_rmsd_change(
 	core::Real rmsd_tol ( get_rmsd_tolerance() );
 
 	int atom_count( 0 );
-	for ( int i = 1; i <= int( pose1.total_residue() ); ++i ) {
+	for ( int i = 1; i <= int( pose1.size() ); ++i ) {
 		const numeric::xyzVector< Real > & vec1( pose1.residue( i ).xyz( CA_pos ) );
 		const numeric::xyzVector< Real > & vec2( pose2.residue( i ).xyz( CA_pos ) );
 		atom_count++;

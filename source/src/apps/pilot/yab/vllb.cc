@@ -127,7 +127,7 @@ void * vlb_test( void * ) {
 	manager.add( new SegmentRebuild( Interval( 1, 1 ), String( 7, 'H' ) ) );
 
 	// Here we try to grow a c-terminal extension.
-	manager.add( new SegmentRebuild( Interval( pose.n_residue(), pose.n_residue() ), String( 6, 'H' ) ) );
+	manager.add( new SegmentRebuild( Interval( pose.size(), pose.size() ), String( 6, 'H' ) ) );
 
 	// Init VLB.  Be aware this is a bootstrap implementation, even
 	// remotely sane results are not guaranteed. To get things pinned
@@ -185,7 +185,7 @@ void * connect_test( void * ) {
 	manager.add( new SegmentRebuild( Interval( 66, 69 ), String( 20, 'H' ), fa_rsd_type_set, false ) );
 	manager.add( new ConnectRight( 73, 39, brsD ) );
 	manager.add( new SegmentRebuild( Interval( 1, 1 ), String( 7, 'H' ), fa_rsd_type_set, false ) );
-	manager.add( new SegmentRebuild( Interval( brsA.n_residue(), brsA.n_residue() ), String( 6, 'H' ), fa_rsd_type_set, false ) );
+	manager.add( new SegmentRebuild( Interval( brsA.size(), brsA.size() ), String( 6, 'H' ), fa_rsd_type_set, false ) );
 
 	// do actual building
 	VarLengthBuild vlb( manager );

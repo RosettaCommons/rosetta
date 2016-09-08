@@ -45,7 +45,7 @@ Real get_rg(core::pose::Pose const & pose){
 	Vec center_of_mass = center_of_geom(pose);
 	Real rg_score = 0;
 	Size nres_counted=0;
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		++nres_counted;
 		Vec const v( pose.residue(i).nbr_atom_xyz() );
@@ -58,7 +58,7 @@ Real get_rg(core::pose::Pose const & pose){
 int neighbor_count(core::pose::Pose const &pose, int ires, double distance_threshold) {
 	core::conformation::Residue const resi( pose.residue( ires ) );
 	Size resi_neighbors( 0 );
-	for ( Size jres = 1; jres <= pose.n_residue(); ++jres ) {
+	for ( Size jres = 1; jres <= pose.size(); ++jres ) {
 		core::conformation::Residue const resj( pose.residue( jres ) );
 		double const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 		if ( distance <= distance_threshold ) {
@@ -79,7 +79,7 @@ void make_Cx(core::pose::Pose & pose, int N, numeric::xyzVector<core::Real> axis
 	core::pose::Pose tmp(pose);
 	for ( int inf = 2; inf <= N; ++inf ) {
 		rot_pose( tmp, axis, 360.0/(Real)N );
-		for ( Size i = 1; i <= tmp.n_residue(); ++i ) {
+		for ( Size i = 1; i <= tmp.size(); ++i ) {
 			if ( i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand() ) {
 				pose.append_residue_by_jump(tmp.residue(i),1,"","",true);
 			} else {
@@ -126,7 +126,7 @@ cb_weight_map_from_pose(
 ){
 	core::id::AtomID_Map<double> amap;
 	core::pose::initialize_atomid_map(amap,pose,-1.0);
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).has("CB") ) {
 			amap[AtomID(pose.residue(i).atom_index("CB"),i)] = cb_weight(pose,i);
 		}
@@ -139,7 +139,7 @@ count_CBs(
 	core::pose::Pose const & pose
 ){
 	platform::Size cbcount = 0;
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) cbcount += pose.residue(ir).has("CB");
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) cbcount += pose.residue(ir).has("CB");
 	return cbcount;
 }
 
@@ -166,7 +166,7 @@ get_CB_Vecs_from_pose(
 	core::pose::Pose const & pose
 ){
 	vector1<numeric::xyzVector<core::Real> > CBs;
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		if ( pose.residue(ir).has("CB") ) {
 			CBs.push_back( pose.residue(ir).xyz("CB") );
 		}
@@ -179,7 +179,7 @@ get_CB_Vecs_from_map(
 	core::id::AtomID_Map<core::Real> const & map
 ){
 	vector1<numeric::xyzVector<core::Real> > CBs;
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 			Real wt = fabs(map[AtomID(ia,ir)]);
 			if ( wt > 0.0001 ) CBs.push_back( pose.residue(ir).xyz(ia) );
@@ -193,7 +193,7 @@ cb_weights_from_pose(
 	core::pose::Pose const & pose
 ){
 	vector1<core::Real> wts;
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).has("CB") ) {
 			wts.push_back( cb_weight(pose,i) );
 		}
@@ -206,7 +206,7 @@ cb_weights_from_map(
 	core::id::AtomID_Map<core::Real> const & map
 ){
 	vector1<core::Real> wts;
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 			Real wt = fabs(map[AtomID(ia,ir)]);
 			if ( wt > 0.0001 ) wts.push_back(wt);
@@ -247,26 +247,26 @@ int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double
 //  core::id::AtomID_Map<bool> atom_subset;
 //  vector1<Real> rsd_sasa;
 //  core::pose::initialize_atomid_map(atom_subset, pose, false);
-//  for(int i = 2; i <= (int)pose.n_residue()-1; ++i) {
+//  for(int i = 2; i <= (int)pose.size()-1; ++i) {
 //   for(int ia = 1; ia <= (int)pose.residue(i).nheavyatoms(); ++ia) {
 //    if(pose.residue(i).atom_is_backbone(ia))
 //     atom_subset[core::id::AtomID(ia,i)] = true;
 //   }
 //  }
 //  atom_subset[core::id::AtomID(1,1)] = true;
-//  atom_subset[core::id::AtomID(3,pose.n_residue())] = true;
+//  atom_subset[core::id::AtomID(3,pose.size())] = true;
 //  core::scoring::calc_per_atom_sasa( pose, atom_sasa,rsd_sasa, 4.0, false, atom_subset );
 //  Real nexpose = atom_sasa[core::id::AtomID(1,        1       )] / 12.56637 / 5.44 / 5.44;
-//  Real cexpose = atom_sasa[core::id::AtomID(3,pose.n_residue())] / 12.56637 / 5.44 / 5.44;
+//  Real cexpose = atom_sasa[core::id::AtomID(3,pose.size())] / 12.56637 / 5.44 / 5.44;
 
 //  Vec nt = pose.residue(        1       ).xyz("N");
-//  Vec ct = pose.residue(pose.n_residue()).xyz("C");
+//  Vec ct = pose.residue(pose.size()).xyz("C");
 //  Real nang = angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0));
 //  Real cang = angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0));
 //  ntgood = nexpose > option[sicdock::term_min_expose]() && nang < option[sicdock::term_max_angle]();
 //  ctgood = cexpose > option[sicdock::term_min_expose]() && cang < option[sicdock::term_max_angle]();
 //  // core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
-//  // for(int ir=1; ir<=pose.n_residue(); ++ir) {
+//  // for(int ir=1; ir<=pose.size(); ++ir) {
 //  //  for(int ia=1; ia<=5; ++ia) {
 //  //   Vec x = pose.residue(ir).xyz(ia);
 //  //   if(angle_degrees(x,Vec(0,0,0),nt) < 15.0 &&  ) {
@@ -284,11 +284,11 @@ int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double
 // }
 
 bool residue_is_floppy(core::pose::Pose const & pose, Size const ir, Real const ttrim_cut, Size const nfold){
-	if ( pose.n_residue()==1 ) return false;
+	if ( pose.size()==1 ) return false;
 	Real contacts = 0.0;
 	for ( Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia ) {
 		Vec const & p1 = pose.residue(ir).xyz(ia);
-		for ( Size jr = 1; jr <= pose.n_residue(); ++jr ) {
+		for ( Size jr = 1; jr <= pose.size(); ++jr ) {
 			if ( std::abs((int)ir-(int)jr) < 3 ) continue;
 			for ( Size ja = 1; ja <= pose.residue(jr).nheavyatoms(); ++ja ) {
 				Vec const & p2 = pose.residue(jr).xyz(ja);
@@ -298,7 +298,7 @@ bool residue_is_floppy(core::pose::Pose const & pose, Size const ir, Real const 
 		// !!!!!!!!!! assume "standard" bb alignment
 		for ( Size ifold = 1; ifold < nfold; ++ifold ) {
 			Mat R = rotation_matrix_degrees(Vec(0,0,1),360.0/(Real)ifold/(Real)nfold);
-			for ( Size jr = 1; jr <= pose.n_residue(); ++jr ) {
+			for ( Size jr = 1; jr <= pose.size(); ++jr ) {
 				for ( Size ja = 1; ja <= pose.residue(jr).nheavyatoms(); ++ja ) {
 					Vec const & p2 = R * pose.residue(jr).xyz(ja);
 					if ( p1.distance_squared(p2) < 25.0 ) contacts += 1.0;
@@ -318,8 +318,8 @@ auto_trim_floppy_termini(core::pose::Pose & pose, Real const ttrim_cut, Size con
 		++ntrim;
 	}
 	TR << "trimmed " << ntrim << " n-terminal residues" << endl;
-	while ( residue_is_floppy(pose,pose.n_residue(),ttrim_cut,nfold) ) {
-		pose.conformation().delete_residue_slow(pose.n_residue());
+	while ( residue_is_floppy(pose,pose.size(),ttrim_cut,nfold) ) {
+		pose.conformation().delete_residue_slow(pose.size());
 		++ctrim;
 	}
 	TR << "trimmed " << ctrim << " c-terminal residues" << endl;
@@ -344,7 +344,7 @@ void dump_points_pdb(vector1<Vec> const & p, Vec t, std::string fn) {
 	o.close();
 }
 void trans_pose( Pose & pose, Vec const & trans, Size start, Size end) {
-	if ( 0==end ) end = pose.n_residue();
+	if ( 0==end ) end = pose.size();
 	for ( Size ir = start; ir <= end; ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -353,7 +353,7 @@ void trans_pose( Pose & pose, Vec const & trans, Size start, Size end) {
 	}
 }
 void rot_pose( Pose & pose, Mat const & rot, Size start, Size end ) {
-	if ( 0==end ) end = pose.n_residue();
+	if ( 0==end ) end = pose.size();
 	for ( Size ir = start; ir <= end; ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -393,7 +393,7 @@ numeric::xyzTransform<core::Real> alignaxis_xform (numeric::xyzVector<core::Real
 }
 
 void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres, Size eres ) {
-	if ( eres==0 ) eres = pose.n_residue();
+	if ( eres==0 ) eres = pose.size();
 	for ( Size ir = sres; ir <= eres; ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -402,7 +402,7 @@ void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size
 	}
 }
 void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s ) {
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
@@ -410,7 +410,7 @@ void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s )
 	}
 }
 void xform_pose( core::pose::Pose & pose, numeric::xyzTransform<core::Real> const & s, Size sres, Size eres ) {
-	if ( eres==0 ) eres = pose.n_residue();
+	if ( eres==0 ) eres = pose.size();
 	for ( Size ir = sres; ir <= eres; ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -419,7 +419,7 @@ void xform_pose( core::pose::Pose & pose, numeric::xyzTransform<core::Real> cons
 	}
 }
 void xform_pose_rev( core::pose::Pose & pose, numeric::xyzTransform<core::Real> const & s ) {
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, ~s * pose.xyz(aid) );
@@ -428,7 +428,7 @@ void xform_pose_rev( core::pose::Pose & pose, numeric::xyzTransform<core::Real> 
 }
 
 Vec center_of_geom(core::pose::Pose const & pose, Size str, Size end) {
-	if ( !end ) end = pose.n_residue();
+	if ( !end ) end = pose.size();
 	Vec c(0,0,0);
 	for ( Size i = str; i <= end; ++i ) {
 		c += pose.xyz(AtomID(2,i));

@@ -250,7 +250,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 			numeric::xyzVector< core::Real > centroid = Vector( 0.0, 0.0, 0.0 );
 			Size numatoms = 0;
 
-			for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+			for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 				conformation::Residue const & rsd( pose.residue( seq_num ) );
 				for ( Size at = 1; at <= rsd.natoms(); at++ ) {
@@ -273,7 +273,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 			euler_angles.set_z( ( 0.25*trial_num )*local_z_bin_size ); //MAKE SURE THIS DOESN'T GET OUT OF BOUND!
 			euler_angles.convert_to_rotation_matrix( rotation_matrix );
 
-			for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+			for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 				conformation::Residue const & rsd( pose.residue( seq_num ) );
 

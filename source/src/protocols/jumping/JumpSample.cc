@@ -315,11 +315,11 @@ JumpSample::set_fold_tree_in_pose( pose::Pose &pose ) const {
 void
 JumpSample::safe_secstruct( pose::Pose &pose ) const {
 	runtime_assert( fold_tree_ != nullptr );
-	runtime_assert( total_residue_ == pose.total_residue() );
+	runtime_assert( total_residue_ == pose.size() );
 	runtime_assert( *fold_tree_ == pose.fold_tree() );
 
 	Size const num_jump ( size() );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	for ( Size i = 1; i <= num_jump; ++i ) {
 		for ( Size j = 1; j <= 2; ++j ) {

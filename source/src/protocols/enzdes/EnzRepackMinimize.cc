@@ -150,7 +150,7 @@ EnzRepackMinimize::apply( pose::Pose & pose )
 			core::kinematics::MoveMapOP movemap = enzprot->create_enzdes_movemap( pose, task_, minimize_prot_jumps_  );
 			core::scoring::ScoreFunctionCOP br_scorefxn = scorefxn_minimize_;
 			std::vector<core::Size> residues;
-			for ( core::Size i =1; i<pose.total_residue(); ++i ) {
+			for ( core::Size i =1; i<pose.size(); ++i ) {
 				if ( movemap->get_bb(i) ) residues.push_back(i);
 			}
 			TR<<"Now Backrub minimizing:  min_sc "<<min_sc_<<" min_bb "<< min_bb_<<std::endl;

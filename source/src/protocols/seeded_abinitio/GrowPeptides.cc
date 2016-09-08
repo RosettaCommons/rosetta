@@ -255,7 +255,7 @@ GrowPeptides::grow_from_verteces(
 		//connect cutpoint with next seed
 
 		grow_foldtree.clear();
-		TR <<"pose size: " << curr_pose.total_residue() << std::endl;
+		TR <<"pose size: " << curr_pose.size() << std::endl;
 		grow_foldtree = curr_pose.fold_tree();
 		TR.Debug <<"done growing, temporary foldtree: " << grow_foldtree << std::endl;
 	}
@@ -369,9 +369,9 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 	cseq += "A";
 	}
 	}
-	std::cout<<"pose: "<< copy_pose.total_residue()<< "\n" <<copy_pose.total_residue() + extend_cterm <<"seq: "<<  cseq << std::endl;
+	std::cout<<"pose: "<< copy_pose.size()<< "\n" <<copy_pose.size() + extend_cterm <<"seq: "<<  cseq << std::endl;
 
-	append_residues_cterminally( 0, copy_pose.total_residue(), copy_pose.total_residue() + extend_cterm, cseq , copy_pose );
+	append_residues_cterminally( 0, copy_pose.size(), copy_pose.size() + extend_cterm, cseq , copy_pose );
 
 	}//end cterm extension
 
@@ -457,7 +457,7 @@ GrowPeptides::parse_my_tag(
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
-		TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
+		TR<<"read in a template pdb with " <<template_pdb_->size() <<"residues"<<std::endl;
 		template_presence = true;
 	}
 
@@ -510,7 +510,7 @@ GrowPeptides::parse_my_tag(
 			core::Size const end( core::pose::parse_resnum( end_str, *template_pdb_ ) );
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
-			runtime_assert( end<=template_pdb_->total_residue() );
+			runtime_assert( end<=template_pdb_->size() );
 			std::string seq_chunk = template_pdb_->sequence();
 			sequence_chunks_.push_back( seq_chunk );
 		}//end steal sequence

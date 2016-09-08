@@ -135,7 +135,7 @@ public:
 		//std::cout << "WTF????" << std::endl;
 
 		const core::pose::PDBInfo& pdb_info = *(pose.pdb_info());
-		for (Size resNum=1; resNum<=pose.total_residue(); ++resNum) {
+		for (Size resNum=1; resNum<=pose.size(); ++resNum) {
 			const core::conformation::Residue& res = pose.residue(resNum);
 			const core::chemical::ResidueType& res_type = res.type();
 			for (Size atomNum=1; atomNum<=res.natoms(); ++atomNum) {

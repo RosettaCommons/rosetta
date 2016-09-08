@@ -165,7 +165,7 @@ core::pose::Pose Environment::end( core::pose::Pose const & pose ){
 
 	if ( input_pose_.pdb_info() ) {
 		tr.Trace << "  Applying old PDBInfo object with " << input_pose_.pdb_info()->nres() << " residues to pose with "
-			<< new_pose.total_residue() << " residues." << std::endl;
+			<< new_pose.size() << " residues." << std::endl;
 
 		new_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *( input_pose_.pdb_info() ) ) ) );
 	} else {
@@ -245,7 +245,7 @@ void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
 		}
 		pose.fold_tree( ft_clean );
 		pose.conformation().delete_residue_range_slow( input_pose_.fold_tree().nres()+1,
-			pose.total_residue() );
+			pose.size() );
 	}
 
 	//Strip out pose datacache elements

@@ -209,7 +209,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s){
 
 void
 setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff, float const /*cst_tol */){
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	for ( int i = 1; i <= nres; i++ ) {
 		Vector const CA_i( pose.residue(i).xyz(" CA "));
 		for ( int j = 1; j <=nres; j++ ) {
@@ -248,7 +248,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 	using namespace moves;
 	using namespace core::scoring::constraints;
 
-	core::Size nmoves = (core::Size)p.total_residue()/4; //number of moves for each move type
+	core::Size nmoves = (core::Size)p.size()/4; //number of moves for each move type
 
 	bool BACKBONE_MOVEMENT = !basic::options::option[OptionKeys::ddg::no_bb_movement]();
 	core::Size nrounds = 1000;

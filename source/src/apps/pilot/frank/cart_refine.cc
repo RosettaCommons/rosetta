@@ -108,7 +108,7 @@ public:
 		std::set<core::Size> user_pos;
 		std::string residues = option[cartrefine::residues]();
 		if (residues.length()==0) {
-			for (int i=1; i<=pose.total_residue(); ++i)
+			for (int i=1; i<=pose.size(); ++i)
 				user_pos.insert( i );
 		} else {
 			user_pos = core::pose::get_resnum_list( residues , pose );

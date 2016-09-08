@@ -108,7 +108,7 @@ get_models(
 
 void
 trim_pdb(core::pose::Pose & pose, std::set<core::Size> const & residue_numbers) {
-	core::Size total_res=pose.total_residue();
+	core::Size total_res=pose.size();
 	int num_removed_residues=0;
 	for(core::Size i=1; i<=total_res; ++i){
 		//if the residue wasn't specified, delete it

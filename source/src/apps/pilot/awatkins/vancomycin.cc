@@ -278,7 +278,7 @@ int main ( int argc, char* argv[] )
 
 		add_constraints( vancomycin );
 
-		for ( Size ii = 1; ii <= vancomycin.total_residue() - 2; ++ii ) {
+		for ( Size ii = 1; ii <= vancomycin.size() - 2; ++ii ) {
 			vancomycin.set_phi( ii, -150 );
 			vancomycin.set_psi( ii, 150 );
 			vancomycin.set_omega( ii, 180 );
@@ -287,7 +287,7 @@ int main ( int argc, char* argv[] )
 		vancomycin.dump_pdb( "vancomycin.pdb" );
 
 		kinematics::MoveMapOP pert_mm( new kinematics::MoveMap() );
-		for ( Size i = 1; i <= vancomycin.total_residue(); ++i ) {
+		for ( Size i = 1; i <= vancomycin.size(); ++i ) {
 			pert_mm->set_bb( i, true );
 			pert_mm->set_chi( i, true );
 		}
@@ -325,7 +325,7 @@ int main ( int argc, char* argv[] )
 		vancomycin.dump_pdb( "vancomycin_min2.pdb" );
 
 		PackerTaskOP task( TaskFactory::create_packer_task( vancomycin ) );
-		for ( Size i = 1; i <= vancomycin.n_residue(); i++ ) {
+		for ( Size i = 1; i <= vancomycin.size(); i++ ) {
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).initialize_from_command_line();
 		}
@@ -430,7 +430,7 @@ int main ( int argc, char* argv[] )
 		vanc2.dump_pdb( "vanc2_min2.pdb" );
 
 		PackerTaskOP task2( TaskFactory::create_packer_task( vanc2 ) );
-		for ( Size i = 1; i <= vanc2.n_residue(); i++ ) {
+		for ( Size i = 1; i <= vanc2.size(); i++ ) {
 			task2->nonconst_residue_task(i).restrict_to_repacking();
 			task2->nonconst_residue_task(i).initialize_from_command_line();
 		}

@@ -165,7 +165,7 @@ namespace ssrbrelax {
 	{
 		using namespace kinematics;
 		kinematics::FoldTree f, f_reset;
-		int const nres( pose.total_residue() );
+		int const nres( pose.size() );
 		f_reset.add_edge( 1, nres, Edge::PEPTIDE );
 		while( rbsegments.num_rb() > 0 ){
 			RbSegments::iterator it ( rbsegments.one_random_segment() ); //pick one random segment
@@ -470,7 +470,7 @@ namespace ssrbrelax {
 		using namespace scoring;
 		using namespace optimization;
 
-		int const nres( pose.total_residue() );
+		int const nres( pose.size() );
 		int const seg_length( this_segment.c_term_loop() - this_segment.n_term_loop() );
 
 		core::kinematics::MoveMapOP refine_move_map ( new kinematics::MoveMap );

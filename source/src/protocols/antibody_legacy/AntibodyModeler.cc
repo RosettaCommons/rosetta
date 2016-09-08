@@ -380,7 +380,7 @@ AntibodyModeler::read_and_store_fragments() {
 	Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
 	setup_simple_fold_tree(  antibody_in_.cdrh_[3][1] - 1, cutpoint,
 		antibody_in_.cdrh_[3][2] + 1,
-		antibody_in_.Fv.total_residue(),
+		antibody_in_.Fv.size(),
 		antibody_in_.Fv );
 
 	FragSetOP offset_3mer_frags;
@@ -487,7 +487,7 @@ AntibodyModeler::relax_cdrs() {
 	// adding cutpoint variants for chainbreak score computation
 	loops::add_cutpoint_variants( antibody_in_.Fv );
 
-	Size const nres = antibody_in_.Fv.total_residue();
+	Size const nres = antibody_in_.Fv.size();
 
 	//setting MoveMap
 	kinematics::MoveMapOP allcdr_map;
@@ -568,7 +568,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 
 	using namespace kinematics;
 
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 	core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	char second_chain = 'H';
 	Size rb_cutpoint(0);
@@ -670,7 +670,7 @@ AntibodyModeler::repulsive_ramp(
 	pose::Pose & pose_in,
 	loops::Loops loops_in ) {
 
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
@@ -753,7 +753,7 @@ AntibodyModeler::snugfit_MC_min (
 
 	using namespace moves;
 	bool nb_list = true;
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn,
 		"lbfgs_armijo_nonmonotone", minimization_threshold, nb_list ) );
@@ -802,7 +802,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 	using namespace moves;
 	bool nb_list = true;
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 
 	//MC move
 	Real trans_mag ( 0.1 );
@@ -990,7 +990,7 @@ AntibodyModeler::global_loop_rmsd (
 	using namespace scoring;
 
 	Size loop_start( 1 );
-	Size loop_end( antibody_in_.Fv.total_residue() );
+	Size loop_end( antibody_in_.Fv.size() );
 	if ( cdr_type == "l1" ) {
 		loop_start = antibody_in_.cdrl_[1][1];
 		loop_end = antibody_in_.cdrl_[1][2];
@@ -1012,7 +1012,7 @@ AntibodyModeler::global_loop_rmsd (
 	}
 
 	using ObjexxFCL::FArray1D_bool;
-	FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+	FArray1D_bool superpos_partner ( pose_in.size(), false );
 
 	for ( Size i = loop_start; i <= loop_end; ++i ) {
 		superpos_partner(i) = true;

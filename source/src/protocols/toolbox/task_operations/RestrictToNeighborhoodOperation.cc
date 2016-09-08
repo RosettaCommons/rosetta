@@ -145,7 +145,7 @@ RestrictToNeighborhoodOperation::apply( core::pose::Pose const & pose, core::pac
 {
 
 	//vector for filling packertask
-	utility::vector1_bool repack(pose.total_residue(), false);
+	utility::vector1_bool repack(pose.size(), false);
 
 	//this is in the parent class, RestrictOperationsBase
 	run_calculator(pose, calculator_name_, "neighbors", repack);

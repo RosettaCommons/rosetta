@@ -73,7 +73,7 @@ public:
 		}
 
 		ResidueSubset subset = name_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		// test
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {

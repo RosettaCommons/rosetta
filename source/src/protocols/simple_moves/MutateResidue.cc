@@ -187,7 +187,7 @@ void MutateResidue::apply( Pose & pose ) {
 		// Do nothing for 0
 		return;
 	}
-	if ( rosetta_target > pose.total_residue() ) {
+	if ( rosetta_target > pose.size() ) {
 		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
 		utility_exit();
 	}

@@ -347,9 +347,9 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 		// fine for now.
 		Pose insert_plus_attached = insert;
 
-		Size const insert_jump_pos = insert.n_residue() % 2 == 0 ? insert.n_residue() / 2 : insert.n_residue() / 2 + 1;
-		Size const attached_jump_pos = attached.n_residue() % 2 == 0 ? attached.n_residue() / 2 : attached.n_residue() / 2 + 1;
-		Size const shifted_attached_jump_pos = attached_jump_pos + insert.n_residue();
+		Size const insert_jump_pos = insert.size() % 2 == 0 ? insert.size() / 2 : insert.size() / 2 + 1;
+		Size const attached_jump_pos = attached.size() % 2 == 0 ? attached.size() / 2 : attached.size() / 2 + 1;
+		Size const shifted_attached_jump_pos = attached_jump_pos + insert.size();
 
 		ConnectRight cr( insert_jump_pos, attached_jump_pos, attached );
 		cr.modify( insert_plus_attached );

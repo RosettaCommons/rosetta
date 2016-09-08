@@ -51,11 +51,11 @@ void AddAssemblyConstraints::apply( core::pose::Pose & pose ) {
 	using namespace core::scoring::constraints;
 	Real const dist_cutoff(3), range(1.5), slope(3.0),
 		score(-40);
-	//score( -1 * pose.total_residue() * 0.25 );
+	//score( -1 * pose.size() * 0.25 );
 
 	ConstraintSetOP cst_set( new ConstraintSet );
 	char const first_chain( pose.pdb_info()->chain(1) );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		char const chain_ii( pose.pdb_info()->chain(ii) );
 		if ( first_chain != chain_ii ) {
 			AtomID atom1( pose.residue_type(ii-1).atom_index(atom_name), ii-1 ),

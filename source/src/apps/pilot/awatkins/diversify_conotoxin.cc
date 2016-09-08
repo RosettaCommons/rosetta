@@ -202,7 +202,7 @@ main( int argc, char* argv[] )
 
 					copy_pose.append_residue_by_jump( pose.residue(1), 1 );
 					Size counter = 1;
-					for ( Size ri = 2; ri <= pose.total_residue(); ++ri ) {
+					for ( Size ri = 2; ri <= pose.size(); ++ri ) {
 						if ( counter <= thiol_options[ ii ].size() &&  ri == thiol_options[ ii ][counter] ) {
 							copy_pose.append_residue_by_bond( *new_b3c, false );
 							counter++;
@@ -222,7 +222,7 @@ main( int argc, char* argv[] )
 								*new AtomID( copy_pose.residue( resi   ).atom_index( "N" ), resi   ),
 								TopOutFuncOP( new TopOutFunc( 100, 1.33, 5 ) ) ) ) );
 						}
-						if ( resi < copy_pose.total_residue() ) {
+						if ( resi < copy_pose.size() ) {
 							copy_pose.add_constraint(
 								AtomPairConstraintOP( new AtomPairConstraint(
 								*new AtomID( copy_pose.residue( resi+1 ).atom_index( "N" ), resi+1 ),
@@ -233,7 +233,7 @@ main( int argc, char* argv[] )
 
 					kinematics::MoveMapOP mm( new kinematics::MoveMap() );
 
-					for ( Size kk = 1; kk <= copy_pose.total_residue(); ++kk ) {
+					for ( Size kk = 1; kk <= copy_pose.size(); ++kk ) {
 						if ( thiol_nm == "B3C" || copy_pose.residue( kk ).chain() == copy_pose.residue( copy_pose.pdb_info()->pdb2pose( 'F', thiol_options[ ii ][1] ) ).chain() ) {
 							mm->set_bb( kk, true );
 							mm->set_chi( kk, true );
@@ -319,7 +319,7 @@ main( int argc, char* argv[] )
 				//mm->set_bb( true );
 				//mm->set_chi( true  );
 				//mm->set_bb( false );
-				for ( Size kk = 1; kk <= copy_pose.total_residue(); ++kk ) {
+				for ( Size kk = 1; kk <= copy_pose.size(); ++kk ) {
 					if ( thiol_nm == "B3C" || copy_pose.residue( kk ).chain() == copy_pose.residue( copy_pose.pdb_info()->pdb2pose( 'F', thiol_options[ ii ][1] ) ).chain() ) {
 						mm->set_bb( kk, true );
 						mm->set_chi( kk, true );

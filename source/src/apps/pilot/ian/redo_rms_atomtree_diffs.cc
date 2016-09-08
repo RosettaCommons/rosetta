@@ -148,7 +148,7 @@ main( int argc, char * argv [] )
 				core::pose::PoseOP ref_pose( ref_poses[i] );
 
 				using namespace core::scoring;
-				core::Size const last_rsd = ref_pose->total_residue();
+				core::Size const last_rsd = ref_pose->size();
 				assert( !ref_pose->residue(last_rsd).is_polymer() );
 				scores[ref_tag+"_ligand_auto_rms_with_super"] = automorphic_rmsd(ref_pose->residue(last_rsd), the_pose->residue(last_rsd), true /*superimpose*/);
 				scores[ref_tag+"_ligand_auto_rms_no_super"] = automorphic_rmsd(ref_pose->residue(last_rsd), the_pose->residue(last_rsd), false /*don't superimpose*/);

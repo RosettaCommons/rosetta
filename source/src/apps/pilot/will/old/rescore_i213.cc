@@ -97,7 +97,7 @@ typedef vector1<Size> Sizes;
 void
 new_sc(core::pose::Pose &pose, Real& int_area, Real& sc) {
   using namespace core;
-  Size nres_monomer = pose.n_residue()/2;
+  Size nres_monomer = pose.size()/2;
   core::scoring::sc::ShapeComplementarityCalculator scc;
   scc.Init();
   for (Size i=1; i<=nres_monomer; ++i) scc.AddResidue(0, pose.residue(i));
@@ -111,19 +111,19 @@ new_sc(core::pose::Pose &pose, Real& int_area, Real& sc) {
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
   using core::id::AtomID;
-  utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
+  utility::vector1<Real> rsd_sasa(pose.size(),0.0);
   core::id::AtomID_Map<Real> atom_sasa;
   core::id::AtomID_Map<bool> atom_mask;
   core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
   core::pose::initialize_atomid_map(atom_mask,pose,false);
-  for(Size i = 1; i <= pose.n_residue(); i++) {
+  for(Size i = 1; i <= pose.size(); i++) {
     for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
       atom_mask[AtomID(j,i)] = true;
     }
   }
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
-  utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
-  for(Size i = 1; i <= pose.n_residue(); i++) {
+  utility::vector1<Real> sc_sasa(pose.size(),0.0);
+  for(Size i = 1; i <= pose.size(); i++) {
     // Use CA as the side chain for Glys
     if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
     for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
@@ -138,7 +138,7 @@ Real
 average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Real distance_threshold=10.0)
 {
 
-  Size nres_monomer = pose.n_residue()/2;
+  Size nres_monomer = pose.size()/2;
   Size count_neighbors( 0 );
 
   for (Size i = 1; i <= mutalyze_pos.size(); ++i) {
@@ -170,22 +170,22 @@ vector1<Size> get_des_pos(core::pose::Pose & pose_for_design) {
   core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
 
   ////////////////////////////////////
-  vector1<bool> indy_resis(pose_for_design.n_residue(),false);
-  for(Size i = 1; i <= pose_for_design.n_residue()/2; ++i) indy_resis[i] = true;
-  vector1<bool> subunit_index(pose_for_design.n_residue());
-  for(Size i = 1; i <= pose_for_design.n_residue(); ++i) subunit_index[i] = (6*(i-1))/pose_for_design.n_residue();
+  vector1<bool> indy_resis(pose_for_design.size(),false);
+  for(Size i = 1; i <= pose_for_design.size()/2; ++i) indy_resis[i] = true;
+  vector1<bool> subunit_index(pose_for_design.size());
+  for(Size i = 1; i <= pose_for_design.size(); ++i) subunit_index[i] = (6*(i-1))/pose_for_design.size();
   vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(2); intra_subs.push_back(3);
 
 
   Sizes interface_pos;
-  for (Size ir=1; ir<= pose_for_design.n_residue()/2; ir++) {
+  for (Size ir=1; ir<= pose_for_design.size()/2; ir++) {
     std::string atom_i = "";
     if (pose_for_design.residue(ir).name3() == "GLY") {
       atom_i = "CA";
     } else {
       atom_i = "CB";
     }
-    for (Size jr=1+pose_for_design.n_residue()/2; jr<= pose_for_design.n_residue(); jr++) {
+    for (Size jr=1+pose_for_design.size()/2; jr<= pose_for_design.size(); jr++) {
       std::string atom_j = "";
       if (pose_for_design.residue(jr).name3() == "GLY") {
         atom_j = "CA";

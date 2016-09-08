@@ -190,11 +190,11 @@ get_n_pep_nbrs(
 )
 {
 	Size n_pep_nbrs( 0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_pep[i] ) continue;
 		bool cg_res_has_nbr( false );
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			if( cg_res_has_nbr ) break;
 			if ( is_pep[j] ) continue;
 			Residue const & rsd2( pose.residue(j) );
@@ -221,7 +221,7 @@ dump_efactor_pdb(
 	std::string const & tag
 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 //	id::AtomID_Mask const & mask;
 //	id::initialize( mask, pose );
 
@@ -236,7 +236,7 @@ dump_efactor_pdb(
 	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
 	out << "MODEL     " << tag << "\n";
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		Real residue_total_energy( pose.energies().residue_total_energies( i ).dot( scorefxn->weights() ) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -272,13 +272,13 @@ gen_fold_tree_for_nbr_segments(
 	vector1< bool > & is_nbr
 )
 {
-	Size nres( pose.total_residue() );
+	Size nres( pose.size() );
 	//define neighbors, all protein residues within cutoff from ligand, excluding is_skipped
 	set_ss_from_phipsi( pose );
-	for( Size i=1; i<= pose.total_residue(); ++i ) {
+	for( Size i=1; i<= pose.size(); ++i ) {
 		if ( !is_ligand[ i ] ) continue;
 		Residue const & rsd1( pose.residue(i) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			Residue const & rsd2( pose.residue(j) );
 			if( is_ligand[ j ] || is_skipped[ j ] || !rsd2.is_protein() || !( pose.secstruct( j ) == 'L' ) ) continue;
 			for ( Size ii=1; ii<= rsd1.natoms(); ++ii ) {
@@ -293,7 +293,7 @@ gen_fold_tree_for_nbr_segments(
 		}
 	}
 
-	for( Size i = 2, j = 1; i <= pose.total_residue(); ++i, ++j ){
+	for( Size i = 2, j = 1; i <= pose.size(); ++i, ++j ){
 		if( is_nbr[ i ] && !is_nbr[ i-1 ] ) j = 1;
 		if( is_nbr[ i ] && !is_nbr[ i+1 ] ){
 			ftree.new_jump( i - j, i - static_cast< int >( j / 2 ), i - j );
@@ -317,7 +317,7 @@ has_clash(
 	using namespace ObjexxFCL::format; // I and F
 
 	bool is_clash( false );
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !is_checked[ seqpos ] ) continue;
 
 		( *scorefxn )( pose );
@@ -550,8 +550,8 @@ pep_scan_analysis(
 	( *full_scorefxn )( pose );
 	Pose start_pose( pose );
 
-	vector1< bool > is_pep( pose.total_residue(), false );
-	for( Size i = 1; i <= pose.total_residue(); ++i ){
+	vector1< bool > is_pep( pose.size(), false );
+	for( Size i = 1; i <= pose.size(); ++i ){
 		if( i >= pep_begin && i <= pep_end ) is_pep[ i ] = true;
 	}
 
@@ -562,9 +562,9 @@ pep_scan_analysis(
 		char pep_aa( pose.residue( pep_seqpos ).name1() );
 
 		float cutoff( option[ pep_spec::interface_cutoff ] );
-		vector1< bool > is_mut_nbr( pose.total_residue(), false );
+		vector1< bool > is_mut_nbr( pose.size(), false );
 		Residue const & rsd1( pose.residue( pep_seqpos ) );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			Residue const & rsd2( pose.residue(j) );
 			for ( Size ii=1; ii<= rsd1.natoms(); ++ii ) {
 				for ( Size jj=1; jj<= rsd2.natoms(); ++jj ) {
@@ -588,7 +588,7 @@ pep_scan_analysis(
 			pack::task::PreventRepackingOperationOP prevent_repack_taskop( new pack::task::PreventRepackingOperation() );
 			pack::task::PackerTaskOP rp_task( pack::task::TaskFactory::create_packer_task( pose ));
 			rp_task->initialize_from_command_line().or_include_current( true );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				if ( is_mut_nbr[i] ) {
 					restrict_to_repack_taskop->include_residue( i );
 					rp_task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -641,7 +641,7 @@ pep_scan_analysis(
 			pack::task::PreventRepackingOperationOP prevent_repack_taskop( new pack::task::PreventRepackingOperation() );
 			pack::task::PackerTaskOP rp_task( pack::task::TaskFactory::create_packer_task( pose ));
 			rp_task->initialize_from_command_line().or_include_current( true );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				if ( is_mut_nbr[i] ) {
 					restrict_to_repack_taskop->include_residue( i );
 					rp_task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -706,7 +706,7 @@ pep_energies_analysis(
 	EMapVector emap_total( pose.energies().total_energies() );
 	emap_total_avg += emap_total;
 
-	for( Size i_seq = 1; i_seq <= pose.total_residue(); ++i_seq ){
+	for( Size i_seq = 1; i_seq <= pose.size(); ++i_seq ){
 		emap_res_avg[ i_seq ] += pose.energies().residue_total_energies( i_seq );
 		char pep_aa( pose.residue( i_seq ).name1() );
 		std::cout << filename << "\t" << pep_aa << "\t" << string_of( i_seq ) << "\ttotal_res\t" << pose.energies().residue_total_energies( i_seq ).weighted_string_of( full_scorefxn->weights() ) <<"\ttotal_score:\t"<< pose.energies().residue_total_energies( i_seq ).dot( full_scorefxn->weights() ) << "\n";
@@ -960,12 +960,12 @@ RunPepSpec()
 		for( Size i = 1; i <= n_prepend; ++i ){
 			pose.conformation().safely_prepend_polymer_residue_before_seqpos( *ala, 1, true );
 		}
-		for( Size i_omega = 1; i_omega <= pose.total_residue() - 1; ++i_omega ){
+		for( Size i_omega = 1; i_omega <= pose.size() - 1; ++i_omega ){
 			pose.set_omega( i_omega, 180.0 );
 		}
 */
 		Size pep_begin( 1 );
-		Size pep_end( pose.total_residue() );
+		Size pep_end( pose.size() );
 /*
 		//rsd type
 		for( Size mut_site = pep_begin; mut_site <= pep_end; mut_site++ ){
@@ -974,7 +974,7 @@ RunPepSpec()
 		}
 */
 		//gen fold tree//
-		FoldTree f( pose.total_residue() );
+		FoldTree f( pose.size() );
 		pose.fold_tree( f );
 
 		//convert to CG residues//
@@ -1038,8 +1038,8 @@ RunPepSpec()
 //		design_seq->add_mover( min_mover );
 
 		EMapVector emap_total_avg;
-		vector1< EMapVector > emap_res_avg( pose.total_residue() );
-		vector1< EMapVector > emap_res_sd( pose.total_residue() );
+		vector1< EMapVector > emap_res_avg( pose.size() );
+		vector1< EMapVector > emap_res_sd( pose.size() );
 
 		//replace termini
 		core::pose::add_lower_terminus_type_to_pose_residue( pose, pep_begin );

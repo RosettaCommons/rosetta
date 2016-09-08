@@ -68,7 +68,7 @@ public:
 		trpcage.fold_tree(ft);
 
 		ResidueSubset subset = jump_d_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 			TS_ASSERT( !subset[ ii ] || ii >= 6 );

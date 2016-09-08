@@ -73,7 +73,7 @@ utility::vector1< protocols::metal_interface::MetalSiteResidueOP >
 ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 {
 	point zinc;
-	Size pose_length = pose.n_residue();
+	Size pose_length = pose.size();
 	Size index( 0 ); // used to fill the various metalsite vectors
 
 	//if the zinc residue position was given in the constructor...

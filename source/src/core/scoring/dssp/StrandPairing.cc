@@ -110,14 +110,14 @@ void StrandPairingSet::add_pairing( core::scoring::dssp::Pairing const& p ) {
 void StrandPairingSet::compute( FArray2_float const &hbonds,
 	float threshold, pose::Pose const& pose ) {
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	if ( !nres ) {
 		return;
 	}
 	debug_assert( hbonds.l1() );
 	debug_assert( hbonds.l2() );
-	debug_assert( hbonds.u1() <= static_cast< int >( pose.total_residue() ) );
-	debug_assert( hbonds.u2() <= static_cast< int >( pose.total_residue() ) );
+	debug_assert( hbonds.u1() <= static_cast< int >( pose.size() ) );
+	debug_assert( hbonds.u2() <= static_cast< int >( pose.size() ) );
 
 	for ( Size i = 2; i <= nres - 1; i++ ) {
 		for ( Size j = i + 1; j <= nres - 1; j++ ) {

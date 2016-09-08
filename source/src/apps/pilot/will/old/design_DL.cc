@@ -81,7 +81,7 @@ int main (int argc, char *argv[]) {
 		// aas[core::chemical::aa_gly] = true;
 		// aas[core::chemical::aa_pro] = true;
 
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			if(pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="DPR") {
 				task->nonconst_residue_task(i).prevent_repacking();
 			} else {

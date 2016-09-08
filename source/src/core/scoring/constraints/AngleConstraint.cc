@@ -153,7 +153,7 @@ AngleConstraint::read_def(
 	TRACER.Debug  << "read: " << name1 << " " << name2 << " " << name3 << " "
 		<< res1 << " " << res2 << " " << res3 << " func: " << func_type
 		<< std::endl;
-	if ( res1 > pose.total_residue() || res2 > pose.total_residue() || res3 > pose.total_residue() ) {
+	if ( res1 > pose.size() || res2 > pose.size() || res3 > pose.size() ) {
 		TRACER.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );

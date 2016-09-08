@@ -209,8 +209,8 @@ void
 make_dna_only_pose( pose::Pose const & pose, Pose & dna_pose )//, vector1< Size > & old2new )
 {
 	dna_pose.clear();
-	//old2new.resize( pose.total_residue() );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	//old2new.resize( pose.size() );
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_DNA() ) {
 			if ( rsd.is_lower_terminus() || !rsd.is_polymer() ) {
@@ -218,7 +218,7 @@ make_dna_only_pose( pose::Pose const & pose, Pose & dna_pose )//, vector1< Size 
 			} else {
 				dna_pose.append_residue_by_bond( rsd );
 			}
-// 			old2new[ i ] = dna_pose.total_residue();
+// 			old2new[ i ] = dna_pose.size();
 // 		} else {
 // 			old2new[ i ] = 0;
 		}
@@ -374,7 +374,7 @@ contact_model_prediction( Pose const & pose, Size const seqpos )
 		if ( !i ) continue;
 		Residue const & rsd1( pose.residue(i) );
 		assert( rsd1.is_DNA() );
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			Residue const & rsd2( pose.residue(j) );
 			if ( rsd2.is_protein( )) {
 				for ( Size ii=rsd1.first_sidechain_atom(); ii<= rsd1.nheavyatoms(); ++ii ) {
@@ -431,7 +431,7 @@ motif_scan()
 
 		Pose pose;
 		core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
-		Size const nres( pose.total_residue() );
+		Size const nres( pose.size() );
 		core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 
 
@@ -476,9 +476,9 @@ motif_scan()
 
 
 		// sequence mapping from pose to dna-only pose
-		vector1< Size > dna_seqpos_mapping( pose.total_residue(), 0 );
+		vector1< Size > dna_seqpos_mapping( pose.size(), 0 );
 		{
-			for ( Size i=1, n=0; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1, n=0; i<= pose.size(); ++i ) {
 				if ( pose.residue(i).is_DNA() ) dna_seqpos_mapping[ i ] = ++n;
 			}
 		}

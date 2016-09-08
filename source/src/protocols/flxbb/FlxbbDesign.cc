@@ -516,7 +516,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 			TR << "Movemap will be overrided by the definition of movemap in blueprint " << std::endl;
 		}
 		runtime_assert( blueprint_ != nullptr );
-		runtime_assert( pose.total_residue() == blueprint_->total_residue() );
+		runtime_assert( pose.size() == blueprint_->total_residue() );
 		movemap_ = MoveMapOP( new core::kinematics::MoveMap );
 		blueprint_->set_movemap( movemap_ );
 	}

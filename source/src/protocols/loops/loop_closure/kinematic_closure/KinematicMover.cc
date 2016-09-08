@@ -951,7 +951,7 @@ KinematicMover::perform_bump_check(
 		Vector const & nbr_i( rsd1.xyz( rsd1.nbr_atom() ) );
 		// iterate over all other residues in the protein
 		//bool had_neighbor = false; // DJM: neighbor filter
-		for ( Size j=1; j <= pose.total_residue(); j++ ) {
+		for ( Size j=1; j <= pose.size(); j++ ) {
 			if ( (j == i) || (j == i+1) || (j == i-1) ) continue; // don't do same or adjacent residues
 			if ( (j >= start_res) && (j <= i) ) continue; // don't do loop residues multiple times
 			conformation::Residue const & rsd2 = pose.conformation().residue(j);

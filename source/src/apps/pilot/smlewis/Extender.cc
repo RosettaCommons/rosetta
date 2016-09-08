@@ -93,7 +93,7 @@ int main( int argc, char* argv[] )
 	//set up our pose
 	core::pose::Pose pose;
 	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
-	core::Size const poselength = pose.total_residue();
+	core::Size const poselength = pose.size();
 
 	//setup ultimate numberings in the combined pose
 	core::Size loop_start;

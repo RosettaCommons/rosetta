@@ -45,10 +45,10 @@ void PredictedBurialEvaluator::apply(
 	using core::Size;
 
 	Real score(0.0);
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		core::conformation::Residue const & resi( pose.residue(ii) );
 		Size countN(0);
-		for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= pose.size(); ++jj ) {
 			core::conformation::Residue const & resj( pose.residue(jj) );
 			core::Real const distance(
 				resi.xyz(resi.nbr_atom()).distance( resj.xyz(resj.nbr_atom()) )

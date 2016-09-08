@@ -109,7 +109,7 @@ AACompositionEnergy::residue_energy(
 		AA aa = AA( i );
 		hist.insert( std::map< AA, Size >::value_type( aa, 0 ) );
 	}
-	for ( Size i=1; i<=pose.total_residue(); i++ ) {
+	for ( Size i=1; i<=pose.size(); i++ ) {
 		hist[ pose.aa( i ) ] ++;
 	}
 
@@ -128,11 +128,11 @@ AACompositionEnergy::residue_energy(
 
 		std::pair< Real, Real > thresholds( itr->second );
 #ifndef WIN32
-		Size const lower = (Size)round( thresholds.first * pose.total_residue() );
-		Size const upper = (Size)round( thresholds.second * pose.total_residue() );
+		Size const lower = (Size)round( thresholds.first * pose.size() );
+		Size const upper = (Size)round( thresholds.second * pose.size() );
 #else
-		Size const lower = (Size)double( thresholds.first * pose.total_residue() + 0.5 );
-		Size const upper = (Size)double( thresholds.second * pose.total_residue() + 0.5 );
+		Size const lower = (Size)double( thresholds.first * pose.size() + 0.5 );
+		Size const upper = (Size)double( thresholds.second * pose.size() + 0.5 );
 #endif
 
 		if ( hist[ itr->first ] < lower ) {

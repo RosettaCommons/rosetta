@@ -157,7 +157,7 @@ main( int argc, char* argv [] ) {
 
 			Size tr = exposed_residues[ti];
 
-			runtime_assert( tr <= current_pose.total_residue() );
+			runtime_assert( tr <= current_pose.size() );
 
 			core::Real sc_sasa = rsd_sasa[tr] - calculate_backbone_sasa(atom_sasa,current_pose,tr);
 
@@ -171,7 +171,7 @@ main( int argc, char* argv [] ) {
 
 			Size tr = buried_residues[ti];
 
-			runtime_assert( tr <= current_pose.total_residue() );
+			runtime_assert( tr <= current_pose.size() );
 
 			core::Real sc_sasa = rsd_sasa[tr] - calculate_backbone_sasa(atom_sasa,current_pose,tr);
 

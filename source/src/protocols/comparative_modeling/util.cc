@@ -382,7 +382,7 @@ protocols::loops::LoopsOP pick_loops_chainbreak(
 	typedef core::Size Size;
 
 	core::Real const chainbreak_cutoff( 4.0 );
-	core::Size nres = query_pose.total_residue();
+	core::Size nres = query_pose.size();
 
 	//fpd symm
 	if ( core::pose::symmetry::is_symmetric(query_pose) ) {
@@ -413,7 +413,7 @@ protocols::loops::LoopsOP pick_loops_chainbreak(
 	tr.flush();
 
 	return pick_loops_unaligned(
-		query_pose.total_residue(),
+		query_pose.size(),
 		residues_near_chainbreak,
 		min_loop_size
 	);
@@ -496,7 +496,7 @@ void steal_ligands(
 	// set up FoldTree for source_pose that has the jump orientation that we want
 	core::kinematics::FoldTree new_fold_tree;
 	core::Size old_fold_tree_end(
-		source_pose.total_residue() - ligand_indices.size()
+		source_pose.size() - ligand_indices.size()
 	); // stupid assumption!
 	new_fold_tree.add_edge(
 		1,
@@ -673,7 +673,7 @@ void randomize_selected_atoms(
 	core::id::AtomID_Mask const & selected
 ) {
 	using core::Size;
-	for ( Size pos = 1; pos <= query_pose.total_residue(); ++pos ) {
+	for ( Size pos = 1; pos <= query_pose.size(); ++pos ) {
 		Size atomj( 1 );
 		for ( auto
 				it = selected[ pos ].begin(), eit = selected[ pos ].end(); it != eit;

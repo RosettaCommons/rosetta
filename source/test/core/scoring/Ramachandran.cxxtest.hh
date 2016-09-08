@@ -84,7 +84,7 @@ public:
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		Real expected[] = { -0.2578, -0.9390, 0.4680, 4.9683};
 
-		for ( Size i = 1; i <= pose_->total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose_->size(); i++ ) {
 			Real observed = rama.eval_rama_score_residue(pose_->residue(i));
 			TS_ASSERT_DELTA(observed, expected[i-1], 1e-4);
 		}
@@ -116,7 +116,7 @@ public:
 		Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 		bool expected[] = {true, true, true, false};
 
-		for ( Size i = 1; i <= pose_->total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose_->size(); i++ ) {
 			bool is_allowed = rama.phipsi_in_allowed_rama(
 				pose_->aa(i), pose_->phi(i), pose_->psi(i));
 			bool is_forbidden = rama.phipsi_in_forbidden_rama(

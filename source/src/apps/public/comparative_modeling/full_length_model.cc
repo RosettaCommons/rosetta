@@ -108,7 +108,7 @@ void restore_hack( core::pose::Pose & pose ) {
 //  RecoverSideChainsMover mover( threader );
 //  mover.apply( full_length_pose );
 //  vector1< bool > residues_to_repack(
-//   full_length_pose.total_residue(), false
+//   full_length_pose.size(), false
 //  );
 //  MoveMapOP mm( new MoveMap() );
 //  mm->set_bb (false);
@@ -200,7 +200,7 @@ main( int argc, char* argv [] ) {
 			RecoverSideChainsMover mover( threader );
 			mover.apply( full_length_pose );
 			vector1< bool > residues_to_repack(
-				full_length_pose.total_residue(), false
+				full_length_pose.size(), false
 			);
 			MoveMapOP mm( new MoveMap() );
 			mm->set_bb (false);
@@ -234,7 +234,7 @@ main( int argc, char* argv [] ) {
 
 			if ( option[ relax::mini ]() ) {
 				protocols::relax::MiniRelax relax( scorefxn );
-				mm->show( std::cout, full_length_pose.total_residue() );
+				mm->show( std::cout, full_length_pose.size() );
 				//relax.set_movemap(mm);
 				relax.apply(full_length_pose);
 			}

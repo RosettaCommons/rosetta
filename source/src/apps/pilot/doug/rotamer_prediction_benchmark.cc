@@ -180,7 +180,7 @@ void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP sco
 	int prot_chi1_chi2_correct = 0;
 
 	// loop over all residues and calculate the chi angle differences between pose_orig and pose_pack and output the results
-	Size nres = pose_orig.n_residue();
+	Size nres = pose_orig.size();
 	for ( Size i = 1; i <= nres; ++i )
 		{
 			// get type name

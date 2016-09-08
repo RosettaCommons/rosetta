@@ -55,7 +55,7 @@ find_basepairs(
 	using namespace chemical;
 
 	Real const max_d( 4.0 );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	//pairs.clear();
 	partner.clear();

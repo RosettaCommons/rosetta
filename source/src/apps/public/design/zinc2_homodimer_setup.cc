@@ -153,8 +153,8 @@ public:
 	virtual Pose
 	setup_grafted_monomer( Pose & pose ) {
 
-		zinc1_res_ = pose.total_residue() + 1;
-		zinc2_res_ = pose.total_residue() + 2;
+		zinc1_res_ = pose.size() + 1;
+		zinc2_res_ = pose.size() + 2;
 
 		protocols::metal_interface::MatchGrafterOP match_grafter( new protocols::metal_interface::MatchGrafter );
 		Pose first_graft_pose = match_grafter->graft( match1_, pose );
@@ -211,7 +211,7 @@ public:
 		point zinc1 = homodimer.residue(zinc1_res_).atom(1).xyz();
 		point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
 		axis const ZnZn_axis = zinc1 - zinc2;
-		Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
+		Size last_residue = homodimer.size(); //((zinc1_res_ - 1) * 2) + 2;
 		protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, ZnZn_axis, zinc1 ) );
 		ZnZn_axis_rollmover->apply( homodimer );
 		//homodimer.dump_pdb("homodimer_ZnZnaxis_rollmove.pdb");
@@ -279,7 +279,7 @@ public:
 		point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
 
 		axis const ZnZn_axis = zinc1 - zinc2;
-		Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
+		Size last_residue = homodimer.size(); //((zinc1_res_ - 1) * 2) + 2;
 		Real grid_angle = basic::options::option[angle_rotation_increment].value();
 
 		protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, grid_angle, grid_angle, ZnZn_axis, zinc1 ) );

@@ -140,7 +140,7 @@ public: // test functions
 		core::Size expected_resnum( 86 );
 		TR << "Check that the memrbane residue is located at the end of the pose (total residue includes symmetry virtuals here!)" << std::endl;
 		TS_ASSERT_EQUALS( expected_resnum, mprsd );
-		TS_ASSERT_EQUALS( symmetric_pose_->total_residue(), expected_resnum );
+		TS_ASSERT_EQUALS( symmetric_pose_->size(), expected_resnum );
 
 		// Check that the root of the pose is the membrane residue num
 		core::Size expected_root( 86 );

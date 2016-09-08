@@ -58,7 +58,7 @@ void RollMover::apply( core::pose::Pose & pose ){
 	// now we have a vector1 of vector1s with a numeric::xyzVector
 	// access will look like coords[residue][atom] to get xyz
 
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	coords.resize( nres );
 
 	for ( Size i=1; i<= nres; ++i ) {
@@ -133,7 +133,7 @@ RollMover::parse_my_tag(
 {
 
 	start_res_ = ( tag->hasOption("start_res") ) ?  tag->getOption<core::Size>("start_res") : 1;
-	stop_res_ = ( tag->hasOption("stop_res") ) ?  tag->getOption<core::Size>("stop_res") : pose.total_residue();
+	stop_res_ = ( tag->hasOption("stop_res") ) ?  tag->getOption<core::Size>("stop_res") : pose.size();
 
 	if ( tag->hasOption("chain") ) {
 		if ( tag->hasOption("start_res") || tag->hasOption("stop_res") ) utility_exit_with_message("cannot specify start/stop res AND chain!");

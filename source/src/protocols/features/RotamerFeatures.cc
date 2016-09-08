@@ -235,7 +235,7 @@ RotamerFeatures::report_features(
 
 	for (
 			Size residue_number=1;
-			residue_number <= pose.total_residue();
+			residue_number <= pose.size();
 			++residue_number ) {
 
 		// only report features for the specified subset of residues

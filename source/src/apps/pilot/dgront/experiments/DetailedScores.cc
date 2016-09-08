@@ -70,7 +70,7 @@ int main(int argc, char * argv[]) {
 
   std::cout << totals[fa_atr] << std::endl;
 
-  for (Size i = 1, i_end = init_pose.total_residue(); i <= i_end; ++i) {
+  for (Size i = 1, i_end = init_pose.size(); i <= i_end; ++i) {
     conformation::Residue const & resl(init_pose.residue(i));
 
     for (graph::Graph::EdgeListIter iru = energy_graph.get_node(i)->upper_edge_list_begin(), irue =

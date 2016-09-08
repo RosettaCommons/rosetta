@@ -365,8 +365,8 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
 
-		TR << "MAN9 res: " << man9_op_->total_residue() << std::endl;
-		TS_ASSERT(man9_op_->total_residue() == 11);
+		TR << "MAN9 res: " << man9_op_->size() << std::endl;
+		TS_ASSERT(man9_op_->size() == 11);
 
 		Size tip_9[] = {9, 8};
 		Size tip_11[] = {11, 10};
@@ -401,7 +401,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core::pose::carbohydrates;
 
 		TR << "Testing glycan branch" << std::endl;
-		TS_ASSERT(man9_op_->total_residue() == 11);
+		TS_ASSERT(man9_op_->size() == 11);
 
 		//Test getting all residues and tips from specific positions.
 		std::pair< vector1< Size >, vector1< Size > > res_and_tips;
@@ -492,51 +492,51 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TR << std::endl << "Deleting from 8" << std::endl;
 		core::pose::PoseOP man9_copy = man9_op_->clone();
-		TS_ASSERT(man9_copy->total_residue() ==11);
+		TS_ASSERT(man9_copy->size() ==11);
 		delete_carbohydrate_branch( *man9_copy, 8); //Deletes 9
-		TS_ASSERT_EQUALS(man9_copy->total_residue(), 10);
+		TS_ASSERT_EQUALS(man9_copy->size(), 10);
 		man9_copy->dump_pdb("man9_trim_at_8.pdb");
 
 		TR << std::endl << "Deleting from 10" << std::endl;
 		man9_copy = man9_op_->clone();
-		TS_ASSERT(man9_copy->total_residue() ==11);
+		TS_ASSERT(man9_copy->size() ==11);
 		delete_carbohydrate_branch( *man9_copy, 10); //Deletes 11
-		TS_ASSERT_EQUALS(man9_copy->total_residue(), 10);
+		TS_ASSERT_EQUALS(man9_copy->size(), 10);
 		man9_copy->dump_pdb("man9_trim_at_10.pdb");
 
 		TR << std::endl << "Deleting from 4" << std::endl;
 		man9_copy = man9_op_->clone();
-		TS_ASSERT(man9_copy->total_residue() ==11);
+		TS_ASSERT(man9_copy->size() ==11);
 		delete_carbohydrate_branch( *man9_copy, 4); //Deletes 6,5
-		TS_ASSERT_EQUALS(man9_copy->total_residue(), 9);
+		TS_ASSERT_EQUALS(man9_copy->size(), 9);
 		man9_copy->dump_pdb("man9_trim_at_4.pdb");
 
 		TR << std::endl << "Deleting from 7" << std::endl;
 		man9_copy = man9_op_->clone();
-		TS_ASSERT(man9_copy->total_residue() ==11);
+		TS_ASSERT(man9_copy->size() ==11);
 		delete_carbohydrate_branch( *man9_copy, 7); //Deletes 9,8,11,10
-		TS_ASSERT_EQUALS(man9_copy->total_residue(), 7);
+		TS_ASSERT_EQUALS(man9_copy->size(), 7);
 		man9_copy->dump_pdb("man9_trim_at_7.pdb");
 
 		TR << std::endl << "Deleting from 3" << std::endl;
 		man9_copy = man9_op_->clone();
-		TS_ASSERT(man9_copy->total_residue() ==11);
+		TS_ASSERT(man9_copy->size() ==11);
 		delete_carbohydrate_branch( *man9_copy, 3); //Deletes 9,8,11,10,6,5,4
-		TS_ASSERT_EQUALS(man9_copy->total_residue(), 3);
+		TS_ASSERT_EQUALS(man9_copy->size(), 3);
 		man9_copy->dump_pdb("man9_trim_at_3.pdb");
 
 		TR << std::endl << "Deleting from 2" << std::endl;
 		man9_copy = man9_op_->clone();
-		TS_ASSERT(man9_copy->total_residue() ==11);
+		TS_ASSERT(man9_copy->size() ==11);
 		delete_carbohydrate_branch( *man9_copy, 2); ///Deletes 9,8,11,10,6,5,4,3
-		TS_ASSERT_EQUALS(man9_copy->total_residue(), 2);
+		TS_ASSERT_EQUALS(man9_copy->size(), 2);
 		man9_copy->dump_pdb("man9_trim_at_2.pdb");
 
 		TR << std::endl << "Deleting from 1" << std::endl;
 		man9_copy = man9_op_->clone();
-		TS_ASSERT(man9_copy->total_residue() ==11);
+		TS_ASSERT(man9_copy->size() ==11);
 		delete_carbohydrate_branch( *man9_copy, 1); ///Deletes 9,8,11,10,6,5,4,3, 2
-		TS_ASSERT_EQUALS(man9_copy->total_residue(), 1);
+		TS_ASSERT_EQUALS(man9_copy->size(), 1);
 		man9_copy->dump_pdb("man9_trim_at_1.pdb");
 
 		TR.flush();

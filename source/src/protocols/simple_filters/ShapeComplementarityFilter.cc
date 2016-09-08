@@ -184,7 +184,7 @@ ShapeComplementarityFilter::write_area( Pose const & pose, core::Real const area
 			utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );
 			int_area /= (Real) subs.size() ;
 		} else {
-			ObjexxFCL::FArray1D_bool is_upstream( pose.total_residue(), false );
+			ObjexxFCL::FArray1D_bool is_upstream( pose.size(), false );
 			utility::vector1<Size> sym_aware_jump_ids;
 			if ( sym_dof_name() != "" ) {
 				sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() ) );
@@ -194,7 +194,7 @@ ShapeComplementarityFilter::write_area( Pose const & pose, core::Real const area
 			}
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
 			Size ndownstream=0;
-			for ( Size i=1; i<=pose.total_residue(); ++i ) {
+			for ( Size i=1; i<=pose.size(); ++i ) {
 				if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 				if ( !is_upstream(i) ) ndownstream++;
 			}
@@ -402,7 +402,7 @@ ShapeComplementarityFilter::setup_single_component_symm(
 	ShapeComplementarityCalculator & scc,
 	core::Real & nsubs_scalefactor ) const
 {
-	ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+	ObjexxFCL::FArray1D_bool is_upstream ( pose.size(), false );
 	utility::vector1<Size> sym_aware_jump_ids;
 
 	if ( sym_dof_name() != "" ) {
@@ -418,7 +418,7 @@ ShapeComplementarityFilter::setup_single_component_symm(
 	// partition & fill residueX_ vectors
 	core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
 	Size ndownstream=0;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		scc.AddResidue(is_upstream(i)?1:0, pose.residue(i));
 		if ( !is_upstream(i) ) ndownstream++;

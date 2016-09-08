@@ -150,11 +150,11 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		if ( chain_num_ ) {
 			chain = pose.split_by_chain( chain_num_ );
 			constraints = chain->constraint_set()->get_all_constraints();
-			tr<<"total number of residues in chain:"<<chain->total_residue()<<std::endl;
+			tr<<"total number of residues in chain:"<<chain->size()<<std::endl;
 			tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
 		} else {
 			constraints = pose.constraint_set()->get_all_constraints();
-			tr<<"total number of residues in pose:"<<pose.total_residue()<<std::endl;
+			tr<<"total number of residues in pose:"<<pose.size()<<std::endl;
 			tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
 		}
 
@@ -182,10 +182,10 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		utility_exit_with_message("No sequence profile set. option -in:file:pssm not specified? no filename in tag specified? Sequence profile constraints not added to pose by other movers/filters?");
 	}
 
-	core::Size asymmetric_unit_res( pose.total_residue() );
+	core::Size asymmetric_unit_res( pose.size() );
 	core::Size last_res( 0 );
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size();
+		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.size() : seqprof->profile().size();
 		tr<<" Pose is SYMMETRIC!!!"<<std::endl;
 		core::conformation::symmetry::SymmetricConformation const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
@@ -193,7 +193,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		//  task.request_symmetrize_by_intersection();
 	} else {
 		tr<<"Pose is NOT--SYMMETRIC!!!"<<std::endl;
-		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/;
+		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.size() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/;
 	}
 	tr<< "the size of sequence profile is: "<<last_res<<std::endl;
 	/// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
@@ -216,7 +216,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	tr<<"Allowing the following identities:"<<std::endl;
 
 	core::Size const resi_begin = ( chain_num_ == 0 ? 1 : pose.conformation().chain_begin( chain_num_ ) );
-	core::Size const resi_end   = ( chain_num_ == 0 ? pose.total_residue() : pose.conformation().chain_end( chain_num_ ) );
+	core::Size const resi_end   = ( chain_num_ == 0 ? pose.size() : pose.conformation().chain_end( chain_num_ ) );
 
 	runtime_assert( (seqprof->profile()).size()>=resi_end - resi_begin );
 
@@ -552,7 +552,7 @@ RestrictConservedLowDdgOperation::apply(
 
 	if ( position_ddGs_.size() == 0 ) utility_exit_with_message("No ddG infos were read in. option -in:file:ddg_predictions_file not specified? no filename in tag specified?");
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		if ( !pose.residue_type( i ).is_protein() ) continue;
 		core::chemical::AA seqprof_wt_aa( this->seqprof_wt_aa( i ) );

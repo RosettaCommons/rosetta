@@ -171,7 +171,7 @@ public:
 		for (Size i=1; i<=partner_chainID.length()-1; i++){ //identify second chain from input partner_chainID
 			if (partner_chainID[i-1] == '_') second_chain = partner_chainID[i];
 		}
-		for ( Size i=2; i<= pose.total_residue(); ++i ) {
+		for ( Size i=2; i<= pose.size(); ++i ) {
 			if(pdb_info->chain( i ) == second_chain){ //identify cutpoint corresponding to second chain in partner_chainID
 				cutpoint = i-1;
 				break;
@@ -179,11 +179,11 @@ public:
 		}
 
 		Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-		Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
+		Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.size() ) );
 
 		//setup fold tree based on cutpoints and jump points
 		f.clear();
-		f.simple_tree( pose.total_residue() );
+		f.simple_tree( pose.size() );
 		f.new_jump( jump_pos1, jump_pos2, cutpoint);
 		movable_jumps_.clear();
 		movable_jumps_.push_back( 1 );
@@ -202,7 +202,7 @@ public:
 		//rebuild jumps between chains C-terminal to the docking cutpoint
 		chain_begin = cutpoint+1;
 		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		while (chain_end != pose.total_residue()){
+		while (chain_end != pose.size()){
 			chain_begin = chain_end+1;
 			f.new_jump( chain_end, chain_begin, chain_end);
 			chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
@@ -224,7 +224,7 @@ public:
 		core::scoring::ScoreFunctionOP std_scorefxn( ScoreFunctionFactory::create_score_function( "score12" ) );
 		pack::task::PackerTaskOP my_task( pack::task::TaskFactory::create_packer_task( pose ));
 		my_task->initialize_from_command_line();
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			my_task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 		protocols::simple_moves::RotamerTrialsMinMoverOP prepack_mover( new protocols::simple_moves::RotamerTrialsMinMover( std_scorefxn, *my_task ) );
@@ -297,7 +297,7 @@ public:
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 		task->initialize_from_command_line();
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue( ii ).type().aa() == aa_asp ||
 					pose.residue( ii ).type().aa() == aa_glu ||
 					pose.residue( ii ).type().aa() == aa_his ||

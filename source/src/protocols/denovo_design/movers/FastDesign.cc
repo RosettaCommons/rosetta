@@ -203,7 +203,7 @@ FastDesign::apply( core::pose::Pose & pose )
 	// if requested, clear all residues marked as designable
 	if ( clear_designable_residues_ ) {
 		TR << "Clearing designable residues...";
-		for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 			if ( pose.residue( resid ).is_protein() && clear_task->being_designed( resid ) ) {
 				if ( pose.residue( resid ).type().is_alpha_aa() ) {
 					if ( pose.residue( resid ).type().is_l_aa() ) { //Note that glycine is skipped, since it's not an L-amino acid.

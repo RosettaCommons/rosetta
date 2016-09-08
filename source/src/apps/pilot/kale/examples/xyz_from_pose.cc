@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 
 		import_pose::pose_from_file(pose, "structures/ubiquitin.pdb", core::import_pose::PDB_file);
 
-		TR << pose.total_residue() << " residues loaded." << std::endl;
+		TR << pose.size() << " residues loaded." << std::endl;
 
 		atom = id::NamedAtomID("CA", 1);
 		position = pose.xyz(atom);

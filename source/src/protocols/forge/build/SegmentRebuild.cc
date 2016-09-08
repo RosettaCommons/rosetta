@@ -381,7 +381,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	//works with non-N,C term extension.  Try placing in SegRebuld
 	if (basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree]()){
 	Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
-	Size nres( pose.total_residue());
+	Size nres( pose.size());
 
 	//FoldTree f(pose.fold_tree());
 	FoldTree f;
@@ -394,18 +394,18 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	protocols:loops::Loops chain_def_loops;
 	chain_def_loops.add_loop(protocols::loops::Loop(1,second_start));
-	chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.total_residue()));
+	chain_def_loops.add_loop(protocols::loops::Loop(second_start,pose.size()));
 
 	//add virtual residue, as star foldtree requires it
-	if (pose.residue( pose.total_residue()).aa() != core::chemical::aa_vrt){
-	pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("VRT")), pose.total_residue());
+	if (pose.residue( pose.size()).aa() != core::chemical::aa_vrt){
+	pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("VRT")), pose.size());
 	}
 
 	//update foldtree to new foldtree
 	f = pose.fold_tree();
 
 	//update nres to include the new residue
-	nres =  pose.total_residue();
+	nres =  pose.size();
 
 	f.reorder(nres);
 	pose.fold_tree(f);
@@ -469,7 +469,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		}
 
 		// on the right
-		if ( !has_upper_terminus && interval_.right < pose.n_residue() ) {
+		if ( !has_upper_terminus && interval_.right < pose.size() ) {
 			right_endpoint_psi = pose.psi( interval_.right );
 			right_endpoint_omega = pose.omega( interval_.right );
 		}
@@ -794,7 +794,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	// special case for Remodel
 	if ( basic::options::option[basic::options::OptionKeys::remodel::no_jumps] ) {
-		//ft.simple_tree(pose.total_residue());
+		//ft.simple_tree(pose.size());
 		//idealize across the loop, in case they are not -- a big problem when taking out jumps
 		// protocols:loops::Loops loops_def_for_idealization;
 		// loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
@@ -830,9 +830,9 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		if ( basic::options::option[basic::options::OptionKeys::remodel::reroot_tree].user() ) { //rerooting tree so can anchor in stationary part of structure.
 			Size new_root =  basic::options::option[basic::options::OptionKeys::remodel::reroot_tree];
-			nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, new_root , true ); // true );
+			nojump_ft.tree_from_jumps_and_cuts( pose.size(), num_jumps_pre_processing, Fjumps, Fcuts, new_root , true ); // true );
 		} else { //default
-			nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
+			nojump_ft.tree_from_jumps_and_cuts( pose.size(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
 		}
 
 		//std::cout << nojump_ft << std::endl;
@@ -858,7 +858,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	// assume proper omega
 	Size const omega_left = ( interval_.left == 1 ) ? interval_.left : interval_.left - 1;
-	Size const omega_right = ( interval_.right == pose.n_residue() ) ? interval_.right - 1 : interval_.right;
+	Size const omega_right = ( interval_.right == pose.size() ) ? interval_.right - 1 : interval_.right;
 	trans_omega( omega_left, omega_right, pose );
 
 	// recover old angles at junctions if requested

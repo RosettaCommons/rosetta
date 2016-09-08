@@ -173,7 +173,7 @@ is_sugar_virtual( core::pose::Pose const & pose, core::Size const sugar_res, cor
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	if ( ( sugar_res + 1 ) != bulge_res && ( sugar_res - 1 ) != bulge_res ) {
 		TR.Debug << "sugar_res = " << sugar_res << " bulge_res = " << bulge_res << std::endl;
@@ -312,7 +312,7 @@ get_reference_res_for_each_virtual_sugar_without_fold_tree( pose::Pose const & p
 	utility::vector1< Size > virtual_sugar_res;
 	utility::vector1< utility::vector1< Size > > possible_reference_res_lists;
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) continue;
 		virtual_sugar_res.push_back( n );
 		reference_res_for_each_virtual_sugar[ n ] = 0;
@@ -385,7 +385,7 @@ look_for_non_jump_reference_to_next( Size const virtual_sugar_res,
 	Size const moving_suite ){
 	// Following was to figure out attachment location for old-school Parin fold tree.
 	Size i = virtual_sugar_res + 1;
-	while ( i <= pose.total_residue() ) {
+	while ( i <= pose.size() ) {
 		if ( pose.fold_tree().is_cutpoint( i - 1 ) ) break;
 		if ( !pose.residue( i ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 			if ( i != (moving_suite - 1) ) {
@@ -425,7 +425,7 @@ std::map< Size, Size > const
 get_reference_res_for_each_virtual_sugar_based_on_fold_tree( pose::Pose const & pose ){
 
 	std::map< Size, Size > reference_res_for_each_virtual_sugar;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 
 		if ( !pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) continue;
 		reference_res_for_each_virtual_sugar[ n ] = get_reference_res_for_virtual_sugar_based_on_fold_tree( pose, n );
@@ -487,7 +487,7 @@ look_for_jumps_to_next( Size const virtual_sugar_res,
 	pose::Pose const & pose,
 	bool const force_upstream ){
 	Size i = virtual_sugar_res + 1;
-	while ( i <= pose.total_residue() ) {  // look for jumps with reference residue 'upstream'
+	while ( i <= pose.size() ) {  // look for jumps with reference residue 'upstream'
 		Size const jump_nr = pose.fold_tree().jump_nr( i, virtual_sugar_res );
 		if ( jump_nr > 0 && (!force_upstream || Size( pose.fold_tree().upstream_jump_residue( jump_nr ) ) == i ) ) {
 			return i;
@@ -524,8 +524,8 @@ instantiate_any_virtual_sugars( pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////
 utility::vector1< bool >
 detect_sugar_contacts( pose::Pose const & pose ) {
-	utility::vector1< bool > sugar_makes_contact( pose.total_residue(), false );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	utility::vector1< bool > sugar_makes_contact( pose.size(), false );
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		sugar_makes_contact[ i ] = detect_sugar_contacts( pose, i );
 	}
@@ -541,7 +541,7 @@ detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
 	bool found_contact( false );
 	Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( i == moving_res ) continue;
 
 		// sometimes see artifactual H-bonds of O2' to next phosphate or sugar.

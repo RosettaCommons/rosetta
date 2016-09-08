@@ -436,7 +436,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		// back to fullatom
 		to_full_atom.apply( pose );
 
-		utility::vector1<bool> allow_chi_copy( pose.total_residue(), true );
+		utility::vector1<bool> allow_chi_copy( pose.size(), true );
 		/// FIXME: JQX very redudent loops defition
 		for ( Size ii=ab_info_->get_CDR_loop(h3).start(); ii<=ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
 			allow_chi_copy[ii] = false;

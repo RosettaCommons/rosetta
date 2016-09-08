@@ -79,7 +79,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -96,7 +96,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'E' );
 		}
 
@@ -113,7 +113,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'H' );
 		}
 
@@ -127,7 +127,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 10.0 * i );
 			pose.set_psi( i, 5.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -148,7 +148,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -159,7 +159,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 5.0 * i );
 			pose.set_psi( i, 10.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -201,7 +201,7 @@ public: // tests
 		TS_ASSERT_EQUALS( swap.interval().left, 4 );
 		TS_ASSERT_EQUALS( swap.interval().right, 13 );
 		TS_ASSERT( swap.original_interval_valid() );
-		TS_ASSERT_EQUALS( c20.n_residue(), 22 );
+		TS_ASSERT_EQUALS( c20.size(), 22 );
 		TS_ASSERT_EQUALS( c20.fold_tree().num_cutpoint(), 2 );
 		TS_ASSERT_EQUALS( c20.annotated_sequence(), "G[GLY:NtermProteinFull]FFKEEEEEEEEKFFFFFFFFG[GLY:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c20.secstruct(), "LLLEEEEEEEEEELLLLLLLLL" );
@@ -225,7 +225,7 @@ public: // tests
 
 		// MoveMap for placing jumps
 		MoveMap movemap;
-		movemap.set_bb_true_range( 1, cut.n_residue() );
+		movemap.set_bb_true_range( 1, cut.size() );
 		movemap.set_bb( 19 , false );
 
 		// Replace section of cut with cut2.  The interval from [13, 17]
@@ -237,7 +237,7 @@ public: // tests
 		TS_ASSERT_EQUALS( swap.interval().left, 13 );
 		TS_ASSERT_EQUALS( swap.interval().right, 32 );
 		TS_ASSERT( swap.original_interval_valid() );
-		TS_ASSERT_EQUALS( cut.n_residue(), 35 );
+		TS_ASSERT_EQUALS( cut.size(), 35 );
 		TS_ASSERT_EQUALS( cut.fold_tree().num_cutpoint(), 5 );
 		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHVVVVVAWWWFGHIKLMNWWWSTVWYVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( cut.secstruct(), "HHHHHHHHHHHHLLLLLLLLLLLLLLLLLLLLHHH" );
@@ -262,7 +262,7 @@ public: // tests
 
 		// MoveMap for placing jumps
 		MoveMap movemap;
-		movemap.set_bb_true_range( 1, cut.n_residue() );
+		movemap.set_bb_true_range( 1, cut.size() );
 		movemap.set_bb( 18 , false );
 		movemap.set_bb( 19 , false );
 		movemap.set_bb( 20 , false );
@@ -276,7 +276,7 @@ public: // tests
 		TS_ASSERT_EQUALS( swap.interval().left, 13 );
 		TS_ASSERT_EQUALS( swap.interval().right, 32 );
 		TS_ASSERT( swap.original_interval_valid() );
-		TS_ASSERT_EQUALS( cut.n_residue(), 35 );
+		TS_ASSERT_EQUALS( cut.size(), 35 );
 		TS_ASSERT_EQUALS( cut.fold_tree().num_cutpoint(), 5 );
 		TS_ASSERT_EQUALS( cut.annotated_sequence(), "A[ALA:NtermProteinFull]CDEFGHVVVVVAWWWFGHIKLMNWWWSTVWYVWY[TYR:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( cut.secstruct(), "HHHHHHHHHHHHLLLLLLLLLLLLLLLLLLLLHHH" );

@@ -500,7 +500,7 @@ void JumpSpecificAbrelax::setup() {
 #endif
 
 		core::util::switch_to_residue_type_set( *native_pose_, chemical::CENTROID ); //so that in do_rerun the native pose is the same as the other poses
-		//		for ( Size i = 1; i<=native_pose_->total_residue(); i++ ) {
+		//		for ( Size i = 1; i<=native_pose_->size(); i++ ) {
 		//			std::cout << native_pose_->phi(i) << ' ' << native_pose_->psi(i) << std::endl;
 		//		}
 	}
@@ -527,13 +527,13 @@ void JumpSpecificAbrelax::setup() {
 		if ( option[ in::file::native_exclude_res ].user() ) {
 			add_evaluation( new SelectRmsdEvaluator(
 						native_pose_,
-						invert_exclude_residues( native_pose_->total_residue(), option[ in::file::native_exclude_res ]()),
+						invert_exclude_residues( native_pose_->size(), option[ in::file::native_exclude_res ]()),
 						native_tag)
 			);
 			if ( option[ bGDT ]() ) {
 				add_evaluation( new SelectGdtEvaluator(
 						native_pose_,
-						invert_exclude_residues( native_pose_->total_residue(), option[ in::file::native_exclude_res ]()),
+						invert_exclude_residues( native_pose_->size(), option[ in::file::native_exclude_res ]()),
 						native_tag)
 				);
 			}
@@ -689,7 +689,7 @@ void JumpSpecificAbrelax::add_constraints( pose::Pose & pose ) {
 	using namespace basic::options::OptionKeys;
 	bool bFirst( !cstset_ );
 	if ( option[ constraints::enable_HA ] ) {
-		for ( Size i = 1; i<= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i<= pose.size(); i++ ) {
 			core::pose::add_variant_type_to_pose_residue( pose, chemical::CENTROID_HA, i );
 		}
 	}
@@ -1029,7 +1029,7 @@ void JumpSpecificAbrelax::do_distributed_rerun() {
 
 		if ( loops_in_.size() ) {
 			utility::vector1< core::Real > vecs;
-			loops::Loops rigid( loops_in_.invert( pose.total_residue() ) );
+			loops::Loops rigid( loops_in_.invert( pose.size() ) );
 			loops::fix_with_coord_cst( rigid, pose, option[ loopfcst::coord_cst_all_atom ], vecs );
 		}
 
@@ -1104,7 +1104,7 @@ void JumpSpecificAbrelax::copy_structure( core::pose::Pose & extended_pose, core
 	// requires that the sequences match at the beginning (1..nmatch_res) -- > use sequence alignment later
 	tr.Info << " *** use native structure as starting template -- NEEDS TO BE IDEALIZED !!! *** \n";
 	// determine length of segment to copy from native
-	Size seg_len = std::min(extended_pose.total_residue(), desired_pose.total_residue() );
+	Size seg_len = std::min(extended_pose.size(), desired_pose.size() );
 	// chu workaround when folding with ligand/metal
 	Size protein_len = 0;
 	for ( Size i = 1; i <= seg_len; ++i ) {
@@ -1139,7 +1139,7 @@ void JumpSpecificAbrelax::generate_extended_pose( core::pose::Pose &extended_pos
 	 );
 
 	// make extended chain
-	for ( Size pos = 1; pos <= extended_pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos <= extended_pose.size(); pos++ ) {
 		if ( ! extended_pose.residue(pos).is_protein() ) continue;
 		extended_pose.set_phi( pos, -150 );
 		extended_pose.set_psi( pos, 150);
@@ -1326,7 +1326,7 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 	}
 
 	if ( option[ jumps::fix_jumps ].user() ) {
-	  JumpSetup *ptr = new JumpSetup( extended_pose.total_residue() );
+	  JumpSetup *ptr = new JumpSetup( extended_pose.size() );
 	  ptr->read_file( option[ jumps::fix_jumps ]() );
 		// initialize jumping
 		jumping::JumpSample current_jumps( ptr->create_jump_sample() );
@@ -1344,7 +1344,7 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 			std::cout<<jump_point[i]<<" ";
 		  std::cout<<"]"<<std::endl;
 		  if(jump_point.size()==4) {
-		    BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.total_residue(), ss_def_, native_pose_,jump_point[1], jump_point[2],jump_point[3], jump_point[4]);
+		    BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.size(), ss_def_, native_pose_,jump_point[1], jump_point[2],jump_point[3], jump_point[4]);
 		    std::cout << "abinitio:dgront:jump_from_library Jumping position is: " << jump_point[1]<< jump_point[2]<<jump_point[3]<< jump_point[4]<<std::endl;
 		    jump_def_ = ptr;
 		  }
@@ -1360,7 +1360,7 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 				  o[i] = jump_point[i*4+3];
 				  p[i] = jump_point[i*4+4];
 			  }
-			  BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.total_residue(), ss_def_, native_pose_,nJumps,ir, jr,o, p);
+			  BaseJumpSetup *ptr = new LibraryJumpSetup( extended_pose.size(), ss_def_, native_pose_,nJumps,ir, jr,o, p);
 			  std::cout << "abinitio:dgront:jump_from_library Jumping with " << nJumps<< " jumps"<<std::endl;
 			  jump_def_ = ptr;
 			  delete ir;
@@ -1410,11 +1410,11 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 	}
 	if ( option[ constraints::forest_file ].user() ) {
 		if( jump_def_ == 0 && constraint_forest_->get_pairings().size() > 0 ) { //constraint_forest pairings but no -sheet option
-			jump_def_ = new JumpsFromConstraintForest(extended_pose.total_residue(),
+			jump_def_ = new JumpsFromConstraintForest(extended_pose.size(),
 																							 constraint_forest_,
 																							 ss_def_->loop_fraction());
 //			jump_def_	= new JumpsFromAllPairings(
-//				extended_pose.total_residue(),
+//				extended_pose.size(),
 //				constraint_forest_->get_pairings(),
 //				ss_def_->loop_fraction()
 //			);
@@ -1434,7 +1434,7 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 // 		assert( native_pose_ );
 // 		SecondaryStructureOP ss_contr = new jumping::SecondaryStructure( *native_pose_ );
 // 		utility::io::ozstream dump("ss_def__from_frags");
-// 		for ( Size i = 1; i<=ss_def_->total_residue(); i++ ) {
+// 		for ( Size i = 1; i<=ss_def_->size(); i++ ) {
 // 			dump << i << " " << ss_def_->loop_fraction()(i) << " " << ss_contr->loop_fraction()(i) << std::endl;
 // 		}
 
@@ -1446,7 +1446,7 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 
 	if ( option[ jumps::residue_pair_jump_file ].user() ) {
 		bDoubleDef = jump_def_ != 0;
-		ResiduePairJumpSetup * ptr = new ResiduePairJumpSetup( extended_pose.total_residue() );
+		ResiduePairJumpSetup * ptr = new ResiduePairJumpSetup( extended_pose.size() );
 		ptr->read_file( option[ jumps::residue_pair_jump_file ]() );
 		jump_def_ = ptr;
 	}
@@ -1590,7 +1590,7 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 			stage1_sampler->bSkipStage3_ = true;
 			stage1_sampler->bSkipStage4_ = true;
 			stage1_sampler->closure_protocol( NULL );
-			loops::Loops rigid_core( loops_in_.invert( extended_pose.total_residue() ) );
+			loops::Loops rigid_core( loops_in_.invert( extended_pose.size() ) );
 			controller = new DoubleLayerKinematicAbinitio(
 						 jump_def_,
 						 extended_loops_in,
@@ -1766,7 +1766,7 @@ void JumpSpecificAbrelax::fold() {
 		// perturb phi/psi randomly -- should be different each run
 		if ( option[ perturb ].user() ) {
 			Real sig = option[ perturb ];
-			for ( Size pos = 1; pos <= fold_pose.total_residue(); pos++ ) {
+			for ( Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 				fold_pose.set_phi( pos, fold_pose.phi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_psi( pos, fold_pose.psi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_omega( pos, fold_pose.omega( pos ) );

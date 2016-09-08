@@ -757,7 +757,7 @@ ubi_e2c_modeler::setup_key_residues(
 	TR << "UBI Setting Up Key Residues" << std::endl;
 
 	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
-	d77_end_ = pose_in.total_residue();
+	d77_end_ = pose_in.size();
 
 	//char chain = '_';
 	char old_chain = '_';
@@ -1053,7 +1053,7 @@ ubi_e2c_modeler::trim_cter(
 	}
 
 	k48r_trim_end_ = k48r_end_ - ( flex_cter_ + 1 );
-	d77_trim_end_ = pose_in.total_residue();
+	d77_trim_end_ = pose_in.size();
 	d77_trim_ctr_mass_ = d77_ctr_of_mass_ - ( flex_cter_ + 1 );
 
 	TR << "UBI Done: Trimming C-terminal" << std::endl;
@@ -1751,7 +1751,7 @@ ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
 	( *pack_scorefxn_ )( pose_in );
 
 	// selecting movable c-terminal residues
-	ObjexxFCL::FArray1D_bool loop_residues( pose_in.total_residue(), false );
+	ObjexxFCL::FArray1D_bool loop_residues( pose_in.size(), false );
 	for ( Size i = 0; i <= flex_cter_; i++ ) {
 		loop_residues( k48r_end_ - i) = true;
 		loop_residues( d77_end_ - i) = true;
@@ -1893,7 +1893,7 @@ ubi_e2c_modeler::CSP_fraction(
 
 	Size total_CSPs = current_CSP.size();
 
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 	utility::vector1<bool> is_interface( nres, false );
 
 	Size num_jump = 2;
@@ -2106,7 +2106,7 @@ ubi_e2c_modeler::calc_Lrmsd (
 
 	using namespace core::scoring;
 
-	ObjexxFCL::FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+	ObjexxFCL::FArray1D_bool superpos_partner ( pose_in.size(), false );
 
 	Size compute_rmsd_start(0), compute_rmsd_end(0);
 
@@ -2525,7 +2525,7 @@ ubi_e2c_modeler::monoub_setup_key_residues(
 	TR << "UBI Mono Ubi Setting Up Key Residues" << std::endl;
 
 	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
-	monoub_end_ = pose_in.total_residue();
+	monoub_end_ = pose_in.size();
 
 	//char chain = '_';
 	char old_chain = '_';
@@ -3064,7 +3064,7 @@ ubi_e2c_modeler::monoub_CSP_fraction(
 	current_CSP = CSP_;
 	Size total_CSPs = current_CSP.size();
 
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 	utility::vector1<bool> is_interface( nres, false );
 
 	protocols::scoring::Interface _interface( 1 );

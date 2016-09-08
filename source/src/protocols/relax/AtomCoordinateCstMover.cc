@@ -111,7 +111,7 @@ AtomCoordinateCstMover::set_refstruct( core::pose::PoseCOP ref ) {
 core::select::residue_selector::ResidueSubset
 AtomCoordinateCstMover::compute_residue_subset( core::pose::Pose const & pose ) const
 {
-	core::Size const nres = pose.total_residue();
+	core::Size const nres = pose.size();
 	core::select::residue_selector::ResidueSubset constrain_residues( nres, false );
 	core::pack::task::PackerTaskOP task;
 	if ( task_segments_ ) {
@@ -168,11 +168,11 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 	core::select::residue_selector::ResidueSubset const constrain_residues = compute_residue_subset( pose );
 	core::scoring::constraints::ConstraintCOPs csts;
 
-	for ( core::Size i = 1; i<= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i<= pose.size(); ++i ) {
 		if ( !constrain_residues[i] ) continue;
 		core::Size const j = seq_map[i];
 		if ( j == 0 ) continue;
-		assert( j <= constraint_target_pose->total_residue() ); // Should be, if map was set up properly.
+		assert( j <= constraint_target_pose->size() ); // Should be, if map was set up properly.
 
 		core::conformation::Residue const & pose_i_rsd( pose.residue(i) );
 		core::conformation::Residue const & targ_j_rsd( constraint_target_pose->residue(j) );

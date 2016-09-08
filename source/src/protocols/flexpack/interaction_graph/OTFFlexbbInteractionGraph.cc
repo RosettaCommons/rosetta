@@ -745,7 +745,7 @@ OTFFlexbbInteractionGraph::set_pose( Pose const & pose )
 #ifdef DEBUG_OTF_FLEXBB_ENERGIES
 	current_pose_ = new Pose( pose );
 	alternate_pose_ = new Pose( pose );
-	resid_2_moltenres_.resize( pose.total_residue() );
+	resid_2_moltenres_.resize( pose.size() );
 	moltenres_2_resid_.resize( get_num_nodes() );
 #endif
 

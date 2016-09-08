@@ -72,7 +72,7 @@ public:
 		PoseOP mod = core::import_pose::pose_from_file("core/scoring/model-5.pdb", core::import_pose::PDB_file);
 
 		map<Size, Size> all_residues;
-		for ( Size i = 1; i <= ref->total_residue(); ++i ) {
+		for ( Size i = 1; i <= ref->size(); ++i ) {
 			all_residues[i] = i;
 		}
 
@@ -83,7 +83,7 @@ public:
 		PoseOP mod = core::import_pose::pose_from_file("core/scoring/model-5.pdb", core::import_pose::PDB_file);
 
 		map<Size, Size> all_residues;
-		for ( Size i = 1; i <= mod->total_residue(); ++i ) {
+		for ( Size i = 1; i <= mod->size(); ++i ) {
 			all_residues[i] = i;
 		}
 
@@ -108,7 +108,7 @@ public:
 		Pose pose2 = *core::import_pose::pose_from_file("core/scoring/2GB3.pdb", core::import_pose::PDB_file);
 
 		std::map<Size, Size> residues;
-		for ( Size i = 1; i <= pose1.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose1.size(); ++i ) {
 			residues[i] = i;
 		}
 

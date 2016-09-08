@@ -176,7 +176,7 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 	using namespace core::chemical;
 	using namespace core::chemical::rna;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	ConstraintSetOP cst_set( new ConstraintSet );
 	for ( Size i = 1; i <= nres; ++i ) {
 		ResidueType const & res = pose.residue_type( i );

@@ -88,7 +88,7 @@ numeric::xyzVector<core::Real>
 InsertResMover::center_of_mass(core::pose::Pose const & pose) {
 	int nAtms = 0;
 	numeric::xyzVector<core::Real> massSum(0.,0.,0.), CoM;
-	for ( core::Size ii =1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii =1; ii <= pose.size(); ++ii ) {
 		if ( pose.residue_type(ii).aa() == core::chemical::aa_vrt ) continue;
 		for ( core::Size iatom = 1; iatom <= pose.residue_type(ii).nheavyatoms(); ++iatom ) {
 			core::conformation::Atom const & atom( pose.residue(ii).atom(iatom) );
@@ -107,8 +107,8 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 	using namespace chemical;
 	core::conformation::ResidueCOPs residues(core::pose::get_chain_residues(*poseOP, chain_id));
 	Size res_position = residue_;
-	if ( residue_>poseOP->total_residue() ) {
-		res_position=poseOP->total_residue();
+	if ( residue_>poseOP->size() ) {
+		res_position=poseOP->size();
 	}
 	Size inPoseResidue = residues[res_position]->seqpos();
 	Real tmpPhi =  poseOP->phi(inPoseResidue);
@@ -143,25 +143,25 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 	new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("VRT") );
 	new_rsd->atom(1).xyz(CoM);
 	//Set up fold tree for this one case --------------------------------------------------
-	poseOP->append_residue_by_jump( *new_rsd,poseOP->total_residue());
+	poseOP->append_residue_by_jump( *new_rsd,poseOP->size());
 	kinematics::FoldTree ft;
 	if ( inPoseResidue != 1 ) {
 		if ( grow_toward_Nterm_ ) {
 			ft.add_edge(1,inPoseResidue-1,core::kinematics::Edge::PEPTIDE);
-			ft.add_edge(1,poseOP->total_residue(),1);
-			ft.add_edge(poseOP->total_residue(),inPoseResidue,core::kinematics::Edge::PEPTIDE);
+			ft.add_edge(1,poseOP->size(),1);
+			ft.add_edge(poseOP->size(),inPoseResidue,core::kinematics::Edge::PEPTIDE);
 		} else {
 			ft.add_edge(1,inPoseResidue,core::kinematics::Edge::PEPTIDE);
-			ft.add_edge(1,poseOP->total_residue(),1);
-			ft.add_edge(poseOP->total_residue(),inPoseResidue+1,core::kinematics::Edge::PEPTIDE);
+			ft.add_edge(1,poseOP->size(),1);
+			ft.add_edge(poseOP->size(),inPoseResidue+1,core::kinematics::Edge::PEPTIDE);
 		}
 		poseOP->fold_tree(ft);
 	} else {
-		ft.add_edge(1,poseOP->total_residue(),core::kinematics::Edge::PEPTIDE);
+		ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
 		poseOP->fold_tree(ft);
 	}
 	/*std::cout << "hereB" << std::endl;
-	ft.add_edge(inPoseResidue,poseOP->total_residue()-1,core::kinematics::Edge::PEPTIDE);
+	ft.add_edge(inPoseResidue,poseOP->size()-1,core::kinematics::Edge::PEPTIDE);
 	std::cout << "hereC" << std::endl;
 	*/
 	poseOP->fold_tree(ft);

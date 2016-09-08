@@ -66,7 +66,7 @@ main( int argc, char * argv [] )
 	core::import_pose::pose_from_file( bound_pose, "bound.pdb" , core::import_pose::PDB_file);
 	core::import_pose::pose_from_file( native_pose, "native.pdb" , core::import_pose::PDB_file);
 
-	if ( bound_pose.total_residue() != native_pose.total_residue() ) {
+	if ( bound_pose.size() != native_pose.size() ) {
 		std::cout << "ERROR - number of residues in bound PDB and native PDB do not match" << std::endl;
 	}
 
@@ -112,7 +112,7 @@ main( int argc, char * argv [] )
 	// Loop over all mutated positions, sequentially mutate each residue in bound_pose
 	// to Ala and to the native residue, in both the bound and the unbound
 	utility::vector1< Size > mutated_residues;
-	for ( int ii = 1, nres = bound_pose.total_residue(); ii <= nres; ++ii ) {
+	for ( int ii = 1, nres = bound_pose.size(); ii <= nres; ++ii ) {
 		chemical::AA const bound_aa( bound_pose.residue(ii).aa());
 		chemical::AA const native_aa( native_pose.residue(ii).aa());
 		if ( bound_aa != native_aa ) {

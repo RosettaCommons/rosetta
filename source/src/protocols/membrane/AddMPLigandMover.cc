@@ -164,11 +164,11 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 	// Check the closest rsd and ligand seqpos parameters are valid
 	// Note - default constructor parameters will make at least one of these statements
 	// fail so please don't use it!
-	if ( closest_rsd_ <= 0 || closest_rsd_ > pose.total_residue() ) {
+	if ( closest_rsd_ <= 0 || closest_rsd_ > pose.size() ) {
 		utility_exit_with_message( "User specified closest residue to ligand is out of bounds.");
 	}
 
-	if ( ligand_seqpos_ <= 0 || ligand_seqpos_ > pose.total_residue() ) {
+	if ( ligand_seqpos_ <= 0 || ligand_seqpos_ > pose.size() ) {
 		utility_exit_with_message( "User specified ligand position in sequence is out of bounds.");
 	}
 

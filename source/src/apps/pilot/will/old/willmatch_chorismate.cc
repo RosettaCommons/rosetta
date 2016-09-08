@@ -80,10 +80,10 @@ static THREAD_LOCAL basic::Tracer TR( "willmatch_chorismate" );
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
   add_lower_terminus_type_to_pose_residue(pose,1);
-  add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+  add_upper_terminus_type_to_pose_residue(pose,pose.size());
   core::pack::optimizeH(pose,*sf);
   remove_lower_terminus_type_from_pose_residue(pose,1);
-  remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
+  remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 }
 
 
@@ -127,12 +127,12 @@ void run() {
     if( startfile != "" && startfile != infile ) continue; // CHECKPOINT
     Pose in_fa;
     pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
-    for(Size ir = 1; ir <= in_fa.n_residue(); ++ir) {
+    for(Size ir = 1; ir <= in_fa.size(); ++ir) {
       if(in_fa.residue(ir).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(in_fa,ir);
       if(in_fa.residue(ir).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(in_fa,ir);
     }
     Pose native = in_fa;
-    Size nres = in_fa.n_residue();
+    Size nres = in_fa.size();
     core::chemical::ResidueType const & rtala( in_fa.residue(1).residue_type_set().name_map("ALA") );
     // core::chemical::ResidueType const & rtasp( in_fa.residue(1).residue_type_set().name_map("ASP") );
     // core::chemical::ResidueType const & rtglu( in_fa.residue(1).residue_type_set().name_map("GLU") );
@@ -170,7 +170,7 @@ void run() {
       TR<<"input scanres!!!!!!"<<std::endl;
       scanres = option[willmatch::residues]();
     } else {
-      for(Size i = 1; i <= in_fa.n_residue(); ++i) {
+      for(Size i = 1; i <= in_fa.size(); ++i) {
         if(!in_fa.residue(i).has("N" )) { continue; }
         if(!in_fa.residue(i).has("CA")) { continue; }
         if(!in_fa.residue(i).has("C" )) { continue; }
@@ -185,7 +185,7 @@ void run() {
     core::pose::Pose pose(native);
 
     vector1<Real> natsasa; {core::id::AtomID_Map<Real> atom_sasa;core::scoring::calc_per_atom_sasa( native, atom_sasa, natsasa, 2.0, false );}
-    vector1<Size> cbnbrs(native.n_residue()); {
+    vector1<Size> cbnbrs(native.size()); {
       for(vector1<Size>::const_iterator rit = scanres.begin(); rit != scanres.end(); ++rit) {
         cbnbrs[*rit] = 0;
 				Vec P1 = pose.residue(*rit).xyz("CA");

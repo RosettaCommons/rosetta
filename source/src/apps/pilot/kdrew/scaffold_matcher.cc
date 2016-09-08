@@ -166,9 +166,9 @@ HotspotPlacementMover::apply(
 
 	//kdrew: create starting pose by combining the target pose and the scaffold pose
 	core::pose::Pose combined_pose = core::pose::Pose(target_pose);
-	for ( Size i = 1; i <= scaffold_pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= scaffold_pose.size(); ++i ) {
 		if ( 1 == i ) {
-			combined_pose.append_residue_by_jump(scaffold_pose.residue(i), combined_pose.total_residue(), "", "", true );
+			combined_pose.append_residue_by_jump(scaffold_pose.residue(i), combined_pose.size(), "", "", true );
 		} else {
 			combined_pose.append_residue_by_bond( scaffold_pose.residue(i) );
 		}
@@ -199,7 +199,7 @@ HotspotPlacementMover::apply(
 	*/
 
 	// get peptide start and end positions
-	Size pep_start( start_pose.conformation().chain_begin( 2 ) ); Size pep_end( start_pose.total_residue() );
+	Size pep_start( start_pose.conformation().chain_begin( 2 ) ); Size pep_end( start_pose.size() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
 
 	////kdrew: automatically find ncbb positions

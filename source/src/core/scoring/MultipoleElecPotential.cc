@@ -186,7 +186,7 @@ MultipoleElecPoseInfo::MultipoleElecPoseInfo( MultipoleElecPoseInfo const & src 
 void
 MultipoleElecPoseInfo::initialize( pose::Pose const & pose )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	residue_info_.resize( nres, nullptr );
 	placeholder_residue_.resize( nres, nullptr );
@@ -971,7 +971,7 @@ MultipoleElecPotential::align_multipole_axes(
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	//  * Identify the neighboring atoms that define the coord set
 	//  * Build the orthonormal axis
@@ -1204,7 +1204,7 @@ MultipoleElecPotential::assign_all_amoeba_types(
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// Look up the Amoeba type information
 	MultipoleElecPoseInfoOP multipole_info;
@@ -1233,7 +1233,7 @@ MultipoleElecPotential::determine_polarization_groups(
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// Look up the Amoeba type information
 	MultipoleElecPoseInfoOP multipole_info;
@@ -1343,7 +1343,7 @@ MultipoleElecPotential::calculate_fixed_fields_for_polarization(
 	pose::Pose & pose
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1392,7 +1392,7 @@ MultipoleElecPotential::calculate_induced_fields_for_polarization(
 	pose::Pose & pose
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1439,7 +1439,7 @@ MultipoleElecPotential::clear_induced_fields(
 	pose::Pose & pose
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1466,7 +1466,7 @@ MultipoleElecPotential::store_induced_dipoles(
 	pose::Pose & pose
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1489,7 +1489,7 @@ MultipoleElecPotential::get_polarization_from_fields(
 	pose::Pose & pose
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1544,7 +1544,7 @@ MultipoleElecPotential::get_effective_radii(
 	pose::Pose & pose
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1633,7 +1633,7 @@ MultipoleElecPotential::relax_induced_dipoles(
 	core::Real const relax
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1667,7 +1667,7 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 	pose::Pose & pose
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	//TR << "In induce_polarize_dipoles()" << std::endl;
 
@@ -1885,7 +1885,7 @@ MultipoleElecPotential::get_single_rotamer_effective_radii(
 	MultipoleElecResidueInfo & mp1
 ) const {
 	PROF_START( basic::MULTIPOLE_SETUP );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	Size const GK_RADIUS_INDEX( pose.residue(1).atom_type_set().extra_parameter_index( "GK_RADIUS" ) );
 
@@ -2688,8 +2688,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 	MultipoleElecPoseInfo const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
 
 	// Make sure the cache for the derivs is correctly sized
-	cached_atom_derivs_.resize( pose.total_residue() );
-	for ( Size ires = 1 ; ires <= pose.total_residue() ; ++ires ) {
+	cached_atom_derivs_.resize( pose.size() );
+	for ( Size ires = 1 ; ires <= pose.size() ; ++ires ) {
 		Size const num_atoms( pose.residue( ires ).natoms() );
 		cached_atom_derivs_[ ires ].resize( num_atoms );
 		for ( Size iat = 1 ; iat <= num_atoms ; ++iat ) {
@@ -2699,8 +2699,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 	}
 
 	// Now loop over all residue-residue combos
-	for ( Size resi = 1 ; resi <= pose.total_residue() ; ++resi ) {
-		for ( Size resj = resi ; resj <= pose.total_residue() ; ++resj ) {
+	for ( Size resi = 1 ; resi <= pose.size() ; ++resi ) {
+		for ( Size resj = resi ; resj <= pose.size() ; ++resj ) {
 
 			Residue const & rsd1( pose.residue( resi ) );
 			Residue const & rsd2( pose.residue( resj ) );

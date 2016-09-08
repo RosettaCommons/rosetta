@@ -227,7 +227,7 @@ int main(int argc, char *argv[]) {
 
 	core::pose::Pose mypose;
 	core::import_pose::pose_from_file (mypose, option[in::file::s]()[1]);
-	const core::Size nres = mypose.n_residue();
+	const core::Size nres = mypose.size();
 	printf("Import complete.\n"); fflush(stdout);
 
 	core::pose::remove_lower_terminus_type_from_pose_residue(mypose, 1);

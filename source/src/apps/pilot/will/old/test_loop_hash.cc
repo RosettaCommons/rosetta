@@ -86,8 +86,8 @@ test_replicate_xform(){
 	core::pose::Pose pose;
 	core::import_pose::pose_from_file( pose, option[in::file::s]()[1] , core::import_pose::PDB_file);
 
-	for(Size lstart =        2; lstart < pose.n_residue()-1; ++lstart ){
-	for(Size lstop  = lstart+1; lstop  < pose.n_residue()  ; ++lstop  ){
+	for(Size lstart =        2; lstart < pose.size()-1; ++lstart ){
+	for(Size lstop  = lstart+1; lstop  < pose.size()  ; ++lstop  ){
 
 		// std::cout << "testing... " << lstart << " " << lstop << std::endl;
 
@@ -144,8 +144,8 @@ test_lh_counts(core::pose::Pose const & pose){
 	int ncalls=0, hits0=0, hits1=0, hits2=0, hits3=0, hits4=0;
 	for(int i = 1; i <= 100; ++i){
 		hits0=0, hits1=0, hits2=0, hits3=0, hits4=0;
-		for(Size lstart =        2; lstart < pose.n_residue()-1; ++lstart ){
-		for(Size lstop  = lstart+1; lstop  < pose.n_residue()  ; ++lstop  ){
+		for(Size lstart =        2; lstart < pose.size()-1; ++lstart ){
+		for(Size lstop  = lstart+1; lstop  < pose.size()  ; ++lstop  ){
 			Real6 loop_transform;
 			get_rt_over_leap_without_foldtree_bs( pose, lstart, lstop, loop_transform );
 			ncalls++;
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
 	for(utility::vector1<core::Size>::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i){
 		Size loopsize = *i;
 
-		for(Size lstart = 2; lstart < pose.n_residue()-loopsize; ++lstart ){
+		for(Size lstart = 2; lstart < pose.size()-loopsize; ++lstart ){
 			Size lstop = lstart+loopsize;
 
 			Real6 loop_transform;
@@ -257,9 +257,9 @@ int main(int argc, char *argv[]) {
 					new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
 					cout << "apending residue " << new_rsd->name() << std::endl;
 					tmp.append_residue_by_bond( *new_rsd, true );
-					tmp.set_phi  ( tmp.n_residue(), 180.0 );
-					tmp.set_psi  ( tmp.n_residue(), 180.0 );
-					tmp.set_omega( tmp.n_residue()-1, 180.0 );
+					tmp.set_phi  ( tmp.size(), 180.0 );
+					tmp.set_psi  ( tmp.size(), 180.0 );
+					tmp.set_omega( tmp.size()-1, 180.0 );
 				}
 				tmp.dump_pdb("test.pdb");
 			}
@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
 				Size seg_length = (*i).length();
 				for ( Size i = 0; i < seg_length; i++){
 					Size ires = lstart+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
-					if (ires > pose.total_residue() ) break;
+					if (ires > pose.size() ) break;
 					tmp.set_phi  ( ires, phi[i]  );
 					tmp.set_psi  ( ires, psi[i]  );
 					tmp.set_omega( ires, omega[i]);

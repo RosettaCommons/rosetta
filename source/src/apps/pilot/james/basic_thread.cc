@@ -141,7 +141,7 @@ main( int argc, char* argv [] ) {
 
 		// repack missing sidechains
 		vector1< bool > residues_to_repack(
-			modeled_pose.total_residue(), false
+			modeled_pose.size(), false
 		);
 		for ( core::Size ii = 1; ii <= (*sequence)->length(); ++ii ) {
 			string const name3( modeled_pose.residue_type(ii).name3() );
@@ -169,7 +169,7 @@ main( int argc, char* argv [] ) {
 		//) {
 		//	core::conformation::idealize_hydrogens( *(*it), modeled_pose.conformation() );
 		//}
-		for ( core::Size ii = 1; ii <= modeled_pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= modeled_pose.size(); ++ii ) {
 			core::conformation::ResidueOP iires = modeled_pose.residue(ii).clone();
 			core::conformation::idealize_hydrogens( *iires, modeled_pose.conformation() );
 			modeled_pose.replace_residue( ii, *iires, false );

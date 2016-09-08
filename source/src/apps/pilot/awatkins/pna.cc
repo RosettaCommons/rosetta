@@ -249,7 +249,7 @@ int main ( int argc, char* argv[] )
 		min_mm->set_jump( true );
 
 		// SET INITIAL CONFORMATION
-		for ( Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+		for ( Size resi = 1; resi <= pose.size(); ++resi ) {
 			mm->set( id::TorsionID( resi, id::BB, 5 ), false );
 			min_mm->set( id::TorsionID( resi, id::BB, 5 ), false );
 

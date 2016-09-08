@@ -86,7 +86,7 @@ void FoldTreeOutputter::apply(core::pose::Pose & pose){
 
 	core::Size sum_neighbors = 0;
 	core::Size cur_seg_size = 0;
-	for(core::Size i=1; i<=pose.total_residue(); ++i) {
+	for(core::Size i=1; i<=pose.size(); ++i) {
 
 		if(cur_seg_size == 0 ){
 			cur_seg_size = 0;
@@ -102,7 +102,7 @@ void FoldTreeOutputter::apply(core::pose::Pose & pose){
 		sum_neighbors += num_neighbors;
 	}
 	std::cout << "Num neighbors full protein: " << sum_neighbors << std::endl;
-	std::cout << "Average neighbors: " << sum_neighbors/pose.total_residue() << std::endl;
+	std::cout << "Average neighbors: " << sum_neighbors/pose.size() << std::endl;
 
 
   std::cout << "------DONE------" << std::endl;

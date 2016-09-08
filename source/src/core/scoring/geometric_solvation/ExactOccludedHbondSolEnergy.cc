@@ -468,7 +468,7 @@ ExactOccludedHbondSolEnergy::clone() const
 void
 ExactOccludedHbondSolEnergy::init_hbond_data( pose::Pose const& pose) const
 {
-	hbond_set_->resize_bb_donor_acceptor_arrays( pose.total_residue() );
+	hbond_set_->resize_bb_donor_acceptor_arrays( pose.size() );
 	core::scoring::hbonds::fill_hbond_set(pose, false, *hbond_set_);
 }
 

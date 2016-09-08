@@ -135,7 +135,7 @@ public:
 
 	void test_user_secstruct() {
 		core::pose::Pose pose = create_trpcage_ideal_pose();
-		for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 			pose.set_secstruct( resid, 'E' );
 		}
 

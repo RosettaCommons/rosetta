@@ -118,7 +118,7 @@ public:
 
 		// proper termini variants
 		TS_ASSERT( pose->residue( 1 ).is_lower_terminus() );
-		TS_ASSERT( pose->residue( pose->total_residue() ).is_upper_terminus() );
+		TS_ASSERT( pose->residue( pose->size() ).is_upper_terminus() );
 	}
 
 	void test_build_pose_with_lower_template() {
@@ -149,7 +149,7 @@ public:
 
 		// proper termini variants
 		TS_ASSERT( pose.residue( 1 ).is_lower_terminus() );
-		TS_ASSERT( pose.residue( pose.total_residue() ).is_upper_terminus() );
+		TS_ASSERT( pose.residue( pose.size() ).is_upper_terminus() );
 
 		// phi/psi should match for residues in helix15
 		for ( core::Size resid=2; resid<=sd.segment( "h1" ).stop(); ++resid ) {
@@ -187,10 +187,10 @@ public:
 
 		// proper termini variants
 		TS_ASSERT( pose.residue( 1 ).is_lower_terminus() );
-		TS_ASSERT( pose.residue( pose.total_residue() ).is_upper_terminus() );
+		TS_ASSERT( pose.residue( pose.size() ).is_upper_terminus() );
 
 		// phi/psi should match for residues in helix15
-		for ( core::Size resid=2, pose_resid=sd.segment( "h1" ).lower(); resid<=helix15.total_residue()-1; ++resid, ++pose_resid ) {
+		for ( core::Size resid=2, pose_resid=sd.segment( "h1" ).lower(); resid<=helix15.size()-1; ++resid, ++pose_resid ) {
 			TR.Debug << "Testing residue " << pose_resid << " vs " << resid << std::endl;
 			TS_ASSERT_DELTA( pose.psi( pose_resid ), helix15.psi( resid ), 1e-6 );
 			TS_ASSERT_DELTA( pose.phi( pose_resid ), helix15.phi( resid ), 1e-6 );
@@ -229,10 +229,10 @@ public:
 
 		// proper termini variants
 		TS_ASSERT( pose.residue( 1 ).is_lower_terminus() );
-		TS_ASSERT( pose.residue( pose.total_residue() ).is_upper_terminus() );
+		TS_ASSERT( pose.residue( pose.size() ).is_upper_terminus() );
 
 		// phi/psi should match for residues in helix15
-		for ( core::Size resid=2; resid<helix15.total_residue()-1; ++resid ) {
+		for ( core::Size resid=2; resid<helix15.size()-1; ++resid ) {
 			TR.Debug << "Testing residue " << resid << std::endl;
 			TS_ASSERT_DELTA( pose.psi( resid ), helix15.psi( resid ), 1e-6 );
 			TS_ASSERT_DELTA( pose.phi( resid ), helix15.phi( resid ), 1e-6 );
@@ -240,7 +240,7 @@ public:
 		}
 
 		// phi/psi should also match for helix14
-		for ( core::Size resid=2, pose_resid=sd.segment( "h2" ).lower(); resid<=helix14.total_residue()-1; ++resid, ++pose_resid ) {
+		for ( core::Size resid=2, pose_resid=sd.segment( "h2" ).lower(); resid<=helix14.size()-1; ++resid, ++pose_resid ) {
 			TR.Debug << "Testing residue " << pose_resid << " vs " << resid << std::endl;
 			TS_ASSERT_DELTA( pose.psi( pose_resid ), helix14.psi( resid ), 1e-6 );
 			TS_ASSERT_DELTA( pose.phi( pose_resid ), helix14.phi( resid ), 1e-6 );
@@ -280,10 +280,10 @@ public:
 
 		// proper termini variants
 		TS_ASSERT( pose.residue( 1 ).is_lower_terminus() );
-		TS_ASSERT( pose.residue( pose.total_residue() ).is_upper_terminus() );
+		TS_ASSERT( pose.residue( pose.size() ).is_upper_terminus() );
 
 		// phi/psi should match for residues in helix15
-		for ( core::Size resid=2; resid<helix15.total_residue()-1; ++resid ) {
+		for ( core::Size resid=2; resid<helix15.size()-1; ++resid ) {
 			TR.Debug << "Testing residue " << resid << std::endl;
 			TS_ASSERT_DELTA( pose.psi( resid ), helix15.psi( resid ), 1e-6 );
 			TS_ASSERT_DELTA( pose.phi( resid ), helix15.phi( resid ), 1e-6 );
@@ -291,7 +291,7 @@ public:
 		}
 
 		// phi/psi should also match for helix14
-		for ( core::Size resid=2, pose_resid=sd.segment( "h2" ).lower(); resid<=helix14.total_residue()-1; ++resid, ++pose_resid ) {
+		for ( core::Size resid=2, pose_resid=sd.segment( "h2" ).lower(); resid<=helix14.size()-1; ++resid, ++pose_resid ) {
 			TR.Debug << "Testing residue " << pose_resid << " vs " << resid << std::endl;
 			TS_ASSERT_DELTA( pose.psi( pose_resid ), helix14.psi( resid ), 1e-6 );
 			TS_ASSERT_DELTA( pose.phi( pose_resid ), helix14.phi( resid ), 1e-6 );
@@ -329,8 +329,8 @@ public:
 		core::pose::PoseOP newpose = builder.apply( *sd );
 		TS_ASSERT( newpose );
 
-		TS_ASSERT_EQUALS( newpose->total_residue(), input_pose.total_residue() );
-		for ( core::Size resid=1; resid<=newpose->total_residue(); ++resid ) {
+		TS_ASSERT_EQUALS( newpose->size(), input_pose.size() );
+		for ( core::Size resid=1; resid<=newpose->size(); ++resid ) {
 			TR.Debug << "Checking dihedrals for residue " << resid << " vs "
 				<< input_pose.phi( resid ) << " "
 				<< input_pose.psi( resid ) << " "
@@ -367,7 +367,7 @@ public:
 			core::Size const start_resid = sd.segment( *s ).start();
 			core::Size const stop_resid = sd.segment( *s ).stop();
 			sd.set_template_pose( *s, input_pose, start_resid, stop_resid );
-			for ( core::Size r=1; r<=sd.segment( *s ).template_pose()->total_residue(); ++r ) {
+			for ( core::Size r=1; r<=sd.segment( *s ).template_pose()->size(); ++r ) {
 				TR.Debug << *s << " " << r << " " << sd.segment( *s ).template_pose()->residue( r ).name() << " " << input_pose.residue( start_resid + r - 1 ).name() << std::endl;
 			}
 		}
@@ -377,11 +377,11 @@ public:
 		TS_ASSERT( newpose );
 
 		TR.Debug << "Resid Orig New" << std::endl;
-		for ( core::Size r=1; r<=newpose->total_residue(); ++r ) {
+		for ( core::Size r=1; r<=newpose->size(); ++r ) {
 			TR.Debug << r << " " << input_pose.residue( r ).name() << " " << newpose->residue( r ).name() << std::endl;
 		}
 
-		TS_ASSERT_EQUALS( newpose->total_residue(), input_pose.total_residue() );
+		TS_ASSERT_EQUALS( newpose->size(), input_pose.size() );
 		TS_ASSERT_EQUALS( newpose->conformation().num_chains(), input_pose.conformation().num_chains() );
 		TS_ASSERT_EQUALS( newpose->sequence(), input_pose.sequence() );
 		check_residue_dihedrals( *newpose, input_pose, 1e-5 );
@@ -465,7 +465,7 @@ public:
 			else new_seq += input_pose.sequence().substr( orig.segment( *s ).lower() - 1, orig.segment( *s ).length() );
 		}
 
-		TS_ASSERT_EQUALS( newpose->total_residue(), 2 + input_pose.total_residue() );
+		TS_ASSERT_EQUALS( newpose->size(), 2 + input_pose.size() );
 		TS_ASSERT_EQUALS( newpose->conformation().num_chains() + 1, input_pose.conformation().num_chains() );
 		TS_ASSERT_EQUALS( newpose->sequence(), new_seq );
 		check_unwanted_movement( orig, input_pose, sd, *newpose );
@@ -558,8 +558,8 @@ public:
 void
 check_residue_dihedrals( core::pose::Pose const & pose, core::pose::Pose const & orig, core::Real const tol )
 {
-	TS_ASSERT_EQUALS( pose.total_residue(), orig.total_residue() );
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	TS_ASSERT_EQUALS( pose.size(), orig.size() );
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		TR.Debug << resid << " phi1 " << orig.phi( resid ) << " phi2 " << pose.phi( resid ) << std::endl;
 		TR.Debug << resid << " psi1 " << orig.psi( resid ) << " psi2 " << pose.psi( resid ) << std::endl;
 		TR.Debug << resid << " omega1 " << orig.omega( resid ) << " omega2 " << pose.omega( resid ) << std::endl;
@@ -583,7 +583,7 @@ compare_atom_coordinates(
 	core::Real const n_dec( pow( static_cast< core::Real >(10), static_cast< int >( n_dec_places ) ) );
 
 	//first compare pose sizes; prerequisite to iterating through length
-	core::Size const lhssize(lhs.total_residue()), rhssize(rhs.total_residue());
+	core::Size const lhssize(lhs.size()), rhssize(rhs.size());
 
 	if ( lhssize != rhssize ) {
 		TR.Warning << "poses of different length in compare_atom_coordinates; doomed to fail!" << std::endl;

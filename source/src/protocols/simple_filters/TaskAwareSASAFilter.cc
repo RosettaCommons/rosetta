@@ -125,12 +125,12 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 	// Calculate SASA for each of the selected residues and spit that out to the log file.
 	// Also add it to the total value.
 	core::Real combined_sasa = 0;
-	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
+	utility::vector1<Real> rsd_sasa(pose.size(),0.0);
 	core::id::AtomID_Map<Real> atom_sasa;
 	core::id::AtomID_Map<bool> atom_mask;
 	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
 	core::pose::initialize_atomid_map(atom_mask,pose,false);
-	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 		core::conformation::Residue const rsd( pose.residue( resi ) );
 		if ( rsd.type().name() == "VRT" ) { continue; }
 		if ( packer_task->being_designed( resi ) || ( !designable_only() && packer_task->being_packed( resi ) ) ) {
@@ -140,9 +140,9 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 		}
 	}
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius(), false);//, atom_mask );
-	utility::vector1<Real> resi_sasa(pose.n_residue(),0.0);
+	utility::vector1<Real> resi_sasa(pose.size(),0.0);
 
-	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 		core::conformation::Residue const rsd( pose.residue( resi ) );
 		if ( rsd.type().name() == "VRT" ) { continue; }
 		if ( packer_task->being_designed( resi ) || ( !designable_only() && packer_task->being_packed( resi ) ) ) {

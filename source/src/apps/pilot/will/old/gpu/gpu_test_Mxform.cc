@@ -76,7 +76,7 @@ typedef cl_uint8 uint8;
 //   ScoreFunctionOP sf = core::scoring::get_score_function();
 //   core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(arg);
 //   task->restrict_to_repacking();
-//   for(Size i=1; i<=arg.n_residue(); ++i) if(arg.residue(i).name3()=="HIS") task->nonconst_residue_task(i).prevent_repacking();
+//   for(Size i=1; i<=arg.size(); ++i) if(arg.residue(i).name3()=="HIS") task->nonconst_residue_task(i).prevent_repacking();
 //   protocols::simple_moves::PackRotamersMover repack( sf, task );
 //   repack.apply(arg);
 // }
@@ -150,8 +150,8 @@ int main(int argc, char *argv[]) {
     // xform_pose_rev(p,sc);
     // p.dump_pdb("test1.pdb");
 
-    vector1<XFORM> toloc(p.n_residue());
-    for(uint i = 1; i <= p.n_residue(); ++i) {
+    vector1<XFORM> toloc(p.size());
+    for(uint i = 1; i <= p.size(); ++i) {
       //toloc[i] = stubcrev(VEC(p.xyz(AtomID(5,i))),VEC(p.xyz(AtomID(5,i))),VEC(p.xyz(AtomID(2,i))),VEC(p.xyz(AtomID(1,i))));
       toloc[i] = stubrev(VEC(p.xyz(AtomID(2,i))),VEC(p.xyz(AtomID(1,i))),VEC(p.xyz(AtomID(3,i))));
     }

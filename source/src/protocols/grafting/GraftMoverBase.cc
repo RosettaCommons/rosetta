@@ -140,7 +140,7 @@ GraftMoverBase::set_piece(Pose const & piece, Size Nter_overhang_length, Size Ct
 	piece_ = PoseOP( new core::pose::Pose(piece) );
 	Nter_overhang_length_ = Nter_overhang_length;
 	Cter_overhang_length_=Cter_overhang_length;
-	insertion_length_ = piece.total_residue()-Cter_overhang_length_-Nter_overhang_length_;
+	insertion_length_ = piece.size()-Cter_overhang_length_-Nter_overhang_length_;
 
 }
 
@@ -148,7 +148,7 @@ Pose
 GraftMoverBase::insert_piece(Pose const & pose){
 
 	//Delete overhang if necessary.
-	insertion_length_ = piece_->total_residue()-Cter_overhang_length_-Nter_overhang_length_;
+	insertion_length_ = piece_->size()-Cter_overhang_length_-Nter_overhang_length_;
 	delete_overhang_residues(*piece_, Nter_overhang_length_, Cter_overhang_length_);
 
 	//strip termini variants from insert if necessary

@@ -285,7 +285,7 @@ PCS_data_Ts2::update_X_Y_Z_all(core::pose::Pose const & pose){
 
 	for ( i = 1; i <= PCS_data_line_all_spin_.size(); ++i ) {
 		res = PCS_data_line_all_spin_[i].residue_num();
-		if ( res > pose.total_residue() ) {
+		if ( res > pose.size() ) {
 			std::cerr << "Error: Couldn't find residue " << res << std::endl;
 			std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 			std::cerr << "Make sure the numbering between the sequence and the PseudocontactShift (npc) input file match" << std::endl;

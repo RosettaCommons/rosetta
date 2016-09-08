@@ -204,8 +204,8 @@ MinimizerMap::reset( pose::Pose const & pose )
 	// dimension the node_pointers to allow fast lookup
 	DOF_NodeOP tmp(nullptr);
 	pose::initialize_dof_id_map( dof_node_pointer_, pose, tmp );
-	atom_derivatives_.resize( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	atom_derivatives_.resize( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		atom_derivatives_[ ii ].resize( pose.residue( ii ).natoms() );
 	}
 }
@@ -313,7 +313,7 @@ MinimizerMap::setup(
 		moving_dof[ (**it).atom_id() ] = true;
 	}
 
-	domain_map_.dimension( pose.total_residue() );
+	domain_map_.dimension( pose.size() );
 	pose.conformation().atom_tree().update_domain_map
 		( domain_map_, moving_dof, moving_xyz );
 }

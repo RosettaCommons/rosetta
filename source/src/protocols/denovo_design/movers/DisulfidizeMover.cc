@@ -321,12 +321,12 @@ DisulfidizeMover::process_pose(
 	if ( set1_selector_ ) {
 		subset1 = set1_selector_->apply( pose );
 	} else {
-		subset1.assign( pose.total_residue(), true );
+		subset1.assign( pose.size(), true );
 	}
 	if ( set2_selector_ ) {
 		subset2 = set2_selector_->apply( pose );
 	} else {
-		subset2.assign( pose.total_residue(), true );
+		subset2.assign( pose.size(), true );
 	}
 
 	DisulfideList current_ds = find_current_disulfides( pose, subset1, subset2 );
@@ -418,11 +418,11 @@ DisulfidizeMover::find_current_disulfides(
 	core::select::residue_selector::ResidueSubset const & subset1,
 	core::select::residue_selector::ResidueSubset const & subset2 ) const
 {
-	debug_assert( pose.total_residue() == subset1.size() );
-	debug_assert( pose.total_residue() == subset2.size() );
+	debug_assert( pose.size() == subset1.size() );
+	debug_assert( pose.size() == subset2.size() );
 	DisulfideList retval;
 	std::set< core::Size > cyds;
-	for ( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
+	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 		if ( ( !subset1[ resi ] ) && ( !subset2[ resi ] ) ) continue;
 		if ( pose.residue(resi).type().is_disulfide_bonded() ) {
 			cyds.insert( resi );
@@ -746,8 +746,8 @@ DisulfidizeMover::build_and_score_disulfide(
 	assert( sfxn_full );
 	assert( res1 );
 	assert( res2 );
-	assert( res1 <= blank_pose.total_residue() );
-	assert( res2 <= blank_pose.total_residue() );
+	assert( res1 <= blank_pose.size() );
+	assert( res2 <= blank_pose.size() );
 	assert( res1 != res2 );
 
 	if ( TR.visible() ) TR << "building and scoring " << res1 << " to " << res2 << std::endl;

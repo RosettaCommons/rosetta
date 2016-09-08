@@ -574,7 +574,7 @@ main( int argc, char * argv [] ) {
 				TR << "Calculated dihedral angles for inverse rotamer id " << ir << ", chi1: " << chi1 << ", chi2: " << chi2 << std::endl;
 //#endif
 
-				for ( Size scaffold_resnum = 1; scaffold_resnum <= scaffold.total_residue(); ++scaffold_resnum ) {
+				for ( Size scaffold_resnum = 1; scaffold_resnum <= scaffold.size(); ++scaffold_resnum ) {
 
 					conformation::Residue const & scaffold_res = scaffold.residue( scaffold_resnum );
 
@@ -642,7 +642,7 @@ main( int argc, char * argv [] ) {
 
 							for ( Size glycan_atom_index = 1; glycan_atom_index <= glycan_res.natoms(); ++glycan_atom_index ) {
 
-								for ( Size scaffold_res_index = 1; scaffold_res_index <= scaffold.total_residue(); ++scaffold_res_index ) {
+								for ( Size scaffold_res_index = 1; scaffold_res_index <= scaffold.size(); ++scaffold_res_index ) {
 									conformation::Residue const & scaffold_res = scaffold.residue( scaffold_res_index );
 
 									for ( Size scaffold_atom_index = 1; scaffold_atom_index <= scaffold.residue( scaffold_res_index ).natoms(); ++scaffold_atom_index ) {
@@ -710,7 +710,7 @@ main( int argc, char * argv [] ) {
 									(int)ir,
 									scaffold_filename.c_str(),
 									aligned_filename.c_str(),
-									(int)scaffold.total_residue(),
+									(int)scaffold.size(),
 									scaffold.pdb_info()->chain( scaffold_resnum ),
 									scaffold.residue( scaffold_resnum ).name1(),
 									(int)(scaffold.pdb_info()->number( scaffold_resnum )),
@@ -728,7 +728,7 @@ main( int argc, char * argv [] ) {
 									(int)ir,
 									scaffold_filename.c_str(),
 									aligned_filename.c_str(),
-									(int)scaffold.total_residue(),
+									(int)scaffold.size(),
 									scaffold.pdb_info()->chain( scaffold_resnum ),
 									scaffold.residue( scaffold_resnum ).name1(),
 									(int)(scaffold.pdb_info()->number( scaffold_resnum )),

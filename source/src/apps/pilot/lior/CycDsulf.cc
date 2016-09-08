@@ -141,7 +141,7 @@ void modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose, core::scoring
 	loop_relax_mover.apply(workpose);
 }
 void printEnergies(pose::Pose& workpose) {
-	for (Size i=1; i<=workpose.n_residue(); ++i) {
+	for (Size i=1; i<=workpose.size(); ++i) {
 		std::cout<<"=========Residue "<< i<<": "<< workpose.residue(i).name()<<"============"<<std::endl;
 		workpose.energies().residue_total_energies(i).print();
 	}
@@ -149,18 +149,18 @@ void printEnergies(pose::Pose& workpose) {
 
 void rotateUntilCys(pose::Pose& workpose, Size untilCys){
 
-	core::pose::remove_lower_terminus_type_from_pose_residue(workpose,workpose.n_residue());
+	core::pose::remove_lower_terminus_type_from_pose_residue(workpose,workpose.size());
 	core::pose::remove_upper_terminus_type_from_pose_residue(workpose,1);
 
-//	while ( untilCys  %  workpose.n_residue() != 1){
+//	while ( untilCys  %  workpose.size() != 1){
 
 		Size counter = 1;
 		pose::Pose tempPose(workpose,untilCys,untilCys);
-		core::pose::remove_lower_terminus_type_from_pose_residue(tempPose,tempPose.n_residue());
+		core::pose::remove_lower_terminus_type_from_pose_residue(tempPose,tempPose.size());
 		core::pose::remove_upper_terminus_type_from_pose_residue(tempPose,1);
-		for( Size j=untilCys+1; j%workpose.n_residue()!=untilCys; ++j){
+		for( Size j=untilCys+1; j%workpose.size()!=untilCys; ++j){
 			//handle the case where j&n_residue == 0.. we actually want it to point to the last residue
-			Size resi = (j%workpose.n_residue() == 0)?workpose.n_residue():j%workpose.n_residue();
+			Size resi = (j%workpose.size() == 0)?workpose.size():j%workpose.size();
 			std::cout<<resi<<std::endl;
 			tempPose.append_polymer_residue_after_seqpos(workpose.residue(resi),counter++,false);
 			std::cout<<"Counter: "<<counter<<std::endl;
@@ -171,20 +171,20 @@ void rotateUntilCys(pose::Pose& workpose, Size untilCys){
 //		core::pose::remove_upper_terminus_type_from_pose_residue(tempPose,1);
 //		std::cout<<"AFTER====================="<<std::endl;
 //
-//		for( Size j=1; j<workpose.n_residue(); ++j){
+//		for( Size j=1; j<workpose.size(); ++j){
 //			tempPose.conformation().safely_append_polymer_residue_after_seqpos(workpose.residue(j),j,false);
 //			//tempPose.append_polymer_residue_after_seqpos(workpose.residue(j),j,false);
 //		}
 //
 //		std::cout<<tempPose.sequence()<<std::endl;
-//		core::pose::remove_lower_terminus_type_from_pose_residue(tempPose,workpose.n_residue());
+//		core::pose::remove_lower_terminus_type_from_pose_residue(tempPose,workpose.size());
 //		core::pose::remove_upper_terminus_type_from_pose_residue(tempPose,1);
 		workpose = tempPose;
-		core::pose::remove_lower_terminus_type_from_pose_residue(workpose,workpose.n_residue());
+		core::pose::remove_lower_terminus_type_from_pose_residue(workpose,workpose.size());
 		core::pose::remove_upper_terminus_type_from_pose_residue(workpose,1);
 //		untilCys++;
 		workpose.dump_pdb("tempPdb.pdb");
-		workpose.conformation().declare_chemical_bond(1,"N",workpose.n_residue(),"C");
+		workpose.conformation().declare_chemical_bond(1,"N",workpose.size(),"C");
 //		workpose.set_omega(w,-180.0);
 //	}
 
@@ -236,8 +236,8 @@ void printScoreTermsPose(pose::Pose& workpose,std::string filename){
 core::scoring::constraints::ConstraintSetOP createMinimizationConstraint(pose::Pose& workpose){
 	core::scoring::constraints::ConstraintSetOP cst_set( new core::scoring::constraints::ConstraintSet() );
 	core::pose::Pose::AtomID atom1(workpose.residue(1).atom_index("N"),1);
-	core::pose::Pose::AtomID atom2(workpose.residue(workpose.n_residue()).atom_index("C"),workpose.n_residue());
-	Real dist = workpose.residue(1).atom("N").xyz().distance(workpose.residue(workpose.n_residue()).atom("C").xyz());
+	core::pose::Pose::AtomID atom2(workpose.residue(workpose.size()).atom_index("C"),workpose.size());
+	Real dist = workpose.residue(1).atom("N").xyz().distance(workpose.residue(workpose.size()).atom("C").xyz());
 	core::scoring::constraints::HarmonicFuncOP spring = new core::scoring::constraints::HarmonicFunc(dist,0.00001);
 
 	cst_set->add_constraint(new core::scoring::constraints::AtomPairConstraint(atom1,atom2,spring));
@@ -258,8 +258,8 @@ void deleteEdge( core::scoring::EnergyGraph&  g){
 core::scoring::constraints::ConstraintSetOP createDihedralConstraint(pose::Pose& workpose) {
 	core::scoring::constraints::ConstraintSetOP cst_set( new core::scoring::constraints::ConstraintSet() );
 	core::scoring::constraints::HarmonicFuncOP spring = new core::scoring::constraints::HarmonicFunc(180,1);
-	id::AtomID atom1(workpose.residue(workpose.n_residue()).atom_index("CA"),workpose.n_residue());
-	id::AtomID atom2(workpose.residue(workpose.n_residue()).atom_index("C"),workpose.n_residue());
+	id::AtomID atom1(workpose.residue(workpose.size()).atom_index("CA"),workpose.size());
+	id::AtomID atom2(workpose.residue(workpose.size()).atom_index("C"),workpose.size());
 	id::AtomID atom3(workpose.residue(1).atom_index("N"),1);
 	id::AtomID atom4(workpose.residue(1).atom_index("CA"),1);
 
@@ -270,7 +270,7 @@ core::scoring::constraints::ConstraintSetOP createDihedralConstraint(pose::Pose&
 void performMinimization(pose::Pose& workpose, core::scoring::ScoreFunctionOP scorefxn){
 	core::kinematics::MoveMapOP tempMap = new core::kinematics::MoveMap();
 
-	tempMap->set_bb_true_range(1,workpose.n_residue());
+	tempMap->set_bb_true_range(1,workpose.size());
 	protocols::simple_moves::MinMover minimizer(tempMap, scorefxn, "lbfgs_armijo_atol", 0.0001, true /*nb_list*/ );
 	std::cout<<"Score before minimization: "<<scorefxn->score(workpose)<<std::endl;
 	workpose.dump_pdb("before_minimization.pdb");
@@ -287,7 +287,7 @@ void packRotamers( pose::Pose& workpose, core::scoring::ScoreFunctionOP scorefxn
 	pack::task::operation::NoRepackDisulfides noRepackDisulf;
 	pack::task::operation::PreventRepacking prevent;
 	prevent.include_residue(1);
-	prevent.include_residue(workpose.n_residue());
+	prevent.include_residue(workpose.size());
 	prevent.apply(workpose,*task);
 	noRepackDisulf.apply(workpose, *task);
 	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(scorefxn, task);
@@ -312,7 +312,7 @@ int main (int argc, char** argv) {
 		for (Size s=0; s<nstruct; ++s){
 			pose::Pose workpose = nativePose;
 			core::pose::remove_lower_terminus_type_from_pose_residue(workpose,1);
-			core::pose::remove_upper_terminus_type_from_pose_residue(workpose,workpose.n_residue());
+			core::pose::remove_upper_terminus_type_from_pose_residue(workpose,workpose.size());
 
 			option[ out::file::fullatom ].value(true);
 			core::scoring::ScoreFunctionOP scorefxn(
@@ -322,7 +322,7 @@ int main (int argc, char** argv) {
 			utility::vector1_int ssAtoms;
 			workpose.dump_pdb("before_minimization_first.pdb");
 			core::conformation::disulfide_bonds(workpose,dss);
-			workpose.conformation().declare_chemical_bond(1,"N",workpose.n_residue(),"C");
+			workpose.conformation().declare_chemical_bond(1,"N",workpose.size(),"C");
 //
 			performMinimization(workpose,scorefxn);
 			packRotamers(workpose,scorefxn);
@@ -339,14 +339,14 @@ int main (int argc, char** argv) {
 	//			workpose.dump_pdb("before_rotating"+int2string(i)+".pdb");
 	//			rotateUntilCys(workpose,ssAtoms[i]);
 	//			workpose.dump_pdb("after_rotating"+int2string(i)+".pdb");
-	//			updateSSAtoms(workpose,ssAtoms[i],ssAtoms,workpose.n_residue());
+	//			updateSSAtoms(workpose,ssAtoms[i],ssAtoms,workpose.size());
 	//			performMinimization(workpose,scorefxn);
 	//			workpose.dump_pdb("workpose_"+int2string(i)+".pdb");
 	//		}
 
 			for(Size i=1; i<=ssAtoms.size(); ++i){
 				rotateUntilCys(workpose,ssAtoms[i]);
-				updateSSAtoms(workpose,ssAtoms[i],ssAtoms,workpose.n_residue());
+				updateSSAtoms(workpose,ssAtoms[i],ssAtoms,workpose.size());
 				workpose.dump_pdb("after_rotating"+int2string(i)+".pdb");
 				core::scoring::constraints::ConstraintSetOP cst_set = createDihedralConstraint(workpose);
 				workpose.add_constraints(cst_set->get_all_constraints());
@@ -401,7 +401,7 @@ int main (int argc, char** argv) {
 //	basic::Tracer TR("protocols.moves.CycPep");
 //	pose::Pose mypose;
 //	core::import_pose::pose_from_file(mypose, options::start_file(), core::import_pose::PDB_file);
-//	Size pepsize = mypose.n_residue();
+//	Size pepsize = mypose.size();
 //	pose::Pose temp = mypose;
 ////	temp.dump_pdb("temp_0.pdb");
 //	core::pose::remove_lower_terminus_type_from_pose_residue(temp,1);
@@ -471,7 +471,7 @@ int main (int argc, char** argv) {
 ////	fd.new_jump(5,7,6);
 ////	mypose.fold_tree(fd);
 ////	for (Size i =1; i<2; ++i){
-////		std::cout<<i<<" "<<mypose.total_residue()-i<<" "<<(mypose.total_residue()-i)/2<<std::endl;
+////		std::cout<<i<<" "<<mypose.size()-i<<" "<<(mypose.size()-i)/2<<std::endl;
 ////		myloop.add_loop(3,13,8);
 ////
 ////		loop_relax_mover.loops(myloop);

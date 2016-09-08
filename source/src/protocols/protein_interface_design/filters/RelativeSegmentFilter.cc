@@ -64,7 +64,7 @@ RelativeSegmentFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 	stop_res( tag->getOption< core::Size >( "stop_res" ));
 	runtime_assert( stop_res() > start_res() );
 	runtime_assert( start_res() > 0 );
-	runtime_assert( stop_res() <= pose.total_residue() );
+	runtime_assert( stop_res() <= pose.size() );
 	TR<<"source_pose: "<<source_pose()<<" start_res: "<<start_res()<<" stop res: "<<stop_res()<<std::endl;
 }
 

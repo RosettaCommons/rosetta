@@ -150,7 +150,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 	// unbound initialized as vector of 0
 	basic::MetricValue< core::Size > total_buns_unbound(0);
 	basic::MetricValue< utility::vector1< core::Size > >
-		res_buns_unbound(utility::vector1< core::Size >(pose.total_residue(), 0));
+		res_buns_unbound(utility::vector1< core::Size >(pose.size(), 0));
 
 	// if given a jump_num, generate an "unbound" pose, use it to fill
 	// res_buns_unbound vector

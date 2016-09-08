@@ -363,7 +363,7 @@ LoopCreationMover::apply(
 			TR << "loop residue size is: " << last_created_loop_.size() << std::endl;
 
 			core::Size last_protein_resnum(0);
-			for ( core::Size i(1); i<=pose.total_residue(); ++i ) {
+			for ( core::Size i(1); i<=pose.size(); ++i ) {
 				if ( pose.residue(i).is_protein() ) {
 					last_protein_resnum = i;
 				}
@@ -435,7 +435,7 @@ LoopCreationMover::copy_last_loop_to_new_anchor(
 	runtime_assert((flanking_size*2)+loop_size == modified_size);
 
 	core::pose::Pose loop_pose(pose, modifications_begin-1, modifications_end);
-	for ( core::Size i=1; i<=loop_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=loop_pose.size(); ++i ) {
 		pose::remove_upper_terminus_type_from_pose_residue(loop_pose, i);
 		pose::remove_lower_terminus_type_from_pose_residue(loop_pose, i);
 	}
@@ -528,7 +528,7 @@ LoopCreationMover::refine_loop(
 	//Restrict all non-packable residues and allow movements at all packable residues
 	pack::task::operation::PreventRepackingOP prevent_packing( new pack::task::operation::PreventRepacking );
 	pack::task::operation::RestrictResidueToRepackingOP repack_res( new pack::task::operation::RestrictResidueToRepacking() );
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( residues_to_pack.find(i)==residues_to_pack.end() ) {
 			prevent_packing->include_residue(i);
 		} else {
@@ -565,7 +565,7 @@ LoopCreationMover::refine_loop(
 		min_mover->apply(pose);
 	}
 
-	// utility::vector1< bool > residues_to_score(pose.total_residue(), false);
+	// utility::vector1< bool > residues_to_score(pose.size(), false);
 	// for(core::Size i=loop.start(); i<=loop.stop(); ++i)
 	// {
 	//  residues_to_score[i]=true;

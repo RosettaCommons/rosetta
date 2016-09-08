@@ -100,8 +100,8 @@ RepGrid::parse_my_tag(utility::tag::TagCOP tag) {
 
 void RepGrid::refresh( core::pose::Pose const & pose,  core::Vector const & )
 {
-	for ( core::Size residue_index = 1; residue_index <= pose.total_residue(); ++residue_index ) {
-		//RepGridTracer <<"refreshing residue " <<residue_index << " of " << pose.total_residue() <<std::endl;
+	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
+		//RepGridTracer <<"refreshing residue " <<residue_index << " of " << pose.size() <<std::endl;
 		core::conformation::Residue const & residue = pose.residue(residue_index);
 		if ( !residue.is_protein() ) {
 			continue;

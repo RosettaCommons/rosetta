@@ -64,10 +64,10 @@ void PartialThreadingMover::apply(
 
 	// iterate backwards as we change downstream sequence numbering with deletions
 	tr.Debug << "current sequence is " << query_pose.sequence() << std::endl;
-	for ( Size resi = query_pose.total_residue(); resi >= 1; --resi ) {
+	for ( Size resi = query_pose.size(); resi >= 1; --resi ) {
 		Size const t_resi = query_to_pdbseq[ resi ];
 
-		if ( t_resi == 0 && query_pose.total_residue() > 1 ) {
+		if ( t_resi == 0 && query_pose.size() > 1 ) {
 			query_pose.conformation().delete_residue_slow(resi);
 		} else {
 			pdb_numbering.push_back( resi );

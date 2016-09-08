@@ -142,7 +142,7 @@ void perturb_bb (
 	core::pose::Pose& pose,
 	numeric::random::RandomGenerator &RG
 ) {
-	for (core::Size ir=1; ir<=pose.n_residue(); ir++) {//loop through all residues
+	for (core::Size ir=1; ir<=pose.size(); ir++) {//loop through all residues
 		if(pose.residue(ir).has("CM")) { //If this is a beta-amino acid, perturb phi, psi, and theta.
 			betapeptide_setphi(pose, ir, randangle(RG));
 			betapeptide_settheta(pose, ir, randangle(RG));
@@ -180,7 +180,7 @@ void jitter_and_minimize (
 		for (core::Size istep=1; istep<=MCsteps_per_round; istep++) {
 			trialpose = lastacceptpose;
 			//Loop through all residues and wiggle all backbone dihedral angles except omega:
-			for(core::Size ir=1; ir<=trialpose.n_residue(); ir++) {
+			for(core::Size ir=1; ir<=trialpose.size(); ir++) {
 				if(trialpose.residue(ir).has("CM")) { //If this is a beta-amino acid, perturb phi, psi, and theta.
 					betapeptide_setphi(trialpose, ir, trialpose.torsion(TorsionID(ir, id::BB, 1))+(core::Real)RG.gaussian()*anglepertsize );
 					betapeptide_settheta(trialpose, ir, trialpose.torsion(TorsionID(ir, id::BB, 2))+(core::Real)RG.gaussian()*anglepertsize);
@@ -268,9 +268,9 @@ int main( int argc, char * argv [] ) {
 		}
 	}
 
-	core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.n_residue());
+	core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.size());
 
-	for(core::Size ir=1; ir<=mypose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=mypose.size(); ir++) {
 		if(mypose.residue(ir).has("CM")) {
 			betapeptide_setphi(mypose, ir, -122.6);
 			betapeptide_settheta(mypose, ir, -58.4);
@@ -278,7 +278,7 @@ int main( int argc, char * argv [] ) {
 			betapeptide_setomega(mypose, ir, 180.0);
 		} else {
 			mypose.set_phi(ir, -60.0);
-			if(ir<mypose.n_residue()) {
+			if(ir<mypose.size()) {
 				mypose.set_omega(ir, 180.0);
 				mypose.set_psi(ir, 160.0);
 			}
@@ -300,7 +300,7 @@ int main( int argc, char * argv [] ) {
 	kinmover->set_rama_check( true );
 	kinmover->set_idealize_loop_first(true); //true
 	kinmover->set_sfxn(sfxn);
-	kinmover->set_pivots(2, 5, mypose.n_residue()-1);
+	kinmover->set_pivots(2, 5, mypose.size()-1);
 
 	for(core::Size i=1; i<=numstructs; i++) {
 		core::pose::Pose temppose=mypose;

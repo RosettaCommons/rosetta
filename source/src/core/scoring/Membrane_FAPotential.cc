@@ -94,7 +94,7 @@ void Membrane_FAEmbed::initialize(pose::Pose const & pose)
 void Membrane_FAEmbed::allocate_appropriate_memory(pose::Pose const & pose) const
 {
 	fa_center_ = 0.0;
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	fa_proj_.resize( nres );
 	fa_proj_coord_.resize( nres );
 	fa_proj_deriv_.resize( nres );
@@ -161,7 +161,7 @@ void Membrane_FAPotential::fa_projection(
 	// mjo commenting out 'topology' because it is unused and causes a warning
 	Membrane_FAEmbed & membrane_faembed(nonconst_Membrane_FAEmbed_from_pose( pose ));
 
-	Size nres=pose.total_residue();
+	Size nres=pose.size();
 	Real internal_product(0), z(0), zn(0), znm1(0);
 
 	membrane_faembed.fa_center() = std::abs(dot(center, normal));

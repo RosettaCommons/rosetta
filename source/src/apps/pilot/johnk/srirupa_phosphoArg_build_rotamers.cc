@@ -92,7 +92,7 @@ main( int argc, char * argv [] )
 	std::string const input_pdb_name( basic::options::start_file() );
 	core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
 
-	Size const totres = input_pose.total_residue();
+	Size const totres = input_pose.size();
 	pose::Pose pose = input_pose;
 
 	// Setup for scoring/repacking

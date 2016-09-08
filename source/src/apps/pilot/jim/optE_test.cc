@@ -230,9 +230,9 @@ get_opte_data(
 
 	scorefxn.setup_for_packing( pose, dummy_task->repacking_residues(), dummy_task->designing_residues() );
 
-	utility::vector1< bool > task_mask( pose.total_residue(), false );
+	utility::vector1< bool > task_mask( pose.size(), false );
 	Size num_diffs_betwee_native_and_input( 0 );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
 		task_mask[ ii ] = true;
@@ -464,7 +464,7 @@ simple_opte_test()
 		core::import_pose::centroid_pose_from_pdb( pose, filename , core::import_pose::PDB_file);
 		native_pose = pose;
 
-		//std::cout << "read file: " << filename << ' '<< pose.total_residue() << std::endl;
+		//std::cout << "read file: " << filename << ' '<< pose.size() << std::endl;
 
 		//std::cout << "SEQUENCE: " << filename << ' ' << pose.sequence() << std::endl;
 
@@ -593,7 +593,7 @@ optimize_weights(
 		core::import_pose::centroid_pose_from_pdb( pose, filename , core::import_pose::PDB_file);
 		core::import_pose::centroid_pose_from_pdb( native_pose, native_filename , core::import_pose::PDB_file);
 
-		std::cout << "read file: " << filename << " " << pose.total_residue() << " and native file: " << native_filename << std::endl;
+		std::cout << "read file: " << filename << " " << pose.size() << " and native file: " << native_filename << std::endl;
 
 		//std::cout << "SEQUENCE: " << filename << ' ' << pose.sequence() << std::endl;
 
@@ -796,7 +796,7 @@ measure_sequence_recovery(
 		}
 
 		/// record original sequence
-		Size const nres = pose.total_residue();
+		Size const nres = pose.size();
 		n_residues_total += nres;
 		utility::vector1< chemical::AA > input_sequence( nres );
 		for ( Size jj = 1; jj <= nres; ++jj ) { input_sequence[ jj ] = pose.residue(jj).aa(); }

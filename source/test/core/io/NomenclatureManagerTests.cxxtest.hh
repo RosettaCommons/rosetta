@@ -154,8 +154,8 @@ public: // Standard methods ///////////////////////////////////////////////////
 		//        PoseFromSFRBuilder pb( residue_set, options );
 		//        pb.build_pose( sfr, pose );
 		//
-		//        TS_ASSERT( pose.total_residue() == 20 );
-		//        if ( pose.total_residue() != 20 ) return;
+		//        TS_ASSERT( pose.size() == 20 );
+		//        if ( pose.size() != 20 ) return;
 		//
 		//        TS_ASSERT( pose.residue_type(  1 ).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ));
 		//        for ( Size ii = 2; ii <= 19; ++ii ) {

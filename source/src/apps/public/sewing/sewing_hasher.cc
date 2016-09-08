@@ -119,7 +119,7 @@ main( int argc, char * argv [] ) {
 					core::pose::Pose pose;
 					core::import_pose::pose_from_file(pose, pdb_library[i], core::import_pose::PDB_file);
 					utility::vector1< std::pair<core::Size,core::Size> > segments;
-					segments.push_back(std::make_pair(1, pose.total_residue()));
+					segments.push_back(std::make_pair(1, pose.size()));
 					Model pdb_model = create_model_from_pose(pose, segments, (int)i);
 					models.insert(std::make_pair(i, pdb_model));
 				}

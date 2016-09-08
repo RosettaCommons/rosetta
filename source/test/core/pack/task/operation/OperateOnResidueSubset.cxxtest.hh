@@ -59,7 +59,7 @@ public:
 		PackerTaskOP task = TaskFactory::create_packer_task( trpcage );
 
 		op_on_subset.apply( trpcage, *task );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT_EQUALS( task->residue_task(ii).being_packed(), ii % 2 == 0 );
 		}
 	}
@@ -75,7 +75,7 @@ public:
 		PackerTaskOP task = TaskFactory::create_packer_task( trpcage );
 
 		op_on_subset.apply( trpcage, *task );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT_EQUALS( task->residue_task(ii).being_packed(), ii % 2 == 0 );
 		}
 	}
@@ -103,7 +103,7 @@ public:
 		PackerTaskOP task = TaskFactory::create_packer_task( trpcage );
 
 		op_on_subset.apply( trpcage, *task );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT_EQUALS( task->residue_task(ii).being_packed(), ii % 2 == 0 );
 		}
 	}
@@ -127,7 +127,7 @@ public:
 		PackerTaskOP task = TaskFactory::create_packer_task( trpcage );
 
 		op_on_subset.apply( trpcage, *task );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT_EQUALS( task->residue_task(ii).being_packed(), ii > 10 );
 		}
 	}

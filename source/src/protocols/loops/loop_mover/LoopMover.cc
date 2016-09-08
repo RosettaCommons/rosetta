@@ -227,7 +227,7 @@ void LoopMover::set_extended_torsions(
 	idealize_loop(pose, loop );
 
 	Size start_extended = std::max((Size)1,loop.start());
-	Size end_extended   = std::min(pose.total_residue(),loop.stop());
+	Size end_extended   = std::min(pose.size(),loop.stop());
 	for ( Size i = start_extended; i <= end_extended; ++i ) {
 		if ( i != start_extended ) pose.set_phi( i, init_phi );
 		if ( i != end_extended ) pose.set_psi( i, init_psi );

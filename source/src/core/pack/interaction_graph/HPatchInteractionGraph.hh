@@ -2810,12 +2810,12 @@ void HPatchInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBase
 	}
 
 	// initializes some local variables that translate between the ig enumeration and resid
-	set_num_residues_in_protein( pose().total_residue() );
+	set_num_residues_in_protein( pose().size() );
 
-	int nbackground = pose().total_residue() - rot_sets.nmoltenres();
+	int nbackground = pose().size() - rot_sets.nmoltenres();
 	set_num_background_residues( nbackground );
 
-	for ( Size ii = 1; ii <= pose().total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose().size(); ++ii ) {
 
 		// in our case, first class residues are residues that are designable or packable (see notes in function comment).
 		if ( packer_task().being_packed(ii) || packer_task().being_designed(ii) ) {
@@ -3417,9 +3417,9 @@ void HPatchInteractionGraph< V, E, G >::verify_sasas_correct() {
 
 	// create an atom_subset mask that calculates sasa for heavyatoms and not hydrogens
 	id::AtomID_Map< bool > atom_subset;
-	atom_subset.resize( pose_copy.n_residue() );
+	atom_subset.resize( pose_copy.size() );
 	// init all heavy atoms to true and all H's to false
-	for ( Size ii=1; ii <= pose_copy.n_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose_copy.size(); ++ii ) {
 		atom_subset.resize( ii, pose_copy.residue_type(ii).natoms(), false );
 		for ( Size jj = 1; jj <= pose_copy.residue_type(ii).nheavyatoms(); ++jj ) {
 			atom_subset[ ii ][ jj ] = true;

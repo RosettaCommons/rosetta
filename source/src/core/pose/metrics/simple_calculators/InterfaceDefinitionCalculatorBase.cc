@@ -74,7 +74,7 @@ void InterfaceDefinitionCalculator::verify_chain_setup( pose::Pose const & pose 
 // returns 0 if chain letter not found
 Size InterfaceDefinitionCalculator::chain_letter_to_number( pose::Pose const & pose, char const chain_id ) {
 	char temp_letter_ = chain_id;
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.pdb_info()->chain( i ) == temp_letter_ ) {
 			return pose.chain( i );
 		} else continue;

@@ -147,7 +147,7 @@ class CycBBMover : public protocols::moves::Mover {
 	Size copyres_;
 	Real mag_;
 public:
-	CycBBMover(Pose const & pose, Real mag) : nres_(pose.n_residue()-2),copyres_(pose.n_residue()-1),mag_(mag) {}
+	CycBBMover(Pose const & pose, Real mag) : nres_(pose.size()-2),copyres_(pose.size()-1),mag_(mag) {}
 	void apply(core::pose::Pose & pose) {
 		Size i = std::ceil(numeric::random::uniform()*nres_);
 		if(     numeric::random::uniform()<0.5) pose.set_phi(i,pose.phi(i)+numeric::random::gaussian()*mag_);
@@ -200,12 +200,12 @@ void minimize(Pose & pose, ScoreFunctionOP sf) {
 Pose cyclic_perm(Pose const & orig, Size start, bool mirror=false) {
 	Pose pose;
 	pose.append_residue_by_jump(orig.residue(start),1);
-	for(Size i = 1; i <= orig.n_residue()-1; ++i) {
-		// std::cout << "appending res " << (i+start-1)%orig.n_residue()+1 << std::endl;
-		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.n_residue()+1));
+	for(Size i = 1; i <= orig.size()-1; ++i) {
+		// std::cout << "appending res " << (i+start-1)%orig.size()+1 << std::endl;
+		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.size()+1));
 	}
 	if(mirror) {
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
 				numeric::xyzVector<Real> xyz = pose.xyz(AtomID(j,i));
 				xyz.z() = - xyz.z();
@@ -221,7 +221,7 @@ Pose cyclic_perm(Pose const & orig, Size start, bool mirror=false) {
 Real cyclic_all_atom_rmsd(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
 	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			Real r = core::scoring::all_atom_rmsd( cyclic_perm(pose,i,m==1), other );
 			if( r < mr ) mr = r;
 		}
@@ -232,7 +232,7 @@ Real cyclic_all_atom_rmsd(Pose const & pose, Pose const & other) {
 Real cyclic_ca_rmsd(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
 	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			Real r = core::scoring::CA_rmsd( cyclic_perm(pose,i,m==1), other );
 			if( r < mr ) mr = r;
 		}
@@ -245,7 +245,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 	Size am = 0;
 	Size amm = 0;
 	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= move.n_residue(); ++i) {
+		for(Size i = 1; i <= move.size(); ++i) {
 			// Pose tmp = cyclic_perm(move,i,m==1);
 			// tmp.dump_pdb("cyc_sup_test_"+ObjexxFCL::string_of(m)+"_"+ObjexxFCL::string_of(i)+".pdb");
 			// Real r = core::scoring::all_atom_rmsd( tmp, ref );
@@ -342,14 +342,14 @@ BINTYPE cyclic_unique_bin(BINTYPE bin, Size nres) {
 BINTYPE pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	BINTYPE bin = 0;
-	for(int i = 0; i < (int)pose.n_residue(); ++i) {
+	for(int i = 0; i < (int)pose.size(); ++i) {
 		// Real phid = pose.phi(i+1);
 		// Real psid = pose.psi(i+1);
-		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.n_residue())%pose.n_residue()+1).xyz("C" );
-		numeric::xyzVector<Real> n  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("N" );
-		numeric::xyzVector<Real> ca = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("CA");
-		numeric::xyzVector<Real> c  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("C" );
-		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.n_residue())%pose.n_residue()+1).xyz("N" );
+		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.size())%pose.size()+1).xyz("C" );
+		numeric::xyzVector<Real> n  = pose.residue((i  +pose.size())%pose.size()+1).xyz("N" );
+		numeric::xyzVector<Real> ca = pose.residue((i  +pose.size())%pose.size()+1).xyz("CA");
+		numeric::xyzVector<Real> c  = pose.residue((i  +pose.size())%pose.size()+1).xyz("C" );
+		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.size())%pose.size()+1).xyz("N" );
 		Real phid = basic::unsigned_periodic_range(numeric::dihedral_degrees(c0,n,ca,c),360.0);
 		Real psid = basic::unsigned_periodic_range(numeric::dihedral_degrees(n,ca,c,n2),360.0);
 		BINTYPE phi = phid * BINSIZE / 360.0;
@@ -360,9 +360,9 @@ BINTYPE pose2bin(core::pose::Pose const & pose) {
 		bin += phi;
 		bin += psi;
 	}
-	// TR << bin2string(bin,pose.n_residue()) << std::endl;
+	// TR << bin2string(bin,pose.size()) << std::endl;
 	// std::exit(-1);
-	return cyclic_unique_bin(bin,pose.n_residue());
+	return cyclic_unique_bin(bin,pose.size());
 }
 
 
@@ -381,11 +381,11 @@ Size compute_num_bins(Size nres) {
 
 
 void fixH(core::pose::Pose & pose) {
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		numeric::xyzVector<Real> n  = pose.residue(i).xyz("N");
 		numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
 		Size in = i-1;
-		if(in == 0) in = pose.n_residue();
+		if(in == 0) in = pose.size();
 		numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
 		numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
 		pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
@@ -393,7 +393,7 @@ void fixH(core::pose::Pose & pose) {
 }
 
 void cyclize_pose(core::pose::Pose & pose) {
-	Size N = pose.n_residue();
+	Size N = pose.size();
 	for(Size i = 1; i <= N; ++i) {
 		if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 		if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
@@ -405,9 +405,9 @@ void cyclize_pose(core::pose::Pose & pose) {
 	pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
 	fixH(pose);
 	using namespace core::scoring::constraints;
-	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
-	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
-	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.size()).atom_index("OVL1"), pose.size() );
+	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.size()).atom_index("OVL2"), pose.size() );
+	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.size()).atom_index(   "C"), pose.size() );
 	pose.remove_constraints();
 	pose.add_constraint(new AtomPairConstraint(a1,a2,new HarmonicFunc(0.0,0.1)));
 	pose.add_constraint(new AtomPairConstraint(b1,b2,new HarmonicFunc(0.0,0.1)));
@@ -466,14 +466,14 @@ int main( int argc, char * argv [] ) {
 	if( option[in::file::s].user() ) {
 		targets_in = core::import_pose::poses_from_files( option[in::file::s]() , core::import_pose::PDB_file);
 		for(Size i = 1; i <= targets_in.size(); i++) {
-			if( targets_in[i].n_residue() != N ) {
+			if( targets_in[i].size() != N ) {
 				utility_exit_with_message("wrong number of residues (not "+ObjexxFCL::string_of(N)+") in target " + std::string(option[in::file::s]()[i]) );
 			}
 			cyclize_pose( targets_in[i] );
 			BINTYPE bin = pose2bin(targets_in[i]);
 			targetbins.insert( bin );
 			targets[bin] = targets_in[i];
-			// TR << "target: " << option[in::file::s]()[1] << " " << bin << " " << bin2string(bin,targets[bin].n_residue()) << std::endl;
+			// TR << "target: " << option[in::file::s]()[1] << " " << bin << " " << bin2string(bin,targets[bin].size()) << std::endl;
 			std::string fn = basic::options::option[basic::options::OptionKeys::out::file::o]() + "/target_"+ObjexxFCL::lead_zero_string_of(bin,10)+".pdb";
 			targets[bin].dump_pdb(fn);
 
@@ -513,8 +513,8 @@ int main( int argc, char * argv [] ) {
 	Pose pose;
 	core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
 	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",       1        );
-	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
-	pose.conformation().declare_chemical_bond( 1, "N", pose.n_residue(), "C" );
+	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.size());
+	pose.conformation().declare_chemical_bond( 1, "N", pose.size(), "C" );
 	// Size const nbb( lower_rsd.mainchain_atoms().size() );
 	// total_dev +=
 	// 	( upper_rsd.atom( upper_rsd.mainchain_atoms()[  1] ).xyz().distance_squared( lower_rsd.atom( "OVL1" ).xyz() ) +
@@ -522,15 +522,15 @@ int main( int argc, char * argv [] ) {
 	// 	  lower_rsd.atom( lower_rsd.mainchain_atoms()[nbb] ).xyz().distance_squared( upper_rsd.atom( "OVU1" ).xyz() ) );
 	TR << " " << std::endl;
 	{
-		AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
-		AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
-		AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+		AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.size()).atom_index("OVL1"), pose.size() );
+		AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.size()).atom_index("OVL2"), pose.size() );
+		AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.size()).atom_index(   "C"), pose.size() );
 		pose.add_constraint(new AtomPairConstraint(a1,a2,new AbsFunc(0.0,0.02)));
 		pose.add_constraint(new AtomPairConstraint(b1,b2,new AbsFunc(0.0,0.02)));
 		pose.add_constraint(new AtomPairConstraint(c1,c2,new AbsFunc(0.0,0.02)));
 	}
 	// gen structure
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if(numeric::random::uniform() < 0.0) pose.set_omega(i,  0.0);
 		else                                 pose.set_omega(i,180.0);
 	}
@@ -542,7 +542,7 @@ int main( int argc, char * argv [] ) {
 
 	TR << "switch to fa" << std::endl;
 	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_UPPER",1);
-	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
+	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.size());
 	protocols::toolbox::switch_to_residue_type_set(pose,"fa_standard");
 	cyclize_pose(pose);
 	TR << "minimize" << std::endl;
@@ -556,9 +556,9 @@ int main( int argc, char * argv [] ) {
 	// if( basic::options::option[ basic::options::OptionKeys::backrub::backrub ].user() ) {
 	// 	TR << "using backrub moves" << std::endl;
 	// 	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_UPPER",1);
-	// 	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
+	// 	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.size());
 	// 	core::pose::add_lower_terminus_type_to_pose_residue(pose,1);
-	// 	core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+	// 	core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.size());
 	// 	protocols::backrub::BackrubMoverOP brmove = new protocols::backrub::BackrubMover();
 	// 	brmove->branchopt().read_database();
 	// 	brmove->clear_segments();
@@ -567,22 +567,22 @@ int main( int argc, char * argv [] ) {
 	// 	brmove->set_input_pose( pose_ptr );
 	// 	utility::vector1< Size > pep_nbrs;
 	// 	//backrub all pep nbrs plus one up/downstream
-	// 	for( Size ii = 1; ii <= pose.n_residue(); ++ii ) pep_nbrs.push_back( ii );
+	// 	for( Size ii = 1; ii <= pose.size(); ++ii ) pep_nbrs.push_back( ii );
 	// 	utility::vector1< std::string > backrub_atomnames( pep_nbrs.size(), "CA" );
 	// 	brmove->add_mainchain_segments( pep_nbrs, backrub_atomnames, 3, 5 );
 	// 	brmove->optimize_branch_angles( pose );
 	// 	core::pose::remove_lower_terminus_type_from_pose_residue(pose,1);
-	// 	core::pose::remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
+	// 	core::pose::remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 	// 	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",       1        );
-	// 	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
+	// 	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.size());
 	// 	TR << "done setting up BackrubMover" << std::endl;
 	// 	bbmove = brmove;
 	// } else {
 		TR << "using bb gaussian moves, lowering chainbreak weight!!!" << std::endl;
 		bbmove = new MoveThenFixH(new protocols::simple_moves::BBG8T3AMover());
-		// AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
-		// AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
-		// AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+		// AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.size()).atom_index("OVL1"), pose.size() );
+		// AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.size()).atom_index("OVL2"), pose.size() );
+		// AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.size()).atom_index(   "C"), pose.size() );
 		// pose.remove_constraints();
 		// pose.add_constraint(new AtomPairConstraint(a1,a2,new AbsFunc(0.0,0.01)));
 		// pose.add_constraint(new AtomPairConstraint(b1,b2,new AbsFunc(0.0,0.01)));
@@ -707,22 +707,22 @@ int main( int argc, char * argv [] ) {
 					Pose tmp = *(i->second);
 					cyclic_superimpose(tmp,*refpose);
 					cyclize_pose(tmp);
-					// std::string tag = ObjexxFCL::string_of(pose.n_residue()) +"-"+ bin2string(i->first,pose.n_residue());
-					std::string tag = ObjexxFCL::string_of(tmp.n_residue()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
+					// std::string tag = ObjexxFCL::string_of(pose.size()) +"-"+ bin2string(i->first,pose.size());
+					std::string tag = ObjexxFCL::string_of(tmp.size()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
 					tmp.dump_pdb( option[basic::options::OptionKeys::out::file::o]() + "/" + tag +".pdb");
 					core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 					ss_out->fill_struct( *(i->second) ,tag);
 					sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() + "_ITER_"+ObjexxFCL::string_of(ITER)+".sc" );
 				}
 				for(std::map<BINTYPE,core::pose::Pose>::const_iterator i = closest.begin(); i != closest.end(); ++i) {
-					std::string tag = ObjexxFCL::string_of(pose.n_residue()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
+					std::string tag = ObjexxFCL::string_of(pose.size()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
 					Pose tmp = i->second;
 					cyclic_superimpose(tmp,targets[i->first]);
 					cyclize_pose(tmp);
 					tmp.dump_pdb( basic::options::option[basic::options::OptionKeys::out::file::o]() + "/closest_" + tag +".pdb");
 				}
 				for(std::map<BINTYPE,core::pose::Pose>::const_iterator i = furthest.begin(); i != furthest.end(); ++i) {
-					std::string tag = ObjexxFCL::string_of(pose.n_residue()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
+					std::string tag = ObjexxFCL::string_of(pose.size()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
 					Pose tmp = i->second;
 					cyclic_superimpose(tmp,targets[i->first]);
 					cyclize_pose(tmp);

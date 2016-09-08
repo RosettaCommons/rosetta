@@ -205,7 +205,7 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 	//TR << "     Sequence " << pose.sequence() << std::endl;
 	//TR << "full Sequence " << full_sequence   << std::endl;
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		char const pose_nt = pose.sequence()[ n-1 ];
 		if ( res_list_in_reference[n] == 0 ) continue;
 
@@ -245,7 +245,7 @@ StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const 
 	FullModelParameters const & reference_full_model_parameters =  *(const_full_model_info( reference_pose_ ).full_model_parameters());
 
 	utility::vector1< Size > res_list_in_reference;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 
 		bool found_it( false );
 		std::pair< int, char > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain( res_list[ n ] );
@@ -283,7 +283,7 @@ StepWisePoseAligner::update_calc_rms_atom_id_map( pose::Pose const & pose ){
 	}
 
 	// super special case -- is this still a possibility?
-	if ( calc_rms_res.size() == 0 && pose.total_residue() == 1 ) calc_rms_res.push_back( 1 );
+	if ( calc_rms_res.size() == 0 && pose.size() == 1 ) calc_rms_res.push_back( 1 );
 
 	get_calc_rms_atom_id_map( calc_rms_atom_id_map_, pose, calc_rms_res );
 }
@@ -314,7 +314,7 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 
 	// additional RNA & protein 'suites' (connections from i to i+1) over which to calculate RMSD
 	utility::vector1< Size > calc_rms_suites;
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 
 		if ( ( pose.residue_type( n ).is_RNA()     && pose.residue_type( n + 1 ).is_RNA() ) ||
 				( pose.residue_type( n ).is_protein() && pose.residue_type( n + 1 ).is_protein() ) ) {
@@ -362,7 +362,7 @@ StepWisePoseAligner::update_superimpose_atom_id_map( pose::Pose const & pose ) {
 	// everything that can move.
 	get_calc_rms_atom_id_map( complete_moving_atom_id_map_, pose, rmsd_res_in_pose_ );
 	superimpose_atom_id_map_.clear();
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !superimpose_res_in_pose_.has_value( n ) ) continue;
 		bool const sample_sugar = check_sample_sugar_in_full_model_info( pose, n );
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
@@ -434,7 +434,7 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 	} else {
 		// Next strategy, figure out 'primary' domain number. Smallest number that is not zero.
 		// must be drawn from root_partition (if that partition is defined)
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
 			Size const d = domain_map[ n ];
 			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
@@ -444,12 +444,12 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 	rmsd_res_in_pose_.clear();
 	superimpose_res_in_pose_.clear();
 	if ( d_primary == 0 ) { // superimpose on everything.
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			rmsd_res_in_pose_.push_back( n );
 			if ( root_partition_res_.size() == 0 || root_partition_res_.has_value( n ) ) superimpose_res_in_pose_.push_back( n );
 		}
 	} else { // superimpose on primary domain, calculate rmsd over rest.
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( superimpose_over_all_instantiated_ ) { // for final RMSDs, superimpose over everything, calc RMS over everything (?)
 				superimpose_res_in_pose_.push_back( n );
 				rmsd_res_in_pose_.push_back( n );
@@ -506,7 +506,7 @@ StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
 
 	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
 	std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
 			add_to_atom_id_map_after_checks( coordinate_constraint_atom_id_map,
 				pose.residue_type( n ).atom_name( q ),
@@ -545,7 +545,7 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const & n, p
 
 	if ( extra_suite_atoms_lower.has_value( atom_name ) &&
 			!pose.residue_type( n ).has_variant_type( "CUTPOINT_LOWER" ) &&
-			( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) ) return false;
+			( n == pose.size() || pose.fold_tree().is_cutpoint( n ) ) ) return false;
 
 	// Do not align over the fourth chi atom. This is either a hydroxyl H (i.e.
 	// fails the no heavy atom check, basically not a "backbone atom") or it is
@@ -566,8 +566,8 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 	using namespace core::id;
 
 	if ( n1 == 0 || n2 == 0 ) return false;
-	runtime_assert ( n1 >= 1 && n1 <= pose1.total_residue() );
-	runtime_assert ( n2 >= 1 && n2 <= pose2.total_residue() );
+	runtime_assert ( n1 >= 1 && n1 <= pose1.size() );
+	runtime_assert ( n2 >= 1 && n2 <= pose2.size() );
 	if ( pose1.residue_type( n1 ).aa() != pose2.residue_type( n2 ).aa() &&
 			!rna_dna_match( pose1.residue_type( n1 ).aa(), pose2.residue_type( n2 ).aa() ) ) {
 		TR << "pose1 at n1 " << n1 << " has aa: " << pose1.residue_type( n1 ).aa() << "; vs pose2 at n2 " << n2 << " has aa: " <<  pose2.residue_type( n2 ).aa()  << std::endl;

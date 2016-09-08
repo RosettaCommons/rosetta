@@ -62,7 +62,7 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 
 	if ( region_def == "" ) {
 		std::ostringstream oss;
-		oss << "1-" << pose.n_residue();
+		oss << "1-" << pose.size();
 		region_def = oss.str();
 	}
 	// split region_def into single regions and process  each separately

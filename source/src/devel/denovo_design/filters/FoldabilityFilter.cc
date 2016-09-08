@@ -276,9 +276,9 @@ FoldabilityFilter::generate_pose( core::pose::Pose const & pose ) const
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		posecopy = core::pose::PoseOP( new core::pose::Pose );
 		core::pose::symmetry::extract_asymmetric_unit(pose, *posecopy);
-		for ( core::Size i=1, endi=posecopy->total_residue(); i<=endi; ++i ) {
+		for ( core::Size i=1, endi=posecopy->size(); i<=endi; ++i ) {
 			if ( posecopy->residue_type(i).name() == "VRT" ) {
-				posecopy->conformation().delete_residue_slow( posecopy->total_residue() );
+				posecopy->conformation().delete_residue_slow( posecopy->size() );
 			}
 		}
 	} else {
@@ -301,7 +301,7 @@ FoldabilityFilter::get_aa_ss_abego(
 	utility::vector1< std::string > abego_insert;
 	// if a motif is not specified, determine it from the structure
 	if ( motif_ == "" ) {
-		for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+		for ( core::Size i=1, endi=pose.size(); i<=endi; ++i ) {
 			if ( i == end+1 ) {
 				continue;
 			}
@@ -328,7 +328,7 @@ FoldabilityFilter::get_aa_ss_abego(
 				abego_insert.push_back( abego_type );
 			}
 		}
-		for ( core::Size i=end+2, endi=pose.total_residue(); i<=endi; ++i ) {
+		for ( core::Size i=end+2, endi=pose.size(); i<=endi; ++i ) {
 			ss += pose.secstruct(i);
 			aa += pose.residue(i).name1();
 		}
@@ -373,12 +373,12 @@ FoldabilityFilter::prepare_pose(
 	core::Size const end ) const
 {
 	// cut the residue after end to avoid clashes
-	if ( end+1 <= pose.total_residue() ) {
+	if ( end+1 <= pose.size() ) {
 		pose.conformation().delete_residue_slow( end+1 );
 	}
 	// insert a jump from start-1 to end+1 (which is actually residue end+2 from the original)
 	core::Size jumpend = 0;
-	if ( end+1 <= pose.total_residue() ) {
+	if ( end+1 <= pose.size() ) {
 		jumpend = end+1;
 	}
 	core::Size jumpstart = 0;

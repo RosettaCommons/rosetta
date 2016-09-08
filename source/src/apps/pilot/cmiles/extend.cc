@@ -30,7 +30,7 @@ using core::pose::PoseOP;
 void generate_extended_pose(Pose* extended_pose, const std::string& sequence) {
   core::pose::make_pose_from_sequence(*extended_pose, sequence, core::chemical::CENTROID );
 
-  for (Size i = 1; i <= extended_pose->total_residue(); ++i) {
+  for (Size i = 1; i <= extended_pose->size(); ++i) {
     extended_pose->set_phi(i, -150);
     extended_pose->set_psi(i, 150);
     extended_pose->set_omega(i, 180);
@@ -78,14 +78,14 @@ int main(int argc, char* argv[]) {
 
   // right-to-left propagation
   FoldTree r2l_tree;
-  r2l_tree.add_edge(pose.total_residue(), 1, core::kinematics::Edge::PEPTIDE);
+  r2l_tree.add_edge(pose.size(), 1, core::kinematics::Edge::PEPTIDE);
   pose.fold_tree(r2l_tree);
   copy_residues(*reference, f1.start(), f1.stop(), &pose);
   core::conformation::idealize_position(f1.start() - 1, pose.conformation());  // Attach residues preceding f1.start() to f1
 
   // left-to-right propagation
   FoldTree l2r_tree;
-  l2r_tree.add_edge(1, pose.total_residue(), core::kinematics::Edge::PEPTIDE);
+  l2r_tree.add_edge(1, pose.size(), core::kinematics::Edge::PEPTIDE);
   pose.fold_tree(l2r_tree);
 
   core::conformation::idealize_position(f1.stop(), pose.conformation());  // Attach residues following f1.stop() to f1

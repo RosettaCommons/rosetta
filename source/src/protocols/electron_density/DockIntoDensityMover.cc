@@ -112,8 +112,8 @@ struct
 // non-superposed RMS
 core::Real
 get_rms(core::pose::PoseOP r1, core::pose::PoseOP r2, DensitySymmInfo const &d) {
-	runtime_assert( r1->total_residue() == r2->total_residue() );
-	core::Size nres = r1->total_residue();
+	runtime_assert( r1->size() == r2->size() );
+	core::Size nres = r1->size();
 	core::Real rms=0.0;
 	core::Size N=0;
 	for ( int i=1; i<=(int)nres; ++i ) {
@@ -165,7 +165,7 @@ DockIntoDensityMover::setNative( core::pose::PoseOP native ) {
 
 	native_com_ = numeric::xyzVector< core::Real >(0,0,0);
 	core::Size N=0;
-	for ( int i=1; i<=(int)native_->total_residue(); ++i ) {
+	for ( int i=1; i<=(int)native_->size(); ++i ) {
 		if ( !native_->residue(i).is_protein() ) continue;
 		native_com_ += native_->residue(i).xyz(2);
 		N++;
@@ -180,13 +180,13 @@ DockIntoDensityMover::get_radius( core::pose::Pose const & pose, numeric::xyzVec
 	numeric::xyzVector< core::Real > centerCA(0.0,0.0,0.0);
 	com = numeric::xyzVector< core::Real >(0.0,0.0,0.0);
 	core::Size nAtms=0;
-	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 			core::conformation::Atom const & atom( rsd.atom(j) );
 			com += atom.xyz();
-			if ( i==(pose.total_residue()+1)/2 && j==2 ) {
+			if ( i==(pose.size()+1)/2 && j==2 ) {
 				centerCA = atom.xyz();
 			}
 			nAtms++;
@@ -199,7 +199,7 @@ DockIntoDensityMover::get_radius( core::pose::Pose const & pose, numeric::xyzVec
 	}
 
 	core::Real maxSize = 0;
-	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -223,7 +223,7 @@ DockIntoDensityMover::apply_transform (
 	utility::vector1< numeric::xyzVector< core::Real > > positions;
 	numeric::xyzVector< core::Real > xyz_rot;
 
-	for ( core::Size irsd = 1; irsd <= pose.n_residue(); ++irsd ) {
+	for ( core::Size irsd = 1; irsd <= pose.size(); ++irsd ) {
 		for ( core::Size iatom = 1; iatom <= pose.residue_type( irsd ).natoms(); ++iatom ) {
 			numeric::xyzVector< core::Real > atom_xyz = pose.xyz( core::id::AtomID( iatom, irsd ) );
 			ids.push_back( core::id::AtomID( iatom, irsd ) );
@@ -246,9 +246,9 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 
 	core::Real massSum=0.0;
 	Size resstart = 1;
-	Size resend = pose.total_residue();
+	Size resend = pose.size();
 	if ( point_radius_ != 0 ) {
-		Size midres = (pose.total_residue()+1)/2;
+		Size midres = (pose.size()+1)/2;
 		resstart = midres;
 		resend = midres;
 	}
@@ -436,7 +436,7 @@ DockIntoDensityMover::poseSphericalSamples(
 	// atom mask ... 3sigma from carbon
 	core::Real ATOM_MASK = 3.0 * sqrt( density.getEffectiveBfactor() / (2*M_PI*M_PI) );
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -444,7 +444,7 @@ DockIntoDensityMover::poseSphericalSamples(
 			atmList.push_back(atom.xyz());
 			massSum += atom.xyz();
 
-			if ( i==(pose.total_residue()+1)/2 && j==2 ) {
+			if ( i==(pose.size()+1)/2 && j==2 ) {
 				centerCA = atom.xyz();
 			}
 

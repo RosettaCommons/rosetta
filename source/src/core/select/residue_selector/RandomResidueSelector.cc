@@ -94,7 +94,7 @@ RandomResidueSelector::subset_from_randomized_vector(
 	}
 	TR << std::endl;
 
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 	for ( std::set< core::Size >::const_iterator r=selected.begin(); r!=selected.end(); ++r ) {
 		debug_assert( *r <= subset.size() );
 		subset[ *r ] = true;

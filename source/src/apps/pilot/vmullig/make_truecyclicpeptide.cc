@@ -252,12 +252,12 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Make the linkage between the N- and C-termini:
-	mypose.conformation().declare_chemical_bond(1, "N", mypose.n_residue(), "C"); //Declare a chemical bond between the N and C termini.
+	mypose.conformation().declare_chemical_bond(1, "N", mypose.size(), "C"); //Declare a chemical bond between the N and C termini.
 	{ 
 		//Peptide bond length constraint:
 		mypose.add_constraint (
 			new AtomPairConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ) ,
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ) ,
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				new HarmonicFunc( 1.3288, 0.01)
 			)
@@ -267,8 +267,8 @@ int main(int argc, char *argv[]) {
 		// (TODO -- change these if we sample a trans-proline.)
 		mypose.add_constraint (
 			new DihedralConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("H") , 1) ,
 				new CircularHarmonicFunc( PI, 0.02)
@@ -276,8 +276,8 @@ int main(int argc, char *argv[]) {
 		);
 		mypose.add_constraint (
 			new DihedralConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("CA") , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("CA") , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				new CircularHarmonicFunc( PI, 0.02)
@@ -287,7 +287,7 @@ int main(int argc, char *argv[]) {
 		//Peptide bond angle constraints:
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02)
@@ -295,7 +295,7 @@ int main(int argc, char *argv[]) {
 		);
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("H") , 1) ,
 				new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02)
@@ -303,16 +303,16 @@ int main(int argc, char *argv[]) {
 		);
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("CA") , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("CA") , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02)
 			)
 		);
 		mypose.add_constraint (
 			new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02)
 			)
@@ -321,7 +321,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Set all the omega angles:
-	for(core::Size ir=1; ir<mypose.n_residue(); ir++) mypose.set_omega(ir, 180.0);
+	for(core::Size ir=1; ir<mypose.size(); ir++) mypose.set_omega(ir, 180.0);
 	mypose.update_residue_neighbors();
 
 	//For testing only -- delete me!
@@ -334,8 +334,8 @@ int main(int argc, char *argv[]) {
 	//TODO -- update this if gly or pro are at the 1, 2, n-1, or n positions.
 	core::pose::Pose alapose;
 	std:string alaseq;
-	if(inlist(mypose.n_residue()-1, d_positions)) alaseq+="A[DALA]"; else alaseq+="A";
-	if(inlist(mypose.n_residue(), d_positions)) alaseq+="A[DALA]"; else alaseq+="A";
+	if(inlist(mypose.size()-1, d_positions)) alaseq+="A[DALA]"; else alaseq+="A";
+	if(inlist(mypose.size(), d_positions)) alaseq+="A[DALA]"; else alaseq+="A";
 	if(inlist(1, d_positions)) alaseq+="A[DALA]"; else alaseq+="A";
 	if(inlist(2, d_positions)) alaseq+="A[DALA]"; else alaseq+="A";
 	//REPLACE below
@@ -352,9 +352,9 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	for(core::Size ir=1; ir<alapose.n_residue(); ir++) alapose.set_omega(ir, 180.0); //Set the omega angles.
+	for(core::Size ir=1; ir<alapose.size(); ir++) alapose.set_omega(ir, 180.0); //Set the omega angles.
 	
-	core::pose::add_upper_terminus_type_to_pose_residue(alapose, alapose.n_residue());
+	core::pose::add_upper_terminus_type_to_pose_residue(alapose, alapose.size());
 
 	//Kinematic closure mover:
 	protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover = new protocols::loops::loop_closure::kinematic_closure::KinematicMover;
@@ -364,7 +364,7 @@ int main(int argc, char *argv[]) {
 	kinmover->set_rama_check( false );
 	kinmover->set_idealize_loop_first(true); //true
 	kinmover->set_sfxn(sfxn);
-	kinmover->set_pivots(2, (core::Size)(((core::Real)mypose.n_residue()-2.0)/2.0+2.0), mypose.n_residue()-1);
+	kinmover->set_pivots(2, (core::Size)(((core::Real)mypose.size()-2.0)/2.0+2.0), mypose.size()-1);
 
 	for(core::Size rep=1; rep<=nstruct; rep++) {
 		//make a copy of alapose:
@@ -372,7 +372,7 @@ int main(int argc, char *argv[]) {
 
 		//If a fraction of residues should be valines, mutate temp_alapose accordingly:
 		if(option[valfraction].user()) {
-			for(core::Size ir=1; ir<=temp_alapose.n_residue(); ir++) {
+			for(core::Size ir=1; ir<=temp_alapose.size(); ir++) {
 				if(numeric::random::rg().uniform() < option[valfraction]()) {
 					string aaname = "VAL";
 					if( core::chemical::is_D_aa( temp_alapose.residue(ir).aa() ) ) aaname="DVAL";
@@ -398,11 +398,11 @@ int main(int argc, char *argv[]) {
 
 		//If a fraction of residues should be valines, mutate accordingly:
 		if(option[valfraction].user()) {
-			for(core::Size ir=1; ir<=temppose.n_residue(); ir++) {
-				if(ir<3 || ir>temppose.n_residue()-2) { //The first two and last two residues must match temp_alapose
+			for(core::Size ir=1; ir<=temppose.size(); ir++) {
+				if(ir<3 || ir>temppose.size()-2) { //The first two and last two residues must match temp_alapose
 					core::Size ir2=0;
 					if(ir<3) ir2=ir+2;
-					else ir2=ir-temppose.n_residue()+2;
+					else ir2=ir-temppose.size()+2;
 					if(temp_alapose.residue(ir2).name3()=="DVA") {
 						protocols::simple_moves::MutateResidue mutres(ir, "DVAL");
 						mutres.apply(temppose);
@@ -424,8 +424,8 @@ int main(int argc, char *argv[]) {
 		//Put the first two and last two residues of temppose in the same positions as the corresponding residues in temp_alapose.
 		copyresidueposition(temppose, 1, temp_alapose, 3); //First residue
 		copyresidueposition(temppose, 2, temp_alapose, 4); //Second residue
-		copyresidueposition(temppose, temppose.n_residue(), temp_alapose, 2); //Last residue
-		copyresidueposition(temppose, temppose.n_residue()-1, temp_alapose, 1); //Second-last residue
+		copyresidueposition(temppose, temppose.size(), temp_alapose, 2); //Last residue
+		copyresidueposition(temppose, temppose.size()-1, temp_alapose, 1); //Second-last residue
 
 		//Update residue neighbours:
 		temppose.update_residue_neighbors();
@@ -438,7 +438,7 @@ int main(int argc, char *argv[]) {
 		//Check that the closure was successful.  If the gap is too big for the loop, it won't always be a successful closure.
 		//printf("Checking successful closure.\n"); fflush(stdout); //DELETE ME
 		bool closurefailed=false;
-		for (core::Size ir=1; ir<temppose.n_residue(); ir++) {
+		for (core::Size ir=1; ir<temppose.size(); ir++) {
 			numeric::xyzVector<core::Real> bonddeltaC = temppose.residue(ir).xyz("C");
 			numeric::xyzVector<core::Real> bonddeltaN = temppose.residue(ir+1).xyz("N");
 			core::Real bonddeltalength = sqrt(pow(bonddeltaC[0]-bonddeltaN[0],2.0)+pow(bonddeltaC[1]-bonddeltaN[1],2.0)+pow(bonddeltaC[2]-bonddeltaN[2],2.0));
@@ -458,9 +458,9 @@ int main(int argc, char *argv[]) {
 		//Check that the peptide bond between residues 1 and n has sensible geometry:
 		//printf("Checking geometry.\n"); fflush(stdout); //DELETE ME
 		{	//Peptide bond length check:
-			core::Real bonddeltalength = sqrt(	pow( temppose.residue(1).xyz("N")[0]-temppose.residue(temppose.n_residue()).xyz("C")[0] , 2) +
-								pow( temppose.residue(1).xyz("N")[1]-temppose.residue(temppose.n_residue()).xyz("C")[1] , 2) +
-								pow( temppose.residue(1).xyz("N")[2]-temppose.residue(temppose.n_residue()).xyz("C")[2] , 2)
+			core::Real bonddeltalength = sqrt(	pow( temppose.residue(1).xyz("N")[0]-temppose.residue(temppose.size()).xyz("C")[0] , 2) +
+								pow( temppose.residue(1).xyz("N")[1]-temppose.residue(temppose.size()).xyz("C")[1] , 2) +
+								pow( temppose.residue(1).xyz("N")[2]-temppose.residue(temppose.size()).xyz("C")[2] , 2)
 							 );
 			if(bonddeltalength>1.4 || bonddeltalength<1.2) {
 				printf("Peptide bond length between first and last residues is %.2f.  Loop closure failed.  Randomizing dihedrals and trying again.\n", bonddeltalength);
@@ -471,8 +471,8 @@ int main(int argc, char *argv[]) {
 		}
 		{	//Peptide dihedral angle check:
 			core::Real bonddihedralangle = numeric::dihedral_degrees(
-				temppose.residue(temppose.n_residue()).xyz("CA"),
-				temppose.residue(temppose.n_residue()).xyz("C"),
+				temppose.residue(temppose.size()).xyz("CA"),
+				temppose.residue(temppose.size()).xyz("C"),
 				temppose.residue(1).xyz("N"),
 				temppose.residue(1).xyz("CA")
 			);
@@ -485,8 +485,8 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 				bonddihedralangle = numeric::dihedral_degrees(
-					temppose.residue(temppose.n_residue()).xyz("O"),
-					temppose.residue(temppose.n_residue()).xyz("C"),
+					temppose.residue(temppose.size()).xyz("O"),
+					temppose.residue(temppose.size()).xyz("C"),
 					temppose.residue(1).xyz("N"),
 					temppose.residue(1).xyz("H")
 				);
@@ -495,8 +495,8 @@ int main(int argc, char *argv[]) {
 		if(closurefailed) continue;
 		{	//Peptide bond angle checks:
 			core::Real peptidebondangle = numeric::angle_degrees(
-				temppose.residue(temppose.n_residue()).xyz("CA"),
-				temppose.residue(temppose.n_residue()).xyz("C"),
+				temppose.residue(temppose.size()).xyz("CA"),
+				temppose.residue(temppose.size()).xyz("C"),
 				temppose.residue(1).xyz("N")
 			);
 			if(peptidebondangle > CaCN_ANGLE+10.0 || peptidebondangle < CaCN_ANGLE-10.0) {
@@ -507,8 +507,8 @@ int main(int argc, char *argv[]) {
 			}
 
 			peptidebondangle = numeric::angle_degrees(
-				temppose.residue(temppose.n_residue()).xyz("O"),
-				temppose.residue(temppose.n_residue()).xyz("C"),
+				temppose.residue(temppose.size()).xyz("O"),
+				temppose.residue(temppose.size()).xyz("C"),
 				temppose.residue(1).xyz("N")
 			);
 			if(peptidebondangle > OCN_ANGLE+10.0 || peptidebondangle < OCN_ANGLE-10.0) {
@@ -519,7 +519,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			peptidebondangle = numeric::angle_degrees(
-				temppose.residue(temppose.n_residue()).xyz("C"),
+				temppose.residue(temppose.size()).xyz("C"),
 				temppose.residue(1).xyz("N"),
 				temppose.residue(1).xyz("CA")
 			);
@@ -531,7 +531,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			peptidebondangle = numeric::angle_degrees(
-				temppose.residue(temppose.n_residue()).xyz("C"),
+				temppose.residue(temppose.size()).xyz("C"),
 				temppose.residue(1).xyz("N"),
 				temppose.residue(1).xyz("H")
 			);

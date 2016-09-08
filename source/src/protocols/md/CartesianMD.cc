@@ -248,11 +248,11 @@ void CartesianMD::get_native_info( pose::Pose const &pose )
 
 	// Set resmap
 	std::map< Size, Size > resmap;
-	for ( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( !pose.residue( ires ).is_protein() ) continue;
 		Size ii_pdb( pose.pdb_info()->number( ires ) );
 
-		for ( Size jres = 1; jres <= native_.total_residue(); ++jres ) {
+		for ( Size jres = 1; jres <= native_.size(); ++jres ) {
 			if ( !native_.residue( jres ).is_protein() ) continue;
 			Size jj_pdb( native_.pdb_info()->number( jres ) );
 			if ( ii_pdb == jj_pdb ) {
@@ -377,7 +377,7 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 		TR << "Set constraints uniformly with stdev: " << cst_sdev_ << std::endl;
 		pose.remove_constraints();
 
-		for ( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ) {
+		for ( Size i_res = 1; i_res <= pose.size(); ++i_res ) {
 			std::string resname = pose.residue(i_res).name();
 
 			core::Size iatm;
@@ -440,7 +440,7 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 		core::Real rmsd_rsr2ref( 0.0 );
 		core::Real rmsd_rsr2crd( 0.0 );
 		core::Size nrsr_dof( 0 );
-		//for ( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ) {
+		//for ( Size i_res = 1; i_res <= pose.size(); ++i_res ) {
 		for ( Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
 			id::AtomID atomID = min_map.get_atom( i_atm );
 			Size resno = atomID.rsd();

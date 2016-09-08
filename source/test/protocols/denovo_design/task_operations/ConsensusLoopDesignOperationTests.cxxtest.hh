@@ -183,8 +183,8 @@ public:
 		info.abego = loop_abego;
 		loopdesign.disallow_aas( *task, info );
 
-		TS_ASSERT_EQUALS( task->total_residue(), input_pose.total_residue() );
-		for ( core::Size i=1; i<=input_pose.total_residue(); ++i ) {
+		TS_ASSERT_EQUALS( task->total_residue(), input_pose.size() );
+		for ( core::Size i=1; i<=input_pose.size(); ++i ) {
 			// all aas should be allowed except for residues 17, 18
 			TS_ASSERT( task->being_packed( i ) );
 			if ( i == 17 ) {
@@ -209,8 +209,8 @@ public:
 		task = tf.create_task_and_apply_taskoperations( input_pose );
 		loopdesign.set_include_adjacent_residues( true );
 		loopdesign.disallow_aas( *task, info );
-		TS_ASSERT_EQUALS( task->total_residue(), input_pose.total_residue() );
-		for ( core::Size i=1; i<=input_pose.total_residue(); ++i ) {
+		TS_ASSERT_EQUALS( task->total_residue(), input_pose.size() );
+		for ( core::Size i=1; i<=input_pose.size(); ++i ) {
 			// all aas should be allowed except for residues 17, 18
 			TS_ASSERT( task->being_packed( i ) );
 			if ( ( i >= 16 ) && ( i <= 19 ) ) {

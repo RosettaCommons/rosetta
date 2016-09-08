@@ -266,7 +266,7 @@ GraftedStemOptimizer::get_N_C_stems_foldtree( pose::Pose const & pose ) const  {
 	ft->add_edge( jumppoint3, jumppoint4, 2 );
 	ft->add_edge( jumppoint3, cutpoint2, Edge::PEPTIDE );
 	ft->add_edge( jumppoint4, cutpoint2 + 1, Edge::PEPTIDE );
-	ft->add_edge( jumppoint4, pose.total_residue(), Edge::PEPTIDE );
+	ft->add_edge( jumppoint4, pose.size(), Edge::PEPTIDE );
 
 
 	//TRG<<"##################################################"<<std::endl;
@@ -295,7 +295,7 @@ GraftedStemOptimizer::get_Nstem_foldtree( pose::Pose const & pose ) const  {
 	ft->add_edge( jumppoint1, jumppoint2, 1 );
 	ft->add_edge( jumppoint1, cutpoint1, Edge::PEPTIDE );
 	ft->add_edge( jumppoint2, cutpoint1 + 1, Edge::PEPTIDE );
-	ft->add_edge( jumppoint2, pose.total_residue(), Edge::PEPTIDE );
+	ft->add_edge( jumppoint2, pose.size(), Edge::PEPTIDE );
 
 	return ft;
 }
@@ -316,7 +316,7 @@ GraftedStemOptimizer::get_Cstem_foldtree( pose::Pose const & pose ) const  {
 	ft->add_edge( jumppoint3, jumppoint4, 1 );
 	ft->add_edge( jumppoint3, cutpoint2, Edge::PEPTIDE );
 	ft->add_edge( jumppoint4, cutpoint2 + 1, Edge::PEPTIDE );
-	ft->add_edge( jumppoint4, pose.total_residue(), Edge::PEPTIDE );
+	ft->add_edge( jumppoint4, pose.size(), Edge::PEPTIDE );
 
 	return ft;
 }
@@ -332,8 +332,8 @@ GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string con
 	mm->set_chi( false );
 	mm->set_bb( false );
 
-	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+	utility::vector1< bool> bb_is_flexible( pose.size(), false );
+	utility::vector1< bool> sc_is_flexible( pose.size(), false );
 
 	if ( (type == "N") || (type == "NC")  ) {
 		for ( Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {
@@ -377,7 +377,7 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 
 	tf= setup_packer_task(pose);
 
-	vector1< bool> sc_is_packable( pose.total_residue(), false );
+	vector1< bool> sc_is_packable( pose.size(), false );
 
 	if ( (type == "N") || (type == "NC")  ) {
 		for ( Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {

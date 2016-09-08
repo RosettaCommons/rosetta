@@ -116,7 +116,7 @@ int main( int argc, char* argv [] ) {
 			vector1< char > pose_ss( get_ss( *mypose ) );
 			vector1< int >  burial( calculate_burial( *mypose ) );
 
-			for ( Size i = 1; i <= mypose->total_residue(); ++i ) {
+			for ( Size i = 1; i <= mypose->size(); ++i ) {
 				core::conformation::Residue resi = mypose->residue(i);
 				core::Real phi   = resi.mainchain_torsion( 1 );
 				core::Real psi   = resi.mainchain_torsion( 2 );
@@ -156,7 +156,7 @@ int main( int argc, char* argv [] ) {
 					//<< A(  9, chi_bin      )
 					<< I( 10, burial[i]    )
 					<< std::endl;
-			} // for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
+			} // for ( unsigned int i = 1; i <= mypose->size(); ++i )
 		} // for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

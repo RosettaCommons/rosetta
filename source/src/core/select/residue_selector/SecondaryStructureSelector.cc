@@ -136,8 +136,8 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 		throw utility::excn::EXCN_BadInput( err.str() );
 	}
 
-	ResidueSubset matching_ss( pose.total_residue(), false );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	ResidueSubset matching_ss( pose.size(), false );
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( selected_ss_.find( ss[ i - 1 ] ) != selected_ss_.end() ) {
 			TR.Debug << "Found ss match at position " << i << std::endl;
 			matching_ss[ i ] = true;

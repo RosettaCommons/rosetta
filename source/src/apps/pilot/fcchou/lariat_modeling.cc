@@ -81,7 +81,7 @@ utility::vector1 < utility::vector1 < Real > >
 get_torsion_set( Pose const & pose )
 {
 	using namespace id;
-	Size const total_res = pose.total_residue();
+	Size const total_res = pose.size();
 	utility::vector1 < utility::vector1 < Real > > torsion_set;
 	utility::vector1 < Real > torsion;
 	Size moving_suite;
@@ -107,7 +107,7 @@ apply_torsion_set( Pose & pose, utility::vector1 < utility::vector1 < Real > > c
 {
 	using namespace id;
 	static protocols::farna::RNA_IdealCoord const ideal_coord_rna;
-	Size const total_res = pose.total_residue();
+	Size const total_res = pose.size();
 	Size moving_suite;
 
 	for (Size i = 1; i <= 3; ++i) {
@@ -194,7 +194,7 @@ lariat_modeling ()
 			ScoreFunctionFactory::create_score_function ( score_weight_file );
 
 	protocols::farna::RNA_IdealCoord const ideal_coord_rna;
-	Size const total_res = pose.total_residue();
+	Size const total_res = pose.size();
 	for (Size i = total_res - 2; i <= total_res; ++i) {
 		ideal_coord_rna.apply( pose, i );
 	}

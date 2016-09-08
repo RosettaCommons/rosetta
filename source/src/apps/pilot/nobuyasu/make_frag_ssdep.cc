@@ -159,7 +159,7 @@ main( int argc, char * argv [] )
 	if( option[ blueprint ].user() ){
 		// read secondary structure from blueprint
 		protocols::jd2::parser::BluePrintOP blue = new protocols::jd2::parser::BluePrint( option[ blueprint ] );
-		naa = blue->total_residue();
+		naa = blue->size();
 		ss = blue->secstruct();
 		if( option[ use_abego ].user() ) {
 			abego = blue->abego();
@@ -169,7 +169,7 @@ main( int argc, char * argv [] )
 		core::import_pose::pose_from_file( pose, option[ in::file::s ].value().at( 1 ) , core::import_pose::PDB_file);
 		protocols::moves::DsspMover dsm;
 		dsm.apply( pose );
-		naa = pose.total_residue();
+		naa = pose.size();
 		ss = pose.secstruct();
 	}else{
 		TR << "You need to choose either options of -blueprint or -s " << std::endl;

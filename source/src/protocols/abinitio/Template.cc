@@ -201,7 +201,7 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 	// [ a a _ _ a a a a a _ _ a ] --> 2 1 0 0 5 4 3 2 1 0 0 x
 	typedef utility::vector1< Size > FragLengthMap;
 	FrameList template_frames;
-	Size const nres( std::min( pose_->total_residue(), reverse_mapping_.size1() ) );
+	Size const nres( std::min( pose_->size(), reverse_mapping_.size1() ) );
 	FragLengthMap frag_length( nres, 0);
 	for ( Size pos1 = nres; pos1 >= 2; pos1-- ) {
 		//if pos1 is aligned .. assign appropriate lengths for each residue in continuous stretch, e.g., 5 4 3 2 1
@@ -276,7 +276,7 @@ Template::steal_frags( FrameList const& frames, FragSet &accumulator, Size ncopi
 	map2template( frames, template_frames );
 	Size total( 0 );
 	for ( auto & template_frame : template_frames ) {
-		tr.Trace << name() << " pick frags at " << template_frame->start() << " " << template_frame->end() << " " << pose_->total_residue() << std::endl;
+		tr.Trace << name() << " pick frags at " << template_frame->start() << " " << template_frame->end() << " " << pose_->size() << std::endl;
 		for ( Size ct = 1; ct <= ncopies; ct ++ ) {
 			if ( template_frame->steal( *pose_ ) ) total++;
 		}

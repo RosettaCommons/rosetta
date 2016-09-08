@@ -403,7 +403,7 @@ void Protocol::phase_hires() {
 
 	// stage 3 - design
 
-	utility::vector1<bool> residues_allowed_to_be_packed( pose->n_residue(), false);
+	utility::vector1<bool> residues_allowed_to_be_packed( pose->size(), false);
 
 	core::pack::task::PackerTaskOP design_task( core::pack::task::TaskFactory::create_packer_task( *pose ) );
 	//design_task->initialize_from_command_line(); // .read_resfile().or_include_current( true );
@@ -496,7 +496,7 @@ void Protocol::phase_hires() {
 
 void Protocol::apply(core::pose::PoseOP pose_) {
 	pose = pose_;
-	move_map = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( get_move_map(pose->n_residue(),loops) ) );
+	move_map = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( get_move_map(pose->size(),loops) ) );
 
 	const double CHAINBREAK_WEIGHT = 10;
 	const double RAMA_WEIGHT       = 10;
@@ -553,7 +553,7 @@ void Protocol::apply(core::pose::PoseOP pose_) {
 
 	cout << "Protocol::apply::Energies:" << endl;
 
-	for( Size i = 1; i <= pose->n_residue(); ++i ) {
+	for( Size i = 1; i <= pose->size(); ++i ) {
 
 	//core::scoring::EnergyMap emap = energies();
 

@@ -145,7 +145,7 @@ void get_helices(core::pose::Pose& pose, protocols::loops::LoopsOP helicesOP){
 	Size endHelix = 0;
 	if(pose.secstruct(1) == 'H')
 		startHelix = 1;
-	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 2; ii <= pose.size(); ++ii ) {
 		if(pose.secstruct(ii) == 'H' && lastSecStruct != 'H')
 			startHelix = ii;
 		if(pose.secstruct(ii) != 'H' && lastSecStruct == 'H'){
@@ -265,10 +265,10 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
     superimpose_pose(pose,native_pose,atom_map);
     //step3: create reference pose without first/last chunck and attach
     //assume you want the longer part of the helix to maintain. Shouldn't be close
-    int dist_to_end = pose.total_residue()-numeric::max(testDock.h1_pos_start,testDock.h1_pos_end,testDock.h2_pos_start,testDock.h2_pos_end);
+    int dist_to_end = pose.size()-numeric::max(testDock.h1_pos_start,testDock.h1_pos_end,testDock.h2_pos_start,testDock.h2_pos_end);
     int dist_to_begin = numeric::min(testDock.h1_pos_start,testDock.h1_pos_end,testDock.h2_pos_start,testDock.h2_pos_end)-1;
     if(testDock.single_helix){
-        dist_to_end = pose.total_residue()-numeric::max(testDock.h1_pos_start,testDock.h1_pos_end);
+        dist_to_end = pose.size()-numeric::max(testDock.h1_pos_start,testDock.h1_pos_end);
         dist_to_begin = numeric::min(testDock.h1_pos_start,testDock.h1_pos_end)-1;
     }
     vector1<Size> pose_positions;
@@ -276,7 +276,7 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
     Size lastRes = 0;
     if(dist_to_end>dist_to_begin){
         firstRes = numeric::max(testDock.h1_pos_start,testDock.h1_pos_end,testDock.h2_pos_start,testDock.h2_pos_end)+1;
-        lastRes = pose.total_residue();
+        lastRes = pose.size();
     }
     else{
         firstRes = 1;
@@ -320,11 +320,11 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
         chainA_front = mod_pose;
         if(testDock.single_helix){
             tmp_start = testDock.h1_nat_start;
-            tmp_end = chainA_->total_residue();
+            tmp_end = chainA_->size();
         }
         else{
             tmp_start = testDock.h1_nat_start;
-            tmp_end = chainA_->total_residue();
+            tmp_end = chainA_->size();
         }
         for(Size ii=tmp_start; ii<=tmp_end; ++ii)
             slice_res.push_back(ii);
@@ -332,10 +332,10 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
     }
 
 
-    remove_upper_terminus_type_from_pose_residue(chainA_front,chainA_front.total_residue());
+    remove_upper_terminus_type_from_pose_residue(chainA_front,chainA_front.size());
     remove_lower_terminus_type_from_pose_residue(chainA_back,1);
-    for(Size ii=1; ii<=chainA_back.total_residue(); ++ii){
-        chainA_front.append_residue_by_bond(chainA_back.residue(ii),false,0,chainA_front.total_residue());
+    for(Size ii=1; ii<=chainA_back.size(); ++ii){
+        chainA_front.append_residue_by_bond(chainA_back.residue(ii),false,0,chainA_front.size());
     }
     core::pose::Pose chainA_full = chainA_front;
     Size finalNativeLength = tmp_end - tmp_start+1;
@@ -345,15 +345,15 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
         testDock.redesign_final_poseCoords_start = 1;
         testDock.redesign_final_poseCoords_end = 1;
         testDock.repeat_final_poseCoords_start = 1;
-        testDock.repeat_final_poseCoords_end = chainA_full.total_residue()-finalNativeLength-1;
-        testDock.nat_final_poseCoords_start = chainA_full.total_residue()-finalNativeLength;
-        testDock.nat_final_poseCoords_end = chainA_full.total_residue();
+        testDock.repeat_final_poseCoords_end = chainA_full.size()-finalNativeLength-1;
+        testDock.nat_final_poseCoords_start = chainA_full.size()-finalNativeLength;
+        testDock.nat_final_poseCoords_end = chainA_full.size();
     }
     else{
         testDock.redesign_final_poseCoords_start = 1;
         testDock.redesign_final_poseCoords_end = 1;
         testDock.repeat_final_poseCoords_start = finalNativeLength+1;
-        testDock.repeat_final_poseCoords_end = chainA_full.total_residue();
+        testDock.repeat_final_poseCoords_end = chainA_full.size();
         testDock.nat_final_poseCoords_start = 1;
         testDock.nat_final_poseCoords_end = finalNativeLength;
     }
@@ -405,8 +405,8 @@ vector1<Dock> get_all_2helix_docks(core::pose::Pose & pose, core::pose::Pose & n
         for(Size kk =0; kk<range; ++kk){
             native_helix_selection.push_back(1+ii);
             native_helix_selection.push_back(helix1_length+ii);
-            native_helix_selection.push_back(chainA_pose->total_residue()-helix2_length+1-kk);
-            native_helix_selection.push_back(chainA_pose->total_residue()-kk);
+            native_helix_selection.push_back(chainA_pose->size()-helix2_length+1-kk);
+            native_helix_selection.push_back(chainA_pose->size()-kk);
             struct Dock dock_tmp(pose_helix_selection[1],pose_helix_selection[2],pose_helix_selection[3],pose_helix_selection[4],native_helix_selection[1],native_helix_selection[2],native_helix_selection[3],native_helix_selection[4]);
             docks.push_back(dock_tmp);
             native_helix_selection.clear();
@@ -424,8 +424,8 @@ vector1<Dock> get_all_2helix_docks(core::pose::Pose & pose, core::pose::Pose & n
         for(Size kk =0; kk<range; ++kk){
             native_helix_selection.push_back(1+ii);
             native_helix_selection.push_back(helix2_length+ii);
-            native_helix_selection.push_back(chainA_pose->total_residue()-helix1_length+1-kk);
-            native_helix_selection.push_back(chainA_pose->total_residue()-kk);
+            native_helix_selection.push_back(chainA_pose->size()-helix1_length+1-kk);
+            native_helix_selection.push_back(chainA_pose->size()-kk);
             struct Dock dock_tmp(pose_helix_selection[1],pose_helix_selection[2],pose_helix_selection[3],pose_helix_selection[4],native_helix_selection[1],native_helix_selection[2],native_helix_selection[3],native_helix_selection[4]);
             docks.push_back(dock_tmp);
             native_helix_selection.clear();
@@ -454,8 +454,8 @@ vector1<Dock> get_all_1helix_docks(core::pose::Pose & pose, core::pose::Pose & n
     pose_helix_selection.push_back((*pose_helices)[1].start());
     pose_helix_selection.push_back((*pose_helices)[1].stop());
     for(Size ii=0; ii<range; ++ii){
-        native_helix_selection.push_back(chainA_pose->total_residue()-helix1_length+1-ii);
-        native_helix_selection.push_back(chainA_pose->total_residue()-ii);
+        native_helix_selection.push_back(chainA_pose->size()-helix1_length+1-ii);
+        native_helix_selection.push_back(chainA_pose->size()-ii);
         struct Dock dock_tmp(pose_helix_selection[1],pose_helix_selection[2],native_helix_selection[1],native_helix_selection[2]);
         docks.push_back(dock_tmp);
         native_helix_selection.clear();
@@ -486,7 +486,7 @@ core::Real compute_motif_score( core::pose::Pose const & pose, Size start_res, S
         Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
         char ss1 = dssp.get_dssp_secstruct( ir );
         char aa1 = pose.residue(ir).name1();
-        for(size_t jr = ir+1; jr <= pose.n_residue(); ++jr){
+        for(size_t jr = ir+1; jr <= pose.size(); ++jr){
             Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));
             if(dist < 12){
                 char ss2 = dssp.get_dssp_secstruct( jr );
@@ -513,7 +513,7 @@ void get_second_2_helices(Dock & dock, core::pose::Pose pose,Size & start_res,Si
     protocols::loops::LoopsOP helices( new protocols::loops::Loops );
     get_helices(pose,helices);
     //Figure out which 2 helices.
-    int dist_to_end = pose.total_residue()-numeric::max(dock.h1_pos_start,dock.h1_pos_end,dock.h2_pos_start,dock.h2_pos_end);
+    int dist_to_end = pose.size()-numeric::max(dock.h1_pos_start,dock.h1_pos_end,dock.h2_pos_start,dock.h2_pos_end);
 
     int dist_to_begin = numeric::min(dock.h1_pos_start,dock.h1_pos_end,dock.h2_pos_start,dock.h2_pos_end)-1;
     if(dist_to_end>dist_to_begin){

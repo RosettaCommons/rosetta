@@ -195,7 +195,7 @@ FreeDOF_Energy::finalize_total_energy(
 	static Real const sugar_hbond_energy_cutoff_( -0.20 );
 
 	Real total_free_base_score( 0.0 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.residue( n ).is_RNA() ) continue;
 		Real free_base_score( 0.0 );
 		if ( base_hbond_energy[ n ] <= base_hbond_energy_cutoff_ ) {
@@ -245,7 +245,7 @@ FreeDOF_Energy::accumulate_stack_energy(
 {
 	using namespace core::scoring;
 
-	stack_energy = utility::vector1< Real >( pose.total_residue(), 0.0 );
+	stack_energy = utility::vector1< Real >( pose.size(), 0.0 );
 	do_fa_stack_scorefunction_checks( scorefxn );
 
 	EnergyGraph const & energy_graph = pose.energies().energy_graph();
@@ -255,7 +255,7 @@ FreeDOF_Energy::accumulate_stack_energy(
 	if ( fa_stack_weight == 0.0 ) fa_stack_weight = weights[ fa_stack_upper ];
 
 	// accumulate energies, but keep track of which residue supplied the base.
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		if ( !pose.residue( i ).is_RNA() ) continue;
 		for ( graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
@@ -288,8 +288,8 @@ FreeDOF_Energy::get_hbond_energy(
 	HBondSet hbond_set;
 	fill_hbond_set( pose, false /*calculate derivative*/, hbond_set );
 
-	base_hbond_energy= utility::vector1< Real > ( pose.total_residue(), 0.0 );
-	sugar_hbond_energy= utility::vector1< Real > ( pose.total_residue(), 0.0 );
+	base_hbond_energy= utility::vector1< Real > ( pose.size(), 0.0 );
+	sugar_hbond_energy= utility::vector1< Real > ( pose.size(), 0.0 );
 
 	for ( Size n = 1; n <= hbond_set.nhbonds(); ++n ) {
 

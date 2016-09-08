@@ -125,11 +125,11 @@ figure_out_moving_partition_res( pose::Pose const & pose,
 		}
 	}
 
-	ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
+	ObjexxFCL::FArray1D<bool> partition_definition( pose.size(), false );
 	pose.fold_tree().partition_by_jump( jump_number, partition_definition );
 
 	utility::vector1< Size > moving_partition_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( partition_definition( n ) == partition_definition( moving_res ) ) moving_partition_res.push_back( n );
 	}
 	return moving_partition_res;

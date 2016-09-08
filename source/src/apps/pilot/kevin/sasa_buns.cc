@@ -194,7 +194,7 @@ sasa_bunsats(
 		core::scoring::calc_per_atom_sasa(pose, atom_sasa, residue_sasa, probe_radius);
 	}
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 
 	// find hbonds and intersect residues
 	scoring::hbonds::HBondSet hbond_set;

@@ -68,7 +68,7 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 	std::string tag = core::pose::extract_tag_from_pose( pose );
 	numeric::xyzVector <core::Real> min_r(9999,9999,9999);
 	numeric::xyzVector <core::Real> max_r(-9999,-9999,-9999);
-	for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
+	for (core::Size ires=1; ires<=pose.size(); ++ires) {
 		for (core::Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom) {
 			for (core::Size i=0; i<3; ++i) {
 				if (pose.residue(ires).xyz(iatom)[i] < min_r[i]) {

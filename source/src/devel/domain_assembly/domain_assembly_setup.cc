@@ -87,7 +87,7 @@ DomainInfo::process_domain( )
 
 	// trim the c-terminus
 	for ( Size i = 1; i <= trim_cterm_; ++i ) {
-		temp_pose.delete_polymer_residue( temp_pose.total_residue() ) ;
+		temp_pose.delete_polymer_residue( temp_pose.size() ) ;
 	}
 
 
@@ -125,9 +125,9 @@ DomainInfo::process_domain( )
 	std::string linker_sequence = Cterm_linker_;
 	//SML HACK: don't forget to remove the cterm patch from the last residue
 	//using core::pose::remove_variant_type_from_pose_residue;
-	//core::pose::remove_variant_type_from_pose_residue(temp_pose, core::chemical::UPPER_TERMINUS, temp_pose.total_residue());
+	//core::pose::remove_variant_type_from_pose_residue(temp_pose, core::chemical::UPPER_TERMINUS, temp_pose.size());
 	if ( linker_sequence.length() > 0 ) {
-		core::pose::remove_upper_terminus_type_from_pose_residue( temp_pose, temp_pose.total_residue());
+		core::pose::remove_upper_terminus_type_from_pose_residue( temp_pose, temp_pose.size());
 	}
 	for ( char aa : linker_sequence ) {
 		// string indexing is zero-based!
@@ -135,7 +135,7 @@ DomainInfo::process_domain( )
 		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa )) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 		temp_pose.append_residue_by_bond( *new_rsd, true );
-		Size seqpos = temp_pose.total_residue( );
+		Size seqpos = temp_pose.size( );
 		//if the residue to be added is RNA, give it the average torsion angles for A-RNA
 		if ( rsd_type.is_NA() ) {
 			temp_pose.set_alpha(seqpos, -68);
@@ -147,7 +147,7 @@ DomainInfo::process_domain( )
 		} else {
 
 			// give the new residue extended chain parameters
-			//Size seqpos = temp_pose.total_residue( );
+			//Size seqpos = temp_pose.size( );
 			temp_pose.set_psi( seqpos-1, 150 );
 			temp_pose.set_omega( seqpos-1, 180 );
 			temp_pose.set_phi( seqpos, -150 );
@@ -179,18 +179,18 @@ connect_domains(
 	Size domain_begin(0), domain_end(0), domains_so_far_end(0);
 	for ( Size i = 1; i <= domains.size(); ++i ) {
 		pose::Pose domain_pose = domains[i].get_processed_pose();
-		if ( full_pose.total_residue() == 0 ) {
+		if ( full_pose.size() == 0 ) {
 			full_pose = domain_pose;
 			domain_begin = 1;
-			domain_end = full_pose.total_residue();
+			domain_end = full_pose.size();
 			//Keep track of the size of the first domain
-			domains_so_far_end = full_pose.total_residue();
+			domains_so_far_end = full_pose.size();
 		} else {
-			core::pose::remove_upper_terminus_type_from_pose_residue( full_pose, full_pose.total_residue( ) );
+			core::pose::remove_upper_terminus_type_from_pose_residue( full_pose, full_pose.size( ) );
 			core::pose::remove_lower_terminus_type_from_pose_residue( domain_pose, 1 );
-			domain_begin = full_pose.total_residue( ) + 1;
+			domain_begin = full_pose.size() + 1;
 			//Will add sequential amino acid residues to the first domain until no more amino acids are detected
-			for ( Size i = 1; i <= domain_pose.total_residue( ); ++i ) {
+			for ( Size i = 1; i <= domain_pose.size( ); ++i ) {
 				if ( !((domain_pose.residue_type(i)).is_NA()) ) {
 					full_pose.append_residue_by_bond( domain_pose.residue(i) );
 					domain_end = i;
@@ -198,11 +198,11 @@ connect_domains(
 			}
 			//Adds the first nucleotide to the connected domains pose using a jump and anchoring them to the C-terminus of the connected domains
 			//Only attempted if there are nucleic acid resiudes at the end of the pdb.
-			if ( full_pose.total_residue() - domains_so_far_end != domain_pose.total_residue() ) {
-				full_pose.append_residue_by_jump(domain_pose.residue( (domain_end + 1)), full_pose.total_residue());
+			if ( full_pose.size() - domains_so_far_end != domain_pose.size() ) {
+				full_pose.append_residue_by_jump(domain_pose.residue( (domain_end + 1)), full_pose.size());
 			}
 			//Adds the nucleotide residues at the end of the final domain pdb that were ignored previously, will crash if only one nucleotide at the end of the final domain pdb. Crude by why would you have just one RNA nucleotide at the end.
-			for ( Size i = domain_end + 2; i <= domain_pose.total_residue(); ++i ) {
+			for ( Size i = domain_end + 2; i <= domain_pose.size(); ++i ) {
 				full_pose.append_residue_by_bond( domain_pose.residue(i) );
 			}
 			full_pose.conformation().insert_ideal_geometry_at_polymer_bond( domain_begin - 1 );
@@ -213,8 +213,8 @@ connect_domains(
 			full_pose.set_phi  ( domain_begin, -150.0 );
 			full_pose.set_psi  ( domain_begin,  150.0 );
 			full_pose.set_omega( domain_begin,  180.0 );
-			domain_end = full_pose.total_residue();
-			domains_so_far_end = full_pose.total_residue();
+			domain_end = full_pose.size();
+			domains_so_far_end = full_pose.size();
 		}
 		domains[i].set_domain_begin( domain_begin );
 		domains[i].set_domain_end( domain_end );

@@ -159,7 +159,7 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 	vector1< vector1< core::Real > > all_feature_vals;
 
 	Size res_count( 0 ), num_features( 0 );
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 
 	// sasa calculation

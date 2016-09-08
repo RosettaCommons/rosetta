@@ -335,7 +335,7 @@ NormalModeRelaxMover::set_movemap(core::pose::Pose const & pose,
 
 	// For Torsional NormalMode
 	NM_.clear_torsions_using();
-	for ( Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( mm_->get_bb( ires ) ) {
 			NM_.set_torsions_using( ires );
 		}

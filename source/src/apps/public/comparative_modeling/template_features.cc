@@ -58,11 +58,11 @@ utility::vector1< int > calculate_burial(
 	core::Real const dist_cutoff
 ) {
 	utility::vector1< int > burial;
-	burial.resize( mypose.total_residue() );
+	burial.resize( mypose.size() );
 
 	using core::Size;
-	for ( Size i = 1; i <= mypose.total_residue(); ++i ) {
-		for ( Size j = i + 1; j <= mypose.total_residue(); ++j ) {
+	for ( Size i = 1; i <= mypose.size(); ++i ) {
+		for ( Size j = i + 1; j <= mypose.size(); ++j ) {
 			core::conformation::Residue const& resi = mypose.residue(i);
 			core::conformation::Residue const& resj = mypose.residue(j);
 			core::Real const dist(resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ));

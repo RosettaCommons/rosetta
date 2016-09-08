@@ -59,7 +59,7 @@ public:
 		make_pose_from_sequence(sample_pose, seq ,"fa_standard");
 
 		// make an alpha helix
-		for ( core::Size ir = 1; ir < sample_pose.total_residue(); ir ++ ) {
+		for ( core::Size ir = 1; ir < sample_pose.size(); ir ++ ) {
 			sample_pose.set_phi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
 			sample_pose.set_psi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
 			sample_pose.set_omega( ir, numeric::random::rg().uniform()*360.0 - 180.0 );

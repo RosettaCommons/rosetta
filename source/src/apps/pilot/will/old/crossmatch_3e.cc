@@ -255,11 +255,11 @@ int main (int argc, char *argv[])
 		axs -= projection_matrix(ori)*axs;
 		axs = rotation_matrix_degrees(ori,90.0) * axs;
 		Mat R = rotation_matrix_degrees(axs,180.0);
-		core::conformation::symmetry::SymmDataOP symmdata = core::pose::symmetry::symm_data_from_axis(base.n_residue(),2,axs,cen);
+		core::conformation::symmetry::SymmDataOP symmdata = core::pose::symmetry::symm_data_from_axis(base.size(),2,axs,cen);
 		core::pose::symmetry::make_symmetric_pose(base,*symmdata);
 		bool clash = false;
-		for(Size ir = 1; ir <= nat.n_residue(); ++ir) {
-			for(Size jr = nat.n_residue()+1; jr <= 2*nat.n_residue(); ++jr) {
+		for(Size ir = 1; ir <= nat.size(); ++ir) {
+			for(Size jr = nat.size()+1; jr <= 2*nat.size(); ++jr) {
 				for(Size ia = 1; ia <= 4; ia++) {
 					for(Size ja = 1; ja <= 4; ja++) {
 						if( base.xyz(AtomID(ia,ir)).distance_squared(base.xyz(AtomID(ja,jr))) < 9.0 ) clash = true;
@@ -279,7 +279,7 @@ int main (int argc, char *argv[])
 
 
 		Size nmut = 0;
-		for(Size ir = 1; ir <= nat.n_residue(); ++ir) {
+		for(Size ir = 1; ir <= nat.size(); ++ir) {
 			if( nat.residue(ir).name3() != base.residue(ir).name3() ) nmut++;
 		}
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
@@ -295,8 +295,8 @@ int main (int argc, char *argv[])
 		utility::io::ozstream out("3E_homo_"+string_of(ilig-1)+".pdb");
 		base.dump_pdb(out);
 		Vec viz;
-		viz = cen+2*ori; out <<"HETATM"<<I(5,9998)<<' '<<"ZN  "<<' '<<" ZN"<<' '<<"B"<<I(4,base.n_residue()+1)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-		viz = cen-2*ori; out <<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' '<<" ZN"<<' '<<"B"<<I(4,base.n_residue()+2)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+		viz = cen+2*ori; out <<"HETATM"<<I(5,9998)<<' '<<"ZN  "<<' '<<" ZN"<<' '<<"B"<<I(4,base.size()+1)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+		viz = cen-2*ori; out <<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' '<<" ZN"<<' '<<"B"<<I(4,base.size()+2)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 		out.close();
 	}
 

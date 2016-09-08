@@ -165,14 +165,14 @@ void dock(Pose const & init1,
 
 	// set up n-ca-c-o-cb ord arrays
 	vector1<Vec> bbi1tmp,cbi1tmp;
-	for(int ir = 1; ir <= init1.n_residue(); ++ir) {
+	for(int ir = 1; ir <= init1.size(); ++ir) {
 		if(!init1.residue(ir).is_protein()) continue;
 		for(int ia = 1; ia <= 5; ++ia) bbi1tmp.push_back(init1.xyz(AtomID( min(ia, (init1.residue(ir).has("CB"))?5:4 ) ,ir)));
 		if(std::find(cstres_A.begin(),cstres_A.end(),ir)!=cstres_A.end()) if(init1.residue(ir).has("CB")) cbi1tmp.push_back(init1.xyz(AtomID(5,ir)));
 	} vector1<Vec> const bbi1(bbi1tmp), cbi1(cbi1tmp);
 
 	vector1<Vec> bbi2tmp,cbi2tmp;
-	for(int ir = 1; ir <= init2.n_residue(); ++ir) {
+	for(int ir = 1; ir <= init2.size(); ++ir) {
 		if(!init2.residue(ir).is_protein()) continue;
 		for(int ia = 1; ia <= 5; ++ia) bbi2tmp.push_back(init2.xyz(AtomID( min(ia, (init2.residue(ir).has("CB"))?5:4 ) ,ir)));
 		if(std::find(cstres_B.begin(),cstres_B.end(),ir)!=cstres_B.end()) if(init2.residue(ir).has("CB")) cbi2tmp.push_back(init2.xyz(AtomID(5,ir)));
@@ -218,7 +218,7 @@ void dock(Pose const & init1,
 						q.dump_pdb("hit"+tag+"B.pdb");
 
 						p.append_residue_by_jump(q.residue(1),1);
-						for(Size i=2; i <= q.n_residue(); ++i) p.append_residue_by_bond(q.residue(i));
+						for(Size i=2; i <= q.size(); ++i) p.append_residue_by_bond(q.residue(i));
 						// p.dump_pdb("test.pdb");
 						// native.dump_pdb("nat.pdb");
 						// utility_exit_with_message("oraistne");
@@ -267,12 +267,12 @@ int main(int argc, char *argv[]) {
 		TR << "searching " << fn1 << " vs " << fn2 << std::endl;
 		{
 			core::import_pose::pose_from_file(pnat1,fn1, core::import_pose::PDB_file);
-			trans_pose(pnat1,-center_of_geom(pnat1,1,pnat1.n_residue()));
+			trans_pose(pnat1,-center_of_geom(pnat1,1,pnat1.size()));
 			core::scoring::dssp::Dssp dssp(pnat1);
 			dssp.insert_ss_into_pose(pnat1);
 		}{
 			core::import_pose::pose_from_file(pnat2,fn2, core::import_pose::PDB_file);
-			trans_pose(pnat2,-center_of_geom(pnat2,1,pnat2.n_residue()));
+			trans_pose(pnat2,-center_of_geom(pnat2,1,pnat2.size()));
 			core::scoring::dssp::Dssp dssp(pnat2);
 			dssp.insert_ss_into_pose(pnat2);
 		}

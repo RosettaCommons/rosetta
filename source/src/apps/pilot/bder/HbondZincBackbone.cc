@@ -149,7 +149,7 @@ public:
 		TR << "Scaffold: " << scaffold.pdb_info()->name() << std::endl;
 
 		utility::vector1< Size > match_residues;
-		for( Size i(1); i <= pose.total_residue() - 1; ++i ) {
+		for( Size i(1); i <= pose.size() - 1; ++i ) {
 			match_residues.push_back( pose.pdb_info()->number(i) );
 		}
 
@@ -158,7 +158,7 @@ public:
 
 		pose = grafted_pose;
 		
-		Size znres = pose.total_residue();
+		Size znres = pose.size();
 		msr_[1]->set_seqpos(znres);
 		TR << "MSR " << 1 << " " << znres << std::endl;
 

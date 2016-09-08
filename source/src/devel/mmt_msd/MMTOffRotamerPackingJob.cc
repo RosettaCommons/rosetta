@@ -79,7 +79,7 @@ void MMTOffRotamerPackingJob::update_pose( core::pose::Pose & final_pose )
 	if ( rotsets_->nmoltenres() != best_assignment_->nmoltenres() ) {
 		errormsg += "MMTOffRotamerPackingJob::update_pose() -- Could not update pose; nmoltenres disagreement between rotsets_ and best_assignment_\n";
 	}
-	if ( pose().total_residue() != final_pose.total_residue() ) {
+	if ( pose().size() != final_pose.size() ) {
 		errormsg += "MMTOffRotamerPackingJob::update_pose() -- Could not update pose; internal pose and final_pose have different numbers of residues\n";
 	}
 	if ( errormsg != "" ) { throw utility::excn::EXCN_Msg_Exception( errormsg ); }

@@ -82,7 +82,7 @@ vector1<vector1 <Real> > gather_ss_pct(){
 				poseOP = core::pose::PoseOP( new core::pose::Pose() );
 				input.fill_pose(*poseOP,*rsd_set);
 				if(first_pose){
-						for(Size ii=1; ii<=poseOP->total_residue(); ++ii){
+						for(Size ii=1; ii<=poseOP->size(); ++ii){
 								vector1<Size> tmp_pos;
 								for(Size kk=1; kk<=3; ++kk){
 										tmp_pos.push_back(0);
@@ -92,7 +92,7 @@ vector1<vector1 <Real> > gather_ss_pct(){
 						first_pose=false;
 				}
 				protocols::jumping::assign_ss_dssp( *poseOP );
-				for (Size ii=1; ii <= poseOP->total_residue(); ++ii) {
+				for (Size ii=1; ii <= poseOP->size(); ++ii) {
 						if(poseOP->secstruct(ii) == 'H')
 								counts[ii][1]+=1;
 						if(poseOP->secstruct(ii) == 'L')

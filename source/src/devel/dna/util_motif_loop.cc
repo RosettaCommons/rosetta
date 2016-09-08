@@ -42,7 +42,7 @@ static THREAD_LOCAL basic::Tracer tr( "devel.dna.util_motif_loop" );
 bool hard_sphere_check( core::pose::Pose & pose, core::conformation::Residue & resi)
 {
 	using namespace numeric;
-	for ( core::Size res(1); res <= pose.total_residue(); ++res ) {
+	for ( core::Size res(1); res <= pose.size(); ++res ) {
 		if ( ! pose.residue(res).is_DNA() ) continue;
 
 		core::conformation::Residue this_resi(pose.residue(res));

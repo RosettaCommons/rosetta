@@ -83,7 +83,7 @@ int slow_nbcount( protocols::sic_dock::xyzStripeHashPose const & xyzhash, float 
 
 int slow_nbcount( core::pose::Pose const & pose, float DIST, Vec const & rv ){
 	int safe_nbcount = 0;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia){
 			if( rv.distance_squared(pose.residue(ir).xyz(ia)) <= DIST*DIST ){
 				++safe_nbcount;
@@ -94,7 +94,7 @@ int slow_nbcount( core::pose::Pose const & pose, float DIST, Vec const & rv ){
 }
 
 void slow_nbset( core::pose::Pose const & pose, float DIST, Vec const & rv, std::set<int> & nbrs ){
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		if( rv.distance_squared(pose.residue(ir).xyz("CA")) <= DIST*DIST ){
 			nbrs.insert(ir);
 		}
@@ -103,7 +103,7 @@ void slow_nbset( core::pose::Pose const & pose, float DIST, Vec const & rv, std:
 
 bool slow_clash( core::pose::Pose const & pose, float DIST, Vec const & rv ){
 	int safe_nbcount = 0;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia){
 			if( rv.distance_squared(pose.residue(ir).xyz(ia)) <= DIST*DIST ){
 				return true;
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
 	core::pose::Pose p;
 	core::import_pose::pose_from_file(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 	if(true) {
-		for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+		for(Size ir = 1; ir <= p.size(); ++ir) {
 			if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
 			if( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);
 		}
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	// for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+	// for(Size ir = 1; ir <= p.size(); ++ir) {
 	// 	for(Size ia = 1; ia <= p.residue_type(ir).natoms(); ++ia) {
 	// 		p.set_xyz(AtomID(ia,ir),p.xyz(AtomID(ia,ir)) + (numeric::xyzVector<core::Real>)xyzhash.translation() );
 	// 	}
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 
 	Vec mn(9e9),mx(-9e9);
 	int real_natom = 0.0;
-	for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= p.size(); ++ir) {
 		for(Size ia = 1; ia <= p.residue(ir).natoms(); ++ia) {
 			real_natom++;
 			// mn.x() = numeric::min(mn.x(),p.xyz(AtomID(ia,ir)).x());

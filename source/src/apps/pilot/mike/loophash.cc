@@ -207,8 +207,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		// Generate alternate structures
 		core::Size starttime2 = time(NULL);
 		core::Size sampler_chunk_size = 1;
-		core::Size start_res = std::max( core::Size(2), core::Size(rand()%(pose.total_residue() - sampler_chunk_size - 2 )) );
-		core::Size stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1 )  );
+		core::Size start_res = std::max( core::Size(2), core::Size(rand()%(pose.size() - sampler_chunk_size - 2 )) );
+		core::Size stop_res  = std::min( core::Size(pose.size()), core::Size(start_res + sampler_chunk_size - 1 )  );
 
 		// If a loopfile was given choose your insertion site from there
 		TR.Info << "Selection size: " << selection.size() << std::endl;
@@ -218,7 +218,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 			numeric::random::random_permutation(temp_selection.begin(), temp_selection.end(), numeric::random::rg());
 
 			start_res = std::max( core::Size(2), core::Size( temp_selection[1] ) );
-			stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1)  );
+			stop_res  = std::min( core::Size(pose.size()), core::Size(start_res + sampler_chunk_size - 1)  );
 			TR.Info << "SubselectionSample: " << start_res << " - " << stop_res << std::endl;
 		}
 

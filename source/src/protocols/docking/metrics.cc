@@ -171,14 +171,14 @@ calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 	Real Lrmsd( 0 );
 
 	for ( Size rb_jump : movable_jumps ) {
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
-		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool temp_part( pose.size(), false );
+		ObjexxFCL::FArray1D_bool superpos_partner( pose.size(), false );
 		/// this gets the wrong partner, therefore it is stored in a temporary
 		/// array and then the opposite is put in the actualy array that is used
 		/// for superpositioning.  there is probably a better way to do this
 		/// need to check TODO
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( temp_part( i ) ) superpos_partner( i )=false;
 			else superpos_partner( i ) = true;
 		}
@@ -196,15 +196,15 @@ calc_P1rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose
 	Real P1rmsd( 0 );
 
 	for ( Size rb_jump : movable_jumps ) {
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
-		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool temp_part( pose.size(), false );
+		ObjexxFCL::FArray1D_bool superpos_partner( pose.size(), false );
 
 		/// this gets the wrong partner, therefore it is stored in a temporary
 		/// array and then the opposite is put in the actualy array that is used
 		/// for superpositioning.  there is probably a better way to do this
 		/// need to check TODO
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( temp_part( i ) ) superpos_partner( i )=true;
 			else superpos_partner( i ) = false;
 		}
@@ -220,15 +220,15 @@ calc_P2rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose
 	Real P2rmsd( 0 );
 
 	for ( Size rb_jump : movable_jumps ) {
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
-		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool temp_part( pose.size(), false );
+		ObjexxFCL::FArray1D_bool superpos_partner( pose.size(), false );
 
 		/// this gets the wrong partner, therefore it is stored in a temporary
 		/// array and then the opposite is put in the actualy array that is used
 		/// for superpositioning.  there is probably a better way to do this
 		/// need to check TODO
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( temp_part( i ) ) superpos_partner( i )=false;
 			else superpos_partner( i ) = true;
 		}
@@ -265,9 +265,9 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 		protocols::scoring::Interface interface( rb_jump );
 		interface.distance( 8.0 );
 		interface.calculate( native_docking_pose );
-		ObjexxFCL::FArray1D_bool is_interface ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool is_interface ( pose.size(), false );
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( interface.is_interface( i ) ) is_interface( i ) = true;
 		}
 
@@ -301,9 +301,9 @@ calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_po
 		protocols::scoring::Interface interface( rb_jump );
 		interface.distance( 8.0 );
 		interface.calculate( native_docking_pose );
-		ObjexxFCL::FArray1D_bool is_interface ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool is_interface ( pose.size(), false );
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( interface.is_interface( i ) ) is_interface( i ) = true;
 		}
 
@@ -336,7 +336,7 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone();
 		(*scorefxn)( native_docking_pose );
 
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool temp_part ( pose.size(), false );
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
 
 		utility::vector1< Size > partner1;
@@ -347,7 +347,7 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 		interface.calculate( native_docking_pose );
 
 		//generate list of interface residues for partner 1 and partner 2
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			if ( interface.is_interface( i ) ) {
 				if ( !temp_part( i ) ) partner1.push_back( i );
 				if ( temp_part( i ) ) partner2.push_back( i );
@@ -466,7 +466,7 @@ calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pos
 		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone();
 		(*scorefxn)( native_docking_pose );
 
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool temp_part ( pose.size(), false );
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
 
 		utility::vector1< Size > partner1;
@@ -478,7 +478,7 @@ calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pos
 
 		//generate list of interface residues for partner 1 and partner 2
 		Size cutpoint = 0;
-		for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		for ( Size i = 1; i < pose.size(); i++ ) {
 			if ( !temp_part( i ) ) {
 				cutpoint = i;
 				break;
@@ -486,7 +486,7 @@ calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pos
 		}
 		TR.Debug << "start residue id of second binding partner " << cutpoint << std::endl;
 
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( Size i = 1; i <= pose.size(); i++ ) {
 			if ( interface.is_interface( i ) ) {
 				if ( !temp_part( i ) ) partner1.push_back( i );
 				if ( temp_part( i ) ) partner2.push_back( i );
@@ -514,7 +514,7 @@ calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pos
 		//identify which native contacts are recovered in the decoy
 
 		for ( Size i = 1; i < cutpoint-1; i++ ) {
-			for ( Size j = cutpoint; j <= pose.total_residue(); j++ ) {
+			for ( Size j = cutpoint; j <= pose.size(); j++ ) {
 				ResidueOP rsd1( new Residue( pose.residue( i ) ) );
 				ResidueOP rsd2( new Residue( pose.residue( j ) ) );
 				if ( calc_res_contact( rsd2, rsd1, cutoff ) ) {
@@ -550,10 +550,10 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 			return 0.0;
 		}
 
-		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool temp_part ( pose.size(), false );
 		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
 		Size cutpoint = 0;
-		for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		for ( Size i = 1; i < pose.size(); i++ ) {
 			if ( !temp_part( i ) ) {
 				cutpoint = i;
 				break;
@@ -592,7 +592,7 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 		//    return 0.0;
 		//   }
 
-		//  ObjexxFCL::FArray2D_bool contact_list( pose.total_residue()-cutpoint+1, cutpoint-1, false);
+		//  ObjexxFCL::FArray2D_bool contact_list( pose.size()-cutpoint+1, cutpoint-1, false);
 		//   std::list< std::pair< core::Size, core::Size> > contact_list;
 		//   for ( Size i=1; i<=partner1.size(); i++ ) {
 		//    contact_list( partner1[i], partner2[i] ) = true;
@@ -603,7 +603,7 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 		//identify which native contacts are recovered in the decoy
 
 		for ( Size i = 1; i < cutpoint - 1; i++ ) {
-			for ( Size j = cutpoint; j <= pose.total_residue(); j++ ) {
+			for ( Size j = cutpoint; j <= pose.size(); j++ ) {
 				ResidueOP rsd1( new Residue( pose.residue( i ) ) );
 				ResidueOP rsd2( new Residue( pose.residue( j ) ) );
 				TR.Debug << "distance between residue pair " << i << " " << j << std::endl;

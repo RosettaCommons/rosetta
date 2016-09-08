@@ -61,7 +61,7 @@ public:
 		utility::vector1< core::Real > const by_residue_sasa(by_residue_sasa_m.value());
 
 		//print the values
-		core::Size const nres(pose.total_residue());
+		core::Size const nres(pose.size());
 		runtime_assert(nres == by_residue_sasa.size());
 		//protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
 		//std::string me(JobDistributor::get_instance()->job_outputter()->output_name( job_me ) );

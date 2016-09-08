@@ -218,9 +218,9 @@ public:
 		using namespace protocols::environment::claims;
 		using namespace core::environment;
 
-		core::environment::FoldTreeSketch new_fts( pose.total_residue() );
+		core::environment::FoldTreeSketch new_fts( pose.size() );
 		new_fts.insert_cut( CUT_POS );
-		new_fts.insert_jump( 1, pose.total_residue() );
+		new_fts.insert_jump( 1, pose.size() );
 		pose.fold_tree( *new_fts.render() );
 
 		TesterOP allowed_mover( new Tester );
@@ -285,7 +285,7 @@ public:
 	}
 
 	void test_pdb_info_persistence() {
-		core::pose::PDBInfoOP info( new core::pose::PDBInfo( pose.total_residue() ) );
+		core::pose::PDBInfoOP info( new core::pose::PDBInfo( pose.size() ) );
 		info->set_chains( 'A' );
 		pose.pdb_info( info );
 

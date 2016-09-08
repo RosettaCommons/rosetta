@@ -89,7 +89,7 @@ void WobbleMoverTest::test_wobble() {
 	movemap->set_bb( true );
 	// for (Size ii=1; ii<=6; ii++ ) {
 	// movemap->set_bb( ii, false );
-	// movemap->set_bb( pose_.total_residue()-ii, false );
+	// movemap->set_bb( pose_.size()-ii, false );
 	// TS_ASSERT( !movemap->get_bb( ii ) );
 	//}
 	Pose pose = pose_;
@@ -98,7 +98,7 @@ void WobbleMoverTest::test_wobble() {
 
 #if 0
 	kinematics::MoveMapOP hardly_moves( new kinematics::MoveMap );
-	hardly_moves->set_bb( pose_.total_residue(), true );
+	hardly_moves->set_bb( pose_.size(), true );
 	protocols::simple_moves::MinMover minimize(
 		hardly_moves,
 		get_score_function(),

@@ -88,7 +88,7 @@ DNA_EnvPairEnergy::finalize_total_energy(
 {
 	//PROF_START( basic::DNA_ENV_PAIR_ENERGY );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Real const nbr_dis2_threshold( potential_.nbr_dis2_threshold() );
 
 	/// get "centroid" positions

@@ -93,7 +93,7 @@ RemodelRotamerLinks::apply(
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		nres_asymm = symm_info->num_independent_residues();
 	} else {
-		nres_asymm = pose.total_residue();
+		nres_asymm = pose.size();
 	}
 
 	Size const nres( nres_asymm );

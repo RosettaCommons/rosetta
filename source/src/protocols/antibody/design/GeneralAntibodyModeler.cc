@@ -296,9 +296,9 @@ GeneralAntibodyModeler::get_cdrs_movemap_with_overhang(Pose  & pose, bool min_bb
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = ab_info_->get_CDR_loop(cdr, pose, overhangs_[ cdr ]);
 
-			vector1<bool> all_included_res(pose.total_residue(), false);
+			vector1<bool> all_included_res(pose.size(), false);
 			select_loop_residues( pose, cdr_loop, (include_neighbor_sc || include_neighbor_bb) ,all_included_res , neighbor_dis_);
-			for ( core::Size x = 1; x <= pose.total_residue(); ++x ) {
+			for ( core::Size x = 1; x <= pose.size(); ++x ) {
 				if ( x >= cdr_loop.start() && x <= cdr_loop.stop() ) {
 					if ( min_bb ) mm->set_bb(x, true);
 					if ( min_sc ) mm->set_chi(x, true);
@@ -318,7 +318,7 @@ GeneralAntibodyModeler::get_cdrs_movemap_with_overhang(Pose  & pose, bool min_bb
 MoveMapOP
 GeneralAntibodyModeler::get_movemap_from_task(core::pose::Pose const & pose, core::pack::task::PackerTaskCOP task) const {
 	MoveMapOP mm( new MoveMap() );
-	for ( core::Size i = 1; i<=pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i<=pose.size(); i++ ) {
 		if ( task->pack_residue(i) ) {
 			mm->set_chi(i, true);
 		}
@@ -600,7 +600,7 @@ GeneralAntibodyModeler::backrub_cdrs( core::pose::Pose & pose, bool min_sc, bool
 		utility::vector1<std::string> res_strings = option [ OptionKeys::antibody::design::add_backrub_pivots]();
 		utility::vector1<bool> add_residues = get_resnums_from_strings_with_ranges(pose, res_strings);
 		add_loops_from_bool_vector(*loops, add_residues);
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( add_residues[ i ] &&  i >= 1 ) {
 				mm->set_bb( i , true);
 				mm->set_chi(i, true);
@@ -731,7 +731,7 @@ GeneralAntibodyModeler::dock_low_res(Pose& pose, bool pack_interface ) const {
 	//TR << original_ft << std::endl;
 
 	//vector1<char> chains;
-	//for (core::Size i = 1; i <= pose.total_residue(); ++i){
+	//for (core::Size i = 1; i <= pose.size(); ++i){
 	// chains.push_back(core::pose::get_chain_from_chain_id(pose.chain(i), pose));
 	//}
 

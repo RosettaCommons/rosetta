@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 
 	core::pose::Pose mypose;
 	core::import_pose::pose_from_file (mypose, option[in::file::s]()[1]);
-	//const core::Size nres = mypose.n_residue();
+	//const core::Size nres = mypose.size();
 	printf("Import complete.\n"); fflush(stdout);
 
 	mypose.dump_scored_pdb("1_initial.pdb", (*sfxn)); printf("Wrote 1_initial.pdb.\n"); fflush(stdout);

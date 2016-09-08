@@ -310,12 +310,12 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	}
 
 	if ( !symmetry_ ) {
-		runtime_assert_msg( copy_pose.total_residue() == native.total_residue(), "the reference pose must be the same size as the working pose" );
+		runtime_assert_msg( copy_pose.size() == native.size(), "the reference pose must be the same size as the working pose" );
 	}
 
 	// generate temporary FArray
-	FArray1D_bool selection_array( pose.total_residue(), false ); // on which residues to check rmsd
-	FArray1D_bool superimpose_array( pose.total_residue(), false ); // which residues to superimpose
+	FArray1D_bool selection_array( pose.size(), false ); // on which residues to check rmsd
+	FArray1D_bool superimpose_array( pose.size(), false ); // which residues to superimpose
 
 	if ( selection_from_segment_cache_ ) {
 		core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
@@ -378,7 +378,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	///against the ref pose
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
-		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<reference_pose_->total_residue()<<" residues"<<std::endl;
+		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<reference_pose_->size()<<" residues"<<std::endl;
 	} else {
 		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
@@ -394,7 +394,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 		core::Size chain_end( 0 );
 
 		utility::vector1<core::Size> chain_ends = reference_pose_->conformation().chain_endings();
-		chain_ends.push_back( reference_pose_->total_residue() ); // chain_endings() doesn't count last residue as a chain ending (sigh)
+		chain_ends.push_back( reference_pose_->size() ); // chain_endings() doesn't count last residue as a chain ending (sigh)
 		for ( std::string::const_iterator chain_it = chains.begin(); chain_it != chains.end(); ++chain_it ) { // for each chain letter
 			char const chain = *chain_it;
 			TR.Debug << "Chain " << chain << " selected" << std::endl;
@@ -402,9 +402,9 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 				chain_end = *it;
 				core::Size const chainid = reference_pose.residue( chain_end ).chain();
 				if ( reference_pose_->pdb_info()->chain( chain_end ) == chain ) { // if chain letter of chain_end == chain specified
-					if ( chain_end == reference_pose_->total_residue() ) { // all of this because the last residue doesn't count as a chain ending. why, god, why!?
+					if ( chain_end == reference_pose_->size() ) { // all of this because the last residue doesn't count as a chain ending. why, god, why!?
 						//core::Size const chainid = reference_pose_.residue( chain_end ).chain();
-						for ( core::Size i = 1; i <= reference_pose_->total_residue(); ++i ) {
+						for ( core::Size i = 1; i <= reference_pose_->size(); ++i ) {
 							if ( (core::Size)reference_pose_->residue(i).chain() == chainid ) { // first time we hit this, we're at the start of the chain in question
 								chain_start = i;
 								break;
@@ -432,7 +432,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 			core::Size const end( core::pose::get_resnum( rmsd_tag, *reference_pose_, "end_" ) );
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
-			runtime_assert( end<=reference_pose_->total_residue() );
+			runtime_assert( end<=reference_pose_->size() );
 			for ( core::Size i=begin; i<=end; ++i ) selection_.push_back( i );
 		}
 
@@ -485,7 +485,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	if ( selection_from_segment_cache_ ) TR << " that are in pose segment observer cache at apply time." << std::endl;
 	else if ( selection_.size() == 0 ) {
 		TR << "ALL" << std::endl;
-		for ( core::Size i=1; i<=reference_pose.total_residue(); ++i ) selection_.push_back( i );
+		for ( core::Size i=1; i<=reference_pose.size(); ++i ) selection_.push_back( i );
 	} else {
 		for ( std::list<core::Size>::const_iterator it=selection_.begin(); it != selection_.end(); ++it ) TR << *it << " ";
 		TR << std::endl;

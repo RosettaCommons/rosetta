@@ -78,7 +78,7 @@ main( int argc, char * argv [] )
 	int const aa_pro = 13;
 
 	// loop over all residues, all amino acids
- 	for ( int resnum = 1,totres =  wt_NGFbound.total_residue(); resnum <= totres; ++resnum ) {
+ 	for ( int resnum = 1,totres =  wt_NGFbound.size(); resnum <= totres; ++resnum ) {
 
 		// NA DEBUG
 		//		if ( ( wt_NGFbound.pdb_info()->number(resnum) != 54 ) ) continue;
@@ -176,7 +176,7 @@ main( int argc, char * argv [] )
 			unbound_packer_task->set_bump_check( false );
 			unbound_packer_task->initialize_from_command_line();
 			unbound_packer_task->or_include_current( true );
-			for ( int resnum =1, totres = mut_NGFunbound.total_residue(); resnum <= totres; ++resnum) {
+			for ( int resnum =1, totres = mut_NGFunbound.size(); resnum <= totres; ++resnum) {
 				unbound_packer_task->nonconst_residue_task( resnum ).restrict_to_repacking();
 			}
 			unbound_packer_task->restrict_to_residues( allow_repacked );

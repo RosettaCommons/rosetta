@@ -126,8 +126,8 @@ void SequenceComparison::fill_num_neighbors( pose::Pose & pose, utility::vector1
 	core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg ); // create vertices
 	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, 10.0 /* ten angstrom distance */ ); // create edges
 
-	num_nbs.resize( pose.n_residue(), 0 );
-	for ( core::Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	num_nbs.resize( pose.size(), 0 );
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 
 		// a PointGraph is a typedef of UpperEdgeGraph< PointGraphVertexData, PointGraphEdgeData >
 		// so any of the method in UpperEdgeGraph should be avail. here. The UpperEdgeGraph provides access to nodes
@@ -190,7 +190,7 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 		// record native sequence
 		// native_sequence vector is sized for the WHOLE pose not just those being designed
 		// it doesn't matter because we only iterate over the number of designed positions
-		Size const nres( native_pose.total_residue() );
+		Size const nres( native_pose.size() );
 		utility::vector1< chemical::AA > native_sequence( nres );
 
 		// iterate over designable positions

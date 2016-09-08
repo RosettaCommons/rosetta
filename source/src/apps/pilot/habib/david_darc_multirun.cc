@@ -102,10 +102,10 @@ calpha_pdb_superimpose_pose(
 {
 	id::AtomID_Map< id::AtomID > atom_map;
   core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-  for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
     if ( ! mod_pose.residue(ii).has("CA") ) continue;
     if ( ! mod_pose.residue(ii).is_protein() ) continue;
-  	for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+  	for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
       if ( ! ref_pose.residue(jj).has("CA") ) continue;
       if ( ! ref_pose.residue(jj).is_protein() ) continue;
 std::cout<<mod_pose.pdb_info()->chain(ii)<<mod_pose.pdb_info()->number(ii)<<" "<<mod_pose.pdb_info()->chain(jj)<<mod_pose.pdb_info()->number(jj)<<std::endl;
@@ -207,7 +207,7 @@ int main( int argc, char * argv [] ) {
     central_relax_residue_number = ObjexxFCL::int_of( resid );
   }
   int seqpos = 0;
-  for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+  for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
     if ( protein_pose.pdb_info()->number(j) == central_relax_residue_number ) {
       //seqpos_ = j;
       if (chain != ' '){
@@ -288,7 +288,7 @@ int main( int argc, char * argv [] ) {
 		pose::Pose known_ligand_pose;
 		core::import_pose::pose_from_file( known_ligand_pose, known_ligand , core::import_pose::PDB_file);
 		core::Size lig_res_num = 0;
-		for ( int j = 1, resnum = known_ligand_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = known_ligand_pose.size(); j <= resnum; ++j ) {
 			if (!known_ligand_pose.residue(j).is_protein()){
 				lig_res_num = j;
 				break;
@@ -323,7 +323,7 @@ int main( int argc, char * argv [] ) {
 	//CHEAT! Calculate CoM of Ligand, move Pocket COM to COM of input_ligand
 	if (option[ cheat ]()){
 		core::Size lig_res_num = 0;
-		for ( int j = 1, resnum = small_mol_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = small_mol_pose.size(); j <= resnum; ++j ) {
 			if (!small_mol_pose.residue(j).is_protein()){
 				lig_res_num = j;
 				break;

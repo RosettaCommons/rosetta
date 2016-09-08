@@ -324,7 +324,7 @@ void GeneralizedKICperturber::reindex_AtomIDs (
 	for ( core::Size i=1, imax=atoms_.size(); i<=imax; ++i ) {
 		utility::vector1 < AtomID > newAtomIDset;
 		for ( core::Size j=1, jmax=atoms_[i].size(); j<=jmax; ++j ) { //Looping through atoms in the set
-			runtime_assert_string_msg( atoms_[i][j].rsd() <= original_pose.n_residue(), "GeneralizedKICperturber::reindex_AtomIDs can't find the specified residue." );
+			runtime_assert_string_msg( atoms_[i][j].rsd() <= original_pose.size(), "GeneralizedKICperturber::reindex_AtomIDs can't find the specified residue." );
 			runtime_assert_string_msg( original_pose.residue( atoms_[i][j].rsd() ).has( atoms_[i][j].atom() ),
 				"GeneralizedKICperturber::reindex_AtomIDs can't find atom " + atoms_[i][j].atom() + " in the specified residue." );
 			newAtomIDset.push_back(
@@ -449,7 +449,7 @@ void GeneralizedKICperturber::init_bbgmover(
 	if ( !bbgmover_ ) {
 		bbgmover_ = simple_moves::BBGaussianMoverOP( new simple_moves::BBGaussianMover() );
 
-		Size looplength = loop_pose.n_residue();
+		Size looplength = loop_pose.size();
 		//reset movemap, default is empty (no move)
 		//the first(0) and the last(N-1) res are anchors
 		//1 and N-2 res are pivots
@@ -514,7 +514,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 
 	runtime_assert_string_msg( residues.size() > 0 , "Residues must be specified for the apply_perturb_dihedral_bbg generalized kinematic closure perturber." );
 
-	core::Size nres = original_pose.n_residue();
+	core::Size nres = original_pose.size();
 	//Make a copy of the loop_pose
 	core::pose::Pose loop_pose_copy = loop_pose;
 
@@ -760,7 +760,7 @@ void GeneralizedKICperturber::apply_set_backbone_bin (
 
 	core::Size const rescount( residues.size() );
 	if ( rescount<1 ) utility_exit_with_message( "In GeneralizedKICperturber::apply_set_backbone_bin(): no residues have been specified!  Failing gracelessly." );
-	core::Size const nres( original_pose.n_residue() );
+	core::Size const nres( original_pose.size() );
 
 	utility::vector1 <core::Size> loop_indices; //The indices in the loop of the defined residues.
 	loop_indices.resize( rescount, 0 );
@@ -836,7 +836,7 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 
 	core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Must be nonconst to allow lazy loading of custom rama tables.
 
-	core::Size nres = original_pose.n_residue();
+	core::Size nres = original_pose.size();
 
 	//Make a copy of the loop_pose
 	core::pose::Pose loop_pose_copy = loop_pose; //TODO -- switch this to just a conformation.
@@ -950,7 +950,7 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_bins(
 	runtime_assert_string_msg( bin_transition_calculator_->bin_params_loaded(), "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): The BinTransitionCalculator object has not loaded a bin params file!" );
 
 	core::Size const rescount( residues.size() ); //Number of residues that have been defined for this perturber
-	core::Size const nres( original_pose.n_residue() ); //Number of residues in the original pose
+	core::Size const nres( original_pose.size() ); //Number of residues in the original pose
 
 	runtime_assert_string_msg(rescount>0, "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): At least one residue must be defined!");
 
@@ -1040,7 +1040,7 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 	runtime_assert_string_msg( bin_transition_calculator_->bin_params_loaded(), "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): The BinTransitionCalculator object has not loaded a bin params file!" );
 
 	core::Size const rescount( residues.size() ); //Number of residues that have been defined for this perturber
-	core::Size const nres( original_pose.n_residue() ); //Number of residues in the original pose
+	core::Size const nres( original_pose.size() ); //Number of residues in the original pose
 
 	runtime_assert_string_msg(rescount>0, "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): At least one residue must be defined!");
 

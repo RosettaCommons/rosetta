@@ -300,7 +300,7 @@ public:
 			locker_.erase(locker_.begin(),locker_.end());
 
 			//go through all residues, lock the first and the last CYD
-			for (Size i=1; i<=pose.total_residue(); i++) {
+			for (Size i=1; i<=pose.size(); i++) {
 				//TR << pose.residue(i).name().substr(0,3) << std::endl;
 				if (pose.residue(i).name3() == "CYS" && pose.residue(i).is_disulfide_bonded() ) {
 					locker_.push_back(i);

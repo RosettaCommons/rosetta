@@ -271,7 +271,7 @@ InvrotTreeNode::get_fixed_pt( core::pose::Pose const & pose ) const
 	std::string target_name3( (*parent_res[1].begin())->name3() );
 	core::Vector const & xyz_to_find( (*parent_res[1].begin())->nbr_atom_xyz() );
 
-	for ( Size i = 1; i<= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i<= pose.size(); ++i ) {
 		if ( pose.residue_type(i).name3() == target_name3 ) {
 			for ( Size j =1; j<= pose.residue(i).atoms().size(); ++j ) {
 				if ( xyz_to_find.distance_squared( pose.residue(i).atom(j).xyz() ) < 0.1 ) {

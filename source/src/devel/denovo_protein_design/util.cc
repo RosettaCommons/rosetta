@@ -72,8 +72,8 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 	utility::vector1< core::Size > SurfPositions;
 
 	// create two boolean vectors for designable and for repackable
-	utility::vector1< bool > designablePositions(pose.n_residue(),false);
-	utility::vector1< bool > packablePositions(pose.n_residue(),false); // packable doesn't imply designing
+	utility::vector1< bool > designablePositions(pose.size(),false);
+	utility::vector1< bool > packablePositions(pose.size(),false); // packable doesn't imply designing
 
 	// get dssp info
 	core::scoring::dssp::Dssp dssp( pose );
@@ -83,8 +83,8 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 	utility::vector1< utility::vector1< core::Size> > neighbors_; // holds neighbors of all positions
 
 
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 			core::Size currentposition = ii;
 			core::conformation::Residue const & rsd1 = pose.residue( currentposition );
 			core::Size nextneighborposition = jj;
@@ -98,7 +98,7 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 	}
 
 	using namespace basic::options;
-	for ( core::Size ii=1; ii <= pose.n_residue(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 		if ( neighbors_[ii].size() >= 19 && pose.secstruct(ii) != 'L' ) {
 			CorePositions.push_back(ii);
 			if ( option[ OptionKeys::DenovoProteinDesign::redesign_core ].value() == true ) {
@@ -122,7 +122,7 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 	// residues that are not designable and are not neighbors of designables are held fixed
 
 	// set true those positions that are packable
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( designablePositions[ii] == true ) {
 			packablePositions[ii] = true;
 			for ( core::Size jj = 1; jj <= neighbors_[ii].size(); ++jj ) {
@@ -137,7 +137,7 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 	operation::RestrictResidueToRepackingOP allowrepacking( new operation::RestrictResidueToRepacking );
 
 
-	for ( core::Size ii = 1; ii <= pose.n_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		if ( packablePositions[ii] == false ) {  // if a position is false in the packablePositions vector then it is prevented from repacking
 
@@ -182,8 +182,8 @@ core::Size numberhelices( core::pose::Pose & pose ){
 	utility::vector1< utility::vector1< core::Size > > Total_SS_E;
 	Total_SS_E.clear();
 
-	for ( core::Size ii = 1; ii <= pose.n_residue(); ++ii ) {
-		if ( ii != pose.n_residue() ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		if ( ii != pose.size() ) {
 			if ( pose.secstruct(ii) == pose.secstruct(ii+1) ) {
 				Ind_SS_E.push_back(ii);
 			}
@@ -193,7 +193,7 @@ core::Size numberhelices( core::pose::Pose & pose ){
 				Ind_SS_E.clear();
 			}
 		}
-		if ( ii == pose.n_residue() ) {
+		if ( ii == pose.size() ) {
 			if ( pose.secstruct(ii) == pose.secstruct(ii-1) ) { Ind_SS_E.push_back(ii); Total_SS_E.push_back(Ind_SS_E); }
 			if ( pose.secstruct(ii) != pose.secstruct(ii-1) ) {
 				Total_SS_E.push_back(Ind_SS_E); // if current_pose.secstruct[i] != current_pose.secstruct[i-1] then the last residue is a new SS Element so pushback previous element
@@ -232,7 +232,7 @@ void create_nucleated_sequence_from_template_pdb( std::string & nucleated_sequen
 	if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence ].value() == true ) {
 		nucleated_sequence = template_pose.sequence();
 	} else {
-		for ( core::Size pos = 1; pos <= template_pose.n_residue(); pos++ ) {
+		for ( core::Size pos = 1; pos <= template_pose.size(); pos++ ) {
 
 			if (  (template_pose.residue( pos ).is_polar()) ) {  nucleated_sequence += devel::denovo_protein_design::random_polar_aa();  }
 			if ( !(template_pose.residue( pos ).is_polar()) ) {  nucleated_sequence += devel::denovo_protein_design::random_apolar_aa(); }
@@ -240,8 +240,8 @@ void create_nucleated_sequence_from_template_pdb( std::string & nucleated_sequen
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::use_template_topology ].value() == true ) {
-		KeepNativeTorsions.resize( template_pose.n_residue(), false );
-		for ( core::Size seqpos = 1; seqpos <= template_pose.total_residue(); ++seqpos ) {
+		KeepNativeTorsions.resize( template_pose.size(), false );
+		for ( core::Size seqpos = 1; seqpos <= template_pose.size(); ++seqpos ) {
 
 			if ( template_pose.secstruct( seqpos ) == 'L' || template_pose.secstruct( seqpos - 1 ) == 'L' || template_pose.secstruct( seqpos + 1) == 'L' ) {
 				KeepNativeTorsions[seqpos] = true;

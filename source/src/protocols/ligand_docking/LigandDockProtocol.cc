@@ -284,7 +284,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	scorefxn_ = hard_scorefxn_;
 
 
-	//movemap->show(TR, pose.n_residue());
+	//movemap->show(TR, pose.size());
 	// Do the final, "tight" minimization of all DOFs
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
@@ -471,7 +471,7 @@ LigandDockProtocol::random_conformer(
 	using core::conformation::ResidueOP;
 
 	if ( option[ OptionKeys::docking::ligand::random_conformer ]() ) {
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).is_polymer() ) continue;
 			//(*scorefxn_)( pose ); scorefxn_->accumulate_residue_total_energies( pose ); std::cout << "Constraints before: " << pose.energies().total_energies()[ core::scoring::dihedral_constraint ] << std::endl;
 			RandomConformerMoverOP rcm( new RandomConformerMover(i) );
@@ -749,7 +749,7 @@ void print_buried_unsat_Hbonds(core::pose::Pose const & bound, core::pose::Pose 
 	calc_bound.get("atom_bur_unsat", map_bound, bound);
 	calc_unbound.get("atom_bur_unsat", map_unbound, unbound);
 	// This is ridiculously inefficient but I don't see a better way...
-	for ( core::Size r = 1; r <= map_bound.value().n_residue(); ++r ) {
+	for ( core::Size r = 1; r <= map_bound.value().size(); ++r ) {
 		for ( core::Size a = 1; a <= map_bound.value().n_atom(r); ++a ) {
 			if ( map_bound.value()(r,a) && !map_unbound.value()(r,a) ) {
 				TR << "Unsatisfied interface H-bond: " << bound.residue_type(r).name3() << " " << r << " " << bound.residue_type(r).atom_name(a) << std::endl;
@@ -841,9 +841,9 @@ LigandDockProtocol::append_ligand_docking_scores(
 	// Ligands tend to bind in outstretched conformations...
 	core::Real lig_rg = 0;
 	int lig_rg_natoms = 0;
-	ObjexxFCL::FArray1D_bool is_upstream ( before.total_residue(), false );
+	ObjexxFCL::FArray1D_bool is_upstream ( before.size(), false );
 	before.fold_tree().partition_by_jump( jump_id, is_upstream );
-	for ( core::Size i = 1, i_end = before.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = before.size(); i <= i_end; ++i ) {
 		if ( is_upstream(i) ) continue; // only downstream residues
 		core::conformation::Residue const & rsd = before.residue(i);
 		for ( core::Size j = 1, j_end = rsd.nheavyatoms(); j <= j_end; ++j ) {
@@ -886,7 +886,7 @@ LigandDockProtocol::restrain_ligand_chis(
 	if ( option[ OptionKeys::docking::ligand::use_ambig_constraints ] ) {
 		constrain_ligand_torsions(pose, ligand_chi_stddev_deg_);
 	} else {
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).is_polymer() ) continue;
 			ligand_torsion_restraints_.push_back( protocols::ligand_docking::ResidueTorsionRestraintsOP( new protocols::ligand_docking::ResidueTorsionRestraints(pose, i, ligand_chi_stddev_deg_) ) );
 		}

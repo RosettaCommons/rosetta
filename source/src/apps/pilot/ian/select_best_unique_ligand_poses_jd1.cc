@@ -102,7 +102,7 @@ main( int argc, char * argv [] )
 			a_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( native_pose == NULL ) atdiff.read_pose(tag, *a_pose);
 			else atdiff.read_pose(tag, *a_pose, *native_pose);
-			core::Size const last_rsd = a_pose->total_residue();
+			core::Size const last_rsd = a_pose->size();
 			core::Real rms = 1e99;
 			utility::vector1 < core::Real > rms_list;
 			for ( core::Size j = 1; j <= selected_poses.size(); ++j ) {

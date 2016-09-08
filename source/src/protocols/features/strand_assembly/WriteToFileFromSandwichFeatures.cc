@@ -175,7 +175,7 @@ prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files(
 
 	if ( write_electrostatic_interactions_of_all_residues_ ) {
 		// <begin> store RKDE to a database table
-		for ( Size ii=1; ii<=pose.total_residue(); ii++ ) {
+		for ( Size ii=1; ii<=pose.size(); ii++ ) {
 			if (
 					(pose.residue_type(ii).name3() == "ARG")
 					|| (pose.residue_type(ii).name3() == "LYS")
@@ -362,7 +362,7 @@ write_beta_sheet_capping_info_to_a_file(
 		for ( int jj = residue_end - primary_seq_distance_cutoff_for_beta_sheet_capping_before_C_term_capping_;
 				jj <= residue_end + primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping_;
 				jj++ ) { // per each beta-strand
-			if ( jj > static_cast<int>(pose.total_residue()) ) {
+			if ( jj > static_cast<int>(pose.size()) ) {
 				capping_near_end = true; // I assume that capping_near_end is not necessary for the last strand
 				break;
 			}
@@ -1049,7 +1049,7 @@ write_p_aa_pp_of_AAs_to_a_file(
 	p_aa_pp_file.open(p_aa_pp_file_name.c_str());
 	p_aa_pp_file << "residue_number\tres_type\tp_aa_pp" << endl;
 
-	for ( Size ii=1; ii<=dssp_pose.total_residue(); ii++ ) {
+	for ( Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 		core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
 		Real resi_p_aa_pp = em1[core::scoring::p_aa_pp];
 
@@ -1123,7 +1123,7 @@ write_phi_psi_of_each_residue_to_a_file(
 		phi_psi_file.open(phi_psi_file_name.c_str());
 		phi_psi_file << "tag\tres_num\tres_type\tdssp\tphi\tpsi" << endl;
 
-		for ( core::Size ii=1; ii<=dssp_pose.total_residue(); ii++ ) {
+		for ( core::Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 			char res_ss( dssp_pose.secstruct( ii ) ) ;
 			Real phi = dssp_pose.phi(ii);
 			Real psi = dssp_pose.psi(ii);
@@ -1153,7 +1153,7 @@ write_rama_of_AAs_to_a_file(
 	rama_file.open(rama_file_name.c_str());
 	rama_file << "residue_number\t\tres_type\trama" << endl;
 
-	for ( Size ii=1; ii<=dssp_pose.total_residue(); ii++ ) {
+	for ( Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 		core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
 		Real rama_at_this_AA = em1[core::scoring::rama];
 
@@ -1293,7 +1293,7 @@ write_resfile_to_a_file_when_seq_rec_is_bad(
 	}
 
 	resfile_stream << "# NOTAA\tCFMWY for loop residues" << endl;
-	for ( Size i =1; i<=(pose.total_residue()); i++ ) {
+	for ( Size i =1; i<=(pose.size()); i++ ) {
 		string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id, db_session, i);
 		if ( edge_or_core == "loop" || edge_or_core == "short_edge" ) {
 			resfile_stream << i << "\tA\tEX\t1\tNOTAA\tCFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
@@ -1369,7 +1369,7 @@ write_resfile_to_a_file_when_seq_rec_is_bad(
 	}
 
 	surface_loop_resfile_stream << "# NOTAA\tCFMWY for loop residues" << endl;
-	for ( Size i =1; i<=(pose.total_residue()); i++ ) {
+	for ( Size i =1; i<=(pose.size()); i++ ) {
 		string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id, db_session, i);
 		if ( edge_or_core == "loop" || edge_or_core == "short_edge" ) {
 			surface_loop_resfile_stream << i << "\tA\tEX\t1\tNOTAA\tCFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
@@ -1421,7 +1421,7 @@ write_resfile_to_a_file(
 		}
 	}
 
-	for ( Size residue_num = 1;  residue_num <=  pose.total_residue(); residue_num++ ) {
+	for ( Size residue_num = 1;  residue_num <=  pose.size(); residue_num++ ) {
 		string id = see_edge_or_core_or_loop_or_short_edge (struct_id,  db_session, residue_num);
 		if ( id == "loop" ) {
 			resfile_stream << residue_num << " A NOTAA CFWY #loop" << endl;

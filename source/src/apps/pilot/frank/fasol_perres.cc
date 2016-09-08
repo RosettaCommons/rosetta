@@ -137,7 +137,7 @@ class FaSolReporter : public protocols::moves::Mover {
 		bur_type++;
 	}
 
-	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		core::conformation::Residue const & rsd1( pose.residue(ires) );
 		if ( !rsd1.is_protein() ) continue;
 		if ( rsd_sasa[ires] != 0 ) continue;
@@ -238,7 +238,7 @@ class FaSolReporter : public protocols::moves::Mover {
 		}
 		std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
 
-		TR << base_name << " " << pose.pdb_info()->number(ires) << " " << pose.total_residue()
+		TR << base_name << " " << pose.pdb_info()->number(ires) << " " << pose.size()
 			<< " " << pose.residue(ires).name1() << " " << fa_sol_i+lk_ball_i << " " << fa_atr_i+fa_rep_i << " " << burial_i << std::endl;
 	}
 

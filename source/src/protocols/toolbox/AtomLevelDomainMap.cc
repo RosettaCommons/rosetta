@@ -336,7 +336,7 @@ AtomLevelDomainMap::calculate_atom_id_domain_map( core::pose::Pose const & pose 
 {
 	std::map< core::id::AtomID, Size > calculated_atom_id_domain_map;
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 
@@ -359,13 +359,13 @@ AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
 
 	using namespace core::id;
 
-	runtime_assert( pose.total_residue() == atom_id_mapper_->nres() );
+	runtime_assert( pose.size() == atom_id_mapper_->nres() );
 
 	mm.set_bb( false );
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		utility::vector1< TorsionID > torsion_ids;
 		for ( Size torsion_number = 1; torsion_number <= pose.residue( i ).mainchain_torsions().size(); torsion_number++ ) {
@@ -408,7 +408,7 @@ AtomLevelDomainMap::initialize( core::pose::Pose const & pose,
 	// need a map to a reference pose without variants.
 	atom_id_mapper_ = AtomID_MapperCOP( new AtomID_Mapper( pose, map_to_vanilla_pose ) );
 
-	utility::vector1< Size > fixed_domain( pose.total_residue(), 0 );
+	utility::vector1< Size > fixed_domain( pose.size(), 0 );
 	if ( full_model_info_defined( pose ) ) {
 		// Pose can store some information on separate domains... check inside.
 		// Any domains that are not claimed as fixed_domains will be assigned domain 0 (i.e., free)
@@ -416,7 +416,7 @@ AtomLevelDomainMap::initialize( core::pose::Pose const & pose,
 		runtime_assert( allow_insert_res.size() == 0 ); // allow_insert_res is a legacy of rna_denovo with params files.
 	}
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 			AtomID const atom_id( j, i );
 			if ( atom_id_mapper_->has_atom_id( atom_id ) ) {
@@ -443,14 +443,14 @@ void
 AtomLevelDomainMap::disallow_movement_of_input_res( core::pose::Pose const & pose ) {
 	using namespace core::pose::full_model_info;
 
-	utility::vector1< Size > input_domain( pose.total_residue(), 0 );
+	utility::vector1< Size > input_domain( pose.size(), 0 );
 	runtime_assert ( full_model_info_defined( pose ) );
 
 	// Pose can store some information on separate domains... check inside.
 	// Any domains that are not claimed as input_domains will be assigned domain 0 (i.e., free)
 	input_domain = get_input_domain_from_full_model_info_const( pose );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 			AtomID const atom_id( j, i );
 			if ( atom_id_mapper_->has_atom_id( atom_id ) ) {
@@ -465,7 +465,7 @@ AtomLevelDomainMap::disallow_movement_of_input_res( core::pose::Pose const & pos
 void
 AtomLevelDomainMap::update_to_not_move_last_virtual_residue( pose::Pose const & pose )
 {
-	Size n = pose.total_residue();
+	Size n = pose.size();
 	if ( pose.residue_type( n ).aa() == core::chemical::aa_vrt && get( n ) /* moving */ ) set( n, false );
 }
 
@@ -475,7 +475,7 @@ void
 AtomLevelDomainMap::update_to_not_move_virtual_phosphates( pose::Pose const & pose )
 {
 	using namespace chemical;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) ) {
 			set_phosphate( n, pose, false );
 		}
@@ -486,7 +486,7 @@ AtomLevelDomainMap::update_to_not_move_virtual_phosphates( pose::Pose const & po
 void
 AtomLevelDomainMap::update_to_move_internal_phosphates( pose::Pose const & pose ) {
 	// new -- make sure loops are moveable (& closeable!) at the 3'-endpoint
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( pose.residue_type( i   ).is_RNA() &&
 				pose.residue_type( i+1 ).is_RNA() &&
 				get_domain( id::NamedAtomID( " C1'", i ), pose ) == 0 &&

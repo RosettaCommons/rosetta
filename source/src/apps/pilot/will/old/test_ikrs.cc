@@ -1219,12 +1219,12 @@ int main (int argc, char *argv[]) {
 
 		string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
 		core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 			if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
 		}
 		Pose pala(pose);
-		for(Size ir = 1; ir <= pala.n_residue(); ++ir) {
+		for(Size ir = 1; ir <= pala.size(); ++ir) {
 			if(pala.residue(ir).name3()!="GLY") pala.replace_residue(ir,ala.residue(1),true);
 		}
 
@@ -1246,12 +1246,12 @@ int main (int argc, char *argv[]) {
 
 		TR << "scanning LYS-LG-OOC" << std::endl;
 		vector1<HitOP> khits; {
-			vector1<vector1<HitOP> > hitsvec(pose.n_residue());
+			vector1<vector1<HitOP> > hitsvec(pose.size());
 			Size nhit=0;
 			#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
 			#endif
-			for(int ir = 3; ir <= (int)pose.n_residue()-2; ++ir) {
+			for(int ir = 3; ir <= (int)pose.size()-2; ++ir) {
 				if(sasa[ir] > 0.1) continue;
 				Pose wp,lg;
 				#ifdef USE_OPENMP
@@ -1259,7 +1259,7 @@ int main (int argc, char *argv[]) {
 				#endif
 							{ wp=pose; lg=ctp; }
 							wp.replace_residue(ir,lys.residue(1),true);
-							for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
+							for(Size jr = 3; jr <= pose.size()-2; ++jr) {
 								if(ir==(int)jr) continue;
 								if(sasa[jr] > 0.1) continue;
 								//if( (ir*jr+jr+3*ir+999999999)%10!=0 ) continue;
@@ -1269,7 +1269,7 @@ int main (int argc, char *argv[]) {
 								ik_lys_ctp_glu(wp,ir,jr,ifc,hitsvec[ir],lg);
 							}
 							nhit += hitsvec[ir].size();
-							if(ir%3==0) TR << Real(ir-2)/Real(pose.n_residue()-4) * 100.0 << " percent done ik_lys_ctp " << nhit << " hits" << std::endl;
+							if(ir%3==0) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_lys_ctp " << nhit << " hits" << std::endl;
 						}
 						for(vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i) khits.insert(khits.end(),i->begin(),i->end());
 						hitsvec.clear(); // recover mem
@@ -1277,12 +1277,12 @@ int main (int argc, char *argv[]) {
 
 					TR << "scanning ARG-OOC" << std::endl;
 					vector1<HitOP> rhits; {
-						vector1<vector1<HitOP> > hitsvec(pose.n_residue());
+						vector1<vector1<HitOP> > hitsvec(pose.size());
 						Size nhit=0;
 				#ifdef USE_OPENMP
 				#pragma omp parallel for schedule(dynamic,1)
 				#endif
-			for(int ir = 3; ir <= (int)pose.n_residue()-2; ++ir) {
+			for(int ir = 3; ir <= (int)pose.size()-2; ++ir) {
 				if(sasa[ir] > 0.1) continue;
 				//TR << ir << std::endl;
 				Pose wp,lg;
@@ -1291,7 +1291,7 @@ int main (int argc, char *argv[]) {
 				#endif
 				{ wp=pose; lg=ctp; }
 				wp.replace_residue(ir,arg.residue(1),true);
-				for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
+				for(Size jr = 3; jr <= pose.size()-2; ++jr) {
 					if(ir==(int)jr) continue;
 					if(sasa[jr] > 0.1) continue;
 					//if( (ir*jr+jr+3*ir+999999999)%5!=0 ) continue;
@@ -1303,7 +1303,7 @@ int main (int argc, char *argv[]) {
 					ik_arg_glu_side(wp,ir,jr,ifc,hitsvec[ir],lg);
 				}
 				nhit += hitsvec[ir].size();
-				if(ir%3==0) TR << Real(ir-2)/Real(pose.n_residue()-4) * 100.0 << " percent done ik_arg " << nhit << " hits" << std::endl;
+				if(ir%3==0) TR << Real(ir-2)/Real(pose.size()-4) * 100.0 << " percent done ik_arg " << nhit << " hits" << std::endl;
 			}
 			for(vector1<vector1<HitOP> >::const_iterator i = hitsvec.begin(); i != hitsvec.end(); ++i) rhits.insert(rhits.end(),i->begin(),i->end());
 			hitsvec.clear(); // recover mem
@@ -1528,7 +1528,7 @@ int main (int argc, char *argv[]) {
 								Size r2 = rhit.rsd2;
 								Size r3 = shit.rsd1;
 								Size r4 = shit.rsd2;
-								Size r5 = tmp3.n_residue();
+								Size r5 = tmp3.size();
 								Size r6 = khit.rsd1;
 								Size r7 = khit.rsd2;
 
@@ -1549,7 +1549,7 @@ int main (int argc, char *argv[]) {
 								tmp3.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-2 ,r7), AtomID(tmp2.residue(7).nheavyatoms()-1,r7), AtomID(iO1,r5), FuncOP( new core::scoring::func::HarmonicFunc(PI*2.0/3.0,0.05)) ) ) ));
 								tmp3.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-1 ,r7), AtomID(iO1, r5), AtomID(iC5,r5), FuncOP( new core::scoring::func::HarmonicFunc(1.838,0.05) ) ) ) ) );
 
-								for(Size ir = 1; ir < tmp3.n_residue(); ++ir) {
+								for(Size ir = 1; ir < tmp3.size(); ++ir) {
 									tmp3.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(2,ir), AtomID(2,100), tmp3.xyz(AtomID(2,ir)) , FuncOP( new core::scoring::func::HarmonicFunc(0,1.0) ) ) ) ) );
 								}
 

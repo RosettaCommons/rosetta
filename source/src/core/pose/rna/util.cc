@@ -92,7 +92,7 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 	using namespace core::chemical;
 
 	//Look for chainbreaks in PDB.
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	kinematics::FoldTree f( nres );
 
 	Size m( 0 );
@@ -135,7 +135,7 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 void
 virtualize_5prime_phosphates( pose::Pose & pose ){
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
 				!pose.residue_type( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
@@ -156,7 +156,7 @@ is_cutpoint_open( Pose const & pose, Size const i ) {
 
 	if ( i < 1 ) return true; // user may pass zero -- sometimes checking if we are at a chain terminus, and this would corresponde to n-1 with n=1.
 
-	if ( i >= pose.total_residue() ) return true;
+	if ( i >= pose.size() ) return true;
 
 	if ( ! pose.fold_tree().is_cutpoint(i) ) return false;
 
@@ -172,7 +172,7 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 
 	static Real const CHAINBREAK_CUTOFF2 ( 2.5 * 2.5 );
 
-	if ( i >= pose.total_residue() ) return true;
+	if ( i >= pose.size() ) return true;
 	if ( i < 1 ) return true;
 
 	conformation::Residue const & current_rsd( pose.residue( i   ) ) ;
@@ -598,7 +598,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 
 	using namespace core::chemical;
 
-	runtime_assert( res_to_add < pose.total_residue() );
+	runtime_assert( res_to_add < pose.size() );
 	if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
 
 	remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res_to_add );
@@ -834,7 +834,7 @@ is_cutpoint_closed_torsion(
 
 	if ( upper_seq_num == 1 ) return false;
 
-	if ( lower_seq_num == pose.total_residue() ) return false;
+	if ( lower_seq_num == pose.size() ) return false;
 
 	if ( pose.residue_type( lower_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 		if ( pose.residue_type( upper_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ) {
@@ -861,7 +861,7 @@ apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size cons
 	using namespace core::chemical;
 	using namespace ObjexxFCL;
 
-	runtime_assert( pose.total_residue() >= seq_num );
+	runtime_assert( pose.size() >= seq_num );
 	if ( pose.residue_type( seq_num ).has_variant_type( VIRTUAL_RNA_RESIDUE ) ) return;
 	// AMW TODO: no reason these should actually be incompatible!
 	//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
@@ -895,14 +895,14 @@ apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size cons
 			std::cerr << pose.fold_tree();
 			utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". The residue is 5' of a OPEN cutpoint" );
 		}
-		if ( pose.total_residue() == seq_num ) {
-			utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". pose.total_residue() == seq_num" );
+		if ( pose.size() == seq_num ) {
+			utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". pose.size() == seq_num" );
 		}
 	}
 
 	pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
 
-	if ( ( pose.total_residue() != seq_num ) &&  ( !is_cutpoint_open ) ) { //April 6, 2011
+	if ( ( pose.size() != seq_num ) &&  ( !is_cutpoint_open ) ) { //April 6, 2011
 		pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
 	}
 }
@@ -914,7 +914,7 @@ remove_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num
 	using namespace core::chemical;
 	using namespace ObjexxFCL;
 
-	runtime_assert( seq_num < pose.total_residue() );
+	runtime_assert( seq_num < pose.size() );
 	pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_RNA_RESIDUE, seq_num );
 	pose::remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, seq_num + 1 );
 }
@@ -927,9 +927,9 @@ has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num ){
 
 	if ( ! pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return false;
 
-	if ( ( seq_num + 1 ) > pose.total_residue() ) { //Check in range
+	if ( ( seq_num + 1 ) > pose.size() ) { //Check in range
 		TR << "( seq_num + 1 ) = " << ( seq_num + 1 )  << std::endl;
-		utility_exit_with_message( "( seq_num + 1 ) > pose.total_residue()!" );
+		utility_exit_with_message( "( seq_num + 1 ) > pose.size()!" );
 	}
 
 	if ( ! pose.residue_type( seq_num + 1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ) {
@@ -1014,7 +1014,7 @@ get_op2_op1_sign( pose::Pose const & pose ) {
 	Real sign= 0;
 	bool found_valid_sign=false;
 
-	for ( Size i = 2; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 2; i <= pose.size(); i++ ) {
 
 		conformation::Residue const & rsd( pose.residue( i )  );
 		if ( !rsd.is_RNA() ) continue;
@@ -1034,7 +1034,7 @@ get_op2_op1_sign( pose::Pose const & pose ) {
 Real
 get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
 
-	if ( res_num > pose.total_residue() ) utility_exit_with_message("res_num > pose.total_residue()");
+	if ( res_num > pose.size() ) utility_exit_with_message("res_num > pose.size()");
 
 	conformation::Residue const & rsd( pose.residue(res_num)  );
 
@@ -1059,7 +1059,7 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 	make_pose_from_sequence( mini_pose, "aa", pose.residue_type( 1 ).residue_type_set());
 	Real const sign2 = get_op2_op1_sign( mini_pose);
 
-	for ( Size res_num=1; res_num<=pose.total_residue(); res_num++ ) {
+	for ( Size res_num=1; res_num<=pose.size(); res_num++ ) {
 
 		if ( !pose.residue( res_num ).is_RNA() ) continue;
 		Real sign1 = get_op2_op1_sign( pose,  res_num);
@@ -1084,7 +1084,7 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 add_virtual_O2Prime_hydrogen( core::pose::Pose & pose ){
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_RNA() ) continue;
 		pose::add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
 	}

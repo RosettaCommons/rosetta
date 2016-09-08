@@ -140,7 +140,7 @@ vector1< vector1< core::Real > >  FragSetFromH5Mover::get_ss_prediction(const co
 	//The psipred tool does not output %helical etc.  So I'm going to use the svm
 	if ( use_svm_ ) {
 		std::string sequence;
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pose.residue( i ).is_protein() ) sequence += pose.residue( i ).name1();
 		}
 		prediction_by_pct = ss_predictor_->predict_ss( sequence );
@@ -149,7 +149,7 @@ vector1< vector1< core::Real > >  FragSetFromH5Mover::get_ss_prediction(const co
 	runtime_assert( psipred_interface_ != 0 );
 	std::string currentSS = pose.secstruct();
 	PsiPredResult const psipred_result = psipred_interface_->run_psipred( pose, currentSS );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 	prediction_by_pct.push_back(psipred_result.psipred_prob[i]);
 	}
 	}
@@ -246,7 +246,7 @@ void FragSetFromH5Mover::apply(core::pose::Pose & pose){
 		core::pose::Pose chosenPose = pose;
 		if ( use_pose_ ) {
 			chosenPose = get_selected_pose(pose);
-			numbRes = chosenPose.total_residue();
+			numbRes = chosenPose.size();
 		} else {
 			if ( ss_.size()>0 ) {
 				numbRes = ss_.size();

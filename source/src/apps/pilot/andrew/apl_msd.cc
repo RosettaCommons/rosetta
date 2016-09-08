@@ -109,7 +109,7 @@ int main( int argc, char ** argv )
 	// set up sequence randomizer
 	PositionSpecificRandomizer::OP rand = new PositionSpecificRandomizer;
 	rand->set_mutation_rate( option[ ms::mutate_rate ]() );
-	for ( Size ii = 1; ii <= ds->entity_task()->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= ds->entity_task()->size(); ++ii ) {
 		EntityElements ii_elements =
 			protocols::multistate_design::list_amino_acid_options(
 			ii, ds->entity_task()->residue_task( ii ) );

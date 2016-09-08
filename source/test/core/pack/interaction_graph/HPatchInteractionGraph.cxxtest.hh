@@ -183,10 +183,10 @@ public:
 
 
 		// initialize some other variables that are used in the SimAnnealers constructor
-		bestrotamer_at_seqpos.dimension( pose.total_residue() );
+		bestrotamer_at_seqpos.dimension( pose.size() );
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.size(), 0 );
 		ObjexxFCL::FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdhig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
@@ -260,9 +260,9 @@ public:
 		// to get the right sasas on the BG Nodes we have to exclude them from the sasa calculations
 		//
 		id::AtomID_Map< bool > atom_subset;
-		atom_subset.resize( pose.n_residue() );
+		atom_subset.resize( pose.size() );
 		// init all heavy atoms to true and all H's to false
-		for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		for ( Size ii=1; ii <= pose.size(); ++ii ) {
 			atom_subset.resize( ii, pose.residue_type(ii).natoms(), false );
 			for ( Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
 				atom_subset[ ii ][ jj ] = true;
@@ -779,7 +779,7 @@ public:
 		// --- InteractionGraph ---
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.size(), 0 );
 		ObjexxFCL::FArray1D< PackerEnergy > rot_freq; rot_freq.dimension( pdhig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
@@ -809,9 +809,9 @@ public:
 
 		// create an atom_subset mask that will tell calc_per_atom_sasa to ignore all H's
 		id::AtomID_Map< bool > atom_subset;
-		atom_subset.resize( pose.n_residue() );
+		atom_subset.resize( pose.size() );
 		// init all heavy atoms to true and all H's to false
-		for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		for ( Size ii=1; ii <= pose.size(); ++ii ) {
 			atom_subset.resize( ii, pose.residue_type(ii).natoms(), false );
 			for ( Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
 				atom_subset[ ii ][ jj ] = true;
@@ -883,7 +883,7 @@ public:
 		/// Parameters passed by reference in annealers constructor to which it writes at the completion of sim annealing.
 		bool start_with_current = false;
 		bool calc_rot_freq = false;
-		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.total_residue(), 0 );
+		ObjexxFCL::FArray1D_int current_rot_index; current_rot_index.dimension( pose.size(), 0 );
 		ObjexxFCL::FArray1D< PackerEnergy > linmem_ig_test_rot_freq( lmhig->get_num_total_states(), 0.0 );
 		utility::vector0<int> rot_to_pack;
 
@@ -910,9 +910,9 @@ public:
 
 		// create an atom_subset mask that will tell calc_per_atom_sasa to ignore all H's
 		id::AtomID_Map< bool > atom_subset;
-		atom_subset.resize( pose.n_residue() );
+		atom_subset.resize( pose.size() );
 		// init all heavy atoms to true and all H's to false
-		for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		for ( Size ii=1; ii <= pose.size(); ++ii ) {
 			atom_subset.resize( ii, pose.residue_type(ii).natoms(), false );
 			for ( Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
 				atom_subset[ ii ][ jj ] = true;

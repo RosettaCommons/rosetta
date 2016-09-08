@@ -69,7 +69,7 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 	using core::Size;
 
 	Size const loop_size  ( stop_ - start_ + 1 );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// Special case if we are extending the loop????
 
@@ -146,7 +146,7 @@ bool
 Loop::is_terminal( core::pose::Pose const & pose ) const
 {
 	if ( start() == 1 )                  return true;     // loop start at first residue
-	if ( stop() == pose.total_residue() ) return true;     // loop end at last residue
+	if ( stop() == pose.size() ) return true;     // loop end at last residue
 	if ( !pose.residue( start() -1 ).is_protein() )   return true;  // residue before start is not protein
 	if ( !pose.residue( stop()   +1 ).is_protein() )   return true;  // residue after end is not protein
 	if ( pose.chain( start() -1 ) != pose.chain( start() ) )  return true; // residues before start is other chain

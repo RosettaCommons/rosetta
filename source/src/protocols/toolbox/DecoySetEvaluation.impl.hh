@@ -38,11 +38,11 @@ void DecoySetEvaluation::push_back_CA_xyz_from_silent_file( Size n_decoys_in, Si
 	core::pose::Pose pose;
 	begin->fill_pose( pose);
 	Size pos = 1;
-	for ( ; pos <= pose.total_residue(); ++pos ) {
+	for ( ; pos <= pose.size(); ++pos ) {
 		if ( !pose.residue( pos ).is_protein() ) break;
 	}
 	--pos;
-	if ( pos < pose.total_residue() ) {
+	if ( pos < pose.size() ) {
 		_impl_tr.Warning << "Found no CA in sequnce at position " << pos+1 << " Will stop pool before this position... " << std::endl;
 		set_n_atom( pos );
 	}

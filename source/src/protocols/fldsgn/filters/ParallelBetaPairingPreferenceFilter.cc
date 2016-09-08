@@ -164,7 +164,7 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 			Size jres( spair.residue_pair( ires ) );
 			float score1 = dssp.bb_pair_score( ires, jres );
 			float score2( 0.0 );
-			if ( jres <= pose.total_residue() ) {
+			if ( jres <= pose.size() ) {
 				score2 = dssp.bb_pair_score( ires, jres+1 );
 			}
 

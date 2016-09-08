@@ -128,7 +128,7 @@ AddMover::apply( core::pose::Pose & viewer_pose, StepWiseMove const & swa_move )
 	using namespace core::pose::full_model_info;
 
 	Pose pose = viewer_pose; // hard copy -- try to avoid graphics problems when variants are added.
-	runtime_assert( pose.total_residue() >= 1 );
+	runtime_assert( pose.size() >= 1 );
 
 	// will record which new dofs added.
 	suite_num_ = 0;
@@ -150,7 +150,7 @@ AddMover::apply( core::pose::Pose & viewer_pose, StepWiseMove const & swa_move )
 	} else {
 		do_prepend( pose );
 	}
-	if ( pose.total_residue() == 2 && pose.fold_tree().num_jump() == 0 ) pose.fold_tree( kinematics::FoldTree( 2 ) ); //special 'from scratch' case.
+	if ( pose.size() == 2 && pose.fold_tree().num_jump() == 0 ) pose.fold_tree( kinematics::FoldTree( 2 ) ); //special 'from scratch' case.
 
 	fix_up_jump_atoms_and_residue_type_variants( pose );
 
@@ -185,7 +185,7 @@ AddMover::do_append( core::pose::Pose & pose ){
 	Size const offset = res_to_add_in_full_model_numbering_ - res_to_build_off_in_full_model_numbering_;
 	// addition to strand ending (append)
 	if ( swa_move_.attachment_type() != JUMP_DOCK ) {
-		runtime_assert( res_to_build_off == pose.total_residue() ||
+		runtime_assert( res_to_build_off == pose.size() ||
 			res_list[ res_to_build_off ] < res_list[ res_to_build_off + 1 ] - 1 );
 		runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
 	}

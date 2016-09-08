@@ -377,7 +377,7 @@ PB::write_pqr(
 	utility::vector1<Size> charged_chains;
 	charged_chains.push_back(1);
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	Size number( 0 );
 
 	for ( Size i=1; i<= nres; ++i ) {
@@ -435,7 +435,7 @@ PB::write_config(
 	numeric::xyzVector <core::Real> min_r(9999,9999,9999);
 	numeric::xyzVector <core::Real> max_r(-9999,-9999,-9999);
 	// Find the min & max coords within the moleculer system to define the grid.
-	for ( core::Size ires=1; ires<=pose.total_residue(); ++ires ) {
+	for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 		for ( core::Size iatom=1; iatom<=pose.residue(ires).natoms(); ++iatom ) {
 			for ( core::Size i=0; i<3; ++i ) {
 				if ( pose.residue(ires).xyz(iatom)[i] < min_r[i] ) {

@@ -60,7 +60,7 @@ PhiPsiRmsd::PhiPsiRmsd(Size priority, Real lowest_acceptable_value, bool use_low
 	core::pose::PoseOP reference_pose) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PhiPsiRmsd") {
 
-	n_atoms_ = reference_pose->total_residue();
+	n_atoms_ = reference_pose->size();
 	query_phi_.redimension(n_atoms_);
 	query_psi_.redimension(n_atoms_);
 	existing_data_.resize(n_atoms_);

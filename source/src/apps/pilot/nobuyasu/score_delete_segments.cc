@@ -159,10 +159,10 @@ public: // apply
 			Size begin = it->first - removed_residues;
 			Size end = it->second - removed_residues;
 
-			if( begin < 1 || end > pose.total_residue() ) {
+			if( begin < 1 || end > pose.size() ) {
         if( option[ ignore_error ]() ) {
 					TR << "Segments to be deleted are out of range of pose. There might be a junk in a readin silent files. " << me << std::endl;
-					TR << pose.total_residue() << " " << begin << " " << end << std::endl;
+					TR << pose.size() << " " << begin << " " << end << std::endl;
 					continue;
 				} else {
 					utility_exit_with_message(" Segment to be deleted is out of range of pose ");
@@ -177,8 +177,8 @@ public: // apply
 
 
 		if( option[ in::file::native ].user() ) {
-			if( copy_pose.total_residue() != native_.total_residue() ) {
-				TR << copy_pose.total_residue() << " " << native_.total_residue() << " " << me << std::endl;
+			if( copy_pose.size() != native_.size() ) {
+				TR << copy_pose.size() << " " << native_.size() << " " << me << std::endl;
 			}
 			Real rms = core::scoring::CA_rmsd( copy_pose, native_ );
 			job_me->add_string_real_pair( "rms", rms );

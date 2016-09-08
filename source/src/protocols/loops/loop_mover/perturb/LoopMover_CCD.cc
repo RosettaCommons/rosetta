@@ -245,7 +245,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	}
 
 	kinematics::MoveMap mm_one_loop;
-	utility::vector1<bool> allow_sc_move( pose.total_residue(), false );
+	utility::vector1<bool> allow_sc_move( pose.size(), false );
 	loops_set_move_map( one_loop_loops, allow_sc_move, mm_one_loop);
 
 	tr() << "loop rmsd before initial fragment perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
@@ -263,7 +263,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 			conformation::insert_ideal_bonds_at_polymer_junction( loop_begin-1, pose.conformation() );
 			pose.set_omega( loop_begin - 1, init_omega );
 		}
-		if ( loop_end < pose.total_residue() && !pose.fold_tree().is_cutpoint( loop_end ) &&
+		if ( loop_end < pose.size() && !pose.fold_tree().is_cutpoint( loop_end ) &&
 				pose.residue( loop_end ).is_bonded( loop_end+1 ) ) {
 			conformation::insert_ideal_bonds_at_polymer_junction( loop_end, pose.conformation() );
 		}

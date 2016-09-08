@@ -87,7 +87,7 @@ MgScanner::scan_magnesiums( core::pose::Pose & pose ) {
 
 	mg_poses_.clear();
 
-	Size const mg_res = pose.total_residue(); // assume there's a Mg at the end of the pose.
+	Size const mg_res = pose.size(); // assume there's a Mg at the end of the pose.
 	runtime_assert ( pose.residue( mg_res ).name3() == " MG" );
 
 	// FIX THIS. THIS IS SILLY -- SHOULD NOT NEED MG potential AT ALL -- SETUP ATOM NUMBERS.
@@ -158,7 +158,7 @@ MgScanner::get_score( pose::Pose & pose,
 
 	Real score( 0.0 );
 
-	Size const mg_res( pose.total_residue() ); /* assuming single Mg at end */
+	Size const mg_res( pose.size() ); /* assuming single Mg at end */
 	runtime_assert( pose.residue( mg_res ).name3() == " MG" );
 
 	utility::vector1< Vector > new_xyz;
@@ -287,7 +287,7 @@ MgScanner::output_mg_into_one_PDB( pose::Pose const & pose )
 		Size const mg_res = get_unique_mg_res( *mg_poses_[ n ] );
 		Vector mg_position = mg_poses_[ n ]->xyz( AtomID( 1, mg_res ) );
 		if ( count > 1 ) mg_pose.append_residue_by_jump( *(mg_rsd->clone()), 1 );
-		mg_pose.set_xyz( AtomID( 1, mg_pose.total_residue() ), mg_position );
+		mg_pose.set_xyz( AtomID( 1, mg_pose.size() ), mg_position );
 		count++;
 	}
 
@@ -299,7 +299,7 @@ MgScanner::output_mg_into_one_PDB( pose::Pose const & pose )
 Size
 MgScanner::get_unique_mg_res( pose::Pose const & mg_pose ) {
 	Size mg_res( 0 );
-	for ( Size n = 1; n <= mg_pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= mg_pose.size(); n++ ) {
 		if ( mg_pose.residue( n ).name3() == " MG" ) {
 			runtime_assert( mg_res == 0 );
 			mg_res = n;
@@ -321,7 +321,7 @@ Distance
 MgScanner::distance_to_closest_magnesium( Vector const & mg_position,
 	pose::Pose const & reference_pose ) {
 	Distance min_dist( 0.0 );
-	for ( Size m = 1; m <= reference_pose.total_residue(); m++ ) {
+	for ( Size m = 1; m <= reference_pose.size(); m++ ) {
 		if ( reference_pose.residue(m).name3() != " MG"  ) continue;
 		Distance dist = ( reference_pose.residue(m).xyz(1) - mg_position ).length();
 		if ( dist < min_dist || min_dist == 0.0 ) min_dist = dist;

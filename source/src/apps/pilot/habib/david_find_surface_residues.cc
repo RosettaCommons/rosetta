@@ -86,9 +86,9 @@ void
 setup_secstruct_dssp( pose::Pose & pose )
 {
 	core::scoring::dssp::Dssp dssp( pose );
-	ObjexxFCL::FArray1D_char dssp_secstruct( pose.total_residue() );
+	ObjexxFCL::FArray1D_char dssp_secstruct( pose.size() );
 	dssp.dssp_reduced( dssp_secstruct );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		pose.set_secstruct(i,  dssp_secstruct(i) );
 	}
 
@@ -138,9 +138,9 @@ main( int argc, char * argv [] )
 		pose.metric( "sasa", "residue_sasa", resisasa );
 		setup_secstruct_dssp(pose);
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			int close = 0;
-			for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+			for ( Size j = 1; j <= pose.size(); ++j ) {
 				if ( i == j ) continue;
 				//make sure it's not within 12A of the interface
 				std::ostringstream residuestream;
@@ -189,7 +189,7 @@ main( int argc, char * argv [] )
 
 					//remove nearest neighbors
 					core::Size pos = 0;
-					for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+					for ( Size j = 1; j <= pose.size(); ++j ) {
 						std::ostringstream residuestream;
 						residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
 						std::string res_id = residuestream.str();
@@ -200,7 +200,7 @@ main( int argc, char * argv [] )
 					}
 					for ( std::vector<std::string>::iterator it2=surface.begin(); it2 != surface.end(); it2++ ) {
 						core::Size(pos2) = 0;
-						for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+						for ( Size j = 1; j <= pose.size(); ++j ) {
 							std::ostringstream residuestream;
 							residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
 							std::string res_id = residuestream.str();

@@ -176,7 +176,7 @@ public:
 
   void get_aa_counts( Pose & pose ){
     vector1<Size> aa_counts(num_canonical_aas, 0);
-    for( Size i=1; i <= pose.total_residue(); ++i ){
+    for( Size i=1; i <= pose.size(); ++i ){
       if( pose.residue( i ).is_protein() ) {
 	aa_counts[ pose.residue( i ).aa() ] += 1;
       }
@@ -217,7 +217,7 @@ public:
       mm->set_bb( true );
       mm->set_chi( true );
     } else if ( !relevant_chains_.empty() ) {
-      for( Size j=1; j<=pose.total_residue(); ++j ){
+      for( Size j=1; j<=pose.size(); ++j ){
 	if( relevant_chains_.find( pose.pdb_info()->chain( j ), 0 ) != std::string::npos ){
 	  mm->set_chi( j, true );
 	  mm->set_bb( j, true );

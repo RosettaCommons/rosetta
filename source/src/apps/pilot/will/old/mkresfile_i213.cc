@@ -107,22 +107,22 @@ vector1<Size> get_des_pos(core::pose::Pose & pose_for_design) {
   core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
 
   ////////////////////////////////////
-  vector1<bool> indy_resis(pose_for_design.n_residue(),false);
-  for(Size i = 1; i <= pose_for_design.n_residue()/2; ++i) indy_resis[i] = true;
-  vector1<bool> subunit_index(pose_for_design.n_residue());
-  for(Size i = 1; i <= pose_for_design.n_residue(); ++i) subunit_index[i] = (6*(i-1))/pose_for_design.n_residue();
+  vector1<bool> indy_resis(pose_for_design.size(),false);
+  for(Size i = 1; i <= pose_for_design.size()/2; ++i) indy_resis[i] = true;
+  vector1<bool> subunit_index(pose_for_design.size());
+  for(Size i = 1; i <= pose_for_design.size(); ++i) subunit_index[i] = (6*(i-1))/pose_for_design.size();
   vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(2); intra_subs.push_back(3);
 
 
   Sizes interface_pos;
-  for (Size ir=1; ir<= pose_for_design.n_residue()/2; ir++) {
+  for (Size ir=1; ir<= pose_for_design.size()/2; ir++) {
     std::string atom_i = "";
     if (pose_for_design.residue(ir).name3() == "GLY") {
       atom_i = "CA";
     } else {
       atom_i = "CB";
     }
-    for (Size jr=1+pose_for_design.n_residue()/2; jr<= pose_for_design.n_residue(); jr++) {
+    for (Size jr=1+pose_for_design.size()/2; jr<= pose_for_design.size(); jr++) {
       std::string atom_j = "";
       if (pose_for_design.residue(jr).name3() == "GLY") {
         atom_j = "CA";
@@ -165,7 +165,7 @@ main (int argc, char *argv[])
     string fname = option[OptionKeys::in::file::s]()[ifile];
     Pose p;
     core::import_pose::pose_from_file(p,fname, core::import_pose::PDB_file);
-    Size nsub = p.n_residue()/6;
+    Size nsub = p.size()/6;
     Size nsym = 3;
 
     utility::io::ozstream out("mutalyze_"+fname+".resfile");

@@ -77,10 +77,10 @@ static THREAD_LOCAL basic::Tracer TR( "genmatch_d6_bpy" );
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
-	add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+	add_upper_terminus_type_to_pose_residue(pose,pose.size());
 	core::pack::optimizeH(pose,*sf);
 	remove_lower_terminus_type_from_pose_residue(pose,1);
-	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
+	remove_upper_terminus_type_from_pose_residue(pose,pose.size());
 }
 
 
@@ -118,7 +118,7 @@ void run() {
 			if(in_fa.residue(ir).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(in_fa,ir);
 		}
 		Pose native = in_fa;
-		Size nres = in_fa.n_residue();
+		Size nres = in_fa.size();
 		core::chemical::ResidueType const & rtala( in_fa.residue(1).residue_type_set().name_map("ALA") );
 		core::chemical::ResidueType const & rthis( in_fa.residue(1).residue_type_set().name_map("HIS") );
 		core::chemical::ResidueType const & rtglu( in_fa.residue(1).residue_type_set().name_map("GLU") );
@@ -207,7 +207,7 @@ void run() {
 			TR << "input scanres!!!!!!" << std::endl;
 			scanres = option[willmatch::residues]();
 		} else {
-			for(Size i = 1; i <= in_fa.n_residue(); ++i) {
+			for(Size i = 1; i <= in_fa.size(); ++i) {
 				if(!in_fa.residue(i).has("N" )) { continue; }
 				if(!in_fa.residue(i).has("CA")) { continue; }
 				if(!in_fa.residue(i).has("C" )) { continue; }
@@ -394,11 +394,11 @@ void run() {
 		}
 		TR << std::endl;
 
-		vector1<Vec> Ns(in_fa.n_residue()),CAs(in_fa.n_residue()),Cs(in_fa.n_residue()),CBs(in_fa.n_residue());
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) Ns [i] = in_fa.residue(i).xyz("N" );
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) CAs[i] = in_fa.residue(i).xyz("CA");
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) Cs [i] = in_fa.residue(i).xyz("C" );
-		for(Size i = 1; i <= in_fa.n_residue(); ++i) CBs[i] = in_fa.residue(i).xyz("CB");
+		vector1<Vec> Ns(in_fa.size()),CAs(in_fa.size()),Cs(in_fa.size()),CBs(in_fa.size());
+		for(Size i = 1; i <= in_fa.size(); ++i) Ns [i] = in_fa.residue(i).xyz("N" );
+		for(Size i = 1; i <= in_fa.size(); ++i) CAs[i] = in_fa.residue(i).xyz("CA");
+		for(Size i = 1; i <= in_fa.size(); ++i) Cs [i] = in_fa.residue(i).xyz("C" );
+		for(Size i = 1; i <= in_fa.size(); ++i) CBs[i] = in_fa.residue(i).xyz("CB");
 
 		Pose pose = fa_pose;
 		//		Size lastb=0,lasti=0,lastj=0,laste=0;

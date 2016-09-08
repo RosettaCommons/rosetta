@@ -106,7 +106,7 @@ void SymFixbbMover::setup_task_mm(core::pose::Pose & pose, core::pack::task::Tas
   //make movemap to mirror task
   movemap_->set_jump(false);
   movemap_->set_bb(false);
-  for( Size ii = 1; ii<= pose.total_residue(); ++ii){
+  for( Size ii = 1; ii<= pose.size(); ++ii){
     if( task_->pack_residue( ii ) )
       movemap_->set_chi(ii, true);
     else

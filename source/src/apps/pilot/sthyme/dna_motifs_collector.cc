@@ -137,7 +137,7 @@ place_waters_and_minimize(
 	core::kinematics::MoveMap mm;
 	mm.set_bb( false );
 	mm.set_chi( false );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			task->nonconst_residue_task(i).prevent_repacking();
 			// Only allowing protein minimization currently
@@ -232,7 +232,7 @@ process_for_motifs(
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 
-	core::Size nres( pose.total_residue() );
+	core::Size nres( pose.size() );
 
 	// Potentially place waters and/or minimize
 	place_waters_and_minimize( pose, *scorefxn, pdb_prefix );

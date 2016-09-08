@@ -508,7 +508,7 @@ PointMutationCalculator::calc_point_mut_filters(
 	vector1< core::Size > being_designed;
 	utility::vector1< Size > group_ids;
 	being_designed.clear();
-	for ( core::Size resi = 1; resi <= start_pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= start_pose.size(); ++resi ) {
 		if ( core::pose::symmetry::is_symmetric(start_pose) ) {
 			if ( resi > core::pose::symmetry::symmetry_info(start_pose)->num_independent_residues() ) {
 				break;

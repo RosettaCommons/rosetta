@@ -190,12 +190,12 @@ PeptiodMovieMover::apply( core::pose::Pose & pose )
 	kinematics::MoveMapOP desn_mm_sc( new kinematics::MoveMap() );
 
 	// make all the residues on the peptide we are moving minimizable
-	for( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for( Size i = 1; i <= pose.size(); ++i ) {
 		desn_mm_sc_bb->set_bb( i, true );
 		desn_mm_sc_bb->set_chi( i, true );
 	}
 
-	for( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for( Size i = 1; i <= pose.size(); ++i ) {
 		desn_mm_sc->set_chi( i, true );
 	}
 

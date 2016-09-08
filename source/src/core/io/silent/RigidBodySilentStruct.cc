@@ -201,7 +201,7 @@ void RigidBodySilentStruct::fill_pose(
 		pose.set_jump( nr, jump( nr ) );
 	}
 
-	if ( pose.total_residue() != one_letter_sequence().length() ) {
+	if ( pose.size() != one_letter_sequence().length() ) {
 		utility_exit_with_message( "RuntimeAssert failed: nres() == one_letter_sequence().length()" );
 	}
 	using namespace basic::options;

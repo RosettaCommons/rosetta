@@ -60,7 +60,7 @@ using namespace ObjexxFCL;
 // void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose, ConstantLengthFragSet& fragset ) {
 //  Size nbb ( 3 ); // three backbone torsions for Protein
 //  Size len = fragset.max_frag_length();
-//  for ( Size pos = 1; pos <= pose.total_residue() - len + 1; ++pos ) {
+//  for ( Size pos = 1; pos <= pose.size() - len + 1; ++pos ) {
 //   FragDataOP frag_raw = new FragData;
 //   for ( Size i = 1; i<= len; i++ ) {
 //    frag_raw->add_residue( new BBTorsionSRFD( nbb, pose.secstruct(pos), oneletter_code_from_aa(pose.residue( pos ).aa() ) ) );
@@ -159,18 +159,18 @@ void FragmentConstantLengthTest::test_frag_cache() {
 
 	{ // test FragCache
 		FragCache< Size > silly_cache("ULTIMATE_SILLINESS");
-		for ( Size pos = 1; pos<= pose_.total_residue() ; pos++ ) {
+		for ( Size pos = 1; pos<= pose_.size() ; pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
 				silly_cache.store(frame, 1, pos);
 			} else {
-				TS_ASSERT( pos>pose_.total_residue()-len+1 );
+				TS_ASSERT( pos>pose_.size()-len+1 );
 			};
 		};
 		FragCache< Real > empty_cache("NO_VALUES_HERE");
 		FragCache< Size > another_silly_cache("ULTIMATE_SILLINESS");
-		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++ ) {
+		for ( Size pos = 1; pos <=  pose_.size(); pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
@@ -205,18 +205,18 @@ void FragmentConstantLengthTest::test_frag_cache() {
 	/// now test the FragStore
 	{
 		FragStore< Size > silly_cache("ULTIMATE_SILLINESS_STORE");
-		for ( Size pos = 1; pos<= pose_.total_residue() ; pos++ ) {
+		for ( Size pos = 1; pos<= pose_.size() ; pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
 				silly_cache.store(frame, 1, pos);
 			} else {
-				TS_ASSERT( pos>pose_.total_residue()-len+1 );
+				TS_ASSERT( pos>pose_.size()-len+1 );
 			};
 		};
 		FragStore< Real > empty_cache("NO_VALUES_HERE_STORE");
 		FragStore< Size > another_silly_cache("ULTIMATE_SILLINESS_STORE");
-		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++ ) {
+		for ( Size pos = 1; pos <=  pose_.size(); pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos+len-1, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
@@ -252,20 +252,20 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 
 	{ // test FragCache
 		FragCache< Size > silly_cache("ULTIMATE_SILLINESS");
-		for ( Size pos = 1; pos<= pose_.total_residue() ; pos++ ) {
+		for ( Size pos = 1; pos<= pose_.size() ; pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
 				silly_cache.store(frame, 1, pos);
 			} else {
-				TS_ASSERT( pos>pose_.total_residue()-len+1 );
+				TS_ASSERT( pos>pose_.size()-len+1 );
 			};
 		};
 		FragSet& bfragset( fragset );
 		ConstFrameIterator it = bfragset.begin();
 		ConstFrameIterator eit= bfragset.end();
 
-		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++ ) {
+		for ( Size pos = 1; pos <=  pose_.size(); pos++ ) {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
@@ -420,14 +420,14 @@ void FragmentConstantLengthTest::test_insertmap() {
 	movemap.set_bb( true );
 	// fold via Nmers
 	Pose pose_Nmers ( pose_ );
-	for ( Size pos = 1; pos<= pose_Nmers.total_residue() - size; pos++ ) {
+	for ( Size pos = 1; pos<= pose_Nmers.size() - size; pos++ ) {
 		for ( Size i = 1; i <= 3; i++ ) {
 			pose_Nmers.set_torsion( id::TorsionID( pos, id::BB, i ), numeric::random::uniform() );
 		}
 	};
 	io::pdb::dump_pdb( pose_Nmers, "randomized.pdb");
 
-	for ( Size pos = 1; pos<= pose_Nmers.total_residue() - size; pos+= ( size / 2 ) ) {
+	for ( Size pos = 1; pos<= pose_Nmers.size() - size; pos+= ( size / 2 ) ) {
 		FrameList frames;
 		fragsetNmer.region_all(  pos, pos, size, size, frames );
 		TS_ASSERT_EQUALS( frames.size(), 1 );
@@ -439,7 +439,7 @@ void FragmentConstantLengthTest::test_insertmap() {
 		frame.apply( movemap, 1, pose_Nmers ); // apply the first fragment of this frame
 	}
 	io::pdb::dump_pdb( pose_Nmers, "pose_after_"+right_string_of(size,1)+"mer_insertion");
-	for ( Size pos = 1; pos<= pose_Nmers.total_residue(); pos ++ ) {
+	for ( Size pos = 1; pos<= pose_Nmers.size(); pos ++ ) {
 		for ( Size i = 1; i <= 3; i++ ) {
 			TS_ASSERT_EQUALS( pose_Nmers.torsion( id::TorsionID( pos, id::BB, i) ), pose_.torsion( id::TorsionID( pos, id::BB, i) ) );
 		}

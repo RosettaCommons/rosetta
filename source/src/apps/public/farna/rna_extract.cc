@@ -100,11 +100,11 @@ extract_pdbs_test()
 		iter->fill_pose( pose, *rsd_set );
 
 		//Fang: This outputing will fail if the pose contains virtual residue.
-		//std::cout << "debug_rmsd(" << tag << ") = " << iter->get_debug_rmsd() << " over " << pose.total_residue() << " residues... \n";
+		//std::cout << "debug_rmsd(" << tag << ") = " << iter->get_debug_rmsd() << " over " << pose.size() << " residues... \n";
 
 
 		if ( option[ remove_variant_cutpoint_atoms ]()==true ) {
-			for ( Size n = 1; n <= pose.total_residue(); n++  ) {
+			for ( Size n = 1; n <= pose.size(); n++  ) {
 				pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, n );
 				pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, n );
 			}

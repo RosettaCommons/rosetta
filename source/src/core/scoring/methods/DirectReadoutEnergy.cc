@@ -80,7 +80,7 @@ DirectReadoutEnergy::finalize_total_energy(
 	EnergyMap & emap
 ) const
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd1( pose.residue(i) );

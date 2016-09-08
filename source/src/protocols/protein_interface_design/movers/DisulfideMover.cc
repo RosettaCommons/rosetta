@@ -178,7 +178,7 @@ void DisulfideMover::apply( Pose & pose ) {
 		task_->restrict_to_repacking();
 
 		// for each residue
-		for ( Size i(1); i <= trial_pose->total_residue(); ++i ) {
+		for ( Size i(1); i <= trial_pose->size(); ++i ) {
 			Residue const& res(trial_pose->residue(i));
 			if ( !res.is_protein() ) {
 				continue;
@@ -200,7 +200,7 @@ void DisulfideMover::apply( Pose & pose ) {
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( false );
 		mm->set_jump( rb_jump_, false );
-		for ( core::Size i=1; i<=trial_pose->total_residue(); ++i ) {
+		for ( core::Size i=1; i<=trial_pose->size(); ++i ) {
 			Residue const& res(trial_pose->residue(i));
 
 			if ( !trial_pose->residue(i).is_protein() ) continue;

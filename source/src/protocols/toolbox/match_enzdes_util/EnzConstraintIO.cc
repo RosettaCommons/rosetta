@@ -294,7 +294,7 @@ EnzConstraintIO::process_pdb_header(
 				if ( resA_num != 0 ) resA_missing = false;
 				if ( resB_num != 0 ) resB_missing = false;
 
-				for ( Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+				for ( Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 					if ( resA_num == 0 && pose.residue(i).name3() == resA_type ) {
 						cst_cache->param_cache( cst_block )->template_res_cache( 1 )->add_position_in_pose( i );
 						resA_missing = false;
@@ -751,7 +751,7 @@ remove_favor_native_constraints( pose );
 }
 
 favor_native_constraints_.clear();
-for( core::Size i = 1; i <= pose.total_residue(); ++i){
+for( core::Size i = 1; i <= pose.size(); ++i){
 
 if( task->design_residue(i) ){
 
@@ -787,7 +787,7 @@ profile->convert_profile_to_probs( 1 ); // was previously implicit in read_from_
 
 tr << *profile << std::endl;
 
-for ( Size seqpos(1), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+for ( Size seqpos(1), end( pose.size() ); seqpos <= end; ++seqpos ) {
 // add individual profile constraint for each residue position
 // because of the underlying constraint implementation, this enures that the constraint is
 // a context-independent 1-body energy, or (intra)residue constraint

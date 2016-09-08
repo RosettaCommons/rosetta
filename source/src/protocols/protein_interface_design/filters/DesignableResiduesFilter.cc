@@ -116,7 +116,7 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		total_residue = symm_info->num_independent_residues();
 	} else {
-		total_residue = pose.total_residue();
+		total_residue = pose.size();
 	}
 	core::Size design_pos = 0;
 	if ( designable() ) {

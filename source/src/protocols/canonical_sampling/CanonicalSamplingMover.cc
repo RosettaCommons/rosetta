@@ -322,8 +322,8 @@ void CanonicalSamplingMover::setup_constraints( core::pose::Pose & pose ){
 	pose.remove_constraints();
 	core::Real const CA_cutoff(9.0);
 	core::Real const cst_tol(0.5);
-	for ( unsigned int itr_res_i = 1; itr_res_i <= pose.total_residue(); itr_res_i++ ) {
-		for ( unsigned int itr_res_j = 1; itr_res_j <= pose.total_residue(); itr_res_j++ ) {
+	for ( unsigned int itr_res_i = 1; itr_res_i <= pose.size(); itr_res_i++ ) {
+		for ( unsigned int itr_res_j = 1; itr_res_j <= pose.size(); itr_res_j++ ) {
 			Vector const CA_i( pose.residue( itr_res_i ).xyz(" CA "));
 			Vector const CA_j( pose.residue( itr_res_j ).xyz(" CA "));
 			core::Real const CA_dist = ( CA_i - CA_j ).length();
@@ -424,7 +424,7 @@ void CanonicalSamplingMover::dump_decoy_or_score(
 		 for ( auto const & itr : loop_to_dump ) {
 			core::pose::Pose looponly( pose, itr.start(), itr.stop() );
 			ss->fill_struct(looponly, decoy_tag);
-			//looponly.copy_segment(itr->size(),pose,looponly.total_residue()+1,itr->start());
+			//looponly.copy_segment(itr->size(),pose,looponly.size()+1,itr->start());
 		}
 
 	} else {
@@ -446,11 +446,11 @@ CanonicalSamplingMover::apply(Pose & pose){
 	using namespace basic::options::OptionKeys;
 
 
-	if ( pose.total_residue() == 0 ) {
+	if ( pose.size() == 0 ) {
 		utility_exit_with_message( "did you forget -in:file:silent ? Need to start CanonicalSamplingMover with a valid pose" );
 	}
 
-	runtime_assert( pose.total_residue() > 0 );
+	runtime_assert( pose.size() > 0 );
 
 	PROF_START( basic::MPICANONICALSAMPLING );
 	std::string jobname = protocols::jd2::current_output_name();
@@ -763,7 +763,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 				}
 			}
 			//pool_rms_->evaluate( pose, cluster_center, rms_to_cluster);
-			runtime_assert( pose.total_residue() > 0 );
+			runtime_assert( pose.size() > 0 );
 			dump_decoy_or_score( traj_sc, pose, i_trial, jobname, loops, true /*not just score*/ );
 
 			if ( !output_only_cluster_transition_ ) {

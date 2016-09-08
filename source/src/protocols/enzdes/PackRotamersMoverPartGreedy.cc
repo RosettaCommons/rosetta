@@ -197,7 +197,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	}
 	//Convert to Ala
 	utility::vector1< core::Size > toAla;
-	for ( core::Size ii=1; ii<=greedy_pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=greedy_pose.size(); ++ii ) {
 		if ( task_->being_designed(ii) ) toAla.push_back( ii );
 	}
 	protocols::toolbox::pose_manipulation::construct_poly_ala_pose( greedy_pose, toAla, true, true, true );
@@ -244,7 +244,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 		TR<<"Considering target residue "<< cur_pose.residue( target_residue ).name3() << target_residue <<": "<<std::endl;
 		utility::vector1< core::Size > neighbors  = compute_designable_neighbors( target_residue, task, cur_pose );
 		utility::vector1< core::Size > cur_neighbors = neighbors;
-		utility::vector1< bool > allow_minimization (pose.total_residue(), false);
+		utility::vector1< bool > allow_minimization (pose.size(), false);
 		for ( utility::vector1< core::Size>::const_iterator iter = neighbors.begin(); iter != neighbors.end(); ++iter ) {
 			allow_minimization[ *iter ] = true;
 		}
@@ -278,7 +278,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 				// fix everything else except this position
 				utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, true );
 
-				for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+				for ( core::Size i=1; i<=pose.size(); ++i ) {
 					if ( i== *neigh_it ) mutate_residue->nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas );
 					else mutate_residue->nonconst_residue_task( i ).prevent_repacking();
 				}
@@ -321,7 +321,7 @@ PackRotamersMoverPartGreedy::compute_designable_neighbors(
 	utility::vector1< core::Size > neighbors;
 	TR << "neighbors of position "<< position << " are: ";
 	core::conformation::Residue const res_pos (pose.residue( position ));
-	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
 		if ( pose.residue( ii ).is_protein() && task->being_designed( ii ) ) {
 			core::conformation::Residue const res_ii (pose.residue( ii ));
 			core::Real distance = res_ii.xyz( res_ii.nbr_atom() ).distance( res_pos.xyz(res_pos.nbr_atom()) );
@@ -381,7 +381,7 @@ PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core
 	(*scorefxn_repack_)(nonconst_pose);
 	EnergyMap const curr_weights = nonconst_pose.energies().weights();
 	core::Size res (1);
-	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
 		if ( pose.residue( ii ).is_ligand() ) res = ii;
 	}
 	//Fill residue_energies of interface residues by traversing energy graph

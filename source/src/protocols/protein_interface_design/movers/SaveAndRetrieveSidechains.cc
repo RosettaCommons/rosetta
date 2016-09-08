@@ -113,13 +113,13 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 		first_apply_->obj = true;
 	}
 	TR << "Retrieving sidechains..."<<std::endl;
-	Size nres = pose.total_residue();
-	if ( nres != init_pose_->total_residue() && core::pose::symmetry::is_symmetric(pose) ) {
+	Size nres = pose.size();
+	if ( nres != init_pose_->size() && core::pose::symmetry::is_symmetric(pose) ) {
 		conformation::symmetry::SymmetricConformation & symm_conf (
 			dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		nres = symm_conf.Symmetry_Info()->num_independent_residues();
 	}
-	runtime_assert( nres == init_pose_->total_residue() );
+	runtime_assert( nres == init_pose_->size() );
 	kinematics::Jump new_jump;
 	core::Size const rb_jump( jumpid_ );
 	if ( jumpid_ > 0 ) {
@@ -139,7 +139,7 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 	if ( ensure_variant_matching_ ) {
 		//make sure variants match, if not put back the initial variants
 		using namespace core;
-		for ( core::uint i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+		for ( core::uint i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 			if ( ! variants_match( pose.residue_type( i ), init_pose_->residue_type( i ) ) ) {
 				utility::vector1< std::string > const new_var_types(
 					pose.residue_type( i ).properties().get_list_of_variants() );

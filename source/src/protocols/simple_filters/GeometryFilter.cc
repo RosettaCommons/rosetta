@@ -161,11 +161,11 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	if ( selector_ ) {
 		scan_me = selector_->apply( copy_pose );
 	} else {
-		scan_me = core::select::residue_selector::ResidueSubset( copy_pose.total_residue(), true );
+		scan_me = core::select::residue_selector::ResidueSubset( copy_pose.size(), true );
 	}
 
 	core::Size const start = std::max( start_, Size( 1 ) );
-	core::Size const stop = std::min( copy_pose.total_residue(), end_ );
+	core::Size const stop = std::min( copy_pose.size(), end_ );
 	TR << "Scan residues between " << start << " and " << stop << std::endl;
 	for ( Size resnum = start; resnum < stop; resnum++ ) {
 		if ( !scan_me[ resnum ] ) continue;
@@ -205,7 +205,7 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	}
 
 	//check the last residues
-	Size resnum = std::min( copy_pose.total_residue(), end_ );
+	Size resnum = std::min( copy_pose.size(), end_ );
 	core::Real const weight( (*scorefxn)[ core::scoring::ScoreType( cart_bonded ) ] );
 	core::Real const score( copy_pose.energies().residue_total_energies( resnum )[ core::scoring::ScoreType( cart_bonded ) ]);
 	core::Real weighted_score = weight * score ;

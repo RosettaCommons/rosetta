@@ -147,7 +147,7 @@ static THREAD_LOCAL basic::Tracer TR( "cycgly_superimpose" );
 // 	Size copyres_;
 // 	Real mag_;
 // public:
-// 	CycBBMover(Pose const & pose, Real mag) : nres_(pose.n_residue()-2),copyres_(pose.n_residue()-1),mag_(mag) {}
+// 	CycBBMover(Pose const & pose, Real mag) : nres_(pose.size()-2),copyres_(pose.size()-1),mag_(mag) {}
 // 	void apply(core::pose::Pose & pose) {
 // 		Size i = std::ceil(numeric::random::uniform()*nres_);
 // 		if(     numeric::random::uniform()<0.5) pose.set_phi(i,pose.phi(i)+numeric::random::gaussian()*mag_);
@@ -200,16 +200,16 @@ static THREAD_LOCAL basic::Tracer TR( "cycgly_superimpose" );
 Pose cyclic_perm(Pose const & orig, Size start) {
 	Pose pose;
 	pose.append_residue_by_jump(orig.residue(start),1);
-	for(Size i = 1; i <= orig.n_residue()-1; ++i) {
-		// std::cout << "appending res " << (i+start-1)%orig.n_residue()+1 << std::endl;
-		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.n_residue()+1));
+	for(Size i = 1; i <= orig.size()-1; ++i) {
+		// std::cout << "appending res " << (i+start-1)%orig.size()+1 << std::endl;
+		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.size()+1));
 	}
 	return pose;
 }
 
 Real cyclic_all_atom_rms(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		Real r = core::scoring::all_atom_rmsd( cyclic_perm(pose,i), other );
 		if( r < mr ) mr = r;
 	}
@@ -218,7 +218,7 @@ Real cyclic_all_atom_rms(Pose const & pose, Pose const & other) {
 
 Real cyclic_ca_rms(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		Real r = core::scoring::CA_rmsd( cyclic_perm(pose,i), other );
 		if( r < mr ) mr = r;
 	}
@@ -228,7 +228,7 @@ Real cyclic_ca_rms(Pose const & pose, Pose const & other) {
 void cyclic_superimpose(Pose & move, Pose const & ref) {
 	Real mr = 9e9;
 	Size am = 0;
-	for(Size i = 1; i <= move.n_residue(); ++i) {
+	for(Size i = 1; i <= move.size(); ++i) {
 		Real r = core::scoring::CA_rmsd( cyclic_perm(move,i), ref );
 		if( r < mr ) {
 			mr = r;
@@ -297,14 +297,14 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // BINTYPE pose2bin(core::pose::Pose const & pose) {
 // 	using namespace ObjexxFCL::format;
 // 	BINTYPE bin = 0;
-// 	for(int i = 0; i < (int)pose.n_residue(); ++i) {
+// 	for(int i = 0; i < (int)pose.size(); ++i) {
 // 		// Real phid = pose.phi(i+1);
 // 		// Real psid = pose.psi(i+1);
-// 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.n_residue())%pose.n_residue()+1).xyz("C" );
-// 		numeric::xyzVector<Real> n  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("N" );
-// 		numeric::xyzVector<Real> ca = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("CA");
-// 		numeric::xyzVector<Real> c  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("C" );
-// 		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.n_residue())%pose.n_residue()+1).xyz("N" );
+// 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.size())%pose.size()+1).xyz("C" );
+// 		numeric::xyzVector<Real> n  = pose.residue((i  +pose.size())%pose.size()+1).xyz("N" );
+// 		numeric::xyzVector<Real> ca = pose.residue((i  +pose.size())%pose.size()+1).xyz("CA");
+// 		numeric::xyzVector<Real> c  = pose.residue((i  +pose.size())%pose.size()+1).xyz("C" );
+// 		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.size())%pose.size()+1).xyz("N" );
 // 		Real phid = basic::unsigned_periodic_range(numeric::dihedral_degrees(c0,n,ca,c),360.0);
 // 		Real psid = basic::unsigned_periodic_range(numeric::dihedral_degrees(n,ca,c,n2),360.0);
 // 		// std::cout << "PHIPSI " << phid << " " << psid << std::endl;
@@ -315,9 +315,9 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 		bin += phi;
 // 		bin += psi;
 // 	}
-// 	// TR << bin2string(bin,pose.n_residue()) << std::endl;
+// 	// TR << bin2string(bin,pose.size()) << std::endl;
 // 	// std::exit(-1);
-// 	return cyclic_unique_bin(bin,pose.n_residue());
+// 	return cyclic_unique_bin(bin,pose.size());
 // }
 
 // std::string printbits(BINTYPE nn) {
@@ -345,14 +345,14 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // BINTYPE pose2bin(core::pose::Pose const & pose) {
 // 	using namespace ObjexxFCL::format;
 // 	BINTYPE bin = 0;
-// 	for(int i = 0; i < (int)pose.n_residue(); ++i) {
+// 	for(int i = 0; i < (int)pose.size(); ++i) {
 // 		// Real phid = pose.phi(i+1);
 // 		// Real psid = pose.psi(i+1);
-// 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.n_residue())%pose.n_residue()+1).xyz("C" );
-// 		numeric::xyzVector<Real> n  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("N" );
-// 		numeric::xyzVector<Real> ca = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("CA");
-// 		numeric::xyzVector<Real> c  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("C" );
-// 		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.n_residue())%pose.n_residue()+1).xyz("N" );
+// 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.size())%pose.size()+1).xyz("C" );
+// 		numeric::xyzVector<Real> n  = pose.residue((i  +pose.size())%pose.size()+1).xyz("N" );
+// 		numeric::xyzVector<Real> ca = pose.residue((i  +pose.size())%pose.size()+1).xyz("CA");
+// 		numeric::xyzVector<Real> c  = pose.residue((i  +pose.size())%pose.size()+1).xyz("C" );
+// 		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.size())%pose.size()+1).xyz("N" );
 // 		Real phid = numeric::dihedral_degrees(c0,n,ca,c);
 // 		Real psid = numeric::dihedral_degrees(n,ca,c,n2);
 // 		// TR << phid << " " << psid << std::endl;
@@ -363,13 +363,13 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // 		bin += phi;
 // 		bin += psi;
 // 	}
-// 	// TR << bin2string(bin,pose.n_residue()) << std::endl;
+// 	// TR << bin2string(bin,pose.size()) << std::endl;
 // 	// std::exit(-1);
 // 	// for debuggung....
 // 	// bin = 1UL<<0*9 | 1UL<<1*9 | 1UL<<2*9 | 1UL<<3*9 | 1UL<<4*9 | 1UL<<5*9 | 1UL<<6*9 ;
 // 	BINTYPE mn = bin;
-// 	for(Size i = 0; i < pose.n_residue(); ++i) {
-// 	 	BINTYPE tmp = (bin << 2*BINBITS*i) | (bin >> (2*BINBITS*pose.n_residue() - 2*BINBITS*i));
+// 	for(Size i = 0; i < pose.size(); ++i) {
+// 	 	BINTYPE tmp = (bin << 2*BINBITS*i) | (bin >> (2*BINBITS*pose.size() - 2*BINBITS*i));
 // 		tmp = tmp & ~(BINTYPE(BINSIZE*BINSIZE-1)<<((sizeof(BINTYPE)-1)*2*BINBITS));
 // 		// TR << i << " " << printbits(tmp) << std::endl;
 // 		if(tmp < mn) mn = tmp;
@@ -408,7 +408,7 @@ int main( int argc, char * argv [] ) {
 	targets_in = core::import_pose::poses_from_files( option[in::file::s]() , core::import_pose::PDB_file);
 	for(Size i = 1; i <= targets_in.size(); i++) {
 		core::pose::remove_lower_terminus_type_from_pose_residue(targets_in[i],           1             );
-		core::pose::remove_upper_terminus_type_from_pose_residue(targets_in[i],targets_in[i].n_residue());
+		core::pose::remove_upper_terminus_type_from_pose_residue(targets_in[i],targets_in[i].size());
 	}
 	ObjexxFCL::FArray2D_float rmsmat(targets_in.size(),targets_in.size(),0.0);
 	TR << "computing central structure out of " << targets_in.size() << std::endl;

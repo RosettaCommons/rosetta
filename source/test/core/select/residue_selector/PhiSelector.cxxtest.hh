@@ -54,7 +54,7 @@ public:
 
 		ResidueSubset subset = selector->apply( trpcage );
 
-		for ( core::Size i=1, imax=trpcage.n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=trpcage.size(); i<=imax; ++i ) {
 			TR << trpcage.residue(i).name3() << i << "\texpect:";
 			if ( i!=10 && i!=11 && i!=15 ) {
 				TR << "false\t";
@@ -77,7 +77,7 @@ public:
 
 		ResidueSubset subset = selector->apply( trpcage );
 
-		for ( core::Size i=1, imax=trpcage.n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=trpcage.size(); i<=imax; ++i ) {
 			TR << trpcage.residue(i).name3() << i << "\texpect:";
 			if ( i!=1 && i!=10 && i!=11 && i!=15 && i!=imax ) {
 				TR << "true\t";
@@ -101,7 +101,7 @@ public:
 
 		ResidueSubset subset = selector->apply( trpcage );
 
-		for ( core::Size i=1, imax=trpcage.n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=trpcage.size(); i<=imax; ++i ) {
 			TR << trpcage.residue(i).name3() << i << "\texpect:";
 			if ( i!=1 && i!=10 && i!=11 && i!=15 ) {
 				TR << "true\t";

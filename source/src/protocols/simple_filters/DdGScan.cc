@@ -164,7 +164,7 @@ DdGScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 	using namespace core::pack::task;
 	PackerTaskOP task = general_task->clone();
 	task->initialize_from_command_line().or_include_current( true );
-	for ( core::Size resj=1; resj<=pose_to_mutate.total_residue(); ++resj ) {
+	for ( core::Size resj=1; resj<=pose_to_mutate.size(); ++resj ) {
 		if ( resi != resj ) {
 			task->nonconst_residue_task( resj ).prevent_repacking();
 		}
@@ -234,7 +234,7 @@ DdGScan::calculate( std::ostream & out, core::pose::Pose const & const_pose ) co
 
 	// *** Entire loop goal: Calculate the binding ddG score upon mutation ***
 	// Loop through residues
-	for ( core::Size resi = 1; resi <= pose.n_residue(); resi++ ) {
+	for ( core::Size resi = 1; resi <= pose.size(); resi++ ) {
 		// Check for canonical protein residue and that position is designable to something
 		// Here we check only to see if the residue is set to at least be packable
 		if ( pose.residue( resi ).is_protein() && task->pack_residue( resi ) ) {

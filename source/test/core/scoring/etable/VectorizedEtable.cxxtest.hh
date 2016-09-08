@@ -788,7 +788,7 @@ public:
 		clock_t start_time1 = clock();
 		time_t start = time(NULL);
 		for ( core::Size ii = 1; ii <= niters; ++ii ) {
-			for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+			for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 				core::conformation::Residue const & r1 = pose.residue( jj );
 				for ( Node::EdgeListConstIter
 						iter     = pose.energies().energy_graph().get_node( jj )->const_upper_edge_list_begin(),
@@ -824,7 +824,7 @@ public:
 		Real ljatr_tot = 0, ljrep_tot = 0, fasol_tot = 0;
 		clock_t start_time2 = clock();
 		for ( core::Size ii = 1; ii <= niters; ++ii ) {
-			for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+			for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 				core::conformation::Residue const & r1 = pose.residue( jj );
 				for ( Node::EdgeListConstIter
 						iter     = pose.energies().energy_graph().get_node( jj )->const_upper_edge_list_begin(),
@@ -951,7 +951,7 @@ public:
 		clock_t start_time1 = clock();
 		time_t start = time(NULL);
 		for ( core::Size ii = 1; ii <= niters; ++ii ) {
-			for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+			for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 				core::conformation::Residue const & r1 = pose.residue( jj );
 				for ( Node::EdgeListConstIter
 						iter     = pose.energies().energy_graph().get_node( jj )->const_upper_edge_list_begin(),
@@ -1004,7 +1004,7 @@ public:
 		Real ljatr_tot = 0, ljrep_tot = 0, fasol_tot = 0;
 		clock_t start_time2 = clock();
 		for ( core::Size ii = 1; ii <= niters; ++ii ) {
-			for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+			for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 				core::conformation::Residue const & r1 = pose.residue( jj );
 				for ( Node::EdgeListConstIter
 						iter     = pose.energies().energy_graph().get_node( jj )->const_upper_edge_list_begin(),

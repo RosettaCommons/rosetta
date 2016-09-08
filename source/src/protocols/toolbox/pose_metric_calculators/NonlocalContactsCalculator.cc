@@ -193,19 +193,19 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 
 	residue_nlcontacts_.clear();
 	residue_nlscore_.clear();
-	residue_nlcontacts_.resize( this_pose.total_residue(), 0 );
-	residue_nlscore_.resize( this_pose.total_residue(), 0.0 );
+	residue_nlcontacts_.resize( this_pose.size(), 0 );
+	residue_nlscore_.resize( this_pose.size(), 0.0 );
 	total_nlcontacts_ = 0;
 	special_region1_nlcontacts_ = 0;
 	special_region2_nlcontacts_ = 0;
 	special_region1_intra_nlcontacts_ = 0;
 	region1_region2_nlcontacts_ = 0;
 
-	nlcontacts_graph_ = core::graph::GraphOP( new core::graph::Graph( this_pose.total_residue() ) );
+	nlcontacts_graph_ = core::graph::GraphOP( new core::graph::Graph( this_pose.size() ) );
 
 	EnergyMap cur_weights = this_pose.energies().weights();
 
-	for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
 
 		if ( ! this_pose.residue_type( i ).is_protein() ) continue;
 		//get the node for this residue in the energy graph
@@ -260,7 +260,7 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 
 	//some optional debug output. done at the end to prevent tracer if evaluations in normal production runs
 	if ( basic::options::option[basic::options::OptionKeys::out::level] >= basic::t_debug ) {
-		for ( core::Size i = 1; i <= this_pose.total_residue(); ++i ) TR.Debug << "Residue " << i << " makes " << residue_nlcontacts_[i] << " nonlocal contacts and has a total nonlocal interaction energy of " << residue_nlscore_[i] << "." << std::endl;
+		for ( core::Size i = 1; i <= this_pose.size(); ++i ) TR.Debug << "Residue " << i << " makes " << residue_nlcontacts_[i] << " nonlocal contacts and has a total nonlocal interaction energy of " << residue_nlscore_[i] << "." << std::endl;
 	}
 } //recompute
 

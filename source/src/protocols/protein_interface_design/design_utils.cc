@@ -116,8 +116,8 @@ ReportSequenceDifferences::calculate( pose::Pose const & pose1_in, pose::Pose co
 	// core::scoring::EnergyMap weights1 = pose1.energies().weights(); // Unused variable causes a warning.
 	// core::scoring::EnergyMap weights2 = pose2.energies().weights(); // Unused variable causes a warning.
 
-	runtime_assert( pose1.total_residue() == pose2.total_residue() );
-	for ( core::Size i = 1; i <= pose1.total_residue(); ++i ) {
+	runtime_assert( pose1.size() == pose2.size() );
+	for ( core::Size i = 1; i <= pose1.size(); ++i ) {
 		if ( !pose1.residue(i).is_protein() ) continue;
 		core::Size const restype1( pose1.residue(i).aa() );
 		core::Size const restype2( pose2.residue(i).aa() );
@@ -174,7 +174,7 @@ point_mutation( pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn, cor
 	allowed_aas[ mutation ] = true;
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( i == seqpos ) {
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
 		} else {
@@ -274,7 +274,7 @@ Revert::apply( pose::Pose & pose_wt, pose::Pose & pose_des ) const
 ///////////////////////////////
 FavorNativeResidue::FavorNativeResidue( core::pose::Pose & pose, core::Real const native_residue_bonus )
 {
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		native_residue_bonus_.push_back( native_residue_bonus );
 	}
@@ -284,7 +284,7 @@ FavorNativeResidue::FavorNativeResidue( core::pose::Pose & pose, core::Real cons
 ////////////////////////////
 FavorNativeResidue::FavorNativeResidue( core::pose::Pose & pose, utility::vector1<core::Real> const & native_residue_bonus )
 {
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		native_residue_bonus_.push_back( native_residue_bonus[i] );
 	}
@@ -299,7 +299,7 @@ FavorNativeResidue::add_residue_constraints( core::pose::Pose & pose ) const {
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
 
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	for ( core::Size i=1; i<= nres;  ++i ) {
 		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new ResidueTypeConstraint( pose, i,  native_residue_bonus_[ i ]) ) ) );
 	}
@@ -309,7 +309,7 @@ FavorNativeResidue::add_residue_constraints( core::pose::Pose & pose ) const {
 ///////////////////////////////
 FavorNonNativeResidue::FavorNonNativeResidue( Pose & pose, core::Real const non_native_residue_bonus )
 {
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		non_native_residue_bonus_.push_back( non_native_residue_bonus );
 	}
@@ -319,7 +319,7 @@ FavorNonNativeResidue::FavorNonNativeResidue( Pose & pose, core::Real const non_
 ////////////////////////////
 FavorNonNativeResidue::FavorNonNativeResidue( Pose & pose, utility::vector1<core::Real> const & non_native_residue_bonus )
 {
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	for ( core::Size i = 1; i <= nres; ++i ) {
 		non_native_residue_bonus_.push_back( non_native_residue_bonus[i] );
 	}
@@ -334,7 +334,7 @@ FavorNonNativeResidue::add_residue_constraints( pose::Pose & pose ) const {
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
 
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	for ( core::Size i=1; i<= nres;  ++i ) {
 		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new NonResidueTypeConstraint( pose, i,  non_native_residue_bonus_[ i ]) ) ) );
 	}
@@ -360,7 +360,7 @@ MinimizeInterface(
 
 	runtime_assert( min_rb.size() == pose.num_jump() );
 
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 	runtime_assert( min_bb.size() == nres );
 	runtime_assert( min_sc.size() == nres );
 	runtime_assert( min_rb.size() == pose.num_jump() );
@@ -372,7 +372,7 @@ MinimizeInterface(
 		core::Real min_mean_dist=10000;
 		core::Size central_residue( *target_residues.begin() );
 		for ( auto res_it1=target_residues.begin(); res_it1!=target_residues.end(); ++res_it1 ) {
-			runtime_assert( *res_it1 <= pose.total_residue() );
+			runtime_assert( *res_it1 <= pose.size() );
 
 			core::conformation::Residue const res1( pose.residue(*res_it1) );
 			core::Real mean_distance( 0.0 );
@@ -413,7 +413,7 @@ MinimizeInterface(
 		new_ft.add_edge( 1, jump_pos1, kinematics::Edge::PEPTIDE );
 		new_ft.add_edge( jump_pos1, pose.conformation().chain_end( 1 ), kinematics::Edge::PEPTIDE );
 		new_ft.add_edge( pose.conformation().chain_begin( 2 ), jump_pos2, kinematics::Edge::PEPTIDE );
-		new_ft.add_edge( jump_pos2, pose.total_residue(), kinematics::Edge::PEPTIDE );
+		new_ft.add_edge( jump_pos2, pose.size(), kinematics::Edge::PEPTIDE );
 		new_ft.reorder( 1 );
 
 		TR<<"setting fold_tree for minimization between "<<jump_pos1<<" and "<<jump_pos2<<"\n";
@@ -425,7 +425,7 @@ MinimizeInterface(
 	core::kinematics::MoveMap mm;
 	mm.set_bb( false );
 	TR<<"minimizing sc of residues: ";
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		mm.set_chi( i, min_sc[ i ] );
 		if ( min_sc[ i ] ) {
@@ -450,7 +450,7 @@ MinimizeInterface(
 	if ( !simultaneous_minimization ) {
 		TR<<"minimizing bb of residues (and sc of the previous subset): ";
 	}
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		mm.set_bb( i, min_bb[ i ] );
 		mm.set_chi( i, min_sc[ i ] );
@@ -488,7 +488,7 @@ SymMinimizeInterface(
 	core::kinematics::MoveMap mm;
 	mm.set_bb( false );
 	TR<<"minimizing sc of residues: ";
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		mm.set_chi( i, min_sc[ i ] );
 		if ( min_sc[ i ] ) {
@@ -516,7 +516,7 @@ SymMinimizeInterface(
 	if ( !simultaneous_minimization ) {
 		TR<<"minimizing bb of residues (and sc of the previous subset): ";
 	}
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		mm.set_bb( i, min_bb[ i ] );
 		mm.set_chi( i, min_sc[ i ] );

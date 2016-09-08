@@ -123,7 +123,7 @@ CoordinateConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	core::id::AtomID const root_atomid( 1, pose.fold_tree().root() );
 
 	core::scoring::constraints::ConstraintCOPs csts;
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( !subset[ resid ] ) continue;
 
 		// don't constrain virtual root residue to itself
@@ -136,7 +136,7 @@ CoordinateConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			TR.Debug << "apply(): skipping residue " << resid << " because it was not found in the sequence map." << std::endl;
 			continue;
 		}
-		debug_assert( ref_resid <= reference_pose->total_residue() );
+		debug_assert( ref_resid <= reference_pose->size() );
 
 		create_residue_constraints( csts, root_atomid, pose.residue( resid ), reference_pose->residue( ref_resid ) );
 	}

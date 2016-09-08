@@ -14,13 +14,13 @@ void gpu_score_test(xyzStripeHashPoseWithMetaMode pom) {
 
   Pose p;
   core::import_pose::pose_from_file(p,option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
-	for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= p.size(); ++ir) {
 		if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
 		if( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);		
 	}
 
   //uint natom = pose_natom(p);
-  uint N = p.n_residue();
+  uint N = p.size();
 
   uint runmode = option[OptionKeys::out::nstruct]();
   uint NITER = runmode/10000;

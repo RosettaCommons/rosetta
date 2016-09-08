@@ -888,7 +888,7 @@ struct TCDock {
 		// core::import_pose::pose_from_file(cmp2olig_,*crs,_cmp2pdb, core::import_pose::PDB_file);
 
 		cmp1diapos_=0.0,cmp1dianeg_=0.0,cmp2diapos_=0.0,cmp2dianeg_=0.0;
-		for(Size i = 1; i <= cmp1olig_.n_residue(); ++i) {
+		for(Size i = 1; i <= cmp1olig_.size(); ++i) {
 			int const natom = (cmp1olig_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp1olig_.residue(i).xyz(j) );
@@ -896,7 +896,7 @@ struct TCDock {
 				cmp1dianeg_ = max(cmp1dianeg_,-v.z());
 			}
 		}
-		for(Size i = 1; i <= cmp2olig_.n_residue(); ++i) {
+		for(Size i = 1; i <= cmp2olig_.size(); ++i) {
 			int const natom = (cmp2olig_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp2olig_.residue(i).xyz(j) );
@@ -976,7 +976,7 @@ struct TCDock {
 		cout << "WARNING: skip O atoms!!!!" << endl;
 		for(Size i12 = 0; i12 < 2; ++i12){
 			Pose const & ptmp( i12?cmp1olig_:cmp2olig_ );
-			for(Size i = 1; i <= ptmp.n_residue(); ++i) {
+			for(Size i = 1; i <= ptmp.size(); ++i) {
 				if(ptmp.residue(i).has("CB")) {
 					Real wt = 1.0;
 					if( option[tcdock::cb_weight_average_degree]()                          ) wt *= min(1.0,(Real)neighbor_count(ptmp,i)/20.0);
@@ -1011,7 +1011,7 @@ struct TCDock {
 		if(option[basic::options::OptionKeys::mh::xform_score_data].user()){
 			mhscore_ = protocols::sic_dock::scores::MotifHashRigidScoreCOP( protocols::sic_dock::scores::MotifHashRigidScoreOP( new protocols::sic_dock::scores::MotifHashRigidScore(cmp1olig_,cmp2olig_) ) );
 			jtscore->add_score(mhscore_,option[tcdock::motif_hash_weight]());
-			// Real const approx_surf = std::pow((Real)cmp1olig_.n_residue(),0.666666) * std::pow((Real)cmp2olig_.n_residue(),0.666666);
+			// Real const approx_surf = std::pow((Real)cmp1olig_.size(),0.666666) * std::pow((Real)cmp2olig_.size(),0.666666);
 			// Real const hackcut = approx_surf/25.0 * option[tcdock::hash_speed_filter_hack]();
 			// cout << "MotifHashRigidScore / JointScore Speed filter hack scorecut: " << hackcut << endl;
 		} else {
@@ -1306,8 +1306,8 @@ struct TCDock {
 
 
 			// // residues in starting pose... silly
-			// Size Ncmp1 = ((arch().dihedral1()) ? cmp1olig_.n_residue()/2 : cmp1olig_.n_residue()) / arch().nfold1();
-			// Size Ncmp2 = ((arch().dihedral2()) ? cmp2olig_.n_residue()/2 : cmp2olig_.n_residue()) / arch().nfold2();
+			// Size Ncmp1 = ((arch().dihedral1()) ? cmp1olig_.size()/2 : cmp1olig_.size()) / arch().nfold1();
+			// Size Ncmp2 = ((arch().dihedral2()) ? cmp2olig_.size()/2 : cmp2olig_.size()) / arch().nfold2();
 			// p1.append_residue_by_jump(cmp1olig_.residue(1),1,"","",false);
 			// for(Size i = 2; i <= Ncmp1; ++i) {
 			// 	if(p1.residue(i-1).is_terminus()||p1.residue(i-1).is_ligand())
@@ -1315,15 +1315,15 @@ struct TCDock {
 			// 	else p1.append_residue_by_bond(cmp1olig_.residue(i));
 			// }
 			// if(true && !p1.residue(       1      ).is_lower_terminus()) add_lower_terminus_type_to_pose_residue(p1,      1       );
-			// if(true && !p1.residue(p1.n_residue()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p1,p1.n_residue());
+			// if(true && !p1.residue(p1.size()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p1,p1.size());
 			// p2.append_residue_by_jump(cmp2olig_.residue(1),1,"","", true ); // other chain iff not dumping sym complex (too many chains)
 			// for(Size i = 2; i <= Ncmp2; ++i) {
-			// 	if(p2.residue(p2.n_residue()).is_terminus()||p2.residue(p2.n_residue()).is_ligand())
+			// 	if(p2.residue(p2.size()).is_terminus()||p2.residue(p2.size()).is_ligand())
 			// 	     p2.append_residue_by_jump(cmp2olig_.residue(i),1);
 			// 	else p2.append_residue_by_bond(cmp2olig_.residue(i));
 			// }
 			// if(true && !p2.residue(       1      ).is_lower_terminus()) add_lower_terminus_type_to_pose_residue(p2,      1       );
-			// if(true && !p2.residue(p2.n_residue()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p2,p2.n_residue());
+			// if(true && !p2.residue(p2.size()).is_upper_terminus()) add_upper_terminus_type_to_pose_residue(p2,p2.size());
 			// p1.dump_pdb("testB1.pdb");
 			// p2.dump_pdb("testB2.pdb");
 
@@ -1345,7 +1345,7 @@ struct TCDock {
 		// make joint structure
 		{
 			symm.append_residue_by_jump(p1.residue(1),1,"","",false);
-			for(Size i = 2; i <= p1.n_residue(); ++i) {
+			for(Size i = 2; i <= p1.size(); ++i) {
 				if(p1.residue(i-1).is_upper_terminus()||
 				   p1.residue(i  ).is_lower_terminus()||
 				   p1.residue(i-1).is_ligand()||
@@ -1357,7 +1357,7 @@ struct TCDock {
 				}
 			}
 			symm.append_residue_by_jump(p2.residue(1),1,"","", true ); // other chain iff not dumping sym complex (too many chains)
-			for(Size i = 2; i <= p2.n_residue(); ++i) {
+			for(Size i = 2; i <= p2.size(); ++i) {
 				if(p2.residue(i-1).is_upper_terminus()||
 				   p2.residue(i  ).is_lower_terminus()||
 				   p2.residue(i-1).is_ligand()||
@@ -1402,8 +1402,8 @@ struct TCDock {
 					 	Vec newt = Vec(0,-dcmp2,0);
 					 	j.set_translation(newt);
 					 	symm.set_jump(it->first,j);
-					 	Vec delta = p2.xyz(core::id::AtomID(1,1))-symm.xyz(core::id::AtomID(1,p1.n_residue()+1));
-					 	trans_pose(symm, delta ,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
+					 	Vec delta = p2.xyz(core::id::AtomID(1,1))-symm.xyz(core::id::AtomID(1,p1.size()+1));
+					 	trans_pose(symm, delta ,p1.size()+1,p1.size()+p2.size());
 					 	// cout << "trans jump! " << j << " " << it->first << " " << dcmp1 << " " << dcmp2 << " " << newt-t << " " << delta << endl;
 					}
 				}
@@ -1589,9 +1589,9 @@ struct TCDock {
 			for(int t2 = 0; t2 <= option[tcdock::termini_trim](); ++t2) {
 				Vec n2_0 = cmp2olig_.xyz(core::id::AtomID(1,1+t2));
 				for(int t3 = 0; t3 <= option[tcdock::termini_trim](); ++t3) {
-					Vec c1_0 = cmp1olig_.xyz(core::id::AtomID(3,cmp1olig_.n_residue()-t3));
+					Vec c1_0 = cmp1olig_.xyz(core::id::AtomID(3,cmp1olig_.size()-t3));
 					for(int t4 = 0; t4 <= option[tcdock::termini_trim](); ++t4) {
-						Vec c2_0 = cmp2olig_.xyz(core::id::AtomID(3,cmp2olig_.n_residue()-t4));
+						Vec c2_0 = cmp2olig_.xyz(core::id::AtomID(3,cmp2olig_.size()-t4));
 						for(int i1 = 0; i1 < arch().nfold1(); ++i1){
 							Vec n1 = d1*arch().move1() + rotation_matrix_degrees(arch().axis1(),a1 + 360.0/(Real)arch().nfold1()*(Real)i1) * n1_0;
 							Vec c1 = d1*arch().move1() + rotation_matrix_degrees(arch().axis1(),a1 + 360.0/(Real)arch().nfold1()*(Real)i1) * c1_0;
@@ -1620,9 +1620,9 @@ struct TCDock {
 		int t2=1;
 		Vec n2_0 = cmp2olig_.xyz(core::id::AtomID(1,1+t2));
 		int t3=0;
-		Vec c1_0 = cmp1olig_.xyz(core::id::AtomID(3,cmp1olig_.n_residue()-t3));
+		Vec c1_0 = cmp1olig_.xyz(core::id::AtomID(3,cmp1olig_.size()-t3));
 		int t4=0;
-		Vec c2_0 = cmp2olig_.xyz(core::id::AtomID(3,cmp2olig_.n_residue()-t4));
+		Vec c2_0 = cmp2olig_.xyz(core::id::AtomID(3,cmp2olig_.size()-t4));
 		for(int i1 = 0; i1 < arch().nfold1(); ++i1){
 			Vec n1 = rotation_matrix_degrees(arch().axis1(),a1 + 360.0/(Real)arch().nfold1()*(Real)i1) * n1_0;
 			Vec c1 = rotation_matrix_degrees(arch().axis1(),a1 + 360.0/(Real)arch().nfold1()*(Real)i1) * c1_0;
@@ -2071,10 +2071,10 @@ struct TCDock {
 			cout << F(6,2,2*max(fabs(dcmp1)+(dcmp1>0?cmp1diapos_:cmp1dianeg_),fabs(dcmp2)+(dcmp2>0?cmp2diapos_:cmp2dianeg_))) << " "
 			     << F(7,5,coverage)<<" "
 			     << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "
-			     << I(4,cmp1olig_.n_residue()) << " "
+			     << I(4,cmp1olig_.size()) << " "
 			     << I(3,h.icmp1+(int)da1) << " "
 			     << F(8,3,dcmp1) << " "
-			     << I(4,cmp2olig_.n_residue()) << " "
+			     << I(4,cmp2olig_.size()) << " "
 			     << I(3,h.icmp2+(int)da2) << " "
 			     << F(8,3,dcmp2) << " "
 				 << I(3,h.iori);
@@ -2180,8 +2180,8 @@ int main (int argc, char *argv[]) {
 		// 	TR << "triming tails on " << comp1pdbs[i] << std::endl;
 		// 	protocols::sic_dock::auto_trim_floppy_termini(pose1,ttrim_cut,compnfold[1]);
 		// }
-		if( pose1.n_residue() > (Size)option[tcdock::max_res]() ){
-			TR << "skip " << comp1pdbs[i] << " " << pose1.n_residue() << std::endl;
+		if( pose1.size() > (Size)option[tcdock::max_res]() ){
+			TR << "skip " << comp1pdbs[i] << " " << pose1.size() << std::endl;
 			continue;
 		}
 		for(Size j = 1; j <= comp2pdbs.size(); ++j) {
@@ -2191,8 +2191,8 @@ int main (int argc, char *argv[]) {
 			// 	TR << "triming tails on " << comp2pdbs[j] << std::endl;
 			// 	protocols::sic_dock::auto_trim_floppy_termini(pose2,ttrim_cut,compnfold[2]);
 			// }
-			if( pose2.n_residue() > (Size)option[tcdock::max_res]() ){
-				TR << "skip " << comp2pdbs[j] << " " << pose2.n_residue() << std::endl;
+			if( pose2.size() > (Size)option[tcdock::max_res]() ){
+				TR << "skip " << comp2pdbs[j] << " " << pose2.size() << std::endl;
 				continue;
 			}
 			TCDock tcd(arch,pose1,pose2,comp1pdbs[i],comp2pdbs[j]);

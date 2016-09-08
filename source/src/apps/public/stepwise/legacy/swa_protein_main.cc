@@ -310,7 +310,7 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 
 	native_pose->conformation().detect_disulfides();
 	if ( !option[ OptionKeys::stepwise::protein::disulfide_file ].user() ) {
-		for ( Size n = 1; n <= native_pose->total_residue(); n++ ) {
+		for ( Size n = 1; n <= native_pose->size(); n++ ) {
 			if ( native_pose->residue_type( n ).has_variant_type( core::chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
 		}
 	}

@@ -78,7 +78,7 @@ void dna_motif_matcher()
     
     // Get protein positions
     utility::vector1< core::Size > protein_positions; // Protein positions
-    core::Size nres( pose->total_residue() ); // Number of residues
+    core::Size nres( pose->size() ); // Number of residues
     for ( core::Size p_index(1); p_index<=nres; ++p_index ) 
     {
       if ( pose->residue_type( p_index ).is_protein() ) 

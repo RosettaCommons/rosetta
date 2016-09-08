@@ -182,8 +182,8 @@ NeighborhoodResidueSelector::get_focus(
 ) const
 {
 
-	debug_assert(pose.total_residue() == subset.size());
-	debug_assert(pose.total_residue() == focus.size());
+	debug_assert(pose.size() == subset.size());
+	debug_assert(pose.size() == focus.size());
 
 	bool focus_set = false;
 	if ( focus_selector_ ) {
@@ -219,8 +219,8 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 {
 
 
-	ResidueSubset subset( pose.total_residue(), false );
-	ResidueSubset focus_subset( pose.total_residue(), false);
+	ResidueSubset subset( pose.size(), false );
+	ResidueSubset focus_subset( pose.size(), false);
 
 	// set subset to focus if option is true.  Parse focus from string, or obtain from residue selector.
 	get_focus(pose, subset, focus_subset);
@@ -228,14 +228,14 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 	debug_assert( focus_subset.size() > 0 );
 
 	utility::vector1< Size > focus_residues = get_residues_from_subset(focus_subset);
-	if ( focus_residues.size() == pose.total_residue() ) {
+	if ( focus_residues.size() == pose.size() ) {
 		return subset;
 	}
 
 	if ( distance_ > 10.0 ) {
 		Real const dst_squared = distance_ * distance_;
 		// go through each residue of the pose and check if it's near anything in the focus set
-		for ( Size ii = 1; ii < pose.total_residue() ; ++ii ) {
+		for ( Size ii = 1; ii < pose.size() ; ++ii ) {
 			if ( subset[ ii ] ) continue;
 			conformation::Residue const & r1( pose.residue( ii ) );
 

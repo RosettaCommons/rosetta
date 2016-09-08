@@ -166,7 +166,7 @@ void apply_superposition_transform(
 	Vector to_init_center,
 	Vector to_fit_center)
 {
-	for ( Size r = 1; r <= pose.total_residue(); r++ ) {
+	for ( Size r = 1; r <= pose.size(); r++ ) {
 		for ( Size a = 1; a <= pose.residue_type(r).natoms(); a++ ) {
 			core::id::AtomID id(a, r);
 			pose.set_xyz( id, ( rotation * ( pose.xyz(id) + to_init_center) ) - to_fit_center );
@@ -175,7 +175,7 @@ void apply_superposition_transform(
 }
 
 void fill_CA_coords( core::pose::Pose const& pose, FArray2_double& coords ) {  // fill coords
-	fill_CA_coords( pose, pose.total_residue(), coords );
+	fill_CA_coords( pose, pose.size(), coords );
 }
 
 //coords needs to be a 3 x total_residues array
@@ -192,7 +192,7 @@ void fill_CA_coords( core::pose::Pose const& pose, Size n_atoms, FArray2_double&
 void CA_superimpose( FArray1_double const& weights, core::pose::Pose const&  ref_pose, core::pose::Pose& fit_pose ) {
 	//count residues with CA
 	Size nres=0;
-	for ( core::Size i = 1; i <= fit_pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= fit_pose.size(); i++ ) {
 		if ( !fit_pose.residue_type( i ).is_protein() ) break;
 		++nres;
 	}
@@ -223,7 +223,7 @@ void CA_superimpose( FArray1_double const& weights, core::pose::Pose const&  ref
 	{ // translate xx2 by COM and fill in the new ref_pose coordinates
 		Size atomno(0);
 		Vector x2;
-		for ( Size i=1; i<= fit_pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= fit_pose.size(); ++i ) {
 			for ( Size j=1; j<= fit_pose.residue_type(i).natoms(); ++j ) { // use residue_type to prevent internal coord update
 				++atomno;
 				fit_pose.set_xyz( id::AtomID( j,i), R * ( fit_pose.xyz( id::AtomID( j, i) ) + toCenter ) - toFitCenter );
@@ -301,7 +301,7 @@ void superimpose( Size natoms, FArray1_double const& weights, FArray2_double& re
 
 
 void CA_superimpose( core::pose::Pose const&  ref_pose, core::pose::Pose& fit_pose ) {
-	FArray1D_double weights( ref_pose.total_residue(), 1.0 );
+	FArray1D_double weights( ref_pose.size(), 1.0 );
 	CA_superimpose( weights, ref_pose, fit_pose );
 }
 

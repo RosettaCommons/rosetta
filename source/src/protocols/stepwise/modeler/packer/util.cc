@@ -72,9 +72,9 @@ utility::vector1< Size >
 figure_out_working_interface_res( core::pose::Pose const & pose,
 	utility::vector1< Size > const & working_moving_res_list ){
 
-	utility::vector1< bool > at_interface( pose.total_residue(), false );
+	utility::vector1< bool > at_interface( pose.size(), false );
 	// could make a map to vecs to save memory:
-	utility::vector1< utility::vector1< bool > > checked_pair( pose.total_residue(), at_interface );
+	utility::vector1< utility::vector1< bool > > checked_pair( pose.size(), at_interface );
 
 	for ( Size n = 1; n <= working_moving_res_list.size(); n++ ) {
 		figure_out_working_interface_res( pose, working_moving_res_list[n],
@@ -82,7 +82,7 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 	}
 
 	utility::vector1< Size > interface_res;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !stepwise_addable_pose_residue( i, pose ) ) continue;
 		if ( at_interface[i] ) interface_res.push_back( i );
 	}

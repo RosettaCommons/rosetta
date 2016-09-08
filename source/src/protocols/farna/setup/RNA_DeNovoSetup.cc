@@ -965,7 +965,7 @@ RNA_DeNovoSetup::get_seq_and_resnum( std::string const & pdb,
 	seq = pose.sequence();
 	resnum.clear();
 	chain.clear();
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		resnum.push_back( pdb_info->number( n ) );
 		chain.push_back( pdb_info->chain( n ) );
 	}

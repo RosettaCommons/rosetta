@@ -162,8 +162,8 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 	core::Size start_res;
 	core::Size stop_res;
 	do {
-		start_res = std::max( core::Size(2), core::Size(rand()%(pose.total_residue() - sampler_chunk_size - 2 )) );
-		stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1 )  );
+		start_res = std::max( core::Size(2), core::Size(rand()%(pose.size() - sampler_chunk_size - 2 )) );
+		stop_res  = std::min( core::Size(pose.size()), core::Size(start_res + sampler_chunk_size - 1 )  );
 
 		// If a loopfile was given choose your insertion site from there
 		//    TR.Info << "Selection size: " << selection.size() << std::endl;
@@ -171,7 +171,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 		//      utility::vector1< core::Size > temp_selection = selection;
 		//   numeric::random::random_permutation( temp_selection, numeric::random::rg() );
 		//      start_res = std::max( core::Size(2), core::Size( temp_selection[1] ) );
-		//      stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1)  );
+		//      stop_res  = std::min( core::Size(pose.size()), core::Size(start_res + sampler_chunk_size - 1)  );
 		//      TR.Info << "SubselectionSample: " << start_res << " - " << stop_res << std::endl;
 		//    }
 

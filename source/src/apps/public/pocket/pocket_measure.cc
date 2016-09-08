@@ -117,7 +117,7 @@ main( int argc, char * argv [] )
 		}
 
 		int seqpos = 0;
-		for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 		//seqpos_ = j;
 		if (chain != ' '){

@@ -232,7 +232,7 @@ PackerTask_::PackerTask_(
 	pose::Pose const & pose
 )
 :
-	nres_( pose.total_residue() ),
+	nres_( pose.size() ),
 	pack_residue_( nres_, true ),
 	n_to_be_packed_( nres_ ),
 	n_to_be_packed_up_to_date_( true ),
@@ -1032,7 +1032,7 @@ void PackerTask_::remap_residue_level_tasks(
 	core::id::SequenceMapping reverse_seqmap = core::id::SequenceMapping( *seqmap );
 	reverse_seqmap.reverse();
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		//core::Size new_pos =  (*seqmap)[ii];
 		core::Size old_pos = reverse_seqmap[ii];
 
@@ -1050,7 +1050,7 @@ void PackerTask_::remap_residue_level_tasks(
 
 	residue_tasks_ = remapped_residue_tasks;
 	pack_residue_ = remapped_pack_residue;
-	nres_ = pose.total_residue();
+	nres_ = pose.size();
 	update_n_to_be_packed();
 
 }

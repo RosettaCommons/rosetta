@@ -379,7 +379,7 @@ CentroidRelax::apply(Pose& pose){
 			PackerTaskOP task = TaskFactory::create_packer_task( pose );
 			task->restrict_to_repacking();
 			task->temporarily_fix_everything();
-			for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			for ( core::Size i=1; i<=pose.size(); ++i ) {
 				if ( movemap_->get_chi(i) ) {
 					task->temporarily_set_pack_residue(i, true);
 				}

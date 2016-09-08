@@ -651,7 +651,7 @@ SymDockProtocol::calc_rms( core::pose::Pose & pose ){
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	FArray1D_bool superpos ( pose.total_residue(), false );
+	FArray1D_bool superpos ( pose.size(), false );
 	for ( Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res ) {
 		superpos(res) = true;
 	}

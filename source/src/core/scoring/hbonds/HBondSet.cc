@@ -814,8 +814,8 @@ HBondSet::setup_for_residue_pair_energies(
 	TenANeighborGraph const & tenA_neighbor_graph
 		( pose.energies().tenA_neighbor_graph() );
 
-	nbrs_.resize( pose.total_residue() );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	nbrs_.resize( pose.size() );
+	for ( Size i=1; i<= pose.size(); ++i ) {
 
 		{ // hacky thing here until we update to current svn
 			nbrs_[i] = 1;
@@ -837,7 +837,7 @@ HBondSet::setup_for_residue_pair_energies(
 	// ensure full size for the the HbondSet bb_acc/bb_don arrays
 	// the bb arrays ought to be resized once at the beginning of this function
 	// and not resized to 0 for later push_back operations.... such a waste.
-	resize_bb_donor_acceptor_arrays( pose.total_residue() );
+	resize_bb_donor_acceptor_arrays( pose.size() );
 }
 
 HBondOptions const &

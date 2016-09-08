@@ -85,11 +85,11 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'H' );
 		}
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, -60.0 );
 			pose.set_psi( i, -45.0 );
 			pose.set_omega( i, 180.0 );

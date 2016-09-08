@@ -206,7 +206,7 @@ void SurfaceDockingProtocol::calc_secondary_structure(core::pose::Pose & pose)
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		sec_struct_+=pose.secstruct(ii);
 	}
 }
@@ -221,7 +221,7 @@ void SurfaceDockingProtocol::calc_secondary_structure_with_surface(core::pose::P
 	singlechain_poses = pose_tmp.split_by_chain();
 	core::scoring::dssp::Dssp dssp( *singlechain_poses[2] );
 	dssp.insert_ss_into_pose( *singlechain_poses[2] );
-	for ( Size ii = 1; ii <= singlechain_poses[2]->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= singlechain_poses[2]->size(); ++ii ) {
 		sec_struct_+=singlechain_poses[2]->secstruct(ii);
 	}
 }
@@ -229,7 +229,7 @@ void SurfaceDockingProtocol::calc_secondary_structure_with_surface(core::pose::P
 void SurfaceDockingProtocol::set_secondary_structure(core::pose::Pose & pose)
 {
 	Size index=0;
-	for ( Size ii = pose.num_jump()+1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = pose.num_jump()+1; ii <= pose.size(); ++ii ) {
 		pose.set_secstruct(ii,sec_struct_[index]);
 		index=index+1;
 	}
@@ -240,8 +240,8 @@ void SurfaceDockingProtocol::initialize_surface_energies(core::pose::Pose & pose
 	// Initialize the SurfaceEnergies object; this protocol assumes that the block of residues from num_jump to total_residue
 	// represents the single range of non-surface residues
 	core::scoring::solid_surface::SurfaceEnergiesOP surfEs( new core::scoring::solid_surface::SurfaceEnergies );
-	surfEs->set_total_residue( pose.total_residue() );
-	surfEs->set_residue_range_not_surface( first_protein_residue, pose.total_residue() );
+	surfEs->set_total_residue( pose.size() );
+	surfEs->set_residue_range_not_surface( first_protein_residue, pose.size() );
 	pose.set_new_energies_object( surfEs );
 }
 
@@ -264,7 +264,7 @@ void SurfaceDockingProtocol::setup_movers ( core::pose::Pose const & pose, Size 
 	surface_orient_->set_surface_parameters(surface_parameters_);
 	setup_abinitio();
 	centroid_relax_ = protocols::surface_docking::CentroidRelaxMoverOP( new surface_docking::CentroidRelaxMover() );
-	core::Size protein_length = pose.total_residue()-first_protein_residue+1;
+	core::Size protein_length = pose.size()-first_protein_residue+1;
 
 	if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
 		centroid_relax_->set_nmoves(2);
@@ -363,9 +363,9 @@ void SurfaceDockingProtocol::split_protein_surface_poses (core::pose::Pose const
 
 void SurfaceDockingProtocol::merge_protein_surface_poses(core::pose::Pose & pose, const core::pose::Pose & surface, const core::pose::Pose & protein)
 {
-	pose.copy_segment((protein).total_residue(),
+	pose.copy_segment((protein).size(),
 		(protein),
-		(surface).total_residue()+1,1);
+		(surface).size()+1,1);
 
 	set_secondary_structure(pose);
 }
@@ -377,7 +377,7 @@ SurfaceDockingProtocol::create_surface_packer_task ( core::pose::Pose const & po
 		( pack::task::TaskFactory::create_packer_task( pose ));
 
 	// allow repacking for only the protein side chains!
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ii < first_protein_residue ) {
 			my_task_fullatom->nonconst_residue_task( ii ).prevent_repacking();
 		} else {

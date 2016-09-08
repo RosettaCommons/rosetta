@@ -164,7 +164,7 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 	using namespace Eigen;
 	using namespace std;
 	//copy from RemodelGlobalFrame because A. lack of const correctness, #remodel is in protocols.b.5 and I wanted this code to live in simple filters which is in protocols.3
-	Size seg_size = pose.total_residue()/numb_repeats_;
+	Size seg_size = pose.size()/numb_repeats_;
 	Size startResOffset = seg_size*(startAtRepeat_-1);
 	MatrixXf A(3, seg_size);
 	MatrixXf B(3, seg_size);

@@ -84,7 +84,7 @@ close_chainbreaks(
 	core::kinematics::FoldTree final_fold_tree;
 	kinematics::MoveMap const& movemap = closure_protocol->movemap();
 	if ( !final_fold_tree_in.nres() ) { //empty fold-tree
-		final_fold_tree.simple_tree( open_pose.total_residue() );
+		final_fold_tree.simple_tree( open_pose.size() );
 	} else if ( core::pose::symmetry::is_symmetric( open_pose ) ) {
 		final_fold_tree = core::conformation::symmetry::replaced_symmetric_foldtree_with_new_monomer(
 			open_pose.fold_tree(), *core::pose::symmetry::symmetry_info( open_pose ),
@@ -128,7 +128,7 @@ close_chainbreaks(
 						&& movemap.get_bb( min_loop_begin - 1 )
 						) --min_loop_begin;
 				while (
-						max_loop_end < pose.total_residue()
+						max_loop_end < pose.size()
 						&& !pose.fold_tree().is_jump_point( max_loop_end + 1 )
 						&& movemap.get_bb( max_loop_end + 1)
 						) ++max_loop_end;
@@ -278,7 +278,7 @@ void safe_secstruct( pose::Pose& pose ) {
 	kinematics::FoldTree const& fold_tree( pose.fold_tree() );
 
 	Size const num_jump ( fold_tree.num_jump() );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	for ( Size i = 1; i <= num_jump; ++i ) {
 		for ( Size j = 1; j <= 2; ++j ) {
@@ -366,8 +366,8 @@ get_pairing_geometry(
 	Real& pleating2
 )
 {
-	runtime_assert( res1>1 && res1 < pose.total_residue() &&
-		res2 > res1 && res2 < pose.total_residue() );
+	runtime_assert( res1>1 && res1 < pose.size() &&
+		res2 > res1 && res2 < pose.size() );
 
 	chemical::ResidueType const& rt1 ( pose.residue_type ( res1 ) );
 	chemical::ResidueType const& rt2 ( pose.residue_type ( res2 ) );

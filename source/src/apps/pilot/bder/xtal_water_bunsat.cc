@@ -67,7 +67,7 @@ public:
 		
 		pose::Pose dry_pose( pose );
 
-		for(Size i(1); i<=dry_pose.total_residue(); ++i) {
+		for(Size i(1); i<=dry_pose.size(); ++i) {
 			if(! dry_pose.residue(i).is_protein() ) {
 				dry_pose.conformation().delete_residue_slow(i);
 				--i;
@@ -106,7 +106,7 @@ public:
 		
 	  
 		water_points_.clear();
-		for(Size i(1); i<=pose.total_residue(); ++i) {
+		for(Size i(1); i<=pose.size(); ++i) {
 			if(pose.residue(i).name() == "TP3") {
 				water_points_.push_back(pose.residue(i).atom(1).xyz());
 			}
@@ -114,7 +114,7 @@ public:
 		TR << "waters: " << water_points_.size() << std::endl;
 
 		//check NH
-		for(Size i(2); i<= dry_pose_.total_residue(); ++i) {
+		for(Size i(2); i<= dry_pose_.size(); ++i) {
 			if(dry_pose_.residue(i).is_protein() && dry_pose_.residue(i).name3() != "PRO") {
 				id::AtomID this_atomid = id::AtomID( dry_pose_.residue(i).atom_index("H"), i);
 				if(atomid_is_contacting_crystallographic_water(this_atomid)) {
@@ -125,7 +125,7 @@ public:
 		}
 		
 		//check O
-		for(Size i(1); i<= dry_pose_.total_residue() - 1; ++i) {
+		for(Size i(1); i<= dry_pose_.size() - 1; ++i) {
 			if(dry_pose_.residue(i).is_protein()) {
 				id::AtomID this_atomid = id::AtomID( 4, i );
 				if(atomid_is_contacting_crystallographic_water(this_atomid)){

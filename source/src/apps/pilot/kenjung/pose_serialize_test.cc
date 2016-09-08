@@ -64,14 +64,14 @@ main( int argc, char * argv [] )
 		std::stringstream s;
 		boost::archive::binary_oarchive oa(s);
 		boost::archive::binary_iarchive ia(s);
-		trmain << "pose size=" << tmppose->total_residue() << std::endl;
+		trmain << "pose size=" << tmppose->size() << std::endl;
 		trmain << "pdb res num = " << tmppose->pdb_info()->number(3) << std::endl;
 		trmain << "before in" << std::endl;
 		oa << tmppose;
 		trmain << "after in, size is " << s.str().size() <<  std::endl;
 		ia >> out;
 		trmain << "after out" << std::endl;
-		trmain << "pose size=" << out->total_residue() << std::endl;
+		trmain << "pose size=" << out->size() << std::endl;
 		trmain << "pdb res num = " << out->pdb_info()->number(3) << std::endl;
 		(*scorefxn)(*out);
 		trmain << "dumping" << std::endl;

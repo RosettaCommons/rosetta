@@ -254,7 +254,7 @@ MetapatchEnumeration::generate_metapatched_variants( Size resi ) {
 	ResidueType const starting_type = pose_.residue( resi ).type();
 
 	// Reset mm bb except for area near resi
-	for ( Size ii = 1; ii <= pose_.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose_.size(); ++ii ) {
 		if ( ii >= resi - 2 || ii <= resi + 2  ) {
 			mm_->set_bb( ii, false );
 		} else  {
@@ -301,7 +301,7 @@ MetapatchEnumeration::initial_sampling(
 	if ( pack_ ) {
 		PackerTaskOP setup_pack = TaskFactory::create_packer_task( pose );
 		setup_pack->initialize_from_command_line().or_include_current( true );
-		for ( core::Size resj = 1; resj <= pose.total_residue(); ++resj ) {
+		for ( core::Size resj = 1; resj <= pose.size(); ++resj ) {
 			setup_pack->nonconst_residue_task( resj ).or_ex1_sample_level( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
 			setup_pack->nonconst_residue_task( resj ).or_ex2_sample_level( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
 			setup_pack->nonconst_residue_task( resj ).restrict_to_repacking();
@@ -348,7 +348,7 @@ void MetapatchEnumeration::final_sampling(
 	Size resi
 ) {
 	kinematics::MoveMapOP mut_mm = mm_;
-	//for ( Size ii = 1; ii <= mut_pose.total_residue(); ++ii ) {
+	//for ( Size ii = 1; ii <= mut_pose.size(); ++ii ) {
 	// mut_mm->set_bb(  ii, true );
 	// mut_mm->set_chi( ii, true );
 	//}
@@ -362,7 +362,7 @@ void MetapatchEnumeration::final_sampling(
 		mutant_tf->push_back( dao );
 		PackerTaskOP mutant_pt = mutant_tf->create_task_and_apply_taskoperations( mut_pose );
 		mutant_pt->initialize_from_command_line().or_include_current( true );
-		for ( core::Size resj = 1; resj <= mut_pose.total_residue(); ++resj ) {
+		for ( core::Size resj = 1; resj <= mut_pose.size(); ++resj ) {
 			mutant_pt->nonconst_residue_task( resj ).or_ex1_sample_level( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
 			mutant_pt->nonconst_residue_task( resj ).or_ex2_sample_level( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
 			mutant_pt->nonconst_residue_task( resj ).restrict_to_repacking();

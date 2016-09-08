@@ -93,7 +93,7 @@ main( int argc, char * argv [] )
 	int const relax_start_pdb_number = option[ relax_start_resnum ];
 	int const relax_final_pdb_number = option[ relax_final_resnum ];
 
-	for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 		if ( input_pose.pdb_info()->number(j) == relax_start_pdb_number ) {
 			start_relax_res = j;
 		}

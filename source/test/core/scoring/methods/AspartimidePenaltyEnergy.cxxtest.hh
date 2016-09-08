@@ -306,7 +306,7 @@ public:
 		// Set up test pose
 		core::pose::Pose pose;
 		make_pose_from_sequence( pose, "AAAAAAAA", "fa_standard");
-		for ( core::Size i=1, imax=pose.n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=1, imax=pose.size(); i<=imax; ++i ) {
 			protocols::simple_moves::MutateResidue mutres;
 			mutres.set_target(i);
 			mutres.set_res_name("DALA");

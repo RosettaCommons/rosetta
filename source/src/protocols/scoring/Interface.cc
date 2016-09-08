@@ -100,11 +100,11 @@ Interface::calculate( core::pose::Pose const & pose )
 	/// create a dummy array to initialize all the members of the partner
 	/// and is_interface array to false
 	using namespace core;
-	FArray1D_bool false_array ( pose.total_residue(), false );
+	FArray1D_bool false_array ( pose.size(), false );
 	partner_ = false_array;
 	is_interface_ = false_array;
 	pair_list_.resize( max_interchain_sites );
-	contact_list_.resize( pose.total_residue() );
+	contact_list_.resize( pose.size() );
 	kinematics::FoldTree const & fold_tree ( pose.fold_tree() );
 
 	// Check if we are symmetric. We don't need the FoldTree partitioning for this
@@ -119,7 +119,7 @@ Interface::calculate( core::pose::Pose const & pose )
 		fold_tree.partition_by_jump( jump_number_, partner_ );
 	}
 
-	//for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	//for ( Size i=1; i<=pose.size(); ++i ) {
 	// assuming if it is not a polymer residue, it must be a ligand
 	Size upstream_jump_res, downstream_jump_res;
 	upstream_jump_res = fold_tree.upstream_jump_residue( jump_number_ );
@@ -228,7 +228,7 @@ Interface::ligand_calculate(
 {
 
 	using namespace core;
-	for ( Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		// all residues on ligand side can move
 		if ( ! partner_(i) ) {
 			is_interface_(i) = true;
@@ -236,7 +236,7 @@ Interface::ligand_calculate(
 		}
 		// on protein side, have to do distance check
 		conformation::Residue const & prot_rsd = pose.residue(i);
-		for ( Size j = 1, j_end = pose.total_residue(); j <= j_end; ++j ) {
+		for ( Size j = 1, j_end = pose.size(); j <= j_end; ++j ) {
 			if ( partner_(j) ) continue; // compare against only ligand residues
 			conformation::Residue const & lig_rsd = pose.residue(j);
 			for ( Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
@@ -266,7 +266,7 @@ Interface::closest_interface_residue( core::pose::Pose const & pose, Size src_rs
 	Size ret_rsd (0);
 	Real min_distance (1000000.0);
 
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( partner_(src_rsd) == partner_(i) ) continue;
 		Real const cendist = pose.residue(i).nbr_atom_xyz().distance(pose.residue(src_rsd).nbr_atom_xyz()) ;
 		if ( cendist < min_distance ) {
@@ -334,7 +334,7 @@ Interface::set_pack(
 	// apl -- this logic is now inverted to start from a task of "repack everything" and to then
 	// produce a task of "repack only a few things"
 	task->restrict_to_repacking();
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii<=pose.size(); ++ii ) {
 		// apl if the residue is set to false (as not being an interface residue), set pack to false
 		// Disable packing completely for ligands, not supported yet.
 		if ( !is_interface_(ii) || pose.residue(ii).is_ligand() ) {
@@ -350,7 +350,7 @@ Interface::set_pack(
 		}
 	}
 	if ( option[ docking::norepack2 ]() ) {
-		for ( Size ii = cutpoint ; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = cutpoint ; ii <= pose.size(); ++ii ) {
 			task->nonconst_residue_task( ii ).prevent_repacking();
 		}
 	}
@@ -409,14 +409,14 @@ Interface::center (
 )
 {
 	int count ( 0 );
-	std::vector < bool > interface ( pose.total_residue(), false );
+	std::vector < bool > interface ( pose.size(), false );
 	using namespace core;
 	Vector center ( 0.0 );
 
 	// first, calculate the residues that are at the interface
 	// this should be already calculated?
 	//  calculate( pose );
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( interface[i] ) {
 			// the c-alpha atom, this should probably be more generalized so that it can work
 			// with a ligand, surface, or dna.
@@ -464,7 +464,7 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 		( dynamic_cast< core::scoring::symmetry::SymmetricEnergies const & > ( pose.energies() ) );
 	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( symm_info->bb_is_independent(i) ) {
 			partner_(i) = true;
 		}
@@ -526,7 +526,7 @@ Interface::set_symmetric_pack(
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !symm_info->chi_is_independent(i) ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
 		}

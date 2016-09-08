@@ -135,11 +135,11 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 	}
 
 	if ( randomize_resnum_ ) {
-		resnum_ = numeric::random::rg().random_range(3, pose.total_residue()-2);
+		resnum_ = numeric::random::rg().random_range(3, pose.size()-2);
 	}
 
 	// only perform move if not adjacent to the end of the chain
-	if ( core::Size(resnum_-2) > 1 && core::Size(resnum_+2) < pose.total_residue() ) {
+	if ( core::Size(resnum_-2) > 1 && core::Size(resnum_+2) < pose.size() ) {
 		utility::vector1<core::Size> pivot_residues;
 		utility::vector1<std::string> pivot_atoms;
 		backrubmover_->clear_segments();

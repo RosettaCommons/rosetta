@@ -123,7 +123,7 @@ adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP 
 	new_mm->set_chi( false );
 	//  new_mm->set_jump( false );
 
-	for ( Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
 		Size previous_pos ( (*fullsmap)[resi] );
 		TR.Debug<<"previous position "<<previous_pos <<", current residue: " << resi << std::endl;
 
@@ -156,7 +156,7 @@ parse_seeds( core::pose::Pose const & pose, utility::vector1 < std::pair < std::
 		core::Size const end   = core::pose::parse_resnum( seed_vector[iter].second, pose );
 		//runtime_assert( end > begin );
 		//runtime_assert( begin>=1);
-		//runtime_assert( end<=pose.total_residue() );
+		//runtime_assert( end<=pose.size() );
 		tmpseed.add_loop( begin , end , 0, 0, false );
 	}
 	TR.Debug<<"runtime parsed: "<< tmpseed <<std::endl;
@@ -169,7 +169,7 @@ combine_two_poses( core::pose::Pose design_pose , core::pose::PoseOP target_chai
 	core::pose::PoseOP combo_pose( new core::pose::Pose );
 	combo_pose = target_chain;
 
-	TR<<"new poseOP total number should contain the additional target chain number: " << combo_pose->total_residue();
+	TR<<"new poseOP total number should contain the additional target chain number: " << combo_pose->size();
 
 	core::pose::PDBInfoOP pdb_info_design( new core::pose::PDBInfo( design_pose ) );
 	core::pose::PDBInfoOP pdb_info_target( new core::pose::PDBInfo( *target_chain ) );
@@ -178,20 +178,20 @@ combine_two_poses( core::pose::Pose design_pose , core::pose::PoseOP target_chai
 
 	// take the target chain pose and append through a jump the newly folded protein pose
 
-	TR<< "folded proteins has " << design_pose.total_residue() << " total residues \n";
-	TR<< "the target protein (chain A) has " << target_chain->total_residue() << " total residues "<<std::endl;
+	TR<< "folded proteins has " << design_pose.size() << " total residues \n";
+	TR<< "the target protein (chain A) has " << target_chain->size() << " total residues "<<std::endl;
 
-	for ( core::Size i=1; i<=design_pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=design_pose.size(); ++i ) {
 		core::conformation::ResidueCOP new_rsd = design_pose.residue(i).clone();
 		if ( i == 1 ) {
-			combo_pose->append_residue_by_jump( *new_rsd, combo_pose->total_residue(), "", "", true /*new chain*/ );//anchor and start atomes are not defined, wonder whether the constructor can deal wtih taht
+			combo_pose->append_residue_by_jump( *new_rsd, combo_pose->size(), "", "", true /*new chain*/ );//anchor and start atomes are not defined, wonder whether the constructor can deal wtih taht
 		} else {
 			combo_pose->append_residue_by_bond( *new_rsd );
 		}
 	}//done adding chain by residues
 
 	combo_pose->dump_pdb( "target_plus_folded.pdb" );
-	TR.Debug<<" total residues of new pdb: " <<combo_pose->total_residue()<<std::endl;
+	TR.Debug<<" total residues of new pdb: " <<combo_pose->size()<<std::endl;
 
 	design_pose = *combo_pose;
 

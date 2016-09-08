@@ -237,7 +237,7 @@ COMCoordinateConstraint::read_def(
 	while ( line_stream >> name >> res ) {
 		tr.Debug << "   " << name << " " << res ;
 		atms.push_back( id::AtomID( pose.residue_type( res ).atom_index( name ), res ) );
-		if ( res > pose.total_residue() ) {
+		if ( res > pose.size() ) {
 			tr.Debug << "** ignored **";
 			continue;
 		}

@@ -85,7 +85,7 @@ public:
 			// make a copy of the Pose, convert all positions to alanine
 			core::pose::Pose poly_ala_pose = pose;
 			utility::vector1< core::Size > positions;
-			for ( Size i = 1; i <= pose.total_residue(); ++i )
+			for ( Size i = 1; i <= pose.size(); ++i )
 				positions.push_back( i );
 
 			protocols::toolbox::pose_manipulation::construct_poly_ala_pose(

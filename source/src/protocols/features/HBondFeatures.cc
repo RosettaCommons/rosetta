@@ -691,7 +691,7 @@ HBondFeatures::report_features(
 	Size site_id(0);
 	AtomID_Map< Size > site_ids;
 	core::pose::initialize_atomid_map(site_ids, pose);
-	for ( Size resNum =1; resNum <= pose.n_residue(); ++resNum ) {
+	for ( Size resNum =1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		Residue const & res(pose.residue(resNum));

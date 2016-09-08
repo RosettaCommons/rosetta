@@ -53,7 +53,7 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 
 		HelixPairingFilter filt( "1-2.P;2-3.A" );
-		filt.secstruct( std::string( pose.total_residue(), 'L' ) );
+		filt.secstruct( std::string( pose.size(), 'L' ) );
 
 		// filter should fail, because helices 1, 2 and 3 are given, and the pose doesn't contain helices
 		TS_ASSERT( !filt.apply( pose ) );

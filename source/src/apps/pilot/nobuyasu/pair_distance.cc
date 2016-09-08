@@ -136,7 +136,7 @@ public: // constructor/deconstructor
 		// define atom_map for main-chain and CB
 		core::id::AtomID_Map< bool > atom_map;
 		core::pose::initialize_atomid_map( atom_map, pose, false );
-		for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+		for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 			for ( Size j = 1; j<=5; ++j ) {
 				core::id::AtomID atom( j, ir );
 				atom_map.set( atom, true );
@@ -176,7 +176,7 @@ public: // apply
 		}
 
 		protocols::fldsgn::topology::BB_Pos bbpos = ssinfo_->bb_pos();
-		Size max_ssele = ssinfo_->ss_element_id( pose.total_residue() );
+		Size max_ssele = ssinfo_->ss_element_id( pose.size() );
 		utility::vector1< utility::vector1< Size > > ncon_sselements( max_ssele, (utility::vector1< Size >(max_ssele, 0)));
 		utility::vector1< utility::vector1< bool > > ncon_calc( max_ssele, (utility::vector1< Size >(max_ssele, false)));
 		for ( Size i=1 ;i<=max_ssele; ++i ) {
@@ -184,14 +184,14 @@ public: // apply
 				ncon_sselements[i][j] = 1;
 			}
 		}
-		utility::vector1< Size > ncon_per_res( pose.total_residue(), 1 );
-		utility::vector1< bool > ncon_per_res_calc( pose.total_residue(), false );
+		utility::vector1< Size > ncon_per_res( pose.size(), 1 );
+		utility::vector1< bool > ncon_per_res_calc( pose.size(), false );
 
-		for( Size ii=1; ii<=pose.total_residue(); ii++ ) {
+		for( Size ii=1; ii<=pose.size(); ii++ ) {
 
 			if( ssinfo_->secstruct( ii ) != 'H' && ssinfo_->secstruct( ii ) != 'E' ) continue;
 			Size ii_ssid = ssinfo_->ss_element_id( ii );
-			for( Size jj=ii+1; jj<=pose.total_residue(); jj++ ) {
+			for( Size jj=ii+1; jj<=pose.size(); jj++ ) {
 
 				Size jj_ssid = ssinfo_->ss_element_id( jj );
 				if( ssinfo_->secstruct( jj ) != 'H' && ssinfo_->secstruct( jj ) != 'E' ) continue;
@@ -218,7 +218,7 @@ public: // apply
 		Size h( 0 );
 		Size total( 0 );
 		Size totale( 0 );
-		for( Size iaa=1; iaa<=pose.total_residue(); iaa++ ) {
+		for( Size iaa=1; iaa<=pose.size(); iaa++ ) {
 			if( ncon_per_res_calc[ iaa ] ) {
 				total ++;
 				totale += ncon_per_res[ iaa ];
@@ -232,7 +232,7 @@ public: // apply
 		Real make_sure = 0.0;
 		Real entropy( 0.0 );
 		Real prob( 0.0 );
-		for( Size iaa=1; iaa<=pose.total_residue(); iaa++ ) {
+		for( Size iaa=1; iaa<=pose.size(); iaa++ ) {
 			if( ncon_per_res_calc[ iaa ] ) {
 				prob = Real( ncon_per_res[ iaa ] )/Real( totale );
 				entropy += -prob*( std::log( prob )/std::log( 2 ) );
@@ -285,7 +285,7 @@ public: // apply
 		Size num( 0 );
 		Real total_surface( 0.0 );
 		utility::vector1< Real > rsd_sasa( calc_rsd_sasa( pose ) );
-		for ( Size iaa=2; iaa<=pose.total_residue()-1; iaa++ ) {
+		for ( Size iaa=2; iaa<=pose.size()-1; iaa++ ) {
 			if( ssinfo_->secstruct( iaa ) == 'E' ) {
 				num++;
 				Real val( 0.0 );

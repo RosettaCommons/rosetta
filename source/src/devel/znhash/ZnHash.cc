@@ -412,10 +412,10 @@ void ZnCoordinationScorer::add_match_from_file(
 	core::import_pose::pose_from_file( match_pose, match_file_name , core::import_pose::PDB_file);
 
 	/// Input validation.
-	if ( match_pose.total_residue() != 3 || match_pose.residue(3).name() != "ZNX" ) {
+	if ( match_pose.size() != 3 || match_pose.residue(3).name() != "ZNX" ) {
 		std::cerr << "Error, match file " << match_file_name << " does not conform to the standard" << std::endl;
-		if ( match_pose.total_residue() != 3 ) {
-			std::cerr << "Total number of residues is not equal to 3 (read " << match_pose.total_residue()  << " residues)" << std::endl;
+		if ( match_pose.size() != 3 ) {
+			std::cerr << "Total number of residues is not equal to 3 (read " << match_pose.size()  << " residues)" << std::endl;
 		} else {
 			std::cerr << "Residue 3 is not a ZNX residue!  Instead, its residue type " << match_pose.residue(3).name() << std::endl;
 		}

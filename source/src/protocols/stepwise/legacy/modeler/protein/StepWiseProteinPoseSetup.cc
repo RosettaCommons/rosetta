@@ -542,7 +542,7 @@ StepWiseProteinPoseSetup::make_full_pose( pose::Pose & pose ){
 	make_pose_from_sequence( pose, desired_sequence_, *rsd_set ); //, false /*auto_termini*/);
 
 	if ( remove_nterminus_variant_ )  pose::remove_lower_terminus_type_from_pose_residue( pose, 1 );
-	if ( remove_cterminus_variant_ )  pose::remove_upper_terminus_type_from_pose_residue( pose, pose.total_residue() );
+	if ( remove_cterminus_variant_ )  pose::remove_upper_terminus_type_from_pose_residue( pose, pose.size() );
 
 	TR.Debug << remove_nterminus_variant_ << ' ' << remove_cterminus_variant_ << "  FULL POSE ANNOTATED SEQUENCE: " << pose.annotated_sequence( true ) << std::endl;
 
@@ -562,7 +562,7 @@ StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 	make_full_pose( pose );
 
 	// Extend pose. (protein)
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.residue_type( n ).is_protein() ) continue;
 		pose.set_phi( n, -150 );
 		pose.set_psi( n, 150);
@@ -572,10 +572,10 @@ StepWiseProteinPoseSetup::make_pose( pose::Pose & pose ){
 	// slice it down.
 	utility::vector1< Size > const & is_working_res = working_parameters_->is_working_res();
 	utility::vector1< Size > working_res_list;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) if ( is_working_res[ n ] ) working_res_list.push_back( n );
+	for ( Size n = 1; n <= pose.size(); n++ ) if ( is_working_res[ n ] ) working_res_list.push_back( n );
 	pdbslice( pose, working_res_list );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	core::kinematics::FoldTree f( nres );
 	assert( cuts_.size() == jump_partners_.size() );
 	Size const num_cuts( cuts_.size() );
@@ -646,7 +646,7 @@ StepWiseProteinPoseSetup::setup_disulfides( pose::Pose & pose ){
 	}
 
 	pose.conformation().fix_disulfides( working_disulf_bonds );
-	for ( Size n = 1; n<= pose.total_residue(); n++ ) TR.Debug << pose.residue_type( n ).has_variant_type( chemical::DISULFIDE );
+	for ( Size n = 1; n<= pose.size(); n++ ) TR.Debug << pose.residue_type( n ).has_variant_type( chemical::DISULFIDE );
 	TR.Debug << std::endl;
 
 	// this is not showing up right...
@@ -701,7 +701,7 @@ StepWiseProteinPoseSetup::setup_constraints( pose::Pose & pose ){
 void
 StepWiseProteinPoseSetup::initialize_phi_psi_offsets(  pose::Pose const & pose ){
 
-	Size const & nres = pose.total_residue();
+	Size const & nres = pose.size();
 
 	phi_offsets_.dimension( nres, 0.0 );
 	psi_offsets_.dimension( nres, 0.0 );
@@ -740,7 +740,7 @@ StepWiseProteinPoseSetup::save_phi_psi_offsets(
 void
 StepWiseProteinPoseSetup::fix_phi_psi_offsets( pose::Pose & pose ) const{
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 
 		if ( !pose.residue_type( n ).is_protein() ) continue;
 		Real const phi_current = protocols::stepwise::legacy::modeler::protein::get_pretend_phi_explicit( pose, n );
@@ -811,7 +811,7 @@ StepWiseProteinPoseSetup::initialize_pose_from_streams( pose::Pose & pose )
 void
 StepWiseProteinPoseSetup::figure_out_partition_definition( pose::Pose const & pose ){
 
-	ObjexxFCL::FArray1D_bool partition_definition( pose.total_residue(), false );
+	ObjexxFCL::FArray1D_bool partition_definition( pose.size(), false );
 
 	utility::vector1< Size > const & moving_suite_list( working_parameters_->working_moving_suite_list() );
 	utility::vector1< Size > const & moving_res_list( working_parameters_->working_moving_res_list() );
@@ -824,7 +824,7 @@ StepWiseProteinPoseSetup::figure_out_partition_definition( pose::Pose const & po
 		if ( (moving_suite_list.size() > 0 &&
 				moving_suite_list[ 1 ] == (moving_res_list[ 1 ]-1) ) /*append*/ ||
 				( moving_res_list[1] > 1 &&
-				moving_res_list[ moving_res_list.size() ] == pose.total_residue() ) ) {
+				moving_res_list[ moving_res_list.size() ] == pose.size() ) ) {
 			partition_res = moving_res_list[ 1 ] - 1;
 		} else {
 			partition_res = moving_res_list[ moving_res_list.size() ];
@@ -834,7 +834,7 @@ StepWiseProteinPoseSetup::figure_out_partition_definition( pose::Pose const & po
 	}
 
 	TR.Debug << "PARTITION_DEFINITION ==> ";
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) TR.Debug << partition_definition( i );
+	for ( Size i = 1; i <= pose.size(); i++ ) TR.Debug << partition_definition( i );
 	TR.Debug << std::endl;
 	TR.Debug << "FOLD_TR.DebugEE " << pose.fold_tree() << std::endl;
 	//  TR.Debug << "NUM_JUMPS " << pose.fold_tree().num_jump() << std::endl;
@@ -848,7 +848,7 @@ StepWiseProteinPoseSetup::figure_out_partition_definition( pose::Pose const & po
 
 	ObjexxFCL::FArray1D< Size > const & is_moving_res( working_parameters_->is_moving_res() );
 	std::map< core::Size, core::Size > & sub_to_full( working_parameters_->sub_to_full() );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( is_moving_res( sub_to_full[ i ] ) ) continue;
 		if ( partition_definition( i )  == start_partition  ) {
 			working_parameters_->set_is_internal( true );
@@ -869,7 +869,7 @@ StepWiseProteinPoseSetup::reroot_fold_tree( pose::Pose & pose ){
 
 	ObjexxFCL::FArray1D< bool > const & partition_definition = working_parameters_->partition_definition();
 	//   std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size num_partition_0( 0 ), num_partition_1( 0 );
 	Size possible_new_root_residue_in_partition_0( 0 ), possible_new_root_residue_in_partition_1( 0 ), root_res( 0 );
@@ -952,7 +952,7 @@ StepWiseProteinPoseSetup::reroot_fold_tree( pose::Pose & pose ){
 	// moving positions // deprecated.
 	//utility::vector1< Size > moving_positions;
 	//  bool const root_partition = partition_definition( pose.fold_tree().root() );
-	//  for (Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+	//  for (Size seq_num=1; seq_num<=pose.size(); seq_num++){
 	//   if ( partition_definition( seq_num ) != root_partition )  moving_positions.push_back( seq_num );
 	//  }
 	//  working_parameters_->set_moving_pos( moving_positions ); // deprecated.
@@ -1058,7 +1058,7 @@ StepWiseProteinPoseSetup::apply_cutpoint_variants( pose::Pose & pose ) const {
 	using namespace core::id;
 
 	pose::Pose pose_copy = pose;
-	kinematics::FoldTree f_simple( pose.total_residue() );
+	kinematics::FoldTree f_simple( pose.size() );
 	pose_copy.fold_tree( f_simple );
 
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
@@ -1112,7 +1112,7 @@ StepWiseProteinPoseSetup::apply_terminus_variants_at_protein_rna_boundaries( pos
 	using namespace core::conformation;
 	using namespace core::pose;
 
-	for ( Size n = 1; n <= pose.total_residue()-1; n++ ) {
+	for ( Size n = 1; n <= pose.size()-1; n++ ) {
 		if ( (pose.residue_type( n ).is_RNA() && pose.residue_type( n+1).is_protein())  ||
 				(pose.residue_type( n ).is_protein() && pose.residue_type( n+1).is_RNA()) ) {
 			pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, n  );
@@ -1171,15 +1171,15 @@ StepWiseProteinPoseSetup::get_working_pose( pose::Pose const & pose, pose::Pose 
 
 	// Need a simple fold tree for following to work...
 	Pose full_pose_copy = pose;
-	full_pose_copy.fold_tree(  core::kinematics::FoldTree(  full_pose_copy.total_residue() ) );
+	full_pose_copy.fold_tree(  core::kinematics::FoldTree(  full_pose_copy.size() ) );
 
-	for ( Size i = 1; i <= full_pose_copy.total_residue(); i++ ) {
+	for ( Size i = 1; i <= full_pose_copy.size(); i++ ) {
 		if ( !is_working_res[ i ] ) continue;
 		//TR.Debug << "About to append: " << i << std::endl;
 		ResidueOP residue_to_add = full_pose_copy.residue( i ).clone() ;
 
 		if ( i > 1 && residue_to_add->is_lower_terminus() ) {
-			working_pose.append_residue_by_jump(  *residue_to_add, working_pose.total_residue()  ) ;
+			working_pose.append_residue_by_jump(  *residue_to_add, working_pose.size()  ) ;
 		} else {
 			working_pose.append_residue_by_bond(  *residue_to_add  ) ;
 		}
@@ -1251,7 +1251,7 @@ StepWiseProteinPoseSetup::align_poses( pose::Pose & pose ){
 	utility::vector1< core::Size > superimpose_res( working_parameters_->working_superimpose_res() );
 
 	if ( superimpose_res.size() == 0 ) {
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) superimpose_res.push_back( i );
+		for ( Size i = 1; i <= pose.size(); i++ ) superimpose_res.push_back( i );
 	}
 
 	alignment_atom_id_map_ = align::create_alignment_id_map_legacy( pose, *working_align_pose_, superimpose_res );
@@ -1312,7 +1312,7 @@ void StepWiseProteinPoseSetup::figure_out_Prepend_Internal( pose::Pose const & p
 		moving_res_attached_at_start = false;
 	}
 
-	if ( last_working_moving_res == pose.total_residue() ||
+	if ( last_working_moving_res == pose.size() ||
 			pose.fold_tree().is_cutpoint( last_working_moving_res ) ) {
 		moving_res_attached_at_end = false;
 	}
@@ -1485,7 +1485,7 @@ StepWiseProteinPoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) 
 	utility::vector1< core::Size > const & working_terminal_res = working_parameters_->working_terminal_res();
 
 	/////////////////////////////////////////////////
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	ObjexxFCL::FArray1D<bool> is_moving_res( nres, false );
 	ObjexxFCL::FArray1D<bool> is_fixed_res( nres, false );
@@ -1557,7 +1557,7 @@ StepWiseProteinPoseSetup::setup_secstruct( core::pose::Pose & pose ) const {
 			pose.set_secstruct( count, secstruct_[n-1] );
 		}
 	} else {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			pose.set_secstruct( n, 'L' );
 		}
 	}
@@ -1601,7 +1601,7 @@ StepWiseProteinPoseSetup::setup_full_model_info( core::pose::Pose & pose ) const
 void
 StepWiseProteinPoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose){  //Fang's electron density code
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	//if already rooted on virtual residue , return
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		TR.Warning << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;

@@ -67,7 +67,7 @@ using namespace core;
 
 
 protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real frac, int max_helix_melt, int max_strand_melt ) {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	while ( !pose.residue(nres).is_polymer() ) nres--;
 
 	// get dssp parse

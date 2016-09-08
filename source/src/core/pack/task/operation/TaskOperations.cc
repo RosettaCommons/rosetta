@@ -1712,7 +1712,7 @@ ExtraRotamers::apply( core::pose::Pose const & p, PackerTask & task ) const
 	} else {
 		// apply to all residues
 		TR << "Enabling extra rotamers for chi " << chi_ << " at all positions" << std::endl;
-		for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= p.size(); ++ii ) {
 			ResidueLevelTask & restask( task.nonconst_residue_task( ii ) );
 			if ( chi_ == 1 ) restask.or_ex1( ExtraRotSample( level_ ) );
 			if ( chi_ == 2 ) restask.or_ex2( ExtraRotSample( level_ ) );
@@ -1803,7 +1803,7 @@ ExtraChiCutoff::apply( core::pose::Pose const & p, PackerTask & task ) const
 	} else {
 		//appy to all residues
 		TR << "Enabling extrachi cutoff at all positions" << std::endl;
-		for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= p.size(); ++ii ) {
 			task.nonconst_residue_task( ii ).and_extrachi_cutoff( extrachi_cutoff_ );
 		}
 	}

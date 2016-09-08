@@ -281,24 +281,24 @@ ClassicFragmentMover::set_defaults() {
 // accept with probability 1 if the fragment window is centered on the center of the protein.
 // accept with probability .3677 if the fragment window is centered end-bias residues away from
 // the center of the protein
-//  if ( total_insert+frag_length != pose.total_residue() ||  r <= std::exp( -( end_dist / end_bias ) ) ) {
-// the question of total_insert+frag_length == pose.total_residue() doesn't make sense if different frag_lengths are involved
+//  if ( total_insert+frag_length != pose.size() ||  r <= std::exp( -( end_dist / end_bias ) ) ) {
+// the question of total_insert+frag_length == pose.size() doesn't make sense if different frag_lengths are involved
 bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size begin ) const {
 	Real r = numeric::random::rg().uniform();
 	// classic bias
 	// Real const end_bias ( 60.0 );
-	// Real end_dist = std::abs( begin - ( pose.total_residue() / 2.0 ) );
+	// Real end_dist = std::abs( begin - ( pose.size() / 2.0 ) );
 	// return r <= std::exp( -( end_dist / end_bias ) );
 	runtime_assert( begin > 0 && begin <= insert_size_.size() );
 	Size size = insert_size_[ begin ];
 
 	// the following assertion can happen if non-continuous (eg. Jump) fragments are inserted with bias-check, switch it off!
 
-	if ( ( begin + size - 1 ) > pose.total_residue() ) {
-		tr.Error << "BEGIN: " << begin << " SIZE: " << size  << " TOTAL_RES: " << pose.total_residue() << std::endl;
+	if ( ( begin + size - 1 ) > pose.size() ) {
+		tr.Error << "BEGIN: " << begin << " SIZE: " << size  << " TOTAL_RES: " << pose.size() << std::endl;
 		tr.Error << "Are the fragments compatible with the fasta or the input PDB used to extract the folding sequence ? " << std::endl;
-		tr.Error << "It appears that the fragments go up to residue " << begin + size - 1 << " while the pose only has " << pose.total_residue() << " residues!" << std::endl;
-		utility_exit_with_message("Assertion failure: runtime_assert( ( begin + size - 1 ) <= pose.total_residue() ); " );
+		tr.Error << "It appears that the fragments go up to residue " << begin + size - 1 << " while the pose only has " << pose.size() << " residues!" << std::endl;
+		utility_exit_with_message("Assertion failure: runtime_assert( ( begin + size - 1 ) <= pose.size() ); " );
 	}
 
 
@@ -353,7 +353,7 @@ bool ClassicFragmentMover::choose_window_start( pose::Pose const& pose, Size, Si
 		//tr.Trace << "window start " << begin << std::endl;
 		/// apl -- distance that the center of the fragment window is from the center of the protein
 		/// apl -- SOON
-		//Real end_dist = std::abs( (begin + frag_length / 2.0 ) - ( pose.total_residue() / 2.0 ) );
+		//Real end_dist = std::abs( (begin + frag_length / 2.0 ) - ( pose.size() / 2.0 ) );
 		if ( !bApplyEndBias_ || end_bias_check( pose, begin ) ) {
 			return true;
 		}
@@ -492,7 +492,7 @@ bool ClassicFragmentMover::apply_frames( pose::Pose &pose, FrameList const& fram
 	// tr.Trace << "now do the ss-check!"<< std::endl;
 	// get actual ss from pose
 	std::string proposed_ss;
-	proposed_ss.reserve( pose.total_residue() );
+	proposed_ss.reserve( pose.size() );
 	proposed_ss = pose.secstruct();
 
 	std::string old_ss = proposed_ss;

@@ -225,9 +225,9 @@ BetaSheetArchitect::modify_and_add_permutation( components::StructureData const 
 		core::Size const total_size = perm.pose_length();
 		core::Size sheet_idx = 1;
 		for ( components::SheetList::const_iterator s=list.begin(); s!=list.end(); ++s, ++sheet_idx ) {
-			if ( (*s)->total_residue() != total_size ) {
+			if ( (*s)->size() != total_size ) {
 				std::stringstream msg;
-				msg << "Sheet from DB with length " << (*s)->total_residue() << " and lengths=" << retrieve_lengths( perm ) << " does not match SD: " << perm << std::endl;
+				msg << "Sheet from DB with length " << (*s)->size() << " and lengths=" << retrieve_lengths( perm ) << " does not match SD: " << perm << std::endl;
 				throw utility::excn::EXCN_BadInput( msg.str() );
 			}
 

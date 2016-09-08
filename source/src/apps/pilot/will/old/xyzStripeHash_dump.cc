@@ -55,7 +55,7 @@ get_surface_points(core::pose::Pose const & p, Real /*DIST*/) {
 	ss.pdb_from_level(7,"test7.pdb");
 
 	utility::vector1<Vec>	points;
-	for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= p.size(); ++ir) {
 		for(Size ia = 1; ia <= p.residue(ir).nheavyatoms(); ++ia){
 			points.push_back(p.xyz(AtomID(ia,ir)));
 		}
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 	core::pose::Pose p;
 	core::import_pose::pose_from_file(p,option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 	if(false) {
-		for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+		for(Size ir = 1; ir <= p.size(); ++ir) {
 			if( p.residue(ir).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(p,ir);
 			if( p.residue(ir).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(p,ir);
 		}

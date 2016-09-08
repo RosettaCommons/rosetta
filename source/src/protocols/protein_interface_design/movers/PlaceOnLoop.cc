@@ -156,7 +156,7 @@ PlaceOnLoop::add_bb_csts_to_loop( core::pose::Pose & pose ) const
 
 	if ( stub_set_ == NULL ) return;
 	PackerTaskOP ptask = TaskFactory::create_packer_task( pose );
-	for ( core::Size i( 1 ); i<=pose.total_residue(); ++i ) {
+	for ( core::Size i( 1 ); i<=pose.size(); ++i ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
@@ -169,7 +169,7 @@ PlaceOnLoop::add_bb_csts_to_loop( core::pose::Pose & pose ) const
 	}
 	stub_set_->pair_with_scaffold( pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
 	core::Size fixed_res(1);
-	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	if ( host_chain_ == 1 ) fixed_res = pose.size();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	stub_set_->add_hotspot_constraints_to_pose( pose, fixed_atom_id, ptask, stub_set_, 0.7/*cbforce*/, 0/*worst allowed stub bonus*/, false/*apply self energies*/, 10.0/*bump cutoff*/, true/*apply ambiguous constraints*/ );
 }
@@ -183,7 +183,7 @@ PlaceOnLoop::ala_pose_loop( core::pose::Pose & pose ) const
 	utility::vector1< bool > ala_only( num_canonical_aas, false );
 	ala_only[ aa_ala ] = true;
 	PackerTaskOP ptask = TaskFactory::create_packer_task( pose );
-	for ( core::Size i( 1 ); i<=pose.total_residue(); ++i ) {
+	for ( core::Size i( 1 ); i<=pose.size(); ++i ) {
 		if ( i>=loop_begin_ && i<=curr_loop_end_ ) {
 			ptask->nonconst_residue_task( i ).restrict_absent_canonical_aas( ala_only );
 		} else {

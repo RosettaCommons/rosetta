@@ -555,8 +555,8 @@ void
 get_base_steps( utility::vector1< float > & data,
 								pose::Pose & pose )
 {
-	Size const n_res = pose.total_residue();
-	Size const n_res_half = pose.total_residue() / 2;
+	Size const n_res = pose.size();
+	Size const n_res_half = pose.size() / 2;
 
 	for (Size i = 1; i <= n_res_half - 1; ++i) {
 		utility::vector1 <Real> params (6);
@@ -582,7 +582,7 @@ helix_minimize (core::pose::Pose & pose, scoring::ScoreFunctionOP scorefxn) {
 	mm.set_chi ( false );
 	mm.set_jump ( false );
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		mm.set( TorsionID( i, id::CHI, 1 ), true );
 	}
 

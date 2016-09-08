@@ -72,7 +72,7 @@ void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 		runtime_assert ( pose.residue(oop_pre_pos).has_variant_type(chemical::OOP_PRE) == 1) ;
 		runtime_assert ( pose.residue(oop_post_pos).has_variant_type(chemical::OOP_POST) == 1) ;
 		//kdrew: an oop pre position cannot be last position
-		runtime_assert ( oop_pre_pos != pose.total_residue() );
+		runtime_assert ( oop_pre_pos != pose.size() );
 		//kdrew: an oop post position cannot be first position
 		runtime_assert ( oop_post_pos != 1 );
 

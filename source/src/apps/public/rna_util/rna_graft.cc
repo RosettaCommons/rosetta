@@ -80,7 +80,7 @@ OPT_KEY( Boolean, graft_backbone_only )
 // by default all 5' phosphates are virtualized -- keep some of them in.
 void
 unvirtualize_phosphates( pose::Pose & pose, utility::vector1< Size > const & unvirtualize_phosphate_residues  ){
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !unvirtualize_phosphate_residues.has_value( pose.pdb_info()->number( n ) ) ) continue;
 		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
 	}
@@ -106,7 +106,7 @@ get_pose_and_numbering( std::string const & pdb_file, pose::Pose & pose, utility
 
 	resnum.clear();
 	PDBInfoOP pdb_info = pose.pdb_info();
-	for ( Size n = 1; n <= pose.total_residue(); n++ )  resnum.push_back( pdb_info->number(n) );
+	for ( Size n = 1; n <= pose.size(); n++ )  resnum.push_back( pdb_info->number(n) );
 
 }
 
@@ -235,7 +235,7 @@ graft_in_positions( pose::Pose const & pose1,
 	using namespace core::conformation;
 	using namespace core::id;
 
-	for ( Size i = 1; i <= pose1.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose1.size(); i++ ) {
 
 		Size q = find_index( resnum1[i], resnum_target );
 		if ( q == 0 ) continue;
@@ -332,13 +332,13 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	std::list< std::pair< Size, char > > resnum_seq_list; // need to use a list, since we can sort it.
 
-	for ( Size n = 1; n <= pose1.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose1.size(); n++ ) {
 		if ( !find_index( resnum1[n], graft_resnum ) ) {
 			resnum_seq_list.push_back( std::make_pair( resnum1[n], pose1.sequence()[ n-1 ] ) );
 		}
 	}
 
-	for ( Size n = 1; n <= pose2.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose2.size(); n++ ) {
 		if ( find_index( resnum2[n], graft_resnum ) ) {
 			resnum_seq_list.push_back( std::make_pair( resnum2[n], pose2.sequence()[ n-1 ] ) );
 		}

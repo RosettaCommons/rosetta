@@ -75,9 +75,9 @@ ResidueIndexDescription::resolve_index(
 	// return bogus index, but do not trip an error.
 	if ( unassigned_ ) { return 0; }
 	if ( pose_numbered_ ) {
-		if ( pose_index_ > pose.total_residue() ) {
+		if ( pose_index_ > pose.size() ) {
 			throw utility::excn::EXCN_Msg_Exception( "Residue index description exceeds the number of residues in the Pose: pose_index_ = " +
-				utility::to_string( pose_index_ ) + " vs pose.total_residue() " + utility::to_string( pose.total_residue() ));
+				utility::to_string( pose_index_ ) + " vs pose.size() " + utility::to_string( pose.size() ));
 		}
 		return pose_index_;
 	} else {
@@ -131,10 +131,10 @@ ResidueIndexDescriptionFromFile::resolve_index(
 	if ( unassigned() ) { return 0; }
 
 	if ( pose_numbered() ) {
-		if ( pose_index() > pose.total_residue() ) {
+		if ( pose_index() > pose.size() ) {
 			throw utility::excn::EXCN_Msg_Exception( "Residue index description given on line " + utility::to_string( linenum_ ) +
 				" of the file named " + fname_ + " exceeds the number of residues in the Pose: pose_index_ = " +
-				utility::to_string( pose_index() ) + " vs pose.total_residue() " + utility::to_string( pose.total_residue() ));
+				utility::to_string( pose_index() ) + " vs pose.size() " + utility::to_string( pose.size() ));
 		}
 		return pose_index();
 	} else {

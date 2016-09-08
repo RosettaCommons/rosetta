@@ -226,7 +226,7 @@ remove_non_protein_residues(
 
 	bool residues_deleted(false);
 
-	for ( core::Size i = pose.total_residue(); i > 0 ; --i ) {
+	for ( core::Size i = pose.size(); i > 0 ; --i ) {
 
 		if ( ! pose.residue_type( i ).is_protein() ) {
 			pose.conformation().delete_residue_slow( i );

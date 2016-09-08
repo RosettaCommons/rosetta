@@ -100,7 +100,7 @@ figure_out_fold_tree( pose::Pose & pose )
 	using namespace core::conformation;
 
 	//Look for chainbreaks in PDB.
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	kinematics::FoldTree f( nres );
 	Real const dist2_cutoff = 1.7 * 1.7;
 
@@ -155,7 +155,7 @@ minimize_test()
 	////////////////////////////////
 	// Personal fold tree.
 	/*
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	int my_anchor = 20;
 
@@ -198,7 +198,7 @@ minimize_test()
 	*/
 
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	Size const my_anchor = 1;
 	figure_out_fold_tree( pose );
 
@@ -345,7 +345,7 @@ repack_test () {
 		std::string const beta_peptide_names [21] = {"B3A", "B3C", "B3D", "B3E", "B3F", "B3G", "B3H", "B3I", "B3K", "B3L", "B3M", "B3N",
 			"B3O","B3P", "B3Q", "B3R", "B3S", "B3T", "B3V", "B3W", "B3Y"};
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			for ( Size j = 0; j != 21; ++j ) {
 				designtask->nonconst_residue_task(i).allow_noncanonical_aa( beta_peptide_names[j] );
 			}
@@ -353,7 +353,7 @@ repack_test () {
 		}
 	}
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	std::cout << "NRES  = " << nres << std::endl;
 
 	//Read in pack_residue file and setup symmetry links

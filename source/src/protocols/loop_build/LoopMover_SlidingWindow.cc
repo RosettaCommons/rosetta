@@ -117,7 +117,7 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	// store starting fold tree and cut pose
 	kinematics::FoldTree f_orig=pose.fold_tree();
 	kinematics::FoldTree f_empty;
-	f_empty.simple_tree( pose.total_residue() );
+	f_empty.simple_tree( pose.size() );
 	core::pose::Pose closedpose = pose;
 	set_single_loop_fold_tree( pose, loop );
 	closedpose.fold_tree( f_empty );
@@ -126,7 +126,7 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
 	set_move_map_for_centroid_loop( loop, *mm_one_loop );
 
-	core::Size const nres =  pose.total_residue();
+	core::Size const nres =  pose.size();
 	// special case ... vrt res at last position
 	//bool chainbreak_present =  ( loop.start() != 1 && loop.stop() != nres );
 	//chainbreak_present &= (loop.stop() != nres-1 || pose.residue( nres ).aa() != core::chemical::aa_vrt );

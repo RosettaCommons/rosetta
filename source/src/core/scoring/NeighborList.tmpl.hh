@@ -448,7 +448,7 @@ NeighborList::setup(
 
 	PROF_START( basic::SETUP_NBLIST );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	if ( auto_update_  ) {
 
@@ -483,7 +483,7 @@ NeighborList::setup(
 	// dimension the nblists, or on a subsquenct setup, remove the stale data from
 	// the nblists
 	bool const first_time_setup( nblist_.size() == 0 );
-	debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
+	debug_assert( first_time_setup || nblist_.size() == pose.size() );
 	if ( first_time_setup ) { nblist_.resize( nres ); upper_nblist_.resize( nres ); intrares_upper_nblist_.resize( nres ); }
 	if ( auto_update_ && first_time_setup ) wide_nblist_.resize( nres );
 	for ( Size i=1; i<= nres; ++i ) {
@@ -648,7 +648,7 @@ NeighborList::prepare_for_scoring(
 	++n_prepare_for_scorings_;
 
 	atoms_to_update_.clear();
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	bool update_narrow = false; // true if any atom has moved > sqrt( move_tolerance_sqr_ ) from reference_coords_
 	bool update_wide = false; // true if any atom has moved > sqrt( wide_move_tolerance_sqr_ ) from wide_reference_coords_

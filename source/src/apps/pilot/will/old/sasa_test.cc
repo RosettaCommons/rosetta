@@ -40,7 +40,7 @@ typedef utility::vector1<Vec>    Vecs;
 typedef numeric::xyzMatrix<Real> Mat;
 
 inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
@@ -99,7 +99,7 @@ int main (int argc, char *argv[])
 	clock_t tot1=0,tot2=0;
 	for(Size i = 1; i <= 10; ++i){
 		rot_pose(pose,numeric::xyzVector<Real>(uniform(),uniform(),uniform()),uniform()*360);
-		// for(Size j = 1; j <= pose.n_residue(); ++j) {
+		// for(Size j = 1; j <= pose.size(); ++j) {
 		// 	pose.set_phi(j,pose.phi(j)+gaussian()/10.0);
 		// 	pose.set_psi(j,pose.psi(j)+gaussian()/10.0);
 		// }

@@ -166,7 +166,7 @@ public:
 
 		//strip out the ZN-containting residue for energy evaluation
 		core::pose::Pose protein_only( pose );
-		protein_only.conformation().delete_residue_slow( protein_only.total_residue() ); // HIZ is last residue
+		protein_only.conformation().delete_residue_slow( protein_only.size() ); // HIZ is last residue
 		scorefxn_->score(protein_only);
 
 		for(Size i(2); i <= msr_.size(); ++i) {
@@ -250,7 +250,7 @@ public:
 
 		// //strip out the ZN-containting residue for energy evaluation
 		// core::pose::Pose protein_only( pose );
-		// protein_only.conformation().delete_residue_slow( protein_only.total_residue() ); // HIZ is last residue
+		// protein_only.conformation().delete_residue_slow( protein_only.size() ); // HIZ is last residue
 
 		//could do some asserts to ensure good input
 
@@ -264,7 +264,7 @@ public:
 		ss_pymol_mutations << pose.pdb_info()->name() << "  PYMOL_SEL: select " << pdbname_base << "_muts, /" << pdbname_base << "//A/"; //hardcode chain A
 
 
-		for(Size i(1); i <= native_pose.total_residue(); ++i) {
+		for(Size i(1); i <= native_pose.size(); ++i) {
 			char design_res = pose.residue(i).name1();
 			char native_res = native_pose.residue(i).name1();
 

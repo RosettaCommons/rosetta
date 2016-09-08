@@ -165,7 +165,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, file, false );
 		loops::Loops rigid_core = loops::Loops( loops );
 
-		combine_exclude_res_.resize( pose.total_residue(), false );
+		combine_exclude_res_.resize( pose.size(), false );
 		rigid_core.transfer_to_residue_vector( combine_exclude_res_, true );
 	}
 	if ( !constraints_ || sequence_ != new_sequence ) {
@@ -195,7 +195,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 	constraint_ref_pose_ = pose;
 
 	scoring::constraints::ConstraintCOPs added_constraints = constraints_->get_all_constraints();
-	if ( skip_redundant_ ) scoring::constraints::skip_redundant_constraints( added_constraints, pose.total_residue(), skip_redundant_width_ );
+	if ( skip_redundant_ ) scoring::constraints::skip_redundant_constraints( added_constraints, pose.size(), skip_redundant_width_ );
 	if ( drop_random_rate_ > 0.0 ) scoring::constraints::drop_constraints( added_constraints, drop_random_rate_ );
 
 	kinematics::ShortestPathInFoldTree sp( pose.fold_tree() );

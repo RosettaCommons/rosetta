@@ -153,8 +153,8 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
 
-		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
-		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
+		utility::vector1< core::conformation::Residue const * > res( pose_->size() );
+		for ( Size ii = 1; ii <= pose_->size(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
 
 		if ( ! utility::pointer::dynamic_pointer_cast< core::scoring::methods::OneBodyEnergy const > ( enmeth_ ) ) {
 			TR.Error
@@ -170,7 +170,7 @@ public:
 		if ( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( core::Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e1b.score_types() );
-			for ( core::Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
+			for ( core::Size jj = 1; jj <= pose_->size(); ++jj ) {
 				e1b.residue_energy( *res[ jj ], *pose_, emap );
 			}
 		}
@@ -182,8 +182,8 @@ public:
 		using namespace core::scoring::methods;
 		using namespace core::graph;
 
-		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
-		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
+		utility::vector1< core::conformation::Residue const * > res( pose_->size() );
+		for ( Size ii = 1; ii <= pose_->size(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
 
 		if ( ! utility::pointer::dynamic_pointer_cast< core::scoring::methods::ShortRangeTwoBodyEnergy const > ( enmeth_ ) ) {
 			TR.Error
@@ -199,7 +199,7 @@ public:
 		if ( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
-			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
+			for ( Size jj = 1; jj <= pose_->size(); ++jj ) {
 				for ( Node::EdgeListConstIter
 						iter     = pose_->energies().energy_graph().get_node( jj )->const_upper_edge_list_begin(),
 						iter_end = pose_->energies().energy_graph().get_node( jj )->const_upper_edge_list_end();
@@ -224,8 +224,8 @@ public:
 				<< "Failed dynamic cast of energy method to LongRangeTwoBodyEnergy" << std::endl;
 		}
 
-		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
-		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
+		utility::vector1< core::conformation::Residue const * > res( pose_->size() );
+		for ( Size ii = 1; ii <= pose_->size(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
 
 		LongRangeTwoBodyEnergy const & e2b( static_cast< LongRangeTwoBodyEnergy const & > (*enmeth_) );
 		EnergyMap emap;
@@ -235,7 +235,7 @@ public:
 		if ( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
 		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
-			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
+			for ( Size jj = 1; jj <= pose_->size(); ++jj ) {
 				if ( ! lrec->any_upper_neighbors_for_residue( jj ) ) continue;
 				for ( ResidueNeighborIteratorOP
 						rni = lrec->upper_neighbor_iterator_begin( jj ),

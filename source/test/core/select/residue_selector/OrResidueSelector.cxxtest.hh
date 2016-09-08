@@ -50,8 +50,8 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
 		ResidueSubset subset = or_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == (ii % 5 == 1 || ii % 2 == 1) );
 		}
 	}
@@ -78,8 +78,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = or_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == (ii % 5 == 1 || ii % 2 == 1) );
 		}
 	}
@@ -140,8 +140,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset = or_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == (ii >= 2 && ii <= 5) );
 		}
 	}

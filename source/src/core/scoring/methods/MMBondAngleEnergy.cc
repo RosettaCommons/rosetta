@@ -116,7 +116,7 @@ MMBondAngleEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )
 
 	// make sure the parameters for all residues are loaded
 	if ( param_set_ ) {
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			param_set_->get(pose.residue_type(i));
 		}
 	}

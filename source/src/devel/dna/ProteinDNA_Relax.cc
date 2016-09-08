@@ -116,7 +116,7 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 {
 	using namespace protocols::moves;
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	// setup task and move maps
 	kinematics::MoveMapOP mm( new kinematics::MoveMap ); // default state is DOF FIXED

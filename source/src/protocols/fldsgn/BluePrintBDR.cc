@@ -317,9 +317,9 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 
 		if ( blueprint_->resnum( i ) != 0 ) {
 			count++;
-			if ( count > pose.total_residue() ) {
+			if ( count > pose.size() ) {
 				TR.Error << "Residue number in blueprint file is more than that of pose!,  pose/blueprint= "
-					<< pose.total_residue() << "/" << count << std::endl;
+					<< pose.size() << "/" << count << std::endl;
 				return false;
 			}
 		}
@@ -331,8 +331,8 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 				left = 1;
 			} else {
 				left = blueprint_->resnum( i-1 )+1; // insert in the middle of sequence
-				if ( left > pose.total_residue() ) {  // C-terminal extension
-					left = pose.total_residue();
+				if ( left > pose.size() ) {  // C-terminal extension
+					left = pose.size();
 				}
 			}
 			flag = true;
@@ -346,7 +346,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 			} else if ( right < left ) { // insert residues into the successive residue numbers
 				right = left;
 			}
-			runtime_assert( right <= pose.total_residue() );
+			runtime_assert( right <= pose.size() );
 
 			if ( insert ) {
 				if ( ins_sec.length() == 1 ) {
@@ -354,8 +354,8 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 					Dssp dssp( pose );
 					dssp.insert_ss_into_pose( insert_pose );
 				} else {
-					runtime_assert( insert_pose.total_residue() == ins_sec.length() );
-					for ( Size j=1; j<=insert_pose.total_residue(); j++ ) {
+					runtime_assert( insert_pose.size() == ins_sec.length() );
+					for ( Size j=1; j<=insert_pose.size(); j++ ) {
 						insert_pose.set_secstruct( j, ins_sec[ j-1 ] );
 					}
 				}
@@ -391,14 +391,14 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 			}
 		} // flag
 
-	} // blueprint_->total_residue()
+	} // blueprint_->size()
 
 	if ( flag ) {
 		if ( blueprint_->resnum( blueprint_->total_residue() ) == 0 ) {
-			right = pose.total_residue();
+			right = pose.size();
 		} else {
 			right = blueprint_->resnum( blueprint_->total_residue() );
-			runtime_assert( right <= pose.total_residue() );
+			runtime_assert( right <= pose.size() );
 		}
 		add_instruction( BuildInstructionOP( new SegmentRebuild( Interval( left, right ), ss, aa ) ) );
 		TR << "SegmentRebuild left: " << left << ", right: " << right << ", ss: " << ss << ", aa:" << aa << std::endl;
@@ -544,7 +544,7 @@ bool BluePrintBDR::centroid_build(
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
-	for ( Size i = 1, ie = modified_archive_pose.n_residue(); mod_ap_is_full_atom && i != ie; ++i ) {
+	for ( Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
 		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->name() == core::chemical::FA_STANDARD );
 	}
 
@@ -555,7 +555,7 @@ bool BluePrintBDR::centroid_build(
 	if ( use_poly_val_ ) {
 		// flip to poly-ala-gly-pro-disulf pose
 		utility::vector1< Size > protein_residues;
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			if ( pose.residue( i ).is_protein() ) {
 				protein_residues.push_back( i );
 			}

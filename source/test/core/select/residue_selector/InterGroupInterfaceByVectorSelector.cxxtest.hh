@@ -52,7 +52,7 @@ public:
 	ResidueSubset
 	apply( core::pose::Pose const & pose ) const
 	{
-		ResidueSubset subset( pose.total_residue(), false );
+		ResidueSubset subset( pose.size(), false );
 		for ( core::Size ii = lower_; ii <= upper_; ++ii ) subset[ ii ] = true;
 		return subset;
 	}
@@ -107,7 +107,7 @@ public:
 
 		ResidueSubset ground_truth = gold_result( pose );
 		TS_ASSERT_EQUALS( subset.size(), ground_truth.size() );
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			//std::cout << ii << " subset[" << ii << "] = " << subset[ ii ] << " ground_truth[ " << ii << " ] = " << ground_truth[ ii ] << std::endl;
 			TS_ASSERT( subset[ ii ] == ground_truth[ ii ] );
 		}
@@ -126,7 +126,7 @@ public:
 
 		ResidueSubset ground_truth = gold_result( pose );
 
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == ground_truth[ ii ] );
 		}
 	}
@@ -158,7 +158,7 @@ public:
 
 		ResidueSubset ground_truth = gold_result( pose );
 
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == ground_truth[ ii ] );
 		}
 	}

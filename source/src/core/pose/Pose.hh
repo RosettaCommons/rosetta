@@ -93,6 +93,9 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/id/AtomID.hh>
 #endif
 
+
+#include <boost/iterator/indirect_iterator.hpp>
+
 // C++ Headers
 #include <iostream>
 
@@ -148,8 +151,9 @@ Pose.fold_tree
 Pose.pdb_info
 Pose.residue
 Pose.sequence
-Pose.total_residue
+Pose.size
 **/
+
 class Pose : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Pose >
 {
 public:
@@ -174,8 +178,17 @@ public:
 	typedef basic::datacache::ConstDataMap ConstDataMap;
 	typedef basic::datacache::ConstDataMapOP ConstDataMapOP;
 
+	typedef boost::indirect_iterator< const conformation::ResidueOPs::const_iterator, Residue const > const_iterator;
+	typedef boost::indirect_iterator< conformation::ResidueOPs::iterator, Residue const > iterator;
+
 public:
 
+	// STL-type methods
+	iterator       begin() noexcept;
+	const_iterator begin()   const noexcept;
+	iterator       end() noexcept;
+	const_iterator end()     const noexcept;
+	
 	/// @brief default constructor, builds an empty pose
 	///
 	/// AtomTree      default   /bonding information
@@ -673,26 +686,29 @@ public:
 	}
 
 	/// @brief Returns the number of residues in the pose conformation
+	/// @details This wrapper for size() is provided for mostly historical 
+	/// reasons.
 	///
 	/// example(s):
 	///     pose.total_residue()
 	/// See also:
 	///     Pose
-	///     Pose.n_residue
+	///     Pose.size
 	///     Pose.sequence
 	Size
-	total_residue() const;
+	total_residue() const { return size(); }
 
-	/// @brief Returns the number of residues in the pose conformation
+	/// @brief Returns the number of residues in the pose conformation.
+	///
 	/// example(s):
-	///     pose.n_residue()
+	///     pose.size()
 	/// See also:
 	///     Pose
+	///     Pose.size
 	///     Pose.sequence
-	///     Pose.total_residue
 	Size
-	n_residue() const;
-
+	size() const;
+	
 	/// @brief Returns the total number of atoms in the pose conformation
 	/// example:
 	///   pose.total_atoms()
@@ -710,7 +726,7 @@ public:
 	///     Pose
 	///     Pose.clear
 	/// Pose.sequence
-	///     Pose.total_residue
+	///     Pose.size
 	bool
 	empty() const;
 
@@ -794,7 +810,7 @@ public:
 	///     Pose.chain
 	///     Pose.chain_sequence
 	///     Pose.residue
-	///     Pose.total_residue
+	///     Pose.size
 	std::string
 	sequence() const;
 
@@ -808,7 +824,7 @@ public:
 	///     Pose.chain
 	///     Pose.chain_sequence
 	///     Pose.residue
-	///     Pose.total_residue
+	///     Pose.size
 	std::string
 	sequence(core::Size resnum_start, core::Size resnum_end) const;
 
@@ -821,7 +837,7 @@ public:
 	/// See also:
 	///     Pose
 	///     Pose.sequence
-	///     Pose.total_residue
+	///     Pose.size
 	/// Residue
 	std::string
 	annotated_sequence( bool show_all_variants = false ) const;
@@ -847,7 +863,7 @@ public:
 	/// See also:
 	///     Pose
 	///     Pose.sequence
-	///     Pose.total_residue
+	///     Pose.size
 	///     Residue
 	///     ResidueType
 	Residue const &
@@ -865,7 +881,7 @@ public:
 	///     Pose
 	///     Pose.residue
 	///     Pose.sequence
-	///     Pose.total_residue
+	///     Pose.size
 	///     Residue
 	///     ResidueType
 	chemical::ResidueType const &
@@ -1817,7 +1833,7 @@ Pose::set_const_data(
 
 /// @brief Test IO operator for debug and Python bindings
 std::ostream & operator << ( std::ostream & os, Pose const & pose);
-
+	
 } // namespace pose
 } // namespace core
 

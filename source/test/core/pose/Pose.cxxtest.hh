@@ -292,11 +292,11 @@ public: // tests
 		Pose work_pose(pose);
 		work_pose.append_pose_by_jump(pose2, 1);
 
-		TS_ASSERT_EQUALS(work_pose.n_residue(), pose.n_residue() + pose2.n_residue());
+		TS_ASSERT_EQUALS(work_pose.size(), pose.size() + pose2.size());
 		TS_ASSERT_EQUALS(work_pose.sequence(), pose.sequence() + pose2.sequence());
 		TS_ASSERT_EQUALS(work_pose.sequence(2, 3), "ES");
 
-		for ( core::Size i = 1; i <= pose.n_residue(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			TS_ASSERT_DELTA(
 				work_pose.residue(i).xyz(1),
 				pose.residue(i).xyz(1),
@@ -306,13 +306,13 @@ public: // tests
 				pose.pdb_info()->chain(i));
 		}
 
-		for ( core::Size i = 1; i <= pose2.n_residue(); i++ ) {
+		for ( core::Size i = 1; i <= pose2.size(); i++ ) {
 			TS_ASSERT_DELTA(
-				work_pose.residue(i + pose.n_residue()).xyz(1),
+				work_pose.residue(i + pose.size()).xyz(1),
 				pose2.residue(i).xyz(1),
 				1e-6);
 			TS_ASSERT_EQUALS(
-				work_pose.pdb_info()->chain(i + pose.n_residue()),
+				work_pose.pdb_info()->chain(i + pose.size()),
 				pose2.pdb_info()->chain(i));
 		}
 	}

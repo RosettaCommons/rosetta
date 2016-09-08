@@ -160,7 +160,7 @@ read_in_mutations(
 		while ( !inputstream.eof() ) {
 
 			// read number of mutations
-			mutations current_mutation(pose.total_residue(),core::chemical::aa_unk);
+			mutations current_mutation(pose.size(),core::chemical::aa_unk);
 			int num_mutations;
 			inputstream >> num_mutations;
 
@@ -312,7 +312,7 @@ main( int argc, char * argv [] )
 		// initializations
 		ObjexxFCL::FArray2D<double> wt_scores(20,num_iterations);
 
-		utility::vector1<core::chemical::AA> all_unk(pose.total_residue(),core::chemical::aa_unk);
+		utility::vector1<core::chemical::AA> all_unk(pose.size(),core::chemical::aa_unk);
 
 		utility::vector1<double> wt_averaged_score_components;
 		utility::vector1<ddgs> delta_energy_components;
@@ -420,7 +420,7 @@ main( int argc, char * argv [] )
 			storage_task->or_include_current(true);
 
 			// iterate over all residues in the pose
-			for ( Size i =1; i<=pose.total_residue(); i++ ) {
+			for ( Size i =1; i<=pose.size(); i++ ) {
 
 				// if residue is designed
 				if ( storage_task->design_residue(i) ) {
@@ -430,7 +430,7 @@ main( int argc, char * argv [] )
 							aa_end(storage_task->residue_task(i).allowed_residue_types_end());
 							aa_iter != aa_end; ++aa_iter ) {
 
-						utility::vector1<core::chemical::AA> residues_to_mutate(pose.total_residue(),core::chemical::aa_unk);
+						utility::vector1<core::chemical::AA> residues_to_mutate(pose.size(),core::chemical::aa_unk);
 						residues_to_mutate[i]=((*aa_iter)->aa());
 
 						// if mutation is not unknown amino acid
@@ -504,14 +504,14 @@ main( int argc, char * argv [] )
 			// protein_interface.print(pose); // unnecessary log output
 
 			//debug statement
-			for ( Size i =1; i<=pose.total_residue(); i++ ) {
+			for ( Size i =1; i<=pose.size(); i++ ) {
 				if ( protein_interface.is_interface(i) ) {
 					TR.Debug << "[DEBUG]:" << i << " is in the interface " << std::endl;
 				}
 			}
 			//debug statement end
 
-			for ( Size i =1; i<=pose.total_residue(); i++ ) {
+			for ( Size i =1; i<=pose.size(); i++ ) {
 
 				if ( protein_interface.is_interface(i) ) { //is interface residue
 

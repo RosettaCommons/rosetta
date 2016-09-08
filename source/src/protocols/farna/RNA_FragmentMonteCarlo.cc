@@ -472,7 +472,7 @@ RNA_FragmentMonteCarlo::do_random_moves( core::pose::Pose & pose ) {
 
 	if ( options_->dump_pdb() ) pose.dump_pdb( "add_chunks.pdb" );
 
-	Size const heat_cycles = 3 * pose.total_residue();
+	Size const heat_cycles = 3 * pose.size();
 	TR << "Heating up... " << std::endl;
 
 	for ( Size i = 1; i <= heat_cycles; i++ ) {
@@ -780,7 +780,7 @@ RNA_FragmentMonteCarlo::align_pose( core::pose::Pose & pose, bool const verbose 
 
 		//realign to native for ease of viewing.
 		utility::vector1< Size > superimpose_res;
-		for ( Size n = 1; n <= pose.total_residue(); n++ )  superimpose_res.push_back( n );
+		for ( Size n = 1; n <= pose.size(); n++ )  superimpose_res.push_back( n );
 
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
 			protocols::stepwise::modeler::align::create_alignment_id_map_legacy( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.

@@ -66,7 +66,7 @@ public:
 	///
 	void form_disulfides( core::pose::PoseOP pose) {
 		bool breaknow(false);
-		for ( core::Size ir=1, nres=pose->n_residue(); ir<nres; ++ir ) { //Loop through all residues except the last
+		for ( core::Size ir=1, nres=pose->size(); ir<nres; ++ir ) { //Loop through all residues except the last
 			if ( pose->residue(ir).name3() == "CYS" || pose->residue(ir).name3() == "DCS" ) {
 				for ( core::Size jr=ir+1; jr<=nres; ++jr ) { //Loop through rest of residues
 					if ( pose->residue(jr).name3() == "CYS" || pose->residue(jr).name3() == "DCS" ) {
@@ -95,7 +95,7 @@ public:
 	///
 	void flip_residues( core::pose::Pose &pose ) {
 		// Create the new residue and replace it
-		for ( core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 			core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( get_mirror_type( pose.residue(ir).type() ), pose.residue( ir ), pose.conformation());
 			core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( ir ), *new_res, pose.conformation(), true );
 			pose.replace_residue( ir, *new_res, false );
@@ -111,7 +111,7 @@ public:
 		core::pose::PoseOP output_pose( refpose->clone() );
 		flip_residues(*output_pose);
 
-		for ( core::Size ir=1, irmax=output_pose->n_residue(); ir<=irmax; ++ir ) {
+		for ( core::Size ir=1, irmax=output_pose->size(); ir<=irmax; ++ir ) {
 			for ( core::Size ia=1, iamax=output_pose->residue(ir).type().natoms(); ia<=iamax; ++ia ) {
 				core::id::AtomID const curatom(ia, ir);
 				numeric::xyzVector<core::Real> xyztemp( refpose->xyz( curatom ) );
@@ -133,7 +133,7 @@ public:
 		remove_disulfides(ref_pose);
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 
-		for ( core::Size i=2, imax=ref_pose->n_residue(); i<=imax; ++i ) {
+		for ( core::Size i=2, imax=ref_pose->size(); i<=imax; ++i ) {
 			core::conformation::ResidueOP new_rsd( ref_pose->residue(i).clone() );
 			if ( i == 2 ) {
 				new_pose->append_residue_by_jump(*new_rsd, 1);
@@ -142,7 +142,7 @@ public:
 			}
 		}
 		new_pose->append_residue_by_bond( *(ref_pose->residue(1).clone()), false);
-		new_pose->conformation().declare_chemical_bond(1, "N", new_pose->n_residue(), "C");
+		new_pose->conformation().declare_chemical_bond(1, "N", new_pose->size(), "C");
 		form_disulfides(new_pose);
 		return new_pose;
 	}

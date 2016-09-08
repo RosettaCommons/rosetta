@@ -162,7 +162,7 @@ core::scoring::ScoreFunctionOP scorefxn( ( core::scoring::get_score_function_leg
   core::pose::Pose nativepose;
   core::import_pose::pose_from_file( nativepose, basic::options::option[ core::options::OptionKeys::in::file::native ]().name()  , core::import_pose::PDB_file);
 
-  core::Real seqlength = nativepose.n_residue();
+  core::Real seqlength = nativepose.size();
   std::string nativesequence = nativepose.sequence();
   utility::vector1< core::Real  >nativeseqdis;
   nativeseqdis.resize(20,0);

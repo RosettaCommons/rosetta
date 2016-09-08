@@ -195,7 +195,7 @@ FragmentReader::apply( FragSetOP & fragset )
 		Pose pose_in;
 		while ( num++ <= nfrags_ && silent_input->has_another_pose() ) {
 			silent_input->fill_pose( pose_in, *residue_set );
-			runtime_assert( end_ <= pose_in.total_residue() );
+			runtime_assert( end_ <= pose_in.size() );
 			set_fragments( pose_in, fragset );
 		}
 
@@ -206,7 +206,7 @@ FragmentReader::apply( FragSetOP & fragset )
 		for ( utility::vector1< String>::const_iterator it( fs.begin() ), end( fs.end() ); it!=end; ++it ) {
 			String filename( *it );
 			core::import_pose::centroid_pose_from_pdb( pose_in, filename , core::import_pose::PDB_file);
-			runtime_assert( end_ <= pose_in.total_residue() );
+			runtime_assert( end_ <= pose_in.size() );
 			for ( Size c=0; c<steal_times_; c++ ) {
 				set_fragments( pose_in, fragset );
 			}

@@ -190,7 +190,7 @@ getRotID( core::Size r1, core::Size r2=0, core::Size r3=0, core::Size r4=0) {
 }
 
 core::Real distance( FragInfo const &f1, FragInfo const &f2) {
-	if ( f1.pose_->total_residue() != f2.pose_->total_residue() ) return 999.0;
+	if ( f1.pose_->size() != f2.pose_->size() ) return 999.0;
 	if ( f1.pose_->sequence() != f2.pose_->sequence() ) return 999.0;
 	if ( f1.center_ != f2.center_ ) return 999.0;
 
@@ -223,14 +223,14 @@ mutate_to_ala(core::pose::Pose &pose, int center) {
 	conformation::Residue const replace_res( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("ALA"), true );
 
 	// remove disulfides
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		if ( pose.residue(i).has_variant_type( chemical::DISULFIDE ) ) {
 			TR << "Reverting disulfide to thiol type at resid " << i << std::endl;
 			conformation::change_cys_state( i, "CYS", pose.conformation() );
 		}
 	}
 
-	for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
 		if ( i==center ) continue;
 		chemical::ResidueType const * cur_restype = & pose.residue_type( i );
 		if ( cur_restype->aa() == chemical::aa_pro || cur_restype->aa() == chemical::aa_gly ) continue;
@@ -1021,7 +1021,7 @@ make_fragments() {
 		dssp.insert_ss_into_pose(pose);
 
 		// foreach residue
-		for ( int i=3; i<=((int)pose.total_residue())-2; ++i ) {
+		for ( int i=3; i<=((int)pose.size())-2; ++i ) {
 			// ensure we have a full fragment, no chainbreaks
 			char ss = pose.secstruct(i);
 			core::pose::PoseOP frag( new core::pose::Pose);
@@ -1041,7 +1041,7 @@ make_fragments() {
 			}
 
 			if ( ss == 'H' ) {
-				if ( i-4<=0 || i+4 >= ((int)pose.total_residue()) ) continue;
+				if ( i-4<=0 || i+4 >= ((int)pose.size()) ) continue;
 				for ( int j=i-4; j<i+4; ++j ) {
 					if ( pose.fold_tree().is_cutpoint(j) || !pose.residue(j).is_protein() ) {
 						have_connected_frag = false;
@@ -1064,7 +1064,7 @@ make_fragments() {
 
 				// find bb hbonds
 				(*scorefxn)(pose); // to get interaction graph
-				utility::vector1<bool> incl(pose.total_residue(), false);
+				utility::vector1<bool> incl(pose.size(), false);
 				EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 				for ( int j=i-2; j<=i+2; ++j ) {
 					core::conformation::Residue const &rsd_j( pose.residue(j) );

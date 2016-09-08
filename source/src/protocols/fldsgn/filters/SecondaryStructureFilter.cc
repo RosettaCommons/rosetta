@@ -209,11 +209,11 @@ SecondaryStructureFilter::correct_for_incomplete_strand_pairings(
 
 	ResidueSubset const paired = selector.apply( pose );
 
-	if ( secstruct.size() != pose.total_residue() ) {
+	if ( secstruct.size() != pose.size() ) {
 		std::stringstream msg;
 		msg << "SecondaryStructureFilter: The secondary structure length ("
 			<< secstruct.size() << ") does not match the size of the pose ("
-			<< pose.total_residue() << ")" << " secstruct=" << secstruct << std::endl;
+			<< pose.size() << ")" << " secstruct=" << secstruct << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 
@@ -264,14 +264,14 @@ SecondaryStructureFilter::compute(
 	std::string filter_ss = get_filtered_secstruct( pose );
 	if ( !strand_pairings_.empty() ) correct_for_incomplete_strand_pairings( pose, filter_ss );
 
-	if ( pose.total_residue() != filter_ss.length() ) {
+	if ( pose.size() != filter_ss.length() ) {
 		utility_exit_with_message("Length of input ss is not same as total residue of pose.");
 	}
-	if ( filtered_abego_.size() >= 1 && pose.total_residue() != filtered_abego_.size() ) {
+	if ( filtered_abego_.size() >= 1 && pose.size() != filtered_abego_.size() ) {
 		utility_exit_with_message("Length of input abego is not same as total residue of pose.");
 	}
 
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		// if this residue is a ligand, ignore and move on
 		if ( ! pose.residue( i ).is_protein() ) continue;
 		if ( ! subset[ i ] ) continue;
@@ -327,9 +327,9 @@ core::Real
 SecondaryStructureFilter::report_sm( core::pose::Pose const & pose ) const
 {
 	// count selected protein residues
-	core::Size protein_residues( pose.total_residue() );
+	core::Size protein_residues( pose.size() );
 	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue( i ).is_protein() && subset[ i ] ) continue;
 		--protein_residues;
 	}

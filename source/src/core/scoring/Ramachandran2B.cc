@@ -119,7 +119,7 @@ Ramachandran2B::eval_rama_score_all(
 	// termini residues are not calculated when jmp_chainbreak_weight is 0.0,
 	// e.g normal pose docking.
 
-	int const total_residue = pose.total_residue();
+	int const total_residue = pose.size();
 
 	// exclude chain breaks
 	Energies & pose_energies( pose.energies() );

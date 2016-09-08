@@ -202,7 +202,7 @@ PlaceStubMover::clone() const {
 void
 PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Size const res_num )
 {
-	runtime_assert( res_num <= pose.total_residue() );
+	runtime_assert( res_num <= pose.size() );
 	core::Size const chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 	core::Size const chain_end  ( pose.conformation().chain_end  ( host_chain_ ) );
 	// Using a default fold tree, rather than the existing atom tree, b/c the atom
@@ -242,8 +242,8 @@ PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue
 		{//setup pose-stub ft
 			pose_stub_tree.clear();
 			using namespace core::kinematics;
-			pose_stub_tree.add_edge( 1, partner_chain.total_residue()-1, Edge::PEPTIDE );
-			pose_stub_tree.add_edge( 1, partner_chain.total_residue(), rb_jump );
+			pose_stub_tree.add_edge( 1, partner_chain.size()-1, Edge::PEPTIDE );
+			pose_stub_tree.add_edge( 1, partner_chain.size(), rb_jump );
 			pose_stub_tree.set_jump_atoms( rb_jump, partner_chain.residue( 1 ).atom_type( partner_chain.residue( 1 ).nbr_atom()).element(), "CB" );
 			partner_chain.fold_tree( pose_stub_tree );
 			TR_debug<<"pose stub tree: "<<partner_chain.fold_tree()<<std::endl;
@@ -263,7 +263,7 @@ PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue
 				new_ft.add_edge( pose.conformation().chain_begin( 2 ), jump_pos2, kinematics::Edge::PEPTIDE );
 			}
 			if ( jump_pos2 < host_chain_end ) {
-				new_ft.add_edge( jump_pos2, pose.total_residue(), kinematics::Edge::PEPTIDE );
+				new_ft.add_edge( jump_pos2, pose.size(), kinematics::Edge::PEPTIDE );
 			}
 			new_ft.set_jump_atoms( rb_jump, pose.residue( 1 ).atom_type( pose.residue( 1 ).nbr_atom()).element(), "CB" );
 			new_ft.reorder( 1 );
@@ -286,7 +286,7 @@ PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue
 bool
 PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashing::HotspotStubCOP stub/* = NULL*/, core::Size const host_residue/*= 0*/, bool const hurry /*=false*/ ){
 	core::Size fixed_res(1);
-	if ( host_chain_ == 1 ) fixed_res = pose.total_residue();
+	if ( host_chain_ == 1 ) fixed_res = pose.size();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	core::pack::task::PackerTaskOP stub_task = stub_set_->prepare_hashing_packer_task_( pose, host_chain_ );
 	core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ) );
@@ -412,8 +412,8 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 		return false;
 	}
 	//for minimization (rb and sc of previous placed stubs)
-	utility::vector1< bool > sc_min( pose.total_residue(), false );
-	utility::vector1< bool > const no_min( pose.total_residue(), false );
+	utility::vector1< bool > sc_min( pose.size(), false );
+	utility::vector1< bool > const no_min( pose.size(), false );
 	utility::vector1< core::Size > const no_targets;
 	// minimize the sc of all placed stubs
 	for ( utility::vector1< std::pair< core::Size, bool > >::const_iterator iter=placed_stubs_.begin(), end=placed_stubs_.end(); iter!=end; ++iter ) sc_min[ iter->first ] = true;
@@ -465,7 +465,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 				curr_mover->apply( pose );
 			} //end of user movers
 			MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, false /*optimize foldtree*/, no_targets, true/*simultaneous optimization*/ );
-			utility::vector1< bool > min_host( pose.total_residue(), false );
+			utility::vector1< bool > min_host( pose.size(), false );
 			for ( core::Size i=host_chain_begin; i<=host_chain_end; ++i ) min_host[ i ] = true;
 			utility::vector1< bool > const no_min_rb( pose.num_jump(), false );
 			MinimizeInterface( pose, scorefxn, min_host/*bb*/, sc_min, no_min_rb/*rb*/, false /*optimize foldtree*/, no_targets, true/*simultaneous optimization*/ );
@@ -1257,7 +1257,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain_ ) );
 		core::Size const chain_end( ala_pose->conformation().chain_end( host_chain_ ) );
 
-		for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			if ( !pose.residue(i).is_protein() ) continue;
 			if ( i >= chain_begin && i <=chain_end ) {
 				core::Size const restype( ala_pose->residue(i).aa() );

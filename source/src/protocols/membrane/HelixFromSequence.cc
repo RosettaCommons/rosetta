@@ -92,7 +92,7 @@ HelixFromSequence::apply( core::pose::Pose & pose ){
 	// create ideal helix pose from the sequence:
 	// 1. create pose from sequence
 	make_pose_from_sequence( pose, seq_, core::chemical::FA_STANDARD );
-	TR << "pose:total_residue: " << pose.total_residue() << std::endl;
+	TR << "pose:total_residue: " << pose.size() << std::endl;
 
 	// 2. need to set the PDBInfo object in the pose, because
 	// make_pose_from_sequence doesn't take care of that!
@@ -100,7 +100,7 @@ HelixFromSequence::apply( core::pose::Pose & pose ){
 	pose.pdb_info( pdbinfo );
 
 	// 3. create ideal helices from SSEs
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		pose.set_phi(   i, -62 );
 		pose.set_psi(   i, -41 );
 		pose.set_omega( i, 180 );
@@ -111,7 +111,7 @@ HelixFromSequence::apply( core::pose::Pose & pose ){
 
 		// create topology object from first to last residue
 		SpanningTopologyOP topo( new SpanningTopology() );
-		topo->add_span( 1, pose.total_residue() );
+		topo->add_span( 1, pose.size() );
 
 		// in case of optimizing the membrane embedding
 		if ( opt_mem_ == true ) {

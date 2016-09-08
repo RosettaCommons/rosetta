@@ -535,17 +535,17 @@ SimpleInteractionGraph::initialize( pose::Pose const & pose){
 	//Real current_energy = (*sfxn_)(*pose_); //DEBUG
 	runtime_assert( pose_ != 0 );
 	//Graph::delete_everything();//DEBUG
-	if ( num_nodes() != pose.total_residue() ) {
-		set_num_nodes( pose.total_residue() );
+	if ( num_nodes() != pose.size() ) {
+		set_num_nodes( pose.size() );
 	}
-	for ( Size res_i = 1; res_i <= pose_->total_residue(); res_i++ ) {
+	for ( Size res_i = 1; res_i <= pose_->size(); res_i++ ) {
 		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
 		runtime_assert( newnode );
 		newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
 	}
 
 	//neighbors determined through ScoreFunction::are_they_neighbors function
-	for ( Size ii = 1; ii <= pose_->total_residue(); ii++ ) {
+	for ( Size ii = 1; ii <= pose_->size(); ii++ ) {
 		for ( Size jj = 1; jj < ii; jj++ ) {
 			//TR.Debug << "examining nodes " << jj << " " << ii << std::endl;
 			if ( sfxn_->are_they_neighbors( *pose_, jj, ii ) ) {
@@ -571,10 +571,10 @@ void
 SimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 {
 	pose_ = pose::PoseCOP( pose::PoseOP( new pose::Pose( pose ) ) );
-	if ( num_nodes() != pose.total_residue() ) {
-		set_num_nodes( pose.total_residue() );
+	if ( num_nodes() != pose.size() ) {
+		set_num_nodes( pose.size() );
 	}
-	for ( Size res_i = 1; res_i <= pose_->total_residue(); res_i++ ) {
+	for ( Size res_i = 1; res_i <= pose_->size(); res_i++ ) {
 		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( res_i ));
 		runtime_assert( newnode );
 		newnode->set_current( conformation::ResidueCOP( conformation::ResidueOP( new conformation::Residue( pose_->residue( res_i ) ) ) ) );
@@ -628,7 +628,7 @@ Real
 SimpleInteractionGraph::total_energy() {
 	//iterate over node ids
 	Real total_energy = 0.0;
-	for ( Size node_itr = 1; node_itr <= pose_->total_residue(); node_itr++ ) {
+	for ( Size node_itr = 1; node_itr <= pose_->size(); node_itr++ ) {
 		SimpleNode* thisnode = static_cast< SimpleNode *> (get_node( node_itr ));
 		Real residue_energy = thisnode->one_body_energy();
 		for ( EdgeListIter edge_iter = thisnode->upper_edge_list_begin();

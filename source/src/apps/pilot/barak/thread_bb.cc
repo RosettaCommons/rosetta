@@ -106,9 +106,9 @@ main( int argc, char * argv [] )
   nres = option[ OptionKeys::threadsc::nres ];
   TR << "anchor residue pdb/pose = " << tanchor_pdb << "/" << tanchor_res << endl;
   // TODO: also verify no overflow within the same chain
-  if( sfirst_res + nres - 1 > src_pose.total_residue() ||  // source out of range
-    tfirst_res + nres - 1 > trg_pose.total_residue() ||  // target out of range
-    tanchor_res > trg_pose.total_residue()  // anchor out of range
+  if( sfirst_res + nres - 1 > src_pose.size() ||  // source out of range
+    tfirst_res + nres - 1 > trg_pose.size() ||  // target out of range
+    tanchor_res > trg_pose.size()  // anchor out of range
   ) {
     TR << "ERROR: specified resiude IDs beyond range" << std::endl;
     exit(-1);

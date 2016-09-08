@@ -819,10 +819,10 @@ RNA_ChemicalShiftPotential::import_exp_chemical_shift_data( std::string const & 
 Real
 RNA_ChemicalShiftPotential::get_calc_chem_shift_value_nuchemics( ChemicalShiftData const & CS_data, pose::Pose const & pose ) const
 {
-	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.total_residue() ) ) {
+	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() ) ) {
 		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
-		std::cout << "ERROR: pose.total_residue() = " << pose.total_residue() << std::endl;
-		utility_exit_with_message( "( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.total_residue() )" );
+		std::cout << "ERROR: pose.size() = " << pose.size() << std::endl;
+		utility_exit_with_message( "( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() )" );
 	}
 
 	if ( CS_data.res_aa != pose.residue( CS_data.seq_num ).aa() ) {
@@ -844,7 +844,7 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_nuchemics( ChemicalShiftDa
 
 	calc_chem_shift += rna_cs_curr_rsd_params.atom_data( CS_data.realatomdata_index, oshi ); //reference offset
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 		core::conformation::Residue const & source_rsd = pose.residue( seq_num );
 		RNA_CS_residue_parameters const & source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( source_rsd.aa() );
 
@@ -864,10 +864,10 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_nuchemics( ChemicalShiftDa
 Real
 RNA_ChemicalShiftPotential::get_calc_chem_shift_value_larmord( ChemicalShiftData const & CS_data, pose::Pose const & pose) const
 {
-	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.total_residue() ) ) {
+	if ( ( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() ) ) {
 		std::cout << "ERROR: CS_data.seq_num = " << CS_data.seq_num << std::endl;
-		std::cout << "ERROR: pose.total_residue() = " << pose.total_residue() << std::endl;
-		utility_exit_with_message( "( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.total_residue() )" );
+		std::cout << "ERROR: pose.size() = " << pose.size() << std::endl;
+		utility_exit_with_message( "( CS_data.seq_num < 1 ) || ( CS_data.seq_num > pose.size() )" );
 	}
 
 	if ( CS_data.res_aa != pose.residue( CS_data.seq_num ).aa() ) {
@@ -890,7 +890,7 @@ RNA_ChemicalShiftPotential::get_calc_chem_shift_value_larmord( ChemicalShiftData
 
 	Real calc_chem_shift = CS_data.ref_shift;
 	// now looping over residues
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 		// get data for "neighbor" residue
 		core::conformation::Residue const & curr_rsd = pose.residue( seq_num );
 		std::string const curr_rsd_name( chemical::name_from_aa( curr_rsd.aa() ) );
@@ -1094,7 +1094,7 @@ RNA_ChemicalShiftPotential::finalize_total_energy( pose::Pose const & pose, Ener
 {
 	using namespace conformation;
 
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) { //Right now assume pure RNA molecule.
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) { //Right now assume pure RNA molecule.
 		if ( pose.residue( seq_num ).is_RNA() == false ) return;
 	}
 
@@ -1182,7 +1182,7 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift_data_atom(
 
 		numeric::xyzVector< core::Real > const & CS_data_atom_xyz = CS_data_rsd.xyz( CS_data_atom_index );
 
-		for ( Size source_seq_num = 1; source_seq_num <= pose.total_residue(); source_seq_num++ ) {
+		for ( Size source_seq_num = 1; source_seq_num <= pose.size(); source_seq_num++ ) {
 
 			core::conformation::Residue const & source_rsd = pose.residue( source_seq_num );
 			RNA_CS_residue_parameters const & source_rsd_CS_params = rna_cs_params_.get_RNA_CS_residue_parameters( source_rsd.aa() );
@@ -1551,7 +1551,7 @@ RNA_ChemicalShiftPotential::eval_atom_derivative(
 	utility::vector1 < std::string > atom_names;
 	//loop over residues
 	Size atmn ( 1 );
-	for ( Size seq_num_tmp = 1; seq_num_tmp <= pose.total_residue(); seq_num_tmp++ ) {
+	for ( Size seq_num_tmp = 1; seq_num_tmp <= pose.size(); seq_num_tmp++ ) {
 		core::conformation::Residue const & curr_rsd_tmp = pose.residue( seq_num_tmp );
 		//std::string const curr_rsd_name_tmp( chemical::name_from_aa( curr_rsd_tmp.aa() ) );
 		//loop over atoms
@@ -1629,7 +1629,7 @@ RNA_ChemicalShiftPotential::get_deriv_for_chemical_shift(
 		//std::cout << "Inside Got in " << std::endl;
 		// now looping over residues
 
-		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+		for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 			// get data for "neighbor" residue
 			core::conformation::Residue const & curr_rsd = pose.residue( seq_num );
 			std::string const curr_rsd_name( chemical::name_from_aa( curr_rsd.aa() ) );

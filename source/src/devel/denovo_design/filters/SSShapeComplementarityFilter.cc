@@ -355,7 +355,7 @@ SSShapeComplementarityFilter::setup_sc( core::pose::Pose const & pose,
 	runtime_assert( ss->begin() <= ss->end() );
 
 	// set1 is the helix
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		// exclude ligands and other weird things
 		if ( ! pose.residue( i ).is_protein() ) {
 			continue;

@@ -104,7 +104,7 @@ MembraneEmbed::MembraneEmbed( MembraneEmbed const & src ) :
 void
 MembraneEmbed::initialize( pose::Pose const & pose )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	depth_.resize(nres,0.0);
 	std::fill(depth_.begin(),depth_.end(),30.0);
 	center_.assign(0,0,0);
@@ -334,7 +334,7 @@ MembranePotential::evaluate_env(
 		evaluate_env(pose,rsd,MembraneDepth,membrane_env_score);
 		Vector const normal(MembraneEmbed_from_pose( pose ).normal());
 		Vector const center(MembraneEmbed_from_pose( pose ).center());
-		if ( Menv_penalties_ && ( rsd.seqpos()==1 || rsd.seqpos()==pose.total_residue() ) ) {
+		if ( Menv_penalties_ && ( rsd.seqpos()==1 || rsd.seqpos()==pose.size() ) ) {
 			Vector const & xyz( pose.residue(rsd.seqpos()).atom( 2 ).xyz() );
 			Real depth=dot(xyz-center,normal)+30;
 			if ( depth>18 &&
@@ -641,7 +641,7 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		Size alpha_start=membrane_normal_start_angle_; //vmyy default 10 degrees
 		Size delta_alpha=membrane_normal_delta_angle_; //vmyy default 10 degrees
 		Size max_alpha=membrane_normal_max_angle_; //vmyy default 40 degrees
-		Size nres=pose.total_residue();
+		Size nres=pose.size();
 		Size counter=0;
 		Size accepted=0;
 		Size thermally_accepted=0;
@@ -866,7 +866,7 @@ void MembranePotential::score_normal_center(
 	Real & score
 ) const {
 	// Compute Starting Conditions
-	Size const nres=pose.total_residue();
+	Size const nres=pose.size();
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) ); // @ra should be SpanningTopology total
 
 	// Initialize Scoring Parameters
@@ -1058,7 +1058,7 @@ MembranePotential::non_helix_in_membrane_penalty(pose::Pose const & pose, Vector
 		return;
 	}
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		Size rsdSeq(i);
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			using namespace core::conformation::symmetry;
@@ -1107,7 +1107,7 @@ MembranePotential::termini_penalty(pose::Pose const & pose, Vector const & norma
 
 	MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
 
-	for ( Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		if ( !pose.residue(i).is_terminus() ) continue;
 
 		Size rsdSeq(i);

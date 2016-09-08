@@ -154,7 +154,7 @@ superimpose_pose(
 
 	/// how many atoms in mod_pose?
 	Size natoms(0);
-	for ( Size i=1; i<= mod_pose.total_residue(); ++i ) natoms += mod_pose.residue(i).natoms();
+	for ( Size i=1; i<= mod_pose.size(); ++i ) natoms += mod_pose.residue(i).natoms();
 
 	// pack coords into local arrays for passing into the rms fitting routine
 	FArray2D_double xx1(3,natoms);
@@ -166,7 +166,7 @@ superimpose_pose(
 	{ // pack coordinates into the local arrays
 		Size atomno(0);
 		Vector const zero_vector(0.0);
-		for ( Size i=1; i<= mod_pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= mod_pose.size(); ++i ) {
 			for ( Size j=1; j<= mod_pose.residue(i).natoms(); ++j ) {
 				++atomno;
 				AtomID const & aid( atom_map[ id::AtomID( j,i) ] );
@@ -202,7 +202,7 @@ superimpose_pose(
 	{ // translate xx2 by COM and fill in the new ref_pose coordinates
 		Size atomno(0);
 		Vector x2;
-		for ( Size i=1; i<= mod_pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= mod_pose.size(); ++i ) {
 			for ( Size j=1; j<= mod_pose.residue_type(i).natoms(); ++j ) { // use residue_type to prevent internal coord update
 				++atomno;
 				if ( find(residue_list.begin(), residue_list.end(), i) == residue_list.end() ) continue;
@@ -229,7 +229,7 @@ get_superposition_transformation(
 
 	// count number of atoms for the array
 	Size total_mapped_atoms(0);
-	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
@@ -249,7 +249,7 @@ get_superposition_transformation(
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, total_mapped_atoms );
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
 	Size atomno(0);
-	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
@@ -346,7 +346,7 @@ void align_backbone_by_chunk(core::pose::Pose & pose, core::Size const residue_s
 
 	//core::pose::Pose local_pose(pose, residue_seq_start, residue_seq_end);
 	/*
-	for ( core::Size i_res = 1; i_res <= local_pose.total_residue(); i_res++ ) {
+	for ( core::Size i_res = 1; i_res <= local_pose.size(); i_res++ ) {
 		if ( ! local_pose.residue_type(i_res).is_protein() ) continue;
 		local_pose.set_phi(i_res,    -70);
 		local_pose.set_psi(i_res,    130);
@@ -372,7 +372,7 @@ void align_backbone_by_chunk(core::pose::Pose & pose, core::Size const residue_s
 			pose.set_omega(ires, 180);
 
 			int seqpos_ref = ires + seqpos_shift;
-			if ( seqpos_ref <= 0 || seqpos_ref > ref_pose.total_residue() ) continue;
+			if ( seqpos_ref <= 0 || seqpos_ref > ref_pose.size() ) continue;
 			if ( !ref_pose.residue_type(seqpos_ref).is_protein() ) continue;
 			if ( !ref_pose.secstruct(seqpos_ref) == 'L' ) continue;
 			pose.set_phi(ires,	ref_pose.phi(seqpos_ref));
@@ -411,7 +411,7 @@ extract_ss_chunks_from_seq(std::string const secstructs,
 						   core::Size minimum_length_of_chunk = 3,
 						   core::Real CA_CA_distance_cutoff = 4.0)
 {
-	assert(pose.total_residue() == secstructs.size());
+	assert(pose.size() == secstructs.size());
 	ss_chunks.clear();
 	core::Size last_extracted_ss_end = 0; // so that different types of secondary structure chunks are not merged together
 
@@ -553,7 +553,7 @@ initialize_template_structures() {
 utility::vector1 <core::Real>
 count_alignment(core::pose::Pose & mod_pose, utility::vector1 < std::map <core::Size, core::Size> > & seqpos_alignments) {
 	utility::vector1 <core::Real> alignment_counts;
-	for (core::Size ires=1; ires<=mod_pose.total_residue(); ++ires) {
+	for (core::Size ires=1; ires<=mod_pose.size(); ++ires) {
 		core::Size num_aligned = 0;
 		for (core::Size i_template=1; i_template<=seqpos_alignments.size(); ++i_template) {
 			if (seqpos_alignments[i_template].find(ires) == seqpos_alignments[i_template].end() ) continue;
@@ -666,7 +666,7 @@ pick_random_template() {
 void
 get_alignment_from_template(core::pose::PoseOP const template_pose, std::map <core::Size, core::Size> & seqpos_alignment) {
 	// specific to this case, alignment comes from residue number
-	for (core::Size ires=1; ires<=template_pose->total_residue(); ++ires) {
+	for (core::Size ires=1; ires<=template_pose->size(); ++ires) {
 		seqpos_alignment[template_pose->pdb_info()->number(ires)] = ires;
 	}
 }
@@ -690,7 +690,7 @@ void initialize_pose(core::pose::Pose & pose)
 
 		// Build the star fold tree, identify jumps
 		ss_chunks_target_ = extract_secondary_structure_chunks( pose );
-		loops_target_ = ss_chunks_target_.invert(pose.total_residue());
+		loops_target_ = ss_chunks_target_.invert(pose.size());
 
 		TR << ss_chunks_target_;
 
@@ -921,7 +921,7 @@ my_main( void* ) {
 		scorefxn->set_weight(core::scoring::vdw, 0.8);
 
 		//Loops ss_chunks_target = extract_secondary_structure_chunks( pose );
-		//Loops loops_target = ss_chunks_target.invert(pose.total_residue());
+		//Loops loops_target = ss_chunks_target.invert(pose.size());
 
 		utility::vector1< core::fragment::FragSetOP > frag_libs;
 		read_loop_fragments(frag_libs);

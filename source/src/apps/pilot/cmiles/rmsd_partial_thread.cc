@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
   map<Size, Size> residues;
 
   PDBInfoCOP info = partial_thread->pdb_info();
-  for (Size i = 1; i <= partial_thread->total_residue(); ++i) {
+  for (Size i = 1; i <= partial_thread->size(); ++i) {
     Size reference_pos = info->number(i);
     residues[reference_pos] = i;
   }

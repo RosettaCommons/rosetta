@@ -142,7 +142,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 	// Pose ala;
 	// core::pose::make_pose_from_sequence(ala,"A",init.residue(1).residue_type_set(),false);
 	// Pose pala(init);
-	// for(Size i = 1; i <= pala.n_residue(); ++i) {
+	// for(Size i = 1; i <= pala.size(); ++i) {
 	// 	if(!pala.residue(i).is_protein()) continue;
 	// 	if(pala.residue(i).aa()!=core::chemical::aa_gly) {
 	// 		pala.replace_residue(i,ala.residue(1),true);
@@ -156,13 +156,13 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 	vector1<Real> asamp; for(Real i = 0; i < 180; ++i) asamp.push_back(i); // just 0-179
 	// set up n-ca-c-o-cb ord arrays
 	vector1<Vec> bb0tmp,cb0tmp;
-	for(int ir = 1; ir <= init.n_residue(); ++ir) {
+	for(int ir = 1; ir <= init.size(); ++ir) {
 		if(!init.residue(ir).is_protein()) continue;
 		for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) {
 			bb0tmp.push_back(init.xyz(AtomID(ia,ir)));
-			if( ir > 1 && ir < init.n_residue() && ia==1 && actacc.find(ir)==actacc.end() &&
+			if( ir > 1 && ir < init.size() && ia==1 && actacc.find(ir)==actacc.end() &&
 			    (init.secstruct(ir-1)=='E'||init.secstruct(ir)=='E'||init.secstruct(ir+1)=='E') ) availdon.push_back(bb0tmp.size());
-			if( ir > 1 && ir < init.n_residue() && ia==4 && actacc.find(ir)==actacc.end() &&
+			if( ir > 1 && ir < init.size() && ia==4 && actacc.find(ir)==actacc.end() &&
 		    	(init.secstruct(ir-1)=='E'||init.secstruct(ir)=='E'||init.secstruct(ir+1)=='E')	) availacc.push_back(bb0tmp.size());
 		}
 		if(init.secstruct(ir)=='H') {
@@ -245,7 +245,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 
 							// make C2 coords
 							vector1<Vec> c2bb1,c2cb1;
-							for(int ir = 1; ir <= init.n_residue(); ++ir) {
+							for(int ir = 1; ir <= init.size(); ++ir) {
 								if(!p.residue(ir).is_protein()) continue;
 								for(int ia = 1; ia <= ((p.residue(ir).has("CB"))?5:4); ++ia) {
 									c2bb1.push_back(          p.xyz(AtomID(ia,ir))  );
@@ -255,7 +255,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 									c2cb1.push_back(          p.xyz(AtomID(i,ir))  );
 								}
 							}
-							for(int ir = 1; ir <= init.n_residue(); ++ir) {
+							for(int ir = 1; ir <= init.size(); ++ir) {
 								if(!p.residue(ir).is_protein()) continue;
 								for(int ia = 1; ia <= ((p.residue(ir).has("CB"))?5:4); ++ia) {
 									c2bb1.push_back(  R180z * p.xyz(AtomID(ia,ir))  );
@@ -363,12 +363,12 @@ int main(int argc, char *argv[]) {
 		Pose pnat;
 		TR << "searching " << fn << std::endl;
 		core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
-		trans_pose(pnat,-center_of_geom(pnat,1,pnat.n_residue()));
+		trans_pose(pnat,-center_of_geom(pnat,1,pnat.size()));
 		core::scoring::dssp::Dssp dssp(pnat);
 		dssp.insert_ss_into_pose(pnat);
-		//if( pnat.n_residue() > 150 ) continue;
+		//if( pnat.size() > 150 ) continue;
 		Size cyscnt=0, nhelix=0;
-		for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
+		for(Size ir = 2; ir <= pnat.size()-1; ++ir) {
 			if(pnat.secstruct(ir) == 'H') nhelix++;
 			//if(!pnat.residue(ir).is_protein()) goto cont1;
 			if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;

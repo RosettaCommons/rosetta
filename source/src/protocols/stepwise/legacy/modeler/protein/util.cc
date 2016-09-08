@@ -218,7 +218,7 @@ Real get_pretend_phi_explicit( core::pose::Pose const & pose, Size const & res )
 ///////////////////////////////////////////////////////////////////////////////////////
 bool
 is_close_chain_break(pose::Pose const & pose){
-	for ( Size seq_num = 1; seq_num < pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num < pose.size(); seq_num++ ) {
 		if ( is_cutpoint_closed( pose, seq_num ) ) return true;
 	}
 	return false;

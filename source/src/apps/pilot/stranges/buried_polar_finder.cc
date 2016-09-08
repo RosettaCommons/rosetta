@@ -254,7 +254,7 @@ void CalcsTestMover::calc_stuff(
 	n_polars_ = 0;
 	n_exposed_polars_ = 0;
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		conformation::Residue rsd = pose.residue( ii );
 		//for all atoms in res
 		for ( Size at = 1; at <= rsd.nheavyatoms(); ++at ) {

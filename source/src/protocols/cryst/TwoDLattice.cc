@@ -157,8 +157,8 @@ MakeLayerMover::apply( core::pose::Pose & pose ) {
 
 	build_layer_of_virtuals( posebase, Ajumps, Bjumps, monomer_anchors, base_monomer);
 
-	Size nvrt = posebase.total_residue();
-	Size nres_monomer = pose.total_residue();
+	Size nvrt = posebase.size();
+	Size nres_monomer = pose.size();
 
 	detect_connecting_subunits( pose, posebase, monomer_anchors, base_monomer );
 	add_monomers_to_layer( pose, posebase, monomer_anchors, monomer_jumps, rootres );
@@ -211,7 +211,7 @@ MakeLayerMover::place_near_origin (
 	Pose & pose
 ) {
 	Size rootpos=0;
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 
 	Vector com(0,0,0);
 	for ( Size i=1; i<= nres; ++i ) {
@@ -266,7 +266,7 @@ MakeLayerMover::detect_connecting_subunits(
 	Size new_basesubunit=0;
 
 	// get pose radius
-	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.total_residue () );
+	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
 
 	Vector com(0,0,0);
 	Real radius = 0;
@@ -325,7 +325,7 @@ MakeLayerMover::add_monomers_to_layer(
 	utility::vector1<Size> & monomer_jumps,
 	Size rootpos
 ) {
-	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.total_residue () );
+	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
 
 	monomer_jumps.clear();
 	Size n_framework_jumps = pose.fold_tree().num_jump();
@@ -339,7 +339,7 @@ MakeLayerMover::add_monomers_to_layer(
 		for ( Size j=rootpos-1; j>=1; --j ) {
 			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(j), old_nres_protein+1, false ); ++nres_protein;
 		}
-		for ( Size j=rootpos+1; j<= monomer_pose.total_residue(); ++j ) {
+		for ( Size j=rootpos+1; j<= monomer_pose.size(); ++j ) {
 			if ( monomer_pose.residue(j).is_lower_terminus() ) {
 				pose.insert_residue_by_jump( monomer_pose.residue(j), nres_protein+1, nres_protein ); ++nres_protein;
 			} else {
@@ -407,9 +407,9 @@ MakeLayerMover::build_layer_of_virtuals(
 			posebase.append_residue_by_bond( *vrt_x );    vrtX(1,1) = 1;
 			posebase.append_residue_by_jump( *vrt_y, 1);  vrtY(1,1) = 2;
 		} else {
-			posebase.append_residue_by_jump( *vrt_x, vrtX(i-1,1));  vrtX(i,1) = posebase.total_residue();
+			posebase.append_residue_by_jump( *vrt_x, vrtX(i-1,1));  vrtX(i,1) = posebase.size();
 			Ajumps.push_back(posebase.fold_tree().num_jump());
-			posebase.append_residue_by_jump( *vrt_y, vrtX(i  ,1));  vrtY(i,1) = posebase.total_residue();
+			posebase.append_residue_by_jump( *vrt_y, vrtX(i  ,1));  vrtY(i,1) = posebase.size();
 		}
 	}
 
@@ -422,7 +422,7 @@ MakeLayerMover::build_layer_of_virtuals(
 			// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
 			ResidueOP vrt_y = make_vrt(O,Bx,By);
 
-			posebase.append_residue_by_jump( *vrt_y, vrtY(i,j-1)); vrtY(i,j) = posebase.total_residue();
+			posebase.append_residue_by_jump( *vrt_y, vrtY(i,j-1)); vrtY(i,j) = posebase.size();
 			Bjumps.push_back(posebase.fold_tree().num_jump());
 		}
 	}
@@ -452,7 +452,7 @@ MakeLayerMover::build_layer_of_virtuals(
 
 				posebase.append_residue_by_jump( *vrt_sub, vrtY(x_i,y_i));
 
-				subunit_anchors.push_back(posebase.total_residue());
+				subunit_anchors.push_back(posebase.size());
 				if ( s==1 && i==0 && j==0 ) {
 					basesubunit = subunit_anchors.size();
 				}
@@ -544,7 +544,7 @@ MakeLayerMover::setup_xtal_symminfo(
 
 	symminfo.num_virtuals( num_virtuals );
 	symminfo.set_use_symmetry( true );
-	symminfo.set_flat_score_multiply( pose.total_residue(), 0 );
+	symminfo.set_flat_score_multiply( pose.size(), 0 );
 	symminfo.set_nres_subunit( nres_monomer );
 
 	Size const nres_protein( num_monomers * nres_monomer );

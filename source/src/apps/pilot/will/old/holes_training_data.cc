@@ -105,9 +105,9 @@ void test( std::string fname ) {
 	for( Size i = 1; i <= pb.nballs(); i++ ) {
 		Size resnum = pb.res_num(i);
 		tag = pb.res_name(i);
-		if( resnum <= pose.total_residue() && pose.residue(resnum).is_upper_terminus() )	tag += "_Cterm";
-		if( resnum <= pose.total_residue() && pose.residue(resnum).is_lower_terminus() )	tag += "_Nterm";
-		if( pb.res_num(i) > pose.total_residue() ) {
+		if( resnum <= pose.size() && pose.residue(resnum).is_upper_terminus() )	tag += "_Cterm";
+		if( resnum <= pose.size() && pose.residue(resnum).is_lower_terminus() )	tag += "_Nterm";
+		if( pb.res_num(i) > pose.size() ) {
 			tag = "UNK";
 			if( resnum == old_resnum ) lines[tag] += "\n" + pb.res_name(i) +" "+ fname +" "+ string_of(resnum) + " ";
 		}

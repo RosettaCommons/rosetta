@@ -287,7 +287,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 	using namespace std;
 
 	// This assert does not hold if we add ligand residues other than the protein and the peptide
-	// runtime_assert( flags_.receptor_nres() + flags_.peptide_nres() == (int)pose.total_residue());
+	// runtime_assert( flags_.receptor_nres() + flags_.peptide_nres() == (int)pose.size());
 
 	ObjexxFCL::FArray1D_int cuts(1000,0); // dim1 = serial numbers of cut
 	ObjexxFCL::FArray2D_int jumps(2,1000,0); // dim1 = from/to; dim2 = serial numbers of jump
@@ -334,7 +334,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		Size resi = 1;
 		Size chain = 0;
-		while ( resi < pose.total_residue() && chain < flags_.receptor_chain().size()-1 ) {
+		while ( resi < pose.size() && chain < flags_.receptor_chain().size()-1 ) {
 			if ( pdbinfo->chain(resi+1) != flags_.receptor_chain().at(chain) ) {
 				int new_jump = ++max_jump;
 				jumps(JUMP_FROM, new_jump) = resi;
@@ -351,17 +351,17 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 	//assumes ligand(s) is last residue in the pdb.
 	if ( flags_.is_ligand_present(pose) ) { // TODO: verify code validity for peptide-folding only (= no receptor)
 		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
-		if ( flags_.receptor_nres() + flags_.peptide_nres() < (int)pose.total_residue() ) {
+		if ( flags_.receptor_nres() + flags_.peptide_nres() < (int)pose.size() ) {
 			cuts ( num_jumps+1 ) = flags_.peptide_last_res();
 			Size resi = flags_.receptor_nres() + flags_.peptide_nres() + 1;
-			while ( resi <= pose.total_residue() ) {
+			while ( resi <= pose.size() ) {
 				char currChain = pdbinfo->chain(resi);
 				int ligand_jump = ++max_jump;
 				jumps(JUMP_FROM, ligand_jump) = flags_.receptor_anchor_pos; // TODO: this line is probably incompatible with pep_fold_only
 				jumps(JUMP_TO, ligand_jump) = resi;
 				num_jumps++;
 				cuts(num_jumps+1) = resi;
-				while ( resi <= pose.total_residue() && pdbinfo->chain(resi) == currChain ) {
+				while ( resi <= pose.size() && pdbinfo->chain(resi) == currChain ) {
 					resi++;
 				}
 			}
@@ -372,7 +372,7 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 	kinematics::FoldTree f;
 	f.clear();
 	f.tree_from_jumps_and_cuts
-		( pose.total_residue(), num_jumps, jumps, cuts );
+		( pose.size(), num_jumps, jumps, cuts );
 	TR << "Old FoldTree : " << pose.fold_tree() << std::endl;
 	pose.fold_tree(f);
 	TR << "New FoldTree : " << pose.fold_tree() << std::endl;
@@ -497,7 +497,7 @@ FlexPepDockingProtocol::prepack_only(
 	mm_protein->clear();
 	int const receptor_nres = flags_.receptor_nres();
 	core::Size pack_start = (ppk_receptor) ? 1            : receptor_nres+1;
-	core::Size pack_end =   (ppk_peptide) ? pose.total_residue() : receptor_nres;
+	core::Size pack_end =   (ppk_peptide) ? pose.size() : receptor_nres;
 	for ( core::Size i = pack_start; i <= pack_end; ++i ) {
 		mm_protein->set_chi(i, true);
 	}
@@ -511,7 +511,7 @@ FlexPepDockingProtocol::prepack_only(
 	for ( core::Size resid = 1; resid < pack_start; resid++ ) {
 		task->nonconst_residue_task(resid).prevent_repacking();
 	}
-	for ( core::Size resid = pack_end+1; resid <= pose.total_residue() ; resid++ ) {
+	for ( core::Size resid = pack_end+1; resid <= pose.size() ; resid++ ) {
 		task->nonconst_residue_task(resid).prevent_repacking();
 	}
 	// support cmd-line option for unbound rotamers
@@ -1485,8 +1485,8 @@ FlexPepDockingProtocol::addLowResStatistics
 	cur_job->add_string_real_pair( "score_lowres_opt",
 		(*scorefxn_lowres_)(pose_after_lowres_CEN) );
 	// mark peptide residues and interface (computed from native)
-	FArray1D_bool superpos_partner ( native_CEN.total_residue(), false );
-	FArray1D_bool native_interface_residues ( native_CEN.total_residue(), false );
+	FArray1D_bool superpos_partner ( native_CEN.size(), false );
+	FArray1D_bool native_interface_residues ( native_CEN.size(), false );
 	markNativeInterface(superpos_partner, native_interface_residues);
 	// add all peptide RMSD:
 	using core::scoring::rmsd_with_super;
@@ -1558,8 +1558,8 @@ FlexPepDockingProtocol::storeJobStatistics
 	}
 	// calculate and store the rms of the starting structure to the native
 	pose::Pose native_pose( *get_native_pose() );
-	FArray1D_bool superpos_partner ( native_pose.total_residue(), false );
-	FArray1D_bool native_interface_residues ( native_pose.total_residue(), false );
+	FArray1D_bool superpos_partner ( native_pose.size(), false );
+	FArray1D_bool native_interface_residues ( native_pose.size(), false );
 	markNativeInterface(superpos_partner, native_interface_residues);
 
 

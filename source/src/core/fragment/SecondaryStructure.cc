@@ -202,10 +202,10 @@ void SecondaryStructure::read_from_file( std::string fn ) {
 
 SecondaryStructure::SecondaryStructure( core::pose::Pose const& pose ) {
 	//  pose::set_ss_from_phi_psi( pose );
-	total_residue_ = pose.total_residue();
+	total_residue_ = pose.size();
 	strand_fraction_.dimension( total_residue_, 0.0 );
 	loop_fraction_.dimension( total_residue_, 0.0 );
-	for ( Size pos = 1; pos<=pose.total_residue(); pos++ ) {
+	for ( Size pos = 1; pos<=pose.size(); pos++ ) {
 		char ss = pose.secstruct( pos );
 		if ( ss == 'L' ) loop_fraction_( pos ) += 1.0;
 		if ( ss == 'E' ) strand_fraction_( pos ) += 1.0;

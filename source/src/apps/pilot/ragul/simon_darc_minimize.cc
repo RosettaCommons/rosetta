@@ -114,7 +114,7 @@ core::Size lig_res_num;
 void define_interface( core::pose::Pose & ref_pose ) {
 	interface.clear();
 	lig_res_num =0;
-	for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
 		if (!ref_pose.residue(j).is_protein()){
 			lig_res_num = j;
 			break;
@@ -182,10 +182,10 @@ calpha_pdb_superimpose_pose(
 {
   id::AtomID_Map< id::AtomID > atom_map;
   core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
-  for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= mod_pose.size(); ++ii ) {
     if ( ! mod_pose.residue(ii).has("CA") ) continue;
     if ( ! mod_pose.residue(ii).is_protein() ) continue;
-    for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+    for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
       if ( ! ref_pose.residue(jj).has("CA") ) continue;
       if ( ! ref_pose.residue(jj).is_protein() ) continue;
       if ( mod_pose.pdb_info()->chain(ii) != ref_pose.pdb_info()->chain(jj)) continue;
@@ -209,10 +209,10 @@ interface_rmsd(
   std::vector< core::Vector > p1_coords;
   std::vector< core::Vector > p2_coords;
 
-  for ( Size ii = 1; ii <= ref_pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= ref_pose.size(); ++ii ) {
     if ( ! ref_pose.residue(ii).has("CA") ) continue;
     if ( ! ref_pose.residue(ii).is_protein() ) continue;
-    for ( Size jj = 1; jj <= mod_pose.total_residue(); ++jj ) {
+    for ( Size jj = 1; jj <= mod_pose.size(); ++jj ) {
       if ( ! ref_pose.residue(ii).has("CA") ) continue;
       if ( ! ref_pose.residue(ii).is_protein() ) continue;
       if ( mod_pose.pdb_info()->chain(jj) != ref_pose.pdb_info()->chain(ii)) continue;
@@ -360,11 +360,11 @@ int main( int argc, char * argv [] ){
 					 if ( bound_pose.residue( bound_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 					 bound_pose.append_residue_by_jump
 					 ( *ResidueFactory::create_residue( bound_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-					 bound_pose.total_residue()/2 );
+					 bound_pose.size()/2 );
 					 }
 				*/
 
-				Size nres = bound_pose.total_residue();
+				Size nres = bound_pose.size();
 				Real const coord_sdev( option[ OptionKeys::cst_force_constant ] );
 				// default is 0.5 (from idealize) -- maybe too small
 				for ( Size i = 1; i< nres; ++i ) {
@@ -409,7 +409,7 @@ int main( int argc, char * argv [] ){
 					base_packer_task->set_bump_check( false );
 					base_packer_task->initialize_from_command_line();
 					base_packer_task->or_include_current( true );
-					for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
+					for ( Size ii = 1; ii <= bound_pose.size(); ++ii ) {
 						base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
 					}
 					// First repack

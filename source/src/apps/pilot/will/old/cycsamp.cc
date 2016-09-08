@@ -150,7 +150,7 @@ class CycBBMover : public protocols::moves::Mover {
 	Size copyres_;
 	Real mag_;
 public:
-	CycBBMover(Pose const & pose, Real mag) : nres_(pose.n_residue()-2),copyres_(pose.n_residue()-1),mag_(mag) {}
+	CycBBMover(Pose const & pose, Real mag) : nres_(pose.size()-2),copyres_(pose.size()-1),mag_(mag) {}
 	void apply(core::pose::Pose & pose) {
 		Size i = std::ceil(numeric::random::uniform()*nres_);
 		if(     numeric::random::uniform()<0.5) pose.set_phi(i,pose.phi(i)+numeric::random::gaussian()*mag_);
@@ -212,12 +212,12 @@ void linmin(Pose & pose, ScoreFunctionOP sf) {
 Pose cyclic_perm(Pose const & orig, Size start, bool mirror=false) {
 	Pose pose;
 	pose.append_residue_by_jump(orig.residue(start),1);
-	for(Size i = 1; i <= orig.n_residue()-1; ++i) {
-		// std::cout << "appending res " << (i+start-1)%orig.n_residue()+1 << std::endl;
-		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.n_residue()+1));
+	for(Size i = 1; i <= orig.size()-1; ++i) {
+		// std::cout << "appending res " << (i+start-1)%orig.size()+1 << std::endl;
+		pose.append_residue_by_bond(orig.residue((start+i-1)%orig.size()+1));
 	}
 	if(mirror) {
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			for(Size j = 1; j <= pose.residue_type(i).natoms(); ++j) {
 				numeric::xyzVector<Real> xyz = pose.xyz(AtomID(j,i));
 				xyz.z() = - xyz.z();
@@ -233,7 +233,7 @@ Pose cyclic_perm(Pose const & orig, Size start, bool mirror=false) {
 Real cyclic_all_atom_rmsd(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
 	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			Real r = core::scoring::all_atom_rmsd( cyclic_perm(pose,i,m==1), other );
 			if( r < mr ) mr = r;
 		}
@@ -244,7 +244,7 @@ Real cyclic_all_atom_rmsd(Pose const & pose, Pose const & other) {
 Real cyclic_ca_rmsd(Pose const & pose, Pose const & other) {
 	Real mr = 9e9;
 	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= pose.n_residue(); ++i) {
+		for(Size i = 1; i <= pose.size(); ++i) {
 			Real r = core::scoring::CA_rmsd( cyclic_perm(pose,i,m==1), other );
 			if( r < mr ) mr = r;
 		}
@@ -257,7 +257,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 	Size am = 0;
 	Size amm = 0;
 	for(Size m = 0; m <= 1; ++m) { // true false
-		for(Size i = 1; i <= move.n_residue(); ++i) {
+		for(Size i = 1; i <= move.size(); ++i) {
 			// Pose tmp = cyclic_perm(move,i,m==1);
 			// tmp.dump_pdb("cyc_sup_test_"+ObjexxFCL::string_of(m)+"_"+ObjexxFCL::string_of(i)+".pdb");
 			// Real r = core::scoring::all_atom_rmsd( tmp, ref );
@@ -307,16 +307,16 @@ std::string bin2string(BINTYPE bin, Size nres) {
 
 BINTYPE pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
-	int nres = min(pose.n_residue(),MAXRES);
+	int nres = min(pose.size(),MAXRES);
 	BINTYPE bin = 0;
 	for(int i = 0; i < nres; ++i) {
 		// Real phid = pose.phi(i+1);
 		// Real psid = pose.psi(i+1);
-		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.n_residue())%pose.n_residue()+1).xyz("C" );
-		numeric::xyzVector<Real> n  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("N" );
-		numeric::xyzVector<Real> ca = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("CA");
-		numeric::xyzVector<Real> c  = pose.residue((i  +pose.n_residue())%pose.n_residue()+1).xyz("C" );
-		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.n_residue())%pose.n_residue()+1).xyz("N" );
+		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.size())%pose.size()+1).xyz("C" );
+		numeric::xyzVector<Real> n  = pose.residue((i  +pose.size())%pose.size()+1).xyz("N" );
+		numeric::xyzVector<Real> ca = pose.residue((i  +pose.size())%pose.size()+1).xyz("CA");
+		numeric::xyzVector<Real> c  = pose.residue((i  +pose.size())%pose.size()+1).xyz("C" );
+		numeric::xyzVector<Real> n2 = pose.residue((i+1+pose.size())%pose.size()+1).xyz("N" );
 		Real phid = basic::unsigned_periodic_range(numeric::dihedral_degrees(c0,n,ca,c),360.0);
 		Real psid = basic::unsigned_periodic_range(numeric::dihedral_degrees(n,ca,c,n2),360.0);
 		BINTYPE phi = phid * BINSIZE / 360.0;
@@ -327,7 +327,7 @@ BINTYPE pose2bin(core::pose::Pose const & pose) {
 		bin += phi;
 		bin += psi;
 	}
-	// TR << bin2string(bin,pose.n_residue()) << std::endl;
+	// TR << bin2string(bin,pose.size()) << std::endl;
 	// std::exit(-1);
 	return bin;
 }
@@ -349,12 +349,12 @@ Size compute_num_bins(Size nres) {
 
 
 void fixH(core::pose::Pose & pose) {
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if(!pose.residue(i).has("H")) continue;
 		numeric::xyzVector<Real> n  = pose.residue(i).xyz("N");
 		numeric::xyzVector<Real> ca = pose.residue(i).xyz("CA");
 		Size in = i-1;
-		if(in == 0) in = pose.n_residue();
+		if(in == 0) in = pose.size();
 		numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
 		numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
 		pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
@@ -362,7 +362,7 @@ void fixH(core::pose::Pose & pose) {
 }
 
 void cyclize_pose(core::pose::Pose & pose) {
-	Size N = pose.n_residue();
+	Size N = pose.size();
 	for(Size i = 1; i <= N; ++i) {
 		if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 		if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
@@ -374,9 +374,9 @@ void cyclize_pose(core::pose::Pose & pose) {
 	pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
 	fixH(pose);
 	using namespace core::scoring::constraints;
-	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
-	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
-	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.size()).atom_index("OVL1"), pose.size() );
+	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.size()).atom_index("OVL2"), pose.size() );
+	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.size()).atom_index(   "C"), pose.size() );
 	pose.remove_constraints();
 	pose.add_constraint(new AtomPairConstraint(a1,a2,new HarmonicFunc(0.0,0.1)));
 	pose.add_constraint(new AtomPairConstraint(b1,b2,new HarmonicFunc(0.0,0.1)));
@@ -440,14 +440,14 @@ void* doit(void*) {
 	Pose pose;
 	// core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
 	core::import_pose::pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
-	Size N = pose.n_residue();
+	Size N = pose.size();
 	if( N > 4 * (Size)sizeof(BINTYPE) ) {
 		utility_exit_with_message("my stupid way of binning chis uses an unsigned short/long, and can't handle that many residues!\nthere is probably a way around this to get maybe 3 more residues easily, or by making the key a pair of longs o rthe bins smaller....");
 	}
 
 	if (option[parser::view]()) protocols::viewer::add_conformation_viewer(pose.conformation(),"cycsamp",1000,1000);
 
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if(pose.residue(i).name3()=="GLY" || pose.residue(i).name3()=="PRO" || pose.residue(i).name3()=="DPR" ) continue;
 		core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
 	}
@@ -556,8 +556,8 @@ void* doit(void*) {
 					Pose tmp = *(i->second);
 					cyclic_superimpose(tmp,*refpose);
 					cyclize_pose(tmp);
-					// std::string tag = ObjexxFCL::string_of(pose.n_residue()) +"-"+ bin2string(i->first,pose.n_residue());
-					std::string tag = ObjexxFCL::string_of(tmp.n_residue()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
+					// std::string tag = ObjexxFCL::string_of(pose.size()) +"-"+ bin2string(i->first,pose.size());
+					std::string tag = ObjexxFCL::string_of(tmp.size()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
 					tmp.dump_scored_pdb( option[basic::options::OptionKeys::out::file::o]() + "/" + tag +".pdb", *sffa );
 					core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 					ss_out->fill_struct( *(i->second) ,tag);

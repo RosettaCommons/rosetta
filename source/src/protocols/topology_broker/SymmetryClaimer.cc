@@ -81,7 +81,7 @@ void SymmetryClaimer::generate_symmetry_claims( claims::SymmetryClaims& symm_cla
 
 void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
 	core::pose::Pose& pose ){
-	asymmetric_res_ = pose.total_residue();
+	asymmetric_res_ = pose.size();
 
 	utility::vector1< claims::SequenceClaimOP > original_claims;
 	for ( auto & claim : pre_accepted ) {
@@ -126,7 +126,7 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
 		rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
 		rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
 		//append it to the end of the monomer i
-		pose.append_residue_by_jump( *rsd, pose.total_residue() );
+		pose.append_residue_by_jump( *rsd, pose.size() );
 
 		pre_accepted.push_back( claims::DofClaimOP( new claims::SequenceClaim( get_self_weak_ptr(), "X", tag ) ));
 	}

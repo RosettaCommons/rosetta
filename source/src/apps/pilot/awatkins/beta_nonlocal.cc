@@ -149,7 +149,7 @@ main( int argc, char* argv[] )
 		pose.append_residue_by_bond( Residue( restype_set->name_map( "B3A" ), true ), true );
 		pose.append_residue_by_bond( Residue( restype_set->name_map( "B3A:MethylatedCtermProteinFull" ), true ), true );
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			pose.set_torsion( TorsionID( ii, id::BB, 4 ), 180 );
 		}
 
@@ -160,7 +160,7 @@ main( int argc, char* argv[] )
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( false );
 		mm->set_jump( true );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			mm->set( TorsionID( ii, id::BB, 4 ), false );
 		}
 
@@ -207,7 +207,7 @@ main( int argc, char* argv[] )
 		for ( Real phi = -170; phi <= 180; phi += 10 ) {
 			for ( Real tht = -170; tht <= 180; tht += 10 ) {
 				for ( Real psi = -170; psi <= 180; psi += 10 ) {
-					for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+					for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 						if ( ii == 6 ) continue;
 						pose.set_torsion( TorsionID( ii, id::BB, 1 ), phi );
 						pose.set_torsion( TorsionID( ii, id::BB, 2 ), tht );

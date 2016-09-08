@@ -480,7 +480,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 	if ( protein_family_=="antibodies" ) { //For antibodies I want to align using the disulfides
 		utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain, I assume that the order is VL and then VH, Gideon Lapidoth
 		pose_positions.clear(); template_positions.clear();
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).has_variant_type(core::chemical::DISULFIDE) ) {
 				cys_pos.push_back(i);
 			}
@@ -494,7 +494,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			template_positions.push_back(cys_pos[4]);
 		}
 		pose_positions.push_back( protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,1));
-		pose_positions.push_back( protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,source_pose_->total_residue()));
+		pose_positions.push_back( protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,source_pose_->size()));
 	};
 	TR<<" template scafold_res: "<<from_res() -1<<",source scafold_res: "<<source_pdb_from_res() -1<<std::endl;
 	utility::vector1< numeric::xyzVector< core::Real > > init_coords( coords( source_pose, pose_positions ) ), ref_coords( coords( pose/*this is the starting pose, the structure on which we want to graft the loop from the source protein*/, template_positions ));
@@ -595,7 +595,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	if ( !from_res() && !to_res() &&protein_family_=="antibodies" &&ccd()/*this is for splice out*/ ) { //if user has not defined from res and to res then we use antibody disulfides as start and end points
 		utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain, I assume that the order is VL and then VH, Gideon Lapidoth
 		//TR << "DEBUG I'm now setting from_res and to_res according to the cysteines " << std::endl;
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).has_variant_type(core::chemical::DISULFIDE) ) {
 				cys_pos.push_back(i);
 			}
@@ -609,7 +609,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		} else if ( segment_type_=="H3" ) {
 			from_res(cys_pos[4]+1);
 			core::conformation::Conformation const & conf(pose.conformation());
-			to_res(conf.num_chains()==1?pose.total_residue():conf.chain_end(1));
+			to_res(conf.num_chains()==1?pose.size():conf.chain_end(1));
 		} else if ( segment_type_=="L3" ) {
 			from_res(cys_pos[2]+1);
 			to_res(vl_vh_cut);
@@ -659,10 +659,10 @@ void Splice::apply(core::pose::Pose & pose) {
 		}
 		if ( segment_type_=="H3"&& (tail_segment_=="c") ) {
 			nearest_to_from = find_nearest_res(*source_pose_, pose,from_res()/*should be the 2 vh cys on template*/, 0);//start res is nearest disulfide on source_pdb
-			nearest_to_to = source_pose_->total_residue();
+			nearest_to_to = source_pose_->size();
 		} else if ( segment_type_=="L3"&& (tail_segment_=="c") ) {
 			nearest_to_from = find_nearest_res(*source_pose_, pose,from_res()/*should be the 2 vl cys on template*/, 0);//start res is nearest disulfide on source_pdb
-			nearest_to_to = source_pose_->total_residue();
+			nearest_to_to = source_pose_->size();
 		} else {
 			nearest_to_from = find_nearest_res(*source_pose_, pose, from_res(), 0/*chain*/);
 			nearest_to_to = find_nearest_res(*source_pose_, pose, to_res(), 0/*chain*/);
@@ -934,7 +934,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			TR << "RAVIT DEBUG " << find_nearest_disulfide(pose,to_res())-1 << " " << to_res()+residue_diff << std::endl;
 
 			//runtime_assert( find_nearest_disulfide(pose,to_res())-1 == to_res()+residue_diff ); // if this is never causing trouble we can remove the if else here... If it is causing trouble splice is likely to cause trouble for the generic case...
-			//fold_tree(pose,from_res(),std::min(find_nearest_disulfide(pose,to_res())+1,pose.total_residue()),cut_site);//llc changes fold tree when new loop is longer then old loop
+			//fold_tree(pose,from_res(),std::min(find_nearest_disulfide(pose,to_res())+1,pose.size()),cut_site);//llc changes fold tree when new loop is longer then old loop
 			fold_tree(pose,from_res(),find_nearest_disulfide(pose,to_res())-1,cut_site);
 		} else {
 			fold_tree(pose,from_res(),to_res()+residue_diff,cut_site);
@@ -1086,7 +1086,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	TR<< "allowing pro/gly only at positions (29Mar13, given sequence profiles, now allowing pro/gly/his at all designed positions. The following is kept for benchmarking): " << std::endl;
 	TR << "Threading sequence" << std::endl;
 	//pose.dump_pdb("thread_problem.pdb");
-	for ( core::Size res_num = 1; res_num <= pose.total_residue(); res_num++ ) {
+	for ( core::Size res_num = 1; res_num <= pose.size(); res_num++ ) {
 		if ( std::find(pro_gly_res.begin(), pro_gly_res.end(), res_num) == pro_gly_res.end() ) {
 			operation::RestrictAbsentCanonicalAASOP racaas( new operation::RestrictAbsentCanonicalAAS );
 			if ( allow_all_aa() ) {
@@ -1152,7 +1152,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		core::Size const startn(from_res());
 		core::Size const startc(from_res() + total_residue_new - 1);
 
-		///  Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
+		///  Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.size()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
 		TR<<"Loop definition before ccd:startn, startc, cut_site"<<startn<<","<< startc<<","<< cut_site<<std::endl;
 		Loop loop(startn, startc, cut_site); /// Gideon & Sarel (8Jul13): we're now respecting the user's choice of from_res to_res and not melting the framework
 		LoopsOP loops( new Loops() );
@@ -1318,7 +1318,7 @@ void Splice::apply(core::pose::Pose & pose) {
 				if ( disulfide_res < cut_vl_vh_after_llc ) {
 					tail_end = cut_vl_vh_after_llc;
 				} else {
-					tail_end = pose.split_by_chain()[1]->total_residue();//in case we have a ligand I assume the designed protein will be chain 1.
+					tail_end = pose.split_by_chain()[1]->size();//in case we have a ligand I assume the designed protein will be chain 1.
 				}
 
 				tail_size = tail_end - disulfide_res;
@@ -1429,7 +1429,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			} //for
 			TR << std::endl;
 			tf->push_back(dao);
-			for ( core::Size res_num = 1; res_num <= pose.total_residue(); res_num++ ) {
+			for ( core::Size res_num = 1; res_num <= pose.size(); res_num++ ) {
 				if ( std::find(pro_gly_res.begin(), pro_gly_res.end(), res_num) == pro_gly_res.end() ) {
 					operation::RestrictAbsentCanonicalAASOP racaas( new operation::RestrictAbsentCanonicalAAS );
 					if ( allow_all_aa() ) {
@@ -1844,7 +1844,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 		source_pdb_to_res(core::pose::parse_resnum(tag->getOption<std::string>("source_pdb_to_res", "0"), *source_pose_));
 		if ( protein_family_=="antibodies" ) {
 			source_pdb_from_res(protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,1)+1);
-			source_pdb_to_res(protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,source_pose_->total_residue())-1);
+			source_pdb_to_res(protocols::rosetta_scripts::find_nearest_disulfide(*source_pose_,source_pose_->size())-1);
 		}
 		runtime_assert( source_pdb_from_res() > 0 && source_pdb_to_res() > source_pdb_from_res() );
 	}
@@ -2208,7 +2208,7 @@ void Splice::set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) 
 	std::map<std::string, core::Size> pose_start_pts;
 	std::map<std::string, core::Size> pose_end_pts;
 	//find all cysteines in the pose
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).has_variant_type(core::chemical::DISULFIDE) ) {
 			cys_pos.push_back(i);
 		}
@@ -2289,7 +2289,7 @@ void Splice::set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) 
 	ft.add_edge(cys_pos[4], pose_cut_pts["H3"], -1);
 	ft.add_edge(pose_end_pts["H3"], pose_cut_pts["H3"] + 1, -1);
 	ft.add_edge(cys_pos[4], pose_end_pts["H3"], 5);
-	ft.add_edge(pose_end_pts["H3"], pose.total_residue(), -1);
+	ft.add_edge(pose_end_pts["H3"], pose.size(), -1);
 	ft.add_edge(cys_pos[2], cys_pos[4], 1); //vl/vh jump
 
 	ft.delete_self_edges();
@@ -2370,10 +2370,10 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 	ft.clear();
 	if ( conf.num_chains() == 1 ) {  /// build simple ft for the cut
 		ft.add_edge(1, s1-1, -1);
-		ft.add_edge(s1-1, std::min(s2+1,pose.total_residue()), 1);
+		ft.add_edge(s1-1, std::min(s2+1,pose.size()), 1);
 		ft.add_edge(s1-1, cut, -1);
-		ft.add_edge (std::min(s2+1,pose.total_residue()), cut + 1, -1);
-		ft.add_edge(std::min(s2+1,pose.total_residue()), pose.total_residue(), -1);
+		ft.add_edge (std::min(s2+1,pose.size()), cut + 1, -1);
+		ft.add_edge(std::min(s2+1,pose.size()), pose.size(), -1);
 		ft.delete_self_edges();
 		//ft.reorder(s2);
 		TR << "single chain ft: " << ft << std::endl;
@@ -2385,7 +2385,7 @@ void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Si
 		ft.add_edge( start-1, stop+1, 1 );
 		ft.add_edge( start-1, cut, -1 );
 		ft.add_edge( stop+1, cut + 1, -1 );
-		ft.add_edge( stop+1, pose.total_residue(), -1 );
+		ft.add_edge( stop+1, pose.size(), -1 );
 		pose.fold_tree( ft );
 		return;
 	}
@@ -2739,7 +2739,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 
 		//If pose has more than one chain the sequence profile mapping needs to be modified accordingly
 		core::id::SequenceMappingOP smap( new core::id::SequenceMapping() );
-		for ( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+		for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 			if ( (seqpos >= pose.conformation().chain_begin(chain_num_))
 					and (seqpos <= pose.conformation().chain_end(chain_num_)) ) {
 				smap->push_back(seqpos - pose.conformation().chain_begin(chain_num_) + 1);
@@ -3065,7 +3065,7 @@ core::Size Splice::find_non_active_site_cut_site(core::pose::Pose const & pose) 
 	} //for
 	core::scoring::dssp::Dssp dssp(pose);
 	dssp.dssp_reduced();// switch to simplified H E L notation
-	for ( core::Size pos /*go over profile ids*/= aapos; pos <= pose.total_residue(); ++pos ) {
+	for ( core::Size pos /*go over profile ids*/= aapos; pos <= pose.size(); ++pos ) {
 		if ( dssp.get_dssp_secstruct(pos) == 'L' ) { // allow site for cutting if it's either in a loop or if cutting secondary structure is allowed
 			while ( pose.residue(pos).name3()=="PRO"||pose.residue(pos+1).name3()=="PRO" )
 					pos=pos+1;//Can't place cut site after proline

@@ -157,13 +157,13 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 	}
 
 	// Partition pose by jump_id
-	ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), true );
+	ObjexxFCL::FArray1D_bool is_upstream ( pose.size(), true );
 
 	if ( jump_id > 0 ) {
 		pose.fold_tree().partition_by_jump( jump_id, is_upstream );
 	}
 
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const & residue = pose.residue(i);
 		if ( residue.type().name() == "VRT" ) {
 			continue;
@@ -283,7 +283,7 @@ int MolecularSurfaceCalculator::ReadScRadii()
 /// core::Real sc;
 /// calc.Init();
 /// calc.Reset(); // Only needed when re-using the calculator
-/// for(core::Size i = 1; i <= pose.n_residue(); i++)
+/// for(core::Size i = 1; i <= pose.size(); i++)
 ///   calc.AddResidue((i < 100), pose.residue(i));
 /// if(calc.Calc())
 ///   sc = calc.GetResults().sc;

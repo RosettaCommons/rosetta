@@ -107,7 +107,7 @@ MPTerminiPenalty::residue_energy(
 	Real termini_pen(0);
 
 	// Skip Membrane Residues
-	core::Size nres = pose.total_residue()-1;
+	core::Size nres = pose.size()-1;
 	if ( rsd.seqpos() > nres ) return;
 
 	// Skip Termini Residues

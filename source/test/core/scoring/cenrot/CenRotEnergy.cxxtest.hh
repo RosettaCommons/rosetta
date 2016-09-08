@@ -204,7 +204,7 @@ public:
 		//atomtree min
 		core::kinematics::MoveMap mm;
 		mm.set_bb(true); mm.set_chi(true); mm.set_jump(false);
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			core::conformation::Residue const &res_i = pose.residue(ii);
 			if ( res_i.aa()!=chemical::aa_gly
 					&& res_i.aa()!=chemical::aa_ala

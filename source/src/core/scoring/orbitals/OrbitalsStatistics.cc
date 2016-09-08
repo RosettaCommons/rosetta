@@ -208,7 +208,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 	}
 
 	//Let the magic begin!
-	for ( core::Size res_num1 = 1; res_num1 <= pdb.n_residue(); ++res_num1 ) {
+	for ( core::Size res_num1 = 1; res_num1 <= pdb.size(); ++res_num1 ) {
 		core::conformation::Residue resid1 = pdb.residue(res_num1);
 		if ( !resid1.has_sc_orbitals() ) continue;
 
@@ -223,7 +223,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 		core::Real angle2=2;
 
 		//std::cout << "inside the resid1.has_sc_orbitals()!" << std::endl;
-		for ( core::Size res_num2 = 1; res_num2 <= pdb.n_residue(); ++res_num2 ) {
+		for ( core::Size res_num2 = 1; res_num2 <= pdb.size(); ++res_num2 ) {
 			core::conformation::Residue resid2 = pdb.residue(res_num2);
 			if ( resid1.seqpos() == resid2.seqpos() ) continue;
 
@@ -291,7 +291,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 					}
 				}  // end for orbital_index != orbital_end
 			}  // end for atom_index != atom_end
-		}  // end for res_num2 <= pdb.n_residue()
+		}  // end for res_num2 <= pdb.size()
 
 		if ( low_D > 10 ) continue;
 
@@ -334,7 +334,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 			//core::Size index_of_histogram(orbital_type_2_enum_.find(orbital_type)->second);
 			//std::cout << "index of histogram " << index_of_histogram << std::endl;
 		}
-	}  // end for res_num1 <= pdb.n_residue()
+	}  // end for res_num1 <= pdb.size()
 	histogram_vector_=histogram_vector;
 }
 
@@ -355,7 +355,7 @@ void OrbitalsStatistics::bb_stats(
 	}
 
 	//Let the magic begin!
-	for ( core::Size res_num1 = 1; res_num1 <= pdb.n_residue(); ++res_num1 ) {
+	for ( core::Size res_num1 = 1; res_num1 <= pdb.size(); ++res_num1 ) {
 		core::conformation::Residue resid1 = pdb.residue(res_num1);
 
 		core::Real low_D = 11;
@@ -368,7 +368,7 @@ void OrbitalsStatistics::bb_stats(
 		core::Real angle2=2;
 
 		//std::cout << "inside the resid1.has_sc_orbitals()!" << std::endl;
-		for ( core::Size res_num2 = 1; res_num2 <= pdb.n_residue(); ++res_num2 ) {
+		for ( core::Size res_num2 = 1; res_num2 <= pdb.size(); ++res_num2 ) {
 			core::conformation::Residue resid2 = pdb.residue(res_num2);
 			if ( resid1.seqpos() == resid2.seqpos() ) continue;
 

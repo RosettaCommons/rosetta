@@ -421,6 +421,12 @@ if config['core']:
     '''
     Pose.get = lambda x: x
 
+    def _total_residue(self):
+        return self.size()
+    Pose.n_residue = _total_residue()
+    Pose.total_residue = _total_residue()
+
+
 
 # Vector compatibility.
 def _extend_func(vec, othervec):

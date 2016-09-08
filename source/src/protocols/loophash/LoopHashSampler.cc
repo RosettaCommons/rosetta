@@ -102,7 +102,7 @@ utility::vector1 < core::Real > extract_sample_weights( const core::pose::Pose &
 	sample_weight_input_parameters = utility::split(sample_weight_str);
 
 	utility::vector1 < core::Real > sample_weight;
-	for ( core::Size res_count = 1; res_count <= pose.total_residue(); ++res_count ) {
+	for ( core::Size res_count = 1; res_count <= pose.size(); ++res_count ) {
 		core::Real new_sample_weight = 1.0;
 		if ( res_count < sample_weight_input_parameters.size() ) {
 			new_sample_weight = utility::string2float( sample_weight_input_parameters[res_count] );
@@ -221,7 +221,7 @@ LoopHashSampler::build_structures(
 	kinematics::MoveMap final_mm;
 	final_mm.set_bb(true);
 
-	Size nres = start_pose.total_residue();
+	Size nres = start_pose.size();
 	Size ir, jr;
 
 	core::Size start_res = start_res_;

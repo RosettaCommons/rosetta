@@ -120,8 +120,8 @@ mem_bb_rmsd_no_super(
 
 	// Pick transmembrane spanning regions
 	SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
-	ObjexxFCL::FArray1D_bool tm_regions ( pose.total_residue(), false );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
 			tm_regions(i)=true;
 		}
@@ -151,8 +151,8 @@ mem_all_atom_rmsd_no_super(
 
 	// Pick transmembrane spanning regions
 	core::conformation::membrane::SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
-	ObjexxFCL::FArray1D_bool tm_regions ( pose.total_residue(), false );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
 			tm_regions(i)=true;
 		}
@@ -182,8 +182,8 @@ mem_bb_rmsd_with_super(
 
 	// Pick transmembrane spanning regions
 	SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
-	ObjexxFCL::FArray1D_bool tm_regions ( pose.total_residue(), false );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
 			tm_regions(i)=true;
 		}
@@ -213,8 +213,8 @@ mem_all_atom_rmsd_with_super(
 
 	// Pick transmembrane spanning regions
 	SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
-	ObjexxFCL::FArray1D_bool tm_regions ( pose.total_residue(), false );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
 			tm_regions(i)=true;
 		}
@@ -287,7 +287,7 @@ calc_helix_axis(
 	// a COM centered at the span start and end
 	bool use_centered( true );
 	if ( ( helix_span->start() < 2 ) ||
-			( pose.total_residue() - helix_span->end() < 2 ) ) {
+			( pose.size() - helix_span->end() < 2 ) ) {
 		use_centered = false;
 	}
 
@@ -532,7 +532,7 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 
 	// create simple foldtree
 	FoldTree ft = FoldTree();
-	ft.simple_tree( pose.total_residue() );
+	ft.simple_tree( pose.size() );
 
 	// get membrane residue
 	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
@@ -853,7 +853,7 @@ void create_membrane_foldtree_from_anchors(
 	utility::vector1< core::Size > chain_nres;
 	core::Size rsd_counter( 0 );
 	for ( core::Size i = 1; i < chain_poses.size(); ++i ) {
-		rsd_counter += chain_poses[ i ]->total_residue();
+		rsd_counter += chain_poses[ i ]->size();
 		chain_nres.push_back( rsd_counter );
 	}
 
@@ -864,7 +864,7 @@ void create_membrane_foldtree_from_anchors(
 	// [3]
 	// start with simple tree
 	FoldTree ft = FoldTree();
-	ft.simple_tree( pose.total_residue() );
+	ft.simple_tree( pose.size() );
 
 	// add jumps with cutpoints, returns jump number of new jump:
 	// add first jump from membrane residue to first chain
@@ -905,7 +905,7 @@ core::Size create_specific_membrane_foldtree( core::pose::Pose & pose, utility::
 
 	// create a simple tree
 	FoldTree ft = FoldTree();
-	ft.simple_tree( pose.total_residue() );
+	ft.simple_tree( pose.size() );
 
 	// membrane residue and jump
 	core::Size mem_rsd = pose.conformation().membrane_info()->membrane_rsd_num();
@@ -996,7 +996,7 @@ core::Size setup_foldtree_pose_com( core::pose::Pose & pose ) {
 	utility::vector1< core::Size > anchors;
 
 	// get rsd nearest pose COM
-	core::Size root_anchor( static_cast< core::Size >( residue_center_of_mass( pose, 1, pose.total_residue() ) ) );
+	core::Size root_anchor( static_cast< core::Size >( residue_center_of_mass( pose, 1, pose.size() ) ) );
 
 	// get chain for pose COM
 	core::Size root_anchor_chain( static_cast< core::Size >( pose.chain(root_anchor) ) );
@@ -1055,13 +1055,13 @@ void setup_foldtree_from_anchors( core::pose::Pose & pose, utility::vector1< cor
 	utility::vector1< core::Size > chain_nres;
 	core::Size rsd_counter( 0 );
 	for ( core::Size i = 1; i <= chain_poses.size(); ++i ) {
-		rsd_counter += chain_poses[ i ]->total_residue();
+		rsd_counter += chain_poses[ i ]->size();
 		chain_nres.push_back( rsd_counter );
 	}
 
 	// start with simple tree
 	FoldTree ft = FoldTree();
-	ft.simple_tree( pose.total_residue() );
+	ft.simple_tree( pose.size() );
 
 	// for each chain starting with the second one, add another jump with
 	// the cutpoint after the chain
@@ -1098,7 +1098,7 @@ get_chain_and_z( core::pose::Pose const & pose ) {
 	utility::vector1< core::Size > chain_info;
 
 	// loop over residues, get chain info and z_coord
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		// get info
 		z_coord.push_back( static_cast< core::Real >(pose.residue(i).atom(2).xyz().z()) );
@@ -1128,7 +1128,7 @@ utility::vector1< char > get_secstruct( core::pose::Pose & pose ) {
 	utility::vector1< char > secstruct;
 
 	// loop over residues, get chain info and z_coord
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		// get info
 		secstruct.push_back( pose.conformation().secstruct( i ) );
@@ -1710,7 +1710,7 @@ void split_topology_by_jump(
 		core::Size end = topo.span( i )->end();
 
 		// if span is not in upstream partner, add to downstream topology
-		if ( start > pose_up.total_residue() ) {
+		if ( start > pose_up.size() ) {
 
 			core::Size new_start = start - nres_protein( pose_up );
 			core::Size new_end = end - nres_protein( pose_up );

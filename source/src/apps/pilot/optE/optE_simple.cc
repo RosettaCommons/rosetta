@@ -125,8 +125,8 @@ get_opte_data(
 
 	unweighted_scorefxn.setup_for_packing( pose, main_task->repacking_residues(), main_task->designing_residues() );
 
-	vector1< bool > task_mask( pose.total_residue(), false );
-	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+	vector1< bool > task_mask( pose.size(), false );
+	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 		if ( pose.residue_type(pos).is_DNA() ) continue; // skip DNA
 //		if ( !main_task->nonconst_residue_task( pos ).being_designed() ) continue;
 		if ( !main_task->nonconst_residue_task( pos ).being_packed() ) continue;
@@ -347,7 +347,7 @@ simple_opte_test()
 			Pose pose;
 			core::import_pose::pose_from_file( pose, *pdb_file , core::import_pose::PDB_file);
 
-			std::cout << "read file: " << *pdb_file << ' '<< pose.total_residue() << std::endl;
+			std::cout << "read file: " << *pdb_file << ' '<< pose.size() << std::endl;
 			std::cout << "SEQUENCE: " << *pdb_file << ' ' << pose.sequence() << std::endl;
 
 			std::cout << "Core optimization version" << std::endl;

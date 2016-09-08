@@ -143,7 +143,7 @@ RestrictInterGroupVectorOperation::apply( core::pose::Pose const & pose, core::p
 		utility_exit_with_message( "No residues defined to look at interface between." );
 	}
 	//make a list of residues allowed
-	utility::vector1_bool repack_full(pose.total_residue(), false);
+	utility::vector1_bool repack_full(pose.size(), false);
 	//itterate over each set of pairs, make a union
 	for ( core::Size jj=1 ; jj<= pair_vector_.size(); ++jj ) {//{utility::vector1<group_pair>::const_iterator jj = pair_vector_.begin() ; jj != pair_vector_.end() ; ++jj ){
 		group_pair this_pair = pair_vector_[jj];

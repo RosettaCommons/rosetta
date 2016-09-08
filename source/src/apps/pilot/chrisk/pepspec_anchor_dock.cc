@@ -274,7 +274,7 @@ has_clash(
 	EnergyGraph & energy_graph( energies.energy_graph() );
 	bool is_clash( false );
 
-	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !check_seqpos[ seqpos ] ) continue;
 		// search upstream
 		for ( graph::Graph::EdgeListIter
@@ -554,7 +554,7 @@ run_pep_prep()
 
 	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	Size prot_chain;
 	for( Size i = 1; i <= pose.conformation().num_chains(); ++i ){
@@ -571,11 +571,11 @@ run_pep_prep()
 
 
 	// create a simple foldtree of the right size
-	FoldTree f( pose.total_residue() );
+	FoldTree f( pose.size() );
 
 	//gen fold tree
 	if( prot_begin != 1 ) f.new_jump( prot_anchor, 1, 1 );
-	if( prot_end != pose.total_residue() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
+	if( prot_end != pose.size() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 
 	core::scoring::ScoreFunctionOP scorefxn(  get_score_function() );
 	core::scoring::ScoreFunctionOP soft_scorefxn(  ScoreFunctionFactory::create_score_function( option[ pepspec::soft_wts ] ) );
@@ -640,7 +640,7 @@ run_pep_prep()
 		std::string const anchor_type( option[ pepspec::anchor_type ] );
 		ResidueOP pep_anchor_res( ResidueFactory::create_residue( rsd_set.name_map( anchor_type ) ) );
 		pose.append_residue_by_jump( *pep_anchor_res, prot_anchor, "CA", "CA", true );
-		Size pep_anchor( pose.total_residue() );
+		Size pep_anchor( pose.size() );
 		Size pep_jump( 1 );
 		Pose start_pose( pose );
 		/*
@@ -649,11 +649,11 @@ run_pep_prep()
 		   pep_anchor_stub3 = "O";
 		   }
 		 */
-		FoldTree f_jump( pose.total_residue() );
-		FoldTree f_orient( pose.total_residue() );
+		FoldTree f_jump( pose.size() );
+		FoldTree f_orient( pose.size() );
 
 		f_jump.new_jump( prot_anchor, pep_anchor, prot_end );
-		if( prot_end != pose.total_residue() - 1 ){
+		if( prot_end != pose.size() - 1 ){
 			f_jump.new_jump( prot_anchor, prot_end + 1, prot_end );
 			f_orient.new_jump( prot_anchor, prot_end + 1, prot_end );
 		}
@@ -741,7 +741,7 @@ run_pep_prep()
 				}
 				total_rmsd = std::sqrt( total_rmsd / npos );
 				TR << string_of( total_rmsd ) + " Ca RMSD over " + string_of( npos ) + " atoms\n";
-				if( npos < pose.total_residue() / 2 ) utility_exit_with_message( "Alignment falied at " + ref_input_name + "\n" );
+				if( npos < pose.size() / 2 ) utility_exit_with_message( "Alignment falied at " + ref_input_name + "\n" );
 				//superimpose ref, target with atom map from seq alignment
 				superimpose_pose( ref_pose, pose, atom_map );
 			}
@@ -1050,10 +1050,10 @@ run_pep_prep()
 			set_pep_cst( pose, pep_anchor, p0_cst );
 		}
 
-		vector1< bool > ignore_clash( pose.total_residue(), false );
+		vector1< bool > ignore_clash( pose.size(), false );
 		TR << "Ignoring clash residues:\t";
-		for( Size i = 1; i <= pose.total_residue() - 1; ++i ){
-			vector1< bool > this_clash( pose.total_residue(), false );
+		for( Size i = 1; i <= pose.size() - 1; ++i ){
+			vector1< bool > this_clash( pose.size(), false );
 			this_clash[ i ] = true;
 			if( has_clash( pose, this_clash, scorefxn, option[ pepspec::clash_cutoff ], false ) ){
 				TR << string_of( i ) + ", ";
@@ -1071,14 +1071,14 @@ run_pep_prep()
 			pose = restart_pose;
 			( *scorefxn )( pose );
 			MonteCarloOP mc_dock ( new MonteCarlo( pose, *scorefxn, 0.8 ) );
-			vector1< bool > check_clash( pose.total_residue(), false );
+			vector1< bool > check_clash( pose.size(), false );
 			check_clash[ pep_anchor ] = true;
 			rigid::RigidBodyPerturbNoCenterMoverOP rb_mover = new rigid::RigidPerturbNoCenterMover( pep_jump, 2.5, 0.25 );
 			rb_mover->apply( pose );
 			mc_dock->boltzmann( pose );
 
 			//get seqpos nbrs from energy map and rottrials
-			vector1< bool > is_pep_nbr( pose.total_residue(), false );
+			vector1< bool > is_pep_nbr( pose.size(), false );
 			EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 			for ( graph::Graph::EdgeListConstIter
 					ir  = energy_graph.get_node( pep_anchor )->const_edge_list_begin(),
@@ -1102,7 +1102,7 @@ run_pep_prep()
 			( *soft_scorefxn )( pose );
 			pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 			task->initialize_from_command_line().or_include_current( true );
-			for ( Size i=1; i<= pose.total_residue(); ++i ) {
+			for ( Size i=1; i<= pose.size(); ++i ) {
 				if( !option[ pepspec::anchor_type ].user() && i == pep_anchor ) continue;
 				else if( i == pep_anchor && option[ pepspec::prep_use_ref_rotamers ] ) task->nonconst_residue_task( i ).prevent_repacking();
 				else if( i == pep_anchor || is_pep_nbr[ i ] ) task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -1126,7 +1126,7 @@ run_pep_prep()
 			mc_dock2->boltzmann( pose );
 		}
 		mc_dock2->recover_low( pose );
-		vector1< bool > check_clash( pose.total_residue(), false );
+		vector1< bool > check_clash( pose.size(), false );
 		EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 		for ( graph::Graph::EdgeListConstIter
 				ir  = energy_graph.get_node( pep_anchor )->const_edge_list_begin(),

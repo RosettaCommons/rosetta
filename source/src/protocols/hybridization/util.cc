@@ -83,7 +83,7 @@ using namespace core::scoring::constraints;
 
 core::Size
 get_num_residues_nonvirt( core::pose::Pose const & pose ) {
-	core::Size nres_tgt = pose.total_residue();
+	core::Size nres_tgt = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & SymmConf (
@@ -97,7 +97,7 @@ get_num_residues_nonvirt( core::pose::Pose const & pose ) {
 
 core::Size
 get_num_residues_prot( core::pose::Pose const & pose ) {
-	core::Size nres_tgt = pose.total_residue();
+	core::Size nres_tgt = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & SymmConf (
@@ -177,20 +177,20 @@ void generate_centroid_constraints(
 	utility::vector1< utility::vector1< core::Real > > tgt_weights(nres_tgt);
 	for ( int i=1; i<=(int)templates.size(); ++i ) {
 		utility::vector1< bool > passed_gapcheck(nres_tgt,false);
-		for ( int j=1; j<(int)templates[i]->total_residue(); ++j ) {
+		for ( int j=1; j<(int)templates[i]->size(); ++j ) {
 			bool includeme=true;
 			for ( int k=1; k<=(int)GAPBUFFER && includeme; ++k ) {
-				if ( j-k < 1 || j+k > (int)templates[i]->total_residue() ) includeme=false;
+				if ( j-k < 1 || j+k > (int)templates[i]->size() ) includeme=false;
 				else if ( templates[i]->pdb_info()->number(j+k) - templates[i]->pdb_info()->number(j) != k ) includeme=false;
 				else if ( templates[i]->pdb_info()->number(j-k) - templates[i]->pdb_info()->number(j) != -k ) includeme=false;
 			}
 			passed_gapcheck[j] = includeme;
 		}
 
-		for ( core::Size j=1; j<templates[i]->total_residue(); ++j ) {
+		for ( core::Size j=1; j<templates[i]->size(); ++j ) {
 			if ( !templates[i]->residue_type(j).is_protein() ) continue;
 			if ( !passed_gapcheck[j] ) continue;
-			for ( core::Size k=j+1; k<templates[i]->total_residue(); ++k ) {
+			for ( core::Size k=j+1; k<templates[i]->size(); ++k ) {
 				if ( !templates[i]->residue_type(k).is_protein() ) continue;
 				if ( !passed_gapcheck[k] ) continue;
 				if ( templates[i]->pdb_info()->number(k) - templates[i]->pdb_info()->number(j) < (int)MINSEQSEP ) continue;
@@ -231,7 +231,7 @@ void setup_user_coordinate_constraints(
 		pose.add_constraint(
 			scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
 			core::id::AtomID(2,reses[i]),
-			core::id::AtomID(2,pose.total_residue()),
+			core::id::AtomID(2,pose.size()),
 			pose.residue(reses[i]).atom(2).xyz(),
 			fx
 			) ) ) );
@@ -278,7 +278,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 	//fpd -- generate constraints between the residues in tmpl with the hetatms in pose
 	if ( het_prot_cst_weight > 1e-7 ) {
 		// constraints protein<->substrate
-		for ( Size ires=1; ires<=tmpl.total_residue(); ++ires ) {
+		for ( Size ires=1; ires<=tmpl.size(); ++ires ) {
 			if ( !tmpl.residue(ires).is_protein() ) continue;
 
 			core::Size iatom;
@@ -293,7 +293,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 				ires_tgt = symm_info->bb_follows( ires_tgt );
 			}
 
-			for ( Size jres=1; jres<=tmpl.total_residue(); ++jres ) {
+			for ( Size jres=1; jres<=tmpl.size(); ++jres ) {
 				if ( tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 
 				core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
@@ -322,7 +322,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 
 	if ( self_cst_weight > 1e-7 ) {
 		// constraints within substrate
-		for ( Size ires=1; ires<=tmpl.total_residue(); ++ires ) {
+		for ( Size ires=1; ires<=tmpl.size(); ++ires ) {
 			if ( tmpl.residue(ires).is_protein() || tmpl.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 
 			core::Size ires_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
@@ -331,7 +331,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 			}
 
 			for ( Size iatom=1; iatom<=tmpl.residue(ires).nheavyatoms(); ++iatom ) {
-				for ( Size jres=1; jres<=tmpl.total_residue(); ++jres ) {
+				for ( Size jres=1; jres<=tmpl.size(); ++jres ) {
 					if ( tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 
 					core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(jres) : jres;
@@ -376,7 +376,7 @@ bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
 
-	if ( seqpos == pose.total_residue() ) return true;
+	if ( seqpos == pose.size() ) return true;
 	if ( !pose.residue_type(seqpos).is_polymer() ) return true;
 	if ( !pose.residue_type(seqpos+1).is_polymer() ) return true;
 	if ( pose.residue_type(seqpos).is_protein() && pose.residue_type(seqpos+1).is_protein() ) {
@@ -422,7 +422,7 @@ partial_align(
 	core::Real min_coverage )
 {
 	std::list <core::Size> residue_list;
-	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
 		residue_list.push_back(ires);
 	}
@@ -488,7 +488,7 @@ core::Size atom_map_valid_size(
 )
 {
 	core::Size n_valid = 0;
-	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
@@ -509,7 +509,7 @@ update_atom_map(
 
 	core::pose::initialize_atomid_map( updated_atom_map, pose, core::id::BOGUS_ATOM_ID );
 
-	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
@@ -531,7 +531,7 @@ natom_aligned(
 )
 {
 	Size n_align=0;
-	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
@@ -557,7 +557,7 @@ get_superposition_transformation(
 	using namespace core::id;
 	// count number of atoms for the array
 	Size total_mapped_atoms(0);
-	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
@@ -577,7 +577,7 @@ get_superposition_transformation(
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, total_mapped_atoms );
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
 	Size atomno(0);
-	for ( Size ires=1; ires<= mod_pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
@@ -778,7 +778,7 @@ protocols::loops::Loops renumber_with_pdb_info(
 
 
 core::Real get_gdtmm( core::pose::Pose & native, core::pose::Pose & pose, core::sequence::SequenceAlignmentOP & aln ) {
-	runtime_assert( native.total_residue() > 0 && pose.total_residue() > 0 );
+	runtime_assert( native.size() > 0 && pose.size() > 0 );
 	if ( !aln ) {
 		core::sequence::SequenceOP model_seq( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
 		core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native.sequence(), "native", 1 ) );

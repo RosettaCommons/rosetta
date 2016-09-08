@@ -131,7 +131,7 @@ LigDSasaFilter::compute( core::pose::Pose const & pose ) const {
 	basic::MetricValue< core::Real > mv_sasa;
 	core::Real sasa (0.0);
 	core::Size lig_chain(2), prot_chain;
-	for ( core::Size i = 1;  i<= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1;  i<= pose.size(); ++i ) {
 		if ( pose.residue_type( i ).is_ligand() ) lig_chain = pose.chain( i );
 	}
 	prot_chain = pose.chain( 1 );   //we're making the not so wild assumption that the the first residue in the pose belongs to the protein
@@ -216,8 +216,8 @@ DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 	aname1_  =  tag->getOption<std::string>("atomname1", "CA" );
 	aname2_  =  tag->getOption<std::string>("atomname2", "CA" );
 	sample_type_  =  tag->getOption<std::string>("sample_type", "more" ); //a1 is more buried than a2 i.e. dsasa is more
-	runtime_assert(resid1_>0 && resid1_<=pose.total_residue() );
-	runtime_assert(resid2_>0 && resid2_<=pose.total_residue() );
+	runtime_assert(resid1_>0 && resid1_<=pose.size() );
+	runtime_assert(resid2_>0 && resid2_<=pose.size() );
 	runtime_assert (pose.residue( resid1_ ).has( aname1_ ));
 	runtime_assert (pose.residue( resid2_ ).has( aname2_ ));
 	runtime_assert( sample_type_=="more" || sample_type_ == "less" );
@@ -260,7 +260,7 @@ LigBurialFilter::compute( core::pose::Pose const & pose ) const {
 	}
 	core::Size count_neighbors( 0 );
 	core::conformation::Residue const res_target( pose.conformation().residue( real_lig_id ) );
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		core::conformation::Residue const resi( pose.residue( i ) );
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
 		if ( distance <= distance_threshold_ ) ++count_neighbors;
@@ -332,7 +332,7 @@ LigInterfaceEnergyFilter::report( std::ostream & out, core::pose::Pose const & p
 	} else {
 		jump = rb_jump_;
 	}
-	FArray1D_bool prot_res( in_pose.total_residue(), false );
+	FArray1D_bool prot_res( in_pose.size(), false );
 	in_pose.fold_tree().partition_by_jump( jump, prot_res );
 	protocols::scoring::Interface interface_obj( jump );
 	in_pose.update_residue_neighbors();
@@ -341,7 +341,7 @@ LigInterfaceEnergyFilter::report( std::ostream & out, core::pose::Pose const & p
 	(*scorefxn_)( in_pose );
 
 	out<<"\n"<<A(9, "chain")<<A( 9, "res")<<A( 9, "AA")<<A( 9, "total")<<A( 9, "contact")<<A( 9, "fa_atr")<<A( 9, "fa_rep")<<A( 9, "hb_bb_sc")<<A( 9, "hb_sc")<<A( 9, "fa_sol")<<A( 9, "fa_dun")<<A( 9, "fa_pair")<<"\n";
-	for ( core::Size resnum_ = 1; resnum_ <= pose.total_residue(); ++resnum_ ) {
+	for ( core::Size resnum_ = 1; resnum_ <= pose.size(); ++resnum_ ) {
 		//   if ( !in_pose.residue(resnum_).is_protein() ) continue;
 		if ( interface_obj.is_interface( resnum_ ) ) { // in interface
 
@@ -595,7 +595,7 @@ RepackWithoutLigandFilter::report( std::ostream & out, core::pose::Pose const & 
 	//  core::Real value( compute( pose ));
 	//  if (calc_rms_) out<<"RMS= "<< value<<'\n';
 	//  else out<<"dEnergy = "<< value<<'\n';
-	out<<"Ligand to take out is: "<< pose.total_residue();
+	out<<"Ligand to take out is: "<< pose.size();
 	out<<'\n';
 }
 
@@ -629,9 +629,9 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 		TR<<"Total energy with ligand is: "<<wl_score<<" and total energy without ligand is "<<nl_score<<std::endl;
 		return (wl_score - nl_score);
 	} else if ( calc_rms_ ) {
-		ObjexxFCL::FArray1D_bool rms_seqpos( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool rms_seqpos( pose.size(), false );
 		utility::vector1< core::Size > trg_res;
-		TR << " Length of initial pose " << rnl_pose.total_residue() << std::endl;
+		TR << " Length of initial pose " << rnl_pose.size() << std::endl;
 		if ( rms_all_rpked_ ) {
 			TR<<"Getting identities of all pack residues... "<< std::endl;
 			core::pack::task::PackerTaskCOP rnl_ptask = rnl.get_ptask();
@@ -650,7 +650,7 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 		trg_res.erase( last, trg_res.end() );
 
 		TR<<"Calculating RMS for residues ";
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( ! (pose.residue_type( i ).is_ligand()) ) {
 				utility::vector1< core::Size >::const_iterator resfind = find( trg_res.begin(), trg_res.end(), i );
 				if ( resfind != trg_res.end() ) {
@@ -1369,7 +1369,7 @@ ResidueConformerFilter::get_current_conformer( core::pose::Pose const & pose ) c
 
 	if ( seqpos_to_check == 0 ) { //this means seqpos didn't get set by the users, and we have to look in the pose
 		utility::vector1< core::Size > possible_seqpos;
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue( i ).name3() == restype_->name3() ) possible_seqpos.push_back( i );
 		}
 		if ( possible_seqpos.size() == 0 ) {

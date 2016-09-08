@@ -106,7 +106,7 @@ largest_cluster( utility::vector1< pose::Pose > lowscore_poses, utility::vector1
 
 			Real maxsub = core::scoring::CA_maxsub( lowscore_poses[ii], pose_list[jj], maxsub_rms );
 
-			Real maxsub_coverage = maxsub / ( static_cast< Real >(lowscore_poses[ii].total_residue() ) );
+			Real maxsub_coverage = maxsub / ( static_cast< Real >(lowscore_poses[ii].size() ) );
 
 			if ( maxsub_coverage >= maxsub_filter ) {
 				++hits;
@@ -125,7 +125,7 @@ largest_cluster( utility::vector1< pose::Pose > lowscore_poses, utility::vector1
 	for ( Size jj = 1; jj <= pose_list.size(); ++jj) {
 		Real maxsub = core::scoring::CA_maxsub( lowscore_poses[most_id], pose_list[jj], maxsub_rms );
 
-		Real maxsub_coverage = maxsub / ( static_cast< Real >(pose_list[most_id].total_residue() ) );
+		Real maxsub_coverage = maxsub / ( static_cast< Real >(pose_list[most_id].size() ) );
 
 		if ( maxsub_coverage >= maxsub_filter ) {
 			topcluster.push_back(pose_list[jj]);
@@ -263,14 +263,14 @@ main( int argc, char* argv [] )
 // 		if ( has_native ) {
 // 			pose::Pose fragnative(cluster_list[1]);
 
-// 			for ( Size fn=1; fn <= fragnative.total_residue(); ++fn ) {
+// 			for ( Size fn=1; fn <= fragnative.size(); ++fn ) {
 // 				fragnative.set_phi(fn, native.phi(res1+fn-1));
 // 				fragnative.set_psi(fn, native.psi(res1+fn-1));
 // 				fragnative.set_omega(fn, native.omega(res1+fn-1));
 // 			}
 // 			Real natmaxsub = core::scoring::CA_maxsub( cluster_list[1], fragnative );
 
-// 			std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << pose_list.size() << "   " << natmaxsub << " / " << fragnative.total_residue() << std::endl;
+// 			std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << pose_list.size() << "   " << natmaxsub << " / " << fragnative.size() << std::endl;
 // 		} else {
 // 			std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << pose_list.size() << std::endl;
 // 		}
@@ -291,8 +291,8 @@ main( int argc, char* argv [] )
 			for ( Size pp=1; pp <= cluster_list.size(); ++pp ) {
 				pose = cluster_list[pp];
 
-				for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
-					for ( Size jj=1; jj <= pose.total_residue(); ++jj ) {
+				for ( Size ii=1; ii <= pose.size(); ++ii ) {
+					for ( Size jj=1; jj <= pose.size(); ++jj ) {
 						Real pose_distance( distance( pose.residue(ii).atom("CA").xyz(), pose.residue(jj).atom("CA").xyz()) );
 
 						//Real pose_dotproduct( dot_product( (pose.residue(ii).xyz("N")-pose.residue(ii).xyz("CA")).normalize(),
@@ -326,8 +326,8 @@ main( int argc, char* argv [] )
 		}
 
 		/*
-		for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
-			for ( Size jj=ii+1; jj <= pose.total_residue(); ++jj ) {
+		for ( Size ii=1; ii <= pose.size(); ++ii ) {
+			for ( Size jj=ii+1; jj <= pose.size(); ++jj ) {
 				Real average(0.0);
 				for ( Size nn=1; nn <= vec2d[ii][jj].size(); ++nn ) {
 					average += vec2d[ii][jj][nn];

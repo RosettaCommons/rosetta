@@ -319,7 +319,7 @@ void revert_lactams( Pose & pose ) {
 
 	core::chemical::ResidueTypeSetCOP residue_set_cap = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( pose.residue(ii).type().name().find("N-conjugated")!= std::string::npos || pose.residue(ii).type().name().find("sidechain_carb")!= std::string::npos ) {
 
 			Size other_res = pose.residue( ii ).residue_connection_partner( pose.residue( ii ).n_polymeric_residue_connections() + 1 );
@@ -439,7 +439,7 @@ main( int argc, char* argv[] )
 			base_packer_task->set_bump_check( false );
 			base_packer_task->initialize_from_command_line();
 			base_packer_task->or_include_current( true );
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				if ( pose.residue(ii).type().name().find("N-conjugated")!= std::string::npos || pose.residue(ii).type().name().find("sidechain_carb")!= std::string::npos ) {
 					base_packer_task->nonconst_residue_task(ii).prevent_repacking();
 				} else {
@@ -450,12 +450,12 @@ main( int argc, char* argv[] )
 
 
 			kinematics::MoveMapOP pert_mm( new kinematics::MoveMap() );
-			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 				if ( pose.residue(ii).type().name().find("N-conjugated")!= std::string::npos || pose.residue(ii).type().name().find("sidechain_carb")!= std::string::npos ) {
 					pert_mm->set_chi( ii, true );
 				} else if ( ii > 1 && (pose.residue(ii-1).type().name().find("N-conjugated")!= std::string::npos || pose.residue(ii-1).type().name().find("sidechain_carb")!= std::string::npos ) ) {
 					pert_mm->set_chi( ii, true );
-				} else if ( ii < pose.total_residue() && ( pose.residue(ii+1).type().name().find("N-conjugated")!= std::string::npos || pose.residue(ii+1).type().name().find("sidechain_carb")!= std::string::npos ) ) {
+				} else if ( ii < pose.size() && ( pose.residue(ii+1).type().name().find("N-conjugated")!= std::string::npos || pose.residue(ii+1).type().name().find("sidechain_carb")!= std::string::npos ) ) {
 					pert_mm->set_chi( ii, true );
 				}
 			}

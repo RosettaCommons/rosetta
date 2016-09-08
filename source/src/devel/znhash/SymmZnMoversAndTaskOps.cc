@@ -190,7 +190,7 @@ void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 		zn_score_->set_reference_pdb( reference_pdb_ );
 
 		// initialize the assym_resid and the third_resid
-		if ( p.total_residue() < 3 ) {
+		if ( p.size() < 3 ) {
 			utility_exit_with_message("Cannot use ZnCoordinationConstraint on a pose with fewer than three residues" );
 		}
 		zn_score_->set_asymm_resid(1);
@@ -201,12 +201,12 @@ void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 		}
 
 		// look for the first residue on chain b -- it should not be either residue 1 or residue 2
-		for ( core::Size ii = 3; ii <= p.total_residue(); ++ii ) {
+		for ( core::Size ii = 3; ii <= p.size(); ++ii ) {
 			if ( p.residue(ii).chain() == 2 ) {
 				zn_score_->set_symm_resid( ii );
 				break;
 			}
-			if ( ii == p.total_residue() ) {
+			if ( ii == p.size() ) {
 				utility_exit_with_message("Did not find chain B in input structure" );
 			}
 		}
@@ -544,7 +544,7 @@ void ZNCoordinationConstraintPlacerMover::insert_zn_residues_into_pose( core::po
 		for ( core::Size ii = 1; ii <= 5; ++ii ) {
 			znres->set_xyz( ii, transform_match_coords_to_docked_coords * m1_.znconf().xyz( ii ) );
 		}
-		//new_zn_resids.push_back( p.total_residue() + 1 );
+		//new_zn_resids.push_back( p.size() + 1 );
 
 		p.append_residue_by_jump( *znres, m1resid, "CA", "ZN", true );
 
@@ -558,7 +558,7 @@ void ZNCoordinationConstraintPlacerMover::insert_zn_residues_into_pose( core::po
 	core::pose::PDBInfoOP newinfo( new core::pose::PDBInfo( p ) ); // fake new info
 	p.pdb_info( newinfo );
 
-	//for ( Size ii = 1; ii <= p.total_residue(); ++ii ) {
+	//for ( Size ii = 1; ii <= p.size(); ++ii ) {
 	// std::cout << "Residue " << ii << " chain: " << p.residue(ii).chain() << " ";
 	// std::cout << p.residue(ii).name() << std::endl;
 	//}

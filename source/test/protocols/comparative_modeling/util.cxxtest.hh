@@ -60,7 +60,7 @@ public:
 		unaligned_residues.push_back( 116 );
 
 		protocols::loops::LoopsOP myloops = pick_loops_unaligned(
-			query_pose_.total_residue(),
+			query_pose_.size(),
 			unaligned_residues,
 			5 // min_loop_size
 		);

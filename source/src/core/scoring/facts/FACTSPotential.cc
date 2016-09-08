@@ -151,7 +151,7 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 	Size res1;
 
 	PROF_START( basic::FACTS_GET_ALL_BORN_RADII );
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	FACTSPoseInfoOP facts_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
@@ -1479,7 +1479,7 @@ void FACTSPotential::setup_for_packing(
 }
 
 void FACTSPotential::get_template_born_radii(pose::Pose const & pose, FACTSPoseInfo & facts_info) const{
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	runtime_assert( facts_info.size() == nres );
 
 	for ( Size i=1; i<= nres; ++i ) {
@@ -1546,7 +1546,7 @@ void FACTSPotential::get_single_rotamer_born_radii(Residue const & rsd1,
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 
 	debug_assert( rsd1.natoms()<1 || std::fabs(facts1.Ai(1)) < 1e-3 );
-	for ( Size res2=1; res2<= pose.total_residue(); ++res2 ) {
+	for ( Size res2=1; res2<= pose.size(); ++res2 ) {
 		res_res_burial( rsd1, facts1, pose.residue( res2 ), facts_info.residue_info( res2 ) );
 	}//end for loop 1
 	get_self_terms( factstype1, facts1, true );

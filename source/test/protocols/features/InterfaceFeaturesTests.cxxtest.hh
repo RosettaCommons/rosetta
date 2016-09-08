@@ -80,7 +80,7 @@ public:
 	void test_reporter(){
 		interface_test();
 		TR << "Testing features reporter" << std::endl;
-		utility::vector1<bool> relavant_residues(multimer_.total_residue(), true);
+		utility::vector1<bool> relavant_residues(multimer_.size(), true);
 
 		reporter_->set_dSASA_cutoff(150); //Not real value
 		reporter_->set_pack_separated(false); //speed

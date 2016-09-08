@@ -73,7 +73,7 @@ OrResidueSelector::apply( core::pose::Pose const & pose ) const
 	debug_assert( num_selectors() > 0 );
 
 	// make subset neutral for OR operations
-	ResidueSubset subset( pose.total_residue(), false );
+	ResidueSubset subset( pose.size(), false );
 	for ( std::list< ResidueSelectorCOP >::const_iterator
 			rs = selectors_.begin();
 			rs != selectors_.end();

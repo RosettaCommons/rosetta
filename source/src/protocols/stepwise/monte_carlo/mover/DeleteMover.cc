@@ -132,7 +132,7 @@ bool
 DeleteMover::decide_to_keep_pose( pose::Pose const & pose ) const {
 	if ( const_full_model_info( pose ).is_a_submotif() ) return const_full_model_info( pose ).is_a_submotif_seed();
 	if ( check_for_input_domain( pose ) ) return true;
-	if ( ( (options_->from_scratch_frequency() > 0.0) || options_->allow_split_off() ) && pose.total_residue() > 1 )  return true;
+	if ( ( (options_->from_scratch_frequency() > 0.0) || options_->allow_split_off() ) && pose.size() > 1 )  return true;
 	return false;
 }
 
@@ -166,7 +166,7 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 	}
 
 	if ( pose_is_alone ) {
-		TR << TR.Red << "EMPTY POSE! Keeping the pose with number of residues " << pose.total_residue() << TR.Reset << std::endl;
+		TR << TR.Red << "EMPTY POSE! Keeping the pose with number of residues " << pose.size() << TR.Reset << std::endl;
 
 		core::pose::PoseCOP old_pose_cop = pose.clone();
 		FullModelInfoOP new_full_model_info = nonconst_full_model_info( pose ).clone_info();

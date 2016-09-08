@@ -104,12 +104,12 @@ std::string SaltBridgeCalculator::print( std::string const & key ) const{
 void SaltBridgeCalculator::recompute(core::pose::Pose const & pose){
 	salt_bridge_total_ = 0;
 	//start iterating through the residues
-	for ( core::Size res_num1=1; res_num1 <= pose.n_residue(); ++res_num1 ) {
+	for ( core::Size res_num1=1; res_num1 <= pose.size(); ++res_num1 ) {
 		//assign the number to a residue based on the seqpos
 		core::conformation::Residue acceptor(pose.residue(res_num1));
 		//continue only if the residue is either aspartic or glutamic acid
 		if ( acceptor.name3() == "ASP" || acceptor.name3() =="GLU" ) {
-			for ( core::Size res_num2=1; res_num2 <= pose.n_residue(); ++res_num2 ) {
+			for ( core::Size res_num2=1; res_num2 <= pose.size(); ++res_num2 ) {
 				core::conformation::Residue donate(pose.residue(res_num2));
 				//only continue if this residue is a his, lys or arg
 				if ( donate.name3() == "HIS" || donate.name3() == "LYS" || donate.name3() =="ARG" ) {

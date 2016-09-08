@@ -236,7 +236,7 @@ build_helix_test(){
     // Pack rotamers
     pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
     task->initialize_from_command_line();
-    Size const nres( pose.total_residue() );
+    Size const nres( pose.size() );
     for ( Size i = 1; i <= nres; ++i ) {
 	task->nonconst_residue_task( i ).restrict_to_repacking();
 	task->nonconst_residue_task(i).or_ex1( true );

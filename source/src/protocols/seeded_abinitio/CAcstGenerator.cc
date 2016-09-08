@@ -143,8 +143,8 @@ void add_dist_constraints(
 	}
 
 
-	for ( Size pos = 1; pos <= pose_of_int->total_residue(); pos++ ) {
-		for ( Size pos_2 = 1; pos_2 <=pose_of_int->total_residue(); pos_2++   ) {
+	for ( Size pos = 1; pos <= pose_of_int->size(); pos++ ) {
+		for ( Size pos_2 = 1; pos_2 <=pose_of_int->size(); pos_2++   ) {
 
 			bool res_is_loop = false;
 			bool res2_is_loop = false;
@@ -248,7 +248,7 @@ CAcstGenerator::apply( pose::Pose & pose ){
 
 	//statements to prevent bogus from happening
 	if ( to_chain_ == 0 && template_presence_ ) {
-		if ( pose.total_residue() != template_pdb_->total_residue() ) {
+		if ( pose.size() != template_pdb_->size() ) {
 			utility_exit_with_message("chain(s) to derrive constraints form and chain(s) to apply it to, do NOT have the same residue number. NOT supported." );
 		}
 	}
@@ -268,8 +268,8 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	}
 
 	if ( from_chain_ != 0 && to_chain_ != 0 ) {
-		TR<<"donor chain length: " << donor_poseOP->total_residue() <<", recipient chain length: " << pose.conformation().chain_end( to_chain_ ) - pose.conformation().chain_begin( to_chain_) +1 <<std::endl;
-		if ( donor_poseOP->total_residue() != (pose.conformation().chain_end( to_chain_ ) - pose.conformation().chain_begin( to_chain_) + 1) ) {
+		TR<<"donor chain length: " << donor_poseOP->size() <<", recipient chain length: " << pose.conformation().chain_end( to_chain_ ) - pose.conformation().chain_begin( to_chain_) +1 <<std::endl;
+		if ( donor_poseOP->size() != (pose.conformation().chain_end( to_chain_ ) - pose.conformation().chain_begin( to_chain_) + 1) ) {
 			utility_exit_with_message("donor pose and recipient chain do not have the same residue numbers, check your template or input pdb");
 		}
 	}
@@ -317,7 +317,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
-		TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
+		TR<<"read in a template pdb with " <<template_pdb_->size() <<"residues"<<std::endl;
 		template_presence_ = true;
 	}
 

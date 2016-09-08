@@ -218,7 +218,7 @@ set_secstruct_from_psipred_ss2(
 			secstructs.push_back( sec );
 		}
 	}
-	assert( secstructs.size() == pose.total_residue() );
+	assert( secstructs.size() == pose.size() );
 	for ( Size i = 1, iend=secstructs.size(); i <= iend; ++i ) {
 		pose.set_secstruct( i, secstructs[i] );
 	}
@@ -267,7 +267,7 @@ my_main( void* )
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_file( pose, option[ OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
- 	int const nres( pose.total_residue() );
+ 	int const nres( pose.size() );
 
  	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	//scorefxn->set_weight(scoring::mm_bend, 1.00);
@@ -295,7 +295,7 @@ my_main( void* )
 	kinematics::MoveMap mm_all_sc;
 	mm_all_sc.set_bb( false );
 	mm_all_sc.set_chi( false );
-	for (core::Size i=1; i<= pose.total_residue(); i++) {
+	for (core::Size i=1; i<= pose.size(); i++) {
 		//if ( ( pose.residue(i).type().name() == "CYD" ) || ( pose.residue(i).type().name() == "CYX" ) ) {	// DJM: DEBUG
 		// amw: changing to check variant types
 		if ( pose.residue(i).type().is_disulfide_bonded() || pose.residue(i).has_variant_type( chemical::SIDECHAIN_CONJUGATION ) {	//

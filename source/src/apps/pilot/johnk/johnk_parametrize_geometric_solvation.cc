@@ -182,7 +182,7 @@ main( int argc, char * argv [] )
 	// Build a peptide with multiple aa's, to use as a template for measuring bond lengths and angles...
 	pose::Pose pose;
 	core::pose::make_pose_from_sequence( pose, "AACDHKNRSW", *( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD )));
-	//	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	//	for ( Size i = 1; i <= pose.size(); i++ ) {
 	//		if ( ! pose.residue(i).is_protein() ) continue;
 	//		pose.set_phi( i, -180 ); // note: -150 for typical extended peptide, eg. protocols/topology_broker/SequenceClaimer.cc
 	//		pose.set_psi( i, 180); // note: 150 for typical extended peptide, eg. protocols/topology_broker/SequenceClaimer.cc

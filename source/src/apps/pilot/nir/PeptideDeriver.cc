@@ -152,7 +152,7 @@ main( int argc, char * argv [] )
 	ConstraintSetOP cst_set( new ConstraintSet() );
 	HarmonicFuncOP spring( new HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/) );
 	conformation::Conformation const & conformation( orig_pose.conformation() );
-	for (Size i=1; i <= orig_pose.total_residue(); ++i) {
+	for (Size i=1; i <= orig_pose.size(); ++i) {
 //		Residue const  & reside = orig_pose.residue( i ); // commented out to fix compilation error: unused variable 'reside' [-Werror=unused-variable] - Oriel
 		id::AtomID CAi ( orig_pose.residue(i).atom_index( " CA " ), i );
 		cst_set->add_constraint
@@ -389,13 +389,13 @@ core::pose::PoseOP get_subPose(
 		}
 
 		pose->append_residue_by_jump(other->residue(pep_start), 1, "", "", true);
-		core::pose::add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS_VARIANT, pose->total_residue() );
+		core::pose::add_variant_type_to_pose_residue( *pose , LOWER_TERMINUS_VARIANT, pose->size() );
 
 		for (core::Size i=pep_start+1; i<=pep_end; ++i){
 
 				pose->append_residue_by_bond(other->residue(i),false,0,0,0,false);
 		}
-		core::pose::add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS_VARIANT, pose->total_residue() );
+		core::pose::add_variant_type_to_pose_residue( *pose , UPPER_TERMINUS_VARIANT, pose->size() );
 
 		pose->conformation().detect_disulfides();
 		return pose;
@@ -432,7 +432,7 @@ core::pose::PoseOP oneChainPose (core::pose::Pose const & src, Size chainA) {
 	for(Size i=startA ; i <= endA; ++i){
 		residue_indices.push_back(i);
 	}
-	for(Size i=1 ; i <= src.total_residue(); ++i){
+	for(Size i=1 ; i <= src.size(); ++i){
 		if ((i<startA) || (i>endA))
 			residue_indices.push_back(i);
 	}

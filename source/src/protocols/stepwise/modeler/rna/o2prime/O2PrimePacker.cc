@@ -77,7 +77,7 @@ O2PrimePacker::initialize_o2prime_green_packer()
 	if ( partition_definition_.size() == 0 ) utility_exit_with_message( "To use green packer, make sure to set partition definition." );
 	bool const root_partition = partition_definition_( o2prime_pack_pose_.fold_tree().root() );
 
-	Size const nres = o2prime_pack_pose_.total_residue();
+	Size const nres = o2prime_pack_pose_.size();
 	UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator );
 	utility::vector1< Size > group_ids;
 

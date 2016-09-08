@@ -147,16 +147,16 @@ RTMin::rtmin(
 	}
 
 	utility::vector1< Size > inactive_neighbors;
-	inactive_neighbors.reserve( pose.total_residue() );
-	utility::vector1< bool > residue_is_inactive_neighbor( pose.total_residue(), false );
-	utility::vector1< bool > active_residue_has_been_visited( pose.total_residue(), false );
+	inactive_neighbors.reserve( pose.size() );
+	utility::vector1< bool > residue_is_inactive_neighbor( pose.size(), false );
+	utility::vector1< bool > active_residue_has_been_visited( pose.size(), false );
 
 	utility::vector1< Size > active_residues = pack::repackable_residues_dup( *input_task );
 	numeric::random::random_permutation( active_residues, numeric::random::rg() );
 
-	utility::vector1< conformation::ResidueCOP > bgres( pose.total_residue() );
+	utility::vector1< conformation::ResidueCOP > bgres( pose.size() );
 	graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, scfxn, input_task );
-	scoring::MinimizationGraph mingraph( pose.total_residue() );
+	scoring::MinimizationGraph mingraph( pose.size() );
 
 	SCMinMinimizerMapOP scminmap;
 	if ( cartesian_ ) {
@@ -165,7 +165,7 @@ RTMin::rtmin(
 		scminmap = SCMinMinimizerMapOP( new AtomTreeSCMinMinimizerMap() );
 	}
 	scminmap->set_nonideal( nonideal_ );
-	scminmap->set_total_residue( pose.total_residue() );
+	scminmap->set_total_residue( pose.size() );
 
 	EnergyMap emap_dummy;
 

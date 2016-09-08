@@ -123,7 +123,6 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 	using namespace core::pack::task::operation;
 	using namespace core::chemical;
 
-
 	/////////////////////////////////////////////////////////////////
 	// translate aa to nt if the protein doesn't already have a nt //
 	// sequence in comments                                        //
@@ -141,7 +140,7 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 	/////////////////////////////////////////////////////////////////
 	PackerTaskCOP task;
 	if ( cache_task_ && task_ ) {
-		if ( pose.total_residue() == task_->total_residue() ) {
+		if ( pose.size() == task_->total_residue() ) {
 			task = task_;
 		} else {
 			task_.reset(); // Invalidate cached task.
@@ -156,7 +155,7 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 
 	utility::vector1< core::Size > being_designed;
 	being_designed.clear();
-	for ( core::Size resi = 1; resi <= pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		if ( task->residue_task( resi ).being_designed() && pose.residue(resi).is_protein() ) {
 			being_designed.push_back( resi );
 		}
@@ -371,7 +370,7 @@ NucleotideMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &d
 	if ( ( reference_pose_ != NULL /* if already read, don't reread */) && ( tag->hasOption( "reference_pdb_file" )) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "reference_pdb_file" ));
 		core::import_pose::pose_from_file( *reference_pose_, template_pdb_fname , core::import_pose::PDB_file);
-		TR <<"reading in " << template_pdb_fname << " pdb with " << reference_pose_->total_residue() <<" residues"<<std::endl;
+		TR <<"reading in " << template_pdb_fname << " pdb with " << reference_pose_->size() <<" residues"<<std::endl;
 	}
 
 	cache_task_ = tag->getOption< bool >( "cache_task", false );

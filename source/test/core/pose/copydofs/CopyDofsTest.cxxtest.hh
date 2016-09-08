@@ -86,7 +86,7 @@ public:
 		std::map < core::id::AtomID , core::id::AtomID > atom_id_map;
 		MiniPose const reference_pose( pose );
 		std::map< Size, Size > res_map;
-		for ( Size n = 1; n <= pose.total_residue(); ++n ) res_map[n] = n;
+		for ( Size n = 1; n <= pose.size(); ++n ) res_map[n] = n;
 		setup_atom_id_map_match_atom_names( atom_id_map, res_map, new_pose, reference_pose );
 
 		// copies over all atoms (except virtuals) from reference_pose to extended pose.

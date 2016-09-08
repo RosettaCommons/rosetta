@@ -254,8 +254,8 @@ HBondEnergy::setup_for_packing(
 	using namespace hbtrie;
 
 	TrieCollectionOP tries( new TrieCollection );
-	tries->total_residue( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	tries->total_residue( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		// Do not compute energy for virtual residues.
 		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 
@@ -302,7 +302,7 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	using EnergiesCacheableDataType::HBOND_SET;
 
 	pose.update_residue_neighbors();
-	HBondSetOP hbond_set( new hbonds::HBondSet( *options_, pose.total_residue() ) );
+	HBondSetOP hbond_set( new hbonds::HBondSet( *options_, pose.size() ) );
 
 	// membrane object initialization
 	if ( options_->Mbhbond() ) {

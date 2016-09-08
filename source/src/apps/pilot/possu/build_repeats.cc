@@ -263,7 +263,7 @@ void * graphics_main( void * ) {
 	std::cout << "sequence: "  << sequence << std::endl;
 
 
-	for ( Size i=1; i<= input_pose.total_residue(); i++ ) {
+	for ( Size i=1; i<= input_pose.size(); i++ ) {
 		std::cout << "res " << i << " phi: " << input_pose.phi(i) << " psi: " << input_pose.psi(i) << " omega: " << input_pose.omega(i) << std::endl;
 		std::cout << "phi: " << all_phi[i] << " psi: " << all_psi[i] << " omega " << all_omega[i] << std::endl;
 	}

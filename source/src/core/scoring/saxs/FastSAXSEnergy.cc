@@ -139,7 +139,7 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 	using namespace core::chemical;
 
 	// 1 compute backbone and sidechain mass centers
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	utility::vector1< numeric::xyzVector< core::Real> > bb_coms( nres, numeric::xyzVector< core::Real>(0,0,0) );
 	utility::vector1< numeric::xyzVector< core::Real> > sc_coms( nres, numeric::xyzVector< core::Real>(0,0,0) );
 	for ( int i=1; i<=(int)nres; ++i ) {
@@ -303,7 +303,7 @@ void FastSAXSEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction con
 
 	// 1 compute backbone and sidechain mass centers'
 	//   these (like chi2 residuals) could be saved from 'setup_for_scoring' ... is it worth the overhead?
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	utility::vector1< numeric::xyzVector< core::Real> > bb_coms( nres, numeric::xyzVector< core::Real>(0,0,0) );
 	utility::vector1< numeric::xyzVector< core::Real> > sc_coms( nres, numeric::xyzVector< core::Real>(0,0,0) );
 	for ( int i=1; i<=(int)nres; ++i ) {

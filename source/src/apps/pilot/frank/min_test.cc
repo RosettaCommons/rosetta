@@ -128,8 +128,8 @@ public:
 		using namespace kinematics;
 		using namespace moves;
 
-		core::Size nnonvrt_cst_target = constraint_pose.total_residue();
-		core::Size nnonvrt_pose = pose.total_residue();
+		core::Size nnonvrt_cst_target = constraint_pose.size();
+		core::Size nnonvrt_pose = pose.size();
 
 		while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
 		while ( constraint_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
@@ -143,7 +143,7 @@ public:
 			core::pose::addVirtualResAsRoot( pose );
 		}
 
-		Size nres = pose.total_residue();
+		Size nres = pose.size();
 		Real const coord_sdev( 0.5 );
 		for ( Size i = 1; i<= (Size)nres; ++i ) {
 			if ( i==(Size)pose.fold_tree().root() ) continue;
@@ -209,7 +209,7 @@ public:
 
 		kinematics::MoveMap my_mm;
 		my_mm.set_bb(true);
-		for ( Size ii=1; ii<= pose.total_residue(); ii ++ ) {
+		for ( Size ii=1; ii<= pose.size(); ii ++ ) {
 			my_mm.set( TorsionID( omega_torsion, BB, ii), false );
 			// disallow proline PHI
 			if ( pose.residue(ii).aa() == chemical::aa_pro ) my_mm.set( TorsionID( phi_torsion, BB, ii), false );
@@ -218,7 +218,7 @@ public:
 		Size nrounds = 5; // rama_list.size()
 		for ( Size g=0; g< nrounds; g++ ) {
 			// find bad ramas
-			for ( Size j=1; j<= pose.total_residue(); ++j ) {
+			for ( Size j=1; j<= pose.size(); ++j ) {
 				EnergyMap & emap( energies.onebody_energies( j ) );
 				if (  emap[ rama ] > limit_rama_min ) {
 					rama_list.push_back( std::make_pair( j, emap[ rama ] ) );
@@ -277,7 +277,7 @@ public:
 
 		// find bad ramas
 		rama_list.clear();
-		for ( Size j=1; j<= pose.total_residue(); ++j ) {
+		for ( Size j=1; j<= pose.size(); ++j ) {
 			EnergyMap & emap( energies.onebody_energies( j ) );
 			if (  emap[ rama ] > limit_rama_min ) {
 				rama_list.push_back( std::make_pair( j, emap[ rama ] ) );
@@ -369,7 +369,7 @@ public:
 			utility::vector1<std::string> chains_to_fix = option[ OptionKeys::min::fix_chains ]();
 			for ( core::Size i=1; i<=chains_to_fix.size(); ++i ) {
 				runtime_assert( chains_to_fix[i].length() == 1);
-				for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
+				for ( core::Size j=1; j<=pose.size(); ++j ) {
 					if ( pose.pdb_info()->chain(j) == chains_to_fix[i][0] ) {
 						mm.set_bb  ( j, false );
 						mm.set_chi ( j, false );
@@ -445,7 +445,7 @@ public:
 				}
 
 				PreventRepackingOP prevent_some( new PreventRepacking() );
-				for ( Size i = 1; i<= pose.total_residue() ; ++i ) {
+				for ( Size i = 1; i<= pose.size() ; ++i ) {
 					if ( !mm.get_chi(i) || !repack ) {
 						prevent_some->include_residue(i);
 					}
@@ -495,7 +495,7 @@ public:
 
 		// add counts of ss elts to scorefile
 		core::Size nL=0,nH=0,nE=0;
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( !pose.residue(i).is_protein() ) continue;
 			if ( pose.secstruct(i) == 'L' ) nL++;
 			if ( pose.secstruct(i) == 'H' ) nH++;

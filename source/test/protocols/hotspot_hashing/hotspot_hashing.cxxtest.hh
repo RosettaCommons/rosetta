@@ -265,10 +265,10 @@ public:
 				residueindex);
 
 			TS_ASSERT_EQUALS(jumpindex, testPose.num_jump());
-			TS_ASSERT_EQUALS(residueindex, testPose.total_residue());
+			TS_ASSERT_EQUALS(residueindex, testPose.size());
 
 			TS_ASSERT_EQUALS(jumpindex, targetPose.num_jump() + 1);
-			TS_ASSERT_EQUALS(residueindex, targetPose.total_residue() + 1);
+			TS_ASSERT_EQUALS(residueindex, targetPose.size() + 1);
 
 			core::conformation::Residue const &placedResidue = testPose.residue(residueindex);
 
@@ -308,7 +308,7 @@ public:
 				residueindex);
 
 			TS_ASSERT_EQUALS(jumpindex, testPose.num_jump());
-			TS_ASSERT_EQUALS(residueindex, testPose.total_residue());
+			TS_ASSERT_EQUALS(residueindex, testPose.size());
 
 			core::conformation::Residue const &placedResidue = testPose.residue(residueindex);
 
@@ -347,7 +347,7 @@ public:
 				residueindex);
 
 			TS_ASSERT_EQUALS(jumpindex, testPose.num_jump());
-			TS_ASSERT_EQUALS(residueindex, testPose.total_residue());
+			TS_ASSERT_EQUALS(residueindex, testPose.size());
 
 			core::conformation::Residue const &placedResidue = testPose.residue(residueindex);
 
@@ -381,7 +381,7 @@ public:
 				residueindex);
 
 			TS_ASSERT_EQUALS(jumpindex, testPose.num_jump());
-			TS_ASSERT_EQUALS(residueindex, testPose.total_residue());
+			TS_ASSERT_EQUALS(residueindex, testPose.size());
 
 			core::conformation::Residue const &placedResidue = testPose.residue(residueindex);
 
@@ -418,7 +418,7 @@ public:
 				residueindex);
 
 			TS_ASSERT_EQUALS(jumpindex, testPose.num_jump());
-			TS_ASSERT_EQUALS(residueindex, testPose.total_residue());
+			TS_ASSERT_EQUALS(residueindex, testPose.size());
 
 			core::conformation::Residue const &placedResidue = testPose.residue(residueindex);
 
@@ -457,7 +457,7 @@ public:
 				residueindex);
 
 			TS_ASSERT_EQUALS(jumpindex, testPose.num_jump());
-			TS_ASSERT_EQUALS(residueindex, testPose.total_residue());
+			TS_ASSERT_EQUALS(residueindex, testPose.size());
 
 			core::conformation::Residue const &placedResidue = testPose.residue(residueindex);
 
@@ -502,10 +502,10 @@ public:
 
 			// Jump index will be zero for the new residue
 			TS_ASSERT_EQUALS(jumpindex, 0);
-			TS_ASSERT_EQUALS(residueindex, testPose.total_residue());
+			TS_ASSERT_EQUALS(residueindex, testPose.size());
 
 			TS_ASSERT_EQUALS(jumpindex, 0);
-			TS_ASSERT_EQUALS(residueindex, targetPose.total_residue() + 1);
+			TS_ASSERT_EQUALS(residueindex, targetPose.size() + 1);
 
 			core::conformation::Residue const &placedResidue = testPose.residue(residueindex);
 

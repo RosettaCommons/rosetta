@@ -389,7 +389,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 
 	if ( pose.energies().energies_updated() ) {
 
-		utility::vector1<core::Real> e(pose.total_residue());
+		utility::vector1<core::Real> e(pose.size());
 		core::Real min=1e100, max=1e-100;
 		for ( unsigned int i=1; i<=e.size(); i++ ) {
 			if ( score_type == core::scoring::total_score ) e[i] = pose.energies().residue_total_energy(i);
@@ -460,7 +460,7 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	// Grab a list of relevant residues and go
 	// Compute radius of gyration of the pose
 	utility::vector1< bool > relevant_residues;
-	relevant_residues.resize( pose.total_residue() );
+	relevant_residues.resize( pose.size() );
 	for ( Size i = 1; i < relevant_residues.size(); ++i ) {
 		relevant_residues[i] = true;
 	}
@@ -527,10 +527,10 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors, X11Colors default_color)
 {
 #ifndef  __native_client__
-	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
+	utility::vector1<int> energies( pose.size(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.size()
 
 	 for ( auto const & color : colors ) {
-		PyAssert( color.first >=1 && color.first <= static_cast<int>(pose.total_residue()),
+		PyAssert( color.first >=1 && color.first <= static_cast<int>(pose.size()),
 			"PyMolMover::send_colors residue index is out of range!");
 		PyAssert( color.second >= XC_first_color && color.second <= XC_last_color,
 			"PyMolMover::send_colors color index is out of range!");

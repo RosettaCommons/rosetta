@@ -86,7 +86,7 @@ get_repl_xyz( pose::Pose const & pose,
 		runtime_assert( std::abs( v_local.z() ) < 1.0e-2 );
 	}
 
-	// if ( i < pose.total_residue() ) {
+	// if ( i < pose.size() ) {
 	// 	for ( Size n = 1; n <= pose.residue( i+1 ).natoms(); n++ ) {
 	// 		TR << pose.residue( i+1 ).atom_name( n ) << " --> " << stub.global2local( pose.xyz( AtomID( n, i+1 ) ) ).z() << std::endl;
 	// 	}

@@ -88,6 +88,7 @@ sources = {
 		"peptidomimetic_ensembles",
 		"peptoid_hbs",
 		"pna",
+		"pose_iteration",
 		"sec_struct_finder",
 		"test_d_l_readin",
 		"test_metapatch",

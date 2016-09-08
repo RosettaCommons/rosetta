@@ -132,7 +132,7 @@ void IAMover::assign_IA_mover(devel::anchored_design::InterfaceAnalyzerMoverOP &
     TR << "Fixed chains are: " ;
     for(core::Size j = 1; j <= fixed_chains_string.size(); ++j){
       char this_chain (fixed_chains_string[ j ][0]);
-      for (core::Size i = 1; i<=pose.total_residue(); ++i){
+      for (core::Size i = 1; i<=pose.size(); ++i){
 	if (pose.pdb_info()->chain( i ) == this_chain){
 	  fixed_chains.insert( pose.chain(i) );
 	  break;

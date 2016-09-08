@@ -149,7 +149,7 @@ Gfloat const DIS_C_N    = 1.3286850f;
 
 //   }
   
-//   // for(int i = 0; i < p.n_residue(); ++i) {
+//   // for(int i = 0; i < p.size(); ++i) {
 //   //   Pose tmp;
 //   //   core::pose::make_pose_from_sequence(tmp,"G",*crs,false);
 //   //   xyzStripeHashPoseWithMeta(tmp);

@@ -171,7 +171,7 @@ main( int argc, char* argv[] )
 		//metapatch_names.push_back( "hydroxylated" );
 
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			mm->set_bb(  ii, true );
 			mm->set_chi( ii, true );
 		}

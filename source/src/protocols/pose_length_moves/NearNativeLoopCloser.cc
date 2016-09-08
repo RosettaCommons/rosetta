@@ -152,8 +152,8 @@ void PossibleLoop::extendRegion(bool towardCTerm, Size resStart, Size numberAddR
 		ft = poseOP->fold_tree();
 		ft.clear();
 		ft.add_edge(1,resStart,core::kinematics::Edge::PEPTIDE);
-		ft.add_edge(1,poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-		ft.add_edge(poseOP->total_residue(),resStart+1,core::kinematics::Edge::PEPTIDE);
+		ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+		ft.add_edge(poseOP->size(),resStart+1,core::kinematics::Edge::PEPTIDE);
 		poseOP->fold_tree(ft);
 		for ( Size ii=0; ii<numberAddRes; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
@@ -163,8 +163,8 @@ void PossibleLoop::extendRegion(bool towardCTerm, Size resStart, Size numberAddR
 		ft = poseOP->fold_tree();
 		ft.clear();
 		ft.add_edge(1,resStart-1,core::kinematics::Edge::PEPTIDE);
-		ft.add_edge(1,poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-		ft.add_edge(poseOP->total_residue(),resStart,core::kinematics::Edge::PEPTIDE);
+		ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+		ft.add_edge(poseOP->size(),resStart,core::kinematics::Edge::PEPTIDE);
 		poseOP->fold_tree(ft);
 		for ( Size ii=0; ii<numberAddRes; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
@@ -178,7 +178,7 @@ void PossibleLoop::extendRegion(bool towardCTerm, Size resStart, Size numberAddR
 	}
 	ft = poseOP->fold_tree();
 	ft.clear();
-	ft.add_edge(1,poseOP->total_residue(),core::kinematics::Edge::PEPTIDE);
+	ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
 	renumber_pdbinfo_based_on_conf_chains(*poseOP,true,false,false,false);
 }
@@ -260,7 +260,7 @@ void PossibleLoop::generate_uncached_stub_rmsd(){
 	residues.push_back(tmpResidueBeforeLoop);
 
 	for ( Size ii=0; ii<9-2-loopLength_; ++ii ) {
-		if ( tmpResidueAfterLoop+ii < fullLengthPoseOP_->total_residue() ) {
+		if ( tmpResidueAfterLoop+ii < fullLengthPoseOP_->size() ) {
 			residues.push_back(tmpResidueAfterLoop+ii);
 		}
 	}
@@ -360,8 +360,8 @@ void PossibleLoop::assign_phi_psi_omega(Size base5index, Size index, bool ideal_
 	ft = poseOP->fold_tree();
 	ft.clear();
 	ft.add_edge(1,resBeforeLoop_+loopLength_,core::kinematics::Edge::PEPTIDE);
-	ft.add_edge(1,poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-	ft.add_edge(poseOP->total_residue(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
+	ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+	ft.add_edge(poseOP->size(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
 	//poseOP->set_psi(resBeforeLoop_,psi_v[1]);
 	//poseOP->set_omega(resBeforeLoop_,omega_v[1]);
@@ -673,9 +673,9 @@ Size PossibleLoop::get_valid_resid(int resid,core::pose::Pose const pose){
 		TR << "invalid resid encountered n-term" << resid << std::endl;
 		resid = 1;
 	}
-	if ( resid+9-1>(int)pose.total_residue() ) {
+	if ( resid+9-1>(int)pose.size() ) {
 		TR << "invalid resid encountered c-term" << resid << std::endl;
-		resid = (int)pose.total_residue()-9+1;
+		resid = (int)pose.size()-9+1;
 	}
 	return(Size(resid));
 }
@@ -734,8 +734,8 @@ bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pos
 	ft = poseOP->fold_tree();
 	ft.clear();
 	ft.add_edge(1,resBeforeLoop_+loopLength_,core::kinematics::Edge::PEPTIDE);
-	ft.add_edge(1,poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-	ft.add_edge(poseOP->total_residue(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
+	ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+	ft.add_edge(poseOP->size(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
 	genKIC->add_filter( "loop_bump_check" );
 	Size res_from_end_of_loop=3;
@@ -776,7 +776,7 @@ bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pos
 	if ( kicSuccess ) {
 		ft = poseOP->fold_tree();
 		ft.clear();
-		ft.add_edge(1,poseOP->total_residue(),core::kinematics::Edge::PEPTIDE);
+		ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
 		poseOP->fold_tree(ft);
 		//poseOP->conformation().set_polymeric_connection(lastLoopRes-1,lastLoopRes);
 		//poseOP->conformation().update_polymeric_connection(lastLoopRes-1,true);
@@ -796,8 +796,8 @@ void PossibleLoop::minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool id
 	ft = poseOP->fold_tree();
 	ft.clear();
 	ft.add_edge(1,resBeforeLoop_+loopLength_,core::kinematics::Edge::PEPTIDE);
-	ft.add_edge(1,poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-	ft.add_edge(poseOP->total_residue(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
+	ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+	ft.add_edge(poseOP->size(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
 	Size firstLoopRes=resBeforeLoop_;
 	Size lastLoopRes=resAfterLoop_;
@@ -818,7 +818,7 @@ void PossibleLoop::minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool id
 	//-----------close fold tree ----------------
 	ft = poseOP->fold_tree();
 	ft.clear();
-	ft.add_edge(1,poseOP->total_residue(),core::kinematics::Edge::PEPTIDE);
+	ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
 }
 
@@ -968,13 +968,13 @@ void NearNativeLoopCloser::combine_chains(core::pose::Pose & pose){
 	Size chain2_id =  get_chain_id_from_chain(chainAfterLoop_,pose);
 	core::pose::PoseOP chain2 = pose.split_by_chain(chain2_id);
 	//assign_residue_number
-	resBeforeLoop_=chain1->total_residue();
-	resAfterLoop_=chain1->total_residue()+1;
+	resBeforeLoop_=chain1->size();
+	resAfterLoop_=chain1->size()+1;
 	//Remove terminal residues & attach
-	remove_upper_terminus_type_from_pose_residue(*chain1,chain1->total_residue());
+	remove_upper_terminus_type_from_pose_residue(*chain1,chain1->size());
 	remove_lower_terminus_type_from_pose_residue(*chain2,1);
-	for ( Size ii=1; ii<=chain2->total_residue(); ++ii ) {
-		chain1->append_residue_by_bond(chain2->residue(ii),false,0,chain1->total_residue());
+	for ( Size ii=1; ii<=chain2->size(); ++ii ) {
+		chain1->append_residue_by_bond(chain2->residue(ii),false,0,chain1->size());
 	}
 	//append chain to pose
 	append_pose_to_pose(pose,*chain1,true);
@@ -1025,8 +1025,8 @@ void NearNativeLoopCloser::extendRegion(bool towardCTerm, Size resStart, char ne
 		ft = poseOP->fold_tree();
 		ft.clear();
 		ft.add_edge(1,resStart,core::kinematics::Edge::PEPTIDE);
-		ft.add_edge(1,poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-		ft.add_edge(poseOP->total_residue(),resStart+1,core::kinematics::Edge::PEPTIDE);
+		ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+		ft.add_edge(poseOP->size(),resStart+1,core::kinematics::Edge::PEPTIDE);
 		poseOP->fold_tree(ft);
 		for ( Size ii=0; ii<numberAddRes; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
@@ -1036,8 +1036,8 @@ void NearNativeLoopCloser::extendRegion(bool towardCTerm, Size resStart, char ne
 		ft = poseOP->fold_tree();
 		ft.clear();
 		ft.add_edge(1,resStart-1,core::kinematics::Edge::PEPTIDE);
-		ft.add_edge(1,poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-		ft.add_edge(poseOP->total_residue(),resStart,core::kinematics::Edge::PEPTIDE);
+		ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+		ft.add_edge(poseOP->size(),resStart,core::kinematics::Edge::PEPTIDE);
 		poseOP->fold_tree(ft);
 		for ( Size ii=0; ii<numberAddRes; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
@@ -1051,7 +1051,7 @@ void NearNativeLoopCloser::extendRegion(bool towardCTerm, Size resStart, char ne
 	}
 	ft = poseOP->fold_tree();
 	ft.clear();
-	ft.add_edge(1,poseOP->total_residue(),core::kinematics::Edge::PEPTIDE);
+	ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
 	renumber_pdbinfo_based_on_conf_chains(*poseOP,true,false,false,false);
 }
@@ -1063,8 +1063,8 @@ core::pose::PoseOP NearNativeLoopCloser::create_maximum_length_pose(char resType
 		kinematics::FoldTree ft;
 		ft = full_length_poseOP->fold_tree();
 		ft.add_edge(1,resAfterLoop_-1,core::kinematics::Edge::PEPTIDE);
-		ft.add_edge(1,full_length_poseOP->total_residue(),1); //edges need to be added in order so the fold tree is completely connected.
-		ft.add_edge(full_length_poseOP->total_residue(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
+		ft.add_edge(1,full_length_poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
+		ft.add_edge(full_length_poseOP->size(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
 		full_length_poseOP->fold_tree(ft);
 		full_length_poseOP->conformation().delete_residue_range_slow(resBeforeLoop_+1,resAfterLoop_-1);
 		renumber_pdbinfo_based_on_conf_chains(*full_length_poseOP,true,false,false,false);
@@ -1114,7 +1114,7 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		core::pose::PoseOP max_length_poseOP = create_maximum_length_pose(resTypeBeforeLoop,resTypeAfterLoop,pose);
 		for ( int ii=low_start; ii<=high_start; ++ii ) {
 			for ( Size kk=loopLengthRangeLow_; kk<=loopLengthRangeHigh_; ++kk ) {
-				if ( (ii+resBeforeLoop_>=3)&&(ii+resAfterLoop_<=max_length_poseOP->total_residue()-3) ) { //ensures at least a 3 residue SS element next to loop
+				if ( (ii+resBeforeLoop_>=3)&&(ii+resAfterLoop_<=max_length_poseOP->size()-3) ) { //ensures at least a 3 residue SS element next to loop
 					PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,ii,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,pose));
 					possibleLoops.push_back(tmpLoopOP);
 				}
@@ -1135,7 +1135,7 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		for ( int ii=resAdjustmentStartLow_; ii<=resAdjustmentStartHigh_; ++ii ) {
 			for ( int jj=resAdjustmentStopLow_; jj<=resAdjustmentStopHigh_; ++jj ) {
 				for ( Size kk=loopLengthRangeLow_; kk<=loopLengthRangeHigh_; ++kk ) {
-					if ( (ii+resBeforeLoop_>=3)&&(jj+resAfterLoop_<=max_length_poseOP->total_residue()-3) ) {
+					if ( (ii+resBeforeLoop_>=3)&&(jj+resAfterLoop_<=max_length_poseOP->size()-3) ) {
 						PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,jj,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,pose));
 						possibleLoops.push_back(tmpLoopOP);
 					}

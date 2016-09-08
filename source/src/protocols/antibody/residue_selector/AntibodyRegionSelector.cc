@@ -213,7 +213,7 @@ AntibodyRegionSelector::apply(
 		utility_exit_with_message("AntibodyRegionSelector: Please set the region to select a region.");
 	}
 
-	utility::vector1< bool > subset( pose.total_residue(), false);
+	utility::vector1< bool > subset( pose.size(), false);
 
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
@@ -224,7 +224,7 @@ AntibodyRegionSelector::apply(
 	}
 
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( local_ab_info->get_region_of_residue(pose, i) == region_ ) {
 			subset[ i ] = true;
 		}

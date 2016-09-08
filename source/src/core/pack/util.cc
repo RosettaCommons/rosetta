@@ -168,7 +168,7 @@ utility::vector1< utility::vector1< Real > > get_rotamer_angle_diffs( Pose & pos
 	// iterate through residues
 	core::Size i = 0; // for pose
 	core::Size j = 0; // for ref pose
-	while ( i < pose.total_residue() && j < ref_pose.total_residue() ) {
+	while ( i < pose.size() && j < ref_pose.size() ) {
 
 		++i;
 		++j;

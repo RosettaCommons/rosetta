@@ -82,7 +82,7 @@ Xform get_backbone_reference_frame(
 }
 Xform get_backbone_reference_frame(Pose const & p, numeric::Size const & i){
 	runtime_assert( i >= 1 );
-	runtime_assert( i <= p.n_residue() );
+	runtime_assert( i <= p.size() );
 	if ( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
 	return get_backbone_reference_frame( a(p,i,"N"), a(p,i,"CA"), a(p,i,"C") );
 }
@@ -113,7 +113,7 @@ Xform get_cterminal_peptide_bond_reference_frame(
 Xform get_cterminal_peptide_bond_reference_frame(Pose const & p, numeric::Size const & i){
 	if ( !p.residue(i).is_protein() ) return Xform::BAD_XFORM();
 	if ( p.residue(i).is_upper_terminus() ) return Xform::BAD_XFORM();
-	// if( i==p.n_residue() ) return Xform::BAD_XFORM();
+	// if( i==p.size() ) return Xform::BAD_XFORM();
 	return get_cterminal_peptide_bond_reference_frame( a(p,i,"O"), a(p,i,"C"), a(p,i,"CA") );
 }
 
@@ -132,14 +132,14 @@ get_cterminal_peptide_bond_reference_frame_atomids(Pose const & p, numeric::Size
 	if ( !p.residue(i).is_protein()       ) return AIDs();
 	if ( p.residue(i).is_upper_terminus() ) return AIDs();
 	AIDs aids = get_AIDs(p,i,make_vector1<string>("CA","C","O"));
-	if ( extra && i < p.n_residue() ) aids.push_back( AtomID(p.residue(i+1).atom_index("N"),i+1) );
+	if ( extra && i < p.size() ) aids.push_back( AtomID(p.residue(i+1).atom_index("N"),i+1) );
 	return aids;
 }
 
 
 Xform get_sidechain_reference_frame(Pose const & p, numeric::Size const & i){
 	runtime_assert( i >= 1 );
-	runtime_assert( i <= p.n_residue() );
+	runtime_assert( i <= p.size() );
 	switch(p.residue(i).aa()){
 	case aa_ala : return get_frame_ala(p,i);
 	case aa_cys : return get_frame_cys(p,i);
@@ -236,7 +236,7 @@ get_backbone_reference_frame_atomids(
 	core::Size const & ir
 ){
 	runtime_assert( ir >= 1 );
-	runtime_assert( ir <= pose.n_residue() );
+	runtime_assert( ir <= pose.size() );
 	AIDs aids;
 	aids.push_back(AtomID(1,ir));
 	aids.push_back(AtomID(2,ir));
@@ -252,7 +252,7 @@ get_backbone_reference_frame_atomids_with_downstream(
 	core::Size const & ir
 ){
 	runtime_assert( ir >= 1 );
-	runtime_assert( ir <= pose.n_residue() );
+	runtime_assert( ir <= pose.size() );
 	AIDs aids;
 	aids.push_back(AtomID(1,ir));
 	aids.push_back(AtomID(2,ir));
@@ -283,7 +283,7 @@ get_sidechain_reference_frame_atomids(
 	core::Size const & ir
 ){
 	runtime_assert( ir >= 1 );
-	runtime_assert( ir <= pose.n_residue() );
+	runtime_assert( ir <= pose.size() );
 	switch(pose.residue(ir).aa()){
 	case aa_ala : return get_atoms_ala(pose,ir);
 	case aa_cys : return get_atoms_cys(pose,ir);
@@ -316,7 +316,7 @@ get_sidechain_reference_frame_atomids_with_downstream(
 	core::Size const & ir
 ){
 	runtime_assert( ir >= 1 );
-	runtime_assert( ir <= pose.n_residue() );
+	runtime_assert( ir <= pose.size() );
 	switch(pose.residue(ir).aa()){
 	case aa_ala : return get_atoms_ala_downstream(pose,ir);
 	case aa_cys : return get_atoms_cys_downstream(pose,ir);

@@ -96,7 +96,7 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 
 	if ( move_jump_points_away_ ) {
 		while ( jump_start_ > 1 && minimize_res_.has_value( jump_start_ ) && !f.is_cutpoint( jump_start_ - 1 ) )          jump_start_--;
-		while ( jump_end_ < pose.total_residue() && minimize_res_.has_value( jump_end_ ) && !f.is_cutpoint( jump_end_ ) ) jump_end_++;
+		while ( jump_end_ < pose.size() && minimize_res_.has_value( jump_end_ ) && !f.is_cutpoint( jump_end_ ) ) jump_end_++;
 	}
 
 	Size const cutpoint = cutpoint_suite_;

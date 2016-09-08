@@ -41,11 +41,11 @@ int main(int argc, char *argv[]) {
 
 
 	double score = 0.0;
-	for(size_t ir = 1; ir <= pose.n_residue(); ++ir){
+	for(size_t ir = 1; ir <= pose.size(); ++ir){
 		Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
 		char ss1 = pose.secstruct(ir);
 		char aa1 = pose.residue(ir).name1();
-		for(size_t jr = ir+1; jr <= pose.n_residue(); ++jr){
+		for(size_t jr = ir+1; jr <= pose.size(); ++jr){
 			char ss2 = pose.secstruct(jr);
 			char aa2 = pose.residue(jr).name1();
 			// std::cout << ss1 << ss2 << " " << aa1 << aa2 << std::endl;

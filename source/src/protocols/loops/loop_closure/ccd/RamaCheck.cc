@@ -116,8 +116,8 @@ void RamaCheckBase::initialize_starting_rama_scores( core::pose::Pose const & po
 	if ( TR.Warning.visible() ) {
 		TR.Trace << "Initializing starting_rama_scores with current conformation." << std::endl;
 	}
-	starting_rama_scores_ = RamaScoreVector( pose.total_residue(), BAD_SCORE ); // init with high value
-	for ( core::uint seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
+	starting_rama_scores_ = RamaScoreVector( pose.size(), BAD_SCORE ); // init with high value
+	for ( core::uint seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 		if ( ! pose.residue( seqpos ).is_protein() ) { continue; }
 		starting_rama_scores_[ seqpos ] = compute_rama_score( pose, seqpos, pose.phi( seqpos ), pose.psi( seqpos ) );
 	}
@@ -149,7 +149,7 @@ RamaCheckBase::accept_new_conformation(
 	if ( ! pose.residue( seqpos ).is_protein() ) { return true; }
 
 	// Make sure starting_rama_scores_ has been initialized. If not, initialize it with the current conformation.
-	if ( starting_rama_scores_.size() != pose.total_residue() ) {
+	if ( starting_rama_scores_.size() != pose.size() ) {
 		if ( TR.Warning.visible() ) {
 			TR.Warning << "Starting Rama scores have not been initialized!" << std::endl;
 		}
@@ -187,13 +187,13 @@ RamaCheckBase::total_net_change_in_rama_score_over_range(
 	using core::Real;
 
 	assert( first_res < last_res );
-	assert( last_res <= pose.total_residue() );
+	assert( last_res <= pose.size() );
 
 	Real total_change_in_rama_score( 0.0 );
 
 	// Make sure starting_rama_scores_ has been initialized. If not, initialize it with the current conformation.
 	// This will result in this metric evaluating to exactly 0.
-	if ( starting_rama_scores_.size() != pose.total_residue() ) {
+	if ( starting_rama_scores_.size() != pose.size() ) {
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "Starting Rama scores have not been initialized!" << std::endl;
 		}
@@ -417,7 +417,7 @@ RamaCheck2B::compute_rama_score(
 	// If we're looking at the last residue, we cannot compute the energy of the "triple" so we'll
 	// return the neighbor-dependent ramachandran score considering only the upstream (N-terminal,
 	// left, lower res no -- however you want to put it) neighbor
-	if ( seqpos == pose.total_residue() ) {
+	if ( seqpos == pose.size() ) {
 		return rama_->RamaE_Lower( phi, psi, pose.aa( seqpos ), pose.aa( seqpos - 1 ) );
 	}
 

@@ -126,10 +126,10 @@ RestrictToMoveMapChiOperation::apply(Pose const & pose, core::pack::task::Packer
 	core::pack::task::operation::PreventRepacking prevent_repacking;
 	core::pack::task::operation::RestrictResidueToRepacking restrict_to_repacking;
 
-	utility::vector1<bool> is_packable( pose.total_residue(), false );
-	utility::vector1<bool> is_designable( pose.total_residue(), false );
+	utility::vector1<bool> is_packable( pose.size(), false );
+	utility::vector1<bool> is_designable( pose.size(), false );
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( movemap_->get_chi(i) ) {
 
 			is_packable[i] = true;
@@ -147,11 +147,11 @@ RestrictToMoveMapChiOperation::apply(Pose const & pose, core::pack::task::Packer
 	if ( include_neighbors_ ) {
 		utility::vector1<bool> original_is_packable = is_packable;
 
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( original_is_packable[i] ) {
 
 				//Get neighbor distance
-				for ( core::Size n = 1; n <= pose.total_residue(); ++n ) {
+				for ( core::Size n = 1; n <= pose.size(); ++n ) {
 					core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( n ).xyz( pose.residue( n ).nbr_atom() )) );
 					if ( distance <= cutoff_ ) {
 						is_packable[n] = true;
@@ -162,7 +162,7 @@ RestrictToMoveMapChiOperation::apply(Pose const & pose, core::pack::task::Packer
 	}
 
 	//Add the residues to the taskop + then apply.
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( is_packable[ i ] &&  ! is_designable[ i ] ) {
 			restrict_to_repacking.include_residue(i);
 		} else if ( ! is_packable[ i ] ) {

@@ -113,7 +113,7 @@ RNA_DeNovoPoseInitializer::initialize_for_de_novo_protocol(
 /////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoPoseInitializer::override_secstruct( core::pose::Pose & pose ){
-	rna_params_.rna_secstruct_legacy_ = std::string( pose.total_residue(), 'X' );
+	rna_params_.rna_secstruct_legacy_ = std::string( pose.size(), 'X' );
 	TR << "OVER-RIDING SECONDARY STRUCTURE WITH:   " << rna_params_.rna_secstruct_legacy_ << std::endl;
 	set_rna_secstruct_legacy( pose, rna_params_.rna_secstruct_legacy_ );
 }
@@ -124,9 +124,9 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 
 	if ( rna_params_.virtual_anchor_attachment_points_.size() == 0 ) return;
 
-	TR.Debug << "Current last residue is type: " << pose.residue( pose.total_residue() ).name3()  << std::endl;
+	TR.Debug << "Current last residue is type: " << pose.residue( pose.size() ).name3()  << std::endl;
 	TR.Debug << pose.annotated_sequence() << std::endl;
-	if ( pose.residue( pose.total_residue() ).name3() == "XXX" ) return; //already did virtual residue attachment.
+	if ( pose.residue( pose.size() ).name3() == "XXX" ) return; //already did virtual residue attachment.
 
 	// Fix up the pose.
 	core::chemical::ResidueTypeSetCOP residue_set = pose.residue_type(1).residue_type_set();
@@ -135,7 +135,7 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 	pose.append_residue_by_jump( *new_res, rna_params_.virtual_anchor_attachment_points_[1] );
 
-	Size const virt_res = pose.total_residue();
+	Size const virt_res = pose.size();
 
 	// Info on pairings and cutpoints.
 	rna_params_.cutpoints_open_.push_back( (virt_res - 1) );
@@ -163,10 +163,10 @@ RNA_DeNovoPoseInitializer::initialize_secstruct( core::pose::Pose & pose  )
 
 	if ( !rna_params_.secstruct_defined_ ) {
 
-		rna_secstruct_legacy = std::string( pose.total_residue(), 'X' );
+		rna_secstruct_legacy = std::string( pose.size(), 'X' );
 
 		if ( rna_params_.rna_pairing_list_.size() > 0 && assume_non_stem_is_loop ) {
-			rna_secstruct_legacy = std::string( pose.total_residue(), 'L' );
+			rna_secstruct_legacy = std::string( pose.size(), 'L' );
 		}
 
 		for ( Size n = 1; n <= rna_params_.rna_pairing_list_.size(); n++ ) {
@@ -244,7 +244,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	///////////////////////////////////////////////////////////
 	// Basic setup ==> How many jumps? cuts?
 	///////////////////////////////////////////////////////////
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	kinematics::FoldTree f( nres );
 
 	Size const num_cuts_closed( rna_params_.cutpoints_closed_.size() );
@@ -460,7 +460,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 
 	if ( rna_params_.virtual_anchor_attachment_points_.size() > 0 ) {
 
-		f.reorder( pose.total_residue() ); //reroot so that virtual residue is fixed.
+		f.reorder( pose.size() ); //reroot so that virtual residue is fixed.
 
 		if ( root_at_first_rigid_body_ ) {
 			utility::vector1< Size > rigid_body_jumps = get_rigid_body_jumps( pose );
@@ -473,8 +473,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	} else {
 
 		// also useful -- if user has an input pdb, put the root in there, if possible.
-		//  for (Size n = pose.total_residue(); n >= 1; n-- ){ // not sure why I did this backwards...
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		//  for (Size n = pose.size(); n >= 1; n-- ){ // not sure why I did this backwards...
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( pose.residue(n).is_RNA() &&
 					rna_jump_mover.atom_level_domain_map()->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1'", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
 					f.possible_root(n) ) {
@@ -507,7 +507,7 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open_ );
 
 	// Create cutpoint variants to force chainbreak score computation.
-	for ( Size cutpos = 1; cutpos < pose.total_residue(); cutpos++ ) {
+	for ( Size cutpos = 1; cutpos < pose.size(); cutpos++ ) {
 
 		if ( ! pose.fold_tree().is_cutpoint( cutpos ) ) continue;
 
@@ -543,7 +543,7 @@ RNA_DeNovoPoseInitializer::setup_virtual_phosphate_variants( pose::Pose & pose )
 
 		Size n = cutpoints_open[ i ];
 
-		if ( n == pose.total_residue() ) {
+		if ( n == pose.size() ) {
 			utility_exit_with_message( "Do not specify cutpoint_open at last residue of model" );
 		}
 

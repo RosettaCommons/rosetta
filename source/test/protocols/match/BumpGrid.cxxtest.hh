@@ -482,7 +482,7 @@ public:
 
 		//for ( Size loop = 1; loop <= 100; ++loop ) {
 
-		for ( Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			BumpGridOP resbgop = bump_grid_to_enclose_residue_backbone( trpcage.residue( ii ), *bgop );
 			fill_grid_with_backbone_heavyatom_spheres( trpcage.residue( ii ), *resbgop );
 			//std::string fname = "trpcage_bumpgrid_res_" + utility::to_string( ii ) + ".kin";

@@ -130,7 +130,7 @@ public:
 	/// all interacting pairs. This would be easy to implement.
 	utility::vector1 < utility::vector1_int > pair_list() { return pair_list_; }
 
-	/// @brief The contact_list is pose.total_residue() long, each element
+	/// @brief The contact_list is pose.size() long, each element
 	/// (contact_list_[i]) contains a list of residues from the other partner that
 	/// interacts with residue i.  This is calculated in protein_calculate, and
 	/// used by Interface.is_pair() function as well as the interchain_vdw,

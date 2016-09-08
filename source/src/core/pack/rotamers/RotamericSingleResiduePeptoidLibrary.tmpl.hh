@@ -977,9 +977,9 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_omg_from_rsd(
 
 	if ( pose.conformation().num_chains() == 2 || rsd.chain() == pose.conformation().num_chains()-1 ) {
 		// chain_end won't be the last residue, because the last residue of a conformation isn't the chain ending for some reason...
-		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.total_residue() ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-			debug_assert( pose.residue( pose.total_residue() ).is_protein() || pose.residue( pose.total_residue() ).is_peptoid() );
-			return pose.residue( pose.total_residue() ).mainchain_torsion( RSD_OMG_INDEX );
+		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.size() ).has_variant_type( chemical::CTERM_CONNECT ) ) {
+			debug_assert( pose.residue( pose.size() ).is_protein() || pose.residue( pose.size() ).is_peptoid() );
+			return pose.residue( pose.size() ).mainchain_torsion( RSD_OMG_INDEX );
 		} else if ( rsd.is_lower_terminus() ) {
 			return parent::NEUTRAL_OMG;
 		} else {

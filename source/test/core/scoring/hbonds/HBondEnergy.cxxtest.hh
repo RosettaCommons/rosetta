@@ -436,7 +436,7 @@ public:
 
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 		// design residues 4 and 8. Turn everything else off.
-		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == 4 || ii == 8 ) continue;
 			task->nonconst_residue_task(ii).prevent_repacking();
 		}

@@ -105,7 +105,7 @@ largest_cluster( utility::vector1< pose::Pose > pose_list )
 
 			Real maxsub = core::scoring::CA_maxsub( pose_list[ii], pose_list[jj], maxsub_rms );
 
-			Real maxsub_coverage = maxsub / ( static_cast< Real >(pose_list[ii].total_residue() ) );
+			Real maxsub_coverage = maxsub / ( static_cast< Real >(pose_list[ii].size() ) );
 
 			if ( maxsub_coverage >= 0.9 ) {
 				++hits;
@@ -122,7 +122,7 @@ largest_cluster( utility::vector1< pose::Pose > pose_list )
 	for ( Size jj = 1; jj <= pose_list.size(); ++jj) {
 		Real maxsub = core::scoring::CA_maxsub( pose_list[most_id], pose_list[jj], maxsub_rms );
 
-		Real maxsub_coverage = maxsub / ( static_cast< Real >(pose_list[most_id].total_residue() ) );
+		Real maxsub_coverage = maxsub / ( static_cast< Real >(pose_list[most_id].size() ) );
 
 		if ( maxsub_coverage >= 0.9 ) {
 			topcluster.push_back(pose_list[jj]);
@@ -218,7 +218,7 @@ main( int argc, char* argv [] )
 		core::import_pose::pose_from_file(fragnative, native_location, core::import_pose::PDB_file);
 		Real natmaxsub = core::scoring::CA_maxsub( cluster_list[1], fragnative );
 
-		std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << forcluster_list.size() << "   " << natmaxsub << " / " << fragnative.total_residue() << std::endl;
+		std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << forcluster_list.size() << "   " << natmaxsub << " / " << fragnative.size() << std::endl;
 
 
 		if (basic::options::option[ basic::options::OptionKeys::robert::pcs_dump_cluster ] ) {
@@ -236,8 +236,8 @@ main( int argc, char* argv [] )
 			//if (score_list[pp] <= pcs_scores[index]) {
 			if (pose_list.size() >= 10 ) {
 
-				for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
-					for ( Size jj=1; jj <= pose.total_residue(); ++jj ) {
+				for ( Size ii=1; ii <= pose.size(); ++ii ) {
+					for ( Size jj=1; jj <= pose.size(); ++jj ) {
 						Real pose_distance( distance( pose.residue(ii).atom("CA").xyz(), pose.residue(jj).atom("CA").xyz()) );
 
 						//Real pose_dotproduct( dot_product( (pose.residue(ii).xyz("N")-pose.residue(ii).xyz("CA")).normalize(),
@@ -271,8 +271,8 @@ main( int argc, char* argv [] )
 		}
 
 		/*
-		for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
-			for ( Size jj=ii+1; jj <= pose.total_residue(); ++jj ) {
+		for ( Size ii=1; ii <= pose.size(); ++ii ) {
+			for ( Size jj=ii+1; jj <= pose.size(); ++jj ) {
 				Real average(0.0);
 				for ( Size nn=1; nn <= vec2d[ii][jj].size(); ++nn ) {
 					average += vec2d[ii][jj][nn];

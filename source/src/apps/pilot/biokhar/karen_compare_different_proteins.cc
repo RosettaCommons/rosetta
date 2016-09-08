@@ -232,7 +232,7 @@ int main( int argc, char * argv [] ) {
 			template_target_residue_number = ObjexxFCL::int_of( resid_t );
 		}
 		int seqpos_t = 0;
-		for ( int j = 1, resnum = template_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = template_pose.size(); j <= resnum; ++j ) {
 			if ( template_pose.pdb_info()->number(j) == template_target_residue_number ) {
 				seqpos_t = j;
 				if ( chain_t != ' ' ) {
@@ -284,7 +284,7 @@ int main( int argc, char * argv [] ) {
 			comparison_target_residue_number = ObjexxFCL::int_of( resid_c );
 		}
 		int seqpos_c = 0;
-		for ( int j = 1, resnum = comparison_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = comparison_pose.size(); j <= resnum; ++j ) {
 			if ( comparison_pose.pdb_info()->number(j) == comparison_target_residue_number ) {
 				seqpos_c = j;
 				if ( chain_c != ' ' ) {

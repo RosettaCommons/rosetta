@@ -96,7 +96,7 @@ void
 RestrictToInterfaceOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 	//vector for filling packertask
-	utility::vector1_bool repack(pose.total_residue(), false);
+	utility::vector1_bool repack(pose.size(), false);
 
 	run_calculator(pose, calculator_name_, "interface_residues", repack);
 

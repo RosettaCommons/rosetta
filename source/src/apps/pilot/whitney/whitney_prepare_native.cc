@@ -101,7 +101,7 @@ main( int argc, char * argv [] )
 		FArray1D_int cuts( 2 );
 		char first_chain = native_pose.pdb_info()->chain( 1 );
 		char second_chain = '_';
-		for ( Size i=2; i<= native_pose.total_residue(); ++i ) {
+		for ( Size i=2; i<= native_pose.size(); ++i ) {
 			char curr_chain = native_pose.pdb_info()->chain( i );
 			if ( curr_chain != first_chain ) {
 				cuts(1) = i-1;
@@ -109,7 +109,7 @@ main( int argc, char * argv [] )
 				break;
 			}
 		}
-		for ( Size i=2; i<= native_pose.total_residue(); ++i ) {
+		for ( Size i=2; i<= native_pose.size(); ++i ) {
 			char curr_chain = native_pose.pdb_info()->chain( i );
 			if ( ( curr_chain != first_chain ) && ( curr_chain != second_chain ) ) {
 				cuts(2) = i-1;
@@ -122,11 +122,11 @@ main( int argc, char * argv [] )
 		jump_points(1,1) = core::pose::residue_center_of_mass( native_pose, 1, cuts(1) );
 		jump_points(2,1) = core::pose::residue_center_of_mass( native_pose, cuts(1)+1, cuts(2) );
 		jump_points(1,2) = jump_points(1,1);
-		jump_points(2,2) = core::pose::residue_center_of_mass( native_pose, cuts(2)+1, native_pose.total_residue() );
+		jump_points(2,2) = core::pose::residue_center_of_mass( native_pose, cuts(2)+1, native_pose.size() );
 		//		TR << "jump1 is " << jump_points(1,1) << " and " << jump_points(2,1) << std::endl;
 		//		TR << "jump2 is " << jump_points(1,2) << " and " << jump_points(2,2) << std::endl;
 
-		bool successful_tree = f.tree_from_jumps_and_cuts( native_pose.total_residue(), 2, jump_points, cuts, 1, true );
+		bool successful_tree = f.tree_from_jumps_and_cuts( native_pose.size(), 2, jump_points, cuts, 1, true );
 
 		if ( ! successful_tree ) {
 			TR << "tree_from_jumps_and_cuts was NOT successful" << std::endl;
@@ -178,7 +178,7 @@ main( int argc, char * argv [] )
 	base_packer_task->initialize_from_command_line();
 	base_packer_task->or_include_current( true ); // jk absolutely critical for BAFF case, Tyr65 is unusual
 
-	for ( Size ii = 1; ii <= native_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
 		base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
 	}
 

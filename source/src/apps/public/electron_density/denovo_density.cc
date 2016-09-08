@@ -178,8 +178,8 @@ struct CAtrace {
 	}
 
 	CAtrace(core::pose::Pose pose, std::string tag, core::Real score, core::Real rms) {
-		cas_.reserve( pose.total_residue() );
-		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+		cas_.reserve( pose.size() );
+		for ( int i=1; i<=(int)pose.size(); ++i ) {
 			if ( pose.residue(i).is_protein() ) cas_.push_back( pose.residue(i).xyz(2) );
 		}
 		dens_score_ = score;
@@ -498,7 +498,7 @@ void DockFragmentsMover::run() {
 
 		// adjust search positions
 		utility::vector1<bool> init_pose_covers(search_positions.size());
-		for ( int i=1; i<=(int)initial_pose.total_residue(); ++i ) {
+		for ( int i=1; i<=(int)initial_pose.size(); ++i ) {
 			init_pose_covers[initial_pose.pdb_info()->number(i)] = true;
 			initial_pose_seqmap[initial_pose.pdb_info()->number(i)] = i;
 		}
@@ -586,7 +586,7 @@ void DockFragmentsMover::run() {
 
 		// create native_frag_pose from native_pose if native are provided
 		core::pose::PoseOP native_frag_pose ( new core::pose::Pose() ) ;
-		if ( native_pose.total_residue() > 0 ) {
+		if ( native_pose.size() > 0 ) {
 			utility::vector1< core::Size > positions;
 			core::kinematics::FoldTree fold_tree( nmer_len );
 			for ( core::Size irsd=seq_pos; irsd<seq_pos+nmer_len; ++irsd ) { positions.push_back( irsd ); }
@@ -647,11 +647,11 @@ DockFragmentsMover::cut_from_map( core::pose::Pose const &pose ) {
 	core::Real mask_radius = 2; //?
 	poseCoords litePose;
 
-	for ( int i = 1; i <= (int)pose.total_residue(); ++i ) {
+	for ( int i = 1; i <= (int)pose.size(); ++i ) {
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		bool skipres = ( rsd_i.aa() == core::chemical::aa_vrt );
 		for ( int j = i-(int)edge_trim; j < (i+(int)edge_trim) && !skipres; ++j ) {
-			if ( j>=1 && j<=(int)pose.total_residue() && pose.fold_tree().is_cutpoint( j ) ) skipres=true;
+			if ( j>=1 && j<=(int)pose.size() && pose.fold_tree().is_cutpoint( j ) ) skipres=true;
 		}
 
 		if ( skipres ) continue;
@@ -1392,7 +1392,7 @@ ConsensusFragmentMover::run() {
 
 		for ( int i=1; i<=(int)iter->second.size(); ++i ) {
 			core::pose::PoseOP frag_i = iter->second[i];
-			for ( int j=1; j<=(int)frag_i->total_residue(); ++j ) {
+			for ( int j=1; j<=(int)frag_i->size(); ++j ) {
 				if ( !frag_i->residue(j).is_protein() ) continue;
 				core::Size resid_j = resid+j-1;
 				if ( rescounts.find( resid_j ) == rescounts.end() ) {
@@ -1448,7 +1448,7 @@ ConsensusFragmentMover::run() {
 			core::Size resid_tgt=iter->first;
 			for ( int i=1; i<=(int)iter->second.size() && !done; ++i ) {
 				core::pose::PoseOP frag_i = iter->second[i];
-				for ( int j=1; j<=(int)frag_i->total_residue() && !done; ++j ) {
+				for ( int j=1; j<=(int)frag_i->size() && !done; ++j ) {
 					if ( !frag_i->residue(j).is_protein() ) continue;
 					int resid_j = resid_tgt+j-1;
 					if ( resid_j == (int)resid ) {
@@ -1482,21 +1482,21 @@ ConsensusFragmentMover::run() {
 			}
 		}
 
-		if ( averaged_pose.total_residue() == 0 || resid != lastres-1 ) {
+		if ( averaged_pose.size() == 0 || resid != lastres-1 ) {
 			averaged_pose.append_residue_by_bond( *res_to_add );
 		} else {
 			core::conformation::add_variant_type_to_conformation_residue(
-				averaged_pose.conformation(), chemical::UPPER_TERMINUS_VARIANT, averaged_pose.total_residue() );
-			averaged_pose.append_residue_by_jump( *res_to_add, averaged_pose.total_residue() );
+				averaged_pose.conformation(), chemical::UPPER_TERMINUS_VARIANT, averaged_pose.size() );
+			averaged_pose.append_residue_by_jump( *res_to_add, averaged_pose.size() );
 			core::conformation::add_variant_type_to_conformation_residue(
-				averaged_pose.conformation(), chemical::LOWER_TERMINUS_VARIANT, averaged_pose.total_residue() );
+				averaged_pose.conformation(), chemical::LOWER_TERMINUS_VARIANT, averaged_pose.size() );
 		}
 		lastres = resid;
 		pdb_numbering.push_back(resid);
 		pdb_chains.push_back('A');
 	}
 
-	if ( averaged_pose.total_residue() == 0 ) {
+	if ( averaged_pose.size() == 0 ) {
 		TR << "NO RESIDUES IN CONSENSUS ASSIGNMENT." << std::endl;
 	} else {
 		// make pdbinfo, set residues
@@ -1510,7 +1510,7 @@ ConsensusFragmentMover::run() {
 		if ( !averaged_pose.residue_type(1).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) {
 			core::pose::add_variant_type_to_pose_residue( averaged_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 		}
-		core::Size nres = averaged_pose.total_residue();
+		core::Size nres = averaged_pose.size();
 		while ( !averaged_pose.residue(nres).is_protein() ) nres--;
 		if ( !averaged_pose.residue_type(nres).has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) {
 			core::pose::add_variant_type_to_pose_residue( averaged_pose, chemical::UPPER_TERMINUS_VARIANT, nres );
@@ -1519,7 +1519,7 @@ ConsensusFragmentMover::run() {
 		// sidechain + Hydrogens
 		id::AtomID_Mask missing( false );
 		core::pose::initialize_atomid_map( missing, averaged_pose ); // dimension the missing-atom mask
-		for ( Size i=1; i<= averaged_pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= averaged_pose.size(); ++i ) {
 			core::conformation::Residue const & rsd( averaged_pose.residue(i) );
 			for ( Size j=5; j<= rsd.natoms(); ++j ) {
 				core::id::AtomID atom_id( j, i );

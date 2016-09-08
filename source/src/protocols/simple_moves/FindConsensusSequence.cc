@@ -127,7 +127,7 @@ FindConsensusSequence::parse_resfiles ()
 	} else {
 		for ( core::Size i = 1; i <= poses_.size(); ++i ) {
 			utility::vector1< core::Size > positions;
-			for ( core::Size j = 1; j <= poses_[ i ]->total_residue(); ++j ) {
+			for ( core::Size j = 1; j <= poses_[ i ]->size(); ++j ) {
 				positions.push_back( j );
 			}
 			res_links_.push_back( positions );

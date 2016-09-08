@@ -53,8 +53,8 @@ public:
 	void test_residue_selectors(){
 
 		///Vectors to test against
-		utility::vector1< bool > correct_glycan_residues(pose_.total_residue(), false);
-		utility::vector1< bool > correct_single_branch_residues(pose_.total_residue(), false);
+		utility::vector1< bool > correct_glycan_residues(pose_.size(), false);
+		utility::vector1< bool > correct_single_branch_residues(pose_.size(), false);
 		for ( core::Size i = 585; i <= 598; ++i ) {
 			correct_glycan_residues[ i ] = true;
 		}
@@ -76,7 +76,7 @@ public:
 
 
 		//Test getting residues of a branch
-		utility::vector1< bool > root_residues(pose_.total_residue(), false);
+		utility::vector1< bool > root_residues(pose_.size(), false);
 		root_residues[ 572 ] = true;
 		selector.set_select_from_branch_residues(root_residues);
 		glycan_residues = selector.apply(pose_);

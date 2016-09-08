@@ -519,7 +519,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 /// that branch connections are "satisfied" in the order in which they were created.  ResidueTypes must be of the
 /// correct VariantType to be appended properly, e.g.
 void
-append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs residue_types )
+append_pose_with_glycasizes( pose::Pose & pose, chemical::ResidueTypeCOPs residue_types )
 {
 	using namespace std;
 	using namespace utility;
@@ -531,9 +531,9 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 	if ( pose.empty() ) {
 		tr.Debug << "Creating new oligosaccharide from provided ResidueTypes..." << endl;
 	} else {
-		Residue const & last_residue( pose.residue( pose.total_residue() ) );
+		Residue const & last_residue( pose.residue( pose.size() ) );
 		if ( ! last_residue.is_carbohydrate() ) {
-			tr.Warning << "append_pose_with_glycan_residues( " <<
+			tr.Warning << "append_pose_with_glycasizes( " <<
 				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
 				"The last residue of <pose> must be a carbohydrate to append." << endl;
 			return;
@@ -546,8 +546,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint i( 1 ); i <= n_branches; ++i ) {
 				branch_points.push_back(
-					//make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ i ] ) );
-					make_pair( pose.total_residue(), branch_atom_names[ i ] ) );
+					//make_pair( pose.residue( pose.size() ).seqpos(), branch_atom_names[ i ] ) );
+					make_pair( pose.size(), branch_atom_names[ i ] ) );
 			}
 		}
 	}
@@ -576,8 +576,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint j( 1 ); j <= n_branches; ++j ) {
 				branch_points.push_back(
-					//make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ j ] ) );
-					make_pair( pose.total_residue(), branch_atom_names[ j ] ) );
+					//make_pair( pose.residue( pose.size() ).seqpos(), branch_atom_names[ j ] ) );
+					make_pair( pose.size(), branch_atom_names[ j ] ) );
 			}
 		}
 	}
@@ -786,7 +786,7 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 
 	// Now we can build the Pose.
 	pose.clear();
-	append_pose_with_glycan_residues( pose, residue_types );
+	append_pose_with_glycasizes( pose, residue_types );
 
 	// Let the Conformation know that it contains sugars.
 	pose.conformation().contains_carbohydrate_residues( true );

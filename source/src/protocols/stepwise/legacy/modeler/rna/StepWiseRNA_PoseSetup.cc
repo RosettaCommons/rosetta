@@ -163,7 +163,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	if ( !get_native_pose() ) return;
 	// Need a simple fold tree for following to work...
 	Pose native_pose_copy = *get_native_pose();
-	native_pose_copy.fold_tree(  core::kinematics::FoldTree(  native_pose_copy.total_residue() ) );
+	native_pose_copy.fold_tree(  core::kinematics::FoldTree(  native_pose_copy.size() ) );
 
 	PoseOP working_native_pose( new Pose );
 
@@ -173,7 +173,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 
 		( *working_native_pose ) = native_pose_copy;
 
-		for ( Size seq_num = native_pose_copy.total_residue(); seq_num >= 1 ; seq_num-- ) {
+		for ( Size seq_num = native_pose_copy.size(); seq_num >= 1 ; seq_num-- ) {
 			if ( !is_working_res[ seq_num ] ) {
 				working_native_pose->conformation().delete_residue_slow( seq_num );
 			}
@@ -301,9 +301,9 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 	utility::vector1< Size > const & input_res = working_parameters_->input_res_vectors()[i];
 	std::string const & full_sequence = working_parameters_->full_sequence();
 	std::string stripped_full_sequence = core::pose::rna::remove_bracketed( full_sequence );
-	runtime_assert ( import_pose.total_residue() == input_res.size() );
+	runtime_assert ( import_pose.size() == input_res.size() );
 	bool match( true );
-	for ( Size n = 1; n <= import_pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= import_pose.size(); n++ ) {
 		if (  import_pose.sequence()[ n - 1 ]  != stripped_full_sequence[ input_res[n] - 1 ] ) {
 			match = false; break;
 		}
@@ -397,7 +397,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		variant_type_list.push_back( core::chemical::THREE_PRIME_END_OH );     //Fang's electron density code
 		variant_type_list.push_back( core::chemical::FIVE_PRIME_END_PHOSPHATE ); //Fang's electron density code
 		variant_type_list.push_back( core::chemical::FIVE_PRIME_END_OH );     //Fang's electron density code
-		for ( Size seq_num = 1; seq_num <= start_pose.total_residue(); seq_num++  ) {
+		for ( Size seq_num = 1; seq_num <= start_pose.size(); seq_num++  ) {
 			for ( Size k = 1; k <= variant_type_list.size(); ++k ) {
 				core::chemical::VariantType const variant_type = variant_type_list[k];
 				if ( start_pose.residue( seq_num ).has_variant_type( variant_type ) ) {
@@ -409,7 +409,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Now actually copy into the pose.
 		// Need to know correspondence of residues between imported pose and the working pose...
-		runtime_assert ( input_res.size() == start_pose.total_residue() );
+		runtime_assert ( input_res.size() == start_pose.size() );
 		std::map< core::Size, core::Size > res_map;  //This is map from sub numbering to input_res numbering..
 		for ( Size n = 1; n <= input_res.size(); n++ )  res_map[ full_to_sub[ input_res[n] ] ] = n;
 
@@ -422,7 +422,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		utility::vector1< Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
 		utility::vector1< Size > const & working_cutpoint_closed_list = apply_full_to_sub_mapping( cutpoint_closed_list, stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ) );
 
-		for ( Size n = 1; n <= start_pose_with_variant.total_residue(); n++  ) {
+		for ( Size n = 1; n <= start_pose_with_variant.size(); n++  ) {
 			if ( has_virtual_rna_residue_variant_type( start_pose_with_variant, n ) ) {
 				apply_virtual_rna_residue_variant_type( pose, full_to_sub[ input_res[n] ], working_cutpoint_closed_list ) ;
 			}
@@ -591,7 +591,7 @@ StepWiseRNA_PoseSetup::apply_cutpoint_variants( pose::Pose & pose ){
 
 	// this copy contains original torsions across chainbreak [zeta, alpha, beta].
 	Pose pose_without_cutpoints = pose;
-	kinematics::FoldTree simple_fold_tree( pose.total_residue() );
+	kinematics::FoldTree simple_fold_tree( pose.size() );
 	pose_without_cutpoints.fold_tree( simple_fold_tree ); // permits read out of original torsions across cutpoints. I think.
 
 	for ( Size n = 1; n <= cutpoint_closed_list.size(); n++ ) {
@@ -692,7 +692,7 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 
 
 	/////////////////////////////////////////////////
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	ObjexxFCL::FArray1D < bool > is_moving_res( nres, false );
 	ObjexxFCL::FArray1D < bool > is_fixed_res( nres, false );
 
@@ -816,7 +816,7 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 	utility::vector1< core::Size > const & working_protonated_H1_adenosine_list = working_parameters_->working_protonated_H1_adenosine_list();
 
 	//Check that all protonated_H1_adenosine exist in the pose!
-	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( working_protonated_H1_adenosine_list.has_value( seq_num ) ) {
 
@@ -952,7 +952,7 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 void
 StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose ) {  //Fang's electron density code
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	Size const working_moving_res( working_parameters_->working_moving_res() );
 	//if already rooted on virtual residue, return
 	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {

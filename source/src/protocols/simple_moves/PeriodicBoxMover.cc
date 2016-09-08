@@ -194,7 +194,7 @@ PeriodicBoxMover::dump_ASU( Pose & pose, core::Size &lattice_jump, std::string f
 	ci.alpha(90.0); ci.beta(90.0); ci.gamma(90.0);
 	ci.spacegroup("P 1");
 
-	//pose_asu.conformation().delete_residue_slow( pose_asu.total_residue() );
+	//pose_asu.conformation().delete_residue_slow( pose_asu.size() );
 	pose_asu.pdb_info()->set_crystinfo(ci);
 
 	pose_asu.dump_pdb( filename );
@@ -209,7 +209,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	Pose pose_asu, pose_periodic;
 
 	// get com of input pose
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	mweight=0;
 	Vector com(0,0,0);
 	for ( Size i=1; i<= nres; ++i ) {
@@ -239,7 +239,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	core::Real sidelen = std::pow ( (nmolecules*mweight)/(0.60220*initial_density_) , 1.0/3.0 );
 
 	// for now...
-	if ( pose.total_residue() == 1 ) {
+	if ( pose.size() == 1 ) {
 		pose.apply_transform_Rx_plus_v( numeric::xyzMatrix<core::Real>::identity(),-com );
 
 		TR << "Creating a box " << sidelen << "A on each side with " << nmolecules << " molecules." << std::endl;
@@ -260,14 +260,14 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 						core::pose::Pose pose_central;
 						core::import_pose::pose_from_file( pose_central, *rsd_set, central_molecule_pdb_ , core::import_pose::PDB_file);
 
-						runtime_assert( pose_central.total_residue() == 1 );
+						runtime_assert( pose_central.size() == 1 );
 						core::conformation::Residue rsd_new = pose_central.residue(1);
 						for ( Size z=1; z<= rsd_new.natoms(); ++z ) {
 							rsd_new.set_xyz( z, rsd_new.xyz(z) + center );
 						}
 						pose_asu.append_residue_by_jump( rsd_new, 1 );
 
-						central_resno_ = pose_asu.total_residue();
+						central_resno_ = pose_asu.size();
 						TR << "central resno: " << central_resno_ << std::endl;
 
 					} else {
@@ -290,7 +290,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 		pose.apply_transform_Rx_plus_v( numeric::xyzMatrix<core::Real>::identity(),-com+0.5*sidelen );
 
 
-		nmolecules = pose.total_residue();
+		nmolecules = pose.size();
 		nmol_side_ = std::pow(nmolecules, 1.0/3.0);
 		std::cerr << nmolecules << " " << nmol_side_ << std::endl;
 		runtime_assert( nmolecules == std::floor( nmol_side_*nmol_side_*nmol_side_ +0.5 ) );
@@ -327,10 +327,10 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 			pose_periodic.append_residue_by_jump( *vrt_y, 1);  vrtY(1,1,1) = 2;
 			pose_periodic.append_residue_by_jump( *vrt_z, 2);  vrtZ(1,1,1) = 3;
 		} else {
-			pose_periodic.append_residue_by_jump( *vrt_x, vrtX(i-1,1,1));  vrtX(i,1,1) = pose_periodic.total_residue();
+			pose_periodic.append_residue_by_jump( *vrt_x, vrtX(i-1,1,1));  vrtX(i,1,1) = pose_periodic.size();
 			Ajumps.push_back(pose_periodic.fold_tree().num_jump());
-			pose_periodic.append_residue_by_jump( *vrt_y, vrtX(i  ,1,1));  vrtY(i,1,1) = pose_periodic.total_residue();
-			pose_periodic.append_residue_by_jump( *vrt_z, vrtY(i  ,1,1));  vrtZ(i,1,1) = pose_periodic.total_residue();
+			pose_periodic.append_residue_by_jump( *vrt_y, vrtX(i  ,1,1));  vrtY(i,1,1) = pose_periodic.size();
+			pose_periodic.append_residue_by_jump( *vrt_z, vrtY(i  ,1,1));  vrtZ(i,1,1) = pose_periodic.size();
 		}
 	}
 
@@ -341,9 +341,9 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 			ResidueOP vrt_y = make_vrt(O,Bx,By);
 			ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-			pose_periodic.append_residue_by_jump( *vrt_y, vrtY(i,j-1,1)); vrtY(i,j,1) = pose_periodic.total_residue();
+			pose_periodic.append_residue_by_jump( *vrt_y, vrtY(i,j-1,1)); vrtY(i,j,1) = pose_periodic.size();
 			Bjumps.push_back(pose_periodic.fold_tree().num_jump());
-			pose_periodic.append_residue_by_jump( *vrt_z, vrtY(i,j,1));   vrtZ(i,j,1) = pose_periodic.total_residue();
+			pose_periodic.append_residue_by_jump( *vrt_z, vrtY(i,j,1));   vrtZ(i,j,1) = pose_periodic.size();
 		}
 	}
 
@@ -354,16 +354,16 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 				core::Vector O ((i-1.5)*sidelen, (j-1.5)*sidelen, (k-1.5)*sidelen);
 				ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-				pose_periodic.append_residue_by_jump( *vrt_z, vrtZ(i,j,k-1));  vrtZ(i,j,k) = pose_periodic.total_residue();
+				pose_periodic.append_residue_by_jump( *vrt_z, vrtZ(i,j,k-1));  vrtZ(i,j,k) = pose_periodic.size();
 				Cjumps.push_back(pose_periodic.fold_tree().num_jump());
 			}
 		}
 	}
 
-	Size nvirtuals = pose_periodic.total_residue();
+	Size nvirtuals = pose_periodic.size();
 
 	// add subunits
-	core::Size nres_monomer = pose_asu.total_residue();
+	core::Size nres_monomer = pose_asu.size();
 	core::Size nres_protein=0;
 	for ( int n=1; n<=(int)nres_monomer; ++n ) {
 		pose_periodic.insert_residue_by_jump( pose_asu.residue(n), nres_protein+1, vrtZ(2,2,2)+nres_protein ); ++nres_protein;
@@ -416,7 +416,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	symminfo.set_use_symmetry( true );
 	symminfo.set_nres_subunit( nres_monomer );
 
-	symminfo.set_flat_score_multiply( pose_periodic.total_residue(), 0 );
+	symminfo.set_flat_score_multiply( pose_periodic.size(), 0 );
 	for ( Size i=1; i<= nres_protein; ++i ) {
 		if ( symminfo.bb_is_independent( i ) ) symminfo.set_score_multiply( i, 2 );
 		else symminfo.set_score_multiply( i, 1 );
@@ -472,7 +472,7 @@ PeriodicBoxMover::check_virial_pressure( Pose & pose, core::Real L ) const
 	/*
 	core::Vector F1, F2;
 	core::kinematics::DomainMap dommap = pose.energies().domain_map();
-	for( core::Size imol = 1; imol <= pose.total_residue(); ++imol ){
+	for( core::Size imol = 1; imol <= pose.size(); ++imol ){
 	for( core::Size iatm = 1; iatm <= pose.residue(imol).natoms(); ++iatm ){
 	sf_->eval_npd_atom_derivative( core::id::AtomID( iatm, imol ),
 	pose, dommap, F1, F2 );
@@ -513,7 +513,7 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 	using namespace ObjexxFCL::format;
 	using namespace core::scoring;
 
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 
 	core::Real lattice = std::abs( pose.jump(lattice_jump).get_translation()[0] );
 	core::Real volume = lattice*lattice*lattice;
@@ -590,11 +590,11 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 	utility::vector1< core::Size > rgcounts( 0, nbins );
 
 	// count RG
-	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) { // mol1
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) { // mol1
 		if ( !pose.residue(ires).has( rg_atom1_ ) ) continue;
 		core::Vector const &crd1 = pose.residue(ires).xyz( rg_atom1_ );
 
-		for ( core::Size jres = 1; jres <= pose.total_residue(); ++jres ) { // mol1
+		for ( core::Size jres = 1; jres <= pose.size(); ++jres ) { // mol1
 			if ( !pose.residue(ires).has( rg_atom1_ ) ) continue;
 			core::Vector const &crd2 = pose.residue(jres).xyz( rg_atom2_ );
 			core::Real const dist = crd1.distance(crd2);
@@ -1014,7 +1014,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 				ci.alpha(90.0); ci.beta(90.0); ci.gamma(90.0);
 				ci.spacegroup("P 1");
 
-				pose_asu.conformation().delete_residue_slow( pose_asu.total_residue() );
+				pose_asu.conformation().delete_residue_slow( pose_asu.size() );
 				pose_asu.pdb_info()->set_crystinfo(ci);
 
 				ss->fill_struct( pose_asu );

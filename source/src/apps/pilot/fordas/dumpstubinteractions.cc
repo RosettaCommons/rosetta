@@ -135,7 +135,7 @@ int main( int argc, char * argv [] )
     core::pose::Pose stubpose;
     core::import_pose::pose_from_file( stubpose, filename, core::import_pose::PDB_file);
 
-    if(!stubpose.total_residue() == 1)
+    if(!stubpose.size() == 1)
     {
       utility_exit_with_message( "Stub pose must contain only one residue:" + filename );
     }
@@ -147,17 +147,17 @@ int main( int argc, char * argv [] )
   }
 
 	// Place stub structures onto target and store residue indicies
-	core::Size maxTargetResidue = target_pose.total_residue();
+	core::Size maxTargetResidue = target_pose.size();
 
 	std::vector<core::Size> stub_residue_indicies;
 	std::map<core::Size, core::Size> residue_indicies_to_stub;
 
 	for (core::Size i = 0; i < stublist.size(); i++)
 	{
-		target_pose.append_residue_by_jump(*stublist[i], target_pose.total_residue(), "", stublist[i]->atom_name(stublist[i]->nbr_atom()), true);
+		target_pose.append_residue_by_jump(*stublist[i], target_pose.size(), "", stublist[i]->atom_name(stublist[i]->nbr_atom()), true);
 
-		stub_residue_indicies.push_back(target_pose.total_residue());
-		residue_indicies_to_stub[target_pose.total_residue()] = i;
+		stub_residue_indicies.push_back(target_pose.size());
+		residue_indicies_to_stub[target_pose.size()] = i;
 	}
 
 	// Score the pose

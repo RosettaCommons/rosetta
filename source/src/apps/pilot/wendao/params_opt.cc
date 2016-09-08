@@ -93,10 +93,10 @@ select_residues_for_evaluation(utility::vector1<core::pose::PoseOP> const &model
 	utility::vector1< utility::vector1<bool> > retval( models.size() );
 
 	for (int i=1; i<=models.size(); ++i) {
-		retval[i].resize( models[i]->total_residue() );
+		retval[i].resize( models[i]->size() );
 		core::Size accepted_residues = 0;
 
-		for (int j=1; j<=models[i]->total_residue(); ++j) {
+		for (int j=1; j<=models[i]->size(); ++j) {
 			core::Real Bsum=0.0, Bcount=0.0;
 			core::conformation::Residue const &rsd_i = models[i]->residue(j);
 
@@ -111,7 +111,7 @@ select_residues_for_evaluation(utility::vector1<core::pose::PoseOP> const &model
 			retval[i][j] = (Bsum<=30 && rsd_i.aa() != core::chemical::aa_gly && rsd_i.aa() != core::chemical::aa_ala);
 			if (retval[i][j]) accepted_residues++;
 		}
-		std::cerr << "model " << i << " repacking " << accepted_residues << " / " << models[i]->total_residue() << std::endl;
+		std::cerr << "model " << i << " repacking " << accepted_residues << " / " << models[i]->size() << std::endl;
 	}
 	return retval;
 }
@@ -214,7 +214,7 @@ do_rtmin(
 
 	rr_score=0;
 	abs_rr_score=0;
-	for( core::Size ii = 1; ii <= pose.total_residue(); ++ii ){
+	for( core::Size ii = 1; ii <= pose.size(); ++ii ){
 		if ( !packer_task.pack_residue(ii) ) continue;
 		if ( !pose.residue(ii).is_polymer() ) continue;
 

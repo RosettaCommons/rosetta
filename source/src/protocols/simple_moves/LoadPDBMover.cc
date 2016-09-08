@@ -58,7 +58,7 @@ LoadPDBMover::apply( Pose & pose )
 	core::pose::read_comment_pdb( filename_, loaded_pose ); //read comments from pdb file
 
 	if ( append() ) {
-		pose.append_pose_by_jump( loaded_pose, pose.total_residue() );
+		pose.append_pose_by_jump( loaded_pose, pose.size() );
 		TR.Debug << "Fold tree after insertion " << pose.fold_tree() << std::endl;
 	} else {
 		pose = loaded_pose;

@@ -1114,8 +1114,8 @@ compute_atom_packing_scores(
 	core::pose::initialize_atomid_map( atom_scores, pose, 0.0 );
 	PosePackData pd( pose_to_pack_data(pose) );
 	vector1<Real> res_scores = compute_atom_packing_scores( pd, oversample );
-	debug_assert( res_scores.size() == pose.total_residue() );
-	for ( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+	debug_assert( res_scores.size() == pose.size() );
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		// numeric::xyzVector<Real> center(0,0,0);
 		for ( core::Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia ) {
 			// center += pose.residue(ir).xyz(ia);
@@ -1238,7 +1238,7 @@ cavity_distance_constraint(
 		}
 
 		std::set<id::AtomID> nbrs;
-		for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+		for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 			for ( Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia ) {
 				id::AtomID const aid(ia,ir);
 				if ( best_clust_wcen.distance_squared(pose.xyz(aid)) > 49.0 ) continue;
@@ -1340,7 +1340,7 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 	for ( Size i = 1; i <= clusters.size(); i++ ) {
 		for ( Size j = 1; j <= clusters[i].cavballs.size(); j++ ) {
 			if ( clusters[i].cavballs[j].radius() > 0.6 ) {
-				out << clusters[i].cavballs[j].hetero_atom_line( pose.total_residue()+i, i, 0.0 ) << std::endl;
+				out << clusters[i].cavballs[j].hetero_atom_line( pose.size()+i, i, 0.0 ) << std::endl;
 			}
 		}
 	}
@@ -1348,7 +1348,7 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 	// pose.dump_pdb(dbg);
 	// for( Size i = 1; i <= clusters.size(); i++ ) {
 	//    for( Size j = 1; j <= clusters[i].cavballs.size(); j++ ) {
-	//       dbg << clusters[i].cavballs[j].hetero_atom_line( pose.total_residue()+i, i ) << std::endl;
+	//       dbg << clusters[i].cavballs[j].hetero_atom_line( pose.size()+i, i ) << std::endl;
 	//    }
 	// }
 	// dbg.close();

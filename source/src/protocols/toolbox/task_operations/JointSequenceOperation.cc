@@ -111,7 +111,7 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 		end =  pose.conformation().chain_end( chain_ );
 	} else {
 		start = 1;
-		end = pose.total_residue();
+		end = pose.size();
 	}
 
 	//TR << "CHAIN: " << chain_ << std::endl;

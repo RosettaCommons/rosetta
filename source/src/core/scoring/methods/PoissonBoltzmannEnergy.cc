@@ -192,7 +192,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		utility::vector1<int> charged_chains
 			= basic::options::option[basic::options::OptionKeys::pb_potential::charged_chains];
 		TR << "Charged residues: [ ";
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			core::conformation::Residue const & rsd( pose.residue(i) );
 			bool residue_charged = false;
 			if ( std::find(charged_chains.begin(), charged_chains.end(), (int)rsd.chain()) != charged_chains.end() ) {
@@ -258,14 +258,14 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
 		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
-		if ( dec->size() != pose.total_residue() ) {
+		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		TR << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( fixed_residue_, pose.total_residue(), PB_elec ) );
+		TR << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
+		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( fixed_residue_, pose.size(), PB_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -313,7 +313,7 @@ PoissonBoltzmannEnergy::revamp_weight_by_burial(
 	Real weight = 1.;
 	Real neighbor_count = 0.;
 	Real threshold = 4.;
-	for ( Size j_res = 1; j_res <= pose.total_residue(); ++j_res ) {
+	for ( Size j_res = 1; j_res <= pose.size(); ++j_res ) {
 		if ( pose.residue(j_res).is_virtual_residue() ) continue;
 		if ( !residue_in_chains(pose.residue(j_res), chains) ) continue;
 
@@ -408,11 +408,11 @@ PoissonBoltzmannEnergy::protein_position_equal_within(
 	// return true;
 	//}
 
-	if ( pose1.total_residue() != pose2.total_residue() ) {
+	if ( pose1.size() != pose2.size() ) {
 		return false;
 	}
 
-	for ( Size i=1; i<=pose1.total_residue(); ++i ) {
+	for ( Size i=1; i<=pose1.size(); ++i ) {
 
 		// Skip nonprotein pose 1.
 		if ( !pose1.residue(i).is_protein() ) continue;

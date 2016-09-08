@@ -170,7 +170,7 @@ void BigBinConstraint::read_def(
 	//chu skip the rest of line since this is a single line defintion.
 	while ( in.good() && (in.get() != '\n') ) {}
 
-	if ( res_ > 1 && res_ < pose.total_residue() - 1 ) {
+	if ( res_ > 1 && res_ < pose.size() - 1 ) {
 		C0_  = AtomID(pose.residue_type(res_ - 1).atom_index("C" ), res_ - 1);
 		N1_  = AtomID(pose.residue_type(res_    ).atom_index("N" ), res_    );
 		CA1_ = AtomID(pose.residue_type(res_    ).atom_index("CA"), res_    );

@@ -105,7 +105,7 @@ public:
 			new core::pack::task::operation::RestrictAbsentCanonicalAAS()
 		);
 
-		for ( core::Size i = 1; i <= test_dimer_pose_->total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= test_dimer_pose_->size(); ++i ) {
 			if ( i == 2 ) {
 				design_taskop->include_residue(i);
 				design_taskop->keep_aas("A");

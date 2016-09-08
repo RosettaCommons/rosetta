@@ -453,7 +453,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 			}
 		}
 	} else {
-		for (int i=1; i<=(int)pose.total_residue(); ++i) {
+		for (int i=1; i<=(int)pose.size(); ++i) {
 			if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
 			core::conformation::Residue const &rsd_i = pose.residue(i);
 			for (int j=1; j<=(int)rsd_i.natoms(); ++j) {
@@ -494,7 +494,7 @@ void PhenixInterface::pylist_to_grads(
 debug_assert (pygrads != NULL);
 
 	SymmetryInfoCOP symm_info;
-	int nres = (int)pose.total_residue();
+	int nres = (int)pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
@@ -504,7 +504,7 @@ debug_assert (pygrads != NULL);
 
 	grads.resize( nres );
 	int listCounter = 0;
-	for (int i=1; i<=(int)pose.total_residue(); ++i) {
+	for (int i=1; i<=(int)pose.size(); ++i) {
 		if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
 		if (symm_info && !symm_info->bb_is_independent(i)) continue;
 

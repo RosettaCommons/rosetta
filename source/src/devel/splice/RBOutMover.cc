@@ -79,7 +79,7 @@ find_disulfs_in_range( core::pose::Pose const & pose, core::Size const start, co
 	utility::vector1< std::pair< core::Size, core::Size > > disulfs;
 	disulfs.clear();
 
-	runtime_assert( end <= pose.total_residue() && end >= 1 && start <= end && start >= 1 );
+	runtime_assert( end <= pose.size() && end >= 1 && start <= end && start >= 1 );
 	for ( core::Size resi = start; resi < end; ++resi ) {
 		for ( core::Size resj = resi + 1 ; resj <= end; ++resj ) {
 			if ( pose.residue( resi ).has_variant_type( core::chemical::DISULFIDE ) && pose.residue( resj ).has_variant_type( core::chemical::DISULFIDE ) && pose.residue( resi ).xyz( "SG" ).distance( pose.residue( resj ).xyz("SG")) <= 3.0 ) {
@@ -99,10 +99,10 @@ find_disulfs_in_range( core::pose::Pose const & pose, core::Size const start, co
 core::kinematics::Jump
 RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose )
 {
-	utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_template = find_disulfs_in_range( template_pose, 1, template_pose.total_residue() );
+	utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_template = find_disulfs_in_range( template_pose, 1, template_pose.size() );
 	runtime_assert( disulfs_in_template.size() == 2 );
 
-	utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_pose = find_disulfs_in_range( pose, 1, pose.total_residue() );
+	utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_pose = find_disulfs_in_range( pose, 1, pose.size() );
 	runtime_assert( disulfs_in_pose.size() >= 2 );
 	utility::vector1< std::pair< core::Size, core::Size > > relevant_disulfs;
 	relevant_disulfs.clear();
@@ -134,7 +134,7 @@ RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose
 	/// Following is an ugly foldtree just used to define the jump between the 2nd and 1st disulfides in the order they're observed in template pose
 	using namespace core::kinematics;
 	ft.add_edge( 1, first_disulf, Edge::PEPTIDE );
-	ft.add_edge( second_disulf, pose.total_residue(), Edge::PEPTIDE );
+	ft.add_edge( second_disulf, pose.size(), Edge::PEPTIDE );
 	ft.add_edge( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second, 1 );
 	if ( relevant_disulfs[ 1 ].second > relevant_disulfs[ 2 ].second ) {
 		ft.add_edge( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second - 1, Edge::PEPTIDE );

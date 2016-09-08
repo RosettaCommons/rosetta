@@ -70,7 +70,7 @@ SampleGrid::get_mg_positions( pose::Pose const & pose ) {
 	for ( Size q = 1; q <= scan_res_.size(); q++ ) {
 
 		Size const n = scan_res_[ q ];
-		if ( n > pose.total_residue() ) continue;
+		if ( n > pose.size() ) continue;
 
 		utility::vector1< Size > const & atom_numbers1   ( atom_numbers_for_mg_calculation[ n ]  );
 		for ( Size m = 1; m <= atom_numbers1.size(); ++m ) {
@@ -144,14 +144,14 @@ SampleGrid::figure_out_scan_res( utility::vector1< Size > const & input_scan_res
 	utility::vector1< Size > scan_res = input_scan_res;
 
 	if ( input_scan_res.size() == 0 ) {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) scan_res.push_back( n );
+		for ( Size n = 1; n <= pose.size(); n++ ) scan_res.push_back( n );
 	}
 
 	if ( tether_to_closest_res_ ) {
 		// expand neighborhood to scan, but later
 		// only sample grid positions that have closest residue in input_res.
 		static Distance NBR_DIST_CUTOFF( 12.0 );
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( scan_res.has_value( n ) ) continue;
 			for ( Size q = 1; q <= input_scan_res.size(); q++ ) {
 				if ( ( pose.residue( input_scan_res[q] ).nbr_atom_xyz() -
@@ -173,7 +173,7 @@ SampleGrid::figure_out_box_bounds( pose::Pose const & pose )
 
 	// determine bounds of scan.
 	bool init( false );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		if ( pose.residue( i ).is_virtual_residue() ) continue;
 		if ( pose.residue( i ).name3() == " MG" ) continue;

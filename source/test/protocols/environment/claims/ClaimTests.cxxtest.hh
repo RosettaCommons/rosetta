@@ -58,7 +58,7 @@ public:
 		core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
 		//store phi values for comparison in the test
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			init_phis.push_back( pose.phi( i ) );
 		}
 
@@ -94,13 +94,13 @@ public:
 		void (core::pose::Pose::*set_psi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_psi;
 		void (core::pose::Pose::*set_omega) ( core::Size const, core::Real const ) = &core::pose::Pose::set_omega;
 
-		for ( core::Size i = 1; i <= prot_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= prot_pose.size(); ++i ) {
 			if ( i != SEQPOS ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}
-				if ( i != prot_pose.total_residue() ) {
+				if ( i != prot_pose.size() ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}
@@ -146,13 +146,13 @@ public:
 		void (core::pose::Pose::*set_psi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_psi;
 		void (core::pose::Pose::*set_omega) ( core::Size const, core::Real const ) = &core::pose::Pose::set_omega;
 
-		for ( core::Size i = 1; i <= prot_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= prot_pose.size(); ++i ) {
 			if ( i != SEQPOS1 && i != SEQPOS2 ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}
-				if ( i != prot_pose.total_residue() ) {
+				if ( i != prot_pose.size() ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}
@@ -198,13 +198,13 @@ public:
 		void (core::pose::Pose::*set_psi)   ( core::Size const, core::Real const ) = &core::pose::Pose::set_psi;
 		void (core::pose::Pose::*set_omega) ( core::Size const, core::Real const ) = &core::pose::Pose::set_omega;
 
-		for ( core::Size i = 1; i <= prot_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= prot_pose.size(); ++i ) {
 			if ( i < SEQPOS_START || i > SEQPOS_END ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}
-				if ( i != prot_pose.total_residue() ) {
+				if ( i != prot_pose.size() ) {
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
 				}

@@ -56,7 +56,7 @@ void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_f
 }
 
 void simple_fold_tree(core::pose::Pose & pose) {
-	pose.fold_tree(core::kinematics::FoldTree(pose.total_residue()));
+	pose.fold_tree(core::kinematics::FoldTree(pose.size()));
 }
 
 void to_centroid(core::pose::Pose & pose) {

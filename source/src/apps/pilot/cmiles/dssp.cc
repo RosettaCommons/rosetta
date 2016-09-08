@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
   dssp.dssp_reduced();
 
   std::cout << "Rosetta_Residue" << "\t" << "PDB_Residue" << "\t" << "Secondary_Structure" << std::endl;
-  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
+  for (core::Size i = 1; i <= pose->size(); ++i) {
     std::cout << i << "\t" << info->number(i) << "\t" << dssp.get_dssp_secstruct(i) << std::endl;
   }
 

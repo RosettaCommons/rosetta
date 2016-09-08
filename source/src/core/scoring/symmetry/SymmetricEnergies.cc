@@ -150,7 +150,7 @@ SymmetricEnergies::update_neighbor_links(
 		if ( context_graphs()[ ii ] ) context_graphs_present.push_back( context_graphs()[ ii ] );
 	}
 
-	for ( uint ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii ) {
+	for ( uint ii = 1, ii_end = pose.size(); ii <= ii_end; ++ii ) {
 
 		int const ii_map( domain_map_during_minimization(ii) );
 		bool const ii_moved( ii_map == 0 || all_moved );
@@ -182,7 +182,7 @@ SymmetricEnergies::update_neighbor_links(
 	}
 
 	/// Manually set the neighbour count for the energy_graph to be symmetrical
-	for ( uint res = 1; res <= pose.total_residue(); ++res ) {
+	for ( uint res = 1; res <= pose.size(); ++res ) {
 		if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
 			int symm_res ( SymmConf.Symmetry_Info()->bb_follows( res ) );
 			int neighbors_symm ( energy_graph_no_state_check().get_node( symm_res )->num_neighbors_counting_self() );
@@ -190,7 +190,7 @@ SymmetricEnergies::update_neighbor_links(
 		}
 	}
 	/// Manually set the neighbour count for the energy_graph to be symmetrical
-	for ( uint res = 1; res <= pose.total_residue(); ++res ) {
+	for ( uint res = 1; res <= pose.size(); ++res ) {
 		for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
 			if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
 				int symm_res ( SymmConf.Symmetry_Info()->bb_follows( res ) );
@@ -268,7 +268,7 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	/// Manually set the neighbour count for the context_graph to be symmetrical
-	for ( uint res = 1; res <= pose.total_residue(); ++res ) {
+	for ( uint res = 1; res <= pose.size(); ++res ) {
 		if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
 			int symm_res ( SymmConf.Symmetry_Info()->bb_follows( res ) );
 			int neighbors_symm ( cgraphs[ type ]->get_node( symm_res )->num_neighbors_counting_self() );

@@ -89,7 +89,7 @@ void HelixNCapperMover::get_start_positions() {
 	helix_start_positions_.clear();
 	core::scoring::dssp::Dssp all_dssp( start_pose_ );
 
-	for ( core::Size i = 5 ; i <= start_pose_.total_residue()-5 ; ++i ) {
+	for ( core::Size i = 5 ; i <= start_pose_.size()-5 ; ++i ) {
 
 		if ( !start_pose_.residue(i).is_protein() ) continue;
 
@@ -108,7 +108,7 @@ void HelixNCapperMover::get_start_positions() {
 		if ( !is_previous_helix && is_this_helix ) {
 			core::Size work_res( i+1 );
 			core::Size helix_length( 1 );
-			while ( work_res <= start_pose_.total_residue() &&
+			while ( work_res <= start_pose_.size() &&
 					( all_dssp.get_dssp_secstruct( work_res ) == 'G' ||
 					all_dssp.get_dssp_secstruct( work_res ) == 'H' ||
 					all_dssp.get_dssp_secstruct( work_res ) == 'I' ) ) {
@@ -307,7 +307,7 @@ HelixNCapperMover::set_excluded_positions() {
 	}
 
 	// Exclude any non-amino acid residues from mutation
-	for ( core::Size i(1), ei( start_pose_.total_residue() ) ; i <= ei ; ++i ) {
+	for ( core::Size i(1), ei( start_pose_.size() ) ; i <= ei ; ++i ) {
 		if ( !start_pose_.residue( i ).is_protein() &&
 				( std::find(excluded_positions_.begin(), excluded_positions_.end(), i ) ==
 				excluded_positions_.end() ) ) {

@@ -57,7 +57,7 @@ protocols::jd2::Parser::generate_mover_from_job(
 		<< "make sure you specified a valid input PDB, silent file "
 		<< "or database.";
 
-	runtime_assert_string_msg( pose.total_residue() > 0, err_msg.str() );
+	runtime_assert_string_msg( pose.size() > 0, err_msg.str() );
 
 	// generate_mover_from_pose returns true if there was a pose change
 	// (i.e. NOT if only the mover changed)

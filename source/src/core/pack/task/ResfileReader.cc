@@ -83,7 +83,7 @@ ResfileContents::ResfileContents(
 	istream & resfile
 ) :
 	fname_initialized_from_( fname ),
-	commands_( pose.total_residue() )
+	commands_( pose.size() )
 {
 	using namespace std;
 
@@ -92,8 +92,8 @@ ResfileContents::ResfileContents(
 
 	// save the RANGE and CHAIN commands and apply them at the end
 	vector1< ResfileCommandOP > default_commands;
-	vector1< std::list< ResfileCommandOP > > residue_range_commands( pose.total_residue(), std::list< ResfileCommandOP >());
-	vector1< std::list< ResfileCommandOP > > residue_chain_commands( pose.total_residue(), std::list< ResfileCommandOP >());
+	vector1< std::list< ResfileCommandOP > > residue_range_commands( pose.size(), std::list< ResfileCommandOP >());
+	vector1< std::list< ResfileCommandOP > > residue_chain_commands( pose.size(), std::list< ResfileCommandOP >());
 
 	uint lineno = 0;
 	while ( resfile ) {
@@ -118,7 +118,7 @@ ResfileContents::ResfileContents(
 	}
 
 	// apply the RANGE and CHAIN commands
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( commands_[i].empty() ) {
 			if ( !residue_range_commands[i].empty() ) {
 				commands_[i].assign(
@@ -290,7 +290,7 @@ ResfileContents::parse_body_line(
 				locate_command(which_token, tokens, command_map, lineno));
 			Size const saved_which_token(which_token);
 			Size which_token_i;
-			for ( Size i=1; i <= pose.total_residue(); ++i ) {
+			for ( Size i=1; i <= pose.size(); ++i ) {
 				if ( pose.pdb_info()->chain(i) == chain ) {
 					found_a_residue_on_chain = true;
 					which_token_i = saved_which_token;
@@ -436,7 +436,7 @@ ResfileContents::locate_resid(
 
 	Size resid(0);
 	if ( pose.pdb_info() == 0 ) {
-		if ( 1 <= PDBnum && PDBnum <= pose.total_residue() ) {
+		if ( 1 <= PDBnum && PDBnum <= pose.size() ) {
 			resid = PDBnum;
 		}
 	} else {
@@ -1396,7 +1396,7 @@ parse_resfile_string(
 	std::string const & resfile_string
 ) throw(ResfileReaderException)
 {
-	core::select::residue_selector::ResidueSubset const mask( pose.n_residue(), true );
+	core::select::residue_selector::ResidueSubset const mask( pose.size(), true );
 	parse_resfile_string( pose, the_task, resfile_fname, resfile_string, mask );
 	return;
 }
@@ -1421,9 +1421,9 @@ parse_resfile_string(
 	istringstream resfile(resfile_string);
 	ResfileContents contents( pose, resfile_fname, resfile );
 
-	runtime_assert_string_msg( mask.size() == pose.n_residue(), "Error in core::pack::task::parse_resfile_string(): The mask passed to this function is not the same size as the pose.  The mask must have one entry for every residue." );
+	runtime_assert_string_msg( mask.size() == pose.size(), "Error in core::pack::task::parse_resfile_string(): The mask passed to this function is not the same size as the pose.  The mask must have one entry for every residue." );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		if ( !mask[ii] ) continue; //Skip masked residues.
 

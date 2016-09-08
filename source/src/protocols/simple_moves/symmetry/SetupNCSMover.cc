@@ -75,7 +75,7 @@ SetupNCSMoverCreator::mover_name() {
 
 NCSResMapping::NCSResMapping( core::pose::Pose &pose ) {
 	ngroups_ = 0;
-	nres_ = pose.total_residue();
+	nres_ = pose.size();
 }
 
 utility::vector1< core::Size >

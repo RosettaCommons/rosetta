@@ -135,7 +135,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 
 	using namespace moves;
 	bool nb_list = true;
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 
 	// rb minimization
 	Real min_threshold ( 15.0 ); /* score unit */

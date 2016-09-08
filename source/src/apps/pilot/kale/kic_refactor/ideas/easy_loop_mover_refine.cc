@@ -24,7 +24,7 @@ void LoopMover_Refine_KIC::apply(core::pose::Pose & pose) {
 	core::pose::Pose native_pose = pose;
 
 	// Set cutpoint variants for correct chainbreak scoring {{{1
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
 
 	for( Loops::const_iterator it=loops()->begin(), it_end=loops()->end();
@@ -149,7 +149,7 @@ void LoopMover_Refine_KIC::apply(core::pose::Pose & pose) {
 
 	// setting redes loop, but no resfile specified. all non-loop positions only repack. loop positions can design.
 	if( redesign_loop_ && !option[ OptionKeys::packing::resfile ].user() ) {
-		for( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		for( core::Size i = 1; i <= pose.size(); ++i ) {
 			if( !is_loop[i] ) repack_packer_task->nonconst_residue_task( i ).restrict_to_repacking();
 		}
 	}

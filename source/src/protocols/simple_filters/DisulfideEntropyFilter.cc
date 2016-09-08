@@ -150,15 +150,15 @@ DisulfideEntropyFilter::apply(
 	//must also be below the path tightness.
 	//calculate number of disulfides
 	int n_disulfides = 0;
-	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
-		for ( core::Size j=i + 2; j < pose.total_residue() + 1; ++j ) {
+	for ( core::Size i=1; i != pose.size(); ++i ) {
+		for ( core::Size j=i + 2; j < pose.size() + 1; ++j ) {
 			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
 				n_disulfides++;
 			}
 		}
 	}
 
-	core::Real expected_entropy = ((0.1604 * pose.total_residue()) + (1.7245 * n_disulfides) + 5.1477);
+	core::Real expected_entropy = ((0.1604 * pose.size()) + (1.7245 * n_disulfides) + 5.1477);
 
 
 	if ( entropy < (expected_entropy - tightness_) ) {
@@ -224,15 +224,15 @@ DisulfideEntropyFilter::compute_residual(
 	//must also be below the path tightness.
 	//calculate number of disulfides
 	int n_disulfides = 0;
-	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
-		for ( core::Size j=i + 2; j < pose.total_residue() + 1; ++j ) {
+	for ( core::Size i=1; i != pose.size(); ++i ) {
+		for ( core::Size j=i + 2; j < pose.size() + 1; ++j ) {
 			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
 				n_disulfides++;
 			}
 		}
 	}
 
-	core::Real expected_entropy = ((0.1604 * pose.total_residue()) + (1.7245 * n_disulfides) + 5.1477);
+	core::Real expected_entropy = ((0.1604 * pose.size()) + (1.7245 * n_disulfides) + 5.1477);
 
 	return entropy - expected_entropy;
 }
@@ -245,8 +245,8 @@ DisulfideEntropyFilter::compute(
 	//determine the current disulfide configuration
 	utility::vector1< std::pair<Size,Size> > disulf_config;
 
-	for ( core::Size i=1; i != pose.total_residue(); ++i ) {
-		for ( core::Size j=i + 2; j < pose.total_residue() + 1; ++j ) {
+	for ( core::Size i=1; i != pose.size(); ++i ) {
+		for ( core::Size j=i + 2; j < pose.size() + 1; ++j ) {
 			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
 				std::pair< Size, Size > temp_pair;
 				temp_pair = std::make_pair( i, j );

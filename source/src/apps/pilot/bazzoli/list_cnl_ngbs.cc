@@ -76,7 +76,7 @@ OPT_KEY(String, cnl_resfile)
 ///
 Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 
-	for ( Size j = 1; j <= ps.total_residue(); ++j ) {
+	for ( Size j = 1; j <= ps.size(); ++j ) {
 		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {
 			return j;
 		}

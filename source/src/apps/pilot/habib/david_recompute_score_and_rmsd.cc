@@ -70,7 +70,7 @@ core::Size lig_res_num;
 
 void define_interface( core::pose::Pose & ref_pose ) {
 	lig_res_num =0;
-	for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
+	for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
 		if ( !ref_pose.residue(j).is_protein() ) {
 			lig_res_num = j;
 			break;
@@ -211,7 +211,7 @@ main( int argc, char * argv [] )
 		central_relax_pdb_number = ObjexxFCL::int_of( resid );
 		}
 		central_relax_res = 0;
-		for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
 		if ( ref_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 		if (chain != ' '){
 		if ( ref_pose.pdb_info()->chain(j) == chain ) {
@@ -229,7 +229,7 @@ main( int argc, char * argv [] )
 		/*
 		int const central_relax_pdb_number = option[ OptionKeys::pocket_grid::central_relax_pdb_num ];
 		//int const central_relax_pdb_number = option[ central_relax_pdb_num ];
-		for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = ref_pose.size(); j <= resnum; ++j ) {
 		if ( ref_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 		central_relax_res = j;
 		}
@@ -307,7 +307,7 @@ main( int argc, char * argv [] )
 
 			// This is the residue we'll use for PocketConstraint
 			//central_relax_res = 0;
-			//for ( int j = 1, resnum = curr_pose.total_residue(); j <= resnum; ++j ) {
+			//for ( int j = 1, resnum = curr_pose.size(); j <= resnum; ++j ) {
 			//if ( curr_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
 			//        central_relax_res = j;
 			//}

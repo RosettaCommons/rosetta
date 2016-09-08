@@ -131,7 +131,7 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
 	devel::enzdes::EnzdesRemodelMover::initialize(pose);
 
 	core::id::SequenceMappingOP seqmap( new core::id::SequenceMapping() );
-	for ( core::Size i(1); i <= pose.total_residue(); ++i ) seqmap->push_back(i);
+	for ( core::Size i(1); i <= pose.size(); ++i ) seqmap->push_back(i);
 	set_seq_mapping(seqmap);
 
 	setup_cached_observers(pose);
@@ -171,9 +171,9 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
 	tr << "Loop is now defined as residues " << design[1] << " - " << design[design.size()] << std::endl;
 
 	//Changes to pose length made, must update numbering of the target residues. EnzdesRemodel takes care of the flexable region numbering for us
-	if ( (mut_pose_.total_residue() != pose.total_residue() ) &&
+	if ( (mut_pose_.size() != pose.size() ) &&
 			(dna_design_pos_[1] > design[1] ) ) {
-		core::Size offset = pose.total_residue() - mut_pose_.total_residue();
+		core::Size offset = pose.size() - mut_pose_.size();
 
 		for ( core::Size i(1); i <= dna_design_pos_.size(); ++i ) {
 			dna_design_pos_[i]+=offset;
@@ -190,7 +190,7 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
 	core::pack::task::PackerTaskOP seq_design_taskOP = core::pack::task::TaskFactory::create_packer_task(pose);
 	seq_design_taskOP->initialize_from_command_line();
 
-	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
+	for ( core::Size i(1); i <= pose.size(); ++i ) {
 		if ( (std::find(design.begin(), design.end(), i) == design.end() ) || ( pose.residue(i).name3() != "ALA") ) {
 			seq_design_taskOP->nonconst_residue_task(i).restrict_to_repacking();
 		} else ( designable << i << ", ");

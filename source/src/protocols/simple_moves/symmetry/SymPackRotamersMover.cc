@@ -176,8 +176,8 @@ SymPackRotamersMover::make_symmetric_task(
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-	for ( Size res=1; res <= pose.total_residue(); ++res ) {
+	utility::vector1<bool> allow_repacked( pose.size(), false );
+	for ( Size res=1; res <= pose.size(); ++res ) {
 		if ( pose.residue(res).aa() != core::chemical::aa_vrt && symm_info->fa_is_independent(res) ) {
 			allow_repacked.at(res) = true;
 		}

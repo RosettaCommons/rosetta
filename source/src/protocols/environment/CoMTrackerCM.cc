@@ -159,13 +159,13 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 	// TODO: Update this to guarantee test_point is downstream from the tracking_residue.
 	// Get the initial position of a (presumably) downstream atom to compare after the tracking resiude is updated.
 	if ( mobile_residues_.index( false ) == 0 ||
-			mobile_residues_.index( false ) >= (int) pose.total_residue() ) {
+			mobile_residues_.index( false ) >= (int) pose.size() ) {
 		std::ostringstream ss;
 		ss << "The CoMTrackerCM '" << name() << "' was configured to move all the residues in the pose.  "
 			<< "This probably isn't what you meant, check your selectors and input pose." << std::endl;
 		throw utility::excn::EXCN_BadInput( ss.str() );
 	}
-	assert( (Size) mobile_residues_.index( false ) <= pose.total_residue() );
+	assert( (Size) mobile_residues_.index( false ) <= pose.size() );
 
 	RT::Vector test_point = pose.residue( mobile_residues_.index( false ) ).xyz( 1 );
 

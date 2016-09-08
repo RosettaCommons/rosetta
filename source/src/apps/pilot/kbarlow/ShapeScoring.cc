@@ -40,7 +40,7 @@ void calc_shape_complementarity(core::pose::Pose &pose){
     *it = 0;
   }
 
-  for (Size i=1; i<=pose.n_residue(); ++i) {
+  for (Size i=1; i<=pose.size(); ++i) {
     //TR << pose.chain(i) ;
     chain_lengths[pose.chain(i)]+=1;
   }
@@ -79,7 +79,7 @@ void calc_shape_complementarity(core::pose::Pose &pose){
 
   core::scoring::sc::ShapeComplementarityCalculator scc_chain_a_ligand;
   scc_chain_a_ligand.Init();
-  for (Size i=1; i<=pose.n_residue(); ++i) {
+  for (Size i=1; i<=pose.size(); ++i) {
     if (pose.chain(i)==protein_chain_a_num)
       scc_chain_a_ligand.AddResidue(0,pose.residue(i));
     else if (pose.chain(i)==ligand_chain_num)
@@ -88,7 +88,7 @@ void calc_shape_complementarity(core::pose::Pose &pose){
 
   core::scoring::sc::ShapeComplementarityCalculator scc_chain_b_ligand;
   scc_chain_b_ligand.Init();
-  for (Size i=1; i<=pose.n_residue(); ++i) {
+  for (Size i=1; i<=pose.size(); ++i) {
     if (pose.chain(i)==protein_chain_b_num)
       scc_chain_b_ligand.AddResidue(0,pose.residue(i));
     else if (pose.chain(i)==ligand_chain_num)

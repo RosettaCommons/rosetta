@@ -87,7 +87,7 @@ using numeric::random::uniform;
 
 Vec helix_axis(core::pose::Pose const & pose) {
 	Vec axis(0,0,0);
-	for(Size i = 2; i <= pose.n_residue()-4; ++i) {
+	for(Size i = 2; i <= pose.size()-4; ++i) {
 		axis += ( pose.residue(i+4).xyz(1) - pose.residue(i).xyz(3) );
 	}
 	axis.normalize();
@@ -95,10 +95,10 @@ Vec helix_axis(core::pose::Pose const & pose) {
 }
 
 inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
-	if( 0 == nres ) nres = pose.n_residue();
+	if( 0 == nres ) nres = pose.size();
 	Vec com(0,0,0);
 	Size count = 0;
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			com += pose.xyz(core::id::AtomID(ia,ir));
 			count++;
@@ -108,7 +108,7 @@ inline Vec center_of_mass( core::pose::Pose const & pose, Size nres = 0 ) {
 }
 
 inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + trans );
@@ -117,7 +117,7 @@ inline void trans_pose( core::pose::Pose & pose, Vec const & trans ) {
 }
 
 inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
@@ -151,7 +151,7 @@ core::pose::Pose make_helix(std::string seq) {
 		std::string name3 = name_from_aa(aa_from_oneletter_code(seq[i-1]));
 		pose.append_residue_by_bond(*core::conformation::ResidueFactory::create_residue(residue_set->name_map(name3)),true);
 	}
-	core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
+	core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.size());
 	for( Size i = 1; i <= seq.size(); i++ ) {
 		pose.set_phi  (i,-60.16731);
 		pose.set_psi  (i,-45.19451);
@@ -178,7 +178,7 @@ make_symm_data(
 	core::Size n
 ) {
 	using namespace ObjexxFCL;
-	Size anchor = pose.n_residue() / 2;
+	Size anchor = pose.size() / 2;
 	std::string s = "";
 	s += "symmetry_name c12345\nsubunits "+string_of(n)+"\nnumber_of_interfaces "+string_of(n-1)+"\n";
 	s += "E = 1.0*VRT0001";
@@ -195,7 +195,7 @@ make_symm_data(
 	// TR << s << std::endl;
 	// TR << "================= symm dat ==================" << std::endl;
 	std::istringstream iss(s);
-	core::conformation::symmetry::SymmData symdat( pose.n_residue(), pose.num_jump() );
+	core::conformation::symmetry::SymmData symdat( pose.size(), pose.num_jump() );
 	symdat.read_symmetry_data_from_stream(iss);
 	return symdat;
 }
@@ -261,7 +261,7 @@ core::pose::Pose make_coiled_coil(CCParam & p) {
 	trans_pose(helix,Vec(p.x,0,0));
 
 	Real mnz=99999,mxz=-99999;
-	for(Size ir = 1; ir <= helix.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= helix.size(); ++ir) {
 		for(Size ia = 1; ia <= helix.residue_type(ir).natoms(); ++ia) {
 			Real z = helix.xyz(core::id::AtomID(ia,ir)).z();
 			if(z<mnz) mnz = z;

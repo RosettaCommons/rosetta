@@ -79,9 +79,9 @@ AlignChainMover::apply( Pose & in_pose )
 	in_pose_positions.clear(); target_positions.clear();
 	runtime_assert( pose() != nullptr );
 	core::Size const in_pose_chain_begin( source_chain() == 0 ? 1 : in_pose.conformation().chain_begin( source_chain() ) );
-	core::Size const in_pose_chain_end  ( source_chain() == 0 ? in_pose.total_residue() : in_pose.conformation().chain_end( source_chain() ) );
+	core::Size const in_pose_chain_end  ( source_chain() == 0 ? in_pose.size() : in_pose.conformation().chain_end( source_chain() ) );
 	core::Size const target_pose_chain_begin( target_chain() == 0 ? 1 : pose()->conformation().chain_begin( target_chain() ) );
-	core::Size const target_pose_chain_end  ( target_chain() == 0 ? pose()->total_residue() : pose()->conformation().chain_end( target_chain() ) );
+	core::Size const target_pose_chain_end  ( target_chain() == 0 ? pose()->size() : pose()->conformation().chain_end( target_chain() ) );
 	TR<<"In_pose from residue: "<<in_pose_chain_begin<<" to_residue: "<<in_pose_chain_end<<"\ntarget_pose from residue: "<<target_pose_chain_begin<<" to_residue: "<<target_pose_chain_end<<std::endl;
 	for ( core::Size i = in_pose_chain_begin; i<=in_pose_chain_end; ++i ) {
 		in_pose_positions.push_back( i );

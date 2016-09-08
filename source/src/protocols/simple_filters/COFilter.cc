@@ -52,9 +52,9 @@ bool COFilter::apply( core::pose::Pose const & pose ) const{
 	core::Real co_cutoff = 0.0;
 
 	if ( sstype_ == "ab" ) {
-		co_cutoff = ( 0.137f * pose.total_residue() ) + 3.25f;
+		co_cutoff = ( 0.137f * pose.size() ) + 3.25f;
 	} else if ( sstype_ == "b" ) {
-		co_cutoff = ( 0.145f * pose.total_residue() ) + 7.50f;
+		co_cutoff = ( 0.145f * pose.size() ) + 7.50f;
 	} else {
 		return true;
 	}

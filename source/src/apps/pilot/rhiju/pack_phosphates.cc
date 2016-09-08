@@ -171,14 +171,14 @@ pack_phosphates()
 
 	if ( pack_all_ ){
 		Size const nres_full_model = const_full_model_info( pose ).size();
-		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+		for ( Size n = 1; n <= pose.size(); n++ ){
 			Size const seqpos_in_full_model = res_list[ n ];
 			if ( ( n == 1 || pose.fold_tree().is_cutpoint( n - 1 ) ) &&
 					 seqpos_in_full_model > 1 &&
 					 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ){
 				five_prime_phosphate_pack_res_list.push_back( res_list[ n ] );
 			}
-			if ( ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) &&
+			if ( ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) ) &&
 						 seqpos_in_full_model < nres_full_model &&
 						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model ) ){
 						 three_prime_phosphate_pack_res_list.push_back( res_list[ n ] );
@@ -258,7 +258,7 @@ pack_phosphates()
 	}
 
 	pack::task::PackerTaskOP pack_task = pack::task::TaskFactory::create_packer_task( pose );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 1; i <= pose.size(); i++ ){
 		pack_task->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
 		//		pack_task->nonconst_residue_task( i ).or_ex4( true ); //extra O2prime modeler
 		//		pack_task->nonconst_residue_task( i ).or_include_current( true );

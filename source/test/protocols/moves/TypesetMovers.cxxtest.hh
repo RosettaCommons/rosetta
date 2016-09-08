@@ -71,8 +71,8 @@ public:
 		pose.dump_pdb(UT_RSM);
 
 		//test another way that it came out right: for all residues, for all chi, check equality
-		core::Size nres = pose.total_residue();
-		TS_ASSERT_EQUALS(nres, posecopy.total_residue());
+		core::Size nres = pose.size();
+		TS_ASSERT_EQUALS(nres, posecopy.size());
 		for ( core::Size res(1); res <= nres; ++res ) {
 			utility::vector1<core::Real> const & copychi(posecopy.residue(res).chi());
 			utility::vector1<core::Real> const & newchi(pose.residue(res).chi());

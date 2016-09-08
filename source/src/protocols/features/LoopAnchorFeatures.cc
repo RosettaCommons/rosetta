@@ -234,10 +234,10 @@ LoopAnchorFeatures::report_features(
 	Size local_min_loop_length = min_loop_length( relevant_residues );
 	Size local_max_loop_length = max_loop_length( relevant_residues );
 
-	for ( SSize begin=1; begin <= SSize( pose.total_residue() - local_min_loop_length ); ++begin ) {
+	for ( SSize begin=1; begin <= SSize( pose.size() - local_min_loop_length ); ++begin ) {
 		// check if end+1 is a chain ending or the last residue because we will use end+1 to calculate a pseudodihedral
 		for ( Size end=begin;
-				(end <= begin + local_max_loop_length && end + 1 <= pose.total_residue());
+				(end <= begin + local_max_loop_length && end + 1 <= pose.size());
 				++end ) {
 
 			bool bail_out = !relevant_residues[end];

@@ -175,7 +175,7 @@ void FoldConstraints::set_default_options() {
 
 //otherwise stage2 cycles remain as in the classic protocol
 Size FoldConstraints::total_res( core::pose::Pose const& pose ) const {
-	return static_cast< Size >( std::min( 1.0*pose.total_residue(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ ) );
+	return static_cast< Size >( std::min( 1.0*pose.size(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ ) );
 }
 
 // what's an noe_stage?
@@ -294,7 +294,7 @@ FoldConstraints::prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_itera
 		if ( tr.Info.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 
 		if ( constraint_threshold_ > 0 ) {
-			constraints_->set_max_seq_sep( pose.total_residue() );
+			constraints_->set_max_seq_sep( pose.size() );
 			pose.constraint_set( constraints_ );
 			scoring::ScoreFunction cst_score;
 			cst_score.set_weight( scoring::atom_pair_constraint, 1.0 );
@@ -355,7 +355,7 @@ FoldConstraints::apply( core::pose::Pose & pose ) {
 		tr.Debug << "introduce MaxSeqSep Filter for constraints \n";
 		orig_constraints = pose.constraint_set()->clone();
 		constraints_ = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet( *orig_constraints, pose.fold_tree() ) );
-		constraints_->set_max_seq_sep( pose.total_residue() ); // so it is prepared for stage4.
+		constraints_->set_max_seq_sep( pose.size() ); // so it is prepared for stage4.
 		pose.constraint_set( constraints_ );
 	}
 

@@ -232,7 +232,7 @@ output_single_motif(
 		pose.residue( 1 ).atom( atom3_name ).xyz()
 	);
 
-	for ( Size ires = 1 ; ires <= pose.total_residue() ; ++ires ) {
+	for ( Size ires = 1 ; ires <= pose.size() ; ++ires ) {
 		for ( Size iatom = 1 ; iatom <= pose.residue(ires).natoms() ; ++iatom ) {
 			pose.set_xyz( id::AtomID( iatom, ires ),
 				end_stub.local2global( start_stub.global2local( pose.residue(ires).xyz( iatom ) ) ) );
@@ -351,7 +351,7 @@ process_for_motifs(
 	protocols::motifs::MotifLibrary & motif_lib
 )
 {
-	int nres( pose.total_residue() );
+	int nres( pose.size() );
 
 	Real dist_threshold( option[ motifs::duplicate_dist_cutoff ]  );
 	Real angl_threshold( option[ motifs::duplicate_angle_cutoff ] );

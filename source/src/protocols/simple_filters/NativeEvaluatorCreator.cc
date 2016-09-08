@@ -106,12 +106,12 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 			eval.add_evaluation( PoseEvaluatorOP( new SelectRmsdEvaluator(
 				native_pose,
 				core::scoring::invert_exclude_residues(
-				native_pose->total_residue(), option[ in::file::native_exclude_res ]()), "" ) )
+				native_pose->size(), option[ in::file::native_exclude_res ]()), "" ) )
 			);
 			if ( option[ OptionKeys::evaluation::gdtmm ]() ) {
 				eval.add_evaluation( PoseEvaluatorOP( new SelectGdtEvaluator(
 					native_pose,
-					core::scoring::invert_exclude_residues( native_pose->total_residue(),
+					core::scoring::invert_exclude_residues( native_pose->size(),
 					option[ in::file::native_exclude_res ]()), "" ) )
 				);
 			}

@@ -203,7 +203,7 @@ int main( int argc, char ** argv )
 	if ( mpi_rank() == 0 ) {
 		devel::pack_daemon::MPIMultistateFitnessFunctionOP func = new devel::pack_daemon::MPIMultistateFitnessFunction;
 		devel::pack_daemon::DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
-		daf->set_num_entity_elements( ds->entity_task()->total_residue() );
+		daf->set_num_entity_elements( ds->entity_task()->size() );
 		utility::io::izstream daf_file( daf_filename );
 		try {
 			daf->initialize_from_input_file( ds, daf_file );
@@ -230,7 +230,7 @@ int main( int argc, char ** argv )
 		// reset the default value of 1.0, but the mutation-rate variable is not used by the Mutate1Randomizer!
 		rand->set_mutation_rate( 0.0 /*option[ ms::mutate_rate ]()*/ );
 
-		for ( Size ii = 1; ii <= ds->entity_task()->total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= ds->entity_task()->size(); ++ii ) {
 			EntityElements ii_elements =
 				protocols::multistate_design::list_amino_acid_options(
 				ii, ds->entity_task()->residue_task( ii ) );

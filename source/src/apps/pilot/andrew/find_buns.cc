@@ -60,15 +60,15 @@ varsoldist_rotamer_dots_for_pose(
 	using namespace core::scoring;
 	using namespace devel::vardist_solaccess;
 
-	utility::vector1< VarSolDRotamerDotsOP > rotamer_dots( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	utility::vector1< VarSolDRotamerDotsOP > rotamer_dots( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		rotamer_dots[ ii ] = VarSolDRotamerDotsOP( new VarSolDRotamerDots( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( ii ) ) ) ), calc ) );
 		rotamer_dots[ ii ]->increment_self_overlap();
 	}
 
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(ii)->const_upper_edge_list_end();
@@ -93,7 +93,7 @@ buns_for_pose(
 	using namespace core::scoring::hbonds;
 
 	std::list< AtomID > buns;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( Size jj = 1; jj <= pose.residue(ii).nheavyatoms(); ++jj ) {
 			AtomID atid( jj, ii );
 
@@ -137,10 +137,10 @@ pose_nbratom_center_of_mass(
 )
 {
 	core::Vector com( 0.0 ); // center of mass
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		com += pose.residue( ii ).xyz( pose.residue( ii ).nbr_atom() );
 	}
-	com /= pose.total_residue();
+	com /= pose.size();
 	return com;
 }
 
@@ -159,7 +159,7 @@ write_buns_and_dots_kinemage(
 	core::conformation::write_kinemage_header( fout, 1, structure_tag, pose_nbratom_center_of_mass( pose ) );
 	writer.write_coords( fout, pose.conformation() );
 	fout << "@group { Dots } dominant off\n";
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) rotamer_dots[ ii ]->write_dot_kinemage( fout );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) rotamer_dots[ ii ]->write_dot_kinemage( fout );
 	fout << "@group { BUns } dominant\n";
 	fout << "@balllist radius= 0.6 color= white\n";
 	for ( std::list< core::id::AtomID >::const_iterator iter = buns.begin(); iter != buns.end(); ++iter ) {

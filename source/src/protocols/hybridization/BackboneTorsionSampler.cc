@@ -85,7 +85,7 @@ void BackboneTorsionSampler::init() {
 
 void BackboneTorsionSampler::local_perturb(core::pose::Pose pose, core::Real max_delta_torsion) {
 	Size n_torsion(0);
-	for ( Size ires=1; ires <= pose.total_residue(); ++ires ) {
+	for ( Size ires=1; ires <= pose.size(); ++ires ) {
 		n_torsion += 2; // for now
 	}
 	Size perturbed_torsion = numeric::random::rg().random_range(1, n_torsion);
@@ -104,7 +104,7 @@ void BackboneTorsionSampler::local_perturb(core::pose::Pose pose, core::Real max
 		next_torsion = floor( perturbed_res_ + variance*numeric::random::rg().gaussian() + 0.5 );
 	}
 
-	if ( next_torsion >= 1 && next_torsion <= (int) pose.total_residue() * 2 ) {
+	if ( next_torsion >= 1 && next_torsion <= (int) pose.size() * 2 ) {
 		Size next_perturbed_residue = (next_torsion + 1)/2;
 		if ( (next_torsion - (next_perturbed_residue-1)*2) == 1 ) {
 			pose.set_phi(next_perturbed_residue, pose.phi(next_perturbed_residue) - delta);
@@ -123,9 +123,9 @@ void BackboneTorsionSampler::perturb(core::pose::Pose & pose,
 	bool repack,
 	bool minimize) {
 	if ( level == 1 ) {
-		perturbed_res_ = numeric::random::rg().random_range(1, pose.total_residue());
+		perturbed_res_ = numeric::random::rg().random_range(1, pose.size());
 	}
-	for ( core::Size ires=1; ires <= pose.total_residue() ; ++ires ) {
+	for ( core::Size ires=1; ires <= pose.size() ; ++ires ) {
 		if ( local != 0 ) {
 			if ( std::abs((int) ires - (int) perturbed_res_) > (int) ((local - 1) * level/2) ) continue;
 		}
@@ -186,7 +186,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		mc[i_nest] = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
 		mc[i_nest]->set_autotemp( false, temperature_ );
 		if ( i_nest == 1 ) {
-			ncycles[i_nest] = 10 * pose.total_residue() * increase_cycles_;
+			ncycles[i_nest] = 10 * pose.size() * increase_cycles_;
 		} else if ( i_nest == n_nested_+1 ) {
 			ncycles[i_nest] = 10 * increase_cycles_;
 		} else {
@@ -236,7 +236,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		}
 
 		core::Real score=(*scorefxn_)(pose);
-		if ( native_ && native_->total_residue() ) {
+		if ( native_ && native_->size() ) {
 			core::Real gdtmm(0.);
 			core::sequence::SequenceAlignmentOP native_aln;
 			gdtmm = get_gdtmm(*native_, pose, native_aln);
@@ -331,7 +331,7 @@ BackboneTorsionSampler::parse_my_tag(
 	Pose const & pose
 ) {
 	core::Size start_res = 1;
-	core::Size stop_res = pose.total_residue();
+	core::Size stop_res = pose.size();
 
 	if ( tag->hasOption( "start_res" ) ) start_res = tag->getOption< core::Size >( "start_res" );
 	if ( tag->hasOption( "stop_res" ) ) stop_res = tag->getOption< core::Size >( "stop_res" );

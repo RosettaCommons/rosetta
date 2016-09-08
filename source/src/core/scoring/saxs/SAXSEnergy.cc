@@ -267,7 +267,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 	ff_manager_->tabulate(q_);
 	std::set<FormFactorOP> ff_set;
 	// ---------- Find the unique set of atom types
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue resi = pose.residue(i);
 		for ( Size m = 1; m <= resi.natoms(); ++m ) {
 			trSAXSEnergy.Trace << "rehash: trying "<<resi.atom_type(m).name();
@@ -304,7 +304,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 	}
 
 	// ---------- Prepare atoms, residues and assign atom types
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue resi = pose.residue(i);
 		for ( Size m = 1; m <= resi.natoms(); ++m ) {
 			if ( (! if_hydrogens_)&&( resi.atom_type(m).is_hydrogen()) ) {

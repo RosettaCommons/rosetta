@@ -72,7 +72,7 @@ point_graph_dme( conformation::PointGraph const & pg, pose::Pose const & pose )
 {
 	Size total(0);
 	Real dme(0.0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & i_rsd( pose.residue(i) );
 		for ( auto
 				i_iter     = pg.get_vertex( i ).const_upper_edge_list_begin(),

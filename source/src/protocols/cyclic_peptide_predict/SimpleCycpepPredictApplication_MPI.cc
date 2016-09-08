@@ -483,12 +483,12 @@ SimpleCycpepPredictApplication_MPI::get_native() {
 		emperor_broadcast_silent_struct( native_ss );
 
 		native_ = native; //Store the pose (though maybe the emperor should discard it at this point to free memory).
-		TR << "Read " << native_->n_residue() << "-residue pose from disk and broadcasted it to all other nodes." << std::endl;
+		TR << "Read " << native_->size() << "-residue pose from disk and broadcasted it to all other nodes." << std::endl;
 	} else { //Other nodes do this
 		native_ = receive_broadcast_silent_struct_and_build_pose();
 		if(TR.Debug.visible()) {
-			TR.Debug << "Process " << MPI_rank_ << " received a " << native_->n_residue() << "-residue pose from the emperor's broadcast, with sequence \"";
-			for(core::Size i=1, imax=native_->n_residue(); i<=imax; ++i) {
+			TR.Debug << "Process " << MPI_rank_ << " received a " << native_->size() << "-residue pose from the emperor's broadcast, with sequence \"";
+			for(core::Size i=1, imax=native_->size(); i<=imax; ++i) {
 				TR.Debug << native_->residue(i).name3();
 				if(i<imax) TR.Debug << " ";
 			}

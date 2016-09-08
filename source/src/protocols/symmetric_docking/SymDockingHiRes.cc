@@ -225,7 +225,7 @@ tf.push_back( new RestrictToInterface( movable_jumps_, interface_dist ) );
 pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
 
 // extend one residue beyond borders of repackable regions, don't allow 1-residue loops
-core::Size const nres = pose.total_residue();
+core::Size const nres = pose.size();
 utility::vector1<bool> flexible_region( nres, false );
 for ( Size i=2; i < nres; ++i ) {
 int num_flexible(0);

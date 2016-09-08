@@ -370,7 +370,7 @@ densityTools()
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 			core::import_pose::pose_from_file( fullpose, pdbfile , core::import_pose::PDB_file);
 
-			core::Size nres = fullpose.total_residue();
+			core::Size nres = fullpose.size();
 			perResCC.resize( nres, 0.0 );
 			perResStrain.resize( nres, 0.0 );
 

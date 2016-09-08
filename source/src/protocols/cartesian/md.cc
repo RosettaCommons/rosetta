@@ -88,7 +88,7 @@ void MolecularDynamics::createCartesianArray( )
 {
 	using namespace core;
 
-	Size const nres( pose->total_residue() );
+	Size const nres( pose->size() );
 	cartom.clear();
 	for ( Size ir = 1; ir <= nres; ++ir ) {
 		conformation::Residue const & rsd( pose->residue( ir ) );
@@ -166,7 +166,7 @@ void MolecularDynamics::getCartesianDerivatives(
 	using namespace core;
 
 	using namespace core::optimization;
-	Size const nres( pose->total_residue() );
+	Size const nres( pose->size() );
 	scorefxn.setup_for_derivatives( *pose);
 	int count = 1;
 	for ( Size ir = 1; ir <= nres; ++ir ) {
@@ -346,7 +346,7 @@ void MolecularDynamics::createBondList( )
 {
 	using namespace core;
 
-	Size const nres( pose->total_residue() );
+	Size const nres( pose->size() );
 	bondlist.clear();
 
 	for ( Size i = 1; i <= cartom.size(); i ++ ) {
@@ -423,7 +423,7 @@ void MolecularDynamics::createAngleList( )
 {
 	using namespace core;
 
-	//Size const nres( pose->total_residue() );
+	//Size const nres( pose->size() );
 	anglelist.clear();
 
 	for ( Size i = 1; i <= bondlist.size(); i ++ ) {
@@ -545,13 +545,13 @@ void MolecularDynamics::createDihedralList(  )
 {
 	using namespace core;
 	int ir;
-	for ( ir = 1; ir < (int)pose->total_residue(); ir ++ ) {
+	for ( ir = 1; ir < (int)pose->size(); ir ++ ) {
 		const  conformation::Residue &rsd = pose->residue( ir );
 
 
 		if ( ( !(rsd.aa() == chemical::aa_pro) )  &&
 				( ir != 1 ) &&
-				( ir <  ( (int)pose->total_residue() - 1 ) )
+				( ir <  ( (int)pose->size() - 1 ) )
 				) {
 
 			dihedrallist.push_back( createDihedral(
@@ -985,7 +985,7 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 {
 	using namespace core;
 	//std::cout << "setup_for_scoring" << std::endl;
-	Size const nres( pose->total_residue() );
+	Size const nres( pose->size() );
 
 	scorefxn.setup_for_derivatives( *pose);
 	cartom.clear();
@@ -1453,7 +1453,7 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	scorefxn.show(std::cout, *pose);
 
 	//std::cout << "setup_for_scoring" << std::endl;
-	Size const nres( pose->total_residue() );
+	Size const nres( pose->size() );
 
 	for ( Size ir = 1; ir <= nres; ++ir ) {
 		// get the appropriate residue from the pose->

@@ -131,7 +131,7 @@ go_main() {
 		std::string tag( scores_list2[i].first );
 		a_pose = core::pose::PoseOP( new core::pose::Pose() );
 		inputter->pose_from_job( *a_pose, tag_job_map[ tag ] );
-		core::Size const last_rsd = a_pose->total_residue();
+		core::Size const last_rsd = a_pose->size();
 		core::Real rms = 1e99;
 		utility::vector1 < core::Real > rms_list;
 		for ( core::Size j = 1; j <= selected_poses.size(); ++j ) {

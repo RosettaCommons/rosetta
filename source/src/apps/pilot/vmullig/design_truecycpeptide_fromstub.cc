@@ -460,7 +460,7 @@ void append_pose_by_jump (
 	const core::pose::Pose &pose_to_append
 ) {
 	if(pose_to_append.empty()) return;
-	for(core::Size ir=1,nres=pose_to_append.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1,nres=pose_to_append.size(); ir<=nres; ir++) {
 		if(ir==1) mypose.append_residue_by_jump( pose_to_append.residue(ir), 1, "", "", true );
 		else mypose.append_residue_by_bond( pose_to_append.residue(ir), false);
 	}
@@ -472,7 +472,7 @@ void append_alanines (
 	const core::Size alacount, //Number of alanines to append.
 	const bool append_D
 ) {
-	core::pose::remove_lower_terminus_type_from_pose_residue(mypose, mypose.n_residue());
+	core::pose::remove_lower_terminus_type_from_pose_residue(mypose, mypose.size());
 
 	std::string seq = "A";
 	if (append_D) seq+="[DALA]";
@@ -487,9 +487,9 @@ void append_alanines (
 		core::conformation::ResidueOP new_rsd = core::conformation::ResidueFactory::create_residue ( *requested_types[ i ] );
 		if(!mypose.empty()) { //If the input pose is not empty, add the new residue as a bond.
 			mypose.append_residue_by_bond( *new_rsd, true);
-			mypose.set_psi(mypose.n_residue()-1, 135.0);
-			mypose.set_omega(mypose.n_residue()-1, 180.0);
-			mypose.set_phi(mypose.n_residue(), -135.0);
+			mypose.set_psi(mypose.size()-1, 135.0);
+			mypose.set_omega(mypose.size()-1, 180.0);
+			mypose.set_phi(mypose.size(), -135.0);
 		} else { //If the input pose is empty, add the new residue as a jump.
 			mypose.append_residue_by_jump(*new_rsd, 1, "", "", true);
 		}
@@ -512,7 +512,7 @@ void create_loop (
 	const bool is_cyclic = option[cyclic]();
 	bool first_residue_appended = false;
 
-	for(core::Size ir=1, nres=masterpose.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1, nres=masterpose.size(); ir<=nres; ir++) {
 		if(ir == 1 || (ir > 1 && masterpose.chain(ir)!=masterpose.chain(ir-1) ) ) chaincount++; //If this is the first residue of a new chain
 		if(chaincount == stub_chain) { //If this is the stub chain
 			if(is_cyclic) { //If we are designing a cyclic peptide, do not append anything until endres, then append everything up to startres, then append alanines.
@@ -523,7 +523,7 @@ void create_loop (
 						first_residue_appended=true;
 					} else {
 						outpose.append_residue_by_bond(masterpose.residue(ir), false);
-						core::pose::remove_upper_terminus_type_from_pose_residue(outpose, outpose.n_residue());
+						core::pose::remove_upper_terminus_type_from_pose_residue(outpose, outpose.size());
 					}
 				}
 			} else { //if we're NOT designing a cyclic peptide, append everything up to startres, then append alanines, then do nothing up to endres, then append everything from endres to the end of the chain.
@@ -535,7 +535,7 @@ void create_loop (
 						outpose.append_residue_by_bond(masterpose.residue(ir), false);
 					}
 					if(ir==startres) {
-						core::pose::remove_upper_terminus_type_from_pose_residue(outpose, outpose.n_residue());
+						core::pose::remove_upper_terminus_type_from_pose_residue(outpose, outpose.size());
 						append_alanines(outpose, option[looplength](), d_only);
 					}
 				} else if(ir>=endres) {
@@ -580,14 +580,14 @@ void set_up_pose (
 	//Temporarily add startpos and endpos to the no_repack_positions vector to conveniently update these values as chains are moved around.  (These will be stripped off again).
 	no_repack_positions.push_back(startpos);
 	no_repack_positions.push_back(endpos);
-	const core::Size aas_in_stubchain = posechains[stub_chain]->n_residue();
+	const core::Size aas_in_stubchain = posechains[stub_chain]->size();
 	core::Size first_stubchain_aa=1;
 	if(stub_chain > 1) {
-		for(core::Size i=1; i<stub_chain; i++) first_stubchain_aa+=posechains[i]->n_residue();
+		for(core::Size i=1; i<stub_chain; i++) first_stubchain_aa+=posechains[i]->size();
 	}
 	core::Size aas_after_stubchain = 0;
 	if(stub_chain < posechains.size()) { //If the stub chain isn't the last pose chain
-		for(core::Size i=stub_chain, imax=posechains.size(); i<=imax; i++) aas_after_stubchain+=posechains[i]->n_residue();
+		for(core::Size i=stub_chain, imax=posechains.size(); i<=imax; i++) aas_after_stubchain+=posechains[i]->size();
 	}
 	if(no_repack_positions.size()>0) {
 		for(core::Size i=1, imax=no_repack_positions.size(); i<=imax; i++) {
@@ -623,7 +623,7 @@ void set_up_pose (
 		if((posechains[ichain]->residue(1).is_protein()) ) { //Skip non-protein chains
 			if(ichain!=stub_chain) {
 				core::pose::add_lower_terminus_type_to_pose_residue((*(posechains[ichain])), 1);
-				core::pose::add_upper_terminus_type_to_pose_residue((*(posechains[ichain])), posechains[ichain]->n_residue());
+				core::pose::add_upper_terminus_type_to_pose_residue((*(posechains[ichain])), posechains[ichain]->size());
 			}
 		}
 		if(ichain!=stub_chain) append_pose_by_jump(newpose, *(posechains[ichain])); //Append the chain, UNLESS it is the stub chain.
@@ -748,7 +748,7 @@ bool noclash (
 	atlist.push_back("O");
 	atlist.push_back("CB");
 
-	for(core::Size ir=1, nres=mypose.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
 		if((core::Size)mypose.chain(ir)==curchain) continue; //No clash check within chain.
 
 		for(core::Size ia1=1, ia1max=atlist.size(); ia1<=ia1max; ia1++) { //Loop through atoms in this residue
@@ -905,8 +905,8 @@ void kinclose(
 				copy_residue_position(dipeptide1, 2, mypose_copy, afterend); //Copy the position of the afterend residue
 				copy_residue_position(dipeptide1, 1, mypose_copy, end); //Copy the position of the end residue
 
-				if(!is_cyclic && mypose_copy.n_residue()>afterend) {
-					for(core::Size ir=afterend+1, nres=mypose_copy.n_residue(); ir<=nres; ir++) copy_residue_position(mypose, ir, mypose_copy, ir); //Copy the positions of the rest of the residues in the chain.
+				if(!is_cyclic && mypose_copy.size()>afterend) {
+					for(core::Size ir=afterend+1, nres=mypose_copy.size(); ir<=nres; ir++) copy_residue_position(mypose, ir, mypose_copy, ir); //Copy the positions of the rest of the residues in the chain.
 				}
 
 				mypose_copy.update_residue_neighbors();
@@ -961,7 +961,7 @@ void kinclose(
 				mutres.apply(mypose);
 				copy_residue_position(mypose_copy, ir, mypose, ir+( (is_cyclic && afterend == endres) ? 1 : 0 ));
 			}
-			copy_residue_position(mypose_copy, ( (is_cyclic && afterend == endres) ? mypose_copy.n_residue() : afterend), mypose, afterend);
+			copy_residue_position(mypose_copy, ( (is_cyclic && afterend == endres) ? mypose_copy.size() : afterend), mypose, afterend);
 			mypose.update_residue_neighbors();
 			//mypose.dump_pdb("postmutmove.pdb"); //DELETE ME
 			break;
@@ -986,7 +986,7 @@ bool near_chain (
 	core::Real distsq=0.0;
 	const core::Real radiussq=radius*radius;
 
-	for(core::Size ir=1, nres=mypose.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
 		if((core::Size)mypose.chain(ir)!=designchain) continue; //Skip residues outside of the design chain
 		if(!mypose.residue(ir).has("CA")) continue; //Skip if there's no alpha carbon
 		chainCAxyz = mypose.residue(ir).atom("CA").xyz();
@@ -1025,13 +1025,13 @@ void designloop(
 	}
 
 
-	const core::Size designchain = mypose.chain(mypose.n_residue()); //The last chain is the design chain
+	const core::Size designchain = mypose.chain(mypose.size()); //The last chain is the design chain
 
 	utility::vector1 < core::Size > dpositions; //List of D-amino acids
 
 	//mypose.dump_pdb("temp.pdb"); //DELETE ME
 
-	for(core::Size ir=startres,lastres=(is_cyclic?mypose.n_residue():endres); ir<=lastres; ir++) {
+	for(core::Size ir=startres,lastres=(is_cyclic?mypose.size():endres); ir<=lastres; ir++) {
 		if(core::chemical::is_canonical_D_aa(mypose.residue(ir).aa())) {
 			dpositions.push_back(ir);
 			if(!is_in_list(mypose.residue(ir).name3(), allowed_D_aas)) { //If this is DALA and DALA isn't an allowed D-amino acid, mutate to glycine temporarily
@@ -1050,7 +1050,7 @@ void designloop(
 
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(mypose);
 
-	for(core::Size ir=1,nres=mypose.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1,nres=mypose.size(); ir<=nres; ir++) {
 		if(!mypose.residue(ir).is_protein()) {
 			task->nonconst_residue_task(ir).prevent_repacking();
 			continue;
@@ -1162,7 +1162,7 @@ void relaxloop(
 			if( !is_in_list(can_repack_positions[i], no_repack_positions) ) mm->set_chi(can_repack_positions[i], true); //Turn on ONLY if not in the no_repack_positions list.
 		}
 	} else if(!option[repackradius].user()){ //If the user has NOT specified a relax radius, all residues can repack by default --> need to turn OFF for entries in the no_repack_positions list.
-		for(core::Size ir=1, nres=mypose.n_residue(); ir<=nres; ir++) {
+		for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
 			if(is_in_list(ir, no_repack_positions)) mm->set_chi(ir, false);
 		}
 	}
@@ -1212,8 +1212,8 @@ void set_loop_conformation(
 		//If this is not a cyclic peptide, all the backbone dihedral values are correct, now, BUT the residues after the loop
 		//are hanging out in space somewhere.  We need to fix this now.
 		core::pose::Pose afterresidues = mypose; //Make a copy of mypose.
-		superimposebb(afterresidues, refpose, endres, afterresidues.n_residue(), endres, refpose.n_residue(), true); //Superimpose the whole last chain.
-		for(core::Size ir=endres, irmax=afterresidues.n_residue(); ir<=irmax; ir++) copy_residue_position(afterresidues, ir, mypose, ir); //Copy the residue positions.
+		superimposebb(afterresidues, refpose, endres, afterresidues.size(), endres, refpose.size(), true); //Superimpose the whole last chain.
+		for(core::Size ir=endres, irmax=afterresidues.size(); ir<=irmax; ir++) copy_residue_position(afterresidues, ir, mypose, ir); //Copy the residue positions.
 		return; //We're done if this is NOT a cyclic peptide.  Otherwise, proceed to set the last psi and after-end phi values.
 	}
 

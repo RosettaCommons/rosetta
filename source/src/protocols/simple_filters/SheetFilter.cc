@@ -90,7 +90,7 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 	FArray1D_int res_num;
 
 	int const max_pos(5);
-	int const max_res(pose.total_residue());
+	int const max_res(pose.size());
 
 	FArray2D_float position( 3, max_pos*max_res );
 

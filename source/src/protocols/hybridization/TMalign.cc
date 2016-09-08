@@ -1785,11 +1785,11 @@ void  TMalign::alignment2AtomMap(
 	std::list <core::Size> residue_list1;
 	std::list <core::Size> residue_list2;
 
-	for ( Size ires=1; ires<= pose1.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose1.size(); ++ires ) {
 		if ( !pose1.residue(ires).is_protein() ) continue;
 		residue_list1.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose2.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose2.size(); ++ires ) {
 		if ( !pose2.residue(ires).is_protein() ) continue;
 		residue_list2.push_back(ires);
 	}
@@ -1805,11 +1805,11 @@ void  TMalign::alignment2AtomMap(
 	core::id::AtomID_Map< core::id::AtomID > & atom_map) {
 	std::list <core::Size> residue_list1;
 	std::list <core::Size> residue_list2;
-	for ( Size ires=1; ires<= pose1.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose1.size(); ++ires ) {
 		if ( !pose1.residue(ires).is_protein() ) continue;
 		residue_list1.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose2.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose2.size(); ++ires ) {
 		if ( !pose2.residue(ires).is_protein() ) continue;
 		residue_list2.push_back(ires);
 	}
@@ -1986,11 +1986,11 @@ core::Real  TMalign::TMscore(Size length) {
 int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
 	std::list <core::Size> residue_list1;
 	std::list <core::Size> residue_list2;
-	for ( Size ires=1; ires<= pose1.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose1.size(); ++ires ) {
 		if ( !pose1.residue(ires).is_protein() ) continue;
 		residue_list1.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose2.total_residue(); ++ires ) {
+	for ( Size ires=1; ires<= pose2.size(); ++ires ) {
 		if ( !pose2.residue(ires).is_protein() ) continue;
 		residue_list2.push_back(ires);
 	}

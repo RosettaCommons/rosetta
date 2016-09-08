@@ -52,12 +52,12 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
 		ResidueSubset subset = nneighbs_rs->apply( trpcage );
-		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
-		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			core::conformation::Residue const & iires = trpcage.residue(ii);
 			core::Size count_neighbs = 0;
-			for ( core::Size jj = 1; jj <= trpcage.total_residue(); ++jj ) {
+			for ( core::Size jj = 1; jj <= trpcage.size(); ++jj ) {
 				if ( ii == jj ) continue;
 				core::conformation::Residue const & jjres = trpcage.residue(jj);
 				if ( iires.xyz( iires.nbr_atom() ).distance_squared( jjres.xyz( jjres.nbr_atom() ) ) <= 100.0 ) ++count_neighbs;

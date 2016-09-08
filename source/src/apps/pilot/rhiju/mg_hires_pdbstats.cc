@@ -88,7 +88,7 @@ Size & total_residues, std::string const pdb_file)
 	using namespace core::chemical::rna;
 	using namespace protocols::magnesium;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	core::chemical::AtomTypeSet const & atom_type_set = pose.residue_type( 1 ).atom_type_set();
 

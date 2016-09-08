@@ -306,7 +306,7 @@ void my_main()
 		(*score_fxn)(p);
 		EnergyGraph const & energy_graph( p.energies().energy_graph() );
 
-		for (Size i=1; i<=p.n_residue(); i++) {
+		for (Size i=1; i<=p.size(); i++) {
 			Size nbr_within_ten=0;
 
 			conformation::Residue const & rsd1 ( p.residue(i) );
@@ -347,8 +347,8 @@ void my_main()
 		}
 
 		/// for each res-pair, cal dist
-		for (Size i=1; i<=p.n_residue(); i++) {
-			// for(Size j=i+option[sequence_seperation]; j<=p.n_residue(); j++) {
+		for (Size i=1; i<=p.size(); i++) {
+			// for(Size j=i+option[sequence_seperation]; j<=p.size(); j++) {
 			// 	// pair
 			// 	Real d = p.residue(i).atom("CEN").xyz().distance(p.residue(j).atom("CEN").xyz());
 			// 	Size bin_p = int(d/wbin)+1;

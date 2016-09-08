@@ -71,7 +71,7 @@ static THREAD_LOCAL basic::Tracer TR( "rblinker2" );
 
 
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
-// 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+// 	for(Size ir = 1; ir <= pose.size(); ++ir) {
 // 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 // 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 // 			pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
@@ -105,7 +105,7 @@ static THREAD_LOCAL basic::Tracer TR( "rblinker2" );
 
 
 inline void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
-	if(eres==0) eres = pose.n_residue();
+	if(eres==0) eres = pose.size();
 	for(Size ir = sres; ir <= eres; ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -114,7 +114,7 @@ inline void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & 
 	}
 }
 inline void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s ) {
-	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(Size ir = 1; ir <= pose.size(); ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
@@ -164,7 +164,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 unsigned long pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
-	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {
+	for(int i = 0; i < min( 16, (int)pose.size() ); ++i) {
 		Real phid = pose.phi(i+1);
 		Real psid = pose.psi(i+1);
 		// TR << phid << " " << psid << std::endl;
@@ -180,7 +180,7 @@ unsigned long pose2bin(core::pose::Pose const & pose) {
 
 Size get_aln_resi(core::pose::Pose const & pose, core::Size const aln_chain, char const aln_termi) {
 	Size resi = 0, nnt = 0, nct = 0;
-	for(Size i = 1; i <= pose.n_residue(); ++i) {
+	for(Size i = 1; i <= pose.size(); ++i) {
 		if(pose.residue(i).is_lower_terminus()) {
 			nnt++;
 			if(aln_termi=='N' && nnt==aln_chain) {
@@ -214,7 +214,7 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	Pose lnk;
 	string ggs = "GGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGSGGS";
 	make_pose_from_sequence( lnk , "A"+ggs.substr(0,len)+"A" , *resset , true);
-	for(Size i = 1; i <= lnk.n_residue(); ++i) {
+	for(Size i = 1; i <= lnk.size(); ++i) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
@@ -223,17 +223,17 @@ core::pose::Pose build_algned_linker(core::pose::Pose const & alnpose, Size len,
 	if(ft.num_jump() != 0) utility_exit_with_message("why is there a jump in the fold tree alreaduy?!?!?!");
 	ObjexxFCL::FArray2D_int jump_point(2,1);
 	ObjexxFCL::FArray1D_int cuts(1);
-	cuts(1) = lnk.n_residue()/2;
+	cuts(1) = lnk.size()/2;
 	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_LOWER",cuts(1)+0);
 	core::pose::add_variant_type_to_pose_residue(lnk,"CUTPOINT_UPPER",cuts(1)+1);
 	jump_point(1,1) = 1;
-	jump_point(2,1) = lnk.n_residue();
-	ft.tree_from_jumps_and_cuts( lnk.n_residue(), 1, jump_point, cuts );
+	jump_point(2,1) = lnk.size();
+	ft.tree_from_jumps_and_cuts( lnk.size(), 1, jump_point, cuts );
 	ft.set_jump_atoms(1,"N","C");
 	lnk.fold_tree(ft);
 
 	xform_pose(lnk, getxform(lnk.residue(     1         ),alnpose.residue(1)) );
-	xform_pose(lnk, getxform(lnk.residue(lnk.n_residue()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
+	xform_pose(lnk, getxform(lnk.residue(lnk.size()),alnpose.residue(2)), cuts(1)+1 ); // only after cutpoint
 
 	return lnk;
 }
@@ -268,7 +268,7 @@ void* doit(void*) {
 	TR << "linker2 size " << linklen2 << " seq2: " << seq2 << std::endl;
 
 	make_pose_from_sequence(lnk,seq1,*cenresset,true);
-	for(Size i = 1; i <= lnk.n_residue(); ++i) {
+	for(Size i = 1; i <= lnk.size(); ++i) {
 		lnk.set_phi  (i,-60);
 		lnk.set_psi  (i,-45);
 		lnk.set_omega(i,180);
@@ -284,19 +284,19 @@ void* doit(void*) {
 	Pose test,hyd;
 	core::import_pose::pose_from_file(test,*cenresset,"input/psI_0001_strip_0001.pdb", core::import_pose::PDB_file);
 	core::import_pose::pose_from_file(hyd ,*cenresset,"input/hyda1_0001_strip_0001.pdb", core::import_pose::PDB_file);
-	Size st = test.n_residue();
+	Size st = test.size();
 
-	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.n_residue());
+	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.size());
 	core::pose::remove_lower_terminus_type_from_pose_residue(lnk,1);
-	for(Size i = 1; i <= lnk.n_residue(); ++i) test.append_residue_by_bond(lnk.residue(i),true);
-	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.n_residue());
+	for(Size i = 1; i <= lnk.size(); ++i) test.append_residue_by_bond(lnk.residue(i),true);
+	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.size());
 	core::pose::remove_lower_terminus_type_from_pose_residue(hyd,1);
-	for(Size i = 1; i <= hyd.n_residue(); ++i) test.append_residue_by_bond(hyd.residue(i),true);
+	for(Size i = 1; i <= hyd.size(); ++i) test.append_residue_by_bond(hyd.residue(i),true);
 
 	test = lnk;
 
-	// MoverOP bbmove = new SimpleBBMover(st+2,st+lnk.n_residue(),30.0);
-	MoverOP bbmove = new SimpleBBMover(1,lnk.n_residue(),30.0);
+	// MoverOP bbmove = new SimpleBBMover(st+2,st+lnk.size(),30.0);
+	MoverOP bbmove = new SimpleBBMover(1,lnk.size(),30.0);
 	MonteCarloOP mc1 = new MonteCarlo( test, *sf, 2.0 );
 	mc1->set_autotemp( true, 2.0 ); mc1->set_temperature( 2.0 );
 	TrialMover trial(bbmove,mc1);

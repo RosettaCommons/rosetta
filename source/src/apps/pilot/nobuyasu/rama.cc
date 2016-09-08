@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 
 		using namespace ObjexxFCL::format;
 		out << "# resn aa ss abego phi psi omega" << std::endl;
-		for ( core::Size ii=1; ii<=pose.total_residue(); ii++ ) {
+		for ( core::Size ii=1; ii<=pose.size(); ii++ ) {
 			out << I( 5, pose.pdb_info()->number( ii ) ) << " " << oneletter_code_from_aa( pose.aa( ii ) ) << " " << pose.secstruct( ii ) << " " << abego_[ ii ] << " "
 				<< F( 8, 2, pose.phi( ii ) ) << F( 8, 2, pose.psi( ii ) ) << F( 8, 2, pose.omega( ii ) )
 				<< std::endl;

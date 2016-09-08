@@ -60,7 +60,7 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 {
 	using namespace core::kinematics;
 
-	core::Size nres ( pose.total_residue() );
+	core::Size nres ( pose.size() );
 	core::Size nres_flexible_segment( nres - chain_start_ );
 	// Does the chain start at a reasonable place in the sequence?
 	runtime_assert( chain_start_ > 1 && chain_start_ <= nres );

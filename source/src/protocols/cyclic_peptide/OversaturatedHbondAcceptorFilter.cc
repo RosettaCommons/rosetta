@@ -297,7 +297,7 @@ OversaturatedHbondAcceptorFilter::compute(
 	(*scorefxn)(pose_copy);
 
 	//Number of residues in the pose:
-	core::Size const nres(pose_copy.n_residue());
+	core::Size const nres(pose_copy.size());
 
 	//The hydrogen bond set:
 	HBondSet hbond_set( energy_options->hbond_options() );

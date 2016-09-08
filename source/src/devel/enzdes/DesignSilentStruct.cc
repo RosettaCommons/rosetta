@@ -55,7 +55,7 @@ DesignSilentStruct::DesignSilentStruct(
 {
 	decoy_tag( tag );
 	sequence( pose.sequence() );
-	nres( pose.total_residue() );
+	nres( pose.size() );
 
 	print_additional_ = add_in;
 	print_only_additional_ = onlyadd_in;
@@ -94,7 +94,7 @@ DesignSilentStruct::DesignSilentStruct(
 
 	decoy_tag( tag );
 	sequence( pose.sequence() );
-	nres( pose.total_residue() );
+	nres( pose.size() );
 
 	print_additional_ = add_in;
 	print_only_additional_ = onlyadd_in;

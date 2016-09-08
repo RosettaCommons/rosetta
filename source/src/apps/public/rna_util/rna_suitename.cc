@@ -75,7 +75,7 @@ rna_suitename()
 		core::pose::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
 
 		std::cout << "-----Pose " << i << "-----" << std::endl;
-		for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+		for ( Size j = 1; j <= pose.size(); ++j ) {
 			RNA_SuiteAssignment assignment = suitename.assign(pose, j);
 			std::cout << "Residue " << j << ' ' << assignment.name << ' ' << std::setprecision(3) <<assignment.suiteness << std::endl;
 		}

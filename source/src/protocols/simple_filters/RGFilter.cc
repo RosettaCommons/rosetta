@@ -55,7 +55,7 @@ bool RGFilter::apply( core::pose::Pose const & pose ) const {
 	core::scoring::methods::RG_Energy_Fast rg_energy;
 
 	core::Real rg_threshold
-		= ( 3.0 * std::pow( static_cast< float >( pose.total_residue() ), ( 1.0f / 3 ) ) ) + 2;
+		= ( 3.0 * std::pow( static_cast< float >( pose.size() ), ( 1.0f / 3 ) ) ) + 2;
 	//core::Real rg_score = (*scorefxn)( pose );
 
 	core::Real rg_score = rg_energy.calculate_rg_score( pose );

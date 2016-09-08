@@ -218,7 +218,7 @@ PredesignPerturbMover::set_docking_pose(
 {
 	toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
 
-	for ( core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( task -> design_residue(i) && !(cst_cache && cst_cache->contains_position(i)) ) {
 			positions_to_replace_.push_back(i);
 		}

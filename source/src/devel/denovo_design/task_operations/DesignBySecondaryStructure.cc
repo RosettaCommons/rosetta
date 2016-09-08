@@ -54,7 +54,7 @@ find_ligands( core::pose::Pose const & pose )
 {
 	utility::vector1<core::Size> retval;
 	// look at each amino acid to see if it is of unknown type
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( ! pose.residue( i ).is_protein() ) {
 			TR << "Residue " << i << " (type=" << pose.residue(i).name3() << ") is probably a ligand" << std::endl;
 			retval.push_back( i );
@@ -152,7 +152,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 		dssp.apply( posecopy );
 		wanted_ss = posecopy.secstruct();
 		std::string pruned_ss( "" );
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pose.residue(i).is_protein() ) {
 				pruned_ss += wanted_ss[i-1];
 			}
@@ -170,7 +170,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 	if ( ! psipred_interface_ ) {
 		runtime_assert( ss_predictor_ != 0 );
 		std::string sequence( "" );
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pose.residue( i ).is_protein() ) {
 				sequence += pose.residue( i ).name1();
 			}

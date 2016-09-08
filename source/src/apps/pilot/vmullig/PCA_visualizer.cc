@@ -187,7 +187,7 @@ void fix_cyclic_termini (core::pose::Pose &mypose) {
 	using namespace core::id;
 
 	core::pose::remove_lower_terminus_type_from_pose_residue(mypose, 1);
-	core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.n_residue());
+	core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.size());
 	core::Size hindex = mypose.residue(1).atom_index("H");
 
 	//Rebuild the N-terminal proton.  This has to be done in a slightly irritating way because Rosetta doesn't really like the fact
@@ -196,7 +196,7 @@ void fix_cyclic_termini (core::pose::Pose &mypose) {
 		core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		core::pose::Pose dialanine;
 		std::string diala_seq = "";
-		if(mypose.residue(mypose.n_residue()).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
+		if(mypose.residue(mypose.size()).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
 		if(mypose.residue(1).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
 
 		//core::pose::make_pose_from_sequence(dialanine, "AA", *standard_residues, true); //The termini are OPEN.
@@ -213,8 +213,8 @@ void fix_cyclic_termini (core::pose::Pose &mypose) {
 
 
 		core::Real omegaval = numeric::dihedral_degrees(
-				mypose.residue(mypose.n_residue()).xyz( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ),
-				mypose.residue(mypose.n_residue()).xyz("C"),
+				mypose.residue(mypose.size()).xyz( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ),
+				mypose.residue(mypose.size()).xyz("C"),
 				mypose.residue(1).xyz("N"),
 				mypose.residue(1).xyz("CA")
 			);
@@ -224,9 +224,9 @@ void fix_cyclic_termini (core::pose::Pose &mypose) {
 
 		core::id::AtomID_Map< core::id::AtomID > amap;
 		core::pose::initialize_atomid_map(amap,dialanine,core::id::BOGUS_ATOM_ID);
-		amap[AtomID(dialanine.residue(1).atom_index((dialanine.residue(1).has("CM")?"CM":"CA")),1)] = AtomID(mypose.residue(mypose.n_residue()).atom_index((dialanine.residue(1).has("CM")?"CM":"CA")),mypose.n_residue());
-		amap[AtomID(dialanine.residue(1).atom_index("C"),1)] = AtomID(mypose.residue(mypose.n_residue()).atom_index("C"),mypose.n_residue());
-		amap[AtomID(dialanine.residue(1).atom_index("O"),1)] = AtomID(mypose.residue(mypose.n_residue()).atom_index("O"),mypose.n_residue());
+		amap[AtomID(dialanine.residue(1).atom_index((dialanine.residue(1).has("CM")?"CM":"CA")),1)] = AtomID(mypose.residue(mypose.size()).atom_index((dialanine.residue(1).has("CM")?"CM":"CA")),mypose.size());
+		amap[AtomID(dialanine.residue(1).atom_index("C"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("C"),mypose.size());
+		amap[AtomID(dialanine.residue(1).atom_index("O"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("O"),mypose.size());
 		amap[AtomID(dialanine.residue(2).atom_index("N"),2)] = AtomID(mypose.residue(1).atom_index("N"),1);
 		amap[AtomID(dialanine.residue(2).atom_index("CA"),2)] = AtomID(mypose.residue(1).atom_index("CA"),1);
 		core::scoring::superimpose_pose( dialanine, mypose, amap );
@@ -234,7 +234,7 @@ void fix_cyclic_termini (core::pose::Pose &mypose) {
 		mypose.conformation().set_xyz(AtomID(hindex, 1), dialanine.residue(2).xyz("H"));
 	}
 
-	mypose.conformation().declare_chemical_bond(1, "N", mypose.n_residue(), "C"); //Declare a chemical bond between the N and C termini.
+	mypose.conformation().declare_chemical_bond(1, "N", mypose.size(), "C"); //Declare a chemical bond between the N and C termini.
 }
 
 //Function to count the number of backbone dihedral angles in an input structure, and to confirm that these match the PCA file.
@@ -247,7 +247,7 @@ bool checkresiduecount (
 
 	core::Size count=0;
 
-	for(core::Size ir=1, nres=mypose.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
 		if(mypose.residue(ir).type().is_beta_aa()) {
 			count+=4; //Beta-amino acid
 			if(mypose.residue(ir).is_lower_terminus() || ir==1) count--;
@@ -403,17 +403,17 @@ int main( int argc, char * argv [] ) {
 
 			//Once the perturbation vector has been generated, loop through all residues and perturb the backbone:
 			core::Size pertindex = 1;
-			for(core::Size ir=1; ir<=perturbedpose.n_residue(); ir++) {
+			for(core::Size ir=1; ir<=perturbedpose.size(); ir++) {
 				if(perturbedpose.residue(ir).type().is_beta_aa()) { //beta-amino acids
 					if(ir>1 && !perturbedpose.residue(ir).is_lower_terminus()) betapeptide_setphi(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(1)+pertvector[pertindex++]);
 					betapeptide_settheta(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(2)+pertvector[pertindex++]);
-					if(ir<perturbedpose.n_residue() && !perturbedpose.residue(ir).is_upper_terminus()) {
+					if(ir<perturbedpose.size() && !perturbedpose.residue(ir).is_upper_terminus()) {
 						betapeptide_setpsi(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(3)+pertvector[pertindex++]);
 						betapeptide_setomega(perturbedpose, ir, perturbedpose.residue(ir).mainchain_torsion(4)+pertvector[pertindex++]);
 					}
 				} else if (perturbedpose.residue(ir).type().is_alpha_aa()) { //alpha-amino acids:
 					if(ir>1 && !perturbedpose.residue(ir).is_lower_terminus()) perturbedpose.set_phi(ir, perturbedpose.phi(ir)+pertvector[pertindex++]);
-					if(ir<perturbedpose.n_residue()  && !perturbedpose.residue(ir).is_lower_terminus()) {
+					if(ir<perturbedpose.size()  && !perturbedpose.residue(ir).is_lower_terminus()) {
 						perturbedpose.set_psi(ir, perturbedpose.psi(ir)+pertvector[pertindex++]);
 						perturbedpose.set_omega(ir, perturbedpose.omega(ir)+pertvector[pertindex++]);
 					}
@@ -424,10 +424,10 @@ int main( int argc, char * argv [] ) {
 			//If this is a cyclic peptide, perturb the backbone dihedral angles adjacent to the peptide bond linking the N- and C-termini
 			if(option[cyclic]()) {
 				core::Real ang1 = numeric::dihedral_degrees (
-					perturbedpose.residue(perturbedpose.n_residue()).xyz( (perturbedpose.residue(perturbedpose.n_residue()).has("CM")?"CA":"N") ),
-					perturbedpose.residue(perturbedpose.n_residue()).xyz( (perturbedpose.residue(perturbedpose.n_residue()).has("CM")?"CM":"CA") ),
-					perturbedpose.residue(perturbedpose.n_residue()).xyz("C"),
-					perturbedpose.residue(perturbedpose.n_residue()).xyz( "O")
+					perturbedpose.residue(perturbedpose.size()).xyz( (perturbedpose.residue(perturbedpose.size()).has("CM")?"CA":"N") ),
+					perturbedpose.residue(perturbedpose.size()).xyz( (perturbedpose.residue(perturbedpose.size()).has("CM")?"CM":"CA") ),
+					perturbedpose.residue(perturbedpose.size()).xyz("C"),
+					perturbedpose.residue(perturbedpose.size()).xyz( "O")
 				);
 				core::Real ang2 = numeric::dihedral_degrees (
 					perturbedpose.residue(1).xyz("H"),
@@ -436,10 +436,10 @@ int main( int argc, char * argv [] ) {
 					perturbedpose.residue(1).xyz( (perturbedpose.residue(1).has("CM")?"CM":"C") )
 				);
 				perturbedpose.conformation().set_torsion_angle(//Set psi of last residue
-					core::id::AtomID(perturbedpose.residue(perturbedpose.n_residue()).atom_index( (perturbedpose.residue(perturbedpose.n_residue()).has("CM")?"CA":"N") ), perturbedpose.n_residue()),
-					core::id::AtomID(perturbedpose.residue(perturbedpose.n_residue()).atom_index( (perturbedpose.residue(perturbedpose.n_residue()).has("CM")?"CM":"CA") ), perturbedpose.n_residue()),
-					core::id::AtomID(perturbedpose.residue(perturbedpose.n_residue()).atom_index("C"), perturbedpose.n_residue()),
-					core::id::AtomID(perturbedpose.residue(perturbedpose.n_residue()).atom_index("O"), perturbedpose.n_residue()),
+					core::id::AtomID(perturbedpose.residue(perturbedpose.size()).atom_index( (perturbedpose.residue(perturbedpose.size()).has("CM")?"CA":"N") ), perturbedpose.size()),
+					core::id::AtomID(perturbedpose.residue(perturbedpose.size()).atom_index( (perturbedpose.residue(perturbedpose.size()).has("CM")?"CM":"CA") ), perturbedpose.size()),
+					core::id::AtomID(perturbedpose.residue(perturbedpose.size()).atom_index("C"), perturbedpose.size()),
+					core::id::AtomID(perturbedpose.residue(perturbedpose.size()).atom_index("O"), perturbedpose.size()),
 					(ang1+pertvector[pertindex++])/180.0*PI);
 				pertindex++;
 				perturbedpose.conformation().set_torsion_angle( //Set phi of first residue

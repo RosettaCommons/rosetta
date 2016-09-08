@@ -193,8 +193,8 @@ XfoxmScore::score(
 		dssp.insert_ss_into_pose(pose);
 	}
 	float tot_score = 0.0;
-	for ( platform::Size ir = 1; ir <= pose.n_residue(); ++ir ) {
-		for ( platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr ) {
+	for ( platform::Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( platform::Size jr = ir+1; jr <= pose.size(); ++jr ) {
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;
@@ -210,8 +210,8 @@ XfoxmScore::score(
 	core::pose::Pose const & pose
 ) const {
 	float tot_score = 0.0;
-	for ( platform::Size ir = 1; ir <= pose.n_residue(); ++ir ) {
-		for ( platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr ) {
+	for ( platform::Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( platform::Size jr = ir+1; jr <= pose.size(); ++jr ) {
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;

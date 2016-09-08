@@ -228,10 +228,10 @@ void run_old() {
 	//  fragment::FragSetOP ss_frags = fragment::FragmentIO().read_data( basic::options::option[ basic::options::OptionKeys::frags_for_ss ]() );
 	//  core::conformation::SecondaryStructure ss_def( *ss_frags, false /*no JustUseCentralResidue */ );
 
-	//  utility::vector1< bool > beta_ss( ss_def.total_residue(), false );
-	//  utility::vector1< bool > helix_ss( ss_def.total_residue(), false );
-	//  utility::vector1< bool > any_ss( ss_def.total_residue(), false );
-	//  for ( Size i=1; i<=ss_def.total_residue(); ++i ) {
+	//  utility::vector1< bool > beta_ss( ss_def.size(), false );
+	//  utility::vector1< bool > helix_ss( ss_def.size(), false );
+	//  utility::vector1< bool > any_ss( ss_def.size(), false );
+	//  for ( Size i=1; i<=ss_def.size(); ++i ) {
 	//   if ( ss_def.strand_fraction( i )>0.7 ) beta_ss[ i ]=true;
 	//   if ( ss_def.helix_fraction( i )>0.7 ) helix_ss[ i ] = true;
 	//   if ( helix_ss[ i ] ) tr.Debug << "helix " << i << std::endl;
@@ -271,8 +271,8 @@ void run_old() {
 	id::NamedAtomID const& atom2( assignment.atom( *resonances, 2 ) ); //[ (*it)->proton( 2 ).assignment( ind_assigned ) ].atom() );
 	if ( atom1.rsd() != atom2.rsd() ) {
 	//   if ( beta_ss[ atom1.rsd() ] && beta_ss[ atom2.rsd() ]
-	//       && atom1.rsd() > 1 && atom1.rsd() < ss_def.total_residue() && ( beta_ss[ atom1.rsd()-1 ] || beta_ss[ atom1.rsd()+1] )
-	//       && atom2.rsd() > 1 && atom2.rsd() < ss_def.total_residue() && ( beta_ss[ atom2.rsd()-1 ] || beta_ss[ atom2.rsd()+1] )
+	//       && atom1.rsd() > 1 && atom1.rsd() < ss_def.size() && ( beta_ss[ atom1.rsd()-1 ] || beta_ss[ atom1.rsd()+1] )
+	//       && atom2.rsd() > 1 && atom2.rsd() < ss_def.size() && ( beta_ss[ atom2.rsd()-1 ] || beta_ss[ atom2.rsd()+1] )
 	//      ) {
 	cst_output_file << "AmbiguousNMRDistance " << atom1 << " " << atom2 << " BOUNDED 1.5 6 0.5 NOE ; unambiguous NOE " << ct << std::endl;     //}
 	}
@@ -287,8 +287,8 @@ void run_old() {
 	id::NamedAtomID const& atom2( assignment.atom( *resonances, 2 ) ); //[ (*it)->proton( 2 ).assignment( ind_assigned ) ].atom() );
 	if ( atom1.rsd() != atom2.rsd() ) {
 	//     if ( beta_ss[ atom1.rsd() ] && beta_ss[ atom2.rsd() ]
-	//       && atom1.rsd() > 1 && atom1.rsd() < ss_def.total_residue() && ( beta_ss[ atom1.rsd()-1 ] || beta_ss[ atom1.rsd()+1] )
-	//       && atom2.rsd() > 1 && atom2.rsd() < ss_def.total_residue() && ( beta_ss[ atom2.rsd()-1 ] || beta_ss[ atom2.rsd()+1] )
+	//       && atom1.rsd() > 1 && atom1.rsd() < ss_def.size() && ( beta_ss[ atom1.rsd()-1 ] || beta_ss[ atom1.rsd()+1] )
+	//       && atom2.rsd() > 1 && atom2.rsd() < ss_def.size() && ( beta_ss[ atom2.rsd()-1 ] || beta_ss[ atom2.rsd()+1] )
 	// ) {
 	cst_output_file << "AmbiguousNMRDistance " << atom1 << " " << atom2 << " BOUNDED 1.5 6 0.5 NOE ; ambiguous NOE " << ct << std::endl;
 	}

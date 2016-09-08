@@ -94,7 +94,7 @@ void SequenceClaimer::make_sequence_claim() {
 		label(),
 		priority_
 		) );
-	runtime_assert( my_pose.total_residue() == sequence_claim_->length() );
+	runtime_assert( my_pose.size() == sequence_claim_->length() );
 }
 
 void SequenceClaimer::generate_sequence_claims( claims::DofClaims& new_claims ) {

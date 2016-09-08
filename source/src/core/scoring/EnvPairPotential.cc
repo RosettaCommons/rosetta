@@ -66,7 +66,7 @@ CenListInfo::CenListInfo( CenListInfo const & src ) :
 void
 CenListInfo::initialize( pose::Pose const & pose )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	fcen6_.resize( nres, 0.0 );
 	fcen10_.resize( nres, 0.0 );
@@ -295,7 +295,7 @@ EnvPairPotential::compute_centroid_environment(
 	/// calculate the cenlist info only if it has not been calculated since the last score evaluation
 	if ( cenlist.calculated() ) return;
 
-	// ensure that cenlist has pose.total_residue() elements in case the pose has
+	// ensure that cenlist has pose.size() elements in case the pose has
 	// changed its sequence lenght since the last cenlist update
 	cenlist.initialize( pose );
 

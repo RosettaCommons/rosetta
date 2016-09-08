@@ -537,12 +537,12 @@ PCS_Energy_Ts1::calculate_scores_and_tensors_from_pose_and_PCS_data( utility::ve
 	core::Size grid_residue_num_2 (PCS_Energy_parameters_manager_Ts1::get_instance()->get_grid_residue_num_2());
 	core::Real grid_k_vector (PCS_Energy_parameters_manager_Ts1::get_instance()->get_grid_k_vector());
 
-	if ( grid_residue_num_1 > pdb.total_residue() ) {
+	if ( grid_residue_num_1 > pdb.size() ) {
 		std::cerr << "Error: Couldn't find residue " << grid_residue_num_1 << std::endl;
 		std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 		utility_exit_with_message("Can't define gridsearchiterator");
 	}
-	if ( grid_residue_num_2> pdb.total_residue() ) {
+	if ( grid_residue_num_2> pdb.size() ) {
 		std::cerr << "Error: Couldn't find residue " << grid_residue_num_1 << std::endl;
 		std::cerr << "Numbering residue within Rosetta match the sequence provided as input" << std::endl;
 		utility_exit_with_message("Can't define gridsearchiterator");

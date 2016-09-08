@@ -127,7 +127,7 @@ StepWiseProteinMinimizer::apply( core::pose::Pose & pose )
 
 	// testing unification...
 	utility::vector1< Size > working_minimize_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) { if ( !fixed_res_.has_value( n ) ) working_minimize_res.push_back( n );}
+	for ( Size n = 1; n <= pose.size(); n++ ) { if ( !fixed_res_.has_value( n ) ) working_minimize_res.push_back( n );}
 	figure_out_stepwise_movemap( mm_start, pose, working_minimize_res, move_takeoff_torsions_ );
 	//  output_movemap( mm_start, pose, TR );
 
@@ -244,7 +244,7 @@ StepWiseProteinMinimizer::pose_has_chainbreak( pose::Pose const & pose ){
 	// this is pretty conservative -- actually  there might be
 	// cases where the pose has a chainbreak but the minimized dofs would
 	// not affect the relative positions of the chainbreak residues.
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.residue_type(i).has_variant_type( "CUTPOINT_UPPER" ) ) return true;
 		if ( pose.residue_type(i).has_variant_type( "CUTPOINT_LOWER" ) ) return true;
 	}

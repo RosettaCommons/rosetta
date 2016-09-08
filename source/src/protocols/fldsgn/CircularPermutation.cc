@@ -162,7 +162,7 @@ CircularPermutation::split_chains( Pose & pose, utility::vector1< Size > const &
 	// insert chain endings
 	for ( Size i=1; i<=pos.size(); i++ ) {
 		Size position = pos[ i ];
-		runtime_assert( position >= 1 && position <= pose.total_residue() );
+		runtime_assert( position >= 1 && position <= pose.size() );
 		pose.conformation().insert_chain_ending( position );
 	}
 
@@ -211,7 +211,7 @@ void CircularPermutation::apply( Pose & pose )
 		TR << "No position to be permutated was specified. " << std::endl;
 		return;
 	}
-	runtime_assert( new_terminal_pos_ > 1 && new_terminal_pos_ <= pose.total_residue() );
+	runtime_assert( new_terminal_pos_ > 1 && new_terminal_pos_ <= pose.size() );
 
 	// make pose asymmetric if pose is symmetric
 	if ( is_symmetric( pose ) ) {
@@ -229,7 +229,7 @@ void CircularPermutation::apply( Pose & pose )
 
 		chain_begin = 1;
 		// find final chains
-		for ( Size i=1; i<=pose.total_residue(); i++ ) {
+		for ( Size i=1; i<=pose.size(); i++ ) {
 			if ( pose.residue( i ).is_protein() && static_cast< int >( chain )< pose.chain( i ) ) {
 				chain = pose.chain( i );
 			}
@@ -254,7 +254,7 @@ void CircularPermutation::apply( Pose & pose )
 	pose.conformation().delete_residue_range_slow( chain_begin, new_terminal_pos_ - 1 );
 
 	// Blow away the latter parts of swap_in pose
-	swap_in.conformation().delete_residue_range_slow( new_terminal_pos_, swap_in.total_residue() );
+	swap_in.conformation().delete_residue_range_slow( new_terminal_pos_, swap_in.size() );
 	if ( chain_begin > 1 ) {
 		// Blow away the former parts of swap_in pose
 		swap_in.conformation().delete_residue_range_slow( 1, chain_begin - 1 );

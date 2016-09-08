@@ -97,7 +97,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 
 	Antibody antibody_in( pose_in, camelid_ );
 	SequenceMoverOP graft_sequence( new SequenceMover() );
-	Size nres = pose_in.total_residue();
+	Size nres = pose_in.size();
 
 	// Storing secondary structure
 	utility::vector1<char> secondary_struct_storage;
@@ -383,7 +383,7 @@ GraftOneMover::get_name() const {
 	return "GraftOneMover";
 }
 void GraftOneMover::apply( pose::Pose & pose_in ) {
-	Size const nres( pose_in.total_residue() ); // Total residues
+	Size const nres( pose_in.size() ); // Total residues
 	Size query_size = ( query_end_ - query_start_ ) + 1;
 
 	pose::Pose truncated_pose;
@@ -458,7 +458,7 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 void GraftMover::relax_optimized_CDR_grafts( pose::Pose & pose_in ) {
 	Size loop_begin(0), loop_end(0);
 	bool detect_flag( false );
-	for ( Size ii = 1; ii <= pose_in.total_residue(); ii++ ) {
+	for ( Size ii = 1; ii <= pose_in.size(); ii++ ) {
 		if ( (pose_in.secstruct(ii) == 'Y') && !detect_flag ) {
 			loop_begin = ii;
 			detect_flag = true;
@@ -591,7 +591,7 @@ void CloseOneMover::close_one_loop_stem (
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
-	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
 	for ( Size ii = loop_flex_begin; ii <= loop_flex_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 		pose_in.set_secstruct( ii, 'Y' );
@@ -636,7 +636,7 @@ void CloseOneMover::close_one_loop_stem (
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
-	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
 	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 		pose_in.set_secstruct( ii, 'Y' );
@@ -831,7 +831,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
-	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
 	for ( Size ii = loop_start_; ii <= loop_end_; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
@@ -865,7 +865,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 		}
 	}
 
-	utility::vector1< bool> allow_repack( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_repack( pose_in.size(), false );
 	select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
 		allow_repack);
 	loop_map->set_chi( allow_repack );

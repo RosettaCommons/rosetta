@@ -60,7 +60,7 @@ remove_all_virtual_residues(
 	core::pose::Pose & pose
 ){
 	//assert(pose);
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue_type(i).name() == "VRT" ) {
 			pose.conformation().delete_residue_slow(i);
 		}
@@ -110,9 +110,9 @@ nosuper_CA_rmsd(
 	core::Size offset = pos_2 - pos_1;
 	tr_rms_util << "offset: " << offset << std::endl;
 
-	for ( core::Size irsd=1; irsd <= pose1.n_residue(); ++irsd ) {
+	for ( core::Size irsd=1; irsd <= pose1.size(); ++irsd ) {
 		tr_rms_util << pose1.residue( irsd ) << std::endl;
-		if ( irsd+offset > pose1.n_residue() ) { break; }
+		if ( irsd+offset > pose1.size() ) { break; }
 		if ( pose1.residue( irsd ).is_virtual_residue() ) { continue; }
 
 		core::Vector diff = pose1.residue( irsd + offset ).xyz( atom_name ) - pose2.residue( irsd ).xyz( atom_name );
@@ -140,7 +140,7 @@ native_frag_CA_RMSD(
 
 	// get frag length
 	core::Size Nmers_size;
-	Nmers_size = frag_pose.total_residue();
+	Nmers_size = frag_pose.size();
 
 	//tr_rms_util << "native_sequence:" << sequence << std::endl;
 	//tr_rms_util << "frag_pose Nmers_size:" << Nmers_size << std::endl;

@@ -300,7 +300,7 @@ ContinuousRotamerSets::ContinuousRotamerSets(
 	task::PackerTask const & task
 )
 {
-	total_residue_ = pose.total_residue();
+	total_residue_ = pose.size();
 	nmoltenres_ = task.num_to_be_packed();
 	moltenresid_2_resid_.resize( nmoltenres_ );
 	resid_2_moltenresid_.resize( total_residue_, 0 );

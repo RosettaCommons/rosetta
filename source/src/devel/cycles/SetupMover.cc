@@ -42,7 +42,7 @@ void SetupMover::apply(pose::Pose& pose) {
 void SetupMover::remove_termini_patches(pose::Pose& pose) {
 
 	Size first_index = 1;
-	Size last_index = pose.total_residue();
+	Size last_index = pose.size();
 
 	// This method triggers three error messages in the Residue class.  Since all 
 	// of these errors are corrected later on by this mover, these messages are 

@@ -86,11 +86,11 @@ void gpu_refold_test(uint const NITER) {
 
   TR << "setup poses" << endl;
   Pose p( *core::import_pose::pose_from_file(*crs,option[in::file::s]()[1],false) , core::import_pose::PDB_file); 
-  for(Size i = 1; i <= p.n_residue(); ++i) {
+  for(Size i = 1; i <= p.size(); ++i) {
     if(p.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(p,i);
     if(p.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(p,i);
   }
-  uint N = p.n_residue();
+  uint N = p.size();
   vector1<xyzVector<Real> > nat_crd(3*N);
   for(Size i=1;i<=N;++i){nat_crd[3*i-2]=p.xyz(AtomID(1,i));nat_crd[3*i-1]=p.xyz(AtomID(2,i));nat_crd[3*i-0]=p.xyz(AtomID(3,i));}
   // p.dump_pdb("refold_natv.pdb");
@@ -130,7 +130,7 @@ void gpu_refold_test(uint const NITER) {
 
   Pose tmp;
   core::pose::make_pose_from_sequence(tmp,nat.sequence(),*crs,false);
-  for(Size i = 1; i <= tmp.n_residue(); ++i) {
+  for(Size i = 1; i <= tmp.size(); ++i) {
     if(tmp.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(tmp,i);
     if(tmp.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(tmp,i);
   }
@@ -285,7 +285,7 @@ void gpu_refold_test(uint const NITER) {
   vector1<xyzVector<Real> > gpu_crd(3*N); {
     Pose tmp;
     core::pose::make_pose_from_sequence(tmp,nat.sequence(),*crs,false);
-    for(Size i = 1; i <= tmp.n_residue(); ++i) {
+    for(Size i = 1; i <= tmp.size(); ++i) {
       if(tmp.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(tmp,i);
       if(tmp.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(tmp,i);
     }

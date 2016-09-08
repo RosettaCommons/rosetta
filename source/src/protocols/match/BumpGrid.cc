@@ -1167,11 +1167,11 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 	Vector first_xyz( 0 );
 	Real at1rad( 0.0 );
 
-	if ( pose.total_residue() < 1 ) {
+	if ( pose.size() < 1 ) {
 		return BumpGridOP( new BumpGrid );
 	} else {
 		bool found_an_atom( false );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue( ii ).natoms() > 0 ) {
 				first_xyz = pose.residue( ii ).xyz( 1 );
 				at1rad = probe_radius_for_atom_type( pose.residue( ii ).atom( 1 ).type() );
@@ -1186,7 +1186,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 	}
 
 	Vector bbl( first_xyz - at1rad ), bbu( first_xyz + at1rad );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( Size jj = 1; jj <= pose.residue( ii ).natoms(); ++jj ) {
 			Real jjrad = BumpGrid::probe_radius( probe_radius_for_atom_type( pose.residue_type( ii ).atom( jj ).atom_type_index() ));
 			bbl.min( pose.residue( ii ).xyz( jj ) - jjrad );

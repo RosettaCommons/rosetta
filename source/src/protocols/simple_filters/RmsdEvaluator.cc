@@ -56,7 +56,7 @@ RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, Size start, Size end, st
 	report_gdt_components_ ( false )
 {
 	runtime_assert( start >=1 );
-	runtime_assert( end <= pose -> total_residue() );
+	runtime_assert( end <= pose->size() );
 }
 
 RmsdEvaluator::~RmsdEvaluator() = default;
@@ -65,7 +65,7 @@ RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, std::string tag, bool bG
 : evaluation::SingleValuePoseEvaluator< Real > ("rms"+tag),
 	rmsd_pose_( pose ),
 	start_( 1 ),
-	end_( pose->total_residue() ),
+	end_( pose->size() ),
 	bGDT_ ( bGDT ),
 	tag_( tag ),
 	report_gdt_components_ ( false )
@@ -102,11 +102,11 @@ RmsdEvaluator::apply( core::pose::Pose& pose, std::string tag, core::io::silent:
 Real RmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	runtime_assert( rmsd_pose_ != nullptr );
 	core::Real rmsd;
-	if ( start_ == 1 && end_ == rmsd_pose_->total_residue() ) {
-		runtime_assert( pose.total_residue() >= end_ );
+	if ( start_ == 1 && end_ == rmsd_pose_->size() ) {
+		runtime_assert( pose.size() >= end_ );
 		rmsd = core::scoring::CA_rmsd( *rmsd_pose_, pose );
 	} else {
-		runtime_assert( pose.total_residue() >= end_ );
+		runtime_assert( pose.size() >= end_ );
 		rmsd = core::scoring::CA_rmsd( *rmsd_pose_, pose, start_, end_ );
 	}
 	return rmsd;

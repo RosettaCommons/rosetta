@@ -111,7 +111,7 @@ stepwise_monte_carlo()
 	StepWiseMove const test_move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() );
 
 	// actual pose to be sampled... do not score pose is user has specified a move
-	if ( pose.total_residue() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( pose );
+	if ( pose.size() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( pose );
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
 

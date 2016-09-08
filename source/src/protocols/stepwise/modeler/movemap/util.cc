@@ -73,7 +73,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	bool const move_takeoff_torsions /* = true */ ){
 
 	utility::vector1< core::Size > working_minimize_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !working_fixed_res.has_value( n ) || working_extra_minimize_res.has_value( n ) ) working_minimize_res.push_back( n );
 	}
 	atom_level_domain_map = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) );
@@ -88,7 +88,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	utility::vector1< Size > const & working_minimize_res,
 	bool const move_takeoff_torsions /* = true */ ) {
 	using namespace core::id;
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
 		if ( working_minimize_res.has_value( n ) )  atom_level_domain_map->set( n, true );
 		if ( !working_minimize_res.has_value( n ) ) atom_level_domain_map->set_fixed_if_moving( n );

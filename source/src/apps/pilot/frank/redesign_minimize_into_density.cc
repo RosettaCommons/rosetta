@@ -96,7 +96,7 @@ main( int argc, char * argv [] )
 
 	// add constraints to the starting structure
 	pose.remove_constraints();
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	Real const cst_width( option[ OptionKeys::relax::coord_cst_width ].user()? option[ OptionKeys::relax::coord_cst_width ]() : 0.5 );
 	Real const coord_sdev( option[ OptionKeys::relax::coord_cst_width ].user()? option[ OptionKeys::relax::coord_cst_stdev ]() : 0.5 );
 	for ( Size ires = 1; ires<= nres - 1; ++ires ) {

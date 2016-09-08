@@ -124,7 +124,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
   core::id::AtomID_Map< bool > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, false );
-  for ( Size ir=1; ir<=pose.total_residue(); ++ir ) {
+  for ( Size ir=1; ir<=pose.size(); ++ir ) {
     atom_map.set(AtomID(2,ir) , true );
     atom_map.set(AtomID(3,ir) , true );
     atom_map.set(AtomID(5,ir) , true );
@@ -199,7 +199,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
       task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
     }
   }
-  for(Size i=nres+1; i<=pose.n_residue(); ++i) {
+  for(Size i=nres+1; i<=pose.size(); ++i) {
     task->nonconst_residue_task(i).prevent_repacking();
   }
   TR << *task << std::endl;
@@ -288,7 +288,7 @@ void run(std::string fname) {
   if(ile.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(cenp,1);
   pose_from_file(cenp,*crs,fname, core::import_pose::PDB_file);
   pose_from_file(natp,*frs,fname, core::import_pose::PDB_file);
-  Size nres=cenp.n_residue();
+  Size nres=cenp.size();
   for(Size ir=1; ir<=nres; ++ir) {
     if(cenp.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(cenp,ir);
     if(natp.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(natp,ir);

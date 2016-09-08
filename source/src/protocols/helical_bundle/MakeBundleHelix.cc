@@ -260,16 +260,16 @@ void MakeBundleHelix::set_tail_dihedrals( core::pose::Pose &helixpose ) const
 	if ( helixpose.residue(1).type().is_alpha_aa() ) {
 		helixpose.set_psi( 1, -47.0 );
 		helixpose.set_omega(1, 180.0);
-		helixpose.set_phi(helixpose.n_residue(), -57.8);
+		helixpose.set_phi(helixpose.size(), -57.8);
 	} else if ( helixpose.residue(1).type().is_beta_aa() ) {
 		helixpose.set_theta( 1, 55.6 );
 		helixpose.set_psi( 1, -126.4 );
 		helixpose.set_omega(1, 180.0);
-		helixpose.set_phi(helixpose.n_residue(), -135.5);
-		helixpose.set_theta( helixpose.n_residue(), 55.6 );
+		helixpose.set_phi(helixpose.size(), -135.5);
+		helixpose.set_theta( helixpose.size(), 55.6 );
 	}
-	if ( helixpose.residue(helixpose.n_residue()-1).type().is_alpha_aa() || helixpose.residue(helixpose.n_residue()-1).type().is_beta_aa() ) {
-		helixpose.set_omega(helixpose.n_residue()-1, 180.0);
+	if ( helixpose.residue(helixpose.size()-1).type().is_alpha_aa() || helixpose.residue(helixpose.size()-1).type().is_beta_aa() ) {
+		helixpose.set_omega(helixpose.size()-1, 180.0);
 	}
 	return;
 }
@@ -281,8 +281,8 @@ void MakeBundleHelix::set_tail_dihedrals( core::pose::Pose &helixpose ) const
 void MakeBundleHelix::add_parameter_info_to_pose( core::pose::Pose &pose )
 {
 	bool const has_tails( tail_residue_name()!="" );
-	core::Size const first_res( pose.n_residue() - helix_length() - ( has_tails ? 2 : 0 ) + 1 );
-	core::Size const last_res( pose.n_residue() - ( has_tails ? 1 : 0 ));
+	core::Size const first_res( pose.size() - helix_length() - ( has_tails ? 2 : 0 ) + 1 );
+	core::Size const last_res( pose.size() - ( has_tails ? 1 : 0 ));
 
 	BundleParametersOP output_parameters( utility::pointer::dynamic_pointer_cast<BundleParameters>( bundle_parameters_->clone() ) );
 

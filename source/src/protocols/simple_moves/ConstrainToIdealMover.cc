@@ -462,7 +462,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 	pose.constraint_set( cst_set );
 
-	core::Size const nres( pose.total_residue() );
+	core::Size const nres( pose.size() );
 
 	//std::map< AtomID, utility::vector1< AtomID > > lists_of_angle_bonded_atoms;
 
@@ -646,7 +646,7 @@ apply_ideal_coordinates_for_alternative_pucker( core::pose::Pose const & pose, c
 	core::Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 	bool const use_phenix_geo = option[ OptionKeys::rna::corrected_geo ]();
 
-	for ( core::Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.residue_type( n ).is_RNA() ) continue;
 		core::Real const delta = pose.residue( n ).mainchain_torsion( DELTA );
 		if ( use_phenix_geo ) {

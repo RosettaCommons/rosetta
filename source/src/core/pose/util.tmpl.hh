@@ -228,7 +228,7 @@ template< typename T >
 void
 initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose )
 {
-	Size const n_res( pose.n_residue() );
+	Size const n_res( pose.size() );
 	dof_map.clear();
 	dof_map.resize( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) {
@@ -242,7 +242,7 @@ template< typename T >
 void
 initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose, T const & value )
 {
-	Size const n_res( pose.n_residue() );
+	Size const n_res( pose.size() );
 	dof_map.clear();
 	dof_map.resize( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) {
@@ -259,7 +259,7 @@ template< typename T >
 void
 initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose )
 {
-	Size const n_res( pose.n_residue() );
+	Size const n_res( pose.size() );
 	atom_map.clear();
 	atom_map.resize( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) {
@@ -273,7 +273,7 @@ template< typename T >
 void
 initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value )
 {
-	Size const n_res( pose.n_residue() );
+	Size const n_res( pose.size() );
 	atom_map.clear();
 	atom_map.resize( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) {
@@ -314,7 +314,7 @@ template< typename T >
 void
 initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose )
 {
-	Size const n_res( pose.n_residue() );
+	Size const n_res( pose.size() );
 	atom_map.clear();
 	atom_map.resize( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) {
@@ -328,7 +328,7 @@ template< typename T >
 void
 initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value )
 {
-	Size const n_res( pose.n_residue() );
+	Size const n_res( pose.size() );
 	atom_map.clear();
 	atom_map.resize( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) {

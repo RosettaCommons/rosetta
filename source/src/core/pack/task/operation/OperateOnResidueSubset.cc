@@ -101,7 +101,7 @@ TaskOperationOP OperateOnResidueSubset::clone() const
 void
 OperateOnResidueSubset::apply( Pose const & pose, PackerTask & ptask ) const
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	runtime_assert( nres == ptask.total_residue() );
 
 	core::select::residue_selector::ResidueSubset subset;
@@ -118,7 +118,7 @@ OperateOnResidueSubset::apply( Pose const & pose, PackerTask & ptask ) const
 		subset.flip();
 	}
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( subset[ ii ] ) op_->apply( ptask.nonconst_residue_task( ii ) );
 	}
 }

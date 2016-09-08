@@ -111,7 +111,7 @@ public:
 		// define atom_map for main-chain and CB
 		core::id::AtomID_Map< bool > atom_map;
 		core::pose::initialize_atomid_map( atom_map, pose, false );
-		for ( Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+		for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 			for ( Size j = 1; j<=5; ++j ) {
 				id::AtomID atom( j, ir );
 				atom_map.set( atom, true );
@@ -129,13 +129,13 @@ public:
 		String aa( pose.sequence() );
 
 		output_ << me << ' ' << 1 << ' ' << aa.substr( 0, 1 ) << ' ' << ss.substr( 0, 1 ) << ' ' << "999" << std::endl;
-		for( Size i=2;i<=pose.total_residue()-1; ++i ){
+		for( Size i=2;i<=pose.size()-1; ++i ){
 			output_ << me << ' ' << i << ' ' << aa.substr( i-1, 1 ) << ' ' << ss.substr( i-1, 1 ) << ' ' << rsd_sasa[ i ] << std::endl;
 		}
-		output_ << me << ' ' << pose.total_residue() << ' ' << aa.substr( pose.total_residue()-1, 1 ) << ' ' << "999" << std::endl;
+		output_ << me << ' ' << pose.size() << ' ' << aa.substr( pose.size()-1, 1 ) << ' ' << "999" << std::endl;
 
 
-		for( Size i=1; i<=pose.total_residue(); i++ ) {
+		for( Size i=1; i<=pose.size(); i++ ) {
 			rasmol_ << "select " << i << std::endl;
 			if ( core_ > rsd_sasa[ i ] ) {
 				rasmol_ << "color blue " << std::endl;

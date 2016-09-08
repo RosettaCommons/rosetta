@@ -583,7 +583,7 @@ PeptideDeriverFilter::minimize(core::pose::Pose & pose) const {
 		1  // std. dev
 		));
 	core::conformation::Conformation const & conformation(pose.conformation());
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! pose.residue(i).is_protein() ) {
 			continue;
 		}
@@ -993,7 +993,7 @@ PeptideDeriverFilter::derive_peptide(
 			// assemble a pose with the receptor and a cut-out peptide, starting at pep_start and ending at pep_end
 			// here, the complex is the receptor and the derived peptide
 			// NOTE : calculate_interface_score() needs to know the jump number, and for that we need to know the residue of the jump
-			//        options were to use receptor_peptide_pose->fold_tree().get_residue_edge(receptor_pose.total_residue() + 1), but we would have to
+			//        options were to use receptor_peptide_pose->fold_tree().get_residue_edge(receptor_pose.size() + 1), but we would have to
 			//        know whether to look at the Edge's start() or stop() for the jump, and that depends on how build_receptor_peptide_pose() builds
 			//        the pose. So it seemed preferable to just output it from build_receptor_peptide_pose().
 			core::Size linear_jump_id;
@@ -1228,7 +1228,7 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 	core::Size peptide_end,
 	core::Size & jump_id) const {
 	// once created these will be the positions of the peptide start and end in the receptor_peptide_pose
-	core::Size two_chain_peptide_start = receptor_pose.total_residue() + 1;
+	core::Size two_chain_peptide_start = receptor_pose.size() + 1;
 	core::Size two_chain_peptide_end = two_chain_peptide_start + peptide_end - peptide_start;
 
 	//copy receptor and start appending the peptide from its center of mass backward and forward
@@ -1238,7 +1238,7 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 	// tracer messages might be useful for debugging, but I'd rather comment than tracer.Debug
 	// from Flexpepdock's flags file; choose the residue in the receptor that is closest to the peptide center-of-mass
 	// TODO : handle a case where the closest residue is not a protein -- we needn't ask for "CA"
-	core::Size receptor_anchor_pos = core::pose::return_nearest_residue(receptor_pose, 1, receptor_pose.total_residue(), partner_pose.residue(pep_cen_mass).atom("CA").xyz());
+	core::Size receptor_anchor_pos = core::pose::return_nearest_residue(receptor_pose, 1, receptor_pose.size(), partner_pose.residue(pep_cen_mass).atom("CA").xyz());
 	// tracer << "Appending jump from " << receptor_peptide_pose->residue(receptor_anchor_pos) << " to " << partner_pose.residue(pep_cen_mass) << std::endl;
 
 	receptor_peptide_pose->append_residue_by_jump(partner_pose.residue(pep_cen_mass), receptor_anchor_pos, "", "", true);
@@ -1249,12 +1249,12 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 	}
 
 	for ( core::Size i = pep_cen_mass ; i < peptide_end; ++i ) {
-		// tracer << "Appending at " << receptor_peptide_pose->total_residue() << " " << partner_pose.residue(i+1) << std::endl;
-		receptor_peptide_pose->conformation().safely_append_polymer_residue_after_seqpos(partner_pose.residue(i+1), receptor_peptide_pose->total_residue(), false);
+		// tracer << "Appending at " << receptor_peptide_pose->size() << " " << partner_pose.residue(i+1) << std::endl;
+		receptor_peptide_pose->conformation().safely_append_polymer_residue_after_seqpos(partner_pose.residue(i+1), receptor_peptide_pose->size(), false);
 	}
 
 	// see note for linear_jump_id
-	jump_id = receptor_peptide_pose->fold_tree().get_jump_that_builds_residue(receptor_pose.total_residue() + pep_cen_mass - peptide_start + 1);
+	jump_id = receptor_peptide_pose->fold_tree().get_jump_that_builds_residue(receptor_pose.size() + pep_cen_mass - peptide_start + 1);
 
 	// NOTE : when enabling -in:missing_density_to_jump (which is enabled by default for the
 	//        PeptideDeriver app), chain termini which are missing hydrogens will receive a

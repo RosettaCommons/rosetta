@@ -554,7 +554,7 @@ LoopGraph::check_for_unexpected_cutpoints( pose::Pose const & pose ) const {
 	using namespace pose::full_model_info;
 
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) && ( res_list[ n+1 ] != res_list[n] + 1 ) ) {
 			// better not be a closed chainbreak!
 			runtime_assert( ! pose.residue( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) );

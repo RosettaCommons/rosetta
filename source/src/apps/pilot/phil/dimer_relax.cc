@@ -150,7 +150,7 @@ setup_dimer_relax_pose( Pose & pose )
 	find_protein_DNA_anchor_point( setup_chain_mask( pose, 3 ), prot_root1, dna_anchor1 );
 	find_protein_DNA_anchor_point( setup_chain_mask( pose, 4 ), prot_root2, dna_anchor2 );
 
-	FoldTree f( pose.total_residue() );
+	FoldTree f( pose.size() );
 	f.new_jump( dna_anchor1, prot_root1, pose.conformation().chain_end(2) );
 	f.new_jump( dna_anchor2, prot_root2, pose.conformation().chain_end(3) );
 	f.new_jump( dna_anchor1, dna_anchor2, pose.conformation().chain_end(1) );

@@ -369,8 +369,8 @@ SS_Info2::initialize( Pose const & pose, String const & secstruct )
 	//attempt at getting desired behavior: initialize with pose length,
 	//but make sure that secondary structure is according to number
 	//of protein res
-	core::Size num_protein_res( pose.total_residue() );
-	for ( core::Size i = pose.total_residue(); i != 0; i-- ) {
+	core::Size num_protein_res( pose.size() );
+	for ( core::Size i = pose.size(); i != 0; i-- ) {
 	if ( !pose.residue_type( i ).is_protein() ) num_protein_res--;
 	}
 	*/
@@ -383,13 +383,13 @@ SS_Info2::initialize( Pose const & pose, String const & secstruct )
 	} else {
 		secstruct_ = secstruct;
 	}
-	runtime_assert( pose.total_residue() == secstruct_.length() ); //flo sep'12 changed from pose.total_residue() to num_protein_res
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	runtime_assert( pose.size() == secstruct_.length() ); //flo sep'12 changed from pose.size() to num_protein_res
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( !pose.residue( i ).is_protein() ) {
 			secstruct_[ i - 1 ] = 'L';
 		}
 	}
-	resize( pose.total_residue() );
+	resize( pose.size() );
 	identify_ss( secstruct_ );
 	// set bb_pos
 	bb_pos_.take_coordinates_from_pose( pose );
@@ -435,7 +435,7 @@ std::ostream & operator<<(std::ostream & out, const SS_Info2 & ssinfo )
 void
 SS_Info2::set_SSorient( Pose const & pose )
 {
-	runtime_assert( pose.total_residue() == bb_pos_.size() );
+	runtime_assert( pose.size() == bb_pos_.size() );
 	bb_pos_.take_coordinates_from_pose( pose );
 	bbpos_is_set_ = true;
 	set_SSorient();

@@ -90,7 +90,7 @@ public:
 		pose::Pose start_pose;
 		import_pose::pose_from_file( start_pose, "core/conformation/symmetry/Cs_INPUT.pdb" , core::import_pose::PDB_file);
 		pose::Pose pose = start_pose;
-		core::conformation::symmetry::SymmData symmdata1(  pose.n_residue(),  pose.num_jump() );
+		core::conformation::symmetry::SymmData symmdata1(  pose.size(),  pose.num_jump() );
 		std::string symm_def1 = "core/conformation/symmetry/Cs.symm";
 		symmdata1.read_symmetry_data_from_file(symm_def1);
 		core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );
@@ -148,7 +148,7 @@ public:
 		core::pose::Pose pose;
 		import_pose::pose_from_file( pose, "core/conformation/symmetry/Cs_INPUT.pdb" , core::import_pose::PDB_file);
 
-		core::conformation::symmetry::SymmData symmdata1(  pose.n_residue(),  pose.num_jump() );
+		core::conformation::symmetry::SymmData symmdata1(  pose.size(),  pose.num_jump() );
 		std::string symm_def1 = "core/conformation/symmetry/Cs.symm";
 		symmdata1.read_symmetry_data_from_file(symm_def1);
 		core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );
@@ -172,7 +172,7 @@ public:
 		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
 		keep_aas[ core::chemical::aa_ala ] = true;
 		keep_aas[ core::chemical::aa_gly ] = true;
-		for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			task->nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas, "PIKAA" );
 			if ( only_design_subset && i < 20 ) {
 				task->nonconst_residue_task( i ).prevent_repacking();
@@ -195,7 +195,7 @@ public:
 			core::Size dalacount(0);
 			core::Size alacount(0);
 			TR << "Sequence:" << std::endl;
-			for ( core::Size i=1, imax=pose.n_residue(); i<=imax; ++i ) {
+			for ( core::Size i=1, imax=pose.size(); i<=imax; ++i ) {
 				TR << pose.residue(i).name3();
 				if ( i<imax ) {
 					if ( pose.residue(i).name3() == "DAL" || pose.residue(i).name3() == "ALA" ) TR << "* ";

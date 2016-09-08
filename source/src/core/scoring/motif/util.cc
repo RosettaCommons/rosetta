@@ -141,7 +141,7 @@ using core::pose::motif::get_backbone_reference_frame_atomids_with_downstream;
 using core::chemical::aa_gly;
 
 void xform_pose( core::pose::Pose & pose, Xform const & s, Size sres=1, Size eres=0 ) {
-if ( eres==0 ) eres = pose.n_residue();
+if ( eres==0 ) eres = pose.size();
 for ( Size ir = sres; ir <= eres; ++ir ) {
 	for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 		core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -354,15 +354,15 @@ Reals get_sasa(Pose const & pose, Real const & probesize){
 	core::id::AtomID_Map<Real> atom_sasa;
 	Reals rsd_sasa;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probesize, false );
-	if ( rsd_sasa.size() != pose.n_residue() ) utility_exit_with_message("bad sasa!");
+	if ( rsd_sasa.size() != pose.size() ) utility_exit_with_message("bad sasa!");
 	return rsd_sasa;
 }
 Reals get_nbrs(Pose const & pose){
-	Reals nbrs(pose.n_residue(),0);
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	Reals nbrs(pose.size(),0);
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		if ( !pose.residue(ir).is_protein() ) continue;
 		Vec CB1 = pose.residue(ir).xyz(2);
-		for ( Size jr = 1; jr <= pose.n_residue(); ++jr ) {
+		for ( Size jr = 1; jr <= pose.size(); ++jr ) {
 			if ( !pose.residue(jr).is_protein() ) continue;
 			if ( CB1.distance_squared(pose.residue(jr).xyz(2)) < 100.0 ) {
 				nbrs[ir] += 1.0;

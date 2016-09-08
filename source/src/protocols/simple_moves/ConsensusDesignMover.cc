@@ -188,7 +188,7 @@ ConsensusDesignMover::create_consensus_design_task(
 	std::string touched_residues;
 	core::Size num_design_residues(0);
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		bool this_residue_allowed( invert_task_ ? !ptask_->residue_task(i).being_packed() : ptask_->residue_task(i).being_designed() );
 		if ( !pose.residue_type( i ).is_protein() ) this_residue_allowed = false;
@@ -203,7 +203,7 @@ ConsensusDesignMover::create_consensus_design_task(
 		}
 
 	} // loop over pose residues
-	TR << num_design_residues << "residues (out of a total of " << pose.total_residue() << ") for consensus design are " << touched_residues << std::endl;
+	TR << num_design_residues << "residues (out of a total of " << pose.size() << ") for consensus design are " << touched_residues << std::endl;
 
 	return consensus_task;
 }
@@ -216,7 +216,7 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 {
 	core::scoring::constraints::ConstraintCOPs csts;
 	core::sequence::SequenceProfileOP temp_sp( new core::sequence::SequenceProfile(*seqprof_) ); //dumb nonconstness of seqprofile in SequenceProfileConstraint makes this necessary :(
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue_type(i).is_protein() && task.residue_task(i).being_designed() ) {
 			csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, i, temp_sp ) ) );
 		}

@@ -461,7 +461,7 @@ bool use_in_rmsd(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(!option[v_cyclic]() && resno==pose1.n_residue() && pose1.residue(resno).has("O") && atomno==pose1.residue(resno).atom_index( "O")) return false;
+	if(!option[v_cyclic]() && resno==pose1.size() && pose1.residue(resno).has("O") && atomno==pose1.residue(resno).atom_index( "O")) return false;
 
 	if(option[v_ignoreresidue_in_rms]().size()>0) { //Return false for residues that are to be ignored.
 		for(core::Size i=1; i<=option[v_ignoreresidue_in_rms]().size(); i++) {
@@ -498,7 +498,7 @@ core::Real get_distance_measure(
 		utility::vector1 <core::id::NamedAtomID> const &extra_rms_atoms
 ) {
 	std::map< core::id::AtomID, core::id::AtomID > amap;
-	for(int ir = 1; ir <= (int)pose1.n_residue(); ++ir) {
+	for(int ir = 1; ir <= (int)pose1.size(); ++ir) {
 		for(int ia = 1; ia <= (int)pose1.residue(ir).nheavyatoms(); ++ia) {
 			if(use_in_rmsd(pose1,pose2,ir,ia,extra_rms_atoms)) {
 				using core::id::AtomID;
@@ -533,7 +533,7 @@ core::Real calc_sequence_score (utility::vector1 < core::Real > &energies, utili
 void set_up_termini (core::pose::Pose &pose) {
 	//printf("Setting up termini.\n"); fflush(stdout);
 	//Loop through and add lower termini and upper termini appropriately:
-	for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
+	for(core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir) {
 		if(pose.residue(ir).is_polymer() && !pose.residue(ir).has_lower_connect() )
 			core::pose::add_lower_terminus_type_to_pose_residue(pose, ir);
 		if(pose.residue(ir).is_polymer() && !pose.residue(ir).has_upper_connect() )
@@ -571,7 +571,7 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 	using namespace core::id;
 
 	core::pose::remove_lower_terminus_type_from_pose_residue(mypose, 1);
-	core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.n_residue());
+	core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.size());
 	
 	const std::string hstring = (mypose.residue(1).name1()=='P' ? "CD" : "H");
 	const core::Size hindex = mypose.residue(1).atom_index(hstring);
@@ -582,7 +582,7 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		core::pose::Pose dialanine;
 		std::string diala_seq = "";
-		if(mypose.residue(mypose.n_residue()).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
+		if(mypose.residue(mypose.size()).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
 		if(mypose.residue(1).has("CM")) diala_seq+="A[B3A]"; else diala_seq+="A";
 
 		{//Make the pose:
@@ -598,8 +598,8 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		//core::pose::make_pose_from_sequence(dialanine, "AA", *standard_residues, true); //The termini are OPEN.
 
 		core::Real omegaval = numeric::dihedral_degrees(
-				mypose.residue(mypose.n_residue()).xyz( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ),
-				mypose.residue(mypose.n_residue()).xyz("C"),
+				mypose.residue(mypose.size()).xyz( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ),
+				mypose.residue(mypose.size()).xyz("C"),
 				mypose.residue(1).xyz("N"),
 				mypose.residue(1).xyz("CA")
 			);
@@ -609,9 +609,9 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 	
 		core::id::AtomID_Map< core::id::AtomID > amap;
 		core::pose::initialize_atomid_map(amap,dialanine,core::id::BOGUS_ATOM_ID);
-		amap[AtomID(dialanine.residue(1).atom_index( (dialanine.residue(1).has("CM")?"CM":"CA") ),1)] = AtomID(mypose.residue(mypose.n_residue()).atom_index( (dialanine.residue(1).has("CM")?"CM":"CA") ),mypose.n_residue());
-		amap[AtomID(dialanine.residue(1).atom_index("C"),1)] = AtomID(mypose.residue(mypose.n_residue()).atom_index("C"),mypose.n_residue());
-		amap[AtomID(dialanine.residue(1).atom_index("O"),1)] = AtomID(mypose.residue(mypose.n_residue()).atom_index("O"),mypose.n_residue());
+		amap[AtomID(dialanine.residue(1).atom_index( (dialanine.residue(1).has("CM")?"CM":"CA") ),1)] = AtomID(mypose.residue(mypose.size()).atom_index( (dialanine.residue(1).has("CM")?"CM":"CA") ),mypose.size());
+		amap[AtomID(dialanine.residue(1).atom_index("C"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("C"),mypose.size());
+		amap[AtomID(dialanine.residue(1).atom_index("O"),1)] = AtomID(mypose.residue(mypose.size()).atom_index("O"),mypose.size());
 		amap[AtomID(dialanine.residue(2).atom_index("N"),2)] = AtomID(mypose.residue(1).atom_index("N"),1);
 		amap[AtomID(dialanine.residue(2).atom_index("CA"),2)] = AtomID(mypose.residue(1).atom_index("CA"),1);
 		core::scoring::superimpose_pose( dialanine, mypose, amap );
@@ -619,12 +619,12 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		mypose.conformation().set_xyz(AtomID(hindex, 1), dialanine.residue(2).xyz("H")); //This won't be right for the proline side-chain, but it will be rebuilt by a repack in any case.
 	}
 
-	mypose.conformation().declare_chemical_bond(1, "N", mypose.n_residue(), "C"); //Declare a chemical bond between the N and C termini.
+	mypose.conformation().declare_chemical_bond(1, "N", mypose.size(), "C"); //Declare a chemical bond between the N and C termini.
 
 	{//Peptide bond length constraint:
 		FuncOP harmfunc1( new HarmonicFunc( 1.3288, 0.02) );
 		ConstraintCOP distconst1( new AtomPairConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ) ,
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ) ,
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				harmfunc1
 			) );
@@ -635,15 +635,15 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		// (TODO -- change these if we sample a trans-proline.)
 		FuncOP circharmfunc1( new CircularHarmonicFunc( PI, 0.02) );
 		ConstraintCOP dihedconst1( new DihedralConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
 				circharmfunc1
 			) );
 		ConstraintCOP dihedconst2( new DihedralConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ) , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ) , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				circharmfunc1
@@ -660,26 +660,26 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		FuncOP circharmfunc2d( new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02) );
 
 		ConstraintCOP angleconst1( new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				circharmfunc2a
 			) );
 		ConstraintCOP angleconst2( new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
 				circharmfunc2b
 			) );
 		ConstraintCOP angleconst3( new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ) , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ) , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				circharmfunc2c
 			) );
 		ConstraintCOP angleconst4( new AngleConstraint (
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
-				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("O") , mypose.size() ),
+				AtomID( mypose.residue(mypose.size()).atom_index("C") , mypose.size() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				circharmfunc2d
 			) );
@@ -735,8 +735,8 @@ void perturb_bb_and_relax (
 	core::Real const procloseweight = sfxn->get_weight(pro_close);
 	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000001, true, false, false);
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	mm->set_bb_true_range(1, pose.n_residue());
-	mm->set_chi_true_range(1, pose.n_residue());
+	mm->set_bb_true_range(1, pose.size());
+	mm->set_chi_true_range(1, pose.size());
 	mm->set_jump(false);
 	core::optimization::CartesianMinimizer cminimizer;
 
@@ -763,7 +763,7 @@ void perturb_bb_and_relax (
 				temppose = lastpose_MC; //Last pose is the input pose if MC is off, or the last pose accepted for MC moves
 				
 				//Generate a random perturbation vector:
-				for(core::Size ir=1, nres=temppose.n_residue(), counter=1; ir<=nres; ir++) { //Loop through all residues.
+				for(core::Size ir=1, nres=temppose.size(), counter=1; ir<=nres; ir++) { //Loop through all residues.
 					if(!temppose.residue(ir).type().is_alpha_aa() && !temppose.residue(ir).type().is_beta_aa()) continue; //Skip non-amino acids for now
 					core::Size ntors=3; //Number of backbone torsions for this residue.
 					if(temppose.residue(ir).is_lower_terminus() || ir==1 || temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().lower_connect_id())!=ir-1 ) ntors--; //if this is a lower terminus OR a noncanonical connection, remove phi
@@ -820,7 +820,7 @@ void perturb_bb_and_relax (
 				for(core::Size i=1; i<=pertvect.size(); i++) pertvect[i] *= bb_perturbation;
 
 				//Apply the perturbation
-				for(core::Size ir=1, nres=temppose.n_residue(), counter=1; ir<=nres; ir++) {
+				for(core::Size ir=1, nres=temppose.size(), counter=1; ir<=nres; ir++) {
 					if(temppose.residue(ir).type().is_beta_aa()) { //beta-amino acid
 						if(!temppose.residue(ir).is_lower_terminus() && ir>1 && temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().lower_connect_id())==ir-1 ) {
 							betapeptide_setphi(temppose, ir, pertvect[counter++]+temppose.residue(ir).mainchain_torsion(1)); //phi
@@ -847,10 +847,10 @@ void perturb_bb_and_relax (
 				if(option[v_cyclic]()) {
 					addcyclicconstraints(temppose);
 					core::Real ang1 = numeric::dihedral_degrees (
-							temppose.residue(temppose.n_residue()).xyz( (temppose.residue(temppose.n_residue()).has("CM")?"CA":"N") ),
-							temppose.residue(temppose.n_residue()).xyz( (temppose.residue(temppose.n_residue()).has("CM")?"CM":"CA") ),
-							temppose.residue(temppose.n_residue()).xyz("C"),
-							temppose.residue(temppose.n_residue()).xyz("O")
+							temppose.residue(temppose.size()).xyz( (temppose.residue(temppose.size()).has("CM")?"CA":"N") ),
+							temppose.residue(temppose.size()).xyz( (temppose.residue(temppose.size()).has("CM")?"CM":"CA") ),
+							temppose.residue(temppose.size()).xyz("C"),
+							temppose.residue(temppose.size()).xyz("O")
 						);
 					core::Real ang2 = numeric::dihedral_degrees (
 							temppose.residue(1).xyz((temppose.residue(1).name1()=='P'?"CD":"H")),
@@ -859,10 +859,10 @@ void perturb_bb_and_relax (
 							temppose.residue(1).xyz( (temppose.residue(1).has("CM")?"CM":"C") )
 						);
 				temppose.conformation().set_torsion_angle(//Set psi of last residue
-					core::id::AtomID(temppose.residue(temppose.n_residue()).atom_index( (temppose.residue(temppose.n_residue()).has("CM")?"CA":"N") ), temppose.n_residue()),
-					core::id::AtomID(temppose.residue(temppose.n_residue()).atom_index( (temppose.residue(temppose.n_residue()).has("CM")?"CM":"CA") ), temppose.n_residue()),
-					core::id::AtomID(temppose.residue(temppose.n_residue()).atom_index("C"), temppose.n_residue()),
-					core::id::AtomID(temppose.residue(temppose.n_residue()).atom_index("O"), temppose.n_residue()),
+					core::id::AtomID(temppose.residue(temppose.size()).atom_index( (temppose.residue(temppose.size()).has("CM")?"CA":"N") ), temppose.size()),
+					core::id::AtomID(temppose.residue(temppose.size()).atom_index( (temppose.residue(temppose.size()).has("CM")?"CM":"CA") ), temppose.size()),
+					core::id::AtomID(temppose.residue(temppose.size()).atom_index("C"), temppose.size()),
+					core::id::AtomID(temppose.residue(temppose.size()).atom_index("O"), temppose.size()),
 					(ang1+pertvect[pertvect.size()-2])/180.0*PI);
 				temppose.conformation().set_torsion_angle( //Set phi of first residue
 					core::id::AtomID(temppose.residue(1).atom_index((temppose.residue(1).name1()=='P'?"CD":"H")), 1),
@@ -879,11 +879,11 @@ void perturb_bb_and_relax (
 				bool goodperturbation = true;
 				if(option[v_cyclic]()) { //If this is a cyclic peptide, check the length of the peptide bond linking the terminal residues.
 					const numeric::xyzVector <core::Real> v1 = temppose.residue(1).atom("N").xyz();
-					const numeric::xyzVector <core::Real> v2 = temppose.residue(temppose.n_residue()).atom("C").xyz();
+					const numeric::xyzVector <core::Real> v2 = temppose.residue(temppose.size()).atom("C").xyz();
 					if( sqrt(pow(v1[0]-v2[0], 2.0) + pow(v1[1]-v2[1], 2.0) + pow(v1[2]-v2[2], 2.0)) < 1.0e-5) goodperturbation = false; //Bad perturbation if peptide bond length is zero.
 				}
-				for(core::Size ir=1; (ir<=temppose.n_residue()-1 && goodperturbation); ir++) { //Check disulfide lengths
-					for(core::Size jr=ir; (jr<=temppose.n_residue() && goodperturbation); jr++) {
+				for(core::Size ir=1; (ir<=temppose.size()-1 && goodperturbation); ir++) { //Check disulfide lengths
+					for(core::Size jr=ir; (jr<=temppose.size() && goodperturbation); jr++) {
 						if(core::conformation::is_disulfide_bond(temppose.conformation(), ir, jr) ) {
 							const numeric::xyzVector <core::Real> v1 = temppose.residue(ir).atom("SG").xyz();
 							const numeric::xyzVector <core::Real> v2 = temppose.residue(jr).atom("SG").xyz();
@@ -961,7 +961,7 @@ void vMPI_transmitpose(
 	MPI_Status mpistatus;
 
 	//Loop through all residues:
-	for(core::Size ir=1; ir<=pose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=pose.size(); ir++) {
 		//Loop through all atoms in the residue
 		for(core::Size ia=1; ia<=pose.residue(ir).natoms(); ia++) {
 			core::id::AtomID curatom(ia, ir);
@@ -989,7 +989,7 @@ void vMPI_Bcastpose(
 	numeric::xyzVector <double> atomxyz;
 	
 	//Loop through all residues:
-	for(core::Size ir=1; ir<=pose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=pose.size(); ir++) {
 		//Loop through all atoms in the residue
 		for(core::Size ia=1; ia<=pose.residue(ir).natoms(); ia++) {
 			core::id::AtomID curatom(ia, ir);
@@ -1016,7 +1016,7 @@ void store_backbone (
 
 	outvect.clear(); //Empty the output vector
 
-	for(core::Size ir=1, nres=mypose.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1, nres=mypose.size(); ir<=nres; ir++) {
 		if(mypose.residue(ir).type().is_beta_aa()) { //beta-amino acid
 			if(!mypose.residue(ir).is_lower_terminus()) outvect.push_back(mypose.residue(ir).mainchain_torsion(1)); //phi
 			outvect.push_back(mypose.residue(ir).mainchain_torsion(2)); //theta
@@ -1036,23 +1036,23 @@ void store_backbone (
 	if (option[v_cyclic]) {
 		outvect.push_back(//Psi of last residue
 			numeric::dihedral_degrees( 
-				mypose.residue(mypose.n_residue()).xyz( (mypose.residue(mypose.n_residue()).has("CM")?"CA":"N") ),
-				mypose.residue(mypose.n_residue()).xyz( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ),
-				mypose.residue(mypose.n_residue()).xyz("C"),
+				mypose.residue(mypose.size()).xyz( (mypose.residue(mypose.size()).has("CM")?"CA":"N") ),
+				mypose.residue(mypose.size()).xyz( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ),
+				mypose.residue(mypose.size()).xyz("C"),
 				mypose.residue(1).xyz("N")
 			)
 		);
 		outvect.push_back(//Omega between last residue and first residue
 			numeric::dihedral_degrees(
-				mypose.residue(mypose.n_residue()).xyz( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ),
-				mypose.residue(mypose.n_residue()).xyz("C"),
+				mypose.residue(mypose.size()).xyz( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ),
+				mypose.residue(mypose.size()).xyz("C"),
 				mypose.residue(1).xyz("N"),
 				mypose.residue(1).xyz("CA")
 			)
 		);
 		outvect.push_back(//Phi of first residue
 			numeric::dihedral_degrees(
-				mypose.residue(mypose.n_residue()).xyz("C"),
+				mypose.residue(mypose.size()).xyz("C"),
 				mypose.residue(1).xyz("N"),
 				mypose.residue(1).xyz("CA"),
 				mypose.residue(1).xyz( (mypose.residue(1).has("CM")?"CM":"C") )
@@ -1069,7 +1069,7 @@ void store_backbone (
 	utility::vector1 < utility::vector1 < core::Real > > &outvector
 ) {
 	outvector.clear();
-	for(core::Size ir=1; ir<=mypose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=mypose.size(); ir++) {
 		utility::vector1 < core::Real > chivector;
 		if(mypose.residue(ir).nchi()>0) {
 			for(core::Size ichi=1; ichi<=mypose.residue(ir).nchi(); ichi++) chivector.push_back(mypose.chi(ichi, ir));
@@ -1081,13 +1081,13 @@ void store_backbone (
 
 //A function to strip terminal glycines.  This returns "true" if there were glycines at both termini (that were stripped off), and false otherwise.
 bool strip_terminal_glycines (core::pose::Pose &mypose) {
-	if(mypose.residue(1).name1()=='G' && mypose.residue(mypose.n_residue()).name1() == 'G')
+	if(mypose.residue(1).name1()=='G' && mypose.residue(mypose.size()).name1() == 'G')
 	{
 		core::pose::Pose temp_pose;
 		temp_pose.append_residue_by_jump(mypose.residue(2),1); //Put in the first residue.
-		for(core::Size ir = 3; ir < mypose.n_residue(); ir++) temp_pose.append_residue_by_bond(mypose.residue(ir)); //Put in the rest.
+		for(core::Size ir = 3; ir < mypose.size(); ir++) temp_pose.append_residue_by_bond(mypose.residue(ir)); //Put in the rest.
 		core::pose::add_lower_terminus_type_to_pose_residue(temp_pose, 1);
-		core::pose::add_upper_terminus_type_to_pose_residue(temp_pose, temp_pose.n_residue());
+		core::pose::add_upper_terminus_type_to_pose_residue(temp_pose, temp_pose.size());
 		temp_pose.conformation().detect_disulfides(); //Detect the disulfides
 		mypose = temp_pose;		
 		return true;
@@ -1107,7 +1107,7 @@ void set_to_state(
 
 	//bool set_sc;
 
-	for(core::Size ir=1, nres=mypose.n_residue(), icount=1; ir<=nres; ir++) { //Loop through all residues
+	for(core::Size ir=1, nres=mypose.size(), icount=1; ir<=nres; ir++) { //Loop through all residues
 		if(mypose.residue(ir).type().is_beta_aa()) { //beta-amino acids
 			if(!mypose.residue(ir).is_lower_terminus()) betapeptide_setphi(mypose, ir, bb_list[icount++]); //phi
 			betapeptide_settheta(mypose, ir, bb_list[icount++]); //theta
@@ -1132,23 +1132,23 @@ void set_to_state(
 
 	if(option[v_cyclic]()) {
 		core::pose::remove_lower_terminus_type_from_pose_residue(mypose, 1);
-		core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.n_residue());
+		core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.size());
 		const std::string hstring = (mypose.residue(1).name1()=='P' ? "CD" : "H");
 		mypose.conformation().set_torsion_angle(//Set psi of last residue
-			core::id::AtomID(mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CA":"N") ), mypose.n_residue()),
-			core::id::AtomID(mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ), mypose.n_residue()),
-			core::id::AtomID(mypose.residue(mypose.n_residue()).atom_index("C"), mypose.n_residue()),
-			core::id::AtomID(mypose.residue(mypose.n_residue()).atom_index("O"), mypose.n_residue()),
-			(bb_list[3*mypose.n_residue()-2]-180.0)/180.0*PI);
+			core::id::AtomID(mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CA":"N") ), mypose.size()),
+			core::id::AtomID(mypose.residue(mypose.size()).atom_index( (mypose.residue(mypose.size()).has("CM")?"CM":"CA") ), mypose.size()),
+			core::id::AtomID(mypose.residue(mypose.size()).atom_index("C"), mypose.size()),
+			core::id::AtomID(mypose.residue(mypose.size()).atom_index("O"), mypose.size()),
+			(bb_list[3*mypose.size()-2]-180.0)/180.0*PI);
 		mypose.conformation().set_torsion_angle( //Set phi of first residue
 			core::id::AtomID(mypose.residue(1).atom_index(hstring), 1),
 			core::id::AtomID(mypose.residue(1).atom_index("N"), 1),
 			core::id::AtomID(mypose.residue(1).atom_index("CA"), 1),
 			core::id::AtomID(mypose.residue(1).atom_index( (mypose.residue(1).has("CM")?"CM":"C") ), 1),
-			(bb_list[3*mypose.n_residue()]-180.0)/180.0*PI);
+			(bb_list[3*mypose.size()]-180.0)/180.0*PI);
 	} //else {
 		//core::pose::add_lower_terminus_type_to_pose_residue(mypose, 1);
-		//core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.n_residue());
+		//core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.size());
 	//}
 
 	mypose.update_residue_neighbors();
@@ -1169,14 +1169,14 @@ void mutate_to_sequence (
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(sequence.length()!=mypose.n_residue()) {
+	if(sequence.length()!=mypose.size()) {
 		printf("Error!  Sequence length/structure size mismatch.  Crashing.\n"); fflush(stdout);
 		exit(1);
 	}
 
 	if(option[v_cyclic]()) mypose.remove_constraints(); //Remove all constraints
 
-	for(core::Size ir=1; ir<=mypose.n_residue(); ir++) {
+	for(core::Size ir=1; ir<=mypose.size(); ir++) {
 		bool continue_on = false;
 		if(!force_mutation) {
 			if(option[v_ignoreresidue]().size()>0) {
@@ -1225,11 +1225,11 @@ void mutate_to_sequence (
 
 	if(option[v_cyclic]()) {
 		core::pose::remove_lower_terminus_type_from_pose_residue(mypose, 1);
-		core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.n_residue());
+		core::pose::remove_upper_terminus_type_from_pose_residue(mypose, mypose.size());
 		addcyclicconstraints(mypose); //Add back the constraints (need to do this in case of !P->P or P->!P mutations at N-terminus.
 	} //else {
 		//core::pose::add_lower_terminus_type_to_pose_residue(mypose, 1);
-		//core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.n_residue());
+		//core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.size());
 	//}
 
 	//if(disulf_positions.size()>0) { //If there are disulfide-bonded positions
@@ -2180,7 +2180,7 @@ int main(int argc, char *argv[]) {
 	//Set the termini depending on whether this is a cyclic peptide:
 	if(option[v_cyclic]()) {
 		core::pose::remove_lower_terminus_type_from_pose_residue(positive_master, 1);
-		core::pose::remove_upper_terminus_type_from_pose_residue(positive_master, positive_master.n_residue());
+		core::pose::remove_upper_terminus_type_from_pose_residue(positive_master, positive_master.size());
 	} else {
 		set_up_termini(positive_master);
 	}
@@ -2241,7 +2241,7 @@ int main(int argc, char *argv[]) {
 	//Check whether the -v_preserve_chirality flag is used.  If it is, store a list of all of the D-amino acid positions.
 	if (procnum == 0 && option[v_preserve_chirality]()) printf("-v_preserve_chirality flag used.  The following positions are D-amino acid positions: ");
 	utility::vector1 <bool> dpositions;
-	for(core::Size ir=1, nres=positive_master.n_residue(); ir<=nres; ir++) dpositions.push_back( core::chemical::is_canonical_D_aa( positive_master.residue(ir).aa() ) );
+	for(core::Size ir=1, nres=positive_master.size(); ir<=nres; ir++) dpositions.push_back( core::chemical::is_canonical_D_aa( positive_master.residue(ir).aa() ) );
 	if(procnum==0) {
 		core::Size dpositioncount = 0;
 		for(core::Size i=1; i<=dpositions.size(); i++) {
@@ -2261,7 +2261,7 @@ int main(int argc, char *argv[]) {
 	//Store a list of beta-amino acid positions:
 	utility::vector1 <bool> betapositions; //The list of beta-amino acid positions (one entry per residue, true for beta, false otherwise).
 	bool hasbetaresidues=false;
-	for(core::Size ir=1, nres=positive_master.n_residue(); ir<=nres; ir++) {
+	for(core::Size ir=1, nres=positive_master.size(); ir<=nres; ir++) {
 		betapositions.push_back( positive_master.residue(ir).type().is_beta_aa() );
 		if( positive_master.residue(ir).type().is_beta_aa() ) hasbetaresidues=true;
 	}
@@ -2276,7 +2276,7 @@ int main(int argc, char *argv[]) {
 	if(option[v_randseq]() && procnum == 0) //If the user has turned on the random sequence flag, randomize the sequence.
 	{
 		printf("-vrandseq flag used.  Randomizing sequence.  "); fflush(stdout);
-		for(core::Size ir = 1; ir<=positive_master.n_residue(); ir++)
+		for(core::Size ir = 1; ir<=positive_master.size(); ir++)
 		{
 			//if(option[v_preserve_cys]() && positive_master.residue(ir).name1()=='C') continue; //Don't mutate cysteines if we're supposed to preserve them.
 			if(option[v_ignoreresidue]().size()>0) { //Don't change residues in the ignore list.
@@ -2307,7 +2307,7 @@ int main(int argc, char *argv[]) {
 		{
 			string fastaseq = core::sequence::read_fasta_file (option[in::file::fasta]()[1])[1]->sequence();
 			printf("Fasta file specified.  Read sequence %s.\n", fastaseq.c_str()); fflush(stdout);
-			for(core::Size ir = 1; ir<=positive_master.n_residue(); ir++){
+			for(core::Size ir = 1; ir<=positive_master.size(); ir++){
 				currentseq[ir-1]=fastaseq[ir-1];
 			}
 			mutate_to_sequence(currentseq, positive_master, dpositions, betapositions, true); //Mutate the positive master pose in proc 0 to the starting sequence
@@ -2427,7 +2427,7 @@ int main(int argc, char *argv[]) {
 				//Set the termini depending on whether this is a cyclic peptide:
 				if(option[v_cyclic]()) {
 					core::pose::remove_lower_terminus_type_from_pose_residue(importpose, 1);
-					core::pose::remove_upper_terminus_type_from_pose_residue(importpose, importpose.n_residue());
+					core::pose::remove_upper_terminus_type_from_pose_residue(importpose, importpose.size());
 				} else {
 					set_up_termini(importpose);
 				}

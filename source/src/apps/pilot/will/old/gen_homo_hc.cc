@@ -199,7 +199,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
   dt_ang[ 6] = 0.0;
 		//		dt_ang[ 9] = a
 
-  Vec com(0.0,0.0,0.0); for(Size i = 1; i <= pose.n_residue(); ++i) com += pose.xyz(AtomID(2,i)); com /= Real(pose.n_residue());
+  Vec com(0.0,0.0,0.0); for(Size i = 1; i <= pose.size(); ++i) com += pose.xyz(AtomID(2,i)); com /= Real(pose.size());
 
   for(Size blen1 = 20; blen1 < 25; ++blen1) {
     db_len[ 7] = Real(blen1)/10.0;
@@ -268,7 +268,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 												Vec AX = rotation_matrix_degrees(DR,idmr?45.0:-45.0)*OR;
 												Mat R = rotation_matrix_degrees(AX,180.0);
 
-												for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+												for(Size ir = 1; ir <= pose.size(); ++ir){
 														Size natm = (ir==rsd1||ir==rsd2)?pose.residue(ir).nheavyatoms():5;
 														for(Size ia = 1; ia <= natm; ia++) {
 																if( !ifc.clash_check( R*(pose.xyz(AtomID(ia,ir))-ZN)+ZN) ) clash=true;
@@ -287,7 +287,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 
 												std::string fn = utility::file_basename(fname)+"_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(blen1,2)+"_"+lzs(blen2,2)+"_"+lzs(bang,3)+"_"+lzs(isol,2)+lzs(idmr,1)+".pdb";
 												tmp.append_residue_by_jump(pose.residue(1),1,"","",true);
-												for(Size i = 2; i <= pose.n_residue(); ++i) tmp.append_residue_by_bond(pose.residue(i));
+												for(Size i = 2; i <= pose.size(); ++i) tmp.append_residue_by_bond(pose.residue(i));
 												tmp.dump_pdb(fn);
 
 												//utility_exit_with_message("arisnte");
@@ -334,7 +334,7 @@ void run(std::string fname) {
   make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   pose_from_file(cenp,*crs,fname, core::import_pose::PDB_file);
   pose_from_file(natp,*frs,fname, core::import_pose::PDB_file);
-  Size nres=cenp.n_residue();
+  Size nres=cenp.size();
   core::scoring::dssp::Dssp dssp(natp);
   dssp.insert_ss_into_pose(natp);
   dssp.insert_ss_into_pose(cenp);

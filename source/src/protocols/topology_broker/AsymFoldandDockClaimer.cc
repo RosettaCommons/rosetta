@@ -120,7 +120,7 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 		loops::PoseNumberedLoopFileReader loop_file_reader;
 		loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file(infile, file, false );
 		loops::Loops loop_defs = loops::Loops( loops ); // <==
-		//  loop_defs = loop_defs.invert( input_pose_.total_residue() );
+		//  loop_defs = loop_defs.invert( input_pose_.size() );
 		tr << "Flexible residues: " << loop_defs << std::endl;
 		moving_res_ = loop_defs;
 	} else if ( tag == "CHAIN_BREAK_ASSYM_FND"  || tag == "chain_break_assym_fnd" ) {
@@ -176,8 +176,8 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	if ( pose.fold_tree().num_jump() == 0 ) {
 		FoldTree f(pose.fold_tree());
 		f.clear();
-		f.simple_tree( pose.total_residue() );
-		f.new_jump( 1, pose.total_residue() , chain_break_res_ );
+		f.simple_tree( pose.size() );
+		f.new_jump( 1, pose.size() , chain_break_res_ );
 		pose.fold_tree( f );
 	}
 	protocols::docking::setup_foldtree( pose, chainID, dock.movable_jumps() );
@@ -215,7 +215,7 @@ core::Size AsymFoldandDockClaimer::docking_jump( core::pose::Pose& pose, core::S
 {
 	using namespace core::kinematics;
 
-	core::Size nres ( pose.total_residue() );
+	core::Size nres ( pose.size() );
 	// Does the chain start at a reasonable place in the sequence?
 	runtime_assert( chain_break_res > 1 && chain_break_res <= nres );
 

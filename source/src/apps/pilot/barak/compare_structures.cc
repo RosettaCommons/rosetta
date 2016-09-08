@@ -101,8 +101,8 @@ main( int argc, char * argv [] )
   tfirst_res = trg_pose.pdb_info()->pdb2pose(tchain_pdb[0],tresi_pdb);
   nres = option[ OptionKeys::threadsc::nres ];
   // TODO: also verify no overflow within the same chain
-  if(sfirst_res + nres - 1 > src_pose.total_residue() ||
-    tfirst_res + nres - 1 > src_pose.total_residue()) {
+  if(sfirst_res + nres - 1 > src_pose.size() ||
+    tfirst_res + nres - 1 > src_pose.size()) {
     TR << "ERROR: specified resiude IDs beyond range" << std::endl;
     exit(-1);
   }

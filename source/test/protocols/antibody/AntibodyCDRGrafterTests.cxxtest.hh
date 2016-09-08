@@ -59,13 +59,13 @@ public:
 		core::import_pose::pose_from_file(scaffold_pose, "protocols/antibody/2j88.pdb", core::import_pose::PDB_file);
 		core::import_pose::pose_from_file(piece, "protocols/grafting/2aabL_L1.pdb", core::import_pose::PDB_file);
 
-		starting_residues = scaffold_pose.total_residue();
+		starting_residues = scaffold_pose.size();
 		nter_overhang=3;
 		cter_overhang=3;
 		flex=2;
 		start = scaffold_pose.pdb_info()->pdb2pose('L', 24) - 1;
 		end = scaffold_pose.pdb_info()->pdb2pose('L', 42) + 1;
-		insert_size = piece.total_residue()-nter_overhang-cter_overhang;
+		insert_size = piece.size()-nter_overhang-cter_overhang;
 		L1_2j88_size = 11;
 
 		TR <<"Setup"<<std::endl;
@@ -111,7 +111,7 @@ public:
 
 		TR << "Graft complete" << std::endl;
 
-		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), starting_residues - L1_2j88_size + insert_size);
+		TS_ASSERT_EQUALS(scaffold_copy.size(), starting_residues - L1_2j88_size + insert_size);
 		TS_ASSERT_EQUALS(grafter->get_primary_graft_mover().start(), start);
 		TS_ASSERT_EQUALS(grafter->get_primary_graft_mover().original_end(), end);
 		TS_ASSERT_EQUALS(grafter->get_primary_graft_mover().end(), 39);

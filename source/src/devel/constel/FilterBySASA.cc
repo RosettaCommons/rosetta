@@ -74,7 +74,7 @@ void FilterBySASA::init( Real const smax, Pose const& ps ) {
 
 
 	//// compute SASA for all atoms in the pose
-	utility::vector1<Real> rsd_sasa( ps.n_residue(), 0.0 );
+	utility::vector1<Real> rsd_sasa( ps.size(), 0.0 );
 	core::scoring::calc_per_atom_sasa( ps, atom_sasa, rsd_sasa, 1.4);
 }
 

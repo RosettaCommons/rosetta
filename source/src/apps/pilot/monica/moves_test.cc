@@ -137,7 +137,7 @@ main( int argc, char * argv [] )
 
 	scoring_test( pose );
 
-	FoldTree f( pose.total_residue() );
+	FoldTree f( pose.size() );
 	pose.fold_tree( f );
 	std::cout << pose.fold_tree() << std::endl;
 

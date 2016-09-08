@@ -40,7 +40,7 @@ void RecoverSideChainsMover::apply( core::pose::Pose & pose ) {
 	mover_.apply( pose );
 
 	SequenceMapping map(
-		SequenceMapping::identity( original_pose.total_residue() )
+		SequenceMapping::identity( original_pose.size() )
 	);
 	StealSideChainsMover sc_mover( original_pose, map );
 	sc_mover.apply( pose );

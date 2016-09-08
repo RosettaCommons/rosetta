@@ -278,7 +278,7 @@ void design(core::pose::Pose & pose, ScoreFunctionOP sf) {
 	task->or_include_current(true);
 	task->nonconst_residue_task(1).prevent_repacking();
 	task->nonconst_residue_task(2).prevent_repacking();
-	for(Size i = 3; i <= task->total_residue(); ++i) {
+	for(Size i = 3; i <= task->size(); ++i) {
 		if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY" ) {
 			task->restrict_to_repacking();
 		} else {
@@ -390,7 +390,7 @@ core::scoring::ScoreFunctionOP
 fa_refine_and_design(core::pose::Pose & pose, Size NCYCLE) {
 	using namespace core;
 	using namespace scoring;
-	Size nres_mono = (pose.n_residue()-4)/4;
+	Size nres_mono = (pose.size()-4)/4;
 	ScoreFunctionOP sf1,sf2,sf3,sf4;
 	sf1 = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
 	sf2 = get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS );
@@ -442,10 +442,10 @@ fa_refine_and_design(core::pose::Pose & pose, Size NCYCLE) {
 
 void report( std::string tag, core::pose::Pose & pose, core::pose::Pose & cenpose, ScoreFunctionOP sf_fa, std::ostringstream & oss, Real censcore ) {
 	using namespace core;
-	Size nres_mono = (pose.n_residue()-4)/4;
+	Size nres_mono = (pose.size()-4)/4;
 	Real ref_rep  =  2260.948; // pre-calculated
 	// for( Size i = 0; i < 4; ++i ) {
-	// 	Size nres_mono = (pose.n_residue()-4)/4;
+	// 	Size nres_mono = (pose.size()-4)/4;
 	// 	ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
 	//    	ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
 	// }

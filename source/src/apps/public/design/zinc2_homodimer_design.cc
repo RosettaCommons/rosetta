@@ -149,7 +149,7 @@ public:
 		bool found_zn1( false );
 		bool found_zn2( false );
 
-		for ( Size i=1; i<=pose.total_residue(); i++ ) {
+		for ( Size i=1; i<=pose.size(); i++ ) {
 			if ( pose.residue(i).name3() == " ZN" ) {
 				if ( ! found_zn1 ) {
 					zn1_res = i;
@@ -215,7 +215,7 @@ public:
 
 
 		//SCOREFUNCTION --> Favor native residue
-		for ( Size i=1; i<= pose.total_residue();  ++i ) {
+		for ( Size i=1; i<= pose.size();  ++i ) {
 			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new ResidueTypeConstraint( pose, i, basic::options::option[fav_nat_bonus].value()) ) ) );
 		}
 		//SCOREFUNCTION --> add constraints

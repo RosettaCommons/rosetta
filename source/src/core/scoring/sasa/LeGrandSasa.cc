@@ -124,7 +124,7 @@ LeGrandSasa::calculate(
 		3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,   4,5,5,6,5,6,6,7, 5,6,6,7,6,7,7,8,  // Ex Fx
 		};
 
-	if ( pose.total_residue() < 1 ) return 0.0; // nothing to do
+	if ( pose.size() < 1 ) return 0.0; // nothing to do
 
 	Real const big_polar_H_radius( 1.08 ); // increase radius of polar hydrogens, eg when doing unsatisfied donorH check
 
@@ -160,7 +160,7 @@ LeGrandSasa::calculate(
 	// identify the maxium radius we have for all atoms in the pose.  this will be used to set a cutoff distance for use
 	// in skipping residue pairs if their nbr atoms are too far apart.
 	core::Real max_radius = 0.0;
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		Residue const & rsd( pose.residue( ii ) );
 		// iterate over all the atoms in residue ii and
 		for ( Size jj=1; jj <= rsd.natoms(); ++jj ) {
@@ -174,11 +174,11 @@ LeGrandSasa::calculate(
 	core::Real cutoff_distance = 2 * ( max_radius + probe_radius_ );
 
 	//j now do calculations: get the atom_masks by looping over all_atoms x all_atoms
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		Residue const & irsd( pose.residue( ii ) );
 
 		//ronj for the other 'j' residue, only iterate over residues which have indexes > residue 'i'
-		for ( Size jj=ii; jj <= pose.total_residue(); ++jj ) {
+		for ( Size jj=ii; jj <= pose.size(); ++jj ) {
 			Residue const & jrsd( pose.residue( jj ) );
 
 			calc_atom_masks(
@@ -199,7 +199,7 @@ LeGrandSasa::calculate(
 	Real const four_pi = 4.0f * Real( numeric::constants::d::pi );
 
 	int num_ones = 0;
-	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		Residue const & rsd( pose.residue(ii) );
 
 		//TR.Debug << "sasa dots: res: " << rsd.name3() << pose.pdb_info()->number(ii) << std::endl;

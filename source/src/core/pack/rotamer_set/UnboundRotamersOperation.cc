@@ -67,7 +67,7 @@ UnboundRotamersOperation::clone() const
 void UnboundRotamersOperation::add_pose(core::pose::PoseCOP pose)
 {
 	poses_.push_back(pose);
-	if ( pose->total_residue() > total_rot_ ) total_rot_ = pose->total_residue();
+	if ( pose->size() > total_rot_ ) total_rot_ = pose->size();
 }
 
 
@@ -123,7 +123,7 @@ UnboundRotamersOperation::alter_rotamer_set(
 	core::pack::task::ResidueLevelTask const & rtask = ptask.residue_task(seqnum);
 	for ( Size i = 1; i <= poses_.size(); ++i ) {
 		core::pose::Pose const & ubr_pose = *(poses_[i]);
-		if ( seqnum > ubr_pose.total_residue() ) continue;
+		if ( seqnum > ubr_pose.size() ) continue;
 		core::chemical::ResidueType const & restype = ubr_pose.residue_type(seqnum);
 		bool type_is_allowed = false;
 		for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter j = rtask.allowed_residue_types_begin(),

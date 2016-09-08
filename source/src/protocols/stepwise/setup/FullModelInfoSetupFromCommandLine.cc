@@ -174,7 +174,7 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 			PDBInfoOP pdb_info( new PDBInfo( pose ) );
 			vector1< Size > input_res_for_pose;
 			vector1< char > input_chain_for_pose;
-			for ( Size k = 1; k <= pose.total_residue(); k++ ) {
+			for ( Size k = 1; k <= pose.size(); k++ ) {
 				input_res_count++;
 				runtime_assert( input_res_count <= input_res_list.size() );
 				Size const & number_in_full_model = input_res_list[ input_res_count ];
@@ -538,7 +538,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		vector1< Size > res_list = full_model_parameters->conventional_to_full( make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
 		reorder_pose( pose, res_list );
 		pose_res_lists.push_back( res_list );
-		for ( Size k = 1; k <= pose.total_residue(); k++ ) {
+		for ( Size k = 1; k <= pose.size(); k++ ) {
 			if ( !sample_res.has_value( res_list[ k ] ) ) input_domain_map[ res_list[ k ] ] = n;
 		}
 	}
@@ -650,7 +650,7 @@ setup_fold_trees( vector1< Pose * > & pose_pointers,
 	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 		Pose & pose = *pose_pointers[n];
 		vector1< Size > const & res_list = pose_res_lists[ n ];
-		for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		for ( Size i = 1; i < pose.size(); i++ ) {
 			if ( (res_list[ i+1 ] > res_list[ i ] + 1) && !pose.fold_tree().is_cutpoint(i) ) {
 				put_in_cutpoint( pose, i );
 			}
@@ -681,7 +681,7 @@ setup_fold_trees( vector1< Pose * > & pose_pointers,
 
 		update_fixed_domain_from_extra_minimize_jump_res( fixed_domain_map, pose, res_list, extra_minimize_jump_res );
 
-		vector1< Size> root_partition_res; for ( Size n = 1; n <= pose.total_residue(); n++ ) root_partition_res.push_back( n );
+		vector1< Size> root_partition_res; for ( Size n = 1; n <= pose.size(); n++ ) root_partition_res.push_back( n );
 		modeler::reroot( pose, root_partition_res, res_list, preferred_root_res, fixed_domain_map,
 			cutpoint_open_in_full_model, working_res );
 
@@ -697,7 +697,7 @@ update_pose_fold_tree( pose::Pose & pose,
 	vector1< Size > const & jump_res,
 	core::pose::full_model_info::FullModelParameters const & full_model_parameters ) {
 
-	if ( pose.total_residue() == 0 ) return;
+	if ( pose.size() == 0 ) return;
 
 	vector1< vector1< Size > > all_res_in_chain, all_fixed_res_in_chain;
 	vector1< Size > moveable_res = sample_res;
@@ -734,9 +734,9 @@ define_chains( pose::Pose const & pose,
 	vector1< Size > const & moveable_res ) {
 
 	Size chain_start( 1 ), chain_end( 0 );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.fold_tree().is_cutpoint( n ) &&
-				n < pose.total_residue() ) continue;
+				n < pose.size() ) continue;
 		chain_end = n;
 		vector1< Size > res_in_chain, fixed_res_in_chain;
 		for ( Size i = chain_start; i <= chain_end; i++ ) {
@@ -897,7 +897,7 @@ get_tree( pose::Pose const & pose,
 		jump_atoms1.push_back( chemical::rna::default_jump_atom( pose.residue_type( jump_partners1[n] ) ) );
 		jump_atoms2.push_back( chemical::rna::default_jump_atom( pose.residue_type( jump_partners2[n] ) ) );
 	}
-	return get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
+	return get_tree( pose.size(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 }
 
 
@@ -963,7 +963,7 @@ update_fixed_domain_from_extra_minimize_jump_pairs( utility::vector1< Size > & f
 		utility::vector1< bool > partition_definition = pose.fold_tree().partition_by_jump( jump_nr );
 		utility::vector1< Size > residues_to_update;
 		Size const downstream_res = pose.fold_tree().downstream_jump_residue( jump_nr );
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( partition_definition[ n ] == partition_definition[ downstream_res ] &&
 					fixed_domain[ res_list[ n ] ] ==         fixed_domain[ res_list[ downstream_res ] ] ) {
 				residues_to_update.push_back( n );
@@ -1032,7 +1032,7 @@ add_virtual_sugar_res( pose::Pose & pose,
 		if ( !res_list.has_value( virtual_sugar_res[ n ] ) ) continue;
 		Size const i = res_list.index( virtual_sugar_res[ n ] );
 		runtime_assert( i == 1 || pose.fold_tree().is_cutpoint( i - 1 ) );
-		runtime_assert( i == pose.total_residue() || pose.fold_tree().is_cutpoint( i ) );
+		runtime_assert( i == pose.size() || pose.fold_tree().is_cutpoint( i ) );
 		add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, i );
 	}
 }

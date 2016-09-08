@@ -303,11 +303,11 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 	//OK, now we match the residues in working_pose and VDW_rep_checker_pose.
 	utility::vector1< Size > working_matching_res_list, VDW_rep_matching_res_list;
 
-	for ( Size working_seq = 1; working_seq <= working_pose.total_residue(); working_seq++ ) {
+	for ( Size working_seq = 1; working_seq <= working_pose.size(); working_seq++ ) {
 
 		Size num_match_res = 0;
 
-		for ( Size VDW_rep_seq = 1; VDW_rep_seq <= VDW_rep_screen_pose.total_residue(); VDW_rep_seq++ ) {
+		for ( Size VDW_rep_seq = 1; VDW_rep_seq <= VDW_rep_screen_pose.size(); VDW_rep_seq++ ) {
 
 			conformation::Residue const & working_rsd = working_pose.residue( working_seq ); //static_pose
 			conformation::Residue const & VDW_rep_rsd = VDW_rep_screen_pose.residue( VDW_rep_seq ); //moving_pose
@@ -428,7 +428,7 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 		output_seq_num_list( "VDW_rep_matching_res_list = ", VDW_rep_matching_res_list, TR );
 	}
 	////////////////////////////////////////////More consistency check!///////////////////////////////////////////////////////////////
-	for ( Size working_seq = 1; working_seq <= working_pose.total_residue(); working_seq++ ) {
+	for ( Size working_seq = 1; working_seq <= working_pose.size(); working_seq++ ) {
 
 		if ( working_matching_res_list.has_value( working_seq ) == false ) {
 
@@ -442,7 +442,7 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 	}
 
 
-	for ( Size VDW_rep_seq = 1; VDW_rep_seq <= VDW_rep_screen_pose.total_residue(); VDW_rep_seq++ ) {
+	for ( Size VDW_rep_seq = 1; VDW_rep_seq <= VDW_rep_screen_pose.size(); VDW_rep_seq++ ) {
 
 		if ( VDW_rep_matching_res_list.has_value( VDW_rep_seq ) == false ) {
 			//check that all working_alignment_res are properly removed.
@@ -530,12 +530,12 @@ RNA_VDW_BinChecker::align_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen
 		Size const res_num_1 = VDW_rep_screen_align_res[ii]; //moving_pose
 		Size const res_num_2 = working_align_res[ii]; //static_pose
 
-		if ( res_num_1 > VDW_rep_screen_pose.total_residue() ) {
-			utility_exit_with_message( "res_num_1 ( " + string_of( res_num_1 ) + " ) > VDW_rep_screen_pose.total_residue() ( " + string_of( VDW_rep_screen_pose.total_residue() ) + " )!" );
+		if ( res_num_1 > VDW_rep_screen_pose.size() ) {
+			utility_exit_with_message( "res_num_1 ( " + string_of( res_num_1 ) + " ) > VDW_rep_screen_pose.size() ( " + string_of( VDW_rep_screen_pose.size() ) + " )!" );
 		}
 
-		if ( res_num_2 > working_pose.total_residue() ) {
-			utility_exit_with_message( "res_num_2 ( " + string_of( res_num_2 ) + " ) > working_pose.total_residue() ( " + string_of( working_pose.total_residue() ) + " )!" );
+		if ( res_num_2 > working_pose.size() ) {
+			utility_exit_with_message( "res_num_2 ( " + string_of( res_num_2 ) + " ) > working_pose.size() ( " + string_of( working_pose.size() ) + " )!" );
 		}
 
 		if ( verbose ) TR << res_num_1 << " ---> " << res_num_2 << std::endl;
@@ -765,7 +765,7 @@ RNA_VDW_BinChecker::FARFAR_setup_using_user_input_VDW_pose( utility::vector1< st
 		std::map< core::Size, core::Size > full_to_sub;
 		full_to_sub.clear();
 
-		for ( Size n = 1; n <= working_pose.total_residue(); n++ ) {
+		for ( Size n = 1; n <= working_pose.size(); n++ ) {
 			full_to_sub[n] = n;
 		}
 
@@ -921,7 +921,7 @@ RNA_VDW_BinChecker::setup_using_user_input_VDW_pose( utility::vector1< std::stri
 		// let's figure it out based on PDB info, which hopefully is set up correctly
 		//pose::PDBInfo const & VDW_rep_screen_pdb_info = *(VDW_rep_screen_info.VDW_pose->pdb_info());
 		//pose::PDBInfo const & working_pose_pdb_info   = *(const_working_pose.pdb_info());
-		//for ( Size n = 1; n <= VDW_rep_screen_info.VDW_pose->total_residue(); n++ ){
+		//for ( Size n = 1; n <= VDW_rep_screen_info.VDW_pose->size(); n++ ){
 		//   Size const working_res =  working_pose_pdb_info.pdb2pose( VDW_rep_screen_pdb_info.chain( n ), VDW_rep_screen_pdb_info.number( n ) ) ;
 		//    if ( working_res > 0  &&  ( working_parameters->working_fixed_res().has_value( working_res ) )  ) {
 		//   VDW_rep_screen_info.VDW_align_res.push_back( n );
@@ -1080,7 +1080,7 @@ RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 
 	bool output_once = false;
 
-	TR.Debug << "pose.total_residue() = " << pose.total_residue() << std::endl;
+	TR.Debug << "pose.size() = " << pose.size() << std::endl;
 
 	// if(output_pdb_) pose.dump_pdb( "create_VDW_screen_bin_pose.pdb" );
 
@@ -1093,7 +1093,7 @@ RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 	TR.Debug << "Size of occupied_xyz_bins_: " << occupied_xyz_bins_.size() << std::endl;
 	TR.Debug << "optimize_memory_usage_    : " << optimize_memory_usage_ << std::endl;
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		core::conformation::Residue const & rsd = pose.residue( n );
 
 		if ( ignore_res_list.has_value( n ) ) {
@@ -1447,7 +1447,7 @@ RNA_VDW_BinChecker::VDW_rep_screen_with_act_pose( core::pose::Pose const & scree
 		//Align VDW_rep_screen_pose to screening_pose
 		align_VDW_rep_screen_pose( VDW_rep_screen_pose, screening_pose, VDW_rep_screen_align_res, working_align_res, false /*verbose*/ );
 
-		for ( Size seq_num = 1; seq_num <= VDW_rep_screen_pose.total_residue(); seq_num++ ) {
+		for ( Size seq_num = 1; seq_num <= VDW_rep_screen_pose.size(); seq_num++ ) {
 
 			if ( VDW_rep_screen_info.VDW_ignore_res.has_value( seq_num ) ) continue;
 

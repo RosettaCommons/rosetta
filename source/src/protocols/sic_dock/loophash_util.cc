@@ -89,17 +89,17 @@ get_termini_from_pose(
 			pose.residue(ir-1).is_protein()
 			) {
 		lowers.push_back( std::make_pair(ir,get_leap_lower_stub(pose,ir)) );
-		TR << "add lower " << ir << "/" <<pose.n_residue() /*<<" "<< get_leap_lower_stub(pose,ir)*/ << endl;
+		TR << "add lower " << ir << "/" <<pose.size() /*<<" "<< get_leap_lower_stub(pose,ir)*/ << endl;
 	}
 	if ( pose.residue(ir).is_lower_terminus() &&
 			!pose.residue(ir).is_upper_terminus() &&
-			ir < pose.n_residue() &&
+			ir < pose.size() &&
 			!pose.residue(ir+1).is_lower_terminus() &&
 			!pose.residue(ir+1).is_upper_terminus() &&
 			pose.residue(ir+1).is_protein()
 			) {
 		uppers.push_back( std::make_pair(ir,get_leap_upper_stub(pose,ir)) );
-		TR << "add upper " << ir << "/" <<pose.n_residue() /*<<" "<< get_leap_upper_stub(pose,ir)*/ << endl;
+		TR << "add upper " << ir << "/" <<pose.size() /*<<" "<< get_leap_upper_stub(pose,ir)*/ << endl;
 	}
 }
 void
@@ -108,7 +108,7 @@ get_termini_from_pose(
 	TermInfo & lowers,
 	TermInfo & uppers
 ){
-	for ( Size ir = 1; ir <= pose.n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
 		get_termini_from_pose(pose,ir,uppers,lowers);
 	}
 }
@@ -199,9 +199,9 @@ dump_loophash_linkers(
 				// cout << "apending residue " << new_rsd->name() << std::endl;
 				if ( 1==i ) tmp.append_residue_by_jump( *new_rsd, 1 );
 				else     tmp.append_residue_by_bond( *new_rsd, true );
-				tmp.set_phi  ( tmp.n_residue(), 180.0 );
-				tmp.set_psi  ( tmp.n_residue(), 180.0 );
-				tmp.set_omega( tmp.n_residue(), 180.0 );
+				tmp.set_phi  ( tmp.size(), 180.0 );
+				tmp.set_psi  ( tmp.size(), 180.0 );
+				tmp.set_omega( tmp.size(), 180.0 );
 			}
 			// tmp.dump_pdb("test.pdb");
 		}
@@ -214,7 +214,7 @@ dump_loophash_linkers(
 			Size seg_length = (*i).length();
 			for ( Size i = 0; i < seg_length; i++ ) {
 				Size ires = 2+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
-				if ( ires > tmp.total_residue() ) break;
+				if ( ires > tmp.size() ) break;
 				tmp.set_phi  ( ires, phi[i]  );
 				tmp.set_psi  ( ires, psi[i]  );
 				tmp.set_omega( ires, omega[i]);
@@ -222,7 +222,7 @@ dump_loophash_linkers(
 			Xform s = vec3_to_stub(get_leap_lower_stub(tmp,2));
 			xform_pose(tmp,~s);
 			xform_pose(tmp,lower);
-			// tmp.delete_polymer_residue(tmp.n_residue());
+			// tmp.delete_polymer_residue(tmp.size());
 			tmp.dump_pdb(outtag+"test_lh_"+ObjexxFCL::string_of(loopsize)+"_"+ObjexxFCL::string_of(++count)+".pdb");
 			++ndumped;
 		}

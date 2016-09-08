@@ -134,7 +134,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 
 			core::Size lcount = 0;
 			while ( lib_structs.size() < skim_size ) {
-				core::Size resnum = numeric::random::random_range(1,pose.total_residue()-2);
+				core::Size resnum = numeric::random::random_range(1,pose.size()-2);
 
 				lsampler.set_start_res ( resnum );
 				lsampler.set_stop_res ( resnum );

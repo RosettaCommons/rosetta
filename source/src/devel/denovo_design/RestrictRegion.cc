@@ -217,24 +217,24 @@ RestrictRegion::apply( core::pose::Pose & pose )
 	}
 
 	if ( permanently_restricted_residues_.size() == 0 ) {
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			permanently_restricted_residues_.push_back( "" );
 		}
 	}
 
-	if ( permanently_restricted_residues_.size() != pose.total_residue() ) {
-		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.total_residue() ) + ", cache size=" + boost::lexical_cast< std::string >( permanently_restricted_residues_.size() ) );
+	if ( permanently_restricted_residues_.size() != pose.size() ) {
+		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.size() ) + ", cache size=" + boost::lexical_cast< std::string >( permanently_restricted_residues_.size() ) );
 	}
 
 	// initialize the restricted residue list if necessary
 	restricted_residues_.clear();
 	TR << "Clearing list of restricted residues" << std::endl;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		restricted_residues_.push_back( permanently_restricted_residues_[i] );
 	}
 
-	if ( restricted_residues_.size() != pose.total_residue() ) {
-		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.total_residue() ) + ", cache size=" + boost::lexical_cast< std::string >( restricted_residues_.size() ) );
+	if ( restricted_residues_.size() != pose.size() ) {
+		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.size() ) + ", cache size=" + boost::lexical_cast< std::string >( restricted_residues_.size() ) );
 	}
 
 	// set up the packer task
@@ -248,7 +248,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 	// check the current pose against the previous pose -- if it has changed, make the restrictions permanent
 	if ( previous_pose() ) {
 		bool changed( false );
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( previous_pose()->residue( i ).aa() != pose.residue( i ).aa() ) {
 				TR << "Poses not identical for " << previous_pose()->residue( i ).name1() << i << pose.residue( i ).name1();
 				// this means there has been a change
@@ -285,7 +285,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 	TR << std::endl;
 	last_type_ = type_;
 	++(metric_stats_[ type_ ].second);
-	op->set_regions_to_design( pose.total_residue() );
+	op->set_regions_to_design( pose.size() );
 	utility::vector1< core::Size > residues( op->get_residues_to_design( pose ) );
 	core::Size restrict_count( 0 );
 	last_residues_restricted_.clear();
@@ -329,13 +329,13 @@ RestrictRegion::apply( core::pose::Pose & pose )
 			if ( enable_max_trp_ ) {
 				utility::vector1< bool > allowed_aa( 20, true );
 				core::Size trp_count( 0 );
-				for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
+				for ( core::Size j=1; j<=pose.size(); ++j ) {
 					if ( pose.residue( j ).name1() == 'W' ) {
 						++trp_count;
 					}
 				}
 				if ( trp_count >= max_trp_ ) {
-					for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
+					for ( core::Size j=1; j<=pose.size(); ++j ) {
 						if ( pose.residue( j ).name1() != 'W' ) {
 							allowed_aa[ core::chemical::aa_from_oneletter_code( 'W' ) ] = false;
 							task->nonconst_residue_task( j ).restrict_absent_canonical_aas( allowed_aa );

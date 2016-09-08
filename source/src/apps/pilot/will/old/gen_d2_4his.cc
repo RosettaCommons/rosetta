@@ -139,7 +139,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
   core::id::AtomID_Map< bool > atom_map;
   core::pose::initialize_atomid_map( atom_map, pose, false );
-  for ( Size ir=1; ir<=pose.total_residue(); ++ir ) {
+  for ( Size ir=1; ir<=pose.size(); ++ir ) {
     atom_map.set(AtomID(2,ir) , true );
     atom_map.set(AtomID(3,ir) , true );
     atom_map.set(AtomID(5,ir) , true );
@@ -214,7 +214,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
       task->nonconst_residue_task(i).or_ex2_sample_level( core::pack::task::EX_ONE_STDDEV );
     }
   }
-  for(Size i=nres+1; i<=pose.n_residue(); ++i) {
+  for(Size i=nres+1; i<=pose.size(); ++i) {
     task->nonconst_residue_task(i).prevent_repacking();
   }
   TR << *task << std::endl;
@@ -419,11 +419,11 @@ double isctfast(
   Mat rot = Mat::identity();
   if     ( ori.dot(Vec(0,0,1)) < -0.999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
   else if( ori.dot(Vec(0,0,1)) <  0.999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-  for(int i = 1; i <= (int)a.n_residue(); ++i) {
+  for(int i = 1; i <= (int)a.size(); ++i) {
     int const natom = (a.residue(i).name3()=="GLY") ? 4 : 5;
     for(int j = 1; j <= natom; ++j) pa.push_back(rot*Vec(a.residue(i).xyz(j)));
   }
-  for(int i = 1; i <= (int)b.n_residue(); ++i) {
+  for(int i = 1; i <= (int)b.size(); ++i) {
     int const natom = (b.residue(i).name3()=="GLY") ? 4 : 5;
     for(int j = 1; j <= natom; ++j) pb.push_back(rot*Vec(b.residue(i).xyz(j)));
   }
@@ -573,7 +573,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
   dt_ang[ 6] = 0.0;
   dt_ang[ 9] = 0.0;
 
-  Vec com(0.0,0.0,0.0); for(Size i = 1; i <= pose.n_residue(); ++i) com += pose.xyz(AtomID(2,i)); com /= Real(pose.n_residue());
+  Vec com(0.0,0.0,0.0); for(Size i = 1; i <= pose.size(); ++i) com += pose.xyz(AtomID(2,i)); com /= Real(pose.size());
 
   for(Size blen1 = 20; blen1 < 24; ++blen1) {
     db_len[ 7] = Real(blen1)/10.0;
@@ -616,7 +616,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 										//#ifdef USE_OPENMP
 										//#pragma omp parallel for schedule(dynamic,1)
 										//#endif
-          for(Size rsd3 = 1; rsd3 <= pose.n_residue(); ++rsd3) {
+          for(Size rsd3 = 1; rsd3 <= pose.size(); ++rsd3) {
 												if( std::abs((int)rsd1-(int)rsd3) < 3 ) continue;
 												if( std::abs((int)rsd2-(int)rsd3) < 3 ) continue;
 												Pose tmp1;
@@ -654,7 +654,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
                 rot_pose(tmp2,symaxs1,180.0,symcen1);
 
                 clash=false;
-                for(Size i = 1; i <= tmp2.n_residue(); ++i) {
+                for(Size i = 1; i <= tmp2.size(); ++i) {
                   for(Size j = 1; j <= 5; ++j) {
                     if(!ifc.clash_check(tmp2.xyz(AtomID(j,i)))) clash=true;
                   } if(clash) break;
@@ -677,7 +677,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
                 rot_pose(tmp3,Rsym2,symcen1+3.0*symaxs1);
                 //tmp3.dump_pdb("test3.pdb");
 
-                for(Size rsd4 = 1; rsd4 <= tmp1.n_residue(); ++rsd4) {
+                for(Size rsd4 = 1; rsd4 <= tmp1.size(); ++rsd4) {
 																		if( std::abs((int)rsd1-(int)rsd4) < 3 ) continue;
 																		if( std::abs((int)rsd2-(int)rsd4) < 3 ) continue;
 																		if( std::abs((int)rsd3-(int)rsd4) < 3 ) continue;
@@ -702,7 +702,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 																				Vec delta = Psym1*(ZN-h4m);
 
                     clash=false;
-                    for(Size i = 1; i <= tmp3.n_residue(); ++i) {
+                    for(Size i = 1; i <= tmp3.size(); ++i) {
                       for(Size j = 1; j <= 5; ++j) {
 																								Vec const X = Rsym2_0*(tmp3.xyz(AtomID(j,i))-symcen1)+symcen1+delta;
                         if(!ifc.clash_check(       X                 )) clash=true;
@@ -760,7 +760,7 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 
 
 																				Pose out1(tmp1);
-																				for(Size i = 1; i <= tmp1.n_residue(); ++i) {
+																				for(Size i = 1; i <= tmp1.size(); ++i) {
 																						if(i==rsd1||i==rsd2||i==rsd3||i==rsd4) continue;
 																						replace_pose_residue_copying_existing_coordinates( out1, i, out1.residue(i).residue_type_set().name_map("ALA"));
 																				}
@@ -841,7 +841,7 @@ void run(std::string fname) {
   make_pose_from_sequence(ile,"I",core::chemical::CENTROID   ,false);
   pose_from_file(cenp,*crs,fname, core::import_pose::PDB_file);
   pose_from_file(natp,*frs,fname, core::import_pose::PDB_file);
-  Size nres=cenp.n_residue();
+  Size nres=cenp.size();
   core::scoring::dssp::Dssp dssp(natp);
   dssp.insert_ss_into_pose(natp);
   dssp.insert_ss_into_pose(cenp);
@@ -884,11 +884,11 @@ void run(std::string fname) {
 
 
 		TR << "making rotamers" << std::endl;
-		vector1<core::pack::rotamer_set::RotamerSetOP> rotsets(hisp.n_residue(),NULL);
+		vector1<core::pack::rotamer_set::RotamerSetOP> rotsets(hisp.size(),NULL);
 		//#ifdef USE_OPENMP
 		//#pragma omp parallel for schedule(dynamic,1)
 		//#endif
-		for(Size i = 1; i <= hisp.n_residue(); ++i) {
+		for(Size i = 1; i <= hisp.size(); ++i) {
 				//TR << i << std::endl;
 				rotsets[i] = get_rotset(hisp,i);
 		}

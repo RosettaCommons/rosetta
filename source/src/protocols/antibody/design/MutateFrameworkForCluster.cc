@@ -197,7 +197,7 @@ MutateFrameworkForCluster::framework_dependant_clusters(){
 utility::vector1<bool>
 MutateFrameworkForCluster::framework_dependant_positions(const core::pose::Pose& pose){
 
-	utility::vector1<bool> positions(pose.total_residue(), false);
+	utility::vector1<bool> positions(pose.size(), false);
 
 	for ( std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter ) {
 
@@ -212,7 +212,7 @@ MutateFrameworkForCluster::framework_dependant_positions(const core::pose::Pose&
 utility::vector1<bool>
 MutateFrameworkForCluster::framework_dependant_positions(const core::pose::Pose& pose, const clusters::CDRClusterEnum cluster){
 
-	utility::vector1<bool> positions(pose.total_residue(), false);
+	utility::vector1<bool> positions(pose.size(), false);
 
 
 	for ( core::Size i = 1; i <= mutant_info_[ cluster ].size(); ++i ) {
@@ -323,7 +323,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 
-	utility::vector1< bool > design_positions(pose.total_residue(), false);
+	utility::vector1< bool > design_positions(pose.size(), false);
 
 	bool framework_dependant_clusters = false;
 
@@ -391,7 +391,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! design_positions[ i ] ) {
 			turn_off_design.include_residue( i );
 		}
@@ -400,7 +400,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	core::select::residue_selector::NeighborhoodResidueSelector neighbor_sel = core::select::residue_selector::NeighborhoodResidueSelector(design_positions, pack_shell_);
 	utility::vector1<bool> pack_positions = neighbor_sel.apply(pose);
 
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! pack_positions[ i ] ) {
 			turn_off_packing.include_residue( i );
 		}

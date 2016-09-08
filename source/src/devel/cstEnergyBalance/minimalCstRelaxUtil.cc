@@ -103,7 +103,7 @@ numeric::xyzVector< Real > get_centerOfMass(const Pose& pose ){
 	using namespace core::conformation;
 	Size nAtms=0;
 	numeric::xyzVector< Real > massSum(0.0,0.0,0.0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -160,7 +160,7 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 		Size residue_id = *caAtomsToConstrain_start;
 		tr.Debug << "constraining " << residue_id << std::endl;
 		Residue const & rsd( pose.residue(residue_id) );
-		cst_set->add_constraint(ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.total_residue()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))) ) ));
+		cst_set->add_constraint(ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.size()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))) ) ));
 		++caAtomsToConstrain_start;
 	}
 	return(cst_set);
@@ -173,7 +173,7 @@ std::set<Size> get_coreResiduesToConstrain(const Size numbResiduesToConstrain,co
 	std::multimap<Real,Size> distCenterMassCaPos;
 	std::multimap<Real,Size>::iterator start_massCenterCaPos,stop_massCenterCaPos;
 	static string atom_name( "CA" );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		Real distance = pose.residue(ii).xyz(atom_name).distance(massSum);
 		distCenterMassCaPos.insert(std::pair<Real,Size>(distance,ii));
 	}
@@ -197,7 +197,7 @@ std::set<Size> get_distDeviationResiduesToConstrain(const Real distDeviationThre
 	core::scoring::calpha_superimpose_pose(relaxed_pose, unmodified_pose);
 	Size count = 0;
 	tr.Debug << "---------------------------------------------------" << std::endl;
-	for ( Size ii = 1; ii <= unmodified_pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 		Real distance = relaxed_pose.residue(ii).xyz(atom_name).distance( unmodified_pose.residue(ii).xyz(atom_name));
 		tr.Debug << ii << "-" << distance << std::endl;
 		if ( distance >= distDeviationThresh ) {
@@ -362,7 +362,7 @@ void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream &
 	using namespace relax;
 	if ( !caAtomsToConstrain.empty() ) { //size() != 0){//don't output coordinate constraints if no atoms to constrain
 		std::set< Size >::const_iterator caAtomsToConstrain_start;//,caAtomsToConstrain_stop;
-		int virtualRes_id = pose.total_residue();
+		int virtualRes_id = pose.size();
 		numeric::xyzVector< core::Real > atomLocation(0.0,0.0,0.0);
 		caAtomsToConstrain_start = caAtomsToConstrain.begin();
 		while ( caAtomsToConstrain_start != caAtomsToConstrain.end() ) {

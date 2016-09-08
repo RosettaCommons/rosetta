@@ -82,7 +82,7 @@ Align_RmsdEvaluator::apply(
 	ss.add_energy( "rms_" + tag(), rmsd );
 
 	Real const coverage(
-		(Real) (n_atoms) / (Real) (native_pose()->total_residue())
+		(Real) (n_atoms) / (Real) (native_pose()->size())
 	);
 
 	if ( report_aln_components() ) {

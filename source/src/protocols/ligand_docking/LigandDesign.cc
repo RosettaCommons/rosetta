@@ -202,7 +202,7 @@ LigandDesign::apply( core::pose::Pose & pose )
 	assert(!fragments_.empty());
 	using namespace basic::options::OptionKeys;
 	using basic::options::option;
-	core::Size ligand_residue_id= pose.n_residue();
+	core::Size ligand_residue_id= pose.size();
 	ASSERT_ONLY(core::conformation::Residue const & ligand= pose.residue(ligand_residue_id);)
 		assert(ligand.is_ligand());
 	assert( ligand.n_possible_residue_connections() > 0);

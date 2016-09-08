@@ -151,7 +151,7 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
 }
 
 void trans_pose( Pose & pose, Vec const & trans, Size start=1, Size end=0 ) {
-	if(0==end) end = pose.n_residue();
+	if(0==end) end = pose.size();
 	for(Size ir = start; ir <= end; ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -160,7 +160,7 @@ void trans_pose( Pose & pose, Vec const & trans, Size start=1, Size end=0 ) {
 	}
 }
 void rot_pose( Pose & pose, Mat const & rot, Size start=1, Size end=0 ) {
-	if(0==end) end = pose.n_residue();
+	if(0==end) end = pose.size();
 	for(Size ir = start; ir <= end; ++ir) {
 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -239,7 +239,7 @@ void design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, 
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 	// Set which residues can be designed
-	for(Size i=1; i<=pose.n_residue(); i++) {
+	for(Size i=1; i<=pose.size(); i++) {
 		if(!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if(pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
@@ -290,7 +290,7 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
 	// If design_pos is populated then we are doing design
 	if(design_pos.size() > 0){
 
-		for(Size i=1; i<=pose.n_residue(); i++) {
+		for(Size i=1; i<=pose.size(); i++) {
 			if(!sym_info->bb_is_independent(i)) {
 				task->nonconst_residue_task(i).prevent_repacking();
 			} else if(pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
@@ -342,7 +342,7 @@ void repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) 
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 	// Set which residues can be repacked
-	for(Size i=1; i<=pose.n_residue(); i++) {
+	for(Size i=1; i<=pose.size(); i++) {
 		if(!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if(find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
@@ -384,26 +384,26 @@ void minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos
 }
 
 int which_subsub(int i,Pose const & p1, Pose const & p2) {
-	int N = p1.n_residue()+p2.n_residue();
+	int N = p1.size()+p2.size();
 	i = (i-1)%N+1;
-	return i > p1.n_residue() ? 2 : 1;
+	return i > p1.size() ? 2 : 1;
 }
 
 utility::vector1<Real> sidechain_sasa(Pose const & pose, Real probe_radius) {
 	using core::id::AtomID;
-	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
+	utility::vector1<Real> rsd_sasa(pose.size(),0.0);
 	core::id::AtomID_Map<Real> atom_sasa;
 	core::id::AtomID_Map<bool> atom_mask;
 	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
 	core::pose::initialize_atomid_map(atom_mask,pose,false);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
+	for(Size i = 1; i <= pose.size(); i++) {
 		for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
 			atom_mask[AtomID(j,i)] = true;
 		}
 	}
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
-	utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
+	utility::vector1<Real> sc_sasa(pose.size(),0.0);
+	for(Size i = 1; i <= pose.size(); i++) {
 		// Use CA as the side chain for Glys
 		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
 		for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
@@ -527,7 +527,7 @@ Real get_atom_packing_score(Pose const &pose, Sizes intra_subs1, Sizes intra_sub
 	for(Size ir=1; ir<=nres_monomer; ir++) {
 		for(Size ia = 1; ia<=sub_pose.residue(ir).nheavyatoms(); ia++) {
 			bool contact = false;
-			for(Size jr=nres_monomer+1; jr<=sub_pose.n_residue(); jr++) {
+			for(Size jr=nres_monomer+1; jr<=sub_pose.size(); jr++) {
 				for(Size ja = 1; ja<=sub_pose.residue(jr).nheavyatoms(); ja++) {
 					if(sub_pose.residue(ir).xyz(ia).distance_squared(sub_pose.residue(jr).xyz(ja)) <= cutoff2)  {
 						contact = true;
@@ -654,8 +654,8 @@ void *dostuff(void*) {
 			import_pose::pose_from_file(p2, file2, resi_set, core::import_pose::PDB_file);
 			sc_sasa1 = sidechain_sasa(p1,2.2); // 110728 -- WAS 2.5 -- Changed for xtal design
 			sc_sasa2 = sidechain_sasa(p2,2.2);
-			if(sc_sasa1.size() != p1.n_residue()) utility_exit_with_message("SASA BAD");
-			if(sc_sasa2.size() != p2.n_residue()) utility_exit_with_message("SASA BAD");
+			if(sc_sasa1.size() != p1.size()) utility_exit_with_message("SASA BAD");
+			if(sc_sasa2.size() != p2.size()) utility_exit_with_message("SASA BAD");
 			sc_sasa = sc_sasa1;
 			sc_sasa.insert(sc_sasa.end(),sc_sasa2.begin(),sc_sasa2.end());
 			rot_pose(p1,Vec(0,0,1),cmp1rots[iconfig]);
@@ -665,15 +665,15 @@ void *dostuff(void*) {
 			alignaxis(p1,cmp1axs,Vec(0,0,1),Vec(0,0,0));
 			alignaxis(p2,cmp2axs,Vec(0,0,1),Vec(0,0,0));
 			Pose mono;
-			for(Size i = 1; i <= p1.n_residue(); ++i) {
+			for(Size i = 1; i <= p1.size(); ++i) {
 				if(p1.residue(i).is_lower_terminus()) mono.append_residue_by_jump(p1.residue(i),1);
 				else                                  mono.append_residue_by_bond(p1.residue(i));
 			}
-			for(Size i = 1; i <= p2.n_residue(); ++i) {
+			for(Size i = 1; i <= p2.size(); ++i) {
 				if(p2.residue(i).is_lower_terminus()) mono.append_residue_by_jump(p2.residue(i),1);
 				else                                  mono.append_residue_by_bond(p2.residue(i));
 			}
-			if(sc_sasa.size() != mono.n_residue()) utility_exit_with_message("SASA BAD");
+			if(sc_sasa.size() != mono.size()) utility_exit_with_message("SASA BAD");
 			pose = mono;
 			// mono.dump_pdb("test.pdb");
 			// for(int i = 1; i <= sc_sasa.size(); ++i) {
@@ -731,10 +731,10 @@ void *dostuff(void*) {
 
 						std::cout << iconfig << " " << iangle1 << " " << iradius1 << " " << iangle1 << " " << iradius2 << std::endl;
 						Pose pose_for_design = pose;
-						rot_pose  (pose_for_design,  rot1,               1,p1.n_residue());
-						trans_pose(pose_for_design,trans1,               1,p1.n_residue());
-						rot_pose  (pose_for_design,  rot2,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
-						trans_pose(pose_for_design,trans2,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
+						rot_pose  (pose_for_design,  rot1,               1,p1.size());
+						trans_pose(pose_for_design,trans1,               1,p1.size());
+						rot_pose  (pose_for_design,  rot2,p1.size()+1,p1.size()+p2.size());
+						trans_pose(pose_for_design,trans2,p1.size()+1,p1.size()+p2.size());
 
 						// pose_for_design.dump_pdb("test_grid_"+ObjexxFCL::string_of(iconfig)+"_"+ObjexxFCL::string_of(iangle1)+"_"+ObjexxFCL::string_of(iradius1)+"_"+ObjexxFCL::string_of(iangle2)+"_"+ObjexxFCL::string_of(iradius2)+".pdb");
 						// utility_exit_with_message("aorisht");
@@ -891,8 +891,8 @@ void *dostuff(void*) {
 
 							Pose boundpose(pose_for_design);
 							Pose unboundpose(pose_for_design);
-							trans_pose(unboundpose,cmp1axs*1000.0,               1,p1.n_residue()               );
-							trans_pose(unboundpose,cmp2axs*1000.0,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
+							trans_pose(unboundpose,cmp1axs*1000.0,               1,p1.size()               );
+							trans_pose(unboundpose,cmp2axs*1000.0,p1.size()+1,p1.size()+p2.size());
 							repack(unboundpose, scorefxn, design_pos);
 							minimize(unboundpose, scorefxn, design_pos, false, true, false);
 							Real ubounde = scorefxn->score(unboundpose);

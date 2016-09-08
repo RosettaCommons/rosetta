@@ -138,7 +138,7 @@ public:
 		if(with_minimization) {
 		// Just run RTMIN on a few residues, because it's slow
 		for(Size i = 1; i < 30; ++i) task->nonconst_residue_task(i).prevent_repacking();
-		for(Size i = 115; i <= pose.total_residue(); ++i) task->nonconst_residue_task(i).prevent_repacking();
+		for(Size i = 115; i <= pose.size(); ++i) task->nonconst_residue_task(i).prevent_repacking();
 		pack::rtmin( pose, scorefxn, task );
 		}
 		else pack::symmetric_rotamer_trials( pose, scorefxn, task );
@@ -168,7 +168,7 @@ public:
 		// test that the rotamers produced are the same as when the test was created
 		// note: last update will sheffler (willsheffler@gmail.com) march 24 2008
 
-		Size nres = pose.n_residue();
+		Size nres = pose.size();
 		for ( Size i = 1; i <= nres; ++i ) {
 			// get chi angles
 			utility::vector1< Real > res_chi = pose.residue( i ).chi();

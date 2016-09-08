@@ -149,7 +149,7 @@ public:
 
 		Vector COM( 0.0, 0.0, 0.0 );
 		utility::vector1< id::AtomID > IDs;
-		for( Size ires = 1; ires <= pose.total_residue(); ++ires){
+		for( Size ires = 1; ires <= pose.size(); ++ires){
 			for( Size iatm = 1; iatm <= pose.residue(ires).natoms(); ++iatm){
 				//Size atmno = pose.residue(ires).atom_index(" CA ");
 				//std::cout << ires << " " << atmno << std::endl;

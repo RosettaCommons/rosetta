@@ -65,7 +65,7 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
-	if ( nres != saved_input_pose.total_residue() ) {
+	if ( nres != saved_input_pose.size() ) {
 		utility_exit_with_message("ReturnSidechainMover used with poses of different length; aborting");
 	}
 
@@ -141,7 +141,7 @@ ReturnSidechainMover::ReturnSidechainMover(
 	copy_all_chi_ = true;
 	if ( start_res == 0 ) start_res_ = 1;
 	else start_res_ = start_res;
-	if ( end_res == 0 ) end_res_ = pose_in.total_residue();
+	if ( end_res == 0 ) end_res_ = pose_in.size();
 	else end_res_ = end_res;
 }
 
@@ -159,7 +159,7 @@ ReturnSidechainMover::ReturnSidechainMover(
 	copy_all_chi_ = false;
 	if ( start_res == 0 ) start_res_ = 1;
 	else start_res_ = start_res;
-	if ( end_res == 0 ) end_res_ = pose_in.total_residue();
+	if ( end_res == 0 ) end_res_ = pose_in.size();
 	else end_res_ = end_res;
 }
 

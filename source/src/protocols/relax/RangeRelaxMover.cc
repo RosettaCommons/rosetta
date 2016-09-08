@@ -726,7 +726,7 @@ void RangeRelaxMover::repack_sequence_window( Pose & pose, MonteCarloOP mc ){
 	// start 5 residues lower and repack for 10 residues
 	core::SSize halfrange = 4;
 	core::SSize range = 2 * halfrange;
-	core::SSize nres = static_cast< core::SSize >( pose.total_residue() );
+	core::SSize nres = static_cast< core::SSize >( pose.size() );
 
 	// create packer task - will be re-used
 	PackerTaskOP repack = TaskFactory::create_packer_task( pose );
@@ -776,7 +776,7 @@ void RangeRelaxMover::repack_spherical_range( Pose & pose, MonteCarloOP mc ) {
 	// find maximum radius in pose
 	core::Vector center_coords = pose.residue( center_resnumber_ ).xyz( "CA" );
 	core::Real max_radius( 0 );
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		core::Vector coords = pose.residue( i ).xyz( "CA" );
 		core::Real radius = ( coords - center_coords ).length();
 
@@ -830,7 +830,7 @@ void RangeRelaxMover::repack_all( Pose & pose, MonteCarloOP mc ) {
 
 utility::vector1< bool > RangeRelaxMover::get_window_repack_residues( Pose & pose, core::SSize center1, core::SSize center2, core::SSize halfrange ){
 
-	core::SSize nres = static_cast< core::SSize >( pose.total_residue() );
+	core::SSize nres = static_cast< core::SSize >( pose.size() );
 	core::SSize m, n;
 
 	// initialize vector with false
@@ -869,7 +869,7 @@ utility::vector1< bool > RangeRelaxMover::get_window_repack_residues( Pose & pos
 /// @brief Initialize from commandline
 utility::vector1< bool > RangeRelaxMover::get_spherical_repack_residues( Pose & pose, core::Real inner_radius, core::Real outer_radius ){
 
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 
 	// initialize vector with false
 	utility::vector1< bool > repack_res( nres, false );

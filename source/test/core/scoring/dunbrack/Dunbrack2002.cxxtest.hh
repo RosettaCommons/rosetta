@@ -138,7 +138,7 @@ public:
 		graph::GraphOP dummy_graph( new graph::Graph() );
 		scoring::ScoreFunction dummy_scorefxn;
 		Size ct( 1 );
-		for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+		for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
 
 			utility::vector1< ResidueOP > suggested_rotamers;
@@ -206,7 +206,7 @@ public:
 		pose::Pose pose(create_test_in_pdb_pose() );
 		//core::import_pose::pose_from_file( pose, "core/scoring/test_in.pdb" , core::import_pose::PDB_file);
 
-		for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
+		for ( Size pos = 1; pos <= pose.size(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
 			SingleResidueRotamerLibraryCOP rotlib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
 			if ( ! rotlib ) continue;

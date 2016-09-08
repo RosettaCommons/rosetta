@@ -240,7 +240,7 @@ int main( int argc, char * argv [] )
 		}
 
 		//// perform search requested by command-line option ////
-		Size const TOTRES = pose_init.total_residue();
+		Size const TOTRES = pose_init.size();
 
 		// option "-pair_all_res"
 		if ( option[pair_all_res] ) {

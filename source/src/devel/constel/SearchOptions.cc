@@ -50,11 +50,11 @@ void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
 	core::Size target_rosetta_resnum = get_pose_resnum(target_pdb_number, target_pdb_chain, pose_init);
 
 	// make a list of residues with vdw atr contacts (to the sidechain only, if possible?)
-	utility::vector1<bool> interacting_residue( pose_init.total_residue(), false );
+	utility::vector1<bool> interacting_residue( pose_init.size(), false );
 	mk_neigh_list(target_rosetta_resnum, interacting_residue, pose_init);
 
 	// for each (target, neighbor) pair, loop over all allowed mutation combinations
-	for ( Size j = 1; j <= pose_init.total_residue(); ++j ) {
+	for ( Size j = 1; j <= pose_init.size(); ++j ) {
 		if ( interacting_residue.at(j) ) {
 			pair_constel_set_idx2(target_rosetta_resnum, j, pose_init);
 		}
@@ -74,7 +74,7 @@ void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
 ///
 void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 
-	Size const TOTRES = pose_init.total_residue();
+	Size const TOTRES = pose_init.size();
 
 	NeighTeller nt(pose_init);
 
@@ -151,11 +151,11 @@ void triple_constel_set(int const target_pdb_number,
 		target_pdb_chain, pose_init);
 
 	// make a list of residues with vdw atr contacts with target
-	vector1<bool> interacting_residue( pose_init.total_residue(), false);
+	vector1<bool> interacting_residue( pose_init.size(), false);
 	mk_neigh_list(target_rosetta_resnum, interacting_residue, pose_init);
 
 	// search for (target, neighbor, neighbor) triples
-	Size UJ = pose_init.total_residue() - 1;
+	Size UJ = pose_init.size() - 1;
 	Size UK = UJ+1;
 
 	for ( Size j = 1; j <= UJ; ++j ) {
@@ -229,7 +229,7 @@ void target_constel(std::string &tgtcnl_fil, Pose & ps) {
 	char aasta;
 	char aaend;
 
-	Size const NRES = ps.total_residue();
+	Size const NRES = ps.size();
 	core::pose::PDBInfoCOP pdb_info = ps.pdb_info();
 
 	// cnl[i] and resmut[i] contain info about the contributing residue specified

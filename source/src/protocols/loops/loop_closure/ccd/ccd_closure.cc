@@ -74,7 +74,7 @@ load_coords_and_torsions(
 	//
 	// In the case of loop modeling, this is really easy -- index 1 is the first residue of the loop, we can
 	// test that the size() of the vector is the same as the loop length, etc.
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	coords.resize( nres );
 	torsions.resize( nres );
 

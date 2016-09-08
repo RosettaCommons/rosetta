@@ -65,7 +65,7 @@ virtual std::string get_name() const { return "PerturbStruct";}
 //////
 void do_mutate( core::pose::Pose & pose, core::Size nmut ) {
 	utility::vector1< core::Size > positions;
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		core::chemical::ResidueType const & cur_restype = pose.residue_type( i );
 		if ( !cur_restype.is_protein() ) continue;
 		if ( cur_restype.aa() == core::chemical::aa_cys && cur_restype.has_variant_type( core::chemical::DISULFIDE ) ) continue;
@@ -73,7 +73,7 @@ void do_mutate( core::pose::Pose & pose, core::Size nmut ) {
 	}
 	numeric::random::random_permutation(positions, numeric::random::rg());
 
-	for ( core::Size i=1; i<=std::min(nmut,pose.total_residue()); ++i ) {
+	for ( core::Size i=1; i<=std::min(nmut,pose.size()); ++i ) {
 		core::Size res_to_mut = positions[i];
 
 		//
@@ -93,7 +93,7 @@ void do_mutate( core::pose::Pose & pose, core::Size nmut ) {
 
 //////
 void revert_muations( core::pose::Pose & pose, core::pose::Pose const & ref ) {
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue(i).aa() != ref.residue(i).aa() ) {
 			pose.replace_residue( i, ref.residue(i), true);
 		}
@@ -105,7 +105,7 @@ void apply( core::pose::Pose & pose ) {
 	core::pose::Pose ref_pose(pose);
 
 	// random mutations
-	core::Size nmut = (core::Size) std::floor( mutrate_ * pose.total_residue() + 0.5 );
+	core::Size nmut = (core::Size) std::floor( mutrate_ * pose.size() + 0.5 );
 
 	protocols::relax::RelaxProtocolBaseOP fa_rlx( protocols::relax::generate_relax_from_cmd() );
 

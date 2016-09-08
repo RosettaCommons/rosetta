@@ -160,7 +160,7 @@ main( int argc, char * argv [] )
 
   pose::Pose pose;
   core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
-  Size const nres( pose.total_residue() );
+  Size const nres( pose.size() );
 
   std::cout << "chain tor_type res_id tor_angle" << std::endl;
   for(Size i = 1; i <= nres; ++i)

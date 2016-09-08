@@ -196,7 +196,7 @@ PeptoidRotamerRecoverer::apply( core::pose::Pose & pose )
 	Size x1x2_correct( 0 );
 	Real const max_diff( 30 );
 
-	for( Size i( 1 ); i <= pose.total_residue(); ++i ) { // total residue might not be compatible with symetric poses
+	for( Size i( 1 ); i <= pose.size(); ++i ) { // total residue might not be compatible with symetric poses
 
 		Size chain_id( orig_pose.residue( i ).chain() );
 		bool chain_match( false );

@@ -82,8 +82,8 @@ SymmDataTest()
 	ScoreFunctionOP scorefxn_sym( get_score_function_legacy( "score13" ) );
 
 	pack::task::PackerTaskOP packer_task( pack::task::TaskFactory::create_packer_task( pose ));
-  	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-  	for (Size res=1; res <= pose.total_residue(); ++res )
+  	utility::vector1<bool> allow_repacked( pose.size(), false );
+  	for (Size res=1; res <= pose.size(); ++res )
   	{
 		if ( symm_conf->Symmetry_Info().fa_is_independent(res) ) allow_repacked.at(res) = true;
   	}

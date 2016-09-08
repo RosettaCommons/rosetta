@@ -440,7 +440,7 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 		ss_def = core::fragment::SecondaryStructureCOP( core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( fragset, target_total_residue() ) ) );
 	}
 	//  utility::io::ozstream dump("ss_def_for_jumps");
-	//  for ( Size i = 1; i<=ss_def->total_residue(); i++ ) {
+	//  for ( Size i = 1; i<=ss_def->size(); i++ ) {
 	//   dump << i << " " << ss_def->loop_fraction()(i) << std::endl;
 	//  }
 	core::scoring::dssp::PairingsList helix_pairings;

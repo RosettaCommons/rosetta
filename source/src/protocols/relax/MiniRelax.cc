@@ -121,7 +121,7 @@ void MiniRelax::apply( core::pose::Pose & pose ) {
 		Real const clash_cutoff(2); // min fa-rep score for a clash
 
 		vector1< Real > coord_sdevs;
-		for ( Size idx = 1; idx <= pose.total_residue(); ++ii ) {
+		for ( Size idx = 1; idx <= pose.size(); ++ii ) {
 			Real coord_sdev(0);
 			if ( map[idx] != 0 ) {
 				// residue is aligned, sdev = default_coord_sdev

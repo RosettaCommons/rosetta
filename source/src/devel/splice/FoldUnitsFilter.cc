@@ -88,7 +88,7 @@ std::string
 aa_sequence( pose::Pose const & pose ){
 	std::string seq( "" );
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( !pose.conformation().residue( i ).is_protein() ) {
 			continue;
 		}
@@ -153,7 +153,7 @@ FoldUnitsFilter::compute(
 	pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 	TR<<"secstruct: "<<sec_struct<<'\n'<<"sequence: "<<aa_seq<<std::endl;
 
-	for ( Size resi = 2; resi <= pose.total_residue(); ++resi ) {
+	for ( Size resi = 2; resi <= pose.size(); ++resi ) {
 		TR<<"resi: "<<resi<<' ';
 		if ( !pose.conformation().residue( resi ).is_protein() ) {
 			continue;
@@ -161,7 +161,7 @@ FoldUnitsFilter::compute(
 		if ( !(sec_struct[ resi - 1 ] != 'L' && sec_struct[ resi - 2 ] == 'L' ) ) {
 			continue;
 		}
-		for ( Size resj = resi + minimal_length(); resj <= resi + maximal_length() && resj < pose.total_residue(); ++resj ) {
+		for ( Size resj = resi + minimal_length(); resj <= resi + maximal_length() && resj < pose.size(); ++resj ) {
 			if ( !pose.conformation().residue( resj ).is_protein() ) {
 				continue;
 			}

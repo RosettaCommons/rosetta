@@ -55,7 +55,7 @@ void test() {
 
 	//A-form torsion
 	chemical::rna::RNA_FittedTorsionInfo const torsion_info;
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
+	for (Size i = 1; i <= pose.size(); ++i) {
 		pose.set_torsion( TorsionID( i, id::BB, 1 ), torsion_info.alpha_aform() );
 		pose.set_torsion( TorsionID( i, id::BB, 2 ), torsion_info.beta_aform() );
 		pose.set_torsion( TorsionID( i, id::BB, 3 ), torsion_info.gamma_aform() );

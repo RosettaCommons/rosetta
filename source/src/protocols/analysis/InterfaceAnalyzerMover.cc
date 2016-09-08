@@ -245,19 +245,19 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 	per_residue_data_.regional_avg_per_residue_dSASA.resize(3, 0);
 	per_residue_data_.regional_avg_per_residue_energy_sep.resize(3, 0);
 
-	per_residue_data_.interface_residues.resize(pose.total_residue(), false);
-	per_residue_data_.complexed_energy.resize(pose.total_residue(), 0.0);
-	per_residue_data_.dG.resize(pose.total_residue(), 0.0);
-	per_residue_data_.dSASA.resize(pose.total_residue(), 0.0);
-	per_residue_data_.dSASA_sc.resize(pose.total_residue(), 0.0);
-	per_residue_data_.dhSASA.resize(pose.total_residue(), 0.0);
-	per_residue_data_.dhSASA_sc.resize(pose.total_residue(), 0.0);
-	per_residue_data_.dhSASA_rel_by_charge.resize(pose.total_residue(), 0.0);
+	per_residue_data_.interface_residues.resize(pose.size(), false);
+	per_residue_data_.complexed_energy.resize(pose.size(), 0.0);
+	per_residue_data_.dG.resize(pose.size(), 0.0);
+	per_residue_data_.dSASA.resize(pose.size(), 0.0);
+	per_residue_data_.dSASA_sc.resize(pose.size(), 0.0);
+	per_residue_data_.dhSASA.resize(pose.size(), 0.0);
+	per_residue_data_.dhSASA_sc.resize(pose.size(), 0.0);
+	per_residue_data_.dhSASA_rel_by_charge.resize(pose.size(), 0.0);
 
-	per_residue_data_.SASA.resize(pose.total_residue(), 0.0);
-	per_residue_data_.dSASA_fraction.resize(pose.total_residue(), 0.0);
-	per_residue_data_.separated_energy.resize(pose.total_residue(), 0.0);
-	per_residue_data_.separated_sasa.resize(pose.total_residue(), 0.0);
+	per_residue_data_.SASA.resize(pose.size(), 0.0);
+	per_residue_data_.dSASA_fraction.resize(pose.size(), 0.0);
+	per_residue_data_.separated_energy.resize(pose.size(), 0.0);
+	per_residue_data_.separated_sasa.resize(pose.size(), 0.0);
 }
 
 void
@@ -304,7 +304,7 @@ InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 	data_.ss_helix_nres.resize(3, 0);
 
 	data_.interface_to_surface_fraction.resize(3, 0);
-	data_.interface_residues.resize(3, vector1< bool >(pose.total_residue(), false));
+	data_.interface_residues.resize(3, vector1< bool >(pose.size(), false));
 
 }
 
@@ -321,7 +321,7 @@ InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
 	score_data_.clear();
 	included_nres_ = 0;
 	include_residue_.clear();
-	include_residue_.resize(pose.total_residue(), true);  //By default we don't ignore any residues for whole - pose calculations.
+	include_residue_.resize(pose.size(), true);  //By default we don't ignore any residues for whole - pose calculations.
 
 }
 
@@ -531,7 +531,7 @@ void InterfaceAnalyzerMover::make_interface_set( core::pose::Pose & pose ){
 
 	//Transform interface_set_ to vector1<bool> to match all the per residue data and regular data.
 	data_.interface_nres[ total ] = interface_set_.size();
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		auto it =  interface_set_.find( i );
 		if ( it != interface_set_.end() ) {
 
@@ -570,7 +570,7 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 
 	//itterate over all residues determine what part of the interface they are
 	//also select what chain(s) are upstream and downstream of the interface
-	for ( Size ii = 1; ii<= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii<= pose.size(); ++ii ) {
 		auto it_chain = ignored_chains_.find( pose.chain( ii ) );
 		if ( it_chain != ignored_chains_.end() ) {
 			include_residue_[ii] = false; // Ignore this residue in total energy/Sasa calculations
@@ -782,7 +782,7 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 	( *sf_ )( complexed_pose );
 	( *sf_ )( separated_pose );
 	//separated_pose.dump_pdb("IAM_test.pdb");
-	for ( core::Size i = 1; i <= complexed_pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= complexed_pose.size(); ++i ) {
 		if ( !include_residue_[ i ] ) continue;
 		included_nres_ += 1;
 
@@ -875,7 +875,7 @@ void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed
 
 
 	//Avoiding more cycles through total residue
-	for ( core::Size i = 1; i <= complexed_pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= complexed_pose.size(); ++i ) {
 
 		per_residue_data_.dSASA_sc[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
 			mv_sep_res_sasa_sc.value()[ i ],
@@ -1115,7 +1115,7 @@ void InterfaceAnalyzerMover::compute_interface_packstat( core::pose::Pose & pose
 	interface_pack_scores = core::scoring::packstat::compute_residue_packing_scores( pose, basic::options::option[ basic::options::OptionKeys::packstat::oversample ]() );
 
 	//JAB - Still bugs in packstat  - so segfault prevention!:
-	if ( interface_pack_scores.size() != pose.total_residue() ) {
+	if ( interface_pack_scores.size() != pose.size() ) {
 		data_.packstat = 0;
 		return;
 	}
@@ -1226,14 +1226,14 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	//core::id::AtomID_Map< core::Real > atom_sasa;
 	//core::pose::initialize_atomid_map( atom_sasa, pose, (core::Real)0.0 ); // initialize to 0.0 for "not computed"
 
-	//utility::vector1< Real > rsd_sasa( pose.total_residue(), 0.0 );
+	//utility::vector1< Real > rsd_sasa( pose.size(), 0.0 );
 	//core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];
 
 	// create an atom_subset mask such that only the heavy atoms will have their sasa computed (ignore H's to make it faster)
 	core::id::AtomID_Map< bool > atom_subset;
 	atom_subset.clear();
-	atom_subset.resize( pose.n_residue() );
-	for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+	atom_subset.resize( pose.size() );
+	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		atom_subset.resize( ii, pose.residue_type(ii).natoms(), false );
 		for ( Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
 			atom_subset[ ii ][ jj ] = true;
@@ -1243,7 +1243,7 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	//   core::Real total_sasa = 0.0;
 	//   total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset );
 	//  //some tracer output to make sure things work
-	//  for ( core::Size ii=1; ii <= pose.total_residue(); ++ii ) {
+	//  for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 	//   core::conformation::Residue const & rsd = pose.residue( ii );
 	//   TR << "residue " << rsd.name3() << pose.pdb_info()->number(ii) << " atom_sasas: [ ";
 	//   for ( Size at=1; at <= rsd.nheavyatoms(); ++at ) {
@@ -1332,7 +1332,7 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
 
 	core::scoring::sc::ShapeComplementarityCalculator sc_calc;
 	// Split PDB into two surfaces
-	for ( core::Size i = 1; i <= complexed_pose.n_residue(); i++ ) {
+	for ( core::Size i = 1; i <= complexed_pose.size(); i++ ) {
 		if ( upstream_chains_.count( complexed_pose.chain( i ) ) && include_residue_[ i ] ) {
 			sc_calc.AddResidue( 0, complexed_pose.residue( i ) );
 		} else if ( downstream_chains_.count( complexed_pose.chain( i ) ) && include_residue_[ i ] ) {
@@ -1381,7 +1381,7 @@ void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::po
 
 	//setupt task info
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( ( copy_complex ) ) );
-	utility::vector1_bool packable( copy_complex.total_residue(), false ); //false = nobody is packable
+	utility::vector1_bool packable( copy_complex.size(), false ); //false = nobody is packable
 	utility::vector1< bool > allowed_aa( chemical::num_canonical_aas, false ); //no allowed residues
 	allowed_aa[ core::chemical::aa_from_oneletter_code( 'G' ) ] = true; //allow gly only
 	//allow all interface residues to be mutated to Gly
@@ -1486,7 +1486,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 		TR << "Fixed chains are: " ;
 		for ( core::Size j = 1; j <= fixed_chains_string.size(); ++j ) {
 			char this_chain ( fixed_chains_string[ j ][ 0 ] );
-			for ( core::Size i = 1; i<=pose.total_residue(); ++i ) {
+			for ( core::Size i = 1; i<=pose.size(); ++i ) {
 				if ( pose.pdb_info()->chain( i ) == this_chain ) {
 					fixed_chains_.insert( pose.chain( i ) );
 					break; //once we know something about the chain we can skip - we just need the chain id
@@ -1737,10 +1737,10 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose 
 	pymol_packing << "cmd.create(\"" << pymol_object_fullpose_pack << "\", \"" << posename_base_ << "\")" << std::endl;
 
 	///////////////////////////////////////////// WHOLE POSE COLOR BY PACKING /////////////////////
-	TR << "Total: "<< pose.total_residue() <<" PackScoresTotal: "<<interface_pack_scores.size() << std::endl;
+	TR << "Total: "<< pose.size() <<" PackScoresTotal: "<<interface_pack_scores.size() << std::endl;
 
 	//JAB  - This can sometimes not match - Temp fix.  I've emailed Will to help fix this bug in packstat.
-	if ( pose.total_residue() != interface_pack_scores.size() ) {
+	if ( pose.size() != interface_pack_scores.size() ) {
 		TR << "Packscores and residues do not match. Skipping pymol selection of packing" << std::endl;
 		return;
 	}

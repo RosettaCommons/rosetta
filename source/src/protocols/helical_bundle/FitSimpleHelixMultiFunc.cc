@@ -69,7 +69,7 @@ FitSimpleHelixMultiFunc::FitSimpleHelixMultiFunc(
 {
 	runtime_assert_string_msg( start_index_ > 0, "In FitSimpleHelixMultiFunc constructor function: the starting index is out of range." );
 	runtime_assert_string_msg( first_res_index_ >= start_index_ && first_res_index_ <= end_index_, "In FitSimpleHelixMultiFunc constructor function: the first residue index is not in the residue range specified." );
-	runtime_assert_string_msg( end_index_ <= pose_.n_residue(), "In FitSimpleHelixMultiFunc constructor function: the ending index is past the end of the pose." );
+	runtime_assert_string_msg( end_index_ <= pose_.size(), "In FitSimpleHelixMultiFunc constructor function: the ending index is past the end of the pose." );
 	runtime_assert_string_msg( start_index_ + 1 < end_index_, "In FitSimpleHelixMultiFunc constructor function: the starting index must be less than the ending index, and they must define at least three residues." );
 	runtime_assert_string_msg( minimization_mode_==0 || minimization_mode_==1, "In FitSimpleHelixMultiFunc constructor function: invalid value for minimization_mode_.");
 	runtime_assert_string_msg( residues_per_repeat_ > 0, "In FitSimpleHelixMultiFunc constructor function: there must be at least one residue per repeating unit." );

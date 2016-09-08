@@ -176,11 +176,11 @@ public:
 		//read poses
 		core::pose::Pose E2;
 		core::import_pose::pose_from_file( E2, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::E2pdb].value() , core::import_pose::PDB_file);
-		core::Size const E2length = E2.total_residue();
+		core::Size const E2length = E2.size();
 
 		core::pose::Pose UBQ;
 		core::import_pose::pose_from_file( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() , core::import_pose::PDB_file);
-		core::Size const UBQlength = UBQ.total_residue();
+		core::Size const UBQlength = UBQ.size();
 		core::pose::PoseOP UBQ_second;
 		if ( two_ubiquitins_ ) UBQ_second = core::pose::PoseOP( new core::pose::Pose(UBQ) );
 		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].user() ) {
@@ -244,7 +244,7 @@ public:
 		//not that this does anything
 		complex.conformation().insert_ideal_geometry_at_residue_connection( E2_cys, cyx_connid );
 
-		core::Size const ubq_pos( complex.total_residue() );
+		core::Size const ubq_pos( complex.size() );
 		core::id::AtomID const atom0( cyx_rsd_type.atom_index( "C" ), E2_cys );
 		core::id::AtomID const atom1( cyx_rsd_type.atom_index( "CA" ), E2_cys );
 		core::id::AtomID const atom2( cyx_rsd_type.atom_index( "CB" ), E2_cys );
@@ -266,7 +266,7 @@ public:
 		}
 
 		//complex.dump_pdb("isthisthefix.pdb");
-		core::Size const complexlength( complex.total_residue());
+		core::Size const complexlength( complex.size());
 		complex.conformation().insert_ideal_geometry_at_polymer_bond( complexlength-1 );
 		complex.set_omega(complexlength-1, 180);
 		complex.conformation().insert_chain_ending(E2length);
@@ -287,7 +287,7 @@ public:
 			core::Size const ub_lys_pos(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_lys].value());
 			complex.conformation().append_residue_by_jump(UBQ_second->residue(ub_lys_pos), complexlength, "C", "NZ", true);
 			//there is a bug lurking here somewhere for C-terminal lysines
-			for ( core::Size i(ub_lys_pos+1); i <= UBQ_second->total_residue(); ++i ) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
+			for ( core::Size i(ub_lys_pos+1); i <= UBQ_second->size(); ++i ) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.size(), false);
 			for ( core::Size i(ub_lys_pos-1); i >= 1; --i ) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
 
 			//check it!
@@ -648,7 +648,7 @@ public:
 			/////////////////////////////sidechainmover for second ubiquitin/////////////////////////////
 			core::Size Kres(pose.fold_tree().jump_edge(1).stop());
 			core::pack::task::PackerTaskOP task(core::pack::task::TaskFactory::create_packer_task((pose)));
-			utility::vector1_bool packable(pose.total_residue(), false); //false = nobody is packable
+			utility::vector1_bool packable(pose.size(), false); //false = nobody is packable
 			packable[Kres] = true;
 			task->restrict_to_residues(packable); //now only one position is mobile
 			task->restrict_to_repacking();
@@ -769,10 +769,10 @@ public:
 			//hack the pose up for analysis purposes
 			core::Size const cbreak(copy.conformation().chain_end(1));
 			using core::kinematics::Edge;
-			core::kinematics::FoldTree main_tree(copy.total_residue());
+			core::kinematics::FoldTree main_tree(copy.size());
 			main_tree.clear();
 			main_tree.add_edge(Edge(1, cbreak, Edge::PEPTIDE));
-			main_tree.add_edge(Edge(cbreak+1, copy.total_residue(), Edge::PEPTIDE));
+			main_tree.add_edge(Edge(cbreak+1, copy.size(), Edge::PEPTIDE));
 			main_tree.add_edge(Edge(cbreak, cbreak+1, 1));
 			main_tree.reorder(1);
 			//TR << main_tree << std::endl;

@@ -65,7 +65,7 @@ dump_energy_method_energies(
 	Real total_energy(0);
 
 	if ( os ) *os << "Intraresidue Energies:" << "\n";
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		emap.zero();
 		emethod.eval_intrares_energy( pose.residue(i), pose, sfxn, emap);
 		//std::cout <<   std::setprecision(4) << std::fixed << std::setw(8) << emap[ mm_bend ] << ",";
@@ -74,8 +74,8 @@ dump_energy_method_energies(
 	}
 
 	if ( os ) *os << "Residue Pair Energies:" << "\n";
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-		if ( (i+1) <= pose.total_residue() ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( (i+1) <= pose.size() ) {
 			twobodyemap.zero();
 			emethod.residue_pair_energy( pose.residue(i), pose.residue(i+1), pose, sfxn, twobodyemap);
 			//std::cout <<   std::setprecision(4) << std::fixed << std::setw(8) << emap[ mm_twist ] << ",";
@@ -85,7 +85,7 @@ dump_energy_method_energies(
 	}
 
 	if ( os ) *os << "Atom Derivatives:" << "\n";
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		for ( Size j = 1; j <= pose.residue(i).natoms(); ++j ) {
 			F1.zero();
 			F2.zero();

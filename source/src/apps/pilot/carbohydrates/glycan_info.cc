@@ -149,7 +149,7 @@ public:  // Standard Rosetta methods
 
 		core::Size protein_branches = 0;
 		core::Size carbohydrate_residues = 0;
-		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 			if ( pose.residue( resnum ).is_carbohydrate() ) {
 				std::string attachment_points = get_attachment_point_string( pose, resnum);
 				core::Size parent_res = find_seqpos_of_saccharides_parent_residue( pose.residue( resnum ));

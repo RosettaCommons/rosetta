@@ -41,24 +41,24 @@ void describe_move(
 		scoring::ScoreFunctionOP score_function) {
 
 	using namespace std;
-	int residues = model.total_residue();
+	int residues = model.size();
 	int width = 7 + 11 * residues - 1;
 
 	TR << endl << string(width, '>');
 	TR << endl << "score  " << setw(10) << score_function->score(model);
 
 	TR << endl << "phi    ";
-	for (int i = 1; i <= model.total_residue(); ++i) {
+	for (int i = 1; i <= model.size(); ++i) {
 		TR << setw(10) << model.phi(i) << " ";
 	}
 
 	TR << endl << "psi    ";
-	for (int i = 1; i <= model.total_residue(); ++i) {
+	for (int i = 1; i <= model.size(); ++i) {
 		TR << setw(10) << model.psi(i) << " ";
 	}
 
 	TR << endl << "omega  ";
-	for (int i = 1; i <= model.total_residue(); ++i) {
+	for (int i = 1; i <= model.size(); ++i) {
 		TR << setw(10) << model.omega(i) << " ";
 	}
 

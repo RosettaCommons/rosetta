@@ -1545,7 +1545,7 @@ Matcher::initialize_scaffold_build_points()
 
 	all_build_points_.resize( pose_build_resids_.size() );
 	for ( Size ii = 1; ii <= pose_build_resids_.size(); ++ii ) {
-		runtime_assert_msg( pose_build_resids_[ ii ] <= upstream_pose_->n_residue(),
+		runtime_assert_msg( pose_build_resids_[ ii ] <= upstream_pose_->size(),
 			"pos file contains position outside of valid range.");
 		all_build_points_[ ii ] = protocols::match::upstream::ScaffoldBuildPointOP( new upstream::OriginalBackboneBuildPoint(
 			upstream_pose_->residue( pose_build_resids_[ ii ] ), ii ) );
@@ -1567,8 +1567,8 @@ Matcher::initialize_bump_grids()
 	}
 
 	/// This code is fixed-backbone only... it needs to be expanded.
-	original_scaffold_residue_bump_grids_.resize( upstream_pose_->total_residue() );
-	for ( Size ii = 1; ii <= upstream_pose_->total_residue(); ++ii ) {
+	original_scaffold_residue_bump_grids_.resize( upstream_pose_->size() );
+	for ( Size ii = 1; ii <= upstream_pose_->size(); ++ii ) {
 		BumpGridOP resbgop = bump_grid_to_enclose_residue_backbone( upstream_pose_->residue( ii ), *bb_grid_ );
 		fill_grid_with_backbone_heavyatom_spheres( upstream_pose_->residue( ii ), *resbgop );
 		bb_grid_->or_with( *resbgop );
@@ -1628,7 +1628,7 @@ Matcher::initialize_active_site_grid()
 				iter = upstream_resids_and_radii_defining_active_site_.begin(),
 				iter_end = upstream_resids_and_radii_defining_active_site_.end();
 				iter != iter_end; ++iter ) {
-			runtime_assert( iter->first <= upstream_pose_->total_residue() );
+			runtime_assert( iter->first <= upstream_pose_->size() );
 			active_site_grid_->enlargen_to_capture_volume_within_radius_of_residue(
 				upstream_pose_->residue( iter->first ), iter->second );
 		}
@@ -1729,7 +1729,7 @@ Matcher::create_ds_builder(
 
 	/// Only supports rigid-ligand builders for now... This code will expand in the future.
 	runtime_assert( downstream_pose_ != nullptr );
-	runtime_assert( downstream_pose_->total_residue() == 1 );
+	runtime_assert( downstream_pose_->size() == 1 );
 
 	for ( Size ii = 1; ii <= 3; ++ii ) {
 		runtime_assert( downstream_3atoms[ ii ].rsd() == 1 );

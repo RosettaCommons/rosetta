@@ -387,7 +387,7 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 		L_found=true;
 		L_chain_ = core::pose::get_chain_id_from_chain('L', pose);
 
-		for ( core::Size x = 1; x<=pose.total_residue(); ++x ) {
+		for ( core::Size x = 1; x<=pose.size(); ++x ) {
 			if ( pose.residue(x).chain()==L_chain_ ) {
 				L_sequence.push_back(pose.residue(x).name1());
 				sequence_map_[x]= pose.residue(x).name1();
@@ -399,7 +399,7 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 		H_found=true;
 		H_chain_ = core::pose::get_chain_id_from_chain('H', pose);
 
-		for ( core::Size x = 1; x<=pose.total_residue(); ++x ) {
+		for ( core::Size x = 1; x<=pose.size(); ++x ) {
 			if ( pose.residue(x).chain()==H_chain_ ) {
 				H_sequence.push_back(pose.residue(x).name1());
 				sequence_map_[x]= pose.residue(x).name1();
@@ -1507,7 +1507,7 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 	// the antigen.
 	Size end_of_light_chain = pose.conformation().chain_end(1);
 	Size light_chain_COM = core::pose::residue_center_of_mass(pose, 1, end_of_light_chain);
-	Size heavy_chain_COM = core::pose::residue_center_of_mass(pose, end_of_light_chain + 1, pose.total_residue());
+	Size heavy_chain_COM = core::pose::residue_center_of_mass(pose, end_of_light_chain + 1, pose.size());
 
 	// Adjust the FoldTree that is produced by fold_tree_from_loops to have no edges that span the light and heavy chains..
 	// Specifically, this will:
@@ -1577,7 +1577,7 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 	using namespace core;
 	using namespace kinematics;
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size cutpoint = 0;
@@ -1603,11 +1603,11 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 	}
 
 	Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
-	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
+	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.size() ) );
 
 	//setup fold tree based on cutpoints and jump points
 	LH_A_foldtree.clear();
-	LH_A_foldtree.simple_tree( pose.total_residue() );
+	LH_A_foldtree.simple_tree( pose.size() );
 	LH_A_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
 
 	Size chain_begin(0), chain_end(0);
@@ -1624,7 +1624,7 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 	//rebuild jumps between all the antigen chains
 	chain_begin = cutpoint+1;
 	chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-	while ( chain_end != pose.total_residue() ) {
+	while ( chain_end != pose.size() ) {
 		chain_begin = chain_end+1;
 		LH_A_foldtree.new_jump( chain_end, chain_begin, chain_end);
 		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
@@ -1654,7 +1654,7 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 	using namespace core;
 	using namespace kinematics;
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size cutpoint = 0;
@@ -1684,7 +1684,7 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 
 	//setup fold tree based on cutpoints and jump points
 	L_HA_foldtree.clear();
-	L_HA_foldtree.simple_tree( pose.total_residue() );
+	L_HA_foldtree.simple_tree( pose.size() );
 	L_HA_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
 
 	Size chain_begin(0), chain_end(0);
@@ -1692,7 +1692,7 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 	//rebuild jumps between heavy chain and antigen chains
 	chain_begin = cutpoint+1;
 	chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-	while ( chain_end != pose.total_residue() ) {
+	while ( chain_end != pose.size() ) {
 		chain_begin = chain_end+1;
 		L_HA_foldtree.new_jump( chain_end, chain_begin, chain_end);
 		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
@@ -1722,7 +1722,7 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 	using namespace core;
 	using namespace kinematics;
 
-	Size nres = pose.total_residue();
+	Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size cutpoint = 0;
@@ -1753,7 +1753,7 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 
 	//setup fold tree based on cutpoints and jump points
 	LA_H_foldtree.clear();
-	LA_H_foldtree.simple_tree( pose.total_residue() );
+	LA_H_foldtree.simple_tree( pose.size() );
 	LA_H_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
 
 	Size chain_begin(0), chain_end(0);
@@ -1761,7 +1761,7 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 	//rebuild jumps between the light chain and antigen chains
 	chain_begin = cutpoint+1;
 	chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-	while ( chain_end != pose.total_residue() ) {
+	while ( chain_end != pose.size() ) {
 		chain_begin = chain_end+1;
 		if ( !lchain_jump ) {
 			LA_H_foldtree.new_jump( pose.conformation().chain_end( pose.chain(1) ), chain_begin, chain_end);
@@ -1791,8 +1791,8 @@ AntibodyInfo::get_MoveMap_for_Loops(pose::Pose const & pose,
 	move_map.clear();
 	move_map.set_chi( false );
 	move_map.set_bb( false );
-	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+	utility::vector1< bool> bb_is_flexible( pose.size(), false );
+	utility::vector1< bool> sc_is_flexible( pose.size(), false );
 
 	select_loop_residues( pose, the_loops, false/*include_neighbors*/, bb_is_flexible, nb_dist);
 	move_map.set_bb( bb_is_flexible );
@@ -1817,8 +1817,8 @@ AntibodyInfo::get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const 
 	move_map.clear();
 	move_map.set_chi( false );
 	move_map.set_bb( false );
-	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+	utility::vector1< bool> bb_is_flexible( pose.size(), false );
+	utility::vector1< bool> sc_is_flexible( pose.size(), false );
 
 	//TR<<"start: "<<get_CDR_start(h3, pose)<<std::endl;
 	//TR<<"end  : "<<get_CDR_end(h3, pose)<<std::endl;
@@ -1852,9 +1852,9 @@ AntibodyInfo::add_CDR_to_MoveMap(pose::Pose const & pose,
 	core::Size cut = (stop-start+1)/2+start;
 
 	loops::Loop cdr_loop = loops::Loop(start, stop, cut);
-	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
+	utility::vector1< bool> bb_is_flexible( pose.size(), false );
 	select_loop_residues( pose, cdr_loop, include_nb_sc/*include_neighbors*/, bb_is_flexible, nb_dist);
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( bb_is_flexible[i] ) {
 			movemap->set_bb(i, true);
 			if ( ! bb_only ) {
@@ -1886,14 +1886,14 @@ AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const & pose,
 pack::task::TaskFactoryOP
 AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 
-	vector1< bool> sc_is_packable( pose.total_residue(), false );
+	vector1< bool> sc_is_packable( pose.size(), false );
 	select_loop_residues( pose, *get_AllCDRs_in_loopsop(), true/*include_neighbors*/, sc_is_packable);
 
 	using namespace pack::task;
 	using namespace pack::task::operation;
 	// selecting movable c-terminal residues
-	ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	ObjexxFCL::FArray1D_bool loop_residues( pose.size(), false );
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		loop_residues(i) = sc_is_packable[i];
 	} // check mapping
 
@@ -1912,7 +1912,7 @@ AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 
 pack::task::TaskFactoryOP
 AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const cdr_name)  const {
-	vector1< bool> sc_is_packable( pose.total_residue(), false );
+	vector1< bool> sc_is_packable( pose.size(), false );
 
 	select_loop_residues( pose, *get_CDR_in_loopsop(cdr_name), true/*include_neighbors*/, sc_is_packable);
 	using namespace protocols::toolbox::task_operations;

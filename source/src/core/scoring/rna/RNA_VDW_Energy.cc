@@ -306,7 +306,7 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 		atom_numbers_for_vdw_calculation( rna_scoring_info.nonconst_atom_numbers_for_vdw_calculation() );
 	utility::vector1< bool > & is_magnesium = rna_scoring_info.nonconst_is_magnesium();
 
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 
 	atom_numbers_for_vdw_calculation.resize( total_residue );
 	is_magnesium.resize( total_residue );

@@ -64,7 +64,7 @@ BackboneSegment::apply_to_pose( core::pose::Pose &pose, core::Size ir, bool cut 
 		core::Size newroot=0;
 		if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) newroot = pose.fold_tree().root();
 
-		core::Size nres = pose.total_residue();
+		core::Size nres = pose.size();
 		while ( !pose.residue_type(nres).is_polymer() ) nres--;
 
 		// get current cutpoints; don't try to connect these
@@ -117,15 +117,15 @@ BackboneSegment::apply_to_pose( core::pose::Pose &pose, core::Size ir, bool cut 
 				if ( last_cut!=0 ) f.add_edge( 1, last_cut+1, jump_num++);
 			}
 		}
-		for ( core::Size i=nres+1; i<=pose.total_residue(); ++i ) {
+		for ( core::Size i=nres+1; i<=pose.size(); ++i ) {
 			f.add_edge( 1, i, jump_num++ );  // additional jumps
 		}
 
 		core::Size theroot = 1;
-		if ( ir == 1 ) theroot = pose.total_residue();
+		if ( ir == 1 ) theroot = pose.size();
 		if ( newroot>0 ) theroot = newroot;  //fpd
 		if ( f.reorder(theroot) == false ) {
-			TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.total_residue() << "   IR: " << ir << "  JR: " << jr << std::endl;
+			TR.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! bailing: The root: " << theroot << " NRES " << pose.size() << "   IR: " << ir << "  JR: " << jr << std::endl;
 			return; // continuing leads to a segfault - instead ignore this loop !
 		}
 		pose.fold_tree(f);
@@ -133,7 +133,7 @@ BackboneSegment::apply_to_pose( core::pose::Pose &pose, core::Size ir, bool cut 
 
 	for ( core::Size i = 0; i < length; i++ ) {
 		core::Size ires = ir + i;
-		if ( ires > pose.total_residue() ) return;
+		if ( ires > pose.size() ) return;
 		pose.set_phi( ires, phi_[i] );
 		pose.set_psi( ires, psi_[i] );
 		pose.set_omega( ires, omega_[i] );
@@ -149,7 +149,7 @@ BackboneSegment::read_from_pose( core::pose::Pose const &pose, core::Size ir, co
 
 	for ( core::Size i = 0; i < length; i++ ) {
 		core::Size ires = ir + i;
-		if ( ires > pose.total_residue() ) return;
+		if ( ires > pose.size() ) return;
 
 		phi_.  push_back( pose.phi(   ires ));
 		psi_.  push_back( pose.psi(   ires ));

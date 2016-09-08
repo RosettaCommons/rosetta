@@ -117,8 +117,8 @@ int main( int argc, char * argv [] )
 
 	//initialize vectors of all disulf bonds
 	vector1< pair<Size,Size> > disulfides;
-	for(Size i(1); i<= pose->total_residue()-1;++i) {
-		for(Size j(i+1); j<= pose->total_residue();++j) {
+	for(Size i(1); i<= pose->size()-1;++i) {
+		for(Size j(i+1); j<= pose->size();++j) {
 			if( actual_disulfide(*pose,i,j) ) {
 				disulfides.push_back(make_pair(i,j));
 			}
@@ -152,7 +152,7 @@ int main( int argc, char * argv [] )
 	mm->set_bb( false );
 
 	// Set up each residue individually
-	for( Size i(1); i <= pose->total_residue(); ++i )
+	for( Size i(1); i <= pose->size(); ++i )
 	{
 		Residue const& res(pose->residue(i));
 		if( !res.is_protein() )

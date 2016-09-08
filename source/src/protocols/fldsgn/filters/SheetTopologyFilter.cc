@@ -222,7 +222,7 @@ SheetTopologyFilter::compute( Pose const & pose ) const
 			ss = pose.secstruct();
 		}
 	} else {
-		for ( core::Size res=1; res<=pose.total_residue(); ++res ) {
+		for ( core::Size res=1; res<=pose.size(); ++res ) {
 			if ( pose.residue( res ).is_protein() ) {
 				ss += secstruct_input_[ res - 1 ];
 			} else {

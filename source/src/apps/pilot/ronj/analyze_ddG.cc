@@ -319,7 +319,7 @@ int main( int argc, char* argv[] ) {
 
 	bool found_mutant_residue = false;
 
-	for ( Size ii = 1; ii <= mutant_pose.n_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= mutant_pose.size(); ++ii ) {
 		if ( ii == mutant_pose_resid ) {
 
 			if ( mutant_pose.residue( mutant_pose_resid ).aa() != core::chemical::aa_from_name( wt_residue_type ) ) {
@@ -373,7 +373,7 @@ int main( int argc, char* argv[] ) {
 	}
 	#ifndef NDEBUG
 		TR << "Movemap created... " << std::endl;
-		//movemap->show( std::cout, mutant_pose.n_residue() );
+		//movemap->show( std::cout, mutant_pose.size() );
 	#endif
 
 	#ifndef NDEBUG

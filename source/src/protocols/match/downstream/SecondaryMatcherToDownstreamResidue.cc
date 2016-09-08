@@ -224,7 +224,7 @@ SecondaryMatcherToDownstreamResidue::build(
 	utility::vector1< core::Vector > ds_coords( ( target_downstream_coords_->get_ds_atom_ids_needed() ).size()  );
 
 	// flo oct 09: moderate hack assuming that the ligand will always be last
-	target_residue.seqpos( upstream_pose_->total_residue() + 1);
+	target_residue.seqpos( upstream_pose_->size() + 1);
 
 	for ( Size ii = 1; ii <= target_downstream_coords_->n_rotamers_for_restype( 1 ); ++ii ) {
 		/// Set the coordinates for only the atoms that I need to give to the evaluator

@@ -79,7 +79,7 @@ public:
 
 		TS_ASSERT_EQUALS(
 			lookup_result.size(),
-			test_pose->n_residue() - full_lookup->fragment_specification().fragment_length + 1);
+			test_pose->size() - full_lookup->fragment_specification().fragment_length + 1);
 
 		for ( numeric::Size i = 0; i < lookup_result.size(); i++ ) {
 			TS_ASSERT_EQUALS(lookup_residue[i], i + 1);
@@ -95,7 +95,7 @@ public:
 
 		TS_ASSERT_EQUALS(
 			lookup_result.size(),
-			test_pose->n_residue() - full_lookup->fragment_specification().fragment_length + 1);
+			test_pose->size() - full_lookup->fragment_specification().fragment_length + 1);
 
 		for ( numeric::Size i = 0; i < lookup_result.size() - 1; i++ ) {
 			TS_ASSERT_EQUALS(lookup_residue[i], i + 1);
@@ -127,7 +127,7 @@ public:
 		TS_ASSERT_EQUALS(full_lookup->fragment_specification.fragment_atoms[1], test_spec.fragment_atoms[1]);
 		TS_ASSERT_EQUALS(full_lookup->fragment_specification.fragment_atoms[2], test_spec.fragment_atoms[2]);
 
-		numeric::Size full_expected_fragments = test_pose->n_residue() - test_spec.fragment_length + 1;
+		numeric::Size full_expected_fragments = test_pose->size() - test_spec.fragment_length + 1;
 		TS_ASSERT_EQUALS(full_lookup->fragment_threshold_distances.size(), full_expected_fragments);
 		TS_ASSERT_EQUALS(full_lookup->fragment_coordinates.size(), full_expected_fragments * test_spec.coordinates_per_fragment());
 
@@ -139,7 +139,7 @@ public:
 		TS_ASSERT_EQUALS(partial_lookup->fragment_specification.fragment_atoms[1], test_spec.fragment_atoms[1]);
 		TS_ASSERT_EQUALS(partial_lookup->fragment_specification.fragment_atoms[2], test_spec.fragment_atoms[2]);
 
-		numeric::Size partial_expected_fragments = test_pose->n_residue() - test_spec.fragment_length;
+		numeric::Size partial_expected_fragments = test_pose->size() - test_spec.fragment_length;
 		TS_ASSERT_EQUALS(partial_lookup->fragment_threshold_distances.size(), partial_expected_fragments);
 		TS_ASSERT_EQUALS(partial_lookup->fragment_coordinates.size(), partial_expected_fragments * test_spec.coordinates_per_fragment());
 	}

@@ -91,7 +91,7 @@ Real compute_bb_motif_score(
  }
 
 Real motif_score_pose(core::pose::Pose const & pose, bool interchain_only=true){
-	Size nres1 = pose.n_residue(), nres2=nres1;
+	Size nres1 = pose.size(), nres2=nres1;
 	if( core::pose::symmetry::is_symmetric(pose) ){
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		nres2 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
@@ -175,7 +175,7 @@ make_motif_task(
 		// aas[core::chemical::aa_met] = true;
 		// aas[core::chemical::aa_val] = true;
 		// now make all non-motif residues ala or gly
-		for(Size ir = 1; ir <= pose.n_residue(); ++ir){
+		for(Size ir = 1; ir <= pose.size(); ++ir){
 			// task->nonconst_residue_task(ir).restrict_absent_canonical_aas(aas);
 			using namespace core::chemical;
 			// if(!core::pose::symmetry::residue_is_independent(pose,ir)) continue; // in in asym unit
@@ -247,7 +247,7 @@ extract_scores(
 	using namespace core::scoring;
 	Energies    const & energies     ( pose.energies() );
 	EnergyGraph const & energy_graph ( energies.energy_graph() );
-	Size nres = pose.n_residue();
+	Size nres = pose.size();
 	if(core::pose::symmetry::is_symmetric(pose)){
 		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
@@ -285,7 +285,7 @@ centroid_scores_destroys_pose(
 	if(DUMP) pose.dump_pdb("cencheat.pdb");
 	sfcen->score(pose);
 	cencheatsc = extract_scores(pose,sfcen->weights());
-	core::Size nres = pose.n_residue();
+	core::Size nres = pose.size();
 	if( core::pose::symmetry::is_symmetric(pose) )
 		core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	for(Size ir = 1; ir <= nres; ++ir)

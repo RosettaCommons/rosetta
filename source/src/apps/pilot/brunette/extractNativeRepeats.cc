@@ -88,9 +88,9 @@ void get_change_in_distance(const core::pose::Pose& pose,vector1<Real> & running
     Size region_smoothing_residues = 20; //I have no clue how to set this.
     //distance seems to work better if it's proportional to the protein size
     numeric::xyzVector< core::Real >  first_res_pt = pose.xyz(core::id::NamedAtomID("CA", 1));
-    numeric::xyzVector< core::Real >  last_res_pt = pose.xyz(core::id::NamedAtomID("CA", pose.total_residue()));
+    numeric::xyzVector< core::Real >  last_res_pt = pose.xyz(core::id::NamedAtomID("CA", pose.size()));
     Real max_dist_from_center_of_mass_along_axis = 80;
-    if(pose.total_residue()<150)
+    if(pose.size()<150)
         max_dist_from_center_of_mass_along_axis = 30; //seems to get better results having the point set closer in. Still miss several cases.
     numeric::xyzVector< core::Real > center_of_mass =  get_center_of_mass(pose);
     numeric::xyzVector< core::Real > random_pt;
@@ -101,7 +101,7 @@ void get_change_in_distance(const core::pose::Pose& pose,vector1<Real> & running
         random_pt.x(center_of_mass.x()+numeric::random::random_range(1,max_dist_from_center_of_mass_along_axis));
         random_pt.y(center_of_mass.y()+numeric::random::random_range(1,max_dist_from_center_of_mass_along_axis));
         random_pt.z(center_of_mass.z()+numeric::random::random_range(1,max_dist_from_center_of_mass_along_axis));
-        for(Size jj=1; jj<=pose.total_residue(); ++jj){
+        for(Size jj=1; jj<=pose.size(); ++jj){
             numeric::xyzVector< core::Real >  pose_pt = pose.xyz(core::id::NamedAtomID("CA", jj));
             Real tmp_dist = random_pt.distance(pose_pt);
             if(ii == 1)
@@ -110,23 +110,23 @@ void get_change_in_distance(const core::pose::Pose& pose,vector1<Real> & running
                 running_total_distance[jj] = running_total_distance[jj]+tmp_dist;
         }
     }
-    for(Size jj=1; jj<=pose.total_residue(); ++jj){
+    for(Size jj=1; jj<=pose.size(); ++jj){
         running_average_distance.push_back(running_total_distance[jj]/25);
     }
-    for(Size ii=1; ii<=pose.total_residue(); ++ii){
+    for(Size ii=1; ii<=pose.size(); ++ii){
         Real local_tmpSum = 0;
         Real local_count = 0;
         Real region_tmpSum = 0;
         Real region_count = 0;
         for(int jj=(int)ii-(int)local_smoothing_residues/2; jj<=(int)ii+(int)local_smoothing_residues/2; jj++){
-            if(jj>=1 && jj<=(int)pose.total_residue()){
+            if(jj>=1 && jj<=(int)pose.size()){
                 local_tmpSum += running_average_distance[jj];
                 local_count += 1;
             }
         }
         local_running_average_smoothed_distance.push_back(local_tmpSum/local_count);
         for(int jj=(int)ii-(int)region_smoothing_residues/2; jj<=(int)ii+(int)region_smoothing_residues/2; jj++){
-            if(jj>=1 && jj<=(int)pose.total_residue()){
+            if(jj>=1 && jj<=(int)pose.size()){
                 region_tmpSum += running_average_distance[jj];
                 region_count += 1;
             }
@@ -135,10 +135,10 @@ void get_change_in_distance(const core::pose::Pose& pose,vector1<Real> & running
     }
 
     change_in_distance.push_back(0);
-    for(Size ii=2; ii<=pose.total_residue(); ++ii){
+    for(Size ii=2; ii<=pose.size(); ++ii){
         change_in_distance.push_back(local_running_average_smoothed_distance[ii]-local_running_average_smoothed_distance[ii-1]);
     }
-    for(Size ii=1; ii<=pose.total_residue(); ++ii){
+    for(Size ii=1; ii<=pose.size(); ++ii){
         magnitude_of_change.push_back(std::abs(local_running_average_smoothed_distance[ii]-region_running_average_smoothed_distance[ii]));
     }
 }
@@ -177,14 +177,14 @@ vector1<Size> get_inflection_points(vector1<Real> change_in_distance,vector1<Rea
 }
 
 Size get_nearest_loop_to_helix(core::pose::Pose& pose, Size starting_pt){
-    Size max_dist = numeric::max(starting_pt-1,pose.total_residue()-starting_pt);
+    Size max_dist = numeric::max(starting_pt-1,pose.size()-starting_pt);
     for(int ii=0; ii<(int)max_dist; ++ii){
         if((pose.secstruct(starting_pt-ii-1) == 'L') && (pose.secstruct(starting_pt-ii) == 'H'))
             return(starting_pt-ii);
         if((pose.secstruct(starting_pt+ii) == 'L') && (pose.secstruct(starting_pt+ii+1) == 'H'))
             return(starting_pt+ii+1);
     }
-    return(pose.total_residue());
+    return(pose.size());
 }
 
 
@@ -386,11 +386,11 @@ Real tm_superimpose(core::pose::Pose & pose, core::pose::Pose & ref_pose){
     using namespace core::id;
     using namespace protocols::hybridization;
     std::list <Size> pose_residue_list; // all residue numbers in ipose, used for transformation after alignment
-    for (Size ires = 1; ires <= pose.total_residue(); ++ires) {
+    for (Size ires = 1; ires <= pose.size(); ++ires) {
         pose_residue_list.push_back(ires);
     }
     std::list <Size> ref_pose_residue_list; // all residue numbers in ipose, used for transformation after alignment
-    for (Size ires = 1; ires <= ref_pose.total_residue(); ++ires) {
+    for (Size ires = 1; ires <= ref_pose.size(); ++ires) {
         ref_pose_residue_list.push_back(ires);
     }
     TMalign tm_align;
@@ -399,7 +399,7 @@ Real tm_superimpose(core::pose::Pose & pose, core::pose::Pose & ref_pose){
 	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
     core::Size n_mapped_residues=0;
 	tm_align.alignment2AtomMap(pose, ref_pose, pose_residue_list,ref_pose_residue_list, n_mapped_residues, atom_map);
-    core::Size normalize_length = pose.total_residue() < ref_pose.total_residue() ? pose.total_residue() : ref_pose.total_residue();
+    core::Size normalize_length = pose.size() < ref_pose.size() ? pose.size() : ref_pose.size();
     core::Real TMscore = tm_align.TMscore(normalize_length);
     utility::vector1< core::Real > aln_cutoffs;
 	aln_cutoffs.push_back(2);
@@ -427,7 +427,7 @@ void calculate_helical_parameters_helper(core::pose::Pose const & pose, Size sta
         slice_res2.push_back(ii);
     pdbslice(repeat2,pose,slice_res2);
     core::pose::Pose repeat1_clone = *repeat1.clone();
-    Size max_res = numeric::min(repeat1.total_residue(), repeat2.total_residue());
+    Size max_res = numeric::min(repeat1.size(), repeat2.size());
    /* core::id::AtomID_Map< core::id::AtomID > atom_map;
     core::pose::initialize_atomid_map( atom_map, repeat1, BOGUS_ATOM_ID );
    	for (Size ii=1; ii<=max_res; ++ii){
@@ -439,8 +439,8 @@ void calculate_helical_parameters_helper(core::pose::Pose const & pose, Size sta
     */
     tm_out = tm_superimpose(repeat1_clone,repeat2);
     append_pose_to_pose(repeat1,repeat1_clone,false);
-    Size res_per_repeat = repeat1.total_residue()/2;
-    calculate_helical_parameters(repeat1,1,res_per_repeat,res_per_repeat+1,repeat1.total_residue(),handedness,rise_out,radius_out, omega_out);
+    Size res_per_repeat = repeat1.size()/2;
+    calculate_helical_parameters(repeat1,1,res_per_repeat,res_per_repeat+1,repeat1.size(),handedness,rise_out,radius_out, omega_out);
 }
 
 Real calculate_sheet_pct(core::pose::Pose& pose,vector1<Size> repeat_positions){

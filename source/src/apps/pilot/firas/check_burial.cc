@@ -60,10 +60,10 @@ utility::vector1< int > calculate_burial(
 ) {
 
 	utility::vector1< int > burial;
-	burial.resize( mypose.total_residue() );
+	burial.resize( mypose.size() );
 
-	for ( unsigned int i = 1; i <= mypose.total_residue(); ++i ) {
-		for ( unsigned int j = i + 1; j <= mypose.total_residue(); ++j ) {
+	for ( unsigned int i = 1; i <= mypose.size(); ++i ) {
+		for ( unsigned int j = i + 1; j <= mypose.size(); ++j ) {
 			core::conformation::Residue resi = mypose.residue(i);
 			core::conformation::Residue resj = mypose.residue(j);
 
@@ -121,8 +121,8 @@ main( int argc, char* argv [] )
 
 		// calculate burial
 		utility::vector1< int > burial = calculate_burial( *mypose );
-		for ( unsigned int i = 1; i <= mypose->total_residue(); ++i ) {
-//			for ( unsigned int j = i + 1; j <= mypose->total_residue(); ++j ) {
+		for ( unsigned int i = 1; i <= mypose->size(); ++i ) {
+//			for ( unsigned int j = i + 1; j <= mypose->size(); ++j ) {
 				core::conformation::Residue resi = mypose->residue(i);
 //				core::conformation::Residue resj = mypose->residue(j);
 
@@ -162,8 +162,8 @@ main( int argc, char* argv [] )
 										<< std::endl;
 //					} 	// for ( unsigned int n = 1; n <= resj.natoms(); ++n )
 				} // 	for ( unsigned int m = 1; m <= resi.natoms(); ++m )
-//			} // 	for ( unsigned int j = i + 1; j <= mypose->total_residue(); ++j )
-		}		// for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
+//			} // 	for ( unsigned int j = i + 1; j <= mypose->size(); ++j )
+		}		// for ( unsigned int i = 1; i <= mypose->size(); ++i )
 		output.close();
 	} // 	for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
     } catch ( utility::excn::EXCN_Base const & e ) {

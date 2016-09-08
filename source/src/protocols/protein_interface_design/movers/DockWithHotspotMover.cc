@@ -110,7 +110,7 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	//load hotspot constraints
 	//core::Size fixed_res(1);  // unused ~Labonte
 	core::Size const chain_to_redesign = 2;
-	//if ( chain_to_redesign == 1 ) fixed_res = pose.total_residue();  // unused ~Labonte
+	//if ( chain_to_redesign == 1 ) fixed_res = pose.size();  // unused ~Labonte
 	// unused variable below ~Labonte
 	//core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	core::Real const worst_allowed_stub_bonus(-1.);

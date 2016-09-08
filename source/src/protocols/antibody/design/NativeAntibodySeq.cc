@@ -64,7 +64,7 @@ NativeAntibodySeq::set_sequence(const core::pose::Pose &pose) {
 	seq_.clear();
 	cdr_seq_.clear();
 	TR << "Setting full pose sequence" << std::endl;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		AA res = pose.aa(i);
 		//PDBNumbering info;
@@ -112,7 +112,7 @@ NativeAntibodySeq::get_sequence(const core::pose::Pose & pose) const {
 
 	//Use any sequence that is set here.  If not, use the current one.
 	utility::vector1<AA> local_seq;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		std::string info = pose.pdb_info()->pose2pdb( i );
 		if ( seq_.find( info )!= seq_.end() ) {
 			AA res = seq_.find( info )->second;
@@ -140,7 +140,7 @@ NativeAntibodySeq::get_sequence(const core::pose::Pose & pose) const {
 
 	//Convert vector to string and return
 	std::string return_seq = "";
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		return_seq += core::chemical::oneletter_code_from_aa( local_seq[ i ]);
 	}
 	return return_seq;

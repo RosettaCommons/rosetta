@@ -120,7 +120,7 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 ) const
 {
 	pose.update_residue_neighbors();
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 
 	residue_N_.clear();
 	residue_E_.clear();

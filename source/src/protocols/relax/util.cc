@@ -134,7 +134,7 @@ void setup_membrane_topology( pose::Pose & pose, std::string spanfile ) {
 void make_dna_rigid( pose::Pose & pose, core::kinematics::MoveMap & mm){
 	using namespace core::conformation;
 	//if DNA present set so it doesn't move
-	for ( core::Size i=1; i<=pose.total_residue() ; ++i )      {
+	for ( core::Size i=1; i<=pose.size() ; ++i )      {
 		if ( pose.residue(i).is_DNA() ) {
 			TR << "turning off DNA bb and chi move" << std::endl;
 			mm.set_bb( i, false );
@@ -160,7 +160,7 @@ void relax_pose( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std:
 }
 
 void fixH(core::pose::Pose & pose) {
-	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(i);
 	}
 }
@@ -173,7 +173,7 @@ cyclize_pose(core::pose::Pose & pose) {
 	using namespace core::scoring::constraints;
 	using namespace chemical;
 	using core::id::AtomID;
-	Size N = pose.n_residue();
+	Size N = pose.size();
 	for ( Size i = 1; i <= N; ++i ) {
 		if ( pose.residue(i).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 		if ( pose.residue(i).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
@@ -192,9 +192,9 @@ cyclize_pose(core::pose::Pose & pose) {
 	pose.conformation().update_polymeric_connection(1);
 
 	using namespace core::scoring::constraints;
-	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
-	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
-	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.size()).atom_index("OVL1"), pose.size() );
+	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.size()).atom_index("OVL2"), pose.size() );
+	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.size()).atom_index(   "C"), pose.size() );
 	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc(0.0,0.1) );
 	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(a1,a2,fx1) ) ));
 	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc(0.0,0.1) );

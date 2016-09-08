@@ -170,7 +170,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 	// Set which residues can be designed
-	for (Size i=1; i<=pose.n_residue(); i++) {
+	for (Size i=1; i<=pose.size(); i++) {
 		if (!sym_info->bb_is_independent(i)) {
 			task->nonconst_residue_task(i).prevent_repacking();
 		} else if (pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
@@ -211,7 +211,7 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
   PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
   // Set which residues can be repacked
-  for (Size i=1; i<=pose.n_residue(); i++) {
+  for (Size i=1; i<=pose.size(); i++) {
     if (!sym_info->bb_is_independent(i)) {
       task->nonconst_residue_task(i).prevent_repacking();
     } else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
@@ -261,19 +261,19 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
 	using core::id::AtomID;
-	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
+	utility::vector1<Real> rsd_sasa(pose.size(),0.0);
 	core::id::AtomID_Map<Real> atom_sasa;
 	core::id::AtomID_Map<bool> atom_mask;
 	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
 	core::pose::initialize_atomid_map(atom_mask,pose,false);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
+	for(Size i = 1; i <= pose.size(); i++) {
 		for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
 			atom_mask[AtomID(j,i)] = true;
 		}
 	}
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
-	utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
+	utility::vector1<Real> sc_sasa(pose.size(),0.0);
+	for(Size i = 1; i <= pose.size(); i++) {
 		// Use CA as the side chain for Glys
 		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
 		for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
@@ -356,7 +356,7 @@ get_neighbor_subs (Pose const &pose, vector1<Size> intra_subs)
       }
     }
     if (contact) {
-			sub_pose.append_residue_by_jump(pose.residue(start+1),sub_pose.n_residue());
+			sub_pose.append_residue_by_jump(pose.residue(start+1),sub_pose.size());
       for (Size ir=2; ir<=nres_monomer; ir++) {
 				sub_pose.append_residue_by_bond(pose.residue(ir+start));
       }
@@ -384,7 +384,7 @@ get_atom_packing_score (Pose const &pose, vector1<Size> intra_subs, Real cutoff=
 	for (Size ir=1; ir<=nres_monomer; ir++) {
    	for (Size ia = 1; ia<=sub_pose.residue(ir).nheavyatoms(); ia++) {
 			bool contact = false;
-			for (Size jr=nres_monomer+1; jr<=sub_pose.n_residue(); jr++) {
+			for (Size jr=nres_monomer+1; jr<=sub_pose.size(); jr++) {
 				for (Size ja = 1; ja<=sub_pose.residue(jr).nheavyatoms(); ja++) {
 					if (sub_pose.residue(ir).xyz(ia).distance_squared(sub_pose.residue(jr).xyz(ja)) <= cutoff2)  {
 						contact = true;
@@ -440,7 +440,7 @@ void
 		utility::vector1<Real> sc_sasa = sidechain_sasa(mono,2.5);
 		core::id::AtomID_Map<Real> bfac;
 		core::pose::initialize_atomid_map(bfac,mono);
-		for(Size i = 1; i <= mono.n_residue(); i++) {
+		for(Size i = 1; i <= mono.size(); i++) {
 			for(Size j = 1; j <= bfac.n_atom(i); j++) {
 				bfac[AtomID(j,i)] = sc_sasa[i];
 			}

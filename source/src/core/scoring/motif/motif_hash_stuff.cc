@@ -584,7 +584,7 @@ Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size c
 	// Real const motif_align_rms = align_motif_pose_super(pose,paln1,ir,paln2,jr);
 	Real const motif_align_rms = align_motif_pose(pose,paln1,ir,paln2,jr,type());
 	core::id::AtomID_Mask const mask = get_motif_atom_mask(pose,type(),/*with_Hpol=*/true);
-	utility::vector1<Size> resnums(pose.n_residue(),tag);
+	utility::vector1<Size> resnums(pose.size(),tag);
 	BOOST_FOREACH ( Xform const & x,xforms ) {
 		xform_pose(pose,x);
 		//core::io::pdb::dump_pdb(pose, out, mask, string_of(tag)); JAB (tag never used)
@@ -625,7 +625,7 @@ void ResPairMotif::fill_pose_with_motif( Pose & pose, int const & ir, int const 
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose, true ) );
 	pdb_info->number(1,ir);
 	pdb_info->number(2,jr);
-	for ( Size i=1; i<=pose.n_residue(); ++i ) pdb_info->chain (i,'~');
+	for ( Size i=1; i<=pose.size(); ++i ) pdb_info->chain (i,'~');
 	pose.pdb_info( pdb_info );
 	for ( Size i=1; i<=pose.residue(1).nchi(); ++i ) { pose.set_chi(i,1,uint8_to_real(chi1_[i],-180.0,180.0)); }
 	for ( Size i=1; i<=pose.residue(2).nchi(); ++i ) { pose.set_chi(i,2,uint8_to_real(chi2_[i],-180.0,180.0)); }
@@ -1187,7 +1187,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 	PoseCOP pose2op ((at(1).pose2ptr()));
 	Pose const &  pose1   ((at(1).pose1()));
 	Pose const &  pose2   ((at(1).pose2()));
-	Size nres1=pose1.n_residue(), nres2=pose2.n_residue();
+	Size nres1=pose1.size(), nres2=pose2.size();
 	if ( core::pose::symmetry::is_symmetric(pose1) ) nres1 = core::pose::symmetry::symmetry_info(pose1)->num_independent_residues();
 	if ( core::pose::symmetry::is_symmetric(pose2) ) nres2 = core::pose::symmetry::symmetry_info(pose2)->num_independent_residues();
 	bool sameseq = pose1.annotated_sequence()==pose2.annotated_sequence();
@@ -1199,9 +1199,9 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 		Pose const &  thispose2  ((hit.pose2()));
 		bool thissameseq = thispose1.annotated_sequence()==thispose2.annotated_sequence();
 		if ( thispose1op != pose1op || thispose2op != pose2op ) {
-			cout << "FIXME mismatched MotifHit poses!  " << pose1.n_residue() << " " << pose2.n_residue() << " " << thispose1.n_residue() << " " << thispose2.n_residue() << endl;
+			cout << "FIXME mismatched MotifHit poses!  " << pose1.size() << " " << pose2.size() << " " << thispose1.size() << " " << thispose2.size() << endl;
 			if ( thispose1op           != thispose1op       ) utility_exit_with_message("fixme");
-			if ( thispose1.n_residue() != pose1.n_residue() ) utility_exit_with_message("fixme");
+			if ( thispose1.size() != pose1.size() ) utility_exit_with_message("fixme");
 		}
 		// ResPairMotif const & sm(hit.motif);
 		// cout << "get_resfile motif: " << hit << endl;
@@ -1528,15 +1528,15 @@ void ResPairMotifQuery::init( Pose const & pose1_in, Pose const & pose2_in){
 	overlap1_ = MATCH_ANY;
 	overlap2_ = MATCH_ANY;
 	max_ca_dis2_ = 2.0*MOTIF_HASH_CART_SIZE*MOTIF_HASH_CART_SIZE;
-	if ( useres1_.size()==0 ) useres1_.resize(pose1_->n_residue(),true);
+	if ( useres1_.size()==0 ) useres1_.resize(pose1_->size(),true);
 	if ( !pose2_ ) {
 		pose2_ = pose1_;
-		useres2_.resize(pose1_->n_residue(),false);
+		useres2_.resize(pose1_->size(),false);
 		if ( core::pose::symmetry::is_symmetric(*pose1_) ) {
 			using namespace core::conformation::symmetry;
 			using namespace core::pose::symmetry;
 			SymmetryInfoCOP syminfo = symmetry_info(*pose1_);
-			for ( Size ir = 1; ir <= pose1_->n_residue(); ++ir ) {
+			for ( Size ir = 1; ir <= pose1_->size(); ++ir ) {
 				useres1_[ir] = true;
 				useres2_[ir] = syminfo->chi_is_independent(ir);
 			}
@@ -1546,14 +1546,14 @@ void ResPairMotifQuery::init( Pose const & pose1_in, Pose const & pose2_in){
 	} else {
 		runtime_assert( !core::pose::symmetry::is_symmetric(*pose1_) );
 	}
-	if ( useres2_.size()==0 ) useres2_.resize(pose2_->n_residue(),true);
-	useres1_ph_.resize(pose1_->n_residue(),true);
-	useres2_ph_.resize(pose2_->n_residue(),true);
-	useres1_po_.resize(pose1_->n_residue(),true);
-	useres2_po_.resize(pose2_->n_residue(),true);
+	if ( useres2_.size()==0 ) useres2_.resize(pose2_->size(),true);
+	useres1_ph_.resize(pose1_->size(),true);
+	useres2_ph_.resize(pose2_->size(),true);
+	useres1_po_.resize(pose1_->size(),true);
+	useres2_po_.resize(pose2_->size(),true);
 
-	runtime_assert(useres1_.size()==pose1_->n_residue());
-	runtime_assert(useres2_.size()==pose2_->n_residue());
+	runtime_assert(useres1_.size()==pose1_->size());
+	runtime_assert(useres2_.size()==pose2_->size());
 }
 
 std::ostream & operator<<(std::ostream & out, ResPairMotifQuery const & opt){
@@ -1615,8 +1615,8 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 	Pose const & pose1(*pose1cop);
 	Pose const & pose2(*pose2cop);
 	bool samepose = (pose1cop==pose2cop);
-	Size res_begin1 = 1, res_end1 = pose1.total_residue();
-	Size res_begin2 = 1, res_end2 = pose2.total_residue();
+	Size res_begin1 = 1, res_end1 = pose1.size();
+	Size res_begin2 = 1, res_end2 = pose2.size();
 	Bools const &useres1(opt.useres1_), &useres2(opt.useres2_);
 	// cout << opt << endl;
 

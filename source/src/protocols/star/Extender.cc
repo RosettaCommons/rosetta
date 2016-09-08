@@ -53,7 +53,7 @@ static const Real EXT_OMG = +180;
 void generate_extended_pose(Pose* extended_pose, const std::string& sequence) {
 	core::pose::make_pose_from_sequence(*extended_pose, sequence, core::chemical::CENTROID );
 
-	for ( Size i = 1; i <= extended_pose->total_residue(); ++i ) {
+	for ( Size i = 1; i <= extended_pose->size(); ++i ) {
 		extended_pose->set_phi(i, EXT_PHI);
 		extended_pose->set_psi(i, EXT_PSI);
 		extended_pose->set_omega(i, EXT_OMG);
@@ -138,8 +138,8 @@ void Extender::extend_unaligned(Pose* pose) {
 	const Loop& f2 = (*aligned_)[2];
 
 	FoldTree l2r, r2l;
-	l2r.add_edge(1, pose->total_residue(), core::kinematics::Edge::PEPTIDE);
-	r2l.add_edge(pose->total_residue(), 1, core::kinematics::Edge::PEPTIDE);
+	l2r.add_edge(1, pose->size(), core::kinematics::Edge::PEPTIDE);
+	r2l.add_edge(pose->size(), 1, core::kinematics::Edge::PEPTIDE);
 
 	pose->fold_tree(r2l);
 	copy_residues(reference, f1.start(), f1.stop(), pose);

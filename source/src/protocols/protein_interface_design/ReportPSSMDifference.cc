@@ -82,7 +82,7 @@ protocols::protein_interface_design::ReportPSSMDifferences::calculate(
 	core::pose::Pose pose2( pose2_in );
 	core::Real pssm = 0.;
 
-	for ( core::Size i = 1; i <= pose1.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose1.size(); ++i ) {
 		if ( !pose1.residue(i).is_protein() ) continue;
 		core::chemical::AA const restype( pose2.residue(i).aa() );
 

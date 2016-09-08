@@ -110,14 +110,14 @@ bool WobbleMover::apply_fragment (
 
 
 	// if fragment is exactly at start or end of pose it is just inserted without ccd
-	bool use_ccd ( ! ( frame.start() == 1 || frame.end() >= pose.total_residue()-1 ) );
+	bool use_ccd ( ! ( frame.start() == 1 || frame.end() >= pose.size()-1 ) );
 	kinematics::FoldTree original_tree;
-	TR.Debug << " start : " << frame.start() <<" buffer " << frame.start()-buffer_length_ << " end: " << frame.end() << " total res: " << pose.total_residue() << std::endl;
+	TR.Debug << " start : " << frame.start() <<" buffer " << frame.start()-buffer_length_ << " end: " << frame.end() << " total res: " << pose.size() << std::endl;
 	if ( use_ccd ) {
 		// prepare foldtree for ccd
 
 		bool cut_Cterm; // controls whether cutpoint is at C-terminal side of fragment
-		if ( frame.end() + buffer_length_ >= pose.total_residue() ) { //close to end of pose: cut at Nterm
+		if ( frame.end() + buffer_length_ >= pose.size() ) { //close to end of pose: cut at Nterm
 			cut_Cterm = false;
 		} else if ( frame.start() <= buffer_length_ ) { //close to start of pose: cut at Cterm
 			cut_Cterm = true;

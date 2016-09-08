@@ -167,7 +167,7 @@ public:
 		using namespace protocols::denovo_design::components;
 		core::pose::Pose rsmn;
 		core::io::pdb::build_pose_from_pdb_as_is( rsmn, "devel/denovo_design/test_input.pdb" );
-		TS_ASSERT_EQUALS( rsmn.total_residue(), 93 );
+		TS_ASSERT_EQUALS( rsmn.size(), 93 );
 		protocols::moves::DsspMover dssp;
 		dssp.apply( rsmn );
 
@@ -191,7 +191,7 @@ public:
 		core::pose::Pose pose;
 		core::io::pdb::build_pose_from_pdb_as_is( pose, "devel/denovo_design/1lvm.pdb" );
 		core::util::switch_to_residue_type_set( pose, "centroid" );
-		TS_ASSERT_EQUALS( pose.total_residue(), 467 );
+		TS_ASSERT_EQUALS( pose.size(), 467 );
 		protocols::moves::DsspMover dssp;
 		dssp.apply( pose );
 

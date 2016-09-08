@@ -55,7 +55,7 @@ public:
 
 		core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, -65 );
 			pose.set_psi( i, -41 );
 		}
@@ -79,7 +79,7 @@ public:
 		using namespace core::conformation;
 		using namespace abinitio::abscript;
 
-		TS_ASSERT_DIFFERS( pose.total_residue(), 0 );
+		TS_ASSERT_DIFFERS( pose.size(), 0 );
 
 		ChainSelectorOP chain1( new ChainSelector() );
 		chain1->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
@@ -99,29 +99,29 @@ public:
 
 		//Verify structural changes after perturbation.
 		TS_ASSERT_THROWS_NOTHING( perturb->apply( ppose ) );
-		for ( core::Size i = 2; i <= pose.total_residue()/2; ++i ) {
+		for ( core::Size i = 2; i <= pose.size()/2; ++i ) {
 			TS_ASSERT_DIFFERS( pose.phi( i ), ppose.phi( i ) );
 		}
 
-		xyzVector< core::Real > com = ppose.residue( ppose.total_residue() ).xyz( "ORIG" );
+		xyzVector< core::Real > com = ppose.residue( ppose.size() ).xyz( "ORIG" );
 
 		//Recalculate CoM
 		TS_ASSERT_THROWS_NOTHING( tracker->apply( ppose ) );
 
 		//Verify CoM Moves
-		TS_ASSERT_DIFFERS( com, ppose.residue( ppose.total_residue() ).xyz( "ORIG" ) );
+		TS_ASSERT_DIFFERS( com, ppose.residue( ppose.size() ).xyz( "ORIG" ) );
 
 		//Test that CoM follows after perturbation
 		utility::vector1< xyzVector< core::Real > > coords;
 
-		for ( core::Size i = 1; i <= pose.total_residue()/2; ++i ) {
+		for ( core::Size i = 1; i <= pose.size()/2; ++i ) {
 			for ( Atoms::const_iterator it = ppose.residue( i ).atom_begin();
 					it != ppose.residue( i ).heavyAtoms_end(); ++it ) {
 				coords.push_back( it->xyz() );
 			}
 		}
 		TS_ASSERT_LESS_THAN( ( numeric::center_of_mass( coords ) -
-			ppose.residue( ppose.total_residue() ).xyz( "ORIG" ) ).length(), 1e-10 );
+			ppose.residue( ppose.size() ).xyz( "ORIG" ) ).length(), 1e-10 );
 
 
 		//Test environment end
@@ -129,9 +129,9 @@ public:
 		TS_ASSERT_THROWS_NOTHING( final_pose = env.end( ppose ) );
 
 		// Test structure unaltered through closing.
-		TS_ASSERT_EQUALS( final_pose.total_residue(), pose.total_residue() );
+		TS_ASSERT_EQUALS( final_pose.size(), pose.size() );
 		TS_ASSERT_EQUALS( final_pose.fold_tree(), pose.fold_tree() );
-		for ( core::Size i = 1; i <= final_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= final_pose.size(); ++i ) {
 			TS_ASSERT_LESS_THAN( ( ppose.residue( i ).atom( 1 ).xyz() -
 				final_pose.residue( i ).atom( 1 ).xyz() ).length(), 1e-10 );
 		}
@@ -145,7 +145,7 @@ public:
 		using namespace numeric;
 		using namespace core::conformation;
 
-		TS_ASSERT_DIFFERS( pose.total_residue(), 0 );
+		TS_ASSERT_DIFFERS( pose.size(), 0 );
 
 		ChainSelectorOP chain1( new ChainSelector() );
 		chain1->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
@@ -161,16 +161,16 @@ public:
 
 		//Test correct topology construction
 		TS_ASSERT_THROWS_NOTHING( ppose = env.start( pose ) );
-		TS_ASSERT_EQUALS( ppose.total_residue(), pose.total_residue()+1 );
+		TS_ASSERT_EQUALS( ppose.size(), pose.size()+1 );
 		TS_ASSERT_EQUALS( ppose.fold_tree().num_jump(), 1 );
-		TS_ASSERT( ppose.fold_tree().is_cutpoint( ppose.total_residue() - 1 ) );
-		TS_ASSERT_EQUALS( ppose.residue( ppose.total_residue() ).name3(), "XXX" );
+		TS_ASSERT( ppose.fold_tree().is_cutpoint( ppose.size() - 1 ) );
+		TS_ASSERT_EQUALS( ppose.residue( ppose.size() ).name3(), "XXX" );
 
 
 		//Test correct CoM initialization position
 		utility::vector1< xyzVector< core::Real > > coords;
 
-		for ( core::Size i = 1; i <= pose.total_residue()/2; ++i ) {
+		for ( core::Size i = 1; i <= pose.size()/2; ++i ) {
 			for ( Atoms::const_iterator it = pose.residue( i ).atom_begin();
 					it != pose.residue( i ).heavyAtoms_end(); ++it ) {
 				coords.push_back( it->xyz() );
@@ -178,16 +178,16 @@ public:
 		}
 
 		TS_ASSERT_LESS_THAN( ( numeric::center_of_mass( coords ) -
-			ppose.residue( ppose.total_residue() ).xyz( "ORIG" ) ).length(), 1e-10 );
+			ppose.residue( ppose.size() ).xyz( "ORIG" ) ).length(), 1e-10 );
 
 		//Test environment end
 		core::pose::Pose final_pose;
 		TS_ASSERT_THROWS_NOTHING( final_pose = env.end( ppose ) );
 
 		// Test structure unaltered.
-		TS_ASSERT_EQUALS( final_pose.total_residue(), pose.total_residue() );
+		TS_ASSERT_EQUALS( final_pose.size(), pose.size() );
 		TS_ASSERT_EQUALS( final_pose.fold_tree(), pose.fold_tree() );
-		for ( core::Size i = 1; i <= final_pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= final_pose.size(); ++i ) {
 			TS_ASSERT_LESS_THAN( ( pose.residue( i ).atom( 1 ).xyz() -
 				final_pose.residue( i ).atom( 1 ).xyz() ).length(), 1e-10 );
 		}
@@ -204,7 +204,7 @@ public:
 		using namespace abinitio::abscript;
 		using namespace protocols::rigid;
 
-		TS_ASSERT_DIFFERS( pose.total_residue(), 0 );
+		TS_ASSERT_DIFFERS( pose.size(), 0 );
 
 		std::string const com1 = "com1";
 		std::string const com2 = "com2";
@@ -235,9 +235,9 @@ public:
 		TS_ASSERT_EQUALS( ppose.num_jump(), 3 );
 
 		// TODO: make this determination less hacky and more declarative
-		int const comcom_jump = (int) ppose.fold_tree().jump_nr( ppose.total_residue()-1, ppose.total_residue() );
-		int const chain1_com =  (int) ppose.fold_tree().jump_nr( 2, ppose.total_residue()-1 );
-		int const chain2_com =  (int) ppose.fold_tree().jump_nr( ppose.total_residue()/2+1, ppose.total_residue() );
+		int const comcom_jump = (int) ppose.fold_tree().jump_nr( ppose.size()-1, ppose.size() );
+		int const chain1_com =  (int) ppose.fold_tree().jump_nr( 2, ppose.size()-1 );
+		int const chain2_com =  (int) ppose.fold_tree().jump_nr( ppose.size()/2+1, ppose.size() );
 
 		TS_ASSERT_DIFFERS( comcom_jump, 0 );
 		TS_ASSERT_DIFFERS( chain1_com, 0 );
@@ -251,8 +251,8 @@ public:
 				// calculate original transform between com1 and
 				core::pose::Pose tmp( pose );
 				core::kinematics::FoldTree tmp_ft = ppose.fold_tree();
-				tmp_ft.delete_seqpos( (int) pose.total_residue() );
-				tmp_ft.delete_seqpos( (int) pose.total_residue()-1 );
+				tmp_ft.delete_seqpos( (int) pose.size() );
+				tmp_ft.delete_seqpos( (int) pose.size()-1 );
 				tmp.fold_tree( tmp_ft );
 				j = tmp.jump( (int) i );
 			}

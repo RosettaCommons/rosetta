@@ -115,7 +115,7 @@ public:
 		using namespace core::scoring::constraints;
 
 		core::pose::PoseOP ubqstump = create_twores_1ubq_poseop();
-		TS_ASSERT( ubqstump->total_residue() == 2 );
+		TS_ASSERT( ubqstump->size() == 2 );
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 ), at4( 4, 1 );
 		core::scoring::func::CircularHarmonicFuncOP func( new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 ) );
 
@@ -125,7 +125,7 @@ public:
 		movemap.set_bb( true );
 		movemap.set_chi( true );
 
-		for ( Size ii = 1; ii <= ubqstump->total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= ubqstump->size(); ++ii ) {
 			core::chemical::ResidueType const & rsd_type( ubqstump->residue_type( ii ));
 			// for each dihedral angle in the residue type
 			for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ) {

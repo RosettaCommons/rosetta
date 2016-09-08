@@ -213,7 +213,7 @@ int main( int argc, char* argv[] )
         std::cout << "Residue Z_coord Five_Layer Two_Layer SASA sixAnbr tenAnbr twelveAnbr" << std::endl;
 
         // For each residue, compute score features and print
-        for ( core::Size i = 1; i <= pose->total_residue(); ++i ) {
+        for ( core::Size i = 1; i <= pose->size(); ++i ) {
 
             // Compute a score feature
             core::Real z_coord = pose->residue(i).xyz(2).z();

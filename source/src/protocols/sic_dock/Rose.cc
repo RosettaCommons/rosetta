@@ -78,7 +78,7 @@ Size Rose::contacts(RCR o) const {
 
 core::pose::PoseCOP Rose::pose() const {
 	core::pose::PoseOP pose( new core::pose::Pose(*p) );
-	for ( Size ir = 1; ir <= pose->n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= pose->size(); ++ir ) {
 		for ( Size ia = 1; ia <= pose->residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose->set_xyz( aid, x.xform(pose->xyz(aid)) );
@@ -96,7 +96,7 @@ void Rose::dump_pdb(std::string const & fname) const {
 }
 
 void Rose::dump_minimal_pdb(std::ostream & out, char chain){
-	for ( Size ir = 1; ir <= p->n_residue(); ++ir ) {
+	for ( Size ir = 1; ir <= p->size(); ++ir ) {
 		V v;
 		v = x * p->xyz(AID(1,ir)); out<<"ATOM  "<<I(5,3*ir-2)<<' '<<"  N "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;
 		v = x * p->xyz(AID(2,ir)); out<<"ATOM  "<<I(5,3*ir-1)<<' '<<" CA "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;

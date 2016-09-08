@@ -224,7 +224,7 @@ CCDLoopCloser::prepare_fold_tree(
 	new_ft.add_edge(loop().start()-1, loop().cut(), kinematics::Edge::PEPTIDE);
 	new_ft.add_edge(loop().start()-1, loop().stop()+1, 1);
 	new_ft.add_edge(loop().stop()+1, loop().cut()+1, kinematics::Edge::PEPTIDE);
-	new_ft.add_edge(loop().stop()+1, pose.total_residue(), kinematics::Edge::PEPTIDE);
+	new_ft.add_edge(loop().stop()+1, pose.size(), kinematics::Edge::PEPTIDE);
 
 	pose.fold_tree(new_ft);
 }

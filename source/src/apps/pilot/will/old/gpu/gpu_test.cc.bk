@@ -310,10 +310,10 @@ int main (int argc, char *argv[]) {
   //   core::pose::Pose p;
   //   core::import_pose::pose_from_file(p,option[in::file::s]()[ifn], core::import_pose::PDB_file);
   //   int count = 0;
-  //   for(Size ir = 1; ir <= p.n_residue(); ++ir) if(p.residue(ir).name3()!="GLY"&&p.residue(ir).name3()!="PRO") count++;
+  //   for(Size ir = 1; ir <= p.size(); ++ir) if(p.residue(ir).name3()!="GLY"&&p.residue(ir).name3()!="PRO") count++;
   //   cl_float16 bb[count];
   //   count = 0;
-  //   for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+  //   for(Size ir = 1; ir <= p.size(); ++ir) {
   //     if(p.residue(ir).name3()=="GLY"||p.residue(ir).name3()=="PRO") continue;
   //     if(p.residue(ir).aa() > 20) utility_exit_with_message("wierd aa! "+str(p.residue(ir).aa()));
   //     cl_float16 crd;

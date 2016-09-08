@@ -243,7 +243,7 @@ get_first_protein_residue( core::pose::Pose const & pose )
 
 	// briefly, loop through the list of residues in the pose, from 1 to N
 	// if the pose is not in the list of ligands, it is the N-terminal residue
-	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.residue( i ).is_protein() ) {
 			return i;
 		}
@@ -263,7 +263,7 @@ get_last_protein_residue( core::pose::Pose const & pose )
 
 	// briefly, loop through the list of residues in the pose, from 1 to N
 	// if the pose is not in the list of ligands, it is the N-terminal residue
-	for ( core::Size i = pose.total_residue(); i >= 1; i-- ) {
+	for ( core::Size i = pose.size(); i >= 1; i-- ) {
 		if ( pose.residue( i ).is_protein() ) {
 			return i;
 		}

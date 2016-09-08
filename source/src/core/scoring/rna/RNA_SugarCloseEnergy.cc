@@ -163,7 +163,7 @@ void
 RNA_SugarCloseEnergy::setup_sugar_ring_closure_constraints( pose::Pose & pose ) const{
 	rna_sugar_close_constraints_ = constraints::ConstraintSetOP( new constraints::ConstraintSet );
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		add_sugar_ring_closure_constraints( pose.residue( i ), *rna_sugar_close_constraints_ );
 	}
 

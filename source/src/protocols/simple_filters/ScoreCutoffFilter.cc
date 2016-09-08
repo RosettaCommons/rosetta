@@ -199,7 +199,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 
 	EnergyGraph const & egraph( pose.energies().energy_graph() );
 
-	for ( core::Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+	for ( core::Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		std::string res1name("");
 		if ( pdb_numbering_ ) {
 			res1name = utility::to_string( pose.residue_type( res1 ).name1() ) + "_" + utility::to_string( pose.pdb_info()->chain( res1 ) ) + utility::to_string( pose.pdb_info()->number( res1 ) );

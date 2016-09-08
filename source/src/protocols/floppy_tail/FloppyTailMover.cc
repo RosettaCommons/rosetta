@@ -206,7 +206,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		if ( option[FloppyTail::flexible_stop_resnum].user() ) {
 			stop_ = pose.pdb_info()->pdb2pose().find(chain, option[FloppyTail::flexible_stop_resnum].value());
 		} else {
-			stop_ = pose.total_residue();
+			stop_ = pose.size();
 		}
 		TR << "Tail is from " << start_ << " to " << stop_ << std::endl;
 
@@ -218,7 +218,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		}
 
 		movemap_lesstail_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap(*movemap_) );
-		if ( stop_ == pose.total_residue() ) {
+		if ( stop_ == pose.size() ) {
 			core::Size const taillength = stop_ - start_;
 			core::Size const substop = (start_ + core::Size(core::Real(taillength) * (1.0 - option[ FloppyTail::short_tail::short_tail_fraction ] ) ) );
 			for ( core::Size i(start_); i <= substop; ++i ) {
@@ -245,7 +245,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		movemap_lesstail_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap(*movemap_) );
 
 		//calculate effective start_ and stop_.  This may be less efficient than the MoveMap's iterators, but it is vastly simpler, less likely to be buggy, and not a performace concern.
-		core::Size const nres(pose.total_residue());
+		core::Size const nres(pose.size());
 		for ( core::Size i(1); i<=nres; ++i ) {
 			if ( movemap_->get_bb(i) ) {
 				start_ = i;
@@ -275,14 +275,14 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	//Reordering the foldtree with symmetry does not work
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) { }
 	else {
-		if ( !((stop_ == pose.total_residue()) || (start_ == 1)) || basic::options::option[ FloppyTail::force_linear_fold_tree].value() ) {
+		if ( !((stop_ == pose.size()) || (start_ == 1)) || basic::options::option[ FloppyTail::force_linear_fold_tree].value() ) {
 			TR << "non-terminal or N-terminal (C-rooted) floppy section, using a linear fold tree to try to ensure downstream residues follow \nOld tree: " << pose.fold_tree();
 			foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_)) );
 			TR << "new tree: " << *foldtree_ << std::endl;
-			TR << "some values: " << stop_ << pose.total_residue() << start_ << std::endl;
+			TR << "some values: " << stop_ << pose.size() << start_ << std::endl;
 		}
 		if ( basic::options::option[ FloppyTail::C_root].value() ) {
-			foldtree_->reorder(pose.total_residue());
+			foldtree_->reorder(pose.size());
 			TR << "C-rooted tree: " << *foldtree_ << std::endl;
 		}
 	}
@@ -309,7 +309,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 
 	//iterate through all residues in the pose/movemap (if symmetric iterate through a single subunit)
 	//get subunit size via if statement and set via ternary
-	core::Size temp_nres = pose.total_residue();
+	core::Size temp_nres = pose.size();
 
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
 		core::conformation::symmetry::SymmetricConformation SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const &>( pose.conformation()) );
@@ -650,7 +650,7 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	//foldtree_->show( std::cout );
 	//movemap_->show( std::cout );
 
-	if ( stop_ == pose.total_residue() ) {
+	if ( stop_ == pose.size() ) {
 		TR << "foldtree, movemap for first part of refine: " << std::endl;
 		core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_lesstail_, TR);
 	}

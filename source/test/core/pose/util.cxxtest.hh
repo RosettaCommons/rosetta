@@ -78,7 +78,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
 		);
 
-		for ( core::Size i = 1; i <= pose->n_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose->size(); ++i ) {
 			pose->set_secstruct( i, 'L' );
 		}
 
@@ -104,7 +104,7 @@ public: // re-used methods
 
 
 	PDBInfoOP add_empty_pdb_info( Pose & pose ) {
-		PDBInfoOP pdbinfo( new PDBInfo( pose.n_residue() ) );
+		PDBInfoOP pdbinfo( new PDBInfo( pose.size() ) );
 		pose.pdb_info( pdbinfo );
 
 		return pdbinfo;
@@ -118,7 +118,7 @@ public: // tests
 		Pose pose = *one_chain_pose();
 		add_empty_pdb_info( pose );
 		// Set up PDBInfo as though residue 5 is an insertion
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == 5 ) {
 				pose.pdb_info()->number( ii, 0 );
 				pose.pdb_info()->chain( ii, ' ' );
@@ -136,8 +136,8 @@ public: // tests
 		TS_ASSERT( pose.pdb_info()->number( 6 ) == 6  ) ;
 		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
 		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
-
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == 5 ) {
 				pose.pdb_info()->number( ii, 0 );
 				pose.pdb_info()->chain( ii, ' ' );
@@ -252,7 +252,7 @@ public: // tests
 		add_empty_pdb_info( *pose_one );
 		renumber_pdbinfo_based_on_conf_chains( *pose_one, true, true, false, false );
 
-		for ( Size i = 1, ie = pose_one->n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose_one->size(); i <= ie; ++i ) {
 			TS_ASSERT_EQUALS( pose_one->pdb_info()->number( i ), static_cast< int >( i ) );
 			TS_ASSERT_EQUALS( pose_one->pdb_info()->chain( i ), 'A' );
 		}

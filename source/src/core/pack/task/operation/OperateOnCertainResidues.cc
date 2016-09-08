@@ -87,7 +87,7 @@ TaskOperationOP OperateOnCertainResidues::clone() const
 void
 OperateOnCertainResidues::apply( Pose const & pose, PackerTask & ptask ) const
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	runtime_assert( nres == ptask.total_residue() );
 	// local nonconst version of residue indices container allows default applicability over
 	// all residues in input pose (while avoiding code duplication or extra function call)

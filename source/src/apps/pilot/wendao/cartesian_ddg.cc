@@ -80,7 +80,7 @@ find_neighbors(
 	bools & is_flexible,
 	Real const heavyatom_distance_threshold = 6.0 )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	is_flexible = is_mutated;
 
 	for ( Size i=1; i<= nres; ++i ) {
@@ -127,7 +127,7 @@ read_in_mutations(
 
 		inputstream >> total; //keep for cross-checking
 		while ( !inputstream.eof() && total>0 ) {
-			mutations current_mutation( pose.total_residue(), core::chemical::aa_unk );
+			mutations current_mutation( pose.size(), core::chemical::aa_unk );
 			int num_mutations;
 			inputstream >> num_mutations;
 			runtime_assert(num_mutations>0);
@@ -180,14 +180,14 @@ compute_folding_energies(
 
 	if ( flexbb ) {
 		runtime_assert( cartmin );
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			if ( is_flexible[i] ) {
 				movemap->set_chi( i, true );
 				//TR << "CHI: " << i << std::endl;
 				if ( bbnbrs > 0 ) {
 					for ( Size j=0; j<=bbnbrs; j++ ) {
 						if ( is_mutpos[i] ||
-								( i+j <= pose.total_residue() && is_mutpos[i+j] ) ||
+								( i+j <= pose.size() && is_mutpos[i+j] ) ||
 								( i-j >= 1                    && is_mutpos[i-j] ) ) {
 							movemap->set_bb ( i, true );
 						}
@@ -242,8 +242,8 @@ main( int argc, char * argv [] )
 		Size const interface_ddg = option[ OptionKeys::ddg::interface_ddg ]();
 		runtime_assert( interface_ddg <= pose.num_jump() );
 
-		bools is_mutated( pose.total_residue(), false );   //mutated position
-		bools is_flexible( pose.total_residue(), false );  //repackable
+		bools is_mutated( pose.size(), false );   //mutated position
+		bools is_flexible( pose.size(), false );  //repackable
 
 		if ( !option[ OptionKeys::ddg::mut_file ].user() ) {
 			//quit!

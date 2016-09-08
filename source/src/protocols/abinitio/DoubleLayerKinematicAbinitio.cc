@@ -114,7 +114,7 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
 	} else {
 		current_kinematics = KinematicControlOP( new KinematicControl );
 	}
-	loops::Loops flexible_part( rigid_core.invert( pose.total_residue() ) );
+	loops::Loops flexible_part( rigid_core.invert( pose.size() ) );
 
 	bool loop_file_is_present = option[ OptionKeys::loops::mm_loop_file ].user();
 	loops::Loops mmloops( loop_file_is_present ) ;

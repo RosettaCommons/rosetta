@@ -108,8 +108,8 @@ public:
 		fcs->parse_resfiles ();
 		res_links = fcs->res_links();
 		TS_ASSERT_EQUALS( res_links.size(), 2 );
-		TS_ASSERT_EQUALS( res_links[ 1 ].size(), pose1->total_residue() );
-		TS_ASSERT_EQUALS( res_links[ 2 ].size(), pose1->total_residue() );
+		TS_ASSERT_EQUALS( res_links[ 1 ].size(), pose1->size() );
+		TS_ASSERT_EQUALS( res_links[ 2 ].size(), pose1->size() );
 
 		// test resfile parsing when a single resfile is given
 		fcs->resfiles( single_resfile );

@@ -224,7 +224,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 		utility::vector1< core::Size > residues;
 		residues.clear();
 
-		for ( core::Size i = pose.conformation().chain_begin( num_chains ); i <= pose.total_residue(); i++ ) {
+		for ( core::Size i = pose.conformation().chain_begin( num_chains ); i <= pose.size(); i++ ) {
 			bool allow_design( false );
 			if ( !seeds.is_loop_residue( i ) || is_part( designable_residues, i ) ) {
 				TR.Debug<<"is not seed: "<< i << " allow design" << std::endl;
@@ -307,7 +307,7 @@ void define_movemap_chains(
 	}
 
 	TR<<"setting movemap method:"<<std::endl;
-	for ( Size i = 1 ; i <=pose.total_residue(); ++i ) {
+	for ( Size i = 1 ; i <=pose.size(); ++i ) {
 		TR.Debug<<"i: "<<i<<", bb: "<< movemap->get_bb(i)<< ", chi: "<<movemap->get_chi(i)<<std::endl;
 	}
 
@@ -362,7 +362,7 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 		set_packerTasks_target_and_seeds( pose, all_seeds_ , designable_residues_motif , norepack_residues , task_factory_ ); //, repack_target_, design_foldpose_, design_target_ )
 
 		//TR<<"at the end of apply movemap:"<<std::endl;
-		for ( Size i = 1 ; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1 ; i <= pose.size(); ++i ) {
 			TR.Debug <<"position: "<< i <<", bb: "<< movemap_->get_bb(i)<< ", chi: "<<movemap_->get_chi(i)<<std::endl;
 		}
 

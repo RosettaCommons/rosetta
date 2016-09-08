@@ -81,13 +81,13 @@ main( int argc, char * argv [] )
 //
 //	core::pose::PoseOP pose = core::import_pose::pose_from_file(*res_type_set, "/Users/tjacobs2/PROJECTS/sewing2/refactor/discontinuous/1yzm_test/inputs/1yzm_no_loop.pdb", core::import_pose::PDB_file);
 //
-//	for(core::Size i=1; i <= pose->total_residue(); ++i) {
+//	for(core::Size i=1; i <= pose->size(); ++i) {
 //		core::conformation::remove_upper_terminus_type_from_conformation_residue( pose->conformation(), i );
 //		core::conformation::remove_lower_terminus_type_from_conformation_residue( pose->conformation(), i );
 //	}
 //
 //	protocols::sewing::LoophashAssemblyMover lh_mover;
-//	lh_mover.add_single_loop(*pose, 18, 1, pose->total_residue());
+//	lh_mover.add_single_loop(*pose, 18, 1, pose->size());
 
 	
 //	utility::vector1<core::Size> loop_sizes;

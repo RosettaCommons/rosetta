@@ -93,11 +93,11 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'H' );
 		}
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, -60.0 );
 			pose.set_psi( i, -45.0 );
 			pose.set_omega( i, 180.0 );
@@ -121,11 +121,11 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( core::Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 11.0 * i );
 			pose.set_psi( i, 7.0 * i );
 			pose.set_omega( i, 180.0 );
@@ -145,7 +145,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -159,7 +159,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 10.0 * i );
 			pose.set_psi( i, 5.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -181,7 +181,7 @@ public: // re-used methods
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_secstruct( i, 'L' );
 		}
 
@@ -192,7 +192,7 @@ public: // re-used methods
 
 		pose.fold_tree( ft );
 
-		for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			pose.set_phi( i, 5.0 * i );
 			pose.set_psi( i, 10.0 *i );
 			pose.set_omega( i, 180.0 );
@@ -255,7 +255,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 18 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 20 );
+		TS_ASSERT_EQUALS( c10.size(), 20 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "R[ARG:NtermProteinFull]DDGGGGKEEEEEEEEKGDR[ARG:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "LLLEEEEHHHHHHHHHHELL" );
@@ -346,7 +346,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 18 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 20 );
+		TS_ASSERT_EQUALS( c10.size(), 20 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "R[ARG:NtermProteinFull]DDGGGGKEEEEEEEEKGDR[ARG:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "LLLEEEEHHHHHHHHHHELL" );
@@ -437,7 +437,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 22 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 25 );
+		TS_ASSERT_EQUALS( c10.size(), 25 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "R[ARG:NtermProteinFull]DDDDDDGGGGKEEEEEEEEKGDDR[ARG:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "LLLLLLLEEEEHHHHHHHHHHELLL" );
@@ -522,7 +522,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 22 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 25 );
+		TS_ASSERT_EQUALS( c10.size(), 25 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "R[ARG:NtermProteinFull]DDDDDDGGGGKEEEEEEEEKGDDR[ARG:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "LLLLLLLEEEEHHHHHHHHHHELLL" );
@@ -605,7 +605,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 15 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 25 );
+		TS_ASSERT_EQUALS( c10.size(), 25 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 0 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "G[GLY:NtermProteinFull]GGGKEEEEEEEEKGRDDDDDDDDR[ARG:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "EEEEHHHHHHHHHHELLLLLLLLLL" );
@@ -660,7 +660,7 @@ public: // tests
 		Vector const left_minus_one_CA = c10.residue( 10 ).xyz( "CA" );
 
 		// attempt a SegmentInsert
-		SegmentInsert si( Interval( 0, c10.n_residue() ), "E^EEEE", "G^GGGG", h10, false, C );
+		SegmentInsert si( Interval( 0, c10.size() ), "E^EEEE", "G^GGGG", h10, false, C );
 		si.modify( c10 );
 
 		// force coordinate update
@@ -678,7 +678,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 25 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 25 );
+		TS_ASSERT_EQUALS( c10.size(), 25 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 0 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "R[ARG:NtermProteinFull]DDDDDDDDRGKEEEEEEEEKGGGG[GLY:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "LLLLLLLLLLEHHHHHHHHHHEEEE" );
@@ -759,7 +759,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 18 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 20 );
+		TS_ASSERT_EQUALS( c10.size(), 20 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "R[ARG:NtermProteinFull]DDKEEEEEEEEKGGGGGDR[ARG:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "LLLHHHHHHHHHHEEEEELL" );
@@ -856,7 +856,7 @@ public: // tests
 		TS_ASSERT_EQUALS( si.interval().right, 18 );
 		TS_ASSERT( !si.original_interval_valid() );
 
-		TS_ASSERT_EQUALS( c10.n_residue(), 20 );
+		TS_ASSERT_EQUALS( c10.size(), 20 );
 		TS_ASSERT_EQUALS( c10.fold_tree().num_cutpoint(), 1 );
 		TS_ASSERT_EQUALS( c10.annotated_sequence(), "R[ARG:NtermProteinFull]DDGGGGGKEEEEEEEEKDR[ARG:CtermProteinFull]" );
 		TS_ASSERT_EQUALS( c10.secstruct(), "LLLEEEEEHHHHHHHHHHLL" );

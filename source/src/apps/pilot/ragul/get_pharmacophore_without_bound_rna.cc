@@ -191,7 +191,7 @@ int main( int argc, char * argv [] ){
 		std::list< numeric::xyzVector<core::Real> > dnr_coord_list;
 		std::list< numeric::xyzVector<core::Real> > acp_coord_list;
 
-		for ( Size j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+		for ( Size j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 			core::conformation::Residue const & rsd( protein_pose.conformation().residue(j) );
 
 			/*int offset = 9;
@@ -289,7 +289,7 @@ int main( int argc, char * argv [] ){
 		}
 
 		numeric::xyzVector<core::Real> protein_atom_coord(0.);
-		for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+		for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 			core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
 			for ( Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
 				protein_atom_coord.x() = curr_rsd.atom(i).xyz()(1);

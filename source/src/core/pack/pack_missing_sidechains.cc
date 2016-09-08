@@ -74,12 +74,12 @@ bool figure_out_repackable_residues( core::pose::Pose & pose,
 	core::id::AtomID_Mask const & to_repack,
 	utility::vector1_bool& repackable
 ) {
-	repackable.resize( pose.total_residue() );
+	repackable.resize( pose.size() );
 	bool any_to_repack(false);
 
 	//set up the PackerTask
 	//iterate over all sidechain atoms, and compare to the state of the input missing map.
-	for ( core::Size resid(1); resid <= pose.total_residue(); ++resid ) {
+	for ( core::Size resid(1); resid <= pose.size(); ++resid ) {
 
 		//iterate over all heavy sidechain atoms
 		core::chemical::ResidueType const & restype(pose.residue_type(resid));

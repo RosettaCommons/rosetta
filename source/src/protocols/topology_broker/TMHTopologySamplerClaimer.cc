@@ -201,7 +201,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 	core::Size nspan = tmhelix_;
 	core::Size num_cut_loops = nspan;
 	njumps_ = nspan;
-	nres_ = pose.total_residue();
+	nres_ = pose.size();
 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "fold tree at beginning of TMHTopologySampler::build_fold_tree()\n" << pose.fold_tree();
@@ -329,7 +329,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 		}
 	}//for span_index
 
-	assert(core::Size(nres_)==pose.total_residue());
+	assert(core::Size(nres_)==pose.size());
 	assert(pose.fold_tree().root()==nres_);
 
 	//make the last cut the last residue before the root residue
@@ -355,7 +355,7 @@ TMHTopologySamplerClaimer::build_fold_tree(core::pose::Pose& pose, core::kinemat
 	if ( tr.Debug.visible() ) {
 		tr.Debug << "TMHTopologySampler finished making fold tree" << std::endl;
 		tr.Debug << new_fold_tree << std::endl;
-		tr.Debug << "pose has " << pose.total_residue() << " residues.  Fold_tree_begin:  " << pose.fold_tree().begin()->start()
+		tr.Debug << "pose has " << pose.size() << " residues.  Fold_tree_begin:  " << pose.fold_tree().begin()->start()
 			<< " " << pose.fold_tree().begin()->stop() << "\tfold_tree_end:  " << pose.fold_tree().end()->start() <<
 			" " << pose.fold_tree().end()->stop() << std::endl;
 		tr.Debug << pose.annotated_sequence() << std::endl;
@@ -432,7 +432,7 @@ TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofC
 void
 TMHTopologySamplerClaimer::set_pose_torsions(core::pose::Pose& pose)
 {
-	for ( core::Size i=1; i<=pose.total_residue(); i++ ) {
+	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		if ( pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" ) {
 			continue;
 		} else {

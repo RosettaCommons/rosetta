@@ -206,7 +206,7 @@ HbsCreatorMover::apply(
 
 	Size patch_ros_num = 0;
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		char chn = pdb_info->chain(i);
 		core::Size pdb_res_num = pdb_info->number(i);
 		TR << "evaluating residue " << chn  << " " << pdb_info->number(i) << std::endl;
@@ -222,8 +222,8 @@ HbsCreatorMover::apply(
 		}
 
 		if ( pdb_res_num > final_res + option[hbs_creator::hbs_length].value() ) {
-			TR << "deleting residue " << pdb_res_num << std::endl;
-			while ( chn == hbs_chain && i <= pose.total_residue() ) {
+			//TR << "deleting residue " << pdb_res_num << std::endl;
+			while ( chn == hbs_chain && i <= pose.size() ) {
 				chn = pdb_info->chain(i);
 				pose.delete_polymer_residue(i);
 			}
@@ -244,15 +244,15 @@ HbsCreatorMover::apply(
 	// from this residue.
 	conformation::Residue term( restype_set->get_residue_type_with_variant_added(
 		restype_set->get_residue_type_with_variant_removed(
-		pose.residue(pose.total_residue()).type(),
+		pose.residue(pose.size()).type(),
 		chemical::UPPER_TERMINUS_VARIANT ),
 		chemical::METHYLATED_CTERMINUS_VARIANT), true );
 
-	term.set_all_chi(pose.residue(pose.total_residue()).chi());
+	term.set_all_chi(pose.residue(pose.size()).chi());
 	//replace_res_post.mainchain_torsions(pose.residue(oop_post_pos_).mainchain_torsions());
 
-	pose.replace_residue( pose.total_residue(), term, true );
-	conformation::idealize_position( pose.total_residue(), pose.conformation() );
+	pose.replace_residue( pose.size(), term, true );
+	conformation::idealize_position( pose.size(), pose.conformation() );
 
 
 	//pose.set_phi(i+3, -40);
@@ -262,7 +262,7 @@ HbsCreatorMover::apply(
 
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
 
@@ -288,7 +288,7 @@ HbsCreatorMover::apply(
 
 		// core::Size hbs_position = 1;
 
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( pdb_info->chain(i) == hbs_chain ) { //i != ( ( unsigned ) ( option[ hbs_creator::hbs_final_res ].value() ) ) ) {
 				if ( pose.residue_type( i ).is_l_aa() ) {
 					TR << "setting small movable resid: "<< i<<std::endl;
@@ -355,7 +355,7 @@ HbsCreatorMover::apply(
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
 		mm->set_chi( true );
 		//mm->set_jump( 1, true );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.pdb_info()->chain(i) == hbs_chain ) {
 				TR << "Can move " << i << " bb " << std::endl;
 				mm->set_bb( i, true);

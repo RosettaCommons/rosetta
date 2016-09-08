@@ -76,7 +76,7 @@ InterRepeatContactFilter::Real
 InterRepeatContactFilter::compute( Pose const & pose ) const
 {
 	using numeric::xyzVector;
-	Size repeatLength = pose.total_residue()/numbRepeats_;
+	Size repeatLength = pose.size()/numbRepeats_;
 	Size region1Start = 1;
 	Size region1End = repeatLength;
 	Size region2Start = repeatLength+1;

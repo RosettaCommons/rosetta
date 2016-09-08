@@ -237,7 +237,7 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 	vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
 		Size fragment_length = ABEGOHashedFragmentStore_->get_fragment_length();
 	vector1<vector1<std::string > > all_aa_hits;
-	for ( Size ii=1; ii<=pose.total_residue()-fragment_length+1; ++ii ) {
+	for ( Size ii=1; ii<=pose.size()-fragment_length+1; ++ii ) {
 		vector1<Real>::const_iterator begin =cenList.begin();
 		vector1<Real> shortCenList(begin+ii-1, begin+ii+fragment_length-1);
 		vector1<std::string> aa_hits = get_closest_sequence_at_res(pose,ii,shortCenList);
@@ -249,7 +249,7 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 vector1<vector1<Size> > StructProfileMover::generate_counts(vector1<vector1<std::string> > top_frag_sequences,core::pose::Pose const pose){
 	//step1---Initialize counts to zero
 	vector1<vector1<Size> > counts;
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii<=pose.size(); ++ii ) {
 		vector1<Size> counts_per_res;
 		for ( Size jj=0; jj<aa_order_.size(); ++jj ) {
 			counts_per_res.push_back(0);
@@ -268,7 +268,7 @@ vector1<vector1<Size> > StructProfileMover::generate_counts(vector1<vector1<std:
 		}
 	}
 	//step3--Print out first position
-	/* for(Size ii=1; ii<=pose.total_residue(); ++ii){
+	/* for(Size ii=1; ii<=pose.size(); ++ii){
 	for(Size kk=1; kk<=counts[1].size(); ++kk)
 	std::cout << aa_order_.at(kk-1) << ":" << counts[ii][kk] << std::endl;
 	std::cout << "____________________________________" << std::endl;
@@ -334,7 +334,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 					tmp_score = -std::log(rmsdProb-backgroundProb);
 				}
 			}
-			if ( ignore_terminal_res_ && (ii==1 || ii==pose.total_residue()) ) {
+			if ( ignore_terminal_res_ && (ii==1 || ii==pose.size()) ) {
 				tmp_score = 0.0;  //phi is 0 in first position and psi and omega are 0 in last position. Can cause odd behavior to the profile so no weight is allowed
 			}
 			if ( pose.secstruct(ii) != 'L' && only_loops_ ) {
@@ -367,7 +367,7 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 	profile_out.close();
 	std::string msa_name( "MSAcst" );
 	utility::io::ozstream msa_out(msa_name);
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( Size ii=1; ii<=pose.size(); ++ii ) {
 		msa_out << "SequenceProfile " << ii << " profile" << std::endl;
 	}
 	msa_out.close();
@@ -376,7 +376,7 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 void StructProfileMover::add_MSAcst_to_pose(vector1<vector1<Real> > profile_score,core::pose::Pose & pose){
 	using namespace core::sequence;
 	SequenceProfileOP profileOP = SequenceProfileOP(new SequenceProfile( profile_score, pose.sequence(), "structProfile" ));
-	for ( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+	for ( core::Size seqpos( 1 ), end( pose.size() ); seqpos <= end; ++seqpos ) {
 		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profileOP ) ) ) );
 	}
 }
@@ -397,7 +397,7 @@ vector1< Real> StructProfileMover::calc_cenlist(Pose const pose){
 	ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 	sfcen->score(*centroidPose);
 	vector1 <Real> cenlist;
-	for ( Size ii = 1; ii <= centroidPose->total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= centroidPose->size(); ++ii ) {
 		if ( cenType_ == 6 ) {
 			Real fcen6( core::scoring::EnvPairPotential::cenlist_from_pose( *centroidPose ).fcen6(ii));
 			cenlist.push_back(fcen6);

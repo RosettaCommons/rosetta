@@ -215,7 +215,7 @@ RestrictDesignToProteinDNAInterface::apply(
 	}
 	*/
 
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	runtime_assert( nres == ptask.total_residue() );
 
 

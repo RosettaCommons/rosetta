@@ -214,7 +214,7 @@ MgKnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose ) co
 	utility::vector1< utility::vector1< Size > > &
 		atom_numbers( rna_scoring_info.nonconst_atom_numbers_for_mg_calculation() );
 
-	Size const total_residue( pose.total_residue() );
+	Size const total_residue( pose.size() );
 
 	atom_numbers.resize( total_residue );
 	is_magnesium.resize( total_residue );

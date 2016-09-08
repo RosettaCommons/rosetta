@@ -117,7 +117,7 @@ SymmetricScoreFunction::operator()( pose::Pose & pose ) const
 	}
 
 	// completely unnecessary temporary hack to force refold if nec. for profiling
-	pose.residue( pose.total_residue() );
+	pose.residue( pose.size() );
 
 	PROF_START( basic::SCORE );
 	//std::cout << "ScoreFunction::operator()\n";
@@ -239,8 +239,8 @@ SymmetricScoreFunction::setup_for_minimizing(
 		dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
 
 
-	MinimizationGraphOP g( new MinimizationGraph( pose.total_residue() ) );
-	MinimizationGraphOP dg( new MinimizationGraph( pose.total_residue() ) ); // derivative graph
+	MinimizationGraphOP g( new MinimizationGraph( pose.size() ) );
+	MinimizationGraphOP dg( new MinimizationGraph( pose.size() ) ); // derivative graph
 
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
 	for ( AllMethods::const_iterator iter=all_methods().begin(),
@@ -254,7 +254,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 
 	/// Accumulate the portions of the scoring function for those residues with non-zero domain-map values
 	/// but also let all energy methods register with each node, since some may require a setup-for-scoring opportunity
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 
 		bool accumulate_fixed_energies( symm_info.fa_is_independent(ii) &&
 			ii > symm_info.num_total_residues_without_pseudo() );
@@ -343,7 +343,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 		if ( !lrec || lrec->empty() ) continue;
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			for ( ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
 					rniend = lrec->const_upper_neighbor_iterator_end( ii );
@@ -489,7 +489,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 	} else {
 		EnergyMap tbemap;
 
-		for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+		for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 			conformation::Residue const & resl( pose.residue( i ) );
 			for ( graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
@@ -575,7 +575,7 @@ SymmetricScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) co
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			for ( ResidueNeighborIteratorOP
 					rni = lrec->upper_neighbor_iterator_begin( ii ),
 					rniend = lrec->upper_neighbor_iterator_end( ii );
@@ -611,7 +611,7 @@ SymmetricScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) co
 			= pose.energies().nonconst_long_range_container( (*iter)->long_range_type() );
 
 		// Potentially O(N^2) operation...
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			for ( ResidueNeighborIteratorOP
 					rni = lrec->upper_neighbor_iterator_begin( ii ),
 					rniend = lrec->upper_neighbor_iterator_end( ii );
@@ -658,7 +658,7 @@ SymmetricScoreFunction::eval_onebody_energies( pose::Pose & pose ) const {
 
 		}
 	} else {
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			if ( !symm_info->fa_is_independent(i) ||
 					i > symm_info->num_total_residues_without_pseudo() ) continue;
 
@@ -904,7 +904,7 @@ SymmetricScoreFunction::set_symmetric_residue_neighbors_hbonds( pose::Pose & pos
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	if ( symm_info->get_use_symmetry() ) {
-		for ( uint res = 1; res <= pose.total_residue(); ++res ) {
+		for ( uint res = 1; res <= pose.size(); ++res ) {
 			if ( symm_info->fa_is_independent( res ) ) continue;
 
 			int symm_res ( symm_info->bb_follows( res ) );
@@ -933,7 +933,7 @@ SymmetricScoreFunction::set_symmetric_cenlist( pose::Pose & pose ) const {
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	if ( symm_info->get_use_symmetry() ) {
-		for ( uint res = 1; res <= pose.total_residue(); ++res ) {
+		for ( uint res = 1; res <= pose.size(); ++res ) {
 			if ( symm_info->fa_is_independent( res ) ) continue;
 
 			int symm_res ( symm_info->bb_follows( res ) );

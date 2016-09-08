@@ -54,7 +54,7 @@ public:
     core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
     //store phi values for comparison in the test
-    for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+    for( core::Size i = 1; i <= pose.size(); ++i ){
       init_phis.push_back( pose.phi( i ) );
     }
 

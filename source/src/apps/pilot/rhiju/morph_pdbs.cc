@@ -80,7 +80,7 @@ morph_by_internal_coords(
 	//	morph_poses.push_back( pose_start );
 
 	std::map< Size, Size > res_map;
-	for ( Size n = 1; n <= pose_start->total_residue(); n++ ) res_map[ n ] = n;
+	for ( Size n = 1; n <= pose_start->size(); n++ ) res_map[ n ] = n;
 	CopyDofMover copy_dof_mover_end(   *pose_start, res_map );
 	CopyDofMover copy_dof_mover_start( *pose_end,   res_map );
 

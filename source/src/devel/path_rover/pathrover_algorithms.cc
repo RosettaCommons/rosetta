@@ -127,7 +127,7 @@ pose_ns::Pose* Single_tree_RRT::build_and_score_pose_from_node(RRT_node* n)
       cst_set_ns::Cst_set bb_tor_cst_set;     //Backbone torsional constraints:
       _score_weight_map.set_weight( pose_ns::PHIPSI_CST, 250.0 );
       // _scoreweight_map.set_weight( pose_ns::OMEGA_CST, 1.0 );
-      for( int res = 1, nres = poseP->total_residue()  ;
+      for( int res = 1, nres = poseP->size()  ;
 	   res <= nres ; ++res )
 	{
 	  bb_tor_cst_set.add_rosetta_torsion_constraint( res, 1, poseP->phi( res ) );
@@ -557,8 +557,8 @@ int Single_tree_RRT::add_nodes_with_local_planner(RRT_node* from,RRT_node* to,
 	// REPACK ARRAYS CODE:
 	//  // TODO:: Barak - is it ok? the side chains are also symetric
 	//  // we want to move all of them right?
-	//  FArray1D_bool allow_repack(from->get_pose().total_residue(),false);
-	//  for( int ii = 1; ii <= from->get_pose().total_residue(); ++ii ) {
+	//  FArray1D_bool allow_repack(from->get_pose().size(),false);
+	//  for( int ii = 1; ii <= from->get_pose().size(); ++ii ) {
 	//    allow_repack(ii) = true;
 	//  }
 

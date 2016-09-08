@@ -117,14 +117,14 @@ int main( int argc, char * argv [] ) {
     SequenceOP native_sequence = new Sequence(native_pose);
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
-    vector1 < vector1 < Real> > rmsd_by_position(native_pose.total_residue()-8);
+    vector1 < vector1 < Real> > rmsd_by_position(native_pose.size()-8);
  	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();
 		input.fill_pose(*input_poseOP,*rsd_set);
         SequenceOP inputPose_sequence = new Sequence(*input_poseOP);
         SequenceAlignment native_alignment =  align_naive(native_sequence,inputPose_sequence);
-        for(Size ii=1; ii<=(Size)input_poseOP->total_residue()-8; ++ii){
+        for(Size ii=1; ii<=(Size)input_poseOP->size()-8; ++ii){
             Real rmsd =  region_rmsd(*input_poseOP,native_pose,native_alignment,ii,ii+8);
             rmsd_by_position[ii].push_back(rmsd);
         }

@@ -733,12 +733,12 @@ PoseMatchOutputWriter::insert_match_into_pose(
 	//then the downstream pose
 	core::pose::PoseCOP downstream_pose = dsbuilders()[ rep_match.originating_geom_cst_for_dspos ]->downstream_pose_from_hit(  full_hit( rep_match ) );
 
-	if ( downstream_pose->total_residue() == 1 ) {
+	if ( downstream_pose->size() == 1 ) {
 		pose.append_residue_by_jump( downstream_pose->residue(1), 1, "", "", true );
-		pose.pdb_info()->chain( pose.total_residue(), 'X' );
-		pose.pdb_info()->number( pose.total_residue(), 1 );
+		pose.pdb_info()->chain( pose.size(), 'X' );
+		pose.pdb_info()->number( pose.size(), 1 );
 		pose.pdb_info()->obsolete( false );
-		//pose.append_residue_by_jump( downstream_pose->residue(1), pose.total_residue(), "CA", downstream_pose->residue(1).atom_name(1), true );
+		//pose.append_residue_by_jump( downstream_pose->residue(1), pose.size(), "CA", downstream_pose->residue(1).atom_name(1), true );
 
 		utility::vector1< core::conformation::ResidueCOP > additional_lig_confs;
 		for ( core::Size i = 1; i <= num_geom_cst(); ++i ) {
@@ -749,7 +749,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 			if ( additional_lig_confs.size() > 99 ) break;
 		}
 		if ( additional_lig_confs.size() > 1 ) {
-			protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_rigid_body_confs_for_lig( pose.total_residue(), additional_lig_confs );
+			protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_rigid_body_confs_for_lig( pose.size(), additional_lig_confs );
 		}
 	} else utility_exit_with_message("PoseMatchOutputWriter not set up to put a downstream pose containing more than one ligand into the upstream pose");
 }

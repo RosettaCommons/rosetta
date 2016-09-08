@@ -182,7 +182,7 @@ public:
 		core::import_pose::pose_from_file( ref_poses, "core/pack/rotamer_set/test_rotamer_sets.pdb" , core::import_pose::PDB_file);
 
 		for ( Size i = 1; i <= ref_poses.size(); ++i ) {
-			for ( Size j = 1; j <= ref_poses[ i ].total_residue(); ++j ) {
+			for ( Size j = 1; j <= ref_poses[ i ].size(); ++j ) {
 
 				Size pdb_res = ref_poses[ i ].pdb_info()->number( j );
 				char pdb_chain = ref_poses[ i ].pdb_info()->chain( j );
@@ -245,7 +245,7 @@ public:
 
 		PackerTaskOP task = TaskFactory::create_packer_task( *trpcage );
 
-		for ( Size ii = 1; ii <= trpcage->total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= trpcage->size(); ++ii ) {
 			if ( ii == 5 ) continue;
 			task->nonconst_residue_task( ii ).prevent_repacking();
 		}

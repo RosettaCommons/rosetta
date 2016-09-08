@@ -65,7 +65,7 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 	TR<< "patching residues" <<std::endl;
 
 	//awatkins: an hbs pre position cannot be last position
-	runtime_assert_msg ( hbs_pre_pos_ != pose.total_residue(), "beginning of hbs cannot be last residue" );
+	runtime_assert_msg ( hbs_pre_pos_ != pose.size(), "beginning of hbs cannot be last residue" );
 	// I believe that this should be terminal, but since we're manually cutting off later residues
 	// I bet we can't require it that way, so we have to trust hbs creator not to be dumb.
 	//awatkins: an hbs post position cannot be first position

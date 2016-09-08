@@ -108,11 +108,11 @@ void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
 	}
 
 // we don't know the correct size of this vector until we see the pose.
-	combine_exclude_res_.resize( pose.total_residue(), false );
+	combine_exclude_res_.resize( pose.size(), false );
 
 	ConstraintCOPs added_constraints = constraints_->get_all_constraints();
 	if ( skip_redundant() ) {
-		skip_redundant_constraints( added_constraints, pose.total_residue(), skip_redundant_width() );
+		skip_redundant_constraints( added_constraints, pose.size(), skip_redundant_width() );
 	}
 	if ( random_drop_rate() > 0.0 ) {
 		drop_constraints( added_constraints, random_drop_rate() );

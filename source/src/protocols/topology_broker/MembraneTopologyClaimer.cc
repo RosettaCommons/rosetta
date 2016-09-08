@@ -186,7 +186,7 @@ void MembraneTopologyClaimer::initialize_dofs( core::pose::Pose& pose, claims::D
 /// @details Adds a virtual residue to a pose as the root.
 /// Jump is to a residue in the middle of a transmembrane segment.
 void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & pose ) {
-	int nres = pose.total_residue();
+	int nres = pose.size();
 	core::scoring::MembraneTopology const & topology( core::scoring::MembraneTopology_from_pose(pose) );
 
 	// return if the pose is empty (otherwise will segfault)

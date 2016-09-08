@@ -85,7 +85,7 @@ assert_region_design_is_disabled(
 	if (region == protocols::antibody::cdr_region) {r = "cdr";}
 
 	TR_util <<"Checking region: " << r << std::endl;
-	for (core::Size i = 1; i <= pose.total_residue(); ++i ){
+	for (core::Size i = 1; i <= pose.size(); ++i ){
 		if (ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region){
 			TS_ASSERT_EQUALS(task->design_residue( i ), false );
 		}
@@ -108,7 +108,7 @@ assert_region_packing_is_disabled(
 	if (region == protocols::antibody::cdr_region) {r = "cdr";}
 
 	TR_util <<"Checking region: " << r << std::endl;
-	for (core::Size i = 1; i <= pose.total_residue(); ++i ){
+	for (core::Size i = 1; i <= pose.size(); ++i ){
 		if (ab_info->get_region_of_residue(pose, i, cdr4_as_framework) == region){
 			TS_ASSERT_EQUALS(task->pack_residue( i ), false );
 		}

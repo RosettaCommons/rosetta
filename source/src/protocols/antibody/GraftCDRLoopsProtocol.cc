@@ -284,7 +284,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 		*/
 	}
 
-	// TR<<" frame_pose.total_residue()  =  "<< frame_pose.total_residue()<<std::endl;
+	// TR<<" frame_pose.size()  =  "<< frame_pose.size()<<std::endl;
 
 
 	// Exact match Aroop's old code in Rosetta 2:
@@ -344,7 +344,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 	}
 
 
-	Size nres = frame_pose.total_residue();
+	Size nres = frame_pose.size();
 
 	// Storing secondary structure
 	utility::vector1<char> secondary_struct_storage;

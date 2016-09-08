@@ -146,7 +146,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb ].user() ) {
 			core::scoring::dssp::Dssp dssp( template_pose );
 			dssp.insert_ss_into_pose(template_pose);
-			for ( Size ii = 1; ii<=template_pose.n_residue(); ++ii ) {
+			for ( Size ii = 1; ii<=template_pose.size(); ++ii ) {
 				nucleated_pose.set_secstruct(ii, template_pose.secstruct(ii));
 			}
 		}
@@ -158,11 +158,11 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		}
 
 
-		KeepNativeTorsions.resize( nucleated_pose.n_residue(), false);
+		KeepNativeTorsions.resize( nucleated_pose.size(), false);
 
 		// set phi, psi, omega
 		if (  basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file ].user() ||  basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::use_template_topology ].value() == true ) {
-			for ( Size seqpos = 1; seqpos <= nucleated_pose.total_residue(); ++seqpos ) {
+			for ( Size seqpos = 1; seqpos <= nucleated_pose.size(); ++seqpos ) {
 
 				if ( nucleated_pose.secstruct(seqpos) == 'H' ) {
 					Real helix_phi = rand() % (62 - 58 +1 ) + 58;
@@ -215,7 +215,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		// make a MoveMap
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file ].user() ) {
-			for ( core::Size ii = 1; ii <= nucleated_pose.n_residue(); ++ii ) {
+			for ( core::Size ii = 1; ii <= nucleated_pose.size(); ++ii ) {
 				if (  nucleated_pose.secstruct(ii) == 'L' || nucleated_pose.secstruct(ii -1 ) == 'L' ||  nucleated_pose.secstruct(ii + 1 )== 'L' ) { movemap->set_bb( ii, true); }
 			}
 			std::cout << "setting move mab abf" << std::endl;

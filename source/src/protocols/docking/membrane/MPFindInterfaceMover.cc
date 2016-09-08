@@ -480,7 +480,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	// get job
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-	TR << "native: " << native_.total_residue() << std::endl;
+	TR << "native: " << native_.size() << std::endl;
 	TR << "jumps: " << jumps_[1] << std::endl;
 	TR << "sfxn: " << sfxn_hires_->get_name() << std::endl;
 
@@ -670,7 +670,7 @@ void MPFindInterfaceMover::superimpose_upstream_partner( Pose & pose ) {
 
 	// get residue range for superposition: get start residue
 	Size start(0);
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( start == 0 &&
 				partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ) {
 			start = i;
@@ -679,7 +679,7 @@ void MPFindInterfaceMover::superimpose_upstream_partner( Pose & pose ) {
 
 	// get end residue
 	Size end(0);
-	for ( Size j = pose.total_residue(); j >= 1; --j ) {
+	for ( Size j = pose.size(); j >= 1; --j ) {
 		if ( end == 0 &&
 				partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ) {
 			end = j;

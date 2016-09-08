@@ -191,7 +191,7 @@ public:
 		scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
 		//  scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
 		pack::task::PackerTaskOP my_task( pack::task::TaskFactory::create_packer_task( pose ));
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			my_task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 		protocols::simple_moves::PackRotamersMoverOP prepack_mover( new protocols::simple_moves::PackRotamersMover( score_fxn, my_task ) );
@@ -243,7 +243,7 @@ public:
 			task->initialize_from_command_line();
 
 			if ( !pH_neighbor_pack_ ) {
-				for ( Size ii = 1; ii <= curr_pose_.total_residue(); ++ii ) {
+				for ( Size ii = 1; ii <= curr_pose_.size(); ++ii ) {
 					if ( ii == res_no ) {
 						task->nonconst_residue_task( ii ).restrict_to_repacking();
 					} else {
@@ -252,7 +252,7 @@ public:
 				}
 			} else {
 				core::conformation::Residue const & rsd1 = curr_pose_.residue( res_no );
-				for ( Size ii = 1; ii <= curr_pose_.total_residue(); ++ii ) {
+				for ( Size ii = 1; ii <= curr_pose_.size(); ++ii ) {
 					core::conformation::Residue const & rsd2 = curr_pose_.residue( ii );
 					if ( rsd1.xyz( rsd1.nbr_atom() ).distance( rsd2.xyz( rsd2.nbr_atom()) ) < pka_rad_ ) {
 						task->nonconst_residue_task( ii ).restrict_to_repacking();
@@ -282,7 +282,7 @@ public:
 						(!curr_pose_.residue( res_no ).has_variant_type(core::chemical::PROTONATED)) && ( curr_pH != 1.0 ) ) {
 
 					core::conformation::Residue const & res1 = curr_pose_.residue( res_no );
-					for ( Size ii = 1; ii <= curr_pose_.total_residue(); ++ii ) {
+					for ( Size ii = 1; ii <= curr_pose_.size(); ++ii ) {
 						core::conformation::Residue const & res2 = curr_pose_.residue( ii );
 						/*      if ( res1.xyz( res1.nbr_atom() ).distance( res2.xyz( res2.nbr_atom()) ) <  10 )
 						neighbor_count_++;*/
@@ -315,11 +315,11 @@ public:
 					/*
 					TR << "Printing all energies" << std::endl;
 					TR << "Old Pose" << std::endl;
-					for ( Size ii = 1; ii <= old_pose_.total_residue(); ++ii ) {
+					for ( Size ii = 1; ii <= old_pose_.size(); ++ii ) {
 					TR << old_pose_.residue(ii).name() << "\t" << old_pose_.pdb_info()->pose2pdb(ii) << "\tweighted_scores:\t" << old_pose_.energies().residue_total_energies(ii).weighted_string_of( score_fxn->weights() ) <<"\ttotal_score:\t"<< old_pose_.energies().residue_total_energies(ii).dot( score_fxn->weights() ) << std::endl;
 					}
 					TR << "Current Pose" << std::endl;
-					for ( Size ii = 1; ii <= curr_pose_.total_residue(); ++ii ) {
+					for ( Size ii = 1; ii <= curr_pose_.size(); ++ii ) {
 					TR << curr_pose_.residue(ii).name() << "\t" << curr_pose_.pdb_info()->pose2pdb(ii) << "\tweighted_scores:\t" << curr_pose_.energies().residue_total_energies(ii).weighted_string_of( score_fxn->weights() ) <<"\ttotal_score:\t"<< curr_pose_.energies().residue_total_energies(ii).dot( score_fxn->weights() ) << std::endl;
 					}
 					*/
@@ -344,7 +344,7 @@ public:
 		using namespace core;
 		using namespace scoring;
 		if ( pka_all_ ) {
-			for ( Size i=1; i<=pose.total_residue(); ++i ) {
+			for ( Size i=1; i<=pose.size(); ++i ) {
 				std::string res_name3 = pose.residue(i).name3();
 				if ( (pose.residue(i).is_protein()) && (res_name3 == "ASP" || res_name3 == "GLU" || res_name3 == "HIS" || res_name3 == "TYR" || res_name3 == "LYS") ) {
 					final_res_list_.push_back(i);

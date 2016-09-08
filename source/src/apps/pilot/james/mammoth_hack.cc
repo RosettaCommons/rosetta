@@ -387,7 +387,7 @@ public:
 		std::string const atom_name("CA");
 		coords_.clear();
 
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			core::id::NamedAtomID atom_ii( atom_name, ii );
 			coords_.push_back( pose.xyz( atom_ii ) );
 			//std::cerr << "idx " << ii << ": "

@@ -50,7 +50,7 @@ MergeFragSetMoverCreator::create_mover() const {
 MergeFragSetMover::MergeFragSetMover():moves::Mover("MergeFragSetMover"){}
 
 void MergeFragSetMover::apply(core::pose::Pose & pose) {
-	TR << pose.total_residue();
+	TR << pose.size();
 }
 
 std::string MergeFragSetMover::get_name() const {

@@ -99,7 +99,7 @@ inline Vec xyz(Pose const & p, Size const & ia, Size const & ir) {
 PoseOP alapose(Pose const & pose_in) {
 	PoseOP rpose( new Pose(pose_in) );
 	Pose & pose(*rpose);
-	for ( Size i=1; i<=pose.n_residue(); ++i ) {
+	for ( Size i=1; i<=pose.size(); ++i ) {
 		core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set()->name_map("ALA"));
 	}
 	return rpose;
@@ -130,7 +130,7 @@ KRSQuery::KRSQuery(KRSQueryType typ, Vec c, Vec a,        Real dt, Real at, Real
 FunGroupTK::FunGroupTK(
 	Pose & p_in,
 	vector1<Size> & pos
-) : pose_(alapose(p_in)), pos_(allifnone(pos,pose_->n_residue()))
+) : pose_(alapose(p_in)), pos_(allifnone(pos,pose_->size()))
 {
 	ifc_ = protocols::scoring::ImplicitFastClashCheckCOP( protocols::scoring::ImplicitFastClashCheckOP( new ImplicitFastClashCheck(*pose_,2.2) ) );
 	frs_ = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
@@ -140,7 +140,7 @@ FunGroupTK::FunGroupTK(
 	res_types.push_back("CYS");
 	res_types.push_back("HIS");
 	for ( vector1<string>::const_iterator it = res_types.begin(); it != res_types.end(); ++it ) {
-		rsd_[*it].resize(pose_->n_residue());
+		rsd_[*it].resize(pose_->size() );
 		for ( unsigned long po : pos_ ) {
 			ResidueOP rsd = core::conformation::ResidueFactory::create_residue(frs->name_map(*it),pose_->residue(po),pose_->conformation());
 			stb_[*it].push_back(Stub(rsd->xyz(5),rsd->xyz(2),rsd->xyz(1)));

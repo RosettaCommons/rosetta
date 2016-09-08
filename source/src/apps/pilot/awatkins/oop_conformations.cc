@@ -83,7 +83,7 @@ idealize( core::pose::Pose & pose, core::scoring::ScoreFunctionOP scorefxn )
 
 	utility::vector1< Size > oop_pre_positions;
 
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).has_variant_type( chemical::OOP_PRE ) ) {
 			oop_pre_positions.push_back( i );
 		} else {

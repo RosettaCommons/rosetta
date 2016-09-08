@@ -204,10 +204,10 @@ void create_starting_template (
 	// thread the input sequence onto the template_pose
 	utility::vector1< core::Real > torsions;
 	utility::vector1< core::Real > chis;
-	utility::vector1< bool > changed_torsions( pose.total_residue(), false );
+	utility::vector1< bool > changed_torsions( pose.size(), false );
 	torsions.reserve( 3 );
 	chis    .reserve( 4 ); // good guess for upper bound on number of chi angles
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( Size i = 1; i <= pose.size(); ++i ) {
 		if ( mapping.size1() < i ) break; // off the end of the mapping!
 
 		Size template_pos = mapping[ i ];
@@ -228,9 +228,9 @@ void create_starting_template (
 			//
 			// 				for ( Size chino = 1; chino <= chis.size(); ++chino ) {
 			// 					pose.set_chi( i, chino, chis[chino] );
-			// 				} // for ( Size i = 1; i <= pose.total_residue(); ++i )
+			// 				} // for ( Size i = 1; i <= pose.size(); ++i )
 			// 			} // if ( pose.residue(i).name1() == template_pose->residue(template_pos).name1() )
 			changed_torsions[ i ] = true;
 		} // if ( template_pos != 0 )
-	} // for ( Size i = 1; i <= pose.total_residue(); ++i )
+	} // for ( Size i = 1; i <= pose.size(); ++i )
 }

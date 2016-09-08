@@ -55,7 +55,7 @@ typedef xyzVector<double> Vecf;
 typedef xyzMatrix<double> Matf;
 
 void trans_pose( Pose & pose, Vec const & trans ) {
-	for(core::Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(core::Size ir = 1; ir <= pose.size(); ++ir) {
 		for(core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + trans );
@@ -64,7 +64,7 @@ void trans_pose( Pose & pose, Vec const & trans ) {
 }
 
 void rot_pose( Pose & pose, Mat const & rot ) {
-	for(core::Size ir = 1; ir <= pose.n_residue(); ++ir) {
+	for(core::Size ir = 1; ir <= pose.size(); ++ir) {
 		for(core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
@@ -119,8 +119,8 @@ void set_cb_pairs(vector1<Vecf> & cba, vector1<Vecf> & cbb) {
 
 int pose_cbcount(Pose const & a, Pose const & b) {
 	int count = 0;
-	for(core::Size i = 1; i <= a.n_residue(); ++i) {
-		for(core::Size j = 1; j <= b.n_residue(); ++j) {
+	for(core::Size i = 1; i <= a.size(); ++i) {
+		for(core::Size j = 1; j <= b.size(); ++j) {
 			if(a.residue(i).xyz(2).distance_squared(b.residue(j).xyz(2)) < 100.0) {
 				count++;
 			}
@@ -316,12 +316,12 @@ double sicfast(
 	Matf rot = Matf::identity();
 	if     ( ori.dot(Vec(0,0,1)) < -0.999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
 	else if( ori.dot(Vec(0,0,1)) <  0.999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
-	for(int i = 1; i <= (int)a.n_residue(); ++i) {
+	for(int i = 1; i <= (int)a.size(); ++i) {
 		cba.push_back(rot*Vecf(a.residue(i).xyz(2)));
 		int const natom = (a.residue(i).name3()=="GLY") ? 4 : 5;
 		for(int j = 1; j <= natom; ++j) pa.push_back(rot*Vecf(a.residue(i).xyz(j)));
 	}
-	for(int i = 1; i <= (int)b.n_residue(); ++i) {
+	for(int i = 1; i <= (int)b.size(); ++i) {
 		cbb.push_back(rot*Vecf(b.residue(i).xyz(2)));
 		int const natom = (b.residue(i).name3()=="GLY") ? 4 : 5;
 		for(int j = 1; j <= natom; ++j) pb.push_back(rot*Vecf(b.residue(i).xyz(j)));
@@ -353,10 +353,10 @@ void run(  ) {
 	rot_pose(p_in,Vec(0,1,0),-alpha,Vec(0,0,0));
 
 	// Vecf tcom(0,0,0),pcom(0,0,0);
-	// for(core::Size i = 1; i <= t_in.n_residue()/3; ++i) for(core::Size j = 1; j <= 5; ++j) tcom += t_in.residue(i).xyz(j);
-	// tcom /= double(5*t_in.n_residue()/3);
-	// for(core::Size i = 1; i <= p_in.n_residue()/5; ++i) for(core::Size j = 1; j <= 5; ++j) pcom += p_in.residue(i).xyz(j);
-	// pcom /= double(5*t_in.n_residue()/5);
+	// for(core::Size i = 1; i <= t_in.size()/3; ++i) for(core::Size j = 1; j <= 5; ++j) tcom += t_in.residue(i).xyz(j);
+	// tcom /= double(5*t_in.size()/3);
+	// for(core::Size i = 1; i <= p_in.size()/5; ++i) for(core::Size j = 1; j <= 5; ++j) pcom += p_in.residue(i).xyz(j);
+	// pcom /= double(5*t_in.size()/5);
 	// rot_pose(t_in,taxs,dihedral_degrees(paxs,Vec(0,0,0),taxs,tcom));
 	// rot_pose(p_in,paxs,dihedral_degrees(taxs,Vec(0,0,0),paxs,pcom));
 	// t_in.dump_pdb("t0.pdb");
@@ -380,7 +380,7 @@ void run(  ) {
 		for(int ipnt = 0; ipnt < 72; ipnt+=ANGLE_INCR) {
 			rot_pose(p,paxs,ANGLE_INCR);
 			vector1<Vecf> ppnt,cbp; // precompute these
-			for(int i = 1; i <= (int)p.n_residue(); ++i) {
+			for(int i = 1; i <= (int)p.size(); ++i) {
 				cbp.push_back(Vecf(p.residue(i).xyz(2)));
 				int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
 				for(int j = 1; j <= natom; ++j) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
@@ -409,7 +409,7 @@ void run(  ) {
 			// Pose p = pinit;
 			rot_pose(p,paxs,ANGLE_INCR);
 			vector1<Vecf> ppnt,cbp; // precompute these
-			for(int i = 1; i <= (int)p.n_residue(); ++i) {
+			for(int i = 1; i <= (int)p.size(); ++i) {
 				cbp.push_back(Vecf(p.residue(i).xyz(2)));
 				int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
 				for(int j = 1; j <= natom; ++j) ppnt.push_back(Vecf(p.residue(i).xyz(j)));
@@ -440,7 +440,7 @@ void run(  ) {
 			Pose t = tinit;
 			rot_pose(t,taxs,(core::Real)itri);
 			vector1<Vecf> ptri,cbt; // precompute these
-			for(int i = 1; i <= (int)t.n_residue(); ++i) {
+			for(int i = 1; i <= (int)t.size(); ++i) {
 				cbt.push_back(Vecf(t.residue(i).xyz(2)));
 				int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
 				for(int j = 1; j <= natom; ++j) ptri.push_back(Vecf(t.residue(i).xyz(j)));
@@ -484,7 +484,7 @@ void run(  ) {
 			Pose t = tinit;
 			rot_pose(t,taxs,(core::Real)itri);
 			vector1<Vecf> ptri,cbt; // precompute these
-			for(int i = 1; i <= (int)t.n_residue(); ++i) {
+			for(int i = 1; i <= (int)t.size(); ++i) {
 				cbt.push_back(Vecf(t.residue(i).xyz(2)));
 				int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
 				for(int j = 1; j <= natom; ++j) ptri.push_back(Vecf(t.residue(i).xyz(j)));
@@ -539,7 +539,7 @@ void run(  ) {
 			Pose p = pinit;
 			rot_pose(p,paxs,(core::Real)ipnt);
 			vector1<Vecf> pb,cbb; // precompute these
-			for(int i = 1; i <= (int)p.n_residue(); ++i) {
+			for(int i = 1; i <= (int)p.size(); ++i) {
 				cbb.push_back(Vecf(p.residue(i).xyz(2)));
 				int const natom = (p.residue(i).name3()=="GLY") ? 4 : 5;
 				for(int j = 1; j <= natom; ++j) pb.push_back(Vecf(p.residue(i).xyz(j)));
@@ -548,7 +548,7 @@ void run(  ) {
 				Pose t = tinit;
 				rot_pose(t,taxs,(core::Real)itri);
 				vector1<Vecf> pa,cba; // precompute these
-				for(int i = 1; i <= (int)t.n_residue(); ++i) {
+				for(int i = 1; i <= (int)t.size(); ++i) {
 					cba.push_back(Vecf(t.residue(i).xyz(2)));
 					int const natom = (t.residue(i).name3()=="GLY") ? 4 : 5;
 					for(int j = 1; j <= natom; ++j) pa.push_back(Vecf(t.residue(i).xyz(j)));
@@ -690,13 +690,13 @@ void run(  ) {
 
 				Pose symm;
 				symm.append_residue_by_jump(t.residue(1),1);
-				for(core::Size i = 2; i <= t.n_residue()/3; ++i) {
+				for(core::Size i = 2; i <= t.size()/3; ++i) {
 					if(symm.residue(i-1).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(symm,i-1);
 					if(   t.residue(i  ).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(t,i);
 					symm.append_residue_by_bond(t.residue(i));
 				}
 				symm.append_residue_by_jump(p.residue(1),1);
-				for(core::Size i = 2; i <= p.n_residue()/5; ++i) symm.append_residue_by_bond(p.residue(i));
+				for(core::Size i = 2; i <= p.size()/5; ++i) symm.append_residue_by_bond(p.residue(i));
 
 				core::pose::symmetry::make_symmetric_pose(symm);
 				core::io::pdb::dump_pdb(symm,fname);

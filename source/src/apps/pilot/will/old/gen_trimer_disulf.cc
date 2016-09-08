@@ -214,15 +214,15 @@ get_chis(
 int get_N(core::pose::Pose const & inp) {
 	Size c = inp.chain(1);
 	Size i = 2;
-	for(i = 2; i <= inp.n_residue(); ++i) {
+	for(i = 2; i <= inp.size(); ++i) {
 		if(inp.chain(i) != (int)c) {
 			break;
 		}
 	}
 	Size N = i-1;
-	if( inp.n_residue() % N != 0 ) {
+	if( inp.size() % N != 0 ) {
 		utility_exit_with_message("N does not divide n_residue! "
-			+ObjexxFCL::string_of(N)+" "+ObjexxFCL::string_of(inp.n_residue()) );
+			+ObjexxFCL::string_of(N)+" "+ObjexxFCL::string_of(inp.size()) );
 	} else if( inp.residue(N).name() != inp.residue(2*N).name() ) {
 		utility_exit_with_message("res N & 2*N not same type!!!");
 	} else if( inp.residue(N).nchi() > 0 && fabs(norm_degrees(inp.residue(N).chi(1)) - norm_degrees(inp.residue(2*N).chi(1))) > 1.0 ) {
@@ -266,14 +266,14 @@ core::pose::Pose make_two_trimers(core::pose::Pose const & inp, Size icys, Size 
 
 	core::pose::Pose partner(pose);
 	rot_pose(partner,rot,cen);
-	for(Size i = 1; i <= partner.n_residue(); ++i) {
+	for(Size i = 1; i <= partner.size(); ++i) {
 		if(partner.residue(i).is_lower_terminus()||partner.residue(i).is_ligand()) {
 			pose.append_residue_by_jump(partner.residue(i),1);
 		} else {
 			pose.append_residue_by_bond(partner.residue(i));
 		}
 	}
-	assert(pose.n_residue()==6*N);
+	assert(pose.size()==6*N);
 
 	std::cout << pose.fold_tree() << std::endl;
 

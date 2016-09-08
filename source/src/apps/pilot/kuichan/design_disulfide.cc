@@ -124,7 +124,7 @@ int main( int argc, char * argv [] )
 	core::import_pose::pose_from_file( start_pose, *rsd_set, pdb, false, core::import_pose::PDB_file);
 
 	utility::vector1< core::Size > positions;
-	for (Size ii = 1; ii <= pose.total_residue(); ii++){
+	for (Size ii = 1; ii <= pose.size(); ii++){
 		positions.push_back (ii);
 	}
 

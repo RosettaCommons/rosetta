@@ -108,7 +108,7 @@ ResidueCountFilter::parse_my_tag(
 		TR << "Residue types specified: " << res_type_vec << std::endl;
 		// if a pose with residues is given, check the residue types vs the pose residue type set to warn the user before runtime
 		core::chemical::ResidueTypeSetCOP restype_set;
-		if ( pose.total_residue() ) {
+		if ( pose.size() ) {
 			// get the residue type set from the first residue of the input pose
 			restype_set = core::chemical::ResidueTypeSetCOP( pose.residue(1).residue_type_set() );
 		} else {
@@ -137,7 +137,7 @@ bool
 ResidueCountFilter::apply(
 	core::pose::Pose const & pose
 ) const {
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		TR.Debug << "Residue " << i << " name3=" << pose.residue(i).name3() << "; name=" << pose.residue(i).name() << ";" << std::endl;
 	}
 	core::Size const computed_count = compute( pose );
@@ -189,9 +189,9 @@ ResidueCountFilter::compute(
 		if ( selector_ ) {
 			subset = selector_->apply( pose );
 		} else {
-			subset.assign( pose.total_residue(), true );
+			subset.assign( pose.size(), true );
 		}
-		for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+		for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 			if ( subset[ resid ] ) {
 				target_res.push_back( resid );
 			}

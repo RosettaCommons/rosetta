@@ -111,7 +111,7 @@ main( int argc, char* argv [] )
 	std::string infile  = *(option[ in::file::silent ]().begin());
 	core::import_pose::pose_from_file( start_pose, infile, core::import_pose::PDB_file);
 	core::pose::Pose pose(start_pose);
-	Size nres=pose.total_residue();
+	Size nres=pose.size();
 	core::kinematics::FoldTree f(nres);
 	f.new_jump(p1,p2,cut);
 //	f.set_jump_atoms(1,"N","N",true);

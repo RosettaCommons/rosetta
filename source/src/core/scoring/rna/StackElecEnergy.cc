@@ -686,14 +686,14 @@ StackElecEnergy::finalize_total_energy(
 
 	nblist.check_domain_map( pose.energies().domain_map() );
 	utility::vector1< conformation::Residue const * > resvect;
-	resvect.reserve( pose.total_residue() );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	resvect.reserve( pose.size() );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		resvect.push_back( & pose.residue( ii ) );
 	}
 
 	Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
 
-	for ( Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
+	for ( Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		conformation::Residue const & ires( *resvect[i] );
 		for ( Size ii = 1, ii_end = ires.natoms(); ii <= ii_end; ++ii ) {
 			if ( ires.is_virtual( ii ) ) continue;

@@ -93,8 +93,8 @@ int main( int argc, char * argv [] )
 	}
 
 	for(int j=0; j<1000; j++) {
-		for(unsigned int r=1; r<=pose.total_residue(); r++) {
-			std::map<int, int> C = utility::tools::make_map(int(r), int(protocols::moves::XC_white), int(1+pose.total_residue() - r), int(protocols::moves::XC_red) );
+		for(unsigned int r=1; r<=pose.size(); r++) {
+			std::map<int, int> C = utility::tools::make_map(int(r), int(protocols::moves::XC_white), int(1+pose.size() - r), int(protocols::moves::XC_red) );
 			pymol.send_colors(pose, C );
 			usleep(500000);
 		}

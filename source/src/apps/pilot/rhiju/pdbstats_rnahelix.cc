@@ -104,7 +104,7 @@ rna_helix_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 	using namespace protocols::farna;
 	using namespace chemical::rna;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	Size res_count( 0 );
 

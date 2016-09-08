@@ -165,7 +165,7 @@ UnfoldedStatePotential::raw_unfolded_state_energymap( std::string const & aa_nam
 
 		EnergyMap unf_total;
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ! pose.residue(ii).is_protein() && ! pose.residue(ii).is_RNA() ) continue;
 
 		// EnergyMap's know how to add, so we can take advantage of that feature to come up with a total unfolded state

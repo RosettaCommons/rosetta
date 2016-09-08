@@ -56,7 +56,7 @@ public:
 
 		protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-		core::Size com = protocols::geometry::residue_center_of_mass( pose_in, 1, pose_in.total_residue() );
+		core::Size com = protocols::geometry::residue_center_of_mass( pose_in, 1, pose_in.size() );
 
 		core::pose::symmetry::make_symmetric_pose( pose_in );
 

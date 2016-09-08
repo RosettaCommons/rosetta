@@ -110,7 +110,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 		if ( task_factory() != nullptr && !task_->residue_task(i).being_designed() ) {
 			// if task operation is used, only calculated pka for the residue that is being designed

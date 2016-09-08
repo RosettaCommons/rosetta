@@ -167,7 +167,7 @@ Serial_Refine::apply( core::pose::Pose &pose,
 	mm->set( core::id::D, true );
 
 	// fix mm for fixres
-	for ( core::Size ires = 1; ires <= pose.total_residue(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( fixres.contains( ires ) ) {
 			mm->set_bb ( ires, false );
 			mm->set_chi( ires, false );

@@ -163,7 +163,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
-	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
+	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
 	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}

@@ -240,7 +240,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 
 	// ca trace of pose
 	utility::vector1< numeric::xyzVector< core::Real > > cas_pose;
-	core::Size nres = pose.total_residue();
+	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & SymmConf (
@@ -497,7 +497,7 @@ SymmetricMotifFilter::process_motifs() {
 	for ( Size i=1; i<=nmotifs; ++i ) {
 		motif_cuts[i].push_back( 0 );
 		core::pose::PoseOP motif_i = ref_motifs_[i];
-		for ( Size j=1; j<=motif_i->total_residue(); ++j ) {
+		for ( Size j=1; j<=motif_i->size(); ++j ) {
 			if ( motif_i->pdb_info()->chain(j) == 'A' ) {
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" CA ").xyz() );
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" C  ").xyz() );

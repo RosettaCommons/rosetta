@@ -584,7 +584,7 @@ public:
 		ScoreFunctionOP score_function( get_score_function() );
 		score_function->score( pose );
 
-		HBondSet hbond_set( pose.n_residue() );
+		HBondSet hbond_set( pose.size() );
 
 		fill_hbond_set(pose,
 			true,

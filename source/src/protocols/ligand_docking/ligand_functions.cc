@@ -175,7 +175,7 @@ constrain_ligand_torsions(
 	using namespace core;
 	using namespace core::scoring::constraints;
 	ConstraintSetOP new_constraint_set = pose.constraint_set()->clone();
-	for ( Size rsdno = 1; rsdno <= pose.total_residue(); ++rsdno ) {
+	for ( Size rsdno = 1; rsdno <= pose.size(); ++rsdno ) {
 		if ( pose.residue_type(rsdno).is_polymer() ) continue;
 		utility::vector1< ConstraintOP > csts;
 		get_ligand_torsion_constraints(pose, rsdno, stddev_degrees, csts, constrain_all_torsions_equally);
@@ -193,7 +193,7 @@ get_ligand_seqpos(
 )
 {
 	utility::vector1< core::Size > to_return;
-	for ( core::Size i =1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i =1; i <= pose.size(); ++i ) {
 		if ( pose.residue_type(i).is_ligand() ) to_return.push_back( i );
 	}
 	return to_return;

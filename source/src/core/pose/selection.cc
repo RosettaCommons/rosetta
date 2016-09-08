@@ -164,7 +164,7 @@ parse_selection_block(
 	utility::vector1<Size> res;
 	if ( sele.size()==9&&sele.substr(0,6)=="name3=" ) {
 		string name3 = sele.substr(6,3);
-		for ( Size ir=1; ir <= pose.n_residue(); ++ir ) {
+		for ( Size ir=1; ir <= pose.size(); ++ir ) {
 			if ( pose.residue(ir).name3()==name3 ) {
 				res.push_back(ir);
 			}
@@ -373,7 +373,7 @@ core::Size get_resnumber_from_reference_pose(
 	core::pose::Pose const &pose
 ) {
 	signed long returnval( static_cast< signed long >( pose.corresponding_residue_in_current(refpose_number, refpose_name) ) + refpose_offset );
-	if ( returnval <= 0 || returnval > static_cast< signed long >( pose.n_residue() ) ) return 0;
+	if ( returnval <= 0 || returnval > static_cast< signed long >( pose.size() ) ) return 0;
 	return static_cast< core::Size >( returnval );
 }
 

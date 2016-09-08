@@ -35,7 +35,7 @@ bool isOverlapping(
 ){
 	assert ( pos_lower < pos_upper );
 
-	core::Size pose_lower_endrsn = pos_lower + pose_lower.n_residue() - 1;
+	core::Size pose_lower_endrsn = pos_lower + pose_lower.size() - 1;
 	if ( pose_lower_endrsn >= pos_upper ) { // "=" mean 1 overlap
 		return true;
 	} else {
@@ -70,8 +70,8 @@ soft_overlap_score(
 	core::Size pos_lower = std::min( pos1, pos2 );
 	core::Size pos_upper = std::max( pos1, pos2 );
 
-	core::Size pose_lower_nrsds = pose_lower.n_residue();
-	core::Size pose_upper_nrsds = pose_upper.n_residue();
+	core::Size pose_lower_nrsds = pose_lower.size();
+	core::Size pose_upper_nrsds = pose_upper.size();
 
 	// check overlap or not
 	//if ( ! isOverlapping( pose_lower, pos_lower, pose_upper, pos_upper ) )
@@ -149,8 +149,8 @@ overlap_score(
 	core::Real sum_overlap_score( 0.0 );
 
 	// this is for speed up
-	core::Size pose_lower_nrsds = pose_lower.n_residue();
-	core::Size pose_upper_nrsds = pose_upper.n_residue();
+	core::Size pose_lower_nrsds = pose_lower.size();
+	core::Size pose_upper_nrsds = pose_upper.size();
 
 	int offset = pos_upper - pos_lower; // should therefore always be positive
 

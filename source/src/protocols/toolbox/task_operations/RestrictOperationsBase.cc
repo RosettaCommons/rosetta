@@ -46,7 +46,7 @@ RestrictOperationsBase::run_calculator(
 	std::string const & calculation,
 	utility::vector1_bool & residues ) const
 {
-	runtime_assert(residues.size() == pose.total_residue());
+	runtime_assert(residues.size() == pose.size());
 
 	//find the set of residues
 	typedef std::set< core::Size > SizeSet;

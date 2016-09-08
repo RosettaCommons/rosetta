@@ -129,16 +129,16 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 	vector1<Real> asamp; for(Real i = 0.0; i < 180.0; i+=1.5) asamp.push_back(i); // just 0-179
 	// set up n-ca-c-o-cb ord arrays
 	vector1<Vec> bb0tmp,cb0tmp;
-	for(int ir = 1; ir <= init.n_residue(); ++ir) {
+	for(int ir = 1; ir <= init.size(); ++ir) {
 		if(!init.residue(ir).is_protein()) continue;
 		for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) {
 			bb0tmp.push_back(init.xyz(AtomID(ia,ir)));
-			if( ir > 1 && ir < init.n_residue() && ia==1 && actdon.find(ir)==actdon.end() &&
+			if( ir > 1 && ir < init.size() && ia==1 && actdon.find(ir)==actdon.end() &&
 			    (init.secstruct(ir-1)=='E'&&actdon.find(ir-1)==actdon.end()||
 					 init.secstruct(ir  )=='E'&&actdon.find(ir  )==actdon.end()||
 					 init.secstruct(ir+1)=='E'&&actdon.find(ir+1)==actdon.end())
 			) availdon.push_back(bb0tmp.size());
-			if( ir > 1 && ir < init.n_residue() && ia==4 && actacc.find(ir)==actacc.end() &&
+			if( ir > 1 && ir < init.size() && ia==4 && actacc.find(ir)==actacc.end() &&
 		    	(init.secstruct(ir-1)=='E'&&actacc.find(ir-1)==actacc.end()||
 				 	 init.secstruct(ir  )=='E'&&actacc.find(ir  )==actacc.end()||
 				 	 init.secstruct(ir+1)=='E'&&actacc.find(ir+1)==actacc.end())
@@ -214,7 +214,7 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 						  ss_out->fill_struct(p,option[OptionKeys::out::file::o]+"/"+tag+"_aln_mono.pdb.gz");
 						  ss_out->add_energy("sym",syms[ic]);
 						  ss_out->add_energy("num_contact",cbc);
-						  ss_out->add_energy("num_res",p.n_residue());
+						  ss_out->add_energy("num_res",p.size());
 						  sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 
 						}
@@ -304,12 +304,12 @@ int main(int argc, char *argv[]) {
 		Pose pnat;
 		TR << "searching " << fn << std::endl;
 		core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
-		trans_pose(pnat,-center_of_geom(pnat,1,pnat.n_residue()));
+		trans_pose(pnat,-center_of_geom(pnat,1,pnat.size()));
 		core::scoring::dssp::Dssp dssp(pnat);
 		dssp.insert_ss_into_pose(pnat);
-		//if( pnat.n_residue() > 150 ) continue;
+		//if( pnat.size() > 150 ) continue;
 		Size cyscnt=0, nhelix=0;
-		for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
+		for(Size ir = 2; ir <= pnat.size()-1; ++ir) {
 			if(pnat.secstruct(ir) == 'H') nhelix++;
 			//if(!pnat.residue(ir).is_protein()) goto cont1;
 			if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;

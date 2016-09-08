@@ -79,7 +79,7 @@ RRProtocolPackRotamers::run(
 	PackerTaskOP packer_task_copy = packer_task.clone();
 	pack_rotamers(working_pose, score_function, packer_task_copy);
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,

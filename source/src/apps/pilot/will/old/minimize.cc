@@ -53,10 +53,10 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
 
 
 void pose2frags(core::pose::Pose const & pose, Size minlen, Size maxlen, std::string tag) {
-	for(Size i = 1; i <= pose.n_residue()-minlen; ++i) {
+	for(Size i = 1; i <= pose.size()-minlen; ++i) {
 		for(Size l = minlen; l <= maxlen; ++l) {
 			Size j = i+l+1;
-			if(j > pose.n_residue()) continue;
+			if(j > pose.size()) continue;
 			core::kinematics::Stub s = getxform( pose.residue(i), pose.residue(j) );
 			Quat q(s.M);
 			TR << "loop " << tag << " " << i << " " << j << " " << s.v << " " << q.w << " " << q.x << " " << q.y << " " << q.z << std::endl;

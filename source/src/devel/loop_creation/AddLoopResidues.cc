@@ -118,7 +118,7 @@ AddLoopResidues::apply( pose::Pose & pose ) {
 		cur_anchor = dup_anchor;
 
 		protocols::loops::Loops just_duplicated;
-		while ( dup_anchor < pose.total_residue() ) {
+		while ( dup_anchor < pose.size() ) {
 			TR << "Appending " << loop_size << " residues to residue: " << dup_anchor << std::endl;
 			for ( core::Size i=1; i<=loop_size; ++i ) {
 				conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *alanine_type );

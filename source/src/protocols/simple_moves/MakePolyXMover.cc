@@ -84,7 +84,7 @@ void MakePolyXMover::apply( Pose & pose )
 {
 	// flip to poly-ala-gly-pro-disulf pose
 	utility::vector1< Size > protein_residues;
-	for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
+	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
 		}

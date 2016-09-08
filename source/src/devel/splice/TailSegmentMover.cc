@@ -165,7 +165,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
 	//getting the start and end tail residues from the movemap
-	core::Size const nres(pose.total_residue());
+	core::Size const nres(pose.size());
 	for ( core::Size i(1); i<=nres; ++i ) {
 		if ( movemap_->get_bb(i) ) {
 			start_ = i;

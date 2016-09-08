@@ -130,7 +130,7 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 		);
 	}
 
-	Size const n_res( pose.total_residue() );
+	Size const n_res( pose.size() );
 	// could save some space by only doing upper triangle (resi < resj)
 	have_cst_ = vector1< vector1< bool > >( n_res, vector1< bool >( n_res, false ) );
 	funcs_ = vector1< vector1< func::SOGFunc_Impl > >(
@@ -246,7 +246,7 @@ CustomAtomPairEnergy::eval_atom_derivative(
 	Size const seqpos1( atom_id.rsd() );
 	if ( atom_id.atomno() != 2 ) return; // tex - fix this!
 
-	for ( Size seqpos2 = 1; seqpos2 <= pose.total_residue(); ++seqpos2 ) {
+	for ( Size seqpos2 = 1; seqpos2 <= pose.size(); ++seqpos2 ) {
 		if ( seqpos1 == seqpos2 || ! have_cst_[seqpos1][seqpos2] ) continue;
 
 		core::id::AtomID other_atom( atom_id.atomno(), seqpos2 );

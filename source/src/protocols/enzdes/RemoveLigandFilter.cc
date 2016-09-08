@@ -112,7 +112,7 @@ RemoveLigandFilter::report_sm( Pose const & pose ) const
 		rmsd_filter->reference_pose( init_pose );
 		rmsd_filter->superimpose( true );
 		std::list< core::Size > selection;
-		for ( Size i = 1; i <= init_pose->n_residue(); i++ ) {
+		for ( Size i = 1; i <= init_pose->size(); i++ ) {
 			selection.push_back( i );
 		}
 		rmsd_filter->selection( selection );

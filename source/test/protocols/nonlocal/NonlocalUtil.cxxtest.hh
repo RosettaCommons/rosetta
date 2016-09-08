@@ -103,15 +103,15 @@ public:
 
 		Loops chunks;
 		chunks.push_back(1, 20);
-		chunks.push_back(21, pose.total_residue());
+		chunks.push_back(21, pose.size());
 
 		// add virtual residue at <chunks>'s center of mass
 		StarTreeBuilder builder;
 		builder.set_up(chunks, &pose);
 
-		Size num_residues_before = pose.total_residue();
+		Size num_residues_before = pose.size();
 		core::pose::remove_virtual_residues(&pose);
-		Size num_residues_after = pose.total_residue();
+		Size num_residues_after = pose.size();
 		TS_ASSERT_DIFFERS(num_residues_before, num_residues_after);
 	}
 
@@ -135,7 +135,7 @@ public:
 
 		Loops chunks;
 		chunks.push_back(1, 20);
-		chunks.push_back(21, model.total_residue());
+		chunks.push_back(21, model.size());
 
 		StarTreeBuilder builder;
 		builder.set_up(chunks, &model);

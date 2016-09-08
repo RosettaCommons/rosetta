@@ -389,7 +389,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 	for ( Size ifilt = 1; ifilt <= set_task_for_filters_.size(); ++ifilt ) {
 		TaskFactoryOP new_task_factory( new TaskFactory );
 		vector1< Size > prevent_repacking_residues;
-		for ( Size resj=1; resj<=pose.total_residue(); ++resj ) {
+		for ( Size resj=1; resj<=pose.size(); ++resj ) {
 			if ( resi != resj ) {
 				prevent_repacking_residues.push_back(resj);
 			}
@@ -660,7 +660,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 	vector1< core::Size > being_designed;
 	utility::vector1< Size > group_ids;
 	being_designed.clear();
-	for ( core::Size resi = 1; resi <= start_pose.total_residue(); ++resi ) {
+	for ( core::Size resi = 1; resi <= start_pose.size(); ++resi ) {
 		if ( core::pose::symmetry::is_symmetric(start_pose) ) {
 			if ( resi > core::pose::symmetry::symmetry_info(start_pose)->num_independent_residues() ) {
 				break;

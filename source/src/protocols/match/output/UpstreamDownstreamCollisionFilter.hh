@@ -111,7 +111,7 @@ public:
 	{
 		core::conformation::ResidueCOP iires = cacher_->upstream_conformation_for_hit( geomcst, upstream_hit );
 		Size ii_first_sc = iires->first_sidechain_atom();
-		for ( Size jj = 1; jj <= downstream_pose_->total_residue(); ++jj ) {
+		for ( Size jj = 1; jj <= downstream_pose_->size(); ++jj ) {
 			core::conformation::Residue const & jjres = downstream_pose_->residue( jj );
 			Real intxn_dis = iires->nbr_radius() + jjres.nbr_radius() + max_overlap_dis_;
 			if ( iires->xyz( iires->nbr_atom() ).distance_squared(

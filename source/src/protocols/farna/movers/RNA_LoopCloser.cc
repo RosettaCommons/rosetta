@@ -138,7 +138,7 @@ RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) const {
 
 	// Loop through all residues and look for potential chainbreaks to close --
 	// marked by CUTPOINT_LOWER and CUTPOINT_UPPER variants.
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 
 		if ( !pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
 		if ( !pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
@@ -310,7 +310,7 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 		pose.append_residue_by_jump( input_pose.residue( cutpoint_partner /* 10 */ ), 1 );
 	}
 
-	kinematics::FoldTree f( pose.total_residue() );
+	kinematics::FoldTree f( pose.size() );
 	if ( close_two_base_pairs ) {
 		// This is totally hard-wired and hacky -- should be easy to fix though.
 		f.new_jump( 1, 4, 1 );
@@ -523,7 +523,7 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 
 	utility::vector1< Size > extra_cutpoints;
 
-	for ( Size cutpos = 1; cutpos < pose.total_residue(); cutpos++ ) {
+	for ( Size cutpos = 1; cutpos < pose.size(); cutpos++ ) {
 
 		if ( ! f.is_cutpoint( cutpos ) ) continue;
 
@@ -734,7 +734,7 @@ RNA_LoopCloser::local_minimize_at_chainbreaks(
 
 	kinematics::FoldTree const & f( pose.fold_tree() );
 
-	for ( Size cutpos = 1; cutpos < pose.total_residue(); cutpos++ ) {
+	for ( Size cutpos = 1; cutpos < pose.size(); cutpos++ ) {
 
 		mm.set_bb( false );
 

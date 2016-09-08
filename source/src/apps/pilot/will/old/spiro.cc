@@ -201,7 +201,7 @@ PoseWrap make_pose(std::string seq) {
 	core::import_pose::pose_from_file(pw.pose,"input/start_gly.pdb" ,residue_set, core::import_pose::PDB_file);
 	// pw.pose.dump_pdb("init0.pdb");
 	// core::pose::remove_lower_terminus_type_from_pose_residue(pw.pose,2);
-	core::pose::remove_upper_terminus_type_from_pose_residue(pw.pose,pw.pose.n_residue());
+	core::pose::remove_upper_terminus_type_from_pose_residue(pw.pose,pw.pose.size());
 	// pw.pose.dump_pdb("init_noterm.pdb");
 	// std::string name3 = name_from_aa(aa_from_oneletter_code(seq[0]));
 	// pw.pose.replace_residue(2,*ResidueFactory::create_residue(residue_set->name_map(name3)),true);
@@ -209,7 +209,7 @@ PoseWrap make_pose(std::string seq) {
 		std::string name3 = name_from_aa(aa_from_oneletter_code(seq[i-2]));
 		pw.pose.append_residue_by_bond(*ResidueFactory::create_residue(residue_set->name_map(name3)),true);
 	}
-	core::pose::add_upper_terminus_type_to_pose_residue(pw.pose,pw.pose.n_residue());
+	core::pose::add_upper_terminus_type_to_pose_residue(pw.pose,pw.pose.size());
 	// pw.pose.dump_pdb("init_allres.pdb");
 	kinematics::FoldTree ft = pw.pose.fold_tree();
 	ft.jump_edge(1).start() = 1;
@@ -282,7 +282,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf) {
 	task->or_include_current(true);
 	task->nonconst_residue_task(1).prevent_repacking();
 	// task->nonconst_residue_task(2).prevent_repacking();
-	for(Size i = 2; i <= task->total_residue(); ++i) {
+	for(Size i = 2; i <= task->size(); ++i) {
 		// if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY" ) {
 		// 	task->restrict_to_repacking();
 		// } else {
@@ -414,7 +414,7 @@ fa_refine_and_design(PoseWrap & pw, Size /*NCYCLE*/) {
 	using namespace scoring;
 	switch_to_fa(pw);
 	core::pose::Pose & pose(pw.pose);
-	// Size nres_mono = (pose.n_residue()-4)/4;
+	// Size nres_mono = (pose.size()-4)/4;
 	ScoreFunctionOP sf1,sf2,sf3,sf4;
 	sf1 = get_score_function();
 	sf2 = get_score_function();
@@ -477,7 +477,7 @@ fa_refine_and_design(PoseWrap & pw, Size /*NCYCLE*/) {
 void report( std::string tag, PoseWrap & pw, core::pose::Pose & cenpose, ScoreFunctionOP sf_fa, std::ostringstream & oss, Real censcore ) {
 	using namespace core;
 	core::pose::Pose & pose(pw.pose);
-	Size nres_mono = pw.nres;//(pose.n_residue()-4)/4;
+	Size nres_mono = pw.nres;//(pose.size()-4)/4;
 	Real ref_rep  =  2827.2 + 2392.02; // pre-calculated
 
 	core::pose::Pose posebefore = pose;
@@ -491,7 +491,7 @@ void report( std::string tag, PoseWrap & pw, core::pose::Pose & cenpose, ScoreFu
 	// sf4->show(pose);
 
 	// for( Size i = 0; i < 4; ++i ) {
-	// 	Size nres_mono = (pose.n_residue()-4)/4;
+	// 	Size nres_mono = (pose.size()-4)/4;
 	// 	ref_rep += pose.energies().residue_total_energies(i*nres_mono+1)[scoring::fa_rep];
 	//    	ref_rep += pose.energies().residue_total_energies(i*nres_mono+2)[scoring::fa_rep];
 	// }
@@ -600,7 +600,7 @@ main( int argc, char * argv [] )
 // #endif
 
 		PoseWrap pw = make_pose(SEQ);
-		TR << "made pose, size: " << pw.pose.n_residue() << std::endl;
+		TR << "made pose, size: " << pw.pose.size() << std::endl;
 
 		std::string tag = string_of(uniform());
 

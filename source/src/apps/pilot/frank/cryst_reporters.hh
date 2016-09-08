@@ -168,7 +168,7 @@ reconstruct_lattice_pose_info(
 	monomer_anchor_virtuals.clear();
 
 	conformation::symmetry::SymmetryInfoCOP symminfo( pose::symmetry::symmetry_info( pose ) );
-	core::Size nres_protein( pose.total_residue() );
+	core::Size nres_protein( pose.size() );
 	while ( !pose.residue( nres_protein ).is_protein() ) --nres_protein;
 	runtime_assert( nres_protein%nres_monomer == 0  );
 	num_monomers = nres_protein/nres_monomer;
@@ -444,7 +444,7 @@ single_sasa_calc( core::pose::Pose & pose, core::Real probe_radius, core::Real &
 
 	total_nonpolar_sasa = total_sasa = 0.0;
 
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	for ( Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
@@ -561,7 +561,7 @@ find_buried_unsatisfied_polars(
 	scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H );
 
 	if ( new_unsats ) { // accumulate sasas of dependent polar hydrogens into their parents' sasa
-		for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		for ( Size i=1; i<= pose.size(); ++i ) {
 			conformation::Residue const & rsd( pose.residue(i) );
 			for ( chemical::AtomIndices::const_iterator
 					hnum  = rsd.Hpos_polar().begin(),
@@ -719,7 +719,7 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 	using namespace core::conformation::symmetry;
 
 	//
-	core::Size nres_asu = pose.total_residue();
+	core::Size nres_asu = pose.size();
 	while ( pose.residue(nres_asu).aa() == core::chemical::aa_vrt ) nres_asu--;
 
 	SymmetryInfoCOP symm_info;

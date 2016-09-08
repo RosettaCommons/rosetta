@@ -188,7 +188,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
 		core::pack::task::PackerTaskOP pack = tf->create_task_and_apply_taskoperations( *pose() );
 		TR<<"prevent repacking (p); restrict to repacking (r), design (d): ";
-		for ( core::Size i = 1; i<=pose()->total_residue(); ++i ) {
+		for ( core::Size i = 1; i<=pose()->size(); ++i ) {
 			if ( !pack->nonconst_residue_task( i ).being_designed() ) { // prevent repacking on all non-designable residues
 				pack->nonconst_residue_task( i ).prevent_repacking();
 				TR<<i<<"(p), ";
@@ -292,7 +292,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 		if ( core::pose::symmetry::is_symmetric(*pose_) ) {
 			core::pose::symmetry::extract_asymmetric_unit(*pose_,*pose_);
 		}
-		symmdata_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData( pose_->n_residue(), pose_->num_jump() ) );
+		symmdata_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData( pose_->size(), pose_->num_jump() ) );
 		symmdata_->read_symmetry_data_from_file(symmetry_definition_);
 		core::pose::symmetry::make_symmetric_pose(*pose_,*symmdata_);
 	}
@@ -320,15 +320,15 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 					( residues2_cstr <= 'Z' && residues2_cstr >= 'A' ) ) ) { // are we aligning two chains to one another?
 				core::pose::PDBInfoCOP pdbinfo1( pose()->pdb_info() ), pdbinfo2( p.pdb_info() );
 				core::Size pose_res( 1 ), p_res( 1 );
-				for ( ; pose_res <= pose()->total_residue(); ++pose_res ) {// find chain1 start
+				for ( ; pose_res <= pose()->size(); ++pose_res ) {// find chain1 start
 					if ( pdbinfo1->chain( pose_res ) == residues1_cstr ) break;
 				}
-				for ( ; p_res <= p.total_residue(); ++p_res ) { // find chain2 start
+				for ( ; p_res <= p.size(); ++p_res ) { // find chain2 start
 					if ( pdbinfo2->chain( p_res ) == residues2_cstr ) break;
 				}
 				for ( core::Size index = 0; ; ++index ) {/// push aligned residues
 					alignment_[ pose_res ] = p_res;
-					if ( pose_res == pose()->total_residue() || p_res == p.total_residue() ) { //end of chains -> stop aligning
+					if ( pose_res == pose()->size() || p_res == p.size() ) { //end of chains -> stop aligning
 						break;
 					}
 					pose_res++; p_res++;
@@ -342,8 +342,8 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 			}
 		}
 	} else {
-		//  runtime_assert( pose()->total_residue() == p.total_residue() || core::pose::symmetry::is_symmetric( p ) );
-		for ( core::Size i=1; i<=p.total_residue(); ++i ) {
+		//  runtime_assert( pose()->size() == p.size() || core::pose::symmetry::is_symmetric( p ) );
+		for ( core::Size i=1; i<=p.size(); ++i ) {
 			alignment_[ i ] = i;
 		}
 	}

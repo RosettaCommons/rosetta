@@ -69,7 +69,7 @@ symmetrizeBfactors( core::pose::Pose & pose ) {
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 	symm_info = SymmConf.Symmetry_Info();
 
-	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( symm_info && !symm_info->bb_is_independent( resid ) ) continue;
 		core::conformation::Residue const & rsd( pose.residue(resid) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
@@ -115,7 +115,7 @@ BfactorMultifunc::BfactorMultifunc(
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
-	for ( Size resid=1; resid<=pose_in.total_residue(); ++resid ) {
+	for ( Size resid=1; resid<=pose_in.size(); ++resid ) {
 		if ( symm_info && !symm_info->bb_is_independent( resid ) ) continue;
 		core::conformation::Residue const & rsd( pose_in.residue(resid) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
@@ -180,7 +180,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 
 	core::Real dens_score = 0;
 	if ( !exact_ ) {
-		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose_copy.size(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd ( pose_copy.residue(i) );
 			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
@@ -188,7 +188,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 		}
 	} else {
 		core::scoring::electron_density::poseCoords litePose;
-		for ( core::Size i = 1; i <= pose_copy.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose_copy.size(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd_i ( pose_copy.residue(i) );
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
@@ -216,7 +216,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	if ( wt_adp_ != 0 ) {
 		core::scoring::EnergyGraph const & energy_graph( pose_copy.energies().energy_graph() );
 
-		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
+		for ( Size i = 1; i <= pose_copy.size(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd1 ( pose_copy.residue(i) );
 			if ( rsd1.aa() == core::chemical::aa_vrt ) continue;
@@ -322,7 +322,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 
 		core::scoring::EnergyGraph const & energy_graph( pose_copy.energies().energy_graph() );
 
-		for ( core::Size i = 1; i <= pose_copy.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose_copy.size(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd1 ( pose_copy.residue(i) );
 			if ( rsd1.aa() == core::chemical::aa_vrt ) continue;

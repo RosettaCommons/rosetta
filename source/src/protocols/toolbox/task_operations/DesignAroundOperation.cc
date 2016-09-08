@@ -104,7 +104,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 
 	utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
 	packing_residues.clear(); prevent_repacking_residues.clear();
-	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		bool allow_design_res( false );
 		bool allow_packing( false );
 		BOOST_FOREACH ( core::Size const res, focus_residues ) { // don't change anything for focus residues

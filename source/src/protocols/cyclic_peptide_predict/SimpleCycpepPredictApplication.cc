@@ -1047,7 +1047,7 @@ SimpleCycpepPredictApplication::set_up_termini_mover (
 	core::pose::PoseCOP pose,
 	bool const native
 ) const {
-	core::Size const nres(pose->n_residue());
+	core::Size const nres(pose->size());
 
 	runtime_assert_string_msg(pose->residue(1).has_lower_connect(), "Error in simple_cycpep_predict app set_up_termini_mover() function: residue 1 does not have a LOWER_CONNECT.");
 	runtime_assert_string_msg(pose->residue(nres).has_upper_connect(), "Error in simple_cycpep_predict app set_up_termini_mover() function: the final residue does not have an UPPER_CONNECT.");
@@ -1111,7 +1111,7 @@ SimpleCycpepPredictApplication::import_and_set_up_native (
 ) const {
 	core::import_pose::pose_from_file(*native_pose, native_file, core::import_pose::PDB_file);
 	TR << "Improrting native structure from " << native_file << "." << std::endl;
-	runtime_assert_string_msg( native_pose->n_residue() == expected_residue_count, "Error in simple_cycpep_predict app!  The imported native pose has a different number of residues than the sequence provided." );
+	runtime_assert_string_msg( native_pose->size() == expected_residue_count, "Error in simple_cycpep_predict app!  The imported native pose has a different number of residues than the sequence provided." );
 
 	TR << "Stripping termini from native structure." << std::endl;
 	core::pose::remove_lower_terminus_type_from_pose_residue(*native_pose, 1);
@@ -1139,7 +1139,7 @@ SimpleCycpepPredictApplication::add_cyclic_constraints (
 
 	TR << "Setting up cyclic constraints." << std::endl;
 
-	core::Size const nres(pose->n_residue());
+	core::Size const nres(pose->size());
 
 	//The four atoms defining the peptide bond:
 	AtomID const atom_a( pose->residue(nres).type().icoor(pose->residue(nres).upper_connect_atom()).stub_atom1().atomno(), nres );
@@ -1198,13 +1198,13 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 	core::Size const cyclic_offset
 ) const {
 	TR << "Randomizing mainchain torsions." << std::endl;
-	core::Size const nres(pose->n_residue());
+	core::Size const nres(pose->size());
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues
 		if ( pose->residue(i).type().is_alpha_aa() ) {
 			core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Get the Rama scoring function; must be nonconst to allow lazy loading
 			core::Real phi(0.0), psi(0.0);
 			//TR << "aa" << i << "=" << pose->residue_type(i).aa() << std::endl; //DELETE ME
-			core::Size const cur_abs_pos( original_position( i, cyclic_offset, pose->n_residue() ) );
+			core::Size const cur_abs_pos( original_position( i, cyclic_offset, pose->size() ) );
 			if ( custom_rama_table_defined( cur_abs_pos ) ) {
 				rama.draw_random_phi_psi_from_extra_cdf( rama_table_type_by_res(cur_abs_pos), phi, psi);
 			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
@@ -1286,7 +1286,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	TR << "Performing GeneralizedKIC closure of loop." << std::endl;
 
 	//Number of residues in the pose:
-	core::Size const nres( pose->n_residue() );
+	core::Size const nres( pose->size() );
 	runtime_assert( nres >= 4 ); //Already checked at sequence load time, so should be true, but let's make sure.
 
 	//Randomly pick one of the middle residues to be the anchor residue:
@@ -1318,7 +1318,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( try_all_disulfides_ ) {
 		protocols::cyclic_peptide::TryDisulfPermutationsOP trydisulf( new protocols::cyclic_peptide::TryDisulfPermutations ); //Default settings should be fine.
 		core::Size disulf_res_count(0);
-		for ( core::Size ir=1, irmax=pose->n_residue(); ir<=irmax; ++ir ) { if ( pose->residue(ir).type().get_disulfide_atom_name() != "NONE" ) ++disulf_res_count; } //Count disulfide-forming residues in the pose.
+		for ( core::Size ir=1, irmax=pose->size(); ir<=irmax; ++ir ) { if ( pose->residue(ir).type().get_disulfide_atom_name() != "NONE" ) ++disulf_res_count; } //Count disulfide-forming residues in the pose.
 		disulf_count = disulf_res_count / 2; //Div operator -- gives correct number of disulfides even in odd disulfide-forming residue case.
 		protocols::simple_filters::ScoreTypeFilterOP disulf_filter1( new protocols::simple_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_prerelax_ * static_cast<core::Real>(disulf_count) ) );
 		pp->add_mover_filter_pair( trydisulf, "Try_Disulfide_Permutations", disulf_filter1 );
@@ -1364,7 +1364,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		}
 
 		protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
-		set_up_design_taskoperations( fdes, cyclic_offset, pose->n_residue() );
+		set_up_design_taskoperations( fdes, cyclic_offset, pose->size() );
 		pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", nullptr );
 
 		protocols::aa_composition::ClearCompositionConstraintsMoverOP clear_aacomp_cst( new protocols::aa_composition::ClearCompositionConstraintsMover );
@@ -1436,7 +1436,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	for ( core::Size i=1; i<=nres; ++i ) {
 		if ( i==anchor_res ) continue; //Can't perturb the anchor residue.
 		if ( pose->residue(i).type().is_alpha_aa() ) {
-			core::Size const res_in_original( original_position(i, cyclic_offset, pose->n_residue() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
+			core::Size const res_in_original( original_position(i, cyclic_offset, pose->size() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
 				core::id::NamedAtomID Natom( "N", i );
@@ -1708,7 +1708,7 @@ SimpleCycpepPredictApplication::depermute (
 
 	if ( offset==0 ) return; //Do nothing if the pose was not offset.
 
-	core::Size const nres(pose->n_residue());
+	core::Size const nres(pose->size());
 	debug_assert(nres > offset);
 	core::Size const old_first_res_index( nres-offset+1 );
 
@@ -1761,8 +1761,8 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	core::pose::PoseOP pose,
 	core::pose::PoseCOP native_pose
 ) const {
-	core::Size const nres( pose->n_residue() );
-	debug_assert( native_pose->n_residue() == nres ); //Should be true.
+	core::Size const nres( pose->size() );
+	debug_assert( native_pose->size() == nres ); //Should be true.
 
 	core::id::AtomID_Map< core::id::AtomID > amap;
 	core::pose::initialize_atomid_map(amap, *pose, core::id::BOGUS_ATOM_ID);

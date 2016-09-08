@@ -88,9 +88,9 @@ Evaluator::Evaluator( pose::Pose const &pose,
 	native_ = native;
 	resmap_.clear();
 
-  for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+  for ( Size ii = 1; ii <= pose.size(); ++ii ) {
     Size ii_pdb( pose.pdb_info()->number( ii ) );
-    for ( Size jj = 1; jj <= native_.total_residue(); ++jj ) {
+    for ( Size jj = 1; jj <= native_.size(); ++jj ) {
       Size jj_pdb( native_.pdb_info()->number( jj ) );
       if( ii_pdb == jj_pdb ){
 				resmap_[ii] = jj;
@@ -445,7 +445,7 @@ Scheduler::pick_hashing_res( pose::Pose const &pose,
 														 std::string const mode,
 														 Size &Lcount )
 {
-	Size const nres( pose.total_residue() );
+	Size const nres( pose.size() );
 	
 	if( mode.compare("random") == 0 ){
 		return (Size)(numeric::random::rg().uniform()*(nres-looplen_)) + 1;
@@ -505,7 +505,7 @@ Scheduler::run_LHeval( pose::Pose &pose )
 	Real const &gdt0 = evaluator_.gdt0;
 	printf("GDT0: %6.2f\n", gdt0*100.0);
 
-  for( Size ires = 1; ires <= pose.total_residue()-looplen_+1; ++ires ){
+  for( Size ires = 1; ires <= pose.size()-looplen_+1; ++ires ){
 		// Pick replacing resid
 		LHsampler_->set_start_res( ires );
 		LHsampler_->set_stop_res( ires );

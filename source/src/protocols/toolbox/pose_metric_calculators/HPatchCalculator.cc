@@ -107,7 +107,7 @@ HPatchCalculator::recompute( pose::Pose const & this_pose ) {
 	} else {
 		// iterate over all residues to see if this pose has any non-protein residues
 		bool has_nonprot_res(false);
-		for ( core::Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= this_pose.size(); ++ii ) {
 			if ( ! this_pose.residue_type(ii).is_protein() ) {
 				has_nonprot_res = true;
 				break;

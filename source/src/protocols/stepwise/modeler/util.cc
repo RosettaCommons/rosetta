@@ -159,7 +159,7 @@ look_for_unique_jump_to_moving_res( kinematics::FoldTree const & fold_tree, Size
 bool
 is_cutpoint_closed( pose::Pose const & pose, Size const seq_num ){
 	runtime_assert( seq_num > 0 );
-	runtime_assert( seq_num <= pose.total_residue() );
+	runtime_assert( seq_num <= pose.size() );
 	if ( pose.residue_type( seq_num  ).has_variant_type( chemical::CUTPOINT_LOWER )  ) {
 		runtime_assert ( pose.residue_type( seq_num+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
 		return true;
@@ -171,7 +171,7 @@ is_cutpoint_closed( pose::Pose const & pose, Size const seq_num ){
 utility::vector1< Size >
 get_cutpoint_closed( pose::Pose const & pose ){
 	utility::vector1< Size > cutpoint_closed;
-	for ( Size seq_num = 1; seq_num < pose.total_residue(); seq_num++ ) {
+	for ( Size seq_num = 1; seq_num < pose.size(); seq_num++ ) {
 		if ( is_cutpoint_closed( pose, seq_num ) ) cutpoint_closed.push_back( seq_num );
 	}
 	return cutpoint_closed;
@@ -223,12 +223,12 @@ get_endpoints_from_pose( utility::vector1< Size > & endpoints,
 	pose::Pose const & pose,
 	utility::vector1< Size > const & working_res ){
 
-	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( pose.fold_tree().is_cutpoint( i ) ) {
 			endpoints.push_back( working_res[ i ] );
 		}
 	}
-	endpoints.push_back( working_res[ pose.total_residue() ] );
+	endpoints.push_back( working_res[ pose.size() ] );
 
 }
 
@@ -336,7 +336,7 @@ effective_upper_terminus_based_on_working_res( Size const i,
 
 	// this was a problem when skip_bulge was activated.
 	//    ( sample_res.size() > 0 && !sample_res.has_value( res_list[i] + 1 ) &&
-	//     ( i == pose.total_residue() || ( res_list[i + 1] > res_list[i] + 1 ) ) ) ){
+	//     ( i == pose.size() || ( res_list[i + 1] > res_list[i] + 1 ) ) ) ){
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -441,7 +441,7 @@ reorder_root_partition_res(
 void
 reroot_based_on_full_model_info( pose::Pose & pose ) {
 	utility::vector1< Size > root_partition_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) root_partition_res.push_back( n );
+	for ( Size n = 1; n <= pose.size(); n++ ) root_partition_res.push_back( n );
 	reroot_based_on_full_model_info( pose, root_partition_res );
 }
 
@@ -688,7 +688,7 @@ merge_two_poses( pose::Pose & pose,
 		if ( rsd->is_polymer() && ( n == 1 || !after_cutpoint ) ) {
 			pose.append_residue_by_bond( *rsd, true /* build_ideal_geometry */ );
 		} else {
-			pose.append_residue_by_jump( *rsd, pose.total_residue() );
+			pose.append_residue_by_jump( *rsd, pose.size() );
 		}
 	}
 
@@ -726,7 +726,7 @@ merge_two_poses( pose::Pose & pose,
 	jump_partners2 = map_to_local_numbering( jump_partners2, working_res );
 	cuts = map_to_local_numbering( cuts, working_res );
 
-	FoldTree f = setup::get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
+	FoldTree f = setup::get_tree( pose.size(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 
 	Size root( 0 );
 	if ( fix_first_pose ) {
@@ -803,7 +803,7 @@ slice_out_pose( pose::Pose & pose,
 	protocols::stepwise::modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( sliced_out_pose, pose );
 
 	// remainder piece.
-	utility::vector1< Size > const residues_to_retain = get_other_residues( residues_to_delete, pose.total_residue() );
+	utility::vector1< Size > const residues_to_retain = get_other_residues( residues_to_delete, pose.size() );
 
 	Pose pose_scratch;
 	slice( pose_scratch, pose, residues_to_retain );
@@ -845,7 +845,7 @@ slice( pose::Pose & sliced_out_pose,
 		bool const jump_to_previous = check_jump_to_previous_residue_in_chain( pose, j, slice_res );
 		if ( jump_to_previous ) num_jumps_to_previous++;
 
-		bool const before_cutpoint = ( j == pose.total_residue() || ( pose.fold_tree().is_cutpoint( j ) ) );
+		bool const before_cutpoint = ( j == pose.size() || ( pose.fold_tree().is_cutpoint( j ) ) );
 		if ( before_cutpoint ) rsd = remove_variant_type_from_residue( *rsd, chemical::UPPER_TERMINUS_VARIANT, pose ); // got to be safe.
 		if ( !before_cutpoint && !slice_res.has_value( j + 1 ) ) num_three_prime_connections++;
 
@@ -855,7 +855,7 @@ slice( pose::Pose & sliced_out_pose,
 		if ( rsd->is_polymer() && ( n == 1 || ( !after_cutpoint && slice_res.has_value( j - 1 ) ) ) ) {
 			sliced_out_pose.append_residue_by_bond( *rsd, true /* build_ideal_geometry */ );
 		} else {
-			sliced_out_pose.append_residue_by_jump( *rsd, sliced_out_pose.total_residue() );
+			sliced_out_pose.append_residue_by_jump( *rsd, sliced_out_pose.size() );
 		}
 	}
 
@@ -902,7 +902,7 @@ slice( pose::Pose & sliced_out_pose,
 		jump_point_( 2, i ) = std::max( jump_partners1[ i ], jump_partners2[ i ] );
 		cuts_( i ) = cuts[ i ];
 	}
-	f_slice.tree_from_jumps_and_cuts( sliced_out_pose.total_residue(), num_cuts, jump_point_, cuts_ );
+	f_slice.tree_from_jumps_and_cuts( sliced_out_pose.size(), num_cuts, jump_point_, cuts_ );
 
 	// fix jump atoms.
 	bool const KeepStubInResidue( true );
@@ -940,7 +940,7 @@ Size
 check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
 	utility::vector1< Size > const & current_element ){
 	utility::vector1< Size > res_list, chains_in_full_model;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		res_list.push_back( n );
 		chains_in_full_model.push_back( 1 ); // could easily fix this for virtual residue.
 	}
@@ -979,7 +979,7 @@ Size
 check_jump_to_next_residue_in_chain( pose::Pose const & pose, Size const i,
 	utility::vector1< Size > const & current_element ){
 	utility::vector1< Size > res_list, chains_in_full_model;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		res_list.push_back( n );
 		chains_in_full_model.push_back( 1 ); // could easily fix this for virtual residue.
 	}
@@ -995,7 +995,7 @@ check_jump_to_next_residue_in_chain( pose::Pose const & pose, Size const i,
 	utility::vector1< Size > const & chains_in_full_model ){
 	Size subsequent_res = i + 1;
 	Size const current_chain = chains_in_full_model[ res_list[ i ] ];
-	while ( subsequent_res <= pose.total_residue() &&
+	while ( subsequent_res <= pose.size() &&
 			chains_in_full_model[ res_list[ subsequent_res ] ] == current_chain ) {
 		if ( !current_element.has_value( res_list[ subsequent_res ] ) &&
 				pose.fold_tree().jump_nr( subsequent_res, i ) > 0 ) return subsequent_res;
@@ -1020,7 +1020,7 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 	// Could this be a chainbreak (cutpoint_closed )?
 	TR.Debug << "checking for cutpoint after append: " << res << " " << res_list[ res ]  << " " << cutpoint_open_in_full_model.size() << std::endl;
 
-	if ( res < pose.total_residue() &&
+	if ( res < pose.size() &&
 			res_list[ res ] + 1 == res_list[ res + 1 ] &&
 			! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) {
 
@@ -1042,7 +1042,7 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 		if ( pose.residue_type( res ).is_protein() ) {
 			if ( res_list[ res ] < full_model_info.size() &&
 					chains_full[ res_list[ res ] + 1 ] == chains_full[ res_list[ res ] ] &&
-					( res == pose.total_residue()  || res_list[ res ] + 1 < res_list[ res + 1 ] ) ) {
+					( res == pose.size()  || res_list[ res ] + 1 < res_list[ res + 1 ] ) ) {
 				remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res );
 				add_variant_type_to_pose_residue( pose, C_METHYLAMIDATION, res );
 			} else {
@@ -1127,7 +1127,7 @@ fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res
 			res_list[ res ] - 1 == res_list[ res - 1 ] &&
 			! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ) return;
 
-	if ( res < pose.total_residue() &&
+	if ( res < pose.size() &&
 			res_list[ res ] + 1 == res_list[ res + 1 ] &&
 			! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) return;
 
@@ -1169,7 +1169,7 @@ fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
 	using namespace core::chemical;
 	pose::Pose pose = pose_to_fix; // costly, but prevents seg fault with graphics.
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 
 		// Are we at a strand beginning?
 		bool const at_strand_beginning = ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) );
@@ -1184,7 +1184,7 @@ fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
 		}
 
 		// Look for strand ends.
-		bool const at_strand_end = ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) );
+		bool const at_strand_end = ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) );
 		if ( at_strand_end ) {
 			fix_up_residue_type_variants_at_strand_end( pose, n );
 		} else {
@@ -1400,7 +1400,7 @@ figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap 
 	utility::vector1< Size > const cutpoint_closed = get_cutpoint_closed( pose );
 
 	// kind of brute-force check over all moving residues. Can optimize if needed.
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 
 		if ( cutpoint_closed.has_value( n ) ) {
 			if ( moving_chainbreak_res.has_value( n ) ) continue;
@@ -1415,7 +1415,7 @@ figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap 
 
 			if ( ! mm.get( id::TorsionID( n+1, id::BB, 1 ) ) ) continue;
 
-			ObjexxFCL::FArray1D_bool partner1( pose.total_residue(), false );
+			ObjexxFCL::FArray1D_bool partner1( pose.size(), false );
 			pose.fold_tree().partition_by_residue( n, partner1 );
 
 			for ( Size m = 1; m <= cutpoint_closed.size(); m++ ) {
@@ -1458,7 +1458,7 @@ primary_fixed_domain( pose::Pose const & pose,
 bool
 check_for_input_domain( pose::Pose const & pose ){
 	utility::vector1< Size > partition_res;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) partition_res.push_back( i );
+	for ( Size i = 1; i <= pose.size(); i++ ) partition_res.push_back( i );
 	return check_for_input_domain( pose, partition_res );
 }
 
@@ -1513,7 +1513,7 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 	utility::vector1< Size > const chains = figure_out_chain_numbers_from_full_model_info_const( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	Size five_prime_chain_break( 0 ), three_prime_chain_break( 0 );
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 
 		if ( !pose.fold_tree().is_cutpoint( n ) ) continue;
 
@@ -1533,7 +1533,7 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 		}
 
 		// fast-forward to non-virtual residue closest to chainbreak
-		for ( three_prime_chain_break = n+1; three_prime_chain_break <= pose.total_residue(); three_prime_chain_break++ ) {
+		for ( three_prime_chain_break = n+1; three_prime_chain_break <= pose.size(); three_prime_chain_break++ ) {
 			if ( !pose.residue_type( three_prime_chain_break ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) break;
 		}
 
@@ -1564,16 +1564,16 @@ get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr 
 utility::vector1< bool >
 get_partition_definition( pose::Pose const & pose, Size const & moving_suite ){
 
-	ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
+	ObjexxFCL::FArray1D<bool> partition_definition( pose.size(), false );
 	if ( moving_suite > 0 ) {
 		pose.fold_tree().partition_by_residue( moving_suite, partition_definition );
 	} else {
-		partition_definition.dimension( pose.total_residue(), true );
+		partition_definition.dimension( pose.size(), true );
 	}
 
 	//silly conversion. There may be a faster way to do this actually.
 	utility::vector1< bool > partition_definition_vector1;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) partition_definition_vector1.push_back( partition_definition(n) );
+	for ( Size n = 1; n <= pose.size(); n++ ) partition_definition_vector1.push_back( partition_definition(n) );
 
 	return partition_definition_vector1;
 
@@ -1597,7 +1597,7 @@ figure_out_moving_partition_res_for_suite( pose::Pose const & pose,
 	Size const moving_suite = ( moving_res < reference_res ) ? moving_res : reference_res;
 	utility::vector1< bool > partition_definition = get_partition_definition( pose, moving_suite );
 	utility::vector1< Size > moving_partition_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( partition_definition[ n ] == partition_definition[ moving_res ] ) moving_partition_res.push_back( n );
 	}
 	return moving_partition_res;
@@ -1610,7 +1610,7 @@ figure_out_moving_partition_res_for_jump( pose::Pose const & pose,
 	utility::vector1< bool > partition_definition = get_partition_definition_by_jump( pose, jump_nr );
 	utility::vector1< Size > moving_partition_res;
 	Size const moving_res = pose.fold_tree().downstream_jump_residue( jump_nr );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( partition_definition[ n ] == partition_definition[ moving_res ] ) moving_partition_res.push_back( n );
 	}
 	return moving_partition_res;
@@ -1648,7 +1648,7 @@ figure_out_root_partition_res( pose::Pose const & pose,
 	utility::vector1< Size > const & moving_res_list ){
 	utility::vector1< Size > root_partition_res;
 	utility::vector1< Size > const moving_partition_res = figure_out_moving_partition_res( pose, moving_res_list );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !moving_partition_res.has_value( n ) )  root_partition_res.push_back( n ) ;
 	}
 	return root_partition_res;
@@ -1665,7 +1665,7 @@ figure_out_root_and_moving_partition_res( pose::Pose const & pose, Size const mo
 	Size const jump_nr = f.jump_nr( moving_res, reference_res );
 	if ( !jump_nr && reference_res > 0 ) runtime_assert( moving_res == reference_res + 1 || reference_res == moving_res + 1 );
 	utility::vector1< bool > partition_definition = jump_nr ? get_partition_definition_by_jump( pose, jump_nr ) : get_partition_definition( pose, std::min( moving_res, reference_res ) );
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( partition_definition[ n ] == partition_definition[ moving_res ] ) {
 			moving_partition_res.push_back( n );
 		} else {
@@ -1728,7 +1728,7 @@ revise_root_and_moving_res_list( pose::Pose & pose,
 
 	// weird case, happens in some protein early moves -- get the root out of the moving res!revise_root_and
 	if ( moving_res_list.has_value( pose.fold_tree().root() ) ) {
-		utility::vector1< Size > other_res = get_other_residues( moving_res_list, pose.total_residue() );
+		utility::vector1< Size > other_res = get_other_residues( moving_res_list, pose.size() );
 		if ( other_res.size() == 0 ) return false; // from scratch.
 		reroot_based_on_full_model_info( pose, other_res );
 	}
@@ -1862,7 +1862,7 @@ get_domain_boundary_suites( pose::Pose const & pose ){
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-	for ( Size n = 1; n < pose.total_residue(); n++ ) {
+	for ( Size n = 1; n < pose.size(); n++ ) {
 		if ( !cutpoint_open_in_full_model.has_value( res_list[ n ] ) &&
 				!pose.fold_tree().is_cutpoint( n ) &&
 				( res_list[ n + 1 ]  == res_list[ n ] + 1 ) &&
@@ -1913,7 +1913,7 @@ get_all_working_moving_res( working_parameters::StepWiseWorkingParametersCOP wor
 ////////////////////////////////////////////////////////////////////////////////
 void
 virtualize_side_chains( pose::Pose & pose ) {
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).is_RNA() ) {
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, n );
 		} else if ( pose.residue_type( n ).is_protein() ) {
@@ -1926,7 +1926,7 @@ virtualize_side_chains( pose::Pose & pose ) {
 utility::vector1< Size >
 get_all_residues( pose::Pose const & pose ){
 	utility::vector1< Size > all_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.size(); n++ ) {
 		all_res.push_back( n );
 	}
 	return all_res;
@@ -1960,7 +1960,7 @@ get_unique_connection_res( pose::Pose const & pose,
 	utility::vector1< Size > const & moving_partition_res ) {
 	Size moving_res1 = find_downstream_connection_res( pose, moving_partition_res );
 
-	utility::vector1< Size > const other_partition_res = get_other_residues( moving_partition_res, pose.total_residue() );
+	utility::vector1< Size > const other_partition_res = get_other_residues( moving_partition_res, pose.size() );
 	Size moving_res2 = find_downstream_connection_res( pose, other_partition_res );
 
 	// can't have 'downstream connections' both ways -- something wrong with partition.

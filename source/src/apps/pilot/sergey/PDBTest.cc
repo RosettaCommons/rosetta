@@ -211,7 +211,7 @@ int main( int argc, char * argv [] )
 
 	core::pose::Pose pose;
 	core::import_pose::build_pose(fd, pose, *residue_set);
-	T("pdb_demo") << " pose.total_residue()=" << pose.total_residue() << "\n";
+	T("pdb_demo") << " pose.size()=" << pose.size() << "\n";
 	//T("pdb_demo") << fd;
 	T("pdb_demo") << "Back to PDB now... -----------------" << std::endl;
 

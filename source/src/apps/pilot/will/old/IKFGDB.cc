@@ -90,7 +90,7 @@ return p.xyz(AtomID(ia,ir));
 }
 
 Pose & alapose(Pose & pose) {
-for(Size i=1; i<=pose.n_residue(); ++i) {
+for(Size i=1; i<=pose.size(); ++i) {
 core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
 }
 return pose;
@@ -114,7 +114,7 @@ protected:
   core::chemical::ResidueTypeSetCAP frs_;
 public:
   RotSel( Pose p_in, vector1<Size> & pos )
-    : pose_(alapose(p_in)), pos_(allifnone(pos,pose_.n_residue())), ifc_(pose_,2.7)
+    : pose_(alapose(p_in)), pos_(allifnone(pos,pose_.size())), ifc_(pose_,2.7)
   {
     frs_ = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
     for(vector1<Size>::const_iterator i=pos_.begin(); i!=pos_.end(); ++i) {
@@ -255,7 +255,7 @@ void run(std::string fname) {
   RotSel & brs(*(new BruteRotSel(pose)));
   TR << "start" << std::endl;
 
-		//  for(Size igln=1;igln<=pose.n_residue();++igln) {
+		//  for(Size igln=1;igln<=pose.size();++igln) {
   for(Size igln=6;igln<=6;++igln) {
     TR << igln << std::endl;
     core::conformation::Residue rtmp(pose.residue(igln));

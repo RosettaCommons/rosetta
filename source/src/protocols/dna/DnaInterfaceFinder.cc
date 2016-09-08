@@ -34,7 +34,7 @@ DnaInterfaceFinder::determine_interface( pose::Pose const & pose )
 {
 	// Does both protein and DNA
 	vector1< Size > protein_positions, dna_positions;
-	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
+	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
 		if ( pose.residue_type( index ).is_protein() ) protein_positions.push_back( index );
 		else if ( pose.residue_type( index ).is_DNA() ) dna_positions.push_back( index );
 	}
@@ -48,7 +48,7 @@ DnaInterfaceFinder::determine_protein_interface( pose::Pose const & pose )
 	// all protein positions against all DNA positions
 	// this is the slowest possible (intended) usage of DnaInterfaceFinder
 	vector1< Size > protein_positions, dna_positions;
-	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
+	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
 		if ( pose.residue_type( index ).is_protein() ) protein_positions.push_back( index );
 		else if ( pose.residue_type( index ).is_DNA() ) dna_positions.push_back( index );
 	}

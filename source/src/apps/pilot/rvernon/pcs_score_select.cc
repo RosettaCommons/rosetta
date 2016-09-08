@@ -124,7 +124,7 @@ void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_li
 		if ( !exclude_residue ) {
 			residue_selection.push_back( ir );
 		}
-	} // for ( Size ir = 1; ir <= native_pose.total_residue(); ++ir )
+	} // for ( Size ir = 1; ir <= native_pose.size(); ++ir )
 }
 
 
@@ -246,7 +246,7 @@ main( int argc, char* argv [] )
 
 		if ( option[ in::file::native ].user() ) {
 			protocols::simple_filters::ResidueSelection residues;
-			invert_exclude_residues( native_pose.total_residue(), vec_exclude, residues );
+			invert_exclude_residues( native_pose.size(), vec_exclude, residues );
 			core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
 			core::Real gdtmm = core::scoring::CA_gdtmm( pose, native_pose, residues );
 

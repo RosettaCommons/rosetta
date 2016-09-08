@@ -236,7 +236,7 @@ void align_poses(
 ) {
 	core::id::AtomID_Map< core::id::AtomID > amap;
 	core::pose::initialize_atomid_map(amap,mypose,core::id::BOGUS_ATOM_ID);
-	for(int ir = 1; ir <= (int)mypose.n_residue(); ++ir) {
+	for(int ir = 1; ir <= (int)mypose.size(); ++ir) {
 		for(int ia = 1; ia <= (int)mypose.residue(ir).nheavyatoms(); ++ia) {
 			if(use_in_rmsd(mypose,target,ir,ia)) {
 				amap[core::id::AtomID(ia,ir)] = core::id::AtomID(ia,ir);
@@ -252,7 +252,7 @@ core::Real get_distance_measure(
 		const core::pose::Pose & pose2
 ) {
 	std::map< core::id::AtomID, core::id::AtomID > amap;
-	for(int ir = 1; ir <= (int)pose1.n_residue(); ++ir) {
+	for(int ir = 1; ir <= (int)pose1.size(); ++ir) {
 		for(int ia = 1; ia <= (int)pose1.residue(ir).nheavyatoms(); ++ia) {
 			if(use_in_rmsd(pose1,pose2,ir,ia)) {
 				amap.insert(std::pair< core::id::AtomID, core::id::AtomID> (core::id::AtomID(ia,ir), core::id::AtomID(ia, ir)));
@@ -338,7 +338,7 @@ int main( int argc, char * argv [] ) {
 		//alpha = omega0*4.0;
 		//alpha = -(double)i/360.0*2.0*numeric::constants::d::pi;
 		//R0 = (double)i*0.5;
-		for(core::Size ir=1; ir<=mypose.n_residue(); ir++) {
+		for(core::Size ir=1; ir<=mypose.size(); ir++) {
 			core::conformation::Residue rsd(mypose.residue(ir));
 
 			Dz=0.0; R1=2.27; phi1=0.0;
@@ -370,7 +370,7 @@ int main( int argc, char * argv [] ) {
 		mypose.update_residue_neighbors();
 		Dz=0.0; R1=2.27; phi1=0.0;
 
-		for(core::Size ir=1; ir<=mypose.n_residue(); ir++) {
+		for(core::Size ir=1; ir<=mypose.size(); ir++) {
 			/*T1[0]=-R0*omega0*sin(omega0*((double)ir-0.5));
 			T2[0]=-R0*omega0*sin(omega0*((double)ir+0.5));
 			T1[1]=R0*omega0*cos(omega0*((double)ir-0.5));
@@ -410,7 +410,7 @@ int main( int argc, char * argv [] ) {
 				mypose.residue(ir).xyz("C"),
 				curtheta);
 			betapeptide_settheta(mypose2, ir, curtheta);
-			if(ir<mypose.n_residue()) {
+			if(ir<mypose.size()) {
 				dihedral_degrees( mypose.residue(ir).xyz("CA"),
 					mypose.residue(ir).xyz("CM"),
 					mypose.residue(ir).xyz("C"),

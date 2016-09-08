@@ -214,7 +214,7 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 
 	core::pack::task::PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( target_pose );
 
-	utility::vector1<bool> packmask(target_pose.total_residue(), false);
+	utility::vector1<bool> packmask(target_pose.size(), false);
 	packmask[target_residue] = true;
 	task->restrict_to_residues(packmask);
 

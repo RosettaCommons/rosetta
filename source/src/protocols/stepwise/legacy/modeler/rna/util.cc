@@ -191,7 +191,7 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 		utility_exit_with_message( "pose2.sequence() != full_sequence" );
 	}
 
-	Size const total_res = pose1.total_residue();
+	Size const total_res = pose1.size();
 
 	if ( verbose ) {
 		output_title_text( "Enter full_length_rmsd_over_residue_list function", TR );
@@ -276,7 +276,7 @@ print_backbone_torsions( pose::Pose const & pose, Size const five_prime_chainbre
 
 	Size const three_prime_chainbreak = five_prime_chainbreak + 1;
 
-	if ( three_prime_chainbreak <= pose.total_residue() ) {
+	if ( three_prime_chainbreak <= pose.size() ) {
 		conformation::Residue const & suite_upper_res = pose.residue( three_prime_chainbreak );
 		TR << std::setw( 5 ) << " a = "  << std::setw( 15 ) << suite_upper_res.mainchain_torsion( 1 );
 		TR << std::setw( 5 ) << " b = "  << std::setw( 15 ) << suite_upper_res.mainchain_torsion( 2 );
@@ -368,7 +368,7 @@ setup_simple_fold_tree( core::pose::Pose & pose ){
 
 	//  using namespace core::chemical;
 
-	Size const nres = pose.total_residue();
+	Size const nres = pose.size();
 
 	kinematics::FoldTree simple_fold_tree( nres ); //create a simple fold tree
 
