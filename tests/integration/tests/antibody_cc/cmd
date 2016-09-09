@@ -1,0 +1,1 @@
+antibody.macosclangrelease -fasta antibody.fasta -antibody::grafting_database ~/Rosetta/tools/antibody -antibody:exclude_homologs -antibody:exclude_homologs_cdr_cutoff 95 -antibody:exclude_homologs_fr_cutoff 90 -antibody:l1_template 1zan -antibody:l2_template 1cr9 

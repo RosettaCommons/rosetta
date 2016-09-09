@@ -137,9 +137,11 @@ get_ab_design_min_scorefxn();
 core::scoring::ScoreFunctionOP
 get_ab_design_min_scorefxn(utility::tag::TagCOP tag, basic::datacache::DataMap & data);
 
+///@brief Check for severe peptide bond issues.  Return pair of chainbreak, and position of wonky peptide bond
 std::pair<bool, core::Size>
 check_cb(core::pose::Pose const & pose, utility::vector1<bool> const & residues);
 
+///@brief Check for severe peptide bond issues.  Return pair of chainbreak, and position of wonky peptide bond
 std::pair<bool, core::Size>
 check_cb(core::pose::Pose const & pose, protocols::loops::Loops const & loops);
 

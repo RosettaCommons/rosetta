@@ -74,6 +74,7 @@ public:
 	bool constrain_relax_to_native_coords() const { return constrain_relax_to_native_coords_; }
 	bool constrain_relax_to_start_coords() const { return constrain_relax_to_start_coords_; }
 	bool constrain_coords() const { return constrain_coords_; }
+	bool coord_constrain_sidechains() const { return coord_constrain_sidechains_; }
 	bool explicit_ramp_constraints() const { return explicit_ramp_constraints_; }
 	bool ramp_down_constraints() const { return ramp_down_constraints_; }
 	bool constrain_relax_segments() const { return constrain_relax_segments_; }
@@ -99,6 +100,9 @@ public:
 	void constrain_relax_to_native_coords( bool constrain_relax_to_native_coords ) { constrain_relax_to_native_coords_ = constrain_relax_to_native_coords; }
 	void constrain_relax_to_start_coords(  bool constrain_relax_to_start_coords ) { constrain_relax_to_start_coords_ = constrain_relax_to_start_coords; }
 	void constrain_coords( bool constrain_coords ) { constrain_coords_ = constrain_coords; }
+	void coord_constrain_sidechains( bool coord_constrain_sidechains ) {
+		coord_constrain_sidechains_ = coord_constrain_sidechains;
+	}
 	void constrain_relax_segments( bool constrain_relax_segments ) { constrain_relax_segments_ = constrain_relax_segments; }
 	void ramp_down_constraints( bool ramp_down_constraints ) {
 		explicit_ramp_constraints_ = true;

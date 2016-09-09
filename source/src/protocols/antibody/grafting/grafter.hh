@@ -30,7 +30,7 @@ namespace grafting {
 
 
 /// @brief graft cdr-loops using best scs-results and write results into specified output_prefix
-core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet const &, std::string const & output_prefix, std::string const & suffix, std::string const & database);
+core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet const &, std::string const & output_prefix, std::string const & suffix, std::string const & database, bool optimal_graft = false, bool optimize_cdrs = false);
 
 // class Grafter
 // {

@@ -314,7 +314,6 @@ AntibodyCDRGrafter::set_defaults(){
 
 void
 AntibodyCDRGrafter::set_cdr_only(CDRNameEnum cdr){
-	TR << "Setting " << ab_info_->get_CDR_name( cdr ) << " to graft"<<std::endl;
 	cdrs_to_graft_.clear();
 	cdrs_to_graft_.resize(8, false);
 	cdrs_to_graft_[cdr] = true;

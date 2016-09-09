@@ -32,11 +32,17 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/sequence/util.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
-#include <protocols/relax/RelaxProtocolBase.hh>
+//#include <protocols/relax/RelaxProtocolBase.hh>
+#include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
 
 #include <basic/report.hh>
@@ -78,7 +84,8 @@ OPT_KEY( String,       fasta )
 //OPT_KEY( Integer,      n)
 OPT_KEY( StringVector, multi_template_regions)
 OPT_KEY( Boolean,      no_relax)
-
+OPT_KEY( Boolean,      optimal_graft)
+OPT_KEY( Boolean,      optimize_cdrs)
 
 void register_options()
 {
@@ -88,45 +95,44 @@ void register_options()
 	//NEW_OPT( n, "Number of templates to generate", 10);
 	NEW_OPT( multi_template_regions, "Specify sequence regions for which multi-template is generated. Avalible regions are: h1, h2, h3, l1, l2, l3, frh, frl, orientation", "orientation");
 	NEW_OPT( no_relax, "Do not relax grafted model", false);
+	NEW_OPT( optimal_graft, "If the graft is not closed, use a new graft mover.  Before any full relax, relax the CDRs with dihedral constraints to make them fit better.   May become default after testing", false);
+	NEW_OPT( optimize_cdrs, "Optimize CDRs.  If doing optimal graft, we will optimize the CDRs.", false);
 }
 
 void relax_model(core::pose::PoseOP &pose)
 {
 	using namespace basic::options;
-
-	// manually set options for user, if not set (probs not the way to do this, but BDW said it should be ok for now...)
-	if ( !option[ OptionKeys::relax::constrain_relax_to_start_coords ].user() ) {
-		option[ OptionKeys::relax::constrain_relax_to_start_coords ].value(true);
-	}
-
-	if ( !option[ OptionKeys::relax::coord_constrain_sidechains ].user() ) {
-		option[ OptionKeys::relax::coord_constrain_sidechains ].value(true);
-	}
-
-	if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
-		option[ OptionKeys::relax::ramp_constraints ].value(false);
-	}
-
-	if ( !option[ OptionKeys::packing::ex1::ex1 ].user() ) {
-		option[ OptionKeys::packing::ex1::ex1 ].value(true);
-	}
-
-	if ( !option[ OptionKeys::packing::ex2::ex2 ].user() ) {
-		option[ OptionKeys::packing::ex2::ex2 ].value(true);
-	}
-
-	if ( !option[ OptionKeys::packing::use_input_sc ].user() ) {
-		option[ OptionKeys::packing::use_input_sc ].value(true);
-	}
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 
 	if ( !option[ OptionKeys::out::file::scorefile ].user() ) {
 		option[ OptionKeys::out::file::scorefile ].value("score-relax.sf");
 	}
 
-	protocols::relax::RelaxProtocolBaseOP protocol = protocols::relax::generate_relax_from_cmd();
+	protocols::relax::FastRelaxOP relax_protocol( new protocols::relax::FastRelax() );
+	
+	// set packer task related defaults on pose
+	TaskFactoryOP task_factory( new TaskFactory() );
+	
+	// I'm pretty sure that this is handled by FastRelax... Yet scary things happen when it is not included.
+	task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) ); // repack only, no design
+	task_factory->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
+	task_factory->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex1*/, 1 /*level*/ ) ) );
+	
+	// Also, use_input_sc is added by to the task_factory by default in FastRelax!
 
+	relax_protocol->set_task_factory( task_factory );
+	
+	// set relax defaults
+	relax_protocol->set_scorefxn( core::scoring::get_score_function() );
+	relax_protocol->constrain_relax_to_start_coords( true );
+	relax_protocol->constrain_coords( true );
+	relax_protocol->coord_constrain_sidechains( true );
+	
+	relax_protocol->ramp_down_constraints( false );
+	
 	//relax
-	protocol->apply( *pose );
+	relax_protocol->apply( *pose );
 }
 
 int antibody_main()
@@ -308,8 +314,11 @@ int antibody_main()
 					TR << "Defaulting to multi-template grafting." << std::endl;
 					TR << "Please use -antibody:n_multi_templates 1 in conjuction with -antibody:light_heavy_template 1abc.pdb" << std::endl;
 				}
-
-				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database );
+				
+				bool optimal_graft = basic::options::option[ basic::options::OptionKeys::optimal_graft]();
+				bool optimize_cdrs = basic::options::option[ basic::options::OptionKeys::optimize_cdrs]();
+				
+				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database, optimal_graft, optimize_cdrs );
 
 
 				if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
@@ -346,7 +355,6 @@ int main(int argc, char * argv [])
 		basic::options::option.add_relevant( basic::options::OptionKeys::antibody::grafting_database );
 		basic::options::option.add_relevant( basic::options::OptionKeys::antibody::blastp );
 		basic::options::option.add_relevant( basic::options::OptionKeys::antibody::n_multi_templates );
-
 		devel::init(argc, argv);
 
 		string grafting_database = basic::options::option[basic::options::OptionKeys::antibody::grafting_database]();
