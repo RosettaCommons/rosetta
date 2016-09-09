@@ -1,0 +1,52 @@
+# Rosetta Lennard-Jones
+fa_atr          0.21
+fa_rep          0.20
+fa_intra_rep    0.0029
+fa_stack        0.13
+ENLARGE_H_LJ_WDEPTH # turns on stronger repulsion between hydrogens
+
+# Hydrogen bonds and solvation
+hbond           0.96
+fa_sol          0.25 # nonpolar only (see NO_LK_POLAR_DESOLVATION below)
+lk_ball			0.17
+NO_HB_ENV_DEP # no hydrogen-bond/geom-sol dependence on burial -- nucleic acid bonds get too weak.
+
+# electrostatics (not in H-bonds)
+stack_elec            0.76
+fa_elec_rna_phos_phos 1.7
+
+# RNA torsion terms
+rna_torsion       1.0
+rna_sugar_close   0.82
+suiteness_bonus   1.0
+linear_chainbreak 5.0 # strong enough to force chainbreak closure
+RNA_TORSION_POTENTIAL      RNA11_based_new # Fang's latest, derived from Richardson RNA11 set.
+RNA_SYN_G_POTENTIAL_BONUS  -1.5            # RNA11 penalized syn-G too much.
+RNA_SUITENESS_BONUS        test/uucg_hack1 # Example of torsion corrections.
+
+FREE_SUITE_BONUS        -2.0
+FREE_SUGAR_BONUS        -2.0
+PACK_PHOSPHATE_PENALTY   0.5
+
+# intra-residue matching inter-residue
+PUT_INTRA_INTO_TOTAL # applies to fa_atr, fa_rep, fa_sol, geom_sol_fast, and hbond terms.
+
+#fa_atr 1
+#fa_rep 0.55
+#fa_sol 1.0
+fa_intra_sol_xover4 0.17
+#lk_ball_wtd 1.0
+#fa_elec 1.0
+pro_close 1.25
+#hbond_sr_bb 1.0
+#hbond_lr_bb 1.0
+#hbond_bb_sc 1.0
+#hbond_sc 1.0
+dslf_fa13 1.25
+rama_prepro 0.45
+omega 0.4
+p_aa_pp 0.6
+fa_dun 0.7
+yhh_planarity 0.625
+
+INCLUDE_INTRA_RES_PROTEIN

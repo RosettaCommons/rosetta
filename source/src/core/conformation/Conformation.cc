@@ -3592,7 +3592,7 @@ Conformation::backbone_torsion_angle_atoms(
 			id1.rsd() = seqpos;
 			id1.atomno() = mainchain[ torsion -1 ];
 		} else {
-			Residue const cterm_res =  *residues_[ chain_end( rsd.chain() ) ];
+			Residue const & cterm_res =  *residues_[ chain_end( rsd.chain() ) ];
 			if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) &&
 					cterm_res.has_variant_type( chemical::CTERM_CONNECT ) ) {
 				// Assume that they are connected as a cyclic polymer.

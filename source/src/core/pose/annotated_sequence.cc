@@ -210,6 +210,11 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 	for ( Size seqpos = 1; seqpos <= one_letter_sequence.length(); ++seqpos ) {
 		char aa = one_letter_sequence[ seqpos-1 ]; // string indexing is zero-based!
 
+		if ( aa == '-' ) {
+			requested_types.push_back( nullptr );
+			continue;
+		}
+		
 		if ( aa == '/' ) continue;  //fpd: force a chainbreak
 
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( aa );

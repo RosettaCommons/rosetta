@@ -18,6 +18,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/types.hh>
@@ -33,6 +34,12 @@ namespace rna {
 
 bool
 mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_seq );
+
+bool
+mutate_position( pose::Pose & pose, Size const i, std::string const & name3 );
+
+bool
+mutate_position( pose::Pose & pose, Size const i, core::chemical::ResidueType const & rt );
 
 void
 figure_out_reasonable_rna_fold_tree( core::pose::Pose & pose );

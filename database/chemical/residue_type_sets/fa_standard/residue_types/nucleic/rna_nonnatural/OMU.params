@@ -16,7 +16,7 @@ ATOM  C3' CH1  H   0.01
 ATOM  O3' Oet2 H   -0.57
 ATOM  C1' CH1  H   0.16
 ATOM  C2' CH2  H   -0.18
-ATOM  O2' OH   H   -0.5
+ATOM  O2' Oet3 H   -0.5
 ATOM  CM2 CH3  H    0.168096
 ATOM  N1  Ntrp H   -0.34
 ATOM  C2  CObb H   0.51

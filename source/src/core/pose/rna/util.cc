@@ -63,7 +63,7 @@ namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 bool
-mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
+mutate_position( pose::Pose & pose, Size const i, char const & new_seq ) {
 
 	using namespace core::conformation;
 	using namespace core::chemical;
@@ -81,6 +81,51 @@ mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
 	pose.replace_residue( i, *new_rsd, false );
 	pose.set_chi( i, save_chi );
 
+	return true;
+}
+	
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+mutate_position( pose::Pose & pose, Size const i, chemical::ResidueType const & rt ) {
+	
+	using namespace core::conformation;
+	using namespace core::chemical;
+	
+	if ( rt.name() == pose.residue_type( i ).name() ) return false;
+	
+	ResidueOP new_rsd( ResidueFactory::create_residue( rt, pose.residue( i ), pose.conformation() ) );
+	
+	Real const save_chi = pose.chi(i);
+	pose.replace_residue( i, *new_rsd, false );
+	pose.set_chi( i, save_chi );
+	
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+mutate_position( pose::Pose & pose, Size const i, std::string const & name3 ) {
+		
+	using namespace core::conformation;
+	using namespace core::chemical;
+	
+	std::string clean_current;
+	std::map< Size, std::string > special_res;
+	remove_and_store_bracketed( pose.annotated_sequence(), clean_current, special_res );
+	
+	if ( name3 == special_res[i-1] ) return false;
+	
+	ResidueTypeSetCOP rsd_set = pose.residue_type( i ).residue_type_set();
+	
+	ResidueProperty base_property = ( pose.residue_type( i ).is_RNA() ) ? RNA : NO_PROPERTY;
+	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name3( name3 ).variants( pose.residue_type(i).variant_types() ).base_property( base_property ).get_representative_type() );
+	
+	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
+	
+	Real const save_chi = pose.chi(i);
+	pose.replace_residue( i, *new_rsd, false );
+	pose.set_chi( i, save_chi );
+	
 	return true;
 }
 

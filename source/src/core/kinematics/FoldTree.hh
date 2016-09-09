@@ -837,6 +837,13 @@ public:
 	delete_jump_and_intervening_cutpoint(
 		int const jump_number
 	);
+	
+	// AMW: I am elevating this to public - this is a concise and 
+	// helpful transformation when you don't want to destroy
+	// your current FT state
+	/// @brief helper function to try cutting an edge in a tree.
+	bool cut_edge( int const cut_point );
+
 
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
@@ -906,9 +913,6 @@ private:
 	// private edge_list_ modifiers
 	/// @brief update edge labels based on whether edges are separating or not.
 	void update_edge_labels();
-
-	/// @brief helper function to try cutting an edge in a tree.
-	bool cut_edge( int const cut_point );
 
 	/// @brief cut an edge randomly based on probability without disconnecting fold tree
 	bool

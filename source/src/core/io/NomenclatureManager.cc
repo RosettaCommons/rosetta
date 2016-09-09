@@ -87,7 +87,29 @@ NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 	}
 	return std::make_pair( pdb_code, "" );
 }
+	
+std::string
+NomenclatureManager::annotated_sequence_from_modomics_oneletter_sequence( std::string const & seq )  {
+	std::string annotated_seq;
+	for ( char const c : seq ) {
+		if ( get_instance()->modomics_map().find( c ) == get_instance()->modomics_map().end() ) utility_exit_with_message( "A character in your provided modomics-style sequence was not recognized." );
+		annotated_seq += get_instance()->modomics_map().at( c );
+	}
+	return annotated_seq;
+}
 
+std::string 
+NomenclatureManager::annotated_sequence_from_IUPAC_sequence( std::string const & seq ) {
+	std::string annotated_seq;
+	utility::vector1< std::string > parts = utility::string_split( seq, '_' );
+	for ( auto const & part : parts ) {
+		if ( get_instance()->iupac_map().find( part ) == get_instance()->iupac_map().end() ) utility_exit_with_message( "A character in your provided IUPAC-style sequence was not recognized." );
+		annotated_seq += get_instance()->iupac_map().at( part );
+	}
+	return annotated_seq;
+}
+
+	
 bool NomenclatureManager::is_NA( std::string const & name3 ) {
 	std::set< std::string > const & na_set( get_instance()->na_set() );
 	return na_set.count( name3 );
@@ -179,6 +201,27 @@ NomenclatureManager::NomenclatureManager()
 				utility_exit_with_message( "Line in name3 properties file \"" + file_list2[ jj ] + "\" malformed:\"" + lines[ ii ] + "\"" );
 			}
 		}
+	}
+	
+	// Set up annotated sequence generation from:
+	// Modomics 1-letter codes 
+	// IUPAC designations
+	//   NOTE: We have to use the #/ digraph to indicate comments because # is 
+	//   one of the Modomics symbols.
+	//   NOTE: Moving to a single file for both of these purposes because we don't 
+	//   want to have to update two places with annotated sequence entries
+	utility::vector1< string > const iupac_lines( utility::io::get_lines_from_file_data( basic::database::full_name( "input_output/modomics_and_iupac_to_ann.txt" ) ) );
+	for ( auto const line : iupac_lines ) { 
+		if ( line.size() == 0 || ( line[ 0 ] == '#' && line[ 1 ] == '/' ) ) continue;
+		istringstream word_by_word( line );
+		std::string modomics, iupac, ann;
+		std::getline( word_by_word, modomics, '\t' );
+		std::getline( word_by_word, iupac, '\t' );
+		std::getline( word_by_word, ann, '\t' );
+		
+		// Only first char of modomics string (well, it's a single char string)
+		annotated_seq_from_modomics_map_[ modomics[0] ] = ann;
+		annotated_seq_from_IUPAC_map_[ iupac ] = ann;
 	}
 }
 

@@ -1,0 +1,70 @@
+#// Modomics
+A	a
+C	c
+G	g
+U	u
+#//H	unknown mod A
+"	m1A	1MA	# 1-methyl adenosine
+/	m2A	2MA # 2-methyl adenosine
++	i6A	I6A # N6-isopentenyladenosine
+*	ms2i6A	MIA # 2-methylthio-N6-isopentenyladenosine
+=	m6A	MA6	# N6-methyladenosine
+6	t6A	T6A # N6-threonylcarbamoyladenosine
+E	m6t6A	MTA # N6-methyl-N6-threonylcarbamoyladenosine
+[	ms2t6A	M26	# 2-methylthio-N6-threonylcarbamoyladenosine
+:	Am	OMA	# Remember to change this when we merge everyday847/additional_rna_params, changing OMA
+I	I	INO # note that this will be, unlike all else, I[INO]. But presumably the annotated seq parser will be ok with that because we no longer are special casing on X
+O	m1I	M1I	#1-methylinosine
+^	Ar(p)	RIA	# ^2'-O-ribosyladenosine (phosphat)
+`	io6A	IHA # cis-hydroxyisopentenyl adenosine	
+
+#//<	unknown mod C
+%	s2C	S2C	# 2-thiocytidine
+B	Cm	OMC	# 2'-O-methylcytidine
+M	ac4C	A4C	# N4-acetylcytidine
+?	m5C	5MC # 5-methylcytidine
+'	m3C	3MC	# 3-methylcytidine
+}	k2C	K2C	# lysidine
+>	f5C	F5C	# 5-formylcytidin
+#// Ordinarily < is used for unknown mod C but we don't want to use the degree symbol...
+<	f5Cm	52C	#2-O-methyl-5-formylcytidin
+
+#//;	unknown mod G
+K	m1G	1MG	# 1-methylguanosine
+L	m2G	2MG	# 2-methylguanosine
+#	Gm	OMG	# 2'-O-methylguanosine
+R	m22G	M2G	# N2,N2-dimethylguanosine
+|	m22Gm	M3G	# N2,N2,2'O trimethylG
+7	m7G	7MG	# 7-methyl G
+(	fa7d7G	FA7	# archaeosine
+Q	Q	  Q	# queuosine
+#// For these, we'll have to be able to add new patches or residues
+#//8	manQ	xxxmnQ # mannosylQ
+#//9	galQ	xxxglQ # galactosyl-Q
+Y	yW	 yW	# wybutosine
+W	o2yW	O2W	# peroxywybutosine
+
+#//	N	unknown mod U
+2	s2U	2SU	# 2-thiouridine
+J	Um	OMU	# 2'-O-methyluridine
+4	s4U	4SU	# 4-thiouridine
+T	m5U	M5U	# ribosylthymine
+F	m5s2U	2ST	# 5-methyl 2-thioU
+\	m5Um	52U	# 5, 2'O dimethyl U
+{	mnm5U	NMT # 5-methylaminomethyluridine
+S	mnm5s2U	NST # 5-methylaminomethyl-2-thiouridine
+&	ncm5U	C5T # 5-carbamoylmethyluridine
+~	ncm5Um	CMT # 5-carbamoylmethyl-2'-O-methyluridine
+1	mcm5U	MOT # 5-methoxycarbonylmethyluridine
+3	mcm5s2U	MST # 5-methoxycarbonylmethyl-2-thiouridine
+V	cmo5U	OAU # uridine 5-oxyacetic acid
+5	mo5U	MOU # 5-methoxyuridine
+!	cmnm5U	CNT # 5-carboxymethylaminomethyluridine
+$	cmnm5s2U	CNS # 5-carboxymethylaminomethyl-2-thiouridine
+)	cmnm5Um	CNM # 5-carboxymethylaminomethyl-2'-O-methyluridine
+X	acp3U	APU	# 3-(3-amino-3-carboxypropyl)uridine
+,	mchm5U	MHU # 5-(carboxyhydroxymethyl)uridinemethyl
+D	D	H2U
+P	psi	PSU	# psuedoU
+]	m1psi	1PU	# 1me pseudo U
+Z	psim	MPU	# 2' Ome psu

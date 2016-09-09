@@ -234,6 +234,7 @@ sources = {
 		"rna_predict_chem_map",
 		"rna_suitename",
 		"rna_thread",
+		"rna_thread_and_minimize",
 		"erraser_minimizer",
 	],
 	"public/sewing": [

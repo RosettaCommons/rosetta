@@ -20,7 +20,7 @@ ATOM  O2' OH   H   -0.824212
 ATOM  N1  Ntrp H   -0.882369
 ATOM  C2  CObb H    1.030875
 ATOM  O2  OCbb H   -0.656171
-ATOM  N3  Nhis H   -0.928441 # what am I doing even
+ATOM  N3  Ntrp H   -0.928441 # what am I doing even
 ATOM  C4  CObb H    0.843965
 ATOM  O4  OCbb H   -0.634142
 ATOM  C5  aroC H   -0.300369

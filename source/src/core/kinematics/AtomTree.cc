@@ -498,7 +498,7 @@ AtomTree::torsion_angle_dof_id(
 
 	// Reorder the atoms if necessary.
 	// We want it to be the case that atom4 has input_stub_atom1 == atom3 and input_stub_atom2 == atom2.
-
+	// AMW TODO: keep_dof_fixed is super slow?
 	if ( !atom4->is_jump() &&
 			!atom4->keep_dof_fixed( id::PHI ) && // not stub atom3 of a jump
 			atom4->raw_input_stub_atom1() == atom3 &&
