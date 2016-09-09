@@ -45,7 +45,7 @@
 // Boost Headers
 #include <boost/cstdint.hpp>
 #include <boost/pool/pool.hpp>
-#include <core/graph/unordered_object_pool.hpp>
+#include <utility/graph/unordered_object_pool.hpp>
 
 namespace protocols {
 namespace sewing  {
@@ -56,8 +56,8 @@ static basic::Tracer TR("protocols.sewing.SewGraph");
 ///////////////////////////   ModelNode Class   //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-ModelNode::ModelNode( core::graph::Graph * owner, core::Size index ) :
-	core::graph::Node( owner, index )
+ModelNode::ModelNode( utility::graph::Graph * owner, core::Size index ) :
+	utility::graph::Node( owner, index )
 {}
 
 Model const &
@@ -86,7 +86,7 @@ ModelNode::segment_ids(
 
 void
 ModelNode::copy_from(
-	core::graph::Node const * source
+	utility::graph::Node const * source
 ){
 	ModelNode const * mn_source = static_cast< ModelNode const * > ( source );
 	model_ = mn_source->model_;
@@ -119,7 +119,7 @@ HashEdge::HashEdge(
 	core::Size n1,
 	core::Size n2
 ) :
-	core::graph::Edge( owner, n1, n2 )
+	utility::graph::Edge( owner, n1, n2 )
 {}
 
 core::Size
@@ -159,17 +159,17 @@ SewGraph::~SewGraph() {
 /// are unavailable during the Graph constructor.  Instead, this function waits
 /// until parent construction is complete, and relies on the assigmnent operator.
 SewGraph::SewGraph( SewGraph const & src ):
-	core::graph::Graph(),
+	utility::graph::Graph(),
 	hash_edge_pool_( new boost::unordered_object_pool< HashEdge > ( 256 ) ),
 	model_indices_(src.model_indices_),
 	last_node_added_(src.last_node_added_),
 	special_edge_data_(src.special_edge_data_)
 {
-	core::graph::Graph::operator = ( src );
+	utility::graph::Graph::operator = ( src );
 }
 
 SewGraph::SewGraph():
-	core::graph::Graph(),
+	utility::graph::Graph(),
 	hash_edge_pool_( new boost::unordered_object_pool< HashEdge > ( 256 ) )
 {}
 
@@ -178,7 +178,7 @@ SewGraph::SewGraph(
 	std::map< int, Model > const & models,
 	core::Size segment_matches_per_edge
 ):
-	core::graph::Graph(),
+	utility::graph::Graph(),
 	hash_edge_pool_( new boost::unordered_object_pool< HashEdge > ( 256 ) )
 {
 
@@ -361,20 +361,20 @@ SewGraph::add_special_edges(){
 
 
 /// @brief Factory method for node creation
-core::graph::Node*
+utility::graph::Node*
 SewGraph::create_new_node( Size index )
 {
 	return new ModelNode( this, index );
 }
 
 /// @brief Factory method for edge creation
-core::graph::Edge*
+utility::graph::Edge*
 SewGraph::create_new_edge( Size index1, Size index2 )
 {
 	return hash_edge_pool_->construct( this, index1, index2 );
 }
 
-void SewGraph::delete_edge( core::graph::Edge * edge )
+void SewGraph::delete_edge( utility::graph::Edge * edge )
 {
 	assert( dynamic_cast< HashEdge* > (edge) );
 	hash_edge_pool_->destroy( static_cast< HashEdge* > (edge) );
@@ -386,7 +386,7 @@ SewGraph::find_hash_edge(
 	Size n1,
 	Size n2
 ){
-	core::graph::Edge * edge( find_edge( n1, n2 ) );
+	utility::graph::Edge * edge( find_edge( n1, n2 ) );
 	if ( edge ) {
 		return static_cast< HashEdge * > ( edge );
 	} else {
@@ -399,7 +399,7 @@ SewGraph::find_hash_edge(
 	Size n1,
 	Size n2
 ) const {
-	core::graph::Edge const * edge( find_edge( n1, n2 ) );
+	utility::graph::Edge const * edge( find_edge( n1, n2 ) );
 	if ( edge ) {
 		return static_cast< HashEdge const * > ( edge );
 	} else {
@@ -412,7 +412,7 @@ ModelNode const *
 SewGraph::get_model_node(
 	Size n
 ) const {
-	core::graph::Node const * node( get_node(n) );
+	utility::graph::Node const * node( get_node(n) );
 	if ( node ) {
 		return static_cast< ModelNode const * > ( node );
 	} else {
@@ -865,8 +865,8 @@ serialize_graph_json(
 
 		TR << "Node " << i << " " << model.model_id_ << std::endl;
 
-		core::graph::EdgeListConstIterator edge_it = model_node->const_upper_edge_list_begin();
-		core::graph::EdgeListConstIterator edge_it_end = model_node->const_upper_edge_list_end();
+		utility::graph::EdgeListConstIterator edge_it = model_node->const_upper_edge_list_begin();
+		utility::graph::EdgeListConstIterator edge_it_end = model_node->const_upper_edge_list_end();
 		for ( ; edge_it != edge_it_end; ++edge_it ) {
 
 			HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);

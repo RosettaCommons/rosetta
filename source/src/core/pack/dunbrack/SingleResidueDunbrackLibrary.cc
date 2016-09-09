@@ -24,7 +24,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -821,7 +821,7 @@ INIT(  FIVE,  FIVE )
 	scoring::ScoreFunction sfxn;
 	pack::task::PackerTask_ task( pose );
 
-	core::graph::GraphOP png;
+	utility::graph::GraphOP png;
 	chemical::ResidueTypeCOP cr;
 	utility::vector1< utility::vector1< Real > > ecs;
 	rotamers::RotamerVector rv;

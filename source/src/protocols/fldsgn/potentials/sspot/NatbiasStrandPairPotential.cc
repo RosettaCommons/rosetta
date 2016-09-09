@@ -264,7 +264,7 @@ NatbiasStrandPairPotential::score( Pose const & pose, SS_Info2 const & ss_info, 
 		StrandOP const strand( strands[ istrand ] );
 		for ( Size ss1=strand->begin(); ss1<strand->end(); ss1++ ) {
 
-			for ( core::graph::Graph::EdgeListConstIter iru =eg.get_node( ss1 )->const_upper_edge_list_begin(),
+			for ( utility::graph::Graph::EdgeListConstIter iru =eg.get_node( ss1 )->const_upper_edge_list_begin(),
 					irue=eg.get_node( ss1 )->const_upper_edge_list_end(); iru != irue; ++iru ) {
 
 				Size const ss2( (*iru)->get_second_node_ind() );

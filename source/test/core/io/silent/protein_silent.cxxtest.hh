@@ -46,7 +46,7 @@
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/graph/UpperEdgeGraph.fwd.hh>
+#include <utility/graph/UpperEdgeGraph.fwd.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>

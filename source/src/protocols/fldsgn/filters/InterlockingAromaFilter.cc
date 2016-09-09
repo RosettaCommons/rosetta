@@ -143,7 +143,7 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 	Size contact( 0 );
 	utility::vector1< Size > lockres;
 	TenANeighborGraph const & energy_graph( pose.energies().tenA_neighbor_graph() );
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node( res )->const_edge_list_begin(),
 			irue = energy_graph.get_node( res )->const_edge_list_end(); iru != irue; ++iru ) {
 

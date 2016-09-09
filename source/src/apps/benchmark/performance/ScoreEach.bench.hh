@@ -180,7 +180,7 @@ public:
 		using namespace core;
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
-		using namespace core::graph;
+		using namespace utility::graph;
 
 		utility::vector1< core::conformation::Residue const * > res( pose_->size() );
 		for ( Size ii = 1; ii <= pose_->size(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
@@ -215,7 +215,7 @@ public:
 		using namespace core;
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
-		using namespace core::graph;
+		using namespace utility::graph;
 		if ( ! utility::pointer::dynamic_pointer_cast< core::scoring::methods::LongRangeTwoBodyEnergy const > ( enmeth_ ) ) {
 			TR.Error
 				<< "Unable to Test scoring with score type '"

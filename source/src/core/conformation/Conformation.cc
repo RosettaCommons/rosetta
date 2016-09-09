@@ -36,7 +36,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -1232,7 +1232,7 @@ Conformation::get_residue_weight(core::Size , core::Size) const {
 void
 Conformation::detect_bonds()
 {
-	using namespace graph;
+	using namespace utility::graph;
 
 	// Determine how many residues have incomplete connections.
 	utility::vector1< Size > resid_2_incomp( size(), 0 );  // residue id to "incomplete connection number"
@@ -1899,7 +1899,7 @@ void
 Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*= utility::vector1< Size >()*/, utility::vector1< Size > const & disulf_two /*= utility::vector1< Size >()*/ )
 {
 	basic::ProfileThis doit( basic::CONFORMATION_DETECT_DISULF );
-	using namespace graph;
+	using namespace utility::graph;
 	using namespace basic::options;
 
 	// gather all cys, construct mapping from resid to cys index

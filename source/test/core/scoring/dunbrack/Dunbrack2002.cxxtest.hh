@@ -24,7 +24,7 @@
 
 #include <core/conformation/Residue.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 //amw
 #include <core/pose/PDBInfo.hh>
@@ -135,7 +135,7 @@ public:
 			while ( pose_ener_gold.size() < pos ) pose_ener_gold.push_back( -1.0 );
 			pose_ener_gold[ pos ] = pose_ener;
 		}
-		graph::GraphOP dummy_graph( new graph::Graph() );
+		utility::graph::GraphOP dummy_graph( new utility::graph::Graph() );
 		scoring::ScoreFunction dummy_scorefxn;
 		Size ct( 1 );
 		for ( Size pos = 1; pos <= pose.size(); pos++ ) {

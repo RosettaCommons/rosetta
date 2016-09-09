@@ -85,7 +85,7 @@ SymMinimizerMap::SymMinimizerMap(
 			continue;
 		}
 		/// ASSUMPTION the energy graph only includes edges where at least one node belongs to the asymmetric unit
-		for ( core::graph::Node::EdgeListConstIter
+		for ( utility::graph::Node::EdgeListConstIter
 				iter = pose.energies().energy_graph().get_node( ii )->const_edge_list_begin(),
 				iter_end = pose.energies().energy_graph().get_node( ii )->const_edge_list_end();
 				iter != iter_end; ++iter ) {

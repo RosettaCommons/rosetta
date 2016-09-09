@@ -51,7 +51,7 @@ int main( int argc, char * argv [] )
 		using namespace core::io::pdb;
 		using namespace core::pose;
 		using namespace core::scoring;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pack;
 		using namespace core::pack::rotamer_set;
 		using namespace core::pack::task;

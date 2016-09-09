@@ -39,7 +39,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
-#include <core/graph/graph.hh>
+#include <utility/graph/graph.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -174,7 +174,7 @@ int main( int argc, char * argv [] )
 		core::Size stub_residue = stub_residue_indicies[i];
 		core::Real targetEnergy = 0;
 
-		for ( core::graph::EdgeListConstIterator egraph_it = targetEnergyGraph.get_node( stub_residue )->const_edge_list_begin(); egraph_it != targetEnergyGraph.get_node( stub_residue )->const_edge_list_end(); ++egraph_it)
+		for ( utility::graph::EdgeListConstIterator egraph_it = targetEnergyGraph.get_node( stub_residue )->const_edge_list_begin(); egraph_it != targetEnergyGraph.get_node( stub_residue )->const_edge_list_end(); ++egraph_it)
 		{
 			core::scoring::EnergyEdge const * eedge = static_cast< core::scoring::EnergyEdge const * > (*egraph_it);
 

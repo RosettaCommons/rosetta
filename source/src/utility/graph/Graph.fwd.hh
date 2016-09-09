@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.fwd.hh
+/// @file   utility/graph/Graph.fwd.hh
 /// @brief  graph base class forward declarations
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
-#ifndef INCLUDED_core_graph_Graph_fwd_hh
-#define INCLUDED_core_graph_Graph_fwd_hh
+#ifndef INCLUDED_utility_graph_Graph_fwd_hh
+#define INCLUDED_utility_graph_Graph_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace core {
+namespace utility {
 namespace graph {
 
 class EdgeListElement;
@@ -33,6 +33,6 @@ typedef utility::pointer::shared_ptr< Graph > GraphOP;
 typedef utility::pointer::shared_ptr< Graph const > GraphCOP;
 
 } // namespace graph
-} // namespace core
+} // namespace utility
 
 #endif

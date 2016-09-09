@@ -989,7 +989,7 @@ GeometricSolEnergyEvaluator::eval_atom_energy(
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iter = energy_graph.get_node( i )->const_edge_list_begin();
 			iter != energy_graph.get_node( i )->const_edge_list_end();
 			++iter ) {
@@ -1316,7 +1316,7 @@ GeometricSolEnergyEvaluator::precalculate_bb_bb_energy_for_design(
 	for ( Size i = 1; i <= total_residue; i++ ) {
 		conformation::Residue const & res_i( pose.residue( i ) );
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {

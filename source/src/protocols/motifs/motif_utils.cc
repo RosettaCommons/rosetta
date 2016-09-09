@@ -32,7 +32,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
@@ -1178,7 +1178,7 @@ build_rotamers_lite(
 	if ( ex_ > 7 ) task->nonconst_residue_task( rotamer_build_position ).or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
 
 	scorefxn( pose );
-	core::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
 
 	rotset->build_rotamers( pose, scorefxn, *task, packer_neighbor_graph, false );
 

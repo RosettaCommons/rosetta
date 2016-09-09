@@ -18,7 +18,7 @@
 #include <core/scoring/ContextGraph.fwd.hh>
 
 // Project Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
@@ -28,9 +28,9 @@
 namespace core {
 namespace scoring {
 
-class ContextGraph : public graph::Graph {
+class ContextGraph : public utility::graph::Graph {
 public:
-	typedef graph::Graph parent;
+	typedef utility::graph::Graph parent;
 
 public:
 

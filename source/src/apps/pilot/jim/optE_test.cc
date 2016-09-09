@@ -41,7 +41,7 @@
 #include <protocols/optimize_weights/OptEData.hh>
 #include <protocols/optimize_weights/OptEMultifunc.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 
 #include <core/io/pdb/pdb_writer.hh>
@@ -249,7 +249,7 @@ get_opte_data(
 		this_pos_data->set_neighbor_count(
 					pose.energies().tenA_neighbor_graph().get_node( ii )->num_neighbors_counting_self() );
 
-		graph::GraphCOP packer_neighbor_graph(  pack::create_packer_graph( pose, scorefxn, task ) );
+		utility::graph::GraphCOP packer_neighbor_graph(  pack::create_packer_graph( pose, scorefxn, task ) );
 
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( ii ) );

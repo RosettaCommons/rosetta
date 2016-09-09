@@ -319,7 +319,7 @@ FA_ElecEnergyAroAll::eval_atom_derivative(
 	// debug_assert( pos1_fixed == ( domain_map(pos1) != 0 ) ); // this is probably not generally true but I'm curious
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			irue = energy_graph.get_node( pos1 )->const_edge_list_end();
 			iru != irue; ++iru ) {

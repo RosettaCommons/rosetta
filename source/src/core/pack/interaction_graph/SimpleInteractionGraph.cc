@@ -15,7 +15,7 @@
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 
 // Project headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -32,7 +32,7 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-using namespace graph;
+using namespace utility::graph;
 using namespace scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "core.pack.interaction_graph.SimpleInteractionGraph" );

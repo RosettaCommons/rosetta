@@ -254,7 +254,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
 			itere = energy_graph.get_node( i )->const_edge_list_end();
 			iter != itere; ++iter ) {

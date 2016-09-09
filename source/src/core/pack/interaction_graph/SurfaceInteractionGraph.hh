@@ -763,7 +763,7 @@ bool SurfaceNode< V, E, G >::detect_neighborship_with_node( int node_index, bool
 	}
 
 	// for every Edge in the neighbor graph, figure out if that residue is surface exposed *and* hydrophobic
-	/* for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( fc_node_index )->const_edge_list_begin(),
+	/* for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( fc_node_index )->const_edge_list_begin(),
 	eli_end = tenA_neighbor_graph.get_node( fc_node_index )->const_edge_list_end(); eli != eli_end; ++eli ) {
 	if ( (*eli)->get_other_ind( fc_node_index ) == node_index ) {
 	return true;
@@ -1395,7 +1395,7 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 
 	//core::scoring::TenANeighborGraph const & tenA_neighbor_graph( get_surface_owner()->pose().energies().tenA_neighbor_graph() );
 
-	//for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( parent::get_node_index() )->const_edge_list_begin(),
+	//for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( parent::get_node_index() )->const_edge_list_begin(),
 	//  eli_end = tenA_neighbor_graph.get_node( parent::get_node_index() )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 	pose::Pose poseRef = get_surface_owner()->pose();

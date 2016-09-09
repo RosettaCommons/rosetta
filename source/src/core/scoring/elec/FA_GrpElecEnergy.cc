@@ -751,7 +751,7 @@ FA_GrpElecEnergy::precalc_context( pose::Pose & pose,
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = tenA_neighbor_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = tenA_neighbor_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

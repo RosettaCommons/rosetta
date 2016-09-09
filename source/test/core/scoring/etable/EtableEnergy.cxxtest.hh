@@ -36,7 +36,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -241,7 +241,7 @@ public:
 	/*void dont_test_atom_deriv_old_vs_new()
 	{
 	using namespace core;
-	using namespace core::graph;
+	using namespace utility::graph;
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace core::scoring::etable;
@@ -451,7 +451,7 @@ public:
 	void dont_test_atom_tree_minimize_with_etable_energy2()
 	{
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -485,7 +485,7 @@ public:
 	void dont_test_atom_tree_minimize_with_intrares_etable_energy()
 	{
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -524,7 +524,7 @@ public:
 	void dont_test_atom_tree_minimize_with_intrares_etable_energy2()
 	{
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -723,7 +723,7 @@ public:
 		adv.validate_start_func_matches_start_score( -22.39185655926555 );
 
 		/*using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -894,7 +894,7 @@ public:
 	void dont_test_atom_tree_minimize_with_autoupdate()
 	{
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -934,7 +934,7 @@ public:
 	void test_setup_for_minimizing_with_autoupdate2_table_version()
 	{
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -982,7 +982,7 @@ public:
 	void test_setup_for_minimizing_with_autoupdate2_analytic_version()
 	{
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -1030,7 +1030,7 @@ public:
 	void dont_test_atom_tree_minimize_with_autoupdate2()
 	{
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::etable;
@@ -1066,7 +1066,7 @@ public:
 	}
 
 	void test_etrable_trie_vs_trie() {
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring::etable;
 		using namespace core::scoring::methods;
@@ -1145,7 +1145,7 @@ public:
 	void test_serialize_etable_trie() {
 		TS_ASSERT( true );
 #ifdef    SERIALIZATION
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring::etable;
 		using namespace core::scoring::etable::etrie;

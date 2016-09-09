@@ -20,7 +20,7 @@
 
 //Project headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/rotamer_set/BumpSelector.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
@@ -90,7 +90,7 @@ public:
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & sfxn,
 		core::pack::task::PackerTask const & ptask,
-		core::graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		core::pack::rotamer_set::RotamerSet & rotamer_set
 	);
 

@@ -395,7 +395,7 @@ RNA_PairwiseLowResolutionEnergy::clean_up_rna_two_body_energy_tables(
 	scoring::EnergyGraph & energy_graph( pose.energies().energy_graph() );
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( i )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( i )->upper_edge_list_end();
 				iru != irue; ++iru ) {

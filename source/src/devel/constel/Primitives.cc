@@ -22,7 +22,7 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -391,7 +391,7 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 	hb_set.clear();
 
 	Residue const& rm( ps.residue( pim ) );
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			nit = energy_graph.get_node(pim)->const_edge_list_begin(),
 			nite = energy_graph.get_node(pim)->const_edge_list_end();
 			nit != nite; ++nit ) {

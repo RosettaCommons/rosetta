@@ -31,7 +31,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.DME_FilterMover" );
 #include <string>
 
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
 

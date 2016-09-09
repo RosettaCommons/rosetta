@@ -25,7 +25,7 @@
 
 // // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -129,7 +129,7 @@ fill_hbond_set(
 		int const nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self_static();
 		conformation::Residue const & rsd1( pose.residue( res1 ) );
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(res1)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(res1)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -284,7 +284,7 @@ fill_hbond_set_by_AHdist_threshold(
 		core::conformation::Residue const & rsd1( pose.residue( res1 ) );
 		int const nb1 = tenA_neighbor_graph.get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(res1)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(res1)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

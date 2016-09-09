@@ -23,7 +23,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pose/Pose.hh>

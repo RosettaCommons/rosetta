@@ -1390,7 +1390,7 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
                             objects.extend( [o] )
 
     if name_spaces == ['::core::conformation::']:  # work-aroung for GCCXML template-misplace-bug
-        for o in context['::core::graph::']:
+        for o in context['::utility::graph::']:
             if o.name == 'UpperEdgeGraph<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>':
                 objects.append( o );
                 #print '######################## ', o

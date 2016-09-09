@@ -42,7 +42,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
@@ -87,7 +87,7 @@ RotamerSet_::build_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	task::PackerTask const & the_task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	bool use_neighbor_context
 )
 {
@@ -209,7 +209,7 @@ RotamerSet_::build_rotamers_for_concrete_virt(
 	scoring::ScoreFunction const & scorefxn,
 	task::PackerTask const & task,
 	chemical::ResidueTypeCOP concrete_residue,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	bool use_neighbor_context
 )
 {
@@ -226,7 +226,7 @@ RotamerSet_::build_rotamers_for_concrete(
 	task::PackerTask const & task,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	bool use_neighbor_context)
 {
 	using namespace conformation;
@@ -408,7 +408,7 @@ RotamerSet_::build_optimize_H_rotamers(
 	task::PackerTask const & task,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 )
 {
 	using namespace chemical;
@@ -631,7 +631,7 @@ RotamerSet_::compute_one_body_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sf,
 	task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< core::PackerEnergy > & energies
 ) const
 {
@@ -652,7 +652,7 @@ RotamerSet_::compute_one_body_energies(
 
 	sf.evaluate_rotamer_intrares_energies( *this, pose, energies );
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( theresid )->const_edge_list_begin(),
 			ire = packer_neighbor_graph->get_node( theresid )->const_edge_list_end();
 			ir != ire; ++ir ) {
@@ -702,7 +702,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sf,
 	task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< core::PackerEnergy > & one_body_energies,
 	utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
 	utility::vector1< core::Size > & packable_neighbors
@@ -718,7 +718,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 
 	sf.evaluate_rotamer_intrares_energies( *this, pose, one_body_energies );
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( theresid )->const_edge_list_begin(),
 			ire = packer_neighbor_graph->get_node( theresid )->const_edge_list_end();
 			ir != ire; ++ir ) {
@@ -789,7 +789,7 @@ RotamerSet_::compute_one_body_energy_maps(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sf,
 	task::PackerTask const & , // task
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< scoring::EnergyMap > & energies
 ) const
 {
@@ -848,7 +848,7 @@ RotamerSet_::compute_one_body_energy_maps(
 		energies[ii] += emap;
 
 		// add interactions for each rotamer with its (fixed) neighbors
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = packer_neighbor_graph->get_node( theresid )->const_edge_list_begin(),
 				ire = packer_neighbor_graph->get_node( theresid )->const_edge_list_end();
 				ir != ire; ++ir ) {
@@ -1053,7 +1053,7 @@ RotamerSet_::bump_check(
 	scoring::ScoreFunction const & sf,
 	pose::Pose const & pose,
 	task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 ) const
 {
 	using namespace scoring;
@@ -1061,7 +1061,7 @@ RotamerSet_::bump_check(
 
 	EnergyMap emap;
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( resid() )->const_edge_list_begin(),
 			ire = packer_neighbor_graph->get_node( resid() )->const_edge_list_end();
 			ir != ire; ++ir ) {
@@ -1085,7 +1085,7 @@ RotamerSet_::build_tp3_water_rotamers(
 	task::PackerTask const & task,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 )
 {
 
@@ -1192,7 +1192,7 @@ RotamerSet_::build_dependent_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	task::PackerTask const & the_task,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 )
 {
 	using namespace chemical;
@@ -1215,7 +1215,7 @@ RotamerSet_::build_dependent_rotamers_for_concrete(
 	task::PackerTask const & task,
 	conformation::Residue const & existing_residue,
 	chemical::ResidueTypeCOP concrete_residue,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 )
 {
 	using namespace conformation;

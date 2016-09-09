@@ -22,7 +22,7 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -54,7 +54,7 @@ public: //typedef
 
 	typedef core::conformation::Residue Residue;
 	typedef core::conformation::ResidueCOP ResidueCOP;
-	typedef core::graph::GraphOP GraphOP;
+	typedef utility::graph::GraphOP GraphOP;
 	typedef core::pack::task::ResidueLevelTask ResidueLevelTask;
 	typedef core::pack::task::PackerTask PackerTask;
 	typedef core::pack::task::PackerTaskOP PackerTaskOP;

@@ -47,7 +47,7 @@
 
 #include <core/id/AtomID_Map.hh>
 
-//#include <core/graph/Graph.hh>
+//#include <utility/graph/Graph.hh>
 //#include <core/scoring/EnergyGraph.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>

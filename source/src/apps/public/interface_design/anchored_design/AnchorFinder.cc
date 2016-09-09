@@ -37,7 +37,7 @@
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 

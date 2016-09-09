@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.hh
+/// @file   utility/graph/Graph.hh
 /// @brief  generic graph class header
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_graph_Graph_hh
-#define INCLUDED_core_graph_Graph_hh
+#ifndef INCLUDED_utility_graph_Graph_hh
+#define INCLUDED_utility_graph_Graph_hh
 
 // Rosetta Headers
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <platform/types.hh>
 
@@ -27,10 +27,10 @@
 #include <iosfwd>
 
 // Boost Headers
-#include <core/graph/unordered_object_pool.fwd.hpp>
+#include <utility/graph/unordered_object_pool.fwd.hpp>
 
 #ifdef PYROSETTA
-#include <core/graph/unordered_object_pool.hpp>
+#include <utility/graph/unordered_object_pool.hpp>
 #endif
 
 // Utility Headers
@@ -44,7 +44,7 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-namespace core {
+namespace utility {
 namespace graph {
 
 /// @brief An extensible graph class
@@ -889,10 +889,10 @@ bool EdgeListConstIterator::valid() const
 
 
 } //end namespace graph
-} //end namespace core
+} //end namespace utility
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_graph_Graph )
+CEREAL_FORCE_DYNAMIC_INIT( utility_graph_Graph )
 #endif // SERIALIZATION
 
 #endif

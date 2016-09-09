@@ -26,7 +26,7 @@
 
 #include <platform/types.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/DOF_Node.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
@@ -109,7 +109,7 @@ public:
 		using namespace scoring;
 		using namespace scoring::methods;
 		using namespace optimization;
-		using namespace graph;
+		using namespace utility::graph;
 
 
 		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
@@ -159,7 +159,7 @@ public:
 		using namespace scoring;
 		using namespace scoring::methods;
 		using namespace optimization;
-		using namespace graph;
+		using namespace utility::graph;
 		//typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
@@ -186,7 +186,7 @@ public:
 		numeric::random::random_permutation( active_residues, numeric::random::rg() );
 
 		utility::vector1< conformation::ResidueCOP > bgres( pose.size() );
-		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
 		scoring::MinimizationGraph mingraph( pose.size() );
 
 		SCMinMinimizerMap scminmap;
@@ -198,7 +198,7 @@ public:
 
 		for ( Size ii = 1; ii <= task->num_to_be_packed(); ++ii ) {
 		Size iires = active_residues[ ii ];
-		for ( graph::Node::EdgeListConstIter
+		for ( utility::graph::Node::EdgeListConstIter
 		eiter = packer_neighbor_graph->get_node( iires )->const_edge_list_begin(),
 		eiter_end = packer_neighbor_graph->get_node( iires )->const_edge_list_end();
 		eiter != eiter_end; ++eiter ) {
@@ -265,7 +265,7 @@ public:
 		* mingraph.get_minimization_node( iiresid ), iirsd,
 		scminmap, pose );
 		}
-		for ( graph::Node::EdgeListIter
+		for ( utility::graph::Node::EdgeListIter
 		eiter = mingraph.get_node( iiresid )->edge_list_begin(),
 		eiter_end = mingraph.get_node( iiresid )->edge_list_end();
 		eiter != eiter_end; ++eiter ) {
@@ -441,7 +441,7 @@ public:
 		// *bgres[ iiresid ], scminmap, pose );
 		reinitialize_mingraph_neighborhood_for_residue( pose, scorefxn, bgres, scminmap, *bgres[ iiresid ], mingraph );
 
-		//for ( graph::Graph::EdgeListIter
+		//for ( utility::graph::Graph::EdgeListIter
 		//  edgeit = mingraph.get_node( iiresid )->edge_list_begin(),
 		//  edgeit_end = mingraph.get_node( iiresid )->edge_list_end();
 		//  edgeit != edgeit_end; ++edgeit ) {
@@ -482,7 +482,7 @@ public:
 	{
 		using namespace pose;
 		using namespace scoring;
-		using namespace graph;
+		using namespace utility::graph;
 
 
 		EnergyMap const & one_body_emap( pose.energies().onebody_energies( resid ));
@@ -597,7 +597,7 @@ public:
 		using namespace scoring;
 		using namespace kinematics;
 		using namespace optimization;
-		using namespace graph;
+		using namespace utility::graph;
 
 		Pose pose_copy( pose );
 		sfxn( pose_copy );
@@ -701,7 +701,7 @@ public:
 			* mingraph.get_minimization_node( resid ),
 			rsd, scminmap, pose );
 		/// Now, iterate across all the edges and set them up
-		for ( graph::Node::EdgeListIter
+		for ( utility::graph::Node::EdgeListIter
 				eiter = mingraph.get_node( resid )->edge_list_begin(),
 				eiter_end = mingraph.get_node( resid )->edge_list_end();
 				eiter != eiter_end; ++eiter ) {
@@ -725,7 +725,7 @@ public:
 	* mingraph.get_minimization_node( iiresid ),
 	iires, scminmap, pose );
 	/// Now, iterate across all the edges and set them up
-	for ( graph::Node::EdgeListIter
+	for ( utility::graph::Node::EdgeListIter
 	eiter = mingraph.get_node( iiresid )->edge_list_begin(),
 	eiter_end = mingraph.get_node( iiresid )->edge_list_end();
 	eiter != eiter_end; ++eiter ) {

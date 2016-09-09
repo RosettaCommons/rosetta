@@ -19,7 +19,7 @@
 #include <protocols/protein_interface_design/design_utils.hh>
 
 // Project headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -190,7 +190,7 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	RotamerSetFactory rsf;
 	RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( hotspot_resnum ) );
 	rotset->set_resid( hotspot_resnum );
-	graph::GraphOP packer_graph( new graph::Graph( pose.size() ) );
+	utility::graph::GraphOP packer_graph( new utility::graph::Graph( pose.size() ) );
 	rotset->build_rotamers( pose, *scorefxn, *ptask, packer_graph, false );
 	TR<<"Created rotamer set for residue "<<hotspot_resnum<<"with explosion="<<explosion<<std::endl;
 	return( rotset );

@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.hh
+/// @file   utility/graph/Graph.hh
 /// @brief  generic graph class header
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
 // Unit Headers
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 
-namespace core {
+namespace utility {
 namespace graph {
 
 ///

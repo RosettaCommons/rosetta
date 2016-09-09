@@ -15,7 +15,7 @@
 
 #include <protocols/ligand_docking/grid_functions.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -214,7 +214,7 @@ void rotamers_for_trials(
 	core::scoring::ScoreFunction dummy_sfxn;
 	PackerTaskOP dummy_task = TaskFactory::create_packer_task(pose); // actually used, in a trivial way
 
-	core::graph::GraphCOP empty_graph( core::graph::GraphOP( new core::graph::Graph() ) );
+	utility::graph::GraphCOP empty_graph( utility::graph::GraphOP( new utility::graph::Graph() ) );
 	// Retrieve conformers
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(rsd_no) );
 	if ( reslib.get() == nullptr ) return;

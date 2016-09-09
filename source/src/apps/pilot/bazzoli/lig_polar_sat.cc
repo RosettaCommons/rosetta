@@ -37,7 +37,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/PDBInfo.hh>
@@ -169,9 +169,9 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 	Residue const& res = ps.residue(ridx);
 
 	core::scoring::EnergyGraph const& energy_graph(ps.energies().energy_graph());
-	core::graph::Graph::EdgeListConstIter NITB =
+	utility::graph::Graph::EdgeListConstIter NITB =
 		energy_graph.get_node(ridx)->const_edge_list_begin();
-	core::graph::Graph::EdgeListConstIter NITE =
+	utility::graph::Graph::EdgeListConstIter NITE =
 		energy_graph.get_node(ridx)->const_edge_list_end();
 
 	// collect hbonds for donors
@@ -188,7 +188,7 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 			dcounts[rep] = 0;
 		}
 
-		for ( core::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
+		for ( utility::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
 
 			Size nidx((*nit)->get_other_ind(ridx));
 			Residue const& ngb = ps.residue(nidx);
@@ -221,7 +221,7 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 			acounts[rep] =  0;
 		}
 
-		for ( core::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
+		for ( utility::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
 
 			Size nidx((*nit)->get_other_ind(ridx));
 			Residue const& ngb = ps.residue(nidx);

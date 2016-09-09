@@ -207,7 +207,7 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 		core::pack::rotamer_set::RotamerSetFactory rotamer_set_factory;
 		core::pack::rotamer_set::RotamerSetOP rotamer_set = rotamer_set_factory.create_rotamer_set( design_res );
 		rotamer_set->set_resid( design_pos );
-		core::graph::GraphOP packer_graph = core::pack::create_packer_graph( *mypose, *score_fxn_, bump_check_task );
+		utility::graph::GraphOP packer_graph = core::pack::create_packer_graph( *mypose, *score_fxn_, bump_check_task );
 		rotamer_set->build_rotamers( *mypose, *score_fxn_, *bump_check_task, packer_graph );
 
 		// determine neighboring positions where any rotamer of the given design residue would result in a clash

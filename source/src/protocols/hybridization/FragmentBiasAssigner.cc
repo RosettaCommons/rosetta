@@ -488,7 +488,7 @@ density_nbr(
 		fragbias_tr.Trace << "rsd: " << i << " " << rsd_i.name3() << " i_dens_rscc: " << i_dens_rscc << std::endl;
 
 		// get density score per i
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {

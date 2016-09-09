@@ -24,7 +24,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 // // Utility headers
 #include <utility/io/izstream.fwd.hh>
@@ -100,7 +100,7 @@ build_independent_water_rotamers(
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 );
 
@@ -116,7 +116,7 @@ build_dependent_water_rotamers(
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 );
 

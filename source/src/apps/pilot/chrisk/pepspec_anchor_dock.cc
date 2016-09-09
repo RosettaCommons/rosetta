@@ -277,7 +277,7 @@ has_clash(
 	for( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ){
 		if( !check_seqpos[ seqpos ] ) continue;
 		// search upstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->lower_edge_list_end();
 				iru != irue; ++iru ) {
@@ -295,7 +295,7 @@ has_clash(
 		}
 
 		// and downstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -1080,7 +1080,7 @@ run_pep_prep()
 			//get seqpos nbrs from energy map and rottrials
 			vector1< bool > is_pep_nbr( pose.size(), false );
 			EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					ir  = energy_graph.get_node( pep_anchor )->const_edge_list_begin(),
 					ire = energy_graph.get_node( pep_anchor )->const_edge_list_end();
 					ir != ire; ++ir ) {
@@ -1128,7 +1128,7 @@ run_pep_prep()
 		mc_dock2->recover_low( pose );
 		vector1< bool > check_clash( pose.size(), false );
 		EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = energy_graph.get_node( pep_anchor )->const_edge_list_begin(),
 				ire = energy_graph.get_node( pep_anchor )->const_edge_list_end();
 				ir != ire; ++ir ) {

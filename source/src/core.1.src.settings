@@ -13,12 +13,6 @@ sources = {
 	"core": [
 		"svn_version",
 	],
-	"core/graph": [
-		"ArrayPool",
-		"DisjointSets",
-		"Graph",
-		"graph_util",
-	],
 	"core/grid": [
 	],
 }

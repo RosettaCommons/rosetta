@@ -357,7 +357,7 @@ create_bp_jump_database_test( ){
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		// Neighboring residues making base-phosphate or base-2'OH contacts?
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {

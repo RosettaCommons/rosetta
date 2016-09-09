@@ -221,7 +221,7 @@ void EnvToolMover::apply( core::pose::Pose &pose ) {
     Real countN    =  0.0;
 
     // iterate across neighbors within 12 angstroms
-    for ( graph::Graph::EdgeListConstIter
+    for ( utility::graph::Graph::EdgeListConstIter
 	    ir  = graph.get_node(i)->const_edge_list_begin(),
 	    ire = graph.get_node(i)->const_edge_list_end();
 	  ir != ire; ++ir ) {

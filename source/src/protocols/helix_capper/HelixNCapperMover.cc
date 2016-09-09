@@ -173,7 +173,7 @@ void HelixNCapperMover::get_Ncap_scores() {
 			core::Real fa_elec_sc_sc_sum( 0.0 );
 
 			for ( core::Size ires = 1 ; ires <= resid ; ++ires ) {
-				for ( core::graph::Graph::EdgeListConstIter
+				for ( utility::graph::Graph::EdgeListConstIter
 						iru  = energy_graph.get_node(ires)->const_upper_edge_list_begin(),
 						irue = energy_graph.get_node(ires)->const_upper_edge_list_end();
 						iru != irue; ++iru ) {

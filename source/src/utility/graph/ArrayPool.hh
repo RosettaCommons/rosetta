@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/ArrayPool.hh
+/// @file   utility/graph/ArrayPool.hh
 /// @brief  ArrayPool class declaration and implementation
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_graph_ArrayPool_hh
-#define INCLUDED_core_graph_ArrayPool_hh
+#ifndef INCLUDED_utility_graph_ArrayPool_hh
+#define INCLUDED_utility_graph_ArrayPool_hh
 
 // Project Headers
-#include <core/types.hh>
+#include <platform/types.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -25,14 +25,14 @@
 // C++ headers
 #include <list>
 
-namespace core {
+namespace utility {
 namespace graph {
 
 std::string
-neg_space_element_allocation_error_message( Size block_size, Size neg_space_element_size );
+neg_space_element_allocation_error_message( platform::Size block_size, platform::Size neg_space_element_size );
 
 std::string
-block_allocation_error_message( Size block_size, Size array_size, Size neg_space_element_size );
+block_allocation_error_message( platform::Size block_size, platform::Size array_size, platform::Size neg_space_element_size );
 
 /// @brief Class Array0 is a c-style array wrapper that does bounds checking in debug mode.
 /// It indexes from 0 just like regular c-arrays.  Class Array0 does not manage it's own

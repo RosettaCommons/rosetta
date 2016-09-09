@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.hh
+/// @file   utility/graph/Graph.hh
 /// @brief  generic graph class header
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_graph_DisjointSets_hh
-#define INCLUDED_core_graph_DisjointSets_hh
+#ifndef INCLUDED_utility_graph_DisjointSets_hh
+#define INCLUDED_utility_graph_DisjointSets_hh
 
 // Project Headers
 
@@ -24,7 +24,7 @@
 #include <utility/vector1.hh>
 
 
-namespace core {
+namespace utility {
 namespace graph {
 
 struct DS_Node {

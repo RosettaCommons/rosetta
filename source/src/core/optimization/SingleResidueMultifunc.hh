@@ -18,7 +18,7 @@
 
 #include <core/optimization/SingleResidueMultifunc.fwd.hh>
 
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/optimization/types.hh>
 
 #include <core/optimization/AtomTreeMultifunc.hh>
@@ -50,7 +50,7 @@ public:
 		Size const rsd_id_in,
 		MinimizerMap & min_map_in,
 		scoring::ScoreFunction const & scorefxn_in,
-		graph::GraphCOP packer_neighbor_graph_in,
+		utility::graph::GraphCOP packer_neighbor_graph_in,
 		bool const deriv_check_in = false,
 		bool const deriv_check_verbose_in = false
 	);
@@ -64,7 +64,7 @@ public:
 
 private:
 	Size rsd_id_;
-	graph::GraphCOP packer_neighbor_graph_;
+	utility::graph::GraphCOP packer_neighbor_graph_;
 
 }; // SingleResidueMultifunc
 

@@ -83,11 +83,6 @@ sources = {
 	"fragment/picking/vall" : [
 		"vall"
 	],
-	"graph" : [
-		"ArrayPool",
-		"DisjointSets",
-		"Graph",
-	],
 	"grid" : [
 		"CartGrid",
 	],

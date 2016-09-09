@@ -20,7 +20,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/Stub.hh>
@@ -486,7 +486,7 @@ void SingleResidueCenrotLibrary::fill_rotamer_vector(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const &, //scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP, //packer_neighbor_graph,
+	utility::graph::GraphCOP, //packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
 	utility::vector1< utility::vector1< Real > > const &, //extra_chi_steps,

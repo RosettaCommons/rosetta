@@ -33,7 +33,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -82,7 +82,7 @@ public:
 
 
 	void test_vdw_trie_vs_trie() {
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring::vdwaals;
 		using namespace core::scoring::methods;

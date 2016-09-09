@@ -23,7 +23,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -87,7 +87,7 @@ RRProtocolRotamerTrials::run(
 	PackerTaskOP one_res_task( packer_task.clone() );
 	Pose working_pose = pose;  // deep copy
 
-	core::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, score_function, one_res_task );
+	utility::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, score_function, one_res_task );
 
 	// I don't know if rtmin looks at more than pack_residue(..)
 	one_res_task->temporarily_fix_everything();

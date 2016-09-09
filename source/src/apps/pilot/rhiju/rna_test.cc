@@ -1800,7 +1800,7 @@ figure_out_domain_neighbors( Size const & i, core::pose::Pose const & pose  ){
 	using namespace core::scoring;
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 			irue = energy_graph.get_node(i)->const_edge_list_end();
 			iru != irue; ++iru ) {
@@ -1878,7 +1878,7 @@ fill_hbond_neighbors( pose::Pose const & pose  ){
 		using namespace core::scoring;
 		EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {

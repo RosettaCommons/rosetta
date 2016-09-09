@@ -187,7 +187,7 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 		if ( ! facts1.changed() )  continue;
 
 		facts1.set_enumeration_shell( true );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node( res1 )->const_edge_list_begin(),
 				irue = energy_graph.get_node( res1 )->const_edge_list_end();
 				iru != irue; ++iru ) {

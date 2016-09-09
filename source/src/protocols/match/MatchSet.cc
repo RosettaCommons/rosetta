@@ -16,7 +16,7 @@
 #include <protocols/match/MatchSet.hh>
 
 // Project headers
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 
 // Utility headers
 #include <utility/LexicographicalIterator.hh>
@@ -328,7 +328,7 @@ HitNeighborFinder::initialize()
 utility::vector1< HitNeighborFinder::HitPtrList >
 HitNeighborFinder::connected_components() const
 {
-	core::graph::DisjointSets ds( all_hits_.size() );
+	utility::graph::DisjointSets ds( all_hits_.size() );
 
 	// we need to visit all 2^6=64 neighboring bins of the query halfbin; the lexicographical iterator
 	// ensures we visit them all.

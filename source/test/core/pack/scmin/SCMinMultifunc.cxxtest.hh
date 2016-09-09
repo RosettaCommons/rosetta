@@ -25,7 +25,7 @@
 
 #include <platform/types.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/packer_neighbors.hh>
 
@@ -84,7 +84,7 @@ public:
 		using namespace pose;
 		using namespace scoring;
 		using namespace optimization;
-		using namespace graph;
+		using namespace utility::graph;
 
 		//typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
@@ -100,7 +100,7 @@ public:
 		}
 		RotamerSetsOP rotsets( new RotamerSets() );
 		rotsets->set_task( task );
-		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
 
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 

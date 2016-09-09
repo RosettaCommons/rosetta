@@ -39,7 +39,7 @@
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -157,7 +157,7 @@ int main( int argc, char * argv [] )
 			Size ri = rset[i];
 			TR << "### " << ps.pdb_info()->chain(ri) << "-" << ps.pdb_info()->number(ri) << " ###" << std::endl;
 
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					nit = energy_graph.get_node(ri)->const_edge_list_begin(),
 					nite = energy_graph.get_node(ri)->const_edge_list_end();
 					nit != nite; ++nit ) {

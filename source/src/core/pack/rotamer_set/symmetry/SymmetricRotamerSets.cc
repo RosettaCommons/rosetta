@@ -28,7 +28,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -71,7 +71,7 @@ void
 SymmetricRotamerSets::compute_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::InteractionGraphBaseOP ig
 )
 {
@@ -104,7 +104,7 @@ void
 SymmetricRotamerSets::compute_one_body_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::InteractionGraphBaseOP ig
 )
 {
@@ -124,7 +124,7 @@ void
 SymmetricRotamerSets::precompute_two_body_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
 	bool const finalize_edges
 )
@@ -142,7 +142,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 		//tt << "pairenergies for ii: " << ii << '\n';
 		uint ii_resid = moltenres_2_resid( ii );
 		// observe that we will loop over only one subunit here
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				uli  = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
 				ulie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
 				uli != ulie; ++uli ) {
@@ -346,7 +346,7 @@ void
 SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::SymmOnTheFlyInteractionGraphOP ig
 )
 {
@@ -374,7 +374,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 	for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
 		Size ii_resid = moltenres_2_resid( ii );
 		//std::cout << "ii_resid: " << ii_resid << std::endl;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				li = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
 				lie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end(); li != lie; ++li ) {
 			Size jj_resid = (*li)->get_other_ind( ii_resid );
@@ -485,7 +485,7 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 	pose::Pose const & pose,
 	conformation::symmetry::SymmetryInfoCOP symm_info,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::SymmOnTheFlyInteractionGraphOP otfig
 )
 {
@@ -539,7 +539,7 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 	for ( Size ii = 1; ii <= nmoltenres(); ++ ii ) {
 		Size const ii_resid = moltenres_2_resid( ii );
 		if ( ! otfig->distinguish_backbone_and_sidechain_for_node( ii ) ) continue;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				li  = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
 				lie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
 				li != lie; ++li ) {
@@ -703,7 +703,7 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 bool
 SymmetricRotamerSets::final_visit_to_edge(
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	uint ii_resid,
 	uint jj_resid
 )

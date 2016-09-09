@@ -209,7 +209,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 		std::map< core::Size, EnergyMap > upper_interactions;
 
 		//1st, get short range enegires
-		for ( core::graph::EdgeListConstIterator egraph_it = egraph.get_energy_node( res1 )->const_upper_edge_list_begin();
+		for ( utility::graph::EdgeListConstIterator egraph_it = egraph.get_energy_node( res1 )->const_upper_edge_list_begin();
 				egraph_it != egraph.get_energy_node( res1 )->const_upper_edge_list_end(); ++egraph_it ) {
 			core::Size other_ind( (*egraph_it)->get_other_ind( res1 ) );
 			upper_interactions.insert( std::pair< Size, EnergyMap >(other_ind, EnergyMap() ) );

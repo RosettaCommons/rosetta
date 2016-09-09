@@ -824,7 +824,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
 	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(ii)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

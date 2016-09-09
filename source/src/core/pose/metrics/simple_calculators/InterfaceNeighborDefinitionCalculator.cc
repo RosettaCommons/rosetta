@@ -31,7 +31,7 @@
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
 

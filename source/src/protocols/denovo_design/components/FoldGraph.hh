@@ -25,7 +25,7 @@
 #include <protocols/loops/Loops.fwd.hh>
 
 // Core headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -167,8 +167,8 @@ private:
 	SegmentToNodeMap seg2node_;
 	NodeToSegmentMap node2seg_;
 	NodeSet cutpoints_;
-	core::graph::Graph g_;
-	core::graph::Graph gpeptide_;
+	utility::graph::Graph g_;
+	utility::graph::Graph gpeptide_;
 };
 
 // helper types for outputting sets of nodes

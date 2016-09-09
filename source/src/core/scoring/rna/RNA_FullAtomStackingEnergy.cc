@@ -421,7 +421,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 
 	Real const dist_cutoff2( dist_cutoff * dist_cutoff );
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
 			itere = energy_graph.get_node( i )->const_edge_list_end();
 			iter != itere; ++iter ) {

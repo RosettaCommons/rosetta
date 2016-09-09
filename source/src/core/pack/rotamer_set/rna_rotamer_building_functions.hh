@@ -23,7 +23,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 // // Utility headers
 #include <utility/io/izstream.fwd.hh>

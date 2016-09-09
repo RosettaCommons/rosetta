@@ -30,7 +30,7 @@
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <basic/Tracer.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -86,7 +86,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sf,
 	task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< core::PackerEnergy > & energies
 ) const
 {
@@ -144,7 +144,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 	for ( core::Size ii = 1; ii <= this_res_clones.size(); ++ii ) {
 		Size iiresid = this_res_clones[ii];
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = packer_neighbor_graph->get_node( iiresid )->const_edge_list_begin(),
 				ire = packer_neighbor_graph->get_node( iiresid )->const_edge_list_end();
 				ir != ire; ++ir ) {

@@ -56,7 +56,7 @@ public:
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & scorefxn,
 		core::pack::task::PackerTask const & task,
-		core::graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
 	void
@@ -78,7 +78,7 @@ protected:
 		core::scoring::ScoreFunction const & scorefxn,
 		core::pack::task::PackerTask const & task,
 		core::chemical::ResidueTypeCOP concrete_residue,
-		core::graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	);
 
@@ -94,7 +94,7 @@ protected:
 		core::scoring::ScoreFunction const & sf,
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task,
-		core::graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	) const;
 
 	virtual

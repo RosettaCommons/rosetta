@@ -34,7 +34,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -114,14 +114,14 @@ create_minimization_graph(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & sfxn,
 	task::PackerTask const & task,
-	graph::Graph const & packer_neighbor_graph,
+	utility::graph::Graph const & packer_neighbor_graph,
 	scmin::SCMinMinimizerMap const & sc_min_map
 )
 {
 	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.size() ) );
 
 	/// copy all edges that are incident upon the molten residues; background edges may be ignored.
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			eiter = packer_neighbor_graph.const_edge_list_begin(),
 			eiter_end = packer_neighbor_graph.const_edge_list_end();
 			eiter != eiter_end; ++eiter ) {
@@ -143,7 +143,7 @@ create_minimization_graph(
 				sc_min_map, pose, false, dummy );
 		}
 	}
-	for ( graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			eiter = mingraph->edge_list_begin(), eiter_end = mingraph->edge_list_end();
 			eiter != eiter_end; ++eiter ) {
 		Size const node1 = (*eiter)->get_first_node_ind();
@@ -575,7 +575,7 @@ void compare_mingraph_and_energy_graph(
 {
 	using namespace pose;
 	using namespace scoring;
-	using namespace graph;
+	using namespace utility::graph;
 
 	bool discrepancy( false );
 	// AMW: cppcheck flags this as being reducible in scope, but since it's static
@@ -781,7 +781,7 @@ min_pack_setup(
 	pose.update_residue_neighbors();
 	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 	if ( option[ minpack_disable_bumpcheck ] ) task->set_bump_check( false );
-	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
 	rotsets = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets() );
 	rotsets->set_task( task );
 	rotsets->build_rotamers( pose, sfxn, packer_neighbor_graph );
@@ -1024,7 +1024,7 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 {
 	using namespace pose;
 	using namespace scoring;
-	using namespace graph;
+	using namespace utility::graph;
 	using namespace interaction_graph;
 
 	bool discrepancy( false );
@@ -1163,7 +1163,7 @@ off_rotamer_pack_setup(
 	ig = interaction_graph::SimpleInteractionGraphOP( new interaction_graph::SimpleInteractionGraph );
 	ig->set_scorefunction( sfxn );
 	ig->set_pose_no_initialize( pose );
-	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
 	//for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 	// ig.get_simple_node( ii )->set_current( pose.residue( ii ).clone() );
 	//}

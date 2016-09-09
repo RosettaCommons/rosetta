@@ -18,7 +18,7 @@
 
 #ifdef PYROSETTA
 	#include <core/conformation/PointGraphData.hh>
-	#include <core/graph/UpperEdgeGraph.hh>
+	#include <utility/graph/UpperEdgeGraph.hh>
 	#include <utility/vector1.hh>
 #endif
 

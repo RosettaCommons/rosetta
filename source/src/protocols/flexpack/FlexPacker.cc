@@ -26,7 +26,7 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
@@ -100,7 +100,7 @@ FlexPacker::apply(
 	(const_cast< core::scoring::ScoreFunction & > (*scorefxn_)).set_energy_method_options( opts );
 
 
-	core::graph::GraphOP flex_neighbor_graph = flex_rotsets->flexpack_neighbor_graph( pose, *scorefxn_, task_ );
+	utility::graph::GraphOP flex_neighbor_graph = flex_rotsets->flexpack_neighbor_graph( pose, *scorefxn_, task_ );
 
 	flex_rotsets->build_rotamers( pose, *scorefxn_, *flex_neighbor_graph );
 	tr << "Flexxbb RotamerSet contains a total of " << flex_rotsets->nrotamers() << " rotamers." << std::endl;

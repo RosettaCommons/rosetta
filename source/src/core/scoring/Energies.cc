@@ -56,8 +56,8 @@
 #include <utility/vector1.hh>
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/ArrayPool.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/ArrayPool.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
 
 
@@ -507,7 +507,7 @@ Energies::prepare_neighbor_graphs()
 /// obsolete edges
 void Energies::delete_graph_edges_using_domain_map( Graph & g )
 {
-	using namespace graph;
+	using namespace utility::graph;
 	for ( Graph::EdgeListIter iter = g.edge_list_begin(),
 			iter_end = g.edge_list_end(); iter != iter_end; /* no increment statement*/ ) {
 		Graph::EdgeListIter iter_next = iter;
@@ -987,7 +987,7 @@ Energies::accumulate_residue_total_energies() const
 	}
 
 	for ( Size i=1, i_end = residue_total_energies_.size(); i<= i_end; ++i ) {
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph_->get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph_->get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -1052,7 +1052,7 @@ Energies::accumulate_residue_total_energy() const
 	for ( Size ii = 1; ii <= size_; ++ii ) {
 		//conformation::Residue const & resl( pose.residue( i ) );
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph_->get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph_->get_node(ii)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -1162,7 +1162,7 @@ Energies::update_neighbor_links(
 	pose::Pose const & pose
 )
 {
-	using namespace graph;
+	using namespace utility::graph;
 	using namespace scoring;
 
 	runtime_assert( !core::pose::symmetry::is_symmetric( pose ) );
@@ -1291,7 +1291,7 @@ Energies::require_context_graph_( scoring::ContextGraphType type, bool external 
 	if ( external ) {
 		externally_required_context_graphs_[ type ] = true;
 
-		using namespace graph;
+		using namespace utility::graph;
 
 		core::conformation::PointGraphOP point_graph( new core::conformation::PointGraph );
 		fill_point_graph( *owner_, point_graph );

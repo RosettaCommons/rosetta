@@ -179,7 +179,7 @@ public:
         // copy from cartesian_minimize
 
         /// 2. eval inter-residue derivatives
-        for ( graph::Node::EdgeListConstIter edgeit = mingraph->const_edge_list_begin(),
+        for ( utility::graph::Node::EdgeListConstIter edgeit = mingraph->const_edge_list_begin(),
                 edgeit_end = mingraph->const_edge_list_end();
                 edgeit != edgeit_end; ++edgeit )
         {

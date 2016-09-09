@@ -431,7 +431,7 @@ void PackDaemon::calculate_background_energies()
 {
 	using namespace core;
 	using namespace core::scoring;
-	using namespace core::graph;
+	using namespace utility::graph;
 
 	background_energies_ = 0;
 	Energies const & energies( pose_->energies() );

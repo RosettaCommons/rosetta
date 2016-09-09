@@ -24,7 +24,7 @@
 
 /// Core headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/io/pdb/pdb_writer.hh>
@@ -123,7 +123,7 @@ void build_bb_independent_rotamers( core::chemical::ResidueTypeCOP target_res_re
 	using namespace core::scoring;
 	using namespace core::pack;
 	using namespace core::pack::rotamer_set;
-	using namespace core::graph;
+	using namespace utility::graph;
 
 	conformation::Residue target_res( *target_res_restype, true ); // boolean is a required dummy argument for Residue constructor
 	pose::Pose dummy_pose;
@@ -149,7 +149,7 @@ void build_bb_independent_rotamers( core::chemical::ResidueTypeCOP target_res_re
 	//task->nonconst_residue_task(1).or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
 	//task->nonconst_residue_task(1).or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
 
-	graph::GraphOP dummy_png = core::pack::create_packer_graph( dummy_pose, dummy_sfxn, task );
+	utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( dummy_pose, dummy_sfxn, task );
 
 	pack::rotamer_set::RotamerSetFactory rsf;
 	pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( dummy_pose.residue( 1 ) ) );

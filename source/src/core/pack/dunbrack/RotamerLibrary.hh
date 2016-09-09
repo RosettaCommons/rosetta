@@ -28,10 +28,10 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-//#include <core/graph/Graph.fwd.hh>
+//#include <utility/graph/Graph.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
-//#include <core/graph/Graph.hh>
+//#include <utility/graph/Graph.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #endif

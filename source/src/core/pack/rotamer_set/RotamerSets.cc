@@ -31,7 +31,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
@@ -153,7 +153,7 @@ void
 RotamerSets::build_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sfxn,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 )
 {
 	RotamerSetFactoryOP rsf;
@@ -427,7 +427,7 @@ void
 RotamerSets::compute_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::InteractionGraphBaseOP ig
 )
 {
@@ -460,7 +460,7 @@ void
 RotamerSets::compute_one_body_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::InteractionGraphBaseOP ig
 )
 {
@@ -477,7 +477,7 @@ void
 RotamerSets::precompute_two_body_energies(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
 	bool const finalize_edges
 )
@@ -494,7 +494,7 @@ RotamerSets::precompute_two_body_energies(
 		uint const ii_resid = moltenres_2_resid_[ ii ];
 		//when design comes online, we will want to iterate across
 		//neighbors defined by a larger interaction cutoff
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
 				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
 				uli != ulie; ++uli ) {
@@ -572,7 +572,7 @@ void
 RotamerSets::prepare_otf_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::OnTheFlyInteractionGraphOP otfig
 )
 {
@@ -600,7 +600,7 @@ RotamerSets::prepare_otf_graph(
 	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
 		//tt << "pairenergies for ii: " << ii << '\n';
 		uint const ii_resid = moltenres_2_resid_[ ii ];
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
 				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
 				uli != ulie; ++uli ) {
@@ -707,7 +707,7 @@ void
 RotamerSets::compute_proline_correction_energies_for_otf_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	interaction_graph::OnTheFlyInteractionGraphOP otfig
 )
 {
@@ -741,7 +741,7 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 	for ( Size ii = 1; ii <= nmoltenres_; ++ ii ) {
 		Size const ii_resid = moltenres_2_resid_[ ii ];
 		if ( ! otfig->distinguish_backbone_and_sidechain_for_node( ii ) ) continue;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
 				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
 				uli != ulie; ++uli ) {

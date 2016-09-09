@@ -174,7 +174,7 @@ CstResNeighbIterator::energy_computed() const
 }
 
 ConstraintEdge *
-CstResNeighbIterator::downcast_cstedge( graph::Edge * edge )
+CstResNeighbIterator::downcast_cstedge( utility::graph::Edge * edge )
 {
 	debug_assert( dynamic_cast< ConstraintEdge * > ( edge ) );
 	return static_cast< ConstraintEdge * > (edge);
@@ -305,7 +305,7 @@ CstResNeighbConstIterator::energy_computed() const
 }
 
 ConstraintEdge const *
-CstResNeighbConstIterator::downcast_cstedge( graph::Edge const * edge )
+CstResNeighbConstIterator::downcast_cstedge( utility::graph::Edge const * edge )
 {
 	debug_assert( dynamic_cast< ConstraintEdge const * > ( edge ) );
 	return static_cast< ConstraintEdge const * > (edge);

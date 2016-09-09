@@ -14,7 +14,7 @@
 #ifndef BOOST_UNORDERED_OBJECT_POOL_HPP
 #define BOOST_UNORDERED_OBJECT_POOL_HPP
 
-#include <core/graph/unordered_object_pool.fwd.hpp>
+#include <utility/graph/unordered_object_pool.fwd.hpp>
 
 #ifdef PYROSETTA
 #include <boost/pool/pool.hpp>

@@ -35,7 +35,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -70,7 +70,7 @@ public:
 	build_rotamers(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
 	void
@@ -172,7 +172,7 @@ public:
 	compute_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::InteractionGraphBaseOP ig
 	);
 
@@ -183,7 +183,7 @@ public:
 	compute_one_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::InteractionGraphBaseOP ig
 	);
 
@@ -196,7 +196,7 @@ public:
 	precompute_two_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
 		bool const finalize_edges = true
 	);
@@ -211,7 +211,7 @@ private:
 	prepare_otf_graph(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::OnTheFlyInteractionGraphOP otfig
 	);
 
@@ -221,7 +221,7 @@ private:
 	compute_proline_correction_energies_for_otf_graph(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::OnTheFlyInteractionGraphOP otfig
 	);
 

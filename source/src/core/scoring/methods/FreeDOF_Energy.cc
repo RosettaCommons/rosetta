@@ -257,7 +257,7 @@ FreeDOF_Energy::accumulate_stack_energy(
 	// accumulate energies, but keep track of which residue supplied the base.
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		if ( !pose.residue( i ).is_RNA() ) continue;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

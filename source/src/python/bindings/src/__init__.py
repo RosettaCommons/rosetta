@@ -96,8 +96,8 @@ if config['monolith']:
         import rosetta.core.scoring.func
 
 if config['low_memory_mode']:
+    import rosetta.utility.graph
     import rosetta.core.pose
-    import rosetta.core.graph
     import rosetta.core.scoring.methods
     import rosetta.protocols.init
     from rosetta.core.pose import Pose
@@ -116,7 +116,6 @@ else:
 
     if config['core']:
         import rosetta.core
-        import rosetta.core.graph
         import rosetta.core.chemical
         import rosetta.core.chemical.rings
         import rosetta.core.chemical.orbitals
@@ -129,7 +128,6 @@ else:
         import rosetta.core.io.silent
         import rosetta.core.pose
 
-        import rosetta.core.graph
         import rosetta.core.conformation
         import rosetta.core.id
         import rosetta.core.io

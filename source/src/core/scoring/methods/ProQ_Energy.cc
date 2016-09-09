@@ -668,7 +668,7 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 		conformation::Residue const & rsd_i( pose.residue(i) );
 		const Energies & energies( pose.energies() );
 		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = graph.get_node(i)->const_edge_list_begin(),
 				ire = graph.get_node(i)->const_edge_list_end();
 				ir != ire; ++ir ) {
@@ -779,7 +779,7 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 		// iterate across neighbors within 12 angstroms
 		//  for ( int j = i+1; j <= nres; j=j+1 ) {
 		//j=53;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = graph.get_node(i)->const_edge_list_begin(),
 				ire = graph.get_node(i)->const_edge_list_end();
 				ir != ire; ++ir ) {

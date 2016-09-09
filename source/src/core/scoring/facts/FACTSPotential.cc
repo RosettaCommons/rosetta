@@ -201,7 +201,7 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		}
 
 		// changed again from upperedge to edge to take care of enumeration_shell stuffs
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node( res1 )->const_edge_list_begin(),
 				irue = energy_graph.get_node( res1 )->const_edge_list_end();
 				iru != irue; ++iru ) {
@@ -246,7 +246,7 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		}
 
 		// changed again from upperedge to edge to take care of enumeration_shell stuffs
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node( res1 )->const_edge_list_begin(),
 				irue = energy_graph.get_node( res1 )->const_edge_list_end();
 				iru != irue; ++iru ) {
@@ -1197,7 +1197,7 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 			}
 
 			// inter-res
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru = energy_graph.get_node( res1 )->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node( res1 )->const_upper_edge_list_end();
 					iru != irue; ++iru ) {

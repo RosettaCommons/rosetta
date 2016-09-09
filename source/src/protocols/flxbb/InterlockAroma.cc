@@ -44,7 +44,7 @@
 #include <utility/vector0.hh>
 
 //Auto Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.InterlockAroma" );
 
 namespace protocols {
@@ -174,7 +174,7 @@ InterlockAroma::apply( Pose & pose )
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( polyala_pose.residue( ii ) );
 		rotset->set_resid( ii );
-		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( core::graph::GraphOP( new core::graph::Graph( polyala_pose.size() ) ) ), false );
+		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, utility::graph::GraphCOP( utility::graph::GraphOP( new utility::graph::Graph( polyala_pose.size() ) ) ), false );
 
 		Size rotnum( 0 );
 		 for ( auto const & rotamer : *rotset ) {

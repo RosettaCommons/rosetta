@@ -622,7 +622,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_donor_atom_energy(
 		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 		utility::vector1 <core::Size> neighborlist;
 		neighborlist.push_back( polar_resnum);
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
 				neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
 				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
@@ -711,7 +711,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_acceptor_atom_energy(
 		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 		utility::vector1 <core::Size> neighborlist;
 		neighborlist.push_back( polar_resnum);
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
 				neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
 				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
@@ -880,7 +880,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 		// loop over all atoms of neighboring residues, INCLUDING SELF
 		core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 		neighborlist.push_back( polar_resnum);
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
 				neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
 				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
@@ -1024,7 +1024,7 @@ core::Real ExactOccludedHbondSolEnergy::get_atom_lk_energy(
 	core::scoring::EnergyGraph const & energy_graph( ps.energies().energy_graph() );
 
 	core::Real lk_tot = 0;
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			NITB = energy_graph.get_node(residx)->const_edge_list_begin(),
 			NITE = energy_graph.get_node(residx)->const_edge_list_end(),
 			nit = NITB; nit != NITE; ++nit ) {

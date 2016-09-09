@@ -34,7 +34,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.fwd.hh>
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
@@ -68,7 +68,7 @@ public:
 		core::scoring::ScoreFunction const & score_function,
 		core::pose::Pose const & pose,
 		core::pack::rotamer_set::RotamerSets & rotamer_sets,
-		graph::GraphCOP
+		utility::graph::GraphCOP
 	);
 
 	// Graph property accessors.

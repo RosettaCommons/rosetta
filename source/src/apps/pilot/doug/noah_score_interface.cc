@@ -74,7 +74,7 @@ core::Real compute_interface_energy(
 	
 	// Loop over interactions across the interface
 	for ( core::Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 						iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 						irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {
@@ -89,7 +89,7 @@ core::Real compute_interface_energy(
 
 	// Graph is asymmetric, so switch i/j and redo
 	for ( core::Size i = ch2_begin_num; i <= ch2_end_num; ++i ) {
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 						iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 						irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {

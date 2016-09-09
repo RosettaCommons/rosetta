@@ -1586,7 +1586,7 @@ HotspotStubSet::evaluate_stub_bumps_(
 
 	core::Real bump_energy = 0.;
 	core::scoring::EnergyMap emap;
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iter = unbound_neighbor_graph.get_node( resnum )->const_edge_list_begin(),
 			iter_end = unbound_neighbor_graph.get_node( resnum )->const_edge_list_end();
 			iter != iter_end; ++iter ) {
@@ -1621,7 +1621,7 @@ HotspotStubSet::evaluate_stub_self_energy_(
 	self_energy += weights.dot( emap );
 	TR.Debug << self_energy << " ";
 
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iter = unbound_neighbor_graph.get_node( resnum )->const_edge_list_begin(),
 			iter_end = unbound_neighbor_graph.get_node( resnum )->const_edge_list_end();
 			iter != iter_end; ++iter ) {

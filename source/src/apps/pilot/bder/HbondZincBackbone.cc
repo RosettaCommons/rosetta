@@ -18,7 +18,7 @@
 #include <protocols/metal_interface/MetalSiteResidue.hh>
 #include <protocols/metal_interface/AddZincSiteConstraints.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 
 

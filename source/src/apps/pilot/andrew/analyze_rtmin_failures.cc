@@ -74,7 +74,7 @@ int main( int argc, char * argv [] )
 		using namespace core::conformation;
 		using namespace core::id;
 		using namespace core::io;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::hbonds;
@@ -115,7 +115,7 @@ int main( int argc, char * argv [] )
 
 		sfxn->setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 
-		graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );
 
 		rotamer_set::RotamerSetsOP rotsets( new rotamer_set::RotamerSets() );
 		rotsets->set_task( task );

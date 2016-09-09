@@ -19,7 +19,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -48,7 +48,7 @@ using core::pose::Pose;
 using core::Size;
 using core::Distance;
 using core::Vector;
-using core::graph::Graph;
+using utility::graph::Graph;
 using core::conformation::Residue;
 using core::scoring::TenANeighborGraph;
 using utility::sql_database::sessionOP;

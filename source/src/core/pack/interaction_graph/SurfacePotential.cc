@@ -26,7 +26,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 
@@ -56,7 +56,7 @@
 #include <utility/vector1.hh>
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/pose/util.tmpl.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
@@ -431,7 +431,7 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 		//TR << "Neighbors of residue " << pose.residue( res1_position ).name3() << " " << res1_position << " include " << std::endl;
 
 		// for every Edge in the neighbor graph, figure out if that residue is surface exposed
-		//for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
+		//for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
 		// eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 		// save the value to simplify code ahead
@@ -579,7 +579,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 		heavyatom_count += rsd.nheavyatoms();
 	}
 
-	graph::DisjointSets ds( heavyatom_count );
+	utility::graph::DisjointSets ds( heavyatom_count );
 	utility::vector1< id::AtomID > ds_index_2_atomid( heavyatom_count );
 
 	// create an AtomID map that will convert an atom in some residue into a DisjointSets index

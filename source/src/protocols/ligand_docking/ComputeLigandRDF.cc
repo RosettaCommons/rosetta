@@ -186,7 +186,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::ligand_pr
 		for ( core::Size ligand_atom_index = 1; ligand_atom_index <= ligand_residue.natoms(); ++ligand_atom_index ) {
 			core::id::AtomID ligand_atom_id(ligand_atom_index,ligand_resnum);
 			core::Vector ligand_atom_coords(ligand_residue.xyz(ligand_atom_index));
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					ir  = graph.get_node( ligand_resnum )->const_edge_list_begin(),
 					ire = graph.get_node( ligand_resnum )->const_edge_list_end();
 					ir != ire; ++ir ) {
@@ -221,7 +221,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::protein_p
 	compute_rdf_tracer << "Identifying ligand pocket atom pairs"<<std::endl;
 	utility::vector1<core::id::AtomID> binding_pocket_atoms;
 	for ( core::Size ligand_resnum = ligand_start; ligand_resnum <= ligand_end; ++ligand_resnum ) {
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = graph.get_node( ligand_resnum )->const_edge_list_begin(),
 				ire = graph.get_node( ligand_resnum )->const_edge_list_end();
 				ir != ire; ++ir ) {

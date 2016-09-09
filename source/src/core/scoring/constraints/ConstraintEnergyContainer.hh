@@ -27,7 +27,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <utility/vector1.hh>
 #include <iostream>
@@ -40,7 +40,7 @@ namespace constraints {
 class CstResNeighbIterator : public ResidueNeighborIterator {
 	CstResNeighbIterator & operator = (CstResNeighbIterator const & );
 public:
-	typedef graph::Node::EdgeListIter EdgeListIter;
+	typedef utility::graph::Node::EdgeListIter EdgeListIter;
 
 public:
 
@@ -69,7 +69,7 @@ public:
 	virtual bool energy_computed() const;
 protected:
 
-	static ConstraintEdge * downcast_cstedge( graph::Edge * );
+	static ConstraintEdge * downcast_cstedge( utility::graph::Edge * );
 
 private:
 	Size focused_node_;
@@ -80,7 +80,7 @@ private:
 class CstResNeighbConstIterator : public ResidueNeighborConstIterator {
 	CstResNeighbConstIterator & operator = (CstResNeighbConstIterator const & );
 public:
-	typedef graph::Node::EdgeListConstIter EdgeListConstIter;
+	typedef utility::graph::Node::EdgeListConstIter EdgeListConstIter;
 
 public:
 	CstResNeighbConstIterator( Size focused_node, EdgeListConstIter edge_iter);
@@ -104,11 +104,11 @@ public:
 	virtual bool energy_computed() const;
 
 protected:
-	static ConstraintEdge const * downcast_cstedge( graph::Edge const * );
+	static ConstraintEdge const * downcast_cstedge( utility::graph::Edge const * );
 
 private:
 	Size focused_node_;
-	graph::Node::EdgeListConstIter edge_iter_; // no need to store a const iterator if this class guarantees that no non-const methods are called
+	utility::graph::Node::EdgeListConstIter edge_iter_; // no need to store a const iterator if this class guarantees that no non-const methods are called
 
 };
 

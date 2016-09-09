@@ -16,7 +16,7 @@
 
 //Project headers
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
@@ -42,7 +42,7 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & sfxn,
 	core::pack::task::PackerTask const & ptask,
-	core::graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 ){
 	using namespace core::pack::rotamer_set;

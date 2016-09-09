@@ -22,12 +22,12 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 
 
 #ifdef    SERIALIZATION
 // Package serialization headers
-#include <core/graph/UpperEdgeGraph.srlz.hh>
+#include <utility/graph/UpperEdgeGraph.srlz.hh>
 
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -57,12 +57,12 @@ residue_point_graph_from_conformation(
 #ifdef    SERIALIZATION
 template < class Archive > void save( Archive & arc, PointGraph const & pointgraph )
 {
-	core::graph::save_to_archive( arc, pointgraph );
+	utility::graph::save_to_archive( arc, pointgraph );
 }
 
 template < class Archive > void load( Archive & arc, PointGraph & pointgraph )
 {
-	core::graph::load_from_archive( arc, pointgraph );
+	utility::graph::load_from_archive( arc, pointgraph );
 }
 
 EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( PointGraph );

@@ -34,7 +34,7 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -304,7 +304,7 @@ RotamerBoltzCalculator::init_task( core::pose::Pose const & pose, core::Size con
 	}
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
 	restask.restrict_to_repacking();///hmk: what is this doing?
-	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.size() ) );
+	utility::graph::GraphOP packer_graph( new utility::graph::Graph( pose.size() ) );
 	ptask->set_bump_check(false);
 	rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 
@@ -370,7 +370,7 @@ RotamerBoltzCalculator::create_rotamer_set( core::pose::Pose const & pose, core:
 	ptask->or_include_current( false );
 	ptask->nonconst_residue_task( resi ).restrict_to_repacking();
 	ptask->set_bump_check( false );
-	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.size() ) );
+	utility::graph::GraphOP packer_graph( new utility::graph::Graph( pose.size() ) );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 	return rotset;
 }

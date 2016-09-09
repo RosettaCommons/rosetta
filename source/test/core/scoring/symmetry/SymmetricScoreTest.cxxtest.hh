@@ -38,8 +38,8 @@
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
-#include <core/graph/UpperEdgeGraph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
+#include <utility/graph/UpperEdgeGraph.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/AtomID_Mask.fwd.hh>

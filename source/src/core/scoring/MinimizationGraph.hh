@@ -31,7 +31,7 @@
 #endif
 
 // Project headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -56,10 +56,10 @@ namespace scoring {
 /// a single residue in a Pose which is being minimized. The data held in this
 /// node will be used in both scoring the residue one-body energies and evaluating
 /// atom derivatives during minimization.
-class MinimizationNode : public graph::Node
+class MinimizationNode : public utility::graph::Node
 {
 public:
-	typedef graph::Node               parent;
+	typedef utility::graph::Node               parent;
 	typedef methods::OneBodyEnergyCOP OneBodyEnergyCOP;
 	typedef methods::TwoBodyEnergyCOP TwoBodyEnergyCOP;
 
@@ -72,7 +72,7 @@ public:
 	typedef pose::Pose                           Pose;
 
 public:
-	MinimizationNode( graph::Graph * owner, Size index );
+	MinimizationNode( utility::graph::Graph * owner, Size index );
 	~MinimizationNode() override;
 	void copy_from( parent const * source ) override;
 
@@ -210,10 +210,10 @@ private:
 /// of interacting residues; this data might be a neighborlist for this residue
 /// pair, for example.  The data held in this edge will be used in both scoring
 /// the residue-pair energies and evaluating atom derivatives during minimization.
-class MinimizationEdge : public graph::Edge
+class MinimizationEdge : public utility::graph::Edge
 {
 public:
-	typedef graph::Edge parent;
+	typedef utility::graph::Edge parent;
 	typedef methods::TwoBodyEnergyCOP            TwoBodyEnergyCOP;
 	typedef utility::vector1< TwoBodyEnergyCOP > TwoBodyEnergies;
 	typedef TwoBodyEnergies::const_iterator      TwoBodyEnergiesIterator;
@@ -358,10 +358,10 @@ private:
 /// @brief Class to hold all the minimization-specific data that's required
 /// to efficiently evaluate the score function and its derivatives on a structure
 /// of fixed sequence and chemical identity.
-class MinimizationGraph : public graph::Graph
+class MinimizationGraph : public utility::graph::Graph
 {
 public:
-	typedef graph::Graph                 parent;
+	typedef utility::graph::Graph                 parent;
 	typedef methods::EnergyMethodCOP     EnergyMethodCOP;
 	typedef std::list< EnergyMethodCOP > Energies;
 	typedef Energies::const_iterator     EnergiesIterator;
@@ -393,7 +393,7 @@ public:
 	MinimizationEdge * find_minimization_edge( Size n1, Size n2);
 	MinimizationEdge const * find_minimization_edge( Size n1, Size n2) const;
 
-	void delete_edge( graph::Edge * edge ) override;
+	void delete_edge( utility::graph::Edge * edge ) override;
 
 	void add_whole_pose_context_enmeth( EnergyMethodCOP enmeth );
 	EnergiesIterator whole_pose_context_enmeths_begin() const;
@@ -406,9 +406,9 @@ protected:
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
 
-	graph::Node * create_new_node( Size index ) override;
-	graph::Edge * create_new_edge( Size index1, Size index2 ) override;
-	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
+	utility::graph::Node * create_new_node( Size index ) override;
+	utility::graph::Edge * create_new_edge( Size index1, Size index2 ) override;
+	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
 
 private:
 	Energies whole_pose_context_enmeths_;

@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.hh
+/// @file   utility/graph/Graph.hh
 /// @brief  generic graph class header
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_graph_graph_util_hh
-#define INCLUDED_core_graph_graph_util_hh
+#ifndef INCLUDED_utility_graph_graph_util_hh
+#define INCLUDED_utility_graph_graph_util_hh
 
 // Package Headers
 
 // Utility Headers
 
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <utility/vector1.hh>
 
 
 // C++ headers
 //#include <utility> // for std::pair?
 
-namespace core {
+namespace utility {
 namespace graph {
 
 /// @brief returns a vector1 of connected component descriptions:

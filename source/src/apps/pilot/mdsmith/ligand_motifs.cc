@@ -72,7 +72,7 @@
 #include <core/pack/packer_neighbors.hh>
 //#include <core/pack/types.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>

@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 
@@ -77,7 +77,7 @@
 
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -493,7 +493,7 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 	core::conformation::find_neighbors( pg, 10.0 /* Angstrom cutoff */ ); // create edges
 
 	// actually create the neighbor graph from the point graph
-	core::graph::Graph neighbor_graph( pose.size() );
+	utility::graph::Graph neighbor_graph( pose.size() );
 	for ( Size r=1; r <= pose.size(); ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
 				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
@@ -504,7 +504,7 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 
 		conformation::Residue const & ii_rsd( pose.residue( ii ) );
-		for ( core::graph::EdgeListConstIterator eli = neighbor_graph.get_node( ii )->const_edge_list_begin(),
+		for ( utility::graph::EdgeListConstIterator eli = neighbor_graph.get_node( ii )->const_edge_list_begin(),
 				eli_end = neighbor_graph.get_node( ii )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 			Size nb_resnum = (*eli)->get_other_ind( ii );

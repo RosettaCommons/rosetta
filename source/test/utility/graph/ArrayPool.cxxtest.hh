@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/ArrayPool.cxxtest.hh
-/// @brief  test suite for core::graph::ArrayPool.hh
+/// @file   utility/graph/ArrayPool.cxxtest.hh
+/// @brief  test suite for utility::graph::ArrayPool.hh
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
@@ -16,14 +16,18 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/graph/ArrayPool.hh>
+#include <utility/graph/ArrayPool.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
 
+//Types
+#include <platform/types.hh>
 
-using namespace core;
-using namespace core::graph;
+
+using namespace platform;
+using namespace utility;
+using namespace utility::graph;
 
 
 // --------------- Test Class --------------- //

@@ -26,7 +26,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/MinimizationGraph.fwd.hh>

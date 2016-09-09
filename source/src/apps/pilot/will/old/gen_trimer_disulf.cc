@@ -39,7 +39,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -117,7 +117,7 @@ get_rotamers(
 	dummy_task->nonconst_residue_task( irsd ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
 	dummy_task->nonconst_residue_task( irsd ).or_ex1( ex1 ); //since we only want rotamers for the specified restype
 	dummy_task->nonconst_residue_task( irsd ).or_ex2( ex2 ); //since we only want rotamers for the specified restype
-	core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
+	utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
 	core::pack::rotamer_set::RotamerSetFactory rsf;
 	rotset = rsf.create_rotamer_set( pose.residue( irsd ) );
 	rotset->set_resid( irsd );

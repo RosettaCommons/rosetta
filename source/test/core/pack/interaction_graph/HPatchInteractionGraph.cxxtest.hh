@@ -53,7 +53,7 @@
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -82,7 +82,7 @@ public:
 	pose::Pose pose;
 	rotamer_set::RotamerSetsOP rotsets;
 	scoring::ScoreFunctionOP scorefxn;
-	graph::GraphOP packer_neighbor_graph;
+	utility::graph::GraphOP packer_neighbor_graph;
 
 	// the IG pointers def have to be "global" scope
 	interaction_graph::LinearMemoryHPatchInteractionGraphOP lmhig;

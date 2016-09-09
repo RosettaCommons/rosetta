@@ -423,7 +423,7 @@ def mb_exclude(path, mb, hfile):
         #E('class_', "BBTorsionSRFD", 'mem_funs', "clone", 'exclude') # mb.class_("BBTorsionSRFD").mem_funs("clone").exclude()
 
 
-    if path == 'core/graph':
+    if path == 'utility/graph':
         #mb.class_("PointGraphVertexData").var('NUM_EDGES_TO_RESERVE').exclude()  # static const
         E('class_', "PointGraphVertexData", 'var', 'NUM_EDGES_TO_RESERVE', 'exclude' )  # static const
 

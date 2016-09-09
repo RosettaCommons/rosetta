@@ -169,7 +169,7 @@ main( int argc, char * argv [] )
 
 			// code for repacking neighbors...
 			core::scoring::TenANeighborGraph const & graph = mut_bound.energies().tenA_neighbor_graph();
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 							iter = graph.get_node( resnum )->const_edge_list_begin(),
 							iter_end = graph.get_node( resnum )->const_edge_list_end();
 						iter != iter_end; ++iter ) {

@@ -99,7 +99,7 @@ main( int argc, char * argv [] ) {
 		core::Size num_edges = reference_node->num_edges();
 		TR << "Found " << num_edges << " for node " << reference_node->get_node_index() << " " << reference_node->model().model_id_ << std::endl;
 		if(num_edges > 0) {
-			core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
+			utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 			HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
 			TR << "Following edge " << *cur_edge << std::endl;
 			two_model_assembly->follow_edge(graph, cur_edge, reference_node->get_node_index());

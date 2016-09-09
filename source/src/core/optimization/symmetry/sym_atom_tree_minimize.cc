@@ -274,7 +274,7 @@ atom_tree_get_atompairE_deriv(
 	}
 
 	/// 2a. eval inter-residue derivatives from the regular minimization graph
-	for ( graph::Node::EdgeListConstIter
+	for ( utility::graph::Node::EdgeListConstIter
 			edgeit = mingraph->const_edge_list_begin(), edgeit_end = mingraph->const_edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
 		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
@@ -292,7 +292,7 @@ atom_tree_get_atompairE_deriv(
 
 	if ( !symm_min_map.new_sym_min() ) {
 		/// 2b. eval inter-residue derivatives from derivative minimization graph
-		for ( graph::Node::EdgeListConstIter
+		for ( utility::graph::Node::EdgeListConstIter
 				edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
 			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );

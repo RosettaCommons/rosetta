@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/graph_util.hh
+/// @file   utility/graph/graph_util.hh
 /// @brief  generic graph class header
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit Headers
-#include <core/graph/graph_util.hh>
+#include <utility/graph/graph_util.hh>
 
 // Package Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 //#include <iostream>
 
-namespace core {
+namespace utility {
 namespace graph {
 
 bool

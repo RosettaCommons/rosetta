@@ -131,7 +131,7 @@ GreedyAssemblyMover::generate_assembly(){
 
 				AssemblyOP pre_edge_assembly = assembly->clone();
 
-				core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
+				utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 				for ( core::Size j=0; j<edge_order[cur_edge_ind]; ++j ) {
 					++edge_it;
 				}

@@ -285,16 +285,16 @@ da_residues_to_repack(
 
 	for ( Size i=1; i <= pose.size(); ++i ) {
 
-		core::graph::Node const * current_node( nb_graph.get_node(i) );  // neighbor graph node for residue i
+		utility::graph::Node const * current_node( nb_graph.get_node(i) );  // neighbor graph node for residue i
 		if ( mm->get_bb(i) ) {
 			repack_residues[ i ] = true;   // movable residues
-			for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
+			for ( utility::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
 					it != current_node->const_edge_list_end(); ++it ) {
 				repack_residues[ (*it)->get_other_ind(i) ] = true;  // neighbors of movable residues
 			}
 		} else {
 			// residues at the interdomain interface
-			for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
+			for ( utility::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
 					it != current_node->const_edge_list_end(); ++it ) {
 				Size nb = (*it)->get_other_ind(i);
 				std::pair< Size, Size > p;

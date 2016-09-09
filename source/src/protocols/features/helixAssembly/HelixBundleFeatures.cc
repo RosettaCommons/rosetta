@@ -33,7 +33,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 //C++
 #include <string>
@@ -220,7 +220,7 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helices(StructureID
 //  //between this residue and any of the residues from fragment j
 //  core::scoring::EnergyGraph const & eg =
 //  pose.energies().energy_graph();
-//  for (core::graph::Node::EdgeListConstIter
+//  for (utility::graph::Node::EdgeListConstIter
 //    iter = eg.get_node(ii)->const_upper_edge_list_begin(),
 //    iter_end = eg.get_node(ii)->const_upper_edge_list_end();
 //    iter != iter_end; ++iter )

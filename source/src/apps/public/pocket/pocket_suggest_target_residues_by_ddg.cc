@@ -166,7 +166,7 @@ main( int argc, char * argv [] )
 
 		for ( int j = 1, resnum = input_pose.size(); j <= resnum; ++j ) {
 			if ( chains.count(input_pose.pdb_info()->chain(j)) ==0 ) {
-				for ( graph::Graph::EdgeListIter
+				for ( utility::graph::Graph::EdgeListIter
 						iru  = energy_graph.get_node( j )->lower_edge_list_begin(),
 						irue = energy_graph.get_node( j )->lower_edge_list_end();
 						iru != irue; ++iru ) {

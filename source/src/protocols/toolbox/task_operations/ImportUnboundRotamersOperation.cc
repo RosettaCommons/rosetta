@@ -32,7 +32,7 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 #ifdef WIN32
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #endif
 
 namespace protocols {

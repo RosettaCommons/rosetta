@@ -41,7 +41,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>

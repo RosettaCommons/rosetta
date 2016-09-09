@@ -15,7 +15,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/find_neighbors.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
@@ -130,7 +130,7 @@ utility::vector1< Real > traverse_for_hbonds ( utility::vector1< utility::vector
 /// readable by things like graphviz. (where the first column "DOT:" should be sed'ed out)
 ///
 /// @param os - [in] - the output stream to write to
-void output_interface_graphviz(core::pose::Pose const & pose, core::graph::Graph const & g, std::ostream & os)
+void output_interface_graphviz(core::pose::Pose const & pose, utility::graph::Graph const & g, std::ostream & os)
 {
 	core::Size const jump_num( 1 );
 	core::Size const dist_cutoff( 10 );
@@ -157,7 +157,7 @@ void output_interface_graphviz(core::pose::Pose const & pose, core::graph::Graph
 	}
 
 	// edge connectivity
-	for (core::graph::Graph::EdgeListConstIter iter = g.const_edge_list_begin(); iter != g.const_edge_list_end(); ++iter) {
+	for (utility::graph::Graph::EdgeListConstIter iter = g.const_edge_list_begin(); iter != g.const_edge_list_end(); ++iter) {
 		core::Size const first_node( (*iter)->get_first_node_ind() );
 		core::Size const second_node( (*iter)->get_second_node_ind() );
 		if( first_node == second_node ) continue;
@@ -228,7 +228,7 @@ main( int argc, char * argv [] )
 	//	hbond_set2.show(pose);
 
 
-		core::graph::Graph g( pose.size() );
+		utility::graph::Graph g( pose.size() );
 		for ( Size i=1; i<=pose.size(); ++i ) {
 			if( interface.is_interface( i ) ) {
 				//utility::vector1< Size > i_hbonds( pose.size(), 0 );

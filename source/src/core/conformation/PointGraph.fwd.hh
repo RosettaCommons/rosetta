@@ -19,7 +19,7 @@
 
 // Package Headers
 #include <core/conformation/PointGraphData.fwd.hh>
-#include <core/graph/UpperEdgeGraph.fwd.hh>
+#include <utility/graph/UpperEdgeGraph.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
@@ -27,7 +27,7 @@
 namespace core {
 namespace conformation {
 
-typedef graph::UpperEdgeGraph< PointGraphVertexData, PointGraphEdgeData > PointGraph;
+typedef utility::graph::UpperEdgeGraph< PointGraphVertexData, PointGraphEdgeData > PointGraph;
 
 typedef utility::pointer::shared_ptr< PointGraph > PointGraphOP;
 

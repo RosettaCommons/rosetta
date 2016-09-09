@@ -303,7 +303,7 @@ SmoothEnvPairPotential::compute_centroid_environment(
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -367,7 +367,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 		if ( !rsd1.is_protein() ) continue;
 		if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -494,7 +494,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 	// change in others' context:
 	Vector atom_x = rsd.atom( rsd.nbr_atom() ).xyz();
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node(position)->const_edge_list_begin(),
 			irue = energy_graph.get_node(position)->const_edge_list_end();
 			iru != irue; ++iru ) {

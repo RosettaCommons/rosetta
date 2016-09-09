@@ -176,7 +176,7 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 	std::vector< int>::iterator new_end_pos;
 
 	for ( Size i=1; i<=Size(energy_graph.num_nodes()); ++i ) {
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -472,7 +472,7 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 	std::vector< int>::iterator new_end_pos;
 
 	for ( Size i=1; i<=Size(energy_graph.num_nodes()); ++i ) {
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

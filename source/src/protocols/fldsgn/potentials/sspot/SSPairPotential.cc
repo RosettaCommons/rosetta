@@ -248,7 +248,7 @@ SSPairPotential::score(
 		if ( strand->length() < 2 ) continue;
 		for ( Size ss1=strand->begin(); ss1<strand->end(); ss1++ ) {
 
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node( ss1 )->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node( ss1 )->const_upper_edge_list_end();
 					iru != irue; ++iru ) {

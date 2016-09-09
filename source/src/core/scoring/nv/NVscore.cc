@@ -140,7 +140,7 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 
 	TwelveANeighborGraph const & graph(pose.energies().twelveA_neighbor_graph());
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			node_index  = graph.get_node( current_residue.seqpos() )->const_edge_list_begin(),
 			node_index_end = graph.get_node( current_residue.seqpos() )->const_edge_list_end();
 			node_index != node_index_end; ++node_index ) {

@@ -114,7 +114,7 @@ public:
 
 		RotamerSetsOP rotsets( new RotamerSets() );
 		rotsets->set_task( task );
-		graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
 		rotsets->build_rotamers( pose, scorefxn, packer_neighbor_graph );
 
 		TS_ASSERT_EQUALS( rotsets->nrotamers(), pose.size() * 2);

@@ -205,7 +205,7 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 
 			//TR << "Neighbors of residue " << pose.residue( res1_position ).name3() << " " << res1_position << " include " << std::endl;
 			// for every Edge in the neighbor graph, figure out if that residue is surface exposed *and* hydrophobic
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// save the value to simplify code ahead
@@ -459,7 +459,7 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 			countNeighbors = tenA_neighbor_graph.get_node( res1_position )->num_neighbors_counting_self() - 1;
 
 			// now determine the number of *surface* neighbors
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// save the value to simplify code ahead
@@ -628,7 +628,7 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 			countNeighbors = tenA_neighbor_graph.get_node( res1_position )->num_neighbors_counting_self() - 1;
 
 			// now determine the number of *surface* neighbors
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node( res1_position )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// save the value to simplify code ahead
@@ -1530,7 +1530,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 			// for every Edge in the neighbor graph, figure out if that residue is surface exposed
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << patchArea << " ) include " << std::endl;
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
@@ -1592,7 +1592,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 				//	TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
 				//		<< ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
 				//	TR << ", nbs: ";
-				//	for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+				//	for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				//		eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 				//		Size jj = (*eli)->get_other_ind(ii);
 				//		TR << pose.residue( jj ).name3() << "-" << jj << "(" << pose.pdb_info()->number( jj ) << "), ";
@@ -1725,7 +1725,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 			// for every Edge in the neighbor graph, figure out if that residue is surface exposed
 
 			TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << patchArea << " ) include " << std::endl;
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
@@ -1783,7 +1783,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 				//	TR << "Residue " << pose.residue( ii ).name3() << " " << ii << " (PDB: " << pose.pdb_info()->number( ii )
 				//		<< ") has very small patchArea. residue key: " << key << ", pdb: " << pose.pdb_info()->name();
 				//	TR << ", nbs: ";
-				//	for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+				//	for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				//		eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 				//		Size jj = (*eli)->get_other_ind(ii);
 				//		TR << pose.residue( jj ).name3() << "-" << jj << "(" << pose.pdb_info()->number( jj ) << "), ";
@@ -1911,7 +1911,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 			// add in every neighbors hASA too
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << patchArea << " ) include " << std::endl;
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
@@ -2047,7 +2047,7 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 			// add in every neighbors hASA too
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << residue_hsasa[ii] << " ) include " << std::endl;
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
@@ -2219,7 +2219,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 			// for every Edge in the neighbor graph, figure out if that residue is surface exposed
 
 			//TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " include " << std::endl;
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method
@@ -2542,7 +2542,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 			#ifdef FILE_DEBUG
 				TR << "Neighbors of residue " << pose.residue(ii).name3() << " " << ii << " ( " << res_to_average_hASA.find( key )->second << " ) include " << std::endl;
 			#endif
-			for ( core::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
+			for ( utility::graph::EdgeListConstIterator eli = tenA_neighbor_graph.get_node(ii)->const_edge_list_begin(),
 				eli_end = tenA_neighbor_graph.get_node(ii)->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 				// get the other node for this edge, so pass in the res1 node to this method

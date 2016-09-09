@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.cc
+/// @file   utility/graph/Graph.cc
 /// @brief  graph base classes
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 // Package headers
-#include <core/graph/unordered_object_pool.hpp>
+#include <utility/graph/unordered_object_pool.hpp>
 
 //STL Headers
 #include <iostream>
@@ -25,7 +25,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Boost Headers
-#include <core/graph/unordered_object_pool.hpp>
+#include <utility/graph/unordered_object_pool.hpp>
 
 #include <boost/pool/pool.hpp>
 
@@ -41,10 +41,10 @@
 
 // #include <basic/Tracer.hh>
 
-//static THREAD_LOCAL basic::Tracer TR( "core.graph.Graph" );
+//static THREAD_LOCAL basic::Tracer TR( "utility.graph.Graph" );
 using namespace ObjexxFCL;
 
-namespace core {
+namespace utility {
 namespace graph {
 
 EdgeList::EdgeList(
@@ -949,9 +949,9 @@ SAVE_AND_LOAD_SERIALIZABLE( Graph );
 #endif // SERIALIZATION
 
 } //end namespace graph
-} //end namespace core
+} //end namespace utility
 
 #ifdef    SERIALIZATION
-CEREAL_REGISTER_TYPE( core::graph::Graph )
-CEREAL_REGISTER_DYNAMIC_INIT( core_graph_Graph )
+CEREAL_REGISTER_TYPE( utility::graph::Graph )
+CEREAL_REGISTER_DYNAMIC_INIT( utility_graph_Graph )
 #endif // SERIALIZATION

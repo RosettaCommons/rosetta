@@ -21,7 +21,7 @@
 #include <core/chemical/ResidueGraphTypes.hh>
 
 // Project Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Atom.hh>
@@ -48,7 +48,7 @@ ObjexxFCL::FArray2D_int
 get_residue_path_distances( ResidueType const & res )
 {
 	//return res.get_residue_path_distances();
-	using namespace graph;
+	using namespace utility::graph;
 	Graph g;
 
 	g.set_num_nodes( res.natoms() );

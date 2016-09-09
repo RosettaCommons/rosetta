@@ -19,7 +19,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -388,7 +388,7 @@ private:
 	core::pack::interaction_graph::InteractionGraphBaseOP ig_;
 	core::pack::task::PackerTaskOP task_;
 	core::pack::rotamer_set::RotamerSetsOP rotsets_;
-	core::graph::GraphOP packer_neighbor_graph_;
+	utility::graph::GraphOP packer_neighbor_graph_;
 	std::string trajectory_fname_;
 	core::Size base_scale_;
 };

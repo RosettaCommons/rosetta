@@ -19,7 +19,7 @@
 
 // Boost Headers
 #include <boost/pool/pool.hpp>
-#include <core/graph/unordered_object_pool.hpp>
+#include <utility/graph/unordered_object_pool.hpp>
 
 // C++ headers
 #include <iostream>
@@ -37,7 +37,7 @@
 namespace core {
 namespace scoring {
 
-using namespace graph;
+using namespace utility::graph;
 
 ///////// Energy Node Class /////////////
 
@@ -313,14 +313,14 @@ EnergyGraph::active_score_types( ScoreTypes const & active )
 	return ! clear_edges;
 }
 
-void EnergyGraph::delete_edge( graph::Edge * edge )
+void EnergyGraph::delete_edge( utility::graph::Edge * edge )
 {
 	debug_assert( dynamic_cast< EnergyEdge* > (edge) );
 	energy_edge_pool_->destroy( static_cast< EnergyEdge* > (edge) );
 }
 
 void EnergyGraph::deallocate_arraypoolelement(
-	graph::ArrayPoolElement< Real > & element
+	utility::graph::ArrayPoolElement< Real > & element
 )
 {
 	energy_array_pool_.deallocate_array( element );

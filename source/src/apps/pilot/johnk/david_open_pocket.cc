@@ -144,7 +144,7 @@ main( int argc, char * argv [] )
 
 	// find the neighbors for the central residue
 	core::scoring::TenANeighborGraph const & graph = input_pose.energies().tenA_neighbor_graph();
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 					iter = graph.get_node( central_relax_res )->const_edge_list_begin(),
 					iter_end = graph.get_node( central_relax_res )->const_edge_list_end();
 				iter != iter_end; ++iter ) {

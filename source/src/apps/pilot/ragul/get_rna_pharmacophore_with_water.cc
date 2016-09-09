@@ -241,7 +241,7 @@ int main( int argc, char * argv [] ){
 
 				int const nnrna = tenA_neighbor_graph.get_node( ic )->num_neighbors_counting_self_static();
 
-				for ( core::graph::Graph::EdgeListConstIter
+				for ( utility::graph::Graph::EdgeListConstIter
 						nit = energy_graph.get_node(ic)->const_edge_list_begin(),
 						nite = energy_graph.get_node(ic)->const_edge_list_end();
 						nit != nite; ++nit ) {

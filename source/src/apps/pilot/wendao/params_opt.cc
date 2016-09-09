@@ -28,7 +28,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/pack/rtmin.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -203,7 +203,7 @@ do_rtmin(
 	core::Size npacked=0, nrotrec=0;
 
 	core::pack::task::PackerTaskOP one_res_task( packer_task.clone() );
-	core::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, sf, one_res_task );
+	utility::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, sf, one_res_task );
 
 	core::pack::RTMin rtmin;
 	rtmin.set_cartesian(!option[rropt::ideal]());

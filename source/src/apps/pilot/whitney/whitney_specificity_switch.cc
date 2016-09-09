@@ -176,7 +176,7 @@ main( int argc, char * argv [] )
 
 		// find the neighbors and allow them to repack
 		core::scoring::TenANeighborGraph const & graph = bound_pose_native.energies().tenA_neighbor_graph();
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 						iter = graph.get_node( j )->const_edge_list_begin(),
 						iter_end = graph.get_node( j )->const_edge_list_end();
 					iter != iter_end; ++iter ) {

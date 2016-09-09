@@ -15,7 +15,7 @@
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/chemical/automorphism.hh>
 #include <core/chemical/ResidueType.hh>
@@ -978,8 +978,8 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	}
 
 	//let's see if this works
-	//graph::GraphOP neighbor_graph = pack::create_packer_graph( pose, *scofx, help_task );
-	graph::GraphOP neighbor_graph( new graph::Graph( pose.energies().energy_graph() ) );
+	//utility::graph::GraphOP neighbor_graph = pack::create_packer_graph( pose, *scofx, help_task );
+	utility::graph::GraphOP neighbor_graph( new utility::graph::Graph( pose.energies().energy_graph() ) );
 
 	chemical::ResidueTypeCOP res_type = pose.residue_type( seqpos ).get_self_ptr();
 	conformation::Residue const & existing_residue( pose.residue( seqpos ) );
@@ -1001,7 +1001,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	for ( auto & suggested_rotamer : suggested_rotamers ) {
 
 		scoring::EnergyMap emap;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = neighbor_graph->get_node( seqpos )->const_edge_list_begin(),
 				ire = neighbor_graph->get_node( seqpos )->const_edge_list_end();
 				ir != ire; ++ir ) {

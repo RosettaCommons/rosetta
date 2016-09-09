@@ -19,8 +19,8 @@
 
 // Project Headers
 #include <core/scoring/EnergyMap.hh>
-#include <core/graph/Graph.hh>
-#include <core/graph/ArrayPool.hh>
+#include <utility/graph/Graph.hh>
+#include <utility/graph/ArrayPool.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
@@ -40,13 +40,13 @@ namespace scoring {
 /// for a residue (corresponding to a node in this graph) have changed
 /// (and are marked with color "0" in the domainmap), then the EnergyNode
 /// object will hold that information for the ScoringFunction to retrieve
-class EnergyNode : public graph::Node
+class EnergyNode : public utility::graph::Node
 {
 public:
-	typedef graph::Node parent;
+	typedef utility::graph::Node parent;
 
 public:
-	EnergyNode( graph::Graph * owner, Size index );
+	EnergyNode( utility::graph::Graph * owner, Size index );
 	~EnergyNode() override;
 	void copy_from( parent const * source ) override;
 
@@ -82,10 +82,10 @@ private:
 /// edge is added to the graph, it sets "energies_computed_" as false, and the
 /// ScoreFunction class marks edges as having their energies computed once it
 /// computes them.
-class EnergyEdge : public graph::Edge
+class EnergyEdge : public utility::graph::Edge
 {
 public:
-	typedef graph::Edge parent;
+	typedef utility::graph::Edge parent;
 	typedef scoring::EnergyMap EnergyMap;
 public:
 	EnergyEdge( EnergyGraph * owner, Size n1, Size n2 );
@@ -164,7 +164,7 @@ private:
 
 	bool energies_not_yet_computed_;
 	DistanceSquared dsqr_; // measured between the nbr atoms
-	graph::ArrayPoolElement< Real > array_;
+	utility::graph::ArrayPoolElement< Real > array_;
 };
 
 /// @brief Class to hold the component energies between pairs of residues.
@@ -174,10 +174,10 @@ private:
 /// weight.  The EnergyGraph may be accessed from the pose's Energies object,
 /// but at a price of an extra score evaluation.  This second score evaluation
 /// may be avoided if you use the ScoreFunction::score_components( pose ) method.
-class EnergyGraph : public graph::Graph
+class EnergyGraph : public utility::graph::Graph
 {
 public:
-	typedef graph::Graph parent;
+	typedef utility::graph::Graph parent;
 
 public:
 	~EnergyGraph() override;
@@ -225,11 +225,11 @@ public:
 	EnergyEdge * find_energy_edge( Size n1, Size n2);
 	EnergyEdge const * find_energy_edge( Size n1, Size n2) const;
 
-	void delete_edge( graph::Edge * edge ) override;
+	void delete_edge( utility::graph::Edge * edge ) override;
 
 	/// @brief As an edge is deleted from the graph, it must reliquish hold over its
 	/// array-pool element so that the element may be reused by new edges.
-	void deallocate_arraypoolelement( graph::ArrayPoolElement< Real > & element );
+	void deallocate_arraypoolelement( utility::graph::ArrayPoolElement< Real > & element );
 
 	utility::vector1< int > const &
 	score_type_2_active() const {
@@ -244,7 +244,7 @@ public:
 	/// @brief Give non-const access to the array pool -- this function should only
 	/// be called by class EnergyEdge.  I wish C++ let me declare this function private
 	/// and that EnergyEdge could be a "friend" of this function.
-	graph::ArrayPool< Real > & array_pool() { return energy_array_pool_; }
+	utility::graph::ArrayPool< Real > & array_pool() { return energy_array_pool_; }
 
 #ifdef     SERIALIZATION
 	template < class Archive >
@@ -258,14 +258,14 @@ protected:
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
 
-	graph::Node * create_new_node( Size index ) override;
-	graph::Edge * create_new_edge( Size index1, Size index2 ) override;
-	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
+	utility::graph::Node * create_new_node( Size index ) override;
+	utility::graph::Edge * create_new_edge( Size index1, Size index2 ) override;
+	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
 
 private:
 
 	boost::unordered_object_pool< EnergyEdge > * energy_edge_pool_;
-	graph::ArrayPool< Real >                     energy_array_pool_;
+	utility::graph::ArrayPool< Real >                     energy_array_pool_;
 
 	ScoreTypes              active_2b_score_types_;
 	/// @brief these are flag values; <0 has a special meaning, so they need to be ints

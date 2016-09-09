@@ -32,7 +32,7 @@
 #include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/PointGraphData.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 //#include <core/chemical/AtomType.hh>

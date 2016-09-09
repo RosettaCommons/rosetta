@@ -27,7 +27,7 @@
 // Project headers
 #include <core/types.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -114,7 +114,7 @@ rotamer_trials(
 	rotamer_set::RotamerSetFactory rsf;
 
 	//Energy last_energy( 0.0 );
-	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
 
 	bool replaced_residue( false );
 
@@ -222,7 +222,7 @@ symmetric_rotamer_trials(
 	rotamer_set::symmetry::SymmetricRotamerSetFactory rsf;
 
 	//Energy last_energy( 0.0 );
-	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
 
 	bool replaced_residue( false );
 

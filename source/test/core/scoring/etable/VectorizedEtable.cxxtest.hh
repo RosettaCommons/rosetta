@@ -760,7 +760,7 @@ public:
 	}
 
 	void test_vectorizer_performance() {
-		using namespace core::graph;
+		using namespace utility::graph;
 
 		EnergyMethodOptions options; // default is fine
 		core::scoring::etable::Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
@@ -909,7 +909,7 @@ public:
 	}
 
 	void test_vectorized_square_distance_performance() {
-		using namespace core::graph;
+		using namespace utility::graph;
 
 		EnergyMethodOptions options; // default is fine
 		core::scoring::etable::Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );

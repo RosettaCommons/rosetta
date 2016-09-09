@@ -232,7 +232,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			irue = energy_graph.get_node( pos1 )->const_edge_list_end();
 			iru != irue; ++iru ) {

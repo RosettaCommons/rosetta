@@ -1577,7 +1577,7 @@ centroid_rescore_test()
 			EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 			for ( Size seqpos=1; seqpos<= pose.size(); ++seqpos ) {
 				if ( !pose.residue(seqpos).is_protein() ) continue;
-				for ( graph::Graph::EdgeListConstIter
+				for ( utility::graph::Graph::EdgeListConstIter
 								iru  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
 								irue = energy_graph.get_node( seqpos )->const_edge_list_end();
 							iru != irue; ++iru ) {

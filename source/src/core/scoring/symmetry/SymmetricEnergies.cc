@@ -41,7 +41,7 @@
 #include <utility/exit.hh>
 
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -123,7 +123,7 @@ void
 SymmetricEnergies::update_neighbor_links(
 	pose::Pose const & pose
 ) {
-	using namespace graph;
+	using namespace utility::graph;
 	using namespace scoring;
 
 	//std::cout << "update_neighbor_links: interaction dist: " << scorefxn_info_->max_atomic_interaction_distance() <<
@@ -248,7 +248,7 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 	if ( external ) {
 		required_cgraphs[type] = true;
 
-		using namespace graph;
+		using namespace utility::graph;
 
 		core::conformation::PointGraphOP point_graph( new core::conformation::PointGraph );
 		fill_point_graph( pose, point_graph );

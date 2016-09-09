@@ -752,7 +752,7 @@ public:
 			core::chemical::AA aa_src = pose.residue(i).aa();
 			if ( aa_src == core::chemical::aa_pro || aa_src == core::chemical::aa_gly ) continue;
 
-			for ( graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node(i)->edge_list_begin(),
 					irue = energy_graph.get_node(i)->edge_list_end();
 					iru != irue; ++iru ) {
@@ -1394,7 +1394,7 @@ public:
 			conformation::Residue const & rsd1( pose.residue( i ) );
 			if ( !symm_info->bb_is_independent(rsd1.seqpos()) ) continue;  // not sure if this is necessary
 
-			for ( graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->upper_edge_list_end();
 					iru != irue; ++iru ) {

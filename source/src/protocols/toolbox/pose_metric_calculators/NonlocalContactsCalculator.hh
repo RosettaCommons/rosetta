@@ -19,7 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <basic/options/option.hh>
 
@@ -90,7 +90,7 @@ private:
 	utility::vector1< core::Size > residue_nlcontacts_;
 	utility::vector1< core::Real > residue_nlscore_;
 
-	core::graph::GraphOP nlcontacts_graph_;
+	utility::graph::GraphOP nlcontacts_graph_;
 
 	//how far two residues need to be apart in sequence to count as nonlocal
 	core::Size min_seq_separation_;

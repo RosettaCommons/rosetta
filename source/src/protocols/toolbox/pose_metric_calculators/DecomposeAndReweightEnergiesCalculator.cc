@@ -47,7 +47,7 @@ using namespace ObjexxFCL::format;
 
 #ifdef    SERIALIZATION
 // Package serialization headers
-#include <core/graph/UpperEdgeGraph.srlz.hh>
+#include <utility/graph/UpperEdgeGraph.srlz.hh>
 
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
@@ -206,7 +206,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 	core::scoring::EnergyGraph const & energy_graph(this_pose.energies().energy_graph());
 
 	// add two body energies to the correct one body or two body locations
-	for ( core::graph::Graph::EdgeListConstIter iter = energy_graph.const_edge_list_begin();
+	for ( utility::graph::Graph::EdgeListConstIter iter = energy_graph.const_edge_list_begin();
 			iter != energy_graph.const_edge_list_end(); ++iter ) {
 		core::scoring::EnergyEdge const * const energy_edge = static_cast<core::scoring::EnergyEdge const *>(*iter);
 		core::Size const first_set_num(residue_set_numbers[energy_edge->get_first_node_ind()]);
@@ -525,7 +525,7 @@ save(
 	DecomposeAndReweightEnergiesCalculator::EnergiesGraph const & g
 )
 {
-	core::graph::save_to_archive( arc, g );
+	utility::graph::save_to_archive( arc, g );
 }
 
 template < class Archive >
@@ -534,7 +534,7 @@ load(
 	Archive & arc,
 	DecomposeAndReweightEnergiesCalculator::EnergiesGraph & g )
 {
-	core::graph::load_from_archive( arc, g );
+	utility::graph::load_from_archive( arc, g );
 }
 
 EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( DecomposeAndReweightEnergiesCalculator::EnergiesGraph );

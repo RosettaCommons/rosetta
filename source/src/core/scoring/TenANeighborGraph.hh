@@ -21,7 +21,7 @@
 #include <core/scoring/ContextGraph.hh>
 
 // Project Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -38,14 +38,14 @@
 namespace core {
 namespace scoring {
 
-class TenANeighborNode : public graph::Node
+class TenANeighborNode : public utility::graph::Node
 {
 public:
-	typedef graph::Node parent;
+	typedef utility::graph::Node parent;
 
 public:
 	~TenANeighborNode() override;
-	TenANeighborNode( graph::Graph*, Size node_id );
+	TenANeighborNode( utility::graph::Graph*, Size node_id );
 
 	void copy_from( Node const * source ) override;
 
@@ -100,16 +100,16 @@ public:
 #endif
 };
 
-class TenANeighborEdge : public graph::Edge
+class TenANeighborEdge : public utility::graph::Edge
 {
 public:
-	typedef graph::Edge parent;
+	typedef utility::graph::Edge parent;
 
 public:
 	~TenANeighborEdge() override;
-	TenANeighborEdge(graph::Graph* owner, Size first_node_ind, Size second_node_ind);
+	TenANeighborEdge(utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind);
 
-	void copy_from( graph::Edge const * source ) override;
+	void copy_from( utility::graph::Edge const * source ) override;
 
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
@@ -166,16 +166,16 @@ public:
 		pose::Pose const & pose
 	) override;
 
-	void delete_edge( graph::Edge * edge ) override;
+	void delete_edge( utility::graph::Edge * edge ) override;
 
 protected:
 
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
 
-	graph::Node * create_new_node( Size node_index ) override;
-	graph::Edge * create_new_edge( Size index1, Size index2) override;
-	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
+	utility::graph::Node * create_new_node( Size node_index ) override;
+	utility::graph::Edge * create_new_edge( Size index1, Size index2) override;
+	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
 
 private:
 	static Distance const tenA_;

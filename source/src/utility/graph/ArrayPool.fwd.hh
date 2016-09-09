@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/ArrayPool.fwd.hh
+/// @file   utility/graph/ArrayPool.fwd.hh
 /// @brief  Forward declaration for ArrayPool classes
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_graph_ArrayPool_fwd_hh
-#define INCLUDED_core_graph_ArrayPool_fwd_hh
+#ifndef INCLUDED_utility_graph_ArrayPool_fwd_hh
+#define INCLUDED_utility_graph_ArrayPool_fwd_hh
 
 /// Project headers
 #include <platform/types.hh>
@@ -20,7 +20,7 @@
 /// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace core {
+namespace utility {
 namespace graph {
 
 template< class T >

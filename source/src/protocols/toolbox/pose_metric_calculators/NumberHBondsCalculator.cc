@@ -290,7 +290,7 @@ NumberHBondsCalculator::compute_Hbonds_for_residue(
 	//go over the neighbours of this residue
 	//in the pose energy graph and see whether there
 	//is an Hbond energy between them
-	for ( graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( i )->const_upper_edge_list_begin();
+	for ( utility::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( i )->const_upper_edge_list_begin();
 			egraph_it != pose.energies().energy_graph().get_node( i )->const_upper_edge_list_end(); ++egraph_it ) {
 
 		Size other_node = (*egraph_it)->get_other_ind( i );

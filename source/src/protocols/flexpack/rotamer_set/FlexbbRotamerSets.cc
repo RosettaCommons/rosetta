@@ -22,7 +22,7 @@
 /// Project headers
 #include <core/conformation/Residue.hh>
 #include <core/fragment/Frame.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -197,7 +197,7 @@ FlexbbRotamerSets::nbackbone_conformations() const
 /// @brief function to figure out the flexpack neighbor graph, see core::pack::create_packer_graph for fixbb version
 /// @brief problem: Ca/Cb not fixed, so we need to add a certain distance to the interaction energies. this distance
 /// @brief will depend on the average deviation of the CBs in the flexible segments for each residue
-core::graph::GraphOP
+utility::graph::GraphOP
 FlexbbRotamerSets::flexpack_neighbor_graph(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & sfxn,
@@ -249,7 +249,7 @@ void
 FlexbbRotamerSets::build_rotamers(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & sfxn,
-	core::graph::Graph const & flexpack_neighbor_graph
+	utility::graph::Graph const & flexpack_neighbor_graph
 )
 {
 
@@ -587,7 +587,7 @@ void
 FlexbbRotamerSets::precompute_energies(
 	Pose const & pose,
 	ScoreFunction const & sfxn,
-	core::graph::GraphCOP flexpack_neighbor_graph,
+	utility::graph::GraphCOP flexpack_neighbor_graph,
 	interaction_graph::FlexbbInteractionGraph & flexbb_ig
 ) const
 {
@@ -612,7 +612,7 @@ void
 FlexbbRotamerSets::precompute_all_energies(
 	Pose const & /*pose*/,
 	ScoreFunction const & /*sfxn*/,
-	core::graph::GraphCOP /*flexpack_neighbor_graph*/,
+	utility::graph::GraphCOP /*flexpack_neighbor_graph*/,
 	interaction_graph::PrecomputedFlexbbInteractionGraph & /*flexbb_ig*/
 ) const
 {
@@ -625,7 +625,7 @@ void
 FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 	Pose const & pose,
 	ScoreFunction const & sfxn,
-	core::graph::GraphCOP flexpack_neighbor_graph,
+	utility::graph::GraphCOP flexpack_neighbor_graph,
 	interaction_graph::OTFFlexbbInteractionGraph & flexbb_ig
 ) const
 {
@@ -683,7 +683,7 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 
 	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
 		Size ii_resid = moltenres_2_resid_[ ii ];
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				li    = flexpack_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
 				liend = flexpack_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
 				li != liend; ++li ) {
@@ -955,7 +955,7 @@ FlexbbRotamerSets::compute_onebody_interactions_with_background(
 	Size moltenres,
 	Pose const & pose,
 	ScoreFunction const & sfxn,
-	core::graph::GraphCOP flexpack_neighbor_graph,
+	utility::graph::GraphCOP flexpack_neighbor_graph,
 	interaction_graph::FlexbbInteractionGraph & flexbb_ig
 ) const
 {

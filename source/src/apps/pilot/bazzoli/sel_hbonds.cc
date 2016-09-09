@@ -330,7 +330,7 @@ int main( int argc, char * argv [] )
 				Size p_idon = get_pose_resnum(idon, cdon, ps);
 				Size p_iacc = get_pose_resnum(iacc, cacc, ps);
 
-				for ( core::graph::Graph::EdgeListConstIter
+				for ( utility::graph::Graph::EdgeListConstIter
 						nit = energy_graph.get_node(p_idon)->const_edge_list_begin(),
 						nite = energy_graph.get_node(p_idon)->const_edge_list_end();
 						nit != nite; ++nit ) {
@@ -380,7 +380,7 @@ int main( int argc, char * argv [] )
 				// the ith output block lists the hbond identifiers of the ith neighbor
 				// residue that forms hbonds with the atom (i=1,...,P, where P is the
 				// number of such neighbor residues).
-				for ( core::graph::Graph::EdgeListConstIter
+				for ( utility::graph::Graph::EdgeListConstIter
 						nit = energy_graph.get_node(pi)->const_edge_list_begin(),
 						nite = energy_graph.get_node(pi)->const_edge_list_end();
 						nit != nite; ++nit ) {

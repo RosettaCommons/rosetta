@@ -77,7 +77,7 @@ public:
 		pose::Pose const &,
 		scoring::ScoreFunction const &,
 		pack::task::PackerTask const &,
-		graph::GraphCOP,
+		utility::graph::GraphCOP,
 		chemical::ResidueTypeCOP,
 		conformation::Residue const&,
 		utility::vector1< utility::vector1< Real > > const &,

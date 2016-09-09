@@ -221,7 +221,7 @@ AssemblyMover::follow_random_edge_from_node(
 
 	for ( core::Size cur_edge_ind=1; cur_edge_ind<=num_edges; ++cur_edge_ind ) {
 		//if(TR.Debug.visible()) { TR << "cur_edge_ind: " << cur_edge_ind << std::endl;}
-		core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
+		utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 		for ( core::Size j=0; j<edge_order[cur_edge_ind]; ++j ) {
 			++edge_it;
 		}

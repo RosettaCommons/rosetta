@@ -27,7 +27,7 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/chemical/VariantType.hh>
@@ -80,7 +80,7 @@
 #include <core/conformation/PseudoBond.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
@@ -1058,7 +1058,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::fill_rotamer_vector(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
@@ -1297,7 +1297,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::build_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
@@ -1364,7 +1364,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::create_rotamers_from_chisets(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
 	utility::vector1< ChiSetOP > const & chi_set_vector,

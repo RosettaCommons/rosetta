@@ -40,8 +40,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/graph/Graph.fwd.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.fwd.hh>
@@ -783,7 +783,7 @@ RDF_norm[ni] = nden*(4/3*M_PI*std::pow((bw*(ni-1))+bw, 3.0) - 4/3*M_PI*std::pow(
 // find all interacting pairs and sort them into RDF bins
 for (int ires=1; ires<=nres; ++ires) {
 core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-for (core::graph::Graph::EdgeListConstIter iru = energy_graph.get_node(ires)->const_edge_list_begin(),
+for (utility::graph::Graph::EdgeListConstIter iru = energy_graph.get_node(ires)->const_edge_list_begin(),
 irue = energy_graph.get_node(ires)->const_edge_list_end(); iru != irue; ++iru) {
 core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 core::Size const e1( edge->get_first_node_ind() );

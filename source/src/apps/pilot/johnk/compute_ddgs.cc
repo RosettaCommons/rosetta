@@ -128,7 +128,7 @@ main( int argc, char * argv [] )
 			allow_repacked.at(ii) = true;
 			// Set the neighbors to repack, everything else fixed
 			core::scoring::TenANeighborGraph const & graph = bound_pose.energies().tenA_neighbor_graph();
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 							iter = graph.get_node( ii )->const_edge_list_begin(),
 							iter_end = graph.get_node( ii )->const_edge_list_end();
 						iter != iter_end; ++iter ) {

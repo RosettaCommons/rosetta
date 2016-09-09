@@ -29,7 +29,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Core headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/Remarks.fwd.hh>

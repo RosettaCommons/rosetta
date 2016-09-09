@@ -108,7 +108,7 @@ public:
         {
             core::conformation::Residue const &rsd_i( pose.residue(i) );
 
-            for ( graph::Graph::EdgeListConstIter
+            for ( utility::graph::Graph::EdgeListConstIter
                     iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
                     irue = energy_graph.get_node(i)->const_upper_edge_list_end();
                     iru != irue; ++iru )

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.cxxtest.hh
-/// @brief  test suite for core::graph::Graph.cc
+/// @file   utility/graph/Graph.cxxtest.hh
+/// @brief  test suite for utility::graph::Graph.cc
 /// @author Ron Jacak (ron.jacak@gmail.com)
 
 

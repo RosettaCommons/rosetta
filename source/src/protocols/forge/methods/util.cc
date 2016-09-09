@@ -30,7 +30,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 #include <core/id/types.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -91,7 +91,7 @@ union_interval(
 	core::Size const root,
 	core::Size const left,
 	core::Size const right,
-	core::graph::DisjointSets & uf
+	utility::graph::DisjointSets & uf
 )
 {
 	using core::Size;

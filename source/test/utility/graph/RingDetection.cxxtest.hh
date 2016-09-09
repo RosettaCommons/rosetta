@@ -17,7 +17,8 @@
 #include <cxxtest/TestSuite.h>
 #include <utility/graph/ring_detection.hh>
 
-#include <core/types.hh>
+//Types
+#include <platform/types.hh>
 
 #include <utility/vector1.hh>
 
@@ -53,10 +54,10 @@ public:
 		boost::add_edge(4, 10,g);
 		boost::add_edge(5, 11,g);
 
-		for( core::Size ii(0); ii < 6; ++ii ) {
+		for( platform::Size ii(0); ii < 6; ++ii ) {
 			TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( ii, g ), 6);
 		}
-		for( core::Size ii(6); ii < 12; ++ii ) {
+		for( platform::Size ii(6); ii < 12; ++ii ) {
 			TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( ii, g ), 999999);
 		}
 	} 
@@ -79,7 +80,7 @@ public:
 		boost::add_edge(2, 6, g);
 		boost::add_edge(3, 7, g);
 
-		for( core::Size ii(0); ii < 8; ++ii ) {
+		for( platform::Size ii(0); ii < 8; ++ii ) {
 			TS_ASSERT_EQUALS(utility::graph::smallest_ring_size( ii, g ), 4);
 		}
 	}

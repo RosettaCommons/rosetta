@@ -35,7 +35,7 @@
 #include <boost/foreach.hpp>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/Energies.hh>
 
@@ -352,7 +352,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	}
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
 	restask.restrict_to_repacking();
-	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.size() ) );
+	utility::graph::GraphOP packer_graph( new utility::graph::Graph( pose.size() ) );
 	ptask->set_bump_check( true );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 	// TR << "num rotamers for resi " << resi << " is: " << rotset->num_rotamers() << std::endl;
@@ -444,7 +444,7 @@ RotamerBoltzmannWeight::report_sm( core::pose::Pose const & pose ) const
 core::Real
 RotamerBoltzmannWeight::interface_interaction_energy( core::pose::Pose const & pose, core::Size const res ) const
 {
-	using namespace core::graph;
+	using namespace utility::graph;
 	using namespace core::scoring;
 
 	core::pose::Pose nonconst_pose( pose );

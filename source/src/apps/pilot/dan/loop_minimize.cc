@@ -119,8 +119,8 @@ get_tenA_neighbor_residues(
 	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 	for ( int i=1; i <= int(local_residue_positions.size()); ++i ) {
 		if ( ! local_residue_positions[i] ) continue;
-		core::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
-		for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
+		utility::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
+		for ( utility::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
 			  it != current_node->const_edge_list_end(); ++it ) {
 			residue_positions[ (*it)->get_other_ind(i) ] = true;
 		}

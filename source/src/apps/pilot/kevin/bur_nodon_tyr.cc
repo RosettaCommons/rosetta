@@ -55,7 +55,7 @@
 
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/vector0.hh>

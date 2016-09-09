@@ -180,7 +180,7 @@ RepeatAssemblyMover::dfs_cycle_finder(
 
 			//Get an interator the first edge and advance it the number of times indicated
 			//in the current index of the traversal_order vector (used for randomness in iteration)
-			core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
+			utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 			for ( core::Size j=0; j<traversal_order[i]; ++j ) {
 				++edge_it;
 			}

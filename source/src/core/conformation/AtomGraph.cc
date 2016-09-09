@@ -19,7 +19,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/conformation/AtomGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 
 
 namespace core {

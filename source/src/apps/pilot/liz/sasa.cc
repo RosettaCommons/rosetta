@@ -234,7 +234,7 @@ main( int argc, char* argv [] )
 
 			{
 				nbrs[i] = 1;
-				for ( graph::Graph::EdgeListConstIter
+				for ( utility::graph::Graph::EdgeListConstIter
 								ir  = tenA_neighbor_graph.get_node( i )->const_edge_list_begin(),
 								ire = tenA_neighbor_graph.get_node( i )->const_edge_list_end();
 							ir != ire; ++ir ) {

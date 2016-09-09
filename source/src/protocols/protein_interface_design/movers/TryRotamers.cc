@@ -30,7 +30,7 @@
 #include <protocols/protein_interface_design/util.hh>
 #include <utility/string_util.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
@@ -132,7 +132,7 @@ TryRotamers::setup_rotamer_set( pose::Pose & pose )
 	ptask->set_bump_check( clash_check_ );
 
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
-	graph::GraphOP packer_graph( new graph::Graph( pose.size() ) );
+	utility::graph::GraphOP packer_graph( new utility::graph::Graph( pose.size() ) );
 	restask.or_ex1( true );
 	restask.or_ex2( true );
 	restask.or_ex3( true );

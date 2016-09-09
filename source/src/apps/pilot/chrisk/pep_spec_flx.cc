@@ -419,7 +419,7 @@ has_clash(
 		EnergyGraph & energy_graph( energies.energy_graph() );
 
 		// search upstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->lower_edge_list_end();
 				iru != irue; ++iru ) {
@@ -438,7 +438,7 @@ has_clash(
 		if( is_clash == true ) break;
 
 		// and downstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -480,7 +480,7 @@ is_clash(
 		// the neighbor/energy links
 		EnergyGraph & energy_graph( energies.energy_graph() );
 		// search upstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->lower_edge_list_end();
 				iru != irue; ++iru ) {
@@ -495,7 +495,7 @@ is_clash(
 			}
 		}
 		// and downstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -1264,7 +1264,7 @@ mutate_random_residue(
 	//get seqpos nbrs from energy map
 	vector1< bool > is_nbr( pose.size(), false );
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 					ir  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
 					ire = energy_graph.get_node( seqpos )->const_edge_list_end();
 				ir != ire; ++ir ) {

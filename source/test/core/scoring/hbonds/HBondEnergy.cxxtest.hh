@@ -375,7 +375,7 @@ public:
 		sfxn( pose );
 
 		{ // scope
-			core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
+			utility::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
 			TS_ASSERT( e4_8 );
 			if ( ! e4_8 ) return;
 
@@ -397,7 +397,7 @@ public:
 		sfxn2( pose );
 
 		{ // scope
-			core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
+			utility::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
 			TS_ASSERT( e4_8 );
 			if ( ! e4_8 ) return;
 

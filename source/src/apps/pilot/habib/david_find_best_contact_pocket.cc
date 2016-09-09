@@ -96,7 +96,7 @@ void define_interface( core::pose::Pose & input_pose ) {
 	(*scorefxn)(input_pose);
 
 	EnergyGraph & energy_graph(input_pose.energies().energy_graph());
-	for ( graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			iru  = energy_graph.get_node( lig_res_num )->lower_edge_list_begin(),
 			irue = energy_graph.get_node( lig_res_num )->lower_edge_list_end();
 			iru != irue; ++iru ) {

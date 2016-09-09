@@ -66,7 +66,7 @@ SpecialRotamerRSO::alter_rotamer_set(
 	//mjo commenting out 'ptask' because it is unused and causes a warning
 	core::pack::task::PackerTask const & /*ptask*/,
 	//mjo commenting out 'packer_neighbor_graph' because it is unused and causes a warning
-	core::graph::GraphCOP /*packer_neighbor_graph*/,
+	utility::graph::GraphCOP /*packer_neighbor_graph*/,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 )
 {

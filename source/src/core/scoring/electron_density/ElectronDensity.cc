@@ -1877,7 +1877,7 @@ core::Real ElectronDensity::matchRes(
 
 		// calc neighbor residues
 		if ( score_window_context_ ) {
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_edge_list_end();
 					iru != irue; ++iru ) {

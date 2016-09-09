@@ -12,7 +12,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -245,7 +245,7 @@ core::scoring::constraints::ConstraintSetOP createMinimizationConstraint(pose::P
 }
 
 void deleteEdge( core::scoring::EnergyGraph&  g){
-	core::graph::EdgeListIterator it = g.edge_list_begin();
+	utility::graph::EdgeListIterator it = g.edge_list_begin();
 	while (it != g.edge_list_end() ){
 		if ( (*it)->get_first_node_ind() == 1 && (*it)->get_second_node_ind() == 14){
 			g.delete_edge(*it);

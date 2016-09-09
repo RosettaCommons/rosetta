@@ -30,7 +30,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 
 // Utility headers
@@ -42,7 +42,7 @@
 #ifdef WIN32
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #endif
 
 #ifdef    SERIALIZATION
@@ -239,7 +239,7 @@ public: // noop functions:
 		pose::Pose const & the_pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	);
 
@@ -249,7 +249,7 @@ public: // noop functions:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
 	virtual
@@ -258,7 +258,7 @@ public: // noop functions:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & energies ) const;
 
 	virtual
@@ -267,7 +267,7 @@ public: // noop functions:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & one_body_energies,
 		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
 		utility::vector1< core::Size > & packable_neighbors ) const;
@@ -279,7 +279,7 @@ public: // noop functions:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< scoring::EnergyMap > & energies ) const;
 
 

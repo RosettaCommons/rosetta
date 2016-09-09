@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/ArrayPool.cc
+/// @file   utility/graph/ArrayPool.cc
 /// @brief  ArrayPool class declaration and implementation
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit Headers
-#include <core/graph/ArrayPool.hh>
+#include <utility/graph/ArrayPool.hh>
 
 // Package Headers
-#include <core/types.hh>
+#include <platform/types.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
 
-namespace core {
+namespace utility {
 namespace graph {
 
 std::string
-neg_space_element_allocation_error_message( Size block_size, Size neg_space_element_size )
+neg_space_element_allocation_error_message( platform::Size block_size, platform::Size neg_space_element_size )
 {
 	return "ERROR: new failed in ArrayPool when requesting neg space block of size " +
 		utility::to_string( block_size ) + " (" +
@@ -33,7 +33,7 @@ neg_space_element_allocation_error_message( Size block_size, Size neg_space_elem
 }
 
 std::string
-block_allocation_error_message( Size block_size, Size array_size, Size t_size )
+block_allocation_error_message( platform::Size block_size, platform::Size array_size, platform::Size t_size )
 {
 	return "ERROR: new failed in ArrayPool when requesting Array block of size " +
 		utility::to_string( block_size ) + "x" + utility::to_string( array_size ) + " (" +
@@ -42,4 +42,4 @@ block_allocation_error_message( Size block_size, Size array_size, Size t_size )
 }
 
 } //end namespace graph
-} //end namespace core
+} //end namespace utility

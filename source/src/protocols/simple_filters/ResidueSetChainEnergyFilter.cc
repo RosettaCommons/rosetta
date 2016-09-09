@@ -156,7 +156,7 @@ ResidueSetChainEnergyFilter::compute(
 		assert( iseq1 <= in_pose.size() );
 		//TR<< "Summing energies: seqpos: " << iseq1 << std::endl;
 		//search over energy edges
-		for ( graph::Graph::EdgeListIter el_iter  = energy_graph.get_node( iseq1 )->edge_list_begin();
+		for ( utility::graph::Graph::EdgeListIter el_iter  = energy_graph.get_node( iseq1 )->edge_list_begin();
 				el_iter != energy_graph.get_node( iseq1 )->edge_list_end(); ++el_iter ) {
 			EnergyEdge * edge( static_cast< EnergyEdge *> ( *el_iter ) );
 			//the other seqpos connected to this edge

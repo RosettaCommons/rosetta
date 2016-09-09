@@ -41,6 +41,9 @@ sources = {
 	],
 	"graph" : [
 		"ring_detection",
+		"ArrayPool",
+		"DisjointSets",
+		"Graph",
 	],
 	"io" : [
 		"izstream",

@@ -137,7 +137,7 @@ interface_energymap(
 		core::scoring::EnergyNode const * const node1(energygraph.get_energy_node(*res_iter1));
 
 		// iterate over all edges connected to that node
-		for (core::graph::EdgeListConstIterator edge_iter = node1->const_edge_list_begin();
+		for (utility::graph::EdgeListConstIterator edge_iter = node1->const_edge_list_begin();
 		     edge_iter != node1->const_edge_list_end(); ++edge_iter) {
 
 			// check to see if the other node connected to the edge is in the second set of residues

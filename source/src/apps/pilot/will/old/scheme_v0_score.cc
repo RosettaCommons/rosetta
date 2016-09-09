@@ -255,7 +255,7 @@ extract_scores(
 	for(Size ir = 1; ir <= nres; ++ir){
 		if(!pose.residue(ir).is_protein()) { continue; }
 		scores.onebody += energies.onebody_energies(ir).dot(weights);
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ir)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(ir)->const_upper_edge_list_end();
 				iru != irue; ++iru

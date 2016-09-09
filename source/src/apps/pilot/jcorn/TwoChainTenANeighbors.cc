@@ -115,7 +115,7 @@ private:
 		scoring::TenANeighborGraph const & tenA_neighbor_graph = pose.energies().tenA_neighbor_graph();
 
 		for ( partner1_res_ = ch1_begin_; partner1_res_ <= ch1_end_; ++partner1_res_ ) {  // for all nodes in chain1 == for all residues in chain 1
-			for ( graph::Graph::EdgeListConstIter edge_iter = tenA_neighbor_graph.get_node( partner1_res_ )->const_upper_edge_list_begin();
+			for ( utility::graph::Graph::EdgeListConstIter edge_iter = tenA_neighbor_graph.get_node( partner1_res_ )->const_upper_edge_list_begin();
 				  edge_iter != tenA_neighbor_graph.get_node( partner1_res_ )->const_upper_edge_list_end();
 				  ++edge_iter ) {   // for all edges of node
 				partner2_res_ = (*edge_iter)->get_other_ind( partner1_res_ );	// get node on other edge of that node == 2nd residue index

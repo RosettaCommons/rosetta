@@ -31,7 +31,7 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/JumpSRFD.hh>
 #include <core/fragment/JumpingFrame.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -431,7 +431,7 @@ ResiduePairJump::build_sidechain_rotamers()
 			// set up a simple packer task with this single residue enabled
 			task_mask[which] = true;
 			task->restrict_to_residues( task_mask );
-			core::graph::GraphOP packer_neighbor_graph( core::pack::create_packer_graph( *miniPose_, *scorefxn, task ) );
+			utility::graph::GraphOP packer_neighbor_graph( core::pack::create_packer_graph( *miniPose_, *scorefxn, task ) );
 			// build possible rotamers for this residue
 			rotset->build_rotamers( *miniPose_, *scorefxn, *task, packer_neighbor_graph );
 			task_mask[which] = false;

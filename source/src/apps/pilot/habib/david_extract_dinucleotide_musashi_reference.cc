@@ -221,7 +221,7 @@ main( int argc, char * argv [] )
 
 				Size cpos=0;
 				Real cscore=1;
-				for ( graph::Graph::EdgeListIter
+				for ( utility::graph::Graph::EdgeListIter
 						iru  = energy_graph.get_node( i )->lower_edge_list_begin(),
 						irue = energy_graph.get_node( i )->lower_edge_list_end();
 						iru != irue; ++iru ) {
@@ -266,7 +266,7 @@ main( int argc, char * argv [] )
 					continue;
 				}
 
-				for ( graph::Graph::EdgeListIter
+				for ( utility::graph::Graph::EdgeListIter
 						iru  = energy_graph.get_node( i )->lower_edge_list_begin(),
 						irue = energy_graph.get_node( i )->lower_edge_list_end();
 						iru != irue; ++iru ) {

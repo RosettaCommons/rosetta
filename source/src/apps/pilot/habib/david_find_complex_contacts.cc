@@ -100,7 +100,7 @@ main( int argc, char * argv [] )
 			std::string rch = tmp.str();
 			//if (rch != chain) continue;
 			//std::cout<<std::endl<<input_pose.pdb_info()->number(i)<<":";
-			for ( graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node( i )->edge_list_begin(),
 					irue = energy_graph.get_node( i )->edge_list_end();
 					iru != irue; ++iru ) {

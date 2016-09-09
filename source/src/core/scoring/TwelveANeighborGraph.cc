@@ -37,7 +37,7 @@ namespace scoring {
 
 TwelveANeighborNode::~TwelveANeighborNode() = default;
 
-TwelveANeighborNode::TwelveANeighborNode( graph::Graph * owner, Size node_id )
+TwelveANeighborNode::TwelveANeighborNode( utility::graph::Graph * owner, Size node_id )
 :
 	parent( owner, node_id )
 {}
@@ -66,7 +66,7 @@ TwelveANeighborNode::count_dynamic_memory() const {
 TwelveANeighborEdge::~TwelveANeighborEdge() = default;
 
 TwelveANeighborEdge::TwelveANeighborEdge(
-	graph::Graph* owner,
+	utility::graph::Graph* owner,
 	Size first_node_ind,
 	Size second_node_ind )
 :
@@ -162,24 +162,24 @@ TwelveANeighborGraph::count_dynamic_memory() const {
 	return parent::count_dynamic_memory();
 }
 
-void TwelveANeighborGraph::delete_edge( graph::Edge * edge )
+void TwelveANeighborGraph::delete_edge( utility::graph::Edge * edge )
 {
 	delete edge;
 }
 
-graph::Node*
+utility::graph::Node*
 TwelveANeighborGraph::create_new_node( Size node_index ) {
 	return new TwelveANeighborNode( this, node_index );
 }
 
-graph::Edge*
+utility::graph::Edge*
 TwelveANeighborGraph::create_new_edge( Size index1, Size index2)
 {
 	return new TwelveANeighborEdge( this, index1, index2 );
 }
 
-graph::Edge*
-TwelveANeighborGraph::create_new_edge( graph::Edge const * example_edge )
+utility::graph::Edge*
+TwelveANeighborGraph::create_new_edge( utility::graph::Edge const * example_edge )
 {
 	return new TwelveANeighborEdge(
 		this,
@@ -199,14 +199,14 @@ TwelveANeighborGraph::create_new_edge( graph::Edge const * example_edge )
 template< class Archive >
 void
 core::scoring::TwelveANeighborGraph::save( Archive & arc ) const {
-	arc( cereal::base_class< core::graph::Graph >( this ) );
+	arc( cereal::base_class< utility::graph::Graph >( this ) );
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
 core::scoring::TwelveANeighborGraph::load( Archive & arc ) {
-	arc( cereal::base_class< core::graph::Graph >( this ) );
+	arc( cereal::base_class< utility::graph::Graph >( this ) );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::TwelveANeighborGraph );

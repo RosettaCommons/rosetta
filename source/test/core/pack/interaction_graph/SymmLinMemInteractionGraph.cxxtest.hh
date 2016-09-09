@@ -19,7 +19,7 @@
 #include <core/pack/interaction_graph/SymmLinMemInteractionGraph.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -320,7 +320,7 @@ public:
 	void test_symm_minimalist_ig() {
 		using namespace core::chemical;
 		using namespace core::conformation::symmetry;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pack;
 		using namespace core::pack::interaction_graph;
 		using namespace core::pack::rotamer_set;
@@ -411,7 +411,7 @@ public:
 					pose.replace_residue( ii, *rotsets->rotamer_set_for_residue( ii )->rotamer( jj ), false );
 					core::Real jjenergy = (*sfxn)( pose );
 					//if ( ii == 11 && jj == 2 ) {
-					// for ( core::graph::Node::EdgeListConstIter
+					// for ( utility::graph::Node::EdgeListConstIter
 					//   eiter = pose.energies().energy_graph().get_node(11)->const_edge_list_begin(),
 					//   eiter_end = pose.energies().energy_graph().get_node(11)->const_edge_list_end();
 					//   eiter != eiter_end; ++eiter ) {
@@ -423,7 +423,7 @@ public:
 					//}
 					//utility::vector1< core::Real > two_body_energy_sum( 3, 0.0 );
 					//for ( Size kk = 11; kk <= 13; ++kk ) {
-					// for ( core::graph::Node::EdgeListConstIter
+					// for ( utility::graph::Node::EdgeListConstIter
 					//   eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
 					//   eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
 					//   eiter != eiter_end; ++eiter ) {
@@ -460,7 +460,7 @@ public:
 							for ( Size kk = 11; kk <= 13; ++kk ) {
 								Size kkmoltenresid = kk-10;
 								core::conformation::Residue const & kkres = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( kk == ii ? jj : 1, 1 );
-								for ( core::graph::Node::EdgeListConstIter
+								for ( utility::graph::Node::EdgeListConstIter
 										eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
 										eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
 										eiter != eiter_end; ++eiter ) {
@@ -505,7 +505,7 @@ public:
 						for ( Size kk = 11; kk <= 13; ++kk ) {
 							Size kkmoltenresid = kk-10;
 							core::conformation::Residue const & kkres = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( kk == ii ? jj : 1, 1 );
-							for ( core::graph::Node::EdgeListConstIter
+							for ( utility::graph::Node::EdgeListConstIter
 									eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
 									eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
 									eiter != eiter_end; ++eiter ) {
@@ -561,7 +561,7 @@ public:
 
 		using namespace core::chemical;
 		using namespace core::conformation::symmetry;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pack;
 		using namespace core::pack::interaction_graph;
 		using namespace core::pack::rotamer_set;
@@ -731,7 +731,7 @@ public:
 		//for ( Size kk = 1; kk <= 7; ++kk ) {
 		// Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
 		// core::conformation::Residue const & kkres( pose.residue( kkresid ) );
-		// for ( core::graph::Node::EdgeListConstIter
+		// for ( utility::graph::Node::EdgeListConstIter
 		//     eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
 		//     eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
 		//    eiter != eiter_end; ++eiter ) {
@@ -794,7 +794,7 @@ public:
 		//for ( Size kk = 1; kk <= 7; ++kk ) {
 		// Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
 		// core::conformation::Residue const & kkres( pose.residue( kkresid ) );
-		// for ( core::graph::Node::EdgeListConstIter
+		// for ( utility::graph::Node::EdgeListConstIter
 		//     eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
 		//     eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
 		//    eiter != eiter_end; ++eiter ) {
@@ -861,7 +861,7 @@ public:
 				// for ( Size kk = 1; kk <= 7; ++kk ) {
 				//  Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
 				//  core::conformation::Residue const & kkres( pose.residue( kkresid ) );
-				//  for ( core::graph::Node::EdgeListConstIter
+				//  for ( utility::graph::Node::EdgeListConstIter
 				//      eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
 				//      eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
 				//     eiter != eiter_end; ++eiter ) {

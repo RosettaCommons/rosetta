@@ -116,7 +116,7 @@ SideChainNeighborsEnergy::residue_energy(
 	Vector const my_sc_vector = (my_sc_coordinates - my_bb_coordinates).normalize();
 
 	// iterate across neighbors within 12 angstroms, add sum of vectors
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin();
 			ir != graph.get_node( rsd.seqpos() )->const_edge_list_end(); ++ir ) {
 		Size const j = (*ir)->get_other_ind( rsd.seqpos() );

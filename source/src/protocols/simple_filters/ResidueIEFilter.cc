@@ -225,7 +225,7 @@ core::Real
 ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 {
 	using namespace core::scoring;
-	using namespace core::graph;
+	using namespace utility::graph;
 
 	std::set< core::Size > const resnums = compute_resnums( pose );
 

@@ -26,7 +26,7 @@
 #include <core/types.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -72,7 +72,7 @@ public:
 		pose::Pose const & the_pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	) = 0;
 
@@ -82,7 +82,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	) = 0;
 
 	virtual
@@ -144,7 +144,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & energies ) const = 0;
 
 	virtual
@@ -153,7 +153,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & one_body_energies,
 		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
 		utility::vector1< core::Size > & packable_neighbors ) const = 0;
@@ -165,7 +165,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< scoring::EnergyMap > & energies ) const = 0;
 
 	virtual

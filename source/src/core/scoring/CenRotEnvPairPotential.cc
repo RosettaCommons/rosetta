@@ -414,7 +414,7 @@ CenRotEnvPairPotential::evaluate_cen_rot_env_and_cbeta_deriv(
 	// change in others' context:
 	Vector atom_x = rsd.atom( rsd.nbr_atom() ).xyz(); //CB for cenrot
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node(position)->const_edge_list_begin(),
 			irue = energy_graph.get_node(position)->const_edge_list_end();
 			iru != irue; ++iru ) {
@@ -567,7 +567,7 @@ CenRotEnvPairPotential::compute_centroid_environment(
 
 		//we need to go through all the edges here rather than just upper ones
 		//because the edges aren't sym due to the new env def
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {
@@ -607,7 +607,7 @@ CenRotEnvPairPotential::compute_dcentroid_environment(
 	for ( Size i = 1; i <= nres; ++i ) {
 		conformation::Residue const & rsd1 ( pose.residue(i) );
 		if ( !rsd1.is_protein() ) continue;
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {

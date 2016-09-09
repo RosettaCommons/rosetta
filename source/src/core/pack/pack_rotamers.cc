@@ -35,7 +35,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -194,7 +194,7 @@ pack_rotamers_setup(
 
 	scfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 
-	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, task );
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, task );
 
 	rotsets->set_task( task );
 	rotsets->initialize_pose_for_rotsets_creation(pose);

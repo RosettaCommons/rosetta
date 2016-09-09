@@ -145,7 +145,7 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 
 		Real countN = 0.0;
 		// iterate across neighbors within 12 angstroms
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = graph.get_node(i)->const_edge_list_begin(),
 				ire = graph.get_node(i)->const_edge_list_end();
 				ir != ire; ++ir ) {
@@ -205,7 +205,7 @@ MembraneEnvSmoothEnergy::residue_energy(
 	// iterate across neighbors within 12 angstroms
 	using namespace ObjexxFCL::format;
 	//TR << I(4,rsd.seqpos()) << std::endl;
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin(),
 			ire = graph.get_node( rsd.seqpos() )->const_edge_list_end();
 			ir != ire; ++ir ) {
@@ -267,7 +267,7 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 
 	Vector f1(0.0), f2(0.0);
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = graph.get_node(i)->const_edge_list_begin(),
 			ire = graph.get_node(i)->const_edge_list_end();
 			ir != ire; ++ir ) {

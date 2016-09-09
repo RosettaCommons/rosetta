@@ -18,7 +18,7 @@
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -592,7 +592,7 @@ GreenPacker::create_fresh_packer_neighbor_graph(
 void
 GreenPacker::drop_inter_group_edges(
 	core::pose::Pose & pose,
-	core::graph::GraphOP packer_neighbor_graph
+	utility::graph::GraphOP packer_neighbor_graph
 ) const
 {
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -616,7 +616,7 @@ GreenPacker::drop_inter_group_edges(
 void
 GreenPacker::drop_intra_group_edges(
 	core::pose::Pose & pose,
-	core::graph::GraphOP packer_neighbor_graph
+	utility::graph::GraphOP packer_neighbor_graph
 ) const
 {
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {

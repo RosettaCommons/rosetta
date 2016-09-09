@@ -451,7 +451,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 
 	// get inter-res etable energies
 	if ( fa_atr_wt>0 || fa_rep_wt>0 || fa_sol_wt>0 || fa_elec_wt>0 ) {
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ires)->const_edge_list_begin(),
 				irue = energy_graph.get_node(ires)->const_edge_list_end();
 				iru != irue; ++iru ) {

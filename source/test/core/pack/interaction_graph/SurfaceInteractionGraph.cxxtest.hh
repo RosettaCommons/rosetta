@@ -58,9 +58,9 @@
 #include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/PointGraphData.fwd.hh>
 #include <core/conformation/RotamerSetBase.hh>
-#include <core/graph/Graph.hh>
-#include <core/graph/UpperEdgeGraph.fwd.hh>
-#include <core/graph/unordered_object_pool.fwd.hpp>
+#include <utility/graph/Graph.hh>
+#include <utility/graph/UpperEdgeGraph.fwd.hh>
+#include <utility/graph/unordered_object_pool.fwd.hpp>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/annealer/AnnealerFactory.fwd.hh>
 #include <core/pack/annealer/SimAnnealerBase.fwd.hh>
@@ -139,7 +139,7 @@ public:
 	pose::Pose pose;
 	rotamer_set::RotamerSetsOP rotsets;
 	scoring::ScoreFunctionOP scorefxn;
-	graph::GraphOP packer_neighbor_graph;
+	utility::graph::GraphOP packer_neighbor_graph;
 
 	// the IG pointers def have to be "global" scope
 	interaction_graph::LinearMemorySurfaceInteractionGraphOP lmsolig;

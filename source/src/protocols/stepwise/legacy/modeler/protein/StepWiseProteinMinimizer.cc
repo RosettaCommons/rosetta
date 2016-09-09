@@ -219,7 +219,7 @@ StepWiseProteinMinimizer::let_neighboring_chis_minimize(
 
 		Size const i = moving_residues_[ n ];
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {

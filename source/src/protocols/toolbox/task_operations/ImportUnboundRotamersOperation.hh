@@ -25,7 +25,7 @@
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/dunbrack/ChiSet.fwd.hh>

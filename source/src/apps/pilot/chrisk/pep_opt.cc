@@ -287,7 +287,7 @@ has_clash(
 		EnergyGraph & energy_graph( energies.energy_graph() );
 
 		// search upstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->lower_edge_list_end();
 				iru != irue; ++iru ) {
@@ -305,7 +305,7 @@ has_clash(
 		if( is_clash == true ) break;
 
 		// and downstream
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node( seqpos )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->upper_edge_list_end();
 				iru != irue; ++iru ) {

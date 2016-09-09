@@ -8,7 +8,7 @@
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/vdwaals/VDW_Energy.hh>
@@ -756,7 +756,7 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 
 	for ( Size i=1, i_end = nres_asu; i<= i_end; ++i ) {
 		conformation::Residue const & rsd1( pose.residue( i ) );
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -907,7 +907,7 @@ get_interface_energies( protocols::cryst::MakeLatticeMover &setup, core::pose::P
 		for ( Size i=1, i_end = nres_asu; i<= i_end; ++i ) {
 			conformation::Residue const & rsd1( pose.residue( i ) );
 
-			for ( graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->upper_edge_list_end();
 					iru != irue; ++iru ) {

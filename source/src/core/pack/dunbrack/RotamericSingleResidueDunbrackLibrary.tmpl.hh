@@ -32,7 +32,7 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Project Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
@@ -64,7 +64,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/PDBPoseMap.fwd.hh>
@@ -797,7 +797,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
@@ -1011,7 +1011,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::build_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
@@ -1094,7 +1094,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::create_rotamers_from_chisets(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
 	utility::vector1< ChiSetOP > const & chi_set_vector,

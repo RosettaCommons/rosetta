@@ -470,7 +470,7 @@ LK_hack::calculate_derivatives_for_atoms_and_pseudo_base_atoms( pose::Pose const
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(ii)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

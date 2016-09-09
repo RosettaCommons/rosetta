@@ -1072,7 +1072,7 @@ void MotifHits::dump_motifs_pdb( ostream & out, int & count, Size & atomno, Xfor
 			//  dummy_task->nonconst_residue_task( ir ).restrict_to_repacking();
 			//  dummy_task->nonconst_residue_task( ir ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
 			//  dummy_task->nonconst_residue_task( ir ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
-			//  core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
+			//  utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
 			//  core::pack::rotamer_set::RotamerSetFactory rsf;
 			//  rotset1 = rsf.create_rotamer_set( pose.residue( ir ) );
 			//  rotset1->set_resid( ir );
@@ -1087,7 +1087,7 @@ void MotifHits::dump_motifs_pdb( ostream & out, int & count, Size & atomno, Xfor
 			//  dummy_task->nonconst_residue_task( jr ).restrict_to_repacking();
 			//  dummy_task->nonconst_residue_task( jr ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
 			//  dummy_task->nonconst_residue_task( jr ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
-			//  core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
+			//  utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
 			//  core::pack::rotamer_set::RotamerSetFactory rsf;
 			//  rotset2 = rsf.create_rotamer_set( pose.residue( jr ) );
 			//  rotset2->set_resid( jr );
@@ -2598,7 +2598,7 @@ int MotifHashManager::get_matching_motifs( ResPairMotifQuery const & opt, MotifH
 //  Pose const & /*pose*/,
 //  core::scoring::ScoreFunction const & /*sfxn*/,
 //  core::pack::task::PackerTask const & /*ptask*/,
-//  core::graph::GraphCOP packer_neighbor_graph,
+//  utility::graph::GraphCOP packer_neighbor_graph,
 //  core::pack::rotamer_set::RotamerSet & rotamer_set
 //  ){
 //  BOOST_FOREACH(PoseCOP pp, res1_poses_[rotamer_set.resid()]){

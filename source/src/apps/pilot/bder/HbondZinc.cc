@@ -18,7 +18,7 @@
 #include <protocols/metal_interface/MetalSiteResidue.hh>
 #include <protocols/metal_interface/AddZincSiteConstraints.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -313,7 +313,7 @@ public:
 					core::pack::rotamer_set::RotamerSetFactory rsf;
 					core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( pose.residue( this_res ) ) );
 					rotset->set_resid( this_res );
-					core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, task );
+					utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, task );
 					rotset->build_rotamers( pose, dummy_sfxn, *task, dummy_png );
 									
 					for(Size krot(1); krot <= rotset->num_rotamers(); ++krot) {

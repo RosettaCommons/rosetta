@@ -3605,7 +3605,7 @@ interface_energy_ratio( core::pose::Pose const & pose, ScoreFunctionOP sf ) {
 	Real tot = 0.0;
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		// conformation::Residue const & resl( pose.residue( i ) );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -3643,7 +3643,7 @@ symm_self_rep( PoseWrap & pw, ScoreFunctionOP sf, Size rsd ) {
 	for ( Size i=1, i_end = pw.pose.size(); i<= i_end; ++i ) {
 		if( (i-1)%pw.nres+1 != rsd ) continue;
 		// conformation::Residue const & resl( pose.residue( i ) );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -3674,7 +3674,7 @@ find_clashes( PoseWrap & pw ) {
 	std::map< std::pair<Size,Size>, Real > clashes;
 	for ( Size i=1, i_end = pw.nres; i<= i_end; ++i ) {
 		// conformation::Residue const & resl( pose.residue( i ) );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

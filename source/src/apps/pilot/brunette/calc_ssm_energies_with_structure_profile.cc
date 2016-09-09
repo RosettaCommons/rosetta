@@ -177,7 +177,7 @@ get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &inter
 
 		if ( pose.pdb_info()->chain(i) != pose.pdb_info()->chain(1) ) continue;
 
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node(i)->edge_list_begin(),
 				irue = energy_graph.get_node(i)->edge_list_end();
 				iru != irue; ++iru ) {

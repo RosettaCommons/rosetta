@@ -48,7 +48,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -755,7 +755,7 @@ build_fixed_O_water_rotamers_independent(
 	Size const seqpos,
 	chemical::ResidueType const & h2o_type,
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 )
 {
@@ -783,7 +783,7 @@ build_fixed_O_water_rotamers_independent(
 
 	utility::vector1< Vector > acceptors, donors;
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( seqpos )->const_edge_list_begin(),
 			ire = packer_neighbor_graph->get_node( seqpos )->const_edge_list_end();
 			ir != ire; ++ir ) {
@@ -1281,7 +1281,7 @@ build_moving_O_water_rotamers_dependent(
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 )
 {
@@ -1322,7 +1322,7 @@ build_moving_O_water_rotamers_dependent(
 	//
 	// may want to refine this
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			jr  = packer_neighbor_graph->get_node( i )->const_edge_list_begin(),
 			jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
 			jr != jre; ++jr ) {
@@ -1368,7 +1368,7 @@ build_moving_O_water_rotamers_independent(
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 )
 {
@@ -1400,7 +1400,7 @@ build_moving_O_water_rotamers_independent(
 	//
 	// may want to refine this
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			jr  = packer_neighbor_graph->get_node( i )->const_edge_list_begin(),
 			jre = packer_neighbor_graph->get_node( i )->const_edge_list_end();
 			jr != jre; ++jr ) {
@@ -1423,7 +1423,7 @@ build_independent_water_rotamers(
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 )
 {
@@ -1431,7 +1431,7 @@ build_independent_water_rotamers(
 
 	{
 		tt << "water " << seqpos_water << " nbrs:";
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				jr  = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_begin(),
 				jre = packer_neighbor_graph->get_node( seqpos_water )->const_edge_list_end();
 				jr != jre; ++jr ) {
@@ -1461,7 +1461,7 @@ build_dependent_water_rotamers(
 	chemical::ResidueType const & h2o_type,
 	pack::task::PackerTask const & task,
 	pose::Pose const & pose,
-	graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 )
 {

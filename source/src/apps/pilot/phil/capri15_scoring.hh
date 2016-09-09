@@ -625,7 +625,7 @@ CapriTotalEnergy::finalize_total_energy(
 			utility_exit_with_message( "sequence mismath in capri15 conservation score" );
 		}
 		Size rna_nbr_count(0);
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 						iru  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
 						irue = energy_graph.get_node( seqpos )->const_edge_list_end();
 					iru != irue; ++iru ) {

@@ -22,7 +22,7 @@
 // Numeric headers
 
 // Boost Headers
-#include <core/graph/unordered_object_pool.hpp>
+#include <utility/graph/unordered_object_pool.hpp>
 
 // C++ headers
 #include <iostream>
@@ -34,7 +34,7 @@
 namespace core {
 namespace scoring {
 
-using namespace graph;
+using namespace utility::graph;
 
 ///////// Minimization Node Class /////////////
 
@@ -707,7 +707,7 @@ MinimizationGraph::operator = ( MinimizationGraph const & rhs )
 	return *this;
 }
 
-void MinimizationGraph::delete_edge( graph::Edge * edge )
+void MinimizationGraph::delete_edge( utility::graph::Edge * edge )
 {
 	debug_assert( dynamic_cast< MinimizationEdge* > (edge) );
 	minimization_edge_pool_->destroy( static_cast< MinimizationEdge* > (edge) );

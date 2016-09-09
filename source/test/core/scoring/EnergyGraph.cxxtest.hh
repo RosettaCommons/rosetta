@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <core/types.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/EnergyGraph.hh>
 
 // C++ headers, for debugging your tests
@@ -110,7 +110,7 @@ public:
 		TS_ASSERT( true );
 #ifdef SERIALIZATION
 		using namespace core;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::scoring;
 		EnergyGraphOP egraph( new EnergyGraph( 5 ) );
 		ScoreTypes sts;

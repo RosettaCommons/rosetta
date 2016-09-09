@@ -143,7 +143,7 @@ RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & p
 	for ( Size k = 1; k <= moving_res_list.size(); k++ ) {
 		Size const i = moving_res_list[ k ];
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {

@@ -58,7 +58,7 @@ public:
 	compute_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::InteractionGraphBaseOP ig
 	);
 
@@ -67,7 +67,7 @@ public:
 	compute_one_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::InteractionGraphBaseOP ig
 	);
 
@@ -79,7 +79,7 @@ public:
 	precompute_two_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
 		bool const finalize_edges = true
 	);
@@ -97,7 +97,7 @@ private:
 	prepare_symm_otf_interaction_graph(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::SymmOnTheFlyInteractionGraphOP ig
 	);
 
@@ -106,7 +106,7 @@ private:
 		pose::Pose const & pose,
 		conformation::symmetry::SymmetryInfoCOP symm_info,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::SymmOnTheFlyInteractionGraphOP otfig
 	);
 
@@ -121,7 +121,7 @@ private:
 	bool
 	final_visit_to_edge(
 		pose::Pose const & pose,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		uint ii_resid,
 		uint jj_resid
 	);

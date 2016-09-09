@@ -56,7 +56,7 @@ varsoldist_rotamer_dots_for_pose(
 )
 {
 	using namespace core;
-	using namespace core::graph;
+	using namespace utility::graph;
 	using namespace core::scoring;
 	using namespace devel::vardist_solaccess;
 
@@ -88,7 +88,7 @@ buns_for_pose(
 {
 	using namespace core;
 	using namespace core::id;
-	using namespace core::graph;
+	using namespace utility::graph;
 	using namespace core::scoring;
 	using namespace core::scoring::hbonds;
 
@@ -177,7 +177,7 @@ int main( int argc, char * argv [] )
 	using namespace core::conformation;
 	using namespace core::id;
 	using namespace core::io;
-	using namespace core::graph;
+	using namespace utility::graph;
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace core::scoring::hbonds;

@@ -447,7 +447,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 		Residue const & rsd( pose.residue(resNum) );
 
 		// Two Body Energies
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(resNum)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(resNum)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {

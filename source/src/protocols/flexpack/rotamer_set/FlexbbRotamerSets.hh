@@ -29,7 +29,7 @@
 /// Project headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetsBase.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -80,7 +80,7 @@ public:
 		utility::vector1< core::fragment::FrameCOP > const & frames
 	);
 
-	core::graph::GraphOP
+	utility::graph::GraphOP
 	flexpack_neighbor_graph(
 		Pose const & pose,
 		ScoreFunction const & sfxn,
@@ -96,7 +96,7 @@ public:
 	void build_rotamers(
 		Pose const & pose,
 		ScoreFunction const & sfxn,
-		core::graph::Graph const & flexpack_neighbor_graph
+		utility::graph::Graph const & flexpack_neighbor_graph
 	);
 
 	void
@@ -106,35 +106,35 @@ public:
 	precompute_energies(
 		Pose const & pose,
 		ScoreFunction const & sfxn,
-		core::graph::GraphCOP flexpack_neighbor_graph,
+		utility::graph::GraphCOP flexpack_neighbor_graph,
 		interaction_graph::FlexbbInteractionGraph & flexbb_ig
 	) const;
 
 	void precompute_all_energies(
 		Pose const & pose,
 		ScoreFunction const & sfxn,
-		core::graph::GraphCOP flexpack_neighbor_graph,
+		utility::graph::GraphCOP flexpack_neighbor_graph,
 		interaction_graph::PrecomputedFlexbbInteractionGraph & flexbb_ig
 	) const;
 
 	/* void compute_one_body_energies_for_precomputed_ig(
 	Pose const & pose,
 	ScoreFunction const & sfxn,
-	core::graph::GraphCOP flexpack_neighbor_graph,
+	utility::graph::GraphCOP flexpack_neighbor_graph,
 	interaction_graph::FlexbbInteractionGraph & flexbb_ig
 	) const; */
 
 	void compute_one_body_energies_for_otf_ig(
 		Pose const & pose,
 		ScoreFunction const & sfxn,
-		core::graph::GraphCOP flexpack_neighbor_graph,
+		utility::graph::GraphCOP flexpack_neighbor_graph,
 		interaction_graph::OTFFlexbbInteractionGraph & flexbb_ig
 	) const;
 
 	/* void compute_two_body_energies(
 	Pose const & pose,
 	ScoreFunction const & sfxn,
-	core::graph::Graph const & flexpack_neighbor_graph,
+	utility::graph::Graph const & flexpack_neighbor_graph,
 	interaction_graph::PrecomputedFlexbbInteractionGraph & flexbb_ig
 	) const; */
 
@@ -398,7 +398,7 @@ private:
 		Size moltenres,
 		Pose const & pose,
 		ScoreFunction const & sfxn,
-		core::graph::GraphCOP flexpack_neighbor_graph,
+		utility::graph::GraphCOP flexpack_neighbor_graph,
 		interaction_graph::FlexbbInteractionGraph & flexbb_ig
 	) const;
 

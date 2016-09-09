@@ -22,7 +22,7 @@
 
 #include <platform/types.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/optimization/DOF_Node.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -95,7 +95,7 @@ public:
 		}
 		RotamerSetsOP rotsets( new RotamerSets() );
 		rotsets->set_task( task );
-		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
 
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 

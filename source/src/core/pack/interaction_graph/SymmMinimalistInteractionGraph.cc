@@ -261,7 +261,7 @@ SymmMinimalistNode::project_deltaE_for_substitution
 	//
 	//   { //scope
 	//   scoring::EnergyGraph const & energygraph = get_on_the_fly_owner()->pose().energies().energy_graph();
-	//   for ( core::graph::Graph::EdgeListConstIter
+	//   for ( utility::graph::Graph::EdgeListConstIter
 	//     iter = energygraph.get_node( seqpos )->const_edge_list_begin(),
 	//     iter_end = energygraph.get_node( seqpos)->const_edge_list_end();
 	//     iter != iter_end; ++iter ) {
@@ -387,7 +387,7 @@ SymmMinimalistNode::project_deltaE_for_substitution
 	//    if ( curr_state_two_body_energies_[ ii ] == 0 ) continue;
 	//    bool found_similar_edge( false );
 	//
-	//    for ( core::graph::Graph::EdgeListConstIter
+	//    for ( utility::graph::Graph::EdgeListConstIter
 	//      iter = energygraph.get_node( seqpos )->const_edge_list_begin(),
 	//      iter_end = energygraph.get_node( seqpos)->const_edge_list_end();
 	//      iter != iter_end; ++iter ) {
@@ -416,7 +416,7 @@ SymmMinimalistNode::project_deltaE_for_substitution
 	//
 	//   { //scope
 	//   scoring::EnergyGraph const & energygraph = get_on_the_fly_owner()->pose().energies().energy_graph();
-	//   for ( core::graph::Graph::EdgeListConstIter
+	//   for ( utility::graph::Graph::EdgeListConstIter
 	//     iter = energygraph.get_node( seqpos )->const_edge_list_begin(),
 	//     iter_end = energygraph.get_node( seqpos)->const_edge_list_end();
 	//     iter != iter_end; ++iter ) {
@@ -461,7 +461,7 @@ SymmMinimalistNode::project_deltaE_for_substitution
 	//    if ( alternate_state_two_body_energies_[ ii ] == 0 ) continue;
 	//    bool found_similar_edge( false );
 	//
-	//    for ( core::graph::Graph::EdgeListConstIter
+	//    for ( utility::graph::Graph::EdgeListConstIter
 	//      iter = energygraph.get_node( seqpos )->const_edge_list_begin(),
 	//      iter_end = energygraph.get_node( seqpos)->const_edge_list_end();
 	//      iter != iter_end; ++iter ) {

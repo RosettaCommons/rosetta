@@ -52,7 +52,7 @@
 // DUMP INCLUDES and clean up later
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -880,7 +880,7 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 		core::Vector vcoord = znx.xyz(znx.atom_index(vname));
 		core::Real best_dist = 0;
 		core::Size ind_w_best_dist( 0 ), atomind_w_best_dist( 0 );
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				eiter    = copy_pose.energies().energy_graph().get_node(znxind)->const_edge_list_begin(),
 				eiterend = copy_pose.energies().energy_graph().get_node(znxind)->const_edge_list_end();
 				eiter != eiterend; ++eiter ) {

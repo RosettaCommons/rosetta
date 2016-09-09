@@ -1005,7 +1005,7 @@ void harvest_motifs(){
 		int nbad=0,nbadbfac=0,nbadocc=0,nbadiface=0,nbaddist=0,nbadsselem=0;
 		for(int ir = 1+min_boundary; ir <= nresmodel1-min_boundary; ++ir){
 			if(!pose.residue(ir).is_protein()) { ++nbad; continue; }
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(ir)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(ir)->const_upper_edge_list_end();
 					iru != irue; ++iru

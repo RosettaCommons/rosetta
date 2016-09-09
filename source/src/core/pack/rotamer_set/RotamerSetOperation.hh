@@ -20,7 +20,7 @@
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -68,7 +68,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & sfxn,
 		pack::task::ResidueLevelTask const & rtask,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		pack::dunbrack::ChiSetOP chi_set
 	) = 0;
 
@@ -90,7 +90,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & sfxn,
 		task::PackerTask const & ptask,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		RotamerSet & rotamer_set
 	) = 0;
 

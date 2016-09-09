@@ -833,7 +833,7 @@ ScoreFunction::get_sub_score(
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		if ( !residue_mask[i] ) continue;
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -960,7 +960,7 @@ ScoreFunction::get_sub_score(
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		if ( !residue_mask[i] ) continue;
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -1162,7 +1162,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 		MinimizationGraphCOP g = energies.minimization_graph();
 		for ( Size ii = 1; ii < pose.size(); ++ii ) {
 			conformation::Residue const & ii_rsd( pose.residue( ii ) );
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					edge_iter = g->get_node( ii )->const_upper_edge_list_begin(),
 					edge_iter_end = g->get_node( ii )->const_upper_edge_list_end();
 					edge_iter != edge_iter_end; ++edge_iter ) {
@@ -1179,7 +1179,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 
 		for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 			conformation::Residue const & resl( pose.residue( i ) );
-			for ( graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->upper_edge_list_end();
 					iru != irue; ++iru ) {
@@ -1947,7 +1947,7 @@ ScoreFunction::setup_for_scoring(
 		}
 
 		/// 2. inter-residue setup for derivatives
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				edgeit = mingraph->edge_list_begin(), edgeit_end = mingraph->edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
 			MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
@@ -2018,7 +2018,7 @@ ScoreFunction::setup_for_derivatives(
 	}
 
 	/// 2. inter-residue setup for derivatives
-	for ( graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			edgeit = mingraph->edge_list_begin(), edgeit_end = mingraph->edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
 		MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
@@ -2089,7 +2089,7 @@ ScoreFunction::setup_for_minimizing(
 	g->copy_connectivity( pose.energies().energy_graph() );
 	// 2. Now initialize the edges of the minimization graph using the edges of the EnergyGraph;
 	// The energy graph should be up-to-date before this occurs
-	for ( core::graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			edge_iter = g->edge_list_begin(),
 			edge_iter_end = g->edge_list_end(),
 			ee_edge_iter = pose.energies().energy_graph().edge_list_begin();
@@ -2149,14 +2149,14 @@ ScoreFunction::setup_for_minimizing(
 
 	/// 4. Call setup_for_minimizing on each edge that has active twobody energies, and drop
 	/// all other edges.
-	for ( core::graph::Graph::EdgeListIter edge_iter = g->edge_list_begin(),
+	for ( utility::graph::Graph::EdgeListIter edge_iter = g->edge_list_begin(),
 			edge_iter_end = g->edge_list_end(); edge_iter != edge_iter_end; /* no increment */ ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
 
 		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 
-		core::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
+		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
 		++edge_iter_next;
 
 		if ( minedge.any_active_enmeths() ) {

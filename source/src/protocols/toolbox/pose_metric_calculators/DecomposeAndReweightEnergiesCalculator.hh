@@ -21,7 +21,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 
 #include <utility/vector1.hh>
 
@@ -37,7 +37,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 /*
-class EnergiesEdge : public core::graph::Edge {
+class EnergiesEdge : public utility::graph::Edge {
 public:
 core::scoring::EnergyMap energies;
 
@@ -51,7 +51,7 @@ virtual unsigned int count_static_memory () const { return sizeof(EnergiesEdge);
 virtual unsigned int count_dynamic_memory () const { return 0; }
 }
 
-class EnergiesGraph : public core::graph::Graph {
+class EnergiesGraph : public utility::graph::Graph {
 
 public:
 
@@ -80,7 +80,7 @@ private:
 
 }
 
-class WeightsEdge : public core::graph::Edge {
+class WeightsEdge : public utility::graph::Edge {
 
 public:
 
@@ -165,11 +165,11 @@ class DecomposeAndReweightEnergiesCalculator : public core::pose::metrics::Energ
 
 public:
 
-	typedef core::graph::UpperEdgeGraph<EmptyVertexData, EnergiesData> EnergiesGraph;
-	typedef core::graph::UEVertex<EmptyVertexData, EnergiesData> EnergiesVertex;
-	typedef core::graph::UEEdge<EmptyVertexData, EnergiesData> EnergiesEdge;
-	typedef utility::vector1<core::graph::UEEdge<EmptyVertexData, EnergiesData> >::iterator EnergiesUpperEdgeListIter;
-	typedef utility::vector1<core::graph::UEEdge<EmptyVertexData, EnergiesData> >::const_iterator EnergiesUpperEdgeListConstIter;
+	typedef utility::graph::UpperEdgeGraph<EmptyVertexData, EnergiesData> EnergiesGraph;
+	typedef utility::graph::UEVertex<EmptyVertexData, EnergiesData> EnergiesVertex;
+	typedef utility::graph::UEEdge<EmptyVertexData, EnergiesData> EnergiesEdge;
+	typedef utility::vector1<utility::graph::UEEdge<EmptyVertexData, EnergiesData> >::iterator EnergiesUpperEdgeListIter;
+	typedef utility::vector1<utility::graph::UEEdge<EmptyVertexData, EnergiesData> >::const_iterator EnergiesUpperEdgeListConstIter;
 
 	// preferred constructor - use an existing InterfaceNeighborDefinitionCalculator
 	DecomposeAndReweightEnergiesCalculator(

@@ -30,7 +30,7 @@
 
 #ifdef WIN32
 // required for VS2005 build
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #endif
 
 #include <basic/Tracer.hh>
@@ -67,7 +67,7 @@ RotamerDNAHBondFilter::operator() (
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	pack::task::ResidueLevelTask const & rtask,
-	graph::GraphCOP,
+	utility::graph::GraphCOP,
 	pack::dunbrack::ChiSetOP chi_set
 )
 {

@@ -21,7 +21,7 @@
 
 #include <platform/types.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -101,7 +101,7 @@ public:
 
 		RotamerSetsOP rotsets( new RotamerSets() );
 		rotsets->set_task( task );
-		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
 
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 
@@ -175,7 +175,7 @@ public:
 
 		RotamerSetsOP rotsets( new RotamerSets() );
 		rotsets->set_task( task );
-		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
 
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 
@@ -209,7 +209,7 @@ public:
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( 7 ) );
 		rotset->set_resid( 7 );
-		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
 		rotset->build_rotamers( pose, *scorefxn, *task, packer_neighbor_graph, true );
 
 		AtomTreeCollection collection( pose, task->residue_task( 7 ), 7 );

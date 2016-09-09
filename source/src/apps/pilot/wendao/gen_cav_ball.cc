@@ -52,7 +52,7 @@
 #include <numeric/xyz.functions.hh>
 
 //from
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyGraph.hh>

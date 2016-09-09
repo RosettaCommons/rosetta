@@ -15,7 +15,7 @@
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 
 // Package headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/MultiplexedAnnealableGraph.hh>
@@ -176,7 +176,7 @@ InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(
 	rotamer_set::RotamerSets & rotsets,
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph)
+	utility::graph::GraphCOP packer_neighbor_graph)
 {
 	InteractionGraphBaseOP ig = create_interaction_graph( packer_task, rotsets, pose, scfxn);
 
@@ -196,7 +196,7 @@ InteractionGraphFactory::create_and_initialize_annealing_graph(
 	rotamer_set::RotamerSets & rotsets,
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	graph::GraphCOP packer_neighbor_graph)
+	utility::graph::GraphCOP packer_neighbor_graph)
 {
 	//using namespace scoring::annealing;
 

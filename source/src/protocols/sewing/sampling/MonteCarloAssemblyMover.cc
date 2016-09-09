@@ -263,7 +263,7 @@ MonteCarloAssemblyMover::add_edge(
 
 		//Pick a random edge and follow it
 		core::Size edge_num = numeric::random::random_range(0, (int)num_edges-1);
-		core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
+		utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 		for ( core::Size j=1; j<=edge_num; ++j ) {
 			++edge_it;
 		}

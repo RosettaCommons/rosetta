@@ -21,7 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -32,14 +32,14 @@
 namespace core {
 namespace pack {
 
-graph::GraphOP
+utility::graph::GraphOP
 create_packer_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task
 );
 
-graph::GraphOP
+utility::graph::GraphOP
 create_packer_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,

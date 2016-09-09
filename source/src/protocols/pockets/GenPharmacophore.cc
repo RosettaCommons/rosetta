@@ -575,7 +575,7 @@ std::string GenPharmacophore::extract_Hbond_atoms_from_protein_rna_complex(core:
 
 		int const nnrna = tenA_neighbor_graph.get_node( ic )->num_neighbors_counting_self_static();
 
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				nit = energy_graph.get_node(ic)->const_edge_list_begin(),
 				nite = energy_graph.get_node(ic)->const_edge_list_end();
 				nit != nite; ++nit ) {

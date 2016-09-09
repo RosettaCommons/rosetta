@@ -162,7 +162,7 @@ class FaSolReporter : public protocols::moves::Mover {
 			Real const sasa_this_atom( atom_sasa[ core::id::AtomID( iatm, ires ) ] );
 			if ( sasa_this_atom > option[fasol::max_sasa] ) continue;
 
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(ires)->const_edge_list_begin(),
 					irue = energy_graph.get_node(ires)->const_edge_list_end();
 					iru != irue; ++iru ) {

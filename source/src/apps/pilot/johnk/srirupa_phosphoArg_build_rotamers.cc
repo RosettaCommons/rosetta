@@ -181,7 +181,7 @@ main( int argc, char * argv [] )
 	//replace this with RotSetsFactory
 	pack::rotamer_set::RotamerSetsOP rotsets( new pack::rotamer_set::RotamerSets() );
 	rotsets->set_task( arg_task );
-	graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, arg_task );
+	utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, arg_task );
 	rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 	//	rotsets->dump_pdb( pose, basic::options::start_file()+".all_arg_rotamers.pdb" );
 

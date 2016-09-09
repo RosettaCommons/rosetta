@@ -131,7 +131,7 @@ main( int argc, char * argv [] )
 		allow_moving.at(central_relax_res1) = true;
 		// find the neighbors for this central residue
 		core::scoring::TenANeighborGraph const & graph = input_pose.energies().tenA_neighbor_graph();
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 						iter = graph.get_node( central_relax_res1 )->const_edge_list_begin(),
 						iter_end = graph.get_node( central_relax_res1 )->const_edge_list_end();
 					iter != iter_end; ++iter ) {
@@ -143,7 +143,7 @@ main( int argc, char * argv [] )
 		allow_moving.at(central_relax_res2) = true;
 		// find the neighbors for this central residue
 		core::scoring::TenANeighborGraph const & graph = input_pose.energies().tenA_neighbor_graph();
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 						iter = graph.get_node( central_relax_res2 )->const_edge_list_begin(),
 						iter_end = graph.get_node( central_relax_res2 )->const_edge_list_end();
 					iter != iter_end; ++iter ) {
@@ -155,7 +155,7 @@ main( int argc, char * argv [] )
 		allow_moving.at(central_relax_res3) = true;
 		// find the neighbors for this central residue
 		core::scoring::TenANeighborGraph const & graph = input_pose.energies().tenA_neighbor_graph();
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 						iter = graph.get_node( central_relax_res3 )->const_edge_list_begin(),
 						iter_end = graph.get_node( central_relax_res3 )->const_edge_list_end();
 					iter != iter_end; ++iter ) {

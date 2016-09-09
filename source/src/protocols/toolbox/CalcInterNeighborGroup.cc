@@ -23,7 +23,7 @@
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 //Utility headers
 //#include <basic/options/option.hh>
@@ -37,7 +37,7 @@
 
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
 
@@ -101,7 +101,7 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 	runtime_assert(nres == pg->num_vertices());
 
 	//PointGraph is the one-way graph, but this is inefficient for group v group calculations - we do not want to iterate over the entire graph each time.  Instead we want to visit just the nodes in one group and see if its edges are in the second group, so we need a two-way graph to prevent reiterating the lower half every time.
-	core::graph::Graph neighborgraph(nres);
+	utility::graph::Graph neighborgraph(nres);
 	for ( core::Size r(1); r <= nres; ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
 				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
@@ -117,7 +117,7 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 		//for the first member of the group/domain, iterate through its residues
 		for ( auto it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it ) {
 			//for all edges of that node
-			for ( core::graph::Graph::EdgeListConstIter edge_iter = neighborgraph.get_node(*it)->const_edge_list_begin(),
+			for ( utility::graph::Graph::EdgeListConstIter edge_iter = neighborgraph.get_node(*it)->const_edge_list_begin(),
 					edge_end_iter = neighborgraph.get_node(*it)->const_edge_list_end();
 					edge_iter != edge_end_iter; ++edge_iter ) {
 				core::Size const other = (*edge_iter)->get_other_ind(*it);

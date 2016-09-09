@@ -26,7 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -118,7 +118,7 @@ RRProtocolRTMin::run(
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
 	PackerTaskOP one_res_task( packer_task.clone() );
-	core::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, score_function, one_res_task );
+	utility::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, score_function, one_res_task );
 
 	RTMin rtmin;
 	rtmin.set_nonideal(nonideal_);

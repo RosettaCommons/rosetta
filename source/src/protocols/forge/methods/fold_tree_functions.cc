@@ -23,7 +23,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -229,7 +229,7 @@ core::Size find_connecting_jump(
 )
 {
 	using core::Size;
-	using core::graph::DisjointSets;
+	using utility::graph::DisjointSets;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
@@ -270,7 +270,7 @@ bool remove_cutpoint(
 )
 {
 	using core::Size;
-	using core::graph::DisjointSets;
+	using utility::graph::DisjointSets;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
@@ -334,7 +334,7 @@ void remove_cutpoints(
 )
 {
 	using core::Size;
-	using core::graph::DisjointSets;
+	using utility::graph::DisjointSets;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
@@ -405,7 +405,7 @@ shift_jumps(
 )
 {
 	using core::Size;
-	using core::graph::DisjointSets;
+	using utility::graph::DisjointSets;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
@@ -511,7 +511,7 @@ fold_tree_from_pose(
 {
 	using core::Size;
 	using core::conformation::Residue;
-	using core::graph::DisjointSets;
+	using utility::graph::DisjointSets;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
@@ -877,7 +877,7 @@ replace(
 )
 {
 	using core::Size;
-	using core::graph::DisjointSets;
+	using utility::graph::DisjointSets;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 	using core::kinematics::MoveMap;

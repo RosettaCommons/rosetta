@@ -18,7 +18,7 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <basic/options/option.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -143,7 +143,7 @@ argrot_dna_dis2(
 	}
 	ScoreFunctionOP scrfxn( ScoreFunctionFactory::create_score_function( weights_tag ) );
 	// unnecessary here, yet also required
-	graph::GraphOP dummygraph( new graph::Graph( pose.size() ) );
+	utility::graph::GraphOP dummygraph( new utility::graph::Graph( pose.size() ) );
 
 	RotamerSetFactory rsf;
 	RotamerSetOP rotset( rsf.create_rotamer_set( pres ) );

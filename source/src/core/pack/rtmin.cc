@@ -121,7 +121,7 @@ RTMin::rtmin(
 	using namespace scoring;
 	using namespace scoring::methods;
 	using namespace optimization;
-	using namespace graph;
+	using namespace utility::graph;
 	using namespace basic::options;
 
 	/// 1st verify that all energy methods are compatible with rtmin.
@@ -155,7 +155,7 @@ RTMin::rtmin(
 	numeric::random::random_permutation( active_residues, numeric::random::rg() );
 
 	utility::vector1< conformation::ResidueCOP > bgres( pose.size() );
-	graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, scfxn, input_task );
+	utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, scfxn, input_task );
 	scoring::MinimizationGraph mingraph( pose.size() );
 
 	SCMinMinimizerMapOP scminmap;
@@ -186,7 +186,7 @@ RTMin::rtmin(
 
 	for ( Size ii = 1; ii <= input_task->num_to_be_packed(); ++ii ) {
 		Size iires = active_residues[ ii ];
-		for ( graph::Node::EdgeListConstIter
+		for ( utility::graph::Node::EdgeListConstIter
 				eiter = packer_neighbor_graph->get_node( iires )->const_edge_list_begin(),
 				eiter_end = packer_neighbor_graph->get_node( iires )->const_edge_list_end();
 				eiter != eiter_end; ++eiter ) {
@@ -303,7 +303,7 @@ RTMin::rtmin(
 					* mingraph.get_minimization_node( iiresid ), iirsd,
 					*scminmap, pose );
 			}
-			for ( graph::Node::EdgeListIter
+			for ( utility::graph::Node::EdgeListIter
 					eiter = mingraph.get_node( iiresid )->edge_list_begin(),
 					eiter_end = mingraph.get_node( iiresid )->edge_list_end();
 					eiter != eiter_end; ++eiter ) {
@@ -479,7 +479,7 @@ RTMin::rtmin(
 		// *bgres[ iiresid ], scminmap, pose );
 		reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, *bgres[ iiresid ], mingraph );
 
-		/*for ( graph::Graph::EdgeListIter
+		/*for ( utility::graph::Graph::EdgeListIter
 		edgeit = mingraph.get_node( iiresid )->edge_list_begin(),
 		edgeit_end = mingraph.get_node( iiresid )->edge_list_end();
 		edgeit != edgeit_end; ++edgeit ) {
@@ -535,7 +535,7 @@ rottrial_task->temporarily_fix_everything();
 scfxn.setup_for_packing( pose, rottrial_task->repacking_residues(),rottrial_task->designing_residues()  );
 
 rotamer_set::RotamerSetFactory rsf;
-graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
+utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
 
 Size const num_in_trials = residues_for_trials.size();
 for (Size ii = 1; ii <= num_in_trials; ++ii)
@@ -668,7 +668,7 @@ void reinitialize_mingraph_neighborhood_for_residue(
 		* mingraph.get_minimization_node( resid ),
 		rsd, scminmap, pose );
 	/// Now, iterate across all the edges and set them up
-	for ( graph::Node::EdgeListIter
+	for ( utility::graph::Node::EdgeListIter
 			eiter = mingraph.get_node( resid )->edge_list_begin(),
 			eiter_end = mingraph.get_node( resid )->edge_list_end();
 			eiter != eiter_end; ++eiter ) {

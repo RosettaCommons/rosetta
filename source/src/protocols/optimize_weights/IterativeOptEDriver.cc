@@ -55,7 +55,7 @@
 #include <protocols/optimize_weights/DDGBindOptEData.hh>
 #include <protocols/optimize_weights/PNatLigPoseOptEData.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/kinematics/FoldTree.hh>
 

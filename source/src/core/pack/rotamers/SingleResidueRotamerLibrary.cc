@@ -27,7 +27,7 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <utility/LexicographicalIterator.hh>
 #include <numeric/random/reservoir_sample.hh>
@@ -290,7 +290,7 @@ SingleResidueRotamerLibrary::bump_filter(
 	scoring::ScoreFunction const & scorefxn,
 	pose::Pose const & pose,
 	task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 ) const
 {
 	using namespace core::pack::rotamer_set; // Temporary for BumpSelectors
@@ -342,7 +342,7 @@ SingleResidueRotamerLibrary::bump_check(
 	scoring::ScoreFunction const & sf,
 	pose::Pose const & pose,
 	task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 ) const
 {
 	using namespace scoring;
@@ -350,7 +350,7 @@ SingleResidueRotamerLibrary::bump_check(
 
 	EnergyMap emap;
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( resid )->const_edge_list_begin(),
 			ire = packer_neighbor_graph->get_node( resid )->const_edge_list_end();
 			ir != ire; ++ir ) {

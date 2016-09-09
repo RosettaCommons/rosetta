@@ -15,7 +15,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 
 // Boost Headers
-#include <core/graph/unordered_object_pool.hpp>
+#include <utility/graph/unordered_object_pool.hpp>
 
 #include <utility/vector1.hh>
 #include <boost/pool/pool.hpp>
@@ -41,7 +41,7 @@ namespace scoring {
 
 TenANeighborNode::~TenANeighborNode() = default;
 
-TenANeighborNode::TenANeighborNode( graph::Graph * owner, Size node_id )
+TenANeighborNode::TenANeighborNode( utility::graph::Graph * owner, Size node_id )
 :
 	parent( owner, node_id ),
 	neighbor_mass_( 1.0 ), // Default -- 1 neighbor mass unit
@@ -86,7 +86,7 @@ TenANeighborNode::count_dynamic_memory() const {
 void
 TenANeighborNode::update_neighbor_mass_sum() const
 {
-	using namespace graph;
+	using namespace utility::graph;
 	sum_of_neighbors_masses_ = 0.0;
 	for ( EdgeListConstIter eiter = const_edge_list_begin(),
 			eiter_end = const_edge_list_end(); eiter != eiter_end; ++eiter ) {
@@ -109,7 +109,7 @@ TenANeighborEdge::~TenANeighborEdge()
 }
 
 TenANeighborEdge::TenANeighborEdge(
-	graph::Graph* owner,
+	utility::graph::Graph* owner,
 	Size first_node_ind,
 	Size second_node_ind )
 :
@@ -199,7 +199,7 @@ TenANeighborGraph::update_from_pose(
 )
 {}
 
-void TenANeighborGraph::delete_edge( graph::Edge * edge )
+void TenANeighborGraph::delete_edge( utility::graph::Edge * edge )
 {
 	//delete edge;
 	debug_assert( dynamic_cast< TenANeighborEdge* > (edge) );
@@ -217,19 +217,19 @@ TenANeighborGraph::count_dynamic_memory() const {
 	return parent::count_dynamic_memory();
 }
 
-graph::Node*
+utility::graph::Node*
 TenANeighborGraph::create_new_node( Size node_index ) {
 	return new TenANeighborNode( this, node_index );
 }
 
-graph::Edge*
+utility::graph::Edge*
 TenANeighborGraph::create_new_edge( Size index1, Size index2)
 {
 	return tenA_edge_pool_->construct( this, index1, index2 );
 }
 
-graph::Edge*
-TenANeighborGraph::create_new_edge( graph::Edge const * example_edge )
+utility::graph::Edge*
+TenANeighborGraph::create_new_edge( utility::graph::Edge const * example_edge )
 {
 	return tenA_edge_pool_->construct(
 		this,

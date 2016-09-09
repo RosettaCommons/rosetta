@@ -22,7 +22,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
-//#include <core/graph/Graph.fwd.hh>
+//#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>

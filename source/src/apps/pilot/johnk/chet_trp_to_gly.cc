@@ -378,7 +378,7 @@ main( int argc, char * argv [] )
 	utility::vector1 <bool>	allow_moving( wt_pose_init.size(), false );
 	allow_moving.at( mut_rosetta_resnum ) = true;
 	core::scoring::TwelveANeighborGraph const & graph = wt_pose_init.energies().twelveA_neighbor_graph();
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 					iter = graph.get_node( mut_rosetta_resnum )->const_edge_list_begin(),
 					iter_end = graph.get_node( mut_rosetta_resnum )->const_edge_list_end();
 				iter != iter_end; ++iter ) {

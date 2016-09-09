@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -64,7 +64,7 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 	score_function_->setup_for_packing(pose, packer_task->repacking_residues(), packer_task->designing_residues());
 
-	core::graph::GraphOP packer_neighbor_graph(core::pack::create_packer_graph(pose,*score_function_,packer_task));
+	utility::graph::GraphOP packer_neighbor_graph(core::pack::create_packer_graph(pose,*score_function_,packer_task));
 
 	rotamer_sets->set_task(packer_task);
 	rotamer_sets->build_rotamers(pose,*score_function_,packer_neighbor_graph);

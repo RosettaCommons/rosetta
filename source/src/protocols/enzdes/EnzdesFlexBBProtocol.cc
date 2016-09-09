@@ -26,7 +26,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/fragment/util.hh>
-#include <core/graph/graph_util.hh> //for deleting edges from graph in calculating lig part sums
+#include <utility/graph/graph_util.hh> //for deleting edges from graph in calculating lig part sums
 #include <basic/options/option.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh> //for calculating lig part sums
 #include <core/pack/task/PackerTask.hh>
@@ -373,8 +373,8 @@ EnzdesFlexBBProtocol::get_tenA_neighbor_residues(
 	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 	for ( Size i=1; i <= pose.size(); ++i ) {
 		if ( !is_remodelable(i) && !is_flexible(i) ) continue;
-		core::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
-		for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
+		utility::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
+		for ( utility::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
 				it != current_node->const_edge_list_end(); ++it ) {
 			Size pos = (*it)->get_other_ind(i);
 			if ( pose.residue(pos).type().is_disulfide_bonded() ) continue;
@@ -1634,7 +1634,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 
 	//first, build a rotamer set
 	core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets() );
-	core::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, *scorefxn, task );
+	utility::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, *scorefxn, task );
 
 	rotsets->set_task( task );
 
@@ -1657,7 +1657,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 			//tr << "CATKEEPGRAPH: resi " << *cat_it << " is part of loop between " << *(positions_.begin() ) << " and " << *(positions_.rbegin() ) << std::endl;
 		} else residue_groups[ design_target ] = 1;
 	}
-	core::graph::delete_all_intragroup_edges( *packer_neighbor_graph, residue_groups );
+	utility::graph::delete_all_intragroup_edges( *packer_neighbor_graph, residue_groups );
 
 	//and then precompute the energies of (hopefully) only the positions/ligand interactions
 	rotsets->precompute_two_body_energies(  pose, *scorefxn, packer_neighbor_graph, ig );
@@ -1728,7 +1728,7 @@ EnzdesFlexibleRegion::extract_lig_designability_score(
 
 	for ( unsigned long design_target : design_targets_ ) {
 
-		for ( core::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( design_target )->const_edge_list_begin();
+		for ( utility::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( design_target )->const_edge_list_begin();
 				egraph_it != pose.energies().energy_graph().get_node( design_target )->const_edge_list_end(); ++egraph_it ) {
 
 			core::Size other_res = (*egraph_it)->get_other_ind( design_target );
@@ -1748,7 +1748,7 @@ EnzdesFlexibleRegion::extract_lig_designability_score(
 
 	for ( core::Size i = this->start(); i <= this->end(); ++i ) {
 
-		for ( core::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( i )->const_edge_list_begin();
+		for ( utility::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( i )->const_edge_list_begin();
 				egraph_it != pose.energies().energy_graph().get_node( i )->const_edge_list_end(); ++egraph_it ) {
 
 			core::Size other_res = (*egraph_it)->get_other_ind( i );
@@ -2167,7 +2167,7 @@ EnzdesFlexibleRegion::get_10A_neighbors(
 
 	for ( core::Size i = this->start(); i <= this->end(); ++i ) {
 
-		for ( core::graph::EdgeListConstIterator graph_it = cur_graph.get_node( i )->const_edge_list_begin();
+		for ( utility::graph::EdgeListConstIterator graph_it = cur_graph.get_node( i )->const_edge_list_begin();
 				graph_it != cur_graph.get_node( i )->const_edge_list_end(); ++graph_it ) {
 
 			core::Size other_res = (*graph_it)->get_other_ind( i );
@@ -2195,7 +2195,7 @@ EnzdesFlexBBProtocol::test_flexbb_rotamer_sets(
 
 	std::cerr << "FlexbbRotamerSet test: done setting frames." << std::endl;
 
-	core::graph::GraphOP flex_graph = flexset->flexpack_neighbor_graph( pose, *scorefxn_, task );
+	utility::graph::GraphOP flex_graph = flexset->flexpack_neighbor_graph( pose, *scorefxn_, task );
 
 	std::cerr << "FlexbbRotamerSet test: done setting up flexpack neighbor graph." << std::endl;
 

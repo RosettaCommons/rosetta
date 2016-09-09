@@ -373,7 +373,7 @@ PackRotamersMoverPartGreedy::target_residues( utility::vector1< core::Size > & t
 utility::vector1<core::Size>
 PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core::Size const & n_best ){
 
-	using namespace core::graph;
+	using namespace utility::graph;
 	using namespace core::scoring;
 	std::list< std::pair< core::Size, core::Real > > residue_energies;
 	utility::vector1<core::Size> chosen_residues;

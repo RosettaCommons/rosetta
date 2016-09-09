@@ -23,7 +23,7 @@
 
 #include <core/conformation/Residue.hh>
 
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 
 #include <core/pack/interaction_graph/HPatchInteractionGraph.fwd.hh>
 #include <core/pack/interaction_graph/AdditionalBackgroundNodesInteractionGraph.hh>
@@ -605,7 +605,7 @@ public:
 		utility::vector1< Size > const & exp_hphobes,
 		Size residue_djs_offset,
 		utility::vector1< utility::vector1< bool > > const & atom_atom_self_overlap,
-		graph::DisjointSets & ds
+		utility::graph::DisjointSets & ds
 	);
 
 	// used for inter-residue connections
@@ -619,7 +619,7 @@ public:
 		utility::vector1< Size > const & exp_hphobes2,
 		Size djs_offset_2,
 		utility::vector1< utility::vector1< bool > > const & atom_atom_overlaps,
-		graph::DisjointSets & ds
+		utility::graph::DisjointSets & ds
 	);
 
 	Real calculate_alt_state_hpatch_score();
@@ -3722,7 +3722,7 @@ void HPatchInteractionGraph< V, E, G >::update_disjoint_sets_using_cache(
 	utility::vector1< Size > const & exp_hphobes,
 	Size residue_djs_offset,
 	utility::vector1< utility::vector1< bool > > const & atom_atom_overlaps,
-	graph::DisjointSets & ds
+	utility::graph::DisjointSets & ds
 ) {
 
 	for ( Size ii=1, iiend = exp_hphobes.size(); ii <= iiend; ++ii ) {
@@ -3776,7 +3776,7 @@ void HPatchInteractionGraph< V, E, G >::update_disjoint_sets_using_cache(
 	utility::vector1< Size > const & exp_hphobes2,
 	Size djs_offset_2,
 	utility::vector1< utility::vector1< bool > > const & atom_atom_overlaps,
-	graph::DisjointSets & ds
+	utility::graph::DisjointSets & ds
 )
 {
 
@@ -3935,7 +3935,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 	}
 
 	// the above loops have determined the number of exposed hydrophobic atoms that are present. now init the disjointsets object.
-	graph::DisjointSets ds( tot_exp_hphobes );
+	utility::graph::DisjointSets ds( tot_exp_hphobes );
 
 	// intra-residue connections
 	for ( Size ii = 1; ii <= (Size)parent::get_num_nodes(); ++ii ) {

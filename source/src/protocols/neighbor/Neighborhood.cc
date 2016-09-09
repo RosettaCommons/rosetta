@@ -13,7 +13,7 @@
 #include <protocols/neighbor/Neighborhood.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
@@ -100,7 +100,7 @@ bool in_nrg_graph(Residue const& r1, Residue const& r2, Pose const& ps) {
 	Size const i2 = r2.seqpos();
 
 	core::scoring::EnergyGraph const& energy_graph( ps.energies().energy_graph() );
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			nit = energy_graph.get_node(i1)->const_edge_list_begin(),
 			nite = energy_graph.get_node(i1)->const_edge_list_end();
 			nit != nite; ++nit ) {

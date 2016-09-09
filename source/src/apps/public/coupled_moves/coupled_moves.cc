@@ -209,7 +209,7 @@ core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 	core::scoring::EnergyMap ligand_two_body_energies;
 
 	for ( core::Size i = 1; i <= pose->size(); i++ ) {
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {

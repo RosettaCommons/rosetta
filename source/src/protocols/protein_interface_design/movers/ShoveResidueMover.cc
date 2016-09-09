@@ -16,7 +16,7 @@
 #include <protocols/protein_interface_design/movers/ShoveResidueMoverCreator.hh>
 
 // Project headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>

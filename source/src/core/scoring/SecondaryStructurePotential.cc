@@ -22,7 +22,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <basic/database/open.hh>
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/Energies.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -196,7 +196,7 @@ SecondaryStructurePotential::hspair(
 		helix_end( HH_resnum_ss1, bb_pos, pt1, pt2 );
 
 		// loop over ALL the 3D neighbors of seqpos= HH_resnum_ss1 (ie not just standard loop over UPPER nbrs)
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node( HH_resnum_ss1 )->const_edge_list_begin(),
 				irue = energy_graph.get_node( HH_resnum_ss1 )->const_edge_list_end();
 				iru != irue; ++iru ) {
@@ -426,7 +426,7 @@ SecondaryStructurePotential::sspair(
 
 		//car ss2 is second dimer, always C term to first
 		// loop over the UPPER neighbors of seqpos= SS_resnum_ss1
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node( SS_resnum_ss1 )->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node( SS_resnum_ss1 )->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -1013,7 +1013,7 @@ SecondaryStructurePotential::sheets_from_dimers(
 	}
 
 
-	graph::DisjointSets sheet_sets( strands.total_strands );
+	utility::graph::DisjointSets sheet_sets( strands.total_strands );
 	for ( int ii = 1; ii <= strands.total_SS_dimer; ++ii ) {
 		//std::cout << "strands.SS_strand(" << ii << ") = " << strands.SS_strand( ii ) << " with neighbs: " << strands.dimer_neighbor( 1, ii ) << " " << strands.dimer_neighbor( 2, ii ) << std::endl;
 		int const ii_sheet = strands.SS_strand( ii );
@@ -1045,7 +1045,7 @@ SecondaryStructurePotential::sheets_from_dimers(
 
 		// Create a reduced set of strands that have scoring weights > 0.
 		utility::vector1< Size > weight_sheets;
-		graph::DisjointSets reduced_sheet_sets;
+		utility::graph::DisjointSets reduced_sheet_sets;
 		std::map< Size, utility::vector1< Size > > const set_and_nodes ( sheet_sets.sets() );
 		auto it_start = set_and_nodes.begin();
 		auto it_end = set_and_nodes.end();

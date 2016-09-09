@@ -274,7 +274,7 @@ atom_tree_get_atompairE_deriv(
 	}
 
 	/// 2. eval inter-residue derivatives
-	for ( graph::Node::EdgeListConstIter
+	for ( utility::graph::Node::EdgeListConstIter
 			edgeit = mingraph->const_edge_list_begin(), edgeit_end = mingraph->const_edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
 		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );

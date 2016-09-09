@@ -18,7 +18,7 @@
 #include <core/pack/interaction_graph/InteractionGraphFactory.fwd.hh>
 
 // Package headers
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
@@ -64,7 +64,7 @@ public:
 		rotamer_set::RotamerSets & rotsets,
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph);
+		utility::graph::GraphCOP packer_neighbor_graph);
 
 	/// @brief Create and initialize annealable graph for the given
 	/// pose, rotamer sets, packer task and score function. Initalizes
@@ -83,7 +83,7 @@ public:
 		rotamer_set::RotamerSets & rotsets,
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph);
+		utility::graph::GraphCOP packer_neighbor_graph);
 
 private:
 

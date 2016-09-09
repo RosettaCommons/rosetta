@@ -755,7 +755,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 		Vector const & y_i = M_i.col_y();
 		Vector const & z_i = M_i.col_z();
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
@@ -1120,7 +1120,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iter = energy_graph.get_node( i )->const_edge_list_begin();
 			iter != energy_graph.get_node( i )->const_edge_list_end();
 			++iter ) {
@@ -1469,7 +1469,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 		//  Size const num_heavy_atoms ( rsd1.nheavyatoms() );
 		//  Size const rna_base_start( rsd1.first_sidechain_atom() );
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
@@ -1530,7 +1530,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 
 		if ( n > 0 ) {
 
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iter = energy_graph.get_node( i )->const_edge_list_begin();
 					iter != energy_graph.get_node( i )->const_edge_list_end();
 					++iter ) {
@@ -1756,7 +1756,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 
 		Vector const & heavy_atom_i = rsd1.xyz( atom_num_i );
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
@@ -1805,7 +1805,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 
 			Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iter = energy_graph.get_node( i )->const_edge_list_begin();
 					iter != energy_graph.get_node( i )->const_edge_list_end();
 					++iter ) {
@@ -1971,7 +1971,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 
 		Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
@@ -2027,7 +2027,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 
 			Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iter = energy_graph.get_node( i )->const_edge_list_begin();
 					iter != energy_graph.get_node( i )->const_edge_list_end();
 					++iter ) {

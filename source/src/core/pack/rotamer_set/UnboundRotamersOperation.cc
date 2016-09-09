@@ -24,7 +24,7 @@
 #include <basic/Tracer.hh>
 
 #ifdef WIN32
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #endif
 
 
@@ -114,7 +114,7 @@ UnboundRotamersOperation::alter_rotamer_set(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & /*sfxn*/,
 	task::PackerTask const & ptask,
-	graph::GraphCOP /*packer_neighbor_graph*/,
+	utility::graph::GraphCOP /*packer_neighbor_graph*/,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 )
 {

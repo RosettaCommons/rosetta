@@ -24,7 +24,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -191,8 +191,8 @@ class GreenPacker : public protocols::moves::Mover
 {
 public:
 	/// Types
-	typedef core::graph::Graph                             Graph;
-	typedef core::graph::GraphOP                           GraphOP;
+	typedef utility::graph::Graph                             Graph;
+	typedef utility::graph::GraphOP                           GraphOP;
 	typedef core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph PrecomputedPairEnergiesInteractionGraph;
 	typedef core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraphOP PrecomputedPairEnergiesInteractionGraphOP;
 	typedef core::pack::rotamer_set::RotamerSets           RotamerSets;

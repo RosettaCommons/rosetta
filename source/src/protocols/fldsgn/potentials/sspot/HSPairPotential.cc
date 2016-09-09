@@ -152,7 +152,7 @@ HSPairPotential::score(
 			Vector pt1, pt2;
 			helix_end( ss1, bb_pos, pt1, pt2 );
 
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node( ss1+1 )->const_edge_list_begin(),
 					irue = energy_graph.get_node( ss1+1 )->const_edge_list_end();
 					iru != irue; ++iru ) {

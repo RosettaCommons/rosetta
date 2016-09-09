@@ -21,7 +21,7 @@
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 //Utility headers
 //#include <basic/options/option.hh>
@@ -35,7 +35,7 @@
 
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
 

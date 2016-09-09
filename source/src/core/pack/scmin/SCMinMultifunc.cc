@@ -83,7 +83,7 @@ SCMinMultifunc::operator ()( Multivec const & chi ) const
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
 		Size const iiresid = scminmap_.active_residue( ii );
 		conformation::Residue const & iires( scminmap_.residue( iiresid ) );
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				edgeit = g_.get_node( iiresid )->edge_list_begin(),
 				edgeit_end = g_.get_node( iiresid )->edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
@@ -112,7 +112,7 @@ SCMinMultifunc::operator ()( Multivec const & chi ) const
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
 		Size const iiresid = scminmap_.active_residue( ii );
 		conformation::Residue const & iires( scminmap_.residue( iiresid ) );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				edgeit = g_.get_node( iiresid )->const_edge_list_begin(),
 				edgeit_end = g_.get_node( iiresid )->const_edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
@@ -150,7 +150,7 @@ SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
 		Size const iiresid = scminmap_.active_residue( ii );
 		conformation::Residue const & iires( scminmap_.residue( iiresid ) );
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				edgeit = g_.get_node( iiresid )->edge_list_begin(),
 				edgeit_end = g_.get_node( iiresid )->edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
@@ -180,7 +180,7 @@ SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 		Size const iiresid = scminmap_.active_residue( ii );
 		MinimizationNode const & iiminnode( * g_.get_minimization_node( iiresid ) );
 		conformation::Residue const & iires( scminmap_.residue( iiresid ) );
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				edgeit = g_.get_node( iiresid )->edge_list_begin(),
 				edgeit_end = g_.get_node( iiresid )->edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {

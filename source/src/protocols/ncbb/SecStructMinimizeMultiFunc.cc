@@ -150,7 +150,7 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 			pose.residue( ii ), min_map, pose, false, dummy );
 	}
 
-	for ( graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			eiter = mingraph->edge_list_begin(), eiter_end = mingraph->edge_list_end();
 			eiter != eiter_end; ++eiter ) {
 		Size const node1 = (*eiter)->get_first_node_ind();

@@ -269,7 +269,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 	dg->copy_connectivity( pose.energies().energy_graph() );
 
 	kinematics::DomainMap const & domain_map( min_map.domain_map() );
-	for ( core::graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			edge_iter = g->edge_list_begin(),
 			edge_iter_end = g->edge_list_end(),
 			dedge_iter = dg->edge_list_begin(),
@@ -381,14 +381,14 @@ SymmetricScoreFunction::setup_for_minimizing(
 	}
 
 	/// 4a. drop unused edges from the scoring graph; call setup for minimizing on those remaining
-	for ( core::graph::Graph::EdgeListIter edge_iter = g->edge_list_begin(),
+	for ( utility::graph::Graph::EdgeListIter edge_iter = g->edge_list_begin(),
 			edge_iter_end = g->edge_list_end(); edge_iter != edge_iter_end; /* no increment */ ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
 
 		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 
-		core::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
+		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
 		++edge_iter_next;
 
 		if ( minedge.any_active_enmeths() ) {
@@ -404,14 +404,14 @@ SymmetricScoreFunction::setup_for_minimizing(
 	}
 
 	/// 4b. drop unused edges from the derivatives graph; call setup for minimizing on those remaining
-	for ( core::graph::Graph::EdgeListIter edge_iter = dg->edge_list_begin(),
+	for ( utility::graph::Graph::EdgeListIter edge_iter = dg->edge_list_begin(),
 			edge_iter_end = dg->edge_list_end(); edge_iter != edge_iter_end; /* no increment */ ) {
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
 
 		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 
-		core::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
+		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
 		++edge_iter_next;
 
 		if ( minedge.any_active_enmeths() ) {
@@ -473,7 +473,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 		/// When minimizing, do not touch the EnergyGraph -- leave it fixed
 		MinimizationGraphCOP g = energies.minimization_graph();
 		EnergyMap scratch_emap;
-		for ( core::graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				edge_iter = g->const_edge_list_begin(),
 				edge_iter_end = g->const_edge_list_end();
 				edge_iter != edge_iter_end; ++edge_iter ) {
@@ -491,7 +491,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 
 		for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 			conformation::Residue const & resl( pose.residue( i ) );
-			for ( graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->upper_edge_list_end();
 					iru != irue; ++iru ) {
@@ -726,7 +726,7 @@ SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
 		}
 	}
 	/// 2. Call setup_for_derivatives on the edges of the scoring graph
-	for ( graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			edgeit = g->edge_list_begin(), edgeit_end = g->edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
 		MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
@@ -746,7 +746,7 @@ SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
 		}
 	}
 	/// 4. Call setup_for_derivatives on the edges of the derivatives graph
-	for ( graph::Graph::EdgeListIter
+	for ( utility::graph::Graph::EdgeListIter
 			edgeit = dg->edge_list_begin(), edgeit_end = dg->edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
 		MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );

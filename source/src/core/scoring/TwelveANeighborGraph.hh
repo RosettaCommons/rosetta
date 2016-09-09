@@ -21,7 +21,7 @@
 #include <core/scoring/ContextGraph.hh>
 
 // Project Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -37,14 +37,14 @@
 namespace core {
 namespace scoring {
 
-class TwelveANeighborNode : public graph::Node
+class TwelveANeighborNode : public utility::graph::Node
 {
 public:
-	typedef graph::Node parent;
+	typedef utility::graph::Node parent;
 
 public:
 	~TwelveANeighborNode() override;
-	TwelveANeighborNode( graph::Graph*, Size node_id );
+	TwelveANeighborNode( utility::graph::Graph*, Size node_id );
 
 	void copy_from( Node const * source ) override;
 
@@ -54,16 +54,16 @@ private:
 
 };
 
-class TwelveANeighborEdge : public graph::Edge
+class TwelveANeighborEdge : public utility::graph::Edge
 {
 public:
-	typedef graph::Edge parent;
+	typedef utility::graph::Edge parent;
 
 public:
 	~TwelveANeighborEdge() override;
-	TwelveANeighborEdge(graph::Graph* owner, Size first_node_ind, Size second_node_ind);
+	TwelveANeighborEdge(utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind);
 
-	void copy_from( graph::Edge const * source ) override;
+	void copy_from( utility::graph::Edge const * source ) override;
 
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
@@ -117,16 +117,16 @@ public:
 		pose::Pose const & pose
 	) override;
 
-	void delete_edge( graph::Edge * edge ) override;
+	void delete_edge( utility::graph::Edge * edge ) override;
 
 protected:
 
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
 
-	graph::Node * create_new_node( Size node_index ) override;
-	graph::Edge * create_new_edge( Size index1, Size index2) override;
-	graph::Edge * create_new_edge( graph::Edge const * example_edge ) override;
+	utility::graph::Node * create_new_node( Size node_index ) override;
+	utility::graph::Edge * create_new_edge( Size index1, Size index2) override;
+	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
 
 private:
 	static Distance const twelveA_;

@@ -46,7 +46,7 @@
 
 #include <core/io/pdb/pdb_writer.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 // protocols headers
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -190,7 +190,7 @@ main( int argc, char * argv [] )
 
 	score_fxn->setup_for_packing( pose, packer_task->repacking_residues(), packer_task->designing_residues() );
 
-	graph::GraphOP packer_neighbor_graph( pack::create_packer_graph( pose, *score_fxn, packer_task ) );
+	utility::graph::GraphOP packer_neighbor_graph( pack::create_packer_graph( pose, *score_fxn, packer_task ) );
 
 	pack::rotamer_set::RotamerSetsOP rotsets;
 	rotsets->set_task( packer_task );
@@ -221,7 +221,7 @@ RotamericSingleResiduePeptoidLibrary< T >::fill_rotamer_vector(
 x	pose::Pose const & pose,
 x	scoring::ScoreFunction const & scorefxn,
 X	pack::task::PackerTask const & task,
-o	graph::GraphCOP packer_neighbor_graph,
+o	utility::graph::GraphCOP packer_neighbor_graph,
 x	chemical::ResidueTypeCAP concrete_residue,
 x	conformation::Residue const & existing_residue,
 o	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,

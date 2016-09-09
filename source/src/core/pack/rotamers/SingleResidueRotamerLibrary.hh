@@ -25,7 +25,7 @@
 //Project Headers
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -100,7 +100,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		pack::task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const& existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
@@ -165,7 +165,7 @@ public:
 		scoring::ScoreFunction const & sf,
 		pose::Pose const & pose,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	) const;
 
 	/// @brief Computes the "bump energy" of a rotamer: the bump energy is the
@@ -181,7 +181,7 @@ public:
 		scoring::ScoreFunction const & sf,
 		pose::Pose const & pose,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	) const;
 
 	/// @brief Adds the current rotamer to rotamer vector, if the Rotlib supports it

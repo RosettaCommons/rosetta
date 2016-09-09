@@ -26,7 +26,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -36,7 +36,7 @@
 #include <utility/vector1.functions.hh>
 
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -48,7 +48,7 @@ namespace pack {
 
 /// @brief Constructs a graph where edges represent the possibility of interactions between
 /// residue pairs
-graph::GraphOP
+utility::graph::GraphOP
 create_packer_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
@@ -62,7 +62,7 @@ create_packer_graph(
 
 /// @brief Constructs a graph where edges represent the possibility of interactions between
 /// residue pairs
-graph::GraphOP
+utility::graph::GraphOP
 create_packer_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
@@ -71,7 +71,7 @@ create_packer_graph(
 	utility::vector1< Distance > const & residue_radii
 )
 {
-	using namespace graph;
+	using namespace utility::graph;
 
 	//GraphOP g = new Graph( pose.size() );
 	GraphOP g( new Graph( total_nodes ) );

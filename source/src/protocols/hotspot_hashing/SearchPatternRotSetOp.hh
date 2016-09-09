@@ -21,7 +21,7 @@
 //Project headers
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>

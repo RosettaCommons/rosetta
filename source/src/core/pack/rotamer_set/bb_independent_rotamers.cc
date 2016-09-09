@@ -20,7 +20,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -53,7 +53,7 @@ bb_independent_rotamers(
 	dummy_task->nonconst_residue_task( 1 ).restrict_to_repacking();
 	dummy_task->nonconst_residue_task( 1 ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
 	dummy_task->nonconst_residue_task( 1 ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
-	core::graph::GraphOP dummy_png = core::pack::create_packer_graph( dummy_pose, dummy_sfxn, dummy_task );
+	utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( dummy_pose, dummy_sfxn, dummy_task );
 
 	core::pack::rotamer_set::RotamerSetFactory rsf;
 	core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( dummy_pose.residue( 1 ) ) );

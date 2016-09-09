@@ -59,7 +59,7 @@ public:
 	core::pose::Pose pose;
 	rotamer_set::RotamerSetsOP rotsets;
 	core::scoring::ScoreFunctionOP scorefxn;
-	core::graph::GraphOP packer_neighbor_graph;
+	utility::graph::GraphOP packer_neighbor_graph;
 	task::PackerTaskOP packertask;
 
 

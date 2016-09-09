@@ -73,7 +73,7 @@ int main(int argc, char * argv[]) {
   for (Size i = 1, i_end = init_pose.size(); i <= i_end; ++i) {
     conformation::Residue const & resl(init_pose.residue(i));
 
-    for (graph::Graph::EdgeListIter iru = energy_graph.get_node(i)->upper_edge_list_begin(), irue =
+    for (utility::graph::Graph::EdgeListIter iru = energy_graph.get_node(i)->upper_edge_list_begin(), irue =
         energy_graph.get_node(i)->upper_edge_list_end(); iru != irue; ++iru) {
       EnergyEdge * edge(static_cast<EnergyEdge *> (*iru));
       Size const j(edge->get_second_node_ind());

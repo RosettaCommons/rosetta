@@ -14,7 +14,7 @@
 // Unit headers
 #include <devel/mmt_msd/MMTMinPackingJob.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationGraph.hh>

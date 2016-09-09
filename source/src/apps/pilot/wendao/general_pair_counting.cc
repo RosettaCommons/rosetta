@@ -310,7 +310,7 @@ void my_main()
 			Size nbr_within_ten=0;
 
 			conformation::Residue const & rsd1 ( p.residue(i) );
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_edge_list_end();
 					iru != irue; ++iru ) {
@@ -364,7 +364,7 @@ void my_main()
 			conformation::Residue const & rsd1 ( p.residue(i) );
 		  if (rsd1.name3()=="CYS" &&  rsd1.type().is_disulfide_bonded() ) continue;
 
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {

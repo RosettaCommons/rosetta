@@ -117,8 +117,8 @@ GivenPathAssemblyMover::generate_assembly(){
 	//  for(; ref_it != ref_it_end; ++ref_it) {
 	//   ModelNode const * reference_node = graph_->get_model_node(*ref_it);
 	//   graph_->add_edges_from_binary(edge_file_, reference_node->get_node_index());
-	//   core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
-	//   core::graph::EdgeListConstIterator edge_it_end = reference_node->const_edge_list_end();
+	//   utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
+	//   utility::graph::EdgeListConstIterator edge_it_end = reference_node->const_edge_list_end();
 	//   for(; edge_it != edge_it_end; ++edge_it) {
 	//    std::set<core::Size>::const_iterator target_it = target_node_ids.begin();
 	//    std::set<core::Size>::const_iterator target_it_end = target_node_ids.end();

@@ -72,7 +72,7 @@ public:
 		pose::Pose const & the_pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	);
 
@@ -84,7 +84,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
 
@@ -134,7 +134,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & energies ) const;
 
 	/// @brief Computes the packers one body energies for the set of rotamers as well
@@ -145,7 +145,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & one_body_energies,
 		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
 		utility::vector1< core::Size > & packable_neighbors ) const;
@@ -157,7 +157,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< scoring::EnergyMap > & energies ) const;
 
 	/*
@@ -244,7 +244,7 @@ protected:
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	);
 
@@ -257,7 +257,7 @@ protected:
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const & existing_residue,
-		graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	);
 
@@ -273,7 +273,7 @@ protected:
 		task::PackerTask const & task,
 		conformation::Residue const & existing_residue,
 		chemical::ResidueTypeCOP concrete_residue,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
 
@@ -284,7 +284,7 @@ protected:
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const & existing_residue,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
 public:
@@ -314,7 +314,7 @@ public:
 		scoring::ScoreFunction const & sf,
 		pose::Pose const & pose,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	) const;
 
 	virtual
@@ -329,7 +329,7 @@ private:
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const & existing_residue,
-		graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
 	/// @brief declare that a new block of residue types has begun, and that new residues

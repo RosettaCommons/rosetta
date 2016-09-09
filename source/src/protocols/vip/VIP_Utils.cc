@@ -128,7 +128,7 @@ set_local_movemap(
 	mmap->set_bb( false );
 	mmap->set_jump( false );
 
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			iru = energy_graph.get_node( position )->const_upper_edge_list_begin(),
 			irue = energy_graph.get_node( position )->const_upper_edge_list_end();
 			iru != irue; ++iru ) {

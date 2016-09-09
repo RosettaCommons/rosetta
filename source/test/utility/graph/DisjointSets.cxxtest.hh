@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/DisjointSets.cxxtest.hh
+/// @file   utility/graph/DisjointSets.cxxtest.hh
 /// @brief  test suite for the graph::DisjointSets class
 /// @author Ron Jacak
 
@@ -15,9 +15,8 @@
 #include <cxxtest/TestSuite.h>
 
 // Core Headers
-#include <core/graph/Graph.hh>
-#include <core/graph/DisjointSets.hh>
-#include <core/types.hh>
+#include <utility/graph/Graph.hh>
+#include <utility/graph/DisjointSets.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -29,13 +28,15 @@
 
 //Auto Headers
 
+//Types
+#include <platform/types.hh>
 
 // Auto Headers
 
 static basic::Tracer TR("test.core.graph.disjointsets");
 
-using namespace core;
-
+using namespace utility;
+using namespace platform;
 
 // --------------- Test Class --------------- //
 
@@ -44,7 +45,7 @@ class DisjointSetsTests : public CxxTest::TestSuite {
 public:
 
 	// Shared data elements go here.
-	core::graph::GraphOP g;
+	utility::graph::GraphOP g;
 
 	// --------------- Test Fixture --------------- //
 
@@ -70,7 +71,7 @@ public:
 	void test_disjoint_sets_example1() {
 		//TR << "Running test_disjoint_sets_example1..." << std::endl;
 
-		g = core::graph::GraphOP( new graph::Graph(5) );
+		g = utility::graph::GraphOP( new graph::Graph(5) );
 		g->add_edge(1,2);
 		g->add_edge(1,5);
 		g->add_edge(4,5);

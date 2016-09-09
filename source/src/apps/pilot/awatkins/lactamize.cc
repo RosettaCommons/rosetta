@@ -14,7 +14,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>

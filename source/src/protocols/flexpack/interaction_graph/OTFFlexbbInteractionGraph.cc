@@ -20,7 +20,7 @@
 /// Project headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/scoring/Energies.hh>
@@ -860,7 +860,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 			Size ii_moltenresid = resid_2_moltenres_[ ii_resid ];
 			//std::cout << "Real energies: " << ii_moltenresid;
 			Real ii_total( 0.0 );
-			for ( core::graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 					ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
 					ir != ire; ++ir ) {
@@ -913,7 +913,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 
 			//std::cout << "Real energies with background: " << ii_moltenresid;
 			ii_total = 0.0;
-			for ( core::graph::Graph::EdgeListIter
+			for ( utility::graph::Graph::EdgeListIter
 					ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 					ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
 					ir != ire; ++ir ) {
@@ -969,7 +969,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 				<< " " << alt_rots_[ ii ]->xyz( jj ).z()
 				<< ")" <<  std::endl;
 				}*/
-				for ( core::graph::Graph::EdgeListIter
+				for ( utility::graph::Graph::EdgeListIter
 						ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 						ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
 						ir != ire; ++ir ) {

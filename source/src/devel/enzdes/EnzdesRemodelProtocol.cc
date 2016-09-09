@@ -94,7 +94,7 @@
 
 //Auto Headers
 #include <platform/types.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/string_util.hh>
 
@@ -715,11 +715,11 @@ protocols::filters::FilterCOP
 EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const & pose) const
 {
 
-	using namespace core::graph;
+	using namespace utility::graph;
 
 	protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator nl_calc( remodel_positions_, other_design_positions_ );
 	basic::MetricValue< core::Size > mval_size;
-	basic::MetricValue< core::graph::GraphOP > mval_graph;
+	basic::MetricValue< utility::graph::GraphOP > mval_graph;
 
 	nl_calc.get( (std::string) "region1_region2_nlcontacts_", mval_size, pose );
 	nl_calc.get( (std::string) "nlcontacts_graph", mval_graph, pose );
@@ -730,7 +730,7 @@ EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const &
 	png_filter->add_required_connections_between_regions( remodel_positions_, other_design_positions_, mval_size.value() );
 
 
-	core::graph::GraphCOP nl_graph = mval_graph.value();
+	utility::graph::GraphCOP nl_graph = mval_graph.value();
 
 	//now iterate through graph to get the residue required connections
 	for ( Node::EdgeListConstIter edge_it( nl_graph->const_edge_list_begin() ), edge_end( nl_graph->const_edge_list_end() );

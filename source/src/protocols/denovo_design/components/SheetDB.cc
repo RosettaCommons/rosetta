@@ -26,8 +26,8 @@
 
 // Core Headers
 #include <core/conformation/ResidueFactory.hh>
-#include <core/graph/Graph.hh>
-#include <core/graph/graph_util.hh>
+#include <utility/graph/Graph.hh>
+#include <utility/graph/graph_util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/PDBInfo.hh>
@@ -522,7 +522,7 @@ SheetDB::add_sheets_from_pose( core::pose::Pose & pose )
 	return add_sheets_from_spairs( pose, spairs, *ssinfo );
 }
 
-core::graph::Graph
+utility::graph::Graph
 graph_from_strandpairings(
 	protocols::fldsgn::topology::StrandPairings const & spairs,
 	std::map< core::Size, core::Size > & node_to_strand )
@@ -558,7 +558,7 @@ graph_from_strandpairings(
 	}
 
 	TR.Debug << node_to_strand << strand_to_node << " number of nodes=" << strand_to_node.size() << std::endl;
-	core::graph::Graph g( strand_to_node.size() );
+	utility::graph::Graph g( strand_to_node.size() );
 	for ( core::Size i=1; i<=g_edges.size(); ++i ) {
 		TR.Debug << "Adding edge " << g_edges[i].first << " <--> " << g_edges[i].second << std::endl;
 		g.add_edge( g_edges[i].first, g_edges[i].second );
@@ -774,9 +774,9 @@ extract_sheets_from_pose(
 
 	utility::vector1< core::pose::PoseOP > sheets;
 	std::map< core::Size, core::Size > node_to_strand;
-	core::graph::Graph g = graph_from_strandpairings( spairs, node_to_strand );
+	utility::graph::Graph g = graph_from_strandpairings( spairs, node_to_strand );
 	g.print_vertices();
-	utility::vector1< std::pair< core::Size, core::Size > > connected_sheets = core::graph::find_connected_components( g );
+	utility::vector1< std::pair< core::Size, core::Size > > connected_sheets = utility::graph::find_connected_components( g );
 	for ( core::Size i=1; i<=connected_sheets.size(); ++i ) {
 		TR << "Tomponent Group " << connected_sheets[i].first << " " << connected_sheets[i].second << std::endl;
 		bool success = true;
@@ -798,9 +798,9 @@ extract_sheets_from_pose(
 				success = false;
 				break;
 			}
-			core::graph::Node const * n = g.get_node(nodenum);
+			utility::graph::Node const * n = g.get_node(nodenum);
 			assert( n );
-			for ( core::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e != n->const_edge_list_end(); ++e ) {
+			for ( utility::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e != n->const_edge_list_end(); ++e ) {
 				core::Size const othernode = (*e)->get_other_ind(nodenum);
 				nodes.push(othernode);
 			}

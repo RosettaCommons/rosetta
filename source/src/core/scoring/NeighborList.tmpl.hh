@@ -79,8 +79,8 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-#include <core/graph/UpperEdgeGraph.fwd.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.fwd.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -444,7 +444,7 @@ NeighborList::setup(
 ) const
 {
 	using namespace etable::count_pair;
-	using namespace graph;
+	using namespace utility::graph;
 
 	PROF_START( basic::SETUP_NBLIST );
 

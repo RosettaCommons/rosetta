@@ -1069,7 +1069,7 @@ make_fragments() {
 				for ( int j=i-2; j<=i+2; ++j ) {
 					core::conformation::Residue const &rsd_j( pose.residue(j) );
 
-					for ( graph::Graph::EdgeListConstIter
+					for ( utility::graph::Graph::EdgeListConstIter
 							iru  = energy_graph.get_node(j)->const_edge_list_begin(),
 							irue = energy_graph.get_node(j)->const_edge_list_end();
 							iru != irue; ++iru ) {

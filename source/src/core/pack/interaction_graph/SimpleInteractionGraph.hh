@@ -20,7 +20,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -35,15 +35,15 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-class SimpleNode : public graph::Node
+class SimpleNode : public utility::graph::Node
 {
 public:
 
 	//  SimpleNode::SimpleNode();
-	SimpleNode( graph::Graph * owner, Size resnum );
+	SimpleNode( utility::graph::Graph * owner, Size resnum );
 	virtual ~SimpleNode();
 
-	virtual  void copy_from( graph::Node const * ) {}
+	virtual  void copy_from( utility::graph::Node const * ) {}
 
 	virtual  void print() const {}
 
@@ -163,15 +163,15 @@ private:
 }; //SimpleNode
 
 
-class SimpleEdge : public graph::Edge {
+class SimpleEdge : public utility::graph::Edge {
 
 public:
 
-	//SimpleEdge( graph::Graph* owner );
-	SimpleEdge( graph::Graph* owner, Size res1, Size res2 );
+	//SimpleEdge( utility::graph::Graph* owner );
+	SimpleEdge( utility::graph::Graph* owner, Size res1, Size res2 );
 	virtual ~SimpleEdge();
 
-	virtual  void copy_from( graph::Edge const * ) {}
+	virtual  void copy_from( utility::graph::Edge const * ) {}
 
 	virtual  platform::Size count_static_memory() const {return 1;}
 	virtual  platform::Size count_dynamic_memory() const {return 1;}
@@ -258,7 +258,7 @@ private:
 /// triggers an update to the energies; and a second, where the graph
 /// is PASSIVE wrt the pointers, and they must be maintained by
 /// an external driver.
-class SimpleInteractionGraph : public graph::Graph {
+class SimpleInteractionGraph : public utility::graph::Graph {
 
 public:
 
@@ -295,7 +295,7 @@ public:
 	virtual  Size count_static_memory() const {return 0;}
 	virtual  Size count_dynamic_memory() const {return 0;}
 
-	virtual void delete_edge( graph::Edge * );
+	virtual void delete_edge( utility::graph::Edge * );
 
 	SimpleNode *
 	get_simple_node( Size ind ) {
@@ -309,8 +309,8 @@ public:
 
 protected:
 
-	virtual graph::Node* create_new_node( Size node_index );
-	virtual graph::Edge* create_new_edge( Size index1, platform::Size index2 );
+	virtual utility::graph::Node* create_new_node( Size node_index );
+	virtual utility::graph::Edge* create_new_edge( Size index1, platform::Size index2 );
 
 	//virtual Edge* create_new_edge( Edge * example_edge );
 

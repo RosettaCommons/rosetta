@@ -14,13 +14,13 @@
 #define INCLUDED_core_conformation_AtomGraph_fwd_hh
 
 #include <core/conformation/AtomGraphData.fwd.hh>
-#include <core/graph/UpperEdgeGraph.fwd.hh>
+#include <utility/graph/UpperEdgeGraph.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace conformation {
 
-typedef graph::UpperEdgeGraph<AtomGraphVertexData, AtomGraphEdgeData> AtomGraph;
+typedef utility::graph::UpperEdgeGraph<AtomGraphVertexData, AtomGraphEdgeData> AtomGraph;
 typedef utility::pointer::shared_ptr<AtomGraph > AtomGraphOP;
 
 }

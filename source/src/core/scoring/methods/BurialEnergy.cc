@@ -86,7 +86,7 @@ BurialEnergy::residue_energy(
 
 	// iterate across neighbors within 12 angstroms, count number <10A
 	Size countN(0);
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin(),
 			ire = graph.get_node( rsd.seqpos() )->const_edge_list_end();
 			ir != ire; ++ir ) {

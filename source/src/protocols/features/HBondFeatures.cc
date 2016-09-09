@@ -26,7 +26,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -96,8 +96,8 @@ using core::id::AtomID_Map;
 using core::id::AtomID;
 using core::pose::Pose;
 using core::pose::initialize_atomid_map;
-using core::graph::EdgeListConstIterator;
-using core::graph::Graph;
+using utility::graph::EdgeListConstIterator;
+using utility::graph::Graph;
 using core::scoring::calc_per_atom_sasa;
 using core::scoring::EnergyMap;
 using core::scoring::get_score_function;

@@ -16,7 +16,7 @@
 
 // Project headers
 #include <basic/Tracer.hh>
-#include <core/graph/DisjointSets.hh>
+#include <utility/graph/DisjointSets.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
@@ -396,7 +396,7 @@ SheetSet::calc_geometry( SS_Info2_COP const ssinfo )
 void
 SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spairset_in )
 {
-	using core::graph::DisjointSets;
+	using utility::graph::DisjointSets;
 	using protocols::fldsgn::topology::StrandPairings;
 	using protocols::fldsgn::topology::StrandPairingCOP;
 

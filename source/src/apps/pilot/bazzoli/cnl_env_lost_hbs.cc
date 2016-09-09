@@ -60,7 +60,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/PDBInfo.hh>
@@ -279,12 +279,12 @@ void don_store_hbs(AtomID const& don, Pose const& ps,
 	Size const dri = don.rsd();
 	core::scoring::EnergyGraph const& energy_graph(ps.energies().energy_graph());
 
-	core::graph::Graph::EdgeListConstIter NITB =
+	utility::graph::Graph::EdgeListConstIter NITB =
 		energy_graph.get_node(dri)->const_edge_list_begin();
-	core::graph::Graph::EdgeListConstIter NITE =
+	utility::graph::Graph::EdgeListConstIter NITE =
 		energy_graph.get_node(dri)->const_edge_list_end();
 
-	for ( core::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
+	for ( utility::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
 
 		Size nri((*nit)->get_other_ind(dri));
 		Residue const& ngb = ps.residue(nri);
@@ -324,12 +324,12 @@ void acc_store_hbs(AtomID const& acc, Pose const& ps,
 	Size const ari = acc.rsd();
 	core::scoring::EnergyGraph const& energy_graph(ps.energies().energy_graph());
 
-	core::graph::Graph::EdgeListConstIter NITB =
+	utility::graph::Graph::EdgeListConstIter NITB =
 		energy_graph.get_node(ari)->const_edge_list_begin();
-	core::graph::Graph::EdgeListConstIter NITE =
+	utility::graph::Graph::EdgeListConstIter NITE =
 		energy_graph.get_node(ari)->const_edge_list_end();
 
-	for ( core::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
+	for ( utility::graph::Graph::EdgeListConstIter nit = NITB; nit != NITE; ++nit ) {
 
 		Size nri((*nit)->get_other_ind(ari));
 		Residue const& ngb = ps.residue(nri);

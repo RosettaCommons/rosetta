@@ -12,7 +12,7 @@
 	#include <core/io/pdb/pdb_writer.hh>
 	#include <core/kinematics/Stub.hh>
 	#include <core/kinematics/MoveMap.hh>
-	#include <core/graph/Graph.hh>
+	#include <utility/graph/Graph.hh>
 	#include <core/pack/packer_neighbors.hh>
 	#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 	#include <core/pack/rotamer_set/RotamerSet.hh>
@@ -841,7 +841,7 @@ void ik_lys_ctp_asp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 	dummy_task->nonconst_residue_task( rsd1 ).restrict_to_repacking();
 	dummy_task->nonconst_residue_task( rsd1 ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
 	dummy_task->nonconst_residue_task( rsd1 ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
-	core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
+	utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
 	core::pack::rotamer_set::RotamerSetFactory rsf;
 	core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( pose.residue( rsd1 ) ) );
 	rotset->set_resid( rsd1 );
@@ -1033,7 +1033,7 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 		dummy_task->nonconst_residue_task( rsd1 ).restrict_to_repacking();
 		dummy_task->nonconst_residue_task( rsd1 ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
 		dummy_task->nonconst_residue_task( rsd1 ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
-		core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
+		utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
 		core::pack::rotamer_set::RotamerSetFactory rsf;
 		rotset = rsf.create_rotamer_set( pose.residue( rsd1 ) );
 		rotset->set_resid( rsd1 );

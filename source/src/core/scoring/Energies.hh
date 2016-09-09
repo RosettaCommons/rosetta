@@ -38,7 +38,7 @@
 #endif
 
 // Project headers
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/conformation/PointGraph.fwd.hh>
@@ -111,7 +111,7 @@ public:
 	typedef id::AtomID_Mask AtomID_Mask;
 	typedef kinematics::DomainMap DomainMap;
 
-	typedef graph::Graph Graph;
+	typedef utility::graph::Graph Graph;
 
 	typedef scoring::EnergyMap EnergyMap;
 
@@ -667,7 +667,7 @@ private:
 	void prepare_neighbor_graphs();
 
 	//// @brief Delete edges for a particular graph using the domain map data
-	void delete_graph_edges_using_domain_map( graph::Graph & g);
+	void delete_graph_edges_using_domain_map( utility::graph::Graph & g);
 
 	/// @brief Reset the "already computed" status for pairs of residues represented
 	/// in a particular long-range energy container using the domain map.

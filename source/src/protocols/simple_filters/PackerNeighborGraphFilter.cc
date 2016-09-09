@@ -21,7 +21,7 @@
 // Package Headers
 
 // Project Headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 //#include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -109,7 +109,7 @@ PackerNeighborGraphFilter::add_required_connections_between_regions(
 bool
 PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 
-	using namespace core::graph;
+	using namespace utility::graph;
 
 	//if( task_invalidated_ ) utility_exit_with_message("Calling PackerNeighborGraphFilter apply function even though the task has been invalidated");
 

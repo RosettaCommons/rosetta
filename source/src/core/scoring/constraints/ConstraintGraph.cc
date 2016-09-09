@@ -19,7 +19,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-ConstraintNode::ConstraintNode( graph::Graph* owner, Size node_id )
+ConstraintNode::ConstraintNode( utility::graph::Graph* owner, Size node_id )
 :
 	parent( owner, node_id )
 {}
@@ -49,7 +49,7 @@ ConstraintNode::count_dynamic_memory() const
 ConstraintEdge::~ConstraintEdge()
 {}
 
-ConstraintEdge::ConstraintEdge( graph::Graph * owner, Size first_node_ind, Size second_node_ind)
+ConstraintEdge::ConstraintEdge( utility::graph::Graph * owner, Size first_node_ind, Size second_node_ind)
 :
 	parent( owner, first_node_ind, second_node_ind ),
 	bond_geometry_energy_( 0.0 ),
@@ -67,7 +67,7 @@ ConstraintEdge::ConstraintEdge( graph::Graph * owner, Size first_node_ind, Size 
 {
 }
 
-ConstraintEdge::ConstraintEdge( graph::Graph * owner, ConstraintEdge const & example_edge )
+ConstraintEdge::ConstraintEdge( utility::graph::Graph * owner, ConstraintEdge const & example_edge )
 :
 	parent( owner, example_edge.get_first_node_ind(), example_edge.get_second_node_ind() ),
 	bond_geometry_energy_( example_edge.bond_geometry_energy_ ),
@@ -85,7 +85,7 @@ ConstraintEdge::ConstraintEdge( graph::Graph * owner, ConstraintEdge const & exa
 {}
 
 void
-ConstraintEdge::copy_from( graph::Edge const * source )
+ConstraintEdge::copy_from( utility::graph::Edge const * source )
 {
 	ConstraintEdge const * cst_source = static_cast< ConstraintEdge const * > ( source );
 
@@ -283,7 +283,7 @@ ConstraintGraph::operator = ( ConstraintGraph const & source )
 
 ConstraintGraph::~ConstraintGraph() { delete_everything(); }
 
-void ConstraintGraph::delete_edge( graph::Edge * edge )
+void ConstraintGraph::delete_edge( utility::graph::Edge * edge )
 {
 	delete edge;
 }
@@ -301,21 +301,21 @@ ConstraintGraph::count_dynamic_memory() const
 	return parent::count_dynamic_memory();
 }
 
-graph::Node*
+utility::graph::Node*
 ConstraintGraph::create_new_node( Size node_index )
 {
 	return new ConstraintNode( this, node_index );
 }
 
-graph::Edge*
+utility::graph::Edge*
 ConstraintGraph::create_new_edge( Size index1, Size index2)
 {
 	return new ConstraintEdge( this, index1, index2 );
 }
 
 
-graph::Edge*
-ConstraintGraph::create_new_edge( graph::Edge const * example_edge )
+utility::graph::Edge*
+ConstraintGraph::create_new_edge( utility::graph::Edge const * example_edge )
 {
 	return new ConstraintEdge(
 		this,

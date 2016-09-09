@@ -245,7 +245,7 @@ calc_lk_burial_for_single_atom(
 
 	Real weighted_desolvation_no_count_pair( 0.0 );
 	Real const lk_dgfree( -1.0 * rsd1.atom_type( atom1 ).lk_dgfree() );
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			ire = energy_graph.get_node( pos1 )->const_edge_list_end();
 			ir != ire; ++ir ) {
@@ -291,7 +291,7 @@ get_atom_lk_energy(
 		scorefxn->energy_method_options()
 	);
 	//over all other residue nbrs in energy graph
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = energy_graph.get_node( seqpos )->const_edge_list_begin(),
 			ire = energy_graph.get_node( seqpos )->const_edge_list_end();
 			ir != ire; ++ir ) {

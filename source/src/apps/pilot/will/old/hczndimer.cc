@@ -25,7 +25,7 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -123,7 +123,7 @@ makerots(Pose const & p, Size ir, Pose const & rsd) {
   // EX_SIX_QUARTER_STEP_STDDEVS,   //7
   dummy_task->nonconst_residue_task(ir).or_ex1_sample_level(core::pack::task::EX_TWO_FULL_STEP_STDDEVS);
   dummy_task->nonconst_residue_task(ir).or_ex2_sample_level(core::pack::task::EX_TWO_FULL_STEP_STDDEVS);
-  core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
+  utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
   core::pack::rotamer_set::RotamerSetFactory rsf;
   core::pack::rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue(ir) );
   rotset->set_resid(ir);

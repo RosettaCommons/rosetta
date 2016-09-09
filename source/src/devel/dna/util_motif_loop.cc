@@ -27,7 +27,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <devel/dna/util_motif_loop.hh>
 #include <basic/Tracer.hh>
@@ -91,7 +91,7 @@ core::pack::rotamer_set::RotamerSetOP get_aa_rotset( std::string & AA)
 	dummy_task->nonconst_residue_task(1).or_include_current(false);
 	dummy_task->nonconst_residue_task(1).or_fix_his_tautomer(true);
 
-	core::graph::GraphOP dummy_png = core::pack::create_packer_graph(rotamer_building_site, scorefxn, dummy_task);
+	utility::graph::GraphOP dummy_png = core::pack::create_packer_graph(rotamer_building_site, scorefxn, dummy_task);
 
 
 	RotamerSetFactory rsf;
@@ -136,7 +136,7 @@ std::map< std::string, core::pack::rotamer_set::RotamerSetOP >  build_all_aa_rot
 		dummy_task->nonconst_residue_task(1).or_include_current(false);
 		dummy_task->nonconst_residue_task(1).or_fix_his_tautomer(true);
 
-		core::graph::GraphOP dummy_png = core::pack::create_packer_graph(rotamer_building_site, scorefxn, dummy_task);
+		utility::graph::GraphOP dummy_png = core::pack::create_packer_graph(rotamer_building_site, scorefxn, dummy_task);
 
 
 		RotamerSetFactory rsf;

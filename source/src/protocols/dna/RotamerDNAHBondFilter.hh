@@ -20,7 +20,7 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -50,7 +50,7 @@ public:
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & scorefxn,
 		core::pack::task::ResidueLevelTask const & rtask,
-		core::graph::GraphCOP packer_neighbor_graph,
+		utility::graph::GraphCOP packer_neighbor_graph,
 		core::pack::dunbrack::ChiSetOP chi_set
 	) override;
 

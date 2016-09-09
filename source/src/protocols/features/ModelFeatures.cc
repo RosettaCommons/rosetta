@@ -22,7 +22,7 @@
 #include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
 #include <core/select/util/interface_vector_calculate.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -295,7 +295,7 @@ ModelFeatures::report_features(
 
 				bool attraction = false;
 				for ( core::Size ii = it1->begin; ii <= it1->end; ++ii ) {
-					for ( core::graph::Node::EdgeListConstIter
+					for ( utility::graph::Node::EdgeListConstIter
 							iter = eg.get_node(ii)->const_upper_edge_list_begin(),
 							iter_end = eg.get_node(ii)->const_upper_edge_list_end();
 							iter != iter_end; ++iter ) {

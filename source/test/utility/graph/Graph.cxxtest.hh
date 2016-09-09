@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/Graph.cxxtest.hh
-/// @brief  test suite for core::graph::Graph.cc
+/// @file   utility/graph/Graph.cxxtest.hh
+/// @brief  test suite for utility::graph::Graph.cc
 /// @author Ron Jacak (ron.jacak@gmail.com)
 
 
@@ -17,7 +17,7 @@
 
 // Unit headers
 #include <core/types.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 // C++ headers, for debugging your tests
 #include <sstream>
@@ -28,7 +28,8 @@
 #include <cereal/types/polymorphic.hpp>
 #endif
 
-using namespace core::graph;
+using namespace core;
+using namespace utility::graph;
 
 
 // --------------- Test Class --------------- //

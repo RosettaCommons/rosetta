@@ -31,7 +31,7 @@ void DeleteAllRotamerSetOperation::alter_rotamer_set(
 	core::pose::Pose const &,
 	core::scoring::ScoreFunction const &,
 	core::pack::task::PackerTask const &,
-	core::graph::GraphCOP,
+	utility::graph::GraphCOP,
 	core::pack::rotamer_set::RotamerSet & rotamer_set)
 {
 	utility::vector1<bool> rotamer_vector(rotamer_set.num_rotamers(), true);

@@ -269,9 +269,9 @@ FoldGraph::fold_tree( SegmentNames const & root_segments ) const
 	while ( to_search.size() > 0 ) {
 		core::Size const node = to_search.top();
 		to_search.pop();
-		core::graph::Node const * n = g_.get_node(node);
+		utility::graph::Node const * n = g_.get_node(node);
 		debug_assert( n );
-		for ( core::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e != n->const_edge_list_end(); ++e ) {
+		for ( utility::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e != n->const_edge_list_end(); ++e ) {
 			core::Size const othernode = (*e)->get_other_ind(node);
 			if ( visited.find(othernode) != visited.end() ) {
 				TR.Debug << "ALready visited " << segment(node) << "__" << segment(othernode) << std::endl;
@@ -432,14 +432,14 @@ FoldGraph::fold_tree_rec(
 	node_stack.push( nodenum );
 
 	// traverse connected edges
-	core::graph::Node const * n;
+	utility::graph::Node const * n;
 	if ( polymer_only ) {
 		n = gpeptide_.get_node(nodenum);
 	} else {
 		n = g_.get_node(nodenum);
 	}
 	debug_assert( n );
-	for ( core::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e!=n->const_edge_list_end(); ++e ) {
+	for ( utility::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e!=n->const_edge_list_end(); ++e ) {
 		core::Size const othernode = (*e)->get_other_ind(nodenum);
 		if ( visited.find(othernode) != visited.end() ) {
 			TR.Debug << "Skipping " << othernode << " as it has been visited." << std::endl;
@@ -628,9 +628,9 @@ FoldGraph::check_solution( Solution const & solution ) const
 			}
 
 			//look for this segment's movable group in the solution
-			core::graph::Node const * node = gpeptide_.get_node(cur);
+			utility::graph::Node const * node = gpeptide_.get_node(cur);
 			debug_assert( node );
-			for ( core::graph::Graph::EdgeListConstIter e=node->const_edge_list_begin(); e!=node->const_edge_list_end(); ++e ) {
+			for ( utility::graph::Graph::EdgeListConstIter e=node->const_edge_list_begin(); e!=node->const_edge_list_end(); ++e ) {
 				core::Size const other = (*e)->get_other_ind(cur);
 				idxs.push( other );
 			}
@@ -652,9 +652,9 @@ FoldGraph::add_combined_solutions( utility::vector1< Solution > & solutions ) co
 				NodeSet merged = solution[i];
 				core::Size overlap_count = 0;
 				for ( NodeSet::const_iterator n = solution[j].begin(), end=solution[j].end(); n != end; ++n ) {
-					core::graph::Node const * nptr = gpeptide_.get_node(*n);
+					utility::graph::Node const * nptr = gpeptide_.get_node(*n);
 					assert( nptr );
-					for ( core::graph::Graph::EdgeListConstIter e=nptr->const_edge_list_begin(); e != nptr->const_edge_list_end(); ++e ) {
+					for ( utility::graph::Graph::EdgeListConstIter e=nptr->const_edge_list_begin(); e != nptr->const_edge_list_end(); ++e ) {
 						core::Size const othernode = (*e)->get_other_ind(*n);
 						if ( solution[i].find( othernode ) != solution[i].end() ) {
 							++overlap_count;
@@ -1035,10 +1035,10 @@ FoldGraph::create_loops_dfs(
 		return;
 	}
 
-	core::graph::Node const * n = gpeptide_.get_node(current_node);
+	utility::graph::Node const * n = gpeptide_.get_node(current_node);
 	debug_assert( n );
 	bool terminal_node = true;
-	for ( core::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e!=n->const_edge_list_end(); ++e ) {
+	for ( utility::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e!=n->const_edge_list_end(); ++e ) {
 		core::Size const othernode = (*e)->get_other_ind(current_node);
 		if ( visited.find( othernode ) == visited.end() ) {
 			terminal_node = false;

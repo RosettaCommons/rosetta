@@ -136,7 +136,7 @@ int main( int argc, char * argv [] )
 
 	utility::vector1< conformation::ResidueOP> rotamers;
 	utility::vector1< utility::vector1< Real > > extra_chi_steps( restype.nchi() );
-	graph::GraphOP graph( new graph::Graph( pose.energies().energy_graph() ));
+	utility::graph::GraphOP graph( new utility::graph::Graph( pose.energies().energy_graph() ));
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 
 	rot_lib->fill_rotamer_vector(pose, *sfxn, *task, graph, ResidueTypeCOP(&restype),

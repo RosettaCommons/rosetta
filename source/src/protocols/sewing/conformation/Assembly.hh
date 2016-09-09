@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 //Core headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 
 //C++ headers

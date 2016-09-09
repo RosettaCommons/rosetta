@@ -17,7 +17,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -59,7 +59,7 @@ FlexbbRotamerSet::build_dependent_rotamers(
 	core::pose::Pose const & /*pose*/,
 	core::scoring::ScoreFunction const & /*scorefxn*/,
 	core::pack::task::PackerTask const & /*task*/,
-	core::graph::GraphCOP /*packer_neighbor_graph*/
+	utility::graph::GraphCOP /*packer_neighbor_graph*/
 )
 {
 	utility_exit_with_message("ERROR: FlexbbRotamerSet does not support build_dependent_rotamers");
@@ -78,7 +78,7 @@ FlexbbRotamerSet::build_rotamers_for_concrete_virt(
 	core::scoring::ScoreFunction const & scorefxn,
 	core::pack::task::PackerTask const & task,
 	core::chemical::ResidueTypeCOP concrete_residue,
-	core::graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	bool use_neighbor_context
 )
 {
@@ -98,7 +98,7 @@ FlexbbRotamerSet::bump_check(
 	core::scoring::ScoreFunction const & sf,
 	core::pose::Pose const & pose,
 	core::pack::task::PackerTask const & task,
-	core::graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph
 ) const
 {
 	/// iterate across neighbors and do shit... that's right
@@ -109,7 +109,7 @@ FlexbbRotamerSet::bump_check(
 	core::Real bumpE( 0.0 );
 	protocols::flexpack::rotamer_set::FlexbbRotamerSetsCOP owner( owner_ );
 
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( resid() )->const_edge_list_begin(),
 			ire = packer_neighbor_graph->get_node( resid() )->const_edge_list_end();
 			ir != ire; ++ir ) {

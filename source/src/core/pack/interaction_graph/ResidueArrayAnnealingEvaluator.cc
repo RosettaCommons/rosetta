@@ -40,7 +40,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <basic/Tracer.hh>
 
@@ -107,7 +107,7 @@ void ResidueArrayAnnealingEvaluator::initialize(
 	core::scoring::ScoreFunction const & score_function,
 	core::pose::Pose const & pose,
 	core::pack::rotamer_set::RotamerSets & rotamer_sets,
-	graph::GraphCOP )
+	utility::graph::GraphCOP )
 {
 	runtime_assert_string_msg(
 		rotamer_sets.total_residue() == pose.size(),

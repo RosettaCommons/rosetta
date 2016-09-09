@@ -25,7 +25,7 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/packer_neighbors.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -189,7 +189,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	core::pack::rotamer_set::RotamerSetFactory rsf;
 	core::pack::rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( res );
 	rotset->set_resid( resnum_ );
-	core::graph::GraphOP packer_graph = core::pack::create_packer_graph( pose, *scorefxn_, ptask );
+	utility::graph::GraphOP packer_graph = core::pack::create_packer_graph( pose, *scorefxn_, ptask );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph );
 	utility::vector1< core::PackerEnergy > one_body_energies( rotset->num_rotamers() );
 	utility::vector1< utility::vector1< core::PackerEnergy > > two_body_energies( rotset->num_rotamers() );

@@ -187,7 +187,7 @@ EnvSmoothEnergy::setup_for_derivatives(
 		Real countN    =  0.0;
 
 		// iterate across neighbors within 12 angstroms
-		for ( graph::Graph::EdgeListConstIter
+		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = graph.get_node(i)->const_edge_list_begin(),
 				ire = graph.get_node(i)->const_edge_list_end();
 				ir != ire; ++ir ) {
@@ -263,7 +263,7 @@ EnvSmoothEnergy::residue_energy(
 
 	Real countN    =  0.0;
 	// iterate across neighbors within 12 angstroms
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin(),
 			ire = graph.get_node( rsd.seqpos() )->const_edge_list_end();
 			ir != ire; ++ir ) {
@@ -329,7 +329,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 
 	Vector f1(0.0), f2(0.0);
 
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = graph.get_node(i)->const_edge_list_begin(),
 			ire = graph.get_node(i)->const_edge_list_end();
 			ir != ire; ++ir ) {

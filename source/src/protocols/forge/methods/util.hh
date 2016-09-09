@@ -22,7 +22,7 @@
 
 // project headers
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/graph/DisjointSets.fwd.hh>
+#include <utility/graph/DisjointSets.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -131,7 +131,7 @@ union_interval(
 	core::Size const root,
 	core::Size const left,
 	core::Size const right,
-	core::graph::DisjointSets & uf
+	utility::graph::DisjointSets & uf
 );
 
 

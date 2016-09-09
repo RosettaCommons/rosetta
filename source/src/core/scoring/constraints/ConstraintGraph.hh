@@ -18,22 +18,22 @@
 #include <core/scoring/constraints/ConstraintGraph.fwd.hh>
 
 // Project headers
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/types.hh>
 
 namespace core {
 namespace scoring {
 namespace constraints {
 
-class ConstraintNode : public graph::Node
+class ConstraintNode : public utility::graph::Node
 {
 
 public:
-	typedef graph::Node parent;
-	typedef graph::Node Node;
+	typedef utility::graph::Node parent;
+	typedef utility::graph::Node Node;
 
 public:
-	ConstraintNode( graph::Graph*, Size node_id );
+	ConstraintNode( utility::graph::Graph*, Size node_id );
 	virtual ~ConstraintNode();
 
 	virtual void copy_from( Node const * source );
@@ -43,16 +43,16 @@ public:
 
 };
 
-class ConstraintEdge : public graph::Edge
+class ConstraintEdge : public utility::graph::Edge
 {
 
 public:
-	typedef graph::Edge parent;
-	typedef graph::Edge Edge;
+	typedef utility::graph::Edge parent;
+	typedef utility::graph::Edge Edge;
 
 public:
-	ConstraintEdge( graph::Graph* owner, Size first_node_ind, Size second_node_ind);
-	ConstraintEdge( graph::Graph* owner, ConstraintEdge const & example_edge );
+	ConstraintEdge( utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind);
+	ConstraintEdge( utility::graph::Graph* owner, ConstraintEdge const & example_edge );
 	virtual ~ConstraintEdge();
 
 	virtual void copy_from( Edge const * source );
@@ -107,12 +107,12 @@ private:
 
 };
 
-class ConstraintGraph : public graph::Graph
+class ConstraintGraph : public utility::graph::Graph
 {
 
 public:
-	typedef graph::Graph parent;
-	typedef graph::Graph Graph;
+	typedef utility::graph::Graph parent;
+	typedef utility::graph::Graph Graph;
 
 public:
 	ConstraintGraph();
@@ -122,7 +122,7 @@ public:
 
 	virtual ~ConstraintGraph();
 
-	virtual void delete_edge( graph::Edge * edge );
+	virtual void delete_edge( utility::graph::Edge * edge );
 
 	//virtual void copy_from( Graph const * source ); //? why haven't I implemented something like this in the base class?
 
@@ -131,9 +131,9 @@ protected:
 	virtual Size count_static_memory() const;
 	virtual Size count_dynamic_memory() const;
 
-	virtual graph::Node * create_new_node( Size node_index );
-	virtual graph::Edge * create_new_edge( Size index1, Size index2);
-	virtual graph::Edge * create_new_edge( graph::Edge const * example_edge );
+	virtual utility::graph::Node * create_new_node( Size node_index );
+	virtual utility::graph::Edge * create_new_edge( Size index1, Size index2);
+	virtual utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge );
 
 
 };

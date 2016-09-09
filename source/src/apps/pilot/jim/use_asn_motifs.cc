@@ -62,7 +62,7 @@
 
 //#include <core/pack/rotamer_set/OptEData.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>

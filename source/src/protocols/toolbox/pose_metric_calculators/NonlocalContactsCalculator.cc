@@ -16,7 +16,7 @@
 
 //#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -164,7 +164,7 @@ NonlocalContactsCalculator::lookup(
 
 	} else if ( key == "nlcontacts_graph" ) {
 		basic::check_cast( valptr, &nlcontacts_graph_, "nlcontacts_graph expects to return a core::Graph::GraphOP" );
-		(static_cast<basic::MetricValue< core::graph::GraphOP > *>(valptr))->set( nlcontacts_graph_ );
+		(static_cast<basic::MetricValue< utility::graph::GraphOP > *>(valptr))->set( nlcontacts_graph_ );
 
 	} else {
 		basic::Error() << "NonlocalContactsCalculator cannot compute the requested metric " << key << std::endl;
@@ -201,7 +201,7 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 	special_region1_intra_nlcontacts_ = 0;
 	region1_region2_nlcontacts_ = 0;
 
-	nlcontacts_graph_ = core::graph::GraphOP( new core::graph::Graph( this_pose.size() ) );
+	nlcontacts_graph_ = utility::graph::GraphOP( new utility::graph::Graph( this_pose.size() ) );
 
 	EnergyMap cur_weights = this_pose.energies().weights();
 
@@ -209,7 +209,7 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 
 		if ( ! this_pose.residue_type( i ).is_protein() ) continue;
 		//get the node for this residue in the energy graph
-		for ( graph::EdgeListConstIterator egraph_it = this_pose.energies().energy_graph().get_node( i )->const_upper_edge_list_begin();
+		for ( utility::graph::EdgeListConstIterator egraph_it = this_pose.energies().energy_graph().get_node( i )->const_upper_edge_list_begin();
 				egraph_it != this_pose.energies().energy_graph().get_node( i )->const_upper_edge_list_end(); ++egraph_it ) {
 
 			core::Size other_res = (*egraph_it)->get_other_ind( i );
@@ -284,7 +284,7 @@ protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator::save( A
 	arc( CEREAL_NVP( region1_region2_nlcontacts_ ) ); // core::Size
 	arc( CEREAL_NVP( residue_nlcontacts_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( residue_nlscore_ ) ); // utility::vector1<core::Real>
-	arc( CEREAL_NVP( nlcontacts_graph_ ) ); // core::graph::GraphOP
+	arc( CEREAL_NVP( nlcontacts_graph_ ) ); // utility::graph::GraphOP
 	arc( CEREAL_NVP( min_seq_separation_ ) ); // core::Size
 	arc( CEREAL_NVP( cutoffE_ ) ); // core::Real
 	arc( CEREAL_NVP( special_region1_ ) ); // std::set<core::Size>
@@ -304,7 +304,7 @@ protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator::load( A
 	arc( region1_region2_nlcontacts_ ); // core::Size
 	arc( residue_nlcontacts_ ); // utility::vector1<core::Size>
 	arc( residue_nlscore_ ); // utility::vector1<core::Real>
-	arc( nlcontacts_graph_ ); // core::graph::GraphOP
+	arc( nlcontacts_graph_ ); // utility::graph::GraphOP
 	arc( min_seq_separation_ ); // core::Size
 	arc( cutoffE_ ); // core::Real
 	arc( special_region1_ ); // std::set<core::Size>

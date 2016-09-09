@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/UpperEdgeGraph.hh
+/// @file   utility/graph/UpperEdgeGraph.hh
 /// @brief  templated graph for fast edge additions
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_graph_UpperEdgeGraph_fwd_hh
-#define INCLUDED_core_graph_UpperEdgeGraph_fwd_hh
+#ifndef INCLUDED_utility_graph_UpperEdgeGraph_fwd_hh
+#define INCLUDED_utility_graph_UpperEdgeGraph_fwd_hh
 
-namespace core {
+namespace utility {
 namespace graph {
 
 template < class V, class E > class UEVertex;

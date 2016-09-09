@@ -169,7 +169,7 @@ RehashAssemblyMover::generate_assembly(
 	//, scores_to_alignments(scores));
 //	ModelNode const * reference_node = bridge_graph->get_model_node_from_model_id(0);
 	ModelNode const * reference_node = 0;
-	core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
+	utility::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 	//for(core::Size j=0; j<edge_order[cur_edge_ind]; ++j) {
 	//	++edge_it;
 	//}

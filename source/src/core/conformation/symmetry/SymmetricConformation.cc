@@ -32,7 +32,7 @@
 #include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/PointGraphData.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -986,7 +986,7 @@ void
 //SymmetricConformation::detect_disulfides( utility::vector1< std::pair<Size, Size> > const & disulf_bonds )
 SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disulf_one, utility::vector1< Size > const & disulf_two )
 {
-	using namespace graph;
+	using namespace utility::graph;
 	using namespace basic::options;
 	if ( ! option[ OptionKeys::in::detect_disulf ].user() || // if the option is not specified
 			( option[ OptionKeys::in::detect_disulf ].user() && option[ OptionKeys::in::detect_disulf ]() )  // option specified and is true

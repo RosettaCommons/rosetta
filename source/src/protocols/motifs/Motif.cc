@@ -23,7 +23,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -528,7 +528,7 @@ Motif::build_rotamers(
 
 	scorefxn( pose );
 
-	core::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
+	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
 
 	rotset->build_rotamers( pose, scorefxn, *task, packer_neighbor_graph, false );
 

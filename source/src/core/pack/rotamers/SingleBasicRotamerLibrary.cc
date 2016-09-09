@@ -114,7 +114,7 @@ SingleBasicRotamerLibrary::fill_rotamer_vector(
 	pose::Pose const &pose,
 	scoring::ScoreFunction const &,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP,
+	utility::graph::GraphCOP,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
 	utility::vector1< utility::vector1< Real > > const & /*extra_chi_steps*/,

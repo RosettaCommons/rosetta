@@ -240,7 +240,7 @@ EnumerateAssemblyMover::generate_assembly(){
 			}
 			graph_->add_edges_from_binary(edge_file_, n_term_node->get_node_index());
 
-			core::graph::EdgeListConstIterator n_edge_it = n_term_node->const_edge_list_begin();
+			utility::graph::EdgeListConstIterator n_edge_it = n_term_node->const_edge_list_begin();
 			for ( core::Size foo=1; foo< n_edge_index; ++foo ) {
 				++n_edge_it;
 			}
@@ -273,7 +273,7 @@ EnumerateAssemblyMover::generate_assembly(){
 				graph_->add_edges_from_binary(edge_file_, c_term_node->get_node_index());
 				num_edges_from_c_term_node = c_term_node->num_edges();
 
-				core::graph::EdgeListConstIterator c_edge_it = c_term_node->const_edge_list_begin();
+				utility::graph::EdgeListConstIterator c_edge_it = c_term_node->const_edge_list_begin();
 				for ( core::Size bar=1; bar< c_edge_index; ++bar ) {
 					++c_edge_it;
 				}

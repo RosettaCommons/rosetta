@@ -267,7 +267,7 @@ retrieve_residue_pair_energies(
 	}
 	assert( pos2 > pos1 );
 	are_they_neighbors = false;
-	for ( graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node( pos1 )->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node( pos1 )->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -322,7 +322,7 @@ show_clashes(
 
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & resl( pose.residue( i ) );
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->upper_edge_list_end();
 				iru != irue; ++iru ) {
@@ -388,7 +388,7 @@ dump_clash_pdb(
 
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
 		conformation::Residue const & rsd1( pose.residue( i ) );
-		for ( graph::Graph::EdgeListIter
+		for ( utility::graph::Graph::EdgeListIter
 				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->upper_edge_list_end();
 				iru != irue; ++iru ) {

@@ -70,7 +70,7 @@ using std::string;
 using std::stringstream;
 using std::endl;
 using core::pose::Pose;
-using core::graph::Graph;
+using utility::graph::Graph;
 using core::scoring::Energies;
 using core::scoring::EnergyGraph;
 using core::scoring::EnergyMap;

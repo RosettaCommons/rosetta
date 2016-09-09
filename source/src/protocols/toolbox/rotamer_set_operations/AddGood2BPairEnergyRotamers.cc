@@ -19,7 +19,7 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pose/PDBInfo.hh>
@@ -95,7 +95,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const & sfxn,
 	core::pack::task::PackerTask const & ptask,
-	core::graph::GraphCOP packer_neighbor_graph,
+	utility::graph::GraphCOP packer_neighbor_graph,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 ){
 

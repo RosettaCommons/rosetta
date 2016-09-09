@@ -42,6 +42,12 @@ sources = {
 		"gzip_util",
 		"PathName",
 	],
+	"utility/graph": [
+		"ArrayPool",
+		"DisjointSets",
+		"Graph",
+		"graph_util",
+	],
 	"utility/io": [
 		"icstream",
 		"izstream",

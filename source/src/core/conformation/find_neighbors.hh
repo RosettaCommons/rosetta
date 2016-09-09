@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/graph/find_neighbors.cc
+/// @file   utility/graph/find_neighbors.cc
 /// @brief  Sets up the residue neighbor information
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
@@ -23,7 +23,7 @@
 #include <core/conformation/find_neighbors.fwd.hh>
 #include <core/types.hh>
 #include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 
 
 // Numeric headers
@@ -82,7 +82,7 @@ struct DefaultCubeHash : std::unary_function< CubeKey, std::size_t > {
 template <class Vertex, class Edge>
 void
 find_neighbors(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	Strategy strategy = AUTOMATIC
 )
@@ -109,7 +109,7 @@ find_neighbors(
 template <class Vertex, class Edge>
 void
 find_neighbors_naive(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff
 )
 {
@@ -136,9 +136,9 @@ find_neighbors_naive(
 
 template <class Vertex, class Edge>
 struct AddEdgeVisitor{
-	graph::UpperEdgeGraph<Vertex, Edge> & point_graph;
+	utility::graph::UpperEdgeGraph<Vertex, Edge> & point_graph;
 	AddEdgeVisitor(
-		graph::UpperEdgeGraph<Vertex, Edge> & point_graph_in
+		utility::graph::UpperEdgeGraph<Vertex, Edge> & point_graph_in
 	) : point_graph(point_graph_in) {}
 	void visit(
 		numeric::xyzVector<Real> const & /*v*/, Real  const & vm,
@@ -151,7 +151,7 @@ struct AddEdgeVisitor{
 template <class Vertex, class Edge>
 void
 find_neighbors_stripe(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff
 ){
 	core::Size const n_points( point_graph->num_vertices() );
@@ -187,7 +187,7 @@ find_neighbors_stripe(
 template <class Vertex, class Edge>
 void
 find_neighbors_octree(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	Strategy strategy
 )
@@ -362,7 +362,7 @@ find_neighbors_octree(
 template <class Vertex, class Edge>
 void
 find_neighbors_3dgrid(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff
 )
 {
@@ -522,7 +522,7 @@ find_neighbors_3dgrid(
 template <class Vertex, class Edge>
 void
 find_neighbors_restricted(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< bool > const & residue_selection,
 	Strategy strategy = AUTOMATIC
@@ -547,7 +547,7 @@ find_neighbors_restricted(
 template <class Vertex, class Edge>
 void
 find_neighbors_naive_restricted(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< bool > const & residue_selection
 )
@@ -579,7 +579,7 @@ find_neighbors_naive_restricted(
 template <class Vertex, class Edge>
 void
 find_neighbors_octree_restricted(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< bool > const & residue_selection,
 	Strategy strategy
@@ -752,7 +752,7 @@ find_neighbors_octree_restricted(
 template <class Vertex, class Edge>
 void
 find_neighbors_3dgrid_restricted(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< bool > const &  residue_selection
 )
@@ -914,15 +914,15 @@ find_neighbors_3dgrid_restricted(
 template <class Vertex, class Edge>
 core::Size
 get_nearest_neighbor(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Size node_id,
 	core::Real neighbor_cutoff,
 	Strategy strategy
 )
 {
 	find_neighbors<Vertex,Edge>(point_graph,neighbor_cutoff,strategy);
-	graph::UEVertex<Vertex,Edge> query_vertex =  point_graph->get_vertex(node_id);
-	typename graph::UEVertex<Vertex,Edge>::UpperEdgeListIter query_it; //sometimes I really don't like C++...
+	utility::graph::UEVertex<Vertex,Edge> query_vertex =  point_graph->get_vertex(node_id);
+	typename utility::graph::UEVertex<Vertex,Edge>::UpperEdgeListIter query_it; //sometimes I really don't like C++...
 	core::Real min_d_squared = 99999999.9;
 	core::Size min_node_index = node_id;
 	for ( query_it = query_vertex.upper_edge_list_begin(); query_it != query_vertex.upper_edge_list_end(); ++query_it ) {
@@ -938,7 +938,7 @@ get_nearest_neighbor(
 template <class Vertex, class Edge>
 void
 find_neighbors_naive_surface(
-	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<utility::graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< std::pair< Size, Size > > const & non_surface_ranges,
 	utility::vector1< bool > const & is_surface

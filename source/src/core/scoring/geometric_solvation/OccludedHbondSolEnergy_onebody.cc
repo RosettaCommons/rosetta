@@ -169,7 +169,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 	core::scoring::TenANeighborGraph const & graph = pose.energies().tenA_neighbor_graph();
 	utility::vector1 <core::Size> neighborlist;
 	neighborlist.push_back( polar_resnum);
-	for ( core::graph::Graph::EdgeListConstIter
+	for ( utility::graph::Graph::EdgeListConstIter
 			neighbor_iter = graph.get_node( polar_resnum )->const_edge_list_begin(),
 			neighbor_iter_end = graph.get_node( polar_resnum )->const_edge_list_end();
 			neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {

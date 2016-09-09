@@ -46,7 +46,7 @@
 
 #include <core/io/pdb/pdb_writer.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/kinematics/MoveMap.hh>
 

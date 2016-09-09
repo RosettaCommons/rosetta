@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-//#include <core/graph/Graph.hh>
+//#include <utility/graph/Graph.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

@@ -29,7 +29,7 @@
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <core/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
@@ -63,7 +63,7 @@ using std::stringstream;
 using std::endl;
 using basic::database::safely_prepare_statement;
 using core::pose::Pose;
-using core::graph::Graph;
+using utility::graph::Graph;
 using core::scoring::Energies;
 using core::scoring::EnergyGraph;
 using core::scoring::EnergyMap;

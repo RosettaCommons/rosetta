@@ -18,7 +18,7 @@
 
 #include <platform/types.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSubsets.hh>
@@ -91,7 +91,7 @@ public:
 
 		RotamerSetsOP rotsets( new RotamerSets() );
 		rotsets->set_task( task );
-		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( *trpcage, *sfxn, task );
+		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( *trpcage, *sfxn, task );
 		rotsets->build_rotamers( *trpcage, *sfxn, packer_neighbor_graph );
 
 		//std::cout << "Rotsets built: " << rotsets->nrotamers() << " rotamers.";

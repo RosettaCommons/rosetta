@@ -23,7 +23,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -608,7 +608,7 @@ SingleResiduePeptoidLibrary::hokey_template_workaround()
 	rsrdl_4.rotamer_energy_deriv( rsd, scratch );
 
 	pose::Pose pose; scoring::ScoreFunction sfxn; pack::task::PackerTask_ task( pose );
-	core::graph::GraphOP png;
+	utility::graph::GraphOP png;
 	chemical::ResidueTypeCOP cr;
 	utility::vector1< utility::vector1< Real > > ecs;
 	RotamerVector rv;

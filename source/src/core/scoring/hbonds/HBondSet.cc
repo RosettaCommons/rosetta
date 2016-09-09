@@ -819,7 +819,7 @@ HBondSet::setup_for_residue_pair_energies(
 
 		{ // hacky thing here until we update to current svn
 			nbrs_[i] = 1;
-			for ( graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					ir  = tenA_neighbor_graph.get_node( i )->const_edge_list_begin(),
 					ire = tenA_neighbor_graph.get_node( i )->const_edge_list_end();
 					ir != ire; ++ir ) {

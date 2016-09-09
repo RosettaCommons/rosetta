@@ -69,9 +69,9 @@
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
-#include <core/graph/Graph.fwd.hh>
-#include <core/graph/Graph.hh>
-#include <core/graph/unordered_object_pool.fwd.hpp>
+#include <utility/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.hh>
+#include <utility/graph/unordered_object_pool.fwd.hpp>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
@@ -175,7 +175,7 @@ public:
 	void test_instantiate_simple_ig() {
 
 		using namespace core::chemical;
-		using namespace core::graph;
+		using namespace utility::graph;
 		using namespace core::pack;
 		using namespace core::pack::interaction_graph;
 		using namespace core::pack::rotamer_set;

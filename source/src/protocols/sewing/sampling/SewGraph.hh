@@ -23,7 +23,7 @@
 #include <protocols/sewing/hashing/Hasher.hh>
 #include <protocols/sewing/conformation/Model.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 //Protocol headers
 #include <core/pose/Pose.fwd.hh>
@@ -46,11 +46,11 @@ namespace sewing  {
 ///////////////////////////////   Node Class   ///////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-class ModelNode : public core::graph::Node {
+class ModelNode : public utility::graph::Node {
 
 public:
 
-	ModelNode( core::graph::Graph * owner, core::Size index );
+	ModelNode( utility::graph::Graph * owner, core::Size index );
 
 	~ModelNode() {}
 
@@ -65,7 +65,7 @@ public:
 	virtual
 	void
 	copy_from(
-		core::graph::Node const * source
+		utility::graph::Node const * source
 	);
 
 	std::set<core::Size> const &
@@ -89,7 +89,7 @@ private:
 ///////////////////////////////   Edge Class   ///////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-class HashEdge : public core::graph::Edge {
+class HashEdge : public utility::graph::Edge {
 
 public:
 
@@ -125,7 +125,7 @@ private:
 ///////////////////////////   SewGraph Class   ///////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-class SewGraph : public core::graph::Graph {
+class SewGraph : public utility::graph::Graph {
 
 public:
 
@@ -141,17 +141,17 @@ public:
 
 	/// @brief Factory method for node creation
 	virtual
-	core::graph::Node*
+	utility::graph::Node*
 	create_new_node( Size index );
 
 	/// @brief Factory method for edge creation
 	virtual
-	core::graph::Edge*
+	utility::graph::Edge*
 	create_new_edge( Size index1, Size index2 );
 
 	virtual
 	void
-	delete_edge( core::graph::Edge * edge );
+	delete_edge( utility::graph::Edge * edge );
 
 	HashEdge *
 	find_hash_edge(Size n1, Size n2);

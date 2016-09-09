@@ -46,7 +46,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
-#include <core/graph/Graph.hh>
+#include <utility/graph/Graph.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -307,7 +307,7 @@ B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 
 	// setup neighbor graph
 	(*scrfxn)( pose ); // if you don'r score the pose before getting the png you get an assertion failure
-	graph::GraphOP packer_neighbor_graph( new graph::Graph( pose.energies().energy_graph() ) );
+	utility::graph::GraphOP packer_neighbor_graph( new utility::graph::Graph( pose.energies().energy_graph() ) );
 
 	for ( Size i(1); i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).type().is_beta_aa() ) {

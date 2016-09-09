@@ -240,7 +240,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 				}
 			}
 
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {
@@ -354,7 +354,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 				}
 			}
 
-			for ( core::graph::Graph::EdgeListConstIter
+			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {

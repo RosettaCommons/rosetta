@@ -24,7 +24,7 @@
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/PointGraphData.hh>
 
-#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/graph/UpperEdgeGraph.hh>
 
 //Utility headers
 //#include <basic/options/option.hh>

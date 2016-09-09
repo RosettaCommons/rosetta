@@ -132,7 +132,7 @@ ScoreFunctionFingerprintMover::sfxn( scoring::ScoreFunctionOP sfxn )
 void
 ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 {
-	using namespace core::graph;
+	using namespace utility::graph;
 	using namespace core::scoring;
 
 	(*sfxn_)( pose );
