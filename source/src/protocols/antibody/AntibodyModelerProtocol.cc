@@ -55,6 +55,7 @@
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.hh>
+#include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
 #include <protocols/antibody/ModelCDRH3.hh>
 #include <protocols/antibody/RefineBetaBarrel.hh>
@@ -514,6 +515,13 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// Finish
 	echo_metrics_to_jd2(pose,job);
 	set_last_move_status( protocols::moves::MS_SUCCESS );
+	
+	
+	if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+		AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
+		converter.apply(pose);
+	}
+	
 	basic::prof_show();
 	TR<<"Antibody Modeling Protocol Finished!!!!"<<std::endl<<std::endl<<std::endl;
 

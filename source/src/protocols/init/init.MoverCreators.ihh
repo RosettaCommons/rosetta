@@ -23,6 +23,7 @@
 #include <protocols/analysis/LoopAnalyzerMoverCreator.hh>
 
 #include <protocols/antibody/AntibodyCDRGrafterCreator.hh>
+#include <protocols/antibody/AntibodyNumberingConverterMoverCreator.hh>
 
 #include <protocols/antibody/constraints/CDRDihedralConstraintMoverCreator.hh>
 #include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMoverCreator.hh>

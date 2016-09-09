@@ -94,8 +94,22 @@ AntibodyEnumManager::setup() {
 	numbering_scheme_to_enum_["Kabat_Scheme"] = Kabat_Scheme;
 	numbering_scheme_to_enum_["Enhanced_Chothia_Scheme"] = Enhanced_Chothia_Scheme;
 	numbering_scheme_to_enum_["AHO_Scheme"] = AHO_Scheme;
+	numbering_scheme_to_enum_["AHo_Scheme"] = AHO_Scheme;
 	numbering_scheme_to_enum_["IMGT_Scheme"] = IMGT_Scheme;
-
+	
+	numbering_scheme_to_enum_["Chothia"] = Chothia_Scheme;
+	numbering_scheme_to_enum_["Kabat"] = Kabat_Scheme;
+	numbering_scheme_to_enum_["Enhanced_Chothia"] = Enhanced_Chothia_Scheme;
+	numbering_scheme_to_enum_["AHO"] = AHO_Scheme;
+	numbering_scheme_to_enum_["AHo"] = AHO_Scheme;
+	numbering_scheme_to_enum_["IMGT"] = IMGT_Scheme;
+	
+	numbering_scheme_to_enum_["chothia"] = Chothia_Scheme;
+	numbering_scheme_to_enum_["kabat"] = Kabat_Scheme;
+	numbering_scheme_to_enum_["enhanced_Chothia"] = Enhanced_Chothia_Scheme;
+	numbering_scheme_to_enum_["aho"] = AHO_Scheme;
+	numbering_scheme_to_enum_["imgt"] = IMGT_Scheme;
+	
 	////////////////// CDR Definitions  ///////////////////////////////////////
 	cdr_definition_to_string_[Chothia] = "Chothia";
 	cdr_definition_to_string_[Aroop] = "Aroop";
@@ -205,6 +219,15 @@ AntibodyEnumManager::numbering_scheme_is_present( std::string const & numbering_
 	return iter != numbering_scheme_to_enum_.end();
 }
 
+utility::vector1<std::string>
+AntibodyEnumManager::get_recognized_numbering_schemes()const{
+	utility::vector1< std::string > recognized_schemes;
+	
+	for(auto imap: numbering_scheme_to_enum_){
+    	recognized_schemes.push_back(imap.first);
+	}
+	return recognized_schemes;
+}
 
 ////////////////// CDR Definitions  ///////////////////////////////////////
 CDRDefinitionEnum
@@ -227,7 +250,15 @@ AntibodyEnumManager::cdr_definition_is_present(std::string const & cdr_definitio
 	return iter != cdr_definition_to_enum_.end();
 }
 
-
+utility::vector1< std::string >
+AntibodyEnumManager::get_recognized_cdr_definitions() const{
+	utility::vector1< std::string > recognized_cdr_definitions;
+	for (auto imap: cdr_definition_to_enum_){
+		recognized_cdr_definitions.push_back(imap.first);
+	}
+	return recognized_cdr_definitions;
+}
+	
 ///////////////// LightChain Types ////////////////////////////////////////////
 LightChainTypeEnum
 AntibodyEnumManager::light_chain_type_string_to_enum(const std::string& light_chain) const {

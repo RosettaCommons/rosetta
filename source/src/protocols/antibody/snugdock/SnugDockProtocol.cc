@@ -22,6 +22,7 @@
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 #include <protocols/antibody/RefineOneCDRLoop.hh>
 #include <protocols/antibody/snugdock/SnugDock.hh>
 #include <protocols/antibody/util.hh>
@@ -179,6 +180,12 @@ void SnugDockProtocol::apply( Pose & pose ) {
 
 	TR << "Beginning application of " + docking()->get_name() + "." << std::endl;
 	docking()->apply( pose );
+	
+	if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+		AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
+		converter.apply(pose);
+	}
+	
 }
 
 void SnugDockProtocol::setup_objects( Pose const & pose ) {

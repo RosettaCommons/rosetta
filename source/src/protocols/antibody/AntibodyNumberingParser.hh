@@ -53,8 +53,7 @@ public:
 	/// @brief Read numbering file and return AntibodyNumbering structure
 	AntibodyNumbering
 	get_antibody_numbering(AntibodyNumberingSchemeEnum const numbering_scheme, CDRDefinitionEnum const cdr_definition);
-
-
+	
 private:
 
 	void
@@ -141,13 +140,13 @@ public:
 
 	// Equivalent operators do not check scheme, since scheme is optional and we want to compare data with different schemes..
 	bool
-	operator==(const PDBLandmark & compare);
+	operator==(const PDBLandmark & compare) const;
 
 	bool
-	operator!=(const PDBLandmark & compare);
+	operator!=(const PDBLandmark & compare) const;
 
 	std::string
-	get_string();
+	get_string() const;
 
 private:
 	AntibodyNumberingSchemeEnum numbering_scheme_;

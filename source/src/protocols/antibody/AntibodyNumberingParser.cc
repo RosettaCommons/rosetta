@@ -86,7 +86,7 @@ AntibodyNumberingParser::read_numbering_scheme_file(std::string const & file_pat
 	std::string line;
 
 	while ( getline(numbering_file, line) ) {
-
+		
 		//Skip any comments + empty lines
 		if ( utility::startswith(line, "#") ) {
 			continue;
@@ -94,10 +94,13 @@ AntibodyNumberingParser::read_numbering_scheme_file(std::string const & file_pat
 		if ( utility::startswith(line, "\n") ) {
 			continue;
 		}
-
+		
 		utility::trim(line, "\n"); //Remove trailing line break
+		
 		vector1< std::string > lineSP = utility::string_split_multi_delim(line); //Split on space or tab
-
+		
+		if ((lineSP.size()) == 0) continue;
+		
 		if ( lineSP[1] == "DEFINES" ) {
 			read_scheme_defines_line(lineSP);
 		} else {
@@ -355,18 +358,18 @@ PDBLandmark::operator =(const PDBLandmark& src){
 }
 
 bool
-PDBLandmark::operator ==(const PDBLandmark& compare) {
+PDBLandmark::operator ==(const PDBLandmark& compare) const {
 
 	return (chain_ == compare.chain_ && resnum_ == compare.resnum_ && insertion_code_ == compare.insertion_code_);
 }
 
 bool
-PDBLandmark::operator !=(const PDBLandmark& compare) {
+PDBLandmark::operator !=(const PDBLandmark& compare) const {
 	return ! (chain_ == compare.chain_ && resnum_ == compare.resnum_ && insertion_code_ == compare.insertion_code_);
 }
 
 std::string
-PDBLandmark::get_string(){
+PDBLandmark::get_string() const {
 	return utility::to_string(chain_)+":"+utility::to_string(resnum_)+":"+utility::to_string(insertion_code_);
 }
 

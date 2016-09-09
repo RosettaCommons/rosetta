@@ -19,6 +19,7 @@
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
+#include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/clusters/util.hh>
 
@@ -33,6 +34,8 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <core/types.hh>
 #include <utility/string_util.hh>
 
@@ -82,6 +85,12 @@ public:
 			check_fix_aho_cdr_numbering(ab_info, cdr_name, pose);
 		}
 		std::cout << std::endl <<"Info added to any echo PDB" << std::endl << std::endl;
+
+		if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+			AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
+			converter.apply(pose);
+		}
+
 	}
 };
 
@@ -96,6 +105,7 @@ int main(int argc, char* argv[])
 		std::cout<< " Please cite RosettaAntibody and the following:" << std::endl;
 		std::cout<< "     Adolf-Bryfogle J, Xu Q, North B, Lehmann A, Dunbrack RL. PyIgClassify: a database of antibody CDR structural classifications. Nucleic Acids Res 2015; 43:D432-D438. " << std::endl;
 		std::cout<< "     North B, Lehmann A, Dunbrack RL. A new clustering of antibody CDR loop conformations. J Mol Biol 2011; 406:228-256." << std::endl <<std::endl;
+
 
 	} catch(utility::excn::EXCN_Base & excn){
 		std::cout << "Exception"<<std::endl;

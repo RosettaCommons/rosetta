@@ -23,6 +23,7 @@
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
+#include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -265,7 +266,78 @@ void test_kink_functions(){
 	// TODO: add tests for kink_anion_atoms and kink_cation_atoms
 	return;
 }
+void test_renumbering(){
+	//JAB - this is just a short test of the renumbering.  We have an integration test as well.
 
+	// Internally, this checks antibody info for proper construction, 
+	// since we use it to do the numbering
+	
+	//AHO to Chothia and back again.
+	AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
+	converter.set_scheme_conversion(AHO_Scheme, Chothia_Scheme);
+	TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_aho) );
+
+	AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_aho, Chothia_Scheme, North ));
+
+	for ( core::Size i = 1; i<= 6; ++i ) {
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+
+		std::string inner_definition_str = ab_info->get_current_CDRDefinition();
+		//TR<< "Testing: "<< outer_definition_str << " to " << inner_definition_str << std::endl;
+		TS_ASSERT_EQUALS(numbering[North][cdr_start][cdr], ab_info->get_CDR_loop(cdr, ab_pose_aho).start());
+		TS_ASSERT_EQUALS(numbering[North][cdr_end][cdr], ab_info->get_CDR_loop(cdr, ab_pose_aho).stop());
+
+
+	}
+
+
+	converter.set_scheme_conversion(Chothia_Scheme, AHO_Scheme);
+	TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_aho) );
+	ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_aho, AHO_Scheme, North ));
+	
+	for ( core::Size i = 1; i<= 6; ++i ) {
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+
+		std::string inner_definition_str = ab_info->get_current_CDRDefinition();
+		//TR<< "Testing: "<< outer_definition_str << " to " << inner_definition_str << std::endl;
+		TS_ASSERT_EQUALS(numbering[North][cdr_start][cdr], ab_info->get_CDR_loop(cdr, ab_pose_aho).start());
+		TS_ASSERT_EQUALS(numbering[North][cdr_end][cdr], ab_info->get_CDR_loop(cdr, ab_pose_aho).stop());
+
+
+	}
+
+	//Chothia to AHO and back again.
+	converter.set_scheme_conversion(Chothia_Scheme, AHO_Scheme);
+	TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_chothia) );
+
+	ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_chothia, AHO_Scheme, North ));
+	for ( core::Size i = 1; i<= 6; ++i ) {
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+
+		std::string inner_definition_str = ab_info->get_current_CDRDefinition();
+		//TR<< "Testing: "<< outer_definition_str << " to " << inner_definition_str << std::endl;
+		TS_ASSERT_EQUALS(numbering[North][cdr_start][cdr], ab_info->get_CDR_loop(cdr, ab_pose_chothia ).start());
+		TS_ASSERT_EQUALS(numbering[North][cdr_end][cdr], ab_info->get_CDR_loop(cdr, ab_pose_chothia ).stop());
+
+
+	}
+
+
+	converter.set_scheme_conversion(AHO_Scheme, Chothia_Scheme);
+	TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_chothia) );
+
+	ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_chothia, Chothia_Scheme, North ));
+	for ( core::Size i = 1; i<= 6; ++i ) {
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+
+		std::string inner_definition_str = ab_info->get_current_CDRDefinition();
+		//TR<< "Testing: "<< outer_definition_str << " to " << inner_definition_str << std::endl;
+		TS_ASSERT_EQUALS(numbering[North][cdr_start][cdr], ab_info->get_CDR_loop(cdr, ab_pose_chothia ).start());
+		TS_ASSERT_EQUALS(numbering[North][cdr_end][cdr], ab_info->get_CDR_loop(cdr, ab_pose_chothia ).stop());
+
+
+	}
+}
 
 };
 

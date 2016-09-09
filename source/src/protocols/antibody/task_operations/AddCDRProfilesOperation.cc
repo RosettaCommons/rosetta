@@ -96,7 +96,7 @@ AddCDRProfilesOperation::set_defaults(){
 	seq_design_options_.clear();
 
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 
 	for ( core::Size i = 1; i <=CDRNameEnum_proto_total; ++i ) {
@@ -165,11 +165,11 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 	zero_prob_sample_ = tag->getOption< core::Real >("sample_zero_probs_at", zero_prob_sample_);
 	set_cons_design_data_source( tag->getOption< std::string >("cons_design_data_source", cons_design_data_source_) );
 
-	if ( tag->hasOption("numbering_scheme") ) {
+	if ( tag->hasOption("input_ab_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
-		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
+		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
 	}
 
@@ -197,7 +197,7 @@ void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 		+ XMLSchemaAttribute::attribute_w_default(  "stats_cutoff", xsct_non_negative_integer, "10" )
 		+ XMLSchemaAttribute::attribute_w_default(  "sample_zero_probs_at", xs_decimal, "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default(  "cons_design_data_source", xs_string, "blosum62" )
-		+ XMLSchemaAttribute( "numbering_scheme", xs_string )
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string )
 		+ XMLSchemaAttribute( "cdr_definition", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );

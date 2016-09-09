@@ -150,15 +150,15 @@ AntibodyCDRGrafter::parse_my_tag(
 	}
 
 
-	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("input_ab_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
 
 		cdr_definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
-		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
+		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
-	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("input_ab_scheme") ) {
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
@@ -265,7 +265,7 @@ AntibodyCDRGrafter::set_defaults(){
 	dihedral_cst_weight_ = 2.0;
 
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 	cdr_definition_ = manager.cdr_definition_string_to_enum(cdr_definition);

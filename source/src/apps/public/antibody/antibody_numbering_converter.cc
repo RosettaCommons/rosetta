@@ -5,18 +5,19 @@
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file --path--/--app_name--.cc
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file apps/public/antibody/antibody_numbering_converter.cc
+/// @brief App to convert antibodies to a different numbering scheme.  Antibodies must have L and/or H chains.  Only works on a FAB, currently, just like the rest of RosettaAntibody.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // devel headers
 #include <devel/init.hh>
 
 // protocol headers
 #include <protocols/jd2/JobDistributor.hh>
---mover_path--
+#include <protocols/antibody/AntibodyNumberingConverterMover.hh>
+
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
@@ -28,18 +29,22 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
 
-static THREAD_LOCAL basic::Tracer TR("--app_name--");
+static THREAD_LOCAL basic::Tracer TR("antibody_numbering_converter");
 
 
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	
-	--app_options--
+	
+
+	option.add_relevant( in::file::s );
+	option.add_relevant( in::file::l );
 
 }
 
---new_app_options_out--
+
+
 
 int
 main( int argc, char * argv [] )
@@ -51,14 +56,15 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		register_options();
 
-		--new_app_options_in--
+		
+
 
 		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {
 			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
 		}
 
 
-		--mover_namespace--::--class--OP mover_protocol( new --mover_namespace--::--class--() );
+		protocols::antibody::AntibodyNumberingConverterMoverOP mover_protocol( new protocols::antibody::AntibodyNumberingConverterMover() );
 
 		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );
 

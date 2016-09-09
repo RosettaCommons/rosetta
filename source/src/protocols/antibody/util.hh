@@ -29,6 +29,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
+#include <protocols/antibody/AntibodyNumberingParser.hh>
 
 //Utility Headers
 #include <utility/vector1.hh>
@@ -157,6 +158,13 @@ is_H3_rama_kinked(std::string const & rama);
 void
 kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibody_info );
 
+///@brief get the equivalent landmark in a numbering scheme.  Set the resnum to zero if not found.
+PDBLandmarkCOP
+get_matching_landmark(
+	AntibodyNumbering const & numbering,
+	PDBLandmark const & landmark,
+	AntibodyNumberingSchemeEnum const from_scheme,
+	AntibodyNumberingSchemeEnum const to_scheme);
 
 } //namespace antibody
 } //namespace protocols

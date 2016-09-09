@@ -331,6 +331,7 @@ using basic::Warning;
 
 //option key includes for deprecated pdbs
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 #include <core/pack/task/operation/ResFilterFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
@@ -831,6 +832,11 @@ void check_deprecated_flags(){
 	if ( option[LoopModel::input_pdb].user() ) {
 		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
 	}
+	
+	if ( option[antibody::numbering_scheme].user() ){
+		error_messages.push_back("-numbering_scheme option no longer used.  Please use -input_ab_scheme instead. ");
+	}
+
 
 	if ( option[basic::options::OptionKeys::out::file::no_scores_in_pdb].user() ) {
 		error_messages.push_back("-no_scores_in_pdb is no longer used.  Please use -output_pose_energies_table false");

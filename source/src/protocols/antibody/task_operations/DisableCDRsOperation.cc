@@ -87,7 +87,7 @@ DisableCDRsOperation::set_defaults() {
 	cdrs_[ h4 ] = false;
 
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 	cdr_definition_ = manager.cdr_definition_string_to_enum(cdr_definition);
@@ -149,15 +149,15 @@ DisableCDRsOperation::parse_tag( TagCOP tag, DataMap & ) {
 
 	disable_packing_and_design_ = tag->getOption< bool >("disable_packing_and_design", disable_packing_and_design_);
 
-	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("input_ab_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
 
 		cdr_definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
-		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
+		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
-	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("input_ab_scheme") ) {
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
@@ -214,7 +214,7 @@ void DisableCDRsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute( "cdrs", xs_string )
 		+ XMLSchemaAttribute::attribute_w_default(  "disable_packing_and_design", xs_boolean, "true" )
 		+ XMLSchemaAttribute( "cdr_definition", xs_string )
-		+ XMLSchemaAttribute( "numbering_scheme", xs_string );
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

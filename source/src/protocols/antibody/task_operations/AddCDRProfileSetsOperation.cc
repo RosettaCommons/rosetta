@@ -123,7 +123,7 @@ AddCDRProfileSetsOperation::set_defaults(){
 	sequences_.clear();
 
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	//std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 
@@ -146,11 +146,11 @@ AddCDRProfileSetsOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache
 	picking_rounds_ = tag->getOption< core::Size >("picking_rounds", picking_rounds_);
 	cutoff_ = tag->getOption< core::Size >("cutoff", cutoff_);
 
-	if ( tag->hasOption("numbering_scheme") ) {
+	if ( tag->hasOption("input_ab_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
-		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
+		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
 	}
 	if ( tag->hasOption("cdr_definition") && tag->getOption<std::string>("cdr_definition") != "North" ) {
@@ -173,7 +173,7 @@ void AddCDRProfileSetsOperation::provide_xml_schema( utility::tag::XMLSchemaDefi
 		+ XMLSchemaAttribute::attribute_w_default(  "include_native_restype", xs_boolean, "true" )
 		+ XMLSchemaAttribute::attribute_w_default(  "picking_rounds", xsct_non_negative_integer, "1" )
 		+ XMLSchemaAttribute::attribute_w_default(  "cutoff", xsct_non_negative_integer, "10" )
-		+ XMLSchemaAttribute( "numbering_scheme", xs_string )
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string )
 		+ XMLSchemaAttribute( "cdr_definition", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );

@@ -3,6 +3,6 @@
 -ignore_unrecognized_res
 
 -cdr_definition North
--numbering_scheme AHO_Scheme
+-input_ab_scheme AHO_Scheme
 
--no_output
+#-no_output Remove this to better test app.

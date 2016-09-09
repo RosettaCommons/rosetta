@@ -25,6 +25,8 @@
 #include <protocols/antibody/grafting/scs_functor.hh>
 #include <protocols/antibody/grafting/grafter.hh>
 
+#include <protocols/antibody/AntibodyNumberingConverterMover.hh>
+
 // Grafting util function related includes
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
@@ -309,10 +311,17 @@ int antibody_main()
 
 				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database );
 
+
+				if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+					protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
+					converter.apply(*model);
+				}
+				
 				if( !basic::options::option[ basic::options::OptionKeys::no_relax ]() ) {
 					relax_model(model);
 					model->dump_pdb(prefix + "model" + suffix + ".relaxed.pdb");
 				}
+				
 			}
 		}
 		else {

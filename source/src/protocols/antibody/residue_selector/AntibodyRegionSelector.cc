@@ -78,7 +78,7 @@ AntibodyRegionSelector::set_defaults(){
 	region_ = unknown_ab_region;
 
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 	cdr_definition_ = manager.cdr_definition_string_to_enum(cdr_definition);
@@ -129,15 +129,15 @@ AntibodyRegionSelector::parse_my_tag(
 		region_ = manager.antibody_region_string_to_enum(tag->getOption< std::string >( "region" ));
 	}
 
-	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("input_ab_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
 
 		cdr_definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
-		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
+		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
-	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("input_ab_scheme") ) {
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
@@ -162,7 +162,7 @@ void AntibodyRegionSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attributes
 		+ XMLSchemaAttribute::attribute_w_default(  "region",      xs_boolean, "true" )
 		+ XMLSchemaAttribute::attribute_w_default(  "cdr_definition", xs_string, option [OptionKeys::antibody::cdr_definition]() )
-		+ XMLSchemaAttribute::attribute_w_default(  "numbering_scheme", xs_string, option [OptionKeys::antibody::numbering_scheme]());
+		+ XMLSchemaAttribute::attribute_w_default(  "input_ab_scheme", xs_string, option [OptionKeys::antibody::input_ab_scheme]());
 	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 
 }

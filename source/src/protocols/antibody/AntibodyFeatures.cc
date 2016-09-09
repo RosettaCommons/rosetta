@@ -708,18 +708,18 @@ AntibodyFeatures::parse_my_tag(
 	}
 
 
-	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("input_ab_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
 
 		CDRDefinitionEnum definition = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
-		AntibodyNumberingSchemeEnum scheme = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
+		AntibodyNumberingSchemeEnum scheme = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
 		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, scheme, definition) );
 
-	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
-		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("input_ab_scheme") ) {
+		TR <<"Please pass both cdr_definition and input_ab_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
 

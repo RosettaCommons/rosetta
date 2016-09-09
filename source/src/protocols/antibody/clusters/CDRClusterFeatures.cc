@@ -122,10 +122,10 @@ CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::Dat
 	std::string cdrs = tag->getOption< std::string >("cdrs", "L1,L2,L3,H1,H2,H3");
 	std::string scheme;
 
-	if ( tag->hasOption("numbering_scheme") ) {
-		scheme = tag->getOption< std::string >("numbering_scheme");
+	if ( tag->hasOption("input_ab_scheme") ) {
+		scheme = tag->getOption< std::string >("input_ab_scheme");
 	} else {
-		scheme = option [OptionKeys::antibody::numbering_scheme]();
+		scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	}
 
 	if ( ! enum_manager->numbering_scheme_is_present(scheme) ) {

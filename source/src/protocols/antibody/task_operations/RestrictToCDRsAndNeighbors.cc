@@ -128,7 +128,7 @@ RestrictToCDRsAndNeighbors::set_defaults() {
 	stem_size_ = 0;
 
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 	cdr_definition_ = manager.cdr_definition_string_to_enum(cdr_definition);
@@ -148,15 +148,15 @@ RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache
 	design_framework_ = tag->getOption< bool >("design_framework", design_framework_);
 	stem_size_ = tag->getOption< core::Size >("stem_size", stem_size_);
 
-	if ( tag->hasOption("cdr_definition") && tag->hasOption("numbering_scheme") ) {
+	if ( tag->hasOption("cdr_definition") && tag->hasOption("input_ab_scheme") ) {
 
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
 
 		cdr_definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
-		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
+		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
-	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme") ) {
+	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("input_ab_scheme") ) {
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
@@ -179,7 +179,7 @@ void RestrictToCDRsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDefi
 		+ XMLSchemaAttribute::attribute_w_default(  "stem_size", xsct_non_negative_integer, "0" )
 
 		+ XMLSchemaAttribute( "cdr_definition", xs_string )
-		+ XMLSchemaAttribute( "numbering_scheme", xs_string );
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

@@ -123,7 +123,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         if not self.options.mover_namespace:
             return "\n"
         else:
-            return "#include <"+"/".join(self.options.mover_namespace)+">\n"
+            return "#include <"+"/".join(self.options.mover_namespace)+"/"+self.options.class_name+".hh>\n"
 
     def get_base_outdir(self):
         if self.options.test:

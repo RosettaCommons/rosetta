@@ -59,7 +59,9 @@ public:
 	bool
 	numbering_scheme_is_present(std::string const & numbering_scheme) const;
 
-
+	utility::vector1<std::string>
+	get_recognized_numbering_schemes()const;
+	
 	////////////////// CDR Definitions  ///////////////////////////////////////
 
 	CDRDefinitionEnum
@@ -70,7 +72,10 @@ public:
 
 	bool
 	cdr_definition_is_present(std::string const & cdr_definition) const;
-
+	
+	utility::vector1< std::string >
+	get_recognized_cdr_definitions() const;
+	
 	///////////////// LightChain Types ////////////////////////////////////////////
 
 	LightChainTypeEnum

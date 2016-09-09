@@ -288,6 +288,11 @@ public:
 		char const insertion_code=' ',
 		bool fail_on_missing_resnum = true) const;
 
+	///@brief Get the full antibody numbering struct for use in anything.
+	AntibodyNumbering const &
+	get_antibody_numbering_info() const {
+		return numbering_info_;
+	}
 
 public:
 	//////////////////////////////////////////////////

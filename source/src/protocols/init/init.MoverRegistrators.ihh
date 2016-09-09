@@ -27,6 +27,7 @@ static MoverRegistrator< analysis::InterfaceAnalyzerMoverCreator > reg_Interface
 static MoverRegistrator< analysis::LoopAnalyzerMoverCreator > reg_LoopAnalyzerMoverCreator;
 
 static MoverRegistrator< antibody::AntibodyCDRGrafterCreator > reg_AntibodyCDRGrafterCreator;
+static MoverRegistrator< antibody::AntibodyNumberingConverterMoverCreator > reg_AntibodyNumberingConverterMoverCreator;
 
 static MoverRegistrator< antibody::constraints::CDRDihedralConstraintMoverCreator > reg_CDRDihedralConstraintMoverCreator;
 static MoverRegistrator< antibody::constraints::ParatopeEpitopeSiteConstraintMoverCreator > reg_ParatopeEpitopeSiteConstraintMoverCreator;

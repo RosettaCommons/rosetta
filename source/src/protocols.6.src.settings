@@ -28,6 +28,7 @@ sources = {
 		"AntibodyFeaturesCreator",
 		"AntibodyModelerProtocol",
 		"AntibodyNumberingParser",
+		"AntibodyNumberingConverterMover",
 		"CDRsMinPackMin",
 		"GraftCDRLoopsProtocol",
 		"GraftOneCDRLoop",

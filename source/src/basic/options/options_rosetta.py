@@ -3392,9 +3392,17 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			legal='true', default='true'
 			),
 
-		Option('numbering_scheme', 'String',
-			desc='The numbering scheme of the PDB file. Options are: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, IMGT_Scheme. Kabat_Scheme is also accepted, but not fully supported due to H1 numbering conventions.  Use Kabat_Scheme with caution.',
+		Option('input_ab_scheme', 'String',
+			desc='The numbering scheme of the PDB file.',
+			legal=['Chothia',        'Enhanced_Chothia',        'AHo',        'AHO'         'IMGT',        'Kabat', \
+			       'Chothia_Scheme', 'Enhanced_Chothia_Scheme', 'AHo_Scheme', 'AHO_Scheme', 'IMGT_Scheme', 'Kabat_Scheme'],
 			default='Chothia_Scheme'
+			),
+		Option('output_ab_scheme', 'String',
+			desc = "Output numbering scheme supported by most antibody apps that output pdbs.  Please see documentation.",
+			legal=['Chothia',        'Enhanced_Chothia',        'AHo',        'AHO'         'IMGT',        'Kabat', \
+			       'Chothia_Scheme', 'Enhanced_Chothia_Scheme', 'AHo_Scheme', 'AHO_Scheme', 'IMGT_Scheme', 'Kabat_Scheme'],
+			default = 'Chothia_Scheme'
 			),
 		Option('cdr_definition', 'String',
 			desc='The CDR definition to use.  Current Options are: Chothia, Aroop, North, Kabat, Martin',
@@ -3412,6 +3420,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('check_cdr_pep_bond_geom', 'Boolean',
 			desc='Check CDRs of input antibody for bad peptide bond geometry.  This checks Ca-C-N and C-N-Ca bond angles for -large- deviations from the min max values found in a recent analysis of protein geometry  - Conformation dependence of backbone geometry in proteins. Structure -.  If found, the model will not proceed.  Use FastRelax with bond angle min to fix issues.  These issues usually arise from poorly resolved crystal loops or incorrectly solved structures.  Many older antibody structures have some of these issues.',
 			default='false'
+			),
+		Option('numbering_scheme', 'String',
+			desc='Deprecated Numbering Scheme option',
+			default='Chothia_Scheme'
 			),
 		Option( 'graft_l1', 'Boolean',
 			desc='Graft CDR L1 from template',

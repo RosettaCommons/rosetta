@@ -860,6 +860,40 @@ kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibo
 	pose.add_constraint( alpha_cst );
 }
 
+PDBLandmarkCOP
+get_matching_landmark(
+	AntibodyNumbering const & numbering,
+	PDBLandmark const & query_landmark,
+	AntibodyNumberingSchemeEnum const from_scheme,
+	AntibodyNumberingSchemeEnum const to_scheme){
+
+	utility::vector1<PDBLandmarkOP> current_landmarks = numbering.numbering_scheme_transform.at(from_scheme);
+	utility::vector1<PDBLandmarkOP> new_landmarks = numbering.numbering_scheme_transform.at(to_scheme);
+	
+	for ( core::Size x = 1; x <= current_landmarks.size(); ++x ) {
+		PDBLandmarkCOP landmark = current_landmarks[x];
+		
+		//TR<< "Attempt match:<"<< query_landmark.get_string()<<">"<< std::endl;
+		
+		if ( *landmark == query_landmark ) {
+		
+			PDBLandmarkOP new_landmark = new_landmarks[x];
+			
+			//TR << "Matched "<< "<" << query_landmark.get_string() << ">" << std::endl;
+			//TR << "To " << "<" <<new_landmark->get_string() << ">" << std::endl;
+			
+			return new_landmark;
+
+		} else {
+			continue;
+		}
+	}
+	
+	PDBLandmarkOP empty_landmark( new PDBLandmark('X', 0, ' ') );
+	return empty_landmark;
+
+}
+
 } // namespace antibody
 } // namespace protocols
 

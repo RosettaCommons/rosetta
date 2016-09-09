@@ -21,6 +21,7 @@
 #include <protocols/antibody/clusters/util.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/snugdock/SnugDock.hh>
 #include <protocols/antibody/snugdock/SnugDockProtocol.hh>
@@ -317,6 +318,12 @@ AntibodyDesignProtocol::output_ensemble(vector1<core::pose::PoseOP> ensemble, co
 
 		//Note that this does NOT write to a scorefile by default.  To pass it to the scorefile,
 		// you need -other_pose_to_scorefile.  This is now working in MPI.
+		
+		if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+			AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
+			converter.apply(*(ensemble[i]));
+		}
+		
 		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(current_job, *(ensemble[i]), tag);
 	}
 }
@@ -435,7 +442,15 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	if ( ! option [OptionKeys::out::file::pdb_comments]() ) {
 		TR << "Added pose comments for cluster info.  Use -pdb_comments option to have it output to pdb file." << std::endl;
 	}
+	
+	if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+		AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
+		converter.apply(pose);
+	}
+	
 	TR << "Complete." << std::endl;
+
+
 
 }
 

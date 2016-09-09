@@ -1,0 +1,3 @@
+-s 2j88_renum.pdb
+-input_ab_scheme AHo
+-output_ab_scheme Chothia

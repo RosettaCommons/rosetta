@@ -177,21 +177,20 @@ void AntibodyInfo::set_default() {
 	loopsop_having_allcdrs_=nullptr;
 
 
-	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 
-	if ( numbering_scheme == "Kabat_Scheme" ) {
+	if ( numbering_scheme == "Kabat_Scheme" || numbering_scheme == "Kabat") {
 		TR <<"Kabat Numbering scheme is not fully supported due to H1 numbering.  Use with caution. http://www.bioinf.org.uk/abs/" <<std::endl;
 	}
 
-	if ( option [OptionKeys::antibody::numbering_scheme].user() && ! enum_manager_->numbering_scheme_is_present(numbering_scheme) ) {
-		utility_exit_with_message("-numbering_scheme not recognized"
-			"Recognized Numbering Schemes: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, Kabat_Scheme, IMGT_Scheme");
+	if ( option [OptionKeys::antibody::input_ab_scheme].user() && ! enum_manager_->numbering_scheme_is_present(numbering_scheme) ) {
+		utility_exit_with_message("-numbering_scheme not recognized.  Recognized Numbering Schemes:  "+utility::to_string(enum_manager_->get_recognized_numbering_schemes()));
 	}
 
 	if ( option [OptionKeys::antibody::cdr_definition].user() && ! enum_manager_->cdr_definition_is_present(cdr_definition) ) {
 		utility_exit_with_message("-cdr_definition not recognized"
-			"Recognized CDR Definitions: Chothia, Aroop, North, Martin, Kabat");
+			"Recognized CDR Definitions: "+utility::to_string(enum_manager_->get_recognized_numbering_schemes()));
 	}
 
 	numbering_info_.numbering_scheme = enum_manager_->numbering_scheme_string_to_enum(numbering_scheme);
