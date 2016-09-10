@@ -1,7 +1,6 @@
 -s inputs/1a19.pdb
 -out:prefix native_
 -in:file:native inputs/1a19_trunc.pdb
--in:file:fullatom
 -relax:constrain_relax_to_native_coords 
 -relax:coord_constrain_sidechains 
 -relax:ramp_constraints false

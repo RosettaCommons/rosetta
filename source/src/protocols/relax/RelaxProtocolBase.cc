@@ -35,6 +35,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/sequence/util.hh>
 #include <core/pose/util.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -398,11 +399,15 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 
 		protocols::relax::AtomCoordinateCstMover coord_cst_mover;
 		if ( constrain_relax_to_native_coords_ ) {
-			if ( get_native_pose() ) {
-				coord_cst_mover.set_refstruct( get_native_pose() );
-			} else {
-				utility_exit_with_message("Native pose needed for OptionKeys::relax::constrain_relax_to_native_coords");
+			std::string const & native_pdb_fname = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
+			if ( native_pdb_fname.empty() ) {
+				utility_exit_with_message("Native pose needs to be specified with -in:file:native for -relax::constrain_relax_to_native_coords");
 			}
+			core::pose::PoseOP ref_pose( new core::pose::Pose() );
+			// We need to load this as a fullatom structure (the default)
+			// Relax is intrinsically a fullatom protocol, so loading it as centroid doesn't make sense.
+			core::io::pdb::build_pose_from_pdb_as_is( *ref_pose, native_pdb_fname );
+			coord_cst_mover.set_refstruct( ref_pose );
 		}
 
 		if ( constrain_relax_segments_ ) {
