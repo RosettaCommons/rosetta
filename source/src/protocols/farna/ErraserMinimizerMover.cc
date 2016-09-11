@@ -207,7 +207,7 @@ ErraserMinimizerMover::ErraserMinimizerMover():
 	utility::vector1< ResidueTypeCOP > ncnts = ResidueTypeFinder( *rsd_set ).name1('X').base_property( RNA ).get_possible_base_residue_types();
 	for ( Size ii = 1; ii <= ncnts.size(); ++ii ) {
 		std::stringstream ss;
-		ss << "X[" << ncnts[ii]->name3() << "]X[" << ncnts[ii]->name3() << "]X[" << ncnts[ii]->name3() << "]";
+		ss << "X[" << ncnts[ii]->name() << "]X[" << ncnts[ii]->name() << "]X[" << ncnts[ii]->name() << "]";
 		make_pose_from_sequence( ref_pose, ss.str(), rsd_set );
 		ideal_ncnt_poses_[ ncnts[ii]->name3() ] = ref_pose;
 	}
