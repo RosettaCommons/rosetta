@@ -17,28 +17,8 @@
 
 namespace aa {
 
-// typedef int aa_INT;
-
-// inline void foo_aa(A& a, aa_INT) {}
-
-// typedef void (* UtilityExitCallBack)(void);
-
-// void set_main_exit_callback( UtilityExitCallBack = 0 );
 
 }
-
-//std::string foo1(std::string s = std::string("aaa") ) { return s; }
-
-//std::string foo2(std::string s = "aaa" ) { return s; }
-//void foo3(A a=A() ) {}
-
-// inline bool foo(bool a, bool&b, aa::A) { return true; }
-// std::string foo(int a) { return "foo1"; }
-// std::string foo(int a, int b) { return "foo2"; }
-// std::string foo(int a, int b, int c) { return "foo3: a="+std::to_string(a)+" b="+std::to_string(b)+" c="+std::to_string(c); }
-
-
-// inline void foo_A(aa::A& a, aa::aa_INT) {}
 
 enum E1 {E1A, E1B};
 
@@ -50,61 +30,27 @@ namespace a {
 struct A {};
 }
 
-/// comment 1
-/// comment 2
-//  comment 2.5
 
-
-/// @brief A molecular system including residues, kinematics, and energies
-
-/** @details
-aaa\\The P"ose" <class> represents a molecular system (protein-dna-ligand...)
-as a container of Rosetta Residue objects together with
-a Conformation object that defines how internal coordinate changes
-propagate through the system and an Energies object that stores
-information from the last energy evaluation.
-
-
-The main responsibilities of the pose are:
-
-@li  Kinematic:
-(a) to update the xyz coordinates in response to changes to internal
-degrees of freedom, and
-(b) to update internal coordinates when the user modifes the xyz
-(Cartesian) coords,
-
-@li  Scoring:
-(a) to keep track of what parts of the structure have changed since
-the last score evaluation, and
-(b) to cache residue and residue-pair energies for efficient re-use
-
-@li As a container:
-The pose provides a single object for passing
-a molecular system and for copying of entire molecules
-or stretches of molecules from one Pose object into another.
-
-
-Output Methods:
-Common Methods:
-Pose.assign
-Pose.atom_tree
-Pose.conformation
-Pose.dump_pdb
-Pose.dump_cif
-Pose.dump_file
-Pose.energies
-Pose.fold_tree
-Pose.pdb_info
-Pose.residue
-Pose.sequence
-Pose.total_residue
-**/
+struct V {};
 
 struct A /// comment 3
 /// comment 4
 {
 	/// comment 5
 	int value;
+	std::string s_;
+
+	virtual void foo() {}
+	virtual void foo2() = 0;
+
+	virtual void foo_v(V&) {}
+
+	virtual std::string foo_s() { return s_; }
+	virtual std::string const &foo_sr() { return s_; }
+
+	virtual int &foo_int_r() { return value; }
+
+
 };
 
 
@@ -124,7 +70,7 @@ std::ostream & operator << ( std::ostream & os, A const & a)
 ///     test_pose.assign(pose)
 /// See also:
 ///     Pose
-A const foo() { return A(); }
+//A const foo() { return A(); }
 
 // std::shared_ptr<B> ptr_creator() { return std::make_shared<B>(); }
 // std::weak_ptr<B> weak_ptr_tester(std::shared_ptr<B> &p) { return p; }

@@ -311,7 +311,7 @@ PYBIND11_PLUGIN({1}) {{
 }}
 )_";
 
-const char * module_header = "\n#include <pybind11/pybind11.h>\n\n{}#ifndef BINDER_PYBIND11_TYPE_CASTER\n\t#define BINDER_PYBIND11_TYPE_CASTER\n\tPYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n#endif\n\n";
+const char * module_header = "\n#include <pybind11/pybind11.h>\n\n{}#ifndef BINDER_PYBIND11_TYPE_CASTER\n\t#define BINDER_PYBIND11_TYPE_CASTER\n\tPYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);\n\tPYBIND11_DECLARE_HOLDER_TYPE(T, T*);\n#endif\n\n";
 
 const char * module_function_suffix = "(std::function< pybind11::module &(std::string const &namespace_) > &M)";
 

@@ -2,18 +2,20 @@
 #include <T01.enum.hpp> // A
 #include <T01.enum.hpp> // E1
 #include <T01.enum.hpp> // E2
+#include <sstream> // __str__
 
 #include <pybind11/pybind11.h>
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
 void bind_T01_enum(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// E1 file:T01.enum.hpp line:17
-	pybind11::enum_<E1>(M(""), "E1")
+	pybind11::enum_<E1>(M(""), "E1", "")
 		.value("E1_V0", E1::E1_V0)
 		.value("E1_V1", E1::E1_V1)
 		.export_values();
@@ -21,23 +23,22 @@ void bind_T01_enum(std::function< pybind11::module &(std::string const &namespac
 ;
 
 	// E2 file:T01.enum.hpp line:19
-	pybind11::enum_<E2>(M(""), "E2")
+	pybind11::enum_<E2>(M(""), "E2", "")
 		.value("E2_V0", E2::E2_V0)
 		.value("E2_V1", E2::E2_V1);
 
 ;
 
 	{ // A file:T01.enum.hpp line:21
-		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A");
+		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());
-		pybind11::enum_<A::AE1>(cl, "AE1")
+		cl.def(pybind11::init<>());	pybind11::enum_<A::AE1>(cl, "AE1", "")
 			.value("AE1_V0", A::AE1::AE1_V0)
 			.value("AE1_V1", A::AE1::AE1_V1)
 			.export_values();
 
-		pybind11::enum_<A::AE2>(cl, "AE2")
+		pybind11::enum_<A::AE2>(cl, "AE2", "")
 			.value("AE2_V0", A::AE2::AE2_V0)
 			.value("AE2_V1", A::AE2::AE2_V1);
 
@@ -77,5 +78,8 @@ PYBIND11_PLUGIN(T01_enum) {
 }
 
 // Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T01_enum.sources
-// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T01_enum.cpp
 // T01_enum.cpp
+// T01_enum.cpp
+
+// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T01_enum.modules
+// 

@@ -12,45 +12,56 @@
 #include <T09.overload.hpp> // A4
 #include <T09.overload.hpp> // A4::A4
 #include <T09.overload.hpp> // A4::operator=
+#include <sstream> // __str__
 
 #include <pybind11/pybind11.h>
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
 // A2 file:T09.overload.hpp line:21
 struct PyCallBack_A2 : public A2 {
 	using A2::A2;
 
-	using _binder_base_ = A2;
-
-	void f() override { PYBIND11_OVERLOAD_NAME(void, _binder_base_, "f", A2::f); }
+	void f() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const A2 *>(this), "f");
+		if (overload) return overload.operator()<pybind11::return_value_policy::reference>().template cast<void>();
+		return A2::f();
+	}
 };
 
 // A3 file:T09.overload.hpp line:28
 struct PyCallBack_A3 : public A3 {
 	using A3::A3;
 
-	using _binder_base_ = A3;
-
-	void f() override { PYBIND11_OVERLOAD_PURE_NAME(void, _binder_base_, "f", A3::f); }
+	void f() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const A3 *>(this), "f");
+		if (overload) return overload.operator()<pybind11::return_value_policy::reference>().template cast<void>();
+		pybind11::pybind11_fail("Tried to call pure virtual function \"A3::f\"");
+	}
 };
 
 // A4 file:T09.overload.hpp line:34
 struct PyCallBack_A4 : public A4 {
 	using A4::A4;
 
-	using _binder_base_ = A4;
-
-	int operator=(int a0) override { PYBIND11_OVERLOAD_PURE_NAME(int, _binder_base_, "assign", A4::operator=, a0); }
+	int operator=(int a0) override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const A4 *>(this), "assign");
+		if (overload) return overload.operator()<pybind11::return_value_policy::reference>(a0).template cast<int>();
+		pybind11::pybind11_fail("Tried to call pure virtual function \"A4::assign\"");
+	}
 };
 
 void bind_T09_overload(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	{ // A1 file:T09.overload.hpp line:16
-		pybind11::class_<A1, std::shared_ptr<A1>> cl(M(""), "A1");
+		pybind11::class_<A1, std::shared_ptr<A1>> cl(M(""), "A1", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def("__init__", [](A1 *self_) { new (self_) A1(); }, "doc");
@@ -58,34 +69,34 @@ void bind_T09_overload(std::function< pybind11::module &(std::string const &name
 
 	}
 	{ // A2 file:T09.overload.hpp line:21
-		pybind11::class_<A2, std::shared_ptr<A2>, PyCallBack_A2> cl(M(""), "A2");
+		pybind11::class_<A2, std::shared_ptr<A2>, PyCallBack_A2> cl(M(""), "A2", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def("__init__", [cl_type](pybind11::handle self_) { if (self_.get_type() == cl_type) new (self_.cast<A2 *>()) A2(); else new (self_.cast<PyCallBack_A2 *>()) PyCallBack_A2(); }, "doc");
 		cl.def(pybind11::init<int>(), pybind11::arg("a"));
 
-		cl.def("f", (void (A2::*)()) &A2::f, "doc");
-		cl.def("assign", (struct A2 & (A2::*)(const struct A2 &)) &A2::operator=, "doc", pybind11::arg(""));
+		cl.def("f", (void (A2::*)()) &A2::f, "");
+		cl.def("assign", (struct A2 & (A2::*)(const struct A2 &)) &A2::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 	{ // A3 file:T09.overload.hpp line:28
-		pybind11::class_<A3, std::shared_ptr<A3>, PyCallBack_A3> cl(M(""), "A3");
+		pybind11::class_<A3, std::shared_ptr<A3>, PyCallBack_A3> cl(M(""), "A3", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def("__init__", [](PyCallBack_A3 *self_) { new (self_) PyCallBack_A3(); }, "doc");
 		cl.def(pybind11::init<int>(), pybind11::arg("a"));
 
-		cl.def("f", (void (A3::*)()) &A3::f, "doc");
-		cl.def("assign", (struct A3 & (A3::*)(const struct A3 &)) &A3::operator=, "doc", pybind11::arg(""));
+		cl.def("f", (void (A3::*)()) &A3::f, "");
+		cl.def("assign", (struct A3 & (A3::*)(const struct A3 &)) &A3::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 	{ // A4 file:T09.overload.hpp line:34
-		pybind11::class_<A4, std::shared_ptr<A4>, PyCallBack_A4> cl(M(""), "A4");
+		pybind11::class_<A4, std::shared_ptr<A4>, PyCallBack_A4> cl(M(""), "A4", "");
 		pybind11::handle cl_type = cl;
 
 		cl.def("__init__", [](PyCallBack_A4 *self_) { new (self_) PyCallBack_A4(); }, "doc");
 		cl.def(pybind11::init<int>(), pybind11::arg("a"));
 
-		cl.def("assign", (int (A4::*)(int)) &A4::operator=, "doc", pybind11::arg(""));
-		cl.def("assign", (struct A4 & (A4::*)(const struct A4 &)) &A4::operator=, "doc", pybind11::arg(""));
+		cl.def("assign", (int (A4::*)(int)) &A4::operator=, "", pybind11::arg(""));
+		cl.def("assign", (struct A4 & (A4::*)(const struct A4 &)) &A4::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 }
 
@@ -122,5 +133,8 @@ PYBIND11_PLUGIN(T09_overload) {
 }
 
 // Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T09_overload.sources
-// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T09_overload.cpp
 // T09_overload.cpp
+// T09_overload.cpp
+
+// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T09_overload.modules
+// 

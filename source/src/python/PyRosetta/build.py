@@ -31,7 +31,7 @@ PlatformBits = platform.architecture()[0][:2]
 _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)  # should be formatted: 2.7 or 3.5
 #_python_version_ = '{}.{}.{}'.format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)  # should be formatted: 2.7.6 or 3.5.0
 
-_pybind11_version_ = 'PyRosetta'
+_pybind11_version_ = '356bf94a850346f4036a894e2197c9944c69bd0d'  # 'PyRosetta'
 
 _banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
@@ -163,7 +163,8 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 def install_pybind11(prefix, clean=True):
     ''' Download and install PyBind11 library at given prefix. Install version specified by _pybind11_version_ sha1
     '''
-    git_checkout = '( git fetch && git checkout {0} && git reset --hard {0} && git pull )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
+    #git_checkout = '( git fetch && git checkout {0} && git reset --hard {0} && git pull )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
+    git_checkout = '( git fetch && git reset --hard {0} )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
 
     if not os.path.isdir(prefix): os.makedirs(prefix)
     package_dir = prefix + '/pybind11'

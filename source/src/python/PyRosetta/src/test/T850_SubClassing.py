@@ -83,12 +83,12 @@ class PyOverloadTest(rosetta.utility.py.OverloadTest):
     def test_ref(self, v): print('PyOverloadTest.test_ref({})'.format(v))
     def pure_test_ref(self, v): print('PyOverloadTest.pure_test_ref({})'.format(v))
 
-print('rosetta.utility.py.OverloadTest Test -----------------------')
+print('rosetta.utility.py.OverloadTest Test -----------------------'); sys.stdout.flush()
 ot = rosetta.utility.py.OverloadTest()
 ot.self_test_virtual_p()
 ot.self_test_virtual_ref()
 
-print('PyOverloadTest Test -----------------------------------------')
+print('PyOverloadTest Test -----------------------------------------'); sys.stdout.flush()
 pot = PyOverloadTest()
 pot.self_test_virtual_p()
 pot.self_pure_test_virtual_p()
@@ -157,7 +157,6 @@ class MyNewCI1B(rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy):
     def residue_energy(self, rsd, pose, emap):
         #print( 'residue_energy:', type(emap) )
         emap.set(rosetta.core.scoring.PyRosettaEnergy_last, 2.0)
-
 
     def clone(self): return MyNewCI1B();
 

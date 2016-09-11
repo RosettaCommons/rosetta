@@ -24,5 +24,4 @@ source/ide/RosettaMini.xcodeproj/project.xcworkspace/
 source/ide/RosettaMini.xcodeproj/xcuserdata/
 database/chemical/components.*
 tests/sfxn_fingerprint/new/
-pyrosetta
 .idea

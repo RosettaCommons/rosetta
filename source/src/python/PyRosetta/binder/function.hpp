@@ -17,6 +17,7 @@
 #include <context.hpp>
 
 #include <clang/AST/Decl.h>
+#include <clang/AST/DeclCXX.h>
 
 #include <string>
 #include <tuple>
@@ -69,6 +70,8 @@ void add_relevant_includes(clang::FunctionDecl const *F, IncludeSet &includes, i
 /// check if generator can create binding
 bool is_bindable(clang::FunctionDecl const *F);
 
+/// check if methods could be overload in Python
+bool is_overloadable(clang::CXXMethodDecl const *M);
 
 
 class FunctionBinder : public Binder

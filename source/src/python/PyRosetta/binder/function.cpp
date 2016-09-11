@@ -260,7 +260,7 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 		pair<string, string> args = function_arguments_for_lambda(F, args_to_bind);
 		//string args; for(uint i=0; i<args_to_bind; ++i) args += "a" + std::to_string(i) + ( i+1 == args_to_bind ? "" : ", " );
 
-		string return_type = F->getReturnType().getCanonicalType().getAsString();  fix_boolean_types(return_type);
+		string return_type = standard_name( F->getReturnType().getCanonicalType().getAsString() );
 
 		if( m and !m->isStatic() ) {
 			string object = class_qualified_name( m->getParent() ) + (m->isConst() ? " const" : "") + " &o" + ( args_to_bind ? ", " : "" );
@@ -397,6 +397,23 @@ bool is_bindable(FunctionDecl const *F)
 	return r;
 }
 
+
+/// check if methods could be overload in Python
+bool is_overloadable(CXXMethodDecl const *M)
+{
+	QualType qt = M->getReturnType().getCanonicalType();
+
+
+	if( ReferenceType const *rt = dyn_cast<ReferenceType>( qt.getTypePtr() ) ) {
+		if( rt->getPointeeType()->isBuiltinType() ) return false;
+
+		string r = standard_name( qt.getAsString() );
+		static vector<string> const types_to_skip = {"std::string &", "const std::string &"};
+		for(auto const &t : types_to_skip) if( r == t) return false;
+	}
+
+	return true;
+}
 
 
 bool FunctionBinder::bindable() const

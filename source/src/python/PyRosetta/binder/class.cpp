@@ -453,18 +453,25 @@ bool is_callback_structure_constructible(CXXRecordDecl const *C)
 	return true;
 }
 
+
+// call_back_function_body_template is almost like PYBIND11_OVERLOAD_INT but specify pybind11::return_value_policy::reference
+// #define PYBIND11_OVERLOAD_INT(ret_type, cname, name, ...) { \
+//         pybind11::gil_scoped_acquire gil; \
+//         pybind11::function overload = pybind11::get_overload(static_cast<const cname *>(this), name); \
+//         if (overload) \
+//             return overload(__VA_ARGS__).template cast<ret_type>();  }
 const char * call_back_function_body_template = R"_(
 pybind11::gil_scoped_acquire gil;
-pybind11::function overload = pybind11::get_overload(this, "{}");
-if (overload) return overload.operator()<pybind11::return_value_policy::reference>({}).cast<{}>();
+pybind11::function overload = pybind11::get_overload(static_cast<const {} *>(this), "{}");
+if (overload) return overload.operator()<pybind11::return_value_policy::reference>({}).template cast<{}>();
 )_";
 
 // generate call-back overloads for all public virtual functions in C including it bases
-string bind_member_functions_for_call_back(CXXRecordDecl const *C, /*string const & base_type_alias,*/ set<string> &binded, int &ret_id, std::vector<clang::FunctionDecl const *> &prefix_includes/*, std::set<clang::NamedDecl const *> &prefix_includes_stack*/)
+string bind_member_functions_for_call_back(CXXRecordDecl const *C, string const & class_name, /*string const & base_type_alias,*/ set<string> &binded, int &ret_id, std::vector<clang::FunctionDecl const *> &prefix_includes/*, std::set<clang::NamedDecl const *> &prefix_includes_stack*/)
 {
 	string c;
 	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-		if( (m->getAccess() != AS_private)  and  is_bindable(*m)
+		if( (m->getAccess() != AS_private)  and  is_bindable(*m)  and  is_overloadable(*m)
 			and  !is_skipping_requested(*m, Config::get())
 			and  !isa<CXXConstructorDecl>(*m)  and   !isa<CXXDestructorDecl>(*m)  and  m->isVirtual() and  !is_const_overload(*m) ) {
 
@@ -482,10 +489,11 @@ string bind_member_functions_for_call_back(CXXRecordDecl const *C, /*string cons
 					return_type = std::move(return_type_alias);
 				}
 
+				string python_name = python_function_name(*m);
+
 				c += "\t{} {}({}){} override {{ "_format(return_type, m->getNameAsString(), std::get<0>(args), m->isConst() ? " const" : "");
 
-				string python_name = python_function_name(*m);
-				c += indent( fmt::format(call_back_function_body_template, python_name, std::get<1>(args), return_type), "\t\t");
+				c += indent( fmt::format(call_back_function_body_template, class_name, /*class_qualified_name(C), */python_name, std::get<1>(args), return_type), "\t\t");
 				if( m->isPure() ) c+= "\t\tpybind11::pybind11_fail(\"Tried to call pure virtual function \\\"{}::{}\\\"\");\n"_format(C->getNameAsString(), python_name);
 				else c+= "\t\treturn {}::{}({});\n"_format(C->getNameAsString(), m->getNameAsString(), std::get<1>(args));
 				c += "\t}\n";
@@ -512,7 +520,7 @@ string bind_member_functions_for_call_back(CXXRecordDecl const *C, /*string cons
 		if( b->getAccessSpecifier() != AS_private ) {
 			if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
 				if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
-					c += bind_member_functions_for_call_back(R, /*base_type_alias,*/ binded, ret_id, prefix_includes);
+					c += bind_member_functions_for_call_back(R, class_name, /*base_type_alias,*/ binded, ret_id, prefix_includes);
 					//add_relevant_includes(R, prefix_includes, prefix_includes_stack, 0);
 				}
 			}
@@ -534,7 +542,7 @@ void ClassBinder::generate_prefix_code()
 	// prefix_code_ += "\tusing {} = {};\n\n"_format(base_type_alias, class_qualified_name(C));
 
 	set<string> binded;  int ret_id = 0;
-	prefix_code_ += bind_member_functions_for_call_back(C, /*base_type_alias,*/ binded, ret_id, prefix_includes);
+	prefix_code_ += bind_member_functions_for_call_back(C, class_qualified_name(C), /*base_type_alias,*/ binded, ret_id, prefix_includes);
 	prefix_code_ += "};\n\n";
 }
 

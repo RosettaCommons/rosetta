@@ -1,43 +1,45 @@
 // File: T30_include_incl_a_include.cpp
 #include <T30.include.incl.a.include> // aaaa::A
+#include <sstream> // __str__
 
 #include <pybind11/pybind11.h>
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
 void bind_T30_include_incl_a_include(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	{ // aaaa::A file:T30.include.incl.a.include line:7
-		pybind11::class_<aaaa::A, std::shared_ptr<aaaa::A>> cl(M("aaaa"), "A");
+		pybind11::class_<aaaa::A, std::shared_ptr<aaaa::A>> cl(M("aaaa"), "A", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());
-	}
+		cl.def(pybind11::init<>());}
 }
 
 
 // File: T30_include_incl_b_include.cpp
 #include <T30.include.incl.a.include> // aaaa::A
 #include <T30.include.incl.b.include> // bbbb::B
+#include <sstream> // __str__
 
 #include <pybind11/pybind11.h>
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
 void bind_T30_include_incl_b_include(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	{ // bbbb::B file:T30.include.incl.b.include line:8
-		pybind11::class_<bbbb::B<aaaa::A>, std::shared_ptr<bbbb::B<aaaa::A>>> cl(M("bbbb"), "B_aaaa_A_t");
+		pybind11::class_<bbbb::B<aaaa::A>, std::shared_ptr<bbbb::B<aaaa::A>>> cl(M("bbbb"), "B_aaaa_A_t", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());
-	}
+		cl.def(pybind11::init<>());}
 }
 
 
@@ -51,12 +53,13 @@ void bind_T30_include_incl_b_include(std::function< pybind11::module &(std::stri
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
 void bind_T30_include(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// foo(class bbbb::B<class aaaa::A>) file:T30.include.hpp line:20
-	M("").def("foo", (void (*)(class bbbb::B<class aaaa::A>)) &foo, "doc", pybind11::arg(""));
+	M("").def("foo", (void (*)(class bbbb::B<class aaaa::A>)) &foo, "", pybind11::arg(""));
 
 }
 
@@ -99,7 +102,10 @@ PYBIND11_PLUGIN(T30_include) {
 }
 
 // Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T30_include.sources
-// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T30_include.cpp
+// T30_include.cpp
 // T30_include_incl_a_include.cpp
 // T30_include_incl_b_include.cpp
 // T30_include.cpp
+
+// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T30_include.modules
+// aaaa bbbb 

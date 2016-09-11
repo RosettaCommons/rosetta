@@ -4,38 +4,39 @@
 #include <T20.template.hpp> // fi
 #include <T20.template.hpp> // fi_instantiated_by_use_in_function
 #include <T20.template.hpp> // foo
+#include <sstream> // __str__
 
 #include <pybind11/pybind11.h>
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
 void bind_T20_template(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// foo() file:T20.template.hpp line:18
-	M("").def("foo_int_t", (void (*)()) &foo<int>, "doc");
+	M("").def("foo_int_t", (void (*)()) &foo<int>, "");
 
 	// foo() file:T20.template.hpp line:18
-	M("").def("foo_double_t", (void (*)()) &foo<double>, "doc");
+	M("").def("foo_double_t", (void (*)()) &foo<double>, "");
 
 	{ // A file:T20.template.hpp line:25
-		pybind11::class_<A<int>, std::shared_ptr<A<int>>> cl(M(""), "A_int_t");
+		pybind11::class_<A<int>, std::shared_ptr<A<int>>> cl(M(""), "A_int_t", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());
-		cl.def_readwrite("t_value", &A<int>::t_value);
-		cl.def("foo", (void (A<int>::*)(int &)) &A<int>::foo, "doc", pybind11::arg(""));
+		cl.def(pybind11::init<>());	cl.def_readwrite("t_value", &A<int>::t_value);
+		cl.def("foo", (void (A<int>::*)(int &)) &A<int>::foo, "", pybind11::arg(""));
 	}
 	// fi_instantiated_by_use_in_function(class A<int>) file:T20.template.hpp line:34
-	M("").def("fi_instantiated_by_use_in_function", (void (*)(class A<int>)) &fi_instantiated_by_use_in_function, "doc", pybind11::arg(""));
+	M("").def("fi_instantiated_by_use_in_function", (void (*)(class A<int>)) &fi_instantiated_by_use_in_function, "", pybind11::arg(""));
 
 	// fi(class A<int> &) file:T20.template.hpp line:35
-	M("").def("fi", (void (*)(class A<int> &)) &fi, "doc", pybind11::arg(""));
+	M("").def("fi", (void (*)(class A<int> &)) &fi, "", pybind11::arg(""));
 
 	// fi(class A<int> *) file:T20.template.hpp line:36
-	M("").def("fi", (void (*)(class A<int> *)) &fi, "doc", pybind11::arg(""));
+	M("").def("fi", (void (*)(class A<int> *)) &fi, "", pybind11::arg(""));
 
 }
 
@@ -72,5 +73,8 @@ PYBIND11_PLUGIN(T20_template) {
 }
 
 // Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T20_template.sources
-// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T20_template.cpp
 // T20_template.cpp
+// T20_template.cpp
+
+// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T20_template.modules
+// 

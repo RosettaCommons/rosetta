@@ -291,6 +291,8 @@ string standard_name(string const &type)
 	string r(type);
 	for(auto & p : name_map) replace(r, p.first, p.second);
 
+	fix_boolean_types(r);
+
 	return r;
 }
 

@@ -9,46 +9,45 @@
 #include <T10.inheritance.hpp> // Base::foo
 #include <T10.inheritance.hpp> // Base::maybe
 #include <T10.inheritance.hpp> // Delete
+#include <sstream> // __str__
 
 #include <pybind11/pybind11.h>
 
 #ifndef BINDER_PYBIND11_TYPE_CASTER
 	#define BINDER_PYBIND11_TYPE_CASTER
 	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
 #endif
 
 void bind_T10_inheritance(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	{ // Base file:T10.inheritance.hpp line:20
-		pybind11::class_<Base, std::shared_ptr<Base>> cl(M(""), "Base");
+		pybind11::class_<Base, std::shared_ptr<Base>> cl(M(""), "Base", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());
-		cl.def("foo", (void (Base::*)()) &Base::foo, "doc");
-		cl.def("maybe", (void (Base::*)()) &Base::maybe, "doc");
+		cl.def(pybind11::init<>());	cl.def("foo", (void (Base::*)()) &Base::foo, "");
+		cl.def("maybe", (void (Base::*)()) &Base::maybe, "");
 	}
 	{ // Delete file:T10.inheritance.hpp line:30
-		pybind11::class_<Delete, std::shared_ptr<Delete>> cl(M(""), "Delete", pybind11::base<Base>());
+		pybind11::class_<Delete, std::shared_ptr<Delete>> cl(M(""), "Delete", "", pybind11::base<Base>());
 		pybind11::handle cl_type = cl;
 
 	}
 	{ // A file:T10.inheritance.hpp line:38
-		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A");
+		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());
-		cl.def(pybind11::init<const class A &>(), pybind11::arg(""));
+		cl.def(pybind11::init<>());	cl.def(pybind11::init<const class A &>(), pybind11::arg(""));
 
-		cl.def("assign", (class A & (A::*)(const class A &)) &A::operator=, "doc", pybind11::arg(""));
+		cl.def("assign", (class A & (A::*)(const class A &)) &A::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 	{ // B file:T10.inheritance.hpp line:41
-		pybind11::class_<B, std::shared_ptr<B>> cl(M(""), "B");
+		pybind11::class_<B, std::shared_ptr<B>> cl(M(""), "B", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());
-		cl.def(pybind11::init<const class B &>(), pybind11::arg(""));
+		cl.def(pybind11::init<>());	cl.def(pybind11::init<const class B &>(), pybind11::arg(""));
 
-		cl.def("assign", (class B & (B::*)(const class B &)) &B::operator=, "doc", pybind11::arg(""));
+		cl.def("assign", (class B & (B::*)(const class B &)) &B::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 }
 
@@ -85,5 +84,8 @@ PYBIND11_PLUGIN(T10_inheritance) {
 }
 
 // Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T10_inheritance.sources
-// /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T10_inheritance.cpp
 // T10_inheritance.cpp
+// T10_inheritance.cpp
+
+// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T10_inheritance.modules
+// 

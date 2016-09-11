@@ -1,0 +1,181 @@
+// File: T11_override.cpp
+#include <T11.override.hpp> // Base
+#include <T11.override.hpp> // Base::Base
+#include <T11.override.hpp> // Base::foo_int
+#include <T11.override.hpp> // Base::foo_sring
+#include <T11.override.hpp> // Base::foo_sring_r
+#include <T11.override.hpp> // Base::foo_void
+#include <T11.override.hpp> // Base::foo_void_pure
+#include <T11.override.hpp> // Base::operator=
+#include <initializer_list> // std::initializer_list
+#include <initializer_list> // std::initializer_list<char>::begin
+#include <initializer_list> // std::initializer_list<char>::end
+#include <initializer_list> // std::initializer_list<char>::initializer_list
+#include <initializer_list> // std::initializer_list<char>::size
+#include <iterator> // __gnu_cxx::__normal_iterator
+#include <iterator> // __gnu_cxx::__normal_iterator<char *, std::basic_string<char> >::__normal_iterator
+#include <iterator> // __gnu_cxx::__normal_iterator<char *, std::basic_string<char> >::base
+#include <iterator> // __gnu_cxx::__normal_iterator<char *, std::basic_string<char> >::operator+
+#include <iterator> // __gnu_cxx::__normal_iterator<char *, std::basic_string<char> >::operator++
+#include <iterator> // __gnu_cxx::__normal_iterator<char *, std::basic_string<char> >::operator-
+#include <iterator> // __gnu_cxx::__normal_iterator<char *, std::basic_string<char> >::operator--
+#include <iterator> // __gnu_cxx::__normal_iterator<char *, std::basic_string<char> >::operator[]
+#include <iterator> // __gnu_cxx::__normal_iterator<const char *, std::basic_string<char> >::__normal_iterator
+#include <iterator> // __gnu_cxx::__normal_iterator<const char *, std::basic_string<char> >::base
+#include <iterator> // __gnu_cxx::__normal_iterator<const char *, std::basic_string<char> >::operator+
+#include <iterator> // __gnu_cxx::__normal_iterator<const char *, std::basic_string<char> >::operator++
+#include <iterator> // __gnu_cxx::__normal_iterator<const char *, std::basic_string<char> >::operator-
+#include <iterator> // __gnu_cxx::__normal_iterator<const char *, std::basic_string<char> >::operator--
+#include <iterator> // __gnu_cxx::__normal_iterator<const char *, std::basic_string<char> >::operator[]
+#include <memory> // std::allocator
+#include <memory> // std::allocator<char>::allocator
+#include <memory> // std::allocator<char>::operator=
+#include <sstream> // __str__
+#include <string> // std::basic_string
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::append
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::assign
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::at
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::back
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::begin
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::c_str
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::capacity
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::cbegin
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::cend
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::clear
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::copy
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::data
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::empty
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::end
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::erase
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::find
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::find_first_not_of
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::find_first_of
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::find_last_not_of
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::find_last_of
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::front
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::get_allocator
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::insert
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::length
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::max_size
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator[]
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::pop_back
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::push_back
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::replace
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::reserve
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::resize
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::rfind
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::shrink_to_fit
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::size
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::substr
+#include <string> // std::basic_string<char, std::char_traits<char>, std::allocator<char> >::swap
+#include <string> // std::char_traits
+#include <string> // std::char_traits<char>::assign
+#include <string> // std::char_traits<char>::compare
+#include <string> // std::char_traits<char>::copy
+#include <string> // std::char_traits<char>::eof
+#include <string> // std::char_traits<char>::eq
+#include <string> // std::char_traits<char>::eq_int_type
+#include <string> // std::char_traits<char>::find
+#include <string> // std::char_traits<char>::length
+#include <string> // std::char_traits<char>::lt
+#include <string> // std::char_traits<char>::move
+#include <string> // std::char_traits<char>::not_eof
+#include <string> // std::char_traits<char>::to_char_type
+#include <string> // std::char_traits<char>::to_int_type
+
+#include <pybind11/pybind11.h>
+
+#ifndef BINDER_PYBIND11_TYPE_CASTER
+	#define BINDER_PYBIND11_TYPE_CASTER
+	PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
+	PYBIND11_DECLARE_HOLDER_TYPE(T, T*);
+#endif
+
+// Base file:T11.override.hpp line:20
+struct PyCallBack_Base : public Base {
+	using Base::Base;
+
+	void foo_void() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const Base *>(this), "foo_void");
+		if (overload) return overload.operator()<pybind11::return_value_policy::reference>().template cast<void>();
+		return Base::foo_void();
+	}
+	void foo_void_pure() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const Base *>(this), "foo_void_pure");
+		if (overload) return overload.operator()<pybind11::return_value_policy::reference>().template cast<void>();
+		pybind11::pybind11_fail("Tried to call pure virtual function \"Base::foo_void_pure\"");
+	}
+	int foo_int() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const Base *>(this), "foo_int");
+		if (overload) return overload.operator()<pybind11::return_value_policy::reference>().template cast<int>();
+		return Base::foo_int();
+	}
+	class std::basic_string<char> foo_sring() override { 
+		pybind11::gil_scoped_acquire gil;
+		pybind11::function overload = pybind11::get_overload(static_cast<const Base *>(this), "foo_sring");
+		if (overload) return overload.operator()<pybind11::return_value_policy::reference>().template cast<class std::basic_string<char>>();
+		return Base::foo_sring();
+	}
+};
+
+void bind_T11_override(std::function< pybind11::module &(std::string const &namespace_) > &M)
+{
+	{ // Base file:T11.override.hpp line:20
+		pybind11::class_<Base, std::shared_ptr<Base>, PyCallBack_Base> cl(M(""), "Base", "");
+		pybind11::handle cl_type = cl;
+
+		cl.def(pybind11::init<>());	cl.def(pybind11::init<PyCallBack_Base const &>());
+		cl.def_readwrite("s_", &Base::s_);
+		cl.def("foo_void", (void (Base::*)()) &Base::foo_void, "");
+		cl.def("foo_void_pure", (void (Base::*)()) &Base::foo_void_pure, "");
+		cl.def("foo_int", (int (Base::*)()) &Base::foo_int, "");
+		cl.def("foo_sring", (std::string (Base::*)()) &Base::foo_sring, "");
+		cl.def("foo_sring_r", (std::string & (Base::*)()) &Base::foo_sring_r, "", pybind11::return_value_policy::automatic);
+		cl.def("assign", (class Base & (Base::*)(const class Base &)) &Base::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
+	}
+}
+
+
+#include <map>
+#include <memory>
+#include <stdexcept>
+#include <functional>
+
+#include <pybind11/pybind11.h>
+
+typedef std::function< pybind11::module & (std::string const &) > ModuleGetter;
+
+void bind_T11_override(std::function< pybind11::module &(std::string const &namespace_) > &M);
+
+
+PYBIND11_PLUGIN(T11_override) {
+	std::map <std::string, std::shared_ptr<pybind11::module> > modules;
+	ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {
+		auto it = modules.find(namespace_);
+		if( it == modules.end() ) throw std::runtime_error("Attempt to access pybind11::module for namespace " + namespace_ + " before it was created!!!");
+		return * it->second;
+	};
+
+	modules[""] = std::make_shared<pybind11::module>("T11_override", "T11_override module");
+
+	std::vector< std::pair<std::string, std::string> > sub_modules {
+	};
+	for(auto &p : sub_modules ) modules[p.first.size() ? p.first+"::"+p.second : p.second] = std::make_shared<pybind11::module>( modules[p.first]->def_submodule(p.second.c_str(), ("Bindings for " + p.first + "::" + p.second + " namespace").c_str() ) );
+
+	bind_T11_override(M);
+
+	return modules[""]->ptr();
+}
+
+// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T11_override.sources
+// T11_override.cpp
+// T11_override.cpp
+
+// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T11_override.modules
+// 

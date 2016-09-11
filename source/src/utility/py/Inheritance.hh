@@ -67,27 +67,35 @@ public:
 	Value value_;
 
 	void self_test_virtual_ref() {
-		std::cout << "Calling test(Value &v)..." << std::endl;
+		std::cout << "OverloadTest::self_test_virtual_ref..." << std::endl;
+		std::cout << "  Calling test(Value &v)..." << std::endl;
 		test_ref(value_);
-		std::cout << "Calling test(Value &v)... Done!" << std::endl;
+		std::cout << "  Calling test(Value &v)... Done!" << std::endl;
+		std::cout << "OverloadTest::self_test_virtual_ref... Done!" << std::endl;
 	}
 
 	void self_pure_test_virtual_ref() {
-		std::cout << "Calling pure_test(Value &v)..." << std::endl;
+		std::cout << "OverloadTest::self_pure_test_virtual_ref..." << std::endl;
+		std::cout << "  Calling pure_test(Value &v)..." << std::endl;
 		pure_test_ref(value_);
-		std::cout << "Calling pure_test(Value &v)... Done!" << std::endl;
+		std::cout << "  Calling pure_test(Value &v)... Done!" << std::endl;
+		std::cout << "OverloadTest::self_pure_test_virtual_ref... Done!" << std::endl;
 	}
 
 	void self_test_virtual_p() {
-		std::cout << "Calling test(Value *v)..." << std::endl;
+		std::cout << "OverloadTest::self_test_virtual_p..." << std::endl;
+		std::cout << "  Calling test(Value *v)..." << std::endl;
 		test_p(&value_);
-		std::cout << "Calling test(Value *v)... Done!" << std::endl;
+		std::cout << "  Calling test(Value *v)... Done!" << std::endl;
+		std::cout << "OverloadTest::self_test_virtual_p... Done!" << std::endl;
 	}
 
 	void self_pure_test_virtual_p() {
-		std::cout << "Calling pure_test(Value *v)..." << std::endl;
+		std::cout << "OverloadTest::self_pure_test_virtual_p..." << std::endl;
+		std::cout << "  Calling pure_test(Value *v)..." << std::endl;
 		pure_test_p(&value_);
-		std::cout << "Calling pure_test(Value *v)... Done!" << std::endl;
+		std::cout << "  Calling pure_test(Value *v)... Done!" << std::endl;
+		std::cout << "OverloadTest::self_pure_test_virtual_p... Done!" << std::endl;
 	}
 
 	virtual void test_p(Value *v) {}
