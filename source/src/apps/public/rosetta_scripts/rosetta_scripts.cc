@@ -58,8 +58,8 @@ my_main( void *)
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
 print_template_script() {
-	TR << "The -\"parser:print_template_script\" option was specified.  The app will print a template script and then exit." << std::endl;
-	TR << "RosettaScripts script template:\n"
+	TR << "No XML file was specified with the \"-parser:protocol <filename>\" commandline option.  In order for RosettaScripts to do something, it must be provided with a script." << std::endl;
+	TR << "The following is an empty (template) RosettaScripts XML file:\n"
 		<< "\n"
 		<< "<ROSETTASCRIPTS>\n"
 		<< "\t<SCOREFXNS>\n"
@@ -99,9 +99,9 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		if ( option[ parser::print_template_script ]() ) { //Just print a template script and exit.
+		if ( !option[ parser::protocol ].user() ) { //Just print a template script and exit if no input script is provided.
 			print_template_script();
-		} else { // If we're not printing a template script and exiting.
+		} else { // If an input script has been provided, then we're not printing a template script and exiting.
 			bool const view( option[ parser::view ] );
 			protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
 			//That means that this can only be used with parser=true

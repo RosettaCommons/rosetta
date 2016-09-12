@@ -6079,7 +6079,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'parser',
 		Option( 'patchdock', 'String', desc='Patchdock output file name.' ),
 		Option( 'patchdock_random_entry', 'IntegerVector', desc='Pick a random patchdock entry between two entry numbers. inclusive', n='2' ),
-		Option( 'print_template_script', 'Boolean', desc='If used, a template RosettaScripts script is printed to the tracer, and the application exits.  Useful when starting a new script.', default='false' ),
 		Option( 'protocol', 'String', desc='File name for the xml parser protocol' ),
 		Option( 'script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
 		Option( 'view', 'Boolean', desc='Use the viewer?' ),
