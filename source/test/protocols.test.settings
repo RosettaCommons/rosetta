@@ -359,6 +359,7 @@ sources = {
                 "FilterReportAsPoseExtraScoresMover",
 		"MoverContainer",
 		"MoversTest",
+		"PyMolMoverTest",
 		"ScoreTest",
 		"SmallMover",
 		"ShearMover",

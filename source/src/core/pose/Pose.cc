@@ -194,8 +194,24 @@ Pose::operator=( Pose const & src )
 	if ( ! constant_cache_ )  constant_cache_ = ConstDataMapOP( new ConstDataMap );
 	*constant_cache_ = *src.constant_cache_;
 
+	// Special observer case: Preserve our PyMol Observer! (or lack there of)
+	// We are specifically NOT cloning any PyMolObserver objects from src,
+	// as this behavior is confusing to users (whom normally create these observers
+	// interactively, and are thus surprised when more than one exists because of cloning).
+	core::pose::datacache::CacheableObserverOP pymol_observer = 0;
+	bool was_pymol_observer_attached = false;
+	if ( observer_cache_ ) {
+		if ( observer_cache_->has( datacache::CacheableObserverType::PYMOL_OBSERVER ) ) {
+			pymol_observer = observer_cache_->get_ptr( datacache::CacheableObserverType::PYMOL_OBSERVER );
+		}
+		was_pymol_observer_attached = observer_cache_->is_attached( datacache::CacheableObserverType::PYMOL_OBSERVER );
+	}
+
 	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
 	*observer_cache_ = *src.observer_cache_;
+
+	// Restore PyMolObserver state
+	observer_cache_->set( datacache::CacheableObserverType::PYMOL_OBSERVER, pymol_observer, was_pymol_observer_attached );
 
 	this->pdb_info( src.pdb_info_ );
 
