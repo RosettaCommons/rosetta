@@ -53,7 +53,7 @@ public:
 	/// @brief Read numbering file and return AntibodyNumbering structure
 	AntibodyNumbering
 	get_antibody_numbering(AntibodyNumberingSchemeEnum const numbering_scheme, CDRDefinitionEnum const cdr_definition);
-	
+
 private:
 
 	void

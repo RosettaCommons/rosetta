@@ -97,7 +97,7 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 				utility::vector1< std::string > const & variant_types ( rsd_type.properties().get_list_of_variants() );
 				utility::vector1< std::string > missing_variant_types;
 
-				 for ( auto const & variant_type : variant_types ) {
+				for ( auto const & variant_type : variant_types ) {
 					if ( !saved_rsd_type.has_variant_type( variant_type ) ) {
 						missing_variant_types.push_back( variant_type );
 					}

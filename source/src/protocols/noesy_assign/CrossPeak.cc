@@ -156,7 +156,7 @@ void CrossPeak::assign_spin( Size iproton ) {
 	//base-class: disregard label
 	Real const my_freq( proton( iproton ).freq() );
 	Real const my_tolerance( info( iproton ).proton_tolerance() );
-	 for ( auto const & it : resonances() )  {
+	for ( auto const & it : resonances() )  {
 		//    if ( std::abs( fold_resonance( it->second->freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second->error() ) ) {
 		if ( it.second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
 			proton( iproton ).add_assignment( it.first );
@@ -328,7 +328,7 @@ core::Real CrossPeak::probability() const {
 	Real max_vc( 0.0 );
 	Real const overall_vc( cumulative_peak_volume() );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	 for ( auto const & ait : *this ) {
+	for ( auto const & ait : *this ) {
 		if ( max_vc < ait->normalized_peak_volume() ) {
 			max_vc = ait->normalized_peak_volume();
 			max_vc_sym = ait->symmetry_compliance();
@@ -354,7 +354,7 @@ Real CrossPeak::smallest_native_violation() const {
 #ifndef WIN32
 	Real viol( 100000 );
 	QualityClass pclass( quality_class() );
-	 for ( auto const & ait : *this ) {
+	for ( auto const & ait : *this ) {
 		Real const vc( ait->normalized_peak_volume() );
 		if ( pclass==HI_UNAMBIG && vc < 0.1 ) continue;
 		if ( pclass<=MED_AMBIG && vc < 0.01 ) continue;
@@ -375,7 +375,7 @@ CrossPeak::QualityClass CrossPeak::quality_class() const {
 #ifndef WIN32
 	Size count_vc_0p1( 0 );
 	Size count_vc_0p01( 0 );
-	 for ( auto const & ait : *this ) {
+	for ( auto const & ait : *this ) {
 		Real const vc( ait->normalized_peak_volume() );
 		if ( vc > 0.1 ) ++count_vc_0p1;
 		if ( vc > 0.01 ) ++count_vc_0p01;
@@ -421,7 +421,7 @@ CrossPeak::QualityClass CrossPeak::quality_class() const {
 core::Real CrossPeak::max_volume_contribution() const {
 #ifndef WIN32
 	Real max_volume( 0.0 );
-	 for ( auto const & ait : *this ) {
+	for ( auto const & ait : *this ) {
 		max_volume= std::max( max_volume, ait->normalized_peak_volume() );
 	}
 	return max_volume;
@@ -434,7 +434,7 @@ core::Real CrossPeak::max_volume_contribution() const {
 Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) const {
 #ifndef WIN32
 	Size min_seq( 99999 );
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		if ( it->normalized_peak_volume() <= volume_threshold ) continue; //not enough contribution
 		Size res1( it->resid( 1 ) );
 		Size res2( it->resid( 2 ) );
@@ -489,7 +489,7 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 	//network anchoring
 	Real N_atom_sum( 0.0 );
 	Real N_res_sum( 0.0 );
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		Real vol( it->normalized_peak_volume() );
 		N_atom_sum +=  vol * it->network_anchoring();
 		N_res_sum += vol * it->network_anchoring_per_residue();
@@ -576,7 +576,7 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 	Real const proton_tolerance( info( iproton ).proton_tolerance() );
 	Real const label_tolerance( info( iproton ).label_tolerance() );
 
-	 for ( auto const & it : resonances() ) {
+	for ( auto const & it : resonances() ) {
 		//  tr.Trace << "match2D for peak " << peak_id() << " with resonance " << it->second->atom() << std::endl;
 		Resonance::ResonancePairs matches;
 		if ( it.second->match2D( proton_freq, proton_tolerance, folder( iproton ), label_freq, label_tolerance, folder( iproton+2 ), matches ) ) {

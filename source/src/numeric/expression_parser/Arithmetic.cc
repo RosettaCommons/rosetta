@@ -258,7 +258,7 @@ TokenSet::print() const
 {
 	std::ostringstream ostream;
 	ostream << "Tokens:\n";
-	 for ( auto const & token : tokens_ ) {
+	for ( auto const & token : tokens_ ) {
 		ostream << token->to_string() << "\n";
 	}
 	return ostream.str();
@@ -527,10 +527,10 @@ ArithmeticScanner::scan_identifier( std::string const & input_string ) const
 void ArithmeticScanner::log_error() const
 {
 	std::cerr << "An error has occurred.  ArithmeticScanner contents: " << std::endl;
-	 for ( auto const & variable : variables_ ) {
+	for ( auto const & variable : variables_ ) {
 		std::cerr << "variable: " << variable.first << std::endl;
 	}
-	 for ( auto const & function : functions_ ) {
+	for ( auto const & function : functions_ ) {
 		std::cerr << "functions: " << function.first << " #args: " << function.second << std::endl;
 	}
 	std::cerr << std::endl;
@@ -1387,7 +1387,7 @@ SimpleExpressionCreator::SimpleExpressionCreator(
 	std::list< std::string > const & varnames
 )
 {
-	 for ( auto const & varname : varnames ) {
+	for ( auto const & varname : varnames ) {
 		add_variable( varname );
 	}
 }

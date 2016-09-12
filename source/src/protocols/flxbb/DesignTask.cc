@@ -186,7 +186,7 @@ DesignTask::dump_packertask( std::ostream & os )
 void
 DesignTask::add_task_operations( utility::vector1< TaskOperationOP > const & tops )
 {
-	 for ( auto const & top : tops ) {
+	for ( auto const & top : tops ) {
 		add_task_operation( top );
 	}
 }

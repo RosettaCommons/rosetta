@@ -101,7 +101,7 @@ EnzdesConstraintReporter::find_constraints_to_ligand(
 		ConstraintsOP constraints;
 		constraints=rpc_start->second;
 
-		 for ( auto const & iter : *constraints ) {
+		for ( auto const & iter : *constraints ) {
 			mv_tr.Info <<iter->type() << std::endl;
 			if ( iter->type() == "MultiConstraint" || iter->type() == "AmbiguousConstraint" ) {
 				add_constrained_atoms_from_multiconstraint( utility::pointer::dynamic_pointer_cast <MultiConstraint const > (iter) );

@@ -106,10 +106,10 @@ protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
 	using protocols::loops::Loops;
 
 	Loops combined;
-	 for ( auto const & i : *aligned_regions ) {
+	for ( auto const & i : *aligned_regions ) {
 		combined.push_back(i);
 	}
-	 for ( auto const & i : *unaligned_regions ) {
+	for ( auto const & i : *unaligned_regions ) {
 		combined.push_back(i);
 	}
 

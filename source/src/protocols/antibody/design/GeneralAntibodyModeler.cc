@@ -142,7 +142,7 @@ GeneralAntibodyModeler::setup_task_operations(){
 	interface_tf_->push_back(cmd_line_operation_);
 	interface_tf_->push_back( restrict_design_operation_);
 	interface_tf_->push_back(TaskOperationCOP( new RestrictToInterface(1, interface_dis_/*Distance*/) ));
-	
+
 	interface_tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
 	interface_tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) ) );
 	interface_tf_->push_back(TaskOperationCOP( new IncludeCurrent() ));
@@ -187,7 +187,7 @@ GeneralAntibodyModeler::set_overhang( const core::Size overhang ){
 
 	overhangs_.clear();
 	overhangs_.resize(CDRNameEnum_proto_total, overhang);
-	
+
 }
 
 void
@@ -489,7 +489,7 @@ GeneralAntibodyModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true
 		tf_->push_back(cmd_line_operation_ );
 		tf_->push_back( restrict_design_operation_ );
 		tf_->push_back(loops_operation_);
-		
+
 		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
 		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) ) );
 		tf_->push_back(TaskOperationCOP( new IncludeCurrent() ));
@@ -641,7 +641,7 @@ GeneralAntibodyModeler::backrub_cdrs( core::pose::Pose & pose, bool min_sc, bool
 		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
 		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) ) );
 		tf_->push_back(TaskOperationCOP( new IncludeCurrent() ));
-		
+
 	} else {
 		tf_->push_back( restrict_design_operation_ );
 	}

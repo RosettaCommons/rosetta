@@ -198,7 +198,7 @@ PDBOutput::output_info( ozstream & pdbout )
 			itr != end; ++itr ) {
 		// the 'key' or title for this particular set of information
 		pdbout << itr->first << '\n';
-		 for ( auto const & line : itr->second ) {
+		for ( auto const & line : itr->second ) {
 			pdbout << line << '\n';
 		}
 		pdbout << "REMARK\n";
@@ -218,7 +218,7 @@ PDBOutput::add_info(
 		info_map_[ key ] = info;
 	} else {
 		Strings & existing_info( finditer->second );
-		 for ( auto const & it : info ) {
+		for ( auto const & it : info ) {
 			existing_info.push_back( it );
 		}
 	}
@@ -293,7 +293,7 @@ string_join(
 )
 {
 	std::string os;
-	 for ( auto const & it : list ) os += sep + it;
+	for ( auto const & it : list ) os += sep + it;
 	return os;
 }
 

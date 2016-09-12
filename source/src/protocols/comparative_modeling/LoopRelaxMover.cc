@@ -421,7 +421,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// this is not great behavior, BUT the code is already tolerant of missing density treated in this fashion
 	bool remove_extended_loops = option[ OptionKeys::loops::remove_extended_loops ]();
 	if ( remove_extended_loops ) {
-		 for ( auto const & it : *loops ) {
+		for ( auto const & it : *loops ) {
 			if ( it.is_extended() && it.skip_rate() == 0.0 ) {
 				TR << "Removing loop: " << it << std::endl;
 				int lstart = it.start(); if ( lstart != 1 ) lstart++;
@@ -819,7 +819,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			for ( core::Size i = 1; i <= pose.size(); ++i ) {
 				// if remodelling was done, repack the loops - otherwise leave it.
 				if ( remodel() != "no" ) {
-					 for ( auto const & it : *loops ) {
+					for ( auto const & it : *loops ) {
 						if (    i >= core::Size( it.start() ) - 3
 								&& i <= core::Size( it.stop() ) + 3 ) {
 							// allow 3-residue leeway on either side for 'random_loops'

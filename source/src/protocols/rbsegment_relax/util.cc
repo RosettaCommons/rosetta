@@ -204,7 +204,7 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	// "star" topology fold tree
 	utility::vector1< core::Size > cuts = f_in.cutpoints(), jump_res;
 	utility::vector1< std::pair<core::Size,core::Size> > jumps;
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		//if (pose.residue(it->stop()).is_upper_terminus() && it->stop() != nres)
 		// cuts.push_back( it->stop() );
 
@@ -260,7 +260,7 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 
 	// movemap
 	mm->clear();
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		for ( int j=(int)(loop.start()) ; j<=(int)(loop.stop()); ++j ) {
 			mm->set_bb(j,true);
 		}
@@ -275,7 +275,7 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	}
 
 	// cb variants
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		Size const loop_cut(loop.cut());
 		if ( !pose.residue(loop_cut).is_lower_terminus() && !pose.residue(loop_cut).is_upper_terminus() ) {
 			if ( ! pose.residue(loop_cut).has_variant_type(core::chemical::CUTPOINT_LOWER) ) {
@@ -800,7 +800,7 @@ void remap_rb_segments(
 	utility::vector1< RBSegment > const &rbsegs,
 	utility::vector1< RBSegment > &rbsegs_remap,
 	core::id::SequenceMapping const &resmap ) {
-	 for ( auto const & rbseg : rbsegs ) {
+	for ( auto const & rbseg : rbsegs ) {
 		RBSegment it_remap = rbseg.remap( resmap );
 		rbsegs_remap.push_back( it_remap );
 	}

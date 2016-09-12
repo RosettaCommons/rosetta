@@ -285,7 +285,7 @@ MatcherMover::parse_my_tag(
 	if ( tag->hasOption( "residues_for_geomcsts" ) ) {
 		std::string const selector_str = tag->getOption< std::string >( "residues_for_geomcsts" );
 		utility::vector1< std::string > const selector_strs = utility::string_split( selector_str, ',' );
-		 for ( auto const & selector_str : selector_strs ) {
+		for ( auto const & selector_str : selector_strs ) {
 			core::select::residue_selector::ResidueSelectorCOP selector;
 			try {
 				selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str );

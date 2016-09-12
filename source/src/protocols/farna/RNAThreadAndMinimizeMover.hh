@@ -54,7 +54,7 @@ public:
 		std::string const & mutation_list = "",
 		std::string const & insertion_list = ""
 	);
-	
+
 	RNAThreadAndMinimizeMover():
 		protocols::moves::Mover( RNAThreadAndMinimizeMover::class_name() ),
 		seq_( "" ),
@@ -67,7 +67,7 @@ public:
 		mutation_list_( "" ),
 		insertion_list_( "" )
 	{}
-	
+
 	// copy constructor (not needed unless you need deep copies)
 	//RNAThreadAndMinimize( RNAThreadAndMinimize const & src );
 
@@ -83,23 +83,23 @@ public:
 	void process_insertions( core::pose::Pose & pose );
 	void process_deletions( core::pose::Pose & pose );
 
-	void set_up_target_sequence( core::pose::Pose & pose );	
-	
+	void set_up_target_sequence( core::pose::Pose & pose );
+
 	void
 	obtain_rtypes_for_target_sequence();
-	
+
 	void
 	long_mutate_strategy( core::pose::Pose & pose );
-	
+
 	void
 	mutate_all_at_once( core::pose::Pose & pose );
-	
+
 	core::kinematics::MoveMapOP mm_from_residues( core::pose::Pose const & pose, utility::vector1< Size > const & changed_pos, bool add_nearby=false );
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	void
 	setup_alignment_map( std::map< Size, Size > & mapping,
-						std::string const & sequence_from_alignment ){
+		std::string const & sequence_from_alignment ){
 		Size count( 0 );
 		for ( Size i = 1; i <= sequence_from_alignment.size(); i++ ) {
 			if ( sequence_from_alignment[ i-1 ] != '-' ) {
@@ -110,7 +110,7 @@ public:
 			}
 		}
 	}
-	
+
 	// mover virtual API
 	virtual void
 	apply( core::pose::Pose & pose );
@@ -143,32 +143,32 @@ public:
 private:
 	// The input sequence
 	std::string seq_;
-	
+
 	// In prior versions, the sequence from an input alignment. May return
 	// to that soon.
 	std::string template_sequence_from_alignment_;
 
 	// Use the slower method - mutations one at a time
 	bool long_strategy_;
-	
+
 	// MODOMICS, IUPAC, or anything else = annotated
 	std::string input_sequence_type_;
-	
+
 	// Scorefunction - set from create_score_function
 	core::scoring::ScoreFunctionOP scorefxn_;
-	
+
 	// The target ANNOTATED sequence - set after parsing
 	std::string  target_sequence_;
-	
+
 	// Manages mapping seqpos
 	utility::vector1< Size > working_res_;
-	
+
 	// Target vector of residue types
 	core::chemical::ResidueTypeCOPs rtypes_;
-	
+
 	// Set of mutations
 	std::string mutation_list_;
-	
+
 	// Set of insertions
 	std::string insertion_list_;
 };

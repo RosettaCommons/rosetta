@@ -232,7 +232,7 @@ HydrogenBondConstraintGenerator::add_atom_definitions( std::string const & atom_
 	HydrogenBondInfo & info = *HydrogenBondInfo::get_instance();
 
 	utility::vector1< std::string > const definitions = utility::string_split( atom_def, ';' );
-	 for ( auto const & definition : definitions ) {
+	for ( auto const & definition : definitions ) {
 		TR.Debug << "Adding atom definition from string: " << definition << std::endl;
 		TR.Debug << "Added " << info.add_atoms_from_string( definition ) << std::endl;
 	}
@@ -242,7 +242,7 @@ utility::vector1< core::Size >
 existing_atoms( core::conformation::Residue const & rsd, utility::vector1< std::string > const & atoms )
 {
 	utility::vector1< core::Size > atom_idxs;
-	 for ( auto const & atom : atoms ) {
+	for ( auto const & atom : atoms ) {
 		if ( rsd.has( atom ) ) atom_idxs.push_back( rsd.type().atom_index( atom ) );
 	}
 	return atom_idxs;
@@ -326,7 +326,7 @@ HydrogenBondConstraintGenerator::choose_atoms(
 			<< " Full residue name is " << rsd.name3() << std::endl;
 	} else {
 		// if atoms are found for this residue, look for existing ones in the allowed set
-		 for ( auto const & hb_atom : hb_atoms ) {
+		for ( auto const & hb_atom : hb_atoms ) {
 			if ( ! rsd.has( hb_atom.hb_atom() ) ) {
 				TR << "Skipping HBond atom " << hb_atom.hb_atom() << " because it does not exist in residue "
 					<< rsd.name() << rsd.seqpos() << std::endl;
@@ -346,7 +346,7 @@ HydrogenBondConstraintGenerator::choose_atoms(
 			if ( ( !allowed_atoms.empty() ) && ( allowed_atoms.find( hb_atom.hb_atom() ) == allowed_atoms.end() ) ) {
 				TR.Debug << "Skipping HBond atom " << hb_atom.hb_atom() << " because it is not in the set of allowed atoms" << std::endl
 					<< "Allowed atoms = [";
-				 for ( auto const & allowed_atom : allowed_atoms ) {
+				for ( auto const & allowed_atom : allowed_atoms ) {
 					TR.Debug << " " << allowed_atom;
 				}
 				TR.Debug << " ], empty=" << allowed_atoms.empty() << std::endl;
@@ -388,11 +388,11 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 	core::scoring::constraints::ConstraintOPs csts;
 	TR.Debug << "Going to create constraints for res1=" << rsd1.seqpos() << " atoms1=" << atoms1
 		<< " res2=" << rsd2.seqpos() << " atoms2=" << atoms2 << std::endl;
-	 for ( auto const & a1 : atoms1 ) {
+	for ( auto const & a1 : atoms1 ) {
 		core::id::AtomID const atomid1( rsd1.type().atom_index( a1.hb_atom() ), rsd1.seqpos() );
 		core::id::AtomID const parent_atomid1( rsd1.type().atom_index( a1.atom2() ), rsd1.seqpos() );
 		core::id::AtomID const parent2_atomid1( rsd1.type().atom_index( a1.atom3() ), rsd1.seqpos() );
-		 for ( auto const & a2 : atoms2 ) {
+		for ( auto const & a2 : atoms2 ) {
 			core::id::AtomID const atomid2( rsd2.type().atom_index( a2.hb_atom() ), rsd2.seqpos() );
 			core::id::AtomID const parent_atomid2( rsd2.type().atom_index( a2.atom2() ), rsd2.seqpos() );
 			core::id::AtomID const parent2_atomid2( rsd2.type().atom_index( a2.atom3() ), rsd2.seqpos() );

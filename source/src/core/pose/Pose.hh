@@ -188,7 +188,7 @@ public:
 	const_iterator begin()   const noexcept;
 	iterator       end() noexcept;
 	const_iterator end()     const noexcept;
-	
+
 	/// @brief default constructor, builds an empty pose
 	///
 	/// AtomTree      default   /bonding information
@@ -686,7 +686,7 @@ public:
 	}
 
 	/// @brief Returns the number of residues in the pose conformation
-	/// @details This wrapper for size() is provided for mostly historical 
+	/// @details This wrapper for size() is provided for mostly historical
 	/// reasons.
 	///
 	/// example(s):
@@ -708,7 +708,7 @@ public:
 	///     Pose.sequence
 	Size
 	size() const;
-	
+
 	/// @brief Returns the total number of atoms in the pose conformation
 	/// example:
 	///   pose.total_atoms()
@@ -1833,7 +1833,7 @@ Pose::set_const_data(
 
 /// @brief Test IO operator for debug and Python bindings
 std::ostream & operator << ( std::ostream & os, Pose const & pose);
-	
+
 } // namespace pose
 } // namespace core
 

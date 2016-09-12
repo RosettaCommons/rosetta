@@ -109,7 +109,7 @@ void
 DesignSilentStruct::print_header( std::ostream& out ) const {
 
 	out << LJ( 50, "#Design_name");
-	 for ( auto const & it : additional_info_silent_energy_ ) {
+	for ( auto const & it : additional_info_silent_energy_ ) {
 		out << " " << A( it.width(), it.name() );
 	}
 
@@ -136,7 +136,7 @@ DesignSilentStruct::add_to_additional_silent_energies(
 	utility::vector1< core::io::silent::SilentEnergy > const & silent_Es)
 {
 
-	 for ( auto const & silent_E : silent_Es ) {
+	for ( auto const & silent_E : silent_Es ) {
 		additional_info_silent_energy_.push_back( silent_E );
 	}
 
@@ -149,7 +149,7 @@ DesignSilentStruct::print_additional_info( std::ostream& out) const
 
 	out << LJ( 50, decoy_tag() );
 
-	 for ( auto const & it : additional_info_silent_energy_ ) {
+	for ( auto const & it : additional_info_silent_energy_ ) {
 		out << " " << F( it.width(), precision, it.value() );
 	}
 
@@ -170,7 +170,7 @@ DesignSilentStruct::calculate_additional_info(
 	if ( cstfind != score_terms.end() ) separate_out_constraints = true;
 
 	//first write out the relevant score terms for the pose total
-	 for ( auto const & score_term : score_terms ) {
+	for ( auto const & score_term : score_terms ) {
 		std::string sco_name = score_term;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
 
@@ -192,7 +192,7 @@ DesignSilentStruct::calculate_additional_info(
 	if ( totcalc_it != calculators.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
-		 for ( auto const & tot_calculator : tot_calculators ) {
+		for ( auto const & tot_calculator : tot_calculators ) {
 
 			std::string calc_name = "tot_" + tot_calculator.first;
 			int width = std::max( 10, (int) calc_name.length() + 3 );
@@ -231,7 +231,7 @@ DesignSilentStruct::calculate_additional_info(
 		SilentEnergy res_name(spec_res_name, special_re, 1, 10);
 		additional_info_silent_energy_.push_back( res_name );
 
-		 for ( auto const & score_term : score_terms ) {
+		for ( auto const & score_term : score_terms ) {
 
 			std::string sco_name = spec_res_name + "_" +  score_term ;
 			int width = std::max( 10, (int) sco_name.length() + 3 );

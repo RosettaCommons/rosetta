@@ -350,7 +350,7 @@ AnchoredGraftMover::set_default_cen_scorefunction(){
 	cen_scorefxn_ = core::scoring::ScoreFunctionOP( new ScoreFunction() );
 	cen_scorefxn_->set_weight( chainbreak,        20.00);
 	cen_scorefxn_->set_weight( linear_chainbreak, 20.00);
-	
+
 	cen_scorefxn_->set_weight( cbeta_smooth,      1.0 );
 	cen_scorefxn_->set_weight( vdw,               1.0 );
 	cen_scorefxn_->set_weight( cen_pair_smooth,   1.0 );
@@ -360,14 +360,14 @@ AnchoredGraftMover::set_default_cen_scorefunction(){
 	cen_scorefxn_->set_weight( hbond_lr_bb,       1.0 );
 	cen_scorefxn_->set_weight( hbond_sr_bb,       1.0 );
 	cen_scorefxn_->set_weight( omega,             5.0 );
-	
+
 	//Keep Disulfides if possible!
 	cen_scorefxn_->set_weight( dslfc_cen_dst,     5.0 );
 	cen_scorefxn_->set_weight( dslfc_cb_dst,      3.5 );
 	cen_scorefxn_->set_weight( dslfc_ang,         2.0 );
 	cen_scorefxn_->set_weight( dslfc_cb_dih,      0.5 );
 	cen_scorefxn_->set_weight( dslfc_bb_dih,      0.5 );
-	
+
 }
 void
 AnchoredGraftMover::set_default_fa_scorefunction(){

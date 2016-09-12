@@ -87,12 +87,12 @@ error_check_requested_adducts( std::map< std::string, int > const & add_map,
 			this_add != add_map.end() ; ++this_add ) {
 		bool not_found( true );
 
-		 for ( auto const & rsd_type : rsd_types ) {
+		for ( auto const & rsd_type : rsd_types ) {
 			// shortcircuit if we've already found an instance of the adduct
 			ResidueType const & rsd( *rsd_type );
 			if ( not_found == false ) break;
 
-			 for ( auto const & rsd_add : rsd.defined_adducts() ) {
+			for ( auto const & rsd_add : rsd.defined_adducts() ) {
 				std::string check_name( rsd_add.adduct_name() );
 				// compare case-insensitively for convenience
 				if ( ObjexxFCL::equali( this_add->first, check_name ) ) {

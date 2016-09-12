@@ -330,7 +330,7 @@ ModelFeatures::report_features(
 	bron_kerbosch_all_cliques(graph, vis);
 	TR << "Found " << cliques->size() << " cliques" << std::endl;
 	core::Size clique_counter = 0;
-	 for ( auto const & clique : *cliques ) {
+	for ( auto const & clique : *cliques ) {
 		if ( clique.size() < min_ss_cluster_size_ || clique.size() > max_ss_cluster_size_ ) {
 			continue;
 		}

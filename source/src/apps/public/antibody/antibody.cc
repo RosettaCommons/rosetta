@@ -110,27 +110,27 @@ void relax_model(core::pose::PoseOP &pose)
 	}
 
 	protocols::relax::FastRelaxOP relax_protocol( new protocols::relax::FastRelax() );
-	
+
 	// set packer task related defaults on pose
 	TaskFactoryOP task_factory( new TaskFactory() );
-	
+
 	// I'm pretty sure that this is handled by FastRelax... Yet scary things happen when it is not included.
 	task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) ); // repack only, no design
 	task_factory->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
 	task_factory->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex1*/, 1 /*level*/ ) ) );
-	
+
 	// Also, use_input_sc is added by to the task_factory by default in FastRelax!
 
 	relax_protocol->set_task_factory( task_factory );
-	
+
 	// set relax defaults
 	relax_protocol->set_scorefxn( core::scoring::get_score_function() );
 	relax_protocol->constrain_relax_to_start_coords( true );
 	relax_protocol->constrain_coords( true );
 	relax_protocol->coord_constrain_sidechains( true );
-	
+
 	relax_protocol->ramp_down_constraints( false );
-	
+
 	//relax
 	relax_protocol->apply( *pose );
 }
@@ -314,10 +314,10 @@ int antibody_main()
 					TR << "Defaulting to multi-template grafting." << std::endl;
 					TR << "Please use -antibody:n_multi_templates 1 in conjuction with -antibody:light_heavy_template 1abc.pdb" << std::endl;
 				}
-				
+
 				bool optimal_graft = basic::options::option[ basic::options::OptionKeys::optimal_graft]();
 				bool optimize_cdrs = basic::options::option[ basic::options::OptionKeys::optimize_cdrs]();
-				
+
 				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database, optimal_graft, optimize_cdrs );
 
 
@@ -325,12 +325,12 @@ int antibody_main()
 					protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
 					converter.apply(*model);
 				}
-				
+
 				if( !basic::options::option[ basic::options::OptionKeys::no_relax ]() ) {
 					relax_model(model);
 					model->dump_pdb(prefix + "model" + suffix + ".relaxed.pdb");
 				}
-				
+
 			}
 		}
 		else {

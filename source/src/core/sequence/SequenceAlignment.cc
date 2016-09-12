@@ -345,7 +345,7 @@ utility::vector1< core::Size > SequenceAlignment::sequence_indices(
 
 	utility::vector1< core::Size > indices;
 
-	 for ( auto const & sequence : sequences_ ) {
+	for ( auto const & sequence : sequences_ ) {
 		indices.push_back( sequence->resnum(column) );
 	}
 
@@ -363,7 +363,7 @@ utility::vector1< std::string > SequenceAlignment::comments() const {
 
 Real SequenceAlignment::max_gap_percentage() const {
 	Real max_gp(0.0);
-	 for ( auto const & sequence : sequences_ ) {
+	for ( auto const & sequence : sequences_ ) {
 		Real gap_percentage = static_cast< Real >
 			( sequence->length() - sequence->ungapped_length() );
 		gap_percentage = gap_percentage / static_cast< Real > ( length() );
@@ -485,7 +485,7 @@ void SequenceAlignment::printGrishinFormat (
 	using utility::vector1;
 
 	vector1< string > keys;
-	 for ( auto const & score : scores_ ) {
+	for ( auto const & score : scores_ ) {
 		keys.push_back( score.first );
 	}
 	std::sort( keys.begin(), keys.end() );

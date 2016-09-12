@@ -128,7 +128,7 @@ bool FloatingResonance::match2D(
 			bool label_match = float_label._pmatch( label_freq, label_error, label_folder ) <= 1.0;
 			if ( label_match ) {
 				ResonanceAPs const& protons( connected_resonances() );
-				 for ( auto const & proton : protons ) {
+				for ( auto const & proton : protons ) {
 					ResonanceOP r( proton );
 					matches.push_back( std::make_pair( r->label(), label() ) );
 				}

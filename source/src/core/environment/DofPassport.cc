@@ -67,7 +67,7 @@ MoveMapOP DofPassport::render_movemap() const {
 }
 
 void DofPassport::render_movemap( core::kinematics::MoveMapOP mm ) const {
-	 for ( auto const & accessible_dof : accessible_dofs_ ) {
+	for ( auto const & accessible_dof : accessible_dofs_ ) {
 		mm->set( accessible_dof, true);
 	}
 

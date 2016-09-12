@@ -417,7 +417,7 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 	// make a dummy stub with the same residue as the first stub and a user-supplied score
 	//HotspotStub scorecut_stub( stub_set_.begin()->second.begin()->residue(), scorecut );
 
-	 for ( auto const & ss_iter : stub_set_ ) {
+	for ( auto const & ss_iter : stub_set_ ) {
 
 		if ( ( scorecut > 0) && ( scorecut <= 1 ) ) {
 			// add 0.5 to get rounding up
@@ -448,7 +448,7 @@ HotspotStubCOP
 HotspotStubSet::get_best_energy_stub() const {
 	core::Real min_energy( 100000.0 );
 	HotspotStubOP ret( nullptr );
-	 for ( auto const & hs_map_it : stub_set_ ) {
+	for ( auto const & hs_map_it : stub_set_ ) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
 		for ( auto hs_it=hs_map_it.second.begin(); hs_it!=hs_map_it.second.end(); ++hs_it ) {
 			if ( min_energy > hs_it->first ) {
@@ -469,7 +469,7 @@ HotspotStubSet::get_nearest_stub( core::conformation::ResidueCOP residue ) const
 	HotspotStubCOP nearest_stub( nullptr );
 	core::Real nearest_distance( 100000.0 );
 	numeric::xyzVector< core::Real > const residue_CA( residue->xyz( "CA" ) );
-	 for ( auto const & map_it : stub_set_ ) {
+	for ( auto const & map_it : stub_set_ ) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
 		for ( auto stub_it=map_it.second.begin(); stub_it!=map_it.second.end(); ++stub_it ) {
 			numeric::xyzVector< core::Real > const stub_CA( stub_it->second->residue()->xyz( "CA" ) );
@@ -495,7 +495,7 @@ HotspotStubSet::find_neighboring_stubs( HotspotStubCOP stub ) const {
 
 	core::Real const dist_threshold( 3.0 );
 
-	 for ( auto const & hs_map_it : stub_set_ ) {
+	for ( auto const & hs_map_it : stub_set_ ) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
 		for ( auto hs_it=hs_map_it.second.begin(); hs_it!=hs_map_it.second.end(); ++hs_it ) {
 			Residue const potential_neighbor( *(hs_it->second->residue()) );
@@ -541,7 +541,7 @@ HotspotStubSet::remove_stub( HotspotStubCOP stub ){
 /// @details removes a set of stubs from the stub_set_
 void
 HotspotStubSet::remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const & stubs ) {
-	 for ( auto const & stub : stubs ) {
+	for ( auto const & stub : stubs ) {
 		auto hs_it( stub_set_.find( stub.first ) );
 		hs_it->second.erase( get_stub( stub.first, stub.second )->first );
 	}
@@ -579,7 +579,7 @@ void HotspotStubSet::read_data( std::string const & filename ) {
 		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		core::io::Remarks const & remarks ( pdbinfo->remarks() );
 		core::Real score = 0;
-		 for ( auto const & remark : remarks ) {
+		for ( auto const & remark : remarks ) {
 			// special remark code for theoretical scores
 			if ( remark.num == 221 ) {
 				score = std::atof( remark.value.c_str() );
@@ -844,7 +844,7 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 	TR << "Rescoring hotspots...\n";
 	TR << "Original Rescored\n";
 	for ( Hs_map::const_iterator it = stub_set_.begin(); it != stub_set_.end(); ++it ) {
-		 for ( auto const & stub_it : it->second ) {
+		for ( auto const & stub_it : it->second ) {
 			pose::Pose working_pose = pose;
 			conformation::ResidueCOP residue = stub_it.second->residue();
 
@@ -873,7 +873,7 @@ void HotspotStubSet::write_all( std::string const & filename ) const
 	// convenience number. would be better to read the last atom number prior to appending the new residue.
 	Size i = 0;
 	std::string tag( "" );
-	 for ( auto const & it : stub_set_ ) {
+	for ( auto const & it : stub_set_ ) {
 		for ( auto stub_it = it.second.begin(); stub_it != it.second.end(); ++stub_it ) {
 			tag = "S_" + stub_it->second->residue()->name3() + "_" + lead_zero_string_of( i, 9 );
 			write_stub( outstream, stub_it->second, tag );
@@ -924,7 +924,7 @@ void HotspotStubSet::pair_with_scaffold( core::pose::Pose const & pose, core::Si
 core::Size HotspotStubSet::size() const
 {
 	core::Size n_stubs(0);
-	 for ( auto const & it : stub_set_ ) {
+	for ( auto const & it : stub_set_ ) {
 		n_stubs += it.second.size();
 	}
 	return n_stubs;

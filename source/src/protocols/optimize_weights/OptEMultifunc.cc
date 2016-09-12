@@ -753,7 +753,7 @@ WrapperOptEMultifunc::derived_dofs( Multivec const & vars ) const
 {
 	//std::cout << "WrapperOptEMultifunc::derived_dofs()\n";
 	utility::vector1< Real > optEvars( optE_dof_expressions_.size() );
-	 for ( auto const & dof_variable : dof_variables_ ) {
+	for ( auto const & dof_variable : dof_variables_ ) {
 		dof_variable.second->update_value_from_list( vars );
 		//std::cout << "variable: " << iter->first << " " << (*iter->second)() << "\n";
 	}
@@ -774,7 +774,7 @@ WrapperOptEMultifunc::print_dofs(
 ) const
 {
 	ostr << "WrapperOptEMultifunc dofs:\n";
-	 for ( auto const & dof_variable : dof_variables_ ) {
+	for ( auto const & dof_variable : dof_variables_ ) {
 		dof_variable.second->update_value_from_list( vars );
 		ostr << dof_variable.first << " : " << (*(dof_variable.second))() << "\n";
 	}
@@ -812,15 +812,15 @@ WrapperOptEMultifunc::register_variable_expression( std::string varname )
 		} else {
 			std::cerr << "Error: variable expression with name '" << varname << "' is not a valid variable name." << std::endl;
 			std::cerr << "Free variables:" << std::endl;
-			 for ( auto const & free_score_name : free_score_names_ ) {
+			for ( auto const & free_score_name : free_score_names_ ) {
 				std::cerr << free_score_name << std::endl;
 			}
 			std::cerr << "Fixed variables:" << std::endl;
-			 for ( auto const & fixed_score_name : fixed_score_names_ ) {
+			for ( auto const & fixed_score_name : fixed_score_names_ ) {
 				std::cerr << fixed_score_name << std::endl;
 			}
 			std::cerr << "New variables:" << std::endl;
-			 for ( auto const & new_dof_name : new_dof_names_ ) {
+			for ( auto const & new_dof_name : new_dof_names_ ) {
 				std::cerr << new_dof_name << std::endl;
 			}
 		}

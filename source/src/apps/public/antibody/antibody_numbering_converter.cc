@@ -35,8 +35,8 @@ static THREAD_LOCAL basic::Tracer TR("antibody_numbering_converter");
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
-	
+
+
 
 	option.add_relevant( in::file::s );
 	option.add_relevant( in::file::l );
@@ -56,7 +56,7 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		register_options();
 
-		
+
 
 
 		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {

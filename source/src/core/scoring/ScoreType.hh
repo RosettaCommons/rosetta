@@ -317,16 +317,16 @@ enum ScoreType {
 	dslf_cbs_ds,
 	// supercedes the above
 	dslf_fa13,
-	
+
 	//Centroid disulfide terms - CentroidDisulfideEnergy/CentroidDisulfideEnergyContainer
 	dslfc_cen_dst, //Interpolation using histogram of a file in the database based on cen distances of poses:
-				       //-> scoring/score_functions/disulfides/centroid_distance_score
-	
+	//-> scoring/score_functions/disulfides/centroid_distance_score
+
 	dslfc_cb_dst, //Uses min and max of actual C-beta distances of disulfides
 	dslfc_ang, //Disulfide angle
 	dslfc_cb_dih, //Cb-S dihediral
 	dslfc_bb_dih, //S-S dihedral
-	
+
 	//disulfide matching terms
 	dslfc_rot,
 	dslfc_trans,

@@ -374,7 +374,7 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 
 	full_to_sub.clear();
 	Size count( 0 );
-	for ( Size i = 1; i <= nres; ++i ) { 
+	for ( Size i = 1; i <= nres; ++i ) {
 		if ( is_working_res[ i ] ) {
 			count++;
 			full_to_sub[ i ] = count;

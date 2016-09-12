@@ -123,7 +123,7 @@ utility::vector1< KDPointOP > make_points(
 	using utility::vector1;
 
 	vector1< KDPointOP > new_data;
-	 for ( auto const & point : points ) {
+	for ( auto const & point : points ) {
 		KDPointOP pt( new KDPoint( point ) );
 		new_data.push_back( pt );
 	}
@@ -161,7 +161,7 @@ void print_points(
 ) {
 	using numeric::Real;
 	using utility::vector1;
-	 for ( auto const & point : points ) {
+	for ( auto const & point : points ) {
 		//for ( vector1< Real >::const_iterator val = pt->begin(),
 		//  val_end = pt->end(); val != val_end; ++val
 		//) {

@@ -246,7 +246,7 @@ EvolutionaryDynamicsMover::boltzmann( Pose & pose, utility::vector1< core::Real 
 		using namespace std;
 		string stringed_comments("");
 		map< string, string > const comments = core::pose::get_all_comments(pose);
-		 for ( auto const & comment : comments ) {
+		for ( auto const & comment : comments ) {
 			stringed_comments += comment.first + ":" + comment.second + " ";
 		}
 

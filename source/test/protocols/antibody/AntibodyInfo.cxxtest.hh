@@ -269,9 +269,9 @@ void test_kink_functions(){
 void test_renumbering(){
 	//JAB - this is just a short test of the renumbering.  We have an integration test as well.
 
-	// Internally, this checks antibody info for proper construction, 
+	// Internally, this checks antibody info for proper construction,
 	// since we use it to do the numbering
-	
+
 	//AHO to Chothia and back again.
 	AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
 	converter.set_scheme_conversion(AHO_Scheme, Chothia_Scheme);
@@ -294,7 +294,7 @@ void test_renumbering(){
 	converter.set_scheme_conversion(Chothia_Scheme, AHO_Scheme);
 	TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_aho) );
 	ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_aho, AHO_Scheme, North ));
-	
+
 	for ( core::Size i = 1; i<= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 

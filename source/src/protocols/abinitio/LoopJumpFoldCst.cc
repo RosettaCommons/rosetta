@@ -87,7 +87,7 @@ void LoopJumpFoldCst::select_loops(
 	loops_out.clear();
 	int ntries = 0;
 	while ( loops_out.size() == 0 && ntries++ < 50 ) {
-		 for ( auto const & loop : loops_ ) {
+		for ( auto const & loop : loops_ ) {
 			if ( numeric::random::rg().uniform() >= loop.skip_rate() )  {
 				loops_out.push_back( loop );
 			}
@@ -309,7 +309,7 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 
 
 	ObjexxFCL::FArray1D_float new_cut_prob( cut_probability );
-	 for ( auto const & it : rigid ) {
+	for ( auto const & it : rigid ) {
 		for ( Size pos = it.start(); pos <= it.stop(); pos++ ) {
 			new_cut_prob( pos ) = 0;
 		}

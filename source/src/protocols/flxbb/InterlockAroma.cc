@@ -177,7 +177,7 @@ InterlockAroma::apply( Pose & pose )
 		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, utility::graph::GraphCOP( utility::graph::GraphOP( new utility::graph::Graph( polyala_pose.size() ) ) ), false );
 
 		Size rotnum( 0 );
-		 for ( auto const & rotamer : *rotset ) {
+		for ( auto const & rotamer : *rotset ) {
 
 			rotnum++;
 			Pose work_pose( polyala_pose );

@@ -497,7 +497,7 @@ FrameOP Frame::generate_sub_frame(  Size length, Size start /* = 1*/ ) const {
 	sub_frame->start_ += start - 1;
 	sub_frame->nr_res_ = length;
 	sub_frame->end_ = sub_frame->start_ + length - 1;
-	 for ( auto const & it : frag_list_ ) {
+	for ( auto const & it : frag_list_ ) {
 		sub_frame->add_fragment( it->generate_sub_fragment( start, start + length - 1 ) );
 	}
 	runtime_assert( nr_frags() == sub_frame->nr_frags() );

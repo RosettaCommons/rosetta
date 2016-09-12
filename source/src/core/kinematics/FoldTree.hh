@@ -837,8 +837,8 @@ public:
 	delete_jump_and_intervening_cutpoint(
 		int const jump_number
 	);
-	
-	// AMW: I am elevating this to public - this is a concise and 
+
+	// AMW: I am elevating this to public - this is a concise and
 	// helpful transformation when you don't want to destroy
 	// your current FT state
 	/// @brief helper function to try cutting an edge in a tree.

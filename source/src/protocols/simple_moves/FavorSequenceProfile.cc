@@ -173,7 +173,7 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		std::string const sf_val( tag->getOption<std::string>("scorefxns") );
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const sf_keys( utility::string_split( sf_val, ',' ) );
-		 for ( auto const & sf_key : sf_keys ) {
+		for ( auto const & sf_key : sf_keys ) {
 			ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", sf_key ) );
 			if ( scorefxn->get_weight( res_type_constraint ) == 0.0 ) {
 				scorefxn->set_weight( res_type_constraint, 1 );

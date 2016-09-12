@@ -66,7 +66,7 @@ FragSetCollection::region(
 	FrameList &frames
 ) const {
 	Size count ( 0 );
-	 for ( auto const & it : fragset_list_ ) {
+	for ( auto const & it : fragset_list_ ) {
 		count += it->region(  move_map, start, end, min_overlap, min_length, frames );
 	}
 	return count;
@@ -108,7 +108,7 @@ FrameIterator FragSetCollection::nonconst_end() {
 }
 
 bool FragSetCollection::empty() const {
-	 for ( auto const & it : fragset_list_ ) {
+	for ( auto const & it : fragset_list_ ) {
 		if ( !it->empty() ) return false;
 	}
 	return true;

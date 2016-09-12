@@ -157,7 +157,7 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 		std::string const t_o_val( tag->getOption<std::string>("task_operations") );
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-		 for ( auto const & t_o_key : t_o_keys ) {
+		for ( auto const & t_o_key : t_o_keys ) {
 			if ( data.has( "task_operations", t_o_key ) ) {
 				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", t_o_key ) );
 			} else {

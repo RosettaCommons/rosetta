@@ -128,7 +128,7 @@ DnaInterfaceMinMover::reset_from_interface()
 	MoveMapOP new_movemap( new MoveMap );
 	// sidechain minimization for all amino acids in the vicinity of nucleotide bases
 	// (according to 'interface', which need not represent the entire protein-DNA interface)
-	 for ( auto const & itr : interface_->protein_neighbors() ) {
+	for ( auto const & itr : interface_->protein_neighbors() ) {
 		if ( itr.second.close() ) {
 			// avoid adding pointless 'false' values to std::map if chi_ or bb_ are false
 			if ( chi_ ) new_movemap->set_chi( itr.first, true );

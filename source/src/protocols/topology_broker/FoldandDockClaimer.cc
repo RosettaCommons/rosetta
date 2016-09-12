@@ -136,7 +136,7 @@ void FoldandDockClaimer::initialize_dofs(
 	movemap->set_jump( false );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
-	 for ( auto const & init_dof : init_dofs ) {
+	for ( auto const & init_dof : init_dofs ) {
 		if ( init_dof->owner().lock().get() == this ) {
 			init_dof->toggle( *movemap, true );
 		}

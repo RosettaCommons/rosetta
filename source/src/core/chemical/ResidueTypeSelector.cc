@@ -112,7 +112,7 @@ Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const resu
 	using namespace basic::options::OptionKeys;
 	b_flag_is_present_ = false;
 	if ( !option[ OptionKeys::chemical::patch_selectors ].user() ) return;
-	 for ( auto const & it : option[ OptionKeys::chemical::patch_selectors ]() ) {
+	for ( auto const & it : option[ OptionKeys::chemical::patch_selectors ]() ) {
 		if ( it == flag_in ) {
 			b_flag_is_present_ = true;
 			break;

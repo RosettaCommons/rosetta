@@ -153,13 +153,13 @@ void pose_data_cache_from_sfr(
 	std::map< std::string,     float   > const & float_data =  sfr.pose_cache_float_data();
 
 	// ARBITRARY_STRING_DATA
-	 for ( auto const & it : string_data ) {
+	for ( auto const & it : string_data ) {
 		//TR << it->first << " " << it->second << std::endl;
 		out << it.first << " " << it.second << std::endl;
 	}
 
 	// ARBITRARY_FLOAT_DATA
-	 for ( auto const & it : float_data ) {
+	for ( auto const & it : float_data ) {
 		//TR << it->first << " " << it->second << std::endl;
 		out << it.first << " " << it.second << std::endl;
 	}

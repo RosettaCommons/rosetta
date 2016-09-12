@@ -73,7 +73,7 @@ bool AlternativePairings::compatible( core::scoring::dssp::StrandPairing const& 
 	Size const new_reg ( strand_pairing.get_register() );
 
 	//get list of pairs for all pairings that roughly match the register of the new strand_pairing
-	 for ( auto const & pairing : pairings_ ) {
+	for ( auto const & pairing : pairings_ ) {
 		//check register
 		Size const reg ( pairing.pairing().get_register() );
 		if ( std::abs( (int)new_reg  - (int)reg ) > (int)register_cutoff ) return false;
@@ -106,7 +106,7 @@ bool AlternativePairings::add_pairing( PairingStatEntry const& pairing_entry ) {
 
 void AlternativePairings::show( std::ostream& out ) const {
 	out << "\n\n Set of alternative strand pairings: \n";
-	 for ( auto const & pairing : pairings_ ) {
+	for ( auto const & pairing : pairings_ ) {
 		out << pairing.weight() << " " << pairing.pairing() << " ";
 		for ( auto mit = pairing.models().begin(), emit = pairing.models().end();
 				mit != emit; ++mit ) {
@@ -153,7 +153,7 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 	//find frequency of start residues
 	std::map< Size, Real > freq; //it will count the score values
 	Real max_freq( 0 );
-	 for ( auto const & pairing : pairings_ ) {
+	for ( auto const & pairing : pairings_ ) {
 		Size const start( pairing.pairing().begin1() );
 		Size const end( pairing.pairing().end1() );
 		for ( Size pos = start; pos <= end; pos++ ) {
@@ -183,7 +183,7 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 			std::map< Size, bool > done;
 
 			//for all end-atoms:
-			 for ( auto const & pairing : pairings_ ) {
+			for ( auto const & pairing : pairings_ ) {
 				Size pair( pairing.pairing().get_pair( pos ) );
 				if ( pair ) { //we have a pairing make a constraint for this guy
 					if ( !done[ pair ] ) {
@@ -245,21 +245,21 @@ void StrandConstraints::add_pairing( PairingStatEntry const& pairing_entry ) {
 
 
 StrandConstraints::StrandConstraints( PairingStatistics const& strand_stats ) {
-	 for ( auto const & strand_stat : strand_stats ) {
+	for ( auto const & strand_stat : strand_stats ) {
 		add_pairing( strand_stat.second );
 	}
 	tr.Info << (*this) << std::endl;
 }
 
 void StrandConstraints::show( std::ostream& out ) const {
-	 for ( auto const & it : fuzzy_topology_ ) {
+	for ( auto const & it : fuzzy_topology_ ) {
 		it.show( out );
 	}
 }
 
 scoring::constraints::ConstraintCOPs StrandConstraints::build_constraints( pose::Pose const& pose ) const {
 	scoring::constraints::ConstraintCOPs all_constraints;
-	 for ( auto const & it : fuzzy_topology_ ) {
+	for ( auto const & it : fuzzy_topology_ ) {
 		it.build_constraints( pose, all_constraints );
 	}
 

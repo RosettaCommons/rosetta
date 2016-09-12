@@ -86,7 +86,7 @@ public:
 		}
 		std::cout << std::endl <<"Info added to any echo PDB" << std::endl << std::endl;
 
-		if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+		if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user() ) {
 			AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
 			converter.apply(pose);
 		}

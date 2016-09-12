@@ -424,7 +424,7 @@ utility::vector1< Size >
 FragLib::frag_sizes() const
 {
 	utility::vector1< Size > sizes;
-	 for ( auto const & it : frag_map_ ) {
+	for ( auto const & it : frag_map_ ) {
 		sizes.push_back( it.first );
 	}
 	return sizes;

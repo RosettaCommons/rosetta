@@ -385,7 +385,7 @@ Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom )
 	auto it_res( by_resid_.find( atom.rsd() ) );
 	if ( it_res != by_resid_.end() ) {
 		Resonances const& reso_list( it_res->second );
-		 for ( auto const & it : reso_list ) {
+		for ( auto const & it : reso_list ) {
 			if ( it->atom() == atom ) return *it;
 		}
 	}
@@ -489,7 +489,7 @@ std::string label_atom_name( std::string const& proton_name, core::chemical::AA 
 
 void ResonanceList::update_bond_connections() {
 	std::set< core::id::NamedAtomID > unknown_resonances_;
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		it.second->clear_connected_resonances();
 	}
 	for ( auto it = begin(); it != end(); ++it ) {

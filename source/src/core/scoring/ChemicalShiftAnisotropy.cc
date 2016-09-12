@@ -99,7 +99,7 @@ extern ChemicalShiftAnisotropyOP retrieve_CSA_from_pose(core::pose::Pose& pose) 
 
 void ChemicalShiftAnisotropy::show(std::ostream& out) const {
 	Size ct=0;
-	 for ( auto const & All_CSA_line : All_CSA_lines_ ) {
+	for ( auto const & All_CSA_line : All_CSA_lines_ ) {
 		out << "CSA "<<++ct << "     ";
 		out << All_CSA_line << std::endl;
 	}

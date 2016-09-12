@@ -231,7 +231,7 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 
 void
 ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
-	 for ( auto const & mover : movers_ ) {
+	for ( auto const & mover : movers_ ) {
 		if ( mover.report_filter_at_end_ ) {
 			core::Real const filter_value( mover.second->report_sm( pose ) );
 			if ( filter_value > -9999 ) {

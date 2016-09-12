@@ -129,7 +129,7 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 
 	utility::vector1< FileName > const silent_files( option[ in::file::silent ]() );
 
-	 for ( auto const & silent_file : silent_files ) {
+	for ( auto const & silent_file : silent_files ) {
 		tr.Debug << "reading " << silent_file << std::endl;
 		if ( option[ in::file::tags ].user() || option[ in::file::tagfile ].user() ) {
 			utility::vector1< string > tags;

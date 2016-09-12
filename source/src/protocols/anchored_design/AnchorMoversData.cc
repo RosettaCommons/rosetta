@@ -417,7 +417,7 @@ void protocols::anchored_design::AnchorMoversData::input_loops_into_tuples(proto
 {
 	loops_and_fa_mms_.clear();
 	loops_and_cen_mms_.clear();
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		//instantiate tuple
 		loops_and_fa_mms_.push_back( Loop_mm_tuple(
 			loop,

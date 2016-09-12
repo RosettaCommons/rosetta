@@ -1030,7 +1030,7 @@ EnzdesRemodelMover::remove_cached_observers(
 	//by vlb stuff if we have several chains
 	core::kinematics::FoldTree const & old_fold_tree( this->get_native_pose()->fold_tree() );
 	core::kinematics::FoldTree new_fold_tree;
-	 for ( auto const & e : old_fold_tree ) {
+	for ( auto const & e : old_fold_tree ) {
 		core::Size estart = (*start_to_current_smap_)[e.start() ];
 		core::Size estop = (*start_to_current_smap_)[e.stop() ];
 		new_fold_tree.add_edge( estart, estop, e.label() );
@@ -1168,7 +1168,7 @@ EnzdesRemodelMover::setup_rcgs(
 	utility::vector1< protocols::forge::remodel::ResidueVicinityInfoOP > fa_rv_infos;
 
 	//loop over all the cst targets in this loop info, i.e. all cst target records in the loop file
-	 for ( auto const & cst_targ : loopinf->cst_interactions() ) {
+	for ( auto const & cst_targ : loopinf->cst_interactions() ) {
 
 		protocols::toolbox::match_enzdes_util::EnzCstTemplateResCOP targ_template;
 		protocols::toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP targ_template_cache;
@@ -1200,7 +1200,7 @@ EnzdesRemodelMover::setup_rcgs(
 
 
 	//now loop over all the other desired interactions
-	 for ( auto const & res_int : loopinf->res_interactions() ) {
+	for ( auto const & res_int : loopinf->res_interactions() ) {
 
 		//target residue of this rcgs: we have to correct for eventual length changes that have happened already
 		core::Size targ_res = (*start_to_current_smap_)[ res_int.targ_res() ];

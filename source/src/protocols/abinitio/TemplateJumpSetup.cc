@@ -255,7 +255,7 @@ TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinemati
 		tr.Debug << "get frags for pairing " << target_pairing << std::endl;
 		if ( templates_ ) {
 			if ( !is_helix_jump( target_pairing ) ) {
-				 for ( auto const & it : *templates_ ) {
+				for ( auto const & it : *templates_ ) {
 
 					//check if template has pairing .. we know all its pairings already aligned in targe-sequence...
 					// its in the strand_stats_
@@ -269,7 +269,7 @@ TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinemati
 			} else { //get here if pairing is helix jump
 				tr.Debug << "has been found in helix-list blindly collect all jump-geometries from models with an H" << std::endl;
 				FrameList aFrame; aFrame.push_back( jump_frame );
-				 for ( auto const & it : templates_->helixjump_picks() ) {
+				for ( auto const & it : templates_->helixjump_picks() ) {
 					nr_frags++;
 					it->steal_frags( aFrame, *jump_frags );
 				}

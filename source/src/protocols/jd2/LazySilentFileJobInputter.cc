@@ -65,7 +65,7 @@ protocols::jd2::LazySilentFileJobInputter::fill_jobs( JobsContainer & jobs ) {
 	// feedign through multiple files.
 	runtime_assert( silent_files.size() <= 1 );
 
-	 for ( auto const & silent_file : silent_files ) {
+	for ( auto const & silent_file : silent_files ) {
 		utility::vector1< std::string > filetags;
 		//core::Size startindex = tags.size();
 		sfd_.read_tags_fast( silent_file, filetags );

@@ -34,7 +34,7 @@ typedef utility::pointer::shared_ptr< Conformation       > ConformationOP;
 typedef utility::pointer::shared_ptr< Conformation const > ConformationCOP;
 typedef utility::pointer::weak_ptr< Conformation       > ConformationAP;
 typedef utility::pointer::weak_ptr< Conformation const > ConformationCAP;
-	
+
 } // conformation
 } // core
 

@@ -125,7 +125,7 @@ SingleStateCOPs
 MultiStateFitnessFunction::const_states( bool positive_only /* = false */ ) const
 {
 	SingleStateCOPs const_states;
-	 for ( auto const & state : states_ ) {
+	for ( auto const & state : states_ ) {
 		if ( positive_only && !state->is_positive_state() ) continue;
 		const_states.push_back( state );
 	}
@@ -139,7 +139,7 @@ core::Size
 MultiStateFitnessFunction::num_states( bool pos_neg ) const
 {
 	core::Size n(0);
-	 for ( auto const & state : states_ ) {
+	for ( auto const & state : states_ ) {
 		if ( state->is_positive_state() != pos_neg ) continue;
 		++n;
 	}

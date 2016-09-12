@@ -202,7 +202,7 @@ TaskOperationFeatures::parse_my_tag(
 	Size taskop_id(0);
 	std::string taskop_list = tag->getOption< std::string >("task_operations");
 	utility::vector0< std::string > const taskop_keys( utility::string_split( taskop_list, ',' ) );
-	 for ( auto const & taskop_key : taskop_keys ) {
+	for ( auto const & taskop_key : taskop_keys ) {
 		taskop_id++;
 		if ( data.has( "task_operations", taskop_key ) ) {
 			TaskFactoryOP new_task_factory( new TaskFactory );

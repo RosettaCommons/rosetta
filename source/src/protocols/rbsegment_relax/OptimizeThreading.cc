@@ -398,7 +398,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
-		 for ( auto const & it : *loops_ ) {
+		for ( auto const & it : *loops_ ) {
 			for ( Size i=it.start(); i<=it.stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true);
@@ -411,7 +411,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		// pick 3mers only in unaligned regions
 		std::string tgt_seq = pose.sequence();
 		core::fragment::FragSetOP frags3( new core::fragment::ConstantLengthFragSet( 3 ) );
-		 for ( auto const & it : *loops_ ) {
+		for ( auto const & it : *loops_ ) {
 			for ( Size i=it.start(); i+2<=it.stop(); ++i ) {
 				core::fragment::FrameOP frame( new core::fragment::Frame( i, 3 ) );
 				frame->add_fragment(

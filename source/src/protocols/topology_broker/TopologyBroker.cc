@@ -181,7 +181,7 @@ SymmetryClaimerOP TopologyBroker::resolve_symmetry_claims( claims::SymmetryClaim
 }
 
 void TopologyBroker::relay_message( ClaimerMessage & msg ) const {
-	 for ( auto const & claimer : claimers_ ) {
+	for ( auto const & claimer : claimers_ ) {
 		if ( msg.matches( claimer->label() ) ) {
 			claimer->receive_message( msg );
 		}
@@ -205,7 +205,7 @@ void TopologyBroker::generate_final_claims( claims::DofClaims & all_claims ) {
 
 core::fragment::FragSetCOP TopologyBroker::loop_frags( core::kinematics::MoveMap & movemap ) const {
 	fragment::FragSetCOP frags( nullptr );
-	 for ( auto const & claimer : claimers_ ) {
+	for ( auto const & claimer : claimers_ ) {
 		fragment::FragSetCOP new_frags = claimer->loop_frags( movemap );
 		runtime_assert( !(new_frags && frags ) );
 		if ( new_frags ) frags = new_frags;
@@ -217,7 +217,7 @@ core::fragment::FragSetCOP TopologyBroker::loop_frags( core::kinematics::MoveMap
 
 void TopologyBroker::add_constraints( core::pose::Pose & pose ) const {
 	pose.constraint_set( nullptr );
-	 for ( auto const & claimer : claimers_ ) {
+	for ( auto const & claimer : claimers_ ) {
 		claimer->add_constraints( pose );
 	}
 	if ( tr.Trace.visible() ) {
@@ -234,7 +234,7 @@ moves::MoverOP TopologyBroker::mover(core::pose::Pose const & pose,
 
 	//tr.Debug << "stage:  " << stage_id << " Progress:  " << progress << std::endl;
 	moves::RandomMoverOP random_mover( new moves::RandomMover );
-	 for ( auto const & claimer : claimers_ ) {
+	for ( auto const & claimer : claimers_ ) {
 		claimer->add_mover( *random_mover, pose, stage_id, scorefxn, progress );
 	}
 
@@ -266,7 +266,7 @@ void TopologyBroker::apply_filter( core::pose::Pose const & pose,
 	abinitio::StageID stage_id,
 	core::Real progress ) const {
 	tr.Debug << "apply filter: \n";
-	 for ( auto const & claimer : claimers_ ) {
+	for ( auto const & claimer : claimers_ ) {
 		std::ostringstream report;
 		if ( !claimer->passes_filter( pose, stage_id, progress, report ) ) {
 			tr.Debug.flush();
@@ -584,7 +584,7 @@ void TopologyBroker::initialize_sequence( claims::DofClaims & claims, core::pose
 /// throws EXCN_Unknown_SequenceLabel if not found
 claims::SequenceClaim & TopologyBroker::resolve_sequence_label( std::string const & label ) const {
 	claims::SequenceClaimOP found(nullptr);
-	 for ( auto const & sequence_claim : sequence_claims_ ) {
+	for ( auto const & sequence_claim : sequence_claims_ ) {
 		if ( sequence_claim->label() == label ) {
 			runtime_assert( !found ); //don't allow duplicate labels -- input is checked when this list is made
 			found = sequence_claim;
@@ -960,7 +960,7 @@ bool TopologyBroker::check_chainbreak_variants(
 
 /// @brief if some claimer wants to influence the movemap for relax he can do it here:
 void TopologyBroker::adjust_relax_movemap( core::kinematics::MoveMap & mm) const {
-	 for ( auto const & claimer : claimers_ ) {
+	for ( auto const & claimer : claimers_ ) {
 		claimer->adjust_relax_movemap( mm );
 	}
 

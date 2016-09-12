@@ -54,7 +54,7 @@ ResidueNetwork::connectivity_index( core::Size const resi ) const
 	dijkstras( resi );
 
 	core::Real running_sum = 0.0;
-	 for ( auto const & node : nodes_ ) {
+	for ( auto const & node : nodes_ ) {
 		core::Size shortest_path = node->distanceFromStart;
 		TR.Debug << "Shortest path from " << resi << " to " << node->resi << " is " << shortest_path << std::endl;
 		running_sum += shortest_path;
@@ -75,7 +75,7 @@ ResidueNetwork::average_shortest_path_length() const
 		dijkstras ((*it)->resi);
 
 		//add the paths from resi it to all other residues
-		 for ( auto const & node : nodes_ ) {
+		for ( auto const & node : nodes_ ) {
 			core::Size shortest_path = node->distanceFromStart;
 			total_path_length += shortest_path;
 		}
@@ -92,7 +92,7 @@ void
 ResidueNetwork::dijkstras( core::Size const resi ) const
 {
 	// reset nodes
-	 for ( auto const & node : nodes_ ) {
+	for ( auto const & node : nodes_ ) {
 		node->in_list = true;
 		if ( node->resi == resi ) {
 			node->distanceFromStart = 0;
@@ -115,7 +115,7 @@ ResidueNetwork::dijkstras( core::Size const resi ) const
 		}
 		std::list< NodeOP > const & adjacentNodes( AdjacentRemainingNodes( smallest ) );
 		TR.Debug << "Nodes adjacent to " << smallest->resi << ": ";
-		 for ( auto const & adjacentNode : adjacentNodes ) {
+		for ( auto const & adjacentNode : adjacentNodes ) {
 			TR.Debug << " " << adjacentNode->resi;
 			int distance = smallest->distanceFromStart + 1;
 			if ( distance < adjacentNode->distanceFromStart ) {
@@ -188,7 +188,7 @@ AdjacentRemainingNodes( NodeOP node )
 bool
 Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 {
-	 for ( auto const & it : nodes ) {
+	for ( auto const & it : nodes ) {
 		if ( node == it ) {
 			return true;
 		}
@@ -200,7 +200,7 @@ Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 void
 ResidueNetwork::clear_edges()
 {
-	 for ( auto const & res_it_1 : nodes() ) {
+	for ( auto const & res_it_1 : nodes() ) {
 		res_it_1->neighbors.clear();
 	}
 }

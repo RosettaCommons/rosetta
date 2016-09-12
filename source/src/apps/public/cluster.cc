@@ -268,7 +268,7 @@ main( int argc, char * argv [] ) {
 		clustering->print_cluster_assignment();
 		std::vector < Cluster >  const & clusterlist=clustering->get_cluster_list();
 		std::list < int > sorted_list;
-		 for ( auto const & i : clusterlist ) {
+		for ( auto const & i : clusterlist ) {
 			for ( int j=0; j<(int)i.size(); j++ ) {
 				sorted_list.push_back(  i[j]  );
 			}

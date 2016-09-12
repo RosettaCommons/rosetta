@@ -79,7 +79,7 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	// Define jumps, cuts
 	vector1<int> cuts;
 	vector1<std::pair<int, int> > jumps;
-	 for ( auto const & chunk : chunks ) {
+	for ( auto const & chunk : chunks ) {
 		const Size cut_point  = chunk.stop();
 		const Size jump_point = choose_anchor_position(chunk);
 

@@ -201,7 +201,7 @@ WaterFeatures::parse_my_tag(
 		//throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 		std::string water_names_list = tag->getOption< std::string >("targets");
 		utility::vector0< std::string > const water_names( utility::string_split( water_names_list, ',' ) );
-		 for ( auto const & water_name : water_names ) {
+		for ( auto const & water_name : water_names ) {
 			utility::vector0< std::string > const resn_atomn( utility::string_split( water_name, ':' ) );
 			std::string resname = resn_atomn[0];
 			std::string atomname = resn_atomn[1];

@@ -82,7 +82,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	std::map< std::string, std::string > const & iupac_map() const { return annotated_seq_from_IUPAC_map_; };
 	std::map< char, std::string > const & modomics_map() const { return annotated_seq_from_modomics_map_; };
 
-		// Try various combinations to locate the specific file being requested by the user.
+	// Try various combinations to locate the specific file being requested by the user.
 	// (inspired by core::scoring::ScoreFunction::find_weights_file())
 	std::string find_alternate_codes_file( std::string const & filename );
 
@@ -97,7 +97,7 @@ private:  // Private data /////////////////////////////////////////////////////
 	std::set< std::string > achiral_set_;
 	std::set< std::string > metal_set_;
 	std::set< std::string > sugar_set_;
-	
+
 	std::map< char, std::string > annotated_seq_from_modomics_map_;
 	std::map< std::string, std::string > annotated_seq_from_IUPAC_map_;
 };

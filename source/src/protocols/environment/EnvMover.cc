@@ -76,7 +76,7 @@ void EnvMover::apply( Pose& pose ) {
 
 	env->register_mover( movers_ );
 
-	 for ( auto const & reg_only_mover : reg_only_movers_ ) {
+	for ( auto const & reg_only_mover : reg_only_movers_ ) {
 		env->register_mover( reg_only_mover );
 	}
 
@@ -129,7 +129,7 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 	env_->allow_pure_movers( tag->getOption< bool >( "allow_pure_movers", env_->allow_pure_movers() ) );
 
 	TagCOPs const& subtags = tag->getTags();
-	 for ( auto const & subtag : subtags ) {
+	for ( auto const & subtag : subtags ) {
 		parse_subtag( subtag, data, filters, movers, pose );
 	}
 }

@@ -409,7 +409,7 @@ TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofC
 	core::kinematics::MoveMapOP init_map( new core::kinematics::MoveMap );
 	init_map->set_jump( false );
 
-	 for ( auto const & init_dof : init_dofs ) {
+	for ( auto const & init_dof : init_dofs ) {
 		if ( init_dof->owner().lock().get() == this && init_dof->str_type() == "JUMP" ) {
 			if ( tr.Trace.visible() ) {
 				init_dof->show(tr.Trace);

@@ -498,7 +498,7 @@ JD2ResourceManagerJobInputter::record_job(
 
 	using namespace basic::options;
 
-	 for ( auto const & iter : resources_for_job ) {
+	for ( auto const & iter : resources_for_job ) {
 		jd2rm->add_resource_tag_by_job_tag( iter.first, job_name, iter.second );
 	}
 
@@ -544,7 +544,7 @@ JD2ResourceManagerJobInputter::read_Option_subtag_for_job(
 	JobOptionsOP job_options
 )
 {
-	 for ( auto const & opt_iter : options_tag->getOptions() ) {
+	for ( auto const & opt_iter : options_tag->getOptions() ) {
 		std::string const & optname = opt_iter.first;
 		std::string const & val = opt_iter.second;
 		parse_options_name_and_value(optname, val, job_options);
@@ -853,7 +853,7 @@ JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 		err <<std::endl;
 		throw EXCN_Msg_Exception( err.str() );
 	}
-	 for ( auto const & opt_iter : options_tag->getOptions() ) {
+	for ( auto const & opt_iter : options_tag->getOptions() ) {
 		if ( opt_iter.first == "resource_tag" ) {
 			rname = opt_iter.second;
 			resources_for_job["residue"] = rname;
@@ -888,7 +888,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	std::string desc;
 	std::string rname;
 	std::string locator = "";
-	 for ( auto const & opt_iter : data_tag->getOptions() ) {
+	for ( auto const & opt_iter : data_tag->getOptions() ) {
 		if ( opt_iter.first == "desc" ) {
 			if ( opt_iter.second == "startstruct" ) {
 				local_startstruct_found = true;
@@ -943,7 +943,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 			err << "for job whose starstruct is given as '" << resources_for_job[ "startstruct" ] << "'";
 		}
 		err << ".\nOptions given:\n";
-		 for ( auto const & opt_iter : data_tag->getOptions() ) {
+		for ( auto const & opt_iter : data_tag->getOptions() ) {
 			err << "\t(" << opt_iter.first << ", " << opt_iter.second << ")\n";
 		}
 		err << "Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
@@ -984,7 +984,7 @@ JD2ResourceManagerJobInputter::check_each_job_has_startstruct(
 	JD2ResourceManager * jd2rm(
 		JD2ResourceManager::get_jd2_resource_manager_instance());
 
-	 for ( auto const & job : jobs ) {
+	for ( auto const & job : jobs ) {
 		if ( !(jd2rm->has_resource_tag_by_job_tag("startstruct", job->input_tag())) ) {
 			std::stringstream errmsg;
 			errmsg

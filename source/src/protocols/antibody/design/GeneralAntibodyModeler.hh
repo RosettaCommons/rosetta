@@ -68,11 +68,11 @@ public:
 	/// @brief Set scorefunction used for bb minimization.
 	void
 	set_scorefunction_min(core::scoring::ScoreFunctionCOP scorefxn);
-	
+
 	/// @brief Set the overhang for all cdrs.  (Default is 0)
 	void
 	set_overhang(core::Size const overhang);
-	
+
 	////////////////////////////////////////////////////////////////////////
 
 	/// @brief How many residues on either side of the CDR to include in CDR - modeling? (Default is 0)

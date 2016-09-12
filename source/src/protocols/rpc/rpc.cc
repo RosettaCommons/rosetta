@@ -367,7 +367,7 @@ void JSON_RPC::load_user_flag_file( const std::string &flags_file ){
 
 void JSON_RPC::load_new_set_of_user_flags( const mObject &json_user_flags ){
 	std::vector < std::string > user_flags;
-	 for ( auto const & json_user_flag : json_user_flags ) {
+	for ( auto const & json_user_flag : json_user_flags ) {
 		if ( json_user_flag.second.type() != obj_type ) {
 			throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_flag member:'" + json_user_flag.first );
 		};
@@ -389,7 +389,7 @@ void JSON_RPC::load_new_set_of_virtual_files( const mArray &json_user_files , bo
 	std::cerr << __FILE__ << __LINE__ << std::endl;
 	if ( clear_previous ) provider->clear_input_files();
 	std::cerr << __FILE__ << __LINE__ << std::endl;
-	 for ( auto const & json_user_file : json_user_files ) {
+	for ( auto const & json_user_file : json_user_files ) {
 		std::cerr << __FILE__ << __LINE__ << std::endl;
 		std::cout << json_user_file.type() << std::endl;
 		std::cerr << __FILE__ << __LINE__ << std::endl;

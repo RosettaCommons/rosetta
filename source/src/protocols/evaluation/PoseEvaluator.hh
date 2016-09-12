@@ -129,7 +129,7 @@ public:
 
 	Size size() const override {
 		Size s( 0 );
-		 for ( auto const & evaluator : evaluators_ ) {
+		for ( auto const & evaluator : evaluators_ ) {
 			s += evaluator->size();
 		}
 		return s;

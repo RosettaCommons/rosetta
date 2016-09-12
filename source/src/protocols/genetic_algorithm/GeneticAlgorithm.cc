@@ -391,7 +391,7 @@ GeneticAlgorithmBase::print_generation_statistics(
 
 	// make a set of entities in earlier generations but not in the previous one
 	for ( core::Size i = 1; i+2 <= gen_num; ++i ) {
-		 for ( auto const & iter : generations_[i] ) {
+		for ( auto const & iter : generations_[i] ) {
 			if ( previous_generation_set.find(iter) == previous_generation_set.end() ) {
 				earlier_generations_set.insert(iter);
 			}
@@ -404,7 +404,7 @@ GeneticAlgorithmBase::print_generation_statistics(
 	core::Size new_entities(0);
 	EntityOP best_new_entity(nullptr);
 
-	 for ( auto const & iter : generations_[gen_num] ) {
+	for ( auto const & iter : generations_[gen_num] ) {
 		if ( previous_generation_set.find(iter) != previous_generation_set.end() ) {
 			++heldover_entities;
 		} else if ( earlier_generations_set.find(iter) != earlier_generations_set.end() ) {
@@ -440,7 +440,7 @@ GeneticAlgorithmBase::print_generation_statistics(
 void
 GeneticAlgorithmBase::print_population( std::ostream & os ) const
 {
-	 for ( auto const & it : generations_[current_generation_] ) {
+	for ( auto const & it : generations_[current_generation_] ) {
 		os << *it << '\n';
 	}
 	os << std::flush;
@@ -450,7 +450,7 @@ GeneticAlgorithmBase::print_population( std::ostream & os ) const
 void
 GeneticAlgorithmBase::print_cache( std::ostream & os ) const
 {
-	 for ( auto const & it : entity_cache_ ) {
+	for ( auto const & it : entity_cache_ ) {
 		if ( it.second->fitness_valid() ) {
 			it.second->write_checkpoint(os);
 			os << '\n';

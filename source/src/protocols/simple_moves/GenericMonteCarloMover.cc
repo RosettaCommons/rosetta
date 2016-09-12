@@ -668,7 +668,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > c
 			using namespace std;
 			string stringed_comments("");
 			map< string, string > const comments = core::pose::get_all_comments(pose);
-			 for ( auto const & comment : comments ) {
+			for ( auto const & comment : comments ) {
 				stringed_comments += comment.first + ":" + comment.second + " ";
 			}
 			data<<trial_counter_<<" "<<accepted<<" "<<filter_val<<" "<<stringed_comments<<" "<<pose_sequence<<'\n';

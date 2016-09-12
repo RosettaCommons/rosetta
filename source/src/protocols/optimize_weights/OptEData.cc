@@ -576,7 +576,7 @@ PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 
 	Size const nrotamers( data().size() );
 	outfile.write( (char*) &nrotamers, sizeof(Size) );
-	 for ( auto const & rot : data() ) {
+	for ( auto const & rot : data() ) {
 		chemical::AA this_aa( rot->this_aa() );
 		Size rot_number( rot->rot_number() );
 		outfile.write( (char*) &this_aa, sizeof(chemical::AA) );
@@ -3922,7 +3922,7 @@ core::Size
 OptEData::num_rotamers() const
 {
 	core::Size num_rots(0);
-	 for ( auto const & pos : data_ ) {
+	for ( auto const & pos : data_ ) {
 		num_rots += pos->size();
 	}
 	return num_rots;
@@ -4024,7 +4024,7 @@ OptEData::write_to_binary_file( std::string filename ) const
 	std::ofstream outfile( filename.c_str(), std::ios::out | std::ios::binary );
 	Size const npositions( data_.size() );
 	outfile.write( (char*) &npositions, sizeof(Size) );
-	 for ( auto const & pos : data_ ) {
+	for ( auto const & pos : data_ ) {
 		OptEPositionDataType pos_data_type = pos->type();
 		outfile.write( (char*) & pos_data_type, sizeof(OptEPositionDataType) );
 		pos->write_to_binary_file( outfile );

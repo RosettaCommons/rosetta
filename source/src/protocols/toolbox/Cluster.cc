@@ -62,7 +62,7 @@ std::ostream & operator<< (
 	ClusterBase::ClusterList const & cl
 ) {
 	Size ncl( 1 );
-	 for ( auto const & it : cl ) {
+	for ( auto const & it : cl ) {
 		out << "CLUSTER " << RJ(3, ncl++ ) << " " << RJ(4, it.size()) << " ";
 		for ( auto cit = it.begin(), ecit = it.end();
 				cit != ecit; ++cit ) {

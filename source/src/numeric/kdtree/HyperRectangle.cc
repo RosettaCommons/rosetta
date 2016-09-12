@@ -34,7 +34,7 @@ HyperRectangle::HyperRectangle(
 	lower_( pts.front() )
 {
 	using utility::vector1;
-	 for ( auto const & pt : pts ) {
+	for ( auto const & pt : pts ) {
 		extend( pt );
 	}
 }

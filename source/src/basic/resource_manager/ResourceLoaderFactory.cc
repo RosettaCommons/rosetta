@@ -76,7 +76,7 @@ std::list< std::string >
 ResourceLoaderFactory::available_resource_loaders() const
 {
 	std::list< std::string > loader_types;
-	 for ( auto const & iter : creator_map_ ) {
+	for ( auto const & iter : creator_map_ ) {
 		loader_types.push_back( iter.first );
 	}
 	return loader_types;

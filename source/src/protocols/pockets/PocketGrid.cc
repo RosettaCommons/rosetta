@@ -3594,7 +3594,7 @@ std::list< numeric::xyzVector<core::Real> > PocketGrid::get_connolly_surfacePoin
 	std::list< numeric::xyzVector<core::Real> > surfacePoints_within_grid;
 	surfacePoints_within_grid.clear();
 	numeric::xyzVector<core::Real> grid_coord;
-	 for ( auto const & sf : surfacePoints_list ) {
+	for ( auto const & sf : surfacePoints_list ) {
 		convert_cartesian_to_grid(sf, mid_, dim_, spacing_, grid_coord);
 		//ignore if the surface point goes out of the grid
 		if ( ((grid_coord.x() >= dim_.x())||(grid_coord.x() < 0)) || ((grid_coord.y() >= dim_.y())||(grid_coord.y() < 0)) || ((grid_coord.z() >= dim_.z())||(grid_coord.z() < 0)) ) {
@@ -3941,7 +3941,7 @@ void PocketGrid::move_pose_to_standard_orie( core::Size const & central_seqpos, 
 	core::Real CoM_z=0.;
 	for ( std::list<PCluster>::const_iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
-		 for ( auto const & point : cit->points_ ) {
+		for ( auto const & point : cit->points_ ) {
 			if ( (grid_[point.x][point.y][point.z]==TP_POCKET) || (grid_[point.x][point.y][point.z]==TP_SURF) || (grid_[point.x][point.y][point.z]==TP_EDGE) || (grid_[point.x][point.y][point.z]==TP_BURIED) ) {
 				CoM_x += point.x*stepSize_+xcorn_;
 				CoM_y += point.y*stepSize_+ycorn_;
@@ -3959,7 +3959,7 @@ void PocketGrid::move_pose_to_standard_orie( core::Size const & central_seqpos, 
 	// put pocket points into a matrix for Eigen, subtracting out the CoM so they'll be centered at zero
 	for ( std::list<PCluster>::const_iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
-		 for ( auto const & point : cit->points_ ) {
+		for ( auto const & point : cit->points_ ) {
 			if ( (grid_[point.x][point.y][point.z]==TP_POCKET) || (grid_[point.x][point.y][point.z]==TP_SURF) || (grid_[point.x][point.y][point.z]==TP_EDGE) || (grid_[point.x][point.y][point.z]==TP_BURIED) ) {
 				// add this pocket point to the Eigen matrix (subtracting out the pocket CoM)
 				pocket_coors_matrix(pocket_inx,0) = point.x*stepSize_+xcorn_ - CoM_x;
@@ -4103,7 +4103,7 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 	core::Size common_points = 0;
 	for ( auto cit=template_pocket.clusters_.clusters_.begin(); cit != template_pocket.clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(template_pocket.stepSize_,3)<template_pocket.minPockSize_ ) continue; // this is a smallpocket
-		 for ( auto const & point : cit->points_ ) {
+		for ( auto const & point : cit->points_ ) {
 			if ( (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_POCKET) || (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_SURF) || (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_EDGE) || (template_pocket.grid_[point.x][point.y][point.z]==template_pocket.TP_BURIED) ) {
 
 				++template_num_points;
@@ -4165,7 +4165,7 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 
 
 	core::Size self_num_points = 0;
-	 for ( auto const & cluster : clusters_.clusters_ ) {
+	for ( auto const & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
 		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
 			if ( (grid_[pit->x][pit->y][pit->z]==TP_POCKET) || (grid_[pit->x][pit->y][pit->z]==TP_SURF) || (grid_[pit->x][pit->y][pit->z]==TP_EDGE) || (grid_[pit->x][pit->y][pit->z]==TP_BURIED) ) {
@@ -4901,7 +4901,7 @@ void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points( std::list<
 				grid_cart.y() = iy * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()-1)/2) * espGrid_spacing_) );
 				grid_cart.z() = iz * espGrid_spacing_ + ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()-1)/2) * espGrid_spacing_) );
 				found_surface = false;
-				 for ( auto const & sf : surfacePoints_list ) {
+				for ( auto const & sf : surfacePoints_list ) {
 					if ( grid_cart.distance(sf) < 0.5 ) {
 						typGrid_[ix][iy][iz] = SURFACE;
 						found_surface = true;
@@ -4918,7 +4918,7 @@ void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points( std::list<
 
 void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points_by_nn( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
 	//nn - nearest neighbour method
-	 for ( auto const & sf : surfacePoints_list ) {
+	for ( auto const & sf : surfacePoints_list ) {
 		//convert to grid points
 		numeric::xyzVector<core::Real> grid_coord;
 		convert_cartesian_to_grid(sf, espGrid_mid_, espGrid_dim_, espGrid_spacing_, grid_coord);
@@ -4989,7 +4989,7 @@ void  ElectrostaticpotentialGrid::assign_esp_for_atom_grid_points( numeric::xyzV
 core::Real  ElectrostaticpotentialGrid::get_atom_dist_from_connolly_surface( numeric::xyzVector<core::Real> atom_coord, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
 
 	core::Real min_dist = 999;
-	 for ( auto const & sf : surfacePoints_list ) {
+	for ( auto const & sf : surfacePoints_list ) {
 		core::Real curr_dist = atom_coord.distance(sf);
 		if ( curr_dist < min_dist ) {
 			min_dist = curr_dist;
@@ -5002,7 +5002,7 @@ void ElectrostaticpotentialGrid::write_connollySurface_to_pdb( std::list< numeri
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
-	 for ( auto const & sf : surfacePoints_list ) {
+	for ( auto const & sf : surfacePoints_list ) {
 		outPDB_stream<<"HETATM   "<<std::setw(2)<<3<<"  N   CNY A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf.x() <<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf.y() <<std::setw(8)<<std::fixed<<std::setprecision(3)<< sf.z() <<std::endl;
 	}
 	outPDB_stream.close();
@@ -5145,7 +5145,7 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 				numeric::xyzVector<core::Real> grid_cart;
 				convert_grid_to_cartesian(grid_coord, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_cart);
 				found_surface = false;
-				 for ( auto const & sf : surfacePoints_list ) {
+				for ( auto const & sf : surfacePoints_list ) {
 					if ( grid_cart.distance(sf) < 0.5 ) {
 						eggshell_coord_list_.push_back(grid_cart);
 						found_surface = true;
@@ -5165,7 +5165,7 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 				numeric::xyzVector<core::Real> grid_cart;
 				convert_grid_to_cartesian(grid_coord, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_cart);
 				found_surface = false;
-				 for ( auto const & sf : surfacePoints_list ) {
+				for ( auto const & sf : surfacePoints_list ) {
 					if ( grid_coord.distance(sf) < 0.5 ) {
 						extra_coord_list_.push_back(grid_cart);
 						found_surface = true;
@@ -5220,7 +5220,7 @@ void EggshellGrid::get_connolly_eggshell( std::list< numeric::xyzVector<core::Re
 
 	//assign connolly surface point for eggGrid
 	eggshell_coord_list_.clear();
-	 for ( auto const & sf : surfacePoints_list ) {
+	for ( auto const & sf : surfacePoints_list ) {
 		convert_cartesian_to_grid(sf, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_coord);
 		//ignore if the surface point goes out of the grid
 		//std::cout<<" GRID SURF : "<<grid_coord.x()<<" "<<grid_coord.y()<<" "<<grid_coord.z()<<std::endl;
@@ -5236,7 +5236,7 @@ void EggshellGrid::get_connolly_eggshell( std::list< numeric::xyzVector<core::Re
 
 	//assign connolly surface point for extGrid
 	extra_coord_list_.clear();
-	 for ( auto const & sf : surfacePoints_list ) {
+	for ( auto const & sf : surfacePoints_list ) {
 		convert_cartesian_to_grid(sf, extGrid.mid_, extGrid.dim_, extGrid.spacing_, grid_coord);
 		//ignore if the surface point goes out of the grid
 		if ( ((grid_coord.x() >= extGrid.dim_.x())||(grid_coord.x() < 0)) || ((grid_coord.y() >= extGrid.dim_.y())||(grid_coord.y() < 0)) || ((grid_coord.z() >= extGrid.dim_.z())||(grid_coord.z() < 0)) ) {
@@ -5319,7 +5319,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& ext_grd, std::list< numeric::xyzVe
 									extra_coord.z() = (z*ext_grd.stepSize_+ext_grd.zcorn_);
 									found = true;
 									bool nearby = false;
-									 for ( auto const & eg : eggshell_coord_list ) {
+									for ( auto const & eg : eggshell_coord_list ) {
 										if ( extra_coord == eg ) {
 											nearby = false;
 											break;
@@ -5582,7 +5582,7 @@ void EggshellGrid::dump_eggshell( std::string const & fname ) const {
 void EggshellGrid::dump_eggshell( std::string const & fname, numeric::xyzMatrix<core::Real> rot1, numeric::xyzMatrix<core::Real> rot2, numeric::xyzMatrix<core::Real> rot3 ) const {
 
 	core::Real xmin = 1,xmax=0,ymin=1,ymax=0,zmin=1,zmax=0;
-	 for ( auto const & pit : eggshell_coord_list_ ) {
+	for ( auto const & pit : eggshell_coord_list_ ) {
 		numeric::xyzVector<core::Real> coord(pit.x(),pit.y(),pit.z());
 		coord = rot1 * coord;
 		coord = rot2 * coord;
@@ -5654,10 +5654,10 @@ void EggshellGrid::write_eggshell_to_pdb( std::string const & output_pdbname ) c
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
-	 for ( auto const & pd : eggshell_coord_list_ ) {
+	for ( auto const & pd : eggshell_coord_list_ ) {
 		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.z()<<std::endl;
 	}
-	 for ( auto const & pd : extra_coord_list_ ) {
+	for ( auto const & pd : extra_coord_list_ ) {
 		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  O   EXT B   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd.z()<<std::endl;
 	}
 	outPDB_stream.close();
@@ -5669,14 +5669,14 @@ void EggshellGrid::write_eggshell_to_pdb( std::string const & output_pdbname, nu
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
-	 for ( auto const & pd : eggshell_coord_list_ ) {
+	for ( auto const & pd : eggshell_coord_list_ ) {
 		numeric::xyzVector<core::Real> coord(pd.x(),pd.y(),pd.z());
 		coord = rot1 * coord;
 		coord = rot2 * coord;
 		coord = rot3 * coord;
 		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(1)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(2)<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord(3)<<std::endl;
 	}
-	 for ( auto const & pd : extra_coord_list_ ) {
+	for ( auto const & pd : extra_coord_list_ ) {
 		numeric::xyzVector<core::Real> coord(pd.x(),pd.y(),pd.z());
 		coord = rot1 * coord;
 		coord = rot2 * coord;
@@ -5710,7 +5710,7 @@ void EggshellGrid::write_Grid_to_pdb( const PocketGrid& gr, std::string const & 
 numeric::xyzVector<core::Real> EggshellGrid::calculate_center_xyz(std::list< numeric::xyzVector<core::Real> > const & pocketshell_coord_list ) {
 
 	numeric::xyzVector<core::Real> pocketshell_CoM(0.);
-	 for ( auto const & pd : pocketshell_coord_list ) {
+	for ( auto const & pd : pocketshell_coord_list ) {
 		pocketshell_CoM.x() += pd.x();
 		pocketshell_CoM.y() += pd.y();
 		pocketshell_CoM.z() += pd.z();
@@ -5740,7 +5740,7 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 	core::Size common_points = 0;
 
 	// Loop over all points in the template eggshell
-	 for ( auto const & pd : template_eggshell.eggshell_coord_list() ) {
+	for ( auto const & pd : template_eggshell.eggshell_coord_list() ) {
 
 		// For this template eggshell point, get the cartesian coors and convert to comparison's grid
 		core::Real const template_x = pd.x();
@@ -5869,7 +5869,7 @@ core::Real ComparisonGrid::compareCoverage(const PocketGrid& gr){
 	core::Real return_penalty = 0;
 	for ( auto cit=gr.clusters_.clusters_.begin(); cit != gr.clusters_.clusters_.end(); ++cit ) {
 		if ( cit->points_.size()*pow(gr.stepSize_,3)<gr.minPockSize_ ) continue; // this is a smallpocket
-		 for ( auto const & point : cit->points_ ) {
+		for ( auto const & point : cit->points_ ) {
 			if ( (gr.grid_[point.x][point.y][point.z]==gr.TP_POCKET) || (gr.grid_[point.x][point.y][point.z]==gr.TP_BURIED ||
 					gr.grid_[point.x][point.y][point.z]==gr.TP_EDGE) ) {
 				if ( grid_[point.x][point.y][point.z]==EMPTY ) return_penalty +=1.;

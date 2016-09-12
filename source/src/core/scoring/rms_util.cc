@@ -625,7 +625,7 @@ core::Real CA_rmsd(const core::pose::Pose& pose1,
 
 	vector1<Size> residues_1;  // residues in pose1
 	vector1<Size> residues_2;  // residues in pose2
-	 for ( auto const & residue : residues ) {
+	for ( auto const & residue : residues ) {
 		Size res_1 = residue.first;
 		Size res_2 = residue.second;
 		residues_1.push_back(res_1);
@@ -651,7 +651,7 @@ core::Real CA_gdtmm(const core::pose::Pose& pose1,
 
 	vector1<Size> residues_1;  // residues in pose1
 	vector1<Size> residues_2;  // residues in pose2
-	 for ( auto const & residue : residues ) {
+	for ( auto const & residue : residues ) {
 		Size res_1 = residue.first;
 		Size res_2 = residue.second;
 		residues_1.push_back(res_1);
@@ -1031,7 +1031,7 @@ void CA_gdttm(const core::pose::Pose& pose1,
 
 	vector1<Size> residues_1;  // residues in pose1
 	vector1<Size> residues_2;  // residues in pose2
-	 for ( auto const & residue : residues ) {
+	for ( auto const & residue : residues ) {
 		Size res_1 = residue.first;
 		Size res_2 = residue.second;
 		residues_1.push_back(res_1);
@@ -1335,7 +1335,7 @@ rms_at_corresponding_atoms(
 
 	utility::vector1< Vector > p1_coords, p2_coords;
 
-	 for ( auto const & iter : atom_id_map ) {
+	for ( auto const & iter : atom_id_map ) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
@@ -1367,7 +1367,7 @@ rms_at_all_corresponding_atoms(
 {
 	utility::vector1< Vector > p1_coords, p2_coords;
 
-	 for ( auto const & iter : atom_id_map ) {
+	for ( auto const & iter : atom_id_map ) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
@@ -1412,7 +1412,7 @@ rms_at_corresponding_atoms_no_super(
 
 	Size natoms( 0 );
 	Real sum( 0.0 );
-	 for ( auto const & iter : atom_id_map ) {
+	for ( auto const & iter : atom_id_map ) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.

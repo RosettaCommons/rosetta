@@ -92,8 +92,8 @@ iterator       Pose::begin() noexcept { return conformation().begin(); }
 const_iterator Pose::begin()   const noexcept { return conformation().begin(); }
 iterator       Pose::end() noexcept { return conformation().end(); }
 const_iterator Pose::end()     const noexcept { return conformation().end(); }
-	
-	
+
+
 /// @details default init function
 void Pose::init(void)
 {

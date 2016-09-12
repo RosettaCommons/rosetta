@@ -385,7 +385,7 @@ ResiduePairJump::apply_dof_conformer(
 	std::map< dofType, core::Size > const & conformer_map
 )
 {
-	 for ( auto const & it : conformer_map ) {
+	for ( auto const & it : conformer_map ) {
 		dofType type = it.first;
 		core::Size index = it.second;
 		if ( ( type == rot1 ) || (type == rot2) ) { // sidechain rotamer dofs
@@ -460,7 +460,7 @@ ResiduePairJump::build_cst_conformer_jumps()
 	for ( Size i = 1; i <= cst_conformers_.size(); ++i ) {
 		std::map< cstType, core::Size > const & conformer( cst_conformers_[i] );
 		utility::vector1< core::Real > cst_values(6);
-		 for ( auto const & it : conformer ) {
+		for ( auto const & it : conformer ) {
 			cstType type = it.first;
 			Size index = it.second;
 			core::Real value = cstInfoMap_.find(type)->second[index];

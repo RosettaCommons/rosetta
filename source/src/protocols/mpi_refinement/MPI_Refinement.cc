@@ -607,7 +607,7 @@ MPI_Refinement::dump_structures( const SilentStructStore &new_structs,
 	std::string filename = jobname_ + "." + prefix + ObjexxFCL::string_of( mpi_rank() ) + ".out";
 
 	core::Size istr( 0 );
-	 for ( auto const & new_struct : new_structs ) {
+	for ( auto const & new_struct : new_structs ) {
 		istr++;
 		sfd.write_silent_struct( *new_struct, filename, score_only );
 	}

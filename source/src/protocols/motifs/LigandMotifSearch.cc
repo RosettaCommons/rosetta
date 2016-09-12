@@ -693,7 +693,7 @@ LigandMotifSearch::incorporate_motifs(
 			if ( allowedtypes.empty() ) {
 				allowed = true;
 			}
-			 for ( auto const & allowedtype : allowedtypes ) {
+			for ( auto const & allowedtype : allowedtypes ) {
 				if ( allowedtype == motifcop->restype_name1() ) {
 					allowed = true;
 				}
@@ -969,7 +969,7 @@ LigandMotifSearch::incorporate_motifs(
 			for ( std::map< std::string, std::map< Real, MotifHitOP > >::const_iterator bh( best_mhits_all.begin() ),
 					end( best_mhits_all.end() ); bh != end; ++bh ) {
 				Size hits = 0;
-				 for ( auto const & bh2 : (bh->second) ) {
+				for ( auto const & bh2 : (bh->second) ) {
 					MotifHitOP motifhitop( bh2.second );
 					if ( ! minimize_ ) {
 						(*ir)->keep_rotamer( *(motifhitop->build_rotamer()) );

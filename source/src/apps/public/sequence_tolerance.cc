@@ -182,7 +182,7 @@ sequence_tolerance_main( void * )
 			// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 			std::set< core::chemical::AA > aaset;
 			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
-			 for ( auto const & t : allowed ) {
+			for ( auto const & t : allowed ) {
 				core::chemical::AA aa( t->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 				if ( aaset.find( aa ) != aaset.end() ) continue;
@@ -312,7 +312,7 @@ sequence_tolerance_main( void * )
 	TraitEntityHashMap const & cache( ga.entity_cache() );
 	utility::vector1< Entity::OP > sortable;
 	//  std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)
-	 for ( auto const & it : cache ) {
+	for ( auto const & it : cache ) {
 		sortable.push_back( it.second );
 	}
 	std::sort( sortable.begin(), sortable.end(), lt_OP_deref< Entity > );
@@ -350,7 +350,7 @@ sequence_tolerance_main( void * )
 		extra_lines.push_back( ms_info.str() );
 		ms_info.str(""); // funky way to 'empty' ostringstream
 		ms_info << "MultiState Sequence:";
-		 for ( auto const & pos : entity.traits() ) {
+		for ( auto const & pos : entity.traits() ) {
 			ms_info << " " << pos->to_string();
 			TR(t_info) << pos->to_string() << " ";
 		}

@@ -254,7 +254,7 @@ void Job::remove_output_observer( JobOutputterObserverAP an_observer ) {
 
 void Job::call_output_observers( core::pose::Pose const & pose )
 {
-	 for ( auto const & output_observer : output_observers_ ) {
+	for ( auto const & output_observer : output_observers_ ) {
 		JobOutputterObserverOP observer = output_observer.lock();
 		if ( observer ) {
 			observer->add_values_to_job( pose, *this );
@@ -307,7 +307,7 @@ Job::show(
 		<< "nstruct index: " << nstruct_index_ << std::endl
 		<< "status_prefix: " << status_prefix_ << std::endl
 		<< "long_strings:" << std::endl;
-	 for ( auto const & long_string : long_strings_ ) {
+	for ( auto const & long_string : long_strings_ ) {
 		out << long_string << std::endl;
 	}
 
@@ -315,13 +315,13 @@ Job::show(
 		<< "completed: " << completed_ << std::endl
 		<< "can be deleted: " << (can_be_deleted_ ? "true" : "false") << std::endl
 		<< "String -> String Pairs:" << std::endl;
-	 for ( auto const & string_string_pair : string_string_pairs_ ) {
+	for ( auto const & string_string_pair : string_string_pairs_ ) {
 		out
 			<< "\t" << string_string_pair.first << ": " << string_string_pair.second << std::endl;
 	}
 
 	out << "String -> Real Pairs:" << std::endl;
-	 for ( auto const & string_real_pair : string_real_pairs_ ) {
+	for ( auto const & string_real_pair : string_real_pairs_ ) {
 		out
 			<< "\t" << string_real_pair.first << ": " << string_real_pair.second << std::endl;
 	}

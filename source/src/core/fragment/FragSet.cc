@@ -242,7 +242,7 @@ FragSet::add( FrameCOP aFrame ) {
 
 void
 FragSet::add( FrameList const& frames ) {
-	 for ( auto const & frame : frames ) {
+	for ( auto const & frame : frames ) {
 		add( frame );
 	}
 }

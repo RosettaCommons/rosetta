@@ -48,25 +48,25 @@ class AntibodyNumberingConverterMover : public protocols::moves::Mover {
 public:
 
 	AntibodyNumberingConverterMover();
-	
+
 	AntibodyNumberingConverterMover(AntibodyNumberingSchemeEnum const from, AntibodyNumberingSchemeEnum const to);
-	
+
 	// destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~AntibodyNumberingConverterMover();
 
 
-	
+
 public:
 
 	///@brief Set the scheme to convert the pose into.
 	void
 	set_scheme_conversion(
-	
+
 		AntibodyNumberingSchemeEnum const from,
 		AntibodyNumberingSchemeEnum const to
-		
+
 	);
-	
+
 	virtual void
 	apply( core::pose::Pose & pose );
 
@@ -99,17 +99,17 @@ public:
 
 	static std::string
 	class_name();
-	
+
 private:
 
 	void
 	set_defaults();
-	
+
 private:
-	
+
 	AntibodyNumberingSchemeEnum from_scheme_;
 	AntibodyNumberingSchemeEnum to_scheme_;
-	
+
 };
 
 std::ostream &

@@ -205,7 +205,7 @@ setup_foldtree(
 			utility_exit_with_message( error_msg.str() );
 		}
 
-		 for ( auto const & partner : partners ) {
+		for ( auto const & partner : partners ) {
 			if ( partner == "" ) {
 				stringstream error_msg;
 				error_msg << "Cannot create FoldTree using the provided partners flag \"" << partner_chainID;
@@ -275,9 +275,9 @@ setup_foldtree(
 	ft.reorder( 1 );
 
 	// Now add back any CHEMICAL Edges, which will have been converted to JUMPs.
-	 for ( auto const & chemical_edge : chemical_edges ) {
+	for ( auto const & chemical_edge : chemical_edges ) {
 		vector1< Edge > const jump_edges( ft.get_jump_edges() );
-		 for ( auto const & jump_edge : jump_edges ) {
+		for ( auto const & jump_edge : jump_edges ) {
 			if ( jump_edge.stop() == chemical_edge.stop() ) {
 				ft.replace_edge( jump_edge, chemical_edge );
 				break;

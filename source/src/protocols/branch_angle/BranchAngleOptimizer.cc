@@ -883,7 +883,7 @@ BranchAngleOptimizer::write_undefined_coef1(
 {
 	std::streamsize oldprecision = out.precision();
 	out << std::setprecision(16);
-	 for ( auto const & params : undefined_coef1_ ) {
+	for ( auto const & params : undefined_coef1_ ) {
 		out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
 		out << params.m1_b1_Ktheta() << " " << numeric::conversions::degrees(params.m1_b1_theta0()) << std::endl;
 		out << params.m2_b1_Ktheta() << " " << numeric::conversions::degrees(params.m2_b1_theta0()) << std::endl;
@@ -1019,7 +1019,7 @@ BranchAngleOptimizer::write_undefined_coef2(
 {
 	std::streamsize oldprecision = out.precision();
 	out << std::setprecision(16);
-	 for ( auto const & params : undefined_coef2_ ) {
+	for ( auto const & params : undefined_coef2_ ) {
 		out << params.m1_m2_Ktheta() << " " << numeric::conversions::degrees(params.m1_m2_theta0()) << std::endl;
 		out << params.m1_b1_Ktheta() << " " << numeric::conversions::degrees(params.m1_b1_theta0()) << std::endl;
 		out << params.m2_b1_Ktheta() << " " << numeric::conversions::degrees(params.m2_b1_theta0()) << std::endl;

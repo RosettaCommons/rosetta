@@ -110,7 +110,7 @@ void KDPointList::merge( KDPointList const & other ) {
 
 void KDPointList::show( std::ostream & out ) const {
 	out << "KDPointList with " << size() << " points." << std::endl;
-	 for ( auto const & it : container_ ) {
+	for ( auto const & it : container_ ) {
 		it->show( out );
 		out << std::endl;
 	}

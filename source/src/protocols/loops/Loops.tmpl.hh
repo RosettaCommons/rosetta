@@ -31,7 +31,7 @@ namespace loops {
 template< class T >
 void Loops::transfer_to_residue_vector( utility::vector1< T > & vector, T val ) const {
 	core::Size nres = vector.size();
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		if ( it.start() <= nres ) {
 			for ( core::Size pos = it.start(); pos <= std::min( it.stop(), nres ); pos++ ) {
 				vector[ pos ] = val;

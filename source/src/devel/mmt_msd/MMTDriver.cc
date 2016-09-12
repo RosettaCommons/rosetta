@@ -237,7 +237,7 @@ void JobsForSequence::finalize_state_energies_and_npd_properties()
 {
 	for ( core::Size ii = 1; ii <= jobs_.size(); ++ii ) {
 		state_energies_[ ii ] = jobs_[ ii ].energy();
-		 for ( auto const & iter : jobs_[ ii ].npd_props() ) {
+		for ( auto const & iter : jobs_[ ii ].npd_props() ) {
 			npd_properties_[ iter.first ] = npd_properties_[ iter.second ];
 		}
 	}

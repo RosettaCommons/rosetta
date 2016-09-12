@@ -700,7 +700,7 @@ MotifDnaPacker::aromatic_motifs(
 		current_pos.erase( it->first );
 		bool aromatics( false );
 		std::set< std::string > name3_arom;
-		 for ( auto const & name3 : name3s ) {
+		for ( auto const & name3 : name3s ) {
 			if ( name3 == "TYR" || name3 == "PHE" || name3 == "TRP" ) {
 				aromatics = true;
 				name3_arom.insert( name3 );

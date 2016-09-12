@@ -125,17 +125,17 @@ public:
 
 	int
 	add_virtual_res( Pose & pose );
-	
+
 	void vary_bond_geometry(
 		core::kinematics::MoveMap & mm,
 		Pose & pose,
 		ObjexxFCL::FArray1D< bool > & allow_insert, // Operationally: not fixed, cutpoint, virt
 		std::set< Size > const & chunk
 	);
-	
+
 	void
-	turn_off_for_chunks( 
-		core::kinematics::MoveMap & mm, 
+	turn_off_for_chunks(
+		core::kinematics::MoveMap & mm,
 		Pose const & pose,
 		std::set< Size > const & chunk
 	);
@@ -146,25 +146,25 @@ public:
 		Size const fixed_res_num,
 		Size const my_anchor
 	);
-	
+
 	core::Real
 	ideal_length(
-		std::string const & pucker, 
+		std::string const & pucker,
 		std::string const & name,
 		std::string const & name1,
 		std::string const & name2
 	);
-	
+
 	core::Real
 	ideal_length_ncnt(
 		std::string const & name,
 		std::string const & name1,
 		std::string const & name2
 	);
-	
+
 	core::Real
 	ideal_angle(
-		std::string const & pucker, 
+		std::string const & pucker,
 		std::string const & name,
 		std::string const & name1,
 		Size const no1,
@@ -173,7 +173,7 @@ public:
 		std::string const & name3,
 		Size const no3
 	);
-	
+
 	core::Real
 	ideal_angle_ncnt(
 		std::string const & name,
@@ -184,12 +184,12 @@ public:
 		std::string const & name3,
 		Size const no3
 	);
-	
+
 	bool
 	ideal_has_atom(
 		core::chemical::ResidueType const & rt,
 		std::string const & an );
-	
+
 private:
 
 	utility::vector1< std::pair< AtomID, AtomID > > bonded_atom_list_;
@@ -206,7 +206,7 @@ private:
 
 	ScoreFunctionOP scorefxn_;
 	ScoreFunctionOP edens_scorefxn_;
-	
+
 	std::map< std::string, std::map< std::string, Pose > > ideal_poses_;
 	std::map< std::string, Pose > ideal_ncnt_poses_;
 };

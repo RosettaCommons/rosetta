@@ -532,7 +532,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
 	// Figure out res_list and input_domain_map.
 	vector1< vector1< Size > > pose_res_lists;
-	std::string const clean_desired_seq = core::pose::rna::remove_bracketed( desired_sequence ); 
+	std::string const clean_desired_seq = core::pose::rna::remove_bracketed( desired_sequence );
 	Size const desired_nres = clean_desired_seq.size();
 	vector1< Size > input_domain_map( desired_nres, 0 );
 	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {

@@ -34,7 +34,7 @@ ClaimerMessage::~ClaimerMessage() = default;
 
 extern std::ostream& operator << ( std::ostream& os, ClaimerMessage const& cm ) {
 	os << "ClaimerMessage type: " << cm.type() << " received by:\n ";
-	 for ( auto const & it : cm.received_by_ ) {
+	for ( auto const & it : cm.received_by_ ) {
 		TopologyClaimerCOP claim(it);
 		os << "      " << claim->label() << " of type " << claim->type() << "\n";
 	}

@@ -270,7 +270,7 @@ void PCA::fill_coordinates(
 {
 	int natoms = 1;
 	x.redimension( 3, ind.size() );
-	 for ( auto const & it : ind ) {
+	for ( auto const & it : ind ) {
 		PointPosition vec( pose.xyz( it ) );
 		for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
 			x(k+1,natoms) = vec[k];

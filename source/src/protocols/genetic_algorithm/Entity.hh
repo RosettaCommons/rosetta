@@ -191,7 +191,7 @@ struct
 	Vec1Hash {
 	std::size_t operator() ( EntityElements const & vec1 ) const {
 		std::size_t seed = 0;
-		 for ( auto const & iter : vec1 ) {
+		for ( auto const & iter : vec1 ) {
 			boost::hash_combine( seed, iter->hash() );
 		}
 		return seed;

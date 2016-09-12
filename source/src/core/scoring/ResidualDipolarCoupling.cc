@@ -117,7 +117,7 @@ extern ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose& pose) 
 
 void ResidualDipolarCoupling::show(std::ostream& out) const {
 	Size ct=0;
-	 for ( auto const & All_RDC_line : All_RDC_lines_ ) {
+	for ( auto const & All_RDC_line : All_RDC_lines_ ) {
 		out << "RDC "<<++ct << "     ";
 		out << All_RDC_line << std::endl;
 	}

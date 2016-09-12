@@ -1218,7 +1218,7 @@ Matcher::process_matches( output::MatchProcessor & processor ) const
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		representative_downstream_algorithm_[ ii ]->prepare_for_match_enumeration( *this );
 	}
-	 for ( auto const & all_downstream_builder : all_downstream_builders_ ) {
+	for ( auto const & all_downstream_builder : all_downstream_builders_ ) {
 		if ( all_downstream_builder->hits_potentially_incompatible() ) {
 			check_potential_dsbuilder_incompatibility_ = true;
 			break;
@@ -1282,7 +1282,7 @@ std::list< downstream::DownstreamAlgorithmCOP >
 Matcher::downstream_algorithms( Size cst_id ) const
 {
 	std::list< downstream::DownstreamAlgorithmCOP > dsalgs;
-	 for ( auto const & iter : downstream_algorithms_[ cst_id ] ) {
+	for ( auto const & iter : downstream_algorithms_[ cst_id ] ) {
 		dsalgs.push_back( iter );
 	}
 	return dsalgs;

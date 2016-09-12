@@ -760,7 +760,7 @@ dump_comment_pdb(
 	out << "##Begin comments##" << std::endl;
 	using namespace std;
 	map< string, string > const comments = core::pose::get_all_comments(pose);
-	 for ( auto const & comment : comments ) {
+	for ( auto const & comment : comments ) {
 		out << comment.first<<" "<<comment.second << std::endl;
 	}
 	out << "##End comments##" << std::endl;
@@ -1774,9 +1774,9 @@ named_atom_id_to_atom_id(
 				return id::BOGUS_ATOM_ID;
 			}
 		} else {
-			//	tr.Error << "Error: can't find residue " << named_atom_id.rsd()
-			//	 << " in pose (pose.size() = ) "
-			//	 << pose.size() << std::endl;
+			// tr.Error << "Error: can't find residue " << named_atom_id.rsd()
+			//  << " in pose (pose.size() = ) "
+			//  << pose.size() << std::endl;
 			if ( raise_exception ) throw id::EXCN_AtomNotFound( named_atom_id );
 			return id::BOGUS_ATOM_ID;
 		}
@@ -2659,7 +2659,7 @@ initialize_disulfide_bonds(
 			utility::vector1< Size > disulf_two;
 
 			// Prepare a list of pose-numbered disulfides!
-			 for ( auto const & ssbond : sfr.ssbond_map() ) {
+			for ( auto const & ssbond : sfr.ssbond_map() ) {
 
 				// For now we really hope the vector1 is just a single element!
 				if ( ssbond.second.size() != 1 ) {
@@ -2967,7 +2967,7 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 	core::pose::Pose const & pose ){
 	id::AtomID_Map< id::AtomID > atom_ID_map;
 	initialize_atomid_map( atom_ID_map, pose, id::BOGUS_ATOM_ID );
-	 for ( auto const & it : atom_map ) {
+	for ( auto const & it : atom_map ) {
 		atom_ID_map.set( it.first, it.second );
 	}
 	return atom_ID_map;
@@ -3063,7 +3063,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 	CircularHarmonicFuncOP ang90_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_2(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 
-	 for ( auto const & it : sfr.link_map() ) {
+	for ( auto const & it : sfr.link_map() ) {
 		for ( Size ii = 1; ii <= it.second.size(); ++ii ) {
 			TR << "|"<<it.second[ii].chainID1 << "| |" << it.second[ii].resSeq1 << "|" << std::endl;
 			TR << "|"<<it.second[ii].chainID2 << "| |" << it.second[ii].resSeq2 << "|" << std::endl;

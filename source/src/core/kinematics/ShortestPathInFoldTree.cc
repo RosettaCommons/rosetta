@@ -199,7 +199,7 @@ ShortestPathInFoldTree::init_dist_map( EdgeList const& edges ) {
 	node_dist_.dimension( jump_res_.size(), jump_res_.size(), inf );
 
 	// initialize distance array with jump-edges
-	 for ( auto const & edge : edges ) {
+	for ( auto const & edge : edges ) {
 		node_dist_( edge.start(), edge.stop() ) = 1;
 		node_dist_( edge.stop(), edge.start() ) = 1;
 		node_dist_( edge.start(), edge.start() ) = 0;
@@ -218,7 +218,7 @@ ShortestPathInFoldTree::compute_dist_map( FoldTree const& f ) {
 
 
 	// look for peptid edges that connect two jumps
-	 for ( auto const & it : f ) {
+	for ( auto const & it : f ) {
 		if ( it.is_jump() ) continue; // only look at peptide edges
 		std::map< Size, Size>::const_iterator fit;
 

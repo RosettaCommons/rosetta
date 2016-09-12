@@ -754,7 +754,7 @@ build_tree(
 	}
 
 	// traverse tree, build edges
-	 for ( auto const & it : fold_tree ) {
+	for ( auto const & it : fold_tree ) {
 
 		if ( it.is_jump() ) {
 			build_jump_edge( it, residues, atom_pointer );
@@ -776,7 +776,7 @@ build_tree(
 	}
 
 	// now guarantee that jump stubs are residue-internal if desired
-	 for ( auto const & it : fold_tree ) {
+	for ( auto const & it : fold_tree ) {
 		if ( it.is_jump() && it.keep_stub_in_residue() ) {
 			promote_sameresidue_child_of_jump_atom( it, residues, atom_pointer );
 		}
@@ -1433,7 +1433,7 @@ get_residue_connections(
 	// setup the outgoing connections
 	new_rsd_out.clear();
 	utility::vector1< kinematics::Edge > const outgoing_edges( fold_tree.get_outgoing_edges( seqpos ) );
-	 for ( auto const & outgoing_edge : outgoing_edges ) {
+	for ( auto const & outgoing_edge : outgoing_edges ) {
 		Size anchor_atomno, root_atomno;
 		Size const root_pos( ( outgoing_edge.is_polymer() ) ? seqpos + outgoing_edge.polymer_direction() : outgoing_edge.stop() );
 		get_anchor_and_root_atoms( new_rsd, *residues[ root_pos ], outgoing_edge, anchor_atomno, root_atomno );

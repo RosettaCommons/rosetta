@@ -202,13 +202,13 @@ read_subset_of_global_option_collection(
 	OptionCollectionOP opts( new OptionCollection );
 
 	// first add all of the options to the OptionCollection
-	 for ( auto const & opt_key : opt_keys ) {
+	for ( auto const & opt_key : opt_keys ) {
 		OptionKey const & opt( opt_key() );
 		add_anonymous_option( *opts, opt );
 	}
 
 	// second, take the default values from the global option collection
-	 for ( auto const & opt_key : opt_keys ) {
+	for ( auto const & opt_key : opt_keys ) {
 		OptionKey const & opt( opt_key() );
 		debug_assert( option.has( opt ) );
 		(*opts)[ opt ].copy_from( option[ opt ] );

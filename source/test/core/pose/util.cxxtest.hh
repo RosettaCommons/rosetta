@@ -136,7 +136,7 @@ public: // tests
 		TS_ASSERT( pose.pdb_info()->number( 6 ) == 6  ) ;
 		TS_ASSERT( pose.pdb_info()->chain( 6 )  == 'A' );
 		TS_ASSERT( pose.pdb_info()->icode( 6 )  == ' ' );
-		
+
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ii == 5 ) {
 				pose.pdb_info()->number( ii, 0 );

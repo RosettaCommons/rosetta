@@ -174,7 +174,7 @@ ErraserMinimizerMover::ErraserMinimizerMover():
 	pdb_file_list.push_back( path + "/C_s_std.pdb" );
 	pdb_file_list.push_back( path + "/U_n_std.pdb" );
 	pdb_file_list.push_back( path + "/U_s_std.pdb" );
-	
+
 	chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_STANDARD);
 	Pose ref_pose;
 	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[1] );
@@ -201,7 +201,7 @@ ErraserMinimizerMover::ErraserMinimizerMover():
 	io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, pdb_file_list[8] );
 	ideal_poses_[ "south" ][ "  U" ] = ref_pose;
 	ref_pose.clear();
-	
+
 	// Get all nonnatural RNA RTs.
 	// We don't have phenix ideal coordinates for NCNTs, but we have QM.
 	utility::vector1< ResidueTypeCOP > ncnts = ResidueTypeFinder( *rsd_set ).name1('X').base_property( RNA ).get_possible_base_residue_types();
@@ -211,7 +211,7 @@ ErraserMinimizerMover::ErraserMinimizerMover():
 		make_pose_from_sequence( ref_pose, ss.str(), rsd_set );
 		ideal_ncnt_poses_[ ncnts[ii]->name3() ] = ref_pose;
 	}
-	
+
 	initialize_from_options();
 }
 
@@ -223,7 +223,7 @@ void ErraserMinimizerMover::initialize_from_options() {
 	attempt_pyrimidine_flip_ = option[ attempt_pyrimidine_flip ].value();
 	std::copy( option[ fixed_res ].value().begin(), option[ fixed_res ].value().end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
 	cutpoint_list_ = option[ full_model::cutpoint_open ].value();
-	
+
 	//Setup score function.
 	std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
@@ -252,7 +252,7 @@ void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 	cutpoint_list_ = string_to_size_vector( tag->getOption< std::string >( "cutpoint_list", "" ) );
 	output_pdb_name_ = tag->getOption< std::string >( "output_pdb_name", output_pdb_name_ );
 }
-	
+
 bool
 ErraserMinimizerMover::check_in_bonded_list(
 	core::id::AtomID const & atom_id1,
@@ -281,10 +281,10 @@ ErraserMinimizerMover::check_in_bond_angle_list(
 
 	return false;
 }
-	
+
 Real
 ErraserMinimizerMover::ideal_length(
-	std::string const & pucker, 
+	std::string const & pucker,
 	std::string const & name,
 	std::string const & name1,
 	std::string const & name2
@@ -294,7 +294,7 @@ ErraserMinimizerMover::ideal_length(
 	return ideal_poses_[ pucker ][ name ].residue(2).xyz( name1 ).distance(
 		ideal_poses_[ pucker ][ name ].residue(2).xyz( name2 ) );
 }
-	
+
 Real
 ErraserMinimizerMover::ideal_length_ncnt(
 	std::string const & name,
@@ -306,11 +306,11 @@ ErraserMinimizerMover::ideal_length_ncnt(
 	return ideal_ncnt_poses_[ name ].residue(2).xyz( name1 ).distance(
 		ideal_ncnt_poses_[ name ].residue(2).xyz( name2 ) );
 }
-	
-	
+
+
 Real
 ErraserMinimizerMover::ideal_angle(
-	std::string const & pucker, 
+	std::string const & pucker,
 	std::string const & name,
 	std::string const & name1,
 	Size const no1,
@@ -327,7 +327,7 @@ ErraserMinimizerMover::ideal_angle(
 		ideal_poses_[ pucker ][ name ].residue(no3).xyz( name3 )
 	);
 }
-	
+
 Real
 ErraserMinimizerMover::ideal_angle_ncnt(
 	std::string const & name,
@@ -346,9 +346,9 @@ ErraserMinimizerMover::ideal_angle_ncnt(
 		ideal_ncnt_poses_[ name ].residue(no3).xyz( name3 )
 	);
 }
-	
+
 bool
-ErraserMinimizerMover::ideal_has_atom( 
+ErraserMinimizerMover::ideal_has_atom(
 	ResidueType const & rt,
 	std::string const & an
 ) {
@@ -356,7 +356,7 @@ ErraserMinimizerMover::ideal_has_atom(
 	if ( rt.name1() == 'X' ) {
 		return ideal_ncnt_poses_[ rt.name3() ].residue_type( 2 ).has( an );
 	} else {
-		return ideal_poses_[ "north" ][ rt.name3() ].residue_type( 2 ).has( an );	
+		return ideal_poses_[ "north" ][ rt.name3() ].residue_type( 2 ).has( an );
 	}
 }
 
@@ -367,26 +367,26 @@ ErraserMinimizerMover::add_bond_constraint(
 	core::pose::Pose const & pose,
 	core::scoring::constraints::ConstraintSetOP & cst_set
 ) {
-#define IDEAL_PHOS 1.60708825
+	#define IDEAL_PHOS 1.60708825
 	Real const delta_cutoff = 115.0;
 	std::string const & atom_name1 = pose.residue_type( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
 	std::string const & atom_name2 = pose.residue_type( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
-	
+
 	if ( !ideal_has_atom( pose.residue_type( atom_id1.rsd() ), atom_name1 ) ) return;
 	if ( !ideal_has_atom( pose.residue_type( atom_id2.rsd() ), atom_name2 ) ) return;
-	
+
 	// already addressed, just return
 	if ( check_in_bonded_list( atom_id1, atom_id2 ) ) return;
 	bonded_atom_list_.push_back( std::make_pair( atom_id1, atom_id2 ) );
-	
+
 	Real const bond_length_sd_( 0.05 );
 	Real bond_length = 0;//( pose_reference_.residue( atom_id1.rsd() ).xyz( atom_name1 ) -
-							  //pose_reference_.residue( atom_id2.rsd() ).xyz( atom_name2 ) ).length();
+	//pose_reference_.residue( atom_id2.rsd() ).xyz( atom_name2 ) ).length();
 	// either same or different residue
 	if ( atom_id1.rsd() == atom_id2.rsd() ) {
-		if ( pose.residue_type( atom_id1.rsd() ).name1() == 'X' )
+		if ( pose.residue_type( atom_id1.rsd() ).name1() == 'X' ) {
 			bond_length = ideal_length_ncnt( pose.residue_type( atom_id1.rsd() ).name3(), atom_name1, atom_name2 );
-		else {
+		} else {
 			std::string pucker = pose.torsion( TorsionID( atom_id1.rsd(), id::BB, DELTA) ) > delta_cutoff ? "south" : "north";
 			bond_length = ideal_length( pucker, pose.residue_type( atom_id1.rsd() ).name3(), atom_name1, atom_name2 );
 		}
@@ -420,11 +420,11 @@ ErraserMinimizerMover::add_bond_angle_constraint(
 	std::string const & atom_name1 = pose.residue_type( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
 	std::string const & atom_name2 = pose.residue_type( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
 	std::string const & atom_name3 = pose.residue_type( atom_id3.rsd() ).atom_name( atom_id3.atomno() );
-	
+
 	if ( !ideal_has_atom( pose.residue_type( atom_id1.rsd() ), atom_name1 ) ) return;
 	if ( !ideal_has_atom( pose.residue_type( atom_id2.rsd() ), atom_name2 ) ) return;
 	if ( !ideal_has_atom( pose.residue_type( atom_id3.rsd() ), atom_name3 ) ) return;
-	
+
 	// if already handled, return
 	if ( check_in_bond_angle_list( atom_id1, atom_id2, atom_id3 ) ) return;
 
@@ -435,27 +435,27 @@ ErraserMinimizerMover::add_bond_angle_constraint(
 	std::string pucker = pose.torsion( TorsionID( atom_id1.rsd(), id::BB, DELTA) ) > delta_cutoff ? "south" : "north";
 	Real bond_angle = 0;
 	if ( pose.residue_type( atom_id1.rsd() ).name1() == 'X' ) {
-		bond_angle = 
-			ideal_angle_ncnt(  
-				pose.residue_type( atom_id1.rsd() ).name3(),
-				atom_name2, 
-				atom_id2.rsd() - smallest_rn + 2,
-				atom_name1, 
-				atom_id1.rsd() - smallest_rn + 2,
-				atom_name3,
-				atom_id3.rsd() - smallest_rn + 2
-			);
+		bond_angle =
+			ideal_angle_ncnt(
+			pose.residue_type( atom_id1.rsd() ).name3(),
+			atom_name2,
+			atom_id2.rsd() - smallest_rn + 2,
+			atom_name1,
+			atom_id1.rsd() - smallest_rn + 2,
+			atom_name3,
+			atom_id3.rsd() - smallest_rn + 2
+		);
 	} else {
-		bond_angle = 
-			ideal_angle( pucker, 
-				pose.residue_type( atom_id1.rsd() ).name3(),
-				atom_name2, 
-				atom_id2.rsd() - smallest_rn + 2,
-				atom_name1, 
-				atom_id1.rsd() - smallest_rn + 2,
-				atom_name3,
-				atom_id3.rsd() - smallest_rn + 2
-			);
+		bond_angle =
+			ideal_angle( pucker,
+			pose.residue_type( atom_id1.rsd() ).name3(),
+			atom_name2,
+			atom_id2.rsd() - smallest_rn + 2,
+			atom_name1,
+			atom_id1.rsd() - smallest_rn + 2,
+			atom_name3,
+			atom_id3.rsd() - smallest_rn + 2
+		);
 	}
 
 	if ( bond_angle < 0.001 ) TR.Warning << "WHAT THE HELL????????? " << std::endl;
@@ -519,7 +519,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 	Size const nres( pose.size() );
 	TR << "Enter vary_bond_geometry....." << std::endl;
-	
+
 	TR << "My impression of what residues should maybe move: " << std::endl;
 	TR << "[ ";
 	for ( auto const elem : chunk ) TR << elem << " ";
@@ -534,7 +534,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 		for ( Size j = 1; j <= residue_type.natoms(); j++ ) {
 			if ( !i_want_this_atom_to_move( residue_type, j ) ) continue;
-			
+
 			tree::AtomCOP current_atom( pose.atom_tree().atom( AtomID( j, i ) ).get_self_ptr() );
 			if ( current_atom->is_jump() ) continue;
 
@@ -543,7 +543,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 			if ( !j_distatom ) continue;
 			if ( !i_want_this_atom_to_move( pose, j_distatom->id() ) ) continue;
-			
+
 			mm.set( DOF_ID( AtomID( j, i ), D ), true );
 
 			if ( j_distatom->is_jump() ) continue;
@@ -577,7 +577,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 		if ( !allow_insert( i ) ) continue;
 
 		chemical::ResidueType const & residue_type( pose.residue_type( i ) );
-		
+
 		for ( Size j = 1; j <= residue_type.natoms(); j++ ) {
 			if ( !i_want_this_atom_to_move( residue_type, j ) ) continue;
 
@@ -613,7 +613,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 					Size const q( ang_nbr.atomno() ) ;
 
 					if ( i_want_this_atom_to_move( residue_type2, k ) &&
-						i_want_this_atom_to_move( residue_type3, q ) )  {
+							i_want_this_atom_to_move( residue_type3, q ) )  {
 						add_bond_angle_constraint( j_atomid, nbr, ang_nbr, pose, cst_set );
 					}
 				}
@@ -628,7 +628,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 					Size const q( nbr2.atomno() ) ;
 
 					if ( i_want_this_atom_to_move( residue_type2, k ) &&
-						i_want_this_atom_to_move( residue_type3, q ) )  {
+							i_want_this_atom_to_move( residue_type3, q ) )  {
 						add_bond_angle_constraint( j_atomid, nbr, nbr2, pose, cst_set );
 					}
 				}
@@ -665,7 +665,7 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 
 	return nres + 1;
 }
-	
+
 ///////////////////////////////////////////////////////////
 void
 ErraserMinimizerMover::setup_fold_tree( pose::Pose & pose ) {
@@ -728,7 +728,7 @@ ErraserMinimizerMover::add_fixed_res_constraints(
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 
 	if ( !rsd.has( "P" ) ) return;
-	
+
 	Real const coord_sdev( 0.1 );
 	Size const atm_indexP   = rsd.atom_index( "P" );
 	Size const atm_indexO3  = rsd.atom_index( "O3'" );
@@ -762,10 +762,10 @@ ErraserMinimizerMover::add_fixed_res_constraints(
 
 	pose.constraint_set( cst_set );
 }
-	
+
 void
 fill_gaps_and_remove_isolated_res(
-	std::set< Size > & res_list, 
+	std::set< Size > & res_list,
 	Size const total_res,
 	std::set< Size > & res_remove
 ) {
@@ -781,12 +781,12 @@ fill_gaps_and_remove_isolated_res(
 	if ( *std::prev(res_list.end()) - *std::prev(res_list.end(),2) != 1 ) {
 		res_remove.insert( *std::prev(res_list.end()) );
 	}
-	
+
 	// remove res in res_remove from res_list
 	for ( std::set< Size >::const_iterator it = res_remove.begin(); it != res_remove.end(); ++it ) {
 		res_list.erase( res_list.find( *it ) );
 	}
-	
+
 	// add some new residues
 	std::set< Size > new_res;
 	for ( std::set< Size >::const_iterator it = res_list.begin(); it != std::prev(res_list.end()); ++it ) {
@@ -804,14 +804,14 @@ fill_gaps_and_remove_isolated_res(
 			new_res.insert( n );
 		}
 	}
-	res_list.insert( new_res.begin(), new_res.end() );	
+	res_list.insert( new_res.begin(), new_res.end() );
 }
 
 std::set< Size >
-find_nearby_res( 
-	Pose const & pose, 
+find_nearby_res(
+	Pose const & pose,
 	std::set< Size > res_list_current,
-	Real const dist_cutoff 
+	Real const dist_cutoff
 ) {
 	std::set< Size > res_list;
 	for ( auto const i : res_list_current ) {
@@ -828,16 +828,16 @@ find_nearby_res(
 				// defect
 				continue;
 			}
-			Real const dist_C1 = pose.residue( i ).xyz( dist_atom_i ).distance_squared( 
+			Real const dist_C1 = pose.residue( i ).xyz( dist_atom_i ).distance_squared(
 				pose.residue( j ).xyz( dist_atom_j ) );
-																					   
+
 			if ( dist_C1 > ( dist_cutoff + 8 ) * ( dist_cutoff + 8 ) ) continue;
-				
+
 			// Now that we've passed the neighborhood filter, check all vs all.
-			for ( Size atom_i = 1; atom_i <= pose.residue_type(i).natoms(); ++atom_i ) { 
+			for ( Size atom_i = 1; atom_i <= pose.residue_type(i).natoms(); ++atom_i ) {
 				bool found_qualifying_atom = false;
-				for ( Size atom_j = 1; atom_j <= pose.residue_type(j).natoms(); ++atom_j ) { 
-					Real const dist_sq = pose.residue( i ).xyz( atom_i ).distance_squared( 
+				for ( Size atom_j = 1; atom_j <= pose.residue_type(j).natoms(); ++atom_j ) {
+					Real const dist_sq = pose.residue( i ).xyz( atom_i ).distance_squared(
 						pose.residue( j ).xyz( atom_j ) );
 					if ( dist_sq < dist_cutoff * dist_cutoff ) {
 						res_list.insert(j);
@@ -850,25 +850,25 @@ find_nearby_res(
 				}
 				if ( found_qualifying_atom ) break;
 			}
-			
+
 		}
 	}
 	return res_list;
 }
-	
-void 
+
+void
 erase_if_in_any_slice( utility::vector1< std::set< Size > > const & res_list_sliced, Size const res, std::set< Size > & res_list_new
 ) {
 	for ( auto & res_set : res_list_sliced ) {
-		if ( res_set.find( res ) != res_set.end() ) { 
+		if ( res_set.find( res ) != res_set.end() ) {
 			res_list_new.erase( res_list_new.find( res ) );
 		}
 	}
 }
 
 void
-identify_chunks( 
-	Pose const & pose, 
+identify_chunks(
+	Pose const & pose,
 	utility::vector1< std::set< Size > > & sliced_list_final
 ) {
 	TR << "Identifying chunks..." << std::endl;
@@ -886,7 +886,7 @@ identify_chunks(
 	Size chunk_size = 0;
 	std::set< Size > res_list_unsliced;
 	for ( Size i = 1; i <= total_res; ++i ) res_list_unsliced.insert(i);
-	
+
 	utility::vector1< std::set< Size > > res_list_sliced;
 	std::set< Size > res_list_current;
 	while ( res_list_unsliced.size() != 0 ) {
@@ -899,13 +899,13 @@ identify_chunks(
 			chunk_size = res_list_unsliced.size() / n_chunk_left;
 			n_chunk_left -= 1;
 		}
-		
+
 		std::set< Size > res_list_new = find_nearby_res(pose, res_list_current, 3.5 );
 		//TR << "Adding " << res_list_new.size() << " new residues near res_list_current" << std::endl;
 		//TR << "To wit, res_list_new: [ ";
 		//for ( auto const elem : res_list_new ) TR << elem << " ";
 		//TR << "]" << std::endl;
-		
+
 		std::set< Size > clean_res_list_new;
 		for ( auto const & res_list : res_list_sliced ) {
 			std::set_difference( res_list_new.begin(), res_list_new.end(), res_list.begin(), res_list.end(), inserter(clean_res_list_new,clean_res_list_new.begin()) );
@@ -915,7 +915,7 @@ identify_chunks(
 			res_list_new = clean_res_list_new;
 			clean_res_list_new.clear();
 		}
-		
+
 		if ( res_list_new.size() == 0 && res_list_current.size() < chunk_size * 0.7 ) {
 			//TR << "No new residues identified and the current res list size " <<  res_list_current.size();
 			//TR << " is less than chunk_size * 0.7 " << chunk_size * 0.7 << std::endl;
@@ -930,20 +930,20 @@ identify_chunks(
 				}
 			}
 		}
-		 
-		//TR << "Inserting res_list_new ( " << res_list_new.size() << " residues ) into current " << std::endl; 
+
+		//TR << "Inserting res_list_new ( " << res_list_new.size() << " residues ) into current " << std::endl;
 		res_list_current.insert( res_list_new.begin(), res_list_new.end() );
-		 
+
 		if ( res_list_current.size() >= chunk_size || res_list_new.size() == 0 ) {
 			//TR << "We have exceeded chunk size with res_list_current or failed at res_list_new" << std::endl;
-		
+
 			//TR << "res_list_current: [ ";
 			//for ( auto const elem : res_list_current ) TR << elem << " ";
 			//TR << "]" << std::endl;
-			
+
 			std::set< Size > unused;
 			fill_gaps_and_remove_isolated_res(res_list_current, total_res, unused );
-		 
+
 			//TR << "Gonna remove res_list_current from res_list_unsliced" << std::endl;
 			for ( auto const & res : res_list_current ) {
 				if ( res_list_unsliced.find(res) != res_list_unsliced.end() ) {
@@ -951,7 +951,7 @@ identify_chunks(
 				}
 			}
 			//res_list_current = sorted(res_list_current)
-					 
+
 			//TR << "Gonna add this chunk to my lists of chunks" << std::endl;
 			res_list_sliced.push_back( res_list_current );
 			sliced_list_final.push_back( res_list_current );
@@ -967,10 +967,10 @@ identify_chunks(
 						just_res.insert( *res );
 						std::set< Size > res_list_near = find_nearby_res( pose, just_res, 2.0 );
 						for ( utility::vector1< std::set< Size > >::iterator res_list = sliced_list_final.begin();
-							 res_list != sliced_list_final.end(); ++res_list ) {
+								res_list != sliced_list_final.end(); ++res_list ) {
 							bool can_break = false;
 							for ( std::set< Size >::iterator res_near = res_list_near.begin();
-								 res_near != res_list_near.end(); ++res_near ) {
+									res_near != res_list_near.end(); ++res_near ) {
 								if ( res_list->find(*res_near) != res_list->end() ) {
 									res_list->insert(*res);
 									res_remove.insert(*res);
@@ -999,14 +999,14 @@ identify_chunks(
 }
 
 void
-ErraserMinimizerMover::turn_off_for_chunks( 
-	MoveMap & mm, 
+ErraserMinimizerMover::turn_off_for_chunks(
+	MoveMap & mm,
 	Pose const & pose,
-	std::set< Size > const & chunk 
+	std::set< Size > const & chunk
 ) {
 	// Turn off all DOFs that ARE NOT in chunk_i
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) { 
-		if ( chunk.find( i ) == chunk.end() ) { 
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( chunk.find( i ) == chunk.end() ) {
 			mm.set_chi( i, false );
 			mm.set_bb(  i, false );
 			for ( Size j = 1; j <= pose.residue_type( i ).natoms(); ++j ) {
@@ -1016,7 +1016,7 @@ ErraserMinimizerMover::turn_off_for_chunks(
 			}
 		}
 	}
-	
+
 	// AMW TODO: Turn ON all DOFs that cross between chunk_i and the universe
 }
 
@@ -1025,13 +1025,13 @@ ErraserMinimizerMover::turn_off_for_chunks(
 
 // Main workhorse function
 void
-ErraserMinimizerMover::apply( 
-	Pose & pose 
+ErraserMinimizerMover::apply(
+	Pose & pose
 ) {
 	core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
 
 	if ( ready_set_only_ ) return;
-	
+
 	// Setup fold tree using user input or using Rhiju's function
 	if ( cutpoint_list_.size() == 0 ) {
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
@@ -1048,7 +1048,7 @@ ErraserMinimizerMover::apply(
 	// Output the sequence
 	std::string const & working_sequence = pose.sequence();
 	TR << "Pose sequence = " << working_sequence << std::endl;
-	
+
 	TR << "Do we have to flip pyrimidines?" << std::endl;
 	// Try flipping the pyrimidines
 	if ( attempt_pyrimidine_flip_ ) {
@@ -1061,7 +1061,7 @@ ErraserMinimizerMover::apply(
 	TR << "Apparently not." << std::endl;
 
 	// If we have more than 150 residues, we need to "slice." This involves
-	// designing ~100-residue chunks of the pose and making only those DOFs 
+	// designing ~100-residue chunks of the pose and making only those DOFs
 	// visible to the minimizer. All residues of the pose will be present.
 	// Each minimization gets its own little output file. Notably, while we
 	// must figure out the chunks every time, we can skip chunks for which
@@ -1079,7 +1079,7 @@ ErraserMinimizerMover::apply(
 		}
 		TR << "]" << std::endl;
 	}
-	
+
 	Size first_chunk = 1;
 	for ( ; first_chunk <= n_chunk; ++first_chunk ) {
 		std::stringstream inname;
@@ -1094,13 +1094,13 @@ ErraserMinimizerMover::apply(
 				found_token = true;
 			}
 		}
-		if ( !found_token ) { 
+		if ( !found_token ) {
 			// this out is bad
 			//first_chunk--;
 			break;
 		}
 	}
-	
+
 	//Set the MoveMap, avoiding moving the virtual residue
 	TR << "Setting up movemap ..." << std::endl;
 	kinematics::MoveMap mm;
@@ -1130,8 +1130,8 @@ ErraserMinimizerMover::apply(
 		if ( pose.residue_type( dstream ).aa() == core::chemical::aa_vrt ) continue;
 
 		if ( fixed_res_list_.size() != 0 &&
-			fixed_res_list_.find( ustream ) == fixed_res_list_.end() &&
-			fixed_res_list_.find( dstream ) == fixed_res_list_.end() ) {
+				fixed_res_list_.find( ustream ) == fixed_res_list_.end() &&
+				fixed_res_list_.find( dstream ) == fixed_res_list_.end() ) {
 			mm.set_jump( i, true );
 		}
 	}
@@ -1144,7 +1144,7 @@ ErraserMinimizerMover::apply(
 	}
 
 	for ( std::set< Size >::const_iterator fixed_res_num = fixed_res_list_.begin(); fixed_res_num != fixed_res_list_.end(); ++fixed_res_num ) {
-		
+
 		TR << *fixed_res_num << " ";
 
 		add_fixed_res_constraints( pose, *fixed_res_num, virtual_res_pos );
@@ -1190,7 +1190,7 @@ ErraserMinimizerMover::apply(
 		}
 		pose.constraint_set( cst_set );
 	}
-	
+
 	for ( Size chunk_i = first_chunk; chunk_i <= n_chunk; ++chunk_i ) {
 		time_t chunk_start = time(0);
 
@@ -1198,7 +1198,7 @@ ErraserMinimizerMover::apply(
 		outname << "full_minimize_temp_" << chunk_i << ".out";
 		std::ofstream out( outname.str() );
 		out << "Starting chunk " << chunk_i << "..." << std::endl;
-		
+
 		// Constrain bonded atom sets to the starting geometry
 		kinematics::MoveMap chunk_mm( mm );
 		if ( vary_bond_geometry_ ) {
@@ -1208,24 +1208,24 @@ ErraserMinimizerMover::apply(
 		if ( n_chunk != 1 ) {
 			turn_off_for_chunks( chunk_mm, pose, chunks[chunk_i] );
 		}
-		
+
 		protocols::stepwise::modeler::output_movemap( chunk_mm, pose );
 		scorefxn_->show( TR, pose );
 		Real const score_before = ( ( *scorefxn_ )( pose ) );
 		Real const edens_score_before = ( ( *edens_scorefxn_ )( pose ) );
-		
+
 		protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-		
+
 		// Start Minimizing the Full Structure
 		Pose const start_pose = pose;
 		AtomTreeMinimizer minimizer;
 		float const dummy_tol( 0.00000001 );
-		
+
 		TR << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
 		MinimizerOptions min_options_dfpmin( "lbfgs_armijo_nonmonotone", dummy_tol, true, false, false );
 		min_options_dfpmin.max_iter( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 		minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin );
-		
+
 		scorefxn_->show( TR, pose );
 		Real const score = ( ( *scorefxn_ )( pose ) );
 		Real const edens_score = ( ( *edens_scorefxn_ )( pose ) );
@@ -1233,9 +1233,9 @@ ErraserMinimizerMover::apply(
 			TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
 			TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
 			TR << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
-			
+
 			pose = start_pose;
-			
+
 			MinimizerOptions min_options_dfpmin_no_nb( "lbfgs_armijo_nonmonotone", dummy_tol, false, false, false );
 			min_options_dfpmin_no_nb.max_iter( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 			minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin_no_nb );

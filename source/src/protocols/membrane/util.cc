@@ -436,7 +436,7 @@ is_membrane_moveable_by_itself( core::pose::Pose & pose ) {
 
 		// Iterate through the edge list and check that only one jump
 		// connects to the membrane residue
-		 for ( auto const & it : current_ft ) {
+		for ( auto const & it : current_ft ) {
 
 			// If a an edge is a jump edge that is not the membrane jump
 			// but has a start or end point that is the membrane rsd,

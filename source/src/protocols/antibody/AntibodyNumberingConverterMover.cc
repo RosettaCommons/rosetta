@@ -59,16 +59,15 @@ AntibodyNumberingConverterMover::AntibodyNumberingConverterMover(
 void
 AntibodyNumberingConverterMover::set_defaults(){
 	using namespace basic::options;
-	
+
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	
+
 	//NOTE - this is to same to make sure we actually set a conversion and we fail if this is still the default.
 	from_scheme_ = manager.numbering_scheme_string_to_enum( option[ OptionKeys::antibody::input_ab_scheme]() );
-	
-	if ( option[ OptionKeys::antibody::output_ab_scheme].user() ){
+
+	if ( option[ OptionKeys::antibody::output_ab_scheme].user() ) {
 		to_scheme_ = manager.numbering_scheme_string_to_enum( option[ OptionKeys::antibody::output_ab_scheme]() );
-	}
-	else {
+	} else {
 		to_scheme_ = Chothia_Scheme;
 	}
 }
@@ -79,13 +78,13 @@ AntibodyNumberingConverterMover::set_scheme_conversion(
 
 	AntibodyNumberingSchemeEnum const from,
 	AntibodyNumberingSchemeEnum const to
-	
+
 ){
 	from_scheme_ = from;
 	to_scheme_ = to;
-	
+
 }
-	
+
 
 AntibodyNumberingConverterMover::~AntibodyNumberingConverterMover(){}
 
@@ -97,89 +96,89 @@ AntibodyNumberingConverterMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
-	if (! (tag->hasOption("from") && tag->hasOption("to") ) ){
+	if ( ! (tag->hasOption("from") && tag->hasOption("to") ) ) {
 		utility_exit_with_message("AntibodyNumberingConverterMover: 'from' and 'to' must be specified to do the conversion!");
 	}
-	
+
 	AntibodyEnumManager manager = AntibodyEnumManager();
-	
+
 	std::string from = tag->getOption<std::string>("from");
 	std::string to = tag->getOption<std::string>("to");
-	
 
-	if (! manager.numbering_scheme_is_present(to)){
+
+	if ( ! manager.numbering_scheme_is_present(to) ) {
 		utility_exit_with_message("Numbering scheme unknown: "+ from);
 	}
-	if (! manager.numbering_scheme_is_present(from)){
+	if ( ! manager.numbering_scheme_is_present(from) ) {
 		utility_exit_with_message("Numbering scheme unknown: "+ to);
 	}
 	from_scheme_ = manager.numbering_scheme_string_to_enum(from);
 	to_scheme_ = manager.numbering_scheme_string_to_enum(to);
-	
+
 }
 
 void
 AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 {
 	using namespace core::pose;
-	
-	if (from_scheme_ == to_scheme_){
+
+	if ( from_scheme_ == to_scheme_ ) {
 		utility_exit_with_message("AntibodyNumberingConverterMover: Cannot convert as schemes are identical.  You probably did not set the conversion scheme!");
 	}
-	
-	if ( ! ( has_chain( 'L', pose) || has_chain('H', pose) ) ){
+
+	if ( ! ( has_chain( 'L', pose) || has_chain('H', pose) ) ) {
 		utility_exit_with_message("AntibodyNumberingConverterMover only works with L and H chains. ");
 	}
-	
-	
+
+
 	AntibodyEnumManagerCOP manager = AntibodyEnumManagerCOP( new AntibodyEnumManager() );
 	AntibodyNumberingParser numbering_parser = AntibodyNumberingParser(manager);
 	AntibodyNumbering const numbering = numbering_parser.get_antibody_numbering(from_scheme_, North); //North is ambiguous - we really don't care here.
-	
+
 	utility::vector1<PDBLandmarkOP> current_landmarks = numbering.numbering_scheme_transform.at(from_scheme_);
 	utility::vector1<PDBLandmarkOP> new_landmarks = numbering.numbering_scheme_transform.at(to_scheme_);
-	
+
 	//Renumbering logic is always so much fun.  Appologies for the confusing nature of all this.
-	
+
 	//core::Size last_L_resnum = core::pose::chain_end_res(pose, get_chain_id_from_chain('L', pose));
 	//core::Size last_H_resnum = core::pose::chain_end_res(pose, get_chain_id_from_chain('H', pose));
-	
-	
-	
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-	
+
+
+
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+
 		core::Size new_resnum = 0;
 		char new_icode = ' ';
-		
+
 		core::Size chain_num = pose.chain(i);
 		char chain = get_chain_from_chain_id( chain_num, pose );
-		
-		if ( ! ( chain == 'L' || chain == 'H' ) ){
+
+		if ( ! ( chain == 'L' || chain == 'H' ) ) {
 			continue;
 		}
-		
+
 		PDBLandmark query_landmark = PDBLandmark(chain, pose.pdb_info()->number( i ), pose.pdb_info()->icode( i ) );
-		
+
 		bool landmark_missing = true;
-		
+
 		PDBLandmarkCOP new_landmark = get_matching_landmark(numbering, query_landmark, from_scheme_, to_scheme_);
-		
+
 		//Resnum is the same.  Nothing to be done.
-		if (*new_landmark == query_landmark){
+		if ( *new_landmark == query_landmark ) {
 			continue;
 		}
-		
-		if (new_landmark->resnum() != 0 ){
-			
+
+		if ( new_landmark->resnum() != 0 ) {
+
 			//TR << "Renumbering resnum "<< i << ", <" <<query_landmark.get_string() << "> to <" << new_landmark->get_string() << ">" << std::endl;
-			
+
 			landmark_missing = false;
 			new_resnum = new_landmark->resnum();
 			new_icode = new_landmark->insertion_code();
-			
+
 		}
 		//Here, we don't have a conversion.
-		
+
 		//Posibilities:
 		// 1) Res is part of constant region.  Here, we don't have conversion info, and we really don't care.
 		//
@@ -202,74 +201,69 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 		//
 		//         ! Should never happen. Unknown how to deal with properly. Utility_exit, refer to PyIgClassify.
 		//
-		
-		if (landmark_missing){
+
+		if ( landmark_missing ) {
 			//Extend it if we are at the end.
-			if (i != 1){
+			if ( i != 1 ) {
 				core::Size last_resnum = pose.pdb_info()->number( i -1 );
 				char const & last_icode = pose.pdb_info()->icode( i - 1 );
-				
+
 				///////////////////////////////////
 				//Need to know if next replacement is the same new_resnum.  If it is, then we have to START to use insertion codes
 				//So, we need to match figure out when the next match is and if that match is the same chain and same resnum as last_resnum.
 
 				bool needs_new_icode = false;
-				
+
 				//We also want to know if we are really at the end of possible matches.  If so, we don't want to increment icode, even if the last resnum has an icode.
-				
+
 				bool downstream_matches = false;
-				
-				for (core::Size xx = i; xx <= pose.total_residue(); ++xx){
+
+				for ( core::Size xx = i; xx <= pose.total_residue(); ++xx ) {
 					core::Size xx_chain = pose.chain(xx); //Here because for some reason we get an int for chain and I don't have time to refactor this all over Rosetta.
-					
-					if (xx_chain != chain_num) break; //End of chain
-					
+
+					if ( xx_chain != chain_num ) break; //End of chain
+
 					PDBLandmark xx_landmark = PDBLandmark(chain, pose.pdb_info()->number( xx ), pose.pdb_info()->icode( xx ));
 					PDBLandmarkCOP xx_match_landmark = get_matching_landmark(numbering, xx_landmark, from_scheme_, to_scheme_);
-					
-					if (xx_match_landmark->resnum() == 0){
+
+					if ( xx_match_landmark->resnum() == 0 ) {
 						continue;
-					}
-					else {
+					} else {
 						downstream_matches = true;
-						if (last_resnum == (xx_match_landmark->resnum() - 1) ){
+						if ( last_resnum == (xx_match_landmark->resnum() - 1) ) {
 							needs_new_icode = true;
 						}
 						break;
 					}
-					
+
 				}
 				///////////////////////////////////
-				
+
 				//New Icode
-				if (needs_new_icode){
+				if ( needs_new_icode ) {
 					new_resnum = last_resnum;
 					new_icode = utility::ALPHANUMERICS.at(0);
-				}
-				//Increment Resnum
-				else if (last_icode == ' ' || ! downstream_matches ){
+				} else if ( last_icode == ' ' || ! downstream_matches ) {
+					//Increment Resnum
 					new_resnum = last_resnum +1;
 					new_icode = ' ';
-				}
-				//Increment Icode
-				else{
+				} else {
+					//Increment Icode
 					std::size_t pos = utility::ALPHANUMERICS.find( last_icode );
-					if (pos!=std::string::npos && pos != utility::ALPHANUMERICS.size() -1 ){
+					if ( pos!=std::string::npos && pos != utility::ALPHANUMERICS.size() -1 ) {
 						new_icode = utility::ALPHANUMERICS.at(pos+1);
-					}
-					else{
+					} else {
 						utility_exit_with_message( "Not enough icodes for CDR length! Last icode"+utility::to_string(last_icode));
 					}
 				}
-			}
-			else{
+			} else {
 				utility_exit_with_message("First resnum not found.  Renumber into a numbering scheme first.  Try PyIgClassify. "+query_landmark.get_string());
 			}
 		}
-		if (new_resnum == 0){
+		if ( new_resnum == 0 ) {
 			utility_exit_with_message("ERROR in conversion. Should never reach here!");
 		}
-		
+
 		pose.pdb_info()->number(i, new_resnum  );
 		pose.pdb_info()->icode( i, new_icode );
 
@@ -281,10 +275,10 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 				utility::to_string(new_landmark->resnum()) + " " + new_landmark->chain() + " " + new_landmark->insertion_code() + "\n";
 			utility_exit_with_message(msg);
 		}
-		
+
 		//This does not need to be fast code, so we can check every time.
 		assert(resnum == i);
-	
+
 	}
 	TR << "Renumbering complete." << std::endl;
 }

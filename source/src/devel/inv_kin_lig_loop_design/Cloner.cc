@@ -427,7 +427,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 	while ( ii <= pose0->size() ) {
 		///while( iter != pose0->res_end() ) {
 
-		 for ( auto const & k : indels ) {
+		for ( auto const & k : indels ) {
 
 			if ( r == k.lo_res ) {
 

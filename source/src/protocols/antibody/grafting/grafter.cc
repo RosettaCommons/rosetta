@@ -178,7 +178,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	if ( !(scs.h1 and scs.h2 and scs.h3 and scs.l1 and scs.l2 and scs.l2 and scs.l3 and scs.frh and scs.frl and scs.orientation) ) throw _AE_grafting_failed_("SimpleGrafter::graft: not all nessesary SCS results is specified!");
 
 	PoseOP result = construct_antibody(A, scs, prefix, suffix, database);
-	
+
 	AntibodyFramework trimmed_heavy_fr = A.heavy_framework();
 	AntibodyFramework trimmed_light_fr = A.light_framework();
 
@@ -193,18 +193,18 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		{"h1", 'H', scs.h1->pdb,  an.heavy.cdr1}, {"h2", 'H', scs.h2->pdb,  an.heavy.cdr2}, {"h3", 'H', scs.h3->pdb,  an.heavy.cdr3},
 		{"l1", 'L', scs.l1->pdb,  an.light.cdr1}, {"l2", 'L', scs.l2->pdb,  an.light.cdr2}, {"l3", 'L', scs.l3->pdb,  an.light.cdr3},
 	};
-	
+
 	AntibodyEnumManager enum_manager = AntibodyEnumManager();
-	
+
 	result->dump_pdb("result_pre_graft.pdb");
-	
+
 	for(auto &g : G) {
 
 		TR << "Attaching CDR loop: " << TR.Bold << g.name << ", from pdb: " << g.pdb << std::endl;
 
 		string pdb_name = database + "/antibody_database/pdb" + g.pdb + "_chothia.pdb"; //These are FULL antibody structures...
 		core::pose::PoseOP cdr = core::import_pose::pose_from_file(pdb_name, core::import_pose::PDB_file);
-		
+
 		if( !g.cdr_numbering.size() ) throw _AE_grafting_failed_( string("Empty template:") + g.pdb +" supplied as cdr for region:" + g.name );
 
 		PDB_N pdb_n_cdr_first( g.cdr_numbering.front() );
@@ -215,9 +215,9 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 		if( !pose_n_cdr_first ) throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.front() + " in template:" + g.pdb + " region:"+ g.name);
 		if( !pose_n_cdr_last )  throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.back() + " in template:" + g.pdb  + " region:"+ g.name);
-		
+
 		if (optimal_graft){
-		
+
 			//AntibodyInfoOP scaffold_ab_info = AntibodyInfoOP( new AntibodyInfo( *result )); //Only needs AbInfo for on-the-fly numbering conversion.
 			AntibodyCDRGrafter grafter = AntibodyCDRGrafter();
 			CDRNameEnum cdr_to_graft = enum_manager.cdr_name_string_to_enum(g.name);
@@ -227,18 +227,18 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			grafter.set_optimize_cdrs( false ); //We will do this later.
 			grafter.set_dihedral_constraint_weight( .3 ); //Value Used originally for ab design
 			grafter.set_idealize_insert( false ); //Take bond angles and lengths from original grafted structure.  If you want to optimize these, use cart-min at the end of RosettaAntibody.
-			
+
 			std::cout << "Grafting "<< g.name << " Using mover" << std::endl;
 			grafter.set_stop_after_closure(false);
 			grafter.apply(*result);
-			
-			
+
+
 		}
 		else {
-		
+
 			const core::Size overlap = 2;
 			core::Size insert_flexibility = 2;
-			
+
 			pose_n_cdr_first -= overlap;
 			pose_n_cdr_last += overlap;
 
@@ -249,20 +249,20 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			//TR << "Deleting residues: " << "1:" << pose_n_cdr_first-1 << " from cdr template... [template size: " << cdr->total_residue() << "]" << std::endl;
 			if( pose_n_cdr_first > 1 ) cdr->delete_residue_range_slow(1, pose_n_cdr_first-1);
 
-			
-			
+
+
 			Size result_pose_cdr_first = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
 			Size result_pose_cdr_last  = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
 
 			if( !result_pose_cdr_first ) throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.front() + " in superimposed pdb. Region:" + g.name);
 			if( !result_pose_cdr_last )  throw _AE_grafting_failed_( string("Could not find residue:") + g.cdr_numbering.back() +  " in superimposed pdb. Region:" + g.name);
-			
+
 			result_pose_cdr_first -= overlap;
-			
+
 			result_pose_cdr_last += overlap;
 
 			if( result_pose_cdr_first < 1  or result_pose_cdr_last > result->total_residue() ) throw _AE_grafting_failed_( string("There is not enough overlap residue in superimposed template! region:") + g.name);
-		
+
 			TR << "Grafting..." << std::endl;
 
 			// Reasons for +1/-1: Jared's code uses an "insert pose into pose" mover written by Steven Lewis where the "start"
@@ -271,25 +271,25 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			// values one residue outside of the loop on either end. Since we define our start/end points as the first/last residues
 			// of the loop, we have to subtract/add one to match up with the terminology.
 			protocols::grafting::CCDEndsGraftMoverOP grafter(new protocols::grafting::CCDEndsGraftMover(result_pose_cdr_first+1, result_pose_cdr_last-1, *cdr, overlap, overlap, true) );
-			
+
 			//JAB - increasing flexibility of stem of insert from 0 to 2 to fix disulfide issues in L1.
 			//  This needs to be refactored to use both CCDEndsGraftMover and AnchoredGraftMover if if the loop is not closed,
 			//   then a dihedral-constrained minimization of the CDR loops with at least a few residues into the stem.
 			//   This is a drastic change, that I don't think is ready to be done now...
-			
+
 			grafter->set_cycles(128);
 			grafter->set_scaffold_flexibility(3, 3);
 			grafter->set_insert_flexibility(insert_flexibility, insert_flexibility);
 			grafter->stop_at_closure( false );
 			grafter->copy_pdbinfo( true );
 			grafter->apply(*result);
-			
+
 		}
-		
+
 		result->dump_pdb(prefix + "debug-model-A" + suffix + ".pdb");
 	}
-	
-	
+
+
 	// prior to dumping, restore proper sequence to CDRs as grafter copies over both structure and sequence from the template
 	AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo(*result) );
 
@@ -303,9 +303,9 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		{ "l2", ab_info->get_CDR_start(l2, *result), ab_info->get_CDR_end(l2, *result),  A.l2_sequence() },
 		{ "l3", ab_info->get_CDR_start(l3, *result), ab_info->get_CDR_end(l3, *result),  A.l3_sequence() },
 	};
-	
+
 	result->dump_pdb(prefix + "debug-model-B" + suffix + ".pdb");
-	
+
 	for (auto &h : H) {
 		// check for matching lengths of cdr and cdr sequence
 		// everything should be kosher since we're using the chothia definition throughout (AFAIK)
@@ -317,40 +317,40 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		}
 
 	}
-	
+
 	result->dump_pdb(prefix + "debug-model-B" + suffix + ".pdb");
-	
+
 	if (optimal_graft || optimize_cdrs){
 		//Optmize all CDRs and DE loop to incorporate the new CDRs using dihedral constraints (including stem residues into the framework).
-		
+
 		// Default ab_design scorefunction has dihedral constraints on at a decent weight.
 		// Default relax is to relax CDRs and optimize neighbor side-chains.  The neighbors are updated every min step,
 		//  This is exactly what we use for antibody design.  By default, no design is done.
-		
+
 		result->dump_pdb(prefix + "pre-model" + suffix + ".pdb");
 		TR << "Optimizing post-grafted CDRs including CDR4" << std::endl;
 		//AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo(*result));
-		
+
 		constraints::CDRDihedralConstraintMover cst_mover = constraints::CDRDihedralConstraintMover(ab_info);
 		cst_mover.set_use_cluster_csts( false );
-		
+
 		for (core::Size i = 1; i <= CDRNameEnum_proto_total; ++i){
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			cst_mover.set_cdr(cdr);
 			cst_mover.apply(*result);
 		}
-		
+
 		//Relax the CDRs and DE loop.
 		design::GeneralAntibodyModeler modeler = design::GeneralAntibodyModeler(ab_info);
 		modeler.set_cdr_range( CDRNameEnum_start, CDRNameEnum_proto_total, true );
 		modeler.set_overhang( 2 ); //3 Residue overhang to account for 3 residue flexibility in CCDEndsGraftMover.
 		modeler.relax_cdrs( * result );
-		
+
 		//Remove our added constraints.
 		result->remove_constraints(); //Since we just created the antibody, this should be OK here.
-		
+
 	}
-	
+
 	result->dump_pdb(prefix + "model" + suffix + ".pdb");
 
 	return result;

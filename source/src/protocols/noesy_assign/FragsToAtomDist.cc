@@ -183,7 +183,7 @@ void initialize_group_list(
 		//  std::string name( utility::trim( pose.residue_type( pos ).atom_name( iatom1 ) ) );
 		MethylNames const& methyls( methyl_lib[ rsd.aa() ] );
 		AtomGrps new_grps;
-		 for ( auto const & methyl : methyls ) {
+		for ( auto const & methyl : methyls ) {
 			SizeList indices;
 			tr.Info << "pos " << pos << " " << methyl.first << " ";
 			for ( auto ait = methyl.second.begin(); ait != methyl.second.end(); ++ait ) {

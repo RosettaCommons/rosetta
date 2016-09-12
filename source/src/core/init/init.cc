@@ -832,8 +832,8 @@ void check_deprecated_flags(){
 	if ( option[LoopModel::input_pdb].user() ) {
 		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
 	}
-	
-	if ( option[antibody::numbering_scheme].user() ){
+
+	if ( option[antibody::numbering_scheme].user() ) {
 		error_messages.push_back("-numbering_scheme option no longer used.  Please use -input_ab_scheme instead. ");
 	}
 

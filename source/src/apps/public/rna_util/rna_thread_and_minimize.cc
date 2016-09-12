@@ -86,45 +86,45 @@ OPT_KEY( Boolean, long_strategy )
 /*void
 setup_mask( utility::vector1< sequence::SequenceOP > const & sequences_from_alignment, ObjexxFCL::FArray1D_bool & sequence_mask )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	
-	utility::vector1< std::string > sequences;
-	for ( Size n=1; n <= sequences_from_alignment.size(); n++ )  sequences.push_back( sequences_from_alignment[n]->sequence() );
-	
-	Size const alignment_length = sequences[1].size();
-	sequence_mask = ObjexxFCL::FArray1D_bool( alignment_length, false );
-	
-	///////////////////////////////////////////////////////////////
-	// First pass -- rule out any part that is gapped in the alignment.
-	for ( Size i = 1; i <= alignment_length; i++ ) {
-		
-		bool found_a_gap( false );
-		for ( Size n = 1; n <= sequences.size(); n++ ) {
-			if ( sequences[n][i-1] == '-' ) {
-				found_a_gap = true;
-				break;
-			}
-		}
-		
-		if ( !found_a_gap ) {
-			sequence_mask( i ) = true;
-		}
-		
-	}
-	
-	// Save into a file.
-	Size count( 0 );
-	if ( option[ sequence_mask_file ].user() ) {
-		utility::io::ozstream out( option[ OptionKeys::sequence_mask_file ]() );
-		for ( Size i = 1; i <= alignment_length; i++ ) {
-			if ( sequences[1][i-1] == '-' ) continue; //Assume native numbering
-			count++;
-			out << sequence_mask(i);
-		}
-		out << std::endl;
-		out.close();
-	}
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+
+utility::vector1< std::string > sequences;
+for ( Size n=1; n <= sequences_from_alignment.size(); n++ )  sequences.push_back( sequences_from_alignment[n]->sequence() );
+
+Size const alignment_length = sequences[1].size();
+sequence_mask = ObjexxFCL::FArray1D_bool( alignment_length, false );
+
+///////////////////////////////////////////////////////////////
+// First pass -- rule out any part that is gapped in the alignment.
+for ( Size i = 1; i <= alignment_length; i++ ) {
+
+bool found_a_gap( false );
+for ( Size n = 1; n <= sequences.size(); n++ ) {
+if ( sequences[n][i-1] == '-' ) {
+found_a_gap = true;
+break;
+}
+}
+
+if ( !found_a_gap ) {
+sequence_mask( i ) = true;
+}
+
+}
+
+// Save into a file.
+Size count( 0 );
+if ( option[ sequence_mask_file ].user() ) {
+utility::io::ozstream out( option[ OptionKeys::sequence_mask_file ]() );
+for ( Size i = 1; i <= alignment_length; i++ ) {
+if ( sequences[1][i-1] == '-' ) continue; //Assume native numbering
+count++;
+out << sequence_mask(i);
+}
+out << std::endl;
+out.close();
+}
 }*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,20 +140,20 @@ remove_dashes( std::string const & s ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Find which template to use, based on input pdb name, or, if that fails, the template sequence.
 Size
-figure_out_which_sequence_is_template( 
-									  utility::vector1< sequence::SequenceOP > const & sequences_from_alignment,
-									  pose::Pose const & template_pose,
-									  std::string const & template_file_name ) {
-	
+figure_out_which_sequence_is_template(
+	utility::vector1< sequence::SequenceOP > const & sequences_from_alignment,
+	pose::Pose const & template_pose,
+	std::string const & template_file_name ) {
+
 	Size which_sequence( 0 );
-	
+
 	for ( Size n=1; n<=sequences_from_alignment.size(); n++ ) {
 		if ( sequences_from_alignment[n]->id() == template_file_name ) {
 			which_sequence = n;
 			break;
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////
 	// If could not find template based on name, try based on sequence...
 	std::string const template_sequence = template_pose.sequence();
@@ -166,27 +166,27 @@ figure_out_which_sequence_is_template(
 		}
 		if ( which_sequence > 0 )  std::cout  << "Using " << sequences_from_alignment[which_sequence]->id() << " from alignment FASTA file, as its sequence corresponds to input template PDB!" << std::endl;
 	}
-	
+
 	if ( which_sequence == 0 )  utility_exit_with_message( "Could not figure out which sequence in fasta file was the template based on name or on sequence!!" );
-	
+
 	if ( which_sequence == 1 ) std::cout << "WARNING! WARNING! Assuming template corresponds to first sequence in the alignment FASTA file " <<  sequences_from_alignment[which_sequence]->id() <<  ". But that first sequence should be the target sequence!" << std::endl;
-	
+
 	runtime_assert( template_sequence == remove_dashes( sequences_from_alignment[which_sequence]->ungapped_sequence()  ) );
-	
-	return which_sequence;	
+
+	return which_sequence;
 }
 
 /*void
-change_sequence_accordingly( 
-	std::string & target_sequence_from_alignment, 
-	Size const seqpos, 
-	std::string const & new_identity
-) { 
-	std::string temp_seq = "";
-	Size additional_counter = 0;
-	for ( Size ii = 0; ii < target_sequence_from_alignment.size(); ++ii ) {
-		if ( )temp_seq += target_sequence_from_alignment[ ii ];
-	}
+change_sequence_accordingly(
+std::string & target_sequence_from_alignment,
+Size const seqpos,
+std::string const & new_identity
+) {
+std::string temp_seq = "";
+Size additional_counter = 0;
+for ( Size ii = 0; ii < target_sequence_from_alignment.size(); ++ii ) {
+if ( )temp_seq += target_sequence_from_alignment[ ii ];
+}
 }*/
 
 ///////////////////////////////////////////////////////////////
@@ -200,7 +200,7 @@ my_main( void* )
 	using namespace core::scoring;
 	using namespace core::pose;
 	using namespace core::sequence;
-	
+
 	////////////////////////////////////////////////
 	//Read in template pdb.
 	Pose pose;
@@ -208,59 +208,59 @@ my_main( void* )
 	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	core::import_pose::pose_from_file( pose, *rsd_set, template_file , core::import_pose::PDB_file);
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
-	
+
 	////////////////////////////////////////////////
 	//Read in fasta file or user-inputted sequence
 	std::string template_sequence_from_alignment, target_sequence_from_alignment, mutlist;
 	ObjexxFCL::FArray1D_bool sequence_mask;
 	if ( option[ seq ].user() ) {
-		
+
 		runtime_assert( ! option[ in::file::fasta ].user() );
 		template_sequence_from_alignment = pose.annotated_sequence();
 		target_sequence_from_alignment = option[ seq ]();
 		std::cout << "Input pose seq: " << template_sequence_from_alignment << std::endl;
 		std::cout << "Input tgt seq:  " << target_sequence_from_alignment << std::endl;
-		
+
 		std::cout << "Clean pose seq: " << core::pose::rna::remove_bracketed(template_sequence_from_alignment) << std::endl;
 		std::cout << "Clean tgt seq:  " << core::pose::rna::remove_bracketed(target_sequence_from_alignment) << std::endl;
 		if ( core::pose::rna::remove_bracketed(target_sequence_from_alignment).size() != core::pose::rna::remove_bracketed(template_sequence_from_alignment).size() ) utility_exit_with_message( "Input sequence from -seq should match size of template pose specified by -s!" );
-		
+
 	} else if ( option[ mutation_list ].user() ) {
-		
+
 		template_sequence_from_alignment = pose.annotated_sequence();
 		target_sequence_from_alignment = pose.annotated_sequence();
 		mutlist = option[ mutation_list ].value();
 		// Mutate target sequence with options in mutation list.
 		/*utility::vector1< std::string > mutation_list = utility::string_split( option[ mutation_list ].value(), ' ' );
 		for ( auto const & mutation : mutation_list ) {
-			// expect: seqpos,identity
-			std::istringstream iss( mutation );
-			Size seqpos, std::string new_identity;
-			std::getline( iss, seqpos, ',');
-			iss >> new_identity;//std::getline( iss, identity, ',')
-			//change_sequence_accordingly( target_sequence_from_alignment, seqpos, new_identity );
+		// expect: seqpos,identity
+		std::istringstream iss( mutation );
+		Size seqpos, std::string new_identity;
+		std::getline( iss, seqpos, ',');
+		iss >> new_identity;//std::getline( iss, identity, ',')
+		//change_sequence_accordingly( target_sequence_from_alignment, seqpos, new_identity );
 		}*/
 	}
-	
+
 	protocols::farna::RNAThreadAndMinimizeMoverOP rtm( new protocols::farna::RNAThreadAndMinimizeMover(
 		target_sequence_from_alignment,
 		template_sequence_from_alignment,
 		option[ long_strategy ](),
-		option[ input_sequence_type ](), 
+		option[ input_sequence_type ](),
 		mutlist,
 		option[ insertion_list ].value()
-	) );
-	    
+		) );
+
 	protocols::jd2::JobDistributor::get_instance()->go( rtm );
-	
+
 	core::pose::rna::virtualize_5prime_phosphates( pose );
-	
+
 	std::string outfile( "threaded.pdb" );
 	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();
-	
+
 	std::cout << "Outputting: " << outfile << std::endl;
 	pose.dump_pdb( outfile );
-	
+
 	exit( 0 );
 }
 

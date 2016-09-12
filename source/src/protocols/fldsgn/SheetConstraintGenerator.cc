@@ -137,7 +137,7 @@ SheetConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	protocols::fldsgn::topology::SS_Info2_OP ssinfo( new protocols::fldsgn::topology::SS_Info2( pose, secstruct ) );
 	protocols::fldsgn::topology::StrandPairingSet spairset( spair_str, ssinfo, abego );
 	ResiduePairs const respairs = compute_residue_pairs( spairset.strand_pairings() );
-	 for ( auto const & respair : respairs ) {
+	for ( auto const & respair : respairs ) {
 		core::Size const iaa = respair.first;
 		core::Size const jaa = respair.second;
 
@@ -409,7 +409,7 @@ ResiduePairs
 SheetConstraintGenerator::compute_residue_pairs( topology::StrandPairings const & spairs ) const
 {
 	ResiduePairs res_pairs;
-	 for ( auto const & spair : spairs ) {
+	for ( auto const & spair : spairs ) {
 		TR << "Pair " << *spair << " from " << spair->begin1() << " to " << spair->end1() << " has bulge? " << spair->has_bulge() << std::endl;
 		for ( core::Size resid=spair->begin1(); resid<=spair->end1(); ++resid ) {
 			if ( spair->is_bulge( resid ) ) {

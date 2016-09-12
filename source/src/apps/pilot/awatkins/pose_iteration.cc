@@ -41,7 +41,7 @@ int main ( int argc, char* argv[] )
 
 		core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueType const & ala = residue_set_cap->name_map( "ALA" );
-		ResidueOP res_ala( new Residue( ala, true ) ); 
+		ResidueOP res_ala( new Residue( ala, true ) );
 		Pose pose;
 		pose.append_residue_by_jump( *res_ala, 1 );
 		pose.append_residue_by_bond( *res_ala, true );
@@ -52,14 +52,14 @@ int main ( int argc, char* argv[] )
 		pose.append_residue_by_bond( *res_ala, true );
 		pose.append_residue_by_bond( *res_ala, true );
 		pose.append_residue_by_bond( *res_ala, true );
-		
+
 		for ( Residue const & res : pose ) {
 			std::cout << "I am happy about " << res.seqpos() << " and here is why: " << res << std::endl;
 		}
-		
+
 		// Demonstrate non ranged for syntax
 		for ( auto res_iter = pose.begin(), pose_end = pose.end(); res_iter != pose_end; ++res_iter ) {
-			// res_iter is a special vector1< ResidueOP >::iterator such that operator* applies	
+			// res_iter is a special vector1< ResidueOP >::iterator such that operator* applies
 			// an extra dereference, so it gives us our const & style access.
 			std::cout << "I am happy about " << res_iter->seqpos() << " and here is why: " << *res_iter << std::endl;
 		}

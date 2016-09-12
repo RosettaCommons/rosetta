@@ -102,7 +102,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 		weights.resize( pose.size() );
 	}
 
-	 for ( auto const & it : rigid ) {
+	for ( auto const & it : rigid ) {
 		for ( Size pos = it.start(); pos <= it.stop(); ++pos ) {
 			Size const seq_dist( std::min( (int) pos - it.start(), (int) it.stop() - pos ) + 1);
 			Real coord_sdev;
@@ -205,7 +205,7 @@ void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loo
 	TR.Debug << "extend structure for " << loops << std::endl;
 
 	Conformation& conf = pose.conformation();
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
 			core::conformation::idealize_position(j, conf);
 			pose.set_phi(j, EXT_PHI);
@@ -463,7 +463,7 @@ void define_scorable_core_from_secondary_structure(
 
 	//elongate loops if they are terminated by a short helix
 	loops::Loops removed_short_helices( unscored_loops );
-	 for ( auto const & unscored_loop : unscored_loops ) {
+	for ( auto const & unscored_loop : unscored_loops ) {
 		Size npos( unscored_loop.stop() + 1 );
 		while ( short_helix[ npos ] ) {
 			removed_short_helices.add_loop( npos-1, npos );

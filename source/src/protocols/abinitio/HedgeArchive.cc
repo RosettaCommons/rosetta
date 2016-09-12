@@ -98,7 +98,7 @@ void HedgeArchive::save_pending_decoys( SilentStructs const& decoys, core::Size 
 	core::io::silent::SilentFileData sfd;
 	//  utility::io::ozstream output( tmp_filename );
 	//  if ( decoys.begin() != decoys.end() ) (*decoys.begin())->print_header( output );
-	 for ( auto const & decoy : decoys ) {
+	for ( auto const & decoy : decoys ) {
 		sfd.add_structure( *(decoy.second) ); //only add OP to sfd
 	}
 	sfd.write_all( tmp_filename );
@@ -140,7 +140,7 @@ void HedgeArchive::collect( jd2::archive::Batch const& batch, core::io::silent::
 void HedgeArchive::save_status( std::ostream& os ) const {
 	Parent::save_status( os );
 	os << "OPEN_BATCHES" << std::endl;
-	 for ( auto const & incoming_structure : incoming_structures_ ) {
+	for ( auto const & incoming_structure : incoming_structures_ ) {
 		if ( !incoming_structure.second.size() ) continue;
 		os << incoming_structure.first << std::endl;
 		HedgeArchive::save_pending_decoys( incoming_structure.second, incoming_structure.first );

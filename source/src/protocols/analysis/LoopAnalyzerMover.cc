@@ -318,7 +318,7 @@ LoopAnalyzerMover::get_chainbreak_scores() {
 
 void LoopAnalyzerMover::find_positions( core::pose::Pose const & pose ){
 	positions_.clear();
-	 for ( auto const & it : *loops_ ) {
+	for ( auto const & it : *loops_ ) {
 		core::Size start(it.start());
 		core::Size end(it.stop());
 		if ( !pose.residue(start).is_terminus() && start != 1 ) --start;

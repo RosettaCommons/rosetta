@@ -529,7 +529,7 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 #ifndef  __native_client__
 	utility::vector1<int> energies( pose.size(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.size()
 
-	 for ( auto const & color : colors ) {
+	for ( auto const & color : colors ) {
 		PyAssert( color.first >=1 && color.first <= static_cast<int>(pose.size()),
 			"PyMolMover::send_colors residue index is out of range!");
 		PyAssert( color.second >= XC_first_color && color.second <= XC_last_color,

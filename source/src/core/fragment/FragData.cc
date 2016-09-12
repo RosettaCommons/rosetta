@@ -233,7 +233,7 @@ bool FragData::is_compatible( FragData const& frag_data ) const {
 void FragData::show( std::ostream &os, Frame const& frame ) const {
 	Size i = 1;
 	if ( is_valid() ) {
-		 for ( auto const & it : data_ ) {
+		for ( auto const & it : data_ ) {
 			os << ObjexxFCL::format::RJ( 10, frame.seqpos( i++ ) ) << " " << ObjexxFCL::format::RJ( 5, pdbpos() ) << " " << pdbid() <<" ";
 			//   std::cerr << "FragData::show " << i-1 << std::endl;
 			it->show( os );
@@ -248,7 +248,7 @@ void FragData::show( std::ostream &os, Frame const& frame ) const {
 void FragData::show( std::ostream &os ) const {
 	Size i = 1;
 	if ( is_valid() ) {
-		 for ( auto const & it : data_ ) {
+		for ( auto const & it : data_ ) {
 			os << ObjexxFCL::format::RJ( 10, i++ ) << " " << ObjexxFCL::format::RJ( 5, pdbpos() ) << " " << pdbid() << " " ;
 			it->show( os );
 			os << std::endl;
@@ -259,7 +259,7 @@ void FragData::show( std::ostream &os ) const {
 }
 
 void FragData::show_classic( std::ostream &os ) const {
-	 for ( auto const & it : data_ ) {
+	for ( auto const & it : data_ ) {
 		os << " 1xxx X   111 ";
 		it->show( os );
 		os << std::endl;

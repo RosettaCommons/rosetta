@@ -373,7 +373,7 @@ simple_visualize_fold_tree_and_movemap_bb_chi( FoldTree const & fold_tree, MoveM
 core::kinematics::FoldTree
 linearize_fold_tree( core::kinematics::FoldTree const & tree ) {
 	core::kinematics::FoldTree newtree;
-	 for ( auto const & it : tree ) {
+	for ( auto const & it : tree ) {
 		//if it is not a jump, we don't modify it
 		if ( !it.is_jump() ) newtree.add_edge(it);
 		//if it is a jump, we move start() to stop-1.  This is naive but works for the intended case.
@@ -664,7 +664,7 @@ remodel_fold_tree_to_account_for_insertion(
 		throw utility::excn::EXCN_Msg_Exception("FoldTree utility remodel_fold_tree_to_account_for_insertion: I do not know how to handle insertion points that are also jump points - does the jump stay where it was or move to the end of the insert?");
 	}
 	core::kinematics::FoldTree return_tree;
-	 for ( auto const & it : input_tree ) {
+	for ( auto const & it : input_tree ) {
 		//get a copy of the old Edge's start/stop, and update them as necessary
 		core::Size start(it.start()), stop(it.stop());
 		if ( start>insert_after ) start = start+insert_size;

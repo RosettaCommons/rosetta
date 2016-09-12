@@ -173,7 +173,7 @@ RotamerBoltzmannWeight2::report( std::ostream & out, core::pose::Pose const & po
 	RotamerProbabilities const & probabilities = probabilities_metricvalue.value();
 
 	out << "Residue\tProbability\tEnergy_Reduction" << std::endl;
-	 for ( auto const & probabilitie : probabilities ) {
+	for ( auto const & probabilitie : probabilities ) {
 		core::Real const energy_reduction = compute_modified_residue_energy( probabilitie.second );
 		out << pose.residue(probabilitie.first).name() << probabilitie.first << '\t'
 			<< probabilitie.second << '\t' << energy_reduction << std::endl;
@@ -188,7 +188,7 @@ compute_mean_probability( protocols::toolbox::pose_metric_calculators::RotamerPr
 	using protocols::toolbox::pose_metric_calculators::RotamerProbabilities;
 
 	core::Real sum = 0.0;
-	 for ( auto const & prob : probs ) {
+	for ( auto const & prob : probs ) {
 		sum += prob.second;
 	}
 	return sum / static_cast< core::Real >( probs.size() );
@@ -232,7 +232,7 @@ RotamerBoltzmannWeight2::compute_modified_ddg(
 
 	core::Real const ddg_in = compute_ddg( pose );
 	core::Real modified_ddG = ddg_in;
-	 for ( auto const & prob : probs ) {
+	for ( auto const & prob : probs ) {
 		core::Size const res( prob.first );
 		core::Real const energy = compute_modified_residue_energy( prob.second );
 		modified_ddG += energy;

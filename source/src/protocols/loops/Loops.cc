@@ -177,7 +177,7 @@ void Loops::center_of_mass(const core::pose::Pose& pose,
 	center->zero();
 
 	Real count = 0;
-	 for ( auto const & i : *this ) {
+	for ( auto const & i : *this ) {
 		for ( Size j = i.start(); j <= i.stop(); ++j ) {
 			(*center) += pose.xyz(NamedAtomID("CA", j));
 			++count;
@@ -195,7 +195,7 @@ Loops::switch_movemap(
 	id::TorsionType id,
 	bool allow_moves
 ) const {
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		it.switch_movemap( movemap, id, allow_moves );
 	}
 }
@@ -204,7 +204,7 @@ Loops::switch_movemap(
 //////////////////////////////////////////////////////////////////////
 std::ostream & operator<< ( std::ostream & os, const Loops & loops ) {
 	os << "LOOP  begin  end  cut  skip_rate  extended" << std::endl;
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		os << loop << std::endl;
 	}
 	return os;
@@ -237,7 +237,7 @@ Loops::write_loops_to_stream(
 ) const
 {
 
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		data << token << " " << it.start() << " " << it.stop() << " " << it.cut() << " "
 			<< it.skip_rate() << " " << it.is_extended() << std::endl;
 	}
@@ -320,7 +320,7 @@ Loops::push_back(
 /////////////////////////////////////////////////////////////////////////////
 void
 Loops::add_overlap_loop( Loops loops ) {
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		add_overlap_loop( loop );
 	}
 }
@@ -415,7 +415,7 @@ Loops::loop_size(
 Size
 Loops::loop_size() const {
 	Size size = 0;
-	 for ( auto const & loop : loops_ ) {
+	for ( auto const & loop : loops_ ) {
 		size += loop.size();
 	}
 	return size;
@@ -432,7 +432,7 @@ core::Size Loops::nr_residues() const {
 bool
 Loops::is_loop_residue( Size const seqpos, int const offset ) const
 {
-	 for ( auto const & loop : loops_ ) {
+	for ( auto const & loop : loops_ ) {
 		if ( seqpos >= (loop.start()+offset) && seqpos <= (loop.stop()-offset) ) return true;
 	}
 	return false;
@@ -440,7 +440,7 @@ Loops::is_loop_residue( Size const seqpos, int const offset ) const
 
 bool
 Loops::loop_of_residue( core::Size const seqpos, Loop& loop ) const {
-	 for ( auto const & it : loops_ ) {
+	for ( auto const & it : loops_ ) {
 		if ( seqpos >= it.start() && seqpos <= it.stop() ) {
 			loop = it;
 			return true;
@@ -493,7 +493,7 @@ LoopsFileIOOP Loops::get_loop_file_reader()
 Loops::LoopList Loops::setup_loops_from_data( SerializedLoopList const & loop_data )
 {
 	LoopList tmp_loops;
-	 for ( auto const & it : loop_data ) {
+	for ( auto const & it : loop_data ) {
 		tmp_loops.push_back( Loop( it ) );
 	}
 	// sort by start residue
@@ -582,7 +582,7 @@ void Loops::verify_against( core::pose::Pose const & pose ) const {
 	using core::Size;
 	Size nres = pose.size();
 
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		if ( it.start() <= 0 ) {
 			tr.Error << "ERROR invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": Beginning less than 1" <<  std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
@@ -774,7 +774,7 @@ void Loops::grow_loop(
 
 void Loops::get_residues( utility::vector1< Size >& selection ) const {
 	selection.clear();
-	 for ( auto const & loop : loops_ ) {
+	for ( auto const & loop : loops_ ) {
 		loop.get_residues( selection );
 	}
 }

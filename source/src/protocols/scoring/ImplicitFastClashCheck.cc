@@ -76,7 +76,7 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	// points_.reserve((pose_->n_residue()-ignore.size())*5);
 	// resno_ .reserve((pose_->n_residue()-ignore.size())*5);
 	// atomno_.reserve((pose_->n_residue()-ignore.size())*5);
-	 for ( auto const & pose : poses ) {
+	for ( auto const & pose : poses ) {
 		for ( Size i = 0; i < pose.size(); ++i ) {
 			if ( std::find(ignore.begin(),ignore.end(),i+1) != ignore.end() ) continue;
 			//Size const natom = min(5ul,pi->residue(i+1).nheavyatoms());
@@ -233,7 +233,7 @@ bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, Size refrsd) 
 	Vec axs = stubl.local2global(stub1.global2local(Vec(0,0,1)));
 	axs = axs - cen;
 	Mat rot = numeric::rotation_matrix_degrees(axs,120.0);
-	 for ( auto const & point : points_ ) {
+	for ( auto const & point : points_ ) {
 		if ( ! clash_check( rot*(point-cen)+cen ) ) return false;
 	}
 	return true;

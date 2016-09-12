@@ -128,7 +128,7 @@ TaskSelector::parse_my_tag(
 
 	utility::vector1< std::string > const task_op_names = utility::string_split( task_operations_str, ',' );
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
-	 for ( auto const & task_op_name : task_op_names ) {
+	for ( auto const & task_op_name : task_op_names ) {
 		if ( data.has( "task_operations", task_op_name ) ) {
 			tf->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", task_op_name ) );
 		} else {

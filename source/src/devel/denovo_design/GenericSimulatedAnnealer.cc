@@ -432,7 +432,7 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 	// save total # of accepted scores
 	saved_file << " " << boost::lexical_cast< std::string >( accepted_scores_.size() ) << std::endl;
 	// save accepted score list
-	 for ( auto const & accepted_score : accepted_scores_ ) {
+	for ( auto const & accepted_score : accepted_scores_ ) {
 		saved_file << accepted_score << std::endl;
 	}
 	// save best scores

@@ -148,7 +148,7 @@ OptionCollection::load(
 	if ( args.size() == 0 ) return;
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
-	 for ( auto const & arg : args ) {
+	for ( auto const & arg : args ) {
 		arg_strings.push_back( arg );
 		argv_copy_ += " " + arg;
 	}
@@ -1163,7 +1163,7 @@ void
 OptionCollection::add_edits( std::set<std::string> & items ) {
 	std::set< std::string > new_edits;
 	std::string const charset( "abcdefghijklmnopqrstuvwxyz1234567890" ); // all lowercase, no underscores
-	 for ( auto const & instring : items ) {
+	for ( auto const & instring : items ) {
 		// keep the unmodified item
 		new_edits.insert( instring );
 		//delete a single charachter
@@ -1307,7 +1307,7 @@ OptionCollection::find_key_cl(
 
 		if ( ! possible_fixes.empty() ) {
 			not_found_error += "\nDid you mean:\n";
-			 for ( auto const & possible_fixe : possible_fixes ) {
+			for ( auto const & possible_fixe : possible_fixes ) {
 				not_found_error += "\t -" + possible_fixe + "\n";
 			}
 		}

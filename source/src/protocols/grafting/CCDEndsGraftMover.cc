@@ -292,7 +292,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 		TR <<"round "<<i <<std::endl;
 		if ( !skip_sampling() ) { small->apply(combined);}
 
-		 for ( auto const & it : *loop_set ) {
+		for ( auto const & it : *loop_set ) {
 
 			loop_set_map[it]->apply(combined);
 			combined.conformation().insert_ideal_geometry_at_polymer_bond(it.cut());

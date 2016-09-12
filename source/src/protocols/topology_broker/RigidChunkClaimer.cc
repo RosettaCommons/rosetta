@@ -191,7 +191,7 @@ void RigidChunkClaimer::select_parts() {
 	if ( rigid_core_.size() == 0 ) return;//nothing to select
 	while ( current_rigid_core_.size() == 0 && attempts < 50 ) {
 		++attempts;
-		 for ( auto const & it : rigid_core_ ) {
+		for ( auto const & it : rigid_core_ ) {
 			if ( numeric::random::rg().uniform() >= it.skip_rate() )  {
 				current_rigid_core_.push_back( it );
 			}
@@ -220,7 +220,7 @@ void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	tr.Trace << "region selected: " << current_rigid_core_ << std::endl;
 
 	// new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
-	 for ( auto const & loop_it : current_rigid_core_ ) {
+	for ( auto const & loop_it : current_rigid_core_ ) {
 		for ( Size pos = loop_it.start(); pos <= loop_it.stop(); ++pos ) {
 			new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(),
 				std::make_pair( label(), pos ),
@@ -293,7 +293,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 	claims::CutClaim const *cut_ptr( dynamic_cast< const claims::CutClaim* >( &foreign_claim ) );
 
 	if ( cut_ptr ) {
-		 for ( auto const & region : current_rigid_core_ ) {
+		for ( auto const & region : current_rigid_core_ ) {
 
 			//TODO: ensure that the label setting code is correctly functioning in this claimer
 
@@ -426,7 +426,7 @@ void fix_mainchain_connect( pose::Pose& pose, pose::Pose const& ref_pose, core::
 void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::Loops core ) {
 	///fpd if there are post modifications to pose (not in ref_pose), we can't just copy ref_pose->pose
 	///fpd    instead ... make xyz copy in rigid regions
-	 for ( auto const & region : core ) {
+	for ( auto const & region : core ) {
 		for ( Size i=region.start(); i<=region.stop(); ++i ) {
 			core::conformation::Residue const &rsd_i = ref_pose.residue(i);
 			pose.replace_residue ( i , rsd_i , false );
@@ -440,7 +440,7 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 
 	///fpd fix connections
 	///fpd this requires that the input pose have one flanking residue on each side of each region
-	 for ( auto const & region : core ) {
+	for ( auto const & region : core ) {
 		Size loop_start = region.start();
 		Size loop_stop  = region.stop();
 
@@ -498,14 +498,14 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 	//fpd   (strictly greater-than since we have to have a flanking res on each side of each region)
 	//fpd   we still need missing dens in the gaps (but not at c term now!)
 	core::Size lastChunk=1;
-	 for ( auto const & it : current_rigid_core_ ) {
+	for ( auto const & it : current_rigid_core_ ) {
 		lastChunk = std::max( lastChunk , it.stop() );
 	}
 	runtime_assert ( lastChunk <= centroid_input_pose_.size() );
 
 	bool missing_density( false );
 	//sanity check: no missing density in backbon in any of the rigid_core residues?
-	 for ( auto const & it : current_rigid_core_ ) {
+	for ( auto const & it : current_rigid_core_ ) {
 		for ( Size pos = it.start(); pos <=it.stop(); ++pos ) {
 			// Do we really have Sidechains ?
 			// check this my making sure that no SC atom is more than 20A (?) away from CA
@@ -536,7 +536,7 @@ void RigidChunkClaimer::switch_to_fullatom( core::pose::Pose& pose , utility::ve
 
 	// copy sidechain torsions from input pose
 	tr.Debug << "copy side chains for residues with * / missing density residues with - ";
-	 for ( auto const & it : region ) {
+	for ( auto const & it : region ) {
 		for ( Size pos = it.start(); pos <=it.stop(); ++pos ) {
 			bNeedToRepack[ pos ] = false; //in principle our residues don't need a repack since we have a side-chains for them.
 			// Do we really have Sidechains ?

@@ -298,7 +298,7 @@ void Entity::show( std::ostream & os ) const
 {
 	os << "Entity with traits:";
 	EntityElements const & seq( this->traits() );
-	 for ( auto const & it : seq ) {
+	for ( auto const & it : seq ) {
 		os << " " << it->to_string();
 	}
 	os << " and fitness " << format::F(6,3,this->fitness());
@@ -313,7 +313,7 @@ std::string Entity::to_string() const {
 std::string Entity::traits_string() const
 {
 	std::ostringstream os;
-	 for ( auto const & trait : traits_ ) {
+	for ( auto const & trait : traits_ ) {
 		os << " " << trait->to_string();
 	}
 	return os.str();
@@ -326,7 +326,7 @@ Entity::write_checkpoint(
 ) const
 {
 	os << "traits";
-	 for ( auto const & trait : traits_ ) {
+	for ( auto const & trait : traits_ ) {
 		os << " " << trait->to_string();
 	}
 	os << " fitness " << fitness_;

@@ -180,12 +180,12 @@ void SnugDockProtocol::apply( Pose & pose ) {
 
 	TR << "Beginning application of " + docking()->get_name() + "." << std::endl;
 	docking()->apply( pose );
-	
-	if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+
+	if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user() ) {
 		AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
 		converter.apply(pose);
 	}
-	
+
 }
 
 void SnugDockProtocol::setup_objects( Pose const & pose ) {

@@ -164,7 +164,7 @@ JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList c
 
 	// first fill jumps_ array:
 	njump_ = 0;
-	 for ( auto const & jump_pairing : jump_pairings ) {
+	for ( auto const & jump_pairing : jump_pairings ) {
 		njump_++;
 		jumps_(1,njump_) = jump_pairing.Pos1();
 		jumps_(2,njump_) = jump_pairing.Pos2();
@@ -190,7 +190,7 @@ JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList c
 
 	// first fill jumps_ array:
 	njump_ = 0;
-	 for ( auto const & jump_pairing : jump_pairings ) {
+	for ( auto const & jump_pairing : jump_pairings ) {
 		njump_++;
 		jumps_(1,njump_) = jump_pairing.Pos1();
 		jumps_(2,njump_) = jump_pairing.Pos2();
@@ -442,7 +442,7 @@ bool JumpSample::has_orientation_and_pleating() const {
 core::scoring::dssp::Pairing
 JumpSample::get_pairing( Size res1, Size res2 ) const {
 	runtime_assert ( has_orientation_and_pleating() );
-	 for ( auto const & jump_pairing : jump_pairings_ ) {
+	for ( auto const & jump_pairing : jump_pairings_ ) {
 		if ( jump_pairing.Pos1() == res1 && jump_pairing.Pos2() == res2 ) return jump_pairing;
 		if ( jump_pairing.Pos1() == res2 && jump_pairing.Pos2() == res1 ) return jump_pairing.generate_reversed();
 	}
@@ -468,7 +468,7 @@ JumpSample::generate_jump_frags(
 	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );
-	 for ( auto const & jump_pairing : jump_pairings_ ) {
+	for ( auto const & jump_pairing : jump_pairings_ ) {
 		Size o_key ( jump_pairing.Orientation() ); // < 0 ? 1 : 2 );
 		Size p_key ( jump_pairing.Pleating() ); // < 0 ? 1 : 2 );
 		jump_kind[ std::make_pair( o_key, p_key ) ].push_back( jump_nr++ );

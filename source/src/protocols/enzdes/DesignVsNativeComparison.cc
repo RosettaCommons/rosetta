@@ -109,7 +109,7 @@ DesignVsNativeComparison::compare_to_native(
 
 	core::Real poseval, nativeval;
 
-	 for ( auto const & calculator : calculators ) {
+	for ( auto const & calculator : calculators ) {
 
 
 		if ( calculator.first == "hbond_pm" || calculator.first == "burunsat_pm" || calculator.first == "NLconts_pm" || calculator.second == "total_pos_charges" || calculator.second == "total_neg_charges" ) {

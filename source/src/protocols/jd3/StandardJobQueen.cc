@@ -189,7 +189,7 @@ StandardJobQueen::job_definition_xsd() const
 		XMLSchemaSimpleSubelementList option_subelements;
 
 		std::set< utility::keys::VariantKey< utility::options::OptionKey > > already_output_options;
-		 for ( auto const & iter : options_ ) {
+		for ( auto const & iter : options_ ) {
 			AttributeList attributes;
 			utility::options::OptionKey const & opt_key( iter() );
 
@@ -440,7 +440,7 @@ StandardJobQueen::create_job( LarvalJobCOP ) const
 void StandardJobQueen::add_options( utility::options::OptionKeyList const & opts )
 {
 	using namespace utility::options;
-	 for ( auto const & opt : opts ) {
+	for ( auto const & opt : opts ) {
 		options_.push_back( opt );
 	}
 }
@@ -539,7 +539,7 @@ StandardJobQueen::options_from_tag( utility::tag::TagCOP job_options_tag ) const
 		common_options_tag = common_block_tags_->getTag( "Options" );
 	}
 
-	 for ( auto const & option : options_ ) {
+	for ( auto const & option : options_ ) {
 		utility::options::OptionKey const & opt( option() );
 		OptionTypes opt_type = option_type_from_key( opt );
 

@@ -260,7 +260,7 @@ scoring::constraints::ConstraintOP COMCoordinateConstraint::remapped_clone(
 
 	bool validity = true;
 
-	 for ( auto const & atm : atms_ ) {
+	for ( auto const & atm : atms_ ) {
 		id::NamedAtomID atom_temp( atom_id_to_named_atom_id( atm, src ) );
 		if ( smap ) {
 			atom_temp.rsd() = (*smap)[ atom_temp.rsd() ];

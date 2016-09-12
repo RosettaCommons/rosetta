@@ -256,7 +256,7 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 	// Validate the start and end res numbers relationship at the same time.
 	// As of Mar 6, 2013, this system cannot build a loop between non-adjacent residues.
 	std::map<Size, MyLoop> lookup_by_r1;
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		lookup_by_r1[loop.r1_] = loop;
 	}
 	std::ofstream bp( bpname.c_str() );

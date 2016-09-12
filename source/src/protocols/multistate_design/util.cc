@@ -46,7 +46,7 @@ list_amino_acid_options(
 	// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 	std::set< core::chemical::AA > aaset;
 	std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
-	 for ( auto const & t : allowed ) {
+	for ( auto const & t : allowed ) {
 		core::chemical::AA aa( t->aa() );
 		// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 		if ( aaset.find( aa ) != aaset.end() ) continue;

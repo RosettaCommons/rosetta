@@ -762,7 +762,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 
 	SequenceScores sequence_scores, sequence_binding_scores;
 
-	 for ( auto const & dna_sequence : dna_sequences ) {
+	for ( auto const & dna_sequence : dna_sequences ) {
 		Real best_trial_E(0), best_trial_binding_E(0);
 		// restrict packer to current protein sequence and this DNA sequence
 		utility::vector0< int > rot_to_pack;
@@ -834,7 +834,7 @@ DnaInterfacePacker::calculate_specificity(
 
 	Real const inv_temp( 1.0 / temp );
 	Real num(0), denom(0);
-	 for ( auto const & sequence_score : sequence_scores ) {
+	for ( auto const & sequence_score : sequence_scores ) {
 		ResTypeSequence const & sequence( sequence_score.first );
 		Real score( sequence_score.second );
 		TR_spec << "\t";
@@ -1244,7 +1244,7 @@ DnaInterfacePacker::dna_seq_tag( Pose const & pose, ResTypeSequence const & sequ
 {
 	std::ostringstream ss;
 	bool sep(false);
-	 for ( auto const & pos : sequence ) {
+	for ( auto const & pos : sequence ) {
 		Size const seqpos( pos.first );
 		if ( !dna_chains_->is_top( seqpos ) ) continue;
 		if ( sep ) ss << "_";

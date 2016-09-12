@@ -35,7 +35,7 @@ static THREAD_LOCAL basic::Tracer tr( "SS" );
 
 std::ostream & operator<< ( std::ostream & os, const SSs & sss_ ) {
 	os << "SS  begin  end  type" << std::endl;
-	 for ( auto const & ss : sss_ ) {
+	for ( auto const & ss : sss_ ) {
 		os << ss << std::endl;
 	}
 	return os;
@@ -55,7 +55,7 @@ SSs::write_ss_to_file(
 		utility_exit_with_message( "Couldn't write check point ss file " );
 	}
 
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		data << "SS " << it.start() << " " << it.stop() << " " << it.sstype() << std::endl;
 	}
 

@@ -607,7 +607,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
-		 for ( auto const & it : *loops ) {
+		for ( auto const & it : *loops ) {
 			for ( Size i=it.start(); i<=it.stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true); // chi of loop residues
@@ -626,7 +626,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		frag9mover->set_check_ss( false ); frag9mover->enable_end_bias_check( false );
 
 		// extend + idealize loops
-		 for ( auto const & it : *loops ) {
+		for ( auto const & it : *loops ) {
 			protocols::loops::Loop to_idealize( it );
 			protocols::loops::set_extended_torsions( pose, it );
 		}

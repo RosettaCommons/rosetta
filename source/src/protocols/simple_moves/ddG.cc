@@ -386,7 +386,7 @@ ddG::report_ddG( std::ostream & out ) const
 	out << " Scores                       Wghtd.Score\n";
 	out << "-----------------------------------------\n";
 	auto unbound_it=unbound_energies_.begin();
-	 for ( auto const & bound_energie : bound_energies_ ) {
+	for ( auto const & bound_energie : bound_energies_ ) {
 		if ( unbound_it != unbound_energies_.end() ) {
 			if ( std::abs( unbound_it->second ) > 0.001 || std::abs( bound_energie.second ) > 0.001 ) {
 				out << ' ' << LJ( 24, bound_energie.first ) << ' ' << F( 9,3, bound_energie.second - unbound_it->second )<<'\n';
@@ -409,7 +409,7 @@ ddG::sum_ddG() const
 	Real sum_energy(0.0);
 
 	auto unbound_it=unbound_energies_.begin();
-	 for ( auto const & bound_energie : bound_energies_ ) {
+	for ( auto const & bound_energie : bound_energies_ ) {
 		if ( unbound_it != unbound_energies_.end() ) {
 			sum_energy += bound_energie.second - unbound_it->second;
 			++unbound_it;

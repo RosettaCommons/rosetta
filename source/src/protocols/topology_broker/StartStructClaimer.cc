@@ -136,7 +136,7 @@ void StartStructClaimer::initialize_dofs(
 
 	FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 	if ( perturb_ == 0.0 ) return;
-	 for ( auto const & init_dof : init_dofs ) {
+	for ( auto const & init_dof : init_dofs ) {
 		//don't really know how this looks for jumps
 
 		claims::BBClaimOP bb_ptr( utility::pointer::dynamic_pointer_cast< claims::BBClaim >( init_dof ) );

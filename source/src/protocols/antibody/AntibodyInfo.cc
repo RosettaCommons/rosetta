@@ -180,7 +180,7 @@ void AntibodyInfo::set_default() {
 	std::string numbering_scheme = option [OptionKeys::antibody::input_ab_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 
-	if ( numbering_scheme == "Kabat_Scheme" || numbering_scheme == "Kabat") {
+	if ( numbering_scheme == "Kabat_Scheme" || numbering_scheme == "Kabat" ) {
 		TR <<"Kabat Numbering scheme is not fully supported due to H1 numbering.  Use with caution. http://www.bioinf.org.uk/abs/" <<std::endl;
 	}
 
@@ -1520,7 +1520,7 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 	// Make sure rb jumps do not reside in the loop region
 	// NOTE: This check is insufficient.  Perhaps the jump adjustment should be done in a while loop.
-	 for ( auto const & it : *get_AllCDRs_in_loopsop() ) {
+	for ( auto const & it : *get_AllCDRs_in_loopsop() ) {
 		if ( light_chain_COM >= (it.start() - 1) && light_chain_COM <= (it.stop() + 1) ) {
 			light_chain_COM = it.stop() + 2;
 		} else if ( heavy_chain_COM >= (it.start() - 1) && heavy_chain_COM <= (it.stop() + 1) ) {

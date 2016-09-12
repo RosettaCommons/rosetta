@@ -330,7 +330,7 @@ void AsyncMPITemperingBase::remove_cycles_from_request_list() {
 }
 
 void AsyncMPITemperingBase::process_match_list( MatchList const& matches ) {
-	 for ( auto const & matche : matches ) {
+	for ( auto const & matche : matches ) {
 		exchange_requests_.erase( exchange_requests_.find( matche.first.level_ ) );
 		exchange_requests_.erase( exchange_requests_.find( matche.second.level_ ) );
 		send_swap_invites( matche.first, matche.second );

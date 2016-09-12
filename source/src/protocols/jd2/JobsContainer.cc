@@ -232,7 +232,7 @@ bool JobsContainer::can_be_deleted ( core::Size const index ) const {
 void JobsContainer::get_loaded_job_indices( utility::vector1 < core::Size > &output) const {
 	output.clear();
 	output.reserve( joblist_.size() );
-	 for ( auto const & it : joblist_ ) {
+	for ( auto const & it : joblist_ ) {
 		output.push_back( it.first );
 	}
 	return;

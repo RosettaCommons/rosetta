@@ -307,7 +307,7 @@ Serial_Refine::dump_structures( protocols::wum::SilentStructStore const &new_str
 	std::string filename = prefix + ".out";
 
 	core::Size istr( 0 );
-	 for ( auto const & new_struct : new_structs ) {
+	for ( auto const & new_struct : new_structs ) {
 		istr++;
 		sfd.write_silent_struct( *new_struct, filename, score_only );
 	}

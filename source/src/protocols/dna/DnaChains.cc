@@ -52,7 +52,7 @@ DnaChains::contains( Size index ) const
 		return true;
 	}
 	// bottom strand check
-	 for ( auto const & position : positions_ ) {
+	for ( auto const & position : positions_ ) {
 		if ( index == position.second.bottom() ) return true;
 	}
 	return false;
@@ -65,7 +65,7 @@ DnaChains::print(
 ) const
 {
 	os << "There are " << positions_.size() << " dna positions:" << '\n';
-	 for ( auto const & position : positions_ ) {
+	for ( auto const & position : positions_ ) {
 
 		Size const top_i( position.first );
 		DnaPosition const & pos( position.second );

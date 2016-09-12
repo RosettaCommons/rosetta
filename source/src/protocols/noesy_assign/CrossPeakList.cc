@@ -71,7 +71,7 @@ CrossPeakList::~CrossPeakList() = default;
 Size CrossPeakList::count_assignments() const {
 	Size total_size( 0 );
 #ifndef WIN32
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		total_size+=it->assignments().size();
 	}
 #endif
@@ -138,7 +138,7 @@ void CrossPeakList::write_to_stream( std::ostream& os, PeakFileFormat& output_ad
 	output_adaptor.set_format_from_peak( **peaks_.begin() );
 	output_adaptor.write_header( os );
 	Size last_peak_id( 0 );
-	 for ( auto const & peak : peaks_ ) {
+	for ( auto const & peak : peaks_ ) {
 		if ( last_peak_id > peak->peak_id() ) {
 			output_adaptor.set_format_from_peak( *peak );
 			output_adaptor.write_header( os );
@@ -164,7 +164,7 @@ void CrossPeakList::write_peak_files( std::string const& prefix, PeakFileFormat&
 
 	output_adaptor.write_header( os );
 	Size last_peak_id( 0 );
-	 for ( auto const & peak : peaks_ ) {
+	for ( auto const & peak : peaks_ ) {
 		if ( last_peak_id > peak->peak_id() ) {
 			output_adaptor.set_format_from_peak( *peak );
 			std::string filename( (*peak).filename() );
@@ -307,7 +307,7 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 ) const {
 	//count for normalization:
 	core::Size ct( 0 );
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		if ( it->eliminated() ) continue;
 		if ( it->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
 		//  if ( !(*it)->has_inter_residue_assignment( resonances(), 0.1 ) ) continue; //ignore peaks that have confident intra-residue assignment
@@ -317,7 +317,7 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 		}
 		++ct;
 	}
-	 for ( auto const & it : *this ) {
+	for ( auto const & it : *this ) {
 		if ( it->eliminated() ) continue;
 		if ( it->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
 		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {

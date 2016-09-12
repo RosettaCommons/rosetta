@@ -556,7 +556,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		conformation::Residue const & ii_res = pose.residue( ii );
-		
+
 		if ( ii_res.has_lower_connect() ) {
 			Size lower = ii_res.lower_connect().index();
 
@@ -600,7 +600,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 						links = sfr_->link_map()[link.resID1];
 					}
 					links.push_back(link);
-				
+
 					sfr_->link_map()[link.resID1] = links;
 				}
 			}
@@ -677,7 +677,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 					if ( push_it ) {
 						links.push_back(link);
 					}
-				
+
 					sfr_->link_map()[link.resID1] = links;
 				}
 			}
@@ -1046,7 +1046,7 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 		}
 		line.push_back( restrict_prec(pose_total)); //end first for overall pose energy;
 		table.push_back(line);
-		
+
 		for ( core::Size j = 1, end_j = pose.size(); j <= end_j; ++j ) {
 			line.clear();
 			core::Real rsd_total = 0.0;

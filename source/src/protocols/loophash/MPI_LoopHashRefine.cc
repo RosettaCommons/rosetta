@@ -444,7 +444,7 @@ MPI_LoopHashRefine::dump_structures( const SilentStructStore &new_structs, bool 
 	start_timer( TIMING_IO_WRITE  );
 	core::io::silent::SilentFileData sfd;
 	std::string filename = jobname_ + "." + string_of( mpi_rank() ) + ".out";
-	 for ( auto const & new_struct : new_structs ) {
+	for ( auto const & new_struct : new_structs ) {
 		// don't add round 0 structures (they have conflicting silent struct headers and
 		// mess up columns in the output
 		if ( new_struct->get_energy("round") > 0 ) {

@@ -99,7 +99,7 @@ core::kinematics::FoldTree
 remove_all_jump_atoms( core::kinematics::FoldTree const & orig )
 {
 	core::kinematics::FoldTree ft;
-	 for ( auto const & e : orig ) {
+	for ( auto const & e : orig ) {
 		if ( e.is_jump() && e.has_atom_info() ) {
 			core::kinematics::Edge newedge = e;
 			newedge.start_atom() = "";
@@ -119,7 +119,7 @@ core::kinematics::FoldTree
 remove_missing_jump_atoms( core::pose::Pose const & pose, core::kinematics::FoldTree const & orig )
 {
 	core::kinematics::FoldTree ft;
-	 for ( auto const & e : orig ) {
+	for ( auto const & e : orig ) {
 		if ( e.is_jump() && e.has_atom_info() ) {
 			core::kinematics::Edge newedge = e;
 			if ( ( !pose.residue(e.start()).has(e.start_atom()) ) || ( !pose.residue(e.stop()).has(e.stop_atom()) ) ) {
@@ -398,7 +398,7 @@ int find_jump_rec(
 	}
 
 	// search for jump edges that contains this residue
-	 for ( auto const & e : ft ) {
+	for ( auto const & e : ft ) {
 		if ( ( e.label() > 0 ) && ( e.stop() == residue ) ) {
 			return e.label();
 		}
@@ -425,7 +425,7 @@ void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Ed
 	utility::vector1< core::kinematics::Edge > new_edges;
 	utility::vector1< core::kinematics::Edge > remove_edges;
 	core::kinematics::FoldTree const & ft_const = ft; // ugly hack needed to prevent gcc from trying to use the protected non-const FoldTree::begin() method...
-	 for ( auto const & it : ft_const ) {
+	for ( auto const & it : ft_const ) {
 		if ( it.label() != core::kinematics::Edge::PEPTIDE ) continue;
 		if ( it.start() <= pos1 && it.stop() >= pos1 ) {
 			//disallow edges to self
@@ -579,7 +579,7 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 	}
 	// copy remarks
 	if ( to_add->pdb_info() ) {
-		 for ( auto const & r : to_add->pdb_info()->remarks() ) {
+		for ( auto const & r : to_add->pdb_info()->remarks() ) {
 			TR.Debug << "Copying remark to new pose: " << r.value << std::endl;
 			if ( !combined->pdb_info() ) {
 				combined->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *combined, true ) ) );
@@ -928,7 +928,7 @@ parse_motif_string( std::string const & motif_str, std::string & secstruct, std:
 	abego.clear();
 
 	utility::vector1< std::string > const motifs = utility::string_split( motif_str, '-' );
-	 for ( auto const & motif : motifs ) {
+	for ( auto const & motif : motifs ) {
 		// here, we can accept "3LX" or "3:LX"
 		std::string motif_seg = "";
 		for ( std::string::const_iterator c=motif.begin(); c!=motif.end(); ++c ) {

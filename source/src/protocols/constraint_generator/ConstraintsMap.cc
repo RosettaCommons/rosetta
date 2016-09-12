@@ -109,7 +109,7 @@ ConstraintsMap::valid_names_string() const
 {
 	std::stringstream stream;
 	utility::vector1< std::string > const names = valid_names();
-	 for ( auto const & name : names ) {
+	for ( auto const & name : names ) {
 		if ( !stream.str().empty() ) stream << ", ";
 		stream << name;
 	}
@@ -120,7 +120,7 @@ utility::vector1< std::string >
 ConstraintsMap::valid_names() const
 {
 	utility::vector1< std::string > names;
-	 for ( auto const & pair : cst_map_ ) {
+	for ( auto const & pair : cst_map_ ) {
 		names.push_back( pair.first );
 	}
 	return names;

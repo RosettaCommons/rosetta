@@ -44,7 +44,7 @@ TrialCounter::reset()
 core::Size
 TrialCounter::total_trials() const {
 	Size ntrials( 0 );
-	 for ( auto const & it : trial_counter_ ) {
+	for ( auto const & it : trial_counter_ ) {
 		ntrials += it.second;
 	}
 	return ntrials;
@@ -59,7 +59,7 @@ TrialCounter::show( std::ostream& os, std::string line_header, bool endline ) co
 	if ( line_header.size() ) {
 		line_header=line_header+" ";
 	}
-	 for ( auto const & it : trial_counter_ ) {
+	for ( auto const & it : trial_counter_ ) {
 		std::string const & tag( it.first );
 		int const ntrials( it.second );
 		if ( accept_counter_.count( tag ) ) {

@@ -217,8 +217,8 @@ core::Real SmallMol::cal_min_dist(SmallMol *other) {
 	vector< vector<core::Real> > const &coord2 = other->get_coordinates();
 	core::Real min_dist = 9999999999.9;
 
-	 for ( auto const & i : coord1 ) {
-		 for ( auto const & j : coord2 ) {
+	for ( auto const & i : coord1 ) {
+		for ( auto const & j : coord2 ) {
 			core::Real currentDist = calDist(i, j);
 			if ( currentDist < min_dist ) {
 				min_dist = currentDist;

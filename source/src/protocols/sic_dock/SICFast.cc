@@ -145,11 +145,11 @@ get_bounds_intersection(
 	// get bounds for plane hashess
 	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9;
 	xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-	 for ( auto const & ia : pb ) {
+	for ( auto const & ia : pb ) {
 		xmx1 = max(xmx1,ia.x()); xmn1 = min(xmn1,ia.x());
 		ymx1 = max(ymx1,ia.y()); ymn1 = min(ymn1,ia.y());
 	}
-	 for ( auto const & ib : pa ) {
+	for ( auto const & ib : pa ) {
 		xmx = max(xmx,ib.x()); xmn = min(xmn,ib.x());
 		ymx = max(ymx,ib.y()); ymn = min(ymn,ib.y());
 	}
@@ -183,7 +183,7 @@ fill_plane_hash(
 	hb.dimension(xub-xlb+1,yub-ylb+1,Vec(0,0, 9e9));
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
-	 for ( auto const & ia : pb ) {
+	for ( auto const & ia : pb ) {
 		int const ix = (int)((ia.x()/BIN)-xlb+0.999999999);
 		int const iy = (int)((ia.y()/BIN)-ylb+0.999999999);
 		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
@@ -191,7 +191,7 @@ fill_plane_hash(
 		// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize) && ha(ix,iy).z() < ia->z();
 		// ha(ix,iy) = test ? *ia : ha(ix,iy);
 	}
-	 for ( auto const & ib : pa ) {
+	for ( auto const & ib : pa ) {
 		int const ix = (int)((ib.x()/BIN)-xlb+0.999999999);
 		int const iy = (int)((ib.y()/BIN)-ylb+0.999999999);
 		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;

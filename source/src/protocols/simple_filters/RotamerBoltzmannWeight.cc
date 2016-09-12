@@ -400,7 +400,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::Real const init_score( stf.compute( const_min_pose ) );
 	TR<<"Total score for input pose: "<<init_score<<std::endl;
 	utility::vector1< core::Real > scores;
-	 for ( auto const & rotamer : *rotset ) {
+	for ( auto const & rotamer : *rotset ) {
 		pose = const_min_pose;
 		pose.replace_residue( resi, *rotamer, false/*orient bb*/ );
 		core::pack::pack_rotamers( pose, *scorefxn(), task );

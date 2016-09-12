@@ -62,7 +62,7 @@ namespace inv_kin_lig_loop_design {
 namespace {
 
 bool contains(vector<Loop> const& loops, int seqpos ) {
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		if ( loop.lo <= seqpos && seqpos <= loop.hi ) {
 			return true;
 		}
@@ -71,7 +71,7 @@ bool contains(vector<Loop> const& loops, int seqpos ) {
 }
 
 bool is_anchor(vector<Loop> const& loops, int seqpos ) {
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		if ( loop.to == seqpos ) {
 			return true;
 		}

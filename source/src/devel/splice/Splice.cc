@@ -2645,7 +2645,7 @@ void Splice::load_pdb_segments_from_pose_comments(core::pose::Pose const & pose)
 	using namespace std;
 	map<string, string> const comments = core::pose::get_all_comments(pose);
 	TR << "The size of comments is: " << comments.size() << std::endl;
-	 for ( auto const & comment : comments ) {
+	for ( auto const & comment : comments ) {
 		//TR<<"the size of j is: "<<j<<std::endl;
 		std::string const key(comment.first);
 		//TR<<"the size of j after i->first is: "<<j<<std::endl;

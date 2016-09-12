@@ -481,7 +481,7 @@ perturb_backbone_for_test(Pose& pose, MoveMapOP mm){
 void
 add_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
 	core::Size i = 0;
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		++i;
 		TR <<"Loop: "<< i << std::endl;
 		TR << "Add variant to: " << loop.cut() << std::endl;
@@ -493,7 +493,7 @@ add_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
 
 void
 remove_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, loop.cut());
 		core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, loop.cut()+1);
 	}
@@ -501,7 +501,7 @@ remove_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
 
 bool
 graft_closed(Pose & pose, Loops & loops){
-	 for ( auto const & loop : loops ) {
+	for ( auto const & loop : loops ) {
 		std::pair<bool, Size> peptide_bond_issues = protocols::loops::has_severe_pep_bond_geom_issues(pose, loop.cut(), true, true, 1.5, 15, 15);
 		if ( peptide_bond_issues.first == true ) {
 			return false;

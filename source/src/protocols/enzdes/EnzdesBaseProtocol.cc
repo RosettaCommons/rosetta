@@ -659,14 +659,14 @@ EnzdesBaseProtocol::cst_minimize(
 
 					utility::vector1< std::string > const new_var_types( pose.residue_type( i ).properties().get_list_of_variants() );
 					utility::vector1< std::string > const old_var_types( old_Pose.residue_type( i ).properties().get_list_of_variants() );
-					 for ( auto const & new_var_type : new_var_types ) {
+					for ( auto const & new_var_type : new_var_types ) {
 						if ( !old_Pose.residue_type( i ).has_variant_type( new_var_type ) ) {
 							core::pose::remove_variant_type_from_pose_residue( pose,
 								core::chemical::ResidueProperties::get_variant_from_string( new_var_type ), i );
 						}
 					}
 
-					 for ( auto const & old_var_type : old_var_types ) {
+					for ( auto const & old_var_type : old_var_types ) {
 						if ( !pose.residue_type( i ).has_variant_type( old_var_type ) ) {
 							core::pose::add_variant_type_to_pose_residue( pose,
 								core::chemical::ResidueProperties::get_variant_from_string( old_var_type ), i );

@@ -282,7 +282,7 @@ FusePosesNtoCMover::setup_relax_fold_tree(
 		tr.flush();
 	}
 
-	 for ( auto const & e : old_fold_tree ) {
+	for ( auto const & e : old_fold_tree ) {
 
 		//sanity check: we need to make sure that we don't have edges
 		//originating or terminating in the fusion regions
@@ -792,7 +792,7 @@ SetupCoiledCoilFoldTreeMover::apply( core::pose::Pose & pose )
 	tr << "CoiledCoilFoldTreeMover Incoming foldtree: " << std::endl << old_fold_tree << std::endl << " and cut_seqpos is " << cut_seqpos << std::endl;
 	tr.flush();
 	bool relevant_jump_found(false);
-	 for ( auto const & e : old_fold_tree ) {
+	for ( auto const & e : old_fold_tree ) {
 
 		std::cout << "looping edge with label " << e. label() << ", start " << e.start() << " and stop " << e.stop() << std::endl;
 

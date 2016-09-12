@@ -323,7 +323,7 @@ void dump_frames_as_pdb(
 	outfile << "REMARK  666  Fragment set for outtag pose \n";
 
 	//now let's go through every fragment of every frame and dump to pdb
-	 for ( auto const & frame : frames ) {
+	for ( auto const & frame : frames ) {
 
 		for ( Size frag = start_frag; frag <= frame->nr_frags(); ++frag ) {
 

@@ -358,7 +358,7 @@ RRReporterHuman::show( ostream & out ) const {
 	write_header( out );
 	out << endl;
 
-	 for ( auto const & nat_it : per_native_recovery_ ) {
+	for ( auto const & nat_it : per_native_recovery_ ) {
 		nat_it.second.show( out );
 		out << endl;
 	}

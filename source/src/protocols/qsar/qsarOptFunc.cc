@@ -79,7 +79,7 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 
 	numeric::RocCurve roc_curve;
 
-	 for ( auto const & data_it : data_map_ ) {
+	for ( auto const & data_it : data_map_ ) {
 
 		core::Real total_score = 0.0;
 

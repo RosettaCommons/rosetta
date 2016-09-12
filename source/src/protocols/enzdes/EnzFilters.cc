@@ -803,7 +803,7 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 	if ( found_evaluators.size() != evaluators.size() ) {
 		std::cerr << "Not all parameters from requirement file " << reqfile_name_ << " were found in EnzdesScorefileFilter values, filering likely not working correctly." << std::endl;
 		std::cerr << "Missing parameters: ";
-		 for ( auto const & evaluator : evaluators ) {
+		for ( auto const & evaluator : evaluators ) {
 			if ( found_evaluators.find( evaluator.first ) == found_evaluators.end() ) std::cerr << evaluator.first << ", ";
 		}
 		std::cerr << std::endl;
@@ -854,7 +854,7 @@ EnzdesScorefileFilter::examine_pose(
 	setup_pose_metric_calculators( pose, separate_out_constraints );
 
 	//first write out the relevant score terms for the pose total
-	 for ( auto const & relevant_scoreterm : relevant_scoreterms_ ) {
+	for ( auto const & relevant_scoreterm : relevant_scoreterms_ ) {
 		std::string sco_name = relevant_scoreterm;
 		int width = std::max( 10, (int) sco_name.length() + 3 );
 
@@ -875,7 +875,7 @@ EnzdesScorefileFilter::examine_pose(
 	if ( totcalc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
-		 for ( auto const & tot_calculator : tot_calculators ) {
+		for ( auto const & tot_calculator : tot_calculators ) {
 
 			std::string calc_name = "tot_" + tot_calculator.first;
 			if ( tot_calculator.first == "charges_pm" ) calc_name = "tot_" + tot_calculator.second;
@@ -1012,7 +1012,7 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 
 	using namespace core::io::silent;
 
-	 for ( auto const & relevant_scoreterm : relevant_scoreterms_ ) {
+	for ( auto const & relevant_scoreterm : relevant_scoreterms_ ) {
 
 		std::string sco_name = sub_name + "_" +  relevant_scoreterm ;
 		int width = std::max( 10, (int) sco_name.length() + 3 );

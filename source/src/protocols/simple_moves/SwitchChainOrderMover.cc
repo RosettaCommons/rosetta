@@ -114,7 +114,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	//When applying switch then comments are erased from the pose. adding condition that if -pdb comments true flag is turned on then copy comments to new pose. gideonla 1/5/13
 	if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value() ) {
 		std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
-		 for ( auto const & comment : comments ) {
+		for ( auto const & comment : comments ) {
 			core::pose::add_comment(new_pose,comment.first,comment.second);
 		}
 	}

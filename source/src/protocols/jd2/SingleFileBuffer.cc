@@ -54,7 +54,7 @@ void SingleFileBuffer::flush( Size slave ) {
 }
 
 bool SingleFileBuffer::has_open_slaves() const {
-	 for ( auto const & unfinished_block : unfinished_blocks_ ) {
+	for ( auto const & unfinished_block : unfinished_blocks_ ) {
 		if ( unfinished_block.second.size() > 0 ) {
 			return true;
 		}

@@ -134,7 +134,7 @@ ResourceManager::show(
 	out
 		<< "ResourceManager.resources:" << endl
 		<< std::setiosflags(std::ios::left) << setw(16) << "ResourceTag" << "ResourceExists" << endl;
-	 for ( auto const & resource : resources_ ) {
+	for ( auto const & resource : resources_ ) {
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << resource.first
 			<< (resource.second ? "true" : "false") << endl;

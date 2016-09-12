@@ -1780,7 +1780,7 @@ AtomTree::insert_single_fragment(
 
 	utility::vector1< AtomCOP > outstub_nonfrag_atoms; // just for debugging
 
-	 for ( auto const & outstub_transform : outstub_transforms ) {
+	for ( auto const & outstub_transform : outstub_transforms ) {
 		StubID const & outstub_id( outstub_transform.first );
 		AtomCOP outstub_frag_atom(nullptr), outstub_nonfrag_atom(nullptr);
 		get_frag_atoms( outstub_id, frag_xyz, outstub_frag_atom, outstub_nonfrag_atom );
@@ -1916,7 +1916,7 @@ AtomTree::insert_fragment(
 		}
 	} // scope
 
-	 for ( auto const & outstub_transform : outstub_transforms ) {
+	for ( auto const & outstub_transform : outstub_transforms ) {
 		StubID const & outstub_id( outstub_transform.first );
 		AtomCOP frag_atom, nonfrag_atom;
 		get_frag_atoms( outstub_id, frag_xyz, frag_atom, nonfrag_atom );
@@ -1999,7 +1999,7 @@ AtomTree::insert_fragment(
 		FragXYZ new_frag_xyz;
 		FragRT new_outstub_transforms;
 		// get frag atoms that depend on this guy:
-		 for ( auto const & it : frag_xyz ) {
+		for ( auto const & it : frag_xyz ) {
 			AtomID const & id( it.first );
 			AtomCOP frag_atom( atom_pointer( id ) );
 			if ( frag_atom->atom_is_on_path_from_root( instub_atom ) ) {

@@ -219,7 +219,7 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 	string tabs(num_tabs,'\t');
 
 	out << tabs << "<" << name_;
-	 for ( auto const & mOption : mOptions_ ) {
+	for ( auto const & mOption : mOptions_ ) {
 		out << " " << mOption.first << "=";
 		if ( quote_options_ ) out << "\"";
 		out << mOption.second;
@@ -240,7 +240,7 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 
 size_t Tag::size() const {
 	size_t rval = 1;
-	 for ( auto const & vTag : vTags_ ) {
+	for ( auto const & vTag : vTags_ ) {
 		rval += (*vTag).size();
 	}
 	return rval;
@@ -325,7 +325,7 @@ void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 {
 	tag = TagOP( new Tag() );
 	tag->setName( v.first );
-	 for ( auto const & i : v.second ) {
+	for ( auto const & i : v.second ) {
 		tag->setOption( i.first, i.second );
 	}
 } // set_name_and_options

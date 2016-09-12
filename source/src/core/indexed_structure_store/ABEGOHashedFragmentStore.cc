@@ -156,7 +156,7 @@ void ABEGOHashedFragmentStore::generate_ss_stub_to_abego(){
 	std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
 	for ( fragStoreMap_iter = ABEGOHashedFragmentStore_.begin(); fragStoreMap_iter != ABEGOHashedFragmentStore_.end(); fragStoreMap_iter++ ) {
 		set<std::string> valid_ss_stubs = get_ss_stubs_per_fragmentStoreOP(fragStoreMap_iter->first,fragStoreMap_iter->second);
-		 for ( auto const & valid_ss_stub : valid_ss_stubs ) {
+		for ( auto const & valid_ss_stub : valid_ss_stubs ) {
 			ss_stub_to_abego_[valid_ss_stub].push_back(fragStoreMap_iter->first);
 			if ( fragStoreMap_iter->second->fragmentStore_groups.count(valid_ss_stub)==0 ) { //checking for map existance
 				std::vector<Size> residues;

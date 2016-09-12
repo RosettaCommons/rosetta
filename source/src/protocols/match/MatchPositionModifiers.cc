@@ -460,7 +460,7 @@ TaskOperationMPM::modified_match_positions(
 				//note: we're doing name3 comparison instead of pointer comparison here because
 				//of variant type uncertainties
 				bool name3_found( false );
-				 for ( auto const & upstream_restype : upstream_restypes ) {
+				for ( auto const & upstream_restype : upstream_restypes ) {
 					if ( (*restype_it)->name3() == upstream_restype->name3() ) {
 						//tr << "ARRG residue " << (*restype_it)->name3() << " allowed at pos " << i << ", set to matching " << std::endl;
 						to_return.push_back( original_positions[i] );

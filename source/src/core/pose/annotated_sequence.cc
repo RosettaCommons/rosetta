@@ -214,7 +214,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			requested_types.push_back( nullptr );
 			continue;
 		}
-		
+
 		if ( aa == '/' ) continue;  //fpd: force a chainbreak
 
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( aa );

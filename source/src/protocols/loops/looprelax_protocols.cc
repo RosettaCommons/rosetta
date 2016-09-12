@@ -227,7 +227,7 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 	int const nres( pose.size() );
 
 	std::vector< int > free_res; // stores residue numbers in real loops
-	 for ( auto const & it : Loops_in_ ) {
+	for ( auto const & it : Loops_in_ ) {
 		TR.Debug << "Loop res " <<  it.start() << " " <<  it.stop() << std::endl;
 		for ( int k = (int)it.start(); k <= (int)it.stop(); ++k ) {
 			free_res.push_back(k);

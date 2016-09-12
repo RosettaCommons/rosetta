@@ -220,7 +220,7 @@ MinMover::apply_dof_tasks_to_movemap(
 	MoveMap & movemap
 ) const {
 
-	 for ( auto const & dof_task : dof_tasks_ ) {
+	for ( auto const & dof_task : dof_tasks_ ) {
 		//generate task
 		PackerTaskOP task( dof_task.second->create_task_and_apply_taskoperations( pose ) );
 

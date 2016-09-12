@@ -100,7 +100,7 @@ extern DipolarCouplingOP retrieve_DC_from_pose(core::pose::Pose& pose) {
 
 void DipolarCoupling::show(std::ostream& out) const {
 	Size ct=0;
-	 for ( auto const & All_DC_line : All_DC_lines_ ) {
+	for ( auto const & All_DC_line : All_DC_lines_ ) {
 		out << "DC " << ++ct << "     ";
 		out << All_DC_line << std::endl;
 	}

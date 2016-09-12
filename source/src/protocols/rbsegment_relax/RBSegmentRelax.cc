@@ -435,7 +435,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 		//pose.dump_pdb("precopy.pdb");
 		//protocols::viewer::add_conformation_viewer( pose.conformation() );   // <<<< added in looprelax mover
 		pose.fold_tree( f );
-		 for ( auto const & it : *loops ) {
+		for ( auto const & it : *loops ) {
 			core::Size lstart = it.start(), lstop = it.stop();
 			idealize_loop( pose, it );
 			for ( core::Size k=lstart; k<lstop; ++k ) {
