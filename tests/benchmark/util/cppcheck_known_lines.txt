@@ -2,14 +2,6 @@
 [core/kinematics/Edge.hh:46]: (warning) Redundant code: Found a statement that begins with numeric constant.
 [core/kinematics/Edge.hh:47]: (warning) Redundant code: Found a statement that begins with numeric constant.
 [core/fragment/FragID_Iterator.cc:88]: (warning) Member variable 'FragID_Iterator::my_frag_id_' is not assigned a value in 'FragID_Iterator::operator='.
-[core/graph/UpperEdgeGraph.hh:110]: (style) Unused private function: 'UEVertex::set_index_and_owner'
-[core/graph/UpperEdgeGraph.hh:216]: (style) Unused private function: 'UEVertex::add_edge'
-[core/graph/UpperEdgeGraph.hh:226]: (style) Unused private function: 'UEVertex::add_edge'
-[core/graph/UpperEdgeGraph.hh:237]: (style) Unused private function: 'UEVertex::note_upper_edge_deleted'
-[core/graph/UpperEdgeGraph.hh:244]: (style) Unused private function: 'UEVertex::note_lower_edge_deleted'
-[core/graph/UpperEdgeGraph.hh:247]: (style) Unused private function: 'UEVertex::note_lower_edge_added'
-[core/graph/UpperEdgeGraph.hh:508]: (style) Unused private function: 'UpperEdgeGraph::get_vertex_ptr'
-[core/graph/UpperEdgeGraph.hh:511]: (style) Unused private function: 'UpperEdgeGraph::note_edge_deleted'
 [core/init/score_function_corrections.cc:448] -> [core/init/score_function_corrections.cc:445]: (style) Found duplicate branches for 'if' and 'else'.
 [core/init/score_function_corrections.cc:467] -> [core/init/score_function_corrections.cc:464]: (style) Found duplicate branches for 'if' and 'else'.
 [core/io/serialization/serialize_pose.hh:31]: (style) 'struct BUFFER' does not have a copy constructor which is recommended since the class contains a pointer to allocated memory.
@@ -330,3 +322,11 @@
 [utility/libsvm/Svm.cc:384]: (warning) Member variable 'Solver::y' is not initialized in the constructor.
 [utility/libsvm/Svm.cc:96]: (style) C-style pointer casting
 [utility/libsvm/Svm.cc:973]: (warning) Member variable 'Solver_NU::si' is not initialized in the constructor.
+[utility/graph/UpperEdgeGraph.hh:109]: (style) Unused private function: 'UEVertex::set_index_and_owner'
+[utility/graph/UpperEdgeGraph.hh:215]: (style) Unused private function: 'UEVertex::add_edge'
+[utility/graph/UpperEdgeGraph.hh:225]: (style) Unused private function: 'UEVertex::add_edge'
+[utility/graph/UpperEdgeGraph.hh:236]: (style) Unused private function: 'UEVertex::note_upper_edge_deleted'
+[utility/graph/UpperEdgeGraph.hh:243]: (style) Unused private function: 'UEVertex::note_lower_edge_deleted'
+[utility/graph/UpperEdgeGraph.hh:246]: (style) Unused private function: 'UEVertex::note_lower_edge_added'
+[utility/graph/UpperEdgeGraph.hh:507]: (style) Unused private function: 'UpperEdgeGraph::get_vertex_ptr'
+[utility/graph/UpperEdgeGraph.hh:510]: (style) Unused private function: 'UpperEdgeGraph::note_edge_deleted'
