@@ -96,7 +96,21 @@ endif()
 # Used exclusively for compilation on the Argonne "Mira" Blue Gene supercomputer.
 # Added by Vikram K. Mulligan, Baker lab (vmullig@uw.edu) on 19 April 2016.
 if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
+	list( REMOVE_ITEM compile
+			-I /usr/include
+			-I /usr/local/include
+			-I src
+			-I external/include
+			-I src/platform/linux
+
+	)
 	list( APPEND compile
+			-I ../../external/boost_1_55_0
+			-I ../../external/include
+			-I ../../src
+			-I ../../src/platform/linux
+			#-I /usr/include
+			#-I /usr/local/include
 			-O3
 			-ffast-math
 			-funroll-loops
@@ -105,12 +119,14 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
 			-s
 	)
 	list ( APPEND warn
+			-Wno-deprecated
 			-Wno-unused-variable
 			-Wno-unused-parameter
 			-Wno-type-limits
 	)
 	list( APPEND defines
 			-DNDEBUG
+			#-DDISABLE_SQLITE
 	)
 endif()
 
@@ -280,6 +296,44 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release" )
 	)
 
 endif()
+
+# "clang", "release_bluegene"
+# Used exclusively for compilation on the Argonne "Mira" Blue Gene supercomputer.
+# Added by Vikram K. Mulligan, Baker lab (vmullig@uw.edu) on 11 Sept 2016.
+if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
+	list( REMOVE_ITEM compile
+			-I /usr/include
+			-I /usr/local/include
+			-I src
+			-I external/include
+			-I src/platform/linux
+			-I src/platform/macos/64/clang/6.1
+			-I src/platform/macos/64/clang
+			-I src/platform/macos/64
+	)
+	list( APPEND compile
+			-I ../../external/boost_1_55_0
+			-I ../../external/include
+			-I ../../src
+			#-I /usr/include
+			#-I /usr/local/include
+			-I ../../src/platform/linux
+			-O3
+	)
+	list ( APPEND warn
+			-Wno-tautological-constant-out-of-range-compare
+			-Wno-undefined-var-template
+			-Wno-unused-variable
+			-Wno-unused-parameter
+			-Wno-type-safety
+			-Wno-inconsistent-missing-override
+	)
+	list( APPEND defines
+			-DNDEBUG
+			#-DDISABLE_SQLITE
+	)
+endif()
+
 
 # Pyrosetta build options
 set(WITH_PYROSETTA OFF CACHE BOOL "Build rosetta libraries with pyrosetta-specific build configuration.")

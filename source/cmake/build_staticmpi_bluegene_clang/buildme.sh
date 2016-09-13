@@ -3,9 +3,9 @@
 ## Argonne Blue Gene/Q system "Mira" setup.
 cd ../
 ./make_project.py all
-cd build_staticmpi_bluegene
-export CXX=mpicxx #For gcc compilation
-#export CXX=mpiclang++11 #For bgclang compilation
+cd build_staticmpi_bluegene_clang
+#export CXX=mpicxx #For gcc compilation
+export CXX=mpiclang++11 #For bgclang compilation
 /soft/buildtools/cmake/current/bin/cmake ./
 make -j 40
 
