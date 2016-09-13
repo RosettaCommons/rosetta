@@ -61,6 +61,7 @@
 static THREAD_LOCAL basic::Tracer TR( "apps.coupled_moves" );
 
 OPT_1GRP_KEY(Integer, coupled_moves, ntrials)
+OPT_1GRP_KEY(Integer, coupled_moves, number_ligands)
 OPT_1GRP_KEY(Real, coupled_moves, mc_kt)
 OPT_1GRP_KEY(Real, coupled_moves, boltzmann_kt)
 OPT_1GRP_KEY(Real, coupled_moves, mm_bend_weight)
@@ -100,6 +101,7 @@ main( int argc, char * argv [] )
 		OPT(constraints::cst_fa_file);
 		OPT(out::pdb_gz);
 		NEW_OPT(coupled_moves::ntrials, "number of Monte Carlo trials to run", 1000);
+		NEW_OPT(coupled_moves::number_ligands, "number of ligands in the pose", 1);
 		NEW_OPT(coupled_moves::mc_kt, "value of kT for Monte Carlo", 0.6);
 		NEW_OPT(coupled_moves::boltzmann_kt, "value of kT for Boltzmann weighted moves", 0.6);
 		NEW_OPT(coupled_moves::mm_bend_weight, "weight of mm_bend bond angle energy term", 1.0);
@@ -153,7 +155,7 @@ public:
 
 	core::Real compute_ligand_score_bonus(
 		core::pose::PoseOP pose,
-		core::Size ligand_resnum,
+		utility::vector1<core::Size> ligand_resnums,
 		core::Real ligand_weight);
 
 private:
@@ -201,7 +203,7 @@ CoupledMovesProtocol::CoupledMovesProtocol(CoupledMovesProtocol const & cmp): Mo
 
 core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 	core::pose::PoseOP pose,
-	core::Size ligand_resnum,
+	utility::vector1<core::Size> ligand_resnums,
 	core::Real ligand_weight) {
 
 	core::scoring::EnergyMap weights = pose->energies().weights();
@@ -216,8 +218,10 @@ core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 			const core::scoring::EnergyEdge * edge( static_cast< const core::scoring::EnergyEdge *> (*iru) );
 			core::Size const j( edge->get_first_node_ind() );
 			core::Size const k( edge->get_second_node_ind() );
-			if ( j == ligand_resnum || k == ligand_resnum ) {
-				ligand_two_body_energies += edge->fill_energy_map();
+			for ( core::Size index = 1; index <= ligand_resnums.size(); index++ ) {
+				if ( j == ligand_resnums[index] || k == ligand_resnums[index] ) {
+					ligand_two_body_energies += edge->fill_energy_map();
+				}
 			}
 		}
 	}
@@ -254,6 +258,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 
 	utility::vector1<core::Size> move_positions;
 	utility::vector1<core::Size> design_positions;
+	utility::vector1<core::Size> ligand_resnums;
 
 	// using ClashBasedRepackShellSelector to define repack shell
 	core::pack::task::residue_selector::ClashBasedRepackShellSelectorOP rs( new core::pack::task::residue_selector::ClashBasedRepackShellSelector(task, score_fxn_) );
@@ -280,14 +285,16 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 
 	TR << std::endl;
 
-	// ASSUMPTION: the ligand is the last residue in the given PDB
-	core::Size ligand_resnum = pose_copy->size();
+	// ASSUMPTION: the ligand(s) are the last residue(s) in the given PDB
+	for ( int i = 0 ; i < option[ coupled_moves::number_ligands ] ; i++ ) {
+		ligand_resnums.push_back( pose_copy->size() - i );
+	}
 	core::Real ligand_weight = option[coupled_moves::ligand_weight];
 	protocols::simple_moves::CoupledMoverOP coupled_mover;
 
 	if ( option[coupled_moves::ligand_mode] ) {
-		coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task, ligand_resnum));
-		coupled_mover->set_ligand_resnum( ligand_resnum );
+		coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task, ligand_resnums[1]));
+		coupled_mover->set_ligand_resnum( ligand_resnums[1], pose_copy );
 		coupled_mover->set_ligand_weight( ligand_weight );
 		core::pack::task::IGEdgeReweighterOP reweight_ligand( new protocols::toolbox::IGLigandDesignEdgeUpweighter( ligand_weight ) );
 		task->set_IGEdgeReweights()->add_reweighter( reweight_ligand );
@@ -351,7 +358,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	core::Real current_score = pose_copy->energies().total_energy();
 
 	if ( option[coupled_moves::ligand_mode] ) {
-		core::Real ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnum, ligand_weight);
+		core::Real ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnums, ligand_weight);
 		current_score += ligand_score_bonus;
 		mc.set_last_accepted_pose(*pose_copy, current_score);
 	}
@@ -361,8 +368,9 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		core::Size resnum = move_positions[random];
 		std::string move_type;
 		core::Real move_prob = numeric::random::uniform();
-		if ( move_prob < option[coupled_moves::ligand_prob] ) {
-			resnum = ligand_resnum;
+		if ( option[coupled_moves::ligand_mode] && move_prob < option[coupled_moves::ligand_prob] ) {
+			resnum = ligand_resnums[numeric::random::random_range(1, ligand_resnums.size())];
+			coupled_mover->set_ligand_resnum( resnum, pose_copy );
 			move_type = "LIGAND";
 		} else {
 			move_type = "RESIDUE";
@@ -376,7 +384,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		core::Real ligand_score_bonus = 0.0;
 
 		if ( option[coupled_moves::ligand_mode] ) {
-			ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnum, ligand_weight);
+			ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnums, ligand_weight);
 		}
 
 		current_score += ligand_score_bonus;

@@ -90,7 +90,7 @@ public:
 	void set_temperature( core::Real temperature );
 	void set_bias_sampling( bool bias_sampling );
 	void set_bump_check( bool bump_check );
-	void set_ligand_resnum( core::Size ligand_resnum );
+	void set_ligand_resnum( core::Size ligand_resnum, core::pose::PoseCOP pose  );
 	void set_ligand_jump_id( core::Size ligand_jump_id );
 	void set_ligand_weight( core::Real ligand_weight );
 	void set_rotation_magnitude( core::Real rotation_magnitude );

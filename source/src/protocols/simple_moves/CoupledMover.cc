@@ -247,9 +247,10 @@ void CoupledMover::set_bump_check( bool bump_check ) {
 	bump_check_ = bump_check;
 	boltzmann_rotamer_mover_->set_bump_check( bump_check );
 }
-void CoupledMover::set_ligand_resnum( core::Size ligand_resnum ) {
+void CoupledMover::set_ligand_resnum( core::Size ligand_resnum, core::pose::PoseCOP pose ) {
 	ligand_resnum_ = ligand_resnum;
 	boltzmann_rotamer_mover_->set_ligand_resnum( ligand_resnum );
+	set_ligand_jump_id( pose->fold_tree().get_jump_that_builds_residue( ligand_resnum ) );
 }
 void CoupledMover::set_ligand_jump_id( core::Size ligand_jump_id ) {
 	ligand_jump_id_ = ligand_jump_id;
