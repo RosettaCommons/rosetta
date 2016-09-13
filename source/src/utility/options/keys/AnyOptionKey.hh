@@ -122,8 +122,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~AnyOptionKey()
-	{}
+	~AnyOptionKey() {}
 
 
 public: // Assignment

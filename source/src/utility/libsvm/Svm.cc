@@ -193,13 +193,13 @@ public:
 	virtual Qfloat *get_Q(int column, int len) const = 0;
 	virtual double *get_QD() const = 0;
 	virtual void swap_index(int i, int j) const = 0;
-	virtual ~QMatrix() = default;
+	virtual ~QMatrix() {}
 };
 
 class Kernel: public QMatrix {
 public:
 	Kernel(int l, svm_node * const * x, const svm_parameter& param);
-	~Kernel() override;
+	~Kernel();
 
 	static double k_function(const svm_node *x, const svm_node *y,
 		const svm_parameter& param);

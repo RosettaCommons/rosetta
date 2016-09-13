@@ -57,14 +57,14 @@ namespace optimization {
 class ConvergenceTest {
 public:
 	virtual bool operator()( Real Fnew, Real Fold ) = 0;
-	virtual ~ConvergenceTest() = default;
+	virtual ~ConvergenceTest() {}
 };
 
 // concrete convergence test class - classic dfpmin
 class DFPMinConvergedFractional : public ConvergenceTest {
 public:
 	DFPMinConvergedFractional( Real _tol, Real _eps = 1.0e-10 ) : tolerance( _tol ), eps( _eps ) {};
-	~DFPMinConvergedFractional() override = default;
+	~DFPMinConvergedFractional() {}
 	bool operator()( Real Fnew, Real Fold ) override;
 private:
 	Real tolerance;
@@ -75,7 +75,7 @@ private:
 class DFPMinConvergedAbsolute : public ConvergenceTest {
 public:
 	DFPMinConvergedAbsolute( Real _tol ) : tolerance( _tol ) {}
-	~DFPMinConvergedAbsolute() override = default;
+	~DFPMinConvergedAbsolute() {}
 	bool operator()( Real Fnew, Real Fold ) override;
 private:
 	Real tolerance;

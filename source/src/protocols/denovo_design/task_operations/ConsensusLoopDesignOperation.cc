@@ -720,17 +720,3 @@ operator<<( std::ostream & os, LoopInfo const & info )
 } // task_operations
 } // denovo_design
 } // protocols
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::denovo_design::task_operations::ConsensusLoopDatabase;
-
-#ifdef MULTI_THREADED
-template<> std::mutex utility::SingletonBase< ConsensusLoopDatabase >::singleton_mutex_{};
-template<> std::atomic< ConsensusLoopDatabase * > utility::SingletonBase< ConsensusLoopDatabase >::instance_( NULL );
-#else
-template<> ConsensusLoopDatabase * utility::SingletonBase< ConsensusLoopDatabase >::instance_( NULL );
-#endif
-
-} // namespace utility

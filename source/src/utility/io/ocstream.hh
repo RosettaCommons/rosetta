@@ -49,8 +49,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~ocstream() override
-	= default;
+	~ocstream() {}
 
 
 public: // Methods: conversion

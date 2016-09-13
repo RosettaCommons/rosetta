@@ -27,7 +27,7 @@
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 
-#if defined WIN32 || WIN_PYROSETTA
+#if defined WIN32 || WIN_PYROSETTA | __INTEL_COMPILER
 #include <core/conformation/signals/ConnectionEvent.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
 #include <core/conformation/signals/IdentityEvent.hh>
@@ -130,27 +130,10 @@ public:
 
 	// STL-type methods
 
-	/*template< typename T >
-	class Conformation_const_iterator {
-	public:
-	Conformation_const_iterator( T * r, size_type pos ):
-	r_( r ), pos_( pos ) {}
-
-	private:
-	T * r_;
-	Size pos_;
-	};
-
-	typedef Conformation_const_iterator< value_type > const_iterator;
-	*/
 	iterator       begin() noexcept { return residues_.begin(); }
 	const_iterator begin()   const noexcept { return residues_.begin(); }
 	iterator       end() noexcept { return residues_.end(); };
 	const_iterator end()     const noexcept { return residues_.end(); };
-
-	//iterator begin() const { return residues_.begin(); } //  { return const_iterator( *residues_[ 1 ], 1 ); }
-	//iterator end() const { return residues_.end(); } //{ return const_iterator( *residues_[ 1 ], size()+1 ); }
-
 
 public:  // standard class methods
 

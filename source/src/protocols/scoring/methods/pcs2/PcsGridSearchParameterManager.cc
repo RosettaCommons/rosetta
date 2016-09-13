@@ -52,20 +52,6 @@
 
 static THREAD_LOCAL basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::scoring::methods::pcs2::PcsGridSearchParameterManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< PcsGridSearchParameterManager >::singleton_mutex_{};
-template <> std::atomic< PcsGridSearchParameterManager * > utility::SingletonBase< PcsGridSearchParameterManager >::instance_( 0 );
-#else
-template <> PcsGridSearchParameterManager * utility::SingletonBase< PcsGridSearchParameterManager >::instance_( 0 );
-#endif
-
-}
-
 namespace protocols {
 namespace scoring {
 namespace methods {

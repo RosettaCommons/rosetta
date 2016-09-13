@@ -690,18 +690,3 @@ clean_for_storage( std::string & ss )
 } //protocols
 } //denovo_design
 } //components
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::denovo_design::components::StructureDataFactory;
-
-#ifdef MULTI_THREADED
-template<> std::mutex utility::SingletonBase< StructureDataFactory >::singleton_mutex_{};
-template<> std::atomic< StructureDataFactory * > utility::SingletonBase< StructureDataFactory >::instance_( NULL );
-#else
-template<> StructureDataFactory * utility::SingletonBase< StructureDataFactory >::instance_( NULL );
-#endif
-
-} // namespace utility
-

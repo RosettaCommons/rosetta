@@ -165,7 +165,7 @@ private: // data
 
 	/// @brief stores the 1-based indexing for accessing this section
 	///  via VallLibrary::operator []
-	Size index_;
+	Size index_ = 0;
 
 
 };

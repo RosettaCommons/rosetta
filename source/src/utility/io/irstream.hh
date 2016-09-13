@@ -46,8 +46,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~irstream()
-	= default;
+	~irstream() {}
 
 
 protected: // Creation

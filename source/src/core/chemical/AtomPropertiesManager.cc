@@ -16,26 +16,6 @@
 #include <core/chemical/AtomPropertiesManager.hh>
 #include <core/chemical/AtomProperty.hh>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
-
-// Singleton set-up
-namespace utility {
-
-using core::chemical::AtomPropertiesManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< AtomPropertiesManager >::singleton_mutex_ {};
-template <> std::atomic< AtomPropertiesManager * > utility::SingletonBase< AtomPropertiesManager >::instance_( 0 );
-#else
-template <> AtomPropertiesManager * utility::SingletonBase< AtomPropertiesManager >::instance_( nullptr );
-#endif
-
-}  // namespace utility
-
 
 namespace core {
 namespace chemical {

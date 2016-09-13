@@ -80,8 +80,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~ResidueChainVectorOption() override
-	= default;
+	~ResidueChainVectorOption() {}
 
 
 public: // copying

@@ -77,21 +77,6 @@
 //#include <boost/function.hpp>
 
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::chemical::ChemicalManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< ChemicalManager >::singleton_mutex_{};
-template <> std::atomic< ChemicalManager * > utility::SingletonBase< ChemicalManager >::instance_( 0 );
-#else
-template <> ChemicalManager * utility::SingletonBase< ChemicalManager >::instance_( nullptr );
-#endif
-
-}
-
-
 namespace core {
 namespace chemical {
 

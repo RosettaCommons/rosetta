@@ -55,20 +55,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::scoring::methods::pcs2::PcsEnergyParameterManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< PcsEnergyParameterManager >::singleton_mutex_{};
-template <> std::atomic< PcsEnergyParameterManager * > utility::SingletonBase< PcsEnergyParameterManager >::instance_( 0 );
-#else
-template <> PcsEnergyParameterManager * utility::SingletonBase< PcsEnergyParameterManager >::instance_( 0 );
-#endif
-
-}
-
 namespace protocols {
 namespace scoring {
 namespace methods {

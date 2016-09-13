@@ -88,36 +88,6 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::scoring::geometric_solvation::GridInfo;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< GridInfo >::singleton_mutex_{};
-template <> std::atomic< GridInfo * > utility::SingletonBase< GridInfo >::instance_( 0 );
-#else
-template <> GridInfo * utility::SingletonBase< GridInfo >::instance_( 0 );
-#endif
-
-}
-
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::scoring::geometric_solvation::WaterWeightGridSet;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< WaterWeightGridSet >::singleton_mutex_{};
-template <> std::atomic< WaterWeightGridSet * > utility::SingletonBase< WaterWeightGridSet >::instance_( 0 );
-#else
-template <> WaterWeightGridSet * utility::SingletonBase< WaterWeightGridSet >::instance_( 0 );
-#endif
-
-}
-
-
 namespace core {
 namespace scoring {
 namespace geometric_solvation {

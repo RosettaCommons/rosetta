@@ -43,6 +43,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
+#include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
 
 // ObjexxFCL Headers

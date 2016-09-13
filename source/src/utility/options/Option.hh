@@ -93,8 +93,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~Option()
-	= default;
+	~Option() {}
 
 
 protected: // Assignment

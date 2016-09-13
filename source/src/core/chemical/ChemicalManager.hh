@@ -59,9 +59,6 @@
 
 #ifdef MULTI_THREADED
 
-#include <atomic>
-#include <mutex>
-
 // Utility thread headers
 #include <utility/thread/ReadWriteMutex.hh>
 

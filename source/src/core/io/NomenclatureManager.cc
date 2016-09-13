@@ -36,30 +36,8 @@
 // C++ headers
 #include <string>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
-
-// Singleton set-up
-namespace utility {
-
-using core::io::NomenclatureManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< NomenclatureManager >::singleton_mutex_ {};
-template <> std::atomic< NomenclatureManager * > utility::SingletonBase< NomenclatureManager >::instance_( 0 );
-#else
-template <> NomenclatureManager * utility::SingletonBase< NomenclatureManager >::instance_( nullptr );
-#endif
-
-}  // namespace utility
-
-
 // Construct tracer.
 static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.NomenclatureManager" );
-
 
 namespace core {
 namespace io {

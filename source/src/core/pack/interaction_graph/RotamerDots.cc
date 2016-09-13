@@ -68,19 +68,6 @@ using namespace ObjexxFCL::format;
 #include <utility/serialization/serialization.hh>
 #endif // SERIALIZATION
 
-namespace utility {
-
-using core::pack::interaction_graph::RotamerDotsRadiusData;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RotamerDotsRadiusData >::singleton_mutex_{};
-template <> std::atomic< RotamerDotsRadiusData * > utility::SingletonBase< RotamerDotsRadiusData >::instance_( 0 );
-#else
-template <> RotamerDotsRadiusData * utility::SingletonBase< RotamerDotsRadiusData >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace pack {
 namespace interaction_graph {

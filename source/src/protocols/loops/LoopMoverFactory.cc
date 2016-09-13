@@ -38,21 +38,6 @@
 // C++ Headers
 #include <sstream>
 
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::loops::LoopMoverFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< LoopMoverFactory >::singleton_mutex_{};
-template <> std::atomic< LoopMoverFactory * > utility::SingletonBase< LoopMoverFactory >::instance_( 0 );
-#else
-template <> LoopMoverFactory * utility::SingletonBase< LoopMoverFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace loops {
 

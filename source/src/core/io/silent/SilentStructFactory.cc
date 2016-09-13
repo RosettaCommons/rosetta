@@ -35,20 +35,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::io::silent::SilentStructFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< SilentStructFactory >::singleton_mutex_{};
-template <> std::atomic< SilentStructFactory * > utility::SingletonBase< SilentStructFactory >::instance_( 0 );
-#else
-template <> SilentStructFactory * utility::SingletonBase< SilentStructFactory >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace io {
 namespace silent {

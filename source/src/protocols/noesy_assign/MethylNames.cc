@@ -32,20 +32,6 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::noesy_assign::MethylNameLibrary;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< MethylNameLibrary >::singleton_mutex_{};
-template <> std::atomic< MethylNameLibrary * > utility::SingletonBase< MethylNameLibrary >::instance_( 0 );
-#else
-template <> MethylNameLibrary * utility::SingletonBase< MethylNameLibrary >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace noesy_assign {
 

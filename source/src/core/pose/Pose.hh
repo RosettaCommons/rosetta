@@ -83,7 +83,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__INTEL_COMPILER)
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>

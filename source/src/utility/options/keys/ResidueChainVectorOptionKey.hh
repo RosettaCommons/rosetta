@@ -120,8 +120,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~ResidueChainVectorOptionKey()
-	{}
+	~ResidueChainVectorOptionKey() {}
 
 
 public: // Assignment

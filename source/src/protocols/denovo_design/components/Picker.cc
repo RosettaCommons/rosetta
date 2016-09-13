@@ -338,17 +338,3 @@ Picker::ss_key(
 } // components
 } // denovo_design
 } // protocols
-
-// singleton stuff
-namespace utility {
-
-using protocols::denovo_design::components::Picker;
-
-#ifdef MULTI_THREADED
-template<> std::mutex utility::SingletonBase< Picker >::singleton_mutex_{};
-template<> std::atomic< Picker * > utility::SingletonBase< Picker >::instance_( NULL );
-#else
-template<> Picker * utility::SingletonBase< Picker >::instance_( NULL );
-#endif
-
-}

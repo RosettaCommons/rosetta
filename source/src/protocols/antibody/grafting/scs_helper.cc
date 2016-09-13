@@ -41,16 +41,6 @@
 #include <basic/Tracer.hh>
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.SCS_Helper");
 
-// Singleton setup
-namespace utility {
-#ifdef MULTI_THREADED
-	template <> std::mutex utility::SingletonBase< protocols::antibody::grafting::SCS_Helper > ::singleton_mutex_;
-	template <> std::atomic< protocols::antibody::grafting::SCS_Helper * > utility::SingletonBase< protocols::antibody::grafting::SCS_Helper >::instance_( 0 );
-#else
-	template <> protocols::antibody::grafting::SCS_Helper * utility::SingletonBase< protocols::antibody::grafting::SCS_Helper >::instance_( 0 );
-#endif
-}
-
 namespace protocols {
 namespace antibody {
 namespace grafting {

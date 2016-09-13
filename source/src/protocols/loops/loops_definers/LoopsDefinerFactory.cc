@@ -34,20 +34,6 @@
 #include <string>
 #include <sstream>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::loops::loops_definers::LoopsDefinerFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< LoopsDefinerFactory >::singleton_mutex_{};
-template <> std::atomic< LoopsDefinerFactory * > utility::SingletonBase< LoopsDefinerFactory >::instance_( 0 );
-#else
-template <> LoopsDefinerFactory * utility::SingletonBase< LoopsDefinerFactory >::instance_( 0 );
-#endif
-
-}
-
 namespace protocols {
 namespace loops {
 namespace loops_definers {

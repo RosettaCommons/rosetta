@@ -28,20 +28,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using basic::resource_manager::ResourceLoaderFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< ResourceLoaderFactory >::singleton_mutex_{};
-template <> std::atomic< ResourceLoaderFactory * > utility::SingletonBase< ResourceLoaderFactory >::instance_( 0 );
-#else
-template <> ResourceLoaderFactory * utility::SingletonBase< ResourceLoaderFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace basic {
 namespace resource_manager {
 

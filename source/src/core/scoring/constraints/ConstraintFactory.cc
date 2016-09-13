@@ -25,20 +25,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::scoring::constraints::ConstraintFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< ConstraintFactory >::singleton_mutex_{};
-template <> std::atomic< ConstraintFactory * > utility::SingletonBase< ConstraintFactory >::instance_( 0 );
-#else
-template <> ConstraintFactory * utility::SingletonBase< ConstraintFactory >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace scoring {
 namespace constraints {

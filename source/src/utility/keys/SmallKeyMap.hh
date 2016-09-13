@@ -139,8 +139,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	~SmallKeyMap()
-	= default;
+	~SmallKeyMap() {}
 
 
 public: // Assignment

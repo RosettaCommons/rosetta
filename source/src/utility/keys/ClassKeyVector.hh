@@ -142,8 +142,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	~ClassKeyVector()
-	= default;
+	~ClassKeyVector() {}
 
 
 public: // Assignment

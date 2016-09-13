@@ -28,32 +28,6 @@
 
 // C++ header
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 headers
-#include <atomic>
-#include <mutex>
-
-#endif
-#endif
-
-
-// Singleton set-up
-namespace utility {
-
-using protocols::antibody::grafting::RegExManager;
-
-#ifdef MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RegExManager >::singleton_mutex_ {};
-template <> std::atomic< RegExManager * > utility::SingletonBase< RegExManager >::instance_( 0 );
-#else
-template <> RegExManager * utility::SingletonBase< RegExManager >::instance_( 0 );
-#endif
-
-}  // namespace utility
-
-
 namespace protocols {
 namespace antibody {
 namespace grafting {

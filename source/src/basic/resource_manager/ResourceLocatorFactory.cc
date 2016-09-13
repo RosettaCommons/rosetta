@@ -23,20 +23,6 @@
 #include <utility/exit.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using basic::resource_manager::ResourceLocatorFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< ResourceLocatorFactory >::singleton_mutex_{};
-template <> std::atomic< ResourceLocatorFactory * > utility::SingletonBase< ResourceLocatorFactory >::instance_( 0 );
-#else
-template <> ResourceLocatorFactory * utility::SingletonBase< ResourceLocatorFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace basic {
 namespace resource_manager {
 

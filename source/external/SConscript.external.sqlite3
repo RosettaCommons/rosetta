@@ -11,7 +11,7 @@
 Import("build", "project")
 
 # Python imports
-from tools.build.settings import Settings, ProjectSettings
+from tools.build.settings import Settings, ProjectSettings, clean_env_for_external
 import os
 
 #this is different from all the other SConscripts.
@@ -31,8 +31,10 @@ def build_sqlite3(current_project):
     # in particular the testing server requires this
     env.Append(CPPDEFINES=["SQLITE_DISABLE_LFS"])
 
+    clean_env_for_external( env )
+
     ccflags = env['CCFLAGS'].split()
-    ccflags = [f for f in ccflags if not f.startswith("-W") and f != '-pedantic' and f != "-ffor-scope" and f != '-std=c++98']
+    ccflags = [f for f in ccflags if f != "-ffor-scope" and f != '-std=c++98']
     ccflags.append("-fno-fast-math")
     env.Replace(CCFLAGS=ccflags)
 

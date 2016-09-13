@@ -53,20 +53,6 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::scoring::constraints::ConstraintIO;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< ConstraintIO >::singleton_mutex_{};
-template <> std::atomic< ConstraintIO * > utility::SingletonBase< ConstraintIO >::instance_( 0 );
-#else
-template <> ConstraintIO * utility::SingletonBase< ConstraintIO >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace scoring {
 namespace constraints {

@@ -25,20 +25,6 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::chemical::rotamers::RotamerLibrarySpecificationFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RotamerLibrarySpecificationFactory >::singleton_mutex_{};
-template <> std::atomic< RotamerLibrarySpecificationFactory * > utility::SingletonBase< RotamerLibrarySpecificationFactory >::instance_( 0 );
-#else
-template <> RotamerLibrarySpecificationFactory * utility::SingletonBase< RotamerLibrarySpecificationFactory >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace chemical {
 namespace rotamers {

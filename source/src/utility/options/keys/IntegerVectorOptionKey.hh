@@ -120,8 +120,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~IntegerVectorOptionKey()
-	{}
+	~IntegerVectorOptionKey() {}
 
 
 public: // Assignment

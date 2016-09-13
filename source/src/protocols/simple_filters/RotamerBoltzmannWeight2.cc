@@ -417,18 +417,3 @@ IdManager< T >::create_singleton_instance()
 } //protocols
 } //simple_filters
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::simple_filters::IdManager;
-
-#ifdef MULTI_THREADED
-template<> std::mutex utility::SingletonBase< IdManager< core::Size > >::singleton_mutex_{};
-template<> std::atomic< IdManager< core::Size > * > utility::SingletonBase< IdManager< core::Size > >::instance_( 0 );
-#else
-template<> IdManager< core::Size > * utility::SingletonBase< IdManager< core::Size > >::instance_( nullptr );
-#endif
-
-}
-
-

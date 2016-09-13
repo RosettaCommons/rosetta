@@ -32,21 +32,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::jd2::JobInputterFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< JobInputterFactory >::singleton_mutex_{};
-template <> std::atomic< JobInputterFactory * > utility::SingletonBase< JobInputterFactory >::instance_( 0 );
-#else
-template <> JobInputterFactory * utility::SingletonBase< JobInputterFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace jd2 {
 

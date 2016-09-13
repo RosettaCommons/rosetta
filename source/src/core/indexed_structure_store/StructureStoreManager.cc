@@ -31,20 +31,6 @@
 
 #include <utility/vector1.hh>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::indexed_structure_store::StructureStoreManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< StructureStoreManager >::singleton_mutex_{};
-template <> std::atomic< StructureStoreManager * > utility::SingletonBase< StructureStoreManager >::instance_( 0 );
-#else
-template <> StructureStoreManager * utility::SingletonBase< StructureStoreManager >::instance_( nullptr );
-#endif
-
-}
-
 namespace core {
 namespace indexed_structure_store {
 

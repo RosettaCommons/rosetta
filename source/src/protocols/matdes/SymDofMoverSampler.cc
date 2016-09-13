@@ -37,20 +37,6 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::matdes::SymDofMoverSampler;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< SymDofMoverSampler >::singleton_mutex_{};
-template <> std::atomic< SymDofMoverSampler * > utility::SingletonBase< SymDofMoverSampler >::instance_( 0 );
-#else
-template <> SymDofMoverSampler * utility::SingletonBase< SymDofMoverSampler >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace matdes {
 

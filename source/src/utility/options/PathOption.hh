@@ -87,8 +87,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~PathOption() override
-	= default;
+	~PathOption() {}
 
 
 public: // Methods

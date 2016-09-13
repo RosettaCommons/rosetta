@@ -40,20 +40,6 @@
 // C++ Headers
 #include <sstream>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::loops::loop_mover::refine::LoopRefineInnerCycleFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< LoopRefineInnerCycleFactory >::singleton_mutex_{};
-template <> std::atomic< LoopRefineInnerCycleFactory * > utility::SingletonBase< LoopRefineInnerCycleFactory >::instance_( 0 );
-#else
-template <> LoopRefineInnerCycleFactory * utility::SingletonBase< LoopRefineInnerCycleFactory >::instance_( 0 );
-#endif
-
-}
-
 namespace protocols {
 namespace loops {
 namespace loop_mover {

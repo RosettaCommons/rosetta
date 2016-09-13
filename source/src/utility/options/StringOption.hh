@@ -74,8 +74,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~StringOption() override
-	= default;
+	~StringOption() {}
 
 
 public: // Properties

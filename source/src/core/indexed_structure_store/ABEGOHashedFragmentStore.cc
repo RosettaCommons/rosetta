@@ -40,19 +40,9 @@
 #include <map>
 #include <set>
 
-namespace utility {
-#ifdef MULTI_THREADED
-template <> std::mutex utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::singleton_mutex_{};
-template <> std::atomic< core::indexed_structure_store::ABEGOHashedFragmentStore * > utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::instance_( 0 );
-#else
-template <> core::indexed_structure_store::ABEGOHashedFragmentStore * utility::SingletonBase< core::indexed_structure_store::ABEGOHashedFragmentStore >::instance_( nullptr );
-#endif
-}
-
 #define foreach BOOST_FOREACH
 
 static THREAD_LOCAL basic::Tracer TR( "core.indexed_structure_store.ABEGOHashedFragmentStore" );
-
 
 namespace core {
 namespace indexed_structure_store {

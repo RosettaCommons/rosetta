@@ -65,7 +65,7 @@ protected:
 		/* IN RELEASE MODE THIS HAS CONSTRUCTOR MUST NOT FAIL! --- otherwise the ERROR Msg get's lost! */
 	};
 public:
-	virtual ~EXCN_Base() = default;
+	virtual ~EXCN_Base() {}
 	virtual void show( std::ostream& ) const = 0;
 	virtual std::string const msg() const {
 		std::string msg;

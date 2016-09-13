@@ -29,20 +29,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::rosetta_scripts::PoseSelectorFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< PoseSelectorFactory >::singleton_mutex_{};
-template <> std::atomic< PoseSelectorFactory * > utility::SingletonBase< PoseSelectorFactory >::instance_( 0 );
-#else
-template <> PoseSelectorFactory * utility::SingletonBase< PoseSelectorFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace rosetta_scripts {
 

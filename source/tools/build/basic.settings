@@ -1615,12 +1615,11 @@ settings = {
                     "Wno-strict-aliasing",
                     #"Wno-documentation",
                     #"Wno-padded",
-                    #"Wno-weak-vtables"
+                    #"Wno-weak-vtables",
                 ],
             },
         },
     },
-
 
     # OSs #####################################################################
 

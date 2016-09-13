@@ -11,7 +11,7 @@
 Import("build", "project")
 
 # Python imports
-from tools.build.settings import Settings, ProjectSettings
+from tools.build.settings import Settings, ProjectSettings, clean_env_for_external
 import os
 
 subscript = build.toplevel + "/external/SConscript.external." + project
@@ -94,48 +94,12 @@ elif os.path.exists( subsettings ):
         lib += boost_ext
     actual.libraries += [ lib ]
 
-
   # Transform the modified settings into SCons Environment variables.
   # Gives priority to project settings over global settings.
   env = build.environment.Clone()
   env.Prepend(**actual.symbols())
 
-  #Kill warning-increasing flags for C and C++
-  #This is external - we can't be responsible for warnings in external code.
-
-  # Common flags for both C++ and C
-  ccflags = env['CCFLAGS'].split()
-  ccflags = [f for f in ccflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
-  if requested.ccflags:
-    ccflags += requested['ccflags']
-  # We may need additional defines for compilation
-  if( requested.defines ):
-    ccflags.extend( ["-D"+d for d in requested.defines] )
-  env.Replace(CCFLAGS=ccflags)
-
-  # C specific flags	
-  cflags = str(env['CFLAGS']).split()
-  cflags = [f for f in cflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
-  if requested.cflags:
-    cflags += requested['cflags']
-  env.Replace(CFLAGS=cflags)
-
-  # C++ specific flags	
-  cxxflags = str(env['CXXFLAGS']).split()
-  cxxflags = [f for f in cxxflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
-  if requested.cxxflags:
-    cxxflags += requested['cxxflags']
-  env.Replace(CXXFLAGS=cxxflags)
-
-  if requested.link_flags:
-    link_flags = str(env['LINKFLAGS']).split()
-    link_flags.extend( requested['link_flags'] )
-    env.Replace(LINKFLAGS=link_flags)
-    ## SHLINKFLAGS are flags which get added to the compile *in addition* to the regular link flags
-    #shlink_flags = str(env['SHLINKFLAGS']).split()
-    #print shlink_flags
-    #shlink_flags.extend( requested['link_flags'] )
-    #env.Replace(SHLINKFLAGS=shlink_flags)
+  clean_env_for_external(env, requested)
 
   if "static" not in build.options.extras:
     env["RPATH"] = [

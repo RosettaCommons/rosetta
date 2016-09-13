@@ -34,20 +34,6 @@ using namespace ObjexxFCL;
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::genetic_algorithm::EntityElementFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< EntityElementFactory >::singleton_mutex_{};
-template <> std::atomic< EntityElementFactory * > utility::SingletonBase< EntityElementFactory >::instance_( 0 );
-#else
-template <> EntityElementFactory * utility::SingletonBase< EntityElementFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace genetic_algorithm {
 

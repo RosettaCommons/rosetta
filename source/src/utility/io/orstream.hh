@@ -46,8 +46,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~orstream()
-	= default;
+	~orstream() {}
 
 
 protected: // Creation

@@ -114,7 +114,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~ozstream() override
+	~ozstream()
 	{
 		close();
 	}

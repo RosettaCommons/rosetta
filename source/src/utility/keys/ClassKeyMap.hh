@@ -138,8 +138,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	~ClassKeyMap()
-	= default;
+	~ClassKeyMap() {}
 
 
 public: // Assignment

@@ -120,17 +120,3 @@ DeNovoArchitectFactory::add_creator( DeNovoArchitectCreatorOP creator )
 } //protocols
 } //denovo_design
 } //architects
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::denovo_design::architects::DeNovoArchitectFactory;
-
-#ifdef MULTI_THREADED
-template<> std::mutex utility::SingletonBase< DeNovoArchitectFactory >::singleton_mutex_{};
-template<> std::atomic< DeNovoArchitectFactory * > utility::SingletonBase< DeNovoArchitectFactory >::instance_( NULL );
-#else
-template<> DeNovoArchitectFactory * utility::SingletonBase< DeNovoArchitectFactory >::instance_( NULL );
-#endif
-
-}

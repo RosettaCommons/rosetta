@@ -54,7 +54,7 @@ public:
 public:
 	WorkUnitQueue():memory_limit_(0) {};
 
-	virtual ~WorkUnitQueue()= default;
+	virtual ~WorkUnitQueue() {};
 
 	virtual core::Size  size() const { return wus_.size(); }
 
@@ -108,7 +108,7 @@ public:
 	{
 	}
 
-	~WorkUnitQueue_Swapped() override= default;
+	~WorkUnitQueue_Swapped() {};
 
 	//virtual core::Size  size();
 

@@ -173,8 +173,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~UserKey()
-	= default;
+	~UserKey() {}
 
 
 public: // Assignment

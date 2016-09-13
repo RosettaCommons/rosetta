@@ -62,20 +62,6 @@
 #include <cstdlib>
 #include <string>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::jumping::StandardPairingLibrary;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< StandardPairingLibrary >::singleton_mutex_{};
-template <> std::atomic< StandardPairingLibrary * > utility::SingletonBase< StandardPairingLibrary >::instance_( 0 );
-#else
-template <> StandardPairingLibrary * utility::SingletonBase< StandardPairingLibrary >::instance_( nullptr );
-#endif
-
-}
-
 static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
 
 using core::Real;

@@ -39,20 +39,6 @@
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::rotamer_recovery::RotamerRecoveryFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RotamerRecoveryFactory >::singleton_mutex_{};
-template <> std::atomic< RotamerRecoveryFactory * > utility::SingletonBase< RotamerRecoveryFactory >::instance_( 0 );
-#else
-template <> RotamerRecoveryFactory * utility::SingletonBase< RotamerRecoveryFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace rotamer_recovery {
 

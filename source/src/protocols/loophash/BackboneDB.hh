@@ -57,7 +57,7 @@ struct BBExtraData{
 };
 struct BBData {
 	std::vector < short > angles;
-	core::Size  extra_key;
+	core::Size  extra_key = 0;
 };
 
 class BackboneSegment {

@@ -22,20 +22,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using basic::resource_manager::FallbackConfigurationFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< FallbackConfigurationFactory >::singleton_mutex_{};
-template <> std::atomic< FallbackConfigurationFactory * > utility::SingletonBase< FallbackConfigurationFactory >::instance_( 0 );
-#else
-template <> FallbackConfigurationFactory * utility::SingletonBase< FallbackConfigurationFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace basic {
 namespace resource_manager {
 

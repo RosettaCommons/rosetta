@@ -94,9 +94,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~Key()
-	= default;
-
+	~Key() {}
 
 public: // Assignment
 

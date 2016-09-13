@@ -72,7 +72,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	~VariantKey()
+	~VariantKey() throw() // throw() needed for ICC
 	{
 		delete key_p_;
 	}

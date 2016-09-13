@@ -31,20 +31,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::pack::rotamers::SingleResidueRotamerLibraryFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< SingleResidueRotamerLibraryFactory >::singleton_mutex_{};
-template <> std::atomic< SingleResidueRotamerLibraryFactory * > utility::SingletonBase< SingleResidueRotamerLibraryFactory >::instance_( 0 );
-#else
-template <> SingleResidueRotamerLibraryFactory * utility::SingletonBase< SingleResidueRotamerLibraryFactory >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace pack {
 namespace rotamers {

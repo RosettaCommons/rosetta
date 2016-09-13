@@ -126,8 +126,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~ScalarOption_T_() override
-	= default;
+	~ScalarOption_T_() {}
 
 
 protected: // Assignment

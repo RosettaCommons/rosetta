@@ -22,19 +22,6 @@
 
 static basic::Tracer TR( "protocols.farna.libraries.RNA_LibraryManager" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-using namespace protocols::farna::libraries;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RNA_LibraryManager >::singleton_mutex_{};
-template <> std::atomic< RNA_LibraryManager * > utility::SingletonBase< RNA_LibraryManager >::instance_( 0 );
-#else
-template <> RNA_LibraryManager * utility::SingletonBase< RNA_LibraryManager >::instance_( 0 );
-#endif
-
-}
-
 using namespace protocols::farna::options;
 
 namespace protocols {

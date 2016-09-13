@@ -87,8 +87,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 
-	~FileOption() override
-	= default;
+	~FileOption() {}
 
 
 public: // Methods

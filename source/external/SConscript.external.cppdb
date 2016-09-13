@@ -11,7 +11,7 @@
 Import("build", "project")
 
 # Python imports
-from tools.build.settings import Settings, ProjectSettings
+from tools.build.settings import Settings, ProjectSettings, clean_env_for_external
 import os
 
 #this is different from all the other SConscripts.
@@ -69,6 +69,8 @@ def build_cppdb(current_project):
     if "mysql" in build.options.extras:
         env.Append(CPPDEFINES=['CPPDB_WITH_MYSQL'])
     env.Append(LIBPATH='#external/lib')
+
+    clean_env_for_external(env)
 
     cppdb_files = [
         "dbio/cppdb/atomic_counter.cpp",

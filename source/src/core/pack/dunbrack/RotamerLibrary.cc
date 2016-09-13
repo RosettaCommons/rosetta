@@ -87,20 +87,6 @@ quick conversion from rotno-tuple to index?
 rotamer_data: probability, chi-mean, chi-sd
 */
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::pack::dunbrack::RotamerLibrary;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RotamerLibrary >::singleton_mutex_{};
-template <> std::atomic< RotamerLibrary * > utility::SingletonBase< RotamerLibrary >::instance_( 0 );
-#else
-template <> RotamerLibrary * utility::SingletonBase< RotamerLibrary >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace pack {
 namespace dunbrack {

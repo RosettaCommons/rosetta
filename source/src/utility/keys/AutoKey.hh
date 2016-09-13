@@ -161,19 +161,15 @@ protected: // Creation
 
 public: // Creation
 
-
 	/// @brief Clone this
 	virtual
 	AutoKey *
 	clone() const = 0;
 
-
 	/// @brief Destructor
 	inline
 	virtual
-	~AutoKey()
-	= default;
-
+	~AutoKey() {}
 
 public: // Assignment
 

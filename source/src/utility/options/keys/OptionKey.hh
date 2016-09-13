@@ -136,8 +136,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~OptionKey()
-	{}
+	~OptionKey() {}
 
 
 public: // Assignment

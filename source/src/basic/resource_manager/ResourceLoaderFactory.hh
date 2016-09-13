@@ -28,6 +28,11 @@
 #include <map>
 #include <string>
 
+#ifdef MULTI_THREADED
+#include <atomic>
+#include <mutex>
+#endif
+
 namespace basic {
 namespace resource_manager {
 

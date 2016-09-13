@@ -26,20 +26,6 @@
 // C++ headers
 #include <map>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using basic::mpi::MessageListenerFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< MessageListenerFactory >::singleton_mutex_{};
-template <> std::atomic< MessageListenerFactory * > utility::SingletonBase< MessageListenerFactory >::instance_( 0 );
-#else
-template <> MessageListenerFactory * utility::SingletonBase< MessageListenerFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace basic {
 namespace mpi {
 

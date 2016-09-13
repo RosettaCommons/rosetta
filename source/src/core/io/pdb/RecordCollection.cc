@@ -31,33 +31,8 @@
 // C++ headers
 #include <string>
 
-#ifdef MULTI_THREADED
-
-// C++11 headers
-#include <atomic>
-#include <mutex>
-
-#endif
-
-
-// Singleton set-up
-namespace utility {
-
-using core::io::pdb::RecordCollection;
-
-#ifdef MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RecordCollection >::singleton_mutex_ {};
-template <> std::atomic< RecordCollection * > utility::SingletonBase< RecordCollection >::instance_( 0 );
-#else
-template <> RecordCollection * utility::SingletonBase< RecordCollection >::instance_( 0 );
-#endif
-
-}  // namespace utility
-
-
 // Construct tracer.
 static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.RecordCollection" );
-
 
 namespace core {
 namespace io {

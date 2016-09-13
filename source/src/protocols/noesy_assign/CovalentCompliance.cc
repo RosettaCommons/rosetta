@@ -20,20 +20,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::noesy_assign::CovalentCompliance;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< CovalentCompliance >::singleton_mutex_{};
-template <> std::atomic< CovalentCompliance * > utility::SingletonBase< CovalentCompliance >::instance_( 0 );
-#else
-template <> CovalentCompliance * utility::SingletonBase< CovalentCompliance >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace noesy_assign {
 

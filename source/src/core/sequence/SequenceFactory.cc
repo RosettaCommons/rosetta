@@ -27,20 +27,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::sequence::SequenceFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< SequenceFactory >::singleton_mutex_{};
-template <> std::atomic< SequenceFactory * > utility::SingletonBase< SequenceFactory >::instance_( 0 );
-#else
-template <> SequenceFactory * utility::SingletonBase< SequenceFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace core {
 namespace sequence {
 

@@ -25,7 +25,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
 

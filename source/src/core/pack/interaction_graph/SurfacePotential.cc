@@ -64,20 +64,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::pack::interaction_graph::SurfacePotential;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< SurfacePotential >::singleton_mutex_{};
-template <> std::atomic< SurfacePotential * > utility::SingletonBase< SurfacePotential >::instance_( 0 );
-#else
-template <> SurfacePotential * utility::SingletonBase< SurfacePotential >::instance_( 0 );
-#endif
-
-}
-
 namespace core {
 namespace pack {
 namespace interaction_graph {

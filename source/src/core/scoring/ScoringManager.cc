@@ -110,20 +110,6 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.ScoringManager" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using core::scoring::ScoringManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< ScoringManager >::singleton_mutex_{};
-template <> std::atomic< ScoringManager * > utility::SingletonBase< ScoringManager >::instance_( 0 );
-#else
-template <> ScoringManager * utility::SingletonBase< ScoringManager >::instance_( nullptr );
-#endif
-
-}
-
 namespace core {
 namespace scoring {
 

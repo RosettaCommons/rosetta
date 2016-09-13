@@ -111,8 +111,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~ScalarOptionKey()
-	{}
+	~ScalarOptionKey() {}
 
 
 public: // Assignment

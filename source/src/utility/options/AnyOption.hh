@@ -91,8 +91,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~AnyOption()
-	= default;
+	~AnyOption() {}
 
 
 protected: // Assignment

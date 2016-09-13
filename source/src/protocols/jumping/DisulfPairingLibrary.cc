@@ -73,20 +73,6 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::jumping::StandardDisulfPairingLibrary;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< StandardDisulfPairingLibrary >::singleton_mutex_{};
-template <> std::atomic< StandardDisulfPairingLibrary * > utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( 0 );
-#else
-template <> StandardDisulfPairingLibrary * utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( nullptr );
-#endif
-
-}
-
 using core::Real;
 using namespace core;
 using namespace basic;

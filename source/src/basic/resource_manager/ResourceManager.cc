@@ -28,21 +28,6 @@
 #include <sstream>
 #include <iomanip>
 
-
-// // Singleton instance and mutex static data members
-// namespace utility {
-//
-// using basic::resource_manager::ResourceManager;
-//
-// #if defined MULTI_THREADED
-// template <> std::mutex utility::SingletonBase< ResourceManager > ::singleton_mutex_;
-// template <> std::atomic< ResourceManager * > utility::SingletonBase< ResourceManager >::instance_( 0 );
-// #else
-// template <> ResourceManager * utility::SingletonBase< ResourceManager >::instance_( 0 );
-// #endif
-//
-// }
-
 namespace basic {
 namespace resource_manager {
 

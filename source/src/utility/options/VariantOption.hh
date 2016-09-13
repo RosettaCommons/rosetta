@@ -76,7 +76,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	~VariantOption()
+	~VariantOption() throw() // throw() is needed for ICC
 	{
 		delete option_p_;
 	}

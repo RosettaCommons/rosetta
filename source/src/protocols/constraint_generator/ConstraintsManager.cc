@@ -160,17 +160,3 @@ ConstraintsManager::has_stored_constraints( core::pose::Pose const & pose, std::
 
 } //protocols
 } //constraint_generator
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::constraint_generator::ConstraintsManager;
-
-#ifdef MULTI_THREADED
-template<> std::mutex utility::SingletonBase< ConstraintsManager >::singleton_mutex_{};
-template<> std::atomic< ConstraintsManager * > utility::SingletonBase< ConstraintsManager >::instance_( NULL );
-#else
-template<> ConstraintsManager * utility::SingletonBase< ConstraintsManager >::instance_( nullptr );
-#endif
-
-} // namespace utility

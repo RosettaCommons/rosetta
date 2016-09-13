@@ -32,6 +32,7 @@
 #include <string>
 
 #ifdef MULTI_THREADED
+#include <mutex>
 #include <thread>
 #endif
 

@@ -27,26 +27,6 @@
 #include <map>
 #include <sstream>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
-
-// Singleton set-up
-namespace utility {
-
-using core::chemical::rings::RingConformerManager;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< RingConformerManager >::singleton_mutex_ {};
-template <> std::atomic< RingConformerManager * > utility::SingletonBase< RingConformerManager >::instance_( 0 );
-#else
-template <> RingConformerManager * utility::SingletonBase< RingConformerManager >::instance_( 0 );
-#endif
-
-}  // namespace utility
-
 
 namespace core {
 namespace chemical {

@@ -36,20 +36,6 @@
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::evaluation::EvaluatorFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< EvaluatorFactory >::singleton_mutex_{};
-template <> std::atomic< EvaluatorFactory * > utility::SingletonBase< EvaluatorFactory >::instance_( 0 );
-#else
-template <> EvaluatorFactory * utility::SingletonBase< EvaluatorFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace protocols {
 namespace evaluation {
 

@@ -293,7 +293,7 @@ public:
 			(
 			data_, data_ + size_, // input
 			data_,                  // output
-			std::binder2nd<  std::plus< T> >( std::plus< T>(), VALUE)
+			std::bind( std::plus< T>(), std::placeholders::_1, VALUE )
 		);
 
 		//end
@@ -308,7 +308,7 @@ public:
 			(
 			data_, data_ + size_, // input
 			data_,                  // output
-			std::binder2nd< std::minus< T> >( std::minus< T>(), VALUE)
+			std::bind( std::minus< T>(), std::placeholders::_1, VALUE )
 		);
 
 		//end
@@ -323,7 +323,7 @@ public:
 			(
 			data_, data_ + size_, // input
 			data_,                  // output
-			std::binder2nd<  std::multiplies< T> >( std::multiplies< T>(), VALUE)
+			std::bind( std::multiplies< T>(), std::placeholders::_1, VALUE )
 		);
 
 		//end
@@ -338,7 +338,7 @@ public:
 			(
 			data_, data_ + size_, // input
 			data_,                  // output
-			std::binder2nd<  std::divides< T> >( std::divides< T>(), VALUE)
+			std::bind( std::divides< T>(), std::placeholders::_1, VALUE )
 		);
 
 		//end

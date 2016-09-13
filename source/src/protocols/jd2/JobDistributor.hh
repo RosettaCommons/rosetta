@@ -46,6 +46,11 @@
 #include <protocols/jd2/Job.hh>
 #endif
 
+#ifdef MULTI_THREADED
+#include <atomic>
+#include <mutex>
+#endif
+
 namespace protocols {
 namespace jd2 {
 

@@ -31,20 +31,6 @@
 //C++ headers
 #include <sstream>
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using basic::resource_manager::ResourceOptionsFactory;
-
-#if defined MULTI_THREADED
-template <> std::mutex utility::SingletonBase< ResourceOptionsFactory >::singleton_mutex_{};
-template <> std::atomic< ResourceOptionsFactory * > utility::SingletonBase< ResourceOptionsFactory >::instance_( 0 );
-#else
-template <> ResourceOptionsFactory * utility::SingletonBase< ResourceOptionsFactory >::instance_( nullptr );
-#endif
-
-}
-
 namespace basic {
 namespace resource_manager {
 

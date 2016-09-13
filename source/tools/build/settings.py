@@ -14,6 +14,50 @@
 import copy, re, string, sys
 import SCons # needed for version checking
 
+def clean_env_for_external(env, requested = None):
+    """Clean up the Build environment for external builds, to remove things like Werror."""
+
+    #Kill warning-increasing flags for C and C++
+    #This is external - we can't be responsible for warnings in external code.
+
+    # Common flags for both C++ and C
+    ccflags = env['CCFLAGS'].split()
+    ccflags = [f for f in ccflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
+    if requested is not None:
+        if requested.ccflags:
+          ccflags += requested['ccflags']
+        # We may need additional defines for compilation
+        if( requested.defines ):
+          ccflags.extend( ["-D"+d for d in requested.defines] )
+    env.Replace(CCFLAGS=' '.join(ccflags))
+
+    # C specific flags
+    cflags = str(env['CFLAGS']).split()
+    cflags = [f for f in cflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
+    if requested is not None:
+        if requested.cflags:
+          cflags += requested['cflags']
+    env.Replace(CFLAGS=' '.join(cflags))
+
+    # C++ specific flags
+    cxxflags = str(env['CXXFLAGS']).split()
+    cxxflags = [f for f in cxxflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
+    if requested is not None:
+        if requested.cxxflags:
+          cxxflags += requested['cxxflags']
+    env.Replace(CXXFLAGS=' '.join(cxxflags))
+
+    if requested is not None:
+        if requested.link_flags:
+          link_flags = str(env['LINKFLAGS']).split()
+          link_flags.extend( requested['link_flags'] )
+          env.Replace(LINKFLAGS=' '.join(link_flags))
+          ## SHLINKFLAGS are flags which get added to the compile *in addition* to the regular link flags
+          #shlink_flags = str(env['SHLINKFLAGS']).split()
+          #print shlink_flags
+          #shlink_flags.extend( requested['link_flags'] )
+          #env.Replace(SHLINKFLAGS=shlink_flags)
+
 class Settings(dict):
     """A dictionary which allows its internal items to be accessed
 as fields of an object.  The object is limited to just those fields

@@ -72,17 +72,3 @@ ConstraintGeneratorFactory::new_constraint_generator(
 
 } //namespace constraint_generator
 } //namespace protocols
-
-// Singleton instance and mutex static data members
-namespace utility {
-
-using protocols::constraint_generator::ConstraintGeneratorFactory;
-
-#ifdef MULTI_THREADED
-template<> std::mutex utility::SingletonBase< ConstraintGeneratorFactory >::singleton_mutex_{};
-template<> std::atomic< ConstraintGeneratorFactory * > utility::SingletonBase< ConstraintGeneratorFactory >::instance_( NULL );
-#else
-template<> ConstraintGeneratorFactory * utility::SingletonBase< ConstraintGeneratorFactory >::instance_( nullptr );
-#endif
-
-} // namespace utility
