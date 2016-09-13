@@ -27,6 +27,15 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -451,3 +460,33 @@ CstEnergyContainer::matches( ConstraintSetCOP cst_set )
 }
 }
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::CstEnergyContainer::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::LREnergyContainer >( this ) );
+	arc( CEREAL_NVP( cst_graph_ ) ); // ConstraintGraphOP
+	arc( CEREAL_NVP( cst_set_revision_id_ ) ); // Size
+	arc( CEREAL_NVP( constraint_set_ ) ); // ConstraintSetCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::CstEnergyContainer::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::LREnergyContainer >( this ) );
+	arc( cst_graph_ ); // ConstraintGraphOP
+	arc( cst_set_revision_id_ ); // Size
+	std::shared_ptr< core::scoring::constraints::ConstraintSet > local_constraint_set;
+	arc( local_constraint_set ); // ConstraintSetCOP
+	constraint_set_ = local_constraint_set; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::CstEnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::CstEnergyContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_ConstraintEnergyContainer )
+#endif // SERIALIZATION

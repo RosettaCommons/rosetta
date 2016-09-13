@@ -33,6 +33,12 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -183,10 +189,21 @@ private:
 	Size cst_set_revision_id_;
 	ConstraintSetCOP constraint_set_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_ConstraintEnergyContainer )
+#endif // SERIALIZATION
+
 
 #endif

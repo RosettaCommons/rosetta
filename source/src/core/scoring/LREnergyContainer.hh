@@ -23,6 +23,11 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -51,6 +56,7 @@ public:
 	virtual void mark_energy_uncomputed() = 0;
 
 	virtual bool energy_computed() const = 0;
+	// NOTE -- not serializable.
 };
 
 class ResidueNeighborConstIterator : public utility::pointer::ReferenceCount
@@ -74,6 +80,7 @@ public:
 
 	virtual bool energy_computed() const = 0;
 
+	// NOTE -- not serializable
 };
 
 class LREnergyContainer : public utility::pointer::ReferenceCount
@@ -132,9 +139,20 @@ public:
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_end( int resid ) = 0;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_LREnergyContainer )
+#endif // SERIALIZATION
+
 
 #endif

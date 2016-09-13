@@ -38,6 +38,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -156,6 +161,12 @@ private:
 	Energy dslfc_rot_;
 	Energy dslfc_trans_;
 	Energy dslfc_RT_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class DisulfideMatchingEnergyContainer : public LREnergyContainer {
@@ -260,10 +271,21 @@ private:
 	utility::vector1< std::pair< Size, Size > > disulfide_partners_;
 	utility::vector1< std::pair< DisulfideAtomIndices, DisulfideAtomIndices > > disulfide_atom_indices_;
 	utility::vector1< std::pair< DisulfideMatchingEnergyComponents, bool > > disulfide_info_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_disulfides_DisulfideMatchingEnergyContainer )
+#endif // SERIALIZATION
+
 
 #endif

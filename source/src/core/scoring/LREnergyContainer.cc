@@ -15,6 +15,14 @@
 // Unit headers
 #include <core/scoring/LREnergyContainer.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -26,3 +34,21 @@ LREnergyContainer::~LREnergyContainer() = default;
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::LREnergyContainer::save( Archive & ) const {}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::LREnergyContainer::load( Archive & ) {}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::LREnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::LREnergyContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_LREnergyContainer )
+#endif // SERIALIZATION

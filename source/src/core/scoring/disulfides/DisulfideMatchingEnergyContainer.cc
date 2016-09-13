@@ -33,6 +33,19 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Core serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -667,3 +680,56 @@ Size DisulfideMatchingEnergyContainer::num_disulfides() const
 }
 }
 
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::DisulfideMatchingEnergyComponents::save( Archive & arc ) const {
+	arc( CEREAL_NVP( dslfc_rot_ ) ); // Energy
+	arc( CEREAL_NVP( dslfc_trans_ ) ); // Energy
+	arc( CEREAL_NVP( dslfc_RT_ ) ); // Energy
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::DisulfideMatchingEnergyComponents::load( Archive & arc ) {
+	arc( dslfc_rot_ ); // Energy
+	arc( dslfc_trans_ ); // Energy
+	arc( dslfc_RT_ ); // Energy
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::DisulfideMatchingEnergyComponents );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::DisulfideMatchingEnergyContainer::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::LREnergyContainer >( this ) );
+	arc( CEREAL_NVP( resid_2_disulfide_index_ ) ); // utility::vector1<Size>
+	serialize_residue_type_vector( arc, disulfide_residue_types_ );
+	arc( CEREAL_NVP( disulfide_partners_ ) ); // utility::vector1<std::pair<Size, Size> >
+	arc( CEREAL_NVP( disulfide_atom_indices_ ) ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
+	arc( CEREAL_NVP( disulfide_info_ ) ); // utility::vector1<std::pair<DisulfideMatchingEnergyComponents, _Bool> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::DisulfideMatchingEnergyContainer::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::LREnergyContainer >( this ) );
+	arc( resid_2_disulfide_index_ ); // utility::vector1<Size>
+	deserialize_residue_type_vector( arc, disulfide_residue_types_ );
+	arc( disulfide_partners_ ); // utility::vector1<std::pair<Size, Size> >
+	arc( disulfide_atom_indices_ ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
+	arc( disulfide_info_ ); // utility::vector1<std::pair<DisulfideMatchingEnergyComponents, _Bool> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::DisulfideMatchingEnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::DisulfideMatchingEnergyContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_disulfides_DisulfideMatchingEnergyContainer )
+#endif // SERIALIZATION
