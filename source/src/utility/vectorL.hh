@@ -107,7 +107,13 @@ public: // Methods: imports
 	using super::back;
 	using super::begin;
 	using super::capacity;
+	using super::cbegin;
+	using super::cend;
+	using super::crbegin;
+	using super::crend;
 	using super::clear;
+	using super::emplace;
+	using super::emplace_back;
 	using super::empty;
 	using super::end;
 	using super::erase;
