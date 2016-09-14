@@ -51,8 +51,7 @@ remove_terminal_phosphates( pose::Pose & pose ){
 /////////////////////////////////////////////////////////////////
 void
 remove_terminal_phosphates( pose::Pose & pose, utility::vector1< Size > const & res_list ){
-	for ( Size i = 1; i <= res_list.size(); i++ ) {
-		Size const & n = res_list[ i ];
+	for ( Size const n : res_list ) {
 		if ( pose.residue(n).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) {
 			remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, n );
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
@@ -112,8 +111,7 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 
 	runtime_assert( pose.size() == reference_pose.size() );
 
-	for ( Size i = 1; i <= phosphate_move_list.size(); i++ ) {
-		PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
+	for ( PhosphateMove const & phosphate_move : phosphate_move_list ) {
 		Size const & n = phosphate_move.rsd();
 		PhosphateTerminus const & terminus = phosphate_move.terminus();
 
@@ -150,8 +148,8 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 			}
 		}
 
-		for ( Size m = 1; m <= torsion_ids.size(); m++ ) {
-			pose.set_torsion( torsion_ids[m], reference_pose.torsion( torsion_ids[m] ) );
+		for ( auto const & tid : torsion_ids ) {
+			pose.set_torsion( tid, reference_pose.torsion( tid ) );
 		}
 
 		make_variants_match( pose, reference_pose, n, core::chemical::VIRTUAL_RIBOSE );
@@ -213,14 +211,14 @@ check_phosphate_contacts_donor( utility::vector1< Vector > const & op_xyz_list,
 	static Real const cos_angle_cutoff = -0.5;
 
 	for ( Size i = 1; i <= donor_atom_xyz_list.size(); i++ ) {
-		for ( Size j = 1; j <= op_xyz_list.size(); j++ ) {
-			Real const dist2 =  ( donor_atom_xyz_list[ i ] - op_xyz_list[ j ] ).length_squared();
+		for ( auto const & op_xyz : op_xyz_list ) {
+			Real const dist2 =  ( donor_atom_xyz_list[ i ] - op_xyz ).length_squared();
 			if ( dist2 > max_hbond_dist_cutoff2 ) continue;
 
-			Real const dist_to_base2 =  ( donor_base_atom_xyz_list[ i ] - op_xyz_list[ j ] ).length_squared();
+			Real const dist_to_base2 =  ( donor_base_atom_xyz_list[ i ] - op_xyz ).length_squared();
 			if ( dist_to_base2 > max_hbond_base_dist_cutoff2  ) continue;
 
-			Real const costheta =  cos_of( donor_base_atom_xyz_list[i], donor_atom_xyz_list[i], op_xyz_list[j]  );
+			Real const costheta =  cos_of( donor_base_atom_xyz_list[i], donor_atom_xyz_list[i], op_xyz  );
 			if ( costheta > cos_angle_cutoff ) continue;
 			//    TR << "dist! " << std::sqrt( dist2 ) << " to " << i << " out of " << donor_atom_xyz_list.size() << " and cos angle is " << costheta << std::endl;
 			return true;
@@ -273,8 +271,7 @@ get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
 		neighbor_copy_dofs.push_back( m );
 
 		core::chemical::AtomIndices Hpos_polar = pose.residue_type( m ).Hpos_polar();
-		for ( Size ii = 1; ii <= Hpos_polar.size(); ii++ ) {
-			Size const & q = Hpos_polar[ ii ];
+		for ( Size const q : Hpos_polar ) {
 			Vector const & donor_atom_xyz = pose.residue( m ).xyz( q );
 			if ( ( donor_atom_xyz - phosphate_takeoff_xyz ).length_squared() < phosphate_takeoff_donor_distance_cutoff2 ) {
 				donor_atom_xyz_list.push_back( donor_atom_xyz );

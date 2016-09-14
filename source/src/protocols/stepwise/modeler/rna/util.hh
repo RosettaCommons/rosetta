@@ -142,9 +142,6 @@ void sort_seq_num_list( utility::vector1< Size > & seq_num_list );
 
 void output_seq_num_list( std::string const & tag, utility::vector1< Size > const & seq_num_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
-bool
-file_exists( std::string const & file_name );
-
 void
 remove_file( std::string const & file_name );
 

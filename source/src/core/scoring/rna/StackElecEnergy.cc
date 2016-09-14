@@ -140,8 +140,8 @@ StackElecEnergy::setup_for_packing(
 	utility::vector1< bool > const & designing_residues
 ) const {
 
-	for ( Size ii = 1; ii <= designing_residues.size(); ++ii ) {
-		if ( designing_residues[ ii ] ) {
+	for ( bool const designing_this : designing_residues ) {
+		if ( designing_this ) {
 			might_be_designing_ = true;
 			break;
 		}
@@ -348,16 +348,15 @@ StackElecEnergy::residue_pair_energy_ext(
 
 	Matrix const M_i ( stub_i.M );
 	Matrix const M_j ( stub_j.M );
-	Size m = 0;
-	Size n = 0;
 
-	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
-		m = neighbs[ ii ].atomno1();
+	for ( auto const & neighb : neighbs ) {
+		Size const m = neighb.atomno1();
 		if ( rsd1.is_virtual( m ) ) continue;
 		if ( base_base_only_ && !is_rna_base( rsd1, m ) ) continue;
 		Real const m_charge( rsd1.atomic_charge( m ) );
 		if ( m_charge == 0.0 ) continue;
-		n = neighbs[ ii ].atomno2();
+		
+		Size const n = neighb.atomno2();
 		if ( rsd2.is_virtual( n ) ) continue;
 		if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;
 		Real const n_charge( rsd2.atomic_charge( n ) );

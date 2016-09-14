@@ -134,9 +134,8 @@ VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const &
 
 	std::string const & working_sequence = working_parameters_->working_sequence();
 
-	for ( Size n = 1; n <= sample_virtual_sugar_string_list_.size(); n++ ) {
-
-		utility::vector1< std::string > const tokenize_list = tokenize( sample_virtual_sugar_string_list_[n], "-" );
+	for ( auto const & sample_virtual_sugar_string : sample_virtual_sugar_string_list_ ) {
+		utility::vector1< std::string > const tokenize_list = tokenize( sample_virtual_sugar_string, "-" );
 		if ( tokenize_list.size() != 2 ) utility_exit_with_message( "tokenize_list != 2" );
 
 		if ( tokenize_list[2] != "A" && tokenize_list[2] != "P" ) {
@@ -148,7 +147,7 @@ VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const &
 		Size const full_bulge_res = ( is_prepend ) ? full_sugar_res + 1 : full_sugar_res - 1;
 		Size const full_ref_res   = ( is_prepend ) ? full_sugar_res + 2 : full_sugar_res - 2;
 
-		TR.Debug << "Case: " << sample_virtual_sugar_string_list_[n];
+		TR.Debug << "Case: " << sample_virtual_sugar_string;
 		TR.Debug << " full_sugar_res = " << full_sugar_res << " full_bulge_res = " << full_bulge_res << " full_ref_res = " << full_ref_res;
 		output_boolean( " is_prepend = ", is_prepend, TR.Debug );
 
@@ -196,54 +195,48 @@ VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const &
 
 /////////////////////////////////////////////////////////////////////////////////////
 bool
-VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< SugarModeling > const &  sugar_modeling_list  ){
+VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< SugarModeling > const & sugar_modeling_list ) {
 
 	TR.Debug << "num_virtual_sugar = " << sugar_modeling_list.size() << std::endl;
-	if ( sugar_modeling_list.size() == 0 ) {
-		TR.Debug << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ). EARLY RETURN/NO OUTPUT SILENT_FILE!" << std::endl;
-
-		std::ofstream outfile;
-		outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
-		outfile << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ).\n";
-		outfile.flush();
-		outfile.close();
-
-		return true;
-	}
-
-	return false;
+	if ( sugar_modeling_list.size() != 0 ) return false;
+	
+	TR.Debug << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ). EARLY RETURN/NO OUTPUT SILENT_FILE!" << std::endl;
+	
+	std::ofstream outfile;
+	outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
+	outfile << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ).\n";
+	outfile.flush();
+	outfile.close();
+	
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 bool
-VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ){
+VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ) {
 
-	if (  pose_list.size() == 0 ) {
-		TR.Debug << "Case n = " << n << " is_sugar_virt == True but " << tag << ".pose_list.size() == 0. EARLY RETURN!" << std::endl;
-
-		std::ofstream outfile;
-		outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
-		outfile << "num_virtual_sugar != 0 but for one of the sampled virtual_sugar," << tag << ".pose_list.size() == 0.\n";
-		outfile.flush();
-		outfile.close();
-		return true;
-	}
-
-	return false;
+	if ( pose_list.size() != 0 ) return false;
+	
+	TR.Debug << "Case n = " << n << " is_sugar_virt == True but " << tag << ".pose_list.size() == 0. EARLY RETURN!" << std::endl;
+	
+	std::ofstream outfile;
+	outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
+	outfile << "num_virtual_sugar != 0 but for one of the sampled virtual_sugar," << tag << ".pose_list.size() == 0.\n";
+	outfile.flush();
+	outfile.close();
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
 VirtualSugarSamplerFromStringList::output_pose_data_list( utility::vector1< pose::PoseOP > & pose_data_list ){
 
-	for ( Size n = 1; n <= pose_data_list.size(); n++ ) {
-		Pose & pose = ( *pose_data_list[n] ); //set viewer_pose;
-		std::string pose_tag = tag_ + "_sample_sugar" + tag_from_pose( *pose_data_list[n]);
+	for ( auto & poseop : pose_data_list ) {
+		std::string pose_tag = tag_ + "_sample_sugar" + tag_from_pose( *poseop );
 		if ( working_parameters_->gap_size() == 0 ) utility_exit_with_message( "working_parameters_->gap_size() == 0" );
-		( *scorefxn_ )( pose );
+		( *scorefxn_ )( *poseop );
 
-
-		output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
+		output_data( silent_file_out_, pose_tag, false, *poseop, working_parameters_->working_native_pose(), working_parameters_ );
 	}
 }
 

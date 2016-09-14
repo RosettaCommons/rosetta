@@ -171,16 +171,16 @@ RNA_SuiteName::update_centers( utility::vector1< utility::vector1< Real > > cons
 	utility::vector1<RNA_SuiteInfo> new_suites;
 	for ( Size n = 1; n <= tags.size(); n++ ) {
 		bool found_match = false;
-		for ( Size i = 1; i <= all_suites_.size(); ++i ) {
-			if ( all_suites_[i].name == tags[n] ) {
+		for ( auto & suite : all_suites_ ) {
+			if ( suite.name == tags[ n ] ) {
 				found_match = true;
-				all_suites_[i].torsion = centers[ n ];
-				new_suites.push_back( all_suites_[i] );
+				suite.torsion = centers[ n ];
+				new_suites.push_back( suite );
 			}
 		}
 
 		if ( !found_match ) {
-			std::string tag = tags[n];
+			std::string const & tag = tags[n];
 			runtime_assert( tag.size() > 0 );
 			new_suites.push_back( RNA_SuiteInfo( tag, get_classifier( centers[n] ), centers[n] ) );
 		}
@@ -191,23 +191,29 @@ RNA_SuiteName::update_centers( utility::vector1< utility::vector1< Real > > cons
 /////////////////////////////////////////////////////////
 RNA_SuiteInfo
 RNA_SuiteName::name2suite( std::string const & name ) const{
-	for ( Size i = 1; i <= all_suites_.size(); ++i ) {
-		if ( all_suites_[i].name == name ) {
-			return all_suites_[i];
+	for ( auto const & suite : all_suites_ ) {
+		if ( suite.name == name ) {
+			return suite;
 		}
 	}
 	utility_exit_with_message( "Invalid suitename!" );
 	return all_suites_[1];
 }
 
+class principal_angle_degrees {
+	public:
+	Real operator()( Real r ) {
+		return numeric::nonnegative_principal_angle_degrees( r );
+	}
+};
+
 ///////////////////////////////////
 //Suite assignment codes
 Size
-RNA_SuiteName::get_classifier( utility::vector1< Real > const & torsions_in,
+RNA_SuiteName::get_classifier( utility::vector1< Real > const & torsions,
 	bool & is_outlier ) const {
 
-	utility::vector1< Real > torsions;
-	for ( Size n = 1; n <= torsions_in.size(); n++ ) torsions.push_back( numeric::nonnegative_principal_angle_degrees( torsions_in[ n ] ) );
+	std::for_each( torsions.begin(), torsions.end(), principal_angle_degrees() );
 
 	Size classifier = 0;
 	//Delta1
@@ -429,11 +435,12 @@ RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in,
 	Size best_index( 0 ), dom_index( 0 );
 	Real best_dist( -1 ), dom_dist( 999 );
 
-	for ( Size i = 1; i <= all_suites_.size(); ++i ) {
-		if ( all_suites_[i].classifier != classifier ) continue;
-		Real const dist = distance_4d( torsions, all_suites_[i].torsion,
+	for ( Size i = 1, e = all_suites_.size(); i <= e; ++i ) {
+		auto const & suite = all_suites_[ i ];
+		if ( suite.classifier != classifier ) continue;
+		Real const dist = distance_4d( torsions, suite.torsion,
 			regular_half_width );
-		if ( dist <= 1 && dominant_suites.has_value( all_suites_[i].name ) ) {
+		if ( dist <= 1 && dominant_suites.has_value( suite.name ) ) {
 			dom_index = i;
 			dom_dist = dist;
 		} else if ( dist < best_dist || best_dist < 0 ) {
@@ -441,7 +448,6 @@ RNA_SuiteName::assign( utility::vector1<Real> const & torsions_in,
 			best_index = i;
 		}
 	}
-
 
 	//std::cout << best_index << ' ' << dom_index << ' ' << classifier <<std::endl;
 	if ( best_dist > 1 && dom_dist <= 1 ) {

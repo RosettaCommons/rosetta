@@ -105,7 +105,6 @@ void output_is_prepend_map( std::string const & tag, std::map< core::Size, bool 
 		outstream << std::setw( spacing ) << prepend_char;
 	}
 	outstream << std::endl;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +175,6 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 
 	using namespace ObjexxFCL;
 
-
 	if ( pose1.sequence() != full_sequence ) {
 		TR << "pose1.sequence() = " << pose1.sequence() << std::endl;
 		TR << "pose2.sequence() = " << pose2.sequence() << std::endl;
@@ -202,9 +200,7 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 	Size atom_count = 0;
 	Real sum_sd = 0;
 
-	for ( Size i = 1; i <= residue_list.size(); i++ ) {
-
-		Size const full_seq_num = residue_list[i];
+	for ( Size const full_seq_num : residue_list ) {
 
 		bool is_prepend = false;
 		bool both_pose_res_is_virtual = false;
@@ -244,7 +240,6 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 
 			phosphate_square_deviation( pose1, pose2, full_seq_num + 1, full_seq_num + 1, atom_count, sum_sd, verbose, ignore_virtual_atom );
 		}
-
 	}
 
 
@@ -260,7 +255,6 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 	}
 
 	return ( std::max( 0.01, rmsd ) );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +278,6 @@ print_backbone_torsions( pose::Pose const & pose, Size const five_prime_chainbre
 	}
 
 	TR << std::endl;
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -365,15 +358,10 @@ is_same_sugar_pucker( core::pose::Pose const & current_pose, core::pose::Pose co
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 setup_simple_fold_tree( core::pose::Pose & pose ){
-
-	//  using namespace core::chemical;
-
 	Size const nres = pose.size();
 
 	kinematics::FoldTree simple_fold_tree( nres ); //create a simple fold tree
-
 	simple_fold_tree.simple_tree( nres ); //Just to make sure.
-
 	pose.fold_tree( simple_fold_tree );
 }
 
@@ -408,7 +396,6 @@ import_pose_from_silent_file( core::pose::Pose & import_pose, std::string const 
 	if ( check_for_messed_up_structure( import_pose, input_tag ) == true ) {
 		utility_exit_with_message( "import_pose " + input_tag + " from silent_file " + silent_file + " is a messed up pose!" );
 	}
-
 }
 
 /////////////////New function on Nov 11, 2010///////////////
@@ -416,7 +403,6 @@ std::string
 get_tag_from_pdb_filename( std::string const & pdb_filename ){
 
 	std::string tag;
-
 	size_t found = pdb_filename.rfind( '/' );
 
 	if ( found != std::string::npos ) {
@@ -444,7 +430,6 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersCOP c
 	( *WP ) = ( *const_WP );
 
 	print_WorkingParameters_info( WP, WP_name, outstream, is_simple_full_length_WP );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -463,7 +448,6 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 	outstream << " moving_res = " <<  WP->moving_res();
 	outstream << " working_moving_res = " << WP->working_moving_res();
 	outstream << " working_moving_suite = " <<  WP->working_moving_suite() << std::endl;
-
 
 	outstream << "gap_size = " << WP->gap_size();
 	outstream << " five_prime_chain_break_res = " << WP->five_prime_chain_break_res();
@@ -496,13 +480,11 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 	if ( WP->force_south_sugar_list().size() > 0 ) output_seq_num_list( "force_south_sugar_list = ", WP->force_south_sugar_list(), outstream );
 	if ( WP->protonated_H1_adenosine_list().size() > 0 ) output_seq_num_list( "protonated_H1_adenosine_list ", WP->protonated_H1_adenosine_list(), outstream );
 
-
 	output_is_prepend_map( "is_prepend_map = ", WP->is_prepend_map(), WP->full_sequence().size(), outstream );
 	output_seq_num_list( "calc_rms_res = ",         WP->calc_rms_res()         , outstream );
 
 	output_seq_num_list( "native_alignment = ",         WP->native_alignment(), outstream );
 	output_seq_num_list( "cutpoint_closed_list = ",      WP->cutpoint_closed_list(), outstream );
-
 
 	outstream << "------------working_stuff------------" << std::endl;
 
@@ -512,7 +494,6 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 	if ( WP->force_north_sugar_list().size() > 0 ) output_seq_num_list( "working_force_north_sugar_list = ", WP->working_force_north_sugar_list(), outstream );
 	if ( WP->force_south_sugar_list().size() > 0 ) output_seq_num_list( "working_force_south_sugar_list = ", WP->working_force_south_sugar_list(), outstream );
 	if ( WP->protonated_H1_adenosine_list().size() > 0 ) output_seq_num_list( "working_protonated_H1_adenosine_list = ", WP->working_protonated_H1_adenosine_list(), outstream );
-
 
 	output_seq_num_list( "working_fixed_res = ",      WP->working_fixed_res()       , outstream );
 
@@ -546,8 +527,6 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 	}
 
 	output_title_text( "", outstream );
-
-
 }
 
 
@@ -568,8 +547,6 @@ set_nucleotide_to_A_form( pose::Pose & pose, Size const seq_num ){
 	pose.set_torsion( TorsionID( seq_num, id::CHI, 1 ), 79.2 ); //chi
 	pose.set_torsion( TorsionID( seq_num, id::CHI, 2 ), 36.9 ); //nu2
 	pose.set_torsion( TorsionID( seq_num, id::CHI, 3 ), 94.7 ); //nu1
-
-
 }
 
 

@@ -43,3 +43,4 @@ core.mm.MMBondAngleLibrary: MM bond angle sets added fully assigned: [0-9]+; wil
 Processed a total of .+ significant \(.+ raw\) lines in .+ files
 Processing time: .+sec
 Found .+ duplicate lines in .+ blocks in .+ files
+Chunk took [0-9]+ seconds.

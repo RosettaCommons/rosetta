@@ -76,9 +76,8 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 	// could make a map to vecs to save memory:
 	utility::vector1< utility::vector1< bool > > checked_pair( pose.size(), at_interface );
 
-	for ( Size n = 1; n <= working_moving_res_list.size(); n++ ) {
-		figure_out_working_interface_res( pose, working_moving_res_list[n],
-			at_interface, checked_pair );
+	for ( Size const res : working_moving_res_list ) {
+		figure_out_working_interface_res( pose, res, at_interface, checked_pair );
 	}
 
 	utility::vector1< Size > interface_res;
@@ -122,9 +121,8 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 
 	utility::vector1< Size > const moving_partition_res = figure_out_moving_partition_res( pose, working_moving_res );
 
-	for ( Size n = 1; n <= moving_partition_res.size(); n++ ) {
+	for ( Size const i : moving_partition_res ) {
 
-		Size const i = moving_partition_res[ n ];
 		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 		for ( utility::graph::Graph::EdgeListConstIter

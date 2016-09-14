@@ -152,7 +152,6 @@ RNA_BaseCentroidChecker::Initialize_base_stub_list( pose::Pose const & pose, boo
 			//    TR << "Moving partition " << seq_num << std::endl;
 		}
 	}
-
 }
 
 
@@ -176,9 +175,8 @@ RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 	is_terminal_res_.dimension( nres, false );
 	stacked_on_terminal_res_in_original_pose_.dimension( nres, nres, false );
 
-	for ( Size n = 1; n <= terminal_res_.size(); n++ ) {
+	for ( Size const terminal_res : terminal_res_ ) {
 
-		Size const terminal_res = terminal_res_[ n ];
 		if ( is_virtual_base_( terminal_res ) ) {
 			TR << TR.Red << pose.fold_tree() << TR.Reset << std::endl;
 			TR << TR.Red << pose.annotated_sequence() << TR.Reset << std::endl;
@@ -188,7 +186,6 @@ RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 		is_terminal_res_( terminal_res ) = true;
 
 		for ( Size m = 1; m <= nres; m++ ) {
-
 			if ( ( is_moving_res_( terminal_res )  && is_moving_res_( m ) ) ||
 					( is_fixed_res_(  terminal_res )  && is_fixed_res_( m ) ) ) {
 				stacked_on_terminal_res_in_original_pose_( terminal_res, m )  = check_base_stack( terminal_res, m );
@@ -284,8 +281,8 @@ RNA_BaseCentroidChecker::check_base_stack( core::kinematics::Stub const & moving
 	core::Real const base_axis_CUTOFF,
 	core::Real const base_planarity_CUTOFF ) const {
 
-	for ( Size i = 1; i <= fixed_residues_.size(); i++ ) {
-		core::kinematics::Stub const & other_base_stub = base_stub_list_[ fixed_residues_[ i ] ];
+	for ( Size const fixed_res : fixed_residues_ ) {
+		core::kinematics::Stub const & other_base_stub = base_stub_list_[ fixed_res ];
 		if ( check_base_stack( moving_res_base_stub, other_base_stub, base_axis_CUTOFF, base_planarity_CUTOFF ) ) return true;
 	}
 	return false;
@@ -339,8 +336,8 @@ RNA_BaseCentroidChecker::check_base_pair( core::kinematics::Stub const & moving_
 	core::Real const base_axis_CUTOFF,
 	core::Real const base_planarity_CUTOFF ) const {
 
-	for ( Size i = 1; i <= fixed_residues_.size(); i++ ) {
-		core::kinematics::Stub const & other_base_stub = base_stub_list_[ fixed_residues_[ i ] ];
+	for ( Size const fixed_residue : fixed_residues_ ) {
+		core::kinematics::Stub const & other_base_stub = base_stub_list_[ fixed_residue ];
 		if ( check_base_pair( moving_res_base_stub, other_base_stub, base_axis_CUTOFF, base_planarity_CUTOFF ) ) return true;
 	}
 	return false;
@@ -380,8 +377,7 @@ RNA_BaseCentroidChecker::update_base_stub_list_and_check_centroid_interaction( c
 void
 RNA_BaseCentroidChecker::update_base_stub_list( core::pose::Pose const & pose ){
 
-	for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
-		Size const moving_res( moving_residues_[ m ] );
+	for ( Size const moving_res : moving_residues_ ) {
 		if ( !pose.residue_type( moving_res ).is_RNA() ) continue;
 		core::conformation::Residue const & residue_object( pose.residue( moving_res ) );
 		Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
@@ -437,9 +433,9 @@ RNA_BaseCentroidChecker::check_centroid_interaction( StepWiseRNA_CountStruct & c
 
 	bool stack_base( false ), base_pair( false );
 
-	for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
+	for ( Size const res : moving_residues_ ) {
 
-		core::kinematics::Stub const & moving_residue_base_stub = base_stub_list_[ moving_residues_[ m ] ];
+		core::kinematics::Stub const & moving_residue_base_stub = base_stub_list_[ res ];
 		stack_base = false;
 
 		for ( Size i = 1; i <= fixed_residues_.size(); i++ ) {
@@ -449,8 +445,8 @@ RNA_BaseCentroidChecker::check_centroid_interaction( StepWiseRNA_CountStruct & c
 
 		base_pair = false;
 
-		for ( Size i = 1; i <= fixed_residues_.size(); i++ ) {
-			base_pair = check_base_pair( moving_residue_base_stub, base_stub_list_[ fixed_residues_[ i ] ], base_pair_axis_cutoff_, base_pair_planarity_cutoff_ );
+		for ( Size const fixed_res : fixed_residues_ ) {
+			base_pair = check_base_pair( moving_residue_base_stub, base_stub_list_[ fixed_res ], base_pair_axis_cutoff_, base_pair_planarity_cutoff_ );
 			if ( base_pair ) break;
 		}
 
@@ -499,16 +495,14 @@ RNA_BaseCentroidChecker::check_that_terminal_res_are_unstacked( bool const verbo
 	for ( Size i = 1; i <= terminal_res_.size(); i++ ) {
 		Size const & terminal_res = terminal_res_[ i ];
 
-		for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
-			Size const & moving_res = moving_residues_[ m ];
+		for ( Size const moving_res : moving_residues_ ) {
 			if ( verbose ) TR << "about to check stack: " << terminal_res << " " << moving_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) << " " <<  check_base_stack( terminal_res, moving_res, false ) << std::endl;
 			if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) &&
 					check_base_stack( terminal_res, moving_res, verbose  ) ) return false;
 		}
 
 		// what is this? seems gratuitous -- rhiju.
-		for ( Size m = 1; m <= fixed_residues_.size(); m++ ) {
-			Size const & fixed_res = fixed_residues_[ m ];
+		for ( Size const fixed_res : fixed_residues_ ) {
 			if ( !is_fixed_res_( fixed_res ) ) continue; // in -tether_jump condition, is_fixed_res may be 0 at fixed_res. Confusing.
 			if ( verbose ) TR << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << " " << check_base_stack( terminal_res, fixed_res, verbose  ) << std::endl;
 			if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) &&
@@ -529,8 +523,7 @@ RNA_BaseCentroidChecker::check_block_stack_res(
 	utility::vector1< Size > const & block_stack_res,
 	BaseStackWhichSide const & block_stack_side ) const
 {
-	for ( Size i = 1; i <= block_stack_res.size(); i++ ) {
-		Size const & res = block_stack_res[ i ];
+	for ( Size const res : block_stack_res ) {
 		// if not in moving_res, look for stack with moving partitions
 		utility::vector1< Size > other_partition = ( is_moving_res_( res ) ? fixed_residues_ : moving_residues_ );
 		if ( check_base_stack_in_partition( res, other_partition, block_stack_side ) ) return true;
@@ -546,9 +539,9 @@ RNA_BaseCentroidChecker::check_base_stack_in_partition(
 	BaseStackWhichSide const & block_stack_side ) const
 {
 	BaseStackWhichSide base_stack_side( core::chemical::rna::ANY_BASE_STACK_SIDE );
-	for ( Size m = 1; m <= other_res.size(); m++ ) {
+	for ( Size const res : other_res ) {
 		if ( check_base_stack( base_stub_list_[ block_stack_res ],
-				base_stub_list_[ other_res[ m ] ],
+				base_stub_list_[ res ],
 				base_stack_side ) &&
 				base_stack_side == block_stack_side ) {
 			return true;

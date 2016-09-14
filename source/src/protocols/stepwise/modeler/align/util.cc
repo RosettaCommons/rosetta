@@ -171,19 +171,15 @@ create_alignment_id_map_legacy( pose::Pose const & mod_pose,
 	pose::initialize_atomid_map( atom_ID_map, mod_pose, BOGUS_ATOM_ID );
 
 	for ( Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
-
-		if ( mod_pose.residue( seq_num ).is_RNA() && res_map.find( seq_num ) != res_map.end() && res_map[ seq_num ] > 0 ) {
+		if ( mod_pose.residue_type( seq_num ).is_RNA() && res_map.find( seq_num ) != res_map.end() && res_map[ seq_num ] > 0 ) {
 			// Parin please update this function!!! Can't we just superimpose over C4'?
 			setup_suite_atom_id_map( mod_pose, ref_pose, seq_num,  res_map[ seq_num ], atom_ID_map);
-
 		} else if ( mod_pose.residue( seq_num ).is_protein() ) { // superimpose over CA.
 			setup_protein_backbone_atom_id_map( mod_pose, ref_pose, seq_num, res_map[ seq_num ], atom_ID_map); // This will superimpose over N, C-alpha, C
 		}
-
 	}
 
 	return atom_ID_map;
-
 }
 
 

@@ -250,8 +250,8 @@ void RNA_SuitePotential::eval_likelihood_potential(
 	utility::vector1< ublas::vector<Real> > neg_likelihood_deriv;
 
 	// Compute the likelihood and derivative for each center
-	for ( Size i = 1; i <= centers_.size(); ++i ) {
-		ublas::vector<Real> diff( torsions - centers_[i] );
+	for ( auto const & center : centers_ ) {
+		ublas::vector<Real> diff( torsions - center );
 		regularize_torsions( diff );
 		ublas::vector<Real> const temp( ublas::prod( inv_cov_, diff ) );
 		Real const likelihood0( exp( -ublas::inner_prod( diff, temp ) ) );

@@ -158,7 +158,6 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 		}
 
 		if ( new_jump ) {
-
 			f.new_jump( i, i+1, i );
 			m++;
 
@@ -170,7 +169,6 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 					chemical::rna::chi1_torsion_atom( next_rsd )   );
 			}
 		}
-
 	}
 
 	pose.fold_tree( f );
@@ -181,7 +179,6 @@ void
 virtualize_5prime_phosphates( pose::Pose & pose ){
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-
 		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
 				!pose.residue_type( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
 				!pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
@@ -189,9 +186,7 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 				pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i );
 			}
 		}
-
 	}
-
 }
 
 
@@ -204,7 +199,6 @@ is_cutpoint_open( Pose const & pose, Size const i ) {
 	if ( i >= pose.size() ) return true;
 
 	if ( ! pose.fold_tree().is_cutpoint(i) ) return false;
-
 	if ( pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
 			pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) return false;
 
@@ -241,7 +235,6 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 	}
 
 	return false;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -301,7 +294,6 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 		for ( Size m = 1; m <= which_dofs[n].size(); m++ ) {
 			pose.set_dof(  DOF_ID( AtomID( j,i) , which_dofs[ n ][ m ] ), new_dof_sets[ n ][ m ] );
 		}
-
 	}
 }
 
@@ -357,8 +349,8 @@ fix_sugar_coords(
 
 	prepare_scratch_residue( scratch_rsd, start_rsd, non_main_chain_sugar_coords, pose );
 
-	for ( Size n = 1; n <= atoms_for_which_we_need_new_dofs.size(); n++  ) {
-		Size const j = scratch_rsd->atom_index( atoms_for_which_we_need_new_dofs[ n ] );
+	for ( auto const & atom_name : atoms_for_which_we_need_new_dofs ) {
+		Size const j = scratch_rsd->atom_index( atom_name );
 
 		// "Don't do update" --> my hack to prevent lots of refolds. I just want information about whether the
 		// atom is a jump_atom, what its stub atoms are, etc... in principle could try to use input_stub_atom1_id(), etc.
@@ -404,7 +396,6 @@ fix_sugar_coords(
 			scratch_rsd->xyz( (input_stub_atom3->id()).atomno() ) );
 
 		pose.set_dof( DOF_ID( AtomID( j, i), PHI), phi );
-
 	}
 }
 
@@ -490,7 +481,6 @@ apply_non_main_chain_sugar_coords(
 		if ( j > NUM_RNA_MAINCHAIN_TORSIONS ) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
 		pose.set_torsion( rna_torsion_id, start_torsions[ j ] );
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -501,9 +491,7 @@ void
 apply_ideal_c2endo_sugar_coords(
 	Pose & pose,
 	Size const i
-)
-{
-
+) {
 	static bool const use_phenix_geo = basic::options::option[  basic::options::OptionKeys::rna::corrected_geo ]();
 	if ( use_phenix_geo ) {
 		apply_pucker( pose, i, SOUTH, false /*skip_same_state*/, true /*idealize_coord*/ );
@@ -602,34 +590,6 @@ correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size 
 	//These are the initial value of virtual upper and lower cutpoint atom.
 	//Actually only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  OP2 and OP1 atom
 	current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.027359 );
-
-	/* BEFORE AUG 24, 2011
-	//Where the hell did I get these numbers from value...by appending with ideal geometry and look at the initalized value? Oct 13, 2009
-	current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 5 ), -151.943 ); //Not Important?
-	current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 6 ), -76.4185 ); //Not Important?
-	current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.0274 );
-	*/
-
-	//RAD.params
-	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
-	//RCY.params
-	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
-	//RGU.params
-	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
-	//URA.parms
-	//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-	//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-	//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
 	current_pose.delete_polymer_residue( five_prime_chainbreak + 1 );
 }
 
@@ -727,7 +687,6 @@ is_torsion_valid(
 		utility_exit_with_message( "is_cutpoint_closed1 == true && is_virtual_torsion == false!!" );
 	}
 
-
 	runtime_assert( id1.rsd() <= id2.rsd() );
 	runtime_assert( id2.rsd() <= id3.rsd() );
 	runtime_assert( id3.rsd() <= id4.rsd() );
@@ -767,7 +726,6 @@ is_torsion_valid(
 	bool should_score_this_torsion = true;
 
 	if ( is_virtual_torsion && !is_cutpoint_closed1 ) should_score_this_torsion = false;
-
 	if ( skip_chainbreak_torsions && is_chain_break_torsion ) should_score_this_torsion = false;
 
 	if ( verbose ) {
@@ -926,8 +884,8 @@ apply_virtual_rna_residue_variant_type( core::pose::Pose & pose, core::Size cons
 	}
 
 	//Ok another possibility is that the CUTPOINT_LOWER and CUTPOINT_UPPER variant type had not been applied yet..so check the working_cutpoint_closed_list
-	for ( Size n = 1; n <= working_cutpoint_closed_list.size(); n++ ) {
-		if ( seq_num == working_cutpoint_closed_list[n] ) {
+	for ( auto const cutpoint_closed : working_cutpoint_closed_list ) {
+		if ( seq_num == cutpoint_closed ) {
 			is_cutpoint_closed = true;
 			break;
 		}
@@ -985,7 +943,6 @@ has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num ){
 	}
 
 	return true;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1172,13 +1129,10 @@ is_atom_bin_in_range( Atom_Bin const & atom_pos_bin, int const bin_max ) {
 	if ( atom_pos_bin.x < 1 || ( atom_pos_bin.x > ( bin_max*2 ) ) ||
 			atom_pos_bin.y < 1 || ( atom_pos_bin.y > ( bin_max*2 ) ) ||
 			atom_pos_bin.z < 1 || ( atom_pos_bin.z > ( bin_max*2 ) ) ) {
-
 		return false;
-
 	} else {
 		return true;
 	}
-
 }
 
 

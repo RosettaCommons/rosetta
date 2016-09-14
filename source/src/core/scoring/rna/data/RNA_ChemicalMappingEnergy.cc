@@ -117,8 +117,7 @@ RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose & pose,
 
 	// get DMS data that needs to be scored.
 	// cycle through those data.
-	for ( Size n = 1; n <= rna_reactivities.size(); n++ ) {
-		RNA_Reactivity const & rna_reactivity = rna_reactivities[ n ];
+	for ( RNA_Reactivity const & rna_reactivity : rna_reactivities ) {
 		if ( rna_reactivity.type() == DMS  )  {
 			if ( use_low_res ) {
 				score += DMS_low_resolution_potential_.evaluate( pose, rna_reactivity );

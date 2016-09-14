@@ -231,6 +231,7 @@ sources = {
 		"rna_features",
 		"rna_graft",
 		"rna_helix",
+		"rna_idealize",
 		"rna_predict_chem_map",
 		"rna_suitename",
 		"rna_thread",

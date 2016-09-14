@@ -86,26 +86,24 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 	mm.set_bb( false );
 	mm.set_chi( false );
 
-	for ( Size n = 1; n <= modeling_list.size(); n++ ) {
-
-		SugarModeling const & sugar_modeling_ = modeling_list[n];
+	for ( auto const & sugar_modeling : modeling_list ) {
 
 		// actually should have this on, but need to run some legacy code
 		//  runtime_assert( pose_data_list[1]->residue( sugar_modeling_.bulge_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) );
 
-		mm.set( TorsionID( sugar_modeling_.bulge_res - 1, id::BB,  5 ), true ); //epsilon
-		mm.set( TorsionID( sugar_modeling_.bulge_res - 1, id::BB,  6 ), true ); //zeta
+		mm.set( TorsionID( sugar_modeling.bulge_res - 1, id::BB,  5 ), true ); //epsilon
+		mm.set( TorsionID( sugar_modeling.bulge_res - 1, id::BB,  6 ), true ); //zeta
 
-		mm.set( TorsionID( sugar_modeling_.bulge_res, id::BB,  1 ), true ); //alpha
-		mm.set( TorsionID( sugar_modeling_.bulge_res, id::BB,  2 ), true ); //beta
-		mm.set( TorsionID( sugar_modeling_.bulge_res, id::BB,  3 ), true ); //gamma
-		mm.set( TorsionID( sugar_modeling_.bulge_res, id::BB,  5 ), true ); //epsilon
-		mm.set( TorsionID( sugar_modeling_.bulge_res, id::BB,  6 ), true ); //zeta
-		mm.set( TorsionID( sugar_modeling_.bulge_res, id::CHI, 1 ), true ); //chi (torsion between base and sugar sugar)
+		mm.set( TorsionID( sugar_modeling.bulge_res, id::BB,  1 ), true ); //alpha
+		mm.set( TorsionID( sugar_modeling.bulge_res, id::BB,  2 ), true ); //beta
+		mm.set( TorsionID( sugar_modeling.bulge_res, id::BB,  3 ), true ); //gamma
+		mm.set( TorsionID( sugar_modeling.bulge_res, id::BB,  5 ), true ); //epsilon
+		mm.set( TorsionID( sugar_modeling.bulge_res, id::BB,  6 ), true ); //zeta
+		mm.set( TorsionID( sugar_modeling.bulge_res, id::CHI, 1 ), true ); //chi (torsion between base and sugar sugar)
 
-		mm.set( TorsionID( sugar_modeling_.bulge_res + 1, id::BB,  1 ), true ); //alpha
-		mm.set( TorsionID( sugar_modeling_.bulge_res + 1, id::BB,  2 ), true ); //beta
-		mm.set( TorsionID( sugar_modeling_.bulge_res + 1, id::BB,  3 ), true ); //gamma
+		mm.set( TorsionID( sugar_modeling.bulge_res + 1, id::BB,  1 ), true ); //alpha
+		mm.set( TorsionID( sugar_modeling.bulge_res + 1, id::BB,  2 ), true ); //beta
+		mm.set( TorsionID( sugar_modeling.bulge_res + 1, id::BB,  3 ), true ); //gamma
 
 	}
 
@@ -137,8 +135,7 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 		minimizer.run( viewer_pose, mm, ( *modeler_scorefxn ), options );
 
 		if ( virtual_sugar_is_from_prior_step_ ) { //Virtualize the other partition since it doesn't exist in prior step!
-			for ( Size ii = 1; ii <= working_moving_partition_res.size(); ii++ ) {
-				Size const seq_num = working_moving_partition_res[ii];
+			for ( Size const seq_num : working_moving_partition_res ) {
 				if ( already_virtualized_res_list.has_value( seq_num ) ) continue;
 				pose::remove_variant_type_from_pose_residue( viewer_pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
 			}
@@ -154,7 +151,6 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 	viewer_pose = viewer_pose_copy;
 
 	output_title_text( "Exit minimize_all_sampled_floating_bases", TR.Debug );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,18 +180,15 @@ is_sugar_virtual( core::pose::Pose const & pose, core::Size const sugar_res, cor
 		utility_exit_with_message( "sugar_res < 1 || sugar_res > nres( " + string_of( nres ) + " )!. sugar_res = " + string_of( sugar_res ) );
 	}
 
-	if ( pose.residue( sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
-
-		//bulge consistency checks:
-		runtime_assert ( bulge_res > 1 && bulge_res < nres );
-		// will virtualize any bulge residues...
-		if ( !pose.residue( bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
-				!bulge_residues_to_virtualize.has( bulge_res ) ) bulge_residues_to_virtualize.push_back( bulge_res );
-
-		return true;
-	} else {
-		return false;
-	}
+	if ( !pose.residue( sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) return false;
+	
+	//bulge consistency checks:
+	runtime_assert ( bulge_res > 1 && bulge_res < nres );
+	// will virtualize any bulge residues...
+	if ( !pose.residue( bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
+		!bulge_residues_to_virtualize.has( bulge_res ) ) bulge_residues_to_virtualize.push_back( bulge_res );
+	
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,9 +228,7 @@ modeler_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data
 
 		if ( sugar_ID_counter_list[sugar_modeling_list.size()] == ( sugar_modeling_list[sugar_modeling_list.size()].pose_list.size() + 1 ) ) break;
 		////////////////////////////////////////////////////////////////
-
 	}
-
 }
 
 

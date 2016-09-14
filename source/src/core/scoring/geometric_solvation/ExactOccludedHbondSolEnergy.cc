@@ -490,20 +490,12 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 	core::Real residue_geosol(0.);
 
 	// loop over donors in polar_rsd
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = polar_rsd.Hpos_polar().begin(),
-			hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-
-		Size const polar_atom( *hnum );
+	for ( Size const polar_atom : polar_rsd.Hpos_polar() ) {
 		residue_geosol += compute_donor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
 	}
 
 	// loop over acceptors in polar_rsd
-	for ( chemical::AtomIndices::const_iterator
-			anum  = polar_rsd.accpt_pos().begin(),
-			anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
-		Size const polar_atom( *anum );
+	for ( Size const polar_atom : polar_rsd.accpt_pos() ) {
 		residue_geosol += compute_acceptor_atom_energy(polar_rsd, polar_resnum, polar_atom, pose);
 	}
 
@@ -598,9 +590,8 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_donor_atom_energy(
 				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
 			neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
 		}
-		for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
-			core::Size const occ_resnum( neighborlist[occ_inx] );
-			conformation::Residue const occ_rsd = pose.residue(occ_resnum);
+		for ( Size const occ_resnum : neighborlist ) {
+			conformation::Residue const & occ_rsd = pose.residue(occ_resnum);
 			if ( exact_occ_pairwise_by_res_ ) {
 				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
 					grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
@@ -687,9 +678,8 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_acceptor_atom_energy(
 				neighbor_iter != neighbor_iter_end; ++neighbor_iter ) {
 			neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
 		}
-		for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
-			core::Size const occ_resnum( neighborlist[occ_inx] );
-			conformation::Residue const occ_rsd = pose.residue(occ_resnum);
+		for ( Size const occ_resnum : neighborlist ) {
+			conformation::Residue const & occ_rsd = pose.residue(occ_resnum);
 			if ( exact_occ_pairwise_by_res_ ) {
 				polar_group_energy += compute_polar_group_sol_energy(pose, polar_rsd, polar_atom, *GridInfo::get_instance(),
 					grid_constant, WaterWeightGridSet::get_instance()->get_water_weight_grid( curr_hbond_eval_type.eval_type() ),
@@ -860,8 +850,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 
 	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
 
-	for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
-		core::Size const occ_resnum( neighborlist[occ_inx] );
+	for ( Size const occ_resnum : neighborlist ) {
 		if ( ! exact_occ_self_res_occ_ && ( polar_resnum == occ_resnum ) ) {
 			continue;
 		}

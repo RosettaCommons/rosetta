@@ -162,7 +162,6 @@ output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const &
 	static const SilentFileData silent_file_data;
 	if ( silent_file.size() > 0 ) silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 	if ( sfd_in != 0 ) sfd_in->add_structure( s );
-
 }
 
 

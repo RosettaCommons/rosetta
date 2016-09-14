@@ -135,11 +135,12 @@ StepWiseProteinMinimizer::apply( core::pose::Pose & pose )
 	Real const original_coordinate_cst_weight = fa_scorefxn_->get_weight( coordinate_constraint );
 
 	utility::vector1< PoseOP > output_pose_list;
-	for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+	for ( Size n = 1; n <= pose_list_.size(); ++n ) {
+		auto const & poseop = pose_list_[n];
 
-		if ( num_pose_minimize_ > 0 &&  n > num_pose_minimize_ ) break;
+		if ( num_pose_minimize_ > 0 && n > num_pose_minimize_ ) break;
 
-		pose = *pose_list_[ n ];
+		pose = *poseop;
 
 		// Following are necessary because poses from clustering went thorugh silent struct and lost their constraints & disulfide information.
 		if ( cst_set ) pose.constraint_set( cst_set );
@@ -183,7 +184,6 @@ StepWiseProteinMinimizer::apply( core::pose::Pose & pose )
 			} else {
 				minimizer.run( pose, mm, *fa_scorefxn_, options );
 			}
-
 		}
 
 		output_pose_list.push_back( pose.clone() );
@@ -194,7 +194,6 @@ StepWiseProteinMinimizer::apply( core::pose::Pose & pose )
 
 	TR.Debug << "Total time in StepWiseProteinMinimizer: " <<
 		static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -208,16 +207,13 @@ StepWiseProteinMinimizer::let_neighboring_chis_minimize(
 	(*fa_scorefxn_)( pose );
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( Size n = 1; n <= moving_residues_.size(); n++ ) {
-		Size const i = moving_residues_[ n ];
+	for ( Size const i : moving_residues_ ) {
 		if ( pose.residue_type(i).is_protein() ) { // these should be activated, but make sure . VIRTUAL_SIDE_CHAIN issue!
 			mm.set_chi( i, true );
 		}
 	}
 
-	for ( Size n = 1; n <= moving_residues_.size(); n++ ) {
-
-		Size const i = moving_residues_[ n ];
+	for ( Size const i : moving_residues_ ) {
 
 		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
@@ -232,10 +228,8 @@ StepWiseProteinMinimizer::let_neighboring_chis_minimize(
 			} else if ( pose.residue_type(j).is_RNA() ) {
 				mm.set( id::TorsionID( j, id::CHI, 4), true ); // 2'-OH.
 			}
-
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////

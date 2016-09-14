@@ -198,12 +198,12 @@ RNA_HelixAssembler::add_capping_base_pairs_to_full_sequence()
 
 	// full name info for isoguanosine, etc.
 	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues_.begin(), end = non_standard_residues_.end(); it != end; ++it ) {
-		Size res( it->first );
+	for ( auto const & elem : non_standard_residues_ ) {
+		Size res( elem.first );
 		if ( res <= L/2 ) {
-			non_standard_residues_new[ res + 1 ] = it->second;
+			non_standard_residues_new[ res + 1 ] = elem.second;
 		} else {
-			non_standard_residues_new[ res + 3 ] = it->second;
+			non_standard_residues_new[ res + 3 ] = elem.second;
 		}
 	}
 	non_standard_residues_ = non_standard_residues_new;
@@ -451,9 +451,9 @@ RNA_HelixAssembler::remove_first_base_pair( std::string & full_sequence,
 	sequence_helix2 = sequence_helix2.substr( 0,  L-1 );
 
 	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(), end = non_standard_residues.end(); it != end; ++it ) {
-		Size res( it->first );
-		if ( res > 1 || res < full_sequence_.size() ) non_standard_residues_new[ res-1 ] = it->second;
+	for ( auto const & elem : non_standard_residues ) {
+		Size res( elem.first );
+		if ( res > 1 || res < full_sequence_.size() ) non_standard_residues_new[ res-1 ] = elem.second;
 	}
 	non_standard_residues = non_standard_residues_new;
 
@@ -477,12 +477,12 @@ RNA_HelixAssembler::remove_last_base_pair( std::string & full_sequence,
 	sequence_helix2 = sequence_helix2.substr( 1,  L-1 );
 
 	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(), end = non_standard_residues.end(); it != end; ++it ) {
-		Size res( it->first );
+	for ( auto const & elem : non_standard_residues ) {
+		Size res( elem.first );
 		if ( res < L  ) {
-			non_standard_residues_new[ res ] = it->second;
+			non_standard_residues_new[ res ] = elem.second;
 		} else if ( res > (L + 1) ) {
-			non_standard_residues_new[ res - 2 ] = it->second;
+			non_standard_residues_new[ res - 2 ] = elem.second;
 		}
 	}
 	non_standard_residues = non_standard_residues_new;
@@ -700,8 +700,8 @@ RNA_HelixAssembler::perturb_torsion(
 	pose::Pose & pose,
 	utility::vector1<id::TorsionID> const & id_list
 ) const {
-	for ( Size i = 1; i <= id_list.size(); ++i ) {
-		pose.set_torsion( id_list[i], pose.torsion(id_list[i]) + perturb_amplitude_ * numeric::random::rg().gaussian() );
+	for ( auto const & id : id_list ) {
+		pose.set_torsion( id, pose.torsion(id) + perturb_amplitude_ * numeric::random::rg().gaussian() );
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////
@@ -770,8 +770,7 @@ RNA_HelixAssembler::fill_chain_info( pose::Pose & pose ){
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
-	utility::vector1< char > chains;
-	for ( Size i = 1; i <= pose.size(); i++ ) chains.push_back( ' ' );
+	utility::vector1< char > chains( pose.size(), ' ' );
 	PDBInfoOP pdb_info( new PDBInfo( pose ) );
 	pdb_info->set_chains( chains );
 	pdb_info->obsolete( false ); // this is silly.

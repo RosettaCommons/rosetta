@@ -125,10 +125,8 @@ RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 void
 RG_Energy_RNA::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scorefxn ) const
 {
-
 	//score the pose.... that should generate the center_of_mass position, and the Rg.
 	setup_for_scoring( pose, scorefxn );
-
 }
 
 

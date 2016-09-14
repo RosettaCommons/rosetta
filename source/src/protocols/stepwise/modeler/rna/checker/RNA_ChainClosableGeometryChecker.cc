@@ -90,9 +90,8 @@ RNA_ChainClosableGeometryChecker::check_screen(  utility::vector1< core::pose::P
 	core::kinematics::Stub const & moving_res_base_stub,
 	Size const & reference_res ) const {
 
-	for ( Size n = 1; n <= pose_data_list.size(); n++ ) {
-		pose::Pose const & pose = ( *pose_data_list[n] );
-		if ( check_screen( pose, rsd_at_origin_list, moving_res_base_stub, reference_res ) ) return true;
+	for ( auto const & poseop : pose_data_list ) {
+		if ( check_screen( *poseop, rsd_at_origin_list, moving_res_base_stub, reference_res ) ) return true;
 	}
 	return false;
 }
@@ -156,9 +155,8 @@ RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( core::Size cons
 	core::kinematics::Stub const & moving_res_base_stub,
 	bool const is_prepend ) const {
 
-	for ( Size n = 1; n <= pose_data_list.size(); n++ ) {
-		pose::Pose const & pose = ( *pose_data_list[n] );
-		if ( check_chain_closable_geometry( reference_res, pose, rsd_at_origin_list, moving_res_base_stub, is_prepend ) ) return true;
+	for ( auto const & poseop : pose_data_list ) {
+		if ( check_chain_closable_geometry( reference_res, *poseop, rsd_at_origin_list, moving_res_base_stub, is_prepend ) ) return true;
 	}
 	return false;
 }
@@ -172,14 +170,13 @@ RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( core::Size cons
 	bool const is_prepend ) const {
 	using namespace core::conformation;
 
-	for ( Size n = 1; n <= rsd_at_origin_list.size(); n++ ) {
+	for ( ResidueCOP const & rsd_at_origin : rsd_at_origin_list ) {
 
-		Residue const & rsd_at_origin = ( *rsd_at_origin_list[n] );
 		std::string const moving_atom_name    = ( is_prepend ) ? " O3'" : " C5'";
 		std::string const reference_atom_name = ( is_prepend ) ? " C5'" : " O3'";
 
 		numeric::xyzVector< core::Real > atom_coordinate;
-		toolbox::rigid_body::get_specific_atom_coordinate( moving_atom_name, atom_coordinate, rsd_at_origin, moving_res_base_stub );
+		toolbox::rigid_body::get_specific_atom_coordinate( moving_atom_name, atom_coordinate, *rsd_at_origin, moving_res_base_stub );
 
 		if ( check_chain_closable_geometry( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ) ) ) {
 			return true;
@@ -253,7 +250,7 @@ RNA_ChainClosableGeometryChecker::get_C4_C3_distance_range( conformation::Residu
 	Real dot_product = dot( start_vector, end_vector );
 
 	// awesome, parin-style.
-	if ( dot_product > -1.00 && dot_product < -0.95  ) { C4_C3_dist_min = 2.428;  C4_C3_dist_max = 4.337; }
+	if      ( dot_product > -1.00 && dot_product < -0.95  ) { C4_C3_dist_min = 2.428;  C4_C3_dist_max = 4.337; }
 	else if ( dot_product > -0.95 && dot_product < -0.90  ) { C4_C3_dist_min = 2.238;  C4_C3_dist_max = 4.582; }
 	else if ( dot_product > -0.90 && dot_product < -0.85  ) { C4_C3_dist_min = 2.064;  C4_C3_dist_max = 4.743; }
 	else if ( dot_product > -0.85 && dot_product < -0.80  ) { C4_C3_dist_min = 1.979;  C4_C3_dist_max = 4.882; }
@@ -272,27 +269,27 @@ RNA_ChainClosableGeometryChecker::get_C4_C3_distance_range( conformation::Residu
 	else if ( dot_product > -0.20 && dot_product < -0.15  ) { C4_C3_dist_min = 0.963;  C4_C3_dist_max = 5.812; }
 	else if ( dot_product > -0.15 && dot_product < -0.10  ) { C4_C3_dist_min = 1.019;  C4_C3_dist_max = 5.861; }
 	else if ( dot_product > -0.10 && dot_product < -0.05  ) { C4_C3_dist_min = 1.331;  C4_C3_dist_max = 5.904; }
-	else if ( dot_product > -0.05 && dot_product < 0.00  ) { C4_C3_dist_min = 1.532;  C4_C3_dist_max = 5.942; }
-	else if ( dot_product > 0.00 && dot_product < 0.05  ) { C4_C3_dist_min = 1.768;  C4_C3_dist_max = 5.979; }
-	else if ( dot_product > 0.05 && dot_product < 0.10  ) { C4_C3_dist_min = 1.953;  C4_C3_dist_max = 6.017; }
-	else if ( dot_product > 0.10 && dot_product < 0.15  ) { C4_C3_dist_min = 2.121;  C4_C3_dist_max = 6.046; }
-	else if ( dot_product > 0.15 && dot_product < 0.20  ) { C4_C3_dist_min = 2.292;  C4_C3_dist_max = 6.083; }
-	else if ( dot_product > 0.20 && dot_product < 0.25  ) { C4_C3_dist_min = 2.424;  C4_C3_dist_max = 6.118; }
-	else if ( dot_product > 0.25 && dot_product < 0.30  ) { C4_C3_dist_min = 2.563;  C4_C3_dist_max = 6.140; }
-	else if ( dot_product > 0.30 && dot_product < 0.35  ) { C4_C3_dist_min = 2.726;  C4_C3_dist_max = 6.171; }
-	else if ( dot_product > 0.35 && dot_product < 0.40  ) { C4_C3_dist_min = 2.849;  C4_C3_dist_max = 6.200; }
-	else if ( dot_product > 0.40 && dot_product < 0.45  ) { C4_C3_dist_min = 2.998;  C4_C3_dist_max = 6.219; }
-	else if ( dot_product > 0.45 && dot_product < 0.50  ) { C4_C3_dist_min = 3.128;  C4_C3_dist_max = 6.245; }
-	else if ( dot_product > 0.50 && dot_product < 0.55  ) { C4_C3_dist_min = 3.261;  C4_C3_dist_max = 6.261; }
-	else if ( dot_product > 0.55 && dot_product < 0.60  ) { C4_C3_dist_min = 3.380;  C4_C3_dist_max = 6.284; }
-	else if ( dot_product > 0.60 && dot_product < 0.65  ) { C4_C3_dist_min = 3.523;  C4_C3_dist_max = 6.298; }
-	else if ( dot_product > 0.65 && dot_product < 0.70  ) { C4_C3_dist_min = 3.658;  C4_C3_dist_max = 6.315; }
-	else if ( dot_product > 0.70 && dot_product < 0.75  ) { C4_C3_dist_min = 3.785;  C4_C3_dist_max = 6.329; }
-	else if ( dot_product > 0.75 && dot_product < 0.80  ) { C4_C3_dist_min = 3.914;  C4_C3_dist_max = 6.340; }
-	else if ( dot_product > 0.80 && dot_product < 0.85  ) { C4_C3_dist_min = 4.065;  C4_C3_dist_max = 6.350; }
-	else if ( dot_product > 0.85 && dot_product < 0.90  ) { C4_C3_dist_min = 4.209;  C4_C3_dist_max = 6.356; }
-	else if ( dot_product > 0.90 && dot_product < 0.95  ) { C4_C3_dist_min = 4.374;  C4_C3_dist_max = 6.357; }
-	else if ( dot_product > 0.95 && dot_product < 1.00  ) { C4_C3_dist_min = 4.570;  C4_C3_dist_max = 6.349; }
+	else if ( dot_product > -0.05 && dot_product <  0.00  ) { C4_C3_dist_min = 1.532;  C4_C3_dist_max = 5.942; }
+	else if ( dot_product >  0.00 && dot_product <  0.05  ) { C4_C3_dist_min = 1.768;  C4_C3_dist_max = 5.979; }
+	else if ( dot_product >  0.05 && dot_product <  0.10  ) { C4_C3_dist_min = 1.953;  C4_C3_dist_max = 6.017; }
+	else if ( dot_product >  0.10 && dot_product <  0.15  ) { C4_C3_dist_min = 2.121;  C4_C3_dist_max = 6.046; }
+	else if ( dot_product >  0.15 && dot_product <  0.20  ) { C4_C3_dist_min = 2.292;  C4_C3_dist_max = 6.083; }
+	else if ( dot_product >  0.20 && dot_product <  0.25  ) { C4_C3_dist_min = 2.424;  C4_C3_dist_max = 6.118; }
+	else if ( dot_product >  0.25 && dot_product <  0.30  ) { C4_C3_dist_min = 2.563;  C4_C3_dist_max = 6.140; }
+	else if ( dot_product >  0.30 && dot_product <  0.35  ) { C4_C3_dist_min = 2.726;  C4_C3_dist_max = 6.171; }
+	else if ( dot_product >  0.35 && dot_product <  0.40  ) { C4_C3_dist_min = 2.849;  C4_C3_dist_max = 6.200; }
+	else if ( dot_product >  0.40 && dot_product <  0.45  ) { C4_C3_dist_min = 2.998;  C4_C3_dist_max = 6.219; }
+	else if ( dot_product >  0.45 && dot_product <  0.50  ) { C4_C3_dist_min = 3.128;  C4_C3_dist_max = 6.245; }
+	else if ( dot_product >  0.50 && dot_product <  0.55  ) { C4_C3_dist_min = 3.261;  C4_C3_dist_max = 6.261; }
+	else if ( dot_product >  0.55 && dot_product <  0.60  ) { C4_C3_dist_min = 3.380;  C4_C3_dist_max = 6.284; }
+	else if ( dot_product >  0.60 && dot_product <  0.65  ) { C4_C3_dist_min = 3.523;  C4_C3_dist_max = 6.298; }
+	else if ( dot_product >  0.65 && dot_product <  0.70  ) { C4_C3_dist_min = 3.658;  C4_C3_dist_max = 6.315; }
+	else if ( dot_product >  0.70 && dot_product <  0.75  ) { C4_C3_dist_min = 3.785;  C4_C3_dist_max = 6.329; }
+	else if ( dot_product >  0.75 && dot_product <  0.80  ) { C4_C3_dist_min = 3.914;  C4_C3_dist_max = 6.340; }
+	else if ( dot_product >  0.80 && dot_product <  0.85  ) { C4_C3_dist_min = 4.065;  C4_C3_dist_max = 6.350; }
+	else if ( dot_product >  0.85 && dot_product <  0.90  ) { C4_C3_dist_min = 4.209;  C4_C3_dist_max = 6.356; }
+	else if ( dot_product >  0.90 && dot_product <  0.95  ) { C4_C3_dist_min = 4.374;  C4_C3_dist_max = 6.357; }
+	else if ( dot_product >  0.95 && dot_product <  1.00  ) { C4_C3_dist_min = 4.570;  C4_C3_dist_max = 6.349; }
 	else {
 		TR << "dot_product = " << dot_product << std::endl;
 		utility_exit_with_message( "Invalid dot_product!" );

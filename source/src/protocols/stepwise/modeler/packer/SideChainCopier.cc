@@ -64,9 +64,7 @@ SideChainCopier::apply( core::pose::Pose & viewer_pose ) {
 	Real const ho2prime_tolerance( 1.0e-3 );
 	Real const orient_backbone_tolerance( 1.0e-3 );
 
-	for ( Size i = 1; i <= copy_res_.size(); i++ ) {
-
-		Size const n = copy_res_[i];
+	for ( Size const n : copy_res_ ) {
 		if ( pose.residue_type( n ).is_RNA() ) {
 			if ( !copy_o2prime_hydrogens_ ) continue;
 			make_variants_match( pose, reference_pose_, n, core::chemical::VIRTUAL_O2PRIME_HYDROGEN );
@@ -75,7 +73,6 @@ SideChainCopier::apply( core::pose::Pose & viewer_pose ) {
 			pose.set_torsion( torsion_id, reference_pose_.torsion( torsion_id ) );
 
 		} else if ( pose.residue_type( n ).is_protein() ) {
-
 			core::conformation::ResidueOP rsd = reference_pose_.residue( n ).clone();
 
 			bool const orient_backbone = ( ( reference_pose_.residue( n ).xyz( 1 ) - pose.residue( n ).xyz( 1 ) ).length() > orient_backbone_tolerance );

@@ -81,8 +81,7 @@ OtherPoseEnergy::finalize_total_energy(
 
 	totals[ other_pose ] = 0.0;
 
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
-		PoseOP other_pose_op = other_pose_list[n];
+	for ( PoseOP other_pose_op : other_pose_list ) {
 		Real other_pose_score = ( *other_pose_scorefxn )( *other_pose_op );
 		totals[ other_pose ] += other_pose_score;
 	}

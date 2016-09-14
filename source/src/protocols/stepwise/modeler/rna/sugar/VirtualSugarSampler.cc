@@ -300,6 +300,7 @@ VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 
 	AtomTreeMinimizer minimizer;
 	bool const use_nblist( true );
+	// AMW TODO: this can't be a good tolerance.
 	float const tolerance = 0.000000000000025; //Sept 21, 2011, same result for  dfp_min and dfpmin_atol| converge to identical energy score with 0.00000025 of dfpmin_atol!
 	//Fang: This number is insanely small....
 	MinimizerOptions options_standard( "lbfgs_armijo_atol", tolerance, use_nblist, false, false );      //Switch to absolute tolerance on Sept 21, 2011
@@ -336,28 +337,35 @@ VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	}
 	runtime_assert( found_desired_jump_ID );
 
-	/////////////Switch to armijo on Sept 21, 2011///////////////////////////////////////////////////////////////////////////////////////
-	/////////////My understanding is that dfpmin_armijo is a "inexact" line search whereas the standard dfpmin is a exact line search///////
-	/////////////It seem to indicate the dfpmin should be slower (require more function evaluation) but at the same time more accurate//////
-	/////////////See http://www.rosettacommons.org/manuals/archive/rosetta3.3_user_guide/minimization_overview.html for details/////////////
-	/////////////However standard dfpmin seem to lead cases where the floating base just "explode" and more far away from starting point////
-	/////////////This sometimes lead to the Hbond tripped error/////////////////////////////////////////////////////////////////////////////
-	/////////////Side note: switching to dfpmin_atol (atol-> absolute tolerance didn't help!)///////////////////////////////////////////////
-	/////////////So switching to dfpmin_armijo which doesn't seem to exhibit this behavior//////////////////////////////////////////////////
-	/////////////Note that there is a currently a bug in in dfpmin_armijo:
-	/////////////core.optimization.LineMinimizer: Inaccurate G! step= 9.53674e-07 Deriv= -0.0226443 Finite Diff= 0.00628252/////////////////
-	/////////////Rhiju mention that this bug is fixed in the latest Rosetta version in trunk////////////////////////////////////////////////
-	/////////////So will keep using standard dfp_min except at the first minimiziation step/////////////////////////////////////////////////
-	/////////////Also tried two round minimizations with the first using options_armijo. This fixes the "explode" bug but led to worst score!/
-	minimize_with_constraints( pose_with_sugar, mm, rescaled_sugar_score_fxn_without_ch_bond, options_armijo ); //Add this round on Sept 20, 2011, Switch to armijo on Sept 21, 2011
-	minimizer.run( pose_with_sugar, mm, *( rescaled_sugar_score_fxn_without_ch_bond ), options_armijo );        //Add this round on Sept 20, 2011, Switch to armijo on Sept 21, 2011
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Switch to armijo on Sept 21, 2011 ////////////////////////////
+	// My understanding is that dfpmin_armijo is a "inexact" line search whereas
+	// the standard dfpmin is a exact line search.  It seem to indicate the
+	// dfpmin should be slower (require more function evaluation) but at the
+	// same time more accurate
+	// See http://www.rosettacommons.org/manuals/archive/rosetta3.3_user_guide/minimization_overview.html for details
+	// However standard dfpmin seem to lead cases where the floating base just
+	// "explode" and more far away from starting point.  This sometimes lead to
+	// the Hbond tripped error
+	// Side note: switching to dfpmin_atol (atol-> absolute tolerance didn't help!)
+	// So switching to dfpmin_armijo which doesn't seem to exhibit this behavior
+	//
+	// Note that there is a currently a bug in in dfpmin_armijo:
+	// core.optimization.LineMinimizer: Inaccurate G! step= 9.53674e-07 Deriv= -0.0226443 Finite Diff= 0.00628252
+	// Rhiju mention that this bug is fixed in the latest Rosetta version in trunk
+	// So will keep using standard dfp_min except at the first minimiziation step
+	// Also tried two round minimizations with the first using options_armijo.
+	// This fixes the "explode" bug but led to worst score!
+
+	//Add this round on Sept 20, 2011, Switch to armijo on Sept 21, 2011
+	minimize_with_constraints( pose_with_sugar, mm, rescaled_sugar_score_fxn_without_ch_bond, options_armijo );
+	//Add this round on Sept 20, 2011, Switch to armijo on Sept 21, 2011
+	minimizer.run( pose_with_sugar, mm, *( rescaled_sugar_score_fxn_without_ch_bond ), options_armijo );
+	
 	minimize_with_constraints( pose_with_sugar, mm, sugar_scorefxn_without_ch_bond, options_standard );
 	minimizer.run( pose_with_sugar, mm, *( sugar_scorefxn_without_ch_bond ), options_standard );
 
 	minimize_with_constraints( pose_with_sugar, mm, sugar_scorefxn, options_standard );
 	minimizer.run( pose_with_sugar, mm, *( sugar_scorefxn ), options_standard );
-
 }
 
 
@@ -524,7 +532,7 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 	Size num_closed_chain_pose = 0;
 
 	utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_;
-	for ( Size n = 1; n <= pose_list.size(); n++ ) atr_rep_checkers_.push_back( rna::checker::RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *(pose_list[n]), bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
+	for ( auto const & poseop : pose_list ) atr_rep_checkers_.push_back( rna::checker::RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *poseop, bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
 
 	RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_( new RNA_ChainClosableGeometryChecker( sugar_modeling_.five_prime_chain_break, 0 /*gap_size*/ ) );
 	RNA_ChainClosureCheckerOP chain_closure_checker_( new RNA_ChainClosureChecker( screening_pose, sugar_modeling_.five_prime_chain_break ) );
@@ -656,16 +664,15 @@ VirtualSugarSampler::bulge_chain_minimize_legacy( utility::vector1< PoseOP > & p
 void
 VirtualSugarSampler::initialize_pose_variants_for_chain_closure( utility::vector1< pose::PoseOP > & pose_list ){
 	// instantiate bulge.
-	for ( Size n = 1; n <= pose_list.size(); n++ ) {
-		Pose & pose = *(pose_list[n]);
+	for ( auto & poseop : pose_list ) {
 		// in legacy mode this occurs above in 'setup'. but it really should be here.
-		if ( !legacy_mode_ ) setup_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
-		pose::add_variant_type_to_pose_residue(  pose,
+		if ( !legacy_mode_ ) setup_chain_break_variants( *poseop, sugar_modeling_.five_prime_chain_break );
+		pose::add_variant_type_to_pose_residue(  *poseop,
 			core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.five_prime_chain_break + 1 );
-		core::pose::rna::remove_virtual_rna_residue_variant_type( pose, sugar_modeling_.bulge_res );
+		core::pose::rna::remove_virtual_rna_residue_variant_type( *poseop, sugar_modeling_.bulge_res );
 
 		// this used to happen inside StepWiseModeler (and not get reverted) -- special for bulge cases, so moved out here.
-		reinstantiate_backbone_at_moving_res( pose, sugar_modeling_.bulge_res, sugar_modeling_.five_prime_chain_break );
+		reinstantiate_backbone_at_moving_res( *poseop, sugar_modeling_.bulge_res, sugar_modeling_.five_prime_chain_break );
 	}
 }
 
@@ -675,13 +682,12 @@ VirtualSugarSampler::restore_pose_variants_after_chain_closure( utility::vector1
 	using namespace core::scoring;
 	// reverse instantiation of bulge.
 	ScoreFunctionOP modeler_scorefxn = get_modeler_scorefxn( scorefxn_ );
-	for ( Size n = 1; n <= pose_list.size(); n++ ) {
-		Pose & pose = *(pose_list[n]);
-		remove_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
-		pose::remove_variant_type_from_pose_residue( pose,
+	for ( auto & poseop : pose_list ) {
+		remove_chain_break_variants( *poseop, sugar_modeling_.five_prime_chain_break );
+		pose::remove_variant_type_from_pose_residue( *poseop,
 			core::chemical::VIRTUAL_PHOSPHATE,  sugar_modeling_.five_prime_chain_break + 1 );
-		core::pose::rna::apply_virtual_rna_residue_variant_type( pose, sugar_modeling_.bulge_res );
-		( *modeler_scorefxn )( pose ); //for output purposes...
+		core::pose::rna::apply_virtual_rna_residue_variant_type( *poseop, sugar_modeling_.bulge_res );
+		( *modeler_scorefxn )( *poseop ); //for output purposes...
 	}
 }
 
@@ -751,8 +757,7 @@ VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewer_pose ){
 	pose_with_original_terminal_phosphates_ = pose.clone();
 	phosphate::remove_terminal_phosphates( pose, distal_partition_res_ );
 
-	for ( Size ii = 1; ii <= distal_partition_res_.size(); ii++ ) {
-		Size const seq_num = distal_partition_res_[ii];
+	for ( Size const seq_num : distal_partition_res_ ) {
 		if ( pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 			already_virtualized_res_list_.push_back( seq_num );
 		} else {

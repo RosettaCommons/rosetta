@@ -72,13 +72,11 @@ StepWiseRNA_PoseSelection::initialize_modeler_scorefxn( core::scoring::ScoreFunc
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
 StepWiseRNA_PoseSelection::pose_selection_by_full_score( pose::Pose & current_pose, std::string const & tag ){
-
 	using namespace core::scoring;
 
 	count_data_.full_score_count++;
 
 	Real const current_score = ( *modeler_scorefxn_ )( current_pose );
-
 	update_pose_list( tag, current_pose, current_score );
 
 	if ( ( pose_list_.size() == ( num_pose_kept_ * multiplier_ ) ) ) {
@@ -98,7 +96,7 @@ StepWiseRNA_PoseSelection::pose_selection_by_full_score( pose::Pose & current_po
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Dec 18, 2009...took off alot of optimization from this code since it is very fast (not rate limiting) anyways.
 void
-StepWiseRNA_PoseSelection::cluster_pose_list(){
+StepWiseRNA_PoseSelection::cluster_pose_list() {
 
 	bool const is_prepend(  working_parameters_->is_prepend() );
 	Size const actually_moving_res = working_parameters_->actually_moving_res();
@@ -109,28 +107,28 @@ StepWiseRNA_PoseSelection::cluster_pose_list(){
 
 	for ( Size i = 1; i <= pose_list_.size(); i++ ) {
 
-		if ( pose_state_list[i] == true ) {
-			num_clustered_pose++;
-			for ( Size j = i + 1; j <= pose_list_.size(); j++ ) {
-
-				Real rmsd;
-				if ( PBP_clustering_at_chain_closure_ && working_parameters_->gap_size() == 0 ) { //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
-					rmsd = phosphate_base_phosphate_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
-				} else {
-					rmsd = suite_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res, is_prepend, false /*ignore_virtual_atom*/ );
-				}
-
-				bool const same_pucker = is_same_sugar_pucker( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res );
-
-				if ( rmsd < cluster_rmsd_ && ( same_pucker || !distinguish_pucker_ ) ) {
-					pose_state_list[j] = false;
-					if ( verbose_ ) {
-						TR.Debug << "rmsd = " << rmsd << "  pose " << tag_from_pose( *pose_list_[j] ) << " is a neighbor of pose " << tag_from_pose( *pose_list_[i] );
-						TR.Debug << " same_pucker = "; output_boolean( same_pucker, TR.Debug );
-						print_sugar_pucker_state( " center_pucker = ", core::pose::rna::get_residue_pucker_state( ( *pose_list_[i] ), actually_moving_res ), TR.Debug );
-						print_sugar_pucker_state( " curr_pucker = ", core::pose::rna::get_residue_pucker_state( ( *pose_list_[j] ), actually_moving_res ), TR.Debug );
-						TR.Debug << std::endl;
-					}
+		if ( ! pose_state_list[i] ) continue;
+		
+		num_clustered_pose++;
+		for ( Size j = i + 1; j <= pose_list_.size(); j++ ) {
+			
+			Real rmsd;
+			if ( PBP_clustering_at_chain_closure_ && working_parameters_->gap_size() == 0 ) { //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
+				rmsd = phosphate_base_phosphate_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
+			} else {
+				rmsd = suite_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res, is_prepend, false /*ignore_virtual_atom*/ );
+			}
+			
+			bool const same_pucker = is_same_sugar_pucker( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res );
+			
+			if ( rmsd < cluster_rmsd_ && ( same_pucker || !distinguish_pucker_ ) ) {
+				pose_state_list[j] = false;
+				if ( verbose_ ) {
+					TR.Debug << "rmsd = " << rmsd << "  pose " << tag_from_pose( *pose_list_[j] ) << " is a neighbor of pose " << tag_from_pose( *pose_list_[i] );
+					TR.Debug << " same_pucker = "; output_boolean( same_pucker, TR.Debug );
+					print_sugar_pucker_state( " center_pucker = ", core::pose::rna::get_residue_pucker_state( ( *pose_list_[i] ), actually_moving_res ), TR.Debug );
+					print_sugar_pucker_state( " curr_pucker = ", core::pose::rna::get_residue_pucker_state( ( *pose_list_[j] ), actually_moving_res ), TR.Debug );
+					TR.Debug << std::endl;
 				}
 			}
 		}
@@ -154,8 +152,6 @@ StepWiseRNA_PoseSelection::cluster_pose_list(){
 		current_score_cutoff_ = 999999.9; //Feb 02, 2012
 	}
 	////////////////////////////////////////////
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,9 +159,7 @@ void
 StepWiseRNA_PoseSelection::finalize( bool const do_clustering /* = true */ ){
 
 	std::sort( pose_list_.begin(), pose_list_.end(), sort_pose_by_score );
-
 	if ( do_clustering ) cluster_pose_list();
-
 	if ( pose_list_.size() > num_pose_kept_ ) pose_list_.erase( pose_list_.begin() + num_pose_kept_, pose_list_.end() );
 }
 
@@ -180,7 +174,6 @@ StepWiseRNA_PoseSelection::update_pose_list(
 
 	//The order of evaluation of the two expression in the if statement is important!
 	if ( add_pose_to_list ) {
-
 		if ( verbose_ ) {
 			TR.Debug << "tag = " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score = " << current_score;
 		}

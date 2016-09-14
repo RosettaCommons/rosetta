@@ -263,8 +263,7 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 		// to not compute that information -- and may contribute to smoother landscape at low-resolution stage.
 		pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged ); // could also get 'energies' for each base pair...
 
-		for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-			pose::rna::BasePair const base_pair = base_pair_list[ n ]; // move this to pose/rna?
+		for ( pose::rna::BasePair const base_pair : base_pair_list ) {
 			update_edge_paired(  base_pair.res1(), base_pair.edge1(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 			update_edge_paired(  base_pair.res2(), base_pair.edge2(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		}
@@ -275,20 +274,20 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 			scorefxn->set_weight( rna_base_pair, 1.0 ); // should fill RNA_FilteredBaseBaseInfo
 			(*scorefxn)( pose );
 		}
-		RNA_ScoringInfo  const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+		RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 		rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() ); // assume this has been filled.
 
 		pose::rna::EnergyBasePairList const & scored_base_pair_list = rna_filtered_base_base_info.scored_base_pair_list();
-		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list.begin(), end = scored_base_pair_list.end(); it != end; ++it ) {
-			pose::rna::BasePair const base_pair = it->second;
-			update_edge_paired(  base_pair.res1(), base_pair.edge1(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
-			update_edge_paired(  base_pair.res2(), base_pair.edge2(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
+		for ( auto const & elem : scored_base_pair_list ) {
+			pose::rna::BasePair const & base_pair = elem.second;
+			update_edge_paired( base_pair.res1(), base_pair.edge1(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
+			update_edge_paired( base_pair.res2(), base_pair.edge2(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		}
 
 		pose::rna::EnergyBaseStackList const & scored_base_stack_list = rna_filtered_base_base_info.scored_base_stack_list();
 		vector1< bool > is_stacked( pose.size(), false );
-		for ( pose::rna::EnergyBaseStackList::const_iterator it = scored_base_stack_list.begin(), end = scored_base_stack_list.end(); it != end; ++it ) {
-			pose::rna::BaseStack const base_stack = it->second;
+		for ( auto const & elem : scored_base_stack_list ) {
+			pose::rna::BaseStack const & base_stack = elem.second;
 			is_stacked[ base_stack.res1() ] = true;
 			is_stacked[ base_stack.res2() ] = true;
 		}

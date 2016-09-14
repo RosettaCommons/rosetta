@@ -226,8 +226,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
+) const {
 	Real score_aro1( 0.0 ), score_aro2( 0.0 );
 	Real const score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, prefactor_, stack_cutoff_, dist_cutoff_ );
 	Real const score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, prefactor_, stack_cutoff_, dist_cutoff_ ) ;

@@ -81,10 +81,10 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.El
 ElectronDensityAtomwise::ElectronDensityAtomwise() {
 	is_map_loaded = false;
 	is_score_precomputed = false;
-	grid = numeric::xyzVector< int > ( 0, 0, 0 );
-	orig = numeric::xyzVector< int > ( 0, 0, 0 );
-	cell_dimensions = numeric::xyzVector< float > ( 1, 1, 1 );
-	cell_angles = numeric::xyzVector< float > ( 90, 90, 90 );
+	grid = numeric::xyzVector< int >( 0, 0, 0 );
+	orig = numeric::xyzVector< int >( 0, 0, 0 );
+	cell_dimensions = numeric::xyzVector< float >( 1, 1, 1 );
+	cell_angles = numeric::xyzVector< float >( 90, 90, 90 );
 	// resolution ... set in readMRCandResize
 	map_reso = -1.0;
 }
@@ -94,36 +94,36 @@ ElectronDensityAtomwise::ElectronDensityAtomwise() {
 
 const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
 
-inline float d2r ( float d ) {
+inline float d2r( float d ) {
 	return ( d * M_PI / 180.0 );
 }
-inline double d2r ( double d ) {
+inline double d2r( double d ) {
 	return ( d * M_PI / 180.0 );
 }
-inline float  square ( float  x ) {
+inline float square( float x ) {
 	return ( x * x );
 }
-inline double square ( double x ) {
+inline double square( double x ) {
 	return ( x * x );
 }
 
 // x mod y, returns z in [0,y-1]
-inline int pos_mod ( int x, int y ) {
+inline int pos_mod( int x, int y ) {
 	int r = x % y;
 
 	if ( r < 0 ) r += y;
 
 	return r;
 }
-inline float pos_mod ( float x, float y ) {
-	float r = std::fmod ( x, y );
+inline float pos_mod( float x, float y ) {
+	float r = std::fmod( x, y );
 
 	if ( r < 0 ) r += y;
 
 	return r;
 }
-inline double pos_mod ( double x, double y ) {
-	double r = std::fmod ( x, y );
+inline double pos_mod( double x, double y ) {
+	double r = std::fmod( x, y );
 
 	if ( r < 0 ) r += y;
 
@@ -132,7 +132,7 @@ inline double pos_mod ( double x, double y ) {
 
 // Endianness swap
 // Only works with aligned 4-byte quantities
-static void swap4_aligned ( void *v, long ndata ) {
+static void swap4_aligned( void *v, long ndata ) {
 	int *data = ( int * ) v;
 	long i;
 	int *N;
@@ -148,13 +148,13 @@ static void swap4_aligned ( void *v, long ndata ) {
 void ElectronDensityAtomwise::computeCrystParams() {
 	// recompute reciprocal cell
 	// f2c, c2f
-	core::Real ca = cos ( d2r ( cell_angles[0] ) ), cb = cos ( d2r ( cell_angles[1] ) ), cg = cos ( d2r ( cell_angles[2] ) );
-	core::Real sa = sin ( d2r ( cell_angles[0] ) ), sb = sin ( d2r ( cell_angles[1] ) ), sg = sin ( d2r ( cell_angles[2] ) );
+	core::Real ca = cos( d2r( cell_angles[0] ) ), cb = cos( d2r( cell_angles[1] ) ), cg = cos( d2r( cell_angles[2] ) );
+	core::Real sa = sin( d2r( cell_angles[0] ) ), sb = sin( d2r( cell_angles[1] ) ), sg = sin( d2r( cell_angles[2] ) );
 	// conversion from fractional cell coords to cartesian coords
-	f2c = numeric::xyzMatrix<core::Real>::rows (
-		cell_dimensions[0]  , cell_dimensions[1] * cg, cell_dimensions[2] * cb,
+	f2c = numeric::xyzMatrix<core::Real>::rows(
+		cell_dimensions[0], cell_dimensions[1] * cg, cell_dimensions[2] * cb,
 		0.0, cell_dimensions[1] * sg, cell_dimensions[2] * ( ca - cb * cg ) / sg,
-		0.0, 0.0   , cell_dimensions[2] * sb * sqrt ( 1.0 - square ( ( cb * cg - ca ) / ( sb * sg ) ) ) );
+		0.0, 0.0, cell_dimensions[2] * sb * sqrt( 1.0 - square( ( cb * cg - ca ) / ( sb * sg ) ) ) );
 	core::Real D = f2c.det();
 
 	if ( D == 0 ) {
@@ -163,26 +163,27 @@ void ElectronDensityAtomwise::computeCrystParams() {
 	}
 
 	// c2f is inverse of f2c
-	c2f = numeric::xyzMatrix<core::Real>::rows (
-		( f2c ( 2, 2 ) * f2c ( 3, 3 ) - f2c ( 2, 3 ) * f2c ( 3, 2 ) ) / D,
-		- ( f2c ( 1, 2 ) * f2c ( 3, 3 ) - f2c ( 1, 3 ) * f2c ( 3, 2 ) ) / D,
-		( f2c ( 1, 2 ) * f2c ( 2, 3 ) - f2c ( 1, 3 ) * f2c ( 2, 2 ) ) / D,
-		- ( f2c ( 2, 1 ) * f2c ( 3, 3 ) - f2c ( 3, 1 ) * f2c ( 2, 3 ) ) / D,
-		( f2c ( 1, 1 ) * f2c ( 3, 3 ) - f2c ( 1, 3 ) * f2c ( 3, 1 ) ) / D,
-		- ( f2c ( 1, 1 ) * f2c ( 2, 3 ) - f2c ( 1, 3 ) * f2c ( 2, 1 ) ) / D,
-		( f2c ( 2, 1 ) * f2c ( 3, 2 ) - f2c ( 3, 1 ) * f2c ( 2, 2 ) ) / D,
-		- ( f2c ( 1, 1 ) * f2c ( 3, 2 ) - f2c ( 1, 2 ) * f2c ( 3, 1 ) ) / D,
-		( f2c ( 1, 1 ) * f2c ( 2, 2 ) - f2c ( 1, 2 ) * f2c ( 2, 1 ) ) / D );
-	cell_volume = cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sqrt ( 1 - square ( ca ) - square ( cb ) - square ( cg ) + 2 * ca * cb * cg );
+	c2f = numeric::xyzMatrix<core::Real>::rows(
+		( f2c( 2, 2 ) * f2c( 3, 3 ) - f2c( 2, 3 ) * f2c( 3, 2 ) ) / D,
+		- ( f2c( 1, 2 ) * f2c( 3, 3 ) - f2c( 1, 3 ) * f2c( 3, 2 ) ) / D,
+		( f2c( 1, 2 ) * f2c( 2, 3 ) - f2c( 1, 3 ) * f2c( 2, 2 ) ) / D,
+		- ( f2c( 2, 1 ) * f2c( 3, 3 ) - f2c( 3, 1 ) * f2c( 2, 3 ) ) / D,
+		( f2c( 1, 1 ) * f2c( 3, 3 ) - f2c( 1, 3 ) * f2c( 3, 1 ) ) / D,
+		- ( f2c( 1, 1 ) * f2c( 2, 3 ) - f2c( 1, 3 ) * f2c( 2, 1 ) ) / D,
+		( f2c( 2, 1 ) * f2c( 3, 2 ) - f2c( 3, 1 ) * f2c( 2, 2 ) ) / D,
+		- ( f2c( 1, 1 ) * f2c( 3, 2 ) - f2c( 1, 2 ) * f2c( 3, 1 ) ) / D,
+		( f2c( 1, 1 ) * f2c( 2, 2 ) - f2c( 1, 2 ) * f2c( 2, 1 ) ) / D );
+	cell_volume = cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sqrt( 1 - square( ca ) - square( cb ) - square( cg ) + 2 * ca * cb * cg );
 	// reciprocal space cell dimensions
 	r_cell_dimensions[0] = cell_dimensions[1] * cell_dimensions[2] * sa / cell_volume;
 	r_cell_dimensions[1] = cell_dimensions[0] * cell_dimensions[2] * sb / cell_volume;
 	r_cell_dimensions[2] = cell_dimensions[0] * cell_dimensions[1] * sg / cell_volume;
-	cos_r_cell_angles[0] = cos ( asin ( std::min ( std::max ( cell_volume / ( cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sb * sg ) , -1.0 ) , 1.0 ) ) );
-	cos_r_cell_angles[1] = cos ( asin ( std::min ( std::max ( cell_volume / ( cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sa * sg ) , -1.0 ) , 1.0 ) ) );
-	cos_r_cell_angles[2] = cos ( asin ( std::min ( std::max ( cell_volume / ( cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sa * sb ) , -1.0 ) , 1.0 ) ) );
+	cos_r_cell_angles[0] = cos( asin( std::min( std::max( cell_volume / ( cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sb * sg ) , -1.0 ) , 1.0 ) ) );
+	cos_r_cell_angles[1] = cos( asin( std::min( std::max( cell_volume / ( cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sa * sg ) , -1.0 ) , 1.0 ) ) );
+	cos_r_cell_angles[2] = cos( asin( std::min( std::max( cell_volume / ( cell_dimensions[0] * cell_dimensions[1] * cell_dimensions[2] * sa * sb ) , -1.0 ) , 1.0 ) ) );
 	r_cell_volume = 1.0 / cell_volume;
 }
+
 /////////////////////////////////////
 // parse symmops from ccp4 map header
 void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string > const & symList ) {
@@ -190,13 +191,12 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 	symmOps.clear();
 
 	if ( symList.size() == 0 ) { // no symminfo in header, assume P 1
-		symmOps.push_back ( RT ( numeric::xyzMatrix< core::Real >::identity(),
-			numeric::xyzVector< core::Real > ( 0.0, 0.0, 0.0 ) ) );
+		symmOps.push_back( RT( numeric::xyzMatrix< core::Real >::identity(),
+			numeric::xyzVector< core::Real >( 0.0, 0.0, 0.0 ) ) );
 	}
 
-	for ( int i = 1; i <= ( int ) symList.size(); ++i ) {
-		std::string line = symList[i];
-		utility::vector1< std::string > rows = utility::string_split ( line, ',' );
+	for ( std::string const & line : symList ) {
+		utility::vector1< std::string > rows = utility::string_split( line, ',' );
 
 		if ( rows.size() != 3 ) {
 			TR.Error << "[ ERROR ] invalid symmop in map file" << std::endl;
@@ -204,53 +204,51 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 			TR.Error << "Setting symmetry to P1 and continuing!" << line << std::endl;
 			// should we throw an exception here????  nah, just set symm to P1 and continue
 			symmOps.clear();
-			symmOps.push_back ( RT ( numeric::xyzMatrix< core::Real >::identity(),
-				numeric::xyzVector< core::Real > ( 0.0, 0.0, 0.0 ) ) );
+			symmOps.push_back( RT( numeric::xyzMatrix< core::Real >::identity(),
+				numeric::xyzVector< core::Real >( 0.0, 0.0, 0.0 ) ) );
 			return;
 		}
 
 		// _REALLY_ simple parser
-		numeric::xyzMatrix< core::Real > rot ( 0 );
-		numeric::xyzVector< core::Real > trans ( 0, 0, 0 );
+		numeric::xyzMatrix< core::Real > rot( 0 );
+		numeric::xyzVector< core::Real > trans( 0, 0, 0 );
 		//int k;
 
 		for ( int j = 0; j < 3; ++j ) {
-			int k = rows[j+1].find ( '/' );
+			int k = rows[j+1].find( '/' );
 
 			if ( k != ( int ) std::string::npos ) {
 				// numerator
-				int startNum = rows[j+1].find_last_not_of ( "0123456789", k - 1 ) + 1;
+				int startNum = rows[j+1].find_last_not_of( "0123456789", k - 1 ) + 1;
 				int startDenom = k + 1;
-				float denom = std::atof ( &rows[j+1][startDenom] );
+				float denom = std::atof( &rows[j+1][startDenom] );
 				// make sure this shift corresponds to a point in the map
-				trans[j] = std::atof ( &rows[j+1][startNum] ) / denom;
+				trans[j] = std::atof( &rows[j+1][startNum] ) / denom;
 			} else {
 				trans[j] = 0;
 			}
 
-			if ( rows[j+1].find ( "-X" ) != std::string::npos ) {
-				rot ( j + 1, 1 ) = -1;
-			} else if ( rows[j+1].find ( "X" ) != std::string::npos ) {
-				rot ( j + 1, 1 ) = 1;
+			if ( rows[j+1].find( "-X" ) != std::string::npos ) {
+				rot( j + 1, 1 ) = -1;
+			} else if ( rows[j+1].find( "X" ) != std::string::npos ) {
+				rot( j + 1, 1 ) = 1;
 			}
 
-			if ( rows[j+1].find ( "-Y" ) != std::string::npos ) {
-				rot ( j + 1, 2 ) = -1;
-			} else if ( rows[j+1].find ( "Y" ) != std::string::npos ) {
-				rot ( j + 1, 2 ) = 1;
+			if ( rows[j+1].find( "-Y" ) != std::string::npos ) {
+				rot( j + 1, 2 ) = -1;
+			} else if ( rows[j+1].find( "Y" ) != std::string::npos ) {
+				rot( j + 1, 2 ) = 1;
 			}
 
-			if ( rows[j+1].find ( "-Z" ) != std::string::npos ) {
-				rot ( j + 1, 3 ) = -1;
-			} else if ( rows[j+1].find ( "Z" ) != std::string::npos ) {
-				rot ( j + 1, 3 ) = 1;
+			if ( rows[j+1].find( "-Z" ) != std::string::npos ) {
+				rot( j + 1, 3 ) = -1;
+			} else if ( rows[j+1].find( "Z" ) != std::string::npos ) {
+				rot( j + 1, 3 ) = 1;
 			}
 		}
 
-		symmOps.push_back ( RT ( rot, trans ) );
+		symmOps.push_back( RT( rot, trans ) );
 	}
-
-	return;
 }
 
 
@@ -258,23 +256,23 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 // expand density to cover unit cell
 // maintain origin
 void ElectronDensityAtomwise::expandToUnitCell() {
-	numeric::xyzVector< int > extent ( density.u1(), density.u2(), density.u3() );
+	numeric::xyzVector< int > extent( density.u1(), density.u2(), density.u3() );
 
 	// if it already covers unit cell do nothing
 	if ( grid[0] == extent[0] && grid[1] == extent[1] && grid[2] == extent[2] ) {
 		return;
 	}
 
-	ObjexxFCL::FArray3D< float > newDensity ( grid[0], grid[1], grid[2], 0.0 );
+	ObjexxFCL::FArray3D< float > newDensity( grid[0], grid[1], grid[2], 0.0 );
 	// copy the block
-	int limX = std::min ( extent[0], grid[0] ),
-		limY = std::min ( extent[1], grid[1] ),
-		limZ = std::min ( extent[2], grid[2] );
+	int limX = std::min( extent[0], grid[0] ),
+		limY = std::min( extent[1], grid[1] ),
+		limZ = std::min( extent[2], grid[2] );
 
 	for ( int x = 1; x <= limX; ++x ) {
 		for ( int y = 1; y <= limY; ++y ) {
 			for ( int z = 1; z <= limZ; ++z ) {
-				newDensity ( x, y, z ) = density ( x, y, z );
+				newDensity( x, y, z ) = density( x, y, z );
 			}
 		}
 	}
@@ -284,25 +282,23 @@ void ElectronDensityAtomwise::expandToUnitCell() {
 	for ( int x = grid[0]; x >= 1; --x ) {
 		for ( int y = grid[1]; y >= 1; --y ) {
 			for ( int z = grid[2]; z >= 1; --z ) {
-				if ( x <= limX && y <= limY && z <= limZ ) {
-					continue;
-				}
+				if ( x <= limX && y <= limY && z <= limZ )  continue;
 
-				numeric::xyzVector<core::Real> fracX (
+				numeric::xyzVector<core::Real> fracX(
 					( ( core::Real ) x + orig[0] - 1 ) / grid[0],
 					( ( core::Real ) y + orig[1] - 1 ) / grid[1],
 					( ( core::Real ) z + orig[2] - 1 ) / grid[2] );
 
-				for ( int symm_idx = 1; symm_idx <= ( int ) symmOps.size(); symm_idx++ ) {
+				for ( auto const & symmOp : symmOps ) {
 					numeric::xyzVector<core::Real> SfracX =
-						symmOps[symm_idx].get_rotation() * fracX +  symmOps[symm_idx].get_translation();
+						symmOp.get_rotation() * fracX + symmOp.get_translation();
 					// indices of symm copy
-					int Sx = pos_mod ( ( int ) floor ( SfracX[0] * grid[0] + 0.5 - orig[0] ) , grid[0] ) + 1;
-					int Sy = pos_mod ( ( int ) floor ( SfracX[1] * grid[1] + 0.5 - orig[1] ) , grid[1] ) + 1 ;
-					int Sz = pos_mod ( ( int ) floor ( SfracX[2] * grid[2] + 0.5 - orig[2] ) , grid[2] ) + 1 ;
+					int Sx = pos_mod( ( int ) floor( SfracX[0] * grid[0] + 0.5 - orig[0] ) , grid[0] ) + 1;
+					int Sy = pos_mod( ( int ) floor( SfracX[1] * grid[1] + 0.5 - orig[1] ) , grid[1] ) + 1 ;
+					int Sz = pos_mod( ( int ) floor( SfracX[2] * grid[2] + 0.5 - orig[2] ) , grid[2] ) + 1 ;
 
 					if ( Sx <= limX && Sy <= limY && Sz <= limZ ) {
-						newDensity ( x, y, z ) = density ( Sx, Sy, Sz );
+						newDensity( x, y, z ) = density( Sx, Sy, Sz );
 					}
 				}
 			}
@@ -315,53 +311,53 @@ void ElectronDensityAtomwise::expandToUnitCell() {
 
 /////////////////////////////////////
 // resize a map (using FFT-interpolation)
-void ElectronDensityAtomwise::resize ( core::Real approxGridSpacing ) {
+void ElectronDensityAtomwise::resize( core::Real approxGridSpacing ) {
 	// potentially expand map to cover entire unit cell
 	if ( grid[0] != density.u1() || grid[1] != density.u2() || grid[2] != density.u3() ) {
 		TR << "[ ERROR ] resize() not supported for maps not covering the entire unit cell." << std::endl;
 		TR << "   " << grid[0] << " != " << density.u1()
 			<< " || " << grid[1] << " != " << density.u2()
 			<< " || " << grid[2] << " != " << density.u3() << std::endl;
-		exit ( 1 );
+		exit( 1 );
 	}
 
 	// compute new dimensions & origin
 	numeric::xyzVector<int> newDims,  newGrid;
 	numeric::xyzVector<double> newOri;
-	newDims[0] = ( int ) floor ( cell_dimensions[0] / approxGridSpacing + 0.5 );
-	newDims[1] = ( int ) floor ( cell_dimensions[1] / approxGridSpacing + 0.5 );
-	newDims[2] = ( int ) floor ( cell_dimensions[2] / approxGridSpacing + 0.5 );
+	newDims[0] = ( int ) floor( cell_dimensions[0] / approxGridSpacing + 0.5 );
+	newDims[1] = ( int ) floor( cell_dimensions[1] / approxGridSpacing + 0.5 );
+	newDims[2] = ( int ) floor( cell_dimensions[2] / approxGridSpacing + 0.5 );
 	newOri[0] = newDims[0] * orig[0] / ( ( core::Real ) grid[0] );
 	newOri[1] = newDims[1] * orig[1] / ( ( core::Real ) grid[1] );
 	newOri[2] = newDims[2] * orig[2] / ( ( core::Real ) grid[2] );
 	newGrid = newDims;
 	ObjexxFCL::FArray3D< std::complex<double> > newDensity;
-	newDensity.dimension ( newDims[0], newDims[1], newDims[2] );
+	newDensity.dimension( newDims[0], newDims[1], newDims[2] );
 	TR << "Resizing " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
 		<< newDensity.u1() << "x" << newDensity.u2() << "x" << newDensity.u3() << std::endl;
 	// convert map to complex<double>
 	ObjexxFCL::FArray3D< std::complex<double> > Foldmap, Fnewmap;
-	Fnewmap.dimension ( newDims[0], newDims[1], newDims[2] );
+	Fnewmap.dimension( newDims[0], newDims[1], newDims[2] );
 	// fft
 	ObjexxFCL::FArray3D< std::complex<double> > cplx_density;
-	cplx_density.dimension ( density.u1() , density.u2() , density.u3() );
+	cplx_density.dimension( density.u1() , density.u2() , density.u3() );
 
 	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) cplx_density[i] = ( double ) density[i];
 
-	numeric::fourier::fft3 ( cplx_density, Foldmap );
+	numeric::fourier::fft3( cplx_density, Foldmap );
 
 	// reshape (handles both shrinking and growing in each dimension)
 	for ( int i = 0; i < Fnewmap.u1() *Fnewmap.u2() *Fnewmap.u3(); ++i ) Fnewmap[i] = std::complex<double> ( 0, 0 );
 
-	numeric::xyzVector<int> nyq ( std::min ( Foldmap.u1(), Fnewmap.u1() ) / 2,
-		std::min ( Foldmap.u2(), Fnewmap.u2() ) / 2,
-		std::min ( Foldmap.u3(), Fnewmap.u3() ) / 2 );
-	numeric::xyzVector<int> nyqplus1_old ( std::max ( Foldmap.u1() - ( std::min ( Foldmap.u1(), Fnewmap.u1() ) - nyq[0] ) + 1 , nyq[0] + 1 ) ,
-		std::max ( Foldmap.u2() - ( std::min ( Foldmap.u2(), Fnewmap.u2() ) - nyq[1] ) + 1 , nyq[1] + 1 ) ,
-		std::max ( Foldmap.u3() - ( std::min ( Foldmap.u3(), Fnewmap.u3() ) - nyq[2] ) + 1 , nyq[2] + 1 ) );
-	numeric::xyzVector<int> nyqplus1_new ( std::max ( Fnewmap.u1() - ( std::min ( Foldmap.u1(), Fnewmap.u1() ) - nyq[0] ) + 1 , nyq[0] + 1 ) ,
-		std::max ( Fnewmap.u2() - ( std::min ( Foldmap.u2(), Fnewmap.u2() ) - nyq[1] ) + 1 , nyq[1] + 1 ) ,
-		std::max ( Fnewmap.u3() - ( std::min ( Foldmap.u3(), Fnewmap.u3() ) - nyq[2] ) + 1 , nyq[2] + 1 ) );
+	numeric::xyzVector<int> nyq( std::min( Foldmap.u1(), Fnewmap.u1() ) / 2,
+		std::min( Foldmap.u2(), Fnewmap.u2() ) / 2,
+		std::min( Foldmap.u3(), Fnewmap.u3() ) / 2 );
+	numeric::xyzVector<int> nyqplus1_old( std::max( Foldmap.u1() - ( std::min( Foldmap.u1(), Fnewmap.u1() ) - nyq[0] ) + 1 , nyq[0] + 1 ) ,
+		std::max( Foldmap.u2() - ( std::min( Foldmap.u2(), Fnewmap.u2() ) - nyq[1] ) + 1 , nyq[1] + 1 ) ,
+		std::max( Foldmap.u3() - ( std::min( Foldmap.u3(), Fnewmap.u3() ) - nyq[2] ) + 1 , nyq[2] + 1 ) );
+	numeric::xyzVector<int> nyqplus1_new( std::max( Fnewmap.u1() - ( std::min( Foldmap.u1(), Fnewmap.u1() ) - nyq[0] ) + 1 , nyq[0] + 1 ) ,
+		std::max( Fnewmap.u2() - ( std::min( Foldmap.u2(), Fnewmap.u2() ) - nyq[1] ) + 1 , nyq[1] + 1 ) ,
+		std::max( Fnewmap.u3() - ( std::min( Foldmap.u3(), Fnewmap.u3() ) - nyq[2] ) + 1 , nyq[2] + 1 ) );
 
 	for ( int i = 1; i <= Fnewmap.u1(); i++ ) {
 		for ( int j = 1; j <= Fnewmap.u2(); j++ ) {
@@ -369,29 +365,29 @@ void ElectronDensityAtomwise::resize ( core::Real approxGridSpacing ) {
 				if ( i - 1 <= nyq[0] ) {
 					if ( j - 1 <= nyq[1] ) {
 						if ( k - 1 <= nyq[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i, j, k );
+							Fnewmap( i, j, k ) = Foldmap( i, j, k );
 						} else if ( k - 1 >= nyqplus1_new[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i, j, k - nyqplus1_new[2] + nyqplus1_old[2] );
+							Fnewmap( i, j, k ) = Foldmap( i, j, k - nyqplus1_new[2] + nyqplus1_old[2] );
 						}
 					} else if ( j - 1 >= nyqplus1_new[1] ) {
 						if ( k - 1 <= nyq[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i, j - nyqplus1_new[1] + nyqplus1_old[1], k );
+							Fnewmap( i, j, k ) = Foldmap( i, j - nyqplus1_new[1] + nyqplus1_old[1], k );
 						} else if ( k - 1 >= nyqplus1_new[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i, j - nyqplus1_new[1] + nyqplus1_old[1], k - nyqplus1_new[2] + nyqplus1_old[2] );
+							Fnewmap( i, j, k ) = Foldmap( i, j - nyqplus1_new[1] + nyqplus1_old[1], k - nyqplus1_new[2] + nyqplus1_old[2] );
 						}
 					}
 				} else if ( i - 1 >= nyqplus1_new[0] ) {
 					if ( j - 1 <= nyq[1] ) {
 						if ( k - 1 <= nyq[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i - nyqplus1_new[0] + nyqplus1_old[0], j, k );
+							Fnewmap( i, j, k ) = Foldmap( i - nyqplus1_new[0] + nyqplus1_old[0], j, k );
 						} else if ( k - 1 >= nyqplus1_new[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i - nyqplus1_new[0] + nyqplus1_old[0], j, k - nyqplus1_new[2] + nyqplus1_old[2] );
+							Fnewmap( i, j, k ) = Foldmap( i - nyqplus1_new[0] + nyqplus1_old[0], j, k - nyqplus1_new[2] + nyqplus1_old[2] );
 						}
 					} else if ( j - 1 >= nyqplus1_new[1] ) {
 						if ( k - 1 <= nyq[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i - nyqplus1_new[0] + nyqplus1_old[0], j - nyqplus1_new[1] + nyqplus1_old[1], k );
+							Fnewmap( i, j, k ) = Foldmap( i - nyqplus1_new[0] + nyqplus1_old[0], j - nyqplus1_new[1] + nyqplus1_old[1], k );
 						} else if ( k - 1 >= nyqplus1_new[2] ) {
-							Fnewmap ( i, j, k ) = Foldmap ( i - nyqplus1_new[0] + nyqplus1_old[0],
+							Fnewmap( i, j, k ) = Foldmap( i - nyqplus1_new[0] + nyqplus1_old[0],
 								j - nyqplus1_new[1] + nyqplus1_old[1],
 								k - nyqplus1_new[2] + nyqplus1_old[2] );
 						}
@@ -402,9 +398,9 @@ void ElectronDensityAtomwise::resize ( core::Real approxGridSpacing ) {
 	}
 
 	// ifft
-	numeric::fourier::ifft3 ( Fnewmap, newDensity );
+	numeric::fourier::ifft3( Fnewmap, newDensity );
 	// update density
-	density.dimension ( newDims[0], newDims[1], newDims[2] );
+	density.dimension( newDims[0], newDims[1], newDims[2] );
 
 	for ( int i = 0; i < newDims[0]*newDims[1]*newDims[2] ; ++i ) {
 		density[i] = ( float ) newDensity[i].real();
@@ -424,13 +420,13 @@ ElectronDensityAtomwise::readMRCandResize() {
 	TR << "Loading Density Map" << std::endl;
 
 	if ( !basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
-		utility_exit_with_message ( "No density map specified for electron density scoring." );
+		utility_exit_with_message( "No density map specified for electron density scoring." );
 	}
 
 	std::string map_file = basic::options::option[ basic::options::OptionKeys::edensity::mapfile ]();
 	map_reso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
 	grid_spacing = basic::options::option[ basic::options::OptionKeys::edensity::grid_spacing ]();
-	std::fstream mapin ( map_file.c_str() , std::ios::binary | std::ios::in );
+	std::fstream mapin( map_file.c_str() , std::ios::binary | std::ios::in );
 	char mapString[4], symData[81];
 	int  crs2xyz[3], extent[3], mode, symBytes, origin_xyz[3];
 	int  xyz2crs[3], vol_xsize, vol_ysize, vol_zsize;
@@ -441,54 +437,54 @@ ElectronDensityAtomwise::readMRCandResize() {
 
 	if ( !mapin ) {
 		TR << "[ ERROR ]  Error opening MRC map " << map_file << ".  Not loading map." << std::endl;
-		utility_exit_with_message ( "Fail to load the density map." );
+		utility_exit_with_message( "Fail to load the density map." );
 	}
 
-	if ( !mapin.read ( reinterpret_cast <char*> ( extent ), 3 * sizeof ( int ) )
-			|| !mapin.read ( reinterpret_cast <char*> ( &mode ), 1 * sizeof ( int ) )
-			|| !mapin.read ( reinterpret_cast <char*> ( &origin_xyz[0] ), 3 * sizeof ( int ) )
-			|| !mapin.read ( reinterpret_cast <char*> ( &grid[0] ), 3 * sizeof ( int ) )
-			|| !mapin.read ( reinterpret_cast <char*> ( &cell_dimensions[0] ), 3 * sizeof ( float ) )
-			|| !mapin.read ( reinterpret_cast <char*> ( &cell_angles[0] ), 3 * sizeof ( float ) )
-			|| !mapin.read ( reinterpret_cast <char*> ( crs2xyz ), 3 * sizeof ( int ) ) )  {
+	if ( !mapin.read ( reinterpret_cast <char*> ( extent ), 3 * sizeof( int ) )
+			|| !mapin.read ( reinterpret_cast <char*> ( &mode ), 1 * sizeof( int ) )
+			|| !mapin.read ( reinterpret_cast <char*> ( &origin_xyz[0] ), 3 * sizeof( int ) )
+			|| !mapin.read ( reinterpret_cast <char*> ( &grid[0] ), 3 * sizeof( int ) )
+			|| !mapin.read ( reinterpret_cast <char*> ( &cell_dimensions[0] ), 3 * sizeof( float ) )
+			|| !mapin.read ( reinterpret_cast <char*> ( &cell_angles[0] ), 3 * sizeof( float ) )
+			|| !mapin.read ( reinterpret_cast <char*> ( crs2xyz ), 3 * sizeof( int ) ) )  {
 		TR << "[ ERROR ]   Improperly formatted line in MRC map.  Not loading map." << std::endl;
-		utility_exit_with_message ( "Fail to load the density map." );
+		utility_exit_with_message( "Fail to load the density map." );
 	}
 
 	// Check the number of bytes used for storing symmetry operators
-	mapin.seekg ( 92, std::ios::beg );
+	mapin.seekg( 92, std::ios::beg );
 
-	if ( !mapin.read ( reinterpret_cast <char*> ( &symBytes ), 1 * sizeof ( int ) ) ) {
+	if ( !mapin.read( reinterpret_cast <char*>( &symBytes ), 1 * sizeof( int ) ) ) {
 		TR << "[ ERROR ]   Failed reading symmetry bytes record.  Not loading map." << "\n";
-		utility_exit_with_message ( "Fail to load the density map." );
+		utility_exit_with_message( "Fail to load the density map." );
 	}
 
 	// alt: MRC files have floating-point origin info at byte 196
 	// read this and try to figure out if it is used
 	float altorigin[3];
-	mapin.seekg ( 196, std::ios::beg );
+	mapin.seekg( 196, std::ios::beg );
 
-	if ( !mapin.read ( reinterpret_cast <char*> ( altorigin ), 3 * sizeof ( float ) ) ) {
+	if ( !mapin.read( reinterpret_cast <char*>( altorigin ), 3 * sizeof( float ) ) ) {
 		TR << "[ ERROR ]   Improperly formatted line in MRC map.  Not loading map." << std::endl;
-		utility_exit_with_message ( "Fail to load the density map." );
+		utility_exit_with_message( "Fail to load the density map." );
 	}
 
 	// Check for the string "MAP" at byte 208, indicating a CCP4 file.
-	mapin.seekg ( 208, std::ios::beg );
+	mapin.seekg( 208, std::ios::beg );
 	mapString[3] = '\0';
 
-	if ( !mapin.read ( mapString, 3 ) || ( std::string ( mapString ) != "MAP" ) ) {
+	if ( !mapin.read( mapString, 3 ) || ( std::string( mapString ) != "MAP" ) ) {
 		TR << "[ ERROR ]  'MAP' string missing, not a valid MRC map.  Not loading map." << std::endl;
-		utility_exit_with_message ( "Fail to load the density map." );
+		utility_exit_with_message( "Fail to load the density map." );
 	}
 
 	// Check the file endianness
 	if ( mode != 2 ) {
-		swap4_aligned ( &mode, 1 );
+		swap4_aligned( &mode, 1 );
 
 		if ( mode != 2 ) {
 			TR << "[ ERROR ]   Non-real (32-bit float) data types are unsupported.  Not loading map." << std::endl;
-			utility_exit_with_message ( "Fail to load the density map." );
+			utility_exit_with_message( "Fail to load the density map." );
 		} else {
 			swap = true; // enable byte swapping
 		}
@@ -496,14 +492,14 @@ ElectronDensityAtomwise::readMRCandResize() {
 
 	// Swap all the information obtained from the header
 	if ( swap ) {
-		swap4_aligned ( extent, 3 );
-		swap4_aligned ( &origin_xyz[0], 3 );
-		swap4_aligned ( &altorigin[0], 3 );
-		swap4_aligned ( &grid[0], 3 );
-		swap4_aligned ( &cell_dimensions[0], 3 );
-		swap4_aligned ( &cell_angles[0], 3 );
-		swap4_aligned ( crs2xyz, 3 );
-		swap4_aligned ( &symBytes, 1 );
+		swap4_aligned( extent, 3 );
+		swap4_aligned( &origin_xyz[0], 3 );
+		swap4_aligned( &altorigin[0], 3 );
+		swap4_aligned( &grid[0], 3 );
+		swap4_aligned( &cell_dimensions[0], 3 );
+		swap4_aligned( &cell_angles[0], 3 );
+		swap4_aligned( crs2xyz, 3 );
+		swap4_aligned( &symBytes, 1 );
 	}
 
 	TR << " Setting resolution to " << map_reso << "A" << std::endl;
@@ -518,7 +514,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	TR << "   symBytes: " << symBytes << std::endl;;
 	// Check the dataOffset: this fixes the problem caused by files claiming
 	// to have symmetry records when they do not.
-	mapin.seekg ( 0, std::ios::end );
+	mapin.seekg( 0, std::ios::end );
 	filesize = mapin.tellg();
 	dataOffset = filesize - 4 * ( extent[0] * extent[1] * extent[2] );
 
@@ -529,7 +525,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 			symBytes = 0;
 		} else if ( dataOffset < CCP4HDSIZE ) {
 			TR << "[ ERROR ] File appears truncated and doesn't match header.  Not loading map." << std::endl;
-			utility_exit_with_message ( "Fail to load the density map." );
+			utility_exit_with_message( "Fail to load the density map." );
 		} else if ( ( dataOffset > CCP4HDSIZE ) && ( dataOffset < ( 1024 * 1024 ) ) ) {
 			// Fix for loading SPIDER files which are larger than usual
 			// In this specific case, we must absolutely trust the symBytes record
@@ -537,7 +533,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 			TR << "[ WARNING ]  File is larger than expected and doesn't match header.  Reading anyway." << std::endl;
 		} else {
 			TR << "[ ERROR ] File is MUCH larger than expected and doesn't match header.  Not loading map." << std::endl;
-			utility_exit_with_message ( "Fail to load the density map." );
+			utility_exit_with_message( "Fail to load the density map." );
 		}
 	}
 
@@ -547,19 +543,19 @@ ElectronDensityAtomwise::readMRCandResize() {
 
 	if ( symBytes != 0 ) {
 		TR << "Symmetry records found:" << std::endl;
-		mapin.seekg ( CCP4HDSIZE, std::ios::beg );
+		mapin.seekg( CCP4HDSIZE, std::ios::beg );
 
 		for ( int i = 0; i < symBytes / 80; i++ ) {
-			mapin.read ( symData, 80 );
-			symList.push_back ( symData );
+			mapin.read( symData, 80 );
+			symList.push_back( symData );
 			TR << symData << std::endl;
 		}
 	} else {
 		// no symm info; assume P 1
-		symList.push_back ( "X,  Y,  Z" );
+		symList.push_back( "X,  Y,  Z" );
 	}
 
-	initializeSymmOps ( symList );
+	initializeSymmOps( symList );
 
 	// check extent and grid interval counts
 	if ( grid[0] == 0 && extent[0] > 0 ) {
@@ -599,9 +595,9 @@ ElectronDensityAtomwise::readMRCandResize() {
 	// coord = <col, row, sec>
 	// extent = <colSize, rowSize, secSize>
 	rowdata = new float[extent[0]];
-	mapin.seekg ( dataOffset, std::ios::beg );
+	mapin.seekg( dataOffset, std::ios::beg );
 	// 'alloc' changes ordering of "extent"
-	density.dimension ( vol_xsize, vol_ysize, vol_zsize );
+	density.dimension( vol_xsize, vol_ysize, vol_zsize );
 
 	for ( coord[2] = 1; coord[2] <= extent[2]; coord[2]++ ) {
 		for ( coord[1] = 1; coord[1] <= extent[1]; coord[1]++ ) {
@@ -609,27 +605,27 @@ ElectronDensityAtomwise::readMRCandResize() {
 			// datablock with the correct slice ordering.
 			if ( mapin.eof() ) {
 				TR << "[ ERROR ] Unexpected end-of-file. Not loading map." << std::endl;
-				utility_exit_with_message ( "Fail to load the density map." );
+				utility_exit_with_message( "Fail to load the density map." );
 			}
 
 			if ( mapin.fail() ) {
 				TR << "[ ERROR ] Problem reading the file. Not loading map." << std::endl;
-				utility_exit_with_message ( "Fail to load the density map." );
+				utility_exit_with_message( "Fail to load the density map." );
 			}
 
-			if ( !mapin.read ( reinterpret_cast< char* > ( rowdata ), sizeof ( float ) *extent[0] ) ) {
+			if ( !mapin.read( reinterpret_cast< char* >( rowdata ), sizeof( float ) *extent[0] ) ) {
 				TR << "[ ERROR ] Error reading data row. Not loading map." << std::endl;
-				utility_exit_with_message ( "Fail to load the density map." );
+				utility_exit_with_message( "Fail to load the density map." );
 			}
 
 			for ( coord[0] = 1; coord[0] <= extent[0]; coord[0]++ ) {
-				density ( coord[xyz2crs[0]], coord[xyz2crs[1]], coord[xyz2crs[2]] ) = rowdata[coord[0] - 1];
+				density( coord[xyz2crs[0]], coord[xyz2crs[1]], coord[xyz2crs[2]] ) = rowdata[coord[0] - 1];
 			}
 		}
 	}
 
 	if ( swap == 1 ) {
-		swap4_aligned ( &density[0], vol_xySize * vol_zsize );
+		swap4_aligned( &density[0], vol_xySize * vol_zsize );
 	}
 
 	delete [] rowdata;
@@ -653,7 +649,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 		orig[1] = altorigin[xyz2crs[1]];
 		orig[2] = altorigin[xyz2crs[2]];
 		numeric::xyzVector<core::Real> fracX = c2f * ( orig );
-		orig = numeric::xyzVector<core::Real> ( fracX[0] * grid[0] , fracX[1] * grid[1] , fracX[2] * grid[2] );
+		orig = numeric::xyzVector<core::Real>( fracX[0] * grid[0] , fracX[1] * grid[1] , fracX[2] * grid[2] );
 		TR << "Using ALTERNATE origin\n";
 		TR << "     origin =" << orig[0] << " x " << orig[1] << " x " << orig[2] << std::endl;
 	}
@@ -661,11 +657,11 @@ ElectronDensityAtomwise::readMRCandResize() {
 	expandToUnitCell();
 
 	// resample the map
-	if ( grid_spacing > 0 ) resize ( grid_spacing );
+	if ( grid_spacing > 0 ) resize( grid_spacing );
 
 	// grid spacing in each dim
-	max_del_grid = std::max ( cell_dimensions[0] / ( ( double ) grid[0] ) , cell_dimensions[1] / ( ( double ) grid[1] ) );
-	max_del_grid = std::max ( max_del_grid , cell_dimensions[2] / ( ( double ) grid[2] ) );
+	max_del_grid = std::max( cell_dimensions[0] / ( ( double ) grid[0] ) , cell_dimensions[1] / ( ( double ) grid[1] ) );
+	max_del_grid = std::max( max_del_grid , cell_dimensions[2] / ( ( double ) grid[2] ) );
 	calculate_index2cart();
 	is_map_loaded = true;
 }
@@ -674,11 +670,11 @@ ElectronDensityAtomwise::readMRCandResize() {
 //compute index to cartesian transformation
 void
 ElectronDensityAtomwise::calculate_index2cart() {
-	numeric::xyzMatrix<core::Real> i2f = numeric::xyzMatrix<core::Real>::rows (
+	auto i2f = numeric::xyzMatrix<core::Real>::rows(
 		1 / double ( grid[0] ), 0, 0,
 		0, 1 / double ( grid[1] ), 0,
 		0, 0, 1 / double ( grid[2] ) );
-	numeric::xyzMatrix<core::Real> f2i = numeric::xyzMatrix<core::Real>::rows (
+	auto f2i = numeric::xyzMatrix<core::Real>::rows(
 		grid[0], 0, 0,
 		0, grid[1], 0,
 		0, 0, grid[2] );
@@ -689,7 +685,7 @@ ElectronDensityAtomwise::calculate_index2cart() {
 ///////////////////////////////////////////////////////////////////////
 //Convert a vector from fractional coordinate to index coordinate
 numeric::xyzVector< core::Real >
-ElectronDensityAtomwise::frac2index ( numeric::xyzVector< core::Real > const & frac_vector ) {
+ElectronDensityAtomwise::frac2index( numeric::xyzVector< core::Real > const & frac_vector ) {
 	numeric::xyzVector< core::Real > index_vector;
 	index_vector[0] = frac_vector[0] * grid[0];
 	index_vector[1] = frac_vector[1] * grid[1];
@@ -699,7 +695,7 @@ ElectronDensityAtomwise::frac2index ( numeric::xyzVector< core::Real > const & f
 
 //Convert a vector from index coordinate to fractional coordinate
 numeric::xyzVector< core::Real >
-ElectronDensityAtomwise::index2frac ( numeric::xyzVector< core::Real > const &index_vector ) {
+ElectronDensityAtomwise::index2frac( numeric::xyzVector< core::Real > const &index_vector ) {
 	numeric::xyzVector< core::Real > frac_vector;
 	frac_vector[0] = index_vector[0] / grid[0];
 	frac_vector[1] = index_vector[1] / grid[1];
@@ -707,7 +703,7 @@ ElectronDensityAtomwise::index2frac ( numeric::xyzVector< core::Real > const &in
 	return frac_vector;
 }
 numeric::xyzVector< core::Real >
-ElectronDensityAtomwise::index2frac ( numeric::xyzVector< int > const & index_vector ) {
+ElectronDensityAtomwise::index2frac( numeric::xyzVector< int > const & index_vector ) {
 	numeric::xyzVector< core::Real > frac_vector;
 	frac_vector[0] = ( double )  index_vector[0] / grid[0];
 	frac_vector[1] = ( double )  index_vector[1] / grid[1];
@@ -717,52 +713,47 @@ ElectronDensityAtomwise::index2frac ( numeric::xyzVector< int > const & index_ve
 
 //Convert a vector from xyz coordinate to index coordinate, shift w/ respect to the origin and fold into the unit cell
 numeric::xyzVector< core::Real >
-ElectronDensityAtomwise::xyz2index_in_cell ( numeric::xyzVector< core::Real > const & xyz_vector ) {
+ElectronDensityAtomwise::xyz2index_in_cell( numeric::xyzVector< core::Real > const & xyz_vector ) {
 	numeric::xyzVector< Real > index_vector;
 	index_vector = c2i * xyz_vector;
-	index_vector[0] = pos_mod ( index_vector[0] - orig[0], ( double ) grid[0] );
-	index_vector[1] = pos_mod ( index_vector[1] - orig[1], ( double ) grid[1] );
-	index_vector[2] = pos_mod ( index_vector[2] - orig[2], ( double ) grid[2] );
+	index_vector[0] = pos_mod( index_vector[0] - orig[0], ( double ) grid[0] );
+	index_vector[1] = pos_mod( index_vector[1] - orig[1], ( double ) grid[1] );
+	index_vector[2] = pos_mod( index_vector[2] - orig[2], ( double ) grid[2] );
 	return index_vector;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //generate 1d gaussian function and store it.
 void
-ElectronDensityAtomwise::generate_gaussian_1d ( core::Real const & sigma ) {
+ElectronDensityAtomwise::generate_gaussian_1d( core::Real const & sigma ) {
 	const Real PI = numeric::constants::f::pi;
 	//Calculate up to 4*sigma
 	gaussian_max_d = 4 * sigma;
 	//Using interval of 0.01 Angstong
-	Size gaussian_size = Size( std::ceil ( gaussian_max_d / 0.01 ) );
+	Size gaussian_size = Size( std::ceil( gaussian_max_d / 0.01 ) );
 
 	for ( Size i = 0; i <= gaussian_size; ++i ) {
-		Real calc_value = exp ( - ( i * 0.01 ) * ( i * 0.01 ) / ( 2.0 * sigma * sigma ) ) / ( sqrt ( 2.0 * PI ) * sigma );
+		Real calc_value = exp( -( i * 0.01 ) * ( i * 0.01 ) / ( 2.0 * sigma * sigma ) ) / ( sqrt( 2.0 * PI ) * sigma );
 		atom_gaussian_value.push_back ( calc_value );
 	}
 }
 
 //Return the value of 1D gaussian given the distance using stored values
 core::Real
-ElectronDensityAtomwise::gaussian_1d ( core::Real const & dist ) {
+ElectronDensityAtomwise::gaussian_1d( core::Real const & dist ) {
 	if ( dist >= gaussian_max_d ) return 0.0;
 
-	return atom_gaussian_value[ ( int ) std::floor ( dist*100.0 + 0.5 ) +1];
+	return atom_gaussian_value[ ( int ) std::floor( dist*100.0 + 0.5 ) +1];
 }
 ///////////////////////////////////////////////////
 //return the weight of atom given its element type
 core::Size
-ElectronDensityAtomwise::get_atom_weight ( std::string const & elt ) {
+ElectronDensityAtomwise::get_atom_weight( std::string const & elt ) {
 	if ( elt == "C" ) return 6;
-
 	if ( elt == "N" ) return 7;
-
 	if ( elt == "O" ) return 8;
-
 	if ( elt == "P" ) return 15;
-
 	if ( elt == "S" ) return 16;
-
 	if ( elt == "X" ) return 0; // centroid
 
 	// default to C
@@ -772,7 +763,7 @@ ElectronDensityAtomwise::get_atom_weight ( std::string const & elt ) {
 //////////////////////////////////////////////////////////////////
 //Trilinear Interpolation
 core::Real
-ElectronDensityAtomwise::trilinear_interpolation (
+ElectronDensityAtomwise::trilinear_interpolation(
 	ObjexxFCL::FArray3D< double > & score,
 	numeric::xyzVector< core::Real > const & index ) {
 	int lower_bound[3], upper_bound[3];
@@ -780,7 +771,7 @@ ElectronDensityAtomwise::trilinear_interpolation (
 
 	// find bounding grid points
 	for ( int i = 0; i < 3; ++i ) {
-		lower_bound[i] = ( int ) ( std::ceil ( index[i] ) );
+		lower_bound[i] = ( int )( std::ceil( index[i] ) );
 		upper_bound[i] = lower_bound[i] + 1;
 
 		if ( upper_bound[i] > grid[i] ) upper_bound[i] = 1;
@@ -788,14 +779,14 @@ ElectronDensityAtomwise::trilinear_interpolation (
 		residual[i] = index[i] + 1 - lower_bound[i];
 	}
 
-	double &c000 = score ( lower_bound[0], lower_bound[1], lower_bound[2] );
-	double &c100 = score ( upper_bound[0], lower_bound[1], lower_bound[2] );
-	double &c010 = score ( lower_bound[0], upper_bound[1], lower_bound[2] );
-	double &c001 = score ( lower_bound[0], lower_bound[1], upper_bound[2] );
-	double &c110 = score ( upper_bound[0], upper_bound[1], lower_bound[2] );
-	double &c101 = score ( upper_bound[0], lower_bound[1], upper_bound[2] );
-	double &c011 = score ( lower_bound[0], upper_bound[1], upper_bound[2] );
-	double &c111 = score ( upper_bound[0], upper_bound[1], upper_bound[2] );
+	double &c000 = score( lower_bound[0], lower_bound[1], lower_bound[2] );
+	double &c100 = score( upper_bound[0], lower_bound[1], lower_bound[2] );
+	double &c010 = score( lower_bound[0], upper_bound[1], lower_bound[2] );
+	double &c001 = score( lower_bound[0], lower_bound[1], upper_bound[2] );
+	double &c110 = score( upper_bound[0], upper_bound[1], lower_bound[2] );
+	double &c101 = score( upper_bound[0], lower_bound[1], upper_bound[2] );
+	double &c011 = score( lower_bound[0], upper_bound[1], upper_bound[2] );
+	double &c111 = score( upper_bound[0], upper_bound[1], upper_bound[2] );
 	//interpolate at x dimension (R is the residual coord)
 	Real cR00 = c000 + residual[0] * ( c100 - c000 );
 	Real cR10 = c010 + residual[0] * ( c110 - c010 );
@@ -810,7 +801,7 @@ ElectronDensityAtomwise::trilinear_interpolation (
 }
 
 numeric::xyzVector<core::Real>
-ElectronDensityAtomwise::trilinear_gradient (
+ElectronDensityAtomwise::trilinear_gradient(
 	ObjexxFCL::FArray3D< double > & score,
 	numeric::xyzVector< core::Real > const & index ) {
 	int lower_bound[3], upper_bound[3];
@@ -819,7 +810,7 @@ ElectronDensityAtomwise::trilinear_gradient (
 
 	// find bounding grid points
 	for ( int i = 0; i < 3; ++i ) {
-		lower_bound[i] = ( int ) ( floor ( index[i] + 1 ) );
+		lower_bound[i] = ( int )( floor( index[i] + 1 ) );
 		upper_bound[i] = lower_bound[i] + 1;
 
 		if ( upper_bound[i] > grid[i] ) upper_bound[i] = 1;
@@ -827,14 +818,14 @@ ElectronDensityAtomwise::trilinear_gradient (
 		residual[i] = index[i] + 1 - lower_bound[i];
 	}
 
-	double &c000 = score ( lower_bound[0], lower_bound[1], lower_bound[2] );
-	double &c100 = score ( upper_bound[0], lower_bound[1], lower_bound[2] );
-	double &c010 = score ( lower_bound[0], upper_bound[1], lower_bound[2] );
-	double &c001 = score ( lower_bound[0], lower_bound[1], upper_bound[2] );
-	double &c110 = score ( upper_bound[0], upper_bound[1], lower_bound[2] );
-	double &c101 = score ( upper_bound[0], lower_bound[1], upper_bound[2] );
-	double &c011 = score ( lower_bound[0], upper_bound[1], upper_bound[2] );
-	double &c111 = score ( upper_bound[0], upper_bound[1], upper_bound[2] );
+	double &c000 = score( lower_bound[0], lower_bound[1], lower_bound[2] );
+	double &c100 = score( upper_bound[0], lower_bound[1], lower_bound[2] );
+	double &c010 = score( lower_bound[0], upper_bound[1], lower_bound[2] );
+	double &c001 = score( lower_bound[0], lower_bound[1], upper_bound[2] );
+	double &c110 = score( upper_bound[0], upper_bound[1], lower_bound[2] );
+	double &c101 = score( upper_bound[0], lower_bound[1], upper_bound[2] );
+	double &c011 = score( lower_bound[0], upper_bound[1], upper_bound[2] );
+	double &c111 = score( upper_bound[0], upper_bound[1], upper_bound[2] );
 	//interpolate at x dimension (x)  (R is the residual coord)
 	Real cR00 = c000 + residual[0] * ( c100 - c000 );
 	Real cR10 = c010 + residual[0] * ( c110 - c010 );
@@ -866,21 +857,21 @@ ElectronDensityAtomwise::trilinear_gradient (
 ///////////////////////////////////////////////////////////////////
 //Spline interpolation
 core::Real
-ElectronDensityAtomwise::spline_interpolation (
+ElectronDensityAtomwise::spline_interpolation(
 	ObjexxFCL::FArray3D< double > & coeffs ,
 	numeric::xyzVector< core::Real > const & idxX ) const {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = {idxX[2], idxX[1], idxX[0]};
-	core::Real retval = core::scoring::electron_density::SplineInterp::interp3 ( &coeffs[0], dims, pt );
+	core::Real retval = core::scoring::electron_density::SplineInterp::interp3( &coeffs[0], dims, pt );
 	return retval;
 }
 
 void
-ElectronDensityAtomwise::spline_coeffs ( ObjexxFCL::FArray3D< double > & data ,
+ElectronDensityAtomwise::spline_coeffs( ObjexxFCL::FArray3D< double > & data ,
 	ObjexxFCL::FArray3D< double > & coeffs ) {
 	int dims[3] = { data.u3(), data.u2(), data.u1() };
 	coeffs = data;
-	core::scoring::electron_density::SplineInterp::compute_coefficients3 ( &coeffs[0] , dims );
+	core::scoring::electron_density::SplineInterp::compute_coefficients3( &coeffs[0] , dims );
 }
 //////////////////////////////////////////////////////////////////
 //Compute Normalization factor given a pose
@@ -908,7 +899,7 @@ ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 
 	atom_weight_stored.reserve( n_res );
 	for ( Size i = 1; i <= n_res; ++i ) { //rsd
-		conformation::Residue const &rsd( pose.residue( i ) );
+		conformation::Residue const & rsd( pose.residue( i ) );
 		Size n_heavyatom_rsd = rsd.nheavyatoms();
 		utility::vector1< Size > weight_rsd;
 
@@ -920,7 +911,7 @@ ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 
 		weight_rsd.reserve( n_heavyatom_rsd );
 		for ( Size j = 1; j <= n_heavyatom_rsd; ++j ) { //atom
-			chemical::AtomTypeSet const & atom_type_set ( rsd.atom_type_set() );
+			chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 			//get the weight of each atom (element based)
 			std::string const & element = atom_type_set[ rsd.atom_type_index( j ) ].element();
 			Size weight = get_atom_weight( element );
@@ -989,9 +980,7 @@ ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 		float rho_obs = density[i];
 		Real rho_calc = rho_calc_array[i];
 
-		if ( rho_calc < 1.0e-2 ) {
-			continue;
-		}
+		if ( rho_calc < 1.0e-2 ) continue;
 
 		//compute all factors required for normalization
 		n_grid_points++;
@@ -1005,13 +994,13 @@ ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 	//calculate the real-space correlation coefficient (rscc)
 	//rscc = (<xy> - <x><y>) / sqrt( (<x^2> -<x>^2) * (<y^2> -<y>^2) )
 	//     = <dx dy> / sqrt( <dx dx> + <dy dy> )
-	Real rscc = ( sum_rho_calc_times_rho_obs - sum_rho_calc * sum_rho_obs / n_grid_points ) / ( sqrt ( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt ( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
+	Real rscc = ( sum_rho_calc_times_rho_obs - sum_rho_calc * sum_rho_obs / n_grid_points ) / ( sqrt( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
 	//Compute Normalization, Score = -sum_weight * rscc = normalization * <dx dy>
 	//Per atom energy = normalization * ( sum(rho_atom*rho_obs) - sum(rho_atom) * avg_rho_obs )
-	normalization = - ( ( double ) sum_weight ) / ( sqrt ( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt ( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
+	normalization = - ( ( double ) sum_weight ) / ( sqrt( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
 	avg_rho_obs = sum_rho_obs / n_grid_points;
 	TR << "RSCC of starting pose = " << rscc << std::endl;
-	TR << "Score of starting pose = " << - ( rscc * sum_weight ) << std::endl;
+	TR << "Score of starting pose = " << -( rscc * sum_weight ) << std::endl;
 	TR << "normalization factor = " << normalization << std::endl;
 	TR << "avg_rho_obs = " << avg_rho_obs << std::endl;
 }
@@ -1024,7 +1013,7 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 	ObjexxFCL::FArray3D< double > unweighted_score;
 	ObjexxFCL::FArray3D< std::complex<double> > density_transformed,
 		atom_dens_transformed, atom_dens, cplx_score, cplx_density;
-	atom_dens.dimension ( density.u1() , density.u2() , density.u3() );
+	atom_dens.dimension( density.u1() , density.u2() , density.u3() );
 
 	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) {
 		atom_dens[i] = 0.0;
@@ -1033,8 +1022,7 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 	//compute the gaussian density of an atom
 	Real sum_rho_calc = 0.0;
 	numeric::xyzVector< core::Real > dist_index;
-	numeric::xyzVector< core::Real > grid_half( grid[0] * 0.5,
-		grid[1] * 0.5, grid[2] * 0.5 );
+	numeric::xyzVector< core::Real > grid_half( grid[0] * 0.5, grid[1] * 0.5, grid[2] * 0.5 );
 
 	for ( int x = 1; x <= atom_dens.u1(); ++x ) {
 		//distance from the atom to point in the map (x)
@@ -1042,11 +1030,10 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 
 		//fold to make it in the range [-0.5*grid, 0.5*grid]
 		if ( dist_index[0] > grid_half[0] ) dist_index[0] -= grid[0];
-
 		if ( dist_index[0] <= - grid_half[0] ) dist_index[0] += grid[0];
 
 		//skip if the dist is too large
-		numeric::xyzVector<Real> dist_x = i2c * numeric::xyzVector<Real> ( dist_index[0], 0.0, 0.0 );
+		numeric::xyzVector<Real> dist_x = i2c * numeric::xyzVector<Real>( dist_index[0], 0.0, 0.0 );
 
 		if ( dist_x.length() > gaussian_max_d ) continue;
 
@@ -1056,11 +1043,10 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 
 			//fold to make it in the range [-0.5*grid, 0.5*grid]
 			if ( dist_index[1] > grid_half[1] ) dist_index[1] -= grid[1];
-
 			if ( dist_index[1] <= - grid_half[1] ) dist_index[1] += grid[1];
 
 			//skip if the dist is too large
-			numeric::xyzVector<Real> dist_xy = i2c * numeric::xyzVector<Real> ( dist_index[0], dist_index[1], 0.0 );
+			auto dist_xy = i2c * numeric::xyzVector<Real>( dist_index[0], dist_index[1], 0.0 );
 
 			if ( dist_xy.length() > gaussian_max_d ) continue;
 
@@ -1074,23 +1060,23 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 
 				numeric::xyzVector<Real> dist_xyz = i2c * dist_index;
 				Real dist = dist_xyz.length();
-				atom_dens ( x, y, z ) = gaussian_1d ( dist );
-				sum_rho_calc += gaussian_1d ( dist );
+				atom_dens( x, y, z ) = gaussian_1d( dist );
+				sum_rho_calc += gaussian_1d( dist );
 			}
 		}
 	}
 
 	//Compute convolution using fft
-	numeric::fourier::fft3_dynamic ( atom_dens, atom_dens_transformed );
+	numeric::fourier::fft3_dynamic( atom_dens, atom_dens_transformed );
 	atom_dens.clear();
-	cplx_density.dimension ( density.u1() , density.u2() , density.u3() );
+	cplx_density.dimension( density.u1() , density.u2() , density.u3() );
 
 	for ( int i = 0; i < density.u1() *density.u2() *density.u3(); ++i ) {
 		cplx_density[i] = ( double ) density[i];
 	}
 
 	density.clear();
-	numeric::fourier::fft3_dynamic ( cplx_density, density_transformed );
+	numeric::fourier::fft3_dynamic( cplx_density, density_transformed );
 	cplx_density.clear();
 
 	for ( int i = 0; i < density_transformed.u1() *density_transformed.u2() *density_transformed.u3(); ++i ) {
@@ -1098,9 +1084,9 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 	}
 
 	atom_dens_transformed.clear();
-	numeric::fourier::ifft3_dynamic ( density_transformed, cplx_score );
+	numeric::fourier::ifft3_dynamic( density_transformed, cplx_score );
 	density_transformed.clear();
-	unweighted_score.dimension ( cplx_score.u1() , cplx_score.u2() , cplx_score.u3() );
+	unweighted_score.dimension( cplx_score.u1() , cplx_score.u2() , cplx_score.u3() );
 
 	for ( int i = 0; i < unweighted_score.u1() *unweighted_score.u2() *unweighted_score.u3(); ++i ) {
 		unweighted_score[i] = cplx_score[i].real();
@@ -1110,14 +1096,15 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 
 	cplx_score.clear();
 	//compute spline coefficient for interpolation
-	spline_coeffs ( unweighted_score, unweighted_score_coeff );
+	spline_coeffs( unweighted_score, unweighted_score_coeff );
 	unweighted_score.clear();
 	is_score_precomputed = true;
 }
+
 ///////////////////////////////////////////////////////////////////////
 //Return the score of a given residue
 core::Real
-ElectronDensityAtomwise::residue_score ( core::conformation::Residue const & rsd ) {
+ElectronDensityAtomwise::residue_score( core::conformation::Residue const & rsd ) {
 	// skip virtual residues
 	if ( rsd.aa() == core::chemical::aa_vrt ) return 0.0;
 
@@ -1131,8 +1118,8 @@ ElectronDensityAtomwise::residue_score ( core::conformation::Residue const & rsd
 		//get the weight of each atom (element based)
 		Size weight = atom_weight_stored[rsd_id][j];
 		//Compute the atom position in unit cell (index coord)
-		numeric::xyzVector< Real > coord_index = xyz2index_in_cell ( rsd.xyz( j ) );
-		Real score = weight * spline_interpolation ( unweighted_score_coeff, coord_index );
+		numeric::xyzVector< Real > coord_index = xyz2index_in_cell( rsd.xyz( j ) );
+		Real score = weight * spline_interpolation( unweighted_score_coeff, coord_index );
 		total_score += score;
 	}
 
@@ -1141,19 +1128,19 @@ ElectronDensityAtomwise::residue_score ( core::conformation::Residue const & rsd
 
 //Return the gradient of an atom
 numeric::xyzVector< core::Real >
-ElectronDensityAtomwise::atom_gradient ( core::pose::Pose const & pose, core::Size
+ElectronDensityAtomwise::atom_gradient( core::pose::Pose const & pose, core::Size
 	const & rsd_id, core::Size const & atm_id ) {
 
 	//Skip virtual atoms
 	if ( pose.residue( rsd_id ).is_virtual( atm_id ) ) {
-		return numeric::xyzVector< core::Real > (0, 0, 0);
+		return numeric::xyzVector< core::Real >( 0, 0, 0 );
 	}
 
 	//get the weight of the atom (element based)
 	Size &weight = atom_weight_stored[rsd_id][atm_id];
 	Real incre = 0.00000001;
-	numeric::xyzVector< Real > atmxyz = pose.residue ( rsd_id ).xyz( atm_id );
-	numeric::xyzVector< Real > coord_index = xyz2index_in_cell ( atmxyz );
+	numeric::xyzVector< Real > atmxyz = pose.residue( rsd_id ).xyz( atm_id );
+	numeric::xyzVector< Real > coord_index = xyz2index_in_cell( atmxyz );
 	numeric::xyzVector< Real > coord_index_dx = coord_index;
 	numeric::xyzVector< Real > coord_index_dy = coord_index;
 	numeric::xyzVector< Real > coord_index_dz = coord_index;
@@ -1161,12 +1148,12 @@ ElectronDensityAtomwise::atom_gradient ( core::pose::Pose const & pose, core::Si
 	coord_index_dy[1] += incre;
 	coord_index_dz[2] += incre;
 	numeric::xyzVector< Real > grad;
-	Real score_atom = spline_interpolation ( unweighted_score_coeff, coord_index );
-	grad[0] = ( spline_interpolation ( unweighted_score_coeff, coord_index_dx ) -
+	Real score_atom = spline_interpolation( unweighted_score_coeff, coord_index );
+	grad[0] = ( spline_interpolation( unweighted_score_coeff, coord_index_dx ) -
 		score_atom ) / incre;
-	grad[1] = ( spline_interpolation ( unweighted_score_coeff, coord_index_dy ) -
+	grad[1] = ( spline_interpolation( unweighted_score_coeff, coord_index_dy ) -
 		score_atom ) / incre;
-	grad[2] = ( spline_interpolation ( unweighted_score_coeff, coord_index_dz ) -
+	grad[2] = ( spline_interpolation( unweighted_score_coeff, coord_index_dz ) -
 		score_atom ) / incre;
 	numeric::xyzMatrix<core::Real> i2c_gradient = c2i;
 	i2c_gradient.transpose();

@@ -104,22 +104,22 @@ SugarModeling::set_base_and_pucker_state( core::pose::Pose const & pose, working
 
 	////////////////////////June 02, 2011 Add core::Size and core::Size information///
 	moving_res_pucker_state = ANY_PUCKER;
-	if (  ( WP->working_force_north_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
-	if (  ( WP->working_force_south_sugar_list() ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
+	if ( ( WP->working_force_north_sugar_list()  ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
+	if ( ( WP->working_force_south_sugar_list()  ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
 
 	// note: hard-wired anti for pyrimidine
 	moving_res_base_state = ( pose.residue_type( moving_res ).is_purine() ) ? ANY_CHI: ANTI;
-	if (  ( WP->working_force_syn_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = SYN;
-	if (  ( WP->working_force_anti_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = ANTI;
+	if ( ( WP->working_force_syn_chi_res_list()  ).has_value( moving_res ) ) moving_res_base_state = SYN;
+	if ( ( WP->working_force_anti_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = ANTI;
 
 	bulge_res_pucker_state = ANY_PUCKER;
-	if (  ( WP->working_force_north_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = NORTH;
-	if (  ( WP->working_force_south_sugar_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = SOUTH;
+	if ( ( WP->working_force_north_sugar_list()  ).has_value(  bulge_res ) ) bulge_res_pucker_state = NORTH;
+	if ( ( WP->working_force_south_sugar_list()  ).has_value(  bulge_res ) ) bulge_res_pucker_state = SOUTH;
 
 	// note: hard-wired anti for pyrimidine
 	bulge_res_base_state = ( pose.residue_type( bulge_res ).is_purine() ) ? ANY_CHI: ANTI;
-	if (  ( WP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
-	if (  ( WP->working_force_anti_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = ANTI;
+	if ( ( WP->working_force_syn_chi_res_list()  ).has_value(  bulge_res ) ) bulge_res_base_state = SYN;
+	if ( ( WP->working_force_anti_chi_res_list() ).has_value(  bulge_res ) ) bulge_res_base_state = ANTI;
 
 	////////////////////////Print data!////////////////////////////////////////
 	TR.Debug << "SugarModeling: " << std::endl;

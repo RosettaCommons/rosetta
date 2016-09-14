@@ -126,7 +126,6 @@ MultiPhosphateSampler::initialize_phosphate_move_list( pose::Pose & pose ){
 	utility::vector1< PhosphateMove > phosphate_move_list;
 
 	if ( screen_all_ ) {
-
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
@@ -216,8 +215,7 @@ MultiPhosphateSampler::find_uninstantiated_phosphates( pose::Pose const & pose,
 	utility::vector1< PhosphateMove > const & phosphate_move_list,
 	utility::vector1< PhosphateMove > & actual_phosphate_move_list ) const {
 
-	for ( Size i = 1; i <= phosphate_move_list.size(); i++ ) {
-		PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
+	for ( PhosphateMove const & phosphate_move : phosphate_move_list ) {
 		if ( actual_phosphate_move_list.has_value( phosphate_move ) ) continue;
 		Size const n = phosphate_move.rsd();
 		if ( phosphate_move.terminus() == FIVE_PRIME_PHOSPHATE &&
@@ -236,8 +234,7 @@ MultiPhosphateSampler::find_phosphate_contacts_other_partition( utility::vector1
 	utility::vector1< PhosphateMove > const & phosphate_move_list,
 	utility::vector1< PhosphateMove > & actual_phosphate_move_list ) const {
 
-	for ( Size i = 1; i <= phosphate_move_list.size(); i++ ) {
-		PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
+	for ( PhosphateMove const & phosphate_move : phosphate_move_list ) {
 		if ( actual_phosphate_move_list.has_value( phosphate_move ) ) continue;
 		Size const n = phosphate_move.rsd();
 		if ( !partition_res1.has_value( n ) ) continue;
@@ -255,13 +252,9 @@ MultiPhosphateSampler::check_other_partition_for_contact( pose::Pose const & pos
 	utility::vector1< Size > const & other_partition_res,
 	Vector const & takeoff_xyz ) const {
 
-	for ( Size i = 1; i <= other_partition_res.size(); i++ ) {
-
-		Size const & m = other_partition_res[ i ];
+	for ( Size const m : other_partition_res ) {
 		core::chemical::AtomIndices Hpos_polar = pose.residue_type( m ).Hpos_polar();
-
-		for ( Size ii = 1; ii <= Hpos_polar.size(); ii++ ) {
-			Size const & q = Hpos_polar[ ii ];
+		for ( Size const q : Hpos_polar ) {
 			if ( ( pose.residue( m ).xyz( q ) - takeoff_xyz ).length_squared() < phosphate_takeoff_donor_distance_cutoff2_ ) {
 				return true;
 			}

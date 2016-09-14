@@ -431,11 +431,7 @@ RNA_DMS_Potential::check_chbonded( pose::Pose const & pose,
 
 		Real energy( 0.0 ), angle( 0.0 ), res_res_energy( 0.0 );
 		core::conformation::Residue const & don_rsd = pose.residue( j );
-		for ( core::chemical::AtomIndices::const_iterator
-				hnum  = don_rsd.Hpos_apolar().begin(),
-				hnume = don_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-
-			Size const don_h_atm( *hnum );
+		for ( Size const don_h_atm : don_rsd.Hpos_apolar() ) {
 
 			/// square-distance check outside the call to get_atom_atom_carbon_hbond_energy
 			if ( don_rsd.xyz( don_h_atm ).distance_squared( acc_rsd.xyz( acc_atm ) ) > carbon_hbond_energy.max_dis2() ) continue;
@@ -565,9 +561,6 @@ RNA_DMS_Potential::get_binding_energy( Size const i,
 
 	core::pose::Pose & pose            = *working_pose_;
 	core::pose::Pose & pose_with_probe = *working_pose_with_probe_;
-
-	//Commented unused variable
-	//int const seqpos = pose.pdb_info()->number( i );
 
 	update_virtual_base_if_necessary( pose, i );
 	update_virtual_base_if_necessary( pose_with_probe, i );

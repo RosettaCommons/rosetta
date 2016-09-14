@@ -189,11 +189,7 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_sc(
 {
 	Real res_solE( 0.0 ), energy( 0.0 );
 
-	for ( chemical::AtomIndices::const_iterator
-			anum  = acc_rsd.accpt_pos().begin(),
-			anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atm( *anum );
-
+	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 		Size start (1);
 		if ( acc_rsd.atom_is_backbone(acc_atm) ) { start = occ_rsd.first_sidechain_atom(); }
 
@@ -224,10 +220,7 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_sc(
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_polar().begin(),
-			hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
+	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
 		Size start (1);
 
 		if ( don_rsd.atom_is_backbone(don_h_atm) ) { start = occ_rsd.first_sidechain_atom(); }
@@ -274,10 +267,7 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_bb_b
 {
 	Real res_solE( 0.0 ), energy( 0.0 );
 
-	for ( chemical::AtomIndices::const_iterator
-			anum  = acc_rsd.accpt_pos().begin(),
-			anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atm( *anum );
+	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 		if ( !acc_rsd.atom_is_backbone(acc_atm) ) continue;
 
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
@@ -309,10 +299,7 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_bb_bb(
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_polar().begin(),
-			hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
+	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
 		if ( !don_rsd.atom_is_backbone(don_h_atm) ) continue;
 
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
@@ -345,10 +332,7 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way(
 	Real res_solE( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_polar().begin(),
-			hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
+	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
 			//Important NOTE. I originally had the code in the following function
@@ -377,10 +361,7 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way(
 {
 	Real res_solE( 0.0 ), energy( 0.0 );
 
-	for ( chemical::AtomIndices::const_iterator
-			anum  = acc_rsd.accpt_pos().begin(),
-			anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atm( *anum );
+	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
 			//Important NOTE. I originally had the code in the following function
@@ -621,8 +602,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	bool const update_deriv /*= false*/,
 	HBondDerivs & deriv /* = DUMMY_DERIVS */,
 	HBEvalTuple & hbe /* = HBEvalTuple() */
-) const
-{
+) const {
 	//Why do we need to send in the pose and the residue stuff?
 	// Well, the pose has info on backbone H-bonds.
 	// and, during design, the residue type doesn't actually
@@ -799,8 +779,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	hbe = potential_backbone_backbone_hbond ? ( HBEvalTuple( occ_atm, occ_rsd, acc_atm, acc_rsd ) ) :
 		HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( acc_atm, acc_rsd), seq_sep_other );
 
-	Size const base_atm ( acc_rsd.atom_base( acc_atm ) );
-
+	Size const base_atm( acc_rsd.atom_base( acc_atm ) );
 	Vector const & acc_atm_xyz( acc_rsd.atom( acc_atm ).xyz() );
 
 	Vector base_atm_xyz  = acc_rsd.xyz( acc_rsd.atom_base(  acc_atm ) );//get_acceptor_base_atm_xyz( acc_rsd, acc_atm, hbe );
@@ -929,15 +908,12 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_intra(
 	conformation::Residue const & occ_rsd=rsd;
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
-	for ( chemical::AtomIndices::const_iterator hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
+	for ( Size const don_h_atm : don_rsd.Hpos_polar() ) {
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
 			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm) ) continue;
 
 			get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd, occ_atm, occ_rsd, pose, energy );
 			res_solE += energy;
-
 		}
 	}
 
@@ -958,15 +934,12 @@ GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_intra(
 	conformation::Residue const & acc_rsd=rsd;
 	conformation::Residue const & occ_rsd=rsd;
 
-	for ( chemical::AtomIndices::const_iterator anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atm( *anum );
+	for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
-
 			if ( just_RNA && !core::chemical::rna::is_base_phosphate_atom_pair(rsd, rsd, occ_atm, acc_atm) ) continue;
 
 			get_atom_atom_geometric_solvation_for_acceptor( acc_atm, acc_rsd, occ_atm, occ_rsd, pose, energy);
 			res_solE += energy;
-
 		}
 	}
 
@@ -1097,8 +1070,7 @@ GeometricSolEnergyEvaluator::eval_intrares_derivatives(
 	Real const & geom_sol_intra_weight,
 	utility::vector1< DerivVectorPair > & atom_derivs,
 	bool const just_RNA
-) const
-{
+) const {
 	if ( just_RNA && !rsd.is_RNA() ) return;
 	if ( !just_RNA && !calculate_intra_res_hbonds( rsd, options_.hbond_options() ) ) return;
 
@@ -1156,9 +1128,9 @@ GeometricSolEnergyEvaluator::eval_residue_pair_derivatives(
 	static bool const update_deriv( true );
 	Real const weighted_energy = -1.0 * geom_sol_weight;
 
-	for ( Size k = 1, kend = neighbs.size(); k <= kend; ++k ) {
-		Size const ii = neighbs[ k ].atomno1();
-		Size const jj = neighbs[ k ].atomno2();
+	for ( auto const & neighb : neighbs ) {
+		Size const ii = neighb.atomno1();
+		Size const jj = neighb.atomno2();
 
 		if ( atom_is_heavy( jres, jj ) ) {
 			if ( ires.atom_is_polar_hydrogen( ii ) ) {
@@ -1199,9 +1171,9 @@ GeometricSolEnergyEvaluator::residue_pair_energy_ext(
 	Size m = 0;
 	Size n = 0;
 
-	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
-		m = neighbs[ ii ].atomno1();
-		n = neighbs[ ii ].atomno2();
+	for ( auto const & neighb : neighbs ) {
+		m = neighb.atomno1();
+		n = neighb.atomno2();
 
 		if ( atom_is_heavy( rsd2, n ) ) {
 			if ( rsd1.atom_is_polar_hydrogen( m ) ) {

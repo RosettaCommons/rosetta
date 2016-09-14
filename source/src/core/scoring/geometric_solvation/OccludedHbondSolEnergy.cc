@@ -208,11 +208,7 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 	Real dcut = ( atom_pair_cutoff + rsd2.nbr_radius() );
 	Real d2cut = dcut * dcut;
 	core::Vector r2_nb_xyz( rsd2.nbr_atom_xyz());
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = rsd1.Hpos_polar().begin(),
-			hnume = rsd1.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
-		Size const don_h_atom( *hnum );
+	for ( Size const don_h_atom : rsd1.Hpos_polar() ) {
 		Size const don_base_atom( rsd1.atom_base( don_h_atom ) );
 		if ( rsd1.xyz( don_h_atom ).distance_squared( r2_nb_xyz ) > d2cut ) continue;
 		for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
@@ -224,11 +220,7 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 		}
 	}
 
-	for ( chemical::AtomIndices::const_iterator
-			anum = rsd1.accpt_pos().begin(),
-			anume = rsd1.accpt_pos().end();
-			anum != anume; ++anum ) {
-		Size const acc_atom( *anum );
+	for ( Size const acc_atom : rsd1.accpt_pos() ) {
 		Size const base_atom ( rsd1.atom_base( acc_atom ) );
 		if ( rsd1.xyz( acc_atom ).distance_squared( r2_nb_xyz ) > d2cut ) continue;
 		for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
@@ -277,8 +269,7 @@ OccludedHbondSolEnergy::res_res_occ_sol_one_way(
 	core::Vector occ_nb_xyz( occ_rsd.nbr_atom_xyz());
 
 	// cycle through donors in polar_rsd
-	for ( chemical::AtomIndices::const_iterator hnum = polar_rsd.Hpos_polar().begin(), hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atom( *hnum );
+	for ( Size const don_h_atom : polar_rsd.Hpos_polar() ) {
 		Size const don_base_atom( polar_rsd.atom_base( don_h_atom ) );
 		if ( polar_rsd.xyz( don_h_atom ).distance_squared( occ_nb_xyz ) > d2cut ) continue;
 		for ( Size occ_atom = 1; occ_atom <= occ_rsd.natoms(); occ_atom++ ) {
@@ -288,8 +279,7 @@ OccludedHbondSolEnergy::res_res_occ_sol_one_way(
 	}
 
 	// cycle through acceptors in polar_rsd
-	for ( chemical::AtomIndices::const_iterator anum = polar_rsd.accpt_pos().begin(), anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atom( *anum );
+	for ( Size const acc_atom : polar_rsd.accpt_pos() ) {
 		Size const base_atom ( polar_rsd.atom_base( acc_atom ) );
 		if ( polar_rsd.xyz( acc_atom ).distance_squared( occ_nb_xyz ) > d2cut ) continue;
 		for ( Size occ_atom = 1; occ_atom <= occ_rsd.natoms(); occ_atom++ ) {
@@ -435,8 +425,6 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 
 	f1_occ -= dist_dfunc * dist_f1;
 	f2_occ -= dist_dfunc * dist_f2;
-
-	return;
 }
 
 Distance
@@ -460,8 +448,7 @@ OccludedHbondSolEnergy::get_cos_angle(
 
 // Helper function that should live inside conformation::Residue (Rhiju's comment)
 bool OccludedHbondSolEnergy::atom_is_donor_h( conformation::Residue const & rsd, Size const atom ) const {
-	for ( chemical::AtomIndices::const_iterator hnum = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atom( *hnum );
+	for ( Size const don_h_atom : rsd.Hpos_polar() ) {
 		if ( don_h_atom == atom ) return true;
 	}
 	return false;
@@ -469,8 +456,7 @@ bool OccludedHbondSolEnergy::atom_is_donor_h( conformation::Residue const & rsd,
 
 // Helper function that should live inside conformation::Residue (Rhiju's comment)
 bool OccludedHbondSolEnergy::atom_is_acceptor( conformation::Residue const & rsd, Size const atom ) const {
-	for ( chemical::AtomIndices::const_iterator anum = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atom( *anum );
+	for ( Size const acc_atom : rsd.accpt_pos() ) {
 		if ( acc_atom == atom ) return true;
 	}
 	return false;
@@ -478,13 +464,11 @@ bool OccludedHbondSolEnergy::atom_is_acceptor( conformation::Residue const & rsd
 
 // Helper function that should live inside conformation::Residue (Rhiju's comment)
 bool OccludedHbondSolEnergy::atom_is_valid_base( conformation::Residue const & rsd, Size const atom ) const {
-	for ( chemical::AtomIndices::const_iterator hnum = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atom( *hnum );
+	for ( Size const don_h_atom : rsd.Hpos_polar() ) {
 		Size const base_atom ( rsd.atom_base( don_h_atom ) );
 		if ( base_atom == atom ) return true;
 	}
-	for ( chemical::AtomIndices::const_iterator anum = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const acc_atom( *anum );
+	for ( Size const acc_atom : rsd.accpt_pos() ) {
 		Size const base_atom ( rsd.atom_base( acc_atom ) );
 		if ( base_atom == atom ) return true;
 	}

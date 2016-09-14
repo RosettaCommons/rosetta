@@ -245,8 +245,8 @@ fill_vdw_cached_rep_screen_info_from_command_line( core::pose::Pose & pose ) {
 void
 fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose::Pose * > & pose_pointers ) {
 	if ( !option_vdw_rep_screen_info_user() ) return;
-	for ( core::Size n = 1; n <= pose_pointers.size(); n++ ) {
-		fill_vdw_cached_rep_screen_info_from_command_line( *pose_pointers[n] );
+	for ( auto const & poseop : pose_pointers ) {
+		fill_vdw_cached_rep_screen_info_from_command_line( *poseop );
 	}
 }
 

@@ -127,7 +127,7 @@ bool
 StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
 {
 	// Lazy initialization of ccd_loop_closure_mover_
-	if ( ccd_loop_closure_mover_.get() == NULL ) {
+	if ( ccd_loop_closure_mover_.get() == nullptr ) {
 		ccd_loop_closure_mover_ = loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loops::loop_closure::ccd::CCDLoopClosureMover() );
 		ccd_loop_closure_mover_->max_cycles( 1000 );
 		ccd_loop_closure_mover_->tolerance( 0.001 );
@@ -304,9 +304,9 @@ void
 StepWiseProteinCCD_Closer::save_phi_psi_omega_over_loop_residues( pose::Pose const & pose ){
 	main_chain_torsion_set_save_.clear();
 	//  TR << ccd_close_res_ << " ";
-	for ( Size n = 1; n <= which_torsions_.size(); n++ )  {
-		main_chain_torsion_set_save_.push_back(  pose.torsion( which_torsions_[ n ] ) );
-		//   TR << "   " << which_torsions_[n] << " " << pose.torsion( which_torsions_[ n ] );
+	for ( auto const torsion : which_torsions_ )  {
+		main_chain_torsion_set_save_.push_back(  pose.torsion( torsion ) );
+		//   TR << "   " << which_torsions_[n] << " " << pose.torsion( torsion );
 	}
 	//  TR << std::endl;
 }
@@ -324,12 +324,12 @@ StepWiseProteinCCD_Closer::check_for_unique_cutpoint_flanked_by_bridge_res( pose
 	Size cutpoint( 0 );
 	Size nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
-		if  ( is_cutpoint_closed( pose, n ) ) {
-			if ( ( n > 1    && working_bridge_res_.has_value( n-1 ) ) ||
-					( n < nres && working_bridge_res_.has_value( n+1 ) ) ) {
-				runtime_assert( cutpoint == 0 ); // uniqueness check.
-				cutpoint = n;
-			}
+		if ( ! is_cutpoint_closed( pose, n ) ) continue;
+		
+		if ( ( n > 1    && working_bridge_res_.has_value( n-1 ) ) ||
+			( n < nres && working_bridge_res_.has_value( n+1 ) ) ) {
+			runtime_assert( cutpoint == 0 ); // uniqueness check.
+			cutpoint = n;
 		}
 	}
 	return cutpoint;
@@ -341,10 +341,10 @@ StepWiseProteinCCD_Closer::check_for_unique_cutpoint( pose::Pose const & pose ){
 	Size cutpoint( 0 );
 	Size nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
-		if  ( is_cutpoint_closed( pose, n ) ) {
-			runtime_assert( cutpoint == 0 ); // uniqueness check.
-			cutpoint = n;
-		}
+		if  ( !is_cutpoint_closed( pose, n ) ) continue;
+		
+		runtime_assert( cutpoint == 0 ); // uniqueness check.
+		cutpoint = n;
 	}
 	return cutpoint;
 }

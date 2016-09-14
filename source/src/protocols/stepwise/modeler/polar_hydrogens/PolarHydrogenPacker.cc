@@ -102,8 +102,7 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 	using namespace core::kinematics;
 
 	core::pose::Pose pose = pose_to_visualize; // make a local copy -- otherwise crashing graphics builds
-
-	core::Size const nres( pose.size() );
+	core::Size const nres( pose.total_residue() );
 
 	for  ( core::Size i = 1; i <= nres; i++ )  {
 
@@ -149,24 +148,22 @@ PolarHydrogenPacker::apply( core::pose::Pose & pose_to_visualize ){
 				// i.e., 10, 20  to model -40 -50 -60 -70 -80 etc.
 				utility::vector1< Real > samples = residue.type().proton_chi_samples( proton_chi_no );
 				utility::vector1< Real > const & extra_samples = residue.type().proton_chi_extra_samples( proton_chi_no );
-				for ( Size n = 1, num_samples = samples.size(); n <= num_samples; n++ ) {
-					for ( Size m = 1; m <= extra_samples.size(); m++ ) {
-						samples.push_back( samples[n] - extra_samples[m] );
-						samples.push_back( samples[n] + extra_samples[m] );
+				for ( Real const sample : samples ) {
+					for ( Real const extra_sample : extra_samples ) {
+						samples.push_back( sample - extra_sample );
+						samples.push_back( sample + extra_sample );
 					}
 				}
-				for ( Size n = 1; n <= samples.size(); n++ ) {
+				for ( Real const sample : samples ) {
 					Vector ideal_hydrogen_local = ideal_input_stub.global2local( ideal_res.xyz( j ) );
-					ideal_hydrogen_local = rotation_matrix( Vector( 1.0, 0.0, 0.0 ), samples[n] ) * ideal_hydrogen_local; //rotation about x
+					ideal_hydrogen_local = rotation_matrix( Vector( 1.0, 0.0, 0.0 ), sample ) * ideal_hydrogen_local; //rotation about x
 					Vector const ideal_hydrogen_xyz = current_input_stub.local2global( ideal_hydrogen_local );
 					ideal_hydrogen_xyz_positions.push_back( ideal_hydrogen_xyz );
 				}
 			}
 
 			// move this to a different function!
-			for ( Size n = 1; n <= ideal_hydrogen_xyz_positions.size(); n++ ) {
-				Vector const ideal_hydrogen_xyz = ideal_hydrogen_xyz_positions[ n ];
-
+			for ( Vector const & ideal_hydrogen_xyz : ideal_hydrogen_xyz_positions ) {
 				if ( possible_hbond_acceptors_.size() == 0 ) continue;
 
 				// might be better to create a 'pseudo' score function penalizing deviation from ideal.
@@ -285,7 +282,6 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 			hb_eval_tuples_.push_back( HBEvalTuple( atomno,
 				pose.residue( moving_res ),
 				j, pose.residue( i) ) );
-
 		}
 	}
 }

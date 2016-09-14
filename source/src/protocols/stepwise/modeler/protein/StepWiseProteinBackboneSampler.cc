@@ -109,7 +109,6 @@ StepWiseProteinBackboneSampler::get_name() const {
 void
 StepWiseProteinBackboneSampler::apply( core::pose::Pose & pose )
 {
-
 	Size which_res( 1 );
 	Size count( 1 );
 
@@ -132,7 +131,6 @@ StepWiseProteinBackboneSampler::apply( core::pose::Pose & pose )
 	pose = pose_save;
 
 	if ( nstruct_centroid_ > 0 && centroid_screen_ ) filter_main_chain_torsion_sets();
-
 }
 
 
@@ -163,20 +161,19 @@ StepWiseProteinBackboneSampler::define_moving_res( pose::Pose const & pose ) {
 	std::sort( moving_residues_.begin(), moving_residues_.end() );
 
 	runtime_assert( is_fixed_res_.size() == pose.size() );
-
 }
 
 ///////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::setup_torsion_sets(){
 
+	// AMW TODO: does this... clear an object, put things in it, and clear it again?
 	main_chain_torsion_set_for_moving_residues_.clear();
 	for ( Size n = 1; n <= moving_residues_.size(); n++ )  {
 		main_chain_torsion_set_for_moving_residues_.push_back( MainChainTorsionSet( 0.0, 0.0, 0.0 ) );
 	}
 
 	main_chain_torsion_sets_for_moving_residues_.clear();
-
 }
 
 
@@ -198,9 +195,7 @@ StepWiseProteinBackboneSampler::sample_residues_recursively(
 	MainChainTorsionSetList main_chain_torsion_set_list;
 	get_main_chain_torsion_set_list( n, pose, main_chain_torsion_set_list );
 
-	for ( Size k = 1; k <= main_chain_torsion_set_list.size(); k++ ) {
-
-		MainChainTorsionSet const & main_chain_torsion_set( main_chain_torsion_set_list[ k ] );
+	for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
 
 		pose.set_phi( n, main_chain_torsion_set.phi() );
 		pose.set_psi( n, main_chain_torsion_set.psi() );
@@ -217,9 +212,7 @@ StepWiseProteinBackboneSampler::sample_residues_recursively(
 		} else {
 			sample_residues_recursively( which_res+1, count, pose );
 		}
-
 	}
-
 }
 
 
@@ -293,7 +286,6 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 
 	}
 
-
 	if ( filter_native_big_bins_ )  {
 		filter_native_BIG_BINS( n, main_chain_torsion_set_list );
 	} else {
@@ -304,7 +296,6 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 		TR.Debug << "-----  SAMPLING CIS OMEGA --------" << std::endl;
 		sample_cis_omega( main_chain_torsion_set_list );
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -319,25 +310,18 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_coarse(
 	// Later, can individually dial in cluster centers based on careful
 	// inspection of residue-specific rama plots. For now, this is basically a quick hack.
 	if ( pose.aa( n ) == aa_pro ) {
-
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -70.0, -30.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet(  60.0, 140.0 ) );
-
 	} else if ( pose.aa( n ) == aa_gly ) {
-
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -80.0, -10.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -70.0, 160.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet(  90.0,  10.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( 100.0, 180.0 ) );
-
 	} else {
-
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -70.0, -30.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet( -70.0, 140.0 ) );
 		main_chain_torsion_set_list.push_back( MainChainTorsionSet(  50.0,  50.0 ) );
-
 	}
-
 }
 
 
@@ -442,7 +426,6 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_phi_only(
 
 	// Make sure to return something at least...
 	if ( main_chain_torsion_set_list.size() == 0 )  main_chain_torsion_set_list.push_back( MainChainTorsionSet( best_phi, psi, omega ) );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -498,7 +481,6 @@ StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
 	Size const & n,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
-
 	if ( get_native_pose() == 0 ) {
 		utility_exit_with_message(  "Filter based on native big bins, but not native specified?" );
 	}
@@ -513,7 +495,6 @@ StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
 	if ( big_bin == 3 ) return; // If loop, no constraints.
 
 	filter_big_bin( big_bin, main_chain_torsion_set_list );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -531,7 +512,6 @@ StepWiseProteinBackboneSampler::filter_based_on_desired_secstruct(
 	if ( big_bin == 3 ) return; // If loop, no constraints.
 
 	filter_big_bin( big_bin, main_chain_torsion_set_list );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -541,12 +521,12 @@ StepWiseProteinBackboneSampler::filter_big_bin( Size const big_bin,
 
 	MainChainTorsionSetList main_chain_torsion_set_list_new;
 
-	for ( Size n = 1; n <= main_chain_torsion_set_list.size(); n++ ) {
-		Real const phi = main_chain_torsion_set_list[ n ].phi();
-		Real const psi = main_chain_torsion_set_list[ n ].psi();
+	for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list) {
+		Real const phi = main_chain_torsion_set.phi();
+		Real const psi = main_chain_torsion_set.psi();
 		if ( ( big_bin == 1 && get_big_bin( phi, psi ) == 1 ) ||
 				( big_bin == 2 && get_big_bin( phi, psi ) == 2 ) ) {
-			main_chain_torsion_set_list_new.push_back( main_chain_torsion_set_list[ n ] );
+			main_chain_torsion_set_list_new.push_back( main_chain_torsion_set );
 		}
 	}
 
@@ -579,9 +559,9 @@ void
 StepWiseProteinBackboneSampler::sample_cis_omega( MainChainTorsionSetList & main_chain_torsion_set_list ){
 	MainChainTorsionSetList main_chain_torsion_set_list_new;
 
-	for ( Size n = 1; n <= main_chain_torsion_set_list.size(); n++ ) {
-		Real const phi = main_chain_torsion_set_list[ n ].phi();
-		Real const psi = main_chain_torsion_set_list[ n ].psi();
+	for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
+		Real const phi = main_chain_torsion_set.phi();
+		Real const psi = main_chain_torsion_set.psi();
 		main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( phi, psi, 180.0 ) );
 		main_chain_torsion_set_list_new.push_back( MainChainTorsionSet( phi, psi,   0.0 ) );
 	}
@@ -663,13 +643,12 @@ utility::vector1< utility::vector1< core::Real > >
 StepWiseProteinBackboneSampler::main_chain_torsion_set_lists_real() const
 {
 	utility::vector1< utility::vector1< core::Real > > output_list;
-	for ( Size k = 1; k <= main_chain_torsion_sets_for_moving_residues_.size(); k++ ) {
+	for ( auto const & main_chain_torsion_set_list : main_chain_torsion_sets_for_moving_residues_ ) {
 		utility::vector1< core::Real > output;
-		MainChainTorsionSetList main_chain_torsion_set_list = main_chain_torsion_sets_for_moving_residues_[ k ];
-		for ( Size n = 1; n <= main_chain_torsion_set_list.size(); n++ ) {
-			output.push_back( main_chain_torsion_set_list[ n ].phi() );
-			output.push_back( main_chain_torsion_set_list[ n ].psi() );
-			output.push_back( main_chain_torsion_set_list[ n ].omega() );
+		for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
+			output.push_back( main_chain_torsion_set.phi() );
+			output.push_back( main_chain_torsion_set.psi() );
+			output.push_back( main_chain_torsion_set.omega() );
 		}
 		output_list.push_back( output );
 	}
@@ -725,9 +704,9 @@ StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const
 	using namespace core::id;
 	template_pose.residue( 1 ); // force a refold.
 
-	for ( ResMap::const_iterator it=ghost_map.begin(), end = ghost_map.end(); it != end; ++it ) {
-		Size const & res( it->first );
-		Size const & template_res( it->second );
+	for ( auto const & elem : ghost_map ) {
+		Size const & res( elem.first );
+		Size const & template_res( elem.second );
 
 		for ( Size j = 1; j <= pose.residue_type( res ).natoms(); j++ ) {
 			if ( pose.residue_type( res ).atom_name( j ) !=

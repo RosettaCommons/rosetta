@@ -136,7 +136,6 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 	setup_vdw_cached_rep_screen_info( pose );
 
 	if ( output_pdb_ ) pose.dump_pdb( "start.pdb" );
-
 	if ( verbose_ ) output_title_text( "Exit StepWiseRNA_PoseSetup::apply", TR.Debug );
 }
 
@@ -224,7 +223,6 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		}
 	}
 
-
 	output_seq_num_list( "act_working_alignment = ", act_working_alignment, TR.Debug );
 	output_seq_num_list( "working_moving_res_list = ", working_moving_res_list, TR.Debug );
 	output_seq_num_list( "working_moving_partition_res = ", working_moving_partition_res, TR.Debug );
@@ -233,7 +231,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 
 	if ( act_working_alignment.size() == 0 ) utility_exit_with_message( "act_working_alignment.size() == 0" );
 
-	if ( working_parameters_ -> add_virt_res_as_root() ) { //Fang's electron density code
+	if ( working_parameters_->add_virt_res_as_root() ) { //Fang's electron density code
 
 		//Fang why do you need this?////
 		pose::Pose dummy_pose = *working_native_pose;
@@ -269,7 +267,6 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 
 	if ( output_pdb_ ) working_native_pose->dump_pdb( "working_native_pose_with_virtual_res_variant_type.pdb" );
 	if ( verbose_ ) output_title_text( "Exit StepWiseRNA_PoseSetup::setup_native_pose", TR.Debug );
-
 }
 
 
@@ -577,7 +574,6 @@ StepWiseRNA_PoseSetup::get_nearest_dist_to_O2prime( Size const O2prime_seq_num,
 	Real const nearest_dist = sqrt( nearest_dist_SQ );
 
 	return nearest_dist;
-
 }
 
 
@@ -801,7 +797,6 @@ StepWiseRNA_PoseSetup::add_protonated_H1_adenosine_variants( pose::Pose & pose )
 	if ( working_protonated_H1_adenosine_list.has_value( working_moving_res ) ) {
 		apply_protonated_H1_adenosine_variant_type( pose, working_moving_res, apply_check );
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -817,34 +812,27 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 
 	//Check that all protonated_H1_adenosine exist in the pose!
 	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
-
 		if ( working_protonated_H1_adenosine_list.has_value( seq_num ) ) {
 
-			if ( pose.residue( seq_num ).aa() != core::chemical::na_rad ) {
+			if ( pose.residue_type( seq_num ).aa() != core::chemical::na_rad ) {
 				print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but pose.residue( seq_num ).aa() != core::chemical::na_rad, seq_num = " + string_of( seq_num ) );
 			}
 
-			if ( ! pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) &&
-					! pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+			if ( ! pose.residue_type( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) &&
+					! pose.residue_type( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 				print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP(
 					working_parameters_ ), "DEBUG working_parameters", TR.Debug );
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but "
 					"residue doesn't either PROTONATED_N1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type, seq_num = " + string_of( seq_num ) );
 			}
-		} else {
-			if ( pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
-
-				print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
-				TR.Debug << "ERROR: seq_num = " << seq_num << std::endl;
-				TR.Debug << "ERROR: start_pose.residue( n ).aa() = " << name_from_aa( pose.residue( seq_num ).aa() ) << std::endl;
-				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == false but pose.residue( seq_num ).has_variant_type( \"PROTONATED_N1_ADENOSINE\" ) ) == false" );
-			}
-
+		} else if ( pose.residue_type( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
+			print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Debug );
+			TR.Debug << "ERROR: seq_num = " << seq_num << std::endl;
+			TR.Debug << "ERROR: start_pose.residue( n ).aa() = " << name_from_aa( pose.residue_type( seq_num ).aa() ) << std::endl;
+			utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == false but pose.residue( seq_num ).has_variant_type( \"PROTONATED_N1_ADENOSINE\" ) ) == false" );
 		}
-
 	}
-
 }
 
 
@@ -856,14 +844,12 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 void
 StepWiseRNA_PoseSetup::update_fold_tree_at_virtual_sugars( pose::Pose & pose ){
 
-	std::map< Size, Size > const reference_res_for_each_virtual_sugar = sugar::get_reference_res_for_each_virtual_sugar_without_fold_tree( pose,  working_parameters_->working_moving_suite() );
+	std::map< Size, Size > const & reference_res_for_each_virtual_sugar = sugar::get_reference_res_for_each_virtual_sugar_without_fold_tree( pose,  working_parameters_->working_moving_suite() );
 
 	TR.Debug << "BEFORE VIRTUAL SUGAR UPDATE " << pose.fold_tree() << std::endl;
-	for ( std::map< Size, Size >::const_iterator it = reference_res_for_each_virtual_sugar.begin(),
-			end = reference_res_for_each_virtual_sugar.end();
-			it != end; ++it ) {
-		Size const & virtual_sugar_res = it->first;
-		Size const & reference_res = it->second;
+	for ( auto const & sugar_and_ref : reference_res_for_each_virtual_sugar ) {
+		Size const virtual_sugar_res = sugar_and_ref.first;
+		Size const reference_res = sugar_and_ref.second;
 
 		if ( pose.fold_tree().jump_exists( virtual_sugar_res, reference_res ) ) continue;
 		setup_chain_break_jump_point( pose, virtual_sugar_res, reference_res );
@@ -879,19 +865,15 @@ StepWiseRNA_PoseSetup::apply_bulge_variants( pose::Pose & pose ) const {
 	using namespace core::pose;
 	using namespace ObjexxFCL;
 
-
 	std::map< core::Size, core::Size > const & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< Size > const & working_terminal_res = working_parameters_->working_terminal_res();
 	utility::vector1< Size > terminal_res = apply_sub_to_full_mapping( working_terminal_res, working_parameters_ );
 
-	for ( Size i = 1; i <= bulge_res_.size(); i++ ) {
-		Size const seq_num = bulge_res_[i];
+	for ( Size const seq_num : bulge_res_ ) {
 		runtime_assert ( !terminal_res.has_value( seq_num ) );
 		if ( full_to_sub.find( seq_num ) == full_to_sub.end() ) continue;
 		pose::add_variant_type_to_pose_residue( pose, core::chemical::BULGE, full_to_sub.find( seq_num )->second );
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -901,7 +883,6 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 
 	using namespace core::id;
 	using namespace ObjexxFCL;
-
 
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< Size > const & working_terminal_res = working_parameters_->working_terminal_res();
@@ -932,17 +913,12 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////
 
-	for ( Size i = 1; i <= virtual_res_list_.size(); i++ ) {
-		Size const seq_num = virtual_res_list_[i];
-
-		if ( terminal_res.has_value( seq_num ) == true ) utility_exit_with_message( "seq_num: " + string_of( seq_num ) + " cannot be both both a virtual_res and a terminal res!" );
-
+	for ( Size const seq_num : virtual_res_list_ ) {
+		if ( terminal_res.has_value( seq_num ) ) utility_exit_with_message( "seq_num: " + string_of( seq_num ) + " cannot be both both a virtual_res and a terminal res!" );
 		if ( full_to_sub.find( seq_num ) == full_to_sub.end() ) continue;
 
 		core::pose::rna::apply_virtual_rna_residue_variant_type( pose, full_to_sub[ seq_num] );
-
 		//   pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, full_to_sub[ seq_num] );
-
 	}
 }
 

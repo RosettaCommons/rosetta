@@ -156,7 +156,7 @@ HackAroEnergy::get_base_coordinate_system( conformation::Residue const & rsd, Ve
 	if ( res_type == aa_tyr ) WC_atom = " CZ ";
 	if ( res_type == aa_trp ) WC_atom = " CZ2";
 
-	Vector const WC_coord (rsd.xyz( WC_atom ) );
+	Vector const WC_coord( rsd.xyz( WC_atom ) );
 	x = WC_coord - centroid;
 	x.normalize();
 
@@ -308,8 +308,7 @@ HackAroEnergy::eval_atom_derivative_aro_aro(
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
-) const
-{
+) const {
 
 	debug_assert( rsd1.is_aromatic() );
 	debug_assert( rsd2.is_aromatic() );

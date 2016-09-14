@@ -203,19 +203,16 @@ PhosphateMover::screen_five_prime_phosphate( pose::Pose & pose ) {
 
 	Pose pose_best = pose;
 	Real score_best = ( *scorefxn_ )( pose );
-	for ( Size i = 1; i <= full_torsions.size(); i++ ) {
-		pose.set_torsion( TorsionID( n, BB, GAMMA ), full_torsions[i] );
+	for ( auto const & torsion_i : full_torsions ) {
+		pose.set_torsion( TorsionID( n, BB, GAMMA ), torsion_i );
 		if ( !pass_clash_check( " O5'", n, pose ) ) continue;
 
-		for ( Size j = 1; j <= full_torsions.size(); j++ ) {
-			pose.set_torsion( TorsionID( n, BB, BETA ), full_torsions[j] );
+		for ( auto const & torsion_j : full_torsions ) {
+			pose.set_torsion( TorsionID( n, BB, BETA ), torsion_j );
 			if ( !pass_clash_check( " P  ", n, pose ) ) continue;
 
-			for ( Size k = 1; k <= full_torsions.size(); k++ ) {
-				pose.set_torsion( TorsionID( n, BB, ALPHA ), full_torsions[k] );
-				//     if ( !pass_clash_check( " OP1", n, pose ) ) continue;
-				//     if ( !pass_clash_check( " OP2", n, pose ) ) continue;
-				//     if ( !pass_clash_check( "XO3'", n, pose ) ) continue;
+			for ( auto const & torsion_k : full_torsions ) {
+				pose.set_torsion( TorsionID( n, BB, ALPHA ), torsion_k );
 				if ( screen_for_donor_contact_ && !check_phosphate_contacts_donor( pose ) ) continue;
 				Real const score = ( *scorefxn_ )( pose );
 				//     TR << "Score: " << score << " compared to best score " << score_best << std::endl;
@@ -256,12 +253,12 @@ PhosphateMover::screen_three_prime_phosphate( pose::Pose & pose ){
 
 	Pose pose_best = pose;
 	Real score_best = ( *scorefxn_ )( pose );
-	for ( Size i = 1; i <= epsilon_torsions.size(); i++ ) {
-		pose.set_torsion( TorsionID( n, BB, EPSILON ), epsilon_torsions[i] );
+	for ( auto const & torsion_i : epsilon_torsions ) {
+		pose.set_torsion( TorsionID( n, BB, EPSILON ), torsion_i );
 		if ( !pass_clash_check( "YP  ", n, pose ) ) continue;
 
-		for ( Size j = 1; j <= full_torsions.size(); j++ ) {
-			pose.set_torsion( TorsionID( n, BB, ZETA ), full_torsions[j] );
+		for ( auto const & torsion_j : full_torsions ) {
+			pose.set_torsion( TorsionID( n, BB, ZETA ), torsion_j );
 			if ( !pass_clash_check( "YOP1", n, pose ) ) continue;
 			if ( !pass_clash_check( "YOP2", n, pose ) ) continue;
 			if ( !pass_clash_check( "YO5'", n, pose ) ) continue;
@@ -296,8 +293,7 @@ PhosphateMover::pass_clash_check( std::string const & atom_name,
 	Real const VDW_radius_1 = pose.residue( n ).atom_type( atom_idx  ).lj_radius();
 	static Real const clash_dist_cutoff = 0.8; //Fail van der Waals repulsion screen if two atoms radius within 0.5 Angstrom of each other
 
-	for ( Size k = 1; k <= neighbor_copy_dofs_.size(); k++ ) {
-		Size const & m = neighbor_copy_dofs_[ k ];
+	for ( Size const m : neighbor_copy_dofs_ ) {
 		if ( m == n ) continue;
 		for ( Size j = 1; j <= pose.residue( m ).natoms(); j++ ) {
 			if ( pose.residue( m ).is_virtual( j )  ) continue;

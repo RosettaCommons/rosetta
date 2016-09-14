@@ -260,17 +260,14 @@ StepWiseWorkingParametersSetup::get_user_input_alignment_res_list( core::Size co
 		if ( working_alignment.size() > working_best_alignment.size() ) working_best_alignment = working_alignment;
 	}
 
-
 	stepwise::modeler::rna::output_seq_num_list( "best_working_align = ", apply_sub_to_full_mapping( working_best_alignment, working_parameters_ ), TR.Debug, 30 );
 
 	//  if(alignment_res_string_list.size()>0 && working_best_alignment.size()==0){ Not compatible with build from scratch mode! Sept 08, 2010
 	//   utility_exit_with_message( "User supplied alignment_res_string_list but working_best_alignment.size()==0!!" );
 	//  }
 
-
 	stepwise::modeler::rna::output_title_text( "", TR.Debug );
 	return working_best_alignment;
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -309,7 +306,6 @@ StepWiseWorkingParametersSetup::figure_out_best_working_alignment(){
 		}
 	}
 
-
 	//Special case for building loop outward
 	if ( working_alignment.size() == 0 ) {
 
@@ -340,7 +336,6 @@ StepWiseWorkingParametersSetup::figure_out_best_working_alignment(){
 	}
 
 	stepwise::modeler::rna::output_title_text( "", TR.Debug );
-
 }
 /////////////////////////////////////////////////////////////////////
 void
@@ -397,7 +392,6 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	stepwise::modeler::rna::output_title_text( "", TR.Debug );
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

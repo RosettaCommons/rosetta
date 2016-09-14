@@ -84,8 +84,7 @@ void
 PrecomputedLibraryMover::initialize_from_directory( std::string const & dir_name ){
 	utility::vector1< std::string > filenames;
 	utility::file::list_dir( dir_name, filenames );
-	for ( Size n = 1; n <= filenames.size(); n++ ) {
-		std::string const & filename = filenames[ n ];
+	for ( std::string const & filename : filenames ) {
 		if ( filename.size() < 5 ) continue;
 		if ( filename.substr(  filename.size()-4, 4 ) != ".out" ) continue;
 		std::string const full_filename = dir_name + "/" + filename ;

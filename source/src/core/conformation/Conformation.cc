@@ -3472,8 +3472,7 @@ Conformation::backbone_torsion_angle_atoms(
 	AtomID & id2,
 	AtomID & id3,
 	AtomID & id4
-) const
-{
+) const {
 	//std::cout << "here" << std::endl;
 	using chemical::AtomIndices;
 

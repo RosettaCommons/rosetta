@@ -154,8 +154,7 @@ void add_to_individual_sol_energies(
 		neighborlist.push_back( (*neighbor_iter)->get_other_ind( polar_resnum ) );
 	}
 
-	for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
-		core::Size const occ_resnum( neighborlist[occ_inx] );
+	for ( Size const occ_resnum : neighborlist ) {
 		conformation::Residue const occ_rsd = input_pose.residue(occ_resnum);
 		//  TR << "jk computing occlusion of polar residue " << polar_resnum << " by residue " << occ_resnum << std::endl;
 
@@ -262,8 +261,6 @@ void add_to_individual_sol_energies(
 		core::Real const geometric_solvation_energy = - geosol_kT * log( 1 - ( sum_occluded_weights / grid_constant ) );
 		residue_energies[ polar_resnum ] += geometric_solvation_energy;
 	}
-
-	return;
 }
 
 
@@ -283,7 +280,7 @@ core::Real compute_exact_geosol(
 	core::scoring::etable::EtableOP etable_ptr( new core::scoring::etable::Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ), core::scoring::etable::EtableOptions() ) );
 
 	// Allocate memory for grid of occluded sites
-	std::vector < std::vector < std::vector <bool> > > occluded_sites;
+	std::vector< std::vector< std::vector< bool > > > occluded_sites;
 	occluded_sites.clear();
 	occluded_sites.resize(GridInfo::get_instance()->xnum_points());
 	for ( core::Size tx=0; tx<GridInfo::get_instance()->xnum_points(); tx++ ) {
@@ -297,22 +294,19 @@ core::Real compute_exact_geosol(
 	TR << "jk computing exact solvation scores" << std::endl;
 	for ( Size polar_resnum = 1; polar_resnum <= input_pose.size(); polar_resnum++ ) {
 
-		conformation::Residue const polar_rsd = input_pose.residue(polar_resnum);
+		conformation::Residue const & polar_rsd = input_pose.residue(polar_resnum);
 
 		// loop over donors in polar_rsd
-		for ( chemical::AtomIndices::const_iterator
-				hnum  = polar_rsd.Hpos_polar().begin(),
-				hnume = polar_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-			Size const polar_atom( *hnum );
+		for ( Size const polar_atom : polar_rsd.Hpos_polar() ) {
 			Size const base_atom( polar_rsd.atom_base( polar_atom ) );
 			hbonds::HBEvalTuple const curr_hbond_eval_tuple(
 				get_hb_don_chem_type( polar_atom, polar_rsd ),
 				hbacc_H2O, seq_sep_other);
 
 			// Figure out max LK energy
-			std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+			std::string const & base_atom_name = polar_rsd.atom_name( base_atom );
 			core::Real max_possible_LK = etable_ptr->lk_dgfree( polar_rsd.atom_type_index( base_atom ) );
-			if ( ( base_atom_name == " N  " ) && polar_rsd.is_lower_terminus() ) max_possible_LK /= 3; // charged N-terminus
+			if ( base_atom_name == " N  " && polar_rsd.is_lower_terminus() ) max_possible_LK /= 3; // charged N-terminus
 			if ( base_atom_name == " NZ " ) max_possible_LK /= 3; // Lys
 			if ( base_atom_name == " ND2" ) max_possible_LK /= 2; // Asn
 			if ( base_atom_name == " NE2" ) max_possible_LK /= 2; // Gln
@@ -336,10 +330,7 @@ core::Real compute_exact_geosol(
 		}
 
 		// loop over acceptors in polar_rsd
-		for ( chemical::AtomIndices::const_iterator
-				anum  = polar_rsd.accpt_pos().begin(),
-				anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-			Size const polar_atom( *anum );
+		for ( Size const polar_atom : polar_rsd.accpt_pos() ) {
 			hbonds::HBEvalType const curr_hbeval_type = (*hbonds::HBEval_lookup)( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 			// Figure out max LK energy

@@ -47,7 +47,7 @@ namespace modeler {
 namespace rna {
 
 
-class Jump_point{
+class Jump_point {
 
 public:
 
@@ -73,7 +73,7 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-struct Torsion_Info{
+struct Torsion_Info {
 	core::id::TorsionID id;
 	core::Real value;
 };
@@ -91,7 +91,7 @@ struct output_data_struct {
 	core::Real O3_C5_distance;
 };
 
-class InternalWorkingResidueParameter{
+class InternalWorkingResidueParameter {
 
 public:
 
@@ -112,7 +112,7 @@ public:
 };
 
 
-class StepWiseRNA_CountStruct{
+class StepWiseRNA_CountStruct {
 
 public:
 

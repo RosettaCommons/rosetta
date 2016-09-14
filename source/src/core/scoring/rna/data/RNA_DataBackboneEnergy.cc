@@ -152,8 +152,7 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
+) const {
 
 	if ( !rsd1.is_RNA() ) return;
 	if ( !rsd2.is_RNA() ) return;

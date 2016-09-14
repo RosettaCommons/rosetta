@@ -79,11 +79,11 @@ get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::Residu
 	runtime_assert( rsd_at_origin_list.size() >= 1 );
 
 	Real max_distance = 0;
-	for ( Size n = 1; n <= rsd_at_origin_list.size(); n++ ) {
-		Residue const & rsd_at_origin = ( *rsd_at_origin_list[n] );
-		numeric::xyzVector< core::Real > const centroid = core::chemical::rna::get_rna_base_centroid( rsd_at_origin, false ); //optimize by returning this by reference? Apr 10, 2010
+	for ( Size n = 1; n <= rsd_at_origin_list.size(); ++n ) {
+		auto const & rsd_at_origin = rsd_at_origin_list[n];
+		numeric::xyzVector< core::Real > const centroid = core::chemical::rna::get_rna_base_centroid( *rsd_at_origin, false ); //optimize by returning this by reference? Apr 10, 2010
 
-		Real const distance = ( rsd_at_origin.xyz( atom_name ) - centroid ).length();
+		Real const distance = ( rsd_at_origin->xyz( atom_name ) - centroid ).length();
 
 		if ( max_distance < distance ) max_distance = distance;
 		TR.Debug << " sugar/base conformation num: " << n << " distance = " << distance << std::endl;
@@ -211,7 +211,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 		total_occupied_bin++;
 		total_count = total_count + base_bin_it->second;
 
-		std::pair < int, int > const & DOF_pair = std::make_pair( DOF_bin_value( base_bin_it, DOF_one ), DOF_bin_value( base_bin_it, DOF_two ) );
+		auto  const & DOF_pair = std::make_pair( DOF_bin_value( base_bin_it, DOF_one ), DOF_bin_value( base_bin_it, DOF_two ) );
 
 		count_density_it = count_density_map.find( DOF_pair );
 

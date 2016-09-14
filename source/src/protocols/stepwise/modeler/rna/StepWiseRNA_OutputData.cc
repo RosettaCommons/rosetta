@@ -60,6 +60,8 @@
 #include <numeric/conversions.hh>
 #include <numeric/NumericTraits.hh>
 
+#include <utility/file/file_sys_util.hh>
+
 #include <basic/Tracer.hh>
 
 #include <iostream>
@@ -186,7 +188,6 @@ output_data( core::io::silent::SilentFileData& silent_file_data, std::string con
 			} else if ( !s.has_energy( "all_rms" ) ) {
 				s.add_energy( "all_rms", rms_at_corresponding_heavy_atoms( pose, *native_poseCOP ) );
 			}
-
 		}
 	}
 
@@ -288,7 +289,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 		BinarySilentStruct DEBUG_silent_struct( pose, debug_tag );
 		BinarySilentStruct const silent_struct( pose, tag );
 
-		if ( file_exists( debug_silent_file ) ) remove_file( debug_silent_file );
+		if ( utility::file::file_exists( debug_silent_file ) ) remove_file( debug_silent_file );
 
 		silent_file_data.write_silent_struct( DEBUG_silent_struct, debug_silent_file, false );
 
@@ -301,17 +302,17 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 		bool found_tag = false;
 		Size num_struct = 0;
 
-		for ( core::io::silent::SilentFileData::iterator iter = import_silent_file_data.begin(), end = import_silent_file_data.end(); iter != end; ++iter ) {
+		for ( auto const & sfd : import_silent_file_data ) {
 			num_struct += 1;
-			if ( iter->decoy_tag() != debug_tag ) continue;
+			if ( sfd->decoy_tag() != debug_tag ) continue;
 			found_tag = true;
-			iter->fill_pose( pose_from_silent_file, *rsd_set );
+			sfd->fill_pose( pose_from_silent_file, *rsd_set );
 		}
 
 		if ( num_struct != 1 ) utility_exit_with_message( "num_struct = ( " + ObjexxFCL::string_of( num_struct ) + " ) != 1" );
 		if ( found_tag == false ) utility_exit_with_message( "Could not find specified tag ( " + debug_tag + " ) in silent file ( " + debug_silent_file + " )!" );
 
-		if ( file_exists( debug_silent_file ) == false ) {
+		if ( utility::file::file_exists( debug_silent_file ) == false ) {
 			utility_exit_with_message( "debug_silent_file ( " + debug_silent_file + " ) SHOULD exist!" );
 		}
 
@@ -328,7 +329,6 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 		} else {
 			TR << "WARNING: Problem with writing pose ( " << debug_tag << " ) to silent_file [Attempt #" << trial_num << "]" << std::endl;
 		}
-
 	}
 
 	first_trial_pose_from_silent_file.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + "_pose_from_silent_file.pdb" );

@@ -52,7 +52,7 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.El
 /// @details This must return a fresh instance of the ElecDensAtomwiseEnergy class,
 /// never an instance already in use
 methods::EnergyMethodOP
-ElecDensAtomwiseEnergyCreator::create_energy_method (
+ElecDensAtomwiseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
 	return methods::EnergyMethodOP( new ElecDensAtomwiseEnergy );
@@ -61,7 +61,7 @@ ElecDensAtomwiseEnergyCreator::create_energy_method (
 ScoreTypes
 ElecDensAtomwiseEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back ( elec_dens_atomwise );
+	sts.push_back( elec_dens_atomwise );
 	return sts;
 }
 
@@ -71,7 +71,7 @@ ElecDensAtomwiseEnergy::long_range_type() const {
 }
 
 ElecDensAtomwiseEnergy::ElecDensAtomwiseEnergy() :
-	parent ( methods::EnergyMethodCreatorOP( new ElecDensAtomwiseEnergyCreator ) ) {
+	parent( methods::EnergyMethodCreatorOP( new ElecDensAtomwiseEnergyCreator ) ) {
 	//Load map
 	get_density_map();
 }
@@ -80,12 +80,12 @@ ElecDensAtomwiseEnergy::~ElecDensAtomwiseEnergy() {}
 
 /// clone
 methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
-	return methods::EnergyMethodOP( new ElecDensAtomwiseEnergy ( *this ) );
+	return methods::EnergyMethodOP( new ElecDensAtomwiseEnergy( *this ) );
 }
 
 
 void
-ElecDensAtomwiseEnergy::setup_for_scoring (
+ElecDensAtomwiseEnergy::setup_for_scoring(
 	pose::Pose & pose,
 	ScoreFunction const &
 ) const {
@@ -93,31 +93,31 @@ ElecDensAtomwiseEnergy::setup_for_scoring (
 
 	// Do we have a map?
 	if ( !get_density_map().isMapLoaded() ) {
-		utility_exit_with_message ( "Density scoring function called but no map loaded." );
+		utility_exit_with_message( "Density scoring function called but no map loaded." );
 	}
 
 	// make sure the root of the FoldTree is a virtual atom and is followed by a jump
 	// if not, emit warning
-	kinematics::Edge const &root_edge ( *pose.fold_tree().begin() );
+	kinematics::Edge const &root_edge( *pose.fold_tree().begin() );
 	int virt_res_idx = root_edge.start();
-	conformation::Residue const &root_res ( pose.residue ( virt_res_idx ) );
+	conformation::Residue const &root_res( pose.residue( virt_res_idx ) );
 	pose_is_proper = true;
 
 	if ( root_res.aa() != core::chemical::aa_vrt || root_edge.label() < 0 ) {
 		pose_is_proper = false;  // we may be able to recover from this some time but for now just exit
-		utility_exit_with_message ( "Fold tree is not set properly for density scoring!" );
+		utility_exit_with_message( "Fold tree is not set properly for density scoring!" );
 	}
 
 	// create LR energy container
-	LongRangeEnergyType const & lr_type ( long_range_type() );
-	Energies & energies ( pose.energies() );
-	bool create_new_lre_container ( false );
+	LongRangeEnergyType const & lr_type( long_range_type() );
+	Energies & energies( pose.energies() );
+	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container ( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == 0 ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container ( lr_type );
-		OneToAllEnergyContainerOP dec ( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
+		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer >( lrc ) );
 
 		// make sure size or root did not change
 		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
@@ -134,23 +134,23 @@ ElecDensAtomwiseEnergy::setup_for_scoring (
 
 	//Pre-calculate the normalization factor and the correlation per
 	//atom
-	get_density_map().compute_normalization ( pose );
+	get_density_map().compute_normalization( pose );
 	get_density_map().precompute_unweighted_score();
 }
 
 ///////////////////////////////////////////////////////////////////////
 ///
-bool ElecDensAtomwiseEnergy::defines_residue_pair_energy (
+bool ElecDensAtomwiseEnergy::defines_residue_pair_energy(
 	pose::Pose const & pose,
 	Size res1,
 	Size res2
 ) const {
-	return ( pose.residue ( res1 ).aa() == core::chemical::aa_vrt || pose.residue ( res2 ).aa() == core::chemical::aa_vrt );
+	return ( pose.residue( res1 ).aa() == core::chemical::aa_vrt || pose.residue( res2 ).aa() == core::chemical::aa_vrt );
 }
 
 ///Compute the residue energy
 void
-ElecDensAtomwiseEnergy::residue_pair_energy (
+ElecDensAtomwiseEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
@@ -163,12 +163,12 @@ ElecDensAtomwiseEnergy::residue_pair_energy (
 		if ( rsd2.aa() == core::chemical::aa_vrt ) return;
 	}
 
-	conformation::Residue const &rsd ( rsd1.aa() == core::chemical::aa_vrt ? rsd2 : rsd1 );
-	emap[elec_dens_atomwise] = get_density_map().residue_score ( rsd );
+	conformation::Residue const &rsd( rsd1.aa() == core::chemical::aa_vrt ? rsd2 : rsd1 );
+	emap[elec_dens_atomwise] = get_density_map().residue_score( rsd );
 }
 
 void
-ElecDensAtomwiseEnergy::eval_atom_derivative (
+ElecDensAtomwiseEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
@@ -181,18 +181,17 @@ ElecDensAtomwiseEnergy::eval_atom_derivative (
 	core::Size const &atm_id = id.atomno();
 
 	// derivatives only defined for (non-VRT) heavyatoms
-	if ( pose.residue ( rsd_id ).aa() == core::chemical::aa_vrt ) return;
+	if ( pose.residue( rsd_id ).aa() == core::chemical::aa_vrt ) return;
 
 	// if (hydrogen) return
-	if ( !pose.residue ( rsd_id ).atom_type ( atm_id ).is_heavyatom() ) return;
+	if ( !pose.residue( rsd_id ).atom_type( atm_id ).is_heavyatom() ) return;
 
-	numeric::xyzVector<core::Real> grad = get_density_map().atom_gradient ( pose, rsd_id, atm_id );
-	Vector atom_xyz = pose.xyz ( id );
+	numeric::xyzVector<core::Real> grad = get_density_map().atom_gradient( pose, rsd_id, atm_id );
+	Vector atom_xyz = pose.xyz( id );
 	Vector f2 = grad;
-	Vector f1 ( atom_xyz.cross ( atom_xyz - f2 ) );
+	Vector f1( atom_xyz.cross( atom_xyz - f2 ) );
 	F1 += weights[ elec_dens_atomwise ] * f1;
 	F2 += weights[ elec_dens_atomwise ] * f2;
-	return;
 }
 
 core::Size

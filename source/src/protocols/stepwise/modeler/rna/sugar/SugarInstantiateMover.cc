@@ -42,10 +42,10 @@ SugarInstantiateMover::~SugarInstantiateMover()
 
 void
 SugarInstantiateMover::apply( pose::Pose & pose ){
-	if ( pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
+	if ( pose.residue_type( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) {
 		pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, moving_res_ ); //May 31, 2010
 	}
-	if ( pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) {
+	if ( pose.residue_type( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) {
 		pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, moving_res_ );
 	}
 }

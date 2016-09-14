@@ -48,7 +48,7 @@ namespace modeler {
 namespace rna {
 
 void
-print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const & type ){
+print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const & type ) {
 
 	using namespace core::id;
 	using namespace core::chemical;
@@ -93,23 +93,15 @@ utility::vector1 < Residue_info >
 Convert_rebuild_residue_string_to_list( std::string const& rebuild_residue_string ){
 
 	utility::vector1 < Residue_info > rebuild_copy_dofs;
-
-	// if(rebuild_residue_string=="none"){
-	//  return rebuild_copy_dofs;
-	// }
-
 	utility::vector1< std::string > nucleotides_token = tokenize( rebuild_residue_string, "-" );
 
-	for ( Size i = 1; i <= nucleotides_token.size(); i++ ) {
-		//   TR<< nucleotides_token[i] << " ";
-
+	for ( std::string const & token : nucleotides_token ) {
+		//   TR<< token << " ";
 		Residue_info res_info;
-		res_info.name = get_three_letter_name( nucleotides_token[i].substr( 0, 1 ) );
-		//std::string seq_num_string=nucleotides_token[i].substr(1,2);
-		std::string seq_num_string = nucleotides_token[i].substr( 1, nucleotides_token[i].length() - 1 );
+		res_info.name = get_three_letter_name( token.substr( 0, 1 ) );
+		std::string seq_num_string = token.substr( 1, token.length() - 1 );
 		res_info.seq_num = string_to_int( seq_num_string );
 		rebuild_copy_dofs.push_back( res_info );
-
 	}
 	//  TR << std::endl;
 
@@ -152,11 +144,10 @@ get_three_letter_name( std::string const & one_letter_name ){
 
 Size
 get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map ){
-
 	Size max_seq_num = 0;
-	for ( std::map< Size, Size > ::const_iterator it = my_map.begin(), end = my_map.end(); it != end; ++it ) {
-		TR << it->first << " =  > " << it->second << std::endl;
-		if ( it->first >= max_seq_num ) max_seq_num = it->first;
+	for ( auto const & elem : my_map ) {
+		TR << elem.first << " =  > " << elem.second << std::endl;
+		if ( elem.first >= max_seq_num ) max_seq_num = elem.first;
 	}
 	return max_seq_num;
 }
@@ -234,21 +225,21 @@ get_copy_dofs_from_fasta( std::string const & full_fasta_sequence ){
 Residue_info
 get_residue_from_seq_num( Size const & seq_num, utility::vector1 < Residue_info > const & copy_dofs ){
 
-	for ( Size i = 1; i <= copy_dofs.size(); i++ ) {
-		if ( seq_num == copy_dofs[i].seq_num ) {
-			return copy_dofs[i];
+	for ( auto const & copy_dof : copy_dofs ) {
+		if ( seq_num == copy_dof.seq_num ) {
+			return copy_dof;
 		}
 	}
 	TR << "Error, in get_residue_from_seq_num function. The seq_num " << seq_num << " does not exist in the copy_dofs" <<  std::endl;
-	exit ( 1 );
+	exit( 1 );
 }
 
 
 bool
 contain_residue_at_seq_num( Size seq_num, utility::vector1 < Residue_info > const & copy_dofs ){
 
-	for ( Size j = 1; j <= copy_dofs.size(); j++ ) {
-		if ( seq_num == copy_dofs[j].seq_num ) {
+	for ( auto const & copy_dof : copy_dofs ) {
+		if ( seq_num == copy_dof.seq_num ) {
 			return true;
 		}
 	}
@@ -294,9 +285,9 @@ set_difference( utility::vector1 < Residue_info > const & copy_dofs_1, utility::
 
 	utility::vector1 < Residue_info > set_difference_copy_dofs;
 
-	for ( Size i = 1; i <= copy_dofs_1.size(); i++ ) {
-		if ( contain_residue_at_seq_num( copy_dofs_1[i].seq_num, copy_dofs_2 ) ) continue;
-		set_difference_copy_dofs.push_back( copy_dofs_1[i] );
+	for ( auto const & copy_dof : copy_dofs_1 ) {
+		if ( contain_residue_at_seq_num( copy_dof.seq_num, copy_dofs_2 ) ) continue;
+		set_difference_copy_dofs.push_back( copy_dof );
 	}
 
 	return set_difference_copy_dofs;
@@ -307,9 +298,9 @@ set_union( utility::vector1 < Residue_info > const & copy_dofs_1, utility::vecto
 
 	utility::vector1 < Residue_info > union_copy_dofs = copy_dofs_1;
 
-	for ( Size i = 1; i <= copy_dofs_2.size(); i++ ) {
-		if ( contain_residue_at_seq_num( copy_dofs_2[i].seq_num, union_copy_dofs ) == false ) {
-			union_copy_dofs.push_back( copy_dofs_2[i] );
+	for ( auto const & copy_dof : copy_dofs_2 ) {
+		if ( contain_residue_at_seq_num( copy_dof.seq_num, union_copy_dofs ) == false ) {
+			union_copy_dofs.push_back( copy_dof );
 		}
 	}
 

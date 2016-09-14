@@ -37,7 +37,6 @@ check_can_prepend( utility::vector1< Size > const & seq_num_list );
 bool
 check_can_append( utility::vector1< Size > const & seq_num_list );
 
-
 void
 output_pair_size( std::pair < Size, Size > const & pair_size, std::ostream & outstream = std::cout );
 

@@ -131,8 +131,8 @@ ContextDependentGeometricSolEnergy::setup_for_packing(
 	}
 
 	bool might_be_designing( false );
-	for ( Size n = 1; n <= designing_residues.size(); n++ ) {
-		if ( designing_residues[n] ) {
+	for ( bool const design : designing_residues ) {
+		if ( design ) {
 			might_be_designing = true;
 			break;
 		}

@@ -403,7 +403,6 @@ StepWisePoseAligner::do_superimposition( pose::Pose & pose ) {
 		}
 	}
 
-
 	TR << "RMSD " << F(5,3,rmsd_) <<
 		" (" << natoms_rmsd() << " atoms in " << make_tag_with_dashes( sub_to_full(rmsd_res_in_pose_,pose) ) << "), superimposed on " << superimpose_atom_id_map_.size() << " atoms in " <<
 		make_tag_with_dashes( sub_to_full(superimpose_res_in_pose_,pose) ) << " (RMSD " <<
@@ -491,7 +490,6 @@ StepWisePoseAligner::add_coordinate_constraints_from_map( pose::Pose & pose, pos
 	}
 
 	pose.constraint_set( cst_set );
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

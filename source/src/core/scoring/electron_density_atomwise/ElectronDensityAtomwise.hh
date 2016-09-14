@@ -58,17 +58,17 @@ public:
 	void readMRCandResize();
 
 	//Compute Normalization factor given a pose
-	void compute_normalization ( pose::Pose const & pose );
+	void compute_normalization( pose::Pose const & pose );
 
 	//Pre-compute the unweighted score of atom in a gride
 	void precompute_unweighted_score();
 
 	//Return the score of a given residue
 	core::Real
-	residue_score ( core::conformation::Residue const & rsd );
+	residue_score( core::conformation::Residue const & rsd );
 
 	//Return the gradient of an atom
-	numeric::xyzVector< core::Real > atom_gradient ( core::pose::Pose const &
+	numeric::xyzVector< core::Real > atom_gradient( core::pose::Pose const &
 		pose, core::Size const & rsd_id, core::Size const & atm_id );
 
 private:
@@ -99,50 +99,50 @@ private:
 	//helper function for symmetry
 	void computeCrystParams();
 	void expandToUnitCell();
-	void initializeSymmOps ( utility::vector1< std::string > const & symList );
+	void initializeSymmOps( utility::vector1< std::string > const & symList );
 
 	//resize the map
-	void resize ( core::Real approxGridSpacing );
+	void resize( core::Real approxGridSpacing );
 
 	//////////////////////////////////////////////////////////////////////
 	//compute index to cartesian transformation
 	void calculate_index2cart();
 
 	//generate 1d gaussian function and store it.
-	void generate_gaussian_1d ( core::Real const & sigma );
+	void generate_gaussian_1d( core::Real const & sigma );
 	//Return the value of 1D gaussian given the distance using stored values
-	core::Real gaussian_1d ( core::Real const & dist );
+	core::Real gaussian_1d( core::Real const & dist );
 
 	//return the weight of atom given its element type
-	core::Size get_atom_weight ( std::string const & elt );
+	core::Size get_atom_weight( std::string const & elt );
 
 	//Spline interpolation
-	core::Real spline_interpolation ( ObjexxFCL::FArray3D < double >
+	core::Real spline_interpolation( ObjexxFCL::FArray3D < double >
 		& coeffs, numeric::xyzVector< core::Real > const & idxX ) const;
 
-	void spline_coeffs ( ObjexxFCL::FArray3D< double > & data,
+	void spline_coeffs( ObjexxFCL::FArray3D< double > & data,
 		ObjexxFCL::FArray3D< double > & coeffs );
 
 	//Trilinear Interpolation
-	core::Real trilinear_interpolation ( ObjexxFCL::FArray3D< double > & score,
+	core::Real trilinear_interpolation( ObjexxFCL::FArray3D< double > & score,
 		numeric::xyzVector< core::Real > const & index );
 
-	numeric::xyzVector<core::Real> trilinear_gradient ( ObjexxFCL::FArray3D
+	numeric::xyzVector<core::Real> trilinear_gradient( ObjexxFCL::FArray3D
 		<double> & score, numeric::xyzVector< core::Real > const & index );
 
 	//Convert a vector from xyz coordinate to index coordinate, shift w/ respect to the origin and fold into the unit cell
-	numeric::xyzVector< core::Real > xyz2index_in_cell ( numeric::xyzVector< core::Real > const & xyz_vector );
+	numeric::xyzVector< core::Real > xyz2index_in_cell( numeric::xyzVector< core::Real > const & xyz_vector );
 
 	//Convert a vector from fractional coordinate to index coordinate
-	numeric::xyzVector< core::Real > frac2index ( numeric::xyzVector< core::Real > const &frac_vector );
+	numeric::xyzVector< core::Real > frac2index( numeric::xyzVector< core::Real > const &frac_vector );
 
 	//Convert a vector from index coordinate to fractional coordinate
-	numeric::xyzVector< core::Real > index2frac ( numeric::xyzVector< core::Real > const & frac_vector );
-	numeric::xyzVector< core::Real > index2frac ( numeric::xyzVector< int > const & frac_vector );
+	numeric::xyzVector< core::Real > index2frac( numeric::xyzVector< core::Real > const & frac_vector );
+	numeric::xyzVector< core::Real > index2frac( numeric::xyzVector< int > const & frac_vector );
 };
 
 //@brief The EDM instance
-ElectronDensityAtomwise& get_density_map ();
+ElectronDensityAtomwise& get_density_map();
 
 } // electron_density_atomwise
 } // scoring

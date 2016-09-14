@@ -197,9 +197,8 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 	// direct interactions, including special non-pair-wise handling of phosphate oxygens
 	utility::vector1< Real > phosphate_scores;
 	bool is_phosphate_oxygen( false );
-	for ( Size m = 1; m <= atom_numbers1.size(); ++m ) {
+	for ( Size const i : atom_numbers1 ) {
 
-		Size const i = atom_numbers1[ m ];
 		if ( rsd1.is_virtual( i ) ) continue;
 		Vector const & i_xyz( rsd1.xyz( i ) );
 

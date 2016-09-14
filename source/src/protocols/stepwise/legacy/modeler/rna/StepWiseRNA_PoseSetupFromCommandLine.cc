@@ -168,6 +168,7 @@ namespace rna {
 
 //////////////////////////////////////////////////////////////////////////////////////
 //Apply chi angle constraint to the purines --
+// AMW TODO: generalize to any NCNT
 void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose ) {
 
 	using namespace core::conformation;
@@ -183,10 +184,10 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 		if ( res.is_RNA() && ( res.aa() == na_rad || res.aa() == na_rgu ) ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
 			core::scoring::func::FuncOP chi_cst_func( new core::scoring::func::CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
-			AtomID const atom1 ( res.atom_index( "C2'" ), i );
-			AtomID const atom2 ( res.atom_index( "C1'" ), i );
-			AtomID const atom3 ( res.is_purine() ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
-			AtomID const atom4 ( res.is_purine() ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
+			AtomID const atom1( res.atom_index( "C2'" ), i );
+			AtomID const atom2( res.atom_index( "C1'" ), i );
+			AtomID const atom3( res.is_purine() ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
+			AtomID const atom4( res.is_purine() ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
 			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) ) ) );
 		}
 	}
@@ -196,7 +197,7 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 
 //////////////////////////////////////////////////////////////////////////////////////
 std::string
-get_working_directory(){
+get_working_directory() {
 
 	char cCurrentPath[FILENAME_MAX];
 	std::string current_directory_string;
@@ -214,7 +215,7 @@ get_working_directory(){
 
 ///////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< core::Size >
-get_fixed_res( core::Size const nres ){
+get_fixed_res( core::Size const nres ) {
 
 	utility::vector1< Size > blank_size_vector;
 
@@ -234,14 +235,11 @@ get_fixed_res( core::Size const nres ){
 
 	if ( fixed_res_list.size() != 0  ) {
 		actual_fixed_res_list = fixed_res_list;
-
 	} else if ( minimize_res_list.size() != 0 ) {
-
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 			if ( minimize_res_list.has_value( seq_num ) ) continue;
 			actual_fixed_res_list.push_back( seq_num );
 		}
-
 	} else { //here I am being a little stringent and require user specify one of these option. Could just return empty list...
 		//utility_exit_with_message( "User did not specify both fixed res and minimize_res!" );
 		TR << " WARNING! User did not specify either fixed res and minimize_res!" << std::endl;
@@ -286,16 +284,13 @@ is_nonempty_input_silent_file( std::string const & input_silent_file, std::strin
 		if ( found_next_line ) std::cout << "input silent_file contain more than one line! next_line = " << next_line << std::endl;
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		return false;
-	} else {
-		return true;
 	}
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< core::Size >
 get_input_res( core::Size const nres, std::string const & pose_num ){
-
-
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::stepwise::modeler::rna;
@@ -313,7 +308,6 @@ get_input_res( core::Size const nres, std::string const & pose_num ){
 		utility_exit_with_message( "Invalid pose_num " + pose_num + ", must by either 1 or 2 !" );
 	}
 
-
 	if ( input_res_list.size() != 0 && missing_res_list.size() != 0 ) {
 		utility_exit_with_message( "User Cannot specify both input_res" + pose_num + " and missing_res" + pose_num + "!" );
 	}
@@ -323,26 +317,22 @@ get_input_res( core::Size const nres, std::string const & pose_num ){
 
 	if ( input_res_list.size() != 0 ) {
 		actual_input_res_list = input_res_list;
-
 	} else if ( missing_res_list.size() != 0 ) {
-
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 			if ( missing_res_list.has_value( seq_num ) ) continue;
 			actual_input_res_list.push_back( seq_num );
 		}
-
 	} else { //did not specify both input_res and missing_res, return empty list
 		TR.Debug << "user did not specify either input_res" << pose_num << " and missing_res" << pose_num << std::endl;
 	}
 
 	return actual_input_res_list;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< std::string >
-get_silent_file_tags(){
+get_silent_file_tags() {
 
 	using namespace protocols::stepwise::modeler::rna;
 
@@ -376,7 +366,6 @@ get_silent_file_tags(){
 			TR << "Open \"" << filtered_tag_file << "\" successful!" << std::endl;
 		}
 
-
 		//Be careful here... job_queue_ID start from ZERO!
 		int const queue_ID = option[ OptionKeys::stepwise::rna::job_queue_ID ]();
 		int ID = 0;
@@ -388,18 +377,15 @@ get_silent_file_tags(){
 		bool found_queue_ID = false;
 
 		while ( getline( infile, tag_pair_string ) ) {
-
 			if ( queue_ID == ID ) {
 				found_queue_ID = true;
 				break;
 			}
-
 			ID++;
 		}
 
 		//Warning queue_ID start at ZERO!
 		if ( found_queue_ID == false ) utility_exit_with_message( "found_queue_ID == false, queue_ID = " + string_of( queue_ID ) + " num_tag_string_in_file = " + string_of( ID ) );
-
 
 		TR << "import silent_file_tags: " << tag_pair_string << " from filter_output_filename = " << filtered_tag_file << std::endl;
 
@@ -412,7 +398,6 @@ get_silent_file_tags(){
 		input_silent_file_tags.push_back( line_list[2] );
 
 		stepwise::modeler::rna::output_title_text( "", TR );
-
 	}
 
 
@@ -425,19 +410,17 @@ get_silent_file_tags(){
 	}
 
 	return input_silent_file_tags;
-
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 core::scoring::ScoreFunctionOP
-create_scorefxn(){
+create_scorefxn() {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring;
-
 
 	std::string score_weight_file;
 
@@ -448,7 +431,6 @@ create_scorefxn(){
 		TR << "User passed in score:weight option: " << score_weight_file << std::endl;
 		num_score_weight_file++;
 	}
-
 
 	if ( num_score_weight_file == 0 ) {
 		//rna_loop_hires_04092010.wts is same as 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts
@@ -465,7 +447,6 @@ create_scorefxn(){
 
 	core::scoring::ScoreFunctionOP scorefxn = get_score_function();
 
-
 	if ( ! option[ OptionKeys::stepwise::rna::minimize_and_score_sugar]() ) {
 		TR << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
 		scorefxn->set_weight( rna_sugar_close, 0 );
@@ -477,7 +458,6 @@ create_scorefxn(){
 	TR.Debug << "---------score function weights----------" << std::endl;
 	scorefxn->show( TR.Debug );
 	TR.Debug << "-----------------------------------------" << std::endl;
-
 
 	return scorefxn;
 }
@@ -623,10 +603,10 @@ setup_simple_full_length_rna_working_parameters(){
 	print_WorkingParameters_info( working_parameters, "simple_full_length_working_parameters", TR, true /*is_simple_full_length_WP*/ );
 
 	return working_parameters;
-
 }
 
 
+// AMW TODO: Move this beautiful documentation to, well, the documentation.
 //////////////////////////////////////////////////////////////////////////////////////
 stepwise::modeler::working_parameters::StepWiseWorkingParametersOP
 setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_input_pose /* = false */ ){
@@ -801,7 +781,6 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 	stepwise_rna_working_parameters_setup.apply();
 
 	return stepwise_rna_working_parameters_setup.working_parameters();
-
 }
 
 
@@ -850,8 +829,6 @@ setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 	//////////////////////////////////////////////////////////////////////////////////////////
 	stepwise_rna_pose_setup->set_input_tags( input_tags );
 	stepwise_rna_pose_setup->set_silent_files_in( silent_files_in );
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -940,38 +917,36 @@ get_tag_and_silent_file_for_struct( std::string & swa_silent_file,
 void
 ensure_directory_for_out_silent_file_exists(){
 
-	if ( option[ out::file::silent ].user() ) {
-
-		std::string outfile =  option[ out::file::silent]();
-
-		std::ofstream outstream;
-		outstream.open( outfile.c_str() ); // for writing
-
-		if ( outstream.fail() ) {
-			// wow, this is tortuous -- libgen.h has dirname, but requires and output C-style char.
-			TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
+	if ( ! option[ out::file::silent ].user() ) return;
+	
+	std::string outfile =  option[ out::file::silent]();
+	
+	std::ofstream outstream;
+	outstream.open( outfile.c_str() ); // for writing
+	
+	if ( outstream.fail() ) {
+		// wow, this is tortuous -- libgen.h has dirname, but requires and output C-style char.
+		TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
 #ifdef WIN32
-			//char * outdir; memory leak if we're just gonna exit right after?
-			utility_exit_with_message( "protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.cc dirname is not implemented under Windows!" );
+		//char * outdir; memory leak if we're just gonna exit right after?
+		utility_exit_with_message( "protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.cc dirname is not implemented under Windows!" );
 #else
-			char * outfile_char = strdup( outfile.c_str() );
-			char * outdir =  dirname( outfile_char );
-
-			std::stringstream mkdir_command;
-			mkdir_command << "mkdir -p " << outdir;
-			int return_code = system( mkdir_command.str().c_str() );
-			if ( return_code != 0 ) {
-				TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
-			}
-			// AMW cppcheck: deleting outdir if we're not on win32
-			delete[] outdir;
-#endif
-		} else {
-			outstream.close();
-			std::remove( outfile.c_str() ); // note that this removes the prior outfile if it exists...
+		char * outfile_char = strdup( outfile.c_str() );
+		char * outdir =  dirname( outfile_char );
+		
+		std::stringstream mkdir_command;
+		mkdir_command << "mkdir -p " << outdir;
+		int return_code = system( mkdir_command.str().c_str() );
+		if ( return_code != 0 ) {
+			TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
 		}
+		// AMW cppcheck: deleting outdir if we're not on win32
+		delete[] outdir;
+#endif
+	} else {
+		outstream.close();
+		std::remove( outfile.c_str() ); // note that this removes the prior outfile if it exists...
 	}
-
 }
 
 

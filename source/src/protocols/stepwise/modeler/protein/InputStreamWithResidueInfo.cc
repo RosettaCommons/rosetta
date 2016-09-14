@@ -347,9 +347,9 @@ InputStreamWithResidueInfo::cleanup_pose( pose::Pose & import_pose ) const {
 	// Also remove VIRTUAL_RESIDUE_VARIANT variant?
 
 	for ( Size n = 1; n <= import_pose.size(); n++  ) {
-		for ( Size i = 1; i <= remove_variants.size(); i++ ) {
-			if ( import_pose.residue_type( n ).has_variant_type( remove_variants[ i ] ) ) {
-				pose::remove_variant_type_from_pose_residue( import_pose, remove_variants[ i ] , n );
+		for ( auto const & variant : remove_variants ) {
+			if ( import_pose.residue_type( n ).has_variant_type( variant ) ) {
+				pose::remove_variant_type_from_pose_residue( import_pose, variant, n );
 			}
 		}
 	}
@@ -379,7 +379,6 @@ InputStreamWithResidueInfo::check_sequence( pose::Pose const & pose, pose::Pose 
 		}
 	}
 	if ( !match ) utility_exit_with_message( "mismatch in sequence between input pose and desired sequence, given input_res " );
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -389,8 +388,7 @@ initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithRes
 	utility::vector1< std::string > const & silent_files_in,
 	utility::vector1< Size > const & input_res,
 	utility::vector1< Size > const & input_res2
-){
-
+) {
 	using namespace import_pose::pose_stream;
 
 	utility::vector1< utility::vector1< Size > > input_res_vectors;

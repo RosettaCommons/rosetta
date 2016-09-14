@@ -20,6 +20,7 @@ sources = {
 	"FARNA_Optimizer",
 	"RNA_DeNovoProtocol",
 	"ErraserMinimizerMover",
+	"RNAIdealizeMover",
 	"RNAThreadAndMinimizeMover",
 	"RNA_FragmentMonteCarlo",
 	"util",

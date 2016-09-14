@@ -509,10 +509,8 @@ RNA_LowResolutionPotential::get_rna_axis_score(
 Real
 RNA_LowResolutionPotential::get_rna_stagger_score( Distance const height, Real & deriv ) const
 {
-
 	Real value( 0.0 );
 	deriv = 0.0;
-
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// SILLY HACK -- no the problem isn't here.
@@ -1417,7 +1415,6 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 	}
 
 	return total_score;
-
 }
 
 

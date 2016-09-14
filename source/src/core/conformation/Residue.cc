@@ -1653,7 +1653,7 @@ Residue::determine_nonstandard_polymer_status()
 	nonstandard_polymer_ = false;
 }
 
-
+/// AMW TODO: somehow SWA spends literally 3.7% of its time calling this function.
 /// @note A misnomer; this should really be called "is_virtual_atom()". ~Labonte
 bool
 Residue::is_virtual( Size const & atomno ) const
