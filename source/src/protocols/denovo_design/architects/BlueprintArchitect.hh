@@ -6,7 +6,7 @@
 // (c) under license. The Rosetta software is developed by the contributing
 // (c) members of the Rosetta Commons. For more information, see
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
-// (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
+// (c) University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/denovo_design/architects/BlueprintArchitect.hh
 /// @brief Designs a structure using a Blueprint file

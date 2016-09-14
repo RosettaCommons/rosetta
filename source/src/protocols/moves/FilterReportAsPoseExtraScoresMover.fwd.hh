@@ -6,7 +6,7 @@
 // (c) under license. The Rosetta software is developed by the contributing
 // (c) members of the Rosetta Commons. For more information, see
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
-// (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
+// (c) University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/moves/FilterReportAsPoseExtraScoresMover.fwd.hh
 /// @brief This Mover runs a Filter and dumps the report_sm value to Pose's extra scores (for later JD reporting)

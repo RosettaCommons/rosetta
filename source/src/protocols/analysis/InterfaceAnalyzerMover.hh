@@ -182,6 +182,7 @@ public:
 	typedef std::pair< one_group, one_group > group_pair;
 	typedef utility::vector1< group_pair > group_set;
 
+	// I think this ctor is also the 'default ctor' because it can take no args
 	/// @brief Constructor for 2 chain poses, separates them by jump number
 	/// @details pack_separated and pack_input only pack the detected interface residues.
 	InterfaceAnalyzerMover(

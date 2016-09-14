@@ -132,6 +132,7 @@ InterfaceAnalyzerMoverCreator::mover_name()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////InterfaceAnalyzerMover///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	core::Size interface_jump,
 	bool const tracer,
@@ -1511,7 +1512,9 @@ InterfaceAnalyzerMover::parse_my_tag(
 	//      tracer_(false), //output to tracer
 	//      calcs_ready_(false), //calculators are not ready
 	//      use_jobname_(false), //use the pose name
-	set_defaults();
+	//Having set_defaults here overrides several user-set values!
+	//Default ctor exists to do this.  SML July 26 2016
+	//set_defaults();
 }
 
 void InterfaceAnalyzerMover::setup_score_data() {

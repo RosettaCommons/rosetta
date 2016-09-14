@@ -731,7 +731,7 @@ Options = Option_Group( '',
 			Option( 'output_pose_energies_table', 'Boolean', default = 'true', desc='Output the pose energies table.  This can be overridden'),
 			Option( 'output_pose_cache_data', 'Boolean', default = 'true', desc='Output the pose cache.'),
 			Option( 'output_pose_fold_tree', 'Boolean', default = 'false', desc = "Output the foldtree of the pose. Will go in rosetta_additional column for cif files."),
-			
+
 			# mmCIF options
 			Option( 'cif_extra_data_separate_file', 'Boolean', default='false', desc="When outputting mmCIF, write extra data and energies to separate files (JOBNAME.extradata and JOBNAME.eneriges)"),
 
@@ -745,7 +745,7 @@ Options = Option_Group( '',
 
 			# SDF file options
 			Option( 'no_extra_sdf_data', 'Boolean', desc='Do not add extra round-tripping data to SDF file output', default='false' ),
-			
+
 			#DEPRECATED OPTIONS
 			Option( 'no_scores_in_pdb', 'Boolean', desc = "Deprated option.  See -output_pose_energies_table and -output_pose_cache_data"),
 
@@ -2456,7 +2456,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 
 		Option( 'loopscores', 'String',
-			desc='Calculate loopscores individually',
+			desc='Calculate loopscores individually for these loops (path to loopsfile)',
 		),
 		Option( 'timer', 'Boolean',
 			desc='Output time spent in seconds for each loop modeling job',

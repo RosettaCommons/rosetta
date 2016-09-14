@@ -8,8 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   ScoreMover.cc
-///
-/// @brief
+/// @brief  Applies a ScoreFunction to a Pose.  Also has CASP and loop modeling features.
 /// @author Monica Berrondo
 
 // unit headers
@@ -170,7 +169,7 @@ ScoreMover::apply( Pose & pose ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if ( option[ OptionKeys::loops::loopscores].user() ) {
+	if ( option[ OptionKeys::loops::loopscores].user() ){ //Option is string containing loops to score
 		core::pose::Pose native_pose;
 		if ( get_native_pose() ) {
 			native_pose = *get_native_pose();
@@ -233,6 +232,10 @@ void ScoreMover::register_options() {
 	option.add_relevant( score::ramaneighbors    );
 	option.add_relevant( score::optH_weights     );
 	option.add_relevant( score::optH_patch       );
+	option.add_relevant( basic::options::OptionKeys::loops::loopscores); //requires namespacing b/c protocols::loops also exists
+	option.add_relevant( evaluation::score_exclude_res);
+	//option.add_relevant( in::file::native        ); // implicit from use of if( get_native_pose())?
+
 }
 
 } // simple_moves
