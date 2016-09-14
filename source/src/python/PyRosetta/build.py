@@ -31,7 +31,7 @@ PlatformBits = platform.architecture()[0][:2]
 _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)  # should be formatted: 2.7 or 3.5
 #_python_version_ = '{}.{}.{}'.format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)  # should be formatted: 2.7.6 or 3.5.0
 
-_pybind11_version_ = '356bf94a850346f4036a894e2197c9944c69bd0d'  # 'PyRosetta'
+_pybind11_version_ = '591a9999c2ccc68efa345363e7de2e5ef4fe512f'  # 'PyRosetta'
 
 _banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'

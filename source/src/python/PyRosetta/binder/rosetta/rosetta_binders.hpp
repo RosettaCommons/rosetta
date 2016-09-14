@@ -287,7 +287,7 @@ public:
 		cl.def("__len__", [](Vector const &v) { return v.size(); } ); // workaround for ld: warning: direct access in ... means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
 
 		cl.def("__iter__", [](Vector &v) {
-				return pybind11::make_iterator<ItType, ItType, T>(v.begin(), v.end());
+				return pybind11::make_iterator<pybind11::return_value_policy::reference_internal, ItType, ItType, T>(v.begin(), v.end());
 			},
 			pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
 			);

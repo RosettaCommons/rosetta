@@ -401,6 +401,10 @@ bool is_bindable(FunctionDecl const *F)
 /// check if methods could be overload in Python
 bool is_overloadable(CXXMethodDecl const *M)
 {
+	// Pybind11 now allow returning a reference to primitive types or string so for now always return true
+	return true;
+
+	/*
 	QualType qt = M->getReturnType().getCanonicalType();
 
 
@@ -413,6 +417,7 @@ bool is_overloadable(CXXMethodDecl const *M)
 	}
 
 	return true;
+	*/
 }
 
 

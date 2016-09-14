@@ -460,11 +460,35 @@ bool is_callback_structure_constructible(CXXRecordDecl const *C)
 //         pybind11::function overload = pybind11::get_overload(static_cast<const cname *>(this), name); \
 //         if (overload) \
 //             return overload(__VA_ARGS__).template cast<ret_type>();  }
+//
+// 		pybind11::gil_scoped_acquire gil; \
+// 		pybind11::function overload = pybind11::get_overload(static_cast<const cname *>(this), name); \
+// 		if (overload) { \
+// 			auto o = overload(__VA_ARGS__); \
+// 			if (pybind11::detail::cast_is_temporary_value_reference<ret_type>::value) { \
+// 				static pybind11::detail::overload_caster_t<ret_type> caster; \
+// 				return pybind11::detail::cast_ref<ret_type>(std::move(o), caster); \
+// 			} \
+// 			else return pybind11::detail::cast_safe<ret_type>(std::move(o)); \
+// 		} \
+// 	}
+
+
 const char * call_back_function_body_template = R"_(
 pybind11::gil_scoped_acquire gil;
-pybind11::function overload = pybind11::get_overload(static_cast<const {} *>(this), "{}");
-if (overload) return overload.operator()<pybind11::return_value_policy::reference>({}).template cast<{}>();
+pybind11::function overload = pybind11::get_overload(static_cast<const {0} *>(this), "{1}");
+if (overload) {{
+	auto o = overload.operator()<pybind11::return_value_policy::reference>({2});
+	if (pybind11::detail::cast_is_temporary_value_reference<{3}>::value) {{
+		static pybind11::detail::overload_caster_t<{3}> caster;
+		return pybind11::detail::cast_ref<{3}>(std::move(o), caster);
+	}}
+	else return pybind11::detail::cast_safe<{3}>(std::move(o));
+}}
 )_";
+//if (overload) return overload.operator()<pybind11::return_value_policy::reference>({}).template cast<{}>();
+
+
 
 // generate call-back overloads for all public virtual functions in C including it bases
 string bind_member_functions_for_call_back(CXXRecordDecl const *C, string const & class_name, /*string const & base_type_alias,*/ set<string> &binded, int &ret_id, std::vector<clang::FunctionDecl const *> &prefix_includes/*, std::set<clang::NamedDecl const *> &prefix_includes_stack*/)
