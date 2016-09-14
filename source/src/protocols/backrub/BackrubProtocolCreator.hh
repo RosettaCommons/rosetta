@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file /BackrubProtocolCreator.hh
+/// @file BackrubProtocolCreator.hh
 /// @brief
 /// @author jadolfbr ()
 
@@ -19,16 +19,12 @@
 namespace protocols {
 namespace backrub {
 
-
 class BackrubProtocolCreator : public protocols::moves::MoverCreator {
 public:
 
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	static std::string mover_name();
-
-
-
 };
 
 }

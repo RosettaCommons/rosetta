@@ -175,11 +175,11 @@ protocols::backrub::BackrubMover::parse_my_tag(
 
 	if ( tag->hasOption("pivot_atoms") ) {
 		std::string const pivot_atoms_string( tag->getOption<std::string>("pivot_atoms") );
-		pivot_atoms_ = utility::string_split( pivot_atoms_string, ',' );
+		this->set_pivot_atoms( utility::string_split( pivot_atoms_string, ',' ) );
 	}
 
-	min_atoms_ = tag->getOption<core::Size>( "min_atoms", min_atoms_ );
-	max_atoms_ = tag->getOption<core::Size>( "max_atoms", max_atoms_ );
+	this->set_min_atoms( tag->getOption<core::Size>( "min_atoms", min_atoms_ ) );
+	this->set_max_atoms( tag->getOption<core::Size>( "max_atoms", max_atoms_ ) );
 	max_angle_disp_4_ = tag->getOption<core::Real>( "max_angle_disp_4", max_angle_disp_4_ );
 	max_angle_disp_7_ = tag->getOption<core::Real>( "max_angle_disp_7", max_angle_disp_7_ );
 	max_angle_disp_slope_ = tag->getOption<core::Real>( "max_angle_disp_slope", max_angle_disp_slope_ );

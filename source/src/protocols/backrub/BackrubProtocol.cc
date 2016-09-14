@@ -11,6 +11,7 @@
 /// @brief run backrub Monte Carlo
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) (Move to Protocols from apps, add Movemap support, some refactoring)
+/// @author Kyle Barlow
 /// @details
 /// Currently a work in progress. The goal is to match the features of rosetta++ -backrub_mc
 
@@ -33,6 +34,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
@@ -52,6 +54,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -63,6 +66,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/tag/Tag.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -91,15 +95,35 @@ static THREAD_LOCAL basic::Tracer TR("protocols.backrub.BackrubProtocol");
 namespace protocols {
 namespace backrub {
 
+std::string
+protocols::backrub::BackrubProtocolCreator::keyname() const {
+	return BackrubProtocolCreator::mover_name();
+}
 
-BackrubProtocol::BackrubProtocol(): Mover(),
-	scorefxn_(nullptr),
-	main_task_factory_(nullptr),
+protocols::moves::MoverOP
+protocols::backrub::BackrubProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BackrubProtocol );
+}
+
+std::string
+protocols::backrub::BackrubProtocolCreator::mover_name() {
+	return "BackrubProtocol";
+}
+
+BackrubProtocol::BackrubProtocol():
+	Mover(),
+	scorefxn_(NULL),
+	main_task_factory_(NULL),
 	backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() )),
 	smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
 	sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
 	packrotamersmover_(protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover())),
-	movemap_smallmover_(nullptr)
+	movemap_smallmover_(NULL),
+	minimize_movemap_(NULL),
+	packing_operation_(NULL),
+	trajectory_(false),
+	trajectory_gz_(false),
+	trajectory_stride_(100)
 {
 	read_cmd_line_options();
 }
@@ -110,53 +134,127 @@ BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp): Mover(bp),
 	backrubmover_(bp.backrubmover_),
 	smallmover_(bp.smallmover_),
 	sidechainmover_(bp.sidechainmover_),
-	packrotamersmover_(bp.packrotamersmover_),
-	ntrials_(bp.ntrials_),
-	movemap_smallmover_(bp.movemap_smallmover_),
-	pivot_residues_(bp.pivot_residues_),
-	pivot_atoms_(bp.pivot_atoms_),
-	min_atoms_(bp.min_atoms_),
-	max_atoms_(bp.max_atoms_),
-	sm_prob_(bp.sm_prob_),
-	sc_prob_(bp.sc_prob_),
-	sc_prob_uniform_(bp.sc_prob_uniform_),
-	sc_prob_withinrot_(bp.sc_prob_withinrot_),
-	mc_kt_(bp.mc_kt_),
-	initial_pack_(bp.initial_pack_)
-{}
+	packrotamersmover_(bp.packrotamersmover_)
+{
+	this->set_options(
+		bp.pivot_residues_,
+		bp.pivot_atoms_,
+		bp.minimize_movemap_,
+		bp.movemap_smallmover_,
+		bp.packing_operation_,
+		bp.min_atoms_,
+		bp.max_atoms_,
+		bp.initial_pack_,
+		bp.mm_bend_weight_,
+		bp.sm_prob_,
+		bp.sc_prob_,
+		bp.sc_prob_uniform_,
+		bp.sc_prob_withinrot_,
+		bp.mc_kt_,
+		bp.ntrials_,
+		bp.trajectory_,
+		bp.trajectory_gz_,
+		bp.trajectory_stride_
+	);
+}
 
 BackrubProtocol::~BackrubProtocol()= default;
+
+void
+BackrubProtocol::set_options(
+	utility::vector1<core::Size> pivot_residues,
+	utility::vector1<std::string> pivot_atoms,
+	core::kinematics::MoveMapCOP minimize_movemap,
+	core::kinematics::MoveMapCOP movemap_smallmover,
+	core::pack::task::operation::TaskOperationCOP packing_operation,
+	core::Size min_atoms,
+	core::Size max_atoms,
+	bool initial_pack,
+	core::Real mm_bend_weight,
+	core::Real sm_prob,
+	core::Real sc_prob,
+	core::Real sc_prob_uniform,
+	core::Real sc_prob_withinrot,
+	core::Real mc_kt,
+	core::Size ntrials,
+	bool trajectory,
+	bool trajectory_gz,
+	core::Size trajectory_stride
+) {
+	this->set_pivot_residues( pivot_residues );
+	this->set_pivot_atoms( pivot_atoms );
+	this->set_movemap_smallmover(movemap_smallmover);
+
+	minimize_movemap_ = minimize_movemap;
+	packing_operation_ = packing_operation;
+	min_atoms_ = min_atoms;
+	max_atoms_ = max_atoms;
+	initial_pack_ = initial_pack;
+	mm_bend_weight_ = mm_bend_weight;
+	sm_prob_ = sm_prob;
+	sc_prob_ = sc_prob;
+	sc_prob_uniform_ = sc_prob_uniform;
+	sc_prob_withinrot_ = sc_prob_withinrot;
+	mc_kt_ = mc_kt;
+	ntrials_ = ntrials;
+	trajectory_ = trajectory;
+	trajectory_gz_ = trajectory_gz;
+	trajectory_stride_ = trajectory_stride;
+}
 
 void
 BackrubProtocol::read_cmd_line_options(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-
-
-	pivot_residues_.clear();
-	pivot_atoms_.clear();
+	utility::vector1<core::Size> pivot_residues;
 
 	if ( option[ OptionKeys::backrub::pivot_residues].user() ) {
 		for ( core::Size i = 1; i <= option[ OptionKeys::backrub::pivot_residues ].size(); ++i ) {
-			if ( option[ OptionKeys::backrub::pivot_residues ][i] >= 1 ) pivot_residues_.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
+			if ( option[ OptionKeys::backrub::pivot_residues ][i] >= 1 ) pivot_residues.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
 		}
 	}
 
-	pivot_atoms_ = option[ OptionKeys::backrub::pivot_atoms ];
-	min_atoms_ = option[ OptionKeys::backrub::min_atoms ];
-	max_atoms_ = option[ OptionKeys::backrub::max_atoms ];
+	core::kinematics::MoveMapOP minimize_movemap = NULL;
+	if ( option[ OptionKeys::backrub::minimize_movemap ].user() ) {
+		minimize_movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		minimize_movemap->init_from_file(option[ OptionKeys::backrub::minimize_movemap ]);
+	}
 
-	initial_pack_ = option[ OptionKeys::backrub::initial_pack ];
-	sm_prob_ = option[ OptionKeys::backrub::sm_prob ];
-	sc_prob_ = option[ OptionKeys::backrub::sc_prob ];
+	core::pack::task::operation::TaskOperationCOP packing_operation = NULL;
+	if ( option[ OptionKeys::packing::resfile ].user() ) {
+		packing_operation = core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile );
+	}
 
-	sc_prob_uniform_ = option[ OptionKeys::backrub::sc_prob_uniform ];
-	sc_prob_withinrot_ = option[ OptionKeys::backrub::sc_prob_withinrot ];
-	mc_kt_ = option[ OptionKeys::backrub::mc_kt];
+	core::Real sm_prob = option[ OptionKeys::backrub::sm_prob ];
+	core::kinematics::MoveMapOP movemap_smallmover = NULL;
+	if ( sm_prob > 0 ) {
+		if ( ! movemap_smallmover_ ) {
+			movemap_smallmover = core::kinematics::MoveMapOP(new core::kinematics::MoveMap );
+			movemap_smallmover->init_from_file( basic::options::option[ basic::options::OptionKeys::in::file::movemap ] );
+		}
+	}
 
-	ntrials_ = option[ OptionKeys::backrub::ntrials ];
-
+	this->set_options(
+		pivot_residues,
+		option[ OptionKeys::backrub::pivot_atoms ],
+		minimize_movemap,
+		movemap_smallmover,
+		packing_operation,
+		option[ OptionKeys::backrub::min_atoms ],
+		option[ OptionKeys::backrub::max_atoms ],
+		option[ OptionKeys::backrub::initial_pack ],
+		option[ OptionKeys::backrub::mm_bend_weight ],
+		option[ OptionKeys::backrub::sm_prob ],
+		option[ OptionKeys::backrub::sc_prob ],
+		option[ OptionKeys::backrub::sc_prob_uniform ],
+		option[ OptionKeys::backrub::sc_prob_withinrot ],
+		option[ OptionKeys::backrub::mc_kt],
+		option[ OptionKeys::backrub::ntrials ],
+		option[ OptionKeys::backrub::trajectory ],
+		option[ OptionKeys::backrub::trajectory_gz ],
+		option[ OptionKeys::backrub::trajectory_stride ]
+	);
 }
 
 void
@@ -171,7 +269,7 @@ BackrubProtocol::set_pivot_residues(utility::vector1<core::Size> pivot_residues)
 
 void
 BackrubProtocol::set_movemap(core::kinematics::MoveMapCOP movemap){
-	pivot_residues_ = get_pivot_residues_from_movemap(movemap);
+	this->set_pivot_residues( get_pivot_residues_from_movemap(movemap) );
 	set_movemap_smallmover(movemap);
 
 }
@@ -218,17 +316,14 @@ BackrubProtocol::write_database() {
 
 void
 BackrubProtocol::finalize_setup(core::pose::Pose & pose){
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
 	if ( ! main_task_factory_ ) {
 		main_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
 		main_task_factory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
-		if ( option[ OptionKeys::packing::resfile ].user() ) {
-			main_task_factory_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+		if ( packing_operation_ ) {
+			main_task_factory_->push_back( packing_operation_ );
 		} else {
 			operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 			main_task_factory_->push_back( rtrop );
@@ -243,7 +338,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	if ( ! scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function();
 	}
-	scorefxn_->set_weight_if_zero(core::scoring::mm_bend, option[ OptionKeys::backrub::mm_bend_weight ]);
+	scorefxn_->set_weight_if_zero(core::scoring::mm_bend, mm_bend_weight_);
 	core::scoring::methods::EnergyMethodOptions energymethodoptions(scorefxn_->energy_method_options());
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 	energymethodoptions.bond_angle_central_atoms_to_score(pivot_atoms_);
@@ -263,11 +358,6 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 
 	// set up the SmallMover
 	if ( sm_prob_ > 0 ) {
-		if ( ! movemap_smallmover_ ) {
-			core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap );
-			mm->init_from_file(option[ OptionKeys::in::file::movemap ]);
-			set_movemap_smallmover(mm);
-		}
 		smallmover_->nmoves(1);
 		smallmover_->movemap(movemap_smallmover_->clone());
 	}
@@ -294,15 +384,61 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 
 }
 
-//void
-//BackrubProtocol::parse_my_tag(
-//  TagCOP tag,
-//  basic::datacache::DataMap&,
-//  const Filters_map&,
-//  const Movers_map&,
-//  const Pose&) {
-//
-//}
+void
+BackrubProtocol::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap  & data,
+	protocols::filters::Filters_map const & /* filters */,
+	protocols::moves::Movers_map const & /* movers */,
+	core::pose::Pose const& pose
+) {
+
+	utility::vector1<core::Size> pivot_residues;
+	if ( tag->hasOption("pivot_residues") ) {
+		pivot_residues = core::pose::get_resnum_list(tag, "pivot_residues", pose);
+	}
+
+	utility::vector1<std::string> pivot_atoms = utility::vector1<std::string>(1, "CA");
+	if ( tag->hasOption("pivot_atoms") ) {
+		std::string const pivot_atoms_string( tag->getOption<std::string>("pivot_atoms") );
+		pivot_atoms = utility::string_split( pivot_atoms_string, ',' );
+	}
+
+	if ( tag->hasOption("task_operations") ) {
+		main_task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	}
+
+	core::Real mc_kt = tag->getOption<core::Real>(
+		"mc_kt",
+		basic::options::option[ basic::options::OptionKeys::backrub::mc_kt ]()
+	);
+
+	core::Size ntrials = tag->getOption<core::Size>(
+		"ntrials",
+		basic::options::option[ basic::options::OptionKeys::backrub::ntrials ]()
+	);
+
+	set_options(
+		pivot_residues,
+		pivot_atoms,
+		NULL, // minimize_movemap - not implemented in parse_my_tag
+		NULL, // movemap_smallmover - not implemented in parse_my_tag
+		NULL, // packing_operation - not needed, as main_task_factory_ set directly if task_operations passed
+		basic::options::option[ basic::options::OptionKeys::backrub::min_atoms ](), // min_atoms
+		basic::options::option[ basic::options::OptionKeys::backrub::max_atoms ](), // max_atoms,
+		false, // initial_pack,
+		basic::options::option[ basic::options::OptionKeys::backrub::mm_bend_weight ](), // mm_bend_weight,
+		basic::options::option[ basic::options::OptionKeys::backrub::sm_prob ](), // sm_prob,
+		basic::options::option[ basic::options::OptionKeys::backrub::sc_prob ](), // sc_prob,
+		basic::options::option[ basic::options::OptionKeys::backrub::sc_prob_uniform ](), // sc_prob_uniform,
+		basic::options::option[ basic::options::OptionKeys::backrub::sc_prob_withinrot ](), // sc_prob_withinrot,
+		mc_kt,
+		ntrials,
+		basic::options::option[ basic::options::OptionKeys::backrub::trajectory ](), // trajectory,
+		basic::options::option[ basic::options::OptionKeys::backrub::trajectory_gz ](), // trajectory_gz,
+		basic::options::option[ basic::options::OptionKeys::backrub::trajectory_stride ]() // trajectory_stride
+	);
+}
 
 void
 BackrubProtocol::apply( core::pose::Pose& pose ){
@@ -377,11 +513,9 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 		//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postpack.pdb");
 
 		// if a minimization movemap was specified, go through a series of minimizations
-		if ( option[ OptionKeys::backrub::minimize_movemap ].user() ) {
+		if ( minimize_movemap_ ) {
 
 			// setup the MoveMaps
-			core::kinematics::MoveMapOP minimize_movemap( new core::kinematics::MoveMap );
-			minimize_movemap->init_from_file(option[ OptionKeys::backrub::minimize_movemap ]);
 			core::kinematics::MoveMapOP minimize_movemap_progressive( new core::kinematics::MoveMap );
 
 			// setup the MinMover
@@ -390,8 +524,8 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			minmover.min_type("dfpmin");
 
 			// first minimize just the side chains
-			for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
-					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap_->movemap_torsion_id_begin();
+					iter != minimize_movemap_->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::CHI ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
@@ -399,8 +533,8 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminchi.pdb");
 
 			// next minimize the side chains and backbone
-			for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
-					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap_->movemap_torsion_id_begin();
+					iter != minimize_movemap_->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::BB ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
@@ -408,8 +542,8 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminbb.pdb");
 
 			// finally minimize everything
-			for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
-					iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
+			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap_->movemap_torsion_id_begin();
+					iter != minimize_movemap_->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::JUMP ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
 			minmover.movemap(minimize_movemap_progressive);
@@ -424,9 +558,9 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	mc.reset(*pose_copy);
 
 	protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
-	if ( option[ OptionKeys::backrub::trajectory ] ) {
-		trajectory.file_name(output_tag + "_traj.pdb" + (option[ OptionKeys::backrub::trajectory_gz ] ? ".gz" : ""));
-		trajectory.stride(option[ OptionKeys::backrub::trajectory_stride ]);
+	if ( trajectory_ ) {
+		trajectory.file_name(output_tag + "_traj.pdb" + ( trajectory_gz_ ? ".gz" : ""));
+		trajectory.stride( trajectory_stride_ );
 		trajectory.reset(mc);
 	}
 
@@ -451,7 +585,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 
 		mc.boltzmann(*pose_copy, move_type);
 
-		if ( option[ OptionKeys::backrub::trajectory ] ) trajectory.update_after_boltzmann(mc);
+		if ( trajectory_ ) trajectory.update_after_boltzmann(mc);
 	}
 
 	mc.show_counters();
@@ -483,22 +617,6 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 		append_fold_tree_to_file(mc.lowest_score_pose().fold_tree(),  output_tag + "_low.pdb"); // this is the lowest scoring from MC trials
 		append_fold_tree_to_file(mc.last_accepted_pose().fold_tree(), output_tag + "_last.pdb"); // this is the last accepted pose from MC trials
 	}
-}
-
-///Creator
-protocols::moves::MoverOP
-BackrubProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP(new BackrubProtocol);
-}
-
-std::string
-BackrubProtocolCreator::keyname() const {
-	return BackrubProtocolCreator::mover_name();
-}
-
-std::string
-BackrubProtocolCreator::mover_name() {
-	return "BackrubProtocol";
 }
 
 } //backrub

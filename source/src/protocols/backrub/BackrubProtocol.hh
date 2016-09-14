@@ -29,6 +29,7 @@
 //Core
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 //Basic
@@ -104,18 +105,43 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	//virtual void
-	//parse_my_tag(
-	// TagCOP tag,
-	// basic::datacache::DataMap & data,
-	// Filters_map const & filters,
-	// moves::Movers_map const & movers,
-	// core::pose::Pose const & pose );
+	void
+	parse_my_tag(
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const & filters,
+		moves::Movers_map const & movers,
+		core::pose::Pose const & pose
+	) override;
 
 private:
 
 	void
 	read_cmd_line_options();
+
+	///@brief Sets all member variables that are options that control behavior.
+	/// These options can be set via parse_my_tag or command line options.
+	void
+	set_options(
+		utility::vector1<core::Size> pivot_residues,
+		utility::vector1<std::string> pivot_atoms,
+		core::kinematics::MoveMapCOP minimize_movemap,
+		core::kinematics::MoveMapCOP movemap_smallmover,
+		core::pack::task::operation::TaskOperationCOP packing_operation,
+		core::Size min_atoms,
+		core::Size max_atoms,
+		bool initial_pack,
+		core::Real mm_bend_weight,
+		core::Real sm_prob,
+		core::Real sc_prob,
+		core::Real sc_prob_uniform,
+		core::Real sc_prob_withinrot,
+		core::Real mc_kt,
+		core::Size ntrials,
+		bool trajectory,
+		bool trajectory_gz,
+		core::Size trajectory_stride
+	);
 
 	void
 	finalize_setup(core::pose::Pose & pose);
@@ -135,7 +161,9 @@ private:
 	//New
 	core::Size ntrials_;
 	core::kinematics::MoveMapCOP movemap_smallmover_;
-	core::kinematics::MoveMapCOP movemap_preminimization_;
+	core::kinematics::MoveMapCOP minimize_movemap_;
+
+	core::pack::task::operation::TaskOperationCOP packing_operation_;
 
 	utility::vector1<core::Size> pivot_residues_;
 	utility::vector1<std::string> pivot_atoms_;
@@ -143,6 +171,7 @@ private:
 	core::Size min_atoms_;
 	core::Size max_atoms_;
 
+	core::Real mm_bend_weight_;
 	core::Real sm_prob_; //SmallMover probability.  Default 0.
 	core::Real sc_prob_; //SideChain Refinement probability.
 
@@ -151,6 +180,9 @@ private:
 	core::Real mc_kt_;
 
 	bool initial_pack_;
+	bool trajectory_;
+	bool trajectory_gz_;
+	core::Size trajectory_stride_;
 };
 
 
@@ -164,10 +196,3 @@ private:
 
 
 #endif
-
-
-
-
-
-
-

@@ -37,6 +37,7 @@ static MoverRegistrator< antibody::design::AntibodyDesignMoverCreator > reg_Anti
 static MoverRegistrator< antibody::design::AntibodyDesignProtocolCreator > reg_AntibodyDesignProtocolCreator;
 
 static MoverRegistrator< backrub::BackrubMoverCreator > reg_BackrubMoverCreator;
+static MoverRegistrator< backrub::BackrubProtocolCreator > reg_BackrubProtocolCreator;
 static MoverRegistrator< backrub::BackrubSidechainMoverCreator > reg_BackrubSidechainMoverCreator;
 
 static MoverRegistrator< canonical_sampling::MetricRecorderCreator > reg_MetricRecorderCreator;
