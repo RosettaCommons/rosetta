@@ -41,6 +41,9 @@ settings = {
             #"defines" : [ 'EXPERIMENTAL_TRACER_FEATURES' ],
         },
         "overrides" : {
+	    ## Uncomment the following line to import the full operating system environment.  Useful for
+	    ## compiling with scons on different systems.
+            #"ENV" : os.environ,
         },
         "removes" : {
         },
