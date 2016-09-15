@@ -64,31 +64,31 @@ get_leontis_westhof_table() {
 	static bool init( false );
 	static LW_Table lw_table;
 	if ( init ) return lw_table;
-	
+
 	lw_table[ std::make_pair( WATSON_CRICK, WATSON_CRICK ) ][ ANTIPARALLEL ] = CIS;
 	lw_table[ std::make_pair( WATSON_CRICK, WATSON_CRICK ) ][     PARALLEL ] = TRANS;
-	
+
 	lw_table[ std::make_pair( WATSON_CRICK, HOOGSTEEN )    ][     PARALLEL ] = CIS;
 	lw_table[ std::make_pair( WATSON_CRICK, HOOGSTEEN )    ][ ANTIPARALLEL ] = TRANS;
-	
+
 	lw_table[ std::make_pair( WATSON_CRICK, SUGAR )        ][ ANTIPARALLEL ] = CIS;
 	lw_table[ std::make_pair( WATSON_CRICK, SUGAR )        ][     PARALLEL ] = TRANS;
-	
+
 	lw_table[ std::make_pair( HOOGSTEEN, HOOGSTEEN )       ][ ANTIPARALLEL ] = CIS;
 	lw_table[ std::make_pair( HOOGSTEEN, HOOGSTEEN )       ][     PARALLEL ] = TRANS;
-	
+
 	lw_table[ std::make_pair( HOOGSTEEN, SUGAR )           ][     PARALLEL ] = CIS;
 	lw_table[ std::make_pair( HOOGSTEEN, SUGAR )           ][ ANTIPARALLEL ] = TRANS;
-	
+
 	lw_table[ std::make_pair( SUGAR, SUGAR )               ][ ANTIPARALLEL ] = CIS;
 	lw_table[ std::make_pair( SUGAR, SUGAR )               ][     PARALLEL ] = TRANS;
-	
+
 	// fill in the rest by symmetry.
 	for ( auto const & elem : lw_table )  {
 		std::pair< BaseEdge, BaseEdge > const & key = elem.first;
 		lw_table[ std::make_pair( key.second, key.first ) ] = elem.second;
 	}
-	
+
 	init = true;
 	return lw_table;
 }

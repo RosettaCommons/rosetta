@@ -1,19 +1,22 @@
 # This is for adding an -NH2 group to C-terminus of protein/peptide (replaces -OH group)
+# Added by who-knows-who, who-knows-when.
+# Made to actually work on 13 September 2016, by Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu).
+
 NAME Cterm_amidation
 TYPES CTERM_AMIDATION
-REPLACE_RES_TYPE
 
 ## general requirements for this patch
 BEGIN_SELECTOR
 PROPERTY PROTEIN
-CMDLINE_SELECTOR CTERM_AMIDATION
+NOT VARIANT_TYPE CTERM_AMIDATION
+NOT VARIANT_TYPE CUTPOINT_UPPER
+NOT PROPERTY PHOSPHONATE
 END_SELECTOR
 
 # Case selector...if specify CTERM_AMIDATION, apply to upper (C) terminus
 BEGIN_CASE
 BEGIN_SELECTOR
 VARIANT_TYPE UPPER_TERMINUS_VARIANT
-NOT PROPERTY PHOSPHONATE
 END_SELECTOR
 
 # If modified, no longer canonical.

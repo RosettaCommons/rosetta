@@ -115,7 +115,7 @@ BLOCK_STACK_BELOW   # Puts a steric block above a base to disallow stacking; for
 N_ACETYLATION      # for stepwise assembly (SWA) code; different geometry/atoms then ACETYLATED_NTERMINUS above
 N_FORMYLATION
 C_METHYLAMIDATION  # for stepwise assembly (SWA) code; distinct from METHYLATED_CTERMINUS above
-
+CTERM_AMIDATION
 
 # CARBOHYDRATE-SPECIFIC VARIANTS
 ## Oxidations

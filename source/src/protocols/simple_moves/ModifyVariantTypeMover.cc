@@ -23,13 +23,12 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // tracer
@@ -58,27 +57,26 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ModifyVariantTypeM
 // ModifyVariantTypeMover; based on the protocols::moves::Mover basis class
 ModifyVariantTypeMover::ModifyVariantTypeMover() :
 	protocols::moves::Mover("ModifyVariantType"),
-	task_factory_(/* NULL */),
 	add_target_types_(),
-	remove_target_types_()
+	remove_target_types_(),
+	residue_selector_()
 {}
 
 // @brief apply function here
 void
 ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 {
-	// Create map of target residues using taskoperation
-	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
+	core::select::residue_selector::ResidueSubset selection( pose.total_residue(), true );
 
-	if ( task_factory_ != nullptr ) {
-		task = task_factory_->create_task_and_apply_taskoperations( pose );
-		TR.Debug << "Initializing from packer task." << std::endl;
+	if ( residue_selector_ != nullptr ) {
+		selection = residue_selector_->apply( pose );
+		TR.Debug << "Initializing residue selection from ResidueSelector." << std::endl;
 	} else {
-		TR.Debug << "No packer task specified, using default task." << std::endl;
+		TR.Debug << "No ResidueSelector supplied.  Applying to ALL residues." << std::endl;
 	}
 
-	for ( core::Size resi = 1; resi <= pose.size(); resi++ ) {
-		if ( task->pack_residue(resi) ) {
+	for ( core::Size resi = 1, resimax = pose.total_residue() ; resi <= resimax; ++resi ) {
+		if ( selection[resi] ) {
 			core::chemical::ResidueTypeSetCOP rsd_set(pose.residue(resi).residue_type_set());
 			core::chemical::ResidueTypeCOP new_rsd_type = pose.residue(resi).type().get_self_ptr();
 
@@ -138,7 +136,22 @@ void ModifyVariantTypeMover::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption("Must specify add_type and/or remove_type type in ModifyVariantTypeMover.");
 	}
 
-	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	if ( tag->hasOption( "residue_selector" ) ) {
+		core::select::residue_selector::ResidueSelectorCOP selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
+		if ( selector != nullptr ) {
+			set_residue_selector( selector );
+		}
+	}
+}
+
+/// @brief Set the ResidueSelector used by this mover.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ModifyVariantTypeMover::set_residue_selector(
+	core::select::residue_selector::ResidueSelectorCOP selector_in
+) {
+	runtime_assert_string_msg( selector_in != nullptr , "Error in protocols::simple_moves::ModifyVariantTypeMover::set_residue_selector(): A null pointer was provided to this function." );
+	residue_selector_ = selector_in;
 }
 
 protocols::moves::MoverOP

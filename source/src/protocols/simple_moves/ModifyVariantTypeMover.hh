@@ -18,10 +18,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.fwd.hh>
 
-#include <core/pack/task/TaskFactory.fwd.hh>
 
 // Project headers
-
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 
@@ -53,10 +52,25 @@ public:
 	moves::MoverOP fresh_instance() const override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
+	/// @brief Set the ResidueSelector used by this mover.
+	///
+	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector_in);
+
+	/// @brief Get the ResidueSelector used by this mover.
+	inline core::select::residue_selector::ResidueSelectorCOP residue_selector() const { return residue_selector_; }
+
 private:
-	core::pack::task::TaskFactoryOP task_factory_;
+	/// @brief List of types to ADD.
+	///
 	utility::vector1<std::string> add_target_types_;
+
+	/// @brief List of types to REMOVE.
+	///
 	utility::vector1<std::string> remove_target_types_;
+
+	/// @brief ResidueSelector specifying residues to which this should be applied.
+	///
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 };
 
 } // moves

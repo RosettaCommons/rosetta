@@ -521,7 +521,7 @@ StepWiseProteinBackboneSampler::filter_big_bin( Size const big_bin,
 
 	MainChainTorsionSetList main_chain_torsion_set_list_new;
 
-	for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list) {
+	for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
 		Real const phi = main_chain_torsion_set.phi();
 		Real const psi = main_chain_torsion_set.psi();
 		if ( ( big_bin == 1 && get_big_bin( phi, psi ) == 1 ) ||

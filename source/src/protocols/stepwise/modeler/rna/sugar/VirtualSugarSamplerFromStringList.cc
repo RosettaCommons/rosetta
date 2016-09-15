@@ -199,15 +199,15 @@ VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< 
 
 	TR.Debug << "num_virtual_sugar = " << sugar_modeling_list.size() << std::endl;
 	if ( sugar_modeling_list.size() != 0 ) return false;
-	
+
 	TR.Debug << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ). EARLY RETURN/NO OUTPUT SILENT_FILE!" << std::endl;
-	
+
 	std::ofstream outfile;
 	outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
 	outfile << "no_virtual_sugar ( sugar_modeling_list.size() == 0 ).\n";
 	outfile.flush();
 	outfile.close();
-	
+
 	return true;
 }
 
@@ -216,9 +216,9 @@ bool
 VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ) {
 
 	if ( pose_list.size() != 0 ) return false;
-	
+
 	TR.Debug << "Case n = " << n << " is_sugar_virt == True but " << tag << ".pose_list.size() == 0. EARLY RETURN!" << std::endl;
-	
+
 	std::ofstream outfile;
 	outfile.open( silent_file_out_.c_str() ); //Opening the file with this command removes all prior content..
 	outfile << "num_virtual_sugar != 0 but for one of the sampled virtual_sugar," << tag << ".pose_list.size() == 0.\n";

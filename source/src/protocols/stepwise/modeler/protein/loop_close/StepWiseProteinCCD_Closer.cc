@@ -325,9 +325,9 @@ StepWiseProteinCCD_Closer::check_for_unique_cutpoint_flanked_by_bridge_res( pose
 	Size nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
 		if ( ! is_cutpoint_closed( pose, n ) ) continue;
-		
+
 		if ( ( n > 1    && working_bridge_res_.has_value( n-1 ) ) ||
-			( n < nres && working_bridge_res_.has_value( n+1 ) ) ) {
+				( n < nres && working_bridge_res_.has_value( n+1 ) ) ) {
 			runtime_assert( cutpoint == 0 ); // uniqueness check.
 			cutpoint = n;
 		}
@@ -342,7 +342,7 @@ StepWiseProteinCCD_Closer::check_for_unique_cutpoint( pose::Pose const & pose ){
 	Size nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
 		if  ( !is_cutpoint_closed( pose, n ) ) continue;
-		
+
 		runtime_assert( cutpoint == 0 ); // uniqueness check.
 		cutpoint = n;
 	}

@@ -360,7 +360,7 @@ VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	minimize_with_constraints( pose_with_sugar, mm, rescaled_sugar_score_fxn_without_ch_bond, options_armijo );
 	//Add this round on Sept 20, 2011, Switch to armijo on Sept 21, 2011
 	minimizer.run( pose_with_sugar, mm, *( rescaled_sugar_score_fxn_without_ch_bond ), options_armijo );
-	
+
 	minimize_with_constraints( pose_with_sugar, mm, sugar_scorefxn_without_ch_bond, options_standard );
 	minimizer.run( pose_with_sugar, mm, *( sugar_scorefxn_without_ch_bond ), options_standard );
 

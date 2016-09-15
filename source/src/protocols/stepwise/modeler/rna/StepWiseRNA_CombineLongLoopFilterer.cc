@@ -165,7 +165,7 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_appended_and_prepended_res_list(
 
 	//OK first find that residues that are common between two pose...there are user inputted residues
 	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
-	
+
 	utility::vector1< core::Size > common_res_list;
 	for ( Size const seq_num : input_res_vectors[1] ) {
 		if ( input_res_vectors[2].has_value( seq_num ) ) {
@@ -299,7 +299,7 @@ StepWiseRNA_CombineLongLoopFilterer::align_all_pose( utility::vector1< PoseOP > 
 	if ( side_TWO_pose_data_list.size() == 0 ) utility_exit_with_message( "side_TWO_pose_data_list.size() == 0" );
 
 	core::pose::Pose const alignment_pose = ( *side_ONE_pose_data_list[1] );
-	
+
 	for ( auto & poseop : side_ONE_pose_data_list ) {
 
 		id::AtomID_Map < id::AtomID > atom_ID_map; //Align the first and last residues of the two pose (which should be the same residue)
@@ -476,7 +476,7 @@ StepWiseRNA_CombineLongLoopFilterer::do_some_filtering() {
 
 	for ( PoseOP const & side_ONE_pose_data : side_ONE_pose_data_list ) {
 		for ( PoseOP const & side_TWO_pose_data : side_TWO_pose_data_list ) {
-			
+
 			total_input_struct_pair_++;
 
 			if ( combine_helical_silent_file_ == false ) {

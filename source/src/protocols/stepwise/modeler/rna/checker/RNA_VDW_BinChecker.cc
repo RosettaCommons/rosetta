@@ -425,10 +425,10 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 	////////////////////////////////////////////More consistency check!///////////////////////////////////////////////////////////////
 	for ( Size working_seq = 1; working_seq <= working_pose.size(); working_seq++ ) {
 		if ( working_matching_res_list.has_value( working_seq ) ) continue;
-		
+
 		//check that all working_alignment_res are properly removed.
 		if ( working_align_res.has_value( working_seq ) ) utility_exit_with_message( "working_seq = " + string_of( working_seq ) + " is a working_align_res!" );
-		
+
 		if ( check_VDW_rep_no_match_res ) {
 			if ( no_match_res_list.has_value( working_seq ) == false ) utility_exit_with_message( "working_seq = " + string_of( working_seq ) + " is NOT in both no_match_res_list and matching_res_list!" );
 		}
@@ -437,7 +437,7 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 
 	for ( Size VDW_rep_seq = 1; VDW_rep_seq <= VDW_rep_screen_pose.size(); VDW_rep_seq++ ) {
 		if ( VDW_rep_matching_res_list.has_value( VDW_rep_seq ) ) continue;
-		
+
 		//check that all working_alignment_res are properly removed.
 		if ( VDW_rep_screen_align_res.has_value( VDW_rep_seq ) ) {
 			utility_exit_with_message( "VDW_rep_seq = " + string_of( VDW_rep_seq ) + " is a VDW_rep_screen_align_res but is not in VDW_rep_matching_res_list!" );
@@ -883,7 +883,7 @@ RNA_VDW_BinChecker::setup_using_user_input_VDW_pose( utility::vector1< std::stri
 				VDW_rep_screen_info.full_align_res.push_back( string_to_int( VDW_rep_screen_align_res_string[ii] ) );
 			}
 		}
-		
+
 		TR.Debug << "VDW_rep_screen_info.VDW_align_res:  " << VDW_rep_screen_info.VDW_align_res << std::endl;
 		TR.Debug << "VDW_rep_screen_info.full_align_res: " << VDW_rep_screen_info.full_align_res << std::endl;
 
@@ -1411,7 +1411,7 @@ bool
 RNA_VDW_BinChecker::check_atom_bin_in_range( core::pose::rna::Atom_Bin const & atom_pos_bin ){
 
 	if ( core::pose::rna::is_atom_bin_in_range( atom_pos_bin, bin_max_ ) ) return true;
-	
+
 	if ( num_atom_pos_bin_out_of_range_message_outputted_ <= 10 ) {
 		TR.Debug << "bin_max_*2 = " << bin_max_*2 << std::endl;
 		TR.Debug << " atom_pos_bin.x = " << atom_pos_bin.x << " atom_pos_bin.y = " << atom_pos_bin.y << " atom_pos_bin.z = " << atom_pos_bin.z << std::endl;
@@ -1419,9 +1419,9 @@ RNA_VDW_BinChecker::check_atom_bin_in_range( core::pose::rna::Atom_Bin const & a
 		num_atom_pos_bin_out_of_range_message_outputted_++;
 		TR.Debug << "num_atom_pos_bin_out_of_range_message_outputted_so_far = " << num_atom_pos_bin_out_of_range_message_outputted_ << std::endl;
 	}
-	
+
 	if ( tolerate_off_range_atom_bin_ ) return false;
-	
+
 	utility_exit_with_message( "atom_pos_bin out of range!" );
 
 	return true;

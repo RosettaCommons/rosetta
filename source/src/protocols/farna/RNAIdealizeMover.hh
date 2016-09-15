@@ -38,7 +38,7 @@ class RNAIdealizeMover : public protocols::moves::Mover {
 public:
 
 	RNAIdealizeMover();
-	
+
 	RNAIdealizeMover( Size const iterations, bool const noise, bool const final_minimize ):
 		protocols::moves::Mover( RNAIdealizeMover::class_name() ),
 		iterations_( iterations ),
@@ -84,16 +84,16 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP
 	clone() const;
-	
+
 	Size get_iterations() const { return iterations_; }
-	
+
 	void set_iterations( Size const iterations ) { iterations_ = iterations; }
-	
+
 private:
-	
+
 	void perturb_pose( core::pose::Pose & pose ) const;
 	void constrain_to_ideal( core::pose::Pose & pose ) const;
-	
+
 	void
 	add_bond_angle_constraint(
 		core::id::AtomID const & atom_id1,
@@ -101,14 +101,14 @@ private:
 		core::id::AtomID const & atom_id3,
 		core::pose::Pose & pose
 	) const;
-	
-	void 
+
+	void
 	add_bond_constraint(
 		core::id::AtomID const & atom_id1,
 		core::id::AtomID const & atom_id2,
 		core::pose::Pose & pose
 	) const;
-		
+
 	core::pose::Pose ref_pose_;
 
 	/// @brief Number of iterations made (1/n idealization per iteration).

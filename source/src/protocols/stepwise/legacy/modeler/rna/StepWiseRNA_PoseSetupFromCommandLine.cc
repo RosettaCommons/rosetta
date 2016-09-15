@@ -918,12 +918,12 @@ void
 ensure_directory_for_out_silent_file_exists(){
 
 	if ( ! option[ out::file::silent ].user() ) return;
-	
+
 	std::string outfile =  option[ out::file::silent]();
-	
+
 	std::ofstream outstream;
 	outstream.open( outfile.c_str() ); // for writing
-	
+
 	if ( outstream.fail() ) {
 		// wow, this is tortuous -- libgen.h has dirname, but requires and output C-style char.
 		TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
@@ -933,7 +933,7 @@ ensure_directory_for_out_silent_file_exists(){
 #else
 		char * outfile_char = strdup( outfile.c_str() );
 		char * outdir =  dirname( outfile_char );
-		
+
 		std::stringstream mkdir_command;
 		mkdir_command << "mkdir -p " << outdir;
 		int return_code = system( mkdir_command.str().c_str() );

@@ -199,10 +199,10 @@ StepWiseProteinKIC_LoopBridger::figure_out_loop( core::pose::Pose const & pose )
 		Size const test_res = static_cast<int>( middle_bridge_res ) + offset;
 		if ( test_res < 1 && test_res > pose.total_residue() ) continue;
 		if ( !pose.fold_tree().is_cutpoint( test_res ) ) continue;
-		
+
 		cutpoint_ = test_res;
 		if ( !pose.residue_type( cutpoint_ ).has_variant_type( CUTPOINT_LOWER ) ||
-			!pose.residue_type( cutpoint_+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
+				!pose.residue_type( cutpoint_+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
 			std::cout << " cutpoint res? " << cutpoint_ << std::endl;
 			utility_exit_with_message( "cutpoints not set up properly at cutpoint residue" );
 		}

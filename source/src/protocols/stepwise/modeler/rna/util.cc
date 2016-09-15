@@ -707,27 +707,27 @@ print_heavy_atoms( Size const & suite_num_1, Size const & suite_num_2, pose::Pos
 /*Size
 get_num_side_chain_atom_from_res_name( chemical::AA const & res_aa, bool const verbose ){
 
-	Size num_side_chain_atom;
+Size num_side_chain_atom;
 
-	if ( name_from_aa( res_aa ) == "RAD" ) {
-		if ( verbose ) TR << "name_from_aa: RAD" << std::endl;
-		num_side_chain_atom = 11;
-	} else if ( name_from_aa( res_aa ) == "RCY" ) {
-		if ( verbose ) TR << "name_from_aa: RCY" << std::endl;
-		num_side_chain_atom = 9;
-	} else if ( name_from_aa( res_aa ) == "RGU" ) {
-		if ( verbose ) TR << "name_from_aa: RGU" << std::endl;
-		num_side_chain_atom = 12;
-	} else if ( name_from_aa( res_aa ) == "URA" ) {
-		if ( verbose ) TR << "name_from_aa: URA" << std::endl;
-		num_side_chain_atom = 9;
-	} else {
-		TR << "Error, cannot identify residue type" << std::endl;
-		num_side_chain_atom = 0;
-		exit ( 1 );
-	}
+if ( name_from_aa( res_aa ) == "RAD" ) {
+if ( verbose ) TR << "name_from_aa: RAD" << std::endl;
+num_side_chain_atom = 11;
+} else if ( name_from_aa( res_aa ) == "RCY" ) {
+if ( verbose ) TR << "name_from_aa: RCY" << std::endl;
+num_side_chain_atom = 9;
+} else if ( name_from_aa( res_aa ) == "RGU" ) {
+if ( verbose ) TR << "name_from_aa: RGU" << std::endl;
+num_side_chain_atom = 12;
+} else if ( name_from_aa( res_aa ) == "URA" ) {
+if ( verbose ) TR << "name_from_aa: URA" << std::endl;
+num_side_chain_atom = 9;
+} else {
+TR << "Error, cannot identify residue type" << std::endl;
+num_side_chain_atom = 0;
+exit ( 1 );
+}
 
-	return num_side_chain_atom;
+return num_side_chain_atom;
 }*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -740,7 +740,7 @@ atom_square_deviation( conformation::Residue const & rsd_1, conformation::Residu
 
 	//This can be turned on for debugging, but by default is mod out since string comparison might be slow Parin Jan 28, 2009
 	//if ( atom_name_1 != atom_name_2 ) {
-	//	utility_exit_with_message( "atom_name_1 != atom_name_2, atom_name_1 = " + atom_name_1 + " atom_name_2 = " + atom_name_2 );
+	// utility_exit_with_message( "atom_name_1 != atom_name_2, atom_name_1 = " + atom_name_1 + " atom_name_2 = " + atom_name_2 );
 	//}
 
 	Distance const dist_squared = ( rsd_1.xyz( atomno_1 ) - rsd_2.xyz( atomno_2 ) ).length_squared();

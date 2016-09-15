@@ -355,7 +355,7 @@ StackElecEnergy::residue_pair_energy_ext(
 		if ( base_base_only_ && !is_rna_base( rsd1, m ) ) continue;
 		Real const m_charge( rsd1.atomic_charge( m ) );
 		if ( m_charge == 0.0 ) continue;
-		
+
 		Size const n = neighb.atomno2();
 		if ( rsd2.is_virtual( n ) ) continue;
 		if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;

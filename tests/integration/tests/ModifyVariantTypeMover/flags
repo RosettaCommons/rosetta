@@ -1,0 +1,6 @@
+-parser:protocol inputs/test.xml
+-in:file:fasta inputs/dummy.fasta
+-nstruct 1
+-out:levels protocols.simple_moves.ModifyVariantTypeMover:500
+##### these are general flags
+-score:weights talaris2014

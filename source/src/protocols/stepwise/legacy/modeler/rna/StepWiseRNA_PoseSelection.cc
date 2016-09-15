@@ -108,19 +108,19 @@ StepWiseRNA_PoseSelection::cluster_pose_list() {
 	for ( Size i = 1; i <= pose_list_.size(); i++ ) {
 
 		if ( ! pose_state_list[i] ) continue;
-		
+
 		num_clustered_pose++;
 		for ( Size j = i + 1; j <= pose_list_.size(); j++ ) {
-			
+
 			Real rmsd;
 			if ( PBP_clustering_at_chain_closure_ && working_parameters_->gap_size() == 0 ) { //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
 				rmsd = phosphate_base_phosphate_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
 			} else {
 				rmsd = suite_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res, is_prepend, false /*ignore_virtual_atom*/ );
 			}
-			
+
 			bool const same_pucker = is_same_sugar_pucker( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res );
-			
+
 			if ( rmsd < cluster_rmsd_ && ( same_pucker || !distinguish_pucker_ ) ) {
 				pose_state_list[j] = false;
 				if ( verbose_ ) {

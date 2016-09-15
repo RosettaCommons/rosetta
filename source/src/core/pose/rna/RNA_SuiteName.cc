@@ -201,7 +201,7 @@ RNA_SuiteName::name2suite( std::string const & name ) const{
 }
 
 class principal_angle_degrees {
-	public:
+public:
 	Real operator()( Real r ) {
 		return numeric::nonnegative_principal_angle_degrees( r );
 	}

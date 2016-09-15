@@ -181,13 +181,13 @@ is_sugar_virtual( core::pose::Pose const & pose, core::Size const sugar_res, cor
 	}
 
 	if ( !pose.residue( sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) return false;
-	
+
 	//bulge consistency checks:
 	runtime_assert ( bulge_res > 1 && bulge_res < nres );
 	// will virtualize any bulge residues...
 	if ( !pose.residue( bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
-		!bulge_residues_to_virtualize.has( bulge_res ) ) bulge_residues_to_virtualize.push_back( bulge_res );
-	
+			!bulge_residues_to_virtualize.has( bulge_res ) ) bulge_residues_to_virtualize.push_back( bulge_res );
+
 	return true;
 }
 

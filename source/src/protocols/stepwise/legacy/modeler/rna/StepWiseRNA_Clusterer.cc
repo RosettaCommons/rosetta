@@ -278,19 +278,19 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 		core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
 
 		if ( found_valid_struct ) continue;
-		
+
 		PoseOP pose_op( new Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 		silent_struct->fill_pose( *pose_op, *rsd_set );
-		
+
 		std::string const & tag( silent_struct->decoy_tag() );
-		
+
 		if ( protocols::stepwise::modeler::rna::check_for_messed_up_structure( (*pose_op), tag ) == true ) continue;
-		
+
 		first_pose_before_slicing = (*pose_op);
-		
+
 		if ( optimize_memory_usage_ ) ( *pose_op) = sliced_pose_job_params_.create_sliced_pose(*pose_op);
-		
+
 		//OK found a valid (non-messed) pose. Will use this pose as the "global" quick alignment pose_
 		first_pose = (*pose_op);
 		found_valid_struct = true;
@@ -400,10 +400,10 @@ StepWiseRNA_Clusterer::initialize_quick_alignment_pose(){
 
 	for ( Size const seq_num : working_best_alignment ) {
 		if ( working_fixed_res.has_value( seq_num ) ) continue;
-		
+
 		output_seq_num_list( "working_best_alignment = ", working_best_alignment, TR, 30 );
 		output_seq_num_list( "working_fixed_res = ", working_fixed_res, TR, 30 );
-		
+
 		utility_exit_with_message( "quick_alignment_mode is true. However: seq_num " + string_of( seq_num ) + " is a element of working_best_alignment BUT not a element of working_fixed_res " );
 	}
 
@@ -958,19 +958,19 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 
 
 		if ( ! distinguish_pucker_ ) continue;
-		
+
 		if ( current_is_virtual_sugar != center_is_virtual_sugar ) {
 			//New on Oct 09, 2011. This should NOT lead to any new changes, since virtual_sugar is usually accompanied by virtual_res at the neighoring nucleotide.
 			return false;
 		}
-		
+
 		bool check_pucker = true;
-		
+
 		if ( current_is_virtual_sugar && center_is_virtual_sugar ) {
 			//New on Oct 09, 2011. This should remove "false" new cluster where current pose and cluster center pose differ only by the pucker of a virtual_sugar.
 			check_pucker = false;
 		}
-		
+
 		if ( check_pucker && ( same_sugar_pucker_list[i] == false ) ) {
 			return false;
 		}
@@ -1772,7 +1772,7 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 		} else if ( seq_num == ( is_sliced_res_.size() + 1 ) || is_sliced_res_[seq_num] == true ) {
 			range_end = seq_num - 1; //This obviously fail if seq_num=0...but this cannot occur since in_delete_range is false at first cycle.
 			in_delete_range = false;
-			
+
 			delete_res_range_list_.push_back( std::make_pair( range_begin, range_end ) );
 			range_end = 0;
 			range_begin = 0;

@@ -169,7 +169,7 @@ ScoreMover::apply( Pose & pose ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if ( option[ OptionKeys::loops::loopscores].user() ){ //Option is string containing loops to score
+	if ( option[ OptionKeys::loops::loopscores].user() ) { //Option is string containing loops to score
 		core::pose::Pose native_pose;
 		if ( get_native_pose() ) {
 			native_pose = *get_native_pose();

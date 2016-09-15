@@ -416,9 +416,9 @@ StepWiseProteinPoseSetup::figure_out_jump_partners() {
 
 	// Tack on the low priority jump pairs at the end.
 	std::copy( potential_jump_partners_low_priority.begin(),
-			  potential_jump_partners_low_priority.end(),
-			  std::back_inserter( potential_jump_partners ) );
-	
+		potential_jump_partners_low_priority.end(),
+		std::back_inserter( potential_jump_partners ) );
+
 	// Might as well figure out (ahead of time) the chain assignments.
 	utility::vector1< std::pair< Size, Size > > potential_chain_partners;
 	for ( auto const & elem : potential_jump_partners ) {
@@ -1033,12 +1033,12 @@ StepWiseProteinPoseSetup::apply_cutpoint_variants( pose::Pose & pose ) const {
 
 		if ( full_to_sub.find( cutpoint )   == full_to_sub.end() ||
 				full_to_sub.find( cutpoint+1 ) == full_to_sub.end() ) continue;
-		
+
 		Size const cutpos = full_to_sub[ cutpoint ];
-		
+
 		pose::correctly_add_cutpoint_variants( pose, cutpos ); //perhaps should not be in rna namespace...
 		TR.Debug << "Applied cutpoint variants to " << cutpoint << std::endl;
-		
+
 		for ( Size i = cutpos; i <= cutpos + 1; i++ ) {
 			utility::vector1< Real > const & mainchain_torsions = pose_copy.residue( i ).mainchain_torsions();
 			for ( Size j = 1; j <= mainchain_torsions.size(); j++ ) {

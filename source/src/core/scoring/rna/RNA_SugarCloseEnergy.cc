@@ -178,7 +178,7 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 	if ( !rsd.is_RNA() ) return;
 
 	Size const & i( rsd.seqpos() );
-	
+
 	// AMW TODO: indices for this stuff for NCNTs.
 
 	//fast look up!
