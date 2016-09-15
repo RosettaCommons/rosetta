@@ -25,6 +25,7 @@
 
 // option key includes
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/io/pdb/build_pose_as_is.hh>
@@ -101,7 +102,12 @@ RMS_Energy::finalize_total_energy(
 	///////////////////////////////////////
 	//
 	// RMS SCORE
-	core::Real rmsd = core::scoring::CA_rmsd( native_pose_, pose );
+	core::Real rmsd;
+	if ( basic::options::option[ basic::options::OptionKeys::evaluation::rms_type ].value() == "RNP" ) {
+		rmsd = core::scoring::CA_or_equiv_rmsd( native_pose_, pose );
+	} else {
+		rmsd = core::scoring::CA_rmsd( native_pose_, pose );
+	}
 	totals[ rms ]  = std::abs( rms_target_ - rmsd );
 
 	// PROF_STOP( basic::RMS );

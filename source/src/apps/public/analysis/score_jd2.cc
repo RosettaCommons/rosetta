@@ -136,7 +136,7 @@ MyScoreMover::MyScoreMover():
 	}
 }
 
-void MyScoreMover::apply( core::pose::Pose& pose ) {
+void MyScoreMover::apply( core::pose::Pose & pose ) {
 	if ( !keep_scores_flag_ ) {
 		pose.energies().clear();
 		pose.data().clear();
@@ -178,14 +178,13 @@ main( int argc, char * argv [] )
 
 		//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
 		if ( option[ broker::setup ].user() ) {
-			protocols::topology_broker::TopologyBrokerOP top_bro_OP( new  topology_broker::TopologyBroker() );
-			try{
+			protocols::topology_broker::TopologyBrokerOP top_bro_OP( new topology_broker::TopologyBroker() );
+			try {
 				add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
+			} catch ( utility::excn::EXCN_Exception & excn ) {
+				excn.show( TR.Error );
+				utility_exit();
 			}
-catch ( utility::excn::EXCN_Exception &excn )  {
-	excn.show( TR.Error );
-	utility_exit();
-}
 		}
 
 		//MyScoreMover* scoremover = new MyScoreMover;
@@ -257,7 +256,7 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 		// file and nothing else.
 		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
-		try{
+		try {
 			JobDistributor::get_instance()->go( scoremover );
 		} catch ( utility::excn::EXCN_Base& excn ) {
 			std::cerr << "Exception: " << std::endl;

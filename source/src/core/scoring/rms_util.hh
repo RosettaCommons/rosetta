@@ -122,6 +122,14 @@ is_protein_CA(
 );
 
 bool
+is_protein_CA_or_equiv(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & ,//pose2,
+	core::Size resno,
+	core::Size atomno
+);
+
+bool
 is_protein_CA_or_CB(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & ,//pose2,
@@ -235,6 +243,17 @@ public:
 		core::Size atomno) const override { return is_protein_CA(pose1, pose2, resno, atomno); }
 };
 
+class IsMainAtomPredicate: public Predicate {
+public:
+	IsMainAtomPredicate() {}
+	~IsMainAtomPredicate() override = default;
+	bool operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const override { return is_protein_CA_or_equiv(pose1, pose2, resno, atomno); }
+};
+
 // (Fill in others as needed.)
 
 //////////////////////
@@ -293,6 +312,16 @@ core::DistanceSquared non_peptide_heavy_atom_RMSD( core::pose::Pose const & pose
 /// If start and end aren't specified, use the entire pose.
 core::Real
 CA_rmsd(
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2,
+	Size start = 1,
+	Size end = 0
+);
+
+/// @brief Compute rmsd for residues between start and end.
+/// If start and end aren't specified, use the entire pose.
+core::Real
+CA_or_equiv_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
 	Size start = 1,

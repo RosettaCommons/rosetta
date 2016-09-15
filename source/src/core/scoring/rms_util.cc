@@ -54,6 +54,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <numeric/util.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/model_quality/maxsub.hh>
@@ -104,7 +105,11 @@ core::Real gdtsc(const core::pose::Pose& ref,
 		('T', "OG1")
 		('V', "CG1")
 		('W', "CH2")
-		('Y',  "OH");
+		('Y',  "OH")
+		('a', "C4'")
+		('c', "C4'")
+		('g', "C4'")
+		('u', "C4'");
 
 	if ( !ref.is_fullatom() || !mod.is_fullatom() ) {
 		tr.Warning << "Reference and model must be fullatom for gdtsc()" << std::endl;
@@ -266,6 +271,8 @@ Real native_CA_rmsd( const core::pose::Pose & native_pose, const core::pose::Pos
 		ResidueSelection residues;
 		invert_exclude_residues( native_pose.size(), option[ in::file::native_exclude_res ](), residues );
 		return core::scoring::CA_rmsd( native_pose, pose, residues );
+	} else if ( option[ evaluation::rms_type ].value() == "RNP" ) {
+		return core::scoring::CA_or_equiv_rmsd( native_pose, pose );
 	} else {
 		// no residues excluded from the native.
 		return core::scoring::CA_rmsd( native_pose, pose );
@@ -388,6 +395,25 @@ is_protein_CA(
 ) {
 	core::conformation::Residue const & rsd = pose1.residue(resno);
 	return rsd.is_protein() && rsd.has("CA") && rsd.atom_index("CA") == atomno;
+}
+
+bool
+is_protein_CA_or_equiv(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & ,//pose2,
+	core::Size resno,
+	core::Size atomno
+) {
+	core::conformation::Residue const & rsd = pose1.residue(resno);
+	if ( rsd.is_protein() ) {
+		return rsd.has("CA") && rsd.atom_index("CA") == atomno;
+	} else if ( rsd.is_RNA() ) {
+		return rsd.has("C4'") && rsd.atom_index("C4'") == atomno;
+	} else if ( rsd.is_carbohydrate() ) {
+		return rsd.has("C1") && rsd.atom_index("C1") == atomno;
+	} else {
+		return false;
+	}
 }
 
 bool
@@ -562,12 +588,45 @@ non_peptide_heavy_atom_RMSD( core::pose::Pose const & pose1, core::pose::Pose co
 }
 
 core::Real
+CA_or_equiv_rmsd(
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2,
+	Size start /* = 1 */,
+	Size end /* = 0 */
+) {
+	using namespace core;
+	core::Size calc_end(end);
+	if ( end == 0 ) {
+		calc_end = std::min( pose1.size(), pose2.size() );
+	}
+	// copy coords into Real arrays
+	int natoms;
+	FArray2D< core::Real > p1a;
+	FArray2D< core::Real > p2a;
+	PredicateOP pred( new ResRangePredicate( start, calc_end, PredicateCOP( new IsMainAtomPredicate ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
+
+	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "WARNING: In CA_or_equiv_rmsd, residue range " << start << " to " << end
+		<< " requested but only " << natoms << " protein CA atoms found." << std::endl;
+	}
+
+	Real rms = numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
+	if ( rms < 0.00001 ) rms = 0.0;
+	return rms;
+} // CA_rmsd
+
+core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
 	Size start /* = 1 */,
 	Size end /* = 0 */
 ) {
+	// Catch here, argh.
+	if ( basic::options::option[ basic::options::OptionKeys::evaluation::rms_type ].value() == "RNP" ) {
+		return core::scoring::CA_or_equiv_rmsd( pose1, pose2 );
+	}
+
 	PROF_START( basic::CA_RMSD_EVALUATION );
 	using namespace core;
 	core::Size calc_end(end);
@@ -712,12 +771,50 @@ bb_rmsd_including_O(
 	return rms;
 } // bb_rmsd_including_O
 
+// AMW: ONLY defined here, because I just want it being called
+// from CA_rmsd function right below.
+core::Real
+CA_or_equiv_rmsd(
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2,
+	std::list< Size > const & residue_selection 
+) {
+	// AMW: note that for some reason this is the one that gets called by RMS energy?
+	if ( basic::options::option[ basic::options::OptionKeys::evaluation::rms_type ].value() == "RNP" ) {
+		CA_or_equiv_rmsd( pose1, pose2, residue_selection );
+	}
+
+	PROF_START( basic::CA_RMSD_EVALUATION );
+	using namespace core;
+	// copy coords into Real arrays
+	int natoms;
+	FArray2D< core::Real > p1a;//( 3, pose1.size() );
+	FArray2D< core::Real > p2a;//( 3, pose2.size() );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsMainAtomPredicate ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
+
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_rmsd " << residue_selection.size()
+		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
+	}
+
+	// Calc rms
+	PROF_STOP( basic::CA_RMSD_EVALUATION );
+	return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
+	
+} // CA_or_equiv_rmsd
+
+
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
 	std::list< Size > residue_selection //the std::list can be sorted!
 ) {
+	// AMW: note that for some reason this is the one that gets called by RMS energy?
+	if ( basic::options::option[ basic::options::OptionKeys::evaluation::rms_type ].value() == "RNP" ) {
+		CA_or_equiv_rmsd( pose1, pose2, residue_selection );
+	}
+
 	PROF_START( basic::CA_RMSD_EVALUATION );
 	using namespace core;
 	// copy coords into Real arrays

@@ -2241,6 +2241,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='format for sequence alignment between structures used in evaluation',
 			legal = ['grishin','general'], default='grishin'
 		),
+		Option( 'rms_type', 'String', desc='RNP if you want both protein and RNA RMSD, blank for protein', default = '' ),
 		Option( 'predicted_burial_fn', 'String', desc='file for burial predictions', default = '' ),
 		Option( 'pool', 'File', desc='find closest matching structure in this pool and report tag and rmsd' ),
 		Option( 'rmsd', 'FileVector', desc='[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)'),

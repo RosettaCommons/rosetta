@@ -130,9 +130,8 @@ void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::s
 	}
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "selection of residues for rmsd of " << tag << std::endl;
-		for ( std::list< core::Size >::const_iterator it = selection.begin(), eit = selection.end();
-				it != eit; ++it ) {
-			tr.Trace << " " << *it;
+		for ( Size const res : selection ) {
+			tr.Trace << " " << res;
 		}
 		tr.Trace << std::endl;
 	}
