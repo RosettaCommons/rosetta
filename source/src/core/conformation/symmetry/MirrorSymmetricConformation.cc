@@ -570,7 +570,9 @@ MirrorSymmetricConformation::detect_disulfides( utility::vector1< Size > const &
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
 MirrorSymmetricConformation::flip_chirality( ResidueOP & new_rsd ) {
-	// Copy the replacement residue to the input residue:
+	if ( new_rsd->type().is_achiral_backbone() ) return; //Do nothing if this residue is achiral.
+
+	// Now copy the replacement residue to the input residue:
 	new_rsd = new_rsd->clone_flipping_chirality();
 }
 

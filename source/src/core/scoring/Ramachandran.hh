@@ -124,8 +124,7 @@ public:
 	eval_rama_score_residue(
 		AA const res_aa,
 		Real const phi,
-		Real const psi,
-		bool const force_mirroring=false
+		Real const psi
 	) const;
 
 	void
@@ -133,8 +132,7 @@ public:
 		conformation::Residue const & res,
 		Real & rama,
 		Real & drama_dphi,
-		Real & drama_dpsi,
-		bool const force_mirroring=false
+		Real & drama_dpsi
 	) const;
 
 	void
@@ -144,8 +142,7 @@ public:
 		Real const psi,
 		Real & rama,
 		Real & drama_dphi,
-		Real & drama_dpsi,
-		bool const force_mirroring=false
+		Real & drama_dpsi
 	) const;
 
 	void
@@ -157,8 +154,7 @@ public:
 		Real const psi,
 		Real & rama,
 		Real & drama_dphi,
-		Real & drama_dpsi,
-		bool const force_mirroring=false
+		Real & drama_dpsi
 	) const;
 
 	/// @brief Function to evaluate the rama score for residues whose connection partners are not necessarily adjacent
@@ -171,8 +167,7 @@ public:
 		conformation::Residue const & res,
 		Real & rama,
 		Real & drama_dphi,
-		Real & drama_dpsi,
-		bool const force_mirroring=false
+		Real & drama_dpsi
 	) const;
 
 	/// @brief Generate random values for phi and psi, biased by the Ramachandran plot of a particular amino acid.

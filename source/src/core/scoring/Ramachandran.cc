@@ -270,7 +270,6 @@ core::chemical::AA
 Ramachandran::get_l_equivalent(
 	AA const d_aa
 ) const {
-	if ( d_aa == core::chemical::aa_gly ) return core::chemical::aa_gly;
 	return core::chemical::get_L_equivalent(d_aa);
 }
 
@@ -445,8 +444,7 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	conformation::Residue const & res,
 	Real & rama,
 	Real & drama_dphi,
-	Real & drama_dpsi,
-	bool const force_mirroring
+	Real & drama_dpsi
 ) const {
 
 	if ( res.connection_incomplete(1) || res.connection_incomplete(2) ) { //If this is an open terminus, don't score this residue.
@@ -482,7 +480,7 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	core::chemical::AA ref_aa = res.aa();
 	if ( res.backbone_aa() != core::chemical::aa_unk ) ref_aa = res.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
 
-	eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi, force_mirroring );
+	eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -491,7 +489,7 @@ Ramachandran::eval_rama_score_residue(
 	conformation::Residue const & rsd
 ) const {
 	Real rama, drama_dphi, drama_dpsi;
-	eval_rama_score_residue( rsd, rama, drama_dphi, drama_dpsi, false );
+	eval_rama_score_residue( rsd, rama, drama_dphi, drama_dpsi );
 	return rama;
 }
 
@@ -501,8 +499,7 @@ Ramachandran::eval_rama_score_residue(
 	conformation::Residue const & rsd,
 	Real & rama,
 	Real & drama_dphi,
-	Real & drama_dpsi,
-	bool const force_mirroring
+	Real & drama_dpsi
 ) const {
 	using namespace numeric;
 
@@ -530,7 +527,7 @@ Ramachandran::eval_rama_score_residue(
 			ref_aa = rsd.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
 		}
 
-		eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi, force_mirroring );
+		eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 	} else { //If this residue is unconventionally connected (should be handled elsewhere)
 		//printf("Residue %lu: THIS SHOULD NEVER OCCUR!\n", rsd.seqpos()); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
 		rama = 0.0;
@@ -547,11 +544,10 @@ Real
 Ramachandran::eval_rama_score_residue(
 	AA const res_aa,
 	Real const phi,
-	Real const psi,
-	bool const force_mirroring
+	Real const psi
 ) const {
 	Real rama, drama_dphi, drama_dpsi;
-	eval_rama_score_residue( res_aa, phi, psi, rama, drama_dphi, drama_dpsi, force_mirroring );
+	eval_rama_score_residue( res_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 	return rama;
 }
 
@@ -562,14 +558,13 @@ Ramachandran::eval_rama_score_residue(
 	Real const psi,
 	Real & rama,
 	Real & drama_dphi,
-	Real & drama_dpsi,
-	bool const force_mirroring
+	Real & drama_dpsi
 ) const {
 	using namespace basic::options;
 	eval_rama_score_residue(
 		option[ OptionKeys::corrections::score::use_bicubic_interpolation ],
 		option[ OptionKeys::corrections::score::rama_not_squared ],
-		res_aa, phi, psi, rama, drama_dphi, drama_dpsi, force_mirroring);
+		res_aa, phi, psi, rama, drama_dphi, drama_dpsi);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -583,8 +578,7 @@ Ramachandran::eval_rama_score_residue(
 	Real const psi,
 	Real & rama,
 	Real & drama_dphi,
-	Real & drama_dpsi,
-	bool const force_mirroring
+	Real & drama_dpsi
 ) const {
 	using namespace numeric;
 
@@ -593,7 +587,7 @@ Ramachandran::eval_rama_score_residue(
 	core::Real psi2 = psi;
 	core::Real d_multiplier=1.0; //A multiplier for derivatives: 1.0 for L-amino acids, -1.0 for D-amino acids.
 
-	if ( force_mirroring || is_canonical_d_aminoacid( res_aa ) ) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
+	if ( is_canonical_d_aminoacid( res_aa ) ) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
 		res_aa2 = get_l_equivalent( res_aa );
 		phi2 = -phi;
 		psi2 = -psi;
