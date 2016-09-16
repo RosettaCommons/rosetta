@@ -238,6 +238,17 @@ public:
 			TR.flush();
 		}
 	}
+	
+	/// @brief Tests cyclic permutation scoring with the cart_bonded scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_cart_bonded() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
+		TR << "Testing cart_bonded score term." << std::endl;
+		cyclic_pose_test(scorefxn);
+		return;
+	}
 
 	/// @brief Tests cyclic permutation scoring with the fa_atr scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

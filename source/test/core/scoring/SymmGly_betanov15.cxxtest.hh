@@ -83,6 +83,17 @@ public:
 		}
 	}
 
+	/// @brief Tests symmetric scoring of glycine with the cart_bonded scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_cart_bonded() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
+		TR << "Testing cart_bonded score term." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
+	}
+
 	/// @brief Tests symmetric scoring of glycine with the fa_atr scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_symm_gly_fa_atr() {

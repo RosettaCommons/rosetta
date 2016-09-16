@@ -2119,6 +2119,14 @@ public:
 	basic::datacache::BasicDataCacheOP
 	nonconst_data_ptr();
 
+	/// @brief Is this residue mirrored relative to its coordinates in the ResidueType?
+	/// @details Only used for achiral residues like glycine in the context of mirror symmetry and other mirror-image structures.
+	inline bool mirrored_relative_to_type() const { return mirrored_relative_to_type_; }
+
+	/// @brief Set whether this residue is mirrored relative to its coordinates in the ResidueType.
+	/// @details Only used for achiral residues like glycine in the context of mirror symmetry and other mirror-image structures.
+	inline void set_mirrored_relative_to_type( bool const setting ) { mirrored_relative_to_type_ = setting; }
+
 #ifdef SERIALIZATION
 	/// @brief Serialize this object
 	template < class Archive >
@@ -2204,6 +2212,11 @@ private:
 
 	/// @brief the sequence position
 	Size seqpos_;
+
+	/// @brief Is this residue mirrored relative to its coordinates in the ResidueType?
+	/// @details Only used for achiral residues like glycine in the context of mirror symmetry and other mirror-image structures.
+	/// False by default.
+	bool mirrored_relative_to_type_;
 
 	/// @brief the chain id number, starting from 1
 	core::Size chain_;

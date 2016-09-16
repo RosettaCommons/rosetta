@@ -10,7 +10,7 @@
 /// @file   core/scoring/methods/CartesianBondedEnergy.cc
 /// @brief  Harmonic bondangle/bondlength/torsion constraints
 /// @author Frank DiMaio
-/// modified by Vikram K. Mulligan to allow D-amino acid minimization.
+/// @author modified by Vikram K. Mulligan to allow D-amino acid minimization and cyclic geometry.
 
 // Unit headers
 #include <core/scoring/methods/CartBondedParameters.hh>
@@ -1382,7 +1382,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amino acids
 		for ( int i=1; i<=5; ++i ) {
 			if ( i==1 && is_nterm ) continue;
-			if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.name3() == "B3G" ) ) continue;
+			if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
 
 			std::string atm1,atm2;
 			int rt1 = 0;
@@ -1403,7 +1403,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		// backbone dependent bond angles
 		for ( int i=1; i<=7; ++i ) {
-			if ( (i==2 || i==4) && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.name3() == "B3G" ) ) continue;
+			if ( (i==2 || i==4) && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
 			if ( i==1 && is_nterm ) continue;
 			if ( (i==6 || i==7) && is_cterm ) continue;
 
@@ -1640,6 +1640,8 @@ CartesianBondedEnergy::defines_residue_pair_energy(
 	Size res2
 ) const {
 	// is this fn. called?
+	//std::cout << "******CartesianBondedEnergy::defines_residue_pair_energy() WAS CALLED!*****" << std::endl; //DELETE ME
+	// VKM -- 10 Sept 2016: No, no it doesn't seem to be.
 	return ( res1 == (res2+1) || res1 == (res2-1) );
 }
 
@@ -1653,9 +1655,12 @@ CartesianBondedEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	if ( rsd1.seqpos() < rsd2.seqpos() ) {
+
+	core::Size const rsd1_next( rsd1.has_upper_connect() ? rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) : 0 ); //The index of the residue connected to residue 1's C-terminus.
+
+	if ( rsd2.seqpos() == rsd1_next || rsd2.seqpos() > rsd1.seqpos() ) {
 		residue_pair_energy_sorted( rsd1, rsd2, pose, sf, emap );
-	} else {
+	} else { //Assumes that residue 1 is connected to residue 2's C-terminus.
 		residue_pair_energy_sorted( rsd2, rsd1, pose, sf, emap );
 	}
 }
@@ -1839,10 +1844,10 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		return 0.0;
 	}
 
-	core::Size resid = rsd.seqpos();
+	core::Size const iplus1_resid( rsd.has_upper_connect() ? rsd.connected_residue_at_resconn( rsd.type().upper_connect_id() ) : 0 ); //Index of residue connected at C-terminal connection; 0 if no connection there.
+	
 	//i+1 residue is either D-proline or L-proline
-	bool preproline = resid+1 < pose.size() && pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
-		(pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr);
+	bool const preproline ( iplus1_resid ? pose.residue( iplus1_resid ).aa() == core::chemical::aa_pro || pose.residue( iplus1_resid ).aa() == core::chemical::aa_dpr : false ); //Is this a residue preceding a proline?
 
 	// phi/psi
 	Real phi=0,psi=0;
@@ -1992,14 +1997,12 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 ) const {
 
 	using namespace numeric;
-
-	debug_assert( rsd2.seqpos() >= rsd1.seqpos() );
-
-	core::Size resid = rsd1.seqpos();
-	bool preproline =
-		rsd1.seqpos() != rsd2.seqpos() &&
-		pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
-		(pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_pro || pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_dpr);
+	
+	bool const preproline(
+		rsd1.seqpos() != rsd2.seqpos() && //These are two different residues?
+		( rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos() ) && //The second residue is connected to the first residue's C-terminus?
+		(pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_pro || pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_dpr) //The second residue is D/L proline?
+	);
 
 
 	//Multipliers for D-amino acids:
@@ -2623,8 +2626,6 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 {
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
-
-	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
@@ -3358,8 +3359,6 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 ) const {
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
-
-	debug_assert ( res1.seqpos() < res2.seqpos() );
 
 	//Multipliers for D-amino acids:
 	//const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(res1.aa()) ? -1.0 : 1.0 ;

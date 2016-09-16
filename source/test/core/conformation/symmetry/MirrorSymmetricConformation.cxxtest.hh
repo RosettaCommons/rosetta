@@ -154,6 +154,19 @@ public:
 		core::pose::symmetry::make_symmetric_pose( pose, symmdata1 );
 		pose.update_residue_neighbors();
 		//pose.dump_pdb("vmirrortemp1.pdb"); //DELETE ME
+		
+		//Little check: do we properly store whether glycines are mirrored?
+		for(core::Size ir=1, irmax=pose.total_residue(); ir<=irmax; ++ir) {
+			if(pose.residue_type(ir).aa() == core::chemical::aa_gly) {
+				if( pose.chain(ir) == 1) {
+					TS_ASSERT( !pose.residue(ir).mirrored_relative_to_type() );
+				} else {
+					TS_ASSERT( pose.residue(ir).mirrored_relative_to_type() );
+				}
+			} else {
+				TS_ASSERT( !pose.residue(ir).mirrored_relative_to_type() );
+			}
+		}
 
 		// Set up score function
 		core::scoring::symmetry::SymmetricScoreFunction scorefxn;
