@@ -27,6 +27,7 @@
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_Suite.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_MultiSuite.hh>
+#include <protocols/farna/thermal_sampling/util.hh>
 
 #include <utility/io/ozstream.hh>
 
@@ -48,6 +49,7 @@ using namespace core::pose;
 using namespace protocols;
 using namespace protocols::stepwise;
 using namespace basic::options::OptionKeys;
+using namespace protocols::farna::thermal_sampling;
 using namespace basic::options;
 
 OPT_KEY( String, seq1 )
@@ -60,133 +62,9 @@ OPT_KEY( String, out_prefix )
 OPT_KEY( Boolean, save_score_terms )
 OPT_KEY( Boolean, dump_pdb )
 OPT_KEY( Integer, n_intermediate_dump )
-//////////////////////////////////////////////////////////////////////////////
-// Histogram class for accumulating samples
-class Histogram {
 
-	public:
-	Histogram( Real const min, Real const max, Real const spacing ):
-	min_( min ),
-		max_( max ),
-		spacing_( spacing )
-		{
-		runtime_assert( max > min );
-	n_elem_ = static_cast<Size>( ( max - min ) / spacing ) + 1;
-	for ( Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
-}
 
-void add( float const value, Size const n_items ) {
-	Size bin_index;
-	if ( value <= min_ ) {
-		bin_index = 1;
-	} else if ( value >= max_ ) {
-		bin_index = n_elem_;
-	} else {
-		bin_index = static_cast<Size>( ( value - min_ ) / spacing_ ) + 1;
-	}
-	hist_[bin_index] += n_items;
-}
 
-void clear() {
-	for ( Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
-}
-
-utility::vector1<Real> get_scores() const {
-	utility::vector1<Real> scores;
-	for ( Size i = 1; i <= n_elem_; ++i ) {
-		scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
-	}
-	return scores;
-}
-
-utility::vector1<Size> get_hist() const { return hist_; }
-
-private:
-Real const min_, max_, spacing_;
-Size n_elem_;
-utility::vector1<Size> hist_;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-// score types to be recorded
-utility::vector1<scoring::ScoreType> const & get_scoretypes() {
-	using namespace scoring;
-	static utility::vector1<ScoreType> scoretypes;
-	if ( !scoretypes.empty() ) return scoretypes;
-
-	// List of score types to be cached
-	scoretypes.push_back( fa_atr );
-	scoretypes.push_back( fa_rep );
-	scoretypes.push_back( fa_intra_rep );
-	scoretypes.push_back( fa_stack );
-	scoretypes.push_back( rna_torsion );
-	scoretypes.push_back( hbond_sc );
-	scoretypes.push_back( lk_nonpolar );
-	scoretypes.push_back( geom_sol_fast );
-	scoretypes.push_back( stack_elec );
-	scoretypes.push_back( fa_elec_rna_phos_phos );
-	return scoretypes;
-}
-//////////////////////////////////////////////////////////////////////////////
-void update_scores(
-	utility::vector1<float> & scores,
-	Pose & pose,
-	scoring::ScoreFunctionOP const scorefxn
-) {
-	using namespace scoring;
-	scores.clear();
-	scores.push_back( ( *scorefxn )( pose ) );
-	utility::vector1<ScoreType> const & score_types( get_scoretypes() );
-	for ( Size i = 1; i<= score_types.size(); ++i ) {
-		scores.push_back( scorefxn->score_by_scoretype(
-			pose, score_types[i], false /*weighted*/ ) );
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void fill_data(
-	utility::vector1<float> & data,
-	Size const count,
-	utility::vector1<float> & scores
-) {
-	using namespace scoring;
-	data.push_back( count );
-	data.insert( data.end(), scores.begin(), scores.end() );
-}
-//////////////////////////////////////////////////////////////////////////////
-// Simple heuristic for gaussian stdev
-Real gaussian_stdev( Real const n_rsd, Real const temp, bool const is_bp ) {
-	// Negative temp is infinite
-	if ( temp < 0 ) return -1;
-	if ( is_bp ) return 5 * temp / n_rsd;
-	return 6 * pow( temp / n_rsd, 0.75 );
-}
-//////////////////////////////////////////////////////////////////////////////
-template<typename T>
-void vector2disk_in1d(
-	std::string const & out_filename,
-	utility::vector1<T> const & out_vector
-) {
-	utility::io::ozstream out(
-		out_filename.c_str(), std::ios::out | std::ios::binary );
-	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
-	out.close();
-}
-//////////////////////////////////////////////////////////////////////////////
-template<typename T>
-void vector2disk_in2d(
-	std::string const & out_filename,
-	Size const dim1,
-	Size const dim2,
-	utility::vector1<T> const & out_vector
-) {
-	utility::io::ozstream out(
-		out_filename.c_str(), std::ios::out | std::ios::binary );
-	runtime_assert( dim1 * dim2 == out_vector.size() );
-	out.write( (const char*) &dim1, sizeof(Size) );
-	out.write( (const char*) &dim2, sizeof(Size) );
-	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
-	out.close();
-}
 //////////////////////////////////////////////////////////////////////////////
 
 void set_gaussian_stdev(
@@ -222,12 +100,7 @@ PoseOP pose_setup(
 	}
 	return pose;
 }
-////////////////////////////////////////////////////////////////////////////////
-Size data_dim() {
-	using namespace scoring;
-	utility::vector1<ScoreType> const & score_types( get_scoretypes() );
-	return score_types.size() + 2;
-}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 MC_run() {
@@ -401,7 +274,7 @@ MC_run() {
 			std::ostringstream oss;
 			oss << option[out_prefix]() << '_' << std::fixed << std::setprecision( 2 )
 				<< temps_[ i ] << ".bin.gz";
-			Size const data_dim2( data_dim() );
+			Size const data_dim2( scorefxn->get_nonzero_weighted_scoretypes().size() + 2 );
 			Size const data_dim1( data[ i ].size() / data_dim2 );
 			vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[ i ] );
 		}

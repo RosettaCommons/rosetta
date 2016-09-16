@@ -56,6 +56,9 @@ public:
 	/// @brief Set the standard deviation of Gaussian sampler
 	void set_gaussian_stdev( core::Real const setting );
 
+	/// @brief Set the angle range from the initial torsions
+	void set_angle_range_from_init( core::Real const setting );
+
 	/// @brief Set the flip rate of pucker
 	void set_pucker_flip_rate( core::Real const setting );
 
@@ -107,6 +110,9 @@ public:
 	/// @brief Set starting torsions and pucker states from pose
 	void set_init_from_pose( core::pose::Pose const & pose );
 
+	/// @brief Set the stored angle from a pose
+	void set_angle( core::pose::Pose const & pose );
+
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_MC_Suite"; }
 
@@ -117,7 +123,7 @@ private:
 	core::Size const rsd_id_;
 	bool skip_same_pucker_, idealize_coord_, sample_near_a_form_, sample_bb_,
 		sample_lower_nucleoside_, sample_upper_nucleoside_;
-	core::Real pucker_flip_rate_, gaussian_stdev_, a_form_range_;
+	core::Real pucker_flip_rate_, gaussian_stdev_, angle_range_, a_form_range_;
 	core::chemical::rna::PuckerState init_pucker_;
 	utility::vector1<core::Real> a_form_torsions_, init_torsions_;
 	utility::vector1<core::id::TorsionID> torsion_ids_;

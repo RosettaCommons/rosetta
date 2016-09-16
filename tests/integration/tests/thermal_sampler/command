@@ -40,39 +40,12 @@ set -e
 # Don't forget to use -constant_seed -nodelay  so results are reproducible.
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
-%(bin)s/recces_turner.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/thermal_sampler.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
 | egrep -vf ../../ignore_list \
 > log
 
-# have to move first run's outputs to a new name
-mv init.pdb init1.pdb
-mv min.pdb min1.pdb
-mv end.pdb end1.pdb
-mv ST_0.80.hist.gz ST_0.80_1.hist.gz
-mv ST_1.00.hist.gz ST_1.00_1.hist.gz
-mv ST_1.40.hist.gz ST_1.40_1.hist.gz
-mv ST_1.80.hist.gz ST_1.80_1.hist.gz
-mv ST_3.00.hist.gz ST_3.00_1.hist.gz
-mv ST_7.00.hist.gz ST_7.00_1.hist.gz
-mv ST_30.00.hist.gz ST_30.00_1.hist.gz
-mv ST_hist_scores.gz ST_hist_scores_1.gz
-
-%(bin)s/recces_turner.%(binext)s %(additional_flags)s @flags2 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/thermal_sampler.%(binext)s %(additional_flags)s @flags2 -database %(database)s -run:constant_seed -nodelay  2>&1 \
 | egrep -vf ../../ignore_list \
 > log2
-
-# may as well...
-mv init.pdb init2.pdb
-mv min.pdb min2.pdb
-mv end.pdb end2.pdb
-mv ST_0.80.hist.gz ST_0.80_2.hist.gz
-mv ST_1.00.hist.gz ST_1.00_2.hist.gz
-mv ST_1.40.hist.gz ST_1.40_2.hist.gz
-mv ST_1.80.hist.gz ST_1.80_2.hist.gz
-mv ST_3.00.hist.gz ST_3.00_2.hist.gz
-mv ST_7.00.hist.gz ST_7.00_2.hist.gz
-mv ST_30.00.hist.gz ST_30.00_2.hist.gz
-mv ST_hist_scores.gz ST_hist_scores_2.gz
-
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so

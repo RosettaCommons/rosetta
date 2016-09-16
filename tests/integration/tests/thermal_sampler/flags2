@@ -1,0 +1,12 @@
+-s gaaa_nonnative.pdb
+-out_prefix native_run2
+-sample_residues 3 4 5 6 
+-free_residues 3 4 5 6
+-n_cycle 1000 
+-angle_range_bb 60 
+-angle_range_chi 180 
+-dump_pdb true 
+-dump_freq 100 
+-out_torsions true 
+-temps 0.8 1 1.4 1.8 3 7 30 
+-st_weights 0 5.99 12.06 13.80 14.04 13.67 12.69

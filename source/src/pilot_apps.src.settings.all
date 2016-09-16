@@ -313,6 +313,7 @@ sources = {
 	# F ######################################################################
 	"pilot/fcchou" : [
 	    #"adenosine_sample_around", # /* Fang-Chieh Chou, demos/sample_around */
+		"thermal_sampler",
 	],
 	"pilot/firas" : [
 		#"check_burial", # /* Firas,Documentation Location,Demo Location */

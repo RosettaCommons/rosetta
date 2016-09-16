@@ -64,6 +64,12 @@ void  RNA_MC_MultiSuite::set_gaussian_stdev(
 	suite_samplers_[rotamer_id]->set_gaussian_stdev( setting );
 }
 ///////////////////////////////////////////////////////////////////////////
+void RNA_MC_MultiSuite::set_angle( pose::Pose const & pose ) {
+	for ( Size i = 1; i<=suite_samplers_.size(); ++i ) {
+		suite_samplers_[i]->set_angle( pose );
+	}
+}
+///////////////////////////////////////////////////////////////////////////
 void  RNA_MC_MultiSuite::add_external_loop_rotamer(
 	MC_StepWiseSamplerOP const & rotamer
 ) {

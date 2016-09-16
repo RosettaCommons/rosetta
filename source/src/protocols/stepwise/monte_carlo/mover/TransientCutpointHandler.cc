@@ -27,6 +27,8 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/id/TorsionID.hh>
+
 using namespace core;
 using namespace core::pose;
 using namespace core::chemical;
@@ -69,11 +71,17 @@ TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & viewer_pose ){
 	Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
 	utility::vector1< std::pair< id::TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose, cutpoint_suite_ );
 
+	// record the alpha torsion
+	Real const alpha_ = pose.torsion( id::TorsionID( cutpoint_suite_ + 1, core::id::BB, 1) );
+
 	// create reasonable fold tree
 	prepare_fold_tree_for_erraser( pose );
 
 	pose::correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
 	apply_suite_torsion_info( pose, suite_torsion_info );
+
+	// reset the alpha torsion to its original value
+	pose.set_torsion( id::TorsionID( cutpoint_suite_ + 1, core::id::BB, 1), alpha_ );
 
 	viewer_pose = pose;
 }

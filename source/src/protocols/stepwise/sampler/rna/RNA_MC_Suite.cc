@@ -47,6 +47,7 @@ RNA_MC_Suite::RNA_MC_Suite( Size const rsd_id ):
 	sample_upper_nucleoside_( true ),
 	pucker_flip_rate_( 0.1 ),
 	gaussian_stdev_( 20 ),
+	angle_range_( 180 ),
 	a_form_range_( 60 ),
 	init_pucker_( NORTH )
 {
@@ -88,6 +89,10 @@ void RNA_MC_Suite::init() {
 			Real const min_angle( a_form_torsions_[i] - a_form_range_ );
 			Real const max_angle( a_form_torsions_[i] + a_form_range_ );
 			sampler->set_angle_range( min_angle, max_angle );
+		} else {
+			Real const min_angle( init_torsions_[i] - angle_range_ );
+			Real const max_angle( init_torsions_[i] + angle_range_ );
+			sampler->set_angle_range( min_angle, max_angle );
 		}
 		bb_samplers_.push_back( sampler );
 	}
@@ -100,6 +105,9 @@ void RNA_MC_Suite::init() {
 			Real const min_angle( a_form_torsions_[5 + i] - a_form_range_ );
 			Real const max_angle( a_form_torsions_[5 + i] + a_form_range_ );
 			chi_sampler->set_angle_range( min_angle, max_angle );
+		} else {
+			Real const min_angle( init_torsions_[5 + i] - angle_range_ );
+			Real const max_angle( init_torsions_[5 + i] + angle_range_ );
 			chi_sampler->set_angle_range( min_angle, max_angle );
 		}
 		RNA_MC_SugarOP sugar_sampler( new RNA_MC_Sugar(
@@ -143,6 +151,28 @@ void RNA_MC_Suite::set_pucker_flip_rate( Real const setting ) {
 	if ( is_init() ) {
 		sugar_samplers_[1]->set_flip_rate( pucker_flip_rate_ );
 		sugar_samplers_[2]->set_flip_rate( pucker_flip_rate_ );
+	}
+}
+///////////////////////////////////////////////////////////////////////////
+void RNA_MC_Suite::set_angle_range_from_init( Real const setting ) {
+	angle_range_ = setting;
+	if ( is_init() ) {
+		chi_samplers_[1]->set_angle_range( init_torsions_[6] - angle_range_,
+			init_torsions_[6] + angle_range_ );
+		chi_samplers_[2]->set_angle_range( init_torsions_[7] - angle_range_,
+			init_torsions_[7] + angle_range_ );
+		for ( Size i = 1; i<= bb_samplers_.size(); ++i ) {
+			bb_samplers_[i]->set_angle_range( init_torsions_[i] - angle_range_,
+				init_torsions_[i] + angle_range_ );
+		}
+	}
+}
+///////////////////////////////////////////////////////////////////////////
+void RNA_MC_Suite::set_angle( pose::Pose const & pose ) {
+	chi_samplers_[1]->set_angle( pose.torsion(torsion_ids_[6]) );
+	chi_samplers_[2]->set_angle( pose.torsion(torsion_ids_[7]) );
+	for ( Size i =1; i <= bb_samplers_.size(); ++i ) {
+		bb_samplers_[i]->set_angle( pose.torsion(torsion_ids_[i]) );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////

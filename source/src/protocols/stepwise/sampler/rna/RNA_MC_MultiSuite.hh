@@ -43,6 +43,9 @@ public:
 		core::Size const rotamer_id
 	);
 
+	/// @brief Set the stored angle from a pose
+	void set_angle( core::pose::Pose const & pose );
+
 	/// @brief Set the flip rate of pucker
 	void set_pucker_flip_rate( core::Real const setting );
 

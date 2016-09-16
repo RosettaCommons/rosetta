@@ -198,6 +198,7 @@ void set_gaussian_stdev(
 			sampler.set_gaussian_stdev( bp_stdev, bp_rsd[i] );
 	for ( Size i = 1; i <= dangling_rsd.size(); ++ i )
 			sampler.set_gaussian_stdev( dangling_stdev, dangling_rsd[i] );
+	std::cout << "std:" << bp_stdev << std::endl;
 }
 //////////////////////////////////////////////////////////////////////////////
 PoseOP pose_setup(
@@ -397,6 +398,7 @@ void*
 my_main( void* )
 {
 	MC_run();
+        protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
 //////////////////////////////////////////////////////////////////////////////
