@@ -11,6 +11,7 @@
 /// @brief Grafter implementation: take SCS results and create antibody Pose with CDR loops from results
 /// @author Sergey Lyskov
 /// @author Jared Adolf-Bryfogle
+/// @author Jeliazko Jeliazkov
 
 #include <protocols/antibody/grafting/util.hh>
 
@@ -23,10 +24,13 @@
 #include <protocols/antibody/AntibodyEnumManager.hh>
 
 #include <core/import_pose/import_pose.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/rms_util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <protocols/grafting/AnchoredGraftMover.hh>
 #include <protocols/antibody/constraints/CDRDihedralConstraintMover.hh>
@@ -34,6 +38,8 @@
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyCDRGrafter.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace antibody {
@@ -99,16 +105,29 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 	trim_framework(A, trimmed_heavy_fr, trimmed_light_fr);
 
 	AntibodyNumbering an( Chothia_Numberer().number(A, trimmed_heavy_fr, trimmed_light_fr) );
-
+	
+	utility::vector1< core::Size > conserved_frh_residues;
+	for( auto i : {10,11,12,13,14,15,16,17,18,19,20,21,21,23,24,25,36,37,38,39,40,41,42,43,44,45,46,47,48,49,66,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,103,104,105} ){
+		conserved_frh_residues.push_back(i);
+	}
+	TR.Debug << "Conserved FRH regions: " << conserved_frh_residues << std::endl;
+	
+	utility::vector1< core::Size > conserved_frl_residues;
+	for( auto i : {10,11,12,13,14,15,16,17,18,19,20,21,21,23,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,57,58,59,60,61,62,63,64,65,66,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,98,99,100} ){
+		conserved_frl_residues.push_back(i);
+	}
+	TR.Debug << "Conserved FRL regions: " << conserved_frl_residues << std::endl;
+	
 	struct {
 		char chain;
 		core::pose::PoseOP &pose;
 		AntibodyChainNumbering numbering;
 		string trimmed_sequence;
 		string color;
+		utility::vector1< core::Size > conserved_fr_residues; // chothia numbering is assumed (and true for members of the database)
 	} J[] {
-		{'H', frh, an.heavy, trimmed_heavy_fr.fr1 + A.h1_sequence() + trimmed_heavy_fr.fr2 + A.h2_sequence() + trimmed_heavy_fr.fr3 + A.h3_sequence() + trimmed_heavy_fr.fr4, TR.Blue},
-		{'L', frl, an.light, trimmed_light_fr.fr1 + A.l1_sequence() + trimmed_light_fr.fr2 + A.l2_sequence() + trimmed_light_fr.fr3 + A.l3_sequence() + trimmed_light_fr.fr4, TR.Green},
+		{'H', frh, an.heavy, trimmed_heavy_fr.fr1 + A.h1_sequence() + trimmed_heavy_fr.fr2 + A.h2_sequence() + trimmed_heavy_fr.fr3 + A.h3_sequence() + trimmed_heavy_fr.fr4, TR.Blue, conserved_frh_residues},
+		{'L', frl, an.light, trimmed_light_fr.fr1 + A.l1_sequence() + trimmed_light_fr.fr2 + A.l2_sequence() + trimmed_light_fr.fr3 + A.l3_sequence() + trimmed_light_fr.fr4, TR.Green, conserved_frl_residues},
 	};
 
 	for(auto &j : J) {
@@ -149,14 +168,26 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 		j.pose->dump_pdb( string(prefix + "fr") + chain_lower + "_after_seqeunce_adjustment" + suffix + ".pdb" );
 
 		PoseOP O = orientation->split_by_chain( find_chain(*orientation, j.chain, "orientation" ) );
+		
+		// super impose only the FR regions
+		core::id::AtomID_Map< core::id::AtomID> atom_map; // map j.pose CAs of FR to orientation CAs of FR
+		core::pose::initialize_atomid_map( atom_map, *j.pose, core::id::BOGUS_ATOM_ID );
+	
+		
+		for (auto it = j.conserved_fr_residues.begin(); it != j.conserved_fr_residues.end(); ++it) {
+			
+			// convert to pose numbering, luckily no insertion codes to worry about!
+			core::Size it1 = j.pose->pdb_info()->pdb2pose(j.chain ,*it);
+			core::Size it2 = O->pdb_info()->pdb2pose(j.chain ,*it);
+			
+			core::id::AtomID const id1( j.pose->residue(it1).atom_index("CA"), it1);
+			core::id::AtomID const id2( O->residue(it2).atom_index("CA"), it2);
+			atom_map[ id1 ] = id2;
+		}
+		
+		core::scoring::superimpose_pose( *j.pose, *O, atom_map );
 
-		protocols::moves::MoverOP imposer( new protocols::simple_moves::SuperimposeMover( *O,
-																																										  1 /*ref_start*/,
-																																										  std::min( O->size(), j.pose->size() ) /*ref_end*/,
-																																										  1 /*target_start*/,
-																																										  std::min(O->size(), j.pose->size() ) /*target_end*/,
-																																										  true /*CA_only*/) );
-		imposer->apply(*j.pose);
+		//j.pose->dump_pdb( prefix + j.chain + "_super_imposed" + suffix + ".pdb");
 	}
 
 	frh->append_pose_by_jump(*frl, 1);
