@@ -10,7 +10,7 @@
 /// @file protocols/floppy_tail/FloppyTailMover.cc
 /// @brief This app was initially intended for modeling the binding of a long unstructured C-terminal tail to some other part of a protein.  It now works for N-terminal, C-terminal, and internal flexible regions.  It works best as a method for sampling space to see what is possible, preferably in conjunction with extensive experimental constraints.  It is not meant to produce ab-initio style models of folded complexes. It has now been expanded to work on symmetric proteins (tested on a homohexamer). Symmetry has not been tested with some flags. To run symmetry one needs a symm file and movemap. Symmetry has not been tested with fragments or constraints.
 /// @author Steven Lewis
-/// @author Jeliazko Jeliazkov (symmetry)
+/// @author Modified by Jeliazko Jeliazkov
 
 // Unit Headers
 #include <protocols/floppy_tail/FloppyTailMover.hh>
@@ -20,6 +20,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
+
+// Center of mass detection
+#include <core/pose/util.hh>
 
 #include <core/conformation/Conformation.hh>
 
@@ -285,6 +288,59 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 			foldtree_->reorder(pose.size());
 			TR << "C-rooted tree: " << *foldtree_ << std::endl;
 		}
+	}
+	
+	// center of mass rooted FT will allow both termini to flop simultaneously
+	// check for number of chains, connect by COM-COM jumps
+	// edges will be from COM out
+	if ( basic::options::option[ FloppyTail::COM_root].value() ) {
+		
+		// identify number of chains
+		core::Size const nchains = pose.conformation().num_chains();
+		
+		utility::vector1< core::Size > com_residues;
+		
+		// calculate com for each chain
+		for (core::Size i=1; i<=nchains; ++i) {
+			com_residues.push_back( residue_center_of_mass( pose, pose.conformation().chain_begin(i), pose.conformation().chain_end(i) ) );
+		}
+		
+		
+		for ( auto it = com_residues.begin(); it != com_residues.end(); ++it ) {
+			
+			// loop over COM and check that these are not termini
+			runtime_assert_msg( !pose.residue(*it).is_terminus(), "COM cannot be a terminus!" );
+			
+			// check if COM is in a region of mobility?
+			runtime_assert_msg( !movemap_->get_bb(*it), "Warning! The COM is in a flexible region. Was this behavior intended?");
+			
+		}
+		
+		// add jumps from COM to COM
+		foldtree_->clear();
+		
+		for ( core::Size i=1; i<=nchains; ++i ) {
+			// every chain has edges emitting from COM
+			foldtree_->add_edge( com_residues[i], pose.conformation().chain_begin(i), -1 );
+			foldtree_->add_edge( com_residues[i], pose.conformation().chain_end(i), -1 );
+			// now connect with jumps across subunits (if any)
+			if (i>1) {
+				foldtree_->add_edge( com_residues[i-1], com_residues[i], i-1);
+				// immobilize jumps from COM to COM as we do not want that movement
+				movemap_->set_jump(i-1, false);
+			}
+		}
+		
+		// update fold tree root (at COM of chain 1)
+		foldtree_->reorder(com_residues[1]);
+		
+		// test validity
+		if ( foldtree_->check_fold_tree() ) {
+				TR << "COM-rooted tree: " << *foldtree_ << std::endl;
+		} else {
+			utility_exit_with_message("Error invalid COM-rooted tree!");
+		}
+		
 	}
 
 	//setup of TaskFactory

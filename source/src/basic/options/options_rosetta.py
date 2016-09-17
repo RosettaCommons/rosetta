@@ -5194,6 +5194,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'pair_off', 'Boolean', desc='turn off Epair electrostatics term.  Used once for a simple side experiment, not meant for general use.', default='false'),
 		Option( 'publication', 'Boolean', desc='output statistics used in publication.  TURN OFF if not running publication demo.', default='false'),
 		Option( 'C_root', 'Boolean', desc='Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation.', default='false'),
+        Option( 'COM_root', 'Boolean', desc='Reroot the fold_tree to the center of mass. This allows you to flop the N- & C-termini simultaneously.', default='false'),
 		Option( 'force_linear_fold_tree', 'Boolean', desc='Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics', default='false'),
 		Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
 		Option( 'cen_weights', 'String', desc = 'Use a different/custom scorefunction for centroid step'),
