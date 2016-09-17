@@ -40,10 +40,8 @@
 namespace protocols {
 namespace docking {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::moves;
-
 class DockingPrepackProtocol : public DockingHighRes {
+
 public:
 	/// @brief Default constructor
 	DockingPrepackProtocol();
@@ -77,8 +75,8 @@ private:
 
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover_;
 	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;
-	SidechainMinMoverOP scmin_mover_;
-	SequenceMoverOP pack_operations_;
+    SidechainMinMoverOP scmin_mover_;
+	protocols::moves::SequenceMoverOP pack_operations_;
 	bool dock_ppk_;
 	FaDockingSlideIntoContactOP fa_dock_slide_into_contact_;
 	bool movers_setup_;
