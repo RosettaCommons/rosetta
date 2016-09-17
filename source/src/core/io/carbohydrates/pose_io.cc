@@ -53,6 +53,7 @@ using namespace core;
 
 
 // Parse sugar code suffixes to extract a list of sugar modifications with their corresponding positions.
+/// @return  A list of pairs of positions and modifications.
 utility::vector1< std::pair< core::uint, std::string > >
 sugar_modifications_from_suffix( std::string const & suffix )
 {
@@ -80,7 +81,7 @@ sugar_modifications_from_suffix( std::string const & suffix )
 				utility_exit_with_message( "Saccharide sequence input error: "
 					"A comma must come between two numerals in a suffix." );
 			}
-			// If it's a valid location for a comma, we just move on.
+		// If it's a valid location for a comma, we just move on.
 		} else if ( char_to_int( letter ) != 0 ) {  // It's a number.
 			if ( char_to_int( next_letter ) != 0 ) {  // If the next letter is also a number....
 				utility_exit_with_message( "Saccharide sequence input error: "
@@ -100,7 +101,7 @@ sugar_modifications_from_suffix( std::string const & suffix )
 			current_positions.push_back( char_to_int( letter ) );
 		} else {  // It's an alphabetic letter (or nonsense).
 			if ( i == 0 ) {  // A default position is only allowed for the first modification.
-				current_positions.push_back( 0 );  // This will be filled in with a real value later.
+				current_positions.push_back( 0 );  // This might be filled in with a real value later.
 			}
 			current_affix += letter;
 		}

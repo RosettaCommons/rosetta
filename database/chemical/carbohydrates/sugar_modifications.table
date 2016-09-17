@@ -1,13 +1,13 @@
 # A table of information on the nomenclature of modified sugars.
 
-#                    Substituent           Short  Patch Name     Default   Reducing    Glycoside  Following
-# Modification Name  Full Name    Implies  Affix  (no position)  Position  End Suffix  Suffix     Word/Phrase
-  amino_sugar        amino        deoxy    N      NH3+                  2  ose         oside      N/A
-  acetyl_sugar       acetyl       N/A      Ac     Ac                    5  ose         oside      N/A
-  acetylamino_sugar  acetylamino  deoxy    NAc    AcNH                  2  ose         oside      N/A
-  methyl_sugar       methyl       deoxy    OMe    Me                    0  ose         oside      N/A
-  deoxy_sugar        deoxy        N/A      N/A    deoxy                 0  ose         oside      N/A
-  sulfoamino_sugar   sulfoamino   deoxy    NS     NHSO3-                2  ose         oside      N/A
-  sulfated_sugar     N/A          N/A      S      OSO3-                 6  ose         oside      sulfate
-  methyl_glycoside   N/A          N/A      OMe    OMe                   1  N/A         oside      N/A
-  uronic_acid        N/A          N/A      A      uronic acid           6  urate       urate      N/A
+#                    Substituent           Short  Patch Name     Default   Has Inherent  Reducing    Glycoside  Following
+# Modification Name  Full Name    Implies  Affix  (no position)  Position      Position  End Suffix  Suffix     Word/Phrase
+  amino_sugar        amino        deoxy    N      NH3+                  2             0  ose         oside      N/A
+  acetyl_sugar       acetyl       N/A      Ac     Ac                    5             0  ose         oside      N/A
+  acetylamino_sugar  acetylamino  deoxy    NAc    AcNH                  2             0  ose         oside      N/A
+  methyl_sugar       methyl       deoxy    OMe    Me                    0             0  ose         oside      N/A
+  deoxy_sugar        deoxy        N/A      N/A    deoxy                 0             0  ose         oside      N/A
+  sulfoamino_sugar   sulfoamino   deoxy    NS     NHSO3-                2             0  ose         oside      N/A
+  sulfated_sugar     N/A          N/A      S      OSO3-                 6             0  ose         oside      sulfate
+  methyl_glycoside   N/A          N/A      OMe    OMe                   1             1  N/A         oside      N/A
+  uronic_acid        N/A          N/A      A      uronic_acid           6             1  urate       urate      N/A

@@ -10,7 +10,7 @@ NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
 NOT VARIANT_TYPE CUTPOINT_UPPER
 END_SELECTOR
 
-BEGIN_CASE ## ALPHA-D-ALDOSE ####################################################
+BEGIN_CASE ## ALPHA-D-ALDOSE #################################################
 
 BEGIN_SELECTOR
 PROPERTY ALDOSE
@@ -26,7 +26,7 @@ ADD_PROPERTY BRANCH_LOWER_TERMINUS
 
 END_CASE
 
-BEGIN_CASE ## BETA ALDOSE #####################################################
+BEGIN_CASE ## BETA ALDOSE ####################################################
 
 BEGIN_SELECTOR
 PROPERTY ALDOSE
@@ -41,7 +41,7 @@ ADD_PROPERTY BRANCH_LOWER_TERMINUS
 
 END_CASE
 
-BEGIN_CASE ## ALPHA-L-ALDOSE ####################################################
+BEGIN_CASE ## ALPHA-L-ALDOSE #################################################
 
 BEGIN_SELECTOR
 PROPERTY ALDOSE
@@ -57,13 +57,34 @@ ADD_PROPERTY BRANCH_LOWER_TERMINUS
 
 END_CASE
 
-BEGIN_CASE ## KETOSE ##########################################################
+BEGIN_CASE ## ALPHA-D-KETOSE #################################################
 
 BEGIN_SELECTOR
 PROPERTY KETOSE
+PROPERTY BETA_SUGAR
+PROPERTY D_SUGAR
 END_SELECTOR
 
-# Fill in later.
-# Also need cases for beta sugars. ~ Labonte
+ADD_CONNECT C1 ICOOR -171.866263   70.670487    1.438104   C2    C3    C4
+
+SET_POLYMER_CONNECT LOWER NONE
+
+ADD_PROPERTY BRANCH_LOWER_TERMINUS
+
+END_CASE
+
+BEGIN_CASE ## BETA-D-KETOSE ##################################################
+
+BEGIN_SELECTOR
+PROPERTY KETOSE
+PROPERTY BETA_SUGAR
+PROPERTY D_SUGAR
+END_SELECTOR
+
+ADD_CONNECT C1 ICOOR   66.573      64.612569    1.431041   C2    C3    C4 
+
+SET_POLYMER_CONNECT LOWER NONE
+
+ADD_PROPERTY BRANCH_LOWER_TERMINUS
 
 END_CASE

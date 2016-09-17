@@ -74,6 +74,9 @@ public:  // Static constant data access ///////////////////////////////////////
 	/// @brief  Get the default position for this sugar modification affix.
 	static core::uint default_position_from_affix( std::string const & affix );
 
+	/// @brief  Does this sugar modification affix have an inherent/defined position?
+	static bool affix_has_inherent_position( std::string const & affix );
+
 
 	/// @brief  Get the Cn_BRANCH_POINT VariantType for this atom name, e.g., On.
 	static VariantType branch_variant_type_from_atom_name( std::string const & atom_name );
@@ -124,6 +127,10 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Get a map of sugar modification affixes to default positions, creating it if necessary.
 	std::map< std::string, core::uint > const & affix_to_position_map();
 
+	// Get a map of sugar modification affixes to a boolean indication of if the position is inherent,
+	// creating it if necessary.
+	std::map< std::string, bool > const & affix_to_position_inherency_map();
+
 
 	// Get a map of linkage conformer statistical data, creating it if necessary.
 	LinkageConformers const & linkage_conformers_map();
@@ -140,20 +147,23 @@ private:  // Private data /////////////////////////////////////////////////////
 	std::map< std::string, std::string > code_to_root_map_;
 	std::map< core::Size, std::pair< char, std::string > > ring_size_to_morphemes_map_;
 	utility::vector1< char > ring_affixes_;
+
+	// Nomenclature
 	SugarModificationsNomenclatureTable nomenclature_table_;
 	std::map< std::string, std::string > affix_to_patch_map_;
 	std::map< std::string, core::uint > affix_to_position_map_;
 	std::map< std::string, std::string > short_name_to_iupac_strings_map_;
+	std::map< std::string, bool > affix_to_position_inherency_map_;
 
 	// Glycan Relax
 	std::map< std::pair< std::string, std::string >, utility::vector1< LinkageConformerData > >
-		linkage_conformers_map_;
+			linkage_conformers_map_;
 };
 
 
 // Helper function ////////////////////////////////////////////////////////////
 std::pair< std::string, std::string > convert_residue_names_into_linkage_map_key(
-	std::string const & name1, std::string const & name2 );
+		std::string const & name1, std::string const & name2 );
 
 }  // namespace carbohydrates
 }  // namespace chemical

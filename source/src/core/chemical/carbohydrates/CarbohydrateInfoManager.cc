@@ -96,6 +96,12 @@ CarbohydrateInfoManager::default_position_from_affix( std::string const & affix 
 	return get_instance()->affix_to_position_map().find( affix )->second;
 }
 
+bool
+CarbohydrateInfoManager::affix_has_inherent_position( std::string const & affix )
+{
+	return get_instance()->affix_to_position_inherency_map().find( affix )->second;
+}
+
 
 bool
 CarbohydrateInfoManager::pair_has_linkage_statistics( std::string const & res1, std::string const & res2 )
@@ -269,6 +275,22 @@ CarbohydrateInfoManager::affix_to_position_map()
 	return affix_to_position_map_;
 }
 
+// Get a map of sugar modification affixes to a boolean indication of if the position is inherent,
+// creating it if necessary.
+std::map< std::string, bool > const &
+CarbohydrateInfoManager::affix_to_position_inherency_map()
+{
+	// Only create map one time, as needed.
+	if ( affix_to_position_inherency_map_.empty() ) {
+		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
+		for ( SugarModificationsNomenclatureTable::const_iterator it( table.begin() ), it_end( table.end() );
+				it != it_end; ++it ) {
+			affix_to_position_inherency_map_[ it->second.short_affix ] = it->second.has_inherent_position;
+		}
+	}
+	return affix_to_position_inherency_map_;
+}
+
 
 // Get a map of linkage conformer statistical data, creating it if necessary.
 LinkageConformers const &
@@ -318,41 +340,8 @@ CarbohydrateInfoManager::find_linkage_conformer_data_file( std::string filename 
 	std::string dir = "chemical/carbohydrates/linkage_conformers/";
 	std::string ext = ".table";
 
-	return basic::database::find_database_path( dir, filename, ext); //JAB - moved logic to general place since its really cool.
-
-
-	/*
-	std::string const & path( basic::database::full_name( "chemical/carbohydrates/linkage_conformers/" ) );
-	std::string const ext( ".table" );
-
-	izstream potential_file( filename );
-	if ( potential_file.good() ) {
-	return filename;
-	} else {
-	izstream potential_file( filename + ext );  // Perhaps the user didn't use the .table extension.
-	if ( potential_file.good() ) {
-	return filename + ext;
-	} else {
-	izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
-	if ( potential_file.good() ) {
-	return path + filename;
-	} else {
-	izstream potential_file( path + filename + ext );  // last try
-	if ( potential_file.good() ) {
-	return path + filename + ext;
-	} else {
-	utility_exit_with_message( "Unable to open linkage conformer data file. Neither ./" + filename +
-	" nor " + "./" + filename + ext +
-	" nor " + path + filename +
-	" nor " + path + filename + ext + " exists." );
-	}
-	}
-	}
-	}
-	return "WHAT THE @#$%!";  // Code can never reach here.
-	*/
+	return basic::database::find_database_path( dir, filename, ext);
 }
-
 
 
 // Helper function ////////////////////////////////////////////////////////////
@@ -376,7 +365,7 @@ convert_residue_names_into_linkage_map_key( std::string const & name1, std::stri
 		}
 	}
 
-	// Next, we do not need want the main-chain connectivity of the non-reducing-end residue.
+	// Next, we do not need the main-chain connectivity of the non-reducing-end residue.
 	if ( fixed_name2.substr( 0, 2 ) == "->" ) {  // We assume that this is the start of a "->n)-".
 		fixed_name2.erase( 0, 5 );
 	}
@@ -384,9 +373,6 @@ convert_residue_names_into_linkage_map_key( std::string const & name1, std::stri
 	// Finally, make a pair and return.
 	return make_pair( fixed_name2, fixed_name1 );
 }
-
-
-
 
 }  // namespace carbohydrates
 }  // namespace chemical

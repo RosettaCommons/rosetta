@@ -19,15 +19,12 @@
 
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
-//#include <core/chemical/ElementSet.hh>
 #include <core/chemical/Element.hh>
 #include <core/chemical/ElectronConfiguration.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
-//#include <core/chemical/AtomType.hh>
-//#include <core/chemical/Bond.hh>
 #include <core/chemical/ResidueConnection.hh>
 
 #include <core/chemical/sdf/mol_writer.hh>
@@ -49,7 +46,7 @@ namespace core {
 namespace chemical {
 namespace gasteiger {
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.gasteiger.GasteigerAtomTypeSet" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.gasteiger.GasteigerAtomTyper" );
 
 void
 PossibleAtomTypesForAtom::gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {

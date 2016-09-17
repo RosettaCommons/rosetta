@@ -227,7 +227,7 @@ get_carbohydrate_residues_upstream(
 void
 get_branching_residues( Pose const & pose,
 	Size parent_residue,
-	utility::vector1< Size > & childresizes,
+	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
 
@@ -244,7 +244,7 @@ void
 fill_upstream_children_res_and_tips( Pose const & pose,
 	Size res,
 	Size parent_residue,
-	utility::vector1< Size > & childresizes,
+	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
 

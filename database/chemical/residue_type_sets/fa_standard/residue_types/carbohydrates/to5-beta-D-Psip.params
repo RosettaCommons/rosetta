@@ -125,9 +125,9 @@ ICOOR_INTERNAL    C6   -58.633512   75.278652    1.576050   C5    C4    C3
 ICOOR_INTERNAL    O6    59.276113   69.354076    1.493092   C6    C5    C4
 ICOOR_INTERNAL    VO6  -55.8657     72.77        1.447      C2    C3    C4  # must build as branch from main chain, unlike O6
 ICOOR_INTERNAL    VC2  -62.8        66.7         1.447      O6    C6    C5  # must build from end of ring, unlike C2
+ICOOR_INTERNAL  LOWER   66.573      64.612569    1.431041   C2    C3    C4 
 # now the side-chain heavy atoms
 ICOOR_INTERNAL    C1  -179.873347   66.003162    1.545188   C2    C3    C4
-ICOOR_INTERNAL  LOWER -113.553634   64.612569    1.431041   C2    C3    C1  # (I should redefine without C1 to put this with the BB atoms.)
 ICOOR_INTERNAL    O2  -113.553634   64.612569    1.431041   C2    C3    C1
 ICOOR_INTERNAL    O1  -164.557952   85.086488    1.410937   C1    C2    C3
 ICOOR_INTERNAL    O3   111.402413   65.837036    1.386857   C3    C2    C4

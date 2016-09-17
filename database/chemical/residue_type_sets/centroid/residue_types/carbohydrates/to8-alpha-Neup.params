@@ -147,7 +147,7 @@ NU 3  C3   C4   C5   C6    # duplicates BB 3
 NU 4  C4   C5   C6   O6    # duplicates BB 4, but defined differently
 NU 5  C5   C6   O6   VC2
 #NU 6 is across the CUT_BOND
-LOWEST_RING_CONFORMER 1 1C4  # in my own experience of looking at these things ~Labonte
+LOWEST_RING_CONFORMER 1 1C4  # in my own experience of looking at these things ~Labonte (in this case, actually 2C5)
 
 PROPERTIES  POLAR CYCLIC CHARGED CARBOHYDRATE KETOSE NONOSE D_SUGAR PYRANOSE ALPHA_SUGAR SIALIC_ACID C2_MODIFIED C3_MODIFIED C5_MODIFIED ALDONIC_ACID AMINO_SUGAR DEOXY_SUGAR
 

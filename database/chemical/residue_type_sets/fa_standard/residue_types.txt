@@ -645,6 +645,9 @@ residue_types/beta-peptide/cisACPC.params
 residue_types/beta-peptide/transACPC.params
 
 ## Saccharide Types (require -include_sugars flag to be loaded in)
+### Aldopentoses
+#### Xyloses
+residue_types/carbohydrates/to4-alpha-D-Xylp.params
 ### Aldohexoses
 #### Glucoses
 residue_types/carbohydrates/to3-alpha-D-Glcp.params
@@ -682,6 +685,8 @@ residue_types/carbohydrates/to4-beta-L-Gulp.params
 #### Altroses
 residue_types/carbohydrates/to4-beta-L-Altp.params
 ### Ketohexoses
+#### Fructoses
+residue_types/carbohydrates/to4-beta-D-Fruf.params
 #### Psicoses
 residue_types/carbohydrates/to5-beta-D-Psip.params
 ### Ketononoses

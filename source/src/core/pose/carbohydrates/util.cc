@@ -949,7 +949,7 @@ glycosylate_pose(
 	pose.append_residue_by_atoms( *first_sugar, true, upper_atom, sequence_position, atom_name, true );
 
 	// Build any other sugars.
-	append_pose_with_glycasizes( pose, ResidueTypeCOPs( residue_types.begin() + 1, residue_types.end() ) );
+	append_pose_with_glycan_residues( pose, ResidueTypeCOPs( residue_types.begin() + 1, residue_types.end() ) );
 
 	// Let the Conformation know that it (now) contains sugars.
 	pose.conformation().contains_carbohydrate_residues( true );
@@ -1394,7 +1394,7 @@ get_carbohydrate_residues_upstream(
 
 	utility::vector1< Size > tips;
 	utility::vector1< Size > list_of_residues;
-	utility::vector1< Size > childresizes;
+	utility::vector1< Size > children_residues;
 
 	if ( ! pose.residue( starting_position ).is_carbohydrate() && ! pose.residue( starting_position ).is_branch_point() ) {
 		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
@@ -1409,10 +1409,10 @@ get_carbohydrate_residues_upstream(
 		parent_residue = starting_position - 1;
 	}
 
-	fill_upstream_children_res_and_tips( pose, starting_position, parent_residue, childresizes, list_of_residues, tips );
+	fill_upstream_children_res_and_tips( pose, starting_position, parent_residue, children_residues, list_of_residues, tips );
 
-	//TR << "Children: " << utility::to_string( childresizes) << std::endl;
-	get_branching_residues( pose, starting_position, childresizes, list_of_residues, tips );
+	//TR << "Children: " << utility::to_string( children_residues) << std::endl;
+	get_branching_residues( pose, starting_position, children_residues, list_of_residues, tips );
 
 	return std::make_pair( list_of_residues, tips );
 
@@ -1432,14 +1432,14 @@ get_carbohydrate_residues_upstream(
 void
 get_branching_residues( Pose const & pose,
 	Size parent_residue,
-	utility::vector1< Size > & childresizes,
+	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips )
 
 {
 
-	for ( core::Size i =1; i <= childresizes.size(); ++i ) {
-		Size res = childresizes[ i ];
+	for ( core::Size i =1; i <= children_residues.size(); ++i ) {
+		Size res = children_residues[ i ];
 		utility::vector1< Size > children;
 		fill_upstream_children_res_and_tips( pose, res, parent_residue, children, list_of_residues, tips );
 
@@ -1463,7 +1463,7 @@ void
 fill_upstream_children_res_and_tips( Pose const & pose,
 	Size res,
 	Size parent_residue,
-	utility::vector1< Size > & childresizes,
+	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips )
 
@@ -1479,7 +1479,7 @@ fill_upstream_children_res_and_tips( Pose const & pose,
 			if ( pose.residue( connecting_res ).n_current_residue_connections() == 1 ) {
 				tips.push_back( connecting_res );
 			} else {
-				childresizes.push_back( connecting_res );
+				children_residues.push_back( connecting_res );
 			}
 		}
 	}

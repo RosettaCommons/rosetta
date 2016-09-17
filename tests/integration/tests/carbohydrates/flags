@@ -4,4 +4,3 @@
 -mute all
 -unmute core.chemical.carbohydrates
 -glycam_pdb_format
--assign_gasteiger_atom_types

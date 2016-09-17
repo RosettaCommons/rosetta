@@ -29,11 +29,15 @@ namespace carbohydrates {
 
 /// @brief  A structure for storing information related to the nomenclature of modified sugars.
 struct SugarModificationsNomenclatureTableRow {
-	std::string substituent_full_name;  // e.g., "acetylamino"; used for saccharied IUPAC names
+	std::string substituent_full_name;  // e.g., "acetylamino"; used for saccharide IUPAC names
 	std::string implies;  // usually, "deoxy"
 	std::string short_affix;  // e.g., "NAc"; used for saccharide abbreviations
 	std::string patch_name;  // e.g., "AcNH"; Rosetta's patch name for this modification
 	core::uint default_position;  // e.g., "2"; the position assumed if absent from the short affix
+	bool has_inherent_position;  //  e.g., "0" = false, "1" = true; the position is defined by the modification
+	//std::string reducing_end_suffix;  // e.g., "ose"; used for saccharide IUPAC names
+	//std::string glycoside_suffix;  // e.g., "oside"; used for saccharide IUPAC names
+	//std::string following_word_or_phrase;  // e.g., "sulfate"; used for saccharide IUPAC names
 };  // struct SugarModificationsNomenclatureTableRow
 
 

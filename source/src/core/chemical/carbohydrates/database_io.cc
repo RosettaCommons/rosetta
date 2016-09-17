@@ -159,13 +159,17 @@ read_nomenclature_table_from_database_file( std::string const & filename )
 		SugarModificationsNomenclatureTableRow row;
 
 		line_word_by_word >> key >> row.substituent_full_name >> row.implies >> row.short_affix >> row.patch_name >>
-			row.default_position;
+				row.default_position >> row.has_inherent_position /*>> row.reducing_end_suffix >> glycoside_suffix >>
+				row.following_word_or_phrase*/;
 
 		replace_underscores_with_spaces( key );
 		check_if_applicable( row.substituent_full_name );
 		check_if_applicable( row.implies );
 		check_if_applicable( row.short_affix );
 		check_if_applicable( row.patch_name );
+		//check_if_applicable( row.reducing_end_suffix );
+		//check_if_applicable( row.glycoside_suffix );
+		//check_if_applicable( row.following_word_or_phrase );
 
 		// TODO: After ResidueProperties static const data is moved into a singleton, check that each key is in fact
 		// derived from accepted ResiduePropertys
