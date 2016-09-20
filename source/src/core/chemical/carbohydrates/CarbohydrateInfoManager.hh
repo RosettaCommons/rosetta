@@ -157,13 +157,13 @@ private:  // Private data /////////////////////////////////////////////////////
 
 	// Glycan Relax
 	std::map< std::pair< std::string, std::string >, utility::vector1< LinkageConformerData > >
-			linkage_conformers_map_;
+		linkage_conformers_map_;
 };
 
 
 // Helper function ////////////////////////////////////////////////////////////
 std::pair< std::string, std::string > convert_residue_names_into_linkage_map_key(
-		std::string const & name1, std::string const & name2 );
+	std::string const & name1, std::string const & name2 );
 
 }  // namespace carbohydrates
 }  // namespace chemical

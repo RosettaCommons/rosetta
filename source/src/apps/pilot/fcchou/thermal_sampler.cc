@@ -98,14 +98,14 @@ utility::vector1<core::Real> get_torsions(
 	const Pose & pose
 ) {
 	utility::vector1<core::Real> curr_torsions;
-	for (Size i = 1; i <= torsion_ids.size(); ++i) {
+	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
 		curr_torsions.push_back( pose.torsion( torsion_ids[i] ) );
 	}
 	return curr_torsions;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void set_gaussian_stdevs( 
+void set_gaussian_stdevs(
 	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
 	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
 	sampler::rna::RNA_MC_MultiSuite & standard_bb_sampler,
@@ -124,14 +124,14 @@ void set_gaussian_stdevs(
 		free_chi_stdev = -1 ;
 		chi_stdev = -1 ;
 		standard_bb_stdev = -1 ;
-	} 
+	}
 	for ( Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
 		internal_bb_sampler[i]->set_gaussian_stdev( internal_bb_stdev );
 	}
 	for ( Size i = 1; i <= chi_sampler.size(); ++i ) {
-		if ( is_free[i] )
+		if ( is_free[i] ) {
 			chi_sampler[i]->set_gaussian_stdev( free_chi_stdev );
-		else chi_sampler[i]->set_gaussian_stdev( chi_stdev );
+		} else chi_sampler[i]->set_gaussian_stdev( chi_stdev );
 	}
 	standard_bb_sampler.set_gaussian_stdev( standard_bb_stdev );
 }
@@ -166,7 +166,7 @@ thermal_sampler()
 			input = PoseInputStreamOP( new SilentFilePoseInputStream(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
-			) );
+				) );
 		} else {
 			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
 		}
@@ -176,9 +176,9 @@ thermal_sampler()
 
 	Pose pose;
 	input->fill_pose( pose, *rsd_set );
-	
+
 	protocols::farna::thermal_sampling::thermal_sampler( pose );
-	
+
 }
 
 
@@ -198,12 +198,12 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
-        using namespace basic::options;
+	try {
+		using namespace basic::options;
 
-        std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
-        std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
-        std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+		std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
+		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
 		utility::vector1< int > null_int_vector;
 		utility::vector1< core::Real > null_real_vector;
@@ -217,7 +217,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( in::file::input_res );
 		option.add_relevant( full_model::cutpoint_open );
 		option.add_relevant( score::weights );
-		
+
 		//option.add_relevant( OptionKeys::rna::farna::thermal_sampling::seq1 );
 		//option.add_relevant( OptionKeys::rna::farna::thermal_sampling::seq2 );
 		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::n_cycle );
@@ -237,22 +237,22 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::standard_bb_stdev );
 		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::out_torsions );
 		option.add_relevant( OptionKeys::rna::farna::thermal_sampling::dump_freq );
-		
-		////////////////////////////////////////////////////////////////////////////
-        // setup
-        ////////////////////////////////////////////////////////////////////////////
-        core::init::init(argc, argv);
-				option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-				option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
-				option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
 
-        ////////////////////////////////////////////////////////////////////////////
-        // end of setup
-        ////////////////////////////////////////////////////////////////////////////
-        protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cout << "caught exception " << e.msg() << std::endl;
-				return -1;
-    }
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init(argc, argv);
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
+
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
 }
 

@@ -95,6 +95,7 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 	rsd_type_ptr_( rsd_type_in ),
 	rsd_type_( reference_from_restype_ptr( rsd_type_in )),
 	seqpos_( 0 ),
+	mirrored_relative_to_type_(false),
 	chain_( 0 ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
 	nus_( rsd_type_.n_nus(), 0.0 ),
@@ -123,6 +124,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	rsd_type_ptr_( rsd_type_in.get_self_ptr() ),
 	rsd_type_( rsd_type_in ),
 	seqpos_( 0 ),
+	mirrored_relative_to_type_(false),
 	chain_( 0 ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
 	nus_( rsd_type_.n_nus(), 0.0 ),
@@ -159,6 +161,7 @@ Residue::Residue(
 	rsd_type_ptr_( rsd_type_in.get_self_ptr() ),
 	rsd_type_( rsd_type_in ),
 	seqpos_( current_rsd.seqpos() ),
+	mirrored_relative_to_type_(current_rsd.mirrored_relative_to_type()),
 	chain_( current_rsd.chain() ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
 	nus_( current_rsd.nus() ),
@@ -238,6 +241,7 @@ Residue::Residue( Residue const & src, bool const flip_chirality ):
 	rsd_type_( flip_chirality ? * (src.residue_type_set()->get_mirrored_type( src.rsd_type_.get_self_ptr() ) ) : src.rsd_type_ ) /*I don't assume that src.rsd_type_ and src.rsd_type_ptr_ point to the same type, though they should.*/
 {
 	init_residue_from_other( src );
+	if ( type().is_achiral_backbone() ) set_mirrored_relative_to_type( !src.mirrored_relative_to_type() ); //For achiral residues, we need to record whether the geometry is mirrored relative to the params file.  (1H and 2H may be chemically indistinguishable, but Rosetta distinguishes them.)
 }
 
 Residue::~Residue() = default;
@@ -252,6 +256,7 @@ Residue::init_residue_from_other(
 	atoms_ = src.atoms_;
 	orbitals_ = src.orbitals_;
 	seqpos_ = src.seqpos_;
+	mirrored_relative_to_type_ = src.mirrored_relative_to_type_;
 	chain_ = src.chain_;
 	chi_ = src.chi_;
 	nus_ = src.nus_;
@@ -343,6 +348,7 @@ Residue::show( std::ostream & output, bool output_atomic_details ) const
 		}
 		output << endl;
 	}
+	output << "Mirrored relative to coordinates in ResidueType: " << (mirrored_relative_to_type() ? "TRUE" : "FALSE") << std::endl;
 }
 
 
@@ -1702,6 +1708,7 @@ Residue::save( Archive & arc ) const
 
 	arc( atoms_, orbitals_ );
 	arc( seqpos_, chain_ );
+	arc( mirrored_relative_to_type_ );
 	arc( chi_, nus_, mainchain_torsions_, actcoord_ );
 	arc( data_cache_ );
 	arc( nonstandard_polymer_, connect_map_ );
@@ -1723,6 +1730,7 @@ Residue::load_and_construct(
 
 	arc( construct->atoms_, construct->orbitals_ );
 	arc( construct->seqpos_, construct->chain_ );
+	arc( construct->mirrored_relative_to_type_ );
 	arc( construct->chi_, construct->nus_, construct->mainchain_torsions_, construct->actcoord_ );
 	arc( construct->data_cache_ );
 	arc( construct->nonstandard_polymer_, construct->connect_map_ );

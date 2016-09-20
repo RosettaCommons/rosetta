@@ -77,10 +77,21 @@ public:
 					(*sfxn)(*pose);
 					(*sfxn)(*pose2);
 					//TR << "phi=" << iphi << " psi=" << ipsi << " E1=" << pose->energies().total_energy() << " E2=" << pose2->energies().total_energy() << std::endl;
-					TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::max( std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ), 0.00001 ) );
+					TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::max( std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ), 1e-5 ) );
 				}
 			}
 		}
+	}
+
+	/// @brief Tests symmetric scoring of glycine with the cart_bonded scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_gly_cart_bonded() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
+		TR << "Testing cart_bonded score term." << std::endl;
+		repeat_structure_test(scorefxn);
+		return;
 	}
 
 	/// @brief Tests symmetric scoring of glycine with the fa_atr scorefunction.

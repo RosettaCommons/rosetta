@@ -149,6 +149,17 @@ public:
 		//pose2.dump_scored_pdb( "Dtemp.pdb", *sfxn );
 	}
 
+	/// @brief Tests symmetric scoring with the cart_bonded scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_DL_cart_bonded() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
+		TR << "Testing cart_bonded score term." << std::endl;
+		mirror_pose_test(scorefxn);
+		return;
+	}
+
 	/// @brief Tests symmetric scoring with the fa_atr scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_symm_DL_fa_atr() {

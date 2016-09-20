@@ -120,7 +120,7 @@ void relax_model(core::pose::PoseOP &pose)
 	task_factory->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex1*/, 1 /*level*/ ) ) );
 
 	task_factory->push_back(TaskOperationCOP( new IncludeCurrent() ));
-	
+
 	relax_protocol->set_task_factory( task_factory );
 
 	// set relax defaults

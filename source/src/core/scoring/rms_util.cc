@@ -777,7 +777,7 @@ core::Real
 CA_or_equiv_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
-	std::list< Size > const & residue_selection 
+	std::list< Size > const & residue_selection
 ) {
 	// AMW: note that for some reason this is the one that gets called by RMS energy?
 	if ( basic::options::option[ basic::options::OptionKeys::evaluation::rms_type ].value() == "RNP" ) {
@@ -800,7 +800,7 @@ CA_or_equiv_rmsd(
 	// Calc rms
 	PROF_STOP( basic::CA_RMSD_EVALUATION );
 	return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
-	
+
 } // CA_or_equiv_rmsd
 
 

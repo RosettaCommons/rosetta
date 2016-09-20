@@ -109,14 +109,14 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	Real const temperature,
 	String  sample_type,
 	bool const drift ) :
-		Super("GenericMonteCarlo"),
-		maxtrials_( maxtrials ),
-		max_accepted_trials_( max_accepted_trials ),
-		task_scaling_( task_scaling ),
-		mover_(std::move( mover )),
-		temperature_( temperature ),
-		sample_type_(std::move( sample_type )),
-		drift_( drift )
+	Super("GenericMonteCarlo"),
+	maxtrials_( maxtrials ),
+	max_accepted_trials_( max_accepted_trials ),
+	task_scaling_( task_scaling ),
+	mover_(std::move( mover )),
+	temperature_( temperature ),
+	sample_type_(std::move( sample_type )),
+	drift_( drift )
 {
 	initialize();
 }
@@ -132,16 +132,16 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	Real const temperature,
 	String  sample_type,
 	bool const drift ) :
-		Super("GenericMonteCarlo"),
-		maxtrials_( maxtrials ),
-		max_accepted_trials_( max_accepted_trials ),
-		task_scaling_( task_scaling ),
-		mover_(std::move( mover )),
-		task_( /* NULL */ ),
-		factory_ (std::move(factory_in)),
-		temperature_( temperature ),
-		sample_type_(std::move( sample_type )),
-		drift_( drift )
+	Super("GenericMonteCarlo"),
+	maxtrials_( maxtrials ),
+	max_accepted_trials_( max_accepted_trials ),
+	task_scaling_( task_scaling ),
+	mover_(std::move( mover )),
+	task_( /* NULL */ ),
+	factory_ (std::move(factory_in)),
+	temperature_( temperature ),
+	sample_type_(std::move( sample_type )),
+	drift_( drift )
 {
 	initialize();
 }

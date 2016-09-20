@@ -39,6 +39,7 @@
 
 //Minimizer
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -108,13 +109,19 @@ public:
 
 	/// @brief Run the minimizer on the pose.
 	///
-	void do_minimization( core::pose::Pose &pose, core::scoring::ScoreFunctionOP sfxn ) {
+	void do_minimization( core::pose::Pose &pose, core::scoring::ScoreFunctionOP sfxn, bool const cartesian ) {
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 		mm->set_bb(true);
 		mm->set_chi(true);
-		core::optimization::AtomTreeMinimizer minimizer;
-		core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "linmin", 10.0, true, false, false ) );
-		minimizer.run( pose, *mm, *sfxn, *min_options );
+		if ( cartesian ) {
+			core::optimization::CartesianMinimizer minimizer;
+			core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "linmin", 10.0, true, false, false ) );
+			minimizer.run( pose, *mm, *sfxn, *min_options );
+		} else {
+			core::optimization::AtomTreeMinimizer minimizer;
+			core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "linmin", 10.0, true, false, false ) );
+			minimizer.run( pose, *mm, *sfxn, *min_options );
+		}
 	}
 
 	/// @brief Are two angles within a threshhold of one another?
@@ -133,7 +140,7 @@ public:
 
 	/// @brief Construct a few L-amino acid poses, and confirm that mirror-image conformations
 	/// score identically with a given scorefunction.
-	void mirror_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
+	void mirror_pose_test( core::scoring::ScoreFunctionOP sfxn, bool const cartesian ) {
 		core::pose::Pose pose = pdb1rpb_pose();
 		core::pose::Pose pose2 = pose;
 
@@ -144,8 +151,8 @@ public:
 		(*sfxn)(pose);
 		(*sfxn)(pose2);
 		//for(core::Size j=1; j<=100; ++j) {
-		do_minimization(pose, sfxn);
-		do_minimization(pose2, sfxn);
+		do_minimization(pose, sfxn, cartesian);
+		do_minimization(pose2, sfxn, cartesian);
 		//}
 
 		(*sfxn)(pose);
@@ -174,7 +181,7 @@ public:
 	/// @brief Construct a few L-amino acid poses, and confirm that mirror-image conformations
 	/// score identically with a given scorefunction.
 	/// @details This version ensures that there's a GLY-PRO sequence.
-	void mirror_pose_test2( core::scoring::ScoreFunctionOP sfxn ) {
+	void mirror_pose_test2( core::scoring::ScoreFunctionOP sfxn, bool const cartesian ) {
 		core::pose::Pose pose = pdb1rpb_pose();
 
 		//Mutate residue 4 to proline.  Since residue 3 is a gly, this makes a nice gly-pro.
@@ -192,8 +199,8 @@ public:
 		(*sfxn)(pose);
 		(*sfxn)(pose2);
 		//for(core::Size j=1; j<=100; ++j) {
-		do_minimization(pose, sfxn);
-		do_minimization(pose2, sfxn);
+		do_minimization(pose, sfxn, cartesian);
+		do_minimization(pose2, sfxn, cartesian);
 		//}
 
 		(*sfxn)(pose);
@@ -219,6 +226,17 @@ public:
 		//pose3.dump_scored_pdb( "Dtemp.pdb", *sfxn );
 	}
 
+	/// @brief Tests symmetric scoring with the cart_bonded scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_symm_DL_min_cart_bonded() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
+		TR << "Testing cart_bonded score term." << std::endl;
+		mirror_pose_test(scorefxn, true);
+		return;
+	}
+
 	/// @brief Tests symmetric scoring with the fa_atr scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_symm_DL_min_fa_atr() {
@@ -226,7 +244,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_atr, 1.0 );
 		TR << "Testing fa_atr score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -237,7 +255,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_rep, 1.0 );
 		TR << "Testing fa_rep score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -248,7 +266,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_intra_rep, 1.0 );
 		TR << "Testing fa_intra_rep score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -259,7 +277,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing fa_sol score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -271,7 +289,7 @@ public:
 		scorefxn->set_weight( core::scoring::fa_intra_sol_xover4, 1.0 );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing fa_intra_sol_xover4 score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -283,7 +301,7 @@ public:
 		scorefxn->set_weight( core::scoring::lk_ball_wtd, 1.0 );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing lk_ball_wtd score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -294,7 +312,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_elec, 1.0 );
 		TR << "Testing fa_elec score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -305,7 +323,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::pro_close, 1.0 );
 		TR << "Testing pro_close score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -316,7 +334,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::dslf_fa13, 1.0 );
 		TR << "Testing dslf_fa13 score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -330,7 +348,7 @@ public:
 		scorefxn->set_weight( core::scoring::hbond_sc, 1.0 );
 		scorefxn->set_weight( core::scoring::hbond_bb_sc, 1.0 );
 		TR << "Testing hbonds score terms." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -341,7 +359,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_dun, 1.0 );
 		TR << "Testing fa_dun score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -352,7 +370,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::omega, 1.0 );
 		TR << "Testing omega score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -363,7 +381,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama, 1.0 );
 		TR << "Testing rama score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -374,7 +392,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
 		TR << "Testing rama_prepro score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -385,7 +403,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
 		TR << "Testing rama_prepro score term with a gly-pro sequence." << std::endl;
-		mirror_pose_test2(scorefxn);
+		mirror_pose_test2(scorefxn, false);
 		return;
 	}
 
@@ -396,7 +414,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::p_aa_pp, 1.0 );
 		TR << "Testing p_aa_pp score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -407,7 +425,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::yhh_planarity, 1.0 );
 		TR << "Testing yhh_planarity score term." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -418,7 +436,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->add_weights_from_file("beta_nov15.wts");
 		TR << "Testing full beta_nov15 score function." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 
@@ -428,7 +446,7 @@ public:
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 		TR << "Testing full default score function." << std::endl;
-		mirror_pose_test(scorefxn);
+		mirror_pose_test(scorefxn, false);
 		return;
 	}
 

@@ -46,7 +46,7 @@ utility::vector1<core::Real> get_torsions(
 );
 
 //////////////////////////////////////////////////////////////////////////////
-void set_gaussian_stdevs( 
+void set_gaussian_stdevs(
 	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
 	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
 	sampler::rna::RNA_MC_MultiSuite & standard_bb_sampler,

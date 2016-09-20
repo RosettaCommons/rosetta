@@ -75,7 +75,7 @@ private:
 
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover_;
 	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;
-    SidechainMinMoverOP scmin_mover_;
+	SidechainMinMoverOP scmin_mover_;
 	protocols::moves::SequenceMoverOP pack_operations_;
 	bool dock_ppk_;
 	FaDockingSlideIntoContactOP fa_dock_slide_into_contact_;

@@ -41,6 +41,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 
 //#include <map>
 
@@ -319,18 +320,27 @@ private:
 	);
 
 	// read bb indep tables
-	void read_length_database(std::string infile);
-	void read_angle_database(std::string infile);
-	void read_torsion_database(std::string /*infile*/);
-	void read_improper_database(std::string infile);
+	void read_length_database( std::string const & infile, bool const symmetrize_gly );
+	void read_angle_database(std::string const & infile, bool const symmetrize_gly);
+	void read_torsion_database(std::string const & infile, bool const symmetrize_gly);
+	void read_improper_database(std::string const & infile, bool const symmetrize_gly);
 
 	// another helper function: read backbone dependent db files
 	void
 	read_bbdep_table(
-		std::string filename,
+		std::string const &filename,
 		boost::unordered_map< atm_name_single, CartBondedParametersOP > &bondlengths,
 		boost::unordered_map< atm_name_pair, CartBondedParametersOP > &bondangles,
-		std::string res );
+		std::string const &res,
+		bool const symmetrize_table
+	);
+
+	/// @brief Symmetrize the glycine backbone-dependent table.
+	/// @details Only called if the score::symmetric_gly_tables option is used.  Intended for design
+	/// with glyceine in a mixed D/L context (in which there should be no preference for a left-handed
+	/// conformation over a right).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void symmetrize_tables( ObjexxFCL::FArray2D<core::Real> &table );
 
 	void
 	create_parameters_for_restype(

@@ -96,9 +96,9 @@ RamachandranEnergy::residue_energy(
 			) {
 		Real rama_score, drama_dphi, drama_dpsi;
 		if ( potential_.is_normally_connected(rsd) ) {
-			potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+			potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi, (rsd.type().is_achiral_backbone() && rsd.mirrored_relative_to_type()) );
 		} else {
-			potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
+			potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi, (rsd.type().is_achiral_backbone() && rsd.mirrored_relative_to_type()) );
 		}
 		//std::cout << "Phi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[1] << std::endl;
 		//std::cout << "Psi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[2] << std::endl;

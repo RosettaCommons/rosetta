@@ -34,7 +34,7 @@
 namespace protocols {
 namespace farna {
 namespace thermal_sampling {
-	
+
 //////////////////////////////////////////////////////////////////////////////
 // Histogram class for accumulating samples
 class Histogram {
@@ -48,7 +48,7 @@ public:
 		n_elem_ = static_cast<core::Size>( ( max - min ) / spacing ) + 1;
 		for ( core::Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
 	}
-	
+
 	void add( float const value, core::Size const n_items ) {
 		core::Size bin_index;
 		if ( value <= min_ ) {
@@ -60,20 +60,21 @@ public:
 		}
 		hist_[bin_index] += n_items;
 	}
-	
+
 	void clear() {
 		for ( core::Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
 	}
-	
+
 	utility::vector1<core::Real> get_scores() const {
 		utility::vector1<core::Real> scores;
-		for ( core::Size i = 1; i <= n_elem_; ++i )
+		for ( core::Size i = 1; i <= n_elem_; ++i ) {
 			scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
+		}
 		return scores;
 	}
-	
-	utility::vector1<core::Size> get_hist() const { return hist_;	}
-	
+
+	utility::vector1<core::Size> get_hist() const { return hist_; }
+
 private:
 	core::Real const min_, max_, spacing_;
 	core::Size n_elem_;
@@ -93,17 +94,17 @@ void update_scores(
 		scores.push_back( scorefxn->score_by_scoretype( pose, score_types[i], false /*weighted*/ ) );
 	}
 }
-	
+
 //////////////////////////////////////////////////////////////////////////////
 void fill_data(
 	utility::vector1<float> & data,
 	core::Size const count,
 	utility::vector1<float> const & scores
-) {	
+) {
 	data.push_back( count );
 	data.insert( data.end(), scores.begin(), scores.end() );
 }
-	
+
 //////////////////////////////////////////////////////////////////////////////
 // Simple heuristic for gaussian stdev
 core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp ) {
@@ -112,7 +113,7 @@ core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool c
 	if ( is_bp ) return 5 * temp / n_rsd;
 	return 6 * std::pow( temp / n_rsd, 0.75 );
 }
-	
+
 }
 } //farna
 } //protocols

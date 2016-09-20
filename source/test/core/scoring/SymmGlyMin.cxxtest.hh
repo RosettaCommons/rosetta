@@ -22,16 +22,20 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/random/random.hh>
 
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/AA.hh>
 
 //Minimizer
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -52,8 +56,7 @@ class SymmGlyMinTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		//core_init();
-		core_init_with_additional_options( "-symmetric_gly_tables true" );
+		core_init_with_additional_options( "-symmetric_gly_tables true -run:constant_seed -nodelay -run:jran 35153" );
 	}
 
 	void tearDown() {
@@ -61,12 +64,19 @@ public:
 
 	/// @brief Run the minimizer on the pose.
 	///
-	void do_minimization( core::pose::PoseOP pose, core::scoring::ScoreFunctionOP sfxn ) {
+	void do_minimization( core::pose::Pose &pose, core::scoring::ScoreFunctionOP sfxn, bool const cartesian ) {
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 		mm->set_bb(true);
-		core::optimization::AtomTreeMinimizer minimizer;
-		core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "linmin", 10.0, true, false, false ) );
-		minimizer.run( *pose, *mm, *sfxn, *min_options );
+		mm->set_chi(true);
+		if ( cartesian ) {
+			core::optimization::CartesianMinimizer minimizer;
+			core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "linmin", 10.0, true, false, false ) );
+			minimizer.run( pose, *mm, *sfxn, *min_options );
+		} else {
+			core::optimization::AtomTreeMinimizer minimizer;
+			core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "linmin", 10.0, true, false, false ) );
+			minimizer.run( pose, *mm, *sfxn, *min_options );
+		}
 	}
 
 	/// @brief Are two angles within a threshhold of one another?
@@ -85,12 +95,23 @@ public:
 
 	/// @brief Construct repeat sequences with poly-glycine, and confirm that mirror-image conformations
 	/// minimize identically with a given scorefunction.
-	void repeat_structure_test( core::scoring::ScoreFunctionOP sfxn ) {
+	void repeat_structure_test( core::scoring::ScoreFunctionOP sfxn, bool const cartesian ) {
+		int count = 0; //DELETE ME
+
 		core::pose::PoseOP pose( new core::pose::Pose() );
-		core::pose::make_pose_from_sequence(*pose, "GGGGGGGG", "fa_standard", false);
+		core::pose::make_pose_from_sequence(*pose, "GGGGGGGG", "fa_standard", cartesian);
 		core::pose::PoseOP pose2( pose->clone() );
 		for ( int iphi=-180; iphi<180; iphi+=60 ) {
-			for ( int ipsi=-180; ipsi<=0; ipsi+=60 ) {
+			for ( int ipsi=-180; ipsi<=180; ipsi+=60 ) {
+				//The following lines may be deleted:
+				++count;
+				char fname1[256];
+				char fname2[256];
+				char fname3[256];
+				sprintf(fname1, "vsymmglytest_pose1_%04i.pdb", count);
+				sprintf(fname2, "vsymmglytest_pose2_%04i.pdb", count);
+				sprintf(fname3, "vsymmglytest_pose3_%04i.pdb", count);
+
 				for ( core::Size ir=1; ir<=8; ++ir ) {
 					pose->set_omega(ir, 180.0);
 					pose->set_phi(ir, static_cast<core::Real>(iphi));
@@ -99,23 +120,134 @@ public:
 					pose2->set_phi(ir, -1.0*static_cast<core::Real>(iphi));
 					pose2->set_psi(ir, -1.0*static_cast<core::Real>(ipsi));
 				}
-				(*sfxn)(*pose);
-				do_minimization(pose, sfxn);
-				(*sfxn)(*pose2);
-				do_minimization(pose2, sfxn);
-				TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ) );
-				TR << "E1\t" << pose->energies().total_energy() << "\tE2\t" << pose2->energies().total_energy() << std::endl;
-				for ( core::Size ir=1, irmax=pose->size(); ir<=irmax; ++ir ) {
-					TR << "phi1\t" << pose->phi(ir) << "\tphi2\t" << pose2->phi(ir) << std::endl;
-					TR << "psi1\t" << pose->psi(ir) << "\tpsi2\t" << pose2->psi(ir) << std::endl;
-					TR << "omega1\t" << pose->omega(ir) << "\tomega2\t" << pose2->omega(ir) << std::endl;
-					TS_ASSERT( within_thresh( pose->phi(ir), -1.0*pose2->phi(ir), 0.01 ) );
-					TS_ASSERT( within_thresh( pose->psi(ir), -1.0*pose2->psi(ir), 0.01 ) );
-					TS_ASSERT( within_thresh( pose->omega(ir), -1.0*pose2->omega(ir), 0.01 ) );
+
+				//Make a third pose, too, and mirror this one:
+				core::pose::PoseOP pose3( pose->clone() );
+				for ( core::Size ir=1, irmax=pose->total_residue(); ir<=irmax; ++ir ) {
+					pose3->conformation().residue_op(ir)->set_mirrored_relative_to_type(true);
+					for ( core::Size ia=1, iamax=pose->residue_type(ir).natoms(); ia<=iamax; ++ia ) {
+						core::id::AtomID const curat( ia, ir );
+						numeric::xyzVector< core::Real > v( pose->xyz(curat) );
+						v.x() *= -1.0;
+						pose3->set_xyz( curat, v );
+					}
 				}
+				pose3->update_residue_neighbors();
+
+				core::pose::PoseOP pose4a, pose4b;
+				core::pose::PoseOP pose5a, pose5b;
+				if ( cartesian ) { //Additional poses used for additional cartesian tests.
+					pose4a = pose->clone();
+					pose4b = pose3->clone();
+					pose5a = pose->clone();
+					pose5b = pose2->clone();
+				}
+
+				(*sfxn)(*pose);
+				do_minimization(*pose, sfxn, cartesian);
+				(*sfxn)(*pose2);
+				do_minimization(*pose2, sfxn, cartesian);
+				(*sfxn)(*pose3);
+				do_minimization(*pose3, sfxn, cartesian);
+
+				//Delete the following:
+				pose->dump_pdb(std::string(fname1));
+				pose2->dump_pdb(std::string(fname2));
+				pose3->dump_pdb(std::string(fname3));
+
+				bool const skip_pose3_tests( sfxn->get_weight( core::scoring::rama ) && ( iphi == 0 || ipsi == 0 ) ); //The phi=0 || psi=0 lines have a known Rama discontinuity.  Blargh.
+
+				TS_ASSERT_DELTA(pose->energies().total_energy(), pose2->energies().total_energy(), std::max( std::abs( std::max(pose->energies().total_energy(), pose2->energies().total_energy())/1000.0 ), 1e-12 ) );
+				if ( !skip_pose3_tests ) TS_ASSERT_DELTA(pose->energies().total_energy(), pose3->energies().total_energy(), std::max( std::abs( std::max(pose->energies().total_energy(), pose3->energies().total_energy())/1000.0 ), 1e-12 ) ); //Skip this check for phi=0, psi=0 and the rama score term.  There's a known silly discontinuity there.1
+				TR << "E1\t" << pose->energies().total_energy() << "\tE2\t" << pose2->energies().total_energy() << "\tE3\t" << pose3->energies().total_energy() << std::endl;
+				for ( core::Size ir=1, irmax=pose->size(); ir<=irmax; ++ir ) {
+					TR << "phi1\t" << pose->phi(ir) << "\tphi2\t" << pose2->phi(ir) << "\tphi3\t" << pose3->phi(ir) << std::endl;
+					TR << "psi1\t" << pose->psi(ir) << "\tpsi2\t" << pose2->psi(ir) << "\tpsi3\t" << pose3->psi(ir) << std::endl;
+					TR << "omega1\t" << pose->omega(ir) << "\tomega2\t" << pose2->omega(ir) << "\tomega3\t" << pose3->omega(ir) << std::endl;
+					TS_ASSERT( within_thresh( pose->phi(ir), -1.0*pose2->phi(ir), 0.01 ) );
+					if ( !skip_pose3_tests ) TS_ASSERT( within_thresh( pose->phi(ir), -1.0*pose3->phi(ir), 0.01 ) );
+					TS_ASSERT( within_thresh( pose->psi(ir), -1.0*pose2->psi(ir), 0.01 ) );
+					if ( !skip_pose3_tests ) TS_ASSERT( within_thresh( pose->psi(ir), -1.0*pose3->psi(ir), 0.01 ) );
+					TS_ASSERT( within_thresh( pose->omega(ir), -1.0*pose2->omega(ir), 0.01 ) );
+					if ( !skip_pose3_tests ) TS_ASSERT( within_thresh( pose->omega(ir), -1.0*pose3->omega(ir), 0.01 ) );
+				}
+
+				if ( cartesian ) { //For cartesian tests, do another test where we jitter the poses.
+					//Jitter coordinates of pose4a, and mirror them in pose4b:
+					for ( core::Size ir=1, irmax=pose4a->total_residue(); ir<=irmax; ++ir ) {
+						for ( core::Size ia=1, iamax=pose4a->residue_type(ir).natoms(); ia<=iamax; ++ia ) {
+							core::id::AtomID const curat( ia, ir );
+							numeric::xyzVector< core::Real > curpos( pose4a->xyz( curat ) );
+							curpos.x() += numeric::random::rg().gaussian() * 3.0;
+							curpos.y() += numeric::random::rg().gaussian() * 3.0;
+							curpos.z() += numeric::random::rg().gaussian() * 3.0;
+							pose4a->set_xyz( curat, curpos );
+							curpos.x() *= -1.0;
+							pose4b->set_xyz( curat, curpos );
+						}
+					}
+					(*sfxn)(*pose4a);
+					(*sfxn)(*pose4b);
+					TR << "E4a_pre\t" << pose4a->energies().total_energy() << "\tE4b_pre\t" << pose4b->energies().total_energy() << std::endl;
+					if ( !skip_pose3_tests ) TS_ASSERT_DELTA(pose4a->energies().total_energy(), pose4b->energies().total_energy(), std::max( std::abs( std::max(pose4a->energies().total_energy(), pose4b->energies().total_energy())/1000.0 ), 1e-12 ) );
+					do_minimization(*pose4a, sfxn, cartesian);
+					do_minimization(*pose4b, sfxn, cartesian);
+					TR << "E4a_post\t" << pose4a->energies().total_energy() << "\tE4b_post\t" << pose4b->energies().total_energy() << std::endl;
+					if ( !skip_pose3_tests ) TS_ASSERT_DELTA(pose4a->energies().total_energy(), pose4b->energies().total_energy(), std::max( std::abs( std::max(pose4a->energies().total_energy(), pose4b->energies().total_energy())/1000.0 ), 1e-12 ) );
+					for ( core::Size ir=1, irmax=pose4a->size(); ir<=irmax; ++ir ) {
+						TR << "phi4a\t" << pose4a->phi(ir) << "\tphi4b\t" << pose4b->phi(ir) << std::endl;
+						TR << "psi4a\t" << pose4a->psi(ir) << "\tpsi4b\t" << pose4b->psi(ir) << std::endl;
+						TR << "omega4a\t" << pose4a->omega(ir) << "\tomega4b\t" << pose4b->omega(ir) << std::endl;
+						if ( !skip_pose3_tests ) {
+							TS_ASSERT( within_thresh( pose4a->phi(ir), -1.0*pose4b->phi(ir), 0.01 ) );
+							TS_ASSERT( within_thresh( pose4a->psi(ir), -1.0*pose4b->psi(ir), 0.01 ) );
+							TS_ASSERT( within_thresh( pose4a->omega(ir), -1.0*pose4b->omega(ir), 0.01 ) );
+						}
+					}
+
+					//Testing torsion potentials for omega:
+					for ( core::Size ir=1, irmax=pose5a->total_residue(); ir<=irmax; ++ir ) {
+						pose5a->set_omega(ir, static_cast<core::Real>(iphi));
+						pose5b->set_omega(ir, -1.0*static_cast<core::Real>(iphi));
+					}
+					(*sfxn)(*pose5a);
+					(*sfxn)(*pose5b);
+					TR << "E5a_pre\t" << pose5a->energies().total_energy() << "\tE5b_pre\t" << pose5b->energies().total_energy() << std::endl;
+					if ( !skip_pose3_tests ) TS_ASSERT_DELTA(pose5a->energies().total_energy(), pose5b->energies().total_energy(), std::max( std::abs( std::max(pose5a->energies().total_energy(), pose5b->energies().total_energy())/1000.0 ), 1e-12 ) );
+					do_minimization(*pose5a, sfxn, cartesian);
+					do_minimization(*pose5b, sfxn, cartesian);
+					TR << "E5a_post\t" << pose5a->energies().total_energy() << "\tE5b_post\t" << pose5b->energies().total_energy() << std::endl;
+					if ( !skip_pose3_tests ) TS_ASSERT_DELTA(pose5a->energies().total_energy(), pose5b->energies().total_energy(), std::max( std::abs( std::max(pose5a->energies().total_energy(), pose5b->energies().total_energy())/1000.0 ), 1e-12 ) );
+					for ( core::Size ir=1, irmax=pose5a->size(); ir<=irmax; ++ir ) {
+						TR << "phi5a\t" << pose5a->phi(ir) << "\tphi5b\t" << pose5b->phi(ir) << std::endl;
+						TR << "psi5a\t" << pose5a->psi(ir) << "\tpsi5b\t" << pose5b->psi(ir) << std::endl;
+						TR << "omega5a\t" << pose5a->omega(ir) << "\tomega5b\t" << pose5b->omega(ir) << std::endl;
+						if ( !skip_pose3_tests ) {
+							TS_ASSERT( within_thresh( pose5a->phi(ir), -1.0*pose5b->phi(ir), 0.01 ) );
+							TS_ASSERT( within_thresh( pose5a->psi(ir), -1.0*pose5b->psi(ir), 0.01 ) );
+							TS_ASSERT( within_thresh( pose5a->omega(ir), -1.0*pose5b->omega(ir), 0.01 ) );
+						}
+					}
+
+
+				} //if cartesian
+
 			}
 		}
 	}
+
+	/*
+	/// @brief Tests symmetric scoring of glycine with the cart_bonded scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void Xtest_symm_gly_min_cart_bonded() {
+	//Set up the scorefunction
+	core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+	scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
+	TR << "Testing cart_bonded score term." << std::endl;
+	repeat_structure_test(scorefxn, true);
+	return;
+	}
+	*/
 
 	/// @brief Tests symmetric scoring of glycine with the fa_atr scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -124,7 +256,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_atr, 1.0 );
 		TR << "Testing fa_atr score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -135,7 +267,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_rep, 1.0 );
 		TR << "Testing fa_rep score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -146,7 +278,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_intra_rep, 1.0 );
 		TR << "Testing fa_intra_rep score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -157,7 +289,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing fa_sol score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -168,7 +300,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_elec, 1.0 );
 		TR << "Testing fa_elec score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -182,7 +314,7 @@ public:
 		scorefxn->set_weight( core::scoring::hbond_sc, 1.0 );
 		scorefxn->set_weight( core::scoring::hbond_bb_sc, 1.0 );
 		TR << "Testing hbonds score terms." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -193,7 +325,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_dun, 1.0 );
 		TR << "Testing fa_dun score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -204,7 +336,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::omega, 1.0 );
 		TR << "Testing omega score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -215,7 +347,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama, 1.0 );
 		TR << "Testing rama score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -226,7 +358,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
 		TR << "Testing rama_prepro score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -238,7 +370,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::p_aa_pp, 1.0 );
 		TR << "Testing p_aa_pp score term." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 
@@ -249,9 +381,22 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->add_weights_from_file("talaris2014.wts");
 		TR << "Testing full talaris2014 score function." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
+
+	/*
+	/// @brief Tests symmetric scoring of glycine with the full talaris2014_cart scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void Xtest_symm_gly_min_talaris2014_cart() {
+	//Set up the scorefunction
+	core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+	scorefxn->add_weights_from_file("talaris2014_cart.wts");
+	TR << "Testing full talaris2014_cart score function." << std::endl;
+	repeat_structure_test(scorefxn, true);
+	return;
+	}
+	*/
 
 	/// @brief Tests symmetric scoring of glycine with the full default scorefunction, whatever that currently is.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -259,7 +404,7 @@ public:
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 		TR << "Testing full default score function." << std::endl;
-		repeat_structure_test(scorefxn);
+		repeat_structure_test(scorefxn, false);
 		return;
 	}
 

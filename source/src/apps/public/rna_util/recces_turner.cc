@@ -68,10 +68,10 @@ OPT_KEY( Integer, n_intermediate_dump )
 //////////////////////////////////////////////////////////////////////////////
 
 void set_gaussian_stdev(
-	sampler::rna::RNA_MC_MultiSuite & sampler,
-	moves::SimulatedTempering const & tempering,
-	utility::vector1<Size> const & bp_rsd,
-	utility::vector1<Size> const & dangling_rsd
+sampler::rna::RNA_MC_MultiSuite & sampler,
+moves::SimulatedTempering const & tempering,
+utility::vector1<Size> const & bp_rsd,
+utility::vector1<Size> const & dangling_rsd
 ) {
 	Size const n_rsd( bp_rsd.size() + dangling_rsd.size() );
 	Real const temp( tempering.temperature() );

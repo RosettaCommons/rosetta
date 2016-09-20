@@ -10,7 +10,7 @@
 /// @file   core/scoring/methods/CartesianBondedEnergy.cc
 /// @brief  Harmonic bondangle/bondlength/torsion constraints
 /// @author Frank DiMaio
-/// modified by Vikram K. Mulligan to allow D-amino acid minimization.
+/// @author modified by Vikram K. Mulligan to allow D-amino acid minimization and cyclic geometry.
 
 // Unit headers
 #include <core/scoring/methods/CartBondedParameters.hh>
@@ -357,26 +357,35 @@ IdealParametersDatabase::init(
 	bbdep_bond_params_ = basic::options::option[ basic::options::OptionKeys::corrections::score::bbdep_bond_params ]();
 	bbdep_bond_devs_ = basic::options::option[ basic::options::OptionKeys::corrections::score::bbdep_bond_devs ]();
 
-	read_length_database( libpath+"/default-lengths.txt" );
-	read_angle_database( libpath+"/default-angles.txt" );
-	read_torsion_database( libpath+"/default-torsions.txt" );
-	read_improper_database( libpath+"/default-improper.txt" ); // used to be called "torsion" until July 2016
+	//std::cout << "READING CARTESIAN BACKBONE-INDEPENDENT DATABASE." << std::endl; //DELETE ME
+
+	bool const symm_gly( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() );
+
+	read_length_database( libpath+"/default-lengths.txt", symm_gly );
+	read_angle_database( libpath+"/default-angles.txt", symm_gly );
+	read_torsion_database( libpath+"/default-torsions.txt", symm_gly );
+	read_improper_database( libpath+"/default-improper.txt", symm_gly ); // used to be called "torsion" until July 2016
 
 	if ( !bbdep_bond_params_ ) return;
+
+	//std::cout << "READING CARTESIAN BACKBONE-DEPENDENT DATABASE." << std::endl; //DELETE ME
 
 	// read bb-dep parameters
 	//NOTE this must be read after the bbindep params are read
 	//   as deviations for low count rama bins are smoothed using the bb-indep deviations
-	read_bbdep_table( libpath+"/bbdep-all-but-gly-pro-xpro-ile-val.txt", bondlengths_bbdep_def_, bondangles_bbdep_def_, "ALA" );
-	read_bbdep_table( libpath+"/bbdep-graphdata-gly.txt", bondlengths_bbdep_gly_, bondangles_bbdep_gly_, "GLY" );
-	read_bbdep_table( libpath+"/bbdep-graphdata-ile-val.txt", bondlengths_bbdep_valile_, bondangles_bbdep_valile_, "VAL" );
-	read_bbdep_table( libpath+"/bbdep-graphdata-pro.txt", bondlengths_bbdep_pro_, bondangles_bbdep_pro_, "PRO" );
-	read_bbdep_table( libpath+"/bbdep-graphdata-xpro.txt", bondlengths_bbdep_prepro_, bondangles_bbdep_prepro_, "ALA" );
+	read_bbdep_table( libpath+"/bbdep-all-but-gly-pro-xpro-ile-val.txt", bondlengths_bbdep_def_, bondangles_bbdep_def_, "ALA", false );
+	read_bbdep_table( libpath+"/bbdep-graphdata-gly.txt", bondlengths_bbdep_gly_, bondangles_bbdep_gly_, "GLY", symm_gly );
+	read_bbdep_table( libpath+"/bbdep-graphdata-ile-val.txt", bondlengths_bbdep_valile_, bondangles_bbdep_valile_, "VAL", false );
+	read_bbdep_table( libpath+"/bbdep-graphdata-pro.txt", bondlengths_bbdep_pro_, bondangles_bbdep_pro_, "PRO", false );
+	read_bbdep_table( libpath+"/bbdep-graphdata-xpro.txt", bondlengths_bbdep_prepro_, bondangles_bbdep_prepro_, "ALA", false );
 }
 
 
 void
-IdealParametersDatabase::read_length_database(std::string infile) {
+IdealParametersDatabase::read_length_database(
+	std::string const & infile,
+	bool const symmetrize_gly
+) {
 	std::string line;
 	std::string name3, atom1, atom2;
 	Real mu_d, K_d;
@@ -399,10 +408,31 @@ IdealParametersDatabase::read_length_database(std::string infile) {
 		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
 	}
 	TR << "Read " << bondlengths_indep_.size() << " bb-independent lengths." << std::endl;
+
+	if ( symmetrize_gly ) {
+		TR << "Symmetrizing glycine bond lengths table." << std::endl;
+		atm_name_pair const tuple1( boost::make_tuple( "GLY", "CA", "1HA" ) );
+		atm_name_pair const tuple2( boost::make_tuple( "GLY", "CA", "2HA" ) );
+		CartBondedParametersOP param1, param2;
+		boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it = bondlengths_indep_.find( tuple1 );
+		boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it2 = bondlengths_indep_.find( tuple2 );
+		debug_assert ( it != bondlengths_indep_.end() );
+		debug_assert ( it2 != bondlengths_indep_.end() );
+		param1 = it->second;
+		param2 = it2->second;
+		core::Real const avgmu( (param1->mu(0.0, 0.0) + param2->mu(0.0, 0.0)) / 2.0 );
+		core::Real const avgK( (param1->K(0.0, 0.0) + param2->K(0.0, 0.0)) / 2.0 );
+		bondlengths_indep_.erase(tuple1); bondlengths_indep_.erase(tuple2);
+		bondlengths_indep_.insert( std::make_pair(tuple1, CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) ) ) );
+		bondlengths_indep_.insert( std::make_pair(tuple2, CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) ) ) );
+	}
 }
 
 void
-IdealParametersDatabase::read_angle_database(std::string infile) {
+IdealParametersDatabase::read_angle_database(
+	std::string const & infile,
+	bool const symmetrize_gly
+) {
 	std::string line;
 	std::string name3, atom1, atom2, atom3;
 	Real mu_d, K_d;
@@ -424,10 +454,23 @@ IdealParametersDatabase::read_angle_database(std::string infile) {
 		bondangles_indep_.insert( std::make_pair( tuple, params_i) );
 	}
 	TR << "Read " << bondangles_indep_.size() << " bb-independent angles." << std::endl;
+
+	if ( symmetrize_gly ) {
+		TR << "Symmetrizing glycine bond angles table." << std::endl;
+		atm_name_triple const tuple1( boost::make_tuple( "GLY", "N", "CA", "1HA" ) );
+		atm_name_triple const tuple2( boost::make_tuple( "GLY", "N", "CA", "2HA" ) );
+		core::Real const avgmu( (bondangles_indep_[ tuple1 ]->mu(0.0, 0.0) + bondangles_indep_[ tuple2 ]->mu(0.0, 0.0)) / 2.0 );
+		core::Real const avgK( (bondangles_indep_[ tuple1 ]->K(0.0, 0.0) + bondangles_indep_[ tuple2 ]->K(0.0, 0.0)) / 2.0 );
+		bondangles_indep_[ tuple1 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) );
+		bondangles_indep_[ tuple2 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) );
+	}
 }
 
 void
-IdealParametersDatabase::read_torsion_database(std::string infile) {
+IdealParametersDatabase::read_torsion_database(
+	std::string const & infile,
+	bool const //symmetrize_gly
+) {
 	std::string line;
 	std::string name3, atom1, atom2, atom3, atom4;
 	Real mu_d, K_d;
@@ -451,7 +494,10 @@ IdealParametersDatabase::read_torsion_database(std::string infile) {
 }
 
 void
-IdealParametersDatabase::read_improper_database(std::string infile) {
+IdealParametersDatabase::read_improper_database(
+	std::string const & infile,
+	bool const symmetrize_gly
+) {
 	std::string line;
 	std::string name3, atom1, atom2, atom3, atom4;
 	Real mu_d, K_d;
@@ -494,19 +540,37 @@ IdealParametersDatabase::read_improper_database(std::string infile) {
 		TR << "Read " << impropers_indep_.size() - size_before << " extra improper tors.";
 		TR << extra_file << std::endl;
 	}
+
+	if ( symmetrize_gly ) {
+		TR << "Symmetrizing glycine improper dihedrals table." << std::endl;
+		//We'll ADD parameters for glycine for this.
+		atm_name_quad const tuple1( boost::make_tuple( "GLY", "CA", "C", "N", "H" ) );
+		atm_name_quad const tuple2( boost::make_tuple( "GLY", "O", "C", "N", "H" ) );
+		atm_name_quad const tuple3( boost::make_tuple( "*", "CA", "C", "N", "H" ) );
+		atm_name_quad const tuple4( boost::make_tuple( "*", "O", "C", "N", "H" ) );
+		core::Real const mu( numeric::constants::d::pi );
+		core::Real const K( 40 );
+		impropers_indep_[ tuple1 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
+		impropers_indep_[ tuple2 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
+		impropers_indep_[ tuple3 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
+		impropers_indep_[ tuple4 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
+	}
 }
 
-// Read bb independent tables
-// smooth using bbdep data corresponding to residue 'resbase'
+/// @brief Read bb-dependent tables
+/// @details Smooth using bbdep data corresponding to residue 'resbase'
 void
 IdealParametersDatabase::read_bbdep_table(
-	std::string filename,
+	std::string const &filename,
 	boost::unordered_map< atm_name_single, CartBondedParametersOP > &bondlengths,
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP > &bondangles,
-	std::string resbase )
-{
+	std::string const &resbase,
+	bool const symmetrize_table
+) {
 	using numeric::constants::d::pi;
 	using namespace ObjexxFCL;
+
+	//std::cout << "READ_BBDEP_TABLE() CALLED." << std::endl; //DELETE ME
 
 	Real DEV_SCALE = 0.1; // scaling factor between bbindep and bbdep spring constants
 	core::Size M = 10; // m estimate to smooth low count bins
@@ -612,10 +676,10 @@ IdealParametersDatabase::read_bbdep_table(
 			>> CACOavg >> CACOdev >>  CACNavg >> CACNdev >>  OCNavg >> OCNdev
 			>> c1avg >> c1dev >> c2avg >> c2dev >> c3avg >> c3dev >> c4avg >> c4dev >> Zavg >> Zdev;
 
-		Size phibin = (Size)std::floor(phiL/10.0 + 0.5);
+		Size phibin = (Size)std::floor(phiL/10.0 + 0.5); //Ranges from 0 to 35 for phibins starting from 0.0 to 35.0, respectively.
 		Size psibin = (Size)std::floor(psiL/10.0 + 0.5);
 
-		CNavg_tbl(phibin+1,psibin+1) = CNavg;
+		CNavg_tbl(phibin+1,psibin+1) = CNavg; // Plus 1 because FArray2D is 1-based, not 0-based.
 		NCAavg_tbl(phibin+1,psibin+1) = NCAavg;
 		CACBavg_tbl(phibin+1,psibin+1) = CACBavg;
 		CACavg_tbl(phibin+1,psibin+1) = CACavg;
@@ -686,6 +750,34 @@ IdealParametersDatabase::read_bbdep_table(
 		}
 	}
 
+	// Symmetrize the tables, if we're doing that (added by VKM, 18 Sept. 2016):
+	if ( symmetrize_table ) {
+		symmetrize_tables( CNavg_tbl );
+		symmetrize_tables( NCAavg_tbl );
+		symmetrize_tables( CACBavg_tbl );
+		symmetrize_tables( CACavg_tbl );
+		symmetrize_tables( COavg_tbl );
+		symmetrize_tables( CNCAavg_tbl );
+		symmetrize_tables( NCACBavg_tbl );
+		symmetrize_tables( NCACavg_tbl );
+		symmetrize_tables( CBCACavg_tbl );
+		symmetrize_tables( CACOavg_tbl );
+		symmetrize_tables( CACNavg_tbl );
+		symmetrize_tables( OCNavg_tbl );
+		symmetrize_tables( CNdev_tbl );
+		symmetrize_tables( NCAdev_tbl );
+		symmetrize_tables( CACBdev_tbl );
+		symmetrize_tables( CACdev_tbl );
+		symmetrize_tables( COdev_tbl );
+		symmetrize_tables( CNCAdev_tbl );
+		symmetrize_tables( NCACBdev_tbl );
+		symmetrize_tables( NCACdev_tbl );
+		symmetrize_tables( CBCACdev_tbl );
+		symmetrize_tables( CACOdev_tbl );
+		symmetrize_tables( CACNdev_tbl );
+		symmetrize_tables( OCNdev_tbl );
+	}
+
 	// make the database entries
 	bondlengths[boost::make_tuple("N","C")] = bondlengths[boost::make_tuple("C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(CNavg_tbl, CNdev_tbl ,"C-N") );
 	bondlengths[boost::make_tuple("CA","N")] = bondlengths[boost::make_tuple("N","CA")] = CartBondedParametersOP( new BBDepCartBondedParameters(NCAavg_tbl, NCAdev_tbl,"CA-N") );
@@ -701,6 +793,55 @@ IdealParametersDatabase::read_bbdep_table(
 	bondangles[boost::make_tuple("N","C","O")] = bondangles[boost::make_tuple("O","C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(OCNavg_tbl, OCNdev_tbl, "O-C-N") );
 }
 
+/// @brief Symmetrize the glycine backbone-dependent table.
+/// @details Only called if the score::symmetric_gly_tables option is used.  Intended for design
+/// with glyceine in a mixed D/L context (in which there should be no preference for a left-handed
+/// conformation over a right).
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+IdealParametersDatabase::symmetrize_tables(
+	ObjexxFCL::FArray2D<core::Real> &table
+) {
+
+	//std::cout << "SYMMETRIZE_TABLES CALLED." << std::endl; //DELETE ME
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "\nSymmetrizing gly table.  Pre-symm:";
+		for ( core::Size i( table.l1() ), imax( table.u1() ); i<=imax; ++i ) {
+			for ( core::Size j( table.l2() ), jmax( table.u2() ); j<=jmax; ++j ) {
+				TR.Debug << table(i, j);
+				if ( j<jmax ) TR.Debug << "\t";
+			}
+			TR.Debug << "\n";
+		}
+		TR.Debug << std::endl;
+	}
+
+	ObjexxFCL::FArray2D< core::Real > newtable( table ); //Copy the old table.  Slightly inefficient, but easier to make sure that I'm doing what I think I'm doing.
+
+	for ( core::Size i( table.l1() ), imax( table.u1() ); i<=imax; ++i ) {
+		for ( core::Size j( table.l2() ), jmax( table.u2() ); j<=jmax; ++j ) {
+			core::Size const iother( imax - i + 1 );
+			core::Size const jother( jmax - j + 1 );
+			newtable( i, j ) = (table(i, j) + table(iother, jother)) / 2.0; //Slightly inefficient, since we do the same calculation twice for equivalent symmetric points, but not a big deal.
+		}
+	}
+
+	table = newtable; //Copy the new table back
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "\nSymmetrizing gly table.  Post-symm:";
+		for ( core::Size i( table.l1() ), imax( table.u1() ); i<=imax; ++i ) {
+			for ( core::Size j( table.l2() ), jmax( table.u2() ); j<=jmax; ++j ) {
+				TR.Debug << table(i, j);
+				if ( j<jmax ) TR.Debug << "\t";
+			}
+			TR.Debug << "\n";
+		}
+		TR.Debug << std::endl;
+	}
+
+}
 
 void
 IdealParametersDatabase::lookup_bondangle_buildideal(
@@ -1382,7 +1523,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amino acids
 		for ( int i=1; i<=5; ++i ) {
 			if ( i==1 && is_nterm ) continue;
-			if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.name3() == "B3G" ) ) continue;
+			if ( i==3 && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
 
 			std::string atm1,atm2;
 			int rt1 = 0;
@@ -1403,7 +1544,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		// backbone dependent bond angles
 		for ( int i=1; i<=7; ++i ) {
-			if ( (i==2 || i==4) && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.name3() == "B3G" ) ) continue;
+			if ( (i==2 || i==4) && ( rsd_type.aa() == core::chemical::aa_gly || rsd_type.aa() == core::chemical::aa_b3g /*"beta-glycine"*/ ) ) continue;
 			if ( i==1 && is_nterm ) continue;
 			if ( (i==6 || i==7) && is_cterm ) continue;
 
@@ -1640,6 +1781,8 @@ CartesianBondedEnergy::defines_residue_pair_energy(
 	Size res2
 ) const {
 	// is this fn. called?
+	//std::cout << "******CartesianBondedEnergy::defines_residue_pair_energy() WAS CALLED!*****" << std::endl; //DELETE ME
+	// VKM -- 10 Sept 2016: No, no it doesn't seem to be.
 	return ( res1 == (res2+1) || res1 == (res2-1) );
 }
 
@@ -1653,9 +1796,12 @@ CartesianBondedEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	if ( rsd1.seqpos() < rsd2.seqpos() ) {
+
+	core::Size const rsd1_next( rsd1.has_upper_connect() ? rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) : 0 ); //The index of the residue connected to residue 1's C-terminus.
+
+	if ( rsd2.seqpos() == rsd1_next || rsd2.seqpos() > rsd1.seqpos() ) {
 		residue_pair_energy_sorted( rsd1, rsd2, pose, sf, emap );
-	} else {
+	} else { //Assumes that residue 1 is connected to residue 2's C-terminus.
 		residue_pair_energy_sorted( rsd2, rsd1, pose, sf, emap );
 	}
 }
@@ -1839,10 +1985,10 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		return 0.0;
 	}
 
-	core::Size resid = rsd.seqpos();
+	core::Size const iplus1_resid( rsd.has_upper_connect() ? rsd.connected_residue_at_resconn( rsd.type().upper_connect_id() ) : 0 ); //Index of residue connected at C-terminal connection; 0 if no connection there.
+
 	//i+1 residue is either D-proline or L-proline
-	bool preproline = resid+1 < pose.size() && pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
-		(pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr);
+	bool const preproline ( iplus1_resid ? pose.residue( iplus1_resid ).aa() == core::chemical::aa_pro || pose.residue( iplus1_resid ).aa() == core::chemical::aa_dpr : false ); //Is this a residue preceding a proline?
 
 	// phi/psi
 	Real phi=0,psi=0;
@@ -1993,13 +2139,11 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	using namespace numeric;
 
-	debug_assert( rsd2.seqpos() >= rsd1.seqpos() );
-
-	core::Size resid = rsd1.seqpos();
-	bool preproline =
-		rsd1.seqpos() != rsd2.seqpos() &&
-		pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
-		(pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_pro || pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_dpr);
+	bool const preproline(
+		rsd1.seqpos() != rsd2.seqpos() && //These are two different residues?
+		( rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos() ) && //The second residue is connected to the first residue's C-terminus?
+		(pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_pro || pose.residue( rsd2.seqpos() ).aa() == core::chemical::aa_dpr) //The second residue is D/L proline?
+	);
 
 
 	//Multipliers for D-amino acids:
@@ -2623,8 +2767,6 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 {
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
-
-	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
@@ -3358,8 +3500,6 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 ) const {
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
-
-	debug_assert ( res1.seqpos() < res2.seqpos() );
 
 	//Multipliers for D-amino acids:
 	//const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(res1.aa()) ? -1.0 : 1.0 ;

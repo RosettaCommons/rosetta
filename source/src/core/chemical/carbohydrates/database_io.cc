@@ -159,8 +159,8 @@ read_nomenclature_table_from_database_file( std::string const & filename )
 		SugarModificationsNomenclatureTableRow row;
 
 		line_word_by_word >> key >> row.substituent_full_name >> row.implies >> row.short_affix >> row.patch_name >>
-				row.default_position >> row.has_inherent_position /*>> row.reducing_end_suffix >> glycoside_suffix >>
-				row.following_word_or_phrase*/;
+			row.default_position >> row.has_inherent_position /*>> row.reducing_end_suffix >> glycoside_suffix >>
+			row.following_word_or_phrase*/;
 
 		replace_underscores_with_spaces( key );
 		check_if_applicable( row.substituent_full_name );

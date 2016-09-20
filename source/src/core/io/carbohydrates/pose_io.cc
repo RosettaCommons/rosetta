@@ -81,7 +81,7 @@ sugar_modifications_from_suffix( std::string const & suffix )
 				utility_exit_with_message( "Saccharide sequence input error: "
 					"A comma must come between two numerals in a suffix." );
 			}
-		// If it's a valid location for a comma, we just move on.
+			// If it's a valid location for a comma, we just move on.
 		} else if ( char_to_int( letter ) != 0 ) {  // It's a number.
 			if ( char_to_int( next_letter ) != 0 ) {  // If the next letter is also a number....
 				utility_exit_with_message( "Saccharide sequence input error: "

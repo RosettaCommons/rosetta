@@ -36,7 +36,7 @@
 namespace protocols {
 namespace farna {
 namespace thermal_sampling {
-	
+
 //////////////////////////////////////////////////////////////////////////////
 // Histogram class for accumulating samples
 class Histogram {
@@ -50,7 +50,7 @@ public:
 		n_elem_ = static_cast<core::Size>( ( max - min ) / spacing ) + 1;
 		for ( core::Size i = 1; i <= n_elem_; ++i ) hist_.push_back( 0 );
 	}
-	
+
 	void add( float const value, core::Size const n_items ) {
 		core::Size bin_index;
 		if ( value <= min_ ) {
@@ -62,20 +62,21 @@ public:
 		}
 		hist_[bin_index] += n_items;
 	}
-	
+
 	void clear() {
 		for ( core::Size i = 0; i <= n_elem_; ++i ) hist_[i] = 0;
 	}
-	
+
 	utility::vector1<core::Real> get_scores() const {
 		utility::vector1<core::Real> scores;
-		for ( core::Size i = 1; i <= n_elem_; ++i )
+		for ( core::Size i = 1; i <= n_elem_; ++i ) {
 			scores.push_back( min_ + spacing_ * ( i - 0.5 ) );
+		}
 		return scores;
 	}
-	
-	utility::vector1<core::Size> get_hist() const { return hist_;	}
-	
+
+	utility::vector1<core::Size> get_hist() const { return hist_; }
+
 private:
 	core::Real const min_, max_, spacing_;
 	core::Size n_elem_;
@@ -88,14 +89,14 @@ void update_scores(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP const scorefxn
 );
-	
+
 //////////////////////////////////////////////////////////////////////////////
 void fill_data(
 	utility::vector1<float> & data,
 	core::Size const count,
 	utility::vector1<float> const & scores
 );
-	
+
 core::Real gaussian_stdev( core::Real const n_rsd, core::Real const temp, bool const is_bp );
 
 //////////////////////////////////////////////////////////////////////////////
@@ -123,7 +124,7 @@ void vector2disk_in2d(
 	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
 	out.close();
 }
-	
+
 }
 } //farna
 } //protocols

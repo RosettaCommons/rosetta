@@ -10,7 +10,7 @@
 /// @file DockingEnsemblePrepackProtocol
 /// @brief Prepacking of the bound structure before docking with ensembles
 /// @author Monica Berrondo
-/// @author Modified by Jeliazko Jeliazkov -- check_ensemble_member_compatibility() 
+/// @author Modified by Jeliazko Jeliazkov -- check_ensemble_member_compatibility()
 
 #ifndef INCLUDED_protocols_docking_DockingEnsemblePrepackProtocol_HH
 #define INCLUDED_protocols_docking_DockingEnsemblePrepackProtocol_HH
@@ -49,12 +49,12 @@ public:
 
 	/// @brief Instantiates and configures movers used by DockingEnsemblePrepackProtocol
 	void setup_pack_operation_movers();
-  
-  /// @brief Returns a vector1 of the pdb chains in a pose, in order
-  utility::vector1< char > get_pose_chains( core::pose::Pose & );
 
-  /// @brief Ensures all members of either ensemble are compatible with one another
-  void check_ensemble_member_compatibility();
+	/// @brief Returns a vector1 of the pdb chains in a pose, in order
+	utility::vector1< char > get_pose_chains( core::pose::Pose & );
+
+	/// @brief Ensures all members of either ensemble are compatible with one another
+	void check_ensemble_member_compatibility();
 
 	void apply( core::pose::Pose & ) override;
 
@@ -74,7 +74,7 @@ private:
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover_;
 	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;
 	SidechainMinMoverOP scmin_mover_;
-    protocols::moves::SequenceMoverOP pack_operations_;
+	protocols::moves::SequenceMoverOP pack_operations_;
 
 	// ensemble objects
 	DockingEnsembleOP ensemble1_;
