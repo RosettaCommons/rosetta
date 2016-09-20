@@ -4266,6 +4266,103 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 	), # -contactMap
 
+	############################################################################
+	# coupled_moves options
+	Option_Group( 'coupled_moves',
+		Option('ntrials', 'Integer',
+			default = '1000',
+			desc = 'number of Monte Carlo trials to run'
+		),
+		Option('number_ligands', 'Integer',
+			default = '1',
+			desc = 'number of ligands in the pose'
+		),
+		Option('mc_kt', 'Real',
+			default = '0.6',
+			desc = 'value of kT for Monte Carlo'
+		),
+		Option('boltzmann_kt', 'Real',
+			default = '0.6',
+			desc = 'value of kT for Boltzmann weighted moves'
+		),
+		Option('mm_bend_weight', 'Real',
+			default = '1.0',
+			desc = 'weight of mm_bend bond angle energy term'
+		),
+		Option('trajectory', 'Boolean',
+			default = 'false',
+			desc = 'record a trajectory'
+		),
+		Option('trajectory_gz', 'Boolean',
+			default = 'false',
+			desc = 'gzip the trajectory'
+		),
+		Option('trajectory_stride', 'Integer',
+			default = '100',
+			desc = 'write out a trajectory frame every N steps'
+		),
+		Option('trajectory_file', 'String',
+			default = 'traj.pdb',
+			desc = 'name of trajectory file'
+		),
+		Option('output_fasta', 'String',
+			default = 'sequences.fasta',
+			desc = 'name of FASTA output file'
+		),
+		Option('output_stats', 'String',
+			default = 'sequences.stats',
+			desc = 'name of stats output file'
+		),
+		Option('ligand_mode', 'Boolean',
+			default = 'false',
+			desc = 'if true, model protein ligand interaction'
+		),
+		Option('initial_repack', 'Boolean',
+			default = 'true',
+			desc = 'start simulation with repack and design step'
+		),
+		Option('min_pack', 'Boolean',
+			default = 'false',
+			desc = 'use min_pack for initial repack and design step'
+		),
+		Option('save_sequences', 'Boolean',
+			default = 'true',
+			desc = 'save all unique sequences'
+		),
+		Option('save_structures', 'Boolean',
+			default = 'false',
+			desc = 'save structures for all unique sequences'
+		),
+		Option('ligand_prob', 'Real',
+			default = '0.1',
+			desc = 'probability of making a ligand move'
+		),
+		Option('fix_backbone', 'Boolean',
+			default = 'false',
+			desc = 'do not make any backbone moves'
+		),
+		Option('uniform_backrub', 'Boolean',
+			default = 'false',
+			desc = 'select backrub rotation angle from uniform distribution'
+		),
+		Option('bias_sampling', 'Boolean',
+			default = 'true',
+			desc = 'if true, bias rotamer selection based on energy'
+		),
+		Option('bump_check', 'Boolean',
+			default = 'true',
+			desc = 'if true, use bump check in generating rotamers'
+		),
+		Option('ligand_weight', 'Real',
+			default = '1.0',
+			desc = 'weight for residue - ligand interactions'
+		),
+		Option('output_prefix', 'String',
+			default = '',
+			desc = 'prefix for output files'
+		),
+	), #-coupled_moves
+
 	##################################
 	# VIP mover options
 	Option_Group( 'cp',

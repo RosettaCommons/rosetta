@@ -142,7 +142,7 @@ ExtendChainMover::parse_my_tag(
 	}
 	if ( segment_names_.empty() && !chain_ ) {
 		std::stringstream msg;
-		msg << architect().id() << ": You must set either segment or chainin ExtendChainMover, but you haven't specified either. Please specify either one or the other.";
+		msg << architect().id() << ": You must set either segment or chain in ExtendChainMover, but you haven't specified either. Please specify either one or the other.";
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
 }
