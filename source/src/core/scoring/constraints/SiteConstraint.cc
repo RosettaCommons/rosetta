@@ -21,6 +21,7 @@
 
 #include <core/id/AtomID.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
@@ -165,8 +166,17 @@ SiteConstraint::setup_csts(
 
 	for ( Size i = 1 ; i < pose.size() ; ++i ) {
 
-		if ( residues[i] ) {
-			id::AtomID atom2( pose.residue_type( i ).atom_index( "CA" ), i );
+		if ( residues[ i ] ) {
+			id::AtomID atom2;
+			if ( pose.residue( i ).is_protein() ) {
+				atom2 = id::AtomID( pose.residue_type( i ).atom_index( "CA" ), i );
+			} else if ( pose.residue( i ).is_carbohydrate() ) {
+				atom2 = id::AtomID( pose.residue( i ).carbohydrate_info()->anomeric_carbon_index(), i );
+			} else {
+				TR.Warning << "Residue " << i << " is not a protein or a carbohydrate; ";
+				TR.Warning << "Setting the nbr_atom as the alternative for 'CA' and 'C1'" << std::endl;
+				atom2 = id::AtomID( pose.residue( i ).nbr_atom(), i );
+			}
 			runtime_assert( target_atom.valid() && atom2.valid() );
 			add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( target_atom, atom2, func ) ) ) );
 		}

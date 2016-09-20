@@ -1058,6 +1058,7 @@ sources = {
 		"test_CCD_loop_closure",
 		"test_non-canonical_connectivities",
 		"test_RingConformationMover",
+		"test_SiteConstraint",
 	],
 }
 
