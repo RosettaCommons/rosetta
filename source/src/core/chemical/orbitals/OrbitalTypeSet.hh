@@ -85,7 +85,7 @@ private:
 	///
 	/// @details OrbitalType has data of atom properties, and it can be
 	/// looked up by orbital_type_index.
-	utility::vector1< OrbitalType* > orbitals_;
+	utility::vector1< OrbitalTypeOP > orbitals_;
 
 
 };

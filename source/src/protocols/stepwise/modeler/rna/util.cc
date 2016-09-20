@@ -1526,8 +1526,6 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 	TR.Debug << " Scores                             Weight\n";
 	TR.Debug << "----------------------------------------------\n";
 
-	pose::Pose empty_pose = *( new pose::Pose );
-
 	for ( Size n = 1; n <= n_score_types; n++ ) {
 		core::Real const weight = scorefxn->get_weight( ScoreType( n ) );
 

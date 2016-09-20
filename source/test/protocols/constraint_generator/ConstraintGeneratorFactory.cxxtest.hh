@@ -100,6 +100,7 @@ public:
 	/// @brief make sure that the factory throws an exception if a two ConstraintGeneratorCreators with
 	/// the same name are registered
 	void test_register_one_creator_twice_with_ConstraintGeneratorFactory() {
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING(
 			ConstraintGeneratorFactory::get_instance()->factory_register( ConstraintGeneratorCreatorOP( new DummyConstraintGeneratorCreator )   )
 		);
@@ -109,6 +110,7 @@ public:
 	// @brief make sure that when we try to create an unregistered constraint generator, an exception is thrown
 	void test_throw_on_unregistered_generator_name_ConstraintGeneratorFactory() {
 		basic::datacache::DataMap dm;
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS( ConstraintGeneratorFactory::get_instance()->new_constraint_generator( "DummyConstraintGenerator2", 0, dm ),
 			utility::excn::EXCN_Msg_Exception );
 	}

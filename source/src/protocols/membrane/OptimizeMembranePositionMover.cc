@@ -368,6 +368,9 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 				new_x = 15 * sin( numeric::conversions::radians( angle ) );
 				new_y = -15 * sin( numeric::conversions::radians( angle ) );
 				new_z = 15 * cos( numeric::conversions::radians( angle ) );
+			} else {
+				// Silence a "may be used uninitialized" compiler warning.
+				utility_exit_with_message("Something has gone *terribly* wrong here.");
 			}
 
 			// set new normal

@@ -10,12 +10,15 @@
 #ifndef INCLUDED_core_chemical_orbitals_OrbitalType_fwd_hh
 #define INCLUDED_core_chemical_orbitals_OrbitalType_fwd_hh
 
+#include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace core {
 namespace chemical {
 namespace orbitals {
 
 class OrbitalType;
+
+typedef  utility::pointer::shared_ptr< OrbitalType > OrbitalTypeOP;
 
 }
 }

@@ -273,31 +273,31 @@ void File::convertEntries(const int from, const int to) {
 // ==================== get fragment file ====================
 // ===========================================================
 
-const Fragment::File* Librarian::getFragmentFile_loop() {
+Fragment::FileCOP Librarian::getFragmentFile_loop() {
 	if ( frag_file_loop == nullptr ) {
-		frag_file_loop = new Fragment::File(get("LLL"));
+		frag_file_loop = Fragment::FileOP( new Fragment::File(get("LLL")) );
 		frag_file_loop->convertEntries(3,1);
 	}
 	return frag_file_loop;
 } // Librarian::getFragmentFile_loop
 
-const Fragment::File* Librarian::getFragmentFile_sheet() {
+Fragment::FileCOP Librarian::getFragmentFile_sheet() {
 	if ( frag_file_sheet == nullptr ) {
-		frag_file_sheet = new Fragment::File(get("EEE"));
+		frag_file_sheet = Fragment::FileOP( new Fragment::File(get("EEE")) );
 		frag_file_sheet->convertEntries(3,1);
 	}
 	return frag_file_sheet;
 } // Librarian::getFragmentFile_sheet
 
-const Fragment::File* Librarian::getFragmentFile_helix() {
+Fragment::FileCOP Librarian::getFragmentFile_helix() {
 	if ( frag_file_helix == nullptr ) {
-		frag_file_helix = new Fragment::File(get("HHH"));
+		frag_file_helix = Fragment::FileOP( new Fragment::File(get("HHH")) );
 		frag_file_helix->convertEntries(3,1);
 	}
 	return frag_file_helix;
 } // Librarian::getFragmentFile_helix
 
-const Fragment::File* Librarian::getFragmentFile(const char ss) {
+Fragment::FileCOP Librarian::getFragmentFile(const char ss) {
 	switch( ss ) {
 	case 'H' :
 		return getFragmentFile_helix();
@@ -310,11 +310,11 @@ const Fragment::File* Librarian::getFragmentFile(const char ss) {
 	} // switch
 } // Librarian::getFragmentFile
 
-map<string,Fragment::File*> Librarian::mFragfiles_ss;
+map<string,Fragment::FileOP> Librarian::mFragfiles_ss;
 
-Fragment::File* Librarian::frag_file_loop;
-Fragment::File* Librarian::frag_file_sheet;
-Fragment::File* Librarian::frag_file_helix;
+Fragment::FileOP Librarian::frag_file_loop;
+Fragment::FileOP Librarian::frag_file_sheet;
+Fragment::FileOP Librarian::frag_file_helix;
 
 string Librarian::get( const string& s) {
 	//assert( false );
@@ -343,7 +343,7 @@ const vector<string> get_acceptable_ss(const string& ss0) {
 
 } // namespace
 
-const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
+Fragment::FileCOP Librarian::getFragmentFile(const string& ss0) {
 
 	auto iter = mFragfiles_ss.find(ss0);
 
@@ -357,7 +357,7 @@ const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
 
 		bool found = false;
 
-		Fragment::File* fragfile = nullptr;
+		Fragment::FileOP fragfile;
 
 		for ( auto i = acceptable_ss.begin(); i != acceptable_ss.end() && !found ; ++i ) {
 
@@ -388,7 +388,7 @@ const Fragment::File* Librarian::getFragmentFile(const string& ss0) {
 			cout << "Fragment::getFragmentFile - trying to open '" << filename << "'" << endl;
 
 			if ( fin ) {
-				fragfile = new Fragment::File();
+				fragfile = Fragment::FileOP( new Fragment::File() );
 				cout << "Fragment::getFragmentFile - successfully opened '" << filename << "'" << endl;
 				fin >> *fragfile;
 				found = true;

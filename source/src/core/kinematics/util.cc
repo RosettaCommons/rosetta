@@ -425,23 +425,25 @@ pad_dash_right ( Size npad, std::string s ) {
 	else return s;
 }
 
+struct Node;
+typedef utility::pointer::shared_ptr< Node > NodeOP;
+typedef utility::pointer::weak_ptr< Node > NodeAP;
+
 struct Node {
 	Node( std::string _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark = ( char )NULL, Size _follows = 0 )
-	: name(std::move( _name )), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent( nullptr ) {}
+	: name(std::move( _name )), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent() {}
 
-	~Node() {
-		for ( auto & i : children ) delete i;
-	}
+	~Node() {}
 
 	void
-	setparent( Node *p ) {
+	setparent( NodeOP p ) {
 		parent = p;
-		parent->children.push_back( this );
+		parent.lock()->children.push_back( this );
 	}
 
-	Node*
+	Node &
 	root() {
-		return parent == nullptr ? this : parent->root();
+		return parent.lock() == nullptr ? *this : parent.lock()->root();
 	}
 
 	std::string
@@ -475,9 +477,11 @@ struct Node {
 	std::string name;
 	Size jnum, jumpfrom, jumpto, prefix_len, follows;
 	char jumpmark;
-	Node *parent; // worried about cycles, no owning_ptr
-	utility::vector1< Node* > children;
+private:
+	NodeAP parent;
+	utility::vector1< Node * > children;
 };
+
 
 struct TreeVizBuilder {
 	utility::vector1< Size > lb_, ub_;
@@ -594,8 +598,8 @@ visualize_fold_tree(
 	std::map< Size, std::string > node_labels_partial( node_labels_partial_in );
 	tvb.expand_node_labels_partial_by_contig( node_labels_partial );
 	utility::vector1<std::string> res_to_nodename = tvb.get_res_nodenames( node_labels_partial );
-	// make Node array
-	std::map< std::string, Node* > nodemap;
+	// make Node array -- OPs here so when the map goes out of scope we don't leak memory
+	std::map< std::string, NodeOP > nodemap;
 	for ( Size ir = 1; ir <= ft.nres(); ++ir ) {
 		if ( nodemap.count(res_to_nodename[ ir ] ) ) continue;
 		Size lb, ub;
@@ -606,7 +610,7 @@ visualize_fold_tree(
 		char markjump = ( char )NULL;
 		for ( Size jr = lb; jr <= ub; ++jr ) if ( mark_jump_to_res.count( jr ) ) markjump = mark_jump_to_res.find( jr )->second;
 		Size follows = jump_follows.find( jnum ) != jump_follows.end() ? jump_follows.find( jnum )->second : ( Size ) 0;
-		nodemap[ res_to_nodename[ ir ] ] = new Node( res_to_nodename[ ir ], jnum, jumpfrom, jumpto, markjump, follows );
+		nodemap[ res_to_nodename[ ir ] ] = NodeOP( new Node( res_to_nodename[ ir ], jnum, jumpfrom, jumpto, markjump, follows ) );
 	}
 	// set tree topology
 	for ( Size i = 1; i <= ft.num_jump(); ++i ) {
@@ -619,14 +623,14 @@ visualize_fold_tree(
 		nodemap[ dn ]->setparent( nodemap[ up ] );
 	}
 	// sanity check: make sure tree is connected
-	for ( std::map< std::string,Node* >::const_iterator i = nodemap.begin(); i != nodemap.end(); ++i ) {
-		std::string rootname0 = nodemap.begin()->second->root()->name;
-		if ( rootname0 != i->second->root()->name ) utility_exit_with_message( "Nodes not connected!!!" );
+	for ( std::map< std::string,NodeOP >::const_iterator i = nodemap.begin(); i != nodemap.end(); ++i ) {
+		std::string rootname0 = nodemap.begin()->second->root().name;
+		if ( rootname0 != i->second->root().name ) utility_exit_with_message( "Nodes not connected!!!" );
 		// std::cerr << "=========================== " << i->second->name << " ===========================" << std::endl;
 		// std::cerr << i->second->str() << std::endl;
 		// std::cerr << "========================================================================" << std::endl;
 	}
-	return nodemap.begin()->second->root()->str();
+	return nodemap.begin()->second->root().str();
 }
 
 std::string

@@ -202,6 +202,7 @@ public:
 		TS_ASSERT_EQUALS( s2.n_residues_after_cutpoint(), 0 );
 
 		// should be invalid
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( s2.set_cutpoint( 2 ) );
 
 		Segment s3( "s3", "", "", true, true );

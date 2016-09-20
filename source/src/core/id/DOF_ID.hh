@@ -36,7 +36,10 @@ class DOF_ID
 
 public: // Creation
 
-	DOF_ID(){}
+	DOF_ID():
+		atom_id_(), // Default is invalid atom id
+		type_( INVALID_DOF )
+	{}
 
 	DOF_ID(
 		AtomID const & atom_id_in,

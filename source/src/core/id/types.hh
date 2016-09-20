@@ -34,6 +34,7 @@ namespace id {
 /// - D       : distance
 /// - RB1-RB6 : rigid-body jump translation and rotation
 enum DOF_Type {
+	INVALID_DOF = 0,
 	PHI = 1, // used for lookup into utility::vector1
 	THETA,
 	D,

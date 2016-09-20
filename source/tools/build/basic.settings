@@ -523,6 +523,98 @@ settings = {
         },
     },
 
+    # Mode adding special instrumentation to check for (sanitize) address errors
+    # only supported by gcc ver > 4.8
+    "gcc, addsan" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+		    "O1",
+                    "fsanitize=address",
+                    "fno-optimize-sibling-calls",
+		],
+                "mode" : [
+                    "g",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+		],
+                "link" : [
+                    "fsanitize=address",
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            #"defines" : [ "NDEBUG" ],
+        },
+    },
+
+#    # Mode adding special instrumentation to check for (sanitize) memory errors
+#    # (Not currently supported by any gcc version)
+#    "gcc, memsan" : {
+#        "appends" : {
+#            "flags" : {
+#                "compile" : [
+#		    "O1",
+#                    "fsanitize=memory",
+#                    "fno-optimize-sibling-calls",
+#                    "fPIE",
+#                    "pie",
+#		],
+#                "mode" : [
+#                    "g",
+#                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+#		],
+#                "link" : [
+#                    "fsanitize=memory",
+#                ],
+#                # Asserts can leave variables unused, making warnings spurious.
+#                # We count on debug builds to catch actual unused variables.
+#                "warn" : [
+#                    "Wno-unused-variable",
+#                    "Wno-unused-parameter",
+#                ],
+#            },
+#            #"defines" : [ "NDEBUG" ],
+#        },
+#    },
+
+    # Mode adding special instrumentation to check for (sanitize) undefined behavior
+    # only supported by gcc ver > 4.9
+    #
+    # Note: Set the environment variable "UBSAN_OPTIONS=print_stacktrace=1" to get a backtrace in addition to the error message  
+    "gcc, ubsan" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+		    "O1",
+                    "fsanitize=undefined",
+                    "fno-sanitize-recover=all", # Error out immediately once an error is encountered
+                    "fno-sanitize=alignment", # x86 (where these tests are run) is fine with misaligned data, and the compilers don't bother padding.
+                    "fno-optimize-sibling-calls",
+                    "fPIE",
+                    "pie",
+		],
+                "mode" : [
+                    "g",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+		],
+                "link" : [
+                    "fsanitize=undefined",
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            #"defines" : [ "NDEBUG" ],
+        },
+    },
+
     # cats ####################################################################
 
     "gcc, src" : {
@@ -1719,6 +1811,99 @@ settings = {
 		    "O3",
 		    "ffloat-store", # "mfpmath=sse", "msse2",  WARNING WARNING WARNING this flags SIGNIFICANTLY degrade performance and only used to improved stability for integration tests, they should NEVER be enabled for production code
 		],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            #"defines" : [ "NDEBUG" ],
+        },
+    },
+
+    # Mode adding special instrumentation to check for (sanitize) address errors
+    # Implemented in clang ver > 3.3
+    "clang, addsan" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+		    "O1",
+                    "fsanitize=address",
+                    "fno-optimize-sibling-calls",
+		],
+                "mode" : [
+                    "g",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+		],
+                "link" : [
+                    "fsanitize=address",
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            #"defines" : [ "NDEBUG" ],
+        },
+    },
+
+    # Mode adding special instrumentation to check for (sanitize) memory errors
+    # Implemented in clang ver > 3.3
+    "clang, memsan" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+		    "O1",
+                    "fsanitize=memory",
+                    "fno-optimize-sibling-calls",
+                    "fPIE",
+                    "pie",
+		],
+                "mode" : [
+                    "g",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+		],
+                "link" : [
+                    "fsanitize=memory",
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            #"defines" : [ "NDEBUG" ],
+        },
+    },
+
+    # Mode adding special instrumentation to check for (sanitize) undefined behavior
+    # Implemented in clang ver > 3.3
+    #
+    # Note: Set the environment variable "UBSAN_OPTIONS=print_stacktrace=1" to get a backtrace in addition to the error message  
+    "clang, ubsan" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+		    "O1",
+                    "fsanitize=undefined",
+                    "fno-sanitize-recover=all", # Error out immediately once an error is encountered
+                    "fsanitize-undefined-trap-on-error", # Die on error, rather than exiting gracefully (for debugging)
+                    "fno-sanitize=alignment", # x86 (where these tests are run) is fine with misaligned data, and the compilers don't bother padding.
+                    "fno-optimize-sibling-calls",
+                    "fPIE",
+                    "pie",
+		],
+                "mode" : [
+                    "g",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+		],
+                "link" : [
+                    "fsanitize=undefined",
+                ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [

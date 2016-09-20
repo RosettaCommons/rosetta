@@ -865,7 +865,7 @@ apply(
 		// apply_frame to a random selected insert pos
 		bool success=false;
 		int try_count=1000;
-		int insert_pos;
+		int insert_pos=-999; //Adding initialization value for quick fix of compiler errors - this might not be the most sensible way of handling this.
 		core::Size i_frag_set;
 
 		while ( !success && --try_count>0 ) {
@@ -887,6 +887,10 @@ apply(
 
 			success = apply_frame(pose, library_[i_frag_set][insert_pos]) ;
 		}// pick and insert_pos and apply_frame (with the best density_score fragment saved)
+
+		if ( insert_pos == -999 ) {
+			TR.Error << "[ ERROR ] Cannot find insert position!" << std::endl;
+		}
 
 		// restricted movemap
 		// TODO we should check of chainbreaks

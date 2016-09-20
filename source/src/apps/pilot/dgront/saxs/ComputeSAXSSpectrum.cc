@@ -57,9 +57,9 @@ public:
 		using namespace basic::options::OptionKeys;
 
 		if ( basic::options::option[ in::file::residue_type_set ]() == "fa_standard" ) {
-			saxs_ = new core::scoring::saxs::SAXSEnergyFA();
+			saxs_ = SAXSEnergyOP( new core::scoring::saxs::SAXSEnergyFA() );
 		} else {
-			saxs_ = new core::scoring::saxs::SAXSEnergyCEN();
+			saxs_ = SAXSEnergyOP( new core::scoring::saxs::SAXSEnergyCEN() );
 		}
 		mdl_cnt_ = 1;
 	}
@@ -84,7 +84,8 @@ public:
 
 private:
 	Size mdl_cnt_;
-	core::scoring::saxs::SAXSEnergy* saxs_;
+	typedef utility::pointer::shared_ptr< core::scoring::saxs::SAXSEnergy > SAXSEnergyOP;
+	SAXSEnergyOP saxs_;
 };
 
 int main( int argc, char * argv [] ) {

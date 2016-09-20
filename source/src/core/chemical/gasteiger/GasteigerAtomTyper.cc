@@ -1151,7 +1151,7 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 	// A subgraph of the residue type with all the fake bonds and edges removed.
 	// The Gasteiger typing assumes what you're typing is all real bonds and atoms.
 	RealFilter filter( restype.graph() );
-	RealResidueGraph real_graph( restype.graph(), filter );
+	RealResidueGraph real_graph( restype.graph(), filter, filter );
 
 	//Make sure that the internal graph representation is up to date.
 	core::chemical::regenerate_graph_vertex_index( real_graph);

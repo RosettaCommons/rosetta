@@ -109,7 +109,7 @@ void OrbitalTypeSet::read_file(std::string const & filename)
 
 			//   std::string const name( line.substr(0,4) );
 			std::string atom_type_name( tag );
-			OrbitalType* orbital_type_ptr( new OrbitalType( name_wo_whitespace, atom_type_name ) );
+			OrbitalTypeOP orbital_type_ptr( new OrbitalType( name_wo_whitespace, atom_type_name ) );
 
 			// now parse the parameters
 			for ( Size i=1; i<= ntags; ++i ) {

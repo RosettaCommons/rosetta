@@ -93,12 +93,13 @@ demangle( std::string trace ) {
 		size_t maxName = 1024;
 		int demangleStatus;
 
-		char* demangledName = (char*) malloc(maxName);
-		if ( (demangledName = abi::__cxa_demangle(mangled_trace.c_str(), demangledName, &maxName,
+		// If output_buffer to __cxa_demangle() is null, memory will be allocated and the pointer returned.
+		char* demangledName; // = (char*) malloc(maxName);
+		if ( (demangledName = abi::__cxa_demangle(mangled_trace.c_str(), 0, &maxName,
 				&demangleStatus)) && demangleStatus == 0 ) {
 			trace = trace.substr(0,begin) + demangledName + trace.substr(end ); // the demangled name is now in our trace string
 		}
-		free(demangledName);
+		free(demangledName); // Will handle null pointers gracefully.
 	}
 	return trace;
 }

@@ -148,17 +148,29 @@ public:
 		move_pair( orig, "h2", "fixed" );
 
 		// bad combination of segments should throw error
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "fixed", "l1" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "fixed", "h2" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "h1", "h2" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "h1", "fixed" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "l1", "h1" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "l1", "fixed" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "h2", "h1" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "h2", "l1" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "h1", "h1" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "l1", "l1" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "h2", "h2" ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( move_pair( orig, "fixed", "fixed" ) );
 	}
 

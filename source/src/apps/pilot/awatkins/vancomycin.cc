@@ -248,18 +248,18 @@ int main ( int argc, char* argv[] )
 		vancomycin.append_residue_by_bond( V022, true );
 		vancomycin.append_residue_by_bond( V04, true );
 		vancomycin.append_residue_by_bond( V03, true );
-		//vancomycin.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "->4)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
+		//vancomycin.append_residue_by_jump( Residue( residue_set_cap->name_map( "->4)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
 		TR << "Appending by jump" << std::endl;
-		vancomycin.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "->2)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
-		//vancomycin.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "->4)-Vnc:non-reducing_end:3-NH3+" ), true ), true );
-		vancomycin.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "->4)-alpha-Daup3Me:non-reducing_end:3-Me" ), true ), true );
+		vancomycin.append_residue_by_jump( Residue( residue_set_cap->name_map( "->2)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
+		//vancomycin.append_residue_by_bond( Residue( residue_set_cap->name_map( "->4)-Vnc:non-reducing_end:3-NH3+" ), true ), true );
+		vancomycin.append_residue_by_bond( Residue( residue_set_cap->name_map( "->4)-alpha-Daup3Me:non-reducing_end:3-Me" ), true ), true );
 
 		protocols::rigid::RigidBodyTransMover translate( vancomycin, 1 );
 		translate.step_size( 4 );
 		translate.apply( vancomycin );
 
 		// extra!
-		//vancomycin.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "GLN:CtermProteinFull" ), true ), true );
+		//vancomycin.append_residue_by_bond( Residue( residue_set_cap->name_map( "GLN:CtermProteinFull" ), true ), true );
 		//import_pose::set_reasonable_fold_tree( vancomycin );
 		//FOLD_TREE  EDGE 1 2 -1  EDGE 2 7 -1  EDGE 2 8 1
 		//FOLD_TREE  EDGE 1 2 -1  EDGE 2 7 -1  EDGE 4 8 -2
@@ -337,12 +337,12 @@ int main ( int argc, char* argv[] )
 
 		TR << "Just those branch res "<< std::endl;
 		Pose vanc2;
-		vanc2.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "GLY:NtermProteinFull" ), true ), 1 );
-		vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "DV02:aryl-O-conjugated" ), true ), true );
-		vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "GLY:CtermProteinFull" ), true ), true );
+		vanc2.append_residue_by_jump( Residue( residue_set_cap->name_map( "GLY:NtermProteinFull" ), true ), 1 );
+		vanc2.append_residue_by_bond( Residue( residue_set_cap->name_map( "DV02:aryl-O-conjugated" ), true ), true );
+		vanc2.append_residue_by_bond( Residue( residue_set_cap->name_map( "GLY:CtermProteinFull" ), true ), true );
 		TR << "Appending by jump" << std::endl;
-		vanc2.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "->2)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
-		vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "->4)-alpha-Daup3Me:non-reducing_end:3-Me" ), true ), true );
+		vanc2.append_residue_by_jump( Residue( residue_set_cap->name_map( "->2)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
+		vanc2.append_residue_by_bond( Residue( residue_set_cap->name_map( "->4)-alpha-Daup3Me:non-reducing_end:3-Me" ), true ), true );
 
 		vanc2.conformation().declare_chemical_bond( 2, "OZ", 4, "C1" );
 		vanc2.conformation().declare_chemical_bond( 4, "O2", 5, "C1" );

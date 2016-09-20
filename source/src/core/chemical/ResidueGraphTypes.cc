@@ -43,10 +43,12 @@ namespace chemical {
 
 
 bool RealFilter::operator()(VD const vd) const {
+	debug_assert( graph_ );
 	return ! (*graph_)[ vd ].is_fake();
 }
 
 bool RealFilter::operator()(ED const ed) const {
+	debug_assert( graph_ );
 	return ! (*graph_)[ ed ].is_fake();
 }
 

@@ -93,34 +93,7 @@ GenericMonteCarloMoverCreator::mover_name()
 
 /// @brief default constructor
 GenericMonteCarloMover::GenericMonteCarloMover():
-	Super( "GenericMonteCarlo" ),
-	maxtrials_( 10 ),
-	max_accepted_trials_( 0 ),
-	task_scaling_( 5 ),
-	mover_( /* NULL */ ),
-	scorefxn_( /* NULL */ ),
-	temperature_( 0.0 ),
-	sample_type_( "low" ),
-	drift_( true ),
-	preapply_( true ),
-	recover_low_( true ),
-	rank_by_filter_( 1 ),
-	boltz_rank_( false ),
-	current_score_( 0.0 ),
-	last_accepted_score_( 0.0 ),
-	lowest_score_( 0.0 ),
-	last_accepted_pose_( /* NULL */ ),
-	lowest_score_pose_( /* NULL */ ),
-	stopping_condition_( /* NULL */ ),
-	mover_stopping_condition_( /* NULL */ ),
-	adaptive_movers_( false ),
-	adaptation_period_( 0 ),
-	saved_accept_file_name_( "" ),
-	saved_trial_number_file_( "" ),
-	mover_tag_( /* NULL */ ),
-	reset_baselines_( true ),
-	keep_filters_( false ),
-	progress_file_( "" )
+	Super( "GenericMonteCarlo" )
 {
 	initialize();
 }
@@ -136,33 +109,14 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	Real const temperature,
 	String  sample_type,
 	bool const drift ) :
-	Super("GenericMonteCarlo"),
-	maxtrials_( maxtrials ),
-	max_accepted_trials_( max_accepted_trials ),
-	task_scaling_( task_scaling ),
-	mover_(std::move( mover )),
-	temperature_( temperature ),
-	sample_type_(std::move( sample_type )),
-	drift_( drift ),
-	preapply_( true ),
-	recover_low_( true ),
-	rank_by_filter_(1),
-	boltz_rank_( false ),
-	current_score_( 0.0 ),
-	last_accepted_score_( 0.0 ),
-	lowest_score_( 0.0 ),
-	last_accepted_pose_( /* NULL */ ),
-	lowest_score_pose_( /* NULL */ ),
-	stopping_condition_( /* NULL */ ),
-	mover_stopping_condition_( /* NULL */ ),
-	adaptive_movers_( false ),
-	adaptation_period_( 0 ),
-	saved_accept_file_name_( "" ),
-	saved_trial_number_file_( "" ),
-	mover_tag_( /* NULL */ ),
-	reset_baselines_( true ),
-	keep_filters_( false ),
-	progress_file_( "" )
+		Super("GenericMonteCarlo"),
+		maxtrials_( maxtrials ),
+		max_accepted_trials_( max_accepted_trials ),
+		task_scaling_( task_scaling ),
+		mover_(std::move( mover )),
+		temperature_( temperature ),
+		sample_type_(std::move( sample_type )),
+		drift_( drift )
 {
 	initialize();
 }
@@ -178,27 +132,16 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	Real const temperature,
 	String  sample_type,
 	bool const drift ) :
-	Super("GenericMonteCarlo"),
-	maxtrials_( maxtrials ),
-	max_accepted_trials_( max_accepted_trials ),
-	task_scaling_( task_scaling ),
-	mover_(std::move( mover )),
-	task_( /* NULL */ ),
-	factory_ (std::move(factory_in)),
-	temperature_( temperature ),
-	sample_type_(std::move( sample_type )),
-	drift_( drift ),
-	preapply_( true ),
-	recover_low_( true ),
-	rank_by_filter_(1),
-	boltz_rank_( false ),
-	current_score_( 0.0 ),
-	last_accepted_score_( 0.0 ),
-	lowest_score_( 0.0 ),
-	saved_accept_file_name_( "" ),
-	mover_tag_( /* NULL */ ),
-	reset_baselines_( true ),
-	keep_filters_( false )
+		Super("GenericMonteCarlo"),
+		maxtrials_( maxtrials ),
+		max_accepted_trials_( max_accepted_trials ),
+		task_scaling_( task_scaling ),
+		mover_(std::move( mover )),
+		task_( /* NULL */ ),
+		factory_ (std::move(factory_in)),
+		temperature_( temperature ),
+		sample_type_(std::move( sample_type )),
+		drift_( drift )
 {
 	initialize();
 }

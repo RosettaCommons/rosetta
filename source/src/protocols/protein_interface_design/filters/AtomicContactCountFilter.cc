@@ -67,19 +67,7 @@ AtomicContactCountFilter::AtomicContactCountFilter(core::Real distance_cutoff) :
 	initialize_all_atoms(NULL);
 }
 
-AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter const & src ) :
-	Filter(src),
-	task_factoryA_(src.task_factoryA_),
-	task_factoryB_(src.task_factoryB_),
-	distance_cutoff_(src.distance_cutoff_),
-	filter_mode_(src.filter_mode_),
-	normalize_by_sasa_(src.normalize_by_sasa_),
-	ss_only_(src.ss_only_),
-	normalize_by_carbon_count_(src.normalize_by_carbon_count_),
-	jump_(src.jump_),
-	sym_dof_name_(src.sym_dof_name_)
-{
-}
+AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter const & ) = default;
 
 AtomicContactCountFilter::~AtomicContactCountFilter() {}
 

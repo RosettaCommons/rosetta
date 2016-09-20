@@ -708,6 +708,7 @@ StrandPairingSet::~StrandPairingSet() {
 StrandPairing::StrandPairing(Size res1, Size res2, bool antiparallel, Size pleating) :
 	begin1_( std::min( res1, res2 ) ), end1_(begin1_),
 	begin2_( std::max( res1, res2 ) ), end2_(begin2_),
+	pleat_weird( false ),
 	antipar(antiparallel)
 {
 	pairing1.push_back( antipar ? end2_ : begin2_ );
@@ -715,7 +716,7 @@ StrandPairing::StrandPairing(Size res1, Size res2, bool antiparallel, Size pleat
 	pleating1.push_back(pleating);
 }
 
-StrandPairing::StrandPairing() : begin1_(0),end1_(0), begin2_(0), end2_(0), antipar(true) {
+StrandPairing::StrandPairing() : begin1_(0),end1_(0), begin2_(0), end2_(0), pleat_weird(false), antipar(true) {
 }
 
 StrandPairing::~StrandPairing() {

@@ -77,10 +77,8 @@ build_dna_rotamers(
 /// @brief Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins listed in the params
 /// file for the given Residue.
 void build_rotamers_from_rotamer_bins(conformation::Residue const & residue,
-	utility::vector1<conformation::ResidueOP> & rotamers,
-	uint current_chi_index=1,
-	utility::vector1<uint> *current_bin_indices=NULL);
-
+	utility::vector1<conformation::ResidueOP> & rotamers
+);
 
 conformation::ResidueOP
 create_oriented_water_rotamer(

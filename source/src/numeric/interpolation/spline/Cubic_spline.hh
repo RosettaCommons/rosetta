@@ -79,6 +79,7 @@ public:
 
 	//! @brief construct generic CubicSpline
 	CubicSpline():
+		border_( e_Natural ),
 		start_(0.0),
 		delta_(0.0)
 	{

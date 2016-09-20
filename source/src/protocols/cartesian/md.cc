@@ -252,17 +252,11 @@ void MolecularDynamics::getCartesianDerivatives(
 		//float  epot_dihedral_this=0;
 		float  /*phi,*/ sin_phi, cos_phi;
 
-		core::Vector dcosdnrml1;
-		core::Vector dcosdnrml2;
-		core::Vector dsindnrml3;
-		core::Vector dsindnrml2;
-		core::Vector f, fi, fab, fj;
+		core::Vector fi(0), fab(0), fj(0);
 
 		core::Vector vti_vta = cartom[no1].position - cartom[no2].position;
 		core::Vector vta_vtb = cartom[no2].position - cartom[no3].position;
 		core::Vector vtb_vtj = cartom[no3].position - cartom[no4].position;
-
-		fi = fab = fj = 0;
 
 		core::Vector nrml1 = cross_product( vti_vta, vta_vtb );
 		core::Vector nrml2 = cross_product( vta_vtb, vtb_vtj );
@@ -279,25 +273,22 @@ void MolecularDynamics::getCartesianDerivatives(
 
 		if ( fabs( sin_phi ) > 0.1 ) {
 			nrml1 *= inv_nrml1_mag;
-			dcosdnrml1 = inv_nrml1_mag * ( nrml1 * cos_phi - nrml2 );
-			dcosdnrml2 = inv_nrml2_mag * ( nrml2 * cos_phi - nrml1 );
-		} else {
-			nrml3 *= inv_nrml3_mag;
-			dsindnrml3 = inv_nrml3_mag * ( nrml3 * sin_phi - nrml2 );
-			dsindnrml2 = inv_nrml2_mag * ( nrml2 * sin_phi - nrml3 );
-		}
+			core::Vector dcosdnrml1 = inv_nrml1_mag * ( nrml1 * cos_phi - nrml2 );
+			core::Vector dcosdnrml2 = inv_nrml2_mag * ( nrml2 * cos_phi - nrml1 );
 
-		//dihedral.phi = phi;
+			deriv *= -1;
 
-		deriv *= -1;
-
-		// forces
-		if ( fabs( sin_phi ) > 0.1 ) {
 			deriv /= sin_phi;
 			fi += deriv * cross_product( vta_vtb, dcosdnrml1 );
 			fj += deriv * cross_product( vta_vtb, dcosdnrml2 );
 			fab += deriv * ( cross_product( vti_vta, dcosdnrml1 ) + cross( vtb_vtj, dcosdnrml2 ) );
 		} else {
+			nrml3 *= inv_nrml3_mag;
+			core::Vector dsindnrml3 = inv_nrml3_mag * ( nrml3 * sin_phi - nrml2 );
+			core::Vector dsindnrml2 = inv_nrml2_mag * ( nrml2 * sin_phi - nrml3 );
+
+			deriv *= -1;
+
 			deriv /= -cos_phi;
 			fi += deriv * update_operation( vta_vtb, dsindnrml3 );
 			fj += deriv * ( cross( dsindnrml2, vta_vtb ) );

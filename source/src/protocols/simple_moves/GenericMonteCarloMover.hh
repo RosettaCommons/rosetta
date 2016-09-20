@@ -359,23 +359,23 @@ protected:
 	/// @brief Sets mc_accpeted
 	void set_mc_accepted( MCA const m ){ mc_accepted_ = m; }
 
-	int trial_counter_;
+	int trial_counter_ = 0;
 
 	/// @brief Count the number of rejections each filter resulted in.
 	utility::vector1< core::Size > num_rejections_;
 
 private:
 	/// @brief max number of MC trials
-	Size maxtrials_;
+	Size maxtrials_ = 10;
 
 	/// @brief max number of accepted MC trials
-	Size max_accepted_trials_;
+	Size max_accepted_trials_ = 0;
 
 	/// @brief number of designable positions
-	Size number_designable_;
+	Size number_designable_ = 0;
 
 	/// @brief multiply the number_designable_ by task_scaling to get the number of trials
-	Size task_scaling_;
+	Size task_scaling_ = 5;
 
 	/// @brief mover
 	MoverOP mover_;
@@ -390,53 +390,55 @@ private:
 	utility::vector1< FilterOP > filters_;
 	utility::vector1< bool > adaptive_; // deflt true; are the filters adaptive or constant
 
-	/// @brief acceptance criterion temperature
-	utility::vector1< Real > temperatures_; // temperature per filter.
-	utility::vector1< String > sample_types_; // low/high, dflt low
+	/// @brief acceptance criterion temperature, per temperature
+	utility::vector1< Real > temperatures_;
+	/// @brief low/high, dflt low
+	utility::vector1< String > sample_types_;
 	utility::vector1< Real > last_accepted_scores_;
-	utility::vector1< Real > lowest_scores_; // best filter scores
+	/// @brief best filter scores
+	utility::vector1< Real > lowest_scores_;
 	utility::vector1< Real > last_tested_scores_;
 
 	/// @brief Pose is evaluated by ScoreFunctionOP during MC trials
 	ScoreFunctionOP scorefxn_;
 
 	/// @brief acceptance criterion temperature
-	Real temperature_;// temperature for non-filters
+	Real temperature_ = 0.0;// temperature for non-filters
 
 	/// @brief set sample type, max or min
-	/// when sample_type == max, sample pose which have higher score
-	/// when sample_type == min, sample pose which have lower score
-	String sample_type_;
+	/// when sample_type == "high", sample pose which have higher score
+	/// when sample_type == "low", sample pose which have lower score
+	String sample_type_ = "low";
 
 	/// @brief if drift=false, the pose is set back to the initial pose at each MC trial
 	/// Of course, this is not MC sampling.
-	bool drift_;
+	bool drift_ = true;
 
 	/// @brief Should we apply (and accept) the first application of the mover
 	/// regardless of boltzman criteria? (Defaults true for historical reasons.)
-	bool preapply_;
+	bool preapply_ = true;
 
 	/// @brief At the end of application, is the structure
 	/// the last accepted structure (recover_low_==false)
 	/// or is it the lowest energy structure (recover_low_=true)
-	bool recover_low_;
+	bool recover_low_ = true;
 
 	/// @brief By which filter (by index) are poses ranked by for non-Boltzman purposes
 	/// (e.g. recover_low())
-	Size rank_by_filter_;
+	Size rank_by_filter_ = 1;
 
 	/// @brief If boltz_rank_=true, instead of ranking by a single filter, rank by the
 	/// temperature-weighted sum of all scores
-	bool boltz_rank_;
+	bool boltz_rank_ = false;
 
-	/// @brief current score
-	Real current_score_;
+	/// @brief current
+	Real current_score_ = 0.0;
 
 	/// @brief accepted structure
-	Real last_accepted_score_;
+	Real last_accepted_score_ = 0.0;
 
 	/// @brief lowest energy structure we've seen
-	Real lowest_score_;
+	Real lowest_score_ = 0.0;
 
 	/// @brief accepted structure
 	PoseOP last_accepted_pose_;
@@ -445,31 +447,42 @@ private:
 	PoseOP lowest_score_pose_;
 
 	/// @brief result of the last call to boltzmann
-	MCA mc_accepted_;
+	MCA mc_accepted_ = MCA_accepted_score_beat_last;
 
 	/// @brief to change the sing of calculated "score"
-	Real flip_sign_;
+	Real flip_sign_ = 1;
 
 	/// @brief diagnostics
-	int accept_counter_;
-	Real energy_gap_counter_;
+	int accept_counter_ = 0;
+	Real energy_gap_counter_ = 0.0;
 
 	/// @brief Next trigger identifier to be assigned
-	Size next_trigger_id_;
+	Size next_trigger_id_ = 1;
 
 	/// @brief Collection of function callbacks
 	boost::unordered_map<Size, GenericMonteCarloMoverTrigger> triggers_;
-	protocols::filters::FilterOP stopping_condition_; //dflt false_filter; use this to stop an MC trajectory before maxtrials_ (if filter evaluates to true)
-	utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > mover_stopping_condition_; // dflt NULL; if the mover defined a stopping condition on the datamap then this assumes the mover's value. In this way, the Mover can tell GenericMC to stop execution, e.g., if it has iterated over all internal possibilities
-	bool adaptive_movers_; //dflt false; change the mover probabilities according to the accept rates?; only works if the mover is a ParsedProtocol type with mode=single_random
-	core::Size adaptation_period_; /// dflt max( 10, trials/10 ); only works with adaptive; how often should the run probabilities be adapted?
-	std::string saved_accept_file_name_; // dflt ""; if a file name is specified, after each accept a pdb file is dumped to disk. This is useful for checkpointing
-	std::string saved_trial_number_file_; // dflt ""; if specified checkpoints the current trial number and recovers from it
-	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_; /// dflt NULL; this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, <saved_accept_file_name>.mover_tag. To work, mover_tag_ must be exposed to the movers being called.
-	std::string user_defined_mover_name_; // dflt ""; the mover being called by GenericMC. Used to add values to the poses DataCache.
-	bool reset_baselines_; ///dflt true; reset the filters' baseline at trial=1?
-	bool keep_filters_; /// dflt false; avoid clearing filters if a score function is given. Used in the EvolutionDynamicsMover which inherits from genericMCmover.
-	std::string progress_file_; // dflt ""; a file name where data on each step is saved.
+	/// @brief dflt false_filter; use this to stop an MC trajectory before maxtrials_ (if filter evaluates to true)
+	protocols::filters::FilterOP stopping_condition_;
+	/// @brief dflt NULL; if the mover defined a stopping condition on the datamap then this assumes the mover's value. In this way, the Mover can tell GenericMC to stop execution, e.g., if it has iterated over all internal possibilities
+	utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > mover_stopping_condition_;
+	/// @brief  change the mover probabilities according to the accept rates?; only works if the mover is a ParsedProtocol type with mode=single_random
+	bool adaptive_movers_ = false;
+	/// @brief dflt max( 10, trials/10 ); only works with adaptive; how often should the run probabilities be adapted?
+	core::Size adaptation_period_ = 0;
+	/// @brief dflt ""; if a file name is specified, after each accept a pdb file is dumped to disk. This is useful for checkpointing
+	std::string saved_accept_file_name_;
+	/// @brief dflt ""; if specified checkpoints the current trial number and recovers from it
+	std::string saved_trial_number_file_;
+	/// @brief dflt NULL; this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, <saved_accept_file_name>.mover_tag. To work, mover_tag_ must be exposed to the movers being called.
+	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_;
+	/// @brief dflt ""; the mover being called by GenericMC. Used to add values to the poses DataCache.
+	std::string user_defined_mover_name_;
+	/// @brief reset the filters' baseline at trial=1?
+	bool reset_baselines_ = true;
+	/// @brief avoid clearing filters if a score function is given. Used in the EvolutionDynamicsMover which inherits from genericMCmover.
+	bool keep_filters_ = false;
+	/// @brief a file name where data on each step is saved.
+	std::string progress_file_;
 };
 
 } // namespace simple_moves

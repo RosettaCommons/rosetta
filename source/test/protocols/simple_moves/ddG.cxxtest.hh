@@ -89,12 +89,12 @@ public:
 		TS_ASSERT_EQUALS( testmover.chain_ids().size(), 1 );
 		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 2 );
 
-		testmover = *(new protocols::simple_moves::ddG());
+		protocols::simple_moves::ddG testmover2;
 		tag = tagptr_from_string("<ddG name=test chain_num=3 />\n");
-		testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
+		testmover2.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
 
-		TS_ASSERT_EQUALS( testmover.chain_ids().size(), 1 );
-		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 3 );
+		TS_ASSERT_EQUALS( testmover2.chain_ids().size(), 1 );
+		TS_ASSERT_EQUALS( testmover2.chain_ids()[1], 3 );
 	}
 
 	void test_filter_parsing_dimer() {

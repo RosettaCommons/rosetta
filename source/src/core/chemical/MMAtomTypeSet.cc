@@ -85,7 +85,7 @@ MMAtomTypeSet::read_file( std::string const & filename )
 				utility_exit_with_message("bad line: "+line);
 			}
 
-			auto* mm_atom_type_ptr( new MMAtomType( name_wo_whitespace ) );
+			MMAtomTypeOP mm_atom_type_ptr( new MMAtomType( name_wo_whitespace ) );
 
 			// now parse the parameters
 			for ( int i=1; i<= ntags; ++i ) {

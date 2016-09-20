@@ -143,26 +143,26 @@ private:
 	/// @brief flag used to specify if the rigid regions should really be treated exclusivity --- i.e., are they really rigid ?
 	/// @brief changing this flag to false, will allow everything to move, but together with coordinate constraints this might yield
 	/// a pose that is easier sampled ?
-	bool bExclusive_; //really rigid?
+	bool bExclusive_ = true; //really rigid?
 
 	/// @brief jump residues that are just next to rigid region are probably leading to impossibl fold-trees (not always -- but most of the time)
 	/// if false we don't allow such jumps
-	bool bAllowAdjacentJumps_;
+	bool bAllowAdjacentJumps_ = false;
 
 	/// @brief use the pose in new_decoy( pose )
-	bool bUseInputPose_;
+	bool bUseInputPose_ = true;
 
 	/// @brief use loop-definition from ThreadingJob
-	bool bUseThreadingJobLoops_;
+	bool bUseThreadingJobLoops_ = false;
 
 	/// @brief min_loop_size for Threading-loops
-	core::Size min_loop_size_;
+	core::Size min_loop_size_ = 0;
 
 	/// @brief same effect as OptionKeys::loops::random_grow_loops_by ]() for looprelax
-	core::Real random_grow_loops_by_;
+	core::Real random_grow_loops_by_ = 0.0;
 
 	/// @brief keep this chunk rigid in relax --- adjust movemap to keep BB-Torsions fixed...
-	bool bRigidInRelax_;
+	bool bRigidInRelax_ = false;
 
 
 	/// @brief helper class -- computes if we have all jupms needed to rigidify the chosen chunk and generate more jumps if needed.

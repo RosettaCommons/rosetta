@@ -320,53 +320,53 @@ MacrocycleMover::apply(
 
 	pose.add_constraint(
 		DihedralConstraintOP( new DihedralConstraint(
-		*new AtomID( pose.residue( nres ).atom_index(next_to_C), nres ),
-		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
-		*new AtomID( pose.residue( 1    ).atom_index(next_to_N), 1    ),
+		AtomID( pose.residue( nres ).atom_index(next_to_C), nres ),
+		AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		AtomID( pose.residue( 1    ).atom_index(next_to_N), 1    ),
 		CircularHarmonicFuncOP( new CircularHarmonicFunc(
 		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
 
 	pose.add_constraint(
 		DihedralConstraintOP( new DihedralConstraint(
-		*new AtomID( pose.residue( nres ).atom_index("O" ), nres ),
-		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
-		*new AtomID( pose.residue( 1    ).atom_index("H" ), 1    ),
+		AtomID( pose.residue( nres ).atom_index("O" ), nres ),
+		AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		AtomID( pose.residue( 1    ).atom_index("H" ), 1    ),
 		CircularHarmonicFuncOP( new CircularHarmonicFunc(
 		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
 
 	pose.add_constraint(
 		DihedralConstraintOP( new DihedralConstraint(
-		*new AtomID( pose.residue( nres ).atom_index(next_to_C), nres ),
-		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
-		*new AtomID( pose.residue( nres ).atom_index("O" ), nres ),
+		AtomID( pose.residue( nres ).atom_index(next_to_C), nres ),
+		AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		AtomID( pose.residue( nres ).atom_index("O" ), nres ),
 		CircularHarmonicFuncOP( new CircularHarmonicFunc(
 		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
 
 	pose.add_constraint(
 		DihedralConstraintOP( new DihedralConstraint(
-		*new AtomID( pose.residue( 1    ).atom_index(next_to_N ), 1 ),
-		*new AtomID( pose.residue( 1    ).atom_index("H" ), 1 ),
-		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
-		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		AtomID( pose.residue( 1    ).atom_index(next_to_N ), 1 ),
+		AtomID( pose.residue( 1    ).atom_index("H" ), 1 ),
+		AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		AtomID( pose.residue( nres ).atom_index("C" ), nres ),
 		CircularHarmonicFuncOP( new CircularHarmonicFunc(
 		numeric::NumericTraits<float>::pi(), 0.02 ) ) ) ) );
 
 	pose.add_constraint(
 		AngleConstraintOP( new AngleConstraint(
-		*new AtomID( pose.residue( 1    ).atom_index("H" ), 1 ),
-		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1 ),
-		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		AtomID( pose.residue( 1    ).atom_index("H" ), 1 ),
+		AtomID( pose.residue( 1    ).atom_index("N" ), 1 ),
+		AtomID( pose.residue( nres ).atom_index("C" ), nres ),
 		CircularHarmonicFuncOP( new CircularHarmonicFunc(
 		numeric::NumericTraits<float>::pi()*2.0/3.0, 0.02 ) ) ) ) );
 
 	pose.add_constraint(
 		AngleConstraintOP( new AngleConstraint(
-		*new AtomID( pose.residue( nres ).atom_index("O" ), nres ),
-		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		AtomID( pose.residue( nres ).atom_index("O" ), nres ),
+		AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
 		CircularHarmonicFuncOP( new CircularHarmonicFunc(
 		numeric::NumericTraits<float>::pi()*2.0/3.0, 0.02 ) ) ) ) );
 
@@ -410,8 +410,8 @@ MacrocycleMover::apply(
 	cart_min->cartesian( true );
 
 	AtomPairConstraintOP topout( new AtomPairConstraint(
-		*new AtomID( pose.residue( nres ).atom_index("C" ), nres ),
-		*new AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
+		AtomID( pose.residue( nres ).atom_index("C" ), nres ),
+		AtomID( pose.residue( 1    ).atom_index("N" ), 1    ),
 		//TopOutFuncOP( new TopOutFunc( 100, 1.33, 5 ) ) ) );
 		HarmonicFuncOP( new HarmonicFunc( 1.33, 0.03 ) ) ) );
 

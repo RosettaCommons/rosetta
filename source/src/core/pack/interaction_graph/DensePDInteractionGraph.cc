@@ -649,7 +649,8 @@ DensePDInteractionGraph::DensePDInteractionGraph(int num_nodes) :
 void
 DensePDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base )
 {
-	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
+	// We'll get a std::bad_cast exception if this reference conversion doesn't work
+	rotamer_set::FixbbRotamerSets const & rot_sets( dynamic_cast< rotamer_set::FixbbRotamerSets const & > ( rot_sets_base) );
 	for ( uint ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
 		set_num_states_for_node( ii, rot_sets.rotamer_set_for_moltenresidue( ii )->num_rotamers() );
 	}

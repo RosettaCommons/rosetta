@@ -126,17 +126,13 @@ main( int argc, char * argv [] )
 				interface.insert(intres);
 			}
 		}
-		char * token;
-		char * str = new char[chain_list.length()+1];
-		strcpy (str, chain_list.c_str());
-		token = strtok (str, ",");
-		while ( token != NULL ) {
-			if ( strlen(token)>1 ) {
+		utility::vector1< std::string > parsed_chains( utility::string_split_simple( chain_list, ',' ) );
+		for ( std::string const & chain : parsed_chains ) {
+			if ( chain.size() > 1 ) {
 				std::cout << "Chains shouls only be one character" << std::endl;
 				return -1;
 			}
-			chains.insert(token[0]);
-			token = strtok (NULL, ",");
+			chains.insert(chain[0]);
 		}
 		if ( chains.empty()/*size() == 0*/ ) {
 			std::cout << "No target chains specified. use -target_chain_list A[,B,C...]"<<std::endl;

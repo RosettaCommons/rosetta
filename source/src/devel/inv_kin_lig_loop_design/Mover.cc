@@ -91,7 +91,7 @@ void Mover::insertFragment(const int seqpos_a, const int seqpos_b, const int fra
 	assert( seqpos_a <= seqpos && seqpos <= seqpos_b );
 
 	// Get random entry
-	const Fragment::File* frag_file = getFragmentFile(seqpos,frag_len);
+	Fragment::FileCOP frag_file( getFragmentFile(seqpos,frag_len) );
 	const Fragment::Entry& e = frag_file->getEntry(frag_len);
 
 	// Set the fragment
@@ -107,7 +107,7 @@ void Mover::randomFragments(const int seqpos_a, const int seqpos_b, const int fr
 
 	for ( int seqpos = seqpos_a + offset; seqpos <= seqpos_b - frag_len + 1; seqpos += frag_len ) {
 
-		const Fragment::File* frag_file = getFragmentFile(seqpos,frag_len);
+		Fragment::FileCOP frag_file( getFragmentFile(seqpos,frag_len) );
 		const Fragment::Entry& e = frag_file->getEntry(frag_len);
 
 		setFragment(seqpos,frag_len,e);
@@ -206,15 +206,15 @@ const string get_ss(core::pose::Pose const* pose, int const seqpos, int const le
 
 } // namespace
 
-const Fragment::File* Mover::getFragmentFile(int seqpos, const int len) const {
+Fragment::FileCOP Mover::getFragmentFile(int seqpos, const int len) const {
 
-	map<pair<int,int>,const Fragment::File*>::const_iterator i = mFragmentFiles.find(make_pair(seqpos,len));
+	map<pair<int,int>,Fragment::FileCOP>::const_iterator i = mFragmentFiles.find(make_pair(seqpos,len));
 
 	if ( i == mFragmentFiles.end() ) {
 
 		// let's use two different ways of doing things
 
-		const Fragment::File* frag_file = nullptr;
+		Fragment::FileCOP frag_file;
 
 		if ( len == 1 ) {
 			const char ss = pose->secstruct(seqpos);

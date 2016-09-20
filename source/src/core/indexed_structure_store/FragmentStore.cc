@@ -22,8 +22,8 @@ namespace indexed_structure_store
 {
 std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s)
 {
-	boost::format f("FragmentSpecification(fragment_length=%s, fragment_atoms=[%s])");
-	os << f % s.fragment_length % boost::algorithm::join(s.fragment_atoms, ", ");
+	os << "FragmentSpecification(fragment_length=" << s.fragment_length
+			<< ", fragment_atoms=[" << boost::algorithm::join(s.fragment_atoms, ", ") << "])";
 	return os;
 }
 

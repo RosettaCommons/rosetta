@@ -635,40 +635,24 @@ build_dna_rotamers(
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins listed in the params file for the
-// given Residue.
-/// @param   <residue>: the Residue for which rotamers are to be made
-/// @param   <rotamers>: a list of rotamers (Residues) to which this method will add new rotamers
-/// @param   <current_chi_index>: internally used by this recursive method; DO NOT PASS A VALUE!
-/// @param   <current_bin_indices>: internally used by this recursive method; DO NOT PASS A VALUE!
-/// @details Uses recursion to make a nested loop n levels deep, where n is the number of side-chain torsions ("chis").
-/// @author  Labonte
-/// @note    This currently assumes that all torsions are independent.  For now, this is the default method of handling
-/// carbohydrate rotamers.  Ideally, we will find an alternative method for handling carbohydrate rotamer libraries....
+
+/// @brief Internal, recursive function to implement the external interface of build_rotamers_from_rotamer_bins(), below
 void
 build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
 	utility::vector1< conformation::ResidueOP > & rotamers,
 	uint current_chi_index,
-	utility::vector1< uint > *current_bin_indices )
+	utility::vector1< uint > & current_bin_indices )
 {
 	using namespace std;
 
 	Size const n_chis( residue.type().nchi() );
-
-	// On 1st (and only 1st) call per residue; create list of bin indices, one index for each side-chain torsion.
-	if ( ! current_bin_indices ) {
-		tt.Debug << "Creating list of indices; ";
-		current_bin_indices = new utility::vector1< uint >( n_chis, 0 );  // Initialize with zeroes.
-		tt.Debug << "nesting " << n_chis << " levels deep." << endl;
-	}
 
 	if ( current_chi_index <= n_chis ) {
 		RotamerBins const bins_for_current_chi( residue.chi_rotamers( current_chi_index ) );
 		Size const n_bins_for_current_chi( bins_for_current_chi.size() );
 		if ( n_bins_for_current_chi != 0 ) {
 			for ( uint i( 1 ); i <= n_bins_for_current_chi; ++i ) {
-				current_bin_indices->at( current_chi_index ) = i;
+				current_bin_indices.at( current_chi_index ) = i;
 				build_rotamers_from_rotamer_bins( residue, rotamers, current_chi_index + 1, current_bin_indices );  // Recurse.
 			}
 		} else {  // Leave the bin index at 0 and drop to next level.
@@ -677,17 +661,17 @@ build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
 		// If the current chi index is greater than the number of chis, every index has been changed, and it is time to
 		// cease recursing and make a rotamer from the current state of the bin indices.
 	} else {
-		// tt.Trace << "Current bin index for rotamer generation: " << *current_bin_indices << endl;
+		// tt.Trace << "Current bin index for rotamer generation: " << current_bin_indices << endl;
 		rotamers.push_back( residue.create_rotamer() );  // Clone current residue.
 		// Set the torsions of the new rotamer to values indexed by current_bin_indices.
 		tt.Debug << "Selecting ";
 		for ( uint i = 1; i <= n_chis; ++i ) {
 			RotamerBins bins( residue.chi_rotamers( i ) );  // Get bins for ith torsion angle.
-			uint const bin_index( current_bin_indices->at( i ) );  // Get the appropriate bin for this rotamer by index.
+			uint const bin_index( current_bin_indices.at( i ) );  // Get the appropriate bin for this rotamer by index.
 			if ( bin_index != 0 ) {  // If index is 0, there are no bins: skip setting this torsion.
 				RotamerBin bin = bins[ bin_index ];
 				Angle const torsion( bin.first );  // first is the setting; second is the SD.
-				tt.Debug << "bin #" << current_bin_indices->at(i) <<
+				tt.Debug << "bin #" << current_bin_indices.at(i) <<
 					" from torsion angle chi" << i << " (" << torsion << ")  ";
 				rotamers[ rotamers.size() ]->set_chi( i, torsion );  // Set the rotamer's torsion angle.
 			}
@@ -696,6 +680,25 @@ build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins listed in the params file for the
+// given Residue.
+/// @param   <residue>: the Residue for which rotamers are to be made
+/// @param   <rotamers>: a list of rotamers (Residues) to which this method will add new rotamers
+/// @details Uses recursion to make a nested loop n levels deep, where n is the number of side-chain torsions ("chis").
+/// @author  Labonte
+/// @note    This currently assumes that all torsions are independent.  For now, this is the default method of handling
+/// carbohydrate rotamers.  Ideally, we will find an alternative method for handling carbohydrate rotamer libraries....
+void build_rotamers_from_rotamer_bins(conformation::Residue const & residue,
+	utility::vector1<conformation::ResidueOP> & rotamers ) {
+
+	Size const n_chis( residue.type().nchi() );
+	tt.Debug << "Creating list of indices; ";
+	utility::vector1< uint > current_bin_indices( n_chis, 0 );  // Initialize with zeroes.
+	tt.Debug << "nesting " << n_chis << " levels deep." << std::endl;
+
+	build_rotamers_from_rotamer_bins( residue, rotamers, 1, current_bin_indices );
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

@@ -62,6 +62,7 @@ public:
 
 		// first, try to get things from pose. this should throw an error because there is no map
 		TS_ASSERT( !manager.has_stored_constraints( pose, csts_name ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( manager.retrieve_constraints( pose, csts_name ) );
 
 		// This should setup blank data in the pose and not throw an error
@@ -85,6 +86,7 @@ public:
 
 		// first, try to get things from pose. This should throw an error because there are no csts with that name
 		TS_ASSERT( !manager.has_stored_constraints( pose, csts_name2 ) );
+		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( manager.retrieve_constraints( pose, csts_name2 ) );
 
 		manager.store_constraints( pose, csts_name2, csts2 );

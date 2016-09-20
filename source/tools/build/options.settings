@@ -43,6 +43,9 @@ options = {
         "coverage",
         "pyrosetta",
         "pyrosetta_debug",
+        "addsan", # Mode adding special instrumentation to check for (sanitize) address errors
+        "memsan", # Mode adding special instrumentation to check for (sanitize) memory errors
+        "ubsan",  # Mode adding special instrumentation to check for (sanitize) undefined behavior
     ],
 
     "cat" : [

@@ -14,10 +14,15 @@
 #ifndef INCLUDED_core_chemical_MMAtomType_fwd_hh
 #define INCLUDED_core_chemical_MMAtomType_fwd_hh
 
+#include <utility/pointer/owning_ptr.fwd.hh>
+
 namespace core {
 namespace chemical {
 
 class MMAtomType;
+
+typedef  utility::pointer::shared_ptr< MMAtomType > MMAtomTypeOP;
+
 } // chemical
 } // core
 

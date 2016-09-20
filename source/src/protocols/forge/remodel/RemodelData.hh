@@ -33,14 +33,16 @@ namespace forge {
 namespace remodel {
 
 struct LineObject {
-	int index;
-	int original_index;
+	LineObject() = default;
+
+	int index = 0 ;
+	int original_index = 0;
 	std::string resname;
 	std::string sstype;
 	std::string design_type;
-	bool isDesignable;
-	bool has_constraints;
-	bool has_ncaa;
+	bool isDesignable = false;
+	bool has_constraints = false;
+	bool has_ncaa = false;
 	std::vector< std::string > ncaaList;
 	std::vector< std::string > constraint_definition;
 	std::vector< core::chemical::AA > aminoAcidList;

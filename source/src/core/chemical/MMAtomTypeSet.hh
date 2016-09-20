@@ -107,7 +107,7 @@ private:
 	///
 	/// @details MMAtomType has data of atom properties, and it can be
 	/// looked up by atom_type_index.
-	utility::vector1< MMAtomType* > atoms_;
+	utility::vector1< MMAtomTypeOP > atoms_;
 
 };
 

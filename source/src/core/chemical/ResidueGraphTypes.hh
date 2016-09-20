@@ -145,13 +145,15 @@ typedef std::pair<lwrg_out_edge_iter, lwrg_out_edge_iter> lwrg_out_edge_iter_pai
 
 class RealFilter{
 public:
-	RealFilter()= default;
-	RealFilter(ResidueGraph const & graph):graph_(&graph) {};
+	RealFilter(): graph_(0) {}; // This can't be private, because various (unused) default objects need it.
+	RealFilter(ResidueGraph const & graph): graph_( &graph ) {};
+	RealFilter(RealFilter const & other): graph_( other.graph_ ) {};
 	bool operator()(VD const vd) const;
 	bool operator()(ED const ed) const;
 private:
 	ResidueGraph const * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
 };
+
 typedef boost::filtered_graph<ResidueGraph, RealFilter, RealFilter> RealResidueGraph;
 typedef RealResidueGraph::vertex_descriptor RealResidueVD;
 typedef RealResidueGraph::edge_descriptor RealResidueED;

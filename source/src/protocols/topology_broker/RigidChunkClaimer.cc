@@ -80,20 +80,12 @@ protocols::loops::Loops generate_rigid_from_alignment( pose::Pose query_pose, co
 
 // having AdjacentJumps causes problems in fix_internal_coords_of_siblings.
 // can have more than two child on C(=0) for instance
-RigidChunkClaimer::RigidChunkClaimer()
-: bExclusive_( true ),
-	bAllowAdjacentJumps_( false ),
-	bUseInputPose_( true ),
-	bRigidInRelax_( false ) {}
+RigidChunkClaimer::RigidChunkClaimer() = default;
 
 RigidChunkClaimer::RigidChunkClaimer( pose::Pose const& input_pose, loops::Loops rigid ) :
 	input_pose_( input_pose ),
 	centroid_input_pose_( input_pose ),
-	rigid_core_( rigid ),
-	bExclusive_( true ),
-	bAllowAdjacentJumps_( false ),
-	bUseInputPose_( true ),
-	bRigidInRelax_( false )
+	rigid_core_( rigid )
 {
 	if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) {
 		core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );

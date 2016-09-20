@@ -54,8 +54,8 @@ struct Mover {
 	// Fragments
 
 	//       void setFragment(const Residue* r, const int frag_len, const Fragment::Entry& e) const;
-	//       void setFragmentFile(const Residue* r, const int frag_len, const Fragment::File* frag_file) const;
-	//       const Fragment::File* getFragmentFile(const Residue* r, const int len) const;
+	//       void setFragmentFile(const Residue* r, const int frag_len, Fragment::FileCOP frag_file) const;
+	//       Fragment::FileCOP getFragmentFile(const Residue* r, const int len) const;
 	//       void clearFragmentFiles() const;
 	//       void randomFragments(const char chain_id, const int from, const int to, const int frag_len) const;
 	//       void insertFragment (const char chain_id, const int from, const int to, const int frag_len) const;
@@ -67,7 +67,7 @@ struct Mover {
 	void setFragment(const int seqpos, const int frag_len, const Fragment::Entry& e) const;
 	void insertFragment(const int seqpos_a, const int seqpos_b, const int frag_len ) const;
 	void randomFragments(const int seqpos_a, const int seqpos_b, const int frag_len ) const;
-	const Fragment::File* getFragmentFile(int seqpos, const int len) const;
+	Fragment::FileCOP getFragmentFile(int seqpos, const int len) const;
 
 	//     // Small moves
 	void smallMoves(const int seqpos_a, const int seqpos_b, const double sigma = ( M_PI / 180.0 ) ) const ;
@@ -116,7 +116,7 @@ struct Mover {
 
 private:
 	//mutable map<const Residue*, vector<Kin::Rotamer> > mvRot;
-	mutable map<pair<int,int>,const Fragment::File*> mFragmentFiles; // will always map to a librarian supplied fragfile
+	mutable map<pair<int,int>, Fragment::FileCOP > mFragmentFiles; // will always map to a librarian supplied fragfile
 
 
 	core::pose::Pose* pose; // unacceptable

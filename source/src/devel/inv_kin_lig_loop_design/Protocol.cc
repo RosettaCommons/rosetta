@@ -238,7 +238,7 @@ void Protocol::phase_lores() {
 			pose->energies().show_total_headers( cout ); cout << endl;
 			pose->energies().show_totals( cout ); cout << endl;
 
-			const int k_rand_loop = numeric::random::rg().random_range(0,INT_MAX) % loops.size(); // this is biased towards shorter loops
+			const int k_rand_loop = numeric::random::rg().random_range(0,loops.size()-1);
 
 			const Loop& loop = loops[k_rand_loop];
 
