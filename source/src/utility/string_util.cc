@@ -89,6 +89,52 @@ std::vector< std::string > split_by_newlines( std::string const & s )
 	return r;
 }
 
+/// @details Split a string by whitespace, but obey single and double quote marks, like the bash commandline
+utility::vector1< std::string >
+quoted_split(std::string const & s ) {
+	utility::vector1<std::string> r;
+	platform::Size start(0);
+	bool insquote(false), indquote(false), escape(false);
+	for ( platform::Size ii(0); ii < s.size(); ++ii ) {
+		if ( escape ) {
+			escape = false;
+			// Do nothing, this character is escaped and is not special
+		} else if ( s[ii] == '"' ) {
+			if ( indquote ) {
+				indquote = false;
+			} else if ( insquote ) {
+				// Do nothing - this quote is quoted.
+			} else {
+				indquote = true;
+			}
+		} else if ( s[ii] == '\'' ) {
+			if ( insquote ) {
+				insquote = false;
+			} else if ( indquote ) {
+				// Do nothing - this quote is quoted.
+			} else {
+				insquote = true;
+			}
+		} else if ( std::isspace( s[ ii ] ) ) {
+			if ( insquote || indquote ) {
+				// Do nothing - this space is quoted.
+			} else {
+				if ( start != ii ) {
+					r.push_back( s.substr( start, ii-start ) );
+				}
+				start = ii + 1;
+			}
+		} else if ( s[ii] == '\\' ) {
+			escape = true;
+		} else {
+			// Do nothing - regular charachter that's in the item.
+		}
+	}
+	if( start != s.size() ) {
+		r.push_back( s.substr( start ) );
+	}
+	return r;
+}
 
 std::string join(utility::vector1<std::string> const & s, std::string const & connector){
 	std::ostringstream os;

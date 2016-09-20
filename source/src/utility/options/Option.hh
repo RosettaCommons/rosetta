@@ -387,10 +387,31 @@ public: // Properties
 	std::string
 	equals_string() const = 0;
 
-	/// @brief The base class deserves a setter.  Why would it not have one?
+	/// @brief Set the value of the option from a string.
+	/// @details The difference between set_value() and set_cl_value() is that
+	/// set_cl_value() assumes that the options have been pre-vectorized by the
+	/// commandline, and the string is being passed in (multiple) vectorized pieces.
+	/// set_value(), in contrast, assumes that it's being passed a pre-vectorized
+	/// string.
+	/// For scalar options, set_value() will set the value as-is, including any spaces.
+	/// For vector options, it will split according to spaces.
+	/// If reset is false, set_value() will act like multiple instances of the option
+	/// on the commandline. If reset is true, vector options will be cleared before
+	/// adding the new items.
+	virtual
+	void
+	set_value( std::string const & value_str, bool reset = false ) = 0;
+
+	/// @brief Set the value of the option from a string from the commandline options.
+	/// @details The difference between set_value() and set_cl_value() is that
+	/// set_cl_value() assumes that the options have been pre-vectorized by the
+	/// commandline, and the string is being passed in (multiple) vectorized pieces.
+	/// set_value(), in contrast, assumes that it's being passed a pre-vectorized
+	/// string.
 	virtual
 	void
 	set_cl_value( std::string const & value_str ) = 0;
+
 
 	/// @brief Set access property to true.
 	void been_accessed() const { been_accessed_ = true; }

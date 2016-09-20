@@ -626,4 +626,66 @@ public:
 		TS_ASSERT( ! local_options[ rcv5 ].user() );
 	}
 
+	void test_set_value() {
+		using namespace utility::options;
+		using namespace basic::options;
+
+		option.add( b1,  "" );
+		option.add( b3,  "" ).def( true );
+		option.add( s1,  "" );
+		option.add( s3,  "" ).def( "youcandoit!" );
+		option.add( sv1, "" );
+		option.add( sv3, "" ).def( "failblog" );
+		option.add( rv1, "" );
+
+		TS_ASSERT_EQUALS( option[b1](), false );
+		option[b1].set_value( "1" );
+		TS_ASSERT_EQUALS( option[b1](), true );
+		TS_ASSERT_EQUALS( option[b3](), true );
+		option[b3].set_cl_value( "false" );
+		TS_ASSERT_EQUALS( option[b3](), false );
+
+		option[s1].set_cl_value( "my spaced string" );
+		TS_ASSERT_EQUALS( option[s1](), "my spaced string" );
+
+		option[s3].set_value( "my spaced string" );
+		TS_ASSERT_EQUALS( option[s3](), "my spaced string" );
+
+		option[sv3].set_cl_value( "new item" );
+		TS_ASSERT_EQUALS( option[sv3].size(), 1 );
+		TS_ASSERT_EQUALS( option[sv3][1], "new item" );
+		option[sv3].set_cl_value( "additional item" );
+		TS_ASSERT_EQUALS( option[sv3].size(), 2 );
+		TS_ASSERT_EQUALS( option[sv3][2], "additional item" );
+		option[sv3].set_cl_value( "I haz' da\" quot-es" );
+		TS_ASSERT_EQUALS( option[sv3].size(), 3 );
+		TS_ASSERT_EQUALS( option[sv3][3], "I haz' da\" quot-es" );
+
+		option[sv1].set_value("space separated");
+		TS_ASSERT_EQUALS( option[sv1].size(), 2 );
+		TS_ASSERT_EQUALS( option[sv1][1], "space" );
+		TS_ASSERT_EQUALS( option[sv1][2], "separated" );
+		option[sv1].set_value("'quotes will'keep \"things together"); // deliberately missing end quote
+		TS_ASSERT_EQUALS( option[sv1].size(), 4 );
+		TS_ASSERT_EQUALS( option[sv1][3], "quotes will'keep" );
+		TS_ASSERT_EQUALS( option[sv1][4], "things together" );
+		option[sv1].set_value("\tescap\\'age it\\'s neat\n  ", /*reset=*/ true);
+		TS_ASSERT_EQUALS( option[sv1].size(), 3 ); //also check reset
+		TS_ASSERT_EQUALS( option[sv1][1], "escap\\'age" );
+		TS_ASSERT_EQUALS( option[sv1][2], "it\\'s" );
+		TS_ASSERT_EQUALS( option[sv1][3], "neat" );
+
+		option[rv1].set_cl_value("12.5");
+		TS_ASSERT_EQUALS( option[rv1].size(), 1 );
+		TS_ASSERT_EQUALS( option[rv1][1], 12.5 );
+		option[rv1].set_value("1.0 23.25 7");
+		TS_ASSERT_EQUALS( option[rv1].size(), 4 );
+		TS_ASSERT_EQUALS( option[rv1][1], 12.5 );
+		TS_ASSERT_EQUALS( option[rv1][2],  1.0 );
+		TS_ASSERT_EQUALS( option[rv1][3], 23.25 );
+		TS_ASSERT_EQUALS( option[rv1][4], 7 );
+
+	}
+
+
 };

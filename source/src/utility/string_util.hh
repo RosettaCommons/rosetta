@@ -101,15 +101,19 @@ string_split (std::string const &in,char splitchar,T)
 
 /// @brief split given std::string using ' ' symbol.
 utility::vector1< std::string >
-split(const std::string &s);
+split(std::string const & s);
 
 /// @brief split given std::string using whitespace as a separator.
 /// Unlike string_split_multi_delim(), any group of mixed whitespace counts only as a single seperator.
 utility::vector1< std::string >
-split_whitespace(const std::string &s);
+split_whitespace(std::string const & s);
 
 /// @details Split string by new line symbols, return vector of string.
 std::vector< std::string > split_by_newlines( std::string const & s );
+
+/// @details Split a string by whitespace, but obey single and double quote marks, like the bash commandline
+utility::vector1< std::string >
+quoted_split(std::string const & s );
 
 /// @brief combine strings with anything
 std::string join(utility::vector1<std::string> const & s, std::string const & connector);

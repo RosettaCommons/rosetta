@@ -546,18 +546,18 @@ StandardJobQueen::options_from_tag( utility::tag::TagCOP job_options_tag ) const
 		if ( job_options_tag && job_options_tag->hasTag( opt.identifier() ) ) {
 			TagCOP opt_tag = job_options_tag->getTag( opt.identifier() );
 			if ( opt_type == BOOLEAN_OPTION ) {
-				(*opts)[ opt ].set_cl_value( opt_tag->getOption< std::string >( "value", "true" ) );
+				(*opts)[ opt ].set_value( opt_tag->getOption< std::string >( "value", "true" ) );
 			} else {
 				debug_assert( opt_tag->hasOption( "value" ) );
-				(*opts)[ opt ].set_cl_value( opt_tag->getOption< std::string >( "value" ) );
+				(*opts)[ opt ].set_value( opt_tag->getOption< std::string >( "value" ) );
 			}
 		} else if ( common_options_tag && common_options_tag->hasTag( opt.identifier() ) ) {
 			TagCOP opt_tag = common_options_tag->getTag( opt.identifier() );
 			if ( opt_type == BOOLEAN_OPTION ) {
-				(*opts)[ opt ].set_cl_value( opt_tag->getOption< std::string >( "value", "true" ) );
+				(*opts)[ opt ].set_value( opt_tag->getOption< std::string >( "value", "true" ) );
 			} else {
 				debug_assert( opt_tag->hasOption( "value" ) );
-				(*opts)[ opt ].set_cl_value( opt_tag->getOption< std::string >( "value" ) );
+				(*opts)[ opt ].set_value( opt_tag->getOption< std::string >( "value" ) );
 			}
 		}
 	}

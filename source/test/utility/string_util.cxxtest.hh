@@ -199,7 +199,7 @@ class StringUtilTests : public CxxTest::TestSuite {
 		core::Real o = 11;
 		//core::Real n2 = 22.23456;
 
-		
+
 		//std::cout << "2Decimal:"<<utility::Real2string(n, 2) << std::endl;
 		//std::cout << "3Decimal:"<<utility::Real2string(n2, 3) << std::endl;
 		//std::cout << "padded2:"<<  utility::fmt_real(n, 2, 3) << std::endl;
@@ -209,4 +209,49 @@ class StringUtilTests : public CxxTest::TestSuite {
 
 	}
 
+	void test_quoted_split() {
+		utility::vector1< std::string > v;
+
+		v = utility::quoted_split("one");
+		TS_ASSERT_EQUALS( v.size(), 1 );
+		TS_ASSERT_EQUALS( v[1], "one" );
+
+		v = utility::quoted_split("one two");
+		TS_ASSERT_EQUALS( v.size(), 2 );
+		TS_ASSERT_EQUALS( v[1], "one" );
+		TS_ASSERT_EQUALS( v[2], "two" );
+
+		v = utility::quoted_split("    multiple   spaces  ");
+		TS_ASSERT_EQUALS( v.size(), 2 );
+		TS_ASSERT_EQUALS( v[1], "multiple" );
+		TS_ASSERT_EQUALS( v[2], "spaces" );
+
+		v = utility::quoted_split("'single quotes' are 'working well '");
+		TS_ASSERT_EQUALS( v.size(), 3 );
+		TS_ASSERT_EQUALS( v[1], "'single quotes'" );
+		TS_ASSERT_EQUALS( v[2], "are" );
+		TS_ASSERT_EQUALS( v[3], "'working well '" );
+
+		v = utility::quoted_split("\"double quotes\" are \" awesome \"  ");
+		TS_ASSERT_EQUALS( v.size(), 3 );
+		TS_ASSERT_EQUALS( v[1], "\"double quotes\"" );
+		TS_ASSERT_EQUALS( v[2], "are" );
+		TS_ASSERT_EQUALS( v[3], "\" awesome \"" );
+
+		v = utility::quoted_split(" \"it's nested\"and con-'\"jugated'");
+		TS_ASSERT_EQUALS( v.size(), 2 );
+		TS_ASSERT_EQUALS( v[1], "\"it's nested\"and" );
+		TS_ASSERT_EQUALS( v[2], "con-'\"jugated'" );
+
+		v = utility::quoted_split("'es\\\"ca\\ \\'pe\\\\d' ");
+		TS_ASSERT_EQUALS( v.size(), 1 );
+		TS_ASSERT_EQUALS( v[1], "'es\\\"ca\\ \\'pe\\\\d'" );
+
+		v = utility::quoted_split("'quotes will'keep \"things together"); // deliberately missing end quote
+		TS_ASSERT_EQUALS( v.size(), 2 );
+		TS_ASSERT_EQUALS( v[1], "'quotes will'keep" );
+		TS_ASSERT_EQUALS( v[2], "\"things together" );
+
+
+	}
 };

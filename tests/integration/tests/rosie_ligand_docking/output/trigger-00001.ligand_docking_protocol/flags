@@ -1,0 +1,20 @@
+-in
+    -ignore_unrecognized_res
+    -file
+        -s '../../input/protein.pdb ../../output/trigger-00000.molfile_to_params/LG.pdb'
+-run
+    -ignore_zero_occupancy false
+-chemical
+    -override_rsd_type_limit
+-qsar
+    -max_grid_cache_size 1
+-jd2
+    -delete_old_poses
+-nstruct 1
+-out
+    -pdb
+-mistakes
+    -restore_pre_talaris_2013_behavior
+-ex1
+-ex2
+-extra_res_fa ../../output/trigger-00000.molfile_to_params/LG.params

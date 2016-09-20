@@ -107,6 +107,13 @@ public: // Methods
 	clear() override = 0;
 
 
+	/// @brief Value assignment from full string.
+	void
+	set_value( std::string const & value_str, bool = false ) override {
+		// reset is ignored, as ScalarOptions always reset.
+		cl_value( value_str );
+	}
+
 	/// @brief Value assignment from a command line string
 
 	ScalarOption &

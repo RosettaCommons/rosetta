@@ -106,16 +106,16 @@ public: // Methods
 	VectorOption &
 	clear() override = 0;
 
+	/// @brief Value assignemt from a command line string but without
+	/// a VectorOption & return type.
+	/// This will separate arguments by whitespace and set the vector option accordingly.
+	/// If reset is true, the current values will be cleared first.
+	void
+	set_value( std::string const & value_str, bool reset = false ) override;
 
 	/// @brief Value assignment from a command line string
-
 	VectorOption &
 	cl_value( std::string const & value_str ) override = 0;
-
-	/// @brief Value assignemt from a command line string but without
-	/// a VectorOption & return type. This will separate arguments into
-	/// blocks grouped by quotes, and then separate the non-quote-delimited
-	/// arguments by whitespace
 
 	void
 	set_cl_value( std::string const & value_str ) override {

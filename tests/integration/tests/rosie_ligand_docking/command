@@ -1,0 +1,31 @@
+#
+# This is a command file.
+#
+
+cd %(workdir)s
+
+# making script terminate with error after any command that return non zero exit code
+set -e
+
+[ -x %(pyapps)s/public/molfile_to_params.py ] || exit 1
+
+cd %(workdir)s/output/trigger-00000.molfile_to_params/
+
+ln -s ../../input/conformers.sdf conformers.sdf
+
+%(pyapps)s/public/molfile_to_params.py -n LG --mm-as-virt --conformers-in-one-file conformers.sdf --chain X 2>&1 \
+    | egrep -vf ../../../../ignore_list \
+    > molfile_to_params.log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+cd %(workdir)s/output/trigger-00001.ligand_docking_protocol/
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -parser:protocol ligand_docking.xml -scorefile dock.sc -multiple_processes_writing_to_one_directory -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    | egrep -vf ../../../../ignore_list \
+    > dock.log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+

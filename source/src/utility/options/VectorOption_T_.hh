@@ -1313,17 +1313,13 @@ protected: // Methods
 	Value
 	value_of( std::string const & value_str ) const = 0;
 
-	/// @brief Value of a string that contains a white-space separated list of values
+	/// @brief Value of a string
 	virtual
 	Values
 	values_of( std::string const & value_str ) const
 	{
 		Values vs;
-		utility::vector1< std::string > ws_sep_values = split( value_str );
-		vs.reserve( ws_sep_values.size() );
-		for ( platform::Size ii = 1; ii <= ws_sep_values.size(); ++ii ) {
-			vs.push_back( value_of( ws_sep_values[ ii ] ) );
-		}
+		vs.push_back( value_of( value_str ) );
 		return vs;
 	}
 
