@@ -10,6 +10,7 @@
 /// @file   protocols/cyclic_peptide/CreateTorsionConstraint.cc
 /// @brief  Add torsion constraints to the current pose conformation.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author modified by Parisa Hosseinzadeh (parisah@uw.edu)
 
 #include <protocols/cyclic_peptide/CreateTorsionConstraint.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraintCreator.hh>
@@ -48,6 +49,34 @@ namespace cyclic_peptide {
 CreateTorsionConstraint::CreateTorsionConstraint() //:
 {}
 CreateTorsionConstraint::~CreateTorsionConstraint()= default;
+
+void CreateTorsionConstraint::set(utility::vector1<Size> res1,
+	utility::vector1<std::string> atom1,
+	utility::vector1<Size> res2,
+	utility::vector1<std::string> atom2,
+	utility::vector1<Size> res3,
+	utility::vector1<std::string> atom3,
+	utility::vector1<Size> res4,
+	utility::vector1<std::string> atom4,
+	utility::vector1<std::string> cst_func
+)
+{
+	res1_=res1;
+	atom1_=atom1;
+	res2_=res2;
+	atom2_=atom2;
+	res3_=res3;
+	atom3_=atom3;
+	res4_=res4;
+	atom4_=atom4;
+	cst_func_=cst_func;
+}
+
+///////////////////////////////////////////////////////////////////
+///////////////////        APPLY FUNCTION     /////////////////////
+///////////////////////////////////////////////////////////////////
+// the actual main apply.
+
 
 void CreateTorsionConstraint::apply( core::pose::Pose & pose )
 {

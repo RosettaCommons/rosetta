@@ -81,6 +81,7 @@ static MoverRegistrator< hybridization::BackboneTorsionPerturbationCreator > reg
 static MoverRegistrator< cyclic_peptide::CreateAngleConstraintCreator > reg_CreateAngleConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CreateDistanceConstraintCreator > reg_CreateDistanceConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_CreateTorsionConstraintCreator;
+static MoverRegistrator< cyclic_peptide::PeptideCyclizeMoverCreator > reg_PeptideCyclizeMoverCreator;
 static MoverRegistrator< cyclic_peptide::DeclareBondCreator > reg_DeclareBondCreator;
 static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideStubMoverCreator;
 static MoverRegistrator< cyclic_peptide::TryDisulfPermutationsCreator > reg_TryDisulfPermutationsCreator;

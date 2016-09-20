@@ -10,11 +10,11 @@
 /// @file   protocols/cyclic_peptide/CreateTorsionConstraint.hh
 /// @brief  Add torsion constraints to the current pose conformation.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
-
+/// @author modified by Parisa Hosseinzadeh (parisah@uw.edu)
 
 #ifndef INCLUDED_protocols_cyclic_peptide_CreateTorsionConstraint_hh
 #define INCLUDED_protocols_cyclic_peptide_CreateTorsionConstraint_hh
-
+#include <protocols/cyclic_peptide/CreateTorsionConstraint.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
@@ -31,6 +31,9 @@ public:
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
+
+	virtual void
+	set( utility::vector1<Size>, utility::vector1<std::string>, utility::vector1<Size>, utility::vector1<std::string>, utility::vector1<Size>, utility::vector1<std::string>, utility::vector1<Size>, utility::vector1<std::string>,utility::vector1<std::string>);
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;

@@ -11,6 +11,7 @@
 /// @brief  Add distance constraints to the current pose conformation.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 /// @author Yifan Song
+///@author modified by Parisa Hosseinzadeh (parisah@uw.edu) to add setters.
 
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraintCreator.hh>
@@ -51,6 +52,26 @@ namespace cyclic_peptide {
 CreateDistanceConstraint::CreateDistanceConstraint() //:
 {}
 CreateDistanceConstraint::~CreateDistanceConstraint()= default;
+
+//adding a setter so that people can call the mover within Rosetta commands
+void CreateDistanceConstraint::set (utility::vector1<Size> res1,
+	utility::vector1<std::string> atom1,
+	utility::vector1<Size> res2,
+	utility::vector1<std::string> atom2,
+	utility::vector1<std::string> cst_func
+)
+{
+	res1_=res1;
+	atom1_=atom1;
+	res2_=res2;
+	atom2_=atom2;
+	cst_func_=cst_func;
+}
+
+///////////////////////////////////////////////////////////////
+/////////////          APPLY FUNCTION         ////////////////
+//////////////////////////////////////////////////////////////
+//The actual apply function
 
 void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 {

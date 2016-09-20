@@ -14,6 +14,7 @@
 
 #ifndef INCLUDED_protocols_cyclic_peptide_CreateDistanceConstraint_hh
 #define INCLUDED_protocols_cyclic_peptide_CreateDistanceConstraint_hh
+#include <protocols/cyclic_peptide/CreateDistanceConstraint.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -31,6 +32,9 @@ public:
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
+
+	virtual void
+	set (utility::vector1<Size>, utility::vector1<std::string>,utility::vector1<Size>,utility::vector1<std::string>,utility::vector1<std::string>);
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;

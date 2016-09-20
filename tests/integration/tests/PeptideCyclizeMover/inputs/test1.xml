@@ -1,0 +1,35 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+	<score_cst >
+            <Reweight scoretype=coordinate_constraint weight=1 />
+            <Reweight scoretype=atom_pair_constraint weight=1 />
+            <Reweight scoretype=dihedral_constraint weight=1 />
+            <Reweight scoretype=angle_constraint weight=1 />
+        </score_cst>
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+	<Chain name=chainb chains="B"/>
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+	<PeptideCyclizeMover name="close" residue_selector="chainb">
+	</PeptideCyclizeMover>
+	<FastRelax name="relax" scorefxn="score_cst" ramp_down_constraints=false repeats=1 >
+		<MoveMap name=frlx1_mm>
+                	<Span begin=1 end=348 chi=0 bb=0/>
+                	<Span begin=349 end=359 chi=1 bb=1/>
+            	</MoveMap>
+        </FastRelax>
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+	<Add mover=close/> #remember to de-activate one of the above
+	<Add mover=relax/>
+	<Add mover=close/>
+    </PROTOCOLS>
+    <OUTPUT />
+</ROSETTASCRIPTS>

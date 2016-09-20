@@ -10,6 +10,7 @@
 /// @file   protocols/cyclic_peptide/CreateAngleConstraint.cc
 /// @brief  Add angle constraints to the current pose conformation.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author modified by Parisa Hosseinzadeh (parisah@uw.edu)
 
 #include <protocols/cyclic_peptide/CreateAngleConstraint.hh>
 #include <protocols/cyclic_peptide/CreateAngleConstraintCreator.hh>
@@ -48,6 +49,30 @@ namespace cyclic_peptide {
 CreateAngleConstraint::CreateAngleConstraint() //:
 {}
 CreateAngleConstraint::~CreateAngleConstraint()= default;
+
+
+void CreateAngleConstraint::set(utility::vector1<Size> res_center,
+	utility::vector1<std::string> atom_center,
+	utility::vector1<Size> res1,
+	utility::vector1<std::string> atom1,
+	utility::vector1<Size> res2,
+	utility::vector1<std::string> atom2,
+	utility::vector1<std::string> cst_func
+)
+{
+	res_center_=res_center;
+	atom_center_=atom_center;
+	res1_=res1;
+	atom1_=atom1;
+	res2_=res2;
+	atom2_=atom2;
+	cst_func_=cst_func;
+}
+
+////////////////////////////////////////////////////
+//////////        APPLY FUNCTION      //////////////
+///////////////////////////////////////////////////
+//Actual apply function
 
 void CreateAngleConstraint::apply( core::pose::Pose & pose )
 {

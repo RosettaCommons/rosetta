@@ -71,6 +71,7 @@
 #include <protocols/cyclic_peptide/CreateAngleConstraintCreator.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraintCreator.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraintCreator.hh>
+#include <protocols/cyclic_peptide/PeptideCyclizeMoverCreator.hh>
 #include <protocols/cyclic_peptide/DeclareBondCreator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMoverCreator.hh>
 #include <protocols/cyclic_peptide/TryDisulfPermutationsCreator.hh>
