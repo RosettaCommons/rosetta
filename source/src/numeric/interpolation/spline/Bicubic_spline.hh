@@ -144,12 +144,12 @@ public:
 
 	/// train BicubicSpline
 	void train (
-		const BorderFlag BORDER[2],
-		const Real START[2],
-		const Real DELTA[2],
-		const MathMatrix< Real> &RESULTS,
-		const bool LINCONT[2],
-		const std::pair< Real, Real> FIRSTBE[2]
+		BorderFlag const BORDER[2],
+		Real const START[2],
+		Real const DELTA[2],
+		MathMatrix< Real> const &RESULTS,
+		bool const LINCONT[2],
+		std::pair< Real, Real> const FIRSTBE[2]
 	);
 
 	inline  Real sqr ( const Real & x ) const{

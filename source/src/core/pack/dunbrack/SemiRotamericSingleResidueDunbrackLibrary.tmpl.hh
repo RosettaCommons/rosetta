@@ -54,7 +54,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 #include <numeric/MathNTensor.hh>
-#include <numeric/interpolation/spline/PolycubicSpline.hh>
+#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
 #include <numeric/util.hh>
 #include <numeric/types.hh>
 #include <numeric/internal/ColPointers.hh>
@@ -1799,23 +1799,20 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 	/// Now create the tricubic interpolation data and store that data in the
 	using namespace numeric;
 	using namespace numeric::interpolation::spline;
-	utility::vector1< BorderFlag > border( N, e_Periodic );
-	border.push_back( e_Periodic );
-	utility::vector1< Real > start( N, -180.0 );
-	start.push_back( nrchi_lower_angle_ );
-	utility::vector1< Real > delta( N, 10.0 );
-	delta.push_back( bbdep_nrchi_binsize_ );
-	utility::vector1< bool > lin_cont( N, true );
-	lin_cont.push_back( true );
-	utility::vector1< std::pair< double, double>  > first_be( N, std::pair< double, double > ( 10, 10 ) );
-	first_be.push_back( std::pair< double, double>( 10, 10 ) );
+	utility::fixedsizearray1< BorderFlag, N+1 > border( e_Periodic );
+	utility::fixedsizearray1< Real, N+1 > start( -180.0 );
+	start[ N + 1 ] = nrchi_lower_angle_;
+	utility::fixedsizearray1< Real, N+1 > delta( 10.0 );
+	delta[ N + 1 ] = bbdep_nrchi_binsize_;
+	utility::fixedsizearray1< bool, N+1 > lin_cont( true );
+	utility::fixedsizearray1< std::pair< double, double>, N+1 > first_be( std::pair< double, double > ( 10, 10 ) );
 
 	for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
 
-		utility::vector1< Size > dimensions( N );
+		utility::fixedsizearray1< Size, N+1 > dimensions;
 		for ( Size i = 1; i <= N; ++i ) dimensions[ i ] = parent::N_PHIPSI_BINS[i];
-		dimensions.push_back( bbdep_nrchi_nbins_ );
-		MathNTensor< Real > data( dimensions, Real(0.0) );
+		dimensions[ N + 1 ] = bbdep_nrchi_nbins_;
+		MathNTensor< Real, N+1 > data( dimensions );
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
 		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
@@ -1823,16 +1820,16 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 
-			utility::vector1< Size > position( N );
-			for ( Size qq = 1; qq <= N; ++qq ) position[ qq ] = bb_bin[ qq ];
-			position.push_back( 1 );
+			utility::fixedsizearray1< Size, N+1 > position;
+			for ( Size qq = 1; qq <= N; ++qq ) position[ qq ] = bb_bin[ qq ] - 1;
+			position[ N+1 ] = 1;
 			utility::vector1< Size > indices;
 			for ( Size i = 1; i <= N; ++i ) indices.push_back( bb_bin[ i ] - 1 );
 
 			Size bbdepindex = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
 
 			for ( Size ll = 1; ll <= bbdep_nrchi_nbins_; ++ll ) {
-				position[ N + 1 ] = ll;
+				position[ N + 1 ] = ll - 1;
 				data( position ) = bbdep_non_rotameric_chi_scores[ ii ]( bbdepindex, ll );
 			}
 
@@ -1844,7 +1841,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 			}
 		}
 
-		PolycubicSpline spline( N + 1 ); // extra dimension because of the nrchi
+		PolycubicSpline< N+1 > spline; // extra dimension because of the nrchi
 		spline.train( border, start, delta, data, lin_cont, first_be );
 
 		for ( Size bbi = 1; bbi <= ( N+1 ); ++bbi ) bb_bin[ bbi ] = 1;
@@ -1853,12 +1850,12 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		while ( bb_bin[ N + 1 ] == 1 ) {
 
 			utility::vector1< Size > position( N );
-			for ( Size qq = 1; qq <= N; ++qq ) position[ qq ] = bb_bin[ qq ];
-			position.push_back( 1 );
+			for ( Size qq = 1; qq <= N; ++qq ) position[ qq ] = bb_bin[ qq ] - 1;
+			position.push_back( 0 );
 			Size bbdepindex = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
 
 			for ( Size ll = 1; ll <= bbdep_nrchi_nbins_; ++ll ) {
-				position[ N + 1 ] = ll;
+				position[ N + 1 ] = ll - 1;
 				bbdep_nrc_interpdata_[ ii ]( bbdepindex, ll ).n_derivs_[ 1 ]   = ( DunbrackReal ) data( position );
 				for ( Size di = 2; di <= ( 1 << ( N + 1 ) ); ++di ) {
 					bbdep_nrc_interpdata_[ ii ]( bbdepindex, ll ).n_derivs_[ di ] = ( DunbrackReal ) spline.get_deriv( di )( position );

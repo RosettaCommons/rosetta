@@ -31,7 +31,9 @@
 #define INCLUDED_numeric_interpolation_spline_PolycubicSpline_hh
 
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
+#include <numeric/interpolation/spline/PolycubicSpline.fwd.hh>
+#include <numeric/interpolation/spline/PolycubicSplineBase.hh>
+#include <numeric/interpolation/spline/Cubic_spline.fwd.hh> //For BorderFlag enum definition.
 #include <numeric/MathNTensor.hh>
 
 #include <utility>
@@ -40,30 +42,50 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
-class PolycubicSpline
+template< Size N >
+class PolycubicSpline : public PolycubicSplineBase
 {
 public:
+
+	typedef PolycubicSplineBase parent;
 
 	//////////////////////////////////
 	// construction and destruction //
 	//////////////////////////////////
 
-	/// construct generic PolycubicSpline
-	PolycubicSpline(){n_xs_ = 3;}
-	PolycubicSpline(Size n_xs) : n_xs_( n_xs ) {
-		border_.resize( n_xs );
-		start_.resize( n_xs );
-		delta_.resize( n_xs );
-		//n_derivs_.resize( static_cast< Size > ( std::pow( 2, n_xs ) ) );
-		firstbe_.resize( n_xs );
-		LinCont_.resize( n_xs );
+	/// @brief construct generic PolycubicSpline
+	PolycubicSpline():
+		parent(N),
+		border_( utility::fixedsizearray1< BorderFlag, ( N ) >( e_Natural ) ),
+		start_( utility::fixedsizearray1< Real, ( N ) >( 0.0 ) ),
+		delta_( utility::fixedsizearray1< Real, ( N ) >( 0.0 ) ),
+		n_derivs_( utility::fixedsizearray1< MathNTensor< Real, N >, ( 1 << N ) >( MathNTensor< Real, N >() ) ),
+		firstbe_( utility::fixedsizearray1< std::pair< Real, Real >, N >( std::pair< Real, Real >(0.0,0.0) ) ),
+		LinCont_( utility::fixedsizearray1< bool, N >( false ) )
+	{
+		/*
+		utility::fixedsizearray1< BorderFlag, N > border_;   ///< controls the behavior at x/y_0 and x/y_dim-1
+
+		utility::fixedsizearray1< Real, N > start_;
+		utility::fixedsizearray1< Real, N > delta_;    ///< gives the arguments as a sequence of equidistant points
+
+		utility::fixedsizearray1< MathNTensor< Real, N >, ( 1 << N ) > n_derivs_; // has 000 = values_,
+		// 001 = z deriv, etc.
+		utility::fixedsizearray1< std::pair< Real, Real>, N > firstbe_; ///< first order derivative at x_0/dim-1, y_0/dim-1, z_0/dim-1 can be set for BorderFlag FIRSTDER
+
+		utility::fixedsizearray1< bool, N > LinCont_;    ///< if the argument x is outside the range decide if the spline should be continued */
 	}
 
-	/// copy constructor
-	PolycubicSpline* Clone() const
-	{
-		return new PolycubicSpline( *this);
-	}
+	/// @brief copy constructor
+	PolycubicSpline( PolycubicSpline const &src ) :
+		parent( src.dimensionality() ),
+		border_(src.border_),
+		start_(src.start_),
+		delta_(src.delta_),
+		n_derivs_(src.n_derivs_),
+		firstbe_(src.firstbe_),
+		LinCont_(src.LinCont_)
+	{}
 
 	/////////////////
 	// data access //
@@ -72,16 +94,18 @@ public:
 	/// get the second order derivatives of the spline
 	/// for 3 dimensions, you would pass 1-8 and get
 	/// values, z, y, yz, x, xz, xy, xyz
-	MathNTensor< Real> const & get_deriv( Size n ) const
+	MathNTensor< Real, N > const & get_deriv( Size n ) const
 	{
 		return n_derivs_[ n ];
 	}
 
+	Size dimensionality() const { return N; }
 
-	utility::vector1< Real > get_all_derivs( utility::vector1< Size > indices )
+
+	utility::fixedsizearray1< Real, ( 1 << N ) > get_all_derivs( utility::fixedsizearray1< Size, N > const & indices )
 	{
-		utility::vector1< Real > ret;
-		for ( Size i = 1; i <= n_derivs_.size(); ++i ) ret.push_back( n_derivs_[ i ]( indices ) );
+		utility::fixedsizearray1< Real, ( 1 << N ) > ret;
+		for ( Size i = 1; i <= ( 1 << N ); ++i ) ret[ i ] = n_derivs_[ i ]( indices );
 		return ret;
 	}
 
@@ -90,13 +114,13 @@ public:
 	////////////////
 
 	/// @return value at (x1, x2, ... xn)
-	Real F( utility::vector1< Real > xs ) const;
+	Real F( utility::fixedsizearray1< Real, N > const & xs ) const;
 
 	/// @return partial derivative at (x1, x2, ... xn) for var i
-	Real dFdxi( Size n, utility::vector1< Real > xs ) const;
+	Real dFdxi( Size n, utility::fixedsizearray1< Real, N > const & xs ) const;
 
 	/// @return partial derivatives at (x1, x2, ... xn)
-	utility::vector1< Real > dFdall( utility::vector1< Real > xs ) const;
+	utility::fixedsizearray1< Real, N > dFdall( utility::fixedsizearray1< Real, N > const & xs ) const;
 
 	/// @return value and derivative at (x, y)
 	//void FdF( utility::vector1< Real > xs, Real & val, utility::vector1< Real > & dvaldxs ) const;
@@ -104,39 +128,215 @@ public:
 	/// train PolycubicSpline
 	void train
 	(
-		const utility::vector1< BorderFlag > & BORDER,//[3],
-		const utility::vector1< double > & START,//[3],
-		const utility::vector1< double > & DELTA,//[3],
-		const MathNTensor< Real > & RESULTS,
-		const utility::vector1< bool > & LINCONT,//[3],
-		const utility::vector1< std::pair< Real, Real > > & FIRSTBE//[3]
+		utility::fixedsizearray1< BorderFlag, N > const & BORDER,//[3],
+		utility::fixedsizearray1< double, N > const & START,//[3],
+		utility::fixedsizearray1< double, N > const & DELTA,//[3],
+		MathNTensor< Real, N > const & RESULTS,
+		utility::fixedsizearray1< bool, N > const & LINCONT,//[3],
+		utility::fixedsizearray1< std::pair< Real, Real >, N > const & FIRSTBE//[3]
 	);
 
 
 private:
-	Size n_xs_; ///< number of dimensions
-	utility::vector1< BorderFlag > border_;   ///< controls the behavior at x/y_0 and x/y_dim-1
+	utility::fixedsizearray1< BorderFlag, N > border_;   ///< controls the behavior at x/y_0 and x/y_dim-1
 
-	utility::vector1< Real > start_;
-	utility::vector1< Real > delta_;    ///< gives the arguments as a sequence of equidistant points
+	utility::fixedsizearray1< Real, N > start_;
+	utility::fixedsizearray1< Real, N > delta_;    ///< gives the arguments as a sequence of equidistant points
 
-	utility::vector1< MathNTensor< Real> > n_derivs_; // has 000 = values_,
+	utility::fixedsizearray1< MathNTensor< Real, N >, ( 1 << N ) > n_derivs_; // has 000 = values_,
+	// xyz
 	// 001 = z deriv, etc.
-	/*MathTensor< Real> values_;     ///< f(x,y,z)
-	MathTensor< Real> dsecox_;     ///< second order derivatives for x -- d**2/dx**2 f(x,y,z)
-	MathTensor< Real> dsecoy_;     ///< second order derivatives for y
-	MathTensor< Real> dsecoxy_;    ///< second order derivatives for x and y
-	MathTensor< Real> dsecoz_;     ///< second order derivatives for z
-	MathTensor< Real> dsecoxz_;    ///< second order derivatives for xz
-	MathTensor< Real> dsecoyz_;    ///< second order derivatives for yz
-	MathTensor< Real> dsecoxyz_;   ///< second order derivatives for x y and z*/
 
-	utility::vector1< std::pair< Real, Real> > firstbe_; ///< first order derivative at x_0/dim-1, y_0/dim-1, z_0/dim-1 can be set for BorderFlag FIRSTDER
+	utility::fixedsizearray1< std::pair< Real, Real>, N > firstbe_; ///< first order derivative at x_0/dim-1, y_0/dim-1, z_0/dim-1 can be set for BorderFlag FIRSTDER
 
-	utility::vector1< bool > LinCont_;    ///< if the argument x is outside the range decide if the spline should be continued linearly
+	utility::fixedsizearray1< bool, N > LinCont_;    ///< if the argument x is outside the range decide if the spline should be continued linearly
 
 
 };
+
+// Stub implementations for 1 and 2 to prevent problems!
+template<>
+class PolycubicSpline< 1 > : public PolycubicSplineBase
+{
+public:
+
+	typedef PolycubicSplineBase parent;
+
+	//////////////////////////////////
+	// construction and destruction //
+	//////////////////////////////////
+
+	/// @brief construct generic PolycubicSpline
+	PolycubicSpline():
+		parent(1),
+		border_( utility::fixedsizearray1< BorderFlag, ( 1 ) >( e_Natural ) ),
+		start_( utility::fixedsizearray1< Real, ( 1 ) >( 0.0 ) ),
+		delta_( utility::fixedsizearray1< Real, ( 1 ) >( 0.0 ) ),
+		n_derivs_( utility::fixedsizearray1< MathNTensor< Real, 1 >, 2 >( MathNTensor< Real, 1 >() ) ),
+		firstbe_( utility::fixedsizearray1< std::pair< Real, Real >, 1 >( std::pair< Real, Real >(0.0,0.0) ) ),
+		LinCont_( utility::fixedsizearray1< bool, 1 >( false ) )
+	{}
+
+	/// @brief copy constructor
+	PolycubicSpline( PolycubicSpline const &src ) :
+		parent( 1 ),
+		border_(src.border_),
+		start_(src.start_),
+		delta_(src.delta_),
+		n_derivs_(src.n_derivs_),
+		firstbe_(src.firstbe_),
+		LinCont_(src.LinCont_)
+	{}
+
+	/////////////////
+	// data access //
+	/////////////////
+
+	/// @brief get the second order derivatives of the spline
+	/// for 3 dimensions, you would pass 1-8 and get
+	/// values, z, y, yz, x, xz, xy, xyz
+	MathNTensor< Real, 1 > const & get_deriv( Size n ) const
+	{
+		return n_derivs_[ n ];
+	}
+
+	/// @brief Get the dimensionality.
+	///
+	Size dimensionality() const { return 1; }
+
+
+	utility::fixedsizearray1< Real, 2 > get_all_derivs( utility::fixedsizearray1< Size, 1 > & /*indices*/ )
+	{
+		utility::fixedsizearray1< Real, 2 > ret;
+		return ret;
+	}
+
+	////////////////
+	// operations //
+	////////////////
+
+	/// @return value at (x1, x2, ... xn)
+	Real F( utility::fixedsizearray1< Real, 1 > const & /*xs*/ ) const { return 0; }
+
+	/// @return partial derivative at (x1, x2, ... xn) for var i
+	Real dFdxi( Size , utility::fixedsizearray1< Real, 1 > const & /*xs*/ ) const { return 0; }
+
+	/// @return partial derivatives at (x1, x2, ... xn)
+	utility::fixedsizearray1< Real, 1 > dFdall( utility::fixedsizearray1< Real, 1 > const & /*xs*/ ) const { return 0; }
+
+	void train
+	(
+		utility::fixedsizearray1< BorderFlag, 1 > const & ,//[3],
+		utility::fixedsizearray1< double, 1 > const & ,//[3],
+		utility::fixedsizearray1< double, 1 > const & ,//[3],
+		MathNTensor< Real, 1 > const & ,
+		utility::fixedsizearray1< bool, 1 > const & ,//[3],
+		utility::fixedsizearray1< std::pair< Real, Real >, 1 > const & //[3]
+	) {
+		utility_exit_with_message( "Error in numeric/interpolation/spline/PolycubicSpline<1>::train(): This function has not yet been implemented!  PolycubicSplines do not currently support the 1D or 2D cases; for these, use Spline or BicubicSpline classes." );
+	}
+
+
+private:
+	utility::fixedsizearray1< BorderFlag, 1 > border_;   ///< controls the behavior at x/y_0 and x/y_dim-1
+	utility::fixedsizearray1< Real, 1 > start_;
+	utility::fixedsizearray1< Real, 1 > delta_;    ///< gives the arguments as a sequence of equidistant points
+	utility::fixedsizearray1< MathNTensor< Real, 1 >, 2 > n_derivs_; // has 000 = values_,
+	utility::fixedsizearray1< std::pair< Real, Real>, 1 > firstbe_;
+	utility::fixedsizearray1< bool, 1 > LinCont_;
+};
+
+template<>
+class PolycubicSpline< 2 >  : public PolycubicSplineBase
+{
+public:
+
+	typedef PolycubicSplineBase parent;
+
+	//////////////////////////////////
+	// construction and destruction //
+	//////////////////////////////////
+
+	/// construct generic PolycubicSpline
+	PolycubicSpline():
+		parent(2),
+		border_( utility::fixedsizearray1< BorderFlag, ( 2 ) >( e_Natural ) ),
+		start_( utility::fixedsizearray1< Real, ( 2 ) >( 0.0 ) ),
+		delta_( utility::fixedsizearray1< Real, ( 2 ) >( 0.0 ) ),
+		n_derivs_( utility::fixedsizearray1< MathNTensor< Real, 2 >, 4 >( MathNTensor< Real, 2 >() ) ),
+		firstbe_( utility::fixedsizearray1< std::pair< Real, Real >, 2 >( std::pair< Real, Real >(0.0,0.0) ) ),
+		LinCont_( utility::fixedsizearray1< bool, 2 >( false ) )
+	{}
+
+
+	/// @brief Get the dimensionality.
+	///
+	Size dimensionality() const { return 2; }
+
+	/// @brief copy constructor
+	PolycubicSpline( PolycubicSpline const &src ) :
+		parent( 2 ),
+		border_( src.border_ ),
+		n_derivs_(src.n_derivs_),
+		firstbe_(src.firstbe_),
+		LinCont_(src.LinCont_)
+	{}
+
+	/////////////////
+	// data access //
+	/////////////////
+
+	/// get the second order derivatives of the spline
+	/// for 3 dimensions, you would pass 1-8 and get
+	/// values, z, y, yz, x, xz, xy, xyz
+	MathNTensor< Real, 2 > const & get_deriv( Size n ) const
+	{
+		return n_derivs_[ n ];
+	}
+
+
+	utility::fixedsizearray1< Real, 4 > get_all_derivs( utility::fixedsizearray1< Size, 2 > &  )
+	{
+		utility::fixedsizearray1< Real, 4 > ret;
+		return ret;
+	}
+
+	////////////////
+	// operations //
+	////////////////
+
+	/// @return value at (x1, x2, ... xn)
+	Real F( utility::fixedsizearray1< Real, 2 > const &  ) const { return 0; }
+
+	/// @return partial derivative at (x1, x2, ... xn) for var i
+	Real dFdxi( Size , utility::fixedsizearray1< Real, 2 > const &  ) const { return 0; }
+
+	/// @return partial derivatives at (x1, x2, ... xn)
+	utility::fixedsizearray1< Real, 2 > dFdall( utility::fixedsizearray1< Real, 2 > const &  ) const { return 0; }
+
+	void train
+	(
+		utility::fixedsizearray1< BorderFlag, 2 > const & ,//[3],
+		utility::fixedsizearray1< double, 2 > const & ,//[3],
+		utility::fixedsizearray1< double, 2 > const & ,//[3],
+		MathNTensor< Real, 2 > & ,
+		utility::fixedsizearray1< bool, 2 > const & ,//[3],
+		utility::fixedsizearray1< std::pair< Real, Real >, 2 > const & //[3]
+	) {
+		utility_exit_with_message( "Error in numeric/interpolation/spline/PolycubicSpline<2>::train(): This function has not yet been implemented!  PolycubicSplines do not currently support the 1D or 2D cases; for these, use Spline or BicubicSpline classes." );
+	}
+
+
+private:
+	utility::fixedsizearray1< BorderFlag, 2 > border_;   ///< controls the behavior at x/y_0 and x/y_dim-1
+	utility::fixedsizearray1< Real, 2 > start_;
+	utility::fixedsizearray1< Real, 2 > delta_;    ///< gives the arguments as a sequence of equidistant points
+	utility::fixedsizearray1< MathNTensor< Real, 2 >, 4 > n_derivs_; // has 000 = values_,
+	utility::fixedsizearray1< std::pair< Real, Real>, 2 > firstbe_;
+	utility::fixedsizearray1< bool, 2 > LinCont_;
+};
+
+void hokey_template_workaround();
 
 }//end namespace spline
 }//end namespace interpolation

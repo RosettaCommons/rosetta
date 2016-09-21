@@ -69,6 +69,14 @@ public:
 	{
 	}
 
+	//MathMatrix & operator=( const MathMatrix & other ):
+	// NumberRows_( other.NumberRows_ ),
+	// NumberCols_( other.NumberCols_ ),
+	// size_( other.size_ )
+	//{
+	// std::uninitialized_copy( other.data_, other.data_ + other.size_, data_ );
+	//}
+
 	/// @brief construct from dimension and possible filler
 	/// @param NUMBER_ROWS number of rows in matrix
 	/// @param NUMBER_COLS number of cols in matrix
@@ -109,11 +117,11 @@ public:
 
 	/// @brief copy constructor from Matrix
 	/// @param MATRIX matrix to be copied from
-	MathMatrix< T>( MathMatrix< T > const & MATRIX ):
-	NumberRows_( MATRIX.NumberRows_ ),
-	NumberCols_( MATRIX.NumberCols_ ),
-	size_( MATRIX.size_ ),
-	data_( new T[ size_ ] )
+	MathMatrix( MathMatrix const & MATRIX ):
+		NumberRows_( MATRIX.NumberRows_ ),
+		NumberCols_( MATRIX.NumberCols_ ),
+		size_( MATRIX.size_ ),
+		data_( new T[ size_ ] )
 	{
 		std::copy( MATRIX.data_, MATRIX.data_ + size_, data_);
 	}
@@ -644,16 +652,12 @@ public:
 				NumberCols_ = MATRIX.NumberCols_;
 				size_ = MATRIX.size_;
 				data_ = new T[ size_ ];
-
-
 			}
 
 			// copy elements
 			std::copy( MATRIX.data_, MATRIX.data_ + size_, data_);
 		}
 		return *this;
-
-
 	}
 
 

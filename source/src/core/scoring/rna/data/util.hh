@@ -18,6 +18,7 @@
 
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
+#include <set>
 
 namespace core {
 namespace scoring {
@@ -30,6 +31,10 @@ lookup_idx( core::Real const value, utility::vector1< core::Real > & values );
 core::Size
 get_bool_idx( bool const value, utility::vector1< bool > const & values );
 
+core::Size
+get_idx( core::Real const value, std::set< core::Real > const & values );
+
+// AMW retaining for lowres, remove shortly
 core::Size
 get_idx( core::Real const value, utility::vector1< core::Real > const & values );
 

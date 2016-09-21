@@ -113,7 +113,7 @@
 #include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 #include <numeric/interpolation/spline/TricubicSpline.hh>
-#include <numeric/interpolation/spline/PolycubicSpline.hh>
+#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
 #include <numeric/util.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
@@ -582,7 +582,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
-	utility::fixedsizearray1< Real, N > bbs,
+	utility::fixedsizearray1< Real, N > const & bbs,
 	utility::fixedsizearray1< Size, N > & bb_bin,
 	utility::fixedsizearray1< Size, N > & bb_bin_next,
 	utility::fixedsizearray1< Real, N > & bb_alpha
@@ -2140,10 +2140,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 			using namespace numeric;
 			using namespace numeric::interpolation::spline;
 
-			PolycubicSpline rotEspline( N );
-			utility::vector1< Size > n_dims( N );
+			PolycubicSpline< N > rotEspline;
+			utility::fixedsizearray1< Size, N > n_dims;
 			for ( Size i = 1; i <= N; ++i ) n_dims[ i ] = N_PHIPSI_BINS[i];
-			MathNTensor< Real > energy_vals( n_dims, 0.0 );
+			MathNTensor< Real, N > energy_vals;
 
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
@@ -2168,12 +2168,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 				}
 			}
 
-			utility::vector1< BorderFlag > periodic_boundary( N, e_Periodic );
-			utility::vector1< Real > start_vals( N, 0.0 );
-			utility::vector1< Real > deltas( N, 10.0 );
+			utility::fixedsizearray1< BorderFlag, N > periodic_boundary( e_Periodic );
+			utility::fixedsizearray1< Real, N > start_vals;
+			utility::fixedsizearray1< Real, N > deltas( 10.0 );
 			for ( Size s = 1; s <= N; ++s ) deltas[ s ] = PHIPSI_BINRANGE[ s ];
-			utility::vector1< bool > lincont( N, false );
-			utility::vector1< std::pair< Real, Real > > unused( N, std::make_pair( 0.0, 0.0 ) );
+			utility::fixedsizearray1< bool, N > lincont( false );
+			utility::fixedsizearray1< std::pair< Real, Real >, N > unused( std::pair< Real, Real >( 10, 10 ) );
 			rotEspline.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
 
 			for ( Size clear_i = 1; clear_i <= N+1; ++clear_i ) bb_bin[ clear_i ] = 1;

@@ -328,7 +328,7 @@ double TricubicSpline::dFdx( const double x, const double y, const double z) con
 
 	const double delta_aktx( x - start_[ 0] - ( i - 1) * delta_[ 0]);
 	const double delta_akty( y - start_[ 1] - ( j - 1) * delta_[ 1]);
-	double delta_aktz( z - start_[ 2] - ( k - 1) * delta_[ 2]);
+	const double delta_aktz( z - start_[ 2] - ( k - 1) * delta_[ 2]);
 
 	const double dxp( delta_aktx / delta_[ 0]);
 	const double dxm( 1 - dxp);

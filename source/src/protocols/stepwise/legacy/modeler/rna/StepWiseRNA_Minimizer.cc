@@ -285,9 +285,10 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_Minimizer::output_pose_wrapper( std::string const & tag,
-																								 pose::Pose & pose,
-																								 std::string const & out_silent_file ) const {
+StepWiseRNA_Minimizer::output_pose_wrapper(
+	std::string const & tag,
+	pose::Pose & pose,
+	std::string const & out_silent_file ) const {
 
 	core::io::silent::SilentFileData silent_file_data;
 	runtime_assert( tag.size() > 1 );
@@ -299,10 +300,10 @@ StepWiseRNA_Minimizer::output_pose_wrapper( std::string const & tag,
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Minimizer::output_pose_wrapper( std::string & tag,
-																								 char tag_first_char,
-																								 pose::Pose & pose,
-																								 core::io::silent::SilentFileData & silent_file_data,
-																								 std::string const out_silent_file ) const {
+	char tag_first_char,
+	pose::Pose & pose,
+	core::io::silent::SilentFileData & silent_file_data,
+	std::string const out_silent_file ) const {
 
 	using namespace core::io::silent;
 
@@ -352,7 +353,7 @@ StepWiseRNA_Minimizer::freeze_sugar_torsions( core::kinematics::MoveMap & mm, Si
 
 //Cannot pass pose in as constant due to the setPoseExtraScore function
 bool
-StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::string const in_tag, core::io::silent::SilentFileData & silent_file_data ) const{
+StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::string const in_tag, core::io::silent::SilentFileData & silent_file_data ) const {
 
 	using namespace core::scoring;
 	using namespace core::chemical::rna;

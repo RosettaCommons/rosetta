@@ -22,6 +22,7 @@
 
 // C++ headers
 #include <utility/assert.hh>
+#include <utility/fixedsizearray1.hh>
 #include <cmath>
 
 
@@ -153,6 +154,100 @@ bilinearly_interpolated(
 		( bx * ay * f12 ) +
 		( ax * by * f21 ) +
 		( ax * ay * f22 );
+}
+
+/// @brief Perform cubic interpolation over each of N axes, using the
+/// 2^N derivatives at 2^N gridpoints
+/// @details
+/// The way encoding gridpoints and derivatives into a linear structure like this
+/// is actually pretty simple. Imagine the "right or left" part of a cube, or the
+/// "derivative taken or not" on a particular variable, as zero or one. Then "just
+/// the actual function value" maps to 000, the z derivative (for example) maps
+/// to 001, d2/dydz maps to 011, etc.
+/// @param[in] n_derivs is a 2^N x 2^N matrix: 2^N derivatives at 2^N gridpoints
+/// @param[in] dbbp is how far along the bin our target point is, in each direction
+/// @param[in] binwbb is the bin width in each direction
+/// @param[out] val is the interpolated value
+/// @param[out] dvaldbb are the interpolated derivatives
+template < Size N >
+void
+polycubic_interpolation(
+	utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > n_derivs,
+	utility::fixedsizearray1< Real, N > dbbp,
+	utility::fixedsizearray1< Real, N > binwbb,
+	Real & val,
+	utility::fixedsizearray1< Real, N > & dvaldbb
+) {
+	utility::fixedsizearray1< Real, N > invbinwbb;
+	utility::fixedsizearray1< Real, N > binwbb_over_6;
+	utility::fixedsizearray1< Real, N > dbbm;
+	utility::fixedsizearray1< Real, N > dbb3p;
+	utility::fixedsizearray1< Real, N > dbb3m;
+	for ( Size ii = 1; ii <= N; ++ii ) {
+		invbinwbb[ ii ] = 1/binwbb[ ii ];
+		binwbb_over_6[ ii ] = binwbb[ ii ] / 6 ;
+		dbbm[ ii ] = 1 - dbbp[ ii ];
+		dbb3p[ ii ] = ( dbbp[ ii ] * dbbp[ ii ] * dbbp[ ii ] - dbbp[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
+		dbb3m[ ii ] = ( dbbm[ ii ] * dbbm[ ii ] * dbbm[ ii ] - dbbm[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
+	}
+
+	// there are 2^N deriv terms, i.e. the value, the N first derivatives,
+	// the N^2 second derivatives... up to the single Nth derivative
+
+	// The value has its own functional form.
+	val = 0;
+	for ( Size iid = 1; iid <= (1 << N); ++iid ) {
+		for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
+			Real valterm = n_derivs[ iid ][ iiv ];
+
+			for ( Size jj = 1; jj <= N; ++jj ) { // each bb
+				Size two_to_the_jj_compl = 1 << ( N - jj );
+				if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
+					valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3p[ jj ] : dbbp[ jj ];
+				} else {
+					valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3m[ jj ] : dbbm[ jj ];
+				}
+			}
+
+			val += valterm;
+		}
+	}
+
+	//Each of the N first derivatives.
+	for ( Size bbn = 1; bbn <= N; ++bbn ) {
+		dvaldbb[ bbn ] = 0;
+
+		for ( Size iid = 1; iid <= (1 << N); ++iid ) {
+			for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
+				Real valterm = n_derivs[ iid ][ iiv ]; // v000
+
+				for ( Size jj = 1; jj <= N; ++jj ) {
+					Size two_to_the_jj_compl = 1 << ( N - jj );
+
+					// Half of the values from iiv = 1 to 2^N come from
+					// "bb_bin_next" and half from "bb_bin."
+					if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
+
+						// Does the iid-th derivative have a jj-backbone deriv?
+						if ( ( iid - 1 ) & two_to_the_jj_compl ) {
+							valterm *= ( bbn == jj ) ?      ( 3 * dbbp[ jj ] * dbbp[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3p[ jj ];
+						} else {
+							valterm *= ( bbn == jj ) ?      invbinwbb[ jj ]                                           :  dbbp[ jj ];
+						}
+					} else { // bb_bin
+						if ( ( iid - 1 ) & two_to_the_jj_compl ) { // is derived
+							valterm *= ( bbn == jj ) ? -1 * ( 3 * dbbm[ jj ] * dbbm[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3m[ jj ];
+						} else {
+							// subtract all terms where bbn was taken from bb_bin
+							valterm *= ( jj == bbn ) ? -1 * invbinwbb[ jj ]                                           :  dbbm[ jj ];
+						}
+					}
+				}
+
+				dvaldbb[ bbn ] += valterm;
+			}
+		}
+	}
 }
 
 

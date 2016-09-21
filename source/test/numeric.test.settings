@@ -54,6 +54,7 @@ sources = {
 		"Bicubic_spline",
 		"Cubic_spline",
 		"TricubicSpline",
+		"PolycubicSpline",
 	],
 	"kdtree" : [
 		"kdtree",

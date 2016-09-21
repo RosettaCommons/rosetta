@@ -424,6 +424,19 @@ public:
 	virtual ~RotamerBuildingData() = 0;
 };
 
+/// @brief Perform cubic interpolation over each of N axes, using the
+/// 2^N derivatives at 2^N gridpoints
+/// @details
+/// The way encoding gridpoints and derivatives into a linear structure like this
+/// is actually pretty simple. Imagine the "right or left" part of a cube, or the
+/// "derivative taken or not" on a particular variable, as zero or one. Then "just
+/// the actual function value" maps to 000, the z derivative (for example) maps
+/// to 001, d2/dydz maps to 011, etc.
+/// @param[in] n_derivs is a 2^N x 2^N matrix: 2^N derivatives at 2^N gridpoints
+/// @param[in] dbbp is how far along the bin our target point is, in each direction
+/// @param[in] binwbb is the bin width in each direction
+/// @param[out] val is the interpolated value
+/// @param[out] dvaldbb are the interpolated derivatives
 template < Size N >
 void
 polycubic_interpolation(

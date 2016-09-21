@@ -72,6 +72,12 @@ public:
 	{
 	}
 
+	//MathVector & operator=( const MathVector & other ):
+	// size_( other.size )
+	//{
+	// std::uninitialized_copy( other.data_, other.data_ + other.size_, data_ );
+	//}
+
 	/// @brief construct from size and possible filler
 	/// @param SIZE number fo elements in Vector
 	/// @param FILL_VALUE assign every element to that value
@@ -94,9 +100,9 @@ public:
 
 	/// @brief copy constructor
 	/// @param VECTOR copy the given Vector
-	MathVector< T >( MathVector< T> const & VECTOR):
-	size_( VECTOR.size_ ),
-	data_( new T[ size_] )
+	MathVector( MathVector const & VECTOR):
+		size_( VECTOR.size_ ),
+		data_( new T[ size_] )
 	{
 		std::copy( VECTOR.data_, VECTOR.data_ + size_, data_ );
 	}

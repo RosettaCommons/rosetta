@@ -90,11 +90,15 @@ RNA_DMS_LowResolutionPotential::~RNA_DMS_LowResolutionPotential()
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DMS_LowResolutionPotential::initialize_DMS_low_resolution_potential() {
-	vector1< vector1< Real > > all_DMS_stats;
+
 	//Read in data file, and fill in private data.
-	all_DMS_stats.push_back( read_DMS_low_resolution_stats_file( "scoring/rna/chem_map_lores/dms/ade_lores_not_WC_protected_logstats.txt" ) );
-	all_DMS_stats.push_back( read_DMS_low_resolution_stats_file( "scoring/rna/chem_map_lores/dms/ade_lores_WC_protected_logstats.txt" ) );
+	auto WC_unprotected = read_DMS_low_resolution_stats_file( "scoring/rna/chem_map_lores/dms/ade_lores_not_WC_protected_logstats.txt" );
+	auto WC_protected = read_DMS_low_resolution_stats_file( "scoring/rna/chem_map_lores/dms/ade_lores_WC_protected_logstats.txt" );
 	is_protected_values_ = make_vector1( false, true );
+	numeric::MathMatrix< Real > all_DMS_stats( 2, WC_unprotected.size() );
+	all_DMS_stats.replace_col( 0 , WC_unprotected );
+	all_DMS_stats.replace_col( 1, WC_protected );
+
 	figure_out_low_resolution_potential( all_DMS_stats );
 }
 
@@ -105,7 +109,7 @@ RNA_DMS_LowResolutionPotential::initialize( core::pose::Pose & pose, bool const 
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-utility::vector1< core::Real > // this is silly -- should use a grid object
+numeric::MathVector< core::Real >
 RNA_DMS_LowResolutionPotential::read_DMS_low_resolution_stats_file( std::string const & potential_file ) {
 
 	utility::io::izstream stream;
@@ -113,6 +117,12 @@ RNA_DMS_LowResolutionPotential::read_DMS_low_resolution_stats_file( std::string 
 	if ( !stream.good() ) utility_exit_with_message( "Unable to open "+potential_file );
 
 	std::string line;
+
+	// get dim
+	getline( stream, line );
+	std::istringstream l1( line );
+	Real dim;
+	l1 >> dim;
 
 	// check labels
 	getline( stream, line );
@@ -123,14 +133,15 @@ RNA_DMS_LowResolutionPotential::read_DMS_low_resolution_stats_file( std::string 
 	runtime_assert( labels[2] == "log-stats" );
 
 	Real  DMS, stats_value, log_stats_value;
-	vector1< Real > DMS_stats;
+	numeric::MathVector< Real > DMS_stats( 80 );
+	Size DMS_idx = 0;
 	while ( getline( stream, line ) ) {
 		std::istringstream l( line );
 		l  >> DMS >> log_stats_value;
 		stats_value = exp( log_stats_value );
-		Size const DMS_idx            = lookup_idx( DMS,            DMS_values_ );
-		if ( DMS_stats.size() < DMS_idx ) DMS_stats.push_back( 0.0 );
-		DMS_stats[ DMS_idx ] = stats_value;
+		DMS_values_.insert( DMS );
+		DMS_stats( DMS_idx ) = stats_value;
+		++DMS_idx;
 	}
 
 	return DMS_stats;
@@ -138,31 +149,31 @@ RNA_DMS_LowResolutionPotential::read_DMS_low_resolution_stats_file( std::string 
 
 //////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DMS_LowResolutionPotential::figure_out_low_resolution_potential( utility::vector1< utility::vector1< core::Real > > & DMS_stats ) {
+RNA_DMS_LowResolutionPotential::figure_out_low_resolution_potential( numeric::MathMatrix< Real > & DMS_stats ) {
 
 	// first of all, need to normalize everything to total.
 	Real DMS_stats_total( 0.0 );
 	for ( Size h = 1; h <= is_protected_values_.size(); h++ ) {
 		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			DMS_stats_total += DMS_stats[ h ][ k ];
+			DMS_stats_total += DMS_stats( h, k );
 		}
 	}
 	for ( Size h = 1; h <= is_protected_values_.size(); h++ ) {
 		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			DMS_stats[ h ][ k ] /= DMS_stats_total;
+			DMS_stats( h, k ) /= DMS_stats_total;
 		}
 	}
 
 	// initialize projections to 0.0.
-	vector1< Real > p_DMS( DMS_values_.size(), 0.0 );
-	vector1< Real > p_model( is_protected_values_.size(), 0.0 );
+	numeric::MathVector< Real > p_DMS( DMS_values_.size() );
+	numeric::MathVector< Real > p_model( is_protected_values_.size() );
 
 	// fill projections, which give denominator of log-odds score.
 	for ( Size h = 1; h <= is_protected_values_.size(); h++ ) {
 		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
 
-			p_DMS[ k ]   += DMS_stats[ h ][ k ];
-			p_model[ h ] += DMS_stats[ h ][ k ];
+			p_DMS( k )   += DMS_stats( h, k );
+			p_model( h ) += DMS_stats( h, k );
 
 		}
 	}
@@ -170,8 +181,8 @@ RNA_DMS_LowResolutionPotential::figure_out_low_resolution_potential( utility::ve
 	DMS_low_resolution_potential_ = DMS_stats; // values will be replaced
 	for ( Size h = 1; h <= is_protected_values_.size(); h++ ) {
 		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			DMS_low_resolution_potential_[ h ][ k ] =
-				-1.0 * log( DMS_stats[ h ][ k ] /( p_model[ h ] * p_DMS[ k ]) );
+			DMS_low_resolution_potential_( h, k ) =
+				-1.0 * log( DMS_stats( h, k ) / ( p_model( h ) * p_DMS( k ) ) );
 		}
 	}
 }

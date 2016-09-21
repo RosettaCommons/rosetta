@@ -26,6 +26,20 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <numeric/MathNTensor.hh>
+#include <numeric/MathTensor.hh>
+#include <numeric/MathMatrix.hh>
+#include <numeric/MathVector.hh>
+#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
+#include <numeric/interpolation/InterpolatedPotential.hh>
+#include <numeric/interpolation/interpolation.hh>
+
+#include <numeric/numeric.functions.hh>
+#include <set>
+
+#include <utility/fixedsizearray1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -93,7 +107,7 @@ public:
 	utility::vector1< Real >
 	get_logL_values( pose::Pose const & pose, Size const i /*, utility::vector1< Real > const & DMS_values */  );
 
-	utility::vector1< Real > const &
+	std::set< Real > const &
 	DMS_values() const { return DMS_values_; }
 
 private:
@@ -101,7 +115,7 @@ private:
 	void
 	initialize_DMS_potential();
 
-	utility::vector1< utility::vector1< utility::vector1< core::Real > > > // this is silly -- should use a grid object
+	numeric::MathNTensor< Real, 3 > // this is silly -- should use a grid object
 	read_DMS_stats_file( std::string const & potential_file );
 
 	void
@@ -122,31 +136,34 @@ private:
 
 private:
 
+	numeric::interpolation::InterpolatedPotential< 4 > interpolated_potential_;
+
 	bool const separate_scores_;
 	core::Distance occ_dist_, methyl_probe_dist_, oxygen_probe_dist_;
 	std::pair< Distance, Distance > occ_shells_;
-	utility::vector1< bool > is_bonded_values_;
-	utility::vector1< Real > occ_values_, binding_energy_values_, DMS_values_;
+
+	// Values for the axes don't need to be mathmatrices or anything
+	std::set< Real > is_bonded_values_;
+	std::set< Real > occ_values_, binding_energy_values_, DMS_values_;
 
 	// useful stats to hold on to.
-	utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > DMS_stats_;
+	numeric::MathNTensor< Real, 4 > DMS_stats_;
 	// 'model' = (is_bonded, occ, binding_energy).
-	utility::vector1< utility::vector1< utility::vector1< Real > > > p_model_;
-	utility::vector1< Real > p_DMS_;
+	numeric::MathTensor< Real > p_model_;
+	numeric::MathVector< Real > p_DMS_;
 
 	// Briefly, DMS_potential = -kT log( p / ( p_DMS  p_model ) );
 	// this is ridiculous -- there should be a universal grid object in Rosetta -- but will do the job for now:
-	utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > DMS_potential_;
-	utility::vector1< utility::vector1< Real > > DMS_potential_is_bonded_;
-	utility::vector1< utility::vector1< Real > > DMS_potential_occ_;
-	utility::vector1< utility::vector1< Real > > DMS_potential_binding_energy_;
+	numeric::MathNTensor< Real, 4 > DMS_potential_;
+	numeric::MathMatrix< Real > DMS_potential_is_bonded_;
+	numeric::MathMatrix< Real > DMS_potential_occ_;
+	numeric::MathMatrix< Real > DMS_potential_binding_energy_;
 
 	// these are a bit silly -- currently using a very slow computation of binding energy
 	// of a 'mock' DMS molecule, based on virtualizing residues, scoring poses, etc.
 	core::pose::PoseOP working_pose_, working_pose_with_probe_;
 	hbonds::HBondSetOP hbond_set_;
 	core::scoring::ScoreFunctionOP probe_scorefxn_;
-
 };
 
 } //data

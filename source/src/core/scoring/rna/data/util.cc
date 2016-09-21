@@ -53,17 +53,27 @@ get_bool_idx( bool const value, utility::vector1< bool > const & values ){
 	return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-// Later upgrade to return how far into bin the value is, then carry out bilinear
-//  interpolation & derivs.
+Size
+get_idx( Real const value, std::set< Real > const & values ){
+
+	Size n = 0;
+	bool consider_returning_next = false;
+	for ( auto const elem : values ) {
+		if ( value >= elem ) consider_returning_next = true;
+		if ( consider_returning_next && value < elem ) return n - 1;
+		++n;
+	}
+	return values.size() - 1;
+}
+
 Size
 get_idx( Real const value, utility::vector1< Real > const & values ){
+
 	for ( Size n = 1; n < values.size(); n++ ) {
 		if ( value >= values[ n ] && value < values[ n+1 ] ) return n;
 	}
 	return values.size();
 }
-
 
 } //data
 } //rna

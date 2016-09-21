@@ -71,6 +71,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/MathVector.hh>
 
 using namespace core;
 //using namespace protocols;
@@ -94,7 +95,7 @@ using ObjexxFCL::format::F;
 
 
 void
-get_max_and_intervals( utility::vector1< Real > const & DMS_values,
+get_max_and_intervals( std::set< Real > const & DMS_values,
 	utility::vector1< Real > const & logL_values,
 	Real & DMS_mean,
 	Real & DMS_std,
@@ -102,6 +103,12 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 	Real & DMS_interval_low,
 	Real & DMS_interval_high,
 	Real const /* confidence_level = 0.68 one-sigma */ ) {
+
+	// This set comes from the DMS potential, but it's useful to
+	// be able to index into it shared with logL.
+	assert( DMS_values.size() == logL_values.size() );
+	utility::vector1< Real > DMS_vector( DMS_values.begin(), DMS_values.end() );
+
 	DMS_maxL = 0.0;
 	DMS_mean = 0.0;
 	DMS_std  = 0.0;
@@ -109,10 +116,10 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 	DMS_interval_high = 0.0;
 
 	Real max_logL( 0.0 );
-	for ( Size n = 1; n <= logL_values.size(); n++ ) {
+	for ( Size n = 1; n <= logL_values.size(); ++n ) {
 		if ( n == 1 || logL_values[ n ] > max_logL ) {
 			max_logL = logL_values[ n ];
-			DMS_maxL = DMS_values[ n ];
+			DMS_maxL = DMS_vector[ n ];
 		}
 	}
 	if ( max_logL == 0.0 ) return; // sign that there's no data here.
@@ -121,8 +128,8 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 	for ( Size n = 1; n <= logL_values.size(); n++ ) {
 		Real const p = exp( logL_values[ n ] );
 		p_tot += p;
-		DMS_mean         += p * DMS_values[ n ];
-		DMS_squared_mean += p * DMS_values[ n ] * DMS_values[ n ];
+		DMS_mean         += p * DMS_vector[ n ];
+		DMS_squared_mean += p * DMS_vector[ n ] * DMS_vector[ n ];
 	}
 	DMS_mean         /= p_tot;
 	DMS_squared_mean /= p_tot;
@@ -172,8 +179,8 @@ get_max_and_intervals( utility::vector1< Real > const & DMS_values,
 ///////////////////////////////////////////////
 void
 get_logL_DMS( pose::Pose & pose,
-	vector1< vector1< Real > > & logL_values,
-	vector1< Real >            & DMS_values,
+	vector1< vector1< Real > >  & logL_values,
+	std::set< Real > & DMS_values,
 	vector1< Size > & probed_res ) {
 
 	logL_values.clear();
@@ -209,7 +216,7 @@ predict_chem_map_test()
 	using namespace core::chemical;
 	using namespace core::import_pose;
 
-	vector1 < std::string> pdb_files( option[ in::file::s ]() );
+	vector1< std::string > pdb_files( option[ in::file::s ]() );
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
 	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
@@ -230,9 +237,11 @@ predict_chem_map_test()
 		std::cout << "Read in pose sequence: " << pose.annotated_sequence() << std::endl;
 
 		vector1< vector1< Real > > logL_values;
-		vector1< Real > DMS_values;
+		std::set< Real > DMS_values;
 		vector1< Size > probed_res;
 		get_logL_DMS( pose, logL_values, DMS_values, probed_res );
+
+		utility::vector1< Real > DMS_vector( DMS_values.begin(), DMS_values.end() );
 
 		///////////////////////////////////////////////////////
 		std::string const logL_outfile = pdb_file + ".DMS.logL.txt";
@@ -244,8 +253,8 @@ predict_chem_map_test()
 			logL_out << ' ' << A( 10, restag );
 		}
 		logL_out << std::endl;
-		for ( Size k = 1; k <= DMS_values.size(); k++ ) {
-			logL_out << F( 10, 2, DMS_values[ k ] );
+		for ( Size k = 1; k <= DMS_vector.size(); k++ ) {
+			logL_out << F( 10, 2, DMS_vector[ k ] );
 			for ( Size n = 1; n <= logL_values.size(); n++ ) logL_out << ' ' << F( 10, 2, logL_values[ n ][ k ] );
 			logL_out << std::endl;
 		}

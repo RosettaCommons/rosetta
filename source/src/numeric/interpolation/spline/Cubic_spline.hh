@@ -94,11 +94,11 @@ public:
 
 	CubicSpline & train
 	(
-		const BorderFlag BORDER,
-		const Real START,
-		const Real DELTA,
-		const MathVector< Real> &RESULTS,
-		const std::pair< Real, Real> &FIRSTBE
+		BorderFlag const BORDER,
+		Real const START,
+		Real const DELTA,
+		MathVector< Real> const &RESULTS,
+		std::pair< Real, Real> const &FIRSTBE
 	);
 
 

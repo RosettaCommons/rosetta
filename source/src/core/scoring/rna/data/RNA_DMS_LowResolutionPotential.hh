@@ -23,6 +23,9 @@
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <numeric/MathVector.hh>
+#include <numeric/MathMatrix.hh>
+#include <set>
 
 namespace core {
 namespace scoring {
@@ -80,21 +83,19 @@ private:
 	void
 	initialize_DMS_low_resolution_potential();
 
-	utility::vector1< core::Real > // this is silly -- should use a grid object
+	numeric::MathVector< core::Real >
 	read_DMS_low_resolution_stats_file( std::string const & potential_file );
 
 	void
-	figure_out_low_resolution_potential( utility::vector1< utility::vector1< core::Real > > & all_DMS_stats );
+	figure_out_low_resolution_potential( numeric::MathMatrix< Real > & all_DMS_stats );
 
 private:
 
 	bool careful_base_pair_classifier_;
 	utility::vector1< bool > wc_edge_paired_, hoog_edge_paired_, sugar_edge_paired_, is_bulged_;
 	utility::vector1< bool > is_protected_values_;
-	utility::vector1< Real > DMS_values_;
-
-	// this is ridiculous -- there should be a universal grid object in Rosetta -- but will do the job for now:
-	utility::vector1< utility::vector1< Real > > DMS_low_resolution_potential_;
+	std::set< Real > DMS_values_;
+	numeric::MathMatrix< Real > DMS_low_resolution_potential_;
 
 };
 

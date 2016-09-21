@@ -328,7 +328,7 @@ protected:
 
 	void
 	get_bb_bins(
-		utility::fixedsizearray1< Real, N > bbs,
+		utility::fixedsizearray1< Real, N > const & bbs,
 		utility::fixedsizearray1< Size, N > & bb_bin,
 		utility::fixedsizearray1< Size, N > & bb_bin_next,
 		utility::fixedsizearray1< Real, N > & bb_alpha

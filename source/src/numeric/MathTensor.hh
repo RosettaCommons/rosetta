@@ -70,6 +70,7 @@ public:
 	{
 		std::fill( data_, data_ + size_, value );
 	}
+
 	//! construct Tensor from optional number of layers, optional number of rows, optional number of columns, and optional single element
 	MathTensor( MathTensor const & src ) :
 		nlayers_( src.nlayers_ ),

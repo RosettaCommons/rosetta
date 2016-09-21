@@ -791,6 +791,7 @@ INIT(  FIVE, THREE ) \
 INIT(  FIVE,  FOUR ) \
 INIT(  FIVE,  FIVE )
 
+
 	// If it's a new number of backbone angles you have added, add lines here.
 	// And increase the size of "realvec" too.
 	utility::fixedsizearray1< Real,   ONE > bb_ONE;

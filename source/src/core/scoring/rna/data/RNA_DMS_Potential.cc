@@ -33,6 +33,8 @@
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
 
+#include <numeric/interpolation/InterpolatedPotential.tmpl.hh>
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
@@ -89,6 +91,21 @@ using namespace basic::options;
 //
 //  -- rhiju
 //
+//  AMW: Some stuff I've done here to make things a little more stable. The prior
+//  implementation as nested vector1s doesn't guarantee e.g. that every 2nd-level
+//  vector is the same length - missing data points can cause mis-alignments.
+//  I think instead they should be zeroes (and interpolated if necessary). You're
+//  also correct ot complain of the lack of a general grid object, and using a
+//  pre-dimensioned array helps with that. It'll also help plug into eventual spline
+//  work... so I'm going to use a MathNTensor (hey, I made that a couple years ago!).
+//
+//  I also don't love separately storing axis values and indices, but I understand
+//  why it's important (and why a map would probably be a poor performance solution)
+//  but I am going to store these values as a std::set (after all, the axis values
+//  are, as you're checking, ascending and unique!)
+//
+//  --AMW
+//
 //////////////////////////////////////////////////////
 
 
@@ -97,14 +114,15 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-
 //Constructor
 RNA_DMS_Potential::RNA_DMS_Potential():
 	separate_scores_( option[ OptionKeys::score::DMS_separate_features ]() ),
 	occ_dist_( 1.5 ),
 	methyl_probe_dist_( 3.5 ),
 	oxygen_probe_dist_( 5.5 ),
-	occ_shells_( std::make_pair( 2.0, 4.0 ) )
+	occ_shells_( std::make_pair( 2.0, 4.0 ) ),
+	DMS_stats_(),
+	DMS_potential_()
 {
 	probe_scorefxn_ = get_probe_scorefxn( true /*soft_rep*/, false /* just_atr_rep */);
 }
@@ -116,18 +134,29 @@ RNA_DMS_Potential::~RNA_DMS_Potential()
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DMS_Potential::initialize_DMS_potential() {
-	DMS_stats_.clear();
 
+	numeric::MathNTensor< Real, 3 > not_bonded = read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_not_bonded_logstats.txt" );
 	//Read in data file, and fill in private data.
-	DMS_stats_.push_back( read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_not_bonded_logstats.txt" ) );
-	DMS_stats_.push_back( read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_bonded_logstats.txt" ) );
-	is_bonded_values_ = make_vector1( false, true );
+	numeric::MathNTensor< Real, 3 > bonded = read_DMS_stats_file( "scoring/rna/chem_map/dms/ade_N1_bonded_logstats.txt" );
+
+	utility::fixedsizearray1< Size, 4 > n_dimensions;
+	n_dimensions[ 1 ] = 2;
+	n_dimensions[ 2 ] = not_bonded.n_bins(1);
+	n_dimensions[ 3 ] = not_bonded.n_bins(2);
+	n_dimensions[ 4 ] = not_bonded.n_bins(3);
+
+	DMS_stats_ = numeric::MathNTensor< Real, 4 >( n_dimensions, 0.0 );
+	DMS_stats_.replace_layer( 0, not_bonded );
+	DMS_stats_.replace_layer( 1, bonded );
+
+	is_bonded_values_.insert( 0.0 );
+	is_bonded_values_.insert( 1.0 );
 
 	figure_out_potential(); // updates DMS_stats_, DMS_potential_, etc.
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-vector1< vector1< vector1< Real > > > // this is silly -- should use a grid object
+numeric::MathNTensor< Real, 3 >
 RNA_DMS_Potential::read_DMS_stats_file( std::string const & potential_file ) {
 
 	utility::io::izstream stream;
@@ -136,31 +165,59 @@ RNA_DMS_Potential::read_DMS_stats_file( std::string const & potential_file ) {
 
 	std::string line;
 
+	// AMW:
+	getline( stream, line );
+	std::istringstream l1( line );
+	utility::fixedsizearray1< Size, 3 > dimensions;
+	l1 >> dimensions[1] >> dimensions[2] >> dimensions[3];
+
+	numeric::MathNTensor< Real, 3 > DMS_stats( dimensions, 0.0 );
+
 	// check labels
 	getline( stream, line );
-	std::istringstream l( line );
+	std::istringstream l2( line );
 	utility::vector1< std::string > labels( 4, "" );
-	l >> labels[1] >> labels[2] >> labels[3] >> labels[4];
+	l2 >> labels[1] >> labels[2] >> labels[3] >> labels[4];
 	runtime_assert( labels[1] == "occ" );
 	runtime_assert( labels[2] == "Ebind" );
 	runtime_assert( labels[3] == "DMS" );
 	runtime_assert( labels[4] == "log-stats" );
 
+	// Indices for the MathMatrix aren't obtained by lookup in vector
+	// anymore. That formalism both assumes they're in increasing order (look
+	// at lookup_idx!) and is only valuable if they might not be.
+	// Instead, loop from 0 to dimensions[1], [2], [3]
+	Size occ_idx = 0, binding_energy_idx = 0, DMS_idx = 0;
 	Real occ, binding_energy, DMS, stats_value, log_stats_value;
-	vector1< vector1< vector1< Real > > > DMS_stats;
 	while ( getline( stream, line ) ) {
+		if ( occ_idx > dimensions[1] ) {
+			utility_exit_with_message( "The number of lines in a DMS file and the label indicating how many to expect are out of sync." );
+		}
 		std::istringstream l( line );
 		l  >> occ >> binding_energy >> DMS >> log_stats_value;
 		stats_value = exp( log_stats_value );
 
-		Size const occ_idx            = lookup_idx( occ,            occ_values_ );
-		Size const binding_energy_idx = lookup_idx( binding_energy, binding_energy_values_ );
-		Size const DMS_idx            = lookup_idx( DMS,            DMS_values_ );
+		// populate std::set axis values
+		occ_values_.insert( occ );
+		if ( occ_idx == 0 ) {
+			binding_energy_values_.insert( binding_energy );
+			if ( binding_energy_idx == 0 ) {
+				DMS_values_.insert( DMS );
+			}
+		}
 
-		if ( DMS_stats.size() < occ_idx ) DMS_stats.push_back( vector1< vector1< Real > >() );
-		if ( DMS_stats[ occ_idx ].size() < binding_energy_idx ) DMS_stats[ occ_idx ].push_back( vector1< Real >() );
-		if ( DMS_stats[ occ_idx ][ binding_energy_idx ].size() < DMS_idx ) DMS_stats[ occ_idx ][ binding_energy_idx ].push_back( 0.0 );
-		DMS_stats[ occ_idx ][ binding_energy_idx ][ DMS_idx ] = stats_value;
+		DMS_stats( occ_idx, binding_energy_idx, DMS_idx ) = stats_value;
+
+		// Increment and wrap as needed
+		++DMS_idx;
+		if ( DMS_idx == dimensions[3] ) {
+			DMS_idx = 0;
+			++binding_energy_idx;
+			if ( binding_energy_idx == dimensions[2] ) {
+				binding_energy_idx = 0;
+				++occ_idx;
+			}
+		}
 	}
 
 	return DMS_stats;
@@ -177,74 +234,60 @@ RNA_DMS_Potential::figure_out_potential(){
 	// log-odds score is: -kT log P( is_bonded, DMS, occ, binding_energy ) / [ P( DMS ) P( is_bonded, occ, binding_energy ) ]
 
 	// first of all, need to normalize everything to total.
-	Real DMS_stats_total( 0.0 );
-	for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
-		for ( Size i = 1; i <= occ_values_.size(); i++ ) {
-			for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
-				for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-					DMS_stats_total += DMS_stats_[ h ][ i ][ j ][ k ];
-				}
-			}
-		}
-	}
-	for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
-		for ( Size i = 1; i <= occ_values_.size(); i++ ) {
-			for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
-				for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-					DMS_stats_[ h ][ i ][ j ][ k ] /= DMS_stats_total;
-				}
-			}
-		}
-	}
+	Real const DMS_stats_total = DMS_stats_.sum();
+	DMS_stats_ /= DMS_stats_total;
 
-	// initialize projections to 0.0. This is pretty clumsy -- would be better to have constructors.
-	p_DMS_ = vector1< Real >( DMS_values_.size(), 0.0 );
-	p_model_.clear(); // 'model' = (is_bonded, occ, binding_energy).
-	for ( Size i = 1; i <= is_bonded_values_.size(); i++ ) {
-		p_model_.push_back( vector1< vector1< Real > >() );
-		for ( Size j = 1; j <= occ_values_.size(); j++ ) {
-			p_model_[ i ].push_back( vector1< Real >( binding_energy_values_.size(), 0.0 ) );
-		}
-	}
+	p_DMS_ = numeric::MathVector< Real >( DMS_values_.size(), 0.0 );
+	p_model_ = numeric::MathTensor< Real >(
+		is_bonded_values_.size(),
+		occ_values_.size(),
+		binding_energy_values_.size(),
+		0.0 ); // 'model' = (is_bonded, occ, binding_energy).
 
 	// for separate feature-scores [ not on by default ]
-	vector1< Real > p_is_bonded( is_bonded_values_.size(), 0.0 );
-	vector1< Real > p_occ( occ_values_.size(), 0.0 );
-	vector1< Real > p_binding_energy( binding_energy_values_.size(), 0.0 );
-	vector1< vector1< Real > > p_is_bonded_DMS, p_occ_DMS, p_binding_energy_DMS;
-	for ( Size i = 1; i <= is_bonded_values_.size(); i++ ) p_is_bonded_DMS.push_back( vector1< Real >( DMS_values_.size(), 0.0 ) );
-	for ( Size i = 1; i <= occ_values_.size(); i++ )  p_occ_DMS.push_back( vector1< Real >( DMS_values_.size(), 0.0 ) );
-	for ( Size i = 1; i <= binding_energy_values_.size(); i++ ) p_binding_energy_DMS.push_back( vector1< Real >( DMS_values_.size(), 0.0 ) );
+	numeric::MathVector< Real > p_is_bonded( is_bonded_values_.size(), 0.0 );
+	numeric::MathVector< Real > p_occ( occ_values_.size(), 0.0 );
+	numeric::MathVector< Real > p_binding_energy( binding_energy_values_.size(), 0.0 );
 
+	numeric::MathMatrix< Real > p_is_bonded_DMS( is_bonded_values_.size(), DMS_values_.size(), 0.0 );
+	numeric::MathMatrix< Real > p_occ_DMS( occ_values_.size(), DMS_values_.size(), 0.0 );
+	numeric::MathMatrix< Real > p_binding_energy_DMS( binding_energy_values_.size(), DMS_values_.size(), 0.0 );
+
+	// AMW todo: implement "slice sums" for cross sections along the axes.
 	// fill projections, which give denominator of log-odds score.
-	for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
-		for ( Size i = 1; i <= occ_values_.size(); i++ ) {
-			for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
-				for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
+	for ( Size h = 0; h < is_bonded_values_.size(); h++ ) {
+		for ( Size i = 0; i < occ_values_.size(); i++ ) {
+			for ( Size j = 0; j < binding_energy_values_.size(); j++ ) {
+				for ( Size k = 0; k < DMS_values_.size(); k++ ) {
 
-					p_DMS_[ k ]                    += DMS_stats_[ h ][ i ][ j ][ k ];
-					p_model_[ h ][ i ][ j ]        += DMS_stats_[ h ][ i ][ j ][ k ];
+					Real const val = DMS_stats_( h, i, j, k );
+					p_DMS_( k )                    += val;
+					p_model_( h, i, j )        += val;
 
 					// for separate feature scores [not on by default]
-					p_is_bonded[ h ]               += DMS_stats_[ h ][ i ][ j ][ k ];
-					p_is_bonded_DMS[ h ][ k ]      += DMS_stats_[ h ][ i ][ j ][ k ];
-					p_occ[ i ]                     += DMS_stats_[ h ][ i ][ j ][ k ];
-					p_occ_DMS[ i ][ k ]            += DMS_stats_[ h ][ i ][ j ][ k ];
-					p_binding_energy[ j ]          += DMS_stats_[ h ][ i ][ j ][ k ];
-					p_binding_energy_DMS[ j ][ k ] += DMS_stats_[ h ][ i ][ j ][ k ];
-
+					p_is_bonded( h )               += val;
+					p_is_bonded_DMS( h, k )      += val;
+					p_occ( i )                     += val;
+					p_occ_DMS( i, k )            += val;
+					p_binding_energy( j )          += val;
+					p_binding_energy_DMS( j, k ) += val;
 				}
 			}
 		}
 	}
 
+	//DMS_potential_ = DMS_stats_; // values will be replaced
 	DMS_potential_ = DMS_stats_; // values will be replaced
-	for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
-		for ( Size i = 1; i <= occ_values_.size(); i++ ) {
-			for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
-				for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-					DMS_potential_[ h ][ i ][ j ][ k ] =
-						-1.0 * log( DMS_stats_[ h ][ i ][ j ][ k ] /( p_model_[ h ][ i ][ j ] * p_DMS_[ k ]) );
+	for ( Size h = 0; h < is_bonded_values_.size(); h++ ) {
+		for ( Size i = 0; i < occ_values_.size(); i++ ) {
+			for ( Size j = 0; j < binding_energy_values_.size(); j++ ) {
+				for ( Size k = 0; k < DMS_values_.size(); k++ ) {
+					DMS_potential_( h, i, j, k ) =
+						-1.0 * log( DMS_stats_( h, i, j, k )/ ( p_model_( h, i, j ) * p_DMS_( k ) ) );
+					//std::cout << "potential " << h << " " << i << " " <<  j << " " << k << " is " <<  DMS_potential_( h, i, j, k ) << std::endl;
+					//std::cout << "stats is " <<  DMS_stats_( h, i, j, k ) << std::endl;
+					//std::cout << "p_model_ is " <<  p_model_( h, i, j ) << std::endl;
+					//std::cout << "p_DMS_ is " <<  p_DMS_( k ) << std::endl;
 				}
 			}
 		}
@@ -252,27 +295,72 @@ RNA_DMS_Potential::figure_out_potential(){
 
 	// separate feature scores [not on by default]
 	DMS_potential_is_bonded_ = p_is_bonded_DMS; // values will be replaced
-	for ( Size h = 1; h <= is_bonded_values_.size(); h++ ) {
-		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			DMS_potential_is_bonded_[ h ][ k ] =
-				-1.0 * log( p_is_bonded_DMS[ h ][ k ] /( p_is_bonded[ h ] * p_DMS_[ k ]) );
+	for ( Size h = 0; h < is_bonded_values_.size(); h++ ) {
+		for ( Size k = 0; k < DMS_values_.size(); k++ ) {
+			DMS_potential_is_bonded_( h, k ) =
+				-1.0 * log( p_is_bonded_DMS( h, k ) /( p_is_bonded( h ) * p_DMS_( k )) );
 		}
 	}
 	DMS_potential_occ_ = p_occ_DMS; // values will be replaced
-	for ( Size i = 1; i <= occ_values_.size(); i++ ) {
-		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			DMS_potential_occ_[ i ][ k ] =
-				-1.0 * log( p_occ_DMS[ i ][ k ] /( p_occ[ i ] * p_DMS_[ k ]) );
+	for ( Size i = 0; i < occ_values_.size(); i++ ) {
+		for ( Size k = 0; k < DMS_values_.size(); k++ ) {
+			DMS_potential_occ_( i, k ) =
+				-1.0 * log( p_occ_DMS( i, k ) / ( p_occ( i ) * p_DMS_( k ) ) );
 		}
 	}
 	DMS_potential_binding_energy_ = p_binding_energy_DMS; // values will be replaced
-	for ( Size j = 1; j <= binding_energy_values_.size(); j++ ) {
-		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			DMS_potential_binding_energy_[ j ][ k ] =
-				-1.0 * log( p_binding_energy_DMS[ j ][ k ] /( p_binding_energy[ j ] * p_DMS_[ k ]) );
+	for ( Size j = 0; j < binding_energy_values_.size(); j++ ) {
+		for ( Size k = 0; k < DMS_values_.size(); k++ ) {
+			DMS_potential_binding_energy_( j, k ) =
+				-1.0 * log( p_binding_energy_DMS( j, k ) /( p_binding_energy( j ) * p_DMS_( k ) ) );
 		}
 	}
 
+	using namespace numeric::interpolation::spline;
+	// Train polycubic spline on the potential.
+	utility::fixedsizearray1< BorderFlag, 4 > const BORDER( e_Natural );
+
+	utility::fixedsizearray1< double, 4 > START;
+	START[1] = *is_bonded_values_.begin();
+	START[2] = *occ_values_.begin();
+	START[3] = *binding_energy_values_.begin();
+	START[4] = *DMS_values_.begin();
+
+	utility::fixedsizearray1< double, 4 >  DELTA;
+	DELTA[1] = *std::next(is_bonded_values_.begin()) - *is_bonded_values_.begin();
+	DELTA[2] = *std::next(occ_values_.begin()) - *occ_values_.begin();
+	DELTA[3] = *std::next(binding_energy_values_.begin()) - *binding_energy_values_.begin();
+	DELTA[4] = *std::next(DMS_values_.begin()) - *DMS_values_.begin();
+
+	utility::fixedsizearray1< bool, 4 > const LINCONT( true );
+	utility::fixedsizearray1< std::pair< Real, Real >, 4 > const FIRSTBE( std::make_pair( 0.0, 0.0 ) );
+
+	numeric::interpolation::spline::PolycubicSpline< 4 > pcs;
+	pcs.train( BORDER, START, DELTA, DMS_potential_, LINCONT, FIRSTBE );
+
+	utility::fixedsizearray1< Size, 4 > dims;
+	dims[1] = is_bonded_values_.size();
+	dims[2] = occ_values_.size();
+	dims[3] = binding_energy_values_.size();
+	dims[4] = DMS_values_.size();
+	interpolated_potential_.dimension( dims );
+	interpolated_potential_.set_bin_width( DELTA );
+	interpolated_potential_.set_periodic( false );
+
+	for ( Size h = 0; h < is_bonded_values_.size(); h++ ) {
+		for ( Size i = 0; i < occ_values_.size(); i++ ) {
+			for ( Size j = 0; j < binding_energy_values_.size(); j++ ) {
+				for ( Size k = 0; k < DMS_values_.size(); k++ ) {
+					utility::fixedsizearray1< Size, 4 > indices;
+					indices[1] = h; indices[2] = i; indices[3] = j; indices[4] = k;
+					debug_assert( interpolated_potential_( h, i, j, k ).size() == pcs.get_all_derivs( indices ).size() );
+					//for ( Size mm = 1; mm <= interpolated_potential_( h, i, j, k ).size(); ++mm ) {
+					interpolated_potential_( h, i, j, k ) = pcs.get_all_derivs( indices );
+					//}
+				}
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -353,31 +441,48 @@ RNA_DMS_Potential::evaluate( core::pose::Pose const & pose,
 	// initialize feature values to what would be appropriate for a bulged A
 	if ( !full_model_info.res_list().has_value( pos ) ) return 0.0;
 
+	// AMW: note that our framework is robust to the possibility that "ade_n1_bonded"
+	// becomes a Real to reflect a continuous confidence in whether the N1 is
+	// H-bonded.
+
 	Size const i = full_model_info.full_to_sub( pos );
 	bool ade_n1_bonded( false );
 	Real binding_energy( 0.0 ), occupancy_density( 0.0 );
 	bool const success = get_features( pose, i, ade_n1_bonded, binding_energy, occupancy_density );
 	if ( !success ) return 0.0;
 
-	Size const n1_bond_idx = get_bool_idx( ade_n1_bonded, is_bonded_values_ );
-	Size const DMS_idx = get_idx( rna_reactivity.value(), DMS_values_ );
-	Size const occ_idx = get_idx( occupancy_density, occ_values_ );
-	Size const binding_energy_idx = get_idx( binding_energy, binding_energy_values_ );
-
 	Real score( 0.0 );
-	if ( separate_scores_ ) {
-		Real score_n1_bond        = DMS_potential_is_bonded_     [ n1_bond_idx ][ DMS_idx ];
-		Real score_occ            = DMS_potential_occ_           [ occ_idx ][ DMS_idx ];
-		Real score_binding_energy = DMS_potential_binding_energy_[ binding_energy_idx ][ DMS_idx ];
-		score = score_n1_bond + score_occ + score_binding_energy;
+	if ( true ) {
+		Size const n1_bond_idx = ade_n1_bonded ? 1 : 0;
+		Size const DMS_idx = get_idx( rna_reactivity.value(), DMS_values_ );
+		Size const occ_idx = get_idx( occupancy_density, occ_values_ );
+		Size const binding_energy_idx = get_idx( binding_energy, binding_energy_values_ );
+
+		if ( separate_scores_ ) {
+			Real score_n1_bond        = DMS_potential_is_bonded_     ( n1_bond_idx, DMS_idx );
+			Real score_occ            = DMS_potential_occ_           ( occ_idx, DMS_idx );
+			Real score_binding_energy = DMS_potential_binding_energy_( binding_energy_idx, DMS_idx );
+			score = score_n1_bond + score_occ + score_binding_energy;
+		} else {
+			score = DMS_potential_( n1_bond_idx, occ_idx,binding_energy_idx, DMS_idx );
+			//std::cout << "score " << score << " " << n1_bond_idx << " " <<  occ_idx << " " << binding_energy_idx << " " << DMS_idx << std::endl;
+			//std::cout << "near vals " << occupancy_density << " " << binding_energy << " " << rna_reactivity.value() << std::endl;
+		}
 	} else {
-		score = DMS_potential_[ n1_bond_idx ][ occ_idx ][ binding_energy_idx ][ DMS_idx  ];
+		utility::fixedsizearray1< Real, 4 > dscoredfeat;
+		utility::fixedsizearray1< Real, 4 > values;
+		values[1] = ade_n1_bonded;
+		values[2] = rna_reactivity.value();
+		values[3] = occupancy_density;
+		values[4] = binding_energy;
+		numeric::interpolation::polycubic_interpolation( interpolated_potential_, values, score, dscoredfeat );
 	}
 
 	//  TR <<  pose.pdb_info()->number(i) << " ade_n1_bonded " << ade_n1_bonded << " (" << n1_bond_idx << ")" << "   occupancy " << occupancy_density << " (" << occ_idx << ")" << "   binding_energy " << binding_energy << " (" << binding_energy_idx << ") " << "  value " << rna_reactivity.value() << " (" << DMS_idx << ")" << " SCORE " << score << std::endl;
 
 	return score;
 }
+
 
 ///////////////////////////////////////////////////////////////////////
 bool
@@ -599,17 +704,18 @@ RNA_DMS_Potential::get_logL_values( pose::Pose const & pose, Size const i /*, ut
 	bool const success = get_features( pose, i, ade_n1_bonded, binding_energy, occupancy_density );
 
 	if ( success ) {
-		Size const n1_bond_idx = get_bool_idx( ade_n1_bonded, is_bonded_values_ );
+		Size const n1_bond_idx = ade_n1_bonded ? 1 : 0;
+		//get_bool_idx( ade_n1_bonded, is_bonded_values_ );
 		Size const occ_idx = get_idx( occupancy_density, occ_values_ );
 		Size const binding_energy_idx = get_idx( binding_energy, binding_energy_values_ );
 		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			logL_values.push_back( log( DMS_stats_[ n1_bond_idx ][ occ_idx ][ binding_energy_idx ][ k ]/
-				p_model_  [ n1_bond_idx ][ occ_idx ][ binding_energy_idx ] ) /*for normalization*/ );
+			logL_values.push_back( log( DMS_stats_( n1_bond_idx, occ_idx, binding_energy_idx, k ) /
+				p_model_( n1_bond_idx, occ_idx, binding_energy_idx ) ) /*for normalization*/ );
 		}
 	} else {
 		// return generic DMS distribution.
 		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
-			logL_values.push_back( log( p_DMS_[k] ) );
+			logL_values.push_back( log( p_DMS_( k ) ) );
 		}
 	}
 

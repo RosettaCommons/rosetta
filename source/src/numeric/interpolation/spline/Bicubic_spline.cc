@@ -48,12 +48,12 @@ namespace spline {
 // FIRSTBE values for the first order derivative at begin and end of spline (only FIRSTDER)
 // train BicubicSpline
 void BicubicSpline::train(
-	const BorderFlag BORDER[2],
-	const Real START[2],
-	const Real DELTA[2],
-	const MathMatrix< Real> &RESULTS,
-	const bool LINCONT[2],
-	const std::pair< Real, Real> FIRSTBE[2]
+	BorderFlag const BORDER[2],
+	Real const START[2],
+	Real const DELTA[2],
+	MathMatrix< Real> const &RESULTS,
+	bool const LINCONT[2],
+	std::pair< Real, Real> const FIRSTBE[2]
 )
 {
 	//check, if the points are given in positive direction
