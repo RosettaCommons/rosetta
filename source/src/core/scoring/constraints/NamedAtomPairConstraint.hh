@@ -120,6 +120,10 @@ public:
 	virtual void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
 	// //@brief set constraint such that the pose doesn't violate it.
 	// virtual void steal( pose::Pose& );
+	
+	/// @brief This overrride updates the sequence numbering but not the atom names.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
 private:
 	id::NamedAtomID named_atom1_;

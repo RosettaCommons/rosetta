@@ -233,6 +233,10 @@ AngleConstraint::score(
 	return 0.0;
 }
 
+void
+AngleConstraint::setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const {} //Do nothing.
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // accumulate F1, F2 contributions from terms that look like

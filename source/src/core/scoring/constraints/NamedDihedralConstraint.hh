@@ -64,6 +64,10 @@ public:
 		pose::Pose const & src,
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL ) const;
+		
+	/// @brief This overrride updates the sequence numbering but not the atom names.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
 	virtual bool operator == ( Constraint const & rhs ) const;
 	virtual bool same_type_as_me( Constraint const & other ) const;

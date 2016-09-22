@@ -160,6 +160,8 @@ public:
 	virtual
 	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp ) const;
 
+	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+
 private:
 	// functions
 	Real

@@ -357,6 +357,12 @@ AtomPairConstraint::effective_sequence_separation( core::kinematics::ShortestPat
 	return sp.dist( atom1_.rsd(), atom2_.rsd() );
 }
 
+void
+AtomPairConstraint::setup_for_scoring(
+	func::XYZ_Func const &,
+	ScoreFunction const &
+) const {} //Do nothing.
+
 // functions
 Real
 AtomPairConstraint::func( Real const theta ) const

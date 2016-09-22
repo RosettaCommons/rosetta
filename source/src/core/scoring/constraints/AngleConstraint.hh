@@ -96,6 +96,8 @@ public:
 	void
 	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
+	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+
 	/// @brief compute atom deriv
 	void
 	fill_f1_f2(
