@@ -130,7 +130,7 @@ quoted_split(std::string const & s ) {
 			// Do nothing - regular charachter that's in the item.
 		}
 	}
-	if( start != s.size() ) {
+	if ( start != s.size() ) {
 		r.push_back( s.substr( start ) );
 	}
 	return r;

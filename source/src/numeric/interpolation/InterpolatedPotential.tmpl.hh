@@ -57,7 +57,7 @@ InterpolatedPotential< N >::operator() ( Size h, Size i, Size j, Size k ) {
 	utility::fixedsizearray1< Size, N > indices;
 	indices[1] = h;
 	indices[2] = i;
-	indices[3] = j;	
+	indices[3] = j;
 	indices[4] = k;
 	return operator()( indices );
 	// AMW: given the time, fix the below expression to do the equivalent of the above!
