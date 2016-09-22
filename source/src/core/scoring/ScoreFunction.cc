@@ -2707,6 +2707,8 @@ ScoreFunction::ready_for_nonideal_scoring() const
 	if ( (has_nonzero_weight( cart_bonded ) ||
 			has_nonzero_weight( cart_bonded_angle ) ||
 			has_nonzero_weight( cart_bonded_length ) ||
+			has_nonzero_weight( cart_bonded_proper ) ||
+			has_nonzero_weight( cart_bonded_improper ) ||
 			has_nonzero_weight( cart_bonded_torsion )) &&
 			has_zero_weight( pro_close ) ) {
 		return true;

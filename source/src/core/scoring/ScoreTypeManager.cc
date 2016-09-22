@@ -93,6 +93,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "cart_bonded_angle" ] = cart_bonded_angle;
 	name2score_type_[ "cart_bonded_length" ] = cart_bonded_length;
 	name2score_type_[ "cart_bonded_torsion" ] = cart_bonded_torsion;
+	name2score_type_[ "cart_bonded_proper" ] = cart_bonded_proper;
 	name2score_type_[ "cart_bonded_improper" ] = cart_bonded_improper;
 	// name2score_type_[ "csd_torsion" ] = csd_torsion; kwk commenting out csd atom type related code until I have implemented them fully
 	name2score_type_[ "fa_elec" ] = fa_elec;

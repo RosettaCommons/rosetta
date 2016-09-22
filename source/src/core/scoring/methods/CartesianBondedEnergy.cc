@@ -173,6 +173,7 @@ CartesianBondedEnergyCreator::score_types_for_method() const {
 	sts.push_back( cart_bonded_angle );
 	sts.push_back( cart_bonded_length );
 	sts.push_back( cart_bonded_torsion );
+	sts.push_back( cart_bonded_proper );
 	sts.push_back( cart_bonded_improper );
 	return sts;
 }
@@ -1750,6 +1751,7 @@ CartesianBondedEnergy::setup_for_scoring(
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
+		s_types.push_back( cart_bonded_proper );
 		s_types.push_back( cart_bonded_improper );
 		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
@@ -2255,6 +2257,7 @@ CartesianBondedEnergy::eval_singleres_improper_energies(
 		}
 
 		emap[ cart_bonded_improper ] += energy_improper;
+		emap[ cart_bonded_torsion ] += energy_improper;
 		emap[ cart_bonded ] += energy_improper; // potential double counting*/
 	}
 }
@@ -2298,6 +2301,7 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_torsion << std::endl;
 		}
 
+		emap[ cart_bonded_proper ] += energy_torsion;
 		emap[ cart_bonded_torsion ] += energy_torsion;
 		emap[ cart_bonded ] += energy_torsion; // potential double counting*/
 	}
@@ -2803,6 +2807,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			}
 
 			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_torsion ] += energy_improper;
 			emap[ cart_bonded_improper ] += energy_improper;
 		}
 
@@ -2840,6 +2845,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			}
 
 			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_torsion ] += energy_improper;
 			emap[ cart_bonded_improper ] += energy_improper;
 		}
 
@@ -2877,6 +2883,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			}
 
 			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_torsion ] += energy_improper;
 			emap[ cart_bonded_improper ] += energy_improper;
 		}
 	}
@@ -2912,6 +2919,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			}
 
 			emap[ cart_bonded ] += energy_improper;
+			emap[ cart_bonded_torsion ] += energy_improper;
 			emap[ cart_bonded_improper ] += energy_improper;
 		}
 	}
@@ -3047,7 +3055,7 @@ CartesianBondedEnergy::eval_singleres_improper_derivatives(
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.improper_parameters() );
 
-	Real const weight = weights[ cart_bonded_improper ] + weights[ cart_bonded ];
+	Real const weight = weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
 	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
@@ -3106,7 +3114,7 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
 		resparams.torsion_parameters() );
-	Real const weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
+	Real const weight = weights[ cart_bonded_proper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
 	for ( Size ii = 1, iiend = itps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
@@ -3507,7 +3515,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 
 	// backbone C-N-CA-H
 	if ( !res1.is_protein() || !res2.is_protein() ) return;
-	Real weight = weights[ cart_bonded_improper ] + weights[ cart_bonded ];
+	Real weight = weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
 	// backbone Oprev-Cprev-N-H
 	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
@@ -3627,9 +3635,11 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 			if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 0.5 : -0.5);
+				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) 
+					* Kphi * (del_phi>0? 0.5 : -0.5);
 			} else {
-				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded ]) * Kphi * del_phi;
+				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) 
+					* Kphi * del_phi;
 			}
 			r1_atom_derivs[ atm1 ].f1() += dE_dphi * f1;
 			r1_atom_derivs[ atm1 ].f2() += dE_dphi * f2;
